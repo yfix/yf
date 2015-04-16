@@ -16,7 +16,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/card/json/';
 
 	public $method_allow = array(
-		'payment' => array(
+		'payout' => array(
 			'pay_card' => array(
 				'title'       => 'EcommPay',
 				'icon'        => 'ecommpay',
@@ -194,7 +194,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$this->url_result = url( '/api/payment/provider?name=ecommpay&operation=response' );
 		$this->url_server = url( '/api/payment/provider?name=ecommpay&operation=response&server=true' );
 		// translation
-		$strs = &$this->method_allow[ 'payment' ][ 'pay_card' ][ 'option' ];
+		$strs = &$this->method_allow[ 'payout' ][ 'pay_card' ][ 'option' ];
 		foreach( $strs as $key => &$str ) { $str = t( $str ); }
 		// parent
 		parent::_init();
@@ -517,11 +517,10 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$method  = &$this->method_allow;
-		if( empty( $method[ 'payment' ][ $_method_id ] )
-			|| empty( $method[ 'payment' ][ $_method_id ][ 'currency' ] )
-		) { return( null ); }
-		$currency = $method[ 'payment' ][ $_method_id ][ 'currency' ];
+		$method = $this->api_method_payout( $_method_id );
+		$key = 'currency';
+		if( empty( $method ) || empty( $method[ $key ] ) ) { return( null ); }
+		$currency = $method[ $key ];
 		if( empty( $_currency ) || empty( $currency[ $_currency ] ) ) {
 			$default = reset( $currency );
 			$result = $default[ 'currency_id' ];
@@ -535,12 +534,10 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$method  = &$this->method_allow;
+		$method = $this->api_method_payout( $_method_id );
 		$key = 'fee';
-		if( empty( $method[ 'payment' ][ $_method_id ] )
-			|| empty( $method[ 'payment' ][ $_method_id ][ $key ] )
-		) { return( null ); }
-		$result = $method[ 'payment' ][ $_method_id ][ $key ];
+		if( empty( $method ) || empty( $method[ $key ] ) ) { return( null ); }
+		$result = $method[ $key ];
 		return( $result );
 	}
 
@@ -627,22 +624,13 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function _url_api() {
-		if( !empty( $this->TEST_MODE ) || !empty( $_[ 'test_mode' ] ) ) {
-			$result = &$this->URL_API_TEST;
-		} else {
-			$result = &$this->URL_API;
-		}
-		return( $result );
-	}
-
 	public function api_request( $method, $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// method
-		$api_method_allow = $this->method_allow[ 'payment' ][ $method ];
-		if( !is_array( $api_method_allow ) ) { return( null ); }
+		$method_option = $this->api_method_payout( $method );
+		if( empty( $method_option ) ) { return( null ); }
 		$options[ 'method_id' ] = $method;
 		$payment_api = &$this->payment_api;
 		// operation_id
@@ -693,10 +681,10 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		!isset( $_site_id ) && $_site_id = $this->key( 'public' );
 		!isset( $_site_id ) && $_site_id = $this->key( 'public' );
 		!isset( $_comment ) && $_comment = t( 'Вывод средств (id: ' . $_external_id . ')' );
-		!isset( $_action ) && $_action = $api_method_allow[ 'action' ];
+		!isset( $_action ) && $_action = $method_option[ 'action' ];
 		// check required
 		$request = array();
-		foreach( $api_method_allow[ 'field' ] as $key ) {
+		foreach( $method_option[ 'field' ] as $key ) {
 			$value = &${ '_'.$key };
 			if( !isset( $value ) ) {
 				$result = array(
@@ -721,7 +709,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 // DEBUG
 // var_dump( $request );
 		// request
-		$url  = $this->_url_api();
+		$url  = $this->api_url( $options );
 		$data = http_build_query( $request );
 		$result = $this->_api_request( $url, $data );
 // DEBUG

@@ -580,6 +580,18 @@ class yf_payment_api {
 		return( array( $payment_status_id, $payment_status ) );
 	}
 
+	public function provider_class( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$result = null;
+		if( !empty( $_provider_name ) ) {
+			$class_name = 'provider_' . $_provider_name;
+			$class = $this->_class( $class_name );
+			if( !( $class && $provider_class->ENABLE ) ) { $result = $class; }
+		}
+		return( $result );
+	}
+
 	public function provider( $options = null ) {
 		// get providers
 		$provider       = $this->provider;

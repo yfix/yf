@@ -9,6 +9,11 @@ class yf_payment_api__provider_remote {
 	public $KEY_PUBLIC  = null;
 	public $KEY_PRIVATE = null;
 
+	public $URL_API      = null;
+	public $URL_API_TEST = null;
+
+	public $method_allow = null;
+
 	public $API_SSL_VERIFY = true;
 
 	public $IS_DEPOSITION = null;
@@ -76,6 +81,40 @@ class yf_payment_api__provider_remote {
 		$ip_allow = isset( $_provider_ip_allow ) ? $_provider_ip_allow : $this->provider_ip_allow;
 		$ip = isset( $_ip ) ? $_ip : $this->_ip();
 		$result = empty( $ip_allow[ $ip ] ) ? false : true;
+		return( $result );
+	}
+
+	public function is_test( $options = null ) {
+		$result = false;
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( !empty( $this->TEST_MODE ) || !empty( $_test_mode ) ) { $result = true; }
+		return( $result );
+	}
+
+	public function api_url( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( $this->is_test( $options ) ) {
+			$result = &$this->URL_API_TEST;
+		} else {
+			$result = &$this->URL_API;
+		}
+		return( $result );
+	}
+
+	public function api_method_payout( $name ) {
+		$result = null;
+		if(
+			empty( $name )
+			|| empty( $this->method_allow )
+			|| empty( $this->method_allow[ 'payout' ] )
+			|| empty( $this->method_allow[ 'payout' ][ $name ] )
+			|| !is_array( $this->method_allow[ 'payout' ][ $name ] )
+		) {
+			return( $result );
+		}
+		$result = $this->method_allow[ 'payout' ][ $name ];
 		return( $result );
 	}
 
