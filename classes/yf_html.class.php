@@ -141,6 +141,10 @@ class yf_html {
 
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$extra['no_header'] = isset($extra['no_header']) ? $extra['no_header'] : 1;
+		$extra['pager_records_on_page'] = isset($extra['pager_records_on_page']) ? $extra['pager_records_on_page'] : 10000;
+		$extra['no_total'] = isset($extra['no_total']) ? $extra['no_total'] : true;
+		$extra['no_pages'] = isset($extra['no_pages']) ? $extra['no_pages'] : true;
+		$extra['hide_empty'] = isset($extra['hide_empty']) ? $extra['hide_empty'] : true;
 
 		return table($data, $extra)
 			->$key_func($key_name, $key_callable, $key_extra)
