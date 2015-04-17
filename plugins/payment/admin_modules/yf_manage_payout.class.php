@@ -234,7 +234,7 @@ class yf_manage_payout {
 			->text( 'amount'        , 'сумма' )
 			->text( 'balance'       , 'баланс' )
 			->func( 'user_name', function( $value, $extra, $row_info ) {
-				$result = $value . ' (id: ' . $row_info[ 'user_id' ] . ')';
+				$result = a('/members/edit/'.$row_info[ 'user_id' ], $value . ' (id: ' . $row_info[ 'user_id' ] . ')');
 				return( $result );
 			}, array( 'desc' => 'пользователь' ) )
 			->func( 'status_id', function( $value, $extra, $row_info ) use ( $payment_status ){
