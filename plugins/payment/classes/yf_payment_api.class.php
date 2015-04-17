@@ -1100,6 +1100,17 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function money_text( $options = null ) {
+		!is_array( $options ) && $options = array(
+			'value' => $options,
+		);
+		$options += array(
+			'sign'   => true,
+		);
+		$result = $this->money_format( $options );
+		return( $result );
+	}
+
 	public function money_html( $options = null ) {
 		!is_array( $options ) && $options = array(
 			'value' => $options,

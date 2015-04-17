@@ -1,0 +1,99 @@
+<style>
+.b-list-step > .list-item {
+	margin: 0 0 1em 0;
+}
+.tab-content {
+	padding: 1em 0;
+}
+.b-data .dl-horizontal dt {
+	width      : 220px;
+	text-align : left;
+}
+.b-data .dl-horizontal dd {
+	margin-left : 240px;
+	width       : 200px;
+}
+.b-data.operation .money,
+.b-data.operation .currency {
+	color       : #0a0;
+	font-size   : 1.5em;
+	line-height : 1em;
+}
+.b-data.operation .balance .money,
+.b-data.operation .balance .currency {
+	color       : #080;
+	font-size   : 1em;
+	line-height : 1em;
+}
+</style>
+
+{if_not_empty( header_data )}
+<div class="b-data operation">{header_data}</div>
+{/if}
+
+<div class="b-content">
+	<div class="info">
+		<p>
+			Выберите режим вывода средств
+		</p>
+	</div>
+	<div role="tabpanel" class="col-md-6">
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active">
+				<a href="#automatic" aria-controls="automatic" role="tab" data-toggle="tab">Автоматический</a>
+			</li>
+			<li role="presentation">
+				<a href="#manual" aria-controls="manual" role="tab" data-toggle="tab">Ручной</a>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="automatic">
+				<ol class="b-list-step">
+					<li class="list-item">
+						<a href="{url.request}" class="btn btn-primary">Выполнить запрос вывода средств</a>
+					</li>
+					<li class="list-item">
+						<a href="{url.provider_operation_detail}" class="btn btn-info">Проверьте детали выполненного запроса</a>
+						{tip( Данная ссылка будет активна после выполнения запроса )}
+					</li>
+				</ol>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="manual">
+				<ol class="b-list-step">
+					<li class="list-item">
+						<a href="{url.provider_payouts}" class="btn btn-primary">Скачать CSV файл для EcommPay</a>
+					</li>
+					<li class="list-item">
+						<a href="{url.provider_payouts}" class="btn btn-info" target="_blank">Выполните вывод средств с помощь CSV файла</a>
+						{tip(На сайте необходимо выбрать вкладку Массовые Выплаты и загрузить скачанный CSV файл, затем подтвердить либо отклонить перевод денег.)}
+					</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+
+{if_not_empty( request_data )}
+	<div role="tabpanel" class="col-md-6">
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active">
+				<a href="#data" aria-controls="data" role="tab" data-toggle="tab">Данные</a>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="data">
+				<div class="b-data">{request_data}</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
+	<div class="b-action">
+		<p>
+			3. Пометите операцию вывода средств:
+		</p>
+		<div class="action">
+			<a href="{url.status_success}" class="btn btn-success">Выполнено</a>
+			<a href="{url.status_refused}" class="btn btn-danger">Не выполнено</a>
+		</div>
+	</div>
+</div>
