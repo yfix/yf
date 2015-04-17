@@ -951,7 +951,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$data = array(
 			'account_id'      => $account_id,
 			'datetime_update' => db()->escape_val( $sql_datetime ),
-			'balance'         => '( balance - ' . $sql_amount . ' )',
+			'balance'         => '( balance + ' . $sql_amount . ' )',
 		);
 		$result = $payment_api->balance_update( $data, array( 'is_escape' => false ) );
 		return( $result );
