@@ -191,9 +191,15 @@ class yf_manage_payment {
 		// check id: user, operation
 		if( $user_id > 0 ) {
 			$user_info = user( $user_id );
-			list( $account_id, $account ) = $payment_api->get_account__by_id( array(
-				'account_id' => $account_id,
-			));
+			if( $account_id > 0 ) {
+				list( $account_id, $account ) = $payment_api->get_account__by_id( array(
+					'account_id' => $account_id,
+				));
+			} else {
+				list( $account_id, $account ) = $payment_api->account( array(
+					'user_id' => $user_id,
+				));
+			}
 		} else {
 			common()->message_error( 'Не определен пользователь', array( 'translate' => false ) );
 			$form = form()->link( 'Назад', $url_back, array( 'class' => 'btn', 'icon' => 'fa fa-chevron-left' ) );

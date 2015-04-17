@@ -777,7 +777,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			case 0:
 				$operation_status_name = 'success';
 				if( $response[ 'amount' ] == $_amount
-					&& $response[ 'external_id' ] == $_external_id
+					&& $response[ 'operation_id' ] == $operation_id
 				) {
 					$status         = true;
 					$status_message = 'Выполнено';
@@ -843,16 +843,19 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function _update_status( $operation_id = null, $name = null ) {
+	public function _update_status( $options = null ) {
 		if( !$this->ENABLE ) { return( null ); }
-		if( empty( $name ) ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// check
+		if( empty( $_name ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Статус операции не определен',
 			);
 			return( $result );
 		}
-		if( empty( $operation_id ) ) {
+		if( empty( $_operation_id ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
@@ -862,11 +865,11 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// var
 		$payment_api = $this->payment_api;
 		// operation
-		$operation = $payment_api->operation( array( 'operation_id' => $operation_id ) );
+		$operation = $payment_api->operation( array( 'operation_id' => $_operation_id ) );
 		if( empty( $operation ) ) {
 			$result = array(
 				'status'         => false,
-				'status_message' => 'Операция отсутствует: ' . $operation_id,
+				'status_message' => 'Операция отсутствует: ' . $_operation_id,
 			);
 			return( $result );
 		}
@@ -877,21 +880,22 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( $status[ 'name' ] != 'in_progress' ) {
 			$result = array(
 				'status'         => false,
-				'status_message' => 'Операция уже обработана: ' . $operation_id,
+				'status_message' => 'Операция уже обработана: ' . $_operation_id,
 			);
 			return( $result );
 		}
 		// progress
-		$object = $payment_api->get_status( array( 'name' => $name ) );
+		$object = $payment_api->get_status( array( 'name' => $_name ) );
 		list( $status_id, $status ) = $object;
 		if( empty( $status_id ) ) { return( $object ); }
 		// prepare
 		$sql_datetime = $payment_api->sql_datetime();
 		$data = array(
-			'operation_id'    => $operation_id,
+			'operation_id'    => $_operation_id,
 			'status_id'       => $status_id,
 			'datetime_update' => $sql_datetime,
 		);
+		!empty( $_is_finish ) && $data[ 'datetime_finish' ] = $sql_datetime;
 		$result = $payment_api->operation_update( $data );
 		return( $result );
 	}
@@ -900,7 +904,11 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// progress
-		$result = $this->_update_status( $_operation_id, 'success' );
+		$result = $this->_update_status( array(
+			'operation_id' => $_operation_id,
+			'name'         => 'success',
+			'is_finish'    => true,
+		));
 		return( $result );
 	}
 
@@ -913,7 +921,11 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
 		$result = $this->_payout_balance_update( $_operation_id );
 			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
-		$result = $this->_update_status( $_operation_id, 'refused' );
+		$result = $this->_update_status( array(
+			'operation_id' => $_operation_id,
+			'name'         => 'refused',
+			'is_finish'    => true,
+		));
 			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
 		db()->commit();
 		return( $result );

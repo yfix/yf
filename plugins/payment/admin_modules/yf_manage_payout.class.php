@@ -433,9 +433,11 @@ class yf_manage_payout {
 		$url_operation_detail = empty( $_transaction_id ) ? $url_view .'#/' : $url_base . 'operations/detail/' . $_transaction_id;
 		$url_payouts          = $url_base . 'payouts/index';
 		// render
+		$is_progressed = $_status[ 'name' ] != 'in_progress';
 		$replace = $operation + array(
-			'header_data'  => $html_operation_options,
-			'request_data' => $html_request_options,
+			'is_progressed' => $is_progressed,
+			'header_data'   => $html_operation_options,
+			'request_data'  => $html_request_options,
 			'url' => array(
 				'list'           => $this->_url( 'list' ),
 				'view'           => $this->_url( 'view',           array( '%operation_id' => $_operation_id ) ),
