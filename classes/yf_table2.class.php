@@ -1049,6 +1049,7 @@ class yf_table2 {
 					$link = $table->_process_link_params($link, $row, $extra + array('id' => $link_id));
 					$is_link_allowed = $table->_is_link_allowed($link);
 				}
+				$icon = $extra['icon'] ? '<i class="'.trim($extra['icon']).'"></i>&nbsp;' : '';
 				if ($link && $is_link_allowed) {
 					if ($extra['rewrite']) {
 						if ($extra['rewrite'] === 'user') {
@@ -1080,12 +1081,12 @@ class yf_table2 {
 					if ($extra['hidden_toggle']) {
 						$extra['data-hidden-toggle'] = $extra['hidden_toggle'];
 					}
-					$body .= strlen($link_text) ? '<a'._attrs($extra, array('href','class','title')).'>'._prepare_html($link_text).'</a>' : '';
+					$body .= strlen($link_text) ? '<a'._attrs($extra, array('href','class','title')).'>'. $icon. _prepare_html($link_text).'</a>' : '';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
-					$body .= $text;
+					$body .= $icon. $text;
 				}
 				$body .= $extra['hidden_data'] ? $table->_hidden_data_container($row, $params, $instance_params) : '';
 				return $table->_apply_badges($body, $orig_extra, $field);
