@@ -5,7 +5,7 @@ return function() {
 return array('versions' => array('master' => array(
 	'css' => '
 		.popover.ajax-user-info { min-width: 350px; min-height: 300px; border: 5px solid black; }
-		.popover.ajax-user-info .popover-content { max-height: 500px; width: auto; overflow-x: visible; overflow-y: auto; }
+		.popover.ajax-user-info .popover-content { width: auto; overflow-x: visible; overflow-y: auto; }
 	',
 	// Ideas from here: http://stackoverflow.com/a/28731847/2521354
 	'jquery' => '
