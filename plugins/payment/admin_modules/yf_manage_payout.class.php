@@ -25,6 +25,28 @@ class yf_manage_payout {
 		$filter      = $_SESSION[ $filter_name ];
 		// url
 		$url = array(
+			'request' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'request',
+				'operation_id' => '%operation_id',
+			)),
+			'status_success' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'update',
+				'status'       => 'success',
+				'operation_id' => '%operation_id',
+			)),
+			'status_refused' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'update',
+				'status'       => 'refused',
+				'operation_id' => '%operation_id',
+			)),
+			'csv' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'csv',
+				'operation_id' => '%operation_id',
+			)),
 			'list' => url_admin( array(
 				'object'       => $object,
 			)),
@@ -45,6 +67,15 @@ class yf_manage_payout {
 				'id'     => '%user_id',
 			)),
 		);
+	}
+
+	function _url( $name, $replace = null ) {
+		$url = &$this->url;
+		$result = null;
+		if( empty( $url[ $name ] ) ) { return( $result ); }
+		if( !is_array( $replace ) ) { return( $url[ $name ] ); }
+		$result = str_replace( array_keys( $replace ), array_values( $replace ), $url[ $name ] );
+		return( $result );
 	}
 
 	function _filter_form_show( $filter, $replace ) {
@@ -370,113 +401,47 @@ class yf_manage_payout {
 				$content[ $title ] = $_request[ 'options' ][ $key ];
 			}
 		}
-		$html_request_options = $html->simple_table( $content );
-		// prepare view: amount
-		$html_user_url = url_admin( '/members/edit/' . $user_id );
+		$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
+		// prepare view: operation options
+		$user_link = $html->a( array(
+			'href'  => $this->_url( 'user', array( '%user_id' => $_user_id ) ),
+			'icon'  => 'fa fa-user',
+			'title' => 'Профиль',
+			'text'  => $_user[ 'name' ],
+		));
+		$balance_link = $html->a( array(
+			'href'  => $this->_url( 'balance', array( '%user_id' => $_user_id, '%account_id' => $_account_id ) ),
+			'title' => 'Баланс',
+			'text'  => $payment_api->money_text( $_account[ 'balance' ] ),
+		));
 		$content = array(
+			'Пользователь'  => $user_link . $balance_link,
 			'Сумма'         => $_html_amount,
 			'Дата создания' => $_html_datetime_start,
 		);
-		$html_operation_options = _class( 'html' )->dd_table( $content, null, array( 'div_class' => ' ' ) );
-		// $html_request_options = table( $request_options )->auto();
-// var_dump( $request_options, (string)$html_request_options );
-// exit;
-		// url
+		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
+		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
+		// url EcommPay
 		$is_test = $_provider_class->is_test();
 		$url_base = 'https://cliff.ecommpay.com/';
 		$is_test && $url_base = 'https://cliff-sandbox.ecommpay.com/';
-		$url_operation_detail = $url_base . 'operations/detail/' . $operation_id;
+		$url_operation_detail = empty( $_transaction_id ) ? $url_view .'#/' : $url_base . 'operations/detail/' . $_transaction_id;
 		$url_payouts          = $url_base . 'payouts/index';
-// var_dump( $operation, $request, $method );
-		$body = '
-<style>
-.b-list-step > .list-item {
-	margin: 0 0 1em 0;
-}
-.tab-content {
-	padding: 1em 0;
-}
-.b-data .dl-horizontal dt {
-	width      : 220px;
-	text-align : left;
-}
-.b-data .dl-horizontal dd {
-	margin-left : 240px;
-	width       : 200px;
-}
-.b-data.operation .money,
-.b-data.operation .currency {
-	color       : #0a0;
-	font-size   : 1.5em;
-	line-height : 1em;
-}
-</style>
-<div class="b-data operation">'. $html_operation_options .'</div>
-<div class="b-content">
-	<div class="info">
-		<p>
-			Выберите режим вывода средств
-		</p>
-	</div>
-	<div role="tabpanel" class="col-md-6">
-		<ul class="nav nav-tabs" role="tablist">
-			<li role="presentation" class="active">
-				<a href="#automatic" aria-controls="automatic" role="tab" data-toggle="tab">Автоматический</a>
-			</li>
-			<li role="presentation">
-				<a href="#manual" aria-controls="manual" role="tab" data-toggle="tab">Ручной</a>
-			</li>
-		</ul>
-		<div class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="automatic">
-				<ol class="b-list-step">
-					<li class="list-item">
-						<a href="'.url('/@object/request?operation_id='.$operation_id).'" class="btn btn-primary">Выполнить запрос вывода средств</a>
-					</li>
-					<li class="list-item">
-						<a href="'. $url_operation_detail .'" class="btn btn-info">Проверьте детали выполненного запроса</a>
-					</li>
-				</ol>
-			</div>
-			<div role="tabpanel" class="tab-pane" id="manual">
-				<ol class="b-list-step">
-					<li class="list-item">
-						<a href="'.url('/@object/csv?operation_id='.$operation_id).'" class="btn btn-primary">Скачать CSV файл для EcommPay</a>
-					</li>
-					<li class="list-item">
-						<a href="'. $url_payouts .'" class="btn btn-info" target="_blank">Выполните вывод средств с помощь CSV файла</a>'
-						.tip('На сайте необходимо выбрать вкладку "Массовые Выплаты" и загрузить скачанный CSV файл, затем подтвердить либо отклонить перевод денег.').'
-					</li>
-				</ol>
-			</div>
-		</div>
-	</div>
-
-	<div role="tabpanel" class="col-md-6">
-		<ul class="nav nav-tabs" role="tablist">
-			<li role="presentation" class="active">
-				<a href="#data" aria-controls="data" role="tab" data-toggle="tab">Данные</a>
-			</li>
-		</ul>
-		<div class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="data">
-				<div class="b-data">'. $html_request_options .'</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="b-action">
-		<p>
-			3. Пометите операцию вывода средств:
-		</p>
-		<div class="action">
-			<a href="'.url('/@object/update?state=success&operation_id='.$operation_id).'" class="btn btn-success">Выполнено</a>
-			<a href="'.url('/@object/update?state=refused&operation_id='.$operation_id).'" class="btn btn-danger">Не выполнено</a>
-		</div>
-	</div>
-</div>
-		';
-		return $body;
+		// render
+		$replace = $operation + array(
+			'header_data'  => $html_operation_options,
+			'request_data' => $html_request_options,
+			'url' => array(
+				'request'        => $this->_url( 'request',        array( '%operation_id' => $_operation_id ) ),
+				'status_success' => $this->_url( 'status_success', array( '%operation_id' => $_operation_id ) ),
+				'status_refused' => $this->_url( 'status_refused', array( '%operation_id' => $_operation_id ) ),
+				'csv'            => $this->_url( 'csv',            array( '%operation_id' => $_operation_id ) ),
+				'provider_operation_detail' => $url_operation_detail,
+				'provider_payouts'          => $url_payouts,
+			)
+		);
+		$result = tpl()->parse( 'manage_payout/view', $replace );
+		return( $result );
 	}
 
 	protected function _user_message( $options = null ) {
