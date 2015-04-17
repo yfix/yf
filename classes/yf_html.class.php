@@ -1431,7 +1431,7 @@ class yf_html {
 		$a = array();
 		// numerics params
 		if (isset($args[0]) && is_array($args[0])) {
-			$a = $a[0];
+			$a = $args[0];
 		} elseif (isset($args[0])) {
 			$a['href']	= $args[0];
 			$a['title']	= $args[1];
