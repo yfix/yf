@@ -27,6 +27,11 @@
 }
 </style>
 
+<div class="b-link-list pull-right">
+	<a href="{url.view}" class="btn btn-info">Операция</a>
+	<a href="{url.list}" class="btn btn-primary">Назад к списоку операций</a>
+</div>
+
 {if_not_empty( header_data )}
 <div class="b-data operation">{header_data}</div>
 {/if}

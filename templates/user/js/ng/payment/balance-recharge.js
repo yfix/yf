@@ -189,7 +189,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			return( false );
 		}
 		var provider = $scope.payment.providers[ provider_id ];
-		var method   = provider._method_allow.payment[ method_id ];
+		var method   = provider._method_allow.payout[ method_id ];
 		var option   = method.option;
 		$scope.action.payment = {
 			provider_id : provider_id,

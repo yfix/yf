@@ -57,7 +57,7 @@ class yf_payment_api__provider {
 			return( $result );
 		}
 		// update account balance
-		$sql_datetime = $payment_api->sql_datatime();
+		$sql_datetime = $payment_api->sql_datetime();
 		$sql_amount   = $payment_api->_number_mysql( $amount );
 		switch( $operation_data[ 'type' ][ 'name' ] ) {
 			case 'payment':

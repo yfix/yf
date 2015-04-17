@@ -357,7 +357,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	public function _api_response( $request ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
-		$sql_datetime = $payment_api->sql_datatime();
+		$sql_datetime = $payment_api->sql_datetime();
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation

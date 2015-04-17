@@ -167,14 +167,6 @@ class yf_manage_payout {
 	}
 
 	function show() {
-		$sql = "
-			SELECT op.operation_id as id, op.provider_id, op.status_id as status, op.amount, op.balance, op.title, op.datetime_start
-			FROM ".db('payment_operation')." as op
-			INNER JOIN ".db('payment_provider')." as pp ON (pp.provider_id = op.provider_id AND pp.`system` = 0 AND pp.active = 1)
-			WHERE op.direction = 'out'
-				AND op.status_id = 1
-			ORDER BY op.datetime_start DESC
-		";
 		$object      = &$this->object;
 		$action      = &$this->action;
 		$filter_name = &$this->filter_name;
@@ -188,8 +180,6 @@ class yf_manage_payout {
 		list( $payment_status_in_progress_id, $payment_success_in_progress ) = $item;
 		if( empty( $payment_status_in_progress_id ) ) {
 			$result = array(
-				'status'         => false,
-				'status_header'  => 'Ошибка',
 				'status_message' => 'Статус платежей не найден: ' . $object_name,
 			);
 			return( $this->_user_message( $result ) );
@@ -282,7 +272,6 @@ class yf_manage_payout {
 		if( empty( $account_result ) ) {
 			$result = array(
 				'status'         => false,
-				'status_header'  => 'Ошибка',
 				'status_message' => 'Счет пользователя не найден',
 			);
 			return( $this->_user_message( $result ) );
@@ -294,7 +283,6 @@ class yf_manage_payout {
 		if( empty( $user ) ) {
 			$result = array(
 				'status'         => false,
-				'status_header'  => 'Ошибка',
 				'status_message' => 'Пользователь не найден: ' . $user_id,
 			);
 			return( $this->_user_message( $result ) );
@@ -306,7 +294,6 @@ class yf_manage_payout {
 		if( empty( $providers_user[ $o_provider_id ] ) ) {
 			$result = array(
 				'status'         => false,
-				'status_header'  => 'Ошибка',
 				'status_message' => 'Неизвестный провайдер',
 			);
 			return( $this->_user_message( $result ) );
@@ -317,7 +304,6 @@ class yf_manage_payout {
 		));
 		if( empty( $provider_class ) ) {
 			$result = array(
-				'status_header'  => 'Ошибка',
 				'status_message' => 'Провайдер недоступный: ' . $provider[ 'title' ],
 			);
 			return( $this->_user_message( $result ) );
@@ -328,7 +314,6 @@ class yf_manage_payout {
 			|| !is_array( $o_options[ 'request' ] )
 		) {
 			$result = array(
-				'status_header'  => 'Ошибка',
 				'status_message' => 'Параметры запроса отсутствует',
 			);
 			return( $this->_user_message( $result ) );
@@ -337,60 +322,77 @@ class yf_manage_payout {
 		// check method
 		if( empty( $request[ 'options' ][ 'method_id' ] ) ) {
 			$result = array(
-				'status_header'  => 'Ошибка',
 				'status_message' => 'Метод вывода средств отсутствует',
 			);
 			return( $this->_user_message( $result ) );
 		}
-		$method = $provider_class->api_method_payout( $request[ 'options' ][ 'method_id' ] );
-		// url
-		$html_amount         = $payment_api->money_html( $o_amount );
-		$html_datetime_start = $o_datetime_start;
+		$method_id = $request[ 'options' ][ 'method_id' ];
+		$method    = $provider_class->api_method_payout( $method_id );
+		// check operation status
+		$statuses = $payment_api->get_status();
+		if( empty( $statuses[ $o_status_id ] ) ) {
+			$result = array(
+				'status_message' => 'Неизвестный статус операции: '. $o_status_id,
+			);
+			return( $this->_user_message( $result ) );
+		}
+		$o_status = $statuses[ $o_status_id ];
+		// misc
+		$html_amount          = $payment_api->money_html( $o_amount );
+		$html_datetime_start  = $o_datetime_start;
+		$html_datetime_update = $o_datetime_update;
+		$html_datetime_finish = $o_datetime_finish;
 		// result
 		$result = array(
-			'status'         => true,
-			'operation_id'   => &$operation_id,
-			'operation'      => &$operation,
-			'account_id'     => &$account_id,
-			'account'        => &$account,
-			'user_id'        => &$user_id,
-			'user'           => &$user,
-			'user_is_online' => &$user_is_online,
-			'provider_id'    => &$o_provider_id,
-			'provider'       => &$provider,
-			'provider_class' => &$provider_class,
-			'providers_user' => &$providers_user,
-			'request'        => &$request,
-			'method'         => &$method,
-			'html_amount'         => &$html_amount,
-			'html_datetime_start' => &$html_datetime_start,
+			'is_valid'             => true,
+			'operation_id'         => &$operation_id,
+			'operation'            => &$operation,
+			'statuses'             => &$statuses,
+			'status'               => &$o_status,
+			'account_id'           => &$account_id,
+			'account'              => &$account,
+			'user_id'              => &$user_id,
+			'user'                 => &$user,
+			'user_is_online'       => &$user_is_online,
+			'provider_id'          => &$o_provider_id,
+			'provider'             => &$provider,
+			'provider_class'       => &$provider_class,
+			'providers_user'       => &$providers_user,
+			'request'              => &$request,
+			'method_id'            => &$method_id,
+			'method'               => &$method,
+			'html_amount'          => &$html_amount,
+			'html_datetime_start'  => &$html_datetime_start,
+			'html_datetime_update' => &$html_datetime_update,
+			'html_datetime_finish' => &$html_datetime_finish,
 		);
 		return( $result );
 	}
 
+	/**
+	 * operation options:
+	 *   'operation_id'
+	 *   'operation'
+	 *   'account_id'
+	 *   'account'
+	 *   'user_id'
+	 *   'user'
+	 *   'user_is_online'
+	 *   'provider_id'
+	 *   'provider'
+	 *   'provider_class'
+	 *   'providers_user'
+	 *   'request'
+	 *   'method'
+	 *   etc: see _operation()
+	 */
+
 	function view() {
 		// check operation
 		$operation = $this->_operation();
-		/**
-		 * operation options:
-		 *   'operation_id'
-		 *   'operation'
-		 *   'account_id'
-		 *   'account'
-		 *   'user_id'
-		 *   'user'
-		 *   'user_is_online'
-		 *   'provider_id'
-		 *   'provider'
-		 *   'provider_class'
-		 *   'providers_user'
-		 *   'request'
-		 *   'method'
-		 *   etc: see _operation()
-		 */
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_status ) ) { return( $result ); }
+		if( empty( $_is_valid ) ) { return( $result ); }
 		// var
 		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );
@@ -415,9 +417,12 @@ class yf_manage_payout {
 			'text'  => $payment_api->money_text( $_account[ 'balance' ] ),
 		));
 		$content = array(
-			'Пользователь'  => $user_link . $balance_link,
-			'Сумма'         => $_html_amount,
-			'Дата создания' => $_html_datetime_start,
+			'Пользователь'    => $user_link . $balance_link,
+			'Сумма'           => $_html_amount,
+			'Статус'          => $_status[ 'title' ],
+			'Дата создания'   => $_html_datetime_start,
+			'Дата обновления' => $_html_datetime_update,
+			'Дата завершения' => $_html_datetime_finish,
 		);
 		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
@@ -432,6 +437,8 @@ class yf_manage_payout {
 			'header_data'  => $html_operation_options,
 			'request_data' => $html_request_options,
 			'url' => array(
+				'list'           => $this->_url( 'list' ),
+				'view'           => $this->_url( 'view',           array( '%operation_id' => $_operation_id ) ),
 				'request'        => $this->_url( 'request',        array( '%operation_id' => $_operation_id ) ),
 				'status_success' => $this->_url( 'status_success', array( '%operation_id' => $_operation_id ) ),
 				'status_refused' => $this->_url( 'status_refused', array( '%operation_id' => $_operation_id ) ),
@@ -452,14 +459,16 @@ class yf_manage_payout {
 		switch( !empty( $_status ) ) {
 			case true:
 				$_css_panel_status = 'success';
+				empty( $_status_header ) && $_status_header = 'Выполнено';
 				break;
 			case false:
 			default:
 				$_css_panel_status = 'danger';
+				empty( $_status_header ) && $_status_header = 'Ошибка';
 				break;
 		}
 		// body
-		$content = htmlentities( $_status_message, ENT_HTML5, 'UTF-8', $double_encode = false );
+		$content = empty( $is_html_message ) ? $_status_message : htmlentities( $_status_message, ENT_HTML5, 'UTF-8', $double_encode = false );
 		$panel_body = '<div class="panel-body">'. $content .'</div>';
 		// header
 		$content = 'Вывод средств';
@@ -467,10 +476,17 @@ class yf_manage_payout {
 		$content = htmlentities( $content, ENT_HTML5, 'UTF-8', $double_encode = false );
 		$panel_header = '<div class="panel-heading">'. $content .'</div>';
 		// footer
-		$url = $url[ 'list' ];
-		$content = '<a href="'. $url .'" class="btn btn-success">Список операций</a>';
 		if( !empty( $_status_footer ) ) {
 			$content = $_status_footer;
+		} else {
+			$content  = '';
+			$operation_id = empty( $_operation_id ) ? (int)$_GET[ 'operation_id' ] :  $_operation_id;
+			if( $operation_id > 0 ) {
+				$url_view = $this->_url( 'view', array( '%operation_id' => $operation_id ) );
+				$content .= '<a href="'. $url_view .'" class="btn btn-info">Назад к операции</a>';
+			}
+			$url_list = $this->_url( 'list' );
+			$content .= '<a href="'. $url_list .'" class="btn btn-primary">Список операции</a>';
 		}
 		isset( $content ) && $panel_footer = '<div class="panel-footer">'. $content .'</div>';
 		// panel
@@ -484,8 +500,42 @@ EOS;
 		return( $result );
 	}
 
-	/**
-	*/
+	function request() {
+		// check operation
+		$operation = $this->_operation();
+		// import options
+		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_is_valid ) ) { return( $result ); }
+		// var
+		$html        = _class( 'html' );
+		$payment_api = _class( 'payment_api' );
+		$data = $_request[ 'options' ] + array(
+			'operation_id' => $_operation_id,
+		);
+		$result = $_provider_class->api_request( $data );
+		// message
+		$message = array();
+		$message[] = $result[ 'status_message' ];
+		if( empty( $result[ 'status' ] ) ) {
+			$r = $_provider_class->_payout_refused( array(
+				'operation_id' => $_operation_id,
+			));
+		} else {
+			$r = $_provider_class->_payout_success( array(
+				'operation_id' => $_operation_id,
+			));
+		}
+		if( empty( $r[ 'status' ] ) ) {
+			$message[] = $r[ 'status_message' ];
+			$result = array(
+				'status_message'  => implode( '<br>', $message ),
+				'is_html_message' => true,
+			) + $result;
+		}
+		$result[ 'operation_id' ] = $_operation_id;
+		return( $this->_user_message( $result ) );
+	}
+
 	function _array2csv(array &$array, $delim = ';') {
 		if (count($array) == 0) {
 			return null;

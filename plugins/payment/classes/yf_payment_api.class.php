@@ -369,7 +369,7 @@ class yf_payment_api {
 		return( $result );
 	}
 
-	public function sql_datatime( $timestamp = null ) {
+	public function sql_datetime( $timestamp = null ) {
 		$tpl = 'Y-m-d H:i:s';
 		if( is_int( $timestamp ) ) {
 			$result = date( $tpl, $timestamp );
@@ -404,7 +404,7 @@ class yf_payment_api {
 		// balance
 		$data[ 'balance' ] = 0;
 		// date
-		$value = $this->sql_datatime();
+		$value = $this->sql_datetime();
 		$data[ 'datetime_create' ] = $value;
 		$data[ 'datetime_update' ] = $value;
 		// create
@@ -961,7 +961,7 @@ class yf_payment_api {
 		$provider_id = (int)$provider[ 'provider_id' ];
 		$data[ 'provider' ] = $provider;
 		// prepare result
-		$sql_datetime = $this->sql_datatime();
+		$sql_datetime = $this->sql_datetime();
 		$data[ 'sql_datetime' ] = $sql_datetime;
 		$result = array(
 			'account_id'            => $account_id,

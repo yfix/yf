@@ -303,7 +303,7 @@ class yf_payment_api__provider_remote {
 		list( $account_id, $account ) = $object;
 		// update
 		$sql_amount   = $payment_api->_number_mysql( $amount );
-		$sql_datetime = $payment_api->sql_datatime();
+		$sql_datetime = $payment_api->sql_datetime();
 		$balance      = null;
 		$payment_status_id = (int)$operation[ 'status_id' ];
 		if( $payment_status_success_id != $payment_status_id ) {
