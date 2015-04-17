@@ -171,7 +171,7 @@ class yf_manage_payment {
 				),
 			))
 			->text( 'user_id', 'Номер'  )
-			->text( 'name'   , 'Имя'    )
+			->text( 'name', 'Имя', array('link' => url('/members/edit/%user_id')) )
 			->text( 'email'  , 'Почта'  )
 			->text( 'balance', 'Баланс' )
 			->btn( 'Баланс' , $url[ 'balance' ], array( 'link_params' => 'user_id, account_id', 'icon' => 'fa fa-money' ) )
