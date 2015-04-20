@@ -518,15 +518,15 @@ EOS;
 		// message
 		$message = array();
 		$message[] = $result[ 'status_message' ];
-		if( empty( $result[ 'status' ] ) ) {
-			$r = $_provider_class->_payout_refused( array(
-				'operation_id' => $_operation_id,
-			));
-		} else {
-			$r = $_provider_class->_payout_success( array(
-				'operation_id' => $_operation_id,
-			));
-		}
+		// if( empty( $result[ 'status' ] ) ) {
+			// $r = $_provider_class->_payout_refused( array(
+				// 'operation_id' => $_operation_id,
+			// ));
+		// } else {
+			// $r = $_provider_class->_payout_success( array(
+				// 'operation_id' => $_operation_id,
+			// ));
+		// }
 		if( empty( $r[ 'status' ] ) ) {
 			$message[] = $r[ 'status_message' ];
 			$result = array(
