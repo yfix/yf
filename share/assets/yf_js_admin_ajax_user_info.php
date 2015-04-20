@@ -73,7 +73,6 @@ return array('versions' => array('master' => array(
 		'asset' => array(
 			'jquery',
 			'jquery-ajax-queue',
-#			'jquery-webui-popover',
 			'bootstrap-theme',
 			'yf_js_popover_fix',
 		),
