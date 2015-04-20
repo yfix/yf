@@ -2,12 +2,12 @@
 
 /**
  */
-class yf_graph {
+class yf_charts {
 
 	public $TICK_COUNT = 10;
 
 	/**
-		data array format for graph
+		data array format for chart
 		
 		Array{
 			'{DATE1}' => '{VALUE1}'
@@ -27,9 +27,9 @@ class yf_graph {
 			)
 		}
 	*/
-	function graph ($data, $params) {
+	function chart($data, $params) {
 		if($params['flash'] == true){
-			return $this->graph_flash($data, $params);
+			return $this->chart_flash($data, $params);
 		}
 
 		$width = isset($params['width'])?$params['width']:'90%';
@@ -58,7 +58,7 @@ class yf_graph {
 		
 		$replace = array(
 			'items'		=> $items,
-			'id'		=> 'graph'.rand(),
+			'id'		=> 'chart'.rand(),
 			'width'		=> is_numeric($width)?$width.'px':$width,
 			'height'	=> is_numeric($height)?$height.'px':$height,
 			
@@ -68,11 +68,11 @@ class yf_graph {
 			$incude_js = $this->_include_js();
 		}
 		
-		return $incude_js.tpl()->parse('system/graph/graph', $replace);
+		return $incude_js.tpl()->parse('charts/chart', $replace);
 	}
 
 	/**
-		data array format for bar graph
+		data array format for bar chart
 		Array{
 			'{NAME}' => Array(
 					'val' => '{VALUE}',
@@ -80,9 +80,9 @@ class yf_graph {
 			)
 		}
 	*/
-	function graph_bar ($data, $params) {
+	function chart_bar($data, $params) {
 		if($params['flash'] == true){
-			return $this->graph_bar_flash($data, $params);
+			return $this->chart_bar_flash($data, $params);
 		}
 	
 		$direction = isset($params['direction'])?$params['direction']:'horizontal';
@@ -112,11 +112,11 @@ class yf_graph {
 			$incude_js = $this->_include_js();
 		}
 		
-		return $incude_js.tpl()->parse('system/graph/graph_bar', $replace);
+		return $incude_js.tpl()->parse('charts/chart_bar', $replace);
 	}
 	
 	/**
-		data array format for pie graph
+		data array format for pie chart
 		Array{	
 			'{NAME}' => Array(
 					'val' => '{VALUE}',
@@ -124,7 +124,7 @@ class yf_graph {
 			)
 		}
 	*/
-	function graph_pie ($data, $params) {
+	function chart_pie($data, $params) {
 		$width = isset($params['width'])?$params['width']:'90%';
 		$height = isset($params['height'])?$params['height']:'90%';
 
@@ -139,13 +139,13 @@ class yf_graph {
 			$incude_js = $this->_include_js();
 		}
 		
-		return $incude_js.tpl()->parse('system/graph/graph_pie', $replace);
+		return $incude_js.tpl()->parse('charts/chart_pie', $replace);
 	}
 
 	/**
 	*
 	*/
-	function _get_ticks ($data) {
+	function _get_ticks($data) {
 		$max = 0;
 	
 		foreach ((array)$data as $val){
@@ -171,18 +171,17 @@ class yf_graph {
 			$tick = round($i, -1*($len-2));
 			$result[$tick] = $tick;
 		}
-		
 		return $result;
 	}
 
 	/**
 	*
 	*/
-	function _include_js () {
+	function _include_js() {
 	
-		if(!$GLOBALS['graph']['include_js']){
-			$GLOBALS['graph']['include_js'] = true;
-			$content = tpl()->parse('system/graph/graph_include_js', $replace);	
+		if(!$GLOBALS['chart']['include_js']){
+			$GLOBALS['chart']['include_js'] = true;
+			$content = tpl()->parse('charts/graph_include_js', $replace);	
 		}
 	
 		return $content;
@@ -191,7 +190,7 @@ class yf_graph {
 	/**
 	*
 	*/
-	function graph_bar_flash ($data, $params) {
+	function graph_bar_flash($data, $params) {
 		if(empty($data)){
 			return;
 		}
@@ -242,7 +241,7 @@ class yf_graph {
 	/**
 	*
 	*/
-	function graph_flash ($data, $params) {
+	function chart_flash($data, $params) {
 		if(empty($data)){
 			return;
 		}
@@ -294,7 +293,5 @@ class yf_graph {
 
 		$g->set_output_type('js');
 		return $g->render();
-
 	}
 }
-

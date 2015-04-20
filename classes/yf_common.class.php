@@ -1041,27 +1041,6 @@ class yf_common {
 	}
 
 	/**
-	*
-	*/
-	function graph($data, $params = '') {
-		return _class('graph', 'classes/common/')->graph($data, $params);
-	}
-
-	/**
-	*
-	*/
-	function graph_bar($data, $params = '') {
-		return _class('graph', 'classes/common/')->graph_bar($data, $params);
-	}
-
-	/**
-	*
-	*/
-	function graph_pie($data, $params = '') {
-		return _class('graph', 'classes/common/')->graph_pie($data, $params);
-	}
-
-	/**
 	* Localize current piece of data
 	*/
 	function l($name = '', $data = '', $lang = '') {
