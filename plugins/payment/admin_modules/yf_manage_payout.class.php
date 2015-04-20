@@ -32,13 +32,13 @@ class yf_manage_payout {
 			)),
 			'status_success' => url_admin( array(
 				'object'       => $object,
-				'action'       => 'update',
+				'action'       => 'status',
 				'status'       => 'success',
 				'operation_id' => '%operation_id',
 			)),
 			'status_refused' => url_admin( array(
 				'object'       => $object,
-				'action'       => 'update',
+				'action'       => 'status',
 				'status'       => 'refused',
 				'operation_id' => '%operation_id',
 			)),
@@ -536,6 +536,33 @@ EOS;
 		}
 		$result[ 'operation_id' ] = $_operation_id;
 		return( $this->_user_message( $result ) );
+	}
+
+	function status() {
+		// check operation
+		$operation = $this->_operation();
+		// import options
+		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_is_valid ) ) { return( $result ); }
+		$status = $_GET[ 'status' ];
+		switch( $status ) {
+			case 'success':
+				$result = $_provider_class->_payout_success( array(
+					'operation_id' => $_operation_id,
+				));
+				break;
+			case 'refused':
+				$result = $_provider_class->_payout_refused( array(
+					'operation_id' => $_operation_id,
+				));
+				break;
+		}
+		if( empty( $result[ 'status' ] ) ) {
+			$result[ 'operation_id' ] = $_operation_id;
+			return( $this->_user_message( $result ) );
+		}
+		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
+		return( js_redirect( $url_view, false ) );
 	}
 
 	function _array2csv(array &$array, $delim = ';') {
