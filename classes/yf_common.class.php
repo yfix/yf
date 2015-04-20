@@ -816,7 +816,8 @@ class yf_common {
 	* Get user info(s) by id(s)
 	*/
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) {
-		return _class('user_data', 'classes/common/')->_user($user_id, $fields, $params, $return_sql);
+		$db = db()->from('user')->where('id', $user_id);
+		return $return_sql ? $db->sql() : $db->get();
 	}
 
 	/**

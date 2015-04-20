@@ -62,7 +62,7 @@ class yf_email {
 	*/
 	function _send_email_to_user($user_id, $template_name, $data = array(), $instant_send = true, $require_verified_email = false, $is_wall_update = true, $template_group = '') {
 		$instant_send = false;
-		$user_data = user($user_id);
+		$user_data = db()->from('user')->whereid($user_id)->get();
 		if (empty($user_data)) {
 			return false;
 		}
