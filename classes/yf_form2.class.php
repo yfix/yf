@@ -993,7 +993,26 @@ class yf_form2 {
 	*/
 	function file($name, $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'file';
+		$this->_params['for_upload'] = true;
 		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* Image upload
+	*/
+	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$this->_params['for_upload'] = true;
+		$extra['name'] = $extra['name'] ?: ($name ?: 'image');
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
+		$extra['type'] = 'file';
+		return $this->input($extra['name'], $extra['desc'], $extra, $replace);
 	}
 
 	/**
@@ -2114,13 +2133,6 @@ class yf_form2 {
 		}
 		$extra['for_type'] = 'admin';
 		return $this->location_select_box($name, $desc, $extra, $replace);
-	}
-
-	/**
-	* Image upload
-	*/
-	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_image', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
