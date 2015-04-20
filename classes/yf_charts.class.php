@@ -181,7 +181,7 @@ class yf_charts {
 	
 		if(!$GLOBALS['chart']['include_js']){
 			$GLOBALS['chart']['include_js'] = true;
-			$content = tpl()->parse('charts/graph_include_js', $replace);	
+			$content = tpl()->parse('charts/chart_include_js', $replace);	
 		}
 	
 		return $content;
@@ -190,7 +190,7 @@ class yf_charts {
 	/**
 	*
 	*/
-	function graph_bar_flash($data, $params) {
+	function chart_bar_flash($data, $params) {
 		if(empty($data)){
 			return;
 		}
