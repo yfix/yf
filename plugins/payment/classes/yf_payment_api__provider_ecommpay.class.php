@@ -832,14 +832,14 @@ $payment_api->dump( array( 'var' => $result ));
 		);
 		$payment_api->operation_update( $operation_update_data );
 		// handle response
-		switch( $operation_status_name ) {
-			case 'success':
-				$this->_payout_success( array( 'operation_id' => $_operation_id ) );
-				break;
-			case 'refused':
-				$this->_payout_refused( array( 'operation_id' => $_operation_id ) );
-				break;
-		}
+		// switch( $operation_status_name ) {
+			// case 'success':
+				// $this->_payout_success( array( 'operation_id' => $_operation_id ) );
+				// break;
+			// case 'refused':
+				// $this->_payout_refused( array( 'operation_id' => $_operation_id ) );
+				// break;
+		// }
 // DEBUG
 // var_dump( $url, $request, $data_json );
 // exit;
