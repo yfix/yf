@@ -29,6 +29,9 @@
 
 <div class="b-link-list pull-right">
 	<a href="{url.view}" class="btn btn-info">Операция</a>
+{if_not_empty( url.provider_payouts )}
+	<a href="{url.provider_payouts}" target="_blank" class="btn btn-warning">Операция провайдера</a>
+{/if}
 	<a href="{url.list}" class="btn btn-primary">Назад к списоку операций</a>
 </div>
 

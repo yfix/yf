@@ -682,8 +682,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			if( isset( $f ) && $_from != $_to ) { $t = $f; unset( ${ $_from } ); }
 		}
 		// default
-		$_currency = $currency_id;
-		$_amount = $this->_amount_payout( $amount_currency_total, $_currency, $is_request = true );
+		// $_currency = $currency_id;
+		// $_amount = $this->_amount_payout( $amount_currency_total, $_currency, $is_request = true );
+		$_amount = $this->_amount_payout( $_amount, $_currency, $is_request = true );
 		!isset( $_site_id ) && $_site_id = $this->key( 'public' );
 		!isset( $_comment ) && $_comment = t( 'Вывод средств (id: ' . $_external_id . ')' );
 		!isset( $_action  ) && $_action = $method_option[ 'action' ];
@@ -953,7 +954,7 @@ $payment_api->dump( array( 'var' => $result ));
 		$data = array(
 			'account_id'      => $account_id,
 			'datetime_update' => db()->escape_val( $sql_datetime ),
-			'balance'         => '( balance - ' . $sql_amount . ' )',
+			'balance'         => '( balance + ' . $sql_amount . ' )',
 		);
 		$result = $payment_api->balance_update( $data, array( 'is_escape' => false ) );
 		return( $result );
