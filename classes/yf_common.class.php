@@ -701,7 +701,7 @@ class yf_common {
 	* Do redirect user to the specified location
 	*/
 	function redirect($location, $rewrite = true, $redirect_type = 'js', $text = '', $ttl = 3) {
-		return _class('redirect', 'classes/common/')->_go($location, $rewrite, $redirect_type, $text, $ttl);
+		return _class('redirect')->_go($location, $rewrite, $redirect_type, $text, $ttl);
 	}
 
 	/**
