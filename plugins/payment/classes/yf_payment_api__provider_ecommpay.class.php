@@ -714,11 +714,13 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$request[ 'signature' ] = $signature;
 // DEBUG
 // var_dump( $request );
+$payment_api->dump( array( 'var' => $request ));
 		// request
 		$url  = $this->api_url( $options );
 		$data = http_build_query( $request );
 		$result = $this->_api_request( $url, $data );
 // DEBUG
+$payment_api->dump( array( 'var' => $result ));
 // var_dump( $result );
 		if( empty( $result ) ) {
 			$result = array(
