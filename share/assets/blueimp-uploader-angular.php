@@ -9,8 +9,7 @@ return array(
 		),
 	),
 	'require' => array(
-		'css' => 'blueimp-uploader',
-		'js' => array(
+		'asset' => array(
 			'angularjs',
 			'blueimp-uploader',
 		),

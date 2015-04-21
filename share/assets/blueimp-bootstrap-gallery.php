@@ -8,11 +8,7 @@ return array(
 		),
 	),
 	'require' => array(
-		'css' => array(
-			'bootstrap',
-			'blueimp-gallery',
-		),
-		'js' => array(
+		'asset' => array(
 			'bootstrap',
 			'blueimp-gallery',
 		),

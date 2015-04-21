@@ -7,9 +7,6 @@ return array(
 		),
 	),
 	'require' => array(
-		'asset' => array(
-			'jquery',
-#			'bootstrap-theme',
-		),
+		'asset' => 'jquery',
 	),
 );
