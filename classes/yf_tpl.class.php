@@ -267,7 +267,7 @@ class yf_tpl {
 				if (DEBUG_MODE) {
 					$body['debug_info'] = common()->show_debug_info();
 				} elseif ($this->ADD_QUICK_PAGE_INFO) {
-					$body['exec_time'] = PHP_EOL. '<!-- date: '.gmdate('Y-m-d H:i:s').' UTC, time: '.round(microtime(true) - main()->_time_start, 3).', memory: '.memory_get_peak_usage().', db: '.(int)db()->NUM_QUERIES.' -->'. PHP_EOL;
+					$body['exec_time'] = $this->_get_quick_page_info();
 				}
 				$_last_pos = strpos($body['content'], '</body>');
 				if ($_last_pos) {
@@ -297,6 +297,15 @@ class yf_tpl {
 		if ($this->EXIT_AFTER_ECHO) {
 			exit();
 		}
+	}
+
+	/**
+	*/
+	function _get_quick_page_info() {
+		if (!$this->ADD_QUICK_PAGE_INFO) {
+			return false;
+		}
+		return PHP_EOL. '<!-- date: '.gmdate('Y-m-d H:i:s').' UTC, time: '.round(microtime(true) - main()->_time_start, 3).', memory: '.memory_get_peak_usage().', db: '.(int)db()->NUM_QUERIES.' -->'. PHP_EOL;
 	}
 
 	/**

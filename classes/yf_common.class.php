@@ -575,6 +575,7 @@ class yf_common {
 			'close_button'	=> (int)((bool)$params['close_button']),
 			'full_width'	=> (int)((bool)$params['full_width']),
 		));
+		$output .= tpl()->_get_quick_page_info();
 		$output = tpl()->_apply_output_filters($output);
 		main()->_send_main_headers(strlen($output));
 		echo $output;
