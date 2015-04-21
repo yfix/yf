@@ -175,7 +175,7 @@ class yf_send_mail {
 						$mail->AddAttachment($file, $file_name );
 					}
 				}
-				if ($this->FORCE_USE_SMTP && $this->SMTP_OPTIONS['smtp_host']) {
+				if( $this->FORCE_USE_SMTP && $this->SMTP_OPTIONS[ 'smtp_host' ] ) {
 					$smtp_options = &$this->SMTP_OPTIONS;
 					$mail->IsSMTP();
 					$mail->Host       = $smtp_options[ 'smtp_host'      ];
