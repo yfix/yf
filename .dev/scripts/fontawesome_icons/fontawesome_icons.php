@@ -1,1808 +1,2968 @@
 <?php
 $data = array (
-  'icon-adjust' => 
+  'fa-adjust' => 
   array (
-    'name' => 'icon-adjust',
+    'name' => 'fa-adjust',
     'active' => 1,
   ),
-  'icon-adn' => 
+  'fa-adn' => 
   array (
-    'name' => 'icon-adn',
+    'name' => 'fa-adn',
     'active' => 1,
   ),
-  'icon-align-center' => 
+  'fa-align-center' => 
   array (
-    'name' => 'icon-align-center',
+    'name' => 'fa-align-center',
     'active' => 1,
   ),
-  'icon-align-justify' => 
+  'fa-align-justify' => 
   array (
-    'name' => 'icon-align-justify',
+    'name' => 'fa-align-justify',
     'active' => 1,
   ),
-  'icon-align-left' => 
+  'fa-align-left' => 
   array (
-    'name' => 'icon-align-left',
+    'name' => 'fa-align-left',
     'active' => 1,
   ),
-  'icon-align-right' => 
+  'fa-align-right' => 
   array (
-    'name' => 'icon-align-right',
+    'name' => 'fa-align-right',
     'active' => 1,
   ),
-  'icon-ambulance' => 
+  'fa-ambulance' => 
   array (
-    'name' => 'icon-ambulance',
+    'name' => 'fa-ambulance',
     'active' => 1,
   ),
-  'icon-anchor' => 
+  'fa-anchor' => 
   array (
-    'name' => 'icon-anchor',
+    'name' => 'fa-anchor',
     'active' => 1,
   ),
-  'icon-android' => 
+  'fa-android' => 
   array (
-    'name' => 'icon-android',
+    'name' => 'fa-android',
     'active' => 1,
   ),
-  'icon-angle-down' => 
+  'fa-angellist' => 
   array (
-    'name' => 'icon-angle-down',
+    'name' => 'fa-angellist',
     'active' => 1,
   ),
-  'icon-angle-left' => 
+  'fa-angle-double-down' => 
   array (
-    'name' => 'icon-angle-left',
+    'name' => 'fa-angle-double-down',
     'active' => 1,
   ),
-  'icon-angle-right' => 
+  'fa-angle-double-left' => 
   array (
-    'name' => 'icon-angle-right',
+    'name' => 'fa-angle-double-left',
     'active' => 1,
   ),
-  'icon-angle-up' => 
+  'fa-angle-double-right' => 
   array (
-    'name' => 'icon-angle-up',
+    'name' => 'fa-angle-double-right',
     'active' => 1,
   ),
-  'icon-apple' => 
+  'fa-angle-double-up' => 
   array (
-    'name' => 'icon-apple',
+    'name' => 'fa-angle-double-up',
     'active' => 1,
   ),
-  'icon-archive' => 
+  'fa-angle-down' => 
   array (
-    'name' => 'icon-archive',
+    'name' => 'fa-angle-down',
     'active' => 1,
   ),
-  'icon-arrow-down' => 
+  'fa-angle-left' => 
   array (
-    'name' => 'icon-arrow-down',
+    'name' => 'fa-angle-left',
     'active' => 1,
   ),
-  'icon-arrow-left' => 
+  'fa-angle-right' => 
   array (
-    'name' => 'icon-arrow-left',
+    'name' => 'fa-angle-right',
     'active' => 1,
   ),
-  'icon-arrow-right' => 
+  'fa-angle-up' => 
   array (
-    'name' => 'icon-arrow-right',
+    'name' => 'fa-angle-up',
     'active' => 1,
   ),
-  'icon-arrow-up' => 
+  'fa-apple' => 
   array (
-    'name' => 'icon-arrow-up',
+    'name' => 'fa-apple',
     'active' => 1,
   ),
-  'icon-asterisk' => 
+  'fa-archive' => 
   array (
-    'name' => 'icon-asterisk',
+    'name' => 'fa-archive',
     'active' => 1,
   ),
-  'icon-backward' => 
+  'fa-area-chart' => 
   array (
-    'name' => 'icon-backward',
+    'name' => 'fa-area-chart',
     'active' => 1,
   ),
-  'icon-ban-circle' => 
+  'fa-arrow-circle-down' => 
   array (
-    'name' => 'icon-ban-circle',
+    'name' => 'fa-arrow-circle-down',
     'active' => 1,
   ),
-  'icon-bar-chart' => 
+  'fa-arrow-circle-left' => 
   array (
-    'name' => 'icon-bar-chart',
+    'name' => 'fa-arrow-circle-left',
     'active' => 1,
   ),
-  'icon-barcode' => 
+  'fa-arrow-circle-o-down' => 
   array (
-    'name' => 'icon-barcode',
+    'name' => 'fa-arrow-circle-o-down',
     'active' => 1,
   ),
-  'icon-beaker' => 
+  'fa-arrow-circle-o-left' => 
   array (
-    'name' => 'icon-beaker',
+    'name' => 'fa-arrow-circle-o-left',
     'active' => 1,
   ),
-  'icon-beer' => 
+  'fa-arrow-circle-o-right' => 
   array (
-    'name' => 'icon-beer',
+    'name' => 'fa-arrow-circle-o-right',
     'active' => 1,
   ),
-  'icon-bell' => 
+  'fa-arrow-circle-o-up' => 
   array (
-    'name' => 'icon-bell',
+    'name' => 'fa-arrow-circle-o-up',
     'active' => 1,
   ),
-  'icon-bell-alt' => 
+  'fa-arrow-circle-right' => 
   array (
-    'name' => 'icon-bell-alt',
+    'name' => 'fa-arrow-circle-right',
     'active' => 1,
   ),
-  'icon-bitbucket' => 
+  'fa-arrow-circle-up' => 
   array (
-    'name' => 'icon-bitbucket',
+    'name' => 'fa-arrow-circle-up',
     'active' => 1,
   ),
-  'icon-bitbucket-sign' => 
+  'fa-arrow-down' => 
   array (
-    'name' => 'icon-bitbucket-sign',
+    'name' => 'fa-arrow-down',
     'active' => 1,
   ),
-  'icon-bold' => 
+  'fa-arrow-left' => 
   array (
-    'name' => 'icon-bold',
+    'name' => 'fa-arrow-left',
     'active' => 1,
   ),
-  'icon-bolt' => 
+  'fa-arrow-right' => 
   array (
-    'name' => 'icon-bolt',
+    'name' => 'fa-arrow-right',
     'active' => 1,
   ),
-  'icon-book' => 
+  'fa-arrow-up' => 
   array (
-    'name' => 'icon-book',
+    'name' => 'fa-arrow-up',
     'active' => 1,
   ),
-  'icon-bookmark' => 
+  'fa-arrows' => 
   array (
-    'name' => 'icon-bookmark',
+    'name' => 'fa-arrows',
     'active' => 1,
   ),
-  'icon-bookmark-empty' => 
+  'fa-arrows-alt' => 
   array (
-    'name' => 'icon-bookmark-empty',
+    'name' => 'fa-arrows-alt',
     'active' => 1,
   ),
-  'icon-briefcase' => 
+  'fa-arrows-h' => 
   array (
-    'name' => 'icon-briefcase',
+    'name' => 'fa-arrows-h',
     'active' => 1,
   ),
-  'icon-btc' => 
+  'fa-arrows-v' => 
   array (
-    'name' => 'icon-btc',
+    'name' => 'fa-arrows-v',
     'active' => 1,
   ),
-  'icon-bug' => 
+  'fa-asterisk' => 
   array (
-    'name' => 'icon-bug',
+    'name' => 'fa-asterisk',
     'active' => 1,
   ),
-  'icon-building' => 
+  'fa-at' => 
   array (
-    'name' => 'icon-building',
+    'name' => 'fa-at',
     'active' => 1,
   ),
-  'icon-bullhorn' => 
+  'fa-automobile' => 
   array (
-    'name' => 'icon-bullhorn',
+    'name' => 'fa-automobile',
     'active' => 1,
   ),
-  'icon-bullseye' => 
+  'fa-backward' => 
   array (
-    'name' => 'icon-bullseye',
+    'name' => 'fa-backward',
     'active' => 1,
   ),
-  'icon-calendar' => 
+  'fa-ban' => 
   array (
-    'name' => 'icon-calendar',
+    'name' => 'fa-ban',
     'active' => 1,
   ),
-  'icon-calendar-empty' => 
+  'fa-bank' => 
   array (
-    'name' => 'icon-calendar-empty',
+    'name' => 'fa-bank',
     'active' => 1,
   ),
-  'icon-camera' => 
+  'fa-bar-chart' => 
   array (
-    'name' => 'icon-camera',
+    'name' => 'fa-bar-chart',
     'active' => 1,
   ),
-  'icon-camera-retro' => 
+  'fa-bar-chart-o' => 
   array (
-    'name' => 'icon-camera-retro',
+    'name' => 'fa-bar-chart-o',
     'active' => 1,
   ),
-  'icon-caret-down' => 
+  'fa-barcode' => 
   array (
-    'name' => 'icon-caret-down',
+    'name' => 'fa-barcode',
     'active' => 1,
   ),
-  'icon-caret-left' => 
+  'fa-bars' => 
   array (
-    'name' => 'icon-caret-left',
+    'name' => 'fa-bars',
     'active' => 1,
   ),
-  'icon-caret-right' => 
+  'fa-bed' => 
   array (
-    'name' => 'icon-caret-right',
+    'name' => 'fa-bed',
     'active' => 1,
   ),
-  'icon-caret-up' => 
+  'fa-beer' => 
   array (
-    'name' => 'icon-caret-up',
+    'name' => 'fa-beer',
     'active' => 1,
   ),
-  'icon-certificate' => 
+  'fa-behance' => 
   array (
-    'name' => 'icon-certificate',
+    'name' => 'fa-behance',
     'active' => 1,
   ),
-  'icon-check' => 
+  'fa-behance-square' => 
   array (
-    'name' => 'icon-check',
+    'name' => 'fa-behance-square',
     'active' => 1,
   ),
-  'icon-check-empty' => 
+  'fa-bell' => 
   array (
-    'name' => 'icon-check-empty',
+    'name' => 'fa-bell',
     'active' => 1,
   ),
-  'icon-check-minus' => 
+  'fa-bell-o' => 
   array (
-    'name' => 'icon-check-minus',
+    'name' => 'fa-bell-o',
     'active' => 1,
   ),
-  'icon-check-sign' => 
+  'fa-bell-slash' => 
   array (
-    'name' => 'icon-check-sign',
+    'name' => 'fa-bell-slash',
     'active' => 1,
   ),
-  'icon-chevron-down' => 
+  'fa-bell-slash-o' => 
   array (
-    'name' => 'icon-chevron-down',
+    'name' => 'fa-bell-slash-o',
     'active' => 1,
   ),
-  'icon-chevron-left' => 
+  'fa-bicycle' => 
   array (
-    'name' => 'icon-chevron-left',
+    'name' => 'fa-bicycle',
     'active' => 1,
   ),
-  'icon-chevron-right' => 
+  'fa-binoculars' => 
   array (
-    'name' => 'icon-chevron-right',
+    'name' => 'fa-binoculars',
     'active' => 1,
   ),
-  'icon-chevron-sign-down' => 
+  'fa-birthday-cake' => 
   array (
-    'name' => 'icon-chevron-sign-down',
+    'name' => 'fa-birthday-cake',
     'active' => 1,
   ),
-  'icon-chevron-sign-left' => 
+  'fa-bitbucket' => 
   array (
-    'name' => 'icon-chevron-sign-left',
+    'name' => 'fa-bitbucket',
     'active' => 1,
   ),
-  'icon-chevron-sign-right' => 
+  'fa-bitbucket-square' => 
   array (
-    'name' => 'icon-chevron-sign-right',
+    'name' => 'fa-bitbucket-square',
     'active' => 1,
   ),
-  'icon-chevron-sign-up' => 
+  'fa-bitcoin' => 
   array (
-    'name' => 'icon-chevron-sign-up',
+    'name' => 'fa-bitcoin',
     'active' => 1,
   ),
-  'icon-chevron-up' => 
+  'fa-bold' => 
   array (
-    'name' => 'icon-chevron-up',
+    'name' => 'fa-bold',
     'active' => 1,
   ),
-  'icon-circle' => 
+  'fa-bolt' => 
   array (
-    'name' => 'icon-circle',
+    'name' => 'fa-bolt',
     'active' => 1,
   ),
-  'icon-circle-arrow-down' => 
+  'fa-bomb' => 
   array (
-    'name' => 'icon-circle-arrow-down',
+    'name' => 'fa-bomb',
     'active' => 1,
   ),
-  'icon-circle-arrow-left' => 
+  'fa-book' => 
   array (
-    'name' => 'icon-circle-arrow-left',
+    'name' => 'fa-book',
     'active' => 1,
   ),
-  'icon-circle-arrow-right' => 
+  'fa-bookmark' => 
   array (
-    'name' => 'icon-circle-arrow-right',
+    'name' => 'fa-bookmark',
     'active' => 1,
   ),
-  'icon-circle-arrow-up' => 
+  'fa-bookmark-o' => 
   array (
-    'name' => 'icon-circle-arrow-up',
+    'name' => 'fa-bookmark-o',
     'active' => 1,
   ),
-  'icon-circle-blank' => 
+  'fa-briefcase' => 
   array (
-    'name' => 'icon-circle-blank',
+    'name' => 'fa-briefcase',
     'active' => 1,
   ),
-  'icon-cloud' => 
+  'fa-btc' => 
   array (
-    'name' => 'icon-cloud',
+    'name' => 'fa-btc',
     'active' => 1,
   ),
-  'icon-cloud-download' => 
+  'fa-bug' => 
   array (
-    'name' => 'icon-cloud-download',
+    'name' => 'fa-bug',
     'active' => 1,
   ),
-  'icon-cloud-upload' => 
+  'fa-building' => 
   array (
-    'name' => 'icon-cloud-upload',
+    'name' => 'fa-building',
     'active' => 1,
   ),
-  'icon-cny' => 
+  'fa-building-o' => 
   array (
-    'name' => 'icon-cny',
+    'name' => 'fa-building-o',
     'active' => 1,
   ),
-  'icon-code' => 
+  'fa-bullhorn' => 
   array (
-    'name' => 'icon-code',
+    'name' => 'fa-bullhorn',
     'active' => 1,
   ),
-  'icon-code-fork' => 
+  'fa-bullseye' => 
   array (
-    'name' => 'icon-code-fork',
+    'name' => 'fa-bullseye',
     'active' => 1,
   ),
-  'icon-coffee' => 
+  'fa-bus' => 
   array (
-    'name' => 'icon-coffee',
+    'name' => 'fa-bus',
     'active' => 1,
   ),
-  'icon-cog' => 
+  'fa-buysellads' => 
   array (
-    'name' => 'icon-cog',
+    'name' => 'fa-buysellads',
     'active' => 1,
   ),
-  'icon-cogs' => 
+  'fa-cab' => 
   array (
-    'name' => 'icon-cogs',
+    'name' => 'fa-cab',
     'active' => 1,
   ),
-  'icon-collapse' => 
+  'fa-calculator' => 
   array (
-    'name' => 'icon-collapse',
+    'name' => 'fa-calculator',
     'active' => 1,
   ),
-  'icon-collapse-alt' => 
+  'fa-calendar' => 
   array (
-    'name' => 'icon-collapse-alt',
+    'name' => 'fa-calendar',
     'active' => 1,
   ),
-  'icon-collapse-top' => 
+  'fa-calendar-o' => 
   array (
-    'name' => 'icon-collapse-top',
+    'name' => 'fa-calendar-o',
     'active' => 1,
   ),
-  'icon-columns' => 
+  'fa-camera' => 
   array (
-    'name' => 'icon-columns',
+    'name' => 'fa-camera',
     'active' => 1,
   ),
-  'icon-comment' => 
+  'fa-camera-retro' => 
   array (
-    'name' => 'icon-comment',
+    'name' => 'fa-camera-retro',
     'active' => 1,
   ),
-  'icon-comment-alt' => 
+  'fa-car' => 
   array (
-    'name' => 'icon-comment-alt',
+    'name' => 'fa-car',
     'active' => 1,
   ),
-  'icon-comments' => 
+  'fa-caret-down' => 
   array (
-    'name' => 'icon-comments',
+    'name' => 'fa-caret-down',
     'active' => 1,
   ),
-  'icon-comments-alt' => 
+  'fa-caret-left' => 
   array (
-    'name' => 'icon-comments-alt',
+    'name' => 'fa-caret-left',
     'active' => 1,
   ),
-  'icon-compass' => 
+  'fa-caret-right' => 
   array (
-    'name' => 'icon-compass',
+    'name' => 'fa-caret-right',
     'active' => 1,
   ),
-  'icon-copy' => 
+  'fa-caret-square-o-down' => 
   array (
-    'name' => 'icon-copy',
+    'name' => 'fa-caret-square-o-down',
     'active' => 1,
   ),
-  'icon-credit-card' => 
+  'fa-caret-square-o-left' => 
   array (
-    'name' => 'icon-credit-card',
+    'name' => 'fa-caret-square-o-left',
     'active' => 1,
   ),
-  'icon-crop' => 
+  'fa-caret-square-o-right' => 
   array (
-    'name' => 'icon-crop',
+    'name' => 'fa-caret-square-o-right',
     'active' => 1,
   ),
-  'icon-css3' => 
+  'fa-caret-square-o-up' => 
   array (
-    'name' => 'icon-css3',
+    'name' => 'fa-caret-square-o-up',
     'active' => 1,
   ),
-  'icon-cut' => 
+  'fa-caret-up' => 
   array (
-    'name' => 'icon-cut',
+    'name' => 'fa-caret-up',
     'active' => 1,
   ),
-  'icon-dashboard' => 
+  'fa-cart-arrow-down' => 
   array (
-    'name' => 'icon-dashboard',
+    'name' => 'fa-cart-arrow-down',
     'active' => 1,
   ),
-  'icon-desktop' => 
+  'fa-cart-plus' => 
   array (
-    'name' => 'icon-desktop',
+    'name' => 'fa-cart-plus',
     'active' => 1,
   ),
-  'icon-double-angle-down' => 
+  'fa-cc' => 
   array (
-    'name' => 'icon-double-angle-down',
+    'name' => 'fa-cc',
     'active' => 1,
   ),
-  'icon-double-angle-left' => 
+  'fa-cc-amex' => 
   array (
-    'name' => 'icon-double-angle-left',
+    'name' => 'fa-cc-amex',
     'active' => 1,
   ),
-  'icon-double-angle-right' => 
+  'fa-cc-discover' => 
   array (
-    'name' => 'icon-double-angle-right',
+    'name' => 'fa-cc-discover',
     'active' => 1,
   ),
-  'icon-double-angle-up' => 
+  'fa-cc-mastercard' => 
   array (
-    'name' => 'icon-double-angle-up',
+    'name' => 'fa-cc-mastercard',
     'active' => 1,
   ),
-  'icon-download' => 
+  'fa-cc-paypal' => 
   array (
-    'name' => 'icon-download',
+    'name' => 'fa-cc-paypal',
     'active' => 1,
   ),
-  'icon-download-alt' => 
+  'fa-cc-stripe' => 
   array (
-    'name' => 'icon-download-alt',
+    'name' => 'fa-cc-stripe',
     'active' => 1,
   ),
-  'icon-dribbble' => 
+  'fa-cc-visa' => 
   array (
-    'name' => 'icon-dribbble',
+    'name' => 'fa-cc-visa',
     'active' => 1,
   ),
-  'icon-dropbox' => 
+  'fa-certificate' => 
   array (
-    'name' => 'icon-dropbox',
+    'name' => 'fa-certificate',
     'active' => 1,
   ),
-  'icon-edit' => 
+  'fa-chain' => 
   array (
-    'name' => 'icon-edit',
+    'name' => 'fa-chain',
     'active' => 1,
   ),
-  'icon-edit-sign' => 
+  'fa-chain-broken' => 
   array (
-    'name' => 'icon-edit-sign',
+    'name' => 'fa-chain-broken',
     'active' => 1,
   ),
-  'icon-eject' => 
+  'fa-check' => 
   array (
-    'name' => 'icon-eject',
+    'name' => 'fa-check',
     'active' => 1,
   ),
-  'icon-ellipsis-horizontal' => 
+  'fa-check-circle' => 
   array (
-    'name' => 'icon-ellipsis-horizontal',
+    'name' => 'fa-check-circle',
     'active' => 1,
   ),
-  'icon-ellipsis-vertical' => 
+  'fa-check-circle-o' => 
   array (
-    'name' => 'icon-ellipsis-vertical',
+    'name' => 'fa-check-circle-o',
     'active' => 1,
   ),
-  'icon-envelope' => 
+  'fa-check-square' => 
   array (
-    'name' => 'icon-envelope',
+    'name' => 'fa-check-square',
     'active' => 1,
   ),
-  'icon-envelope-alt' => 
+  'fa-check-square-o' => 
   array (
-    'name' => 'icon-envelope-alt',
+    'name' => 'fa-check-square-o',
     'active' => 1,
   ),
-  'icon-eraser' => 
+  'fa-chevron-circle-down' => 
   array (
-    'name' => 'icon-eraser',
+    'name' => 'fa-chevron-circle-down',
     'active' => 1,
   ),
-  'icon-eur' => 
+  'fa-chevron-circle-left' => 
   array (
-    'name' => 'icon-eur',
+    'name' => 'fa-chevron-circle-left',
     'active' => 1,
   ),
-  'icon-exchange' => 
+  'fa-chevron-circle-right' => 
   array (
-    'name' => 'icon-exchange',
+    'name' => 'fa-chevron-circle-right',
     'active' => 1,
   ),
-  'icon-exclamation' => 
+  'fa-chevron-circle-up' => 
   array (
-    'name' => 'icon-exclamation',
+    'name' => 'fa-chevron-circle-up',
     'active' => 1,
   ),
-  'icon-exclamation-sign' => 
+  'fa-chevron-down' => 
   array (
-    'name' => 'icon-exclamation-sign',
+    'name' => 'fa-chevron-down',
     'active' => 1,
   ),
-  'icon-expand' => 
+  'fa-chevron-left' => 
   array (
-    'name' => 'icon-expand',
+    'name' => 'fa-chevron-left',
     'active' => 1,
   ),
-  'icon-expand-alt' => 
+  'fa-chevron-right' => 
   array (
-    'name' => 'icon-expand-alt',
+    'name' => 'fa-chevron-right',
     'active' => 1,
   ),
-  'icon-external-link' => 
+  'fa-chevron-up' => 
   array (
-    'name' => 'icon-external-link',
+    'name' => 'fa-chevron-up',
     'active' => 1,
   ),
-  'icon-external-link-sign' => 
+  'fa-child' => 
   array (
-    'name' => 'icon-external-link-sign',
+    'name' => 'fa-child',
     'active' => 1,
   ),
-  'icon-eye-close' => 
+  'fa-circle' => 
   array (
-    'name' => 'icon-eye-close',
+    'name' => 'fa-circle',
     'active' => 1,
   ),
-  'icon-eye-open' => 
+  'fa-circle-o' => 
   array (
-    'name' => 'icon-eye-open',
+    'name' => 'fa-circle-o',
     'active' => 1,
   ),
-  'icon-facebook' => 
+  'fa-circle-o-notch' => 
   array (
-    'name' => 'icon-facebook',
+    'name' => 'fa-circle-o-notch',
     'active' => 1,
   ),
-  'icon-facebook-sign' => 
+  'fa-circle-thin' => 
   array (
-    'name' => 'icon-facebook-sign',
+    'name' => 'fa-circle-thin',
     'active' => 1,
   ),
-  'icon-facetime-video' => 
+  'fa-clipboard' => 
   array (
-    'name' => 'icon-facetime-video',
+    'name' => 'fa-clipboard',
     'active' => 1,
   ),
-  'icon-fast-backward' => 
+  'fa-clock-o' => 
   array (
-    'name' => 'icon-fast-backward',
+    'name' => 'fa-clock-o',
     'active' => 1,
   ),
-  'icon-fast-forward' => 
+  'fa-close' => 
   array (
-    'name' => 'icon-fast-forward',
+    'name' => 'fa-close',
     'active' => 1,
   ),
-  'icon-female' => 
+  'fa-cloud' => 
   array (
-    'name' => 'icon-female',
+    'name' => 'fa-cloud',
     'active' => 1,
   ),
-  'icon-fighter-jet' => 
+  'fa-cloud-download' => 
   array (
-    'name' => 'icon-fighter-jet',
+    'name' => 'fa-cloud-download',
     'active' => 1,
   ),
-  'icon-file' => 
+  'fa-cloud-upload' => 
   array (
-    'name' => 'icon-file',
+    'name' => 'fa-cloud-upload',
     'active' => 1,
   ),
-  'icon-file-alt' => 
+  'fa-cny' => 
   array (
-    'name' => 'icon-file-alt',
+    'name' => 'fa-cny',
     'active' => 1,
   ),
-  'icon-file-text' => 
+  'fa-code' => 
   array (
-    'name' => 'icon-file-text',
+    'name' => 'fa-code',
     'active' => 1,
   ),
-  'icon-file-text-alt' => 
+  'fa-code-fork' => 
   array (
-    'name' => 'icon-file-text-alt',
+    'name' => 'fa-code-fork',
     'active' => 1,
   ),
-  'icon-film' => 
+  'fa-codepen' => 
   array (
-    'name' => 'icon-film',
+    'name' => 'fa-codepen',
     'active' => 1,
   ),
-  'icon-filter' => 
+  'fa-coffee' => 
   array (
-    'name' => 'icon-filter',
+    'name' => 'fa-coffee',
     'active' => 1,
   ),
-  'icon-fire' => 
+  'fa-cog' => 
   array (
-    'name' => 'icon-fire',
+    'name' => 'fa-cog',
     'active' => 1,
   ),
-  'icon-fire-extinguisher' => 
+  'fa-cogs' => 
   array (
-    'name' => 'icon-fire-extinguisher',
+    'name' => 'fa-cogs',
     'active' => 1,
   ),
-  'icon-flag' => 
+  'fa-columns' => 
   array (
-    'name' => 'icon-flag',
+    'name' => 'fa-columns',
     'active' => 1,
   ),
-  'icon-flag-alt' => 
+  'fa-comment' => 
   array (
-    'name' => 'icon-flag-alt',
+    'name' => 'fa-comment',
     'active' => 1,
   ),
-  'icon-flag-checkered' => 
+  'fa-comment-o' => 
   array (
-    'name' => 'icon-flag-checkered',
+    'name' => 'fa-comment-o',
     'active' => 1,
   ),
-  'icon-flickr' => 
+  'fa-comments' => 
   array (
-    'name' => 'icon-flickr',
+    'name' => 'fa-comments',
     'active' => 1,
   ),
-  'icon-folder-close' => 
+  'fa-comments-o' => 
   array (
-    'name' => 'icon-folder-close',
+    'name' => 'fa-comments-o',
     'active' => 1,
   ),
-  'icon-folder-close-alt' => 
+  'fa-compass' => 
   array (
-    'name' => 'icon-folder-close-alt',
+    'name' => 'fa-compass',
     'active' => 1,
   ),
-  'icon-folder-open' => 
+  'fa-compress' => 
   array (
-    'name' => 'icon-folder-open',
+    'name' => 'fa-compress',
     'active' => 1,
   ),
-  'icon-folder-open-alt' => 
+  'fa-connectdevelop' => 
   array (
-    'name' => 'icon-folder-open-alt',
+    'name' => 'fa-connectdevelop',
     'active' => 1,
   ),
-  'icon-font' => 
+  'fa-copy' => 
   array (
-    'name' => 'icon-font',
+    'name' => 'fa-copy',
     'active' => 1,
   ),
-  'icon-food' => 
+  'fa-copyright' => 
   array (
-    'name' => 'icon-food',
+    'name' => 'fa-copyright',
     'active' => 1,
   ),
-  'icon-forward' => 
+  'fa-credit-card' => 
   array (
-    'name' => 'icon-forward',
+    'name' => 'fa-credit-card',
     'active' => 1,
   ),
-  'icon-foursquare' => 
+  'fa-crop' => 
   array (
-    'name' => 'icon-foursquare',
+    'name' => 'fa-crop',
     'active' => 1,
   ),
-  'icon-frown' => 
+  'fa-crosshairs' => 
   array (
-    'name' => 'icon-frown',
+    'name' => 'fa-crosshairs',
     'active' => 1,
   ),
-  'icon-fullscreen' => 
+  'fa-css3' => 
   array (
-    'name' => 'icon-fullscreen',
+    'name' => 'fa-css3',
     'active' => 1,
   ),
-  'icon-gamepad' => 
+  'fa-cube' => 
   array (
-    'name' => 'icon-gamepad',
+    'name' => 'fa-cube',
     'active' => 1,
   ),
-  'icon-gbp' => 
+  'fa-cubes' => 
   array (
-    'name' => 'icon-gbp',
+    'name' => 'fa-cubes',
     'active' => 1,
   ),
-  'icon-gift' => 
+  'fa-cut' => 
   array (
-    'name' => 'icon-gift',
+    'name' => 'fa-cut',
     'active' => 1,
   ),
-  'icon-github' => 
+  'fa-cutlery' => 
   array (
-    'name' => 'icon-github',
+    'name' => 'fa-cutlery',
     'active' => 1,
   ),
-  'icon-github-alt' => 
+  'fa-dashboard' => 
   array (
-    'name' => 'icon-github-alt',
+    'name' => 'fa-dashboard',
     'active' => 1,
   ),
-  'icon-github-sign' => 
+  'fa-dashcube' => 
   array (
-    'name' => 'icon-github-sign',
+    'name' => 'fa-dashcube',
     'active' => 1,
   ),
-  'icon-gittip' => 
+  'fa-database' => 
   array (
-    'name' => 'icon-gittip',
+    'name' => 'fa-database',
     'active' => 1,
   ),
-  'icon-glass' => 
+  'fa-dedent' => 
   array (
-    'name' => 'icon-glass',
+    'name' => 'fa-dedent',
     'active' => 1,
   ),
-  'icon-globe' => 
+  'fa-delicious' => 
   array (
-    'name' => 'icon-globe',
+    'name' => 'fa-delicious',
     'active' => 1,
   ),
-  'icon-google-plus' => 
+  'fa-desktop' => 
   array (
-    'name' => 'icon-google-plus',
+    'name' => 'fa-desktop',
     'active' => 1,
   ),
-  'icon-google-plus-sign' => 
+  'fa-deviantart' => 
   array (
-    'name' => 'icon-google-plus-sign',
+    'name' => 'fa-deviantart',
     'active' => 1,
   ),
-  'icon-group' => 
+  'fa-diamond' => 
   array (
-    'name' => 'icon-group',
+    'name' => 'fa-diamond',
     'active' => 1,
   ),
-  'icon-h-sign' => 
+  'fa-digg' => 
   array (
-    'name' => 'icon-h-sign',
+    'name' => 'fa-digg',
     'active' => 1,
   ),
-  'icon-hand-down' => 
+  'fa-dollar' => 
   array (
-    'name' => 'icon-hand-down',
+    'name' => 'fa-dollar',
     'active' => 1,
   ),
-  'icon-hand-left' => 
+  'fa-dot-circle-o' => 
   array (
-    'name' => 'icon-hand-left',
+    'name' => 'fa-dot-circle-o',
     'active' => 1,
   ),
-  'icon-hand-right' => 
+  'fa-download' => 
   array (
-    'name' => 'icon-hand-right',
+    'name' => 'fa-download',
     'active' => 1,
   ),
-  'icon-hand-up' => 
+  'fa-dribbble' => 
   array (
-    'name' => 'icon-hand-up',
+    'name' => 'fa-dribbble',
     'active' => 1,
   ),
-  'icon-hdd' => 
+  'fa-dropbox' => 
   array (
-    'name' => 'icon-hdd',
+    'name' => 'fa-dropbox',
     'active' => 1,
   ),
-  'icon-headphones' => 
+  'fa-drupal' => 
   array (
-    'name' => 'icon-headphones',
+    'name' => 'fa-drupal',
     'active' => 1,
   ),
-  'icon-heart' => 
+  'fa-edit' => 
   array (
-    'name' => 'icon-heart',
+    'name' => 'fa-edit',
     'active' => 1,
   ),
-  'icon-heart-empty' => 
+  'fa-eject' => 
   array (
-    'name' => 'icon-heart-empty',
+    'name' => 'fa-eject',
     'active' => 1,
   ),
-  'icon-home' => 
+  'fa-ellipsis-h' => 
   array (
-    'name' => 'icon-home',
+    'name' => 'fa-ellipsis-h',
     'active' => 1,
   ),
-  'icon-hospital' => 
+  'fa-ellipsis-v' => 
   array (
-    'name' => 'icon-hospital',
+    'name' => 'fa-ellipsis-v',
     'active' => 1,
   ),
-  'icon-html5' => 
+  'fa-empire' => 
   array (
-    'name' => 'icon-html5',
+    'name' => 'fa-empire',
     'active' => 1,
   ),
-  'icon-inbox' => 
+  'fa-envelope' => 
   array (
-    'name' => 'icon-inbox',
+    'name' => 'fa-envelope',
     'active' => 1,
   ),
-  'icon-indent-left' => 
+  'fa-envelope-o' => 
   array (
-    'name' => 'icon-indent-left',
+    'name' => 'fa-envelope-o',
     'active' => 1,
   ),
-  'icon-indent-right' => 
+  'fa-envelope-square' => 
   array (
-    'name' => 'icon-indent-right',
+    'name' => 'fa-envelope-square',
     'active' => 1,
   ),
-  'icon-info' => 
+  'fa-eraser' => 
   array (
-    'name' => 'icon-info',
+    'name' => 'fa-eraser',
     'active' => 1,
   ),
-  'icon-info-sign' => 
+  'fa-eur' => 
   array (
-    'name' => 'icon-info-sign',
+    'name' => 'fa-eur',
     'active' => 1,
   ),
-  'icon-inr' => 
+  'fa-euro' => 
   array (
-    'name' => 'icon-inr',
+    'name' => 'fa-euro',
     'active' => 1,
   ),
-  'icon-instagram' => 
+  'fa-exchange' => 
   array (
-    'name' => 'icon-instagram',
+    'name' => 'fa-exchange',
     'active' => 1,
   ),
-  'icon-italic' => 
+  'fa-exclamation' => 
   array (
-    'name' => 'icon-italic',
+    'name' => 'fa-exclamation',
     'active' => 1,
   ),
-  'icon-jpy' => 
+  'fa-exclamation-circle' => 
   array (
-    'name' => 'icon-jpy',
+    'name' => 'fa-exclamation-circle',
     'active' => 1,
   ),
-  'icon-key' => 
+  'fa-exclamation-triangle' => 
   array (
-    'name' => 'icon-key',
+    'name' => 'fa-exclamation-triangle',
     'active' => 1,
   ),
-  'icon-keyboard' => 
+  'fa-expand' => 
   array (
-    'name' => 'icon-keyboard',
+    'name' => 'fa-expand',
     'active' => 1,
   ),
-  'icon-krw' => 
+  'fa-external-link' => 
   array (
-    'name' => 'icon-krw',
+    'name' => 'fa-external-link',
     'active' => 1,
   ),
-  'icon-laptop' => 
+  'fa-external-link-square' => 
   array (
-    'name' => 'icon-laptop',
+    'name' => 'fa-external-link-square',
     'active' => 1,
   ),
-  'icon-leaf' => 
+  'fa-eye' => 
   array (
-    'name' => 'icon-leaf',
+    'name' => 'fa-eye',
     'active' => 1,
   ),
-  'icon-legal' => 
+  'fa-eye-slash' => 
   array (
-    'name' => 'icon-legal',
+    'name' => 'fa-eye-slash',
     'active' => 1,
   ),
-  'icon-lemon' => 
+  'fa-eyedropper' => 
   array (
-    'name' => 'icon-lemon',
+    'name' => 'fa-eyedropper',
     'active' => 1,
   ),
-  'icon-level-down' => 
+  'fa-facebook' => 
   array (
-    'name' => 'icon-level-down',
+    'name' => 'fa-facebook',
     'active' => 1,
   ),
-  'icon-level-up' => 
+  'fa-facebook-f' => 
   array (
-    'name' => 'icon-level-up',
+    'name' => 'fa-facebook-f',
     'active' => 1,
   ),
-  'icon-lightbulb' => 
+  'fa-facebook-official' => 
   array (
-    'name' => 'icon-lightbulb',
+    'name' => 'fa-facebook-official',
     'active' => 1,
   ),
-  'icon-link' => 
+  'fa-facebook-square' => 
   array (
-    'name' => 'icon-link',
+    'name' => 'fa-facebook-square',
     'active' => 1,
   ),
-  'icon-linkedin' => 
+  'fa-fast-backward' => 
   array (
-    'name' => 'icon-linkedin',
+    'name' => 'fa-fast-backward',
     'active' => 1,
   ),
-  'icon-linkedin-sign' => 
+  'fa-fast-forward' => 
   array (
-    'name' => 'icon-linkedin-sign',
+    'name' => 'fa-fast-forward',
     'active' => 1,
   ),
-  'icon-linux' => 
+  'fa-fax' => 
   array (
-    'name' => 'icon-linux',
+    'name' => 'fa-fax',
     'active' => 1,
   ),
-  'icon-list' => 
+  'fa-female' => 
   array (
-    'name' => 'icon-list',
+    'name' => 'fa-female',
     'active' => 1,
   ),
-  'icon-list-alt' => 
+  'fa-fighter-jet' => 
   array (
-    'name' => 'icon-list-alt',
+    'name' => 'fa-fighter-jet',
     'active' => 1,
   ),
-  'icon-list-ol' => 
+  'fa-file' => 
   array (
-    'name' => 'icon-list-ol',
+    'name' => 'fa-file',
     'active' => 1,
   ),
-  'icon-list-ul' => 
+  'fa-file-archive-o' => 
   array (
-    'name' => 'icon-list-ul',
+    'name' => 'fa-file-archive-o',
     'active' => 1,
   ),
-  'icon-location-arrow' => 
+  'fa-file-audio-o' => 
   array (
-    'name' => 'icon-location-arrow',
+    'name' => 'fa-file-audio-o',
     'active' => 1,
   ),
-  'icon-lock' => 
+  'fa-file-code-o' => 
   array (
-    'name' => 'icon-lock',
+    'name' => 'fa-file-code-o',
     'active' => 1,
   ),
-  'icon-long-arrow-down' => 
+  'fa-file-excel-o' => 
   array (
-    'name' => 'icon-long-arrow-down',
+    'name' => 'fa-file-excel-o',
     'active' => 1,
   ),
-  'icon-long-arrow-left' => 
+  'fa-file-image-o' => 
   array (
-    'name' => 'icon-long-arrow-left',
+    'name' => 'fa-file-image-o',
     'active' => 1,
   ),
-  'icon-long-arrow-right' => 
+  'fa-file-movie-o' => 
   array (
-    'name' => 'icon-long-arrow-right',
+    'name' => 'fa-file-movie-o',
     'active' => 1,
   ),
-  'icon-long-arrow-up' => 
+  'fa-file-o' => 
   array (
-    'name' => 'icon-long-arrow-up',
+    'name' => 'fa-file-o',
     'active' => 1,
   ),
-  'icon-magic' => 
+  'fa-file-pdf-o' => 
   array (
-    'name' => 'icon-magic',
+    'name' => 'fa-file-pdf-o',
     'active' => 1,
   ),
-  'icon-magnet' => 
+  'fa-file-photo-o' => 
   array (
-    'name' => 'icon-magnet',
+    'name' => 'fa-file-photo-o',
     'active' => 1,
   ),
-  'icon-mail-reply-all' => 
+  'fa-file-picture-o' => 
   array (
-    'name' => 'icon-mail-reply-all',
+    'name' => 'fa-file-picture-o',
     'active' => 1,
   ),
-  'icon-male' => 
+  'fa-file-powerpoint-o' => 
   array (
-    'name' => 'icon-male',
+    'name' => 'fa-file-powerpoint-o',
     'active' => 1,
   ),
-  'icon-map-marker' => 
+  'fa-file-sound-o' => 
   array (
-    'name' => 'icon-map-marker',
+    'name' => 'fa-file-sound-o',
     'active' => 1,
   ),
-  'icon-maxcdn' => 
+  'fa-file-text' => 
   array (
-    'name' => 'icon-maxcdn',
+    'name' => 'fa-file-text',
     'active' => 1,
   ),
-  'icon-medkit' => 
+  'fa-file-text-o' => 
   array (
-    'name' => 'icon-medkit',
+    'name' => 'fa-file-text-o',
     'active' => 1,
   ),
-  'icon-meh' => 
+  'fa-file-video-o' => 
   array (
-    'name' => 'icon-meh',
+    'name' => 'fa-file-video-o',
     'active' => 1,
   ),
-  'icon-microphone' => 
+  'fa-file-word-o' => 
   array (
-    'name' => 'icon-microphone',
+    'name' => 'fa-file-word-o',
     'active' => 1,
   ),
-  'icon-microphone-off' => 
+  'fa-file-zip-o' => 
   array (
-    'name' => 'icon-microphone-off',
+    'name' => 'fa-file-zip-o',
     'active' => 1,
   ),
-  'icon-minus' => 
+  'fa-files-o' => 
   array (
-    'name' => 'icon-minus',
+    'name' => 'fa-files-o',
     'active' => 1,
   ),
-  'icon-minus-sign' => 
+  'fa-film' => 
   array (
-    'name' => 'icon-minus-sign',
+    'name' => 'fa-film',
     'active' => 1,
   ),
-  'icon-minus-sign-alt' => 
+  'fa-filter' => 
   array (
-    'name' => 'icon-minus-sign-alt',
+    'name' => 'fa-filter',
     'active' => 1,
   ),
-  'icon-mobile-phone' => 
+  'fa-fire' => 
   array (
-    'name' => 'icon-mobile-phone',
+    'name' => 'fa-fire',
     'active' => 1,
   ),
-  'icon-money' => 
+  'fa-fire-extinguisher' => 
   array (
-    'name' => 'icon-money',
+    'name' => 'fa-fire-extinguisher',
     'active' => 1,
   ),
-  'icon-moon' => 
+  'fa-flag' => 
   array (
-    'name' => 'icon-moon',
+    'name' => 'fa-flag',
     'active' => 1,
   ),
-  'icon-move' => 
+  'fa-flag-checkered' => 
   array (
-    'name' => 'icon-move',
+    'name' => 'fa-flag-checkered',
     'active' => 1,
   ),
-  'icon-music' => 
+  'fa-flag-o' => 
   array (
-    'name' => 'icon-music',
+    'name' => 'fa-flag-o',
     'active' => 1,
   ),
-  'icon-off' => 
+  'fa-flash' => 
   array (
-    'name' => 'icon-off',
+    'name' => 'fa-flash',
     'active' => 1,
   ),
-  'icon-ok' => 
+  'fa-flask' => 
   array (
-    'name' => 'icon-ok',
+    'name' => 'fa-flask',
     'active' => 1,
   ),
-  'icon-ok-circle' => 
+  'fa-flickr' => 
   array (
-    'name' => 'icon-ok-circle',
+    'name' => 'fa-flickr',
     'active' => 1,
   ),
-  'icon-ok-sign' => 
+  'fa-floppy-o' => 
   array (
-    'name' => 'icon-ok-sign',
+    'name' => 'fa-floppy-o',
     'active' => 1,
   ),
-  'icon-paper-clip' => 
+  'fa-folder' => 
   array (
-    'name' => 'icon-paper-clip',
+    'name' => 'fa-folder',
     'active' => 1,
   ),
-  'icon-paste' => 
+  'fa-folder-o' => 
   array (
-    'name' => 'icon-paste',
+    'name' => 'fa-folder-o',
     'active' => 1,
   ),
-  'icon-pause' => 
+  'fa-folder-open' => 
   array (
-    'name' => 'icon-pause',
+    'name' => 'fa-folder-open',
     'active' => 1,
   ),
-  'icon-pencil' => 
+  'fa-folder-open-o' => 
   array (
-    'name' => 'icon-pencil',
+    'name' => 'fa-folder-open-o',
     'active' => 1,
   ),
-  'icon-phone' => 
+  'fa-font' => 
   array (
-    'name' => 'icon-phone',
+    'name' => 'fa-font',
     'active' => 1,
   ),
-  'icon-phone-sign' => 
+  'fa-forumbee' => 
   array (
-    'name' => 'icon-phone-sign',
+    'name' => 'fa-forumbee',
     'active' => 1,
   ),
-  'icon-picture' => 
+  'fa-forward' => 
   array (
-    'name' => 'icon-picture',
+    'name' => 'fa-forward',
     'active' => 1,
   ),
-  'icon-pinterest' => 
+  'fa-foursquare' => 
   array (
-    'name' => 'icon-pinterest',
+    'name' => 'fa-foursquare',
     'active' => 1,
   ),
-  'icon-pinterest-sign' => 
+  'fa-frown-o' => 
   array (
-    'name' => 'icon-pinterest-sign',
+    'name' => 'fa-frown-o',
     'active' => 1,
   ),
-  'icon-plane' => 
+  'fa-futbol-o' => 
   array (
-    'name' => 'icon-plane',
+    'name' => 'fa-futbol-o',
     'active' => 1,
   ),
-  'icon-play' => 
+  'fa-gamepad' => 
   array (
-    'name' => 'icon-play',
+    'name' => 'fa-gamepad',
     'active' => 1,
   ),
-  'icon-play-circle' => 
+  'fa-gavel' => 
   array (
-    'name' => 'icon-play-circle',
+    'name' => 'fa-gavel',
     'active' => 1,
   ),
-  'icon-play-sign' => 
+  'fa-gbp' => 
   array (
-    'name' => 'icon-play-sign',
+    'name' => 'fa-gbp',
     'active' => 1,
   ),
-  'icon-plus' => 
+  'fa-ge' => 
   array (
-    'name' => 'icon-plus',
+    'name' => 'fa-ge',
     'active' => 1,
   ),
-  'icon-plus-sign' => 
+  'fa-gear' => 
   array (
-    'name' => 'icon-plus-sign',
+    'name' => 'fa-gear',
     'active' => 1,
   ),
-  'icon-plus-sign-alt' => 
+  'fa-gears' => 
   array (
-    'name' => 'icon-plus-sign-alt',
+    'name' => 'fa-gears',
     'active' => 1,
   ),
-  'icon-print' => 
+  'fa-genderless' => 
   array (
-    'name' => 'icon-print',
+    'name' => 'fa-genderless',
     'active' => 1,
   ),
-  'icon-pushpin' => 
+  'fa-gift' => 
   array (
-    'name' => 'icon-pushpin',
+    'name' => 'fa-gift',
     'active' => 1,
   ),
-  'icon-puzzle-piece' => 
+  'fa-git' => 
   array (
-    'name' => 'icon-puzzle-piece',
+    'name' => 'fa-git',
     'active' => 1,
   ),
-  'icon-qrcode' => 
+  'fa-git-square' => 
   array (
-    'name' => 'icon-qrcode',
+    'name' => 'fa-git-square',
     'active' => 1,
   ),
-  'icon-question' => 
+  'fa-github' => 
   array (
-    'name' => 'icon-question',
+    'name' => 'fa-github',
     'active' => 1,
   ),
-  'icon-question-sign' => 
+  'fa-github-alt' => 
   array (
-    'name' => 'icon-question-sign',
+    'name' => 'fa-github-alt',
     'active' => 1,
   ),
-  'icon-quote-left' => 
+  'fa-github-square' => 
   array (
-    'name' => 'icon-quote-left',
+    'name' => 'fa-github-square',
     'active' => 1,
   ),
-  'icon-quote-right' => 
+  'fa-gittip' => 
   array (
-    'name' => 'icon-quote-right',
+    'name' => 'fa-gittip',
     'active' => 1,
   ),
-  'icon-random' => 
+  'fa-glass' => 
   array (
-    'name' => 'icon-random',
+    'name' => 'fa-glass',
     'active' => 1,
   ),
-  'icon-refresh' => 
+  'fa-globe' => 
   array (
-    'name' => 'icon-refresh',
+    'name' => 'fa-globe',
     'active' => 1,
   ),
-  'icon-remove' => 
+  'fa-google' => 
   array (
-    'name' => 'icon-remove',
+    'name' => 'fa-google',
     'active' => 1,
   ),
-  'icon-remove-circle' => 
+  'fa-google-plus' => 
   array (
-    'name' => 'icon-remove-circle',
+    'name' => 'fa-google-plus',
     'active' => 1,
   ),
-  'icon-remove-sign' => 
+  'fa-google-plus-square' => 
   array (
-    'name' => 'icon-remove-sign',
+    'name' => 'fa-google-plus-square',
     'active' => 1,
   ),
-  'icon-renren' => 
+  'fa-google-wallet' => 
   array (
-    'name' => 'icon-renren',
+    'name' => 'fa-google-wallet',
     'active' => 1,
   ),
-  'icon-reorder' => 
+  'fa-graduation-cap' => 
   array (
-    'name' => 'icon-reorder',
+    'name' => 'fa-graduation-cap',
     'active' => 1,
   ),
-  'icon-repeat' => 
+  'fa-gratipay' => 
   array (
-    'name' => 'icon-repeat',
+    'name' => 'fa-gratipay',
     'active' => 1,
   ),
-  'icon-reply' => 
+  'fa-group' => 
   array (
-    'name' => 'icon-reply',
+    'name' => 'fa-group',
     'active' => 1,
   ),
-  'icon-reply-all' => 
+  'fa-h-square' => 
   array (
-    'name' => 'icon-reply-all',
+    'name' => 'fa-h-square',
     'active' => 1,
   ),
-  'icon-resize-full' => 
+  'fa-hacker-news' => 
   array (
-    'name' => 'icon-resize-full',
+    'name' => 'fa-hacker-news',
     'active' => 1,
   ),
-  'icon-resize-horizontal' => 
+  'fa-hand-o-down' => 
   array (
-    'name' => 'icon-resize-horizontal',
+    'name' => 'fa-hand-o-down',
     'active' => 1,
   ),
-  'icon-resize-small' => 
+  'fa-hand-o-left' => 
   array (
-    'name' => 'icon-resize-small',
+    'name' => 'fa-hand-o-left',
     'active' => 1,
   ),
-  'icon-resize-vertical' => 
+  'fa-hand-o-right' => 
   array (
-    'name' => 'icon-resize-vertical',
+    'name' => 'fa-hand-o-right',
     'active' => 1,
   ),
-  'icon-retweet' => 
+  'fa-hand-o-up' => 
   array (
-    'name' => 'icon-retweet',
+    'name' => 'fa-hand-o-up',
     'active' => 1,
   ),
-  'icon-road' => 
+  'fa-hdd-o' => 
   array (
-    'name' => 'icon-road',
+    'name' => 'fa-hdd-o',
     'active' => 1,
   ),
-  'icon-rocket' => 
+  'fa-header' => 
   array (
-    'name' => 'icon-rocket',
+    'name' => 'fa-header',
     'active' => 1,
   ),
-  'icon-rss' => 
+  'fa-headphones' => 
   array (
-    'name' => 'icon-rss',
+    'name' => 'fa-headphones',
     'active' => 1,
   ),
-  'icon-rss-sign' => 
+  'fa-heart' => 
   array (
-    'name' => 'icon-rss-sign',
+    'name' => 'fa-heart',
     'active' => 1,
   ),
-  'icon-save' => 
+  'fa-heart-o' => 
   array (
-    'name' => 'icon-save',
+    'name' => 'fa-heart-o',
     'active' => 1,
   ),
-  'icon-screenshot' => 
+  'fa-heartbeat' => 
   array (
-    'name' => 'icon-screenshot',
+    'name' => 'fa-heartbeat',
     'active' => 1,
   ),
-  'icon-search' => 
+  'fa-history' => 
   array (
-    'name' => 'icon-search',
+    'name' => 'fa-history',
     'active' => 1,
   ),
-  'icon-share' => 
+  'fa-home' => 
   array (
-    'name' => 'icon-share',
+    'name' => 'fa-home',
     'active' => 1,
   ),
-  'icon-share-alt' => 
+  'fa-hospital-o' => 
   array (
-    'name' => 'icon-share-alt',
+    'name' => 'fa-hospital-o',
     'active' => 1,
   ),
-  'icon-share-sign' => 
+  'fa-hotel' => 
   array (
-    'name' => 'icon-share-sign',
+    'name' => 'fa-hotel',
     'active' => 1,
   ),
-  'icon-shield' => 
+  'fa-html5' => 
   array (
-    'name' => 'icon-shield',
+    'name' => 'fa-html5',
     'active' => 1,
   ),
-  'icon-shopping-cart' => 
+  'fa-ils' => 
   array (
-    'name' => 'icon-shopping-cart',
+    'name' => 'fa-ils',
     'active' => 1,
   ),
-  'icon-sign-blank' => 
+  'fa-image' => 
   array (
-    'name' => 'icon-sign-blank',
+    'name' => 'fa-image',
     'active' => 1,
   ),
-  'icon-signal' => 
+  'fa-inbox' => 
   array (
-    'name' => 'icon-signal',
+    'name' => 'fa-inbox',
     'active' => 1,
   ),
-  'icon-signin' => 
+  'fa-indent' => 
   array (
-    'name' => 'icon-signin',
+    'name' => 'fa-indent',
     'active' => 1,
   ),
-  'icon-signout' => 
+  'fa-info' => 
   array (
-    'name' => 'icon-signout',
+    'name' => 'fa-info',
     'active' => 1,
   ),
-  'icon-sitemap' => 
+  'fa-info-circle' => 
   array (
-    'name' => 'icon-sitemap',
+    'name' => 'fa-info-circle',
     'active' => 1,
   ),
-  'icon-skype' => 
+  'fa-inr' => 
   array (
-    'name' => 'icon-skype',
+    'name' => 'fa-inr',
     'active' => 1,
   ),
-  'icon-smile' => 
+  'fa-instagram' => 
   array (
-    'name' => 'icon-smile',
+    'name' => 'fa-instagram',
     'active' => 1,
   ),
-  'icon-sort' => 
+  'fa-institution' => 
   array (
-    'name' => 'icon-sort',
+    'name' => 'fa-institution',
     'active' => 1,
   ),
-  'icon-sort-by-alphabet' => 
+  'fa-ioxhost' => 
   array (
-    'name' => 'icon-sort-by-alphabet',
+    'name' => 'fa-ioxhost',
     'active' => 1,
   ),
-  'icon-sort-by-alphabet-alt' => 
+  'fa-italic' => 
   array (
-    'name' => 'icon-sort-by-alphabet-alt',
+    'name' => 'fa-italic',
     'active' => 1,
   ),
-  'icon-sort-by-attributes' => 
+  'fa-joomla' => 
   array (
-    'name' => 'icon-sort-by-attributes',
+    'name' => 'fa-joomla',
     'active' => 1,
   ),
-  'icon-sort-by-attributes-alt' => 
+  'fa-jpy' => 
   array (
-    'name' => 'icon-sort-by-attributes-alt',
+    'name' => 'fa-jpy',
     'active' => 1,
   ),
-  'icon-sort-by-order' => 
+  'fa-jsfiddle' => 
   array (
-    'name' => 'icon-sort-by-order',
+    'name' => 'fa-jsfiddle',
     'active' => 1,
   ),
-  'icon-sort-by-order-alt' => 
+  'fa-key' => 
   array (
-    'name' => 'icon-sort-by-order-alt',
+    'name' => 'fa-key',
     'active' => 1,
   ),
-  'icon-sort-down' => 
+  'fa-keyboard-o' => 
   array (
-    'name' => 'icon-sort-down',
+    'name' => 'fa-keyboard-o',
     'active' => 1,
   ),
-  'icon-sort-up' => 
+  'fa-krw' => 
   array (
-    'name' => 'icon-sort-up',
+    'name' => 'fa-krw',
     'active' => 1,
   ),
-  'icon-spinner' => 
+  'fa-language' => 
   array (
-    'name' => 'icon-spinner',
+    'name' => 'fa-language',
     'active' => 1,
   ),
-  'icon-stackexchange' => 
+  'fa-laptop' => 
   array (
-    'name' => 'icon-stackexchange',
+    'name' => 'fa-laptop',
     'active' => 1,
   ),
-  'icon-star' => 
+  'fa-lastfm' => 
   array (
-    'name' => 'icon-star',
+    'name' => 'fa-lastfm',
     'active' => 1,
   ),
-  'icon-star-empty' => 
+  'fa-lastfm-square' => 
   array (
-    'name' => 'icon-star-empty',
+    'name' => 'fa-lastfm-square',
     'active' => 1,
   ),
-  'icon-star-half' => 
+  'fa-leaf' => 
   array (
-    'name' => 'icon-star-half',
+    'name' => 'fa-leaf',
     'active' => 1,
   ),
-  'icon-star-half-empty' => 
+  'fa-leanpub' => 
   array (
-    'name' => 'icon-star-half-empty',
+    'name' => 'fa-leanpub',
     'active' => 1,
   ),
-  'icon-step-backward' => 
+  'fa-legal' => 
   array (
-    'name' => 'icon-step-backward',
+    'name' => 'fa-legal',
     'active' => 1,
   ),
-  'icon-step-forward' => 
+  'fa-lemon-o' => 
   array (
-    'name' => 'icon-step-forward',
+    'name' => 'fa-lemon-o',
     'active' => 1,
   ),
-  'icon-stethoscope' => 
+  'fa-level-down' => 
   array (
-    'name' => 'icon-stethoscope',
+    'name' => 'fa-level-down',
     'active' => 1,
   ),
-  'icon-stop' => 
+  'fa-level-up' => 
   array (
-    'name' => 'icon-stop',
+    'name' => 'fa-level-up',
     'active' => 1,
   ),
-  'icon-strikethrough' => 
+  'fa-life-bouy' => 
   array (
-    'name' => 'icon-strikethrough',
+    'name' => 'fa-life-bouy',
     'active' => 1,
   ),
-  'icon-subscript' => 
+  'fa-life-buoy' => 
   array (
-    'name' => 'icon-subscript',
+    'name' => 'fa-life-buoy',
     'active' => 1,
   ),
-  'icon-suitcase' => 
+  'fa-life-ring' => 
   array (
-    'name' => 'icon-suitcase',
+    'name' => 'fa-life-ring',
     'active' => 1,
   ),
-  'icon-sun' => 
+  'fa-life-saver' => 
   array (
-    'name' => 'icon-sun',
+    'name' => 'fa-life-saver',
     'active' => 1,
   ),
-  'icon-superscript' => 
+  'fa-lightbulb-o' => 
   array (
-    'name' => 'icon-superscript',
+    'name' => 'fa-lightbulb-o',
     'active' => 1,
   ),
-  'icon-table' => 
+  'fa-line-chart' => 
   array (
-    'name' => 'icon-table',
+    'name' => 'fa-line-chart',
     'active' => 1,
   ),
-  'icon-tablet' => 
+  'fa-link' => 
   array (
-    'name' => 'icon-tablet',
+    'name' => 'fa-link',
     'active' => 1,
   ),
-  'icon-tag' => 
+  'fa-linkedin' => 
   array (
-    'name' => 'icon-tag',
+    'name' => 'fa-linkedin',
     'active' => 1,
   ),
-  'icon-tags' => 
+  'fa-linkedin-square' => 
   array (
-    'name' => 'icon-tags',
+    'name' => 'fa-linkedin-square',
     'active' => 1,
   ),
-  'icon-tasks' => 
+  'fa-linux' => 
   array (
-    'name' => 'icon-tasks',
+    'name' => 'fa-linux',
     'active' => 1,
   ),
-  'icon-terminal' => 
+  'fa-list' => 
   array (
-    'name' => 'icon-terminal',
+    'name' => 'fa-list',
     'active' => 1,
   ),
-  'icon-text-height' => 
+  'fa-list-alt' => 
   array (
-    'name' => 'icon-text-height',
+    'name' => 'fa-list-alt',
     'active' => 1,
   ),
-  'icon-text-width' => 
+  'fa-list-ol' => 
   array (
-    'name' => 'icon-text-width',
+    'name' => 'fa-list-ol',
     'active' => 1,
   ),
-  'icon-th' => 
+  'fa-list-ul' => 
   array (
-    'name' => 'icon-th',
+    'name' => 'fa-list-ul',
     'active' => 1,
   ),
-  'icon-th-large' => 
+  'fa-location-arrow' => 
   array (
-    'name' => 'icon-th-large',
+    'name' => 'fa-location-arrow',
     'active' => 1,
   ),
-  'icon-th-list' => 
+  'fa-lock' => 
   array (
-    'name' => 'icon-th-list',
+    'name' => 'fa-lock',
     'active' => 1,
   ),
-  'icon-thumbs-down' => 
+  'fa-long-arrow-down' => 
   array (
-    'name' => 'icon-thumbs-down',
+    'name' => 'fa-long-arrow-down',
     'active' => 1,
   ),
-  'icon-thumbs-down-alt' => 
+  'fa-long-arrow-left' => 
   array (
-    'name' => 'icon-thumbs-down-alt',
+    'name' => 'fa-long-arrow-left',
     'active' => 1,
   ),
-  'icon-thumbs-up' => 
+  'fa-long-arrow-right' => 
   array (
-    'name' => 'icon-thumbs-up',
+    'name' => 'fa-long-arrow-right',
     'active' => 1,
   ),
-  'icon-thumbs-up-alt' => 
+  'fa-long-arrow-up' => 
   array (
-    'name' => 'icon-thumbs-up-alt',
+    'name' => 'fa-long-arrow-up',
     'active' => 1,
   ),
-  'icon-ticket' => 
+  'fa-magic' => 
   array (
-    'name' => 'icon-ticket',
+    'name' => 'fa-magic',
     'active' => 1,
   ),
-  'icon-time' => 
+  'fa-magnet' => 
   array (
-    'name' => 'icon-time',
+    'name' => 'fa-magnet',
     'active' => 1,
   ),
-  'icon-tint' => 
+  'fa-mail-forward' => 
   array (
-    'name' => 'icon-tint',
+    'name' => 'fa-mail-forward',
     'active' => 1,
   ),
-  'icon-trash' => 
+  'fa-mail-reply' => 
   array (
-    'name' => 'icon-trash',
+    'name' => 'fa-mail-reply',
     'active' => 1,
   ),
-  'icon-trello' => 
+  'fa-mail-reply-all' => 
   array (
-    'name' => 'icon-trello',
+    'name' => 'fa-mail-reply-all',
     'active' => 1,
   ),
-  'icon-trophy' => 
+  'fa-male' => 
   array (
-    'name' => 'icon-trophy',
+    'name' => 'fa-male',
     'active' => 1,
   ),
-  'icon-truck' => 
+  'fa-map-marker' => 
   array (
-    'name' => 'icon-truck',
+    'name' => 'fa-map-marker',
     'active' => 1,
   ),
-  'icon-tumblr' => 
+  'fa-mars' => 
   array (
-    'name' => 'icon-tumblr',
+    'name' => 'fa-mars',
     'active' => 1,
   ),
-  'icon-tumblr-sign' => 
+  'fa-mars-double' => 
   array (
-    'name' => 'icon-tumblr-sign',
+    'name' => 'fa-mars-double',
     'active' => 1,
   ),
-  'icon-twitter' => 
+  'fa-mars-stroke' => 
   array (
-    'name' => 'icon-twitter',
+    'name' => 'fa-mars-stroke',
     'active' => 1,
   ),
-  'icon-twitter-sign' => 
+  'fa-mars-stroke-h' => 
   array (
-    'name' => 'icon-twitter-sign',
+    'name' => 'fa-mars-stroke-h',
     'active' => 1,
   ),
-  'icon-umbrella' => 
+  'fa-mars-stroke-v' => 
   array (
-    'name' => 'icon-umbrella',
+    'name' => 'fa-mars-stroke-v',
     'active' => 1,
   ),
-  'icon-underline' => 
+  'fa-maxcdn' => 
   array (
-    'name' => 'icon-underline',
+    'name' => 'fa-maxcdn',
     'active' => 1,
   ),
-  'icon-undo' => 
+  'fa-meanpath' => 
   array (
-    'name' => 'icon-undo',
+    'name' => 'fa-meanpath',
     'active' => 1,
   ),
-  'icon-unlink' => 
+  'fa-medium' => 
   array (
-    'name' => 'icon-unlink',
+    'name' => 'fa-medium',
     'active' => 1,
   ),
-  'icon-unlock' => 
+  'fa-medkit' => 
   array (
-    'name' => 'icon-unlock',
+    'name' => 'fa-medkit',
     'active' => 1,
   ),
-  'icon-unlock-alt' => 
+  'fa-meh-o' => 
   array (
-    'name' => 'icon-unlock-alt',
+    'name' => 'fa-meh-o',
     'active' => 1,
   ),
-  'icon-upload' => 
+  'fa-mercury' => 
   array (
-    'name' => 'icon-upload',
+    'name' => 'fa-mercury',
     'active' => 1,
   ),
-  'icon-upload-alt' => 
+  'fa-microphone' => 
   array (
-    'name' => 'icon-upload-alt',
+    'name' => 'fa-microphone',
     'active' => 1,
   ),
-  'icon-usd' => 
+  'fa-microphone-slash' => 
   array (
-    'name' => 'icon-usd',
+    'name' => 'fa-microphone-slash',
     'active' => 1,
   ),
-  'icon-user' => 
+  'fa-minus' => 
   array (
-    'name' => 'icon-user',
+    'name' => 'fa-minus',
     'active' => 1,
   ),
-  'icon-user-md' => 
+  'fa-minus-circle' => 
   array (
-    'name' => 'icon-user-md',
+    'name' => 'fa-minus-circle',
     'active' => 1,
   ),
-  'icon-vk' => 
+  'fa-minus-square' => 
   array (
-    'name' => 'icon-vk',
+    'name' => 'fa-minus-square',
     'active' => 1,
   ),
-  'icon-volume-down' => 
+  'fa-minus-square-o' => 
   array (
-    'name' => 'icon-volume-down',
+    'name' => 'fa-minus-square-o',
     'active' => 1,
   ),
-  'icon-volume-off' => 
+  'fa-mobile' => 
   array (
-    'name' => 'icon-volume-off',
+    'name' => 'fa-mobile',
     'active' => 1,
   ),
-  'icon-volume-up' => 
+  'fa-mobile-phone' => 
   array (
-    'name' => 'icon-volume-up',
+    'name' => 'fa-mobile-phone',
     'active' => 1,
   ),
-  'icon-warning-sign' => 
+  'fa-money' => 
   array (
-    'name' => 'icon-warning-sign',
+    'name' => 'fa-money',
     'active' => 1,
   ),
-  'icon-weibo' => 
+  'fa-moon-o' => 
   array (
-    'name' => 'icon-weibo',
+    'name' => 'fa-moon-o',
     'active' => 1,
   ),
-  'icon-windows' => 
+  'fa-mortar-board' => 
   array (
-    'name' => 'icon-windows',
+    'name' => 'fa-mortar-board',
     'active' => 1,
   ),
-  'icon-wrench' => 
+  'fa-motorcycle' => 
   array (
-    'name' => 'icon-wrench',
+    'name' => 'fa-motorcycle',
     'active' => 1,
   ),
-  'icon-xing' => 
+  'fa-music' => 
   array (
-    'name' => 'icon-xing',
+    'name' => 'fa-music',
     'active' => 1,
   ),
-  'icon-xing-sign' => 
+  'fa-navicon' => 
   array (
-    'name' => 'icon-xing-sign',
+    'name' => 'fa-navicon',
     'active' => 1,
   ),
-  'icon-youtube' => 
+  'fa-neuter' => 
   array (
-    'name' => 'icon-youtube',
+    'name' => 'fa-neuter',
     'active' => 1,
   ),
-  'icon-youtube-play' => 
+  'fa-newspaper-o' => 
   array (
-    'name' => 'icon-youtube-play',
+    'name' => 'fa-newspaper-o',
     'active' => 1,
   ),
-  'icon-youtube-sign' => 
+  'fa-openid' => 
   array (
-    'name' => 'icon-youtube-sign',
+    'name' => 'fa-openid',
     'active' => 1,
   ),
-  'icon-zoom-in' => 
+  'fa-outdent' => 
   array (
-    'name' => 'icon-zoom-in',
+    'name' => 'fa-outdent',
     'active' => 1,
   ),
-  'icon-zoom-out' => 
+  'fa-pagelines' => 
   array (
-    'name' => 'icon-zoom-out',
+    'name' => 'fa-pagelines',
+    'active' => 1,
+  ),
+  'fa-paint-brush' => 
+  array (
+    'name' => 'fa-paint-brush',
+    'active' => 1,
+  ),
+  'fa-paper-plane' => 
+  array (
+    'name' => 'fa-paper-plane',
+    'active' => 1,
+  ),
+  'fa-paper-plane-o' => 
+  array (
+    'name' => 'fa-paper-plane-o',
+    'active' => 1,
+  ),
+  'fa-paperclip' => 
+  array (
+    'name' => 'fa-paperclip',
+    'active' => 1,
+  ),
+  'fa-paragraph' => 
+  array (
+    'name' => 'fa-paragraph',
+    'active' => 1,
+  ),
+  'fa-paste' => 
+  array (
+    'name' => 'fa-paste',
+    'active' => 1,
+  ),
+  'fa-pause' => 
+  array (
+    'name' => 'fa-pause',
+    'active' => 1,
+  ),
+  'fa-paw' => 
+  array (
+    'name' => 'fa-paw',
+    'active' => 1,
+  ),
+  'fa-paypal' => 
+  array (
+    'name' => 'fa-paypal',
+    'active' => 1,
+  ),
+  'fa-pencil' => 
+  array (
+    'name' => 'fa-pencil',
+    'active' => 1,
+  ),
+  'fa-pencil-square' => 
+  array (
+    'name' => 'fa-pencil-square',
+    'active' => 1,
+  ),
+  'fa-pencil-square-o' => 
+  array (
+    'name' => 'fa-pencil-square-o',
+    'active' => 1,
+  ),
+  'fa-phone' => 
+  array (
+    'name' => 'fa-phone',
+    'active' => 1,
+  ),
+  'fa-phone-square' => 
+  array (
+    'name' => 'fa-phone-square',
+    'active' => 1,
+  ),
+  'fa-photo' => 
+  array (
+    'name' => 'fa-photo',
+    'active' => 1,
+  ),
+  'fa-picture-o' => 
+  array (
+    'name' => 'fa-picture-o',
+    'active' => 1,
+  ),
+  'fa-pie-chart' => 
+  array (
+    'name' => 'fa-pie-chart',
+    'active' => 1,
+  ),
+  'fa-pied-piper' => 
+  array (
+    'name' => 'fa-pied-piper',
+    'active' => 1,
+  ),
+  'fa-pied-piper-alt' => 
+  array (
+    'name' => 'fa-pied-piper-alt',
+    'active' => 1,
+  ),
+  'fa-pinterest' => 
+  array (
+    'name' => 'fa-pinterest',
+    'active' => 1,
+  ),
+  'fa-pinterest-p' => 
+  array (
+    'name' => 'fa-pinterest-p',
+    'active' => 1,
+  ),
+  'fa-pinterest-square' => 
+  array (
+    'name' => 'fa-pinterest-square',
+    'active' => 1,
+  ),
+  'fa-plane' => 
+  array (
+    'name' => 'fa-plane',
+    'active' => 1,
+  ),
+  'fa-play' => 
+  array (
+    'name' => 'fa-play',
+    'active' => 1,
+  ),
+  'fa-play-circle' => 
+  array (
+    'name' => 'fa-play-circle',
+    'active' => 1,
+  ),
+  'fa-play-circle-o' => 
+  array (
+    'name' => 'fa-play-circle-o',
+    'active' => 1,
+  ),
+  'fa-plug' => 
+  array (
+    'name' => 'fa-plug',
+    'active' => 1,
+  ),
+  'fa-plus' => 
+  array (
+    'name' => 'fa-plus',
+    'active' => 1,
+  ),
+  'fa-plus-circle' => 
+  array (
+    'name' => 'fa-plus-circle',
+    'active' => 1,
+  ),
+  'fa-plus-square' => 
+  array (
+    'name' => 'fa-plus-square',
+    'active' => 1,
+  ),
+  'fa-plus-square-o' => 
+  array (
+    'name' => 'fa-plus-square-o',
+    'active' => 1,
+  ),
+  'fa-power-off' => 
+  array (
+    'name' => 'fa-power-off',
+    'active' => 1,
+  ),
+  'fa-print' => 
+  array (
+    'name' => 'fa-print',
+    'active' => 1,
+  ),
+  'fa-puzzle-piece' => 
+  array (
+    'name' => 'fa-puzzle-piece',
+    'active' => 1,
+  ),
+  'fa-qq' => 
+  array (
+    'name' => 'fa-qq',
+    'active' => 1,
+  ),
+  'fa-qrcode' => 
+  array (
+    'name' => 'fa-qrcode',
+    'active' => 1,
+  ),
+  'fa-question' => 
+  array (
+    'name' => 'fa-question',
+    'active' => 1,
+  ),
+  'fa-question-circle' => 
+  array (
+    'name' => 'fa-question-circle',
+    'active' => 1,
+  ),
+  'fa-quote-left' => 
+  array (
+    'name' => 'fa-quote-left',
+    'active' => 1,
+  ),
+  'fa-quote-right' => 
+  array (
+    'name' => 'fa-quote-right',
+    'active' => 1,
+  ),
+  'fa-ra' => 
+  array (
+    'name' => 'fa-ra',
+    'active' => 1,
+  ),
+  'fa-random' => 
+  array (
+    'name' => 'fa-random',
+    'active' => 1,
+  ),
+  'fa-rebel' => 
+  array (
+    'name' => 'fa-rebel',
+    'active' => 1,
+  ),
+  'fa-recycle' => 
+  array (
+    'name' => 'fa-recycle',
+    'active' => 1,
+  ),
+  'fa-reddit' => 
+  array (
+    'name' => 'fa-reddit',
+    'active' => 1,
+  ),
+  'fa-reddit-square' => 
+  array (
+    'name' => 'fa-reddit-square',
+    'active' => 1,
+  ),
+  'fa-refresh' => 
+  array (
+    'name' => 'fa-refresh',
+    'active' => 1,
+  ),
+  'fa-remove' => 
+  array (
+    'name' => 'fa-remove',
+    'active' => 1,
+  ),
+  'fa-renren' => 
+  array (
+    'name' => 'fa-renren',
+    'active' => 1,
+  ),
+  'fa-reorder' => 
+  array (
+    'name' => 'fa-reorder',
+    'active' => 1,
+  ),
+  'fa-repeat' => 
+  array (
+    'name' => 'fa-repeat',
+    'active' => 1,
+  ),
+  'fa-reply' => 
+  array (
+    'name' => 'fa-reply',
+    'active' => 1,
+  ),
+  'fa-reply-all' => 
+  array (
+    'name' => 'fa-reply-all',
+    'active' => 1,
+  ),
+  'fa-retweet' => 
+  array (
+    'name' => 'fa-retweet',
+    'active' => 1,
+  ),
+  'fa-rmb' => 
+  array (
+    'name' => 'fa-rmb',
+    'active' => 1,
+  ),
+  'fa-road' => 
+  array (
+    'name' => 'fa-road',
+    'active' => 1,
+  ),
+  'fa-rocket' => 
+  array (
+    'name' => 'fa-rocket',
+    'active' => 1,
+  ),
+  'fa-rotate-left' => 
+  array (
+    'name' => 'fa-rotate-left',
+    'active' => 1,
+  ),
+  'fa-rotate-right' => 
+  array (
+    'name' => 'fa-rotate-right',
+    'active' => 1,
+  ),
+  'fa-rouble' => 
+  array (
+    'name' => 'fa-rouble',
+    'active' => 1,
+  ),
+  'fa-rss' => 
+  array (
+    'name' => 'fa-rss',
+    'active' => 1,
+  ),
+  'fa-rss-square' => 
+  array (
+    'name' => 'fa-rss-square',
+    'active' => 1,
+  ),
+  'fa-rub' => 
+  array (
+    'name' => 'fa-rub',
+    'active' => 1,
+  ),
+  'fa-ruble' => 
+  array (
+    'name' => 'fa-ruble',
+    'active' => 1,
+  ),
+  'fa-rupee' => 
+  array (
+    'name' => 'fa-rupee',
+    'active' => 1,
+  ),
+  'fa-save' => 
+  array (
+    'name' => 'fa-save',
+    'active' => 1,
+  ),
+  'fa-scissors' => 
+  array (
+    'name' => 'fa-scissors',
+    'active' => 1,
+  ),
+  'fa-search' => 
+  array (
+    'name' => 'fa-search',
+    'active' => 1,
+  ),
+  'fa-search-minus' => 
+  array (
+    'name' => 'fa-search-minus',
+    'active' => 1,
+  ),
+  'fa-search-plus' => 
+  array (
+    'name' => 'fa-search-plus',
+    'active' => 1,
+  ),
+  'fa-sellsy' => 
+  array (
+    'name' => 'fa-sellsy',
+    'active' => 1,
+  ),
+  'fa-send' => 
+  array (
+    'name' => 'fa-send',
+    'active' => 1,
+  ),
+  'fa-send-o' => 
+  array (
+    'name' => 'fa-send-o',
+    'active' => 1,
+  ),
+  'fa-server' => 
+  array (
+    'name' => 'fa-server',
+    'active' => 1,
+  ),
+  'fa-share' => 
+  array (
+    'name' => 'fa-share',
+    'active' => 1,
+  ),
+  'fa-share-alt' => 
+  array (
+    'name' => 'fa-share-alt',
+    'active' => 1,
+  ),
+  'fa-share-alt-square' => 
+  array (
+    'name' => 'fa-share-alt-square',
+    'active' => 1,
+  ),
+  'fa-share-square' => 
+  array (
+    'name' => 'fa-share-square',
+    'active' => 1,
+  ),
+  'fa-share-square-o' => 
+  array (
+    'name' => 'fa-share-square-o',
+    'active' => 1,
+  ),
+  'fa-shekel' => 
+  array (
+    'name' => 'fa-shekel',
+    'active' => 1,
+  ),
+  'fa-sheqel' => 
+  array (
+    'name' => 'fa-sheqel',
+    'active' => 1,
+  ),
+  'fa-shield' => 
+  array (
+    'name' => 'fa-shield',
+    'active' => 1,
+  ),
+  'fa-ship' => 
+  array (
+    'name' => 'fa-ship',
+    'active' => 1,
+  ),
+  'fa-shirtsinbulk' => 
+  array (
+    'name' => 'fa-shirtsinbulk',
+    'active' => 1,
+  ),
+  'fa-shopping-cart' => 
+  array (
+    'name' => 'fa-shopping-cart',
+    'active' => 1,
+  ),
+  'fa-sign-in' => 
+  array (
+    'name' => 'fa-sign-in',
+    'active' => 1,
+  ),
+  'fa-sign-out' => 
+  array (
+    'name' => 'fa-sign-out',
+    'active' => 1,
+  ),
+  'fa-signal' => 
+  array (
+    'name' => 'fa-signal',
+    'active' => 1,
+  ),
+  'fa-simplybuilt' => 
+  array (
+    'name' => 'fa-simplybuilt',
+    'active' => 1,
+  ),
+  'fa-sitemap' => 
+  array (
+    'name' => 'fa-sitemap',
+    'active' => 1,
+  ),
+  'fa-skyatlas' => 
+  array (
+    'name' => 'fa-skyatlas',
+    'active' => 1,
+  ),
+  'fa-skype' => 
+  array (
+    'name' => 'fa-skype',
+    'active' => 1,
+  ),
+  'fa-slack' => 
+  array (
+    'name' => 'fa-slack',
+    'active' => 1,
+  ),
+  'fa-sliders' => 
+  array (
+    'name' => 'fa-sliders',
+    'active' => 1,
+  ),
+  'fa-slideshare' => 
+  array (
+    'name' => 'fa-slideshare',
+    'active' => 1,
+  ),
+  'fa-smile-o' => 
+  array (
+    'name' => 'fa-smile-o',
+    'active' => 1,
+  ),
+  'fa-soccer-ball-o' => 
+  array (
+    'name' => 'fa-soccer-ball-o',
+    'active' => 1,
+  ),
+  'fa-sort' => 
+  array (
+    'name' => 'fa-sort',
+    'active' => 1,
+  ),
+  'fa-sort-alpha-asc' => 
+  array (
+    'name' => 'fa-sort-alpha-asc',
+    'active' => 1,
+  ),
+  'fa-sort-alpha-desc' => 
+  array (
+    'name' => 'fa-sort-alpha-desc',
+    'active' => 1,
+  ),
+  'fa-sort-amount-asc' => 
+  array (
+    'name' => 'fa-sort-amount-asc',
+    'active' => 1,
+  ),
+  'fa-sort-amount-desc' => 
+  array (
+    'name' => 'fa-sort-amount-desc',
+    'active' => 1,
+  ),
+  'fa-sort-asc' => 
+  array (
+    'name' => 'fa-sort-asc',
+    'active' => 1,
+  ),
+  'fa-sort-desc' => 
+  array (
+    'name' => 'fa-sort-desc',
+    'active' => 1,
+  ),
+  'fa-sort-down' => 
+  array (
+    'name' => 'fa-sort-down',
+    'active' => 1,
+  ),
+  'fa-sort-numeric-asc' => 
+  array (
+    'name' => 'fa-sort-numeric-asc',
+    'active' => 1,
+  ),
+  'fa-sort-numeric-desc' => 
+  array (
+    'name' => 'fa-sort-numeric-desc',
+    'active' => 1,
+  ),
+  'fa-sort-up' => 
+  array (
+    'name' => 'fa-sort-up',
+    'active' => 1,
+  ),
+  'fa-soundcloud' => 
+  array (
+    'name' => 'fa-soundcloud',
+    'active' => 1,
+  ),
+  'fa-space-shuttle' => 
+  array (
+    'name' => 'fa-space-shuttle',
+    'active' => 1,
+  ),
+  'fa-spinner' => 
+  array (
+    'name' => 'fa-spinner',
+    'active' => 1,
+  ),
+  'fa-spoon' => 
+  array (
+    'name' => 'fa-spoon',
+    'active' => 1,
+  ),
+  'fa-spotify' => 
+  array (
+    'name' => 'fa-spotify',
+    'active' => 1,
+  ),
+  'fa-square' => 
+  array (
+    'name' => 'fa-square',
+    'active' => 1,
+  ),
+  'fa-square-o' => 
+  array (
+    'name' => 'fa-square-o',
+    'active' => 1,
+  ),
+  'fa-stack-exchange' => 
+  array (
+    'name' => 'fa-stack-exchange',
+    'active' => 1,
+  ),
+  'fa-stack-overflow' => 
+  array (
+    'name' => 'fa-stack-overflow',
+    'active' => 1,
+  ),
+  'fa-star' => 
+  array (
+    'name' => 'fa-star',
+    'active' => 1,
+  ),
+  'fa-star-half' => 
+  array (
+    'name' => 'fa-star-half',
+    'active' => 1,
+  ),
+  'fa-star-half-empty' => 
+  array (
+    'name' => 'fa-star-half-empty',
+    'active' => 1,
+  ),
+  'fa-star-half-full' => 
+  array (
+    'name' => 'fa-star-half-full',
+    'active' => 1,
+  ),
+  'fa-star-half-o' => 
+  array (
+    'name' => 'fa-star-half-o',
+    'active' => 1,
+  ),
+  'fa-star-o' => 
+  array (
+    'name' => 'fa-star-o',
+    'active' => 1,
+  ),
+  'fa-steam' => 
+  array (
+    'name' => 'fa-steam',
+    'active' => 1,
+  ),
+  'fa-steam-square' => 
+  array (
+    'name' => 'fa-steam-square',
+    'active' => 1,
+  ),
+  'fa-step-backward' => 
+  array (
+    'name' => 'fa-step-backward',
+    'active' => 1,
+  ),
+  'fa-step-forward' => 
+  array (
+    'name' => 'fa-step-forward',
+    'active' => 1,
+  ),
+  'fa-stethoscope' => 
+  array (
+    'name' => 'fa-stethoscope',
+    'active' => 1,
+  ),
+  'fa-stop' => 
+  array (
+    'name' => 'fa-stop',
+    'active' => 1,
+  ),
+  'fa-street-view' => 
+  array (
+    'name' => 'fa-street-view',
+    'active' => 1,
+  ),
+  'fa-strikethrough' => 
+  array (
+    'name' => 'fa-strikethrough',
+    'active' => 1,
+  ),
+  'fa-stumbleupon' => 
+  array (
+    'name' => 'fa-stumbleupon',
+    'active' => 1,
+  ),
+  'fa-stumbleupon-circle' => 
+  array (
+    'name' => 'fa-stumbleupon-circle',
+    'active' => 1,
+  ),
+  'fa-subscript' => 
+  array (
+    'name' => 'fa-subscript',
+    'active' => 1,
+  ),
+  'fa-subway' => 
+  array (
+    'name' => 'fa-subway',
+    'active' => 1,
+  ),
+  'fa-suitcase' => 
+  array (
+    'name' => 'fa-suitcase',
+    'active' => 1,
+  ),
+  'fa-sun-o' => 
+  array (
+    'name' => 'fa-sun-o',
+    'active' => 1,
+  ),
+  'fa-superscript' => 
+  array (
+    'name' => 'fa-superscript',
+    'active' => 1,
+  ),
+  'fa-support' => 
+  array (
+    'name' => 'fa-support',
+    'active' => 1,
+  ),
+  'fa-table' => 
+  array (
+    'name' => 'fa-table',
+    'active' => 1,
+  ),
+  'fa-tablet' => 
+  array (
+    'name' => 'fa-tablet',
+    'active' => 1,
+  ),
+  'fa-tachometer' => 
+  array (
+    'name' => 'fa-tachometer',
+    'active' => 1,
+  ),
+  'fa-tag' => 
+  array (
+    'name' => 'fa-tag',
+    'active' => 1,
+  ),
+  'fa-tags' => 
+  array (
+    'name' => 'fa-tags',
+    'active' => 1,
+  ),
+  'fa-tasks' => 
+  array (
+    'name' => 'fa-tasks',
+    'active' => 1,
+  ),
+  'fa-taxi' => 
+  array (
+    'name' => 'fa-taxi',
+    'active' => 1,
+  ),
+  'fa-tencent-weibo' => 
+  array (
+    'name' => 'fa-tencent-weibo',
+    'active' => 1,
+  ),
+  'fa-terminal' => 
+  array (
+    'name' => 'fa-terminal',
+    'active' => 1,
+  ),
+  'fa-text-height' => 
+  array (
+    'name' => 'fa-text-height',
+    'active' => 1,
+  ),
+  'fa-text-width' => 
+  array (
+    'name' => 'fa-text-width',
+    'active' => 1,
+  ),
+  'fa-th' => 
+  array (
+    'name' => 'fa-th',
+    'active' => 1,
+  ),
+  'fa-th-large' => 
+  array (
+    'name' => 'fa-th-large',
+    'active' => 1,
+  ),
+  'fa-th-list' => 
+  array (
+    'name' => 'fa-th-list',
+    'active' => 1,
+  ),
+  'fa-thumb-tack' => 
+  array (
+    'name' => 'fa-thumb-tack',
+    'active' => 1,
+  ),
+  'fa-thumbs-down' => 
+  array (
+    'name' => 'fa-thumbs-down',
+    'active' => 1,
+  ),
+  'fa-thumbs-o-down' => 
+  array (
+    'name' => 'fa-thumbs-o-down',
+    'active' => 1,
+  ),
+  'fa-thumbs-o-up' => 
+  array (
+    'name' => 'fa-thumbs-o-up',
+    'active' => 1,
+  ),
+  'fa-thumbs-up' => 
+  array (
+    'name' => 'fa-thumbs-up',
+    'active' => 1,
+  ),
+  'fa-ticket' => 
+  array (
+    'name' => 'fa-ticket',
+    'active' => 1,
+  ),
+  'fa-times' => 
+  array (
+    'name' => 'fa-times',
+    'active' => 1,
+  ),
+  'fa-times-circle' => 
+  array (
+    'name' => 'fa-times-circle',
+    'active' => 1,
+  ),
+  'fa-times-circle-o' => 
+  array (
+    'name' => 'fa-times-circle-o',
+    'active' => 1,
+  ),
+  'fa-tint' => 
+  array (
+    'name' => 'fa-tint',
+    'active' => 1,
+  ),
+  'fa-toggle-down' => 
+  array (
+    'name' => 'fa-toggle-down',
+    'active' => 1,
+  ),
+  'fa-toggle-left' => 
+  array (
+    'name' => 'fa-toggle-left',
+    'active' => 1,
+  ),
+  'fa-toggle-off' => 
+  array (
+    'name' => 'fa-toggle-off',
+    'active' => 1,
+  ),
+  'fa-toggle-on' => 
+  array (
+    'name' => 'fa-toggle-on',
+    'active' => 1,
+  ),
+  'fa-toggle-right' => 
+  array (
+    'name' => 'fa-toggle-right',
+    'active' => 1,
+  ),
+  'fa-toggle-up' => 
+  array (
+    'name' => 'fa-toggle-up',
+    'active' => 1,
+  ),
+  'fa-train' => 
+  array (
+    'name' => 'fa-train',
+    'active' => 1,
+  ),
+  'fa-transgender' => 
+  array (
+    'name' => 'fa-transgender',
+    'active' => 1,
+  ),
+  'fa-transgender-alt' => 
+  array (
+    'name' => 'fa-transgender-alt',
+    'active' => 1,
+  ),
+  'fa-trash' => 
+  array (
+    'name' => 'fa-trash',
+    'active' => 1,
+  ),
+  'fa-trash-o' => 
+  array (
+    'name' => 'fa-trash-o',
+    'active' => 1,
+  ),
+  'fa-tree' => 
+  array (
+    'name' => 'fa-tree',
+    'active' => 1,
+  ),
+  'fa-trello' => 
+  array (
+    'name' => 'fa-trello',
+    'active' => 1,
+  ),
+  'fa-trophy' => 
+  array (
+    'name' => 'fa-trophy',
+    'active' => 1,
+  ),
+  'fa-truck' => 
+  array (
+    'name' => 'fa-truck',
+    'active' => 1,
+  ),
+  'fa-try' => 
+  array (
+    'name' => 'fa-try',
+    'active' => 1,
+  ),
+  'fa-tty' => 
+  array (
+    'name' => 'fa-tty',
+    'active' => 1,
+  ),
+  'fa-tumblr' => 
+  array (
+    'name' => 'fa-tumblr',
+    'active' => 1,
+  ),
+  'fa-tumblr-square' => 
+  array (
+    'name' => 'fa-tumblr-square',
+    'active' => 1,
+  ),
+  'fa-turkish-lira' => 
+  array (
+    'name' => 'fa-turkish-lira',
+    'active' => 1,
+  ),
+  'fa-twitch' => 
+  array (
+    'name' => 'fa-twitch',
+    'active' => 1,
+  ),
+  'fa-twitter' => 
+  array (
+    'name' => 'fa-twitter',
+    'active' => 1,
+  ),
+  'fa-twitter-square' => 
+  array (
+    'name' => 'fa-twitter-square',
+    'active' => 1,
+  ),
+  'fa-umbrella' => 
+  array (
+    'name' => 'fa-umbrella',
+    'active' => 1,
+  ),
+  'fa-underline' => 
+  array (
+    'name' => 'fa-underline',
+    'active' => 1,
+  ),
+  'fa-undo' => 
+  array (
+    'name' => 'fa-undo',
+    'active' => 1,
+  ),
+  'fa-university' => 
+  array (
+    'name' => 'fa-university',
+    'active' => 1,
+  ),
+  'fa-unlink' => 
+  array (
+    'name' => 'fa-unlink',
+    'active' => 1,
+  ),
+  'fa-unlock' => 
+  array (
+    'name' => 'fa-unlock',
+    'active' => 1,
+  ),
+  'fa-unlock-alt' => 
+  array (
+    'name' => 'fa-unlock-alt',
+    'active' => 1,
+  ),
+  'fa-unsorted' => 
+  array (
+    'name' => 'fa-unsorted',
+    'active' => 1,
+  ),
+  'fa-upload' => 
+  array (
+    'name' => 'fa-upload',
+    'active' => 1,
+  ),
+  'fa-usd' => 
+  array (
+    'name' => 'fa-usd',
+    'active' => 1,
+  ),
+  'fa-user' => 
+  array (
+    'name' => 'fa-user',
+    'active' => 1,
+  ),
+  'fa-user-md' => 
+  array (
+    'name' => 'fa-user-md',
+    'active' => 1,
+  ),
+  'fa-user-plus' => 
+  array (
+    'name' => 'fa-user-plus',
+    'active' => 1,
+  ),
+  'fa-user-secret' => 
+  array (
+    'name' => 'fa-user-secret',
+    'active' => 1,
+  ),
+  'fa-user-times' => 
+  array (
+    'name' => 'fa-user-times',
+    'active' => 1,
+  ),
+  'fa-users' => 
+  array (
+    'name' => 'fa-users',
+    'active' => 1,
+  ),
+  'fa-venus' => 
+  array (
+    'name' => 'fa-venus',
+    'active' => 1,
+  ),
+  'fa-venus-double' => 
+  array (
+    'name' => 'fa-venus-double',
+    'active' => 1,
+  ),
+  'fa-venus-mars' => 
+  array (
+    'name' => 'fa-venus-mars',
+    'active' => 1,
+  ),
+  'fa-viacoin' => 
+  array (
+    'name' => 'fa-viacoin',
+    'active' => 1,
+  ),
+  'fa-video-camera' => 
+  array (
+    'name' => 'fa-video-camera',
+    'active' => 1,
+  ),
+  'fa-vimeo-square' => 
+  array (
+    'name' => 'fa-vimeo-square',
+    'active' => 1,
+  ),
+  'fa-vine' => 
+  array (
+    'name' => 'fa-vine',
+    'active' => 1,
+  ),
+  'fa-vk' => 
+  array (
+    'name' => 'fa-vk',
+    'active' => 1,
+  ),
+  'fa-volume-down' => 
+  array (
+    'name' => 'fa-volume-down',
+    'active' => 1,
+  ),
+  'fa-volume-off' => 
+  array (
+    'name' => 'fa-volume-off',
+    'active' => 1,
+  ),
+  'fa-volume-up' => 
+  array (
+    'name' => 'fa-volume-up',
+    'active' => 1,
+  ),
+  'fa-warning' => 
+  array (
+    'name' => 'fa-warning',
+    'active' => 1,
+  ),
+  'fa-wechat' => 
+  array (
+    'name' => 'fa-wechat',
+    'active' => 1,
+  ),
+  'fa-weibo' => 
+  array (
+    'name' => 'fa-weibo',
+    'active' => 1,
+  ),
+  'fa-weixin' => 
+  array (
+    'name' => 'fa-weixin',
+    'active' => 1,
+  ),
+  'fa-whatsapp' => 
+  array (
+    'name' => 'fa-whatsapp',
+    'active' => 1,
+  ),
+  'fa-wheelchair' => 
+  array (
+    'name' => 'fa-wheelchair',
+    'active' => 1,
+  ),
+  'fa-wifi' => 
+  array (
+    'name' => 'fa-wifi',
+    'active' => 1,
+  ),
+  'fa-windows' => 
+  array (
+    'name' => 'fa-windows',
+    'active' => 1,
+  ),
+  'fa-won' => 
+  array (
+    'name' => 'fa-won',
+    'active' => 1,
+  ),
+  'fa-wordpress' => 
+  array (
+    'name' => 'fa-wordpress',
+    'active' => 1,
+  ),
+  'fa-wrench' => 
+  array (
+    'name' => 'fa-wrench',
+    'active' => 1,
+  ),
+  'fa-xing' => 
+  array (
+    'name' => 'fa-xing',
+    'active' => 1,
+  ),
+  'fa-xing-square' => 
+  array (
+    'name' => 'fa-xing-square',
+    'active' => 1,
+  ),
+  'fa-yahoo' => 
+  array (
+    'name' => 'fa-yahoo',
+    'active' => 1,
+  ),
+  'fa-yelp' => 
+  array (
+    'name' => 'fa-yelp',
+    'active' => 1,
+  ),
+  'fa-yen' => 
+  array (
+    'name' => 'fa-yen',
+    'active' => 1,
+  ),
+  'fa-youtube' => 
+  array (
+    'name' => 'fa-youtube',
+    'active' => 1,
+  ),
+  'fa-youtube-play' => 
+  array (
+    'name' => 'fa-youtube-play',
+    'active' => 1,
+  ),
+  'fa-youtube-square' => 
+  array (
+    'name' => 'fa-youtube-square',
     'active' => 1,
   ),
 );
