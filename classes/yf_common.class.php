@@ -1376,7 +1376,7 @@ class yf_common {
 			$items[$error_key] = $value;
 		}
 		if ($this->TRACK_USER_ERRORS && !empty($this->USER_ERRORS)) {
-			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
+			_class('logs')->save_user_error($this->USER_ERRORS);
 		}
 		if ($clear_error) {
 			$this->_remove_error_messages();
