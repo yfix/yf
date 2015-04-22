@@ -550,17 +550,29 @@ EOS;
 				$result = $_provider_class->_payout_success( array(
 					'operation_id' => $_operation_id,
 				));
+				$mail_tpl = 'payout_success';
 				break;
 			case 'refused':
 				$result = $_provider_class->_payout_refused( array(
 					'operation_id' => $_operation_id,
 				));
+				$mail_tpl = 'payout_refused';
 				break;
 		}
 		if( empty( $result[ 'status' ] ) ) {
 			$result[ 'operation_id' ] = $_operation_id;
 			return( $this->_user_message( $result ) );
 		}
+		// mail
+		$payment_module = module( 'payment' );
+		$payment_module->mail( array(
+			'tpl'     => $mail_tpl,
+			'user_id' => $_user_id,
+			'data'    => array(
+				'operation_id' => $_operation_id,
+				'amount'       => $_operation[ 'amount' ],
+			),
+		));
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
 		return( js_redirect( $url_view, false ) );
 	}
@@ -591,7 +603,6 @@ EOS;
 		$info['options'] = json_decode($info['options'], true);
 		$options = $info['options']['request'][0]['options'];
 		$opt_data = $info['options']['request'][0]['data'];
-
 		$data = array();
 		$data['payment_group_id']	= 1; // Bank cards
 		$data['site_id']			= '2415'; // Betonmoney.com
@@ -608,15 +619,12 @@ EOS;
 #		$data['currency']			= $opt_data['currency_id'];
 		$data['amount']				= intval($options['amount'] * 100);
 		$data['currency']			= 'USD';
-
 		$data = array($data);
 		$csv = $this->_array2csv($data);
-
 		// Ecommpay wants ";" everywhere
 		$csv = explode(PHP_EOL, $csv);
 		$csv[0] = str_replace(',', ';', $csv[0]);
 		$csv = trim(implode(PHP_EOL, $csv));
-
 		no_graphics(true);
 		if (DEBUG_MODE) {
 			echo '<pre>'; print_r($csv); print_r($opt); print_r($info); print_r($data);
@@ -628,30 +636,4 @@ EOS;
 		exit;
 	}
 
-	/**
-	*/
-	function update(){
-		$operation_id = intval($_GET['operation_id']);
-		$info = db()->from('payment_operation')->where('operation_id', $operation_id)->get();
-		if (!$info) {
-			return _404();
-		}
-		db()->query("START TRANSACTIONS");
-		db()->query("UPDATE ".db('payment_operation')." SET status_id = 2 WHERE operation_id = ".$operation_id);
-		db()->query("COMMIT");
-		return js_redirect("./?object=".__CLASS__);
-	}
-
-	/**
-	*/
-	function reject(){
-		$operation_id = intval($_GET['operation_id']);
-		$info = db()->from('payment_operation')->where('operation_id', $operation_id)->get();
-		if (!$info) {
-			return _404();
-		}
-		db()->query("UPDATE ".db('payment_operation')." SET status_id = 3 WHERE operation_id = ".$operation_id);
-		// TODO return money into user balance
-		return js_redirect("./?object=".__CLASS__);
-	}
 }
