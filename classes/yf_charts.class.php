@@ -14,6 +14,7 @@ class yf_charts {
 	}
 
 	/**
+	* http://omnipotent.net/jquery.sparkline
 	*/
 	function jquery_sparklines($data, $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
