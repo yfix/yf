@@ -38,6 +38,13 @@ class yf_email {
 	);
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _init() {
 		$this->ADMIN_EMAIL	= defined('SITE_ADMIN_EMAIL') && strlen(SITE_ADMIN_EMAIL) ? SITE_ADMIN_EMAIL : 'support@'.$_SERVER['HTTP_HOST'];

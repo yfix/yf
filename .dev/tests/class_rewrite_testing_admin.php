@@ -38,5 +38,8 @@ class class_rewrite_testing_admin_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(ADMIN_WEB_PATH.'?object=members', url_admin('/members') );
 		$this->assertEquals('http://'.self::$host.'/admin/', url_admin('/', array('admin_host' => self::$host)) );
 		$this->assertEquals('http://'.self::$host.'/admin/?object=members', url_admin('/members', array('admin_host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/admin/?object=members', url_admin('/?object=members', array('admin_host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/admin/?object=members', url_admin(array('object' => 'members', 'admin_host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/admin/?object=members&action=some_action', url_admin(array('object' => 'members', 'action' => 'some_action', 'admin_host' => self::$host)) );
 	}
 }

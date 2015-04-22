@@ -49,6 +49,13 @@ class yf_send_mail {
 	);
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* Module constructor
 	*/
 	function _init () {

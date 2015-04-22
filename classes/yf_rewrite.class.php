@@ -10,6 +10,13 @@ class yf_rewrite {
 	public $BUILD_RULES = array();
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* YF module constructor
 	*/
 	function _init () {

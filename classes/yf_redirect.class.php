@@ -41,6 +41,13 @@ class yf_redirect {
 	);
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _loop_detected($cur_url) {
 		if (!$this->LOOP_DEFENCE) {

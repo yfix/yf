@@ -21,6 +21,13 @@ class yf_cookie {
 	public $HTTPONLY	= false;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _init() {
 		$main = main();
