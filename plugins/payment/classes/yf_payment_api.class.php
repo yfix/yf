@@ -1146,7 +1146,7 @@ class yf_payment_api {
 			'url'  => $url,
 			'mail' => $mail,
 		));
-		_class( 'email' )->_send_email_safe( $mail_to, $mail_name, $_tpl, $data, true, array( 'force_send' => true ) );
+		_class( 'email' )->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
 		if( !empty( $_admin ) ) {
 			$url = array(
 				'user_manage' => $this->url_admin( array(
@@ -1165,7 +1165,7 @@ class yf_payment_api {
 				'url'        => $url,
 				'user_title' => $user[ 'name' ] . ' (id: '. $_user_id .')'
 			));
-			_class( 'email' )->_send_email_safe( $mail_admin_to, $mail_admin_name, $_tpl . '_admin', $data, true, array( 'force_send' => true ) );
+			_class( 'email' )->_send_email_safe( $mail_admin_to, $mail_admin_name, $_tpl . '_admin', $data );
 		}
 	}
 

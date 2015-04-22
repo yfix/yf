@@ -337,6 +337,14 @@ class yf_manage_payout {
 			return( $this->_user_message( $result ) );
 		}
 		$o_status = $statuses[ $o_status_id ];
+		// check response
+		$response = null;
+		if(
+			!empty( $o_options[ 'response' ] )
+			&& is_array( $o_options[ 'response' ] )
+		) {
+			$response = $o_options[ 'response' ];
+		}
 		// misc
 		$html_amount          = $payment_api->money_html( $o_amount );
 		$html_datetime_start  = $o_datetime_start;
@@ -361,6 +369,7 @@ class yf_manage_payout {
 			'request'              => &$request,
 			'method_id'            => &$method_id,
 			'method'               => &$method,
+			'response'             => &$response,
 			'html_amount'          => &$html_amount,
 			'html_datetime_start'  => &$html_datetime_start,
 			'html_datetime_update' => &$html_datetime_update,
@@ -404,6 +413,21 @@ class yf_manage_payout {
 			}
 		}
 		$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
+		// prepare view: response options
+		$content = null;
+		if( !empty( $_response ) ) {
+			$content = table( $_response, array( 'no_total' => true ) )
+				->text( 'datetime', 'дата' )
+				->func( 'date', function( $value, $extra, $row_info ) {
+					$value = $row_info[ 'data' ];
+					$message = trim( $value[ 'message' ] );
+					$message = trim( $value[ 'message' ], '.' );
+					$result = t( $message ) . ' (' . $value[ 'state' ] . ')';
+					return( $result );
+				}, array( 'desc' => 'сообщение' ) )
+			;
+		}
+		$html_response = $content;
 		// prepare view: operation options
 		$user_link = $html->a( array(
 			'href'  => $this->_url( 'user', array( '%user_id' => $_user_id ) ),
@@ -438,6 +462,7 @@ class yf_manage_payout {
 			'is_progressed' => $is_progressed,
 			'header_data'   => $html_operation_options,
 			'request_data'  => $html_request_options,
+			'response_data' => $html_response,
 			'url' => array(
 				'list'           => $this->_url( 'list' ),
 				'view'           => $this->_url( 'view',           array( '%operation_id' => $_operation_id ) ),
