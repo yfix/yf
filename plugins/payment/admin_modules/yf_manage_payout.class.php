@@ -564,8 +564,8 @@ EOS;
 			return( $this->_user_message( $result ) );
 		}
 		// mail
-		$payment_module = module( 'payment' );
-		$payment_module->mail( array(
+		$payment_api = _class( 'payment_api' );
+		$payment_api->mail( array(
 			'tpl'     => $mail_tpl,
 			'user_id' => $_user_id,
 			'data'    => array(

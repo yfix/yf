@@ -348,6 +348,18 @@ class yf_payment_api__provider_remote {
 			));
 			// save options
 			$result = $payment_api->operation_update( $data );
+			// mail
+			$mail_tpl = empty( $result[ 'status' ] ) ? 'payment_refused' : 'payment_success';
+			$payment_api->mail( array(
+				'tpl'     => $mail_tpl,
+				'user_id' => $account[ 'user_id' ],
+				'admin'   => true,
+				'data'    => array(
+					'operation_id' => $operation_id,
+					'amount'       => $amount,
+				),
+			));
+			// sql translation
 			if( !$result[ 'status' ] ) {
 				db()->rollback();
 				return( $result );

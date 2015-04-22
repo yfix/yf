@@ -1100,6 +1100,84 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function mail( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_tpl ) ) { return( null ); }
+		// var
+		// $payment_api = _class( 'payment_api' );
+		$payment_api = $this;
+		$mail_class  = _class( 'email' );
+		// check user
+		if( !empty( $_user_id ) ) {
+			$user = user( $_user_id );
+			// check email, validate email
+			if( empty( $user )
+				|| empty( $user[ 'email' ] )
+				|| $user[ 'email' ] != $user[ 'email_validated' ]
+			) { return( null ); }
+			$mail_to   = $user[ 'email' ];
+			$mail_name = $user[ 'name'  ];
+		}
+		// check data
+		$data = array();
+		if( !empty( $_data ) ) {
+			// import data
+			is_array( $_data ) && extract( $_data, EXTR_PREFIX_ALL | EXTR_REFS, '_' );
+			// amount
+			if( !empty( $__amount ) ) {
+				$__amount = $payment_api->money_text( $__amount );
+			}
+			$data = $_data;
+		}
+		// url
+		$url = array(
+			'user_payments' => url_user( '/payments' ),
+		);
+		// mail
+		$mail_admin_to   = $mail_class->ADMIN_EMAIL;
+		$mail_admin_name = $mail_class->ADMIN_NAME;
+		$mail = array(
+			'support_mail' => $mail_admin_to,
+			'support_name' => $mail_admin_name,
+		);
+		// compile
+		$data = array_replace_recursive( $data, array(
+			'url'  => $url,
+			'mail' => $mail,
+		));
+		_class( 'email' )->_send_email_safe( $mail_to, $mail_name, $_tpl, $data, true, array( 'force_send' => true ) );
+		if( !empty( $_admin ) ) {
+			$url = array(
+				'user_manage' => $this->url_admin( array(
+					'object' => 'members',
+					'action' => 'edit',
+					'id'     => $_user_id,
+				)),
+				'user_balance' => $this->url_admin( array(
+					'object'  => 'manage_payment',
+					'action'  => 'balance',
+					'user_id' => $_user_id,
+				)),
+			);
+			// compile
+			$data = array_replace_recursive( $data, array(
+				'url'        => $url,
+				'user_title' => $user[ 'name' ] . ' (id: '. $_user_id .')'
+			));
+			_class( 'email' )->_send_email_safe( $mail_admin_to, $mail_admin_name, $_tpl . '_admin', $data, true, array( 'force_send' => true ) );
+		}
+	}
+
+	public function url_admin( $options = null ) {
+		if( empty( $options ) ) { return( null ); }
+		$result = url_admin( $options );
+		if( substr( $result, 0, 2 ) == '//' ) {
+			$result = str_replace( '//', 'http://', $result );
+		}
+		return( $result );
+	}
+
 	public function money_text( $options = null ) {
 		!is_array( $options ) && $options = array(
 			'value' => $options,
