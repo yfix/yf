@@ -85,14 +85,25 @@
 	</div>
 </div>
 
-<div class="b-action">
+{if_not_empty( response_data )}
+<div class="clearfix"></div>
+<div class="b-data">
 	<p>
-		Пометьте операцию вывода средств:
+		Журнал ответов провайдера
+	</p>
+	{response_data}
+</div>
+{/if}
+
+<div class="b-action pull-left">
+	<p>
+		Пометьте операцию вывода средств
 	</p>
 	<div class="action">
 		<a href="{url.status_success}" class="btn btn-success">Выполнено</a>
 		<a href="{url.status_refused}" class="btn btn-danger">Не выполнено</a>
 	</div>
 </div>
+
 {/if}
 
