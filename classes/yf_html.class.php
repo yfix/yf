@@ -1133,10 +1133,33 @@ class yf_html {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
 		$extra['type'] = $extra['type'] ?: 'text';
-		$extra['placeholder'] = $extra['desc'];
+		$extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
 
 		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step');
 		return '<input'._attrs($extra, $attrs_names).'>';
+	}
+
+	/**
+	* Simple textarea form control
+	*/
+	function textarea($name = '', $value = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['name'] = $extra['name'] ?: ($name ?: 'text');
+		$extra['value'] = $extra['value'] ?: $value;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
+		$extra['type'] = $extra['type'] ?: 'text';
+		$extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
+		$extra['contenteditable'] = (!isset($extra['contenteditable']) || $extra['contenteditable']) ? 'true' : false;
+
+		$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size','disabled','readonly','autocomplete','autofocus');
+		return '<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']).'</textarea>';
 	}
 
 	/**
