@@ -45,10 +45,10 @@ class yf_charts {
 
 		asset('jquery-sparklines');
 		jquery('
-			$("#'.$extra['id'].'").sparkline(['.implode(',', $data).'], {
+			$("#'.$extra['id'].'").sparkline('.json_encode(array_values($data)).', {
 				type: "'.$extra['type'].'",
 				enableTagOptions: true,
-				tooltipFormat: "{{offset:key}} - {{value}}",
+				tooltipFormat: "{{offset:key}}: {{value}}",
 				tooltipValueLookups: { key: '.json_encode(array_keys($data)).' }
 			});
 		');
