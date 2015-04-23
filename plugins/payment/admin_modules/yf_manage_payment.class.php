@@ -192,7 +192,7 @@ class yf_manage_payment {
 				$daily = _class('charts')->jquery_sparklines($table->_data_daily_num[$a['id']]);
 				return $daily ? '<span title="'.t('Транзакции').'">'.$daily.'</span>' : false;
 			}, array('desc' => 'Транзакции'))
-			->btn( 'Баланс' , $url[ 'balance' ], array( 'link_params' => 'id, account_id', 'icon' => 'fa fa-money' ) )
+			->btn( 'Баланс' , $url[ 'balance' ], array( 'icon' => 'fa fa-money' ) )
 		);
 	}
 
