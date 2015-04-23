@@ -318,9 +318,12 @@ class yf_manage_payment {
 			$currency && $currency_str = ' ' . $currency[ 'short' ];
 			$balance = $account[ 'balance' ];
 		}
+		$user = user( $user_id );
+		$url_user = a( '/members/edit/'.$user_id, $user[ 'name' ] );
 		$replace += array(
-			'user' => user( $user_id ),
-			'balance' => array(
+			'user'     => $user,
+			'url_user' => $url_user,
+			'balance'  => array(
 				'amount'   => $balance,
 				'currency' => $currency_str,
 			),
