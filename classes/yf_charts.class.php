@@ -25,14 +25,23 @@ class yf_charts {
 		// Trim empty data left and right
 		if ($extra['trim']) {
 			foreach ((array)$data as $k => $v) {
-				if (!$v) {
+				if (is_array($v)) {
+					if (!array_sum($v)) {
+						unset($data[$k]);
+						continue;
+					}
+				} elseif (!$v) {
 					unset($data[$k]);
 					continue;
 				}
 				break;
 			}
 			foreach (array_reverse($data, $preserve_keys = true) as $k => $v) {
-				if ($v) {
+				if (is_array($v)) {
+					if (array_sum($v)) {
+						break;
+					}
+				} elseif ($v) {
 					break;
 				}
 				unset($data[$k]);
