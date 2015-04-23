@@ -1294,7 +1294,7 @@ class yf_table2 {
 	*/
 	function allow_deny($name, $extra = array()) {
 		if (!isset($this->_pair_allow_deny)) {
-			$this->_pair_allow_deny = main()->get_data('pair_allow_deny');
+			$this->_pair_allow_deny = str_replace('class="', 'disabled class="', main()->get_data('pair_allow_deny'));
 		}
 		$extra['data'] = $this->_pair_allow_deny;
 		return $this->func($name, function($field, $params, $row) {
@@ -1308,7 +1308,7 @@ class yf_table2 {
 	*/
 	function yes_no($name = '', $extra = array()) {
 		if (!isset($this->_pair_yes_no)) {
-			$this->_pair_yes_no = main()->get_data('pair_yes_no');
+			$this->_pair_yes_no = str_replace('class="', 'disabled class="', main()->get_data('pair_yes_no'));
 		}
 		$extra['data'] = $this->_pair_yes_no;
 		return $this->func($name, function($field, $params, $row) {
