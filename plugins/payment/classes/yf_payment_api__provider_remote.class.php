@@ -310,10 +310,19 @@ class yf_payment_api__provider_remote {
 			db()->begin();
 			if( $payment_status_id != $_payment_status_id && $_payment_status_name == 'success' ) {
 				// update account
+				switch( $operation_data[ 'type' ][ 'name' ] ) {
+					case 'payment':
+						$sql_sign = '-';
+						break;
+					case 'deposition':
+					default:
+						$sql_sign = '+';
+						break;
+				}
 				$_data = array(
 					'account_id'      => $account_id,
 					'datetime_update' => db()->escape_val( $sql_datetime ),
-					'balance'         => '( balance + ' . $sql_amount . ' )',
+					'balance'         => "( balance + $sql_sign $sql_amount )",
 				);
 				$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
 				if( !$_result[ 'status' ] ) {
@@ -348,6 +357,18 @@ class yf_payment_api__provider_remote {
 			));
 			// save options
 			$result = $payment_api->operation_update( $data );
+			// mail
+			$mail_tpl = empty( $result[ 'status' ] ) ? 'payment_refused' : 'payment_success';
+			$payment_api->mail( array(
+				'tpl'     => $mail_tpl,
+				'user_id' => $account[ 'user_id' ],
+				'admin'   => true,
+				'data'    => array(
+					'operation_id' => $operation_id,
+					'amount'       => $amount,
+				),
+			));
+			// sql translation
 			if( !$result[ 'status' ] ) {
 				db()->rollback();
 				return( $result );

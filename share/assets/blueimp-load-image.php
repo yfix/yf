@@ -7,7 +7,7 @@ return array(
 		),
 	),
 	'require' => array(
-		'js' => 'jquery',
+		'asset' => 'jquery',
 	),
 	'info' => array(
 		'url' => 'https://blueimp.github.io/JavaScript-Load-Image/',

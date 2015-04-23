@@ -20,10 +20,7 @@ return array(
 		),
 	),
 	'require' => array(
-		'css' => array(
-			'jquery-ui',
-		),
-		'js' => array(
+		'asset' => array(
 			'blueimp-load-image',
 			'blueimp-canvas-to-blob',
 			'jquery',

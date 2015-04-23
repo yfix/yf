@@ -461,7 +461,7 @@ class yf_form2 {
 				$extra['data-fv-framework'] = 'bootstrap';
 			}
 
-			$body = '<form'._attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
+			$body = '<form'._attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate','target')).'>'.PHP_EOL;
 			$form->_fieldset_mode_on = true;
 			$body .= '<fieldset'._attrs($extra['fieldset'], array('class','style','id','name')).'>';
 			if ($extra['legend']) {

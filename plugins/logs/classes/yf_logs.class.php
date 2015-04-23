@@ -215,6 +215,12 @@ class yf_logs {
 	}
 
 	/**
+	*/
+	function save_user_error($errors) {
+		return _class('logs_user_error', 'classes/logs/')->_track_error(implode(PHP_EOL, (array)$errors));
+	}
+
+	/**
 	* Log script execution params
 	*/
 	function log_exec() {

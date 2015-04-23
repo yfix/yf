@@ -242,9 +242,9 @@ class yf_manage_payout {
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Вывод средств', $url[ 'view'    ], array( 'link_params' => 'operation_id'       , 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-danger' ) )
-			->btn( 'Пользователь' , $url[ 'user'    ], array( 'link_params' => 'user_id'            , 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
-			->btn( 'Счет'         , $url[ 'balance' ], array( 'link_params' => 'user_id, account_id', 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
+			->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-danger' ) )
+			->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
+			->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
 		);
 	}
 
@@ -337,6 +337,14 @@ class yf_manage_payout {
 			return( $this->_user_message( $result ) );
 		}
 		$o_status = $statuses[ $o_status_id ];
+		// check response
+		$response = null;
+		if(
+			!empty( $o_options[ 'response' ] )
+			&& is_array( $o_options[ 'response' ] )
+		) {
+			$response = $o_options[ 'response' ];
+		}
 		// misc
 		$html_amount          = $payment_api->money_html( $o_amount );
 		$html_datetime_start  = $o_datetime_start;
@@ -361,6 +369,7 @@ class yf_manage_payout {
 			'request'              => &$request,
 			'method_id'            => &$method_id,
 			'method'               => &$method,
+			'response'             => &$response,
 			'html_amount'          => &$html_amount,
 			'html_datetime_start'  => &$html_datetime_start,
 			'html_datetime_update' => &$html_datetime_update,
@@ -404,6 +413,21 @@ class yf_manage_payout {
 			}
 		}
 		$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
+		// prepare view: response options
+		$content = null;
+		if( !empty( $_response ) ) {
+			$content = table( $_response, array( 'no_total' => true ) )
+				->text( 'datetime', 'дата' )
+				->func( 'date', function( $value, $extra, $row_info ) {
+					$value = $row_info[ 'data' ];
+					$message = trim( $value[ 'message' ] );
+					$message = trim( $value[ 'message' ], '.' );
+					$result = t( $message ) . ' (' . $value[ 'state' ] . ')';
+					return( $result );
+				}, array( 'desc' => 'сообщение' ) )
+			;
+		}
+		$html_response = $content;
 		// prepare view: operation options
 		$user_link = $html->a( array(
 			'href'  => $this->_url( 'user', array( '%user_id' => $_user_id ) ),
@@ -438,6 +462,7 @@ class yf_manage_payout {
 			'is_progressed' => $is_progressed,
 			'header_data'   => $html_operation_options,
 			'request_data'  => $html_request_options,
+			'response_data' => $html_response,
 			'url' => array(
 				'list'           => $this->_url( 'list' ),
 				'view'           => $this->_url( 'view',           array( '%operation_id' => $_operation_id ) ),
@@ -550,17 +575,29 @@ EOS;
 				$result = $_provider_class->_payout_success( array(
 					'operation_id' => $_operation_id,
 				));
+				$mail_tpl = 'payout_success';
 				break;
 			case 'refused':
 				$result = $_provider_class->_payout_refused( array(
 					'operation_id' => $_operation_id,
 				));
+				$mail_tpl = 'payout_refused';
 				break;
 		}
 		if( empty( $result[ 'status' ] ) ) {
 			$result[ 'operation_id' ] = $_operation_id;
 			return( $this->_user_message( $result ) );
 		}
+		// mail
+		$payment_api = _class( 'payment_api' );
+		$payment_api->mail( array(
+			'tpl'     => $mail_tpl,
+			'user_id' => $_user_id,
+			'data'    => array(
+				'operation_id' => $_operation_id,
+				'amount'       => $_operation[ 'amount' ],
+			),
+		));
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
 		return( js_redirect( $url_view, false ) );
 	}
@@ -591,7 +628,6 @@ EOS;
 		$info['options'] = json_decode($info['options'], true);
 		$options = $info['options']['request'][0]['options'];
 		$opt_data = $info['options']['request'][0]['data'];
-
 		$data = array();
 		$data['payment_group_id']	= 1; // Bank cards
 		$data['site_id']			= '2415'; // Betonmoney.com
@@ -608,15 +644,12 @@ EOS;
 #		$data['currency']			= $opt_data['currency_id'];
 		$data['amount']				= intval($options['amount'] * 100);
 		$data['currency']			= 'USD';
-
 		$data = array($data);
 		$csv = $this->_array2csv($data);
-
 		// Ecommpay wants ";" everywhere
 		$csv = explode(PHP_EOL, $csv);
 		$csv[0] = str_replace(',', ';', $csv[0]);
 		$csv = trim(implode(PHP_EOL, $csv));
-
 		no_graphics(true);
 		if (DEBUG_MODE) {
 			echo '<pre>'; print_r($csv); print_r($opt); print_r($info); print_r($data);
@@ -628,30 +661,4 @@ EOS;
 		exit;
 	}
 
-	/**
-	*/
-	function update(){
-		$operation_id = intval($_GET['operation_id']);
-		$info = db()->from('payment_operation')->where('operation_id', $operation_id)->get();
-		if (!$info) {
-			return _404();
-		}
-		db()->query("START TRANSACTIONS");
-		db()->query("UPDATE ".db('payment_operation')." SET status_id = 2 WHERE operation_id = ".$operation_id);
-		db()->query("COMMIT");
-		return js_redirect("./?object=".__CLASS__);
-	}
-
-	/**
-	*/
-	function reject(){
-		$operation_id = intval($_GET['operation_id']);
-		$info = db()->from('payment_operation')->where('operation_id', $operation_id)->get();
-		if (!$info) {
-			return _404();
-		}
-		db()->query("UPDATE ".db('payment_operation')." SET status_id = 3 WHERE operation_id = ".$operation_id);
-		// TODO return money into user balance
-		return js_redirect("./?object=".__CLASS__);
-	}
 }

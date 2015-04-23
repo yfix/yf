@@ -20,9 +20,7 @@ return array(
 		),
 	),
 	'require' => array(
-		'asset' => array(
-			'jquery',
-		),
+		'asset' => 'jquery',
 	),
 );
 

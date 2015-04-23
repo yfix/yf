@@ -9,11 +9,7 @@ return array(
 		),
 	),
 	'require' => array(
-		'css' => array(
-			'jquery-ui',
-			'blueimp-uploader',
-		),
-		'js' => array(
+		'asset' => array(
 			'jquery-ui',
 			'blueimp-uploader',
 		),

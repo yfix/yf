@@ -12,7 +12,7 @@ function data_get_latest_icons() {
 	}
 	$html2 = file_get_contents($f2);
 	///////////////
-	$regex2 = '~</i>[^<]*(icon\-[^<]*)<~ims';
+	$regex2 = '~</i>[^<]*(fa\-[^<]*)<~ims';
 	$tmp = array();
 	preg_match_all($regex2, $html2, $m2);
 	foreach($m2[1] as $v) {

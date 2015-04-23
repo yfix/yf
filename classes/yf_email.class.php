@@ -38,6 +38,13 @@ class yf_email {
 	);
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _init() {
 		$this->ADMIN_EMAIL	= defined('SITE_ADMIN_EMAIL') && strlen(SITE_ADMIN_EMAIL) ? SITE_ADMIN_EMAIL : 'support@'.$_SERVER['HTTP_HOST'];
@@ -57,12 +64,12 @@ class yf_email {
 		}
 		return false;
 	}
-	
+
 	/**
 	*/
 	function _send_email_to_user($user_id, $template_name, $data = array(), $instant_send = true, $require_verified_email = false, $is_wall_update = true, $template_group = '') {
 		$instant_send = false;
-		$user_data = user($user_id);
+		$user_data = db()->from('user')->whereid($user_id)->get();
 		if (empty($user_data)) {
 			return false;
 		}
@@ -88,7 +95,7 @@ class yf_email {
 				}
 				if (empty($a[$template_group])) {
 					return false;
-				}				
+				}
 			} else {
 				return false;
 			}
@@ -96,7 +103,7 @@ class yf_email {
 		return $this->_send_email_safe($user_data['email'], $user_data['name'], $template_name, $data, $instant_send);
 	}
 
-	/**	
+	/**
 	* send_email_from_admin
 	*/
 	function _send_email_safe($email_to, $name_to, $template_name, $data = array(), $instant_send = true, $override = array()) {
@@ -261,7 +268,7 @@ class yf_email {
 		return $result;
 	}
 
-	/**	
+	/**
 	*/
 	function _text_from_html($html = '') {
 		if (!strlen($html)) {

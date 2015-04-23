@@ -5,8 +5,7 @@
 				<span>Пользователь:</span>
 			</div>
 			<div class="col-md-4">
-				<span>{user.name}</span>
-				<span>({user_id})</span>
+				{url_user}
 			</div>
 			<div class="pull-right"><a href="{back_link}"class="btn"><i class="fa fa-chevron-left"></i> Назад</a></div>
 		</div>

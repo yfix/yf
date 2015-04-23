@@ -575,6 +575,7 @@ class yf_common {
 			'close_button'	=> (int)((bool)$params['close_button']),
 			'full_width'	=> (int)((bool)$params['full_width']),
 		));
+		$output .= tpl()->_get_quick_page_info();
 		$output = tpl()->_apply_output_filters($output);
 		main()->_send_main_headers(strlen($output));
 		echo $output;
@@ -701,7 +702,7 @@ class yf_common {
 	* Do redirect user to the specified location
 	*/
 	function redirect($location, $rewrite = true, $redirect_type = 'js', $text = '', $ttl = 3) {
-		return _class('redirect', 'classes/common/')->_go($location, $rewrite, $redirect_type, $text, $ttl);
+		return _class('redirect')->_go($location, $rewrite, $redirect_type, $text, $ttl);
 	}
 
 	/**
@@ -816,7 +817,8 @@ class yf_common {
 	* Get user info(s) by id(s)
 	*/
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) {
-		return _class('user_data', 'classes/common/')->_user($user_id, $fields, $params, $return_sql);
+		$db = db()->from('user')->where('id', $user_id);
+		return $return_sql ? $db->sql() : $db->get();
 	}
 
 	/**
@@ -1375,7 +1377,7 @@ class yf_common {
 			$items[$error_key] = $value;
 		}
 		if ($this->TRACK_USER_ERRORS && !empty($this->USER_ERRORS)) {
-			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
+			_class('logs')->save_user_error($this->USER_ERRORS);
 		}
 		if ($clear_error) {
 			$this->_remove_error_messages();

@@ -73,8 +73,6 @@ class yf_main {
 	public $INLINE_EDIT_LOCALE		= false;
 	/** @var bool Hide total ids where possible @experimental */
 	public $HIDE_TOTAL_ID			= false;
-	/** @var bool Switch between traditional mode and user info with dynamic fields */
-	public $USER_INFO_DYNAMIC		= false;
 	/** @var bool Static pages as objects routing (eq. for URL like /terms/ instead of /static_pages/show/terms/) */
 	public $STATIC_PAGES_ROUTE_TOP	= false;
 	/** @var string 'Acces denied' redirect url */
@@ -1698,9 +1696,6 @@ class yf_main {
 		$_GET['action'] = str_replace('-', '_', preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim( $_GET['action'] ))));
 		if (!$_GET['action']) {
 			$_GET['action'] = defined('DEFAULT_ACTION') ? DEFAULT_ACTION : 'show';
-		}
-		if ($this->USER_INFO_DYNAMIC) {
-			module_conf('user_data', 'MODE', 'DYNAMIC');
 		}
 		if (!conf('css_framework')) {
 			conf('css_framework', 'bs2');
