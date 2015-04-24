@@ -28,6 +28,11 @@ class yf_table2_filter {
 				$from = trim($a['value']);
 				$to = trim($a['and']);
 				if ($from && $to) {
+					if ($from > $to) {
+						$tmp = $from;
+						$from = $to;
+						$to = $tmp;
+					}
 					$result = sprintf(' BETWEEN "%s" AND "%s"', $from, $to);
 				} elseif ($from) {
 					$result = sprintf(' >= "%s"', $from);
@@ -42,6 +47,11 @@ class yf_table2_filter {
 				!empty($from) && $from = strtotime($from);
 				!empty($to) && $to = strtotime($to);
 				if ($from && $to) {
+					if ($from > $to) {
+						$tmp = $from;
+						$from = $to;
+						$to = $tmp;
+					}
 					$result = sprintf(' BETWEEN "%s" AND "%s"', $from, $to);
 				} elseif ($from) {
 					$result = sprintf(' >= "%s"', $from);
@@ -57,6 +67,11 @@ class yf_table2_filter {
 				!empty($from) && $from = date($format, strtotime($from));
 				!empty($to) && $to = date($format, strtotime($to));
 				if ($from && $to) {
+					if ($from > $to) {
+						$tmp = $from;
+						$from = $to;
+						$to = $tmp;
+					}
 					$result = sprintf(' BETWEEN "%s" AND "%s"', $from, $to);
 				} elseif ($from) {
 					$result = sprintf(' >= "%s"', $from);
@@ -70,12 +85,24 @@ class yf_table2_filter {
 				if (!$value || false === strpos($value, '-')) {
 					return false;
 				}
+				$only_date_regex = '~^[0-9]{2,4}[\.-][0-9]{2,4}[\.-][0-9]{2,4}$~';
 				list($from, $to) = explode('-', $value);
 				$from = trim($from);
+				if (preg_match($only_date_regex, $from)) {
+					$from .= ' 00:00:00';
+				}
 				$to = trim($to);
+				if (preg_match($only_date_regex, $to)) {
+					$to .= ' 23:59:59';
+				}
 				!empty($from) && $from = strtotime($from);
 				!empty($to) && $to = strtotime($to);
 				if ($from && $to) {
+					if ($from > $to) {
+						$tmp = $from;
+						$from = $to;
+						$to = $tmp;
+					}
 					$result = sprintf(' BETWEEN "%s" AND "%s"', $from, $to);
 				} elseif ($from) {
 					$result = sprintf(' >= "%s"', $from);
