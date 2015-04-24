@@ -852,10 +852,7 @@ class yf_common {
 	/**
 	* Create translit from Russian or Ukrainian text
 	*/
-	function make_translit($string, $from_encoding = '') {
-		if (empty($from_encoding)) {
-			$from_encoding = $this->TRANSLIT_FROM;
-		}
+	function make_translit($string) {
 		return _class('translit', 'classes/common/')->make($string);
 	}
 
@@ -933,28 +930,29 @@ class yf_common {
 	/**
 	* Convert name into URL-friendly string
 	*/
-	function _propose_url_from_name($name = '', $from_encoding = '', $force_dashes = null) {
+	function _propose_url_from_name($name = '', $force_dashes = null) {
 		if (empty($name)) {
 			return '';
 		}
-		if (empty($from_encoding)) {
-			$from_encoding = $this->TRANSLIT_FROM;
-		}
 		$url = str_replace(array(';',',','.',':',' ','/'), '_', $name);
-		$url = preg_replace('/[_]{2,}/', '_', $url);
+		$url = preg_replace('/[_-]{2,}/', '_', $url);
 		$url = trim(trim(trim($url), '_-'));
 
-		$url = common()->make_translit($url, $from_encoding);
+		$url = common()->make_translit($url);
 
-		$url = preg_replace('/[_]{2,}/', '_', $url);
-		$url = preg_replace('/[_-]{2,}/', '-', $url);
 		$url = strtolower(preg_replace('/[^a-z0-9_-]+/i', '', $url));
-		$url = trim(trim(trim($url), '_-'));
+
 		if (!isset($force_dashes)) {
 			$force_dashes = $this->URL_FORCE_DASHES;
 		}
 		if ($force_dashes) {
 			$url = str_replace('_', '-', $url);
+			$url = preg_replace('/[-]{2,}/', '-', $url);
+			$url = trim(trim(trim($url), '-'));
+		} else {
+			$url = str_replace('-', '_', $url);
+			$url = preg_replace('/[_]{2,}/', '_', $url);
+			$url = trim(trim(trim($url), '_'));
 		}
 		return $url;
 	}
