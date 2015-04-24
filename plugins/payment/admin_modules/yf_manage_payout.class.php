@@ -202,7 +202,7 @@ class yf_manage_payout {
 				->left_join( 'payment_account  as a', 'a.account_id  = o.account_id'   )
 				->left_join( 'user as u'            , 'u.id = a.user_id'              )
 			->where( 'p.system', 'in', 0 )
-			->where( 'p.active', 1 )
+			->where( 'p.active', '>=', 1 )
 			->where( 'o.direction', 'out' )
 		;
 		$sql = $db->sql();
