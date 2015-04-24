@@ -71,8 +71,8 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		// load api
 		require_once( __DIR__ . '/payment_provider/liqpay/LiqPay.php' );
 		$this->api = new LiqPay( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
-		$this->url_result = url( '/api/payment/provider?name=liqpay&operation=response' );
-		$this->url_server = url( '/api/payment/provider?name=liqpay&operation=response&server=true' );
+		$this->url_result = url_user( '/api/payment/provider?name=liqpay&operation=response' );
+		$this->url_server = url_user( '/api/payment/provider?name=liqpay&operation=response&server=true' );
 		// parent
 		parent::_init();
 	}

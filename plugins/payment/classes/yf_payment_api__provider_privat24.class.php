@@ -117,8 +117,8 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		// load api
 		require_once( __DIR__ . '/payment_provider/privat24/Privat24.php' );
 		$this->api = new Privat24( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
-		$this->url_result = url( '/api/payment/provider?name=privat24&operation=response' );
-		$this->url_server = url( '/api/payment/provider?name=privat24&operation=response&server=true' );
+		$this->url_result = url_user( '/api/payment/provider?name=privat24&operation=response' );
+		$this->url_server = url_user( '/api/payment/provider?name=privat24&operation=response&server=true' );
 		// parent
 		parent::_init();
 	}

@@ -596,12 +596,16 @@ class yf_payment_api {
 	}
 
 	public function provider( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// get providers
 		$provider       = $this->provider;
 		$provider_index = $this->provider_index;
 		if( empty( $provider ) ) {
+			$is_admin = main()->ADMIN_ID > 0;
+			$active = $is_admin || $_is_service ? 1 : 2;
 			$provider = db()->table( 'payment_provider' )
-				->where( 'active', 1 )
+				->where( 'active', '>=', $active )
 				->order_by( 'order' )
 				->get_deep_array( 1 );
 			if( empty( $provider ) ) {
@@ -624,32 +628,33 @@ class yf_payment_api {
 				$provider_index[ 'name'   ][ $name   ][ $id ] = &$provider[ $id ];
 			}
 		}
-		// options
-		$_           = &$options;
-		$all         = $_[ 'all'         ];
-		$exists      = $_[ 'exists'      ];
-		$provider_id = $_[ 'provider_id' ];
-		$name        = $_[ 'name'        ];
-		$system      = $_[ 'system'      ];
+		/**
+		 * options
+		 * $_all
+		 * $_exists
+		 * $_provider_id
+		 * $_name
+		 * $_system
+		 */
 		// test: exists by provider_id
-		if( !empty( $exists ) ) {
+		if( !empty( $_exists ) ) {
 			$result = !empty( $provider[ $exists ] );
 		}
 		// all
-		elseif( !empty( $all ) ) {
+		elseif( !empty( $_all ) ) {
 			$result = $provider_index[ 'all' ];
 		}
 		// by provider_id
-		elseif( isset( $provider_id ) ) {
-			$provider[ $provider_id ] && $result = array( $provider_id => $provider[ $provider_id ] );
+		elseif( isset( $_provider_id ) ) {
+			$provider[ $_provider_id ] && $result = array( $_provider_id => $provider[ $_provider_id ] );
 		}
 		// by name
-		elseif( !empty( $name ) ) {
-			$result = $provider_index[ 'name' ][ $name ];
+		elseif( !empty( $_name ) ) {
+			$result = $provider_index[ 'name' ][ $_name ];
 		}
 		// by system
-		elseif( isset( $system ) ) {
-			$result = $provider_index[ 'system' ][ (int)$system ];
+		elseif( isset( $_system ) ) {
+			$result = $provider_index[ 'system' ][ (int)$_system ];
 		}
 		// by default: all, not system
 		else {

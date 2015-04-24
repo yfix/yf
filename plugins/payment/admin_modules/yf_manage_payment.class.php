@@ -236,10 +236,20 @@ class yf_manage_payment {
 			'user_id'    => $user_id,
 			'account_id' => $account_id,
 		));
+		// prepare provider
+		$providers = $payment_api->provider( array(
+			'all' => true,
+		));
+		$items = array();
+		foreach( $providers as $i => $item ) {
+			$items[ $item[ 'name' ] ] = $item[ 'title' ];
+		}
+		$providers = $items;
 		// prepare form
 		$replace = array(
 			'amount'        => null,
 			'user_id'       => $user_id,
+			'provider_name' => 'administration',
 			'account_id'    => $account_id,
 				'form_action'   => $url_form_action,
 				'redirect_link' => $url_operation,
@@ -249,19 +259,33 @@ class yf_manage_payment {
 		$replace += $_POST;
 		$form = form( $replace, array( 'autocomplete' => 'off' ) )
 			->validate(array(
-				'amount' => 'trim|required|numeric|greater_than_equal_to[1]',
+				'amount'        => 'trim|required|numeric|greater_than_equal_to[1]',
+				'provider_name' => 'trim|required',
 			))
 			->on_validate_ok( function( $data, $extra, $rules ) use( &$user_id, &$account_id, &$account ) {
 				$payment_api = _class( 'payment_api' );
+				$provider_name = $_POST[ 'provider_name' ];
+				$provider_name = empty( $provider_name ) ? 'administration' : $provider_name;
+				$operation = $_POST[ 'operation' ];
+				if( $operation == 'payment' ) {
+					$provider_name = 'administration';
+				}
 				$options = array(
 					'user_id'         => $user_id,
 					'account_id'      => $account_id,
 					'amount'          => $_POST[ 'amount' ],
 					'operation_title' => $_POST[ 'title' ],
-					'operation'       => $_POST[ 'operation' ],
-					'provider_name'   => 'administration',
+					'operation'       => $operation,
+					'provider_name'   => $provider_name,
 				);
 				$result = $payment_api->transaction( $options );
+				if( !empty( $result[ 'form' ] ) ) {
+					$form = $result[ 'form' ]
+						. '<script>document.forms[0].submit();</script>'
+					;
+					echo $form;
+					exit;
+				}
 				if( $result[ 'status' ] === true ) {
 					$message = 'message_success';
 					if( empty( $account_id ) ) {
@@ -284,11 +308,12 @@ class yf_manage_payment {
 			})
 			->number( 'amount', 'Сумма' )
 			->text( 'title', 'Название' )
+			->select_box( 'provider_name', $providers, array( 'show_text' => 1, 'desc' => 'Провайдер', 'tip' => 'Выбрать провайдера возможно только для пополнения. Списание возможно только от Администратора.' ) )
 			->row_start( array(
 				'desc' => 'Операция',
 			))
 				->submit( 'operation', 'deposition', array( 'desc' => 'Пополнить' ) )
-				->submit( 'operation', 'payment',    array( 'desc' => 'Списать'   ) )
+				->submit( 'operation', 'payment',    array( 'desc' => 'Списать', 'tip' => 'Списание возможно только от Администратора.' ) )
 			->row_end()
 		;
 		if( $account_id > 0 ) {
@@ -320,8 +345,8 @@ class yf_manage_payment {
 				->text( 'amount'         , 'Сумма'           )
 				->text( 'balance'        , 'Баланс'          )
 				->text( 'title'          , 'Название'        )
-				->date( 'datetime_start' , 'Дата начала'     )
-				->date( 'datetime_finish', 'Дата завершения' )
+				->date( 'datetime_start' , 'Дата начала', array( 'format' => 'full', 'nowrap' => 1 )     )
+				->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
 			;
 		} else {
 			if( !$_POST[ 'amount' ] ) {

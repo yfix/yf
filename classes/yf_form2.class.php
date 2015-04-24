@@ -1535,7 +1535,7 @@ class yf_form2 {
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
 			$extra['class'] = $extra['class'] ?: $form->CLASS_BTN_SUBMIT. $form->_prepare_css_class('', $r[$extra['name']], $extra);
-			$extra['value'] = t($extra['value']);
+			$extra['value'] = $extra['value'];
 			$extra['type'] = 'submit';
 			$button_text = $extra[ 'desc' ];
 			$extra['desc'] = '';
@@ -1545,7 +1545,7 @@ class yf_form2 {
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']);
-				$button_text = $icon . ( $button_text ?: $value );
+				$button_text = $icon . t( $button_text ?: $value );
 				return $form->_row_html('<button'._attrs($extra, $attrs_names).'>'.$button_text.'</button>', $extra, $r);
 			} else {
 				return $form->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
