@@ -191,8 +191,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// load api
 		require_once( __DIR__ . '/payment_provider/ecommpay/EcommPay.php' );
 		$this->api = new EcommPay( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
-		$this->url_result = url( '/api/payment/provider?name=ecommpay&operation=response' );
-		$this->url_server = url( '/api/payment/provider?name=ecommpay&operation=response&server=true' );
+		$this->url_result = url_user( '/api/payment/provider?name=ecommpay&operation=response' );
+		$this->url_server = url_user( '/api/payment/provider?name=ecommpay&operation=response&server=true' );
 		// translation
 		$strs = &$this->method_allow[ 'payout' ][ 'pay_card' ][ 'option' ];
 		foreach( $strs as $key => &$str ) { $str = t( $str ); }

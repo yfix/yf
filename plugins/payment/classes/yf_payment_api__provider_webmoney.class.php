@@ -91,8 +91,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// load api
 		require_once( __DIR__ . '/payment_provider/webmoney/WebMoney.php' );
 		$this->api = new WebMoney( $this->KEY_PUBLIC, $this->KEY_PRIVATE, $this->HASH_METHOD );
-		$this->url_result = url( '/api/payment/provider?name=webmoney&operation=response' );
-		$this->url_server = url( '/api/payment/provider?name=webmoney&operation=response&server=true' );
+		$this->url_result = url_user( '/api/payment/provider?name=webmoney&operation=response' );
+		$this->url_server = url_user( '/api/payment/provider?name=webmoney&operation=response&server=true' );
 		// parent
 		parent::_init();
 	}

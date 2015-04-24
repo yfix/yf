@@ -109,8 +109,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		// load api
 		require_once( __DIR__ . '/payment_provider/interkassa/Interkassa.php' );
 		$this->api = new Interkassa( $this->KEY_PUBLIC, $this->KEY_PRIVATE, $this->KEY_PRIVATE_TEST, $this->HASH_METHOD, $this->TEST_MODE );
-		$this->url_result = url( '/api/payment/provider?name=interkassa&operation=response' );
-		$this->url_server = url( '/api/payment/provider?name=interkassa&operation=response&server=true' );
+		$this->url_result = url_user( '/api/payment/provider?name=interkassa&operation=response' );
+		$this->url_server = url_user( '/api/payment/provider?name=interkassa&operation=response&server=true' );
 		// parent
 		parent::_init();
 	}

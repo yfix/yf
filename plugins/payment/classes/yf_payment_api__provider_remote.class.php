@@ -274,7 +274,10 @@ class yf_payment_api__provider_remote {
 			return( $result );
 		}
 		// check provider
-		$object = $payment_api->provider( array( 'provider_id' => $provider_id ) );
+		$object = $payment_api->provider( array(
+			'is_service'  => true,
+			'provider_id' => $provider_id,
+		));
 		if( empty( $object ) ) {
 			$result = array(
 				'status'         => false,
