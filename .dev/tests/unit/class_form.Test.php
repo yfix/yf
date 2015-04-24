@@ -401,11 +401,11 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_yes_no_box() {
 		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_1" value="0"><span class="btn btn-default btn-mini btn-xs btn-warning">'
-			.'<i class="icon-ban-circle fa fa-ban-circle"></i> No</span></label><label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_2" value="1">'
+			.'<i class="icon-ban-circle fa fa-ban"></i> No</span></label><label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_2" value="1">'
 			.'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('', array('force_id' => 'radio_box_1')))) );
 		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_1" value="0"><span class="btn btn-default btn-mini btn-xs btn-warning">'
-			.'<i class="icon-ban-circle fa fa-ban-circle"></i> No</span></label><label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_2" value="1">'
+			.'<i class="icon-ban-circle fa fa-ban"></i> No</span></label><label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_2" value="1">'
 			.'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('test', array('force_id' => 'radio_box_1')))) );
 	}
