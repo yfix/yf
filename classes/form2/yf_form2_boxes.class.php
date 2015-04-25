@@ -252,7 +252,7 @@ class yf_form2_boxes {
 		$row_tpl = $extra['row_tpl'] ?: '%icon %name';
 		foreach ((array)main()->get_data('fontawesome_icons') as $icon) {
 			$r = array(
-				'%icon'	=> '<i class="icon '.$icon.'"></i> ',
+				'%icon'	=> '<i class="icon fa '.$icon.'"></i> ',
 				'%name'	=> $icon,
 			);
 			$data[$icon] = str_replace(array_keys($r), array_values($r), $row_tpl);
