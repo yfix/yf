@@ -49,19 +49,22 @@ class yf_category_editor {
 	*/
 	function show() {
 		$sql = 'SELECT * FROM '.db('categories').' ORDER BY type DESC, active ASC';
-		return table($sql, array('custom_fields' => array(
-				'items' => 'SELECT cat_id, COUNT(*) AS num FROM '.db('category_items').' GROUP BY cat_id',
-			)))
+		return table($sql, array(
+				'hide_empty' => true,
+				'custom_fields' => array(
+					'items' => 'SELECT cat_id, COUNT(*) AS num FROM '.db('category_items').' GROUP BY cat_id',
+				),
+			))
 			->link('name', url('/@object/show_items/%d'))
 			->text('type')
 			->text('desc')
 			->text('custom_fields')
 			->text('items')
-			->btn_edit()
-			->btn_delete()
-			->btn_clone('', url('/@object/clone_cat/%d'))
-			->btn('Drag', url('/@object/drag_items/%d'))
-			->btn('Export', url('/@object/export/%d'))
+			->btn('Drag', url('/@object/drag_items/%d'), array('icon' => 'icon-move fa fa-arrows', 'btn_no_text' => 1))
+			->btn_clone('', url('/@object/clone_cat/%d'), array('btn_no_text' => 1))
+#			->btn('Export', url('/@object/export/%d'), array('btn_no_text' => 1, 'icon' => 'fa fa-angle-double-up'))
+			->btn_edit(array('btn_no_text' => 1))
+			->btn_delete(array('btn_no_text' => 1))
 			->btn_active()
 			->footer_add();
 	}
@@ -239,9 +242,9 @@ class yf_category_editor {
 			->input_padded('name')
 			->input('url', array('propose_url_from' => $this->PROPOSE_SHORT_URL ? 'name' : false))
 			->text('other_info')
-			->btn_edit('', url('/@object/edit_item/%d'))
-			->btn_delete('', url('/@object/delete_item/%d'))
-			->btn_clone('', url('/@object/clone_item/%d'))
+			->btn_edit('', url('/@object/edit_item/%d'), array('btn_no_text' => 1, 'no_ajax' => 1))
+			->btn_delete('', url('/@object/delete_item/%d'), array('btn_no_text' => 1))
+			->btn_clone('', url('/@object/clone_item/%d'), array('btn_no_text' => 1))
 			->btn_active('', url('/@object/activate_item/%d'))
 			->footer_add('Add item', url('/@object/add_item/'.$_GET['id']), array('copy_to_header' => 1))
 			->footer_link('Drag items', url('/@object/drag_items&id='.$_GET['id']), array('icon' => 'icon-move fa fa-arrows', 'copy_to_header' => 1))
