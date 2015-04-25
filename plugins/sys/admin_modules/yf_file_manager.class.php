@@ -261,6 +261,8 @@ class yf_file_manager {
 		);
 		$div_id = 'editor_html';
 		$hidden_id = 'file_text_hidden';
+		$ace_mode = common()->get_file_ext($file_path);
+		$ace_mode == 'stpl' && $ace_mode = 'html';
 		return '<h4>Edit: '.$file_name. '</h4>'.
 			form($replace, array(
 				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
@@ -268,7 +270,7 @@ class yf_file_manager {
 			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$file_text.'</div>', '', array(
 				'id'	=> $div_id,
 				'wide'	=> 1,
-				'ace_editor' => array('mode' => common()->get_file_ext($file_path)),
+				'ace_editor' => array('mode' => $ace_mode),
 			))
 			->hidden($hidden_id)
 			->save_and_back();
