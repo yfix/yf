@@ -40,26 +40,46 @@ class yf_template_editor {
 			return true;
 		}
 		$this->_preload_complete = true;
+		$themes_path = tpl()->_THEMES_PATH;
 		$this->_dir_array = array(
-			'framework'			=> YF_PATH. tpl()->_THEMES_PATH,
-			'project'			=> PROJECT_PATH. tpl()->_THEMES_PATH,
-#			'framework_p2'		=> YF_PATH. 'priority2/'. tpl()->_THEMES_PATH,
-#			'project_p2'		=> PROJECT_PATH. 'priority2/'. tpl()->_THEMES_PATH,
-			'framework_user'	=> YF_PATH. 'templates/',
-			'plugins_framework' => YF_PATH. 'plugins/*/'.tpl()->_THEMES_PATH,
-			'plugins_project'	=> PROJECT_PATH. 'plugins/*/'.tpl()->_THEMES_PATH,
-			'plugins_framework_user' => YF_PATH. 'plugins/*/templates/',
-			'plugins_user_section' => YF_PATH. 'plugins/*/templates/',
+			'app'				=> APP_PATH. $themes_path,
+			'app_plugins'		=> APP_PATH. 'plugins/*/'. $themes_path,
+			'project'			=> PROJECT_PATH. $themes_path,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $themes_path,
+			'yf'				=> YF_PATH. $themes_path,
+			'yf_plugins' 		=> YF_PATH. 'plugins/*/'. $themes_path,
 		);
-		foreach ((array)_class('sites_info')->info as $site_dir_array) {
-			$this->_dir_array[$site_dir_array['name']] = $site_dir_array['REAL_PATH'].'templates/';		
-		}
+#		foreach ((array)_class('sites_info')->info as $site_dir_array) {
+#			$this->_dir_array[$site_dir_array['name']] = $site_dir_array['REAL_PATH'].'templates/';		
+#		}
 	}
 
 	/**
 	*/
 	function show () {
-		return $this->_show_themes();
+		$deepness = 3;
+		$ext = '.stpl';
+		$ext_len = strlen($ext);
+		foreach ((array)$this->_dir_array as $gname => $glob) {
+			foreach (range(1, $deepness) as $deep) {
+				$glob_pattern = $glob. '*'.str_repeat('/*', $deep). $ext;
+				foreach (glob($glob_pattern) as $path) {
+					$name = substr(implode('/', array_reverse(array_slice(array_reverse(explode('/', $path)), 0, $deep))), 0, -$ext_len);
+					$names[$name][$path] = $path;
+					$theme = implode(array_slice(array_reverse(explode('/', $path)), $deep, 1));
+					$found_in[$path] = $gname. ' | '.$theme;
+				}
+			}
+		}
+		ksort($names);
+		foreach ((array)$names as $name => $paths) {
+			$links = array();
+			foreach ($paths as $path) {
+				$links[] = a('/file_manager/edit/'.urlencode($path), 'Edit '.$path, 'fa fa-edit', $found_in[$path]);
+			}
+			$body['<b>'.$name.'</b>'] = implode(' ', $links);
+		}
+		return html()->simple_table($body, array('condensed' => 1));
 	}
 
 	/**
