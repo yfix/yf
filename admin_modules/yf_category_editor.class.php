@@ -605,6 +605,7 @@ class yf_category_editor {
 
 		$a = $item_info + (array)$_POST;
 		$a['redirect_link'] = url('/@object/show_items/'.$cat_info['id']);
+		$a['back_link'] = url('/@object/show_items/'.$cat_info['id']);
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required',
