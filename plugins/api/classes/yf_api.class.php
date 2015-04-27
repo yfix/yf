@@ -43,6 +43,8 @@ class yf_api {
 		$method  = &$this->method;
 		$is_post = &$this->is_post;
 		// setup
+		$object = $_GET[ 'object' ];
+		if( empty( $object ) || $object != 'api' ) { return( null ); }
 		$class  = $_GET[ 'action' ];
 		$method = $_GET[ 'id'     ];
 		$is_post = isset( $_POST );
@@ -194,6 +196,92 @@ class yf_api {
 		if( isset( $response ) ) { echo( $response ); }
 		// if( isset( $error    ) ) { echo( "\n,([{\n $error" ); }
 		exit;
+	}
+
+	public function _request( $url, $post = null, $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// default
+		$options = array(
+			// CURLOPT_URL            =>  $url,
+			CURLOPT_RETURNTRANSFER =>  true,
+		);
+		// options
+		if( !empty( $post ) ) {
+			$options = array(
+				CURLOPT_POST           =>  true,
+				CURLOPT_POSTFIELDS     =>  $post,
+			);
+		}
+		if( !empty( $_is_request_json ) ) {
+			$options += array(
+				CURLOPT_HTTPHEADER => array(
+					'Content-Type: application/json; charset=utf-8'
+				),
+			);
+		}
+		if( $this->API_SSL_VERIFY && strpos( $url, 'https' ) !== false ) {
+			$options += array(
+				CURLOPT_SSL_VERIFYPEER => true,
+				CURLOPT_SSL_VERIFYHOST => 2,
+				CURLOPT_CAINFO         => __DIR__ . '/ca.pem',
+			);
+		} else {
+			$options += array(
+				CURLOPT_SSL_VERIFYPEER => false,
+			);
+		}
+		// exec
+		$ch = curl_init( $url );
+		curl_setopt_array( $ch, $options );
+		$result = curl_exec( $ch );
+		// status
+		$http_code     = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		$error_number  = curl_errno( $ch );
+		$error_message = curl_error( $ch );
+		curl_close( $ch );
+// DEBUG
+// var_dump( $url, $options, $result, $http_code );
+// exit;
+		// result
+		$status = null;
+		if( $result === false ) {
+			$message = sprintf( '[%d] %s', $error_number, $error_message );
+			$result = array(
+				'status'         => $status,
+				'status_message' => 'Ошибка транспорта: ' . $message,
+			);
+			return( $result );
+		}
+		switch( $http_code ) {
+			case 200:
+				$status = true;
+				break;
+			case 400:
+				$message = 'неверный запрос';
+				break;
+			case 401:
+				$message = 'неавторизован';
+				break;
+			case 403:
+				$message = 'доступ ограничен';
+				break;
+			case 404:
+				$message = 'неверный адрес';
+				break;
+			default:
+				if( $http_code >= 500 ) {
+					$message = 'ошибка сервера';
+				}
+				break;
+		}
+		if( $http_code != 200 ) {
+			$result = sprintf( 'Ошибка транспорта: [%d] %s', $http_code, $message );
+		}
+		if( !empty( $status ) && $_is_response_json ) {
+			$result = json_decode( $result, true );
+		}
+		return( array( $status, $result ) );
 	}
 
 }
