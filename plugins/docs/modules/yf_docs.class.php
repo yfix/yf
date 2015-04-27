@@ -160,6 +160,9 @@ class yf_docs {
 				}
 				$names[$name] = $name;
 			}
+			if ($obj && !$names) {
+				return $obj->show();
+			}
 			foreach ($names as $name) {
 				$data[$name] = array(
 					'name'	=> $name,

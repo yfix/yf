@@ -84,8 +84,10 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 
 		$label_tip_html = $extra['label_tip'] ? trim(' '.html()->tooltip($extra['label_tip'])) : '';
 
+		$label = ($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']). $label_tip_html.'</label>'.PHP_EOL : '');
+
 		$row_start = '<div'._attrs($form_group_extra, array('id','class','style')).'>'.PHP_EOL
-			.($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']). $label_tip_html.'</label>'.PHP_EOL : '')
+			.$label
 			.(!$extra['wide'] ? '<div'._attrs($controls_extra, array('id','class','style')).'>'.PHP_EOL : '');
 
 		$row_end =
@@ -128,16 +130,19 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 				$extra_stacked['class'] = $extra['class_stacked'];
 			}
 			$extra_stacked['class'] = ($extra_stacked['class'] ?: $this->CLASS_STACKED_ITEM). ' '.($extra_stacked['class_add'] ?: $extra['class_add_stacked']);
-			return '<span'._attrs($extra_stacked, array('id', 'class', 'style')).'>'
-					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
-					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
+			return 
+				'<span'._attrs($extra_stacked, array('id', 'class', 'style')).'>'
+				.($extra['show_label'] ? $label : '')
+				.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
+				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
 				.'</span>';
 		} else {
 			// Full variant
-			return $row_start
-					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
-					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
-					.$this->_add_rich_editor($extra, $replace, $form)
+			return 
+				$row_start
+				.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
+				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
+				.$this->_add_rich_editor($extra, $replace, $form)
 				.$row_end;
 		}
 	}

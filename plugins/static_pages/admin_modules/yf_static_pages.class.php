@@ -73,7 +73,10 @@ class yf_static_pages {
 		}
 		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url('/@object');
-
+		// Prevent execution of template tags when editing page content
+		if (false !== strpos($a['text'], '{') && false !== strpos($a['text'], '}')) {
+			$a['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $a['text']);
+		}
 		$_this = $this;
 		return form($a, array('hide_empty' => true))
 			->validate(array(
@@ -140,6 +143,10 @@ class yf_static_pages {
 		$a = $this->_get_info();
 		if (empty($a)) {
 			return _404();
+		}
+		// Prevent execution of template tags when editing page content
+		if (false !== strpos($a['text'], '{') && false !== strpos($a['text'], '}')) {
+			$a['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $a['text']);
 		}
 		$body = stripslashes($a['text']);
 		$replace = array(

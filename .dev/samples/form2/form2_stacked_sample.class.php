@@ -20,6 +20,12 @@ class form2_stacked_sample {
 				->button('per', array('disabled' => 1))
 				->select_box('split', array('val1','val2'))
 			->row_end()
+			->row_start(array('desc' => 'For a period of'))
+				->number('duration_day', 'day')
+				->number('duration_week', 'week', array('show_label' => 1))
+				->number('duration_month', 'month')
+				->number('duration_year', 'year')
+			->row_end()
 			->textarea('desc')
 			->submit()
 		;
