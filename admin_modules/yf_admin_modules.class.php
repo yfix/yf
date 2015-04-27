@@ -70,8 +70,9 @@ class yf_admin_modules {
 				);
 			}
 			foreach ($places as $pname => $p) {
-				if (file_exists($p['dir']. $p['file'])) {
-					$locations[$pname] = './?object=file_manager&action=edit_item&f_='.urlencode($p['file']).'&dir_name='.urlencode($p['dir']);
+				$path = $p['dir']. $p['file'];
+				if (file_exists($path)) {
+					$locations[$pname] = url('/file_manager/edit/'.urlencode($path));
 				}
 			}
 			$items[] = array(
@@ -80,6 +81,7 @@ class yf_admin_modules {
 				'locations'	=> $locations,
 			);
 		}
+		css('.table .checkbox { min-height: 5px; }');
 		return table($items, array(
 				'condensed' => 1,
 				'pager_records_on_page' => 10000,
@@ -97,11 +99,11 @@ class yf_admin_modules {
 				}
 				return implode(PHP_EOL, (array)$out);
 			})
-			->btn('conf', './?object=conf_editor&action=admin_modules&id=%d', array('id' => 'name'))
+			->btn('conf', url('/conf_editor/admin_modules/%d'), array('id' => 'name'))
 			->btn_active(array('id' => 'name'))
 			->footer_submit(array('value' => 'activate selected'))
 			->footer_submit(array('value' => 'disable selected'))
-			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list', array('icon' => 'icon-refresh'))
+			->footer_link('Refresh list', url('/@object/refresh_modules_list'), array('icon' => 'icon-refresh'))
 		;
 	}
 
