@@ -356,8 +356,6 @@ class yf_payment_api {
 		$currency_rate = $this->currency_rate( array(
 			'currency_rate_type' => $conversion_type,
 		));
-var_dump( $currency_rate );
-exit;
 		if( empty( $currency_rate[ $currency_id ] ) ) { return( null ); }
 		// calc
 		$rate  = $currency_rate[ $currency_id ][ 'rate'  ];
