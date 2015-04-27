@@ -310,11 +310,12 @@ class yf_payment_api {
 			}
 			$key_value = $target . '_value';
 			$key_rate  = $source . '_value';
-			$result = db()->table( 'payment_currency_rate' )
+			$sql = db()->table( 'payment_currency_rate' )
 				->where( $target, '=', $currency_id )
-				->group_by( $source )
+				// ->group_by( $source )
 				->order_by( 'datetime', 'DESC' )
-				->get_deep_array( 1 );
+				->sql();
+			$result = db()->query_fetch_all( 'SELECT * FROM ( '. $sql .' ) as cr GROUP BY '. db()->escape_key( $source ) );
 			if( empty( $result ) ) {
 				$currency_id_default = &$this->currency_id_default;
 				foreach( $this->currencies as $key => $item ) {

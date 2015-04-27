@@ -790,7 +790,6 @@ $payment_api->dump( array( 'var' => $result ));
 				break;
 			// in progress
 			case 50:
-				$status = true;
 				$status_message = 'В процессе';
 				break;
 			// fails...
