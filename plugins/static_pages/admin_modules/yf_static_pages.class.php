@@ -161,6 +161,7 @@ class yf_static_pages {
 				'wide'	=> 1,
 				'ckeditor' => array(
 					'hidden_id'	=> 'text',
+					'config' => _class('admin_methods')->_get_cke_config(),
 				),
 			))
 			->hidden('text')
