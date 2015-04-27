@@ -32,7 +32,7 @@ class yf_form2_ckeditor {
 			if (is_array($params['config'])) {
 				$config_js = '
 					try {
-						CKEDITOR.replace("'.$content_id.'", '.json_encode($params['config']).');
+						CKEDITOR.'.($hidden_id ? 'inline' : 'replace').'("'.$content_id.'", '.json_encode($params['config']).');
 					} catch (e) {
 						console.error("ckeditor init failed:", e);
 					}
@@ -44,7 +44,37 @@ class yf_form2_ckeditor {
 				$config_js = $params['config'];
 			}
 		} else {
-			$config_js = tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, (array)$extra + (array)$replace) : '';
+#			CKEDITOR.inline( _ck_content_id, ck_config)
+/*
+var ck_config = {
+	toolbarGroups: [
+	    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+//		{ name: 'document', items: [ 'Source', '-', 'NewPage', 'Preview', '-', 'Templates' ] },
+//	    { name: 'source', items: ['Source'] },
+{ name: 'insert' },
+    	{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+		{ name: 'styles' },
+	],
+	filebrowserBrowseUrl: '/kcfinder/browse.php?type=files',
+	filebrowserImageBrowseUrl: '/kcfinder/browse.php?type=images',
+	filebrowserFlashBrowseUrl: '/kcfinder/browse.php?type=flash',
+	filebrowserUploadUrl: '/kcfinder/upload.php?type=files',
+	filebrowserImageUploadUrl: '/kcfinder/upload.php?type=images',
+	filebrowserFlashUploadUrl: '/kcfinder/upload.php?type=flash',
+}
+var _ck_content_id = '{content_id}';
+if (!_ck_content_id) {
+	_ck_content_id = 'content_editable';
+}
+try { 
+{if_ok(ckeditor_inline)}
+	CKEDITOR.inline( _ck_content_id, ck_config);
+{else}
+	CKEDITOR.replace( 'text', ck_config);
+{/if}
+} catch(e) { console.error("CKeditor init failed:", e) }
+*/
+#			$config_js = tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, (array)$extra + (array)$replace) : '';
 		}
 		if (strlen($config_js)) {
 			js($config_js);
