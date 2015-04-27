@@ -263,14 +263,19 @@ class yf_file_manager {
 		$hidden_id = 'file_text_hidden';
 		$ace_mode = common()->get_file_ext($file_path);
 		$ace_mode == 'stpl' && $ace_mode = 'html';
+
+		jquery('
+			var h = $(window).height() - $(".navbar").height() - $("h4").height() * 2 - $("[type=submit]").height() * 5
+			$("#'.$div_id.'").height(h);
+		');
 		return '<h4>Edit: '.$file_name. '</h4>'.
 			form($replace, array(
 				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
 			))
-			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$file_text.'</div>', '', array(
+			->container('<div id="'.$div_id.'" style="width: 100%; min-height: 500px;">'.$file_text.'</div>', '', array(
 				'id'	=> $div_id,
 				'wide'	=> 1,
-				'ace_editor' => array('mode' => $ace_mode),
+				'ace_editor' => array('mode' => $ace_mode, 'hScrollBarAlwaysVisible' => false, 'vScrollBarAlwaysVisible' => false),
 			))
 			->hidden($hidden_id)
 			->save_and_back();
