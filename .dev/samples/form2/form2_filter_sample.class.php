@@ -2,7 +2,6 @@
 
 class form2_filter_sample {
 	function show() {
-		$filter_name = __CLASS__.'__'.__FUNCTION__;
 		$offer_types = array(
 			'buy' => 'buy',
 			'ask' => 'ask',
@@ -20,12 +19,11 @@ class form2_filter_sample {
 			'id', 'title', 'amount', 'percent'
 		);
 		return form($replace, array(
-				'selected' => $_SESSION[$filter_name],
-				'class' => 'form-inline',
+				'filter' => true,
 			))
 			->text('title', array('class' => 'input-medium', 'tip' => 'Title field helping description'))
-			->select_box('type', $offer_types, array('show_text' => 1, 'class' => 'input-medium'))
-			->select_box('currency', $currencies, array('show_text' => 1, 'class' => 'input-medium'))
+			->select_box('type', $offer_types, array('show_text' => 1, 'class_add' => 'input-medium'))
+			->select_box('currency', $currencies, array('show_text' => 1, 'class_add' => 'input-medium'))
 
 			->ui_range('amount')
 
@@ -34,13 +32,13 @@ class form2_filter_sample {
 				->money('amount__and')
 			->row_end()
 			->row_start(array('desc' => 'Interest rate from/to'))
-				->number('percent', array('class' => 'input-small'))
-				->number('percent__and', array('class' => 'input-small'))
+				->number('percent', array('class_add' => 'input-small'))
+				->number('percent__and', array('class_add' => 'input-small'))
 			->row_end()
 			->row_start(array('desc' => 'per'))
-				->select_box('split_period', $split_period, array('show_text' => 1, 'class' => 'input-medium'))
+				->select_box('split_period', $split_period, array('show_text' => 1, 'class_add' => 'input-medium'))
 			->row_end()
-			->select_box('order_by', $order_fields, array('show_text' => 1, 'class' => 'input-medium'))
+			->select_box('order_by', $order_fields, array('show_text' => 1, 'class_add' => 'input-medium'))
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending')/*, array('selected' => 'asc')*/)
 			->save_and_clear()
 			. $this->_self_source(__FUNCTION__)
