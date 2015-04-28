@@ -75,8 +75,13 @@ $(function(){
 		var group_is_stacked = controls.has(".stacked-item").length;
 		var help_block = controls.find(".help-block");
 		if (!help_block.length) {
-			controls.append(yf_html_help_block);
-			help_block = controls.find(".help-block");
+			if (group_is_stacked) {
+				_this.closest(".stacked-item").append(yf_html_help_block);
+				help_block = _this.closest(".stacked-item").find(".help-block");
+			} else {
+				controls.append(yf_html_help_block);
+				help_block = controls.find(".help-block");
+			}
 		}
 		var is_error = (!result || !result["ok"]);
 		if (is_error) {
