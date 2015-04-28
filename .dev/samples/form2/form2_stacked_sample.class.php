@@ -7,6 +7,9 @@ class form2_stacked_sample {
 			'amount'		=> '50',
 		);
 		$body .= form($replace)
+			->validate(array(
+				'duration_month2' => 'required'
+			))
 			->text('title')
 			->select_box('want', array('val1','val2'))
 			->row_start(array('desc' => 'For a period of'))
@@ -21,10 +24,10 @@ class form2_stacked_sample {
 				->select_box('split', array('val1','val2'))
 			->row_end()
 			->row_start(array('desc' => 'For a period of'))
-				->number('duration_day', 'day')
-				->number('duration_week', 'week', array('show_label' => 1))
-				->number('duration_month', 'month')
-				->number('duration_year', 'year')
+				->number('duration_day2', 'day')
+				->number('duration_week2', 'week', array('show_label' => 1))
+				->number('duration_month2', 'month')
+				->number('duration_year2', 'year')
 			->row_end()
 			->textarea('desc')
 			->submit()
