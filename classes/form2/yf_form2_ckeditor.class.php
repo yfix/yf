@@ -32,7 +32,7 @@ class yf_form2_ckeditor {
 			if (is_array($params['config'])) {
 				$config_js = '
 					try {
-						CKEDITOR.replace("'.$content_id.'", '.json_encode($params['config']).');
+						CKEDITOR.'.($hidden_id ? 'inline' : 'replace').'("'.$content_id.'", '.json_encode($params['config']).');
 					} catch (e) {
 						console.error("ckeditor init failed:", e);
 					}

@@ -26,12 +26,13 @@ class yf_admin_groups {
 		$menu_id = db()->get_one('SELECT id FROM '.db('menus').' WHERE type="admin" AND active=1 LIMIT 1');
 		return table('SELECT * FROM '.db('admin_groups').' ORDER BY id ASC', array(
 				'custom_fields' => array('members_count' => 'SELECT `group`, COUNT(*) AS num FROM '.db('admin').' GROUP BY `group`'),
+				'hide_empty' => 1,
 			))
 			->text('name')
 			->text('go_after_login')
 			->text('members_count', array('link' => url('/admin/filter_save/clear/?filter=group:%d'), 'link_field_name' => 'id'))
-			->btn_edit()
-			->btn_delete(array('display_func' => $func))
+			->btn_edit(array('btn_no_text' => 1))
+			->btn_delete(array('btn_no_text' => 1, 'display_func' => $func))
 			->btn_active(array('display_func' => $func))
 			->footer_add()
 			->footer_link('Blocks', url('/blocks/show_rules/'.$admin_center_id))

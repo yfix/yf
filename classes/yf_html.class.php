@@ -799,6 +799,9 @@ class yf_html {
 			if ($this->AUTO_ASSIGN_IDS) {
 				$extra['id'] = $id;
 			}
+			if ($extra['outer_label']) {
+				$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
+			}
 			$extra['name'] = $name;
 			$body[] = '<select'._attrs($extra, array('name','id','class','style','disabled','required')). ($add_str ? ' '.$add_str : '').'>';
 		}
@@ -869,6 +872,9 @@ class yf_html {
 			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			if ($this->AUTO_ASSIGN_IDS) {
 				$extra['id'] = $id;
+			}
+			if ($extra['outer_label']) {
+				$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
 			}
 			$extra['multiple'] = 'multiple';
 			$extra['name'] = $name ? $name.'[]' : '';
@@ -945,6 +951,9 @@ class yf_html {
 		$extra['force_id'] && $id_prefix = $extra['force_id'];
 		$counter = 0;
 		$body = array();
+		if ($extra['outer_label']) {
+			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
+		}
 		$orig_extra = $extra;
 		foreach ((array)$values as $value => $val_name) {
 			if (is_array($val_name)) {
@@ -974,9 +983,9 @@ class yf_html {
 					$label_extra['class'] .= ' '.$this->CLASS_LABEL_RADIO_SELECTED;
 				}
 				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
-							.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
-							.t($val_name)
-						.'</label>'.PHP_EOL;
+							. '<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
+							. '<span>'. t($val_name). '</span>'
+						. '</label>'.PHP_EOL;
 			}
 		}
 		return implode(PHP_EOL, $body);
@@ -1018,11 +1027,16 @@ class yf_html {
 		if ($selected) {
 			$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_SELECTED;
 		}
+		$body = array();
+		if ($extra['outer_label']) {
+			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
+		}
 		$extra['type'] = 'checkbox';
-		return '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
+		$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
 				. '<input'._attrs($extra, array('type','name','id','value','checked','class','style','disabled','required')). ($add_str ? ' '.$add_str : '')
-				. '> &nbsp;'. ($translate ? t($extra['desc']) : $extra['desc']) // Please do not remove whitespace :)
+				. '> &nbsp;<span>'. ($translate ? t($extra['desc']) : $extra['desc']). '</span>' // Please do not remove whitespace before &nbsp; :)
 			. '</label>';
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -1055,8 +1069,10 @@ class yf_html {
 		if (!is_array($selected)) {
 			$selected = strval($selected);
 		}
-
 		$body = array();
+		if ($extra['outer_label']) {
+			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
+		}
 		foreach ((array)$values as $key => $value) {
 			$sel_text = '';
 			// Selected value could be an array
@@ -1110,7 +1126,7 @@ class yf_html {
 				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
 							. '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" value="'.$key.'"'
 							. ($is_selected ? ' '.$sel_text : '') . ($add_str ? ' '.trim($add_str) : '')
-							. '> &nbsp;'. $desc  // Please do not remove whitespace :)
+							. '> &nbsp;'. '<span>'.$desc.'</span>'  // Please do not remove whitespace :)
 						.'</label>';
 			}
 		}

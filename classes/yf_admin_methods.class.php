@@ -424,11 +424,19 @@ class yf_admin_methods {
 				),
 			),
 			'language' => conf('language'),
-			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,templates,style',
+			'removeButtons' => 'Flash',
+			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,flash,iframe,pagebreak,showborders,templates,style',
 			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
 			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*) table tr th td caption',
 			'extraPlugins' => 'autosave',
 #			'autosave_SaveKey' => 'cke_autosave_'.abs(crc32($_GET['object'].'_'.$_GET['action'].'_'.$_GET['id'])),// 'autosaveKey',
+
+#			'filebrowserBrowseUrl' => '/kcfinder/browse.php?type=files',
+#			'filebrowserImageBrowseUrl' => '/kcfinder/browse.php?type=images',
+#			'filebrowserFlashBrowseUrl' => '/kcfinder/browse.php?type=flash',
+#			'filebrowserUploadUrl' => '/kcfinder/upload.php?type=files',
+#			'filebrowserImageUploadUrl' => '/kcfinder/upload.php?type=images',
+#			'filebrowserFlashUploadUrl' => '/kcfinder/upload.php?type=flash',
 		);
 		// Other config variant example
 		/* 

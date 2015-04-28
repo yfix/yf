@@ -443,7 +443,7 @@ class yf_form2 {
 			}
 			$extra['enctype'] = $enctype;
 			if (!isset($extra['action'])) {
-				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : url('/@object/@action/@id'). $form->_params['links_add'];
+				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : url('/@object/@action/@id/@page'). $form->_params['links_add'];
 			}
 			if (MAIN_TYPE_USER) {
 				if (strpos($extra['action'], 'http://') === false && strpos($extra['action'], 'https://') !== 0) {

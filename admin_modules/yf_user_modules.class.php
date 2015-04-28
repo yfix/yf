@@ -71,9 +71,10 @@ class yf_user_modules {
 					'app_plugin'		=> array('dir' => APP_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => $name. YF_CLS_EXT),
 				);
 			}
-			foreach ($places as $pname => $p) {
-				if (file_exists($p['dir']. $p['file'])) {
-					$locations[$pname] = './?object=file_manager&action=edit_item&f_='.urlencode($p['file']).'&dir_name='.urlencode($p['dir']);
+			foreach ((array)$places as $pname => $p) {
+				$path = $p['dir']. $p['file'];
+				if (file_exists($path)) {
+					$locations[$pname] = url('/file_manager/edit/'.urlencode($path));
 				}
 			}
 			$items[] = array(
@@ -99,11 +100,11 @@ class yf_user_modules {
 				}
 				return implode(PHP_EOL, (array)$out);
 			})
-			->btn('conf', './?object=conf_editor&action=user_modules&id=%d', array('id' => 'name'))
+			->btn('conf', url('/conf_editor/user_modules/%d'), array('id' => 'name'))
 			->btn_active(array('id' => 'name'))
 			->footer_submit(array('value' => 'activate selected'))
 			->footer_submit(array('value' => 'disable selected'))
-			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list', array('icon' => 'icon-refresh fa fa-refresh'))
+			->footer_link('Refresh list', url('/@object/refresh_modules_list'), array('icon' => 'icon-refresh fa fa-refresh'))
 		;
 	}
 

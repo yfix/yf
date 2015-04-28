@@ -203,34 +203,34 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$html = html();
 		$def_class = $html->CLASS_LABEL_CHECKBOX.' '.$html->CLASS_LABEL_CHECKBOX_INLINE;
 
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="id" id="id" value="1"> &nbsp;Id</label>'
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="id" id="id" value="1"> &nbsp;<span>Id</span></label>'
 			, trim(self::form_no_chain($r)->check_box('id')) );
-		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;Id</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;<span>Id</span></label>'
 			, trim(self::form_no_chain($r)->check_box('id', array('selected' => 'true'))) );
-		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;Id</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;<span>Id</span></label>'
 			, trim(self::form_no_chain($r)->check_box('id', '1', array('selected' => 'true'))) );
-		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;<span>Is public</span></label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', '1', array('selected' => 'true'))) );
-		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;<span>Is public</span></label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', '1', array('checked' => 'true'))) );
-		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;<span>Is public</span></label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', array('checked' => 'true'))) );
 		$this->assertEquals(
-			'<label class="testme active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+			'<label class="testme active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;<span>Is public</span></label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', array(
 				'checked' => 'true',
 				'class_label_checkbox' => 'testme',
 			)
 		)));
 		$this->assertEquals(
-			'<label class="'.$def_class.' testme active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+			'<label class="'.$def_class.' testme active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;<span>Is public</span></label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', array(
 				'checked' => 'true',
 				'class_add_label_checkbox' => 'testme',
 			)
 		)));
 		$this->assertEquals(
-			'<label class="'.$def_class.' testme active"><input type="checkbox" name="is_public" id="myid" value="myval" checked="checked" class="myclass" style="color:red;" data-some="mydata"> &nbsp;Is public</label>'
+			'<label class="'.$def_class.' testme active"><input type="checkbox" name="is_public" id="myid" value="myval" checked="checked" class="myclass" style="color:red;" data-some="mydata"> &nbsp;<span>Is public</span></label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', array(
 				'checked' => 'true',
 				'class_add_label_checkbox' => 'testme',
@@ -255,21 +255,21 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$selected = array('k2' => '1');
 		$def_class = $html->CLASS_LABEL_CHECKBOX.' '.$html->CLASS_LABEL_CHECKBOX_INLINE;
 
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="mycheck_k1" id="multi_check_box_1" value="k1"> &nbsp;v1</label>'
-			.'<label class="'.$def_class.'"><input type="checkbox" name="mycheck_k2" id="multi_check_box_2" value="k2"> &nbsp;v2</label>'
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="mycheck_k1" id="multi_check_box_1" value="k1"> &nbsp;<span>v1</span></label>'
+			.'<label class="'.$def_class.'"><input type="checkbox" name="mycheck_k2" id="multi_check_box_2" value="k2"> &nbsp;<span>v2</span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_check_box('mycheck', $data))) );
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="mycheck_k1" id="multi_check_box_3" value="k1"> &nbsp;v1</label>'
-			.'<label class="'.$def_class.' active"><input type="checkbox" name="mycheck_k2" id="multi_check_box_4" value="k2" checked="checked"> &nbsp;v2</label>'
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="mycheck_k1" id="multi_check_box_3" value="k1"> &nbsp;<span>v1</span></label>'
+			.'<label class="'.$def_class.' active"><input type="checkbox" name="mycheck_k2" id="multi_check_box_4" value="k2" checked="checked"> &nbsp;<span>v2</span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_check_box('mycheck', $data, array('selected' => $selected)))) );
 	}
 	public function test_radio_box() {
 		$data = array('k1' => 'v1', 'k2' => 'v2');
 		$selected = 'k2';
-		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="myradio" id="radio_box_1_1" value="k1">v1</label>'
-			.'<label class="radio radio-inline"><input type="radio" name="myradio" id="radio_box_1_2" value="k2">v2</label>'
+		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="myradio" id="radio_box_1_1" value="k1"><span>v1</span></label>'
+			.'<label class="radio radio-inline"><input type="radio" name="myradio" id="radio_box_1_2" value="k2"><span>v2</span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->radio_box('myradio', $data, array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="myradio" id="radio_box_1_1" value="k1">v1</label>'
-			.'<label class="radio radio-inline active"><input type="radio" name="myradio" id="radio_box_1_2" value="k2" checked="checked">v2</label>'
+		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="myradio" id="radio_box_1_1" value="k1"><span>v1</span></label>'
+			.'<label class="radio radio-inline active"><input type="radio" name="myradio" id="radio_box_1_2" value="k2" checked="checked"><span>v2</span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->radio_box('myradio', $data, array('selected' => $selected, 'force_id' => 'radio_box_1')))) );
 	}
 	public function test_div_box() {
@@ -380,33 +380,33 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<input name="test" type="week" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->week('test')) );
 	}
 	public function test_active_box() {
-		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_1" value="0"><span class="btn btn-default btn-mini btn-xs btn-warning">'
-			.'<i class="icon-ban-circle fa fa-ban"></i> Disabled</span></label><label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_2" value="1">'
-			.'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span></label>'
+		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_1" value="0"><span><span class="btn btn-default btn-mini btn-xs btn-warning">'
+			.'<i class="icon-ban-circle fa fa-ban"></i> Disabled</span></span></label><label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_2" value="1">'
+			.'<span><span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span></span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->active_box('', array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_1" value="0"><span class="btn btn-default btn-mini btn-xs btn-warning">'
-			.'<i class="icon-ban-circle fa fa-ban"></i> Disabled</span></label><label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_2" value="1">'
-			.'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span></label>'
+		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_1" value="0"><span><span class="btn btn-default btn-mini btn-xs btn-warning">'
+			.'<i class="icon-ban-circle fa fa-ban"></i> Disabled</span></span></label><label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_2" value="1">'
+			.'<span><span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span></span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->active_box('test', array('force_id' => 'radio_box_1')))) );
 	}
 	public function test_allow_deny_box() {
-		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_1" value="DENY"><span class="btn btn-default btn-mini btn-xs btn-warning">'
-			.'<i class="icon-ban-circle fa fa-ban"></i> Deny</span></label><label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_2" value="ALLOW">'
-			.'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span></label>'
+		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_1" value="DENY"><span><span class="btn btn-default btn-mini btn-xs btn-warning">'
+			.'<i class="icon-ban-circle fa fa-ban"></i> Deny</span></span></label><label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_2" value="ALLOW">'
+			.'<span><span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span></span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->allow_deny_box('', array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_1" value="DENY"><span class="btn btn-default btn-mini btn-xs btn-warning">'
-			.'<i class="icon-ban-circle fa fa-ban"></i> Deny</span></label><label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_2" value="ALLOW">'
-			.'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span></label>'
+		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_1" value="DENY"><span><span class="btn btn-default btn-mini btn-xs btn-warning">'
+			.'<i class="icon-ban-circle fa fa-ban"></i> Deny</span></span></label><label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_2" value="ALLOW">'
+			.'<span><span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span></span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->allow_deny_box('test', array('force_id' => 'radio_box_1')))) );
 	}
 	public function test_yes_no_box() {
-		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_1" value="0"><span class="btn btn-default btn-mini btn-xs btn-warning">'
-			.'<i class="icon-ban-circle fa fa-ban"></i> No</span></label><label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_2" value="1">'
-			.'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span></label>'
+		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_1" value="0"><span><span class="btn btn-default btn-mini btn-xs btn-warning">'
+			.'<i class="icon-ban-circle fa fa-ban"></i> No</span></span></label><label class="radio radio-inline"><input type="radio" name="active" id="radio_box_1_2" value="1">'
+			.'<span><span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span></span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('', array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_1" value="0"><span class="btn btn-default btn-mini btn-xs btn-warning">'
-			.'<i class="icon-ban-circle fa fa-ban"></i> No</span></label><label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_2" value="1">'
-			.'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span></label>'
+		$this->assertEquals('<label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_1" value="0"><span><span class="btn btn-default btn-mini btn-xs btn-warning">'
+			.'<i class="icon-ban-circle fa fa-ban"></i> No</span></span></label><label class="radio radio-inline"><input type="radio" name="test" id="radio_box_1_2" value="1">'
+			.'<span><span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span></span></label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('test', array('force_id' => 'radio_box_1')))) );
 	}
 	public function test_submit() {
