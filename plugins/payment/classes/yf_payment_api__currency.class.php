@@ -1,9 +1,5 @@
 <?php
 
-if( !function_exists( 'array_replace_recursive' ) ) {
-	trigger_error( 'Not exists function "array_replace_recursive ( PHP 5 >= 5.3.0 )"', E_USER_ERROR );
-}
-
 class yf_payment_api__currency {
 
 	public $user_id_default = null;
@@ -115,6 +111,101 @@ class yf_payment_api__currency {
 			);
 		});
 		return( $data );
+	}
+
+	public function reverse( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_currency_rate ) ) { return( null ); }
+		// reverse
+		$result = $_currency_rate;
+		foreach( $_currency_rate as $i => $item ) {
+			$from = $item[ 'from' ];
+			$to   = $item[ 'to'   ];
+			$result[] = array(
+				'from'       => $item[ 'to'         ],
+				'to'         => $item[ 'from'       ],
+				'from_value' => $item[ 'to_value'   ],
+				'to_value'   => $item[ 'from_value' ],
+			);
+		}
+		return( $result );
+	}
+
+	public function prepare( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_currency_rate ) ) { return( null ); }
+		// currency
+		empty( $_base        ) && $_base        = 'UAH';
+		empty( $_main        ) && $_main        = 'UNT';
+		empty( $_main_shadow ) && $_main_shadow = 'USD';
+		// create index
+		$index = array();
+		$currencies = array();
+		foreach( $_currency_rate as $i => &$item ) {
+			$from = $item[ 'from' ];
+			$to   = $item[ 'to'   ];
+			$name = $from .'-'. $to;
+			// relations
+			$index[ $name ] = &$item;
+			// available
+			$currencies[ $from ] = $from;
+			$currencies[ $to   ] = $to;
+		}
+		// find main relations
+		$main_relations = $currencies;
+		unset( $main_relations[ $_base ] );
+		foreach( $main_relations as $id1 ) {
+			foreach( $main_relations as $id2 ) {
+				if( $id1 == $id2 ) { continue; }
+				if(
+					!empty( $index[ $id1 .'-'. $_base ] )
+					&& !empty( $index[ $id2 .'-'. $_base ] )
+				) {
+					$from_value = $index[ $id1 .'-'. $_base ][ 'from_value' ] / $index[ $id2 .'-'. $_base ][ 'from_value' ];
+					$to_value = $index[ $id1 .'-'. $_base ][ 'to_value' ] / $index[ $id2 .'-'. $_base ][ 'to_value' ];
+					$_currency_rate[] = array(
+						'from'       => $id1,
+						'to'         => $id2,
+						'from_value' => $from_value,
+						'to_value'   => $to_value,
+					);
+				}
+			}
+		}
+		// find main shadow
+		$result = $_currency_rate;
+		foreach( $_currency_rate as $i => &$item ) {
+			$from = $item[ 'from' ];
+			$to   = $item[ 'to'   ];
+			// add base
+			$base_id = null;
+			$_main_shadow == $from && $base_id = 'from';
+			$_main_shadow == $to   && $base_id = 'to';
+			if( !empty( $base_id ) ) {
+				$base_item = $item;
+				$base_item[ $base_id ] = $_main;
+				$result[] = $base_item;
+			}
+		}
+		return( $result );
+	}
+
+	public function update( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_currency_rate ) ) { return( null ); }
+		// var
+		$payment_api = $this->payment_api;
+		$sql_datetime = $payment_api->sql_datetime();
+		// add date time
+		foreach( $_currency_rate as $index => &$item ) {
+			$item[ 'datetime' ] = &$sql_datetime;
+		}
+		// store
+		$result = db()->table( 'payment_currency_rate' )->insert( $_currency_rate );
+		return( $result );
 	}
 
 }
