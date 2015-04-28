@@ -2,7 +2,14 @@
 
 class yf_payment_api__currency {
 
-	public $user_id_default = null;
+	public $base        = 'UAH';
+	public $main        = 'UNT';
+	public $main_shadow = 'USD';
+
+	public $rate = array(
+		'buy'  => +3.5, // 3%
+		'sell' => -2.5, // 2%
+	);
 	public $user_id         = null;
 
 	public $payment_api = null;
@@ -132,14 +139,37 @@ class yf_payment_api__currency {
 		return( $result );
 	}
 
+	public function correction( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_currency_rate ) ) { return( null ); }
+		// currency
+		empty( $_main ) && $_main = $this->main;
+		// correction
+		$k_buy  = 1 + $this->rate[ buy  ] / 100;
+		$k_sell = 1 + $this->rate[ sell ] / 100;
+		$result = $_currency_rate;
+		foreach( $result as $index => &$item ) {
+			$value = &$item[ 'to_value' ];
+			if( $item[ 'from' ] == $_main ) {
+				// buy
+				$value = $value * $k_buy;
+			} elseif( $item[ 'to' ] == $_main ) {
+				// sell
+				$value = $value * $k_sell;
+			}
+		}
+		return( $result );
+	}
+
 	public function prepare( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_currency_rate ) ) { return( null ); }
 		// currency
-		empty( $_base        ) && $_base        = 'UAH';
-		empty( $_main        ) && $_main        = 'UNT';
-		empty( $_main_shadow ) && $_main_shadow = 'USD';
+		empty( $_base        ) && $_base        = $this->base;
+		empty( $_main        ) && $_main        = $this->main;
+		empty( $_main_shadow ) && $_main_shadow = $this->main_shadow;
 		// create index
 		$index = array();
 		$currencies = array();
