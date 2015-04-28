@@ -51,7 +51,11 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		);
 		foreach ($_css_group_map as $_a => $_css_class) {
 			if (isset($extra[$_a][$name]) || ($is_html_array && isset($extra[$_a][$name_dotted]))) {
-				$extra['class_add_form_group'] .= ' '.$_css_class;
+				if ($extra['stacked']) {
+					$extra['class_add_stacked'] .= ' '.$_css_class;
+				} else {
+					$extra['class_add_form_group'] .= ' '.$_css_class;
+				}
 				break;
 			}
 		}
