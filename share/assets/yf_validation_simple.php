@@ -72,6 +72,7 @@ $(function(){
 		var input_group = _this.closest(".input-group");
 		var control_group = _this.closest(".control-group");
 		var controls = _this.closest(".controls");
+		var group_is_stacked = controls.has(".stacked-item").length;
 		var help_block = controls.find(".help-block");
 		if (!help_block.length) {
 			controls.append(yf_html_help_block);
@@ -80,11 +81,19 @@ $(function(){
 		var is_error = (!result || !result["ok"]);
 		if (is_error) {
 			title = result["error_msg"] || yf_title_error;
-			controls.addClass(yf_css_class_error);
-			control_group.addClass(yf_css_class_error);
+			if (group_is_stacked) {
+				_this.closest(".stacked-item").addClass(yf_css_class_error);
+			} else {
+				controls.addClass(yf_css_class_error);
+				control_group.addClass(yf_css_class_error);
+			}
 		} else {
-			controls.removeClass(yf_css_class_error);
-			control_group.removeClass(yf_css_class_error);
+			if (group_is_stacked) {
+				_this.closest(".stacked-item").removeClass(yf_css_class_error);
+			} else {
+				controls.removeClass(yf_css_class_error);
+				control_group.removeClass(yf_css_class_error);
+			}
 		}
 
 //		if (is_error) {
@@ -106,18 +115,27 @@ $(function(){
 		var textfield = _this.get(0);
 		var control_group = _this.closest(".control-group");
 		var controls = _this.closest(".controls");
+		var group_is_stacked = controls.has(".stacked-item").length;
 		var help_block = controls.find(".help-block");
 		// setCustomValidity not only sets the message, but also marks the field as invalid. 
 		// In order to see whether the field really is invalid, we have to remove the message first
 		textfield.setCustomValidity("");
 		if (!textfield.validity.valid) {
 			textfield.setCustomValidity(help_block.html());
-			controls.addClass(yf_css_class_error);
-			control_group.addClass(yf_css_class_error);
+			if (group_is_stacked) {
+				_this.closest(".stacked-item").addClass(yf_css_class_error);
+			} else {
+				controls.addClass(yf_css_class_error);
+				control_group.addClass(yf_css_class_error);
+			}
 			help_block.show()
 		} else {
-			controls.removeClass(yf_css_class_error);
-			control_group.removeClass(yf_css_class_error);
+			if (group_is_stacked) {
+				_this.closest(".stacked-item").removeClass(yf_css_class_error);
+			} else {
+				controls.removeClass(yf_css_class_error);
+				control_group.removeClass(yf_css_class_error);
+			}
 			help_block.hide()
 		}
 	})
