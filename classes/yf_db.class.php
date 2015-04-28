@@ -194,7 +194,7 @@ class yf_db {
 		}
 		// Set shutdown function
 		if ($this->USE_SHUTDOWN_QUERIES) {
-			register_shutdown_function(array($this, '_execute_shutdown_queries'));
+			register_shutdown_function(array(&$this, '_execute_shutdown_queries'));
 		}
 		if ($this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
 			register_shutdown_function(array($this, '_log_queries'));
@@ -528,7 +528,7 @@ class yf_db {
 		}
 		$log = &$this->_LOG[$log_id];
 		$time = (float)microtime(true) - (float)$query_time_start;
-		$sql = $log['sql'];
+		$sql = $log['sql[5~'];
 		if ($this->GATHER_AFFECTED_ROWS && $result) {
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
 			if (substr($_sql_type, 0, 4) === 'SHOW') {
@@ -607,7 +607,7 @@ class yf_db {
 			return $sql;
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
-			$this->_save_query_revision(__FUNCTION__, $table, compact('data', 'replace', 'ignore', 'on_duplicate_key_update'));
+			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
 		}
 		return $this->query($sql);
 	}
@@ -669,7 +669,7 @@ class yf_db {
 			return $sql;
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
-			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $data, 'where' => $where));
+			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
 		}
 		return $this->query($sql);
 	}
@@ -1180,7 +1180,7 @@ class yf_db {
 	function delete($table, $where, $as_sql = false) {
 		$sql = $this->from($table)->delete($where, $_as_sql = true);
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS && !$as_sql) {
-			$this->_save_query_revision(__FUNCTION__, $table, array('where' => $where, 'cond' => $cond));
+			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
 		}
 		return $as_sql ? $sql : $this->query($sql);
 	}
@@ -1355,7 +1355,7 @@ class yf_db {
 	* Execute shutdown queries
 	*/
 	function _execute_shutdown_queries() {
-		if (!$this->USE_SHUTDOWN_QUERIES || !isset($this->_shutdown_executed)) {
+		if (!$this->USE_SHUTDOWN_QUERIES || isset($this->_shutdown_executed)) {
 			return false;
 		}
 		foreach ((array)$this->_SHUTDOWN_QUERIES as $sql) {
@@ -1561,19 +1561,21 @@ class yf_db {
 	/**
 	*/
 	function _save_query_revision($method, $table, $params = array()) {
-		$trace = main()->trace_string();
-		$trace = array_slice(explode(PHP_EOL, $trace), 1, 5);
-		$extra = array(
-			'get_object'	=> $_GET['object'],
-			'get_action'	=> $_GET['action'],
-			'get_id'		=> $_GET['id'],
-			'trace'			=> $trace,
-		);
+		if (($allowed_methods = $this->QUERY_REVISIONS_METHODS)) {
+			if (!in_array($method, $allowed_methods)) {
+				return false;
+			}
+		}
+		if (($allowed_tables = $this->QUERY_REVISIONS_TABLES)) {
+			if (!in_array($table, $allowed_tables)) {
+				return false;
+			}
+		}
 		$to_insert = array(
 			'date'			=> date('Y-m-d H:i:s'),
-			'data_new'		=> $params['data'] ? json_encode($params['data']) : '',
-			'data_old'		=> $params['data_old'],
-			'data_diff'		=> $params['data_diff'],
+			'data_new'		=> is_array($params['data']) ? json_encode($params['data']) : (string)$params['data'],
+			'data_old'		=> is_array($params['data_old']) ? json_encode($params['data_olf']) : (string)$params['data_old'],
+			'data_diff'		=> is_array($params['data_diff']) ? json_encode($params['data_diff']) : (string)$params['data_diff'],
 			'user_id'		=> main()->ADMIN_ID,
 			'user_group'	=> main()->ADMIN_GROUP,
 			'site_id'		=> conf('SITE_ID'),
@@ -1581,8 +1583,14 @@ class yf_db {
 			'ip'			=> common()->get_ip(),
 			'query_method'	=> $method,
 			'query_table'	=> $table,
-			'extra'			=> json_encode($extra),
-			'url'			=> $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
+			'extra'			=> json_encode(array(
+				'get_object'	=> $_GET['object'],
+				'get_action'	=> $_GET['action'],
+				'get_id'		=> $_GET['id'],
+				'get_page'		=> $_GET['page'],
+				'trace'			=> array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5),
+			)),
+			'url'			=> (main()->is_https() ? 'https://' : 'http://'). $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
 		);
 		$sql = $this->insert_safe('sys_db_revisions', $to_insert, $only_sql = true);
 		$this->_add_shutdown_query($sql);
