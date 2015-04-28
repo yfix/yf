@@ -8,8 +8,8 @@ class form2_stacked_sample {
 		);
 		$body .= form($replace)
 			->validate(array(
-				'duration_month2' => 'required',
-				'desc' => 'required',
+				'duration_month2' => 'trim|required|gt[10]',
+				'desc' => 'trim|required',
 			))
 			->text('title')
 			->select_box('want', array('val1','val2'))
