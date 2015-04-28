@@ -974,9 +974,9 @@ class yf_html {
 					$label_extra['class'] .= ' '.$this->CLASS_LABEL_RADIO_SELECTED;
 				}
 				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
-							.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
-							.t($val_name)
-						.'</label>'.PHP_EOL;
+							. '<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
+							. '<span>'. t($val_name). '</span>'
+						. '</label>'.PHP_EOL;
 			}
 		}
 		return implode(PHP_EOL, $body);
@@ -1021,7 +1021,7 @@ class yf_html {
 		$extra['type'] = 'checkbox';
 		return '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
 				. '<input'._attrs($extra, array('type','name','id','value','checked','class','style','disabled','required')). ($add_str ? ' '.$add_str : '')
-				. '> &nbsp;'. ($translate ? t($extra['desc']) : $extra['desc']) // Please do not remove whitespace :)
+				. '> &nbsp;<span>'. ($translate ? t($extra['desc']) : $extra['desc']). '</span>' // Please do not remove whitespace before &nbsp; :)
 			. '</label>';
 	}
 
@@ -1110,7 +1110,7 @@ class yf_html {
 				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
 							. '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" value="'.$key.'"'
 							. ($is_selected ? ' '.$sel_text : '') . ($add_str ? ' '.trim($add_str) : '')
-							. '> &nbsp;'. $desc  // Please do not remove whitespace :)
+							. '> &nbsp;'. '<span>'.$desc.'</span>'  // Please do not remove whitespace :)
 						.'</label>';
 			}
 		}
