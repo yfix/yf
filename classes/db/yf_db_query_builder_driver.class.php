@@ -330,6 +330,9 @@ abstract class yf_db_query_builder_driver {
 		$where = implode(' ', array_filter($where, 'strlen'));
 		$key_escaped = $this->_escape_col_name($field);
 		$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.$key_escaped.' = '.$key_escaped.' '.($step < 0 ? '-' : '+'). ' '.abs(intval($step)). (!empty($where) ? ' '.$where : '');
+		if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+			$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql, 'where' => $where));
+		}
 		return $as_sql ? $sql : $this->db->query($sql);
 	}
 
@@ -512,10 +515,11 @@ abstract class yf_db_query_builder_driver {
 		if (empty($from)) {
 			return false;
 		}
+		$where = $this->_render_where();
 		$sql = array(
 			'DELETE',
 			$from,
-			$this->_render_where(),
+			$where,
 			$this->_render_limit(),
 		);
 		// Implode only non-empty array items
@@ -524,6 +528,9 @@ abstract class yf_db_query_builder_driver {
 			return $sql;
 		}
 		if ($sql) {
+			if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+				$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $where));
+			}
 			return $this->db->query($sql);
 		}
 		return false;
@@ -549,6 +556,9 @@ abstract class yf_db_query_builder_driver {
 			return $sql;
 		}
 		if ($sql) {
+			if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+				$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $data));
+			}
 			$result = $this->db->query($sql);
 			$insert_id = $result ? $this->db->insert_id() : false;
 			return $insert_id ?: $result;
@@ -577,6 +587,9 @@ abstract class yf_db_query_builder_driver {
 			.' INTO '.$this->_escape_table_name($table)
 			. ($fields_escaped ? ' ('. $fields_escaped. ')' : '')
 			. ' '. PHP_EOL. $select_sql;
+		if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+			$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+		}
 		return $params['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -696,6 +709,9 @@ abstract class yf_db_query_builder_driver {
 			return $sql;
 		}
 		if ($sql) {
+			if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+				$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+			}
 			$result = $this->db->query($sql);
 		}
 		return $result;
@@ -764,6 +780,9 @@ abstract class yf_db_query_builder_driver {
 			if ($only_sql) {
 				$out .= $sql.';'.PHP_EOL;
 			} else {
+				if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+					$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+				}
 				$this->db->query($sql);
 				$affected_rows += $this->db->affected_rows();
 			}

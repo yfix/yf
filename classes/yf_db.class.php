@@ -528,7 +528,7 @@ class yf_db {
 		}
 		$log = &$this->_LOG[$log_id];
 		$time = (float)microtime(true) - (float)$query_time_start;
-		$sql = $log['sql'];
+		$sql = $log['sql[5~'];
 		if ($this->GATHER_AFFECTED_ROWS && $result) {
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
 			if (substr($_sql_type, 0, 4) === 'SHOW') {
@@ -607,7 +607,7 @@ class yf_db {
 			return $sql;
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
-			$this->_save_query_revision(__FUNCTION__, $table, compact('data', 'replace', 'ignore', 'on_duplicate_key_update'));
+			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
 		}
 		return $this->query($sql);
 	}
@@ -669,7 +669,7 @@ class yf_db {
 			return $sql;
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
-			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $data, 'where' => $where));
+			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
 		}
 		return $this->query($sql);
 	}
@@ -1180,7 +1180,7 @@ class yf_db {
 	function delete($table, $where, $as_sql = false) {
 		$sql = $this->from($table)->delete($where, $_as_sql = true);
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS && !$as_sql) {
-			$this->_save_query_revision(__FUNCTION__, $table, array('where' => $where, 'cond' => $cond));
+			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
 		}
 		return $as_sql ? $sql : $this->query($sql);
 	}
