@@ -166,22 +166,31 @@ class yf_graphics {
 			$meta['robots'] = 'noindex,nofollow,noarchive,nosnippet';
 		}
 		$out = array();
-		foreach ((array)$meta as $name => $value) {
+		foreach ((array)$meta as $name => $values) {
 			$name = trim($name);
-			$value = trim($value);
-			if (!strlen($name) || !strlen($value)) {
+			if (!strlen($name) || !$values) {
 				continue;
 			}
 			$_name = _prepare_html($name);
-			$_value = _prepare_html($value);
-			if ($name === 'canonical') {
-				$out[$name] = '<link rel="canonical" href="'.$_value.'" />';
-			} elseif ($name === 'charset') {
-				$out[$name] = '<meta http-equiv="Content-Type" content="text/html; charset='.$_value.'" />';
-			} elseif (false !== strpos($name, ':')) {
-				$out[$name] = '<meta property="'.$_name.'" content="'.$_value.'" />';
-			} else {
-				$out[$name] = '<meta name="'.$_name.'" content="'.$_value.'" />';
+			if (!is_array($values)) {
+				$values = array($values);
+			}
+			foreach ((array)$values as $value) {
+				$value = trim($value);
+				if (!strlen($name) || !strlen($value)) {
+					continue;
+				}
+				$value = str_replace(array("\r\n\r\n\r\n", "\r\n\r\n", "\r\n", "\r", "\n"), ' ', $value);
+				$value = _prepare_html($value);
+				if ($name === 'canonical') {
+					$out[$name] = '<link rel="canonical" href="'.$value.'" />';
+				} elseif ($name === 'charset') {
+					$out[$name] = '<meta http-equiv="Content-Type" content="text/html; charset='.$value.'" />';
+				} elseif (false !== strpos($name, ':')) {
+					$out[$name] = '<meta property="'.$_name.'" content="'.$value.'" />';
+				} else {
+					$out[$name] = '<meta name="'.$_name.'" content="'.$value.'" />';
+				}
 			}
 		}
 		if (DEBUG_MODE) {
