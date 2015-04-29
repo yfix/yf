@@ -111,6 +111,7 @@ class yf_graphics {
 		if ($conf_title) {
 			$title = $conf_title;
 		}
+		$title = preg_replace('~\s+~ims', ' ', $title);
 		return _prepare_html($title);
 	}
 
