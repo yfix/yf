@@ -51,6 +51,9 @@ class yf_static_pages {
 				'locale' => 'required',
 			))
 			->db_insert_if_ok(self::table, array('name','locale','active'))
+			->on_before_update(function() {
+#				module_safe('manage_revisions')->content_revision_add();
+			})
 			->on_after_update(function() {
 				$id = db()->insert_id();
 				common()->admin_wall_add(array('static page added: '.$name, $id));
@@ -100,6 +103,9 @@ class yf_static_pages {
 				'text' => 'required',
 			))
 			->db_update_if_ok(self::table, array('name','text','page_title','page_heading','meta_keywords','meta_desc','active'), 'id='.$a['id'])
+			->on_before_update(function() {
+#				module_safe('manage_revisions')->content_revision_add();
+			})
 			->on_after_update(function() {
 				common()->admin_wall_add(array('static page updated: '.$a['name'], $a['id']));
 				cache_del('static_pages_names');
@@ -122,6 +128,7 @@ class yf_static_pages {
 	function delete() {
 		$a = $this->_get_info();
 		if ($a) {
+#			module_safe('manage_revisions')->content_revision_add();
 			db()->from(self::table)->whereid($a['id'])->delete();
 			common()->admin_wall_add(array('static page deleted: '.$a['id'], $a['id']));
 			cache_del('static_pages_names');
@@ -139,6 +146,7 @@ class yf_static_pages {
 	function active () {
 		$a = $this->_get_info();
 		if (!empty($a['id'])) {
+#			module_safe('manage_revisions')->content_revision_add();
 			db()->update(self::table, array('active' => (int)!$a['active']), (int)$a['id']);
 			common()->admin_wall_add(array('static page: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
 			cache_del('static_pages_names');
