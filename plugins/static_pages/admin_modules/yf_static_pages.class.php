@@ -112,7 +112,7 @@ class yf_static_pages {
 			->text('meta_keywords')
 			->text('meta_desc')
 			->active_box()
-			->save(array('desc' => 'Preview', 'class_add' => 'preview', 'icon' => 'fa fa-eye'))
+			->preview()
 			->save_and_back()
 		;
 	}
