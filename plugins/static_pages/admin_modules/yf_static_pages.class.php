@@ -78,7 +78,22 @@ class yf_static_pages {
 			$a['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $a['text']);
 		}
 		$_this = $this;
-		return form($a, array('hide_empty' => true))
+
+		jquery('
+			var bak_action = $("form#myform").attr("action");
+			$("[type=submit].preview", "form#myform").on("click", function() {
+				$(this).closest("form")
+					.attr("action", "'.url_user('/dynamic/preview/static_pages/'.$a['id']).'")
+					.attr("target", "_blank")
+			})
+			$("[type=submit]:not(.preview)", "form#myform").on("click", function() {
+				$(this).closest("form")
+					.attr("action", bak_action)
+					.attr("target", "")
+			})
+		');
+
+		return form($a, array('hide_empty' => true, 'id' => 'myform'))
 			->validate(array(
 				'__before__'=> 'trim',
 				'name' => array('required', function(&$in) use ($_this) {
@@ -100,7 +115,9 @@ class yf_static_pages {
 			->text('meta_keywords')
 			->text('meta_desc')
 			->active_box()
-			->save_and_back();
+			->save(array('desc' => 'Preview', 'class_add' => 'preview', 'icon' => 'fa fa-eye'))
+			->save_and_back()
+		;
 	}
 
 	/**
