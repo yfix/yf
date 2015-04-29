@@ -229,12 +229,19 @@ class yf_payment_api__currency {
 		// var
 		$payment_api = $this->payment_api;
 		$sql_datetime = $payment_api->sql_datetime();
-		// add date time
+		// add datetime, value
+		$decimals = 6;
 		foreach( $_currency_rate as $index => &$item ) {
 			$item[ 'datetime' ] = &$sql_datetime;
+			$value = &$item[ 'from_value' ];
+			$value = $payment_api->_number_mysql( $value, $decimals );
+			$value = &$item[ 'to_value' ];
+			$value = $payment_api->_number_mysql( $value, $decimals );
 		}
 		// store
-		$result = db()->table( 'payment_currency_rate' )->insert( $_currency_rate );
+		$result = db()->table( 'payment_currency_rate' )->insert( $_currency_rate
+			// , array( 'sql' => true, )
+		);
 		return( $result );
 	}
 
