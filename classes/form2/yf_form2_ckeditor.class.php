@@ -49,13 +49,15 @@ class yf_form2_ckeditor {
 		if (strlen($config_js)) {
 			js($config_js);
 		}
-		jquery('
-			var _content_id = "#'.$content_id.'";
-			var _hidden_id = "#'.$hidden_id.'";
-			$(_content_id).parents("form").submit(function(){
-				$("input[type=hidden]" + _hidden_id).val( $(_content_id).html() );
-			})
-		');
+		if (strlen($hidden_id) && strlen($content_id)) {
+			jquery('
+				var _content_id = "#'.$content_id.'";
+				var _hidden_id = "#'.$hidden_id.'";
+				$(_content_id).parents("form").submit(function(){
+					$("input[type=hidden]" + _hidden_id).val( $(_content_id).html() );
+				})
+			');
+		}
 		return $body;
 	}
 }
