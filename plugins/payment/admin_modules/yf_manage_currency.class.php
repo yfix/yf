@@ -28,6 +28,10 @@ class yf_manage_currency {
 			'list' => url_admin( array(
 				'object'           => $object,
 			)),
+			'update' => url_admin( array(
+				'object' => $object,
+				'action' => 'update',
+			)),
 			'edit' => url_admin( array(
 				'object' => $object,
 				'action' => 'edit',
@@ -123,9 +127,7 @@ class yf_manage_currency {
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
 		$url         = &$this->url;
-		$sql = db()->table( 'payment_currency_rate' )
-			->sql();
-		$_this = $this;
+		$sql = db()->table( 'payment_currency_rate' )->sql();
 		return
 			table( $sql, array(
 				'filter' => $filter,
@@ -136,8 +138,6 @@ class yf_manage_currency {
 				),
 				'hide_empty' => true,
 			))
-			->on_before_render(function($p, $data, $table) use ($_this) {
-			})
 			->text( 'currency_rate_id', 'ID'  )
 			->date( 'datetime', 'дата обновления', array( 'format' => 'full', 'nowrap' => 1 ) )
 			->text( 'from', 'валюта продажи' )
@@ -145,6 +145,7 @@ class yf_manage_currency {
 			->text( 'from_value', 'величина продажи' )
 			->text( 'to_value'  , 'величина покупки' )
 			->btn( 'Правка' , $url[ 'edit' ], array( 'icon' => 'fa fa-edit' ) )
+			->footer_link( 'Обновить курс валют', $url[ 'update' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
 		;
 	}
 
@@ -190,42 +191,71 @@ class yf_manage_currency {
 			->text( 'to_value'  , 'величина покупки' )
 			->row_start()
 				->save_and_back()
-				->link( 'Назад' , $url[ 'list' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-chevron-left' ) )
+				->link( 'Назад' , $url[ 'list' ], array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
 			->row_end()
 		;
 		return( $result );
 	}
 
-	function update() {
+	function _update() {
 		$currency__api = _class( 'payment_api__currency' );
-		$data = $currency__api->load_from_NBU();
-		$data = $currency__api->reverse( array(
-			'currency_rate' => $data,
-		));
-		$data = $currency__api->prepare( array(
-			'currency_rate' => $data,
-		));
-		$data = $currency__api->correction( array(
-			'currency_rate' => $data,
-		));
-		$result = $currency__api->update( array(
-			'currency_rate' => $data,
-		));
+		$data   = $currency__api->load_from_NBU();
+		if( empty( $data ) ) { return( null ); }
+		$data   = $currency__api->reverse( array( 'currency_rate'    => $data, ));
+		$data   = $currency__api->prepare( array( 'currency_rate'    => $data, ));
+		$data   = $currency__api->correction( array( 'currency_rate' => $data, ));
+		$count = count( $data );
+		$result = $currency__api->update( array( 'currency_rate'     => $data, ));
+		return( array( $result, $count ) );
+	}
+
+	function update() {
+		$url = &$this->url;
+		// command line interface
 		$is_cli = ( php_sapi_name() == 'cli' );
-		if( $is_cli ) {
-			if( empty( $result ) || $result < 4 ) {
-				$status = 1;
-				$message = 'Currency rate update is fail: '. $result;
-			} else {
-				$status = 0;
-				$message = 'Currency rate update is success: '
-					. count( $data ) .' ('. $result . ')';
-				;
-			}
-			echo( $message . PHP_EOL );
-			exit( $status );
-		}
+		$is_cli && $this->_update_cli();
+		// web
+		$replace = array(
+			'is_confirm' => false,
+		);
+		$result = form( $replace )
+			->on_post( function( $data, $extra, $rules ) {
+				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
+				if( $is_confirm ) {
+					list( $result, $count ) = $this->_update();
+					if( empty( $result ) || $result < 4 ) {
+						$level = 'error';
+						$message = 'Ошибка: обновление курса валют: '. $result;
+					} else {
+						$level = 'success';
+						$message = 'Выполнено: обновление курса валют: '. $count;
+					}
+					common()->add_message( $message, $level );
+				} else {
+					common()->message_info( 'Требуется подтверждение, для выполнения операции' );
+				}
+			})
+			->check_box( 'is_confirm', array( 'desc' => 'Подтверждение', 'no_label' => true ) )
+			->row_start()
+				->submit( 'operation', 'update', array( 'desc' => 'Обновить курс валют', 'icon' => 'fa fa-refresh' ) )
+				->link( 'Назад' , $url[ 'list' ], array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
+			->row_end()
+		;
 		return( $result );
+	}
+
+	function _update_cli() {
+		list( $result, $count ) = $this->_update();
+		if( empty( $result ) || $result < 4 ) {
+			$status = 1;
+			$message = 'Currency rate update is fail: '. $result;
+		} else {
+			$status = 0;
+			$message = 'Currency rate update is success: '. $count;
+			;
+		}
+		echo( $message . PHP_EOL );
+		exit( $status );
 	}
 
 }
