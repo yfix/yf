@@ -19,6 +19,10 @@ class yf_common {
 	public $MEDIA_PATH		= '';
 	/** @var bool Used by propose url from name */
 	public $URL_FORCE_DASHES = false;
+	/** @var bool Track content revisions */
+	public $CONTENT_REVISIONS = true;
+	/** @var array Restrict logged revisions to specific content objects */
+	public $CONTENT_REVISIONS_OBJECTS = array();
 
 	/**
 	* Constructor
@@ -36,6 +40,39 @@ class yf_common {
 	*/
 	function __call($name, $args) {
 		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
+	* Should be used from admin modules
+	*/
+	function content_revision_add ($extra = array()) {
+		if (!$this->CONTENT_REVISIONS) {
+			return false;
+		}
+		$object_name = $extra['object_name'];
+		$object_id = $extra['object_id'];
+		if (($allowed_objects = $this->CONTENT_REVISIONS_OBJECTS)) {
+			if (!in_array($object_name, $allowed_objects)) {
+				return false;
+			}
+		}
+		$to_insert = array(
+			'object_name'	=> $object_name,
+			'object_id'		=> $object_id,
+			'locale'		=> $extra['locale'],
+			'data_old'		=> is_array($extra['data_old']) ? 'json:'.json_encode($extra['data_old']) : (string)$extra['data_old'],
+			'data_new'		=> is_array($extra['data_new']) ? 'json:'.json_encode($extra['data_new']) : (string)$extra['data_new'],
+			'comment'		=> $extra['comment'],
+			'date'			=> date('Y-m-d H:i:s'),
+			'user_id'		=> main()->ADMIN_ID,
+			'site_id'		=> conf('SITE_ID'),
+			'server_id'		=> conf('SERVER_ID'),
+			'ip'			=> common()->get_ip(),
+			'url'			=> (main()->is_https() ? 'https://' : 'http://'). $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
+			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
+		);
+		$sql = db()->insert_safe('sys_revisions', $to_insert, $only_sql = true);
+		return db()->_add_shutdown_query($sql);
 	}
 
 	/**
