@@ -23,6 +23,7 @@ class yf_form2 {
 	public $CLASS_ICON_EMAIL = 'icon-email fa fa-at fa-fw';
 	public $CLASS_ICON_CURRENCY = 'icon-dollar fa fa-dollar fa-fw';
 	public $CLASS_ICON_CALENDAR = 'icon icon-calendar fa fa-calendar fa-fw';
+	public $CLASS_ICON_PREVIEW = 'icon-eye fa fa-eye';
 	public $CLASS_LABEL_INFO = 'label label-info';
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 	public $CLASS_REQUIRED = 'control-group-required form-group-required';
@@ -1537,7 +1538,7 @@ class yf_form2 {
 			$extra['class'] = $extra['class'] ?: $form->CLASS_BTN_SUBMIT. $form->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['value'] = $extra['value'];
 			$extra['type'] = 'submit';
-			$button_text = $extra[ 'desc' ];
+			$button_text = $extra['desc'];
 			$extra['desc'] = '';
 			$extra['buttons_controls'] = true;
 
@@ -1617,6 +1618,45 @@ class yf_form2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_SAVE;
 		}
+		return $this->submit($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function preview($name = '', $value = '', $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		if (is_array($value)) {
+			$extra = (array)$extra + $value;
+			$value = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$name = $extra['name'] ?: $name;
+		$extra['desc'] = $extra['desc'] ?: 'Preview';
+		if (!$name) {
+			$name = 'preview';
+		}
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = $this->CLASS_ICON_PREVIEW;
+		}
+/*
+		$form_id = 'content_form';
+		jquery('
+			var form_id = "'.$form_id.'";
+			var bak_action = $("form#" + form_id).attr("action");
+			var preview_url = "'.url_user('/dynamic/preview/static_pages/'.$a['id']).'";
+			$("[type=submit].preview", "form#" + form_id).on("click", function() {
+				$(this).closest("form").attr("target", "_blank").attr("action", preview_url)
+			})
+			$("[type=submit]:not(.preview)", "form#" + form_id).on("click", function() {
+				$(this).closest("form").attr("target", "").attr("action", bak_action)
+			})
+		');
+*/
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
