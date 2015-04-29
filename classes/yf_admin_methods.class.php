@@ -415,24 +415,27 @@ class yf_admin_methods {
 	* Return default config used by CKEditor
 	*/
 	function _get_cke_config($params = array()) {
+		asset('ckeditor-plugin-save');
 		asset('ckeditor-plugin-autosave');
 		asset('ckeditor-plugin-html5-video');
 		asset('ckeditor-plugin-youtube');
+//		asset('ckeditor-plugin-fontawesome4');
 		return array(
 			'toolbar' => array(
 				array(
 					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
-					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', 'Table', '-', 'Blockquote', 'Link', 'Unlink', 'Image', 'Video', 'Youtube', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', 'Table', '-', 'Blockquote', 'Link', 'Unlink', 'Image', 'Video', 'Youtube', '-', 
+					'SpecialChar', 'FontAwesome', '-', 'Source', '-', 'Save', '-', 'Maximize'
 				),
 			),
 			'language' => conf('language'),
 			'removeButtons' => 'Flash',
-			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,flash,iframe,pagebreak,showborders,templates,style',
-			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
-			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); video[*]{*}; source[*]{*}; div[*]{*}(*); div[*]{*}(*) table tr th td caption',
-			'extraPlugins' => 'autosave,video,youtube',
-#			'autosave_SaveKey' => 'cke_autosave_'.abs(crc32($_GET['object'].'_'.$_GET['action'].'_'.$_GET['id'])),// 'autosaveKey',
-
+			'removePlugins' => 'bidi,dialogadvtab,filebrowser,horizontalrule,flash,iframe,pagebreak,showborders,templates',
+			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address', //,div',
+#			'allowedContent' => true,
+			'extraAllowedContent' => implode('; ', array('a[*]{*}(*)','img[*]{*}(*)','video[*]{*}','source[*]{*}','div(*){*}[*]','table','tr','th','td','caption')),
+			'extraPlugins' => 'autosave,video,youtube', //,widget,lineutils,fontawesome',
+			'forcePasteAsPlainText' => true,
 #			'filebrowserBrowseUrl' => '/kcfinder/browse.php?type=files',
 #			'filebrowserImageBrowseUrl' => '/kcfinder/browse.php?type=images',
 #			'filebrowserFlashBrowseUrl' => '/kcfinder/browse.php?type=flash',
