@@ -416,19 +416,21 @@ class yf_admin_methods {
 	*/
 	function _get_cke_config($params = array()) {
 		asset('ckeditor-plugin-autosave');
+		asset('ckeditor-plugin-html5-video');
+		asset('ckeditor-plugin-youtube');
 		return array(
 			'toolbar' => array(
 				array(
 					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
-					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', 'Table', '-', 'Blockquote', 'Link', 'Unlink', 'Image', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', 'Table', '-', 'Blockquote', 'Link', 'Unlink', 'Image', 'Video', 'Youtube', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
 				),
 			),
 			'language' => conf('language'),
 			'removeButtons' => 'Flash',
 			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,flash,iframe,pagebreak,showborders,templates,style',
 			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
-			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*) table tr th td caption',
-			'extraPlugins' => 'autosave',
+			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); video[*]{*}; source[*]{*}; div[*]{*}(*); div[*]{*}(*) table tr th td caption',
+			'extraPlugins' => 'autosave,video,youtube',
 #			'autosave_SaveKey' => 'cke_autosave_'.abs(crc32($_GET['object'].'_'.$_GET['action'].'_'.$_GET['id'])),// 'autosaveKey',
 
 #			'filebrowserBrowseUrl' => '/kcfinder/browse.php?type=files',
