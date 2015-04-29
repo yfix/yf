@@ -1637,6 +1637,7 @@ class yf_form2 {
 		}
 		$name = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: 'Preview';
+		$extra['class_add'] = $extra['class_add'] ?: 'preview';
 		if (!$name) {
 			$name = 'preview';
 		}
