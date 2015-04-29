@@ -425,7 +425,7 @@ class yf_admin_methods {
 				array(
 					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
 					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', 'Table', '-', 'Blockquote', 'Link', 'Unlink', 'Image', 'Video', 'Youtube', '-', 
-					'SpecialChar', 'FontAwesome', '-', 'Source', '-', 'Save', '-', 'Maximize'
+					'SpecialChar', 'FontAwesome', '-', 'Source', '-', 'Save', '-', 'Maximize'//, 'Preview'
 				),
 			),
 			'language' => conf('language'),
@@ -434,8 +434,13 @@ class yf_admin_methods {
 			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address', //,div',
 #			'allowedContent' => true,
 			'extraAllowedContent' => implode('; ', array('a[*]{*}(*)','img[*]{*}(*)','video[*]{*}','source[*]{*}','div(*){*}[*]','table','tr','th','td','caption')),
-			'extraPlugins' => 'autosave,video,youtube', //,widget,lineutils,fontawesome',
+			'extraPlugins' => 'autosave,video,youtube,preview', //,widget,lineutils,fontawesome',
 			'forcePasteAsPlainText' => true,
+#			'contentsCss' => array(
+#				'http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css',
+#				'http://netdna.bootstrapcdn.com/bootswatch/3.3.2/slate/bootstrap.min.css',
+#				'http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css'
+#			),
 #			'filebrowserBrowseUrl' => '/kcfinder/browse.php?type=files',
 #			'filebrowserImageBrowseUrl' => '/kcfinder/browse.php?type=images',
 #			'filebrowserFlashBrowseUrl' => '/kcfinder/browse.php?type=flash',
