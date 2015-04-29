@@ -1627,23 +1627,23 @@ class yf_db {
 			return false;
 		}
 		$cpu_usage = function_exists('getrusage') ? getrusage() : array();
-
+		$ip = common()->get_ip();
 		$this->_instrument_items = array(
 			'memory_usage'		=> function_exists('memory_get_usage') ? memory_get_usage() : '',
 			'cpu_user'			=> $cpu_usage['ru_utime.tv_sec'] * 1e6 + $cpu_usage['ru_utime.tv_usec'],
 			'cpu_system'		=> $cpu_usage['ru_stime.tv_sec'] * 1e6 + $cpu_usage['ru_stime.tv_usec'],
-			'GET_object'		=> $_GET['object'],
-			'GET_action'		=> $_GET['action'],
-			'GET_id'			=> $_GET['id'],
-			'GET_page'			=> $_GET['page'],
+			'get_object'		=> $_GET['object'],
+			'get_action'		=> $_GET['action'],
+			'get_id'			=> $_GET['id'],
+			'get_page'			=> $_GET['page'],
 			'user_id'			=> $_SESSION['user_id'],
 			'user_group'		=> $_SESSION['user_group'],
 			'session_id'		=> session_id(),
-			'request_id'		=> md5($_SERVER['REMOTE_PORT']. $_SERVER['REMOTE_ADDR']. $_SERVER['REQUEST_URI']. microtime(true)),
+			'request_id'		=> md5($_SERVER['REMOTE_PORT']. $ip. $_SERVER['REQUEST_URI']. microtime(true)),
 			'request_method'	=> $_SERVER['REQUEST_METHOD'],
 			'request_uri'		=> $_SERVER['REQUEST_URI'],
 			'http_host'			=> $_SERVER['HTTP_HOST'],
-			'remote_addr'		=> $_SERVER['REMOTE_ADDR'],
+			'ip'				=> $ip,
 		);
 		return true;
 	}
@@ -1679,7 +1679,7 @@ class yf_db {
 			// all other chars are safe in comments
 			$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key));
 			// Add the requested instrumentation keys
-			$query_header .= "\t".$key.': '.$val;
+			$query_header .= "\t".$key.': '.$this->es($val);
 		}
 		return $query_header. PHP_EOL. $query_sql;
 	}
