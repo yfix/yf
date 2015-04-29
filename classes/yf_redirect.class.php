@@ -302,7 +302,7 @@ class yf_redirect {
 			'use_rewrite'	=> (int)$params['rewrite'],
 			'redirect_type'	=> $params['type'],
 			'date'			=> gmdate('Y-m-d H:i:s'),
-			'ip'			=> $_SERVER['REMOTE_ADDR'],
+			'ip'			=> common()->get_ip(),
 			'query_string'	=> $_SERVER['QUERY_STRING'],
 			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
 			'referer'		=> $_SERVER['HTTP_REFERER'],
