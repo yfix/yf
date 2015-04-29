@@ -10,39 +10,39 @@
 class yf_captcha {
 
 	/** @var string Secret key (will be added to hash) */
-	public $secret_key    = '';
+	public $secret_key		= '';
 	/** @var bool Use cookies or session vars */
-	public $use_cookies   = false;
+	public $use_cookies		= false;
 	/** @var bool Checking if once used */
-	public $already_used  = false;
+	public $already_used	= false;
 	/** @var string Cookie var name */
-	public $var_name      = 'image_hash';
+	public $var_name		= 'image_hash';
 	/** @var int Cookie time-to-live (in seconds) */
-	public $cookie_ttl    = 86400; // @var 24 * 3600 == 1 day
+	public $cookie_ttl		= 86400; // @var 24 * 3600 == 1 day
 	/** @var string Path to the True Type Font to use (could be array) */
-	public $ttf_font_path = '';
+	public $ttf_font_path	= '';
 	/** @var int Result image width (in pixels) */
-	public $image_width   = 110;
+	public $image_width		= 110;
 	/** @var int Result image height (in pixels) */
-	public $image_height  = 30;
+	public $image_height	= 30;
 	/** @var array Allowed symbols to use in randomizer */
-	var	$symbols_array    = array();
+	public $symbols_array	= array();
 	/** @var int Number of symbols to generate */
-	var	$num_symbols      = 5;
+	public $num_symbols		= 5;
 	/** @var int Middle value (will be bounced randomly with +2 and -2) */
-	var	$font_height      = 16;
+	public $font_height		= 16;
 	/** @var int Number of random rectangles to add */
-	var	$add_rects        = 15;
+	public $add_rects		= 15;
 	/** @var int Number of random lines to add */
-	var	$add_lines        = 15;
+	public $add_lines		= 15;
 	/** @var int Number of random ellipses to add */
-	var	$add_ellipses     = 10;
+	public $add_ellipses	= 10;
 	/** @var int Number of random pixels to add */
-	var	$add_pixels       = 500;
+	public $add_pixels		= 500;
 	/** @var int @conf_skip Image background color */
-	public $bg_color      = 0x00ffffff; // @var 0x AA RR GG BB (alpha, red, green, blue)
+	public $bg_color		= 0x00ffffff; // @var 0x AA RR GG BB (alpha, red, green, blue)
 	/** @var array @conf_skip Colors arrays */
-	public $text_colors	= array(
+	public $text_colors		= array(
 		0x162A7C8F,
 		0x1628508C,
 		0x16A12F9B,
@@ -50,7 +50,7 @@ class yf_captcha {
 		0x16622A19,
 	);
 	/** @var array @conf_skip */
-	public $rect_colors	= array(
+	public $rect_colors		= array(
 		0x702A7C8F,
 		0x7028508C,
 		0x70A12F9B,
@@ -58,7 +58,7 @@ class yf_captcha {
 		0x70622A19,
 	);
 	/** @var array @conf_skip */
-	public $line_colors	= array(
+	public $line_colors		= array(
 		0x202A7C8F,
 		0x2028508C,
 	);

@@ -37,7 +37,7 @@ class yf_manage_shop_suppliers{
 					'sort_order'	=> intval($_POST['sort_order']),
 				);
 				db()->insert(db('shop_suppliers'), db()->es($sql_array));
-				module('manage_revisions')->new_revision(__FUNCTION__, db()->insert_id(), 'shop_suppliers');
+				module('manage_shop_revisions')->new_revision(__FUNCTION__, db()->insert_id(), 'shop_suppliers');
 				common()->admin_wall_add(array('shop supplier added: '.$_POST['name'], db()->insert_id()));
 				if (!empty($_FILES)) {
 					$man_id = $_GET['id'];
@@ -93,9 +93,9 @@ class yf_manage_shop_suppliers{
 					'meta_desc'     => $_POST['meta_desc'],
 					'sort_order'=> intval($_POST['sort_order']),
 				);
-				module('manage_revisions')->check_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
+				module('manage_shop_revisions')->check_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
 				db()->update('shop_suppliers', db()->es($sql_array), 'id='.$_GET['id']);
-				module('manage_revisions')->new_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
+				module('manage_shop_revisions')->new_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
 				common()->admin_wall_add(array('shop supplier updated: '.$_POST['name'], $_GET['id']));
 				if (!empty($_FILES)) {
 					$man_id = $_GET['id'];
@@ -137,9 +137,9 @@ class yf_manage_shop_suppliers{
 			$info = db()->query_fetch('SELECT * FROM '.db('shop_suppliers').' WHERE id='.intval($_GET['id']));
 		}
 		if (!empty($info['id'])) {
-			module('manage_revisions')->check_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
+			module('manage_shop_revisions')->check_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
 			db()->query('DELETE FROM '.db('shop_suppliers').' WHERE id='.intval($_GET['id']).' LIMIT 1');
-			module('manage_revisions')->new_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
+			module('manage_shop_revisions')->new_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
 			common()->admin_wall_add(array('shop supplier deleted: '.$info['name'], $_GET['id']));
 		}
 		if ($_POST['ajax_mode']) {

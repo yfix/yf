@@ -2,7 +2,7 @@
 
 /**
 */
-class yf_manage_revisions {
+class yf_manage_shop_revisions {
 
 	/**
 	*/
@@ -23,13 +23,13 @@ class yf_manage_revisions {
 			->text('ip')
 			->text('action')
 			->text('item_id')
-			->btn_view('', './?object=manage_revisions&action=details&id=%d')
+			->btn_view('', './?object=manage_shop_revisions&action=details&id=%d')
 		;
 	}
 
 	/**
 	*/
-	function new_revision($function, $ids, $db_table){
+	function new_revision($function, $ids, $db_table) {
 		if (empty($function) || empty($ids) || empty($db_table)) {
 			return false;
 		}
@@ -85,11 +85,11 @@ class yf_manage_revisions {
 		return form($a, array(
 				'dd_mode' => 1,
 			))
-			->link('Revisions list','./?object=manage_revisions')
+			->link('Revisions list','./?object=manage_shop_revisions')
 			->admin_info('user_id')
 			->info_date('add_date', array('format' => 'full'))
 			->info('action')
-			->link('Activate new version', './?object=manage_revisions&action=rollback_revision&id='.$a['id'])
+			->link('Activate new version', './?object=manage_shop_revisions&action=rollback_revision&id='.$a['id'])
 			->tab_start('View_difference')
 				->func('data', function($extra, $r, $_this) {
 					$origin = json_decode($r[$extra['name']], true);
@@ -181,7 +181,7 @@ class yf_manage_revisions {
 			->date('add_date', array('format' => '%d/%m/%Y', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_revisions&action=details&id=%d&page='.$_GET['page'])
+			->btn_view('', './?object=manage_shop_revisions&action=details&id=%d&page='.$_GET['page'])
 		;
 	}
 
@@ -213,7 +213,7 @@ class yf_manage_revisions {
 		db()->commit();
 		common()->message_success("Revision retrieved");
 		common()->admin_wall_add(array('Rollback common revision: '.$_GET['id'], $_GET['id']));
-		return js_redirect('./?object=manage_revisions&action=details&id='.$_GET['id']);
+		return js_redirect('./?object=manage_shop_revisions&action=details&id='.$_GET['id']);
 	}
 
 }
