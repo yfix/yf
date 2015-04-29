@@ -77,23 +77,20 @@ class yf_static_pages {
 		if (false !== strpos($a['text'], '{') && false !== strpos($a['text'], '}')) {
 			$a['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $a['text']);
 		}
-		$_this = $this;
-
+		$form_id = 'content_form';
 		jquery('
-			var bak_action = $("form#myform").attr("action");
-			$("[type=submit].preview", "form#myform").on("click", function() {
-				$(this).closest("form")
-					.attr("action", "'.url_user('/dynamic/preview/static_pages/'.$a['id']).'")
-					.attr("target", "_blank")
+			var form_id = "'.$form_id.'";
+			var bak_action = $("form#" + form_id).attr("action");
+			var preview_url = "'.url_user('/dynamic/preview/static_pages/'.$a['id']).'";
+			$("[type=submit].preview", "form#" + form_id).on("click", function() {
+				$(this).closest("form").attr("target", "_blank").attr("action", preview_url)
 			})
-			$("[type=submit]:not(.preview)", "form#myform").on("click", function() {
-				$(this).closest("form")
-					.attr("action", bak_action)
-					.attr("target", "")
+			$("[type=submit]:not(.preview)", "form#" + form_id).on("click", function() {
+				$(this).closest("form").attr("target", "").attr("action", bak_action)
 			})
 		');
-
-		return form($a, array('hide_empty' => true, 'id' => 'myform'))
+		$_this = $this;
+		return form($a, array('hide_empty' => true, 'id' => $form_id))
 			->validate(array(
 				'__before__'=> 'trim',
 				'name' => array('required', function(&$in) use ($_this) {
