@@ -196,4 +196,36 @@ class yf_manage_currency {
 		return( $result );
 	}
 
+	function update() {
+		$currency__api = _class( 'payment_api__currency' );
+		$data = $currency__api->load_from_NBU();
+		$data = $currency__api->reverse( array(
+			'currency_rate' => $data,
+		));
+		$data = $currency__api->prepare( array(
+			'currency_rate' => $data,
+		));
+		$data = $currency__api->correction( array(
+			'currency_rate' => $data,
+		));
+		$result = $currency__api->update( array(
+			'currency_rate' => $data,
+		));
+		$is_cli = ( php_sapi_name() == 'cli' );
+		if( $is_cli ) {
+			if( empty( $result ) || $result < 4 ) {
+				$status = 1;
+				$message = 'Currency rate update is fail: '. $result;
+			} else {
+				$status = 0;
+				$message = 'Currency rate update is success: '
+					. count( $data ) .' ('. $result . ')';
+				;
+			}
+			echo( $message . PHP_EOL );
+			exit( $status );
+		}
+		return( $result );
+	}
+
 }
