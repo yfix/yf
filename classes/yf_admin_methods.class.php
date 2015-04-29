@@ -415,6 +415,7 @@ class yf_admin_methods {
 	* Return default config used by CKEditor
 	*/
 	function _get_cke_config($params = array()) {
+		asset('ckeditor-plugin-save');
 		asset('ckeditor-plugin-autosave');
 		asset('ckeditor-plugin-html5-video');
 		asset('ckeditor-plugin-youtube');
@@ -424,7 +425,7 @@ class yf_admin_methods {
 				array(
 					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
 					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', 'Table', '-', 'Blockquote', 'Link', 'Unlink', 'Image', 'Video', 'Youtube', '-', 
-					'SpecialChar', 'FontAwesome', '-', 'Source', '-', 'Maximize'
+					'SpecialChar', 'FontAwesome', '-', 'Source', '-', 'Save', '-', 'Maximize'
 				),
 			),
 			'language' => conf('language'),
