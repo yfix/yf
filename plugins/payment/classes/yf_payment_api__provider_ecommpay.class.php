@@ -16,6 +16,40 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/card/json/';
 
 	public $method_allow = array(
+		'payin' => array(
+			'card' => array(
+				'title'       => 'Visa, MasterCard',
+				'icon'        => 'visa-mastercard',
+				'option' => array(
+					'payment_group_id' => 1,
+					'followup'         => 1,
+				),
+				'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
+			'qiwi' => array(
+				'title'       => 'Qiwi',
+				'icon'        => 'qiwi',
+				'option' => array(
+					'payment_group_id' => 1,
+					'followup'         => 1,
+				),
+				'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
+		),
 		'payout' => array(
 			'pay_card' => array(
 				'title'       => 'EcommPay',
