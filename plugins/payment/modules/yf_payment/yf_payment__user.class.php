@@ -32,6 +32,8 @@ class yf_payment__user {
 			$_provider[ '_IS_DEPOSITION' ] && $provider[ 'deposition' ][] = $provider_id;
 			$_provider[ '_IS_PAYMENT'    ] && $provider[ 'payment'    ][] = $provider_id;
 		}
+		// user
+		$user = user( main()->USER_ID );
 		// misc
 		$status        = $payment_api->status();
 		$currencies    = $payment_api->currencies;
@@ -45,7 +47,9 @@ class yf_payment__user {
 		$payment_module->t( $status );
 		// tpl
 		$replace = array(
-			'payment'   => json_encode( array(
+			'user'    => $user,
+			'payment' => json_encode( array(
+				'user'                 => $user,
 				'account'              => $account,
 				'currency'             => $currency,
 				'currencies'           => $currencies,

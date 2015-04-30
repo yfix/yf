@@ -196,6 +196,26 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// translation
 		$strs = &$this->method_allow[ 'payout' ][ 'pay_card' ][ 'option' ];
 		foreach( $strs as $key => &$str ) { $str = t( $str ); }
+		// payout default option
+		$user_id = main()->USER_ID;
+		if( $user_id ) {
+			$user = user( $user_id );
+			$option_default = &$this->method_allow[ 'payout' ][ 'pay_card' ][ 'option_default' ];
+			$option_default = array(
+				'card'                       => $user[ 'card' ],
+				'sender_first_name'          => $user[ 'first_name' ],
+				'sender_last_name'           => $user[ 'last_name' ],
+				'sender_middle_name'         => $user[ 'middle_name' ] ?: $user[ 'patronymic' ],
+				'sender_passport_number'     => $user[ 'passport_num' ],
+				'sender_passport_issue_date' => $user[ 'passport_issue_date' ],
+				'sender_passport_issued_by'  => $user[ 'passport_issued_by' ] ?: $user[ 'passport_released' ],
+				'sender_phone'               => $user[ 'phone' ],
+				'sender_birthdate'           => $user[ 'birthdate' ] ?: $user[ 'birth_date' ],
+				'sender_address'             => $user[ 'address' ] ?: $user[ 'address2' ],
+				'sender_city'                => $user[ 'city' ] ?: $user[ 'city2' ],
+				'sender_postindex'           => $user[ 'zip_code' ] ?: $user[ 'zip_code2' ],
+			);
+		}
 		// parent
 		parent::_init();
 	}
