@@ -24,6 +24,14 @@ class yf_payment_api__provider {
 		return( $result );
 	}
 
+	public function is_test( $options = null ) {
+		$result = false;
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( !empty( $this->TEST_MODE ) || !empty( $_test_mode ) ) { $result = true; }
+		return( $result );
+	}
+
 	public function deposition( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->_transaction( $options );

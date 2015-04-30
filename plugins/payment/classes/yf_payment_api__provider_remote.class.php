@@ -197,25 +197,25 @@ class yf_payment_api__provider_remote {
 		return( array( $status, $result ) );
 	}
 
-	protected function _api_request( $url, $data, $options = array() ) {
+	public function _api_request( $url, $data, $options = array() ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->_api_post( $url, $data, $options );
 		return( $result );
 	}
 
-	protected function _api_deposition( $options ) {
+	public function _api_deposition( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->_api_transaction( $options );
 		return( $result );
 	}
 
-	protected function _api_payment( $options ) {
+	public function _api_payment( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->_api_transaction( $options );
 		return( $result );
 	}
 
-	protected function _api_transaction( $options ) {
+	public function _api_transaction( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -325,7 +325,7 @@ class yf_payment_api__provider_remote {
 				$_data = array(
 					'account_id'      => $account_id,
 					'datetime_update' => db()->escape_val( $sql_datetime ),
-					'balance'         => "( balance + $sql_sign $sql_amount )",
+					'balance'         => "( balance $sql_sign $sql_amount )",
 				);
 				$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
 				if( !$_result[ 'status' ] ) {

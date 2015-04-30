@@ -401,7 +401,7 @@ class yf_manage_payout {
 		$operation = $this->_operation();
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $result ); }
+		if( empty( $_is_valid ) ) { return( $operation ); }
 		// var
 		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );

@@ -153,7 +153,7 @@ class yf_manage_deposit {
 		$object = &$this->object;
 		$id     = &$this->id;
 		switch( $id ) {
-			case 'manage_payout__show':
+			case 'manage_deposit__show':
 				$url_redirect_url = url_admin( array(
 					'object' => $object,
 				));
@@ -199,11 +199,11 @@ class yf_manage_deposit {
 			)
 			->table( 'payment_operation as o' )
 				->left_join( 'payment_provider as p', 'p.provider_id = o.provider_id' )
-				->left_join( 'payment_account  as a', 'a.account_id  = o.account_id'   )
+				->left_join( 'payment_account  as a', 'a.account_id  = o.account_id'  )
 				->left_join( 'user as u'            , 'u.id = a.user_id'              )
 			->where( 'p.system', 'in', 0 )
 			->where( 'p.active', '>=', 1 )
-			->where( 'o.direction', 'out' )
+			->where( 'o.direction', '=', 'in' )
 		;
 		$sql = $db->sql();
 		return( table( $sql, array(
@@ -242,9 +242,9 @@ class yf_manage_deposit {
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-danger' ) )
-			->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
-			->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
+			->btn( 'Ввод средств',  $url[ 'view'    ], array( 'icon' => 'fa fa-sign-in', 'class_add' => 'btn-danger' ) )
+			->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'   , 'class_add' => 'btn-info'   ) )
+			->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'  , 'class_add' => 'btn-info'   ) )
 		);
 	}
 
@@ -309,17 +309,22 @@ class yf_manage_deposit {
 			return( $this->_user_message( $result ) );
 		}
 		// check request
+		$request = array();
 		if(
 			empty( $o_options[ 'request' ] )
 			|| !is_array( $o_options[ 'request' ] )
 		) {
-			$result = array(
-				'status_message' => 'Параметры запроса отсутствует',
-			);
-			return( $this->_user_message( $result ) );
+			// $result = array(
+				// 'status_message' => 'Параметры запроса отсутствует',
+			// );
+			// return( $this->_user_message( $result ) );
+		} else {
+			$request = reset( $o_options[ 'request' ] );
 		}
-		$request = reset( $o_options[ 'request' ] );
 		// check method
+		$method_id = null;
+		$method = array();
+/*
 		if( empty( $request[ 'options' ][ 'method_id' ] ) ) {
 			$result = array(
 				'status_message' => 'Метод вывода средств отсутствует',
@@ -328,6 +333,7 @@ class yf_manage_deposit {
 		}
 		$method_id = $request[ 'options' ][ 'method_id' ];
 		$method    = $provider_class->api_method_payout( $method_id );
+*/
 		// check operation status
 		$statuses = $payment_api->get_status();
 		if( empty( $statuses[ $o_status_id ] ) ) {
@@ -401,18 +407,21 @@ class yf_manage_deposit {
 		$operation = $this->_operation();
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $result ); }
+		if( empty( $_is_valid ) ) { return( $operation ); }
 		// var
 		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );
 		// prepare view: request options
-		$content = array();
-		foreach( $_method[ 'option' ] as $key => $title ) {
-			if( !empty( $_request[ 'options' ][ $key ] ) ) {
-				$content[ $title ] = $_request[ 'options' ][ $key ];
+		$html_request_options = null;
+		if( !empty( $_method ) ) {
+			$content = array();
+			foreach( $_method[ 'option' ] as $key => $title ) {
+				if( !empty( $_request[ 'options' ][ $key ] ) ) {
+					$content[ $title ] = $_request[ 'options' ][ $key ];
+				}
 			}
+			$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
 		}
-		$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
 		// prepare view: response options
 		$content = null;
 		if( !empty( $_response ) ) {
@@ -443,6 +452,7 @@ class yf_manage_deposit {
 		$content = array(
 			'Пользователь'    => $user_link . $balance_link,
 			'Сумма'           => $_html_amount,
+			'Провайдер'       => $_provider[ 'title' ],
 			'Статус'          => $_status[ 'title' ],
 			'Дата создания'   => $_html_datetime_start,
 			'Дата обновления' => $_html_datetime_update,
@@ -450,15 +460,11 @@ class yf_manage_deposit {
 		);
 		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
-		// url EcommPay
-		$is_test = $_provider_class->is_test();
-		$url_base = 'https://cliff.ecommpay.com/';
-		$is_test && $url_base = 'https://cliff-sandbox.ecommpay.com/';
-		$url_operation_detail = empty( $_transaction_id ) ? $url_view .'#/' : $url_base . 'operations/detail/' . $_transaction_id;
-		$url_payouts          = $url_base . 'payouts/index';
 		// render
+		$is_test = $_provider_class->is_test();
 		$is_progressed = $_status[ 'name' ] != 'in_progress';
 		$replace = $operation + array(
+			'is_test'       => $is_test,
 			'is_progressed' => $is_progressed,
 			'header_data'   => $html_operation_options,
 			'request_data'  => $html_request_options,
@@ -471,10 +477,9 @@ class yf_manage_deposit {
 				'status_refused' => $this->_url( 'status_refused', array( '%operation_id' => $_operation_id ) ),
 				'csv'            => $this->_url( 'csv',            array( '%operation_id' => $_operation_id ) ),
 				'provider_operation_detail' => $url_operation_detail,
-				'provider_payouts'          => $url_payouts,
 			)
 		);
-		$result = tpl()->parse( 'manage_payout/view', $replace );
+		$result = tpl()->parse( 'manage_deposit/view', $replace );
 		return( $result );
 	}
 
@@ -527,42 +532,6 @@ EOS;
 		return( $result );
 	}
 
-	function request() {
-		// check operation
-		$operation = $this->_operation();
-		// import options
-		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $result ); }
-		// var
-		$html        = _class( 'html' );
-		$payment_api = _class( 'payment_api' );
-		$data = $_request[ 'options' ] + array(
-			'operation_id' => $_operation_id,
-		);
-		$result = $_provider_class->api_request( $data );
-		// message
-		$message = array();
-		$message[] = $result[ 'status_message' ];
-		// if( empty( $result[ 'status' ] ) ) {
-			// $r = $_provider_class->_payout_refused( array(
-				// 'operation_id' => $_operation_id,
-			// ));
-		// } else {
-			// $r = $_provider_class->_payout_success( array(
-				// 'operation_id' => $_operation_id,
-			// ));
-		// }
-		if( empty( $r[ 'status' ] ) ) {
-			$message[] = $r[ 'status_message' ];
-			$result = array(
-				'status_message'  => implode( '<br>', $message ),
-				'is_html_message' => true,
-			) + $result;
-		}
-		$result[ 'operation_id' ] = $_operation_id;
-		return( $this->_user_message( $result ) );
-	}
-
 	function status() {
 		// check operation
 		$operation = $this->_operation();
@@ -570,95 +539,30 @@ EOS;
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $result ); }
 		$status = $_GET[ 'status' ];
-		switch( $status ) {
-			case 'success':
-				$result = $_provider_class->_payout_success( array(
-					'operation_id' => $_operation_id,
-				));
-				$mail_tpl = 'payout_success';
-				break;
-			case 'refused':
-				$result = $_provider_class->_payout_refused( array(
-					'operation_id' => $_operation_id,
-				));
-				$mail_tpl = 'payout_refused';
-				break;
+		// check status
+		if( !in_array( $status, array( 'success', 'refused' ) ) ) {
+			$result = array(
+				'status_message' => 'Неизвестный статус операции: '. $status,
+			);
+			return( $this->_user_message( $result ) );
 		}
+		// update status
+		$result = $_provider_class->_api_deposition( array(
+			'provider_name' => $_provider[ 'name' ],
+			'response'      => array(
+				'operation_id' => $_operation_id,
+				'title'        => $_operation[ 'title' ],
+				'comment'      => 'updated by admin: ' . main()->ADMIN_ID,
+			),
+			'payment_status_name' => $status,
+			'status_message'      => $_operation[ 'title' ],
+		));
 		if( empty( $result[ 'status' ] ) ) {
 			$result[ 'operation_id' ] = $_operation_id;
 			return( $this->_user_message( $result ) );
 		}
-		// mail
-		$payment_api = _class( 'payment_api' );
-		$payment_api->mail( array(
-			'tpl'     => $mail_tpl,
-			'user_id' => $_user_id,
-			'data'    => array(
-				'operation_id' => $_operation_id,
-				'amount'       => $_operation[ 'amount' ],
-			),
-		));
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
 		return( js_redirect( $url_view, false ) );
-	}
-
-	function _array2csv(array &$array, $delim = ';') {
-		if (count($array) == 0) {
-			return null;
-		}
-		ob_start();
-		$df = fopen('php://output', 'w');
-		fputcsv($df, array_keys(reset($array)));
-		foreach ($array as $row) {
-			fputcsv($df, $row, $delim);
-		}
-		fclose($df);
-		return ob_get_clean();
-	}
-
-	/**
-	* https://cliff.ecommpay.com/download/%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F%20%D0%BF%D0%BE%20%D0%B2%D1%8B%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%D0%BC%20%D1%87%D0%B5%D1%80%D0%B5%D0%B7%20%D1%84%D0%B0%D0%B9%D0%BB.pdf
-	*/
-	function csv() {
-		$operation_id = intval($_GET['operation_id']);
-		$info = db()->from('payment_operation')->where('operation_id', $operation_id)->get();
-		if (!$info) {
-			return _404();
-		}
-		$info['options'] = json_decode($info['options'], true);
-		$options = $info['options']['request'][0]['options'];
-		$opt_data = $info['options']['request'][0]['data'];
-		$data = array();
-		$data['payment_group_id']	= 1; // Bank cards
-		$data['site_id']			= '2415'; // Betonmoney.com
-		$data['external_id']		= $operation_id;
-		$data['comment']			= 'Payments out request. Date: '.date('Y-m-d_H-i-s').' OID: '.$operation_id;
-		$data['phone']				= preg_replace('~[^0-9]~ims', '', $options['sender_phone']);
-		$data['customer_purse']		= $options['card'];
-#		$data['transaction_id'] = ''; // [обязательный, если customer_purse не используется; пустой, если используется customer_purse]
-			// Номер транзакции в Клиентском интерфейсе, по которой ранее был осуществлен прием средств.
-			// Обычно используется для выплат на банковские карты при отсутствии сертификата PCI DSS.
-		// Валюта, в которой была указана сумма платежа. Если валюта запроса не соответствует валюте счета, с которого будет осуществлен платеж,
-		// то система автоматически осуществит пересчет суммы по курсу ЦБ РФ.
-#		$data['amount']				= intval($opt_data['amount'] * 100);
-#		$data['currency']			= $opt_data['currency_id'];
-		$data['amount']				= intval($options['amount'] * 100);
-		$data['currency']			= 'USD';
-		$data = array($data);
-		$csv = $this->_array2csv($data);
-		// Ecommpay wants ";" everywhere
-		$csv = explode(PHP_EOL, $csv);
-		$csv[0] = str_replace(',', ';', $csv[0]);
-		$csv = trim(implode(PHP_EOL, $csv));
-		no_graphics(true);
-		if (DEBUG_MODE) {
-			echo '<pre>'; print_r($csv); print_r($opt); print_r($info); print_r($data);
-		} else {
-			header('Content-disposition: attachment; filename=Ecommpay_out_'.intval($operation_id).'_'.date('Ymd_His').'.csv');
-			header('Content-type: text/csv');
-			echo $csv;
-		}
-		exit;
 	}
 
 }
