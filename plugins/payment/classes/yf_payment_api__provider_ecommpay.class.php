@@ -49,7 +49,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'title'       => 'Qiwi',
 				'icon'        => 'qiwi',
 				'option' => array(
-					'payment_group_id'         => 6,
+					// 'payment_group_id'         => 6,
 					// 'followup'                 => 1,
 					// 'phone'                    => '380679041321',
 					// 'external_payment_type_id' => 'qw',
@@ -67,7 +67,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'title'       => 'C24',
 				'icon'        => 'c24',
 				'option' => array(
-					'payment_group_id'         => 28,
+					// 'payment_group_id'         => 28,
 					// 'followup'                 => 0,
 					// 'external_payment_type_id' => 'qw',
 				),
@@ -84,7 +84,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'title'       => 'Comepay',
 				'icon'        => 'comepay',
 				'option' => array(
-					'payment_group_id'         => 29,
+					// 'payment_group_id'         => 29,
 					// 'followup'                 => 0,
 					// 'external_payment_type_id' => 'qw',
 				),
