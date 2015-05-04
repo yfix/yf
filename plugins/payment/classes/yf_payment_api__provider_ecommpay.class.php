@@ -17,6 +17,18 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 
 	public $method_allow = array(
 		'payin' => array(
+			'ecommpay' => array(
+				'title'       => 'Visa, MasterCard',
+				'icon'        => 'ecommpay',
+				'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
 			'card' => array(
 				'title'       => 'Visa, MasterCard',
 				'icon'        => 'visa-mastercard',
@@ -38,7 +50,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'icon'        => 'qiwi',
 				'option' => array(
 					'payment_group_id'         => 6,
-					'followup'                 => 1,
+					'followup'                 => 0,
 					// 'external_payment_type_id' => 'qw',
 				),
 				'amount_min'  => 100,
