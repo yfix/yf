@@ -16,6 +16,18 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/card/json/';
 
 	public $method_allow = array(
+		'order' => array(
+			'payin' => array(
+				'ecommpay',
+				'card',
+				'qiwi',
+				'c24',
+				'comepay',
+			),
+			'payout' => array(
+				'pay_card'
+			),
+		),
 		'payin' => array(
 			'ecommpay' => array(
 				'title'       => 'Visa, MasterCard, etc',
