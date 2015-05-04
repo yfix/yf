@@ -614,6 +614,7 @@ class yf_debug {
 		$data['yf'] = array(
 			'MAIN_TYPE'			=> MAIN_TYPE,
 			'LANG'				=> conf('language'),
+			'IP'				=> common()->get_ip(),
 			'COUNTRY'			=> conf('country') ?: $_SERVER['GEOIP_COUNTRY_CODE'],
 			'TIMEZONE'			=> date_default_timezone_get(). (conf('timezone') ? ', conf: '.conf('timezone') : ''),
 			'DEBUG_MODE'		=> (int)DEBUG_MODE,
