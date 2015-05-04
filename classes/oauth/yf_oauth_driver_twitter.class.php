@@ -20,7 +20,7 @@ class yf_oauth_driver_twitter extends yf_oauth_driver1 {
 			'name'			=> $raw[0]['name'],
 #			'email'			=> $raw[0]['email'],
 			'avatar_url'	=> $raw[0]['profile_image_url'],
-			'profile_url'	=> $raw[0]['url'], // Can be empty
+			'profile_url'	=> 'https://twitter.com/'.$raw[0]['screen_name'], // Can be empty
 		);
 		return $user_info;
 	}

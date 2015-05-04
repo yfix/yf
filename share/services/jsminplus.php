@@ -1,17 +1,14 @@
 #!/usr/bin/php
 <?php
 
-$requires = array('minify');
-require __DIR__.'/_config.php';
-
-require_once $libs_root.'minify/min/lib/JSMinPlus.php';
-
-// Test mode when direct call
-if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
-
-	$js = ' function  hello_world ( i , v ) { return " " ; } ';
-	var_dump($js);
-	$min = \JSMinPlus::minify($js);
-	var_dump($min);
-
-}
+$config = array(
+	'require_services' => array('minify'),
+	'require_once' => array('minify/min/lib/JSMinPlus.php'),
+	'example' => function() {
+		$js = ' function  hello_world ( i , v ) { return " " ; } ';
+		var_dump($js);
+		$min = \JSMinPlus::minify($js);
+		var_dump($min);
+	}
+);
+if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

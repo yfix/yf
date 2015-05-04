@@ -330,6 +330,9 @@ abstract class yf_db_query_builder_driver {
 		$where = implode(' ', array_filter($where, 'strlen'));
 		$key_escaped = $this->_escape_col_name($field);
 		$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.$key_escaped.' = '.$key_escaped.' '.($step < 0 ? '-' : '+'). ' '.abs(intval($step)). (!empty($where) ? ' '.$where : '');
+		if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+			$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql, 'where' => $where));
+		}
 		return $as_sql ? $sql : $this->db->query($sql);
 	}
 
@@ -343,22 +346,22 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Return first item from resultset
 	*/
-	public function first($use_cache = false) {
+	public function first($select = null, $use_cache = false) {
 		if (is_object($this->get_model())) {
-			return $this->order_by($this->get_key_name().' asc')->limit(1)->get($use_cache);
+			return $this->order_by($this->get_key_name().' asc')->limit(1)->get($select, $use_cache);
 		} else {
-			return $this->get($use_cache);
+			return $this->get($select, $use_cache);
 		}
 	}
 
 	/**
 	* Return last item from resultset
 	*/
-	public function last($use_cache = false) {
+	public function last($select = null, $use_cache = false) {
 		if (is_object($this->get_model())) {
-			return $this->order_by($this->get_key_name().' desc')->limit(1)->get($use_cache);
+			return $this->order_by($this->get_key_name().' desc')->limit(1)->get($select, $use_cache);
 		} else {
-			$result = $this->get_all($use_cache);
+			$result = $this->get_all($select, $use_cache);
 			if (is_array($result) && count($result)) {
 				return end($result);
 			} else {
@@ -370,7 +373,10 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get()
 	*/
-	public function get($use_cache = false) {
+	public function get($select = null, $use_cache = false) {
+		if (isset($select)) {
+			$this->select($select);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			$result = $this->db->get($sql, $use_cache);
@@ -385,14 +391,17 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias for get_one()
 	*/
-	public function one($use_cache = false) {
-		return $this->get_one($use_cache);
+	public function one($field = '', $use_cache = false) {
+		return $this->get_one($field, $use_cache);
 	}
 
 	/**
 	* Render SQL and execute db->get_one()
 	*/
-	public function get_one($use_cache = false) {
+	public function get_one($field = '', $use_cache = false) {
+		if (strlen($field)) {
+			$this->select($field);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_one($sql, $use_cache);
@@ -433,14 +442,17 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias for get_all()
 	*/
-	public function all($use_cache = false) {
-		return $this->get_all($use_cache);
+	public function all($select = null, $use_cache = false, $key_name = null) {
+		return $this->get_all($select, $use_cache, $key_name);
 	}
 
 	/**
 	* Get all records with generated SQL
 	*/
-	public function get_all($use_cache = false) {
+	public function get_all($select = null, $use_cache = false, $key_name = null) {
+		if (isset($select)) {
+			$this->select($select);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			$result = $this->db->get_all($sql, $key_name, $use_cache);
@@ -457,7 +469,10 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get_2d()
 	*/
-	public function get_2d($use_cache = false) {
+	public function get_2d($select = null, $use_cache = false) {
+		if (isset($select)) {
+			$this->select($select);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			$result = $this->db->get_2d($sql, $use_cache);
@@ -472,7 +487,10 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get_deep_array()
 	*/
-	public function get_deep_array($levels = 1, $use_cache = false) {
+	public function get_deep_array($levels = 1, $select = null, $use_cache = false) {
+		if (isset($select)) {
+			$this->select($select);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_deep_array($sql, $levels, $use_cache);
@@ -483,7 +501,10 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Delete records matching query params
 	*/
-	public function delete($as_sql = false) {
+	public function delete($where = null, $as_sql = false) {
+		if (isset($where)) {
+			$this->where($where);
+		}
 		$sql = false;
 		$remove_as_from_delete = true;
 		if ($remove_as_from_delete) {
@@ -494,10 +515,11 @@ abstract class yf_db_query_builder_driver {
 		if (empty($from)) {
 			return false;
 		}
+		$where = $this->_render_where();
 		$sql = array(
 			'DELETE',
 			$from,
-			$this->_render_where(),
+			$where,
 			$this->_render_limit(),
 		);
 		// Implode only non-empty array items
@@ -506,6 +528,9 @@ abstract class yf_db_query_builder_driver {
 			return $sql;
 		}
 		if ($sql) {
+			if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+				$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $where));
+			}
 			return $this->db->query($sql);
 		}
 		return false;
@@ -531,6 +556,9 @@ abstract class yf_db_query_builder_driver {
 			return $sql;
 		}
 		if ($sql) {
+			if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+				$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $data));
+			}
 			$result = $this->db->query($sql);
 			$insert_id = $result ? $this->db->insert_id() : false;
 			return $insert_id ?: $result;
@@ -559,6 +587,9 @@ abstract class yf_db_query_builder_driver {
 			.' INTO '.$this->_escape_table_name($table)
 			. ($fields_escaped ? ' ('. $fields_escaped. ')' : '')
 			. ' '. PHP_EOL. $select_sql;
+		if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+			$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+		}
 		return $params['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -678,6 +709,9 @@ abstract class yf_db_query_builder_driver {
 			return $sql;
 		}
 		if ($sql) {
+			if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+				$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+			}
 			$result = $this->db->query($sql);
 		}
 		return $result;
@@ -746,6 +780,9 @@ abstract class yf_db_query_builder_driver {
 			if ($only_sql) {
 				$out .= $sql.';'.PHP_EOL;
 			} else {
+				if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
+					$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+				}
 				$this->db->query($sql);
 				$affected_rows += $this->db->affected_rows();
 			}

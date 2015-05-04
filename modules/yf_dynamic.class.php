@@ -32,15 +32,15 @@ class yf_dynamic {
 	* Default method
 	*/
 	function show () {
-		main()->NO_GRAPHICS = true;
-		return '';
+		no_graphics(true);
+		return _404();
 	}
 
 	/**
 	* Execute selected php func
 	*/
 	function php_func () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (!main()->CONSOLE_MODE) {
 			exit('No direct access to method allowed');
 		}
@@ -57,29 +57,42 @@ class yf_dynamic {
 	}
 
 	/**
+	* Display image with error text inside
+	*/
+	function _show_error_image () {
+		@header('Content-Type: image/gif', $force = true);
+		print base64_decode('R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==');
+		exit();
+	}
+
+	/**
 	* Display 'dynamic' image (block hotlinking)
 	*/
 	function image () {
-		main()->NO_GRAPHICS = true;
-		// Prepare path to image we need to display
-		$IMAGE_PATH = trim($_GET['id'], '/');
-		if (empty($IMAGE_PATH)) {
+		no_graphics(true);
+		if (empty($_SERVER['HTTP_REFERER']) || !defined('WEB_PATH') || substr($_SERVER['HTTP_REFERER'], 0, strlen(WEB_PATH)) !== WEB_PATH) {
 			return $this->_show_error_image();
 		}
-		// Check permissions
-		if (substr($IMAGE_PATH, 0, strlen(SITE_ACCOUNT_VERIFY_DIR)) != SITE_ACCOUNT_VERIFY_DIR) {
+		$img = trim($_GET['id'], '/');
+		$path = PROJECT_PATH. $img;
+		if (!strlen($img) || false !== strpos($img, '..')) {
 			return $this->_show_error_image();
 		}
-		// Prevent hotlinking
-		if (empty($_SERVER['HTTP_REFERER']) || substr($_SERVER['HTTP_REFERER'], 0, strlen(WEB_PATH)) != WEB_PATH) {
+		if (!file_exists($path) || !filesize($path)) {
 			return $this->_show_error_image();
 		}
-		// Check if target file exists
-		if (!file_exists(INCLUDE_PATH. $IMAGE_PATH) || !filesize(INCLUDE_PATH. $IMAGE_PATH)) {
+		$ext = pathinfo($path, PATHINFO_EXTENSION);
+		$allowed_exts = array(
+			'jpg'	=> 'image/jpeg',
+			'jpeg'	=> 'image/jpeg',
+			'gif'	=> 'image/gif',
+			'png'	=> 'image/png',
+		);
+		if (!$ext || !isset($allowed_exts[$ext])) {
 			return $this->_show_error_image();
 		}
-		@header('Content-Type: image/jpeg');
-		readfile(INCLUDE_PATH. $IMAGE_PATH);
+		@header('Content-Type: '.$allowed_exts[$ext], $force = true);
+		readfile($path);
 		exit();
 	}
 
@@ -87,51 +100,37 @@ class yf_dynamic {
 	* Display 'dynamic' CSS (to allow get CSS also from framework)
 	*/
 	function css () {
-		main()->NO_GRAPHICS = true;
-		// Prepare CSS file name
-		$name = preg_replace('/[^a-z0-9\_\.]+/ims', '', trim($_GET['id']));
-		// Do nothing if something wrong from input
-		if (empty($name) || substr($name, -strlen('.css')) != '.css') {
+		no_graphics(true);
+		$name = preg_replace('~[^a-z0-9\./_-]+~ims', '', trim($_GET['id']));
+		$ext = '.css';
+		if (!strlen($name) || false !== strpos($name, '..') || substr($name, -strlen($ext)) != $ext) {
+			_404();
 			exit();
 		}
-		// Common way
-		$FS_PATH = INCLUDE_PATH. tpl()->TPL_PATH. $name;
-		if (file_exists($FS_PATH)) {
-			$css = file_get_contents($FS_PATH);
+// TODO: improve according to new YF architecture
+/*
+		$fs_path = PROJECT_PATH. tpl()->TPL_PATH. $name;
+		if (file_exists($fs_path)) {
+			$css = file_get_contents($fs_path);
 		}
-		// Try to load from admin section
 		if (empty($css) && MAIN_TYPE_ADMIN) {
-			$FS_PATH = YF_PATH. 'templates/admin/'. $name;
-			if (file_exists($FS_PATH)) {
-				return file_get_contents($FS_PATH);
+			$fs_path = YF_PATH. 'templates/admin/'. $name;
+			if (file_exists($fs_path)) {
+				return file_get_contents($fs_path);
 			}
 		}
-		// Try framework user section
 		if (empty($css)) {
-			$FS_PATH = YF_PATH. 'templates/user/'. $name;
-			if (file_exists($FS_PATH)) {
-				$css = file_get_contents($FS_PATH);
+			$fs_path = YF_PATH. 'templates/user/'. $name;
+			if (file_exists($fs_path)) {
+				$css = file_get_contents($fs_path);
 			}
 		}
 		@header('Content-Type: text/css');
 		echo $css;
+*/
 		exit();
 	}
 
-	/**
-	* Display image with error text inside
-	*/
-	function _show_error_image () {
-		if ($this->ERROR_IMAGE_INTERNAL) {
-			@header('Content-Type: image/gif');
-			print base64_decode('R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==');
-		} else {
-			@header('Content-Type: image/jpeg');
-			readfile(INCLUDE_PATH. 'images/no_hotlinking.gif');
-		}
-		exit();
-	}
-	
 	/**
 	* Change current user language
 	*/
@@ -140,20 +139,17 @@ class yf_dynamic {
 			return _e('Changing language not allowed!');
 		}
 		$new_lang = _prepare_html($_REQUEST['lang_id']);
-		// If new language found - check it
 		if (!empty($new_lang) && conf('languages::'.$new_lang.'::active')) {
 			$_SESSION['user_lang'] = $new_lang;
-			// Try to get user back
 			$old_location = './?object=account';
 			if (!empty($_POST['back_url'])) {
 				$old_location = str_replace(WEB_PATH, './', $_POST['back_url']);
 			}
-			return js_redirect($old_location/*. '&language='.(!isset($_GET['language']) ? $_SESSION['user_lang'] : $_GET['language'])*/);
+			return js_redirect($old_location/*. '&lang='.(!isset($_GET['language']) ? $_SESSION['user_lang'] : $_GET['language'])*/);
 		}
-		// Default return path
 		return js_redirect($_SERVER['HTTP_REFERER']);
 	}
-	
+
 	/**
 	* Display form
 	*/
@@ -168,7 +164,6 @@ class yf_dynamic {
 		if (!$this->ALLOW_LANG_CHANGE) {
 			return false;
 		}
-		// Get available languages
 		foreach ((array)conf('languages') as $lang_info) {
 			if (!$lang_info['active']) {
 				continue;
@@ -179,7 +174,6 @@ class yf_dynamic {
 			return false;
 		}
 		$atts = " onchange=\"this.form.submit();\"";
-		// Process footer
 		$replace = array(
 			'form_action'	=> './?object='.str_replace(YF_PREFIX, '', __CLASS__).'&action=change_lang',
 			'lang_box'		=> common()->select_box('lang_id', array(t('Language') => $lang_names), conf('language'), false, 2, $atts, false),
@@ -192,7 +186,7 @@ class yf_dynamic {
 	* AJAX-based method save current locale variable
 	*/
 	function save_locale_var () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (!DEBUG_MODE && !$_SESSION['locale_vars_edit']) {
 			return print('Access denied');
 		}
@@ -253,7 +247,7 @@ class yf_dynamic {
 	* AJAX-based method edit selected template for the current locale
 	*/
 	function edit_locale_stpl () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (!DEBUG_MODE || !tpl()->ALLOW_INLINE_DEBUG) {
 			return print('Access denied');
 		}
@@ -309,7 +303,7 @@ class yf_dynamic {
 	* AJAX-based method edit selected tooltip
 	*/
 	function edit_tip () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (!DEBUG_MODE || !tpl()->ALLOW_INLINE_DEBUG) {
 			return print('Access denied');
 		}
@@ -353,7 +347,7 @@ class yf_dynamic {
 	* find users over nick or email
 	*/
 	function find_users() {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (!$_POST || !main()->USER_ID || IS_ADMIN != 1) {
 			echo '';
 		}
@@ -373,7 +367,7 @@ class yf_dynamic {
 	* find users over nick or email
 	*/
 	function find_ids() {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (!$_POST || !main()->USER_ID || IS_ADMIN != 1/* || !strlen($_POST['param'])*/) {
 			echo '';
 			exit;
@@ -428,7 +422,7 @@ class yf_dynamic {
 	/**
 	*/
 	function ajax_validate() {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		header('X-Robots-Tag: noindex, nofollow, noarchive, nosnippet');
 
 		$allowed_params = $this->AJAX_VALIDATE_ALLOWED;
@@ -518,7 +512,7 @@ class yf_dynamic {
 	* Output sample placeholder image, useful for designing wireframes and prototypes
 	*/
 	function placeholder() {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 
 		list($id, $ext) = explode('.', $_GET['id']);
 		list($w, $h) = explode('x', $id);
@@ -549,5 +543,46 @@ class yf_dynamic {
 			$extra['src'] = 'data:image/png;base64,'.base64_encode($img_data);
 		}
 		return '<img'._attrs($extra, array('src', 'type', 'class', 'id')).' />';
+	}
+
+	/**
+	*/
+	function preview($extra = array()) {
+		conf('ROBOTS_NO_INDEX', true);
+		no_graphics(true);
+		if (main()->USER_ID != 1) {
+			return print _403('You should be logged as user 1');
+		}
+		// Example of url: /dynamic/preview/static_pages/29/
+		$object = preg_replace('~[^a-z0-9_]+~ims', '', $_GET['id']);
+		$id = preg_replace('~[^a-z0-9_]+~ims', '', $_GET['page']);
+		if (!strlen($object)) {
+			return print _403('Object is required');
+		}
+		$ref = $_SERVER['HTTP_REFERER'];
+		$body = '';
+		if (main()->is_post() && isset($_POST['text'])) {
+			$u_ref	= parse_url($ref);
+			$u_self	= parse_url(WEB_PATH);
+			$u_adm	= parse_url(ADMIN_WEB_PATH);
+			if ($u_ref['host'] && $u_ref['host'] == $u_self['host'] && $u_ref['host'] == $u_adm['host'] && $u_ref['path'] == $u_adm['path']) {
+				$body = $_POST['text'];
+			} else {
+				return print _403('Preview security check not passed');
+			}
+		}
+		if (!$body) {
+			if ($object == 'static_pages') {
+				$body = db()->from($object)->whereid($id)->get_one('text');
+			} elseif ($object == 'tips') {
+				$body = db()->from($object)->whereid($id)->get_one('text');
+			} elseif ($object == 'faq') {
+				$body = db()->from($object)->whereid($id)->get_one('text');
+			} elseif ($object == 'news') {
+				$body = db()->from($object)->whereid($id)->get_one('full_text');
+			}
+		}
+		$body = '<div class="container">'.$body.'</div>';
+		return print common()->show_empty_page($body);
 	}
 }

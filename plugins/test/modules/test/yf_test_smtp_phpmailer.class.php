@@ -34,7 +34,7 @@ class yf_test_smtp_phpmailer {
 		$result = $mail->Send();
 		$error_message .= $mail->ErrorInfo;
 
-		$body .= $result ? '<b style='color:green;'>Send successful</b>' : '<b style='color:red;'>Send failed</b>';
+		$body .= $result ? '<b style="color:green;">Send successful</b>' : '<b style="color:red;">Send failed</b>';
 		$body .= !$result ? '<br /><b>Reason:</b><br /> '.$error_message.implode('<br />\n', (array)main()->_all_core_error_msgs).'<br />' : '';
 		$body .= '<br />Spent time: '.common()->_format_time_value(microtime(true) - $time_start).' sec.<br />';
 		return $body;

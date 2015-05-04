@@ -42,7 +42,7 @@ return array(
 	'form_validate_max_length'				=> 'Длина поля %field не должна превышать %param символов.',
 	'form_validate_md5_not_empty'			=> 'The %field field is required.',
 	'form_validate_mime'					=> 'The %field field content mime-type not allowed.',
-	'form_validate_min_length'				=> 'Длина поля %field должна быть не менеее %param символов.',
+	'form_validate_min_length'				=> 'Длина поля %field должна быть не менее %param символов.',
 	'form_validate_numeric'					=> 'Поле %field должно содержать только цифры.',
 	'form_validate_password_update'			=> 'The %field field must contain a valid password.',
 	'form_validate_phone_cleanup'			=> 'The %field field must contain a valid phone number.',

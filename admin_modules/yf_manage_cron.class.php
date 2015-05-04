@@ -18,81 +18,93 @@ class yf_manage_cron {
 				'active'
 			),
 		);
-		$this->_minutes = array('*' => '*') + range(0, 59);
-		$this->_hours 	= array('*' => '*') + range(0, 23);
-		$this->_days 	= array('*' => '*') + array_combine(range(1, 31),range(1, 31));
+		$this->exec_type = array(
+			'sh' => 'sh', 
+			'include_php' => 'include_php',
+			'php_script' => 'php_script',
+		);
 	}
 
 	/**
 	*/
 	function show() {
-		$pattern = 'share/cron_jobs/*cron.php';
-		$globs = array(
-			'yf_main'			=> YF_PATH. $pattern,
-			'yf_plugins'		=> YF_PATH. 'plugins/*'.$pattern,
-			'project_main'		=> PROJECT_PATH. $pattern,
-			'project_plugins'	=> PROJECT_PATH. 'plugins/*'.$pattern,
-			'app_main'			=> APP_PATH. $pattern,
-			'app_plugins'		=> APP_PATH. 'plugins/*'.$pattern,
-		);
-		$paths = array();
-		foreach((array)$globs as $glob) {
-			foreach (glob($glob) as $path) {
-				$paths[$path] = $path;
-			}
-		}
-		foreach((array)$paths as $path) {
-			$name = basename($path);
-			$data = db()->from('cron_tasks')->where('name', $name)->get();
-			if (empty($data)) {
+		$path = glob(YF_PATH.'share/cron_jobs/*cron.php') + glob(YF_PATH.'plugins/*/share/cron_jobs/*cron.php');
+
+		foreach ((array)$path as $name) {
+			$cron_name = basename($name);
+			$cron_dir = str_replace($cron_name, '', $name);
+			$return = db()->from('cron_tasks')->where('name', $cron_name)->get();
+			if (empty($return)) {
 				db()->insert_safe('cron_tasks', array(
-					'name'	=>	$name,
+					'name'	=>	$cron_name,
+					'dir'	=>  $cron_dir,
+					'update_date'	=> time(),
+					'admin_id'	=> main()->ADMIN_ID,
 				));
 			}
 		}
-		return table('SELECT * FROM '.db('cron_tasks').' ORDER BY `name` ASC')
-			->text('name','',array('badge' => 'info'))
+		return table(
+				'SELECT c.*, a.login FROM '.db('cron_tasks').' as c
+				LEFT JOIN '.db('sys_admin').' as a ON a.id = c.admin_id
+				ORDER BY c.name ASC'
+			)
+			->text('name')
+			->text('dir', 'Directory')
 			->text('comment', array('width' => 300))
 			->text('frequency')
+			->func('exec_type', function($extra, $r, $_this) {
+				return $this->exec_type[$extra];
+			})
+			->text('exec_time', 'Max exec time, s')
+			->text('login')
+			->date('update_date', array('format' => '%d-%m-%Y %H:%M'))
 			->btn_edit(array('no_ajax' => 1))
+			->btn_func('Logs', function($value, $extra, $row_info){
+				$action_url = url('/@object/cron_logs/'.$value['id']);
+				return '<a href="'.$action_url.'" class="btn btn-default btn-mini btn-xs" title="Просмотр"><i class="fa fa-lg fa-eye eye_view"></i>Logs</a>';
+			}, array('no_ajax' => 1))
 			->btn_active();
 	}
 
 	/**
 	*/
+
 	function edit() {
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e('No id');
+		$id = intval($_GET['id']);
+		if (!$id) {
+			return js_redirect(url('/@object'), false, 'Empty ID');
 		}
-		$a = db()->query_fetch('SELECT * FROM '.db('cron_tasks').' WHERE id='.intval($_GET['id']));
+		$a = db()->from('cron_tasks')->whereid($id)->get();
 		if (empty($a['id'])) {
-			return _e('Cron task not found');
+			common()->message_error('Cron task not found');
+			return js_redirect(url('/@object'), false, 'Cron task not found');
 		}
-		if (main()->is_post()) {
-			if (!common()->_error_exists()) {
-				$frequency = $_POST['minutes'].' '.$_POST['hours'].' '.$_POST['days'];
+		$file_content = nl2br(file_get_contents($a['dir'].$a['name']));
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'exec_time' => 'trim|decimal|required',
+			))
+			->on_post(function(){
 				db()->update_safe('cron_tasks', array(
 					'comment'		=> $_POST['comment'],
-					'frequency'		=> $frequency,
+					'frequency'		=> $_POST['digits'].' '.$_POST['units'],
 					'update_date'	=> time(),
 					'admin_id'		=> main()->ADMIN_ID,	
 					'active'		=> $_POST['active'],
-				), 'id='.$a['id']);
+					'exec_type'		=> $_POST['exec_type'],
+					'exec_time'		=> $_POST['exec_time']? : '600',
+				), 'id='.intval($_GET['id']));
 				common()->admin_wall_add(array('cron tasks updated: '.$a['name'], $a['id']));
-			}
-		}
-		$a['redirect_link'] = url_admin('/@object');
-		$cron_timer = explode(' ', $a['frequency']);
-		$a['minutes'] 	= $cron_timer[0];
-		$a['hours'] 	= $cron_timer[1];
-		$a['days'] 		= $cron_timer[2];
-		return form((array)$_POST + (array)$a, array('autocomplete' => 'off'))
+				return js_redirect(url('/@object')); 
+			})
 			->info('name')
+			->container('<pre>'.$file_content.'</pre>', 'Content')
+			->select_box('exec_type', $this->exec_type)
+			->container($this->select_f(), 'Start every')
+			->integer('exec_time', 'Max exec time, s', array(
+				'placeholder'    => 'время выполнения, секунд',
+			))
 			->textarea('comment')
-			->select_box('minutes', $this->_minutes, array('class_add' => 'span1 col-md-1', 'type' => 1))
-			->select_box('hours', $this->_hours, array('class_add' => 'span1 col-md-1', 'type' => 1))
-			->select_box('days', $this->_days, array('class_add' => 'span1 col-md-1', 'type' => 1))
 			->active_box()
 			->save_and_back();
 	}
@@ -102,4 +114,34 @@ class yf_manage_cron {
 	function active() {
 		return _class('admin_methods')->active($this->_table);
 	}
+
+	function cron_logs() {
+		return table(
+				db()->from('cron_logs')->where('cron_id', (int)$_GET['id'])->order_by('time_start', 'desc')
+			)
+			->date('time_start', array('format' => 'full'))
+			->text('log')
+			->text('time_spent')
+		;
+	}
+
+	function select_f(){
+		$digits = range(1, 59);
+		$units = array(
+			'minutes' => 'minutes',
+			'hours' => 'hours',
+			'days'	=> 'days',
+		);
+		foreach ($digits as $d) {
+			$options_d .= '<option value="'.$d.'">'.$d.'</option>';
+		}
+		foreach ($units as $u) {
+			$options_u .= '<option value="'.$u.'">'.$u.'</option>';	
+		}	
+		return '
+			<select id="select_box_1" class="form-inline" class="span1" name="digits">'.$options_d.'</select>
+			<select id="select_box_2" class="form-inline" class="span1" name="units">'.$options_u.'</select>
+		';
+	}
 }
+

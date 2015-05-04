@@ -16,12 +16,12 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 		),
-		'name' => array(
-			'name' => 'name',
-			'type' => 'varchar',
-			'length' => 255,
+		'cron_id' => array(
+			'name' => 'cron_id',
+			'type' => 'int',
+			'length' => 10,
 			'decimals' => NULL,
-			'unsigned' => NULL,
+			'unsigned' => true,
 			'nullable' => false,
 			'default' => NULL,
 			'charset' => NULL,

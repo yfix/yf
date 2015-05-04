@@ -123,7 +123,7 @@ class yf_session {
 		}
 		session_start();
 		// Instruct bots to totally ignore current page
-		if (DEBUG_MODE || MAIN_TYPE_ADMIN) {
+		if (DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX')) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
 		}
 		$now = time();

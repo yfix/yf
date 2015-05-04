@@ -75,7 +75,6 @@ class yf_tpl_driver_yf_compile {
 			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}/i' => function($m) use ($start, $end) {
 				$global_arrays = tpl()->_avail_arrays;
 				$is_global = is_array($global_arrays) && array_key_exists($m[1], $global_arrays);
-#				return $start. 'echo '.($is_global ? '$'.$global_arrays[$m[1]].'[\''.$m[2].'\']' : '($replace[\''.$m[1].'\'][\''.$m[2].'\'] ?: _class_safe(\''.$m[1].'\')->'.$m[2].')').';'. $end;
 				return $start. 'echo '.($is_global ? '$'.$global_arrays[$m[1]].'[\''.$m[2].'\']' : '$replace[\''.$m[1].'\'][\''.$m[2].'\']').';'. $end;
 			},
 			// Variable filtering like in Smarty/Twig. Examples: {var1|trim} {var1|urlencode|trim} {var1|_prepare_html} {var1|my_func} {sub1.var1|trim}
@@ -84,7 +83,6 @@ class yf_tpl_driver_yf_compile {
 			},
 			// Second level variables with filters
 			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
-#				return $start. 'echo _class(\'tpl\')->_process_var_filters($replace[\''.$m[1].'\'][\''.$m[2].'\'] ?: _class_safe(\''.$m[1].'\')->'.$m[2].', \''.$m[3].'\');'. $end;
 				return $start. 'echo _class(\'tpl\')->_process_var_filters($replace[\''.$m[1].'\'][\''.$m[2].'\'], \''.$m[3].'\');'. $end;
 			},
 			// Vars inside foreach with filters
@@ -101,11 +99,9 @@ class yf_tpl_driver_yf_compile {
 			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
 				return $start.'echo main()->_execute(\'graphics\',\'_show_block\',\'name='.$m[1].';'.$m[2].'\',\''.$name.'\',0,false);'.$end;
 			},
-			'/\{tip\(\s*["\']{0,1}([\w\.#-]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-				return $start.'echo _class_safe("graphics")->_show_help_tip(array("tip_id"=>\''.$m[1].'\',"tip_type"=>\''.$m[2].'\'));'.$end;
-			},
-			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-				return $start.'echo _class_safe("graphics")->_show_inline_tip(array("text"=>\''.$m[1].'\'));'.$end;
+			// Display help tooltip. Examples: {tip('register.login')} or {tip('Some inline help text')} or {tip('Some inline help text';'fa-eye')}
+			'/\{(tip|itip)\(\s*["\']{0,1}(?P<raw>[^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end, $name) {
+				return $start.'echo _class_safe("graphics")->tip(array("raw"=>\''.addslashes($m['raw']).'\', "replace" => $replace, "tpl_name" => $name));'.$end;
 			},
 			'/\{(e|user_error)\(\s*["\']{0,1}([\w\.-]+)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start.'echo common()->_show_error_inline(\''.$m[2].'\');'.$end;
@@ -124,7 +120,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo module_safe("advertising")->_show(array("ad"=>\''.$m[1].'\'));'. $end;
 			},
 			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-				return $start. 'echo _class(\'tpl\')->_generate_url_wrapper(\''.$m[1].'\');'. $end;
+				return $start. 'echo _class(\'tpl\')->_url_wrapper(\''.$m[1].'\');'. $end;
 			},
 			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9_-]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo _class("form2")->tpl_row(\''.$m[1].'\',$replace,\''.$m[3].'\',\''.$m[5].'\',\''.$m[7].'\');'. $end;
@@ -413,6 +409,7 @@ class yf_tpl_driver_yf_compile {
 		$func = trim($m['func']);
 		$orig_arr_name = trim($m['key']);
 		$foreach_arr_name = $orig_arr_name;
+		$orig_arr_name = str_replace(array(',',';',' ','=','\'','"'), '__', $orig_arr_name);
 		$foreach_body = $m['body'];
 		// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
 		$no_rows_text = '';
@@ -440,7 +437,7 @@ class yf_tpl_driver_yf_compile {
 		if ($func === 'foreach_exec') {
 			$foreach_data_tag = 'array()';
 			if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $foreach_arr_name, $m_exec)) {
-				$foreach_data_tag = '(array)main()->_execute(\''.$m_exec['object'].'\', \''.$m_exec['action'].'\', \''.$m_exec['args'].'\', $name. $this->_STPL_EXT, 0, $use_cache = false)';
+				$foreach_data_tag = 'main()->_execute(\''.$m_exec['object'].'\', \''.$m_exec['action'].'\', \''.$m_exec['args'].'\', $name. $this->_STPL_EXT, 0, $use_cache = false)';
 			}
 		// Support for deep arrays as main array
 		} elseif (false !== strpos($foreach_arr_name, '.')) {

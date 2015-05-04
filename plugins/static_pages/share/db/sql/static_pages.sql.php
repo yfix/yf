@@ -8,7 +8,7 @@ return '
   `page_heading` varchar(255) NOT NULL DEFAULT \'\',
   `meta_keywords` text NOT NULL DEFAULT \'\',
   `meta_desc` text NOT NULL DEFAULT \'\',
-  `locale` char(6) NOT NULL DEFAULT \'\',
+  `locale` char(6) NOT NULL DEFAULT \'en\',
   `active` enum(\'1\',\'0\') NOT NULL DEFAULT \'1\',
   PRIMARY KEY (`id`)
 ';

@@ -110,6 +110,50 @@ class yf_html {
 
 	/**
 	*/
+	function simple_table($replace = array(), $extra = array()) {
+		if (!$replace) {
+			return false;
+		}
+		$key_name = isset($extra['key']['name']) ? $extra['key']['name'] : 'key';
+		$val_name = isset($extra['val']['name']) ? $extra['val']['name'] : 'val';
+
+		$key_extra = isset($extra['key']['extra']) ? $extra['key']['extra'] : array();
+		$val_extra = isset($extra['val']['extra']) ? $extra['val']['extra'] : array();
+
+		$key_func = isset($extra['key']['func']) ? $extra['key']['func'] : 'text';
+		if (!is_string($key_func) && is_callable($key_func)) {
+			$key_callable = $key_func;
+			$key_func = 'func';
+		}
+		$val_func = isset($extra['val']['func']) ? $extra['val']['func'] : 'text';
+		if (!is_string($val_func) && is_callable($val_func)) {
+			$val_callable = $val_func;
+			$val_func = 'func';
+		}
+
+		$data = array();
+		foreach ((array)$replace as $k => $v) {
+			$data[] = array(
+				$key_name => $k,
+				$val_name => $v,
+			);
+		}
+
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['no_header'] = isset($extra['no_header']) ? $extra['no_header'] : 1;
+		$extra['pager_records_on_page'] = isset($extra['pager_records_on_page']) ? $extra['pager_records_on_page'] : 10000;
+		$extra['no_total'] = isset($extra['no_total']) ? $extra['no_total'] : true;
+		$extra['no_pages'] = isset($extra['no_pages']) ? $extra['no_pages'] : true;
+		$extra['hide_empty'] = isset($extra['hide_empty']) ? $extra['hide_empty'] : true;
+
+		return table($data, $extra)
+			->$key_func($key_name, $key_callable, $key_extra)
+			->$val_func($val_name, $val_callable, $val_extra)
+		;
+	}
+
+	/**
+	*/
 	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (DEBUG_MODE) {
@@ -563,6 +607,8 @@ class yf_html {
 				if ($close_num_levels < 0) {
 					$close_num_levels = 0;
 				}
+			} elseif ($item['level'] > 0) {
+				$close_num_levels = $item['level'] + 1;
 			}
 			$items[] = '
 				<div class="media">
@@ -691,19 +737,32 @@ class yf_html {
 				$body = $v;
 				$v = array();
 			} else {
-				$body = $v['body'];
+				$body = $v['body'] ?: $v['name'];
 			}
-			$class_item = $v['class_item'] ?: $extra['class_item'];
+			if (!strlen($body)) {
+				continue;
+			}
+			$class_item = $v['class'] ?: $extra['class_item'];
 			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
-			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'">'. $badge. ($v['link'] ? '<a href="'.$v['link'].'">'.$body.'</a>' : $body).'</li>';
+			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"'. ($v['id'] ? ' id="'.$v['id'].'"' : '').'>'. $badge. ($v['link'] ? '<a href="'.$v['link'].'">'.$body.'</a>' : $body).'</li>';
+			if (is_array($v['sub'])) {
+				$items[] = $this->li($v['sub'], $extra);
+				continue;
+			}
 		}
-		return '<ul class="'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul>';
+		return '<ul'._attrs(array('id','class','style'), $extra).'>'.implode(PHP_EOL, (array)$items).'</ul>';
 	}
 
 	/**
 	*/
 	function tree($data = array(), $extra = array()) {
 		return _class('html_tree', 'classes/html/')->tree($data, $extra);
+	}
+
+	/**
+	*/
+	function li_tree($data = array(), $extra = array()) {
+		return _class('html_tree', 'classes/html/')->li_tree($data, $extra);
 	}
 
 	/**
@@ -739,6 +798,9 @@ class yf_html {
 			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			if ($this->AUTO_ASSIGN_IDS) {
 				$extra['id'] = $id;
+			}
+			if ($extra['outer_label']) {
+				$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
 			}
 			$extra['name'] = $name;
 			$body[] = '<select'._attrs($extra, array('name','id','class','style','disabled','required')). ($add_str ? ' '.$add_str : '').'>';
@@ -811,6 +873,9 @@ class yf_html {
 			if ($this->AUTO_ASSIGN_IDS) {
 				$extra['id'] = $id;
 			}
+			if ($extra['outer_label']) {
+				$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
+			}
 			$extra['multiple'] = 'multiple';
 			$extra['name'] = $name ? $name.'[]' : '';
 			$body[] = '<select'._attrs($extra, array('name','id','class','style','multiple','disabled','required')). ($add_str ? ' '.trim($add_str) : '').'>';
@@ -872,7 +937,7 @@ class yf_html {
 		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
 		$horizontal = isset($extra['horizontal']) ? $extra['horizontal'] : $horizontal;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		if ($extra['class']) {
+		if ($extra['class_add']) {
 			$add_str .= ' class="'.trim($extra['class'].' '.$extra['class_add']).'" ';
 		}
 		if ($extra['style']) {
@@ -886,6 +951,9 @@ class yf_html {
 		$extra['force_id'] && $id_prefix = $extra['force_id'];
 		$counter = 0;
 		$body = array();
+		if ($extra['outer_label']) {
+			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
+		}
 		$orig_extra = $extra;
 		foreach ((array)$values as $value => $val_name) {
 			if (is_array($val_name)) {
@@ -915,9 +983,9 @@ class yf_html {
 					$label_extra['class'] .= ' '.$this->CLASS_LABEL_RADIO_SELECTED;
 				}
 				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
-							.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
-							.t($val_name)
-						.'</label>'.PHP_EOL;
+							. '<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
+							. '<span>'. t($val_name). '</span>'
+						. '</label>'.PHP_EOL;
 			}
 		}
 		return implode(PHP_EOL, $body);
@@ -943,6 +1011,9 @@ class yf_html {
 		$extra['checked'] = $selected ? 'checked' : null;
 		$extra['id'] = ($extra['force_id'] ?: $extra['id']) ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__.'_'.++$this->_ids[__FUNCTION__] : null);
 		$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $extra['name']));
+		if ($extra['no_desc']) {
+			$extra['desc'] = '';
+		}
 		$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
 		$translate = $extra['translate'] ? $extra['translate'] : $translate;
@@ -956,11 +1027,16 @@ class yf_html {
 		if ($selected) {
 			$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_SELECTED;
 		}
+		$body = array();
+		if ($extra['outer_label']) {
+			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
+		}
 		$extra['type'] = 'checkbox';
-		return '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
+		$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
 				. '<input'._attrs($extra, array('type','name','id','value','checked','class','style','disabled','required')). ($add_str ? ' '.$add_str : '')
-				. '> &nbsp;'. ($translate ? t($extra['desc']) : $extra['desc']) // Please do not remove whitespace :)
+				. '> &nbsp;<span>'. ($translate ? t($extra['desc']) : $extra['desc']). '</span>' // Please do not remove whitespace before &nbsp; :)
 			. '</label>';
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -993,8 +1069,10 @@ class yf_html {
 		if (!is_array($selected)) {
 			$selected = strval($selected);
 		}
-
 		$body = array();
+		if ($extra['outer_label']) {
+			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
+		}
 		foreach ((array)$values as $key => $value) {
 			$sel_text = '';
 			// Selected value could be an array
@@ -1028,10 +1106,16 @@ class yf_html {
 				$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_SELECTED;
 			}
 			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			if ($extra['no_desc']) {
+				$desc = '';
+			} else {
+				$desc = ($translate ? t($value) : $value);
+			}
 			if ($this->BOXES_USE_STPL) {
 				$body[] = tpl()->parse('system/common/check_box_item', array(
 					'name'		=> $val_name,
 					'value'		=> $key,
+					'desc'		=> $desc,
 					'selected'	=> $sel_text,
 					'add_str'	=> $add_str,
 					'label'		=> $translate ? t($value) : $value,
@@ -1042,7 +1126,7 @@ class yf_html {
 				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
 							. '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" value="'.$key.'"'
 							. ($is_selected ? ' '.$sel_text : '') . ($add_str ? ' '.trim($add_str) : '')
-							. '> &nbsp;'. ($translate ? t($value) : $value) // Please do not remove whitespace :)
+							. '> &nbsp;'. '<span>'.$desc.'</span>'  // Please do not remove whitespace :)
 						.'</label>';
 			}
 		}
@@ -1065,10 +1149,33 @@ class yf_html {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
 		$extra['type'] = $extra['type'] ?: 'text';
-		$extra['placeholder'] = $extra['desc'];
+		$extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
 
 		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step');
 		return '<input'._attrs($extra, $attrs_names).'>';
+	}
+
+	/**
+	* Simple textarea form control
+	*/
+	function textarea($name = '', $value = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['name'] = $extra['name'] ?: ($name ?: 'text');
+		$extra['value'] = $extra['value'] ?: $value;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
+		$extra['type'] = $extra['type'] ?: 'text';
+		$extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
+		$extra['contenteditable'] = (!isset($extra['contenteditable']) || $extra['contenteditable']) ? 'true' : false;
+
+		$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size','disabled','readonly','autocomplete','autofocus');
+		return '<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']).'</textarea>';
 	}
 
 	/**
@@ -1192,26 +1299,18 @@ class yf_html {
 			return false;
 		}
 		asset('bfh-select');
-// TODO: allow deep customization of its layout
-// TODO: require here js, css of the bfh-selectbox plugin
-		$selected = strval($selected);
-		$body .= '<div class="bfh-selectbox" id="'.$extra['id'].'">'
-					.'<input type="hidden" name="'.$name.'" value="'.$selected.'">'
-					.'<a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">'
-						.'<span class="bfh-selectbox-option bfh-selectbox-medium" data-option="'.$selected.'">'.$values[$selected].'</span>'
-						.'<b class="caret"></b>'
-					.'</a>'
-					.'<div class="bfh-selectbox-options">'
-						.'<input type="text" class="bfh-selectbox-filter">'
-						.'<div role="listbox">'
-							.'<ul role="option">';
+
+		$extra['class'] = 'bfh-selectbox '.$extra['class_add'];
+		$extra['data-name']		= $name;
+		$extra['data-value']	= strval($selected);
+		$extra['data-filter']	= isset($extra['data-filter']) ? $extra['data-filter'] : (count($values) > 10 ? 'true' : '');
+
+		$body .= '<div'._attrs($extra, array('id','class','style')).'>';
 		foreach ((array)$values as $key => $cur_value) {
-			$body .= '<li'.($is_selected ? ' class="active"' : '').'><a tabindex="-1" href="#" data-option="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
+			$body .= '<div data-value="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</div>'.PHP_EOL;
 		}
-		$body .= 			'</ul>'
-						.'</div>'
-					.'</div>'
-				.'</div>';
+		$body .= '</div>';
+
 		return $body;
 	}
 
@@ -1348,11 +1447,152 @@ class yf_html {
 	/**
 	*/
 	function tooltip($text = '', $extra = array()) {
-		if (!strlen($text)) {
-			return '';
+		if (is_array($text)) {
+			$extra = (array)$extra + $text;
+			$text = '';
 		}
-#		return form()->_show_tip($text);
-		css('.popover { width:auto; min-width: 100px;}');
-		return '&nbsp;<span class="yf_tip" data-toggle="popover" data-content="'._prepare_html($text).'"><i class="icon icon-question-sign fa fa-question-circle"></i></span>';
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+#		css('.popover { width:auto; min-width: 100px;}');
+		$extra['text'] = $extra['text'] ?: $text;
+		$extra['icon'] = $extra['icon'] ?: 'icon icon-info-sign fa fa-question-circle';
+		$extra['href'] = $extra['href'] ?: '#';
+		$extra['class'] = ($extra['class'] ?: 'yf_tip'). ($extra['class_add'] ? ' '.$extra['class_add'] : '');
+		$extra['data-content'] = $extra['data-content'] ?: _prepare_html($extra['text']);
+		$extra['data-toggle'] = $extra['data-toggle'] ?: 'popover';
+		$extra['data-container'] = $extra['data-container'] ?: 'body';
+		$extra['data-html']	= $extra['data-html'] ?: 'true';
+		return (!$extra['no_nbsp'] ? '&nbsp;' : ''). '<span'._attrs($extra, array('id','class','style')).'><i class="'.$extra['icon'].'"></i></span>';
+	}
+
+	/**
+	* Hyperlink container
+	*/
+	function a() {
+		$args = func_get_args();
+		$a = array();
+		// numerics params
+		if (isset($args[0]) && is_array($args[0])) {
+			$a = $args[0];
+		} elseif (isset($args[0])) {
+			$a['href']	= $args[0];
+			$a['title']	= $args[1];
+			$a['icon']	= $args[2];
+			$a['text']	= $args[3];
+			$a['class_add']	= $args[4];
+			$a['target']= $args[5];
+		// named params
+		} elseif (isset($args['link'])) {
+			$a = $args;
+		}
+		if (isset($args['extra']) && is_array($args['extra'])) {
+			foreach($args['extra'] as $k => $v) {
+				$a[$k] = $v;
+			}
+		}
+		if (!isset($a['text'])) {
+			$a['text'] = $a['title'] ?: $a['href'];
+		}
+		if ($a['href'] && substr($a['href'], 0, strlen('http')) !== 'http' && substr($a['href'], 0, strlen('//')) !== '//') {
+			$a['href'] = url($a['href']);
+		}
+		if (!isset($a['class'])) {
+			$a['class'] = 'btn btn-default btn-mini btn-xs';
+		}
+		if ($a['class_add']) {
+			$a['class'] .= ' '.$a['class_add'];
+		}
+		if (!isset($a['target'])) {
+			$a['target'] = '_blank';
+		}
+		$icon = '';
+		if (isset($a['icon'])) {
+			$icon = array();
+			if (!is_array($a['icon'])) {
+				$a['icon'] = array($a['icon']);
+			}
+			foreach ((array)$a['icon'] as $i) {
+				$icon[] = '<i class="'.$i.'"></i>';
+			}
+			$icon = implode('&nbsp;', $icon);
+		}
+		return '<a'._attrs($a, array('href','title','class','style','id','rel','target','disabled')).'>'. $icon. (strlen($a['text']) ? ($icon ? '&nbsp;' : '')._prepare_html($a['text']) : '').'</a>';
+	}
+
+	/**
+	* Icon container
+	*/
+	function icon() {
+		$args = func_get_args();
+		$a = array();
+		// numerics params
+		if (isset($args[0]) && is_array($args[0])) {
+			$a = $a[0];
+		} elseif (isset($args[0])) {
+			$a['icon']	= $args[0];
+			$a['title']	= $args[1];
+			$a['text']	= $args[2];
+			$a['class']	= $args[3];
+		// named params
+		} elseif (isset($args['icon'])) {
+			$a = $args;
+		}
+		if (isset($args['extra']) && is_array($args['extra'])) {
+			foreach($args['extra'] as $k => $v) {
+				$a[$k] = $v;
+			}
+		}
+		if (!isset($a['text'])) {
+			$a['text'] = $a['title'];
+		}
+		if (!isset($a['style'])) {
+			$a['style'] = 'padding-right:5px';
+		}
+		return '<span style="'.$a['style'].'" title="'._prepare_html($a['title']).'"><i class="'.$a['icon'].'"></i>'.(strlen($a['text']) ? '&nbsp;'._prepare_html($a['text']) : '').'</span>';
+	}
+
+	/**
+	* IP container
+	*/
+	function ip() {
+		asset('bfh-select');
+
+		$args = func_get_args();
+		$a = array();
+		// numerics params
+		if (isset($args[0]) && is_array($args[0])) {
+			$a = $a[0];
+		} elseif (isset($args[0])) {
+			$a['ip'] = $args[0];
+		}
+		if (isset($args['extra']) && is_array($args['extra'])) {
+			foreach($args['extra'] as $k => $v) {
+				$a[$k] = $v;
+			}
+		}
+		$ip = $a['ip'];
+		$code = strtoupper($this->_get_ip_country($ip));
+		$name = _prepare_html($this->_get_country_name($code));
+		return a('http://whois.domaintools.com/'.urlencode($ip), $ip. ' | '. $code. ' | '. $name, ($code ? 'bfh-flag-'.$code : ''), $ip);
+	}
+
+	/**
+	*/
+	function _get_ip_country ($ip) {
+		if (!isset($this->_ip_to_country[$ip])) {
+			$func = 'geoip_country_code_by_name';
+			$this->_ip_to_country[$ip] = is_callable($func) ? $func($ip) : '';
+		}
+		return $this->_ip_to_country[$ip];
+	}
+
+	/**
+	*/
+	function _get_country_name ($code) {
+		if (!isset($this->_country_names)) {
+			$this->_country_names = db()->select('code','name')->from('geo_countries')->get_2d();
+		}
+		return $this->_country_names[$code];
 	}
 }

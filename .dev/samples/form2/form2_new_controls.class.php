@@ -63,6 +63,7 @@ class form2_new_controls {
 			->country_box(array('selected' => 'US', 'renderer' => 'multi_check_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'radio_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'radio_box', 'row_tpl' => '%name %icon'))
+			->country_box(array('selected' => 'US', 'renderer' => 'radio_box', 'horizontal' => '0'))
 			->country_box(array('selected' => 'US', 'renderer' => 'div_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'button_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'button_split_box'))
@@ -124,5 +125,11 @@ class form2_new_controls {
 			$links[url('/@object/'.$name)] = t($name);
 		}
 		return html()->navlist($links);
+	}
+
+	function _self_source($method) {
+		asset('highlightjs');
+		$source = _class('core_api')->get_method_source(__CLASS__, $method);
+		return '<div id="func_self_source_'.$name.'"><pre class="prettyprint lang-php"><code>'._prepare_html($source['source']).'</code></pre></div> ';
 	}
 }

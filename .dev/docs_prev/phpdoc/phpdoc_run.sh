@@ -1,1 +1,0 @@
-phpdoc -d /home/www/yf/classes/ -t /home/www/yf/.dev/__DOCS/phpdoc/generated/

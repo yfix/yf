@@ -85,66 +85,120 @@ class yf_graphics {
 		// For compatibility with old versions
 		$website_name = conf('website_name');
 		if (strlen($website_name)) {
-			$title = _prepare_html($website_name);
+			$title = $website_name;
 		}
 		// Add pages names to the title
 		if ($this->ADD_TITLE_PAGES) {
 			if (strlen($_GET['object']) && $_GET['object'] != 'static_pages') {
 				$title .= ' :: '._ucfirst(t($_GET['object']));
+				$title = _ucfirst(t($_GET['object'])).' : '.$title;
 			}
 		}
 		// Override by hook method
-		$method_name = '_site_title';
-// TODO: need to check permissions at first
-#		$obj = module($_GET['object']);
-		if (method_exists($obj, $method_name)) {
-			$title = _prepare_html($obj->$method_name($title));
+// TODO: maybe need to check permissions at first
+		$obj = module_safe($_GET['object']);
+		if (is_object($obj)) {
+			$hook_names = array('_hook_title', '_site_title');
+			foreach ($hook_names as $method_name) {
+				if (method_exists($obj, $method_name)) {
+					$title = $obj->$method_name($title);
+					break;
+				}
+			}
 		}
 		// Force by global var
 		$conf_title = conf('site_title');
 		if ($conf_title) {
-			$title = _prepare_html($conf_title);
+			$title = $conf_title;
 		}
-		return $title;
+		$title = preg_replace('~\s+~ims', ' ', $title);
+		return _prepare_html($title);
 	}
 
 	/**
 	* Show metatags
 	*/
-	function show_metatags() {
-		$charset = conf('charset');
-		if (!$charset) {
-			$charset = 'utf-8';
+	function show_metatags($meta = array()) {
+		if (empty($meta)) {
+			$meta = $this->META_DEFAULT;
 		}
-		$meta_keywords = conf('meta_keywords');
-		if (!$meta_keywords) {
-			$meta_keywords = $this->META_KEYWORDS;
+		if (!is_array($meta)) {
+			$meta = array();
 		}
-		$meta_description = conf('meta_description');
-		if (!$meta_description) {
-			$meta_description = $this->META_DESCRIPTION;
-		}
-		$meta = array(
-			'charset'		=> $charset,
-			'keywords'		=> $meta_keywords,
-			'description'	=> $meta_description,
-		);
+		$meta['charset']	= $meta['charset'] ?: (conf('charset') ?: 'utf-8');
+		$meta['keywords']	= $meta['keywords'] ?: (conf('meta_keywords') ?: $this->META_KEYWORDS);
+		$meta['description']= $meta['description'] ?: (conf('meta_description') ?: $this->META_DESCRIPTION);
 		// Override by hook method
-		$method_name = '_hook_meta_tags';
-// TODO: need to check permissions at first
-#		$obj = module($_GET['object']);
-		if (method_exists($obj, $method_name)) {
-			$meta = _prepare_html($obj->$method_name($meta));
+// TODO: maybe need to check permissions at first
+		$obj = module_safe($_GET['object']);
+		if (is_object($obj)) {
+			$hook_names = array('_hook_meta_tags', '_hook_meta');
+			foreach ($hook_names as $method_name) {
+				if (method_exists($obj, $method_name)) {
+					$meta = $obj->$method_name($meta);
+					break;
+				}
+			}
+		}
+		foreach ((array)$this->META_ADD as $k => $v) {
+			if (!is_string($v) && is_callable($v)) {
+				$meta = $v($meta);
+			} elseif (isset($meta[$k])) {
+				continue;
+			} else {
+				$meta[$k] = $v;
+			}
+		}
+		// Quick fixes for common meta "og:" and "fb:"
+		foreach ((array)$meta as $name => $value) {
+			if (substr($name, 0, 3) === 'og_') {
+				$meta['og:'. substr($name, 3)] = $value;
+				unset($meta[$name]);
+			} elseif (substr($name, 0, 3) === 'fb_') {
+				$meta['og:'. substr($name, 3)] = $value;
+				unset($meta[$name]);
+			}
+		}
+		if (isset($meta['og:title']) && !isset($meta['og:type'])) {
+			$meta['og:type'] = 'website';
+		}
+		$robots_no_index = (main()->is_ajax() || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX') || DEBUG_MODE || (defined('DEVELOP') && DEVELOP) || (defined('TEST_MODE') && TEST_MODE));
+		if ($robots_no_index) {
+			$meta['robots'] = 'noindex,nofollow,noarchive,nosnippet';
+		}
+		$out = array();
+		foreach ((array)$meta as $name => $values) {
+			$name = trim($name);
+			if (!strlen($name) || !$values) {
+				continue;
+			}
+			$_name = _prepare_html($name);
+			if (!is_array($values)) {
+				$values = array($values);
+			}
+			foreach ((array)$values as $value) {
+				$value = trim($value);
+				if (!strlen($name) || !strlen($value)) {
+					continue;
+				}
+				$value = str_replace(array("\r\n\r\n\r\n", "\r\n\r\n", "\r\n", "\r", "\n"), ' ', $value);
+				$value = _prepare_html($value);
+				if ($name === 'canonical') {
+					$out[$name] = '<link rel="canonical" href="'.$value.'" />';
+				} elseif ($name === 'charset') {
+					$out[$name] = '<meta http-equiv="Content-Type" content="text/html; charset='.$value.'" />';
+				} elseif (false !== strpos($name, ':')) {
+					$out[$name] = '<meta property="'.$_name.'" content="'.$value.'" />';
+				} else {
+					$out[$name] = '<meta name="'.$_name.'" content="'.$value.'" />';
+				}
+			}
 		}
 		if (DEBUG_MODE) {
 			debug('_DEBUG_META', $meta);
+			debug('_DEBUG_META_OUT', $out);
 		}
-		$replace = array(
-			'charset'		=> _prepare_html($meta['charset']),
-			'keywords'		=> $meta['keywords'],
-			'description'	=> $meta['description'],
-		);
-		return tpl()->parse('system/meta_tags', $replace);
+		return implode(PHP_EOL, $out);
 	}
 
 	/**
@@ -315,46 +369,6 @@ class yf_graphics {
 	}
 
 	/**
-	* Show help tip block
-	*/
-	function _show_help_tip($params = array()) {
-		$tip_id		= $params['tip_id'];
-		$tip_type	= !empty($params['tip_type']) ? intval($params['tip_type']) : 1;
-		if (empty($tip_id)) {
-			return false;
-		}
-		if (!isset($this->_avail_tips)) {
-			$this->_avail_tips = (array)main()->get_data('tips');
-		}
-		$r = $params['replace'];
-		$legend = '';
-		$var = $tip_id[0] == '#' ? substr($tip_id, 1) : '';
-		if ($var && isset($r[$var])) {
-			$legend = $r[$var];
-		} elseif (isset($this->_avail_tips[$tip_id])) {
-			$legend = $this->_avail_tips[$tip_id];
-		} else {
-			$legend = t($tip_id);
-		}
-		if (!strlen($legend)) {
-			return false;
-		}
-		return tpl()->parse('system/help_tip', array(
-			'tip_id'	=> _prepare_html($tip_id),
-			'tip_type'	=> intval($tip_type),
-			'legend'	=> _prepare_html($legend),
-		));
-	}
-
-	/**
-	* Show inline tip block
-	*/
-	function _show_inline_tip($params = array()) {
-		$params['tip_id'] = $params['text'];
-		return $this->_show_help_tip($params);
-	}
-
-	/**
 	* Prepare help for show
 	*/
 	function show_help(){
@@ -371,24 +385,11 @@ class yf_graphics {
 	}
 
 	/**
-	* Get html code for external bookmarking (Yahoo, Digg, etc)
-	*/
-	function _show_bookmarks_button($title = '', $url = '', $only_links = 1) {
-		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_bookmarks_button($title, $url, $only_links);
-	}
-
-	/**
-	* Get html code for external bookmarking (Yahoo, Digg, etc)
-	*/
-	function _show_rss_button($feed_name = '', $feed_link = '', $only_links = 1) {
-		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_rss_button($feed_name, $feed_link, $only_links);
-	}
-
-	/**
 	* Send main headers
 	*/
 	function _send_main_headers($content_length = 0) {
-		if (headers_sent() || conf('no_headers')) {
+		if (headers_sent($file, $line) || conf('no_headers')) {
+#			trigger_error('Headers were sent in '.$file.':'.$line, E_USER_WARNING);
 			return false;
 		}
 		if ($this->HEADER_POWERED_BY) {
@@ -407,9 +408,14 @@ class yf_graphics {
 			header('Cache-Control: post-check=0, pre-check=0', false); // HTTP/1.1
 			header('Pragma: no-cache'); // HTTP/1.0
 		}
-		if (main()->is_ajax()/* || main()->is_post()*/) {
+		if (main()->is_ajax() || DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX')) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
 		}
+// TODO: unify headers sending for 301, 302, 403, 404, also chech php_sapi_name() for strpos "cgi"
+// http://stackoverflow.com/questions/3258634/php-how-to-send-http-response-code
+#			http_response_code(404); // 5.4+
+#			header('X-PHP-Response-Code: 404', true, 404);
+#			header('Status: 404 Not Found');
 		$this->_send_custom_http_headers();
 	}
 
@@ -428,13 +434,6 @@ class yf_graphics {
 				header($name.': '.$value, true);
 			}
 		}
-	}
-
-	/**
-	* Generate typos for the given text
-	*/
-	function _generate_typos($params = array()) {
-		return _class('graphics_typos', $this->SUB_MODULES_PATH)->get_all_with_stpl($params['text'], $params);
 	}
 
 	/**
@@ -457,6 +456,27 @@ class yf_graphics {
 			'change_link'			=> './?object=geo_content&action=change_location',
 		);
 		return tpl()->parse('user_geo_block', $replace);
+	}
+
+	/**
+	* Generate typos for the given text
+	*/
+	function _generate_typos($params = array()) {
+		return _class('graphics_typos', $this->SUB_MODULES_PATH)->get_all_with_stpl($params['text'], $params);
+	}
+
+	/**
+	* Get html code for external bookmarking (Yahoo, Digg, etc)
+	*/
+	function _show_bookmarks_button($title = '', $url = '', $only_links = 1) {
+		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_bookmarks_button($title, $url, $only_links);
+	}
+
+	/**
+	* Get html code for external bookmarking (Yahoo, Digg, etc)
+	*/
+	function _show_rss_button($feed_name = '', $feed_link = '', $only_links = 1) {
+		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_rss_button($feed_name, $feed_link, $only_links);
 	}
 
 	/**
@@ -540,5 +560,86 @@ class yf_graphics {
 			'items'	=> $items,
 		);
 		return tpl()->parse('system/quick_menu_main', $replace);
+	}
+
+	/**
+	* New unified method to display tooltips, all others should be deprecated. Examples:
+	* tip('register.login')     tpl version: {tip('register.login')}
+	* tip('Some inline help text')     tpl version: {tip('Some inline help text')}
+	* tip('Some inline help text';'fa-eye')    tpl version: {tip('Some inline help text';'fa-eye')}
+	* tip(array('raw' => '\'Some inline help text\';\'fa-eye\''))
+	* tip(array('text' => 'Some inline help text', 'icon' => 'fa-eye'))
+	* tip('Some inline help text', array('icon' => 'fa-eye'))
+	*/
+	function tip($in = null, $extra = array()) {
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		if (is_array($in) && isset($in['text'])) {
+			$extra = (array)$extra + $in;
+		} elseif (is_array($in) && isset($in['raw'])) {
+			// Some inline help text
+			// Some inline help text;fa-eye;my_tip_class'
+			// Some inline help text; fa-eye; my_tip_class
+			// 'Some inline help text'
+			// 'Some inline help text';'fa-eye'
+			// 'Some inline help text';'fa-eye';'my_tip_class'
+			$raw = explode(';', str_replace(array('\'','"'), '', $in['raw']));
+			$extra['text']	= trim($raw[0]);
+			if ($raw[1] === 'return_text=1' || $raw[1] === 'text=1') {
+				$return_text = true;
+			}
+			$extra['icon']	= trim($raw[1]);
+			$extra['class']	= trim($raw[1]);
+			if (isset($in['replace']) && $extra['text'] && substr($extra['text'], 0, 1) === '@') {
+				$replace_var = substr($extra['text'], 1);
+				if (isset($in['replace'][$replace_var])) {
+					$extra['text'] = $in['replace'][$replace_var];
+				}
+			}
+		}
+		$extra['text'] = trim($extra['text'] ?: (is_string($in) ? $in : ''));
+		if (!strlen($extra['text'])) {
+			return false;
+		}
+		$strip_tags = isset($extra['strip_tags']) ? $extra['strip_tags'] : $this->TIPS_STRIP_TAGS;
+		if (!isset($this->_tips)) {
+			$this->_tips = (array)main()->get_data('tips');
+		}
+		$tip = array();
+		if (isset($this->_tips[$extra['text']])) {
+			$lang = conf('language');
+			// Exact match for current language
+			if (isset($this->_tips[$extra['text']][$lang])) {
+				$tip = $this->_tips[$extra['text']][$lang];
+			} else {
+				// Try to get first record and translate it
+				$tip = current($this->_tips[$extra['text']]);
+				if ($strip_tags) {
+					$tip['text'] = strip_tags($tip['text']); // Needed for correct translation
+				}
+				$tip['text'] = t($tip['text']);
+			}
+			if (!$tip['active']) {
+				return false;
+			}
+			$extra['text'] = $tip['text'];
+		}
+		if ($strip_tags) {
+			$extra['text'] = strip_tags($extra['text']);
+		}
+		if (!strlen($extra['text'])) {
+			return false;
+		}
+		// Thinking that we have template variables or tags inside tip contents, try to replace them
+		if (isset($in['replace']) && false !== strpos($extra['text'], '{')) {
+			$extra['text'] = tpl()->parse_string($extra['text'], $in['replace'], 'html_tip_auto__'.crc32($extra['text']));
+		}
+		if ($return_text || $extra['return_text']) {
+			return $extra['text'];
+		}
+		$extra['icon'] = $extra['icon'] ?: $tip['icon'];
+		$extra['class_add'] = $extra['class_add'] ?: $tip['class_add'];
+		return html()->tooltip($extra['text'], $extra);
 	}
 }

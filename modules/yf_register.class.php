@@ -18,7 +18,7 @@ class yf_register {
 			'captcha'		=> 'trim|captcha',
 		);
 		$a = $_POST;
-		$a['redirect_link'] = './?object='.$_GET['object'].'&action=success';
+		$a['redirect_link'] = url('/@object/success');
 // TODO: generate confirmation code and send emails
 		return form($a, array('legend' => 'Registration', 'class_add' => 'col-md-6'))
 			->validate($validate_rules)
@@ -60,17 +60,15 @@ class yf_register {
 		$replace = array(
 			'nick'			=> $identify,
 			'confirm_code'	=> $code,
-			'conf_link'		=> process_url('./?object='.$_GET['object'].'&action=confirm&id='.$code),
-			'aol_link'		=> process_url('./?object='.$_GET['object'].'&action=confirm&id='.$code),
-			'conf_link_aol'	=> process_url('./?object='.$_GET['object'].'&action=confirm_aol&id='.$code),
-			'conf_form_url'	=> process_url('./?object=login_form&action=account_inactive'),
+			'conf_link'		=> url('/@object/confirm/'.$code),
+			'conf_form_url'	=> url('/login_form/account_inactive'),
 			'admin_name'	=> SITE_ADVERT_NAME,
 			'advert_url'	=> SITE_ADVERT_URL,
 		);
 		if(isset($extra['add_replace']) && is_array($extra['add_replace'])){
 			$replace = array_merge($replace, $extra['add_replace']);
 		}
-		$text = tpl()->parse($_GET['object'].'/email_confirm'.(!empty($_POST['account_type']) ? '_'.$_POST['account_type'] : ''), $replace);	
+		$text = tpl()->parse('@object/email_confirm'.(!empty($_POST['account_type']) ? '_'.$_POST['account_type'] : ''), $replace);	
 		// prepare email data
 		$email_from	= SITE_ADMIN_EMAIL;
 		$name_from	= SITE_ADVERT_NAME;
@@ -92,7 +90,7 @@ class yf_register {
 			'advert_name'	=> SITE_ADVERT_NAME,
 			'advert_url'	=> SITE_ADVERT_URL,
 		);
-		$text = tpl()->parse($_GET['object'].'/email_success'.(!empty($_POST['account_type']) ? '_'.$_POST['account_type'] : ''), $replace);
+		$text = tpl()->parse('@object/email_success'.(!empty($_POST['account_type']) ? '_'.$_POST['account_type'] : ''), $replace);
 		// prepare email data
 		$email_from	= SITE_ADMIN_EMAIL;
 		$name_from	= SITE_ADVERT_NAME;
@@ -109,7 +107,7 @@ class yf_register {
 	function confirm () {
 		// Send registration confirmation email
 		if (!$this->CONFIRM_REGISTER) {
-			return tpl()->parse($_GET['object'].'/confirm_messages', array('msg' => 'confirm_not_needed'));
+			return tpl()->parse('@object/confirm_messages', array('msg' => 'confirm_not_needed'));
 		}
 		// Check confirmation code
 		if (!strlen($_GET['id'])) {
@@ -129,7 +127,7 @@ class yf_register {
 		}
 		// Check if user already confirmed
 		if ($target_user_info['active']) {
-			return tpl()->parse($_GET['object'].'/confirm_messages', array('msg' => 'already_confirmed'));
+			return tpl()->parse('@object/confirm_messages', array('msg' => 'already_confirmed'));
 		}
 		// Check if code is expired
 		if (!common()->_error_exists()) {
@@ -144,11 +142,11 @@ class yf_register {
 		}
 		if (!common()->_error_exists()) {
 			db()->update('user', array('active' => 1), $user_id);
-			return tpl()->parse($_GET['object'].'/confirm_messages', array('msg' => 'confirm_success'));
+			return tpl()->parse('@object/confirm_messages', array('msg' => 'confirm_success'));
 		}
 		$body .= _e();
-		$body .= tpl()->parse($_GET['object'].'/enter_code', $replace3);
-		$body .= tpl()->parse($_GET['object'].'/resend_code', $replace4);
+		$body .= tpl()->parse('@object/enter_code', $replace3);
+		$body .= tpl()->parse('@object/resend_code', $replace4);
 		return $body;
 	}
 
@@ -165,7 +163,7 @@ class yf_register {
 		// Display form
 		$replace = array(
 		);
-		return tpl()->parse($_GET['object'].'/enter_code', $replace);
+		return tpl()->parse('@object/enter_code', $replace);
 	}
 
 	/**
@@ -187,14 +185,12 @@ class yf_register {
 				$replace = array(
 					'nick'			=> $user_info['nick'],
 					'confirm_code'	=> $code,
-					'conf_link'		=> process_url('./?object='.$_GET['object'].'&action=confirm&id='.$code),
-					'aol_link'		=> process_url('./?object='.$_GET['object'].'&action=confirm&id='.$code),
-					'conf_link_aol'	=> process_url('./?object='.$_GET['object'].'&action=confirm_aol&id='.$code),
-					'conf_form_url'	=> process_url('./?object=login_form&action=account_inactive'),
+					'conf_link'		=> url('/@object/confirm&id='.$code),
+					'conf_form_url'	=> url('/login_form/account_inactive'),
 					'admin_name'	=> SITE_ADVERT_NAME,
 					'advert_url'	=> SITE_ADVERT_URL,
 				);
-				$text = tpl()->parse($_GET['object'].'/email_confirm_'.$this->_account_types[$user_info['group']], $replace);
+				$text = tpl()->parse('@object/email_confirm_'.$this->_account_types[$user_info['group']], $replace);
 				// Prepare email
 				$email_from	= SITE_ADMIN_EMAIL;
 				$name_from	= SITE_ADVERT_NAME;
@@ -209,6 +205,6 @@ class yf_register {
 				}
 			}
 		}
-		return tpl()->parse($_GET['object'].'/resend_code', $replace);
+		return tpl()->parse('@object/resend_code', $replace);
 	}
 }

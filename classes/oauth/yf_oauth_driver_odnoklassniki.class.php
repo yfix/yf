@@ -25,6 +25,7 @@ class yf_oauth_driver_odnoklassniki extends yf_oauth_driver2 {
 #			'email'			=> $raw['has_email'],
 			'avatar_url'	=> $raw['pic_2'],
 #			'profile_url'	=> $raw['url'],
+			'profile_url'	=> 'http://ok.ru/profile/'.$raw['uid'],
 			'birthday'		=> $raw['birthday'],
 			'locale'		=> $raw['locale'],
 			'gender'		=> $raw['gender'],

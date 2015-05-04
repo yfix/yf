@@ -51,7 +51,11 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		);
 		foreach ($_css_group_map as $_a => $_css_class) {
 			if (isset($extra[$_a][$name]) || ($is_html_array && isset($extra[$_a][$name_dotted]))) {
-				$extra['class_add_form_group'] .= ' '.$_css_class;
+				if ($extra['stacked']) {
+					$extra['class_add_stacked'] .= ' '.$_css_class;
+				} else {
+					$extra['class_add_form_group'] .= ' '.$_css_class;
+				}
 				break;
 			}
 		}
@@ -84,8 +88,10 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 
 		$label_tip_html = $extra['label_tip'] ? trim(' '.html()->tooltip($extra['label_tip'])) : '';
 
+		$label = ($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']). $label_tip_html.'</label>'.PHP_EOL : '');
+
 		$row_start = '<div'._attrs($form_group_extra, array('id','class','style')).'>'.PHP_EOL
-			.($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']). $label_tip_html.'</label>'.PHP_EOL : '')
+			.$label
 			.(!$extra['wide'] ? '<div'._attrs($controls_extra, array('id','class','style')).'>'.PHP_EOL : '');
 
 		$row_end =
@@ -93,7 +99,8 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 			.'</div>';
 
 		$input_group_extra = $extra['input_group'];
-		$input_group_extra['class'] = $this->CLASS_INPUT_GROUP.' '.($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : ''). ($extra['append'] ? ' '.$this->CLASS_INPUT_APPEND : '');
+		$input_group_extra['class'] = $input_group_extra['class'] ?: ($this->CLASS_INPUT_GROUP.' '.($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : ''). ($extra['append'] ? ' '.$this->CLASS_INPUT_APPEND : ''));
+		$input_group_extra['class'] .= ' '.$input_group_extra['class_add'];
 
 		$show_input_group = ($extra['append'] || $extra['prepend']);
 
@@ -126,17 +133,20 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 			if ($extra['class_stacked'] && !isset($extra_stacked['class'])) {
 				$extra_stacked['class'] = $extra['class_stacked'];
 			}
-			$extra_stacked['class'] = ($extra['class_stacked'] ?: $this->CLASS_STACKED_ITEM). ' '.$extra['class_add_stacked'];
-			return '<span'._attrs($extra_stacked, array('id', 'class', 'style')).'>'
-					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
-					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
+			$extra_stacked['class'] = ($extra_stacked['class'] ?: $this->CLASS_STACKED_ITEM). ' '.($extra_stacked['class_add'] ?: $extra['class_add_stacked']);
+			return 
+				'<span'._attrs($extra_stacked, array('id', 'class', 'style')).'>'
+				.($extra['show_label'] ? $label : '')
+				.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
+				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
 				.'</span>';
 		} else {
 			// Full variant
-			return $row_start
-					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
-					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
-					.$this->_add_rich_editor($extra, $replace, $form)
+			return 
+				$row_start
+				.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
+				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
+				.$this->_add_rich_editor($extra, $replace, $form)
 				.$row_end;
 		}
 	}

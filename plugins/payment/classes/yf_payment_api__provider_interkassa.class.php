@@ -10,6 +10,9 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	public $KEY_PRIVATE_TEST = null;  // secret key for test
 	public $HASH_METHOD      = 'md5'; // signature hash method: md5, sha256
 
+	public $IS_DEPOSITION = true;
+	// public $IS_PAYMENT    = true;
+
 	public $_options_transform = array(
 		'amount'       => 'ik_am',
 		'currency'     => 'ik_cur',
@@ -64,79 +67,86 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	public $service_allow = array(
 		'Visa',
 		'Mastercard',
-		'WebMoney',
+		// 'WebMoney',
 		// 'LiqPay',
 		// 'Privat24',
 		// 'Yandex.Money',
 		// 'Единый кошелек',
-		'PerfectMoney',
-		'Почта России',
-		'Юнистрим',
-		'Салоны связи',
-		'Альфаклик (Альфабанк)',
-		'Anelik',
-		'ЛИДЕР',
+		// 'PerfectMoney',
+		// 'Почта России',
+		// 'Юнистрим',
+		// 'Салоны связи',
+		// 'Альфаклик (Альфабанк)',
+		// 'Anelik',
+		// 'ЛИДЕР',
 		// 'Qiwi Кошелек',
-		'Украинский банк',
-		'Российский банк',
-		'Терминалы России',
-		'Терминалы Украины',
-		'Тестовая платежная система',
-		'Салоны связи «Альт-телеком»',
+		// 'Украинский банк',
+		// 'Российский банк',
+		// 'Терминалы России',
+		// 'Терминалы Украины',
+		// 'Тестовая платежная система',
+		// 'Салоны связи «Альт-телеком»',
 		// 'SWIFT Банковский перевод',
-		'Интернет-банк «Связной Банк»',
-		'Салоны связи «Форвард Мобайл»',
-		'Интернет-банк «PSB-Retail» («Промсвязьбанк»)',
-		'Сбербанк ОнЛ@йн',
-		'Салоны связи «Диксис»',
-		'Салоны связи «Евросеть»',
-		'Салоны связи «Связной»',
-		'OKPay',
-		'Салоны связи «Цифроград»',
-		'Payeer',
-		'Салоны связи «Сотовый мир»',
+		// 'Интернет-банк «Связной Банк»',
+		// 'Салоны связи «Форвард Мобайл»',
+		// 'Интернет-банк «PSB-Retail» («Промсвязьбанк»)',
+		// 'Сбербанк ОнЛ@йн',
+		// 'OKPay',
+		// 'Payeer',
+		// 'Салоны связи «Диксис»',
+		// 'Салоны связи «Евросеть»',
+		// 'Салоны связи «Связной»',
+		// 'Салоны связи «Цифроград»',
+		// 'Салоны связи «Сотовый мир»',
 	);
 
 	public $url_result = null;
 	public $url_server = null;
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/interkassa/Interkassa.php' );
 		$this->api = new Interkassa( $this->KEY_PUBLIC, $this->KEY_PRIVATE, $this->KEY_PRIVATE_TEST, $this->HASH_METHOD, $this->TEST_MODE );
-		$this->url_result = url( '/api/payment/provider?name=interkassa&operation=response' );
-		$this->url_server = url( '/api/payment/provider?name=interkassa&operation=response&server=true' );
+		$this->url_result = url_user( '/api/payment/provider?name=interkassa&operation=response' );
+		$this->url_server = url_user( '/api/payment/provider?name=interkassa&operation=response&server=true' );
 		// parent
 		parent::_init();
 	}
 
 	public function key( $name = 'public', $value = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$value = $this->api->key( $name, $value );
 		return( $value );
 	}
 
 	public function key_reset() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->key( 'public',       $this->KEY_PUBLIC       );
 		$this->key( 'private',      $this->KEY_PRIVATE      );
 		$this->key( 'private_test', $this->KEY_PRIVATE_TEST );
 	}
 
 	public function hash_method( $value = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$value = $this->api->hash_method( $value );
 		return( $value );
 	}
 
 	public function hash_method_reset() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->api->hash_method( $this->HASH_METHOD );
 	}
 
 	public function signature( $options, $request = true ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->api->signature( $options, $request );
 		return( $result );
 	}
 
 	public function _form_options( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_ = $options;
 		// transform
 		foreach ((array)$this->_options_transform as $from => $to ) {
@@ -179,6 +189,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function _url( $options, $is_server = false ) {
+		if( !$this->ENABLE ) { return( null ); }
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( $is_server ) {
 			$url = $_url_server ?: $this->url_server;
@@ -190,6 +201,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function _form( $data, $options = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		if( empty( $data ) ) { return( null ); }
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
@@ -219,6 +231,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function _api_response() {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
@@ -337,6 +350,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function _response_parse( $response ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_ = $response;
 		// transform
 		foreach( (array)$this->_options_transform_reverse as $from => $to  ) {
@@ -349,6 +363,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function get_currency( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_       = &$options;
 		$api     = $this->api;
 		$allow   = &$this->currency_allow;
@@ -363,6 +378,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function deposition( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$_              = $options;
 		$data           = &$_[ 'data'           ];

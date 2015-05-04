@@ -46,6 +46,13 @@ class form2_2forms {
 			})
 			->submit('cancel', false, array('value' => $request_owner == false ? 'Reject' : 'Cancel', 'class_add' => 'btn-danger'));
 
-		return implode(PHP_EOL, $body);
+		return implode(PHP_EOL, $body)
+			. $this->_self_source(__FUNCTION__)
+		;
+	}
+	function _self_source($method) {
+		asset('highlightjs');
+		$source = _class('core_api')->get_method_source(__CLASS__, $method);
+		return '<div id="func_self_source_'.$name.'"><pre class="prettyprint lang-php"><code>'._prepare_html($source['source']).'</code></pre></div> ';
 	}
 }

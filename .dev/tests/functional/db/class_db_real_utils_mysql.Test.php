@@ -10,12 +10,24 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'mysql5';
 		self::_connect();
-		self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
+		if (!$_ENV['TRAVIS']) {
+			self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
+		}
 	}
 	public static function tearDownAfterClass() {
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public static function _need_skip_test($name) {
+		if (main()->is_hhvm()) {
+			if (in_array($name, array('test_drop_database','test_create_database','test_rename_database'))) {
+				return true;
+			}
+		}
+		if ($_ENV['TRAVIS']) {	
+			if (in_array($name, array('test_drop_database','test_create_database','test_rename_database')) || false !== strpos($name, '_foreign_')) {
+				return true;
+			}
+		}
 		return false;
 	}
 	public static function db_name() {
@@ -620,6 +632,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	}
 	public function test_add_foreign_key() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		self::utils()->db->db->select_db($this->db_name());
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(

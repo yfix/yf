@@ -157,11 +157,26 @@ class yf_manage_payment {
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
 		$url         = &$this->url;
-		$sql = db()->select( 'u.id as user_id', 'u.name as name', 'u.email as email', 'pa.balance as balance', 'pa.account_id as account_id' )
+
+#		$sum_daily = $this->_get_daily_stats('sum', $last_days = 180);
+#		$sum_chart = _class('charts')->jquery_sparklines($sum_daily);
+#		if ($sum_chart) {
+#			$sum_chart = '<div title="'.t('Баланс по системе по дням').'" style="margin-bottom: 10px;">'.$sum_chart.'</div>';
+#		}
+
+		$num_daily = $this->_get_daily_stats('num', $last_days = 180);
+		$num_chart = _class('charts')->jquery_sparklines($num_daily);
+		if ($num_chart) {
+			$num_chart = '<div title="'.t('Транзакции в системе по дням').'" style="margin-bottom: 10px;">'.$num_chart.'</div>';
+		}
+
+		$sql = db()->select( 'u.id as id', 'u.id as user_id', 'u.name as name', 'u.email as email', 'pa.balance as balance', 'pa.account_id as account_id' )
 			->table( 'user as u' )
 			->left_join( 'payment_account as pa', 'pa.user_id = u.id' )
 			->sql();
-		return( table( $sql, array(
+		$_this = $this;
+		return $sum_chart. $num_chart.
+			table( $sql, array(
 				'filter' => $filter,
 				'filter_params' => array(
 					'user_id' => array( 'cond' => 'in', 'field' => 'u.id' ),
@@ -169,13 +184,30 @@ class yf_manage_payment {
 					'balance' => 'between',
 					'email'   => 'like',
 				),
+				'hide_empty' => true,
 			))
-			->text( 'user_id', 'Номер'  )
-			->text( 'name'   , 'Имя'    )
+			->on_before_render(function($p, $data, $table) use ($_this) {
+			})
+			->text( 'id', 'Номер'  )
+			->text( 'name', 'Имя', array('link' => url('/members/edit/%id')) )
 			->text( 'email'  , 'Почта'  )
 			->text( 'balance', 'Баланс' )
-			->btn( 'Баланс' , $url[ 'balance' ], array( 'link_params' => 'user_id, account_id', 'icon' => 'fa fa-money' ) )
-		);
+			->func('id', function($in, $e, $a, $p, $table) use ($_this) {
+				if (!isset($table->_data_daily_sum)) {
+					$table->_data_daily_sum = $_this->_get_users_daily_payments($table->_ids, 'sum');
+				}
+				$daily = _class('charts')->jquery_sparklines($table->_data_daily_sum[$a['id']]);
+				return $daily ? '<span title="'.t('График изменения баланса').'">'.$daily.'</span>' : false;
+			}, array('desc' => 'Изменение баланса'))
+			->func('id', function($in, $e, $a, $p, $table) use ($_this) {
+				if (!isset($table->_data_daily_num)) {
+					$table->_data_daily_num = $_this->_get_users_daily_payments($table->_ids, 'num');
+				}
+				$daily = _class('charts')->jquery_sparklines($table->_data_daily_num[$a['id']]);
+				return $daily ? '<span title="'.t('Транзакции').'">'.$daily.'</span>' : false;
+			}, array('desc' => 'Транзакции'))
+			->btn( 'Баланс' , $url[ 'balance' ], array( 'icon' => 'fa fa-money' ) )
+		;
 	}
 
 	function balance() {
@@ -191,9 +223,15 @@ class yf_manage_payment {
 		// check id: user, operation
 		if( $user_id > 0 ) {
 			$user_info = user( $user_id );
-			list( $account_id, $account ) = $payment_api->get_account__by_id( array(
-				'account_id' => $account_id,
-			));
+			if( $account_id > 0 ) {
+				list( $account_id, $account ) = $payment_api->get_account__by_id( array(
+					'account_id' => $account_id,
+				));
+			} else {
+				list( $account_id, $account ) = $payment_api->account( array(
+					'user_id' => $user_id,
+				));
+			}
 		} else {
 			common()->message_error( 'Не определен пользователь', array( 'translate' => false ) );
 			$form = form()->link( 'Назад', $url_back, array( 'class' => 'btn', 'icon' => 'fa fa-chevron-left' ) );
@@ -212,10 +250,20 @@ class yf_manage_payment {
 			'user_id'    => $user_id,
 			'account_id' => $account_id,
 		));
+		// prepare provider
+		$providers = $payment_api->provider( array(
+			'all' => true,
+		));
+		$items = array();
+		foreach( $providers as $i => $item ) {
+			$items[ $item[ 'name' ] ] = $item[ 'title' ];
+		}
+		$providers = $items;
 		// prepare form
 		$replace = array(
 			'amount'        => null,
 			'user_id'       => $user_id,
+			'provider_name' => 'administration',
 			'account_id'    => $account_id,
 				'form_action'   => $url_form_action,
 				'redirect_link' => $url_operation,
@@ -223,21 +271,35 @@ class yf_manage_payment {
 		);
 		// $replace += $_POST + $data;
 		$replace += $_POST;
-		$form = form( $replace, array( 'class_add' => 'form-inline', 'autocomplete' => 'off' ) )
+		$form = form( $replace, array( 'autocomplete' => 'off' ) )
 			->validate(array(
-				'amount' => 'trim|required|numeric|greater_than_equal_to[1]',
+				'amount'        => 'trim|required|numeric|greater_than_equal_to[1]',
+				'provider_name' => 'trim|required',
 			))
 			->on_validate_ok( function( $data, $extra, $rules ) use( &$user_id, &$account_id, &$account ) {
 				$payment_api = _class( 'payment_api' );
+				$provider_name = $_POST[ 'provider_name' ];
+				$provider_name = empty( $provider_name ) ? 'administration' : $provider_name;
+				$operation = $_POST[ 'operation' ];
+				if( $operation == 'payment' ) {
+					$provider_name = 'administration';
+				}
 				$options = array(
 					'user_id'         => $user_id,
 					'account_id'      => $account_id,
 					'amount'          => $_POST[ 'amount' ],
 					'operation_title' => $_POST[ 'title' ],
-					'operation'       => $_POST[ 'operation' ],
-					'provider_name'   => 'administration',
+					'operation'       => $operation,
+					'provider_name'   => $provider_name,
 				);
 				$result = $payment_api->transaction( $options );
+				if( !empty( $result[ 'form' ] ) ) {
+					$form = $result[ 'form' ]
+						. '<script>document.forms[0].submit();</script>'
+					;
+					echo $form;
+					exit;
+				}
 				if( $result[ 'status' ] === true ) {
 					$message = 'message_success';
 					if( empty( $account_id ) ) {
@@ -260,11 +322,12 @@ class yf_manage_payment {
 			})
 			->number( 'amount', 'Сумма' )
 			->text( 'title', 'Название' )
+			->select_box( 'provider_name', $providers, array( 'show_text' => 1, 'desc' => 'Провайдер', 'tip' => 'Выбрать провайдера возможно только для пополнения. Списание возможно только от Администратора.' ) )
 			->row_start( array(
 				'desc' => 'Операция',
 			))
 				->submit( 'operation', 'deposition', array( 'desc' => 'Пополнить' ) )
-				->submit( 'operation', 'payment',    array( 'desc' => 'Списать'   ) )
+				->submit( 'operation', 'payment',    array( 'desc' => 'Списать', 'tip' => 'Списание возможно только от Администратора.' ) )
 			->row_end()
 		;
 		if( $account_id > 0 ) {
@@ -296,8 +359,8 @@ class yf_manage_payment {
 				->text( 'amount'         , 'Сумма'           )
 				->text( 'balance'        , 'Баланс'          )
 				->text( 'title'          , 'Название'        )
-				->date( 'datetime_start' , 'Дата начала'     )
-				->date( 'datetime_finish', 'Дата завершения' )
+				->date( 'datetime_start' , 'Дата начала', array( 'format' => 'full', 'nowrap' => 1 )     )
+				->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
 			;
 		} else {
 			if( !$_POST[ 'amount' ] ) {
@@ -312,9 +375,12 @@ class yf_manage_payment {
 			$currency && $currency_str = ' ' . $currency[ 'short' ];
 			$balance = $account[ 'balance' ];
 		}
+		$user = user( $user_id );
+		$url_user = a( '/members/edit/'.$user_id, $user[ 'name' ] );
 		$replace += array(
-			'user' => user( $user_id ),
-			'balance' => array(
+			'user'     => $user,
+			'url_user' => $url_user,
+			'balance'  => array(
 				'amount'   => $balance,
 				'currency' => $currency_str,
 			),
@@ -324,4 +390,125 @@ class yf_manage_payment {
 		return( $result );
 	}
 
+	/**
+	*/
+	function _get_users_daily_payments($user_ids = array(), $type = 'sum') {
+		if (!$user_ids) {
+			return false;
+		}
+		if (!is_array($user_ids)) {
+			$user_ids = array($user_ids);
+		}
+		$time = time();
+		$days = 60;
+		$min_time = $time - $days * 86400;
+		$data = array();
+		$sql = '
+			SELECT FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d") AS day, a.user_id, o.direction, COUNT(*) AS num, SUM(amount) AS sum
+			FROM s_payment_account AS a
+			INNER JOIN s_payment_operation AS o ON o.account_id = a.account_id
+			WHERE o.status_id = 2
+				AND a.user_id IN('.implode(',', $user_ids).')
+				AND o.datetime_start >= "'.date('Y-m-d H:i:s', $min_time).'"
+			GROUP BY FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d"), a.user_id, o.direction
+		';
+		foreach ((array)db()->get_all($sql) as $a) {
+			$data[$a['user_id']][$a['day']][$type][$a['direction']] = $a[$type];
+		}
+		if (!$data) {
+			return false;
+		}
+		$dates = array();
+		foreach (range($days, 0) as $days_ago) {
+			$date = date('Y-m-d', $time - $days_ago * 86400);
+			$dates[$date] = $days_ago;
+		}
+		$result = array();
+		foreach ((array)$data as $user_id => $user_dates) {
+			$result[$user_id] = array();
+			$_data = null;
+			foreach ($dates as $date => $days_ago) {
+				$in = $user_dates[$date][$type]['in'];
+				$out = $user_dates[$date][$type]['out'];
+				if ($type == 'num') {
+					$_data = array($in, $out);
+				} else {
+					$_data = $in - $out;
+				}
+				// Trim empty values from left side
+				if (!$result[$user_id] && !$_data) {
+					continue;
+				}
+				$result[$user_id][$date] = $_data ?: null;
+			}
+			// Trim values from the right side too
+			foreach (array_reverse($result[$user_id], $preserve_keys = true) as $k => $v) {
+				if (is_array($v)) {
+					if (array_sum($v)) {
+						break;
+					}
+				} elseif ($v) {
+					break;
+				}
+				unset($result[$user_id][$k]);
+			}
+		}
+		return $result;
+	}
+
+	/**
+	*/
+	function _get_daily_stats($type = 'sum', $days = null) {
+		$time = time();
+		$days = $days ?: 60;
+		$min_time = $time - $days * 86400;
+		$data = array();
+		$sql = '
+			SELECT FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d") AS day, o.direction, COUNT(*) AS num, SUM(amount) AS sum
+			FROM s_payment_account AS a
+			INNER JOIN s_payment_operation AS o ON o.account_id = a.account_id
+			WHERE o.status_id = 2
+				AND o.datetime_start >= "'.date('Y-m-d H:i:s', $min_time).'"
+			GROUP BY FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d"), o.direction
+		';
+		foreach ((array)db()->get_all($sql) as $a) {
+			$data[$a['day']][$a['direction']] = $a[$type];
+		}
+		if (!$data) {
+			return false;
+		}
+		$dates = array();
+		foreach (range($days, 0) as $days_ago) {
+			$date = date('Y-m-d', $time - $days_ago * 86400);
+			$dates[$date] = $days_ago;
+		}
+		$result = array();
+		$_data = null;
+		foreach ($dates as $date => $days_ago) {
+			$in = $data[$date]['in'];
+			$out = $data[$date]['out'];
+			if ($type == 'num') {
+				$_data = array($in, $out);
+			} else {
+				$_data = $in - $out;
+			}
+			// Trim empty values from left side
+			if (!$result && !$_data) {
+				continue;
+			}
+			$result[$date] = $_data ?: null;
+		}
+		// Trim values from the right side too
+		foreach (array_reverse($result, $preserve_keys = true) as $k => $v) {
+			if (is_array($v)) {
+				if (array_sum($v)) {
+					break;
+				}
+			} elseif ($v) {
+				break;
+			}
+			unset($result[$k]);
+		}
+		return $result;
+	}
 }

@@ -15,6 +15,41 @@ return array(
 			',
 <<<END
 $(function(){
+	window.yf_show_bs_modal = function (extra) {
+		if (typeof $.fn.modal !== 'function') {
+			console.error('modal bootstrap component not loaded');
+			return '';
+		}
+		if (typeof extra !== 'object') {
+			extra = { };
+		}
+		var undef // shortcut for comparing with 'undefined'
+		, modal_class = 'modal fade' + (extra['class_add'] !== undef ? ' ' + extra['class_add'] : '')
+		, modal_id = extra['id'] !== undef ? extra['id'] : 'edit_link_modal'
+		, modal_data = extra['data'] !== undef ? extra['data'] : ''
+		, modal_footer = extra['footer'] !== undef ? extra['footer'] : ''
+		, modal_title = extra['title'] !== undef ? extra['title'] : _t_modal_title
+		, modal_html = 
+			'<div class="' + modal_class + '" id="' + modal_id + '">' 
+				+ '<div class="modal-dialog">' 
+					+ '<div class="modal-content">' 
+						+ '<div class="modal-header">' 
+							+ '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' 
+							+ '<h4 class="modal-title">' + modal_title + '</h4>' 
+						+ '</div>'
+						+ (modal_data.length ? '<div class="modal-body">' + modal_data + '</div>' : '')
+						+ (modal_footer.length ? '<div class="modal-footer">' + modal_footer + '</div>' : '')
+					+ '</div>'
+				+ '</div>'
+			+ '</div>'
+		, modal_opts = extra['opts'] !== undef ? extra['opts'] : {
+			'keyboard'	: true,
+			'backdrop'	: true,
+			'show'		: true,
+		}
+		return $(modal_html).modal(modal_opts);
+	}
+
 	// Change activity status of different elements without page refresh
 	$(document).on("click", ".change_active", function(){
 		var _obj = this;
@@ -74,27 +109,11 @@ $(function(){
 			return true;
 		}
 		$.get(_obj.attr("href"), function(data) {
-			var modal_html = 
-				'<div class="modal fade" id="edit_link_modal">' 
-					+ '<div class="modal-dialog">' 
-						+ '<div class="modal-content">' 
-							+ '<div class="modal-header">' 
-								+ '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' 
-								+ '<h4 class="modal-title">' + _t_modal_title + '</h4>' 
-							+ '</div>'
-							+ '<div class="modal-body">'
-								+ data
-							+ '</div>'
-//							+ '<div class="modal-footer">'
-//							+ '</div>'
-						+ '</div>'
-					+ '</div>'
-				+ '</div>';
-			$(modal_html).modal({
-				keyboard: true,
-				backdrop: true,
-				show: true
-			});
+			yf_show_bs_modal({
+				'id'	: 'edit_link_modal',
+				'data'	: data,
+				'title'	: _t_modal_title,
+			})
 		}).success(function() {
 			$("#edit_link_modal input:text:visible:first").focus();
 		});

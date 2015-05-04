@@ -72,14 +72,14 @@ class yf_get_pswd {
 		if (empty($user)) {
 			return false;
 		}
-		$html = tpl()->parse($_GET['object'].'/email', array(
+		$html = tpl()->parse('@object/email', array(
 			'user_name'		=> _display_name($user),
 			'password'		=> $user['password'],
 			'login'			=> $user['login'],
 			'advert_name'	=> SITE_ADVERT_NAME,
-			'home_url'		=> _force_get_url(array(), '', './'),
-			'login_url'		=> _force_get_url(array('object' => 'login_form')),
-			'faq_url'		=> _force_get_url(array('object' => 'faq')),
+			'home_url'		=> url('/'),
+			'login_url'		=> url('/login_form'),
+			'faq_url'		=> url('/faq'),
 		));
 		return common()->send_mail(array(
 			'from_mail' => SITE_ADMIN_EMAIL,

@@ -8,13 +8,17 @@ return array(
 		),
 	),
 	'require' => array(
-		'css' => array(
+		'asset' => array(
 			'bootstrap',
 			'blueimp-gallery',
 		),
-		'js' => array(
-			'bootstrap',
-			'blueimp-gallery',
-		),
+	),
+	'info' => array(
+		'url' => 'https://blueimp.github.io/Bootstrap-Image-Gallery/',
+		'name' => 'Bootstrap Image Gallery',
+		'desc' => 'Bootstrap Image Gallery is an extension to <a href="https://blueimp.github.io/Gallery/">blueimp Gallery</a>, a touch-enabled, responsive and customizable 
+			image &amp; video gallery.<br>It displays images and videos in the modal dialog of the <a href="http://getbootstrap.com/">Bootstrap</a> framework, features swipe, 
+			mouse and keyboard navigation, transition effects, fullscreen support and on-demand content loading and can be extended to display additional content types.',
+		'git' => 'https://github.com/yfix/Bootstrap-Image-Gallery.git',
 	),
 );

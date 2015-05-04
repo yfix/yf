@@ -8,6 +8,9 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	public $KEY_PUBLIC  = null;
 	public $KEY_PRIVATE = null;
 
+	public $IS_DEPOSITION = true;
+	// public $IS_PAYMENT    = true;
+
 	public $_options_transform = array(
 		'title'        => 'description',
 		'operation_id' => 'order_id',
@@ -63,32 +66,37 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	public $url_server = null;
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/liqpay/LiqPay.php' );
 		$this->api = new LiqPay( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
-		$this->url_result = url( '/api/payment/provider?name=liqpay&operation=response' );
-		$this->url_server = url( '/api/payment/provider?name=liqpay&operation=response&server=true' );
+		$this->url_result = url_user( '/api/payment/provider?name=liqpay&operation=response' );
+		$this->url_server = url_user( '/api/payment/provider?name=liqpay&operation=response&server=true' );
 		// parent
 		parent::_init();
 	}
 
 	public function key( $name = 'public', $value = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$value = $this->api->key( $name, $value );
 		return( $value );
 	}
 
 	public function key_reset() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->key( 'public',  $this->KEY_PUBLIC  );
 		$this->key( 'private', $this->KEY_PRIVATE );
 	}
 
 	public function signature( $options, $is_request = true ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->api->signature( $options, $is_request );
 		return( $result );
 	}
 
 	public function _form_options( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_ = $options;
 		// transform
 		foreach ((array)$this->_options_transform as $from => $to ) {
@@ -115,6 +123,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	}
 
 	public function _form( $data, $options = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		if( empty( $data ) ) { return( null ); }
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
@@ -144,6 +153,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	}
 
 	public function _api_check( $request = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$is_server = !empty( $_GET[ 'server' ] );
 		if( $is_server ) { return( null ); }
@@ -191,6 +201,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	}
 
 	public function _api_response( $request = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$is_server = !empty( $_GET[ 'server' ] );
 		if( $is_server ) {
 			$name = 'server';
@@ -202,6 +213,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	}
 
 	public function _api_server( $request = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$is_server = !empty( $_GET[ 'server' ] );
 		if( !$is_server ) { return( null ); }
@@ -271,6 +283,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	}
 
 	public function _response_parse( $response ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_ = $response;
 		// transform
 		foreach( (array)$this->_options_transform_reverse as $from => $to  ) {
@@ -283,6 +296,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	}
 
 	public function get_currency( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_       = &$options;
 		$api     = $this->api;
 		$allow   = &$this->currency_allow;
@@ -297,6 +311,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	}
 
 	public function deposition( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$_              = $options;
 		$data           = &$_[ 'data'           ];

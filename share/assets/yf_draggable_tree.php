@@ -128,12 +128,12 @@ $(function(){
 		}
 	});
 
-	$(".controls_over", ".draggable_menu").hide();
+	$(".draggable_menu").not(".no_hide_controls").find(".controls_over").hide();
 
-	$(".draggable_menu").on("mouseover", "dl", function() {
+	$(".draggable_menu").not(".no_hide_controls").on("mouseover", "dl", function() {
 		$(this).find(".controls_over").show();
 	});
-	$(".draggable_menu").on("mouseout", "dl", function() {
+	$(".draggable_menu").not(".no_hide_controls").on("mouseout", "dl", function() {
 		$(this).find(".controls_over").hide();
 	});
 })

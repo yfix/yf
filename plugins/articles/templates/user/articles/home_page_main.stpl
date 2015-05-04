@@ -1,7 +1,0 @@
-{items}
-
-{if("items" eq "")}
-	<div align="center">{t(No latest articles yet)}!</div>
-{/if}
-
-

@@ -7,16 +7,20 @@ angular.module( __NS__, [
 	'payment.balance',
 ])
 
-.value( 'PaymentBalanceRechargeConfig', { payment: {}, } )
+// .value( 'payment.balance.recharge.config', { payment: {}, } )
 
 .controller( 'payment.balance.recharge.ctrl',
-[ '$log', '$scope', '$timeout', 'PaymentBalanceApi', 'PaymentBalance', 'PaymentBalanceRechargeConfig',
-function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBalanceRechargeConfig ) {
+[ '$log', '$scope', '$timeout', 'PaymentApi', 'PaymentBalance', 'payment.balance.config', 'payment.balance.recharge.config',
+function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _config_recharge ) {
+	// var config = PaymentApiConfig.config();
+	var config = {};
+	angular.extend( config, _config_balance  );
 	$scope.payment = {};
-	angular.extend( $scope.payment, PaymentBalanceRechargeConfig.payment );
+	angular.extend( $scope.payment, _config_recharge.payment );
 	$scope.amount_init = function() {
 		// min, step
 		$scope.amount_min           = $scope.currency_min( false );
+		$scope.amount_max           = $scope.currency_max( false );
 		$scope.amount_step          = $scope.currency_step( false );
 		$scope.amount_currency_min  = $scope.currency_min( true );
 		$scope.amount_currency_step = $scope.currency_step( true );
@@ -102,8 +106,28 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		var result = +( rate / value ).toFixed( round );
 		return( result );
 	};
+	$scope.currency_max = function( is_currency ) {
+		var max = $scope.payment.account.balance || null;
+		is_currency = is_currency || false;
+		if( !is_currency ) { return( max ); }
+		var currency = is_currency ? $scope.currency_selected : $scope.payment.currency;
+		var round, rate = 1, value = max, offset = 0;
+		if( is_currency ) {
+			// currency rate
+			var currency_rate = $scope.currency_rate( currency );
+			rate  = currency_rate.rate;
+			value = currency_rate.value;
+		}
+		round = currency.minor_units;
+		var result = +( rate / value ).toFixed( round );
+		return( result );
+	};
 	$scope.currency_step = function( is_currency ) {
-		return( $scope.currency_min( is_currency ) );
+		var result = $scope.currency_min( is_currency );
+		// is_currency = is_currency || false;
+		// var currency = is_currency ? $scope.currency_selected : $scope.payment.currency;
+		// var result = 1 / Math.pow( 10, currency.minor_units );
+		return( result );
 	};
 	$scope.currency_rate = function( currency ) {
 		// currency rate
@@ -120,7 +144,7 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		BalanceApi.timer.cancel();
 		// init calc
 		is_currency = is_currency || false;
-		var form = $scope.form_payment_balance_recharge;
+		var form = $scope.form_payment__deposition;
 		if( !angular.isObject( form ) ||
 			(
 				( is_currency && form.amount_currency.$error.number ) ||
@@ -156,8 +180,45 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 			$scope.amount_currency_fee = amount_currency_fee_round;
 		}
 	};
+	// payment out
+	$scope.payout_provider_change = function( $event, provider_id, method_id ) {
+		$event.stopPropagation();
+		var action = $scope.action.payment;
+		if( action.provider_id == provider_id && action.method_id == method_id ) {
+			$scope.payout_provider_init();
+			return( false );
+		}
+		var provider = $scope.payment.providers[ provider_id ];
+		var method   = provider._method_allow.payout[ method_id ];
+		var option   = method.option;
+		$scope.action.payment = {
+			provider_id : provider_id,
+			method_id   : method_id,
+			provider    : provider,
+			method      : method,
+			option      : option,
+		};
+		$scope.block_payout_provider_show = false;
+		return( true );
+	};
+	$scope.payout_provider_init = function() {
+		$scope.block_payout_provider_show = true;
+		$scope.action.payment = {};
+	};
+	$scope.action_payout = function() {
+		var payment = $scope.action.payment;
+		var options = {
+			amount      : $scope.amount,
+			provider_id : payment.provider_id,
+			method_id   : payment.method_id,
+		};
+		angular.extend( options, payment.options );
+		BalanceApi.payout( options );
+	};
+	// balance api
 	var BalanceApi = {
-		timer: {
+		_timer : null,
+		timer  : {
 			id      : null,
 			timeout : 5000,
 			cancel  : function() {
@@ -165,46 +226,47 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 			},
 		},
 		operation: function( options ) {
-			var $this = this;
+			var $this             = this;
 			$scope.block_wait     = true;
 			$scope.status         = false;
 			$scope.status_message = null;
-			var result = PaymentBalanceApi.operation( options );
-			result.$promise.then(
-				function( r ) {
-					$scope.block_wait = false;
-					if( r.response && r.response.payment ) {
-						if( r.response.payment ) {
+			$timeout.cancel( $this._timer );
+			$this._timer = $timeout( function() {
+				var result = PaymentApi.operation( options );
+				result.$promise.then(
+					function( r ) {
+						$scope.block_wait = false;
+						if( r.response && r.response.payment ) {
 							angular.extend( $scope.payment, r.response.payment );
 							PaymentBalance.load({ account: r.response.payment.account });
+						} else {
+							$scope.status_message = config.message.error.operation;
+							$log.error( 'balance->operation is fail operation:', r );
 						}
-					} else {
-						$scope.status_message = 'Ошибка при выполнении операции';
-						$log.error( 'balance->operation is fail operation:', r );
+					},
+					function( r ) {
+						$scope.block_wait = false;
+						if( r.status && r.status == 403 ) {
+							$scope.status_message = config.message.error.authentication;
+							// reload page for login
+							$this.timer.cancel();
+							$this.timer.id = $timeout( function() {
+								window.location.href = config.url_login;
+							}, 3000 );
+						} else {
+							$scope.status_message = config.message.error.request;
+							$log.error( 'balance->operation is fail transport:', r );
+						}
 					}
-				},
-				function( r ) {
-					$scope.block_wait = false;
-					if( r.status && r.status == 403 ) {
-						$scope.status_message = 'Требуется авторизация';
-						// reload page for login
-						$this.timer.cancel();
-						$this.timer.id = $timeout( function() {
-							window.location.href = ( '{url( /login_form )}' );
-						}, 3000 );
-					} else {
-						$scope.status_message = 'Ошибка при выполнении запроса';
-						$log.error( 'balance->operation is fail transport:', r );
-					}
-				}
-			);
+				);
+			}, 500 );
 		},
 		recharge: function( options ) {
 			var $this = this;
 			$scope.block_wait     = true;
 			$scope.status         = false;
 			$scope.status_message = null;
-			var result = PaymentBalanceApi.recharge( options );
+			var result = PaymentApi.recharge( options );
 			result.$promise.then(
 				function( r ) {
 					$scope.block_wait = false;
@@ -228,7 +290,7 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 							$scope.show_balance_recharge( !$scope.status );
 						}, $this.timer.timeout );
 					} else {
-						$scope.status_message = 'Ошибка при выполнении операции';
+						$scope.status_message = config.message.error.operation;
 						$log.error( 'balance->recharge is fail operation:', r );
 					}
 				},
@@ -240,15 +302,58 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 						$log.warnig( 'balance->recharge is fail transport operation:', r );
 					} else {
 						if( r.status && r.status == 403 ) {
-							$scope.status_message = 'Требуется авторизация';
+							$scope.status_message = config.message.error.authentication;
+							// reload page for login
+							$timeout.cancel( $this.timer );
+							$this.timer = $timeout( function() {
+								window.location.href = config.url_login;
+							}, 3000 );
+						} else {
+							$scope.status_message = config.message.error.request;
+							$log.error( 'balance->recharge is fail transport:', r );
+						}
+					}
+				}
+			);
+		},
+		payout: function( options ) {
+			var $this = this;
+			$scope.block_wait     = true;
+			$scope.status         = false;
+			$scope.status_message = null;
+			var result = PaymentApi.payout( options );
+			result.$promise.then(
+				function( r ) {
+					$scope.block_wait = false;
+					if( r.response && r.response.payout ) {
+						$scope.status            = r.response.payout.status;
+						$scope.status_message    = r.response.payout.status_message;
+						if( r.response.payment ) {
+							angular.extend( $scope.payment, r.response.payment);
+							PaymentBalance.load({ account: r.response.payment.account });
+						}
+					} else {
+						$scope.status_message = config.message.error.operation;
+						$log.error( 'balance->payout is fail operation:', r );
+					}
+				},
+				function( r ) {
+					$scope.block_wait = false;
+					if( r.response && r.response.payout ) {
+						$scope.status            = r.response.payout.status;
+						$scope.status_message    = r.response.payout.status_message;
+						$log.warnig( 'balance->payout is fail transport operation:', r );
+					} else {
+						if( r.status && r.status == 403 ) {
+							$scope.status_message = config.message.error.authentication;
 							// reload page for login
 							$timeout.cancel( $this.timer );
 							$this.timer = $timeout( function() {
 								window.location.href = ( '{url( /login_form )}' );
 							}, 3000 );
 						} else {
-							$scope.status_message = 'Ошибка при выполнении запроса';
-							$log.error( 'balance->recharge is fail transport:', r );
+							$scope.status_message = config.message.error.request;
+							$log.error( 'balance->payout is fail transport:', r );
 						}
 					}
 				}
@@ -275,23 +380,29 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		BalanceApi.operation({ page: $scope.payment.operation_pagination.pages });
 	};
 	$scope.operation = function( direction ) {
-		var payment      = $scope.payment;
-		var count        = payment.operation.length;
-		var page_per     = payment.operation_pagination.page_per;
-		var page_current = payment.operation_pagination.page;
-		// next
-		if( direction > 0 && count < page_per ) { return( false ); }
-		// previous
-		if( direction < 0 && page_current <= 1 ) { return( false ); }
-		// request
-		var page = page_current + direction;
+		var payment  = $scope.payment;
+		var page     = +payment.operation_pagination.page;
+		$scope.operation_page_change( page + direction );
+	};
+	$scope.operation_page_change = function( value ) {
+		var $this   = this;
+		var payment = $scope.payment;
+		var pages   = +payment.operation_pagination.pages;
+		var page   = +value;
+		if( page < 1 || page > pages ) { return( false ); }
 		BalanceApi.operation({ page: page });
+		return( true );
 	};
 	// init
 	$scope.block_wait = false;
+	$scope.action = {
+		'deposition' : {},
+		'payment'    : {},
+	};
+	$scope.payout_provider_init();
 	// select first provider
-	if( $scope.payment.provider[ 0 ] ) {
-		$scope.provider_change( $scope.payment.provider[ 0 ] );
+	if( $scope.payment.provider.deposition && $scope.payment.provider.deposition[ 0 ] ) {
+		$scope.provider_change( $scope.payment.provider.deposition[ 0 ] );
 		// amount
 		$scope.amount_init();
 	}

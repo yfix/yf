@@ -16,3 +16,4 @@
 
 #$CONF['DEF_BOOTSTRAP_THEME'] = 'spacelab';
 #$CONF['MEMCACHED_HOST'] = '192.168.1.5';
+#$CONF['ROBOTS_NO_INDEX'] = true;

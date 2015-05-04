@@ -23,6 +23,7 @@ class yf_form2 {
 	public $CLASS_ICON_EMAIL = 'icon-email fa fa-at fa-fw';
 	public $CLASS_ICON_CURRENCY = 'icon-dollar fa fa-dollar fa-fw';
 	public $CLASS_ICON_CALENDAR = 'icon icon-calendar fa fa-calendar fa-fw';
+	public $CLASS_ICON_PREVIEW = 'icon-eye fa fa-eye';
 	public $CLASS_LABEL_INFO = 'label label-info';
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 	public $CLASS_REQUIRED = 'control-group-required form-group-required';
@@ -94,6 +95,9 @@ class yf_form2 {
 			$params['selected'] = $_SESSION[$filter_name];
 			$replace['form_action'] = $replace['form_action'] ?: url('/@object/filter_save/'.$filter_name);
 			$replace['clear_url'] = $replace['clear_url'] ?: url('/@object/filter_save/'.$filter_name.'/clear');
+			if (MAIN_TYPE_ADMIN && !isset($params['class'])) {
+				$params['class'] = 'form-vertical';
+			}
 		}
 		if (!$params['no_chained_mode']) {
 			$this->_chained_mode = true;
@@ -330,7 +334,7 @@ class yf_form2 {
 				}
 			}
 			if ($this->_stacked_mode_on) {
-				$_extra['stacked'] = true;
+				$_extra['stacked'] = $_extra['stacked'] ?: true;
 			}
 			// Callback to decide if we need to show this field or not
 			if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
@@ -440,7 +444,7 @@ class yf_form2 {
 			}
 			$extra['enctype'] = $enctype;
 			if (!isset($extra['action'])) {
-				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $form->_params['links_add'];
+				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : url('/@object/@action/@id/@page'). $form->_params['links_add'];
 			}
 			if (MAIN_TYPE_USER) {
 				if (strpos($extra['action'], 'http://') === false && strpos($extra['action'], 'https://') !== 0) {
@@ -458,7 +462,7 @@ class yf_form2 {
 				$extra['data-fv-framework'] = 'bootstrap';
 			}
 
-			$body = '<form'._attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
+			$body = '<form'._attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate','target')).'>'.PHP_EOL;
 			$form->_fieldset_mode_on = true;
 			$body .= '<fieldset'._attrs($extra['fieldset'], array('class','style','id','name')).'>';
 			if ($extra['legend']) {
@@ -637,7 +641,7 @@ class yf_form2 {
 			$extra['prepend'] = '';
 		}
 		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
+			$extra['stacked'] = $extra['stacked'] ?: true;
 		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
@@ -662,10 +666,7 @@ class yf_form2 {
 	/**
 	*/
 	function _show_tip($value = '', $extra = array(), $replace = array()) {
-		return _class('graphics')->_show_help_tip(array(
-			'tip_id'	=> $value,
-			'replace'	=> $replace,
-		));
+		return tip($value, $replace);
 	}
 
 	/**
@@ -993,7 +994,26 @@ class yf_form2 {
 	*/
 	function file($name, $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'file';
+		$this->_params['for_upload'] = true;
 		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* Image upload
+	*/
+	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$this->_params['for_upload'] = true;
+		$extra['name'] = $extra['name'] ?: ($name ?: 'image');
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
+		$extra['type'] = 'file';
+		return $this->input($extra['name'], $extra['desc'], $extra, $replace);
 	}
 
 	/**
@@ -1421,6 +1441,17 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+	function order_box($name = '', $data = array(), $extra = array(), $replace = array()) {
+		$data = $data ?: array(
+			'asc'	=> 'Ascending',
+			'desc'	=> 'Descending'
+		);
+		$extra['horizontal'] = isset($extra['horizontal']) ? $extra['horizontal'] : 1;
+		return $this->radio_box($name ?: 'order_direction', t($data), $extra, $replace);
+	}
+
+	/**
 	* Helper to display one or more buttons in one row without need to do work with row_start, etc..
 	*/
 	function buttons($names = array(), $extra = array(), $replace = array()) {
@@ -1500,14 +1531,14 @@ class yf_form2 {
 			$form->_prepare_inline_error($extra);
 			$extra['id'] = $extra['id'] ?: ($extra['name'] ?: strtolower($extra['value']));
 			$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
-			if (preg_match('~^[a-z0-9_-]+$~ims', $extra['link_url'])) {
+			if (false === strpos($extra['link_url'], '/')) {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
 			$extra['class'] = $extra['class'] ?: $form->CLASS_BTN_SUBMIT. $form->_prepare_css_class('', $r[$extra['name']], $extra);
-			$extra['value'] = t($extra['value']);
+			$extra['value'] = $extra['value'];
 			$extra['type'] = 'submit';
-			$button_text = $extra[ 'desc' ];
+			$button_text = $extra['desc'];
 			$extra['desc'] = '';
 			$extra['buttons_controls'] = true;
 
@@ -1515,7 +1546,7 @@ class yf_form2 {
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']);
-				$button_text = $icon . ( $button_text ?: $value );
+				$button_text = $icon . t( $button_text ?: $value );
 				return $form->_row_html('<button'._attrs($extra, $attrs_names).'>'.$button_text.'</button>', $extra, $r);
 			} else {
 				return $form->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
@@ -1587,6 +1618,46 @@ class yf_form2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_SAVE;
 		}
+		return $this->submit($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function preview($name = '', $value = '', $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		if (is_array($value)) {
+			$extra = (array)$extra + $value;
+			$value = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$name = $extra['name'] ?: $name;
+		$extra['desc'] = $extra['desc'] ?: 'Preview';
+		$extra['class_add'] = $extra['class_add'] ?: 'preview';
+		if (!$name) {
+			$name = 'preview';
+		}
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = $this->CLASS_ICON_PREVIEW;
+		}
+/*
+		$form_id = 'content_form';
+		jquery('
+			var form_id = "'.$form_id.'";
+			var bak_action = $("form#" + form_id).attr("action");
+			var preview_url = "'.url_user('/dynamic/preview/static_pages/'.$a['id']).'";
+			$("[type=submit].preview", "form#" + form_id).on("click", function() {
+				$(this).closest("form").attr("target", "_blank").attr("action", preview_url)
+			})
+			$("[type=submit]:not(.preview)", "form#" + form_id).on("click", function() {
+				$(this).closest("form").attr("target", "").attr("action", bak_action)
+			})
+		');
+*/
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1691,6 +1762,35 @@ class yf_form2 {
 		}
 		$extra['link'] = $extra['link'] ?: ($link ?: $r[$name]);
 		return $this->info($name, '', $extra, $replace);
+	}
+
+	/**
+	*/
+	function info_lang($name = '', $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['name'] = $extra['name'] ?: $name;
+		$func = function($extra, $r, $form) {
+			$extra['desc'] = !$extra['no_label'] && !$form->_params['no_label'] ? $extra['desc'] : '';
+			$value = $r[$extra['name']] ?: $extra['value'];
+			$lang = $value;
+			asset('bfh-select');
+			if (!isset($form->lang_def_country)) {
+				$form->lang_def_country = main()->get_data('lang_def_country');
+			}
+			$content = html()->icon('bfh-flag-'.$form->lang_def_country[$lang], strtoupper($lang));
+			return $form->_row_html($content, $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func((array)$extra + (array)$this->_extra, (array)$replace + (array)$this->_replace, $this);
 	}
 
 	/**
@@ -1976,6 +2076,12 @@ class yf_form2 {
 
 	/**
 	*/
+	function locale_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+	}
+
+	/**
+	*/
 	function language_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
@@ -2071,13 +2177,6 @@ class yf_form2 {
 	}
 
 	/**
-	* Image upload
-	*/
-	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_image', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
-	}
-
-	/**
 	*/
 	function google_maps($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_google_maps', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
@@ -2104,9 +2203,9 @@ class yf_form2 {
 			$extra['id'] = $form->_prepare_id($extra);
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
-			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
+			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value','size'));
 			$extra = $form->_input_assign_params_from_validate($extra);
-			return $form->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
+			return $form->_row_html(_class('captcha')->show_block(url('/dynamic/captcha_image'), $extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -2211,8 +2310,28 @@ class yf_form2 {
 	}
 
 	/**
+	* Daterange picker (Alias)
+	*/
+	function daterange($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return $this->daterange_select($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* Daterange picker
+	*/
+	function daterange_select($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return _class('form2_daterange', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+	}
+
+	/**
 	*/
 	function tbl_link($name, $link, $extra = array(), $replace = array()) {
+		return _class('form2_tbl_funcs', 'classes/form2/')->{__FUNCTION__}($name, $link, $extra, $replace, $this);
+	}
+
+	/**
+	*/
+	function tbl_link_add($name = '', $link = '', $extra = array(), $replace = array()) {
 		return _class('form2_tbl_funcs', 'classes/form2/')->{__FUNCTION__}($name, $link, $extra, $replace, $this);
 	}
 
@@ -2514,13 +2633,13 @@ class yf_form2 {
 	/**
 	* Alias
 	*/
-	function update_if_ok($table, $fields, $where_id, $extra = array()) {
+	function update_if_ok($table, $fields, $where_id = null, $extra = array()) {
 		return $this->db_update_if_ok($table, $fields, $where_id, $extra);
 	}
 
 	/**
 	*/
-	function db_update_if_ok($table, $fields, $where_id, $extra = array()) {
+	function db_update_if_ok($table, $fields, $where_id = null, $extra = array()) {
 		$extra['where_id'] = $where_id;
 		return $this->_db_change_if_ok($table, $fields, 'update', $extra);
 	}
@@ -2570,9 +2689,14 @@ class yf_form2 {
 			if ($data && $table) {
 				$db = is_object($form->_params['db']) ? $form->_params['db'] : db();
 				if ($type == 'update') {
-					$db->update($table, $db->es($data), $extra['where_id']);
+					$where_id = $extra['where_id'] ?: $form->_replace[$form->_params['id'] ?: 'id'];
+					if ($where_id) {
+						$db->update_safe($table, $data, $where_id);
+					} else {
+						throw new Exception(__CLASS__.'::'.__FUNCTION__.' where_id param is empty, not updating table: '.$table);
+					}
 				} elseif ($type == 'insert') {
-					$db->insert($table, $db->es($data));
+					$db->insert_safe($table, $data);
 				}
 				// Callback/hook function implementation
 				$on_after_update = isset($extra['on_after_update']) ? $extra['on_after_update'] : $form->_on['on_after_update'];
@@ -2584,9 +2708,12 @@ class yf_form2 {
 				if ($on_success_text) {
 					common()->set_notice($on_success_text);
 				}
-				$redirect_link = isset($extra['redirect_link']) ? $extra['redirect_link'] : (!empty($form->_replace['redirect_link']) ? $form->_replace['redirect_link'] : !empty($form->_replace['back_link']) ? $form->_replace['back_link'] : '');
+				$redirect_link = $extra['redirect_link'] ?: $form->_replace['redirect_link'];
 				if (!$redirect_link) {
-					$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : '');
+					$redirect_link = $form->_replace['back_link'];
+				}
+				if (!$redirect_link || false === strpos($redirect_link, '/')) {
+					$redirect_link = url('/@object/@action/@id');
 				}
 				if (!$extra['no_redirect'] && !main()->is_console()) {
 					js_redirect($redirect_link);

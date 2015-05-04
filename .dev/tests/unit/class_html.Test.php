@@ -234,77 +234,83 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 		$html->_ids = array();
 		$html->AUTO_ASSIGN_IDS = false;
 
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;Checkbox</label>', $html->check_box());
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;Checkbox</label>', $html->check_box('', ''));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" value="1"> &nbsp;Test</label>', $html->check_box('test'));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" value="true"> &nbsp;Test</label>', $html->check_box('test', 'true'));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="true"> &nbsp;Checkbox</label>', $html->check_box('', 'true'));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" value="1"> &nbsp;Test</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;<span>Checkbox</span></label>', $html->check_box());
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;<span>Checkbox</span></label>', $html->check_box('', ''));
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" value="1"> &nbsp;<span>Test</span></label>', $html->check_box('test'));
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" value="true"> &nbsp;<span>Test</span></label>', $html->check_box('test', 'true'));
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="true"> &nbsp;<span>Checkbox</span></label>', $html->check_box('', 'true'));
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" value="1"> &nbsp;<span>Test</span></label>', $html->check_box(array(
 			'name' => 'test',
 		)));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" value="true"> &nbsp;Test</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" value="true"> &nbsp;<span>Test</span></label>', $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
 		)));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;Test</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;<span>Test</span></label>', $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
 			'id' => 'myid',
 		)));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;<span></span></label>', $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
 			'id' => 'myid',
 			'desc' => '',
 		)));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;My desc</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;<span>My desc</span></label>', $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
 			'id' => 'myid',
 			'desc' => 'My desc',
 		)));
-		$this->assertEquals('<label><input type="checkbox" name="test" id="myid" value="true"> &nbsp;My desc</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;<span></span></label>', $html->check_box(array(
+			'name' => 'test',
+			'value' => 'true',
+			'id' => 'myid',
+			'desc' => '',
+		)));
+		$this->assertEquals('<label><input type="checkbox" name="test" id="myid" value="true"> &nbsp;<span>My desc</span></label>', $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
 			'id' => 'myid',
 			'desc' => 'My desc',
 			'class_label_checkbox' => '',
 		)));
-		$this->assertEquals('<label class="testme"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;My desc</label>', $html->check_box(array(
+		$this->assertEquals('<label class="testme"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;<span>My desc</span></label>', $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
 			'id' => 'myid',
 			'desc' => 'My desc',
 			'class_label_checkbox' => 'testme',
 		)));
-		$this->assertEquals('<label class="testme"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;My desc</label>', $html->check_box(array(
+		$this->assertEquals('<label class="testme"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;<span>My desc</span></label>', $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
 			'id' => 'myid',
 			'desc' => 'My desc',
 			'label_extra' => array('class' => 'testme'),
 		)));
-		$this->assertEquals('<label class="'.$def_class.' testme"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;My desc</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.' testme"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;<span>My desc</span></label>', $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
 			'id' => 'myid',
 			'desc' => 'My desc',
 			'class_add_label_checkbox' => 'testme',
 		)));
-		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="checkbox" value="1" checked="checked"> &nbsp;Checkbox</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="checkbox" value="1" checked="checked"> &nbsp;<span>Checkbox</span></label>', $html->check_box(array(
 			'selected' => true,
 		)));
-		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="checkbox" value="1" checked="checked"> &nbsp;Checkbox</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="checkbox" value="1" checked="checked"> &nbsp;<span>Checkbox</span></label>', $html->check_box(array(
 			'checked' => true,
 		)));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;Checkbox</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;<span>Checkbox</span></label>', $html->check_box(array(
 			'selected' => false,
 		)));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;Checkbox</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;<span>Checkbox</span></label>', $html->check_box(array(
 			'checked' => false,
 		)));
 		$this->assertEquals(
-			'<label class="'.$def_class.' testme active"><input type="checkbox" name="test" id="myid" value="true" checked="checked"> &nbsp;My desc</label>'
+			'<label class="'.$def_class.' testme active"><input type="checkbox" name="test" id="myid" value="true" checked="checked"> &nbsp;<span>My desc</span></label>'
 			, $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
@@ -314,7 +320,7 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'selected' => true,
 		)));
 		$this->assertEquals(
-			'<label class="'.$def_class.' testme active"><input type="checkbox" name="test" id="myid" value="true" checked="checked" style="color:red;"> &nbsp;My desc</label>'
+			'<label class="'.$def_class.' testme active"><input type="checkbox" name="test" id="myid" value="true" checked="checked" style="color:red;"> &nbsp;<span>My desc</span></label>'
 			, $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
@@ -328,16 +334,16 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 		$html->_ids = array();
 		$html->AUTO_ASSIGN_IDS = true;
 
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" id="check_box_1" value="1"> &nbsp;Checkbox</label>', $html->check_box());
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" id="check_box_2" value="1"> &nbsp;Checkbox</label>', $html->check_box('', ''));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="check_box_3" value="1"> &nbsp;Test</label>', $html->check_box('test'));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="check_box_4" value="true"> &nbsp;Test</label>', $html->check_box('test', 'true'));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" id="check_box_5" value="true"> &nbsp;Checkbox</label>', $html->check_box('', 'true'));
-		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="check_box_6" value="1"> &nbsp;Test</label>', $html->check_box(array(
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" id="check_box_1" value="1"> &nbsp;<span>Checkbox</span></label>', $html->check_box());
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" id="check_box_2" value="1"> &nbsp;<span>Checkbox</span></label>', $html->check_box('', ''));
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="check_box_3" value="1"> &nbsp;<span>Test</span></label>', $html->check_box('test'));
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="check_box_4" value="true"> &nbsp;<span>Test</span></label>', $html->check_box('test', 'true'));
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="checkbox" id="check_box_5" value="true"> &nbsp;<span>Checkbox</span></label>', $html->check_box('', 'true'));
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="check_box_6" value="1"> &nbsp;<span>Test</span></label>', $html->check_box(array(
 			'name' => 'test',
 		)));
 		$this->assertEquals(
-			'<label class="'.$def_class.' testme active"><input type="checkbox" name="test" id="myid" value="true" checked="checked" style="color:red;"> &nbsp;My desc</label>'
+			'<label class="'.$def_class.' testme active"><input type="checkbox" name="test" id="myid" value="true" checked="checked" style="color:red;"> &nbsp;<span>My desc</span></label>'
 			, $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
@@ -362,8 +368,8 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 		$this->assertEmpty($html->multi_check_box(''));
 		$this->assertEmpty($html->multi_check_box('test'));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<label class="'.$def_class.'"><input type="checkbox" name="test_1" id="multi_check_box_1" value="1"> &nbsp;red</label>'.
-			'<label class="'.$def_class.'"><input type="checkbox" name="test_2" id="multi_check_box_2" value="2"> &nbsp;green</label>'
+			'<label class="'.$def_class.'"><input type="checkbox" name="test_1" id="multi_check_box_1" value="1"> &nbsp;<span>red</span></label>'.
+			'<label class="'.$def_class.'"><input type="checkbox" name="test_2" id="multi_check_box_2" value="2"> &nbsp;<span>green</span></label>'
 			), str_replace(PHP_EOL, '', trim( $html->multi_check_box('test', $data) )));
 	}
 	public function test_radio_box() {
@@ -380,8 +386,8 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 		$this->assertEmpty($html->radio_box(''));
 		$this->assertEmpty($html->radio_box('test'));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<label class="'.$def_class.'"><input type="radio" name="test" id="radio_box_1_1" value="1">red</label>'.
-			'<label class="'.$def_class.'"><input type="radio" name="test" id="radio_box_1_2" value="2">green</label>'
+			'<label class="'.$def_class.'"><input type="radio" name="test" id="radio_box_1_1" value="1"><span>red</span></label>'.
+			'<label class="'.$def_class.'"><input type="radio" name="test" id="radio_box_1_2" value="2"><span>green</span></label>'
 			), str_replace(PHP_EOL, '', trim( $html->radio_box('test', $data) )));
 	}
 }

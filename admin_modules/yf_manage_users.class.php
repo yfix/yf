@@ -7,9 +7,8 @@ class yf_manage_users {
 	/**
 	*/
 	function show () {
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		return table('SELECT * FROM '.db('user'), array(
-				'filter' => $_SESSION[$filter_name],
+				'filter' => true,
 				'filter_params' => array(
 					'login'	=> 'like',
 					'email'	=> 'like',
@@ -35,7 +34,7 @@ class yf_manage_users {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'login' => 'trim|required|alpha_numeric|is_unique[user.login]',
@@ -60,8 +59,8 @@ class yf_manage_users {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('user').' WHERE id='.intval($_GET['id']));
-		$a['back_link'] = url_admin('/@object');
-		$a['redirect_link'] = url_admin('/@object');
+		$a['back_link'] = url('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'login' => 'trim|alpha_numeric|is_unique_without[user.login.'.$id.']',
@@ -93,11 +92,11 @@ class yf_manage_users {
 			db()->update('user', array('active' => (int)!$user_info['active']), $user_info['id']);
 		}
 		cache_del('user');
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($user_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -145,27 +144,11 @@ class yf_manage_users {
 	/**
 	*/
 	function login_as() {
-// TODO: move this into classes/auth_user ?
 		$id = intval($_GET['id']);
 		if (!$id) {
 			return _e('Wrong id');
 		}
-		$a = db()->get('SELECT * FROM '.db('user').' WHERE id='.$id);
-		if (!$a) {
-			return _e('Target user not found');
-		}
-		$t = time();
-		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(array('http://', 'https://'), '//', INCLUDE_PATH).'")) FROM '.db('admin').' WHERE id=1');
-		$to_encode = 'userid-'.$a['id'].'-'.$t.'-'.md5($a['password']);
-		$integrity_hash = md5($to_encode);
-		$encrypted = _class('encryption')->_safe_encrypt_with_base64($to_encode.'-'.$integrity_hash, $secret_key);
-		if (tpl()->REWRITE_MODE) {
-#			$url = WEB_PATH.'login/'.$encrypted;
-			$url = _force_get_url(array('task' => 'login', 'id' => $encrypted), parse_url(WEB_PATH, PHP_URL_HOST));
-		} else {
-			$url = WEB_PATH.'?task=login&id='.$encrypted;
-		}
-		return js_redirect($url, $rewrite = false);
+		return _class('auth_user', 'classes/auth/')->login_as($id);
 	}
 
 	/**
@@ -191,14 +174,14 @@ class yf_manage_users {
 				'email'		=> $A['email'],
 				'password'	=> $A['password'],
 			);
-			$message = tpl()->parse($_GET['object'].'/email', $replace2);
+			$message = tpl()->parse('@object/email', $replace2);
 			// Set user confirmed
 			db()->query('UPDATE '.db('user').' SET active='1' WHERE id='.intval($A['id']));
 			common()->send_mail(SITE_ADVERT_NAME, SITE_ADMIN_EMAIL, $A['email'], _display_name($A), 'Thank you for registering with us!', $message, nl2br($message));
 			$replace = array(
 				'name'	=> _display_name($A),
 			);
-			$body = tpl()->parse($_GET['object'].'/confirmed', $replace);
+			$body = tpl()->parse('@object/confirmed', $replace);
 		} else {
 			$body .= _e();
 			$body .= $this->show($_POST);
@@ -219,18 +202,12 @@ class yf_manage_users {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array();
 		foreach (explode('|', 'name,login,email|add_date|last_login|num_logins|active') as $f) {
 			$order_fields[$f] = $f;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->number('id')
 			->text('name')
@@ -238,7 +215,7 @@ class yf_manage_users {
 			->email('email')
 			->select_box('group', main()->get_data('user_groups'), array('show_text' => 1))
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}

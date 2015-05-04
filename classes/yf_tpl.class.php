@@ -37,8 +37,6 @@ class yf_tpl {
 	public $ALLOW_CUSTOM_FILTER		= false;
 	/** @var bool Allow language-based special stpls */
 	public $ALLOW_LANG_BASED_STPLS	= false;
-	/** @var bool Allow inline debug */
-	public $ALLOW_INLINE_DEBUG		= false;
 	/** @var bool Allow skin inheritance (only one level used) */
 	public $ALLOW_SKIN_INHERITANCE	= true;
 	/** @var bool Allow to compile templates */
@@ -51,6 +49,8 @@ class yf_tpl {
 	public $ALLOW_PHP_TEMPLATES		= false;
 	/** @var bool */
 	public $DEBUG_STPL_VARS			= false;
+	/** @var bool Will add cur date, generation time, memory and db queries into any common page before body */
+	public $ADD_QUICK_PAGE_INFO		= true;
 	/** @var bool Compile templates folder */
 	public $COMPILED_DIR			= 'stpls_compiled/';
 	/** @var string @conf_skip */
@@ -131,19 +131,11 @@ class yf_tpl {
 				$this->_INHERITED_SKIN2 = conf('INHERIT_SKIN2');
 			}
 		}
-		if (isset($_SESSION['force_gzip'])) {
-			main()->OUTPUT_GZIP_COMPRESS = $_SESSION['force_gzip'];
-		}
 		// Turn off CPU expensive features on overloading
 		if (conf('HIGH_CPU_LOAD') == 1) {
-			main()->OUTPUT_GZIP_COMPRESS = false;
 			$this->COMPRESS_OUTPUT  = false;
 			$this->TIDY_OUTPUT		= false;
 			$this->FROM_DB_GET_ALL  = false;
-		}
-		// Force inline debug setting
-		if (isset($_SESSION['stpls_inline_edit'])) {
-			$this->ALLOW_INLINE_DEBUG = intval((bool)$_SESSION['stpls_inline_edit']);
 		}
 		$this->_init_global_tags();
 
@@ -174,12 +166,10 @@ class yf_tpl {
 	*/
 	function _init_global_tags() {
 		$data = array(
+			'main_user_id'	=> (int)main()->USER_ID,
 			'is_logged_in'  => intval((bool) main()->USER_ID),
-			'is_spider'     => (int)conf('IS_SPIDER'),
-			'is_https'      => isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']) ? 1 : 0,
 			'site_id'       => (int)conf('SITE_ID'),
-			'lang_id'       => conf('language'),
-			'debug_mode'    => (int)((bool)DEBUG_MODE),
+			'lang'          => conf('language'),
 			'tpl_path'      => MEDIA_PATH. $this->TPL_PATH,
 		);
 		foreach ($data as $k => $v) {
@@ -202,7 +192,7 @@ class yf_tpl {
 		if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 			_class('output_cache')->_process_output_cache();
 		}
-		if (!main()->NO_GRAPHICS) {
+		if (!main()->no_graphics()) {
 			if ($this->OB_CATCH_CONTENT) {
 				ob_start();
 			}
@@ -227,8 +217,9 @@ class yf_tpl {
 			if ($init_type == 'admin' && (empty($_SESSION['admin_id']) || empty($_SESSION['admin_group']))) {
 				$tpl_name = 'login';
 				if (main()->is_ajax()) {
+					no_graphics(true);
+					main()->IS_403 = true;
 					header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
-					main()->NO_GRAPHICS = true;
 					$skip_prefetch = true;
 				}
 				if (!main()->is_console()) {
@@ -241,9 +232,6 @@ class yf_tpl {
 					$this->_TMP_FROM_DB[$A['name']] = stripslashes($A['text']);
 				}
 			}
-			if (DEBUG_MODE && $this->ALLOW_INLINE_DEBUG || main()->INLINE_EDIT_LOCALE) {
-				conf('inline_js_edit', true);
-			}
 			if (!$skip_prefetch) {
 				if (main()->is_console()) {
 					// Skip security checks for console mode
@@ -253,7 +241,7 @@ class yf_tpl {
 				}
 			}
 		}
-		if (!main()->NO_GRAPHICS) {
+		if (!main()->no_graphics()) {
 			$body['content'] = $this->_init_main_stpl($tpl_name);
 			$this->_CENTER_RESULT = '';
 			if ($this->CUSTOM_META_INFO && $init_type == 'user') {
@@ -263,7 +251,7 @@ class yf_tpl {
 				$this->register_output_filter(array($this, '_replace_for_iframe_callback'), 'replace_for_iframe');
 			}
 		}
-		if (!main()->NO_GRAPHICS) {
+		if (!main()->no_graphics()) {
 			// Replace images paths with their absolute ones
 			if ($this->REWRITE_MODE && $init_type != 'admin') {
 				$this->register_output_filter(array($this, '_rewrite_links_callback'), 'rewrite_links');
@@ -271,37 +259,21 @@ class yf_tpl {
 			if ($this->TIDY_OUTPUT && $init_type != 'admin') {
 				$this->register_output_filter(array($this, '_tidy_cleanup_callback'), 'tidy_cleanup');
 			}
-
 			$body['content'] = $this->_apply_output_filters($body['content']);
-
-			if (main()->OUTPUT_GZIP_COMPRESS && !conf('no_gzip')) {
-				if ($this->OB_CATCH_CONTENT && ob_get_level()) {
-					$old_content = ob_get_clean();
-				}
-				ob_start('ob_gzhandler');
-				conf('GZIP_ENABLED', true);
-				if ($this->OB_CATCH_CONTENT) {
-					$body['content'] = $old_content.$body['content'];
-				}
-				// Count number of compressed bytes (not exactly accurate)
-				if (DEBUG_MODE) {
-					debug('gzip_page::size_original', strlen($body['content']));
-					debug('gzip_page::size_gzipped', strlen(gzencode($body['content'], 3, FORCE_GZIP)));
-				}
-			}
 			if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 				_class('output_cache')->_put_page_to_output_cache($body);
 			}
-			if (DEBUG_MODE && !main()->is_console() && !main()->is_ajax()) {
-				$body['debug_info'] = common()->show_debug_info();
-				if ($this->ALLOW_INLINE_DEBUG || main()->INLINE_EDIT_LOCALE) {
-					$body['debug_info'] .= $this->parse('system/js_inline_editor');
+			if (!main()->is_console() && !main()->is_ajax()) {
+				if (DEBUG_MODE) {
+					$body['debug_info'] = common()->show_debug_info();
 				}
 				$_last_pos = strpos($body['content'], '</body>');
 				if ($_last_pos) {
-					$body['content'] = substr($body['content'], 0, $_last_pos). $body['exec_time']. $body['debug_info']. '</body></html>';
+					$body['content'] = substr($body['content'], 0, $_last_pos). $body['debug_info']. '</body></html>';
 					$body['debug_info'] = '';
-					$body['exec_time']  = '';
+				}
+				if ($this->ADD_QUICK_PAGE_INFO) {
+					$body['exec_time'] = $this->_get_quick_page_info();
 				}
 			}
 			$output = implode('', $body);
@@ -310,11 +282,11 @@ class yf_tpl {
 			// Throw generated output to user
 			echo $output;
 		}
-		if (DEBUG_MODE && main()->NO_GRAPHICS && !main()->is_console() && !main()->is_ajax()) {
+		if (DEBUG_MODE && main()->no_graphics() && !main()->is_console() && !main()->is_ajax()) {
 			echo common()->show_debug_info();
 		}
 		// Output cache for 'no graphics' content
-		if (main()->NO_GRAPHICS && main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
+		if (main()->no_graphics() && main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 			_class('output_cache')->_put_page_to_output_cache(ob_get_clean());
 		}
 		if (main()->LOG_EXEC || $this->LOG_EXEC_INFO) {
@@ -325,6 +297,15 @@ class yf_tpl {
 		if ($this->EXIT_AFTER_ECHO) {
 			exit();
 		}
+	}
+
+	/**
+	*/
+	function _get_quick_page_info() {
+		if (!$this->ADD_QUICK_PAGE_INFO) {
+			return false;
+		}
+		return PHP_EOL. '<!-- date: '.gmdate('Y-m-d H:i:s').' UTC, time: '.round(microtime(true) - main()->_time_start, 3).', memory: '.memory_get_peak_usage().', db: '.(int)db()->NUM_QUERIES.' -->'. PHP_EOL;
 	}
 
 	/**
@@ -364,6 +345,14 @@ class yf_tpl {
 		$yfp_len = strlen($yf_prefix);
 		if (substr($name, 0, $yfp_len) == $yf_prefix) {
 			$name = substr($name, $yfp_len);
+		}
+		if (false !== strpos($name, '@')) {
+			$r = array(
+				'@object'	=> $_GET['object'],
+				'@action'	=> $_GET['action'],
+				'@id'		=> $_GET['id'],
+			);
+			$name = str_replace(array_keys($r), array_values($r), $name);
 		}
 		if (!is_array($params)) {
 			$params = array();
@@ -452,11 +441,6 @@ class yf_tpl {
 		}
 		if ($this->USE_SOURCE_BACKTRACE) {
 			debug('STPL_TRACES::'.$name, main()->trace_string());
-		}
-		if ($this->ALLOW_INLINE_DEBUG && strlen($string) > 20 && !in_array($name, array('main', 'system/debug_info', 'system/js_inline_editor')) ) {
-			if (preg_match('/^<([^>]*?)>/ims', ltrim($string), $m)) {
-				$string = '<'.$m[1].' stpl_name="'.$name.'">'.substr(ltrim($string), strlen($m[0]));
-			}
 		}
 		return true;
 	}
@@ -818,13 +802,10 @@ class yf_tpl {
 	}
 
 	/**
-	* Wrapper around '_generate_url' function, called like this inside templates:
+	* Wrapper around 'url()' function, called like this inside templates:
 	* {url(object=home_page;action=test)}
 	*/
-	function _generate_url_wrapper($params = array()){
-		if (!function_exists('_force_get_url')) {
-			return '';
-		}
+	function _url_wrapper($params = array()){
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($params) && strlen($params)) {
 			// Url like this: /object/action/id

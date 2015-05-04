@@ -17,6 +17,8 @@ class yf_common {
 	public $TRANSLIT_FROM	= 'cp1251';
 	/** @var string Required for the compatibility with old main class */
 	public $MEDIA_PATH		= '';
+	/** @var bool Used by propose url from name */
+	public $URL_FORCE_DASHES = false;
 
 	/**
 	* Constructor
@@ -37,6 +39,18 @@ class yf_common {
 	}
 
 	/**
+	*/
+	function show_ga () {
+		if (DEBUG_MODE || MAIN_TYPE_ADMIN) {
+			return false;
+		}
+		$body = array();
+		// override this method and insert your google analytics tracking code here and all other analytics codes too
+		return $body ? implode(PHP_EOL, $body) : '';
+	}
+
+
+	/**
 	* Form2 chained wrapper
 	*/
 	function form2($replace = array(), $params = array()) {
@@ -50,6 +64,38 @@ class yf_common {
 	function table2($data = array(), $params = array()) {
 		$table = clone _class('table2');
 		return $table->chained_wrapper($data, $params);
+	}
+
+	/**
+	*/
+	function css_class_body($extra = array()) {
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$main = main();
+		$extra['css_framework']	= 'cssfw-'.strtolower(conf('css_framework'));
+		$extra['bs_theme']		= 'bs-theme-'.strtolower($this->bs_current_theme());
+		$extra['main_type']		= 'main-type-'.strtolower(MAIN_TYPE);
+		$extra['is_common_page']= $main->is_common_page() ? 'is-common-page' : '';
+		$extra['is_ajax']		= $main->is_ajax() ? 'is-ajax' : '';
+		$extra['is_post']		= $main->is_post() ? 'is-post' : '';
+		$extra['is_dev']		= $main->is_dev() ? 'is-dev' : '';
+		$extra['is_debug']		= $main->is_debug() ? 'is-debug' : '';
+		$extra['is_https']		= $main->is_https() ? 'is-https' : '';
+		$extra['is_spider']		= $main->is_spider() ? 'is-spider' : '';
+		$extra['is_redirect']	= $main->is_redirect() ? 'is-redirect' : '';
+		$extra['is_unit_test']	= $main->is_unit_test() ? 'is-unit-test' : '';
+		$extra['is_logged_in']	= $main->is_logged_in() ? 'is-logged-in' : 'is-guest';
+		$extra['is_banned']		= $main->is_banned() ? 'is-banned' : '';
+		$extra['group_id']		= ($group = MAIN_TYPE_ADMIN ? $main->ADMIN_GROUP : $main->USER_GROUP) ? 'groupid-'.strtolower($group) : '';
+		$extra['site_id']		= ($site_id = $main->SITE_ID) ? 'siteid-'.strtolower($site_id) : '';
+		$extra['get_object']	= 'get-object-'.strtolower($_GET['object']);
+		$extra['get_action']	= 'get-action-'.strtolower($_GET['action']);
+		$extra['get_id']		= $_GET['id'] ? 'get-id-'.strtolower($_GET['id']) : '';
+		$extra['language']		= 'lang-'.strtolower(conf('language') ?: 'en');
+		$extra['country']		= $_SERVER['GEOIP_COUNTRY_CODE'] ? 'country-'.strtolower($_SERVER['GEOIP_COUNTRY_CODE']) : '';
+		$extra['currency']		= ($currency = conf('currency')) ? 'currency-'.strtolower($currency) : '';
+		return implode(' ', array_filter($extra));
 	}
 
 	/**
@@ -143,21 +189,21 @@ class yf_common {
 	* Send emails with attachments with DEBUG ability
 	*/
 	function send_mail($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3) {
-		return _class('send_mail', 'classes/common/')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
+		return _class('send_mail')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
 	}
 
 	/**
 	* Quick send mail (From admin info)
 	*/
 	function quick_send_mail($email_to, $subject, $html) {
-		return $this->send_mail (SITE_ADMIN_EMAIL, defined('SITE_ADMIN_NAME') ? SITE_ADMIN_NAME : 'Site admin', $email_to, '', $subject, strip_tags($html), $html);
+		return $this->send_mail(SITE_ADMIN_EMAIL, defined('SITE_ADMIN_NAME') ? SITE_ADMIN_NAME : 'Site admin', $email_to, '', $subject, strip_tags($html), $html);
 	}
 
 	/**
 	* Quick email notification to the admin (from the system)
 	*/
 	function send_notify_mail_to_admin($subject, $html) {
-		return $this->send_mail (SITE_ADMIN_EMAIL, SITE_NAME.' system notification', SITE_ADMIN_EMAIL, '', $subject, strip_tags($html), $html);
+		return $this->send_mail(SITE_ADMIN_EMAIL, SITE_NAME.' system notification', SITE_ADMIN_EMAIL, '', $subject, strip_tags($html), $html);
 	}
 
 	/**
@@ -266,6 +312,70 @@ class yf_common {
 			$timestamp = $r;
 		}
 		return $result_string;
+	}
+
+	/**
+	*/
+	function _get_time_diff_human($seconds, $delimiter = ' ', $need_return = false, $only_text = false, $need_closing_tag = false) {
+		$d = array();
+		$tr = array(
+			'years'		=> array('лет', 'год', 'года'),
+			'months'	=> array('месяцев', 'месяц', 'месяца'),
+			'days'		=> array('дней', 'день', 'дня'),
+			'hours'		=> array('часов', 'час', 'часа'),
+			'minutes'	=> array('минут', 'минута', 'минуты'),
+			'seconds'	=> array('секунд', 'секунда', 'секунды'),
+		);
+		if ($need_return && is_array($need_return)) {
+			$check_format = true;
+		}
+		if ($check_format && in_array('years', $need_return)) {
+			$d['years'] = floor($seconds / (3600 * 24 * 365));
+			$seconds -= $d['years'] * (3600 * 24 * 365);
+	    }
+		if ($check_format && in_array('months', $need_return)) {
+			$d['months'] = floor($seconds / (3600 * 24 * 365 / 12));
+			$seconds -= $d['months'] * (3600 * 24 * 365 / 12);
+		}	
+		if ($check_format && in_array('days', $need_return)) {
+			$d['days'] = floor($seconds / (3600 * 24));
+			$seconds -= $d['days'] * (3600 * 24);
+		}
+		if ($check_format && in_array('hours', $need_return)) {
+			$d['hours'] = floor($seconds / 3600);
+			$seconds -= $d['hours'] * 3600;
+		}
+		if ($check_format && in_array('minutes', $need_return)) {
+			$d['minutes'] = floor($seconds / 60);
+			$seconds -= $d['minutes'] * 60;
+		}
+		if ($check_format && in_array('seconds', $need_return)) {
+			$d['seconds'] = $seconds;
+		}
+		$out = array();
+		foreach ($d as $name => $val) {
+			if (!$val) {
+				continue;
+			}
+			$last1 = substr($val, -1);
+			$last2 = substr($val, -2);
+			if ($last1 == 0 || ($last1 >= 5 && $last1 <= 9) || ($last2 >= 10 && $last2 <= 20)) {
+				$str = $tr[$name][0];
+			} elseif ($last1 === '1') {
+				$str = $tr[$name][1];
+			} else {
+				$str = $tr[$name][2];
+			}
+			$out[] = $only_text ? $str : $val.' '.$str;
+		}
+		$open_tag = '';
+		$close_tag = '';
+		if ($need_closing_tag) {
+			$open_tag = '<'.$delimiter.'>';
+			$close_tag = '</'.$delimiter.'>';
+			$delimiter = $close_tag.$open_tag;
+		}
+		return $open_tag . implode($delimiter, $out) . $close_tag;
 	}
 
 	/**
@@ -405,7 +515,7 @@ class yf_common {
 	* Show print version of the given page
 	*/
 	function print_page($text = '') {
-		main()->NO_GRAPHICS = true;
+		main()->no_graphics(true);
 		return print tpl()->parse('system/common/print_page', array(
 			'text'			=> $text,
 			'path_to_tpls'	=> WEB_PATH. tpl()->TPL_PATH,
@@ -458,13 +568,14 @@ class yf_common {
 	* Show empty page (useful for popup windows, etc)
 	*/
 	function show_empty_page($text = '', $params = array()) {
-		main()->NO_GRAPHICS = true;
+		main()->no_graphics(true);
 		$output = tpl()->parse('empty_page', array(
 			'text'			=> $text,
 			'title'			=> $params['title'],
 			'close_button'	=> (int)((bool)$params['close_button']),
 			'full_width'	=> (int)((bool)$params['full_width']),
 		));
+		$output .= tpl()->_get_quick_page_info();
 		$output = tpl()->_apply_output_filters($output);
 		main()->_send_main_headers(strlen($output));
 		echo $output;
@@ -591,7 +702,7 @@ class yf_common {
 	* Do redirect user to the specified location
 	*/
 	function redirect($location, $rewrite = true, $redirect_type = 'js', $text = '', $ttl = 3) {
-		return _class('redirect', 'classes/common/')->_go($location, $rewrite, $redirect_type, $text, $ttl);
+		return _class('redirect')->_go($location, $rewrite, $redirect_type, $text, $ttl);
 	}
 
 	/**
@@ -706,7 +817,8 @@ class yf_common {
 	* Get user info(s) by id(s)
 	*/
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) {
-		return _class('user_data', 'classes/common/')->_user($user_id, $fields, $params, $return_sql);
+		$db = db()->from('user')->where('id', $user_id);
+		return $return_sql ? $db->sql() : $db->get();
 	}
 
 	/**
@@ -740,10 +852,7 @@ class yf_common {
 	/**
 	* Create translit from Russian or Ukrainian text
 	*/
-	function make_translit($string, $from_encoding = '') {
-		if (empty($from_encoding)) {
-			$from_encoding = $this->TRANSLIT_FROM;
-		}
+	function make_translit($string) {
 		return _class('translit', 'classes/common/')->make($string);
 	}
 
@@ -821,25 +930,29 @@ class yf_common {
 	/**
 	* Convert name into URL-friendly string
 	*/
-	function _propose_url_from_name($name = '', $from_encoding = '', $force_dashes = false) {
+	function _propose_url_from_name($name = '', $force_dashes = null) {
 		if (empty($name)) {
 			return '';
 		}
-		if (empty($from_encoding)) {
-			$from_encoding = $this->TRANSLIT_FROM;
-		}
 		$url = str_replace(array(';',',','.',':',' ','/'), '_', $name);
-		$url = preg_replace('/[_]{2,}/', '_', $url);
+		$url = preg_replace('/[_-]{2,}/', '_', $url);
 		$url = trim(trim(trim($url), '_-'));
 
-		$url = common()->make_translit($url, $from_encoding);
+		$url = common()->make_translit($url);
 
-		$url = preg_replace('/[_]{2,}/', '_', $url);
-		$url = preg_replace('/[_-]{2,}/', '-', $url);
 		$url = strtolower(preg_replace('/[^a-z0-9_-]+/i', '', $url));
-		$url = trim(trim(trim($url), '_-'));
+
+		if (!isset($force_dashes)) {
+			$force_dashes = $this->URL_FORCE_DASHES;
+		}
 		if ($force_dashes) {
 			$url = str_replace('_', '-', $url);
+			$url = preg_replace('/[-]{2,}/', '-', $url);
+			$url = trim(trim(trim($url), '-'));
+		} else {
+			$url = str_replace('-', '_', $url);
+			$url = preg_replace('/[_]{2,}/', '_', $url);
+			$url = trim(trim(trim($url), '_'));
 		}
 		return $url;
 	}
@@ -925,27 +1038,6 @@ class yf_common {
 	*/
 	function gmtime() {
 		return strtotime('now GMT');
-	}
-
-	/**
-	*
-	*/
-	function graph($data, $params = '') {
-		return _class('graph', 'classes/common/')->graph($data, $params);
-	}
-
-	/**
-	*
-	*/
-	function graph_bar($data, $params = '') {
-		return _class('graph', 'classes/common/')->graph_bar($data, $params);
-	}
-
-	/**
-	*
-	*/
-	function graph_pie($data, $params = '') {
-		return _class('graph', 'classes/common/')->graph_pie($data, $params);
 	}
 
 	/**
@@ -1283,7 +1375,7 @@ class yf_common {
 			$items[$error_key] = $value;
 		}
 		if ($this->TRACK_USER_ERRORS && !empty($this->USER_ERRORS)) {
-			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
+			_class('logs')->save_user_error($this->USER_ERRORS);
 		}
 		if ($clear_error) {
 			$this->_remove_error_messages();
@@ -1323,6 +1415,48 @@ class yf_common {
 			'key'	=> $error_key,
 		);
 		return tpl()->parse('system/error_inline', $replace);
+	}
+
+	/**
+	* Show error and set response header to "404 Not Found"
+	*/
+	function error_404($msg = '') {
+		if ((MAIN_TYPE_ADMIN && is_logged_in()) || DEBUG_MODE) {
+			// Do not override status header for logged in admin, just display error inlined
+			!$msg && $msg = t('404 Not Found');
+		} else {
+			// All other cases
+			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
+			main()->IS_404 = true;
+		}
+		if (DEBUG_MODE) {
+			no_graphics(true);
+			$body .= '<b>404 Not found</b><br />'. PHP_EOL. '<i>'.$msg.'</i>';
+			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
+			return print common()->show_empty_page($body, array('full_width' => 1));
+		}
+		return $this->_show_error_message($msg);
+	}
+
+	/**
+	* Show error and set response header to "403 Forbidden"
+	*/
+	function error_403($msg = '') {
+		if ((MAIN_TYPE_ADMIN && is_logged_in()) || DEBUG_MODE) {
+			// Do not override status header for logged in admin, just display error inlined
+			!$msg && $msg = t('403 Forbidden');
+		} else {
+			// All other cases
+			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+			main()->IS_403 = true;
+		}
+		if (DEBUG_MODE) {
+			no_graphics(true);
+			$body .= '<b>404 Not found</b><br />'. PHP_EOL. '<i>'.$msg.'</i>';
+			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
+			return print common()->show_empty_page($body, array('full_width' => 1));
+		}
+		return $this->_show_error_message($msg);
 	}
 
 	/**

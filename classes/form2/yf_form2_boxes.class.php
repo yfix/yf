@@ -136,6 +136,44 @@ class yf_form2_boxes {
 
 	/**
 	*/
+	function locale_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
+		if (!$name) {
+			$name = 'locale';
+		}
+		$data = array();
+		$row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
+
+		asset('bfh-select');
+		$extra['style'] = $extra['style'] ?: 'max-width:200px;';
+
+		$lang_def_country = main()->get_data('lang_def_country');
+		foreach ((array)db()->from('sys_locale_langs')->get_all() as $v) {
+			$lang = strtolower($v['locale']);
+			$country = strtoupper($lang_def_country[$lang]);
+			$r = array(
+				'%icon'	=> ($country ? '<i class="bfh-flag-'.$country.'"></i> ' : ''),
+				'%name'	=> $v['name'],
+				'%code'	=> '['.$lang.']',
+			);
+			$data[$lang] = str_replace(array_keys($r), array_values($r), $row_tpl);
+		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = url('/locale_editor');
+		}
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $form->$renderer($name, $data, $extra, $replace);
+	}
+
+	/**
+	*/
 	function language_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -214,7 +252,7 @@ class yf_form2_boxes {
 		$row_tpl = $extra['row_tpl'] ?: '%icon %name';
 		foreach ((array)main()->get_data('fontawesome_icons') as $icon) {
 			$r = array(
-				'%icon'	=> '<i class="icon '.$icon.'"></i> ',
+				'%icon'	=> '<i class="icon fa '.$icon.'"></i> ',
 				'%name'	=> $icon,
 			);
 			$data[$icon] = str_replace(array_keys($r), array_values($r), $row_tpl);

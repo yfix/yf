@@ -9,14 +9,13 @@
 */
 class yf_static_pages {
 
+	const table = 'static_pages';
 	/** @var string @conf_skip */
 	public $PAGE_NAME			= null;
 	/** @var string @conf_skip */
 	public $PAGE_TITLE			= null;
 	/** @var bool Allow HTML in text */
 	public $ALLOW_HTML_IN_TEXT	= true;
-	/** @var bool */
-	public $MULTILANG_MODE		= false;
 
 	/**
 	* Catch missing method call
@@ -32,15 +31,9 @@ class yf_static_pages {
 		if (method_exists($this, $name) && substr($name, 0, 1) !== '_') {
 			return $this->$name();
 		} else {
-			$page = $this->_get_page_from_db($name);
-			if ($page) {
-				$_GET['id'] = $name;
-				$_GET['action'] = 'show';
-				return $this->show();
-			} else {
-				common()->message_error('Not found');
-				return false;
-			}
+			$_GET['action'] = 'show';
+			$_GET['id'] = $name;
+			return $this->show();
 		}
 	}
 
@@ -48,16 +41,11 @@ class yf_static_pages {
 	* Display page contents
 	*/
 	function show () {
-		if (empty($_GET['id'])) {
-			return '';
+		$a = $this->_get_page_from_db();
+		if (!$a) {
+			return _404();
 		}
-		$page_info = $this->_get_page_from_db();
-		$this->_set_global_info($page_info);
-		// Show error message
-		if (empty($page_info)) {
-			_re('No such page!');
-			return _e();
-		}
+		$this->_set_global_info($a);
 		// Get sub-pages (from menu)
 		$sub_pages = array();
 		$menus = main()->get_data('menus');
@@ -96,18 +84,18 @@ class yf_static_pages {
 				);
 			}
 		}
-		$content = tpl()->parse_string(stripslashes($page_info['text']), array(), 'static_page__'.$page_info['id']);
+		$content = tpl()->parse_string(stripslashes($a['text']), array(), 'static_page__'.$a['id']);
 		// Process template
 		$replace = array(
-			'id'				=> intval($page_info['id']),
-			'name'				=> stripslashes($page_info['name']),
-//			'content'			=> stripslashes($page_info['text']), // DO NOT ADD _prepare_html here!
+			'id'				=> intval($a['id']),
+			'name'				=> stripslashes($a['name']),
+//			'content'			=> stripslashes($a['text']), // DO NOT ADD _prepare_html here!
 			'content'			=> $content,
-			'page_heading'		=> _prepare_html(_ucfirst($page_info['page_heading'])),
-			'page_page_title'	=> _prepare_html(_ucfirst($page_info['page_title'])),
-			'print_link'		=> './?object='.$_GET['object'].'&action=print_view&id='.$page_info['id'],
-			'pdf_link'			=> './?object='.$_GET['object'].'&action=pdf_view&id='.$page_info['id'],
-			'email_link'		=> './?object='.$_GET['object'].'&action=email_page&id='.$page_info['id'],
+			'page_heading'		=> _prepare_html(_ucfirst($a['page_heading'])),
+			'page_page_title'	=> _prepare_html(_ucfirst($a['page_title'])),
+			'print_link'		=> './?object='.$_GET['object'].'&action=print_view&id='.$a['id'],
+			'pdf_link'			=> './?object='.$_GET['object'].'&action=pdf_view&id='.$a['id'],
+			'email_link'		=> './?object='.$_GET['object'].'&action=email_page&id='.$a['id'],
 			'sub_pages'			=> $sub_pages,
 		);
 		return tpl()->parse($_GET['object'].'/main', $replace);
@@ -120,64 +108,62 @@ class yf_static_pages {
 		if (empty($id)) {
 			return array();
 		}
-		$q = db()->from('static_pages')->where('active = 1');
+		$cache_name = $id.'|'.$lang;
+		$a = $this->_cache[$cache_name];
+		if (!is_null($a)) {
+			return $a;
+		}
+		$q = db()->from(self::table)->where('active', '1');
 		if (is_numeric($id)) {
 			$q->where('id', (int)$id);
 		} else {
 			$q->where('name', _strtolower($id));
 		}
-		if ($this->MULTILANG_MODE) {
-			$q->where('locale', conf('language'));
-		}
-		return $q->get();
+		$lang = conf('language');
+		$q->where('locale', $lang);
+		$a = $q->get();
+		$this->_cache[$cache_name] = $a;
+		return $a;
 	}
 
 	/**
 	* Print View
 	*/
 	function print_view () {
-		$page_info = $this->_get_page_from_db();
-		$this->_set_global_info($page_info);
-		// Show error message
-		if (empty($page_info)) {
-			_re('No such page!');
-			$body = _e();
-		} else {
-			$text = $this->ALLOW_HTML_IN_TEXT ? $page_info['text'] : _prepare_html($page_info['text']);
-			$body = common()->print_page($text);
+		$a = $this->_get_page_from_db();
+		if (!$a) {
+			return _404();
 		}
-		return $body;
+		$this->_set_global_info($a);
+		$text = $this->ALLOW_HTML_IN_TEXT ? $a['text'] : _prepare_html($a['text']);
+		return common()->pdf_page($text, 'page_'.$a['name']);
 	}
 
 	/**
 	* Pdf View
 	*/
 	function pdf_view () {
-		$page_info = $this->_get_page_from_db();
-		$this->_set_global_info($page_info);
-		// Show error message
-		if (empty($page_info)) {
-			_re('No such page!');
-			$body = _e();
-		} else {
-			$text = $this->ALLOW_HTML_IN_TEXT ? $page_info['text'] : _prepare_html($page_info['text']);
-			$body = common()->pdf_page($text, 'page_'.$page_info['name']);
+		$a = $this->_get_page_from_db();
+		if (!$a) {
+			return _404();
 		}
-		return $body;
+		$this->_set_global_info($a);
+		$text = $this->ALLOW_HTML_IN_TEXT ? $a['text'] : _prepare_html($a['text']);
+		return common()->pdf_page($text, 'page_'.$a['name']);
 	}
 
 	/**
 	* Email Page
 	*/
 	function email_page () {
-		$page_info = $this->_get_page_from_db();
-		$this->_set_global_info($page_info);
+		$a = $this->_get_page_from_db();
+		$this->_set_global_info($a);
 		// Show error message
-		if (empty($page_info)) {
+		if (empty($a)) {
 			_re('No such page!');
 			$body = _e();
 		} else {
-			$body = common()->email_page($page_info['text']);
+			$body = common()->email_page($a['text']);
 		}
 		return $body;
 	}
@@ -204,28 +190,12 @@ class yf_static_pages {
 	/**
 	* Set page infor for global use
 	*/
-	function _set_global_info ($page_info = array()) {
-		$this->PAGE_NAME	= _prepare_html($page_info['name']);
-		$this->PAGE_HEADING	= _prepare_html(_ucfirst($page_info['page_heading']));
-		$this->PAGE_TITLE	= _prepare_html(_ucfirst($page_info['title'] ? $page_info['title'] : $page_info['page_title']));
-		conf('meta_keywords', _prepare_html($page_info['meta_keywords']));
-		conf('meta_description', _prepare_html($page_info['meta_desc']));
-	}
-
-	/**
-	* Hook for the site_map
-	*/
-	function _site_map_items ($OBJ = false) {
-		if (!is_object($OBJ)) {
-			return false;
-		}
-		$Q = db()->query('SELECT * FROM '.db('static_pages')." WHERE active='1'". ($this->MULTILANG_MODE ? " AND locale='"._es(conf('language'))."'" : ""));
-		while ($A = db()->fetch_assoc($Q)) {
-			$OBJ->_store_item(array(
-				'url'	=> './?object=static_pages&action=show&id='.$A['id'],
-			));
-		}
-		return true;
+	function _set_global_info ($a = array()) {
+		$this->PAGE_NAME	= _prepare_html($a['name']);
+		$this->PAGE_HEADING	= _prepare_html(_ucfirst($a['page_heading']));
+		$this->PAGE_TITLE	= _prepare_html(_ucfirst($a['title'] ? $a['title'] : $a['page_title']));
+		conf('meta_keywords', _prepare_html($a['meta_keywords']));
+		conf('meta_description', _prepare_html($a['meta_desc']));
 	}
 
 	/**
@@ -251,19 +221,6 @@ class yf_static_pages {
 	}
 
 	/**
-	* Title hook
-	*/
-	function _site_title($title) {
-		$subtitle = '';
-
-		$subtitle = $this->PAGE_TITLE ? $this->PAGE_TITLE : $this->PAGE_NAME;
-		if ($subtitle) {
-			$title .= ' : '.t($subtitle);
-		}
-		return $title;
-	}
-
-	/**
 	* Hook for navigation bar
 	*/
 	function _nav_bar_items ($params = array()) {
@@ -279,5 +236,31 @@ class yf_static_pages {
 #		$items[]	= $NAV_BAR_OBJ->_nav_item('Home', './');
 		$items[]	= $NAV_BAR_OBJ->_nav_item($subtitle);
 		return $items;
+	}
+
+	/**
+	* Title hook
+	*/
+	function _site_title($title) {
+		$subtitle = '';
+
+		$subtitle = $this->PAGE_TITLE ? $this->PAGE_TITLE : $this->PAGE_NAME;
+		if ($subtitle) {
+			$title .= ' : '.t($subtitle);
+		}
+		return $title;
+	}
+
+	/**
+	* Hook for the site_map
+	*/
+	function _hook_sitemap($sitemap = false) {
+		if (!is_object($sitemap)) {
+			return false;
+		}
+		foreach ((array)db()->from(self::table)->where('active','1')->where('locale', conf('language'))->get_all() as $a) {
+			$sitemap->_add('/static_pages/show/'.$a['name']);
+		}
+		return true;
 	}
 }

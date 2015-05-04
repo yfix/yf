@@ -5,7 +5,7 @@
 {exec_last(assets,show_css)}
 {execute(graphics,show_metatags)}
 </head>
-<body class="bs-theme-{execute(common,bs_current_theme)} cssfw-{conf(css_framework)}">
+<body class="{execute(common,css_class_body)}">
 	<div class="navbar navbar-default{if(conf.css_havbar_inverse eq 1)} navbar-inverse{/if}">
 		<div class="navbar-inner navbar-header container">
 			<a class="brand navbar-brand" href="{const(WEB_PATH)}">{const(SITE_ADVERT_NAME)}</a>

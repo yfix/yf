@@ -8,20 +8,42 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	public $KEY_PUBLIC  = null; // merchant
 	public $KEY_PRIVATE = null; // pass
 
+	public $IS_DEPOSITION = true;
+	public $IS_PAYMENT    = true;
+
 	public $_api_request_timeout = 30;  // sec
-	public $_api_method_allow = array(
-		'pay_pb' => array(
-			'b_card_or_acc',
-			'amt',
-			'ccy',
-			'details',
-		),
-		'pay_visa' => array(
-			'b_name',
-			'b_card_or_acc',
-			'amt',
-			'ccy',
-			'details',
+	public $method_allow = array(
+		'payment' => array(
+			'pay_pb' => array(
+				'title' => 'Приват24',
+				'icon'  => 'privat24',
+				'amount_min' => 100,
+				'field' => array(
+					'b_card_or_acc',
+					'amt',
+					'ccy',
+					'details',
+				),
+				'option' => array(
+					'account' => 'Счет',
+				),
+			),
+			'pay_visa' => array(
+				'title' => 'Visa',
+				'icon'  => 'visa',
+				'amount_min' => 100,
+				'field' => array(
+					'b_name',
+					'b_card_or_acc',
+					'amt',
+					'ccy',
+					'details',
+				),
+				'option' => array(
+					'name'    => 'ФИО получателя',
+					'account' => 'Счет',
+				),
+			),
 		),
 	);
 
@@ -64,6 +86,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 
 	public $currency_default = 'UAH';
 	public $currency_allow = array(
+/*
 		'USD' => array(
 			'currency_id' => 'USD',
 			'active'      => true,
@@ -72,6 +95,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			'currency_id' => 'EUR',
 			'active'      => true,
 		),
+ */
 		'UAH' => array(
 			'currency_id' => 'UAH',
 			'active'      => true,
@@ -88,33 +112,45 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	public $url_server = null;
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/privat24/Privat24.php' );
 		$this->api = new Privat24( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
-		$this->url_result = url( '/api/payment/provider?name=privat24&operation=response' );
-		$this->url_server = url( '/api/payment/provider?name=privat24&operation=response&server=true' );
+		$this->url_result = url_user( '/api/payment/provider?name=privat24&operation=response' );
+		$this->url_server = url_user( '/api/payment/provider?name=privat24&operation=response&server=true' );
 		// parent
 		parent::_init();
 	}
 
 	public function key( $name = 'public', $value = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$value = $this->api->key( $name, $value );
 		return( $value );
 	}
 
 	public function key_reset() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->key( 'public',  $this->KEY_PUBLIC  );
 		$this->key( 'private', $this->KEY_PRIVATE );
 	}
 
 	public function signature( $options, $is_request = true ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->api->signature( $options, $is_request );
 		return( $result );
 	}
 
+	protected function _api_request( $uri, $data ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$url    = $this->URL . $uri;
+		$result = $this->_api_post( $url, $data );
+		return( $result );
+	}
+
 	public function api_request( $method, $options ) {
-		$api_method_allow = $this->_api_method_allow[ $method ];
+		if( !$this->ENABLE ) { return( null ); }
+		$api_method_allow = $this->method_allow[ 'payment' ][ $method ];
 		if( !is_array( $api_method_allow ) ) { return( null ); }
 		$payment_api = &$this->payment_api;
 		// import options
@@ -127,10 +163,11 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		}
 		// default
 		$_amt  = number_format( $_amt, 2, '.', '' );
+		$_ccy  = $payment_api->_default( array( $_ccy, $this->currency_default ) );
 		$_wait = $_wait ?: $this->_api_request_timeout;
 		$_test = $payment_api->_default( array( $_test, $this->TEST_MODE ) );
 		// $_test = (int)$_test;
-		foreach( $api_method_allow as $name ) {
+		foreach( $api_method_allow[ 'field' ] as $name ) {
 			$value = &${ '_'.$name };
 			if( !isset( $value ) ) {
 				$result = array(
@@ -158,7 +195,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		isset( $_payment_id ) && $xml_payment->addAttribute( 'id', $_payment_id );
 		// data
 		$data = '';
-		foreach( $api_method_allow as $name ) {
+		foreach( $api_method_allow[ 'field' ] as $name ) {
 			$value = ${ '_'.$name };
 			$value = htmlentities( $value, ENT_COMPAT | ENT_XML1, 'UTF-8', $double_encode = false );
 			$prop = $xml_payment->addChild( 'prop' );
@@ -181,6 +218,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		libxml_use_internal_errors( true );
 		$xml_response = simplexml_load_string( $response );
 // debug
+// ini_set( 'html_errors', 0 );
 // var_dump( $response, $xml_response );
 		// error?
 		$error = libxml_get_errors();
@@ -270,6 +308,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function _form_options( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_ = $options;
 		// transform
 		foreach ((array)$this->_options_transform as $from => $to ) {
@@ -295,6 +334,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function _form( $data, $options = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		if( empty( $data ) ) { return( null ); }
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
@@ -302,7 +342,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$signature    = $this->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
-		$url = &$this->URL . 'ishop';
+		$url = $this->URL . 'ishop';
 		$result = array();
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
@@ -324,6 +364,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function _api_response() {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
@@ -379,6 +420,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function _response_parse( $response ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$options = explode( '&', $response );
 		$_ = array();
 		foreach( (array)$options as $option ) {
@@ -396,6 +438,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function get_currency( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_       = &$options;
 		$api     = $this->api;
 		$allow   = &$this->currency_allow;
@@ -410,18 +453,19 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function deposition( $options ) {
-		$payment_api = $this->payment_api;
+		if( !$this->ENABLE ) { return( null ); }
+		$payment_api    = $this->payment_api;
 		$_              = $options;
 		$data           = &$_[ 'data'           ];
 		$options        = &$_[ 'options'        ];
 		$operation_data = &$_[ 'operation_data' ];
 		// prepare data
-		$user_id      = (int)$operation_data[ 'user_id' ];
-		$operation_id = (int)$data[ 'operation_id' ];
-		$account_id   = (int)$data[ 'account_id'   ];
-		$provider_id  = (int)$data[ 'provider_id'  ];
-		$amount       = $payment_api->_number_float( $data[ 'amount' ] );
-		$currency_id  = $this->get_currency( $options );
+		$user_id        = (int)$operation_data[ 'user_id' ];
+		$operation_id   = (int)$data[ 'operation_id' ];
+		$account_id     = (int)$data[ 'account_id'   ];
+		$provider_id    = (int)$data[ 'provider_id'  ];
+		$amount         = $payment_api->_number_float( $data[ 'amount' ] );
+		$currency_id    = $this->get_currency( $options );
 		if( empty( $operation_id ) ) {
 			$result = array(
 				'status'         => false,
@@ -491,4 +535,57 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
+	public function payment( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$payment_api    = $this->payment_api;
+		$_              = $options;
+		$data           = &$_[ 'data'           ];
+		$options        = &$_[ 'options'        ];
+		$operation_data = &$_[ 'operation_data' ];
+		// prepare data
+		$user_id        = (int)$operation_data[ 'user_id' ];
+		$operation_id   = (int)$data[ 'operation_id' ];
+		$account_id     = (int)$data[ 'account_id'   ];
+		$provider_id    = (int)$data[ 'provider_id'  ];
+		$amount         = $payment_api->_number_float( $data[ 'amount' ] );
+		$currency_id    = $this->get_currency( $options );
+		if( empty( $operation_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не определен код операции',
+			);
+			return( $result );
+		}
+		// currency conversion
+		$amount_currency = $payment_api->currency_conversion( array(
+			'conversion_type' => 'sell',
+			'currency_id'     => $currency_id,
+			'amount'          => $amount,
+		));
+		if( empty( $amount_currency ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Невозможно произвести конвертацию валют',
+			);
+			return( $result );
+		}
+		// fee
+		$fee = $this->fee;
+		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+		// prepare
+		$method_id = $options[ 'method_id' ];
+		$request   = array(
+			'operation_id' => $operation_id,
+			'amount'       => $amount_currency_total,
+			// 'currency'     => 'UAH',
+			'title'        => $options[ 'operation_title' ],
+			'account'      => $options[ 'account' ],
+		);
+		$result = $this->api_request( $method_id, $request );
+// DEBUG
+// ini_set( 'html_errors', 0 );
+// var_dump( $options, $request, $result );
+// exit;
+		list( $status, $status_message ) = $result;
+	}
 }

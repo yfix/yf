@@ -48,7 +48,7 @@ class yf_debug {
 	public $ADMIN_PATHS				= array(
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={THEME}&name={ID}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={ID}',
-		'edit_file'		=> 'object=file_manager&action=edit_item&id={ID}',
+		'edit_file'		=> 'object=file_manager&action=edit&id={ID}',
 		'show_db_table'	=> 'object=db_manager&action=table_show&id={ID}',
 		'sql_query'		=> 'object=db_manager&action=import&id={ID}',
 		'link'			=> '{ID}',
@@ -66,6 +66,7 @@ class yf_debug {
 	*/
 	function _init() {
 		$this->_NOT_TRANSLATED_FILE = PROJECT_PATH. 'logs/not_translated_'. conf('language'). '.php';
+		$this->DEBUG_CONSOLE_LIGHT = intval((bool)$_SESSION['debug_console_light']);
 	}
 
 	/**
@@ -89,6 +90,9 @@ class yf_debug {
 				continue;
 			}
 			$name = substr($method, strlen('_debug_'));
+			if ($this->DEBUG_CONSOLE_LIGHT && $name !== 'DEBUG_YF') {
+				continue;
+			}
 			$ts2 = microtime(true);
 			$content = $this->$method($method_params);
 			if ($method_params) {
@@ -589,38 +593,6 @@ class yf_debug {
 
 	/**
 	*/
-	function _i18n_vars_todo() {
-// TODO: JS full rewrite needed, as was done for i18n inline editor
-		// !!! Needed to be on the bottom of the page
-		$i18n_vars = _class('i18n')->_I18N_VARS;
-		if (!$this->SHOW_I18N_VARS || empty($i18n_vars)) {
-			return false;
-		}
-		ksort($i18n_vars);
-		$js_vars1 = array();
-		foreach ((array)$i18n_vars as $name => $value) {
-			$name = str_replace("_", " ", strtolower($name));
-			$js_vars1[$name] = $value;
-		}
-		$body .= 'var _i18n_for_page = '.json_encode($js_vars1);
-
-		$not_translated = _class('i18n')->_NOT_TRANSLATED;
-		if (!empty($not_translated)) {
-			ksort($not_translated);
-			$js_vars2 = array();
-			foreach ((array)$not_translated as $name => $hits) {
-				$name = str_replace("_", " ", strtolower($name));
-				$js_vars2[$name] = (int)$hits;
-			}
-			$body .= 'var _i18n_not_translated = '.json_encode($js_vars2);
-		}
-
-		$body .= 'var _i18n_for_page = '.json_encode($js_vars);
-		return '<script type="text/javascript">'.$body.'</script>';
-	}
-
-	/**
-	*/
 	function _var_export($var) {
 		if (defined('HHVM_VERSION')) {
 			return is_array($var) ? print_r($var, 1) : $var;
@@ -642,7 +614,7 @@ class yf_debug {
 		$data['yf'] = array(
 			'MAIN_TYPE'			=> MAIN_TYPE,
 			'LANG'				=> conf('language'),
-			'COUNTRY'			=> conf('country'),
+			'COUNTRY'			=> conf('country') ?: $_SERVER['GEOIP_COUNTRY_CODE'],
 			'TIMEZONE'			=> date_default_timezone_get(). (conf('timezone') ? ', conf: '.conf('timezone') : ''),
 			'DEBUG_MODE'		=> (int)DEBUG_MODE,
 			'DEV_MODE'			=> (int)conf('DEV_MODE'),
@@ -740,15 +712,6 @@ class yf_debug {
 				'compress: ratio'			=> ($c_info['size_compressed'] ? round($c_info['size_original'] / $c_info['size_compressed'] * 100, 0) : 0).'%',
 			);
 		}
-		if (conf('GZIP_ENABLED')) {
-			$g_info = $this->_get_debug_data('gzip_page');
-
-			$data['ini'] += array(
-				'gzip: size original'		=> $g_info['size_original'].' bytes',
-				'gzip: size gzipped approx'	=> $g_info['size_gzipped'].' bytes',
-				'gzip: ratio approx'		=> round($g_info['size_original'] / $g_info['size_gzipped'] * 100, 0).'%',
-			);
-		}
 		$data['ini'] += array(
 			'memory_usage'			=> function_exists('memory_get_usage') ? memory_get_usage() : 'n/a',
 			'memory_peak_usage'		=> function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : 'n/a',
@@ -768,12 +731,14 @@ class yf_debug {
 			$data['session'][$k] = $v['local_value'];
 		}
 		$a = $_POST + $_SESSION;
-		$body .= form($a, array('action' => _force_get_url(array('object' => 'test', 'action' => 'change_debug')), 'class' => 'form-inline', 'style' => 'padding-left:20px;'))
+		$body .= form($a, array('action' => url('/test/change_debug'), 'class' => 'form-inline', 'style' => 'padding-left:20px;'))
 			->row_start()
 				->container('Locale edit')
 				->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
-				->save(array('class' => 'btn btn-default btn-mini btn-xs'))
+				->container('<span style="padding-left:20px;">Debug console light</span>')
+				->active_box('debug_console_light', array('selected' => $_SESSION['debug_console_light']))
 			->row_end()
+			->save(array('class' => 'btn btn-default btn-mini btn-xs'))
 		;
 		foreach ($data as $name => $_data) {
 			foreach ($_data as $k => $v) {
@@ -859,18 +824,13 @@ class yf_debug {
 			if (empty($v['calls'])) {
 				continue;
 			}
-			$stpl_inline_edit = '';
-			if (tpl()->ALLOW_INLINE_DEBUG) {
-				$stpl_inline_edit = ' stpl_name=\''._prepare_html($k).'\' ';
-			}
 			$cur_size = strlen($v['string']);
 			$total_size += $cur_size;
 			$total_stpls_exec_time += (float)$v['exec_time'];
 
 			$items[$counter] = array(
 				'id'		=> ++$counter,
-// TODO: add link to inline stpl edit
-				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $debug[$k]['storage'])),
+				'name'		=> $this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $debug[$k]['storage'])),
 				'calls'		=> strval($v['calls']),
 				'driver'	=> strval($v['driver']),
 				'compiled'	=> (int)$v['is_compiled'],
@@ -938,7 +898,7 @@ class yf_debug {
 		if (!$this->SHOW_REWRITE_INFO) {
 			return '';
 		}
-		$items = $this->_get_debug_data('_force_get_url');
+		$items = $this->_get_debug_data('_url');
 		foreach ((array)$items as $k => $v) {
 			$items[$k]['time'] = round($v['time'], 4);
 			$items[$k]['rewrited_link'] = strval($this->_admin_link('link', $v['rewrited_link']));

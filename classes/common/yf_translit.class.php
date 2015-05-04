@@ -5,6 +5,32 @@
 */
 class yf_translit {
 
+	public $pairs = array(
+		'Ð°' => 'a',	'Ð±' => 'b',	'Ð²' => 'v',	'Ð³' => 'g',	
+		'Ð´' => 'd',	'Ðµ' => 'e',	'Ñ‘' => 'e',	'Ð·' => 'z',	
+		'Ð¸' => 'i',	'Ð¹' => 'y',	'Ðº' => 'k',	'Ð»' => 'l',
+		'Ð¼' => 'm',	'Ð½' => 'n',	'Ð¾' => 'o',	'Ð¿' => 'p',
+		'Ñ€' => 'r',	'Ñ' => 's',	'Ñ‚' => 't',	'Ñƒ' => 'u',
+		'Ñ„' => 'f',	'Ñ…' => 'h',	'ÑŠ' => 'j',	'Ñ‹' => 'i',
+		'Ñ' => 'e',	'Ñ–' => 'i',
+
+		'Ð' => 'A',	'Ð‘' => 'B',	'Ð’' => 'V',	'Ð“' => 'G',
+		'Ð”' => 'D',	'Ð•' => 'E',	'Ð' => 'E',	'Ð—' => 'Z',
+		'Ð˜' => 'I',	'Ð™' => 'Y',	'Ðš' => 'K',	'Ð›' => 'L',
+		'Ðœ' => 'M',	'Ð' => 'N',	'Ðž' => 'O',	'ÐŸ' => 'P',
+		'Ð ' => 'R',	'Ð¡' => 'S',	'Ð¢' => 'T',	'Ð£' => 'U',
+		'Ð¤' => 'F',	'Ð¥' => 'H',	'Ðª' => 'J',	'Ð«' => 'I',
+		'Ð­' => 'E',	'Ð†' => 'I',
+
+		'Ð¶' => 'zh', 'Ñ†' => 'ts', 'Ñ‡' => 'ch', 'Ñˆ' => 'sh', 
+		'Ñ‰' => 'shch', 'ÑŒ' => '', 'ÑŽ' => 'yu', 'Ñ' => 'ya',
+
+		'Ð–' => 'ZH', 'Ð¦' => 'TS', 'Ð§' => 'CH', 'Ð¨' => 'SH', 
+		'Ð©' => 'SHCH', 'Ð¬' => '', 'Ð®' => 'YU', 'Ð¯' => 'YA',
+
+		'Ñ—' => 'i', 'Ð‡' => 'Yi', 'Ñ”' => 'ie', 'Ð„' => 'Ye',
+	);
+
 	/**
 	* Make translit from russian or ukrainian text
 	*/
@@ -13,40 +39,9 @@ class yf_translit {
 			return $str;
 		}
 		if ($this->_is_utf8($str)) {
-			$str = iconv("UTF-8", "CP1251//IGNORE", $str);
-			//echo strlen($str);
+			$str = iconv('UTF-8', 'UTF-8//IGNORE', $str);
 		}
-		// Ñíà÷àëà çàìåíÿåì "îäíîñèìâîëüíûå" ôîíåìû.
-		$str = strtr($str,"àáâãäå¸çèéêëìíîïðñòóôõúûý³", "abvgdeeziyklmnoprstufhjiei");
-		$str = strtr($str,"ÀÁÂÃÄÅ¨ÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÚÛÝ²", "ABVGDEEZIYKLMNOPRSTUFHJIEI");
-		// Çàòåì - "ìíîãîñèìâîëüíûå".
-		$str = strtr($str, array(
-			"æ"=>"zh", "ö"=>"ts", "÷"=>"ch", "ø"=>"sh", 
-			"ù"=>"shch","ü"=>"", "þ"=>"yu", "ÿ"=>"ya",
-			"Æ"=>"ZH", "Ö"=>"TS", "×"=>"CH", "Ø"=>"SH", 
-			"Ù"=>"SHCH","Ü"=>"", "Þ"=>"YU", "ß"=>"YA",
-			"¿"=>"i", "¯"=>"Yi", "º"=>"ie", "ª"=>"Ye"
-		));
-/*
-		if ($this->_is_utf8($str)) {
-return iconv('UTF-8', 'UTF-8//TRANSLIT//IGNORE', $str);
-#			$str = iconv('UTF-8', 'CP1251//IGNORE', $str);
-#			$str = iconv('CP1251', 'UTF-8//IGNORE', $str);
-#			$str = iconv('UTF-8', 'UTF-8//IGNORE', $str);
-		}
-		// Ð¡Ð½Ð°Ñ‡Ð°Ð»Ð° Ð·Ð°Ð¼ÐµÐ½ÑÐµÐ¼ 'Ð¾Ð´Ð½Ð¾ÑÐ¸Ð¼Ð²Ð¾Ð»ÑŒÐ½Ñ‹Ðµ' Ñ„Ð¾Ð½ÐµÐ¼Ñ‹.
-		$str = strtr($str,'Ð°Ð±Ð²Ð³Ð´ÐµÑ‘Ð·Ð¸Ð¹ÐºÐ»Ð¼Ð½Ð¾Ð¿Ñ€ÑÑ‚ÑƒÑ„Ñ…ÑŠÑ‹ÑÑ–', 'abvgdeeziyklmnoprstufhjiei');
-		$str = strtr($str,'ÐÐ‘Ð’Ð“Ð”Ð•ÐÐ—Ð˜Ð™ÐšÐ›ÐœÐÐžÐŸÐ Ð¡Ð¢Ð£Ð¤Ð¥ÐªÐ«Ð­Ð†', 'ABVGDEEZIYKLMNOPRSTUFHJIEI');
-		// Ð—Ð°Ñ‚ÐµÐ¼ - 'Ð¼Ð½Ð¾Ð³Ð¾ÑÐ¸Ð¼Ð²Ð¾Ð»ÑŒÐ½Ñ‹Ðµ'.
-		$str = strtr($str, array(
-			'Ð¶'=>'zh', 'Ñ†'=>'ts', 'Ñ‡'=>'ch', 'Ñˆ'=>'sh', 
-			'Ñ‰'=>'shch','ÑŒ'=>'', 'ÑŽ'=>'yu', 'Ñ'=>'ya',
-			'Ð–'=>'ZH', 'Ð¦'=>'TS', 'Ð§'=>'CH', 'Ð¨'=>'SH', 
-			'Ð©'=>'SHCH','Ð¬'=>'', 'Ð®'=>'YU', 'Ð¯'=>'YA',
-			'Ñ—'=>'i', 'Ð‡'=>'Yi', 'Ñ”'=>'ie', 'Ð„'=>'Ye'
-		));
-*/
-		return $str;
+		return strtr($str, $this->pairs);
 	}
 
 	/**
@@ -57,22 +52,30 @@ return iconv('UTF-8', 'UTF-8//TRANSLIT//IGNORE', $str);
 	}
 
 	/**
-	* 
 	*/
-	function rus2uni($str,$isTo = true) {
-		$arr = array('¸'=>'&#x451;','¨'=>'&#x401;');
-		for($i=192;$i<256;$i++) {
+	function rus2uni($str, $isTo = true) {
+		$arr = array(
+			'Ñ‘' => '&#x451;',
+			'Ð' => '&#x401;'
+		);
+		for ($i=192;$i<256;$i++) {
 			$arr[chr($i)] = '&#x4'.dechex($i-176).';';
 		}
-		$str =preg_replace(array('@([à-ÿ]) @i','@ ([à-ÿ])@i'),array('$1&#x0a0;','&#x0a0;$1'),$str);
-		return strtr($str,$isTo?$arr:array_flip($arr));
+		$str = preg_replace(array(
+			'@([Ð°-Ñ]) @i',
+			'@ ([Ð°-Ñ])@i'
+		), array(
+			'$1&#x0a0;',
+			'&#x0a0;$1'
+		), $str);
+		return strtr($str, $isTo ? $arr : array_flip($arr));
 	}
 
 	/**
 	* 
 	*/
 	function utf2win1251 ($s) {
-		$out = "";
+		$out = '';
 
 		for ($i=0; $i<strlen($s); $i++) {
 			$c1 = substr ($s, $i, 1);
@@ -92,10 +95,10 @@ return iconv('UTF-8', 'UTF-8//TRANSLIT//IGNORE', $str);
 				elseif ($word>=0x0410 && $word<=0x044F) $out .= chr($word-848); // ?-? ?-?
 				else {  
 					$a = dechex($byte1);
-					$a = str_pad($a, 2, "0", STR_PAD_LEFT);
+					$a = str_pad($a, 2, '0', STR_PAD_LEFT);
 					$b = dechex($byte2);
-					$b = str_pad($b, 2, "0", STR_PAD_LEFT);
-					$out .= "&#x".$a.$b.";";
+					$b = str_pad($b, 2, '0', STR_PAD_LEFT);
+					$out .= '&#x'.$a.$b.';';
 				}
 			} else {
 				$out .= $c1;

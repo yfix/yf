@@ -208,7 +208,7 @@ class yf_cats {
 			}
 			$items_for_box[$cur_item_id] = str_repeat($this->BOX_LEVEL_SPACER, $cur_item_info['level'])
 				.($cur_item_info['level'] > 0 ? $this->BOX_LEVEL_MARKER : '')
-				.$cur_item_info['name'];
+				.t($cur_item_info['name']);
 		}
 		return $items_for_box;
 	}

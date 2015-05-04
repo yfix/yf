@@ -52,8 +52,8 @@ class yf_admin_methods {
 		$params += (array)$this->params;
 
 		$replace = array(
-			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'. $params['links_add']),
-			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
+			'form_action'	=> $params['form_action'] ?: url('/@object/@action/'. $params['links_add']),
+			'back_link'		=> $params['back_link'] ?: url('/@object/'. $params['links_add']),
 		);
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
@@ -87,14 +87,14 @@ class yf_admin_methods {
 					$params['on_before_update']($sql);
 				}
 
-				$db->insert($table, $db->es($sql));
+				$db->insert_safe($table, $sql);
 				$NEW_ID = $db->insert_id();
 				common()->admin_wall_add(array($_GET['object'].': added record into table '.$table, $NEW_ID));
 
 				if (is_callable($params['on_after_update'])) {
 					$params['on_after_update']($sql, $NEW_ID);
 				}
-				$form_action = $params['form_action'] ?: url_admin('/@object/@action/'. $params['links_add']);
+				$form_action = $params['form_action'] ?: url('/@object/@action/'. $params['links_add']);
 				if ($NEW_ID) {
 					$form_action .= '&id=' . $NEW_ID;
 				}
@@ -137,8 +137,8 @@ class yf_admin_methods {
 		$params += (array)$this->params;
 
 		$replace = array(
-			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']),
-			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
+			'form_action'	=> $params['form_action'] ?: url('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']),
+			'back_link'		=> $params['back_link'] ?: url('/@object/'. $params['links_add']),
 		);
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
@@ -183,7 +183,7 @@ class yf_admin_methods {
 					$params['on_before_update']($sql);
 				}
 
-				$db->update($table, $db->es($sql), '`'.$db->es($primary_field).'`="'.$db->es($id).'"');
+				$db->update_safe($table, $sql, '`'.$db->es($primary_field).'`="'.$db->es($id).'"');
 				common()->admin_wall_add(array($_GET['object'].': updated record in table '.$table, $id));
 
 				if (is_callable($params['on_after_update'])) {
@@ -253,7 +253,7 @@ class yf_admin_methods {
 		if (conf('IS_AJAX')) {
 			echo $_GET['id'];
 		} else {
-			return js_redirect(url_admin('/@object/'. _add_get(). $params['links_add']));
+			return js_redirect(url('/@object/'. _add_get(). $params['links_add']));
 		}
 	}
 
@@ -287,7 +287,7 @@ class yf_admin_methods {
 			if (is_callable($params['on_before_update'])) {
 				$params['on_before_update']($info);
 			}
-			$db->update($table, array('active' => (int)!$info['active']), $db->es($primary_field).'="'.$db->es($id).'"');
+			$db->update_safe($table, array('active' => (int)!$info['active']), $db->es($primary_field).'="'.$db->es($id).'"');
 			common()->admin_wall_add(array($_GET['object'].': item in table '.$table.' '.($info['active'] ? 'inactivated' : 'activated'), $id));
 
 			if (is_callable($params['on_after_update'])) {
@@ -297,7 +297,7 @@ class yf_admin_methods {
 		if (conf('IS_AJAX')) {
 			echo ($info['active'] ? 0 : 1);
 		} else {
-			return js_redirect(url_admin('/@object/'. _add_get(). $params['links_add']));
+			return js_redirect(url('/@object/'. _add_get(). $params['links_add']));
 		}
 	}
 
@@ -334,7 +334,7 @@ class yf_admin_methods {
 				$params['on_before_update']($sql);
 			}
 
-			$db->insert($table, $db->es($sql));
+			$db->insert_safe($table, $sql);
 			$new_id = $db->insert_id();
 
 			common()->admin_wall_add(array($_GET['object'].': item cloned in table '.$table, $new_id));
@@ -346,7 +346,7 @@ class yf_admin_methods {
 		if (conf('IS_AJAX')) {
 			echo ($new_id ? 1 : 0);
 		} else {
-			return js_redirect(url_admin('/@object/'. _add_get(). $params['links_add']));
+			return js_redirect(url('/@object/'. _add_get(). $params['links_add']));
 		}
 	}
 
@@ -378,7 +378,7 @@ class yf_admin_methods {
 				}
 			}
 		}
-		$redrect_url = $params['redirect_url'] ?: url_admin('/@object/'. str_replace($_GET['object'].'__', '', $filter_name) );
+		$redrect_url = $params['redirect_url'] ?: url('/@object/'. str_replace($_GET['object'].'__', '', $filter_name) );
 		return js_redirect($redrect_url);
 	}
 
@@ -392,8 +392,8 @@ class yf_admin_methods {
 		}
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$r = array(
-			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
-			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
+			'form_action'	=> url('/@object/filter_save/'.$filter_name),
+			'clear_url'		=> url('/@object/filter_save/'.$filter_name.'/clear'),
 		);
 		$order_fields = array();
 		foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
@@ -409,5 +409,56 @@ class yf_admin_methods {
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
 			->save_and_clear();
 		;
+	}
+
+	/**
+	* Return default config used by CKEditor
+	*/
+	function _get_cke_config($params = array()) {
+		asset('ckeditor-plugin-save');
+		asset('ckeditor-plugin-autosave');
+		asset('ckeditor-plugin-html5-video');
+		asset('ckeditor-plugin-youtube');
+//		asset('ckeditor-plugin-fontawesome4');
+		return array(
+			'toolbar' => array(
+				array(
+					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', 'Table', '-', 'Blockquote', 'Link', 'Unlink', 'Image', 'Video', 'Youtube', '-', 
+					'SpecialChar', 'FontAwesome', '-', 'Source', '-', 'Save', '-', 'Maximize'//, 'Preview'
+				),
+			),
+			'language' => conf('language'),
+			'removeButtons' => 'Flash',
+			'removePlugins' => 'bidi,dialogadvtab,filebrowser,horizontalrule,flash,iframe,pagebreak,showborders,templates',
+			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address', //,div',
+#			'allowedContent' => true,
+			'extraAllowedContent' => implode('; ', array('a[*]{*}(*)','img[*]{*}(*)','video[*]{*}','source[*]{*}','div(*){*}[*]','table','tr','th','td','caption')),
+			'extraPlugins' => 'autosave,video,youtube,preview', //,widget,lineutils,fontawesome',
+			'forcePasteAsPlainText' => true,
+#			'contentsCss' => array(
+#				'http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css',
+#				'http://netdna.bootstrapcdn.com/bootswatch/3.3.2/slate/bootstrap.min.css',
+#				'http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css'
+#			),
+#			'filebrowserBrowseUrl' => '/kcfinder/browse.php?type=files',
+#			'filebrowserImageBrowseUrl' => '/kcfinder/browse.php?type=images',
+#			'filebrowserFlashBrowseUrl' => '/kcfinder/browse.php?type=flash',
+#			'filebrowserUploadUrl' => '/kcfinder/upload.php?type=files',
+#			'filebrowserImageUploadUrl' => '/kcfinder/upload.php?type=images',
+#			'filebrowserFlashUploadUrl' => '/kcfinder/upload.php?type=flash',
+		);
+		// Other config variant example
+		/* 
+		return '
+			CKEDITOR.replace("'.$textarea_id.'", {
+				toolbar: [
+					[ "Cut", "Copy", "Paste", "PasteText", "PasteFromWord", "-", "Undo", "Redo" ], [ "RemoveFormat" ], [ "Bold", "Italic", "Underline" ],
+					[ "FontSize" ], [ "TextColor" ], [ "NumberedList", "BulletedList", "-", "Blockquote" ], [ "Link", "Unlink", "SpecialChar" ], [ "Source" ], [ "Maximize" ]
+				],
+				language: "'.conf('language').'",
+				removePlugins: "bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates",
+			});
+		';*/
 	}
 }

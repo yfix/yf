@@ -310,11 +310,12 @@ class yf_payment_api {
 			}
 			$key_value = $target . '_value';
 			$key_rate  = $source . '_value';
-			$result = db()->table( 'payment_currency_rate' )
+			$sql = db()->table( 'payment_currency_rate' )
 				->where( $target, '=', $currency_id )
-				->group_by( $source )
+				// ->group_by( $source )
 				->order_by( 'datetime', 'DESC' )
-				->get_deep_array( 1 );
+				->sql();
+			$result = db()->query_fetch_all( 'SELECT * FROM ( '. $sql .' ) as cr GROUP BY '. db()->escape_key( $source ) );
 			if( empty( $result ) ) {
 				$currency_id_default = &$this->currency_id_default;
 				foreach( $this->currencies as $key => $item ) {
@@ -369,7 +370,7 @@ class yf_payment_api {
 		return( $result );
 	}
 
-	public function sql_datatime( $timestamp = null ) {
+	public function sql_datetime( $timestamp = null ) {
 		$tpl = 'Y-m-d H:i:s';
 		if( is_int( $timestamp ) ) {
 			$result = date( $tpl, $timestamp );
@@ -404,7 +405,7 @@ class yf_payment_api {
 		// balance
 		$data[ 'balance' ] = 0;
 		// date
-		$value = $this->sql_datatime();
+		$value = $this->sql_datetime();
 		$data[ 'datetime_create' ] = $value;
 		$data[ 'datetime_update' ] = $value;
 		// create
@@ -576,17 +577,36 @@ class yf_payment_api {
 		if( count( $payment_status ) == 1 ) {
 			$payment_status    = reset( $payment_status );
 			$payment_status_id = (int)$payment_status[ 'status_id' ];
+			$result = array( $payment_status_id, $payment_status );
+		} else {
+			$result = $payment_status;
 		}
-		return( array( $payment_status_id, $payment_status ) );
+		return( $result );
+	}
+
+	public function provider_class( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$result = null;
+		if( !empty( $_provider_name ) ) {
+			$class_name = 'provider_' . $_provider_name;
+			$class = $this->_class( $class_name );
+			if( !( $class && $provider_class->ENABLE ) ) { $result = $class; }
+		}
+		return( $result );
 	}
 
 	public function provider( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// get providers
 		$provider       = $this->provider;
 		$provider_index = $this->provider_index;
 		if( empty( $provider ) ) {
+			$is_admin = main()->ADMIN_ID > 0;
+			$active = $is_admin || $_is_service ? 1 : 2;
 			$provider = db()->table( 'payment_provider' )
-				->where( 'active', 1 )
+				->where( 'active', '>=', $active )
 				->order_by( 'order' )
 				->get_deep_array( 1 );
 			if( empty( $provider ) ) {
@@ -609,32 +629,33 @@ class yf_payment_api {
 				$provider_index[ 'name'   ][ $name   ][ $id ] = &$provider[ $id ];
 			}
 		}
-		// options
-		$_           = &$options;
-		$all         = $_[ 'all'         ];
-		$exists      = $_[ 'exists'      ];
-		$provider_id = $_[ 'provider_id' ];
-		$name        = $_[ 'name'        ];
-		$system      = $_[ 'system'      ];
+		/**
+		 * options
+		 * $_all
+		 * $_exists
+		 * $_provider_id
+		 * $_name
+		 * $_system
+		 */
 		// test: exists by provider_id
-		if( !empty( $exists ) ) {
+		if( !empty( $_exists ) ) {
 			$result = !empty( $provider[ $exists ] );
 		}
 		// all
-		elseif( !empty( $all ) ) {
+		elseif( !empty( $_all ) ) {
 			$result = $provider_index[ 'all' ];
 		}
 		// by provider_id
-		elseif( isset( $provider_id ) ) {
-			$provider[ $provider_id ] && $result = array( $provider_id => $provider[ $provider_id ] );
+		elseif( isset( $_provider_id ) ) {
+			$provider[ $_provider_id ] && $result = array( $_provider_id => $provider[ $_provider_id ] );
 		}
 		// by name
-		elseif( !empty( $name ) ) {
-			$result = $provider_index[ 'name' ][ $name ];
+		elseif( !empty( $_name ) ) {
+			$result = $provider_index[ 'name' ][ $_name ];
 		}
 		// by system
-		elseif( isset( $system ) ) {
-			$result = $provider_index[ 'system' ][ (int)$system ];
+		elseif( isset( $_system ) ) {
+			$result = $provider_index[ 'system' ][ (int)$_system ];
 		}
 		// by default: all, not system
 		else {
@@ -643,7 +664,7 @@ class yf_payment_api {
 		if( is_array( $result ) ) {
 			foreach( $result as $index => $item ) {
 				$_options = &$result[ $index ][ 'options' ];
-				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+				$_options && $_options = (array)json_decode( $_options, true );
 			}
 		}
 		return( $result );
@@ -774,6 +795,7 @@ class yf_payment_api {
 			'options'        => $options,
 			'operation_data' => $operation_data,
 		));
+		$result[ 'operation_id' ] = $operation_id;
 		return( $result );
 	}
 
@@ -789,6 +811,11 @@ class yf_payment_api {
 	 */
 	public function payment_system( $options = null ) {
 		$options[ 'provider_name' ] = 'system';
+		$result = $this->payment( $options );
+		return( $result );
+	}
+	public function payment_user( $options = null ) {
+		$options[ 'user_mode' ] = true;
 		$result = $this->payment( $options );
 		return( $result );
 	}
@@ -826,6 +853,7 @@ class yf_payment_api {
 			'options'        => $options,
 			'operation_data' => $operation_data,
 		));
+		$result[ 'operation_id' ] = $operation_id;
 		return( $result );
 	}
 
@@ -939,7 +967,7 @@ class yf_payment_api {
 		$provider_id = (int)$provider[ 'provider_id' ];
 		$data[ 'provider' ] = $provider;
 		// prepare result
-		$sql_datetime = $this->sql_datatime();
+		$sql_datetime = $this->sql_datetime();
 		$data[ 'sql_datetime' ] = $sql_datetime;
 		$result = array(
 			'account_id'            => $account_id,
@@ -970,7 +998,7 @@ class yf_payment_api {
 			} else {
 				$result = $db->get();
 				$_options = &$result[ 'options' ];
-				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+				isset( $_options ) && $_options = (array)json_decode( $_options, true );
 			}
 			return( $result );
 		}
@@ -1007,7 +1035,7 @@ class yf_payment_api {
 			$datetime_key = array( 'start', 'finish', 'update', );
 			foreach( $result as $index => &$item ) {
 				$_options = &$item[ 'options' ];
-				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+				$_options && $_options = (array)json_decode( $_options, true );
 				foreach( $datetime_key as $key ) {
 					$item[ '_ts_' . $key ] = strtotime( $item[ 'datetime_' . $key ] );
 				}
@@ -1051,17 +1079,19 @@ class yf_payment_api {
 			$operation = db()->table( $table )
 				->where( $id_name, $id )
 				->get();
-			$operation_options = (array)json_decode( $operation[ 'options' ], JSON_NUMERIC_CHECK );
-			$_options = json_encode( array_merge_recursive(
+			$operation_options = (array)json_decode( $operation[ 'options' ], true );
+			$json_options = json_encode( array_merge_recursive(
 				$operation_options,
 				$_options
-			));
+			), JSON_NUMERIC_CHECK );
+			$json_options && $_options = $json_options;
 		}
 		// remove id by update
 		unset( $data[ $id_name ] );
 		// escape sql data
 		$sql_data = $data;
-		$__is_escape && $sql_data = _es( $data );
+		$is_escape = isset( $__is_escape ) ? (bool)$__is_escape : true;
+		$is_escape && $sql_data = _es( $data );
 		// query
 		$sql_status = db()->table( $table )
 			->where( $id_name, $id )
@@ -1073,6 +1103,95 @@ class yf_payment_api {
 		}
 		$status         = true;
 		$status_message = 'Выполнено обновление "' . t( $name ) . '"';
+		return( $result );
+	}
+
+	public function mail( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_tpl ) ) { return( null ); }
+		// var
+		// $payment_api = _class( 'payment_api' );
+		$payment_api = $this;
+		$mail_class  = _class( 'email' );
+		// check user
+		if( !empty( $_user_id ) ) {
+			$user = user( $_user_id );
+			// check email, validate email
+			if( empty( $user )
+				|| empty( $user[ 'email' ] )
+				|| $user[ 'email' ] != $user[ 'email_validated' ]
+			) { return( null ); }
+			$mail_to   = $user[ 'email' ];
+			$mail_name = $user[ 'name'  ];
+		}
+		// check data
+		$data = array();
+		if( !empty( $_data ) ) {
+			// import data
+			is_array( $_data ) && extract( $_data, EXTR_PREFIX_ALL | EXTR_REFS, '_' );
+			// amount
+			if( !empty( $__amount ) ) {
+				$__amount = $payment_api->money_text( $__amount );
+			}
+			$data = $_data;
+		}
+		// url
+		$url = array(
+			'user_payments' => url_user( '/payments' ),
+		);
+		// mail
+		$mail_admin_to   = $mail_class->ADMIN_EMAIL;
+		$mail_admin_name = $mail_class->ADMIN_NAME;
+		$mail = array(
+			'support_mail' => $mail_admin_to,
+			'support_name' => $mail_admin_name,
+		);
+		// compile
+		$data = array_replace_recursive( $data, array(
+			'url'  => $url,
+			'mail' => $mail,
+		));
+		_class( 'email' )->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
+		if( !empty( $_admin ) ) {
+			$url = array(
+				'user_manage' => $this->url_admin( array(
+					'object' => 'members',
+					'action' => 'edit',
+					'id'     => $_user_id,
+				)),
+				'user_balance' => $this->url_admin( array(
+					'object'  => 'manage_payment',
+					'action'  => 'balance',
+					'user_id' => $_user_id,
+				)),
+			);
+			// compile
+			$data = array_replace_recursive( $data, array(
+				'url'        => $url,
+				'user_title' => $user[ 'name' ] . ' (id: '. $_user_id .')'
+			));
+			_class( 'email' )->_send_email_safe( $mail_admin_to, $mail_admin_name, $_tpl . '_admin', $data );
+		}
+	}
+
+	public function url_admin( $options = null ) {
+		if( empty( $options ) ) { return( null ); }
+		$result = url_admin( $options );
+		if( substr( $result, 0, 2 ) == '//' ) {
+			$result = str_replace( '//', 'http://', $result );
+		}
+		return( $result );
+	}
+
+	public function money_text( $options = null ) {
+		!is_array( $options ) && $options = array(
+			'value' => $options,
+		);
+		$options += array(
+			'sign'   => true,
+		);
+		$result = $this->money_format( $options );
 		return( $result );
 	}
 
@@ -1198,7 +1317,7 @@ class yf_payment_api {
 			$result .= 'GET:'    . PHP_EOL . var_export( $_GET,    true ) . PHP_EOL . PHP_EOL;
 			$result .= 'POST:'   . PHP_EOL . var_export( $_POST,   true ) . PHP_EOL . PHP_EOL;
 		}
-		$_var && $result .= 'VAR:' . PHP_EOL . var_export( $_var, true ) . PHP_EOL . PHP_EOL;
+		isset( $_var ) && $result .= 'VAR:' . PHP_EOL . var_export( $_var, true ) . PHP_EOL . PHP_EOL;
 		!empty( $result ) && file_put_contents( $file, $result, FILE_APPEND );
 		$is_first = false;
 		return( $result );

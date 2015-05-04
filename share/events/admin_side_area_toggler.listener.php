@@ -24,12 +24,12 @@ MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', f
 		;
 		function side_area_close() {
 			side_area.hide("fast");
-			center_area.addClass("center_area_wide");
+			center_area.addClass("center_area_wide").removeClass("center_area_narrow");
 			toggle_icon.removeClass().addClass(icons["closed"]);
 			is_hidden = true;
 		}
 		function side_area_open() {
-			center_area.removeClass("center_area_wide");
+			center_area.removeClass("center_area_wide").addClass("center_area_narrow");
 			side_area.show("fast");
 			toggle_icon.removeClass().addClass(icons["open"]);
 			is_hidden = false;
@@ -47,7 +47,16 @@ MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', f
 		})
 	';
 
-	$css = '.center_area_wide { margin-left:1%; margin-right:1%; width:98%; }';
+	$css = '
+		.center_area_wide { margin-left:1%; width:98%; }
+		.center_area_narrow { margin-left: 25% !important; width: 74% !important; }
+	';
+	if ($is_hidden) {
+		$css .= '
+			.center_area { margin-left:1%; width:98%; }
+			.left_area { display: none; }
+		';
+	}
 
 	jquery($jquery);
 	js('jquery-cookie');

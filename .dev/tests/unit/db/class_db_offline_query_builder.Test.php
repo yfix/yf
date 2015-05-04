@@ -334,11 +334,13 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	public function test_delete() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->delete() );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->delete($sql = true) );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->whereid(1)->delete($sql = true) );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3))->delete($sql = true) );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'uid')->delete($sql = true) );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user as u')->whereid(array(1,2,3), 'u.id')->delete($sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->delete(null, $sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->whereid(1)->delete(null, $sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->delete(1, $sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->delete(array(1,2,3), $sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3))->delete(null, $sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'uid')->delete(null, $sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user as u')->whereid(array(1,2,3), 'u.id')->delete(null, $sql = true) );
 	}
 	public function test_increment() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }

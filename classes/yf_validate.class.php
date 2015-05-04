@@ -803,12 +803,26 @@ class yf_validate {
 	}
 
 	/**
+	* Alias
+	*/
+	public function gt($in, $params = array()) {
+		return $this->greater_than($in, $params);
+	}
+
+	/**
 	* Returns TRUE if given field value is a number and less than specified, not including exact value
 	* Example: less_than[10]
 	*/
 	public function less_than($in, $params = array()) {
 		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in < $max) : false;
+	}
+
+	/**
+	* Alias
+	*/
+	public function lt($in, $params = array()) {
+		return $this->less_than($in, $params);
 	}
 
 	/**
@@ -821,12 +835,26 @@ class yf_validate {
 	}
 
 	/**
+	* Alias
+	*/
+	public function gte($in, $params = array()) {
+		return $this->greater_than_equal_to($in, $params);
+	}
+
+	/**
 	* Returns TRUE if given field value is a number and less than specified, including exact value
 	* Example: less_than_equal_to[10]
 	*/
 	public function less_than_equal_to($in, $params = array()) {
 		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in <= $max) : false;
+	}
+
+	/**
+	* Alias
+	*/
+	public function lte($in, $params = array()) {
+		return $this->less_than_equal_to($in, $params);
 	}
 
 	/**
@@ -840,7 +868,10 @@ class yf_validate {
 	* Returns TRUE if given field value contains only latin1 letters, lower and uppercase allowed, and digits.
 	*/
 	public function alpha_numeric($in) {
-		return (is_array($in) || is_object($in) || is_callable($in)) ? false : ctype_alnum((string) $in);
+		if (is_array($in) || is_object($in) || (is_callable($in) && !function_exists($in))) {
+			return false;
+		}
+		return ctype_alnum((string) $in);
 	}
 
 	/**

@@ -94,7 +94,7 @@ class yf_manage_comments {
 		if (!empty($_GET['id'])) {
 			db()->query('DELETE FROM '.db('comments').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
@@ -112,7 +112,7 @@ class yf_manage_comments {
 		if (!empty($a)) {
 			db()->update('comments', array('active' => (int)!$a['active']), 'id='.intval($_GET['id']));
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo ($a['active'] ? 0 : 1);
 		} else {

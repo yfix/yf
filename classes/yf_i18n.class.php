@@ -54,10 +54,10 @@ class yf_i18n {
 	* Framework constructor
 	*/
 	function _init() {
-		// Inline locale editor
-		if (DEBUG_MODE && isset($_SESSION['locale_vars_edit'])) {
-			$this->TRACK_TRANSLATED = intval((bool)$_SESSION['locale_vars_edit']);
-			main()->INLINE_EDIT_LOCALE = intval((bool)$_SESSION['locale_vars_edit']);
+		if (function_exists('locale_accept_from_http')) {
+// TODO: use this method for language detection
+#			$locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+#			var_dump($locale);
 		}
 		conf('languages', main()->get_data('locale_langs'));
 		// Force default language as it set in locale editor
@@ -86,7 +86,7 @@ class yf_i18n {
 		if (DEBUG_MODE && $this->AUTO_FIND_VARS && $this->TRANSLATE_ENABLED) {
 			$is_db = main()->is_db();
 			if( $is_db ) {
-				$q = db()->query('SELECT id,value FROM '.db('locale_vars').'');
+				$q = db()->query('SELECT id, value FROM '.db('locale_vars').'');
 				while ($a = db()->fetch_assoc($q)) {
 					$this->TR_ALL_VARS[$a['value']] = $a['id'];
 				}
@@ -94,6 +94,22 @@ class yf_i18n {
 			if (!empty($this->TR_ALL_VARS)) {
 				ksort($this->TR_ALL_VARS);
 			}
+		}
+	}
+
+	/**
+	*/
+	function _init_inline_editor() {
+		if (!DEBUG_MODE || !isset($_SESSION['locale_vars_edit'])) {
+			return false;
+		}
+		$is_enabled = intval((bool)$_SESSION['locale_vars_edit']);
+		$this->TRACK_TRANSLATED		= $is_enabled;
+		main()->INLINE_EDIT_LOCALE	= $is_enabled;
+
+		if ($is_enabled && main()->is_common_page()) {
+			$this->WRAP_VARS_FOR_INLINE_EDIT = true;
+			asset('yf_js_inline_editor');
 		}
 	}
 
@@ -154,6 +170,8 @@ class yf_i18n {
 			exec('locale -a', $sys_locale);
 			debug('locale::system', $sys_locale);
 		}
+
+		$this->_init_inline_editor();
 	}
 
 	/**
@@ -471,17 +489,15 @@ class yf_i18n {
 			}
 		}
 		if (DEBUG_MODE) {
-			if ($this->TRACK_TRANSLATED) {
-				if (main()->INLINE_EDIT_LOCALE && !main()->_IS_REDIRECTING) {
-					$r = array(
-						' ' => '%20',
-						'='	=> '&equals;',
-						'<' => '&lt;',
-						'>' => '&gt;',
-					);
-					$s_var = _prepare_html(str_replace(array_keys($r), array_values($r), $_source));
-					$output_string = '<span class=locale_tr s_var='.$s_var.'>'.$output_string.'</span>';
-				}
+			if ($this->WRAP_VARS_FOR_INLINE_EDIT && false === strpos($output_string, 'class=localetr')) {
+				$r = array(
+					' ' => '%20',
+					'='	=> '&equals;',
+					'<' => '&lt;',
+					'>' => '&gt;',
+				);
+				$svar = _prepare_html(str_replace(array_keys($r), array_values($r), $_source));
+				$output_string = '<span class=localetr svar='.$svar.'>'.$output_string.'</span>';
 			}
 			debug('i18n[]', array(
 				'name_orig'	=> $_source,
@@ -596,10 +612,7 @@ class yf_i18n {
 		if (empty($var_name)) {
 			return false;
 		}
-		db()->insert('locale_vars', array(
-			'value'		=> _es($var_name),
-			'location'	=> '',
-		));
+		return db()->insert_safe('locale_vars', array('value' => $var_name, 'location' => ''));
 	}
 
 	/**

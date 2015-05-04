@@ -9,11 +9,20 @@ class yf_payment_api__provider_remote {
 	public $KEY_PUBLIC  = null;
 	public $KEY_PRIVATE = null;
 
+	public $URL_API      = null;
+	public $URL_API_TEST = null;
+
+	public $method_allow = null;
+
 	public $API_SSL_VERIFY = true;
+
+	public $IS_DEPOSITION = null;
+	public $IS_PAYMENT    = null;
 
 	public $service_allow = null;
 	public $description   = null;
 
+	public $_status = array();
 	public $_status_message = array(
 		'success'     => 'Выполнено: ',
 		'in_progress' => 'Ожидание: ',
@@ -24,24 +33,95 @@ class yf_payment_api__provider_remote {
 	public $api         = null;
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );
 	}
 
-	public function allow( $value ) {
+	public function allow( $value = null ) {
 		$result = &$this->ENABLE;
-		isset( $value ) && $result = (bool)$value;
+		if( isset( $value ) ) {
+			$value = (bool)$value;
+			// init if enable
+			if( !$result && $value ) { $this->_init(); }
+			$result = $value;
+		}
 		return( $result );
 	}
 
-	protected function _state( $value ) {
+	protected function _state( $value, $status = null, $status_message = null ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$name    = $this->_status[ $value ];
-		$message = $this->_status_message[ $name ];
+		if( !is_array( $status         ) ) { $status         = &$this->_status;         }
+		if( !is_array( $status_message ) ) { $status_message = &$this->_status_message; }
+		$name    = isset( $status[ $value ] ) ? $status[ $value ] : null;
+		$message = isset( $status_message[ $name ] ) ? $status_message[ $name ] : null;
 		return( array( $name, $message ) );
 	}
 
-	protected function _api_post( $url, $post ) {
+	protected function _ip( $options = null ) {
+		if( !empty( $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] ) ) {
+			$ips = explode( ',', $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] );
+			$ip  = reset( $ips );
+		} else {
+			$ip =
+				   $_SERVER[ 'HTTP_CLIENT_IP' ]
+				?: $_SERVER[ 'HTTP_X_REAL_IP' ]
+				?: $_SERVER[ 'REMOTE_ADDR' ]
+			;
+		}
+		$result = trim( $ip );
+		return( $result );
+	}
+
+	protected function _check_ip( $options = null ) {
+		if( !$this->ENABLE ) { return( null ); }
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// allow ip
+		$ip_allow = isset( $_provider_ip_allow ) ? $_provider_ip_allow : $this->provider_ip_allow;
+		$ip = isset( $_ip ) ? $_ip : $this->_ip();
+		$result = empty( $ip_allow[ $ip ] ) ? false : true;
+		return( $result );
+	}
+
+	public function is_test( $options = null ) {
+		$result = false;
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( !empty( $this->TEST_MODE ) || !empty( $_test_mode ) ) { $result = true; }
+		return( $result );
+	}
+
+	public function api_url( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( $this->is_test( $options ) ) {
+			$result = &$this->URL_API_TEST;
+		} else {
+			$result = &$this->URL_API;
+		}
+		return( $result );
+	}
+
+	public function api_method_payout( $name ) {
+		$result = null;
+		if(
+			empty( $name )
+			|| empty( $this->method_allow )
+			|| empty( $this->method_allow[ 'payout' ] )
+			|| empty( $this->method_allow[ 'payout' ][ $name ] )
+			|| !is_array( $this->method_allow[ 'payout' ][ $name ] )
+		) {
+			return( $result );
+		}
+		$result = $this->method_allow[ 'payout' ][ $name ];
+		return( $result );
+	}
+
+	protected function _api_post( $url, $post, $options = true ) {
+		if( !$this->ENABLE ) { return( null ); }
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// options
 		$options = array(
 			// CURLOPT_URL            =>  $url,
@@ -49,6 +129,13 @@ class yf_payment_api__provider_remote {
 			CURLOPT_POSTFIELDS     =>  $post,
 			CURLOPT_RETURNTRANSFER =>  true,
 		);
+		if( !empty( $_is_json ) ) {
+			$options += array(
+				CURLOPT_HTTPHEADER => array(
+					'Content-Type: application/json; charset=utf-8'
+				),
+			);
+		}
 		if( $this->API_SSL_VERIFY && strpos( $url, 'https' ) !== false ) {
 			$options += array(
 				CURLOPT_SSL_VERIFYPEER => true,
@@ -69,9 +156,9 @@ class yf_payment_api__provider_remote {
 		$error_number  = curl_errno( $ch );
 		$error_message = curl_error( $ch );
 		curl_close( $ch );
-		// debug
-		// var_dump( $url, $options, $result, $http_code );
-		// exit;
+// DEBUG
+// var_dump( $url, $options, $result, $http_code );
+// exit;
 		// result
 		$status = null;
 		if( $result === false ) {
@@ -110,25 +197,25 @@ class yf_payment_api__provider_remote {
 		return( array( $status, $result ) );
 	}
 
-	protected function _api_request( $uri, $data ) {
-		$url    = $this->URL . $uri;
-		$result = $this->_api_post( $url, $data );
+	public function _api_request( $url, $data, $options = array() ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$result = $this->_api_post( $url, $data, $options );
 		return( $result );
 	}
 
-	protected function _api_deposition( $options ) {
+	public function _api_deposition( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->_api_transaction( $options );
 		return( $result );
 	}
 
-	protected function _api_payment( $options ) {
+	public function _api_payment( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->_api_transaction( $options );
 		return( $result );
 	}
 
-	protected function _api_transaction( $options ) {
+	public function _api_transaction( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -153,6 +240,7 @@ class yf_payment_api__provider_remote {
 		}
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
+			'test'=> true
 		));
 		if( empty( $operation ) ) {
 			$result = array(
@@ -186,7 +274,10 @@ class yf_payment_api__provider_remote {
 			return( $result );
 		}
 		// check provider
-		$object = $payment_api->provider( array( 'provider_id' => $provider_id ) );
+		$object = $payment_api->provider( array(
+			'is_service'  => true,
+			'provider_id' => $provider_id,
+		));
 		if( empty( $object ) ) {
 			$result = array(
 				'status'         => false,
@@ -215,17 +306,26 @@ class yf_payment_api__provider_remote {
 		list( $account_id, $account ) = $object;
 		// update
 		$sql_amount   = $payment_api->_number_mysql( $amount );
-		$sql_datetime = $payment_api->sql_datatime();
+		$sql_datetime = $payment_api->sql_datetime();
 		$balance      = null;
 		$payment_status_id = (int)$operation[ 'status_id' ];
 		if( $payment_status_success_id != $payment_status_id ) {
 			db()->begin();
 			if( $payment_status_id != $_payment_status_id && $_payment_status_name == 'success' ) {
 				// update account
+				switch( $operation_data[ 'type' ][ 'name' ] ) {
+					case 'payment':
+						$sql_sign = '-';
+						break;
+					case 'deposition':
+					default:
+						$sql_sign = '+';
+						break;
+				}
 				$_data = array(
 					'account_id'      => $account_id,
 					'datetime_update' => db()->escape_val( $sql_datetime ),
-					'balance'         => '( balance + ' . $sql_amount . ' )',
+					'balance'         => "( balance $sql_sign $sql_amount )",
 				);
 				$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
 				if( !$_result[ 'status' ] ) {
@@ -260,6 +360,18 @@ class yf_payment_api__provider_remote {
 			));
 			// save options
 			$result = $payment_api->operation_update( $data );
+			// mail
+			$mail_tpl = empty( $result[ 'status' ] ) ? 'payment_refused' : 'payment_success';
+			$payment_api->mail( array(
+				'tpl'     => $mail_tpl,
+				'user_id' => $account[ 'user_id' ],
+				'admin'   => true,
+				'data'    => array(
+					'operation_id' => $operation_id,
+					'amount'       => $amount,
+				),
+			));
+			// sql translation
 			if( !$result[ 'status' ] ) {
 				db()->rollback();
 				return( $result );

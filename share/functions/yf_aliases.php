@@ -66,6 +66,12 @@ if (!function_exists('common')) {
 if (!function_exists('input')) {
 	function input($silent = false) { return _class('input') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('events')) {
+	function events($silent = false) { return _class('core_events') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
+if (!function_exists('services')) {
+	function services($silent = false) { return _class('services') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
 // example: cache()->put()
 if (!function_exists('cache')) {
 	function cache($silent = false) { return _class('cache') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
@@ -116,12 +122,6 @@ if (!function_exists('url_user')) {
 }
 if (!function_exists('url_admin')) {
 	function url_admin($params = array(), $host = '', $url_str = '') { return _class('rewrite')->_url_admin($params, $host, $url_str); }
-}
-if (!function_exists('_force_get_url')) {
-	function _force_get_url($params = array(), $host = '', $url_str = '') { return _class('rewrite')->_force_get_url($params, $host, $url_str); }
-}
-if (!function_exists('_generate_url')) {
-	function _generate_url($params = array(), $host = '') { return _class('rewrite')->_generate_url($params, $host); }
 }
 if (!function_exists('process_url')) {
 	function process_url($url = '', $force_rewrite = false, $for_site_id = false) { return _class('rewrite')->_process_url($url, $force_rewrite, $for_site_id); }
@@ -177,19 +177,20 @@ if (!function_exists('sass')) {
 if (!function_exists('less')) {
 	function less($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'less', $content_type, $params); }
 }
-if (!function_exists('jade')) {
-	function jade($content, $content_type = 'auto', $params = array()) {
-// TODO
-	}
-}
 if (!function_exists('coffee')) {
 	function coffee($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'coffee', $content_type, $params); }
 }
-if (!function_exists('require_php_lib')) {
-	function require_php_lib($name, $params = array()) { return main()->require_php_lib($name, $params); }
+if (!function_exists('jade')) {
+	function jade($content, $params = array()) { return _class('services')->jade($content, $params); }
 }
-if (!function_exists('events')) {
-	function events() { return _class('core_events'); }
+if (!function_exists('haml')) {
+	function haml($content, $params = array()) { return _class('services')->haml($content, $params); }
+}
+if (!function_exists('tip')) {
+	function tip($text, $extra = array()) { return _class('graphics')->tip($text, $extra); }
+}
+if (!function_exists('require_php_lib')) {
+	function require_php_lib($name, $params = array()) { return _class('services')->require_php_lib($name, $params); }
 }
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
@@ -199,6 +200,18 @@ if (!function_exists('js_redirect')) {
 }
 if (!function_exists('redirect')) {
 	function redirect($location, $rewrite = true, $text = '', $ttl = 3) { return common()->redirect($location, $rewrite, 'html', $text, $ttl); }
+}
+if (!function_exists('_302')) {
+	function _302($url, $text = '') { return common()->redirect(array('url' => $url, 'text' => $text, 'type' => '302')); }
+}
+if (!function_exists('_301')) {
+	function _301($url, $text = '') { return common()->redirect(array('url' => $url, 'text' => $text, 'type' => '301')); }
+}
+if (!function_exists('_404')) {
+	function _404($text = '') { return common()->error_404($text); }
+}
+if (!function_exists('_403')) {
+	function _403($text = '') { return common()->error_403($text); }
 }
 if (!function_exists('_e')) {
 	function _e($text = '', $clear_error = true) { return common()->_show_error_message($text, $clear_error); }
@@ -241,6 +254,7 @@ if (!function_exists('_check_rights')) {
 }
 // Execute command on remote server using SSH
 if (!function_exists('_ssh_exec')) {
+// TODO: rename into just "ssh" and reimplement with laravel-style
 	function _ssh_exec($server_info = array(), $cmd = '') { return _class('ssh')->exec($server_info, $cmd); }
 }
 if (!function_exists('_add_get')) {
@@ -284,6 +298,9 @@ if (!function_exists('sphinx_escape_string')) {
 if (!function_exists('html')) {
 	function html(array $params = array()) { return _class('html')->chained_wrapper($params); }
 }
+if (!function_exists('a')) {
+	function a() { return call_user_func_array(array(_class('html'), __FUNCTION__), func_get_args()); }
+}
 if (!function_exists('validate')) {
 	function validate($input = '', $rules = array()) { return _class('validate')->_input_is_valid($input, $rules); }
 }
@@ -301,4 +318,61 @@ if (!function_exists('_isset')) {
 // FirePHP shortcut in case if not exists
 if (!function_exists('fb')) {
 	function fb() { return false; }
+}
+if (!function_exists('_get')) {
+	function _get($key = null, $val = null) { return input()->get($key, $val); }
+}
+if (!function_exists('_post')) {
+	function _post($key = null, $val = null) { return input()->post($key, $val); }
+}
+if (!function_exists('_session')) {
+	function _session($key = null, $val = null) { return input()->session($key, $val); }
+}
+if (!function_exists('_server')) {
+	function _server($key = null, $val = null) { return input()->server($key, $val); }
+}
+if (!function_exists('_cookie')) {
+	function _cookie($key = null, $val = null) { return input()->cookie($key, $val); }
+}
+if (!function_exists('_env')) {
+	function _env($key = null, $val = null) { return input()->env($key, $val); }
+}
+if (!function_exists('no_graphics')) {
+	function no_graphics($val = null) { return main()->no_graphics($val); }
+}
+if (!function_exists('is_dev')) {
+	function is_dev() { return (defined('DEVELOP') && DEVELOP) || (defined('TEST_MODE') && TEST_MODE); }
+}
+if (!function_exists('is_debug')) {
+	function is_debug() { return (defined('DEBUG_MODE') && DEBUG_MODE); }
+}
+if (!function_exists('is_post')) {
+	function is_post() { return ($_SERVER['REQUEST_METHOD'] == 'POST'); }
+}
+if (!function_exists('is_ajax')) {
+	function is_ajax() { return (bool)conf('IS_AJAX'); }
+}
+if (!function_exists('is_console')) {
+	function is_console() { return (bool)main()->CONSOLE_MODE; }
+}
+if (!function_exists('is_redirect')) {
+	function is_redirect() { return (bool)main()->_IS_REDIRECTING; }
+}
+if (!function_exists('is_common_page')) {
+	function is_common_page() { return !(is_post() || is_ajax() || is_redirect() || is_console()); }
+}
+if (!function_exists('is_unit_test')) {
+	function is_unit_test() { return (bool)defined('YF_IN_UNIT_TESTS'); }
+}
+if (!function_exists('is_logged_in')) {
+	function is_logged_in() { return MAIN_TYPE_ADMIN ? main()->ADMIN_ID : main()->USER_ID; }
+}
+if (!function_exists('is_spider')) {
+	function is_spider() { return (bool)conf('IS_SPIDER'); }
+}
+if (!function_exists('is_https')) {
+	function is_https() { return isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']); }
+}
+if (!function_exists('is_hhvm')) {
+	function is_hhvm() { return defined('HHVM_VERSION'); }
 }

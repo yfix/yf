@@ -16,9 +16,8 @@ class yf_admin {
 		$func = function($row) use ($admin_id) {
 			return !($row['id'] == $admin_id);
 		};
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		return table('SELECT * FROM '.db('admin'), array(
-				'filter' => $_SESSION[$filter_name],
+				'filter' => true,
 				'filter_params' => array(
 					'login'	=> 'like',
 					'email'	=> 'like',
@@ -26,7 +25,7 @@ class yf_admin {
 			))
 			->text('login')
 			->text('email')
-			->link('group', url_admin('/admin_groups/edit/%d'), main()->get_data('admin_groups'))
+			->link('group', url('/admin_groups/edit/%d'), main()->get_data('admin_groups'))
 			->text('first_name')
 			->text('last_name')
 			->text('go_after_login')
@@ -34,9 +33,9 @@ class yf_admin {
 			->btn_active(array('display_func' => $func))
 			->btn_edit()
 			->btn_delete(array('display_func' => $func))
-			->btn('log_auth', url_admin('/log_admin_auth/show_for_admin/%d'))
-			->btn('login', url_admin('/@object/login_as/%d'), array('display_func' => $func))
-			->footer_link('Failed auth log', url_admin('/log_admin_auth_fails'))
+			->btn('log_auth', url('/log_admin_auth/show_for_admin/%d'))
+			->btn('login', url('/@object/login_as/%d'), array('display_func' => $func))
+			->footer_link('Failed auth log', url('/log_admin_auth_fails'))
 			->footer_add();
 	}
 
@@ -52,8 +51,8 @@ class yf_admin {
 			return !($row['id'] == $admin_id);
 		};
 		$a = (array)db()->get('SELECT * FROM '.db('admin').' WHERE id='.$id);
-		$a['back_link'] = url_admin('/@object');
-		$a['redirect_link'] = url_admin('/@object');
+		$a['back_link'] = url('/@object');
+		$a['redirect_link'] = url('/@object');
 		$a['password'] = '';
 		$a = (array)$_POST + $a;
 		return form($a, array('autocomplete' => 'off'))
@@ -81,8 +80,8 @@ class yf_admin {
 			->info_date('add_date','Added')
 			->row_start()
 				->save_and_back()
-				->link('log auth', url_admin('/log_admin_auth/show_for_admin/'.$a['id']))
-				->link('login as', url_admin('/@object/login_as/'.$a['id']), array('display_func' => $func))
+				->link('log auth', url('/log_admin_auth/show_for_admin/'.$a['id']))
+				->link('login as', url('/@object/login_as/'.$a['id']), array('display_func' => $func))
 			->row_end()
 		;
 	}
@@ -91,7 +90,7 @@ class yf_admin {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'__before__'	=> 'trim',
@@ -121,64 +120,49 @@ class yf_admin {
 	/**
 	*/
 	function delete() {
-		$_GET['id'] = intval($_GET['id']);
-		if ($_GET['id'] && $_GET['id'] != 1 && $_GET['id'] != $_SESSION['admin_id']) {
-			db()->query('DELETE FROM '.db('admin').' WHERE id='.intval($_GET['id']));
-			common()->admin_wall_add(array('admin account deleted', $_GET['id']));
+		$id = (int)$_GET['id'];
+		if ($id && $id != 1 && $id != main()->ADMIN_ID) {
+			db()->delete('admin', $id);
+			common()->admin_wall_add(array('admin account deleted', $id));
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
-			echo $_GET['id'];
+		if (is_ajax()) {
+			no_graphics(true);
+			echo $id;
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
 	/**
 	*/
 	function active () {
-		$_GET['id'] = intval($_GET['id']);
-		if (!empty($_GET['id'])) {
-			$admin_info = db()->query_fetch('SELECT * FROM '.db('admin').' WHERE id='.intval($_GET['id']));
+		$id = intval($_GET['id']);
+		if (!empty($id)) {
+			$a = db()->from('admin')->whereid($id)->get();
 		}
-		if (!empty($admin_info['id']) && $_GET['id'] != 1 && $_GET['id'] != $_SESSION['admin_id']) {
-			db()->UPDATE('admin', array('active' => (int)!$admin_info['active']), 'id='.intval($_GET['id']));
-			common()->admin_wall_add(array('admin account '.($admin_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+		if (!empty($a['id']) && $id != 1 && $id != main()->ADMIN_ID) {
+			db()->update_safe('admin', array('active' => (int)!$a['active']), $id);
+			common()->admin_wall_add(array('admin account '.($a['active'] ? 'inactivated' : 'activated'), $id));
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
-			echo ($admin_info['active'] ? 0 : 1);
+		if (is_ajax()) {
+			no_graphics(true);
+			echo (int)(!$a['active']);
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
 	/**
 	*/
 	function login_as() {
-// TODO: move this into classes/auth_admin
-		$id = intval($_GET['id']);
+		$id = (int)$_GET['id'];
 		if (!$id) {
 			return _e('Wrong id');
 		}
 		if (main()->ADMIN_GROUP != 1) {
 			return _e('Allowed only for super-admins');
 		}
-		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.$id);
-		if (!$a) {
-			return _e('Target admin user info not found');
-		}
-		$t_group = db()->get('SELECT * FROM '.db('admin_groups').' WHERE id='.(int)$a['group']);
-		// Save previous session
-		$tmp = $_SESSION;
-		$_SESSION['admin_prev_info'] = $tmp;
-		// Login as different admin user
-		$_SESSION['admin_id'] = $a['id'];
-		$_SESSION['admin_group'] = $a['group'];
-		$_SESSION['admin_login_time'] = time();
-
-		$after_login = $t_group['go_after_login'] ?: $t_group['go_after_login'];
-		return js_redirect($after_login ?: './');
+		return _class('auth_admin', 'classes/auth/')->login_as($id);
 	}
 
 	/**
@@ -193,24 +177,18 @@ class yf_admin {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
-			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
-		);
 		$order_fields = array();
 		foreach (explode('|', 'login|email|group|first_name|last_name|add_date|last_login|num_logins|active') as $f) {
 			$order_fields[$f] = $f;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->login('login', array('class' => 'input-medium'))
 			->email('email', array('class' => 'input-medium'))
 			->select_box('group', main()->get_data('admin_groups'))
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}

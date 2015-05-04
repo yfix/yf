@@ -9,7 +9,6 @@ return array(
 		),
 	),
 	'require' => array(
-		'js' => 'jquery',
-		'css' => 'bootstrap',
+		'asset' => 'jquery',
 	),
 );

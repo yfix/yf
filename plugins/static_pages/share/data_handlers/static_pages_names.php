@@ -1,11 +1,12 @@
 <?php
 
-$data = array();
-$Q = db()->query('SELECT id,name FROM '.db('static_pages').' WHERE active="1"');
-while ($A = db()->fetch_assoc($Q)) {
-	$_name = preg_replace('/[^a-z0-9\_\-]/i', '', _strtolower($A['name']));
-	if (strlen($_name)) {
-		$data[$_name] = $_name;
-	}
-}
-return $data;
+return function() {
+	$data = array();
+	foreach ((array)db()->select('id, name')->from('static_pages')->where('active', '1')->get_2d() as $id => $name) {
+		$name = _strtolower($name);
+		if (strlen($name)) {
+			$data[$name] = $name;
+		}
+	}	
+	return $data;
+};

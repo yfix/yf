@@ -50,7 +50,7 @@
 
 	<div class="row payment_account" ng-show="payment.account">
 		<div class="col-sm-2">
-			<span class="payment_account__header">Счет:</span>
+			<span class="payment_account__header">{t( Счет )}:</span>
 		</div>
 		<div class="col-sm-3">
 			<span
@@ -64,7 +64,7 @@
 		<div class="col-sm-7">
 			<div class="pull-right">
 				<button type="button" class="payment_account__refresh btn btn-success btn-lg"
-					title="Обновить информацию о счете"
+					title="{t( Обновить информацию о счете )}"
 					ng-hide="block_balance_recharge"
 					ng-click="balance_refresh()"
 				>
@@ -72,11 +72,11 @@
 				</button>
 				<span class="offset-1"></span>
 				<button type="button" class="payment_account__recharge btn btn-primary btn-lg"
-					title="Пополнить счет"
+					title="{t( Пополнить счет )}"
 					ng-hide="block_balance_recharge"
 					ng-click="show_balance_recharge( true )"
 				>
-					Пополнить
+					{t( Пополнить )}
 				</button>
 			</div>
 		</div>
@@ -120,7 +120,7 @@
 		<form name="form_payment_balance_recharge" class="form-horizontal" role="form" novalidate>
 			<div class="form-group">
 				<div class="col-sm-offset-{col1} col-sm-{col2}">
-					<h3 class="title">Пополнение счета</h3>
+					<h3 class="title">{t( Пополнение счета )}</h3>
 				</div>
 			</div>
 			<div class="form-group"
@@ -130,12 +130,12 @@
 					<div class="error-message"
 						ng-show="form_payment_balance_recharge.amount.$error.number || form_payment_balance_recharge.amount_currency.$error.number"
 					>
-						Неверно указана величина пополнения
+						{t( Неверно указана величина пополнения )}
 					</div>
 					<div class="error-message"
 						ng-show="form_payment_balance_recharge.amount.$error.min"
 					>
-						Величина '{{ payment.currency.short }}' должна быть больше или равна {{ amount_min }}
+						{t( Величина )} '{{ payment.currency.short }}' {t( должна быть больше или равна )} {{ amount_min }}
 					</div>
 					<div class="error-message"
 						ng-show="
@@ -143,7 +143,7 @@
 							&& form_payment_balance_recharge.amount_currency.$error.min
 						"
 					>
-						Величина '{{ currency_selected.short }}' должна быть больше или равна {{ amount_currency_min }}
+						{t( Величина )} '{{ currency_selected.short }}' {t( должна быть больше или равна )} {{ amount_currency_min }}
 					</div>
 				</div>
 			</div>
@@ -188,7 +188,7 @@
 			<div class="form-group"
 				ng-show="fee && _amount_currency && form_payment_balance_recharge.$valid"
 			>
-				<label class="col-sm-{col1} control-label">комиссия</label>
+				<label class="col-sm-{col1} control-label">{t( комиссия )}</label>
 				<div class="col-sm-{col2}">
 					<div class="form-control-static text-success">
 						<span class="balance_recharge__amount"
@@ -205,7 +205,7 @@
 			<div class="form-group"
 				ng-show="_amount_currency && form_payment_balance_recharge.$valid"
 			>
-				<label class="col-sm-{col1} control-label">итого</label>
+				<label class="col-sm-{col1} control-label">{t( итого )}</label>
 				<div class="col-sm-{col2}">
 					<div class="form-control-static text-success">
 						<span class="balance_recharge__amount"
@@ -220,7 +220,7 @@
 			</div>
 
 			<div class="form-group">
-				<label class="col-sm-{col1} control-label">сервис</label>
+				<label class="col-sm-{col1} control-label">{t( сервис )}</label>
 				<div class="col-sm-{col2}">
 					<div style="margin: 0 1em 0.5em 0;">
 					<div class="input-group col-sm-5 pull-left"
@@ -245,8 +245,8 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-{col1} col-sm-{col2}">
-					<button type="submit" class="btn btn-success btn-lg" ng-disabled="form_payment_balance_recharge.$invalid" ng-click="balance_recharge()">Пополнить</button>
-					<button type="button" class="btn btn-default btn-lg" ng-click="show_balance_recharge( false )" >Отмена</button>
+					<button type="submit" class="btn btn-success btn-lg" ng-disabled="form_payment_balance_recharge.$invalid" ng-click="balance_recharge()">{t( Пополнить )}</button>
+					<button type="button" class="btn btn-default btn-lg" ng-click="show_balance_recharge( false )" >{t( Отмена )}</button>
 				</div>
 			</div>
 		</form>
@@ -289,16 +289,16 @@ span + .payment-operation__btn,
 		|| payment.operation_pagination.page > 1
 		">
 		<table class="table table-striped">
-			<caption class="text-capitalize text-success">Журнал операций</caption>
+			<caption class="text-capitalize text-success">{t( Журнал операций )}</caption>
 			<thead>
 				<tr
 					ng-show   = "payment.operation"
 				>
-					<th>дата</th>
-					<th>название</th>
-					<th>сумма</th>
-					<th>баланс</th>
-					<th>статус</th>
+					<th>{t( дата )}</th>
+					<th>{t( название )}</th>
+					<th>{t( сумма )}</th>
+					<th>{t( баланс )}</th>
+					<th>{t( статус )}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -318,7 +318,7 @@ span + .payment-operation__btn,
 					class   = "payment-operation__item_none"
 					ng-show = "!payment.operation"
 				>
-					<td colspan="5" class="text-center"><span class="text-muted">Нет данных</span></td>
+					<td colspan="5" class="text-center"><span class="text-muted">{t( Нет данных )}</span></td>
 				</tr>
 			</tbody>
 			<tfoot>
@@ -327,17 +327,17 @@ span + .payment-operation__btn,
 			>
 				<td colspan="5">
 					<span class="pull-left">
-						Страница:&nbsp;
+						{t( Страница )}:&nbsp;
 					</span>
 					<button type="button" class="payment_operation__first btn btn-xs payment-operation__btn"
-						title="первая страница"
+						title="{t( первая страница )}"
 						ng-show="payment.operation_pagination.page > 2"
 						ng-click="operation_first()"
 					>
 						<i class="fa fa-angle-double-left"></i>
 					</button>
 					<button type="button" class="payment_operation__prev btn btn-xs payment-operation__btn"
-						title="предыдущая страница"
+						title="{t( предыдущая страница )}"
 						ng-show="payment.operation_pagination.page > 1"
 						ng-click="operation( -1 )"
 					>
@@ -345,18 +345,18 @@ span + .payment-operation__btn,
 					</button>
 					<span class="pull-left">
 						<span ng-bind="payment.operation_pagination.page"></span>
-						<span>из</span>
+						<span>{t( из )}</span>
 						<span ng-bind="payment.operation_pagination.pages"></span>
 					</span>
 					<button type="button" class="payment_operation__next btn btn-xs payment-operation__btn"
-						title="следующая страница"
+						title="{t( следующая страница )}"
 						ng-show="payment.operation.length == payment.operation_pagination.page_per"
 						ng-click="operation( 1 )"
 					>
 						<i class="fa fa-angle-right"></i>
 					</button>
 					<button type="button" class="payment_operation__last btn btn-xs payment-operation__btn"
-						title="последняя страница"
+						title="{t( последняя страница )}"
 						ng-show="payment.operation_pagination.page < payment.operation_pagination.pages - 1"
 						ng-click="operation_last()"
 					>

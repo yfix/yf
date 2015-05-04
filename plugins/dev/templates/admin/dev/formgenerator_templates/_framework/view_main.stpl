@@ -1,6 +1,0 @@
-<div class='displayform'>
-%items%
-	<div class='button_div'>
-		<input type='button' value='{t(Back)}' onclick="window.location.href='{back_url}'">
-	</div>
-</div>

@@ -22,12 +22,13 @@ class yf_user_groups {
 		$menu_id = db()->get_one('SELECT id FROM '.db('menus').' WHERE type="user" AND active=1 LIMIT 1');
 		return table('SELECT * FROM '.db('user_groups').' ORDER BY id ASC', array(
 				'custom_fields' => array('members_count' => 'SELECT `group`, COUNT(*) AS num FROM '.db('user').' GROUP BY `group`'),
+				'hide_empty' => 1,
 			))
 			->text('name')
 			->text('go_after_login')
 			->text('members_count', array('link' => './?object=manage_users&action=filter_save&page=clear&filter=group:%d', 'link_field_name' => 'id'))
-			->btn_edit()
-			->btn_delete()
+			->btn_edit(array('btn_no_text' => 1))
+			->btn_delete(array('btn_no_text' => 1))
 			->btn_active()
 			->footer_add()
 			->footer_link('Blocks', './?object=blocks&action=show_rules&id='.$block_center_id)
@@ -40,7 +41,7 @@ class yf_user_groups {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
@@ -64,7 +65,7 @@ class yf_user_groups {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('user_groups').' WHERE id='.intval($_GET['id']));
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
@@ -88,11 +89,11 @@ class yf_user_groups {
 			common()->admin_wall_add(array('user group deleted: '.$_GET['id'].'', $_GET['id']));
 		}
 		cache_del(array('user_groups', 'user_groups_details'));
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -110,11 +111,11 @@ class yf_user_groups {
 			common()->admin_wall_add(array('user group: '.$group_info['name'].' '.($group_info['active'] ? 'inactivated' : 'activated'), $group_info['id']));
 		}
 		cache_del(array('user_groups', 'user_groups_details'));
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($group_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 

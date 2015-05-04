@@ -8,13 +8,27 @@ class yf_payment_api__provider {
 	public $payment_api = null;
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );
 	}
 
-	public function allow( $value ) {
+	public function allow( $value = null ) {
 		$result = &$this->ENABLE;
-		isset( $value ) && $result = (bool)$value;
+		if( isset( $value ) ) {
+			$value = (bool)$value;
+			// init if enable
+			if( !$result && $value ) { $this->_init(); }
+			$result = $value;
+		}
+		return( $result );
+	}
+
+	public function is_test( $options = null ) {
+		$result = false;
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( !empty( $this->TEST_MODE ) || !empty( $_test_mode ) ) { $result = true; }
 		return( $result );
 	}
 
@@ -51,7 +65,7 @@ class yf_payment_api__provider {
 			return( $result );
 		}
 		// update account balance
-		$sql_datetime = $payment_api->sql_datatime();
+		$sql_datetime = $payment_api->sql_datetime();
 		$sql_amount   = $payment_api->_number_mysql( $amount );
 		switch( $operation_data[ 'type' ][ 'name' ] ) {
 			case 'payment':

@@ -43,7 +43,7 @@ class yf_user_modules {
 				db()->update('user_modules', array('active' => $active), $where);
 				cache_del(array('user_modules','user_modules_for_select'));
 			}
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 
 		if (!isset($this->_yf_plugins)) {
@@ -71,9 +71,10 @@ class yf_user_modules {
 					'app_plugin'		=> array('dir' => APP_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => $name. YF_CLS_EXT),
 				);
 			}
-			foreach ($places as $pname => $p) {
-				if (file_exists($p['dir']. $p['file'])) {
-					$locations[$pname] = './?object=file_manager&action=edit_item&f_='.urlencode($p['file']).'&dir_name='.urlencode($p['dir']);
+			foreach ((array)$places as $pname => $p) {
+				$path = $p['dir']. $p['file'];
+				if (file_exists($path)) {
+					$locations[$pname] = url('/file_manager/edit/'.urlencode($path));
 				}
 			}
 			$items[] = array(
@@ -82,11 +83,10 @@ class yf_user_modules {
 				'locations'	=> $locations,
 			);
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		return table($items, array(
 				'condensed' => 1,
 				'pager_records_on_page' => 10000,
-				'filter' => $_SESSION[$filter_name],
+				'filter' => true,
 				'filter_params' => array(
 					'name' => 'like',
 				),
@@ -100,11 +100,11 @@ class yf_user_modules {
 				}
 				return implode(PHP_EOL, (array)$out);
 			})
-			->btn('conf', './?object=conf_editor&action=user_modules&id=%d', array('id' => 'name'))
+			->btn('conf', url('/conf_editor/user_modules/%d'), array('id' => 'name'))
 			->btn_active(array('id' => 'name'))
 			->footer_submit(array('value' => 'activate selected'))
 			->footer_submit(array('value' => 'disable selected'))
-			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list', array('icon' => 'icon-refresh fa fa-refresh'))
+			->footer_link('Refresh list', url('/@object/refresh_modules_list'), array('icon' => 'icon-refresh fa fa-refresh'))
 		;
 	}
 
@@ -118,11 +118,11 @@ class yf_user_modules {
 			db()->UPDATE('user_modules', array('active' => (int)!$module_info['active']), 'id='.intval($module_info['id']));
 		}
 		cache_del(array('user_modules','user_modules_for_select'));
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($module_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -167,7 +167,7 @@ class yf_user_modules {
 		}
 		cache_del(array('user_modules','user_modules_for_select'));
 		if (!$silent) {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -441,11 +441,6 @@ class yf_user_modules {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
-			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
-		);
 		$order_fields = array();
 		foreach (explode('|', 'name|active') as $f) {
 			$order_fields[$f] = $f;
@@ -455,14 +450,13 @@ class yf_user_modules {
 			$locations[$f] = $f;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->text('name')
 			->select_box('locations', $locations, array('show_text' => 1))
 			->active_box()
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}

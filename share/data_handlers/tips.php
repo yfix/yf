@@ -1,8 +1,9 @@
 <?php
 
-$data = array();
-$Q = db()->query('SELECT * FROM '.db('tips').' WHERE active="1" '.($locale ? ' AND locale="'.db()->es($locale).'"' : ''));
-while ($A = db()->fetch_assoc($Q)) {
-	$data[$A['name']] = $A;
-}
-return $data;
+return function($params = array()) {
+	$data = array();
+	foreach ((array)db()->from('tips')->get_all() as $a) {
+		$data[$a['name']][$a['locale']] = $a;
+	}
+	return $data;
+};

@@ -49,19 +49,22 @@ class yf_category_editor {
 	*/
 	function show() {
 		$sql = 'SELECT * FROM '.db('categories').' ORDER BY type DESC, active ASC';
-		return table($sql, array('custom_fields' => array(
-				'items' => 'SELECT cat_id, COUNT(*) AS num FROM '.db('category_items').' GROUP BY cat_id',
-			)))
-			->link('name', './?object='.$_GET['object'].'&action=show_items&id=%d')
+		return table($sql, array(
+				'hide_empty' => true,
+				'custom_fields' => array(
+					'items' => 'SELECT cat_id, COUNT(*) AS num FROM '.db('category_items').' GROUP BY cat_id',
+				),
+			))
+			->link('name', url('/@object/show_items/%d'))
 			->text('type')
 			->text('desc')
 			->text('custom_fields')
 			->text('items')
-			->btn_edit()
-			->btn_delete()
-			->btn_clone('', './?object='.$_GET['object'].'&action=clone_cat&id=%d')
-			->btn('Drag', './?object='.$_GET['object'].'&action=drag_items&id=%d')
-			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
+			->btn('Drag', url('/@object/drag_items/%d'), array('icon' => 'icon-move fa fa-arrows', 'btn_no_text' => 1))
+			->btn_clone('', url('/@object/clone_cat/%d'), array('btn_no_text' => 1))
+#			->btn('Export', url('/@object/export/%d'), array('btn_no_text' => 1, 'icon' => 'fa fa-angle-double-up'))
+			->btn_edit(array('btn_no_text' => 1))
+			->btn_delete(array('btn_no_text' => 1))
 			->btn_active()
 			->footer_add();
 	}
@@ -70,7 +73,7 @@ class yf_category_editor {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required|is_unique[categories.name]',
@@ -99,7 +102,7 @@ class yf_category_editor {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required',
@@ -132,11 +135,11 @@ class yf_category_editor {
 			common()->admin_wall_add(array('category deleted: '.$cat_info['name'], $_GET['id']));
 		}
 		module('category_editor')->_purge_category_caches();
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -180,7 +183,7 @@ class yf_category_editor {
 		}
 		common()->admin_wall_add(array('category cloned: from '.$cat_info['name'].' into '.$sql['name'], $_GET['id']));
 		module('category_editor')->_purge_category_caches();
-		return js_redirect(url_admin('/@object'));
+		return js_redirect(url('/@object'));
 	}
 
 	/**
@@ -194,11 +197,11 @@ class yf_category_editor {
 			common()->admin_wall_add(array('category '.$cat_info['name'].' '.($cat_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		module('category_editor')->_purge_category_caches();
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($cat_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -228,7 +231,7 @@ class yf_category_editor {
 				common()->admin_wall_add(array('category items updated: '.$cat_info['name'], $cat_info['id']));
 				module('category_editor')->_purge_category_caches($cat_info);
 			}
-			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
+			return js_redirect(url('/@object/show_items/'.$_GET['id']));
 		}
 		return table($cat_items, array(
 				'pager_records_on_page' => $this->ITEMS_PER_PAGE,
@@ -239,12 +242,12 @@ class yf_category_editor {
 			->input_padded('name')
 			->input('url', array('propose_url_from' => $this->PROPOSE_SHORT_URL ? 'name' : false))
 			->text('other_info')
-			->btn_edit('', './?object='.$_GET['object'].'&action=edit_item&id=%d')
-			->btn_delete('', './?object='.$_GET['object'].'&action=delete_item&id=%d')
-			->btn_clone('', './?object='.$_GET['object'].'&action=clone_item&id=%d')
-			->btn_active('', './?object='.$_GET['object'].'&action=activate_item&id=%d')
-			->footer_add('Add item', './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'], array('copy_to_header' => 1))
-			->footer_link('Drag items', './?object='.$_GET['object'].'&action=drag_items&id='.$_GET['id'], array('icon' => 'icon-move fa fa-arrows', 'copy_to_header' => 1))
+			->btn_edit('', url('/@object/edit_item/%d'), array('btn_no_text' => 1, 'no_ajax' => 1))
+			->btn_delete('', url('/@object/delete_item/%d'), array('btn_no_text' => 1))
+			->btn_clone('', url('/@object/clone_item/%d'), array('btn_no_text' => 1))
+			->btn_active('', url('/@object/activate_item/%d'))
+			->footer_add('Add item', url('/@object/add_item/'.$_GET['id']), array('copy_to_header' => 1))
+			->footer_link('Drag items', url('/@object/drag_items&id='.$_GET['id']), array('icon' => 'icon-move fa fa-arrows', 'copy_to_header' => 1))
 			->footer_submit()
 		;
 	}
@@ -291,7 +294,7 @@ class yf_category_editor {
 					module('category_editor')->_purge_category_caches($cat_info);
 				_class( 'core_events' )->fire( 'category_editor.drag_items.after', array( array_keys( $batch ) ) );
 			}
-			main()->NO_GRAPHICS = true;
+			no_graphics(true);
 			return false;
 		}
 		if (isset($items[''])) {
@@ -305,9 +308,9 @@ class yf_category_editor {
 	*/
 	function _drag_tpl_main(&$items) {
 		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
-			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
+			'form_action'	=> url('/@object/@action/@id'),
+			'add_link'		=> url('/@object/add_item/@id'),
+			'back_link'		=> url('/@object/show_items/@id'),
 		);
 		asset('yf_draggable_tree');
 
@@ -330,9 +333,9 @@ class yf_category_editor {
 
 		$form = _class('form2');
 		$replace = array(
-			'edit_link'		=> './?object='.$_GET['object'].'&action=edit_item&id=%d',
-			'delete_link'	=> './?object='.$_GET['object'].'&action=delete_item&id=%d',
-			'clone_link'	=> './?object='.$_GET['object'].'&action=clone_item&id=%d',
+			'edit_link'		=> url('/@object/edit_item/%d'),
+			'delete_link'	=> url('/@object/delete_item/%d'),
+			'clone_link'	=> url('/@object/clone_item/%d'),
 		);
 		$form_controls =
 			$form->tpl_row('tbl_link_edit', $replace, '', '', '')
@@ -552,7 +555,7 @@ class yf_category_editor {
 		}
 
 		$a = (array)$_POST;
-		$a['redirect_link'] = './?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id'];
+		$a['redirect_link'] = url('/@object/show_items/'.$cat_info['id']);
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required',
@@ -601,7 +604,8 @@ class yf_category_editor {
 		}
 
 		$a = $item_info + (array)$_POST;
-		$a['redirect_link'] = './?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id'];
+		$a['redirect_link'] = url('/@object/show_items/'.$cat_info['id']);
+		$a['back_link'] = url('/@object/show_items/'.$cat_info['id']);
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required',
@@ -649,11 +653,11 @@ class yf_category_editor {
 			common()->admin_wall_add(array('category item '.$item_info['id'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 			module('category_editor')->_purge_category_caches($cat_info);
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($item_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$item_info['cat_id']);
+			return js_redirect(url('/@object/show_items/'.$item_info['cat_id']));
 		}
 	}
 
@@ -661,26 +665,31 @@ class yf_category_editor {
 	*/
 	function delete_item() {
 		$id = (int)$_GET['id']; $_GET['id'] = $id;
-		$object = $_GET[ 'object' ];
-		$action = $_GET[ 'action' ];
-		if( $id < 1 ) { return js_redirect( './?object='.$object, 'item id < 1' ); }
-		$db_item   = db( 'category_items' );
-		$item_info = db()->query_fetch( 'SELECT * FROM ' . $db_item . ' WHERE id = ' . $id );
-		if( !empty( $item_info ) ) {
-			$db       = db( 'categories' );
-			$cats_id = $item_info[ 'cat_id' ];
+		$object = $_GET['object'];
+		$action = $_GET['action'];
+		if ($id < 1) {
+			return js_redirect(url('/'.$object), 'item id < 1');
+		}
+		$db_item   = db('category_items');
+		$item_info = db()->query_fetch('SELECT * FROM ' . $db_item . ' WHERE id = ' . $id);
+		if (!empty($item_info)) {
+			$db       = db('categories');
+			$cats_id = $item_info['cat_id'];
 			$cat_info = db()->query_fetch( 'SELECT * FROM ' . $db . ' WHERE id = ' . (int)$cats_id );
+
 			_class( 'core_events' )->fire( 'category_editor.delete_item.before', array( $id, $cats_id ) );
-				db()->query('DELETE FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
-				common()->admin_wall_add(array('category item deleted: '.$item_info['id'], $_GET['id']));
-				$this->_purge_category_caches( $cat_info );
+
+			db()->query('DELETE FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
+			common()->admin_wall_add(array('category item deleted: '.$item_info['id'], $_GET['id']));
+			$this->_purge_category_caches($cat_info);
+
 			_class( 'core_events' )->fire( 'category_editor.delete_item.after', array( $id, $cats_id ) );
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$item_info['cat_id']);
+			return js_redirect(url('/@object/show_items/'.$item_info['cat_id']));
 		}
 	}
 
@@ -699,7 +708,7 @@ class yf_category_editor {
 			common()->admin_wall_add(array('category item cloned from '.$item_info['id'].' into '.$item_info['id'], $_GET['id']));
 			module('category_editor')->_purge_category_caches($cat_info);
 		}
-		return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$item_info['cat_id']);
+		return js_redirect(url('/@object/show_items/'.$item_info['cat_id']));
 	}
 
 	/**
@@ -728,7 +737,7 @@ class yf_category_editor {
 
 		$replace = array(
 			'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
-			'back_link'	=> url_admin('/@object'),
+			'back_link'	=> url('/@object'),
 		);
 		return tpl()->parse('db_manager/export_text_result', $replace);
 	}

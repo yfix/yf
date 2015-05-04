@@ -468,13 +468,9 @@ class yf_tpl_driver_yf {
 			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims' => function($m) {
 				return trim(str_replace(array("\r","\n","\t"), '', stripslashes($m[1])));
 			},
-			// Display help tooltip. Examples: {tip('register.login')} or {tip('form.some_field',2)}
-			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name) {
-				return _class_safe('graphics')->_show_help_tip(array('tip_id' => $m[1], 'tip_type' => $m[2], 'replace' => $replace));
-			},
-			// Display help tooltip inline. Examples: {itip('register.login')}
-			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name) {
-				return _class_safe('graphics')->_show_inline_tip(array('text' => $m[1], 'replace' => $replace));
+			// Display help tooltip. Examples: {tip('register.login')} or {tip('Some inline help text')} or {tip('Some inline help text';'fa-eye')}
+			'/\{(tip|itip)\(\s*["\']{0,1}(?P<raw>[^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name) {
+				return _class_safe('graphics')->tip(array('raw' => $m['raw'], 'replace' => $replace, 'tpl_name' => $name));
 			},
 			// Display user level single (inline) error message by its name (keyword). Examples: {e('login')} or {user_error('name_field')}
 			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims' => function($m) {
@@ -486,7 +482,7 @@ class yf_tpl_driver_yf {
 			},
 			// Url generation with params. Examples: {url(object=home_page;action=test)}
 			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($tpl) {
-				return $tpl->_generate_url_wrapper($m[1]);
+				return $tpl->_url_wrapper($m[1]);
 			},
 			// Form item/row. Examples: {form_row("text","password","New Password")}
 			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,'
@@ -500,9 +496,6 @@ class yf_tpl_driver_yf {
 			// Second level variables with filters. Examples: {sub1.var1|trim}
 			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function($m) use ($replace, $name, $tpl) {
 				$val = $replace[$m[1]][$m[2]];
-#				if (!isset($val)) {
-#					$class_prop = _class_safe($m[1])->$m[2];
-#				}
 				return $tpl->_process_var_filters($val ?: $class_prop, $m[3]);
 			},
 		);
@@ -823,6 +816,8 @@ class yf_tpl_driver_yf {
 		return preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$func = trim($m['func']);
 			$key_to_cycle = trim($m['key']);
+			$orig_key_to_cycle = $key_to_cycle;
+			$key_to_cycle = str_replace(array(',',';',' ','=','\'','"'), '__', $key_to_cycle);
 			if (empty($key_to_cycle)) {
 				return '';
 			}
@@ -842,7 +837,7 @@ class yf_tpl_driver_yf {
 			$sub_array = array();
 			// Ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
 			if ($func === 'foreach_exec') {
-				if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $key_to_cycle, $m_exec)) {
+				if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $orig_key_to_cycle, $m_exec)) {
 					$sub_array = main()->_execute($m_exec['object'], $m_exec['action'], $m_exec['args'], $stpl_name. $_this->_STPL_EXT, 0, $use_cache = false);
 				} else {
 					return '';

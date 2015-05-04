@@ -13,13 +13,9 @@ return array(
 		),
 	),
 	'require' => array(
-		'js' => array(
+		'asset' => array(
 			'jquery',
-#			'bootstrap',
 			'momentjs',
-		),
-		'css' => array(
-#			'bootstrap',
 		),
 	),
 );
