@@ -60,17 +60,16 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		$scope.block_operation = !show;
 	};
 	$scope.show_balance_recharge( false );
-	$scope.provider_change = function( provider_id ) {
-		$scope.provider_id = +provider_id;
-		var provider = $scope.payment.providers[ provider_id ];
+	$scope.provider_change = function( provider, method ) {
+		$scope.provider_id = +provider.provider_id;
 		$scope.provider_selected = provider;
 		$scope.fee               = provider._fee || 0;
-		$scope.provider_currency( provider );
+		$scope.provider_currency( provider, method );
 		CurrencyApi.change();
 	};
-	$scope.provider_currency = function( provider ) {
+	$scope.provider_currency = function( provider, method ) {
 		provider = provider || $scope.provider_selected;
-		var currency_allow = provider._currency_allow || null;
+		var currency_allow = ( method && method.currency_allow ) || provider._currency_allow || null;
 		var index, currencies = {};
 		if( currency_allow ) {
 			angular.forEach( $scope.payment.currencies, function( item, id ) {
@@ -182,15 +181,15 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 	};
 	// payin
 	$scope.payin_provider_change = function( $event, provider_id, method_id ) {
-		$event.stopPropagation();
+		if( $event ) { $event.stopPropagation(); }
 		var action = $scope.action.payin;
 		if( action.provider_id == provider_id && action.method_id == method_id ) {
-			$scope.payin_provider_init();
+			// $scope.payin_provider_init();
 			return( false );
 		}
 		var provider = $scope.payment.providers[ provider_id ];
-		var method   = provider._method_allow.payin[ method_id ];
-		var option   = method.option;
+		var method   = method_id && provider._method_allow.payin[ method_id ] || method_id;
+		var option   = method && method.option || method;
 		$scope.action.payin = {
 			provider_id : provider_id,
 			method_id   : method_id,
@@ -198,12 +197,32 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			method      : method,
 			option      : option,
 		};
+		$scope.provider_change( provider, method );
+		// amount
+		$scope.amount_init();
 		$scope.block_payin_provider_show = false;
 		return( true );
 	};
 	$scope.payin_provider_init = function() {
 		$scope.block_payin_provider_show = true;
 		$scope.action.payin = {};
+		// select first provider, method
+		if(
+			$scope.payment.provider.payin &&
+			$scope.payment.provider.payin[ 0 ] )
+		{
+			var provider_id = $scope.payment.provider.payin[ 0 ];
+			var provider    = $scope.payment.providers[ provider_id ];
+			var method_id   = null;
+			if( provider._method_allow && provider._method_allow.payin ) {
+				for( method_id in provider._method_allow.payin ) break;
+			}
+			var method      = method_id && provider._method_allow.payin.method_id || null;
+			$scope.payin_provider_change( null, provider_id, method_id );
+			$scope.provider_change( provider, method );
+			// amount
+			$scope.amount_init();
+		}
 	};
 	$scope.action_payin = function() {
 		var payment     = $scope.action.payin;
@@ -214,7 +233,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			provider_id : payment.provider_id,
 			method_id   : payment.method_id,
 		};
-		angular.extend( options, payment.options );
+		// angular.extend( options, payment.options );
 		BalanceApi.payin( options );
 	};
 	// payout
@@ -249,7 +268,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			provider_id : payment.provider_id,
 			method_id   : payment.method_id,
 		};
-		angular.extend( options, payment.options );
+		// angular.extend( options, payment.options );
 		BalanceApi.payout( options );
 	};
 	// balance api
@@ -438,12 +457,6 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 	};
 	$scope.payin_provider_init();
 	$scope.payout_provider_init();
-	// select first provider
-	if( $scope.payment.provider.deposition && $scope.payment.provider.deposition[ 0 ] ) {
-		$scope.provider_change( $scope.payment.provider.deposition[ 0 ] );
-		// amount
-		$scope.amount_init();
-	}
 }])
 
 ;

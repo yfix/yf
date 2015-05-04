@@ -29,8 +29,8 @@ class yf_payment__user {
 		foreach( (array)$provider_user as &$item ) {
 			$provider_id = (int)$item[ 'provider_id' ];
 			$_provider   = &$providers[ $provider_id ];
-			$_provider[ '_IS_DEPOSITION' ] && $provider[ 'deposition' ][] = $provider_id;
-			$_provider[ '_IS_PAYMENT'    ] && $provider[ 'payment'    ][] = $provider_id;
+			$_provider[ '_IS_DEPOSITION' ] && $provider[ 'payin'  ][] = $provider_id;
+			$_provider[ '_IS_PAYMENT'    ] && $provider[ 'payout' ][] = $provider_id;
 		}
 		// user
 		$user = user( main()->USER_ID );
@@ -64,7 +64,8 @@ class yf_payment__user {
 					'pages'    => $pages,
 					'page'     => 1,
 				),
-			), JSON_NUMERIC_CHECK ),
+			) ),
+			// ), JSON_NUMERIC_CHECK ),
 		);
 		// tpl
 		$result  = '';
