@@ -144,7 +144,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		BalanceApi.timer.cancel();
 		// init calc
 		is_currency = is_currency || false;
-		var form = $scope.form_payment__deposition;
+		var form = $scope.form_payment__payin;
 		if( !angular.isObject( form ) ||
 			(
 				( is_currency && form.amount_currency.$error.number ) ||
@@ -180,10 +180,47 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			$scope.amount_currency_fee = amount_currency_fee_round;
 		}
 	};
-	// payment out
+	// payin
+	$scope.payin_provider_change = function( $event, provider_id, method_id ) {
+		$event.stopPropagation();
+		var action = $scope.action.payin;
+		if( action.provider_id == provider_id && action.method_id == method_id ) {
+			$scope.payin_provider_init();
+			return( false );
+		}
+		var provider = $scope.payment.providers[ provider_id ];
+		var method   = provider._method_allow.payin[ method_id ];
+		var option   = method.option;
+		$scope.action.payin = {
+			provider_id : provider_id,
+			method_id   : method_id,
+			provider    : provider,
+			method      : method,
+			option      : option,
+		};
+		$scope.block_payin_provider_show = false;
+		return( true );
+	};
+	$scope.payin_provider_init = function() {
+		$scope.block_payin_provider_show = true;
+		$scope.action.payin = {};
+	};
+	$scope.action_payin = function() {
+		var payment     = $scope.action.payin;
+		var currency_id = $scope.currency_id;
+		var options = {
+			amount      : $scope.amount,
+			currency_id : currency_id,
+			provider_id : payment.provider_id,
+			method_id   : payment.method_id,
+		};
+		angular.extend( options, payment.options );
+		BalanceApi.payin( options );
+	};
+	// payout
 	$scope.payout_provider_change = function( $event, provider_id, method_id ) {
 		$event.stopPropagation();
-		var action = $scope.action.payment;
+		var action = $scope.action.payout;
 		if( action.provider_id == provider_id && action.method_id == method_id ) {
 			$scope.payout_provider_init();
 			return( false );
@@ -191,7 +228,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		var provider = $scope.payment.providers[ provider_id ];
 		var method   = provider._method_allow.payout[ method_id ];
 		var option   = method.option;
-		$scope.action.payment = {
+		$scope.action.payout = {
 			provider_id : provider_id,
 			method_id   : method_id,
 			provider    : provider,
@@ -203,10 +240,10 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 	};
 	$scope.payout_provider_init = function() {
 		$scope.block_payout_provider_show = true;
-		$scope.action.payment = {};
+		$scope.action.payout = {};
 	};
 	$scope.action_payout = function() {
-		var payment = $scope.action.payment;
+		var payment = $scope.action.payout;
 		var options = {
 			amount      : $scope.amount,
 			provider_id : payment.provider_id,
@@ -261,12 +298,12 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				);
 			}, 500 );
 		},
-		recharge: function( options ) {
+		payin: function( options ) {
 			var $this = this;
 			$scope.block_wait     = true;
 			$scope.status         = false;
 			$scope.status_message = null;
-			var result = PaymentApi.recharge( options );
+			var result = PaymentApi.payin( options );
 			result.$promise.then(
 				function( r ) {
 					$scope.block_wait = false;
@@ -291,7 +328,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 						}, $this.timer.timeout );
 					} else {
 						$scope.status_message = config.message.error.operation;
-						$log.error( 'balance->recharge is fail operation:', r );
+						$log.error( 'balance->payin is fail operation:', r );
 					}
 				},
 				function( r ) {
@@ -299,7 +336,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					if( r.response && r.response.balance ) {
 						$scope.status         = r.response.balance.status;
 						$scope.status_message = r.response.balance.status_message;
-						$log.warnig( 'balance->recharge is fail transport operation:', r );
+						$log.warnig( 'balance->payin is fail transport operation:', r );
 					} else {
 						if( r.status && r.status == 403 ) {
 							$scope.status_message = config.message.error.authentication;
@@ -310,7 +347,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 							}, 3000 );
 						} else {
 							$scope.status_message = config.message.error.request;
-							$log.error( 'balance->recharge is fail transport:', r );
+							$log.error( 'balance->payin is fail transport:', r );
 						}
 					}
 				}
@@ -399,6 +436,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		'deposition' : {},
 		'payment'    : {},
 	};
+	$scope.payin_provider_init();
 	$scope.payout_provider_init();
 	// select first provider
 	if( $scope.payment.provider.deposition && $scope.payment.provider.deposition[ 0 ] ) {

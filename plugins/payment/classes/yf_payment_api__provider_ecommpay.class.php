@@ -37,8 +37,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'title'       => 'Qiwi',
 				'icon'        => 'qiwi',
 				'option' => array(
-					'payment_group_id' => 1,
-					'followup'         => 1,
+					'payment_group_id'         => 6,
+					'followup'                 => 1,
+					// 'external_payment_type_id' => 'qw',
 				),
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -655,6 +656,14 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			// 'result_url'   => $result_url,
 			// 'server_url'   => $server_url,
 		);
+		// add options
+		if( !empty( $options[ 'method_id' ] ) && !empty( $this->method_allow[ 'payin' ][ $options[ 'method_id' ] ] ) ) {
+			$method_id = &$options[ 'method_id' ];
+			$method = &$this->method_allow[ 'payin' ][ $method_id ];
+			if( !empty( $method[ 'option' ] ) ) {
+				$form_options += $method[ 'option' ];
+			}
+		}
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
 		// save options

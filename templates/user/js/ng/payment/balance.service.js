@@ -48,25 +48,19 @@ function( $log, $resource, _config ) {
 	};
 	service.create_resource = function() {
 		return( $resource( null, null, {
-			refresh   : { method : 'GET',  url : service.url(), params : { operation : 'refresh'   } } ,
-			recharge  : { method : 'POST', url : service.url(), params : { operation : 'recharge'  } } ,
-			payout    : { method : 'POST', url : service.url(), params : { operation : 'payout'  } } ,
-			operation : { method : 'POST', url : service.url(), params : { operation : 'operation' } } ,
+			refresh   : { method : 'GET' , url : service.url(), params : { operation : 'refresh'   } },
+			recharge  : { method : 'POST', url : service.url(), params : { operation : 'recharge'  } },
+			payin     : { method : 'POST', url : service.url(), params : { operation : 'payin'     } },
+			payout    : { method : 'POST', url : service.url(), params : { operation : 'payout'    } },
+			operation : { method : 'POST', url : service.url(), params : { operation : 'operation' } },
 		}));
 	};
 	service.resource = service.create_resource();
-	service.recharge = function( options ) {
-		return( service.resource.recharge({ options: options }) );
-	};
-	service.payout = function( options ) {
-		return( service.resource.payout({ options: options }) );
-	};
-	service.operation = function( options ) {
-		return( service.resource.operation({ options: options }) );
-	};
-	service.refresh = function( options ) {
-		return( service.resource.refresh({ options: options }) );
-	};
+	service.recharge  = function( options ) { return( service.resource.recharge({ options: options }) ); };
+	service.payin     = function( options ) { return( service.resource.payin({ options: options }) ); };
+	service.payout    = function( options ) { return( service.resource.payout({ options: options }) ); };
+	service.operation = function( options ) { return( service.resource.operation({ options: options }) ); };
+	service.refresh   = function( options ) { return( service.resource.refresh({ options: options }) ); };
 	return( service );
 }])
 
