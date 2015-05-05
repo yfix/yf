@@ -103,6 +103,18 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
+	public function validate( $options = null ) {
+		return( $this->result_success() );
+	}
+
+	public function result_success() {
+		return( array( 'status' => true ) );
+	}
+
+	public function result_fail( $message ) {
+		return( array( 'status' => false, 'status_message' => $message ) );
+	}
+
 	public function api_method_payout( $name ) {
 		$result = null;
 		if(
@@ -240,7 +252,6 @@ class yf_payment_api__provider_remote {
 		}
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
-			'test'=> true
 		));
 		if( empty( $operation ) ) {
 			$result = array(

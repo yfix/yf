@@ -30,7 +30,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		),
 		'payin' => array(
 			'ecommpay' => array(
-				'title'       => 'Visa, MasterCard, etc',
+				'title'       => 'Visa, MasterCard',
 				'icon'        => 'ecommpay',
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -112,8 +112,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		),
 		'payout' => array(
 			'pay_card' => array(
-				'title'       => 'EcommPay',
-				'icon'        => 'ecommpay',
+				'title'       => 'Visa, MasterCard',
+				'icon'        => 'visa-mastercard',
 				'action'      => 'payout',
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -234,16 +234,16 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// 3 (purchase)       5  (refund)
 		// 6 (rebill)         11 (payout)
 		'1'  => 'deposition',     // authorization Авторизация
-		// '2'  => 'payout', // confirm Подтверждение авторизации
+		// '2'  => 'payment', // confirm Подтверждение авторизации
 		'3'  => 'deposition',     // purchase Прямое списание
-		'4'  => 'payout', // void Отмена авторизации
-		'5'  => 'payout', // refund Возврат
+		'4'  => 'payment', // void Отмена авторизации
+		'5'  => 'payment', // refund Возврат
 		'6'  => 'deposition',     // rebill Рекуррентный платеж
-		// '7'  => 'payout', // chargeback Опротестование платежа
-		// '8'  => 'payout', // complete3ds Завершение платежа 3ds
-		// '9'  => 'payout',
-		// '10' => 'payout',
-		'11' => 'payout', // payout Выплата
+		// '7'  => 'payment', // chargeback Опротестование платежа
+		// '8'  => 'payment', // complete3ds Завершение платежа 3ds
+		// '9'  => 'payment',
+		// '10' => 'payment',
+		'11' => 'payment', // payout Выплата
 	);
 
 	public $currency_default = 'USD';
@@ -463,7 +463,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 // DEBUG
-// $payment_api->dump();
+$payment_api->dump();
 		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
@@ -523,6 +523,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
 			);
+// DEBUG
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		$signature_options = $response;
@@ -536,7 +538,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'status_message' => 'Неверная подпись',
 			);
 // DEBUG
-// $payment_api->dump( array( 'var' => $result ));
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// user success or fail
@@ -572,7 +574,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'status_message' => 'Неверный ключ (site_id)',
 			);
 // DEBUG
-// $payment_api->dump( array( 'var' => $result ));
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// check status
@@ -585,18 +587,23 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		list( $payment_type ) = $this->_state( $state, $status );
 		if( empty( $payment_type ) ) {
 // DEBUG
-// $payment_api->dump( array( 'var' => 'type: ' . $state ));
+$payment_api->dump( array( 'var' => 'type: ' . $state ));
 			return( null );
 		}
 		// amount
 		// $_response[ 'amount' ] = $this->_amount( $_response[ 'amount' ], $_response[ 'currency' ], $is_request = false );
 		// update account, operation data
-		$result = $this->{ '_api_' . $payment_type }( array(
+		$operation_data = array(
 			'provider_name'       => 'ecommpay',
 			'response'            => $_response,
 			'payment_status_name' => $payment_status_name,
 			'status_message'      => $status_message,
-		));
+		);
+// DEBUG
+$payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));
+		$result = $this->{ '_api_' . $payment_type }( $operation_data );
+// DEBUG
+$payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		return( $result );
 	}
 
@@ -1113,6 +1120,52 @@ $payment_api->dump( array( 'var' => $result ));
 		);
 		$result = $payment_api->operation_update( $data );
 		return( $result );
+	}
+
+	public function validate( $options ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// type: deposition, payment, etc
+		if( empty( $_type_name ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестный тип операции',
+			);
+			return( $result );
+		}
+		switch( $_type_name ) {
+			case 'payment':
+				return( $this->validate_payment( $options ) );
+				break;
+		}
+		return( $this->result_success() );
+	}
+
+	public function validate_payment( $options ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// todo: real validation on type
+		if( empty( $_method_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Отсутствует метод вывода средств',
+			);
+			return( $result );
+		}
+		if( empty( $this->method_allow[ 'payout' ][ $_method_id ] ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Метод вывода средств не найден: '. $_method_id,
+			);
+			return( $result );
+		}
+		$method = &$this->method_allow[ 'payout' ][ $_method_id ];
+		foreach( $method[ 'option' ] as $key => $item ) {
+			if( empty( trim( ${ '_'. $key } ) ) ) {
+				return( $this->result_fail( 'Отсутствует обязательное поле запроса: '. $item ) );
+			}
+		}
+		return( $this->result_success() );
 	}
 
 	public function payment( $options ) {
