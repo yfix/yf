@@ -10,31 +10,6 @@ class yf_manage_revisions {
 	public $ALLOWED_OBJECTS = array();
 
 	/**
-	*/
-	function show() {
-/*
-		return table('SELECT * FROM '.db('revisions'), array(
-				'filter' => true,
-				'filter_params' => array(
-					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('dt_between','add_date'),
-					'action' 	=> array('eq','action'),
-					'item_id' 	=> array('eq','item_id'),
-					'ip'		=> array('like', 'ip'),
-				),
-				'hide_empty' => 1,
-			))
-			->date('add_date', array('format' => '%d-%m-%Y', 'nowrap' => 1))
-			->admin('user_id', array('desc' => 'admin'))
-			->text('ip')
-			->text('action')
-			->text('item_id')
-			->btn_view('', url('/@object/details/%d'))
-		;
-*/
-	}
-
-	/**
 	* Should be used from admin modules.
 	* Examples:
 	*	module_safe('manage_revisions')->add($table, $id, 'add');
@@ -103,6 +78,15 @@ class yf_manage_revisions {
 			}
 			$data_old = $data['old'] ?: ($extra['data_old'] ?: $extra['old']);
 			$data_new = $data['new'] ?: ($extra['data_new'] ?: $extra['new']);
+#			$data_stump_json = json_encode($data_stump);
+#			$check_equal_data = db()->get_one('SELECT data FROM '.db('revisions').' WHERE item_id='.$id.' ORDER BY id DESC');
+#			if ($data_stump_json == $check_equal_data) {
+#				continue;
+#			}
+			if ($data_old && $data_old == $data_new) {
+// TODO: do not save same data as new revision
+#				continue;
+			}
 			$sql = db()->insert_safe('sys_revisions', $to_insert + array(
 				'object_id'		=> $object_id,
 				'locale'		=> $data['locale'] ?: $extra['locale'],
@@ -117,44 +101,27 @@ class yf_manage_revisions {
 
 	/**
 	*/
-	function new_revision($function, $ids, $db_table) {
+	function show() {
 /*
-		if (empty($function) || empty($ids) || empty($db_table)) {
-			return false;
-		}
-		if (!is_array($ids) && intval($ids)) {
-			$ids = array(intval($ids));
-		}
-		$user_id = intval(main()->ADMIN_ID) ?: intval($_GET['admin_id']);
-		$add_rev_date = time();
-		foreach ((array)$ids as $id) {
-			$data_stump = db()->query_fetch('SELECT * FROM '.db($db_table).' WHERE id='.$id);
-			$data_stump_json = json_encode($data_stump);
-			$check_equal_data = db()->get_one('SELECT data FROM '.db('revisions').' WHERE item_id='.$id.' ORDER BY id DESC');
-			if ($data_stump_json == $check_equal_data) {
-				continue;
-			}
-			$insert = array(
-				'user_id'  => $user_id,
-				'add_date' => $add_rev_date,
-				'action'   => $function,
-				'item_id'  => $id,
-				'ip'	   => common()->get_ip(),
-				'table'		=> $db_table,
-				'data'     => $data_stump_json ? : '',
-			);
-			db()->insert_safe('revisions', $insert);
-			$revisions_ids[] = db()->insert_id();
-		}
-		return $revision_ids;
+		return table('SELECT * FROM '.db('revisions'), array(
+				'filter' => true,
+				'filter_params' => array(
+					'user_id'	=> array('eq','user_id'),
+					'add_date'	=> array('dt_between','add_date'),
+					'action' 	=> array('eq','action'),
+					'item_id' 	=> array('eq','item_id'),
+					'ip'		=> array('like', 'ip'),
+				),
+				'hide_empty' => 1,
+			))
+			->date('add_date', array('format' => '%d-%m-%Y', 'nowrap' => 1))
+			->admin('user_id', array('desc' => 'admin'))
+			->text('ip')
+			->text('action')
+			->text('item_id')
+			->btn_view('', url('/@object/details/%d'))
+		;
 */
-	}
-
-	/**
-	* Alias
-	*/
-	function content_revision_add ($object_name, $ids = array(), $extra = array()) {
-		return $this->add($object_name, $ids, $extra);
 	}
 
 	/**
