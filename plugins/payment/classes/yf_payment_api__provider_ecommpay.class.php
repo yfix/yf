@@ -30,7 +30,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		),
 		'payin' => array(
 			'ecommpay' => array(
-				'title'       => 'Visa, MasterCard, etc',
+				'title'       => 'Visa, MasterCard',
 				'icon'        => 'ecommpay',
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -112,8 +112,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		),
 		'payout' => array(
 			'pay_card' => array(
-				'title'       => 'EcommPay',
-				'icon'        => 'ecommpay',
+				'title'       => 'Visa, MasterCard',
+				'icon'        => 'visa-mastercard',
 				'action'      => 'payout',
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -1113,6 +1113,52 @@ $payment_api->dump( array( 'var' => $result ));
 		);
 		$result = $payment_api->operation_update( $data );
 		return( $result );
+	}
+
+	public function validate( $options ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// type: deposition, payment, etc
+		if( empty( $_type_name ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестный тип операции',
+			);
+			return( $result );
+		}
+		switch( $_type_name ) {
+			case 'payment':
+				return( $this->validate_payment( $options ) );
+				break;
+		}
+		return( $this->result_success() );
+	}
+
+	public function validate_payment( $options ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// todo: real validation on type
+		if( empty( $_method_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Отсутствует метод вывода средств',
+			);
+			return( $result );
+		}
+		if( empty( $this->method_allow[ 'payout' ][ $_method_id ] ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Метод вывода средств не найден: '. $_method_id,
+			);
+			return( $result );
+		}
+		$method = &$this->method_allow[ 'payout' ][ $_method_id ];
+		foreach( $method[ 'option' ] as $key => $item ) {
+			if( empty( trim( ${ '_'. $key } ) ) ) {
+				return( $this->result_fail( 'Отсутствует обязательное поле запроса: '. $item ) );
+			}
+		}
+		return( $this->result_success() );
 	}
 
 	public function payment( $options ) {

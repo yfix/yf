@@ -966,6 +966,21 @@ class yf_payment_api {
 		}
 		$provider_id = (int)$provider[ 'provider_id' ];
 		$data[ 'provider' ] = $provider;
+		// provider class
+		$object = $this->provider_class( array(
+			'provider_name' => $provider[ 'name' ],
+		));
+		if( empty( $object ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестный класс провайдера',
+			);
+			return( $result );
+		}
+		// $data[ 'provider_class' ] = $object;
+		// provider validate
+		$result = $object->validate( $options );
+		if( empty( $result[ 'status' ] ) ) { return( $result ); }
 		// prepare result
 		$sql_datetime = $this->sql_datetime();
 		$data[ 'sql_datetime' ] = $sql_datetime;
