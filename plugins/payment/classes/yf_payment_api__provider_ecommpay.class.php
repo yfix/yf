@@ -16,13 +16,37 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/card/json/';
 
 	public $method_allow = array(
+		'order' => array(
+			'payin' => array(
+				'ecommpay',
+				'card',
+				'qiwi',
+				'c24',
+				'comepay',
+			),
+			'payout' => array(
+				'pay_card'
+			),
+		),
 		'payin' => array(
+			'ecommpay' => array(
+				'title'       => 'Visa, MasterCard, etc',
+				'icon'        => 'ecommpay',
+				'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
 			'card' => array(
 				'title'       => 'Visa, MasterCard',
 				'icon'        => 'visa-mastercard',
 				'option' => array(
 					'payment_group_id' => 1,
-					'followup'         => 1,
+					// 'followup'         => 1,
 				),
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -37,8 +61,44 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'title'       => 'Qiwi',
 				'icon'        => 'qiwi',
 				'option' => array(
-					'payment_group_id' => 1,
-					'followup'         => 1,
+					// 'payment_group_id'         => 6,
+					// 'followup'                 => 1,
+					// 'phone'                    => '380679041321',
+					// 'external_payment_type_id' => 'qw',
+				),
+				'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
+			'c24' => array(
+				'title'       => 'C24',
+				'icon'        => 'c24',
+				'option' => array(
+					// 'payment_group_id'         => 28,
+					// 'followup'                 => 0,
+					// 'external_payment_type_id' => 'qw',
+				),
+				'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
+			'comepay' => array(
+				'title'       => 'Comepay',
+				'icon'        => 'comepay',
+				'option' => array(
+					// 'payment_group_id'         => 29,
+					// 'followup'                 => 0,
+					// 'external_payment_type_id' => 'qw',
 				),
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -655,6 +715,14 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			// 'result_url'   => $result_url,
 			// 'server_url'   => $server_url,
 		);
+		// add options
+		if( !empty( $options[ 'method_id' ] ) && !empty( $this->method_allow[ 'payin' ][ $options[ 'method_id' ] ] ) ) {
+			$method_id = &$options[ 'method_id' ];
+			$method = &$this->method_allow[ 'payin' ][ $method_id ];
+			if( !empty( $method[ 'option' ] ) ) {
+				$form_options += $method[ 'option' ];
+			}
+		}
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
 		// save options
