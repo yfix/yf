@@ -593,14 +593,15 @@ $payment_api->dump( array( 'var' => 'type: ' . $state ));
 		// amount
 		// $_response[ 'amount' ] = $this->_amount( $_response[ 'amount' ], $_response[ 'currency' ], $is_request = false );
 		// update account, operation data
-// DEBUG
-$payment_api->dump(array( 'var' => 'update operation' ));
-		$result = $this->{ '_api_' . $payment_type }( array(
+		$operation_data = array(
 			'provider_name'       => 'ecommpay',
 			'response'            => $_response,
 			'payment_status_name' => $payment_status_name,
 			'status_message'      => $status_message,
-		));
+		);
+// DEBUG
+$payment_api->dump(array( 'var' => $operation_data ));
+		$result = $this->{ '_api_' . $payment_type }( $operation_data );
 		return( $result );
 	}
 
