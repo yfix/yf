@@ -600,10 +600,10 @@ $payment_api->dump( array( 'var' => 'type: ' . $state ));
 			'status_message'      => $status_message,
 		);
 // DEBUG
-$payment_api->dump(array( 'var' => $operation_data ));
+$payment_api->dump(array( 'var' => array( 'update operation' => $operation_data ) ));
 		$result = $this->{ '_api_' . $payment_type }( $operation_data );
 // DEBUG
-$payment_api->dump(array( 'var' => $result ));
+$payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		return( $result );
 	}
 
