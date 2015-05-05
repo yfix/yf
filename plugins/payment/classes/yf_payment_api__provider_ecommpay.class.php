@@ -602,6 +602,8 @@ $payment_api->dump( array( 'var' => 'type: ' . $state ));
 // DEBUG
 $payment_api->dump(array( 'var' => $operation_data ));
 		$result = $this->{ '_api_' . $payment_type }( $operation_data );
+// DEBUG
+$payment_api->dump(array( 'var' => $result ));
 		return( $result );
 	}
 

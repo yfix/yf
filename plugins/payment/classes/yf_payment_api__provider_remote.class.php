@@ -252,7 +252,6 @@ class yf_payment_api__provider_remote {
 		}
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
-			'test'=> true
 		));
 		if( empty( $operation ) ) {
 			$result = array(
