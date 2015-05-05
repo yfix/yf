@@ -463,7 +463,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 // DEBUG
-// $payment_api->dump();
+$payment_api->dump();
 		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
@@ -515,8 +515,6 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		); // */
 		// response
 		$response = $_POST;
-// DEBUG
-$payment_api->dump( array( 'var' => $result ));
 		// check signature
 		isset( $response[ 'signature' ] ) && $signature = $response[ 'signature' ];
 		// check signature
