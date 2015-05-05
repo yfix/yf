@@ -3,6 +3,7 @@ return '
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `object_name` varchar(64) NOT NULL,
   `object_id` varchar(64) NOT NULL,
+  `action` varchar(32) NOT NULL,
   `locale` varchar(10) NOT NULL,
   `data_old` text NOT NULL,
   `data_new` text NOT NULL,

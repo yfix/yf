@@ -10,6 +10,108 @@ class yf_manage_revisions {
 	public $ALLOWED_OBJECTS = array();
 
 	/**
+	* Should be used from admin modules.
+	* Examples:
+	*	module_safe('manage_revisions')->add($table, $id, 'add');
+	*	module_safe('manage_revisions')->add($table, array(1,2,3), 'delete');
+	*	module_safe('manage_revisions')->add(array(
+	*		'object_id' => $a['id'],
+	*		'old'		=> $a,
+	*		'new'		=> $_POST,
+	*		'action'	=> 'update',
+	*	));
+	*/
+	function add ($object_name, $ids = array(), $action = null, $extra = array()) {
+		if (!$this->ENABLED) {
+			return false;
+		}
+		if (is_array($object_name)) {
+			$extra = (array)$extra + $object_name;
+			$object_name = '';
+		}
+		$object_name = $extra['object_name'] ?: ($object_name ?: $_GET['object']);
+		if (($allowed_objects = $this->ALLOWED_OBJECTS)) {
+			if (!in_array($object_name, $allowed_objects)) {
+				return false;
+			}
+		}
+		$ids = $extra['object_id'] ?: ($extra['ids'] ?: $ids);
+		if ($ids && !is_array($ids)) {
+			$ids = array($ids);
+		}
+		$items = array();
+		if (is_array($extra['items'])) {
+			$items = $extra['items'];
+			if (!$items) {
+				return false;
+			}
+		} elseif (is_array($ids) && !empty($ids)) {
+			if (isset($extra['old']) || isset($extra['new'])) {
+				foreach ((array)$ids as $id) {
+					$items[$id] = array();
+				}
+			} else {
+				$records = (array)db()->from($object_name)->whereid($ids)->get_all();
+				foreach ((array)$ids as $id) {
+					$a = $records[$id];
+					if ($a) {
+						$items[$id] = array(
+							'new'		=> $a,
+							'locale'	=> $a['locale'],
+						);
+					}
+				}
+			}
+			if (!$items) {
+				return false;
+			}
+		}
+		$action = $extra['action'] ?: $action;
+		if (!$action) {
+			$action = 'update';
+		}
+		$to_insert = array(
+			'action'		=> $action,
+			'object_name'	=> $object_name,
+			'date'			=> date('Y-m-d H:i:s'),
+			'user_id'		=> main()->ADMIN_ID,
+			'site_id'		=> conf('SITE_ID'),
+			'server_id'		=> conf('SERVER_ID'),
+			'ip'			=> common()->get_ip(),
+			'url'			=> (main()->is_https() ? 'https://' : 'http://'). $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
+			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
+		);
+		foreach ((array)$items as $object_id => $data) {
+			if (!$object_id) {
+				continue;
+			}
+			$data_old = $data['old'] ?: ($extra['data_old'] ?: $extra['old']);
+			$data_new = $data['new'] ?: ($extra['data_new'] ?: $extra['new']);
+			if (!$data_old && !$data_new) {
+				continue;
+			}
+#			$data_stump_json = json_encode($data_stump);
+#			$check_equal_data = db()->get_one('SELECT data FROM '.db('revisions').' WHERE item_id='.$id.' ORDER BY id DESC');
+#			if ($data_stump_json == $check_equal_data) {
+#				continue;
+#			}
+			if ($data_old && $data_old == $data_new) {
+// TODO: do not save same data as new revision
+#				continue;
+			}
+			$sql = db()->insert_safe('sys_revisions', $to_insert + array(
+				'object_id'		=> $object_id,
+				'locale'		=> (is_array($data_old) ? $data_old['locale'] : '') ?: $extra['locale'],
+				'data_old'		=> is_array($data_old) ? 'json:'.json_encode($data_old) : (string)$data_old,
+				'data_new'		=> is_array($data_new) ? 'json:'.json_encode($data_new) : (string)$data_new,
+				'comment'		=> $data['comment'] ?: $extra['comment'],
+			), $only_sql = true);
+			db()->_add_shutdown_query($sql);
+		}
+		return true;
+	}
+
+	/**
 	*/
 	function show() {
 /*
@@ -31,74 +133,6 @@ class yf_manage_revisions {
 			->text('item_id')
 			->btn_view('', url('/@object/details/%d'))
 		;
-*/
-	}
-
-	/**
-	* Should be used from admin modules
-	*/
-	function content_revision_add ($extra = array()) {
-		if (!$this->ENABLED) {
-			return false;
-		}
-		$object_name = $extra['object_name'];
-		$object_id = $extra['object_id'];
-		if (($allowed_objects = $this->ALLOWED_OBJECTS)) {
-			if (!in_array($object_name, $allowed_objects)) {
-				return false;
-			}
-		}
-		$to_insert = array(
-			'object_name'	=> $object_name,
-			'object_id'		=> $object_id,
-			'locale'		=> $extra['locale'],
-			'data_old'		=> is_array($extra['data_old']) ? 'json:'.json_encode($extra['data_old']) : (string)$extra['data_old'],
-			'data_new'		=> is_array($extra['data_new']) ? 'json:'.json_encode($extra['data_new']) : (string)$extra['data_new'],
-			'comment'		=> $extra['comment'],
-			'date'			=> date('Y-m-d H:i:s'),
-			'user_id'		=> main()->ADMIN_ID,
-			'site_id'		=> conf('SITE_ID'),
-			'server_id'		=> conf('SERVER_ID'),
-			'ip'			=> common()->get_ip(),
-			'url'			=> (main()->is_https() ? 'https://' : 'http://'). $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
-			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
-		);
-		$sql = db()->insert_safe('sys_revisions', $to_insert, $only_sql = true);
-		return db()->_add_shutdown_query($sql);
-	}
-
-	/**
-	*/
-	function new_revision($function, $ids, $db_table) {
-/*
-		if (empty($function) || empty($ids) || empty($db_table)) {
-			return false;
-		}
-		if (!is_array($ids) && intval($ids)) {
-			$ids = array(intval($ids));
-		}
-		$user_id = intval(main()->ADMIN_ID) ?: intval($_GET['admin_id']);
-		$add_rev_date = time();
-		foreach ((array)$ids as $id) {
-			$data_stump = db()->query_fetch('SELECT * FROM '.db($db_table).' WHERE id='.$id);
-			$data_stump_json = json_encode($data_stump);
-			$check_equal_data = db()->get_one('SELECT data FROM '.db('revisions').' WHERE item_id='.$id.' ORDER BY id DESC');
-			if ($data_stump_json == $check_equal_data) {
-				continue;
-			}
-			$insert = array(
-				'user_id'  => $user_id,
-				'add_date' => $add_rev_date,
-				'action'   => $function,
-				'item_id'  => $id,
-				'ip'	   => common()->get_ip(),
-				'table'		=> $db_table,
-				'data'     => $data_stump_json ? : '',
-			);
-			db()->insert_safe('revisions', $insert);
-			$revisions_ids[] = db()->insert_id();
-		}
-		return $revision_ids;
 */
 	}
 
