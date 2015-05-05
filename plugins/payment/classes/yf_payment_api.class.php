@@ -168,6 +168,10 @@ class yf_payment_api {
 	public $OPERATION_LIMIT     = 10;
 	public $BALANCE_LIMIT_LOWER = 0;
 
+	public $MAIL_COPY_TO = array(
+		'larv.job+payment@gmail.com',
+	);
+
 	public function _init() {
 		$this->config();
 		$this->user_id_default = (int)main()->USER_ID;
@@ -1187,6 +1191,13 @@ class yf_payment_api {
 				'user_title' => $user[ 'name' ] . ' (id: '. $_user_id .')'
 			));
 			_class( 'email' )->_send_email_safe( $mail_admin_to, $mail_admin_name, $_tpl . '_admin', $data );
+			// todo
+			if( false && !empty( $this->MAIL_COPY_TO ) ) {
+				$mail_subject = 'Payment: ';
+				foreach( $this->MAIL_COPY_TO as $mail ) {
+					// code...
+				}
+			}
 		}
 	}
 
