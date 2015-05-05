@@ -323,28 +323,35 @@ class yf_payment_api__provider_remote {
 			db()->begin();
 			if( $payment_status_id != $_payment_status_id && $_payment_status_name == 'success' ) {
 				// update account
-				switch( $operation_data[ 'type' ][ 'name' ] ) {
-					case 'payment':
-						$sql_sign = '-';
+				$direction = $operation[ 'direction' ];
+				$is_payin  = null;
+				$is_payout = null;
+				switch( $direction ) {
+					case 'out':
+						$is_payout = true;
+						$sql_sign  = '-';
 						break;
-					case 'deposition':
+					case 'in':
+						$is_payin = true;
 					default:
 						$sql_sign = '+';
 						break;
 				}
-				$_data = array(
-					'account_id'      => $account_id,
-					'datetime_update' => db()->escape_val( $sql_datetime ),
-					'balance'         => "( balance $sql_sign $sql_amount )",
-				);
-				$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
-				if( !$_result[ 'status' ] ) {
-					db()->rollback();
-					$result = array(
-						'status'         => false,
-						'status_message' => 'Ошибка при обновлении счета',
+				if( $is_payin ) {
+					$_data = array(
+						'account_id'      => $account_id,
+						'datetime_update' => db()->escape_val( $sql_datetime ),
+						'balance'         => "( balance $sql_sign $sql_amount )",
 					);
-					return( $result );
+					$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
+					if( !$_result[ 'status' ] ) {
+						db()->rollback();
+						$result = array(
+							'status'         => false,
+							'status_message' => 'Ошибка при обновлении счета',
+						);
+						return( $result );
+					}
 				}
 				// get balance
 				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
