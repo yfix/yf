@@ -274,7 +274,7 @@ class yf_payment_api__provider_remote {
 			$_operation_id = (int)$operation[ 'operation_id' ];
 			$account_id    = (int)$operation[ 'account_id'   ];
 			$provider_id   = (int)$operation[ 'provider_id'  ];
-			$amount        = $payment_api->_number_float( $operation_data[ 'amount' ] );
+			$amount        = $payment_api->_number_float( $operation[ 'amount' ] );
 		// check operation_id
 		if( $operation_id != $_operation_id ) {
 			$result = array(
