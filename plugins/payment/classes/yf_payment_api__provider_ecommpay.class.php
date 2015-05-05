@@ -515,6 +515,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		); // */
 		// response
 		$response = $_POST;
+// DEBUG
+$payment_api->dump( array( 'var' => $result ));
 		// check signature
 		isset( $response[ 'signature' ] ) && $signature = $response[ 'signature' ];
 		// check signature
@@ -523,6 +525,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
 			);
+// DEBUG
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		$signature_options = $response;
@@ -536,7 +540,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'status_message' => 'Неверная подпись',
 			);
 // DEBUG
-// $payment_api->dump( array( 'var' => $result ));
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// user success or fail
@@ -572,7 +576,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'status_message' => 'Неверный ключ (site_id)',
 			);
 // DEBUG
-// $payment_api->dump( array( 'var' => $result ));
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// check status
@@ -585,7 +589,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		list( $payment_type ) = $this->_state( $state, $status );
 		if( empty( $payment_type ) ) {
 // DEBUG
-// $payment_api->dump( array( 'var' => 'type: ' . $state ));
+$payment_api->dump( array( 'var' => 'type: ' . $state ));
 			return( null );
 		}
 		// amount
