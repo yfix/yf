@@ -247,12 +247,14 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		var provider = $scope.payment.providers[ provider_id ];
 		var method   = provider._method_allow.payout[ method_id ];
 		var option   = method.option;
+		var options  = angular.extend( {}, method.option, method.option_default );
 		$scope.action.payout = {
 			provider_id : provider_id,
 			method_id   : method_id,
 			provider    : provider,
 			method      : method,
 			option      : option,
+			options     : options,
 		};
 		$scope.block_payout_provider_show = false;
 		return( true );
@@ -262,13 +264,13 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		$scope.action.payout = {};
 	};
 	$scope.action_payout = function() {
-		var payment = $scope.action.payout;
+		var payout = $scope.action.payout;
 		var options = {
 			amount      : $scope.amount,
-			provider_id : payment.provider_id,
-			method_id   : payment.method_id,
+			provider_id : payout.provider_id,
+			method_id   : payout.method_id,
+			options     : payout.options,
 		};
-		// angular.extend( options, payment.options );
 		BalanceApi.payout( options );
 	};
 	// balance api
