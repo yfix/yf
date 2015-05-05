@@ -1257,15 +1257,21 @@ $payment_api->dump( array( 'var' => $result ));
 		list( $account_id, $account ) = $account_result;
 		// prepare
 		// save options
-		$data = array(
-			'fee'         => $fee,
-			'currency_id' => $currency_id,
-			'amount'      => $amount_currency_total,
+		$request_data  = array(
+			'user_id'               => $user_id,
+			'operation_id'          => $operation_id,
+			'account_id'            => $account_id,
+			'provider_id'           => $provider_id,
+			'currency_id'           => $currency_id,
+			'fee'                   => $fee,
+			'amount'                => $amount,
+			'amount_currency'       => $amount_currency,
+			'amount_currency_total' => $amount_currency_total,
 		);
 		$operation_options = array(
 			'request' => array( array(
 				'options'  => $options,
-				'data'     => $data,
+				'data'     => $request_data,
 				'datetime' => $operation_data[ 'sql_datetime' ],
 			))
 		);
