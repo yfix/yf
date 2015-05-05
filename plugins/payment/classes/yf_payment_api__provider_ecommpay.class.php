@@ -234,16 +234,16 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// 3 (purchase)       5  (refund)
 		// 6 (rebill)         11 (payout)
 		'1'  => 'deposition',     // authorization Авторизация
-		// '2'  => 'payout', // confirm Подтверждение авторизации
+		// '2'  => 'payment', // confirm Подтверждение авторизации
 		'3'  => 'deposition',     // purchase Прямое списание
-		'4'  => 'payout', // void Отмена авторизации
-		'5'  => 'payout', // refund Возврат
+		'4'  => 'payment', // void Отмена авторизации
+		'5'  => 'payment', // refund Возврат
 		'6'  => 'deposition',     // rebill Рекуррентный платеж
-		// '7'  => 'payout', // chargeback Опротестование платежа
-		// '8'  => 'payout', // complete3ds Завершение платежа 3ds
-		// '9'  => 'payout',
-		// '10' => 'payout',
-		'11' => 'payout', // payout Выплата
+		// '7'  => 'payment', // chargeback Опротестование платежа
+		// '8'  => 'payment', // complete3ds Завершение платежа 3ds
+		// '9'  => 'payment',
+		// '10' => 'payment',
+		'11' => 'payment', // payout Выплата
 	);
 
 	public $currency_default = 'USD';
