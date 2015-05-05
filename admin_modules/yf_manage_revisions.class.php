@@ -35,26 +35,60 @@ class yf_manage_revisions {
 	}
 
 	/**
-	* Should be used from admin modules
+	* Should be used from admin modules.
+	* Examples:
+	*	module_safe('manage_revisions')->add($table, $id, 'add');
+	*	module_safe('manage_revisions')->add($table, array(1,2,3), 'delete');
+	*	module_safe('manage_revisions')->add(array(
+	*		'object_id' => $a['id'],
+	*		'old'		=> $a,
+	*		'new'		=> $_POST,
+	*		'action'	=> 'update',
+	*	));
 	*/
-	function content_revision_add ($extra = array()) {
+	function add ($object_name, $ids = array(), $action = null, $extra = array()) {
 		if (!$this->ENABLED) {
 			return false;
 		}
-		$object_name = $extra['object_name'];
-		$object_id = $extra['object_id'];
+		if (is_array($object_name)) {
+			$extra = (array)$extra + $object_name;
+			$object_name = '';
+		}
+		$object_name = $extra['object_name'] ?: ($object_name ?: $_GET['object']);
 		if (($allowed_objects = $this->ALLOWED_OBJECTS)) {
 			if (!in_array($object_name, $allowed_objects)) {
 				return false;
 			}
 		}
+		$ids = $extra['object_id'] ?: ($extra['ids'] ?: $ids);
+		if ($ids && !is_array($ids)) {
+			$ids = array($ids);
+		}
+		$items = array();
+		if (is_array($extra['items'])) {
+			$items = $extra['items'];
+		} elseif (is_array($ids) && !empty($ids)) {
+			$records = (array)db()->from($object_name)->whereid($ids)->get_all();
+			foreach ((array)$ids as $id) {
+				$a = $records[$id];
+				if ($a) {
+					$items[$id] = array(
+						'new'		=> $a,
+						'locale'	=> $a['locale'],
+					);
+				}
+			}
+		}
+		if (!$items) {
+			return false;
+		}
+		$action = $extra['action'] ?: $action;
+		if (!$action) {
+			$action = 'update';
+		}
 		$to_insert = array(
+			'action'		=> $action,
 			'object_name'	=> $object_name,
-			'object_id'		=> $object_id,
-			'locale'		=> $extra['locale'],
-			'data_old'		=> is_array($extra['data_old']) ? 'json:'.json_encode($extra['data_old']) : (string)$extra['data_old'],
-			'data_new'		=> is_array($extra['data_new']) ? 'json:'.json_encode($extra['data_new']) : (string)$extra['data_new'],
-			'comment'		=> $extra['comment'],
 			'date'			=> date('Y-m-d H:i:s'),
 			'user_id'		=> main()->ADMIN_ID,
 			'site_id'		=> conf('SITE_ID'),
@@ -63,8 +97,22 @@ class yf_manage_revisions {
 			'url'			=> (main()->is_https() ? 'https://' : 'http://'). $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
 			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
 		);
-		$sql = db()->insert_safe('sys_revisions', $to_insert, $only_sql = true);
-		return db()->_add_shutdown_query($sql);
+		foreach ((array)$items as $object_id => $data) {
+			if (!$object_id) {
+				continue;
+			}
+			$data_old = $data['old'] ?: ($extra['data_old'] ?: $extra['old']);
+			$data_new = $data['new'] ?: ($extra['data_new'] ?: $extra['new']);
+			$sql = db()->insert_safe('sys_revisions', $to_insert + array(
+				'object_id'		=> $object_id,
+				'locale'		=> $data['locale'] ?: $extra['locale'],
+				'data_old'		=> is_array($data_old) ? 'json:'.json_encode($data_old) : (string)$data_old,
+				'data_new'		=> is_array($data_new) ? 'json:'.json_encode($data_new) : (string)$data_new,
+				'comment'		=> $data['comment'] ?: $extra['comment'],
+			), $only_sql = true);
+			db()->_add_shutdown_query($sql);
+		}
+		return true;
 	}
 
 	/**
@@ -100,6 +148,13 @@ class yf_manage_revisions {
 		}
 		return $revision_ids;
 */
+	}
+
+	/**
+	* Alias
+	*/
+	function content_revision_add ($object_name, $ids = array(), $extra = array()) {
+		return $this->add($object_name, $ids, $extra);
 	}
 
 	/**
