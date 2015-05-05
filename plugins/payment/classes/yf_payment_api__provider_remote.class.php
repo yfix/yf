@@ -321,22 +321,24 @@ class yf_payment_api__provider_remote {
 		$payment_status_id = (int)$operation[ 'status_id' ];
 		if( $payment_status_success_id != $payment_status_id ) {
 			db()->begin();
+			$direction = $operation[ 'direction' ];
+			$is_payin  = null;
+			$is_payout = null;
+			switch( $direction ) {
+				case 'out':
+					$is_payout = true;
+					$sql_sign  = '-';
+					$mail_tpl  = 'payment';
+					break;
+				case 'in':
+					$is_payin = true;
+					$mail_tpl = 'payout';
+				default:
+					$sql_sign = '+';
+					break;
+			}
 			if( $payment_status_id != $_payment_status_id && $_payment_status_name == 'success' ) {
 				// update account
-				$direction = $operation[ 'direction' ];
-				$is_payin  = null;
-				$is_payout = null;
-				switch( $direction ) {
-					case 'out':
-						$is_payout = true;
-						$sql_sign  = '-';
-						break;
-					case 'in':
-						$is_payin = true;
-					default:
-						$sql_sign = '+';
-						break;
-				}
 				if( $is_payin ) {
 					$_data = array(
 						'account_id'      => $account_id,
@@ -378,7 +380,7 @@ class yf_payment_api__provider_remote {
 			// save options
 			$result = $payment_api->operation_update( $data );
 			// mail
-			$mail_tpl = empty( $result[ 'status' ] ) ? 'payment_refused' : 'payment_success';
+			$mail_tpl .= '_'. empty( $result[ 'status' ] ) ? 'refused' : 'success';
 			$payment_api->mail( array(
 				'tpl'     => $mail_tpl,
 				'user_id' => $account[ 'user_id' ],
