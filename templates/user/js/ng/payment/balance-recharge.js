@@ -269,8 +269,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			amount      : $scope.amount,
 			provider_id : payout.provider_id,
 			method_id   : payout.method_id,
-			options     : payout.options,
 		};
+		angular.extend( options, payout.options );
 		BalanceApi.payout( options );
 	};
 	// balance api
