@@ -247,7 +247,15 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		var provider = $scope.payment.providers[ provider_id ];
 		var method   = provider._method_allow.payout[ method_id ];
 		var option   = method.option;
-		var options  = angular.extend( {}, method.option, method.option_default );
+		var options  = null;
+		// default options
+		if( method.option_default ) {
+			options = angular.extend( {}, method.option );
+			angular.forEach( options, function( item, id ) {
+				this[ id ] = null;
+			}, options );
+			angular.extend( options, method.option_default );
+		}
 		$scope.action.payout = {
 			provider_id : provider_id,
 			method_id   : method_id,
