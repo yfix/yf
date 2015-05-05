@@ -42,20 +42,29 @@ class yf_manage_revisions {
 		$items = array();
 		if (is_array($extra['items'])) {
 			$items = $extra['items'];
+			if (!$items) {
+				return false;
+			}
 		} elseif (is_array($ids) && !empty($ids)) {
-			$records = (array)db()->from($object_name)->whereid($ids)->get_all();
-			foreach ((array)$ids as $id) {
-				$a = $records[$id];
-				if ($a) {
-					$items[$id] = array(
-						'new'		=> $a,
-						'locale'	=> $a['locale'],
-					);
+			if (isset($extra['old']) || isset($extra['new'])) {
+				foreach ((array)$ids as $id) {
+					$items[$id] = array();
+				}
+			} else {
+				$records = (array)db()->from($object_name)->whereid($ids)->get_all();
+				foreach ((array)$ids as $id) {
+					$a = $records[$id];
+					if ($a) {
+						$items[$id] = array(
+							'new'		=> $a,
+							'locale'	=> $a['locale'],
+						);
+					}
 				}
 			}
-		}
-		if (!$items) {
-			return false;
+			if (!$items) {
+				return false;
+			}
 		}
 		$action = $extra['action'] ?: $action;
 		if (!$action) {
@@ -78,6 +87,9 @@ class yf_manage_revisions {
 			}
 			$data_old = $data['old'] ?: ($extra['data_old'] ?: $extra['old']);
 			$data_new = $data['new'] ?: ($extra['data_new'] ?: $extra['new']);
+			if (!$data_old && !$data_new) {
+				continue;
+			}
 #			$data_stump_json = json_encode($data_stump);
 #			$check_equal_data = db()->get_one('SELECT data FROM '.db('revisions').' WHERE item_id='.$id.' ORDER BY id DESC');
 #			if ($data_stump_json == $check_equal_data) {
@@ -89,7 +101,7 @@ class yf_manage_revisions {
 			}
 			$sql = db()->insert_safe('sys_revisions', $to_insert + array(
 				'object_id'		=> $object_id,
-				'locale'		=> $data['locale'] ?: $extra['locale'],
+				'locale'		=> (is_array($data_old) ? $data_old['locale'] : '') ?: $extra['locale'],
 				'data_old'		=> is_array($data_old) ? 'json:'.json_encode($data_old) : (string)$data_old,
 				'data_new'		=> is_array($data_new) ? 'json:'.json_encode($data_new) : (string)$data_new,
 				'comment'		=> $data['comment'] ?: $extra['comment'],
