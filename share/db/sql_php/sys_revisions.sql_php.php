@@ -105,7 +105,6 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 		),
 		'user_id' => array(
 			'name' => 'user_id',

@@ -6,7 +6,7 @@ return '
   `locale` varchar(10) NOT NULL,
   `data_old` text NOT NULL,
   `data_new` text NOT NULL,
-  `date` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `date` datetime NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `site_id` tinyint(3) unsigned NOT NULL DEFAULT \'0\',
   `server_id` tinyint(3) unsigned NOT NULL DEFAULT \'0\',
