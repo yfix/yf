@@ -271,11 +271,10 @@ class yf_payment_api__provider_remote {
 		}
 		$request = reset( $operation_options[ 'request' ] );
 		$operation_data = $request[ 'data' ];
-			$user_id         = (int)$operation_data[ 'user_id'      ];
-			$_operation_id   = (int)$operation_data[ 'operation_id' ];
-			$account_id      = (int)$operation_data[ 'account_id'   ];
-			$provider_id     = (int)$operation_data[ 'provider_id'  ];
-			$amount          = $payment_api->_number_float( $operation_data[ 'amount' ] );
+			$_operation_id = (int)$operation[ 'operation_id' ];
+			$account_id    = (int)$operation[ 'account_id'   ];
+			$provider_id   = (int)$operation[ 'provider_id'  ];
+			$amount        = $payment_api->_number_float( $operation_data[ 'amount' ] );
 		// check operation_id
 		if( $operation_id != $_operation_id ) {
 			$result = array(
