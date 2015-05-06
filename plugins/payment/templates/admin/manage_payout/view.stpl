@@ -40,7 +40,12 @@
 {/if}
 
 {if_not_empty( request_data )}
-<div class="b-data pull-left">{request_data}</div>
+<div class="b-data pull-left">
+	{request_data}
+	{if_not_empty( request_data_csv )}
+		{request_data_csv}
+	{/if}
+</div>
 {/if}
 
 <div class="clearfix"></div>

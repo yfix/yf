@@ -47,6 +47,11 @@ class yf_manage_payout {
 				'action'       => 'csv',
 				'operation_id' => '%operation_id',
 			)),
+			'csv_request' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'csv_request',
+				'operation_id' => '%operation_id',
+			)),
 			'list' => url_admin( array(
 				'object'       => $object,
 			)),
@@ -248,6 +253,101 @@ class yf_manage_payout {
 		);
 	}
 
+	function csv_request( $options = null ) {
+		// check operation
+		$operation = $this->_operation();
+		// import options
+		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_is_valid ) ) { return( $operation ); }
+		// var
+		$html        = _class( 'html' );
+		$payment_api = _class( 'payment_api' );
+		// prepare view: request options
+		$content = array();
+		foreach( $_method[ 'option' ] as $key => $title ) {
+			if( !empty( $_request[ 'options' ][ $key ] ) ) {
+				$content[ $title ] = $_request[ 'options' ][ $key ];
+			}
+		}
+		// prepare data
+		$data = array();
+		$data[] = array_keys( $content );
+		$data[] = array_values( $content );
+		$file_name = 'operation_'. $_operation_id .'__'. date( 'Y-m-d_H-i-s' ) .'.csv';
+		// output
+		$result = $this->_http_csv( array(
+			'file_name' => $file_name,
+			'data'      => $data,
+			// 'debug'     => true,
+		));
+		$result[ 'operation_id' ] = $_operation_id;
+		return( $this->_user_message( $result ) );
+	}
+
+	function _save_csv( $file_name, $data = null ) {
+		// setlocale( LC_ALL, 'ru_RU.utf8' )
+			// || setlocale( LC_ALL, 'ru_UA.utf8' )
+			// || setlocale( LC_ALL, 'en_US.utf8' );
+		if( is_array( $data ) && ( $file = fopen( $file_name, 'w' ) ) !== FALSE ) {
+			foreach( $data as $id => $item ) {
+				if( !is_array( $item ) ) {
+					fclose( $file );
+					$result = array(
+						'status'         => false,
+						'status_header'  => 'Экспорт в CSV',
+						'status_message' => 'Требуется массив, неверные данные: '. $item,
+					);
+					return( $result );
+				}
+				$_data = array_values( $item );
+				$result = fputcsv( $file, $_data, ';', '"' );
+				if( false === $result ) {
+					fclose( $file );
+					$result = array(
+						'status'         => false,
+						'status_header'  => 'Экспорт в CSV',
+						'status_message' => 'Ошибка при конвертацию данных: '. $_data,
+					);
+					return( $result );
+				}
+			}
+			fclose( $file );
+			$result = array(
+				'status' => true,
+			);
+		} else {
+			$result = array(
+				'status'         => false,
+				'status_header'  => 'Экспорт в CSV',
+				'status_message' => 'Ошибка при открытие потока данных',
+			);
+		}
+		return( $result );
+	}
+
+	function _http_csv( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( !is_array( $_data ) || empty( $_file_name ) ) {
+			$result = array(
+				'status'         => false,
+				'status_header'  => 'Экспорт в CSV',
+				'status_message' => 'Нет данных',
+			);
+			return( $result );
+		}
+		// start
+		ob_start();
+		$result = $this->_save_csv( 'php://output', $_data );
+		$csv = ob_get_clean();
+		if( empty( $result[ 'status' ] ) ) { return( $result ); }
+		if( !empty( $_debug ) ) { return( $csv ); }
+		header( 'Content-type: text/csv' );
+		header( 'Content-disposition: attachment; filename='. $_file_name );
+		echo $csv;
+		exit;
+	}
+
 	function _operation( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -413,6 +513,13 @@ class yf_manage_payout {
 			}
 		}
 		$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
+		$html_request_options_csv = $html->a( array(
+			'href'   => $this->_url( 'csv_request', array( '%operation_id' => $_operation_id ) ),
+			'icon'   => 'fa fa-file-excel-o',
+			'title'  => 'Опции запроса: экспорт в CSV файл',
+			'text'   => 'CSV файл',
+			'target' => '_blank',
+		));
 		// prepare view: response options
 		$content = null;
 		if( !empty( $_response ) ) {
@@ -459,10 +566,11 @@ class yf_manage_payout {
 		// render
 		$is_progressed = $_status[ 'name' ] != 'in_progress';
 		$replace = $operation + array(
-			'is_progressed' => $is_progressed,
-			'header_data'   => $html_operation_options,
-			'request_data'  => $html_request_options,
-			'response_data' => $html_response,
+			'is_progressed'    => $is_progressed,
+			'header_data'      => $html_operation_options,
+			'request_data'     => $html_request_options,
+			'request_data_csv' => $html_request_options_csv,
+			'response_data'    => $html_response,
 			'url' => array(
 				'list'           => $this->_url( 'list' ),
 				'view'           => $this->_url( 'view',           array( '%operation_id' => $_operation_id ) ),
