@@ -1,25 +1,14 @@
-<h1>{t(Site News)} ({total})</h1>
-
-<table align="center" width="100%">
-{if("items" ne "")}
+<div class="container-block news">
+	<h1>{t(Новости)}</h1>
 {foreach("items")}
-	<tr class="subtitle">
-		<td align="left">
-			{#.title} ({#.add_date})
-		</td>
-	</tr>
-	<tr>
-		<td align="left">
-			<p  class="text_main">{#.head_text} <a href="{#.full_link}">{t(Read more...)}</a></p>
-			<a href="{#.full_link}" class="btn btn-mini btn-xs">{t(Read entire article)}</a>&nbsp;
-			<a href="{#.full_link}" class="btn btn-mini btn-xs">{t(Comments)} ({#.num_comments})</a>&nbsp;
-			<br /><br />
-		</td>
-	</tr>
+	<div class="news_item">
+		<div class="news_item_date" title="{t(Время публикации новости)}">{#.add_date}</div>
+		<h3 class="news_item_title"><a href="{#.full_link}" title="{t(Читать дальше)}">{#.title}</a></h3>
+		<div class="news_item_content">{#.head_text}</div>
+		<div class="news_item_footer">
+			<a href="{#.full_link}" class="btn btn-default btn-mini btn-xs news_btn" title="{t(Читать дальше)}">{t(Читать дальше)}</a>
+			{if_ok(#.num_comments)}<span style="padding-left: 10px; padding-right:5px" title="{t(Комментариев)}"><i class="fa fa-comment-o"></i>&nbsp;{#.num_comments}</span>{/if}
+		</div>
+	</div>
 {/foreach}
-{/if}
-</table>
-{if("items" eq "")}<div align="center">{t(No active news found)}</div>{/if}
-{if("pages" ne "")}
-	<div align="center">{pages}</div>
-{/if}
+</div>

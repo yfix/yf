@@ -1,6 +1,37 @@
-<h1>{title} ({add_date})</h1>
-
-<p>{full_text}</p>
-
-<br />
-{comments}
+<div id="news_page" class="container-block news">
+	<div class="news_item_date" title="{t(Время публикации новости)}">{add_date}</div>
+	<h1 class="news_item_title">{title}</h1>
+	<div class="news_item_content">{head_text} {full_text}</div>
+	<div class="news_item_social">{social}</div>
+	<div class="news_item_comments" style="padding-bottom: 5px;">
+		<div class="comments block tab_block">
+			<div role="tabpanel">
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs " role="tablist">
+					<li role="presentation" class="active"><a href="#comments" aria-controls="comments" role="tab" data-toggle="tab"><span>{t(Комментарии)} ({num_comments})</span></a></li>
+				</ul>
+				<!-- Tab panes -->
+				<div class="tab-content">
+					<div role="tabpanel" class="tab-pane active" id="comments">
+						{if("is_logged_in" ne 0)}
+							{comments_form}
+						{/if}
+						<div class="row clearfix" style="">
+							<div class="col-md-12 column" data-test="comments">
+								{if("is_logged_in" eq 0)}
+									<div class="login-item" style="">
+										<a data-toggle="modal" class="" href="{url(login_form/login)}" id="login_link" data-target="#ajaxModal">{t(Войти)}</a>{t(, чтобы оставить комментарий)}
+									</div>
+								{/if}
+								{if('comments_block' ne '')}
+								{comments_block}
+								{/if}
+							</div>
+						</div>
+						<div style="clear:both;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
