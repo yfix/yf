@@ -126,7 +126,6 @@ class yf_manage_emails {
 		if (!$a) {
 			return _404();
 		}
-		$a = (array)$_POST + (array)$a;
 		$a['redirect_link'] = url('/@object/@action/@id');
 		$a['back_link'] = url('/@object');
 
@@ -136,7 +135,7 @@ class yf_manage_emails {
 		$parents = db()->from(self::table)->where('id != '.$a['id'])->order_by('name ASC, locale ASC')->get_2d('id, CONCAT(name," [", UPPER(locale),"]")');
 
 		$_this = $this;
-		return form($a, array(
+		return form((array)$_POST + (array)$a, array(
 				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
 			))
 			->validate(array(
