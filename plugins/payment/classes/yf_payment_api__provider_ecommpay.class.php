@@ -932,7 +932,7 @@ $payment_api->dump( array( 'var' => $result ));
 				$status_message = 'Неверный номер телефона ' . $request[ 'sender_phone' ];
 				break;
 			case 421:
-				$status_message = 'Неверный данные запроса';
+				$status_message = 'Неверные данные запроса';
 				break;
 			case 113:
 				$status_message = 'Выплата отключена';
