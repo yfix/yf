@@ -327,15 +327,13 @@ class yf_payment_api__provider_remote {
 			switch( $direction ) {
 				case 'out':
 					$is_payout = true;
-					$sql_sign  = '-';
 					$mail_tpl  = 'payment';
+					$sql_sign  = '-';
 					break;
 				case 'in':
 					$is_payin = true;
 					$mail_tpl = 'payout';
-				default:
 					$sql_sign = '+';
-					break;
 			}
 			if( $payment_status_id != $_payment_status_id && $_payment_status_name == 'success' ) {
 				// update account
