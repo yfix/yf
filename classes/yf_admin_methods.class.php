@@ -88,15 +88,18 @@ class yf_admin_methods {
 				}
 
 				$db->insert_safe($table, $sql);
-				$NEW_ID = $db->insert_id();
-				common()->admin_wall_add(array($_GET['object'].': added record into table '.$table, $NEW_ID));
+				$new_id = $db->insert_id();
+				if ($params['revisions']) {
+					module_safe('manage_revisions')->add($params['table'], $new_id, 'add');
+				}
+				common()->admin_wall_add(array($_GET['object'].': added record into table '.$table, $new_id));
 
 				if (is_callable($params['on_after_update'])) {
-					$params['on_after_update']($sql, $NEW_ID);
+					$params['on_after_update']($sql, $new_id);
 				}
 				$form_action = $params['form_action'] ?: url('/@object/@action/'. $params['links_add']);
-				if ($NEW_ID) {
-					$form_action .= '&id=' . $NEW_ID;
+				if ($new_id) {
+					$form_action .= '&id=' . $new_id;
 				}
 				$form_action = str_replace( array( 'add', '_add' ), array( 'edit', '_edit' ), $form_action );
 				return js_redirect( $form_action );
@@ -183,6 +186,16 @@ class yf_admin_methods {
 					$params['on_before_update']($sql);
 				}
 
+				if ($params['revisions']) {
+					module_safe('manage_revisions')->add(array(
+						'object_name'	=> $params['table'],
+						'object_id'		=> $id,
+						'old'			=> $a,
+						'new'			=> $_POST,
+						'action'		=> 'update',
+					));
+				}
+
 				$db->update_safe($table, $sql, '`'.$db->es($primary_field).'`="'.$db->es($id).'"');
 				common()->admin_wall_add(array($_GET['object'].': updated record in table '.$table, $id));
 
@@ -243,6 +256,16 @@ class yf_admin_methods {
 				$params['on_before_update']($fields);
 			}
 
+			if ($params['revisions']) {
+				$a = $db->get('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($id).'"');
+				module_safe('manage_revisions')->add(array(
+					'object_name'	=> $params['table'],
+					'object_id'		=> $id,
+					'old'			=> $a,
+					'action'		=> 'delete',
+				));
+			}
+
 			$db->query('DELETE FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($id).'" LIMIT 1');
 			common()->admin_wall_add(array($_GET['object'].': deleted record from table '.$table, $id));
 
@@ -287,6 +310,19 @@ class yf_admin_methods {
 			if (is_callable($params['on_before_update'])) {
 				$params['on_before_update']($info);
 			}
+
+			if ($params['revisions']) {
+				$n = $info;
+				$n['active'] = (int)!$info['active'];
+				module_safe('manage_revisions')->add(array(
+					'object_name'	=> $params['table'],
+					'object_id'		=> $id,
+					'old'			=> $info,
+					'new'			=> $n,
+					'action'		=> 'active',
+				));
+			}
+
 			$db->update_safe($table, array('active' => (int)!$info['active']), $db->es($primary_field).'="'.$db->es($id).'"');
 			common()->admin_wall_add(array($_GET['object'].': item in table '.$table.' '.($info['active'] ? 'inactivated' : 'activated'), $id));
 
@@ -336,6 +372,10 @@ class yf_admin_methods {
 
 			$db->insert_safe($table, $sql);
 			$new_id = $db->insert_id();
+
+			if ($params['revisions']) {
+				module_safe('manage_revisions')->add($params['table'], $new_id, 'add');
+			}
 
 			common()->admin_wall_add(array($_GET['object'].': item cloned in table '.$table, $new_id));
 

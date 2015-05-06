@@ -28,17 +28,23 @@ class yf_manage_tips {
 	/**
 	*/
 	function add() {
-		$a = (array)$_POST + (array)$a;
+		$a = array();
 		$a['back_link'] = url('/@object');
 		!$a['locale'] && $a['locale'] = conf('language');
-		return form($a)
+		$_this = $this;
+		return form((array)$_POST + (array)$a)
 			->validate(array(
 				'__before__'=> 'trim',
 				'name' => 'required',
 				'text' => 'required',
 				'locale' => 'required',
 			))
-			->db_insert_if_ok(self::table, array('name','text','active','locale'))
+			->insert_if_ok(self::table, array('name','text','active','locale'))
+			->on_after_update(function() use ($_this) {
+				$id = db()->insert_id();
+				module_safe('manage_revisions')->add($_this::table, $id, 'add');
+				js_redirect(url('/@object/edit/'.$id));
+			})
 			->text('name')
 			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
 			->locale_box('locale')
@@ -53,15 +59,24 @@ class yf_manage_tips {
 		if (!$a) {
 			return _404();
 		}
-		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url('/@object');
-		return form($a)
+		$_this = $this;
+		return form((array)$_POST + (array)$a)
 			->validate(array(
 				'__before__'=> 'trim',
 				'name' => 'required',
 				'text' => 'required',
 			))
-			->db_update_if_ok(self::table, array('name','text','active','locale'))
+			->update_if_ok(self::table, array('name','text','active','locale'))
+			->on_before_update(function() use ($a, $_this) {
+				module_safe('manage_revisions')->add(array(
+					'object_name'	=> $_this::table,
+					'object_id'		=> $a['id'],
+					'old'			=> $a,
+					'new'			=> $_POST,
+					'action'		=> 'update',
+				));
+			})
 			->container($this->_get_lang_links($a['locale'], $a['name'], 'edit'))
 			->text('name')
 			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
@@ -72,19 +87,19 @@ class yf_manage_tips {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => self::table));
+		return _class('admin_methods')->delete(array('table' => self::table, 'revisions' => true));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => self::table));
+		return _class('admin_methods')->active(array('table' => self::table, 'revisions' => true));
 	}
 
 	/**
 	*/
 	function clone_item() {
-		return _class('admin_methods')->clone_item(array('table' => self::table));
+		return _class('admin_methods')->clone_item(array('table' => self::table, 'revisions' => true));
 	}
 
 	/**

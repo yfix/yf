@@ -114,7 +114,9 @@ class yf_manage_emails {
 			'name' => date('YmdHis'),
 			'active' => 0,
 		));
-		return js_redirect(url('/@object/edit/'.db()->insert_id()));
+		$id = db()->insert_id();
+		module_safe('manage_revisions')->add(self::table, $id, 'add');
+		return js_redirect(url('/@object/edit/'.$id));
 	}
 
 	/**
@@ -124,7 +126,6 @@ class yf_manage_emails {
 		if (!$a) {
 			return _404();
 		}
-		$a = (array)$_POST + (array)$a;
 		$a['redirect_link'] = url('/@object/@action/@id');
 		$a['back_link'] = url('/@object');
 
@@ -134,7 +135,7 @@ class yf_manage_emails {
 		$parents = db()->from(self::table)->where('id != '.$a['id'])->order_by('name ASC, locale ASC')->get_2d('id, CONCAT(name," [", UPPER(locale),"]")');
 
 		$_this = $this;
-		return form($a, array(
+		return form((array)$_POST + (array)$a, array(
 				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
 			))
 			->validate(array(
@@ -143,7 +144,16 @@ class yf_manage_emails {
 				'subject'	=> 'required',
 				'text'		=> 'required',
 			))
-			->db_update_if_ok(self::table, array('name','subject','text','active','parent_id','locale'))
+			->update_if_ok(self::table, array('name','subject','text','active','parent_id','locale'))
+			->on_before_update(function() use ($a, $_this) {
+				module_safe('manage_revisions')->add(array(
+					'object_name'	=> $_this::table,
+					'object_id'		=> $a['id'],
+					'old'			=> $a,
+					'new'			=> $_POST,
+					'action'		=> 'update',
+				));
+			})
 			->on_after_update(function() use ($a) {
 				common()->admin_wall_add(array('Email template updated: '.$a['name'], $a['id']));
 			})
@@ -167,6 +177,13 @@ class yf_manage_emails {
 	function delete() {
 		$id = (int)$_GET['id'];
 		if ($id) {
+			$a = $this->_get_info();
+			module_safe('manage_revisions')->add(array(
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'action'		=> 'delete',
+			));
 			db()->delete(self::table, $id);
 			common()->admin_wall_add(array('Email temptate deleted: '.$id, $id));
 		}
@@ -183,6 +200,15 @@ class yf_manage_emails {
 	function active() {
 		$id = (int)$_GET['id'];
 		if ($a = $this->_get_info()) {
+			$n = $a;
+			$n['active'] = (int)!$a['active'];
+			module_safe('manage_revisions')->add(array(
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'new'			=> $n,
+				'action'		=> 'active',
+			));
 			db()->update_safe(self::table, array('active' => (int)!$a['active']), 'id='.intval($a['id']));
 			common()->admin_wall_add(array('Email template: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
 		}
