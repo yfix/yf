@@ -43,6 +43,7 @@ class yf_manage_tips {
 			->on_after_update(function() use ($_this) {
 				$id = db()->insert_id();
 				module_safe('manage_revisions')->add($_this::table, $id, 'add');
+				js_redirect(url('/@object/edit/'.$id));
 			})
 			->text('name')
 			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
@@ -59,6 +60,7 @@ class yf_manage_tips {
 			return _404();
 		}
 		$a['back_link'] = url('/@object');
+		$_this = $this;
 		return form((array)$_POST + (array)$a)
 			->validate(array(
 				'__before__'=> 'trim',
