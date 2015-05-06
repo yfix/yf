@@ -189,13 +189,13 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		// success, failure, wait_secure, sandbox
 		$state = $response[ 'status' ];
 		if( $this->TEST_MODE && $state == 'sandbox' ) { $state = 'success'; }
-		list( $payment_status_name, $status_message ) = $this->_state( $state );
+		list( $status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'       => 'liqpay',
-			'response'            => $response,
-			'payment_status_name' => $payment_status_name,
-			'status_message'      => $status_message,
+			'provider_name'  => 'liqpay',
+			'response'       => $response,
+			'status_name'    => $status_name,
+			'status_message' => $status_message,
 		));
 		return( $result );
 	}
@@ -271,13 +271,13 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		// success, failure, wait_secure, sandbox
 		$state = $response[ 'status' ];
 		if( $this->TEST_MODE && $state == 'sandbox' ) { $state = 'success'; }
-		list( $payment_status_name, $status_message ) = $this->_state( $state );
+		list( $status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'       => 'liqpay',
-			'response'            => $response,
-			'payment_status_name' => $payment_status_name,
-			'status_message'      => $status_message,
+			'provider_name'  => 'liqpay',
+			'response'       => $response,
+			'status_name'    => $status_name,
+			'status_message' => $status_message,
 		));
 		return( $result );
 	}

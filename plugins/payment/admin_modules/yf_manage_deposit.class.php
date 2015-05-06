@@ -554,8 +554,8 @@ EOS;
 				'title'        => $_operation[ 'title' ],
 				'comment'      => 'updated by admin: ' . main()->ADMIN_ID,
 			),
-			'payment_status_name' => $status,
-			'status_message'      => $_operation[ 'title' ],
+			'status_name'    => $status,
+			'status_message' => $_operation[ 'title' ],
 		));
 		if( empty( $result[ 'status' ] ) ) {
 			$result[ 'operation_id' ] = $_operation_id;

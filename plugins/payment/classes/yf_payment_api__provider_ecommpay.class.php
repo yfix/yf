@@ -580,7 +580,7 @@ $payment_api->dump(array( 'var' => $result ));
 		// check status
 		$state = $_response[ 'status_id' ];
 		$status = $this->_status_server;
-		list( $payment_status_name, $status_message ) = $this->_state( $state, $status );
+		list( $status_name, $status_message ) = $this->_state( $state, $status );
 		// deposition or payout
 		$state = $_response[ 'type_id' ];
 		$status = $this->_type_server;
@@ -594,10 +594,10 @@ $payment_api->dump( array( 'var' => 'type: ' . $state ));
 		// $_response[ 'amount' ] = $this->_amount( $_response[ 'amount' ], $_response[ 'currency' ], $is_request = false );
 		// update account, operation data
 		$operation_data = array(
-			'provider_name'       => 'ecommpay',
-			'response'            => $_response,
-			'payment_status_name' => $payment_status_name,
-			'status_message'      => $status_message,
+			'provider_name'  => 'ecommpay',
+			'response'       => $_response,
+			'status_name'    => $status_name,
+			'status_message' => $status_message,
 		);
 // DEBUG
 $payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));
@@ -932,7 +932,7 @@ $payment_api->dump( array( 'var' => $result ));
 				$status_message = 'Неверный номер телефона ' . $request[ 'sender_phone' ];
 				break;
 			case 421:
-				$status_message = 'Неверный данные запроса';
+				$status_message = 'Неверные данные запроса';
 				break;
 			case 113:
 				$status_message = 'Выплата отключена';

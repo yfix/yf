@@ -336,15 +336,15 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		}
 		// check status
 		$state = $response[ 'ik_inv_st' ];
-		list( $payment_status_name, $status_message ) = $this->_state( $state );
+		list( $status_name, $status_message ) = $this->_state( $state );
 		// test
 		// $response[ 'operation_id' ] = '3304';
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'       => 'interkassa',
-			'response'            => $response,
-			'payment_status_name' => $payment_status_name,
-			'status_message'      => $status_message,
+			'provider_name'  => 'interkassa',
+			'response'       => $response,
+			'status_name'    => $status_name,
+			'status_message' => $status_message,
 		));
 		return( $result );
 	}

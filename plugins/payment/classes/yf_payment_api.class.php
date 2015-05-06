@@ -168,6 +168,10 @@ class yf_payment_api {
 	public $OPERATION_LIMIT     = 10;
 	public $BALANCE_LIMIT_LOWER = 0;
 
+	public $MAIL_COPY_TO = array(
+		'larv.job+payment@gmail.com',
+	);
+
 	public function _init() {
 		$this->config();
 		$this->user_id_default = (int)main()->USER_ID;
@@ -1167,8 +1171,12 @@ class yf_payment_api {
 			'url'  => $url,
 			'mail' => $mail,
 		));
-		_class( 'email' )->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
-		if( !empty( $_admin ) ) {
+		$is_admin = !empty( $_is_admin );
+		$admin    = !empty( $admin     );
+		if( !$is_admin ) {
+			$mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
+		}
+		if( $admin || $is_admin ) {
 			$url = array(
 				'user_manage' => $this->url_admin( array(
 					'object' => 'members',
@@ -1186,7 +1194,17 @@ class yf_payment_api {
 				'url'        => $url,
 				'user_title' => $user[ 'name' ] . ' (id: '. $_user_id .')'
 			));
-			_class( 'email' )->_send_email_safe( $mail_admin_to, $mail_admin_name, $_tpl . '_admin', $data );
+			$tpl = $_tpl . '_admin';
+			$mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
+			// mail copy to
+			if( is_array( $this->MAIL_COPY_TO ) ) {
+				$override = array();
+				$_subject && $override[ 'subject' ] = $_subject;
+				$name = 'Payment admin';
+				foreach( $this->MAIL_COPY_TO as $mail ) {
+					$mail_class->_send_email_safe( $mail, $name, $tpl, $data, $override );
+				}
+			}
 		}
 	}
 
