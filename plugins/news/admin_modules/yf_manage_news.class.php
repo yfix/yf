@@ -58,11 +58,10 @@ class yf_manage_news {
 		if (!$a) {
 			return _404();
 		}
-		$a = (array)$_POST + (array)$a;
 		$a['redirect_link'] = url('/@object/@action/@id');
 		$a['back_link'] = url('/@object');
 		$_this = $this;
-		return form($a)
+		return form((array)$_POST + (array)$a)
 			->validate(array(
 				'__before__'=> 'trim',
 				'title'		=> 'required',
