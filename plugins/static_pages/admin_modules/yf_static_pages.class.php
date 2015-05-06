@@ -78,12 +78,7 @@ class yf_static_pages {
 		if (!$a) {
 			return _404();
 		}
-		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url('/@object');
-		// Prevent execution of template tags when editing page content
-		if (false !== strpos($a['text'], '{') && false !== strpos($a['text'], '}')) {
-			$a['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $a['text']);
-		}
 		$form_id = 'content_form';
 		jquery('
 			var form_id = "'.$form_id.'";
@@ -96,8 +91,15 @@ class yf_static_pages {
 				$(this).closest("form").attr("target", "").attr("action", bak_action)
 			})
 		');
+		// Prevent execution of template tags when editing page content
+		if (false !== strpos($a['text'], '{') && false !== strpos($a['text'], '}')) {
+			$a['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $a['text']);
+		}
+		if (is_post() && false !== strpos($_POST['text'], '{') && false !== strpos($_POST['text'], '}')) {
+			$_POST['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $_POST['text']);
+		}
 		$_this = $this;
-		return form($a, array('hide_empty' => true, 'id' => $form_id))
+		return form((array)$_POST + (array)$a, array('hide_empty' => true, 'id' => $form_id))
 			->validate(array(
 				'__before__'=> 'trim',
 				'name' => array('required', function(&$in) use ($_this) {
