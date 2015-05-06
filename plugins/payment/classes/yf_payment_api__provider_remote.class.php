@@ -16,8 +16,11 @@ class yf_payment_api__provider_remote {
 
 	public $API_SSL_VERIFY = true;
 
-	public $IS_DEPOSITION = null;
-	public $IS_PAYMENT    = null;
+	public $IS_DEPOSITION    = null;
+	public $IS_PAYMENT       = null;
+
+	public $IS_PAYIN_MANUAL  = null;
+	public $IS_PAYOUT_MANUAL = null;
 
 	public $service_allow = null;
 	public $description   = null;
@@ -233,14 +236,6 @@ class yf_payment_api__provider_remote {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// vars
 		$payment_api = $this->payment_api;
-		// get success status
-		$object = $payment_api->get_status( array( 'name' => 'success' ) );
-		list( $payment_status_success_id, $payment_success_status ) = $object;
-		if( empty( $payment_status_success_id ) ) { return( $object ); }
-		// get currency status
-		$object = $payment_api->get_status( array( 'name' => $_payment_status_name ) );
-		list( $_payment_status_id, $payment_status ) = $object;
-		if( empty( $_payment_status_id ) ) { return( $object ); }
 		// get operation options
 		$operation_id = (int)$_response[ 'operation_id' ];
 		if( empty( $operation_id ) ) {
@@ -283,6 +278,14 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
+		// get success status
+		$object = $payment_api->get_status( array( 'name' => 'success' ) );
+		list( $payment_status_success_id, $payment_success_status ) = $object;
+		if( empty( $payment_status_success_id ) ) { return( $object ); }
+		// get currency status
+		$object = $payment_api->get_status( array( 'name' => $_payment_status_name ) );
+		list( $_payment_status_id, $payment_status ) = $object;
+		if( empty( $_payment_status_id ) ) { return( $object ); }
 		// check provider
 		$object = $payment_api->provider( array(
 			'is_service'  => true,
