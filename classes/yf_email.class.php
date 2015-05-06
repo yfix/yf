@@ -36,6 +36,7 @@ class yf_email {
 	/** @var */
 	public $SMTP_CONFIG_ALTERNATE = array(
 	);
+	public $FORCE_SEND = false;
 
 	/**
 	* Catch missing method call
@@ -107,7 +108,11 @@ class yf_email {
 	* send_email_from_admin
 	*/
 	function _send_email_safe($email_to, $name_to, $template_name, $data = array(), $instant_send = true, $override = array()) {
-		if (defined('TEST_MODE') && TEST_MODE && !$override['force_send']) {
+		$is_test = ( defined( 'TEST_MODE' ) && TEST_MODE )
+			&& empty( $override[ 'force_send' ] )
+			&& empty( $this->FORCE_SEND )
+		;
+		if ($is_test) {
 			common()->message_error('Test mode enabled. Email real sending is disabled');
 			return false;
 		}
