@@ -62,13 +62,18 @@ class yf_manage_faq {
 		}
 		$a['parent_name'] = $parent ? $parent['title'] : '';
 		$a['back_link'] = url('/@object');
+		$_this = $this;
 		return form((array)$_POST + (array)$a)
 			->validate(array(
 				'title' => 'trim|required',
 				'text' => 'trim',
 			))
 			->db_insert_if_ok(self::table, array('title','text','parent_id','active','locale'), array('add_date' => time(), 'author_id' => main()->ADMIN_ID))
-			->on_after_update(function(){ js_redirect(url('/@object')); })
+			->on_after_update(function() use ($_this) {
+				$id = db()->insert_id();
+				module_safe('manage_revisions')->add($_this::table, $id, 'add');
+				js_redirect(url('/@object'));
+			})
 			->hidden('parent_id')
 			->hidden('locale')
 			->info_lang('locale')
@@ -91,12 +96,22 @@ class yf_manage_faq {
 		}
 		$a['parent_name'] = $a['parent_id'] ? db()->select('title')->from(self::table)->whereid($a['parent_id'])->get_one() : '';
 		$a['back_link'] = url('/@object');
+		$_this = $this;
 		return form((array)$_POST + (array)$a)
 			->validate(array(
 				'title' => 'trim|required',
 				'text' => 'trim',
 			))
 			->update_if_ok(self::table, array('title','text','active','locale'))
+			->on_before_update(function() use ($a, $_this) {
+				module_safe('manage_revisions')->add(array(
+					'object_name'	=> $_this::table,
+					'object_id'		=> $a['id'],
+					'old'			=> $a,
+					'new'			=> $_POST,
+					'action'		=> 'update',
+				));
+			})
 			->on_after_update(function(){ js_redirect(url('/@object')); })
 			->hidden('parent_id')
 			->info_lang('locale')
@@ -113,6 +128,13 @@ class yf_manage_faq {
 	function delete() {
 		$id = (int)$_GET['id'];
 		if ($id) {
+			$a = db()->from(self::table)->whereid($id)->get();
+			module_safe('manage_revisions')->add(array(
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'action'		=> 'delete',
+			));
 			db()->delete(self::table, $id);
 		}
 		if (is_ajax()) {
@@ -131,6 +153,15 @@ class yf_manage_faq {
 			$a = db()->from(self::table)->whereid($id)->get();
 		}
 		if ($a) {
+			$n = $a;
+			$n['active'] = (int)!$a['active'];
+			module_safe('manage_revisions')->add(array(
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'new'			=> $n,
+				'action'		=> 'active',
+			));
 			db()->update_safe(self::table, array('active' => (int)!$a['active']), $id);
 		}
 		if (is_ajax()) {
