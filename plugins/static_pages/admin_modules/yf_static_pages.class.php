@@ -113,12 +113,13 @@ class yf_static_pages {
 				'text' => 'required',
 			))
 			->update_if_ok(self::table, array('name','text','page_title','page_heading','meta_keywords','meta_desc','active'), 'id='.$a['id'])
-			->on_before_update(function() use ($a) {
+			->on_before_update(function() use ($a, $_this) {
 				module_safe('manage_revisions')->add(array(
-					'object_id' => $a['id'],
-					'old'		=> $a,
-					'new'		=> $_POST,
-					'action'	=> 'update',
+					'object_name'	=> $_this::table,
+					'object_id'		=> $a['id'],
+					'old'			=> $a,
+					'new'			=> $_POST,
+					'action'		=> 'update',
 				));
 			})
 			->on_after_update(function() {
@@ -144,9 +145,10 @@ class yf_static_pages {
 		$a = $this->_get_info();
 		if ($a) {
 			module_safe('manage_revisions')->add(array(
-				'object_id' => $a['id'],
-				'old'		=> $a,
-				'action'	=> 'delete',
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'action'		=> 'delete',
 			));
 			db()->from(self::table)->whereid($a['id'])->delete();
 			common()->admin_wall_add(array('static page deleted: '.$a['id'], $a['id']));
@@ -168,10 +170,11 @@ class yf_static_pages {
 			$n = $a;
 			$n['active'] = (int)!$a['active'];
 			module_safe('manage_revisions')->add(array(
-				'object_id' => $a['id'],
-				'old'		=> $a,
-				'new'		=> $n,
-				'action'	=> 'active',
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'new'			=> $n,
+				'action'		=> 'active',
 			));
 			db()->update(self::table, array('active' => (int)!$a['active']), (int)$a['id']);
 			common()->admin_wall_add(array('static page: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
