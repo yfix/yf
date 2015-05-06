@@ -236,7 +236,7 @@ class yf_payment_api__provider_remote {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// vars
 		$payment_api = $this->payment_api;
-		// get operation options
+		// response operation id
 		$operation_id = (int)$_response[ 'operation_id' ];
 		if( empty( $operation_id ) ) {
 			$result = array(
@@ -245,6 +245,7 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
+		// exists operation
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
 		));
@@ -256,21 +257,23 @@ class yf_payment_api__provider_remote {
 			return( $result );
 		}
 		$operation_options = $operation[ 'options' ];
-		// check operation options
-		if( empty( $operation_options[ 'request' ] ) ) {
+		// operation request options
+		if( !is_array( $operation_options[ 'request' ] ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Отсутствуют опции операции',
 			);
 			return( $result );
 		}
+		// request data
 		$request = reset( $operation_options[ 'request' ] );
-		$operation_data = $request[ 'data' ];
-			$_operation_id = (int)$operation[ 'operation_id' ];
-			$account_id    = (int)$operation[ 'account_id'   ];
-			$provider_id   = (int)$operation[ 'provider_id'  ];
-			$amount        = $payment_api->_number_float( $operation[ 'amount' ] );
-		// check operation_id
+		$request_data = $request[ 'data' ];
+		// operation options
+		$_operation_id = (int)$operation[ 'operation_id' ];
+		$account_id    = (int)$operation[ 'account_id'   ];
+		$provider_id   = (int)$operation[ 'provider_id'  ];
+		$amount        = $payment_api->_number_float( $operation[ 'amount' ] );
+		// check request/response operation_id
 		if( $operation_id != $_operation_id ) {
 			$result = array(
 				'status'         => false,
@@ -278,15 +281,15 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
-		// get success status
-		$object = $payment_api->get_status( array( 'name' => 'success' ) );
-		list( $payment_status_success_id, $payment_success_status ) = $object;
-		if( empty( $payment_status_success_id ) ) { return( $object ); }
-		// get currency status
-		$object = $payment_api->get_status( array( 'name' => $_payment_status_name ) );
-		list( $_payment_status_id, $payment_status ) = $object;
-		if( empty( $_payment_status_id ) ) { return( $object ); }
-		// check provider
+		// get in_progress status
+		$object = $payment_api->get_status( array( 'name' => 'in_progress' ) );
+		list( $payment_status_in_progress_id, $payment_in_progress_status ) = $object;
+		if( empty( $payment_status_in_progress_id ) ) { return( $object ); }
+		// get current status
+		$object = $payment_api->get_status( array( 'name' => $_status_name ) );
+		list( $_status_id, $_status ) = $object;
+		if( empty( $_status_id ) ) { return( $object ); }
+		// check request provider
 		$object = $payment_api->provider( array(
 			'is_service'  => true,
 			'provider_id' => $provider_id,
@@ -300,6 +303,7 @@ class yf_payment_api__provider_remote {
 		}
 		$provider      = reset( $object );
 		$provider_name = $provider[ 'name' ];
+		// check request/response provider
 		if( $provider_name != $_provider_name ) {
 			$result = array(
 				'status'         => false,
@@ -317,91 +321,140 @@ class yf_payment_api__provider_remote {
 			return( $result );
 		}
 		list( $account_id, $account ) = $object;
-		// update
+		// sql options
 		$sql_amount   = $payment_api->_number_mysql( $amount );
 		$sql_datetime = $payment_api->sql_datetime();
 		$balance      = null;
-		$payment_status_id = (int)$operation[ 'status_id' ];
-		if( $payment_status_success_id != $payment_status_id ) {
+		$current_status_id = (int)$operation[ 'status_id' ];
+		// start update
+		if( $payment_status_in_progress_id == $current_status_id ) {
 			db()->begin();
 			$direction = $operation[ 'direction' ];
+			$is_manual = null;
 			$is_payin  = null;
 			$is_payout = null;
+			$is_update = null;
 			switch( $direction ) {
 				case 'out':
 					$is_payout = true;
+					$is_manual = $this->IS_PAYOUT_MANUAL;
+					// revert amount
+					if( !$is_manual && $_status_name == 'refused' ) {
+						$is_update = true;
+						$sql_sign  = '+';
+					}
 					$mail_tpl  = 'payment';
-					$sql_sign  = '-';
 					break;
 				case 'in':
-					$is_payin = true;
-					$mail_tpl = 'payout';
-					$sql_sign = '+';
-			}
-			if( $payment_status_id != $_payment_status_id && $_payment_status_name == 'success' ) {
-				// update account
-				if( $is_payin ) {
-					$_data = array(
-						'account_id'      => $account_id,
-						'datetime_update' => db()->escape_val( $sql_datetime ),
-						'balance'         => "( balance $sql_sign $sql_amount )",
-					);
-					$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
-					if( !$_result[ 'status' ] ) {
-						db()->rollback();
-						$result = array(
-							'status'         => false,
-							'status_message' => 'Ошибка при обновлении счета',
-						);
-						return( $result );
+					$is_payin  = true;
+					$is_manual = $this->IS_PAYIN_MANUAL;
+					// add amount
+					if( !$is_manual && $_status_name == 'success' ) {
+						$is_update = true;
+						$sql_sign  = '+';
 					}
+					$mail_tpl  = 'payout';
+					break;
+			}
+			// update account balance
+			if( $is_update && $current_status_id != $_status_id ) {
+				// update account
+				$_data = array(
+					'account_id'      => $account_id,
+					'datetime_update' => db()->escape_val( $sql_datetime ),
+					'balance'         => "( balance $sql_sign $sql_amount )",
+				);
+				$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
+				if( !$_result[ 'status' ] ) {
+					db()->rollback();
+					$result = array(
+						'status'         => false,
+						'status_message' => 'Ошибка при обновлении счета',
+					);
+					// mail admin
+					$tpl = $mail_tpl . '_refused';
+					$payment_api->mail( array(
+						'subject'  => 'DB error: payment account update error, id operation: '. $account_id,
+						'tpl'      => $tpl,
+						'user_id'  => $account[ 'user_id' ],
+						'is_admin' => true,
+						'data'    => array(
+							'operation_id' => $operation_id,
+							'amount'       => $amount,
+						),
+					));
+					return( $result );
 				}
+				// mail
+				$tpl = $mail_tpl . '_'. $_status_name;
+				$payment_api->mail( array(
+					'tpl'     => $tpl,
+					'user_id' => $account[ 'user_id' ],
+					'admin'   => true,
+					'data'    => array(
+						'operation_id' => $operation_id,
+						'amount'       => $amount,
+					),
+				));
 				// get balance
 				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
 				list( $account_id, $account ) = $object;
 				$balance = $account[ 'balance' ];
 			}
-			// update operation
-			$data = array(
-				'response' => array( array(
-					'data'     => $_response,
-					'datetime' => $sql_datetime,
-				))
-			);
-			$data = array(
-				'operation_id'    => $operation_id,
-				'status_id'       => $_payment_status_id,
-				'datetime_update' => $sql_datetime,
-				'options'         => $data,
-			);
-			$balance && ( $data += array(
-				'balance'         => $balance,
-				'datetime_finish' => $sql_datetime,
-			));
-			// save options
-			$result = $payment_api->operation_update( $data );
-			// mail
-			$mail_tpl .= '_'. empty( $result[ 'status' ] ) ? 'refused' : 'success';
-			$payment_api->mail( array(
-				'tpl'     => $mail_tpl,
-				'user_id' => $account[ 'user_id' ],
-				'admin'   => true,
-				'data'    => array(
-					'operation_id' => $operation_id,
-					'amount'       => $amount,
-				),
-			));
-			// sql translation
-			if( !$result[ 'status' ] ) {
-				db()->rollback();
-				return( $result );
+			if( $is_update ) {
+				// update operation
+				$data = array(
+					'response' => array( array(
+						'data'     => $_response,
+						'datetime' => $sql_datetime,
+					))
+				);
+				$data = array(
+					'operation_id'    => $operation_id,
+					'status_id'       => $_status_id,
+					'datetime_update' => $sql_datetime,
+					'options'         => $data,
+				);
+				$balance && ( $data += array(
+					'balance'         => $balance,
+					'datetime_finish' => $sql_datetime,
+				));
+				$result = $payment_api->operation_update( $data );
+				if( !$result[ 'status' ] ) {
+					db()->rollback();
+					// mail admin
+					$tpl = $mail_tpl . '_refused';
+					$payment_api->mail( array(
+						'subject'  => 'DB error: payment operation update error, id operation: '. $operation_id,
+						'tpl'      => $tpl,
+						'user_id'  => $account[ 'user_id' ],
+						'is_admin' => true,
+						'data'    => array(
+							'operation_id' => $operation_id,
+							'amount'       => $amount,
+						),
+					));
+					return( $result );
+				}
 			}
 			db()->commit();
 			$status_message = $_status_message;
 		} else {
 			$status_message = 'Выполнено повторно: ';
+			// mail admin
+			$tpl = $mail_tpl . '_success';
+			$payment_api->mail( array(
+				'subject'  => 'Payment operation notification again, id operation: '. $operation_id,
+				'tpl'      => $tpl,
+				'user_id'  => $account[ 'user_id' ],
+				'is_admin' => true,
+				'data'    => array(
+					'operation_id' => $operation_id,
+					'amount'       => $amount,
+				),
+			));
 		}
-		$status_message .= $_response[ 'title' ] . ', сумма: ' . $amount;
+		$status_message .= $operation[ 'title' ] . ', сумма: ' . $amount;
 		if( !empty( $payment_api->currency[ 'short' ] ) ) {
 			$status_message .= ' ' . $payment_api->currency[ 'short' ];
 		}
