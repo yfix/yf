@@ -352,6 +352,7 @@ class yf_manage_payout {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
+		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );
 		// check operation
 		$operation_id = isset( $_operation_id ) ? $_operation_id : (int)$_GET[ 'operation_id' ];
@@ -428,6 +429,7 @@ class yf_manage_payout {
 		}
 		$method_id = $request[ 'options' ][ 'method_id' ];
 		$method    = $provider_class->api_method_payout( $method_id );
+		$html_method = $method[ 'title' ];
 		// check operation status
 		$statuses = $payment_api->get_status();
 		if( empty( $statuses[ $o_status_id ] ) ) {
@@ -469,6 +471,7 @@ class yf_manage_payout {
 			'request'              => &$request,
 			'method_id'            => &$method_id,
 			'method'               => &$method,
+			'html_method'          => &$html_method,
 			'response'             => &$response,
 			'html_amount'          => &$html_amount,
 			'html_datetime_start'  => &$html_datetime_start,
@@ -549,6 +552,7 @@ class yf_manage_payout {
 		));
 		$content = array(
 			'Пользователь'    => $user_link . $balance_link,
+			'Метод'           => $_html_method,
 			'Сумма'           => $_html_amount,
 			'Статус'          => $_status[ 'title' ],
 			'Дата создания'   => $_html_datetime_start,

@@ -103,6 +103,9 @@ class yf_payment_api__provider_remote {
 		} else {
 			$result = &$this->URL_API;
 		}
+		if( is_array( $_uri ) ) {
+			$result = str_replace( array_keys( $_uri ), array_values( $_uri ), $result );
+		}
 		return( $result );
 	}
 
@@ -185,21 +188,11 @@ class yf_payment_api__provider_remote {
 			return( $result );
 		}
 		switch( $http_code ) {
-			case 200:
-				$status = true;
-				break;
-			case 400:
-				$message = 'неверный запрос';
-				break;
-			case 401:
-				$message = 'неавторизован';
-				break;
-			case 403:
-				$message = 'доступ ограничен';
-				break;
-			case 404:
-				$message = 'неверный адрес';
-				break;
+			case 200: $status = true;                break;
+			case 400: $message = 'неверный запрос';  break;
+			case 401: $message = 'неавторизован';    break;
+			case 403: $message = 'доступ ограничен'; break;
+			case 404: $message = 'неверный адрес';   break;
 			default:
 				if( $http_code >= 500 ) {
 					$message = 'ошибка сервера';

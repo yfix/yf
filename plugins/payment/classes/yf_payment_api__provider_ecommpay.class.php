@@ -12,8 +12,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	// public $IS_DEPOSITION = true;
 	// public $IS_PAYMENT    = true;
 
-	public $URL_API          = 'https://gate.ecommpay.com/card/json/';
-	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/card/json/';
+	public $URL_API          = 'https://gate.ecommpay.com/%method/json/';
+	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/%method/json/';
 
 	public $method_allow = array(
 		'order' => array(
@@ -25,7 +25,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'comepay',
 			),
 			'payout' => array(
-				'pay_card'
+				'pay_card',
+				'qiwi',
 			),
 		),
 		'payin' => array(
@@ -112,11 +113,14 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		),
 		'payout' => array(
 			'pay_card' => array(
-				'title'       => 'Visa, MasterCard',
-				'icon'        => 'visa-mastercard',
-				'action'      => 'payout',
-				'amount_min'  => 100,
-				'fee'         => 0, // 0.1%
+				'title'      => 'card: Visa, MasterCard',
+				'icon'       => 'visa-mastercard',
+				'uri'        => array(
+					'%method' => 'card',
+				),
+				'action'     => 'payout',
+				'amount_min' => 100,
+				'fee'        => 0, // 0.1%
 				'currency' => array(
 					'RUB' => array(
 						'currency_id' => 'RUB',
@@ -157,6 +161,35 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_address'             => 'Адрес',
 					'sender_city'                => 'Город',
 					'sender_postindex'           => 'Почтовый индекс',
+				),
+			),
+			'qiwi' => array(
+				'title'      => 'Qiwi',
+				'icon'       => 'qiwi',
+				'uri'        => array(
+					'%method' => 'qiwi',
+				),
+				'action'     => 'qiwi_payout',
+				'amount_min' => 100,
+				'fee'        => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+				'field' => array(
+					'action',
+					'site_id',
+					'amount',
+					'currency',
+					'external_id',
+					// 'customer_ip',
+					'comment',
+					'account_number',
+				),
+				'option' => array(
+					'account_number' => 'Кошелек',
 				),
 			),
 		),
@@ -847,7 +880,7 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 // var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
 		// request
-		$url  = $this->api_url( $options );
+		$url  = $this->api_url( $method_option );
 		$data = http_build_query( $request );
 		$result = $this->_api_request( $url, $data );
 // DEBUG
