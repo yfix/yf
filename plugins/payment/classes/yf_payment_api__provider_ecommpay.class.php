@@ -113,7 +113,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		),
 		'payout' => array(
 			'pay_card' => array(
-				'title'      => 'card: Visa, MasterCard',
+				'title'      => 'Visa, MasterCard',
 				'icon'       => 'visa-mastercard',
 				'uri'        => array(
 					'%method' => 'card',
