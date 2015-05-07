@@ -234,6 +234,8 @@ class yf_payment_api__provider_remote {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+// DEBUG
+// $payment_api->dump(array( 'var' => $options ));
 		// vars
 		$payment_api = $this->payment_api;
 		// response operation id
@@ -281,14 +283,11 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
-		// get in_progress status
-		$object = $payment_api->get_status( array( 'name' => 'in_progress' ) );
-		list( $payment_status_in_progress_id, $payment_in_progress_status ) = $object;
-		if( empty( $payment_status_in_progress_id ) ) { return( $object ); }
 		// get current status
-		$object = $payment_api->get_status( array( 'name' => $_status_name ) );
-		list( $_status_id, $_status ) = $object;
-		if( empty( $_status_id ) ) { return( $object ); }
+		$new_status_name = $_status_name;
+		$object = $payment_api->get_status( array( 'name' => $new_status_name ) );
+		list( $new_status_id, $new_status ) = $object;
+		if( empty( $new_status_id ) ) { return( $object ); }
 		// check request provider
 		$object = $payment_api->provider( array(
 			'is_service'  => true,
@@ -325,9 +324,19 @@ class yf_payment_api__provider_remote {
 		$sql_amount   = $payment_api->_number_mysql( $amount );
 		$sql_datetime = $payment_api->sql_datetime();
 		$balance      = null;
+		// get current status_name
 		$current_status_id = (int)$operation[ 'status_id' ];
+		$object = $payment_api->get_status( array( 'status_id' => $current_status_id ) );
+		list( $current_status_id, $current_status ) = $object;
+		if( empty( $current_status_id ) ) { return( $object ); }
+		$current_status_name = $current_status[ 'name' ];
 		// start update
-		if( $payment_status_in_progress_id == $current_status_id ) {
+		$is_try =
+			( $_payment_type == 'payment'    && $current_status_id == 'in_progress' )
+			||
+			( $_payment_type == 'deposition' && $current_status_id != 'success' )
+		;
+		if( $is_try ) {
 			db()->begin();
 			$direction = $operation[ 'direction' ];
 			$is_manual = null;
@@ -335,27 +344,27 @@ class yf_payment_api__provider_remote {
 			$is_payout = null;
 			$is_update_balance = null;
 			$is_update_status  = null;
-			switch( $direction ) {
-				case 'out':
+			switch( $_payment_type ) {
+				case 'payment':
 					$is_payout = true;
 					$is_manual = $this->IS_PAYOUT_MANUAL;
 					// revert amount
 					if( !$is_manual ) {
 						$is_update_status = true;
-						if( $_status_name == 'refused' ) {
+						if( $new_status_name == 'refused' ) {
 							$is_update_balance = true;
 							$sql_sign  = '+';
 						}
 					}
 					$mail_tpl  = 'payment';
 					break;
-				case 'in':
+				case 'deposition':
 					$is_payin  = true;
 					$is_manual = $this->IS_PAYIN_MANUAL;
 					// add amount
 					if( !$is_manual ) {
 						$is_update_status = true;
-						if( $_status_name == 'success' ) {
+						if( $new_status_name == 'success' ) {
 							$is_update_balance = true;
 							$sql_sign  = '+';
 						}
@@ -364,7 +373,7 @@ class yf_payment_api__provider_remote {
 					break;
 			}
 			// update account balance
-			if( $is_update_balance && $current_status_id != $_status_id ) {
+			if( $is_update_balance && $current_status_id != $new_status_id ) {
 				// update account
 				$_data = array(
 					'account_id'      => $account_id,
@@ -393,7 +402,7 @@ class yf_payment_api__provider_remote {
 					return( $result );
 				}
 				// mail
-				$tpl = $mail_tpl . '_'. $_status_name;
+				$tpl = $mail_tpl . '_'. $new_status_name;
 				$payment_api->mail( array(
 					'tpl'     => $tpl,
 					'user_id' => $account[ 'user_id' ],
@@ -403,12 +412,12 @@ class yf_payment_api__provider_remote {
 						'amount'       => $amount,
 					),
 				));
+			}
+			if( $is_update_status ) {
 				// get balance
 				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
 				list( $account_id, $account ) = $object;
 				$balance = $account[ 'balance' ];
-			}
-			if( $is_update_status ) {
 				// update operation
 				$data = array(
 					'response' => array( array(
@@ -418,7 +427,7 @@ class yf_payment_api__provider_remote {
 				);
 				$data = array(
 					'operation_id'    => $operation_id,
-					'status_id'       => $_status_id,
+					'status_id'       => $new_status_id,
 					'datetime_update' => $sql_datetime,
 					'options'         => $data,
 				);
