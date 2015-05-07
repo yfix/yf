@@ -336,6 +336,12 @@ $payment_api->dump(array( 'var' => $options ));
 			||
 			( $_payment_type == 'deposition' && $current_status_name != 'success' )
 		;
+// DEBUG
+$payment_api->dump(array( 'var' => array(
+	'is_try'              => $is_try,
+	'payment type'        => $_payment_type,
+	'current_status_name' => $current_status_name,
+)));
 		if( $is_try ) {
 			db()->begin();
 			$direction = $operation[ 'direction' ];
