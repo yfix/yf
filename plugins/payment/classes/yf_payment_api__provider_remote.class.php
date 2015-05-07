@@ -235,7 +235,9 @@ class yf_payment_api__provider_remote {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 // DEBUG
-$payment_api->dump(array( 'var' => $options ));
+$payment_api->dump(array( 'var' => array(
+	'transaction' => $options,
+)));
 		// vars
 		$payment_api = $this->payment_api;
 		// response operation id
@@ -245,6 +247,8 @@ $payment_api->dump(array( 'var' => $options ));
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
 			);
+// DEBUG
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// exists operation
@@ -256,6 +260,8 @@ $payment_api->dump(array( 'var' => $options ));
 				'status'         => false,
 				'status_message' => 'Операция отсутствует: ' . $operation_id,
 			);
+// DEBUG
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		$operation_options = $operation[ 'options' ];
@@ -265,6 +271,8 @@ $payment_api->dump(array( 'var' => $options ));
 				'status'         => false,
 				'status_message' => 'Отсутствуют опции операции',
 			);
+// DEBUG
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// request data
@@ -281,10 +289,13 @@ $payment_api->dump(array( 'var' => $options ));
 				'status'         => false,
 				'status_message' => 'Неверный код операции',
 			);
+// DEBUG
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// get current status
 		$new_status_name = $_status_name;
+// DEBUG
 $payment_api->dump(array( 'var' => array(
 	'new_status_name' => $new_status_name,
 )));
