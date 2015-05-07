@@ -285,6 +285,9 @@ $payment_api->dump(array( 'var' => $options ));
 		}
 		// get current status
 		$new_status_name = $_status_name;
+$payment_api->dump(array( 'var' => array(
+	'new_status_name' => $new_status_name,
+)));
 		$object = $payment_api->get_status( array( 'name' => $new_status_name ) );
 		list( $new_status_id, $new_status ) = $object;
 		if( empty( $new_status_id ) ) { return( $object ); }
@@ -326,6 +329,10 @@ $payment_api->dump(array( 'var' => $options ));
 		$balance      = null;
 		// get current status_name
 		$current_status_id = (int)$operation[ 'status_id' ];
+// DEBUG
+$payment_api->dump(array( 'var' => array(
+	'current_status_id' => $current_status_id,
+)));
 		$object = $payment_api->get_status( array( 'status_id' => $current_status_id ) );
 		list( $current_status_id, $current_status ) = $object;
 		if( empty( $current_status_id ) ) { return( $object ); }
