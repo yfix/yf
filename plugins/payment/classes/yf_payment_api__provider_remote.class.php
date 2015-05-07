@@ -332,9 +332,9 @@ class yf_payment_api__provider_remote {
 		$current_status_name = $current_status[ 'name' ];
 		// start update
 		$is_try =
-			( $_payment_type == 'payment'    && $current_status_id == 'in_progress' )
+			( $_payment_type == 'payment'    && $current_status_name == 'in_progress' )
 			||
-			( $_payment_type == 'deposition' && $current_status_id != 'success' )
+			( $_payment_type == 'deposition' && $current_status_name != 'success' )
 		;
 		if( $is_try ) {
 			db()->begin();
