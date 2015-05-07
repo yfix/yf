@@ -355,7 +355,7 @@ class yf_payment_api__provider_remote {
 					// add amount
 					if( !$is_manual ) {
 						$is_update_status = true;
-						if( $_status_name == 'refused' ) {
+						if( $_status_name == 'success' ) {
 							$is_update_balance = true;
 							$sql_sign  = '+';
 						}
