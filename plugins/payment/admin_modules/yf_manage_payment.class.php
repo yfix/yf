@@ -346,6 +346,12 @@ class yf_manage_payment {
 					'order_direction' => 'desc',
 				);
 			}
+			// prepare provider
+			$providers = $payment_api->provider( array(
+				'all' => true,
+			));
+			// prepare status
+			$status = $payment_api->status();
 			$table = table( $sql, array(
 					'filter' => $filter,
 					'filter_params' => array(
@@ -355,11 +361,19 @@ class yf_manage_payment {
 					),
 				))
 				->text( 'operation_id'   , 'Номер'           )
-				->date( 'datetime_update', 'Дата', array( 'format' => 'full', 'nowrap' => 1 ) )
+				->text( 'title'          , 'Название'        )
+				->func( 'provider_id', function($in, $e, $a, $p, $table) use( $providers ) {
+					$result = $providers[ $in ][ 'title' ];
+					return( $result );
+				}, array( 'desc' => 'Провайдер' ) )
 				->text( 'amount'         , 'Сумма'           )
 				->text( 'balance'        , 'Баланс'          )
-				->text( 'title'          , 'Название'        )
-				->date( 'datetime_start' , 'Дата начала', array( 'format' => 'full', 'nowrap' => 1 )     )
+				->func( 'status_id', function($in, $e, $a, $p, $table) use( $status ) {
+					$result = $status[ $in ][ 'title' ];
+					return( $result );
+				}, array( 'desc' => 'Статус' ) )
+				->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
+				->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
 				->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
 			;
 		} else {
