@@ -248,7 +248,7 @@ $payment_api->dump(array( 'var' => array(
 				'status_message' => 'Не определен код операции',
 			);
 // DEBUG
-$payment_api->dump(array( 'var' => $result ));
+// $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// exists operation
@@ -261,7 +261,7 @@ $payment_api->dump(array( 'var' => $result ));
 				'status_message' => 'Операция отсутствует: ' . $operation_id,
 			);
 // DEBUG
-$payment_api->dump(array( 'var' => $result ));
+// $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		$operation_options = $operation[ 'options' ];
@@ -272,7 +272,7 @@ $payment_api->dump(array( 'var' => $result ));
 				'status_message' => 'Отсутствуют опции операции',
 			);
 // DEBUG
-$payment_api->dump(array( 'var' => $result ));
+// $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// request data
@@ -290,15 +290,15 @@ $payment_api->dump(array( 'var' => $result ));
 				'status_message' => 'Неверный код операции',
 			);
 // DEBUG
-$payment_api->dump(array( 'var' => $result ));
+// $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// get current status
 		$new_status_name = $_status_name;
 // DEBUG
-$payment_api->dump(array( 'var' => array(
-	'new_status_name' => $new_status_name,
-)));
+// $payment_api->dump(array( 'var' => array(
+	// 'new_status_name' => $new_status_name,
+// )));
 		$object = $payment_api->get_status( array( 'name' => $new_status_name ) );
 		list( $new_status_id, $new_status ) = $object;
 		if( empty( $new_status_id ) ) { return( $object ); }
@@ -341,9 +341,9 @@ $payment_api->dump(array( 'var' => array(
 		// get current status_name
 		$current_status_id = (int)$operation[ 'status_id' ];
 // DEBUG
-$payment_api->dump(array( 'var' => array(
-	'current_status_id' => $current_status_id,
-)));
+// $payment_api->dump(array( 'var' => array(
+	// 'current_status_id' => $current_status_id,
+// )));
 		$object = $payment_api->get_status( array( 'status_id' => $current_status_id ) );
 		list( $current_status_id, $current_status ) = $object;
 		if( empty( $current_status_id ) ) { return( $object ); }
@@ -351,9 +351,9 @@ $payment_api->dump(array( 'var' => array(
 		// get payment type
 		$current_type_id = (int)$operation[ 'type_id' ];
 // DEBUG
-$payment_api->dump(array( 'var' => array(
-	'current_type_id' => $current_type_id,
-)));
+// $payment_api->dump(array( 'var' => array(
+	// 'current_type_id' => $current_type_id,
+// )));
 		$object = $payment_api->get_type( array( 'type_id' => $current_type_id ) );
 		list( $current_type_id, $current_type ) = $object;
 		if( empty( $current_type_id ) ) { return( $object ); }
@@ -408,6 +408,10 @@ $payment_api->dump(array( 'var' => array(
 			}
 			// update account balance
 			if( $is_update_balance && $current_status_id != $new_status_id ) {
+// DEBUG
+$payment_api->dump(array( 'var' => array(
+	'is_update_balance' => $is_update_balance,
+)));
 				// update account
 				$_data = array(
 					'account_id'      => $account_id,
@@ -448,6 +452,10 @@ $payment_api->dump(array( 'var' => array(
 				));
 			}
 			if( $is_update_status ) {
+// DEBUG
+$payment_api->dump(array( 'var' => array(
+	'is_update_status' => $is_update_status,
+)));
 				// get balance
 				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
 				list( $account_id, $account ) = $object;
