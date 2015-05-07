@@ -234,12 +234,12 @@ class yf_payment_api__provider_remote {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// vars
+		$payment_api = $this->payment_api;
 // DEBUG
 $payment_api->dump(array( 'var' => array(
 	'transaction' => $options,
 )));
-		// vars
-		$payment_api = $this->payment_api;
 		// response operation id
 		$operation_id = (int)$_response[ 'operation_id' ];
 		if( empty( $operation_id ) ) {
