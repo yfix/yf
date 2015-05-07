@@ -348,16 +348,26 @@ $payment_api->dump(array( 'var' => array(
 		list( $current_status_id, $current_status ) = $object;
 		if( empty( $current_status_id ) ) { return( $object ); }
 		$current_status_name = $current_status[ 'name' ];
+		// get payment type
+		$current_type_id = (int)$operation[ 'type_id' ];
+// DEBUG
+$payment_api->dump(array( 'var' => array(
+	'current_type_id' => $current_type_id,
+)));
+		$object = $payment_api->get_status( array( 'type_id' => $current_type_id ) );
+		list( $current_type_id, $current_type ) = $object;
+		if( empty( $current_type_id ) ) { return( $object ); }
+		$current_type_name = $current_type[ 'name' ];
 		// start update
 		$is_try =
-			( $_payment_type == 'payment'    && $current_status_name == 'in_progress' )
+			( $current_type_name == 'payment'    && $current_status_name == 'in_progress' )
 			||
-			( $_payment_type == 'deposition' && $current_status_name != 'success' )
+			( $current_type_name == 'deposition' && $current_status_name != 'success' )
 		;
 // DEBUG
 $payment_api->dump(array( 'var' => array(
 	'is_try'              => $is_try,
-	'payment type'        => $_payment_type,
+	'payment type'        => $current_type_name,
 	'current_status_name' => $current_status_name,
 )));
 		if( $is_try ) {
@@ -368,7 +378,7 @@ $payment_api->dump(array( 'var' => array(
 			$is_payout = null;
 			$is_update_balance = null;
 			$is_update_status  = null;
-			switch( $_payment_type ) {
+			switch( $current_type_name ) {
 				case 'payment':
 					$is_payout = true;
 					$is_manual = $this->IS_PAYOUT_MANUAL;

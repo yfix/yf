@@ -596,6 +596,7 @@ $payment_api->dump( array( 'var' => 'type: ' . $state ));
 		$operation_data = array(
 			'provider_name'  => 'ecommpay',
 			'response'       => $_response,
+			'payment_type'   => $payment_type,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
 		);

@@ -526,6 +526,27 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function get_type( $options = null ) {
+		$_ = &$options;
+		$object = $this->status( $options );
+		if( empty( $object ) ) {
+			$name = $_[ 'exists' ] ?: $_[ 'type_id' ] ?: $_[ 'name' ];
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Тип платежей не существует: "' . $name . '"',
+			);
+			return( $result );
+		}
+		if( count( $object ) == 1 ) {
+			$object    = reset( $object );
+			$object_id = (int)$object[ 'type_id' ];
+			$result    = array( $object_id, $object );
+		} else {
+			$result = $object;
+		}
+		return( $result );
+	}
+
 	public function status( $options = null ) {
 		// get status
 		$status       = $this->status;
