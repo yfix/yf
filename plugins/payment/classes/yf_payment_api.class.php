@@ -528,7 +528,7 @@ class yf_payment_api {
 
 	public function get_type( $options = null ) {
 		$_ = &$options;
-		$object = $this->status( $options );
+		$object = $this->type( $options );
 		if( empty( $object ) ) {
 			$name = $_[ 'exists' ] ?: $_[ 'type_id' ] ?: $_[ 'name' ];
 			$result = array(
