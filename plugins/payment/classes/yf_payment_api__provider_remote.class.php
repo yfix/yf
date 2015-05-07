@@ -333,15 +333,23 @@ class yf_payment_api__provider_remote {
 			$is_manual = null;
 			$is_payin  = null;
 			$is_payout = null;
-			$is_update = null;
+			$is_update_balance = null;
+			$is_update_status  = null;
 			switch( $direction ) {
 				case 'out':
 					$is_payout = true;
 					$is_manual = $this->IS_PAYOUT_MANUAL;
 					// revert amount
-					if( !$is_manual && $_status_name == 'refused' ) {
-						$is_update = true;
-						$sql_sign  = '+';
+					if( !$is_manual ) {
+						switch( $_status_name ) {
+							case 'refused':
+								$is_update_balance = true;
+								$sql_sign  = '+';
+								break;
+							case 'success':
+								$is_update_status = true;
+								break;
+						}
 					}
 					$mail_tpl  = 'payment';
 					break;
@@ -349,15 +357,22 @@ class yf_payment_api__provider_remote {
 					$is_payin  = true;
 					$is_manual = $this->IS_PAYIN_MANUAL;
 					// add amount
-					if( !$is_manual && $_status_name == 'success' ) {
-						$is_update = true;
-						$sql_sign  = '+';
+					if( !$is_manual ) {
+						switch( $_status_name ) {
+							case 'refused':
+								$is_update_status = true;
+								break;
+							case 'success':
+								$is_update_balance = true;
+								$sql_sign  = '+';
+								break;
+						}
 					}
 					$mail_tpl  = 'payout';
 					break;
 			}
 			// update account balance
-			if( $is_update && $current_status_id != $_status_id ) {
+			if( $is_update_balance && $current_status_id != $_status_id ) {
 				// update account
 				$_data = array(
 					'account_id'      => $account_id,
@@ -401,7 +416,7 @@ class yf_payment_api__provider_remote {
 				list( $account_id, $account ) = $object;
 				$balance = $account[ 'balance' ];
 			}
-			if( $is_update ) {
+			if( $is_update_status ) {
 				// update operation
 				$data = array(
 					'response' => array( array(
