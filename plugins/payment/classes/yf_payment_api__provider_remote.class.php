@@ -354,7 +354,7 @@ $payment_api->dump(array( 'var' => array(
 $payment_api->dump(array( 'var' => array(
 	'current_type_id' => $current_type_id,
 )));
-		$object = $payment_api->get_status( array( 'type_id' => $current_type_id ) );
+		$object = $payment_api->get_type( array( 'type_id' => $current_type_id ) );
 		list( $current_type_id, $current_type ) = $object;
 		if( empty( $current_type_id ) ) { return( $object ); }
 		$current_type_name = $current_type[ 'name' ];
@@ -367,7 +367,7 @@ $payment_api->dump(array( 'var' => array(
 // DEBUG
 $payment_api->dump(array( 'var' => array(
 	'is_try'              => $is_try,
-	'payment type'        => $current_type_name,
+	'current_type_name'   => $current_type_name,
 	'current_status_name' => $current_status_name,
 )));
 		if( $is_try ) {
