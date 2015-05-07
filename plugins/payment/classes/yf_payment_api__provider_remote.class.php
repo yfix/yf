@@ -341,14 +341,10 @@ class yf_payment_api__provider_remote {
 					$is_manual = $this->IS_PAYOUT_MANUAL;
 					// revert amount
 					if( !$is_manual ) {
-						switch( $_status_name ) {
-							case 'refused':
-								$is_update_balance = true;
-								$sql_sign  = '+';
-								break;
-							case 'success':
-								$is_update_status = true;
-								break;
+						$is_update_status = true;
+						if( $_status_name == 'refused' ) {
+							$is_update_balance = true;
+							$sql_sign  = '+';
 						}
 					}
 					$mail_tpl  = 'payment';
@@ -358,14 +354,10 @@ class yf_payment_api__provider_remote {
 					$is_manual = $this->IS_PAYIN_MANUAL;
 					// add amount
 					if( !$is_manual ) {
-						switch( $_status_name ) {
-							case 'refused':
-								$is_update_status = true;
-								break;
-							case 'success':
-								$is_update_balance = true;
-								$sql_sign  = '+';
-								break;
+						$is_update_status = true;
+						if( $_status_name == 'refused' ) {
+							$is_update_balance = true;
+							$sql_sign  = '+';
 						}
 					}
 					$mail_tpl  = 'payout';
