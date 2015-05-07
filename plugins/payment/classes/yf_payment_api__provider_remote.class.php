@@ -235,7 +235,7 @@ class yf_payment_api__provider_remote {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 // DEBUG
-// $payment_api->dump(array( 'var' => $options ));
+$payment_api->dump(array( 'var' => $options ));
 		// vars
 		$payment_api = $this->payment_api;
 		// response operation id
