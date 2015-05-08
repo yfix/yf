@@ -247,9 +247,9 @@ class yf_manage_payout {
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-danger' ) )
-			->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
-			->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
+			->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-primary' ) )
+			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
+			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
 		);
 	}
 
@@ -352,6 +352,7 @@ class yf_manage_payout {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
+		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );
 		// check operation
 		$operation_id = isset( $_operation_id ) ? $_operation_id : (int)$_GET[ 'operation_id' ];
@@ -523,7 +524,8 @@ class yf_manage_payout {
 		// prepare view: response options
 		$content = null;
 		if( !empty( $_response ) ) {
-			$content = table( $_response, array( 'no_total' => true ) )
+			$response = array_reverse( $_response );
+			$content = table( $response, array( 'no_total' => true ) )
 				->text( 'datetime', 'дата' )
 				->func( 'date', function( $value, $extra, $row_info ) {
 					$value = $row_info[ 'data' ];
@@ -549,6 +551,8 @@ class yf_manage_payout {
 		));
 		$content = array(
 			'Пользователь'    => $user_link . $balance_link,
+			'Провайдер'       => $_provider[ 'title' ],
+			'Метод'           => $_method[ 'title' ],
 			'Сумма'           => $_html_amount,
 			'Статус'          => $_status[ 'title' ],
 			'Дата создания'   => $_html_datetime_start,

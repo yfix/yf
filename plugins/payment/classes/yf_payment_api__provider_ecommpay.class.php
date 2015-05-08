@@ -12,8 +12,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	// public $IS_DEPOSITION = true;
 	// public $IS_PAYMENT    = true;
 
-	public $URL_API          = 'https://gate.ecommpay.com/card/json/';
-	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/card/json/';
+	public $URL_API          = 'https://gate.ecommpay.com/%method/json/';
+	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/%method/json/';
 
 	public $method_allow = array(
 		'order' => array(
@@ -25,7 +25,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'comepay',
 			),
 			'payout' => array(
-				'pay_card'
+				'pay_card',
+				'qiwi',
 			),
 		),
 		'payin' => array(
@@ -112,14 +113,18 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		),
 		'payout' => array(
 			'pay_card' => array(
-				'title'       => 'Visa, MasterCard',
-				'icon'        => 'visa-mastercard',
-				'action'      => 'payout',
-				'amount_min'  => 100,
-				'fee'         => 0, // 0.1%
+				'title'      => 'Visa, MasterCard',
+				'icon'       => 'visa-mastercard',
+				'uri'        => array(
+					'%method' => 'card',
+				),
+				'action'     => 'payout',
+				'amount_min' => 100,
+				'fee'        => 0, // 0.1%
 				'currency' => array(
-					'RUB' => array(
-						'currency_id' => 'RUB',
+					'USD' => array(
+						'currency_id' => 'USD',
+						'is_int'      => true,
 						'active'      => true,
 					),
 				),
@@ -157,6 +162,64 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_address'             => 'Адрес',
 					'sender_city'                => 'Город',
 					'sender_postindex'           => 'Почтовый индекс',
+				),
+				'option_validation' => array(
+					'card'                       => 'required|integer|length[13,19]',
+					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
+					'sender_last_name'           => 'required|unicode_alpha|length[2,256]',
+					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
+					'sender_passport_number'     => 'required|unicode_alpha|length[10]',    // only Russian
+					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
+					'sender_passport_issued_by'  => 'required|unicode_alpha|length[10]',
+					'sender_phone'               => 'required|integer|length[11]',          // only Russian
+					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
+					'sender_address'             => 'required|unicode_alpha|length[2,256]',
+					'sender_city'                => 'required|unicode_alpha|length[2,256]',
+					'sender_postindex'           => 'required|unicode_alpha|length[2,256]',
+				),
+				'option_validation_message' => array(
+					'card'                       => 'required|integer|length[13,19]',
+					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
+					'sender_last_name'           => 'required|unicode_alpha|length[2,256]',
+					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
+					'sender_passport_number'     => 'required|unicode_alpha|length[10]',    // only Russian
+					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
+					'sender_passport_issued_by'  => 'required|unicode_alpha|length[10]',
+					'sender_phone'               => 'required|integer|length[11]',          // only Russian
+					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
+					'sender_address'             => 'required|unicode_alpha|length[2,256]',
+					'sender_city'                => 'required|unicode_alpha|length[2,256]',
+					'sender_postindex'           => 'required|unicode_alpha|length[2,256]',
+				),
+			),
+			'qiwi' => array(
+				'title'      => 'Qiwi',
+				'icon'       => 'qiwi',
+				'uri'        => array(
+					'%method' => 'qiwi',
+				),
+				'action'     => 'qiwi_payout',
+				'amount_min' => 100,
+				'fee'        => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'is_int'      => true,
+						'active'      => true,
+					),
+				),
+				'field' => array(
+					'action',
+					'site_id',
+					'amount',
+					'currency',
+					'external_id',
+					// 'customer_ip',
+					'comment',
+					'account_number',
+				),
+				'option' => array(
+					'account_number' => 'Кошелек',
 				),
 			),
 		),
@@ -342,13 +405,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
 			'currency_id' => $currency_id,
 		));
-		if( empty( $_currency_id ) ) {
-			// $result = array(
-				// 'status'         => false,
-				// 'status_message' => 'Неизвестная валюта',
-			// );
-			return( null );
-		}
+		if( empty( $_currency_id ) ) { return( null ); }
 		$units = pow( 10, $currency[ 'minor_units' ] );
 		if( $is_request ) {
 			$result = (int)( $amount * $units );
@@ -358,18 +415,33 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function _amount_payout( $amount, $currency, $is_request = true ) {
+	public function _amount_payout( $amount, $currency_id, $method, $is_request = true ) {
 		if( !$this->ENABLE ) { return( null ); }
+		empty( $currency_id ) && $currency_id = $this->currency_default;
+		if( empty( $currency_id ) ) { return( null ); }
 		$payment_api = $this->payment_api;
 		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
 			'currency_id' => $currency_id,
 		));
 		if( empty( $_currency_id ) ) { return( null ); }
-		$units = pow( 10, $currency[ 'minor_units' ] );
-		if( $is_request ) {
-			$result = (int)( $amount * $units );
+		// use conversion to integer by minor_units
+		$is_int = false;
+		if( !empty( $method )
+			&& !empty( $method[ 'currency' ] )
+			&& !empty( $method[ 'currency' ][ $_currency_id ] )
+			&& !empty( $method[ 'currency' ][ $_currency_id ][ 'is_int' ] )
+		) {
+			$is_int = true;
+		}
+		if( $is_int ) {
+			$units = pow( 10, $currency[ 'minor_units' ] );
+			if( $is_request ) {
+				$result = (int)( $amount * $units );
+			} else {
+				$result = (float)$amount / $units;
+			}
 		} else {
-			$result = (float)$amount / $units;
+			$result = $amount;
 		}
 		return( $result );
 	}
@@ -814,7 +886,7 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		// default
 		// $_currency = $currency_id;
 		// $_amount = $this->_amount_payout( $amount_currency_total, $_currency, $is_request = true );
-		$_amount = $this->_amount_payout( $_amount, $_currency, $is_request = true );
+		$_amount = $this->_amount_payout( $_amount, $_currency_id, $method_option, $is_request = true );
 		!isset( $_site_id ) && $_site_id = $this->key( 'public' );
 		!isset( $_comment ) && $_comment = t( 'Вывод средств (id: ' . $_external_id . ')' );
 		!isset( $_action  ) && $_action = $method_option[ 'action' ];
@@ -847,7 +919,7 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 // var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
 		// request
-		$url  = $this->api_url( $options );
+		$url  = $this->api_url( $method_option );
 		$data = http_build_query( $request );
 		$result = $this->_api_request( $url, $data );
 // DEBUG

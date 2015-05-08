@@ -45,10 +45,6 @@
 <div class="b-data pull-left">{request_data}</div>
 {/if}
 
-<div class="clearfix"></div>
-
-{if_empty( is_progressed )}
-
 {if_not_empty( response_data )}
 <div class="clearfix"></div>
 <div class="b-data">
@@ -58,6 +54,10 @@
 	{response_data}
 </div>
 {/if}
+
+<div class="clearfix"></div>
+
+{if_empty( is_progressed )}
 
 <div class="b-action pull-left">
 	<p>
