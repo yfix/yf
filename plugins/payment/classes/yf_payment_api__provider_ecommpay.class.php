@@ -204,7 +204,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'currency' => array(
 					'USD' => array(
 						'currency_id' => 'USD',
-						'is_int'      => false,
+						'is_int'      => true,
 						'active'      => true,
 					),
 				),
