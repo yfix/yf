@@ -419,8 +419,8 @@ class yf_manage_payment {
 		$data = array();
 		$sql = '
 			SELECT FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d") AS day, a.user_id, o.direction, COUNT(*) AS num, SUM(amount) AS sum
-			FROM s_payment_account AS a
-			INNER JOIN s_payment_operation AS o ON o.account_id = a.account_id
+			FROM '.db("payment_account").' AS a
+			INNER JOIN '.db("payment_operation").' AS o ON o.account_id = a.account_id
 			WHERE o.status_id = 2
 				AND a.user_id IN('.implode(',', $user_ids).')
 				AND o.datetime_start >= "'.date('Y-m-d H:i:s', $min_time).'"
@@ -479,8 +479,8 @@ class yf_manage_payment {
 		$data = array();
 		$sql = '
 			SELECT FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d") AS day, o.direction, COUNT(*) AS num, SUM(amount) AS sum
-			FROM s_payment_account AS a
-			INNER JOIN s_payment_operation AS o ON o.account_id = a.account_id
+			FROM '.db("payment_account").' AS a
+			INNER JOIN '.db("payment_operation").' AS o ON o.account_id = a.account_id
 			WHERE o.status_id = 2
 				AND o.datetime_start >= "'.date('Y-m-d H:i:s', $min_time).'"
 			GROUP BY FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d"), o.direction
