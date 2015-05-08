@@ -122,8 +122,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'amount_min' => 100,
 				'fee'        => 0, // 0.1%
 				'currency' => array(
-					'RUB' => array(
-						'currency_id' => 'RUB',
+					'USD' => array(
+						'currency_id' => 'USD',
+						'is_int'      => true,
 						'active'      => true,
 					),
 				),
@@ -203,6 +204,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'currency' => array(
 					'USD' => array(
 						'currency_id' => 'USD',
+						'is_int'      => false,
 						'active'      => true,
 					),
 				),
@@ -403,13 +405,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
 			'currency_id' => $currency_id,
 		));
-		if( empty( $_currency_id ) ) {
-			// $result = array(
-				// 'status'         => false,
-				// 'status_message' => 'Неизвестная валюта',
-			// );
-			return( null );
-		}
+		if( empty( $_currency_id ) ) { return( null ); }
 		$units = pow( 10, $currency[ 'minor_units' ] );
 		if( $is_request ) {
 			$result = (int)( $amount * $units );
@@ -419,18 +415,33 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function _amount_payout( $amount, $currency, $is_request = true ) {
+	public function _amount_payout( $amount, $currency_id, $method, $is_request = true ) {
 		if( !$this->ENABLE ) { return( null ); }
+		empty( $currency_id ) && $currency_id = $this->currency_default;
+		if( empty( $currency_id ) ) { return( null ); }
 		$payment_api = $this->payment_api;
 		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
 			'currency_id' => $currency_id,
 		));
 		if( empty( $_currency_id ) ) { return( null ); }
-		$units = pow( 10, $currency[ 'minor_units' ] );
-		if( $is_request ) {
-			$result = (int)( $amount * $units );
+		// use conversion to integer by minor_units
+		$is_int = false;
+		if( !empty( $method )
+			&& !empty( $method[ 'currency' ] )
+			&& !empty( $method[ 'currency' ][ $_currency_id ] )
+			&& !empty( $method[ 'currency' ][ $_currency_id ][ 'is_int' ] )
+		) {
+			$is_int = true;
+		}
+		if( $is_int ) {
+			$units = pow( 10, $currency[ 'minor_units' ] );
+			if( $is_request ) {
+				$result = (int)( $amount * $units );
+			} else {
+				$result = (float)$amount / $units;
+			}
 		} else {
-			$result = (float)$amount / $units;
+			$result = $amount;
 		}
 		return( $result );
 	}
@@ -875,7 +886,7 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		// default
 		// $_currency = $currency_id;
 		// $_amount = $this->_amount_payout( $amount_currency_total, $_currency, $is_request = true );
-		$_amount = $this->_amount_payout( $_amount, $_currency, $is_request = true );
+		$_amount = $this->_amount_payout( $_amount, $_currency_id, $method_option, $is_request = true );
 		!isset( $_site_id ) && $_site_id = $this->key( 'public' );
 		!isset( $_comment ) && $_comment = t( 'Вывод средств (id: ' . $_external_id . ')' );
 		!isset( $_action  ) && $_action = $method_option[ 'action' ];

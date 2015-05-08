@@ -425,7 +425,8 @@ class yf_manage_deposit {
 		// prepare view: response options
 		$content = null;
 		if( !empty( $_response ) ) {
-			$content = table( $_response, array( 'no_total' => true ) )
+			$response = array_reverse( $_response );
+			$content = table( $response, array( 'no_total' => true ) )
 				->text( 'datetime', 'дата' )
 				->func( 'date', function( $value, $extra, $row_info ) {
 					$value = $row_info[ 'data' ];

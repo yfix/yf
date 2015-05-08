@@ -48,6 +48,16 @@
 </div>
 {/if}
 
+{if_not_empty( response_data )}
+<div class="clearfix"></div>
+<div class="b-data">
+	<p>
+		Журнал ответов провайдера
+	</p>
+	{response_data}
+</div>
+{/if}
+
 <div class="clearfix"></div>
 
 {if_empty( is_progressed )}
@@ -89,16 +99,6 @@
 		</div>
 	</div>
 </div>
-
-{if_not_empty( response_data )}
-<div class="clearfix"></div>
-<div class="b-data">
-	<p>
-		Журнал ответов провайдера
-	</p>
-	{response_data}
-</div>
-{/if}
 
 <div class="b-action pull-left">
 	<p>
