@@ -1028,7 +1028,10 @@ class yf_assets {
 			$_params = (array)$v['params'] + (array)$params;
 			$content_type = $v['content_type'];
 			$cached_path = '';
-			$use_cache = $this->USE_CACHE && $content_type !== 'inline' && !$_params['no_cache'] && !$_params['config']['no_cache'];
+			$use_cache = $this->USE_CACHE && !$_params['no_cache'] && !$_params['config']['no_cache'];
+			if ($use_cache && $content_type === 'inline' && !$_params['config']['inline_cache']) {
+				$use_cache = false;
+			}
 			if ($use_cache) {
 				if ($v['name'] === 'bootstrap-theme') {
 					$v['name'] .= '-'.$bs_current_theme;
