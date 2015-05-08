@@ -16,6 +16,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 	var config = {};
 	angular.extend( config, _config_balance  );
 	$scope.payment = {};
+	$scope.payout  = {};
 	angular.extend( $scope.payment, _config_recharge.payment );
 	$scope.amount_init = function() {
 		// min, step
@@ -394,6 +395,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					if( r.response && r.response.payout ) {
 						$scope.status            = r.response.payout.status;
 						$scope.status_message    = r.response.payout.status_message;
+						$scope.payout.validation = r.response.payout.options || {};
 						if( r.response.payment ) {
 							angular.extend( $scope.payment, r.response.payment);
 							PaymentBalance.load({ account: r.response.payment.account });

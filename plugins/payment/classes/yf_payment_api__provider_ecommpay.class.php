@@ -168,28 +168,28 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
 					'sender_last_name'           => 'required|unicode_alpha|length[2,256]',
 					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
-					'sender_passport_number'     => 'required|unicode_alpha|length[10]',    // only Russian
+					'sender_passport_number'     => 'required|integer|length[10]', // only Russian
 					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
-					'sender_passport_issued_by'  => 'required|unicode_alpha|length[10]',
-					'sender_phone'               => 'required|integer|length[11]',          // only Russian
+					'sender_passport_issued_by'  => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
+					'sender_phone'               => 'required|integer|length[11]', // only Russian
 					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
-					'sender_address'             => 'required|unicode_alpha|length[2,256]',
+					'sender_address'             => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
 					'sender_city'                => 'required|unicode_alpha|length[2,256]',
-					'sender_postindex'           => 'required|unicode_alpha|length[2,256]',
+					'sender_postindex'           => 'required|integer|length[6,256]',
 				),
 				'option_validation_message' => array(
-					'card'                       => 'required|integer|length[13,19]',
-					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
-					'sender_last_name'           => 'required|unicode_alpha|length[2,256]',
-					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
-					'sender_passport_number'     => 'required|unicode_alpha|length[10]',    // only Russian
-					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
-					'sender_passport_issued_by'  => 'required|unicode_alpha|length[10]',
-					'sender_phone'               => 'required|integer|length[11]',          // only Russian
-					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
-					'sender_address'             => 'required|unicode_alpha|length[2,256]',
-					'sender_city'                => 'required|unicode_alpha|length[2,256]',
-					'sender_postindex'           => 'required|unicode_alpha|length[2,256]',
+					'card'                       => 'обязательное поле от 13 до 19 цифр',
+					'sender_first_name'          => 'обязательное поле от 2 символов',
+					'sender_last_name'           => 'обязательное поле от 2 символов',
+					'sender_middle_name'         => 'обязательное поле от 2 символов',
+					'sender_passport_number'     => 'обязательное поле 10 цифр', // only Russian
+					'sender_passport_issue_date' => 'обязательное поле дата год-месяц-число (пример: 1999-01-22)',
+					'sender_passport_issued_by'  => 'обязательное поле от 2 символов',
+					'sender_phone'               => 'обязательное поле 11 цифр, без "+"', // only Russian
+					'sender_birthdate'           => 'обязательное поле дата год-месяц-число (пример: 1977-01-22)',
+					'sender_address'             => 'обязательное поле от 2 символов',
+					'sender_city'                => 'обязательное поле от 2 символов',
+					'sender_postindex'           => 'обязательное поле от 6 цифр',
 				),
 			),
 			'qiwi' => array(
@@ -220,6 +220,12 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				),
 				'option' => array(
 					'account_number' => 'Кошелек',
+				),
+				'option_validation' => array(
+					'account_number' => 'required|integer|length[8,15]',
+				),
+				'option_validation_message' => array(
+					'account_number' => 'обязательное поле от 8 до 15 цифр, без "+"',
 				),
 			),
 		),
@@ -1233,12 +1239,25 @@ $payment_api->dump( array( 'var' => $result ));
 			return( $result );
 		}
 		$method = &$this->method_allow[ 'payout' ][ $_method_id ];
+		$validation         = $method[ 'option_validation' ];
+		$validation_message = $method[ 'option_validation_message' ];
+		$validation_error   = array();
+		$validate = _class( 'validate' );
+		// validation processor
 		foreach( $method[ 'option' ] as $key => $item ) {
-			if( empty( trim( ${ '_'. $key } ) ) ) {
-				return( $this->result_fail( 'Отсутствует обязательное поле запроса: '. $item ) );
+			// skip: empty validator
+			if( empty( $validation[ $key ] ) ) { continue; }
+			// processor
+			$value  = trim( ${ '_'. $key } );
+			$rules  = $validation[ $key ];
+			$result = $validate->_input_is_valid( $value, $rules );
+			if( empty( $result ) ) {
+				$message = @$validation_message[ $key ] ?: 'Неверное поле';
+				$validation_error[ $key ] = t( $message );
 			}
 		}
-		return( $this->result_success() );
+		if( empty( $validation_error ) ) { return( $this->result_success() ); }
+		return( $this->result_fail( t( 'Неверно заполненные поля для вывода средств, проверьте и повторите запрос.' ), $validation_error ) );
 	}
 
 	public function payment( $options ) {
