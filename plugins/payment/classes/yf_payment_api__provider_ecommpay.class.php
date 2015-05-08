@@ -162,6 +162,34 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_city'                => 'Город',
 					'sender_postindex'           => 'Почтовый индекс',
 				),
+				'option_validation' => array(
+					'card'                       => 'required|integer|length[13,19]',
+					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
+					'sender_last_name'           => 'required|unicode_alpha|length[2,256]',
+					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
+					'sender_passport_number'     => 'required|unicode_alpha|length[10]',    // only Russian
+					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
+					'sender_passport_issued_by'  => 'required|unicode_alpha|length[10]',
+					'sender_phone'               => 'required|integer|length[11]',          // only Russian
+					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
+					'sender_address'             => 'required|unicode_alpha|length[2,256]',
+					'sender_city'                => 'required|unicode_alpha|length[2,256]',
+					'sender_postindex'           => 'required|unicode_alpha|length[2,256]',
+				),
+				'option_validation_message' => array(
+					'card'                       => 'required|integer|length[13,19]',
+					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
+					'sender_last_name'           => 'required|unicode_alpha|length[2,256]',
+					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
+					'sender_passport_number'     => 'required|unicode_alpha|length[10]',    // only Russian
+					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
+					'sender_passport_issued_by'  => 'required|unicode_alpha|length[10]',
+					'sender_phone'               => 'required|integer|length[11]',          // only Russian
+					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
+					'sender_address'             => 'required|unicode_alpha|length[2,256]',
+					'sender_city'                => 'required|unicode_alpha|length[2,256]',
+					'sender_postindex'           => 'required|unicode_alpha|length[2,256]',
+				),
 			),
 			'qiwi' => array(
 				'title'      => 'Qiwi',
