@@ -242,9 +242,9 @@ class yf_manage_deposit {
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Ввод средств',  $url[ 'view'    ], array( 'icon' => 'fa fa-sign-in', 'class_add' => 'btn-danger' ) )
-			->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'   , 'class_add' => 'btn-info'   ) )
-			->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'  , 'class_add' => 'btn-info'   ) )
+			->btn( 'Ввод средств',  $url[ 'view'    ], array( 'icon' => 'fa fa-sign-in', 'class_add' => 'btn-primary' ) )
+			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'   , 'class_add' => 'btn-info'   ) )
+			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'  , 'class_add' => 'btn-info'   ) )
 		);
 	}
 
