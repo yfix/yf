@@ -43,6 +43,10 @@ class yf_assets {
 	/** @bool */ // '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
 	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{asset_name}/{version}/{out_type}/'; // shorter variant
 	/** @bool */
+	public $CACHE_INLINE_ALLOW = true;
+	/** @bool */
+	public $CACHE_INLINE_MIN_SIZE = 1000;
+	/** @bool */
 	public $URL_TIMEOUT = 5;
 	/** @bool */
 	public $FORCE_LOCAL_STORAGE = false;
@@ -1029,8 +1033,10 @@ class yf_assets {
 			$content_type = $v['content_type'];
 			$cached_path = '';
 			$use_cache = $this->USE_CACHE && !$_params['no_cache'] && !$_params['config']['no_cache'];
-			if ($use_cache && $content_type === 'inline' && !$_params['config']['inline_cache']) {
-				$use_cache = false;
+			if ($use_cache && $content_type === 'inline') {
+				if (!$this->CACHE_INLINE_ALLOW || !$_params['config']['inline_cache'] || strlen($v['content']) < $this->CACHE_INLINE_MIN_SIZE) {
+					$use_cache = false;
+				}
 			}
 			if ($use_cache) {
 				if ($v['name'] === 'bootstrap-theme') {
@@ -1443,6 +1449,8 @@ var_dump($out);
 			}
 		} elseif ($content_type === 'file') {
 			$_name = pathinfo($content, PATHINFO_FILENAME);
+		} elseif ($content_type === 'inline') {
+			$_name = md5($content);
 		}
 		return $_name;
 	}
