@@ -1146,8 +1146,8 @@ var_dump($out);
 				} elseif ($content_type === 'file' && file_exists($content)) {
 					$combined[$md5] = file_get_contents($content);
 				}
-				if ($out_type === 'css' && $content_type === 'url') {
-					$combined[$md5] = $this->_css_urls_rewrite_and_save($combined[$md5], $content, $combined_file);
+				if ($out_type === 'css' && in_array($content_type, array('url', 'inline'))) {
+					$combined[$md5] = $this->_css_urls_rewrite_and_save($combined[$md5], $content, $combined_file, $content_type);
 				}
 				if ($out_type === 'js' && $content_type === 'url') {
 					$this->_js_map_save($combined[$md5], $content, $combined_file);
@@ -1290,9 +1290,9 @@ var_dump($out);
 			$content = ob_get_clean();
 			file_put_contents($cache_path, $content);
 		}
-		if ($out_type === 'css' && $content_type === 'url') {
+		if ($out_type === 'css' && in_array($content_type, array('url', 'inline', 'file'))) {
 			$content_before = $content;
-			$content = $this->_css_urls_rewrite_and_save($content, $content_url, $cache_path);
+			$content = $this->_css_urls_rewrite_and_save($content, $content_url, $cache_path, $content_type, $data['content']);
 			if ($content_before !== $content) {
 				file_put_contents($cache_path, $content);
 			}
@@ -1361,38 +1361,52 @@ var_dump($out);
 	/**
 	* process and save CSS url() and @import
 	*/
-	function _css_urls_rewrite_and_save($content, $content_url, $cache_path) {
+	function _css_urls_rewrite_and_save($content, $content_url, $cache_path, $content_type = 'url', $orig_content = '') {
 		$_this = $this;
 		$self_func = __FUNCTION__;
-		return preg_replace_callback('~url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path, $self_func) {
+		return preg_replace_callback('~url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path, $content_type, $orig_content, $self_func) {
 			$url = trim($m['url']);
 			if (strpos($url, 'data:') === 0) {
 				return $m[0];
 			}
-			$orig_url = $url;
-			if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
-				$url = dirname($content_url). '/'. $url;
-			}
-			$u = parse_url($url);
-			$host = $u['host'];
-			$path = $u['path'];
-			$query = $u['query'];
-			// example: //fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700
-			if ($host === 'fonts.googleapis.com') {
-				$ext = '.'.($path === '/css' ? 'css' : trim($path, '/')); // example: /css
-				$path = preg_replace('~[^a-z0-9_-]~ims', '_', strtolower($query)). $ext;
-			}
-			$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
-			$save_path = '/'.ltrim($save_path, '/');
-			// singleton for getting urls contents
-			if (!file_exists($save_path)) {
-				$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
-				$str = $_this->_url_get_contents($url);
-				if (strlen($str)) {
-					$str = $_this->$self_func($str, $content_url, $cache_path);
-					file_put_contents($save_path, $str);
-					$_this->_write_cache_info($save_path, $url, $str);
+			$str = '';
+			$save_path = '';
+			if ($content_type === 'file') {
+				$path = $_this->_get_absolute_path(dirname($orig_content). '/'. ltrim($url, '/'));
+				$path = '/'.ltrim($path, '/');
+
+				$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
+				$save_path = '/'.ltrim($save_path, '/');
+				// singleton for getting urls contents
+				if (!file_exists($save_path)) {
+					$str = file_get_contents($path);
 				}
+			} else {
+				$orig_url = $url;
+				if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
+					$url = dirname($content_url). '/'. $url;
+				}
+				$u = parse_url($url);
+				$host = $u['host'];
+				$path = $u['path'];
+				$query = $u['query'];
+				// example: //fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700
+				if ($host === 'fonts.googleapis.com') {
+					$ext = '.'.($path === '/css' ? 'css' : trim($path, '/')); // example: /css
+					$path = preg_replace('~[^a-z0-9_-]~ims', '_', strtolower($query)). $ext;
+				}
+				$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
+				$save_path = '/'.ltrim($save_path, '/');
+				// singleton for getting urls contents
+				if (!file_exists($save_path)) {
+					$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
+					$str = $_this->_url_get_contents($url);
+				}
+			}
+			if (strlen($str)) {
+				$str = $_this->$self_func($str, $content_url, $cache_path, $content_type, $orig_content);
+				file_put_contents($save_path, $str);
+				$_this->_write_cache_info($save_path, $url, $str);
 			}
 			return 'url(\''.basename($save_path).'\')';
 		}, $content);
