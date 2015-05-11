@@ -301,7 +301,7 @@ class yf_validate {
 	}
 
 	/**
-	* Returns md5() from given input string, only if not empty. 
+	* Returns md5() from given input string, only if not empty.
 	* Example usage: ["password" => 'trim|min_length[6]|max_length[32]|md5_not_empty']
 	*/
 	public function md5_not_empty(&$in) {
@@ -388,7 +388,7 @@ class yf_validate {
 	}
 
 	/**
-	* Returns FALSE if field does not match field(s) in parameter. 
+	* Returns FALSE if field does not match field(s) in parameter.
 	* Example: matches[password_again]
 	*/
 	public function matches($in, $params = array(), $fields = array()) {
@@ -397,7 +397,7 @@ class yf_validate {
 	}
 
 	/**
-	* Returns FALSE if form field(s) defined in parameter are not filled in. 
+	* Returns FALSE if form field(s) defined in parameter are not filled in.
 	* Example: depends_on[field_name]
 	*/
 	public function depends_on($in, $params = array(), $fields = array()) {
@@ -413,7 +413,7 @@ class yf_validate {
 	}
 
 	/**
-	* The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function. 
+	* The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function.
 	* Examples: after_date[2012-01-01], after_date[day ago]
 	*/
 	public function after_date($in, $params = array()) {
@@ -433,7 +433,7 @@ class yf_validate {
 	}
 
 	/**
-	* The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function. 
+	* The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function.
 	* Example: before_date[2020-12-31], after_date[+1 day]
 	*/
 	public function before_date($in, $params = array()) {
@@ -483,7 +483,7 @@ class yf_validate {
 	}
 
 	/**
-	* The field under validation must have a size between the given min and max. Strings, numerics, and files are evaluated in the same fashion as the size rule. 
+	* The field under validation must have a size between the given min and max. Strings, numerics, and files are evaluated in the same fashion as the size rule.
 	* Examples: between[a,z]  between[44,99]
 	*/
 	public function between($in, $params = array()) {
@@ -493,7 +493,7 @@ class yf_validate {
 	}
 
 	/**
-	* Returns FALSE if field contains characters not in the parameter. 
+	* Returns FALSE if field contains characters not in the parameter.
 	* Example: chars[a,b,c,d,1,2,3,4]
 	*/
 	public function chars($in, $params = array()) {
@@ -633,12 +633,12 @@ class yf_validate {
 	}
 
 	/**
-	* The original specification of hostnames in RFC 952, mandated that labels could not start with a digit or with a hyphen, and must not end with a hyphen. 
+	* The original specification of hostnames in RFC 952, mandated that labels could not start with a digit or with a hyphen, and must not end with a hyphen.
 	* However, a subsequent specification (RFC 1123) permitted hostname labels to start with digits.
 	* http://tools.ietf.org/html/rfc952, http://tools.ietf.org/html/rfc1123
 	* Each label within a valid hostname may be no more than 63 octets long.
 	* the total length of the hostname must not exceed 255 characters. For more information, please consult RFC-952 and RFC-1123.
-	* see also: 
+	* see also:
 	*    http://stackoverflow.com/questions/106179/regular-expression-to-match-hostname-or-ip-address
 	*    http://data.iana.org/TLD/tlds-alpha-by-domain.txt
 	*/
@@ -771,7 +771,7 @@ class yf_validate {
 	}
 
 	/**
-	* Returns FALSE if the field is too long or too short. 
+	* Returns FALSE if the field is too long or too short.
 	* Examples: length[1,30] - between 1 and 30 characters long. length[30] - exactly 30 characters long
 	*/
 	public function length($in, $params = array()) {
@@ -1191,7 +1191,7 @@ class yf_validate {
 	public function _validate_url_by_http($url) {
 		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
 	}
-	
+
 	/**
 	* Alias
 	*/
@@ -1221,7 +1221,7 @@ class yf_validate {
 	}
 
 	/**
-	* Returns FALSE if credit card is not valid. 
+	* Returns FALSE if credit card is not valid.
 	* Examples: credit_card[mastercard]
 	*/
 	public function credit_card($in, $params = array(), $fields = array()) {

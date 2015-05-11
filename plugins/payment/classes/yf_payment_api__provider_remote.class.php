@@ -117,8 +117,8 @@ class yf_payment_api__provider_remote {
 		return( array( 'status' => true ) );
 	}
 
-	public function result_fail( $message ) {
-		return( array( 'status' => false, 'status_message' => $message ) );
+	public function result_fail( $message, $options = null ) {
+		return( array( 'status' => false, 'status_message' => $message, 'options' => $options ) );
 	}
 
 	public function api_method_payout( $name ) {
