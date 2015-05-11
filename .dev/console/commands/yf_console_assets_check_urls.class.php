@@ -10,7 +10,7 @@ class yf_console_assets_check_urls extends Command {
 	protected function configure() {
 		$this
 			->setName('assets:check_urls')
-			->setDescription('YF unit tests runner')
+			->setDescription('YF assets urls check if all alive')
 			->addArgument('params',	InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Params for sub-command');
 		;
 	}
