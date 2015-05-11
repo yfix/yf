@@ -256,6 +256,14 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				this[ id ] = null;
 			}, options );
 			angular.extend( options, method.option_default );
+			angular.forEach( options, function( item, id ) {
+				if( method.option_validation_js &&
+					method.option_validation_js[ id ] &&
+					method.option_validation_js[ id ].type == 'date'
+				) {
+					this[ id ] = new Date().from_mysql( item );
+				}
+			}, options );
 		}
 		$scope.action.payout = {
 			provider_id : provider_id,
@@ -280,6 +288,16 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			method_id   : payout.method_id,
 		};
 		angular.extend( options, payout.options );
+		// date
+		var method = payout.method;
+		angular.forEach( options, function( item, id ) {
+			if( method.option_validation_js &&
+				method.option_validation_js[ id ] &&
+				method.option_validation_js[ id ].type == 'date'
+			) {
+				this[ id ] = item.to_mysql_date();
+			}
+		}, options );
 		BalanceApi.payout( options );
 	};
 	// balance api
@@ -484,5 +502,55 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 }])
 
 ;
+
+Date.prototype.from_mysql = function( str ) {
+	if( typeof str === 'string' ) {
+		var is_422 = false;
+		var is_224 = false;
+		if( /^\d{4}[\.\-]\d{1,2}[\.\-]\d{1,2}/.test( str ) ) {
+			is_422 = true;
+		} else if( /\d{1,2}[\.\-]\d{1,2}[\.\-]\d{4}$/.test( str ) ) {
+			is_224 = true;
+		} else {
+			return( null );
+		}
+		var t = str.split(/[-. :]/);
+		var result = null;
+		if( is_422 ) {
+			if( t.length == 3 ) {
+				result = new Date( Date.UTC( t[0], t[1] - 1, t[2] ) );
+			} else if( t.length == 6 ) {
+				result = new Date( Date.UTC( t[0], t[1] - 1, t[2], t[3] || 0, t[4] || 0, t[5] || 0 ) );
+			}
+		} else if( is_224 ) {
+			if( t.length == 3 ) {
+				result = new Date( Date.UTC( t[2], t[1] - 1, t[0] ) );
+			} else if( t.length == 6 ) {
+				result = new Date( Date.UTC( t[3], t[4] - 1, t[5], t[0] || 0, t[1] || 0, t[2] || 0 ) );
+			}
+		}
+		return( result );
+	}
+	return( null );
+};
+
+Date.prototype.to_mysql_date = function() {
+	console.log( 'this', this );
+	function twoDigits(d) {
+		if(0 <= d && d < 10) return "0" + d.toString();
+		if(-10 < d && d < 0) return "-0" + (-1*d).toString();
+		return d.toString();
+	}
+	return( this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate()) );
+};
+
+Date.prototype.to_mysql_datetime = function() {
+	function twoDigits(d) {
+		if(0 <= d && d < 10) return "0" + d.toString();
+		if(-10 < d && d < 0) return "-0" + (-1*d).toString();
+		return d.toString();
+	}
+	return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate()) + " " + twoDigits(this.getUTCHours()) + ":" + twoDigits(this.getUTCMinutes()) + ":" + twoDigits(this.getUTCSeconds());
+};
 
 })();

@@ -163,6 +163,88 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_city'                => 'Город',
 					'sender_postindex'           => 'Почтовый индекс',
 				),
+				'option_validation_js' => array(
+					'card'                       => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 13,
+						'maxlength' => 19,
+						'pattern'   => '^\d+$',
+					),
+					'sender_first_name'          => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 2,
+						'maxlength' => 256,
+						'pattern'   => '^[a-zA-Zа-яА-Я]+$',
+					),
+					'sender_last_name'           => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 2,
+						'maxlength' => 256,
+						'pattern'   => '^[a-zA-Zа-яА-Я]+$',
+					),
+					'sender_middle_name'         => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 2,
+						'maxlength' => 256,
+						'pattern'   => '^[a-zA-Zа-яА-Я]+$',
+					),
+					'sender_passport_number'     => array( // only Russian
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 10,
+						'maxlength' => 10,
+						'pattern'   => '^\d+$',
+					),
+					'sender_passport_issue_date' => array(
+						'type'      => 'date',
+						'required'  => true,
+						// 'pattern'   => '^\d{4}\-\d{1,2}\-\d{1,2}$',
+					),
+					'sender_passport_issued_by'  => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 2,
+						'maxlength' => 256,
+						'pattern'   => '^[\wа-яА-Я\s\,\.\-\\/\#№]+$',
+					),
+					'sender_phone'               => array( // only Russian
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 11,
+						'maxlength' => 11,
+						'pattern'   => '^\d+$',
+					),
+					'sender_birthdate'           => array(
+						'type'      => 'date',
+						'required'  => true,
+						// 'pattern'   => '^\d{4}\-\d{1,2}\-\d{1,2}$',
+					),
+					'sender_address'             => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 2,
+						'maxlength' => 256,
+						'pattern'   => '^[\wа-яА-Я\s\,\.\-\\/\#№]+$',
+					),
+					'sender_city'                => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 2,
+						'maxlength' => 256,
+						'pattern'   => '^[a-zA-Zа-яА-Я]+$',
+					),
+					'sender_postindex'           => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 6,
+						'maxlength' => 256,
+						'pattern'   => '^\d+$',
+					),
+				),
 				'option_validation' => array(
 					'card'                       => 'required|is_natural|length[13,19]',
 					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
@@ -170,7 +252,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
 					'sender_passport_number'     => 'required|is_natural|length[10]', // only Russian
 					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
-					'sender_passport_issued_by'  => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
+					'sender_passport_issued_by'  => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#№]+$~u|length[2,256]',
 					'sender_phone'               => 'required|is_natural|length[11]', // only Russian
 					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
 					'sender_address'             => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
@@ -220,6 +302,15 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				),
 				'option' => array(
 					'account_number' => 'Кошелек',
+				),
+				'option_validation_js' => array(
+					'account_number' => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 8,
+						'maxlength' => 15,
+						'pattern'   => '^\d+$',
+					),
 				),
 				'option_validation' => array(
 					'account_number' => 'required|is_natural|length[8,15]',
