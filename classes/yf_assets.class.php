@@ -1371,8 +1371,27 @@ var_dump($out);
 			}
 			$str = '';
 			$save_path = '';
+			$is_local_file = false;
 			if ($content_type === 'file') {
-				$path = $_this->_get_absolute_path(dirname($orig_content). '/'. ltrim($url, '/'));
+				// examples: ../ ./
+				if (substr($url, 0, 1) === '.') {
+					$is_local_file = true;
+				// full url like http://test.dev/image.png
+				} elseif (false === strpos($url, 'http://') && false === strpos($url, 'https://')) {
+					$is_local_file = true;
+				// should not match: //domain.com/some_path
+				} elseif (substr($url, 0, 1) === '/' && substr($url, 1, 1) !== '/') {
+					$is_local_file = true;
+				}
+			}
+			if ($is_local_file) {
+				// /templates/user/theme/default/image/smile_1.0_unactive.png
+				if (substr($url, 0, 1) === '/') {
+					$try_path = PROJECT_PATH. ltrim($url, '/');
+				} else {
+					$try_path = dirname($orig_content). '/'. ltrim($url, '/');
+				}
+				$path = $_this->_get_absolute_path($try_path);
 				$path = '/'.ltrim($path, '/');
 
 				$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
