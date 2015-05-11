@@ -164,18 +164,18 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_postindex'           => 'Почтовый индекс',
 				),
 				'option_validation' => array(
-					'card'                       => 'required|integer|length[13,19]',
+					'card'                       => 'required|is_natural|length[13,19]',
 					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
 					'sender_last_name'           => 'required|unicode_alpha|length[2,256]',
 					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
-					'sender_passport_number'     => 'required|integer|length[10]', // only Russian
+					'sender_passport_number'     => 'required|is_natural|length[10]', // only Russian
 					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
 					'sender_passport_issued_by'  => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
-					'sender_phone'               => 'required|integer|length[11]', // only Russian
+					'sender_phone'               => 'required|is_natural|length[11]', // only Russian
 					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
 					'sender_address'             => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
 					'sender_city'                => 'required|unicode_alpha|length[2,256]',
-					'sender_postindex'           => 'required|integer|length[6,256]',
+					'sender_postindex'           => 'required|is_natural|length[6,256]',
 				),
 				'option_validation_message' => array(
 					'card'                       => 'обязательное поле от 13 до 19 цифр',
@@ -183,10 +183,10 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_last_name'           => 'обязательное поле от 2 символов',
 					'sender_middle_name'         => 'обязательное поле от 2 символов',
 					'sender_passport_number'     => 'обязательное поле 10 цифр', // only Russian
-					'sender_passport_issue_date' => 'обязательное поле дата год-месяц-число (пример: 1999-01-22)',
+					'sender_passport_issue_date' => 'обязательное поле дата "год-месяц-число" (пример: 1999-01-22)',
 					'sender_passport_issued_by'  => 'обязательное поле от 2 символов',
 					'sender_phone'               => 'обязательное поле 11 цифр, без "+"', // only Russian
-					'sender_birthdate'           => 'обязательное поле дата год-месяц-число (пример: 1977-01-22)',
+					'sender_birthdate'           => 'обязательное поле дата "год-месяц-число" (пример: 1977-01-22)',
 					'sender_address'             => 'обязательное поле от 2 символов',
 					'sender_city'                => 'обязательное поле от 2 символов',
 					'sender_postindex'           => 'обязательное поле от 6 цифр',
@@ -222,7 +222,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'account_number' => 'Кошелек',
 				),
 				'option_validation' => array(
-					'account_number' => 'required|integer|length[8,15]',
+					'account_number' => 'required|is_natural|length[8,15]',
 				),
 				'option_validation_message' => array(
 					'account_number' => 'обязательное поле от 8 до 15 цифр, без "+"',

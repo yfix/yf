@@ -383,6 +383,13 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				}
 			);
 		},
+		on_payout_success: function() {
+			$( '.payment__modal.payout' ).modal( 'hide' );
+		},
+		on_payout_fail: function() {
+		},
+		on_payout_validation: function() {
+		},
 		payout: function( options ) {
 			var $this = this;
 			$scope.block_wait     = true;
@@ -395,7 +402,12 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					if( r.response && r.response.payout ) {
 						$scope.status            = r.response.payout.status;
 						$scope.status_message    = r.response.payout.status_message;
-						$scope.payout.validation = r.response.payout.options || {};
+						$scope.payout.validation = r.response.payout.options || null;
+						if( BalanceApi.on_payout_validation && $scope.payout.validation ) {
+							BalanceApi.on_payout_validation();
+						} else if( BalanceApi.on_payout_success ) {
+							BalanceApi.on_payout_success();
+						}
 						if( r.response.payment ) {
 							angular.extend( $scope.payment, r.response.payment);
 							PaymentBalance.load({ account: r.response.payment.account });
