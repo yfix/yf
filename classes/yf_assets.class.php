@@ -43,6 +43,14 @@ class yf_assets {
 	/** @bool */ // '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
 	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{asset_name}/{version}/{out_type}/'; // shorter variant
 	/** @bool */
+	public $CACHE_INLINE_ALLOW = true;
+	/** @bool */
+	public $CACHE_INLINE_MIN_SIZE = 1000;
+	/** @bool */
+	public $CACHE_IMAGES_USE_DATA_URI = false;
+	/** @bool */
+	public $CACHE_IMAGES_DATA_URI_MAX_SIZE = 5000;
+	/** @bool */
 	public $URL_TIMEOUT = 5;
 	/** @bool */
 	public $FORCE_LOCAL_STORAGE = false;
@@ -1028,7 +1036,12 @@ class yf_assets {
 			$_params = (array)$v['params'] + (array)$params;
 			$content_type = $v['content_type'];
 			$cached_path = '';
-			$use_cache = $this->USE_CACHE && $content_type !== 'inline' && !$_params['no_cache'] && !$_params['config']['no_cache'];
+			$use_cache = $this->USE_CACHE && !$_params['no_cache'] && !$_params['config']['no_cache'];
+			if ($use_cache && $content_type === 'inline') {
+				if (!$this->CACHE_INLINE_ALLOW || !$_params['config']['inline_cache'] || strlen($v['content']) < $this->CACHE_INLINE_MIN_SIZE) {
+					$use_cache = false;
+				}
+			}
 			if ($use_cache) {
 				if ($v['name'] === 'bootstrap-theme') {
 					$v['name'] .= '-'.$bs_current_theme;
@@ -1137,8 +1150,8 @@ var_dump($out);
 				} elseif ($content_type === 'file' && file_exists($content)) {
 					$combined[$md5] = file_get_contents($content);
 				}
-				if ($out_type === 'css' && $content_type === 'url') {
-					$combined[$md5] = $this->_css_urls_rewrite_and_save($combined[$md5], $content, $combined_file);
+				if ($out_type === 'css' && in_array($content_type, array('url', 'inline'))) {
+					$combined[$md5] = $this->_css_urls_rewrite_and_save($combined[$md5], $content, $combined_file, $content_type);
 				}
 				if ($out_type === 'js' && $content_type === 'url') {
 					$this->_js_map_save($combined[$md5], $content, $combined_file);
@@ -1281,9 +1294,9 @@ var_dump($out);
 			$content = ob_get_clean();
 			file_put_contents($cache_path, $content);
 		}
-		if ($out_type === 'css' && $content_type === 'url') {
+		if ($out_type === 'css' && in_array($content_type, array('url', 'inline', 'file'))) {
 			$content_before = $content;
-			$content = $this->_css_urls_rewrite_and_save($content, $content_url, $cache_path);
+			$content = $this->_css_urls_rewrite_and_save($content, $content_url, $cache_path, $content_type, $data['content']);
 			if ($content_before !== $content) {
 				file_put_contents($cache_path, $content);
 			}
@@ -1352,37 +1365,81 @@ var_dump($out);
 	/**
 	* process and save CSS url() and @import
 	*/
-	function _css_urls_rewrite_and_save($content, $content_url, $cache_path) {
+	function _css_urls_rewrite_and_save($content, $content_url, $cache_path, $content_type = 'url', $orig_content = '') {
 		$_this = $this;
 		$self_func = __FUNCTION__;
-		return preg_replace_callback('~url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path, $self_func) {
+		return preg_replace_callback('~url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path, $content_type, $orig_content, $self_func) {
 			$url = trim($m['url']);
 			if (strpos($url, 'data:') === 0) {
 				return $m[0];
 			}
-			$orig_url = $url;
-			if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
-				$url = dirname($content_url). '/'. $url;
+			$str = '';
+			$save_path = '';
+			$is_local_file = false;
+			if ($content_type === 'file') {
+				// examples: ../ ./
+				if (substr($url, 0, 1) === '.') {
+					$is_local_file = true;
+				// full url like http://test.dev/image.png
+				} elseif (false === strpos($url, 'http://') && false === strpos($url, 'https://')) {
+					$is_local_file = true;
+				// should not match: //domain.com/some_path
+				} elseif (substr($url, 0, 1) === '/' && substr($url, 1, 1) !== '/') {
+					$is_local_file = true;
+				}
 			}
-			$u = parse_url($url);
-			$host = $u['host'];
-			$path = $u['path'];
-			$query = $u['query'];
-			// example: //fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700
-			if ($host === 'fonts.googleapis.com') {
-				$ext = '.'.($path === '/css' ? 'css' : trim($path, '/')); // example: /css
-				$path = preg_replace('~[^a-z0-9_-]~ims', '_', strtolower($query)). $ext;
+			if ($is_local_file) {
+				// /templates/user/theme/default/image/smile_1.0_unactive.png
+				if (substr($url, 0, 1) === '/') {
+					$try_path = PROJECT_PATH. ltrim($url, '/');
+				} else {
+					$try_path = dirname($orig_content). '/'. ltrim($url, '/');
+				}
+				$path = $_this->_get_absolute_path($try_path);
+				$path = '/'.ltrim($path, '/');
+
+				$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
+				$save_path = '/'.ltrim($save_path, '/');
+				// singleton for getting urls contents
+				if (!file_exists($save_path)) {
+					$str = file_get_contents($path);
+				}
+			} else {
+				$orig_url = $url;
+				if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
+					$url = dirname($content_url). '/'. $url;
+				}
+				$u = parse_url($url);
+				$host = $u['host'];
+				$path = $u['path'];
+				$query = $u['query'];
+				// example: //fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700
+				if ($host === 'fonts.googleapis.com') {
+					$ext = '.'.($path === '/css' ? 'css' : trim($path, '/')); // example: /css
+					$path = preg_replace('~[^a-z0-9_-]~ims', '_', strtolower($query)). $ext;
+				}
+				$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
+				$save_path = '/'.ltrim($save_path, '/');
+				// singleton for getting urls contents
+				if (!file_exists($save_path)) {
+					$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
+					$str = $_this->_url_get_contents($url);
+				}
 			}
-			$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
-			$save_path = '/'.ltrim($save_path, '/');
-			// singleton for getting urls contents
-			if (!file_exists($save_path)) {
-				$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
-				$str = $_this->_url_get_contents($url);
-				if (strlen($str)) {
-					$str = $_this->$self_func($str, $content_url, $cache_path);
-					file_put_contents($save_path, $str);
-					$_this->_write_cache_info($save_path, $url, $str);
+			if (strlen($str)) {
+				$str = $_this->$self_func($str, $content_url, $cache_path, $content_type, $orig_content);
+				file_put_contents($save_path, $str);
+				$_this->_write_cache_info($save_path, $url, $str);
+			}
+			if ($_this->CACHE_IMAGES_USE_DATA_URI) {
+				$ext = strtolower(pathinfo($save_path, PATHINFO_EXTENSION));
+				if (in_array($ext, array('png','gif','jpg','jpeg'))) {
+					$max_size = $_this->CACHE_IMAGES_DATA_URI_MAX_SIZE;
+					$size = filesize($save_path);
+					if ($size <= $max_size) {
+						$data_type = 'image/'. ($ext == 'jpg' ? 'jpeg' : $ext);
+						return 'url(\'data:'.$data_type.';base64,'.base64_encode(file_get_contents($save_path)).'\')';
+					}
 				}
 			}
 			return 'url(\''.basename($save_path).'\')';
@@ -1440,6 +1497,8 @@ var_dump($out);
 			}
 		} elseif ($content_type === 'file') {
 			$_name = pathinfo($content, PATHINFO_FILENAME);
+		} elseif ($content_type === 'inline') {
+			$_name = md5($content);
 		}
 		return $_name;
 	}
