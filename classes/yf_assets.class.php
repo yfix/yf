@@ -1431,10 +1431,10 @@ var_dump($out);
 				file_put_contents($save_path, $str);
 				$_this->_write_cache_info($save_path, $url, $str);
 			}
-			if ($this->CACHE_IMAGES_USE_DATA_URI) {
+			if ($_this->CACHE_IMAGES_USE_DATA_URI) {
 				$ext = strtolower(pathinfo($save_path, PATHINFO_EXTENSION));
 				if (in_array($ext, array('png','gif','jpg','jpeg'))) {
-					$max_size = $this->CACHE_IMAGES_DATA_URI_MAX_SIZE;
+					$max_size = $_this->CACHE_IMAGES_DATA_URI_MAX_SIZE;
 					$size = filesize($save_path);
 					if ($size <= $max_size) {
 						$data_type = 'image/'. ($ext == 'jpg' ? 'jpeg' : $ext);
