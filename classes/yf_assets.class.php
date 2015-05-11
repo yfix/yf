@@ -47,6 +47,10 @@ class yf_assets {
 	/** @bool */
 	public $CACHE_INLINE_MIN_SIZE = 1000;
 	/** @bool */
+	public $CACHE_IMAGES_USE_DATA_URI = false;
+	/** @bool */
+	public $CACHE_IMAGES_DATA_URI_MAX_SIZE = 5000;
+	/** @bool */
 	public $URL_TIMEOUT = 5;
 	/** @bool */
 	public $FORCE_LOCAL_STORAGE = false;
@@ -1426,6 +1430,17 @@ var_dump($out);
 				$str = $_this->$self_func($str, $content_url, $cache_path, $content_type, $orig_content);
 				file_put_contents($save_path, $str);
 				$_this->_write_cache_info($save_path, $url, $str);
+			}
+			if ($this->CACHE_IMAGES_USE_DATA_URI) {
+				$ext = strtolower(pathinfo($save_path, PATHINFO_EXTENSION));
+				if (in_array($ext, array('png','gif','jpg','jpeg'))) {
+					$max_size = $this->CACHE_IMAGES_DATA_URI_MAX_SIZE;
+					$size = filesize($save_path);
+					if ($size <= $max_size) {
+						$data_type = 'image/'. ($ext == 'jpg' ? 'jpeg' : $ext);
+						return 'url(\'data:'.$data_type.';base64,'.base64_encode(file_get_contents($save_path)).'\')';
+					}
+				}
 			}
 			return 'url(\''.basename($save_path).'\')';
 		}, $content);
