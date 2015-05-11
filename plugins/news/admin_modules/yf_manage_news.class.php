@@ -2,11 +2,20 @@
 
 class yf_manage_news {
 
+	const table = 'news';
+
 	/**
 	*/
-	function _get_page_info($id = null) {
+	function _init() {
+// TODO: integrate for edit/upload images
+#		require_php_lib('kcfinder');
+	}
+
+	/**
+	*/
+	function _get_info($id = null) {
 		$id = isset($id) ? $id : $_GET['id'];
-		return db()->from('news')
+		return db()->from(self::table)
 			->where('title', _strtolower(urldecode($id)) )
 			->or_where('id', (int)$id)->get();
 	}
@@ -14,57 +23,84 @@ class yf_manage_news {
 	/**
 	*/
 	function show() {
-		return table(
-			db()->from('news')->order_by('add_date', 'desc')
-			, array(
-				'filter' => true,
-				'filter_params' => array(
-					'title'	=> 'like',
-				),
+		$data = db()->from(self::table)->order_by('add_date', 'desc')->get_all();
+		return table($data, array(
+				'pager_records_on_page' => 1000,
 			))
 			->text('id')
-			->text('title')
-			->date('add_date', array('format' => 'full', 'nowrap' => 1))
-#			->btn('View', url('/@object/view/%d'))
-			->btn_edit(array('no_ajax' => 1))
-			->btn_delete()
+			->date('add_date', array('format' => 'long', 'nowrap' => 1))
+			->text('title', array('link' => '/news/show/%url/?lang=%locale', 'rewrite' => 'user'))
+			->lang('locale')
+			->btn_view('', '/news/show/%url/?lang=%locale', array('rewrite' => 'user', 'btn_no_text' => 1, 'no_ajax' => 1))
+			->btn_edit(array('btn_no_text' => 1, 'no_ajax' => 1))
+			->btn_delete(array('btn_no_text' => 1))
 			->btn_active()
-			->footer_link('Add', url('/@object/add'));
+			->footer_add(array('no_ajax' => 1))
 		;
 	}
 
 	/**
 	*/
 	function add() {
-		db()->insert_safe('news', array(
+		db()->insert_safe(self::table, array(
 			'add_date'	=> time(),
 			'active'	=> 0,
 		));
-		return js_redirect(url('/@object/edit/'.db()->insert_id()));
+		$id = db()->insert_id();
+		module_safe('manage_revisions')->add(self::table, $id, 'add');
+		return js_redirect(url('/@object/edit/'.$id));
 	}
 
 	/**
 	*/
 	function edit() {
-		$a = $this->_get_page_info();
+		$a = $this->_get_info();
 		if (!$a) {
-			return _e('No info');
+			return _404();
 		}
-		$a = (array)$_POST + (array)$a;
+		$a['redirect_link'] = url('/@object/@action/@id');
 		$a['back_link'] = url('/@object');
 		$_this = $this;
-		return form($a)
+		return form((array)$_POST + (array)$a)
 			->validate(array(
 				'__before__'=> 'trim',
-				'title' => array('required'),
-				'full_text' => 'required',
+				'title'		=> 'required',
+				'head_text'	=> 'required',
+				'full_text'	=> 'required',
+				'url'		=> 'required',
+				'locale'	=> 'required',
 			))
-			->db_update_if_ok('news', array('title','head_text','full_text','meta_keywords','meta_desc','active'), 'id='.$a['id'])
+			->on_post(function() {
+				if (strlen($_POST['url'])) {
+					$_POST['url'] = preg_replace('~[\s/]+~', '-', trim($_POST['url']));
+				}
+				if (strlen($_POST['title']) && !strlen($_POST['url'])) {
+					$_POST['url'] = common()->_propose_url_from_name($_POST['title']);
+				} else
+				if (!strlen($_POST['head_text']) && strlen($_POST['full_text'])) {
+					$_POST['head_text'] = _truncate($_POST['full_text'], 200, false, false);
+				}
+			})
+			->update_if_ok(self::table, array('title','head_text','full_text','meta_keywords','meta_desc','url','active','locale'))
+			->on_before_update(function() use ($a, $_this) {
+				module_safe('manage_revisions')->add(array(
+					'object_name'	=> $_this::table,
+					'object_id'		=> $a['id'],
+					'old'			=> $a,
+					'new'			=> $_POST,
+					'action'		=> 'update',
+				));
+			})
 			->on_after_update(function() {
 				common()->admin_wall_add(array('news updated: '.$a['id'], $a['id']));
 			})
 			->text('title')
-			->textarea('full_text', array('id' => 'full_text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+			->textarea('head_text', array('cols' => 200, 'rows' => 5, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+			->textarea('full_text', array('cols' => 200, 'rows' => 20, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+			->text('url')
+			->text('meta_keywords')
+			->text('meta_desc')
+			->locale_box('locale')
 			->active_box()
 			->save_and_back()
 		;
@@ -72,50 +108,44 @@ class yf_manage_news {
 
 	/**
 	*/
-	function view() {
-		$a = $this->_get_page_info();
-		if (empty($a)) {
-			return _e('No such page!');
-		}
-		$body = stripslashes($a['full_text']);
-		$replace = array(
-			'form_action'	=> url('/@object/edit/'.$a['id']),
-			'back_link'		=> url('/@object'),
-			'body'			=> $body,
-		);
-		return form($replace)
-			->container('<h3>'.$a['title'].'</h3>', array('wide' => 1))
-			->container($body, '', array(
-				'id'	=> 'content_editable',
-				'wide'	=> 1,
-				'ckeditor' => array(
-					'hidden_id'	=> 'full_text',
-				),
-			))
-			->hidden('full_text')
-			->hidden('title')
-			->save_and_back();
-	}
-
-	/**
-	*/
 	function delete() {
 		$id = (int)$_GET['id'];
-		if ($a = db()->from('news')->whereid($id)->get()) {
-			db()->delete('news', $id);
+		if ($id) {
+			$a = $this->_get_info();
+			module_safe('manage_revisions')->add(array(
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'action'		=> 'delete',
+			));
+			db()->delete(self::table, $id);
 		}
-		return js_redirect(url('/@object'));
+		if (is_ajax()) {
+			no_graphics(true);
+			echo $id;
+		} else {
+			return js_redirect(url('/@object'));
+		}
 	}
 
 	/**
 	*/
 	function active() {
 		$id = (int)$_GET['id'];
-		if ($a = $this->_get_page_info()) {
-			db()->update_safe('news', array('active' => (int)!$a['active']), 'id='.intval($a['id']));
+		if ($a = $this->_get_info()) {
+			$n = $a;
+			$n['active'] = (int)!$a['active'];
+			module_safe('manage_revisions')->add(array(
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'new'			=> $n,
+				'action'		=> 'active',
+			));
+			db()->update_safe(self::table, array('active' => (int)!$a['active']), 'id='.intval($a['id']));
 		}
-		if (main()->is_ajax()) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			return print intval(!$a['active']);
 		}
 		return js_redirect(url('/@object'));

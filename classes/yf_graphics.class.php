@@ -404,8 +404,7 @@ class yf_graphics {
 		} else {
 			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
 			header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-			header('Cache-Control: no-store, no-cache, must-revalidate'); // HTTP/1.1
-			header('Cache-Control: post-check=0, pre-check=0', false); // HTTP/1.1
+			header('Cache-Control: private, no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0');
 			header('Pragma: no-cache'); // HTTP/1.0
 		}
 		if (main()->is_ajax() || DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX')) {

@@ -411,13 +411,13 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 				if( is_array( $result ) ) { $state = 'fail'; }
 				break;
 		}
-		list( $payment_status_name, $status_message ) = $this->_state( $state );
+		list( $status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'       => 'webmoney',
-			'response'            => $_response,
-			'payment_status_name' => $payment_status_name,
-			'status_message'      => $status_message,
+			'provider_name'  => 'webmoney',
+			'response'       => $_response,
+			'status_name'    => $status_name,
+			'status_message' => $status_message,
 		));
 		return( $result );
 	}

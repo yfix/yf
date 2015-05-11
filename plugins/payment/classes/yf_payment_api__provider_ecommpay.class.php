@@ -12,17 +12,42 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	// public $IS_DEPOSITION = true;
 	// public $IS_PAYMENT    = true;
 
-	public $URL_API          = 'https://gate.ecommpay.com/card/json/';
-	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/card/json/';
+	public $URL_API          = 'https://gate.ecommpay.com/%method/json/';
+	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/%method/json/';
 
 	public $method_allow = array(
+		'order' => array(
+			'payin' => array(
+				'ecommpay',
+				'card',
+				'qiwi',
+				'c24',
+				'comepay',
+			),
+			'payout' => array(
+				'pay_card',
+				'qiwi',
+			),
+		),
 		'payin' => array(
+			'ecommpay' => array(
+				'title'       => 'Visa, MasterCard',
+				'icon'        => 'ecommpay',
+				'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
 			'card' => array(
 				'title'       => 'Visa, MasterCard',
 				'icon'        => 'visa-mastercard',
 				'option' => array(
 					'payment_group_id' => 1,
-					'followup'         => 1,
+					// 'followup'         => 1,
 				),
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -37,8 +62,44 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'title'       => 'Qiwi',
 				'icon'        => 'qiwi',
 				'option' => array(
-					'payment_group_id' => 1,
-					'followup'         => 1,
+					// 'payment_group_id'         => 6,
+					// 'followup'                 => 1,
+					// 'phone'                    => '380679041321',
+					// 'external_payment_type_id' => 'qw',
+				),
+				'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
+			'c24' => array(
+				'title'       => 'C24',
+				'icon'        => 'c24',
+				'option' => array(
+					// 'payment_group_id'         => 28,
+					// 'followup'                 => 0,
+					// 'external_payment_type_id' => 'qw',
+				),
+				'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
+			'comepay' => array(
+				'title'       => 'Comepay',
+				'icon'        => 'comepay',
+				'option' => array(
+					// 'payment_group_id'         => 29,
+					// 'followup'                 => 0,
+					// 'external_payment_type_id' => 'qw',
 				),
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -52,14 +113,18 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		),
 		'payout' => array(
 			'pay_card' => array(
-				'title'       => 'EcommPay',
-				'icon'        => 'ecommpay',
-				'action'      => 'payout',
-				'amount_min'  => 100,
-				'fee'         => 0, // 0.1%
+				'title'      => 'Visa, MasterCard',
+				'icon'       => 'visa-mastercard',
+				'uri'        => array(
+					'%method' => 'card',
+				),
+				'action'     => 'payout',
+				'amount_min' => 100,
+				'fee'        => 0, // 0.1%
 				'currency' => array(
-					'RUB' => array(
-						'currency_id' => 'RUB',
+					'USD' => array(
+						'currency_id' => 'USD',
+						'is_int'      => true,
 						'active'      => true,
 					),
 				),
@@ -97,6 +162,70 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_address'             => 'Адрес',
 					'sender_city'                => 'Город',
 					'sender_postindex'           => 'Почтовый индекс',
+				),
+				'option_validation' => array(
+					'card'                       => 'required|integer|length[13,19]',
+					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
+					'sender_last_name'           => 'required|unicode_alpha|length[2,256]',
+					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
+					'sender_passport_number'     => 'required|integer|length[10]', // only Russian
+					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
+					'sender_passport_issued_by'  => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
+					'sender_phone'               => 'required|integer|length[11]', // only Russian
+					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
+					'sender_address'             => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
+					'sender_city'                => 'required|unicode_alpha|length[2,256]',
+					'sender_postindex'           => 'required|integer|length[6,256]',
+				),
+				'option_validation_message' => array(
+					'card'                       => 'обязательное поле от 13 до 19 цифр',
+					'sender_first_name'          => 'обязательное поле от 2 символов',
+					'sender_last_name'           => 'обязательное поле от 2 символов',
+					'sender_middle_name'         => 'обязательное поле от 2 символов',
+					'sender_passport_number'     => 'обязательное поле 10 цифр', // only Russian
+					'sender_passport_issue_date' => 'обязательное поле дата год-месяц-число (пример: 1999-01-22)',
+					'sender_passport_issued_by'  => 'обязательное поле от 2 символов',
+					'sender_phone'               => 'обязательное поле 11 цифр, без "+"', // only Russian
+					'sender_birthdate'           => 'обязательное поле дата год-месяц-число (пример: 1977-01-22)',
+					'sender_address'             => 'обязательное поле от 2 символов',
+					'sender_city'                => 'обязательное поле от 2 символов',
+					'sender_postindex'           => 'обязательное поле от 6 цифр',
+				),
+			),
+			'qiwi' => array(
+				'title'      => 'Qiwi',
+				'icon'       => 'qiwi',
+				'uri'        => array(
+					'%method' => 'qiwi',
+				),
+				'action'     => 'qiwi_payout',
+				'amount_min' => 100,
+				'fee'        => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'is_int'      => true,
+						'active'      => true,
+					),
+				),
+				'field' => array(
+					'action',
+					'site_id',
+					'amount',
+					'currency',
+					'external_id',
+					// 'customer_ip',
+					'comment',
+					'account_number',
+				),
+				'option' => array(
+					'account_number' => 'Кошелек',
+				),
+				'option_validation' => array(
+					'account_number' => 'required|integer|length[8,15]',
+				),
+				'option_validation_message' => array(
+					'account_number' => 'обязательное поле от 8 до 15 цифр, без "+"',
 				),
 			),
 		),
@@ -174,16 +303,16 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// 3 (purchase)       5  (refund)
 		// 6 (rebill)         11 (payout)
 		'1'  => 'deposition',     // authorization Авторизация
-		// '2'  => 'payout', // confirm Подтверждение авторизации
+		// '2'  => 'payment', // confirm Подтверждение авторизации
 		'3'  => 'deposition',     // purchase Прямое списание
-		'4'  => 'payout', // void Отмена авторизации
-		'5'  => 'payout', // refund Возврат
+		'4'  => 'payment', // void Отмена авторизации
+		'5'  => 'payment', // refund Возврат
 		'6'  => 'deposition',     // rebill Рекуррентный платеж
-		// '7'  => 'payout', // chargeback Опротестование платежа
-		// '8'  => 'payout', // complete3ds Завершение платежа 3ds
-		// '9'  => 'payout',
-		// '10' => 'payout',
-		'11' => 'payout', // payout Выплата
+		// '7'  => 'payment', // chargeback Опротестование платежа
+		// '8'  => 'payment', // complete3ds Завершение платежа 3ds
+		// '9'  => 'payment',
+		// '10' => 'payment',
+		'11' => 'payment', // payout Выплата
 	);
 
 	public $currency_default = 'USD';
@@ -282,13 +411,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
 			'currency_id' => $currency_id,
 		));
-		if( empty( $_currency_id ) ) {
-			// $result = array(
-				// 'status'         => false,
-				// 'status_message' => 'Неизвестная валюта',
-			// );
-			return( null );
-		}
+		if( empty( $_currency_id ) ) { return( null ); }
 		$units = pow( 10, $currency[ 'minor_units' ] );
 		if( $is_request ) {
 			$result = (int)( $amount * $units );
@@ -298,18 +421,33 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function _amount_payout( $amount, $currency, $is_request = true ) {
+	public function _amount_payout( $amount, $currency_id, $method, $is_request = true ) {
 		if( !$this->ENABLE ) { return( null ); }
+		empty( $currency_id ) && $currency_id = $this->currency_default;
+		if( empty( $currency_id ) ) { return( null ); }
 		$payment_api = $this->payment_api;
 		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
 			'currency_id' => $currency_id,
 		));
 		if( empty( $_currency_id ) ) { return( null ); }
-		$units = pow( 10, $currency[ 'minor_units' ] );
-		if( $is_request ) {
-			$result = (int)( $amount * $units );
+		// use conversion to integer by minor_units
+		$is_int = false;
+		if( !empty( $method )
+			&& !empty( $method[ 'currency' ] )
+			&& !empty( $method[ 'currency' ][ $_currency_id ] )
+			&& !empty( $method[ 'currency' ][ $_currency_id ][ 'is_int' ] )
+		) {
+			$is_int = true;
+		}
+		if( $is_int ) {
+			$units = pow( 10, $currency[ 'minor_units' ] );
+			if( $is_request ) {
+				$result = (int)( $amount * $units );
+			} else {
+				$result = (float)$amount / $units;
+			}
 		} else {
-			$result = (float)$amount / $units;
+			$result = $amount;
 		}
 		return( $result );
 	}
@@ -403,7 +541,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 // DEBUG
-// $payment_api->dump();
+$payment_api->dump();
 		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
@@ -463,6 +601,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
 			);
+// DEBUG
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		$signature_options = $response;
@@ -476,7 +616,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'status_message' => 'Неверная подпись',
 			);
 // DEBUG
-// $payment_api->dump( array( 'var' => $result ));
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// user success or fail
@@ -512,31 +652,37 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'status_message' => 'Неверный ключ (site_id)',
 			);
 // DEBUG
-// $payment_api->dump( array( 'var' => $result ));
+$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// check status
 		$state = $_response[ 'status_id' ];
 		$status = $this->_status_server;
-		list( $payment_status_name, $status_message ) = $this->_state( $state, $status );
+		list( $status_name, $status_message ) = $this->_state( $state, $status );
 		// deposition or payout
 		$state = $_response[ 'type_id' ];
 		$status = $this->_type_server;
 		list( $payment_type ) = $this->_state( $state, $status );
 		if( empty( $payment_type ) ) {
 // DEBUG
-// $payment_api->dump( array( 'var' => 'type: ' . $state ));
+$payment_api->dump( array( 'var' => 'type: ' . $state ));
 			return( null );
 		}
 		// amount
 		// $_response[ 'amount' ] = $this->_amount( $_response[ 'amount' ], $_response[ 'currency' ], $is_request = false );
 		// update account, operation data
-		$result = $this->{ '_api_' . $payment_type }( array(
-			'provider_name'       => 'ecommpay',
-			'response'            => $_response,
-			'payment_status_name' => $payment_status_name,
-			'status_message'      => $status_message,
-		));
+		$operation_data = array(
+			'provider_name'  => 'ecommpay',
+			'response'       => $_response,
+			'payment_type'   => $payment_type,
+			'status_name'    => $status_name,
+			'status_message' => $status_message,
+		);
+// DEBUG
+$payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));
+		$result = $this->{ '_api_' . $payment_type }( $operation_data );
+// DEBUG
+$payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		return( $result );
 	}
 
@@ -655,6 +801,14 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			// 'result_url'   => $result_url,
 			// 'server_url'   => $server_url,
 		);
+		// add options
+		if( !empty( $options[ 'method_id' ] ) && !empty( $this->method_allow[ 'payin' ][ $options[ 'method_id' ] ] ) ) {
+			$method_id = &$options[ 'method_id' ];
+			$method = &$this->method_allow[ 'payin' ][ $method_id ];
+			if( !empty( $method[ 'option' ] ) ) {
+				$form_options += $method[ 'option' ];
+			}
+		}
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
 		// save options
@@ -738,7 +892,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// default
 		// $_currency = $currency_id;
 		// $_amount = $this->_amount_payout( $amount_currency_total, $_currency, $is_request = true );
-		$_amount = $this->_amount_payout( $_amount, $_currency, $is_request = true );
+		$_amount = $this->_amount_payout( $_amount, $_currency_id, $method_option, $is_request = true );
 		!isset( $_site_id ) && $_site_id = $this->key( 'public' );
 		!isset( $_comment ) && $_comment = t( 'Вывод средств (id: ' . $_external_id . ')' );
 		!isset( $_action  ) && $_action = $method_option[ 'action' ];
@@ -771,7 +925,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 // var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
 		// request
-		$url  = $this->api_url( $options );
+		$url  = $this->api_url( $method_option );
 		$data = http_build_query( $request );
 		$result = $this->_api_request( $url, $data );
 // DEBUG
@@ -857,7 +1011,7 @@ $payment_api->dump( array( 'var' => $result ));
 				$status_message = 'Неверный номер телефона ' . $request[ 'sender_phone' ];
 				break;
 			case 421:
-				$status_message = 'Неверный данные запроса';
+				$status_message = 'Неверные данные запроса';
 				break;
 			case 113:
 				$status_message = 'Выплата отключена';
@@ -1047,6 +1201,65 @@ $payment_api->dump( array( 'var' => $result ));
 		return( $result );
 	}
 
+	public function validate( $options ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// type: deposition, payment, etc
+		if( empty( $_type_name ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестный тип операции',
+			);
+			return( $result );
+		}
+		switch( $_type_name ) {
+			case 'payment':
+				return( $this->validate_payment( $options ) );
+				break;
+		}
+		return( $this->result_success() );
+	}
+
+	public function validate_payment( $options ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// todo: real validation on type
+		if( empty( $_method_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Отсутствует метод вывода средств',
+			);
+			return( $result );
+		}
+		if( empty( $this->method_allow[ 'payout' ][ $_method_id ] ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Метод вывода средств не найден: '. $_method_id,
+			);
+			return( $result );
+		}
+		$method = &$this->method_allow[ 'payout' ][ $_method_id ];
+		$validation         = $method[ 'option_validation' ];
+		$validation_message = $method[ 'option_validation_message' ];
+		$validation_error   = array();
+		$validate = _class( 'validate' );
+		// validation processor
+		foreach( $method[ 'option' ] as $key => $item ) {
+			// skip: empty validator
+			if( empty( $validation[ $key ] ) ) { continue; }
+			// processor
+			$value  = trim( ${ '_'. $key } );
+			$rules  = $validation[ $key ];
+			$result = $validate->_input_is_valid( $value, $rules );
+			if( empty( $result ) ) {
+				$message = @$validation_message[ $key ] ?: 'Неверное поле';
+				$validation_error[ $key ] = t( $message );
+			}
+		}
+		if( empty( $validation_error ) ) { return( $this->result_success() ); }
+		return( $this->result_fail( t( 'Неверно заполненные поля для вывода средств, проверьте и повторите запрос.' ), $validation_error ) );
+	}
+
 	public function payment( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api    = $this->payment_api;
@@ -1136,15 +1349,21 @@ $payment_api->dump( array( 'var' => $result ));
 		list( $account_id, $account ) = $account_result;
 		// prepare
 		// save options
-		$data = array(
-			'fee'         => $fee,
-			'currency_id' => $currency_id,
-			'amount'      => $amount_currency_total,
+		$request_data  = array(
+			'user_id'               => $user_id,
+			'operation_id'          => $operation_id,
+			'account_id'            => $account_id,
+			'provider_id'           => $provider_id,
+			'currency_id'           => $currency_id,
+			'fee'                   => $fee,
+			'amount'                => $amount,
+			'amount_currency'       => $amount_currency,
+			'amount_currency_total' => $amount_currency_total,
 		);
 		$operation_options = array(
 			'request' => array( array(
 				'options'  => $options,
-				'data'     => $data,
+				'data'     => $request_data,
 				'datetime' => $operation_data[ 'sql_datetime' ],
 			))
 		);

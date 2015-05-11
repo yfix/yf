@@ -32,6 +32,18 @@ class yf_payment_api__provider {
 		return( $result );
 	}
 
+	public function validate( $options = null ) {
+		return( $this->result_success() );
+	}
+
+	public function result_success() {
+		return( array( 'status' => true ) );
+	}
+
+	public function result_fail( $message ) {
+		return( array( 'status' => false, 'status_message' => $message ) );
+	}
+
 	public function deposition( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->_transaction( $options );

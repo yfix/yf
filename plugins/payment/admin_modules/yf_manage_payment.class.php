@@ -206,7 +206,7 @@ class yf_manage_payment {
 				$daily = _class('charts')->jquery_sparklines($table->_data_daily_num[$a['id']]);
 				return $daily ? '<span title="'.t('Транзакции').'">'.$daily.'</span>' : false;
 			}, array('desc' => 'Транзакции'))
-			->btn( 'Баланс' , $url[ 'balance' ], array( 'icon' => 'fa fa-money' ) )
+			->btn( 'Баланс' , $url[ 'balance' ], array( 'icon' => 'fa fa-money', 'class_add' => 'btn-primary' ) )
 		;
 	}
 
@@ -346,6 +346,12 @@ class yf_manage_payment {
 					'order_direction' => 'desc',
 				);
 			}
+			// prepare provider
+			$providers = $payment_api->provider( array(
+				'all' => true,
+			));
+			// prepare status
+			$status = $payment_api->status();
 			$table = table( $sql, array(
 					'filter' => $filter,
 					'filter_params' => array(
@@ -355,11 +361,19 @@ class yf_manage_payment {
 					),
 				))
 				->text( 'operation_id'   , 'Номер'           )
-				->date( 'datetime_update', 'Дата', array( 'format' => 'full', 'nowrap' => 1 ) )
+				->text( 'title'          , 'Название'        )
+				->func( 'provider_id', function($in, $e, $a, $p, $table) use( $providers ) {
+					$result = $providers[ $in ][ 'title' ];
+					return( $result );
+				}, array( 'desc' => 'Провайдер' ) )
 				->text( 'amount'         , 'Сумма'           )
 				->text( 'balance'        , 'Баланс'          )
-				->text( 'title'          , 'Название'        )
-				->date( 'datetime_start' , 'Дата начала', array( 'format' => 'full', 'nowrap' => 1 )     )
+				->func( 'status_id', function($in, $e, $a, $p, $table) use( $status ) {
+					$result = $status[ $in ][ 'title' ];
+					return( $result );
+				}, array( 'desc' => 'Статус' ) )
+				->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
+				->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
 				->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
 			;
 		} else {
@@ -405,8 +419,8 @@ class yf_manage_payment {
 		$data = array();
 		$sql = '
 			SELECT FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d") AS day, a.user_id, o.direction, COUNT(*) AS num, SUM(amount) AS sum
-			FROM s_payment_account AS a
-			INNER JOIN s_payment_operation AS o ON o.account_id = a.account_id
+			FROM '.db("payment_account").' AS a
+			INNER JOIN '.db("payment_operation").' AS o ON o.account_id = a.account_id
 			WHERE o.status_id = 2
 				AND a.user_id IN('.implode(',', $user_ids).')
 				AND o.datetime_start >= "'.date('Y-m-d H:i:s', $min_time).'"
@@ -465,8 +479,8 @@ class yf_manage_payment {
 		$data = array();
 		$sql = '
 			SELECT FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d") AS day, o.direction, COUNT(*) AS num, SUM(amount) AS sum
-			FROM s_payment_account AS a
-			INNER JOIN s_payment_operation AS o ON o.account_id = a.account_id
+			FROM '.db("payment_account").' AS a
+			INNER JOIN '.db("payment_operation").' AS o ON o.account_id = a.account_id
 			WHERE o.status_id = 2
 				AND o.datetime_start >= "'.date('Y-m-d H:i:s', $min_time).'"
 			GROUP BY FROM_UNIXTIME(UNIX_TIMESTAMP(o.datetime_start), "%Y-%m-%d"), o.direction

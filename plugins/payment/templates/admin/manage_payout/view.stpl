@@ -40,7 +40,22 @@
 {/if}
 
 {if_not_empty( request_data )}
-<div class="b-data pull-left">{request_data}</div>
+<div class="b-data pull-left">
+	{request_data}
+	{if_not_empty( request_data_csv )}
+		{request_data_csv}
+	{/if}
+</div>
+{/if}
+
+{if_not_empty( response_data )}
+<div class="clearfix"></div>
+<div class="b-data">
+	<p>
+		Журнал ответов провайдера
+	</p>
+	{response_data}
+</div>
 {/if}
 
 <div class="clearfix"></div>
@@ -84,16 +99,6 @@
 		</div>
 	</div>
 </div>
-
-{if_not_empty( response_data )}
-<div class="clearfix"></div>
-<div class="b-data">
-	<p>
-		Журнал ответов провайдера
-	</p>
-	{response_data}
-</div>
-{/if}
 
 <div class="b-action pull-left">
 	<p>

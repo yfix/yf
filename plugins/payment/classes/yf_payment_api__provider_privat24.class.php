@@ -141,7 +141,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	protected function _api_request( $uri, $data ) {
+	public function _api_request( $uri, $data ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$url    = $this->URL . $uri;
 		$result = $this->_api_post( $url, $data );
@@ -408,13 +408,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		// ok, fail, test, wait
 		$state = $response[ 'state' ];
 		if( $this->TEST_MODE && $state == 'test' ) { $state = 'ok'; }
-		list( $payment_status_name, $status_message ) = $this->_state( $state );
+		list( $status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'       => 'privat24',
-			'response'            => $response,
-			'payment_status_name' => $payment_status_name,
-			'status_message'      => $status_message,
+			'provider_name'  => 'privat24',
+			'response'       => $response,
+			'status_name'    => $status_name,
+			'status_message' => $status_message,
 		));
 		return( $result );
 	}

@@ -31,7 +31,7 @@ class yf_static_pages {
 			->btn_edit('', url('/@object/edit/%d/%locale'), array('no_ajax' => 1, 'btn_no_text' => 1))
 			->btn_delete('', url('/@object/delete/%d/%locale'), array('btn_no_text' => 1))
 			->btn_active('', url('/@object/active/%d/%locale'))
-			->footer_add('', url('/@object/add'), array('no_ajax' => 1));
+			->footer_add('', url('/@object/add'), array('no_ajax' => 1, 'copy_to_header' => 1));
 	}
 
 	/**
@@ -47,15 +47,19 @@ class yf_static_pages {
 				'name' => array('required', function(&$in) use ($_this) {
 					$in = $_this->_fix_page_name($in);
 					return (bool)strlen($in);
+				}, function($name, $tmp, $d, &$error) use ($_this) {
+					$ok = ! db()->from($_this::table)->where('locale', $_POST['locale'])->where('name', $name)->get_one('id');
+					if (!$ok) {
+						$error = t('Page with this name and locale already exists');
+					}
+					return $ok;
 				}),
 				'locale' => 'required',
 			))
 			->db_insert_if_ok(self::table, array('name','locale','active'))
-			->on_before_update(function() {
-#				module_safe('manage_revisions')->content_revision_add();
-			})
-			->on_after_update(function() {
+			->on_after_update(function() use ($_this) {
 				$id = db()->insert_id();
+				module_safe('manage_revisions')->add($_this::table, $id, 'add');
 				common()->admin_wall_add(array('static page added: '.$name, $id));
 				cache_del('static_pages_names');
 				js_redirect('/@object/edit/'.$id.'/'.$_POST['locale']);
@@ -74,12 +78,7 @@ class yf_static_pages {
 		if (!$a) {
 			return _404();
 		}
-		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url('/@object');
-		// Prevent execution of template tags when editing page content
-		if (false !== strpos($a['text'], '{') && false !== strpos($a['text'], '}')) {
-			$a['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $a['text']);
-		}
 		$form_id = 'content_form';
 		jquery('
 			var form_id = "'.$form_id.'";
@@ -92,19 +91,38 @@ class yf_static_pages {
 				$(this).closest("form").attr("target", "").attr("action", bak_action)
 			})
 		');
+		// Prevent execution of template tags when editing page content
+		if (false !== strpos($a['text'], '{') && false !== strpos($a['text'], '}')) {
+			$a['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $a['text']);
+		}
+		if (is_post() && false !== strpos($_POST['text'], '{') && false !== strpos($_POST['text'], '}')) {
+			$_POST['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $_POST['text']);
+		}
 		$_this = $this;
-		return form($a, array('hide_empty' => true, 'id' => $form_id))
+		return form((array)$_POST + (array)$a, array('hide_empty' => true, 'id' => $form_id))
 			->validate(array(
 				'__before__'=> 'trim',
 				'name' => array('required', function(&$in) use ($_this) {
 					$in = $_this->_fix_page_name($in);
 					return (bool)strlen($in);
+				}, function($name, $tmp, $d, &$error) use ($_this, $a) {
+					$id = db()->from($_this::table)->where('locale', $a['locale'])->where('name', $name)->get_one('id');
+					if ($id && $id != $a['id']) {
+						$error = t('Page with this name and locale already exists');
+					}
+					return $error ? false : true;
 				}),
 				'text' => 'required',
 			))
-			->db_update_if_ok(self::table, array('name','text','page_title','page_heading','meta_keywords','meta_desc','active'), 'id='.$a['id'])
-			->on_before_update(function() {
-#				module_safe('manage_revisions')->content_revision_add();
+			->update_if_ok(self::table, array('name','text','page_title','page_heading','meta_keywords','meta_desc','active'), 'id='.$a['id'])
+			->on_before_update(function() use ($a, $_this) {
+				module_safe('manage_revisions')->add(array(
+					'object_name'	=> $_this::table,
+					'object_id'		=> $a['id'],
+					'old'			=> $a,
+					'new'			=> $_POST,
+					'action'		=> 'update',
+				));
 			})
 			->on_after_update(function() {
 				common()->admin_wall_add(array('static page updated: '.$a['name'], $a['id']));
@@ -118,8 +136,8 @@ class yf_static_pages {
 			->text('meta_keywords')
 			->text('meta_desc')
 			->active_box()
-			->preview()
 			->save_and_back()
+			->preview()
 		;
 	}
 
@@ -128,7 +146,12 @@ class yf_static_pages {
 	function delete() {
 		$a = $this->_get_info();
 		if ($a) {
-#			module_safe('manage_revisions')->content_revision_add();
+			module_safe('manage_revisions')->add(array(
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'action'		=> 'delete',
+			));
 			db()->from(self::table)->whereid($a['id'])->delete();
 			common()->admin_wall_add(array('static page deleted: '.$a['id'], $a['id']));
 			cache_del('static_pages_names');
@@ -146,7 +169,15 @@ class yf_static_pages {
 	function active () {
 		$a = $this->_get_info();
 		if (!empty($a['id'])) {
-#			module_safe('manage_revisions')->content_revision_add();
+			$n = $a;
+			$n['active'] = (int)!$a['active'];
+			module_safe('manage_revisions')->add(array(
+				'object_name'	=> self::table,
+				'object_id'		=> $a['id'],
+				'old'			=> $a,
+				'new'			=> $n,
+				'action'		=> 'active',
+			));
 			db()->update(self::table, array('active' => (int)!$a['active']), (int)$a['id']);
 			common()->admin_wall_add(array('static page: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
 			cache_del('static_pages_names');
