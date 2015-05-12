@@ -455,7 +455,7 @@ $payment_api->dump(array( 'var' => array(
 				$balance = $account[ 'balance' ];
 				// save response
 				if( empty( $_response[ 'message' ] ) ) {
-					switch( $current_status_name ) {
+					switch( $new_status_name ) {
 					case 'success':
 						$message = 'Выполнено';
 						break;
