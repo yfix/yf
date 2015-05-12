@@ -474,7 +474,7 @@ class yf_admin_methods {
 			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address', //,div',
 #			'allowedContent' => true,
 			'extraAllowedContent' => implode('; ', array('a[*]{*}(*)','img[*]{*}(*)','video[*]{*}','source[*]{*}','div(*){*}[*]','table','tr','th','td','caption')),
-			'extraPlugins' => 'autosave,video,youtube,preview', //,widget,lineutils,fontawesome',
+			'extraPlugins' => 'autosave,video,youtube',//,preview', //,widget,lineutils,fontawesome',
 			'forcePasteAsPlainText' => true,
 #			'contentsCss' => array(
 #				'http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css',
