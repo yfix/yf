@@ -538,6 +538,7 @@ class yf_manage_payout {
 					return( $result );
 				}, array( 'desc' => 'сообщение' ) )
 			;
+			$response_last = reset( $response );
 		}
 		$html_response = $content;
 		// prepare view: operation options
@@ -576,7 +577,7 @@ class yf_manage_payout {
 					$url_base = 'https://cliff-sandbox.ecommpay.com/';
 					$url_provider_payouts = $url_base . 'operations';
 				}
-				$url_provider_operation_detail = empty( $_response[ 'transaction_id' ] ) ? $url_base . 'operations' : $url_base . 'operations/detail/' . $_response[ 'transaction_id' ];
+				$url_provider_operation_detail = empty( $response_last[ 'transaction_id' ] ) ? $url_base . 'operations' : $url_base . 'operations/detail/' . $response_last[ 'transaction_id' ];
 				break;
 		}
 
