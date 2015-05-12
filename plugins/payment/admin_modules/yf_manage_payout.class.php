@@ -664,13 +664,13 @@ EOS;
 				// 'operation_id' => $_operation_id,
 			// ));
 		// }
-		if( empty( $r[ 'status' ] ) ) {
-			$message[] = $r[ 'status_message' ];
-			$result = array(
-				'status_message'  => implode( '<br>', $message ),
-				'is_html_message' => true,
-			) + $result;
-		}
+		// if( empty( $r[ 'status' ] ) ) {
+			// $message[] = $r[ 'status_message' ];
+			// $result = array(
+				// 'status_message'  => implode( '<br>', $message ),
+				// 'is_html_message' => true,
+			// ) + $result;
+		// }
 		$result[ 'operation_id' ] = $_operation_id;
 		return( $this->_user_message( $result ) );
 	}

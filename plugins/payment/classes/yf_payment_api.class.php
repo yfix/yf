@@ -1123,7 +1123,7 @@ class yf_payment_api {
 			$json_options = json_encode( array_merge_recursive(
 				$operation_options,
 				$_options
-			), JSON_NUMERIC_CHECK );
+			));
 			$json_options && $_options = $json_options;
 		}
 		// remove id by update

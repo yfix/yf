@@ -64,8 +64,7 @@ class yf_payment__user {
 					'pages'    => $pages,
 					'page'     => 1,
 				),
-			) ),
-			// ), JSON_NUMERIC_CHECK ),
+			)),
 		);
 		// tpl
 		$result  = '';
