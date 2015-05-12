@@ -149,6 +149,20 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_city',
 					'sender_postindex',
 				),
+				'order' => array(
+					'card',
+					'sender_first_name',
+					'sender_last_name',
+					'sender_middle_name',
+					'sender_passport_number',
+					'sender_passport_issue_date',
+					'sender_passport_issued_by',
+					'sender_phone',
+					'sender_birthdate',
+					'sender_address',
+					'sender_city',
+					'sender_postindex',
+				),
 				'option' => array(
 					'card'                       => 'Номер карты',
 					'sender_first_name'          => 'Имя',
@@ -176,21 +190,21 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 						'required'  => true,
 						'minlength' => 2,
 						'maxlength' => 256,
-						'pattern'   => '^[a-zA-Zа-яА-Я]+$',
+						'pattern'   => '^[a-zA-Zа-яА-Я\s\.\-]+$',
 					),
 					'sender_last_name'           => array(
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 2,
 						'maxlength' => 256,
-						'pattern'   => '^[a-zA-Zа-яА-Я]+$',
+						'pattern'   => '^[a-zA-Zа-яА-Я\s\.\-]+$',
 					),
 					'sender_middle_name'         => array(
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 2,
 						'maxlength' => 256,
-						'pattern'   => '^[a-zA-Zа-яА-Я]+$',
+						'pattern'   => '^[a-zA-Zа-яА-Я\s\.\-]+$',
 					),
 					'sender_passport_number'     => array( // only Russian
 						'type'      => 'text',
@@ -215,7 +229,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 11,
-						'maxlength' => 11,
+						'maxlength' => 15,
 						'pattern'   => '^\d+$',
 					),
 					'sender_birthdate'           => array(
@@ -235,29 +249,29 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 						'required'  => true,
 						'minlength' => 2,
 						'maxlength' => 256,
-						'pattern'   => '^[a-zA-Zа-яА-Я]+$',
+						'pattern'   => '^[a-zA-Zа-яА-Я\s\-\.]+$',
 					),
 					'sender_postindex'           => array(
 						'type'      => 'text',
 						'required'  => true,
-						'minlength' => 6,
-						'maxlength' => 256,
-						'pattern'   => '^\d+$',
+						'minlength' => 5,
+						'maxlength' => 6,
+						'pattern'   => '^[\d]+$',
 					),
 				),
 				'option_validation' => array(
 					'card'                       => 'required|is_natural|length[13,19]',
-					'sender_first_name'          => 'required|unicode_alpha|length[2,256]',
-					'sender_last_name'           => 'required|unicode_alpha|length[2,256]',
-					'sender_middle_name'         => 'required|unicode_alpha|length[2,256]',
+					'sender_first_name'          => 'required|regex:~^[\pL\pM\s\.\-]+$~u|length[2,256]',
+					'sender_last_name'           => 'required|regex:~^[\pL\pM\s\.\-]+$~u|length[2,256]',
+					'sender_middle_name'         => 'required|regex:~^[\pL\pM\s\.\-]+$~u|length[2,256]',
 					'sender_passport_number'     => 'required|is_natural|length[10]', // only Russian
 					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
 					'sender_passport_issued_by'  => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#№]+$~u|length[2,256]',
-					'sender_phone'               => 'required|is_natural|length[11]', // only Russian
+					'sender_phone'               => 'required|is_natural|length[11,15]', // only Russian
 					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
 					'sender_address'             => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
-					'sender_city'                => 'required|unicode_alpha|length[2,256]',
-					'sender_postindex'           => 'required|is_natural|length[6,256]',
+					'sender_city'                => 'required|regex:~^[\pL\pM\s\-\.]+$~u|length[2,256]',
+					'sender_postindex'           => 'required|is_natural|length[5,6]',
 				),
 				'option_validation_message' => array(
 					'card'                       => 'обязательное поле от 13 до 19 цифр',
@@ -271,7 +285,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_birthdate'           => 'обязательное поле дата "год-месяц-число" (пример: 1977-01-22)',
 					'sender_address'             => 'обязательное поле от 2 символов',
 					'sender_city'                => 'обязательное поле от 2 символов',
-					'sender_postindex'           => 'обязательное поле от 6 цифр',
+					'sender_postindex'           => 'обязательное поле от 5 цифр',
 				),
 			),
 			'qiwi' => array(
@@ -298,6 +312,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'external_id',
 					// 'customer_ip',
 					'comment',
+					'account_number',
+				),
+				'order' => array(
 					'account_number',
 				),
 				'option' => array(
@@ -463,11 +480,15 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'sender_passport_number'     => $user[ 'passport_num' ],
 				'sender_passport_issue_date' => $user[ 'passport_issue_date' ],
 				'sender_passport_issued_by'  => $user[ 'passport_issued_by' ] ?: $user[ 'passport_released' ],
-				'sender_phone'               => $user[ 'phone' ],
+				'sender_phone'               => @str_replace( array( ' ', '-', '+', ), '', $user[ 'phone' ] ),
 				'sender_birthdate'           => $user[ 'birthdate' ] ?: $user[ 'birth_date' ],
 				'sender_address'             => $user[ 'address' ] ?: $user[ 'address2' ],
 				'sender_city'                => $user[ 'city' ] ?: $user[ 'city2' ],
 				'sender_postindex'           => $user[ 'zip_code' ] ?: $user[ 'zip_code2' ],
+			);
+			$option_default = &$this->method_allow[ 'payout' ][ 'qiwi' ][ 'option_default' ];
+			$option_default = array(
+				'account_number'             => @str_replace( array( ' ', '-', '+', ), '', $user[ 'phone' ] ),
 			);
 		}
 		// parent
