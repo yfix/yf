@@ -529,7 +529,7 @@ class yf_manage_payout {
 			$response = array_reverse( $_response );
 			$content = table( $response, array( 'no_total' => true ) )
 				->text( 'datetime', 'дата' )
-				->func( 'date', function( $value, $extra, $row_info ) {
+				->func( 'data', function( $value, $extra, $row_info ) {
 					$value = $row_info[ 'data' ];
 					$message = trim( $value[ 'message' ] );
 					$message = trim( $value[ 'message' ], '.' );
@@ -539,6 +539,7 @@ class yf_manage_payout {
 				}, array( 'desc' => 'сообщение' ) )
 			;
 			$response_last = reset( $response );
+			$response_last = $response_last[ 'data' ];
 		}
 		$html_response = $content;
 		// prepare view: operation options
