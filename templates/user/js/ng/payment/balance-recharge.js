@@ -261,7 +261,11 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					method.option_validation_js[ id ] &&
 					method.option_validation_js[ id ].type == 'date'
 				) {
-					this[ id ] = new Date().from_mysql( item );
+					if( !item || item == '0000-00-00' ) {
+						this[ id ] = null;
+					} else {
+						this[ id ] = new Date().from_mysql( item );
+					}
 				}
 			}, options );
 		}
