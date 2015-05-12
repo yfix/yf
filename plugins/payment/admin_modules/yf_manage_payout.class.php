@@ -595,12 +595,16 @@ class yf_manage_payout {
 		// import operation
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_status_message ) ) { return( null ); }
-		switch( !empty( $_status ) ) {
-			case true:
+		switch( true ) {
+			case @$_status == 'in_progress':
+				$_css_panel_status = 'warning';
+				empty( $_status_header ) && $_status_header = 'В процессе';
+				break;
+			case @$_status == 'success' || @$_status === true:
 				$_css_panel_status = 'success';
 				empty( $_status_header ) && $_status_header = 'Выполнено';
 				break;
-			case false:
+			case @$_status == 'refused':
 			default:
 				$_css_panel_status = 'danger';
 				empty( $_status_header ) && $_status_header = 'Ошибка';
@@ -652,25 +656,6 @@ EOS;
 			'operation_id' => $_operation_id,
 		);
 		$result = $_provider_class->api_request( $data );
-		// message
-		$message = array();
-		$message[] = $result[ 'status_message' ];
-		// if( empty( $result[ 'status' ] ) ) {
-			// $r = $_provider_class->_payout_refused( array(
-				// 'operation_id' => $_operation_id,
-			// ));
-		// } else {
-			// $r = $_provider_class->_payout_success( array(
-				// 'operation_id' => $_operation_id,
-			// ));
-		// }
-		// if( empty( $r[ 'status' ] ) ) {
-			// $message[] = $r[ 'status_message' ];
-			// $result = array(
-				// 'status_message'  => implode( '<br>', $message ),
-				// 'is_html_message' => true,
-			// ) + $result;
-		// }
 		$result[ 'operation_id' ] = $_operation_id;
 		return( $this->_user_message( $result ) );
 	}

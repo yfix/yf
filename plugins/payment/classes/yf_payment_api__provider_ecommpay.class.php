@@ -1064,7 +1064,7 @@ $payment_api->dump( array( 'var' => $result ));
 			'status'         => &$status,
 			'status_message' => &$status_message,
 		);
-		$status = false;
+		$status = 'refused';
 		// transform reverse
 		foreach( $this->_api_transform_reverse as $from => $to ) {
 			if( $from != $to && isset( $response[ $from ] ) ) {
@@ -1081,15 +1081,16 @@ $payment_api->dump( array( 'var' => $result ));
 				if( $response[ 'amount' ] == $_amount
 					&& $response[ 'operation_id' ] == $operation_id
 				) {
-					$status         = true;
+					$status         = 'success';
 					$status_message = 'Выполнено';
 				} else {
+					$status         = 'in_progress';
 					$status_message = 'Выполнено, но сумма или код операции не совпадают';
 				}
 				break;
 			// in progress
 			case 50:
-				$status         = true;
+				$status         = 'in_progress';
 				$status_message = 'В процессе';
 				break;
 			// fails...
@@ -1117,6 +1118,7 @@ $payment_api->dump( array( 'var' => $result ));
 		}
 		$status_message = $_comment .' - '. $status_message;
 		// save response
+		empty( $response[ 'message' ] ) && $response[ 'message' ] = $status_message;
 		$sql_datetime = $payment_api->sql_datetime();
 		$operation_options = array(
 			'response' => array( array(
@@ -1130,18 +1132,6 @@ $payment_api->dump( array( 'var' => $result ));
 			'options'         => $operation_options,
 		);
 		$payment_api->operation_update( $operation_update_data );
-		// handle response
-		// switch( $operation_status_name ) {
-			// case 'success':
-				// $this->_payout_success( array( 'operation_id' => $_operation_id ) );
-				// break;
-			// case 'refused':
-				// $this->_payout_refused( array( 'operation_id' => $_operation_id ) );
-				// break;
-		// }
-// DEBUG
-// var_dump( $url, $request, $data_json );
-// exit;
 		return( $result );
 	}
 
