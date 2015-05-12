@@ -453,6 +453,23 @@ $payment_api->dump(array( 'var' => array(
 				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
 				list( $account_id, $account ) = $object;
 				$balance = $account[ 'balance' ];
+				// save response
+				if( empty( $_response[ 'message' ] ) ) {
+					switch( $current_status_name ) {
+					case 'success':
+						$message = 'Выполнено';
+						break;
+					case 'in_progress':
+						$message = 'В процессе';
+						break;
+					case 'refused':
+					default:
+						$message = 'Отклонено';
+						break;
+					}
+					$_response[ 'message' ] = $message;
+					// code...
+				}
 				// update operation
 				$data = array(
 					'response' => array( array(
