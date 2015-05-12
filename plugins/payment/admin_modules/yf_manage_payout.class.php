@@ -531,7 +531,8 @@ class yf_manage_payout {
 					$value = $row_info[ 'data' ];
 					$message = trim( $value[ 'message' ] );
 					$message = trim( $value[ 'message' ], '.' );
-					$result = t( $message ) . ' (' . (int)$value[ 'state' ] . ')';
+					$result = t( $message );
+					isset( $value[ 'state' ] ) && $result .= ' (' . $value[ 'state' ] . ')';
 					return( $result );
 				}, array( 'desc' => 'сообщение' ) )
 			;
