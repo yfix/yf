@@ -28,11 +28,11 @@
 </style>
 
 <div class="b-link-list pull-right">
+	<a href="{url.list}" class="btn btn-primary">Назад к списоку операций</a>
 	<a href="{url.view}" class="btn btn-info">Операция</a>
 {if_not_empty( url.provider_payouts )}
 	<a href="{url.provider_payouts}" target="_blank" class="btn btn-warning">Операция провайдера</a>
 {/if}
-	<a href="{url.list}" class="btn btn-primary">Назад к списоку операций</a>
 </div>
 
 {if_not_empty( header_data )}
@@ -72,19 +72,18 @@
 			<li role="presentation" class="active">
 				<a href="#automatic" aria-controls="automatic" role="tab" data-toggle="tab">Автоматический</a>
 			</li>
+{if_not_empty( is_manual )}
 			<li role="presentation">
 				<a href="#manual" aria-controls="manual" role="tab" data-toggle="tab">Ручной</a>
 			</li>
+{/if}
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="automatic">
 				<a href="{url.request}" class="btn btn-success">Выполнить запрос вывода средств</a>
-					{{-- <li class="list-item">
-						<a href="{url.provider_operation_detail}" class="btn btn-info">Проверьте детали выполненного запроса</a>
-						{tip( Данная ссылка будет активна после выполнения запроса )}
-					</li> --}}
 				</ol>
 			</div>
+{if_not_empty( is_manual )}
 			<div role="tabpanel" class="tab-pane" id="manual">
 				<ol class="b-list-step">
 					<li class="list-item">
@@ -96,6 +95,7 @@
 					</li>
 				</ol>
 			</div>
+{/if}
 		</div>
 	</div>
 </div>

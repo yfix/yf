@@ -400,8 +400,9 @@ class yf_manage_payout {
 			return( $this->_user_message( $result ) );
 		}
 		$provider = &$providers_user[ $o_provider_id ];
+		$provider_name = &$provider[ 'name' ];
 		$provider_class = $payment_api->provider_class( array(
-			'provider_name' => $provider[ 'name' ],
+			'provider_name' => $provider_name,
 		));
 		if( empty( $provider_class ) ) {
 			$result = array(
@@ -465,6 +466,7 @@ class yf_manage_payout {
 			'user_is_online'       => &$user_is_online,
 			'provider_id'          => &$o_provider_id,
 			'provider'             => &$provider,
+			'provider_name'        => &$provider_name,
 			'provider_class'       => &$provider_class,
 			'providers_user'       => &$providers_user,
 			'request'              => &$request,
@@ -562,16 +564,27 @@ class yf_manage_payout {
 		);
 		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
-		// url EcommPay
+		// manual mode
+		$is_manual = false;
 		$is_test = $_provider_class->is_test();
-		$url_base = 'https://cliff.ecommpay.com/';
-		$is_test && $url_base = 'https://cliff-sandbox.ecommpay.com/';
-		$url_operation_detail = empty( $_transaction_id ) ? $url_view .'#/' : $url_base . 'operations/detail/' . $_transaction_id;
-		$url_payouts          = $url_base . 'payouts/index';
+		switch( $_provider_name ) {
+			case 'ecommpay':
+				$is_manual = true;
+				$url_base = 'https://cliff.ecommpay.com/';
+				$url_provider_payouts = $url_base . 'operations/searchPayout';
+				if( $is_test ) {
+					$url_base = 'https://cliff-sandbox.ecommpay.com/';
+					$url_provider_payouts = $url_base . 'operations';
+				}
+				$url_provider_operation_detail = empty( $_response[ 'transaction_id' ] ) ? $url_base . 'operations' : $url_base . 'operations/detail/' . $_response[ 'transaction_id' ];
+				break;
+		}
+
 		// render
 		$is_progressed = $_status[ 'name' ] != 'in_progress';
 		$replace = $operation + array(
 			'is_progressed'    => $is_progressed,
+			'is_manual'        => $is_manual,
 			'header_data'      => $html_operation_options,
 			'request_data'     => $html_request_options,
 			'request_data_csv' => $html_request_options_csv,
@@ -583,8 +596,8 @@ class yf_manage_payout {
 				'status_success' => $this->_url( 'status_success', array( '%operation_id' => $_operation_id ) ),
 				'status_refused' => $this->_url( 'status_refused', array( '%operation_id' => $_operation_id ) ),
 				'csv'            => $this->_url( 'csv',            array( '%operation_id' => $_operation_id ) ),
-				'provider_operation_detail' => $url_operation_detail,
-				'provider_payouts'          => $url_payouts,
+				'provider_operation_detail' => @$url_provider_operation_detail,
+				'provider_payouts'          => @$url_provider_payouts,
 			)
 		);
 		$result = tpl()->parse( 'manage_payout/view', $replace );
