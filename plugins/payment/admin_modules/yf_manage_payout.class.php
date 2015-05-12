@@ -573,12 +573,14 @@ class yf_manage_payout {
 			case 'ecommpay':
 				$is_manual = true;
 				$url_base = 'https://cliff.ecommpay.com/';
-				$url_provider_payouts = $url_base . 'operations/searchPayout';
+				$url_provider_operations = $url_base . 'operations/searchPayout';
+				$url_provider_payouts    = $url_base . 'payouts';
 				if( $is_test ) {
 					$url_base = 'https://cliff-sandbox.ecommpay.com/';
-					$url_provider_payouts = $url_base . 'operations';
+					$url_provider_operations = $url_base . 'operations';
+					$url_provider_payouts    = $url_provider_operations;
 				}
-				$url_provider_operation_detail = empty( $response_last[ 'transaction_id' ] ) ? $url_base . 'operations' : $url_base . 'operations/detail/' . $response_last[ 'transaction_id' ];
+				$url_provider_operation_detail = empty( $response_last[ 'transaction_id' ] ) ? null : $url_base . 'operations/detail/' . $response_last[ 'transaction_id' ];
 				break;
 		}
 
@@ -599,6 +601,7 @@ class yf_manage_payout {
 				'status_refused' => $this->_url( 'status_refused', array( '%operation_id' => $_operation_id ) ),
 				'csv'            => $this->_url( 'csv',            array( '%operation_id' => $_operation_id ) ),
 				'provider_operation_detail' => @$url_provider_operation_detail,
+				'provider_operations'       => @$url_provider_operations,
 				'provider_payouts'          => @$url_provider_payouts,
 			)
 		);
