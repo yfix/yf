@@ -68,7 +68,6 @@ class yf_manage_cron {
 
 	/**
 	*/
-
 	function edit() {
 		$id = intval($_GET['id']);
 		if (!$id) {
@@ -100,7 +99,7 @@ class yf_manage_cron {
 			->info('name')
 			->container('<pre>'.$file_content.'</pre>', 'Content')
 			->select_box('exec_type', $this->exec_type)
-			->container($this->select_f(), 'Start every')
+			->container($this->_select_f(), 'Start every')
 			->integer('exec_time', 'Max exec time, s', array(
 				'placeholder'    => 'время выполнения, секунд',
 			))
@@ -115,6 +114,8 @@ class yf_manage_cron {
 		return _class('admin_methods')->active($this->_table);
 	}
 
+	/**
+	*/
 	function cron_logs() {
 		return table(
 				db()->from('cron_logs')->where('cron_id', (int)$_GET['id'])->order_by('time_start', 'desc')
@@ -125,7 +126,9 @@ class yf_manage_cron {
 		;
 	}
 
-	function select_f(){
+	/**
+	*/
+	function _select_f() {
 		$digits = range(1, 59);
 		$units = array(
 			'minutes' => 'minutes',
@@ -144,4 +147,3 @@ class yf_manage_cron {
 		';
 	}
 }
-
