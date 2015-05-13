@@ -128,8 +128,7 @@ class yf_manage_revisions {
 			->text('action')
 			->text('object_name')
 			->text('object_id')
-#			->text('ip')
-#			->text('item_id')
+			->text('ip')
 			->admin('user_id', array('desc' => 'admin'))
 			->btn_view()
 		;
@@ -236,22 +235,6 @@ class yf_manage_revisions {
 			->text('action')
 			->btn_view('', url('/@object/details/%id/@page'))
 		;
-*/
-	}
-
-	/**
-	*/
-	function check_revision($function, $id, $db_table) {
-/*
-		if (empty($function) || empty($id) || empty($db_table)) {
-			return false;
-		}
-		if (!is_array($id) && intval($id)) {
-			$ids = array(intval($id));
-		}
-		$check_ids = db()->get_2d('SELECT id, item_id FROM '.db(self::table).' WHERE item_id IN ('.implode(',',$ids).') AND action=\''.$function.'\'');
-		$ids = array_diff($ids, (array)$check_ids);
-		return $this->new_revision($function, $ids, $db_table);
 */
 	}
 
