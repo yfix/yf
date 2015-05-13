@@ -154,17 +154,15 @@ class yf_manage_revisions {
 		$prefix = 'json:';
 		$plen = strlen('json:');
 		if (substr($a['data_old'], 0, 1) === '{') {
-			$a['data_old'] = var_export(json_decode($a['data_old'], true), 1);
+			$a['data_old'] = json_decode($a['data_old'], true);
 		} elseif (substr($a['data_old'], 0, $plen) === $prefix) {
-			$a['data_old'] = var_export(json_decode(substr($a['data_old'], $plen), true), 1);
+			$a['data_old'] = json_decode(substr($a['data_old'], $plen), true);
 		}
-		$a['data_old'] = _prepare_html($a['data_old']);
 		if (substr($a['data_new'], 0, 1) === '{') {
-			$a['data_new'] = var_export(json_decode($a['data_new'], true), 1);
+			$a['data_new'] = json_decode($a['data_new'], true);
 		} elseif (substr($a['data_new'], 0, $plen) === $prefix) {
-			$a['data_new'] = var_export(json_decode(substr($a['data_new'], $plen), true), 1);
+			$a['data_new'] = json_decode(substr($a['data_new'], $plen), true);
 		}
-		$a['data_new'] = _prepare_html($a['data_new']);
 
 		$prev_id = 0;
 		$next_id = 0;
@@ -178,19 +176,33 @@ class yf_manage_revisions {
 			}
 		}
 		css('pre.black { color: #ccc; background: black; font-weight: bold; font-family: inherit; margin: 0; display: inline-block; width: auto; padding: 2px; border: 0; }');
+		$admin_objects = array(
+			'static_pages' => 'static_pages',
+			'news'	=> 'manage_news',
+			'faq'	=> 'manage_faq',
+			'tips'	=> 'manage_tips',
+		);
+		$url_object = $admin_objects[$a['object_name']];
+		$object_info = $a['object_name'].' | '.$a['object_id'];
+		$diff = array();
+		if (is_array($a['data_old']) || is_array($a['data_new'])) {
+			$diff = array_diff((array)$a['data_old'], (array)$a['data_new']);
+		}
 		$a = array(
 			'navigation' => ''
 				. ($prev_id ? a('/@object/@action/'.$prev_id, 'Prev: '.$prev_id, 'fa fa-backward', null, null, false).'&nbsp;' : '')
 				. '<big><b>&nbsp;'.$id.'&nbsp;</b></big>&nbsp;'
 				. ($next_id ? a('/@object/@action/'.$next_id, 'Next: '.$next_id, 'fa fa-forward', null, null, false) : '')
 			,
-			'object'	=> a('/'.$a['object_name'].'/edit/'.$a['object_id'], $a['object_name'].' | '.$a['object_id'], 'fa fa-edit'). ' | '. $a['action']. ($a['locale'] ? ' | locale: '.$a['locale'] : ''),
+			'object'	=> ($url_object ? a('/'.$url_object.'/edit/'.$a['object_id'], $object_info, 'fa fa-edit') : $object_info)
+				. ' | '. $a['action']. ($a['locale'] ? ' | locale: '.$a['locale'] : ''),
 			'date'		=> $a['date'],
 			'url'		=> a($a['url']),
 			'editor'	=> a('/admin/edit/'.$a['user_id'], db()->from('admin')->get_one('login').'&nbsp;['.$a['user_id'].']', 'fa fa-user'). '&nbsp;'
 				. html()->ip($a['ip']). '<br /><small>'.$a['user_agent'].'</small>',
-			'data_old'	=> '<pre class="black">'.$a['data_old'].'</pre>',
-			'data_new'	=> '<pre class="black">'.$a['data_new'].'</pre>',
+			'data_old'	=> $a['data_old'] ? '<pre class="black">'._prepare_html(is_array($a['data_old']) ? var_export($a['data_old'], 1) : $a['data_old']).'</pre>' : '',
+			'data_new'	=> $a['data_new'] ? '<pre class="black">'._prepare_html(is_array($a['data_new']) ? var_export($a['data_new'], 1) : $a['data_new']).'</pre>' : '',
+			'diff'		=> $diff ? '<pre class="black">'._prepare_html(var_export($diff, 1)).'</pre>' : '',
 		);
 		foreach ($a as $k => $v) {
 			if (empty($v)) {
