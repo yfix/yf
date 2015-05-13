@@ -5,6 +5,8 @@ __ANGULAR_MODULES__.push( __NS__ );
 
 angular.module( __NS__, [
 	'payment.balance',
+	'ngSanitize',
+	'mgcrea.ngStrap',
 ])
 
 // .value( 'payment.balance.recharge.config', { payment: {}, } )
