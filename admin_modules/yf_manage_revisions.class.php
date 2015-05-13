@@ -131,44 +131,73 @@ class yf_manage_revisions {
 #			->text('ip')
 #			->text('item_id')
 			->admin('user_id', array('desc' => 'admin'))
-			->btn_view('', url('/@object/details/%id'))
+			->btn_view()
 		;
 	}
 
 	/**
 	*/
-	function details() {
-/*
-		$sql = 'SELECT * FROM '.db(self::table).' WHERE id='.intval($_GET['id']);
-		$a = db()->get($sql);
-		if (empty($a)) {
-			return _e('Revision not found');
+	function view() {
+		$id = (int)$_GET['id'];
+		if ($id) {
+			$a = db()->from(self::table)->whereid($id)->get();
 		}
-		return form($a, array(
-				'dd_mode' => 1,
-			))
-			->link('Revisions list', url('/@object'))
-			->admin_info('user_id')
-			->info_date('add_date', array('format' => 'full'))
-			->info('action')
-			->link('Activate new version', url('/object/rollback_revision/%id'))
-			->tab_start('View_difference')
-				->func('data', function($extra, $r, $_this) {
-					$origin = json_decode($r[$extra['name']], true);
-					$before = db()->get('SELECT * FROM '.db(self::table).' WHERE id<'.$r['id'].' AND item_id='.$r['item_id'].' ORDER BY id DESC' );
-					$before = json_decode($before[$extra['name']], true);
-					$origin = var_export($origin, true);
-					$before = var_export($before, true);
-					return common()->get_diff($before, $origin);
-				})
-			->tab_end()
-			->tab_start('New_version')
-				->func('data', function($extra, $r, $_this) {
-					return '<pre>'.var_export(json_decode($r[$extra['name']], true), 1).'</pre>';
-				})
-			->tab_end()
+		if (!$a) {
+			return _404();
+		}
+		$all = db()->select('id, date, action')->from(self::table)
+			->where('object_name', $a['object_name'])
+			->where('object_id', $a['object_id'])
+			->order_by('id ASC')
+			->get_all()
 		;
-*/
+		$prefix = 'json:';
+		$plen = strlen('json:');
+		if (substr($a['data_old'], 0, 1) === '{') {
+			$a['data_old'] = var_export(json_decode($a['data_old'], true), 1);
+		} elseif (substr($a['data_old'], 0, $plen) === $prefix) {
+			$a['data_old'] = var_export(json_decode(substr($a['data_old'], $plen), true), 1);
+		}
+		$a['data_old'] = _prepare_html($a['data_old']);
+		if (substr($a['data_new'], 0, 1) === '{') {
+			$a['data_new'] = var_export(json_decode($a['data_new'], true), 1);
+		} elseif (substr($a['data_new'], 0, $plen) === $prefix) {
+			$a['data_new'] = var_export(json_decode(substr($a['data_new'], $plen), true), 1);
+		}
+		$a['data_new'] = _prepare_html($a['data_new']);
+
+		$prev_id = 0;
+		$next_id = 0;
+		foreach ($all as $rinfo) {
+			$rid = $rinfo['id'];
+			if ($rid < $id) {
+				$prev_id = $rid;
+			} elseif ($rid > $id) {
+				$next_id = $rid;
+				break;
+			}
+		}
+		css('pre.black { color: #ccc; background: black; font-weight: bold; font-family: inherit; margin: 0; display: inline-block; width: auto; padding: 2px; border: 0; }');
+		$a = array(
+			'navigation' => ''
+				. ($prev_id ? a('/@object/@action/'.$prev_id, 'Prev: '.$prev_id, 'fa fa-backward', null, null, false).'&nbsp;' : '')
+				. '<big><b>&nbsp;'.$id.'&nbsp;</b></big>&nbsp;'
+				. ($next_id ? a('/@object/@action/'.$next_id, 'Next: '.$next_id, 'fa fa-forward', null, null, false) : '')
+			,
+			'object'	=> a('/'.$a['object_name'].'/edit/'.$a['object_id'], $a['object_name'].' | '.$a['object_id'], 'fa fa-edit'). ' | '. $a['action']. ($a['locale'] ? ' | locale: '.$a['locale'] : ''),
+			'date'		=> $a['date'],
+			'url'		=> a($a['url']),
+			'editor'	=> a('/admin/edit/'.$a['user_id'], db()->from('admin')->get_one('login').'&nbsp;['.$a['user_id'].']', 'fa fa-user'). '&nbsp;'
+				. html()->ip($a['ip']). '<br /><small>'.$a['user_agent'].'</small>',
+			'data_old'	=> '<pre class="black">'.$a['data_old'].'</pre>',
+			'data_new'	=> '<pre class="black">'.$a['data_new'].'</pre>',
+		);
+		foreach ($a as $k => $v) {
+			if (empty($v)) {
+				unset($a[$k]);
+			}
+		}
+		return html()->simple_table($a);
 	}
 
 	/**
