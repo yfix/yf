@@ -115,14 +115,11 @@ class yf_manage_revisions {
 	/**
 	*/
 	function show() {
-		return table(db()->from(self::table)->order_by('date DESC'), array(
+		return table(db()->from(self::table), array(
 				'filter' => true,
 				'filter_params' => array(
-#					'user_id'	=> array('eq','user_id'),
-#					'add_date'	=> array('dt_between','add_date'),
-#					'action' 	=> array('eq','action'),
-#					'item_id' 	=> array('eq','item_id'),
-#					'ip'		=> array('like', 'ip'),
+					'date'				=> 'daterange_dt_between',
+					'__default_order'	=> 'date DESC',
 				),
 				'hide_empty' => 1,
 			))
@@ -262,6 +259,7 @@ class yf_manage_revisions {
 			return false;
 		}
 		$min_date = db()->from(self::table)->min('date');
+		$min_date = strtotime($min_date);
 
 		$order_fields = array();
 		foreach (explode('|', 'id|date|object_name|object_id|action|user_id|locale|site_id|server_id|ip') as $f) {
