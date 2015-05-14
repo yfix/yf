@@ -23,7 +23,7 @@ class yf_db_revisions {
 			->text('ip')	
 			->text('query_method')
 			->text('query_table')
-			->btn_view('', './?object=db_revisions&action=details&id=%d')
+			->btn_view('', url('/@object/details/%d'))
 			;
 	}
 
@@ -64,22 +64,7 @@ class yf_db_revisions {
 	/**
 	*/
 	function filter_save() {
-		$_GET['id'] = preg_replace('~[^0-9a-z_]+~ims', '', $_GET['id']);
-		if ($_GET['id'] && false !== strpos($_GET['id'], $_GET['object'].'__')) {
-			$filter_name = $_GET['id'];
-			list(,$action) = explode('__', $filter_name);
-		}
-		if ($_GET['page'] == 'clear') {
-			$_SESSION[$filter_name] = array();
-		} else {
-			$_SESSION[$filter_name] = $_POST;
-			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
-				if (isset($_SESSION[$filter_name][$f])) {
-					unset($_SESSION[$filter_name][$f]);
-				}
-			}
-		}
-		return js_redirect('./?object='.$_GET['object'].'&action='.$action);
+		_class('admin_methods')->filter_save();
 	}
 
 	/**
