@@ -587,7 +587,7 @@ EOS;
 		$db = db()->table( 'payment_operation' )
 			->where( 'status_id', '=', $status_id )
 			->where( 'direction', '=', 'in' )
-			->where( 'datetime_start', '<', $sql_datetime_over )
+			->where( 'datetime_update', '<', $sql_datetime_over )
 			->where_null( 'datetime_finish' )
 		;
 		db()->begin();
