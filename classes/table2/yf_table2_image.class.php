@@ -73,7 +73,7 @@ class yf_table2_image {
 				}
 				if ($link_url) {
 					if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-						$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link_url);
+						$is_link_allowed = _class('admin_methods')->_admin_link_is_allowed($link_url);
 						if (!$is_link_allowed) {
 							$link_url = '';
 						}

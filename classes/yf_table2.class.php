@@ -935,7 +935,7 @@ class yf_table2 {
 			if (in_array($link, array('','#','javascript:void();'))) {
 				$is_link_allowed = true;
 			} else {
-				$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
+				$is_link_allowed = _class('admin_methods')->_admin_link_is_allowed($link);
 			}
 		}
 		return $is_link_allowed;

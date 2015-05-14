@@ -123,12 +123,12 @@ class yf_manage_revisions {
 				),
 				'hide_empty' => 1,
 			))
-			->text('id')
+			->text('id', array('link' => url('/@object/view/%id')))
 			->date('date', array('format' => 'long'))
 			->func('object_id', function($in, $e, $a) { return $a['object_name']. ' | '.$a['object_id'].' | '.$a['action']; })
-			->text('ip')
-			->admin('user_id', array('desc' => 'admin'))
-			->btn_view()
+			->func('ip', function($ip) { return html()->ip($ip); })
+			->admin('user_id', array('desc' => 'Editor'))
+#			->btn_view(array('btn_no_text' => 1))
 		;
 	}
 
