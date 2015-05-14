@@ -588,4 +588,5 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 // exit;
 		list( $status, $status_message ) = $result;
 	}
+
 }
