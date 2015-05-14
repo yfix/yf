@@ -50,6 +50,10 @@ class yf_manage_deposit {
 			'list' => url_admin( array(
 				'object'       => $object,
 			)),
+			'update_expired' => url_admin( array(
+				'object' => $object,
+				'action' => 'update_expired',
+			)),
 			'view' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'view',
@@ -245,6 +249,7 @@ class yf_manage_deposit {
 			->btn( 'Ввод средств',  $url[ 'view'    ], array( 'icon' => 'fa fa-sign-in', 'class_add' => 'btn-primary' ) )
 			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'   , 'class_add' => 'btn-info'   ) )
 			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'  , 'class_add' => 'btn-info'   ) )
+			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
 		);
 	}
 
@@ -565,5 +570,90 @@ EOS;
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
 		return( js_redirect( $url_view, false ) );
 	}
+
+	function _update_expired() {
+		// var
+		$payment_api = _class( 'payment_api' );
+		// update status only in_progress
+		$object = $payment_api->get_status( array( 'name' => 'in_progress' ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+		$object = $payment_api->get_status( array( 'name' => 'expired' ) );
+		list( $new_status_id, $new_status ) = $object;
+		if( empty( $new_status_id ) ) { return( $object ); }
+		// date: over 3 days
+		$sql_datetime_over = date( 'Y-m-d', strtotime('-3 day') );
+		$sql_datetime = $payment_api->sql_datetime();
+		$db = db()->table( 'payment_operation' )
+			->where( 'status_id', '=', $status_id )
+			->where( 'direction', '=', 'in' )
+			->where( 'datetime_start', '<', $sql_datetime_over )
+			->where_null( 'datetime_finish' )
+		;
+		db()->begin();
+		$result = $db->update( array(
+			'status_id'       => $new_status_id,
+			'datetime_finish' => $sql_datetime,
+/* DEBUG
+), array( 'sql' => true ) );
+db()->rollback();
+var_dump( $result );
+exit; //*/
+		));
+		if( empty( $result ) ) { db()->rollback(); return( null ); }
+		db()->commit();
+		return( true );
+	}
+
+	function update_expired() {
+		$url = &$this->url;
+		// command line interface
+		$is_cli = ( php_sapi_name() == 'cli' );
+		$is_cli && $this->_update_expired_cli();
+		// web
+		$replace = array(
+			'is_confirm' => false,
+		);
+		$result = form( $replace )
+			->on_post( function( $data, $extra, $rules ) {
+				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
+				if( $is_confirm ) {
+					$result = $this->_update_expired();
+					if( empty( $result ) ) {
+						$level = 'error';
+						$message = 'Ошибка при обновлении';
+					} else {
+						$level = 'success';
+						$message = 'Выполнено обновление';
+					}
+					common()->add_message( $message, $level );
+				} else {
+					common()->message_info( 'Требуется подтверждение, для выполнения операции' );
+				}
+			})
+			->info( 'header', array( 'value' => 'Ввод средств: обновление статуса просроченных операций', 'no_label' => true, 'class' => 'text-warning' ) )
+			->check_box( 'is_confirm', array( 'desc' => 'Подтверждение', 'no_label' => true ) )
+			->row_start()
+				->submit( 'operation', 'update', array( 'desc' => 'Обновить', 'icon' => 'fa fa-refresh' ) )
+				->link( 'Назад' , $url[ 'list' ], array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
+			->row_end()
+		;
+		return( $result );
+	}
+
+	function _update_expired_cli() {
+		$result = $this->_update_expired();
+		if( empty( $result ) ) {
+			$status = 1;
+			$message = 'Update is fail';
+		} else {
+			$status = 0;
+			$message = 'Update is success';
+			;
+		}
+		echo( $message . PHP_EOL );
+		exit( $status );
+	}
+
 
 }
