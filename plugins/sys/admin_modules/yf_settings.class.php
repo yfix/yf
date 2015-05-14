@@ -9,8 +9,8 @@ class yf_settings {
 	public $css_frameworks = array(
 		'bs2' => 'Twitter Bootstrap v2',
 		'bs3' => 'Twitter Bootstrap v3',
-		'pure' => 'Yahoo PureCSS',
-		'foundation' => 'Zurb Foundation',
+#		'pure' => 'Yahoo PureCSS',
+#		'foundation' => 'Zurb Foundation',
 	);
 	// currently for: bs2, bs3
 	public $css_subthemes = array(
@@ -36,22 +36,22 @@ class yf_settings {
 		'mysql'		=> 'mysql',
 		'mysqli'	=> 'mysqli',
 		'mysql_pdo'	=> 'mysql PDO',
-		'sqlite'	=> 'sqlite',
-		'oracle'	=> 'oracle',
-		'postgre'	=> 'postgre',
+#		'sqlite'	=> 'sqlite',
+#		'oracle'	=> 'oracle',
+#		'postgre'	=> 'postgre',
 	);
 	public $cache_drivers = array(
 		'memcache'	=> 'memcache',
 		'xcache'	=> 'xcache',
-		'apc'		=> 'apc',
+#		'apc'		=> 'apc',
 		'files'		=> 'files',
 	);
 	public $tpl_drivers = array(
 		'yf'		=> 'YF stpl (default)',
-		'smarty'	=> 'smarty',
-		'fenom'		=> 'fenom',
-		'twig'		=> 'twig',
-		'blitz'		=> 'blitz',
+#		'smarty'	=> 'smarty',
+#		'fenom'		=> 'fenom',
+#		'twig'		=> 'twig',
+#		'blitz'		=> 'blitz',
 	);
 
 	/**
@@ -73,9 +73,9 @@ class yf_settings {
 		}
 		$a = array(
 			'row_start',
-				array('link', 'display_what', './?object='.$_GET['object'].'&action=display_what', array('no_text' => 1, 'icon' => 'icon-edit fa fa-edit')),
+				array('link', 'display_what', url('/@object/display_what'), array('no_text' => 1, 'icon' => 'icon-edit fa fa-edit')),
 				array('save'),
-				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge', array('class' => 'btn btn-default')), // TODO: link, method, icon
+				array('link', 'cache_purge', url('/@object/cache_purge'), array('class' => 'btn btn-default')), // TODO: link, method, icon
 			'row_end',
 		);
 		$r = array();
@@ -126,7 +126,7 @@ class yf_settings {
 	/**
 	*/
 	function _get_settings($hooks_data) {
-		$settings = db()->get_all('SELECT * FROM '.db('settings').' ORDER BY `order` ASC', 'item', $cache = false);
+		$settings = db()->from('settings')->order_by('`order`, item ASC')->get_all();
 		if (!$settings && $hooks_data) {
 			$settings = array();
 			foreach ((array)$hooks_data as $k => $v) {
@@ -181,7 +181,7 @@ class yf_settings {
 				db()->query('TRUNCATE TABLE '.db('settings'));
 				db()->insert_safe('settings', $to_save);
 			}
-			return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
+			return js_redirect('/@object/@action');
 		}
 		jquery('
 			var container = $("#settings-sortable-container")
@@ -191,9 +191,9 @@ class yf_settings {
 			});
 		');
 		$container_html = '
-<div class="span6" id="settings-sortable-container">
-    <ul class="nav nav-pills nav-stacked" id="sortable_settings">
-';
+			<div class="span6" id="settings-sortable-container">
+			    <ul class="nav nav-pills nav-stacked" id="sortable_settings">
+		';
 		foreach ((array)$settings as $s) {
 			$name = $s['item'];
 			if (!isset($avail_hook_modules[$name])) {
@@ -204,10 +204,10 @@ class yf_settings {
 			$container_html .= '<li class="item" id="liitem_'.str_replace('_', '', $name).'"><a style="cursor:move;"><i class="icon icon-move fa fa-arrows"></i> '.t($name).' ('.(count($hooks)).')'
 				.' <input type="checkbox" name="check['.str_replace('_', '', $name).']" value="1" style="float:right;"'.($is_checked ? ' checked="checked"' : '').'></a></li>'.PHP_EOL;
 		}
-$container_html .= '
-    </ul>
-</div>
-			';
+		$container_html .= '
+			    </ul>
+			</div>
+		';
 		$a['back_link'] = url('/@object');
 		return form($a, array('legend' => 'Settings items'))
 			->hidden('sort')
@@ -342,9 +342,7 @@ $container_html .= '
 #			array('number', 'db_query_cache_ttl'),
 #			array('select_box', 'db_query_cache_driver'),
 			'row_start',
-#				array('link', 'cache_stats', './?object='.$_GET['object'].'&action=cache_stats'), // TODO: link, method, icon
-#				array('link', 'minify_css', './?object='.$_GET['object'].'&action=minify_css'), // TODO: link, method, icon
-#				array('link', 'minify_js', './?object='.$_GET['object'].'&action=minify_js'), // TODO: link, method, icon
+#				array('link', 'cache_stats', url('/@object/cache_stats')), // TODO: link, method, icon
 			'row_end',
 */
 		);
@@ -367,18 +365,6 @@ $container_html .= '
 	/**
 	*/
 	function cache_stats() {
-// TODO
-	}
-
-	/**
-	*/
-	function minify_css() {
-// TODO
-	}
-
-	/**
-	*/
-	function minify_js() {
 // TODO
 	}
 }
