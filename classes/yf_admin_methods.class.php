@@ -21,7 +21,30 @@ class yf_admin_methods {
 
 	/**
 	*/
-	function _init() {
+	function __get ($name) {
+		if (!$this->_preload_complete) {
+			$this->_preload_data();
+		}
+		return $this->$name;
+	}
+
+	/**
+	*/
+	function __set ($name, $value) {
+		if (!$this->_preload_complete) {
+			$this->_preload_data();
+		}
+		$this->$name = $value;
+		return $this->$name;
+	}
+
+	/**
+	*/
+	function _preload_data () {
+		if ($this->_preload_complete) {
+			return true;
+		}
+		$this->_preload_complete = true;
 		$this->USER_ID		= main()->USER_ID;
 		$this->USER_GROUP	= main()->USER_GROUP;
 		$this->ADMIN_ID		= main()->ADMIN_ID;

@@ -23,7 +23,7 @@ class yf_form2_tbl_funcs {
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
 			if ($link_url) {
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($link_url)) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('admin_methods')->_admin_link_is_allowed($link_url)) {
 					return '';
 				}
 			}
@@ -166,7 +166,7 @@ class yf_form2_tbl_funcs {
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
 			if ($link_url) {
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($link_url)) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('admin_methods')->_admin_link_is_allowed($link_url)) {
 					return '';
 				}
 			}

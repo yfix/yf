@@ -88,7 +88,7 @@ class yf_settings {
 				$r[$k] = $v;
 			}
 		}
-		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
+		$hooks_data = _class('admin_methods')->call_hooks('settings', $r);
 		$avail_hook_modules = array();
 		foreach ((array)$hooks_data as $k => $v) {
 			list($module_name,) = explode('___', $k);
@@ -147,7 +147,7 @@ class yf_settings {
 	/**
 	*/
 	function display_what() {
-		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
+		$hooks_data = _class('admin_methods')->call_hooks('settings', $r);
 		$avail_hook_modules = array();
 		foreach ((array)$hooks_data as $k => $v) {
 			list($module_name,) = explode('___', $k);
