@@ -4,10 +4,12 @@
 */
 class yf_manage_users {
 
+	const table = 'user';
+
 	/**
 	*/
 	function show () {
-		return table('SELECT * FROM '.db('user'), array(
+		return table('SELECT * FROM '.db(self::table), array(
 				'filter' => true,
 				'filter_params' => array(
 					'login'	=> 'like',
@@ -40,7 +42,7 @@ class yf_manage_users {
 				'login' => 'trim|required|alpha_numeric|is_unique[user.login]',
 				'email' => 'trim|required|valid_email|is_unique[user.email]',
 			))
-			->db_insert_if_ok('user', array('login','email','name','active'), array('add_date' => time()))
+			->db_insert_if_ok(self::table, array('login','email','name','active'), array('add_date' => time()))
 			->on_after_update(function() {
 				common()->admin_wall_add(array('user added: '.$_POST['login'].'', db()->insert_id()));
 			})
@@ -58,7 +60,7 @@ class yf_manage_users {
 		if (!$id) {
 			return _e('No id');
 		}
-		$a = db()->query_fetch('SELECT * FROM '.db('user').' WHERE id='.intval($_GET['id']));
+		$a = db()->query_fetch('SELECT * FROM '.db(self::table).' WHERE id='.intval($_GET['id']));
 		$a['back_link'] = url('/@object');
 		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
@@ -66,7 +68,7 @@ class yf_manage_users {
 				'login' => 'trim|alpha_numeric|is_unique_without[user.login.'.$id.']',
 				'email' => 'trim|required|valid_email|is_unique_without[user.email.'.$id.']',
 			))
-			->db_update_if_ok('user', array('login','email','name','active', 'birthday'), 'id='.$id)
+			->db_update_if_ok(self::table, array('login','email','name','active', 'birthday'), 'id='.$id)
 			->on_after_update(function() {
 				common()->admin_wall_add(array('user updated: '.$_POST['login'].'', $id));
 			})
@@ -89,9 +91,9 @@ class yf_manage_users {
 			$user_info = user($_GET['id']);
 		}
 		if (!empty($user_info)) {
-			db()->update('user', array('active' => (int)!$user_info['active']), $user_info['id']);
+			db()->update(self::table, array('active' => (int)!$user_info['active']), $user_info['id']);
 		}
-		cache_del('user');
+		cache_del(self::table);
 		if (is_ajax()) {
 			no_graphics(true);
 			echo ($user_info['active'] ? 0 : 1);
@@ -137,7 +139,7 @@ class yf_manage_users {
 		if ($user_folder_path && file_exists($user_folder_path)) {
 			_class('dir')->delete_dir($user_folder_path, true);
 		}
-		db()->query('DELETE FROM '.db('user').' WHERE id='.$user_id);
+		db()->query('DELETE FROM '.db(self::table).' WHERE id='.$user_id);
 		return js_redirect($_SERVER['HTTP_REFERER']);
 	}
 
@@ -161,7 +163,7 @@ class yf_manage_users {
 			_re('Login required');
 		}
 		if (!common()->_error_exists()) {
-			$A = db()->query_fetch('SELECT * FROM '.db('user').' WHERE active='0' AND login="'._es($_POST['login']).'"');
+			$A = db()->query_fetch('SELECT * FROM '.db(self::table).' WHERE active='0' AND login="'._es($_POST['login']).'"');
 			if (!$A['id']) {
 				_re('Sorry, either someone has already confirmed membership or some important information has been missed. Please enter email below and submit');
 			}
@@ -176,7 +178,7 @@ class yf_manage_users {
 			);
 			$message = tpl()->parse('@object/email', $replace2);
 			// Set user confirmed
-			db()->query('UPDATE '.db('user').' SET active='1' WHERE id='.intval($A['id']));
+			db()->query('UPDATE '.db(self::table).' SET active='1' WHERE id='.intval($A['id']));
 			common()->send_mail(SITE_ADVERT_NAME, SITE_ADMIN_EMAIL, $A['email'], _display_name($A), 'Thank you for registering with us!', $message, nl2br($message));
 			$replace = array(
 				'name'	=> _display_name($A),
