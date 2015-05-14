@@ -541,7 +541,6 @@ Date.prototype.from_mysql = function( str ) {
 };
 
 Date.prototype.to_mysql_date = function() {
-	console.log( 'this', this );
 	function twoDigits(d) {
 		if(0 <= d && d < 10) return "0" + d.toString();
 		if(-10 < d && d < 0) return "-0" + (-1*d).toString();
