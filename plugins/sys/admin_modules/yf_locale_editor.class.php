@@ -73,7 +73,7 @@ class yf_locale_editor {
 			'module'		=> 'select_box("module",		$this->_modules,		$selected, false, 2, "", false)',
 		);
 
-		$this->_modules = _class('common_admin')->find_active_modules();
+		$this->_modules = _class('admin_methods')->find_active_modules();
 
 		$langs = array();
 		foreach ((array)$this->_get_iso639_list() as $lang_code => $lang_params) {

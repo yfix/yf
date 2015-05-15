@@ -1481,7 +1481,8 @@ class yf_html {
 			$a['icon']	= $args[2];
 			$a['text']	= $args[3];
 			$a['class_add']	= $args[4];
-			$a['target']= $args[5];
+			$a['target']    = $args[5];
+			$a['no_text'] = $args[6];
 		// named params
 		} elseif (isset($args['link'])) {
 			$a = $args;
@@ -1517,7 +1518,7 @@ class yf_html {
 			}
 			$icon = implode('&nbsp;', $icon);
 		}
-		return '<a'._attrs($a, array('href','title','class','style','id','rel','target','disabled')).'>'. $icon. (strlen($a['text']) ? ($icon ? '&nbsp;' : '')._prepare_html($a['text']) : '').'</a>';
+		return '<a'._attrs($a, array('href','title','class','style','id','rel','target','disabled')).'>'. $icon. ($a['no_text'] ?'' : (strlen($a['text']) ? ($icon ? '&nbsp;' : '')._prepare_html($a['text']) : '')).'</a>';
 	}
 
 	/**

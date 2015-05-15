@@ -599,7 +599,6 @@ class yf_assets {
 		if (isset($__params['config'])) {
 			unset($__params['config']);
 		}
-		// var_dump(__FUNCTION__.': '.$_content);
 		$inherit_types_map = $this->inherit_asset_types_map;
 		$types = array();
 		foreach ((array)$this->supported_asset_types as $k => $atype) {
@@ -615,21 +614,18 @@ class yf_assets {
 		foreach ((array)$types as $atype) {
 			$data = $bundle_details['require'][$atype];
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': require '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $__params);
 			}
 		}
 		foreach ((array)$types as $atype) {
 			$data = $this->get_asset($_content, $atype);
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': content '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $_params);
 			}
 		}
 		foreach ((array)$types as $atype) {
 			$data = $bundle_details['add'][$atype];
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': add '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $__params);
 			}
 		}
@@ -679,25 +675,21 @@ class yf_assets {
 		foreach ((array)$inherit_types as $inherit_type) {
 			$types[$inherit_type] = $inherit_type;
 		}
-		// var_dump(__FUNCTION__.': '.$_content.', atype: '.$asset_type);
 		foreach ((array)$types as $atype) {
 			$data = $asset_data['require'][$atype];
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': require '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $__params);
 			}
 		}
 		foreach ((array)$types as $atype) {
 			$data = $this->get_asset($_content, $atype);
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': content '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $_params);
 			}
 		}
 		foreach ((array)$types as $atype) {
 			$data = $asset_data['add'][$atype];
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': add '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $__params);
 			}
 		}

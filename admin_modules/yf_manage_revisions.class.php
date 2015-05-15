@@ -4,6 +4,7 @@
 */
 class yf_manage_revisions {
 
+	const table = 'sys_revisions';
 	/** @var bool Track content revisions */
 	public $ENABLED = true;
 	/** @var array Restrict logged revisions to specific content objects */
@@ -91,7 +92,7 @@ class yf_manage_revisions {
 				continue;
 			}
 #			$data_stump_json = json_encode($data_stump);
-#			$check_equal_data = db()->get_one('SELECT data FROM '.db('revisions').' WHERE item_id='.$id.' ORDER BY id DESC');
+#			$check_equal_data = db()->get_one('SELECT data FROM '.db(self::table).' WHERE item_id='.$id.' ORDER BY id DESC');
 #			if ($data_stump_json == $check_equal_data) {
 #				continue;
 #			}
@@ -99,7 +100,7 @@ class yf_manage_revisions {
 // TODO: do not save same data as new revision
 #				continue;
 			}
-			$sql = db()->insert_safe('sys_revisions', $to_insert + array(
+			$sql = db()->insert_safe(self::table, $to_insert + array(
 				'object_id'		=> $object_id,
 				'locale'		=> (is_array($data_old) ? $data_old['locale'] : '') ?: $extra['locale'],
 				'data_old'		=> is_array($data_old) ? 'json:'.json_encode($data_old) : (string)$data_old,
@@ -114,145 +115,109 @@ class yf_manage_revisions {
 	/**
 	*/
 	function show() {
-/*
-		return table('SELECT * FROM '.db('revisions'), array(
+		return table(db()->from(self::table), array(
 				'filter' => true,
 				'filter_params' => array(
-					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('dt_between','add_date'),
-					'action' 	=> array('eq','action'),
-					'item_id' 	=> array('eq','item_id'),
-					'ip'		=> array('like', 'ip'),
+					'date'				=> 'daterange_dt_between',
+					'__default_order'	=> 'date DESC',
 				),
 				'hide_empty' => 1,
 			))
-			->date('add_date', array('format' => '%d-%m-%Y', 'nowrap' => 1))
-			->admin('user_id', array('desc' => 'admin'))
-			->text('ip')
-			->text('action')
-			->text('item_id')
-			->btn_view('', url('/@object/details/%d'))
+			->text('id', array('link' => url('/@object/view/%id')))
+			->date('date', array('format' => 'long'))
+			->func('object_id', function($in, $e, $a) { return $a['object_name']. ' | '.$a['object_id'].' | '.$a['action']; })
+			->func('ip', function($ip) { return html()->ip($ip); })
+			->admin('user_id', array('desc' => 'Editor'))
+#			->btn_view(array('btn_no_text' => 1))
 		;
-*/
 	}
 
 	/**
 	*/
-	function check_revision($function, $id, $db_table) {
-/*
-		if (empty($function) || empty($id) || empty($db_table)) {
-			return false;
+	function view() {
+		$id = (int)$_GET['id'];
+		if ($id) {
+			$a = db()->from(self::table)->whereid($id)->get();
 		}
-		if (!is_array($id) && intval($id)) {
-			$ids = array(intval($id));
+		if (!$a) {
+			return _404();
 		}
-		$check_ids = db()->get_2d('SELECT id, item_id FROM '.db('revisions').' WHERE item_id IN ('.implode(',',$ids).') AND action=\''.$function.'\'');
-		$ids = array_diff($ids, (array)$check_ids);
-		return $this->new_revision($function, $ids, $db_table);
-*/
-	}
-
-	/**
-	*/
-	function details() {
-/*
-		$sql = 'SELECT * FROM '.db('revisions').' WHERE id='.intval($_GET['id']);
-		$a = db()->get($sql);
-		if (empty($a)) {
-			return _e('Revision not found');
-		}
-		return form($a, array(
-				'dd_mode' => 1,
-			))
-			->link('Revisions list', url('/@object'))
-			->admin_info('user_id')
-			->info_date('add_date', array('format' => 'full'))
-			->info('action')
-			->link('Activate new version', url('/object/rollback_revision/%id'))
-			->tab_start('View_difference')
-				->func('data', function($extra, $r, $_this) {
-					$origin = json_decode($r[$extra['name']], true);
-					$before = db()->get('SELECT * FROM '.db('revisions').' WHERE id<'.$r['id'].' AND item_id='.$r['item_id'].' ORDER BY id DESC' );
-					$before = json_decode($before[$extra['name']], true);
-					$origin = var_export($origin, true);
-					$before = var_export($before, true);
-					return common()->get_diff($before, $origin);
-				})
-			->tab_end()
-			->tab_start('New_version')
-				->func('data', function($extra, $r, $_this) {
-					return '<pre>'.var_export(json_decode($r[$extra['name']], true), 1).'</pre>';
-				})
-			->tab_end()
+		$all = db()->select('id, date, action')->from(self::table)
+			->where('object_name', $a['object_name'])
+			->where('object_id', $a['object_id'])
+			->order_by('id ASC')
+			->get_all()
 		;
-*/
-	}
-
-	/**
-	*/
-	function filter_save() {
-/*
-		$_GET['id'] = preg_replace('~[^0-9a-z_]+~ims', '', $_GET['id']);
-		if ($_GET['id'] && false !== strpos($_GET['id'], $_GET['object'].'__')) {
-			$filter_name = $_GET['id'];
-			list(,$action) = explode('__', $filter_name);
+		$prefix = 'json:';
+		$plen = strlen('json:');
+		if (substr($a['data_old'], 0, 1) === '{') {
+			$a['data_old'] = json_decode($a['data_old'], true);
+		} elseif (substr($a['data_old'], 0, $plen) === $prefix) {
+			$a['data_old'] = json_decode(substr($a['data_old'], $plen), true);
 		}
-		if ($_GET['page'] == 'clear') {
-			$_SESSION[$filter_name] = array();
-		} else {
-			$_SESSION[$filter_name] = $_POST;
-			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
-				if (isset($_SESSION[$filter_name][$f])) {
-					unset($_SESSION[$filter_name][$f]);
-				}
+		if (substr($a['data_new'], 0, 1) === '{') {
+			$a['data_new'] = json_decode($a['data_new'], true);
+		} elseif (substr($a['data_new'], 0, $plen) === $prefix) {
+			$a['data_new'] = json_decode(substr($a['data_new'], $plen), true);
+		}
+
+		$prev_id = 0;
+		$next_id = 0;
+		foreach ($all as $rinfo) {
+			$rid = $rinfo['id'];
+			if ($rid < $id) {
+				$prev_id = $rid;
+			} elseif ($rid > $id) {
+				$next_id = $rid;
+				break;
 			}
 		}
-		return js_redirect('/@object/'.$action);
-*/
-	}
-
-	/**
-	*/
-	function _show_filter() {
-/*
-		$filters = array(
-			'show'	=> function($filter_name, $replace) {
-				$fields = array('id','add_date','action','item_id','ip', 'user_id');
-				foreach ((array)$fields as $v) {
-					$order_fields[$v] = $v;
-				}
-				$action = db()->get_2d('SELECT DISTINCT action FROM '.db('revisions'));
-				$action = array_combine($action, $action );
-				return form($replace, array(
-						'filter' => true,
-					))
-					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
-					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
-					->text('user_id', 'Админ')
-					->text('ip')
-					->select_box('action', $action, array('no_translate' => 1, 'show_text' => 1))
-					->select_box('order_by', $order_fields, array('no_translate' => 1,'show_text' => 1));
-			},
+		css('pre.black { color: #ccc; background: black; font-weight: bold; font-family: inherit; margin: 0; display: inline-block; width: auto; padding: 2px; border: 0; }');
+		$admin_objects = array(
+			'static_pages' => 'static_pages',
+			'news'	=> 'manage_news',
+			'faq'	=> 'manage_faq',
+			'tips'	=> 'manage_tips',
 		);
-		$action = $_GET['action'];
-		if (isset($filters[$action])) {
-			return $filters[$action]($filter_name, $replace)
-				->order_box()
-				->save_and_clear();
+		$url_object = $admin_objects[$a['object_name']];
+		$object_info = $a['object_name'].' | '.$a['object_id'];
+		$diff = array();
+		if (is_array($a['data_old']) || is_array($a['data_new'])) {
+			$diff = array_diff((array)$a['data_old'], (array)$a['data_new']);
 		}
-		return false;
-*/
+		$a = array(
+			'navigation' => ''
+				. ($prev_id ? a('/@object/@action/'.$prev_id, 'Prev: '.$prev_id, 'fa fa-backward', null, null, false).'&nbsp;' : '')
+				. '<big><b>&nbsp;'.$id.'&nbsp;</b></big>&nbsp;'
+				. ($next_id ? a('/@object/@action/'.$next_id, 'Next: '.$next_id, 'fa fa-forward', null, null, false) : '')
+			,
+			'object'	=> ($url_object ? a('/'.$url_object.'/edit/'.$a['object_id'], $object_info, 'fa fa-edit') : $object_info)
+				. ' | '. $a['action']. ($a['locale'] ? ' | locale: '.$a['locale'] : ''),
+			'date'		=> $a['date'],
+			'url'		=> a($a['url']),
+			'editor'	=> a('/admin/edit/'.$a['user_id'], db()->from('admin')->get_one('login').'&nbsp;['.$a['user_id'].']', 'fa fa-user'). '&nbsp;'
+				. html()->ip($a['ip']). '<br /><small>'.$a['user_agent'].'</small>',
+			'data_old'	=> $a['data_old'] ? '<pre class="black">'._prepare_html(is_array($a['data_old']) ? var_export($a['data_old'], 1) : $a['data_old']).'</pre>' : '',
+			'data_new'	=> $a['data_new'] ? '<pre class="black">'._prepare_html(is_array($a['data_new']) ? var_export($a['data_new'], 1) : $a['data_new']).'</pre>' : '',
+			'diff'		=> $diff ? '<pre class="black">'._prepare_html(var_export($diff, 1)).'</pre>' : '',
+		);
+		foreach ($a as $k => $v) {
+			if (empty($v)) {
+				unset($a[$k]);
+			}
+		}
+		return html()->simple_table($a);
 	}
 
 	/**
 	*/
 	function _hook_side_column () {
 /*
-		$rev = db()->get('SELECT * FROM '.db('revisions').' WHERE id='.intval($_GET['id']));
+		$rev = db()->get('SELECT * FROM '.db(self::table).' WHERE id='.intval($_GET['id']));
 		if (!$rev) {
 			return false;
 		}
-		$sql = 'SELECT * FROM '.db('revisions').' WHERE item_id='.intval($rev['item_id']).' AND action !=\'\' ORDER BY id DESC';
+		$sql = 'SELECT * FROM '.db(self::table).' WHERE item_id='.intval($rev['item_id']).' AND action !=\'\' ORDER BY id DESC';
 		return table($sql, array(
 				'caption' => t('Product revisions'),
 				'no_records_html' => '',
@@ -276,7 +241,7 @@ class yf_manage_revisions {
 	function rollback_revision() {
 /*
 		$_GET['id'] = intval($_GET['id']);
-		$revision_data = db()->get('SELECT * FROM '.db('revisions').' WHERE id='.$_GET['id']);
+		$revision_data = db()->get('SELECT * FROM '.db(self::table).' WHERE id='.$_GET['id']);
 		if (empty($revision_data)) {
 			return _e('Revision not found');
 		}
@@ -301,5 +266,44 @@ class yf_manage_revisions {
 		common()->admin_wall_add(array('Rollback common revision: '.$_GET['id'], $_GET['id']));
 		return js_redirect('/@object/details/@id');
 */
+	}
+
+	/**
+	*/
+	function filter_save() {
+		return _class('admin_methods')->filter_save();
+	}
+
+	/**
+	*/
+	function _show_filter() {
+		if (!in_array($_GET['action'], array('show'))) {
+			return false;
+		}
+		$min_date = db()->from(self::table)->min('date');
+		$min_date = strtotime($min_date);
+
+		$order_fields = array();
+		foreach (explode('|', 'id|date|object_name|object_id|action|user_id|locale|site_id|server_id|ip') as $f) {
+			$order_fields[$f] = $f;
+		}
+		return form($r, array(
+				'filter' => true,
+			))
+			->daterange('date', array(
+				'format'		=> 'DD.MM.YYYY',
+				'min_date'		=> date('d.m.Y', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('d.m.Y', time() + 86400),
+				'autocomplete'	=> 'off',
+			))
+			->number('id')
+			->number('user_id')
+			->text('object_name')
+			->text('object_id')
+			->text('action')
+			->select_box('order_by', $order_fields, array('no_translate' => 1,'show_text' => 1))
+			->order_box()
+			->save_and_clear()
+		;
 	}
 }

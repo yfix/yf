@@ -1145,7 +1145,7 @@ class yf_common {
 	/**
 	*/
 	function admin_wall_add($data = array()) {
-		return _class('common_admin')->admin_wall_add($data);
+		return _class('admin_methods')->admin_wall_add($data);
 	}
 
 	/**

@@ -273,7 +273,7 @@ class yf_manage_payment {
 		$replace += $_POST;
 		$form = form( $replace, array( 'autocomplete' => 'off' ) )
 			->validate(array(
-				'amount'        => 'trim|required|numeric|greater_than_equal_to[1]',
+				'amount'        => 'trim|required|numeric|greater_than[0]',
 				'provider_name' => 'trim|required',
 			))
 			->on_validate_ok( function( $data, $extra, $rules ) use( &$user_id, &$account_id, &$account ) {
@@ -320,7 +320,7 @@ class yf_manage_payment {
 					return( js_redirect( $url ) );
 				}
 			})
-			->number( 'amount', 'Сумма' )
+			->float( 'amount', 'Сумма' )
 			->text( 'title', 'Название' )
 			->select_box( 'provider_name', $providers, array( 'show_text' => 1, 'desc' => 'Провайдер', 'tip' => 'Выбрать провайдера возможно только для пополнения. Списание возможно только от Администратора.' ) )
 			->row_start( array(

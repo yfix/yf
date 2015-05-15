@@ -209,9 +209,10 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_passport_number'     => array( // only Russian
 						'type'      => 'text',
 						'required'  => true,
-						'minlength' => 10,
+						'minlength' => 8,
 						'maxlength' => 10,
 						'pattern'   => '^\d+$',
+						'pattern'   => '^[\wа-яА-Я]+$',
 					),
 					'sender_passport_issue_date' => array(
 						'type'      => 'date',
@@ -264,10 +265,10 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_first_name'          => 'required|regex:~^[\pL\pM\s\.\-]+$~u|length[2,256]',
 					'sender_last_name'           => 'required|regex:~^[\pL\pM\s\.\-]+$~u|length[2,256]',
 					'sender_middle_name'         => 'required|regex:~^[\pL\pM\s\.\-]+$~u|length[2,256]',
-					'sender_passport_number'     => 'required|is_natural|length[10]', // only Russian
+					'sender_passport_number'     => 'required|regex:~^[\pL\pM\pN]+$~u|length[8,10]',
 					'sender_passport_issue_date' => 'required|valid_date_format[Y-m-d]',
 					'sender_passport_issued_by'  => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#№]+$~u|length[2,256]',
-					'sender_phone'               => 'required|is_natural|length[11,15]', // only Russian
+					'sender_phone'               => 'required|is_natural|length[11,15]',
 					'sender_birthdate'           => 'required|valid_date_format[Y-m-d]',
 					'sender_address'             => 'required|regex:~^[\pL\pM\pN\s\,\.\-\\/\#]+$~u|length[2,256]',
 					'sender_city'                => 'required|regex:~^[\pL\pM\s\-\.]+$~u|length[2,256]',
@@ -278,10 +279,10 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'sender_first_name'          => 'обязательное поле от 2 символов',
 					'sender_last_name'           => 'обязательное поле от 2 символов',
 					'sender_middle_name'         => 'обязательное поле от 2 символов',
-					'sender_passport_number'     => 'обязательное поле 10 цифр', // only Russian
+					'sender_passport_number'     => 'обязательное поле от 8 до 10 символов',
 					'sender_passport_issue_date' => 'обязательное поле дата "год-месяц-число" (пример: 1999-01-22)',
 					'sender_passport_issued_by'  => 'обязательное поле от 2 символов',
-					'sender_phone'               => 'обязательное поле 11 цифр, без "+"', // only Russian
+					'sender_phone'               => 'обязательное поле от 11 цифр, без "+"',
 					'sender_birthdate'           => 'обязательное поле дата "год-месяц-число" (пример: 1977-01-22)',
 					'sender_address'             => 'обязательное поле от 2 символов',
 					'sender_city'                => 'обязательное поле от 2 символов',

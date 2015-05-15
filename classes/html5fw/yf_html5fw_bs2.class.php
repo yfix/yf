@@ -113,7 +113,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 #		$after_content_html .= $extra['feedback_icon'] ? '<span class="'.$extra['feedback_icon'].' '.$this->CLASS_FEEDBACK.'" aria-hidden="true"></span>'.PHP_EOL : '';
 
 		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('admin_methods')->_admin_link_is_allowed($extra['edit_link'])) {
 				$extra['edit_link'] = '';
 			}
 		}
@@ -171,7 +171,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		$row_end = '</dl>'.PHP_EOL;
 
 		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('admin_methods')->_admin_link_is_allowed($extra['edit_link'])) {
 				$extra['edit_link'] = '';
 			}
 		}

@@ -1694,7 +1694,7 @@ class yf_form2 {
 				$value = '';
 			}
 			if ($extra['link']) {
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['link'])) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('admin_methods')->_admin_link_is_allowed($extra['link'])) {
 					$extra['link'] = '';
 				}
 			}
