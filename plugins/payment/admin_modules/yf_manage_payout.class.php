@@ -262,7 +262,7 @@ class yf_manage_payout {
 				if( empty( $method_title ) ) { return( null ); }
 				$result = $method_title;
 				return( $result );
-			}, array( 'desc' => 'пользователь' ) )
+			}, array( 'desc' => 'метод' ) )
 			->text( 'amount'        , 'сумма' )
 			->text( 'balance'       , 'баланс' )
 			->func( 'user_name', function( $value, $extra, $row ) {
