@@ -220,6 +220,7 @@ class yf_manage_payment {
 		$account_id  = (int)$_GET[ 'account_id' ];
 		$url_back    = url_admin( '/@object' );
 		$payment_api = _class( 'payment_api' );
+		$payment_status = $payment_api->get_status();
 		// check id: user, operation
 		if( $user_id > 0 ) {
 			$user_info = user( $user_id );
@@ -350,8 +351,6 @@ class yf_manage_payment {
 			$providers = $payment_api->provider( array(
 				'all' => true,
 			));
-			// prepare status
-			$status = $payment_api->status();
 			$table = table( $sql, array(
 					'filter' => $filter,
 					'filter_params' => array(
@@ -368,10 +367,18 @@ class yf_manage_payment {
 				}, array( 'desc' => 'Провайдер' ) )
 				->text( 'amount'         , 'Сумма'           )
 				->text( 'balance'        , 'Баланс'          )
-				->func( 'status_id', function($in, $e, $a, $p, $table) use( $status ) {
-					$result = $status[ $in ][ 'title' ];
-					return( $result );
-				}, array( 'desc' => 'Статус' ) )
+			->func( 'status_id', function( $value, $extra, $row ) use ( $payment_status ){
+				$status_id = $payment_status[ $value ][ 'name' ];
+				$title     = $payment_status[ $value ][ 'title' ];
+				switch( $status_id ) {
+					case 'in_progress': $css = 'text-warning'; break;
+					case 'success':     $css = 'text-success'; break;
+					case 'expired':     $css = 'text-danger';  break;
+					case 'refused':     $css = 'text-danger';  break;
+				}
+				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
+				return( $result );
+			}, array( 'desc' => 'статус' ) )
 				->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
 				->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
 				->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
