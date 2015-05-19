@@ -9,6 +9,8 @@
 */
 class yf_manage_languages {
 
+	const table = 'languages';
+
 	/**
 	*/
 	private $params = array(
@@ -19,7 +21,7 @@ class yf_manage_languages {
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('languages'), array(
+		return table('SELECT * FROM '.db(self::table), array(
 				'id' => 'code',
 				'filter' => true,
 				'filter_params' => array('name' => 'like', 'native' => 'like'),
@@ -37,7 +39,7 @@ class yf_manage_languages {
 	*/
 	function edit() {
 		$_GET['id'] = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
-		$a = db()->query_fetch('SELECT * FROM '.db('languages').' WHERE code="'._es($_GET['id']).'"');
+		$a = db()->query_fetch('SELECT * FROM '.db(self::table).' WHERE code="'._es($_GET['id']).'"');
 		if (!$a) {
 			return _e('Wrong record!');
 		}
@@ -45,9 +47,9 @@ class yf_manage_languages {
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_update_if_ok('languages', array('name','native','active'), 'code="'._es($a['code']).'"')
+			->db_update_if_ok(self::table, array('name','native','active'), 'code="'._es($a['code']).'"')
 			->on_after_update(function() {
-				cache_del(array('languages'));
+				cache_del(array(self::table));
 				common()->admin_wall_add(array('language updated: '.$_POST['name'].'', $a['code']));
 			})
 			->text('name')
@@ -62,9 +64,9 @@ class yf_manage_languages {
 		$a = $_POST;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_insert_if_ok('languages', array('name','code','native','active'), array())
+			->db_insert_if_ok(self::table, array('name','code','native','active'), array())
 			->on_after_update(function() {
-				cache_del(array('languages'));
+				cache_del(array(self::table));
 				common()->admin_wall_add(array('language added: '.$_POST['name'].'', db()->insert_id()));
 			})
 			->text('code')
