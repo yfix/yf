@@ -4,10 +4,12 @@
 */
 class yf_db_revisions {
 
+	const table = 'db_revisions';
+
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('db_revisions'), array(
+		return table('SELECT * FROM '.db(self::table), array(
 				'filter' => true,
 				'filter_params' => array(
 					'user_id'	=> array('eq','user_id'),
@@ -33,7 +35,7 @@ class yf_db_revisions {
 		if (empty($_GET['id'])) {
 			return _e('Empty revision id');
 		}
-		$sql = 'SELECT * FROM '.db('db_revisions').' WHERE id='.intval($_GET['id']);
+		$sql = 'SELECT * FROM '.db(self::table).' WHERE id='.intval($_GET['id']);
 		$a = db()->get($sql);
 		if (empty($a['id'])) {
 			return _e('Revision not found');
@@ -76,9 +78,9 @@ class yf_db_revisions {
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				$methods = db()->get_2d('SELECT DISTINCT query_method FROM '.db('db_revisions'));
+				$methods = db()->get_2d('SELECT DISTINCT query_method FROM '.db(self::table));
 				$method_fields = array_combine($methods, $methods);
-				$tables = db()->get_2d('SELECT DISTINCT query_table FROM '.db('db_revisions'));
+				$tables = db()->get_2d('SELECT DISTINCT query_table FROM '.db(self::table));
 				$table_fields = array_combine($tables, $tables);
 				return form($replace, array(
 						'filter' => true,
