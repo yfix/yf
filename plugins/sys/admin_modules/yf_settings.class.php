@@ -321,8 +321,6 @@ class yf_settings {
 #			array('active_box', 'xhprof_enable'),
 
 			array('active_box', 'use_only_https'),
-			array('active_box', 'css_minimize'),
-			array('active_box', 'js_minimize'),
 			array('active_box', 'use_phar_php_code'),
 			array('active_box', 'online_users_tracking'),
 			array('active_box', 'errors_custom_handler'),
