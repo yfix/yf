@@ -177,8 +177,14 @@ class yf_manage_payout {
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
 		$url         = &$this->url;
-		// payment status
+		// payment
 		$payment_api = _class( 'payment_api' );
+		// payment providers
+		$providers = $payment_api->provider();
+		$payment_api->provider_options( $providers, array(
+			'method_allow',
+		));
+		// payment status
 		$payment_status = $payment_api->get_status();
 		$name = 'in_progress';
 		$item = $payment_api->get_status( array( 'name' => $name) );
@@ -194,6 +200,7 @@ class yf_manage_payout {
 			'o.operation_id',
 			'o.account_id',
 			'o.provider_id',
+			'o.options',
 			'a.user_id',
 			'u.name as user_name',
 			'o.amount',
@@ -236,14 +243,42 @@ class yf_manage_payout {
 			))
 			->text( 'operation_id'  , 'операция' )
 			->text( 'provider_title', 'провайдер' )
+			->func( 'options', function( $value, $extra, $row ) use( $providers ) {
+				if( empty( $row[ 'options' ] ) ) { return( null ); }
+				// options
+				$options = @json_decode( $row[ 'options' ], true );
+				if( empty( $options ) ) { return( null ); }
+				// request
+				$request = @reset( $options[ 'request' ] );
+				if( empty( $request ) ) { return( null ); }
+				// method
+				$provider_id = @$request[ 'options' ][ 'provider_id' ];
+				if( empty( $provider_id ) ) { return( null ); }
+				$method_id   = @$request[ 'options' ][ 'method_id' ];
+				if( empty( $method_id ) ) { return( null ); }
+				$method = @$providers[ $provider_id ][ '_method_allow' ][ 'payout' ][ $method_id ];
+				if( empty( $method ) ) { return( null ); }
+				$method_title = @$method[ 'title' ];
+				if( empty( $method_title ) ) { return( null ); }
+				$result = $method_title;
+				return( $result );
+			}, array( 'desc' => 'метод' ) )
 			->text( 'amount'        , 'сумма' )
 			->text( 'balance'       , 'баланс' )
-			->func( 'user_name', function( $value, $extra, $row_info ) {
-				$result = a('/members/edit/'.$row_info[ 'user_id' ], $value . ' (id: ' . $row_info[ 'user_id' ] . ')');
+			->func( 'user_name', function( $value, $extra, $row ) {
+				$result = a('/members/edit/'.$row[ 'user_id' ], $value . ' (id: ' . $row[ 'user_id' ] . ')');
 				return( $result );
 			}, array( 'desc' => 'пользователь' ) )
-			->func( 'status_id', function( $value, $extra, $row_info ) use ( $payment_status ){
-				$result = $payment_status[ $value ][ 'title' ];
+			->func( 'status_id', function( $value, $extra, $row ) use ( $payment_status ){
+				$status_id = $payment_status[ $value ][ 'name' ];
+				$title     = $payment_status[ $value ][ 'title' ];
+				switch( $status_id ) {
+					case 'in_progress': $css = 'text-warning'; break;
+					case 'success':     $css = 'text-success'; break;
+					case 'expired':     $css = 'text-danger';  break;
+					case 'refused':     $css = 'text-danger';  break;
+				}
+				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
 			->text( 'datetime_start', 'дата создания' )
@@ -439,6 +474,17 @@ class yf_manage_payout {
 			return( $this->_user_message( $result ) );
 		}
 		$o_status = $statuses[ $o_status_id ];
+		// status css
+		$status_name  = $o_status[ 'name' ];
+		$status_title = $o_status[ 'title' ];
+		$css = '';
+		switch( $status_name ) {
+			case 'in_progress': $css = 'text-warning'; break;
+			case 'success':     $css = 'text-success'; break;
+			case 'expired':     $css = 'text-danger';  break;
+			case 'refused':     $css = 'text-danger';  break;
+		}
+		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $status_title );
 		// check response
 		$response = null;
 		if(
@@ -459,6 +505,10 @@ class yf_manage_payout {
 			'operation'            => &$operation,
 			'statuses'             => &$statuses,
 			'status'               => &$o_status,
+			'status_id'            => &$o_status_id,
+			'status_name'          => &$status_name,
+			'status_title'         => &$status_title,
+			'html_status_title'    => &$html_status_title,
 			'account_id'           => &$account_id,
 			'account'              => &$account,
 			'user_id'              => &$user_id,
@@ -529,8 +579,8 @@ class yf_manage_payout {
 			$response = array_reverse( $_response );
 			$content = table( $response, array( 'no_total' => true ) )
 				->text( 'datetime', 'дата' )
-				->func( 'data', function( $value, $extra, $row_info ) {
-					$value = $row_info[ 'data' ];
+				->func( 'data', function( $value, $extra, $row ) {
+					$value = $row[ 'data' ];
 					$message = trim( $value[ 'message' ] );
 					$message = trim( $value[ 'message' ], '.' );
 					$result = t( $message );
@@ -554,12 +604,13 @@ class yf_manage_payout {
 			'title' => 'Баланс',
 			'text'  => $payment_api->money_text( $_account[ 'balance' ] ),
 		));
+		// compile
 		$content = array(
 			'Пользователь'    => $user_link . $balance_link,
 			'Провайдер'       => $_provider[ 'title' ],
 			'Метод'           => $_method[ 'title' ],
 			'Сумма'           => $_html_amount,
-			'Статус'          => $_status[ 'title' ],
+			'Статус'          => $_html_status_title,
 			'Дата создания'   => $_html_datetime_start,
 			'Дата обновления' => $_html_datetime_update,
 			'Дата завершения' => $_html_datetime_finish,
