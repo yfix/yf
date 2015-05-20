@@ -127,8 +127,40 @@ class yf_manage_currency {
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
 		$url         = &$this->url;
+		// var
+		$html        = _class( 'html' );
+		$payment_api = _class( 'payment_api' );
+		// current current rates
+		list( $currency_id, $currency ) = $payment_api->get_currency__by_id();
+		// buy
+		$data = $payment_api->currency_rate__buy();
+		$content = array();
+		foreach( $data as $id => $item ) { $content[ $id ] = sprintf( '%.3f', $item[ 'rate' ] / $item[ 'value' ] ); }
+		$html_buy = $html->simple_table( $content, array( 'no_total' => true, 'rotate_table' => true ) );
+		// sell
+		$data = $payment_api->currency_rate__sell();
+		$content = array();
+		foreach( $data as $id => $item ) { $content[ $id ] = sprintf( '%.3f', $item[ 'rate' ] / $item[ 'value' ] ); }
+		$html_sell = $html->simple_table( $content, array( 'no_total' => true, 'rotate_table' => true ) );
+		// compile
+		$html = <<<EOS
+<div class="panel panel-default pull-left">
+	<div class="panel-heading">Текущий курс валюты: $currency[name] ($currency_id, $currency[sign])</div>
+	<div class="panel-body">
+		<div class="pull-left">
+			<b>Продажа</b>
+$html_buy
+		</div>
+		<div class="pull-left">
+			<b>Покупка</b>
+$html_sell
+		</div>
+	</div>
+</div>
+EOS;
+		// current rates
 		$sql = db()->table( 'payment_currency_rate' )->sql();
-		return
+		return $html.
 			table( $sql, array(
 				'filter' => $filter,
 				'filter_params' => array(
