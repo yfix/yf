@@ -145,15 +145,15 @@ class yf_manage_currency {
 		// compile
 		$html = <<<EOS
 <div class="panel panel-default pull-left">
-	<div class="panel-heading">Текущий курс валюты: $currency[name] ($currency_id, $currency[sign])</div>
+	<div class="panel-heading">Курс валюты: $currency[name] ($currency_id, $currency[sign])</div>
 	<div class="panel-body">
 		<div class="pull-left">
 			<b>Продажа</b>
-$html_buy
+$html_sell
 		</div>
 		<div class="pull-left">
 			<b>Покупка</b>
-$html_sell
+$html_buy
 		</div>
 	</div>
 </div>
