@@ -1089,7 +1089,7 @@ class yf_assets {
 					'trace'			=> $debug['trace'],
 				));
 			}
-			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, $_params). $after;
+			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, $_params + array('asset_name' => $v['name'])). $after;
 		}
 		if ($this->COMBINE && $to_combine) {
 			$out = $this->_combine_content($out, $out_type, $to_combine, $combined_file, $md5_inside_combined);
@@ -1601,6 +1601,9 @@ var_dump($out);
 			if (substr($str, 0, $slen) === MEDIA_PATH) {
 				$str = '/'.substr($str, $slen);
 			}
+		}
+		if ($params['asset_name'] && !isset($params['id']) && in_array($content_type, array('inline', 'file'))) {
+			$params['data-asset'] = 'asset_'.$out_type.'_'.$content_type.'_'.$params['asset_name'];
 		}
 		if ($out_type === 'js') {
 			$params['type'] = 'text/javascript';
