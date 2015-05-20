@@ -169,6 +169,7 @@ EOS;
 					'__default_order'  => 'ORDER BY datetime DESC',
 				),
 				'hide_empty' => true,
+				'no_total' => true,
 			))
 			->text( 'currency_rate_id', 'ID'  )
 			->date( 'datetime', 'дата обновления', array( 'format' => 'full', 'nowrap' => 1 ) )
