@@ -31,10 +31,22 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
 				'currency' => array(
-					'USD' => array(
-						'currency_id' => 'USD',
+					// 'USD' => array(
+						// 'currency_id' => 'USD',
+						// 'active'      => true,
+					// ),
+					// 'EUR' => array(
+						// 'currency_id' => 'EUR',
+						// 'active'      => true,
+					// ),
+					'UAH' => array(
+						'currency_id' => 'UAH',
 						'active'      => true,
 					),
+					// 'RUB' => array(
+						// 'currency_id' => 'RUB',
+						// 'active'      => true,
+					// ),
 				),
 			),
 		),
@@ -50,7 +62,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'min' => 50,
 					'max' => 10000,
 				),
-				'fee' => array(
+				'_fee' => array(
 					'out' => array(
 						'rt'  => 1,
 						'fix' => 10,
@@ -72,7 +84,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'option' => array(
 					'card' => 'Номер карты',
 				),
-				'option_validation_js' => array(
+				'option_validation_js1' => array(
 					'card'                       => array(
 						'type'      => 'text',
 						'required'  => true,
@@ -83,7 +95,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					),
 				),
 				'option_validation' => array(
-					'card' => 'required|regex:~^4((40588)|(14949)|(32339)|(32334)|(32338)|(32340)|(40535)|(73117)|(73121)|(13051)|(40509)|(24600)|(62708)|(76065)|(17649)|(32337)|(62705)|(14943)|(14961)|(14962)|(32575)|(58121)|(58122)|(14939)|(14960)|(24657)|(34156)|(32335)|(23396)|(73118)|(32336)|(40129)|(76339)|(14963)|(73114)|(04030)|(58120)|(10653))[0-9]{7}(?:[0-9]{3})?$~|length[13,16]',
+					'card' => 'required|length[13,16]|regex:~^4((40588)\|(14949)\|(32339)\|(32334)\|(32338)\|(32340)\|(40535)\|(73117)\|(73121)\|(13051)\|(40509)\|(24600)\|(62708)\|(76065)\|(17649)\|(32337)\|(62705)\|(14943)\|(14961)\|(14962)\|(32575)\|(58121)\|(58122)\|(14939)\|(14960)\|(24657)\|(34156)\|(32335)\|(23396)\|(73118)\|(32336)\|(40129)\|(76339)\|(14963)\|(73114)\|(04030)\|(58120)\|(10653))[0-9]{7}(?:[0-9]{3})?$~',
 				),
 				'option_validation_message' => array(
 					'card' => 'обязательное поле от 13 до 16 цифр',

@@ -109,8 +109,40 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
-	public function validate( $options = null ) {
-		return( $this->result_success() );
+	public function validate( $options ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// check payment method, type
+		if( empty( $_method_id ) || empty( $_type_name ) ) { return( $this->result_success() ); }
+		// payway
+		$payway = null;
+		switch( $_type_name ) {
+			case 'deposition': $payway = 'payin';  break;
+			case 'payment':    $payway = 'payout'; break;
+		}
+		if( empty( $payway ) || empty( $this->method_allow[ $payway ][ $_method_id ] ) ) { return( $this->result_success() ); }
+		// method
+		$method = &$this->method_allow[ $payway ][ $_method_id ];
+		if( empty( $method[ 'option_validation' ] ) ) { return( $this->result_success() ); }
+		$validation         = $method[ 'option_validation' ];
+		$validation_message = @$method[ 'option_validation_message' ];
+		$validation_error   = array();
+		$validate = _class( 'validate' );
+		// validation processor
+		foreach( $method[ 'option' ] as $key => $item ) {
+			// skip: empty validator
+			if( empty( $validation[ $key ] ) ) { continue; }
+			// processor
+			$value  = trim( ${ '_'. $key } );
+			$rules  = $validation[ $key ];
+			$result = $validate->_input_is_valid( $value, $rules );
+			if( empty( $result ) ) {
+				$message = @$validation_message[ $key ] ?: 'Неверное поле';
+				$validation_error[ $key ] = t( $message );
+			}
+		}
+		if( empty( $validation_error ) ) { return( $this->result_success() ); }
+		return( $this->result_fail( t( 'Неверно заполненные поля для вывода средств, проверьте и повторите запрос.' ), $validation_error ) );
 	}
 
 	public function result_success() {
@@ -119,6 +151,21 @@ class yf_payment_api__provider_remote {
 
 	public function result_fail( $message, $options = null ) {
 		return( array( 'status' => false, 'status_message' => $message, 'options' => $options ) );
+	}
+
+	public function api_method_payin( $name ) {
+		$result = null;
+		if(
+			empty( $name )
+			|| empty( $this->method_allow )
+			|| empty( $this->method_allow[ 'payin' ] )
+			|| empty( $this->method_allow[ 'payin' ][ $name ] )
+			|| !is_array( $this->method_allow[ 'payin' ][ $name ] )
+		) {
+			return( $result );
+		}
+		$result = $this->method_allow[ 'payin' ][ $name ];
+		return( $result );
 	}
 
 	public function api_method_payout( $name ) {
@@ -529,6 +576,252 @@ $payment_api->dump(array( 'var' => array(
 		$result = array(
 			'status'         => true,
 			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	public function get_currency_payout( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$method = $this->api_method_payout( $_method_id );
+		$key = 'currency';
+		if( empty( $method ) || empty( $method[ $key ] ) ) { return( null ); }
+		$currency = $method[ $key ];
+		if( empty( $_currency ) || empty( $currency[ $_currency ] ) ) {
+			$default = reset( $currency );
+			$result = $default[ 'currency_id' ];
+		} else {
+			$result = $currency[ 'currency_id' ];
+		}
+		return( $result );
+	}
+
+	public function get_fee_payout( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$method = $this->api_method_payout( $_method_id );
+		$key = 'fee';
+		if( empty( $method ) || empty( $method[ $key ] ) ) { return( null ); }
+		$result = $method[ $key ];
+		return( $result );
+	}
+
+	public function deposition( $options ) {
+		ini_set( 'html_errors', 0 );
+		if( !$this->ENABLE ) { return( null ); }
+		$payment_api = $this->payment_api;
+		$_              = $options;
+		$data           = &$_[ 'data'           ];
+		$options        = &$_[ 'options'        ];
+		$operation_data = &$_[ 'operation_data' ];
+		// prepare data
+		$user_id      = (int)$operation_data[ 'user_id' ];
+		$operation_id = (int)$data[ 'operation_id' ];
+		$account_id   = (int)$data[ 'account_id'   ];
+		$provider_id  = (int)$data[ 'provider_id'  ];
+		$amount       = $payment_api->_number_float( $data[ 'amount' ] );
+		$currency_id  = $this->get_currency( $options );
+		if( empty( $operation_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не определен код операции',
+			);
+			return( $result );
+		}
+		// currency conversion
+		$amount_currency = $payment_api->currency_conversion( array(
+			'conversion_type' => 'buy',
+			'currency_id'     => $currency_id,
+			'amount'          => $amount,
+		));
+		if( empty( $amount_currency ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Невозможно произвести конвертацию валют',
+			);
+			return( $result );
+		}
+		// fee
+		$fee = $this->fee;
+		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+		// prepare request form
+		$form_data  = array(
+			'user_id'               => $user_id,
+			'operation_id'          => $operation_id,
+			'account_id'            => $account_id,
+			'provider_id'           => $provider_id,
+			'currency_id'           => $currency_id,
+			'fee'                   => $fee,
+			'amount'                => $amount,
+			'amount_currency'       => $amount_currency,
+			'amount_currency_total' => $amount_currency_total,
+		);
+		// $description = implode( '#', array_values( $description ) );
+		$form_options = array(
+			'amount'       => $amount_currency_total,
+			'currency'     => $currency_id,
+			'operation_id' => $operation_id,
+			'title'        => $data[ 'title' ],
+			'description'  => $operation_id,
+			// 'description'  => $description,
+			// 'result_url'   => $result_url,
+			// 'server_url'   => $server_url,
+		);
+		// add options
+		if( !empty( $options[ 'method_id' ] ) && !empty( $this->method_allow[ 'payin' ][ $options[ 'method_id' ] ] ) ) {
+			$method_id = &$options[ 'method_id' ];
+			$method = &$this->method_allow[ 'payin' ][ $method_id ];
+			if( !empty( $method[ 'option' ] ) ) {
+				$form_options += $method[ 'option' ];
+			}
+		}
+		$form = $this->_form( $form_options );
+		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
+		// save options
+		$operation_options = array(
+			'request' => array( array(
+				'data'     => $form_data,
+				'form'     => $form_options,
+				'datetime' => $operation_data[ 'sql_datetime' ],
+			))
+		);
+		$result = $payment_api->operation_update( array(
+			'operation_id' => $operation_id,
+			'options'      => $operation_options,
+		));
+		if( !$result[ 'status' ] ) { return( $result ); }
+		$result = array(
+			'form'           => $form,
+			'status'         => true,
+			'status_message' => t( 'Заявка на ввод средств принята' ),
+		);
+		return( $result );
+	}
+
+	public function payment( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$payment_api    = $this->payment_api;
+		$_              = $options;
+		$data           = &$_[ 'data'           ];
+		$options        = &$_[ 'options'        ];
+		$operation_data = &$_[ 'operation_data' ];
+		// prepare data
+		$user_id        = (int)$operation_data[ 'user_id' ];
+		$operation_id   = (int)$data[ 'operation_id' ];
+		$account_id     = (int)$data[ 'account_id'   ];
+		$provider_id    = (int)$data[ 'provider_id'  ];
+		$amount         = $payment_api->_number_float( $data[ 'amount' ] );
+		$currency_id    = $this->get_currency_payout( $options );
+		if( empty( $operation_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не определен код операции',
+			);
+			return( $result );
+		}
+		// currency conversion
+		$amount_currency = $payment_api->currency_conversion( array(
+			'conversion_type' => 'sell',
+			'currency_id'     => $currency_id,
+			'amount'          => $amount,
+		));
+		if( empty( $amount_currency ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Невозможно произвести конвертацию валют',
+			);
+			return( $result );
+		}
+		// fee
+		$fee = $this->get_fee_payout( $options );
+		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+		// check balance
+		$account_result = $payment_api->get_account( array( 'account_id' => $account_id ) );
+		if( empty( $account_result ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при проверке, баланса',
+			);
+			return( $result );
+		}
+		list( $account_id, $account ) = $account_result;
+		$balance = $account[ 'balance' ];
+		if( $amount > $balance ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Недостаточно средств на счету',
+			);
+			return( $result );
+		}
+		// update account balance
+		db()->begin();
+		$sql_datetime = $operation_data[ 'sql_datetime' ];
+		$sql_amount   = $payment_api->_number_mysql( $amount );
+		$_data = array(
+			'account_id'      => $account_id,
+			'datetime_update' => db()->escape_val( $sql_datetime ),
+			'balance'         => "( balance - $sql_amount )",
+		);
+		$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
+		if( !$_result[ 'status' ] ) {
+			db()->rollback();
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при обновлении счета',
+			);
+			return( $result );
+		}
+		$result = array(
+			'status' => true,
+		);
+		// check account
+		$account_result = $payment_api->get_account( array( 'account_id' => $account_id ) );
+		if( empty( $account_result ) ) {
+			db()->rollback();
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при получении, баланса',
+			);
+			return( $result );
+		}
+		list( $account_id, $account ) = $account_result;
+		// prepare
+		// save options
+		$request_data  = array(
+			'user_id'               => $user_id,
+			'operation_id'          => $operation_id,
+			'account_id'            => $account_id,
+			'provider_id'           => $provider_id,
+			'currency_id'           => $currency_id,
+			'fee'                   => $fee,
+			'amount'                => $amount,
+			'amount_currency'       => $amount_currency,
+			'amount_currency_total' => $amount_currency_total,
+		);
+		$operation_options = array(
+			'request' => array( array(
+				'options'  => $options,
+				'data'     => $request_data,
+				'datetime' => $operation_data[ 'sql_datetime' ],
+			))
+		);
+		$operation_update_data = array(
+			'operation_id'    => $operation_id,
+			'balance'         => $account[ 'balance' ],
+			'datetime_update' => $sql_datetime,
+			'options'         => $operation_options,
+		);
+		$result = $payment_api->operation_update( $operation_update_data );
+		if( !$result[ 'status' ] ) {
+			db()->rollback();
+			return( $result );
+		}
+		db()->commit();
+		$result = array(
+			'status'         => true,
+			'status_message' => t( 'Заявка на вывод средств принята' ),
 		);
 		return( $result );
 	}
