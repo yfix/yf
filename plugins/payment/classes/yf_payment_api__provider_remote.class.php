@@ -1,5 +1,9 @@
 <?php
 
+if( !function_exists( 'array_replace_recursive' ) ) {
+	trigger_error( 'Not exists function "array_replace_recursive ( PHP 5 >= 5.3.0 )"', E_USER_ERROR );
+}
+
 class yf_payment_api__provider_remote {
 
 	public $ENABLE    = null;
@@ -11,6 +15,8 @@ class yf_payment_api__provider_remote {
 
 	public $URL_API      = null;
 	public $URL_API_TEST = null;
+	public $API_KEY_PUBLIC  = null;
+	public $API_KEY_PRIVATE = null;
 
 	public $method_allow = null;
 
@@ -98,10 +104,10 @@ class yf_payment_api__provider_remote {
 	public function api_url( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( $this->is_test( $options ) ) {
-			$result = &$this->URL_API_TEST;
+		if( $this->is_test( $options ) && !empty( $this->URL_API_TEST ) ) {
+			$result = $this->URL_API_TEST;
 		} else {
-			$result = &$this->URL_API;
+			$result = $this->URL_API;
 		}
 		if( is_array( $_uri ) ) {
 			$result = str_replace( array_keys( $_uri ), array_values( $_uri ), $result );
@@ -120,9 +126,13 @@ class yf_payment_api__provider_remote {
 			case 'deposition': $payway = 'payin';  break;
 			case 'payment':    $payway = 'payout'; break;
 		}
-		if( empty( $payway ) || empty( $this->method_allow[ $payway ][ $_method_id ] ) ) { return( $this->result_success() ); }
 		// method
-		$method = &$this->method_allow[ $payway ][ $_method_id ];
+		$method = $this->api_method( array(
+			'type'      => @$payway,
+			'method_id' => @$_method_id,
+		));
+		if( empty( $method ) ) { return( $this->result_success() ); }
+		// validation options
 		if( empty( $method[ 'option_validation' ] ) ) { return( $this->result_success() ); }
 		$validation         = $method[ 'option_validation' ];
 		$validation_message = @$method[ 'option_validation_message' ];
@@ -153,33 +163,22 @@ class yf_payment_api__provider_remote {
 		return( array( 'status' => false, 'status_message' => $message, 'options' => $options ) );
 	}
 
-	public function api_method_payin( $name ) {
+	public function api_authorization( $method = null ) {
 		$result = null;
-		if(
-			empty( $name )
-			|| empty( $this->method_allow )
-			|| empty( $this->method_allow[ 'payin' ] )
-			|| empty( $this->method_allow[ 'payin' ][ $name ] )
-			|| !is_array( $this->method_allow[ 'payin' ][ $name ] )
-		) {
-			return( $result );
-		}
-		$result = $this->method_allow[ 'payin' ][ $name ];
+		if( ! @$method[ 'is_authorization' ] ) { return( $result ); }
+		$result = array(
+			'user'     => $this->API_KEY_PUBLIC,
+			'password' => $this->API_KEY_PRIVATE,
+		);
 		return( $result );
 	}
 
-	public function api_method_payout( $name ) {
+	public function api_method( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		$result = null;
-		if(
-			empty( $name )
-			|| empty( $this->method_allow )
-			|| empty( $this->method_allow[ 'payout' ] )
-			|| empty( $this->method_allow[ 'payout' ][ $name ] )
-			|| !is_array( $this->method_allow[ 'payout' ][ $name ] )
-		) {
-			return( $result );
-		}
-		$result = $this->method_allow[ 'payout' ][ $name ];
+		if( !is_array( @$this->method_allow[ $_type ][ $_method_id ] ) ) { return( $result ); }
+		$result = $this->method_allow[ $_type ][ $_method_id ];
 		return( $result );
 	}
 
@@ -190,10 +189,22 @@ class yf_payment_api__provider_remote {
 		// options
 		$options = array(
 			// CURLOPT_URL            =>  $url,
-			CURLOPT_POST           =>  true,
-			CURLOPT_POSTFIELDS     =>  $post,
 			CURLOPT_RETURNTRANSFER =>  true,
 		);
+		if( !empty( $post ) ) {
+			$options += array(
+				CURLOPT_POST       => true,
+				CURLOPT_POSTFIELDS => $post,
+			);
+		}
+		if( !empty( $_user ) && !empty( $_password ) ) {
+			$userpwd = $_user;
+			!empty( $_password ) && $userpwd .= ':'. $_password;
+			$options += array(
+				CURLOPT_HTTPAUTH => CURLAUTH_ANY,
+				CURLOPT_USERPWD  => $userpwd,
+			);
+		}
 		if( !empty( $_is_json ) ) {
 			$options += array(
 				CURLOPT_HTTPHEADER => array(
@@ -215,12 +226,11 @@ class yf_payment_api__provider_remote {
 		// exec
 		$ch = curl_init( $url );
 		curl_setopt_array( $ch, $options );
-		$result    = curl_exec( $ch );
+		$result = curl_exec( $ch );
 		// status
 		$http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 		$error_number  = curl_errno( $ch );
 		$error_message = curl_error( $ch );
-		curl_close( $ch );
 // DEBUG
 // var_dump( $url, $options, $result, $http_code );
 // exit;
@@ -249,6 +259,17 @@ class yf_payment_api__provider_remote {
 		if( $http_code != 200 ) {
 			$result = sprintf( 'Ошибка транспорта: [%d] %s', $http_code, $message );
 		}
+		// detect content type of response
+		if( empty( $_is_response_raw ) ) {
+			$content_type = curl_getinfo( $ch, CURLINFO_CONTENT_TYPE );
+			switch( true ) {
+			case $content_type == 'application/json' || $_is_response_json:
+				$result = @json_decode( $result, true );
+				break;
+			}
+		}
+		// finish
+		curl_close( $ch );
 		return( array( $status, $result ) );
 	}
 
@@ -584,7 +605,10 @@ $payment_api->dump(array( 'var' => array(
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$method = $this->api_method_payout( $_method_id );
+		$method = $this->api_method( array(
+			'type'      => 'payout',
+			'method_id' => $_method_id,
+		));
 		$key = 'currency';
 		if( empty( $method ) || empty( $method[ $key ] ) ) { return( null ); }
 		$currency = $method[ $key ];
@@ -601,10 +625,44 @@ $payment_api->dump(array( 'var' => array(
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$method = $this->api_method_payout( $_method_id );
+		$method = $this->api_method( array(
+			'type'      => 'payout',
+			'method_id' => $_method_id,
+		));
 		$key = 'fee';
 		if( empty( $method ) || empty( $method[ $key ] ) ) { return( null ); }
 		$result = $method[ $key ];
+		return( $result );
+	}
+
+	public function _amount_payout( $amount, $currency_id, $method, $is_request = true ) {
+		if( !$this->ENABLE ) { return( null ); }
+		empty( $currency_id ) && $currency_id = $this->currency_default;
+		if( empty( $currency_id ) ) { return( null ); }
+		$payment_api = $this->payment_api;
+		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
+			'currency_id' => $currency_id,
+		));
+		if( empty( $_currency_id ) ) { return( null ); }
+		// use conversion to integer by minor_units
+		$is_int = false;
+		if( !empty( $method )
+			&& !empty( $method[ 'currency' ] )
+			&& !empty( $method[ 'currency' ][ $_currency_id ] )
+			&& !empty( $method[ 'currency' ][ $_currency_id ][ 'is_int' ] )
+		) {
+			$is_int = true;
+		}
+		if( $is_int ) {
+			$units = pow( 10, $currency[ 'minor_units' ] );
+			if( $is_request ) {
+				$result = (int)( $amount * $units );
+			} else {
+				$result = (float)$amount / $units;
+			}
+		} else {
+			$result = $amount;
+		}
 		return( $result );
 	}
 
@@ -670,13 +728,12 @@ $payment_api->dump(array( 'var' => array(
 			// 'server_url'   => $server_url,
 		);
 		// add options
-		if( !empty( $options[ 'method_id' ] ) && !empty( $this->method_allow[ 'payin' ][ $options[ 'method_id' ] ] ) ) {
-			$method_id = &$options[ 'method_id' ];
-			$method = &$this->method_allow[ 'payin' ][ $method_id ];
-			if( !empty( $method[ 'option' ] ) ) {
-				$form_options += $method[ 'option' ];
-			}
-		}
+		$method = $this->api_method( array(
+			'type'      => 'payin',
+			'method_id' => @$options[ 'method_id' ],
+		));
+		!empty( $method[ 'option' ] ) && $form_options += $method[ 'option' ];
+		// form
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
 		// save options

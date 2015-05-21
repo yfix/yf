@@ -13,7 +13,29 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 
 	public $_api_request_timeout = 30;  // sec
 	public $method_allow = array(
-		'payment' => array(
+		'order' => array(
+			'payin' => array(
+				'private',
+			),
+			'payout' => array(
+				'pay_pb',
+				'pay_visa',
+			),
+		),
+		'payin' => array(
+			'private' => array(
+				'title'       => 'Приват Банк',
+				'icon'        => 'privat24',
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'UAH' => array(
+						'currency_id' => 'UAH',
+						'active'      => true,
+					),
+				),
+			),
+		),
+		'payout' => array(
 			'pay_pb' => array(
 				'title' => 'Приват24',
 				'icon'  => 'privat24',
@@ -148,10 +170,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function api_request( $method, $options ) {
+	public function api_payout( $method, $options ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$api_method_allow = $this->method_allow[ 'payment' ][ $method ];
-		if( !is_array( $api_method_allow ) ) { return( null ); }
+		$method = $this->api_method( array(
+			'type'      => 'payout',
+			'method_id' => $method,
+		));
+		if( !is_array( $method ) ) { return( null ); }
 		$payment_api = &$this->payment_api;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -167,7 +192,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$_wait = $_wait ?: $this->_api_request_timeout;
 		$_test = $payment_api->_default( array( $_test, $this->TEST_MODE ) );
 		// $_test = (int)$_test;
-		foreach( $api_method_allow[ 'field' ] as $name ) {
+		foreach( $method[ 'field' ] as $name ) {
 			$value = &${ '_'.$name };
 			if( !isset( $value ) ) {
 				$result = array(
@@ -195,7 +220,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		isset( $_payment_id ) && $xml_payment->addAttribute( 'id', $_payment_id );
 		// data
 		$data = '';
-		foreach( $api_method_allow[ 'field' ] as $name ) {
+		foreach( $method[ 'field' ] as $name ) {
 			$value = ${ '_'.$name };
 			$value = htmlentities( $value, ENT_COMPAT | ENT_XML1, 'UTF-8', $double_encode = false );
 			$prop = $xml_payment->addChild( 'prop' );
@@ -581,7 +606,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			'title'        => $options[ 'operation_title' ],
 			'account'      => $options[ 'account' ],
 		);
-		$result = $this->api_request( $method_id, $request );
+		// $result = $this->api_request( $method_id, $request );
 // DEBUG
 // ini_set( 'html_errors', 0 );
 // var_dump( $options, $request, $result );

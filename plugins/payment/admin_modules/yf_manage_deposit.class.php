@@ -338,16 +338,6 @@ class yf_manage_deposit {
 		// check method
 		$method_id = null;
 		$method = array();
-/*
-		if( empty( $request[ 'options' ][ 'method_id' ] ) ) {
-			$result = array(
-				'status_message' => 'Метод вывода средств отсутствует',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		$method_id = $request[ 'options' ][ 'method_id' ];
-		$method    = $provider_class->api_method_payout( $method_id );
-*/
 		// check operation status
 		$statuses = $payment_api->get_status();
 		if( empty( $statuses[ $o_status_id ] ) ) {

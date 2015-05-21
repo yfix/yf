@@ -464,7 +464,10 @@ class yf_manage_payout {
 			return( $this->_user_message( $result ) );
 		}
 		$method_id = $request[ 'options' ][ 'method_id' ];
-		$method    = $provider_class->api_method_payout( $method_id );
+		$method    = $provider_class->api_method( array(
+			'type'      => 'payout',
+			'method_id' => $method_id,
+		));
 		// check operation status
 		$statuses = $payment_api->get_status();
 		if( empty( $statuses[ $o_status_id ] ) ) {
@@ -725,7 +728,7 @@ EOS;
 		$data = $_request[ 'options' ] + array(
 			'operation_id' => $_operation_id,
 		);
-		$result = $_provider_class->api_request( $data );
+		$result = $_provider_class->api_payout( $data );
 		$result[ 'operation_id' ] = $_operation_id;
 		return( $this->_user_message( $result ) );
 	}

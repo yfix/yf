@@ -534,37 +534,6 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function _amount_payout( $amount, $currency_id, $method, $is_request = true ) {
-		if( !$this->ENABLE ) { return( null ); }
-		empty( $currency_id ) && $currency_id = $this->currency_default;
-		if( empty( $currency_id ) ) { return( null ); }
-		$payment_api = $this->payment_api;
-		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
-			'currency_id' => $currency_id,
-		));
-		if( empty( $_currency_id ) ) { return( null ); }
-		// use conversion to integer by minor_units
-		$is_int = false;
-		if( !empty( $method )
-			&& !empty( $method[ 'currency' ] )
-			&& !empty( $method[ 'currency' ][ $_currency_id ] )
-			&& !empty( $method[ 'currency' ][ $_currency_id ][ 'is_int' ] )
-		) {
-			$is_int = true;
-		}
-		if( $is_int ) {
-			$units = pow( 10, $currency[ 'minor_units' ] );
-			if( $is_request ) {
-				$result = (int)( $amount * $units );
-			} else {
-				$result = (float)$amount / $units;
-			}
-		} else {
-			$result = $amount;
-		}
-		return( $result );
-	}
-
 	public function _form_options( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$_ = $options;
@@ -826,13 +795,16 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		return( $result );
 	}
 
-	public function api_request( $options = null ) {
+	public function api_payout( $options = null ) {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// method
-		$method_option = $this->api_method_payout( $_method_id );
-		if( empty( $method_option ) ) {
+		$method = $this->api_method( array(
+			'type'      => 'payout',
+			'method_id' => $_method_id,
+		));
+		if( empty( $method ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Метод запроса не найден',
@@ -886,14 +858,14 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		// default
 		// $_currency = $currency_id;
 		// $_amount = $this->_amount_payout( $amount_currency_total, $_currency, $is_request = true );
-		$_amount = $this->_amount_payout( $_amount, $_currency_id, $method_option, $is_request = true );
+		$_amount = $this->_amount_payout( $_amount, $_currency_id, $method, $is_request = true );
 		!isset( $_site_id ) && $_site_id = $this->key( 'public' );
 		!isset( $_comment ) && $_comment = t( 'Вывод средств (id: ' . $_external_id . ')' );
-		!isset( $_action  ) && $_action = $method_option[ 'action' ];
+		!isset( $_action  ) && $_action = $method[ 'action' ];
 		is_string( $_sender_phone ) && $_sender_phone = str_replace( array( ' ', '-', '+', ), '', $_sender_phone );
 		// check required
 		$request = array();
-		foreach( $method_option[ 'field' ] as $key ) {
+		foreach( $method[ 'field' ] as $key ) {
 			$value = &${ '_'.$key };
 			if( !isset( $value ) ) {
 				$result = array(
@@ -919,7 +891,7 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 // var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
 		// request
-		$url  = $this->api_url( $method_option );
+		$url  = $this->api_url( $method );
 		$data = http_build_query( $request );
 		$result = $this->_api_request( $url, $data );
 // DEBUG
@@ -952,7 +924,7 @@ $payment_api->dump( array( 'var' => $result ));
 			"authcode"          : "6Y8A0C"
 			}
 		'; //*/
-		$response = json_decode( $response, true );
+		// $response = json_decode( $response, true );
 // DEBUG
 // var_dump( $result, $response );
 		if( is_null( $response ) ) {
