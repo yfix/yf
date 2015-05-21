@@ -148,12 +148,12 @@ class yf_manage_currency {
 	<div class="panel-heading">Курс валюты: $currency[name] ($currency_id, $currency[sign])</div>
 	<div class="panel-body">
 		<div class="pull-left">
-			<b>Продажа</b>
-$html_sell
-		</div>
-		<div class="pull-left">
 			<b>Покупка</b>
 $html_buy
+		</div>
+		<div class="pull-left">
+			<b>Продажа</b>
+$html_sell
 		</div>
 	</div>
 </div>
