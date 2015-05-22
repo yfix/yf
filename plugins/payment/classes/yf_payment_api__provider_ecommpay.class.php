@@ -890,8 +890,11 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 // DEBUG
 // var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
+		// url
+		$object  = $this->api_url( $method, $options );
+		if( @$object[ 'status' ] === false ) { return( $object ); }
+		$url = $object;
 		// request
-		$url  = $this->api_url( $method );
 		$data = http_build_query( $request );
 		$result = $this->_api_request( $url, $data );
 // DEBUG

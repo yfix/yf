@@ -25,6 +25,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			),
 		),
 		'api' => array(
+			// Список используемых в системе валют и курсов
 			'currency' => array(
 				'uri' => array(
 					'%method' => 'currency',
@@ -33,20 +34,68 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					// 'active' => true,
 				// ),
 			),
+			// Список платежных направлений на ввод, включенных в системе ИК
 			'paysystem-input-payway' => array(
 				'uri' => array(
 					'%method' => 'paysystem-input-payway',
 				),
 			),
+			// Список платежных направлений на вывод, включенных в системе ИК
 			'paysystem-output-payway' => array(
 				'uri' => array(
 					'%method' => 'paysystem-output-payway',
 				),
 			),
+			// Список аккаунтов, доступных пользователю
 			'account' => array(
 				'is_authorization' => true,
 				'uri' => array(
 					'%method' => 'account',
+				),
+			),
+			// Список касс, привязанных к аккаунту
+			'checkout' => array(
+				'is_authorization' => true,
+				'uri' => array(
+					'%method' => 'checkout',
+				),
+			),
+			// Список бизнес касс, привязанных к аккаунту
+			'checkout-b' => array(
+				'is_authorization' => true,
+				'is_handler'       => 'checkout_b',
+			),
+			// Список кошельков, привязанных к аккаунту, с их параметрами
+			'purse' => array(
+				'is_authorization' => true,
+				'uri' => array(
+					'%method' => 'purse',
+				),
+			),
+			// Позволяет получить выгрузку платежей
+			'co-invoice' => array(
+				'is_authorization' => true,
+				'uri' => array(
+					'%method' => 'co-invoice',
+				),
+			),
+			// GET
+			// - список осуществленных выводов
+			// - информацию по конкретному выводу
+			// POST
+			// - создать новый вывод в системе
+			'withdraw' => array(
+				'is_authorization' => true,
+				'uri' => array(
+					'%method' => 'withdraw',
+				),
+			),
+			'withdraw-id' => array(
+				'is_authorization' => true,
+				'url' => 'https://api.interkassa.com/v1/%method/%id',
+				'uri' => array(
+					'%method' => 'withdraw',
+					'%id'     => '$id',
 				),
 			),
 		),
@@ -494,6 +543,39 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		return( $result );
 	}
 
+	public function api_request__checkout_b( $options = null ) {
+		// get business account_id
+		list( $status, $account ) = $this->api_request( 'account' );
+		if( empty( $status )
+			|| !empty( $account[ 'code' ] )
+			|| empty( $account[ 'data' ] )
+		) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при запросе бизнес счета',
+			);
+			return( $result );
+		}
+		// find business account_id
+		$account_id = null;
+		foreach( $account[ 'data' ] as $id => $item ) {
+			if( @$item[ 'tp' ] == 'b' ) {
+				$account_id = $item[ '_id' ];
+				break;
+			}
+		}
+		// get business account
+		$request_options = array(
+			'is_json' => true,
+			'method_id' => 'checkout',
+			'header'    => array(
+				'Ik-Api-Account-Id: '. $account_id,
+			),
+		);
+		$result = $this->api_request( $request_options );
+		return( $result );
+	}
+
 	public function api_request( $options = null ) {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
@@ -511,6 +593,19 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			);
 			return( $result );
 		}
+		// method handler
+		if( !empty( $method[ 'is_handler' ] ) ) {
+			$handler = 'api_request__'. $method[ 'is_handler' ];
+			if( !method_exists( $this, $handler ) ) {
+				$result = array(
+					'status'         => false,
+					'status_message' => 'Опработчик метода запроса не найден',
+				);
+				return( $result );
+			}
+			$result = $this->{ $handler }( $options );
+			return( $result );
+		}
 		// request
 		$request = array();
 		!empty( $_option ) && $request = $_option;
@@ -519,10 +614,15 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			$request, $method[ 'option' ]
 		);
 		// url
-		$url  = $this->api_url( $method );
-		// authorization
+		$object  = $this->api_url( $method, $options );
+		if( @$object[ 'status' ] === false ) { return( $object ); }
+		$url = $object;
+		// request options
 		$request_options = array();
-		$request_options += $this->api_authorization( $method );
+			// authorization
+			$request_options += (array)$this->api_authorization( $method );
+			// header
+			is_array( $_header ) && $request_options[ 'header' ] = $_header;
 		// request
 		$result = $this->_api_request( $url, $request, $request_options );
 		return( $result );
@@ -624,7 +724,10 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 // var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
 		// request
-		$url  = $this->api_url( $method );
+		// url
+		$object  = $this->api_url( $method, $options );
+		if( @$object[ 'status' ] === false ) { return( $object ); }
+		$url = $object;
 		$data = http_build_query( $request );
 		$result = $this->_api_request( $url, $data );
 // DEBUG

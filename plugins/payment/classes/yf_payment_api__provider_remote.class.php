@@ -101,16 +101,35 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
-	public function api_url( $options = null ) {
+	public function api_url( $options = null, $request_options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( $this->is_test( $options ) && !empty( $this->URL_API_TEST ) ) {
+		if( !empty( $_url ) ) {
+			$result = $_url;
+		} elseif( $this->is_test( $options ) && !empty( $this->URL_API_TEST ) ) {
 			$result = $this->URL_API_TEST;
 		} else {
 			$result = $this->URL_API;
 		}
 		if( is_array( $_uri ) ) {
-			$result = str_replace( array_keys( $_uri ), array_values( $_uri ), $result );
+			// prepare uri
+			$uri = array();
+			foreach( $_uri as $id => $value ) {
+				if( is_string( $value ) && strpos( $value, '$' ) !== false ) {
+					$v = str_replace( '$', '', $value );
+					$v = @$request_options[ $v ];
+					if( is_null( $v ) ) {
+						$result = array(
+							'status'         => false,
+							'status_message' => 'error api url: required option '. $value,
+						);
+						return( $result );
+					}
+					$value = $v;
+				}
+				$uri[ $id ] = $value;
+			}
+			$result = str_replace( array_keys( $uri ), array_values( $uri ), $result );
 		}
 		return( $result );
 	}
@@ -191,6 +210,7 @@ class yf_payment_api__provider_remote {
 			// CURLOPT_URL            =>  $url,
 			CURLOPT_RETURNTRANSFER =>  true,
 		);
+		$header = array();
 		if( !empty( $post ) ) {
 			$options += array(
 				CURLOPT_POST       => true,
@@ -206,11 +226,7 @@ class yf_payment_api__provider_remote {
 			);
 		}
 		if( !empty( $_is_json ) ) {
-			$options += array(
-				CURLOPT_HTTPHEADER => array(
-					'Content-Type: application/json; charset=utf-8'
-				),
-			);
+			$header[] = 'Content-Type: application/json; charset=utf-8';
 		}
 		if( $this->API_SSL_VERIFY && strpos( $url, 'https' ) !== false ) {
 			$options += array(
@@ -223,20 +239,35 @@ class yf_payment_api__provider_remote {
 				CURLOPT_SSL_VERIFYPEER => false,
 			);
 		}
+		// add header
+		if( !empty( $_header ) ) {
+			$header = array_merge_recursive( $header, $_header );
+		}
+		!empty( $header ) && $options += array( CURLOPT_HTTPHEADER => $header );
+		// debug request header
+		$options += array(
+			CURLINFO_HEADER_OUT => true,
+		);
+		// debug response header
+		$options += array(
+			CURLOPT_VERBOSE => true,
+			CURLOPT_HEADER  => true,
+		);
 		// exec
 		$ch = curl_init( $url );
 		curl_setopt_array( $ch, $options );
-		$result = curl_exec( $ch );
+		$response = curl_exec( $ch );
 		// status
-		$http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		$http_code   = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		$http_header = curl_getinfo( $ch, CURLINFO_HEADER_OUT );
 		$error_number  = curl_errno( $ch );
 		$error_message = curl_error( $ch );
 // DEBUG
-// var_dump( $url, $options, $result, $http_code );
+// var_dump( $url, $options, $http_code, $http_header );
 // exit;
-		// result
+		// response
 		$status = null;
-		if( $result === false ) {
+		if( $response === false ) {
 			$message = sprintf( '[%d] %s', $error_number, $error_message );
 			$result = array(
 				'status'         => $status,
@@ -244,6 +275,15 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
+		// get header, body
+		$http_header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
+		$header = substr( $response, 0, $http_header_size );
+		$body   = substr( $response, $http_header_size );
+// DEBUG
+// var_dump( $header, $body );
+// exit;
+		// http code
+		$message = '';
 		switch( $http_code ) {
 			case 200: $status = true;                break;
 			case 400: $message = 'неверный запрос';  break;
@@ -264,9 +304,11 @@ class yf_payment_api__provider_remote {
 			$content_type = curl_getinfo( $ch, CURLINFO_CONTENT_TYPE );
 			switch( true ) {
 			case $content_type == 'application/json' || $_is_response_json:
-				$result = @json_decode( $result, true );
+				$result = @json_decode( $body, true );
 				break;
 			}
+		} else {
+			$result = $body;
 		}
 		// finish
 		curl_close( $ch );
