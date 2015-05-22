@@ -105,9 +105,9 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		$show_input_group = ($extra['append'] || $extra['prepend']);
 
 		$before_content_html = $show_input_group ? '<div'._attrs($input_group_extra, array('id','class','style')).'>'.PHP_EOL : '';
-		$before_content_html .= $extra['prepend'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['prepend'].'</span>'.PHP_EOL : '';
+		$before_content_html .= $extra['prepend'] ? '<span class="'.$this->CLASS_ADDON.($extra['class_prepend'] ? ' '.$extra['class_prepend']: '').'">'.$extra['prepend'].'</span>'.PHP_EOL : '';
 
-		$after_content_html = $extra['append'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['append'].'</span>'.PHP_EOL : '';
+		$after_content_html = $extra['append'] ? '<span class="'.$this->CLASS_ADDON.($extra['class_append'] ? ' '.$extra['class_append']: '').'">'.$extra['append'].'</span>'.PHP_EOL : '';
 		$after_content_html .= $show_input_group ? '</div>'.PHP_EOL : '';
 
 #		$after_content_html .= $extra['feedback_icon'] ? '<span class="'.$extra['feedback_icon'].' '.$this->CLASS_FEEDBACK.'" aria-hidden="true"></span>'.PHP_EOL : '';
