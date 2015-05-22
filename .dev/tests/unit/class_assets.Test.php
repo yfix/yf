@@ -8,6 +8,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		tpl()->parse_string('', array(), 'style_css');
 		tpl()->parse_string('', array(), 'script_js');
 		_class('assets')->ADD_IS_DIRECT_OUT = false;
+		_class('assets')->OUT_ADD_ASSET_NAME = false;
 	}
 
 	public function setUp() {
