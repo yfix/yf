@@ -235,8 +235,13 @@ class yf_validate {
 				$val = trim($rule[0]);
 				$param = null;
 				// Parsing these: min_length:6, matches:form_item, is_unique:table.field
+				// skip regex
 				if (strpos($val, ':') !== false && substr($val, -1) != ']') {
-					list($_val, $param) = explode(':', $val);
+					if (strpos($val, 'regex') !== false || strpos($val, 'regex_match') !== false) {
+						list($_val, $param) = explode(':', $val, 2);
+					} else {
+						list($_val, $param) = explode(':', $val);
+					}
 					$param = trim($param);
 					$val = trim($_val);
 				// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
@@ -266,15 +271,22 @@ class yf_validate {
 	*/
 	public function _validate_rules_array_from_raw($raw = '') {
 		$rules = array();
+		// esxape '|' to '\|'
+		$delimeter = '|';
+		$delimeter_regexp = '~(?<![^\\\]\\\)' . preg_quote( $delimeter, '~' ) . '~';
 		// At first, we merging all rules sets variants into one array
 		if (is_string($raw)) {
-			foreach((array)explode('|', $raw) as $_item) {
+			// foreach((array)explode('|', $raw) as $_item) {
+			foreach((array)preg_split( $delimeter_regexp, $raw ) as $_item) {
+				$_item = str_replace( '\|', '|', $_item );
 				$rules[] = array($_item, null);
 			}
 		} elseif (is_array($raw)) {
 			foreach((array)$raw as $_raw) {
 				if (is_string($_raw)) {
-					foreach((array)explode('|', $_raw) as $_item) {
+					// foreach((array)explode('|', $_raw) as $_item) {
+					foreach((array)preg_split( $delimeter_regexp, $_raw ) as $_item) {
+						$_item = str_replace( '\|', '|', $_item );
 						$rules[] = array($_item, null);
 					}
 				} elseif (is_callable($_raw)) {
