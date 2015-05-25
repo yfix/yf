@@ -70,6 +70,8 @@ class yf_assets {
 	public $USE_REQUIRE_JS = false;
 	/** @bool */
 	public $CACHE_OUT_ADD_MTIME = true;
+	/** @bool */
+	public $OUT_ADD_ASSET_NAME = true;
 
 	/**
 	* Catch missing method call
@@ -1602,7 +1604,7 @@ var_dump($out);
 				$str = '/'.substr($str, $slen);
 			}
 		}
-		if ($params['asset_name'] && !isset($params['id']) && in_array($content_type, array('inline', 'file'))) {
+		if ($this->OUT_ADD_ASSET_NAME && $params['asset_name'] && !isset($params['id']) && in_array($content_type, array('inline', 'file'))) {
 			$params['data-asset'] = 'asset_'.$out_type.'_'.$content_type.'_'.$params['asset_name'];
 		}
 		if ($out_type === 'js') {
