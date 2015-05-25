@@ -201,7 +201,7 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
-	protected function _api_post( $url, $post, $options = true ) {
+	protected function _api_post( $url, $post, $options = null ) {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -212,9 +212,14 @@ class yf_payment_api__provider_remote {
 		);
 		$header = array();
 		if( !empty( $post ) ) {
+			if( @$_is_json ) {
+				$http_post = json_encode( $post );
+			} else {
+				$http_post = http_build_query( $post );
+			}
 			$options += array(
 				CURLOPT_POST       => true,
-				CURLOPT_POSTFIELDS => $post,
+				CURLOPT_POSTFIELDS => $http_post,
 			);
 		}
 		if( !empty( $_user ) && !empty( $_password ) ) {
@@ -262,9 +267,9 @@ class yf_payment_api__provider_remote {
 		$http_header = curl_getinfo( $ch, CURLINFO_HEADER_OUT );
 		$error_number  = curl_errno( $ch );
 		$error_message = curl_error( $ch );
-// DEBUG
-// var_dump( $url, $options, $http_code, $http_header );
-// exit;
+		// DEBUG
+		@$_is_debug && var_dump( $url, $options, $http_code, $http_header );
+		// exit;
 		// response
 		$status = null;
 		if( $response === false ) {
@@ -279,9 +284,9 @@ class yf_payment_api__provider_remote {
 		$http_header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
 		$header = substr( $response, 0, $http_header_size );
 		$body   = substr( $response, $http_header_size );
-// DEBUG
-// var_dump( $header, $body );
-// exit;
+		// DEBUG
+		@$_is_debug && var_dump( $header, $body );
+		// exit;
 		// http code
 		$message = '';
 		switch( $http_code ) {
@@ -315,7 +320,7 @@ class yf_payment_api__provider_remote {
 		return( array( $status, $result ) );
 	}
 
-	public function _api_request( $url, $data, $options = array() ) {
+	public function _api_request( $url, $data, $options = null ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->_api_post( $url, $data, $options );
 		return( $result );

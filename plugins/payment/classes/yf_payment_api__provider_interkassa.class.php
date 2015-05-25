@@ -56,6 +56,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			// Список касс, привязанных к аккаунту
 			'checkout' => array(
 				'is_authorization' => true,
+				'is_api_account'   => true,
 				'uri' => array(
 					'%method' => 'checkout',
 				),
@@ -96,6 +97,16 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'uri' => array(
 					'%method' => 'withdraw',
 					'%id'     => '$id',
+				),
+			),
+			'withdraw-calc' => array(
+				'is_authorization' => true,
+				'is_api_account'   => true,
+				'uri' => array(
+					'%method' => 'withdraw',
+				),
+				'option' => array(
+					'action' => 'calc',
 				),
 			),
 		),
@@ -159,7 +170,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'option' => array(
 					'card' => 'Номер карты',
 				),
-				'option_validation_js1' => array(
+				'option_validation_js' => array(
 					'card'                       => array(
 						'type'      => 'text',
 						'required'  => true,
@@ -566,7 +577,6 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		}
 		// get business account
 		$request_options = array(
-			'is_json' => true,
 			'method_id' => 'checkout',
 			'header'    => array(
 				'Ik-Api-Account-Id: '. $account_id,
@@ -618,13 +628,19 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		if( @$object[ 'status' ] === false ) { return( $object ); }
 		$url = $object;
 		// request options
-		$request_options = array();
+		$request_options = array(
+			'is_debug' => true,
+		);
 			// authorization
 			$request_options += (array)$this->api_authorization( $method );
 			// header
 			is_array( $_header ) && $request_options[ 'header' ] = $_header;
 		// request
+// DEBUG
+// var_dump( $url, $request, $request_options );
 		$result = $this->_api_request( $url, $request, $request_options );
+// var_dump( $result );
+// exit;
 		return( $result );
 	}
 
