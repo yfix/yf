@@ -3,8 +3,8 @@ return array(
 	'fields' => array(
 		'id' => array(
 			'name' => 'id',
-			'type' => 'tinyint',
-			'length' => 3,
+			'type' => 'smallint',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
