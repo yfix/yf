@@ -315,10 +315,6 @@ if (!function_exists('_empty')) {
 if (!function_exists('_isset')) {
 	function _isset($in = null) { return isset($in); }
 }
-// FirePHP shortcut in case if not exists
-if (!function_exists('fb')) {
-	function fb() { return false; }
-}
 if (!function_exists('_get')) {
 	function _get($key = null, $val = null) { return input()->get($key, $val); }
 }

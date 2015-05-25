@@ -1,7 +1,7 @@
 <?php
 
-MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', function() {
-	if (!main()->is_common_page()) {
+MAIN_TYPE_ADMIN && events()->listen('block.prepend[center_area]', function() {
+	if (!is_common_page()) {
 		return ;
 	}
 	$icons = array(
