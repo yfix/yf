@@ -1,12 +1,15 @@
 # Google
 # UA "AdsBot-Google (+http://www.google.com/adsbot.html)"
+# UA "DoCoMo/2.0 N905i(c100;TB;W24H16) (compatible; Googlebot-Mobile/2.1; +http://www.google.com/bot.html)"
 # UA "Googlebot-Image/1.0"
+# UA "Googlebot/2.1 (+http://www.google.com/bot.html)"
 # UA "Googlebot/2.1 (+http://www.googlebot.com/bot.html)"
 # UA "Googlebot/Test (+http://www.googlebot.com/bot.html)"
 # UA "Googlebot/Test"
 # UA "Mediapartners-Google/2.1 (+http://www.googlebot.com/bot.html)"
 # UA "Mediapartners-Google/2.1"
 # UA "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+# UA "SAMSUNG-SGH-E250/1.0 Profile/MIDP-2.0 Configuration/CLDC-1.1 UP.Browser/6.2.3.3.c.1.101 (GUI) MMP/2.0 (compatible; Googlebot-Mobile/2.1; +http://www.google.com/bot.html)"
 # UA "gsa-crawler (Enterprise; S4-E9LJ2B82FJJAA; me@mycompany.com)"
 209.185.108
 209.185.253
@@ -285,6 +288,7 @@
 66.249.71
 66.249.72
 66.249.73
+66.249.76.196
 66.249.78
 66.249.79
 72.14.199
