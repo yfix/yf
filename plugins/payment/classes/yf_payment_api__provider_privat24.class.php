@@ -46,6 +46,9 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 					'ccy',
 					'details',
 				),
+				'order' => array(
+					'account',
+				),
 				'option' => array(
 					'account' => 'Счет',
 				),
@@ -60,6 +63,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 					'amt',
 					'ccy',
 					'details',
+				),
+				'order' => array(
+					'name',
+					'account',
 				),
 				'option' => array(
 					'name'    => 'ФИО получателя',
