@@ -1252,7 +1252,7 @@ class yf_main {
 				'params'	=> $method_params,
 				'tpl_name'	=> $tpl_name,
 				'silent'	=> (int)$silent,
-				'size'		=> strlen($body),
+				'size'		=> strlen( is_array( $body ) ? implode( $body ) : $body ),
 				'time'		=> round(microtime(true) - $_time_start, 5),
 				'trace'		=> $this->trace_string(),
 			));
