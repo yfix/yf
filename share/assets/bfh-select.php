@@ -7,6 +7,7 @@ $bfh_css_fixes = '
 	[class^="bfh-flag-"]:empty, [class*="bfh-flag-"]:empty { width: 16px; }
 	.bfh-selectbox { max-width: 300px; }
 	.bfh-selectbox-options a { padding-left: 10px; }
+	a.bfh-selectbox-toggle:hover { color: #333; }
 ';
 return array(
 	'versions' => array(

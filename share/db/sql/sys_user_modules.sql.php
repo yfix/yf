@@ -1,6 +1,6 @@
 <?php
 return '
-  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `id` smallint(6) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT \'\',
   `description` varchar(255) NOT NULL DEFAULT \'\',
   `version` varchar(16) NOT NULL DEFAULT \'\',

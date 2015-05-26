@@ -498,7 +498,7 @@ $payment_api->dump(array( 'var' => array(
 							$sql_sign  = '+';
 						}
 					}
-					$mail_tpl  = 'payment';
+					$mail_tpl  = 'payout';
 					break;
 				case 'deposition':
 					$is_payin  = true;
@@ -511,7 +511,7 @@ $payment_api->dump(array( 'var' => array(
 							$sql_sign  = '+';
 						}
 					}
-					$mail_tpl  = 'payout';
+					$mail_tpl  = 'payment';
 					break;
 			}
 			// update account balance

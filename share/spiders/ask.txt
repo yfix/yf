@@ -1,4 +1,4 @@
-# Ask Jeeves
+# Ask Jeeves/Teoma
 # UA "Mozilla/2.0 (compatible; Ask Jeeves/Teoma; +http://sp.ask.com/docs/about/tech_crawling.html)"
 # UA "Mozilla/2.0 (compatible; AskJeeves/Teoma)"
 # UA "Mozilla/5.0 (compatible; Ask Jeeves/Teoma; +http://about.ask.com/en/docs/about/webmasters.shtml)"
@@ -10,6 +10,7 @@
 140.239.251.223
 140.239.251.224
 140.239.251.230
+206.80.1.253
 207.204.132.233
 207.204.132.234
 208.178.104.55
