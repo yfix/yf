@@ -1147,6 +1147,7 @@ class yf_payment_api {
 	}
 
 	public function mail( $options = null ) {
+		$result = true;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_tpl ) ) { return( null ); }
@@ -1158,9 +1159,11 @@ class yf_payment_api {
 		if( !empty( $_user_id ) ) {
 			$user = user( $_user_id );
 			// check email, validate email
-			if( empty( $user )
-				|| empty( $user[ 'email' ] )
-				|| $user[ 'email' ] != $user[ 'email_validated' ]
+			if( !@$_force && (
+					empty( $user )
+					|| empty( $user[ 'email' ] )
+					|| $user[ 'email' ] != $user[ 'email_validated' ]
+				)
 			) { return( null ); }
 			$mail_to   = $user[ 'email' ];
 			$mail_name = $user[ 'name'  ];
@@ -1193,9 +1196,11 @@ class yf_payment_api {
 			'mail' => $mail,
 		));
 		$is_admin = !empty( $_is_admin );
-		$admin    = !empty( $admin     );
+		$admin    = !empty( $_admin    );
 		if( !$is_admin ) {
-			$mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
+			$result &= $mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
+			// mail copy
+			!$admin && $this->mail_copy( array( 'tpl' => $_tpl, 'subject' => @$_subject, 'data' => $data ) );
 		}
 		if( $admin || $is_admin ) {
 			$url = array(
@@ -1216,17 +1221,29 @@ class yf_payment_api {
 				'user_title' => $user[ 'name' ] . ' (id: '. $_user_id .')'
 			));
 			$tpl = $_tpl . '_admin';
-			$mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
-			// mail copy to
-			if( is_array( $this->MAIL_COPY_TO ) ) {
-				$override = array();
-				$_subject && $override[ 'subject' ] = $_subject;
-				$name = 'Payment admin';
-				foreach( $this->MAIL_COPY_TO as $mail ) {
-					$mail_class->_send_email_safe( $mail, $name, $tpl, $data, $override );
-				}
+			$result &= $mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
+			// mail copy
+			$this->mail_copy( array( 'tpl' => $tpl, 'subject' => @$_subject, 'data' => $data ) );
+		}
+		return( $result );
+	}
+
+	public function mail_copy( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_tpl ) || empty( $_data ) ) { return( null ); }
+		$result = true;
+		if( is_array( $this->MAIL_COPY_TO ) ) {
+			$mail_class = _class( 'email' );
+			$override = array();
+			$_subject && $override[ 'subject' ] = $_subject;
+			$name = 'Payment admin';
+			$instant_send = true;
+			foreach( $this->MAIL_COPY_TO as $mail ) {
+				$result &= $mail_class->_send_email_safe( $mail, $name, $_tpl, $_data, $instant_send, $override );
 			}
 		}
+		return( $result );
 	}
 
 	public function url_admin( $options = null ) {

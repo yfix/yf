@@ -511,7 +511,7 @@ $payment_api->dump(array( 'var' => array(
 							$sql_sign  = '+';
 						}
 					}
-					$mail_tpl  = 'payment';
+					$mail_tpl  = 'payin';
 					break;
 			}
 			// update account balance
