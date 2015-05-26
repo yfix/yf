@@ -1197,11 +1197,13 @@ class yf_payment_api {
 		));
 		$is_admin = !empty( $_is_admin );
 		$admin    = !empty( $_admin    );
+		// user
 		if( !$is_admin ) {
 			$result &= $mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
 			// mail copy
 			!$admin && $this->mail_copy( array( 'tpl' => $_tpl, 'subject' => @$_subject, 'data' => $data ) );
 		}
+		// admin
 		if( $admin || $is_admin ) {
 			$url = array(
 				'user_manage' => $this->url_admin( array(

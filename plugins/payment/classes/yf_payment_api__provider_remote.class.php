@@ -515,37 +515,39 @@ $payment_api->dump(array( 'var' => array(
 					break;
 			}
 			// update account balance
-			if( $is_update_balance && $current_status_id != $new_status_id ) {
+			if( $current_status_id != $new_status_id ) {
+				if( $is_update_balance ) {
 // DEBUG
 $payment_api->dump(array( 'var' => array(
 	'is_update_balance' => $is_update_balance,
 )));
-				// update account
-				$_data = array(
-					'account_id'      => $account_id,
-					'datetime_update' => db()->escape_val( $sql_datetime ),
-					'balance'         => "( balance $sql_sign $sql_amount )",
-				);
-				$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
-				if( !$_result[ 'status' ] ) {
-					db()->rollback();
-					$result = array(
-						'status'         => false,
-						'status_message' => 'Ошибка при обновлении счета',
+					// update account
+					$_data = array(
+						'account_id'      => $account_id,
+						'datetime_update' => db()->escape_val( $sql_datetime ),
+						'balance'         => "( balance $sql_sign $sql_amount )",
 					);
-					// mail admin
-					$tpl = $mail_tpl . '_refused';
-					$payment_api->mail( array(
-						'subject'  => 'DB error: payment account update error, id operation: '. $account_id,
-						'tpl'      => $tpl,
-						'user_id'  => $account[ 'user_id' ],
-						'is_admin' => true,
-						'data'    => array(
-							'operation_id' => $operation_id,
-							'amount'       => $amount,
-						),
-					));
-					return( $result );
+					$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
+					if( !$_result[ 'status' ] ) {
+						db()->rollback();
+						$result = array(
+							'status'         => false,
+							'status_message' => 'Ошибка при обновлении счета',
+						);
+						// mail admin
+						$tpl = $mail_tpl . '_refused';
+						$payment_api->mail( array(
+							'subject'  => 'DB error: payment account update error, id operation: '. $account_id,
+							'tpl'      => $tpl,
+							'user_id'  => $account[ 'user_id' ],
+							'is_admin' => true,
+							'data'    => array(
+								'operation_id' => $operation_id,
+								'amount'       => $amount,
+							),
+						));
+						return( $result );
+					}
 				}
 				// mail
 				$tpl = $mail_tpl . '_'. $new_status_name;
@@ -623,7 +625,7 @@ $payment_api->dump(array( 'var' => array(
 			db()->commit();
 			$status_message = $_status_message;
 		} else {
-			$status_message = 'Выполнено повторно: ';
+			$status_message = 'Выполнено повторно: '. $operation[ 'title' ];
 			// mail admin
 			$tpl = $mail_tpl . '_success';
 			$payment_api->mail( array(
@@ -637,7 +639,7 @@ $payment_api->dump(array( 'var' => array(
 				),
 			));
 		}
-		$status_message .= $operation[ 'title' ] . ', сумма: ' . $amount;
+		$status_message .= ', сумма: ' . $amount;
 		if( !empty( $payment_api->currency[ 'short' ] ) ) {
 			$status_message .= ' ' . $payment_api->currency[ 'short' ];
 		}
