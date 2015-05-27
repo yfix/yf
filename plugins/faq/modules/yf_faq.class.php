@@ -1,7 +1,9 @@
 <?php
 
 class yf_faq {
+
 	const table = 'faq';
+
 	private $_tpl = '
 		<div class="container-block">
 			<form class="form-inline" id="faq-search" style="width:50%;">
@@ -19,6 +21,16 @@ class yf_faq {
 			</div>
 		</div>
 	';
+
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
+	*/
 	public function show() {
 		css('
 			#faq-search { padding-top: 20px; }

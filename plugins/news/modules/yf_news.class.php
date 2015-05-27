@@ -14,6 +14,13 @@ class yf_news {
 	);
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _module_action_handler($method, $dirty_args = array()) {
 		// For links like this:
