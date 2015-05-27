@@ -210,6 +210,51 @@ class yf_manage_payment {
 		;
 	}
 
+	function _operation_sql( $options = null ) {
+		$payment_api = _class( 'payment_api' );
+		list( $sql ) = $payment_api->operation( $operation_options );
+		$result = $sql;
+		return( $result );
+	}
+
+	function _operation_table( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$result = table( $_sql, array(
+				'filter' => $_filter,
+				'filter_params' => array(
+					'operation_id'    => 'in',
+					'title'           => 'like',
+					'datetime_update' => array( 'datetime_between', 'datetime_update' ),
+				),
+			))
+			->text( 'operation_id'   , 'Номер'           )
+			->text( 'title'          , 'Название'        )
+			->func( 'provider_id', function($in, $e, $a, $p, $table) use( $_providers ) {
+				$result = $_providers[ $in ][ 'title' ];
+				return( $result );
+			}, array( 'desc' => 'Провайдер' ) )
+			->text( 'amount'         , 'Сумма'           )
+			->text( 'balance'        , 'Баланс'          )
+		->func( 'status_id', function( $value, $extra, $row ) use ( $_payment_status ){
+			$status_id = $_payment_status[ $value ][ 'name' ];
+			$title     = $_payment_status[ $value ][ 'title' ];
+			switch( $status_id ) {
+				case 'in_progress': $css = 'text-warning'; break;
+				case 'success':     $css = 'text-success'; break;
+				case 'expired':     $css = 'text-danger';  break;
+				case 'refused':     $css = 'text-danger';  break;
+			}
+			$result = sprintf( '<span class="%s">%s</span>', $css, $title );
+			return( $result );
+		}, array( 'desc' => 'статус' ) )
+			->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
+			->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
+			->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
+		;
+		return( $result );
+	}
+
 	function balance() {
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -259,7 +304,7 @@ class yf_manage_payment {
 		foreach( $providers as $i => $item ) {
 			$items[ $item[ 'name' ] ] = $item[ 'title' ];
 		}
-		$providers = $items;
+		$providers_form = $items;
 		// prepare form
 		$replace = array(
 			'amount'        => null,
@@ -323,7 +368,7 @@ class yf_manage_payment {
 			})
 			->float( 'amount', 'Сумма' )
 			->text( 'title', 'Название' )
-			->select_box( 'provider_name', $providers, array( 'show_text' => 1, 'desc' => 'Провайдер', 'tip' => 'Выбрать провайдера возможно только для пополнения. Списание возможно только от Администратора.' ) )
+			->select_box( 'provider_name', $providers_form, array( 'show_text' => 1, 'desc' => 'Провайдер', 'tip' => 'Выбрать провайдера возможно только для пополнения. Списание возможно только от Администратора.' ) )
 			->row_start( array(
 				'desc' => 'Операция',
 			))
@@ -340,49 +385,21 @@ class yf_manage_payment {
 				'no_order_by' => true,
 				'sql'         => true,
 			);
-			list( $sql, $sql_count ) = $payment_api->operation( $operation_options );
+			$sql = $this->_operation_sql( $operation_options );
 			if( empty( $filter ) ) {
 				$filter = array(
 					'order_by'        => 'datetime_update',
 					'order_direction' => 'desc',
 				);
 			}
-			// prepare provider
-			$providers = $payment_api->provider( array(
-				'all' => true,
+			// operations table
+			$table = $this->_operation_table( array(
+				'filter'         => $filter,
+				'sql'            => $sql,
+				'user_id'        => $user_id,
+				'payment_status' => $payment_status,
+				'providers'      => $providers,
 			));
-			$table = table( $sql, array(
-					'filter' => $filter,
-					'filter_params' => array(
-						'operation_id'    => 'in',
-						'title'           => 'like',
-						'datetime_update' => array( 'datetime_between', 'datetime_update' ),
-					),
-				))
-				->text( 'operation_id'   , 'Номер'           )
-				->text( 'title'          , 'Название'        )
-				->func( 'provider_id', function($in, $e, $a, $p, $table) use( $providers ) {
-					$result = $providers[ $in ][ 'title' ];
-					return( $result );
-				}, array( 'desc' => 'Провайдер' ) )
-				->text( 'amount'         , 'Сумма'           )
-				->text( 'balance'        , 'Баланс'          )
-			->func( 'status_id', function( $value, $extra, $row ) use ( $payment_status ){
-				$status_id = $payment_status[ $value ][ 'name' ];
-				$title     = $payment_status[ $value ][ 'title' ];
-				switch( $status_id ) {
-					case 'in_progress': $css = 'text-warning'; break;
-					case 'success':     $css = 'text-success'; break;
-					case 'expired':     $css = 'text-danger';  break;
-					case 'refused':     $css = 'text-danger';  break;
-				}
-				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
-				return( $result );
-			}, array( 'desc' => 'статус' ) )
-				->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
-				->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
-				->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
-			;
 		} else {
 			if( !$_POST[ 'amount' ] ) {
 				common()->message_warning( 'Счет не определен', array( 'translate' => false ) );
