@@ -6,10 +6,12 @@ return array(
 			'js' => array(
 				'//cdn.ckeditor.com/4.4.5/full/ckeditor.js',
 				'//cdn.ckeditor.com/4.4.5/full/adapters/jquery.js',
-#				'//cdn.ckeditor.com/4.4.5/standard/ckeditor.js',
-#				'//cdn.ckeditor.com/4.4.5/standard/adapters/jquery.js',
-//				'//cdn.ckeditor.com/4.4.5/basic/ckeditor.js',
-//				'//cdn.ckeditor.com/4.4.5/basic/adapters/jquery.js',
+			),
+		),
+		'4.4.7' => array(
+			'js' => array(
+				'//cdn.ckeditor.com/4.4.7/full/ckeditor.js',
+				'//cdn.ckeditor.com/4.4.7/full/adapters/jquery.js',
 			),
 		),
 	),
