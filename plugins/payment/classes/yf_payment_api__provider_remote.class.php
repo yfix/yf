@@ -623,7 +623,7 @@ $payment_api->dump(array( 'var' => array(
 				}
 			}
 			db()->commit();
-			$status_message = $_status_message;
+			$status_message = $_status_message . $operation[ 'title' ];
 		} else {
 			$status_message = 'Выполнено повторно: '. $operation[ 'title' ];
 			// mail admin
