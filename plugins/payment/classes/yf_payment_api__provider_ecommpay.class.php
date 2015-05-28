@@ -6,11 +6,6 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 
 	public $URL              = 'https://terminal.ecommpay.com/';
 	public $URL_TEST         = 'https://terminal-sandbox.ecommpay.com/';
-	public $KEY_PUBLIC       = null;  // site id
-	public $KEY_PRIVATE      = null;  // salt
-
-	// public $IS_DEPOSITION = true;
-	// public $IS_PAYMENT    = true;
 
 	public $URL_API          = 'https://gate.ecommpay.com/%method/json/';
 	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/%method/json/';
@@ -866,7 +861,7 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		// check required
 		$request = array();
 		foreach( $method[ 'field' ] as $key ) {
-			$value = &${ '_'.$key };
+			$value = @${ '_'.$key };
 			if( !isset( $value ) ) {
 				$result = array(
 					'status'         => false,
@@ -891,12 +886,13 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 // var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
 		// url
-		$object  = $this->api_url( $method, $options );
-		if( @$object[ 'status' ] === false ) { return( $object ); }
+		$object = $this->api_url( $method, $options );
+		if( is_array( $object ) && $object[ 'status' ] === false ) { return( $object ); }
 		$url = $object;
 		// request
-		$data = http_build_query( $request );
-		$result = $this->_api_request( $url, $data );
+		$request_options = array();
+		@$_is_debug && $request_options[ 'is_debug' ] = true;
+		$result = $this->_api_request( $url, $request, $request_options );
 // DEBUG
 $payment_api->dump( array( 'var' => $result ));
 // var_dump( $result );

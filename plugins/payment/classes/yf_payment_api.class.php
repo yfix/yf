@@ -1469,6 +1469,7 @@ class yf_payment_api {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		$ts = microtime( true );
 		$file = $_file ?: sprintf( '/tmp/payment_api_dump-%s.txt', date( 'Y-m-d_H-i-s', $ts ) );
+		$html_errors = ini_get( 'html_errors' );
 		ini_set( 'html_errors', 0 );
 		$result = '';
 		if( $is_first ) {
@@ -1479,6 +1480,7 @@ class yf_payment_api {
 		isset( $_var ) && $result .= 'VAR:' . PHP_EOL . var_export( $_var, true ) . PHP_EOL . PHP_EOL;
 		!empty( $result ) && file_put_contents( $file, $result, FILE_APPEND );
 		$is_first = false;
+		ini_set( 'html_errors', $html_errors );
 		return( $result );
 	}
 

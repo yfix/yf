@@ -14,6 +14,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	// public $IS_PAYMENT    = true;
 
 	public $URL_API          = 'https://api.interkassa.com/v1/%method';
+	public $API_ACCOUNT      = null; // api header: Ik-Api-Account-Id
 
 	public $method_allow = array(
 		'order' => array(
@@ -69,6 +70,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			// Список кошельков, привязанных к аккаунту, с их параметрами
 			'purse' => array(
 				'is_authorization' => true,
+				'is_api_account'   => true,
 				'uri' => array(
 					'%method' => 'purse',
 				),
@@ -76,6 +78,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			// Позволяет получить выгрузку платежей
 			'co-invoice' => array(
 				'is_authorization' => true,
+				'is_api_account'   => true,
 				'uri' => array(
 					'%method' => 'co-invoice',
 				),
@@ -87,12 +90,14 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			// - создать новый вывод в системе
 			'withdraw' => array(
 				'is_authorization' => true,
+				'is_api_account'   => true,
 				'uri' => array(
 					'%method' => 'withdraw',
 				),
 			),
 			'withdraw-id' => array(
 				'is_authorization' => true,
+				'is_api_account'   => true,
 				'url' => 'https://api.interkassa.com/v1/%method/%id',
 				'uri' => array(
 					'%method' => 'withdraw',
@@ -106,6 +111,17 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'%method' => 'withdraw',
 				),
 				'option' => array(
+					'action' => 'calc',
+				),
+			),
+			'withdraw-process' => array(
+				'is_authorization' => true,
+				'is_api_account'   => true,
+				'uri' => array(
+					'%method' => 'withdraw',
+				),
+				'option' => array(
+					// 'action' => 'process',
 					'action' => 'calc',
 				),
 			),
@@ -586,6 +602,19 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		return( $result );
 	}
 
+	public function api_account( $options = null ) {
+		// var
+		$account_id = @$this->API_ACCOUNT;
+		if( empty( $account_id ) ) { return( null ); }
+		// business account id
+		$result = array(
+			'header'    => array(
+				'Ik-Api-Account-Id: '. $account_id,
+			),
+		);
+		return( $result );
+	}
+
 	public function api_request( $options = null ) {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
@@ -624,20 +653,25 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			$request, $method[ 'option' ]
 		);
 		// url
-		$object  = $this->api_url( $method, $options );
+		$object = $this->api_url( $method, $options );
+		var_dump( $object );
 		if( @$object[ 'status' ] === false ) { return( $object ); }
 		$url = $object;
 		// request options
-		$request_options = array(
-			'is_debug' => true,
-		);
-			// authorization
-			$request_options += (array)$this->api_authorization( $method );
+		$request_options = array();
+		@$_is_debug && $request_options[ 'is_debug' ] = true;
+			// api authorization
+			$_request_options = $this->api_authorization( $method );
+			is_array( $_request_options ) && $request_options = array_merge_recursive( $request_options, $_request_options );
+			// api account
+			$_request_options = $this->api_account( $method );
+			is_array( $_request_options ) && $request_options = array_merge_recursive( $request_options, $_request_options );
 			// header
-			is_array( $_header ) && $request_options[ 'header' ] = $_header;
+			is_array( $_header ) && $request_options = array_merge_recursive( $request_options, array( 'header' => $_header ) );
 		// request
 // DEBUG
 // var_dump( $url, $request, $request_options );
+// exit;
 		$result = $this->_api_request( $url, $request, $request_options );
 // var_dump( $result );
 // exit;
