@@ -101,6 +101,17 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
+	public function option_transform( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		foreach( (array)$_transform as $from => $to ) {
+			if( isset( $_option[ $from ] ) && $from != $to ) {
+				$_option[ $to ] = $_option[ $from ];
+				unset( $_option[ $from ] );
+			}
+		}
+	}
+
 	public function api_url( $options = null, $request_options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -681,6 +692,86 @@ $payment_api->dump(array( 'var' => array(
 		$key = 'fee';
 		if( empty( $method ) || empty( $method[ $key ] ) ) { return( null ); }
 		$result = $method[ $key ];
+		if( is_array( $result[ 'out' ] ) ) {
+			$result = $result[ 'out' ];
+		}
+		return( $result );
+	}
+
+	public function currency_conversion_payout( $options ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$amount = &$_amount;
+		// processing
+		if( !empty( $_method[ 'is_currency' ] ) ) {
+			// currency_id
+			$currency_id = $this->get_currency_payout( $_options );
+			if( empty( $currency_id ) ) {
+				$result = array(
+					'status'         => false,
+					'status_message' => 'Неизвестная валюта',
+				);
+				return( $result );
+			}
+			$payment_api = &$this->payment_api;
+			// currency conversion
+			$amount_currency = $payment_api->currency_conversion( array(
+				'conversion_type' => 'sell',
+				'currency_id'     => $currency_id,
+				'amount'          => $_amount,
+			));
+			if( empty( $amount_currency ) ) {
+				$result = array(
+					'status'         => false,
+					'status_message' => 'Невозможно произвести конвертацию валют',
+				);
+				return( $result );
+			}
+			$amount = $amount_currency;
+			// fee
+			if( !empty( $method[ 'is_fee' ] ) ) {
+				$fee = $this->get_fee_payout( $_options );
+				$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+				$amount = $amount_currency_total;
+			}
+		}
+		$result = array(
+			'status'                => true,
+			'amount'                => $amount,
+			'amount_currency'       => @$amount_currency,
+			'amount_currency_total' => @$amount_currency_total,
+			'currency_id'           => @$currency_id,
+		);
+		return( $result );
+	}
+
+	public function amount_limit( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( !empty( $_method[ 'amount' ] ) ) {
+			$min = @$_method[ 'amount' ][ 'min' ];
+			$max = @$_method[ 'amount' ][ 'max' ];
+			$status = false;
+			switch( true ) {
+				case isset( $min ) && $_amount < $min: $status_message = 'больше '. $min; break;
+				case isset( $max ) && $_amount > $max: $status_message = 'меньше '. $max;  break;
+				default: $status = true; break;
+			}
+			if( empty( $status ) ) {
+					$result = array(
+						'status'         => false,
+						'status_message' => @sprintf(
+							'Сумма %s: %s должна быть %s'
+								, $_currency_id
+								, $_amount
+								, $status_message
+						),
+					);
+					return( $result );
+			}
+		}
+		$result = array( 'status' => true );
 		return( $result );
 	}
 

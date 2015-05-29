@@ -388,7 +388,15 @@ class yf_payment_api {
 	}
 
 	public function fee( $amount, $fee ) {
-		$result = $amount + $amount * ( $fee / 100 );
+		$rt  = 0;
+		$fix = 0;
+		if( is_array( $fee ) ) {
+			$rt  = $fee[ 'rt'  ];
+			$fix = $fee[ 'fix' ];
+		} else {
+			$rt = $fee;
+		}
+		$result = $amount + $amount * ( $rt / 100 ) + $fix;
 		return( $result );
 	}
 
