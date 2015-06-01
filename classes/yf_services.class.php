@@ -125,4 +125,30 @@ class yf_services {
 	function yaml($content, $params = array()) {
 // TODO
 	}
+
+	/**
+	*/
+	function google_translate($text, $lang_from, $lang_to, $params = array()) {
+		if (!strlen($text) || !$lang_from || !$lang_to) {
+			return false;
+		}
+		$md5 = md5($lang_from.'|'.$lang_to.'|'.$text);
+		$table = 'cache_google_translate';
+		$cached = db()->from($table)->where('lang_from', $lang_from)->where('lang_to', $lang_to)->where('md5', $md5)->get();
+		if (isset($cached['translated'])) {
+			return $cached['translated'];
+		} else {
+			$this->require_php_lib('google_translate');
+			$translated = Stichoza\GoogleTranslate\TranslateClient::translate($lang_from, $lang_to, $text);
+			db()->insert_safe($table, array(
+				'md5'			=> $md5,
+				'lang_from'		=> $lang_from,
+				'lang_to'		=> $lang_to,
+				'source'		=> $text,
+				'translated'	=> $translated,
+				'date'			=> date('Y-m-d H:i:s'),
+			));
+		}
+		return $translated;
+	}
 }
