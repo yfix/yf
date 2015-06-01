@@ -83,6 +83,15 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'%method' => 'co-invoice',
 				),
 			),
+			'co-invoice-id' => array(
+				'is_authorization' => true,
+				'is_api_account'   => true,
+				'url' => 'https://api.interkassa.com/v1/%method/%id',
+				'uri' => array(
+					'%method' => 'co-invoice',
+					'%id'     => '$id',
+				),
+			),
 			// GET
 			// - список осуществленных выводов
 			// - информацию по конкретному выводу
@@ -220,12 +229,6 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		'account'        => 'card',
 	);
 
-	public $_api_transform_reverse = array(
-		'paymentNo' => 'operation_id',
-		'trnId'     => 'transaction_id',
-		'code'      => 'state',
-	);
-
 	public $_options_transform = array(
 		'amount'       => 'ik_am',
 		'currency'     => 'ik_cur',
@@ -253,6 +256,56 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		'process'    => 'in_progress',
 		'fail'       => 'refused',
 		'canceled'   => 'refused',
+	);
+
+	public $_payin_status = array(
+		//     status           description                    финальный
+		2  => 'in_progress', // Ожидает оплаты             - Нет
+		3  => 'in_progress', // Обрабатывается             - Нет
+		4  => 'in_progress', // В процессе возврата        - Нет
+		5  => 'expired',     // Просрочен                  - Да
+		7  => 'success',     // Зачислен                   - Да
+		8  => 'refused',     // Отменен платежной системой - Да
+		9  => 'refused',     // Возвращен                  - Да
+	);
+
+	public $_payin_status_message = array(
+		2  => 'Ожидает оплаты',
+		3  => 'Обрабатывается',
+		4  => 'В процессе возврата',
+		5  => 'Просрочен',
+		7  => 'Зачислен',
+		8  => 'Отменен платежной системой',
+		9  => 'Возвращен',
+	);
+
+	public $_payout_status = array(
+		//     status           description                    финальный
+		1  => 'in_progress', // Ожидает проверки модерацией  - Нет
+		2  => 'in_progress', // Проверен модерацией          - Нет
+		3  => 'refused',     // Отозван модерацией           - Да
+		4  => 'in_progress', // Заморожен                    - Нет
+		5  => 'in_progress', // Разморожен                   - Нет
+		6  => 'in_progress', // Обработка платежной системой - Нет
+		7  => 'in_progress', // Зачисление                   - Нет
+		8  => 'success',     // Проведен                     - Да
+		9  => 'refused',     // Отменен                      - Да
+		11 => 'refused',     // Возвращен                    - Да
+		12 => 'in_progress', // Создан, но еще не проведен   - Нет
+	);
+
+	public $_payout_status_message = array(
+		1  => 'Ожидает проверки модерацией',
+		2  => 'Проверен модерацией',
+		3  => 'Отозван модерацией',
+		4  => 'Заморожен',
+		5  => 'Разморожен',
+		6  => 'Обработка платежной системой',
+		7  => 'Зачисление',
+		8  => 'Проведен',
+		9  => 'Отменен',
+		11 => 'Возвращен',
+		12 => 'Создан, но еще не проведен',
 	);
 
 	public $currency_default = 'USD';
@@ -774,7 +827,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			$request[ 'details' ][ $key ] = &$request_details[ $key ];
 		}
 // DEBUG
-var_dump( $request );
+// var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
 		// request options
 		$request_option = array(
@@ -782,119 +835,104 @@ $payment_api->dump( array( 'var' => $request ));
 			'option'    => $request,
 			'is_debug'  => @$_is_debug,
 		);
-		$result = $this->api_request( $request_option );
+		// $result = $this->api_request( $request_option );
 // DEBUG
-$payment_api->dump( array( 'var' => $result ));
-		if( empty( $result ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Невозможно отправить запрос',
-			);
-			return( $result );
-		}
-		list( $status, $response ) = $result;
+// $payment_api->dump( array( 'var' => $result ));
+		// if( empty( $result ) ) {
+			// $result = array(
+				// 'status'         => false,
+				// 'status_message' => 'Невозможно отправить запрос',
+			// );
+			// return( $result );
+		// }
+		// list( $status, $response ) = $result;
 		// DEBUG
-		/*
-		$response = '
-			{
-			"code"              : 0,
-			"message"           : "Success.",
-			"acquirer_id"       : "552e1df177a9e",
-			"transaction_id"    : "42169",
-			"processor_id"      : "1",
-			"processor_code"    : "00",
-			"processor_message" : "SUCCESS",
-			"amount"            : "89",
-			"currency"          : "RUB",
-			"real_amount"       : "89",
-			"real_currency"     : "RUB",
-			"external_id"       : "24563",
-			"authcode"          : "6Y8A0C"
-			}
-		'; //*/
-		$response = json_decode( $response, true );
-// DEBUG
-// var_dump( $result, $response );
-		if( is_null( $response ) ) {
+		//*
+		$response = array (
+			'status' => 'ok',
+			'code' => 0,
+			'data' =>
+			array (
+				'withdraw' => array (
+					'state'         => '4',
+					'state'         => '3',
+					'result'        => '0',
+					'stateName'     => 'success',
+					'purseId'       => '300301404317',
+					'accountId'     => '5534b0f13b1eaf67738b456a',
+					'coId'          => '5534b12f3b1eaf07728b4569',
+					'paymentNo'     => '1',
+					'paywayId'      => '52efa902e4ae1a780e000001',
+					'paywayPurseId' => '52efa952e4ae1a3008000003',
+					'payerWriteoff' => 2063.3299999999999,
+					'payeeReceive'  => 2063.3299999999999,
+					'ikFee'         => 0,
+					'ikPrice'       => 2063.3299999999999,
+					'ikPsPrice'     => 2063.3299999999999,
+					'psFeeIn'       => 0,
+					'psFeeOut'      => 30.329999999999998,
+					'psCost'        => 22.329999999999998,
+					'ikIncome'      => 8,
+					'psAmount'      => 2033,
+					'psValue'       => 2033,
+					'psPrice'       => 2055.3299999999999,
+					'psCurRate'     => 1,
+				),
+				'transaction' => array (
+					'payerPurseId' => '300301404317',
+					'payerBalance' => 5714.3199999999997,
+					'payeePurseId' => '304403706200',
+					'payeeBalance' => 179616920.39289999,
+					'payerAmount' => 2063.3299999999999,
+					'payerPrice' => 2063.3299999999999,
+					'payerFee' => 0,
+					'payerExchFee' => 0,
+					'payeeAmount' => 2063.3299999999999,
+					'payeeFee' => 0,
+					'payeePrice' => 2063.3299999999999,
+					'exchRate' => 1,
+				),
+			),
+			'message' => 'Success',
+		); //*/
+		if( empty( $response[ 'data' ][ 'withdraw' ] ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Невозможно декодировать ответа',
 			);
 			return( $result );
 		}
+		$data = $response[ 'data' ][ 'withdraw' ];
 		// result
 		$result = array(
 			'status'         => &$status,
 			'status_message' => &$status_message,
 		);
-		$status = 'refused';
-		// transform reverse
-		foreach( $this->_api_transform_reverse as $from => $to ) {
-			if( $from != $to && isset( $response[ $from ] ) ) {
-				$response[ $to ] = $response[ $from ];
-				unset( $response[ $from ] );
-			}
-		}
-		$operation_status_name = 'refused';
-		$state = (int)$response[ 'state' ];
-		switch( $state ) {
-			// success
-			case 0:
-				$operation_status_name = 'success';
-				if( $response[ 'amount' ] == $_amount
-					&& $response[ 'operation_id' ] == $operation_id
-				) {
-					$status         = 'success';
-					$status_message = 'Выполнено';
-				} else {
-					$status         = 'in_progress';
-					$status_message = 'Выполнено, но сумма или код операции не совпадают';
-				}
-				break;
-			// in progress
-			case 50:
-				$status         = 'in_progress';
-				$status_message = 'В процессе';
-				break;
-			// fails...
-			case 2:
-				$status_message = 'Доступ запрещен';
-				break;
-			case 101:
-				$status_message = 'Неверный номер карты ' . $request[ 'card' ];
-				break;
-			case 126:
-				$status_message = 'Неверный номер телефона ' . $request[ 'sender_phone' ];
-				break;
-			case 421:
-				$status_message = 'Неверные данные запроса';
-				break;
-			case 113:
-				$status_message = 'Выплата отключена';
-				break;
-			case 908:
-				$status_message = 'Выплата уже произведена ранее';
-				break;
-			default:
-				$status_message = 'Ошибка при выполнении ('. $state .' - '. $response[ 'message' ] .')';
-				break;
-		}
-		$status_message = $_comment .' - '. $status_message;
-		// save response
-		empty( $response[ 'message' ] ) && $response[ 'message' ] = $status_message;
-		$sql_datetime = $payment_api->sql_datetime();
-		$operation_options = array(
-			'response' => array( array(
-				'data'     => $response,
-				'datetime' => $sql_datetime,
-			))
+		// check status
+		$state = (int)$data[ 'state' ];
+		list( $status_name, $status_message ) = $this->_state( $state
+			, $this->_payout_status
+			, $this->_payout_status_message
 		);
-		$operation_update_data = array(
-			'operation_id'    => $operation_id,
-			'datetime_update' => $sql_datetime,
-			'options'         => $operation_options,
+		$status_message = @$status_message ?: @$data[ 'stateName' ];
+		// update account, operation data
+		$response[ 'operation_id' ] = $operation_id;
+		$response[ 'status'       ] = $status_name;
+		$response[ 'message'      ] = $status_message;
+		$payment_type = 'payment';
+		$operation_data = array(
+			'provider_name'  => 'interkassa',
+			'provider_force' => @$_provider_force,
+			'payment_type'   => $payment_type,
+			'response'       => $response,
+			'status_name'    => $status_name,
+			'status_message' => $status_message,
 		);
-		$payment_api->operation_update( $operation_update_data );
+// DEBUG
+$payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));
+		$result = $this->{ '_api_' . $payment_type }( $operation_data );
+// DEBUG
+$payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		return( $result );
 	}
 

@@ -186,6 +186,9 @@ class yf_payment_api {
 			'request' => array(
 				'larv.job+payment.request@gmail.com',
 			),
+			'error' => array(
+				'larv.job+payment.error@gmail.com',
+			),
 		),
 		// 'payin' => array(
 			// 'all' => array(
@@ -196,6 +199,9 @@ class yf_payment_api {
 			// ),
 			// 'refused' => array(
 				// 'larv.job+payin.refused@gmail.com',
+			// ),
+			// 'error' => array(
+				// 'larv.job+payin.error@gmail.com',
 			// ),
 		// ),
 		// 'payout' => array(
@@ -210,6 +216,9 @@ class yf_payment_api {
 			// ),
 			// 'request' => array(
 				// 'larv.job+payin.request@gmail.com',
+			// ),
+			// 'error' => array(
+				// 'larv.job+payin.error@gmail.com',
 			// ),
 		// ),
 	);
@@ -1197,6 +1206,8 @@ class yf_payment_api {
 	}
 
 	public function mail( $options = null ) {
+// DEBUG
+// var_dump( $options );
 		$result = true;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -1265,7 +1276,7 @@ class yf_payment_api {
 		if( !$is_admin ) {
 			$result &= $mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
 			// mail copy
-			!$admin && $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
+			!$admin && $result &= $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 		}
 		// admin
 		if( $admin || $is_admin ) {
@@ -1289,7 +1300,9 @@ class yf_payment_api {
 			$tpl = $_tpl . '_admin';
 			$result &= $mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
 			// mail copy
-			$this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
+			$result_copy = $this->mail_copy( array( 'tpl' => $tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
+			!$result_copy && $result &= $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
+
 		}
 		return( $result );
 	}
@@ -1332,7 +1345,7 @@ class yf_payment_api {
 		if( is_array( $mails ) ) {
 			$mail_class = _class( 'email' );
 			$override = array();
-			$_subject && $override[ 'subject' ] = $_subject;
+			@$_subject && $override[ 'subject' ] = $_subject;
 			$name = 'Payment admin';
 			$instant_send = true;
 			foreach( $mails as $mail ) {

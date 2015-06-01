@@ -62,8 +62,8 @@ class yf_payment_api__provider_remote {
 		if( !$this->ENABLE ) { return( null ); }
 		if( !is_array( $status         ) ) { $status         = &$this->_status;         }
 		if( !is_array( $status_message ) ) { $status_message = &$this->_status_message; }
-		$name    = isset( $status[ $value ] ) ? $status[ $value ] : null;
-		$message = isset( $status_message[ $name ] ) ? $status_message[ $name ] : null;
+		$name    = @$status[ $value ] ?: null;
+		$message = @$status_message[ $name ] ?: @$status_message[ $value ] ?: null;
 		return( array( $name, $message ) );
 	}
 
@@ -436,7 +436,7 @@ $payment_api->dump(array( 'var' => array(
 		$provider      = reset( $object );
 		$provider_name = $provider[ 'name' ];
 		// check request/response provider
-		if( $provider_name != $_provider_name ) {
+		if( !@$_provider_force && $provider_name != $_provider_name ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => "Провайдер не совпадает ($_provider_name)",
@@ -489,42 +489,43 @@ $payment_api->dump(array( 'var' => array(
 	'current_type_name'   => $current_type_name,
 	'current_status_name' => $current_status_name,
 )));
+		// prepare
+		$is_manual = null;
+		$is_payin  = null;
+		$is_payout = null;
+		$is_update_balance = null;
+		$is_update_status  = null;
+		switch( $current_type_name ) {
+			case 'payment':
+				$is_payout = true;
+				$is_manual = $this->IS_PAYOUT_MANUAL;
+				// revert amount
+				if( !$is_manual ) {
+					$is_update_status = true;
+					if( $new_status_name == 'refused' ) {
+						$is_update_balance = true;
+						$sql_sign  = '+';
+					}
+				}
+				$mail_tpl  = 'payout';
+				break;
+			case 'deposition':
+				$is_payin  = true;
+				$is_manual = $this->IS_PAYIN_MANUAL;
+				// add amount
+				if( !$is_manual ) {
+					$is_update_status = true;
+					if( $new_status_name == 'success' ) {
+						$is_update_balance = true;
+						$sql_sign  = '+';
+					}
+				}
+				$mail_tpl  = 'payin';
+				break;
+		}
 		if( $is_try ) {
 			db()->begin();
 			$direction = $operation[ 'direction' ];
-			$is_manual = null;
-			$is_payin  = null;
-			$is_payout = null;
-			$is_update_balance = null;
-			$is_update_status  = null;
-			switch( $current_type_name ) {
-				case 'payment':
-					$is_payout = true;
-					$is_manual = $this->IS_PAYOUT_MANUAL;
-					// revert amount
-					if( !$is_manual ) {
-						$is_update_status = true;
-						if( $new_status_name == 'refused' ) {
-							$is_update_balance = true;
-							$sql_sign  = '+';
-						}
-					}
-					$mail_tpl  = 'payout';
-					break;
-				case 'deposition':
-					$is_payin  = true;
-					$is_manual = $this->IS_PAYIN_MANUAL;
-					// add amount
-					if( !$is_manual ) {
-						$is_update_status = true;
-						if( $new_status_name == 'success' ) {
-							$is_update_balance = true;
-							$sql_sign  = '+';
-						}
-					}
-					$mail_tpl  = 'payin';
-					break;
-			}
 			// update account balance
 			if( $current_status_id != $new_status_id ) {
 				if( $is_update_balance ) {
@@ -541,20 +542,21 @@ $payment_api->dump(array( 'var' => array(
 					$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
 					if( !$_result[ 'status' ] ) {
 						db()->rollback();
+						$message = 'Ошибка при обновлении счета';
 						$result = array(
 							'status'         => false,
-							'status_message' => 'Ошибка при обновлении счета',
+							'status_message' => $message,
 						);
 						// mail admin
-						$tpl = $mail_tpl . '_refused';
+						$tpl = $mail_tpl . '_error';
 						$payment_api->mail( array(
-							'subject'  => 'DB error: payment account update error, id operation: '. $account_id,
+							'subject'  => 'Ошибка платежа (id: '. $operation_id . ')',
 							'tpl'      => $tpl,
 							'user_id'  => $account[ 'user_id' ],
 							'is_admin' => true,
 							'data'    => array(
 								'operation_id' => $operation_id,
-								'amount'       => $amount,
+								'message'      => $message,
 							),
 						));
 						return( $result );
@@ -619,38 +621,40 @@ $payment_api->dump(array( 'var' => array(
 				if( !$result[ 'status' ] ) {
 					db()->rollback();
 					// mail admin
-					$tpl = $mail_tpl . '_refused';
+					$tpl = $mail_tpl . '_error';
+					$message = 'Ошибка при обновлении операции';
 					$payment_api->mail( array(
-						'subject'  => 'DB error: payment operation update error, id operation: '. $operation_id,
+						'subject'  => 'Ошибка платежа (id: '. $operation_id . ')',
 						'tpl'      => $tpl,
 						'user_id'  => $account[ 'user_id' ],
 						'is_admin' => true,
 						'data'    => array(
 							'operation_id' => $operation_id,
-							'amount'       => $amount,
+							'message'      => $message,
 						),
 					));
 					return( $result );
 				}
 			}
 			db()->commit();
-			$status_message = $_status_message . $operation[ 'title' ];
+			$status_message = $_status_message .'. ';
 		} else {
-			$status_message = 'Выполнено повторно: '. $operation[ 'title' ];
+			$message = 'Повторный запрос на выполнение операции';
+			$status_message = $message;
 			// mail admin
-			$tpl = $mail_tpl . '_success';
+			$tpl = $mail_tpl . '_error';
 			$payment_api->mail( array(
-				'subject'  => 'Payment operation notification again, id operation: '. $operation_id,
+				'subject'  => 'Ошибка платежа (id: '. $operation_id . ')',
 				'tpl'      => $tpl,
 				'user_id'  => $account[ 'user_id' ],
 				'is_admin' => true,
 				'data'    => array(
 					'operation_id' => $operation_id,
-					'amount'       => $amount,
+					'message'      => $message,
 				),
 			));
 		}
-		$status_message .= ', сумма: ' . $amount;
+		$status_message .= $operation[ 'title' ] .', сумма: '. $amount;
 		if( !empty( $payment_api->currency[ 'short' ] ) ) {
 			$status_message .= ' ' . $payment_api->currency[ 'short' ];
 		}
