@@ -2,6 +2,8 @@
 
 class yf_manage_payout {
 
+	public $IS_PAYOUT_INTERKASSA = null;
+
 	protected $object      = null;
 	protected $action      = null;
 	protected $id          = null;
@@ -28,6 +30,11 @@ class yf_manage_payout {
 			'request' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'request',
+				'operation_id' => '%operation_id',
+			)),
+			'request_interkassa' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'request_interkassa',
 				'operation_id' => '%operation_id',
 			)),
 			'status_success' => url_admin( array(
@@ -637,23 +644,25 @@ class yf_manage_payout {
 				$url_provider_operation_detail = empty( $response_last[ 'transaction_id' ] ) ? null : $url_base . 'operations/detail/' . $response_last[ 'transaction_id' ];
 				break;
 		}
-
 		// render
 		$is_progressed = $_status[ 'name' ] != 'in_progress';
+		$is_payout_interkassa = (bool)$this->IS_PAYOUT_INTERKASSA;
 		$replace = $operation + array(
-			'is_progressed'    => $is_progressed,
-			'is_manual'        => $is_manual,
+			'is_progressed'        => $is_progressed,
+			'is_manual'            => $is_manual,
+			'is_payout_interkassa' => $is_payout_interkassa,
 			'header_data'      => $html_operation_options,
 			'request_data'     => $html_request_options,
 			'request_data_csv' => $html_request_options_csv,
 			'response_data'    => $html_response,
 			'url' => array(
-				'list'           => $this->_url( 'list' ),
-				'view'           => $this->_url( 'view',           array( '%operation_id' => $_operation_id ) ),
-				'request'        => $this->_url( 'request',        array( '%operation_id' => $_operation_id ) ),
-				'status_success' => $this->_url( 'status_success', array( '%operation_id' => $_operation_id ) ),
-				'status_refused' => $this->_url( 'status_refused', array( '%operation_id' => $_operation_id ) ),
-				'csv'            => $this->_url( 'csv',            array( '%operation_id' => $_operation_id ) ),
+				'list'               => $this->_url( 'list' ),
+				'view'               => $this->_url( 'view',               array( '%operation_id' => $_operation_id ) ),
+				'request'            => $this->_url( 'request',            array( '%operation_id' => $_operation_id ) ),
+				'request_interkassa' => $this->_url( 'request_interkassa', array( '%operation_id' => $_operation_id ) ),
+				'status_success'     => $this->_url( 'status_success',     array( '%operation_id' => $_operation_id ) ),
+				'status_refused'     => $this->_url( 'status_refused',     array( '%operation_id' => $_operation_id ) ),
+				'csv'                => $this->_url( 'csv',                array( '%operation_id' => $_operation_id ) ),
 				'provider_operation_detail' => @$url_provider_operation_detail,
 				'provider_operations'       => @$url_provider_operations,
 				'provider_payouts'          => @$url_provider_payouts,
@@ -729,6 +738,62 @@ EOS;
 			'operation_id' => $_operation_id,
 		);
 		$result = $_provider_class->api_payout( $data );
+		$result[ 'operation_id' ] = $_operation_id;
+		return( $this->_user_message( $result ) );
+	}
+
+	function request_interkassa() {
+		// check operation
+		$operation = $this->_operation();
+		// import options
+		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_is_valid ) ) { return( $result ); }
+		// var
+		$html        = _class( 'html' );
+		$payment_api = _class( 'payment_api' );
+		$data = $_request[ 'options' ] + array(
+			'operation_id' => $_operation_id,
+		);
+		$card = $data[ 'card' ];
+		if( empty( $card ) ) {
+			$result = array(
+				'status_message' => 'Не задан номер карты',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// $result = $_provider_class->api_payout( $data );
+		$provider_class = $payment_api->provider_class( array(
+			'provider_name' => 'interkassa',
+		));
+		if( empty( $provider_class ) ) {
+			$result = array(
+				'status_message' => 'Провайдер Интеркасса не доступен',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// find by card
+		$validate = _class( 'validate' );
+		$methods = &$provider_class->method_allow[ 'payout' ];
+		$is_method_id = null;
+		foreach( $methods as $method_id => $method ) {
+			$rules = &$method[ 'option_validation' ][ 'card' ];
+			if( empty( $rules ) ) { continue; }
+			$result = $validate->_input_is_valid( $card, $rules );
+			if( $result ) { $is_method_id = $method_id; break; }
+		}
+		if( false && empty( $is_method_id ) ) {
+			$result = array(
+				'status_message' => 'Карта не опознана: '. $card,
+			);
+			return( $this->_user_message( $result ) );
+		}
+		$data[ 'method_id'      ] = $is_method_id;
+		$data[ 'provider_force' ] = true;
+$data[ 'method_id' ] = $method_id;
+$data[ 'card' ] = '5218572211211342';
+var_dump( $data );
+		// result
+		$result = $provider_class->api_payout( $data );
 		$result[ 'operation_id' ] = $_operation_id;
 		return( $this->_user_message( $result ) );
 	}

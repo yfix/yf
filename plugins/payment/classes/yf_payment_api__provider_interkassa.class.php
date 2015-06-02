@@ -220,6 +220,64 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'card' => 'обязательное поле от 13 до 16 цифр',
 				),
 			),
+			'visa_p2p_privat_uah' => array(
+				'title'      => 'Visa (Privat24, UAH)',
+				'icon'       => 'visa',
+				'request_option'     => array(
+					'purseId'  => '300301404317',             // Betonmoney UAH
+					'paywayId' => '52e7f6bce4ae1adc09000004', // visa_p2p_privat_uah
+					'calcKey'  => 'psPayeeAmount',
+				),
+				'amount' => array(
+					'min' => 50,
+					'max' => 10000,
+				),
+				// 'is_fee' => true,
+				'fee' => array(
+					'out' => array(
+						'rt'  => 1,
+						'fix' => 10,
+					),
+				),
+				'is_currency' => true,
+				'currency' => array(
+					'UAH' => array(
+						'currency_id' => 'UAH',
+						'active'      => true,
+					),
+				),
+				'request_field' => array(
+					'amount',
+					'paymentNo',
+					'purseId',
+					'paywayId',
+				),
+				'field' => array(
+					'card',
+				),
+				'order' => array(
+					'card',
+				),
+				'option' => array(
+					'card' => 'Номер карты',
+				),
+				'option_validation_js' => array(
+					'card'                       => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 13,
+						'maxlength' => 16,
+						// 'pattern'   => '^\d+$',
+						'pattern'   => '^((535145)|(536354)|(532957)|(521153)|(530217)|(545708)|(516915)|(558335)|(532032)|(544013)|(521152)|(516874)|(557721)|(545709)|(521857)|(516933)|(670509)|(676246)|(516875)|(516798)|(552324)|(558424)|(516936)|(513399)|(517691))[0-9]{7}(?:[0-9]{3})?$',
+					),
+				),
+				'option_validation' => array(
+					'card' => 'required|length[13,16]|regex:~^((535145)\|(536354)\|(532957)\|(521153)\|(530217)\|(545708)\|(516915)\|(558335)\|(532032)\|(544013)\|(521152)\|(516874)\|(557721)\|(545709)\|(521857)\|(516933)\|(670509)\|(676246)\|(516875)\|(516798)\|(552324)\|(558424)\|(516936)\|(513399)\|(517691))[0-9]{7}(?:[0-9]{3})?$~',
+				),
+				'option_validation_message' => array(
+					'card' => 'обязательное поле от 13 до 16 цифр',
+				),
+			),
 		),
 	);
 
