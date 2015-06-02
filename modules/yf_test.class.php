@@ -241,6 +241,8 @@ div
 		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => 'fff', 'color_bg' => '000', 'width' => '120', 'height' => '70'));
 		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => '000', 'color_bg' => 'fff', 'width' => '120', 'height' => '70', 'opacity_bg' => 127));
 		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => '00f', 'width' => '120', 'height' => '70', 'transparent_bg' => true));
+#		$font_path = '/usr/share/fonts/roboto/Roboto-Bold.ttf';
+#		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => '00f', 'width' => '120', 'height' => '70', 'transparent_bg' => true, 'font_name' => 'roboto/Roboto-Bold.ttf'));
 		$body[] = $this->_transparent_png();
 		return implode(PHP_EOL, $body);
 	}
