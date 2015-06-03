@@ -1294,12 +1294,12 @@ class yf_payment_api {
 				'manage_payin' => $this->url_admin( array(
 					'object'       => 'manage_deposit',
 					'action'       => 'view',
-					'operation_id' => $_operation_id,
+					'operation_id' => $__operation_id,
 				)),
 				'manage_payout' => $this->url_admin( array(
 					'object'       => 'manage_payout',
 					'action'       => 'view',
-					'operation_id' => $_operation_id,
+					'operation_id' => $__operation_id,
 				)),
 			);
 			// compile

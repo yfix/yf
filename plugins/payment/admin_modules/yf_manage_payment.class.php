@@ -60,6 +60,21 @@ class yf_manage_payment {
 		foreach( explode( '|', 'operation_id|datetime_update|datetime_start|datetime_finish|title|amount|balance' ) as $f ) {
 			$order_fields[ $f ] = $f;
 		}
+		// provider
+		$payment_api = _class( 'payment_api' );
+		$providers = $payment_api->provider();
+		$providers__select_box = array();
+		foreach( $providers as $id => $item ) {
+			$providers__select_box[ $id ] = $item[ 'title' ];
+		}
+		// status
+		$payment_status = $payment_api->get_status();
+		$payment_status__select_box = array();
+		$payment_status__select_box[ -1 ] = 'ВСЕ СТАТУСЫ';
+		foreach( $payment_status as $id => $item ) {
+			$payment_status__select_box[ $id ] = $item[ 'title' ];
+		}
+		// render
 		$result = form( $replace, array(
 				'selected' => $filter,
 			))
@@ -67,6 +82,8 @@ class yf_manage_payment {
 			->hidden( 'account_id' )
 			->text( 'operation_id', 'Номер операции' )
 			->text( 'title'       , 'Название'       )
+			->select_box( 'status_id'  , $payment_status__select_box, array( 'show_text' => 'статус'    , 'desc' => 'Статус'     ) )
+			->select_box( 'provider_id', $providers__select_box     , array( 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ) )
 			->radio_box( 'direction', array( '' => 'все', 'in' => 'приход', 'out' => 'расход' ), array( 'desc' => 'Направление' ) )
 			->datetime_select( 'datetime_update',      'Дата с',  array( 'with_time' => 1 ) )
 			->datetime_select( 'datetime_update__and', 'Дата до', array( 'with_time' => 1 ) )
@@ -231,7 +248,23 @@ class yf_manage_payment {
 			->text( 'operation_id'   , 'Номер'           )
 			->text( 'title'          , 'Название'        )
 			->func( 'provider_id', function($in, $e, $a, $p, $table) use( $_providers ) {
-				$result = $_providers[ $in ][ 'title' ];
+				$system    = &$_providers[ $in ][ 'system' ];
+				$direction = &$a[ 'direction' ];
+				$url = null;
+				$title = $_providers[ $in ][ 'title' ];
+				if( empty( $system ) ) {
+					$uri = '';
+					switch( $direction ) {
+						case 'in':
+							$uri   = '/manage_deposit';
+							break;
+						case 'out':
+							$uri   = '/manage_payout';
+							break;
+					}
+					$uri && $url = a( $uri . '/view?operation_id=' . $a[ 'operation_id' ], $title );
+				}
+				$result = $url ?: $title;
 				return( $result );
 			}, array( 'desc' => 'Провайдер' ) )
 			->text( 'amount'         , 'Сумма'           )

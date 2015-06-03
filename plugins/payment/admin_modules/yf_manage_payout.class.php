@@ -117,12 +117,13 @@ class yf_manage_payout {
 		$result = form( $replace, array(
 				'selected' => $filter,
 			))
-			->text( 'user_id'     , 'Номер(а) пользователя' )
-			->text( 'name'        , 'Имя'                   )
-			->text( 'amount'      , 'Сумма от'              )
-			->text( 'amount__and' , 'Сумма до'              )
-			->text( 'balance'     , 'Баланс от'             )
-			->text( 'balance__and', 'Баланс до'             )
+			->text( 'operation_id', 'Номер операции'     )
+			->text( 'user_id'     , 'Номер пользователя' )
+			->text( 'name'        , 'Имя'                )
+			->text( 'amount'      , 'Сумма от'           )
+			->text( 'amount__and' , 'Сумма до'           )
+			->text( 'balance'     , 'Баланс от'          )
+			->text( 'balance__and', 'Баланс до'          )
 			->select_box( 'status_id'  , $payment_status__select_box, array( 'show_text' => 'статус'    , 'desc' => 'Статус'     ) )
 			->select_box( 'provider_id', $providers__select_box     , array( 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ) )
 			->select_box( 'order_by'   , $order_fields              , array( 'show_text' => 'сортировка', 'desc' => 'Сортировка' ) )
@@ -240,11 +241,12 @@ class yf_manage_payout {
 						isset( $value ) && $result = ' o.status_id = ' . $value;
 						return( $result );
 					},
-					'provider_id' => array( 'cond' => 'eq',      'field' => 'o.provider_id' ),
-					'user_id'     => array( 'cond' => 'in',      'field' => 'a.user_id'     ),
-					'name'        => array( 'cond' => 'like',    'field' => 'u.name'        ),
-					'balance'     => array( 'cond' => 'between', 'field' => 'a.balance'     ),
-					'amount'      => array( 'cond' => 'between', 'field' => 'o.amount'      ),
+					'provider_id'  => array( 'cond' => 'eq',      'field' => 'o.provider_id'  ),
+					'operation_id' => array( 'cond' => 'in',      'field' => 'o.operation_id' ),
+					'user_id'      => array( 'cond' => 'in',      'field' => 'a.user_id'      ),
+					'name'         => array( 'cond' => 'like',    'field' => 'u.name'         ),
+					'balance'      => array( 'cond' => 'between', 'field' => 'a.balance'      ),
+					'amount'       => array( 'cond' => 'between', 'field' => 'o.amount'       ),
 					'__default_order'  => 'ORDER BY o.datetime_start DESC',
 				),
 			))
