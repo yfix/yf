@@ -637,7 +637,7 @@ $payment_api->dump(array( 'var' => array(
 				}
 			}
 			db()->commit();
-			$status_message = $_status_message .'. ';
+			@$_status_message && $status_message = $_status_message;
 		} else {
 			$message = 'Повторный запрос на выполнение операции';
 			$status_message = $message;
