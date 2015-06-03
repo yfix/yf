@@ -1291,6 +1291,16 @@ class yf_payment_api {
 					'action'  => 'balance',
 					'user_id' => $_user_id,
 				)),
+				'manage_payin' => $this->url_admin( array(
+					'object'       => 'manage_deposit',
+					'action'       => 'view',
+					'operation_id' => $_operation_id,
+				)),
+				'manage_payout' => $this->url_admin( array(
+					'object'       => 'manage_payout',
+					'action'       => 'view',
+					'operation_id' => $_operation_id,
+				)),
 			);
 			// compile
 			$data = array_replace_recursive( $data, array(
