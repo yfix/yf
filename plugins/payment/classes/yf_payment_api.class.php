@@ -1010,6 +1010,7 @@ class yf_payment_api {
 		$sql_amount = $this->_number_mysql( $amount );
 		$data[ 'sql_amount' ] = $sql_amount;
 		// check balance limit lower
+		!isset( $_[ 'is_balance_limit_lower' ] ) && $_[ 'is_balance_limit_lower' ] = true;
 		$balance_limit_lower = $this->_default( array(
 			$_[ 'balance_limit_lower' ],
 			$account[ 'options' ][ 'balance_limit_lower' ],
@@ -1017,7 +1018,7 @@ class yf_payment_api {
 			0,
 		));
 		$balance_limit_lower = $this->_number_float( $balance_limit_lower );
-		if( $type[ 'name' ] == 'payment' && ( $balance - $amount < $balance_limit_lower ) ) {
+		if( $type[ 'name' ] == 'payment' && $_[ 'is_balance_limit_lower' ] && ( $balance - $amount < $balance_limit_lower ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Недостаточно средств на счету',
