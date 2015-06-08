@@ -57,7 +57,7 @@
 
 <div class="clearfix"></div>
 
-{if_empty( is_progressed )}
+{if_true( is_progressed )}
 
 <div class="b-action pull-left">
 	<p>

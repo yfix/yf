@@ -246,6 +246,7 @@ class yf_manage_deposit {
 				$status_id = $payment_status[ $value ][ 'name' ];
 				$title     = $payment_status[ $value ][ 'title' ];
 				switch( $status_id ) {
+					case 'processing':
 					case 'in_progress': $css = 'text-warning'; break;
 					case 'success':     $css = 'text-success'; break;
 					case 'expired':     $css = 'text-danger';  break;
@@ -352,6 +353,7 @@ class yf_manage_deposit {
 		$status_title = $o_status[ 'title' ];
 		$css = '';
 		switch( $status_name ) {
+			case 'processing':
 			case 'in_progress': $css = 'text-warning'; break;
 			case 'success':     $css = 'text-success'; break;
 			case 'expired':     $css = 'text-danger';  break;
@@ -482,7 +484,7 @@ class yf_manage_deposit {
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
 		// render
 		$is_test = $_provider_class->is_test();
-		$is_progressed = $_status[ 'name' ] != 'in_progress';
+		$is_progressed = $_status[ 'name' ] == 'in_progress';
 		$replace = $operation + array(
 			'is_test'       => $is_test,
 			'is_progressed' => $is_progressed,

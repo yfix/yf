@@ -63,7 +63,7 @@
 
 <div class="clearfix"></div>
 
-{if_empty( is_progressed )}
+{if_true( is_progressed )}
 <div class="b-content">
 	<div class="info">
 		<p>

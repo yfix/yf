@@ -389,21 +389,21 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		'2'  => 'refused',
 	);
 	public $_status_server = array(
-		'1'  => 'in_progress', // initiated
-		'2'  => 'in_progress', // external processing
-		'3'  => 'in_progress', // awaiting confirmation
-		'4'  => 'success',     // success
-		'5'  => 'refused',     // void
-		'6'  => 'refused',     // processor decline
-		'7'  => 'refused',     // fraudstop decline
-		'8'  => 'refused',     // mpi decline
+		'1'  => 'processing', // initiated
+		'2'  => 'processing', // external processing
+		'3'  => 'processing', // awaiting confirmation
+		'4'  => 'success',    // success
+		'5'  => 'refused',    // void
+		'6'  => 'refused',    // processor decline
+		'7'  => 'refused',    // fraudstop decline
+		'8'  => 'refused',    // mpi decline
 		'9'  => 'refused',
-		'10' => 'refused',     // system failure
-		'11' => 'refused',     // unsupported protocol operation
-		'12' => 'refused',     // protocol configuration error
-		'13' => 'refused',     // transaction is expired
-		'14' => 'refused',     // transaction rejected by user
-		'15' => 'refused',     // internal decline
+		'10' => 'refused',    // system failure
+		'11' => 'refused',    // unsupported protocol operation
+		'12' => 'refused',    // protocol configuration error
+		'13' => 'refused',    // transaction is expired
+		'14' => 'refused',    // transaction rejected by user
+		'15' => 'refused',    // internal decline
 	);
 
 	public $_type_server = array(
@@ -962,13 +962,13 @@ $payment_api->dump( array( 'var' => $result ));
 					$status         = 'success';
 					$status_message = 'Выполнено';
 				} else {
-					$status         = 'in_progress';
+					$status         = 'processing';
 					$status_message = 'Выполнено, но сумма или код операции не совпадают';
 				}
 				break;
 			// in progress
 			case 50:
-				$status         = 'in_progress';
+				$status         = 'processing';
 				$status_message = 'В процессе';
 				break;
 			// fails...
@@ -1010,63 +1010,6 @@ $payment_api->dump( array( 'var' => $result ));
 			'options'         => $operation_options,
 		);
 		$payment_api->operation_update( $operation_update_data );
-		return( $result );
-	}
-
-	public function _update_status( $options = null ) {
-		if( !$this->ENABLE ) { return( null ); }
-		// import options
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// check
-		if( empty( $_name ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Статус операции не определен',
-			);
-			return( $result );
-		}
-		if( empty( $_operation_id ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Не определен код операции',
-			);
-			return( $result );
-		}
-		// var
-		$payment_api = $this->payment_api;
-		// operation
-		$operation = $payment_api->operation( array( 'operation_id' => $_operation_id ) );
-		if( empty( $operation ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Операция отсутствует: ' . $_operation_id,
-			);
-			return( $result );
-		}
-		// update status only in_progress
-		$object = $payment_api->get_status( array( 'status_id' => $operation[ 'status_id' ] ) );
-		list( $status_id, $status ) = $object;
-		if( empty( $status_id ) ) { return( $object ); }
-		if( $status[ 'name' ] != 'in_progress' ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Операция уже обработана: ' . $_operation_id,
-			);
-			return( $result );
-		}
-		// progress
-		$object = $payment_api->get_status( array( 'name' => $_name ) );
-		list( $status_id, $status ) = $object;
-		if( empty( $status_id ) ) { return( $object ); }
-		// prepare
-		$sql_datetime = $payment_api->sql_datetime();
-		$data = array(
-			'operation_id'    => $_operation_id,
-			'status_id'       => $status_id,
-			'datetime_update' => $sql_datetime,
-		);
-		!empty( $_is_finish ) && $data[ 'datetime_finish' ] = $sql_datetime;
-		$result = $payment_api->operation_update( $data );
 		return( $result );
 	}
 

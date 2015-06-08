@@ -35,6 +35,7 @@ class yf_payment_api__provider_remote {
 	public $_status_message = array(
 		'success'     => 'Выполнено: ',
 		'in_progress' => 'Ожидание: ',
+		'processing'  => 'Обработка: ',
 		'refused'     => 'Отклонено: ',
 	);
 
@@ -131,6 +132,63 @@ class yf_payment_api__provider_remote {
 			}
 			$result = str_replace( array_keys( $uri ), array_values( $uri ), $result );
 		}
+		return( $result );
+	}
+
+	public function _update_status( $options = null ) {
+		if( !$this->ENABLE ) { return( null ); }
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// check
+		if( empty( $_name ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Статус операции не определен',
+			);
+			return( $result );
+		}
+		if( empty( $_operation_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не определен код операции',
+			);
+			return( $result );
+		}
+		// var
+		$payment_api = $this->payment_api;
+		// operation
+		$operation = $payment_api->operation( array( 'operation_id' => $_operation_id ) );
+		if( empty( $operation ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Операция отсутствует: ' . $_operation_id,
+			);
+			return( $result );
+		}
+		// update status only in_progress
+		$object = $payment_api->get_status( array( 'status_id' => $operation[ 'status_id' ] ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+		if( $status[ 'name' ] != 'in_progress' && $status[ 'name' ] != 'processing' ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Операция уже обработана: ' . $_operation_id,
+			);
+			return( $result );
+		}
+		// progress
+		$object = $payment_api->get_status( array( 'name' => $_name ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+		// prepare
+		$sql_datetime = $payment_api->sql_datetime();
+		$data = array(
+			'operation_id'    => $_operation_id,
+			'status_id'       => $status_id,
+			'datetime_update' => $sql_datetime,
+		);
+		!empty( $_is_finish ) && $data[ 'datetime_finish' ] = $sql_datetime;
+		$result = $payment_api->operation_update( $data );
 		return( $result );
 	}
 
@@ -470,6 +528,8 @@ $payment_api->dump(array( 'var' => array(
 		$is_try =
 			( $current_type_name == 'payment'    && $current_status_name == 'in_progress' )
 			||
+			( $current_type_name == 'payment'    && $current_status_name == 'processing' )
+			||
 			( $current_type_name == 'deposition' && $current_status_name != 'success' )
 		;
 // DEBUG
@@ -573,19 +633,21 @@ $payment_api->dump(array( 'var' => array(
 				// save response
 				if( empty( $_response[ 'message' ] ) ) {
 					switch( $new_status_name ) {
-					case 'success':
-						$message = 'Выполнено';
-						break;
-					case 'in_progress':
-						$message = 'В процессе';
-						break;
-					case 'refused':
-					default:
-						$message = 'Отклонено';
-						break;
+						case 'success':
+							$message = 'Выполнено';
+							break;
+						case 'in_progress':
+							$message = 'В процессе';
+							break;
+						case 'processing':
+							$message = 'Обработка';
+							break;
+						case 'refused':
+						default:
+							$message = 'Отклонено';
+							break;
 					}
 					$_response[ 'message' ] = $message;
-					// code...
 				}
 				// update operation
 				$data = array(
