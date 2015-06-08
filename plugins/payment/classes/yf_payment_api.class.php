@@ -166,7 +166,8 @@ class yf_payment_api {
 
 	public $CONFIG              = null;
 	public $OPERATION_LIMIT     = 10;
-	public $BALANCE_LIMIT_LOWER = 0;
+	public $IS_BALANCE_LIMIT_LOWER = true;
+	public $BALANCE_LIMIT_LOWER    = 0;
 
 	public $MAIL_COPY_TO = array(
 		'all' => array(
@@ -1010,7 +1011,7 @@ class yf_payment_api {
 		$sql_amount = $this->_number_mysql( $amount );
 		$data[ 'sql_amount' ] = $sql_amount;
 		// check balance limit lower
-		!isset( $_[ 'is_balance_limit_lower' ] ) && $_[ 'is_balance_limit_lower' ] = true;
+		!isset( $_[ 'is_balance_limit_lower' ] ) && $_[ 'is_balance_limit_lower' ] = $this->IS_BALANCE_LIMIT_LOWER;
 		$balance_limit_lower = $this->_default( array(
 			$_[ 'balance_limit_lower' ],
 			$account[ 'options' ][ 'balance_limit_lower' ],
