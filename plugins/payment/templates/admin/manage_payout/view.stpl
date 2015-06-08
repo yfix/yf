@@ -84,6 +84,9 @@
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="automatic">
 				<a href="{url.request}" class="btn btn-success">Выполнить запрос вывода средств</a>
+{if_not_empty( is_payout_interkassa )}
+				<a href="{url.request_interkassa}" class="btn btn-warning">Выполнить запрос вывода средств через Интеркассу</a>
+{/if}
 				</ol>
 			</div>
 {if_not_empty( is_manual )}

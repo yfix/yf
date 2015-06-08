@@ -24,14 +24,23 @@ function yf_placeholder_img($w = 100, $h = 100, $params = array()) {
 		}
 	}
 	$im = imagecreatetruecolor($w, $h);
+	imagealphablending($im, false);
 
 	$ctext = $params['color_text'] ?: '777';
 	$cbg = $params['color_bg'] ?: 'bbb';
 
+	// http://php.net/manual/en/function.imagecolorallocatealpha.php
+	// alpha A value between 0 and 127. 0 indicates completely opaque while 127 indicates completely transparent.
+	$opacity_text = $params['opacity_text'] ?: 0;
+	$opacity_bg = $params['opacity_bg'] ?: 0;
+	if ($params['transparent_bg']) {
+		$opacity_bg = 127;
+	}
+
 	strlen($ctext) === 3 && $ctext = str_repeat(substr($ctext, 0, 1), 2). str_repeat(substr($ctext, 1, 1), 2). str_repeat(substr($ctext, 2, 1), 2);
 	strlen($cbg) === 3 && $cbg = str_repeat(substr($cbg, 0, 1), 2). str_repeat(substr($cbg, 1, 1), 2). str_repeat(substr($cbg, 2, 1), 2);
-	$color_text = imagecolorallocate($im, hexdec(substr($ctext, 0, 2)), hexdec(substr($ctext, 2, 2)), hexdec(substr($ctext, 4, 2)));
-	$color_bg = imagecolorallocate($im, hexdec(substr($cbg, 0, 2)), hexdec(substr($cbg, 2, 2)), hexdec(substr($cbg, 4, 2)));
+	$color_text = imagecolorallocatealpha($im, hexdec(substr($ctext, 0, 2)), hexdec(substr($ctext, 2, 2)), hexdec(substr($ctext, 4, 2)), $opacity_text);
+	$color_bg = imagecolorallocatealpha($im, hexdec(substr($cbg, 0, 2)), hexdec(substr($cbg, 2, 2)), hexdec(substr($cbg, 4, 2)), $opacity_bg);
 
 	$min_size = $params['min_size'] ?: 5;
 	$max_size = $params['max_size'] ?: 14;
@@ -47,11 +56,14 @@ function yf_placeholder_img($w = 100, $h = 100, $params = array()) {
 
 	// Set the background
 	imagefilledrectangle($im, 0, 0, $w, $h, $color_bg);
+	imagealphablending($im, true);
 
 	$bbox = imagettfbbox($font_size, $font_angle, $font, $text);
 	$x = $bbox[0] + (imagesx($im) / 2) - ($bbox[4] / 2);
 	$y = $bbox[1] + (imagesy($im) / 2) - ($bbox[5] / 2);
 	imagettftext($im, $font_size, $font_angle, $x, $y, $color_text, $font, $text);
+
+	imagesavealpha($im, true);
 
 	ob_start();
 	imagepng($im);

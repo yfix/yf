@@ -230,4 +230,52 @@ div
 		$out	= $jade->render($raw);
 		return 'JADE: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>HTML: <pre>'._prepare_html($out).'</pre>';
 	}
+
+	/**
+	*/
+	function placeholder() {
+		$body[] = module('dynamic')->placeholder_img();
+		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello'));
+		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => 'f00'));
+		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => 'fff', 'color_bg' => '000'));
+		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => 'fff', 'color_bg' => '000', 'width' => '120', 'height' => '70'));
+		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => '000', 'color_bg' => 'fff', 'width' => '120', 'height' => '70', 'opacity_bg' => 127));
+		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => '00f', 'width' => '120', 'height' => '70', 'transparent_bg' => true));
+#		$font_path = '/usr/share/fonts/roboto/Roboto-Bold.ttf';
+#		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => '00f', 'width' => '120', 'height' => '70', 'transparent_bg' => true, 'font_name' => 'roboto/Roboto-Bold.ttf'));
+		$body[] = $this->_transparent_png();
+		return implode(PHP_EOL, $body);
+	}
+
+	/**
+	*/
+	function _transparent_png() {
+		$w = $h = 200;
+		$k = 4;
+		$image = imagecreatetruecolor($w, $h);
+		imagealphablending($image, false);
+		$color_bg = imagecolorallocatealpha($image, 255, 255, 255, 127);
+		imagefilledrectangle($image, 0, 0, $w, $h, $color_bg);
+		imagealphablending($image, true);
+
+		$color2 = imagecolorallocatealpha($image, 0, 0, 0, 0);
+		imagefilledrectangle($image, 0, 0, $w/$k, $h/$k, $color2);
+		imagefilledrectangle($image, $w - $w/$k, $h - $h/$k, $w, $h, $color2);
+		imagefilledrectangle($image, 0, $h - $h/$k, $w/$k, $h, $color2);
+		imagefilledrectangle($image, $w - $w/$k, 0, $w, $h/$k, $color2);
+
+		imagealphablending($image, true);
+		$color3 = imagecolorallocatealpha($image, 0, 0, 127, 100);
+		imagefilledrectangle($image, $w/2 - $w/$k, $h/2 - $h/$k, $w/2 + $w/$k, $h/2 + $h/$k, $color3);
+
+		imagealphablending($image, false);
+		imagesavealpha($image, true);
+
+		ob_start();
+		imagepng($image);
+		$img_data = ob_get_clean();
+		imagedestroy($image);
+
+		return '<img src="data:image/png;base64,'.base64_encode($img_data).'" width="'.$w.'" height="'.$h.'" />';
+	}
 }

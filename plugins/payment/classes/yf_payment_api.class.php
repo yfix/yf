@@ -169,7 +169,58 @@ class yf_payment_api {
 	public $BALANCE_LIMIT_LOWER = 0;
 
 	public $MAIL_COPY_TO = array(
-		'larv.job+payment@gmail.com',
+		'all' => array(
+			// 'all'   => 'larv.job+payment@gmail.com',
+			// 'payin' => array(
+				// 'larv.job+payin@gmail.com',
+			// ),
+			// 'payout' => array(
+				// 'larv.job+payout@gmail.com',
+			// ),
+			// 'success' => array(
+				// 'larv.job+payment.success@gmail.com',
+			// ),
+			'refused' => array(
+				'larv.job+payment.refused@gmail.com',
+			),
+			'request' => array(
+				'larv.job+payment.request@gmail.com',
+			),
+			'error' => array(
+				'larv.job+payment.error@gmail.com',
+			),
+		),
+		// 'payin' => array(
+			// 'all' => array(
+				// 'larv.job+payin@gmail.com',
+			// ),
+			// 'success' => array(
+				// 'larv.job+payin.success@gmail.com',
+			// ),
+			// 'refused' => array(
+				// 'larv.job+payin.refused@gmail.com',
+			// ),
+			// 'error' => array(
+				// 'larv.job+payin.error@gmail.com',
+			// ),
+		// ),
+		// 'payout' => array(
+			// 'all' => array(
+				// 'larv.job+payin@gmail.com',
+			// ),
+			// 'success' => array(
+				// 'larv.job+payin.success@gmail.com',
+			// ),
+			// 'refused' => array(
+				// 'larv.job+payin.refused@gmail.com',
+			// ),
+			// 'request' => array(
+				// 'larv.job+payin.request@gmail.com',
+			// ),
+			// 'error' => array(
+				// 'larv.job+payin.error@gmail.com',
+			// ),
+		// ),
 	);
 
 	public function _init() {
@@ -346,7 +397,15 @@ class yf_payment_api {
 	}
 
 	public function fee( $amount, $fee ) {
-		$result = $amount + $amount * ( $fee / 100 );
+		$rt  = 0;
+		$fix = 0;
+		if( is_array( $fee ) ) {
+			$rt  = $fee[ 'rt'  ];
+			$fix = $fee[ 'fix' ];
+		} else {
+			$rt = $fee;
+		}
+		$result = $amount + $amount * ( $rt / 100 ) + $fix;
 		return( $result );
 	}
 
@@ -1147,12 +1206,28 @@ class yf_payment_api {
 	}
 
 	public function mail( $options = null ) {
+// DEBUG
+// var_dump( $options );
 		$result = true;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// tpl by type, status
+		if( empty( $_tpl ) && !( empty( $_type ) && empty( $_status ) ) ) {
+			$_tpl = $_type .'_'. $_status;
+		}
 		if( empty( $_tpl ) ) { return( null ); }
+		if( empty( $_type ) || empty( $_status ) ) {
+			list( $type, $status ) = @explode( '_', $_tpl );
+			if( !@$_type && @$type ) {
+				$_type = $type;
+				$options[ 'type' ] = $_type;
+			}
+			if( !@$_status && @$status ) {
+				$_status = $status;
+				$options[ 'status' ] = $_status;
+			}
+		}
 		// var
-		// $payment_api = _class( 'payment_api' );
 		$payment_api = $this;
 		$mail_class  = _class( 'email' );
 		// check user
@@ -1201,7 +1276,7 @@ class yf_payment_api {
 		if( !$is_admin ) {
 			$result &= $mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
 			// mail copy
-			!$admin && $this->mail_copy( array( 'tpl' => $_tpl, 'subject' => @$_subject, 'data' => $data ) );
+			!$admin && $result &= $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 		}
 		// admin
 		if( $admin || $is_admin ) {
@@ -1216,6 +1291,16 @@ class yf_payment_api {
 					'action'  => 'balance',
 					'user_id' => $_user_id,
 				)),
+				'manage_payin' => $this->url_admin( array(
+					'object'       => 'manage_deposit',
+					'action'       => 'view',
+					'operation_id' => $__operation_id,
+				)),
+				'manage_payout' => $this->url_admin( array(
+					'object'       => 'manage_payout',
+					'action'       => 'view',
+					'operation_id' => $__operation_id,
+				)),
 			);
 			// compile
 			$data = array_replace_recursive( $data, array(
@@ -1225,23 +1310,55 @@ class yf_payment_api {
 			$tpl = $_tpl . '_admin';
 			$result &= $mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
 			// mail copy
-			$this->mail_copy( array( 'tpl' => $tpl, 'subject' => @$_subject, 'data' => $data ) );
+			$result_copy = $this->mail_copy( array( 'tpl' => $tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
+			!$result_copy && $result &= $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
+
 		}
 		return( $result );
+	}
+
+	public function mail_copy_find( &$mails, $options = null ) {
+		if( empty( $this->MAIL_COPY_TO ) ) { return; }
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$mail_copy = &$this->MAIL_COPY_TO;
+		// add: all, type, status
+		if( @$mail_copy[ 'all' ] ) {
+			$mail_ref = &$mail_copy[ 'all' ];
+			foreach( @array( 'all', $_type, $_status ) as $key ) {
+				foreach( (array)@$mail_ref[ $key ] as $value ) {
+					$mails[ $value ] = $value;
+				}
+			}
+		}
+		// add by type: all, status
+		if( @$mail_copy[ $_type ] ) {
+			$mail_ref = &$mail_copy[ $_type ];
+			foreach( @array( 'all', $_status ) as $key ) {
+				foreach( (array)@$mail_ref[ $key ] as $value ) {
+					$mails[ $value ] = $value;
+				}
+			}
+		}
 	}
 
 	public function mail_copy( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_tpl ) || empty( $_data ) ) { return( null ); }
+		// prepare admin mail
+		$mails = array();
+		$this->mail_copy_find( $mails, $options );
+		// processing
 		$result = true;
-		if( is_array( $this->MAIL_COPY_TO ) ) {
+		if( is_array( $mails ) ) {
 			$mail_class = _class( 'email' );
 			$override = array();
-			$_subject && $override[ 'subject' ] = $_subject;
+			@$_subject && $override[ 'subject' ] = $_subject;
 			$name = 'Payment admin';
 			$instant_send = true;
-			foreach( $this->MAIL_COPY_TO as $mail ) {
+			foreach( $mails as $mail ) {
 				$result &= $mail_class->_send_email_safe( $mail, $name, $_tpl, $_data, $instant_send, $override );
 			}
 		}
@@ -1383,6 +1500,7 @@ class yf_payment_api {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		$ts = microtime( true );
 		$file = $_file ?: sprintf( '/tmp/payment_api_dump-%s.txt', date( 'Y-m-d_H-i-s', $ts ) );
+		$html_errors = ini_get( 'html_errors' );
 		ini_set( 'html_errors', 0 );
 		$result = '';
 		if( $is_first ) {
@@ -1393,6 +1511,7 @@ class yf_payment_api {
 		isset( $_var ) && $result .= 'VAR:' . PHP_EOL . var_export( $_var, true ) . PHP_EOL . PHP_EOL;
 		!empty( $result ) && file_put_contents( $file, $result, FILE_APPEND );
 		$is_first = false;
+		ini_set( 'html_errors', $html_errors );
 		return( $result );
 	}
 
