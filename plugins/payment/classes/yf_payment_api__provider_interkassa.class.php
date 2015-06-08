@@ -887,6 +887,20 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 // DEBUG
 // var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
+		// update processing
+		$sql_datetime = $payment_api->sql_datetime();
+		$operation_options = array(
+			'processing' => array( array(
+				'provider_name' => 'interkassa',
+				'datetime'      => $sql_datetime,
+			)),
+		);
+		$operation_update_data = array(
+			'operation_id'    => $operation_id,
+			'datetime_update' => $sql_datetime,
+			'options'         => $operation_options,
+		);
+		$payment_api->operation_update( $operation_update_data );
 		// request options
 		$request_option = array(
 			'method_id' => 'withdraw-process',

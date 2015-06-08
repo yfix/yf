@@ -933,12 +933,6 @@ $payment_api->dump( array( 'var' => $result ));
 			);
 			return( $result );
 		}
-		// result
-		$result = array(
-			'status'         => &$status,
-			'status_message' => &$status_message,
-		);
-		$status = 'refused';
 		// transform reverse
 		foreach( $this->_api_transform_reverse as $from => $to ) {
 			if( $from != $to && isset( $response[ $from ] ) ) {
@@ -946,6 +940,13 @@ $payment_api->dump( array( 'var' => $result ));
 				unset( $response[ $from ] );
 			}
 		}
+		// result
+		$result = array(
+			'status'         => &$status,
+			'status_message' => &$status_message,
+		);
+		$status         = 'refused';
+		$status_message = null;
 		$operation_status_name = 'refused';
 		$state = (int)$response[ 'state' ];
 		switch( $state ) {
@@ -962,7 +963,7 @@ $payment_api->dump( array( 'var' => $result ));
 					$status_message = 'Выполнено, но сумма или код операции не совпадают';
 				}
 				break;
-			// in progress
+			// processing
 			case 50:
 				$status         = 'processing';
 				$status_message = 'В процессе';
@@ -990,15 +991,19 @@ $payment_api->dump( array( 'var' => $result ));
 				$status_message = 'Ошибка при выполнении ('. $state .' - '. $response[ 'message' ] .')';
 				break;
 		}
+		@$status_message && $response[ 'message' ] = $status_message;
 		$status_message = $_comment .' - '. $status_message;
 		// save response
-		empty( $response[ 'message' ] ) && $response[ 'message' ] = $status_message;
 		$sql_datetime = $payment_api->sql_datetime();
 		$operation_options = array(
+			'processing' => array( array(
+				'provider_name' => 'ecommpay',
+				'datetime'      => $sql_datetime,
+			)),
 			'response' => array( array(
 				'data'     => $response,
 				'datetime' => $sql_datetime,
-			))
+			)),
 		);
 		$operation_update_data = array(
 			'operation_id'    => $operation_id,

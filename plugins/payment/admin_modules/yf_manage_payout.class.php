@@ -37,6 +37,11 @@ class yf_manage_payout {
 				'action'       => 'request_interkassa',
 				'operation_id' => '%operation_id',
 			)),
+			'check_interkassa' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'check_interkassa',
+				'operation_id' => '%operation_id',
+			)),
 			'status_success' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'status',
@@ -498,7 +503,21 @@ class yf_manage_payout {
 			case 'expired':     $css = 'text-danger';  break;
 			case 'refused':     $css = 'text-danger';  break;
 		}
-		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $status_title );
+		$html_status_title = $status_title;
+		$processing = array();
+		if( is_array( $o_options[ 'processing' ] ) ) {
+			$processing_log = array_reverse( $o_options[ 'processing' ] );
+			$processing     = reset( $processing_log );
+			if( @$processing[ 'provider_name' ] && $processing[ 'provider_name' ] != $provider_name ) {
+				@list( $processing_provider_id, $processing_provider ) = $payment_api->get_provider( array(
+					'name' => $processing[ 'provider_name' ],
+				));
+				if( $processing_provider ) {
+					$html_status_title = $status_title . ' ('. $processing_provider[ 'title' ] .')';
+				}
+			}
+		}
+		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $html_status_title );
 		// check response
 		$response = null;
 		if(
@@ -517,6 +536,8 @@ class yf_manage_payout {
 			'is_valid'             => true,
 			'operation_id'         => &$operation_id,
 			'operation'            => &$operation,
+			'processing_log'       => &$processing_log,
+			'processing'           => &$processing,
 			'statuses'             => &$statuses,
 			'status'               => &$o_status,
 			'status_id'            => &$o_status_id,
@@ -652,9 +673,11 @@ class yf_manage_payout {
 		$is_progressed = $_status[ 'name' ] == 'in_progress';
 		$is_processing = $_status[ 'name' ] == 'processing';
 		$is_payout_interkassa = (bool)$this->IS_PAYOUT_INTERKASSA;
+		$is_processing_interkassa = $is_processing && $_processing[ 'provider_name' ] == 'interkassa';
 		$replace = $operation + array(
-			'is_progressed'        => $is_progressed,
-			'is_processing'        => $is_processing,
+			'is_progressed'            => $is_progressed,
+			'is_processing'            => $is_processing,
+			'is_processing_interkassa' => $is_processing_interkassa,
 			'is_manual'            => $is_manual,
 			'is_payout_interkassa' => $is_payout_interkassa,
 			'header_data'      => $html_operation_options,
@@ -666,6 +689,7 @@ class yf_manage_payout {
 				'view'               => $this->_url( 'view',               array( '%operation_id' => $_operation_id ) ),
 				'request'            => $this->_url( 'request',            array( '%operation_id' => $_operation_id ) ),
 				'request_interkassa' => $this->_url( 'request_interkassa', array( '%operation_id' => $_operation_id ) ),
+				'check_interkassa'   => $this->_url( 'check_interkassa', array( '%operation_id' => $_operation_id ) ),
 				'status_success'     => $this->_url( 'status_success',     array( '%operation_id' => $_operation_id ) ),
 				'status_refused'     => $this->_url( 'status_refused',     array( '%operation_id' => $_operation_id ) ),
 				'csv'                => $this->_url( 'csv',                array( '%operation_id' => $_operation_id ) ),

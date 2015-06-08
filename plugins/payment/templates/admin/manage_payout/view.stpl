@@ -63,7 +63,7 @@
 
 <div class="clearfix"></div>
 
-{if_true( is_progressed )}
+{if_or_true( is_progressed, is_processing )}
 <div class="b-content">
 	<div class="info">
 		<p>
@@ -83,9 +83,12 @@
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="automatic">
-				<a href="{url.request}" class="btn btn-success">Выполнить запрос вывода средств</a>
-{if_not_empty( is_payout_interkassa )}
-				<a href="{url.request_interkassa}" class="btn btn-warning">Выполнить запрос вывода средств через Интеркассу</a>
+				<a disabled='{is_processing}' href="{url.request}" class="btn btn-success">Выполнить запрос вывода средств</a>
+{if_true( is_payout_interkassa )}
+				<a disabled='{is_processing}' href="{url.request_interkassa}" class="btn btn-warning">Выполнить запрос вывода средств через Интеркассу</a>
+{if_true( is_processing_interkassa )}
+				<a href="{url.check_interkassa}" class="btn btn-warning">Проверить состояние вывода средств через Интеркассу</a>
+{/if}
 {/if}
 				</ol>
 			</div>
@@ -106,6 +109,7 @@
 	</div>
 </div>
 
+{if_false( is_processing )}
 <div class="b-action pull-left">
 	<p>
 		Пометьте операцию вывода средств
@@ -115,6 +119,7 @@
 		<a href="{url.status_refused}" class="btn btn-danger">Не выполнено</a>
 	</div>
 </div>
+{/if}
 
 {/if}
 

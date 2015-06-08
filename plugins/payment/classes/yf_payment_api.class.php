@@ -754,6 +754,28 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function get_provider( $options = null ) {
+		$_ = &$options;
+		$object = $this->provider( $options );
+		$object_id_name = 'provider_id';
+		if( empty( $object ) ) {
+			$name = $_[ 'exists' ] ?: $_[ $object_id_name ] ?: $_[ 'name' ];
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Провайдер не существует: "' . $name . '"',
+			);
+			return( $result );
+		}
+		if( count( $object ) == 1 ) {
+			$object    = reset( $object );
+			$object_id = (int)$object[ $object_id_name ];
+			$result = array( $object_id, $object );
+		} else {
+			$result = $object;
+		}
+		return( $result );
+	}
+
 	public function provider_options( &$provider, $options = null ) {
 		if( !isset( $options ) || !is_array( $provider ) ) { return( false ); }
 		foreach( $provider as $id => $item ) {
