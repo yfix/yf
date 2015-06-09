@@ -887,7 +887,7 @@ EOS;
 			);
 			return( $this->_user_message( $result ) );
 		}
-		$id = &$response[ 'data' ][ 'data' ][ 'id' ];
+		$id = &$response[ 'data' ][ 'data' ][ 'withdraw' ][ 'id' ];
 		if( !@$id || $id < 1 ) {
 			$result = array(
 				'status_message' => 'Номер транзакции не найдена',
