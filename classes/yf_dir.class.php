@@ -663,7 +663,7 @@ class yf_dir {
 
 	/**
 	*/
-	function grep($pattern_find, $start_dirs, $pattern_path = '*') {
+	function grep($pattern_find, $start_dirs, $pattern_path = '*', $extra = array()) {
 		if (!$pattern_find) {
 			return false;
 		}
@@ -688,7 +688,7 @@ class yf_dir {
 			$contents = file_get_contents($path);
 			foreach ((array)$pattern_find as $p_find) {
 				if (preg_match_all($p_find, $contents, $m)) {
-					$matched[$files[$_id]] = $m[0];
+					$matched[$files[$_id]] = $extra['return_match'] && isset($m[$extra['return_match']]) ? $m[$extra['return_match']] : $m[0];
 					continue;
 				}
 			}
