@@ -310,7 +310,6 @@ class yf_manage_payout {
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $operation ); }
 		// var
-		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );
 		// prepare view: request options
 		$content = array();
@@ -402,7 +401,6 @@ class yf_manage_payout {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
-		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );
 		// check operation
 		$operation_id = isset( $_operation_id ) ? $_operation_id : (int)$_GET[ 'operation_id' ];
@@ -504,8 +502,15 @@ class yf_manage_payout {
 			case 'refused':     $css = 'text-danger';  break;
 		}
 		$html_status_title = $status_title;
+		// is
+		$is_progressed = $o_status[ 'name' ] == 'in_progress';
+		$is_processing = $o_status[ 'name' ] == 'processing';
+		$is_finish     = !( $is_progressed || $is_processing );
+		$is_payout_interkassa = (bool)$this->IS_PAYOUT_INTERKASSA;
+		// processing
 		$processing = array();
-		if( is_array( $o_options[ 'processing' ] ) ) {
+		$is_processing_self = false;
+		if( $is_processing && is_array( $o_options[ 'processing' ] ) ) {
 			$processing_log = array_reverse( $o_options[ 'processing' ] );
 			$processing     = reset( $processing_log );
 			if( @$processing[ 'provider_name' ] && $processing[ 'provider_name' ] != $provider_name ) {
@@ -515,9 +520,12 @@ class yf_manage_payout {
 				if( $processing_provider ) {
 					$html_status_title = $status_title . ' ('. $processing_provider[ 'title' ] .')';
 				}
+			} else {
+				$is_processing_self = true;
 			}
 		}
 		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $html_status_title );
+		$is_processing_interkassa = $is_processing && $processing[ 'provider_name' ] == 'interkassa';
 		// check response
 		$response = null;
 		if(
@@ -533,35 +541,41 @@ class yf_manage_payout {
 		$html_datetime_finish = $o_datetime_finish;
 		// result
 		$result = array(
-			'is_valid'             => true,
-			'operation_id'         => &$operation_id,
-			'operation'            => &$operation,
-			'processing_log'       => &$processing_log,
-			'processing'           => &$processing,
-			'statuses'             => &$statuses,
-			'status'               => &$o_status,
-			'status_id'            => &$o_status_id,
-			'status_name'          => &$status_name,
-			'status_title'         => &$status_title,
-			'html_status_title'    => &$html_status_title,
-			'account_id'           => &$account_id,
-			'account'              => &$account,
-			'user_id'              => &$user_id,
-			'user'                 => &$user,
-			'user_is_online'       => &$user_is_online,
-			'provider_id'          => &$o_provider_id,
-			'provider'             => &$provider,
-			'provider_name'        => &$provider_name,
-			'provider_class'       => &$provider_class,
-			'providers_user'       => &$providers_user,
-			'request'              => &$request,
-			'method_id'            => &$method_id,
-			'method'               => &$method,
-			'response'             => &$response,
-			'html_amount'          => &$html_amount,
-			'html_datetime_start'  => &$html_datetime_start,
-			'html_datetime_update' => &$html_datetime_update,
-			'html_datetime_finish' => &$html_datetime_finish,
+			'is_valid'                 => true,
+			'operation_id'             => &$operation_id,
+			'operation'                => &$operation,
+			'processing_log'           => &$processing_log,
+			'processing'               => &$processing,
+			'statuses'                 => &$statuses,
+			'status'                   => &$o_status,
+			'status_id'                => &$o_status_id,
+			'status_name'              => &$status_name,
+			'status_title'             => &$status_title,
+			'html_status_title'        => &$html_status_title,
+			'account_id'               => &$account_id,
+			'account'                  => &$account,
+			'user_id'                  => &$user_id,
+			'user'                     => &$user,
+			'user_is_online'           => &$user_is_online,
+			'provider_id'              => &$o_provider_id,
+			'provider'                 => &$provider,
+			'provider_name'            => &$provider_name,
+			'provider_class'           => &$provider_class,
+			'providers_user'           => &$providers_user,
+			'request'                  => &$request,
+			'method_id'                => &$method_id,
+			'method'                   => &$method,
+			'response'                 => &$response,
+			'is_progressed'            => &$is_progressed,
+			'is_processing'            => &$is_processing,
+			'is_processing_self'       => &$is_processing_self,
+			'is_processing_interkassa' => &$is_processing_interkassa,
+			'is_payout_interkassa'     => &$is_payout_interkassa,
+			'is_finish'                => &$is_finish,
+			'html_amount'              => &$html_amount,
+			'html_datetime_start'      => &$html_datetime_start,
+			'html_datetime_update'     => &$html_datetime_update,
+			'html_datetime_finish'     => &$html_datetime_finish,
 		);
 		return( $result );
 	}
@@ -670,16 +684,8 @@ class yf_manage_payout {
 				break;
 		}
 		// render
-		$is_progressed = $_status[ 'name' ] == 'in_progress';
-		$is_processing = $_status[ 'name' ] == 'processing';
-		$is_payout_interkassa = (bool)$this->IS_PAYOUT_INTERKASSA;
-		$is_processing_interkassa = $is_processing && $_processing[ 'provider_name' ] == 'interkassa';
 		$replace = $operation + array(
-			'is_progressed'            => $is_progressed,
-			'is_processing'            => $is_processing,
-			'is_processing_interkassa' => $is_processing_interkassa,
-			'is_manual'            => $is_manual,
-			'is_payout_interkassa' => $is_payout_interkassa,
+			'is_manual'        => $is_manual,
 			'header_data'      => $html_operation_options,
 			'request_data'     => $html_request_options,
 			'request_data_csv' => $html_request_options_csv,
@@ -766,7 +772,6 @@ EOS;
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $result ); }
 		// var
-		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );
 		$data = $_request[ 'options' ] + array(
 			'operation_id' => $_operation_id,
@@ -783,6 +788,38 @@ EOS;
 		return( $this->_user_message( $result ) );
 	}
 
+	function status_interkassa( $options = null ) {
+		// import operation
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// provider interkassa
+		$payment_api = _class( 'payment_api' );
+		$provider_class = $payment_api->provider_class( array(
+			'provider_name' => 'interkassa',
+		));
+		if( empty( $provider_class ) ) {
+			$result = array(
+				'status_message' => 'Провайдер Интеркасса не доступен',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// result
+		$result = array(
+			'status'         => &$status_name,
+			'status_message' => &$status_message,
+		);
+		// state
+		list( $status_name, $status_message ) = $provider_class->_state( $_state
+			, $provider_class->_payout_status
+			, $provider_class->_payout_status_message
+		);
+		$status_message = @$status_message ?: @$data[ 'stateName' ];
+		// transaction compile
+		if( @$result[ 'status' ] == 'success' || @$result[ 'status' ] == 'refused' ) {
+			return( $this->status( $result ) );
+		}
+		return( $this->_user_message( $result ) );
+	}
+
 	function request_interkassa() {
 		// check operation
 		$operation = $this->_operation();
@@ -790,7 +827,6 @@ EOS;
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $result ); }
 		// var
-		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );
 		$data = $_request[ 'options' ] + array(
 			'operation_id' => $_operation_id,
@@ -802,7 +838,6 @@ EOS;
 			);
 			return( $this->_user_message( $result ) );
 		}
-		// $result = $_provider_class->api_payout( $data );
 		$provider_class = $payment_api->provider_class( array(
 			'provider_name' => 'interkassa',
 		));
@@ -830,22 +865,73 @@ EOS;
 		}
 		$data[ 'method_id'      ] = $is_method_id;
 		$data[ 'provider_force' ] = true;
-$data[ 'method_id' ] = $method_id;
-$data[ 'card' ] = '5218572211211342';
-var_dump( $data );
 		// result
 		$result = $provider_class->api_payout( $data );
 		$result[ 'operation_id' ] = $_operation_id;
 		return( $this->_user_message( $result ) );
 	}
 
-	function status() {
+	function check_interkassa() {
 		// check operation
 		$operation = $this->_operation();
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $result ); }
-		$status = $_GET[ 'status' ];
+		// var
+		$payment_api = _class( 'payment_api' );
+		// response
+		$response = @end( $_response );
+		if( empty( $response ) ) {
+			$result = array(
+				'status_message' => 'Транзакция не найдена',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		$id = &$response[ 'data' ][ 'data' ][ 'id' ];
+		if( !@$id || $id < 1 ) {
+			$result = array(
+				'status_message' => 'Номер транзакции не найдена',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// provider interkassa
+		$provider_class = $payment_api->provider_class( array(
+			'provider_name' => 'interkassa',
+		));
+		if( empty( $provider_class ) ) {
+			$result = array(
+				'status_message' => 'Провайдер Интеркасса не доступен',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// check transaction
+		$request_option = array(
+			'method_id' => 'withdraw-id',
+			'id'        => $id,
+		);
+		list( $status, $result ) = $provider_class->api_request( $request_option );
+		if( empty( $status ) ) {
+			$result = array(
+				'status_message' => 'Невозможно выполнить проверку транзакции',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// check status
+		$data = @$result[ 'data' ];
+		// check status
+		$state = (int)$data[ 'state' ];
+		$result = $this->status_interkassa( array( 'state' => $state ) );
+		return( $result );
+	}
+
+	function status( $options = null ) {
+		// check operation
+		$operation = $this->_operation();
+		// import options
+		is_array( $options   ) && extract( $options,   EXTR_PREFIX_ALL | EXTR_REFS, '_' );
+		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, ''  );
+		if( empty( $_is_valid ) ) { return( $result ); }
+		$status = $_GET[ 'status' ] ?: $__status;
 		switch( $status ) {
 			case 'success':
 				$result = $_provider_class->_payout_success( array(
@@ -869,12 +955,14 @@ var_dump( $data );
 		@$mail_tpl && $payment_api->mail( array(
 			'tpl'     => $mail_tpl,
 			'user_id' => $_user_id,
+			'admin'   => true,
 			'data'    => array(
 				'operation_id' => $_operation_id,
 				'amount'       => $_operation[ 'amount' ],
 			),
 		));
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
+		if( !empty( $__status_message ) ) { return( $this->_user_message( $options ) ); }
 		return( js_redirect( $url_view, false ) );
 	}
 
