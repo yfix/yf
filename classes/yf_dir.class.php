@@ -687,8 +687,8 @@ class yf_dir {
 		foreach ((array)$files as $_id => $path) {
 			$contents = file_get_contents($path);
 			foreach ((array)$pattern_find as $p_find) {
-				if (preg_match($p_find, $contents)) {
-					$matched[$_id] = $files[$_id];
+				if (preg_match_all($p_find, $contents, $m)) {
+					$matched[$files[$_id]] = $m[0];
 					continue;
 				}
 			}
