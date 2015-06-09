@@ -370,6 +370,7 @@ class yf_manage_payment {
 					'operation_title' => $_POST[ 'title' ],
 					'operation'       => $operation,
 					'provider_name'   => $provider_name,
+					'is_balance_limit_lower' => false,
 				);
 				$result = $payment_api->transaction( $options );
 				if( !empty( $result[ 'form' ] ) ) {
