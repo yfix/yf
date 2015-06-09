@@ -2,6 +2,13 @@
 
 /**
 * Filesystem utils
+*
+* Benchmark results of the methods, from SLOW to FASTEST:
+* 1) _class("dir")->scan() | time: 0.46 | mem: 175824 | peakmem: 4467496 | found: 8
+* 2) _class("dir")->riterate() | time: 0.306 | mem: 2288 | peakmem: 4489568 | found: 8
+* 3) _class("dir")->scan_fast() | time: 0.176 | mem: 2352 | peakmem: 4489568 | found: 8
+* 4) _class("dir")->rglob() | time: 0.066 | mem: 2256 | peakmem: 4489568 | found: 8
+* 5) _class("dir")->find() | time: 0.058 | mem: 2232 | peakmem: 4489568 | found: 8    = fastest so far
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -22,97 +29,55 @@ class yf_dir {
 	}
 
 	/**
-	* Check if we need to skip current path according to given patterns (unified method for whole dir module)
+	* Scan dir using shell find = so far, fastest method
 	*/
-	function _skip_by_pattern($path = '', $_is_dir = false, $pattern_include = '', $pattern_exclude = '') {
-		if (!$path) {
-			return false;
-		}
-		if (!$pattern_include && !$pattern_exclude) {
-			return false;
-		}
-		$_path_clean = trim(str_replace('//', '/', str_replace("\\", '/', $path)));
-		// Include files only if they match the mask
-		$_index = $_is_dir ? 0 : 1;
-		if ($_is_dir) {
-			$_path_clean	= rtrim($_path_clean, '/');
-		}
-		if (is_array($pattern_include)) {
-			$pattern_include = $pattern_include[$_index];
-		}
-		if (is_array($pattern_exclude)) {
-			$pattern_exclude = $pattern_exclude[$_index];
-		}
-		$MATCHED = false;
-		if (!empty($pattern_include) && is_string($pattern_include)) {
-			// Examples: "-f /\.(jpg|png)$/", -d /some_dir/
-			$try_modifier = substr($pattern_include, 0, 3);
-			if (in_array($try_modifier, array('-f ', '-d '))) {
-				$pattern_include = substr($pattern_include, 3);
-				$modifier = $try_modifier;
-			}
-			if (strlen($pattern_include) == 2 && $pattern_include{0} == '-') {
-				if ($pattern_include == '-d' && !$_is_dir) {
-					$MATCHED = true;
-				} elseif ($pattern_include == '-f' && $_is_dir) {
-					$MATCHED = true;
-				}
-			} else {
-				$need_match = true;
-				if ($modifier == '-f ' && $_is_dir) {
-					$need_match = false;
-				} elseif ($modifier == '-d ' && !$_is_dir) {
-					$need_match = false;
-				}
-				if ($need_match && !preg_match($pattern_include.'ims', $_path_clean)) {
-					$MATCHED = true;
-				}
-			}
-		}
-		// Exclude files from list by mask
-		if (!empty($pattern_exclude) && is_string($pattern_exclude)) {
-			// Examples: "-f /\.(jpg|png)$/", -d /some_dir/
-			$try_modifier = substr($pattern_include, 0, 3);
-			if (in_array($try_modifier, array('-f ', '-d '))) {
-				$pattern_include = substr($pattern_include, 3);
-				$modifier = $try_modifier;
-			}
-			if (strlen($pattern_exclude) == 2 && $pattern_exclude{0} == '-') {
-				if ($pattern_exclude == '-d' && $_is_dir) {
-					$MATCHED = true;
-				} elseif ($pattern_exclude == '-f' && !$_is_dir) {
-					$MATCHED = true;
-				}
-			} else {
-				$need_match = true;
-				if ($modifier == '-f ' && $_is_dir) {
-					$need_match = false;
-				} elseif ($modifier == '-d ' && !$_is_dir) {
-					$need_match = false;
-				}
-				if ($need_match && preg_match($pattern_exclude.'ims', $_path_clean)) {
-					$MATCHED = true;
-				}
-			}
-		}
-		return $MATCHED;
+	function find($folder, $pattern) {
+		return explode("\n", trim(shell_exec('find -L '.escapeshellarg($folder).' -iname '.escapeshellarg($pattern))));
 	}
 
 	/**
+	* Recursive glob(). Note that glob and rglob does not search hidden files (starting from dot on linux/unix)
 	*/
-	function scan_dir_fast($start_dir, $pattern = '') {
+	function rglob($folder, $pattern) {
+		$folder = rtrim($folder, '/');
+		// http://php.net/sql_regcase   !Warning! This function has been DEPRECATED as of PHP 5.3.0. Relying on this feature is highly discouraged.
+		if (false === strpos($pattern, '[')) {
+			$pattern = sql_regcase($pattern);
+		}
+		$files = (array)glob($folder.'/'.$pattern, GLOB_BRACE|GLOB_NOSORT);
+		$dirs = (array)glob($folder.'/*', GLOB_BRACE|GLOB_ONLYDIR|GLOB_NOSORT);
+		// Dotted dirs
+		foreach (glob($folder.'/.**', GLOB_BRACE|GLOB_ONLYDIR|GLOB_NOSORT) as $path) {
+			$d = basename($path);
+			if ($d === '.' || $d === '..' || $d === '.git' || $d === '.svn') {
+				continue;
+			}
+			$dirs[] = $path;
+		}
+		$func = __FUNCTION__;
+		foreach ((array)$dirs as $dir) {
+			$files = array_merge($files, $this->$func($dir, $pattern));
+		}
+		return $files;
+	}
+
+	/**
+	* Fast implementation with old functions opendir/readdir
+	*/
+	function scan_fast($start_dir, $pattern = '') {
 		$files = array();
 		$dh	= @opendir($start_dir);
 		if (!$dh) {
 			return $files;
 		}
+		$func = __FUNCTION__;
 		while (false !== ($f = readdir($dh))) {
 			if ($f === '.' || $f === '..') {
 				continue;
 			}
 			$item = $start_dir.'/'.$f;
 			if (is_dir($item)) {
-				$files = array_merge($files, $this->scan_dir_fast($item, $pattern));
+				$files = array_merge($files, $this->$func($item, $pattern));
 			} elseif (is_file($item) && (!$pattern || preg_match($pattern, $item))) {
 				$files[] = $item;
 			}
@@ -124,26 +89,13 @@ class yf_dir {
 	/**
 	* Recursive folder search, based on RecursiveDirectoryIterator 
 	*/
-	function rsearch($folder, $pattern) {
-		$dir = new RecursiveDirectoryIterator($folder);
-		$ite = new RecursiveIteratorIterator($dir);
-		$files = new RegexIterator($ite, $pattern, RegexIterator::GET_MATCH);
-		$fileList = array();
-		foreach($files as $file) {
-			$fileList = array_merge($fileList, $file);
+	function riterate($folder, $pattern) {
+		$out = array();
+		$flags = FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::FOLLOW_SYMLINKS;
+		foreach(new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder, $flags)), $pattern, RegexIterator::GET_MATCH) as $path => $f) {
+			$out[] = $path;
 		}
-		return $fileList;
-	}
-
-	/**
-	* Recursive glob(). Note that glob and rglob does not search hidden files (starting from dot on linux/unix)
-	*/
-	function rglob($pattern, $flags = 0) {
-		$files = glob($pattern, $flags); 
-		foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-			$files = array_merge($files, $this->rglob($dir.'/'.basename($pattern), $flags));
-		}
-		return $files;
+		return $out;
 	}
 
 	/**
@@ -157,10 +109,11 @@ class yf_dir {
 	* Recursively scanning directory structure (including subdirectories) //
 	*/
 	function scan_dir($start_dir, $_tmp = 1, $pattern_include = '', $pattern_exclude = '') {
+		$func = __FUNCTION__;
 		// Here we accept several start folders, result will be merged
 		if (is_array($start_dir)) {
 			foreach ((array)$start_dir as $_dir_name) {
-				foreach ((array)$this->scan_dir($_dir_name, 1, $pattern_include, $pattern_exclude) as $_file_path) {
+				foreach ((array)$this->$func($_dir_name, 1, $pattern_include, $pattern_exclude) as $_file_path) {
 					$_files[] = $_file_path;
 				}
 			}
@@ -170,7 +123,6 @@ class yf_dir {
 			return false;
 		}
 		$start_dir = rtrim($start_dir, '/');
-
 		$files	= array();
 		$dh		= opendir($start_dir);
 		while (false !== ($f = readdir($dh))) {
@@ -183,7 +135,7 @@ class yf_dir {
 				continue;
 			}
 			if ($_is_dir) {
-				$files = array_merge($files, $this->scan_dir($item, 1, $pattern_include, $pattern_exclude));
+				$files = array_merge($files, $this->$func($item, 1, $pattern_include, $pattern_exclude));
 			} elseif (is_file($item)) {
 				$files[] = $item;
 			}
@@ -275,6 +227,7 @@ class yf_dir {
 		if (!$path1 || !file_exists($path1)) {
 			return false;
 		}
+		$func = __FUNCTION__;
 		$path1 = rtrim(str_replace("\\", '/', realpath($path1)), '/');
 		$path2 = rtrim(str_replace("\\", '/', realpath($path2)), '/');
 
@@ -299,7 +252,7 @@ class yf_dir {
 					$this->mkdir_m($item_2);
 				}
 				if (is_null($level) || $level > 0) {
-					$this->copy_dir($item_1, $item_2, $pattern_include, $pattern_exclude, is_null($level) ? $level : $level - 1);
+					$this->$func($item_1, $item_2, $pattern_include, $pattern_exclude, is_null($level) ? $level : $level - 1);
 				}
 			} else {
 				$this->_copy_file($item_1, $item_2);
@@ -322,6 +275,7 @@ class yf_dir {
 		if (!$path1 || !file_exists($path1)) {
 			return false;
 		}
+		$func = __FUNCTION__;
 		$path1 = rtrim($path1, '/');
 		$path2 = rtrim($path2, '/');
 
@@ -344,7 +298,7 @@ class yf_dir {
 				if (!file_exists($item_2)) {
 					mkdir($item_2, 0777);
 				}
-				$this->move_dir($item_1, $item_2, $pattern_include, $pattern_exclude);
+				$this->$func($item_1, $item_2, $pattern_include, $pattern_exclude);
 			} else {
 				$this->_copy_file($item_1, $item_2);
 				unlink ($item_1);
@@ -386,6 +340,7 @@ class yf_dir {
 		if (!$start_dir || !file_exists($start_dir)) {
 			return false;
 		}
+		$func = __FUNCTION__;
 		$start_dir = rtrim($start_dir, '/');
 		// Process folder contents
 		$dh = opendir($start_dir);
@@ -400,7 +355,7 @@ class yf_dir {
 				unlink($item);
 			// Store folders to delete in stack and try to delete sub items
 			} elseif (is_dir($item)) {
-				$this->delete_dir ($item);
+				$this->$func($item);
 				$sub_dirs_list[] = $item;
 			}
 		}
@@ -438,6 +393,7 @@ class yf_dir {
 		if (!$start_dir || !file_exists($start_dir) || empty($new_mode)) {
 			return false;
 		}
+		$func = __FUNCTION__;
 		$start_dir = rtrim($start_dir, '/');
 
 		$dh = opendir($start_dir);
@@ -453,7 +409,7 @@ class yf_dir {
 			}
 			chmod($item, $new_mode);
 			if ($_is_dir) {
-				$this->chmod_dir ($item, $new_mode);
+				$this->$func($item, $new_mode);
 			}
 		}
 	}
@@ -706,6 +662,41 @@ class yf_dir {
 	}
 
 	/**
+	*/
+	function grep($pattern_find, $start_dirs, $pattern_path = '*') {
+		if (!$pattern_find) {
+			return false;
+		}
+		if (!$start_dirs) {
+			$start_dirs = APP_PATH;
+		}
+		if (!is_array($start_dirs)) {
+			$start_dirs = array($start_dirs);
+		}
+		if (!is_array($pattern_find)) {
+			$pattern_find = array($pattern_find);
+		}
+		$files = array();
+		foreach ((array)$start_dirs as $start_dir) {
+			$start_dir = rtrim($start_dir, '/');
+			foreach ((array)$this->rglob($start_dir, $pattern_path) as $path) {
+				$files[] = $path;
+			}
+		}
+		$matched = array();
+		foreach ((array)$files as $_id => $path) {
+			$contents = file_get_contents($path);
+			foreach ((array)$pattern_find as $p_find) {
+				if (preg_match($p_find, $contents)) {
+					$matched[$_id] = $files[$_id];
+					continue;
+				}
+			}
+		}
+		return $matched;
+	}
+
+	/**
 	* Implementation of the UNIX 'tail' command on pure PHP, memory safe on huge files
 	*/
 	function tail($file, $lines = 10) {
@@ -738,5 +729,82 @@ class yf_dir {
 		}
 		fclose ($handle);
 		return array_reverse($text);
+	}
+
+	/**
+	* Check if we need to skip current path according to given patterns (unified method for whole dir module)
+	*/
+	function _skip_by_pattern($path = '', $_is_dir = false, $pattern_include = '', $pattern_exclude = '') {
+		if (!$path) {
+			return false;
+		}
+		if (!$pattern_include && !$pattern_exclude) {
+			return false;
+		}
+		$_path_clean = trim(str_replace('//', '/', str_replace("\\", '/', $path)));
+		// Include files only if they match the mask
+		$_index = $_is_dir ? 0 : 1;
+		if ($_is_dir) {
+			$_path_clean	= rtrim($_path_clean, '/');
+		}
+		if (is_array($pattern_include)) {
+			$pattern_include = $pattern_include[$_index];
+		}
+		if (is_array($pattern_exclude)) {
+			$pattern_exclude = $pattern_exclude[$_index];
+		}
+		$MATCHED = false;
+		if (!empty($pattern_include) && is_string($pattern_include)) {
+			// Examples: "-f /\.(jpg|png)$/", -d /some_dir/
+			$try_modifier = substr($pattern_include, 0, 3);
+			if (in_array($try_modifier, array('-f ', '-d '))) {
+				$pattern_include = substr($pattern_include, 3);
+				$modifier = $try_modifier;
+			}
+			if (strlen($pattern_include) == 2 && $pattern_include{0} == '-') {
+				if ($pattern_include == '-d' && !$_is_dir) {
+					$MATCHED = true;
+				} elseif ($pattern_include == '-f' && $_is_dir) {
+					$MATCHED = true;
+				}
+			} else {
+				$need_match = true;
+				if ($modifier == '-f ' && $_is_dir) {
+					$need_match = false;
+				} elseif ($modifier == '-d ' && !$_is_dir) {
+					$need_match = false;
+				}
+				if ($need_match && !preg_match($pattern_include.'ims', $_path_clean)) {
+					$MATCHED = true;
+				}
+			}
+		}
+		// Exclude files from list by mask
+		if (!empty($pattern_exclude) && is_string($pattern_exclude)) {
+			// Examples: "-f /\.(jpg|png)$/", -d /some_dir/
+			$try_modifier = substr($pattern_include, 0, 3);
+			if (in_array($try_modifier, array('-f ', '-d '))) {
+				$pattern_include = substr($pattern_include, 3);
+				$modifier = $try_modifier;
+			}
+			if (strlen($pattern_exclude) == 2 && $pattern_exclude{0} == '-') {
+				if ($pattern_exclude == '-d' && $_is_dir) {
+					$MATCHED = true;
+				} elseif ($pattern_exclude == '-f' && !$_is_dir) {
+					$MATCHED = true;
+				}
+			} else {
+				$need_match = true;
+				if ($modifier == '-f ' && $_is_dir) {
+					$need_match = false;
+				} elseif ($modifier == '-d ' && !$_is_dir) {
+					$need_match = false;
+				}
+				if ($need_match && preg_match($pattern_exclude.'ims', $_path_clean)) {
+					$MATCHED = true;
+				}
+			}
+		}
+		return $MATCHED;
 	}
 }
