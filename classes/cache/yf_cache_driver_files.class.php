@@ -98,7 +98,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return _class('dir')->rglob($this->CACHE_DIR. '*'. $this->FILE_PREFIX. '*'. $this->FILE_EXT);
+		return _class('dir')->rglob($this->CACHE_DIR, '*'. $this->FILE_PREFIX. '*'. $this->FILE_EXT);
 	}
 
 	/**
