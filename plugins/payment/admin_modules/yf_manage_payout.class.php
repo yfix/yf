@@ -771,6 +771,13 @@ EOS;
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $result ); }
+		// is_processing
+		if( @$_is_processing ) {
+			$result = array(
+				'status_message' => 'Операция уже обрабатывается',
+			);
+			return( $this->_user_message( $result ) );
+		}
 		// var
 		$payment_api = _class( 'payment_api' );
 		$data = $_request[ 'options' ] + array(
@@ -826,6 +833,13 @@ EOS;
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $result ); }
+		// is_processing
+		if( @$_is_processing ) {
+			$result = array(
+				'status_message' => 'Операция уже обрабатывается',
+			);
+			return( $this->_user_message( $result ) );
+		}
 		// var
 		$payment_api = _class( 'payment_api' );
 		$data = $_request[ 'options' ] + array(

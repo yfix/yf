@@ -76,7 +76,7 @@
 			<li role="presentation" class="active">
 				<a href="#automatic" aria-controls="automatic" role="tab" data-toggle="tab">Автоматический</a>
 			</li>
-		{if_not_empty( is_manual )}
+		{if_true( is_manual, is_progressed )}
 			<li role="presentation">
 				<a href="#manual" aria-controls="manual" role="tab" data-toggle="tab">Ручной</a>
 			</li>
@@ -97,7 +97,7 @@
 		{/if}
 				</ol>
 			</div>
-		{if_not_empty( is_manual )}
+		{if_true( is_manual, is_progressed )}
 			<div role="tabpanel" class="tab-pane" id="manual">
 				<ol class="b-list-step">
 					<li class="list-item">
