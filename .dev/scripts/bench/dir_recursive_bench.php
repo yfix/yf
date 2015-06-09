@@ -4,6 +4,9 @@
 $argv[1] = '/home/www/test2/';
 require dirname(__DIR__).'/scripts_init.php';
 
+function find($folder, $pattern) {
+	return explode("\n", trim(shell_exec('find -L '.escapeshellarg($folder).' -iname '.escapeshellarg($pattern))));
+}
 function rsearch($folder, $pattern) {
 	$out = array();
 	$flags = FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::FOLLOW_SYMLINKS;
@@ -12,20 +15,36 @@ function rsearch($folder, $pattern) {
 	}
 	return $out;
 }
-function rglob($pattern, $flags = 0) {
-	$files = glob($pattern, $flags); 
-	foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-		$files = array_merge($files, rglob($dir.'/'.basename($pattern), $flags));
+function rglob($folder, $pattern) {
+	$folder = rtrim($folder, '/');
+	// http://php.net/sql_regcase   !Warning! This function has been DEPRECATED as of PHP 5.3.0. Relying on this feature is highly discouraged.
+	if (false === strpos($pattern, '[')) {
+		$pattern = sql_regcase($pattern);
+	}
+	$files = (array)glob($folder.'/'.$pattern, GLOB_BRACE|GLOB_NOSORT);
+	$dirs = (array)glob($folder.'/*', GLOB_BRACE|GLOB_ONLYDIR|GLOB_NOSORT);
+	// Dotted dirs
+	foreach (glob($folder.'/.**', GLOB_BRACE|GLOB_ONLYDIR|GLOB_NOSORT) as $path) {
+		$d = basename($path);
+		if ($d === '.' || $d === '..' || $d === '.git' || $d === '.svn') {
+			continue;
+		}
+		$dirs[] = $path;
+	}
+	$func = __FUNCTION__;
+	foreach ((array)$dirs as $dir) {
+		$files = array_merge($files, $func($dir, $pattern));
 	}
 	return $files;
 }
-function rglob2($pattern, $flags = 0) {
-	$files = iterator_to_array(new GlobIterator($pattern, $flags));
-	foreach (new GlobIterator(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-		$files = array_merge($files, rglob($dir.'/'.basename($pattern), $flags));
-	}
-	return $files;
-}
+#function rglob2($folder, $pattern) {
+#	$files = iterator_to_array(new GlobIterator($pattern, $flags));
+#	foreach (new GlobIterator(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+#		$files = array_merge($files, rglob($dir.'/'.basename($pattern), $flags));
+#		$files = array_merge($files, rglob2($dir.'/'.basename($pattern), $flags));
+#	}
+#	return $files;
+#}
 
 class bench {
 	function __toString() {
@@ -51,17 +70,17 @@ class bench {
 		return array('DirectoryIterator', $files);
 	}
 	function exec_find() {
-		$files = explode("\n", trim(shell_exec('find -L '.YF_PATH.' -iname '.'*gallery*.php')));
+		$files = find(YF_PATH, '*gallery*.php');
 		return array('exec(find ...)', $files);
 	}
 	function rglob() {
-		$files = rglob(YF_PATH.'*gallery*.php');
+		$files = rglob(YF_PATH, '*gallery*.php');
 		return array('rglob()', $files);
 	}
-	function rglob2() {
-		$files = rglob2(YF_PATH.'*gallery*.php');
-		return array('rglob2()', $files);
-	}
+#	function rglob2() {
+#		$files = rglob2(YF_PATH, '*gallery*.php');
+#		return array('rglob2()', $files);
+#	}
 }
 
 print new bench();
