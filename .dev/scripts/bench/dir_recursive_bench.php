@@ -25,7 +25,7 @@ class bench {
 	}
 	function dir_iterate() {
 		$files = _class('dir')->riterate(YF_PATH, '~gallery.*\.php$~ims');
-		return array('_class("dir")->rsearch()', $files);
+		return array('_class("dir")->riterate()', $files);
 	}
 	function dir_scan_fast() {
 		$files = _class('dir')->scan_fast(YF_PATH, '~gallery.*.php$~ims');
@@ -39,10 +39,10 @@ class bench {
 		$files = _class('dir')->find(YF_PATH, '*gallery*.php');
 		return array('_class("dir")->find()', $files);
 	}
-	function dir_grep() {
-		$files = _class('dir')->grep('~github~', YF_PATH, '*gallery*.php');
-		return array('_class("dir")->grep() for word github', $files);
-	}
+#	function dir_grep() {
+#		$files = _class('dir')->grep('~github~', YF_PATH, '*gallery*.php');
+#		return array('_class("dir")->grep() for word github', $files);
+#	}
 }
 
 print new bench();
