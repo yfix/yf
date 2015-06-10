@@ -320,16 +320,16 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'account_number' => array(
 						'type'      => 'text',
 						'required'  => true,
-						'minlength' => 8,
-						'maxlength' => 15,
-						'pattern'   => '^\d+$',
+						'minlength' => 11,
+						'maxlength' => 14,
+						'pattern'   => '^(?!8)\d+$',
 					),
 				),
 				'option_validation' => array(
-					'account_number' => 'required|is_natural|length[8,15]',
+					'account_number' => 'required|is_natural|length[11,14]',
 				),
 				'option_validation_message' => array(
-					'account_number' => 'обязательное поле от 8 до 15 цифр, без "+"',
+					'account_number' => 'обязательное поле от 11 до 14 цифр, без "+"',
 				),
 			),
 		),
