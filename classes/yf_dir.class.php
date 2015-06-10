@@ -685,6 +685,9 @@ class yf_dir {
 		}
 		$matched = array();
 		foreach ((array)$files as $_id => $path) {
+			if (isset($extra['exclude_paths']) && wildcard_compare($extra['exclude_paths'], $path)) {
+				continue;
+			}
 			$contents = file_get_contents($path);
 			foreach ((array)$pattern_find as $p_find) {
 				if (preg_match_all($p_find, $contents, $m)) {
