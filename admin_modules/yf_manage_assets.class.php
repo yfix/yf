@@ -12,8 +12,16 @@ class yf_manage_assets {
 	/**
 	*/
 	function search_used() {
+		$exclude_paths = array(
+			'*/.dev/*',
+			'*/test/*',
+			'*/tests/*',
+			'*/cache/*',
+			'*/test*.class.php',
+			'*/yf_test*.class.php',
+		);
 		$regex_php = '~[\s](asset|js|css)\([\s"\']+(?P<name>[^\(\)\{\}\$]+)[\s"\']+\)~ims';
-		$raw_in_php = _class('dir')->grep($regex_php, APP_PATH, '*.php');
+		$raw_in_php = _class('dir')->grep($regex_php, APP_PATH, '*.php', array('exclude_paths' => $exclude_paths));
 		$assets = array();
 		foreach ((array)$raw_in_php as $path => $matches) {
 			$lines = file($path);
@@ -31,7 +39,7 @@ class yf_manage_assets {
 			}
 		}
 		$regex_tpl = '~\{(asset|js|css)\(\)\}\s+(?P<name>[^\{\}\(\)\$]+?)\s+\{\/\1\}~ims';
-		$raw_in_tpl = _class('dir')->grep($regex_tpl, APP_PATH, '*.stpl');
+		$raw_in_tpl = _class('dir')->grep($regex_tpl, APP_PATH, '*.stpl', array('exclude_paths' => $exclude_paths));
 		foreach ((array)$raw_in_tpl as $path => $matches) {
 			$lines = file($path);
 			foreach ((array)$matches as $raw) {
@@ -47,11 +55,13 @@ class yf_manage_assets {
 				}
 			}
 		}
-#			foreach ((array)$by_line[$path] as $raw => $nums) {
+#		foreach ($by_line as $path => $contents) {
+#			foreach ((array)$contents as $raw => $nums) {
 #				foreach ($nums as $n) {
 #					$sources[$path][$raw] = PHP_EOL. implode(array_slice($lines, $n - 3, 6));
 #				}
 #			}
+#		}
 		foreach ((array)$assets as $k => $v) {
 			if (substr($k, 0, 2) === '//' || substr($k, 0, 7) === 'http://' || substr($k, 0, 8) === 'https://') {
 				unset($assets[$k]);
@@ -65,6 +75,11 @@ class yf_manage_assets {
 #		$out[] = 'TPL: <pre>'.print_r(_prepare_html($raw_in_tpl), 1).'</pre>';
 
 #		return implode(PHP_EOL, $out);
-		return html()->simple_table($assets);
+
+		$table = array();
+		foreach ((array)$assets as $name) {
+			$table[$name] = '<small>'.implode('<br>', array_keys($by_path[$name])).'</small>';
+		}
+		return html()->simple_table($table);
 	}
 }
