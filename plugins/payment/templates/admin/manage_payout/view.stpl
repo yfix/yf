@@ -63,7 +63,8 @@
 
 <div class="clearfix"></div>
 
-{if_empty( is_progressed )}
+{if_false( is_finish )}
+{if_false( is_processing_self )}
 <div class="b-content">
 	<div class="info">
 		<p>
@@ -75,21 +76,28 @@
 			<li role="presentation" class="active">
 				<a href="#automatic" aria-controls="automatic" role="tab" data-toggle="tab">Автоматический</a>
 			</li>
-{if_not_empty( is_manual )}
+		{if_true( is_manual, is_progressed )}
 			<li role="presentation">
 				<a href="#manual" aria-controls="manual" role="tab" data-toggle="tab">Ручной</a>
 			</li>
-{/if}
+		{/if}
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="automatic">
+			{if_false( is_processing )}
 				<a href="{url.request}" class="btn btn-success">Выполнить запрос вывода средств</a>
-{if_not_empty( is_payout_interkassa )}
+			{/if}
+		{if_true( is_payout_interkassa )}
+			{if_false( is_processing )}
 				<a href="{url.request_interkassa}" class="btn btn-warning">Выполнить запрос вывода средств через Интеркассу</a>
-{/if}
+			{/if}
+			{if_true( is_processing_interkassa )}
+				<a href="{url.check_interkassa}" class="btn btn-warning">Проверить состояние вывода средств через Интеркассу</a>
+			{/if}
+		{/if}
 				</ol>
 			</div>
-{if_not_empty( is_manual )}
+		{if_true( is_manual, is_progressed )}
 			<div role="tabpanel" class="tab-pane" id="manual">
 				<ol class="b-list-step">
 					<li class="list-item">
@@ -101,20 +109,23 @@
 					</li>
 				</ol>
 			</div>
-{/if}
+		{/if}
 		</div>
 	</div>
 </div>
 
-<div class="b-action pull-left">
-	<p>
-		Пометьте операцию вывода средств
-	</p>
-	<div class="action">
-		<a href="{url.status_success}" class="btn btn-success">Выполнено</a>
-		<a href="{url.status_refused}" class="btn btn-danger">Не выполнено</a>
+	{if_false( is_processing )}
+	<div class="b-action pull-left">
+		<p>
+			Пометьте операцию вывода средств
+		</p>
+		<div class="action">
+			<a href="{url.status_success}" class="btn btn-success">Выполнено</a>
+			<a href="{url.status_refused}" class="btn btn-danger">Не выполнено</a>
+		</div>
 	</div>
-</div>
+	{/if}
 
+{/if}
 {/if}
 

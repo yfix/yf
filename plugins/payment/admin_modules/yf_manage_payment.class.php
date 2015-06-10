@@ -269,18 +269,18 @@ class yf_manage_payment {
 			}, array( 'desc' => 'Провайдер' ) )
 			->text( 'amount'         , 'Сумма'           )
 			->text( 'balance'        , 'Баланс'          )
-		->func( 'status_id', function( $value, $extra, $row ) use ( $_payment_status ){
-			$status_id = $_payment_status[ $value ][ 'name' ];
-			$title     = $_payment_status[ $value ][ 'title' ];
-			switch( $status_id ) {
-				case 'in_progress': $css = 'text-warning'; break;
-				case 'success':     $css = 'text-success'; break;
-				case 'expired':     $css = 'text-danger';  break;
-				case 'refused':     $css = 'text-danger';  break;
-			}
-			$result = sprintf( '<span class="%s">%s</span>', $css, $title );
-			return( $result );
-		}, array( 'desc' => 'статус' ) )
+			->func( 'status_id', function( $value, $extra, $row ) use ( $_payment_status ){
+				$status = &$_payment_status[ $value ];
+				switch( $status[ 'name' ] ) {
+					case 'processing':
+					case 'in_progress': $css = 'text-warning'; break;
+					case 'success':     $css = 'text-success'; break;
+					case 'expired':     $css = 'text-danger';  break;
+					case 'refused':     $css = 'text-danger';  break;
+				}
+				$result = sprintf( '<span class="%s">%s</span>', $css, $status[ 'title' ] );
+				return( $result );
+			}, array( 'desc' => 'статус' ) )
 			->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
 			->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
 			->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )

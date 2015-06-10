@@ -320,16 +320,16 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'account_number' => array(
 						'type'      => 'text',
 						'required'  => true,
-						'minlength' => 8,
-						'maxlength' => 15,
-						'pattern'   => '^\d+$',
+						'minlength' => 11,
+						'maxlength' => 14,
+						'pattern'   => '^(?!8)\d+$',
 					),
 				),
 				'option_validation' => array(
-					'account_number' => 'required|is_natural|length[8,15]',
+					'account_number' => 'required|is_natural|length[11,14]',
 				),
 				'option_validation_message' => array(
-					'account_number' => 'обязательное поле от 8 до 15 цифр, без "+"',
+					'account_number' => 'обязательное поле от 11 до 14 цифр, без "+"',
 				),
 			),
 		),
@@ -384,21 +384,21 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		'2'  => 'refused',
 	);
 	public $_status_server = array(
-		'1'  => 'in_progress', // initiated
-		'2'  => 'in_progress', // external processing
-		'3'  => 'in_progress', // awaiting confirmation
-		'4'  => 'success',     // success
-		'5'  => 'refused',     // void
-		'6'  => 'refused',     // processor decline
-		'7'  => 'refused',     // fraudstop decline
-		'8'  => 'refused',     // mpi decline
+		'1'  => 'processing', // initiated
+		'2'  => 'processing', // external processing
+		'3'  => 'processing', // awaiting confirmation
+		'4'  => 'success',    // success
+		'5'  => 'refused',    // void
+		'6'  => 'refused',    // processor decline
+		'7'  => 'refused',    // fraudstop decline
+		'8'  => 'refused',    // mpi decline
 		'9'  => 'refused',
-		'10' => 'refused',     // system failure
-		'11' => 'refused',     // unsupported protocol operation
-		'12' => 'refused',     // protocol configuration error
-		'13' => 'refused',     // transaction is expired
-		'14' => 'refused',     // transaction rejected by user
-		'15' => 'refused',     // internal decline
+		'10' => 'refused',    // system failure
+		'11' => 'refused',    // unsupported protocol operation
+		'12' => 'refused',    // protocol configuration error
+		'13' => 'refused',    // transaction is expired
+		'14' => 'refused',    // transaction rejected by user
+		'15' => 'refused',    // internal decline
 	);
 
 	public $_type_server = array(
@@ -933,12 +933,6 @@ $payment_api->dump( array( 'var' => $result ));
 			);
 			return( $result );
 		}
-		// result
-		$result = array(
-			'status'         => &$status,
-			'status_message' => &$status_message,
-		);
-		$status = 'refused';
 		// transform reverse
 		foreach( $this->_api_transform_reverse as $from => $to ) {
 			if( $from != $to && isset( $response[ $from ] ) ) {
@@ -946,6 +940,13 @@ $payment_api->dump( array( 'var' => $result ));
 				unset( $response[ $from ] );
 			}
 		}
+		// result
+		$result = array(
+			'status'         => &$status,
+			'status_message' => &$status_message,
+		);
+		$status         = 'refused';
+		$status_message = null;
 		$operation_status_name = 'refused';
 		$state = (int)$response[ 'state' ];
 		switch( $state ) {
@@ -958,13 +959,13 @@ $payment_api->dump( array( 'var' => $result ));
 					$status         = 'success';
 					$status_message = 'Выполнено';
 				} else {
-					$status         = 'in_progress';
+					$status         = 'processing';
 					$status_message = 'Выполнено, но сумма или код операции не совпадают';
 				}
 				break;
-			// in progress
+			// processing
 			case 50:
-				$status         = 'in_progress';
+				$status         = 'processing';
 				$status_message = 'В процессе';
 				break;
 			// fails...
@@ -990,15 +991,19 @@ $payment_api->dump( array( 'var' => $result ));
 				$status_message = 'Ошибка при выполнении ('. $state .' - '. $response[ 'message' ] .')';
 				break;
 		}
+		@$status_message && $response[ 'message' ] = $status_message;
 		$status_message = $_comment .' - '. $status_message;
 		// save response
-		empty( $response[ 'message' ] ) && $response[ 'message' ] = $status_message;
 		$sql_datetime = $payment_api->sql_datetime();
 		$operation_options = array(
+			'processing' => array( array(
+				'provider_name' => 'ecommpay',
+				'datetime'      => $sql_datetime,
+			)),
 			'response' => array( array(
 				'data'     => $response,
 				'datetime' => $sql_datetime,
-			))
+			)),
 		);
 		$operation_update_data = array(
 			'operation_id'    => $operation_id,
@@ -1006,154 +1011,6 @@ $payment_api->dump( array( 'var' => $result ));
 			'options'         => $operation_options,
 		);
 		$payment_api->operation_update( $operation_update_data );
-		return( $result );
-	}
-
-	public function _update_status( $options = null ) {
-		if( !$this->ENABLE ) { return( null ); }
-		// import options
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// check
-		if( empty( $_name ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Статус операции не определен',
-			);
-			return( $result );
-		}
-		if( empty( $_operation_id ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Не определен код операции',
-			);
-			return( $result );
-		}
-		// var
-		$payment_api = $this->payment_api;
-		// operation
-		$operation = $payment_api->operation( array( 'operation_id' => $_operation_id ) );
-		if( empty( $operation ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Операция отсутствует: ' . $_operation_id,
-			);
-			return( $result );
-		}
-		// update status only in_progress
-		$object = $payment_api->get_status( array( 'status_id' => $operation[ 'status_id' ] ) );
-		list( $status_id, $status ) = $object;
-		if( empty( $status_id ) ) { return( $object ); }
-		if( $status[ 'name' ] != 'in_progress' ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Операция уже обработана: ' . $_operation_id,
-			);
-			return( $result );
-		}
-		// progress
-		$object = $payment_api->get_status( array( 'name' => $_name ) );
-		list( $status_id, $status ) = $object;
-		if( empty( $status_id ) ) { return( $object ); }
-		// prepare
-		$sql_datetime = $payment_api->sql_datetime();
-		$data = array(
-			'operation_id'    => $_operation_id,
-			'status_id'       => $status_id,
-			'datetime_update' => $sql_datetime,
-		);
-		!empty( $_is_finish ) && $data[ 'datetime_finish' ] = $sql_datetime;
-		$result = $payment_api->operation_update( $data );
-		return( $result );
-	}
-
-	public function _payout_success( $options = null ) {
-		// import options
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// progress
-		$result = $this->_update_status( array(
-			'operation_id' => $_operation_id,
-			'name'         => 'success',
-			'is_finish'    => true,
-		));
-		return( $result );
-	}
-
-	public function _payout_refused( $options = null ) {
-		// import options
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// progress
-		db()->begin();
-		$result = $this->_payout_amount_revert( $_operation_id );
-			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
-		$result = $this->_payout_balance_update( $_operation_id );
-			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
-		$result = $this->_update_status( array(
-			'operation_id' => $_operation_id,
-			'name'         => 'refused',
-			'is_finish'    => true,
-		));
-			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
-		db()->commit();
-		return( $result );
-	}
-
-	public function _payout_amount_revert( $operation_id ) {
-		$payment_api = $this->payment_api;
-		// operation
-		$operation = $payment_api->operation( array( 'operation_id' => $operation_id ) );
-		if( empty( $operation ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Операция отсутствует: ' . $operation_id,
-			);
-			return( $result );
-		}
-		// amount revert
-		$account_id = $operation[ 'account_id' ];
-		$amount     = $operation[ 'amount' ];
-		// update account
-		$sql_amount   = $payment_api->_number_mysql( $amount );
-		$sql_datetime = $payment_api->sql_datetime();
-		$data = array(
-			'account_id'      => $account_id,
-			'datetime_update' => db()->escape_val( $sql_datetime ),
-			'balance'         => '( balance + ' . $sql_amount . ' )',
-		);
-		$result = $payment_api->balance_update( $data, array( 'is_escape' => false ) );
-		return( $result );
-	}
-
-	public function _payout_balance_update( $operation_id ) {
-		$payment_api = $this->payment_api;
-		// operation
-		$operation = $payment_api->operation( array( 'operation_id' => $operation_id ) );
-		if( empty( $operation ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Операция отсутствует: ' . $operation_id,
-			);
-			return( $result );
-		}
-		$account_id = $operation[ 'account_id' ];
-		// update balance
-		$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
-		if( empty( $object ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Ошибка при обновлении счет',
-			);
-			return( $result );
-		}
-		list( $account_id, $account ) = $object;
-		$balance = $account[ 'balance' ];
-		// prepare
-		$sql_datetime = $payment_api->sql_datetime();
-		$data = array(
-			'operation_id'    => $operation_id,
-			'balance'         => $balance,
-			'datetime_update' => $sql_datetime,
-		);
-		$result = $payment_api->operation_update( $data );
 		return( $result );
 	}
 

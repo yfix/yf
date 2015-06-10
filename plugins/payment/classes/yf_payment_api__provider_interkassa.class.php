@@ -23,6 +23,9 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			),
 			'payout' => array(
 				'visa_p2p_privat_uah',
+				'visa_p2p_notprivat_uah',
+				'mastercard_p2p_privat_uah',
+				'mastercard_p2p_notprivat_uah',
 			),
 		),
 		'api' => array(
@@ -130,8 +133,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'%method' => 'withdraw',
 				),
 				'option' => array(
-					// 'action' => 'process',
-					'action' => 'calc',
+					'action' => 'process',
+					// 'action' => 'calc', // DEBUG
 				),
 			),
 		),
@@ -162,12 +165,12 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			),
 		),
 		'payout' => array(
-			'mastercard_p2p_privat_uah' => array(
-				'title'      => 'MasterCard (Privat24, UAH)',
-				'icon'       => 'mastercard',
+			'visa_p2p_privat_uah' => array(
+				'title'      => 'Visa (Privat24, UAH)',
+				'icon'       => 'visa',
 				'request_option'     => array(
 					'purseId'  => '300301404317',             // Betonmoney UAH
-					'paywayId' => '52efa902e4ae1a780e000001', // mastercard_p2p_privat_uah
+					'paywayId' => '52e7f883e4ae1a2406000000', // visa_p2p_privat_uah
 					'calcKey'  => 'psPayeeAmount',
 				),
 				'amount' => array(
@@ -220,12 +223,70 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'card' => 'обязательное поле от 13 до 16 цифр',
 				),
 			),
-			'visa_p2p_privat_uah' => array(
-				'title'      => 'Visa (Privat24, UAH)',
+			'visa_p2p_notprivat_uah' => array(
+				'title'      => 'Visa (UAH)',
 				'icon'       => 'visa',
 				'request_option'     => array(
 					'purseId'  => '300301404317',             // Betonmoney UAH
-					'paywayId' => '52e7f6bce4ae1adc09000004', // visa_p2p_privat_uah
+					'paywayId' => '52ef9b77e4ae1a3008000000', // visa_p2p_notprivat_uah
+					'calcKey'  => 'psPayeeAmount',
+				),
+				'amount' => array(
+					'min' => 50,
+					'max' => 10000,
+				),
+				// 'is_fee' => true,
+				'fee' => array(
+					'out' => array(
+						'rt'  => 1,
+						'fix' => 20,
+					),
+				),
+				'is_currency' => true,
+				'currency' => array(
+					'UAH' => array(
+						'currency_id' => 'UAH',
+						'active'      => true,
+					),
+				),
+				'request_field' => array(
+					'amount',
+					'paymentNo',
+					'purseId',
+					'paywayId',
+				),
+				'field' => array(
+					'card',
+				),
+				'order' => array(
+					'card',
+				),
+				'option' => array(
+					'card' => 'Номер карты',
+				),
+				'option_validation_js' => array(
+					'card'                       => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 13,
+						'maxlength' => 16,
+						// 'pattern'   => '^\d+$',
+						'pattern'   => '^4(?:(?!(40588)|(14949)|(32339)|(32334)|(32338)|(32340)|(40535)|(73117)|(73121)|(13051)|(40509)|(24600)|(62708)|(76065)|(17649)|(32337)|(62705)|(14943)|(14961)|(14962)|(32575)|(58121)|(58122)|(14939)|(14960)|(24657)|(34156)|(32335)|(23396)|(73118)|(32336)|(40129)|(76339)|(14963)|(73114)|(04030)|(58120)|(10653)))[0-9]{12}(?:[0-9]{3})?$',
+					),
+				),
+				'option_validation' => array(
+					'card' => 'required|length[13,16]|regex:~^4(?:(?!(40588)\|(14949)\|(32339)\|(32334)\|(32338)\|(32340)\|(40535)\|(73117)\|(73121)\|(13051)\|(40509)\|(24600)\|(62708)\|(76065)\|(17649)\|(32337)\|(62705)\|(14943)\|(14961)\|(14962)\|(32575)\|(58121)\|(58122)\|(14939)\|(14960)\|(24657)\|(34156)\|(32335)\|(23396)\|(73118)\|(32336)\|(40129)\|(76339)\|(14963)\|(73114)\|(04030)\|(58120)\|(10653)))[0-9]{12}(?:[0-9]{3})?$~',
+				),
+				'option_validation_message' => array(
+					'card' => 'обязательное поле от 13 до 16 цифр',
+				),
+			),
+			'mastercard_p2p_privat_uah' => array(
+				'title'      => 'MasterCard (Privat24, UAH)',
+				'icon'       => 'mastercard',
+				'request_option'     => array(
+					'purseId'  => '300301404317',             // Betonmoney UAH
+					'paywayId' => '52efa902e4ae1a780e000001', // mastercard_p2p_privat_uah
 					'calcKey'  => 'psPayeeAmount',
 				),
 				'amount' => array(
@@ -278,6 +339,64 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'card' => 'обязательное поле от 13 до 16 цифр',
 				),
 			),
+			'mastercard_p2p_notprivat_uah' => array(
+				'title'      => 'Visa (Privat24, UAH)',
+				'icon'       => 'visa',
+				'request_option'     => array(
+					'purseId'  => '300301404317',             // Betonmoney UAH
+					'paywayId' => '52efa871e4ae1a3008000002', // mastercard_p2p_notprivat_uah
+					'calcKey'  => 'psPayeeAmount',
+				),
+				'amount' => array(
+					'min' => 50,
+					'max' => 10000,
+				),
+				// 'is_fee' => true,
+				'fee' => array(
+					'out' => array(
+						'rt'  => 1,
+						'fix' => 20,
+					),
+				),
+				'is_currency' => true,
+				'currency' => array(
+					'UAH' => array(
+						'currency_id' => 'UAH',
+						'active'      => true,
+					),
+				),
+				'request_field' => array(
+					'amount',
+					'paymentNo',
+					'purseId',
+					'paywayId',
+				),
+				'field' => array(
+					'card',
+				),
+				'order' => array(
+					'card',
+				),
+				'option' => array(
+					'card' => 'Номер карты',
+				),
+				'option_validation_js' => array(
+					'card'                       => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 13,
+						'maxlength' => 16,
+						// 'pattern'   => '^\d+$',
+						'pattern'   => '^(?:(?!(535145)|(536354)|(532957)|(521153)|(530217)|(545708)|(516915)|(558335)|(532032)|(544013)|(521152)|(516874)|(557721)|(545709)|(521857)|(516933)|(670509)|(676246)|(516875)|(516798)|(552324)|(558424)|(516936)|(513399)|(517691)))[5-6]{1}[0-9]{12}(?:[0-9]{3})?$',
+					),
+				),
+				'option_validation' => array(
+					'card' => 'required|length[13,16]|regex:~^(?:(?!(535145)\|(536354)\|(532957)\|(521153)\|(530217)\|(545708)\|(516915)\|(558335)\|(532032)\|(544013)\|(521152)\|(516874)\|(557721)\|(545709)\|(521857)\|(516933)\|(670509)\|(676246)\|(516875)\|(516798)\|(552324)\|(558424)\|(516936)\|(513399)\|(517691)))[5-6]{1}[0-9]{12}(?:[0-9]{3})?$~',
+				),
+				'option_validation_message' => array(
+					'card' => 'обязательное поле от 13 до 16 цифр',
+				),
+			),
 		),
 	);
 
@@ -309,22 +428,22 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 
 	public $_status = array(
 		'success'    => 'success',
-		'new'        => 'in_progress',
-		'waitAccept' => 'in_progress',
-		'process'    => 'in_progress',
+		'new'        => 'processing',
+		'waitAccept' => 'processing',
+		'process'    => 'processing',
 		'fail'       => 'refused',
 		'canceled'   => 'refused',
 	);
 
 	public $_payin_status = array(
-		//     status           description                    финальный
-		2  => 'in_progress', // Ожидает оплаты             - Нет
-		3  => 'in_progress', // Обрабатывается             - Нет
-		4  => 'in_progress', // В процессе возврата        - Нет
-		5  => 'expired',     // Просрочен                  - Да
-		7  => 'success',     // Зачислен                   - Да
-		8  => 'refused',     // Отменен платежной системой - Да
-		9  => 'refused',     // Возвращен                  - Да
+		//     status          description                  финальный
+		2  => 'processing', // Ожидает оплаты             - Нет
+		3  => 'processing', // Обрабатывается             - Нет
+		4  => 'processing', // В процессе возврата        - Нет
+		5  => 'expired',    // Просрочен                  - Да
+		7  => 'success',    // Зачислен                   - Да
+		8  => 'refused',    // Отменен платежной системой - Да
+		9  => 'refused',    // Возвращен                  - Да
 	);
 
 	public $_payin_status_message = array(
@@ -338,18 +457,18 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	);
 
 	public $_payout_status = array(
-		//     status           description                    финальный
-		1  => 'in_progress', // Ожидает проверки модерацией  - Нет
-		2  => 'in_progress', // Проверен модерацией          - Нет
-		3  => 'refused',     // Отозван модерацией           - Да
-		4  => 'in_progress', // Заморожен                    - Нет
-		5  => 'in_progress', // Разморожен                   - Нет
-		6  => 'in_progress', // Обработка платежной системой - Нет
-		7  => 'in_progress', // Зачисление                   - Нет
-		8  => 'success',     // Проведен                     - Да
-		9  => 'refused',     // Отменен                      - Да
-		11 => 'refused',     // Возвращен                    - Да
-		12 => 'in_progress', // Создан, но еще не проведен   - Нет
+		//     status          description                    финальный
+		1  => 'processing', // Ожидает проверки модерацией  - Нет
+		2  => 'processing', // Проверен модерацией          - Нет
+		3  => 'refused',    // Отозван модерацией           - Да
+		4  => 'processing', // Заморожен                    - Нет
+		5  => 'processing', // Разморожен                   - Нет
+		6  => 'processing', // Обработка платежной системой - Нет
+		7  => 'processing', // Зачисление                   - Нет
+		8  => 'success',    // Проведен                     - Да
+		9  => 'refused',    // Отменен                      - Да
+		11 => 'refused',    // Возвращен                    - Да
+		12 => 'processing', // Создан, но еще не проведен   - Нет
 	);
 
 	public $_payout_status_message = array(
@@ -798,10 +917,16 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			is_array( $_request_option ) && $request_option = array_merge_recursive( $request_option, $_request_option );
 			// header
 			is_array( $_header ) && $request_option = array_merge_recursive( $request_option, array( 'header' => $_header ) );
+		// test
+		if( $this->is_test() ) {
+			switch( $_method_id ) {
+				case 'withdraw-process':
+					$request[ 'action' ] = 'calc';
+					break;
+			}
+		}
 		// request
 // DEBUG
-// var_dump( $url, $request, $request_option );
-// exit;
 		$result = $this->_api_request( $url, $request, $request_option );
 // var_dump( $result );
 // exit;
@@ -887,25 +1012,39 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 // DEBUG
 // var_dump( $request );
 $payment_api->dump( array( 'var' => $request ));
+		// update processing
+		$sql_datetime = $payment_api->sql_datetime();
+		$operation_options = array(
+			'processing' => array( array(
+				'provider_name' => 'interkassa',
+				'datetime'      => $sql_datetime,
+			)),
+		);
+		$operation_update_data = array(
+			'operation_id'    => $operation_id,
+			'datetime_update' => $sql_datetime,
+			'options'         => $operation_options,
+		);
+		$payment_api->operation_update( $operation_update_data );
 		// request options
 		$request_option = array(
 			'method_id' => 'withdraw-process',
 			'option'    => $request,
 			'is_debug'  => @$_is_debug,
 		);
-		// $result = $this->api_request( $request_option );
+		$result = $this->api_request( $request_option );
 // DEBUG
-// $payment_api->dump( array( 'var' => $result ));
-		// if( empty( $result ) ) {
-			// $result = array(
-				// 'status'         => false,
-				// 'status_message' => 'Невозможно отправить запрос',
-			// );
-			// return( $result );
-		// }
-		// list( $status, $response ) = $result;
+$payment_api->dump( array( 'var' => $result ));
+		if( empty( $result ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Невозможно отправить запрос',
+			);
+			return( $result );
+		}
+		list( $status, $response ) = $result;
 		// DEBUG
-		//*
+		/*
 		$response = array (
 			'status' => 'ok',
 			'code' => 0,
@@ -913,7 +1052,7 @@ $payment_api->dump( array( 'var' => $request ));
 			array (
 				'withdraw' => array (
 					'state'         => '4',
-					'state'         => '3',
+					'state'         => '1',
 					'result'        => '0',
 					'stateName'     => 'success',
 					'purseId'       => '300301404317',
@@ -963,7 +1102,7 @@ $payment_api->dump( array( 'var' => $request ));
 		$data = $response[ 'data' ][ 'withdraw' ];
 		// result
 		$result = array(
-			'status'         => &$status,
+			'status'         => &$status_name,
 			'status_message' => &$status_message,
 		);
 		// check status
