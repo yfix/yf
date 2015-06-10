@@ -13,12 +13,13 @@ class yf_manage_assets {
 	*/
 	function search_used() {
 		$exclude_paths = array(
+			'*/.git/*',
 			'*/.dev/*',
 			'*/test/*',
 			'*/tests/*',
 			'*/cache/*',
 			'*/test*.class.php',
-			'*/yf_test*.class.php',
+			'*/'.YF_PREFIX.'test*.class.php',
 		);
 		$regex_php = '~[\s](asset|js|css)\([\s"\']+(?P<name>[^\(\)\{\}\$]+)[\s"\']+\)~ims';
 		$raw_in_php = _class('dir')->grep($regex_php, APP_PATH, '*.php', array('exclude_paths' => $exclude_paths));
@@ -27,9 +28,9 @@ class yf_manage_assets {
 			$lines = file($path);
 			foreach ((array)$matches as $raw) {
 				preg_match($regex_php, $raw, $m);
-				$name = trim(trim($m['name']), '"\' \t');
+				$name = trim(trim(trim($m['name']), '"\''));
 				$assets[$name] = $name;
-				$raw = trim(trim($raw), '"\' \t');
+				$raw = trim(trim(trim($raw), '"\''));
 				foreach ((array)$lines as $n => $line) {
 					if (strpos($line, $raw) !== false) {
 						$by_line[$path][$raw][$n] = $n;
@@ -44,9 +45,9 @@ class yf_manage_assets {
 			$lines = file($path);
 			foreach ((array)$matches as $raw) {
 				preg_match($regex_tpl, $raw, $m);
-				$name = trim(trim($m['name']), '"\' \t');
+				$name = trim(trim(trim($m['name']), '"\''));
 				$assets[$name] = $name;
-				$raw = trim(trim($raw), '"\' \t');
+				$raw = trim(trim(trim($raw), '"\''));
 				foreach ((array)$lines as $n => $line) {
 					if (strpos($line, $raw) !== false) {
 						$by_line[$path][$raw][$n] = $n;
@@ -55,31 +56,16 @@ class yf_manage_assets {
 				}
 			}
 		}
-#		foreach ($by_line as $path => $contents) {
-#			foreach ((array)$contents as $raw => $nums) {
-#				foreach ($nums as $n) {
-#					$sources[$path][$raw] = PHP_EOL. implode(array_slice($lines, $n - 3, 6));
-#				}
-#			}
-#		}
 		foreach ((array)$assets as $k => $v) {
 			if (substr($k, 0, 2) === '//' || substr($k, 0, 7) === 'http://' || substr($k, 0, 8) === 'https://') {
 				unset($assets[$k]);
 			}
 		}
 		ksort($assets);
-#		$out[] = 'ASSETS: <pre>'.print_r(_prepare_html($assets), 1).'</pre>';
-#		$out[] = 'BY LINE: <pre>'.print_r(_prepare_html($by_line), 1).'</pre>';
-#		$out[] = 'SOURCES: <pre>'.print_r(_prepare_html($sources), 1).'</pre>';
-#		$out[] = 'PHP: <pre>'.print_r(_prepare_html($raw_in_php), 1).'</pre>';
-#		$out[] = 'TPL: <pre>'.print_r(_prepare_html($raw_in_tpl), 1).'</pre>';
-
-#		return implode(PHP_EOL, $out);
-
 		$table = array();
 		foreach ((array)$assets as $name) {
 			$table[$name] = '<small>'.implode('<br>', array_keys($by_path[$name])).'</small>';
 		}
-		return html()->simple_table($table);
+		return '<h3>Used assets</h3>'.html()->simple_table($table);
 	}
 }
