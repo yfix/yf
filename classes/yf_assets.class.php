@@ -41,6 +41,8 @@ class yf_assets {
 	/** @bool */
 	public $URL_TIMEOUT = 15;
 	/** @bool */
+	public $URL_FILE_CACHE_TTL = 3600;
+	/** @bool */
 	public $USE_CACHE = false;
 	/** @bool */
 	public $CACHE_TTL = 86400;
@@ -149,7 +151,7 @@ class yf_assets {
 		}
 		$cache_path = '/tmp/yf_assets/'.urlencode($url).'.cache';
 		// 24 hours tmp file cache
-		if (file_exists($cache_path) && filemtime($cache_path) > ($this->_time - 86400)) {
+		if (file_exists($cache_path) && filemtime($cache_path) > ($this->_time - $this->URL_FILE_CACHE_TTL)) {
 			return file_get_contents($cache_path);
 		}
 		$cache_dir = dirname($cache_path);
@@ -1536,10 +1538,7 @@ class yf_assets {
 			);
 			$cache_dir = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->CACHE_DIR_TPL));
 		}
-		if (!$this->_cache_dir_created[$out_type][$asset_name]) {
-			!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
-			$this->_cache_dir_created[$out_type][$asset_name] = $cache_dir;
-		}
+		!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
 		return $cache_dir;
 	}
 
