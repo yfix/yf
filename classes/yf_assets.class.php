@@ -20,7 +20,7 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'jquery', 'js', 'css', 'less', 'sass', 'coffee'/*, 'img', 'font'*/, 'bundle', 'asset'
+		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'bundle', 'asset'/*, 'img', 'font'*/
 	);
 	/***/
 	protected $inherit_asset_types_map = array(
@@ -61,7 +61,9 @@ class yf_assets {
 	/** @bool */
 	public $COMBINED_VERSION_TPL = '{year}{month}';
 	/** @bool Do not generate combined file on-the-fly */
-	public $COMBINED_LOCK = true;
+	public $COMBINED_LOCK = false;
+	/** @bool */
+	public $COMBINED_CONFIG = null;
 	/** @bool */
 	public $SHORTEN_LOCAL_URL = true;
 	/** @bool Set to blank to disable */
@@ -112,6 +114,7 @@ class yf_assets {
 			$this->CACHE_TTL = $this->FORCE_LOCAL_TTL;
 		}
 		$this->load_predefined_assets();
+		$this->load_combined_config();
 	}
 
 	/**
@@ -179,6 +182,11 @@ class yf_assets {
 
 	/**
 	*/
+	function load_combined_config() {
+	}
+
+	/**
+	*/
 	function _autoload_libs() {
 		if (isset($this->_autoload_registered)) {
 			return true;
@@ -196,10 +204,6 @@ class yf_assets {
 				break;
 			}
 		}
-#		if (!$path_loaded) {
-#			throw new Exception('Assets: filter libs not loaded as composer autoload not found on these paths: '.implode(', ', $paths).'.'
-#				. PHP_EOL. 'You need to install composer dependencies by running this script from console: %YF_PATH%/.dev/scripts/assets/install_global.sh');
-#		}
 		$this->_autoload_registered = $paths[$path_loaded];
 	}
 
