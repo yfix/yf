@@ -53,5 +53,8 @@ return function() {
 				'jquery-formvalidation',
 			),
 		),
+		'config' => array(
+			'no_cache' => true,
+		),
 	);
 };

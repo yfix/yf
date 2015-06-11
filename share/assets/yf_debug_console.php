@@ -57,6 +57,9 @@ return array(
 			$debug_use_popup ? 'yf_debug_popup' : '',
 		),
 	),
+	'config' => array(
+		'no_cache' => true,
+	),
 );
 
 } : null;

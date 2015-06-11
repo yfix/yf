@@ -112,6 +112,9 @@ END
 	'require' => array(
 		'asset' => 'jquery',
 	),
+	'config' => array(
+		'no_cache' => true,
+	),
 );
 
 };
