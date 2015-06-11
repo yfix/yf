@@ -448,6 +448,12 @@ class yf_manage_payout {
 			return( $this->_user_message( $result ) );
 		}
 		$provider = &$providers_user[ $o_provider_id ];
+		// providers by name
+		$providers_user__by_name = array();
+		foreach( $providers_user as &$item ) {
+			$provider_name = $item[ 'name' ];
+			$providers_user__by_name[ $provider_name ] = &$item;
+		}
 		$provider_name = &$provider[ 'name' ];
 		$provider_class = $payment_api->provider_class( array(
 			'provider_name' => $provider_name,
@@ -510,7 +516,7 @@ class yf_manage_payout {
 		// processing
 		$processing = array();
 		$is_processing_self = false;
-		if( $is_processing && is_array( $o_options[ 'processing' ] ) ) {
+		if( is_array( $o_options[ 'processing' ] ) ) {
 			$processing_log = array_reverse( $o_options[ 'processing' ] );
 			$processing     = reset( $processing_log );
 			if( @$processing[ 'provider_name' ] && $processing[ 'provider_name' ] != $provider_name ) {
@@ -562,6 +568,7 @@ class yf_manage_payout {
 			'provider_name'            => &$provider_name,
 			'provider_class'           => &$provider_class,
 			'providers_user'           => &$providers_user,
+			'providers_user__by_name'  => &$providers_user__by_name,
 			'request'                  => &$request,
 			'method_id'                => &$method_id,
 			'method'                   => &$method,
@@ -628,14 +635,22 @@ class yf_manage_payout {
 			$response = array_reverse( $_response );
 			$content = table( $response, array( 'no_total' => true ) )
 				->text( 'datetime', 'дата' )
-				->func( 'data', function( $value, $extra, $row ) {
-					$value = $row[ 'data' ];
-					$message = trim( $value[ 'message' ] );
-					$message = trim( $value[ 'message' ], '.' );
-					$result = t( $message );
-					isset( $value[ 'state' ] ) && $result .= ' (' . $value[ 'state' ] . ')';
+				->func( 'data', function( $value, $extra, $row ) use( $_provider_name, $_providers_user__by_name  ) {
+					// message
+					$message = @$row[ 'status_message' ] ?: @$row[ 'data' ][ 'message' ];
+					$result = t( trim( trim( $message ), '.,:' ) );
+					// provider
+					$provider_name = @$row[ 'provider_name' ];
+					if( $provider_name && $provider_name != $_provider_name ) {
+						$provider_title = @$_providers_user__by_name[ $provider_name ][ 'title' ];
+						$result .= ' ('. $provider_title .')';
+					}
 					return( $result );
 				}, array( 'desc' => 'сообщение' ) )
+				->func( 'data', function( $value, $extra, $row ) {
+					$result = @$row[ 'state' ] ?: @$row[ 'data' ][ 'state' ] ?: null;
+					return( $result );
+				}, array( 'desc' => 'статус' ) )
 			;
 			$response_last = reset( $response );
 			$response_last = $response_last[ 'data' ];
@@ -800,8 +815,9 @@ EOS;
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// provider interkassa
 		$payment_api = _class( 'payment_api' );
+		$provider_name = 'interkassa';
 		$provider_class = $payment_api->provider_class( array(
-			'provider_name' => 'interkassa',
+			'provider_name' => $provider_name,
 		));
 		if( empty( $provider_class ) ) {
 			$result = array(
@@ -822,6 +838,25 @@ EOS;
 		$status_message = @$status_message ?: @$data[ 'stateName' ];
 		// transaction compile
 		if( @$result[ 'status' ] == 'success' || @$result[ 'status' ] == 'refused' ) {
+			// save response
+			$sql_datetime = $payment_api->sql_datetime();
+			$operation_options = array(
+				'response' => array( array(
+					'datetime'       => $sql_datetime,
+					'provider_name'  => $provider_name,
+					'state'          => $_state,
+					'status'         => $status_name,
+					'status_message' => $status_message,
+					'data'           => $_data,
+				)),
+			);
+			$operation_update_data = array(
+				'operation_id'    => $_operation_id,
+				'datetime_update' => $sql_datetime,
+				'options'         => $operation_options,
+			);
+			$payment_api->operation_update( $operation_update_data );
+			// update status
 			return( $this->status( $result ) );
 		}
 		return( $this->_user_message( $result ) );
@@ -901,7 +936,7 @@ EOS;
 			);
 			return( $this->_user_message( $result ) );
 		}
-		$id = &$response[ 'data' ][ 'data' ][ 'withdraw' ][ 'id' ];
+		$id = &$response[ 'data' ][ 'id' ];
 		if( !@$id || $id < 1 ) {
 			$result = array(
 				'status_message' => 'Номер транзакции не найдена',
@@ -934,7 +969,11 @@ EOS;
 		$data = @$result[ 'data' ];
 		// check status
 		$state = (int)$data[ 'state' ];
-		$result = $this->status_interkassa( array( 'state' => $state ) );
+		$result = $this->status_interkassa( array(
+			'operation_id' => $_operation_id,
+			'state'        => $state,
+			'data'         => $data
+		));
 		return( $result );
 	}
 
