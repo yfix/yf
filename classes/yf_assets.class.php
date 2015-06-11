@@ -52,7 +52,7 @@ class yf_assets {
 	public $CACHE_IMAGES_DATA_URI_MAX_SIZE = 5000;
 	/** @bool */
 	public $URL_TIMEOUT = 5;
-	/** @bool */
+	/** @bool Skip auto-generate cached files on production */
 	public $FORCE_LOCAL_STORAGE = false;
 	/** @bool */
 	public $FORCE_LOCAL_TTL = 86400000; // 1000 days * 24 hours * 60 minutes * 60 seconds == almost forever
@@ -60,6 +60,8 @@ class yf_assets {
 	public $COMBINE = false;
 	/** @bool */
 	public $COMBINED_VERSION_TPL = '{year}{month}';
+	/** @bool Do not generate combined file on-the-fly */
+	public $COMBINED_LOCK = true;
 	/** @bool */
 	public $SHORTEN_LOCAL_URL = true;
 	/** @bool Set to blank to disable */
