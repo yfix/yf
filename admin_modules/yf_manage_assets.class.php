@@ -66,6 +66,7 @@ class yf_manage_assets {
 		foreach ((array)$assets as $name) {
 			$table[$name] = '<small>'.implode('<br>', array_keys($by_path[$name])).'</small>';
 		}
-		return '<h3>Used assets</h3>'.html()->simple_table($table);
+		return '<pre style="color:white;background:black;line-height:1em;font-weight:bold;"><small>'._prepare_html(var_export(array_keys($assets), 1)).'</small></pre>'
+			.'<h3>Used assets</h3>'.html()->simple_table($table);
 	}
 }
