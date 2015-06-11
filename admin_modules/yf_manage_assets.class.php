@@ -182,12 +182,15 @@ class yf_manage_assets {
 		$combined_names = $assets->load_combined_config($force = true);
 #		if (is_callable($combined_names)) { $combined_names = $combined_names(); }
 
+		$cur_lang = conf('language');
+
 		$dir = _class('dir');
 		$enabled_langs = main()->get_data('languages');
 		$main_types = array('user', 'admin');
 		foreach ((array)$main_types as $main_type) {
 			$assets->_override['main_type'] = $main_type;
 			foreach ((array)$enabled_langs as $lang) {
+				conf('language', $lang);
 				$assets->_override['language'] = $lang;
 				foreach ((array)$assets->supported_out_types as $out_type) {
 					foreach ((array)$combined_names as $name) {
@@ -197,6 +200,7 @@ class yf_manage_assets {
 				}
 			}
 		}
+		conf($cur_lang);
 		return $this->cache_info();
 	}
 
@@ -213,14 +217,22 @@ class yf_manage_assets {
 		($cache_dir_tpl = $GLOBALS['PROJECT_CONF']['assets']['CACHE_DIR_TPL']) && $assets->CACHE_DIR_TPL = $cache_dir_tpl;
 #		if (is_callable($combined_names)) { $combined_names = $combined_names(); }
 
+		$cur_lang = conf('language');
+
 		$dir = _class('dir');
 		$enabled_langs = main()->get_data('languages');
 		$main_types = array('user', 'admin');
 		foreach ((array)$main_types as $main_type) {
 			$assets->_override['main_type'] = $main_type;
 			foreach ((array)$enabled_langs as $lang) {
+				conf('language', $lang);
 				$assets->_override['language'] = $lang;
 				foreach ((array)$assets->supported_out_types as $out_type) {
+					$combined_path = $assets->_get_combined_path($out_type);
+					if (file_exists($combined_path)) {
+						unlink($combined_path);
+						unlink($combined_path.'.info');
+					}
 					foreach ((array)$combined_names as $name) {
 						$assets->add_asset($name);
 					}
@@ -237,6 +249,7 @@ class yf_manage_assets {
 				}
 			}
 		}
+		conf($cur_lang);
 		return 'Combined info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small>';
 	}
 
