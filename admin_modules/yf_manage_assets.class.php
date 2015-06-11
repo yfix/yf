@@ -29,8 +29,15 @@ class yf_manage_assets {
 			array('/@object/combine/', 'Combine', 'fa fa-rocket'),
 			array('/@object/upload/', 'Upload', 'fa fa-upload'),
 			array('/@object/settings/', 'Settings', 'fa fa-wrench'),
-		));
+		)). '<br /><br />'.PHP_EOL;
 	}
+
+	/**
+	*/
+	function show() {
+		return redirect('/@object/search_used');
+	}
+
 	/**
 	*/
 	function search_used() {
@@ -81,6 +88,12 @@ class yf_manage_assets {
 		foreach ((array)$assets as $k => $v) {
 			if (substr($k, 0, 2) === '//' || substr($k, 0, 7) === 'http://' || substr($k, 0, 8) === 'https://') {
 				unset($assets[$k]);
+				continue;
+			}
+			$details = _class('assets')->get_asset_details($k);
+			if (isset($details['config']) && $details['config']['no_cache']) {
+				unset($assets[$k]);
+				continue;
 			}
 		}
 		ksort($assets);
@@ -90,12 +103,6 @@ class yf_manage_assets {
 		}
 		return '<pre style="color:white;background:black;line-height:1em;font-weight:bold;"><small>'._prepare_html(var_export(array_keys($assets), 1)).'</small></pre>'
 			.'<h3>Used assets</h3>'.html()->simple_table($table);
-	}
-
-	/**
-	*/
-	function show() {
-		return redirect('/@object/search_used');
 	}
 
 	/**
@@ -127,5 +134,4 @@ class yf_manage_assets {
 	function settings() {
 // TODO
 	}
-
 }
