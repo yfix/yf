@@ -732,6 +732,16 @@ $payment_api->dump(array( 'var' => $result ));
 $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
+		// check operation_id
+		if( $operation_id != $_response[ 'operation_id' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не соответствует код операции',
+			);
+// DEBUG
+$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
 		// check status
 		$state = $_response[ 'status_id' ];
 		$status = $this->_status_server;
@@ -749,11 +759,13 @@ $payment_api->dump( array( 'var' => 'type: ' . $state ));
 		// $_response[ 'amount' ] = $this->_amount( $_response[ 'amount' ], $_response[ 'currency' ], $is_request = false );
 		// update account, operation data
 		$operation_data = array(
+			'operation_id'   => $operation_id,
 			'provider_name'  => 'ecommpay',
-			'response'       => $_response,
-			'payment_type'   => $payment_type,
+			'state'          => $state,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
+			'payment_type'   => $payment_type,
+			'response'       => $_response,
 		);
 // DEBUG
 $payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));
@@ -1004,7 +1016,7 @@ $payment_api->dump( array( 'var' => $result ));
 				'datetime'       => $sql_datetime,
 				'provider_name'  => $provider_name,
 				'state'          => $state,
-				'status'         => $status,
+				'status_name'    => $status,
 				'status_message' => $status_message,
 				'data'           => $response,
 			)),

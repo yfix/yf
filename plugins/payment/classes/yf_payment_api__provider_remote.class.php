@@ -418,7 +418,7 @@ $payment_api->dump(array( 'var' => array(
 	'transaction' => $options,
 )));
 		// response operation id
-		$operation_id = (int)$_response[ 'operation_id' ];
+		$operation_id = (int)( $_operation_id ?: $_response[ 'operation_id' ] );
 		if( empty( $operation_id ) ) {
 			$result = array(
 				'status'         => false,

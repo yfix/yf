@@ -927,6 +927,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		}
 		// request
 // DEBUG
+// var_dump( $url, $request, $request_option );
+// exit;
 		$result = $this->_api_request( $url, $request, $request_option );
 // var_dump( $result );
 // exit;
@@ -1045,7 +1047,7 @@ $payment_api->dump( array( 'var' => $result ));
 		list( $status, $response ) = $result;
 		// DEBUG
 		/*
-		$response = array (
+		$this->is_test() && $response = array (
 			'status' => 'ok',
 			'code' => 0,
 			'data' =>
@@ -1101,6 +1103,11 @@ $payment_api->dump( array( 'var' => $result ));
 			return( $result );
 		}
 		$data[ '_transaction' ] = &$response[ 'data' ][ 'transaction' ];
+		// test mode
+		$this->is_test() && $data += array (
+			'state' => 1,
+			'id'    => 401040, // need real interkassa operation id
+		);
 		// result
 		$result = array(
 			'status'         => &$status_name,
@@ -1116,15 +1123,17 @@ $payment_api->dump( array( 'var' => $result ));
 		// update account, operation data
 		$payment_type = 'payment';
 		$operation_data = array(
+			'operation_id'   => $operation_id,
 			'provider_force' => @$_provider_force,
 			'provider_name'  => 'interkassa',
 			'state'          => $state,
-			'status'         => $status_name,
+			'status_name'    => $status_name,
 			'status_message' => $status_message,
 			'payment_type'   => $payment_type,
 			'response'       => $data,
 		);
 // DEBUG
+// var_dump( $operation_data ); exit;
 $payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));
 		$result = $this->{ '_api_' . $payment_type }( $operation_data );
 // DEBUG
