@@ -210,7 +210,7 @@ class yf_manage_assets {
 				conf('language', $lang);
 				$assets->_override['language'] = $lang;
 				foreach ((array)$assets->supported_out_types as $out_type) {
-					foreach ((array)$combined_names as $name) {
+					foreach ((array)$combined_names[$main_type] as $name) {
 						// echo $main_type.' | '.$lang.' | '.$out_type.' | '.$name.'<br>';
 						$direct_out = $assets->add_asset($name);
 					}
@@ -226,6 +226,7 @@ class yf_manage_assets {
 	*/
 	function combine() {
 		$assets = clone _class('assets');
+		$assets->clean_all();
 		$assets->ADD_IS_DIRECT_OUT = false;
 		$assets->USE_CACHE = true;
 		$assets->COMBINE = true;
@@ -245,12 +246,13 @@ class yf_manage_assets {
 				conf('language', $lang);
 				$assets->_override['language'] = $lang;
 				foreach ((array)$assets->supported_out_types as $out_type) {
+					$assets->clean_all();
 					$combined_path = $assets->_get_combined_path($out_type);
 					if (file_exists($combined_path)) {
 						unlink($combined_path);
 						unlink($combined_path.'.info');
 					}
-					foreach ((array)$combined_names as $name) {
+					foreach ((array)$combined_names[$main_type] as $name) {
 						$assets->add_asset($name);
 					}
 					$out = $assets->show($out_type);
