@@ -1596,4 +1596,19 @@ class yf_html {
 		}
 		return $this->_country_names[$code];
 	}
+
+	/**
+	*/
+	function module_menu($obj, $items = array(), $extra = array()) {
+// TODO: check $obj for methods existance and hide not existing
+// TODO: build auto-menu if items empty
+		$out = array();
+		$selected = '/'.$_GET['object'].'/'.$_GET['action'];
+		$selected2 = '/@object/'.$_GET['action'];
+		foreach ((array)$items as $i) {
+			$is_selected = (strpos($i[0], $selected) === 0) || (strpos($i[0], $selected2) === 0);
+			$out[] = a($i[0], $i[1], $i[2], $i[3], $is_selected ? 'disabled btn-primary' : '', $i[5] ?: '', $i[6]);
+		}
+		return implode($out). PHP_EOL;
+	}
 }
