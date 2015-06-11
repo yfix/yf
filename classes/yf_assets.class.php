@@ -1,14 +1,12 @@
 <?php
 
 // TODO: requirejs integration, auto-generate its config with switcher on/off
-// TODO: cache fill from console, with ability to put into cron task
 // TODO: support for multiple media servers
 // TODO: Fallback to local: window.Foundation || document.write('<script src="/js/vendor/foundation.min.js"><\/script>')
 // TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
 // TODO: move to web accessible folder only after completion to ensure atomicity
 // TODO: decide with images: jpeg, png, gif, sprites
 // TODO: compare versions with require_php_lib('php_semver')
-// TODO: upload to S3, FTP
 
 class yf_assets {
 
@@ -34,14 +32,20 @@ class yf_assets {
 	public $supported_out_types = array(
 		'js', 'css'/*, 'images', 'fonts',*/
 	);
+	/** @bool Set to blank to disable */
+	public $MAIN_TPL_CSS = 'style_css';
+	/** @bool Set to blank to disable */
+	public $MAIN_TPL_JS = 'script_js';
 	/** @bool Needed to ensure smooth transition of existing codebase. If enabled - then each add() call will immediately return generated content */
 	public $ADD_IS_DIRECT_OUT = false;
+	/** @bool */
+	public $URL_TIMEOUT = 15;
 	/** @bool */
 	public $USE_CACHE = false;
 	/** @bool */
 	public $CACHE_TTL = 86400;
 	/** @bool */ // '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
-	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{asset_name}/{version}/{out_type}/'; // shorter variant
+	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{lang}/{asset_name}/{version}/{out_type}/'; // shorter variant
 	/** @bool */
 	public $CACHE_INLINE_ALLOW = true;
 	/** @bool */
@@ -51,7 +55,7 @@ class yf_assets {
 	/** @bool */
 	public $CACHE_IMAGES_DATA_URI_MAX_SIZE = 5000;
 	/** @bool */
-	public $URL_TIMEOUT = 5;
+	public $CACHE_OUT_ADD_MTIME = true;
 	/** @bool Skip auto-generate cached files on production */
 	public $FORCE_LOCAL_STORAGE = false;
 	/** @bool */
@@ -66,14 +70,8 @@ class yf_assets {
 	public $COMBINED_CONFIG = null;
 	/** @bool */
 	public $SHORTEN_LOCAL_URL = true;
-	/** @bool Set to blank to disable */
-	public $MAIN_TPL_CSS = 'style_css';
-	/** @bool Set to blank to disable */
-	public $MAIN_TPL_JS = 'script_js';
 	/** @bool */
 	public $USE_REQUIRE_JS = false;
-	/** @bool */
-	public $CACHE_OUT_ADD_MTIME = true;
 	/** @bool */
 	public $OUT_ADD_ASSET_NAME = true;
 
@@ -118,7 +116,19 @@ class yf_assets {
 	}
 
 	/**
-	* Smart wrapper
+	* Get file by path or url, using local cache inside /tmp/assets/
+	*/
+	public function _file_get($path) {
+		$cache_dir = dirname($cache_path);
+		if (!file_exists($cache_dir)) {
+			mkdir($cache_dir, 0755, $recurse = true);
+		}
+		return $out;
+	}
+
+
+	/**
+	* Smart wrapper with temp file cache
 	*/
 	function _url_get_contents($url) {
 		if (!strlen($url)) {
@@ -133,9 +143,24 @@ class yf_assets {
 			return file_get_contents($path);
 		}
 		$url = (substr($url, 0, 2) === '//' ? 'http:' : ''). $url;
-		return file_get_contents($url, false, stream_context_create(array(
+		// Save syscall
+		if (!isset($this->_time)) {
+			$this->_time = time();
+		}
+		$cache_path = '/tmp/yf_assets/'.urlencode($url).'.cache';
+		// 24 hours tmp file cache
+		if (file_exists($cache_path) && filemtime($cache_path) > ($this->_time - 86400)) {
+			return file_get_contents($cache_path);
+		}
+		$cache_dir = dirname($cache_path);
+		if (!file_exists($cache_dir)) {
+			mkdir($cache_dir, 0755, $recurse = true);
+		}
+		$data = file_get_contents($url, false, stream_context_create(array(
 			'http' => array('timeout' => $this->URL_TIMEOUT)
 		)));
+		file_put_contents($cache_path, $data);
+		return $data;
 	}
 
 	/**
@@ -440,29 +465,6 @@ class yf_assets {
 			return key(array_slice($asset_data['versions'], -1, 1, true));
 		}
 		return null;
-	}
-
-	/**
-	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
-	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
-	* Version constraints can be specified in a few different ways.
-	* Exact version	1.0.2	You can specify the exact version of a package.
-	* Range			   >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
-	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
-	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
-	* Wildcard		 1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
-	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
-	*/
-	public function find_version_best_match($version = '', $avail_versions = array()) {
-		if (empty($avail_versions)) {
-			return null;
-		}
-		if (!$version) {
-			return current(array_slice($avail_versions, -1, 1, true));
-		}
-// TODO: comparing versions and return best match
-#		require_php_lib('php_semver')
-		return $version;
 	}
 
 	/**
@@ -1122,32 +1124,6 @@ class yf_assets {
 			'name' => 'combined',
 			'version' => $this->_get_combined_version($out_type),
 		));
-	}
-
-	/**
-	*/
-	public function show_require_js($params = array()) {
-		$out_type = 'js';
-		$out = array();
-		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
-			if (!is_array($v)) {
-				continue;
-			}
-			$out[$md5] = $this->html_out($out_type, $v['content_type'], $v['content'], (array)$v['params'] + (array)$params);
-		}
-		$this->clean_content($out_type);
-		$out = '
-<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.js" type="text/javascript"></script>
-<script type="text/javascript">
-requirejs.config({ baseUrl: "/templates/"'.MAIN_TYPE.'"/cache/" });
-define("jquery", [], function() { });
-requirejs( [ "module1", "module2" ], function( angular ) {
-	console.log( "modules load" );
-});
-</script>
-				'/*. PHP_EOL. implode(PHP_EOL, $out)*/;
-var_dump($out);
-		return $out;
 	}
 
 	/**
@@ -1860,8 +1836,51 @@ var_dump($out);
 	}
 
 	/**
+	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
+	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
+	* Version constraints can be specified in a few different ways.
+	* Exact version	1.0.2	You can specify the exact version of a package.
+	* Range			   >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
+	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
+	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
+	* Wildcard		 1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
+	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
 	*/
-	public function upload_to() {
-// TODO: upload to S3, FTP
+	public function find_version_best_match($version = '', $avail_versions = array()) {
+		if (empty($avail_versions)) {
+			return null;
+		}
+		if (!$version) {
+			return current(array_slice($avail_versions, -1, 1, true));
+		}
+// TODO: comparing versions and return best match
+#		require_php_lib('php_semver')
+		return $version;
+	}
+
+	/**
+	*/
+	public function show_require_js($params = array()) {
+		$out_type = 'js';
+		$out = array();
+		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
+			if (!is_array($v)) {
+				continue;
+			}
+			$out[$md5] = $this->html_out($out_type, $v['content_type'], $v['content'], (array)$v['params'] + (array)$params);
+		}
+		$this->clean_content($out_type);
+		$out = '
+<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.js" type="text/javascript"></script>
+<script type="text/javascript">
+requirejs.config({ baseUrl: "/templates/"'.MAIN_TYPE.'"/cache/" });
+define("jquery", [], function() { });
+requirejs( [ "module1", "module2" ], function( angular ) {
+	console.log( "modules load" );
+});
+</script>
+				'/*. PHP_EOL. implode(PHP_EOL, $out)*/;
+var_dump($out);
+		return $out;
 	}
 }
