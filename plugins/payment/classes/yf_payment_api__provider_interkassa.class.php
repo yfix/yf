@@ -1092,14 +1092,15 @@ $payment_api->dump( array( 'var' => $result ));
 			),
 			'message' => 'Success',
 		); //*/
-		if( empty( $response[ 'data' ][ 'withdraw' ] ) ) {
+		$data = &$response[ 'data' ][ 'withdraw' ];
+		if( !is_array( $data ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Невозможно декодировать ответа',
 			);
 			return( $result );
 		}
-		$data = $response[ 'data' ][ 'withdraw' ];
+		$data[ '_transaction' ] = &$response[ 'data' ][ 'transaction' ];
 		// result
 		$result = array(
 			'status'         => &$status_name,
@@ -1113,17 +1114,15 @@ $payment_api->dump( array( 'var' => $result ));
 		);
 		$status_message = @$status_message ?: @$data[ 'stateName' ];
 		// update account, operation data
-		$response[ 'operation_id' ] = $operation_id;
-		$response[ 'status'       ] = $status_name;
-		$response[ 'message'      ] = $status_message;
 		$payment_type = 'payment';
 		$operation_data = array(
-			'provider_name'  => 'interkassa',
 			'provider_force' => @$_provider_force,
-			'payment_type'   => $payment_type,
-			'response'       => $response,
-			'status_name'    => $status_name,
+			'provider_name'  => 'interkassa',
+			'state'          => $state,
+			'status'         => $status_name,
 			'status_message' => $status_message,
+			'payment_type'   => $payment_type,
+			'response'       => $data,
 		);
 // DEBUG
 $payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));

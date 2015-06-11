@@ -665,8 +665,12 @@ $payment_api->dump(array( 'var' => array(
 				// update operation
 				$data = array(
 					'response' => array( array(
-						'data'     => $_response,
-						'datetime' => $sql_datetime,
+						'datetime'       => $sql_datetime,
+						'provider_name'  => $provider_name,
+						'state'          => $_state,
+						'status'         => $new_status_name,
+						'status_message' => @$_status_message,
+						'data'           => $_response,
 					))
 				);
 				$data = array(

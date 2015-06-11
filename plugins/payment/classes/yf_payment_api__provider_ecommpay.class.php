@@ -992,17 +992,21 @@ $payment_api->dump( array( 'var' => $result ));
 				break;
 		}
 		@$status_message && $response[ 'message' ] = $status_message;
-		$status_message = $_comment .' - '. $status_message;
 		// save response
 		$sql_datetime = $payment_api->sql_datetime();
+		$provider_name = 'ecommpay';
 		$operation_options = array(
 			'processing' => array( array(
-				'provider_name' => 'ecommpay',
+				'provider_name' => $provider_name,
 				'datetime'      => $sql_datetime,
 			)),
 			'response' => array( array(
-				'data'     => $response,
-				'datetime' => $sql_datetime,
+				'datetime'       => $sql_datetime,
+				'provider_name'  => $provider_name,
+				'state'          => $state,
+				'status'         => $status,
+				'status_message' => $status_message,
+				'data'           => $response,
 			)),
 		);
 		$operation_update_data = array(
@@ -1011,6 +1015,7 @@ $payment_api->dump( array( 'var' => $result ));
 			'options'         => $operation_options,
 		);
 		$payment_api->operation_update( $operation_update_data );
+		$status_message = $_comment .' - '. $status_message;
 		return( $result );
 	}
 
