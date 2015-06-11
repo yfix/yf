@@ -1,5 +1,12 @@
 <?php
 
+// TODO: requirejs integration, auto-generate its config with switcher on/off
+// TODO: cache fill from console, with ability to put into cron task
+// TODO: support for multiple media servers
+// TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
+// TODO: move to web accessible folder only after completion to ensure atomicity
+// TODO: upload to S3, FTP
+
 class yf_manage_assets {
 
 	/**
@@ -120,7 +127,15 @@ class yf_manage_assets {
 			$assets->_override['main_type'] = $main_type;
 			foreach ((array)$enabled_langs as $lang) {
 				$assets->_override['language'] = $lang;
-				$contents[] = implode(PHP_EOL, $dir->rglob($assets->_cache_dir($out_type = '')));
+				$cache_dir = $assets->_cache_dir($out_type = '');
+				$tmp = array();
+				foreach ((array)$dir->rglob($cache_dir) as $path) {
+					if (is_dir($path) || substr($path, -5, 5) === '.info') {
+						continue;
+					}
+					$tmp[] = $path;
+				}
+				$contents[] = implode(PHP_EOL, $tmp);
 			}
 		}
 		return 'Cache info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small>';
@@ -139,7 +154,14 @@ class yf_manage_assets {
 			foreach ((array)$enabled_langs as $lang) {
 				$assets->_override['language'] = $lang;
 				$cache_dir = $assets->_cache_dir($out_type = '');
-				$contents[] = implode(PHP_EOL, $dir->rglob($cache_dir));
+				$tmp = array();
+				foreach ((array)$dir->rglob($cache_dir) as $path) {
+					if (is_dir($path) || substr($path, -5, 5) === '.info') {
+						continue;
+					}
+					$tmp[] = $path;
+				}
+				$contents[] = implode(PHP_EOL, $tmp);
 				$dir->delete($cache_dir, $and_start_dir = true);
 			}
 		}
@@ -151,15 +173,12 @@ class yf_manage_assets {
 	function cache_fill() {
 // TODO: use temp dir while caching
 // TODO: verify that all files are available
-// TODO: use shared tmp file cache to save network bandwidth
 		$assets = clone _class('assets');
 		$assets->ADD_IS_DIRECT_OUT = true;
-#		$assets->USE_CACHE = false;
 		$assets->USE_CACHE = true;
 		$assets->COMBINE = false;
 		$assets->FORCE_LOCAL_STORAGE = false;
 		($cache_dir_tpl = $GLOBALS['PROJECT_CONF']['assets']['CACHE_DIR_TPL']) && $assets->CACHE_DIR_TPL = $cache_dir_tpl;
-		$assets->COMBINED_VERSION_TPL = false;
 		$combined_names = $assets->load_combined_config($force = true);
 #		if (is_callable($combined_names)) { $combined_names = $combined_names(); }
 
@@ -172,21 +191,53 @@ class yf_manage_assets {
 				$assets->_override['language'] = $lang;
 				foreach ((array)$assets->supported_out_types as $out_type) {
 					foreach ((array)$combined_names as $name) {
+						// echo $main_type.' | '.$lang.' | '.$out_type.' | '.$name.'<br>';
 						$direct_out = $assets->add_asset($name);
 					}
-break;
 				}
-break;
 			}
-break;
 		}
 		return $this->cache_info();
 	}
 
 	/**
+	* Force combine assets according to config
 	*/
 	function combine() {
-// TODO: force combine according to config
+		$assets = clone _class('assets');
+		$assets->ADD_IS_DIRECT_OUT = false;
+		$assets->USE_CACHE = true;
+		$assets->COMBINE = true;
+		$combined_names = $assets->load_combined_config($force = true);
+		$assets->FORCE_LOCAL_STORAGE = false;
+		($cache_dir_tpl = $GLOBALS['PROJECT_CONF']['assets']['CACHE_DIR_TPL']) && $assets->CACHE_DIR_TPL = $cache_dir_tpl;
+#		if (is_callable($combined_names)) { $combined_names = $combined_names(); }
+
+		$dir = _class('dir');
+		$enabled_langs = main()->get_data('languages');
+		$main_types = array('user', 'admin');
+		foreach ((array)$main_types as $main_type) {
+			$assets->_override['main_type'] = $main_type;
+			foreach ((array)$enabled_langs as $lang) {
+				$assets->_override['language'] = $lang;
+				foreach ((array)$assets->supported_out_types as $out_type) {
+					foreach ((array)$combined_names as $name) {
+						$assets->add_asset($name);
+					}
+					$out = $assets->show($out_type);
+					$combined_dir = dirname($assets->_get_combined_path($_out_type = ''));
+					$tmp = array();
+					foreach ((array)$dir->rglob($combined_dir) as $path) {
+						if (is_dir($path) || substr($path, -5, 5) === '.info') {
+							continue;
+						}
+						$tmp[] = $path;
+					}
+					$contents[] = implode(PHP_EOL, $tmp);
+				}
+			}
+		}
+		return 'Combined info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small>';
 	}
 
 	/**
