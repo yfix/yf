@@ -516,7 +516,7 @@ class yf_manage_payout {
 		// processing
 		$processing = array();
 		$is_processing_self = false;
-		if( $is_processing && is_array( $o_options[ 'processing' ] ) ) {
+		if( is_array( $o_options[ 'processing' ] ) ) {
 			$processing_log = array_reverse( $o_options[ 'processing' ] );
 			$processing     = reset( $processing_log );
 			if( @$processing[ 'provider_name' ] && $processing[ 'provider_name' ] != $provider_name ) {
