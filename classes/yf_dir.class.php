@@ -31,14 +31,14 @@ class yf_dir {
 	/**
 	* Scan dir using shell find = so far, fastest method
 	*/
-	function find($folder, $pattern) {
+	function find($folder, $pattern = '*') {
 		return explode("\n", trim(shell_exec('find -L '.escapeshellarg($folder).' -iname '.escapeshellarg($pattern))));
 	}
 
 	/**
 	* Recursive glob(). Note that glob and rglob does not search hidden files (starting from dot on linux/unix)
 	*/
-	function rglob($folder, $pattern) {
+	function rglob($folder, $pattern = '*') {
 		$folder = rtrim($folder, '/');
 		// http://php.net/sql_regcase   !Warning! This function has been DEPRECATED as of PHP 5.3.0. Relying on this feature is highly discouraged.
 		if (false === strpos($pattern, '[')) {
@@ -64,7 +64,7 @@ class yf_dir {
 	/**
 	* Fast implementation with old functions opendir/readdir
 	*/
-	function scan_fast($start_dir, $pattern = '') {
+	function scan_fast($start_dir, $pattern = '~.+~') {
 		$files = array();
 		$dh	= @opendir($start_dir);
 		if (!$dh) {
@@ -89,7 +89,7 @@ class yf_dir {
 	/**
 	* Recursive folder search, based on RecursiveDirectoryIterator 
 	*/
-	function riterate($folder, $pattern) {
+	function riterate($folder, $pattern = '~.+~') {
 		$out = array();
 		$flags = FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::FOLLOW_SYMLINKS;
 		foreach(new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder, $flags)), $pattern, RegexIterator::GET_MATCH) as $path => $f) {
