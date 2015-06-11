@@ -19,20 +19,20 @@ class yf_assets {
 	/** @array All filters to apply stored here */
 	protected $filters = array();
 	/***/
-	protected $supported_asset_types = array(
+	public $supported_asset_types = array(
 		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'bundle', 'asset'/*, 'img', 'font'*/
 	);
 	/***/
-	protected $inherit_asset_types_map = array(
+	public $inherit_asset_types_map = array(
 		'js' => array('jquery'),
 	);
 	/***/
-	protected $supported_content_types = array(
+	public $supported_content_types = array(
 		'asset', 'url', 'file', 'inline',
 	);
 	/***/
-	protected $supported_out_types = array(
-		'js', 'css', 'images', 'fonts',
+	public $supported_out_types = array(
+		'js', 'css'/*, 'images', 'fonts',*/
 	);
 	/** @bool Needed to ensure smooth transition of existing codebase. If enabled - then each add() call will immediately return generated content */
 	public $ADD_IS_DIRECT_OUT = false;
@@ -141,8 +141,8 @@ class yf_assets {
 	/**
 	* Main JS from theme stpl
 	*/
-	public function init_js() {
-		if ($this->_init_js_done) {
+	public function init_js($force = false) {
+		if ($this->_init_js_done && !$force) {
 			return false;
 		}
 		$this->_init_js_done = true;
@@ -162,8 +162,8 @@ class yf_assets {
 	/**
 	* Main CSS from theme stpl
 	*/
-	public function init_css() {
-		if ($this->_init_css_done) {
+	public function init_css($force = false) {
+		if ($this->_init_css_done && !$force) {
 			return false;
 		}
 		$this->_init_css_done = true;
@@ -182,7 +182,18 @@ class yf_assets {
 
 	/**
 	*/
-	function load_combined_config() {
+	function load_combined_config($force = false) {
+		if (!$this->COMBINE && !$force) {
+			return false;
+		}
+		if (isset($this->COMBINED_CONFIG) && !$force) {
+			return $this->COMBINED_CONFIG;
+		}
+		$path = CONFIG_PATH. 'assets_combine.php';
+		if (file_exists) {
+			$this->COMBINED_CONFIG = include $path;
+		}
+		return $this->COMBINED_CONFIG;
 	}
 
 	/**
@@ -209,7 +220,7 @@ class yf_assets {
 
 	/**
 	*/
-	public function load_predefined_assets() {
+	public function load_predefined_assets($force = false) {
 		$assets = array();
 		$suffix = '.php';
 		$dir = 'share/assets/';
@@ -1013,10 +1024,7 @@ class yf_assets {
 			return $this->show_require_js($params);
 		}
 		if ($this->COMBINE) {
-			$combined_file = $this->_cache_path($out_type, '', array(
-				'name' => 'combined',
-				'version' => $this->_get_combined_version($out_type),
-			));
+			$combined_file = $this->_get_combined_path($out_type);
 			$md5_inside_combined = array();
 			if (file_exists($combined_file)) {
 				$combined_info = json_decode(file_get_contents($combined_file.'.info'), $as_array = true);
@@ -1105,6 +1113,15 @@ class yf_assets {
 		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
 		$this->clean_content($out_type);
 		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
+	}
+
+	/**
+	*/
+	public function _get_combined_path($out_type) {
+		return $this->_cache_path($out_type, '', array(
+			'name' => 'combined',
+			'version' => $this->_get_combined_version($out_type),
+		));
 	}
 
 	/**
@@ -1206,15 +1223,15 @@ var_dump($out);
 			if (!isset($this->_cache_language)) {
 				$this->_cache_language = conf('language');
 			}
-			$lang = $this->_cache_language;
+			$lang = $this->_override['language'] ?: $this->_cache_language;
 			if (!isset($this->_cache_html5fw)) {
 				$this->_cache_html5fw = conf('language');
 			}
-			$html5fw = $this->_cache_html5fw;
+			$html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
 			if (!isset($this->_cache_date)) {
 				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
 			}
-			$date = $this->_cache_date;
+			$date = $this->_override['date'] ?: $this->_cache_date;
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
@@ -1510,24 +1527,24 @@ var_dump($out);
 			$func = $this->CACHE_DIR_TPL;
 			$cache_dir = $func($out_type, $asset_name, $version);
 		} else {
-			$host = $_SERVER['HTTP_HOST'];
+			$host = $this->_override['host'] ?: $_SERVER['HTTP_HOST'];
 			if (!isset($this->_cache_language)) {
 				$this->_cache_language = conf('language');
 			}
-			$lang = $this->_cache_language;
+			$lang = $this->_override['language'] ?: $this->_cache_language;
 			if (!isset($this->_cache_html5fw)) {
 				$this->_cache_html5fw = conf('language');
 			}
-			$html5fw = $this->_cache_html5fw;
+			$html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
 			if (!isset($this->_cache_date)) {
 				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
 			}
-			$date = $this->_cache_date;
+			$date = $this->_override['date'] ?: $this->_cache_date;
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
 				'{project_path}'=> PROJECT_PATH,
-				'{main_type}'	=> MAIN_TYPE,
+				'{main_type}'	=> $this->_override['main_type'] ?: MAIN_TYPE,
 				'{host}'		=> $host,
 				'{lang}'		=> $lang,
 				'{asset_name}'	=> $asset_name,
