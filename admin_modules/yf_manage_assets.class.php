@@ -94,23 +94,39 @@ class yf_manage_assets {
 			}
 		}
 		$assets = _class('assets');
+		$names_by_type = array(
+			'user'	=> array(),
+			'admin'	=> array(),
+		);
 		foreach ((array)$names as $k => $v) {
 			if (substr($k, 0, 2) === '//' || substr($k, 0, 7) === 'http://' || substr($k, 0, 8) === 'https://') {
 				unset($names[$k]);
 				continue;
 			}
 			$details = $assets->get_asset_details($k);
-			if (isset($details['config']) && $details['config']['no_cache']) {
+			if (empty($details) || (isset($details['config']) && $details['config']['no_cache'])) {
 				unset($names[$k]);
 				continue;
 			}
+			if (isset($details['config']['main_type'])) {
+				$main_type = $details['config']['main_type'];
+				$names_by_type[$main_type][$k] = $v;
+			} else {
+				$names_by_type['user'][$k] = $v;
+				$names_by_type['admin'][$k] = $v;
+			}
 		}
 		ksort($names);
+		ksort($names_by_type['user']);
+		ksort($names_by_type['admin']);
 		$table = array();
 		foreach ((array)$names as $name) {
 			$table[$name] = '<small>'.implode('<br>', array_keys($by_path[$name])).'</small>';
 		}
-		$export = preg_replace('~\s{2}[0-9]+\s+=>\s+~i', '  ', var_export(array_keys($names), 1));
+		$export = '<'.'?php'.PHP_EOL.'return array('.PHP_EOL
+			.'\'user\' => '.preg_replace('~\s{2}[0-9]+\s+=>\s+~i', '  ', var_export(array_keys($names_by_type['user']), 1)). ','. PHP_EOL
+			.'\'admin\' => '.preg_replace('~\s{2}[0-9]+\s+=>\s+~i', '  ', var_export(array_keys($names_by_type['admin']), 1)). ','. PHP_EOL
+			.');';
 		return '<pre style="color:white;background:black;line-height:1em;font-weight:bold;"><small>'._prepare_html($export).'</small></pre>'
 			.'<h3>Used assets</h3>'.html()->simple_table($table);
 	}
@@ -171,6 +187,7 @@ class yf_manage_assets {
 	/**
 	*/
 	function cache_fill() {
+		$this->cache_purge();
 // TODO: use temp dir while caching
 // TODO: verify that all files are available
 		$assets = clone _class('assets');
