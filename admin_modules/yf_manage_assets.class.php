@@ -37,20 +37,20 @@ class yf_manage_assets {
 	*/
 	function _menu() {
 		return html()->module_menu($this, array(
-			array('/@object/search_used/', 'Search used', 'fa fa-search'),
 			array('/@object/cache_info/', 'Cache info', 'fa fa-info'),
 			array('/@object/cache_purge/', 'Cache purge', 'fa fa-recycle'),
 			array('/@object/cache_fill/', 'Cache fill', 'fa fa-refresh'),
 			array('/@object/combine/', 'Combine', 'fa fa-rocket'),
-			array('/@object/upload/', 'Upload', 'fa fa-upload'),
 			array('/@object/settings/', 'Settings', 'fa fa-wrench'),
+			array('/@object/search_used/', 'Search used', 'fa fa-search'),
+			array('/@object/upload/', 'Upload', 'fa fa-upload'),
 		)). '<br /><br />'.PHP_EOL;
 	}
 
 	/**
 	*/
 	function show() {
-		return redirect('/@object/search_used');
+		return redirect('/@object/cache_info');
 	}
 
 	/**
@@ -272,6 +272,10 @@ class yf_manage_assets {
 	/**
 	*/
 	function settings() {
+		$config_path = CONFIG_PATH. 'assets_combine.php';
+		$combined_config = file_get_contents($config_path);
+		return 'Current assets combine config: <b>'.$config_path.'</b>'
+			.'<pre style="color:white;background:black;line-height:1em;font-weight:bold;"><small>'._prepare_html($combined_config).'</small></pre>';
 // TODO: pretty show current important assets settings and optionally allow to change them
 	}
 }
