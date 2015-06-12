@@ -149,8 +149,9 @@ class yf_manage_assets {
 
 		$cache_dir_tpl = preg_replace('~/+~', '/', str_replace('{project_path}', PROJECT_PATH, $assets->CACHE_DIR_TPL));
 		$combined_dir_tpl = str_replace('{asset_name}', 'combined', $cache_dir_tpl).'_combined.*';
-		$contents[] = shell_exec('ls -l '.preg_replace('~\{[^\}]+\}~ims', '*', $combined_dir_tpl));
+		$contents[] = 'Combined info:'.PHP_EOL.shell_exec('ls -l '.preg_replace('~\{[^\}]+\}~ims', '*', $combined_dir_tpl));
 
+		$contents[] = 'Cached assets:'.PHP_EOL;
 		foreach ((array)$main_types as $main_type) {
 			$assets->_override['main_type'] = $main_type;
 			foreach ((array)$enabled_langs as $lang) {
@@ -166,7 +167,7 @@ class yf_manage_assets {
 				$contents[] = implode(PHP_EOL, $tmp);
 			}
 		}
-		$contents[] = PHP_EOL.shell_exec('ls -l /tmp/yf_assets/*');
+		$contents[] = PHP_EOL.'Shared url file cache info:'. PHP_EOL. shell_exec('ls -l /tmp/yf_assets/*');
 		return 'Cache info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small></pre>';
 	}
 
@@ -225,7 +226,7 @@ class yf_manage_assets {
 				foreach ((array)$assets->supported_out_types as $out_type) {
 					foreach ((array)$combined_names[$main_type] as $name) {
 						// echo $main_type.' | '.$lang.' | '.$out_type.' | '.$name.'<br>';
-						$direct_out = $assets->add_asset($name);
+						$direct_out = $assets->add_asset($name, $out_type);
 					}
 				}
 			}
@@ -266,7 +267,7 @@ class yf_manage_assets {
 						unlink($combined_path.'.info');
 					}
 					foreach ((array)$combined_names[$main_type] as $name) {
-						$assets->add_asset($name);
+						$assets->add_asset($name, $out_type);
 					}
 					$out = $assets->show($out_type);
 					$combined_dir = dirname($assets->_get_combined_path($_out_type = ''));
