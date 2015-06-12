@@ -77,6 +77,9 @@ return array('versions' => array('master' => array(
 			'yf_js_popover_fix',
 		),
 	),
+	'config' => array(
+		'no_cache' => true,
+	),
 );
 
 };

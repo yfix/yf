@@ -1,14 +1,12 @@
 <?php
 
 // TODO: requirejs integration, auto-generate its config with switcher on/off
-// TODO: cache fill from console, with ability to put into cron task
 // TODO: support for multiple media servers
 // TODO: Fallback to local: window.Foundation || document.write('<script src="/js/vendor/foundation.min.js"><\/script>')
 // TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
 // TODO: move to web accessible folder only after completion to ensure atomicity
 // TODO: decide with images: jpeg, png, gif, sprites
 // TODO: compare versions with require_php_lib('php_semver')
-// TODO: upload to S3, FTP
 
 class yf_assets {
 
@@ -19,29 +17,37 @@ class yf_assets {
 	/** @array All filters to apply stored here */
 	protected $filters = array();
 	/***/
-	protected $supported_asset_types = array(
-		'jquery', 'js', 'css', 'less', 'sass', 'coffee'/*, 'img', 'font'*/, 'bundle', 'asset'
+	public $supported_asset_types = array(
+		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'bundle', 'asset'/*, 'img', 'font'*/
 	);
 	/***/
-	protected $inherit_asset_types_map = array(
+	public $inherit_asset_types_map = array(
 		'js' => array('jquery'),
 	);
 	/***/
-	protected $supported_content_types = array(
+	public $supported_content_types = array(
 		'asset', 'url', 'file', 'inline',
 	);
 	/***/
-	protected $supported_out_types = array(
-		'js', 'css', 'images', 'fonts',
+	public $supported_out_types = array(
+		'js', 'css'/*, 'images', 'fonts',*/
 	);
+	/** @bool Set to blank to disable */
+	public $MAIN_TPL_CSS = 'style_css';
+	/** @bool Set to blank to disable */
+	public $MAIN_TPL_JS = 'script_js';
 	/** @bool Needed to ensure smooth transition of existing codebase. If enabled - then each add() call will immediately return generated content */
 	public $ADD_IS_DIRECT_OUT = false;
+	/** @bool */
+	public $URL_TIMEOUT = 15;
+	/** @bool */
+	public $URL_FILE_CACHE_TTL = 3600;
 	/** @bool */
 	public $USE_CACHE = false;
 	/** @bool */
 	public $CACHE_TTL = 86400;
 	/** @bool */ // '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
-	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{asset_name}/{version}/{out_type}/'; // shorter variant
+	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{lang}/{asset_name}/{version}/{out_type}/'; // shorter variant
 	/** @bool */
 	public $CACHE_INLINE_ALLOW = true;
 	/** @bool */
@@ -51,8 +57,8 @@ class yf_assets {
 	/** @bool */
 	public $CACHE_IMAGES_DATA_URI_MAX_SIZE = 5000;
 	/** @bool */
-	public $URL_TIMEOUT = 5;
-	/** @bool */
+	public $CACHE_OUT_ADD_MTIME = true;
+	/** @bool Skip auto-generate cached files on production */
 	public $FORCE_LOCAL_STORAGE = false;
 	/** @bool */
 	public $FORCE_LOCAL_TTL = 86400000; // 1000 days * 24 hours * 60 minutes * 60 seconds == almost forever
@@ -60,16 +66,14 @@ class yf_assets {
 	public $COMBINE = false;
 	/** @bool */
 	public $COMBINED_VERSION_TPL = '{year}{month}';
+	/** @bool Do not generate combined file on-the-fly */
+	public $COMBINED_LOCK = false;
+	/** @bool */
+	public $COMBINED_CONFIG = null;
 	/** @bool */
 	public $SHORTEN_LOCAL_URL = true;
-	/** @bool Set to blank to disable */
-	public $MAIN_TPL_CSS = 'style_css';
-	/** @bool Set to blank to disable */
-	public $MAIN_TPL_JS = 'script_js';
 	/** @bool */
 	public $USE_REQUIRE_JS = false;
-	/** @bool */
-	public $CACHE_OUT_ADD_MTIME = true;
 	/** @bool */
 	public $OUT_ADD_ASSET_NAME = true;
 
@@ -110,10 +114,23 @@ class yf_assets {
 			$this->CACHE_TTL = $this->FORCE_LOCAL_TTL;
 		}
 		$this->load_predefined_assets();
+		$this->load_combined_config();
 	}
 
 	/**
-	* Smart wrapper
+	* Get file by path or url, using local cache inside /tmp/assets/
+	*/
+	public function _file_get($path) {
+		$cache_dir = dirname($cache_path);
+		if (!file_exists($cache_dir)) {
+			mkdir($cache_dir, 0755, $recurse = true);
+		}
+		return $out;
+	}
+
+
+	/**
+	* Smart wrapper with temp file cache
 	*/
 	function _url_get_contents($url) {
 		if (!strlen($url)) {
@@ -128,16 +145,31 @@ class yf_assets {
 			return file_get_contents($path);
 		}
 		$url = (substr($url, 0, 2) === '//' ? 'http:' : ''). $url;
-		return file_get_contents($url, false, stream_context_create(array(
+		// Save syscall
+		if (!isset($this->_time)) {
+			$this->_time = time();
+		}
+		$cache_path = '/tmp/yf_assets/'.urlencode($url).'.cache';
+		// 24 hours tmp file cache
+		if (file_exists($cache_path) && filemtime($cache_path) > ($this->_time - $this->URL_FILE_CACHE_TTL)) {
+			return file_get_contents($cache_path);
+		}
+		$cache_dir = dirname($cache_path);
+		if (!file_exists($cache_dir)) {
+			mkdir($cache_dir, 0755, $recurse = true);
+		}
+		$data = file_get_contents($url, false, stream_context_create(array(
 			'http' => array('timeout' => $this->URL_TIMEOUT)
 		)));
+		file_put_contents($cache_path, $data);
+		return $data;
 	}
 
 	/**
 	* Main JS from theme stpl
 	*/
-	public function init_js() {
-		if ($this->_init_js_done) {
+	public function init_js($force = false) {
+		if ($this->_init_js_done && !$force) {
 			return false;
 		}
 		$this->_init_js_done = true;
@@ -157,8 +189,8 @@ class yf_assets {
 	/**
 	* Main CSS from theme stpl
 	*/
-	public function init_css() {
-		if ($this->_init_css_done) {
+	public function init_css($force = false) {
+		if ($this->_init_css_done && !$force) {
 			return false;
 		}
 		$this->_init_css_done = true;
@@ -173,6 +205,22 @@ class yf_assets {
 		} else {
 			$this->add($main_style_css, 'css', 'inline');
 		}
+	}
+
+	/**
+	*/
+	function load_combined_config($force = false) {
+		if (!$this->COMBINE && !$force) {
+			return false;
+		}
+		if (isset($this->COMBINED_CONFIG) && !$force) {
+			return $this->COMBINED_CONFIG;
+		}
+		$path = CONFIG_PATH. 'assets_combine.php';
+		if (file_exists) {
+			$this->COMBINED_CONFIG = include $path;
+		}
+		return $this->COMBINED_CONFIG;
 	}
 
 	/**
@@ -194,16 +242,12 @@ class yf_assets {
 				break;
 			}
 		}
-#		if (!$path_loaded) {
-#			throw new Exception('Assets: filter libs not loaded as composer autoload not found on these paths: '.implode(', ', $paths).'.'
-#				. PHP_EOL. 'You need to install composer dependencies by running this script from console: %YF_PATH%/.dev/scripts/assets/install_global.sh');
-#		}
 		$this->_autoload_registered = $paths[$path_loaded];
 	}
 
 	/**
 	*/
-	public function load_predefined_assets() {
+	public function load_predefined_assets($force = false) {
 		$assets = array();
 		$suffix = '.php';
 		$dir = 'share/assets/';
@@ -423,29 +467,6 @@ class yf_assets {
 			return key(array_slice($asset_data['versions'], -1, 1, true));
 		}
 		return null;
-	}
-
-	/**
-	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
-	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
-	* Version constraints can be specified in a few different ways.
-	* Exact version	1.0.2	You can specify the exact version of a package.
-	* Range			   >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
-	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
-	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
-	* Wildcard		 1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
-	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
-	*/
-	public function find_version_best_match($version = '', $avail_versions = array()) {
-		if (empty($avail_versions)) {
-			return null;
-		}
-		if (!$version) {
-			return current(array_slice($avail_versions, -1, 1, true));
-		}
-// TODO: comparing versions and return best match
-#		require_php_lib('php_semver')
-		return $version;
 	}
 
 	/**
@@ -1007,10 +1028,7 @@ class yf_assets {
 			return $this->show_require_js($params);
 		}
 		if ($this->COMBINE) {
-			$combined_file = $this->_cache_path($out_type, '', array(
-				'name' => 'combined',
-				'version' => $this->_get_combined_version($out_type),
-			));
+			$combined_file = $this->_get_combined_path($out_type);
 			$md5_inside_combined = array();
 			if (file_exists($combined_file)) {
 				$combined_info = json_decode(file_get_contents($combined_file.'.info'), $as_array = true);
@@ -1103,28 +1121,11 @@ class yf_assets {
 
 	/**
 	*/
-	public function show_require_js($params = array()) {
-		$out_type = 'js';
-		$out = array();
-		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
-			if (!is_array($v)) {
-				continue;
-			}
-			$out[$md5] = $this->html_out($out_type, $v['content_type'], $v['content'], (array)$v['params'] + (array)$params);
-		}
-		$this->clean_content($out_type);
-		$out = '
-<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.js" type="text/javascript"></script>
-<script type="text/javascript">
-requirejs.config({ baseUrl: "/templates/"'.MAIN_TYPE.'"/cache/" });
-define("jquery", [], function() { });
-requirejs( [ "module1", "module2" ], function( angular ) {
-	console.log( "modules load" );
-});
-</script>
-				'/*. PHP_EOL. implode(PHP_EOL, $out)*/;
-var_dump($out);
-		return $out;
+	public function _get_combined_path($out_type) {
+		return $this->_cache_path($out_type, '', array(
+			'name' => 'combined',
+			'version' => $this->_get_combined_version($out_type),
+		));
 	}
 
 	/**
@@ -1200,15 +1201,15 @@ var_dump($out);
 			if (!isset($this->_cache_language)) {
 				$this->_cache_language = conf('language');
 			}
-			$lang = $this->_cache_language;
+			$lang = $this->_override['language'] ?: $this->_cache_language;
 			if (!isset($this->_cache_html5fw)) {
 				$this->_cache_html5fw = conf('language');
 			}
-			$html5fw = $this->_cache_html5fw;
+			$html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
 			if (!isset($this->_cache_date)) {
 				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
 			}
-			$date = $this->_cache_date;
+			$date = $this->_override['date'] ?: $this->_cache_date;
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
@@ -1504,24 +1505,24 @@ var_dump($out);
 			$func = $this->CACHE_DIR_TPL;
 			$cache_dir = $func($out_type, $asset_name, $version);
 		} else {
-			$host = $_SERVER['HTTP_HOST'];
+			$host = $this->_override['host'] ?: $_SERVER['HTTP_HOST'];
 			if (!isset($this->_cache_language)) {
 				$this->_cache_language = conf('language');
 			}
-			$lang = $this->_cache_language;
+			$lang = $this->_override['language'] ?: $this->_cache_language;
 			if (!isset($this->_cache_html5fw)) {
 				$this->_cache_html5fw = conf('language');
 			}
-			$html5fw = $this->_cache_html5fw;
+			$html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
 			if (!isset($this->_cache_date)) {
 				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
 			}
-			$date = $this->_cache_date;
+			$date = $this->_override['date'] ?: $this->_cache_date;
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
 				'{project_path}'=> PROJECT_PATH,
-				'{main_type}'	=> MAIN_TYPE,
+				'{main_type}'	=> $this->_override['main_type'] ?: MAIN_TYPE,
 				'{host}'		=> $host,
 				'{lang}'		=> $lang,
 				'{asset_name}'	=> $asset_name,
@@ -1537,10 +1538,7 @@ var_dump($out);
 			);
 			$cache_dir = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->CACHE_DIR_TPL));
 		}
-		if (!$this->_cache_dir_created[$out_type][$asset_name]) {
-			!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
-			$this->_cache_dir_created[$out_type][$asset_name] = $cache_dir;
-		}
+		!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
 		return $cache_dir;
 	}
 
@@ -1837,8 +1835,51 @@ var_dump($out);
 	}
 
 	/**
+	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
+	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
+	* Version constraints can be specified in a few different ways.
+	* Exact version	1.0.2	You can specify the exact version of a package.
+	* Range			   >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
+	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
+	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
+	* Wildcard		 1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
+	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
 	*/
-	public function upload_to() {
-// TODO: upload to S3, FTP
+	public function find_version_best_match($version = '', $avail_versions = array()) {
+		if (empty($avail_versions)) {
+			return null;
+		}
+		if (!$version) {
+			return current(array_slice($avail_versions, -1, 1, true));
+		}
+// TODO: comparing versions and return best match
+#		require_php_lib('php_semver')
+		return $version;
+	}
+
+	/**
+	*/
+	public function show_require_js($params = array()) {
+		$out_type = 'js';
+		$out = array();
+		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
+			if (!is_array($v)) {
+				continue;
+			}
+			$out[$md5] = $this->html_out($out_type, $v['content_type'], $v['content'], (array)$v['params'] + (array)$params);
+		}
+		$this->clean_content($out_type);
+		$out = '
+<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.js" type="text/javascript"></script>
+<script type="text/javascript">
+requirejs.config({ baseUrl: "/templates/"'.MAIN_TYPE.'"/cache/" });
+define("jquery", [], function() { });
+requirejs( [ "module1", "module2" ], function( angular ) {
+	console.log( "modules load" );
+});
+</script>
+				'/*. PHP_EOL. implode(PHP_EOL, $out)*/;
+var_dump($out);
+		return $out;
 	}
 }
