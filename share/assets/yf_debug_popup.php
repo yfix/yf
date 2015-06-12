@@ -62,4 +62,7 @@ return array(
 	}
 END
 	))),
+	'config' => array(
+		'no_cache' => true,
+	),
 );
