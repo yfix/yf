@@ -136,6 +136,10 @@ class yf_assets {
 		if (!strlen($url)) {
 			return false;
 		}
+		// Possibly inline code
+		if (false !== strpos($url, "\t") && false !== strpos($url, PHP_EOL) || strlen($url) >= 512) {
+			return $url;
+		}
 		// Do not use web server for self-accessible paths
 		if (substr($url, 0, strlen(MEDIA_PATH)) === MEDIA_PATH) {
 			$path = PROJECT_PATH. substr($url, strlen(MEDIA_PATH));
@@ -151,17 +155,19 @@ class yf_assets {
 		}
 		$cache_path = '/tmp/yf_assets/'.urlencode($url).'.cache';
 		// 24 hours tmp file cache
-		if (file_exists($cache_path) && filemtime($cache_path) > ($this->_time - $this->URL_FILE_CACHE_TTL)) {
+		if ($cache_path && file_exists($cache_path) && filemtime($cache_path) > ($this->_time - $this->URL_FILE_CACHE_TTL)) {
 			return file_get_contents($cache_path);
-		}
-		$cache_dir = dirname($cache_path);
-		if (!file_exists($cache_dir)) {
-			mkdir($cache_dir, 0755, $recurse = true);
 		}
 		$data = file_get_contents($url, false, stream_context_create(array(
 			'http' => array('timeout' => $this->URL_TIMEOUT)
 		)));
-		file_put_contents($cache_path, $data);
+		if ($cache_path) {
+			$cache_dir = dirname($cache_path);
+			if (!file_exists($cache_dir)) {
+				mkdir($cache_dir, 0755, $recurse = true);
+			}
+			file_put_contents($cache_path, $data);
+		}
 		return $data;
 	}
 
@@ -1199,46 +1205,6 @@ class yf_assets {
 	}
 
 	/**
-	*/
-	public function _get_combined_version($out_type = '') {
-		if (!is_string($this->COMBINED_VERSION_TPL) && is_callable($this->COMBINED_VERSION_TPL)) {
-			$func = $this->COMBINED_VERSION_TPL;
-			$version = $func($out_type, $this);
-		} else {
-			if (!isset($this->_cache_language)) {
-				$this->_cache_language = conf('language');
-			}
-			$lang = $this->_override['language'] ?: $this->_cache_language;
-			if (!isset($this->_cache_html5fw)) {
-				$this->_cache_html5fw = conf('language');
-			}
-			$html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
-			if (!isset($this->_cache_date)) {
-				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
-			}
-			$date = $this->_override['date'] ?: $this->_cache_date;
-			$replace = array(
-				'{site_path}'	=> SITE_PATH,
-				'{app_path}'	=> APP_PATH,
-				'{project_path}'=> PROJECT_PATH,
-				'{main_type}'	=> MAIN_TYPE,
-				'{host}'		=> $_SERVER['HTTP_HOST'],
-				'{lang}'		=> $lang,
-				'{out_type}'	=> $out_type,
-				'{html5fw}'		=> $html5fw,
-				'{year}'		=> $date[0],
-				'{month}'		=> $date[1],
-				'{day}'			=> $date[2],
-				'{hour}'		=> $date[3],
-				'{minute}'		=> $date[4],
-				'{second}'		=> $date[5],
-			);
-			$version = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->COMBINED_VERSION_TPL));
-		}
-		return $version;
-	}
-
-	/**
 	* Shortcut
 	*/
 	public function show_js($params = array()) {
@@ -1512,24 +1478,23 @@ class yf_assets {
 			$func = $this->CACHE_DIR_TPL;
 			$cache_dir = $func($out_type, $asset_name, $version, $this);
 		} else {
+			$main_type = $this->_override['main_type'] ?: MAIN_TYPE;
 			$host = $this->_override['host'] ?: $_SERVER['HTTP_HOST'];
-			if (!isset($this->_cache_language)) {
-				$this->_cache_language = conf('language');
-			}
+
+			!isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
 			$lang = $this->_override['language'] ?: $this->_cache_language;
-			if (!isset($this->_cache_html5fw)) {
-				$this->_cache_html5fw = conf('language');
-			}
+
+			!isset($this->_cache_html5fw) && $this->_cache_html5fw = conf('css_framework') ?: 'bs3';
 			$html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
-			if (!isset($this->_cache_date)) {
-				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
-			}
+
+			!isset($this->_cache_date) && $this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
 			$date = $this->_override['date'] ?: $this->_cache_date;
+
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
 				'{project_path}'=> PROJECT_PATH,
-				'{main_type}'	=> $this->_override['main_type'] ?: MAIN_TYPE,
+				'{main_type}'	=> $main_type,
 				'{host}'		=> $host,
 				'{lang}'		=> $lang,
 				'{asset_name}'	=> $asset_name,
@@ -1547,6 +1512,46 @@ class yf_assets {
 		}
 		!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
 		return $cache_dir;
+	}
+
+	/**
+	*/
+	public function _get_combined_version($out_type = '') {
+		if (!is_string($this->COMBINED_VERSION_TPL) && is_callable($this->COMBINED_VERSION_TPL)) {
+			$func = $this->COMBINED_VERSION_TPL;
+			$version = $func($out_type, $this);
+		} else {
+			$main_type = $this->_override['main_type'] ?: MAIN_TYPE;
+			$host = $this->_override['host'] ?: $_SERVER['HTTP_HOST'];
+
+			!isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
+			$lang = $this->_override['language'] ?: $this->_cache_language;
+
+			!isset($this->_cache_html5fw) && $this->_cache_html5fw = conf('css_framework') ?: 'bs3';
+			$html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
+
+			!isset($this->_cache_date) && $this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
+			$date = $this->_override['date'] ?: $this->_cache_date;
+
+			$replace = array(
+				'{site_path}'	=> SITE_PATH,
+				'{app_path}'	=> APP_PATH,
+				'{project_path}'=> PROJECT_PATH,
+				'{main_type}'	=> MAIN_TYPE,
+				'{host}'		=> $host,
+				'{lang}'		=> $lang,
+				'{out_type}'	=> $out_type,
+				'{html5fw}'		=> $html5fw,
+				'{year}'		=> $date[0],
+				'{month}'		=> $date[1],
+				'{day}'			=> $date[2],
+				'{hour}'		=> $date[3],
+				'{minute}'		=> $date[4],
+				'{second}'		=> $date[5],
+			);
+			$version = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->COMBINED_VERSION_TPL));
+		}
+		return $version;
 	}
 
 	/**
