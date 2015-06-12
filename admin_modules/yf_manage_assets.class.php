@@ -143,30 +143,21 @@ class yf_manage_assets {
 	function cache_info() {
 		$assets = clone _class('assets');
 		$assets->USE_CACHE = false;
-		$dir = _class('dir');
-		$enabled_langs = main()->get_data('languages');
-		$main_types = array('user', 'admin');
 
 		$cache_dir_tpl = preg_replace('~/+~', '/', str_replace('{project_path}', PROJECT_PATH, $assets->CACHE_DIR_TPL));
 		$combined_dir_tpl = str_replace('{asset_name}', 'combined', $cache_dir_tpl).'_combined.*';
 		$contents[] = 'Combined info:'.PHP_EOL.shell_exec('ls -l '.preg_replace('~\{[^\}]+\}~ims', '*', $combined_dir_tpl));
 
-		$contents[] = 'Cached assets:'.PHP_EOL;
-		foreach ((array)$main_types as $main_type) {
-			$assets->_override['main_type'] = $main_type;
-			foreach ((array)$enabled_langs as $lang) {
-				$assets->_override['language'] = $lang;
-				$cache_dir = $assets->_cache_dir($out_type = '');
-				$tmp = array();
-				foreach ((array)$dir->rglob($cache_dir) as $path) {
-					if (is_dir($path) || substr($path, -5, 5) === '.info') {
-						continue;
-					}
-					$tmp[] = $path;
-				}
-				$contents[] = implode(PHP_EOL, $tmp);
+		$cache_dir = substr($cache_dir_tpl, 0, strpos($cache_dir_tpl, '{'));
+		$tmp = array();
+		foreach ((array)_class('dir')->rglob($cache_dir) as $path) {
+			if (is_dir($path) || substr($path, -5, 5) === '.info') {
+				continue;
 			}
+			$tmp[] = $path;
 		}
+		$contents[] = 'Cached assets:'.PHP_EOL.implode(PHP_EOL, $tmp);
+
 		$contents[] = PHP_EOL.'Shared url file cache info:'. PHP_EOL. shell_exec('ls -l /tmp/yf_assets/*');
 		return 'Cache info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small></pre>';
 	}
@@ -176,26 +167,12 @@ class yf_manage_assets {
 	function cache_purge() {
 		$assets = clone _class('assets');
 		$assets->USE_CACHE = false;
-		$dir = _class('dir');
-		$enabled_langs = main()->get_data('languages');
-		$main_types = array('user', 'admin');
-		foreach ((array)$main_types as $main_type) {
-			$assets->_override['main_type'] = $main_type;
-			foreach ((array)$enabled_langs as $lang) {
-				$assets->_override['language'] = $lang;
-				$cache_dir = $assets->_cache_dir($out_type = '');
-				$tmp = array();
-				foreach ((array)$dir->rglob($cache_dir) as $path) {
-					if (is_dir($path) || substr($path, -5, 5) === '.info') {
-						continue;
-					}
-					$tmp[] = $path;
-				}
-				$contents[] = implode(PHP_EOL, $tmp);
-				$dir->delete($cache_dir, $and_start_dir = true);
-			}
+		$cache_dir_tpl = preg_replace('~/+~', '/', str_replace('{project_path}', PROJECT_PATH, $assets->CACHE_DIR_TPL));
+		$cache_dir = substr($cache_dir_tpl, 0, strpos($cache_dir_tpl, '{')) ?: $cache_dir_tpl;
+		if (substr($cache_dir, 0, strlen(PROJECT_PATH)) === PROJECT_PATH && strlen($cache_dir) > strlen(PROJECT_PATH)) {
+			_class('dir')->delete($cache_dir, $and_start_dir = true);
 		}
-		return 'Deleted: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small></pre>';
+		return 'Done';
 	}
 
 	/**
@@ -231,7 +208,7 @@ class yf_manage_assets {
 				}
 			}
 		}
-		conf($cur_lang);
+		conf('language', $cur_lang);
 		return $this->cache_info();
 	}
 
@@ -282,7 +259,7 @@ class yf_manage_assets {
 				}
 			}
 		}
-		conf($cur_lang);
+		conf('language', $cur_lang);
 		return 'Combined info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small></pre>';
 	}
 
