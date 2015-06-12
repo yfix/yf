@@ -533,11 +533,11 @@ class yf_manage_payout {
 				@list( $processing_provider_id, $processing_provider ) = $payment_api->get_provider( array(
 					'name' => $processing[ 'provider_name' ],
 				));
-				if( $processing_provider ) {
+				if( $is_processing && $processing_provider ) {
 					$html_status_title = $status_title . ' ('. $processing_provider[ 'title' ] .')';
 				}
 			} else {
-				$is_processing_self = true;
+				$is_processing_self = $is_processing;
 			}
 		}
 		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $html_status_title );

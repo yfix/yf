@@ -957,14 +957,12 @@ $payment_api->dump( array( 'var' => $result ));
 			'status'         => &$status,
 			'status_message' => &$status_message,
 		);
-		$status         = 'refused';
+		$status         = 'in_progress';
 		$status_message = null;
-		$operation_status_name = 'refused';
 		$state = (int)$response[ 'state' ];
 		switch( $state ) {
 			// success
 			case 0:
-				$operation_status_name = 'success';
 				if( $response[ 'amount' ] == $_amount
 					&& $response[ 'operation_id' ] == $operation_id
 				) {
@@ -987,6 +985,9 @@ $payment_api->dump( array( 'var' => $result ));
 			case 101:
 				$status_message = 'Неверный номер карты ' . $request[ 'card' ];
 				break;
+			case 121:
+				$status_message = 'Обработка заказа невозможна с данным id: ' . $operation_id;
+				break;
 			case 126:
 				$status_message = 'Неверный номер телефона ' . $request[ 'sender_phone' ];
 				break;
@@ -1000,7 +1001,7 @@ $payment_api->dump( array( 'var' => $result ));
 				$status_message = 'Выплата уже произведена ранее';
 				break;
 			default:
-				$status_message = 'Ошибка при выполнении ('. $state .' - '. $response[ 'message' ] .')';
+				$status_message = 'Ошибка: '. $response[ 'message' ];
 				break;
 		}
 		@$status_message && $response[ 'message' ] = $status_message;
@@ -1027,7 +1028,6 @@ $payment_api->dump( array( 'var' => $result ));
 			'options'         => $operation_options,
 		);
 		$payment_api->operation_update( $operation_update_data );
-		$status_message = $_comment .' - '. $status_message;
 		return( $result );
 	}
 

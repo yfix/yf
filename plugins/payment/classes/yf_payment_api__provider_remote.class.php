@@ -720,10 +720,11 @@ $payment_api->dump(array( 'var' => array(
 				),
 			));
 		}
-		@$status_message && $status_message .= ': ';
-		$status_message .= $operation[ 'title' ] .', сумма: '. $amount;
-		if( !empty( $payment_api->currency[ 'short' ] ) ) {
-			$status_message .= ' ' . $payment_api->currency[ 'short' ];
+		if( ! @$status_message ) {
+			$status_message = $operation[ 'title' ] .', сумма: '. $amount;
+			if( !empty( $payment_api->currency[ 'short' ] ) ) {
+				$status_message .= ' ' . $payment_api->currency[ 'short' ];
+			}
 		}
 		$result = array(
 			'status'         => true,
