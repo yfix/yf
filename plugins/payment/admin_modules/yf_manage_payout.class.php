@@ -487,6 +487,16 @@ class yf_manage_payout {
 			'type'      => 'payout',
 			'method_id' => $method_id,
 		));
+		// detect card
+		$card = @$request[ 'options' ][ 'card' ];
+		$result = $this->interkassa_detect_card( array(
+			'card' => $card,
+		));
+		@list( $card_method_id, $card_method ) = $result;
+		$html_card_title = null;
+		if( $card_method_id ) {
+			$html_card_title = $card_method[ 'title' ];
+		}
 		// check operation status
 		$statuses = $payment_api->get_status();
 		if( empty( $statuses[ $o_status_id ] ) ) {
@@ -523,11 +533,11 @@ class yf_manage_payout {
 				@list( $processing_provider_id, $processing_provider ) = $payment_api->get_provider( array(
 					'name' => $processing[ 'provider_name' ],
 				));
-				if( $processing_provider ) {
+				if( $is_processing && $processing_provider ) {
 					$html_status_title = $status_title . ' ('. $processing_provider[ 'title' ] .')';
 				}
 			} else {
-				$is_processing_self = true;
+				$is_processing_self = $is_processing;
 			}
 		}
 		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $html_status_title );
@@ -572,6 +582,9 @@ class yf_manage_payout {
 			'request'                  => &$request,
 			'method_id'                => &$method_id,
 			'method'                   => &$method,
+			'card_method_id'           => &$card_method_id,
+			'card_method'              => &$card_method,
+			'html_card_title'          => &$html_card_title,
 			'response'                 => &$response,
 			'is_progressed'            => &$is_progressed,
 			'is_processing'            => &$is_processing,
@@ -673,12 +686,14 @@ class yf_manage_payout {
 			'Пользователь'    => $user_link . $balance_link,
 			'Провайдер'       => $_provider[ 'title' ],
 			'Метод'           => $_method[ 'title' ],
+			'Тип карты'       => $_html_card_title,
 			'Сумма'           => $_html_amount,
 			'Статус'          => $_html_status_title,
 			'Дата создания'   => $_html_datetime_start,
 			'Дата обновления' => $_html_datetime_update,
 			'Дата завершения' => $_html_datetime_finish,
 		);
+		if( ! @$_html_card_title ) { unset( $content[ 'Тип карты' ] ); };
 		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
 		// manual mode
@@ -810,6 +825,88 @@ EOS;
 		return( $this->_user_message( $result ) );
 	}
 
+	function request_interkassa() {
+		// check operation
+		$operation = $this->_operation();
+		// import options
+		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_is_valid ) ) { return( $result ); }
+		// is_processing
+		if( @$_is_processing ) {
+			$result = array(
+				'status_message' => 'Операция уже обрабатывается',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// var
+		$payment_api = _class( 'payment_api' );
+		$data = $_request[ 'options' ] + array(
+			'operation_id' => $_operation_id,
+		);
+		// provider
+		$provider_class = $payment_api->provider_class( array(
+			'provider_name' => 'interkassa',
+		));
+		if( empty( $provider_class ) ) {
+			$result = array(
+				'status_message' => 'Провайдер Интеркасса не доступен',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// detect card type
+		$card = @$data[ 'card' ];
+		$result = $this->interkassa_detect_card( array(
+			'card' => $card,
+		));
+		@list( $method_id, $method ) = $result;
+		if( empty( $method_id ) ) { return( $this->_user_message( $result ) ); }
+		$data[ 'method_id'      ] = $method_id;
+		$data[ 'provider_force' ] = true;
+		// result
+		$result = $provider_class->api_payout( $data );
+		return( $this->_user_message( $result ) );
+	}
+
+	function interkassa_detect_card( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_card ) ) {
+			$result = array(
+				'status_message' => 'Не задан номер карты',
+			);
+			return( $result );
+		}
+		// var
+		$payment_api = _class( 'payment_api' );
+		$provider_class = $payment_api->provider_class( array(
+			'provider_name' => 'interkassa',
+		));
+		if( empty( $provider_class ) ) {
+			$result = array(
+				'status_message' => 'Провайдер Интеркасса не доступен',
+			);
+			return( $result );
+		}
+		// find by card
+		$validate = _class( 'validate' );
+		$methods = &$provider_class->method_allow[ 'payout' ];
+		$is_method_id = null;
+		foreach( $methods as $method_id => $method ) {
+			$rules = &$method[ 'option_validation' ][ 'card' ];
+			if( empty( $rules ) ) { continue; }
+			$result = $validate->_input_is_valid( $_card, $rules );
+			if( $result ) { $is_method_id = $method_id; break; }
+		}
+		if( empty( $is_method_id ) ) {
+			$result = array(
+				'status_message' => 'Карта не опознана: '. $_card,
+			);
+		} else {
+			$result = array( $method_id, $method );
+		}
+		return( $result );
+	}
+
 	function status_interkassa( $options = null ) {
 		// import operation
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -845,7 +942,7 @@ EOS;
 					'datetime'       => $sql_datetime,
 					'provider_name'  => $provider_name,
 					'state'          => $_state,
-					'status'         => $status_name,
+					'status_name'    => $status_name,
 					'status_message' => $status_message,
 					'data'           => $_data,
 				)),
@@ -859,64 +956,6 @@ EOS;
 			// update status
 			return( $this->status( $result ) );
 		}
-		return( $this->_user_message( $result ) );
-	}
-
-	function request_interkassa() {
-		// check operation
-		$operation = $this->_operation();
-		// import options
-		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $result ); }
-		// is_processing
-		if( @$_is_processing ) {
-			$result = array(
-				'status_message' => 'Операция уже обрабатывается',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		// var
-		$payment_api = _class( 'payment_api' );
-		$data = $_request[ 'options' ] + array(
-			'operation_id' => $_operation_id,
-		);
-		$card = $data[ 'card' ];
-		if( empty( $card ) ) {
-			$result = array(
-				'status_message' => 'Не задан номер карты',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		$provider_class = $payment_api->provider_class( array(
-			'provider_name' => 'interkassa',
-		));
-		if( empty( $provider_class ) ) {
-			$result = array(
-				'status_message' => 'Провайдер Интеркасса не доступен',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		// find by card
-		$validate = _class( 'validate' );
-		$methods = &$provider_class->method_allow[ 'payout' ];
-		$is_method_id = null;
-		foreach( $methods as $method_id => $method ) {
-			$rules = &$method[ 'option_validation' ][ 'card' ];
-			if( empty( $rules ) ) { continue; }
-			$result = $validate->_input_is_valid( $card, $rules );
-			if( $result ) { $is_method_id = $method_id; break; }
-		}
-		if( false && empty( $is_method_id ) ) {
-			$result = array(
-				'status_message' => 'Карта не опознана: '. $card,
-			);
-			return( $this->_user_message( $result ) );
-		}
-		$data[ 'method_id'      ] = $is_method_id;
-		$data[ 'provider_force' ] = true;
-		// result
-		$result = $provider_class->api_payout( $data );
-		$result[ 'operation_id' ] = $_operation_id;
 		return( $this->_user_message( $result ) );
 	}
 

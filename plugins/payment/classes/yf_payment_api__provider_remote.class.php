@@ -418,7 +418,7 @@ $payment_api->dump(array( 'var' => array(
 	'transaction' => $options,
 )));
 		// response operation id
-		$operation_id = (int)$_response[ 'operation_id' ];
+		$operation_id = (int)( $_operation_id ?: $_response[ 'operation_id' ] );
 		if( empty( $operation_id ) ) {
 			$result = array(
 				'status'         => false,
@@ -720,10 +720,11 @@ $payment_api->dump(array( 'var' => array(
 				),
 			));
 		}
-		@$status_message && $status_message .= ': ';
-		$status_message .= $operation[ 'title' ] .', сумма: '. $amount;
-		if( !empty( $payment_api->currency[ 'short' ] ) ) {
-			$status_message .= ' ' . $payment_api->currency[ 'short' ];
+		if( ! @$status_message ) {
+			$status_message = $operation[ 'title' ] .', сумма: '. $amount;
+			if( !empty( $payment_api->currency[ 'short' ] ) ) {
+				$status_message .= ' ' . $payment_api->currency[ 'short' ];
+			}
 		}
 		$result = array(
 			'status'         => true,
