@@ -28,6 +28,13 @@ class yf_manage_assets {
 
 	/**
 	*/
+	function _init() {
+		_class('assets')->USE_CACHE = false;
+		_class('assets')->COMBINE = false;
+	}
+
+	/**
+	*/
 	function _menu() {
 		return html()->module_menu($this, array(
 			array('/@object/search_used/', 'Search used', 'fa fa-search'),
@@ -197,7 +204,6 @@ class yf_manage_assets {
 		$assets->FORCE_LOCAL_STORAGE = false;
 		($cache_dir_tpl = $GLOBALS['PROJECT_CONF']['assets']['CACHE_DIR_TPL']) && $assets->CACHE_DIR_TPL = $cache_dir_tpl;
 		$combined_names = $assets->load_combined_config($force = true);
-#		if (is_callable($combined_names)) { $combined_names = $combined_names(); }
 
 		$cur_lang = conf('language');
 
@@ -209,6 +215,7 @@ class yf_manage_assets {
 			foreach ((array)$enabled_langs as $lang) {
 				conf('language', $lang);
 				$assets->_override['language'] = $lang;
+				$assets->load_predefined_assets($force = true);
 				foreach ((array)$assets->supported_out_types as $out_type) {
 					foreach ((array)$combined_names[$main_type] as $name) {
 						// echo $main_type.' | '.$lang.' | '.$out_type.' | '.$name.'<br>';
@@ -233,7 +240,6 @@ class yf_manage_assets {
 		$combined_names = $assets->load_combined_config($force = true);
 		$assets->FORCE_LOCAL_STORAGE = false;
 		($cache_dir_tpl = $GLOBALS['PROJECT_CONF']['assets']['CACHE_DIR_TPL']) && $assets->CACHE_DIR_TPL = $cache_dir_tpl;
-#		if (is_callable($combined_names)) { $combined_names = $combined_names(); }
 
 		$cur_lang = conf('language');
 
@@ -245,6 +251,7 @@ class yf_manage_assets {
 			foreach ((array)$enabled_langs as $lang) {
 				conf('language', $lang);
 				$assets->_override['language'] = $lang;
+				$assets->load_predefined_assets($force = true);
 				foreach ((array)$assets->supported_out_types as $out_type) {
 					$assets->clean_all();
 					$combined_path = $assets->_get_combined_path($out_type);
