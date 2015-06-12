@@ -248,6 +248,10 @@ class yf_assets {
 	/**
 	*/
 	public function load_predefined_assets($force = false) {
+		// Cleanup previously filled assets
+		if ($force) {
+			$this->assets = array();
+		}
 		$assets = array();
 		$suffix = '.php';
 		$dir = 'share/assets/';
@@ -416,7 +420,7 @@ class yf_assets {
 		// If overall asset is callable - call it and save result to prevent multiple calls
 		if (!is_string($this->assets[$name]) && is_callable($this->assets[$name])) {
 			$func = $this->assets[$name];
-			$this->assets[$name] = $func();
+			$this->assets[$name] = $func($this);
 		}
 		return $this->assets[$name];
 	}
@@ -438,7 +442,7 @@ class yf_assets {
 			return null;
 		}
 		if (!is_string($asset_data) && is_callable($asset_data)) {
-			$asset_data = $asset_data();
+			$asset_data = $asset_data($this);
 		}
 		if (!is_array($asset_data['versions'])) {
 			return null;
@@ -461,7 +465,7 @@ class yf_assets {
 			return null;
 		}
 		if (!is_string($asset_data) && is_callable($asset_data)) {
-			$asset_data = $asset_data();
+			$asset_data = $asset_data($this);
 		}
 		if (is_array($asset_data['versions'])) {
 			return key(array_slice($asset_data['versions'], -1, 1, true));
@@ -481,7 +485,7 @@ class yf_assets {
 			$trace = main()->trace_string();
 		}
 		if (!is_string($content) && is_callable($content)) {
-			$content = $content($params);
+			$content = $content($params, $this);
 		}
 		if ($asset_type === 'js' && !$this->_init_js_done) {
 			$this->init_js();
@@ -525,7 +529,7 @@ class yf_assets {
 		foreach ((array)$content as $_content) {
 			$_params = $params;
 			if (!is_string($_content) && is_callable($_content)) {
-				$_content = $_content($_params);
+				$_content = $_content($_params, $this);
 			}
 			if (is_array($_content) && isset($_content['content'])) {
 				if (is_array($_content['params'])) {
@@ -604,7 +608,7 @@ class yf_assets {
 			return false;
 		}
 		if (!is_string($bundle_details) && is_callable($bundle_details)) {
-			$bundle_details = $bundle_details($_params);
+			$bundle_details = $bundle_details($_params, $this);
 		}
 		if (!$bundle_details) {
 			return false;
@@ -672,7 +676,7 @@ class yf_assets {
 			return false;
 		}
 		if (!is_string($asset_data) && is_callable($asset_data)) {
-			$asset_data = $asset_data($_params);
+			$asset_data = $asset_data($_params, $this);
 		}
 		if (!$asset_data) {
 			return false;
@@ -725,7 +729,7 @@ class yf_assets {
 			return false;
 		}
 		if (!is_string($info) && is_callable($info)) {
-			$info = $info($_params);
+			$info = $info($_params, $this);
 		}
 		if (!$info) {
 			return false;
@@ -1078,6 +1082,7 @@ class yf_assets {
 				$to_combine[$md5] = array(
 					'content' => $str,
 					'content_type' => $content_type,
+					'name' => $v['name'],
 				);
 			}
 			if (DEBUG_MODE) {
@@ -1137,6 +1142,7 @@ class yf_assets {
 				$divider = PHP_EOL.';'.PHP_EOL;
 			}
 			$combined = array();
+			$combined_names = array();
 			foreach ($to_combine as $md5 => $info) {
 				$content_type = $info['content_type'];
 				$content = $info['content'];
@@ -1152,12 +1158,13 @@ class yf_assets {
 					$this->_js_map_save($combined[$md5], $content, $combined_file);
 				}
 				$md5_inside_combined[$md5] = $md5;
+				$combined_names[$info['name']] = $info['name'];
 			}
 			if ($combined) {
 				$combined_md5 = array_keys($combined);
 				$combined = implode($divider, $combined);
 				file_put_contents($combined_file, $combined);
-				$this->_write_cache_info($combined_file, '', $combined, array('elements' => implode(',', $combined_md5)));
+				$this->_write_cache_info($combined_file, '', $combined, array('elements' => implode(',', $combined_md5), 'names' => implode(',', $combined_names)));
 			}
 		}
 		foreach ($to_combine as $md5 => $info) {
@@ -1196,7 +1203,7 @@ class yf_assets {
 	public function _get_combined_version($out_type = '') {
 		if (!is_string($this->COMBINED_VERSION_TPL) && is_callable($this->COMBINED_VERSION_TPL)) {
 			$func = $this->COMBINED_VERSION_TPL;
-			$version = $func($out_type);
+			$version = $func($out_type, $this);
 		} else {
 			if (!isset($this->_cache_language)) {
 				$this->_cache_language = conf('language');
@@ -1503,7 +1510,7 @@ class yf_assets {
 	public function _cache_dir($out_type, $asset_name = '', $version = '') {
 		if (!is_string($this->CACHE_DIR_TPL) && is_callable($this->CACHE_DIR_TPL)) {
 			$func = $this->CACHE_DIR_TPL;
-			$cache_dir = $func($out_type, $asset_name, $version);
+			$cache_dir = $func($out_type, $asset_name, $version, $this);
 		} else {
 			$host = $this->_override['host'] ?: $_SERVER['HTTP_HOST'];
 			if (!isset($this->_cache_language)) {
@@ -1783,7 +1790,7 @@ class yf_assets {
 				continue;
 			}
 			if (!is_string($filter) && is_callable($filter)) {
-				$out = $filter($out, $params);
+				$out = $filter($out, $params, $this);
 			} elseif (is_string($filter) && isset($avail_filters[$filter])) {
 				$out = _class('assets_filter_'.$filter, 'classes/assets/')->apply($out, $params);
 			}
