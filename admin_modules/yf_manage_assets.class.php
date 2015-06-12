@@ -146,6 +146,11 @@ class yf_manage_assets {
 		$dir = _class('dir');
 		$enabled_langs = main()->get_data('languages');
 		$main_types = array('user', 'admin');
+
+		$cache_dir_tpl = preg_replace('~/+~', '/', str_replace('{project_path}', PROJECT_PATH, $assets->CACHE_DIR_TPL));
+		$combined_dir_tpl = str_replace('{asset_name}', 'combined', $cache_dir_tpl).'_combined.*';
+		$contents[] = shell_exec('ls -l '.preg_replace('~\{[^\}]+\}~ims', '*', $combined_dir_tpl));
+
 		foreach ((array)$main_types as $main_type) {
 			$assets->_override['main_type'] = $main_type;
 			foreach ((array)$enabled_langs as $lang) {
@@ -161,7 +166,8 @@ class yf_manage_assets {
 				$contents[] = implode(PHP_EOL, $tmp);
 			}
 		}
-		return 'Cache info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small>';
+		$contents[] = PHP_EOL.shell_exec('ls -l /tmp/yf_assets/*');
+		return 'Cache info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small></pre>';
 	}
 
 	/**
@@ -188,7 +194,7 @@ class yf_manage_assets {
 				$dir->delete($cache_dir, $and_start_dir = true);
 			}
 		}
-		return 'Deleted: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small>';
+		return 'Deleted: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small></pre>';
 	}
 
 	/**
@@ -276,7 +282,7 @@ class yf_manage_assets {
 			}
 		}
 		conf($cur_lang);
-		return 'Combined info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small>';
+		return 'Combined info: <pre style="line-height:1em;"><small>'.implode(PHP_EOL, $contents).'</small></pre>';
 	}
 
 	/**
