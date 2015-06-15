@@ -5,13 +5,12 @@ _class( 'payment_api__provider_remote' );
 class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remote {
 
 	public $URL              = 'https://sci.interkassa.com/';
-	public $KEY_PUBLIC       = null;  // Checkout ID, Идентификатор кассы
-	public $KEY_PRIVATE      = null;  // secret key
-	public $KEY_PRIVATE_TEST = null;  // secret key for test
-	public $HASH_METHOD      = 'md5'; // signature hash method: md5, sha256
+    public $KEY_PUBLIC       = null;     // Checkout ID, Идентификатор кассы
+    public $KEY_PRIVATE      = null;     // secret key
+    public $KEY_PRIVATE_TEST = null;     // secret key for test
+    public $HASH_METHOD      = 'sha256'; // signature hash method: md5, sha256
 
-	public $IS_DEPOSITION = true;
-	// public $IS_PAYMENT    = true;
+	public $PURSE_ID         = null;     // purse_id by currency_id
 
 	public $URL_API          = 'https://api.interkassa.com/v1/%method';
 	public $API_ACCOUNT      = null; // api header: Ik-Api-Account-Id
@@ -166,10 +165,9 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		),
 		'payout' => array(
 			'visa_p2p_privat_uah' => array(
-				'title'      => 'Visa (Privat24, UAH)',
-				'icon'       => 'visa',
-				'request_option'     => array(
-					'purseId'  => '300301404317',             // Betonmoney UAH
+				'title' => 'Visa (Privat24, UAH)',
+				'icon'  => 'visa',
+				'request_option' => array(
 					'paywayId' => '52e7f883e4ae1a2406000000', // visa_p2p_privat_uah
 					'calcKey'  => 'psPayeeAmount',
 				),
@@ -227,7 +225,6 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'title'      => 'Visa (UAH)',
 				'icon'       => 'visa',
 				'request_option'     => array(
-					'purseId'  => '300301404317',             // Betonmoney UAH
 					'paywayId' => '52ef9b77e4ae1a3008000000', // visa_p2p_notprivat_uah
 					'calcKey'  => 'psPayeeAmount',
 				),
@@ -285,7 +282,6 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'title'      => 'MasterCard (Privat24, UAH)',
 				'icon'       => 'mastercard',
 				'request_option'     => array(
-					'purseId'  => '300301404317',             // Betonmoney UAH
 					'paywayId' => '52efa902e4ae1a780e000001', // mastercard_p2p_privat_uah
 					'calcKey'  => 'psPayeeAmount',
 				),
@@ -343,7 +339,6 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'title'      => 'Visa (Privat24, UAH)',
 				'icon'       => 'visa',
 				'request_option'     => array(
-					'purseId'  => '300301404317',             // Betonmoney UAH
 					'paywayId' => '52efa871e4ae1a3008000002', // mastercard_p2p_notprivat_uah
 					'calcKey'  => 'psPayeeAmount',
 				),
@@ -898,6 +893,9 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		// request
 		$request = array();
 		!empty( $_option ) && $request = $_option;
+// DEBUG
+var_dump( $url, $request, $request_option );
+exit;
 		// add options
 		!empty( $method[ 'option' ] ) && $request = array_merge_recursive(
 			$request, $method[ 'option' ]
@@ -927,8 +925,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		}
 		// request
 // DEBUG
-// var_dump( $url, $request, $request_option );
-// exit;
+var_dump( $url, $request, $request_option );
+exit;
 		$result = $this->_api_request( $url, $request, $request_option );
 // var_dump( $result );
 // exit;
@@ -986,6 +984,14 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$request = array();
 		@$method[ 'request_option' ] && $request = $method[ 'request_option' ];
 		// add common fields
+		!@$request[ 'purseId' ] && $request[ 'purseId' ] = $this->PURSE_ID[ $currency_id ];
+		if( ! @$request[ 'purseId' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Требуется настройка кошелька',
+			);
+			return( $result );
+		}
 		$request[ 'amount'       ] = $amount;
 		$request[ 'operation_id' ] = $operation_id;
 		// transform

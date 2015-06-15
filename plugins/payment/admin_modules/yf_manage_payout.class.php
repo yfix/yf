@@ -965,6 +965,12 @@ EOS;
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $result ); }
+		if( !$_is_processing_interkassa ) {
+			$result = array(
+				'status_message' => 'Данная операция обрабатывается не Интеркассой',
+			);
+			return( $this->_user_message( $result ) );
+		}
 		// var
 		$payment_api = _class( 'payment_api' );
 		// response
