@@ -80,7 +80,20 @@ function init_yf() {
 	if (function_exists('main')) {
 		return true;
 	}
+	$dev_settings = APP_PATH.'.dev/override.php';
+	if (file_exists($dev_settings)) {
+	    require_once $dev_settings;
+	}
+	$saved_settings = PROJECT_PATH.'saved_settings.php';
+	if (file_exists($saved_settings)) {
+	    require_once $saved_settings;
+	}
 	require YF_PATH.'classes/yf_main.class.php';
+	$project_conf_path = CONFIG_PATH.'project_conf.php';
+	if (file_exists($project_conf_path)) {
+		global $PROJECT_CONF;
+		require_once $project_conf_path;
+	}
 	new yf_main('admin', $no_db_connect = false, $auto_init_all = false);
 
 	date_default_timezone_set('Europe/Kiev');
@@ -130,6 +143,9 @@ if (!defined('YF_PATH')) {
 }
 if (!defined('APP_PATH')) {
 	define('APP_PATH', $yf_paths['app_path']);
+}
+if (!defined('CONFIG_PATH')) {
+	define('CONFIG_PATH', $yf_paths['config_path']);
 }
 if (!defined('PROJECT_PATH')) {
 	define('PROJECT_PATH', $yf_paths['project_path']);
