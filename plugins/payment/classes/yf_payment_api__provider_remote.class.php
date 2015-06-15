@@ -33,10 +33,10 @@ class yf_payment_api__provider_remote {
 
 	public $_status = array();
 	public $_status_message = array(
-		'success'     => 'Выполнено: ',
-		'in_progress' => 'Ожидание: ',
-		'processing'  => 'Обработка: ',
-		'refused'     => 'Отклонено: ',
+		'success'     => 'Выполнено',
+		'in_progress' => 'Ожидание',
+		'processing'  => 'Обработка',
+		'refused'     => 'Отклонено',
 	);
 
 	public $payment_api = null;
