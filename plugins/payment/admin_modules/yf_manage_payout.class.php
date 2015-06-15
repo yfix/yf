@@ -1170,6 +1170,7 @@ EOS;
 				'operation_id' => $operation_id,
 			));
 			$result[ $operation_id ] = $r;
+			sleep( 5 );
 		}
 		return( $result );
 	}
