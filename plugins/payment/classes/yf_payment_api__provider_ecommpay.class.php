@@ -742,10 +742,6 @@ $payment_api->dump(array( 'var' => $result ));
 $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		// check status
-		$state = $_response[ 'status_id' ];
-		$status = $this->_status_server;
-		list( $status_name, $status_message ) = $this->_state( $state, $status );
 		// deposition or payout
 		$state = $_response[ 'type_id' ];
 		$status = $this->_type_server;
@@ -755,6 +751,10 @@ $payment_api->dump(array( 'var' => $result ));
 $payment_api->dump( array( 'var' => 'type: ' . $state ));
 			return( null );
 		}
+		// check status
+		$state = $_response[ 'status_id' ];
+		$status = $this->_status_server;
+		list( $status_name, $status_message ) = $this->_state( $state, $status );
 		// amount
 		// $_response[ 'amount' ] = $this->_amount( $_response[ 'amount' ], $_response[ 'currency' ], $is_request = false );
 		// update account, operation data
