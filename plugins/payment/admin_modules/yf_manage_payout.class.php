@@ -42,6 +42,10 @@ class yf_manage_payout {
 				'action'       => 'check_interkassa',
 				'operation_id' => '%operation_id',
 			)),
+			'check_all_interkassa' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'check_all_interkassa',
+			)),
 			'status_success' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'status',
@@ -300,6 +304,7 @@ class yf_manage_payout {
 			->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
 			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
 			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
+			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
 		);
 	}
 
@@ -800,7 +805,7 @@ EOS;
 		$operation = $this->_operation();
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $result ); }
+		if( empty( $_is_valid ) ) { return( $operation ); }
 		// is_processing
 		if( @$_is_processing ) {
 			$result = array(
@@ -830,7 +835,7 @@ EOS;
 		$operation = $this->_operation();
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $result ); }
+		if( empty( $_is_valid ) ) { return( $operation ); }
 		// is_processing
 		if( @$_is_processing ) {
 			$result = array(
@@ -920,10 +925,11 @@ EOS;
 			$result = array(
 				'status_message' => 'Провайдер Интеркасса не доступен',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// result
 		$result = array(
+			'operation_id'   => &$_operation_id,
 			'status'         => &$status_name,
 			'status_message' => &$status_message,
 		);
@@ -954,22 +960,22 @@ EOS;
 			);
 			$payment_api->operation_update( $operation_update_data );
 			// update status
-			return( $this->status( $result ) );
+			return( $this->_status( $result ) );
 		}
-		return( $this->_user_message( $result ) );
+		return( $result );
 	}
 
-	function check_interkassa() {
+	function _check_interkassa( $options = null ) {
 		// check operation
-		$operation = $this->_operation();
+		$operation = $this->_operation( $options );
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $result ); }
+		if( ! @$_is_valid ) { return( $operation ); }
 		if( !$_is_processing_interkassa ) {
 			$result = array(
-				'status_message' => 'Данная операция обрабатывается не Интеркассой',
+				'status_message' => 'Данная операция не обрабатывается Интеркассой',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// var
 		$payment_api = _class( 'payment_api' );
@@ -979,14 +985,14 @@ EOS;
 			$result = array(
 				'status_message' => 'Транзакция не найдена',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		$id = &$response[ 'data' ][ 'id' ];
 		if( !@$id || $id < 1 ) {
 			$result = array(
 				'status_message' => 'Номер транзакции не найдена',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// provider interkassa
 		$provider_class = $payment_api->provider_class( array(
@@ -996,7 +1002,7 @@ EOS;
 			$result = array(
 				'status_message' => 'Провайдер Интеркасса не доступен',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// check transaction
 		$request_option = array(
@@ -1008,7 +1014,7 @@ EOS;
 			$result = array(
 				'status_message' => 'Невозможно выполнить проверку транзакции',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// check status
 		$data = @$result[ 'data' ];
@@ -1022,13 +1028,18 @@ EOS;
 		return( $result );
 	}
 
-	function status( $options = null ) {
+	function check_interkassa() {
+		$result = $this->_check_interkassa();
+		return( $this->_user_message( $result ) );
+	}
+
+	function _status( $options = null ) {
 		// check operation
-		$operation = $this->_operation();
+		$operation = $this->_operation( $options );
 		// import options
 		is_array( $options   ) && extract( $options,   EXTR_PREFIX_ALL | EXTR_REFS, '_' );
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, ''  );
-		if( empty( $_is_valid ) ) { return( $result ); }
+		if( empty( $_is_valid ) ) { return( $operation ); }
 		$status = $_GET[ 'status' ] ?: $__status;
 		switch( $status ) {
 			case 'success':
@@ -1046,7 +1057,7 @@ EOS;
 		}
 		if( empty( $result[ 'status' ] ) ) {
 			$result[ 'operation_id' ] = $_operation_id;
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// mail
 		$payment_api = _class( 'payment_api' );
@@ -1060,8 +1071,13 @@ EOS;
 			),
 		));
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
-		if( !empty( $__status_message ) ) { return( $this->_user_message( $options ) ); }
+		if( !empty( $__status_message ) ) { return( $options ); }
 		return( js_redirect( $url_view, false ) );
+	}
+
+	function status( $options = null ) {
+		$result = $this->_status( $options );
+		return( $this->_user_message( $result ) );
 	}
 
 	function _array2csv(array &$array, $delim = ';') {
@@ -1121,6 +1137,109 @@ EOS;
 			echo $csv;
 		}
 		exit;
+	}
+
+	function _check_all_interkassa() {
+		// var
+		$html        = _class( 'html' );
+		$payment_api = _class( 'payment_api' );
+		// update status only processing
+		$object = $payment_api->get_status( array( 'name' => 'processing' ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+		// provider
+		$providers_user = $payment_api->provider();
+		$providers_id = implode( ',', array_keys( $providers_user ) );
+		// fetch operations
+		$db = db()->table( 'payment_operation' )
+			->where( 'provider_id', 'in', $providers_id )
+			->where( 'status_id', '=', $status_id )
+			->where( 'direction', '=', 'out' )
+		;
+// DEBUG
+// var_dump( $db->sql() ); exit;
+		$operations = $db->get_all();
+// DEBUG
+// var_dump( $operations ); exit;
+		if( empty( $operations ) ) { return( $operations ); }
+		// check operations
+		$result = array();
+		foreach( $operations as $item ) {
+			$operation_id = $item[ 'operation_id' ];
+			$r = $this->_check_interkassa( array(
+				'operation_id' => $operation_id,
+			));
+			$result[ $operation_id ] = $r;
+		}
+		return( $result );
+	}
+
+	function check_all_interkassa( $options = null ) {
+		// command line interface
+		$is_cli = ( php_sapi_name() == 'cli' );
+		$is_cli && $this->_check_all_interkassa_cli();
+		// web
+		$replace = array(
+			'is_confirm' => false,
+		);
+		$html_result = '';
+		$result = form( $replace )
+			->on_post( function( $data, $extra, $rules ) use( &$html_result ) {
+				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
+				if( $is_confirm ) {
+					$result = $this->_check_all_interkassa();
+					if( empty( $result ) ) {
+						$level = 'warning';
+						$message = 'Нет операций для обработки';
+					} else {
+						$level = 'success';
+						$message = 'Выполнено, обновление статусов операций Интеркассы';
+						// prepare result html
+						$content = array();
+						$html = _class( 'html' );
+						foreach( $result as $operation_id => $item ) {
+							$link = $html->a( array(
+								'href'      => $this->_url( 'view', array( '%operation_id' => $operation_id ) ),
+								'class_add' => 'btn-primary',
+								'target'    => '_blank',
+								'icon'      => 'fa fa-sign-out',
+								'title'     => 'Вывод средств №'. $operation_id,
+								'text'      => 'Вывод средств №'. $operation_id,
+							));
+							$content[ $link ] = $item[ 'status_message' ];
+						}
+						$html_result = $html->simple_table( $content, array( 'no_total' => true ) );
+					}
+					common()->add_message( $message, $level );
+				} else {
+					common()->message_info( 'Требуется подтверждение, для выполнения операции' );
+				}
+			})
+			->check_box( 'is_confirm', array( 'desc' => 'Подтверждение', 'no_label' => true ) )
+			->row_start()
+				->submit( 'operation', 'update', array( 'desc' => 'Обновить статусы операций Интеркассы', 'icon' => 'fa fa-refresh' ) )
+				->link( 'Назад' , $this->_url( 'list' ), array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
+			->row_end()
+		;
+		return( $result . $html_result );
+	}
+
+	function _check_all_interkassa_cli( $options = null ) {
+		$result = $this->_check_all_interkassa();
+		if( empty( $result ) ) {
+			$status = -1;
+			$message = 'no operations';
+		} else {
+			$status = 0;
+			$content = array();
+			foreach( $result as $operation_id => $item ) {
+				$content[] = $operation_id .' - '. $item[ 'status' ];
+			;
+			$message = implode( "\n", $content );
+			}
+		}
+		echo( $message . PHP_EOL );
+		exit( $status );
 	}
 
 }

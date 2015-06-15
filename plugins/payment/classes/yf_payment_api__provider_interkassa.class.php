@@ -5,12 +5,17 @@ _class( 'payment_api__provider_remote' );
 class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remote {
 
 	public $URL              = 'https://sci.interkassa.com/';
-    public $KEY_PUBLIC       = null;     // Checkout ID, Идентификатор кассы
-    public $KEY_PRIVATE      = null;     // secret key
-    public $KEY_PRIVATE_TEST = null;     // secret key for test
-    public $HASH_METHOD      = 'sha256'; // signature hash method: md5, sha256
+	public $KEY_PUBLIC       = null;     // Checkout ID, Идентификатор кассы
+	public $KEY_PRIVATE      = null;     // secret key
+	public $KEY_PRIVATE_TEST = null;     // secret key for test
+	public $HASH_METHOD      = 'sha256'; // signature hash method: md5, sha256
 
 	public $PURSE_ID         = null;     // purse_id by currency_id
+/* example for project_conf.php:
+	public $PURSE_ID         = array(    // purse_id by currency_id
+		'UAH' => '...',
+	);
+*/
 
 	public $URL_API          = 'https://api.interkassa.com/v1/%method';
 	public $API_ACCOUNT      = null; // api header: Ik-Api-Account-Id
@@ -894,8 +899,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$request = array();
 		!empty( $_option ) && $request = $_option;
 // DEBUG
-var_dump( $url, $request, $request_option );
-exit;
+// var_dump( $url, $request, $request_option );
+// exit;
 		// add options
 		!empty( $method[ 'option' ] ) && $request = array_merge_recursive(
 			$request, $method[ 'option' ]
@@ -925,8 +930,8 @@ exit;
 		}
 		// request
 // DEBUG
-var_dump( $url, $request, $request_option );
-exit;
+// var_dump( $url, $request, $request_option );
+// exit;
 		$result = $this->_api_request( $url, $request, $request_option );
 // var_dump( $result );
 // exit;
