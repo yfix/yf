@@ -165,6 +165,7 @@ END
 	),
 	'config' => array(
 		'no_cache' => true,
+		'main_type' => 'admin',
 	),
 );
 

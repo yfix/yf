@@ -79,6 +79,7 @@ return array('versions' => array('master' => array(
 	),
 	'config' => array(
 		'no_cache' => true,
+		'main_type' => 'admin',
 	),
 );
 

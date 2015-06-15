@@ -1,11 +1,13 @@
 <?php
 
-return function() {
+return function($assets) {
 
-$bs_theme = common()->bs_current_theme();
-$bs_major_version = conf('css_framework') === 'bs3' ? '3' : '2';
+$main_type = $assets->_override['main_type'] ?: MAIN_TYPE;
+$bs_theme = common()->bs_current_theme($main_type, $force = true);
+$html5fw = conf('css_framework');
+$bs_major_version = $html5fw === 'bs3' ? '3' : '2';
 $require_name = 'bootstrap'. $bs_major_version;
-$fixes_name = 'yf_bootstrap_fixes_'.MAIN_TYPE;
+$fixes_name = 'yf_bootstrap_fixes_'.$main_type;
 
 if ($bs_theme === 'bootstrap') {
 	conf('bs3_no_default_theme', true);
