@@ -170,6 +170,9 @@ class yf_manage_assets {
 		$cache_dir_tpl = preg_replace('~/+~', '/', str_replace('{project_path}', PROJECT_PATH, $assets->CACHE_DIR_TPL));
 		$cache_dir = substr($cache_dir_tpl, 0, strpos($cache_dir_tpl, '{')) ?: $cache_dir_tpl;
 		if (substr($cache_dir, 0, strlen(PROJECT_PATH)) === PROJECT_PATH && strlen($cache_dir) > strlen(PROJECT_PATH)) {
+			if (is_console()) {
+				echo 'Cleaning '.$cache_dir. PHP_EOL;
+			}
 			_class('dir')->delete($cache_dir, $and_start_dir = true);
 		}
 		return 'Done';
