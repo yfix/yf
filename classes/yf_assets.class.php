@@ -76,6 +76,8 @@ class yf_assets {
 	public $USE_REQUIRE_JS = false;
 	/** @bool */
 	public $OUT_ADD_ASSET_NAME = true;
+	/** @bool */
+	public $ALLOW_URL_CONTROL = true;
 
 	/**
 	* Catch missing method call
@@ -109,6 +111,32 @@ class yf_assets {
 	/**
 	*/
 	public function _init() {
+		if ($this->ALLOW_URL_CONTROL) {
+			if (isset($_GET['assets_cache'])) {
+				$this->USE_CACHE = (bool)$_GET['assets_cache'];
+			}
+			if (isset($_GET['assets_combine'])) {
+				$this->COMBINE = (bool)$_GET['assets_combine'];
+			}
+			if (isset($_GET['assets_requirejs'])) {
+				$this->USE_REQUIRE_JS = (bool)$_GET['assets_require_js'];
+			}
+			if (isset($_GET['assets_out_mtime'])) {
+				$this->CACHE_OUT_ADD_MTIME = (bool)$_GET['assets_out_mtime'];
+			}
+			if (isset($_GET['assets_do_purge'])) {
+// TODO
+				$this->_do_purge();
+			}
+			if (isset($_GET['assets_do_combine'])) {
+// TODO
+				$this->_do_combine();
+			}
+			if (isset($_GET['assets_do_upload'])) {
+// TODO
+				$this->_do_upload();
+			}
+		}
 		if ($this->FORCE_LOCAL_STORAGE) {
 			$this->USE_CACHE = true;
 			$this->CACHE_TTL = $this->FORCE_LOCAL_TTL;
