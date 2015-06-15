@@ -451,13 +451,22 @@ class yf_manage_deposit {
 			$response = array_reverse( $_response );
 			$content = table( $response, array( 'no_total' => true ) )
 				->text( 'datetime', 'дата' )
-				->func( 'date', function( $value, $extra, $row_info ) {
-					$value = $row_info[ 'data' ];
-					$message = trim( $value[ 'message' ] );
-					$message = trim( $value[ 'message' ], '.' );
-					$result = t( $message ) . ' (' . $value[ 'state' ] . ')';
+				->func( 'data', function( $value, $extra, $row ) use( $_provider_name, $_providers_user__by_name  ) {
+					// message
+					$message = @$row[ 'status_message' ] ?: @$row[ 'data' ][ 'message' ];
+					$result = t( trim( trim( $message ), '.,:' ) );
+					// provider
+					$provider_name = @$row[ 'provider_name' ];
+					if( $provider_name && $provider_name != $_provider_name ) {
+						$provider_title = @$_providers_user__by_name[ $provider_name ][ 'title' ];
+						$result .= ' ('. $provider_title .')';
+					}
 					return( $result );
 				}, array( 'desc' => 'сообщение' ) )
+				->func( 'data', function( $value, $extra, $row ) {
+					$result = @$row[ 'state' ] ?: @$row[ 'data' ][ 'state' ] ?: null;
+					return( $result );
+				}, array( 'desc' => 'статус' ) )
 			;
 		}
 		$html_response = $content;
