@@ -623,7 +623,7 @@ $payment_api->dump();
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
-		$operation_id = (int)$_GET[ 'operation_id' ];
+		$operation_id = @$_GET[ 'operation_id' ];
 		// TEST DATA
 		/*
 		$_POST = array (
@@ -733,7 +733,7 @@ $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// check operation_id
-		if( $operation_id != $_response[ 'operation_id' ] ) {
+		if( $operation_id && $operation_id != $_response[ 'operation_id' ] ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Не соответствует код операции',
