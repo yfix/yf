@@ -20,16 +20,6 @@ class yf_console_assets_cache_purge extends Command {
 			$output->writeln('Error: not inside a project');
 			return false;
 		}
-		$cache_path_user	= PROJECT_PATH. 'templates/user/cache/';
-		foreach ((array)_class('dir')->scan($cache_path_user) as $path) {
-			$output->writeln($path);
-		}
-		_class('dir')->delete($cache_path_user, $and_start_dir = true);
-
-		$cache_path_admin	= PROJECT_PATH. 'templates/admin/cache/';
-		foreach ((array)_class('dir')->scan($cache_path_admin) as $path) {
-			$output->writeln($path);
-		}
-		_class('dir')->delete($cache_path_admin, $and_start_dir = true);
+		_class('manage_assets', 'admin_modules/')->cache_purge();
 	}
 }
