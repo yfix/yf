@@ -76,6 +76,8 @@ class yf_assets {
 	public $USE_REQUIRE_JS = false;
 	/** @bool */
 	public $OUT_ADD_ASSET_NAME = true;
+	/** @bool */
+	public $ALLOW_URL_CONTROL = true;
 
 	/**
 	* Catch missing method call
@@ -109,12 +111,122 @@ class yf_assets {
 	/**
 	*/
 	public function _init() {
+		$this->_url_control();
 		if ($this->FORCE_LOCAL_STORAGE) {
 			$this->USE_CACHE = true;
 			$this->CACHE_TTL = $this->FORCE_LOCAL_TTL;
 		}
 		$this->load_predefined_assets();
 		$this->load_combined_config();
+	}
+
+	/**
+	*/
+	public function _url_control() {
+		if (!$this->ALLOW_URL_CONTROL) {
+			return false;
+		}
+		$used = array();
+		if (isset($_GET['assets_cache'])) {
+			$this->USE_CACHE = (bool)$_GET['assets_cache'];
+			$used[] = 'assets_cache';
+		}
+		if (isset($_GET['assets_combine'])) {
+			$this->COMBINE = (bool)$_GET['assets_combine'];
+			if ($this->COMBINE) {
+				$this->USE_CACHE = true;
+			}
+			$used[] = 'assets_combine';
+		}
+		if (isset($_GET['assets_requirejs'])) {
+			$this->USE_REQUIRE_JS = (bool)$_GET['assets_require_js'];
+			$used[] = 'assets_requirejs';
+		}
+		if (isset($_GET['assets_out_mtime'])) {
+			$this->CACHE_OUT_ADD_MTIME = (bool)$_GET['assets_out_mtime'];
+			$used[] = 'assets_out_mtime';
+		}
+		if (DEBUG_MODE) {
+			if ($_GET['assets_do_cache']) {
+				$this->_do_cache();
+				$used[] = 'assets_do_cache';
+			}
+			if ($_GET['assets_do_combine']) {
+				$this->_do_combine();
+				$used[] = 'assets_do_combine';
+			}
+			if ($_GET['assets_do_purge']) {
+				$this->_do_purge();
+				$used[] = 'assets_do_purge';
+			}
+		}
+		if ($used) {
+			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
+		}
+	}
+
+	/**
+	*/
+	public function _do_purge() {
+		$cache_dir_tpl = preg_replace('~/+~', '/', str_replace('{project_path}', PROJECT_PATH, $this->CACHE_DIR_TPL));
+		$cache_dir = substr($cache_dir_tpl, 0, strpos($cache_dir_tpl, '{')) ?: $cache_dir_tpl;
+		if (substr($cache_dir, 0, strlen(PROJECT_PATH)) === PROJECT_PATH && strlen($cache_dir) > strlen(PROJECT_PATH)) {
+			_class('dir')->delete($cache_dir, $and_start_dir = true);
+		}
+		header('X-YF-assets-do-purge: true');
+	}
+
+	/**
+	*/
+	public function _do_cache() {
+		$this->_do_purge();
+
+		$bak['ADD_IS_DIRECT_OUT'] = $this->ADD_IS_DIRECT_OUT;
+		$this->ADD_IS_DIRECT_OUT = true;
+		$bak['USE_CACHE'] = $this->USE_CACHE;
+		$this->USE_CACHE = true;
+
+		$combined_names = $this->load_combined_config($force = true);
+		foreach ((array)$this->supported_out_types as $out_type) {
+			foreach ((array)$combined_names[MAIN_TYPE] as $name) {
+				$direct_out = $this->add_asset($name, $out_type);
+			}
+		}
+		header('X-YF-assets-do-cache: true');
+
+		$this->ADD_IS_DIRECT_OUT = $bak['ADD_IS_DIRECT_OUT'];
+		$this->USE_CACHE = $bak['USE_CACHE'];
+	}
+
+	/**
+	*/
+	public function _do_combine() {
+		$this->_do_cache();
+
+		$bak['ADD_IS_DIRECT_OUT'] = $this->ADD_IS_DIRECT_OUT;
+		$this->ADD_IS_DIRECT_OUT = true;
+		$bak['USE_CACHE'] = $this->USE_CACHE;
+		$this->USE_CACHE = true;
+		$bak['COMBINE'] = $this->COMBINE;
+		$this->COMBINE = true;
+
+		$combined_names = $this->load_combined_config($force = true);
+		foreach ((array)$this->supported_out_types as $out_type) {
+			$combined_path = $this->_get_combined_path($out_type);
+			if (file_exists($combined_path)) {
+				unlink($combined_path);
+				unlink($combined_path.'.info');
+			}
+			foreach ((array)$combined_names[MAIN_TYPE] as $name) {
+				$this->add_asset($name, $out_type);
+			}
+			$out = $this->show($out_type);
+		}
+		header('X-YF-assets-do-combine: true');
+
+		$this->ADD_IS_DIRECT_OUT = $bak['ADD_IS_DIRECT_OUT'];
+		$this->USE_CACHE = $bak['USE_CACHE'];
+		$this->COMBINE = $bak['COMBINE'];
 	}
 
 	/**
