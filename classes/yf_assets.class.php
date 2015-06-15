@@ -146,17 +146,19 @@ class yf_assets {
 			$this->CACHE_OUT_ADD_MTIME = (bool)$_GET['assets_out_mtime'];
 			$used[] = 'assets_out_mtime';
 		}
-		if ($_GET['assets_do_cache']) {
-			$this->_do_cache();
-			$used[] = 'assets_do_cache';
-		}
-		if ($_GET['assets_do_combine']) {
-			$this->_do_combine();
-			$used[] = 'assets_do_combine';
-		}
-		if ($_GET['assets_do_purge']) {
-			$this->_do_purge();
-			$used[] = 'assets_do_purge';
+		if (DEBUG_MODE) {
+			if ($_GET['assets_do_cache']) {
+				$this->_do_cache();
+				$used[] = 'assets_do_cache';
+			}
+			if ($_GET['assets_do_combine']) {
+				$this->_do_combine();
+				$used[] = 'assets_do_combine';
+			}
+			if ($_GET['assets_do_purge']) {
+				$this->_do_purge();
+				$used[] = 'assets_do_purge';
+			}
 		}
 		if ($used) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
