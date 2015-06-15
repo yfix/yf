@@ -1234,7 +1234,7 @@ EOS;
 			$status = 0;
 			$content = array();
 			foreach( $result as $operation_id => $item ) {
-				$content[] = $operation_id .' - '. $item[ 'status' ];
+				$content[] = $operation_id .' - '. ( @$item[ 'status' ] ?: 'fail' );
 			;
 			$message = implode( "\n", $content );
 			}
