@@ -117,6 +117,9 @@ class yf_assets {
 			}
 			if (isset($_GET['assets_combine'])) {
 				$this->COMBINE = (bool)$_GET['assets_combine'];
+				if ($this->COMBINE) {
+					$this->USE_CACHE = true;
+				}
 			}
 			if (isset($_GET['assets_requirejs'])) {
 				$this->USE_REQUIRE_JS = (bool)$_GET['assets_require_js'];
@@ -124,17 +127,14 @@ class yf_assets {
 			if (isset($_GET['assets_out_mtime'])) {
 				$this->CACHE_OUT_ADD_MTIME = (bool)$_GET['assets_out_mtime'];
 			}
-			if (isset($_GET['assets_do_purge'])) {
-// TODO
-				$this->_do_purge();
+			if ($_GET['assets_do_cache']) {
+				$this->_do_cache();
 			}
-			if (isset($_GET['assets_do_combine'])) {
-// TODO
+			if ($_GET['assets_do_combine']) {
 				$this->_do_combine();
 			}
-			if (isset($_GET['assets_do_upload'])) {
-// TODO
-				$this->_do_upload();
+			if ($_GET['assets_do_purge']) {
+				$this->_do_purge();
 			}
 		}
 		if ($this->FORCE_LOCAL_STORAGE) {
@@ -143,6 +143,51 @@ class yf_assets {
 		}
 		$this->load_predefined_assets();
 		$this->load_combined_config();
+	}
+
+	/**
+	*/
+	public function _do_purge() {
+		$cache_dir_tpl = preg_replace('~/+~', '/', str_replace('{project_path}', PROJECT_PATH, $this->CACHE_DIR_TPL));
+		$cache_dir = substr($cache_dir_tpl, 0, strpos($cache_dir_tpl, '{')) ?: $cache_dir_tpl;
+		if (substr($cache_dir, 0, strlen(PROJECT_PATH)) === PROJECT_PATH && strlen($cache_dir) > strlen(PROJECT_PATH)) {
+			_class('dir')->delete($cache_dir, $and_start_dir = true);
+		}
+		header('X-YF-assets-do-purge: true');
+	}
+
+	/**
+	*/
+	public function _do_cache() {
+		$this->_do_purge();
+		$combined_names = $this->load_combined_config($force = true);
+		$bak['ADD_IS_DIRECT_OUT'] = $this->ADD_IS_DIRECT_OUT;
+		$this->ADD_IS_DIRECT_OUT = true;
+		foreach ((array)$this->supported_out_types as $out_type) {
+			foreach ((array)$combined_names[MAIN_TYPE] as $name) {
+				$direct_out = $this->add_asset($name, $out_type);
+			}
+		}
+		$this->ADD_IS_DIRECT_OUT = $bak['ADD_IS_DIRECT_OUT'];
+		header('X-YF-assets-do-cache: true');
+	}
+
+	/**
+	*/
+	public function _do_combine() {
+		$combined_names = $this->load_combined_config($force = true);
+		foreach ((array)$this->supported_out_types as $out_type) {
+			$combined_path = $this->_get_combined_path($out_type);
+			if (file_exists($combined_path)) {
+				unlink($combined_path);
+				unlink($combined_path.'.info');
+			}
+			foreach ((array)$combined_names[MAIN_TYPE] as $name) {
+				$this->add_asset($name, $out_type);
+			}
+			$out = $this->show($out_type);
+		}
+		header('X-YF-assets-do-combine: true');
 	}
 
 	/**
