@@ -174,19 +174,11 @@ class yf_manage_payment {
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
 		$url         = &$this->url;
-
-#		$sum_daily = $this->_get_daily_stats('sum', $last_days = 180);
-#		$sum_chart = _class('charts')->jquery_sparklines($sum_daily);
-#		if ($sum_chart) {
-#			$sum_chart = '<div title="'.t('Баланс по системе по дням').'" style="margin-bottom: 10px;">'.$sum_chart.'</div>';
-#		}
-
 		$num_daily = $this->_get_daily_stats('num', $last_days = 180);
 		$num_chart = _class('charts')->jquery_sparklines($num_daily);
 		if ($num_chart) {
 			$num_chart = '<div title="'.t('Транзакции в системе по дням').'" style="margin-bottom: 10px;">'.$num_chart.'</div>';
 		}
-
 		$sql = db()->select( 'u.id as id', 'u.id as user_id', 'u.name as name', 'u.email as email', 'pa.balance as balance', 'pa.account_id as account_id' )
 			->table( 'user as u' )
 			->left_join( 'payment_account as pa', 'pa.user_id = u.id' )
@@ -223,7 +215,7 @@ class yf_manage_payment {
 				$daily = _class('charts')->jquery_sparklines($table->_data_daily_num[$a['id']]);
 				return $daily ? '<span title="'.t('Транзакции').'">'.$daily.'</span>' : false;
 			}, array('desc' => 'Транзакции'))
-			->btn( 'Баланс' , $url[ 'balance' ], array( 'icon' => 'fa fa-money', 'class_add' => 'btn-primary' ) )
+			->btn( 'Баланс' , $url[ 'balance' ], array( 'icon' => 'fa fa-money', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
 		;
 	}
 
