@@ -9,7 +9,13 @@ class yf_manage_deposit {
 	protected $filter      = null;
 	protected $url         = null;
 
+	public $payment_api        = null;
+	public $manage_payment_lib = null;
+
 	function _init() {
+		// class
+		$this->payment_api        = _class( 'payment_api'        );
+		$this->manage_payment_lib = module( 'manage_payment_lib' );
 		// property
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -177,8 +183,10 @@ class yf_manage_deposit {
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
 		$url         = &$this->url;
-		// payment status
-		$payment_api = _class( 'payment_api' );
+		// class
+		$payment_api = &$this->payment_api;
+		$manage_lib  = &$this->manage_payment_lib;
+		// status
 		$payment_status = $payment_api->get_status();
 		$name = 'in_progress';
 		$item = $payment_api->get_status( array( 'name' => $name) );
@@ -244,16 +252,12 @@ class yf_manage_deposit {
 				$result = a('/members/edit/'.$row_info[ 'user_id' ], $value . ' (id: ' . $row_info[ 'user_id' ] . ')');
 				return( $result );
 			}, array( 'desc' => 'пользователь' ) )
-			->func( 'status_id', function( $value, $extra, $row ) use ( $payment_status ){
-				$status_id = $payment_status[ $value ][ 'name' ];
-				$title     = $payment_status[ $value ][ 'title' ];
-				switch( $status_id ) {
-					case 'processing':
-					case 'in_progress': $css = 'text-warning'; break;
-					case 'success':     $css = 'text-success'; break;
-					case 'expired':     $css = 'text-danger';  break;
-					case 'refused':     $css = 'text-danger';  break;
-				}
+			->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $payment_status ) {
+				$status_name = $payment_status[ $value ][ 'name' ];
+				$title       = $payment_status[ $value ][ 'title' ];
+				$css = $manage_lib->css_by_status( array(
+					'status_name' => $status_name,
+				));
 				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
@@ -268,8 +272,9 @@ class yf_manage_deposit {
 	function _operation( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// var
-		$payment_api = _class( 'payment_api' );
+		// class
+		$payment_api = &$this->payment_api;
+		$manage_lib  = &$this->manage_payment_lib;
 		// check operation
 		$operation_id = isset( $_operation_id ) ? $_operation_id : (int)$_GET[ 'operation_id' ];
 		$operation = $payment_api->operation( array(
@@ -353,14 +358,9 @@ class yf_manage_deposit {
 		// status css
 		$status_name  = $o_status[ 'name' ];
 		$status_title = $o_status[ 'title' ];
-		$css = '';
-		switch( $status_name ) {
-			case 'processing':
-			case 'in_progress': $css = 'text-warning'; break;
-			case 'success':     $css = 'text-success'; break;
-			case 'expired':     $css = 'text-danger';  break;
-			case 'refused':     $css = 'text-danger';  break;
-		}
+		$css = $manage_lib->css_by_status( array(
+			'status_name' => $status_name,
+		));
 		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $status_title );
 		// check response
 		$response = null;

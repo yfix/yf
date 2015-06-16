@@ -9,7 +9,13 @@ class yf_manage_payment {
 	protected $filter      = null;
 	protected $url         = null;
 
+	public $payment_api        = null;
+	public $manage_payment_lib = null;
+
 	function _init() {
+		// class
+		$this->payment_api        = _class( 'payment_api'        );
+		$this->manage_payment_lib = module( 'manage_payment_lib' );
 		// property
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -229,6 +235,10 @@ class yf_manage_payment {
 	function _operation_table( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// class
+		$manage_lib  = &$this->manage_payment_lib;
+		// status
+		$payment_status = &$_payment_status;
 		$result = table( $_sql, array(
 				'filter' => $_filter,
 				'filter_params' => array(
@@ -261,15 +271,12 @@ class yf_manage_payment {
 			}, array( 'desc' => 'Провайдер' ) )
 			->text( 'amount'         , 'Сумма'           )
 			->text( 'balance'        , 'Баланс'          )
-			->func( 'status_id', function( $value, $extra, $row ) use ( $_payment_status ){
-				$status = &$_payment_status[ $value ];
-				switch( $status[ 'name' ] ) {
-					case 'processing':
-					case 'in_progress': $css = 'text-warning'; break;
-					case 'success':     $css = 'text-success'; break;
-					case 'expired':     $css = 'text-danger';  break;
-					case 'refused':     $css = 'text-danger';  break;
-				}
+			->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $payment_status ) {
+				$status_name = $payment_status[ $value ][ 'name' ];
+				$title       = $payment_status[ $value ][ 'title' ];
+				$css = $manage_lib->css_by_status( array(
+					'status_name' => $status_name,
+				));
 				$result = sprintf( '<span class="%s">%s</span>', $css, $status[ 'title' ] );
 				return( $result );
 			}, array( 'desc' => 'статус' ) )

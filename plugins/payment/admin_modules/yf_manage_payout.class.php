@@ -4,6 +4,9 @@ class yf_manage_payout {
 
 	public $IS_PAYOUT_INTERKASSA = null;
 
+	public $payment_api        = null;
+	public $manage_payment_lib = null;
+
 	protected $object      = null;
 	protected $action      = null;
 	protected $id          = null;
@@ -12,6 +15,9 @@ class yf_manage_payout {
 	protected $url         = null;
 
 	function _init() {
+		// class
+		$this->payment_api        = _class( 'payment_api'        );
+		$this->manage_payment_lib = module( 'manage_payment_lib' );
 		// property
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -109,7 +115,7 @@ class yf_manage_payout {
 			'o.datetime_update' => 'дата обновления',
 		);
 		// provider
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		$providers = $payment_api->provider();
 		$providers__select_box = array();
 		foreach( $providers as $id => $item ) {
@@ -195,7 +201,8 @@ class yf_manage_payout {
 		$filter      = &$this->filter;
 		$url         = &$this->url;
 		// payment
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
+		$manage_lib  = &$this->manage_payment_lib;
 		// payment providers
 		$providers = $payment_api->provider();
 		$payment_api->provider_options( $providers, array(
@@ -287,17 +294,12 @@ class yf_manage_payout {
 				$result = a('/members/edit/'.$row[ 'user_id' ], $value . ' (id: ' . $row[ 'user_id' ] . ')');
 				return( $result );
 			}, array( 'desc' => 'пользователь' ) )
-			->func( 'status_id', function( $value, $extra, $row ) use ( $payment_status ){
-				$status_id = $payment_status[ $value ][ 'name' ];
-				$title     = $payment_status[ $value ][ 'title' ];
-				switch( $status_id ) {
-					case 'processing':
-					case 'in_progress': $css = 'text-warning'; break;
-					case 'success':     $css = 'text-success'; break;
-					case 'expired':
-					case 'refused':
-					case 'cancelled':   $css = 'text-danger';  break;
-				}
+			->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $payment_status ) {
+				$status_name = $payment_status[ $value ][ 'name' ];
+				$title       = $payment_status[ $value ][ 'title' ];
+				$css = $manage_lib->css_by_status( array(
+					'status_name' => $status_name,
+				));
 				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
@@ -316,7 +318,7 @@ class yf_manage_payout {
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $operation ); }
 		// var
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		// prepare view: request options
 		$content = array();
 		foreach( $_method[ 'option' ] as $key => $title ) {
@@ -407,7 +409,8 @@ class yf_manage_payout {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
+		$manage_lib  = &$this->manage_payment_lib;
 		// check operation
 		$operation_id = isset( $_operation_id ) ? $_operation_id : (int)$_GET[ 'operation_id' ];
 		$operation = $payment_api->operation( array(
@@ -515,14 +518,9 @@ class yf_manage_payout {
 		// status css
 		$status_name  = $o_status[ 'name' ];
 		$status_title = $o_status[ 'title' ];
-		$css = '';
-		switch( $status_name ) {
-			case 'processing':
-			case 'in_progress': $css = 'text-warning'; break;
-			case 'success':     $css = 'text-success'; break;
-			case 'expired':     $css = 'text-danger';  break;
-			case 'refused':     $css = 'text-danger';  break;
-		}
+		$css = $manage_lib->css_by_status( array(
+			'status_name' => $status_name,
+		));
 		$html_status_title = $status_title;
 		// is
 		$is_progressed = $o_status[ 'name' ] == 'in_progress';
@@ -632,7 +630,7 @@ class yf_manage_payout {
 		if( empty( $_is_valid ) ) { return( $operation ); }
 		// var
 		$html        = _class( 'html' );
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		// prepare view: request options
 		$content = array();
 		foreach( $_method[ 'option' ] as $key => $title ) {
@@ -815,7 +813,7 @@ EOS;
 			return( $this->_user_message( $result ) );
 		}
 		// var
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		$data = $_request[ 'options' ] + array(
 			'operation_id' => $_operation_id,
 		);
@@ -845,7 +843,7 @@ EOS;
 			return( $this->_user_message( $result ) );
 		}
 		// var
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		$data = $_request[ 'options' ] + array(
 			'operation_id' => $_operation_id,
 		);
@@ -883,7 +881,7 @@ EOS;
 			return( $result );
 		}
 		// var
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		$provider_class = $payment_api->provider_class( array(
 			'provider_name' => 'interkassa',
 		));
@@ -917,7 +915,7 @@ EOS;
 		// import operation
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// provider interkassa
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		$provider_name = 'interkassa';
 		$provider_class = $payment_api->provider_class( array(
 			'provider_name' => $provider_name,
@@ -979,7 +977,7 @@ EOS;
 			return( $result );
 		}
 		// var
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		// response
 		$response = @end( $_response );
 		if( empty( $response ) ) {
@@ -1061,7 +1059,7 @@ EOS;
 			return( $result );
 		}
 		// mail
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		@$mail_tpl && $payment_api->mail( array(
 			'tpl'     => $mail_tpl,
 			'user_id' => $_user_id,
@@ -1143,7 +1141,7 @@ EOS;
 	function _check_all_interkassa() {
 		// var
 		$html        = _class( 'html' );
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		// update status only processing
 		$object = $payment_api->get_status( array( 'name' => 'processing' ) );
 		list( $status_id, $status ) = $object;
