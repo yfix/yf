@@ -4,15 +4,15 @@ class yf_manage_payout {
 
 	public $IS_PAYOUT_INTERKASSA = null;
 
-	public $payment_api        = null;
-	public $manage_payment_lib = null;
-
 	protected $object      = null;
 	protected $action      = null;
 	protected $id          = null;
 	protected $filter_name = null;
 	protected $filter      = null;
 	protected $url         = null;
+
+	public $payment_api        = null;
+	public $manage_payment_lib = null;
 
 	function _init() {
 		// class
@@ -200,7 +200,7 @@ class yf_manage_payout {
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
 		$url         = &$this->url;
-		// payment
+		// class
 		$payment_api = &$this->payment_api;
 		$manage_lib  = &$this->manage_payment_lib;
 		// payment providers
