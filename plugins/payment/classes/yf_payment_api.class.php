@@ -964,6 +964,170 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function cancel_user( $options = null ) {
+		$options[ 'user_mode' ] = true;
+		$result = $this->cancel( $options );
+		return( $result );
+	}
+
+	public function cancel( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		if( @$_operation_id < 1 ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный код операции',
+			);
+			return( $result );
+		}
+		// operation
+		$operation = $this->operation( array(
+			'operation_id' => $_operation_id,
+		));
+		if( empty( $operation ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Операция отсутствует: ' . $_operation_id,
+			);
+			return( $result );
+		}
+		// status
+		$object = $this->get_status( array( 'status_id' => $operation[ 'status_id' ] ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+		// check in_progress
+		if( $status[ 'name' ] != 'in_progress' ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Данную операцию невозможно отменить',
+			);
+			return( $result );
+		}
+		// check provider
+		$provider_options = array();
+		if( ! @$_user_mode ) {
+			$provider_options[ 'all' ] = true;
+		}
+		$providers = $this->provider( $provider_options );
+		if( ! @$providers[ $operation[ 'provider_id' ] ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Операцию данного провайдера невозможно отменить',
+			);
+			return( $result );
+		}
+		// revert
+		if( $operation[ 'direction' ] == 'out' ) {
+			$options[ 'is_revert' ] = true;
+		}
+		$result = $this->_cancel( $options );
+		if( @$result[ 'status' ] ) {
+			$result[ 'status_message' ] = 'Отмена операция (id: '. $_operation_id .')';
+		}
+		return( $result );
+	}
+
+	public function _cancel( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		if( @$_operation_id < 1 ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный код операции',
+			);
+			return( $result );
+		}
+		// status cancelled
+		$object = $this->get_status( array( 'name' => 'cancelled' ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+		// start transaction
+		db()->begin();
+			// revert funds
+			if( @$_is_revert ) {
+				$result = $this->_amount_revert( $options );
+					if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+			}
+			// update operation balance
+			$options = array(
+				'status_id' => $status_id,
+				'is_finish' => true,
+			) + $options;
+			$result = $this->_operation_balance_update( $options );
+				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+		// finish transaction
+		db()->commit();
+		return( $result );
+	}
+
+	public function _amount_revert( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// operation
+		$operation = $this->operation( array( 'operation_id' => $_operation_id ) );
+		if( empty( $operation ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Операция отсутствует: ' . $_operation_id,
+			);
+			return( $result );
+		}
+		// amount revert
+		$account_id = $operation[ 'account_id' ];
+		$amount     = $operation[ 'amount' ];
+		// update account
+		$sql_amount   = $this->_number_mysql( $amount );
+		$sql_datetime = $this->sql_datetime();
+		$data = array(
+			'account_id'      => $account_id,
+			'datetime_update' => db()->escape_val( $sql_datetime ),
+			'balance'         => '( balance + ' . $sql_amount . ' )',
+		);
+		$result = $this->balance_update( $data, array( 'is_escape' => false ) );
+		return( $result );
+	}
+
+	public function _operation_balance_update( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// operation
+		$operation = $this->operation( $options );
+		if( empty( $operation ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Операция отсутствует: ' . $_operation_id,
+			);
+			return( $result );
+		}
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// update balance
+		$account_id = $operation[ 'account_id' ];
+		$object = $this->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
+		if( empty( $object ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при обновлении счет',
+			);
+			return( $result );
+		}
+		list( $account_id, $account ) = $object;
+		$balance = $account[ 'balance' ];
+		// prepare
+		$sql_datetime = $this->sql_datetime();
+		$data = array(
+			'operation_id'    => $_operation_id,
+			'balance'         => $balance,
+			'datetime_update' => $sql_datetime,
+		);
+		@$_status_id && $data[ 'status_id'       ] = $_status_id;
+		@$_is_finish && $data[ 'datetime_finish' ] = $sql_datetime;
+		$result = $this->operation_update( $data );
+		return( $result );
+	}
+
 	public function _operation_check( $options = null ) {
 		$result = array();
 		$data   = array();
@@ -1111,7 +1275,12 @@ class yf_payment_api {
 		$is_no_limit    = $_[ 'no_limit'     ];
 		$is_no_order_by = $_[ 'no_order_by'  ];
 		// by operation_id
-		$operation_id   = (int)$_[ 'operation_id' ];
+		$operation_id = &$_[ 'operation_id' ];
+		if( isset( $operation_id ) ) {
+			if( ( is_int( $operation_id ) || ctype_digit( $operation_id ) ) && $operation_id > 0 ) {
+				$operation_id = (int)$operation_id;
+			} else { return( null ); }
+		}
 		$db = db()->table( 'payment_operation' );
 		if( $operation_id > 0 ) {
 			$db->where( 'operation_id', $operation_id );

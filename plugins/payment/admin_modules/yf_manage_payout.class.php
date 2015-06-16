@@ -294,8 +294,9 @@ class yf_manage_payout {
 					case 'processing':
 					case 'in_progress': $css = 'text-warning'; break;
 					case 'success':     $css = 'text-success'; break;
-					case 'expired':     $css = 'text-danger';  break;
-					case 'refused':     $css = 'text-danger';  break;
+					case 'expired':
+					case 'refused':
+					case 'cancelled':   $css = 'text-danger';  break;
 				}
 				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
 				return( $result );

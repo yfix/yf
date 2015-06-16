@@ -53,14 +53,16 @@ function( $log, $resource, _config ) {
 			payin     : { method : 'POST', url : service.url(), params : { operation : 'payin'     } },
 			payout    : { method : 'POST', url : service.url(), params : { operation : 'payout'    } },
 			operation : { method : 'POST', url : service.url(), params : { operation : 'operation' } },
+			cancel    : { method : 'POST', url : service.url(), params : { operation : 'cancel'    } },
 		}));
 	};
 	service.resource = service.create_resource();
+	service.refresh   = function( options ) { return( service.resource.refresh({ options: options }) ); };
 	service.recharge  = function( options ) { return( service.resource.recharge({ options: options }) ); };
 	service.payin     = function( options ) { return( service.resource.payin({ options: options }) ); };
 	service.payout    = function( options ) { return( service.resource.payout({ options: options }) ); };
 	service.operation = function( options ) { return( service.resource.operation({ options: options }) ); };
-	service.refresh   = function( options ) { return( service.resource.refresh({ options: options }) ); };
+	service.cancel    = function( options ) { return( service.resource.cancel({ options: options }) ); };
 	return( service );
 }])
 
