@@ -1039,10 +1039,6 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
-		// status cancelled
-		$object = $this->get_status( array( 'name' => 'cancelled' ) );
-		list( $status_id, $status ) = $object;
-		if( empty( $status_id ) ) { return( $object ); }
 		// start transaction
 		db()->begin();
 			// revert funds
@@ -1052,8 +1048,8 @@ class yf_payment_api {
 			}
 			// update operation balance
 			$options = array(
-				'status_id' => $status_id,
-				'is_finish' => true,
+				'status_name' => 'cancelled',
+				'is_finish'   => true,
 			) + $options;
 			$result = $this->_operation_balance_update( $options );
 				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
@@ -1115,6 +1111,12 @@ class yf_payment_api {
 		}
 		list( $account_id, $account ) = $object;
 		$balance = $account[ 'balance' ];
+		// status
+		if( @$_status_name ) {
+			$object = $this->get_status( array( 'name' => $_status_name ) );
+			list( $status_id, $status ) = $object;
+			if( empty( $status_id ) ) { return( $object ); }
+		}
 		// prepare
 		$sql_datetime = $this->sql_datetime();
 		$data = array(
