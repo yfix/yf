@@ -319,6 +319,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		operation: function( options ) {
 			var $this             = this;
 			$scope.block_wait     = true;
+			$scope.is_submitted   = true;
 			$scope.status         = false;
 			$scope.status_message = null;
 			$timeout.cancel( $this._timer );
@@ -326,7 +327,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				var result = PaymentApi.operation( options );
 				result.$promise.then(
 					function( r ) {
-						$scope.block_wait = false;
+						$scope.block_wait   = false;
+						$scope.is_submitted = false;
 						if( r.response && r.response.payment ) {
 							angular.extend( $scope.payment, r.response.payment );
 							PaymentBalance.load({ account: r.response.payment.account });
@@ -336,7 +338,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 						}
 					},
 					function( r ) {
-						$scope.block_wait = false;
+						$scope.block_wait   = false;
+						$scope.is_submitted = false;
 						if( r.status && r.status == 403 ) {
 							$scope.status_message = config.message.error.authentication;
 							// reload page for login
@@ -355,12 +358,14 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		payin: function( options ) {
 			var $this = this;
 			$scope.block_wait     = true;
+			$scope.is_submitted   = true;
 			$scope.status         = false;
 			$scope.status_message = null;
 			var result = PaymentApi.payin( options );
 			result.$promise.then(
 				function( r ) {
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.balance ) {
 						// provider request form
 						if( r.response.balance.form ) {
@@ -386,7 +391,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					}
 				},
 				function( r ) {
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.balance ) {
 						$scope.status         = r.response.balance.status;
 						$scope.status_message = r.response.balance.status_message;
@@ -417,12 +423,14 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		payout: function( options ) {
 			var $this = this;
 			$scope.block_wait     = true;
+			$scope.is_submitted   = true;
 			$scope.status         = false;
 			$scope.status_message = null;
 			var result = PaymentApi.payout( options );
 			result.$promise.then(
 				function( r ) {
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.payout ) {
 						$scope.status            = r.response.payout.status;
 						$scope.status_message    = r.response.payout.status_message;
@@ -442,7 +450,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					}
 				},
 				function( r ) {
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.payout ) {
 						$scope.status            = r.response.payout.status;
 						$scope.status_message    = r.response.payout.status_message;
@@ -466,13 +475,14 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		cancel: function( options ) {
 			var $this = this;
 			$scope.block_wait     = true;
+			$scope.is_submitted   = true;
 			$scope.status         = false;
 			$scope.status_message = null;
 			var result = PaymentApi.cancel( options );
 			result.$promise.then(
 				function( r ) {
-					$log.log( 'result', r );
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.cancel ) {
 						$scope.status            = r.response.cancel.status;
 						$scope.status_message    = r.response.cancel.status_message;
@@ -486,7 +496,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					}
 				},
 				function( r ) {
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.payout ) {
 						$scope.status            = r.response.cancel.status;
 						$scope.status_message    = r.response.cancel.status_message;
@@ -545,7 +556,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		return( true );
 	};
 	// init
-	$scope.block_wait = false;
+	$scope.block_wait   = false;
+	$scope.is_submitted = false;
 	$scope.action = {
 		'deposition' : {},
 		'payment'    : {},
