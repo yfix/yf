@@ -396,7 +396,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		'10' => 'refused',    // system failure
 		'11' => 'refused',    // unsupported protocol operation
 		'12' => 'refused',    // protocol configuration error
-		'13' => 'refused',    // transaction is expired
+		'13' => 'expired',    // transaction is expired
 		'14' => 'refused',    // transaction rejected by user
 		'15' => 'refused',    // internal decline
 	);
