@@ -1689,6 +1689,18 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function _merge() {
+		$options = func_get_args();
+		$data = array();
+		foreach( $options as $option ) {
+			if( is_array( $option ) && !empty( $option ) ) {
+				$data[] = $option;
+			}
+		}
+		$result = call_user_func_array( 'array_merge_recursive', $data );
+		return( $result );
+	}
+
 	public function dump( $options = null ) {
 		static $is_first = true;
 		// import options

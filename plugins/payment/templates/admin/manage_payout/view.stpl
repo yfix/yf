@@ -73,33 +73,52 @@
 	</div>
 	<div role="tabpanel" class="col-md-6">
 		<ul class="nav nav-tabs" role="tablist">
+		{if_false( is_processing_administration )}
 			<li role="presentation" class="active">
 				<a href="#automatic" aria-controls="automatic" role="tab" data-toggle="tab">Автоматический</a>
 			</li>
-		{if_true( is_manual, is_progressed )}
+		{/if}
+		{if_true( is_manual )}
+		{if_or_true( is_progressed, is_processing_administration )}
+			{if_false( is_processing_administration )}
 			<li role="presentation">
+			{else}
+			<li role="presentation" class="active">
+			{/if}
 				<a href="#manual" aria-controls="manual" role="tab" data-toggle="tab">Ручной</a>
 			</li>
 		{/if}
+		{/if}
 		</ul>
 		<div class="tab-content">
+		{if_false( is_processing_administration )}
 			<div role="tabpanel" class="tab-pane active" id="automatic">
 			{if_false( is_processing )}
 				<a href="{url.request}" class="btn btn-success">Выполнить запрос вывода средств</a>
 			{/if}
-		{if_true( is_payout_interkassa )}
-			{if_false( is_processing )}
+			{if_true( is_payout_interkassa )}
+				{if_false( is_processing )}
 				<a href="{url.request_interkassa}" class="btn btn-warning">Выполнить запрос вывода средств через Интеркассу</a>
-			{/if}
-			{if_true( is_processing_interkassa )}
+				{/if}
+				{if_true( is_processing_interkassa )}
 				<a href="{url.check_interkassa}" class="btn btn-warning">Проверить состояние вывода средств через Интеркассу</a>
+				{/if}
 			{/if}
-		{/if}
-				</ol>
 			</div>
-		{if_true( is_manual, is_progressed )}
+		{/if}
+		{if_true( is_manual )}
+		{if_or_true( is_progressed, is_processing_administration )}
+			{if_false( is_processing_administration )}
 			<div role="tabpanel" class="tab-pane" id="manual">
+			{else}
+			<div role="tabpanel" class="tab-pane active" id="manual">
+			{/if}
 				<ol class="b-list-step">
+					{if_false( is_processing_administration )}
+					<li class="list-item">
+						<a href="{url.status_processing}" class="btn btn-warning" title="Переведите операцию в состояние 'Обработка', чтобы пользователь не мог отменить данную операцию">Обрабатывается</a>
+					</li>
+					{/if}
 					<li class="list-item">
 						<a href="{url.csv}" class="btn btn-primary">Скачать CSV файл для EcommPay</a>
 					</li>
@@ -110,16 +129,20 @@
 				</ol>
 			</div>
 		{/if}
+		{/if}
 		</div>
 	</div>
 </div>
 
-	{if_false( is_processing )}
+	{if_or_true( is_progressed, is_processing_administration )}
 	<div class="b-action pull-left">
 		<p>
 			Пометьте операцию вывода средств
 		</p>
 		<div class="action">
+		{if_false( is_processing_administration )}
+			<a href="{url.status_processing}" class="btn btn-warning" title="Переведите операцию в состояние 'Обработка', чтобы пользователь не мог отменить данную операцию">Обработка (для ручного вывода)</a>
+		{/if}
 			<a href="{url.status_success}" class="btn btn-success">Выполнено</a>
 			<a href="{url.status_refused}" class="btn btn-danger">Не выполнено</a>
 		</div>

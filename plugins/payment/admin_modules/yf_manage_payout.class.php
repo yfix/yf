@@ -52,6 +52,12 @@ class yf_manage_payout {
 				'object'       => $object,
 				'action'       => 'check_all_interkassa',
 			)),
+			'status_processing' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'status',
+				'status'       => 'processing',
+				'operation_id' => '%operation_id',
+			)),
 			'status_success' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'status',
@@ -545,7 +551,8 @@ class yf_manage_payout {
 			}
 		}
 		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $html_status_title );
-		$is_processing_interkassa = $is_processing && $processing[ 'provider_name' ] == 'interkassa';
+		$is_processing_interkassa     = $is_processing && $processing[ 'provider_name' ] == 'interkassa';
+		$is_processing_administration = $is_processing && $processing[ 'provider_name' ] == 'administration';
 		// check response
 		$response = null;
 		if(
@@ -561,45 +568,46 @@ class yf_manage_payout {
 		$html_datetime_finish = $o_datetime_finish;
 		// result
 		$result = array(
-			'is_valid'                 => true,
-			'operation_id'             => &$operation_id,
-			'operation'                => &$operation,
-			'processing_log'           => &$processing_log,
-			'processing'               => &$processing,
-			'statuses'                 => &$statuses,
-			'status'                   => &$o_status,
-			'status_id'                => &$o_status_id,
-			'status_name'              => &$status_name,
-			'status_title'             => &$status_title,
-			'html_status_title'        => &$html_status_title,
-			'account_id'               => &$account_id,
-			'account'                  => &$account,
-			'user_id'                  => &$user_id,
-			'user'                     => &$user,
-			'user_is_online'           => &$user_is_online,
-			'provider_id'              => &$o_provider_id,
-			'provider'                 => &$provider,
-			'provider_name'            => &$provider_name,
-			'provider_class'           => &$provider_class,
-			'providers_user'           => &$providers_user,
-			'providers_user__by_name'  => &$providers_user__by_name,
-			'request'                  => &$request,
-			'method_id'                => &$method_id,
-			'method'                   => &$method,
-			'card_method_id'           => &$card_method_id,
-			'card_method'              => &$card_method,
-			'html_card_title'          => &$html_card_title,
-			'response'                 => &$response,
-			'is_progressed'            => &$is_progressed,
-			'is_processing'            => &$is_processing,
-			'is_processing_self'       => &$is_processing_self,
-			'is_processing_interkassa' => &$is_processing_interkassa,
-			'is_payout_interkassa'     => &$is_payout_interkassa,
-			'is_finish'                => &$is_finish,
-			'html_amount'              => &$html_amount,
-			'html_datetime_start'      => &$html_datetime_start,
-			'html_datetime_update'     => &$html_datetime_update,
-			'html_datetime_finish'     => &$html_datetime_finish,
+			'is_valid'                     => true,
+			'operation_id'                 => &$operation_id,
+			'operation'                    => &$operation,
+			'processing_log'               => &$processing_log,
+			'processing'                   => &$processing,
+			'statuses'                     => &$statuses,
+			'status'                       => &$o_status,
+			'status_id'                    => &$o_status_id,
+			'status_name'                  => &$status_name,
+			'status_title'                 => &$status_title,
+			'html_status_title'            => &$html_status_title,
+			'account_id'                   => &$account_id,
+			'account'                      => &$account,
+			'user_id'                      => &$user_id,
+			'user'                         => &$user,
+			'user_is_online'               => &$user_is_online,
+			'provider_id'                  => &$o_provider_id,
+			'provider'                     => &$provider,
+			'provider_name'                => &$provider_name,
+			'provider_class'               => &$provider_class,
+			'providers_user'               => &$providers_user,
+			'providers_user__by_name'      => &$providers_user__by_name,
+			'request'                      => &$request,
+			'method_id'                    => &$method_id,
+			'method'                       => &$method,
+			'card_method_id'               => &$card_method_id,
+			'card_method'                  => &$card_method,
+			'html_card_title'              => &$html_card_title,
+			'response'                     => &$response,
+			'is_progressed'                => &$is_progressed,
+			'is_processing'                => &$is_processing,
+			'is_processing_self'           => &$is_processing_self,
+			'is_processing_administration' => &$is_processing_administration,
+			'is_processing_interkassa'     => &$is_processing_interkassa,
+			'is_payout_interkassa'         => &$is_payout_interkassa,
+			'is_finish'                    => &$is_finish,
+			'html_amount'                  => &$html_amount,
+			'html_datetime_start'          => &$html_datetime_start,
+			'html_datetime_update'         => &$html_datetime_update,
+			'html_datetime_finish'         => &$html_datetime_finish,
 		);
 		return( $result );
 	}
@@ -729,7 +737,8 @@ class yf_manage_payout {
 				'view'               => $this->_url( 'view',               array( '%operation_id' => $_operation_id ) ),
 				'request'            => $this->_url( 'request',            array( '%operation_id' => $_operation_id ) ),
 				'request_interkassa' => $this->_url( 'request_interkassa', array( '%operation_id' => $_operation_id ) ),
-				'check_interkassa'   => $this->_url( 'check_interkassa', array( '%operation_id' => $_operation_id ) ),
+				'check_interkassa'   => $this->_url( 'check_interkassa',   array( '%operation_id' => $_operation_id ) ),
+				'status_processing'  => $this->_url( 'status_processing',  array( '%operation_id' => $_operation_id ) ),
 				'status_success'     => $this->_url( 'status_success',     array( '%operation_id' => $_operation_id ) ),
 				'status_refused'     => $this->_url( 'status_refused',     array( '%operation_id' => $_operation_id ) ),
 				'csv'                => $this->_url( 'csv',                array( '%operation_id' => $_operation_id ) ),
@@ -1052,6 +1061,11 @@ EOS;
 					'operation_id' => $_operation_id,
 				));
 				$mail_tpl = 'payout_refused';
+				break;
+			case 'processing':
+				$result = $_provider_class->_payout_processing( array(
+					'operation_id' => $_operation_id,
+				));
 				break;
 		}
 		if( empty( $result[ 'status' ] ) ) {

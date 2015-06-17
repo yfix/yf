@@ -198,7 +198,19 @@ class yf_payment_api__provider_remote {
 			'status_id'       => $status_id,
 			'datetime_update' => $sql_datetime,
 		);
+		if( $status[ 'name' ] == 'processing' ) {
+			// update processing
+			$data_options = array(
+				'processing' => array( array(
+					'provider_name' => 'administration',
+					'datetime'      => $sql_datetime,
+				)),
+			);
+		}
 		!empty( $_is_finish ) && $data[ 'datetime_finish' ] = $sql_datetime;
+		if( @$data_options ) {
+			$data[ 'options' ] = $payment_api->_merge( $data_options, $_options );
+		}
 		$result = $payment_api->operation_update( $data );
 		return( $result );
 	}
@@ -878,19 +890,33 @@ $payment_api->dump(array( 'var' => array(
 		return( $result );
 	}
 
+	public function _payout_processing( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// progress
+		db()->begin();
+			$result = $this->_update_status( array(
+				'operation_id' => $_operation_id,
+				'name'         => 'processing',
+			));
+				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+		db()->commit();
+		return( $result );
+	}
+
 	public function _payout_success( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// progress
 		db()->begin();
-		$result = $this->_payout_balance_update( $options );
-			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
-		$result = $this->_update_status( array(
-			'operation_id' => $_operation_id,
-			'name'         => 'success',
-			'is_finish'    => true,
-		));
-			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+			$result = $this->_payout_balance_update( $options );
+				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+			$result = $this->_update_status( array(
+				'operation_id' => $_operation_id,
+				'name'         => 'success',
+				'is_finish'    => true,
+			));
+				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
 		db()->commit();
 		return( $result );
 	}
@@ -900,16 +926,16 @@ $payment_api->dump(array( 'var' => array(
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// progress
 		db()->begin();
-		$result = $this->_payout_amount_revert( $options );
-			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
-		$result = $this->_payout_balance_update( $options );
-			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
-		$result = $this->_update_status( array(
-			'operation_id' => $_operation_id,
-			'name'         => 'refused',
-			'is_finish'    => true,
-		));
-			if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+			$result = $this->_payout_amount_revert( $options );
+				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+			$result = $this->_payout_balance_update( $options );
+				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+			$result = $this->_update_status( array(
+				'operation_id' => $_operation_id,
+				'name'         => 'refused',
+				'is_finish'    => true,
+			));
+				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
 		db()->commit();
 		return( $result );
 	}
