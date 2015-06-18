@@ -226,7 +226,7 @@ class yf_manage_payment_operation {
 					'title'        => array( 'cond' => 'like',    'field' => 'o.title'        ),
 					'balance'      => array( 'cond' => 'between', 'field' => 'a.balance'      ),
 					'amount'       => array( 'cond' => 'between', 'field' => 'o.amount'       ),
-					'__default_order'  => 'ORDER BY o.datetime_start DESC',
+					'__default_order'  => 'ORDER BY o.datetime_update DESC',
 				),
 			))
 			->text( 'operation_id',   'операция'  )

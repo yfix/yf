@@ -241,7 +241,7 @@ class yf_manage_deposit {
 					'name'         => array( 'cond' => 'like'   , 'field' => 'u.name'          ),
 					'balance'      => array( 'cond' => 'between', 'field' => 'a.balance'       ),
 					'amount'       => array( 'cond' => 'between', 'field' => 'o.amount'        ),
-					'__default_order'  => 'ORDER BY o.datetime_start DESC',
+					'__default_order'  => 'ORDER BY o.datetime_update DESC',
 				),
 			))
 			->text( 'operation_id'  , 'операция' )
