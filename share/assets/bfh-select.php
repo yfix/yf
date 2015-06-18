@@ -11,17 +11,17 @@ $bfh_css_fixes = '
 ';
 return array(
 	'versions' => array(
+#		'2.3.0' => array(
+#			'js' => '//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/js/bootstrap-formhelpers.min.js',
+#			'css' => array(
+#				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/css/bootstrap-formhelpers.min.css',
+#				$bfh_css_fixes,
+#			),
+#		),
 		'master' => array(
 			'js' => '//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/js/bootstrap-formhelpers.min.js',
 			'css' => array(
 				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/css/bootstrap-formhelpers.min.css',
-				$bfh_css_fixes,
-			),
-		),
-		'2.3.0' => array(
-			'js' => '//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/js/bootstrap-formhelpers.min.js',
-			'css' => array(
-				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/css/bootstrap-formhelpers.min.css',
 				$bfh_css_fixes,
 			),
 		),
