@@ -1112,6 +1112,7 @@ class yf_payment_api {
 		list( $account_id, $account ) = $object;
 		$balance = $account[ 'balance' ];
 		// status
+		$status_id = &$_status_id;
 		if( @$_status_name ) {
 			$object = $this->get_status( array( 'name' => $_status_name ) );
 			list( $status_id, $status ) = $object;
@@ -1124,7 +1125,7 @@ class yf_payment_api {
 			'balance'         => $balance,
 			'datetime_update' => $sql_datetime,
 		);
-		@$_status_id && $data[ 'status_id'       ] = $_status_id;
+		@$status_id  && $data[ 'status_id'       ] = $status_id;
 		@$_is_finish && $data[ 'datetime_finish' ] = $sql_datetime;
 		$result = $this->operation_update( $data );
 		return( $result );
