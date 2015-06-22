@@ -299,15 +299,7 @@ class yf_auth_user {
 					$PSWD_OK = true;
 				}
 			}
-			if ($PSWD_OK) {
-				// Set member id cookie expired on session end
-				if ($this->SET_MEMBER_ID_COOKIE && preg_match('/^[a-z0-9_\-]+$/ims', $this->SET_MEMBER_ID_COOKIE)) {
-					$this->_cookie_set($this->SET_MEMBER_ID_COOKIE, $user_info['id']);
-				}
-				if ($this->SET_IS_LOGGED_COOKIE && preg_match('/^[a-z0-9_\-]+$/ims', $this->SET_IS_LOGGED_COOKIE)) {
-					$this->_cookie_set($this->SET_IS_LOGGED_COOKIE, '1');
-				}
-			} else {
+			if (!$PSWD_OK) {
 				unset($user_info);
 				if ($this->LOG_FAILED_LOGINS) {
 					db()->insert_safe('log_auth_fails', array(
@@ -454,7 +446,13 @@ class yf_auth_user {
 			if (!empty($_POST[$this->REMEMBER_FIELD]) && $this->ALLOW_REMEMBER_ME) {
 				$encrypted_string = _class('encryption')->_safe_encrypt_with_base64($user_info['id'].'-'.$user_info[$this->LOGIN_FIELD].'-'.$user_info[$this->PSWD_FIELD].'-'.time());
 				$this->_cookie_set($this->VAR_COOKIE_NAME, $encrypted_string, time() + $this->VAR_COOKIE_LIFE_TIME);
-				$this->_cookie_set('quick_login', xsb_encode($user_info[$this->LOGIN_FIELD]), time() + 86400 * 365);
+			}
+			// Set member id cookie expired on session end
+			if ($this->SET_MEMBER_ID_COOKIE && preg_match('/^[a-z0-9_\-]+$/ims', $this->SET_MEMBER_ID_COOKIE)) {
+				$this->_cookie_set($this->SET_MEMBER_ID_COOKIE, $user_info['id']);
+			}
+			if ($this->SET_IS_LOGGED_COOKIE && preg_match('/^[a-z0-9_\-]+$/ims', $this->SET_IS_LOGGED_COOKIE)) {
+				$this->_cookie_set($this->SET_IS_LOGGED_COOKIE, '1');
 			}
 			if ($this->CHECK_MULTI_ACCOUNTS) {
 				$this->_check_multi_accounts();
