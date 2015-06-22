@@ -369,6 +369,7 @@ class yf_auth_user {
 			$this->_encrypted_error = 'user pswd_hash not matched';
 			return false;
 		}
+		$this->INSIDE_LOGIN_FROM_ADMIN = true;
 		return $this->_save_login_in_session($user_info);
 	}
 
@@ -483,8 +484,10 @@ class yf_auth_user {
 	/**
 	*/
 	function _success_login_redirect ($user_info = array(), $group_info = array()) {
+		if ($this->INSIDE_LOGIN_FROM_ADMIN) {
+			return js_redirect('/');
 		// Auto-redirect to the page before login form if needed
-		if (!empty($_SESSION[$this->VAR_USER_GO_URL]) && !($this->URL_SUCCESS_LOGIN && $_POST['skip_auto_url'])) {
+		} elseif (!empty($_SESSION[$this->VAR_USER_GO_URL]) && !($this->URL_SUCCESS_LOGIN && $_POST['skip_auto_url'])) {
 			$REDIRECT_URL = (substr($_SESSION[$this->VAR_USER_GO_URL], 0, 2) != './' ? './?' : ''). str_replace(WEB_PATH, '', str_replace(array('http:','https:'), '', $_SESSION[$this->VAR_USER_GO_URL]));
 			$_SESSION[$this->VAR_USER_GO_URL] = '';
 		} elseif (!empty($user_info['go_after_login'])) {
