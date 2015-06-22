@@ -12,7 +12,8 @@ fi
 # -2 means using protocol v2 only, -4 IPv4
 myssh="ssh -2 -4 root@$host"
 
-sphinxsearch_version="2.0.8-release"
+#sphinxsearch_version="2.0.8-release"
+sphinxsearch_version=`php -r 'preg_match("~sphinx\-([0-9]+\.[0-9]+\.[0-9]+)\-release\.tar\.gz~ims", file_get_contents("http://sphinxsearch.com/downloads/release/"), $m); echo $m[1];'`
 if [ "$override_sphinxsearch_version" ]; then
     sphinxsearch_version="$override_sphinxsearch_version"
 fi

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-sphinxsearch_version="2.0.8-release"
+#sphinxsearch_version="2.0.8-release"
+sphinxsearch_version=`php -r 'preg_match("~sphinx\-([0-9]+\.[0-9]+\.[0-9]+)\-release\.tar\.gz~ims", file_get_contents("http://sphinxsearch.com/downloads/release/"), $m); echo $m[1];'`
+echo $sphinxsearch_version
 
 function require_packages {
 	packages="$1"
