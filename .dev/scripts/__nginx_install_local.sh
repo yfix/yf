@@ -1,6 +1,8 @@
 #!/bin/bash
 
-nginx_version="1.5.3"
+#nginx_version="1.5.3"
+nginx_version=`php -r 'preg_match("~nginx\-([0-9]+\.[0-9]+\.[0-9]+)\.tar\.gz~ims", file_get_contents("http://nginx.org/en/download.html"), $m); echo $m[1];'`
+echo $nginx_version
 
 function require_packages {
 	packages="$1"
