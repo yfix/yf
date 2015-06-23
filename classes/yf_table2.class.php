@@ -1602,7 +1602,9 @@ class yf_table2 {
 				}
 				$extra['href'] = $link;
 				$extra['title'] = $params['name'];
-				$extra['class'] = $table->CLASS_CHANGE_ACTIVE;
+        		if (!$extra['no_ajax']) {                
+                    $extra['class'] = $table->CLASS_CHANGE_ACTIVE;
+                }
 				if (!isset($extra['data-test'])) {
 					$extra['data-test'] = 'activate';
 				}
