@@ -20,7 +20,7 @@ class yf_session {
 	/** @var bool */
 	public $COOKIE_SECURE	= false;
 	/** @var bool */
-	public $COOKIE_HTTPONLY	= false;
+	public $COOKIE_HTTPONLY	= true;
 	/** @var string */
 	public $REFERER_CHECK	= ''; // WEB_PATH
 	/** @var string */
