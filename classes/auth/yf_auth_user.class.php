@@ -49,6 +49,10 @@ class yf_auth_user {
 	public $VAR_USER_INFO			= 'user_info';
 	/** @var string field name @conf_skip */
 	public $VAR_LOCK_IP				= 'auth_lock_to_ip';
+	/** @var string field name @conf_skip */
+	public $VAR_LOCK_UA				= 'auth_lock_to_ua';
+	/** @var string field name @conf_skip */
+	public $VAR_LOCK_HOST			= 'auth_lock_to_host';
 	/** @var bool Do log into db user login actions */
 	public $DO_LOG_LOGINS			= true;
 	/** @var bool Set cookie 'member_id', useful for fast_init before session start */
@@ -57,11 +61,7 @@ class yf_auth_user {
 	public $SET_IS_LOGGED_COOKIE	= '';
 	/** @var string Site closed stpl name */
 	public $SITE_CLOSED_STPL		= 'site_closed';
-	/** @var array @conf_skip 
-	* Methods to execute after success login or logout
-	* @example	$EXEC_AFTER_LOGIN = array(array('test_method', array('Working!')));
-	* @example	$EXEC_AFTER_LOGIN = array(array(array('custom_class', 'custom_method'), array('my_param_1' => 'Working!')));
-	*/
+	/** @var array @conf_skip Methods to execute after success login or logout @example	$EXEC_AFTER_LOGIN = array(array('test_method', array('Working!')));	*/
 	public $EXEC_AFTER_LOGIN		= array();
 	/** @var array @conf_skip */
 	public $EXEC_AFTER_LOGOUT		= array();
@@ -108,6 +108,10 @@ class yf_auth_user {
 	public $SESSION_REFERER_CHECK	= false;
 	/** @var bool Lock session to IP address (to prevent hacks) @security */
 	public $SESSION_LOCK_TO_IP		= true;
+	/** @var bool Lock session to User Agent string (to prevent hacks) @security */
+	public $SESSION_LOCK_TO_UA		= false;
+	/** @var bool Lock session to hostname string (to prevent hacks) @security */
+	public $SESSION_LOCK_TO_HOST	= false;
 	/** @var bool Allow to use 'remember me in cookies' feature @security */
 	public $ALLOW_REMEMBER_ME		= true;
 	/** @var string */
@@ -164,20 +168,40 @@ class yf_auth_user {
 			}
 		}
 		// Check for session IP
-		if ($this->SESSION_LOCK_TO_IP && !empty($_SESSION[$this->VAR_USER_ID])) {
+		if ($this->SESSION_LOCK_TO_IP && !empty($_SESSION[$this->VAR_USER_ID]) && $_GET['task'] !== 'logout') {
 			// User has changed IP, logout immediately
-			if (!isset($_SESSION[$this->VAR_LOCK_IP]) || $_SESSION[$this->VAR_LOCK_IP] != common()->get_ip()) {
-				trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:'.$_SESSION[$this->VAR_LOCK_IP].', new_ip:'.common()->get_ip().', user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
+			$ip = common()->get_ip();
+			if (!isset($_SESSION[$this->VAR_LOCK_IP]) || $_SESSION[$this->VAR_LOCK_IP] !== $ip) {
+				trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:'.$_SESSION[$this->VAR_LOCK_IP].', new_ip:'.$ip.', user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
+				$_GET['task'] = 'logout';
+			}
+		}
+		// Check for session User Agent
+		if ($this->SESSION_LOCK_TO_UA && !empty($_SESSION[$this->VAR_USER_ID]) && $_GET['task'] !== 'logout') {
+			// User has changed User Agent, logout immediately
+			$ua = $_SERVER['HTTP_USER_AGENT'];
+			if (!isset($_SESSION[$this->VAR_LOCK_UA]) || $_SESSION[$this->VAR_LOCK_UA] !== $ua) {
+				trigger_error('AUTH: Attempt to use session with changed User Agent blocked, auth_ua:"'.$_SESSION[$this->VAR_LOCK_UA].'", new_ua:"'.$ua.'", user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
+				$_GET['task'] = 'logout';
+			}
+		}
+		// Check for session hostname
+		if ($this->SESSION_LOCK_TO_HOST && !empty($_SESSION[$this->VAR_USER_ID]) && $_GET['task'] !== 'logout') {
+			// User has changed Host, logout immediately
+			$host = $_SERVER['HTTP_HOST'];
+			if (!isset($_SESSION[$this->VAR_LOCK_HOST]) || $_SESSION[$this->VAR_LOCK_HOST] !== $host) {
+				trigger_error('AUTH: Attempt to use session with changed Host blocked, auth_host:"'.$_SESSION[$this->VAR_LOCK_HOST].'", new_host:"'.$ua.'", user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
 				$_GET['task'] = 'logout';
 			}
 		}
 		// Check referer matched to WEB_PATH
-		if ($this->SESSION_REFERER_CHECK && (!$_SERVER['HTTP_REFERER'] || substr($_SERVER['HTTP_REFERER'], 0, strlen(WEB_PATH)) != WEB_PATH)) {
-			trigger_error('AUTH: Referer not matched and session blocked, referer:'.$_SERVER['HTTP_REFERER'], E_USER_WARNING);
+		$referer = $_SERVER['HTTP_REFERER'];
+		if ($this->SESSION_REFERER_CHECK && (!$referer || substr($referer, 0, strlen(WEB_PATH)) != WEB_PATH) && $_GET['task'] !== 'logout') {
+			trigger_error('AUTH: Referer not matched and session blocked, referer:'.$referer, E_USER_WARNING);
 			$_GET['task'] = 'logout';
 		}
 		// Switch between login/logout actions
-		if (isset($_GET['task']) && $_GET['task'] == 'logout') {
+		if (isset($_GET['task']) && $_GET['task'] === 'logout') {
 			return $this->_do_logout();
 		}
 		if (!empty($_COOKIE[$this->VAR_COOKIE_NAME]) && empty($_SESSION[$this->VAR_USER_ID])) {
@@ -436,6 +460,8 @@ class yf_auth_user {
 			$_SESSION[$this->VAR_USER_GROUP_ID]		= $user_info['group'];
 			$_SESSION[$this->VAR_USER_LOGIN_TIME]	= time();
 			$_SESSION[$this->VAR_LOCK_IP]			= common()->get_ip();
+			$_SESSION[$this->VAR_LOCK_UA]			= $_SERVER['HTTP_USER_AGENT'];
+			$_SESSION[$this->VAR_LOCK_HOST]			= $_SERVER['HTTP_HOST'];
 			$main = main();
 			$main->_init_cur_user_info($main);
 			$main->USER_INFO = &$main->_user_info;
@@ -520,6 +546,8 @@ class yf_auth_user {
 			$this->VAR_USER_GROUP_ID,
 			$this->VAR_USER_LOGIN_TIME,
 			$this->VAR_LOCK_IP,
+			$this->VAR_LOCK_UA,
+			$this->VAR_LOCK_HOST,
 		);
 		foreach ((array)$_SESSION as $k => $v) {
 			if (in_array($k, $user_session_vars)) {
