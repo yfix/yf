@@ -44,7 +44,7 @@ class yf_main {
 	/** @var bool */
 	public $SESSION_COOKIE_SECURE	= false;
 	/** @var bool */
-	public $SESSION_COOKIE_HTTPONLY	= false;
+	public $SESSION_COOKIE_HTTPONLY	= true;
 	/** @var string */
 	public $SESSION_REFERER_CHECK	= ''; // WEB_PATH
 	/** @var string */
