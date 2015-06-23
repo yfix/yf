@@ -94,6 +94,9 @@ class yf_auth_admin {
 			$ip = common()->get_ip();
 			if (!isset($_SESSION[$this->VAR_LOCK_IP]) || $_SESSION[$this->VAR_LOCK_IP] !== $ip) {
 				trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:'.$_SESSION[$this->VAR_LOCK_IP].', new_ip:'.$ip.', admin_id: '.intval($_SESSION[$this->VAR_ADMIN_ID]), E_USER_WARNING);
+				$this->_log_fail(array(
+					'reason'	=> 'auth_blocked_by_ip',
+				));
 				$_GET['task'] = 'logout';
 			}
 		}
@@ -103,6 +106,9 @@ class yf_auth_admin {
 			$ua = $_SERVER['HTTP_USER_AGENT'];
 			if (!isset($_SESSION[$this->VAR_LOCK_UA]) || $_SESSION[$this->VAR_LOCK_UA] !== $ua) {
 				trigger_error('AUTH: Attempt to use session with changed User Agent blocked, auth_ua:"'.$_SESSION[$this->VAR_LOCK_UA].'", new_ua:"'.$ua.'", admin_id: '.intval($_SESSION[$this->VAR_ADMIN_ID]), E_USER_WARNING);
+				$this->_log_fail(array(
+					'reason'	=> 'auth_blocked_by_ua',
+				));
 				$_GET['task'] = 'logout';
 			}
 		}
@@ -112,6 +118,9 @@ class yf_auth_admin {
 			$host = $_SERVER['HTTP_HOST'];
 			if (!isset($_SESSION[$this->VAR_LOCK_HOST]) || $_SESSION[$this->VAR_LOCK_HOST] !== $host) {
 				trigger_error('AUTH: Attempt to use session with changed Host blocked, auth_host:"'.$_SESSION[$this->VAR_LOCK_HOST].'", new_host:"'.$ua.'", admin_id: '.intval($_SESSION[$this->VAR_ADMIN_ID]), E_USER_WARNING);
+				$this->_log_fail(array(
+					'reason'	=> 'auth_blocked_by_host',
+				));
 				$_GET['task'] = 'logout';
 			}
 		}
@@ -119,6 +128,9 @@ class yf_auth_admin {
 		$referer = $_SERVER['HTTP_REFERER'];
 		if ($this->SESSION_REFERER_CHECK && (!$referer || substr($referer, 0, strlen(WEB_PATH)) != WEB_PATH) && $_GET['task'] !== 'logout') {
 			trigger_error('AUTH: Referer not matched and session blocked, referer:'.$referer, E_USER_WARNING);
+			$this->_log_fail(array(
+				'reason'	=> 'auth_blocked_by_referer',
+			));
 			$_GET['task'] = 'logout';
 		}
 		// Process log in or log out
@@ -228,22 +240,38 @@ class yf_auth_admin {
 		// Login is wrong
 		} else {
 			unset($admin_info);
-			if ($this->LOG_FAILED_LOGINS) {
-				db()->insert_safe('log_admin_auth_fails', array(
-					'time'		=> str_replace(',', '.', microtime(true)),
-					'ip'		=> common()->get_ip(),
-					'login'		=> $AUTH_LOGIN,
-					'pswd'		=> $AUTH_PSWD,
-					'reason'	=> $NEED_QUERY_DB ? 'w' : 'b', // 'w' means wrong login, 'b' means blocked
-					'site_id'	=> (int)conf('SITE_ID'),
-					'server_id'	=> (int)conf('SERVER_ID'),
-				));
-			}
+			$this->_log_fail(array(
+				'login'		=> $AUTH_LOGIN,
+				'pswd'		=> $AUTH_PSWD,
+				'reason'	=> $NEED_QUERY_DB ? 'w' : 'b', // 'w' means wrong login, 'b' means blocked
+			));
 			// Force redirect if given info is wrong
 			if (!empty($this->URL_WRONG_LOGIN)) {
 				js_redirect($this->URL_WRONG_LOGIN);
 			}
 		}
+	}
+
+	/**
+	*/
+	function _log_fail($data = array()) {
+		if (!$this->LOG_FAILED_LOGINS) {
+			return false;
+		}
+		return db()->insert_safe('log_admin_auth_fails', array(
+			'time'		=> str_replace(',', '.', microtime(true)),
+			'ip'		=> common()->get_ip(),
+			'user_id'	=> $data['user_id'] ?: $_SESSION[$this->VAR_ADMIN_ID],
+			'login'		=> $data['login'],
+			'pswd'		=> $data['pswd'],
+			'reason'	=> $data['reason'],
+			'host'		=> $_SERVER['HTTP_HOST'],
+			'ua'		=> $_SERVER['HTTP_USER_AGENT'],
+			'referer'	=> $_SERVER['HTTP_REFERER'],
+			'query_string'	=> $_SERVER['QUERY_STRING'],
+			'site_id'	=> (int)conf('SITE_ID'),
+			'server_id'	=> (int)conf('SERVER_ID'),
+		));
 	}
 
 	/**
