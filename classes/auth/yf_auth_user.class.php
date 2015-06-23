@@ -486,6 +486,7 @@ class yf_auth_user {
 
 		} else {
 
+			session_regenerate_id($destroy = true);
 			$_SESSION[$this->VAR_USER_ID]			= $user_info['id'];
 			$_SESSION[$this->VAR_USER_GROUP_ID]		= $user_info['group'];
 			$_SESSION[$this->VAR_USER_LOGIN_TIME]	= time();
@@ -590,7 +591,7 @@ class yf_auth_user {
 		$main->_LOGGED_IN_USER_INFO	= &$main->_user_info;
 
 		$this->_cleanup_cookie();
-		session_destroy();
+		session_regenerate_id($destroy = true);
 
 		if ($no_redirect) {
 			return false;
