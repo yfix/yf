@@ -30,7 +30,7 @@ class yf_graphics {
 	/** @var bool */
 	public $NOT_FOUND_RAISE_WARNING	= true;
 	/** @var bool */
-	public $HEADER_POWERED_BY		= true;
+	public $HEADER_POWERED_BY		= false;
 	/** @var bool */
 	public $JS_CONSOLE_ALLOW		= true;
 	/** @var string Required for the compatibility with old main class */
