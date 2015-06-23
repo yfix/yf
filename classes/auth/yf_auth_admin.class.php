@@ -208,6 +208,7 @@ class yf_auth_admin {
 			if ($this->DO_LOG_LOGINS) {
 				_class('logs')->store_admin_auth($admin_info);
 			}
+			session_regenerate_id($destroy = true);
 			$_SESSION[$this->VAR_ADMIN_ID]			= $admin_info['id'];
 			$_SESSION[$this->VAR_ADMIN_GROUP_ID]	= $admin_info['group'];
 			$_SESSION[$this->VAR_ADMIN_LOGIN_TIME]	= time();
@@ -292,6 +293,7 @@ class yf_auth_admin {
 		$tmp = $_SESSION;
 		$_SESSION['admin_prev_info'] = $tmp;
 		// Login as different admin user
+		session_regenerate_id($destroy = true);
 		$_SESSION[$this->VAR_ADMIN_ID]			= $a['id'];
 		$_SESSION[$this->VAR_ADMIN_GROUP_ID]	= $a['group'];
 		$_SESSION[$this->VAR_ADMIN_LOGIN_TIME]	= time();
@@ -327,6 +329,7 @@ class yf_auth_admin {
 		$_SESSION = $_SESSION['admin_prev_info'];
 		unset($_SESSION['admin_prev_info']); // Prevent recursion
 		// Login as different admin user
+		session_regenerate_id($destroy = true);
 		$_SESSION[$this->VAR_ADMIN_ID]			= $a['id'];
 		$_SESSION[$this->VAR_ADMIN_GROUP_ID]	= $a['group'];
 		$_SESSION[$this->VAR_ADMIN_LOGIN_TIME]	= time();
@@ -364,7 +367,8 @@ class yf_auth_admin {
 //		$main->_init_admin_info($main);
 		$main->ADMIN_INFO = &$main->_admin_info;
 
-		session_destroy();
+		session_regenerate_id($destroy = true);
+
 		if (!empty($this->URL_AFTER_LOGOUT)) {
 			js_redirect($this->URL_AFTER_LOGOUT);
 		}
