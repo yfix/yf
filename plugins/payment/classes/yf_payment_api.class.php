@@ -169,8 +169,14 @@ class yf_payment_api {
 	public $IS_BALANCE_LIMIT_LOWER = true;
 	public $BALANCE_LIMIT_LOWER    = 0;
 
-	public $MAIL_COPY_TO = array(
-		'all' => array(
+	public $IS_PAYOUT_CONFIRMATION = true;
+
+	public $SECURITY_CODE = '7CFL4AjeB6P7RWAk7W0n';
+
+	public $MAIL_COPY_TO = null;
+		//  example:
+		// array(
+		// 'all' => array(
 			// 'all'   => 'larv.job+payment@gmail.com',
 			// 'payin' => array(
 				// 'larv.job+payin@gmail.com',
@@ -181,16 +187,16 @@ class yf_payment_api {
 			// 'success' => array(
 				// 'larv.job+payment.success@gmail.com',
 			// ),
-			'refused' => array(
-				'larv.job+payment.refused@gmail.com',
-			),
-			'request' => array(
-				'larv.job+payment.request@gmail.com',
-			),
-			'error' => array(
-				'larv.job+payment.error@gmail.com',
-			),
-		),
+			// 'refused' => array(
+				// 'larv.job+payment.refused@gmail.com',
+			// ),
+			// 'request' => array(
+				// 'larv.job+payment.request@gmail.com',
+			// ),
+			// 'error' => array(
+				// 'larv.job+payment.error@gmail.com',
+			// ),
+		// ),
 		// 'payin' => array(
 			// 'all' => array(
 				// 'larv.job+payin@gmail.com',
@@ -222,7 +228,7 @@ class yf_payment_api {
 				// 'larv.job+payin.error@gmail.com',
 			// ),
 		// ),
-	);
+	// );
 
 	public function _init() {
 		$this->config();
@@ -233,9 +239,17 @@ class yf_payment_api {
 	public function config( $options = null ) {
 		!empty( (array)$options ) && $this->CONFIG = (array)$options;
 		$config = &$this->CONFIG;
-		if( is_array( $config[ 'currencies' ] ) ) {
-			$this->currencies = array_replace_recursive( $this->currencies_default, $config[ 'currencies' ] );
+		if( is_array( $config ) ) {
+			foreach( $config as $key => $item ) {
+				if( is_array( $this->$key ) ) {
+					$this->$key = $this->_replace( $this->$key, $item );
+				} else {
+					$this->$key = $item;
+				}
+			}
 		}
+		// setup currencies
+		$this->currencies = $this->_replace( $this->currencies_default, $this->currencies );
 	}
 
 	public function user_id( $value = -1 ) {
@@ -952,6 +966,9 @@ class yf_payment_api {
 		}
 		$operation_id = (int)$status;
 		$data[ 'operation_id' ] = $operation_id;
+		// user confirmation
+		$result = $this->confirmation( $options, $data, $operation_data );
+		if( ! @$result[ 'status' ] ) { return( $result ); }
 		// try provider operation
 		$provider_class = 'provider_' . $operation_data[ 'provider' ][ 'name' ];
 		$result = $this->_class( $provider_class, __FUNCTION__, array(
@@ -1401,6 +1418,41 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	// user confirmation
+	public function confirmation( &$options = null, &$data = null, &$operation_data = null ) {
+		$result[ 'status' ] = true;
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// user mode
+		if( !$_user_mode
+			|| !( $_type_name == 'payment' && @$this->IS_PAYOUT_CONFIRMATION )
+		) {
+			return;
+		}
+		// code
+		list( $code, $salt ) = $this->confirmation_code( $options, $data, $operation_data );
+		$object = $this->get_status( array( 'name' => 'confirmation' ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+	}
+
+	public function confirmation_code( &$options = null, &$data = null, &$operation_data = null ) {
+		$salt   = $this->_hash( time() . @$this->SECURITY_CODE );
+		$raw    = @$data[ 'operation_id' ] . @$data[ 'amount' ] . $salt;
+		$code   = $this->_hash( $raw );
+		$result = array( $code, $salt );
+		return( $result );
+	}
+
+	public function _hash( $str ) {
+		$hash   = hash( 'sha256', @$str, true );
+		$base64 = base64_encode( $hash );
+		$clean  = str_replace( array( '+', '=', '/' ), '', $base64 );
+		$result = substr( $clean, 0, 16 );
+		return( $result );
+	}
+
+	// mail
 	public function mail( $options = null ) {
 // DEBUG
 // var_dump( $options );
@@ -1699,6 +1751,18 @@ class yf_payment_api {
 			}
 		}
 		$result = call_user_func_array( 'array_merge_recursive', $data );
+		return( $result );
+	}
+
+	public function _replace() {
+		$options = func_get_args();
+		$data = array();
+		foreach( $options as $option ) {
+			if( is_array( $option ) && !empty( $option ) ) {
+				$data[] = $option;
+			}
+		}
+		$result = call_user_func_array( 'array_replace_recursive', $data );
 		return( $result );
 	}
 
