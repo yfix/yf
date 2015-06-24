@@ -340,7 +340,7 @@ class yf_auth_user {
 				$this->_log_fail(array(
 					'login'		=> $AUTH_LOGIN,
 					'pswd'		=> $AUTH_PSWD,
-					'reason'	=> $NEED_QUERY_DB ? 'w' : 'b', // 'w' means wrong login, 'b' means blocked
+					'reason'	=> $NEED_QUERY_DB ? 'wrong_login' : 'blocked',
 				));
 			}
 		}

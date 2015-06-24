@@ -244,7 +244,7 @@ class yf_auth_admin {
 			$this->_log_fail(array(
 				'login'		=> $AUTH_LOGIN,
 				'pswd'		=> $AUTH_PSWD,
-				'reason'	=> $NEED_QUERY_DB ? 'w' : 'b', // 'w' means wrong login, 'b' means blocked
+				'reason'	=> $NEED_QUERY_DB ? 'wrong_login' : 'blocked',
 			));
 			// Force redirect if given info is wrong
 			if (!empty($this->URL_WRONG_LOGIN)) {
