@@ -3,12 +3,13 @@
 class yf_manage_payment_lib {
 
 	public $css_by_status = array(
-		'processing'  => 'text-warning',
-		'in_progress' => 'text-warning',
-		'success'     => 'text-success',
-		'expired'     => 'text-danger',
-		'refused'     => 'text-danger',
-		'cancelled'   => 'text-danger',
+		'processing'   => 'text-warning',
+		'in_progress'  => 'text-warning',
+		'success'      => 'text-success',
+		'expired'      => 'text-danger',
+		'refused'      => 'text-danger',
+		'cancelled'    => 'text-danger',
+		'confirmation' => 'text-warning',
 	);
 
 	function _init() {

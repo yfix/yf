@@ -169,7 +169,7 @@ class yf_payment_api {
 	public $IS_BALANCE_LIMIT_LOWER = true;
 	public $BALANCE_LIMIT_LOWER    = 0;
 
-	public $IS_PAYOUT_CONFIRMATION = true;
+	public $IS_PAYOUT_CONFIRMATION = false;
 
 	public $SECURITY_CODE = '7CFL4AjeB6P7RWAk7W0n';
 
@@ -1204,6 +1204,7 @@ class yf_payment_api {
 		list( $balance, $account_result ) = $this->get_balance( $_options );
 		if( empty( $account_result ) ) { return( $account_result ); }
 		list( $account_id, $account ) = $account_result;
+		$data[ 'account' ] = $account;
 		// check amount
 		$decimals = $this->currency[ 'minor_units' ];
 		$amount   = $this->_number_float( $_[ 'amount' ], $decimals );
@@ -1420,27 +1421,51 @@ class yf_payment_api {
 
 	// user confirmation
 	public function confirmation( &$options = null, &$data = null, &$operation_data = null ) {
-		$result[ 'status' ] = true;
+		$status = true;
+		$result = array(
+			'status'         => &$status,
+			'status_message' => &$status_message,
+		);
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// user mode
 		if( !$_user_mode
 			|| !( $_type_name == 'payment' && @$this->IS_PAYOUT_CONFIRMATION )
 		) {
-			return;
+			return( $result );
 		}
-		// code
-		list( $code, $salt ) = $this->confirmation_code( $options, $data, $operation_data );
+		// code by operation_id, amount
+		$operation_id = &$data[ 'operation_id' ];
+		$amount       = &$data[ 'amount' ];
+		list( $code, $salt, $raw ) = $this->confirmation_code( array( 'data' => array(
+			'operation_id' => $operation_id,
+			'amount'       => $amount,
+		)));
+		// status: confirmation
 		$object = $this->get_status( array( 'name' => 'confirmation' ) );
 		list( $status_id, $status ) = $object;
 		if( empty( $status_id ) ) { return( $object ); }
+		$data[ 'status_id' ] = $status_id;
+		$operation_data[ 'status' ] = $status;
+		// store confirmation data
+		$operation_data[ 'options' ] = array( 'confirmation' => array(
+			'code' => $code,
+			'salt' => $salt,
+		));
+		// message
+		$status_message = t( 'Требуется подтверждение операции. На ваш почтовый адрес было отправлено письмо с руководством для подтверждения выплаты средств.' );
+		$operation_data[ 'status_message' ] = &$status_message;
+		return( $result );
 	}
 
-	public function confirmation_code( &$options = null, &$data = null, &$operation_data = null ) {
-		$salt   = $this->_hash( time() . @$this->SECURITY_CODE );
-		$raw    = @$data[ 'operation_id' ] . @$data[ 'amount' ] . $salt;
-		$code   = $this->_hash( $raw );
-		$result = array( $code, $salt );
+	public function confirmation_code( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// processing
+		$salt   = @$_salt ?: $this->_hash( time() . @$this->SECURITY_CODE );
+		$raw    = implode( '-', (array)@$_data );
+		$code   = $this->_hash( $raw . $salt );
+		$result = array( $code, $salt, $raw );
 		return( $result );
 	}
 
@@ -1506,6 +1531,21 @@ class yf_payment_api {
 		$url = array(
 			'user_payments' => url_user( '/payments' ),
 		);
+		switch( $status ) {
+			case 'confirmation':
+				$url[ 'user_confirmation' ] = url_user( array(
+					'object'          => 'payments',
+					'operation_id'    => @$__operation_id,
+					'code'            => @$__code,
+					'is_confirmation' => 1,
+				));
+				$url[ 'user_confirmation_cancel' ] = url_user( array(
+					'object'       => 'payments',
+					'operation_id' => @$__operation_id,
+					'is_cancel'    => 1,
+				));
+				break;
+		}
 		// mail
 		$mail_admin_to   = $mail_class->ADMIN_EMAIL;
 		$mail_admin_name = $mail_class->ADMIN_NAME;

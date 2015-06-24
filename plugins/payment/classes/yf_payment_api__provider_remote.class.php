@@ -1145,15 +1145,16 @@ $payment_api->dump(array( 'var' => array(
 			'amount_currency'       => $amount_currency,
 			'amount_currency_total' => $amount_currency_total,
 		);
-		$operation_options = array(
+		$operation_options = $payment_api->_merge( $operation_data[ 'options' ], array(
 			'request' => array( array(
 				'options'  => $options,
 				'data'     => $request_data,
 				'datetime' => $operation_data[ 'sql_datetime' ],
 			))
-		);
+		));
 		$operation_update_data = array(
 			'operation_id'    => $operation_id,
+			'status_id'       => $data[ 'status_id' ],
 			'balance'         => $account[ 'balance' ],
 			'datetime_update' => $sql_datetime,
 			'options'         => $operation_options,
@@ -1164,9 +1165,30 @@ $payment_api->dump(array( 'var' => array(
 			return( $result );
 		}
 		db()->commit();
+		// mail
+		$data = array(
+			'operation_id' => $operation_id,
+			'amount'       => $amount,
+		);
+		if( $payment_api->IS_PAYOUT_CONFIRMATION ) {
+			// mail: confirmation
+			$tpl = 'payout_confirmation';
+			$data[ 'code' ] = $operation_data[ 'options' ][ 'confirmation' ][ 'code' ];
+		} else {
+			// mail: payout request
+			$tpl = 'payout_request';
+		}
+		// mail
+		$payment_api->mail( array(
+			'tpl'     => $tpl,
+			'user_id' => $account[ 'user_id' ],
+			'admin'   => true,
+			'data'    => $data,
+		));
+		// message
 		$result = array(
 			'status'         => true,
-			'status_message' => t( 'Заявка на вывод средств принята' ),
+			'status_message' => @$operation_data[ 'status_message' ] ?: t( 'Заявка на вывод средств принята' ),
 		);
 		return( $result );
 	}
