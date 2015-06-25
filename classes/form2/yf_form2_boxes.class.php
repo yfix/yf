@@ -20,7 +20,8 @@ class yf_form2_boxes {
 		}
 		$data = array();
 		$row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
-		foreach ((array)main()->get_data('geo_countries') as $v) {
+		$countries = $extra['countries'] ?: main()->get_data('geo_countries');
+		foreach ((array)$countries as $v) {
 			$r = array(
 				'%icon'	=> '<i class="bfh-flag-'.strtoupper($v['code']).'"></i>',
 				'%name'	=> $v['name'],
@@ -52,7 +53,8 @@ class yf_form2_boxes {
 		$extra['country'] = $extra['country'] ?: 'UA';
 		$data = array();
 		$row_tpl = $extra['row_tpl'] ?: '%name';
-		foreach ((array)main()->get_data('geo_regions', 0, array('country' => $extra['country'])) as $v) {
+		$regions = $extra['regions'] ?: main()->get_data('geo_regions', 0, array('country' => $extra['country']));
+		foreach ((array)$regions as $v) {
 			$r = array(
 				'%name'	=> $v['name'],
 			);
