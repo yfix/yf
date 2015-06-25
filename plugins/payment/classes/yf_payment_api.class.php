@@ -170,6 +170,7 @@ class yf_payment_api {
 	public $BALANCE_LIMIT_LOWER    = 0;
 
 	public $IS_PAYOUT_CONFIRMATION = false;
+	public $CONFIRMATION_TIME      = 21600; // sec: 6 hours = 6 * 60 * 60
 
 	public $SECURITY_CODE = '7CFL4AjeB6P7RWAk7W0n';
 
@@ -254,7 +255,7 @@ class yf_payment_api {
 
 	public function user_id( $value = -1 ) {
 		$object = &$this->user_id;
-		if( $this->check_user_id( $value ) && $value !== -1 ) { $object = $value; }
+		if( $value !== -1 && $this->check_user_id( $value ) ) { $object = $value; }
 		return( $object );
 	}
 
@@ -1014,10 +1015,17 @@ class yf_payment_api {
 		list( $status_id, $status ) = $object;
 		if( empty( $status_id ) ) { return( $object ); }
 		// check in_progress
-		if( $status[ 'name' ] != 'in_progress' ) {
+		if( $status[ 'name' ] == 'cancelled' ) {
+			$result = array(
+				'status'         => true,
+				'status_message' => 'Операция уже отменена',
+			);
+			return( $result );
+		}
+		if( $status[ 'name' ] != 'in_progress' && $status[ 'name' ] != 'confirmation' ) {
 			$result = array(
 				'status'         => false,
-				'status_message' => 'Данную операцию невозможно отменить',
+				'status_message' => 'Операцию невозможно отменить',
 			);
 			return( $result );
 		}
@@ -1040,7 +1048,7 @@ class yf_payment_api {
 		}
 		$result = $this->_cancel( $options );
 		if( @$result[ 'status' ] ) {
-			$result[ 'status_message' ] = 'Отмена операция (id: '. $_operation_id .')';
+			$result[ 'status_message' ] = 'Операция отменена';
 		}
 		return( $result );
 	}
@@ -1310,8 +1318,10 @@ class yf_payment_api {
 				$result = $db->sql();
 			} else {
 				$result = $db->get();
-				$_options = &$result[ 'options' ];
-				isset( $_options ) && $_options = (array)json_decode( $_options, true );
+				if( @$result[ 'options' ] ) {
+					$_options = &$result[ 'options' ];
+					$_options = (array)json_decode( $_options, true );
+				}
 			}
 			return( $result );
 		}
@@ -1453,7 +1463,7 @@ class yf_payment_api {
 			'salt' => $salt,
 		));
 		// message
-		$status_message = t( 'Требуется подтверждение операции. На ваш почтовый адрес было отправлено письмо с руководством для подтверждения выплаты средств.' );
+		$status_message = t( 'Требуется подтверждение операции. Вам было отправлено письмо с руководством для подтверждения вывода средств.' );
 		$operation_data[ 'status_message' ] = &$status_message;
 		return( $result );
 	}
@@ -1474,6 +1484,99 @@ class yf_payment_api {
 		$base64 = base64_encode( $hash );
 		$clean  = str_replace( array( '+', '=', '/' ), '', $base64 );
 		$result = substr( $clean, 0, 16 );
+		return( $result );
+	}
+
+	public function confirmation_code_check( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// operation
+		$operation = $this->operation( array(
+			'operation_id' => $_operation_id,
+		));
+		if( !$operation ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Операция отсутствует',
+			);
+			return( $result );
+		}
+		// check status
+		$object = $this->get_status( array( 'status_id' => $operation[ 'status_id' ] ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+		if( $status[ 'name' ] != 'confirmation' ) {
+			$result = array(
+				'status'         => true,
+				'status_message' => 'Операция не нуждается в подтверждении',
+			);
+			return( $result );
+		}
+		// check
+		$confirmation = &$operation[ 'options' ][ 'confirmation' ];
+		// check already confirmed
+		$is_confirmed = @$confirmation[ 'status' ][ 0 ] ?: @$confirmation[ 'status' ];
+		if( $is_confirmed ) {
+			$result = array(
+				'status'         => true,
+				'status_message' => 'Операция уже подтверждена',
+			);
+			return( $result );
+		}
+		// check datetime
+		$time_code = strtotime( $operation[ 'datetime_update' ] );
+		$time = time();
+// DEBUG
+// $time_code = $time - 1;
+		$is_expired = ( $time - $time_code ) > $this->CONFIRMATION_TIME;
+		if( $is_expired ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Код подтверждения просрочен',
+			);
+			return( $result );
+		}
+		// check code
+		$code = &$confirmation[ 'code' ];
+		$salt = &$confirmation[ 'salt' ];
+		if( $code !== @$_code ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный код',
+			);
+			return( $result );
+		}
+		// status to in_progress
+		$object = $this->get_status( array( 'name' => 'in_progress' ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+		// update operation
+		$sql_datetime = $this->sql_datetime();
+		$update_options = array(
+			'confirmation' => array(
+				'status' => true,
+			),
+		);
+		$update_data = array(
+			'operation_id'    => $_operation_id,
+			'status_id'       => $status_id,
+			'datetime_update' => $sql_datetime,
+			'options'         => $update_options,
+		);
+		$result = $this->operation_update( $update_data );
+		if( @$result[ 'status' ] ) {
+			$result[ 'status_message' ] = 'Операция подтверждена';
+			// mail
+			$this->mail( array(
+				'tpl'     => 'payout_request',
+				'user_id' => $this->user_id(),
+				'admin'   => true,
+				'data'    => array(
+					'operation_id' => $_operation_id,
+					'amount'       => $operation[ 'amount' ],
+				),
+			));
+		}
 		return( $result );
 	}
 
@@ -1534,13 +1637,13 @@ class yf_payment_api {
 		switch( $status ) {
 			case 'confirmation':
 				$url[ 'user_confirmation' ] = url_user( array(
-					'object'          => 'payments',
+					'object'          => 'payment',
 					'operation_id'    => @$__operation_id,
 					'code'            => @$__code,
 					'is_confirmation' => 1,
 				));
 				$url[ 'user_confirmation_cancel' ] = url_user( array(
-					'object'       => 'payments',
+					'object'       => 'payment',
 					'operation_id' => @$__operation_id,
 					'is_cancel'    => 1,
 				));
