@@ -381,7 +381,7 @@ class yf_tpl_driver_yf {
 		// Examples: {execute(graphics, translate, value = blabla; extra = strtoupper)
 		if (strpos($string, '{exec') !== false) {
 			$string = preg_replace_callback(
-				'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
+				'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i',
 				function($m) use ($replace, $name, $_this) {
 					$use_cache = false;
 					if ($m[1] === 'exec_cached') {
@@ -415,7 +415,7 @@ class yf_tpl_driver_yf {
 		// Examples: {exec_last(graphics, translate, value = blabla; extra = strtoupper)
 		if (strpos($string, '{exec_last') !== false || strpos($string, '{execute_shutdown') !== false) {
 			$string = preg_replace_callback(
-				'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
+				'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i',
 				function($m) use ($replace, $name, $_this) {
 					return main()->_execute($m[2], $m[3], $m[4], $name. $_this->_STPL_EXT, 0, $use_cache = false);
 				}
@@ -596,7 +596,7 @@ class yf_tpl_driver_yf {
 			return '<'.'?p'.'hp '.($cond === 'elseif' ? '} '.$cond : $cond).'('. $part_left. ' '. $cur_operator. ' '. $part_right. ' '. $add_cond. ') { ?>';
 		}, $string);
 
-		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}  {if_empty(name1,name2,name3)}<h1 style="color: white;">NEW</h1>{/if}  
+		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}  {if_empty(name1,name2,name3)}<h1 style="color: white;">NEW</h1>{/if}
 		$pattern = '/\{(?P<cond>if_or|if_and|elseif_or|elseif_and|if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.,+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
@@ -619,7 +619,7 @@ class yf_tpl_driver_yf {
 				$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
 			}
 			$func = trim($m['func']);
-			// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
+			// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));',
 			$funcs_map = array(
 				'empty'		=> '_empty',
 				'not_ok'	=> '_empty',
@@ -652,13 +652,13 @@ class yf_tpl_driver_yf {
 			} elseif ($func === '_isset') {
 				$part_left = array();
 				if ($is_multiple) {
-					foreach (explode(',',trim($m['left'])) as $v) {
-						$part_left[] = $_this->_cond_sub_array($v, $replace);
+					foreach (explode(',',$m['left']) as $v) {
+						$part_left[] = $_this->_cond_sub_array(trim($v), $replace);
 					}
 				} else {
 					$part_left = $_this->_cond_sub_array($m['left'], $replace);
 				}
-			// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
+			// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if}
 			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
 				return '';
 			}
