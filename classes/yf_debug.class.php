@@ -171,6 +171,7 @@ class yf_debug {
 			return array();
 		}
 		$git_head_path = $git_base_path.'/HEAD';
+		$git_branch = '';
 		$git_hash = '';
 		$git_date = 0;
 		if (!file_exists($git_head_path) && file_exists($git_base_path) && is_file($git_base_path)) {
@@ -182,8 +183,14 @@ class yf_debug {
 		if ($git_head_path && file_exists($git_head_path)) {
 			// ref: refs/heads/master
 			list(, $git_subhead_path) = explode('ref:', file_get_contents($git_head_path));
+			$git_subhead_path = trim($git_subhead_path);
+			$git_branch = basename($git_subhead_path);
 			$git_hash_file = $git_subhead_path ? $git_base_path.'/'.trim($git_subhead_path) : '';
 			$git_hash = $git_hash_file && file_exists($git_hash_file) ? trim(file_get_contents($git_hash_file)) : '';
+			if (!$git_hash) {
+				$git_hash_file = $git_subhead_path ? $git_base_path.'/refs/remotes/origin/'.$git_branch : '';
+				$git_hash = $git_hash_file && file_exists($git_hash_file) ? trim(file_get_contents($git_hash_file)) : '';
+			}
 		}
 		$git_log_path = $git_base_path. '/logs/HEAD';
 		if ($git_hash && file_exists($git_log_path)) {
@@ -215,6 +222,7 @@ class yf_debug {
 			'hash'	=> $git_hash,
 			'date'	=> $git_date,
 			'url'	=> 'https://'.$url_part.'/tree/',
+			'branch'=> $git_branch,
 		);
 	}
 
@@ -231,11 +239,14 @@ class yf_debug {
 		$yf_version = file_exists($yf_version_file) ? file_get_contents($yf_version_file) : '';
 		if ($yf_version) {
 			$yf_version = _prepare_html($yf_version);
-			$out[] = '<a href="'.$git['url']. $yf_version.'" class="btn btn-mini btn-xs">'.$yf_version.'</a>';
+			$out[] = '<a href="'.$git['url']. $yf_version.'" class="btn btn-mini btn-xs btn-default">'.$yf_version.'</a>';
 		}
 		if ($git['hash']) {
 			$git['hash'] = _prepare_html($git['hash']);
-			$out[] = '<a href="'.$git['url']. $git['hash'].'" class="btn btn-mini btn-xs">'.substr($git['hash'], 0, 8).'</a>';
+			$out[] = '<a href="'.$git['url']. $git['hash'].'" class="btn btn-mini btn-xs btn-default">'.substr($git['hash'], 0, 8).'</a>';
+		}
+		if ($git['branch']) {
+			$out[] = '<a href="'.$git['url']. $git['branch'].'" class="btn btn-mini btn-xs btn-default">'.substr($git['branch'], 0, 8).'</a>';
 		}
 		if ($git['date']) {
 			$out[] = date('Y-m-d H:i', $git['date']);
@@ -252,11 +263,14 @@ class yf_debug {
 		$app_version = file_exists($app_version_file) ? file_get_contents($app_version_file) : '';
 		if ($app_version) {
 			$app_version = _prepare_html($app_version);
-			$out[] = '<a href="'.$git['url']. $app_version.'" class="btn btn-mini btn-xs">'.$app_version.'</a>';
+			$out[] = '<a href="'.$git['url']. $app_version.'" class="btn btn-mini btn-xs btn-default">'.$app_version.'</a>';
 		}
 		if ($git['hash']) {
 			$git['hash'] = _prepare_html($git['hash']);
-			$out[] = '<a href="'.$git['url']. $git['hash'].'" class="btn btn-mini btn-xs">'.substr($git['hash'], 0, 8).'</a>';
+			$out[] = '<a href="'.$git['url']. $git['hash'].'" class="btn btn-mini btn-xs btn-default">'.substr($git['hash'], 0, 8).'</a>';
+		}
+		if ($git['branch']) {
+			$out[] = '<a href="'.$git['url']. $git['branch'].'" class="btn btn-mini btn-xs btn-default">'.substr($git['branch'], 0, 8).'</a>';
 		}
 		if ($git['date']) {
 			$out[] = date('Y-m-d H:i', $git['date']);
