@@ -337,9 +337,6 @@ class yf_auth_user {
 					}
 				}
 			}
-			if (!$fail_reason && $this->USER_SECURITY_CHECKS) {
-				$fail_reason = $this->_user_security_checks();
-			}
 			if (!$fail_reason) {
 				$PSWD_OK = false;
 				$user_info = $this->_get_user_info($AUTH_LOGIN);
@@ -352,6 +349,9 @@ class yf_auth_user {
 				if (!$PSWD_OK) {
 					$fail_reason = 'wrong_login';
 				}
+			}
+			if (!$fail_reason && $this->USER_SECURITY_CHECKS) {
+				$fail_reason = $this->_user_security_checks($user_info['id']);
 			}
 			if ($fail_reason) {
 				unset($user_info);
@@ -367,8 +367,9 @@ class yf_auth_user {
 
 	/**
 	*/
-	function _user_security_checks() {
-		if (!$this->USER_SECURITY_CHECKS) {
+	function _user_security_checks($user_id) {
+		$user_id = (int)$user_id;
+		if (!$this->USER_SECURITY_CHECKS || !$user_id) {
 			return false;
 		}
 		$fail_reason = false;
@@ -381,13 +382,18 @@ class yf_auth_user {
 		$fields_ip = array('ip_whitelist', 'ip_blacklist');
 		$fields_country = array('country_whitelist', 'country_blacklist');
 		foreach (array_merge($fields_ip, $fields_country) as $k) {
+			if (!strlen(trim($user_settings[$k]))) {
+				continue;
+			}
 			$tmp = array();
-			foreach (explode(';', $user_settings[$k]) as $v) {
+			foreach (explode(';', trim($user_settings[$k])) as $v) {
+				$v = trim($v);
 				$tmp[$v] = $v;
 			}
 			$user_settings[$k] = $tmp;
 		}
 
+		// Whitelists have more priority over blacklists, IP checks have more priority over country checks
 		$country_allow = null;
 		if ($user_settings['country_whitelist']) {
 			if (isset($user_settings['country_whitelist'][$cur_country])) {
@@ -395,10 +401,8 @@ class yf_auth_user {
 			} else {
 				$country_allow = false;
 			}
-		} elseif ($user_settings['country_blacklist']) {
-			if (isset($user_settings['country_whitelist'][$cur_country])) {
-				$country_allow = false;
-			}
+		} elseif ($user_settings['country_blacklist'] && $cur_country && isset($user_settings['country_blacklist'][$cur_country])) {
+			$country_allow = false;
 		}
 		$ip_allow = null;
 		if ($user_settings['ip_whitelist']) {
@@ -407,28 +411,19 @@ class yf_auth_user {
 			} else {
 				$ip_allow = false;
 			}
-		} elseif ($user_settings['ip_blacklist']) {
-			if (isset($user_settings['ip_blacklist'][$cur_ip])) {
-				$ip_allow = false;
-			}
+		} elseif ($user_settings['ip_blacklist'] && $cur_ip && isset($user_settings['ip_blacklist'][$cur_ip])) {
+			$ip_allow = false;
 		}
-		if (isset($country_allow) || isset($ip_allow)) {
-			// Whitelists have more priority over blacklists, IP checks have more priority over country checks
-			if ($ip_allow) {
-				// all is good
-			} elseif ($country_allow) {
-				// all is good
-			} elseif (!$ip_allow) {
-				$fail_reason = 'block_ip_user_settings';
-				$msg = 'Login from your IP ('.$cur_ip.') is blocked by user security settings';
-				common()->message_error($msg);
-				trigger_error('AUTH: '.$msg, E_USER_WARNING);
-			} elseif (!$country_allow) {
-				$fail_reason = 'block_country_user_settings';
-				$msg = 'Login from your country ('.$cur_country.') is blocked by user security settings';
-				common()->message_error($msg);
-				trigger_error('AUTH: '.$msg, E_USER_WARNING);
-			}
+		if ($ip_allow === false) {
+			$fail_reason = 'block_ip_user_settings';
+			$msg = 'Login from your IP ('.$cur_ip.') is blocked by user security settings';
+			common()->message_error($msg);
+			trigger_error('AUTH: '.$msg, E_USER_WARNING);
+		} elseif ($country_allow === false && $ip_allow !== true) {
+			$fail_reason = 'block_country_user_settings';
+			$msg = 'Login from your country ('.$cur_country.') is blocked by user security settings';
+			common()->message_error($msg);
+			trigger_error('AUTH: '.$msg, E_USER_WARNING);
 		}
 		return $fail_reason;
 	}
