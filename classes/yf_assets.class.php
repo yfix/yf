@@ -1780,7 +1780,7 @@ class yf_assets {
 		if (isset($this->assets[$content])) {
 			$type = 'asset';
 		} elseif ($asset_type === 'js') {
-			if (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
+			if (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content) && !preg_match('~\s+~ims', $content)) {
 				$type = 'url';
 			} elseif (preg_match('~^/[a-z0-9\./_-]+\.js$~ims', $content) && file_exists($content)) {
 				$type = 'file';
@@ -1788,7 +1788,7 @@ class yf_assets {
 				$type = 'inline';
 			}
 		} elseif ($asset_type === 'css') {
-			if (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
+			if (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content) && !preg_match('~\s+~ims', $content)) {
 				$type = 'url';
 			} elseif (preg_match('~^/[a-z0-9\./_-]+\.css$~ims', $content) && file_exists($content)) {
 				$type = 'file';
