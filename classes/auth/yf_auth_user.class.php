@@ -116,6 +116,8 @@ class yf_auth_user {
 	public $ALLOW_REMEMBER_ME		= true;
 	/** @var string */
 	public $USER_PASSWORD_SALT		= '';
+	/** @var string */
+	public $USER_SECURITY_CHECKS	= false;
 
 	/**
 	*/
@@ -285,6 +287,8 @@ class yf_auth_user {
 		$AUTH_LOGIN	= trim($params['login']);
 		$AUTH_PSWD	= trim($params['pswd']);
 
+		$cur_ip = common()->get_ip();
+
 		if ($this->AUTH_ONLY_HTTPS && !($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL'])) {
 			$redirect_url = '';
 			if ($_SERVER['HTTP_REFERER']) {
@@ -300,33 +304,44 @@ class yf_auth_user {
 			}
 			return js_redirect($redirect_url);
 		}
-
+		$fail_reason = false;
 		if (!empty($AUTH_LOGIN) && !empty($AUTH_PSWD)) {
 			$NEED_QUERY_DB = true;
-
-			$CUR_IP = common()->get_ip();
-			if ($this->BLOCK_BANNED_IPS) {
-				if (common()->_ip_is_banned()) {
-					$NEED_QUERY_DB = false;
-					trigger_error('AUTH: Attempt to login from banned IP ('.$CUR_IP.') as "'.$AUTH_LOGIN.'" blocked', E_USER_WARNING);
-					return js_redirect($this->URL_WRONG_LOGIN);
-				}
+			if ($this->BLOCK_BANNED_IPS && common()->_ip_is_banned()) {
+				$fail_reason = 'ip_blocked';
+				$this->_log_fail(array(
+					'login'		=> $AUTH_LOGIN,
+					'pswd'		=> $AUTH_PSWD,
+					'reason'	=> $fail_reason,
+				));
+				$msg = 'Attempt to login from banned IP ('.$cur_ip.') as "'.$AUTH_LOGIN.'" blocked';
+				common()->message_error($msg);
+				trigger_error('AUTH: '.$msg, E_USER_WARNING);
+				return js_redirect($this->URL_WRONG_LOGIN);
 			}
 			if ($this->BLOCK_FAILED_LOGINS) {
-				list($_fails_by_login) = db()->query_fetch(
-					'SELECT COUNT(*) AS `0` FROM '.db('log_auth_fails').' WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' AND login="'._es($AUTH_LOGIN).'"'
-				);
-				list($_fails_by_ip) = db()->query_fetch(
-					'SELECT COUNT(*) AS `0` FROM '.db('log_auth_fails').' WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' AND ip="'._es(common()->get_ip()).'"'
-				);
-				if ($_fails_by_login >= $this->BLOCK_FAILS_BY_LOGIN_COUNT || $_fails_by_ip >= $this->BLOCK_FAILS_BY_IP_COUNT) {
-					$NEED_QUERY_DB = false;
-					trigger_error('AUTH: Attempt to login as "'.$AUTH_LOGIN.'" blocked, fails_by_login: '.intval($_fails_by_login).', fails_by_ip: '.intval($_fails_by_ip), E_USER_WARNING);
+				$min_time = time() - $this->BLOCK_FAILED_TTL;
+				$fails_by_login = (int)db()->get_one('SELECT COUNT(*) FROM '.db('log_auth_fails').' WHERE time > '.$min_time.' AND login="'._es($AUTH_LOGIN).'"');
+				if ($fails_by_login >= $this->BLOCK_FAILS_BY_LOGIN_COUNT) {
+					$fail_reason = 'blocked_fails_by_login';
+					$msg = 'Attempt to login as "'.$AUTH_LOGIN.'" blocked';
+					common()->message_error($msg);
+					trigger_error('AUTH: '.$msg.', fails_by_login: '.$fails_by_login, E_USER_WARNING);
+				} else {
+					$fails_by_ip = (int)db()->get_one('SELECT COUNT(*) FROM '.db('log_auth_fails').' WHERE time > '.$min_time.' AND ip="'._es($cur_ip).'"');
+					if ($fails_by_ip >= $this->BLOCK_FAILS_BY_IP_COUNT) {
+						$fail_reason = 'blocked_fails_by_ip';
+						$msg = 'Attempt to login as "'.$AUTH_LOGIN.'" blocked';
+						common()->message_error($msg);
+						trigger_error('AUTH: '.$msg.', fails_by_ip: '.$fails_by_ip, E_USER_WARNING);
+					}
 				}
 			}
-
-			$PSWD_OK = false;
-			if ($NEED_QUERY_DB) {
+			if (!$fail_reason && $this->USER_SECURITY_CHECKS) {
+				$fail_reason = $this->_user_security_checks();
+			}
+			if (!$fail_reason) {
+				$PSWD_OK = false;
 				$user_info = $this->_get_user_info($AUTH_LOGIN);
 				// Allow md5 passwords
 				if (strlen($user_info['password']) == 32 && md5($AUTH_PSWD. $this->USER_PASSWORD_SALT) == $user_info['password']) {
@@ -334,17 +349,88 @@ class yf_auth_user {
 				} elseif ($user_info['password'] == $AUTH_PSWD) {
 					$PSWD_OK = true;
 				}
+				if (!$PSWD_OK) {
+					$fail_reason = 'wrong_login';
+				}
 			}
-			if (!$PSWD_OK) {
+			if ($fail_reason) {
 				unset($user_info);
 				$this->_log_fail(array(
 					'login'		=> $AUTH_LOGIN,
 					'pswd'		=> $AUTH_PSWD,
-					'reason'	=> $NEED_QUERY_DB ? 'wrong_login' : 'blocked',
+					'reason'	=> $fail_reason,
 				));
 			}
 		}
 		return $this->_save_login_in_session($user_info, $params['no_redirect']);
+	}
+
+	/**
+	*/
+	function _user_security_checks() {
+		if (!$this->USER_SECURITY_CHECKS) {
+			return false;
+		}
+		$fail_reason = false;
+
+		$cur_ip = common()->get_ip();
+		$cur_country = strtoupper($_SERVER['GEOIP_COUNTRY_CODE']);
+
+		$user_settings = db()->from('user_settings')->whereid($user_id, 'user_id')->get_2d('key, value');
+
+		$fields_ip = array('ip_whitelist', 'ip_blacklist');
+		$fields_country = array('country_whitelist', 'country_blacklist');
+		foreach (array_merge($fields_ip, $fields_country) as $k) {
+			$tmp = array();
+			foreach (explode(';', $user_settings[$k]) as $v) {
+				$tmp[$v] = $v;
+			}
+			$user_settings[$k] = $tmp;
+		}
+
+		$country_allow = null;
+		if ($user_settings['country_whitelist']) {
+			if (isset($user_settings['country_whitelist'][$cur_country])) {
+				$country_allow = true;
+			} else {
+				$country_allow = false;
+			}
+		} elseif ($user_settings['country_blacklist']) {
+			if (isset($user_settings['country_whitelist'][$cur_country])) {
+				$country_allow = false;
+			}
+		}
+		$ip_allow = null;
+		if ($user_settings['ip_whitelist']) {
+			if (isset($user_settings['ip_whitelist'][$cur_ip])) {
+				$ip_allow = true;
+			} else {
+				$ip_allow = false;
+			}
+		} elseif ($user_settings['ip_blacklist']) {
+			if (isset($user_settings['ip_blacklist'][$cur_ip])) {
+				$ip_allow = false;
+			}
+		}
+		if (isset($country_allow) || isset($ip_allow)) {
+			// Whitelists have more priority over blacklists, IP checks have more priority over country checks
+			if ($ip_allow) {
+				// all is good
+			} elseif ($country_allow) {
+				// all is good
+			} elseif (!$ip_allow) {
+				$fail_reason = 'block_ip_user_settings';
+				$msg = 'Login from your IP ('.$cur_ip.') is blocked by user security settings';
+				common()->message_error($msg);
+				trigger_error('AUTH: '.$msg, E_USER_WARNING);
+			} elseif (!$country_allow) {
+				$fail_reason = 'block_country_user_settings';
+				$msg = 'Login from your country ('.$cur_country.') is blocked by user security settings';
+				common()->message_error($msg);
+				trigger_error('AUTH: '.$msg, E_USER_WARNING);
+			}
+		}
+		return $fail_reason;
 	}
 
 	/**
