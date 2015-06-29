@@ -1444,6 +1444,9 @@ class yf_payment_api {
 		) {
 			return( $result );
 		}
+		// check user mail
+		$user_mail = $this->is_user_mail( $options );
+		if( !@$user_mail[ 'status' ] ) { return( $user_mail ); }
 		// code by operation_id, amount
 		$operation_id = &$data[ 'operation_id' ];
 		$amount       = &$data[ 'amount' ];
@@ -1581,8 +1584,41 @@ class yf_payment_api {
 	}
 
 	// mail
+	public function is_user_mail( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$result = array(
+			'status'         => &$status,
+			'status_message' => &$status_message,
+		);
+		// check user
+		$user = user( @$_user_id );
+		if( empty( $user ) ) {
+			$status_message = 'Пользователь не найден для отправки почты';
+			return( $result );
+		}
+		// check mail
+		if( !@$user[ 'email' ] ) {
+			$status_message = 'Не найден почтовый адрес';
+			return( $result );
+		}
+		// check mail verification
+		var_dump( $user );
+		exit;
+		if( @$user[ 'email' ] != @$user[ 'email_validated' ] ) {
+			$status_message = 'Почтовый адрес не проверен';
+			return( $result );
+		}
+		$result[ 'user' ] = $user;
+		$result[ 'mail' ] = $user[ 'email' ];
+		$result[ 'name' ] = $user[ 'name' ] ?: $user[ 'login' ];
+		return( $result );
+	}
+
 	public function mail( $options = null ) {
 // DEBUG
+// ini_set( 'html_errors', 0 );
 // var_dump( $options );
 		$result = true;
 		// import options
@@ -1603,22 +1639,24 @@ class yf_payment_api {
 				$options[ 'status' ] = $_status;
 			}
 		}
+// DEBUG
+// ini_set( 'html_errors', 0 );
+// var_dump( $options );
 		// var
 		$payment_api = $this;
 		$mail_class  = _class( 'email' );
 		// check user
-		if( !empty( $_user_id ) ) {
-			$user = user( $_user_id );
+		if( ! @$_user_id ) {
+			$user_mail = $this->is_user_mail( $options );
 			// check email, validate email
-			if( !@$_force && (
-					empty( $user )
-					|| empty( $user[ 'email' ] )
-					|| $user[ 'email' ] != $user[ 'email_validated' ]
-				)
-			) { return( null ); }
-			$mail_to   = $user[ 'email' ];
-			$mail_name = $user[ 'name'  ];
+			if( !@$_force && $user_mail[ 'status' ] ) { return( $user_mail ); }
+			$user      = $user_mail[ 'user' ];
+			$mail_to   = $user_mail[ 'mail' ];
+			$mail_name = $user_mail[ 'name'  ];
 		}
+// DEBUG
+// ini_set( 'html_errors', 0 );
+// var_dump( $mail_to, $mail_name );
 		// check data
 		$data = array();
 		if( !empty( $_data ) ) {
@@ -1666,6 +1704,15 @@ class yf_payment_api {
 		// user
 		if( !$is_admin ) {
 			$result &= $mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
+			// mail fail
+			!$result && $this->dump( array(
+				'operation_id' => $__operation_id,
+				'var' => array(
+					'user_id'   => $_user_id,
+					'mail_to'   => $mail_to,
+					'mail_name' => $mail_name,
+				),
+			));
 			// mail copy
 			!$admin && $result &= $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 		}
@@ -1703,7 +1750,6 @@ class yf_payment_api {
 			// mail copy
 			$result_copy = $this->mail_copy( array( 'tpl' => $tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 			!$result_copy && $result &= $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
-
 		}
 		return( $result );
 	}
@@ -1914,7 +1960,9 @@ class yf_payment_api {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		$ts = microtime( true );
-		$file = $_file ?: sprintf( '/tmp/payment_api_dump-%s.txt', date( 'Y-m-d_H-i-s', $ts ) );
+		$file = $_file ?: sprintf( '/tmp/payment_api_dump-%s.txt',
+			( @$_operation_id ? $_operation_id .'-' : '' ) . date( 'Y-m-d_H-i-s', $ts )
+		);
 		$html_errors = ini_get( 'html_errors' );
 		ini_set( 'html_errors', 0 );
 		$result = '';
