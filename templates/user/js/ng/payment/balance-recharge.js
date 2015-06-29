@@ -316,6 +316,11 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				$timeout.cancel( this.id );
 			},
 		},
+		_update: function( r ) {
+			angular.extend( $scope.payment, r.response.payment );
+			PaymentBalance.load({ account: r.response.payment.account });
+			$scope.amount_init();
+		},
 		operation: function( options ) {
 			var $this             = this;
 			$scope.block_wait     = true;
@@ -330,8 +335,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 						$scope.block_wait   = false;
 						$scope.is_submitted = false;
 						if( r.response && r.response.payment ) {
-							angular.extend( $scope.payment, r.response.payment );
-							PaymentBalance.load({ account: r.response.payment.account });
+							$this._update( r );
 						} else {
 							$scope.status_message = config.message.error.operation;
 							$log.error( 'balance->operation is fail operation:', r );
@@ -377,8 +381,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 						$scope.status            = r.response.balance.status;
 						$scope.status_message    = r.response.balance.status_message;
 						if( r.response.payment ) {
-							angular.extend( $scope.payment, r.response.payment);
-							PaymentBalance.load({ account: r.response.payment.account });
+							$this._update( r );
 						}
 						// hide block_balance_recharge
 						$this.timer.cancel();
@@ -441,8 +444,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 							BalanceApi.on_payout_success();
 						}
 						if( r.response.payment ) {
-							angular.extend( $scope.payment, r.response.payment);
-							PaymentBalance.load({ account: r.response.payment.account });
+							$this._update( r );
 						}
 					} else {
 						$scope.status_message = config.message.error.operation;
@@ -487,8 +489,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 						$scope.status            = r.response.cancel.status;
 						$scope.status_message    = r.response.cancel.status_message;
 						if( r.response.payment ) {
-							angular.extend( $scope.payment, r.response.payment);
-							PaymentBalance.load({ account: r.response.payment.account });
+							$this._update( r );
 						}
 					} else {
 						$scope.status_message = config.message.error.operation;
