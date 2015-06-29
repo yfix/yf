@@ -1445,7 +1445,7 @@ class yf_payment_api {
 			return( $result );
 		}
 		// check user mail
-		$user_mail = $this->is_user_mail( $options );
+		$user_mail = $this->is_user_mail( $operation_data );
 		if( !@$user_mail[ 'status' ] ) { return( $user_mail ); }
 		// code by operation_id, amount
 		$operation_id = &$data[ 'operation_id' ];
@@ -1588,12 +1588,17 @@ class yf_payment_api {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
+		$status = false;
 		$result = array(
 			'status'         => &$status,
 			'status_message' => &$status_message,
 		);
 		// check user
-		$user = user( @$_user_id );
+		if( @$_user_id < 1 ) {
+			$status_message = 'Пользователь не найден для отправки почты';
+			return( $result );
+		}
+		$user = user( $_user_id );
 		if( empty( $user ) ) {
 			$status_message = 'Пользователь не найден для отправки почты';
 			return( $result );
@@ -1604,12 +1609,11 @@ class yf_payment_api {
 			return( $result );
 		}
 		// check mail verification
-		var_dump( $user );
-		exit;
 		if( @$user[ 'email' ] != @$user[ 'email_validated' ] ) {
 			$status_message = 'Почтовый адрес не проверен';
 			return( $result );
 		}
+		$status = true;
 		$result[ 'user' ] = $user;
 		$result[ 'mail' ] = $user[ 'email' ];
 		$result[ 'name' ] = $user[ 'name' ] ?: $user[ 'login' ];
@@ -1646,10 +1650,10 @@ class yf_payment_api {
 		$payment_api = $this;
 		$mail_class  = _class( 'email' );
 		// check user
-		if( ! @$_user_id ) {
+		if( @$_user_id > 0 ) {
 			$user_mail = $this->is_user_mail( $options );
 			// check email, validate email
-			if( !@$_force && $user_mail[ 'status' ] ) { return( $user_mail ); }
+			if( !@$_force && !@$user_mail[ 'status' ] ) { return( $user_mail ); }
 			$user      = $user_mail[ 'user' ];
 			$mail_to   = $user_mail[ 'mail' ];
 			$mail_name = $user_mail[ 'name'  ];
