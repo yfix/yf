@@ -35,7 +35,7 @@ class yf_console_langs_export extends Command {
 				if (!strlen($k)) {
 					continue;
 				}
-				$data[$k] = '"'.str_replace('"', '\\\"', $k).'";"'.str_replace('"', '\\\"', $v).'"';
+				$data[$k] = '"'.str_replace('"', '\\\"', str_replace('_', ' ', $k)).'";"'.str_replace('"', '\\\"', str_replace('_', ' ', $v)).'"';
 			}
 			ksort($data);
 			file_put_contents($fname, implode(PHP_EOL, $data));
