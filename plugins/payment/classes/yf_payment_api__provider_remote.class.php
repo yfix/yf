@@ -1170,13 +1170,12 @@ $payment_api->dump(array( 'var' => array(
 			'operation_id' => $operation_id,
 			'amount'       => $amount,
 		);
+		// mail: payout request
+		$tpl = 'payout_request';
 		if( $payment_api->IS_PAYOUT_CONFIRMATION ) {
 			// mail: confirmation
 			$tpl = 'payout_confirmation';
 			$data[ 'code' ] = $operation_data[ 'options' ][ 'confirmation' ][ 'code' ];
-		} else {
-			// mail: payout request
-			$tpl = 'payout_request';
 		}
 		// mail
 		$payment_api->mail( array(
