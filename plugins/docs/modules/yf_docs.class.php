@@ -44,339 +44,130 @@ class yf_docs {
 			if ($m[0] === '_' || $m === __FUNCTION__) {
 				continue;
 			}
-			$a[$m] = '<h2><a href="'.url('/@object/'.$m).'">'.ucfirst($m).'</a></h2>';
+			$a[$m] = '<h4><a href="'.url('/@object/'.$m).'">'.ucfirst($m).'</a></h4>';
 		}
+		ksort($a);
 		return implode(PHP_EOL, $a);
 	}
 
 	/***/
-	public function demo() {
-		$dir = $this->demo_dir;
-		$dir_len = strlen($dir);
-		$ext = '.php';
-		$ext_len = strlen($ext);
-
-		$name = preg_replace('~[^a-z0-9/_-]+~ims', '', $_GET['id']);
-		if (strlen($name)) {
-			$f = $dir. $name. '.php';
-			if (!file_exists($f)) {
-				return _404('Not found');
-			}
-			$body = include $f;
-			return '<section class="page-contents">'.tpl()->parse_string($body, $replace, 'demo_'.$name).'</section>';
-		}
-		$url = rtrim(url('/@object/@action/')).'/';
-		$data = array();
-		foreach ((array)_class('dir')->scan($dir) as $path) {
-			if (substr($path, -$ext_len) !== $ext) {
-				continue;
-			}
-			$name = substr($path, $dir_len, -$ext_len);
-			$data[$name] = array(
-				'name'	=> $name,
-				'link'	=> $url. urlencode($name),
-			);
-		}
-		ksort($data);
-		return html()->li($data);
+	public function _subclass($name) {
+		return _class('sample_'.$name, YF_PATH.'.dev/samples/classes/')->show();
 	}
 
 	/***/
 	public function assets() {
-		asset('font-awesome4');
-		foreach ($this->_get_assets() as $a) {
-			$name = $a['name'];
-			$sub = array();
-			$sub[] = $this->_github_link($a['path']);
-			$content = $a['content'];
-			$info = is_array($content) ? $content['info'] : array();
-			if ($info['name']) {
-				$sub[] = '<b>'.t('name').'</b>: '.$info['name'];
-			}
-			if ($info['desc']) {
-				$sub[] = '<b>'.t('desc').'</b>: '.$info['desc'];
-			}
-			if ($info['url']) {
-				$sub[] = '<b>'.t('url').'</b>: <a href="'._prepare_html($info['url']).'">'._prepare_html($info['url']).'</a>';
-			}
-			if ($info['git']) {
-				$sub[] = '<b>'.t('git').'</b>: <a href="'.$info['git'].'">'.$info['git'].'</a>';
-			}
-			$data[$name] = array(
-				'name'	=> $name,
-				'link'	=> url('/@object/@action/#'.$name),
-				'sub'	=> $sub,
-				'id'	=> $name,
-#				'class'	=> 'btn btn-default btn-small btn-sm',
-			);
-		}
-		return html()->li($data);
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function services() {
-		asset('font-awesome4');
-		foreach ($this->_get_services() as $a) {
-			$name = $a['name'];
-			$sub = array();
-			$sub[] = $this->_github_link($a['path']);
-			$content = $a['content'];
-			$info = is_array($content) ? $content['info'] : array();
-			if ($info['name']) {
-				$sub[] = '<b>'.t('name').'</b>: '.$info['name'];
-			}
-			if ($info['desc']) {
-				$sub[] = '<b>'.t('desc').'</b>: '.$info['desc'];
-			}
-			if ($info['url']) {
-				$sub[] = '<b>'.t('url').'</b>: <a href="'._prepare_html($info['url']).'">'._prepare_html($info['url']).'</a>';
-			}
-			if ($info['git']) {
-				$sub[] = '<b>'.t('git').'</b>: <a href="'.$info['git'].'">'.$info['git'].'</a>';
-			}
-			$data[$name] = array(
-				'name'	=> $name,
-				'link'	=> url('/@object/@action/#'.$name),
-				'sub'	=> $sub,
-				'id'	=> $name,
-#				'class'	=> 'btn btn-default btn-small btn-sm',
-			);
-		}
-		return html()->li($data);
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function form() {
-		$id = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
-		$method = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['page']);
-		if (strlen($id)) {
-			$obj = _class($id, YF_PATH.'.dev/samples/form2/');
-			if ($method) {
-				return $obj->$method();
-			}
-			foreach (get_class_methods($obj) as $name) {
-				if (substr($name, 0, 1) === '_' || $name === 'show') {
-					continue;
-				}
-				$names[$name] = $name;
-			}
-			if ($obj && !$names) {
-				return $obj->show();
-			}
-			foreach ($names as $name) {
-				$data[$name] = array(
-					'name'	=> $name,
-					'link'	=> url('/@object/@action/@id/'. $name),
-				);
-			}
-			return html()->li($data);
-		}
-		$ext = '.class.php';
-		$ext_len = strlen($ext);
-		$globs = array(
-			'yf_dev'	=> YF_PATH.'.dev/samples/form2/*'.$ext,
-#			'app'		=> APP_PATH.'modules/*'.$ext,
-#			'project'	=> PROJECT_PATH.'modules/*'.$ext,
-		);
-		$names = array();
-		foreach ($globs as $glob) {
-			foreach (glob($glob) as $cls) {
-				$cls = basename($cls);
-				if ($cls == __CLASS__ || false === strpos($cls, __FUNCTION__)) {
-					continue;
-				}
-				$name = substr($cls, 0, -$ext_len);
-				$names[$name] = $name;
-			}
-		}
-		$links = array();
-		foreach ($names as $name) {
-			$data[$name] = array(
-				'name'	=> $name,
-				'link'	=> url('/@object/@action/'. $name),
-			);
-		}
-		return html()->li($data);
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function table() {
-		$id = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
-		if (strlen($id)) {
-			return _class($id, YF_PATH.'.dev/samples/table2/')->show();
-		}
-		$ext = '.class.php';
-		$ext_len = strlen($ext);
-		$globs = array(
-			'yf_dev'	=> YF_PATH.'.dev/samples/table2/*'.$ext,
-#			'app'		=> APP_PATH.'modules/*'.$ext,
-#			'project'	=> PROJECT_PATH.'modules/*'.$ext,
-		);
-		$names = array();
-		foreach ($globs as $glob) {
-			foreach (glob($glob) as $cls) {
-				$cls = basename($cls);
-				if ($cls == __CLASS__ || false === strpos($cls, __FUNCTION__)) {
-					continue;
-				}
-				$name = substr($cls, 0, -$ext_len);
-				$names[$name] = $name;
-			}
-		}
-		$links = array();
-		foreach ($names as $name) {
-			$data[$name] = array(
-				'name'	=> $name,
-				'link'	=> url('/@object/@action/'. $name),
-			);
-		}
-		return html()->li($data);
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function html() {
-		return _class('test_html', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
-#	public function db() {
-// TODO
-#	}
+	public function main() {
+		return $this->_subclass(__FUNCTION__);
+	}
 
 	/***/
-#	public function orm() {
-// TODO
-#	}
+	public function common() {
+		return $this->_subclass(__FUNCTION__);
+	}
 
 	/***/
-#	public function common() {
-// TODO
-#	}
+	public function graphics() {
+		return $this->_subclass(__FUNCTION__);
+	}
 
 	/***/
-#	public function main() {
-// TODO
-#	}
+	public function cache() {
+		return $this->_subclass(__FUNCTION__);
+	}
 
 	/***/
-#	public function aliases() {
-// TODO
-#	}
+	public function dir() {
+		return $this->_subclass(__FUNCTION__);
+	}
 
 	/***/
-#	public function fast_init() {
-// TODO
-#	}
+	public function utils() {
+		return $this->_subclass(__FUNCTION__);
+	}
 
 	/***/
-#	public function yf() {
-// TODO: console tool docs
-#	}
+	public function aliases() {
+		return $this->_subclass(__FUNCTION__);
+	}
 
 	/***/
-#	public function dir() {
-// TODO
-#	}
+	public function functions() {
+		return $this->_subclass(__FUNCTION__);
+	}
 
 	/***/
-#	public function auth() {
-// TODO
-#	}
+	public function console_tool() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function db() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function db_query_builder() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function db_utils() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function db_migrator() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function model() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function core_api() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function demo() {
+		return $this->_subclass(__FUNCTION__);
+	}
 
 	/***/
 	public function misc() {
-		$dir = $this->docs_dir;
-		$dir_len = strlen($dir);
-		$ext = '.stpl';
-		$ext_len = strlen($ext);
-
-		$name = preg_replace('~[^a-z0-9/_-]+~ims', '', $_GET['id']);
-		if (strlen($name)) {
-			$dev_path = YF_PATH.'.dev/samples/classes/';
-			$dev_class_path = $dev_path. $name. '.class.php';
-			if (file_exists($dev_class_path)) {
-				return _class($name, $dev_path)->show();
-			}
-			$f = $dir. $name. '.stpl';
-			if (!file_exists($f)) {
-				return _404('Not found');
-			}
-			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'doc_'.$name).'</section>';
-		}
-		$url = rtrim(url('/@object/@action/')).'/';
-		$data = array();
-		foreach ((array)_class('dir')->scan($dir) as $path) {
-			if (substr($path, -$ext_len) !== $ext) {
-				continue;
-			}
-			$name = substr($path, $dir_len, -$ext_len);
-			$data[$name] = array(
-				'name'	=> $name,
-				'link'	=> $url. urlencode($name),
-			);
-		}
-		ksort($data);
-		return html()->li($data);
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
-	public function _get_assets() {
-		$assets = array();
-		$suffix = '.php';
-		$dir = 'share/assets/';
-		$pattern = $dir. '*'. $suffix;
-		$globs = array(
-			'yf_main'		=> YF_PATH. $pattern,
-			'yf_plugins'	=> YF_PATH. 'plugins/*/'. $pattern,
-		);
-		$slen = strlen($suffix);
-		$names = array();
-		foreach($globs as $gname => $glob) {
-			foreach(glob($glob) as $path) {
-				$name = substr(basename($path), 0, -$slen);
-				$names[$name] = $path;
-			}
-		}
-		foreach($names as $name => $path) {
-			$assets[$name] = array(
-				'name'		=> $name,
-				'path'		=> $path,
-				'content'	=> include $path,
-				'raw'		=> file_get_contents($path),
-			);
-		}
-		return $assets;
-	}
-
-	/***/
-	public function _get_services() {
-		$services = array();
-		$suffix = '.php';
-		$dir = 'share/services/';
-		$pattern = $dir. '*'. $suffix;
-		$globs = array(
-			'yf_main'		=> YF_PATH. $pattern,
-			'yf_plugins'	=> YF_PATH. 'plugins/*/'. $pattern,
-		);
-		$slen = strlen($suffix);
-		$names = array();
-		foreach($globs as $gname => $glob) {
-			foreach(glob($glob) as $path) {
-				$name = substr(basename($path), 0, -$slen);
-				$names[$name] = $path;
-			}
-		}
-		foreach($names as $name => $path) {
-			if (substr($name, 0, 1) === '_') {
-				continue;
-			}
-			$services[$name] = array(
-				'name'	=> $name,
-				'path'	=> $path,
-				'raw'	=> file_get_contents($path),
-			);
-		}
-		return $services;
+	public function validate() {
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
@@ -396,12 +187,16 @@ class yf_docs {
 
 	/***/
 	public function _hook_side_column() {
-		if ($_GET['action'] == 'html') {
+		$custom_class_name = 'sample_'.$_GET['action'];
+		$custom_obj = _class_safe($custom_class_name);
+		$hook_name = __FUNCTION__;
+		// Try to load side column hook from subclass
+		if ($_GET['action'] && is_object($custom_obj) && method_exists($custom_obj, $hook_name)) {
 			// class should be instantinated with full path before this
-			$custom = _class('test_html')->_hook_side_column();
-		}
-		if ($custom) {
-			return $custom;
+			$custom = $custom_obj->$hook_name();
+			if ($custom) {
+				return $custom;
+			}
 		}
 		$url = url('/@object');
 		$names = array();
@@ -409,9 +204,9 @@ class yf_docs {
 		$ext = '.class.php';
 		$ext_len = strlen($ext);
 		$globs = array(
+			'yf_dev_classes'	=> YF_PATH.'.dev/samples/classes/*'.$ext,
 			'yf_dev_form2'		=> YF_PATH.'.dev/samples/form2/*'.$ext,
 			'yf_dev_table2'		=> YF_PATH.'.dev/samples/table2/*'.$ext,
-			'yf_dev_classes'	=> YF_PATH.'.dev/samples/classes/*'.$ext,
 #			'app'		=> APP_PATH.'modules/*'.$ext,
 #			'project'	=> PROJECT_PATH.'modules/*'.$ext,
 		);
@@ -427,19 +222,17 @@ class yf_docs {
 			}
 		}
 		$links = array();
-		$links[url('/@object/assets')] = t('assets');
-		$links[url('/@object/services')] = t('services');
-		$links[url('/@object/misc')] = t('misc');
 		foreach ($names as $name) {
+			if (substr($name, 0, strlen('sample_')) === 'sample_') {
+				$name = substr($name, strlen('sample_'));
+			}
 			$url = '/';
 			if (substr($name, 0, strlen('table2_')) === 'table2_') {
 				$url = '/@object/table/'. $name;
 			} elseif (substr($name, 0, strlen('form2_')) === 'form2_') {
 				$url = '/@object/form/'. $name;
-			} elseif (substr($name, 0, strlen('test_html')) === 'test_html') {
-				$url = '/@object/html/';
 			} else {
-				$url = '/@object/misc/'. $name;
+				$url = '/@object/'. $name;
 			}
 			$links[url($url)] = t($name);
 		}

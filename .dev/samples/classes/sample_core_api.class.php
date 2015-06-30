@@ -1,6 +1,6 @@
 <?php
 
-class test_core_api {
+class sample_core_api {
 
 	/**
 	*/
@@ -18,17 +18,26 @@ class test_core_api {
 			'get_method_source',
 			'get_submodule_methods',
 		);
-		$methods = array();
-		foreach (get_class_methods($this) as $name) {
-			if ($name[0] == '_' || $name == 'show' || in_array($name, $skip_list)) {
+		$items = array();
+		$methods = get_class_methods(_class('core_api'));
+		$sample_methods = get_class_methods($this);
+		sort($methods);
+		foreach ((array)$sample_methods as $name) {
+			if (in_array($name, $methods)) {
 				continue;
 			}
-			$methods[$name] = array(
-				'name'	=> $name,
-				'link'	=> './?object='.__CLASS__.'&action='.$name,
+			$methods[] = $name;
+		}
+		foreach ((array)$methods as $name) {
+			if ($name == 'show' || substr($name, 0, 1) == '_' || in_array($name, $skip_list)) {
+				continue;
+			}
+			$items[] = array(
+				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
+				'link'	=> url('/@object/@action/'.$name),
 			);
 		}
-		return _class('html')->navlist($methods);
+		return _class('html')->navlist($items);
 	}
 
 	/**
