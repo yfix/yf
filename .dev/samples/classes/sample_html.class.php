@@ -92,6 +92,11 @@ class sample_html {
 	}
 
 	/***/
+	function a() {
+		return _class('html')->a('/docs/html', 'Block me', 'fa fa-lock');
+	}
+
+	/***/
 	function dd_table() {
 		$data = array(
 			'first' 	=> 'first text',
