@@ -1,6 +1,6 @@
 <?php
 
-class sample_functions {
+class sample_validate {
 
 	/***/
 	function _init() {
@@ -11,7 +11,7 @@ class sample_functions {
 	function _hook_side_column() {
 		$items = array();
 		$url = url('/@object');
-		$methods = _class('core_api')->get_functions();
+		$methods = get_class_methods(_class('validate'));
 		$sample_methods = get_class_methods($this);
 		sort($methods);
 		foreach ((array)$sample_methods as $name) {
