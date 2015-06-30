@@ -369,6 +369,9 @@ class yf_rewrite {
 			}
 		}
 		// Return links to the http protocol
+		if (substr($url, 0, 2) == '//') {
+			$url = str_replace('//', 'http://', $url);
+		}
 		if (substr($url, 0, 8) == 'https://') {
 			$is_https = true;
 			if ($main->HTTPS_ENABLED_FOR) {
