@@ -3,8 +3,8 @@ return array(
 	'fields' => array(
 		'id' => array(
 			'name' => 'id',
-			'type' => 'smallint',
-			'length' => 6,
+			'type' => 'tinyint',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -107,5 +107,7 @@ return array(
 	'foreign_keys' => array(
 	),
 	'options' => array(
+		'engine' => 'InnoDB',
+		'charset' => 'utf8',
 	),
 );
