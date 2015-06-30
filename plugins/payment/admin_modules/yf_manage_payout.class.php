@@ -455,6 +455,9 @@ class yf_manage_payout {
 		$user_is_online = $online_users->_is_online( $user_id );
 		// check provider
 		$providers_user = $payment_api->provider();
+		$payment_api->provider_options( $providers_user, array(
+			'method_allow',
+		));
 		if( empty( $providers_user[ $o_provider_id ] ) ) {
 			$result = array(
 				'status'         => false,
@@ -637,8 +640,10 @@ class yf_manage_payout {
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $operation ); }
 		// var
+		$url         = &$this->url;
 		$html        = _class( 'html' );
 		$payment_api = &$this->payment_api;
+		$manage_lib  = &$this->manage_payment_lib;
 		// prepare view: request options
 		$content = array();
 		foreach( $_method[ 'option' ] as $key => $title ) {
@@ -681,6 +686,54 @@ class yf_manage_payout {
 			$response_last = $response_last[ 'data' ];
 		}
 		$html_response = $content;
+		// prepare view: operations by method
+		list( $data, $count ) = $payment_api->operation( array(
+			'where' =>
+				'account_id = '. $_account_id
+				.' AND provider_id = '. $_provider_id
+				.' AND operation_id != '. $_operation_id
+				.' AND direction = "out"'
+			,
+			'limit' => 50,
+		));
+		$html_operations_by_method = null;
+		if( @count( $data ) > 0 ) {
+			$content = array();
+			foreach( $data as $item ) {
+				$request = &$item[ 'options' ][ 'request' ][ 0 ];
+				// match method
+				if( @$request[ 'options' ][ 'method_id' ] == $_method_id ) {
+					$request_options = &$request[ 'options' ];
+					$account_number = @$request_options[ 'account_number' ] ?:
+							@$request_options[ 'card' ] ?:
+							'-'
+					;
+					$content[ $item[ 'operation_id' ] ] = array(
+						'operation_id'   => $item[ 'operation_id' ],
+						'account_number' => $account_number,
+						'amount'         => $item[ 'amount' ],
+						'status_id'      => $item[ 'status_id' ],
+						'date'           => $item[ 'datetime_update' ],
+					);
+				}
+			}
+			$content && $html_operations_by_method = table( $content, array( 'no_total' => true ) )
+				->text( 'operation_id'  , 'операция' )
+				->text( 'account_number', 'счет, номер карты, кошелек' )
+				->text( 'amount'        , 'сумма'    )
+				->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $_statuses ) {
+					$status_name = $_statuses[ $value ][ 'name' ];
+					$title       = $_statuses[ $value ][ 'title' ];
+					$css = $manage_lib->css_by_status( array(
+						'status_name' => $status_name,
+					));
+					$result = sprintf( '<span class="%s">%s</span>', $css, $title );
+					return( $result );
+				}, array( 'desc' => 'статус' ) )
+				->text( 'date' , 'дата' )
+				->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
+			;
+		}
 		// prepare view: operation options
 		$user_link = $html->a( array(
 			'href'  => $this->_url( 'user', array( '%user_id' => $_user_id ) ),
@@ -727,11 +780,12 @@ class yf_manage_payout {
 		}
 		// render
 		$replace = $operation + array(
-			'is_manual'        => $is_manual,
-			'header_data'      => $html_operation_options,
-			'request_data'     => $html_request_options,
-			'request_data_csv' => $html_request_options_csv,
-			'response_data'    => $html_response,
+			'is_manual'            => $is_manual,
+			'header_data'          => $html_operation_options,
+			'request_data'         => $html_request_options,
+			'request_data_csv'     => $html_request_options_csv,
+			'response_data'        => $html_response,
+			'operations_by_method' => $html_operations_by_method,
 			'url' => array(
 				'list'               => $this->_url( 'list' ),
 				'view'               => $this->_url( 'view',               array( '%operation_id' => $_operation_id ) ),
