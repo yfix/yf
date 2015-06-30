@@ -92,11 +92,6 @@ class sample_html {
 	}
 
 	/***/
-	function a() {
-		return _class('html')->a('/docs/html', 'Block me', 'fa fa-lock');
-	}
-
-	/***/
 	function dd_table() {
 		$data = array(
 			'first' 	=> 'first text',
@@ -618,6 +613,140 @@ class sample_html {
 			),
 			array(
 				array('s12'),
+			),
+		));
+	}
+
+	/***/
+	function a() {
+		return _class('html')->a('/docs/html', 'Block me', 'fa fa-lock');
+	}
+
+	/***/
+	function icon() {
+		return _class('html')->icon('fa fa-lock');
+	}
+
+	/***/
+	function ip() {
+		return _class('html')->ip('8.8.8.8');
+	}
+
+	/***/
+	function tooltip() {
+		return _class('html')->tooltip('This is custom text to be displayed inside tooltip, also you can use tip short names, editable from admin panel');
+	}
+
+	/***/
+	function select_box() {
+		return _class('html')->select_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function multi_select() {
+		return _class('html')->multi_select_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function multi_select_box() {
+		return _class('html')->multi_select_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function select2_box() {
+		return _class('html')->select2_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function chosen_box() {
+		return _class('html')->chosen_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function button_box() {
+		return _class('html')->button_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function button_split_box() {
+		return _class('html')->button_split_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function radio_box() {
+		return _class('html')->radio_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function check_box() {
+		return _class('html')->check_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function multi_check_box() {
+		return _class('html')->multi_check_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function list_box() {
+		return _class('html')->list_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function div_box() {
+		return _class('html')->div_box('input_name', array('k1' => 'key1', 'k2' => 'key2'));
+	}
+
+	/***/
+	function date_box() {
+		return _class('html')->date_box('input_name');
+	}
+
+	/***/
+	function date_box2() {
+		return _class('html')->date_box2('input_name');
+	}
+
+	/***/
+	function time_box() {
+		return _class('html')->time_box('input_name');
+	}
+
+	/***/
+	function time_box2() {
+		return _class('html')->time_box2('input_name');
+	}
+
+	/***/
+	function datetime_box2() {
+		return _class('html')->datetime_box2('input_name');
+	}
+
+	/***/
+	function date_picker() {
+		return _class('html')->date_picker('input_name', '2015-02-02');
+	}
+
+	/***/
+	function input() {
+		return _class('html')->input('input_name', 'some value');
+	}
+
+	/***/
+	function textarea() {
+		return _class('html')->textarea('input_name', 'some value');
+	}
+
+	/***/
+	function li() {
+		return _class('html')->li(array(
+			'name 1',
+			array(
+				'name' => 'My name 2',
+			),
+			array(
+				'name' => 'My name 3',
+				'link' => url('/@object/@action/@id/3'),
 			),
 		));
 	}
