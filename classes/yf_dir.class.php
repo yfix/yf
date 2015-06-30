@@ -492,26 +492,6 @@ class yf_dir {
 	}
 
 	/**
-	* Get values from the multi-dimensional array
-	* 
-	* @access	public
-	* @param	$ary	array	Array to process
-	* @return	array			Flat array of values
-	*/
-	function array_values_recursive($ary) {
-		$lst = array();
-		foreach (array_keys((array)$ary) as $k) {
-			$v = $ary[$k];
-			if (is_scalar($v)) {
-				$lst[] = $v;
-			} elseif (is_array($v)) {
-				$lst = array_merge($lst, $this->array_values_recursive($v));
-			}
-		}
-		return $lst;
-	}
-
-	/**
 	* generate user upload path and if need make generated dirs
 	* 
 	* @code
