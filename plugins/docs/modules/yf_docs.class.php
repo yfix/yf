@@ -166,6 +166,11 @@ class yf_docs {
 	}
 
 	/***/
+	public function validate() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
 	public function _github_link($path = '') {
 		if (!strlen($path)) {
 			return '';
