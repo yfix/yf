@@ -36,18 +36,68 @@ class yf_docs {
 
 	/***/
 	public function show() {
-		if ($_GET['id']) {
-			return $this->misc();
-		}
-		$a = array();
+		$methods = array();
 		foreach (get_class_methods($this) as $m) {
 			if ($m[0] === '_' || $m === __FUNCTION__) {
 				continue;
 			}
+			$methods[$m] = $m;
+		}
+		$id = $_GET['id'];
+		if ($id) {
+			$func = in_array($id, $methods) ? $id : 'misc';
+			return $this->$func();
+		}
+		$a = array();
+		foreach ($methods as $m) {
 			$a[$m] = '<h4><a href="'.url('/@object/'.$m).'">'.ucfirst($m).'</a></h4>';
 		}
 		ksort($a);
 		return implode(PHP_EOL, $a);
+	}
+
+	/***/
+	public function _show_for($obj, $id = '') {
+		$id = $id ?: $_GET['id'];
+		$action = $_GET['action'];
+		if (preg_match('~^[a-z0-9_]+$~ims', $id)) {
+			$only_method = strtolower($id);
+		}
+		$methods = array();
+		foreach(get_class_methods($obj) as $name) {
+			if ($name == 'show' || substr($name, 0, 1) == '_') {
+				continue;
+			}
+			$methods[$name] = $name;
+		}
+		sort($methods);
+		if (!$only_method) {
+			$only_method = current($methods);
+		}
+		$url = url('/@object');
+		foreach ((array)$methods as $name) {
+			if ($only_method && $only_method !== $name) {
+				continue;
+			}
+			$self_source	= _class('core_api')->get_method_source($obj, $name);
+			$target_source	= _class('core_api')->get_method_source(_class('html'), $name);
+			$target_docs	= _class('core_api')->get_method_docs('html', $name);
+
+			$items[] = 
+				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
+					<h1><a href="'.url('/@object/@action/'.$name).'">'.$name.'</a>
+						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button> '
+						.($target_source['source'] ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("'.$action.'")-&gt;'.$name.'() source</button> ' : '')
+						._class('core_api')->get_github_link($action.'.'.$name)
+						.($target_docs ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">'.$action.'::'.$name.' docs</button> ' : '')
+					.'</h1>
+					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'._prepare_html($self_source['source']).'</code></pre></div> '
+					.($target_source['source'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['source'])).'</code></pre></div> ' : '')
+					.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'._class('html')->well(nl2br($target_docs)).'</div> ' : '')
+					.'<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$obj->$name().'</div>
+				</div>';
+		}
+		return implode(PHP_EOL, $items);
 	}
 
 	/***/
