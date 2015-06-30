@@ -957,6 +957,7 @@ class yf_payment_api {
 			'title'     => $title,
 		);
 		// create operation
+		db()->begin();
 		$status = db()->table( 'payment_operation' )->insert( $data );
 		if( empty( $status ) ) {
 			$result = array(
@@ -969,7 +970,8 @@ class yf_payment_api {
 		$data[ 'operation_id' ] = $operation_id;
 		// user confirmation
 		$result = $this->confirmation( $options, $data, $operation_data );
-		if( ! @$result[ 'status' ] ) { return( $result ); }
+		if( ! @$result[ 'status' ] ) { db()->rollback(); return( $result ); }
+		db()->commit();
 		// try provider operation
 		$provider_class = 'provider_' . $operation_data[ 'provider' ][ 'name' ];
 		$result = $this->_class( $provider_class, __FUNCTION__, array(
