@@ -720,7 +720,10 @@ class yf_manage_payout {
 			$content && $html_operations_by_method = table( $content, array( 'no_total' => true ) )
 				->text( 'operation_id'  , 'операция' )
 				->text( 'account_number', 'счет, номер карты, кошелек' )
-				->text( 'amount'        , 'сумма'    )
+				->func( 'amount', function( $value, $extra, $row ) use( $payment_api ) {
+					$result = $payment_api->money_html( $value );
+					return( $result );
+				}, array( 'desc' => 'сумма' ) )
 				->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $_statuses ) {
 					$status_name = $_statuses[ $value ][ 'name' ];
 					$title       = $_statuses[ $value ][ 'title' ];
