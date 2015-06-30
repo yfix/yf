@@ -46,6 +46,7 @@ class yf_docs {
 			}
 			$a[$m] = '<h4><a href="'.url('/@object/'.$m).'">'.ucfirst($m).'</a></h4>';
 		}
+		ksort($a);
 		return implode(PHP_EOL, $a);
 	}
 
@@ -183,9 +184,9 @@ class yf_docs {
 		$ext = '.class.php';
 		$ext_len = strlen($ext);
 		$globs = array(
+			'yf_dev_classes'	=> YF_PATH.'.dev/samples/classes/*'.$ext,
 			'yf_dev_form2'		=> YF_PATH.'.dev/samples/form2/*'.$ext,
 			'yf_dev_table2'		=> YF_PATH.'.dev/samples/table2/*'.$ext,
-			'yf_dev_classes'	=> YF_PATH.'.dev/samples/classes/*'.$ext,
 #			'app'		=> APP_PATH.'modules/*'.$ext,
 #			'project'	=> PROJECT_PATH.'modules/*'.$ext,
 		);
@@ -202,6 +203,9 @@ class yf_docs {
 		}
 		$links = array();
 		foreach ($names as $name) {
+			if (substr($name, 0, strlen('sample_')) === 'sample_') {
+				$name = substr($name, strlen('sample_'));
+			}
 			$url = '/';
 			if (substr($name, 0, strlen('table2_')) === 'table2_') {
 				$url = '/@object/table/'. $name;
