@@ -51,103 +51,118 @@ class yf_docs {
 	}
 
 	/***/
+	public function _subclass($name) {
+		return _class('sample_'.$name, YF_PATH.'.dev/samples/classes/')->show();
+	}
+
+	/***/
 	public function assets() {
-		return _class('sample_assets', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function services() {
-		return _class('sample_services', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function form() {
-		return _class('sample_form', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function table() {
-		return _class('sample_table', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function html() {
-		return _class('sample_html', YF_PATH.'.dev/samples/classes/')->show();
-	}
-
-	/***/
-	public function common() {
-		return _class('sample_common', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function main() {
-		return _class('sample_main', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function common() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function graphics() {
+		return $this->_subclass(__FUNCTION__);
+	}
+
+	/***/
+	public function cache() {
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function dir() {
-		return _class('sample_dir', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function utils() {
-		return _class('sample_utils', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function aliases() {
-		return _class('sample_aliases', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function functions() {
-		return _class('sample_functions', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function console_tool() {
-		return _class('sample_console_tool', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function db() {
-		return _class('sample_db', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function db_query_builder() {
-		return _class('sample_db_query_builder', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function db_utils() {
-		return _class('sample_db_utils', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function db_migrator() {
-		return _class('sample_db_migrator', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function model() {
-		return _class('sample_model', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function core_api() {
-		return _class('sample_core_api', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function demo() {
-		return _class('sample_demo', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
 	public function misc() {
-		return _class('sample_misc', YF_PATH.'.dev/samples/classes/')->show();
+		return $this->_subclass(__FUNCTION__);
 	}
 
 	/***/
@@ -211,10 +226,8 @@ class yf_docs {
 				$url = '/@object/table/'. $name;
 			} elseif (substr($name, 0, strlen('form2_')) === 'form2_') {
 				$url = '/@object/form/'. $name;
-			} elseif (substr($name, 0, strlen('sample_html')) === 'sample_html') {
-				$url = '/@object/html/';
 			} else {
-				$url = '/@object/misc/'. $name;
+				$url = '/@object/'. $name;
 			}
 			$links[url($url)] = t($name);
 		}
