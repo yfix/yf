@@ -33,7 +33,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 .bs-docs-sidenav [class*="span"] { margin-left:0; }
 .bs-docs-sidenav > li { height: 20px; line-height: 20px; }
 .bs-docs-sidenav > li > a { display:block; margin:0; padding:0; }
-.bs-docs-sidenav .icon-chevron-right { display: none; float:right; margin-top:0; margin-right:-5px; opacity:.25; }
+.bs-docs-sidenav .icon-chevron-right { float:left; line-height: 20px; margin:0; margin-right:5px; opacity:.25; }
 
 .table a.btn { text-decoration:none; }
 .table { width:auto; }
