@@ -748,6 +748,7 @@ class yf_manage_payout {
 		));
 		// compile
 		$content = array(
+			'Операция'        => $_operation_id,
 			'Пользователь'    => $user_link . $balance_link,
 			'Провайдер'       => $_provider[ 'title' ],
 			'Метод'           => $_method[ 'title' ],

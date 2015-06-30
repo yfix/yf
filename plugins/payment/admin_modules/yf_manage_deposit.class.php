@@ -483,6 +483,7 @@ class yf_manage_deposit {
 			'text'  => $payment_api->money_text( $_account[ 'balance' ] ),
 		));
 		$content = array(
+			'Операция'        => $_operation_id,
 			'Пользователь'    => $user_link . $balance_link,
 			'Сумма'           => $_html_amount,
 			'Провайдер'       => $_provider[ 'title' ],
