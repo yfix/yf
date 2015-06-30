@@ -34,10 +34,13 @@ class sample_table {
 
 	/***/
 	function show() {
-// TODO
 		$id = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
 		if (strlen($id)) {
-			return _class($id, YF_PATH.'.dev/samples/table2/')->show();
+			if (substr($id, 0, strlen('table2_')) === 'table2_') {
+				return _class($id, YF_PATH.'.dev/samples/table2/')->show();
+			} else {
+				return _class('docs')->_show_for($this);
+			}
 		}
 		$ext = '.class.php';
 		$ext_len = strlen($ext);

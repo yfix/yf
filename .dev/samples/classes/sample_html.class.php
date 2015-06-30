@@ -34,41 +34,7 @@ class sample_html {
 
 	/***/
 	function show() {
-		if (preg_match('~^[a-z0-9_]+$~ims', $_GET['id'])) {
-			$only_method = strtolower($_GET['id']);
-		}
-		if (!$only_method) {
-			return _class('html')->li($this->_hook_side_column($only_data = true));
-		}
-		$url = url('/@object');
-		$methods = get_class_methods($this);
-		sort($methods);
-		foreach ((array)$methods as $name) {
-			if ($name == 'show' || substr($name, 0, 1) == '_') {
-				continue;
-			}
-			if ($only_method && $only_method !== $name) {
-				continue;
-			}
-			$self_source	= _class('core_api')->get_method_source(__CLASS__, $name);
-			$target_source	= _class('core_api')->get_method_source(_class('html'), $name);
-			$target_docs	= _class('core_api')->get_method_docs('html', $name);
-
-			$items[] = 
-				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
-					<h1><a href="'.url('/@object/@action/'.$name).'">'.$name.'</a>
-						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button> '
-						.($target_source['source'] ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button> ' : '')
-						._class('core_api')->get_github_link('html.'.$name)
-						.($target_docs ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">html::'.$name.' docs</button> ' : '')
-					.'</h1>
-					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'._prepare_html($self_source['source']).'</code></pre></div> '
-					.($target_source['source'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['source'])).'</code></pre></div> ' : '')
-					.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'._class('html')->well(nl2br($target_docs)).'</div> ' : '')
-					.'<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$this->$name().'</div>
-				</div>';
-		}
-		return implode(PHP_EOL, $items);
+		return _class('docs')->_show_for($this);
 	}
 
 	/***/

@@ -34,10 +34,12 @@ class sample_form {
 
 	/***/
 	function show() {
-// TODO
 		$id = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
 		$method = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['page']);
 		if (strlen($id)) {
+			if (substr($id, 0, strlen('form2_')) !== 'form2_') {
+				return _class('docs')->_show_for($this);
+			}
 			$obj = _class($id, YF_PATH.'.dev/samples/form2/');
 			if ($method) {
 				return $obj->$method();

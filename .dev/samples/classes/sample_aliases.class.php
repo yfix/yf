@@ -48,6 +48,16 @@ class sample_aliases {
 
 	/***/
 	function show() {
-// TODO
+		return _class('docs')->_show_for($this);
+	}
+
+	/***/
+	function a() {
+		return a('/docs/html', 'Block me', 'fa fa-lock');
+	}
+
+	/***/
+	function tip() {
+		return tip('This is custom text to be displayed inside tooltip, also you can use tip short names, editable from admin panel');
 	}
 }

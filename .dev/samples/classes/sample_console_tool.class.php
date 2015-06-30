@@ -34,7 +34,7 @@ class sample_console_tool {
 
 	/***/
 	function show() {
-// TODO
+		return _class('docs')->_show_for($this);
 	}
 
 	/**

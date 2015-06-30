@@ -43,6 +43,9 @@ class sample_core_api {
 	/**
 	*/
 	function show() {
+		if ($_GET['id']) {
+			return _class('docs')->_show_for($this);
+		}
 		return $this->get_all_classes();
 	}
 

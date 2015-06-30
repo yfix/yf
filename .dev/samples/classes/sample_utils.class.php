@@ -34,6 +34,6 @@ class sample_utils {
 
 	/***/
 	function show() {
-// TODO
+		return _class('docs')->_show_for($this);
 	}
 }

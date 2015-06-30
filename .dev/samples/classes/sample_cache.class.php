@@ -35,6 +35,9 @@ class sample_cache {
 	/**
 	*/
 	function show() {
+		if ($_GET['id']) {
+			return _class('docs')->_show_for($this);
+		}
 		!cache()->get('var1') && cache()->set('var1', 'value_core_cache');
 		!cache_tmp()->get('var1') && cache_tmp()->set('var1', 'value_tmp');
 		!cache_files()->get('var1') && cache_files()->set('var1', 'value_files');

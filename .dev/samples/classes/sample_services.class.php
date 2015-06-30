@@ -34,7 +34,9 @@ class sample_services {
 
 	/***/
 	function show() {
-// TODO
+		if ($_GET['id']) {
+			return _class('docs')->_show_for($this);
+		}
 		$docs = _class('docs');
 		asset('font-awesome4');
 		foreach ($this->_get_services() as $a) {

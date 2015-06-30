@@ -34,6 +34,9 @@ class sample_assets {
 
 	/***/
 	function show() {
+		if ($_GET['id']) {
+			return _class('docs')->_show_for($this);
+		}
 		$docs = _class('docs');
 		asset('font-awesome4');
 		foreach ($this->_get_assets() as $a) {
