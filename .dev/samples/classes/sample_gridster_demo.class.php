@@ -1,6 +1,6 @@
 <?php
 
-class test_gridster_demo {
+class sample_gridster_demo {
 	function show() {
 		asset('gridster');
 		css('

@@ -1,6 +1,6 @@
 <?php
 
-class test_html {
+class sample_html {
 
 	/***/
 	function _init() {
@@ -8,27 +8,37 @@ class test_html {
 	}
 
 	/***/
-	function _hook_side_column() {
+	function _hook_side_column($only_data = false) {
 		$items = array();
 		$url = url('/@object');
-		$methods = get_class_methods($this);
+		$methods = get_class_methods(_class('html'));
+		$sample_methods = get_class_methods($this);
 		sort($methods);
+		foreach ((array)$sample_methods as $name) {
+			if (in_array($name, $methods)) {
+				continue;
+			}
+			$methods[] = $name;
+		}
 		foreach ((array)$methods as $name) {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
 			$items[] = array(
-				'name'	=> $name,
-				'link'	=> '#head_'.$name,
+				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
+				'link'	=> url('/@object/@action/'.$name), // '#head_'.$name,
 			);
 		}
-		return _class('html')->navlist($items);
+		return $only_data ? $items : _class('html')->navlist($items);
 	}
 
 	/***/
 	function show() {
 		if (preg_match('~^[a-z0-9_]+$~ims', $_GET['id'])) {
 			$only_method = strtolower($_GET['id']);
+		}
+		if (!$only_method) {
+			return _class('html')->li($this->_hook_side_column($only_data = true));
 		}
 		$url = url('/@object');
 		$methods = get_class_methods($this);

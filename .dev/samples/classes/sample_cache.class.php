@@ -1,6 +1,6 @@
 <?php
 
-class test_cache {
+class sample_cache {
 	function show() {
 		!cache()->get('var1') && cache()->set('var1', 'value_core_cache');
 		!cache_tmp()->get('var1') && cache_tmp()->set('var1', 'value_tmp');
