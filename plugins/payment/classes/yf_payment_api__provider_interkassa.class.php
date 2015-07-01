@@ -406,6 +406,10 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		'account'        => 'card',
 	);
 
+	public $_api_transform_reverse = array(
+		'code'           => 'state',
+	);
+
 	public $_options_transform = array(
 		'amount'       => 'ik_am',
 		'currency'     => 'ik_cur',
@@ -1055,7 +1059,7 @@ $payment_api->dump( array( 'var' => $result ));
 			);
 			return( $result );
 		}
-		list( $status, $response ) = $result;
+		@list( $status, $response ) = $result;
 		// DEBUG
 		/*
 		$this->is_test() && $response = array (
@@ -1105,12 +1109,49 @@ $payment_api->dump( array( 'var' => $result ));
 			),
 			'message' => 'Success',
 		); //*/
-		$data = &$response[ 'data' ][ 'withdraw' ];
-		if( !is_array( $data ) ) {
+		if( !@$response ) {
 			$result = array(
 				'status'         => false,
-				'status_message' => 'Невозможно декодировать ответа',
+				'status_message' => 'Невозможно декодировать ответ: '. var_export( $response, true ),
 			);
+			return( $result );
+		}
+		// transform reverse
+		foreach( $this->_api_transform_reverse as $from => $to ) {
+			if( $from != $to && isset( $response[ $from ] ) ) {
+				$response[ $to ] = $response[ $from ];
+				unset( $response[ $from ] );
+			}
+		}
+		// result
+		$result = array(
+			'status'         => &$status_name,
+			'status_message' => &$status_message,
+		);
+		$status_name         = false;
+		$status_message = null;
+		$state = (int)$response[ 'state' ];
+		switch( $state ) {
+			// success
+			case 0:
+				$status_name    = true;
+				$status_message = 'Выполнено';
+				break;
+			// processing
+			case 1106:
+				$status_message = 'Не хватает средств';
+				break;
+			default:
+				$status_message = 'Ошибка: '. $response[ 'message' ];
+				break;
+		}
+		@$status_message && $response[ 'message' ] = $status_message;
+		if( !$status_name ) { return( $result ); }
+		// data
+		$data = &$response[ 'data' ][ 'withdraw' ];
+		if( !is_array( $data ) ) {
+			$status_name    = false;
+			$status_message = 'Невозможно декодировать ответ: '. var_export( $response, true );
 			return( $result );
 		}
 		$data[ '_transaction' ] = &$response[ 'data' ][ 'transaction' ];
@@ -1118,11 +1159,6 @@ $payment_api->dump( array( 'var' => $result ));
 		$this->is_test() && $data += array (
 			'state' => 1,
 			'id'    => 401040, // need real interkassa operation id
-		);
-		// result
-		$result = array(
-			'status'         => &$status_name,
-			'status_message' => &$status_message,
 		);
 		// check status
 		$state = (int)$data[ 'state' ];
