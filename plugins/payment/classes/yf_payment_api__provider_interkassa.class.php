@@ -1028,7 +1028,10 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		}
 // DEBUG
 // var_dump( $request );
-$payment_api->dump( array( 'var' => $request ));
+		// START DUMP
+		$payment_api->dump( array( 'name' => 'Interkassa', 'operation_id' => $operation_id,
+			'var' => array( 'request' => $request )
+		));
 		// update processing
 		$sql_datetime = $payment_api->sql_datetime();
 		$operation_options = array(
@@ -1050,8 +1053,8 @@ $payment_api->dump( array( 'var' => $request ));
 			'is_debug'  => @$_is_debug,
 		);
 		$result = $this->api_request( $request_option );
-// DEBUG
-$payment_api->dump( array( 'var' => $result ));
+		// DUMP
+		$payment_api->dump( array( 'var' => array( 'response' => $result )));
 		if( empty( $result ) ) {
 			$result = array(
 				'status'         => false,
@@ -1181,10 +1184,11 @@ $payment_api->dump( array( 'var' => $result ));
 		);
 // DEBUG
 // var_dump( $operation_data ); exit;
-$payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));
+		// DUMP
+		$payment_api->dump( array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data )));
 		$result = $this->{ '_api_' . $payment_type }( $operation_data );
-// DEBUG
-$payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
+		// DUMP
+		$payment_api->dump( array( 'var' => array( 'update result' => $result )));
 		return( $result );
 	}
 

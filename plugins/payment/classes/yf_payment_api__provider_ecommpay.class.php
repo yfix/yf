@@ -617,13 +617,13 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	public function _api_response() {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
-// DEBUG
-$payment_api->dump();
 		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
 		$operation_id = @$_GET[ 'operation_id' ];
+		// START DUMP
+		$payment_api->dump( array( 'name' => 'EcommPay', 'operation_id' => (int)$operation_id ));
 		// TEST DATA
 		/*
 		$_POST = array (
@@ -678,8 +678,8 @@ $payment_api->dump();
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
 			);
-// DEBUG
-$payment_api->dump(array( 'var' => $result ));
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		$signature_options = $response;
@@ -692,8 +692,8 @@ $payment_api->dump(array( 'var' => $result ));
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
 			);
-// DEBUG
-$payment_api->dump(array( 'var' => $result ));
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// user success or fail
@@ -715,6 +715,7 @@ $payment_api->dump(array( 'var' => $result ));
 		// check ip
 		$ip_allow = $this->_check_ip();
 		if( !$ip_allow ) {
+			// DUMP
 			$payment_api->dump( array( 'var' => 'ip not allow' ));
 			return( null );
 		}
@@ -728,8 +729,8 @@ $payment_api->dump(array( 'var' => $result ));
 				'status'         => false,
 				'status_message' => 'Неверный ключ (site_id)',
 			);
-// DEBUG
-$payment_api->dump(array( 'var' => $result ));
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// check operation_id
@@ -738,8 +739,8 @@ $payment_api->dump(array( 'var' => $result ));
 				'status'         => false,
 				'status_message' => 'Не соответствует код операции',
 			);
-// DEBUG
-$payment_api->dump(array( 'var' => $result ));
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// deposition or payout
@@ -747,8 +748,8 @@ $payment_api->dump(array( 'var' => $result ));
 		$status = $this->_type_server;
 		list( $payment_type ) = $this->_state( $state, $status );
 		if( empty( $payment_type ) ) {
-// DEBUG
-$payment_api->dump( array( 'var' => 'type: ' . $state ));
+			// DUMP
+			$payment_api->dump( array( 'var' => 'type: ' . $state ));
 			return( null );
 		}
 		// check status
@@ -767,11 +768,11 @@ $payment_api->dump( array( 'var' => 'type: ' . $state ));
 			'payment_type'   => $payment_type,
 			'response'       => $_response,
 		);
-// DEBUG
-$payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));
+		// DUMP
+		$payment_api->dump(array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data ) ));
 		$result = $this->{ '_api_' . $payment_type }( $operation_data );
-// DEBUG
-$payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
+		// DUMP
+		$payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		return( $result );
 	}
 
@@ -896,7 +897,10 @@ $payment_api->dump(array( 'var' => array( 'update result' => $result ) ));
 		$request[ 'signature' ] = $signature;
 // DEBUG
 // var_dump( $request );
-$payment_api->dump( array( 'var' => $request ));
+		// START DUMP
+		$payment_api->dump( array( 'name' => 'EcommPay', 'operation_id' => $operation_id,
+			'var' => array( 'request' => $request )
+		));
 		// url
 		$object = $this->api_url( $method, $options );
 		if( is_array( $object ) && $object[ 'status' ] === false ) { return( $object ); }
@@ -905,9 +909,8 @@ $payment_api->dump( array( 'var' => $request ));
 		$request_options = array();
 		@$_is_debug && $request_options[ 'is_debug' ] = true;
 		$result = $this->_api_request( $url, $request, $request_options );
-// DEBUG
-$payment_api->dump( array( 'var' => $result ));
-// var_dump( $result );
+		// DUMP
+		$payment_api->dump( array( 'var' => array( 'response'=> $result )));
 		if( empty( $result ) ) {
 			$result = array(
 				'status'         => false,

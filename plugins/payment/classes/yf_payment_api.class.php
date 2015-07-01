@@ -231,6 +231,9 @@ class yf_payment_api {
 		// ),
 	// );
 
+	public $DUMP_PATH = '/tmp';
+	public $dump = null;
+
 	public function _init() {
 		$this->config();
 		$this->user_id_default = (int)main()->USER_ID;
@@ -1716,8 +1719,11 @@ class yf_payment_api {
 			$result &= $mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
 			// mail fail
 			!$result && $this->dump( array(
-				'operation_id' => $__operation_id,
+				'is_transaction' => true,
+				'name'           => 'user_mail',
+				'operation_id'   => $__operation_id,
 				'var' => array(
+					'status'    => 'fail',
 					'user_id'   => $_user_id,
 					'mail_to'   => $mail_to,
 					'mail_name' => $mail_name,
@@ -1969,10 +1975,27 @@ class yf_payment_api {
 		static $is_first = true;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$ts = microtime( true );
-		$file = $_file ?: sprintf( '/tmp/payment_api_dump-%s.txt',
-			( @$_operation_id ? $_operation_id .'-' : '' ) . date( 'Y-m-d_H-i-s', $ts )
-		);
+		// time
+		$ts = &$this->dump[ 'ts' ];
+		!$ts && $ts = microtime( true );
+			$time = &$this->dump[ 'time' ];
+			!$time && $time = date( 'Y-m-d_H-i-s', $ts );
+		// name
+		!@$_is_transaction && $name = &$this->dump[ 'name' ];
+		@$_name && $name = $_name;
+		$name = @$name ?: 'payment_api_dump';
+		// number
+		!@$_is_transaction && $number = &$this->dump[ 'number' ];
+		if( !@$number || @$_operation_id ) {
+			$number = array();
+			@$_operation_id && $number[] =  $_operation_id;
+			$number[] = $time;
+			$number = implode( '_', $number );
+		}
+		// path
+		$path = @$_path ?: @$this->DUMP_PATH ?: '/tmp';
+		// file path
+		$file = @$_file_path ?: sprintf( '%s/%s__%s.txt', $path, $name, $number );
 		$html_errors = ini_get( 'html_errors' );
 		ini_set( 'html_errors', 0 );
 		$result = '';

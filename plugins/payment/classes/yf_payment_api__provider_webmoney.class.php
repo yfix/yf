@@ -388,26 +388,17 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			case 'result':
 				$state = 'wait';
 				$result = $this->__api_response__result( $operation_id, $response );
-// $payment_api->dump( array( 'var' => array(
-	// 'result' => $result,
-// )));
 				return( $result );
 				break;
 			case 'success':
 				$state = 'success';
 				$result = $this->__api_response__success( $operation_id, $response );
-// $payment_api->dump( array( 'var' => array(
-	// 'success' => $result,
-// )));
 				if( is_array( $result ) ) { $state = 'fail'; }
 				break;
 			case 'fail':
 			default:
 				$state = 'fail';
 				$result = $this->__api_response__fail( $operation_id, $response );
-// $payment_api->dump( array( 'var' => array(
-	// 'fail' => $result,
-// )));
 				if( is_array( $result ) ) { $state = 'fail'; }
 				break;
 		}

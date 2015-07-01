@@ -425,10 +425,10 @@ class yf_payment_api__provider_remote {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// vars
 		$payment_api = $this->payment_api;
-// DEBUG
-$payment_api->dump(array( 'var' => array(
-	'transaction' => $options,
-)));
+		// DUMP
+		$payment_api->dump(array( 'var' => array(
+			'transaction' => $options,
+		)));
 		// response operation id
 		$operation_id = (int)( $_operation_id ?: $_response[ 'operation_id' ] );
 		if( empty( $operation_id ) ) {
@@ -436,8 +436,6 @@ $payment_api->dump(array( 'var' => array(
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
 			);
-// DEBUG
-// $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// exists operation
@@ -449,8 +447,6 @@ $payment_api->dump(array( 'var' => array(
 				'status'         => false,
 				'status_message' => 'Операция отсутствует: ' . $operation_id,
 			);
-// DEBUG
-// $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		$operation_options = $operation[ 'options' ];
@@ -460,8 +456,6 @@ $payment_api->dump(array( 'var' => array(
 				'status'         => false,
 				'status_message' => 'Отсутствуют опции операции',
 			);
-// DEBUG
-// $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// request data
@@ -478,16 +472,10 @@ $payment_api->dump(array( 'var' => array(
 				'status'         => false,
 				'status_message' => 'Неверный код операции',
 			);
-// DEBUG
-// $payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// get current status
 		$new_status_name = $_status_name;
-// DEBUG
-// $payment_api->dump(array( 'var' => array(
-	// 'new_status_name' => $new_status_name,
-// )));
 		$object = $payment_api->get_status( array( 'name' => $new_status_name ) );
 		list( $new_status_id, $new_status ) = $object;
 		if( empty( $new_status_id ) ) { return( $object ); }
@@ -529,20 +517,12 @@ $payment_api->dump(array( 'var' => array(
 		$balance      = null;
 		// get current status_name
 		$current_status_id = (int)$operation[ 'status_id' ];
-// DEBUG
-// $payment_api->dump(array( 'var' => array(
-	// 'current_status_id' => $current_status_id,
-// )));
 		$object = $payment_api->get_status( array( 'status_id' => $current_status_id ) );
 		list( $current_status_id, $current_status ) = $object;
 		if( empty( $current_status_id ) ) { return( $object ); }
 		$current_status_name = $current_status[ 'name' ];
 		// get payment type
 		$current_type_id = (int)$operation[ 'type_id' ];
-// DEBUG
-// $payment_api->dump(array( 'var' => array(
-	// 'current_type_id' => $current_type_id,
-// )));
 		$object = $payment_api->get_type( array( 'type_id' => $current_type_id ) );
 		list( $current_type_id, $current_type ) = $object;
 		if( empty( $current_type_id ) ) { return( $object ); }
@@ -555,12 +535,12 @@ $payment_api->dump(array( 'var' => array(
 			||
 			( $current_type_name == 'deposition' && $current_status_name != 'success' )
 		;
-// DEBUG
-$payment_api->dump(array( 'var' => array(
-	'is_try'              => $is_try,
-	'current_type_name'   => $current_type_name,
-	'current_status_name' => $current_status_name,
-)));
+		// DUMP
+		$payment_api->dump(array( 'var' => array(
+			'is_try'              => $is_try,
+			'current_type_name'   => $current_type_name,
+			'current_status_name' => $current_status_name,
+		)));
 		// prepare
 		$is_manual = null;
 		$is_payin  = null;
@@ -601,10 +581,10 @@ $payment_api->dump(array( 'var' => array(
 			// update account balance
 			if( $current_status_id != $new_status_id ) {
 				if( $is_update_balance ) {
-// DEBUG
-$payment_api->dump(array( 'var' => array(
-	'is_update_balance' => $is_update_balance,
-)));
+					// DUMP
+					$payment_api->dump(array( 'var' => array(
+						'is_update_balance' => $is_update_balance,
+					)));
 					// update account
 					$_data = array(
 						'account_id'      => $account_id,
@@ -647,10 +627,10 @@ $payment_api->dump(array( 'var' => array(
 				));
 			}
 			if( $is_update_status ) {
-// DEBUG
-$payment_api->dump(array( 'var' => array(
-	'is_update_status' => $is_update_status,
-)));
+				// DUMP
+				$payment_api->dump(array( 'var' => array(
+					'is_update_status' => $is_update_status,
+				)));
 				// get balance
 				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
 				list( $account_id, $account ) = $object;
