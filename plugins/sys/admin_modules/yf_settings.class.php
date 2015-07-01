@@ -57,6 +57,20 @@ class yf_settings {
 	/**
 	*/
 	function show() {
+		$r = array();
+		foreach ((array)conf() as $k => $v) {
+			if (is_array($v)) {
+				foreach ((array)$v as $k2 => $v2) {
+					$r[$k.'__'.$k2] = $v2;
+				}
+			} else {
+				$r[$k] = $v;
+			}
+		}
+		return '<pre>'._prepare_html(print_r($r, 1)).'</pre>';
+	}
+/*
+	function show() {
 		if (main()->is_post()) {
 			$to_save = $this->_prepare_to_save($_POST);
 			if ($to_save) {
@@ -115,6 +129,7 @@ class yf_settings {
 		$r = (array)$_POST + (array)$r;
 		return form($r, array('class' => 'form-vertical form-condensed span6'))->array_to_form($a);
 	}
+*/
 
 	/**
 	*/
