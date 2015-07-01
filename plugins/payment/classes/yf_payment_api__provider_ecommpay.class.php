@@ -941,7 +941,7 @@ $payment_api->dump( array( 'var' => $result ));
 		if( is_null( $response ) ) {
 			$result = array(
 				'status'         => false,
-				'status_message' => 'Невозможно декодировать ответа',
+				'status_message' => 'Невозможно декодировать ответ',
 			);
 			return( $result );
 		}
