@@ -19,6 +19,7 @@ class yf_unsubscribe {
 	/**
 	*/
 	function show() {
-		return common()->message_success(t('You just have been unsubscribed'));
+		common()->message_success(t('You just have been unsubscribed'));
+		return js_redirect("./");
 	}
 }
