@@ -227,7 +227,7 @@ class yf_manage_payment {
 
 	function _operation_sql( $options = null ) {
 		$payment_api = _class( 'payment_api' );
-		list( $sql ) = $payment_api->operation( $operation_options );
+		list( $sql ) = $payment_api->operation( $options );
 		$result = $sql;
 		return( $result );
 	}
