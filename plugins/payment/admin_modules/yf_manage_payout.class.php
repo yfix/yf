@@ -1169,6 +1169,12 @@ EOS;
 	* https://cliff.ecommpay.com/download/%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F%20%D0%BF%D0%BE%20%D0%B2%D1%8B%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%D0%BC%20%D1%87%D0%B5%D1%80%D0%B5%D0%B7%20%D1%84%D0%B0%D0%B9%D0%BB.pdf
 	*/
 	function csv() {
+		// class
+		$payment_api    = &$this->payment_api;
+		$provider_class = $payment_api->provider_class( array(
+			'provider_name' => 'ecommpay',
+		));
+		// var
 		$operation_id = intval($_GET['operation_id']);
 		$info = db()->from('payment_operation')->where('operation_id', $operation_id)->get();
 		if (!$info) {
@@ -1179,7 +1185,7 @@ EOS;
 		$opt_data = $info['options']['request'][0]['data'];
 		$data = array();
 		$data['payment_group_id']	= 1; // Bank cards
-		$data['site_id']			= '2415'; // Betonmoney.com
+		$data['site_id']			= $provider_class->key(); // EcommPay site id
 		$data['external_id']		= $operation_id;
 		$data['comment']			= 'Payments out request. Date: '.date('Y-m-d_H-i-s').' OID: '.$operation_id;
 		$data['phone']				= preg_replace('~[^0-9]~ims', '', $options['sender_phone']);
