@@ -63,6 +63,12 @@ class yf_assets {
 	/** @bool */
 	public $FORCE_LOCAL_TTL = 86400000; // 1000 days * 24 hours * 60 minutes * 60 seconds == almost forever
 	/** @bool */
+	public $INLINE_ASSETS_USE_DATA_URI = false;
+	/** @bool */
+	public $FILE_ASSETS_USE_DATA_URI = false;
+	/** @bool */
+	public $FILE_ASSETS_DATA_URI_MAX_SIZE = 5000;
+	/** @bool */
 	public $COMBINE = false;
 	/** @bool */
 	public $COMBINED_VERSION_TPL = '{year}{month}';
@@ -1746,23 +1752,47 @@ class yf_assets {
 		}
 		if ($out_type === 'js') {
 			$params['type'] = 'text/javascript';
+			if ($content_type === 'file') {
+				$str = file_get_contents($str);
+			}
+			if ($this->INLINE_ASSETS_USE_DATA_URI && $content_type === 'inline') {
+				$content_type = 'url';
+				$params['src'] = 'data:'.$params['type'].';base64,'.base64_encode($this->_strip_js_input($str));
+			} elseif ($this->FILE_ASSETS_USE_DATA_URI && strlen($str) <= $this->FILE_ASSETS_DATA_URI_MAX_SIZE) {
+				$content_type = 'url';
+				$params['src'] = 'data:'.$params['type'].';base64,'.base64_encode($str);
+			}
 			if ($content_type === 'url') {
-				$params['src'] = $str. $this->_cached_url_get_mtime($str);
+				if (!isset($params['src'])) {
+					$params['src'] = $str. $this->_cached_url_get_mtime($str);
+				}
 				$out = '<script'._attrs($params, array('src', 'type', 'class', 'id')).'></script>';
 			} elseif ($content_type === 'file') {
-				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
+				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</script>';
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_js_input($str);
 				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</script>';
 			}
 		} elseif ($out_type === 'css') {
 			$params['type'] = 'text/css';
+			if ($content_type === 'file') {
+				$str = file_get_contents($str);
+			}
+			if ($this->INLINE_ASSETS_USE_DATA_URI && $content_type === 'inline') {
+				$content_type = 'url';
+				$params['href'] = 'data:'.$params['type'].';base64,'.base64_encode($this->_strip_css_input($str));
+			} elseif ($this->FILE_ASSETS_USE_DATA_URI && strlen($str) <= $this->FILE_ASSETS_DATA_URI_MAX_SIZE) {
+				$content_type = 'url';
+				$params['href'] = 'data:'.$params['type'].';base64,'.base64_encode($str);
+			}
 			if ($content_type === 'url') {
 				$params['rel'] = 'stylesheet';
-				$params['href'] = $str. $this->_cached_url_get_mtime($str);
+				if (!isset($params['href'])) {
+					$params['href'] = $str. $this->_cached_url_get_mtime($str);
+				}
 				$out = '<link'._attrs($params, array('href', 'rel', 'class', 'id')).' />';
 			} elseif ($content_type === 'file') {
-				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
+				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</style>';
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_css_input($str);
 				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</style>';

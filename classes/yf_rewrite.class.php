@@ -8,6 +8,13 @@ class yf_rewrite {
 	public $URL_ADD_BUILTIN_PARAMS = true;
 	public $PARSE_RULES = array();
 	public $BUILD_RULES = array();
+	public $allowed_url_params = array(
+		'utm_source',
+		'utm_medium',
+		'utm_content',
+		'utm_campaign',
+		'utm_term',
+	);
 
 	/**
 	* Catch missing method call
