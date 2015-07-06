@@ -13,7 +13,7 @@ return array('versions' => array('master' => array(
 			delay: { "show": 0, "hide": 300 },
 			container: "body",
 			html: true,
-			selector: \'a[href*="object=members&action=edit&id="]:not(.no-popover),a[href*="/profile/"]:not(.no-popover),[data-ajax-user-info]\',
+			selector: \'a[href*="object=members&action=edit&id="]:not(.no-popover),a[href*="/profile/"]:not(.no-popover):not([href*="ok.ru/profile/"]),[data-ajax-user-info]\',
 			placement: "auto",
 			trigger: "hover",
 			template: \'<div class="popover ajax-user-info" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>\',
