@@ -1323,16 +1323,13 @@ class yf_html {
 			$extra['name'] = $name;
 		}
 		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-
-		asset('jq-select2');
-
+		// put default js options here
 		$js_options = (array)$extra['js_options'] + array(
-			'width'			=> 'element',
-			'placeholder'	=> $extra['desc'],
-			// put default js options here
+			'width'       => 'element',
+			'placeholder' => $extra['desc'],
 		);
+		asset('jq-select2');
 		jquery('$("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).');');
-
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		$extra['class'] .= 'no-chosen';
 		return $this->$func($extra, $values, $selected);
