@@ -341,7 +341,7 @@ class yf_common {
 		if ($check_format && in_array('months', $need_return)) {
 			$d['months'] = floor($seconds / (3600 * 24 * 365 / 12));
 			$seconds -= $d['months'] * (3600 * 24 * 365 / 12);
-		}	
+		}
 		if ($check_format && in_array('days', $need_return)) {
 			$d['days'] = floor($seconds / (3600 * 24));
 			$seconds -= $d['days'] * (3600 * 24);
@@ -1285,12 +1285,15 @@ class yf_common {
 		return true;
 	}
 
+	function is_messages() {
+		$result = @count( $_SESSION[ 'permanent' ] ) > 0;
+		return( $result );
+	}
+
 	/**
 	*/
 	function show_messages() {
-		if (empty($_SESSION['permanent'])) {
-			return false;
-		}
+		if( !$this->is_messages ) { return( false ); }
 		$body = array();
 		$level_to_style = array(
 			'info'		=> 'alert alert-info',
