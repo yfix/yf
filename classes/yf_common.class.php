@@ -1293,7 +1293,7 @@ class yf_common {
 	/**
 	*/
 	function show_messages() {
-		if( !$this->is_messages ) { return( false ); }
+		if( !$this->is_messages() ) { return( false ); }
 		$body = array();
 		$level_to_style = array(
 			'info'		=> 'alert alert-info',
