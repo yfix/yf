@@ -1004,7 +1004,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				$status_message = 'Выплата уже произведена ранее';
 				break;
 			default:
-				$status_message = 'Ошибка: '. $response[ 'message' ];
+				$status_message = 'Ошибка: '. $response[ 'message' ] .' ('. $state . ')';
 				break;
 		}
 		@$status_message && $response[ 'message' ] = $status_message;

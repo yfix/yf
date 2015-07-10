@@ -867,6 +867,8 @@ EOS;
 	}
 
 	function request() {
+		// start
+		db()->begin();
 		// check operation
 		$operation = $this->_operation();
 		// import options
@@ -876,6 +878,13 @@ EOS;
 		if( @$_is_processing ) {
 			$result = array(
 				'status_message' => 'Операция уже обрабатывается',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// is_progressed
+		if( !@$is_progressed ) {
+			$result = array(
+				'status_message' => 'Операция не может быть обработана, так как изменился статус',
 			);
 			return( $this->_user_message( $result ) );
 		}
@@ -893,10 +902,14 @@ EOS;
 				'name'         => 'processing',
 			));
 		}
+		// finish
+		db()->commit();
 		return( $this->_user_message( $result ) );
 	}
 
 	function request_interkassa() {
+		// start
+		db()->begin();
 		// check operation
 		$operation = $this->_operation();
 		// import options
@@ -906,6 +919,13 @@ EOS;
 		if( @$_is_processing ) {
 			$result = array(
 				'status_message' => 'Операция уже обрабатывается',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// is_progressed
+		if( !@$is_progressed ) {
+			$result = array(
+				'status_message' => 'Операция не может быть обработана, так как изменился статус',
 			);
 			return( $this->_user_message( $result ) );
 		}
@@ -935,6 +955,8 @@ EOS;
 		$data[ 'provider_force' ] = true;
 		// result
 		$result = $provider_class->api_payout( $data );
+		// finish
+		db()->commit();
 		return( $this->_user_message( $result ) );
 	}
 
