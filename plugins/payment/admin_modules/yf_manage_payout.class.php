@@ -882,7 +882,7 @@ EOS;
 			return( $this->_user_message( $result ) );
 		}
 		// is_progressed
-		if( !@$is_progressed ) {
+		if( !@$_is_progressed ) {
 			$result = array(
 				'status_message' => 'Операция не может быть обработана, так как изменился статус',
 			);
@@ -923,7 +923,7 @@ EOS;
 			return( $this->_user_message( $result ) );
 		}
 		// is_progressed
-		if( !@$is_progressed ) {
+		if( !@$_is_progressed ) {
 			$result = array(
 				'status_message' => 'Операция не может быть обработана, так как изменился статус',
 			);
