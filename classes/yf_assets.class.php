@@ -388,17 +388,18 @@ class yf_assets {
 		if ($force) {
 			$this->assets = array();
 		}
-		$assets = array();
-		$suffix = '.php';
-		$dir = 'share/assets/';
-		$pattern = $dir. '*'. $suffix;
+		$assets   = array();
+		$suffix   = '.php';
+		$pattern  = 'assets/*'.       $suffix;
+		$patterns = 'share/assets/*'. $suffix;
 		$globs = array(
-			'yf_main'				=> YF_PATH. $pattern,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
-			'project_main'			=> PROJECT_PATH. $pattern,
+			'yf_main'				=> YF_PATH. $patterns,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $patterns,
+			'project_main'			=> PROJECT_PATH. $patterns,
+			'project_app_share'		=> APP_PATH. $patterns,
 			'project_app'			=> APP_PATH. $pattern,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $patterns,
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $patterns,
 		);
 		$slen = strlen($suffix);
 		$names = array();
@@ -2009,7 +2010,7 @@ class yf_assets {
 	* Version constraints can be specified in a few different ways.
 	* Exact version	1.0.2	You can specify the exact version of a package.
 	* Range			   >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
-	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
+	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=.
 	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
 	* Wildcard		 1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
 	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
