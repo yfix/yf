@@ -183,7 +183,7 @@ class yf_table2_filter {
 			// 'price' => array('gt', 'value' => '100')
 			// 'price' => array('between', 'value' => '1', 'and' => '10')
 			// 'name' => array('like', 'value' => 'john')
-			if (is_array($v) && !@in_array( $filter_params[ $k ][ 'cond' ], $array_fields )) {
+			if (is_array($v) && !( is_array( $filter_params[ $k ] ) && @in_array( (array)$filter_params[ $k ][ 'cond' ], $array_fields ) )) {
 				$cond = isset($v[0]) ? $v[0] : $v['cond'];
 				if (!$cond) {
 					continue;
@@ -199,7 +199,7 @@ class yf_table2_filter {
 				}
 				$part_on_the_right = $supported_conds[$cond]($v);
 			} else {
-				if( @in_array( $filter_params[ $k ][ 'cond' ], $array_fields ) ) {
+				if( in_array( $filter_params[ $k ][ 'cond' ], $array_fields ) ) {
 					$v = implode( ',', array_values( $v ) );
 				}
 				if (!strlen($v)) {
