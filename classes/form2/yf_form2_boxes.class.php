@@ -158,6 +158,9 @@ class yf_form2_boxes {
 
 		$lang_def_country = main()->get_data('lang_def_country');
 		foreach ((array)db()->from('sys_locale_langs')->get_all() as $v) {
+			if ($extra['only_active'] && !$v['active']) {
+				continue;
+			}
 			$lang = strtolower($v['locale']);
 			$country = strtoupper($lang_def_country[$lang]);
 			$r = array(
