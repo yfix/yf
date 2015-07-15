@@ -1619,7 +1619,7 @@ class yf_payment_api {
 		}
 		// check mail verification
 		if( @$user[ 'email' ] != @$user[ 'email_validated' ] ) {
-			$status_message = 'Почтовый адрес не проверен';
+			$status_message = 'Подтвердите ваш email адрес в личном кабинете';
 			return( $result );
 		}
 		$status = true;
