@@ -353,7 +353,7 @@ class yf_assets {
 			return $this->COMBINED_CONFIG;
 		}
 		$path = CONFIG_PATH. 'assets_combine.php';
-		if (file_exists) {
+		if (file_exists($path)) {
 			$this->COMBINED_CONFIG = include $path;
 		}
 		return $this->COMBINED_CONFIG;
