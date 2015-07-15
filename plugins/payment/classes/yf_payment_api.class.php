@@ -1716,21 +1716,22 @@ class yf_payment_api {
 		$admin    = !empty( $_admin    );
 		// user
 		if( !$is_admin ) {
-			$result &= $mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
+			$r = $mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
 			// mail fail
-			!$result && $this->dump( array(
-				'is_transaction' => true,
-				'name'           => 'user_mail',
-				'operation_id'   => $__operation_id,
-				'var' => array(
-					'status'    => 'fail',
-					'user_id'   => $_user_id,
-					'mail_to'   => $mail_to,
-					'mail_name' => $mail_name,
+			!$r && $this->mail_log( array(
+				'name' => 'mail_user',
+				'data' => array(
+					'status'       => 'fail',
+					'operation_id' => $__operation_id,
+					'user_id'      => $_user_id,
+					'mail'         => $mail_to,
+					'name'         => $mail_name,
+					'tpl'          => $_tpl,
 				),
 			));
+			$result &= $r;
 			// mail copy
-			!$admin && $result &= $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
+			!$admin && $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 		}
 		// admin
 		if( $admin || $is_admin ) {
@@ -1762,10 +1763,22 @@ class yf_payment_api {
 				'user_title' => $user[ 'name' ] . ' (id: '. $_user_id .')'
 			));
 			$tpl = $_tpl . '_admin';
-			$result &= $mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
+			$r = $mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
+			// mail fail
+			!$r && $this->mail_log( array(
+				'name' => 'mail_user',
+				'data' => array(
+					'status'       => 'fail',
+					'operation_id' => $__operation_id,
+					'user_id'      => $_user_id,
+					'mail'         => $mail_admin_to,
+					'name'         => $mail_admin_name,
+					'tpl'          => $tpl,
+				),
+			));
 			// mail copy
 			$result_copy = $this->mail_copy( array( 'tpl' => $tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
-			!$result_copy && $result &= $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
+			!$result_copy && $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 		}
 		return( $result );
 	}
@@ -1812,10 +1825,34 @@ class yf_payment_api {
 			$name = 'Payment admin';
 			$instant_send = true;
 			foreach( $mails as $mail ) {
-				$result &= $mail_class->_send_email_safe( $mail, $name, $_tpl, $_data, $instant_send, $override );
+				$r = $mail_class->_send_email_safe( $mail, $name, $_tpl, $_data, $instant_send, $override );
+				!$r && $this->mail_log( array(
+					'name' => 'mail_copy',
+					'data' => array(
+						'status'       => 'fail',
+						'operation_id' => $_data[ 'operation_id' ],
+						'mail'         => $mail,
+						'name'         => $name,
+						'tpl'          => $_tpl,
+					),
+				));
+				$result &= $r;
 			}
 		}
 		return( $result );
+	}
+
+	public function mail_log( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( !@$_name || !@$_data ) { return( null ); }
+		// log
+		$this->dump( array(
+			'is_transaction' => true,
+			'name'           => $_name,
+			'var'            => $_data,
+		));
+		return( true );
 	}
 
 	public function url_admin( $options = null ) {
