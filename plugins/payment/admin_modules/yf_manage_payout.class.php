@@ -535,7 +535,7 @@ class yf_manage_payout {
 		$is_progressed = $o_status[ 'name' ] == 'in_progress';
 		$is_processing = $o_status[ 'name' ] == 'processing';
 		$is_finish     = !( $is_progressed || $is_processing );
-		$is_payout_interkassa = (bool)$this->IS_PAYOUT_INTERKASSA;
+		$is_payout_interkassa = (bool)$this->IS_PAYOUT_INTERKASSA && $card_method_id;
 		// processing
 		$processing = array();
 		$is_processing_self = false;

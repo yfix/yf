@@ -1766,7 +1766,7 @@ class yf_payment_api {
 			$r = $mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
 			// mail fail
 			!$r && $this->mail_log( array(
-				'name' => 'mail_user',
+				'name' => 'mail_admin',
 				'data' => array(
 					'status'       => 'fail',
 					'operation_id' => $__operation_id,
@@ -2044,6 +2044,7 @@ class yf_payment_api {
 		isset( $_var ) && $result .= 'VAR:' . PHP_EOL . var_export( $_var, true ) . PHP_EOL . PHP_EOL;
 		!empty( $result ) && file_put_contents( $file, $result, FILE_APPEND );
 		$is_first = false;
+		@$_is_new && $is_first = true;
 		ini_set( 'html_errors', $html_errors );
 		return( $result );
 	}

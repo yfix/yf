@@ -685,6 +685,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$result = null;
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
+		// START DUMP
+		$payment_api->dump( array( 'name' => 'Interkassa', 'operation_id' => (int)$operation_id ));
 		/* // test data
 		$this->key( 'private',      'xXceiJgnFURU0lq9' );
 		$this->key( 'private_test', 'AxlrteZIreEpMddf' );
@@ -750,29 +752,33 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			'ik_inv_st' => string 'waitAccept' (length=10)
 			'ik_inv_prc' => string '' (length=0)
  */
-		$payment = $_POST;
+		$response = $_POST;
 		// response POST:
-		$signature = $payment[ 'ik_sign' ];
+		$signature = $response[ 'ik_sign' ];
 		// check signature
 		if( !$test_mode && empty( $signature ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
 			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		$_signature = $this->signature( $payment, false );
+		$_signature = $this->signature( $response, false );
 		if( !( $test_mode && empty( $signature ) ) && $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
 			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
 		// update operation
-		$response = $this->_response_parse( $payment );
+		$_response = $this->_response_parse( $response );
 		// check public key (ik_co_id)
-		$key_public = $response[ 'key_public' ];
+		$key_public = $_response[ 'key_public' ];
 		$_key_public = $this->key( 'public' );
 		if( $key_public != $_key_public ) {
 			$result = array(
@@ -782,14 +788,14 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			return( $result );
 		}
 		// check status
-		$state = $response[ 'ik_inv_st' ];
+		$state = $_response[ 'ik_inv_st' ];
 		list( $status_name, $status_message ) = $this->_state( $state );
 		// test
-		// $response[ 'operation_id' ] = '3304';
+		// $_response[ 'operation_id' ] = '3304';
 		// update account, operation data
 		$result = $this->_api_deposition( array(
 			'provider_name'  => 'interkassa',
-			'response'       => $response,
+			'response'       => $_response,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
 		));

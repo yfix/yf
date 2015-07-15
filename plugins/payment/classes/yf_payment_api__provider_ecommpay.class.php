@@ -743,6 +743,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
+		// START NEW DUMP
+		$payment_api->dump( array( 'is_new' => true, 'name' => 'EcommPay', 'operation_id' => (int)$operation_id ));
 		// deposition or payout
 		$state = $_response[ 'type_id' ];
 		$status = $this->_type_server;
