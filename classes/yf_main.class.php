@@ -276,6 +276,7 @@ class yf_main {
 	*/
 	function _after_init_hook() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->events->fire('main.after_init_begin');
 		$this->_check_site_maintenance();
 
 		$this->_do_rewrite();
@@ -322,6 +323,7 @@ class yf_main {
 		if ($this->INTRUSION_DETECTION) {
 			$this->modules['common']->intrusion_detection();
 		}
+		$this->events->fire('main.after_init');
 	}
 
 	/**
@@ -332,6 +334,7 @@ class yf_main {
 		if ($this->is_console() || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
 			return false;
 		}
+		$this->events->fire('main.before_rewrite');
         $host = $_SERVER['HTTP_HOST'];
 		$request_uri = $_SERVER['REQUEST_URI'];
 		// Override by WEB_PATH
@@ -388,6 +391,7 @@ class yf_main {
 			}
 		}
         $_SERVER['QUERY_STRING'] = http_build_query((array)$_GET);
+		$this->events->fire('main.after_rewrite');
     }
 
 	/**
