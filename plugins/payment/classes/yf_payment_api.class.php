@@ -1614,7 +1614,7 @@ class yf_payment_api {
 		}
 		// check mail
 		if( !@$user[ 'email' ] ) {
-			$status_message = 'Не найден почтовый адрес';
+			$status_message = 'Укажите и подтвердите ваш email адрес в личном кабинете';
 			return( $result );
 		}
 		// check mail verification
