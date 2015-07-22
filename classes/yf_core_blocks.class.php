@@ -317,6 +317,42 @@ class yf_core_blocks {
 	}
 
 	/**
+	*/
+	function _get_denied_tasks_names() {
+		$cache = 'cache_'.__FUNCTION__;
+		if (isset($this->$cache)) {
+			return $this->$cache;
+		}
+		$names = array();
+		$ext = '.class.php';
+		$dir = 'classes/';
+		$pattern = $dir. '*'. $ext;
+		$globs = array(
+			'yf_core'			=> YF_PATH. $pattern,
+			'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
+			'project_core'		=> PROJECT_PATH. $pattern,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'app_core'			=> APP_PATH. $pattern,
+			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
+		);
+		$ext_len = strlen($ext);
+		$names = array();
+		$prefix = YF_PREFIX;
+		$plen = strlen($prefix);
+		foreach ($globs as $glob) {
+			foreach (glob($glob) as $path) {
+				$name = substr(basename($path), 0, -$ext_len);
+				if (substr($name, 0, $plen) === $prefix) {
+					$name = substr($name, $plen);
+				}
+				$names[$name] = $name;
+			}
+		}
+		$this->$cache = $names;
+		return $names;
+	}
+
+	/**
 	* Main $_GET tasks handler
 	*/
 	function tasks($allowed_check = false) {
@@ -333,19 +369,22 @@ class yf_core_blocks {
 		$access_denied	= false;
 		$custom_handler_exists = false;
 
+		$OBJECT = &$_GET['object'];
+		$ACTION = &$_GET['action'];
+
 		_class('router')->_route_request();
 		// Check if called class method is 'private' - then do not use it
 		// Also we protect here core classes that can be instantinated before this method and can be allowed by mistake
 		// Use other module names, think about this list as "reserved" words
-		if (substr($_GET['action'], 0, 1) == '_' || in_array($_GET['object'], array('main','common','db','graphics','cache','form2','table2','tpl'))) {
+		if (substr($ACTION, 0, 1) == '_' || !strlen($OBJECT) || substr($OBJECT, 0, strlen(YF_PREFIX)) === YF_PREFIX || in_array($OBJECT, $this->_get_denied_tasks_names())) {
 			$access_denied = true;
 		}
 		if (!$access_denied) {
-			$obj = module($_GET['object']);
+			$obj = module($OBJECT);
 			if (!is_object($obj)) {
 				$not_found = true;
 			}
-			if (!$not_found && !method_exists($obj, $_GET['action'])) {
+			if (!$not_found && !method_exists($obj, $ACTION)) {
 				$not_found = true;
 			}
 			// Check if we have custom action handler in module (catch all requests to module methods)
@@ -355,7 +394,7 @@ class yf_core_blocks {
 			if (!$not_found || $custom_handler_exists) {
 				if ($custom_handler_exists) {
 					$not_found = false;
-					$body = $obj->{$main->MODULE_ACTION_HANDLER}($_GET['action'], $main->_ARGS_DIRTY);
+					$body = $obj->{$main->MODULE_ACTION_HANDLER}($ACTION, $main->_ARGS_DIRTY);
 				} else {
 					$is_banned = false;
 					if (MAIN_TYPE_USER && $main->AUTO_BAN_CHECKING) {
@@ -364,15 +403,15 @@ class yf_core_blocks {
 					if ($is_banned) {
 						$body = _e();
 					} else {
-						$body = $obj->$_GET['action']();
+						$body = $obj->$ACTION();
 					}
 				}
 			}
 		}
 		$redirect_func = function($url) {
 			$redir_params = array(
-				'%%object%%'		=> $_GET['object'],
-				'%%action%%'		=> $_GET['action'],
+				'%%object%%'		=> $OBJECT,
+				'%%action%%'		=> $ACTION,
 				'%%add_get_vars%%'	=> str_replace('&',';',_add_get(array('object','action'))),
 			);
 			$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), $url);
@@ -387,7 +426,7 @@ class yf_core_blocks {
 				$main->IS_404 = true;
 			}
 			if (_class('graphics')->NOT_FOUND_RAISE_WARNING) {
-				trigger_error(__CLASS__.': Task not found: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
+				trigger_error(__CLASS__.': Task not found: '.$OBJECT.'.'.$ACTION, E_USER_WARNING);
 			}
 			if (MAIN_TYPE_USER) {
 				$u = $main->REDIR_URL_NOT_FOUND;
@@ -413,7 +452,7 @@ class yf_core_blocks {
 				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
 				$main->IS_403 = true;
 			}
-			trigger_error(__CLASS__.': Access denied: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
+			trigger_error(__CLASS__.': Access denied: '.$OBJECT.'.'.$ACTION, E_USER_WARNING);
 			if (MAIN_TYPE_USER) {
 				$redirect_func($main->REDIR_URL_DENIED);
 			}
