@@ -443,7 +443,8 @@ class yf_core_blocks {
 						print tpl()->parse($u['stpl']);
 					}
 				} else {
-					$redirect_func($u);
+					$redir_func = $this->REDIRECT_CALLBACK_404 ?: $redirect_func;
+					$redir_func($u);
 				}
 			}
 		} elseif ($allowed_check && $access_denied) {
@@ -454,7 +455,8 @@ class yf_core_blocks {
 			}
 			trigger_error(__CLASS__.': Access denied: '.$OBJECT.'.'.$ACTION, E_USER_WARNING);
 			if (MAIN_TYPE_USER) {
-				$redirect_func($main->REDIR_URL_DENIED);
+				$redir_func = $this->REDIRECT_CALLBACK_403 ?: $redirect_func;
+				$redir_func($main->REDIR_URL_DENIED);
 			}
 		}
 		$block_name = 'center_area';
