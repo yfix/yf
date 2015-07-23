@@ -11,6 +11,9 @@ class yf_core_blocks {
 
 	public $TASK_NOT_FOUND_404_HEADER = false;
 	public $TASK_DENIED_403_HEADER = false;
+	public $FORCE_ALLOWED_CLASSES = array(
+		'api',
+	);
 
 	/**
 	* Catch missing method call
@@ -346,6 +349,13 @@ class yf_core_blocks {
 					$name = substr($name, $plen);
 				}
 				$names[$name] = $name;
+			}
+		}
+		if ($exclude = $this->FORCE_ALLOWED_CLASSES) {
+			foreach ((array)$exclude as $name) {
+				if (isset($names[$name])) {
+					unset($names[$name]);
+				}
 			}
 		}
 		$this->$cache = $names;
