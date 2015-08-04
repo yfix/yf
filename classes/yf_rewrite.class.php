@@ -422,4 +422,39 @@ class yf_rewrite {
 		}
 		return $unique;
 	}
+
+	/**
+	* Checks if two input urls are the same
+	*/
+	function is_urls_same($url1 = '', $url2 = '', $params = array()) {
+// TODO
+	}
+
+	/**
+	* Checks if given url is same as internal one
+	*/
+	function is_current_url($url = '', $params = array()) {
+// TODO
+	}
+
+	/**
+	* Generate current url, using internal params
+	*/
+	function get_current_url($params = array()) {
+// TODO
+	}
+
+	/**
+	* Get user side home page url
+	*/
+	function get_user_home_url($params = array()) {
+// TODO
+	}
+
+	/**
+	* Get admin side home page url
+	*/
+	function get_admin_home_url($params = array()) {
+// TODO
+	}
 }
