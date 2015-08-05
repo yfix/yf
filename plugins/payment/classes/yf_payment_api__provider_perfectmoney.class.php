@@ -137,7 +137,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		}
 		// title
 		if( !empty( $_[ 'SUGGESTED_MEMO' ] ) ) {
-			$_[ 'SUGGESTED_MEMO_NOCHANGE' ] = 1;
+			$_[ 'SUGGESTED_MEMO_NOCHANGE' ] = true;
 		}
 		// url
 		if( !empty( $_[ 'url_result' ] )
@@ -236,12 +236,26 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		); // */
 		// response
 		$response = $_POST;
+		// operation_id
+		if( empty( $operation_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не определен код операции',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
 		// signature
 		$signature  = @$response[ $this->HASH_KEY ];
 		$_signature = $this->signature( $response, false );
 		$is_signature_ok = $signature == $_signature;
 		// check status
 		$state = @$_GET[ 'status' ];
+		// server status always is success
+		if( $is_server && $is_signature_ok ) {
+			$state = 'success';
+		}
 		list( $status_name, $status_message ) = $this->_state( $state );
 		$status = $status_name == 'success';
 		// check signature
@@ -263,8 +277,23 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		// update operation
+		// get response
 		$_response = $this->_response_parse( $response );
+		// check operation data
+		$operation = $payment_api->operation( array( 'operation_id' => $operation_id ) );
+		$_operation_id = @$operation[ 'operation_id' ];
+		$amount        = @$_response[ 'amount'       ];
+		$_amount       = @$operation[ 'amount'       ];
+		$is_operation_ok = $operation_id == $_operation_id && $amount == $_amount;
+		if( !$is_operation_ok ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверные данные запроса',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
 		// update account, operation data
 		$result = $this->_api_deposition( array(
 			'provider_name'  => 'perfectmoney',
