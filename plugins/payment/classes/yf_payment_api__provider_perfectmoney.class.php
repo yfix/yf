@@ -245,7 +245,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		list( $status_name, $status_message ) = $this->_state( $state );
 		$status = $status_name == 'success';
 		// check signature
-		if( empty( $signature ) && !$status && !$test_mode ) {
+		if( empty( $signature ) && $status && !$test_mode ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
