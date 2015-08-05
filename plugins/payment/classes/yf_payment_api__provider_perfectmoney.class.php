@@ -215,18 +215,8 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		// check operation
 		// $_operation_id = (int)$_GET[ 'operation_id' ];
 		$operation_id = (int)$_POST[ 'PAYMENT_ID' ];
-		// check status
-		$state = @$_GET[ 'status' ];
-		list( $status_name, $status_message ) = $this->_state( $state );
 		// START DUMP
 		$payment_api->dump( array( 'name' => 'PerfectMoney', 'operation_id' => (int)$operation_id ));
-		if( !$is_server ) {
-			$result = array(
-				'status'         => $state == 'success',
-				'status_message' => 'Операция выполнена',
-			);
-			return( $result );
-		}
 		/* // test data
 		$api->key( 'private', "ohboyi'msogood1" );
 		$_POST = array (
@@ -239,9 +229,26 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			'TIMESTAMPGMT'      => '876543210',
 			'V2_HASH'           => '1CC09524986EDC51F7BEA9E6973F5187',
 		); // */
+		// response
 		$response = $_POST;
-		// response POST:
-		$signature = $response[ $this->HASH_KEY ];
+		// signature
+		$signature  = @$response[ $this->HASH_KEY ];
+		$_signature = $this->signature( $response, false );
+		$is_signature_ok = $signature =$signature != $_signature= $_signature;
+		// check status
+		$state = @$_GET[ 'status' ];
+		list( $status_name, $status_message ) = $this->_state( $state );
+		if( !$is_server ) {
+			if( $status_name == 'refused' || !$is_signature_ok ) {
+				list( $status_name, $status_message ) = $this->_state( 'fail' );
+			}
+			$status = $status_name == 'success';
+			$result = array(
+				'status'         => $status,
+				'status_message' => $status_message,
+			);
+			return( $result );
+		}
 		// check signature
 		if( empty( $signature ) && !$test_mode ) {
 			$result = array(
@@ -252,8 +259,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		$_signature = $this->signature( $response, false );
-		if( !( $test_mode && empty( $signature ) ) && $signature != $_signature ) {
+		if( !$is_signature_ok && !( $test_mode && empty( $signature ) ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
@@ -266,7 +272,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$_response = $this->_response_parse( $response );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'  => 'interkassa',
+			'provider_name'  => 'perfectmoney',
 			'response'       => $_response,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
