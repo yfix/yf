@@ -140,7 +140,10 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			$_[ 'SUGGESTED_MEMO_NOCHANGE' ] = 1;
 		}
 		// url
-		if( !empty( $_[ 'url_result' ] ) ) {
+		if( !empty( $_[ 'url_result' ] )
+			|| empty( $_[ 'PAYMENT_URL'   ] )
+			|| empty( $_[ 'NOPAYMENT_URL' ] )
+		) {
 			$url = $this->_url( $options );
 			if( empty( $_[ 'PAYMENT_URL'   ] ) ) {
 				$_[ 'PAYMENT_URL'        ] = $url . '&status=success';
@@ -152,7 +155,9 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			}
 			unset( $_[ 'url_result' ] );
 		}
-		if( !empty( $_[ 'url_server' ] ) ) {
+		if( !empty( $_[ 'url_server' ] )
+			|| empty( $_[ 'STATUS_URL' ] )
+		) {
 			$url = $this->_url( $options, $is_server = true );
 			if( empty( $_[ 'STATUS_URL' ] ) ) {
 				$_[ 'STATUS_URL' ] = $url;
@@ -238,7 +243,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		// check status
 		$state = @$_GET[ 'status' ];
 		list( $status_name, $status_message ) = $this->_state( $state );
-		if( !$is_server ) {
+		if( !$test_mode && !$is_server ) {
 			if( $status_name == 'refused' || !$is_signature_ok ) {
 				list( $status_name, $status_message ) = $this->_state( 'fail' );
 			}
@@ -308,124 +313,6 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		return( $result );
 	}
 
-	public function api_request__checkout_b( $options = null ) {
-		// get business account_id
-		list( $status, $account ) = $this->api_request( 'account' );
-		if( empty( $status )
-			|| !empty( $account[ 'code' ] )
-			|| empty( $account[ 'data' ] )
-		) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Ошибка при запросе бизнес счета',
-			);
-			return( $result );
-		}
-		// find business account_id
-		$account_id = null;
-		foreach( $account[ 'data' ] as $id => $item ) {
-			if( @$item[ 'tp' ] == 'b' ) {
-				$account_id = $item[ '_id' ];
-				break;
-			}
-		}
-		// get business account
-		$request_option = array(
-			'method_id' => 'checkout',
-			'header'    => array(
-				'Ik-Api-Account-Id: '. $account_id,
-			),
-		);
-		$result = $this->api_request( $request_option );
-		return( $result );
-	}
-
-	public function api_account( $options = null ) {
-		// var
-		$account_id = @$this->API_ACCOUNT;
-		if( empty( $account_id ) ) { return( null ); }
-		// business account id
-		$result = array(
-			'header'    => array(
-				'Ik-Api-Account-Id: '. $account_id,
-			),
-		);
-		return( $result );
-	}
-
-	public function api_request( $options = null ) {
-		if( !$this->ENABLE ) { return( null ); }
-		// import options
-		if( is_string( $options ) ) { $_method_id = $options; }
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// method
-		$method = $this->api_method( array(
-			'type'      => 'api',
-			'method_id' => @$_method_id,
-		));
-		if( empty( $method ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Метод запроса не найден',
-			);
-			return( $result );
-		}
-		// method handler
-		if( !empty( $method[ 'is_handler' ] ) ) {
-			$handler = 'api_request__'. $method[ 'is_handler' ];
-			if( !method_exists( $this, $handler ) ) {
-				$result = array(
-					'status'         => false,
-					'status_message' => 'Опработчик метода запроса не найден',
-				);
-				return( $result );
-			}
-			$result = $this->{ $handler }( $options );
-			return( $result );
-		}
-		// request
-		$request = array();
-		!empty( $_option ) && $request = $_option;
-// DEBUG
-// var_dump( $url, $request, $request_option );
-// exit;
-		// add options
-		!empty( $method[ 'option' ] ) && $request = array_merge_recursive(
-			$request, $method[ 'option' ]
-		);
-		// url
-		$object = $this->api_url( $method, $options );
-		if( isset( $object[ 'status' ] ) && $object[ 'status' ] === false ) { return( $object ); }
-		$url = $object;
-		// request options
-		$request_option = array();
-		@$_is_debug && $request_option[ 'is_debug' ] = true;
-			// api authorization
-			$_request_option = $this->api_authorization( $method );
-			is_array( $_request_option ) && $request_option = array_merge_recursive( $request_option, $_request_option );
-			// api account
-			$_request_option = $this->api_account( $method );
-			is_array( $_request_option ) && $request_option = array_merge_recursive( $request_option, $_request_option );
-			// header
-			is_array( $_header ) && $request_option = array_merge_recursive( $request_option, array( 'header' => $_header ) );
-		// test
-		if( $this->is_test() ) {
-			switch( $_method_id ) {
-				case 'withdraw-process':
-					$request[ 'action' ] = 'calc';
-					break;
-			}
-		}
-		// request
-// DEBUG
-// var_dump( $url, $request, $request_option );
-// exit;
-		$result = $this->_api_request( $url, $request, $request_option );
-// var_dump( $result );
-// exit;
-		return( $result );
-	}
-
 	public function deposition( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
@@ -475,16 +362,11 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			'amount_currency'       => $amount_currency,
 			'amount_currency_total' => $amount_currency_total,
 		);
-		// $description = implode( '#', array_values( $description ) );
 		$form_options = array(
 			'amount'       => $amount_currency_total,
 			'currency'     => $currency_id,
 			'operation_id' => $operation_id,
 			'title'        => $data[ 'title' ],
-			'description'  => $operation_id,
-			// 'description'  => $description,
-			// 'result_url'   => $result_url,
-			// 'server_url'   => $server_url,
 		);
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
@@ -504,7 +386,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$result = array(
 			'form'           => $form,
 			'status'         => true,
-			'status_message' => 'Поплнение через сервис: Интеркасса',
+			'status_message' => 'Поплнение через сервис: PerfectMoney',
 		);
 		return( $result );
 	}
