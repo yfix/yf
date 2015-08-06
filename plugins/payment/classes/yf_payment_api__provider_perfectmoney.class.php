@@ -137,10 +137,13 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		}
 		// title
 		if( !empty( $_[ 'SUGGESTED_MEMO' ] ) ) {
-			$_[ 'SUGGESTED_MEMO_NOCHANGE' ] = 1;
+			$_[ 'SUGGESTED_MEMO_NOCHANGE' ] = true;
 		}
 		// url
-		if( !empty( $_[ 'url_result' ] ) ) {
+		if( !empty( $_[ 'url_result' ] )
+			|| empty( $_[ 'PAYMENT_URL'   ] )
+			|| empty( $_[ 'NOPAYMENT_URL' ] )
+		) {
 			$url = $this->_url( $options );
 			if( empty( $_[ 'PAYMENT_URL'   ] ) ) {
 				$_[ 'PAYMENT_URL'        ] = $url . '&status=success';
@@ -152,7 +155,9 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			}
 			unset( $_[ 'url_result' ] );
 		}
-		if( !empty( $_[ 'url_server' ] ) ) {
+		if( !empty( $_[ 'url_server' ] )
+			|| empty( $_[ 'STATUS_URL' ] )
+		) {
 			$url = $this->_url( $options, $is_server = true );
 			if( empty( $_[ 'STATUS_URL' ] ) ) {
 				$_[ 'STATUS_URL' ] = $url;
@@ -215,18 +220,8 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		// check operation
 		// $_operation_id = (int)$_GET[ 'operation_id' ];
 		$operation_id = (int)$_POST[ 'PAYMENT_ID' ];
-		// check status
-		$state = @$_GET[ 'status' ];
-		list( $status_name, $status_message ) = $this->_state( $state );
 		// START DUMP
 		$payment_api->dump( array( 'name' => 'PerfectMoney', 'operation_id' => (int)$operation_id ));
-		if( !$is_server ) {
-			$result = array(
-				'status'         => $state == 'success',
-				'status_message' => 'Операция выполнена',
-			);
-			return( $result );
-		}
 		/* // test data
 		$api->key( 'private', "ohboyi'msogood1" );
 		$_POST = array (
@@ -239,11 +234,32 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			'TIMESTAMPGMT'      => '876543210',
 			'V2_HASH'           => '1CC09524986EDC51F7BEA9E6973F5187',
 		); // */
+		// response
 		$response = $_POST;
-		// response POST:
-		$signature = $response[ $this->HASH_KEY ];
+		// operation_id
+		if( empty( $operation_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не определен код операции',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
+		// signature
+		$signature  = @$response[ $this->HASH_KEY ];
+		$_signature = $this->signature( $response, false );
+		$is_signature_ok = $signature == $_signature;
+		// check status
+		$state = @$_GET[ 'status' ];
+		// server status always is success
+		if( $is_server && $is_signature_ok ) {
+			$state = 'success';
+		}
+		list( $status_name, $status_message ) = $this->_state( $state );
+		$status = $status_name == 'success';
 		// check signature
-		if( empty( $signature ) && !$test_mode ) {
+		if( empty( $signature ) && $status && !$test_mode ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
@@ -252,8 +268,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		$_signature = $this->signature( $response, false );
-		if( !( $test_mode && empty( $signature ) ) && $signature != $_signature ) {
+		if( !$is_signature_ok && $status && !( $test_mode && empty( $signature ) ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
@@ -262,11 +277,26 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		// update operation
+		// get response
 		$_response = $this->_response_parse( $response );
+		// check operation data
+		$operation = $payment_api->operation( array( 'operation_id' => $operation_id ) );
+		$_operation_id = @$operation[ 'operation_id' ];
+		$amount        = @$_response[ 'amount'       ];
+		$_amount       = @$operation[ 'amount'       ];
+		$is_operation_ok = $operation_id == $_operation_id && $amount == $_amount;
+		if( !$is_operation_ok ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверные данные запроса',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'  => 'interkassa',
+			'provider_name'  => 'perfectmoney',
 			'response'       => $_response,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
@@ -299,124 +329,6 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		if( isset( $allow[ $id ] ) && $allow[ $id ][ 'active' ] ) {
 			$result = $id;
 		}
-		return( $result );
-	}
-
-	public function api_request__checkout_b( $options = null ) {
-		// get business account_id
-		list( $status, $account ) = $this->api_request( 'account' );
-		if( empty( $status )
-			|| !empty( $account[ 'code' ] )
-			|| empty( $account[ 'data' ] )
-		) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Ошибка при запросе бизнес счета',
-			);
-			return( $result );
-		}
-		// find business account_id
-		$account_id = null;
-		foreach( $account[ 'data' ] as $id => $item ) {
-			if( @$item[ 'tp' ] == 'b' ) {
-				$account_id = $item[ '_id' ];
-				break;
-			}
-		}
-		// get business account
-		$request_option = array(
-			'method_id' => 'checkout',
-			'header'    => array(
-				'Ik-Api-Account-Id: '. $account_id,
-			),
-		);
-		$result = $this->api_request( $request_option );
-		return( $result );
-	}
-
-	public function api_account( $options = null ) {
-		// var
-		$account_id = @$this->API_ACCOUNT;
-		if( empty( $account_id ) ) { return( null ); }
-		// business account id
-		$result = array(
-			'header'    => array(
-				'Ik-Api-Account-Id: '. $account_id,
-			),
-		);
-		return( $result );
-	}
-
-	public function api_request( $options = null ) {
-		if( !$this->ENABLE ) { return( null ); }
-		// import options
-		if( is_string( $options ) ) { $_method_id = $options; }
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// method
-		$method = $this->api_method( array(
-			'type'      => 'api',
-			'method_id' => @$_method_id,
-		));
-		if( empty( $method ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Метод запроса не найден',
-			);
-			return( $result );
-		}
-		// method handler
-		if( !empty( $method[ 'is_handler' ] ) ) {
-			$handler = 'api_request__'. $method[ 'is_handler' ];
-			if( !method_exists( $this, $handler ) ) {
-				$result = array(
-					'status'         => false,
-					'status_message' => 'Опработчик метода запроса не найден',
-				);
-				return( $result );
-			}
-			$result = $this->{ $handler }( $options );
-			return( $result );
-		}
-		// request
-		$request = array();
-		!empty( $_option ) && $request = $_option;
-// DEBUG
-// var_dump( $url, $request, $request_option );
-// exit;
-		// add options
-		!empty( $method[ 'option' ] ) && $request = array_merge_recursive(
-			$request, $method[ 'option' ]
-		);
-		// url
-		$object = $this->api_url( $method, $options );
-		if( isset( $object[ 'status' ] ) && $object[ 'status' ] === false ) { return( $object ); }
-		$url = $object;
-		// request options
-		$request_option = array();
-		@$_is_debug && $request_option[ 'is_debug' ] = true;
-			// api authorization
-			$_request_option = $this->api_authorization( $method );
-			is_array( $_request_option ) && $request_option = array_merge_recursive( $request_option, $_request_option );
-			// api account
-			$_request_option = $this->api_account( $method );
-			is_array( $_request_option ) && $request_option = array_merge_recursive( $request_option, $_request_option );
-			// header
-			is_array( $_header ) && $request_option = array_merge_recursive( $request_option, array( 'header' => $_header ) );
-		// test
-		if( $this->is_test() ) {
-			switch( $_method_id ) {
-				case 'withdraw-process':
-					$request[ 'action' ] = 'calc';
-					break;
-			}
-		}
-		// request
-// DEBUG
-// var_dump( $url, $request, $request_option );
-// exit;
-		$result = $this->_api_request( $url, $request, $request_option );
-// var_dump( $result );
-// exit;
 		return( $result );
 	}
 
@@ -469,16 +381,11 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			'amount_currency'       => $amount_currency,
 			'amount_currency_total' => $amount_currency_total,
 		);
-		// $description = implode( '#', array_values( $description ) );
 		$form_options = array(
 			'amount'       => $amount_currency_total,
 			'currency'     => $currency_id,
 			'operation_id' => $operation_id,
 			'title'        => $data[ 'title' ],
-			'description'  => $operation_id,
-			// 'description'  => $description,
-			// 'result_url'   => $result_url,
-			// 'server_url'   => $server_url,
 		);
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
@@ -498,7 +405,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$result = array(
 			'form'           => $form,
 			'status'         => true,
-			'status_message' => 'Поплнение через сервис: Интеркасса',
+			'status_message' => 'Поплнение через сервис: PerfectMoney',
 		);
 		return( $result );
 	}
