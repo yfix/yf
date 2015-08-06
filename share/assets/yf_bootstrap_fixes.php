@@ -1,7 +1,7 @@
 <?php
 
 return array('versions' => array('master' => array('css' => array(
-<<<END
+'
 .cke_source { min-width: 100%; }
 
 fieldset.well { padding-bottom:0; }
@@ -103,12 +103,9 @@ td input[type=text], td textarea { margin-bottom:0; }
 .cssfw-bs3 .controls .help-block { width:100%; margin-bottom:0; }
 
 .cssfw-bs3 .modal .form-horizontal .form-group { margin-right:inherit; margin-left:inherit; }
-/*.cssfw-bs3 .modal .form-horizontal .control-label.col-md-3 { width:30%; }*/
-/*.cssfw-bs3 .modal .form-horizontal .controls.col-md-offset-3 { margin-left:30%; }*/
 
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color:#52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color:#c8c8c8; }
-
-END
+'
 ))));
