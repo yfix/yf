@@ -542,9 +542,10 @@ class yf_payment_api__provider_remote {
 			'current_status_name' => $current_status_name,
 		)));
 		// prepare
-		$is_manual = null;
-		$is_payin  = null;
-		$is_payout = null;
+		$is_manual  = null;
+		$is_payin   = null;
+		$is_payout  = null;
+		$event_name = null;
 		$is_update_balance = null;
 		$is_update_status  = null;
 		switch( $current_type_name ) {
@@ -559,7 +560,8 @@ class yf_payment_api__provider_remote {
 						$sql_sign  = '+';
 					}
 				}
-				$mail_tpl  = 'payout';
+				$event_name = 'payout';
+				$mail_tpl   = 'payout';
 				break;
 			case 'deposition':
 				$is_payin  = true;
@@ -572,7 +574,8 @@ class yf_payment_api__provider_remote {
 						$sql_sign  = '+';
 					}
 				}
-				$mail_tpl  = 'payin';
+				$event_name = 'payin';
+				$mail_tpl   = 'payin';
 				break;
 		}
 		if( $is_try ) {
@@ -696,6 +699,15 @@ class yf_payment_api__provider_remote {
 			}
 			db()->commit();
 			@$_status_message && $status_message = $_status_message;
+			// event
+				// get updated account
+				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, ) );
+				list( $account_id, $account ) = $object;
+				// get updated operation
+				$operation = $payment_api->operation( array(
+					'operation_id' => $operation_id,
+				));
+			_class( 'core_events' )->fire( $event_name .'.finish', array( $account, $operation ) );
 		} else {
 			$message = 'Повторный запрос на выполнение операции';
 			$status_message = $message;
