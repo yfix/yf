@@ -11,6 +11,29 @@ class yf_payment_api__provider_remote_test extends yf_payment_api__provider_remo
 		'Remote test',
 	);
 
+	public $method_allow = array(
+		'order' => array(
+			'payin' => array(
+				'remote_test',
+			),
+			'payout' => array(
+				'remote_test',
+			),
+		),
+		'payin' => array(
+			'remote_test' => array(
+				'title' => 'Тест (внешний)',
+				'icon'  => 'test',
+			),
+		),
+		'payout' => array(
+			'remote_test' => array(
+				'title' => 'Тест (внешний)',
+				'icon'  => 'test',
+			),
+		),
+	);
+
 	public $currency_default = 'USD';
 	public $currency_allow = array(
 		'USD' => array(
