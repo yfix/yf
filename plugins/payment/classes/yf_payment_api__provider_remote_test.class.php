@@ -30,6 +30,12 @@ class yf_payment_api__provider_remote_test extends yf_payment_api__provider_remo
 			'remote_test' => array(
 				'title' => 'Тест (внешний)',
 				'icon'  => 'test',
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
 			),
 		),
 	);
