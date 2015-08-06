@@ -243,7 +243,7 @@ class yf_manage_payment_operation {
 				$options = @json_decode( $row[ 'options' ], true );
 				if( empty( $options ) ) { return( $result ); }
 				// request
-				$request = @reset( $options[ 'request' ] );
+				is_array( $options[ 'request' ] ) && $request = reset( $options[ 'request' ] );
 				if( empty( $request ) ) { return( $result ); }
 				// method
 				$provider_id = @$request[ 'options' ][ 'provider_id' ];

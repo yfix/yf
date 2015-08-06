@@ -43,6 +43,7 @@ class yf_payment_api__provider_remote {
 	public $api         = null;
 
 	public function _init() {
+		ini_set( 'html_errors', 0 );
 		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );
@@ -450,6 +451,7 @@ class yf_payment_api__provider_remote {
 			return( $result );
 		}
 		$operation_options = $operation[ 'options' ];
+/*
 		// operation request options
 		if( !is_array( $operation_options[ 'request' ] ) ) {
 			$result = array(
@@ -461,6 +463,7 @@ class yf_payment_api__provider_remote {
 		// request data
 		$request = reset( $operation_options[ 'request' ] );
 		$request_data = $request[ 'data' ];
+*/
 		// operation options
 		$_operation_id = (int)$operation[ 'operation_id' ];
 		$account_id    = (int)$operation[ 'account_id'   ];
@@ -707,7 +710,7 @@ class yf_payment_api__provider_remote {
 				$operation = $payment_api->operation( array(
 					'operation_id' => $operation_id,
 				));
-			_class( 'core_events' )->fire( $event_name .'.finish', array( $account, $operation ) );
+			events()->fire( $event_name .'.finish', array( $account, $operation ) );
 		} else {
 			$message = 'Повторный запрос на выполнение операции';
 			$status_message = $message;
@@ -946,8 +949,21 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
+	public function get_currency( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$_       = &$options;
+		$allow   = &$this->currency_allow;
+		$default = $this->currency_default;
+		// check: allow currency_id
+		$id     = $_[ 'currency_id' ];
+		$result = $default;
+		if( isset( $allow[ $id ] ) && $allow[ $id ][ 'active' ] ) {
+			$result = $id;
+		}
+		return( $result );
+	}
+
 	public function deposition( $options ) {
-		ini_set( 'html_errors', 0 );
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$_              = $options;
@@ -996,16 +1012,12 @@ class yf_payment_api__provider_remote {
 			'amount_currency'       => $amount_currency,
 			'amount_currency_total' => $amount_currency_total,
 		);
-		// $description = implode( '#', array_values( $description ) );
 		$form_options = array(
 			'amount'       => $amount_currency_total,
 			'currency'     => $currency_id,
 			'operation_id' => $operation_id,
 			'title'        => $data[ 'title' ],
 			'description'  => $operation_id,
-			// 'description'  => $description,
-			// 'result_url'   => $result_url,
-			// 'server_url'   => $server_url,
 		);
 		// add options
 		$method = $this->api_method( array(

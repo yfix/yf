@@ -791,20 +791,6 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		return( $_ );
 	}
 
-	public function get_currency( $options ) {
-		if( !$this->ENABLE ) { return( null ); }
-		$_       = &$options;
-		$allow   = &$this->currency_allow;
-		$default = $this->currency_default;
-		// check: allow currency_id
-		$id     = $_[ 'currency_id' ];
-		$result = $default;
-		if( isset( $allow[ $id ] ) && $allow[ $id ][ 'active' ] ) {
-			$result = $id;
-		}
-		return( $result );
-	}
-
 	public function api_payout( $options = null ) {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options

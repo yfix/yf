@@ -429,21 +429,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		return( $_ );
 	}
 
-	public function get_currency( $options ) {
-		if( !$this->ENABLE ) { return( null ); }
-		$_       = &$options;
-		$api     = $this->api;
-		$allow   = &$this->currency_allow;
-		$default = $this->currency_default;
-		// chech: allow currency_id
-		$id     = $_[ 'currency_id' ];
-		$result = $default;
-		if( isset( $allow[ $id ] ) && $allow[ $id ][ 'active' ] ) {
-			$result = $id;
-		}
-		return( $result );
-	}
-
 	public function deposition( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api    = $this->payment_api;
