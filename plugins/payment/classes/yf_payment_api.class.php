@@ -1560,7 +1560,7 @@ class yf_payment_api {
 		}
 		// confirmation is ok
 		$confirmation_ok_options = array(
-			'operation_id' => $operation_id,
+			'operation_id' => $_operation_id,
 		);
 		$result = $this->confirmation_ok( $confirmation_ok_options );
 		return( $result );
