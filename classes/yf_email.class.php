@@ -37,6 +37,7 @@ class yf_email {
 	public $SMTP_CONFIG_ALTERNATE = array(
 	);
 	public $FORCE_SEND = false;
+	public $MAIL_DEBUG = false;
 
 	/**
 	* Catch missing method call
@@ -133,6 +134,12 @@ class yf_email {
 			'text'		=> $html,
 			'date'		=> $_SERVER['REQUEST_TIME'],
 		));
+		if (!$html) {
+			if( $this->MAIL_DEBUG ) {
+				trigger_error('Email is empty', E_USER_WARNING);
+			}
+			return( null );
+		}
 		if ($instant_send) {
 			$email_id = db()->insert_id();
 			$params = array(
@@ -147,7 +154,9 @@ class yf_email {
 			);
 			$result = common()->send_mail((array)$params);
 			if (!$result) {
-				trigger_error('Email not sent', E_USER_WARNING);
+				if( $this->MAIL_DEBUG ) {
+					trigger_error('Email not sent', E_USER_WARNING);
+				}
 			} else {
 				db()->update_safe(self::table_history, array('status' => 1), 'id='.(int)$email_id);
 				$this->_send_copies($params);
