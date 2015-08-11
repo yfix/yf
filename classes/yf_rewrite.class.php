@@ -382,6 +382,12 @@ class yf_rewrite {
 		}
 		if (substr($url, 0, 8) == 'https://') {
 			$is_https = true;
+		} elseif (substr($url, 0, 7) == 'http://') {
+			$is_http = true;
+		}
+		if ($request_is_https) {
+			$change_to_https = true;
+		} elseif ($is_https) {
 			if ($main->HTTPS_ENABLED_FOR) {
 				if (!$matched) {
 					$change_to_http = true;
@@ -389,20 +395,14 @@ class yf_rewrite {
 			} elseif (!$main->USE_ONLY_HTTPS) {
 				$change_to_http = true;
 			}
-		} elseif (substr($url, 0, 7) == 'http://') {
-			$is_http = true;
+		} elseif ($is_http) {
 			if ($main->USE_ONLY_HTTPS) {
 				$change_to_https = true;
 			} elseif ($main->HTTPS_ENABLED_FOR) {
 				if ($matched) {
 					$change_to_https = true;
 				}
-			} elseif ($request_is_https) {
-				$change_to_https = true;
 			}
-#			if ($https_needed) {
-#				$url = str_replace('http://', 'https://', $url);
-#			}
 		}
 		if ($is_http && $change_to_https) {
 			$url = str_replace('http://', 'https://', $url);
