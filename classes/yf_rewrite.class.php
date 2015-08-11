@@ -357,6 +357,7 @@ class yf_rewrite {
 			return false;
 		}
 		$main = main();
+		$request_is_https = $main->is_https();
 		$is_http = false;
 		$is_https = false;
 		$change_to_http = false;
@@ -396,10 +397,12 @@ class yf_rewrite {
 				if ($matched) {
 					$change_to_https = true;
 				}
+			} elseif ($request_is_https) {
+				$change_to_https = true;
 			}
-			if ($https_needed) {
-				$url = str_replace('http://', 'https://', $url);
-			}
+#			if ($https_needed) {
+#				$url = str_replace('http://', 'https://', $url);
+#			}
 		}
 		if ($is_http && $change_to_https) {
 			$url = str_replace('http://', 'https://', $url);
