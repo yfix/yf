@@ -386,19 +386,51 @@ class yf_payment_api__provider_remote {
 		if( $http_code != 200 ) {
 			$result = sprintf( 'Ошибка транспорта: [%d] %s', $http_code, $message );
 		}
+		$content_type = curl_getinfo( $ch, CURLINFO_CONTENT_TYPE );
+		// finish
+		curl_close( $ch );
 		// detect content type of response
 		if( empty( $_is_response_raw ) ) {
-			$content_type = curl_getinfo( $ch, CURLINFO_CONTENT_TYPE );
 			switch( true ) {
-			case $content_type == 'application/json' || $_is_response_json:
-				$result = @json_decode( $body, true );
-				break;
+				case $content_type == 'application/json' || $_is_response_json:
+					$result = @json_decode( $body, true );
+					break;
+				case $content_type == 'text/html' || $_is_response_html || $_is_response_xml || $_is_response_form:
+					libxml_use_internal_errors( true );
+					$xml_response = @simplexml_load_string( $body );
+					$error = libxml_get_errors();
+					if( $error ) {
+						libxml_clear_errors();
+						$result = array(
+							'status'         => null,
+							'status_message' => 'Ошибка ответа: неверная структура данных',
+							'error'          => $error,
+							'result'         => $body,
+						);
+						return( $result );
+					}
+					if( $xml_response->getName() == 'error' ) {
+						$result = array(
+							'status'         => null,
+							'status_message' => 'Ошибка ответа: неверные данные - ' . (string)$xml_response,
+						);
+						return( $result );
+					}
+					if( $_is_response_form ) {
+						$form = array();
+						foreach( $xml_response->xpath( '//input' ) as $item ) {
+							$_item = $item->attributes();
+							$name  = (string)$_item->name;
+							$value = (string)$_item->value;
+							$form[ $name ] = $value;
+						}
+						!empty( $form ) && $xml_response = $form;
+					}
+					$result = $xml_response;
 			}
 		} else {
 			$result = $body;
 		}
-		// finish
-		curl_close( $ch );
 		return( array( $status, $result ) );
 	}
 
