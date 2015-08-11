@@ -47,11 +47,11 @@ class yf_rewrite {
 		if (!$this->DEFAULT_PORT) {
 			if (defined('WEB_PATH') && strlen(WEB_PATH)) {
 				$port = parse_url(WEB_PATH, PHP_URL_PORT);
-				if ($port && $port != '80') {
+				if ($port && !in_array($port, array('80', '443'))) {
 					$this->DEFAULT_PORT = $port;
 				}
 			}
-			if (!$this->DEFAULT_PORT && $_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != '80') {
+			if (!$this->DEFAULT_PORT && $_SERVER['SERVER_PORT'] && !in_array($_SERVER['SERVER_PORT'], array('80', '443'))) {
 				$this->DEFAULT_PORT = $_SERVER['SERVER_PORT'];
 			}
 			if (!$this->DEFAULT_PORT) {
@@ -298,7 +298,7 @@ class yf_rewrite {
 		}
 		if (empty($params['port'])) {
 			$port = $port ?: $this->DEFAULT_PORT;
-			if ($port != '80') {
+			if ($port && !in_array($port, array('80', '443'))) {
 				$params['port'] = $port;
 			}
 		}
@@ -322,7 +322,7 @@ class yf_rewrite {
 					$_host = $params['admin_host'];
 					$_port = $params['admin_port'] ?: '80';
 					$_path = $params['admin_path'] ?: '/admin/';
-					$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && $_port != '80' ? ':'.$_port : ''). ($_path ?: '/'). $u);
+					$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && !in_array($_port, array('80','443')) ? ':'.$_port : ''). ($_path ?: '/'). $u);
 				} else {
 					$link = ADMIN_WEB_PATH. $u;
 				}
@@ -330,7 +330,7 @@ class yf_rewrite {
 				$_host = $params['host'];
 				$_port = $params['port'] ?: '80';
 				$_path = $params['path'] ?: '/';
-				$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && $_port != '80' ? ':'.$_port : ''). ($_path ?: '/'). $u);
+				$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && !in_array($_port, array('80','443')) ? ':'.$_port : ''). ($_path ?: '/'). $u);
 			}
 			if ($params['fragment']) {
 				$link .= '#'.$params['fragment'];
