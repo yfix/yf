@@ -1632,7 +1632,7 @@ class yf_main {
 			define('UPLOADS_PATH', PROJECT_PATH.'uploads/');
 		}
 		// Set WEB_PATH (if not done yet)
-		if (!defined('WEB_PATH'))	{
+		if (!defined('WEB_PATH')) {
 			$request_uri	= $_SERVER['REQUEST_URI'];
 			$cur_web_path	= '';
 			if ($request_uri[strlen($request_uri) - 1] == '/') {
@@ -1652,9 +1652,12 @@ class yf_main {
 			$this->web_path_was_not_defined = true;
 			define('WEB_PATH',
 				($this->is_https() ? 'https://' : 'http://')
-				.$host. ($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != '80' ? ':'.$_SERVER['SERVER_PORT'] : '')
+				.$host. ($_SERVER['SERVER_PORT'] && !in_array($_SERVER['SERVER_PORT'], array('80','443')) ? ':'.$_SERVER['SERVER_PORT'] : '')
 				.str_replace(array("\\",'//'), '/', (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/')
 			);
+		}
+		if (!defined('WEB_DOMAIN') && defined('WEB_PATH') && strlen(WEB_PATH)) {
+			define('WEB_DOMAIN', parse_url(WEB_PATH, PHP_URL_HOST));
 		}
 		// Should be different that WEB_PATH to distribute static content from other subdomain
 		if (!defined('MEDIA_PATH')) {
