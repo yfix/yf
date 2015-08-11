@@ -675,6 +675,7 @@ class yf_debug {
 			'USER_ROLE'			=> main()->USER_ROLE,
 			'IS_POST'			=> (int)main()->is_post(),
 			'IS_AJAX'			=> (int)main()->is_ajax(),
+			'IS_HTTPS'			=> (int)main()->is_https(),
 			'IS_CONSOLE'		=> (int)main()->is_console(),
 			'IS_REDIRECT'		=> (int)main()->is_redirect(),
 			'IS_COMMON_PAGE'	=> (int)main()->is_common_page(),
