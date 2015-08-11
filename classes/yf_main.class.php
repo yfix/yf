@@ -1946,7 +1946,7 @@ class yf_main {
 	/**
 	*/
 	function is_https() {
-		return isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']);
+		return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off') || (isset($_SERVER['SSL_PROTOCOL']) && $_SERVER['SSL_PROTOCOL']);
 	}
 
 	/**
