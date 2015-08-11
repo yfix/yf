@@ -277,7 +277,7 @@ class yf_manage_payment {
 				$css = $manage_lib->css_by_status( array(
 					'status_name' => $status_name,
 				));
-				$result = sprintf( '<span class="%s">%s</span>', $css, $status[ 'title' ] );
+				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
 			->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )

@@ -1558,6 +1558,28 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
+		// confirmation is ok
+		$confirmation_ok_options = array(
+			'operation_id' => $_operation_id,
+		);
+		$result = $this->confirmation_ok( $confirmation_ok_options );
+		return( $result );
+	}
+
+	public function confirmation_ok( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// operation
+		$operation = $this->operation( array(
+			'operation_id' => $_operation_id,
+		));
+		if( !$operation ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Операция отсутствует',
+			);
+			return( $result );
+		}
 		// status to in_progress
 		$object = $this->get_status( array( 'name' => 'in_progress' ) );
 		list( $status_id, $status ) = $object;
@@ -1658,6 +1680,12 @@ class yf_payment_api {
 		// var
 		$payment_api = $this;
 		$mail_class  = _class( 'email' );
+		// error off
+		$mail_debug = $mail_class->MAIL_DEBUG;
+		$mail_class->MAIL_DEBUG = false;
+		$send_mail_class = _class( 'send_mail' );
+		$send_mail_debug = $send_mail_class->MAIL_DEBUG;
+		$send_mail_class->MAIL_DEBUG = false;
 		// check user
 		if( @$_user_id > 0 ) {
 			$user_mail = $this->is_user_mail( $options );
@@ -1716,7 +1744,7 @@ class yf_payment_api {
 		$admin    = !empty( $_admin    );
 		// user
 		if( !$is_admin ) {
-			$r = $mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
+			$r = @$mail_class->_send_email_safe( $mail_to, $mail_name, $_tpl, $data );
 			// mail fail
 			!$r && $this->mail_log( array(
 				'name' => 'mail_user',
@@ -1763,7 +1791,7 @@ class yf_payment_api {
 				'user_title' => $user[ 'name' ] . ' (id: '. $_user_id .')'
 			));
 			$tpl = $_tpl . '_admin';
-			$r = $mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
+			$r = @$mail_class->_send_email_safe( $mail_admin_to, $mail_admin_name, $tpl, $data );
 			// mail fail
 			!$r && $this->mail_log( array(
 				'name' => 'mail_admin',
@@ -1780,6 +1808,8 @@ class yf_payment_api {
 			$result_copy = $this->mail_copy( array( 'tpl' => $tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 			!$result_copy && $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 		}
+		$mail_class->MAIL_DEBUG      = $mail_debug;
+		$send_mail_class->MAIL_DEBUG = $send_mail_debug;
 		return( $result );
 	}
 
@@ -1825,7 +1855,7 @@ class yf_payment_api {
 			$name = 'Payment admin';
 			$instant_send = true;
 			foreach( $mails as $mail ) {
-				$r = $mail_class->_send_email_safe( $mail, $name, $_tpl, $_data, $instant_send, $override );
+				$r = @$mail_class->_send_email_safe( $mail, $name, $_tpl, $_data, $instant_send, $override );
 				!$r && $this->mail_log( array(
 					'name' => 'mail_copy',
 					'data' => array(

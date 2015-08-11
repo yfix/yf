@@ -209,8 +209,8 @@ class yf_send_mail {
 			if (!$result) {
 				$error_message .= $mail->ErrorInfo;
 			}
-			if( DEBUG_MODE && $this->MAIL_DEBUG ) {
-				echo $error_message;
+			if( @$error_message && DEBUG_MODE && $this->MAIL_DEBUG ) {
+				trigger_error( $error_message, E_USER_WARNING );
 			}
 		// Internal Framework mailer
 		} elseif ($this->USE_MAILER == 'internal') {

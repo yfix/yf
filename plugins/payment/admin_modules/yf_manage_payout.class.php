@@ -280,7 +280,7 @@ class yf_manage_payout {
 				$options = @json_decode( $row[ 'options' ], true );
 				if( empty( $options ) ) { return( null ); }
 				// request
-				$request = @reset( $options[ 'request' ] );
+				is_array( $options[ 'request' ] ) && $request = @reset( $options[ 'request' ] );
 				if( empty( $request ) ) { return( null ); }
 				// method
 				$provider_id = @$request[ 'options' ][ 'provider_id' ];
