@@ -304,15 +304,15 @@ class yf_payment_api__provider_remote {
 				CURLOPT_POSTFIELDS => $http_post,
 			);
 		}
-		if( !empty( $_user ) && !empty( $_password ) ) {
+		if( @$_user ) {
 			$userpwd = $_user;
-			!empty( $_password ) && $userpwd .= ':'. $_password;
+			@$_password && $userpwd .= ':'. $_password;
 			$options += array(
 				CURLOPT_HTTPAUTH => CURLAUTH_ANY,
 				CURLOPT_USERPWD  => $userpwd,
 			);
 		}
-		if( !empty( $_is_json ) ) {
+		if( @$_is_json ) {
 			$header[] = 'Content-Type: application/json; charset=utf-8';
 		}
 		if( $this->API_SSL_VERIFY && strpos( $url, 'https' ) !== false ) {
@@ -390,12 +390,12 @@ class yf_payment_api__provider_remote {
 		// finish
 		curl_close( $ch );
 		// detect content type of response
-		if( empty( $_is_response_raw ) ) {
+		if( empty( @$_is_response_raw ) ) {
 			switch( true ) {
 				case $content_type == 'application/json' || $_is_response_json:
 					$result = @json_decode( $body, true );
 					break;
-				case $content_type == 'text/html' || $_is_response_html || $_is_response_xml || $_is_response_form:
+				case $content_type == 'text/html' || @$_is_response_html || @$_is_response_xml || @$_is_response_form:
 					libxml_use_internal_errors( true );
 					$xml_response = @simplexml_load_string( $body );
 					$error = libxml_get_errors();
@@ -405,18 +405,19 @@ class yf_payment_api__provider_remote {
 							'status'         => null,
 							'status_message' => 'Ошибка ответа: неверная структура данных',
 							'error'          => $error,
-							'result'         => $body,
+							'content'        => $body,
 						);
 						return( $result );
 					}
-					if( $xml_response->getName() == 'error' ) {
+					if( @$xml_response->getName() == 'error' ) {
 						$result = array(
 							'status'         => null,
 							'status_message' => 'Ошибка ответа: неверные данные - ' . (string)$xml_response,
+							'content'        => $body,
 						);
 						return( $result );
 					}
-					if( $_is_response_form ) {
+					if( @$_is_response_form ) {
 						$form = array();
 						foreach( $xml_response->xpath( '//input' ) as $item ) {
 							$_item = $item->attributes();
@@ -841,7 +842,7 @@ class yf_payment_api__provider_remote {
 			}
 			$amount = $amount_currency;
 			// fee
-			if( !empty( $method[ 'is_fee' ] ) ) {
+			if( !empty( $_method[ 'is_fee' ] ) ) {
 				$fee = $this->get_fee_payout( $_options );
 				$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
 				$amount = $amount_currency_total;

@@ -56,19 +56,22 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 				'uri' => array(
 					'%method' => 'verify',
 				),
-				// 'option' => array(
-					// 'active' => true,
-				// ),
+			),
+			// spend (payout)
+			'spend' => array(
+				'uri' => array(
+					'%method' => 'confirm',
+				),
 			),
 		),
 		'payout' => array(
 			'perfectmoney' => array(
 				'title' => 'Perfect Money',
 				'icon'  => 'perfectmoney',
-				// 'is_fee' => true,
+				'is_fee' => true,
 				'fee' => array(
 					'out' => array(
-						'rt'  => 0.5, // 0.5% (1.99%)
+						'rt'  => 1.99, // 0.5% (1.99%)
 						// 'fix' => 10,
 					),
 				),
@@ -117,12 +120,17 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 	);
 
 	public $_api_transform = array(
-		'operation_id'   => 'PAYMENT_ID',
-		'account'        => 'Payee_Account',
+		'operation_id' => 'PAYMENT_ID',
+		'account'      => 'Payee_Account',
+		'amount'       => 'Amount',
+		'title'        => 'Memo',
 	);
 
 	public $_api_transform_reverse = array(
-		'code'           => 'state',
+		'ERROR'             => 'state',
+		'PAYMENT_ID'        => 'operation_id',
+		'PAYMENT_BATCH_NUM' => 'provider_operation_id',
+		'PAYMENT_AMOUNT'    => 'amount',
 	);
 
 	public $_options_transform = array(
@@ -143,6 +151,18 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 	public $_status = array(
 		'success' => 'success',
 		'fail'    => 'refused',
+	);
+
+	public $_payout_status = array(
+		'success' => 'success',
+		'error'   => 'processing',
+		'refused' => 'refused',
+	);
+
+	public $_payout_status_message = array(
+		'success' => 'Выполнено',
+		'error'   => 'Ошибка при выполнении',
+		'refused' => 'Отклонено',
 	);
 
 	public $currency_default = 'USD';
@@ -246,6 +266,9 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$amount = number_format( $_[ 'PAYMENT_AMOUNT' ], $this->PURSE_UNITS[ $currency_id ][ 'decimals' ] ?: 2, '.', '' );
 		if( $amount != $_[ 'PAYMENT_AMOUNT' ] ) { return( null ); }
 		$_[ 'PAYMENT_AMOUNT' ] = $amount;
+		if( $this->is_test() ) {
+			$_[ 'PAYMENT_AMOUNT' ] = '0.01';
+		}
 		$_[ 'PAYEE_NAME' ] = $this->PAYEE_NAME ?: 'Service';
 		return( $_ );
 	}
@@ -362,7 +385,10 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$_operation_id = @$operation[ 'operation_id' ];
 		$amount        = @$_response[ 'amount'       ];
 		$_amount       = @$operation[ 'amount'       ];
-		$is_operation_ok = $operation_id == $_operation_id && $amount == $_amount;
+		$is_operation_ok =
+			$operation_id == $_operation_id
+			&& ( $amount == $_amount || $this->is_test() )
+		;
 		if( !$is_operation_ok ) {
 			$result = array(
 				'status'         => false,
@@ -395,17 +421,17 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		return( $_ );
 	}
 
-	public function api_account( $options = null ) {
+	public function api_account( $options = null, &$request ) {
+		// import options
+		is_array( $request ) && extract( $request, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
 		$account_id = $this->KEY_PUBLIC;
 		$password   = $this->KEY_PRIVATE_API;
 		if( !$account_id && !$password ) { return( null ); }
 		// AccountID, PassPhrase
-		$result = array(
-			'AccountID'  => $account_id,
-			'PassPhrase' => $password,
-		);
-		return( $result );
+		! @$_AccountID  && $request[ 'AccountID'  ] = $account_id;
+		! @$_PassPhrase && $request[ 'PassPhrase' ] = $password;
+		return( $request );
 	}
 
 	public function api_request( $options = null ) {
@@ -449,8 +475,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			$request, $method[ 'option' ]
 		);
 		// api account
-		$_request = $this->api_account( $method );
-		is_array( $_request ) && $request = array_merge_recursive( $request, $_request );
+		$this->api_account( $method, $request );
 		// url
 		$object = $this->api_url( $method, $options );
 		if( isset( $object[ 'status' ] ) && $object[ 'status' ] === false ) { return( $object ); }
@@ -498,7 +523,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		}
 		$payment_api = &$this->payment_api;
 		// operation_id
-		$_operation_id = (int)$_operation_id;
+		!$this->is_test() && $_operation_id = (int)$_operation_id;
 		$operation_id = $_operation_id;
 		if( empty( $_operation_id ) ) {
 			$result = array(
@@ -531,14 +556,29 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$request = array();
 		@$method[ 'request_option' ] && $request = $method[ 'request_option' ];
 		// add common fields
-		!@$request[ 'purseId' ] && $request[ 'purseId' ] = $this->PURSE_ID[ $currency_id ];
-		if( ! @$request[ 'purseId' ] ) {
+		!@$request[ 'Payer_Account' ] && $request[ 'Payer_Account' ] = $this->PURSE_ID[ $currency_id ];
+		if( ! @$request[ 'Payer_Account' ] ) {
 			$result = array(
 				'status'         => false,
-				'status_message' => 'Требуется настройка кошелька',
+				'status_message' => 'Требуется настройка счет плательщика',
 			);
 			return( $result );
 		}
+		// account
+		@$_account && $request[ 'account' ] = $_account;
+		if( ! @$request[ 'account' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Требуется указать счет получателя',
+			);
+			return( $result );
+		}
+		// title
+		@$_title           && $request[ 'title' ] = $_title;
+		@$_operation_title && $request[ 'title' ] = $_operation_title;
+		// test amount
+		$this->is_test() && $amount = '0.01';
+		$amount = number_format( $amount, $this->PURSE_UNITS[ $currency_id ][ 'decimals' ] ?: 2, '.', '' );
 		$request[ 'amount'       ] = $amount;
 		$request[ 'operation_id' ] = $operation_id;
 		// transform
@@ -546,15 +586,11 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			'option'    => &$request,
 			'transform' => $this->_api_transform,
 		));
-		// add details
-		$request[ 'details' ] = array();
-		$request_details = $options;
-		$this->option_transform( array(
-			'option'    => &$request_details,
-			'transform' => $this->_api_transform,
-		));
-		foreach( $method[ 'field' ] as $key ) {
-			$value = &$request_details[ $key ];
+		// api account
+		$this->api_account( $method, $request );
+		// check request field
+		foreach( $method[ 'request_field' ] as $key ) {
+			$value = &$request[ $key ];
 			if( !isset( $value ) ) {
 				$result = array(
 					'status'         => false,
@@ -562,19 +598,20 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 				);
 				return( $result );
 			}
-			$request[ 'details' ][ $key ] = &$request_details[ $key ];
 		}
 // DEBUG
-// var_dump( $request );
+// var_dump( $request ); exit;
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'Interkassa', 'operation_id' => $operation_id,
-			'var' => array( 'request' => $request )
+		$request_dump = $request;
+		unset( $request_dump[ 'PassPhrase' ] );
+		$payment_api->dump( array( 'name' => 'PerfectMoney', 'operation_id' => $operation_id,
+			'var' => array( 'request' => $request_dump )
 		));
 		// update processing
 		$sql_datetime = $payment_api->sql_datetime();
 		$operation_options = array(
 			'processing' => array( array(
-				'provider_name' => 'interkassa',
+				'provider_name' => 'perfectmoney',
 				'datetime'      => $sql_datetime,
 			)),
 		);
@@ -586,11 +623,16 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$payment_api->operation_update( $operation_update_data );
 		// request options
 		$request_option = array(
-			'method_id' => 'withdraw-process',
+			'method_id' => 'spend',
 			'option'    => $request,
 			'is_debug'  => @$_is_debug,
 		);
+// DEBUG
+// var_dump( $request_option ); exit;
 		$result = $this->api_request( $request_option );
+// DEBUG
+// ini_set( 'html_errors', 1 );
+// var_dump( $result ); exit;
 		// DUMP
 		$payment_api->dump( array( 'var' => array( 'response' => $result )));
 		if( empty( $result ) ) {
@@ -601,55 +643,13 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			return( $result );
 		}
 		@list( $status, $response ) = $result;
-		// DEBUG
-		/*
-		$this->is_test() && $response = array (
-			'status' => 'ok',
-			'code' => 0,
-			'data' =>
-			array (
-				'withdraw' => array (
-					'state'         => '4',
-					'state'         => '1',
-					'result'        => '0',
-					'stateName'     => 'success',
-					'purseId'       => '300301404317',
-					'accountId'     => '5534b0f13b1eaf67738b456a',
-					'coId'          => '5534b12f3b1eaf07728b4569',
-					'paymentNo'     => '1',
-					'paywayId'      => '52efa902e4ae1a780e000001',
-					'paywayPurseId' => '52efa952e4ae1a3008000003',
-					'payerWriteoff' => 2063.3299999999999,
-					'payeeReceive'  => 2063.3299999999999,
-					'ikFee'         => 0,
-					'ikPrice'       => 2063.3299999999999,
-					'ikPsPrice'     => 2063.3299999999999,
-					'psFeeIn'       => 0,
-					'psFeeOut'      => 30.329999999999998,
-					'psCost'        => 22.329999999999998,
-					'ikIncome'      => 8,
-					'psAmount'      => 2033,
-					'psValue'       => 2033,
-					'psPrice'       => 2055.3299999999999,
-					'psCurRate'     => 1,
-				),
-				'transaction' => array (
-					'payerPurseId' => '300301404317',
-					'payerBalance' => 5714.3199999999997,
-					'payeePurseId' => '304403706200',
-					'payeeBalance' => 179616920.39289999,
-					'payerAmount' => 2063.3299999999999,
-					'payerPrice' => 2063.3299999999999,
-					'payerFee' => 0,
-					'payerExchFee' => 0,
-					'payeeAmount' => 2063.3299999999999,
-					'payeeFee' => 0,
-					'payeePrice' => 2063.3299999999999,
-					'exchRate' => 1,
-				),
-			),
-			'message' => 'Success',
-		); //*/
+		if( !@$status ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => @$response ?: @$result[ 'status_message' ] ?: 'unknown error',
+			);
+			return( $result );
+		}
 		if( !@$response ) {
 			$result = array(
 				'status'         => false,
@@ -669,51 +669,42 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			'status'         => &$status_name,
 			'status_message' => &$status_message,
 		);
-		$status_name         = false;
+		$status_name    = false;
 		$status_message = null;
-		$state = (int)$response[ 'state' ];
-		switch( $state ) {
+		$error = &$response[ 'state' ];
+		$state = empty( $error );
+		switch( true ) {
 			// success
-			case 0:
+			case $state:
+				$status         = 'success';
 				$status_name    = true;
 				$status_message = 'Выполнено';
 				break;
+			// refused
+			// case $error == '...':
+				// $status         = 'refused';
+				// $status_message = $error;
+				// break;
 			// processing
-			case 1106:
-				$status_message = 'Не хватает средств';
-				break;
 			default:
-				$status_message = 'Ошибка: '. $response[ 'message' ];
+				$status         = 'error';
+				$status_message = 'Ошибка: '. $response[ 'state' ];
 				break;
 		}
 		@$status_message && $response[ 'message' ] = $status_message;
 		if( !$status_name ) { return( $result ); }
-		// data
-		$data = &$response[ 'data' ][ 'withdraw' ];
-		if( !is_array( $data ) ) {
-			$status_name    = false;
-			$status_message = 'Невозможно декодировать ответ: '. var_export( $response, true );
-			return( $result );
-		}
-		$data[ '_transaction' ] = &$response[ 'data' ][ 'transaction' ];
-		// test mode
-		$this->is_test() && $data += array (
-			'state' => 1,
-			'id'    => 401040, // need real interkassa operation id
-		);
 		// check status
-		$state = (int)$data[ 'state' ];
-		list( $status_name, $status_message ) = $this->_state( $state
+		list( $status_name, $status_message ) = $this->_state( $status
 			, $this->_payout_status
 			, $this->_payout_status_message
 		);
-		$status_message = @$status_message ?: @$data[ 'stateName' ];
+		$status_message = @$status_message ?: @$error;
 		// update account, operation data
 		$payment_type = 'payment';
 		$operation_data = array(
 			'operation_id'   => $operation_id,
 			'provider_force' => @$_provider_force,
-			'provider_name'  => 'interkassa',
+			'provider_name'  => 'perfectmoney',
 			'state'          => $state,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
