@@ -94,7 +94,7 @@ class yf_rewrite_pattern_yf {
 		if ($class_rewrite->USE_WEB_PATH) {
 			$url = WEB_PATH;
 		} else {
-			$url = 'http://'. $a['host']. ($a['port'] && $a['port'] != '80' ? ':'.$a['port'] : ''). '/';
+			$url = 'http://'. $a['host']. ($a['port'] && !in_array($a['port'], array('80','443')) ? ':'.$a['port'] : ''). '/';
 		}
 		return $class_rewrite->_correct_protocol($url. $u);
 	}
