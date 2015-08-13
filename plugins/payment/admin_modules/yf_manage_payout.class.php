@@ -705,6 +705,7 @@ class yf_manage_payout {
 				if( @$request[ 'options' ][ 'method_id' ] == $_method_id ) {
 					$request_options = &$request[ 'options' ];
 					$account_number = @$request_options[ 'account_number' ] ?:
+							@$request_options[ 'account' ] ?:
 							@$request_options[ 'card' ] ?:
 							'-'
 					;
@@ -815,19 +816,19 @@ class yf_manage_payout {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_status_message ) ) { return( null ); }
 		switch( true ) {
-			case @$_status == 'in_progress':
+			case @$_status === 'in_progress':
 				$_css_panel_status = 'warning';
 				empty( $_status_header ) && $_status_header = 'В процессе';
 				break;
-			case @$_status == 'processing':
+			case @$_status === 'processing':
 				$_css_panel_status = 'warning';
 				empty( $_status_header ) && $_status_header = 'Обработка';
 				break;
-			case @$_status == 'success' || @$_status === true:
+			case @$_status === 'success' || @$_status === true:
 				$_css_panel_status = 'success';
 				empty( $_status_header ) && $_status_header = 'Выполнено';
 				break;
-			case @$_status == 'refused':
+			case @$_status === 'refused':
 			default:
 				$_css_panel_status = 'danger';
 				empty( $_status_header ) && $_status_header = 'Ошибка';

@@ -363,6 +363,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	public $_api_transform_reverse = array(
 		'external_id' => 'operation_id',
 		'code'        => 'state',
+		'card'        => 'account',
 	);
 
 	public $_options_transform = array(

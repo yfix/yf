@@ -43,7 +43,6 @@ class yf_payment_api__provider_remote {
 	public $api         = null;
 
 	public function _init() {
-		ini_set( 'html_errors', 0 );
 		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );

@@ -131,6 +131,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		'PAYMENT_ID'        => 'operation_id',
 		'PAYMENT_BATCH_NUM' => 'provider_operation_id',
 		'PAYMENT_AMOUNT'    => 'amount',
+		'Payee_Account'     => 'account',
 	);
 
 	public $_options_transform = array(
@@ -384,10 +385,10 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$operation = $payment_api->operation( array( 'operation_id' => $operation_id ) );
 		$_operation_id = @$operation[ 'operation_id' ];
 		$amount        = @$_response[ 'amount'       ];
-		$_amount       = @$operation[ 'amount'       ];
+		// $_amount       = @$operation[ 'amount'       ];
 		$is_operation_ok =
 			$operation_id == $_operation_id
-			&& ( $amount == $_amount || $this->is_test() )
+			// && ( $amount == $_amount || $this->is_test() )
 		;
 		if( !$is_operation_ok ) {
 			$result = array(
@@ -566,6 +567,8 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		}
 		// account
 		@$_account && $request[ 'account' ] = $_account;
+		// test account self
+		$this->is_test() && $request[ 'account' ] = $this->PURSE_ID[ $currency_id ];
 		if( ! @$request[ 'account' ] ) {
 			$result = array(
 				'status'         => false,
@@ -699,6 +702,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			, $this->_payout_status_message
 		);
 		$status_message = @$status_message ?: @$error;
+		!@$error && $error = $status_name;
 		// update account, operation data
 		$payment_type = 'payment';
 		$operation_data = array(
@@ -709,7 +713,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
 			'payment_type'   => $payment_type,
-			'response'       => $data,
+			'response'       => $response,
 		);
 // DEBUG
 // var_dump( $operation_data ); exit;
