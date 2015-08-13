@@ -321,6 +321,13 @@ class yf_manage_deposit {
 			return( $this->_user_message( $result ) );
 		}
 		$provider = &$providers_user[ $o_provider_id ];
+		// providers by name
+		$providers_user__by_name = array();
+		foreach( $providers_user as &$item ) {
+			$provider_name = $item[ 'name' ];
+			$providers_user__by_name[ $provider_name ] = &$item;
+		}
+		$provider_name = &$provider[ 'name' ];
 		$provider_class = $payment_api->provider_class( array(
 			'provider_name' => $provider[ 'name' ],
 		));
@@ -377,32 +384,34 @@ class yf_manage_deposit {
 		$html_datetime_finish = $o_datetime_finish;
 		// result
 		$result = array(
-			'is_valid'             => true,
-			'operation_id'         => &$operation_id,
-			'operation'            => &$operation,
-			'statuses'             => &$statuses,
-			'status'               => &$o_status,
-			'status_id'            => &$o_status_id,
-			'status_name'          => &$status_name,
-			'status_title'         => &$status_title,
-			'html_status_title'    => &$html_status_title,
-			'account_id'           => &$account_id,
-			'account'              => &$account,
-			'user_id'              => &$user_id,
-			'user'                 => &$user,
-			'user_is_online'       => &$user_is_online,
-			'provider_id'          => &$o_provider_id,
-			'provider'             => &$provider,
-			'provider_class'       => &$provider_class,
-			'providers_user'       => &$providers_user,
-			'request'              => &$request,
-			'method_id'            => &$method_id,
-			'method'               => &$method,
-			'response'             => &$response,
-			'html_amount'          => &$html_amount,
-			'html_datetime_start'  => &$html_datetime_start,
-			'html_datetime_update' => &$html_datetime_update,
-			'html_datetime_finish' => &$html_datetime_finish,
+			'is_valid'                => true,
+			'operation_id'            => &$operation_id,
+			'operation'               => &$operation,
+			'statuses'                => &$statuses,
+			'status'                  => &$o_status,
+			'status_id'               => &$o_status_id,
+			'status_name'             => &$status_name,
+			'status_title'            => &$status_title,
+			'html_status_title'       => &$html_status_title,
+			'account_id'              => &$account_id,
+			'account'                 => &$account,
+			'user_id'                 => &$user_id,
+			'user'                    => &$user,
+			'user_is_online'          => &$user_is_online,
+			'provider_id'             => &$o_provider_id,
+			'provider'                => &$provider,
+			'provider_name'           => &$provider_name,
+			'provider_class'          => &$provider_class,
+			'providers_user'          => &$providers_user,
+			'providers_user__by_name' => &$providers_user__by_name,
+			'request'                 => &$request,
+			'method_id'               => &$method_id,
+			'method'                  => &$method,
+			'response'                => &$response,
+			'html_amount'             => &$html_amount,
+			'html_datetime_start'     => &$html_datetime_start,
+			'html_datetime_update'    => &$html_datetime_update,
+			'html_datetime_finish'    => &$html_datetime_finish,
 		);
 		return( $result );
 	}
@@ -457,7 +466,7 @@ class yf_manage_deposit {
 					$result = t( trim( trim( $message ), '.,:' ) );
 					// provider
 					$provider_name = @$row[ 'provider_name' ];
-					if( $provider_name && $provider_name != $_provider_name ) {
+					if( $_provider_name && $provider_name != $_provider_name ) {
 						$provider_title = @$_providers_user__by_name[ $provider_name ][ 'title' ];
 						$result .= ' ('. $provider_title .')';
 					}
