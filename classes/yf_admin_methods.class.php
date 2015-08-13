@@ -447,7 +447,7 @@ class yf_admin_methods {
 			}
 		} else {
 			$_SESSION[$filter_name] = $_POST;
-			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
+			foreach (explode('|', 'clear_url|form_id|submit|_token') as $f) {
 				if (isset($_SESSION[$filter_name][$f])) {
 					unset($_SESSION[$filter_name][$f]);
 				}
