@@ -131,6 +131,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		'PAYMENT_ID'        => 'operation_id',
 		'PAYMENT_BATCH_NUM' => 'provider_operation_id',
 		'PAYMENT_AMOUNT'    => 'amount',
+		'Payee_Account'     => 'account',
 	);
 
 	public $_options_transform = array(

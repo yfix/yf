@@ -36,8 +36,9 @@ class yf_email {
 	/** @var */
 	public $SMTP_CONFIG_ALTERNATE = array(
 	);
-	public $FORCE_SEND = false;
-	public $MAIL_DEBUG = false;
+	public $FORCE_SEND       = false;
+	public $MAIL_DEBUG       = false;
+	public $MAIL_DEBUG_ERROR = false;
 
 	/**
 	* Catch missing method call
@@ -135,8 +136,8 @@ class yf_email {
 			'date'		=> $_SERVER['REQUEST_TIME'],
 		));
 		if (!$html) {
-			if( $this->MAIL_DEBUG ) {
-				trigger_error('Email is empty', E_USER_WARNING);
+			if( $this->MAIL_DEBUG_ERROR ) {
+				trigger_error('Email body is empty', E_USER_WARNING);
 			}
 			return( null );
 		}
@@ -154,7 +155,7 @@ class yf_email {
 			);
 			$result = common()->send_mail((array)$params);
 			if (!$result) {
-				if( $this->MAIL_DEBUG ) {
+				if( $this->MAIL_DEBUG_ERROR ) {
 					trigger_error('Email not sent', E_USER_WARNING);
 				}
 			} else {

@@ -1681,19 +1681,21 @@ class yf_payment_api {
 		$payment_api = $this;
 		$mail_class  = _class( 'email' );
 		// error off
+/*
 		$mail_debug = $mail_class->MAIL_DEBUG;
 		$mail_class->MAIL_DEBUG = false;
 		$send_mail_class = _class( 'send_mail' );
 		$send_mail_debug = $send_mail_class->MAIL_DEBUG;
 		$send_mail_class->MAIL_DEBUG = false;
+ */
 		// check user
 		if( @$_user_id > 0 ) {
 			$user_mail = $this->is_user_mail( $options );
 			// check email, validate email
 			if( !@$_force && !@$user_mail[ 'status' ] ) { return( $user_mail ); }
 			$user      = $user_mail[ 'user' ];
-			$mail_to   = $user_mail[ 'mail' ];
-			$mail_name = $user_mail[ 'name'  ];
+			$mail_to   = $user[ 'email' ];
+			$mail_name = $user[ 'name'  ];
 		}
 // DEBUG
 // ini_set( 'html_errors', 0 );
@@ -1808,8 +1810,10 @@ class yf_payment_api {
 			$result_copy = $this->mail_copy( array( 'tpl' => $tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 			!$result_copy && $this->mail_copy( array( 'tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data ) );
 		}
+/*
 		$mail_class->MAIL_DEBUG      = $mail_debug;
 		$send_mail_class->MAIL_DEBUG = $send_mail_debug;
+ */
 		return( $result );
 	}
 
