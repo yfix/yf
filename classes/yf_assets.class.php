@@ -1489,6 +1489,11 @@ class yf_assets {
 				}
 			}
 			if ($is_local_file) {
+				$basename = basename($url);
+				// Fix for local files and url params inside path
+				if (false !== ($pos = strpos($basename, '?'))) {
+					$url = dirname($url).'/'.substr($basename, 0, $pos);
+				}
 				// /templates/user/theme/default/image/smile_1.0_unactive.png
 				if (substr($url, 0, 1) === '/') {
 					$try_path = PROJECT_PATH. ltrim($url, '/');
