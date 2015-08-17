@@ -266,6 +266,15 @@ class yf_tpl_driver_yf {
 			$stpl_name = $m[2];
 			$_replace = $m[3];
 			$force_storage = '';
+			// Useful replacements
+			$special = '@object/';
+			if (substr($stpl_name, 0, strlen($special)) === $special) {
+				$stpl_name = $_GET['object'].'/'.substr($stpl_name, strlen($special));
+			}
+			$special = '@action/';
+			if (substr($stpl_name, 0, strlen($special)) === $special) {
+				$stpl_name = $_GET['action'].'/'.substr($stpl_name, strlen($special));
+			}
 			// Force to include template from special storage, example: @framework:script_js
 			if ($stpl_name[0] === '@') {
 				list($force_storage, $stpl_name) = explode(':', substr($stpl_name, 1));
