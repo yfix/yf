@@ -1726,6 +1726,33 @@ class yf_main {
 			$_COOKIE	= $this->_strip_quotes_recursive($_COOKIE);
 			$_REQUEST	= array_merge((array)$_GET, (array)$_POST, (array)$_COOKIE);
 		}
+/*
+if ($_POST) {
+	if (!verify_token()) {
+		$ini = "max_input_vars";
+		$max_vars = ini_get($ini);
+		if (extension_loaded("suhosin")) {
+			foreach (array("suhosin.request.max_vars", "suhosin.post.max_vars") as $key) {
+				$val = ini_get($key);
+				if ($val && (!$max_vars || $val < $max_vars)) {
+					$ini = $key;
+					$max_vars = $val;
+				}
+			}
+		}
+		$error = (!$_POST["token"] && $max_vars
+			? lang('Maximum number of allowed fields exceeded. Please increase %s.', "'$ini'")
+			: lang('Invalid CSRF token. Send the form again.') . ' ' . lang('If you did not send this request from Adminer then close this page.')
+		);
+	}
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
+	// posted form with no data means that post_max_size exceeded because Adminer always sends token at least
+	$error = lang('Too big POST data. Reduce the data or increase the %s configuration directive.', "'post_max_size'");
+	if (isset($_GET["sql"])) {
+		$error .= ' ' . lang('You can upload a big SQL file via FTP and import it from server.');
+	}
+}
+*/
 	}
 
 	/**
