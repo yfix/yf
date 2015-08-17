@@ -495,7 +495,23 @@ class yf_admin_methods {
 		asset('ckeditor-plugin-html5-video');
 		asset('ckeditor-plugin-youtube');
 //		asset('ckeditor-plugin-fontawesome4');
-		return array(
+
+		$override = array();
+		if (!is_array($params)) {
+			$params = array();
+		}
+		if ($params['file_browser'] === 'internal' && MAIN_TYPE_ADMIN) {
+			$override += array(
+				'filebrowserBrowseUrl'		=> url('/ck_file_browser'),
+				'filebrowserImageBrowseUrl'	=> url('/ck_file_browser'),
+				'filebrowserImageUploadUrl' => url('/ck_file_browser/upload_image/'.intval($_GET['id']).'/?type=image'),
+			);
+			unset($params['file_browser']);
+		}
+		foreach ((array)$params as $k => $v) {
+			$override[$k] = $v;
+		}
+		return (array)$override + array(
 			'toolbar' => array(
 				array(
 					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
@@ -505,7 +521,7 @@ class yf_admin_methods {
 			),
 			'language' => conf('language'),
 			'removeButtons' => 'Flash',
-			'removePlugins' => 'bidi,dialogadvtab,filebrowser,horizontalrule,flash,iframe,pagebreak,showborders,templates',
+			'removePlugins' => 'bidi,dialogadvtab,horizontalrule,pagebreak,showborders,templates',
 			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address', //,div',
 #			'allowedContent' => true,
 			'extraAllowedContent' => implode('; ', array('a[*]{*}(*)','img[*]{*}(*)','video[*]{*}','source[*]{*}','div(*){*}[*]','table','tr','th','td','caption')),
