@@ -31,7 +31,7 @@ class yf_form2 {
 
 	public $CONF_BOXES_USE_BTN_GROUP = false;
 	public $CONF_CSRF_PROTECTION = false;
-	public $CONF_CSRF_NAME = 'token';
+	public $CONF_CSRF_NAME = '_token';
 
 	/**
 	* Catch missing method call
@@ -232,34 +232,6 @@ class yf_form2 {
 	}
 
 	/**
-	* Check if we have generated token, generate it if not
-	*/
-	function csrf_has_token() {
-		$has_token = $_SESSION[$this->CONF_CSRF_NAME];
-		if (!$has_token) {
-			$_SESSION[$this->CONF_CSRF_NAME] = rand(1, 1e6); // defense against cross-site request forgery
-		}
-		return $has_token;
-	}
-
-	/**
-	* Generate BREACH resistant CSRF token
-	*/
-	function csrf_get_token() {
-		$rand = rand(1, 1e6);
-		return ($rand ^ $_SESSION[$this->CONF_CSRF_NAME]) . ':'.$rand;
-	}
-
-	/**
-	* Verify if supplied CSRF token is valid
-	*/
-	function csrf_verify_token($check_token = '') {
-		$check_token = $check_token ?: $_POST[$this->CONF_CSRF_NAME];
-		list($token, $rand) = explode(':', $check_token);
-		return ($rand ^ $_SESSION[$this->CONF_CSRF_NAME]) == $token;
-	}
-
-	/**
 	* Render result form html, gathered by row functions
 	* Params here not required, but if provided - will be passed to form_begin()
 	*/
@@ -276,39 +248,42 @@ class yf_form2 {
 		if (is_callable($on_before_render)) {
 			$on_before_render($extra, $replace, $this);
 		}
-		$csrf_protect = isset($extra['csrf']) ? (bool)$extra['csrf'] : (isset($this->_params['csrf']) ? $this->_params['csrf'] : $this->CONF_CSRF_PROTECTION);
-		if (is_post()) {
-/*
-if ($_POST) {
-	if (!verify_token()) {
-		$ini = "max_input_vars";
-		$max_vars = ini_get($ini);
-		if (extension_loaded("suhosin")) {
-			foreach (array("suhosin.request.max_vars", "suhosin.post.max_vars") as $key) {
-				$val = ini_get($key);
-				if ($val && (!$max_vars || $val < $max_vars)) {
-					$ini = $key;
-					$max_vars = $val;
-				}
-			}
+		if (!is_array($this->_body)) {
+			$this->_body = array();
 		}
-		$error = (!$_POST["token"] && $max_vars
-			? lang('Maximum number of allowed fields exceeded. Please increase %s.', "'$ini'")
-			: lang('Invalid CSRF token. Send the form again.') . ' ' . lang('If you did not send this request from Adminer then close this page.')
-		);
-	}
-} elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
-	// posted form with no data means that post_max_size exceeded because Adminer always sends token at least
-	$error = lang('Too big POST data. Reduce the data or increase the %s configuration directive.', "'post_max_size'");
-	if (isset($_GET["sql"])) {
-		$error .= ' ' . lang('You can upload a big SQL file via FTP and import it from server.');
-	}
-}
-*/
-			if ($csrf_protect) {
-				if (!$this->csrf_verify_token()) {
-#					return _e('Invalid CSRF token. Send the form again. If you did not send this request then close this page.');
-				}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra_override = array();
+		$form_id = isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : $this->_form_id;
+		if ($form_id) {
+			$extra_override = $this->_get_extra_override($form_id);
+		}
+		$headless_form = ($extra['no_form'] || $this->_params['no_form']);
+
+		$csrf_protect = isset($extra['csrf']) ? (bool)$extra['csrf'] : (isset($this->_params['csrf']) ? $this->_params['csrf'] : $this->CONF_CSRF_PROTECTION);
+		if (isset($extra['method']) && strtolower($extra['method']) != 'post') {
+			$csrf_protect = false;
+		}
+		if ($headless_form) {
+			$csrf_protect = false;
+		}
+		if ($csrf_protect && is_callable($csrf_protect)) {
+			$csrf_protect = $csrf_protect($this, $extra);
+		}
+		if ($csrf_protect) {
+			$csrf_guard = _class('csrf_guard')->configure(array(
+				'form_id'		=> $form_id ?: 'autoid_'.++main()->_csrf_ids,
+				'token_name'	=> $this->CONF_CSRF_NAME,
+			));
+		}
+		if (is_post()) {
+			if ($csrf_protect && !$csrf_guard->validate($_POST[$this->CONF_CSRF_NAME])) {
+				$this->_params['show_alerts'] = true;
+				$this->_validate_rules[$this->CONF_CSRF_NAME] = function($in, $p, $a, &$error_msg) {
+					$error_msg = 'Invalid CSRF token. Send the form again. If you did not send this request then close this page.';
+					return false;
+				};
 			}
 			$on_post = isset($extra['on_post']) ? $extra['on_post'] : $this->_on['on_post'];
 			if (is_callable($on_post)) {
@@ -326,25 +301,13 @@ if ($_POST) {
 			}
 		} else {
 			if ($csrf_protect) {
-				$has_token = $this->csrf_has_token();
-				$replace[$this->CONF_CSRF_NAME] = $this->csrf_get_token();
+				$this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
 				$this->hidden($this->CONF_CSRF_NAME);
 			}
 		}
-		if (!is_array($this->_body)) {
-			$this->_body = array();
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra_override = array();
-		$form_id = isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : $this->_form_id;
-		if ($form_id) {
-			$extra_override = $this->_get_extra_override($form_id);
-		}
 		$r = (array)$this->_replace + (array)$replace;
 
-		if (!$extra['no_form'] && !$this->_params['no_form']) {
+		if (!$headless_form) {
 			// Call these methods, if not done yet, save 2 api calls
 			if (!isset($this->_body['form_begin'])) {
 				$this->form_begin('', '', $extra + (array)$extra_override['form_begin'], $r);
