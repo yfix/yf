@@ -240,6 +240,7 @@ class yf_ck_file_browser {
 			// Sort files by date DESC
 			arsort($files);
 			foreach ((array)$files as $f => $mtime) {
+				$ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
 				list($w, $h) = getimagesize($f);
 				$fsize = $sizes[$f];
 				$fsize = round($fsize / 1024, 0, 2).'Kb';
