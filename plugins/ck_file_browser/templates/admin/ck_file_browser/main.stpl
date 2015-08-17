@@ -1,0 +1,16 @@
+<div id="container" role="main">
+	<div id="tree"></div>
+	<div id="data">
+		<div class="content folder" style="display:none;"></div>
+		<div class="content image" style="display:none;">
+		<button id="add_image_url" style="margin-bottom: 10px;" class="btn btn-xs btn-default">{t(Select image)}</button><br />
+		<a href="" id="image_src_href" target="_blank"><img src="" alt="" id="image_src" style="max-width: 600px;"/></a><div id="image_info"></div></div>
+		<div class="content default">{t(Select a file from the tree)}</div>
+	</div>
+</div>
+<div style="display:none;">
+	<iframe id="file_upload_process_container" name="file_upload_process_container"></iframe>
+</div>
+
+{include(@object/css)}
+{include(@object/js)}
