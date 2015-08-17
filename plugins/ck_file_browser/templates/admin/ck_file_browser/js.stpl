@@ -18,7 +18,17 @@ function refreshjstree() {
 {/js}
 
 {jquery()}
-	$('#add_image_url').click(function() {
+	$('#data').on("click", 'a.ck_select_image', function() {
+		try {
+			window.opener.CKEDITOR.tools.callFunction(bconf.func_num, $('img', this).attr('src'));
+			window.close();
+			return false;
+		} catch (e) {
+			console.log('CKeditor opener not found', e)
+		}
+	});
+
+	$('#data').on("click", '#add_image_url', function() {
 		try {
 			window.opener.CKEDITOR.tools.callFunction(bconf.func_num, $('#image_src').attr('src'));
 			window.close();

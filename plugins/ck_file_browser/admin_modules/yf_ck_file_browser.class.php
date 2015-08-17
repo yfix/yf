@@ -243,7 +243,7 @@ class yf_ck_file_browser {
 				list($w, $h) = getimagesize($f);
 				$fsize = $sizes[$f];
 				$fsize = round($fsize / 1024, 0, 2).'Kb';
-				$images[] = '<a href="javsscript:void();" class="ck_select_image" title="'._prepare_html(basename($f)).'"><img src="'.str_replace(PROJECT_PATH, WEB_PATH, $f).'" />
+				$images[] = '<a href="#" class="ck_select_image" title="'._prepare_html(basename($f)).'"><img src="'.str_replace(PROJECT_PATH, WEB_PATH, $f).'" />
 					<div class="details">'.$fsize.' '.$w.'x'.$h.' '.strtoupper($ext).'<br />'.date('Y-m-d H:i:s', $mtime).'</div></a>';
 			}
 			return array(
