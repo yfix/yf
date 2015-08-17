@@ -130,7 +130,7 @@ function refreshjstree() {
 		}
 	})
 	.on('changed.jstree', function (e, data) {
-		if(data && data.selected && data.selected.length) {
+		if (data && data.selected && data.selected.length) {
 			$.get(bconf.url_contents.replace('%id', data.selected.join(':')), function (d) {
 				if(d && typeof d.type !== 'undefined') {
 					$('#data .content').hide();

@@ -2,14 +2,13 @@
 
 class yf_ck_file_browser {
 
+	public $TOP_DIR = '/uploads/';
+	public $WRITABLE_DIR = '/uploads/ck_browser/';
 	protected $base = null;
 	
 	/**
 	*/
-	function _init () {
-		$this->TOP_DIR = '/uploads/';
-//		$this->WRITABLE_DIR = '/uploads/ck_browser/';
-//		$this->TOP_DIR = '/uploads/ck_browser/';
+	function _init() {
 		$this->base = $this->_real(INCLUDE_PATH . $this->TOP_DIR);
 	}
 
@@ -25,18 +24,17 @@ class yf_ck_file_browser {
 	
 	/**
 	*/
-	function show () {
+	function show() {
 		asset('jquery-jstree');
-		$funcNum = $_GET['CKEditorFuncNum'];
-		$items = array();
+
 		_mkdir_m(INCLUDE_PATH . $this->TOP_DIR);
 		_mkdir_m(INCLUDE_PATH . $this->WRITABLE_DIR);
-		no_graphics(true);
+
 		$body = tpl()->parse(__CLASS__.'/main', array(
-			'ck_funcnum' => $funcNum,
+			'ck_funcnum' => (int)$_GET['CKEditorFuncNum'],
 		));
+		no_graphics(true);
 		return print common()->show_empty_page($body);
-#		exit;
 	}
 
 	/**
@@ -101,16 +99,17 @@ class yf_ck_file_browser {
 	*/
 	function upload_file() {
 		$error = '';
-		$upload_dir = $this->base .'/'. $_GET['dir'];
-		if (empty($_FILES['file']['tmp_name'])) {
+		$upload_dir = $this->base .'/'. $_GET['id'];
+		$file = $_FILES['file'];
+		if (empty($file['tmp_name'])) {
 			$error = 'File upload error';
 		} else {
-			$file_name = $_FILES['file']['name'];
+			$file_name = $file['name'];
 			$file_path = $upload_dir.'/'.$file_name;
 			if (file_exists($file_path)) {
 				$error = 'File already exists';
 			} else {
-				move_uploaded_file($_FILES['file']['tmp_name'], $file_path);
+				move_uploaded_file($file['tmp_name'], $file_path);
 				if (!file_exists($file_path)) {
 					$error = 'Cannot upload file to this dir';
 				}
@@ -170,8 +169,6 @@ class yf_ck_file_browser {
 			if ($item == '.' || $item == '..' || $item === null) {
 				continue;
 			}
-//			$tmp = preg_match('([^ a-zа-я-_0-9.]+)ui', $item);
-//			if($tmp === false || $tmp === 1) { continue; }
 			if (is_dir($dir . DIRECTORY_SEPARATOR . $item)) {
 				$res[] = array(
 					'text'		=> $item,
@@ -180,6 +177,9 @@ class yf_ck_file_browser {
 					'icon'		=> 'folder'
 				);
 			} else {
+				if (filesize($dir . DIRECTORY_SEPARATOR . $item) < 50) {
+					continue;
+				}
 				$res[] = array(
 					'text'		=> $item,
 					'children'	=> false,
@@ -214,20 +214,41 @@ class yf_ck_file_browser {
 		$dir = $this->_path($id);
 		if (is_dir($dir)) {
 			$form = form(true, array(
-				'action'		=> url('/@object/upload_file/?dir='.urlencode($id)),
+				'action'		=> url('/@object/upload_file/'.urlencode($id)),
 				'autocomplete'	=> 'off', 
 				'enctype'		=> 'multipart/form-data',
-				'class'			=> 'form-condensed form-no-labels',
+				'class'			=> 'form-condensed form-no-labels ck_upload_form',
 				'target'		=> 'file_upload_process_container',
 				'no_label'		=> 1,
 			))
 			->file('file', t('upload image'), array('accept' => 'image/*', 'style' => 'width:auto; background: inherit', 'class_add' => 'btn btn-primary'))
 			->save(array('value' => t('Upload'), 'class' => 'btn btn-primary'))
 			;
-			$content = t('Current folder:') . ' <b>' . $this->TOP_DIR . $id . '</b><br />' . $form;
+			$images = array();
+			$files = array();
+			foreach (glob(rtrim($dir).'/*') as $f) {
+				$ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+				if (!in_array($ext, array('png','gif','jpg','jpeg'))) {
+					continue;
+				}
+				if (($fsize = filesize($f)) < 50) {
+					continue;
+				}
+				$sizes[$f] = $fsize;
+				$files[$f] = filemtime($f);
+			}
+			// Sort files by date DESC
+			arsort($files);
+			foreach ((array)$files as $f => $mtime) {
+				list($w, $h) = getimagesize($f);
+				$fsize = $sizes[$f];
+				$fsize = round($fsize / 1024, 0, 2).'Kb';
+				$images[] = '<a href="javsscript:void();" class="ck_select_image" title="'._prepare_html(basename($f)).'"><img src="'.str_replace(PROJECT_PATH, WEB_PATH, $f).'" />
+					<div class="details">'.$fsize.' '.$w.'x'.$h.' '.strtoupper($ext).'<br />'.date('Y-m-d H:i:s', $mtime).'</div></a>';
+			}
 			return array(
 				'type' => 'folder',
-				'content' => $content
+				'content' => '<div>'.t('Current folder:') . ' <b>' . $this->TOP_DIR . $id . '</b><br />'. $form. '<br />'. implode(PHP_EOL, $images).'</div>',
 			);
 		}
 		if (is_file($dir)) {
@@ -240,7 +261,7 @@ class yf_ck_file_browser {
 				case 'png':
 				case 'bmp':
 					$dat['content'] = WEB_PATH . $this->TOP_DIR . $id;
-					$dat['info']	= round(filesize(INCLUDE_PATH . $this->TOP_DIR . $id)/1024,0,2).'Kb';
+					$dat['info'] = round(filesize(INCLUDE_PATH . $this->TOP_DIR . $id) / 1024, 0, 2).'Kb';
 					break;
 				default:
 					$dat['content'] = t('File is not an image: '.$this->_id($dir));
@@ -248,7 +269,7 @@ class yf_ck_file_browser {
 			}
 			return $dat;
 		}
-		throw new Exception('Not a valid selection: ' . $dir);
+		throw new Exception('Not a valid selection: '. $dir);
 	}
 
 	/**
@@ -278,7 +299,7 @@ class yf_ck_file_browser {
 		array_pop($new);
 		array_push($new, $name);
 		$new = implode(DIRECTORY_SEPARATOR, $new);
-		if($dir !== $new) {
+		if ($dir !== $new) {
 			if (is_file($new) || is_dir($new)) {
 				throw new Exception('Path already exists: ' . $new);
 			}

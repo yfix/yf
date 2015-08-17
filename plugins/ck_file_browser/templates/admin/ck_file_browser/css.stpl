@@ -2,7 +2,7 @@
 html, body { font-size:10px; font-family:Verdana; margin:0; padding:0; }
 #container { min-width:320px; margin:0px auto 0 auto; border-radius:0px; padding:0px; overflow:hidden; }
 #tree { float:left; min-width:319px; border-right:1px solid silver; overflow:auto; padding:0px 0; }
-#data { margin-left:320px; }
+#data { margin-left:320px; overflow: auto; }
 #data textarea { margin:0; padding:0; height:100%; width:100%; border:0; display:block; line-height:18px; resize:none; }
 #data, #code { font: normal normal normal 12px/18px 'Consolas', monospace !important; }
 .content { padding:10px; }
@@ -33,4 +33,9 @@ html, body { font-size:10px; font-family:Verdana; margin:0; padding:0; }
 
 #tree .jstree-anchor { color: inherit; }
 #tree .jstree-hovered { border-radius: inherit; box-shadow: none; color: black; }
+.ck_select_image { width: 130px; height: 130px; float: left; margin: 5px; margin-bottom: 30px; border: 1px solid; position: relative; }
+.ck_select_image img { max-width: 100%; max-height: 100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; height: auto; }
+.ck_select_image .details { position: absolute; bottom: -25px; left: 0; right: 0; font-size: 9px; width: 100%; margin: auto; text-align: center; line-height: 1.2em; overflow: hidden; }
+.ck_upload_form { width: auto; }
+.ck_upload_form .control-group { width: 300px; float:left; }
 {/css}
