@@ -1,6 +1,6 @@
 <?php
 
-class ck_test {
+class yf_ck_test {
     function show() {
         return form()
             ->textarea('full_text', array('desc' => '', 'ckeditor' => array('config' => $this->_get_cke_config()), 'no_label' => true ));

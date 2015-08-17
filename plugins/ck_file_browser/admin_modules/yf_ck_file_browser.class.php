@@ -1,6 +1,6 @@
 <?php
 
-class ck_file_browser {
+class yf_ck_file_browser {
 
 	protected $base = null;
 	
