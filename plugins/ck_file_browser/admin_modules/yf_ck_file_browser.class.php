@@ -127,6 +127,50 @@ class yf_ck_file_browser {
 	}
 
 	/**
+	* Endpoint for pixlr editor for upload back edited image
+	*/
+	function edit() {
+		$img_url= urldecode($_REQUEST['image']);
+		$title	= urldecode($_REQUEST['title']);
+		$type	= strtolower($_REQUEST['type']);
+		if (!strlen($img_url)
+			|| parse_url($img_url, PHP_URL_HOST) !== 'apps.pixlr.com'
+			|| !strlen($title)
+			|| false !== strpos($title, '../')
+			|| !in_array($type, $this->ALLOWED_EXTS)
+		) {
+			common()->message_error('Image upload from Pixlr error #1');
+			return js_redirect(url('/@object'));
+		}
+		// Move image from url into temp file and analyze it
+		$tmp_dir = '/tmp/pixlr_upload/';
+		!file_exists($tmp_dir) && mkdir($tmp_dir, 0755, true);
+		$tmp_path = tempnam($tmp_dir);
+		file_put_contents($tmp_path, file_get_contents($img_url));
+		if (!file_exists($tmp_path) || filesize($tmp_path) <= $this->MIN_FILE_SIZE) {
+			common()->message_error('Image upload from Pixlr error #2');
+			return js_redirect(url('/@object'));
+		}
+		$target = PROJECT_PATH . $this->TOP_DIR. $title. '.'. $type;
+		if (!file_exists($target)) {
+			common()->message_error('Image upload from Pixlr error #3');
+			return js_redirect(url('/@object'));
+		}
+		// copy old and new file as revision into separate dir
+		$revs_dir = PROJECT_PATH. 'uploads/.img_revisions/';
+		!file_exists($revs_dir) && mkdir($revs_dir, 0755, true);
+		$revid = date('YmdHis_'.str_pad(substr(microtime(true), 11, 2), 2, '0', STR_PAD_LEFT));
+		$rev_path_old = $revs_dir. $revid. '__old__'. urlencode($title). $type;
+		$rev_path_new = $revs_dir. $revid. '__new__'. urlencode($title). $type;
+		file_put_contents($rev_path_old, file_get_contents($target));
+		file_put_contents($rev_path_new, file_get_contents($tmp_path));
+		// Finally save new file
+		file_put_contents($target, file_get_contents($tmp_path));
+		unlink($tmp_path);
+		return js_redirect(url('/@object/show/'.urlencode($title)));
+	}
+
+	/**
 	*/
 	function _real($path) {
 		$temp = realpath($path);
