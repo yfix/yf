@@ -1,7 +1,8 @@
 {css()}
-#ck_file_browser { font-size:10px; font-family:Verdana; margin:0px auto 0 auto; border-radius:0px; padding:0px; min-width:320px; overflow:hidden; }
+.jstree-contextmenu { font-size:10px; font-family:Verdana; }
+#ck_file_browser { font-size:10px; font-family:Verdana; margin:0px auto 0 auto; border-radius:0px; padding:0px; min-width:320px; }
 #ck_file_browser #tree { float:left; min-width:319px; border-right:1px solid silver; overflow:auto; padding:0px 0; }
-#ck_file_browser #data { margin-left:320px; overflow: auto; }
+#ck_file_browser #data { margin-left:320px; height: auto; }
 #ck_file_browser #data textarea { margin:0; padding:0; height:100%; width:100%; border:0; display:block; line-height:18px; resize:none; }
 #ck_file_browser #data,
 #ck_file_browser #code { font: normal normal normal 12px/18px 'Consolas', monospace !important; }

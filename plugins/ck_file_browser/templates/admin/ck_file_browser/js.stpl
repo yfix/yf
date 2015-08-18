@@ -19,25 +19,32 @@ function refreshjstree() {
 {/js}
 
 {jquery()}
-	$('#data').on("click", '.ck_select_image a.img-select', function() {
-		try {
-			window.opener.CKEDITOR.tools.callFunction(bconf.func_num, $('img', this).attr('src'));
-			window.close();
-			return false;
-		} catch (e) {
-			console.log('CKeditor opener not found', e)
-		}
-	});
+	if (window.opener) {
+		$('#data').on("click", '.ck_select_image a.img-select', function() {
+			try {
+				window.opener.CKEDITOR.tools.callFunction(bconf.func_num, $('img', this).attr('src'));
+				window.close();
+				return false;
+			} catch (e) {
+				console.log('CKeditor opener not found', e)
+			}
+		});
 
-	$('#data').on("click", '#add_image_url', function() {
-		try {
-			window.opener.CKEDITOR.tools.callFunction(bconf.func_num, $('#image_src').attr('src'));
-			window.close();
+		$('#data').on("click", '#add_image_url', function() {
+			try {
+				window.opener.CKEDITOR.tools.callFunction(bconf.func_num, $('#image_src').attr('src'));
+				window.close();
+				return false;
+			} catch (e) {
+				console.log('CKeditor opener not found', e)
+			}
+		});
+	} else {
+		$('#data').on("click", '.ck_select_image a.img-select', function() {
+			window.open($('img', this).attr('src'), '_blank');
 			return false;
-		} catch (e) {
-			console.log('CKeditor opener not found', e)
-		}
-	});
+		});
+	}
 
 	$('#data').on("click", '.ck_select_image .img-actions a.btn', function() {
 		var img = $(this).closest('.ck_select_image').find('.img-select img')
