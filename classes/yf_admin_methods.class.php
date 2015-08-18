@@ -11,6 +11,10 @@ class yf_admin_methods {
 
 	/***/
 	public $params = array();
+	/***/
+	public $default_ckeditor_params = array(
+		'file_browser' => 'internal',
+	);
 
 	/**
 	* Catch missing method call
@@ -500,11 +504,19 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
+		foreach ((array)$this->default_ckeditor_params as $k => $v) {
+			if (!isset($params[$k])) {
+				$params[$k] = $v;
+			}
+		}
 		if ($params['file_browser'] === 'internal' && MAIN_TYPE_ADMIN) {
 			$override += array(
 				'filebrowserBrowseUrl'		=> url('/ck_file_browser'),
+				'filebrowserUploadUrl'		=> url('/ck_file_browser'),
 				'filebrowserImageBrowseUrl'	=> url('/ck_file_browser'),
 				'filebrowserImageUploadUrl' => url('/ck_file_browser/upload_image/'.intval($_GET['id']).'/?type=image'),
+#				'filebrowserFlashBrowseUrl' => url('/ck_file_browser'),
+#				'filebrowserFlashUploadUrl' => url('/ck_file_browser/upload_image/'.intval($_GET['id']).'/?type=flash'),
 			);
 			unset($params['file_browser']);
 		}
@@ -532,12 +544,6 @@ class yf_admin_methods {
 #				'http://netdna.bootstrapcdn.com/bootswatch/3.3.2/slate/bootstrap.min.css',
 #				'http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css'
 #			),
-#			'filebrowserBrowseUrl' => '/kcfinder/browse.php?type=files',
-#			'filebrowserImageBrowseUrl' => '/kcfinder/browse.php?type=images',
-#			'filebrowserFlashBrowseUrl' => '/kcfinder/browse.php?type=flash',
-#			'filebrowserUploadUrl' => '/kcfinder/upload.php?type=files',
-#			'filebrowserImageUploadUrl' => '/kcfinder/upload.php?type=images',
-#			'filebrowserFlashUploadUrl' => '/kcfinder/upload.php?type=flash',
 		);
 		// Other config variant example
 		/* 
