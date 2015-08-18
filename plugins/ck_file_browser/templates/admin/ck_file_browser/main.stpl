@@ -1,4 +1,4 @@
-<div id="container" role="main">
+<div id="ck_file_browser" role="main">
 	<div id="tree"></div>
 	<div id="data">
 		<div class="content folder" style="display:none;"></div>

@@ -35,10 +35,11 @@ class yf_ck_file_browser {
 	*/
 	function show() {
 		asset('jquery-jstree');
+		$slick_view = isset($_GET['CKEditorFuncNum']);
 		$body = tpl()->parse(__CLASS__.'/main', array(
 			'ck_funcnum' => (int)$_GET['CKEditorFuncNum'],
 		));
-		return print common()->show_empty_page($body);
+		return $slick_view ? print common()->show_empty_page($body) : $body;
 	}
 
 	/**
