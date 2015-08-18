@@ -131,7 +131,7 @@ class yf_ck_file_browser {
 	*/
 	function edit() {
 		$img_url= urldecode($_REQUEST['image']);
-		$title	= ltrim(urldecode($_REQUEST['title']), '/');
+		$title	= ltrim(str_replace('|', '/', urldecode($_REQUEST['title'])), '/');
 		$type	= strtolower($_REQUEST['type']);
 		if (!strlen($img_url)
 			|| parse_url($img_url, PHP_URL_HOST) !== 'apps.pixlr.com'
@@ -317,7 +317,7 @@ class yf_ck_file_browser {
 				list($w, $h) = getimagesize($f);
 				$fsize = $sizes[$f];
 				$fsize = round($fsize / 1024, 0, 2).'Kb';
-				$uploads_path = ltrim(str_replace(PROJECT_PATH. ltrim($this->TOP_DIR, '/'), '', $f), '/');
+				$uploads_path = str_replace('/', '|', ltrim(str_replace(PROJECT_PATH. ltrim($this->TOP_DIR, '/'), '', $f), '/'));
 				$images[] = ''
 					. '<div class="ck_select_image">'
 						. '<a href="#" class="img-select" title="'._prepare_html(basename($f)).'">'
