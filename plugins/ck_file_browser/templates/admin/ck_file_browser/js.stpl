@@ -8,6 +8,7 @@ var bconf = {
 	url_move		: '{url(/@object/move_node)}',
 	url_copy		: '{url(/@object/copy_node)}',
 	url_contents	: '{url(/@object/get_content/%id)}',
+	url_edit		: '{url(/@object/edit)}',
 	t_are_you_sure	: '{t(Are you sure?)}',
 	t_select_file	: '{t('Select a file from the tree')}',
 	__last			: null
@@ -18,7 +19,7 @@ function refreshjstree() {
 {/js}
 
 {jquery()}
-	$('#data').on("click", 'a.ck_select_image', function() {
+	$('#data').on("click", '.ck_select_image a.img-select', function() {
 		try {
 			window.opener.CKEDITOR.tools.callFunction(bconf.func_num, $('img', this).attr('src'));
 			window.close();
@@ -36,6 +37,21 @@ function refreshjstree() {
 		} catch (e) {
 			console.log('CKeditor opener not found', e)
 		}
+	});
+
+	$('#data').on("click", '.ck_select_image .img-actions a.btn', function() {
+		var img_src = $(this).closest('.ck_select_image').find('.img-select img').attr('src')
+		var pixlr_url = 'http://www.pixlr.com/editor/'
+			+ '?target=' + encodeURIComponent(bconf.url_edit)
+			+ '&method=GET'
+			+ '&referer=localhost'
+			+ '&image=' + encodeURIComponent(img_src)
+			+ '&title=' + encodeURIComponent(img_src.split('/').reverse()[0])
+			+ '&locktarget=true'
+			+ '&locktitle=true'
+		console.log(pixlr_url)
+		window.location.href = pixlr_url;
+		return false;
 	});
 
 	$(window).resize(function () {

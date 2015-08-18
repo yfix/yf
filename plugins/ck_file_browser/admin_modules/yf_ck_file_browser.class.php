@@ -265,10 +265,11 @@ class yf_ck_file_browser {
 				$fsize = $sizes[$f];
 				$fsize = round($fsize / 1024, 0, 2).'Kb';
 				$images[] = ''
-					. '<a href="#" class="ck_select_image" title="'._prepare_html(basename($f)).'">'
-						. '<img src="'.str_replace(PROJECT_PATH, MEDIA_PATH, $f).'" />'
-						. '<div class="details">'.$fsize.' '.$w.'x'.$h.' '.strtoupper($ext).'<br />'.date('Y-m-d H:i:s', $mtime).'</div>'
-					. '</a>';
+					. '<div class="ck_select_image">'
+						. '<a href="#" class="img-select" title="'._prepare_html(basename($f)).'"><img src="'.str_replace(PROJECT_PATH, MEDIA_PATH, $f).'" /></a>'
+						. '<div class="img-details">'.$fsize.' '.$w.'x'.$h.' '.strtoupper($ext).'<br />'.date('Y-m-d H:i:s', $mtime).'</div>'
+						. '<div class="img-actions">'.a('#', 'Edit', 'fa fa-edit', '').'</div>'
+					. '</div>';
 			}
 			return array(
 				'type'		=> 'folder',
