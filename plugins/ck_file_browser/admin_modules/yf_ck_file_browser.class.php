@@ -131,7 +131,7 @@ class yf_ck_file_browser {
 	*/
 	function edit() {
 		$img_url= urldecode($_REQUEST['image']);
-		$title	= urldecode($_REQUEST['title']);
+		$title	= ltrim(urldecode($_REQUEST['title']), '/');
 		$type	= strtolower($_REQUEST['type']);
 		if (!strlen($img_url)
 			|| parse_url($img_url, PHP_URL_HOST) !== 'apps.pixlr.com'
@@ -139,35 +139,44 @@ class yf_ck_file_browser {
 			|| false !== strpos($title, '../')
 			|| !in_array($type, $this->ALLOWED_EXTS)
 		) {
-			common()->message_error('Image upload from Pixlr error #1');
-			return js_redirect(url('/@object'));
+			common()->message_error('Image upload from Pixlr error #1: wrong input');
+			return common()->show_messages();
 		}
+
 		// Move image from url into temp file and analyze it
 		$tmp_dir = '/tmp/pixlr_upload/';
 		!file_exists($tmp_dir) && mkdir($tmp_dir, 0755, true);
-		$tmp_path = tempnam($tmp_dir);
+		$tmp_path = tempnam($tmp_dir, 'pixlr_upload_');
 		file_put_contents($tmp_path, file_get_contents($img_url));
 		if (!file_exists($tmp_path) || filesize($tmp_path) <= $this->MIN_FILE_SIZE) {
-			common()->message_error('Image upload from Pixlr error #2');
-			return js_redirect(url('/@object'));
+			common()->message_error('Image upload from Pixlr error #2: temp file error');
+			return common()->show_messages();
 		}
 		$target = PROJECT_PATH . $this->TOP_DIR. $title. '.'. $type;
 		if (!file_exists($target)) {
-			common()->message_error('Image upload from Pixlr error #3');
-			return js_redirect(url('/@object'));
+			common()->message_error('Image upload from Pixlr error #3: target not exists');
+			return common()->show_messages();
 		}
+
 		// copy old and new file as revision into separate dir
 		$revs_dir = PROJECT_PATH. 'uploads/.img_revisions/';
 		!file_exists($revs_dir) && mkdir($revs_dir, 0755, true);
-		$revid = date('YmdHis_'.str_pad(substr(microtime(true), 11, 2), 2, '0', STR_PAD_LEFT));
-		$rev_path_old = $revs_dir. $revid. '__old__'. urlencode($title). $type;
-		$rev_path_new = $revs_dir. $revid. '__new__'. urlencode($title). $type;
-		file_put_contents($rev_path_old, file_get_contents($target));
-		file_put_contents($rev_path_new, file_get_contents($tmp_path));
+		if (md5_file($target) != md5_file($tmp_path)) {
+			$revid = date('YmdHis_'.str_pad(substr(microtime(true), 11, 2), 2, '0', STR_PAD_LEFT));
+			$rev_path_old = $revs_dir. $revid. '__old__'. urlencode($title). '.'. $type;
+			$rev_path_new = $revs_dir. $revid. '__new__'. urlencode($title). '.'. $type;
+			file_put_contents($rev_path_old, file_get_contents($target));
+			file_put_contents($rev_path_new, file_get_contents($tmp_path));
+		}
 		// Finally save new file
 		file_put_contents($target, file_get_contents($tmp_path));
 		unlink($tmp_path);
-		return js_redirect(url('/@object/show/'.urlencode($title)));
+		common()->message_success('Image upload from Pixlr success!');
+		$web_path = str_replace(PROJECT_PATH, MEDIA_PATH, $target);
+		return common()->show_messages()
+			. '<br />path: '._prepare_html($title).', size: '.filesize($target)
+			. '<br /><a href="'.$web_path.'" target="_blank"><img src="'.$web_path.'" style="max-width: 200px; max-height: 200px;"></a>'
+			. '<br /><br />'. a('/@object/show/'.urlencode($title), 'Go Next');
 	}
 
 	/**
