@@ -4,12 +4,21 @@ class yf_ck_file_browser {
 
 	public $TOP_DIR = '/uploads/';
 	public $WRITABLE_DIR = '/uploads/ck_browser/';
+	public $ALLOWED_EXTS = array(
+		'jpg',
+		'jpeg',
+		'png',
+		'gif',
+	);
+	public $MIN_FILE_SIZE = 50;
 	protected $base = null;
 	
 	/**
 	*/
 	function _init() {
-		$this->base = $this->_real(INCLUDE_PATH . $this->TOP_DIR);
+		$this->base = $this->_real(PROJECT_PATH . $this->TOP_DIR);
+		_mkdir_m(PROJECT_PATH . $this->TOP_DIR);
+		_mkdir_m(PROJECT_PATH . $this->WRITABLE_DIR);
 	}
 
 	/**
@@ -26,14 +35,9 @@ class yf_ck_file_browser {
 	*/
 	function show() {
 		asset('jquery-jstree');
-
-		_mkdir_m(INCLUDE_PATH . $this->TOP_DIR);
-		_mkdir_m(INCLUDE_PATH . $this->WRITABLE_DIR);
-
 		$body = tpl()->parse(__CLASS__.'/main', array(
 			'ck_funcnum' => (int)$_GET['CKEditorFuncNum'],
 		));
-		no_graphics(true);
 		return print common()->show_empty_page($body);
 	}
 
@@ -140,9 +144,9 @@ class yf_ck_file_browser {
 	/**
 	*/
 	function _path($id) {
-		$id = str_replace('/', DIRECTORY_SEPARATOR, $id);
-		$id = trim($id, DIRECTORY_SEPARATOR);
-		$id = $this->_real($this->base . DIRECTORY_SEPARATOR . $id);
+		$id = str_replace('/', '/', $id);
+		$id = trim($id, '/');
+		$id = $this->_real($this->base . '/' . $id);
 		return $id;
 	}
 	
@@ -151,7 +155,7 @@ class yf_ck_file_browser {
 	function _id($path) {
 		$path = $this->_real($path);
 		$path = substr($path, strlen($this->base));
-		$path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
+		$path = str_replace('/', '/', $path);
 		$path = trim($path, '/');
 		return strlen($path) ? $path : '/';
 	}
@@ -169,35 +173,39 @@ class yf_ck_file_browser {
 			if ($item == '.' || $item == '..' || $item === null) {
 				continue;
 			}
-			if (is_dir($dir . DIRECTORY_SEPARATOR . $item)) {
+			if (is_dir($dir. '/' . $item)) {
 				$res[] = array(
 					'text'		=> $item,
 					'children'	=> true,
-					'id'		=> $this->_id($dir . DIRECTORY_SEPARATOR . $item),
-					'icon'		=> 'folder'
+					'id'		=> $this->_id($dir . '/' . $item),
+					'icon'		=> 'fa fa-folder fa-lg'
 				);
 			} else {
-				if (filesize($dir . DIRECTORY_SEPARATOR . $item) < 50) {
+				if (filesize($dir. '/' . $item) <= $this->MIN_FILE_SIZE) {
+					continue;
+				}
+				$ext = strtolower(pathinfo($item, PATHINFO_EXTENSION));
+				if (!in_array($ext, $this->ALLOWED_EXTS)) {
 					continue;
 				}
 				$res[] = array(
 					'text'		=> $item,
 					'children'	=> false,
-					'id'		=> $this->_id($dir . DIRECTORY_SEPARATOR . $item),
+					'id'		=> $this->_id($dir . '/' . $item),
 					'type'		=> 'file',
-					'icon'		=> 'file file-'.substr($item, strrpos($item,'.') + 1)
+					'icon'		=> 'fa fa-file-image-o fa-lg fa-file-type-'.$ext,
 				);
 			}
 		}
 		if ($with_root && $this->_id($dir) === '/') {
 			$res = array(array(
-				'text' => basename($this->base),
-				'children' => $res,
-				'id' => '/',
-				'icon'=>'folder',
-				'state' => array(
-					'opened' => true,
-					'disabled' => true
+				'text'		=> basename($this->base),
+				'children'	=> $res,
+				'id'		=> '/',
+				'icon'		=> 'fa fa-folder fa-lg',
+				'state'		=> array(
+					'opened'	=> true,
+					'disabled'	=> true,
 				)
 			));
 		}
@@ -209,7 +217,10 @@ class yf_ck_file_browser {
 	function _data($id) {
 		if (strpos($id, ':')) {
 			$id = array_map(array($this, 'id'), explode(':', $id));
-			return array('type'=>'multiple', 'content'=> 'Multiple selected: ' . implode(' ', $id));
+			return array(
+				'type' => 'multiple',
+				'content'=> 'Multiple selected: ' . implode(' ', $id)
+			);
 		}
 		$dir = $this->_path($id);
 		if (is_dir($dir)) {
@@ -221,17 +232,26 @@ class yf_ck_file_browser {
 				'target'		=> 'file_upload_process_container',
 				'no_label'		=> 1,
 			))
-			->file('file', t('upload image'), array('accept' => 'image/*', 'style' => 'width:auto; background: inherit', 'class_add' => 'btn btn-primary'))
-			->save(array('value' => t('Upload'), 'class' => 'btn btn-primary'))
-			;
+			->file('file', t('upload image'), array(
+				'accept' => 'image/*',
+				'style' => 'width:auto; background: inherit',
+				'class_add' => 'btn btn-primary'
+			))
+			->save(array(
+				'value' => t('Upload'),
+				'class' => 'btn btn-primary'
+			));
 			$images = array();
 			$files = array();
 			foreach (glob(rtrim($dir).'/*') as $f) {
-				$ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
-				if (!in_array($ext, array('png','gif','jpg','jpeg'))) {
+				if (!is_file($f)) {
 					continue;
 				}
-				if (($fsize = filesize($f)) < 50) {
+				$ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+				if (!in_array($ext, $this->ALLOWED_EXTS)) {
+					continue;
+				}
+				if (($fsize = filesize($f)) <= $this->MIN_FILE_SIZE) {
 					continue;
 				}
 				$sizes[$f] = $fsize;
@@ -244,25 +264,35 @@ class yf_ck_file_browser {
 				list($w, $h) = getimagesize($f);
 				$fsize = $sizes[$f];
 				$fsize = round($fsize / 1024, 0, 2).'Kb';
-				$images[] = '<a href="#" class="ck_select_image" title="'._prepare_html(basename($f)).'"><img src="'.str_replace(PROJECT_PATH, WEB_PATH, $f).'" />
-					<div class="details">'.$fsize.' '.$w.'x'.$h.' '.strtoupper($ext).'<br />'.date('Y-m-d H:i:s', $mtime).'</div></a>';
+				$images[] = ''
+					. '<a href="#" class="ck_select_image" title="'._prepare_html(basename($f)).'">'
+						. '<img src="'.str_replace(PROJECT_PATH, MEDIA_PATH, $f).'" />'
+						. '<div class="details">'.$fsize.' '.$w.'x'.$h.' '.strtoupper($ext).'<br />'.date('Y-m-d H:i:s', $mtime).'</div>'
+					. '</a>';
 			}
 			return array(
-				'type' => 'folder',
-				'content' => '<div>'.t('Current folder:') . ' <b>' . $this->TOP_DIR . $id . '</b><br />'. $form. '<br />'. implode(PHP_EOL, $images).'</div>',
+				'type'		=> 'folder',
+				'content'	=> ''
+					. '<div>'.t('Current folder:').' '
+						. '<b>' . $this->TOP_DIR. $id. '</b><br />'
+						. $form. '<br />'
+						. implode(PHP_EOL, $images)
+					. '</div>',
 			);
-		}
-		if (is_file($dir)) {
-			$ext = strpos($dir, '.') !== FALSE ? substr($dir, strrpos($dir, '.') + 1) : '';
-			$dat = array('type' => $ext, 'content' => '');
+		} elseif (is_file($dir)) {
+			$ext = strtolower(pathinfo($dir, PATHINFO_EXTENSION));
+			$dat = array(
+				'type' => $ext,
+				'content' => ''
+			);
 			switch($ext) {
 				case 'jpg':
 				case 'jpeg':
 				case 'gif':
 				case 'png':
 				case 'bmp':
-					$dat['content'] = WEB_PATH . $this->TOP_DIR . $id;
-					$dat['info'] = round(filesize(INCLUDE_PATH . $this->TOP_DIR . $id) / 1024, 0, 2).'Kb';
+					$dat['content'] = MEDIA_PATH . $this->TOP_DIR . $id;
+					$dat['info'] = round(filesize(PROJECT_PATH . $this->TOP_DIR . $id) / 1024, 0, 2).'Kb';
 					break;
 				default:
 					$dat['content'] = t('File is not an image: '.$this->_id($dir));
@@ -281,9 +311,9 @@ class yf_ck_file_browser {
 			throw new Exception('Invalid name: ' . $name);
 		}
 		if ($mkdir) {
-			mkdir($dir . DIRECTORY_SEPARATOR . $name);
+			mkdir($dir . '/' . $name);
 		}
-		return array('id' => $this->_id($dir . DIRECTORY_SEPARATOR . $name));
+		return array('id' => $this->_id($dir . '/' . $name));
 	}
 
 	/**
@@ -296,10 +326,10 @@ class yf_ck_file_browser {
 		if (preg_match('([^ a-zа-я-_0-9.]+)ui', $name) || !strlen($name)) {
 			throw new Exception('Invalid name: ' . $name);
 		}
-		$new = explode(DIRECTORY_SEPARATOR, $dir);
+		$new = explode('/', $dir);
 		array_pop($new);
 		array_push($new, $name);
-		$new = implode(DIRECTORY_SEPARATOR, $new);
+		$new = implode('/', $new);
 		if ($dir !== $new) {
 			if (is_file($new) || is_dir($new)) {
 				throw new Exception('Path already exists: ' . $new);
@@ -318,7 +348,7 @@ class yf_ck_file_browser {
 		}
 		if (is_dir($dir)) {
 			foreach(array_diff(scandir($dir), array('.', '..')) as $f) {
-				$this->_remove($this->_id($dir . DIRECTORY_SEPARATOR . $f));
+				$this->_remove($this->_id($dir . '/' . $f));
 			}
 			rmdir($dir);
 		}
@@ -333,9 +363,9 @@ class yf_ck_file_browser {
 	function _move($id, $par) {
 		$dir = $this->_path($id);
 		$par = $this->_path($par);
-		$new = explode(DIRECTORY_SEPARATOR, $dir);
+		$new = explode('/', $dir);
 		$new = array_pop($new);
-		$new = $par . DIRECTORY_SEPARATOR . $new;
+		$new = $par . '/' . $new;
 		rename($dir, $new);
 		return array('id' => $this->_id($new));
 	}
@@ -345,16 +375,16 @@ class yf_ck_file_browser {
 	function _copy($id, $par) {
 		$dir = $this->_path($id);
 		$par = $this->_path($par);
-		$new = explode(DIRECTORY_SEPARATOR, $dir);
+		$new = explode('/', $dir);
 		$new = array_pop($new);
-		$new = $par . DIRECTORY_SEPARATOR . $new;
+		$new = $par . '/' . $new;
 		if (is_file($new) || is_dir($new)) {
 			throw new Exception('Path already exists: ' . $new);
 		}
 		if (is_dir($dir)) {
 			mkdir($new);
 			foreach(array_diff(scandir($dir), array('.', '..')) as $f) {
-				$this->_copy($this->_id($dir . DIRECTORY_SEPARATOR . $f), $this->_id($new));
+				$this->_copy($this->_id($dir . '/' . $f), $this->_id($new));
 			}
 		}
 		if (is_file($dir)) {

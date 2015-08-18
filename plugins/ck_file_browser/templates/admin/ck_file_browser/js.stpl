@@ -97,8 +97,8 @@ function refreshjstree() {
 			}
 		},
 		'types' : {
-			'default' : { 'icon' : 'folder' },
-			'file' : { 'valid_children' : [], 'icon' : 'file' }
+			'default' : { 'icon' : 'fa fa-folder fa-lg' },
+			'file' : { 'valid_children' : [], 'icon' : 'fa fa-file-image-o fa-lg' }
 		},
 		'unique' : {
 			'duplicate' : function (name, counter) {
@@ -107,7 +107,7 @@ function refreshjstree() {
 		},
 		'plugins' : ['state','dnd','sort','types'
 /*,'contextmenu'*/
-			,'unique']
+,'unique']
 	})
 	.on('delete_node.jstree', function (e, data) {
 		if (confirm(bconf.t_are_you_sure)) {
