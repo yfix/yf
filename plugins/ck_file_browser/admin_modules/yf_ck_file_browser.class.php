@@ -317,9 +317,12 @@ class yf_ck_file_browser {
 				list($w, $h) = getimagesize($f);
 				$fsize = $sizes[$f];
 				$fsize = round($fsize / 1024, 0, 2).'Kb';
+				$uploads_path = ltrim(str_replace(PROJECT_PATH. ltrim($this->TOP_DIR, '/'), '', $f), '/');
 				$images[] = ''
 					. '<div class="ck_select_image">'
-						. '<a href="#" class="img-select" title="'._prepare_html(basename($f)).'"><img src="'.str_replace(PROJECT_PATH, MEDIA_PATH, $f).'" /></a>'
+						. '<a href="#" class="img-select" title="'._prepare_html(basename($f)).'">'
+							. '<img src="'.str_replace(PROJECT_PATH, MEDIA_PATH, $f).'" data-uploads-path="'._prepare_html($uploads_path).'" />'
+						. '</a>'
 						. '<div class="img-details">'.$fsize.' '.$w.'x'.$h.' '.strtoupper($ext).'<br />'.date('Y-m-d H:i:s', $mtime).'</div>'
 						. '<div class="img-actions">'.a('#', 'Edit', 'fa fa-edit', '').'</div>'
 					. '</div>';

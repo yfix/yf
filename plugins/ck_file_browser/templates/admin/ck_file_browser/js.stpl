@@ -40,7 +40,8 @@ function refreshjstree() {
 	});
 
 	$('#data').on("click", '.ck_select_image .img-actions a.btn', function() {
-		var img_src = $(this).closest('.ck_select_image').find('.img-select img').attr('src')
+		var img = $(this).closest('.ck_select_image').find('.img-select img')
+		var img_src = img.attr('src')
 		if (img_src.substr(0,2) == '//') {
 			img_src = 'http:' + img_src
 		}
@@ -48,12 +49,13 @@ function refreshjstree() {
 		if (url_edit.substr(0,2) == '//') {
 			url_edit = 'http:' + url_edit
 		}
+		var img_uploads_path = img.data('uploads-path')
 		var pixlr_url = 'http://www.pixlr.com/editor/'
 			+ '?target=' + encodeURIComponent(url_edit)
 			+ '&method=GET'
 			+ '&referer=' + encodeURIComponent(url_edit)
 			+ '&image=' + encodeURIComponent(img_src)
-			+ '&title=' + encodeURIComponent(img_src.split('/').reverse()[0])
+			+ '&title=' + encodeURIComponent(img_uploads_path.split('.')[0])
 			+ '&locktarget=true'
 			+ '&locktitle=true'
 		console.log(pixlr_url)
