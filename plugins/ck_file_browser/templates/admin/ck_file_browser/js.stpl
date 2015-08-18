@@ -121,9 +121,7 @@ function refreshjstree() {
 				return name + ' ' + counter;
 			}
 		},
-		'plugins' : ['state','dnd','sort','types'
-/*,'contextmenu'*/
-,'unique']
+		'plugins' : ['state','dnd','sort','types','contextmenu','unique']
 	})
 	.on('delete_node.jstree', function (e, data) {
 		if (confirm(bconf.t_are_you_sure)) {
