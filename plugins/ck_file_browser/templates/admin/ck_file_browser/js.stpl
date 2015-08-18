@@ -41,12 +41,19 @@ function refreshjstree() {
 
 	$('#data').on("click", '.ck_select_image .img-actions a.btn', function() {
 		var img_src = $(this).closest('.ck_select_image').find('.img-select img').attr('src')
+		if (img.src.substr(0,2) == '//') {
+			img_src = 'http:' + img_src
+		}
+		var url_edit = bconf.url_edit
+		if (url_edit.substr(0,2) == '//') {
+			url_edit = 'http:' + url_edit
+		}
 		var pixlr_url = 'http://www.pixlr.com/editor/'
-			+ '?target=' + encodeURIComponent(bconf.url_edit)
+			+ '?target=' + encodeURIComponent()
 			+ '&method=GET'
 			+ '&referer=localhost'
-			+ '&image=' + encodeURIComponent(img_src)
-			+ '&title=' + encodeURIComponent(img_src.split('/').reverse()[0])
+			+ '&image=' + encodeURI(img_src)
+			+ '&title=' + encodeURI(img_src.split('/').reverse()[0])
 			+ '&locktarget=true'
 			+ '&locktitle=true'
 		console.log(pixlr_url)
