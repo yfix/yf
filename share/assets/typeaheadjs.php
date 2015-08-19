@@ -5,6 +5,7 @@ return array(
 		'master' => array(
 //			'js' => '//cdn.rawgit.com/yfix/typeahead.js/master/dist/typeahead.jquery.js',
 			'js' => '//cdn.rawgit.com/yfix/typeahead.js/master/dist/typeahead.bundle.min.js',
+/*
 			'css' => '
 				.tt-dataset { color: #999; }
 				.tt-highlight { color: #555; }
@@ -15,6 +16,7 @@ return array(
 				.tt-suggestion:hover { background: #eee; }
 				.tt-selectable { cursor: pointer; }
 			',
+*/
 		),
 	),
 	'require' => array(
