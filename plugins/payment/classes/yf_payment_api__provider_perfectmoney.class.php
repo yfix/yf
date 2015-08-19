@@ -68,7 +68,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			'perfectmoney' => array(
 				'title' => 'Perfect Money',
 				'icon'  => 'perfectmoney',
-				'is_fee' => true,
+				// 'is_fee' => true,
 				'fee' => array(
 					'out' => array(
 						'rt'  => 1.99, // 0.5% (1.99%)

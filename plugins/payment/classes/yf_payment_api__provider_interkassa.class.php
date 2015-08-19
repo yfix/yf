@@ -341,8 +341,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				),
 			),
 			'mastercard_p2p_notprivat_uah' => array(
-				'title'      => 'Visa (Privat24, UAH)',
-				'icon'       => 'visa',
+				'title'      => 'MasterCard (UAH)',
+				'icon'       => 'mastercard',
 				'request_option'     => array(
 					'paywayId' => '52efa871e4ae1a3008000002', // mastercard_p2p_notprivat_uah
 					'calcKey'  => 'psPayeeAmount',
