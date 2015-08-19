@@ -418,13 +418,16 @@ class yf_payment_api {
 	public function fee( $amount, $fee ) {
 		$rt  = 0;
 		$fix = 0;
+		$min = 0;
 		if( is_array( $fee ) ) {
-			$rt  = $fee[ 'rt'  ];
-			$fix = $fee[ 'fix' ];
+			$rt  = @$fee[ 'rt'  ] ?: $rt;
+			$fix = @$fee[ 'fix' ] ?: $fix;
+			$min = @$fee[ 'min' ] ?: $min;
 		} else {
-			$rt = $fee;
+			$rt = @$fee ?: $rt;
 		}
 		$result = $amount + $amount * ( $rt / 100 ) + $fix;
+		( $min > 0 && $min > $result ) && $result = $min;
 		return( $result );
 	}
 
