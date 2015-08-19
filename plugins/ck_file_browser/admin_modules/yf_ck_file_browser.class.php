@@ -146,7 +146,7 @@ class yf_ck_file_browser {
 
 		// Move image from url into temp file and analyze it
 		$tmp_dir = '/tmp/pixlr_upload/';
-		!file_exists($tmp_dir) && mkdir($tmp_dir, 0755, true);
+		!file_exists($tmp_dir) && _mkdir_m($tmp_dir);
 		$tmp_path = tempnam($tmp_dir, 'pixlr_upload_');
 		file_put_contents($tmp_path, file_get_contents($img_url));
 		if (!file_exists($tmp_path) || filesize($tmp_path) <= $this->MIN_FILE_SIZE) {
@@ -161,7 +161,7 @@ class yf_ck_file_browser {
 
 		// copy old and new file as revision into separate dir
 		$revs_dir = PROJECT_PATH. 'uploads/.img_revisions/';
-		!file_exists($revs_dir) && mkdir($revs_dir, 0755, true);
+		!file_exists($revs_dir) && _mkdir_m($revs_dir);
 		if (md5_file($target) != md5_file($tmp_path)) {
 			$revid = date('YmdHis_'.str_pad(substr(microtime(true), 11, 2), 2, '0', STR_PAD_LEFT));
 			$rev_path_old = $revs_dir. $revid. '__old__'. urlencode($title). '.'. $type;
@@ -177,7 +177,7 @@ class yf_ck_file_browser {
 		return common()->show_messages()
 			. '<br />path: '._prepare_html($title).', size: '.filesize($target)
 			. '<br /><a href="'.$web_path.'" target="_blank"><img src="'.$web_path.'" style="max-width: 200px; max-height: 200px;"></a>'
-			. '<br /><br />'. a('/@object/show/'.urlencode($title), 'Go Next');
+			. '<br /><br />'. a(array('href' => '/@object/show/'.urlencode($title), 'title' => 'Go Next', 'target' => ''));
 	}
 
 	/**
@@ -218,24 +218,21 @@ class yf_ck_file_browser {
 	*/
 	function _lst($id, $with_root = false) {
 		$dir = $this->_path($id);
-		$lst = @scandir($dir);
-		if (!$lst) {
-			throw new Exception('Could not list path: ' . $dir);
-		}
 		$res = array();
-		foreach ($lst as $item) {
-			if ($item == '.' || $item == '..' || $item === null) {
+		foreach (glob(rtrim($dir, '/'). '/*') as $f) {
+			if (!strlen($f) || !file_exists($f)) {
 				continue;
 			}
-			if (is_dir($dir. '/' . $item)) {
+			$item = basename($f);
+			if (is_dir($f)) {
 				$res[] = array(
 					'text'		=> $item,
 					'children'	=> true,
-					'id'		=> $this->_id($dir . '/' . $item),
+					'id'		=> $this->_id($f),
 					'icon'		=> 'fa fa-folder fa-lg'
 				);
 			} else {
-				if (filesize($dir. '/' . $item) <= $this->MIN_FILE_SIZE) {
+				if (filesize($f) <= $this->MIN_FILE_SIZE) {
 					continue;
 				}
 				$ext = strtolower(pathinfo($item, PATHINFO_EXTENSION));
@@ -245,7 +242,7 @@ class yf_ck_file_browser {
 				$res[] = array(
 					'text'		=> $item,
 					'children'	=> false,
-					'id'		=> $this->_id($dir . '/' . $item),
+					'id'		=> $this->_id($f),
 					'type'		=> 'file',
 					'icon'		=> 'fa fa-file-image-o fa-lg fa-file-type-'.$ext,
 				);
@@ -325,7 +322,13 @@ class yf_ck_file_browser {
 							. '<img src="'.str_replace(PROJECT_PATH, MEDIA_PATH, $f).'?m='.intval($mtime).'" data-uploads-path="'._prepare_html($uploads_path).'" />'
 						. '</a>'
 						. '<div class="img-details">'.$fsize.' '.$w.'x'.$h.' '.strtoupper($ext).'<br />'.date('Y-m-d H:i:s', $mtime).'</div>'
-						. '<div class="img-actions">'.a('#', 'Edit', 'fa fa-edit', '').'</div>'
+						. '<div class="img-actions">'
+#							. a('#', 'Choose', 'fa fa-share', '', 'btn-info')
+#							. a('#', 'View', 'fa fa-eye', '')
+#							. a('#', 'Copy', 'fa fa-copy', '')
+#							. a('#', 'Delete', 'fa fa-trash', '', 'btn-danger')
+							. a('#', 'Edit', 'fa fa-edit', '', 'btn-warning')
+						. '</div>'
 					. '</div>';
 			}
 			return array(
@@ -369,7 +372,7 @@ class yf_ck_file_browser {
 			throw new Exception('Invalid name: ' . $name);
 		}
 		if ($mkdir) {
-			mkdir($dir . '/' . $name);
+			_mkdir_m($dir . '/' . $name);
 		}
 		return array('id' => $this->_id($dir . '/' . $name));
 	}
@@ -405,8 +408,8 @@ class yf_ck_file_browser {
 			throw new Exception('Cannot remove root');
 		}
 		if (is_dir($dir)) {
-			foreach(array_diff(scandir($dir), array('.', '..')) as $f) {
-				$this->_remove($this->_id($dir . '/' . $f));
+			foreach (glob(rtrim($dir, '/'). '/*') as $f) {
+				$this->_remove($this->_id($dir . '/' . basename($f)));
 			}
 			rmdir($dir);
 		}
@@ -440,9 +443,9 @@ class yf_ck_file_browser {
 			throw new Exception('Path already exists: ' . $new);
 		}
 		if (is_dir($dir)) {
-			mkdir($new);
-			foreach(array_diff(scandir($dir), array('.', '..')) as $f) {
-				$this->_copy($this->_id($dir . '/' . $f), $this->_id($new));
+			_mkdir_m($new);
+			foreach (glob(rtrim($dir, '/'). '/*') as $f) {
+				$this->_copy($this->_id($dir . '/' . basename($f)), $this->_id($new));
 			}
 		}
 		if (is_file($dir)) {
