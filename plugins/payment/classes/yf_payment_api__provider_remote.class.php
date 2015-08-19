@@ -42,10 +42,28 @@ class yf_payment_api__provider_remote {
 	public $payment_api = null;
 	public $api         = null;
 
+	public $config      = null;
+
 	public function _init() {
 		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );
+		$this->config();
+	}
+
+	public function config( $options = null ) {
+		$config = &$this->CONFIG;
+		if( !is_array( $config ) ) { return( null ); }
+		// var
+		$payment_api = $this->payment_api;
+		// method_allow
+		foreach( $config as $key => $item ) {
+			if( is_array( $this->$key ) ) {
+				$this->$key = $payment_api->_replace( $this->$key, $item );
+			} else {
+				$this->$key = $item;
+			}
+		}
 	}
 
 	public function allow( $value = null ) {
