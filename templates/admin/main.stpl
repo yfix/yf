@@ -19,6 +19,7 @@
 			</ul>
 {execute(site_nav_bar,_show_dropdown_menu)}
 			<ul class="nav pull-right navbar-right navbar-nav">
+{if_ok(conf.admin_navbar_search)} {include(navbar_search)} {/if}
 {include_if_exists(navbar_additions)}
 {execute(common,bs_theme_changer)}
 				<li>{execute(graphics,show_welcome)}</li>
