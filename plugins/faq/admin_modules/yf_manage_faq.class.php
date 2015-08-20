@@ -74,6 +74,7 @@ class yf_manage_faq {
 		$items = $this->_recursive_get_items($lang);
 		$old_info = $this->_auto_update_items_orders($lang);
 		$batch = array();
+		$old = array();
 		foreach ((array)json_decode((string)$_POST['items'], $assoc = true) as $order_id => $info) {
 			$item_id = (int)$info['item_id'];
 			if (!$item_id || !isset($items[$item_id])) {
@@ -93,10 +94,20 @@ class yf_manage_faq {
 			);
 			if ($new_data != $old_data) {
 				$batch[$item_id] = $new_data;
+				$old[$item_id] = $old_data;
 			}
 		}
 		if ($batch) {
-			db()->update_batch(self::table, db()->es($batch));
+			db()->update_batch_safe(self::table, $batch);
+			foreach ((array)$batch as $item_id => $info) {
+				module_safe('manage_revisions')->add(array(
+					'object_name'	=> $_this::table,
+					'object_id'		=> $item_id,
+					'old'			=> $old[$item_id],
+					'new'			=> $batch[$item_id],
+					'action'		=> 'drag',
+				));
+			}
 		}
 		return js_redirect(url('/@object'));
 	}
@@ -104,7 +115,6 @@ class yf_manage_faq {
 	/**
 	*/
 	function add() {
-// TODO: testme
 		$a['locale'] = substr($_GET['page'], 0, 2);
 		$a['parent_id'] = (int)$_GET['id'];
 		$parent = $a['parent_id'] ? (array)from(self::table)->whereid($a['parent_id'])->get() : array();
@@ -126,7 +136,7 @@ class yf_manage_faq {
 			})
 			->hidden('locale')
 			->info_lang('locale')
-			->select_box('parent_id', $this->_get_parents_for_select($a['locale'], $skip = $a['parent_id']), array('desc' => t('Parent item')))
+			->select_box('parent_id', $this->_get_parents_for_select($a['locale']), array('desc' => t('Parent item')))
 			->text('title')
 			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
 			->active_box()
@@ -243,7 +253,7 @@ class yf_manage_faq {
 			$new_order++;
 		}
 		if ($batch) {
-			db()->update_batch(self::table, $batch);
+			db()->update_batch_safe(self::table, $batch);
 		}
 		return $items;
 	}
