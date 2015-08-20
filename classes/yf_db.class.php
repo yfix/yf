@@ -818,6 +818,13 @@ class yf_db {
 	}
 
 	/**
+	* Alias
+	*/
+	function all($query, $key_name = null, $use_cache = true) {
+		return $this->query_fetch_all($query, $key_name, $use_cache);
+	}
+
+	/**
 	* Execute database query and fetch result into assotiative array
 	*/
 	function query_fetch_all($query, $key_name = null, $use_cache = true) {
