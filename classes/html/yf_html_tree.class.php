@@ -21,21 +21,18 @@ class yf_html_tree {
 
 		$items = implode(PHP_EOL, (array)$this->_tree_items($data, $extra));
 		$r = array(
-			'form_action'	=> $extra['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'add_link'		=> $extra['add_link'] ?: './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
-			'back_link'		=> $extra['back_link'] ?: './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
+			'form_action'	=> isset($extra['form_action']) ? $extra['form_action'] : url('/@object/@action/@id/@page'),
+			'add_link'		=> isset($extra['add_link']) ? $extra['add_link'] : url('/@object/add_item/@id/@page'),
+			'back_link'		=> isset($extra['back_link']) ? $extra['back_link'] : url('/@object/show_items/@id/@page'),
 		);
-#		$btn_save	= '<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-large fa-lg icon-save fa fa-save"></i> '.t('Save').'</button>';
-#		$btn_back	= $r['back_link'] ? '<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-large fa-lg icon-backward fa fa-backward"></i> '.t('Go Back').'</a>' : '';
-#		$btn_add	= $r['add_link'] ? '<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-large fa-lg icon-plus-sign fa fa-plus-circle"></i> '.t('Add').'</a>' : '';
-		$btn_expand = !$extra['no_expand'] ? '<a href="javascript:void(0);" class="btn btn-mini btn-xs draggable-menu-expand-all"><i class="icon-large fa-lg icon-expand-alt fa fa-expand"></i> '.t('Expand').'</a>' : '';
 		$form_class = 'draggable_form'. ($extra['form_class'] ? ' '.$extra['form_class'] : ''). ($extra['class_add'] ? ' '.$extra['class_add'] : '');
-		return '<form action="'.$r['form_action'].'" method="post" class="'.$form_class.'">
+		return 
+			'<form action="'.$r['form_action'].'" method="post" class="'.$form_class.'">
 				<div class="controls">'
-					. $btn_save
-					. $btn_back
-					. $btn_add
-					. $btn_expand
+					. ($r['form_action'] ? '<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="fa fa-save"></i> '.t('Save').'</button>' : '')
+					. ($r['back_link'] ? '<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs btn-default"><i class="fa fa-backward"></i> '.t('Go Back').'</a>' : '')
+					. ($r['add_link'] ? '<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs btn-default ajax_add"><i class="fa fa-plus"></i> '.t('Add').'</a>' : '')
+					. (!$extra['no_expand'] ? '<a href="javascript:void(0);" class="btn btn-mini btn-xs btn-default draggable-menu-expand-all"><i class="fa fa-expand"></i> '.t('Expand').'</a>' : '')
 				.'</div>
 				<ul class="draggable_menu">'.$items.'</ul>
 			</form>';
@@ -45,11 +42,11 @@ class yf_html_tree {
 	* This pure-php method needed to greatly speedup page rendering time for 100+ items
 	*/
 	function _tree_items(&$data, $extra = array()) {
-		if ($extra['show_controls']) {
+		if ($extra['show_controls'] && !is_callable($extra['show_controls'])) {
 			$r = array(
-				'edit_link'		=> $extra['edit_link'] ?: './?object='.$_GET['object'].'&action=edit_item&id=%d',
-				'delete_link'	=> $extra['delete_link'] ?: './?object='.$_GET['object'].'&action=delete_item&id=%d',
-				'clone_link'	=> $extra['clone_link'] ?: './?object='.$_GET['object'].'&action=clone_item&id=%d',
+				'edit_link'		=> isset($extra['edit_link']) ? $extra['edit_link'] : url('/@object/edit_item/%d/@page'),
+				'delete_link'	=> isset($extra['delete_link']) ? $extra['delete_link'] : url('/@object/delete_item/%d/@page'),
+				'clone_link'	=> isset($extra['clone_link']) ? $extra['clone_link'] : url('/@object/clone_item/%d/@page'),
 			);
 			$form_controls = form_item($r)->tbl_link_edit()
 				. form_item($r)->tbl_link_delete()
