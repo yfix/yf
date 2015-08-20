@@ -286,9 +286,12 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 	$scope.payout_provider_init = function() {
 		$scope.block_payout_provider_show = true;
 		$scope.action.payout = {};
-		if( $scope.payment.payout_currency_allow ) {
+		if( $scope.payment.payout_currency_allow && !$scope.payout_currency_selected ) {
 			$scope.payout_currency_selected = $scope.payment.payout_currency_allow[ 0 ];
 		}
+	};
+	$scope.payout_currency_allow_change = function( currency_id ) {
+		$scope.payout_provider_init();
 	};
 	$scope.action_payout = function() {
 		var payout = $scope.action.payout;
