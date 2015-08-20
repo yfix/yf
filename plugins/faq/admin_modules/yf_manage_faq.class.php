@@ -57,7 +57,7 @@ class yf_manage_faq {
 				return implode(PHP_EOL, array(
 					$form->tbl_link_add(array('hide_text' => 1, 'no_ajax' => 1)),
 					$form->tbl_link_edit(array('hide_text' => 1, 'no_ajax' => 1)),
-					$form->tbl_link_delete(array('hide_text' => 1)),
+					$form->tbl_link_delete(array('hide_text' => 1, 'no_ajax' => 1)),
 					$form->tbl_link_active(),
 				));
 			},
@@ -99,15 +99,15 @@ class yf_manage_faq {
 		}
 		if ($batch) {
 			db()->update_batch_safe(self::table, $batch);
-			foreach ((array)$batch as $item_id => $info) {
-				module_safe('manage_revisions')->add(array(
-					'object_name'	=> $_this::table,
-					'object_id'		=> $item_id,
-					'old'			=> $old[$item_id],
-					'new'			=> $batch[$item_id],
-					'action'		=> 'drag',
-				));
-			}
+#			foreach ((array)$batch as $item_id => $info) {
+#				module_safe('manage_revisions')->add(array(
+#					'object_name'	=> self::table,
+#					'object_id'		=> $item_id,
+#					'old'			=> $old[$item_id],
+#					'new'			=> $batch[$item_id],
+#					'action'		=> 'drag',
+#				));
+#			}
 		}
 		return js_redirect(url('/@object'));
 	}
@@ -115,7 +115,7 @@ class yf_manage_faq {
 	/**
 	*/
 	function add() {
-		$a['locale'] = substr($_GET['page'], 0, 2);
+		$a['locale'] = substr($_GET['page'], 0, 2) ?: 'ru';
 		$a['parent_id'] = (int)$_GET['id'];
 		$parent = $a['parent_id'] ? (array)from(self::table)->whereid($a['parent_id'])->get() : array();
 		if (!$a['locale'] && $parent['locale']) {
