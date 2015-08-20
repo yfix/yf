@@ -46,6 +46,7 @@ class yf_manage_faq {
 			'add_link'		=> url('/@object/add/@id/@page'),
 			'add_no_ajax'	=> true,
 			'no_expand'		=> true,
+			'opened_levels'	=> 10, // very deep
 			'show_controls' => function($id, $item) {
 				$form = form_item($item + array(
 					'add_link'		=> url('/@object/add/'.$id.'/@page'),
@@ -66,10 +67,11 @@ class yf_manage_faq {
 	/**
 	*/
 	function save() {
-		$lang = $_GET['lang'];
-		if (!is_post() || !$lang || !isset($this->langs[$lang])) {
+		$lang = $_GET['page'];
+		if (!is_post() || !$lang || !isset($this->all_langs[$lang])) {
 			return js_redirect(url('/@object'));
 		}
+		$items = $this->_recursive_get_items($lang);
 		$old_info = $this->_auto_update_items_orders($lang);
 		$batch = array();
 		foreach ((array)json_decode((string)$_POST['items'], $assoc = true) as $order_id => $info) {
@@ -93,9 +95,9 @@ class yf_manage_faq {
 				$batch[$item_id] = $new_data;
 			}
 		}
-#		if ($batch) {
-#			db()->update_batch(self::table, db()->es($batch));
-#		}
+		if ($batch) {
+			db()->update_batch(self::table, db()->es($batch));
+		}
 		return js_redirect(url('/@object'));
 	}
 
