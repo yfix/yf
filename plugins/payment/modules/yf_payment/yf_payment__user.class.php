@@ -38,6 +38,7 @@ class yf_payment__user {
 		$status        = $payment_api->status();
 		$currencies    = $payment_api->currencies;
 		$currency_rate = $payment_api->currency_rate__buy();
+		$payout_currency_allow = $payment_api->payout_currency_allow;
 		// transition
 		$payment_module = $this->payment_module;
 		$payment_module->t( $currency,   'currency' );
@@ -49,16 +50,17 @@ class yf_payment__user {
 		$replace = array(
 			'user'    => $user,
 			'payment' => json_encode( array(
-				'user'                 => $user,
-				'account'              => $account,
-				'currency'             => $currency,
-				'currencies'           => $currencies,
-				'currency_rate'        => $currency_rate,
-				'operation'            => $operation,
-				'provider'             => $provider,
-				'providers'            => $providers,
-				'status'               => $status,
-				'operation_pagination' => array(
+				'user'                  => $user,
+				'account'               => $account,
+				'currency'              => $currency,
+				'currencies'            => $currencies,
+				'currency_rate'         => $currency_rate,
+				'payout_currency_allow' => $payout_currency_allow,
+				'operation'             => $operation,
+				'provider'              => $provider,
+				'providers'             => $providers,
+				'status'                => $status,
+				'operation_pagination'  => array(
 					'count'    => $count,
 					'page_per' => $page_per,
 					'pages'    => $pages,

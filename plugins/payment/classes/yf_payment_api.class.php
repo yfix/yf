@@ -155,6 +155,12 @@ class yf_payment_api {
 		),
 	);
 
+	public $payout_currency_allow = array(
+		'USD',
+		'UAH',
+		'RUB',
+	);
+
 	public $provider_id    = null;
 	public $provider       = null;
 	public $provider_index = null;
