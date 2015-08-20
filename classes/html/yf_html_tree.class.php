@@ -26,12 +26,13 @@ class yf_html_tree {
 			'back_link'		=> isset($extra['back_link']) ? $extra['back_link'] : url('/@object/show_items/@id/@page'),
 		);
 		$form_class = 'draggable_form'. ($extra['form_class'] ? ' '.$extra['form_class'] : ''). ($extra['class_add'] ? ' '.$extra['class_add'] : '');
+		$add_link_class = 'btn btn-mini btn-xs btn-default'. (!$extra['add_no_ajax'] ? ' ajax_add' : '');
 		return 
 			'<form action="'.$r['form_action'].'" method="post" class="'.$form_class.'">
 				<div class="controls">'
 					. ($r['form_action'] ? '<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="fa fa-save"></i> '.t('Save').'</button>' : '')
 					. ($r['back_link'] ? '<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs btn-default"><i class="fa fa-backward"></i> '.t('Go Back').'</a>' : '')
-					. ($r['add_link'] ? '<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs btn-default ajax_add"><i class="fa fa-plus"></i> '.t('Add').'</a>' : '')
+					. ($r['add_link'] ? '<a href="'.$r['add_link'].'" class="'.$add_link_class.'"><i class="fa fa-plus"></i> '.t('Add').'</a>' : '')
 					. (!$extra['no_expand'] ? '<a href="javascript:void(0);" class="btn btn-mini btn-xs btn-default draggable-menu-expand-all"><i class="fa fa-expand"></i> '.t('Expand').'</a>' : '')
 				.'</div>
 				<ul class="draggable_menu">'.$items.'</ul>
