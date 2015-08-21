@@ -92,14 +92,23 @@ class yf_static_pages {
 			})
 		');
 		// Prevent execution of template tags when editing page content
-		if (false !== strpos($a['text'], '{') && false !== strpos($a['text'], '}')) {
-			$a['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $a['text']);
+		$exec_fix = array('{' => '&#123;', '}' => '&#125;');
+		$keys_to_fix = array('text');
+		foreach ((array)$keys_to_fix as $k) {
+			if (false !== strpos($a[$k], '{') && false !== strpos($a[$k], '}')) {
+				$a[$k] = str_replace(array_keys($exec_fix), array_values($exec_fix), $a[$k]);
+			}
 		}
-		if (is_post() && false !== strpos($_POST['text'], '{') && false !== strpos($_POST['text'], '}')) {
-			$_POST['text'] = str_replace(array('{', '}'), array('&#123;', '&#125;'), $_POST['text']);
+		$a = (array)$_POST + (array)$a;
+		if (is_post()) {
+			foreach ((array)$keys_to_fix as $k) {
+				if (false !== strpos($_POST[$k], '{') && false !== strpos($_POST[$k], '}')) {
+					$_POST[$k] = str_replace(array_values($exec_fix), array_keys($exec_fix), $_POST[$k]);
+				}
+			}
 		}
 		$_this = $this;
-		return form((array)$_POST + (array)$a, array('hide_empty' => true, 'id' => $form_id))
+		return form($a, array('hide_empty' => true, 'id' => $form_id))
 			->validate(array(
 				'__before__'=> 'trim',
 				'name' => array('required', function(&$in) use ($_this) {
