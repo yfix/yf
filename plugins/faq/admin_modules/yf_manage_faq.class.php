@@ -154,9 +154,25 @@ class yf_manage_faq {
 		if (!$a) {
 			return _404();
 		}
+		// Prevent execution of template tags when editing page content
+		$exec_fix = array('{' => '&#123;', '}' => '&#125;');
+		$keys_to_fix = array('text');
+		foreach ((array)$keys_to_fix as $k) {
+			if (false !== strpos($a[$k], '{') && false !== strpos($a[$k], '}')) {
+				$a[$k] = str_replace(array_keys($exec_fix), array_values($exec_fix), $a[$k]);
+			}
+		}
+		$a = (array)$_POST + (array)$a;
+		if (is_post()) {
+			foreach ((array)$keys_to_fix as $k) {
+				if (false !== strpos($_POST[$k], '{') && false !== strpos($_POST[$k], '}')) {
+					$_POST[$k] = str_replace(array_values($exec_fix), array_keys($exec_fix), $_POST[$k]);
+				}
+			}
+		}
 		$a['back_link'] = url('/@object');
 		$_this = $this;
-		return form((array)$_POST + (array)$a)
+		return form($a)
 			->validate(array(
 				'title' => 'trim|required',
 				'text' => 'trim',
