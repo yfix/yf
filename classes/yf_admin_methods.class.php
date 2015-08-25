@@ -491,6 +491,16 @@ class yf_admin_methods {
 	}
 
 	/**
+	*/
+	function _get_filter($params = array()) {
+		$filter_name = $params['filter_name'] ?: $this->_params['filter_name'];
+		if (!$filter_name) {
+			$filter_name = $_GET['object'].'__'.$_GET['action'];
+		}
+		return (array)$_SESSION[$filter_name];
+	}
+
+	/**
 	* Return default config used by CKEditor
 	*/
 	function _get_cke_config($params = array()) {
