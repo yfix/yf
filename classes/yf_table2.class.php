@@ -147,8 +147,13 @@ class yf_table2 {
 		$ids	= &$a['ids'];
 		if (main()->is_post()) {
 			$on_post = isset($params['on_post']) ? $params['on_post'] : $this->_on['on_post'];
-			if (is_callable($on_post)) {
-				$on_post($params, $a, $this);
+			if (!is_array($on_post)) {
+				$on_post = array($on_post);
+			}
+			foreach ((array)$on_post as $func_on_post) {
+				if (is_callable($func_on_post)) {
+					$func_on_post($params, $a, $this);
+				}
 			}
 		}
 		// Automatically get fields from results
@@ -181,8 +186,13 @@ class yf_table2 {
 			}
 		}
 		$on_before_render = isset($params['on_before_render']) ? $params['on_before_render'] : $this->_on['on_before_render'];
-		if (is_callable($on_before_render)) {
-			$on_before_render($params, $data, $this);
+		if (!is_array($on_before_render)) {
+			$on_before_render = array($on_before_render);
+		}
+		foreach ((array)$on_before_render as $func_on_before_render) {
+			if (is_callable($func_on_before_render)) {
+				$func_on_before_render($params, $data, $this);
+			}
 		}
 		_class('core_events')->fire('table.before_render', array('this' => $this));
 
@@ -193,8 +203,13 @@ class yf_table2 {
 		}
 
 		$on_after_render = isset($params['on_after_render']) ? $params['on_after_render'] : $this->_on['on_after_render'];
-		if (is_callable($on_after_render)) {
-			$on_after_render($params, $a, $body, $this);
+		if (!is_array($on_after_render)) {
+			$on_after_render = array($on_after_render);
+		}
+		foreach ((array)$on_after_render as $func_on_after_render) {
+			if (is_callable($func_on_after_render)) {
+				$func_on_after_render($params, $a, $body, $this);
+			}
 		}
 		if (array_key_exists('feedback', $params)) {
 			$params['feedback']['total'] = count($data);
@@ -595,7 +610,7 @@ class yf_table2 {
 			if (is_object($custom_sql) && $custom_sql instanceof yf_db_query_builder_driver) {
 				$custom_sql = $custom_sql->sql();
 			} elseif (is_callable($custom_sql)) {
-				$custom_sql = $custom_sql($_ids_sql);
+				$custom_sql = $custom_sql($_ids_sql, $db_func, $this, $data, $ids);
 			}
 			if ($custom_sql) {
 				$custom_sql = str_replace('%ids', $_ids_sql, $custom_sql);
@@ -1124,33 +1139,47 @@ class yf_table2 {
 	/**
 	* Currently designed only for admin usage
 	*/
-	function user($name = '', $link = '', $data = '', $extra = array()) {
-		if (is_array($link)) {
-			$extra = (array)$extra + $link;
-			$link = '';
+	function user($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		if (!$name) {
-			$name = 'user_id';
-		}
-		if ($link) {
-			$extra['link'] = $link;
-		}
+		$name = $extra['name'] ?: $name;
 		if (!$extra['link']) {
 			$extra['link'] = url_admin('/members/edit/%d');
 		}
-		if (!$extra['link_field_name']) {
-			$extra['link_field_name'] = $name;
-		}
-		$extra['data'] = $data ?: $extra['data'];
-		$_name = 'user';
-		$this->_params['custom_fields'][$_name] = array(
-			'SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), ""), IF(STRCMP(email,""), CONCAT("; ",email), IF(STRCMP(phone,""), CONCAT("; ",phone), ""))) AS user_name
-			FROM '.db('user').' WHERE id IN(%ids)'
-		, $name);
-		return $this->text($_name, '', $extra);
+		$func_name = __FUNCTION__;
+		$this->on_before_render(function($p, $data, $table) use ($name, $extra, $func_name) {
+			if (!$data) {
+				return false;
+			}
+			$field = $name;
+			$user_ids = array();
+			foreach ((array)$data as $a) {
+				$id = $a[$field];
+				$id && $user_ids[$id] = $id;
+			}
+			if (!$user_ids) {
+				return false;
+			}
+			foreach ((array)from('user')->whereid(array_keys($user_ids))->all('id,name,login,email,phone,active') as $a) {
+				$table->_data_for_func[$func_name][$a['id']] = $a;
+			}
+		});
+		return $this->func($name, function($user_id, $e, $a, $p, $table) use ($func_name) {
+			if (!$user_id) {
+				return false;
+			}
+			if (!isset($table->_data_for_func[$func_name][$user_id])) {
+				return $user_id;
+			}
+			$u = $table->_data_for_func[$func_name][$user_id];
+			$uname = ($u['login'] ?: $u['name'] ?: $u['email'] ?: $u['phone']);
+			return a(str_replace('%d', $user_id, $e['extra']['link']), _truncate($uname, 50).'&nbsp;['.$user_id.']', 'fa fa-user');
+		}, $extra);
 	}
 
 	/**
@@ -1908,21 +1937,21 @@ class yf_table2 {
 	/**
 	*/
 	function on_post($func) {
-		$this->_on[__FUNCTION__] = $func;
+		$this->_on[__FUNCTION__][] = $func;
 		return $this;
 	}
 
 	/**
 	*/
 	function on_before_render($func) {
-		$this->_on[__FUNCTION__] = $func;
+		$this->_on[__FUNCTION__][] = $func;
 		return $this;
 	}
 
 	/**
 	*/
 	function on_after_render($func) {
-		$this->_on[__FUNCTION__] = $func;
+		$this->_on[__FUNCTION__][] = $func;
 		return $this;
 	}
 }
