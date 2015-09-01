@@ -206,7 +206,8 @@ class yf_manage_deposit {
 			'a.user_id',
 			'u.name as user_name',
 			'o.amount',
-			'a.balance',
+			// 'a.balance',
+			'o.balance',
 			'p.title as provider_title',
 			'o.status_id as status_id',
 			'o.datetime_start'
