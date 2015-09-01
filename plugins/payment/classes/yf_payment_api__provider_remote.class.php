@@ -489,6 +489,7 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
+		db()->begin();
 		// exists operation
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
@@ -632,7 +633,7 @@ class yf_payment_api__provider_remote {
 				break;
 		}
 		if( $is_try ) {
-			db()->begin();
+			// db()->begin();
 			$direction = $operation[ 'direction' ];
 			// update account balance
 			if( $current_status_id != $new_status_id ) {
@@ -750,7 +751,7 @@ class yf_payment_api__provider_remote {
 					return( $result );
 				}
 			}
-			db()->commit();
+			// db()->commit();
 			@$_status_message && $status_message = $_status_message;
 			// event
 				// get updated account
@@ -783,6 +784,7 @@ class yf_payment_api__provider_remote {
 				$status_message .= ' ' . $payment_api->currency[ 'short' ];
 			}
 		}
+		db()->commit();
 		$result = array(
 			'status'         => true,
 			'status_message' => $status_message,
