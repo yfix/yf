@@ -320,6 +320,11 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$is_server = !empty( $_GET[ 'server' ] );
 		$is_server_origin = gethostbyaddr( $this->_ip() ) === 'robot.pm';
 		$result = null;
+		// check operation
+		// $_operation_id = (int)$_GET[ 'operation_id' ];
+		$operation_id = (int)$_POST[ 'PAYMENT_ID' ];
+		// START DUMP
+		$payment_api->dump( array( 'name' => 'PerfectMoney', 'operation_id' => (int)$operation_id ));
 		// check origin server
 		if( !$is_server_origin && !$test_mode ) {
 			$result = array(
@@ -330,11 +335,6 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		// check operation
-		// $_operation_id = (int)$_GET[ 'operation_id' ];
-		$operation_id = (int)$_POST[ 'PAYMENT_ID' ];
-		// START DUMP
-		$payment_api->dump( array( 'name' => 'PerfectMoney', 'operation_id' => (int)$operation_id ));
 		/* // test data
 		$api->key( 'private', "ohboyi'msogood1" );
 		$_POST = array (
