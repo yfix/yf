@@ -316,8 +316,9 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 	public function _api_response() {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
-		$test_mode = &$this->TEST_MODE;
-		$is_server = !empty( $_GET[ 'server' ] );
+		// var
+		$test_mode        = &$this->TEST_MODE;
+		$is_server        = !empty( $_GET[ 'server' ] );
 		$is_server_origin = gethostbyaddr( $this->_ip() ) === 'robot.pm';
 		$result = null;
 		// check operation
@@ -326,7 +327,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		// START DUMP
 		$payment_api->dump( array( 'name' => 'PerfectMoney', 'operation_id' => (int)$operation_id ));
 		// check origin server
-		if( !$is_server_origin && !$test_mode ) {
+		if( false && !$is_server_origin && !$test_mode ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Разрешены запросы только от сервера',
@@ -365,7 +366,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$is_signature_ok = $signature == $_signature;
 		// check status
 		$state = null;
-		// $state = @$_GET[ 'status' ]; // disable user request
+		$state = @$_GET[ 'status' ]; // disable user request by comment this line
 		// server status always is success
 		if( $is_server && $is_signature_ok ) {
 			$state = 'success';

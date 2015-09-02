@@ -492,8 +492,8 @@ class yf_payment_api__provider_remote {
 		// start transaction
 		db()->begin();
 		// highest level of isolation
-		$result = db()->query( 'SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE' );
-		if( !$result ) {
+		// $result = db()->query( 'SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE' );
+		if( false && !$result ) {
 			db()->rollback();
 			$message = 'Ошибка установки уровня изоляции транзакции';
 			$result = array(
