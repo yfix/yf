@@ -327,7 +327,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		// START DUMP
 		$payment_api->dump( array( 'name' => 'PerfectMoney', 'operation_id' => (int)$operation_id ));
 		// check origin server
-		if( !$is_server_origin && !$test_mode ) {
+		if( false && !$is_server_origin && !$test_mode ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Разрешены запросы только от сервера',

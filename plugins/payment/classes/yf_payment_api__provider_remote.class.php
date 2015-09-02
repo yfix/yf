@@ -489,8 +489,6 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
-		// start transaction
-		db()->begin();
 		// highest level of isolation
 		$result = db()->query( 'SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE' );
 		if( !$result ) {
@@ -516,6 +514,15 @@ class yf_payment_api__provider_remote {
 			));
 			return( $result );
 		}
+		// start transaction
+		db()->begin();
+		// lock operation id
+		$sql_datetime = $payment_api->sql_datetime();
+		$data = array(
+			'operation_id'    => $operation_id,
+			'datetime_update' => $sql_datetime,
+		);
+		$result = $payment_api->operation_update( $data );
 		// exists operation
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
@@ -592,9 +599,8 @@ class yf_payment_api__provider_remote {
 		}
 		list( $account_id, $account ) = $object;
 		// sql options
-		$sql_amount   = $payment_api->_number_mysql( $amount );
-		$sql_datetime = $payment_api->sql_datetime();
-		$balance      = null;
+		$sql_amount = $payment_api->_number_mysql( $amount );
+		$balance    = null;
 		// get current status_name
 		$current_status_id = (int)$operation[ 'status_id' ];
 		$object = $payment_api->get_status( array( 'status_id' => $current_status_id ) );
