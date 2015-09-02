@@ -489,7 +489,33 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
+		// start transaction
 		db()->begin();
+		// highest level of isolation
+		$result = db()->query( 'SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE' );
+		if( !$result ) {
+			db()->rollback();
+			$message = 'Ошибка установки уровня изоляции транзакции';
+			$result = array(
+				'status'         => false,
+				'status_message' => $message,
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			// mail admin
+			$tpl = $mail_tpl . '_error';
+			$payment_api->mail( array(
+				'subject'  => 'Ошибка платежа (id: '. $operation_id . ')',
+				'tpl'      => $tpl,
+				'user_id'  => $account[ 'user_id' ],
+				'is_admin' => true,
+				'data'    => array(
+					'operation_id' => $operation_id,
+					'message'      => $message,
+				),
+			));
+			return( $result );
+		}
 		// exists operation
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
@@ -594,6 +620,7 @@ class yf_payment_api__provider_remote {
 			'is_try'              => $is_try,
 			'current_type_name'   => $current_type_name,
 			'current_status_name' => $current_status_name,
+			'datetime'            => $payment_api->sql_datetime(),
 		)));
 		// prepare
 		$is_manual  = null;
@@ -656,6 +683,8 @@ class yf_payment_api__provider_remote {
 							'status'         => false,
 							'status_message' => $message,
 						);
+						// DUMP
+						$payment_api->dump(array( 'var' => $result ));
 						// mail admin
 						$tpl = $mail_tpl . '_error';
 						$payment_api->mail( array(
