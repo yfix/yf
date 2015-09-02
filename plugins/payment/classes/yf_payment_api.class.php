@@ -237,6 +237,8 @@ class yf_payment_api {
 		// ),
 	// );
 
+	public $transaction = null;
+
 	public $DUMP_PATH = '/tmp';
 	public $dump = null;
 
@@ -1620,6 +1622,87 @@ class yf_payment_api {
 				),
 			));
 		}
+		return( $result );
+	}
+
+	// transaction
+	public function transaction_isolation( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$result    = null;
+		$new_level = null;
+		if( @$_level ) {
+			$level = strtoupper( $_level );
+			switch( $_level ) {
+				case 'READ UNCOMMITTED':
+				case 'READ COMMITTED':
+				case 'REPEATABLE READ':
+				case 'SERIALIZABLE':
+					$new_level = $level;
+					break;
+			}
+			if( $new_level ) {
+				$result = db()->query( 'SET SESSION TRANSACTION ISOLATION LEVEL '. $new_level );
+				return( $result );
+			}
+		}
+		// get currency level
+		$r = db()->get_2d( 'SHOW VARIABLES LIKE "tx_isolation"' );
+		@$r[ 'tx_isolation' ] && $result = str_replace( '-', ' ', $r[ 'tx_isolation' ] );
+		return( $result );
+	}
+
+	public function transaction_start( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$tx = &$this->transaction;
+		$result = null;
+		// save last transaction isolation level
+		if( ! @$tx[ 'level' ] ) {
+			$tx[ 'level' ] = $this->transaction_isolation();
+			// set highest level of isolation
+			$result = $this->transaction_isolation(array( 'level' => 'SERIALIZABLE' ));
+			$result &= db()->query( 'START TRANSACTION' );
+		}
+		return( $result );
+	}
+
+	public function transaction_finish( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$tx = &$this->transaction;
+		$result = null;
+		if( @$_state ) {
+			$state = strtoupper( $_state );
+			switch( $state ) {
+				case 'COMMIT':
+				case 'ROLLBACK':
+					break;
+				default:
+					$state = null;
+					break;
+			}
+		}
+		if( $state && @$tx[ 'level' ] ) {
+			$result = $this->transaction_isolation(array( 'level' => $tx[ 'level' ] ));
+			$result &= db()->query( $state );
+			$result && $tx[ 'level' ] = null;
+		}
+		return( $result );
+	}
+
+	public function transaction_commit( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$result = $this->transaction_finish(array( 'state' => 'COMMIT' ));
+		return( $result );
+	}
+
+	public function transaction_rollback( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$result = $this->transaction_finish(array( 'state' => 'ROLLBACK' ));
 		return( $result );
 	}
 
