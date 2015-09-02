@@ -318,7 +318,18 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$payment_api = $this->payment_api;
 		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
+		$is_server_origin = gethostbyaddr( $this->_ip() ) === 'robot.pm';
 		$result = null;
+		// check origin server
+		if( !$is_server_origin && !$test_mode ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Разрешены запросы только от сервера',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
 		// check operation
 		// $_operation_id = (int)$_GET[ 'operation_id' ];
 		$operation_id = (int)$_POST[ 'PAYMENT_ID' ];
@@ -353,7 +364,8 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$_signature = $this->signature( $response, false );
 		$is_signature_ok = $signature == $_signature;
 		// check status
-		$state = @$_GET[ 'status' ];
+		$state = null;
+		// $state = @$_GET[ 'status' ]; // disable user request
 		// server status always is success
 		if( $is_server && $is_signature_ok ) {
 			$state = 'success';
