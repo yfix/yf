@@ -489,10 +489,9 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
-		// highest level of isolation
-		$result = db()->query( 'SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE' );
+		// start transaction with row lock by operation_id
+		$result = $payment_api->transaction_start(array( 'operation_id' => $operation_id ));
 		if( !$result ) {
-			db()->rollback();
 			$message = 'Ошибка установки уровня изоляции транзакции';
 			$result = array(
 				'status'         => false,
@@ -514,15 +513,6 @@ class yf_payment_api__provider_remote {
 			));
 			return( $result );
 		}
-		// start transaction
-		db()->begin();
-		// lock operation id
-		$sql_datetime = $payment_api->sql_datetime();
-		$data = array(
-			'operation_id'    => $operation_id,
-			'datetime_update' => $sql_datetime,
-		);
-		$result = $payment_api->operation_update( $data );
 		// exists operation
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
@@ -683,7 +673,7 @@ class yf_payment_api__provider_remote {
 					);
 					$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
 					if( !$_result[ 'status' ] ) {
-						db()->rollback();
+						$payment_api->transaction_rollback();
 						$message = 'Ошибка при обновлении счета';
 						$result = array(
 							'status'         => false,
@@ -769,7 +759,7 @@ class yf_payment_api__provider_remote {
 				));
 				$result = $payment_api->operation_update( $data );
 				if( !$result[ 'status' ] ) {
-					db()->rollback();
+					$payment_api->transaction_rollback();
 					// mail admin
 					$tpl = $mail_tpl . '_error';
 					$message = 'Ошибка при обновлении операции';
@@ -786,7 +776,6 @@ class yf_payment_api__provider_remote {
 					return( $result );
 				}
 			}
-			// db()->commit();
 			@$_status_message && $status_message = $_status_message;
 			// event
 				// get updated account
@@ -819,7 +808,7 @@ class yf_payment_api__provider_remote {
 				$status_message .= ' ' . $payment_api->currency[ 'short' ];
 			}
 		}
-		db()->commit();
+		$payment_api->transaction_commit();
 		$result = array(
 			'status'         => true,
 			'status_message' => $status_message,

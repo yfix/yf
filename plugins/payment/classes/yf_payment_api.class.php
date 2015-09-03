@@ -1664,6 +1664,19 @@ class yf_payment_api {
 			// set highest level of isolation
 			$result = $this->transaction_isolation(array( 'level' => 'SERIALIZABLE' ));
 			$result &= db()->query( 'START TRANSACTION' );
+			// lock operation id
+			if( $result ) {
+				if( @(int)$_operation_id > 0 ) {
+					$sql_datetime = $this->sql_datetime();
+					$operation_id = (int)$_operation_id;
+					$data = array(
+						'operation_id'    => $operation_id,
+						'datetime_update' => $sql_datetime,
+					);
+					$r = $this->operation_update( $data );
+					$result &= @(bool)$r[ 'status' ];
+				}
+			}
 		}
 		return( $result );
 	}
@@ -1685,8 +1698,8 @@ class yf_payment_api {
 			}
 		}
 		if( $state && @$tx[ 'level' ] ) {
-			$result = $this->transaction_isolation(array( 'level' => $tx[ 'level' ] ));
-			$result &= db()->query( $state );
+			$result = db()->query( $state );
+			$result &= $this->transaction_isolation(array( 'level' => $tx[ 'level' ] ));
 			$result && $tx[ 'level' ] = null;
 		}
 		return( $result );
