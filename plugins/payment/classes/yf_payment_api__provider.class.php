@@ -56,17 +56,46 @@ class yf_payment_api__provider {
 		return( $result );
 	}
 
+	public function transfer( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$_options = array(
+			'options'  => &$options[ 'options' ],
+			'provider' => &$options[ 'provider' ],
+		);
+		// from
+		$options_from = $_options + array(
+			'data'           => &$options[ 'data' ][ 'from' ],
+			'operation_data' => &$options[ 'operation_data' ][ 'from' ],
+		);
+		$result_from = $this->_transaction( $options_from );
+		// to
+		$options_to = $_options + array(
+			'data'           => &$options[ 'data' ][ 'to' ],
+			'operation_data' => &$options[ 'operation_data' ][ 'to' ],
+		);
+		$result_to = $this->_transaction( $options_to );
+		$result = array(
+			'status'         => $result_from[ 'status' ] & $result_to[ 'status' ],
+			'status_message' => $result_from[ 'status_message' ],
+			'from'           => $result_from,
+			'to'             => $result_to,
+		);
+		return( $result );
+	}
+
 	protected function _transaction( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api    = $this->payment_api;
 		$_              = $options;
-		$data           = &$_[ 'data'           ];
 		$options        = &$_[ 'options'        ];
+		$provider       = &$_[ 'provider'       ];
+		$data           = &$_[ 'data'           ];
 		$operation_data = &$_[ 'operation_data' ];
-		$operation      = &$_[ 'operation'      ];
 		// prepare data
 		$operation_id = (int)$data[ 'operation_id' ];
 		$account_id   = (int)$data[ 'account_id'   ];
+		$type_name    = &$operation_data[ 'type' ][ 'name' ];
+		$direction    = &$data[ 'direction' ];
 		$amount       = $payment_api->_number_float( $data[ 'amount' ] );
 		// operation_id
 		if( empty( $operation_id ) ) {
@@ -79,11 +108,13 @@ class yf_payment_api__provider {
 		// update account balance
 		$sql_datetime = $payment_api->sql_datetime();
 		$sql_amount   = $payment_api->_number_mysql( $amount );
-		switch( $operation_data[ 'type' ][ 'name' ] ) {
-			case 'payment':
+		switch( true ) {
+			case $type_name == 'payment':
+			case $type_name == 'transfer' && $direction == 'out':
 				$sql_sign = '-';
 				break;
-			case 'deposition':
+			case $type_name == 'deposition':
+			case $type_name == 'transfer' && $direction == 'in':
 			default:
 				$sql_sign = '+';
 				break;

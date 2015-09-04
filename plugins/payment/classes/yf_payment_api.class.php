@@ -905,8 +905,6 @@ class yf_payment_api {
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
-		// $provider_title = $operation_data[ 'provider' ][ 'title' ];
-		// $title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
 		$title = $_[ 'operation_title' ];
 		$data += array(
 			'direction' => 'in',
@@ -926,9 +924,9 @@ class yf_payment_api {
 		// try provider operation
 		$provider_class = 'provider_' . $operation_data[ 'provider' ][ 'name' ];
 		$result = $this->_class( $provider_class, __FUNCTION__, array(
+			'options'        => $options,
 			'provider'       => $operation_data[ 'provider' ],
 			'data'           => $data,
-			'options'        => $options,
 			'operation_data' => $operation_data,
 		));
 		$result[ 'operation_id' ] = $operation_id;
@@ -963,8 +961,6 @@ class yf_payment_api {
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
-		// $provider_title = $operation_data[ 'provider' ][ 'title' ];
-		// $title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
 		$title = $_[ 'operation_title' ];
 		$data += array(
 			'direction' => 'out',
@@ -989,12 +985,120 @@ class yf_payment_api {
 		// try provider operation
 		$provider_class = 'provider_' . $operation_data[ 'provider' ][ 'name' ];
 		$result = $this->_class( $provider_class, __FUNCTION__, array(
+			'options'        => $options,
 			'provider'       => $operation_data[ 'provider' ],
 			'data'           => $data,
-			'options'        => $options,
 			'operation_data' => $operation_data,
 		));
 		$result[ 'operation_id' ] = $operation_id;
+		return( $result );
+	}
+
+	/*
+		example:
+			$payment_api = _class( 'payment_api' );
+			$options = array(
+				'user_id'         => $user_id,
+				'amount'          => '10',
+				'operation_title' => 'Перевод',
+			);
+			$result = $payment_api->transfer_system( $options );
+	 */
+	public function transfer_system( $options = null ) {
+		$options[ 'provider_name' ] = 'system';
+		$result = $this->transfer( $options );
+		return( $result );
+	}
+	public function transfer_user( $options = null ) {
+		$options[ 'user_mode' ] = true;
+		$result = $this->transfer( $options );
+		return( $result );
+	}
+	public function transfer( $options = null ) {
+		$_ = &$options;
+		// check: from, to
+		if( !@$_[ 'from' ] || !@$_[ 'to' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Недостаточно данных',
+			);
+			return( $result );
+		}
+		// prepare
+		$_[ 'type_name' ] = __FUNCTION__;
+		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Перевод';
+		$data = $_; unset( $data[ 'from' ], $data[ 'to' ] );
+		// prepare operation
+		$options_from = $data; $options_from[ 'user_id' ] = &$_[ 'from' ][ 'user_id' ]; $options_from[ 'direction' ] = 'out';
+		$options_to   = $data; $options_to[   'user_id' ] = &$_[ 'to'   ][ 'user_id' ]; $options_to[   'direction' ] = 'in';
+		// prepare to operation
+		$result = $this->_operation_check( $options_from );
+		list( $status, $data_from, $operation_data_from ) = $result;
+		if( empty( $status ) ) { return( $result ); }
+		$result = $this->_operation_check( $options_to );
+		list( $status, $data_to, $operation_data_to ) = $result;
+		if( empty( $status ) ) { return( $result ); }
+		// check currency
+		$currency_id_from = &$operation_data_from[ 'account' ][ 'currency_id' ];
+		$currency_id_to   = &$operation_data_to[   'account' ][ 'currency_id' ];
+		if( $currency_id_from != $currency_id_to ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка: валюты должны, быть одинаковые',
+			);
+			return( $result );
+		}
+		// update payment operation
+		$title = $_[ 'operation_title' ];
+		$data_from += array(
+			'direction' => 'out',
+			'title'     => $title,
+		);
+		$data_to += array(
+			'direction' => 'in',
+			'title'     => $title,
+		);
+		// create operation
+		db()->begin();
+		$status_from = db()->table( 'payment_operation' )->insert( $data_from );
+		$status_to   = db()->table( 'payment_operation' )->insert( $data_to   );
+		if( !@$status_from || !@$status_to ) {
+			db()->rollback();
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при создании операции',
+			);
+			return( $result );
+		}
+		db()->commit();
+		// get operation_id
+		$operation_id_from = (int)$status_from;
+		$data_from[ 'operation_id' ] = $operation_id_from;
+		$operation_id_to = (int)$status_to;
+		$data_to[ 'operation_id' ] = $operation_id_to;
+		// try provider operation
+		$object = $this->provider_class( $options );
+		if( empty( $object ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестный класс провайдера',
+			);
+			return( $result );
+		}
+		$result = $object->{ __FUNCTION__ }( array(
+			'options'        => $options,
+			'provider'       => $operation_data_from[ 'provider' ],
+			'data'           => array(
+				'from' => $data_from,
+				'to'   => $data_to,
+			),
+			'operation_data' => array(
+				'from' => $operation_data_from,
+				'to'   => $operation_data_to,
+			),
+		));
+		$result[ 'operation_id_from' ] = $operation_id_from;
+		$result[ 'operation_id_to' ]   = $operation_id_to;
 		return( $result );
 	}
 
@@ -1191,6 +1295,17 @@ class yf_payment_api {
 			return( $result );
 		}
 		$data[ 'user_id' ] = $value;
+		// check direction
+		$direction = null;
+		switch( @$_[ 'direction' ] ) {
+			case 'in':
+				$direction = 'in';
+				break;
+			case 'out':
+				$direction = 'out';
+				break;
+		}
+		$direction && $data[ 'direction' ] = $direction;
 		// check type
 		$object = array();
 		if( !empty( $_[ 'type_name' ] ) ) {
@@ -1250,7 +1365,9 @@ class yf_payment_api {
 			0,
 		));
 		$balance_limit_lower = $this->_number_float( $balance_limit_lower );
-		if( $type[ 'name' ] == 'payment' && $_[ 'is_balance_limit_lower' ] && ( $balance - $amount < $balance_limit_lower ) ) {
+		if( ( $type[ 'name' ] == 'payment' && $_[ 'is_balance_limit_lower' ] && ( $balance - $amount < $balance_limit_lower ) )
+			|| ( $type[ 'name' ] == 'transfer' && $direction === 'out' && $_[ 'is_balance_limit_lower' ] && ( $balance - $amount < $balance_limit_lower ) )
+			) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Недостаточно средств на счету',

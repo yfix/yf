@@ -1,6 +1,6 @@
 <?php
 
-class yf_manage_payout {
+class yf_manage_transfer {
 
 	public $IS_PAYOUT_INTERKASSA = null;
 
@@ -33,6 +33,30 @@ class yf_manage_payout {
 		$filter      = $_SESSION[ $filter_name ];
 		// url
 		$url = array(
+			'create' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'create',
+			)),
+			'list' => url_admin( array(
+				'object'       => $object,
+			)),
+			'view' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'view',
+				'operation_id' => '%operation_id',
+			)),
+			'balance' => url_admin( array(
+				'object'     => 'manage_payment',
+				'action'     => 'balance',
+				'user_id'    => '%user_id',
+				'account_id' => '%account_id',
+			)),
+			'user' => url_admin( array(
+				'object' => 'members',
+				'action' => 'edit',
+				'id'     => '%user_id',
+			)),
+
 			'request' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'request',
@@ -79,25 +103,6 @@ class yf_manage_payout {
 				'object'       => $object,
 				'action'       => 'csv_request',
 				'operation_id' => '%operation_id',
-			)),
-			'list' => url_admin( array(
-				'object'       => $object,
-			)),
-			'view' => url_admin( array(
-				'object'       => $object,
-				'action'       => 'view',
-				'operation_id' => '%operation_id',
-			)),
-			'balance' => url_admin( array(
-				'object'     => 'manage_payment',
-				'action'     => 'balance',
-				'user_id'    => '%user_id',
-				'account_id' => '%account_id',
-			)),
-			'user' => url_admin( array(
-				'object' => 'members',
-				'action' => 'edit',
-				'id'     => '%user_id',
 			)),
 		);
 	}
@@ -225,11 +230,23 @@ class yf_manage_payout {
 			);
 			return( $this->_user_message( $result ) );
 		}
+		// payment type
+		$payment_type = $payment_api->get_type();
+		$name = 'transfer';
+		$item = $payment_api->get_type( array( 'name' => $name) );
+		list( $payment_type_transfer_id, $payment_type_transfer ) = $item;
+		if( empty( $payment_type_transfer_id ) ) {
+			$result = array(
+				'status_message' => 'Тип платежей не найден: ' . $name,
+			);
+			return( $this->_user_message( $result ) );
+		}
 		// prepare sql
 		$db = db()->select(
 			'o.operation_id',
 			'o.account_id',
 			'o.provider_id',
+			'o.direction',
 			'o.options',
 			'a.user_id',
 			'u.name as user_name',
@@ -244,9 +261,10 @@ class yf_manage_payout {
 				->left_join( 'payment_provider as p', 'p.provider_id = o.provider_id' )
 				->left_join( 'payment_account  as a', 'a.account_id  = o.account_id'   )
 				->left_join( 'user as u'            , 'u.id = a.user_id'              )
-			->where( 'p.system', 'in', 0 )
+			->where( 'o.type_id', $payment_type_transfer_id )
 			->where( 'p.active', '>=', 1 )
-			->where( 'o.direction', 'out' )
+			// ->where( 'p.system', 'in', 0 )
+			// ->where( 'o.direction', 'out' )
 		;
 		$sql = $db->sql();
 		return( table( $sql, array(
@@ -275,27 +293,19 @@ class yf_manage_payout {
 			))
 			->text( 'operation_id'  , 'операция' )
 			->text( 'provider_title', 'провайдер' )
-			->func( 'options', function( $value, $extra, $row ) use( $providers ) {
-				if( empty( $row[ 'options' ] ) ) { return( null ); }
-				// options
-				$options = @json_decode( $row[ 'options' ], true );
-				if( empty( $options ) ) { return( null ); }
-				// request
-				is_array( $options[ 'request' ] ) && $request = @reset( $options[ 'request' ] );
-				if( empty( $request ) ) { return( null ); }
-				// method
-				$provider_id = @$request[ 'options' ][ 'provider_id' ];
-				if( empty( $provider_id ) ) { return( null ); }
-				$method_id   = @$request[ 'options' ][ 'method_id' ];
-				if( empty( $method_id ) ) { return( null ); }
-				$method = @$providers[ $provider_id ][ '_method_allow' ][ 'payout' ][ $method_id ];
-				if( empty( $method ) ) { return( null ); }
-				$method_title = @$method[ 'title' ];
-				if( empty( $method_title ) ) { return( null ); }
-				$result = $method_title;
-				return( $result );
-			}, array( 'desc' => 'метод' ) )
 			->text( 'amount'        , 'сумма' )
+			->func( 'direction', function( $value, $extra, $row ) {
+				switch( $value ) {
+					case 'in':
+						$css = 'fa fa-long-arrow-right text-success';
+						break;
+					case 'out':
+						$css = 'fa fa-long-arrow-left text-danger';
+						break;
+				}
+				$result = sprintf( '<i class="%s"></i>', $css );
+				return( $result );
+			}, array( 'desc' => 'направление', 'align' => 'center' ) )
 			->text( 'balance'       , 'баланс' )
 			->func( 'user_name', function( $value, $extra, $row ) {
 				$result = a('/members/edit/'.$row[ 'user_id' ], $value . ' (id: ' . $row[ 'user_id' ] . ')');
@@ -311,105 +321,54 @@ class yf_manage_payout {
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
-			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
-			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
-			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
+			->btn( 'Перевод', $url[ 'view' ], array( 'icon' => 'fa fa-mail-forward', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
+			->header_link( 'Перевод', $url[ 'create' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ) )
+			->footer_link( 'Перевод', $url[ 'create' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ) )
 		);
 	}
 
-	function csv_request( $options = null ) {
-		// check operation
-		$operation = $this->_operation();
-		// import options
-		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $operation ); }
-		// var
-		$payment_api = &$this->payment_api;
-		// prepare view: request options
-		$content = array();
-		foreach( $_method[ 'option' ] as $key => $title ) {
-			if( !empty( $_request[ 'options' ][ $key ] ) ) {
-				$content[ $title ] = $_request[ 'options' ][ $key ];
-			}
-		}
-		// prepare data
-		$data = array();
-		$data[] = array_keys( $content );
-		$data[] = array_values( $content );
-		$file_name = 'operation_'. $_operation_id .'__'. date( 'Y-m-d_H-i-s' ) .'.csv';
-		// output
-		$result = $this->_http_csv( array(
-			'file_name' => $file_name,
-			'data'      => $data,
-			// 'debug'     => true,
-		));
-		$result[ 'operation_id' ] = $_operation_id;
-		return( $this->_user_message( $result ) );
-	}
-
-	function _save_csv( $file_name, $data = null ) {
-		// setlocale( LC_ALL, 'ru_RU.utf8' )
-			// || setlocale( LC_ALL, 'ru_UA.utf8' )
-			// || setlocale( LC_ALL, 'en_US.utf8' );
-		if( is_array( $data ) && ( $file = fopen( $file_name, 'w' ) ) !== FALSE ) {
-			foreach( $data as $id => $item ) {
-				if( !is_array( $item ) ) {
-					fclose( $file );
-					$result = array(
-						'status'         => false,
-						'status_header'  => 'Экспорт в CSV',
-						'status_message' => 'Требуется массив, неверные данные: '. $item,
-					);
-					return( $result );
+	function create() {
+		$replace = array();
+		$_this = $this;
+		$result = form( $replace, array( 'autocomplete' => 'off' ) )
+			->validate(array(
+				'from[user_id]' => 'trim|required|numeric|greater_than[0]|exists[user.id]',
+				'to[user_id]'   => 'trim|required|numeric|greater_than[0]|exists[user.id]',
+				'amount'        => 'trim|required|numeric|greater_than[0]',
+			))
+			->on_validate_ok( function( $data, $extra, $rules ) use( &$_this ) {
+				$result = $this->_transfer( $_POST );
+				// message
+				if( @$result[ 'status' ] ) {
+					$message_type = 'message_success';
+					$message = @$result[ 'status_message' ] ?: 'Операция выполнена';
+				} else {
+					$message_type = 'message_error';
+					$message = 'Операция не выполнена';
 				}
-				$_data = array_values( $item );
-				$result = fputcsv( $file, $_data, ';', '"' );
-				if( false === $result ) {
-					fclose( $file );
-					$result = array(
-						'status'         => false,
-						'status_header'  => 'Экспорт в CSV',
-						'status_message' => 'Ошибка при конвертацию данных: '. $_data,
-					);
-					return( $result );
-				}
-			}
-			fclose( $file );
-			$result = array(
-				'status' => true,
-			);
-		} else {
-			$result = array(
-				'status'         => false,
-				'status_header'  => 'Экспорт в CSV',
-				'status_message' => 'Ошибка при открытие потока данных',
-			);
-		}
+				common()->$message_type( $message, array( 'translate' => false ) );
+				// redirect
+				$url = $_this->_url( 'list' );
+				$is_continue && $url = $_this->_url( 'create' );
+				return( js_redirect( $url, false, $_operation ) );
+			})
+			->text( 'from[user_id]'  , 'От пользователя' )
+			->text( 'to[user_id]'    , 'К пользователю'  )
+			->text( 'amount'         , 'Сумма'           )
+			->text( 'operation_title', 'Название'        )
+			->row_start(array( 'desc' => 'Операция' ))
+				->submit( 'operation', 'transfer', array( 'desc' => 'Перечислить' ) )
+				->submit( 'operation', 'transfer_and_continue', array( 'desc' => 'Перечислить и продолжить' ) )
+			->row_end()
+		;
 		return( $result );
 	}
 
-	function _http_csv( $options = null ) {
-		// import options
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( !is_array( $_data ) || empty( $_file_name ) ) {
-			$result = array(
-				'status'         => false,
-				'status_header'  => 'Экспорт в CSV',
-				'status_message' => 'Нет данных',
-			);
-			return( $result );
-		}
-		// start
-		ob_start();
-		$result = $this->_save_csv( 'php://output', $_data );
-		$csv = ob_get_clean();
-		if( empty( $result[ 'status' ] ) ) { return( $result ); }
-		if( !empty( $_debug ) ) { return( $csv ); }
-		header( 'Content-type: text/csv' );
-		header( 'Content-disposition: attachment; filename='. $_file_name );
-		echo $csv;
-		exit;
+	function _transfer( $options = null ) {
+		$payment_api = _class( 'payment_api' );
+		$options[ 'provider_name' ] = 'administration';
+		$result = $payment_api->transfer( $options );
+		return( $result );
 	}
 
 	function _operation( $options = null ) {
@@ -866,482 +825,6 @@ class yf_manage_payout {
 </div>
 EOS;
 		return( $result );
-	}
-
-	function request() {
-		// start
-		db()->begin();
-		// check operation
-		$operation = $this->_operation();
-		// import options
-		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $operation ); }
-		// is_processing
-		if( @$_is_processing ) {
-			$result = array(
-				'status_message' => 'Операция уже обрабатывается',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		// is_progressed
-		if( !@$_is_progressed ) {
-			$result = array(
-				'status_message' => 'Операция не может быть обработана, так как изменился статус',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		// var
-		$payment_api = &$this->payment_api;
-		$data = $_request[ 'options' ] + array(
-			'operation_id' => $_operation_id,
-		);
-		$result = $_provider_class->api_payout( $data );
-		$result[ 'operation_id' ] = $_operation_id;
-		if( @$result[ 'status' ] == 'success' ) {
-			// processing
-			$_provider_class->_update_status( array(
-				'operation_id' => $_operation_id,
-				'name'         => 'processing',
-			));
-		}
-		// finish
-		db()->commit();
-		return( $this->_user_message( $result ) );
-	}
-
-	function request_interkassa() {
-		// start
-		db()->begin();
-		// check operation
-		$operation = $this->_operation();
-		// import options
-		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $operation ); }
-		// is_processing
-		if( @$_is_processing ) {
-			$result = array(
-				'status_message' => 'Операция уже обрабатывается',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		// is_progressed
-		if( !@$_is_progressed ) {
-			$result = array(
-				'status_message' => 'Операция не может быть обработана, так как изменился статус',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		// var
-		$payment_api = &$this->payment_api;
-		$data = $_request[ 'options' ] + array(
-			'operation_id' => $_operation_id,
-		);
-		// provider
-		$provider_class = $payment_api->provider_class( array(
-			'provider_name' => 'interkassa',
-		));
-		if( empty( $provider_class ) ) {
-			$result = array(
-				'status_message' => 'Провайдер Интеркасса не доступен',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		// detect card type
-		$card = @$data[ 'card' ];
-		$result = $this->interkassa_detect_card( array(
-			'card' => $card,
-		));
-		@list( $method_id, $method ) = $result;
-		if( empty( $method_id ) ) { return( $this->_user_message( $result ) ); }
-		$data[ 'method_id'      ] = $method_id;
-		$data[ 'provider_force' ] = true;
-		// result
-		$result = $provider_class->api_payout( $data );
-		// finish
-		db()->commit();
-		return( $this->_user_message( $result ) );
-	}
-
-	function interkassa_detect_card( $options = null ) {
-		// import options
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_card ) ) {
-			$result = array(
-				'status_message' => 'Не задан номер карты',
-			);
-			return( $result );
-		}
-		// var
-		$payment_api = &$this->payment_api;
-		$provider_class = $payment_api->provider_class( array(
-			'provider_name' => 'interkassa',
-		));
-		if( empty( $provider_class ) ) {
-			$result = array(
-				'status_message' => 'Провайдер Интеркасса не доступен',
-			);
-			return( $result );
-		}
-		// find by card
-		$validate = _class( 'validate' );
-		$methods = &$provider_class->method_allow[ 'payout' ];
-		$is_method_id = null;
-		foreach( $methods as $method_id => $method ) {
-			$rules = &$method[ 'option_validation' ][ 'card' ];
-			if( empty( $rules ) ) { continue; }
-			$result = $validate->_input_is_valid( $_card, $rules );
-			if( $result ) { $is_method_id = $method_id; break; }
-		}
-		if( empty( $is_method_id ) ) {
-			$result = array(
-				'status_message' => 'Карта не опознана: '. $_card,
-			);
-		} else {
-			$result = array( $method_id, $method );
-		}
-		return( $result );
-	}
-
-	function status_interkassa( $options = null ) {
-		// import operation
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// provider interkassa
-		$payment_api = &$this->payment_api;
-		$provider_name = 'interkassa';
-		$provider_class = $payment_api->provider_class( array(
-			'provider_name' => $provider_name,
-		));
-		if( empty( $provider_class ) ) {
-			$result = array(
-				'status_message' => 'Провайдер Интеркасса не доступен',
-			);
-			return( $result );
-		}
-		// result
-		$result = array(
-			'operation_id'   => &$_operation_id,
-			'status'         => &$status_name,
-			'status_message' => &$status_message,
-		);
-		// state
-		list( $status_name, $status_message ) = $provider_class->_state( $_state
-			, $provider_class->_payout_status
-			, $provider_class->_payout_status_message
-		);
-		$status_message = @$status_message ?: @$data[ 'stateName' ];
-		// transaction compile
-		if( @$result[ 'status' ] == 'success' || @$result[ 'status' ] == 'refused' ) {
-			// save response
-			$sql_datetime = $payment_api->sql_datetime();
-			$operation_options = array(
-				'response' => array( array(
-					'datetime'       => $sql_datetime,
-					'provider_name'  => $provider_name,
-					'state'          => $_state,
-					'status_name'    => $status_name,
-					'status_message' => $status_message,
-					'data'           => $_data,
-				)),
-			);
-			$operation_update_data = array(
-				'operation_id'    => $_operation_id,
-				'datetime_update' => $sql_datetime,
-				'options'         => $operation_options,
-			);
-			$payment_api->operation_update( $operation_update_data );
-			// update status
-			return( $this->_status( $result ) );
-		}
-		return( $result );
-	}
-
-	function _check_interkassa( $options = null ) {
-		// check operation
-		$operation = $this->_operation( $options );
-		// import options
-		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( ! @$_is_valid ) { return( $operation ); }
-		if( !$_is_processing_interkassa ) {
-			$result = array(
-				'status_message' => 'Данная операция не обрабатывается Интеркассой',
-			);
-			return( $result );
-		}
-		// var
-		$payment_api = &$this->payment_api;
-		// response
-		$response = @end( $_response );
-		if( empty( $response ) ) {
-			$result = array(
-				'status_message' => 'Транзакция не найдена',
-			);
-			return( $result );
-		}
-		$id = &$response[ 'data' ][ 'id' ];
-		if( !@$id || $id < 1 ) {
-			$result = array(
-				'status_message' => 'Номер транзакции не найдена',
-			);
-			return( $result );
-		}
-		// provider interkassa
-		$provider_class = $payment_api->provider_class( array(
-			'provider_name' => 'interkassa',
-		));
-		if( empty( $provider_class ) ) {
-			$result = array(
-				'status_message' => 'Провайдер Интеркасса не доступен',
-			);
-			return( $result );
-		}
-		// check transaction
-		$request_option = array(
-			'method_id' => 'withdraw-id',
-			'id'        => $id,
-		);
-		list( $status, $result ) = $provider_class->api_request( $request_option );
-		if( empty( $status ) ) {
-			$result = array(
-				'status_message' => 'Невозможно выполнить проверку транзакции',
-			);
-			return( $result );
-		}
-		// check status
-		$data = @$result[ 'data' ];
-		// check status
-		$state = (int)$data[ 'state' ];
-		$result = $this->status_interkassa( array(
-			'operation_id' => $_operation_id,
-			'state'        => $state,
-			'data'         => $data
-		));
-		return( $result );
-	}
-
-	function check_interkassa() {
-		$result = $this->_check_interkassa();
-		return( $this->_user_message( $result ) );
-	}
-
-	function _status( $options = null ) {
-		// check operation
-		$operation = $this->_operation( $options );
-		// import options
-		is_array( $options   ) && extract( $options,   EXTR_PREFIX_ALL | EXTR_REFS, '_' );
-		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, ''  );
-		if( empty( $_is_valid ) ) { return( $operation ); }
-		$status = $_GET[ 'status' ] ?: $__status;
-		switch( $status ) {
-			case 'success':
-				$result = $_provider_class->_payout_success( array(
-					'operation_id' => $_operation_id,
-				));
-				$mail_tpl = 'payout_success';
-				break;
-			case 'refused':
-				$result = $_provider_class->_payout_refused( array(
-					'operation_id' => $_operation_id,
-				));
-				$mail_tpl = 'payout_refused';
-				break;
-			case 'processing':
-				$result = $_provider_class->_payout_processing( array(
-					'operation_id' => $_operation_id,
-				));
-				break;
-		}
-		if( empty( $result[ 'status' ] ) ) {
-			$result[ 'operation_id' ] = $_operation_id;
-			return( $result );
-		}
-		// mail
-		$payment_api = &$this->payment_api;
-		@$mail_tpl && $payment_api->mail( array(
-			'tpl'     => $mail_tpl,
-			'user_id' => $_user_id,
-			'admin'   => true,
-			'data'    => array(
-				'operation_id' => $_operation_id,
-				'amount'       => $_operation[ 'amount' ],
-			),
-		));
-		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
-		if( !empty( $__status_message ) ) { return( $options ); }
-		return( js_redirect( $url_view, false ) );
-	}
-
-	function status( $options = null ) {
-		$result = $this->_status( $options );
-		return( $this->_user_message( $result ) );
-	}
-
-	function _array2csv(array &$array, $delim = ';') {
-		if (count($array) == 0) {
-			return null;
-		}
-		ob_start();
-		$df = fopen('php://output', 'w');
-		fputcsv($df, array_keys(reset($array)));
-		foreach ($array as $row) {
-			fputcsv($df, $row, $delim);
-		}
-		fclose($df);
-		return ob_get_clean();
-	}
-
-	/**
-	* https://cliff.ecommpay.com/download/%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F%20%D0%BF%D0%BE%20%D0%B2%D1%8B%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%D0%BC%20%D1%87%D0%B5%D1%80%D0%B5%D0%B7%20%D1%84%D0%B0%D0%B9%D0%BB.pdf
-	*/
-	function csv() {
-		// class
-		$payment_api    = &$this->payment_api;
-		$provider_class = $payment_api->provider_class( array(
-			'provider_name' => 'ecommpay',
-		));
-		// var
-		$operation_id = intval($_GET['operation_id']);
-		$info = db()->from('payment_operation')->where('operation_id', $operation_id)->get();
-		if (!$info) {
-			return _404();
-		}
-		$info['options'] = json_decode($info['options'], true);
-		$options = $info['options']['request'][0]['options'];
-		$opt_data = $info['options']['request'][0]['data'];
-		$data = array();
-		$data['payment_group_id']	= 1; // Bank cards
-		$data['site_id']			= $provider_class->key(); // EcommPay site id
-		$data['external_id']		= $operation_id;
-		$data['comment']			= 'Payments out request. Date: '.date('Y-m-d_H-i-s').' OID: '.$operation_id;
-		$data['phone']				= preg_replace('~[^0-9]~ims', '', $options['sender_phone']);
-		$data['customer_purse']		= $options['card'];
-#		$data['transaction_id'] = ''; // [обязательный, если customer_purse не используется; пустой, если используется customer_purse]
-			// Номер транзакции в Клиентском интерфейсе, по которой ранее был осуществлен прием средств.
-			// Обычно используется для выплат на банковские карты при отсутствии сертификата PCI DSS.
-		// Валюта, в которой была указана сумма платежа. Если валюта запроса не соответствует валюте счета, с которого будет осуществлен платеж,
-		// то система автоматически осуществит пересчет суммы по курсу ЦБ РФ.
-#		$data['amount']				= intval($opt_data['amount'] * 100);
-#		$data['currency']			= $opt_data['currency_id'];
-		$data['amount']				= intval($options['amount'] * 100);
-		$data['currency']			= 'USD';
-		$data = array($data);
-		$csv = $this->_array2csv($data);
-		// Ecommpay wants ";" everywhere
-		$csv = explode(PHP_EOL, $csv);
-		$csv[0] = str_replace(',', ';', $csv[0]);
-		$csv = trim(implode(PHP_EOL, $csv));
-		no_graphics(true);
-		if (DEBUG_MODE) {
-			echo '<pre>'; print_r($csv); print_r($opt); print_r($info); print_r($data);
-		} else {
-			header('Content-disposition: attachment; filename=Ecommpay_out_'.intval($operation_id).'_'.date('Ymd_His').'.csv');
-			header('Content-type: text/csv');
-			echo $csv;
-		}
-		exit;
-	}
-
-	function _check_all_interkassa() {
-		// var
-		$html        = _class( 'html' );
-		$payment_api = &$this->payment_api;
-		// update status only processing
-		$object = $payment_api->get_status( array( 'name' => 'processing' ) );
-		list( $status_id, $status ) = $object;
-		if( empty( $status_id ) ) { return( $object ); }
-		// provider
-		$providers_user = $payment_api->provider();
-		$providers_id = implode( ',', array_keys( $providers_user ) );
-		// fetch operations
-		$db = db()->table( 'payment_operation' )
-			->where( 'provider_id', 'in', $providers_id )
-			->where( 'status_id', '=', $status_id )
-			->where( 'direction', '=', 'out' )
-		;
-// DEBUG
-// var_dump( $db->sql() ); exit;
-		$operations = $db->get_all();
-// DEBUG
-// var_dump( $operations ); exit;
-		if( empty( $operations ) ) { return( $operations ); }
-		// check operations
-		$result = array();
-		foreach( $operations as $item ) {
-			$operation_id = $item[ 'operation_id' ];
-			$r = $this->_check_interkassa( array(
-				'operation_id' => $operation_id,
-			));
-			$result[ $operation_id ] = $r;
-			sleep( 5 );
-		}
-		return( $result );
-	}
-
-	function check_all_interkassa( $options = null ) {
-		// command line interface
-		$is_cli = ( php_sapi_name() == 'cli' );
-		$is_cli && $this->_check_all_interkassa_cli();
-		// web
-		$replace = array(
-			'is_confirm' => false,
-		);
-		$html_result = '';
-		$result = form( $replace )
-			->on_post( function( $data, $extra, $rules ) use( &$html_result ) {
-				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
-				if( $is_confirm ) {
-					$result = $this->_check_all_interkassa();
-					if( empty( $result ) ) {
-						$level = 'warning';
-						$message = 'Нет операций для обработки';
-					} else {
-						$level = 'success';
-						$message = 'Выполнено, обновление статусов операций Интеркассы';
-						// prepare result html
-						$content = array();
-						$html = _class( 'html' );
-						foreach( $result as $operation_id => $item ) {
-							$link = $html->a( array(
-								'href'      => $this->_url( 'view', array( '%operation_id' => $operation_id ) ),
-								'class_add' => 'btn-primary',
-								'target'    => '_blank',
-								'icon'      => 'fa fa-sign-out',
-								'title'     => 'Вывод средств №'. $operation_id,
-								'text'      => 'Вывод средств №'. $operation_id,
-							));
-							$content[ $link ] = $item[ 'status_message' ];
-						}
-						$html_result = $html->simple_table( $content, array( 'no_total' => true ) );
-					}
-					common()->add_message( $message, $level );
-				} else {
-					common()->message_info( 'Требуется подтверждение, для выполнения операции' );
-				}
-			})
-			->check_box( 'is_confirm', array( 'desc' => 'Подтверждение', 'no_label' => true ) )
-			->row_start()
-				->submit( 'operation', 'update', array( 'desc' => 'Обновить статусы операций Интеркассы', 'icon' => 'fa fa-refresh' ) )
-				->link( 'Назад' , $this->_url( 'list' ), array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
-			->row_end()
-		;
-		return( $result . $html_result );
-	}
-
-	function _check_all_interkassa_cli( $options = null ) {
-		$result = $this->_check_all_interkassa();
-		if( empty( $result ) ) {
-			$status = -1;
-			$message = 'no operations';
-		} else {
-			$status = 0;
-			$content = array();
-			foreach( $result as $operation_id => $item ) {
-				$content[] = $operation_id .' - '. ( @$item[ 'status' ] ?: 'fail' );
-			;
-			$message = implode( "\n", $content );
-			}
-		}
-		echo( $message . PHP_EOL );
-		exit( $status );
 	}
 
 }
