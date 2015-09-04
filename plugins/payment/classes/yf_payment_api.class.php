@@ -1029,8 +1029,8 @@ class yf_payment_api {
 		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Перевод';
 		$data = $_; unset( $data[ 'from' ], $data[ 'to' ] );
 		// prepare operation
-		$options_from = $data; $options_from[ 'user_id' ] = &$_[ 'from' ][ 'user_id' ]; $options_from[ 'direction' ] = 'out';
-		$options_to   = $data; $options_to[   'user_id' ] = &$_[ 'to'   ][ 'user_id' ]; $options_to[   'direction' ] = 'in';
+		$options_from = $data; $options_from[ 'user_id' ] = (int)$_[ 'from' ][ 'user_id' ]; $options_from[ 'direction' ] = 'out';
+		$options_to   = $data; $options_to[   'user_id' ] = (int)$_[ 'to'   ][ 'user_id' ]; $options_to[   'direction' ] = 'in';
 		// prepare to operation
 		$result = $this->_operation_check( $options_from );
 		list( $status, $data_from, $operation_data_from ) = $result;
@@ -1070,12 +1070,12 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
-		db()->commit();
 		// get operation_id
 		$operation_id_from = (int)$status_from;
 		$data_from[ 'operation_id' ] = $operation_id_from;
 		$operation_id_to = (int)$status_to;
 		$data_to[ 'operation_id' ] = $operation_id_to;
+		db()->commit();
 		// try provider operation
 		$object = $this->provider_class( $options );
 		if( empty( $object ) ) {

@@ -2,8 +2,6 @@
 
 class yf_manage_transfer {
 
-	public $IS_PAYOUT_INTERKASSA = null;
-
 	protected $object      = null;
 	protected $action      = null;
 	protected $id          = null;
@@ -247,6 +245,7 @@ class yf_manage_transfer {
 			'o.account_id',
 			'o.provider_id',
 			'o.direction',
+			'o.title',
 			'o.options',
 			'a.user_id',
 			'u.name as user_name',
@@ -291,24 +290,46 @@ class yf_manage_transfer {
 					'__default_order'  => 'ORDER BY o.datetime_update DESC',
 				),
 			))
-			->text( 'operation_id'  , 'операция' )
+			->text( 'operation_id'  , 'операция'  )
 			->text( 'provider_title', 'провайдер' )
-			->text( 'amount'        , 'сумма' )
+			->text( 'title'         , 'название'  )
+			->text( 'amount'        , 'сумма'     )
+/*
 			->func( 'direction', function( $value, $extra, $row ) {
 				switch( $value ) {
 					case 'in':
-						$css = 'fa fa-long-arrow-right text-success';
+						$css = 'fa fa-long-arrow-up text-success';
 						break;
 					case 'out':
-						$css = 'fa fa-long-arrow-left text-danger';
+						$css = 'fa fa-long-arrow-down text-danger';
 						break;
 				}
 				$result = sprintf( '<div class="text-center"><i class="%s"></i></div>', $css );
 				return( $result );
-			}, array( 'desc' => 'направление', 'align' => 'center' ) )
+			}, array( 'desc' => 'направление' ) )
+ */
 			->text( 'balance'       , 'баланс' )
 			->func( 'user_name', function( $value, $extra, $row ) {
-				$result = a('/members/edit/'.$row[ 'user_id' ], $value . ' (id: ' . $row[ 'user_id' ] . ')');
+				$user = a('/members/edit/'.$row[ 'user_id' ], $value . ' (id: ' . $row[ 'user_id' ] . ')');
+				$direction = &$row[ 'direction' ];
+				$options = (array)json_decode( $row[ 'options' ], true );
+				switch( $direction ) {
+					case 'in':
+						$user_id  = $options[ 'from' ][ 'user_id' ];
+						$user_dir = '<i class="fa fa-long-arrow-left text-success"></i>';
+						break;
+					case 'out':
+						$user_id = $options[ 'to' ][ 'user_id' ];
+						$user_dir = '<i class="fa fa-long-arrow-right text-danger"></i>';
+						break;
+				}
+				// prepare user link to/from
+				$user2 = '';
+				if( $user_id ) {
+					$name = db()->table( 'user' )->select( 'name' )->where( 'id', $user_id )->get_one();
+					$user2 = a('/members/edit/'.$user_id, $name .'(id: ' . $user_id . ')');
+				}
+				$result = sprintf( '<div class="text-center">%s %s %s</div>', $user, $user_dir, $user2 );
 				return( $result );
 			}, array( 'desc' => 'пользователь' ) )
 			->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $payment_status ) {
@@ -321,7 +342,7 @@ class yf_manage_transfer {
 				return( $result );
 			}, array( 'desc' => 'статус' ) )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Перевод', $url[ 'view' ], array( 'icon' => 'fa fa-mail-forward', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
+			->btn( 'Просмотр', $url[ 'view' ], array( 'icon' => 'fa fa-eye', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
 			->header_link( 'Перевод', $url[ 'create' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ) )
 			->footer_link( 'Перевод', $url[ 'create' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ) )
 		);
@@ -420,7 +441,8 @@ class yf_manage_transfer {
 		$online_users = _class( 'online_users', null, null, true );
 		$user_is_online = $online_users->_is_online( $user_id );
 		// check provider
-		$providers_user = $payment_api->provider();
+		// $providers_user = $payment_api->provider();
+		$providers_user = $payment_api->provider(array( 'all' => true ));
 		$payment_api->provider_options( $providers_user, array(
 			'method_allow',
 		));
@@ -448,39 +470,6 @@ class yf_manage_transfer {
 			);
 			return( $this->_user_message( $result ) );
 		}
-		// check request
-		if(
-			empty( $o_options[ 'request' ] )
-			|| !is_array( $o_options[ 'request' ] )
-		) {
-			$result = array(
-				'status_message' => 'Параметры запроса отсутствует',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		$request = reset( $o_options[ 'request' ] );
-		// check method
-		if( empty( $request[ 'options' ][ 'method_id' ] ) ) {
-			$result = array(
-				'status_message' => 'Метод вывода средств отсутствует',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		$method_id = $request[ 'options' ][ 'method_id' ];
-		$method    = $provider_class->api_method( array(
-			'type'      => 'payout',
-			'method_id' => $method_id,
-		));
-		// detect card
-		$card = @$request[ 'options' ][ 'card' ];
-		$result = $this->interkassa_detect_card( array(
-			'card' => $card,
-		));
-		@list( $card_method_id, $card_method ) = $result;
-		$html_card_title = null;
-		if( $card_method_id ) {
-			$html_card_title = $card_method[ 'title' ];
-		}
 		// check operation status
 		$statuses = $payment_api->get_status();
 		if( empty( $statuses[ $o_status_id ] ) ) {
@@ -501,7 +490,6 @@ class yf_manage_transfer {
 		$is_progressed = $o_status[ 'name' ] == 'in_progress';
 		$is_processing = $o_status[ 'name' ] == 'processing';
 		$is_finish     = !( $is_progressed || $is_processing );
-		$is_payout_interkassa = (bool)$this->IS_PAYOUT_INTERKASSA && $card_method_id;
 		// processing
 		$processing = array();
 		$is_processing_self = false;
@@ -520,16 +508,7 @@ class yf_manage_transfer {
 			}
 		}
 		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $html_status_title );
-		$is_processing_interkassa     = $is_processing && $processing[ 'provider_name' ] == 'interkassa';
 		$is_processing_administration = $is_processing && $processing[ 'provider_name' ] == 'administration';
-		// check response
-		$response = null;
-		if(
-			!empty( $o_options[ 'response' ] )
-			&& is_array( $o_options[ 'response' ] )
-		) {
-			$response = $o_options[ 'response' ];
-		}
 		// misc
 		$html_amount          = $payment_api->money_html( $o_amount );
 		$html_datetime_start  = $o_datetime_start;
@@ -559,19 +538,10 @@ class yf_manage_transfer {
 			'provider_class'               => &$provider_class,
 			'providers_user'               => &$providers_user,
 			'providers_user__by_name'      => &$providers_user__by_name,
-			'request'                      => &$request,
-			'method_id'                    => &$method_id,
-			'method'                       => &$method,
-			'card_method_id'               => &$card_method_id,
-			'card_method'                  => &$card_method,
-			'html_card_title'              => &$html_card_title,
-			'response'                     => &$response,
 			'is_progressed'                => &$is_progressed,
 			'is_processing'                => &$is_processing,
 			'is_processing_self'           => &$is_processing_self,
 			'is_processing_administration' => &$is_processing_administration,
-			'is_processing_interkassa'     => &$is_processing_interkassa,
-			'is_payout_interkassa'         => &$is_payout_interkassa,
 			'is_finish'                    => &$is_finish,
 			'html_amount'                  => &$html_amount,
 			'html_datetime_start'          => &$html_datetime_start,
@@ -610,59 +580,17 @@ class yf_manage_transfer {
 		$html        = _class( 'html' );
 		$payment_api = &$this->payment_api;
 		$manage_lib  = &$this->manage_payment_lib;
-		// prepare view: request options
-		$content = array();
-		foreach( $_method[ 'option' ] as $key => $title ) {
-			if( !empty( $_request[ 'options' ][ $key ] ) ) {
-				$content[ $title ] = $_request[ 'options' ][ $key ];
-			}
-		}
-		$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
-		$html_request_options_csv = $html->a( array(
-			'href'   => $this->_url( 'csv_request', array( '%operation_id' => $_operation_id ) ),
-			'icon'   => 'fa fa-file-excel-o',
-			'title'  => 'Опции запроса: экспорт в CSV файл',
-			'text'   => 'CSV файл',
-			'target' => '_blank',
-		));
-		// prepare view: response options
-		$content = null;
-		if( !empty( $_response ) ) {
-			$response = array_reverse( $_response );
-			$content = table( $response, array( 'no_total' => true ) )
-				->text( 'datetime', 'дата' )
-				->func( 'data', function( $value, $extra, $row ) use( $_provider_name, $_providers_user__by_name  ) {
-					// message
-					$message = @$row[ 'status_message' ] ?: @$row[ 'data' ][ 'message' ];
-					$result = t( trim( trim( $message ), '.,:' ) );
-					// provider
-					$provider_name = @$row[ 'provider_name' ];
-					if( $provider_name && $provider_name != $_provider_name ) {
-						$provider_title = @$_providers_user__by_name[ $provider_name ][ 'title' ];
-						$result .= ' ('. $provider_title .')';
-					}
-					return( $result );
-				}, array( 'desc' => 'сообщение' ) )
-				->func( 'data', function( $value, $extra, $row ) {
-					$result = @$row[ 'state' ] ?: @$row[ 'data' ][ 'state' ] ?: null;
-					return( $result );
-				}, array( 'desc' => 'статус' ) )
-			;
-			$response_last = reset( $response );
-			$response_last = $response_last[ 'data' ];
-		}
-		$html_response = $content;
-		// prepare view: operations by method
+		// prepare view: operations log
 		list( $data, $count ) = $payment_api->operation( array(
 			'where' =>
 				'account_id = '. $_account_id
 				.' AND provider_id = '. $_provider_id
 				.' AND operation_id != '. $_operation_id
-				.' AND direction = "out"'
+				.' AND direction = "'. $_operation[ 'direction' ] .'"'
 			,
 			'limit' => 50,
 		));
-		$html_operations_by_method = null;
+		$html_operations_log = null;
 		if( @count( $data ) > 0 ) {
 			$content = array();
 			foreach( $data as $item ) {
@@ -684,7 +612,7 @@ class yf_manage_transfer {
 					);
 				}
 			}
-			$content && $html_operations_by_method = table( $content, array( 'no_total' => true ) )
+			$content && $html_operations_log = table( $content, array( 'no_total' => true ) )
 				->text( 'operation_id'  , 'операция' )
 				->text( 'account_number', 'счет, номер карты, кошелек' )
 				->func( 'amount', function( $value, $extra, $row ) use( $payment_api ) {
@@ -751,28 +679,18 @@ class yf_manage_transfer {
 		}
 		// render
 		$replace = $operation + array(
-			'is_manual'            => $is_manual,
-			'header_data'          => $html_operation_options,
-			'request_data'         => $html_request_options,
-			'request_data_csv'     => $html_request_options_csv,
-			'response_data'        => $html_response,
-			'operations_by_method' => $html_operations_by_method,
+			'is_manual'      => $is_manual,
+			'header_data'    => $html_operation_options,
+			'operations_log' => $html_operations_log,
 			'url' => array(
 				'list'               => $this->_url( 'list' ),
 				'view'               => $this->_url( 'view',               array( '%operation_id' => $_operation_id ) ),
-				'request'            => $this->_url( 'request',            array( '%operation_id' => $_operation_id ) ),
-				'request_interkassa' => $this->_url( 'request_interkassa', array( '%operation_id' => $_operation_id ) ),
-				'check_interkassa'   => $this->_url( 'check_interkassa',   array( '%operation_id' => $_operation_id ) ),
 				'status_processing'  => $this->_url( 'status_processing',  array( '%operation_id' => $_operation_id ) ),
 				'status_success'     => $this->_url( 'status_success',     array( '%operation_id' => $_operation_id ) ),
 				'status_refused'     => $this->_url( 'status_refused',     array( '%operation_id' => $_operation_id ) ),
-				'csv'                => $this->_url( 'csv',                array( '%operation_id' => $_operation_id ) ),
-				'provider_operation_detail' => @$url_provider_operation_detail,
-				'provider_operations'       => @$url_provider_operations,
-				'provider_payouts'          => @$url_provider_payouts,
 			)
 		);
-		$result = tpl()->parse( 'manage_payout/view', $replace );
+		$result = tpl()->parse( 'manage_transfer/view', $replace );
 		return( $result );
 	}
 

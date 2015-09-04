@@ -59,20 +59,29 @@ class yf_payment_api__provider {
 	public function transfer( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$_options = array(
-			'options'  => &$options[ 'options' ],
-			'provider' => &$options[ 'provider' ],
+			'options'           => &$options[ 'options' ],
+			'provider'          => &$options[ 'provider' ],
+			'operation_options' => array(
+				'from'   => $options[ 'options' ][ 'from'   ],
+				'to'     => $options[ 'options' ][ 'to'     ],
+				'amount' => $options[ 'options' ][ 'amount' ],
+			),
 		);
+		$_options[ 'operation_options' ][ 'from' ][ 'operation_id' ] = &$options[ 'data' ][ 'from' ][ 'operation_id' ];
+		$_options[ 'operation_options' ][ 'to'   ][ 'operation_id' ] = &$options[ 'data' ][ 'to'   ][ 'operation_id' ];
 		// from
 		$options_from = $_options + array(
-			'data'           => &$options[ 'data' ][ 'from' ],
-			'operation_data' => &$options[ 'operation_data' ][ 'from' ],
+			'data'              => &$options[ 'data' ][ 'from' ],
+			'operation_data'    => &$options[ 'operation_data' ][ 'from' ],
 		);
+		$options_from[ 'operation_options' ][ 'direction' ] = 'out';
 		$result_from = $this->_transaction( $options_from );
 		// to
 		$options_to = $_options + array(
 			'data'           => &$options[ 'data' ][ 'to' ],
 			'operation_data' => &$options[ 'operation_data' ][ 'to' ],
 		);
+		$options_from[ 'operation_options' ][ 'direction' ] = 'in';
 		$result_to = $this->_transaction( $options_to );
 		$result = array(
 			'status'         => $result_from[ 'status' ] & $result_to[ 'status' ],
@@ -85,12 +94,13 @@ class yf_payment_api__provider {
 
 	protected function _transaction( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$payment_api    = $this->payment_api;
-		$_              = $options;
-		$options        = &$_[ 'options'        ];
-		$provider       = &$_[ 'provider'       ];
-		$data           = &$_[ 'data'           ];
-		$operation_data = &$_[ 'operation_data' ];
+		$payment_api       = $this->payment_api;
+		$_                 = $options;
+		$options           = &$_[ 'options'           ];
+		$provider          = &$_[ 'provider'          ];
+		$data              = &$_[ 'data'              ];
+		$operation_data    = &$_[ 'operation_data'    ];
+		$operation_options = &$_[ 'operation_options' ];
 		// prepare data
 		$operation_id = (int)$data[ 'operation_id' ];
 		$account_id   = (int)$data[ 'account_id'   ];
@@ -157,6 +167,7 @@ class yf_payment_api__provider {
 			'operation_id'    => $operation_id,
 			'status_id'       => $payment_status_id,
 			'balance'         => $account[ 'balance' ],
+			'options'         => $operation_options,
 			'datetime_update' => $sql_datetime,
 			'datetime_finish' => $sql_datetime,
 		);
