@@ -303,7 +303,7 @@ class yf_manage_transfer {
 						$css = 'fa fa-long-arrow-left text-danger';
 						break;
 				}
-				$result = sprintf( '<i class="%s"></i>', $css );
+				$result = sprintf( '<div class="text-center"><i class="%s"></i></div>', $css );
 				return( $result );
 			}, array( 'desc' => 'направление', 'align' => 'center' ) )
 			->text( 'balance'       , 'баланс' )
@@ -328,7 +328,7 @@ class yf_manage_transfer {
 	}
 
 	function create() {
-		$replace = array();
+		@$replace = array() + $_POST;
 		$_this = $this;
 		$result = form( $replace, array( 'autocomplete' => 'off' ) )
 			->validate(array(
@@ -337,16 +337,22 @@ class yf_manage_transfer {
 				'amount'        => 'trim|required|numeric|greater_than[0]',
 			))
 			->on_validate_ok( function( $data, $extra, $rules ) use( &$_this ) {
+				$is_error    = false;
+				$is_continue = $_POST[ 'operation' ] === 'transfer_and_continue';
+				// handler
 				$result = $this->_transfer( $_POST );
 				// message
+				$message = @$result[ 'status_message' ];
 				if( @$result[ 'status' ] ) {
 					$message_type = 'message_success';
-					$message = @$result[ 'status_message' ] ?: 'Операция выполнена';
+					$message = $message ?: 'Операция выполнена';
 				} else {
 					$message_type = 'message_error';
-					$message = 'Операция не выполнена';
+					$message = $message ?: 'Операция не выполнена';
+					$is_error = true;
 				}
 				common()->$message_type( $message, array( 'translate' => false ) );
+				if( $is_error ) { return( $result ); }
 				// redirect
 				$url = $_this->_url( 'list' );
 				$is_continue && $url = $_this->_url( 'create' );
