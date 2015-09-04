@@ -489,6 +489,7 @@ class yf_payment_api__provider_remote {
 			);
 			return( $result );
 		}
+		$sql_datetime = $payment_api->sql_datetime();
 		// start transaction with row lock by operation_id
 		$result = $payment_api->transaction_start(array( 'operation_id' => $operation_id ));
 		if( !$result ) {
@@ -616,7 +617,7 @@ class yf_payment_api__provider_remote {
 			'is_try'              => $is_try,
 			'current_type_name'   => $current_type_name,
 			'current_status_name' => $current_status_name,
-			'datetime'            => $payment_api->sql_datetime(),
+			'datetime'            => $sql_datetime,
 		)));
 		// prepare
 		$is_manual  = null;
