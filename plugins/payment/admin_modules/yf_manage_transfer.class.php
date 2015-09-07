@@ -584,37 +584,38 @@ class yf_manage_transfer {
 		list( $data, $count ) = $payment_api->operation( array(
 			'where' =>
 				'account_id = '. $_account_id
+				.' AND type_id = '. $_operation[ 'type_id' ]
 				.' AND provider_id = '. $_provider_id
 				.' AND operation_id != '. $_operation_id
 				.' AND direction = "'. $_operation[ 'direction' ] .'"'
 			,
-			'limit' => 50,
+			'limit' => 10,
 		));
 		$html_operations_log = null;
 		if( @count( $data ) > 0 ) {
-			$content = array();
-			foreach( $data as $item ) {
-				$request = &$item[ 'options' ][ 'request' ][ 0 ];
-				// match method
-				if( @$request[ 'options' ][ 'method_id' ] == $_method_id ) {
-					$request_options = &$request[ 'options' ];
-					$account_number = @$request_options[ 'account_number' ] ?:
-							@$request_options[ 'account' ] ?:
-							@$request_options[ 'card' ] ?:
-							'-'
-					;
-					$content[ $item[ 'operation_id' ] ] = array(
-						'operation_id'   => $item[ 'operation_id' ],
-						'account_number' => $account_number,
-						'amount'         => $item[ 'amount' ],
-						'status_id'      => $item[ 'status_id' ],
-						'date'           => $item[ 'datetime_update' ],
-					);
-				}
-			}
-			$content && $html_operations_log = table( $content, array( 'no_total' => true ) )
+			$html_operations_log = table( $data, array( 'no_total' => true ) )
 				->text( 'operation_id'  , 'операция' )
-				->text( 'account_number', 'счет, номер карты, кошелек' )
+				->func( 'options', function( $value, $extra, $row ) {
+					$direction = &$row[ 'direction' ];
+					switch( $direction ) {
+						case 'in':
+							$user_id  = $row[ 'options' ][ 'from' ][ 'user_id' ];
+							$user_dir = '<i class="fa fa-long-arrow-left text-success"></i>';
+							break;
+						case 'out':
+							$user_id = $row[ 'options' ][ 'to' ][ 'user_id' ];
+							$user_dir = '<i class="fa fa-long-arrow-right text-danger"></i>';
+							break;
+					}
+					// prepare user link to/from
+					$user2 = '';
+					if( $user_id ) {
+						$name = db()->table( 'user' )->select( 'name' )->where( 'id', $user_id )->get_one();
+						$user2 = a('/members/edit/'.$user_id, $name .'(id: ' . $user_id . ')');
+					}
+					$result = sprintf( '<div class="text-center">%s %s</div>', $user_dir, $user2 );
+					return( $result );
+				}, array( 'desc' => 'пользователь' ) )
 				->func( 'amount', function( $value, $extra, $row ) use( $payment_api ) {
 					$result = $payment_api->money_html( $value );
 					return( $result );
@@ -629,7 +630,7 @@ class yf_manage_transfer {
 					return( $result );
 				}, array( 'desc' => 'статус' ) )
 				->text( 'date' , 'дата' )
-				->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
+				->btn( 'Просмотр', $url[ 'view'    ], array( 'icon' => 'fa fa-eye', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
 			;
 		}
 		// prepare view: operation options
@@ -642,52 +643,56 @@ class yf_manage_transfer {
 		$balance_link = $html->a( array(
 			'href'  => $this->_url( 'balance', array( '%user_id' => $_user_id, '%account_id' => $_account_id ) ),
 			'title' => 'Баланс',
-			'text'  => $payment_api->money_text( $_account[ 'balance' ] ),
+			'text'  => $payment_api->money_text( $_operation[ 'balance' ] ),
 		));
+		// user
+		$direction = &$_operation[ 'direction' ];
+		switch( $direction ) {
+			case 'in':
+				$user2_id      = $_operation[ 'options' ][ 'from' ][ 'user_id' ];
+				$user_dir      = '<i class="fa fa-long-arrow-left text-success"></i>';
+				$operation_id2 = $_operation[ 'options' ][ 'from' ][ 'operation_id' ];
+				break;
+			case 'out':
+				$user2_id      = $_operation[ 'options' ][ 'to' ][ 'user_id' ];
+				$user_dir      = '<i class="fa fa-long-arrow-right text-danger"></i>';
+				$operation_id2 = $_operation[ 'options' ][ 'to' ][ 'operation_id' ];
+				break;
+		}
+		// prepare user, operation link
+		$user2_link = '';
+		if( $user2_id ) {
+			$name = db()->table( 'user' )->select( 'name' )->where( 'id', $user2_id )->get_one();
+			$user2_link = a('/members/edit/'.$user2_id, $name );
+		}
+		$operation_id2 && $operation2_link = a( array(
+			'href'  => $this->_url( 'view', array( '%operation_id' => $operation_id2 ) ),
+			'title' => 'Операция',
+			'icon'  => 'fa fa-eye',
+			'text'  => $operation_id2,
+
+		));
+		$html_user = sprintf( '<span>%s %s %s %s</span>', $user_link, $user_dir, $user2_link, $operation2_link );
 		// compile
 		$content = array(
 			'Операция'        => $_operation_id,
-			'Пользователь'    => $user_link . $balance_link,
 			'Провайдер'       => $_provider[ 'title' ],
-			'Метод'           => $_method[ 'title' ],
-			'Тип карты'       => $_html_card_title,
+			'Пользователь'    => $html_user,
 			'Сумма'           => $_html_amount,
+			'Баланс'          => $balance_link,
 			'Статус'          => $_html_status_title,
 			'Дата создания'   => $_html_datetime_start,
 			'Дата обновления' => $_html_datetime_update,
 			'Дата завершения' => $_html_datetime_finish,
 		);
-		if( ! @$_html_card_title ) { unset( $content[ 'Тип карты' ] ); };
 		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
-		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
-		// manual mode
-		$is_manual = false;
-		$is_test = $_provider_class->is_test();
-		switch( $_provider_name ) {
-			case 'ecommpay':
-				$is_manual = true;
-				$url_base = 'https://cliff.ecommpay.com/';
-				$url_provider_operations = $url_base . 'operations/searchPayout';
-				$url_provider_payouts    = $url_base . 'payouts';
-				if( $is_test ) {
-					$url_base = 'https://cliff-sandbox.ecommpay.com/';
-					$url_provider_operations = $url_base . 'operations';
-					$url_provider_payouts    = $url_provider_operations;
-				}
-				$url_provider_operation_detail = empty( $response_last[ 'transaction_id' ] ) ? null : $url_base . 'operations/detail/' . $response_last[ 'transaction_id' ];
-				break;
-		}
 		// render
 		$replace = $operation + array(
-			'is_manual'      => $is_manual,
 			'header_data'    => $html_operation_options,
 			'operations_log' => $html_operations_log,
 			'url' => array(
-				'list'               => $this->_url( 'list' ),
-				'view'               => $this->_url( 'view',               array( '%operation_id' => $_operation_id ) ),
-				'status_processing'  => $this->_url( 'status_processing',  array( '%operation_id' => $_operation_id ) ),
-				'status_success'     => $this->_url( 'status_success',     array( '%operation_id' => $_operation_id ) ),
-				'status_refused'     => $this->_url( 'status_refused',     array( '%operation_id' => $_operation_id ) ),
+				'list' => $this->_url( 'list' ),
+				'view' => $this->_url( 'view', array( '%operation_id' => $_operation_id ) ),
 			)
 		);
 		$result = tpl()->parse( 'manage_transfer/view', $replace );

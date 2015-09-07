@@ -1,0 +1,56 @@
+<style>
+.b-list-step > .list-item {
+	margin: 0 0 1em 0;
+}
+.tab-content {
+	padding: 1em 0;
+}
+.b-data .dl-horizontal dt {
+	width      : 220px;
+	text-align : left;
+}
+.b-data .dl-horizontal dd {
+	margin-left : 240px;
+	width       : 200px;
+}
+.b-data.operation .money,
+.b-data.operation .currency {
+	color       : #0a0;
+	font-size   : 1.5em;
+	line-height : 1em;
+}
+.b-data.operation .balance .money,
+.b-data.operation .balance .currency {
+	color       : #080;
+	font-size   : 1em;
+	line-height : 1em;
+}
+</style>
+
+<div class="b-link-list pull-right">
+	<a href="{url.list}" class="btn btn-primary">Назад к списоку операций</a>
+	{{-- <a href="{url.view}" class="btn btn-info">Операция</a> --}}
+{if_not_empty( url.provider_operation_detail )}
+	<a href="{url.provider_operation_detail}" target="_blank" class="btn btn-info">Операция провайдера</a>
+{/if}
+{if_not_empty( url.provider_operations )}
+	<a href="{url.provider_operations}" target="_blank" class="btn btn-warning">Список операций провайдера</a>
+{/if}
+</div>
+
+{if_not_empty( header_data )}
+<div class="b-data operation pull-left">{header_data}</div>
+{/if}
+
+<div class="clearfix"></div>
+
+{if_not_empty( operations_log )}
+<div class="clearfix"></div>
+<div class="b-data">
+	<p>
+		Журнал похожих операций
+	</p>
+	{operations_log}
+</div>
+{/if}
+
