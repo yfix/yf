@@ -1160,7 +1160,21 @@ class yf_table2 {
 			$user_ids = array();
 			foreach ((array)$data as $a) {
 				$id = $a[$field];
-				$id && $user_ids[$id] = $id;
+				if (!$id) {
+					continue;
+				}
+				if (is_numeric($id)) {
+					$id && $user_ids[$id] = $id;
+				} elseif (is_array($id)) {
+					foreach ((array)$id as $_id) {
+						$_id && $user_ids[$_id] = $_id;
+					}
+				} elseif (false !== strpos($id, ',')) {
+					foreach (explode(',', $id) as $_id) {
+						$_id = (int)trim($_id);
+						$_id && $user_ids[$_id] = $_id;
+					}
+				}
 			}
 			if (!$user_ids) {
 				return false;
@@ -1169,16 +1183,34 @@ class yf_table2 {
 				$table->_data_for_func[$func_name][$a['id']] = $a;
 			}
 		});
-		return $this->func($name, function($user_id, $e, $a, $p, $table) use ($func_name) {
-			if (!$user_id) {
+		return $this->func($name, function($id, $e, $a, $p, $table) use ($func_name) {
+			if (!$id) {
 				return false;
 			}
-			if (!isset($table->_data_for_func[$func_name][$user_id])) {
-				return $user_id;
+			$out = array();
+			$user_ids = array();
+			if (is_numeric($id)) {
+				$user_ids[$id] = $id;
+			} elseif (is_array($id)) {
+				foreach ((array)$id as $_id) {
+					$_id && $user_ids[$_id] = $_id;
+				}
+			} elseif (false !== strpos($id, ',')) {
+				foreach (explode(',', $id) as $_id) {
+					$_id = (int)trim($_id);
+					$_id && $user_ids[$_id] = $_id;
+				}
 			}
-			$u = $table->_data_for_func[$func_name][$user_id];
-			$uname = ($u['login'] ?: $u['name'] ?: $u['email'] ?: $u['phone']);
-			return a(str_replace('%d', $user_id, $e['extra']['link']), _truncate($uname, 50).'&nbsp;['.$user_id.']', 'fa fa-user');
+			foreach ((array)$user_ids as $id) {
+				if (!isset($table->_data_for_func[$func_name][$id])) {
+					$out[$id] = $id;
+					continue;
+				}
+				$u = $table->_data_for_func[$func_name][$id];
+				$uname = ($u['login'] ?: $u['name'] ?: $u['email'] ?: $u['phone']);
+				$out[$id] = a(str_replace('%d', $id, $e['extra']['link']), _truncate($uname, 50).'&nbsp;['.$id.']', 'fa fa-user');
+			}
+			return implode(PHP_EOL, $out);
 		}, $extra);
 	}
 
