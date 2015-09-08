@@ -44,7 +44,7 @@ class yf_form_api {
 		// prepare text fields
 		$fields_text = array( 'name', 'login', 'email', 'first_name', 'last_name', 'nick', 'phone' );
 		foreach( $fields_text as $item ) {
-			$db->where_or( $item, 'like', _es( $q ). '%' );
+			$db->where_or( $item, 'like', '%'. _es( $q ) .'%' );
 		}
 		// prepare int fields
 		$fields_int = array( 'id' );
