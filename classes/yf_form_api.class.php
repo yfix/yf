@@ -18,6 +18,9 @@ class yf_form_api {
 	}
 
 	function _api_user_select_box( $options = null ) {
+		if (!main()->ADMIN_ID) {
+			return _403();
+		}
 		$result = array();
 		// prepare query
 		$db = db()->table( 'user' );
