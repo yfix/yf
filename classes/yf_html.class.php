@@ -1317,7 +1317,8 @@ class yf_html {
 	/**
 	*/
 	function select2_box($name, $values = array(), $selected = '', $extra = array()) {
-		$css = array();
+		$css   = array();
+		$style = array();
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 		} else {
@@ -1378,8 +1379,12 @@ class yf_html {
 			$extra[ 'value' ] = @$extra['selected'] ?: @$extra['value'] ?: '';
 			$css[] = 'form-control';
 		}
-		$css[] = 'no-chosen';
-		$extra[ 'class' ] = implode( ' ', $css );
+		$css[]   = 'no-chosen';
+			$extra[ 'class' ] && $css[] = $extra[ 'class' ];
+		// $style[] = 'padding:0.3em';
+			$extra[ 'style' ] && $style[] = $extra[ 'style' ];
+		$extra[ 'class' ] = implode( ' ', $css   );
+		$extra[ 'style' ] = implode( ';', $style );
 		return $this->$func($extra, $values, $selected);
 	}
 

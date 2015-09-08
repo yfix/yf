@@ -19,6 +19,7 @@ return array(
 	),
 	'require' => array(
 		'asset' => 'jquery',
+		'asset' => 'jq-select2-fix',
 	),
 );
 
