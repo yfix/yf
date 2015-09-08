@@ -18,9 +18,11 @@ class yf_form_api {
 	}
 
 	function _api_user_select_box( $options = null ) {
-		if (!main()->ADMIN_ID) {
-			return _403();
-		}
+		// etc
+		$api = _class( 'api' );
+		$api->JSON_VULNERABILITY_PROTECTION = false;
+		// admin only
+		if( !main()->ADMIN_ID ) { return $api->_forbidden(); }
 		$result = array();
 		// prepare query
 		$db = db()->table( 'user' );
@@ -84,9 +86,6 @@ class yf_form_api {
 			'more'  => $more,
 			'items' => $result
 		);
-		// etc
-		$api = _class( 'api' );
-		$api->JSON_VULNERABILITY_PROTECTION = false;
 		return( $result );
 	}
 
