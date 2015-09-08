@@ -31,6 +31,7 @@ class yf_manage_transfer {
 		$filter      = $_SESSION[ $filter_name ];
 		// url
 		$url = array(
+			'api_user_search' => url_admin( '/api/manage_transfer/user_search' ),
 			'create' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'create',
@@ -351,6 +352,7 @@ class yf_manage_transfer {
 	function create() {
 		@$replace = array() + $_POST;
 		$_this = $this;
+		$user_search_url = $this->_url( 'api_user_search' );
 		$result = form( $replace, array( 'autocomplete' => 'off' ) )
 			->validate(array(
 				'from[user_id]' => 'trim|required|numeric|greater_than[0]|exists[user.id]',
@@ -361,7 +363,7 @@ class yf_manage_transfer {
 				$is_error    = false;
 				$is_continue = $_POST[ 'operation' ] === 'transfer_and_continue';
 				// handler
-				$result = $this->_transfer( $_POST );
+				// $result = $this->_transfer( $_POST );
 				// message
 				$message = @$result[ 'status_message' ];
 				if( @$result[ 'status' ] ) {
@@ -379,8 +381,26 @@ class yf_manage_transfer {
 				$is_continue && $url = $_this->_url( 'create' );
 				return( js_redirect( $url, false, $_operation ) );
 			})
-			->text( 'from[user_id]'  , 'От пользователя' )
-			->text( 'to[user_id]'    , 'К пользователю'  )
+			->select2_box( array(
+				'name'        => 'from[user_id]',
+				'desc'        => 'От пользователя',
+				'placeholder' => 'id, name, mail',
+				'ajax' => array(
+					'url' => $user_search_url,
+				),
+				// 'value'   => @$replace[ 'from' ][ 'user_id' ],
+			))
+			->select2_box( array(
+				'name'        => 'to[user_id]',
+				'desc'        => 'От пользователя',
+				'placeholder' => 'id, name, mail',
+				'ajax' => array(
+					'url' => $user_search_url,
+				),
+				// 'value'   => @$replace[ 'to' ][ 'user_id' ],
+			))
+			// ->text( 'from[user_id]'  , 'От пользователя' )
+			// ->text( 'to[user_id]'    , 'К пользователю'  )
 			->text( 'amount'         , 'Сумма'           )
 			->text( 'operation_title', 'Название'        )
 			->row_start(array( 'desc' => 'Операция' ))
@@ -388,6 +408,76 @@ class yf_manage_transfer {
 				->submit( 'operation', 'transfer_and_continue', array( 'desc' => 'Перечислить и продолжить' ) )
 			->row_end()
 		;
+		return( $result );
+	}
+
+	function _api_user_search( $options = null ) {
+		$result = array();
+		// prepare query
+		$db = db()->table( 'user' );
+		// limit
+		$page_per = 10;
+		$page = (int)$_GET[ 'page' ]; $page = $page < 1 ? 1: $page;
+		$offset = ( $page - 1 ) * $page_per;
+		$db->limit( $page_per, $offset );
+		// q
+		$q = @$_GET[ 'q' ];
+		$q_int = (int)$q;
+		$q_is_int = $q_int > 0;
+		// order
+		if( $q_is_int ) {
+			$db->order_by( 'id' );
+		} else {
+			$db->order_by( 'name' );
+		}
+		// prepare text fields
+		$fields_text = array( 'name', 'login', 'email', 'first_name', 'last_name', 'nick', 'phone' );
+		foreach( $fields_text as $item ) {
+			$db->where_or( $item, 'like', _es( $q ). '%' );
+		}
+		// prepare int fields
+		$fields_int = array( 'id' );
+		if( $q_is_int ) {
+			foreach( $fields_int as $item ) {
+				$db->where_or( $item, '=', $q_int );
+			}
+		}
+		// prepare select fields
+		$fields = array_merge( $fields_int, $fields_text );
+		$db->select( implode( ',', $fields ) );
+		// DEBUG
+		// $data = $db->sql(); var_dump( $data ); exit;
+		// get db data
+		$data = $db->get_all();
+		// more?
+		$more = count( $data ) == $page_per;
+		// DEBUG
+		// var_dump( $data ); exit;
+		// empty
+		if( !$data ) { return( $result ); }
+		// prepare data
+		$fields_json = array( 'login', 'name', 'email' );
+		foreach( $data as $idx => $item ) {
+			$fields = array();
+			foreach( $fields_json as $field ) {
+				$f = &$item[ $field ];
+				if( !empty( $f ) ) {
+					$fields[ $f ] = $f;
+				}
+			}
+			$fields = empty( $fields ) ? '': implode( '; ', $fields );
+			$result[] = array(
+				'id' => $item[ 'id' ],
+				'text' => sprintf( '%u: %s', $item[ 'id' ], $fields ),
+			);
+		}
+		$result = array(
+			'more'  => $more,
+			'items' => $result
+		);
+		// etc
+		$api = _class( 'api' );
+		$api->JSON_VULNERABILITY_PROTECTION = false;
 		return( $result );
 	}
 
@@ -564,8 +654,6 @@ class yf_manage_transfer {
 	 *   'provider'
 	 *   'provider_class'
 	 *   'providers_user'
-	 *   'request'
-	 *   'method'
 	 *   etc: see _operation()
 	 */
 

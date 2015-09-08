@@ -786,7 +786,7 @@ class yf_html {
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		$extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_SELECT_BOX;
 		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
-		if (!$values) {
+		if (!$values && @!$extra[ 'ajax' ]) {
 			return false;
 		}
 		if ($extra['disabled']) {
@@ -1317,6 +1317,7 @@ class yf_html {
 	/**
 	*/
 	function select2_box($name, $values = array(), $selected = '', $extra = array()) {
+		$css = array();
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 		} else {
@@ -1326,12 +1327,59 @@ class yf_html {
 		// put default js options here
 		$js_options = (array)$extra['js_options'] + array(
 			'width'       => 'element',
-			'placeholder' => $extra['desc'],
+			'placeholder' => @$extra['placeholder'] ?: @$extra['desc'],
 		);
+		// ajax
+		$js_functions = array();
+		if( @$extra[ 'ajax_func' ] ) {
+			foreach( (array)$extra[ 'ajax_func' ] as $key => $value ) {
+				$js_options[ 'ajax' ][ $key ] = '%__'. $key .'__%';
+				$js_functions[ '"%__'. $key .'__%"' ] = $value;
+			}
+		}
+		if( @$extra[ 'ajax' ] ) {
+			$js_options += array(
+				'maximumSelectionSize' => 10,
+				'minimumInputLength'   => 1,
+				'minimumInputLength'   => 1,
+				'initSelection'        => '%__initSelection__%',
+			);
+			$js_options[ 'ajax' ] = $extra[ 'ajax' ];
+			$js_options[ 'ajax' ] += array(
+				// 'dataType'           => 'json',
+				// 'quietMillis'        => 500,
+				// 'cache'              => true,
+				'data'               => '%__data__%',
+				'results'            => '%__results__%',
+			);
+			$js_functions += array(
+				'"%__data__%"'    => 'function( term, page, context ) { return { q: term, page: page }; }',
+				'"%__results__%"' => 'function( data, page, query ) { return { results: data.items, more: data.more || false  }; }',
+				'"%__initSelection__%"' => 'function( element, callback ) {
+					var $this = $(element);
+					var id = $this.val();
+					if( id !== "" ) {
+						$.ajax("'. $js_options[ 'ajax' ][ 'url' ] .'" + "&q=" + id, {
+							dataType: "json"
+						}).done(function(data) { callback(data.items[0] || null); });
+					}
+				}',
+			);
+		}
 		asset('jq-select2');
-		jquery('$("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).');');
+		// prepare js options
+		$_js_options = json_encode( $js_options );
+		$js_functions && $_js_options = str_replace( array_keys( $js_functions ), array_values( $js_functions ), $_js_options  );
+		jquery('$("#'.addslashes($extra['force_id']).'").select2('. $_js_options .');');
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
-		$extra['class'] .= 'no-chosen';
+		if( $extra[ 'ajax' ] ) {
+			$func = 'input';
+			$extra[ 'id' ] = $extra['force_id'];
+			$extra[ 'value' ] = @$extra['selected'] ?: @$extra['value'] ?: '';
+			$css[] = 'form-control';
+		}
+		$css[] = 'no-chosen';
+		$extra[ 'class' ] = implode( ' ', $css );
 		return $this->$func($extra, $values, $selected);
 	}
 

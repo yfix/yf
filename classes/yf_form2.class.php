@@ -803,7 +803,20 @@ class yf_form2 {
 	/**
 	*/
 	function _prepare_selected($name, &$extra, &$r) {
-		$selected = $r[$name];
+		$is_array = strpos( $name, '[' );
+		if( $is_array !== false ) {
+			$value = &$r;
+			$keys = explode( '[', $name );
+			foreach( $keys as $key ) {
+				$key = trim( rtrim( $key, ']' ) );
+				if( !isset( $value[ $key ] ) ) { $value = null; break; }
+				$value = &$value[ $key ];
+			}
+			$selected = $value;
+		} else {
+			$selected = $r{$name};
+		}
+		// $selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
