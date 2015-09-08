@@ -328,7 +328,7 @@ class yf_manage_transfer {
 				$user2 = '';
 				if( $user_id ) {
 					$name = db()->table( 'user' )->select( 'name' )->where( 'id', $user_id )->get_one();
-					$user2 = a('/members/edit/'.$user_id, $name .'(id: ' . $user_id . ')');
+					$user2 = a('/members/edit/'.$user_id, $name .' (id: ' . $user_id . ')');
 				}
 				$result = sprintf( '<div class="text-center">%s %s %s</div>', $user, $user_dir, $user2 );
 				return( $result );
@@ -362,7 +362,7 @@ class yf_manage_transfer {
 				$is_error    = false;
 				$is_continue = $_POST[ 'operation' ] === 'transfer_and_continue';
 				// handler
-				// $result = $this->_transfer( $_POST );
+				$result = $this->_transfer( $_POST );
 				// message
 				$message = @$result[ 'status_message' ];
 				if( @$result[ 'status' ] ) {
@@ -620,7 +620,7 @@ class yf_manage_transfer {
 					$user2 = '';
 					if( $user_id ) {
 						$name = db()->table( 'user' )->select( 'name' )->where( 'id', $user_id )->get_one();
-						$user2 = a('/members/edit/'.$user_id, $name .'(id: ' . $user_id . ')');
+						$user2 = a('/members/edit/'.$user_id, $name .' (id: ' . $user_id . ')');
 					}
 					$result = sprintf( '<div class="text-center">%s %s</div>', $user_dir, $user2 );
 					return( $result );
