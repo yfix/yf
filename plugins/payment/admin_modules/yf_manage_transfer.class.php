@@ -381,23 +381,15 @@ class yf_manage_transfer {
 				$is_continue && $url = $_this->_url( 'create' );
 				return( js_redirect( $url, false, $_operation ) );
 			})
-			->select2_box( array(
+			->user_select_box( array(
 				'name'        => 'from[user_id]',
 				'desc'        => 'От пользователя',
 				'placeholder' => 'id, name, mail',
-				'ajax' => array(
-					'url' => $user_search_url,
-				),
-				// 'value'   => @$replace[ 'from' ][ 'user_id' ],
 			))
-			->select2_box( array(
+			->user_select_box( array(
 				'name'        => 'to[user_id]',
 				'desc'        => 'От пользователя',
 				'placeholder' => 'id, name, mail',
-				'ajax' => array(
-					'url' => $user_search_url,
-				),
-				// 'value'   => @$replace[ 'to' ][ 'user_id' ],
 			))
 			// ->text( 'from[user_id]'  , 'От пользователя' )
 			// ->text( 'to[user_id]'    , 'К пользователю'  )

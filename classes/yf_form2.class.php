@@ -2048,6 +2048,11 @@ class yf_form2 {
 		return $this->_html_control($name, $values, $extra, $replace, 'image_select_box');
 	}
 
+	function user_select_box($name, $values = null, $extra = array(), $replace = array()) {
+		_class( 'form_api' )->{ __FUNCTION__ }($name, $values, $extra, $replace);
+		return $this->_html_control($name, $values, $extra, $replace, 'select2_box');
+	}
+
 	/**
 	*/
 	function date_box($name = '', $values = array(), $extra = array(), $replace = array()) {
