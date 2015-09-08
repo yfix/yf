@@ -388,7 +388,7 @@ class yf_manage_transfer {
 				'ajax' => array(
 					'url' => $user_search_url,
 				),
-				'value'   => @$replace[ 'from' ][ 'user_id' ],
+				// 'value'   => @$replace[ 'from' ][ 'user_id' ],
 			))
 			->select2_box( array(
 				'name'        => 'to[user_id]',
@@ -397,7 +397,7 @@ class yf_manage_transfer {
 				'ajax' => array(
 					'url' => $user_search_url,
 				),
-				'value'   => @$replace[ 'to' ][ 'user_id' ],
+				// 'value'   => @$replace[ 'to' ][ 'user_id' ],
 			))
 			// ->text( 'from[user_id]'  , 'От пользователя' )
 			// ->text( 'to[user_id]'    , 'К пользователю'  )
