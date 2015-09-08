@@ -16,6 +16,8 @@ class yf_payment__user {
 		list( $operation, $count ) = $payment_api->operation( $account );
 		$page_per = $payment_api->OPERATION_LIMIT;
 		$pages    = ceil( $count / $page_per );
+		// limit
+		$balance_limit_lower = $payment_api->BALANCE_LIMIT_LOWER;
 		// provider
 		$providers = $payment_api->provider( array(
 			'all' => true,
@@ -50,6 +52,7 @@ class yf_payment__user {
 		$replace = array(
 			'user'    => $user,
 			'payment' => json_encode( array(
+				'balance_limit_lower'   => $balance_limit_lower,
 				'user'                  => $user,
 				'account'               => $account,
 				'currency'              => $currency,
