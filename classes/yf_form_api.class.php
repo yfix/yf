@@ -65,7 +65,13 @@ class yf_form_api {
 		// DEBUG
 		// var_dump( $data ); exit;
 		// empty
-		if( !$data ) { return( $result ); }
+		if( !$data ) {
+			$result = array(
+				'more'  => false,
+				'items' => array(),
+			);
+			return( $result );
+		}
 		// prepare data
 		$fields_json = array( 'login', 'name', 'email' );
 		foreach( $data as $idx => $item ) {
