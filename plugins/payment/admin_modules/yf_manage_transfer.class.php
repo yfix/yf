@@ -383,12 +383,12 @@ class yf_manage_transfer {
 			->user_select_box( array(
 				'name'        => 'from[user_id]',
 				'desc'        => 'От пользователя',
-				'placeholder' => 'id, name, mail',
+				'placeholder' => 'id, name, mail, etc',
 			))
 			->user_select_box( array(
 				'name'        => 'to[user_id]',
-				'desc'        => 'От пользователя',
-				'placeholder' => 'id, name, mail',
+				'desc'        => 'К пользователя',
+				'placeholder' => 'id, name, mail, etc',
 			))
 			// ->text( 'from[user_id]'  , 'От пользователя' )
 			// ->text( 'to[user_id]'    , 'К пользователю'  )
@@ -679,7 +679,6 @@ class yf_manage_transfer {
 			'title' => 'Операция',
 			'icon'  => 'fa fa-eye',
 			'text'  => $operation_id2,
-
 		));
 		$html_user = sprintf( '<span>%s %s %s %s</span>', $user_link, $user_dir, $user2_link, $operation2_link );
 		// compile
