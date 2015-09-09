@@ -595,6 +595,7 @@ class yf_html {
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
 		}
+		$img_class = ($extra['img_class'] ?: 'media-object'). ($extra['img_class_add'] ? ' '.$extra['img_class_add'] : '');
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
 		$items = array();
@@ -613,7 +614,7 @@ class yf_html {
 			$items[] = '
 				<div class="media">
 					<a class="pull-left"'.($item['link'] ? ' href="'.$item['link'].'"' : '').'>'
-					.'<img class="media-object" alt="'.$item['alt'].'" src="'.$item['img'].'"'.($item['img_width'] ? ' width="'.$item['img_width'].'"' : '').($item['img_height'] ? ' height="'.$item['img_height'].'"' : '').'></a>
+					.'<img class="'.$img_class.'" alt="'.$item['alt'].'" src="'.$item['img'].'"'.($item['img_width'] ? ' width="'.$item['img_width'].'"' : '').($item['img_height'] ? ' height="'.$item['img_height'].'"' : '').'></a>
 					<div class="media-body">
 						<h4 class="media-heading">'
 						.($item['link'] ? '<a href="'.$item['link'].'">' : ''). $item['head']. ($item['link'] ? '</a>' : '')
