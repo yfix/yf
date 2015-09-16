@@ -1365,9 +1365,10 @@ class yf_payment_api {
 			0,
 		));
 		$balance_limit_lower = $this->_number_float( $balance_limit_lower );
-		if( ( $type[ 'name' ] == 'payment' && $_[ 'is_balance_limit_lower' ] && ( $balance - $amount < $balance_limit_lower ) )
+		if( @$_[ 'user_mode' ] && (
+			( $type[ 'name' ] == 'payment' && $_[ 'is_balance_limit_lower' ] && ( $balance - $amount < $balance_limit_lower ) )
 			|| ( $type[ 'name' ] == 'transfer' && $direction === 'out' && $_[ 'is_balance_limit_lower' ] && ( $balance - $amount < $balance_limit_lower ) )
-			) {
+		) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Недостаточно средств на счету',
@@ -1391,7 +1392,7 @@ class yf_payment_api {
 			return( $result );
 		}
 		$provider = reset( $object );
-		if( $_[ 'user_mode' ] && (bool)$provider[ 'system' ] ) {
+		if( @$_[ 'user_mode' ] && (bool)$provider[ 'system' ] ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неизвестный провайдер',
