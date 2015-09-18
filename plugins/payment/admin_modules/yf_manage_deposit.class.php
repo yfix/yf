@@ -620,7 +620,8 @@ EOS;
 		list( $new_status_id, $new_status ) = $object;
 		if( empty( $new_status_id ) ) { return( $object ); }
 		// date: over 3 days
-		$sql_datetime_over = date( 'Y-m-d', strtotime('-6 hour') );
+		$ts = strtotime( $payment_api->DEPOSITION_TIME );
+		$sql_datetime_over = $payment_api->sql_datetime( $ts );
 		$sql_datetime = $payment_api->sql_datetime();
 		$db = db()->table( 'payment_operation' )
 			->where( 'status_id', '=', $status_id )

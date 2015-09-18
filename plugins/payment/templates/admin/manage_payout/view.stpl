@@ -5,6 +5,9 @@
 .tab-content {
 	padding: 1em 0;
 }
+.b-action {
+	margin: 0 0 1em;
+}
 .b-data .dl-horizontal dt {
 	width      : 220px;
 	text-align : left;
@@ -145,11 +148,26 @@
 		{/if}
 			<a href="{url.status_success}" class="btn btn-success">Выполнено</a>
 			<a href="{url.status_refused}" class="btn btn-danger">Не выполнено</a>
+			<a href="{url.cancel}" class="btn btn-primary">Отменено</a>
+			<a href="{url.expired}" class="btn btn-primary">Просрочено</a>
 		</div>
 	</div>
 	{/if}
 
 {/if}
+
+	{if_true( is_confirmation )}
+	<div class="b-action pull-left">
+		<p>
+			Пометьте операцию вывода средств
+		</p>
+		<div class="action">
+			<a href="{url.expired}" class="btn btn-primary">Просрочено</a>
+			<a href="{url.cancel}" class="btn btn-primary">Отменено</a>
+		</div>
+	</div>
+	{/if}
+
 {/if}
 
 {if_not_empty( operations_by_method )}

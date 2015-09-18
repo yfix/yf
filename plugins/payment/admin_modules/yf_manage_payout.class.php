@@ -52,6 +52,20 @@ class yf_manage_payout {
 				'object'       => $object,
 				'action'       => 'check_all_interkassa',
 			)),
+			'confirmation_update_expired' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'confirmation_update_expired',
+			)),
+			'expired' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'expired',
+				'operation_id' => '%operation_id',
+			)),
+			'cancel' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'cancel',
+				'operation_id' => '%operation_id',
+			)),
 			'status_processing' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'status',
@@ -315,6 +329,7 @@ class yf_manage_payout {
 			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
 			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
 			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
+			->footer_link( 'Обновить статусы операций Подтверждения', $url[ 'confirmation_update_expired' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
 		);
 	}
 
@@ -533,9 +548,10 @@ class yf_manage_payout {
 		));
 		$html_status_title = $status_title;
 		// is
-		$is_progressed = $o_status[ 'name' ] == 'in_progress';
-		$is_processing = $o_status[ 'name' ] == 'processing';
-		$is_finish     = !( $is_progressed || $is_processing );
+		$is_progressed   = $o_status[ 'name' ] == 'in_progress';
+		$is_processing   = $o_status[ 'name' ] == 'processing';
+		$is_confirmation = $o_status[ 'name' ] == 'confirmation';
+		$is_finish       = !( $is_progressed || $is_processing || $is_confirmation );
 		$is_payout_interkassa = (bool)$this->IS_PAYOUT_INTERKASSA && $card_method_id;
 		// processing
 		$processing = array();
@@ -554,6 +570,7 @@ class yf_manage_payout {
 				$is_processing_self = $is_processing;
 			}
 		}
+		$is_confirmation && $is_processing_self = true;
 		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $html_status_title );
 		$is_processing_interkassa     = $is_processing && $processing[ 'provider_name' ] == 'interkassa';
 		$is_processing_administration = $is_processing && $processing[ 'provider_name' ] == 'administration';
@@ -603,6 +620,7 @@ class yf_manage_payout {
 			'response'                     => &$response,
 			'is_progressed'                => &$is_progressed,
 			'is_processing'                => &$is_processing,
+			'is_confirmation'              => &$is_confirmation,
 			'is_processing_self'           => &$is_processing_self,
 			'is_processing_administration' => &$is_processing_administration,
 			'is_processing_interkassa'     => &$is_processing_interkassa,
@@ -794,6 +812,8 @@ class yf_manage_payout {
 			'operations_by_method' => $html_operations_by_method,
 			'url' => array(
 				'list'               => $this->_url( 'list' ),
+				'cancel'             => $this->_url( 'cancel',             array( '%operation_id' => $_operation_id ) ),
+				'expired'            => $this->_url( 'expired',            array( '%operation_id' => $_operation_id ) ),
 				'view'               => $this->_url( 'view',               array( '%operation_id' => $_operation_id ) ),
 				'request'            => $this->_url( 'request',            array( '%operation_id' => $_operation_id ) ),
 				'request_interkassa' => $this->_url( 'request_interkassa', array( '%operation_id' => $_operation_id ) ),
@@ -836,7 +856,7 @@ class yf_manage_payout {
 				break;
 		}
 		// body
-		$content = empty( $is_html_message ) ? $_status_message : htmlentities( $_status_message, ENT_HTML5, 'UTF-8', $double_encode = false );
+		$content = empty( $_is_html_message ) ? $_status_message : htmlentities( $_status_message, ENT_HTML5, 'UTF-8', $double_encode = false );
 		$panel_body = '<div class="panel-body">'. $content .'</div>';
 		// header
 		$content = 'Вывод средств';
@@ -1342,6 +1362,124 @@ EOS;
 		}
 		echo( $message . PHP_EOL );
 		exit( $status );
+	}
+
+	function _confirmation_update_expired() {
+		// var
+		$payment_api = _class( 'payment_api' );
+		// update status only in_progress
+		$object = $payment_api->get_status( array( 'name' => 'confirmation' ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) { return( $object ); }
+		$object = $payment_api->get_status( array( 'name' => 'expired' ) );
+		list( $new_status_id, $new_status ) = $object;
+		if( empty( $new_status_id ) ) { return( $object ); }
+		// time expired
+		$ts = strtotime( $payment_api->CONFIRMATION_TIME );
+		$sql_datetime_over = $payment_api->sql_datetime( $ts );
+		$sql_datetime = $payment_api->sql_datetime();
+		$db = db()->table( 'payment_operation' )->select( 'operation_id' )
+			->where( 'status_id', '=', $status_id )
+			->where( 'direction', '=', 'out' )
+			->where( 'datetime_update', '<', $sql_datetime_over )
+			->where_null( 'datetime_finish' )
+		;
+		// get items
+		$items = @$db->get_all(); $db_error = $db->db->_last_query_error;
+		if( $items === false && is_array( $db_error ) ) { return( null ); }
+		if( !$items ) { return( true ); }
+		// processing
+		$result = true;
+		foreach( $items as $idx => $item ) {
+			$operation_id = (int)$item[ 'operation_id' ];
+			$r = $payment_api->expired( array(
+				'operation_id' => $operation_id,
+			));
+			$result &= @$r[ 'status' ];
+		}
+		return( $result );
+	}
+
+	function confirmation_update_expired() {
+		$url = &$this->url;
+		// command line interface
+		$is_cli = ( php_sapi_name() == 'cli' );
+		$is_cli && $this->_confirmation_update_expired_cli();
+		// web
+		$replace = array(
+			'is_confirm' => false,
+		);
+		$result = form( $replace )
+			->on_post( function( $data, $extra, $rules ) {
+				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
+				if( $is_confirm ) {
+					$result = $this->_confirmation_update_expired();
+					if( empty( $result ) ) {
+						$level = 'error';
+						$message = 'Ошибка при обновлении';
+					} else {
+						$level = 'success';
+						$message = 'Выполнено обновление';
+					}
+					common()->add_message( $message, $level );
+				} else {
+					common()->message_info( 'Требуется подтверждение, для выполнения операции' );
+				}
+			})
+			->info( 'header', array( 'value' => 'Ввод средств: обновление статуса просроченных операций', 'no_label' => true, 'class' => 'text-warning' ) )
+			->check_box( 'is_confirm', array( 'desc' => 'Подтверждение', 'no_label' => true ) )
+			->row_start()
+				->submit( 'operation', 'update', array( 'desc' => 'Обновить', 'icon' => 'fa fa-refresh' ) )
+				->link( 'Назад' , $url[ 'list' ], array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
+			->row_end()
+		;
+		return( $result );
+	}
+
+	function _confirmation_update_expired_cli() {
+		$result = $this->_confirmation_update_expired();
+		if( empty( $result ) ) {
+			$status = 1;
+			$message = 'Update is fail';
+		} else {
+			$status = 0;
+			$message = 'Update is success';
+			;
+		}
+		echo( $message . PHP_EOL );
+		exit( $status );
+	}
+
+	function cancel() {
+		$operation_id = (int)@$_GET[ 'operation_id' ];
+		if( $operation_id < 1 ) {
+			$result = array(
+				'status_message' => 'Неверная операция',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// processing
+		$payment_api = _class( 'payment_api' );
+		$result = $payment_api->cancel( array(
+			'operation_id' => $operation_id,
+		));
+		return( $this->_user_message( $result ) );
+	}
+
+	function expired() {
+		$operation_id = (int)@$_GET[ 'operation_id' ];
+		if( $operation_id < 1 ) {
+			$result = array(
+				'status_message' => 'Неверная операция',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// processing
+		$payment_api = _class( 'payment_api' );
+		$result = $payment_api->expired( array(
+			'operation_id' => $operation_id,
+		));
+		return( $this->_user_message( $result ) );
 	}
 
 }

@@ -176,7 +176,9 @@ class yf_payment_api {
 	public $BALANCE_LIMIT_LOWER    = 0;
 
 	public $IS_PAYOUT_CONFIRMATION = false;
-	public $CONFIRMATION_TIME      = 21600; // sec: 6 hours = 6 * 60 * 60
+	public $CONFIRMATION_TIME      = '-6 hour';
+
+	public $DEPOSITION_TIME        = '-6 hour';
 
 	public $SECURITY_CODE = '7CFL4AjeB6P7RWAk7W0n';
 
@@ -1108,6 +1110,11 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function expired( $options = null ) {
+		$options[ 'status_name' ] = 'expired';
+		$result = $this->cancel( $options );
+		return( $result );
+	}
 	public function cancel( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -1119,6 +1126,7 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
+		$this->transaction_start( $options );
 		// operation
 		$operation = $this->operation( array(
 			'operation_id' => $_operation_id,
@@ -1128,6 +1136,7 @@ class yf_payment_api {
 				'status'         => false,
 				'status_message' => 'Операция отсутствует: ' . $_operation_id,
 			);
+			$this->transaction_rollback();
 			return( $result );
 		}
 		// status
@@ -1140,6 +1149,7 @@ class yf_payment_api {
 				'status'         => true,
 				'status_message' => 'Операция уже отменена',
 			);
+			$this->transaction_rollback();
 			return( $result );
 		}
 		if( $status[ 'name' ] != 'in_progress' && $status[ 'name' ] != 'confirmation' ) {
@@ -1147,6 +1157,7 @@ class yf_payment_api {
 				'status'         => false,
 				'status_message' => 'Операцию невозможно отменить',
 			);
+			$this->transaction_rollback();
 			return( $result );
 		}
 		// check provider
@@ -1160,6 +1171,7 @@ class yf_payment_api {
 				'status'         => false,
 				'status_message' => 'Операцию данного провайдера невозможно отменить',
 			);
+			$this->transaction_rollback();
 			return( $result );
 		}
 		// revert
@@ -1169,6 +1181,9 @@ class yf_payment_api {
 		$result = $this->_cancel( $options );
 		if( @$result[ 'status' ] ) {
 			$result[ 'status_message' ] = 'Операция отменена';
+			$this->transaction_commit();
+		} else {
+			$this->transaction_rollback();
 		}
 		return( $result );
 	}
@@ -1185,21 +1200,21 @@ class yf_payment_api {
 			return( $result );
 		}
 		// start transaction
-		db()->begin();
+		$this->transaction_start( $options );
 			// revert funds
 			if( @$_is_revert ) {
 				$result = $this->_amount_revert( $options );
-					if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+				if( empty( $result[ 'status' ] ) ) { $this->transaction_rollback(); return( $result ); }
 			}
 			// update operation balance
 			$options = array(
-				'status_name' => 'cancelled',
+				'status_name' => @$_status_name ?: 'cancelled',
 				'is_finish'   => true,
 			) + $options;
 			$result = $this->_operation_balance_update( $options );
-				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
+				if( empty( $result[ 'status' ] ) ) { $this->transaction_rollback(); return( $result ); }
 		// finish transaction
-		db()->commit();
+		$this->transaction_commit();
 		return( $result );
 	}
 
@@ -1669,7 +1684,7 @@ class yf_payment_api {
 		$time = time();
 // DEBUG
 // $time_code = $time - 1;
-		$is_expired = ( $time - $time_code ) > $this->CONFIRMATION_TIME;
+		$is_expired = ( $time - $time_code ) > strtotime( $this->CONFIRMATION_TIME );
 		if( $is_expired ) {
 			$result = array(
 				'status'         => false,
