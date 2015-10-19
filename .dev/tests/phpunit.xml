@@ -9,7 +9,6 @@
 	stopOnFailure="true"
 	syntaxCheck="false"
 	verbose="true"
-	strict="false"
 >
 	<testsuites>
 		<testsuite name="all-tests">
