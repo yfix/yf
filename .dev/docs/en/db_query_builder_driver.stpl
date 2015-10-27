@@ -1,0 +1,61 @@
+<h3>count</h3>
+{github(db_query_builder_driver.count)}
+<p>
+	<code>count</code> function counting number of records inside requested recordset.
+	Default parameter is: <code>$id = '*', $as_sql = false</code>
+	If parameter <code>$as_sql = true</code> return simple sql command,
+	else - return query result
+	* Example:
+</p>
+<h3>max</h3>
+{github(db_query_builder_driver.max)}
+<p>
+	<code>max</code> SQL aggregate MAX()
+	Default parameter is: <code>$pk = null, $as_sql = false</code>
+	If parameter <code>$as_sql = true</code> return simple sql command,
+	else - return query result
+	* Example:
+</p>
+<h3>min</h3>
+{github(db_query_builder_driver.min)}
+<p>
+	<code>min</code> SQL aggregate MIN()
+	Default parameter is: <code>$pk = null, $as_sql = false</code>
+	If parameter <code>$as_sql = true</code> return simple sql command,
+	else - return query result
+	* Example:
+</p>
+<h3>avg</h3>
+{github(db_query_builder_driver.avg)}
+<p>
+	<code>avg</code> SQL aggregate AVG()
+	Default parameter is: <code>$pk = null, $as_sql = false</code>
+	If parameter <code>$as_sql = true</code> return simple sql command,
+	else - return query result
+	* Example:
+</p>
+<h3>sum</h3>
+{github(db_query_builder_driver.sum)}
+<p>
+	<code>sum</code> SQL aggregate SUM()
+	Default parameter is: <code>$pk = null, $as_sql = false</code>
+	If parameter <code>$as_sql = true</code> return simple sql command,
+	else - return query result
+	* Example:
+</p>
+<h3>first</h3>
+{github(db_query_builder_driver.first)}
+<p>
+	<code>first</code> Return first item from resultset
+	Default parameter is: <code>$select = null, $use_cache = false</code>
+	If parameter <code>$use_cache = true</code> return cached query result
+	* Example:
+</p>
+<h3>last</h3>
+{github(db_query_builder_driver.last)}
+<p>
+	<code>last</code> Return last item from resultset
+	Default parameter is: <code>$select = null, $use_cache = false</code>
+	If parameter <code>$use_cache = true</code> return cached query result
+	* Example:
+</p>
