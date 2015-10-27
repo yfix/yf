@@ -20,7 +20,7 @@ class yf_session {
 	/** @var bool */
 	public $COOKIE_SECURE	= false;
 	/** @var bool */
-	public $COOKIE_HTTPONLY	= false;
+	public $COOKIE_HTTPONLY	= true;
 	/** @var string */
 	public $REFERER_CHECK	= ''; // WEB_PATH
 	/** @var string */
@@ -133,16 +133,21 @@ class yf_session {
 			$percent = $diff / $this->LIFE_TIME * 100;
 			// Session expired
 			if ($percent > 100 && $this->DESTROY_EXPIRED) {
-				session_destroy();
-				session_start();
+				session_regenerate_id($destroy = true);
 			// Session need to be regenerated
 			} elseif ($percent > 10) {
-				session_regenerate_id(/*$delete_old_session = true*/);
+				session_regenerate_id();
 				$_SESSION['last_update'] = $now;
 			}
 		} else {
 			$_SESSION['last_update'] = $now;
 		}
+		$_SESSION['sys_main_type'] = MAIN_TYPE;
+		$_SESSION['sys_requests_count']++;
+		$_SESSION['sys_user_ip'] = common()->get_ip();
+		$_SESSION['sys_user_geo_country'] = $_SERVER['GEOIP_COUNTRY_CODE'];
+#		$_SESSION['sys_user_ua'] = $_SERVER['HTTP_USER_AGENT'];
+		$_SESSION['sys_user_current_url'] = (is_https() ? 'https://' : 'http://'). $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'];
 		$main->_session_init_complete = true;
 		$this->_started = true;
 		return $this->_started;

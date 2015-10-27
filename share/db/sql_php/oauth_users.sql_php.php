@@ -143,7 +143,7 @@ return array(
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
-			'default' => '',
+			'default' => NULL,
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
@@ -158,7 +158,7 @@ return array(
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
-			'default' => '',
+			'default' => NULL,
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
@@ -213,9 +213,18 @@ return array(
 				'provider_uid' => 'provider_uid',
 			),
 		),
+		'user_id' => array(
+			'name' => 'user_id',
+			'type' => 'index',
+			'columns' => array(
+				'user_id' => 'user_id',
+			),
+		),
 	),
 	'foreign_keys' => array(
 	),
 	'options' => array(
+		'engine' => 'InnoDB',
+		'charset' => 'utf8',
 	),
 );

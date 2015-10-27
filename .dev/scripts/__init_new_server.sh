@@ -13,7 +13,7 @@ myssh="ssh -2 -4 root@$host"
 echo "== Copy authorized keys"
 cat ./_authorized_keys.txt | $myssh "mkdir -p /root/.ssh/ && chmod 700 /root/.ssh/; cat > /root/.ssh/authorized_keys; chmod 400 /root/.ssh/authorized_keys"
 echo "== Copy SSH key"
-cat ../yfix_team.pem | $myssh "mkdir -p /root/.ssh/ && chmod 700 /root/.ssh/; cat > /root/.ssh/yfix_team.pem; chmod 400 /root/.ssh/yfix_team.pem"
+cat ../yfix_team2.pem | $myssh "mkdir -p /root/.ssh/ && chmod 700 /root/.ssh/; cat > /root/.ssh/yfix_team2.pem; chmod 400 /root/.ssh/yfix_team2.pem"
 
 $myssh '
 
@@ -103,15 +103,6 @@ require_packages "ntp"
 
 echo "== Completely disable SWAP"
 swapoff -a
-
-echo "== xtrabackup install"
-echo "deb http://repo.percona.com/apt precise main
-deb-src http://repo.percona.com/apt precise main
-" > /etc/apt/sources.list.d/percona.list;
-gpg --keyserver  hkp://keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A;
-gpg -a --export CD2EFD2A | sudo apt-key add -;
-( apt-get update && apt-get upgrade -y )
-require_packages "xtrabackup percona-toolkit"
 
 echo "== Enable bash completion"
 sed "/if \[ -f \/etc\/bash_completion/,/fi/ d" -i /root/.bashrc

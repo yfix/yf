@@ -9,10 +9,12 @@
 */
 class yf_manage_servers {
 
+	const table = 'core_servers';
+
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('core_servers'))
+		return table('SELECT * FROM '.db(self::table))
 			->text('ip')
 			->text('role')
 			->text('name')
@@ -27,14 +29,14 @@ class yf_manage_servers {
 	/**
 	*/
 	function edit() {
-		$a = db()->query_fetch('SELECT * FROM '.db('core_servers').' WHERE id='.intval($_GET['id']));
+		$a = db()->query_fetch('SELECT * FROM '.db(self::table).' WHERE id='.intval($_GET['id']));
 		if (!$a['id']) {
 			return _e('No id!');
 		}
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('ip' => 'trim|required|valid_ip'))
-			->db_update_if_ok('core_servers', array('ip','role','name','hostname','comment'), 'id='.$a['id'])
+			->db_update_if_ok(self::table, array('ip','role','name','hostname','comment'), 'id='.$a['id'])
 			->on_after_update(function() {
 				cache_del(array('servers','server_roles'));
 				common()->admin_wall_add(array('server updated: '.$_POST['ip'].'', $a['id']));
@@ -54,7 +56,7 @@ class yf_manage_servers {
 		$a = $_POST;
 		return form($a)
 			->validate(array('ip' => 'trim|required|valid_ip|is_unique[core_servers.ip]'))
-			->db_insert_if_ok('core_servers', array('ip','role','name','hostname','comment'), array())
+			->db_insert_if_ok(self::table, array('ip','role','name','hostname','comment'), array())
 			->on_after_update(function() {
 				cache_del(array('servers','server_roles'));
 				common()->admin_wall_add(array('server added: '.$_POST['ip'].'', db()->insert_id()));
@@ -71,13 +73,13 @@ class yf_manage_servers {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => 'core_servers'));
+		return _class('admin_methods')->delete(array('table' => self::table));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => 'core_servers'));
+		return _class('admin_methods')->active(array('table' => self::table));
 	}
 
 	/**

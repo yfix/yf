@@ -5,6 +5,14 @@
 */
 class yf_rewrite_pattern_yf {
 
+	public $allowed_url_params = array(
+		'utm_source',
+		'utm_medium',
+		'utm_content',
+		'utm_campaign',
+		'utm_term',
+	);
+
 	/**
 	* Build url
 	*/
@@ -66,6 +74,11 @@ class yf_rewrite_pattern_yf {
 		unset($arr['fragment']);
 		$lang = $arr['lang'];
 		unset($arr['lang']);
+#		foreach ((array)$class_rewrite->allowed_url_params as $name) {
+#			if (isset($_GET[$name]) && preg_match('~^[a-z0-9_-]+$~i', $_GET[$name])) {
+#				$arr[$name] = $_GET[$name];
+#			}
+#		}
 		foreach ((array)$arr as $k => $v) {
 			$arr_out[] = $k.'='.$v;
 		}
@@ -81,7 +94,7 @@ class yf_rewrite_pattern_yf {
 		if ($class_rewrite->USE_WEB_PATH) {
 			$url = WEB_PATH;
 		} else {
-			$url = 'http://'. $a['host']. ($a['port'] && $a['port'] != '80' ? ':'.$a['port'] : ''). '/';
+			$url = 'http://'. $a['host']. ($a['port'] && !in_array($a['port'], array('80','443')) ? ':'.$a['port'] : ''). '/';
 		}
 		return $class_rewrite->_correct_protocol($url. $u);
 	}
@@ -137,10 +150,15 @@ class yf_rewrite_pattern_yf {
 				$s = 'object=home_page&action=show';
 			}
 		}
-		if (isset($url[2])) {
+		foreach ((array)$class_rewrite->allowed_url_params as $name) {
+			if (isset($_GET[$name]) && preg_match('~^[a-z0-9_-]+$~i', $_GET[$name])) {
+				$query[$name] = $_GET[$name];
+			}
+		}
+		if (isset($url[2]) && strlen($url[2])) {
 			$s .= '&id='.$url[2];
 		}
-		if (isset($url[3])) {
+		if (isset($url[3]) && strlen($url[3])) {
 			$s .= '&page='.$url[3];
 		}
 		if ($s != '') {

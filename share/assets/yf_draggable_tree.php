@@ -27,11 +27,11 @@ $(function(){
 			"parent_id" : +($(this).closest("ul").not(".draggable_menu").parent("li").attr("id") || "").substring("item_".length)
 		}
 	})
-	$("#draggable_form").on("submit", function(){
+	$("#draggable_form, .draggable_form").on("submit", function(){
 		var _form = $(this);
 		var items = { };
 		var i = 0;
-		$("li", ".draggable_menu").each(function(){
+		$(".draggable_menu li", _form).each(function(){
 			items[++i] = {
 				"item_id" : +$(this).attr("id").substring("item_".length),
 				"parent_id" : +($(this).closest("ul").not(".draggable_menu").parent("li").attr("id") || "").substring("item_".length)
@@ -42,10 +42,18 @@ $(function(){
 				orig_items[i] = items[i];
 			}
 		})
-		if (items) {
-			$.post(_form.attr("action"), {"items" : JSON.stringify(items)}, function(data){
+		if (Object.keys(items).length > 0) {
+			if ($("input[type=hidden][name=items]", _form).length == 0) {
+				_form.append("<input type=hidden name=items>")
+			}
+			$("input[type=hidden][name=items]", _form).val(JSON.stringify(items))
+			console.log("Draggable form: saving these changed items", items)
+			return true;
+//			$.post(_form.attr("action"), {"items" : JSON.stringify(items)}, function(data){
 //				window.location.reload();
-			})
+//			})
+		} else {
+			console.log("Draggable form: no changes tracked, do nothing")
 		}
 		return false;
 	})
@@ -111,7 +119,7 @@ $(function(){
 			_set_dl_colors()
 		}
 	});
-	$("li",".draggable_menu").not(".not_draggable").draggable({
+	$("li", ".draggable_menu").not(".not_draggable").draggable({
 		handle: " > dl",
 		opacity: .8,
 		addClasses: false,

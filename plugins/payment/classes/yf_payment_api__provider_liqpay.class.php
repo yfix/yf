@@ -8,9 +8,6 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	public $KEY_PUBLIC  = null;
 	public $KEY_PRIVATE = null;
 
-	public $IS_DEPOSITION = true;
-	// public $IS_PAYMENT    = true;
-
 	public $_options_transform = array(
 		'title'        => 'description',
 		'operation_id' => 'order_id',
@@ -293,104 +290,6 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 			}
 		}
 		return( $_ );
-	}
-
-	public function get_currency( $options ) {
-		if( !$this->ENABLE ) { return( null ); }
-		$_       = &$options;
-		$api     = $this->api;
-		$allow   = &$this->currency_allow;
-		$default = $this->currency_default;
-		// chech: allow currency_id
-		$id     = $_[ 'currency_id' ];
-		$result = $default;
-		if( isset( $allow[ $id ] ) && $allow[ $id ][ 'active' ] ) {
-			$result = $id;
-		}
-		return( $result );
-	}
-
-	public function deposition( $options ) {
-		if( !$this->ENABLE ) { return( null ); }
-		$payment_api = $this->payment_api;
-		$_              = $options;
-		$data           = &$_[ 'data'           ];
-		$options        = &$_[ 'options'        ];
-		$operation_data = &$_[ 'operation_data' ];
-		// prepare data
-		$user_id      = (int)$operation_data[ 'user_id' ];
-		$operation_id = (int)$data[ 'operation_id' ];
-		$account_id   = (int)$data[ 'account_id'   ];
-		$provider_id  = (int)$data[ 'provider_id'  ];
-		$amount       = $payment_api->_number_float( $data[ 'amount' ] );
-		$currency_id  = $this->get_currency( $options );
-		if( empty( $operation_id ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Не определен код операции',
-			);
-			return( $result );
-		}
-		// currency conversion
-		$amount_currency = $payment_api->currency_conversion( array(
-			'conversion_type' => 'buy',
-			'currency_id'     => $currency_id,
-			'amount'          => $amount,
-		));
-		if( empty( $amount_currency ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Невозможно произвести конвертацию валют',
-			);
-			return( $result );
-		}
-		// fee
-		$fee = $this->fee;
-		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
-		// prepare request form
-		$form_data  = array(
-			'user_id'               => $user_id,
-			'operation_id'          => $operation_id,
-			'account_id'            => $account_id,
-			'provider_id'           => $provider_id,
-			'currency_id'           => $currency_id,
-			'fee'                   => $fee,
-			'amount'                => $amount,
-			'amount_currency'       => $amount_currency,
-			'amount_currency_total' => $amount_currency_total,
-		);
-		// $description = implode( '#', array_values( $description ) );
-		$form_options = array(
-			'amount'       => $amount_currency_total,
-			'currency'     => $currency_id,
-			'operation_id' => $operation_id,
-			'title'        => $data[ 'title' ],
-			// 'description'  => $operation_id,
-			// 'description'  => $description,
-			// 'result_url'   => $result_url,
-			// 'server_url'   => $server_url,
-		);
-		$form = $this->_form( $form_options );
-		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
-		// save options
-		$operation_options = array(
-			'request' => array( array(
-				'data'     => $form_data,
-				'form'     => $form_options,
-				'datetime' => $operation_data[ 'sql_datetime' ],
-			))
-		);
-		$result = $payment_api->operation_update( array(
-			'operation_id' => $operation_id,
-			'options'      => $operation_options,
-		));
-		if( !$result[ 'status' ] ) { return( $result ); }
-		$result = array(
-			'form'           => $form,
-			'status'         => true,
-			'status_message' => 'Поплнение через сервис: LiqPay',
-		);
-		return( $result );
 	}
 
 }

@@ -13,7 +13,29 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 
 	public $_api_request_timeout = 30;  // sec
 	public $method_allow = array(
-		'payment' => array(
+		'order' => array(
+			'payin' => array(
+				'private',
+			),
+			'payout' => array(
+				'pay_pb',
+				'pay_visa',
+			),
+		),
+		'payin' => array(
+			'private' => array(
+				'title'       => 'Приват Банк',
+				'icon'        => 'privat24',
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'UAH' => array(
+						'currency_id' => 'UAH',
+						'active'      => true,
+					),
+				),
+			),
+		),
+		'payout' => array(
 			'pay_pb' => array(
 				'title' => 'Приват24',
 				'icon'  => 'privat24',
@@ -23,6 +45,9 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 					'amt',
 					'ccy',
 					'details',
+				),
+				'order' => array(
+					'account',
 				),
 				'option' => array(
 					'account' => 'Счет',
@@ -38,6 +63,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 					'amt',
 					'ccy',
 					'details',
+				),
+				'order' => array(
+					'name',
+					'account',
 				),
 				'option' => array(
 					'name'    => 'ФИО получателя',
@@ -148,10 +177,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function api_request( $method, $options ) {
+	public function api_payout( $method, $options ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$api_method_allow = $this->method_allow[ 'payment' ][ $method ];
-		if( !is_array( $api_method_allow ) ) { return( null ); }
+		$method = $this->api_method( array(
+			'type'      => 'payout',
+			'method_id' => $method,
+		));
+		if( !is_array( $method ) ) { return( null ); }
 		$payment_api = &$this->payment_api;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -167,7 +199,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$_wait = $_wait ?: $this->_api_request_timeout;
 		$_test = $payment_api->_default( array( $_test, $this->TEST_MODE ) );
 		// $_test = (int)$_test;
-		foreach( $api_method_allow[ 'field' ] as $name ) {
+		foreach( $method[ 'field' ] as $name ) {
 			$value = &${ '_'.$name };
 			if( !isset( $value ) ) {
 				$result = array(
@@ -195,7 +227,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		isset( $_payment_id ) && $xml_payment->addAttribute( 'id', $_payment_id );
 		// data
 		$data = '';
-		foreach( $api_method_allow[ 'field' ] as $name ) {
+		foreach( $method[ 'field' ] as $name ) {
 			$value = ${ '_'.$name };
 			$value = htmlentities( $value, ENT_COMPAT | ENT_XML1, 'UTF-8', $double_encode = false );
 			$prop = $xml_payment->addChild( 'prop' );
@@ -437,155 +469,4 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		return( $_ );
 	}
 
-	public function get_currency( $options ) {
-		if( !$this->ENABLE ) { return( null ); }
-		$_       = &$options;
-		$api     = $this->api;
-		$allow   = &$this->currency_allow;
-		$default = $this->currency_default;
-		// chech: allow currency_id
-		$id     = $_[ 'currency_id' ];
-		$result = $default;
-		if( isset( $allow[ $id ] ) && $allow[ $id ][ 'active' ] ) {
-			$result = $id;
-		}
-		return( $result );
-	}
-
-	public function deposition( $options ) {
-		if( !$this->ENABLE ) { return( null ); }
-		$payment_api    = $this->payment_api;
-		$_              = $options;
-		$data           = &$_[ 'data'           ];
-		$options        = &$_[ 'options'        ];
-		$operation_data = &$_[ 'operation_data' ];
-		// prepare data
-		$user_id        = (int)$operation_data[ 'user_id' ];
-		$operation_id   = (int)$data[ 'operation_id' ];
-		$account_id     = (int)$data[ 'account_id'   ];
-		$provider_id    = (int)$data[ 'provider_id'  ];
-		$amount         = $payment_api->_number_float( $data[ 'amount' ] );
-		$currency_id    = $this->get_currency( $options );
-		if( empty( $operation_id ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Не определен код операции',
-			);
-			return( $result );
-		}
-		// currency conversion
-		$amount_currency = $payment_api->currency_conversion( array(
-			'conversion_type' => 'buy',
-			'currency_id'     => $currency_id,
-			'amount'          => $amount,
-		));
-		if( empty( $amount_currency ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Невозможно произвести конвертацию валют',
-			);
-			return( $result );
-		}
-		// fee
-		$fee = $this->fee;
-		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
-		// prepare request form
-		$form_data  = array(
-			'user_id'               => $user_id,
-			'operation_id'          => $operation_id,
-			'account_id'            => $account_id,
-			'provider_id'           => $provider_id,
-			'currency_id'           => $currency_id,
-			'fee'                   => $fee,
-			'amount'                => $amount,
-			'amount_currency'       => $amount_currency,
-			'amount_currency_total' => $amount_currency_total,
-		);
-		// $description = implode( '#', array_values( $description ) );
-		$form_options = array(
-			'amount'       => $amount_currency_total,
-			'currency'     => $currency_id,
-			'operation_id' => $operation_id,
-			'title'        => $data[ 'title' ],
-			'description'  => $operation_id,
-			// 'description'  => $description,
-			// 'result_url'   => $result_url,
-			// 'server_url'   => $server_url,
-		);
-		$form = $this->_form( $form_options );
-		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
-		// save options
-		$operation_options = array(
-			'request' => array( array(
-				'data'     => $form_data,
-				'form'     => $form_options,
-				'datetime' => $operation_data[ 'sql_datetime' ],
-			))
-		);
-		$result = $payment_api->operation_update( array(
-			'operation_id' => $operation_id,
-			'options'      => $operation_options,
-		));
-		if( !$result[ 'status' ] ) { return( $result ); }
-		$result = array(
-			'form'           => $form,
-			'status'         => true,
-			'status_message' => 'Поплнение через сервис: Приват24',
-		);
-		return( $result );
-	}
-
-	public function payment( $options ) {
-		if( !$this->ENABLE ) { return( null ); }
-		$payment_api    = $this->payment_api;
-		$_              = $options;
-		$data           = &$_[ 'data'           ];
-		$options        = &$_[ 'options'        ];
-		$operation_data = &$_[ 'operation_data' ];
-		// prepare data
-		$user_id        = (int)$operation_data[ 'user_id' ];
-		$operation_id   = (int)$data[ 'operation_id' ];
-		$account_id     = (int)$data[ 'account_id'   ];
-		$provider_id    = (int)$data[ 'provider_id'  ];
-		$amount         = $payment_api->_number_float( $data[ 'amount' ] );
-		$currency_id    = $this->get_currency( $options );
-		if( empty( $operation_id ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Не определен код операции',
-			);
-			return( $result );
-		}
-		// currency conversion
-		$amount_currency = $payment_api->currency_conversion( array(
-			'conversion_type' => 'sell',
-			'currency_id'     => $currency_id,
-			'amount'          => $amount,
-		));
-		if( empty( $amount_currency ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Невозможно произвести конвертацию валют',
-			);
-			return( $result );
-		}
-		// fee
-		$fee = $this->fee;
-		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
-		// prepare
-		$method_id = $options[ 'method_id' ];
-		$request   = array(
-			'operation_id' => $operation_id,
-			'amount'       => $amount_currency_total,
-			// 'currency'     => 'UAH',
-			'title'        => $options[ 'operation_title' ],
-			'account'      => $options[ 'account' ],
-		);
-		$result = $this->api_request( $method_id, $request );
-// DEBUG
-// ini_set( 'html_errors', 0 );
-// var_dump( $options, $request, $result );
-// exit;
-		list( $status, $status_message ) = $result;
-	}
 }

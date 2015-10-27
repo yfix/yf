@@ -28,7 +28,7 @@
 </style>
 
 <div class="b-link-list pull-right">
-	<a href="{url.view}" class="btn btn-info">Операция</a>
+	{{-- <a href="{url.view}" class="btn btn-info">Операция</a> --}}
 {{--
 {if_not_empty( url.provider_payouts )}
 	<a href="{url.provider_payouts}" target="_blank" class="btn btn-warning">Операция провайдера</a>
@@ -57,7 +57,7 @@
 
 <div class="clearfix"></div>
 
-{if_empty( is_progressed )}
+{if_true( is_progressed )}
 
 <div class="b-action pull-left">
 	<p>

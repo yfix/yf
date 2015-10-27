@@ -18,7 +18,7 @@ done
 #$d = new yf_dir();
 #print_r($d->replace($yf."'$d'","-f /\.class\.php/", "","/if\(/", "if ("));
 
-# TODO: find oout how to NOT parse/replace strings regexps for these:
+# TODO: find out how to NOT parse/replace strings regexps for these:
 
 # if(            ->  if (
 # }else          -> } else

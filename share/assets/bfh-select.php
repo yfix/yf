@@ -7,20 +7,21 @@ $bfh_css_fixes = '
 	[class^="bfh-flag-"]:empty, [class*="bfh-flag-"]:empty { width: 16px; }
 	.bfh-selectbox { max-width: 300px; }
 	.bfh-selectbox-options a { padding-left: 10px; }
+	a.bfh-selectbox-toggle:hover { color: #333; }
 ';
 return array(
 	'versions' => array(
+#		'2.3.0' => array(
+#			'js' => '//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/js/bootstrap-formhelpers.min.js',
+#			'css' => array(
+#				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/css/bootstrap-formhelpers.min.css',
+#				$bfh_css_fixes,
+#			),
+#		),
 		'master' => array(
 			'js' => '//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/js/bootstrap-formhelpers.min.js',
 			'css' => array(
 				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/css/bootstrap-formhelpers.min.css',
-				$bfh_css_fixes,
-			),
-		),
-		'2.3.0' => array(
-			'js' => '//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/js/bootstrap-formhelpers.min.js',
-			'css' => array(
-				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/css/bootstrap-formhelpers.min.css',
 				$bfh_css_fixes,
 			),
 		),

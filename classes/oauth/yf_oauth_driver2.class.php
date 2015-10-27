@@ -142,13 +142,16 @@ abstract class yf_oauth_driver2 {
 	/**
 	*/
 	function _decode_result($result, $response, $for_method = '') {
-		if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
+		if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false || is_string($result) && in_array(substr(ltrim($result), 0, 1), array('[','{'))) {
 			$result = json_decode($result, $assoc = true);
 		} elseif (strpos($response['content_type'], 'application/x-www-form-urlencoded') !== false) {
 			parse_str($result, $try_parsed);
 			if (is_array($try_parsed) && count($try_parsed) > 1) {
 				$result = $try_parsed;
 			}
+		}
+		if (is_string($result) && in_array(substr(ltrim($result), 0, 1), array('[','{'))) {
+			$result = json_decode($result, $assoc = true);
 		}
 		return $result;
 	}

@@ -9,7 +9,13 @@ class yf_manage_payment {
 	protected $filter      = null;
 	protected $url         = null;
 
+	public $payment_api        = null;
+	public $manage_payment_lib = null;
+
 	function _init() {
+		// class
+		$this->payment_api        = _class( 'payment_api'        );
+		$this->manage_payment_lib = module( 'manage_payment_lib' );
 		// property
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -60,6 +66,21 @@ class yf_manage_payment {
 		foreach( explode( '|', 'operation_id|datetime_update|datetime_start|datetime_finish|title|amount|balance' ) as $f ) {
 			$order_fields[ $f ] = $f;
 		}
+		// provider
+		$payment_api = _class( 'payment_api' );
+		$providers = $payment_api->provider();
+		$providers__select_box = array();
+		foreach( $providers as $id => $item ) {
+			$providers__select_box[ $id ] = $item[ 'title' ];
+		}
+		// status
+		$payment_status = $payment_api->get_status();
+		$payment_status__select_box = array();
+		$payment_status__select_box[ -1 ] = 'ВСЕ СТАТУСЫ';
+		foreach( $payment_status as $id => $item ) {
+			$payment_status__select_box[ $id ] = $item[ 'title' ];
+		}
+		// render
 		$result = form( $replace, array(
 				'selected' => $filter,
 			))
@@ -67,6 +88,8 @@ class yf_manage_payment {
 			->hidden( 'account_id' )
 			->text( 'operation_id', 'Номер операции' )
 			->text( 'title'       , 'Название'       )
+			->select_box( 'status_id'  , $payment_status__select_box, array( 'show_text' => 'статус'    , 'desc' => 'Статус'     ) )
+			->select_box( 'provider_id', $providers__select_box     , array( 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ) )
 			->radio_box( 'direction', array( '' => 'все', 'in' => 'приход', 'out' => 'расход' ), array( 'desc' => 'Направление' ) )
 			->datetime_select( 'datetime_update',      'Дата с',  array( 'with_time' => 1 ) )
 			->datetime_select( 'datetime_update__and', 'Дата до', array( 'with_time' => 1 ) )
@@ -157,19 +180,11 @@ class yf_manage_payment {
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
 		$url         = &$this->url;
-
-#		$sum_daily = $this->_get_daily_stats('sum', $last_days = 180);
-#		$sum_chart = _class('charts')->jquery_sparklines($sum_daily);
-#		if ($sum_chart) {
-#			$sum_chart = '<div title="'.t('Баланс по системе по дням').'" style="margin-bottom: 10px;">'.$sum_chart.'</div>';
-#		}
-
 		$num_daily = $this->_get_daily_stats('num', $last_days = 180);
 		$num_chart = _class('charts')->jquery_sparklines($num_daily);
 		if ($num_chart) {
 			$num_chart = '<div title="'.t('Транзакции в системе по дням').'" style="margin-bottom: 10px;">'.$num_chart.'</div>';
 		}
-
 		$sql = db()->select( 'u.id as id', 'u.id as user_id', 'u.name as name', 'u.email as email', 'pa.balance as balance', 'pa.account_id as account_id' )
 			->table( 'user as u' )
 			->left_join( 'payment_account as pa', 'pa.user_id = u.id' )
@@ -206,8 +221,70 @@ class yf_manage_payment {
 				$daily = _class('charts')->jquery_sparklines($table->_data_daily_num[$a['id']]);
 				return $daily ? '<span title="'.t('Транзакции').'">'.$daily.'</span>' : false;
 			}, array('desc' => 'Транзакции'))
-			->btn( 'Баланс' , $url[ 'balance' ], array( 'icon' => 'fa fa-money', 'class_add' => 'btn-primary' ) )
+			->btn( 'Баланс' , $url[ 'balance' ], array( 'icon' => 'fa fa-money', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
 		;
+	}
+
+	function _operation_sql( $options = null ) {
+		$payment_api = _class( 'payment_api' );
+		list( $sql ) = $payment_api->operation( $options );
+		$result = $sql;
+		return( $result );
+	}
+
+	function _operation_table( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// class
+		$manage_lib  = &$this->manage_payment_lib;
+		// status
+		$payment_status = &$_payment_status;
+		$result = table( $_sql, array(
+				'filter' => $_filter,
+				'filter_params' => array(
+					'operation_id'    => 'in',
+					'title'           => 'like',
+					'datetime_update' => array( 'datetime_between', 'datetime_update' ),
+				),
+			))
+			->text( 'operation_id'   , 'Номер'           )
+			->text( 'title'          , 'Название'        )
+			->func( 'provider_id', function($in, $e, $a, $p, $table) use( $_providers ) {
+				$system    = &$_providers[ $in ][ 'system' ];
+				$direction = &$a[ 'direction' ];
+				$url = null;
+				$title = $_providers[ $in ][ 'title' ];
+				if( empty( $system ) ) {
+					$uri = '';
+					switch( $direction ) {
+						case 'in':
+							$uri   = '/manage_deposit';
+							break;
+						case 'out':
+							$uri   = '/manage_payout';
+							break;
+					}
+					$uri && $url = a( $uri . '/view?operation_id=' . $a[ 'operation_id' ], $title );
+				}
+				$result = $url ?: $title;
+				return( $result );
+			}, array( 'desc' => 'Провайдер' ) )
+			->text( 'amount'         , 'Сумма'           )
+			->text( 'balance'        , 'Баланс'          )
+			->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $payment_status ) {
+				$status_name = $payment_status[ $value ][ 'name' ];
+				$title       = $payment_status[ $value ][ 'title' ];
+				$css = $manage_lib->css_by_status( array(
+					'status_name' => $status_name,
+				));
+				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
+				return( $result );
+			}, array( 'desc' => 'статус' ) )
+			->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
+			->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
+			->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
+		;
+		return( $result );
 	}
 
 	function balance() {
@@ -220,6 +297,7 @@ class yf_manage_payment {
 		$account_id  = (int)$_GET[ 'account_id' ];
 		$url_back    = url_admin( '/@object' );
 		$payment_api = _class( 'payment_api' );
+		$payment_status = $payment_api->get_status();
 		// check id: user, operation
 		if( $user_id > 0 ) {
 			$user_info = user( $user_id );
@@ -258,7 +336,7 @@ class yf_manage_payment {
 		foreach( $providers as $i => $item ) {
 			$items[ $item[ 'name' ] ] = $item[ 'title' ];
 		}
-		$providers = $items;
+		$providers_form = $items;
 		// prepare form
 		$replace = array(
 			'amount'        => null,
@@ -273,7 +351,7 @@ class yf_manage_payment {
 		$replace += $_POST;
 		$form = form( $replace, array( 'autocomplete' => 'off' ) )
 			->validate(array(
-				'amount'        => 'trim|required|numeric|greater_than_equal_to[1]',
+				'amount'        => 'trim|required|numeric|greater_than[0]',
 				'provider_name' => 'trim|required',
 			))
 			->on_validate_ok( function( $data, $extra, $rules ) use( &$user_id, &$account_id, &$account ) {
@@ -291,6 +369,7 @@ class yf_manage_payment {
 					'operation_title' => $_POST[ 'title' ],
 					'operation'       => $operation,
 					'provider_name'   => $provider_name,
+					'is_balance_limit_lower' => false,
 				);
 				$result = $payment_api->transaction( $options );
 				if( !empty( $result[ 'form' ] ) ) {
@@ -320,9 +399,9 @@ class yf_manage_payment {
 					return( js_redirect( $url ) );
 				}
 			})
-			->number( 'amount', 'Сумма' )
+			->float( 'amount', 'Сумма' )
 			->text( 'title', 'Название' )
-			->select_box( 'provider_name', $providers, array( 'show_text' => 1, 'desc' => 'Провайдер', 'tip' => 'Выбрать провайдера возможно только для пополнения. Списание возможно только от Администратора.' ) )
+			->select_box( 'provider_name', $providers_form, array( 'show_text' => 1, 'desc' => 'Провайдер', 'tip' => 'Выбрать провайдера возможно только для пополнения. Списание возможно только от Администратора.' ) )
 			->row_start( array(
 				'desc' => 'Операция',
 			))
@@ -339,43 +418,21 @@ class yf_manage_payment {
 				'no_order_by' => true,
 				'sql'         => true,
 			);
-			list( $sql, $sql_count ) = $payment_api->operation( $operation_options );
+			$sql = $this->_operation_sql( $operation_options );
 			if( empty( $filter ) ) {
 				$filter = array(
 					'order_by'        => 'datetime_update',
 					'order_direction' => 'desc',
 				);
 			}
-			// prepare provider
-			$providers = $payment_api->provider( array(
-				'all' => true,
+			// operations table
+			$table = $this->_operation_table( array(
+				'filter'         => $filter,
+				'sql'            => $sql,
+				'user_id'        => $user_id,
+				'payment_status' => $payment_status,
+				'providers'      => $providers,
 			));
-			// prepare status
-			$status = $payment_api->status();
-			$table = table( $sql, array(
-					'filter' => $filter,
-					'filter_params' => array(
-						'operation_id'    => 'in',
-						'title'           => 'like',
-						'datetime_update' => array( 'datetime_between', 'datetime_update' ),
-					),
-				))
-				->text( 'operation_id'   , 'Номер'           )
-				->text( 'title'          , 'Название'        )
-				->func( 'provider_id', function($in, $e, $a, $p, $table) use( $providers ) {
-					$result = $providers[ $in ][ 'title' ];
-					return( $result );
-				}, array( 'desc' => 'Провайдер' ) )
-				->text( 'amount'         , 'Сумма'           )
-				->text( 'balance'        , 'Баланс'          )
-				->func( 'status_id', function($in, $e, $a, $p, $table) use( $status ) {
-					$result = $status[ $in ][ 'title' ];
-					return( $result );
-				}, array( 'desc' => 'Статус' ) )
-				->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
-				->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
-				->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
-			;
 		} else {
 			if( !$_POST[ 'amount' ] ) {
 				common()->message_warning( 'Счет не определен', array( 'translate' => false ) );

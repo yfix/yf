@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 
+define('DEBUG_MODE', 1);
 require_once dirname(__DIR__).'/scripts_init.php';
 
 require __DIR__.'/fontawesome_icons.php';

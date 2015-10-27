@@ -2,11 +2,13 @@
 
 class yf_manage_conf {
 
+	const table = 'conf';
+
 	/**
 	*/
 	function _init() {
 		$this->_table = array(
-			'table' => 'conf',
+			'table' => self::table,
 			'fields' => array(
 				'name',
 				'value',
@@ -18,7 +20,7 @@ class yf_manage_conf {
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('conf').' ORDER BY `name` ASC')
+		return table('SELECT * FROM '.db(self::table).' ORDER BY `name` ASC')
 			->text('name','',array('badge' => 'info'))
 			->text('value')
 			->text('desc','Description')

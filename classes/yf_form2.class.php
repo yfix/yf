@@ -30,6 +30,8 @@ class yf_form2 {
 	public $CLASS_STACKED_ROW = 'stacked-row';
 
 	public $CONF_BOXES_USE_BTN_GROUP = false;
+	public $CONF_CSRF_PROTECTION = false;
+	public $CONF_CSRF_NAME = '_token';
 
 	/**
 	* Catch missing method call
@@ -246,7 +248,43 @@ class yf_form2 {
 		if (is_callable($on_before_render)) {
 			$on_before_render($extra, $replace, $this);
 		}
-		if (main()->is_post()) {
+		if (!is_array($this->_body)) {
+			$this->_body = array();
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra_override = array();
+		$form_id = isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : $this->_form_id;
+		if ($form_id) {
+			$extra_override = $this->_get_extra_override($form_id);
+		}
+		$headless_form = ($extra['no_form'] || $this->_params['no_form']);
+
+		$csrf_protect = isset($extra['csrf']) ? (bool)$extra['csrf'] : (isset($this->_params['csrf']) ? $this->_params['csrf'] : $this->CONF_CSRF_PROTECTION);
+		if (isset($extra['method']) && strtolower($extra['method']) != 'post') {
+			$csrf_protect = false;
+		}
+		if ($headless_form) {
+			$csrf_protect = false;
+		}
+		if ($csrf_protect && is_callable($csrf_protect)) {
+			$csrf_protect = $csrf_protect($this, $extra);
+		}
+		if ($csrf_protect) {
+			$csrf_guard = _class('csrf_guard')->configure(array(
+				'form_id'		=> $form_id ?: 'autoid_'.++main()->_csrf_ids,
+				'token_name'	=> $this->CONF_CSRF_NAME,
+			));
+		}
+		if (is_post()) {
+			if ($csrf_protect && !$csrf_guard->validate($_POST[$this->CONF_CSRF_NAME])) {
+				$this->_params['show_alerts'] = true;
+				$this->_validate_rules[$this->CONF_CSRF_NAME] = function($in, $p, $a, &$error_msg) {
+					$error_msg = 'Invalid CSRF token. Send the form again. If you did not send this request then close this page.';
+					return false;
+				};
+			}
 			$on_post = isset($extra['on_post']) ? $extra['on_post'] : $this->_on['on_post'];
 			if (is_callable($on_post)) {
 				$on_post($extra, $replace, $this);
@@ -261,21 +299,15 @@ class yf_form2 {
 				$func = $up['func'];
 				$func($up['table'], $up['fields'], $up['type'], $up['extra'], $this);
 			}
-		}
-		if (!is_array($this->_body)) {
-			$this->_body = array();
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra_override = array();
-		$form_id = isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : $this->_form_id;
-		if ($form_id) {
-			$extra_override = $this->_get_extra_override($form_id);
+		} else {
+			if ($csrf_protect) {
+				$this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
+				$this->hidden($this->CONF_CSRF_NAME);
+			}
 		}
 		$r = (array)$this->_replace + (array)$replace;
 
-		if (!$extra['no_form'] && !$this->_params['no_form']) {
+		if (!$headless_form) {
 			// Call these methods, if not done yet, save 2 api calls
 			if (!isset($this->_body['form_begin'])) {
 				$this->form_begin('', '', $extra + (array)$extra_override['form_begin'], $r);
@@ -771,7 +803,20 @@ class yf_form2 {
 	/**
 	*/
 	function _prepare_selected($name, &$extra, &$r) {
-		$selected = $r[$name];
+		$is_array = strpos( $name, '[' );
+		if( $is_array !== false ) {
+			$value = &$r;
+			$keys = explode( '[', $name );
+			foreach( $keys as $key ) {
+				$key = trim( rtrim( $key, ']' ) );
+				if( !isset( $value[ $key ] ) ) { $value = null; break; }
+				$value = &$value[ $key ];
+			}
+			$selected = $value;
+		} else {
+			$selected = $r{$name};
+		}
+		// $selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
@@ -980,6 +1025,10 @@ class yf_form2 {
 			$extra = (array)$extra + $name;
 			$name = '';
 		}
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1044,6 +1093,14 @@ class yf_form2 {
 	* Custom
 	*/
 	function login($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1063,6 +1120,14 @@ class yf_form2 {
 	* HTML5
 	*/
 	function email($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1694,7 +1759,7 @@ class yf_form2 {
 				$value = '';
 			}
 			if ($extra['link']) {
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['link'])) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('admin_methods')->_admin_link_is_allowed($extra['link'])) {
 					$extra['link'] = '';
 				}
 			}
@@ -1981,6 +2046,11 @@ class yf_form2 {
 	*/
 	function image_select_box($name, $values, $extra = array(), $replace = array()) {
 		return $this->_html_control($name, $values, $extra, $replace, 'image_select_box');
+	}
+
+	function user_select_box($name, $values = null, $extra = array(), $replace = array()) {
+		_class( 'form_api' )->{ __FUNCTION__ }($name, $values, $extra, $replace);
+		return $this->_html_control($name, $values, $extra, $replace, 'select2_box');
 	}
 
 	/**

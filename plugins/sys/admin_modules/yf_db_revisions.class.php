@@ -4,10 +4,12 @@
 */
 class yf_db_revisions {
 
+	const table = 'db_revisions';
+
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('db_revisions'), array(
+		return table('SELECT * FROM '.db(self::table), array(
 				'filter' => true,
 				'filter_params' => array(
 					'user_id'	=> array('eq','user_id'),
@@ -23,7 +25,7 @@ class yf_db_revisions {
 			->text('ip')	
 			->text('query_method')
 			->text('query_table')
-			->btn_view('', './?object=db_revisions&action=details&id=%d')
+			->btn_view('', url('/@object/details/%d'))
 			;
 	}
 
@@ -33,7 +35,7 @@ class yf_db_revisions {
 		if (empty($_GET['id'])) {
 			return _e('Empty revision id');
 		}
-		$sql = 'SELECT * FROM '.db('db_revisions').' WHERE id='.intval($_GET['id']);
+		$sql = 'SELECT * FROM '.db(self::table).' WHERE id='.intval($_GET['id']);
 		$a = db()->get($sql);
 		if (empty($a['id'])) {
 			return _e('Revision not found');
@@ -64,22 +66,7 @@ class yf_db_revisions {
 	/**
 	*/
 	function filter_save() {
-		$_GET['id'] = preg_replace('~[^0-9a-z_]+~ims', '', $_GET['id']);
-		if ($_GET['id'] && false !== strpos($_GET['id'], $_GET['object'].'__')) {
-			$filter_name = $_GET['id'];
-			list(,$action) = explode('__', $filter_name);
-		}
-		if ($_GET['page'] == 'clear') {
-			$_SESSION[$filter_name] = array();
-		} else {
-			$_SESSION[$filter_name] = $_POST;
-			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
-				if (isset($_SESSION[$filter_name][$f])) {
-					unset($_SESSION[$filter_name][$f]);
-				}
-			}
-		}
-		return js_redirect('./?object='.$_GET['object'].'&action='.$action);
+		_class('admin_methods')->filter_save();
 	}
 
 	/**
@@ -91,9 +78,9 @@ class yf_db_revisions {
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				$methods = db()->get_2d('SELECT DISTINCT query_method FROM '.db('db_revisions'));
+				$methods = db()->get_2d('SELECT DISTINCT query_method FROM '.db(self::table));
 				$method_fields = array_combine($methods, $methods);
-				$tables = db()->get_2d('SELECT DISTINCT query_table FROM '.db('db_revisions'));
+				$tables = db()->get_2d('SELECT DISTINCT query_table FROM '.db(self::table));
 				$table_fields = array_combine($tables, $tables);
 				return form($replace, array(
 						'filter' => true,

@@ -1,14 +1,12 @@
 <?php
 
 // TODO: requirejs integration, auto-generate its config with switcher on/off
-// TODO: cache fill from console, with ability to put into cron task
 // TODO: support for multiple media servers
 // TODO: Fallback to local: window.Foundation || document.write('<script src="/js/vendor/foundation.min.js"><\/script>')
 // TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
 // TODO: move to web accessible folder only after completion to ensure atomicity
 // TODO: decide with images: jpeg, png, gif, sprites
 // TODO: compare versions with require_php_lib('php_semver')
-// TODO: upload to S3, FTP
 
 class yf_assets {
 
@@ -19,49 +17,73 @@ class yf_assets {
 	/** @array All filters to apply stored here */
 	protected $filters = array();
 	/***/
-	protected $supported_asset_types = array(
-		'jquery', 'js', 'css', 'less', 'sass', 'coffee'/*, 'img', 'font'*/, 'bundle', 'asset'
+	public $supported_asset_types = array(
+		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'bundle', 'asset'/*, 'img', 'font'*/
 	);
 	/***/
-	protected $inherit_asset_types_map = array(
+	public $inherit_asset_types_map = array(
 		'js' => array('jquery'),
 	);
 	/***/
-	protected $supported_content_types = array(
+	public $supported_content_types = array(
 		'asset', 'url', 'file', 'inline',
 	);
 	/***/
-	protected $supported_out_types = array(
-		'js', 'css', 'images', 'fonts',
+	public $supported_out_types = array(
+		'js', 'css'/*, 'images', 'fonts',*/
 	);
+	/** @bool Set to blank to disable */
+	public $MAIN_TPL_CSS = 'style_css';
+	/** @bool Set to blank to disable */
+	public $MAIN_TPL_JS = 'script_js';
 	/** @bool Needed to ensure smooth transition of existing codebase. If enabled - then each add() call will immediately return generated content */
 	public $ADD_IS_DIRECT_OUT = false;
+	/** @bool */
+	public $URL_TIMEOUT = 15;
+	/** @bool */
+	public $URL_FILE_CACHE_TTL = 3600;
 	/** @bool */
 	public $USE_CACHE = false;
 	/** @bool */
 	public $CACHE_TTL = 86400;
 	/** @bool */ // '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
-	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{asset_name}/{version}/{out_type}/'; // shorter variant
+	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{lang}/{asset_name}/{version}/{out_type}/'; // shorter variant
 	/** @bool */
-	public $URL_TIMEOUT = 5;
+	public $CACHE_INLINE_ALLOW = true;
 	/** @bool */
+	public $CACHE_INLINE_MIN_SIZE = 1000;
+	/** @bool */
+	public $CACHE_IMAGES_USE_DATA_URI = false;
+	/** @bool */
+	public $CACHE_IMAGES_DATA_URI_MAX_SIZE = 5000;
+	/** @bool */
+	public $CACHE_OUT_ADD_MTIME = true;
+	/** @bool Skip auto-generate cached files on production */
 	public $FORCE_LOCAL_STORAGE = false;
 	/** @bool */
 	public $FORCE_LOCAL_TTL = 86400000; // 1000 days * 24 hours * 60 minutes * 60 seconds == almost forever
 	/** @bool */
+	public $INLINE_ASSETS_USE_DATA_URI = false;
+	/** @bool */
+	public $FILE_ASSETS_USE_DATA_URI = false;
+	/** @bool */
+	public $FILE_ASSETS_DATA_URI_MAX_SIZE = 5000;
+	/** @bool */
 	public $COMBINE = false;
 	/** @bool */
 	public $COMBINED_VERSION_TPL = '{year}{month}';
+	/** @bool Do not generate combined file on-the-fly */
+	public $COMBINED_LOCK = false;
+	/** @bool */
+	public $COMBINED_CONFIG = null;
 	/** @bool */
 	public $SHORTEN_LOCAL_URL = true;
-	/** @bool Set to blank to disable */
-	public $MAIN_TPL_CSS = 'style_css';
-	/** @bool Set to blank to disable */
-	public $MAIN_TPL_JS = 'script_js';
 	/** @bool */
 	public $USE_REQUIRE_JS = false;
 	/** @bool */
-	public $CACHE_OUT_ADD_MTIME = true;
+	public $OUT_ADD_ASSET_NAME = true;
+	/** @bool */
+	public $ALLOW_URL_CONTROL = true;
 
 	/**
 	* Catch missing method call
@@ -95,39 +117,193 @@ class yf_assets {
 	/**
 	*/
 	public function _init() {
+		$this->_url_control();
 		if ($this->FORCE_LOCAL_STORAGE) {
 			$this->USE_CACHE = true;
 			$this->CACHE_TTL = $this->FORCE_LOCAL_TTL;
 		}
 		$this->load_predefined_assets();
+		$this->load_combined_config();
 	}
 
 	/**
-	* Smart wrapper
+	*/
+	public function _url_control() {
+		if (!$this->ALLOW_URL_CONTROL) {
+			return false;
+		}
+		$used = array();
+		if (isset($_GET['assets_cache'])) {
+			$this->USE_CACHE = (bool)$_GET['assets_cache'];
+			$used[] = 'assets_cache';
+		}
+		if (isset($_GET['assets_combine'])) {
+			$this->COMBINE = (bool)$_GET['assets_combine'];
+			if ($this->COMBINE) {
+				$this->USE_CACHE = true;
+			}
+			$used[] = 'assets_combine';
+		}
+		if (isset($_GET['assets_requirejs'])) {
+			$this->USE_REQUIRE_JS = (bool)$_GET['assets_require_js'];
+			$used[] = 'assets_requirejs';
+		}
+		if (isset($_GET['assets_out_mtime'])) {
+			$this->CACHE_OUT_ADD_MTIME = (bool)$_GET['assets_out_mtime'];
+			$used[] = 'assets_out_mtime';
+		}
+		if (DEBUG_MODE) {
+			if ($_GET['assets_do_cache']) {
+				$this->_do_cache();
+				$used[] = 'assets_do_cache';
+			}
+			if ($_GET['assets_do_combine']) {
+				$this->_do_combine();
+				$used[] = 'assets_do_combine';
+			}
+			if ($_GET['assets_do_purge']) {
+				$this->_do_purge();
+				$used[] = 'assets_do_purge';
+			}
+		}
+		if ($used) {
+			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
+		}
+	}
+
+	/**
+	*/
+	public function _do_purge() {
+		$cache_dir_tpl = preg_replace('~/+~', '/', str_replace('{project_path}', PROJECT_PATH, $this->CACHE_DIR_TPL));
+		$cache_dir = substr($cache_dir_tpl, 0, strpos($cache_dir_tpl, '{')) ?: $cache_dir_tpl;
+		if (substr($cache_dir, 0, strlen(PROJECT_PATH)) === PROJECT_PATH && strlen($cache_dir) > strlen(PROJECT_PATH)) {
+			_class('dir')->delete($cache_dir, $and_start_dir = true);
+		}
+		header('X-YF-assets-do-purge: true');
+	}
+
+	/**
+	*/
+	public function _do_cache() {
+		$this->_do_purge();
+
+		$bak['ADD_IS_DIRECT_OUT'] = $this->ADD_IS_DIRECT_OUT;
+		$this->ADD_IS_DIRECT_OUT = true;
+		$bak['USE_CACHE'] = $this->USE_CACHE;
+		$this->USE_CACHE = true;
+
+		$combined_names = $this->load_combined_config($force = true);
+		foreach ((array)$this->supported_out_types as $out_type) {
+			foreach ((array)$combined_names[MAIN_TYPE] as $name) {
+				$direct_out = $this->add_asset($name, $out_type);
+			}
+		}
+		header('X-YF-assets-do-cache: true');
+
+		$this->ADD_IS_DIRECT_OUT = $bak['ADD_IS_DIRECT_OUT'];
+		$this->USE_CACHE = $bak['USE_CACHE'];
+	}
+
+	/**
+	*/
+	public function _do_combine() {
+		$this->_do_cache();
+
+		$bak['ADD_IS_DIRECT_OUT'] = $this->ADD_IS_DIRECT_OUT;
+		$this->ADD_IS_DIRECT_OUT = true;
+		$bak['USE_CACHE'] = $this->USE_CACHE;
+		$this->USE_CACHE = true;
+		$bak['COMBINE'] = $this->COMBINE;
+		$this->COMBINE = true;
+
+		$combined_names = $this->load_combined_config($force = true);
+		foreach ((array)$this->supported_out_types as $out_type) {
+			$combined_path = $this->_get_combined_path($out_type);
+			if (file_exists($combined_path)) {
+				unlink($combined_path);
+				unlink($combined_path.'.info');
+			}
+			foreach ((array)$combined_names[MAIN_TYPE] as $name) {
+				$this->add_asset($name, $out_type);
+			}
+			$out = $this->show($out_type);
+		}
+		header('X-YF-assets-do-combine: true');
+
+		$this->ADD_IS_DIRECT_OUT = $bak['ADD_IS_DIRECT_OUT'];
+		$this->USE_CACHE = $bak['USE_CACHE'];
+		$this->COMBINE = $bak['COMBINE'];
+	}
+
+	/**
+	* Get file by path or url, using local cache inside /tmp/assets/
+	*/
+	public function _file_get($path) {
+		$cache_dir = dirname($cache_path);
+		if (!file_exists($cache_dir)) {
+			mkdir($cache_dir, 0755, $recurse = true);
+		}
+		return $out;
+	}
+
+	/**
+	*/
+	function _get_media_path() {
+		$media_path = MEDIA_PATH;
+		if (substr($media_path, 0, 2) === '//') {
+			$media_path = 'http:'.$media_path;
+		}
+		return $media_path;
+	}
+
+	/**
+	* Smart wrapper with temp file cache
 	*/
 	function _url_get_contents($url) {
 		if (!strlen($url)) {
 			return false;
 		}
+		// Possibly inline code
+		if (false !== strpos($url, "\t") && false !== strpos($url, PHP_EOL) || strlen($url) >= 512) {
+			return $url;
+		}
+		$media_path = $this->_get_media_path();
 		// Do not use web server for self-accessible paths
-		if (substr($url, 0, strlen(MEDIA_PATH)) === MEDIA_PATH) {
-			$path = PROJECT_PATH. substr($url, strlen(MEDIA_PATH));
+		if (substr($url, 0, strlen($media_path)) === $media_path) {
+			$path = PROJECT_PATH. substr($url, strlen($media_path));
 			// This line needed to strip query string from file name like this:
 			// /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
 			$path = parse_url($path, PHP_URL_PATH);
 			return file_get_contents($path);
 		}
 		$url = (substr($url, 0, 2) === '//' ? 'http:' : ''). $url;
-		return file_get_contents($url, false, stream_context_create(array(
+		// Save syscall
+		if (!isset($this->_time)) {
+			$this->_time = time();
+		}
+		$cache_path = '/tmp/yf_assets/'.urlencode($url).'.cache';
+		// 24 hours tmp file cache
+		if ($cache_path && file_exists($cache_path) && filemtime($cache_path) > ($this->_time - $this->URL_FILE_CACHE_TTL)) {
+			return file_get_contents($cache_path);
+		}
+		$data = file_get_contents($url, false, stream_context_create(array(
 			'http' => array('timeout' => $this->URL_TIMEOUT)
 		)));
+		if ($cache_path) {
+			$cache_dir = dirname($cache_path);
+			if (!file_exists($cache_dir)) {
+				mkdir($cache_dir, 0755, $recurse = true);
+			}
+			file_put_contents($cache_path, $data);
+		}
+		return $data;
 	}
 
 	/**
 	* Main JS from theme stpl
 	*/
-	public function init_js() {
-		if ($this->_init_js_done) {
+	public function init_js($force = false) {
+		if ($this->_init_js_done && !$force) {
 			return false;
 		}
 		$this->_init_js_done = true;
@@ -138,7 +314,8 @@ class yf_assets {
 		$main_script_js = trim(tpl()->parse_if_exists($this->MAIN_TPL_JS));
 		// single string = automatically generated by compass
 		if (strlen($main_script_js) && strpos($main_script_js, "\n") === false && preg_match('~^js/script.js\?[0-9]{10}$~ims', $main_script_js)) {
-			$this->add(MEDIA_PATH. tpl()->TPL_PATH. $main_script_js, 'js', 'url');
+			$media_path = $this->_get_media_path();
+			$this->add($media_path. tpl()->TPL_PATH. $main_script_js, 'js', 'url');
 		} else {
 			$this->add($main_script_js, 'js', 'inline');
 		}
@@ -147,8 +324,8 @@ class yf_assets {
 	/**
 	* Main CSS from theme stpl
 	*/
-	public function init_css() {
-		if ($this->_init_css_done) {
+	public function init_css($force = false) {
+		if ($this->_init_css_done && !$force) {
 			return false;
 		}
 		$this->_init_css_done = true;
@@ -159,10 +336,27 @@ class yf_assets {
 		$main_style_css = trim(tpl()->parse_if_exists($this->MAIN_TPL_CSS));
 		// single string = automatically generated by compass
 		if (strlen($main_style_css) && strpos($main_style_css, "\n") === false && preg_match('~^css/style.css\?[0-9]{10}$~ims', $main_style_css)) {
-			$this->add(MEDIA_PATH. tpl()->TPL_PATH. $main_style_css, 'css', 'inline');
+			$media_path = $this->_get_media_path();
+			$this->add($media_path. tpl()->TPL_PATH. $main_style_css, 'css', 'inline');
 		} else {
 			$this->add($main_style_css, 'css', 'inline');
 		}
+	}
+
+	/**
+	*/
+	function load_combined_config($force = false) {
+		if (!$this->COMBINE && !$force) {
+			return false;
+		}
+		if (isset($this->COMBINED_CONFIG) && !$force) {
+			return $this->COMBINED_CONFIG;
+		}
+		$path = CONFIG_PATH. 'assets_combine.php';
+		if (file_exists($path)) {
+			$this->COMBINED_CONFIG = include $path;
+		}
+		return $this->COMBINED_CONFIG;
 	}
 
 	/**
@@ -184,27 +378,28 @@ class yf_assets {
 				break;
 			}
 		}
-#		if (!$path_loaded) {
-#			throw new Exception('Assets: filter libs not loaded as composer autoload not found on these paths: '.implode(', ', $paths).'.'
-#				. PHP_EOL. 'You need to install composer dependencies by running this script from console: %YF_PATH%/.dev/scripts/assets/install_global.sh');
-#		}
 		$this->_autoload_registered = $paths[$path_loaded];
 	}
 
 	/**
 	*/
-	public function load_predefined_assets() {
-		$assets = array();
-		$suffix = '.php';
-		$dir = 'share/assets/';
-		$pattern = $dir. '*'. $suffix;
+	public function load_predefined_assets($force = false) {
+		// Cleanup previously filled assets
+		if ($force) {
+			$this->assets = array();
+		}
+		$assets   = array();
+		$suffix   = '.php';
+		$pattern  = 'assets/*'.       $suffix;
+		$patterns = 'share/assets/*'. $suffix;
 		$globs = array(
-			'yf_main'				=> YF_PATH. $pattern,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
-			'project_main'			=> PROJECT_PATH. $pattern,
+			'yf_main'				=> YF_PATH. $patterns,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $patterns,
+			'project_main'			=> PROJECT_PATH. $patterns,
+			'project_app_share'		=> APP_PATH. $patterns,
 			'project_app'			=> APP_PATH. $pattern,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $patterns,
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $patterns,
 		);
 		$slen = strlen($suffix);
 		$names = array();
@@ -362,7 +557,7 @@ class yf_assets {
 		// If overall asset is callable - call it and save result to prevent multiple calls
 		if (!is_string($this->assets[$name]) && is_callable($this->assets[$name])) {
 			$func = $this->assets[$name];
-			$this->assets[$name] = $func();
+			$this->assets[$name] = $func($this);
 		}
 		return $this->assets[$name];
 	}
@@ -384,7 +579,7 @@ class yf_assets {
 			return null;
 		}
 		if (!is_string($asset_data) && is_callable($asset_data)) {
-			$asset_data = $asset_data();
+			$asset_data = $asset_data($this);
 		}
 		if (!is_array($asset_data['versions'])) {
 			return null;
@@ -407,35 +602,12 @@ class yf_assets {
 			return null;
 		}
 		if (!is_string($asset_data) && is_callable($asset_data)) {
-			$asset_data = $asset_data();
+			$asset_data = $asset_data($this);
 		}
 		if (is_array($asset_data['versions'])) {
 			return key(array_slice($asset_data['versions'], -1, 1, true));
 		}
 		return null;
-	}
-
-	/**
-	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
-	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
-	* Version constraints can be specified in a few different ways.
-	* Exact version	1.0.2	You can specify the exact version of a package.
-	* Range			   >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
-	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
-	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
-	* Wildcard		 1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
-	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
-	*/
-	public function find_version_best_match($version = '', $avail_versions = array()) {
-		if (empty($avail_versions)) {
-			return null;
-		}
-		if (!$version) {
-			return current(array_slice($avail_versions, -1, 1, true));
-		}
-// TODO: comparing versions and return best match
-#		require_php_lib('php_semver')
-		return $version;
 	}
 
 	/**
@@ -450,7 +622,7 @@ class yf_assets {
 			$trace = main()->trace_string();
 		}
 		if (!is_string($content) && is_callable($content)) {
-			$content = $content($params);
+			$content = $content($params, $this);
 		}
 		if ($asset_type === 'js' && !$this->_init_js_done) {
 			$this->init_js();
@@ -494,7 +666,7 @@ class yf_assets {
 		foreach ((array)$content as $_content) {
 			$_params = $params;
 			if (!is_string($_content) && is_callable($_content)) {
-				$_content = $_content($_params);
+				$_content = $_content($_params, $this);
 			}
 			if (is_array($_content) && isset($_content['content'])) {
 				if (is_array($_content['params'])) {
@@ -573,7 +745,7 @@ class yf_assets {
 			return false;
 		}
 		if (!is_string($bundle_details) && is_callable($bundle_details)) {
-			$bundle_details = $bundle_details($_params);
+			$bundle_details = $bundle_details($_params, $this);
 		}
 		if (!$bundle_details) {
 			return false;
@@ -591,7 +763,6 @@ class yf_assets {
 		if (isset($__params['config'])) {
 			unset($__params['config']);
 		}
-		// var_dump(__FUNCTION__.': '.$_content);
 		$inherit_types_map = $this->inherit_asset_types_map;
 		$types = array();
 		foreach ((array)$this->supported_asset_types as $k => $atype) {
@@ -607,21 +778,18 @@ class yf_assets {
 		foreach ((array)$types as $atype) {
 			$data = $bundle_details['require'][$atype];
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': require '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $__params);
 			}
 		}
 		foreach ((array)$types as $atype) {
 			$data = $this->get_asset($_content, $atype);
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': content '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $_params);
 			}
 		}
 		foreach ((array)$types as $atype) {
 			$data = $bundle_details['add'][$atype];
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': add '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $__params);
 			}
 		}
@@ -645,7 +813,7 @@ class yf_assets {
 			return false;
 		}
 		if (!is_string($asset_data) && is_callable($asset_data)) {
-			$asset_data = $asset_data($_params);
+			$asset_data = $asset_data($_params, $this);
 		}
 		if (!$asset_data) {
 			return false;
@@ -671,25 +839,21 @@ class yf_assets {
 		foreach ((array)$inherit_types as $inherit_type) {
 			$types[$inherit_type] = $inherit_type;
 		}
-		// var_dump(__FUNCTION__.': '.$_content.', atype: '.$asset_type);
 		foreach ((array)$types as $atype) {
 			$data = $asset_data['require'][$atype];
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': require '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $__params);
 			}
 		}
 		foreach ((array)$types as $atype) {
 			$data = $this->get_asset($_content, $atype);
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': content '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $_params);
 			}
 		}
 		foreach ((array)$types as $atype) {
 			$data = $asset_data['add'][$atype];
 			if ($data) {
-				// var_dump(__FUNCTION__.': '.$_content.': add '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $__params);
 			}
 		}
@@ -702,7 +866,7 @@ class yf_assets {
 			return false;
 		}
 		if (!is_string($info) && is_callable($info)) {
-			$info = $info($_params);
+			$info = $info($_params, $this);
 		}
 		if (!$info) {
 			return false;
@@ -1005,10 +1169,7 @@ class yf_assets {
 			return $this->show_require_js($params);
 		}
 		if ($this->COMBINE) {
-			$combined_file = $this->_cache_path($out_type, '', array(
-				'name' => 'combined',
-				'version' => $this->_get_combined_version($out_type),
-			));
+			$combined_file = $this->_get_combined_path($out_type);
 			$md5_inside_combined = array();
 			if (file_exists($combined_file)) {
 				$combined_info = json_decode(file_get_contents($combined_file.'.info'), $as_array = true);
@@ -1017,6 +1178,7 @@ class yf_assets {
 			}
 		}
 		$bs_current_theme = common()->bs_current_theme();
+		$media_path = $this->_get_media_path();
 		$prepend = _class('core_events')->fire('assets.prepend');
 		// Process previously added content, depending on its type
 		$out = array();
@@ -1028,7 +1190,12 @@ class yf_assets {
 			$_params = (array)$v['params'] + (array)$params;
 			$content_type = $v['content_type'];
 			$cached_path = '';
-			$use_cache = $this->USE_CACHE && $content_type !== 'inline' && !$_params['no_cache'] && !$_params['config']['no_cache'];
+			$use_cache = $this->USE_CACHE && !$_params['no_cache'] && !$_params['config']['no_cache'];
+			if ($use_cache && $content_type === 'inline') {
+				if (!$this->CACHE_INLINE_ALLOW || !$_params['config']['inline_cache'] || strlen($v['content']) < $this->CACHE_INLINE_MIN_SIZE) {
+					$use_cache = false;
+				}
+			}
 			if ($use_cache) {
 				if ($v['name'] === 'bootstrap-theme') {
 					$v['name'] .= '-'.$bs_current_theme;
@@ -1039,7 +1206,7 @@ class yf_assets {
 				}
 				if ($cached_path) {
 					$content_type = 'url';
-					$v['content'] = MEDIA_PATH. substr($cached_path, strlen(PROJECT_PATH));
+					$v['content'] = $media_path. substr($cached_path, strlen(PROJECT_PATH));
 				}
 			}
 			$str = $v['content'];
@@ -1053,6 +1220,7 @@ class yf_assets {
 				$to_combine[$md5] = array(
 					'content' => $str,
 					'content_type' => $content_type,
+					'name' => $v['name'],
 				);
 			}
 			if (DEBUG_MODE) {
@@ -1084,7 +1252,7 @@ class yf_assets {
 					'trace'			=> $debug['trace'],
 				));
 			}
-			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, $_params). $after;
+			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, $_params + array('asset_name' => $v['name'])). $after;
 		}
 		if ($this->COMBINE && $to_combine) {
 			$out = $this->_combine_content($out, $out_type, $to_combine, $combined_file, $md5_inside_combined);
@@ -1096,28 +1264,11 @@ class yf_assets {
 
 	/**
 	*/
-	public function show_require_js($params = array()) {
-		$out_type = 'js';
-		$out = array();
-		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
-			if (!is_array($v)) {
-				continue;
-			}
-			$out[$md5] = $this->html_out($out_type, $v['content_type'], $v['content'], (array)$v['params'] + (array)$params);
-		}
-		$this->clean_content($out_type);
-		$out = '
-<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.js" type="text/javascript"></script>
-<script type="text/javascript">
-requirejs.config({ baseUrl: "/templates/"'.MAIN_TYPE.'"/cache/" });
-define("jquery", [], function() { });
-requirejs( [ "module1", "module2" ], function( angular ) {
-	console.log( "modules load" );
-});
-</script>
-				'/*. PHP_EOL. implode(PHP_EOL, $out)*/;
-var_dump($out);
-		return $out;
+	public function _get_combined_path($out_type) {
+		return $this->_cache_path($out_type, '', array(
+			'name' => 'combined',
+			'version' => $this->_get_combined_version($out_type),
+		));
 	}
 
 	/**
@@ -1129,6 +1280,7 @@ var_dump($out);
 				$divider = PHP_EOL.';'.PHP_EOL;
 			}
 			$combined = array();
+			$combined_names = array();
 			foreach ($to_combine as $md5 => $info) {
 				$content_type = $info['content_type'];
 				$content = $info['content'];
@@ -1137,19 +1289,20 @@ var_dump($out);
 				} elseif ($content_type === 'file' && file_exists($content)) {
 					$combined[$md5] = file_get_contents($content);
 				}
-				if ($out_type === 'css' && $content_type === 'url') {
-					$combined[$md5] = $this->_css_urls_rewrite_and_save($combined[$md5], $content, $combined_file);
+				if ($out_type === 'css' && in_array($content_type, array('url', 'inline'))) {
+					$combined[$md5] = $this->_css_urls_rewrite_and_save($combined[$md5], $content, $combined_file, $content_type);
 				}
 				if ($out_type === 'js' && $content_type === 'url') {
 					$this->_js_map_save($combined[$md5], $content, $combined_file);
 				}
 				$md5_inside_combined[$md5] = $md5;
+				$combined_names[$info['name']] = $info['name'];
 			}
 			if ($combined) {
 				$combined_md5 = array_keys($combined);
 				$combined = implode($divider, $combined);
 				file_put_contents($combined_file, $combined);
-				$this->_write_cache_info($combined_file, '', $combined, array('elements' => implode(',', $combined_md5)));
+				$this->_write_cache_info($combined_file, '', $combined, array('elements' => implode(',', $combined_md5), 'names' => implode(',', $combined_names)));
 			}
 		}
 		foreach ($to_combine as $md5 => $info) {
@@ -1181,46 +1334,6 @@ var_dump($out);
 		return array(
 			md5($combined) => $before. $this->html_out($out_type, 'file', $combined_file). $after
 		) + $out;
-	}
-
-	/**
-	*/
-	public function _get_combined_version($out_type = '') {
-		if (!is_string($this->COMBINED_VERSION_TPL) && is_callable($this->COMBINED_VERSION_TPL)) {
-			$func = $this->COMBINED_VERSION_TPL;
-			$version = $func($out_type);
-		} else {
-			if (!isset($this->_cache_language)) {
-				$this->_cache_language = conf('language');
-			}
-			$lang = $this->_cache_language;
-			if (!isset($this->_cache_html5fw)) {
-				$this->_cache_html5fw = conf('language');
-			}
-			$html5fw = $this->_cache_html5fw;
-			if (!isset($this->_cache_date)) {
-				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
-			}
-			$date = $this->_cache_date;
-			$replace = array(
-				'{site_path}'	=> SITE_PATH,
-				'{app_path}'	=> APP_PATH,
-				'{project_path}'=> PROJECT_PATH,
-				'{main_type}'	=> MAIN_TYPE,
-				'{host}'		=> $_SERVER['HTTP_HOST'],
-				'{lang}'		=> $lang,
-				'{out_type}'	=> $out_type,
-				'{html5fw}'		=> $html5fw,
-				'{year}'		=> $date[0],
-				'{month}'		=> $date[1],
-				'{day}'			=> $date[2],
-				'{hour}'		=> $date[3],
-				'{minute}'		=> $date[4],
-				'{second}'		=> $date[5],
-			);
-			$version = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->COMBINED_VERSION_TPL));
-		}
-		return $version;
 	}
 
 	/**
@@ -1281,9 +1394,9 @@ var_dump($out);
 			$content = ob_get_clean();
 			file_put_contents($cache_path, $content);
 		}
-		if ($out_type === 'css' && $content_type === 'url') {
+		if ($out_type === 'css' && in_array($content_type, array('url', 'inline', 'file'))) {
 			$content_before = $content;
-			$content = $this->_css_urls_rewrite_and_save($content, $content_url, $cache_path);
+			$content = $this->_css_urls_rewrite_and_save($content, $content_url, $cache_path, $content_type, $data['content']);
 			if ($content_before !== $content) {
 				file_put_contents($cache_path, $content);
 			}
@@ -1352,37 +1465,86 @@ var_dump($out);
 	/**
 	* process and save CSS url() and @import
 	*/
-	function _css_urls_rewrite_and_save($content, $content_url, $cache_path) {
+	function _css_urls_rewrite_and_save($content, $content_url, $cache_path, $content_type = 'url', $orig_content = '') {
 		$_this = $this;
 		$self_func = __FUNCTION__;
-		return preg_replace_callback('~url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path, $self_func) {
+		return preg_replace_callback('~url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path, $content_type, $orig_content, $self_func) {
 			$url = trim($m['url']);
 			if (strpos($url, 'data:') === 0) {
 				return $m[0];
 			}
-			$orig_url = $url;
-			if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
-				$url = dirname($content_url). '/'. $url;
+			$str = '';
+			$save_path = '';
+			$is_local_file = false;
+			if ($content_type === 'file') {
+				// examples: ../ ./
+				if (substr($url, 0, 1) === '.') {
+					$is_local_file = true;
+				// full url like http://test.dev/image.png
+				} elseif (false === strpos($url, 'http://') && false === strpos($url, 'https://')) {
+					$is_local_file = true;
+				// should not match: //domain.com/some_path
+				} elseif (substr($url, 0, 1) === '/' && substr($url, 1, 1) !== '/') {
+					$is_local_file = true;
+				}
 			}
-			$u = parse_url($url);
-			$host = $u['host'];
-			$path = $u['path'];
-			$query = $u['query'];
-			// example: //fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700
-			if ($host === 'fonts.googleapis.com') {
-				$ext = '.'.($path === '/css' ? 'css' : trim($path, '/')); // example: /css
-				$path = preg_replace('~[^a-z0-9_-]~ims', '_', strtolower($query)). $ext;
+			if ($is_local_file) {
+				$basename = basename($url);
+				// Fix for local files and url params inside path
+				if (false !== ($pos = strpos($basename, '?'))) {
+					$url = dirname($url).'/'.substr($basename, 0, $pos);
+				}
+				// /templates/user/theme/default/image/smile_1.0_unactive.png
+				if (substr($url, 0, 1) === '/') {
+					$try_path = PROJECT_PATH. ltrim($url, '/');
+				} else {
+					$try_path = dirname($orig_content). '/'. ltrim($url, '/');
+				}
+				$path = $_this->_get_absolute_path($try_path);
+				$path = '/'.ltrim($path, '/');
+
+				$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
+				$save_path = '/'.ltrim($save_path, '/');
+				// singleton for getting urls contents
+				if (!file_exists($save_path)) {
+					$str = file_get_contents($path);
+				}
+			} else {
+				$orig_url = $url;
+				if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
+					$url = dirname($content_url). '/'. $url;
+				}
+				$u = parse_url($url);
+				$host = $u['host'];
+				$path = $u['path'];
+				$query = $u['query'];
+				// example: //fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700
+				if ($host === 'fonts.googleapis.com') {
+					$ext = '.'.($path === '/css' ? 'css' : trim($path, '/')); // example: /css
+					$path = preg_replace('~[^a-z0-9_-]~ims', '_', strtolower($query)). $ext;
+				}
+				$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
+				$save_path = '/'.ltrim($save_path, '/');
+				// singleton for getting urls contents
+				if (!file_exists($save_path)) {
+					$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
+					$str = $_this->_url_get_contents($url);
+				}
 			}
-			$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
-			$save_path = '/'.ltrim($save_path, '/');
-			// singleton for getting urls contents
-			if (!file_exists($save_path)) {
-				$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
-				$str = $_this->_url_get_contents($url);
-				if (strlen($str)) {
-					$str = $_this->$self_func($str, $content_url, $cache_path);
-					file_put_contents($save_path, $str);
-					$_this->_write_cache_info($save_path, $url, $str);
+			if (strlen($str)) {
+				$str = $_this->$self_func($str, $content_url, $cache_path, $content_type, $orig_content);
+				file_put_contents($save_path, $str);
+				$_this->_write_cache_info($save_path, $url, $str);
+			}
+			if ($_this->CACHE_IMAGES_USE_DATA_URI) {
+				$ext = strtolower(pathinfo($save_path, PATHINFO_EXTENSION));
+				if (in_array($ext, array('png','gif','jpg','jpeg'))) {
+					$max_size = $_this->CACHE_IMAGES_DATA_URI_MAX_SIZE;
+					$size = filesize($save_path);
+					if ($size <= $max_size) {
+						$data_type = 'image/'. ($ext == 'jpg' ? 'jpeg' : $ext);
+						return 'url(\'data:'.$data_type.';base64,'.base64_encode(file_get_contents($save_path)).'\')';
+					}
 				}
 			}
 			return 'url(\''.basename($save_path).'\')';
@@ -1440,6 +1602,8 @@ var_dump($out);
 			}
 		} elseif ($content_type === 'file') {
 			$_name = pathinfo($content, PATHINFO_FILENAME);
+		} elseif ($content_type === 'inline') {
+			$_name = md5($content);
 		}
 		return $_name;
 	}
@@ -1449,26 +1613,25 @@ var_dump($out);
 	public function _cache_dir($out_type, $asset_name = '', $version = '') {
 		if (!is_string($this->CACHE_DIR_TPL) && is_callable($this->CACHE_DIR_TPL)) {
 			$func = $this->CACHE_DIR_TPL;
-			$cache_dir = $func($out_type, $asset_name, $version);
+			$cache_dir = $func($out_type, $asset_name, $version, $this);
 		} else {
-			$host = $_SERVER['HTTP_HOST'];
-			if (!isset($this->_cache_language)) {
-				$this->_cache_language = conf('language');
-			}
-			$lang = $this->_cache_language;
-			if (!isset($this->_cache_html5fw)) {
-				$this->_cache_html5fw = conf('language');
-			}
-			$html5fw = $this->_cache_html5fw;
-			if (!isset($this->_cache_date)) {
-				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
-			}
-			$date = $this->_cache_date;
+			$main_type = $this->_override['main_type'] ?: MAIN_TYPE;
+			$host = $this->_override['host'] ?: $_SERVER['HTTP_HOST'];
+
+			!isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
+			$lang = $this->_override['language'] ?: $this->_cache_language;
+
+			!isset($this->_cache_html5fw) && $this->_cache_html5fw = conf('css_framework') ?: 'bs3';
+			$html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
+
+			!isset($this->_cache_date) && $this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
+			$date = $this->_override['date'] ?: $this->_cache_date;
+
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
 				'{project_path}'=> PROJECT_PATH,
-				'{main_type}'	=> MAIN_TYPE,
+				'{main_type}'	=> $main_type,
 				'{host}'		=> $host,
 				'{lang}'		=> $lang,
 				'{asset_name}'	=> $asset_name,
@@ -1484,11 +1647,48 @@ var_dump($out);
 			);
 			$cache_dir = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->CACHE_DIR_TPL));
 		}
-		if (!$this->_cache_dir_created[$out_type][$asset_name]) {
-			!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
-			$this->_cache_dir_created[$out_type][$asset_name] = $cache_dir;
-		}
+		!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
 		return $cache_dir;
+	}
+
+	/**
+	*/
+	public function _get_combined_version($out_type = '') {
+		if (!is_string($this->COMBINED_VERSION_TPL) && is_callable($this->COMBINED_VERSION_TPL)) {
+			$func = $this->COMBINED_VERSION_TPL;
+			$version = $func($out_type, $this);
+		} else {
+			$main_type = $this->_override['main_type'] ?: MAIN_TYPE;
+			$host = $this->_override['host'] ?: $_SERVER['HTTP_HOST'];
+
+			!isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
+			$lang = $this->_override['language'] ?: $this->_cache_language;
+
+			!isset($this->_cache_html5fw) && $this->_cache_html5fw = conf('css_framework') ?: 'bs3';
+			$html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
+
+			!isset($this->_cache_date) && $this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
+			$date = $this->_override['date'] ?: $this->_cache_date;
+
+			$replace = array(
+				'{site_path}'	=> SITE_PATH,
+				'{app_path}'	=> APP_PATH,
+				'{project_path}'=> PROJECT_PATH,
+				'{main_type}'	=> MAIN_TYPE,
+				'{host}'		=> $host,
+				'{lang}'		=> $lang,
+				'{out_type}'	=> $out_type,
+				'{html5fw}'		=> $html5fw,
+				'{year}'		=> $date[0],
+				'{month}'		=> $date[1],
+				'{day}'			=> $date[2],
+				'{hour}'		=> $date[3],
+				'{minute}'		=> $date[4],
+				'{second}'		=> $date[5],
+			);
+			$version = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->COMBINED_VERSION_TPL));
+		}
+		return $version;
 	}
 
 	/**
@@ -1508,7 +1708,8 @@ var_dump($out);
 		$mtime = '';
 		$file = '';
 		$has_question_sign = (false !== strpos($str, '?'));
-		$media_path_len = strlen(MEDIA_PATH);
+		$media_path = $this->_get_media_path();
+		$media_path_len = strlen($media_path);
 		// short url paths like /templates/user/cache/..., but not //domain.com/
 		if (substr($str, 0, 1) === '/' && substr($str, 1, 1) !== '/') {
 			if (substr($str, 0, strlen(PROJECT_PATH)) === PROJECT_PATH) {
@@ -1516,7 +1717,7 @@ var_dump($out);
 			} else {
 				$file = PROJECT_PATH. ltrim($str, '/');
 			}
-		} elseif (substr($str, 0, $media_path_len) === MEDIA_PATH) {
+		} elseif (substr($str, 0, $media_path_len) === $media_path) {
 			$file = PROJECT_PATH. ltrim(substr($str, $media_path_len), '/');
 		}
 		// Avoid different url params when checking local file path
@@ -1538,38 +1739,66 @@ var_dump($out);
 		}
 		$func = __FUNCTION__;
 		$out = '';
+		$media_path = $this->_get_media_path();
 		// try to find web path for file and show it as url
 		if ($content_type === 'file') {
 			if (substr($str, 0, strlen(PROJECT_PATH)) === PROJECT_PATH) {
-				$url = MEDIA_PATH. substr($str, strlen(PROJECT_PATH));
+				$url = $media_path. substr($str, strlen(PROJECT_PATH));
 				return $this->$func($out_type, 'url', $url, $params);
 			}
 		}
-		if ($content_type === 'url' && $this->SHORTEN_LOCAL_URL && MEDIA_PATH === WEB_PATH) {
-			$slen = strlen(MEDIA_PATH);
-			if (substr($str, 0, $slen) === MEDIA_PATH) {
+		if ($content_type === 'url' && $this->SHORTEN_LOCAL_URL) {
+			$slen = strlen($media_path);
+			if (substr($str, 0, $slen) === $media_path) {
 				$str = '/'.substr($str, $slen);
 			}
 		}
+		if ($this->OUT_ADD_ASSET_NAME && $params['asset_name'] && !isset($params['id']) && in_array($content_type, array('inline', 'file'))) {
+			$params['data-asset'] = 'asset_'.$out_type.'_'.$content_type.'_'.$params['asset_name'];
+		}
 		if ($out_type === 'js') {
 			$params['type'] = 'text/javascript';
+			if ($content_type === 'file') {
+				$str = file_get_contents($str);
+			}
+			if ($this->INLINE_ASSETS_USE_DATA_URI && $content_type === 'inline') {
+				$content_type = 'url';
+				$params['src'] = 'data:'.$params['type'].';base64,'.base64_encode($this->_strip_js_input($str));
+			} elseif ($this->FILE_ASSETS_USE_DATA_URI && strlen($str) <= $this->FILE_ASSETS_DATA_URI_MAX_SIZE) {
+				$content_type = 'url';
+				$params['src'] = 'data:'.$params['type'].';base64,'.base64_encode($str);
+			}
 			if ($content_type === 'url') {
-				$params['src'] = $str. $this->_cached_url_get_mtime($str);
+				if (!isset($params['src'])) {
+					$params['src'] = $str. $this->_cached_url_get_mtime($str);
+				}
 				$out = '<script'._attrs($params, array('src', 'type', 'class', 'id')).'></script>';
 			} elseif ($content_type === 'file') {
-				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
+				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</script>';
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_js_input($str);
 				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</script>';
 			}
 		} elseif ($out_type === 'css') {
 			$params['type'] = 'text/css';
+			if ($content_type === 'file') {
+				$str = file_get_contents($str);
+			}
+			if ($this->INLINE_ASSETS_USE_DATA_URI && $content_type === 'inline') {
+				$content_type = 'url';
+				$params['href'] = 'data:'.$params['type'].';base64,'.base64_encode($this->_strip_css_input($str));
+			} elseif ($this->FILE_ASSETS_USE_DATA_URI && strlen($str) <= $this->FILE_ASSETS_DATA_URI_MAX_SIZE) {
+				$content_type = 'url';
+				$params['href'] = 'data:'.$params['type'].';base64,'.base64_encode($str);
+			}
 			if ($content_type === 'url') {
 				$params['rel'] = 'stylesheet';
-				$params['href'] = $str. $this->_cached_url_get_mtime($str);
+				if (!isset($params['href'])) {
+					$params['href'] = $str. $this->_cached_url_get_mtime($str);
+				}
 				$out = '<link'._attrs($params, array('href', 'rel', 'class', 'id')).' />';
 			} elseif ($content_type === 'file') {
-				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
+				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</style>';
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_css_input($str);
 				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</style>';
@@ -1587,7 +1816,7 @@ var_dump($out);
 		if (isset($this->assets[$content])) {
 			$type = 'asset';
 		} elseif ($asset_type === 'js') {
-			if (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
+			if (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content) && !preg_match('~\s+~ims', $content)) {
 				$type = 'url';
 			} elseif (preg_match('~^/[a-z0-9\./_-]+\.js$~ims', $content) && file_exists($content)) {
 				$type = 'file';
@@ -1595,7 +1824,7 @@ var_dump($out);
 				$type = 'inline';
 			}
 		} elseif ($asset_type === 'css') {
-			if (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
+			if (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content) && !preg_match('~\s+~ims', $content)) {
 				$type = 'url';
 			} elseif (preg_match('~^/[a-z0-9\./_-]+\.css$~ims', $content) && file_exists($content)) {
 				$type = 'file';
@@ -1729,7 +1958,7 @@ var_dump($out);
 				continue;
 			}
 			if (!is_string($filter) && is_callable($filter)) {
-				$out = $filter($out, $params);
+				$out = $filter($out, $params, $this);
 			} elseif (is_string($filter) && isset($avail_filters[$filter])) {
 				$out = _class('assets_filter_'.$filter, 'classes/assets/')->apply($out, $params);
 			}
@@ -1781,8 +2010,51 @@ var_dump($out);
 	}
 
 	/**
+	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
+	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
+	* Version constraints can be specified in a few different ways.
+	* Exact version	1.0.2	You can specify the exact version of a package.
+	* Range			   >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
+	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=.
+	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
+	* Wildcard		 1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
+	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
 	*/
-	public function upload_to() {
-// TODO: upload to S3, FTP
+	public function find_version_best_match($version = '', $avail_versions = array()) {
+		if (empty($avail_versions)) {
+			return null;
+		}
+		if (!$version) {
+			return current(array_slice($avail_versions, -1, 1, true));
+		}
+// TODO: comparing versions and return best match
+#		require_php_lib('php_semver')
+		return $version;
+	}
+
+	/**
+	*/
+	public function show_require_js($params = array()) {
+		$out_type = 'js';
+		$out = array();
+		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
+			if (!is_array($v)) {
+				continue;
+			}
+			$out[$md5] = $this->html_out($out_type, $v['content_type'], $v['content'], (array)$v['params'] + (array)$params);
+		}
+		$this->clean_content($out_type);
+		$out = '
+<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.js" type="text/javascript"></script>
+<script type="text/javascript">
+requirejs.config({ baseUrl: "/templates/"'.MAIN_TYPE.'"/cache/" });
+define("jquery", [], function() { });
+requirejs( [ "module1", "module2" ], function( angular ) {
+	console.log( "modules load" );
+});
+</script>
+				'/*. PHP_EOL. implode(PHP_EOL, $out)*/;
+var_dump($out);
+		return $out;
 	}
 }

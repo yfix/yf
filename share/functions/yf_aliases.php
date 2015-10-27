@@ -106,11 +106,23 @@ if (!function_exists('db')) {
 	}
 }
 if (!function_exists('db_master')) {
-	function db_master($tbl_name = '') { return db($tbl_name); }
+	function db_master($tbl = '') { return db($tbl); }
 }
 if (!function_exists('db_slave')) {
-	function db_slave($tbl_name = '') { return db($tbl_name); }
+	function db_slave($tbl = '') { return db($tbl); }
 }
+if (!function_exists('from')) {
+	function from() { return call_user_func_array(array(db(), __FUNCTION__), func_get_args()); }
+}
+if (!function_exists('select')) {
+	function select() { return call_user_func_array(array(db(), __FUNCTION__), func_get_args()); }
+}
+#if (!function_exists('insert')) {
+#	function insert() { return call_user_func_array(array(db(), __FUNCTION__.'_safe'), func_get_args()); }
+#}
+#if (!function_exists('update')) {
+#	function update() { return call_user_func_array(array(db(), __FUNCTION__.'_safe'), func_get_args()); }
+#}
 if (!function_exists('t')) {
 	function t($string, $args = 0, $lang = '') { return _class('i18n')->translate_string($string, $args, $lang); }
 }
@@ -314,10 +326,6 @@ if (!function_exists('_empty')) {
 // Wrapper for tpl generated php code for PHP 5.3 compatibility
 if (!function_exists('_isset')) {
 	function _isset($in = null) { return isset($in); }
-}
-// FirePHP shortcut in case if not exists
-if (!function_exists('fb')) {
-	function fb() { return false; }
 }
 if (!function_exists('_get')) {
 	function _get($key = null, $val = null) { return input()->get($key, $val); }

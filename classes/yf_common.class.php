@@ -100,8 +100,10 @@ class yf_common {
 
 	/**
 	*/
-	function bs_get_avail_themes() {
-		$css_fw = conf('css_framework');
+	function bs_get_avail_themes($css_fw = '') {
+		if (!$css_fw) {
+			$css_fw = conf('css_framework');
+		}
 		if (!$css_fw) {
 			$css_fw = 'bs2';
 		}
@@ -118,18 +120,21 @@ class yf_common {
 
 	/**
 	*/
-	function bs_current_theme() {
-		if (MAIN_TYPE_USER) {
+	function bs_current_theme($main_type = '', $force = false) {
+		if (!$main_type) {
+			$main_type = MAIN_TYPE;
+		}
+		if ($main_type === 'user') {
 			$theme = 'spacelab'; // Default
-		} elseif (MAIN_TYPE_ADMIN) {
+		} elseif ($main_type === 'admin') {
 			$theme = 'slate'; // Default
 		}
-		$conf_theme = conf('DEF_BOOTSTRAP_THEME_'.strtoupper(MAIN_TYPE)) ?: conf('DEF_BOOTSTRAP_THEME');
+		$conf_theme = conf('DEF_BOOTSTRAP_THEME_'.strtoupper($main_type)) ?: conf('DEF_BOOTSTRAP_THEME');
 		if ($conf_theme) {
 			$theme = $conf_theme;
 		}
 		$avail_themes = $this->bs_get_avail_themes();
-		if ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
+		if (!$force && $_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
 			$theme = $_COOKIE['yf_theme'];
 		}
 		return $theme;
@@ -336,7 +341,7 @@ class yf_common {
 		if ($check_format && in_array('months', $need_return)) {
 			$d['months'] = floor($seconds / (3600 * 24 * 365 / 12));
 			$seconds -= $d['months'] * (3600 * 24 * 365 / 12);
-		}	
+		}
 		if ($check_format && in_array('days', $need_return)) {
 			$d['days'] = floor($seconds / (3600 * 24));
 			$seconds -= $d['days'] * (3600 * 24);
@@ -1145,7 +1150,7 @@ class yf_common {
 	/**
 	*/
 	function admin_wall_add($data = array()) {
-		return _class('common_admin')->admin_wall_add($data);
+		return _class('admin_methods')->admin_wall_add($data);
 	}
 
 	/**
@@ -1280,12 +1285,15 @@ class yf_common {
 		return true;
 	}
 
+	function is_messages() {
+		$result = @count( $_SESSION[ 'permanent' ] ) > 0;
+		return( $result );
+	}
+
 	/**
 	*/
 	function show_messages() {
-		if (empty($_SESSION['permanent'])) {
-			return false;
-		}
+		if( !$this->is_messages() ) { return( false ); }
 		$body = array();
 		$level_to_style = array(
 			'info'		=> 'alert alert-info',

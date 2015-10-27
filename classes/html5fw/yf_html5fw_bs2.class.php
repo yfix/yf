@@ -86,7 +86,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		$label_extra['class'] = $class_label;
 		$label_extra['for'] = $extra['id'];
 
-		$label_tip_html = $extra['label_tip'] ? trim(' '.html()->tooltip($extra['label_tip'])) : '';
+		$label_tip_html = $extra['label_tip'] ? trim(' '.tip($extra['label_tip'], $replace)) : '';
 
 		$label = ($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']). $label_tip_html.'</label>'.PHP_EOL : '');
 
@@ -105,15 +105,15 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		$show_input_group = ($extra['append'] || $extra['prepend']);
 
 		$before_content_html = $show_input_group ? '<div'._attrs($input_group_extra, array('id','class','style')).'>'.PHP_EOL : '';
-		$before_content_html .= $extra['prepend'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['prepend'].'</span>'.PHP_EOL : '';
+		$before_content_html .= $extra['prepend'] ? '<span class="'.$this->CLASS_ADDON.($extra['class_prepend'] ? ' '.$extra['class_prepend']: '').'">'.$extra['prepend'].'</span>'.PHP_EOL : '';
 
-		$after_content_html = $extra['append'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['append'].'</span>'.PHP_EOL : '';
+		$after_content_html = $extra['append'] ? '<span class="'.$this->CLASS_ADDON.($extra['class_append'] ? ' '.$extra['class_append']: '').'">'.$extra['append'].'</span>'.PHP_EOL : '';
 		$after_content_html .= $show_input_group ? '</div>'.PHP_EOL : '';
 
 #		$after_content_html .= $extra['feedback_icon'] ? '<span class="'.$extra['feedback_icon'].' '.$this->CLASS_FEEDBACK.'" aria-hidden="true"></span>'.PHP_EOL : '';
 
 		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('admin_methods')->_admin_link_is_allowed($extra['edit_link'])) {
 				$extra['edit_link'] = '';
 			}
 		}
@@ -122,7 +122,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 
 		$inline_help_before = $extra['help_before'] ? '<span class="'.$this->CLASS_HELP.'">'.nl2br($extra['help_before']).'</span>'.PHP_EOL : '';
 		$inline_help_after = $extra['inline_help'] ? '<span class="'.$this->CLASS_HELP.'">'.nl2br($extra['inline_help']).'</span>'.PHP_EOL : '';
-		$inline_tip_html = $extra['tip'] ? ' '.$form->_show_tip($extra['tip'], $extra, $replace) : '';
+		$inline_tip_html = $extra['tip'] ? ' '.tip($extra['tip'], $replace) : '';
 
 		if ($extra['only_row_start']) {
 			return $row_start;
@@ -171,14 +171,14 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		$row_end = '</dl>'.PHP_EOL;
 
 		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('admin_methods')->_admin_link_is_allowed($extra['edit_link'])) {
 				$extra['edit_link'] = '';
 			}
 		}
 		$edit_link_html = $extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="'.$this->CLASS_EDIT_LINK.'"><i class="'.$this->CLASS_EDIT_ICON.'"></i> '.t('Edit').'</a>'.PHP_EOL : '';
 		$link_name_html = ($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="'.$this->CLASS_LINK_URL.'">'.t($extra['link_name']).'</a>'.PHP_EOL : '';
 
-		$inline_tip_html = ($extra['tip'] ? ' '.$form->_show_tip($extra['tip'], $extra, $replace) : '');
+		$inline_tip_html = ($extra['tip'] ? ' '.tip($extra['tip'], $replace) : '');
 
 		if ($extra['only_row_start']) {
 			return $row_start . $before_content_html;

@@ -8,6 +8,13 @@ class yf_rewrite {
 	public $URL_ADD_BUILTIN_PARAMS = true;
 	public $PARSE_RULES = array();
 	public $BUILD_RULES = array();
+	public $allowed_url_params = array(
+		'utm_source',
+		'utm_medium',
+		'utm_content',
+		'utm_campaign',
+		'utm_term',
+	);
 
 	/**
 	* Catch missing method call
@@ -40,11 +47,11 @@ class yf_rewrite {
 		if (!$this->DEFAULT_PORT) {
 			if (defined('WEB_PATH') && strlen(WEB_PATH)) {
 				$port = parse_url(WEB_PATH, PHP_URL_PORT);
-				if ($port && $port != '80') {
+				if ($port && !in_array($port, array('80', '443'))) {
 					$this->DEFAULT_PORT = $port;
 				}
 			}
-			if (!$this->DEFAULT_PORT && $_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != '80') {
+			if (!$this->DEFAULT_PORT && $_SERVER['SERVER_PORT'] && !in_array($_SERVER['SERVER_PORT'], array('80', '443'))) {
 				$this->DEFAULT_PORT = $_SERVER['SERVER_PORT'];
 			}
 			if (!$this->DEFAULT_PORT) {
@@ -291,7 +298,7 @@ class yf_rewrite {
 		}
 		if (empty($params['port'])) {
 			$port = $port ?: $this->DEFAULT_PORT;
-			if ($port != '80') {
+			if ($port && !in_array($port, array('80', '443'))) {
 				$params['port'] = $port;
 			}
 		}
@@ -315,7 +322,7 @@ class yf_rewrite {
 					$_host = $params['admin_host'];
 					$_port = $params['admin_port'] ?: '80';
 					$_path = $params['admin_path'] ?: '/admin/';
-					$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && $_port != '80' ? ':'.$_port : ''). ($_path ?: '/'). $u);
+					$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && !in_array($_port, array('80','443')) ? ':'.$_port : ''). ($_path ?: '/'). $u);
 				} else {
 					$link = ADMIN_WEB_PATH. $u;
 				}
@@ -323,7 +330,7 @@ class yf_rewrite {
 				$_host = $params['host'];
 				$_port = $params['port'] ?: '80';
 				$_path = $params['path'] ?: '/';
-				$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && $_port != '80' ? ':'.$_port : ''). ($_path ?: '/'). $u);
+				$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && !in_array($_port, array('80','443')) ? ':'.$_port : ''). ($_path ?: '/'). $u);
 			}
 			if ($params['fragment']) {
 				$link .= '#'.$params['fragment'];
@@ -350,6 +357,7 @@ class yf_rewrite {
 			return false;
 		}
 		$main = main();
+		$request_is_https = $main->is_https();
 		$is_http = false;
 		$is_https = false;
 		$change_to_http = false;
@@ -369,8 +377,17 @@ class yf_rewrite {
 			}
 		}
 		// Return links to the http protocol
+		if (substr($url, 0, 2) == '//') {
+			$url = str_replace('//', 'http://', $url);
+		}
 		if (substr($url, 0, 8) == 'https://') {
 			$is_https = true;
+		} elseif (substr($url, 0, 7) == 'http://') {
+			$is_http = true;
+		}
+		if ($request_is_https) {
+			$change_to_https = true;
+		} elseif ($is_https) {
 			if ($main->HTTPS_ENABLED_FOR) {
 				if (!$matched) {
 					$change_to_http = true;
@@ -378,17 +395,13 @@ class yf_rewrite {
 			} elseif (!$main->USE_ONLY_HTTPS) {
 				$change_to_http = true;
 			}
-		} elseif (substr($url, 0, 7) == 'http://') {
-			$is_http = true;
+		} elseif ($is_http) {
 			if ($main->USE_ONLY_HTTPS) {
 				$change_to_https = true;
 			} elseif ($main->HTTPS_ENABLED_FOR) {
 				if ($matched) {
 					$change_to_https = true;
 				}
-			}
-			if ($https_needed) {
-				$url = str_replace('http://', 'https://', $url);
 			}
 		}
 		if ($is_http && $change_to_https) {
@@ -411,5 +424,40 @@ class yf_rewrite {
 			}
 		}
 		return $unique;
+	}
+
+	/**
+	* Checks if two input urls are the same
+	*/
+	function is_urls_same($url1 = '', $url2 = '', $params = array()) {
+// TODO
+	}
+
+	/**
+	* Checks if given url is same as internal one
+	*/
+	function is_current_url($url = '', $params = array()) {
+// TODO
+	}
+
+	/**
+	* Generate current url, using internal params
+	*/
+	function get_current_url($params = array()) {
+// TODO
+	}
+
+	/**
+	* Get user side home page url
+	*/
+	function get_user_home_url($params = array()) {
+// TODO
+	}
+
+	/**
+	* Get admin side home page url
+	*/
+	function get_admin_home_url($params = array()) {
+// TODO
 	}
 }

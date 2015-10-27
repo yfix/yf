@@ -150,12 +150,13 @@ class yf_payment_api__currency {
 		$k_sell = 1 + $this->rate[ sell ] / 100;
 		$result = $_currency_rate;
 		foreach( $result as $index => &$item ) {
-			$value = &$item[ 'to_value' ];
 			if( $item[ 'from' ] == $_main ) {
 				// buy
+				$value = &$item[ 'from_value' ];
 				$value = $value * $k_buy;
 			} elseif( $item[ 'to' ] == $_main ) {
 				// sell
+				$value = &$item[ 'to_value' ];
 				$value = $value * $k_sell;
 			}
 		}

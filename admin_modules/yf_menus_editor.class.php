@@ -310,7 +310,11 @@ class yf_menus_editor {
 				common()->admin_wall_add(array('menu items dragged: '.$menu_info['name'].'', $menu_info['id']));
 				module('menus_editor')->_purge_caches();
 			}
-			no_graphics(true);
+			if (is_ajax()) {
+				no_graphics(true);
+			} else {
+				js_redirect(url('/@object/@action/@id/@page'));
+			}
 			return false;
 		}
 		if (isset($items[''])) {

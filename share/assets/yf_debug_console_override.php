@@ -19,5 +19,8 @@ return DEBUG_MODE ? function() {
 				),
 			),
 		)),
+		'config' => array(
+			'no_cache' => true,
+		),
 	);
 } : null;

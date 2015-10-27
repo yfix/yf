@@ -21,6 +21,7 @@ class yf_send_mail {
 	public $FORCE_USE_SMTP			= true;
 	/** @var bool */
 	public $MAIL_DEBUG				= false;
+	public $MAIL_DEBUG_ERROR		= false;
 	/** @var string */
 	public $DEBUG_TEST_ADDRESS		= '';
 	/** @var bool */
@@ -100,7 +101,7 @@ class yf_send_mail {
 		}
 		$_prev_num_errors = count((array)main()->_all_core_error_msgs);
 		// Check required params
-		if (empty($email_to)) {
+		if ($this->MAIL_DEBUG_ERROR && empty($email_to)) {
 			trigger_error('SEND_MAIL: Missing \'To\' email address', E_USER_WARNING);
 			return false;
 		}
@@ -209,8 +210,8 @@ class yf_send_mail {
 			if (!$result) {
 				$error_message .= $mail->ErrorInfo;
 			}
-			if( DEBUG_MODE && $this->MAIL_DEBUG ) {
-				echo $error_message;
+			if( @$error_message && DEBUG_MODE && $this->MAIL_DEBUG_ERROR ) {
+				trigger_error( $error_message, E_USER_WARNING );
 			}
 		// Internal Framework mailer
 		} elseif ($this->USE_MAILER == 'internal') {
@@ -220,7 +221,9 @@ class yf_send_mail {
 		} elseif ($this->USE_MAILER == 'simple') {
 			$result = mail($email_to, $subject, $text/*, ($email_from ? 'From: '.$email_from : null)*/);
 		} else {
-			trigger_error('SEND_MAIL: Wrong USE_MAILER value: '.$this->USE_MAILER , E_USER_WARNING);
+			if( $this->MAIL_DEBUG_ERROR ) {
+				trigger_error('SEND_MAIL: Wrong USE_MAILER value: '.$this->USE_MAILER , E_USER_WARNING);
+			}
 		}
 
 		$log_data = array(

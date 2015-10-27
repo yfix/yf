@@ -69,4 +69,7 @@ END
 	'require' => array(
 		'asset' => 'kendoui'
 	),
+	'config' => array(
+		'no_cache' => true,
+	),
 );

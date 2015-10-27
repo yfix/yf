@@ -1,7 +1,7 @@
 <?php
 
 return array('versions' => array('master' => array('css' => array(
-<<<END
+'
 .cke_source { min-width: 100%; }
 
 fieldset.well { padding-bottom:0; }
@@ -31,8 +31,9 @@ td input[type=text], td textarea { margin-bottom:0; }
 
 .bs-docs-sidenav { width:200px; margin:0; padding:0; z-index:1000; }
 .bs-docs-sidenav [class*="span"] { margin-left:0; }
-.bs-docs-sidenav > li > a { display:block; margin:0; padding:5px 15px; }
-.bs-docs-sidenav .icon-chevron-right { float:right; margin-top:0; margin-right:-5px; opacity:.25; }
+.bs-docs-sidenav > li { height: 20px; line-height: 20px; }
+.bs-docs-sidenav > li > a { display:block; margin:0; padding:0; }
+.bs-docs-sidenav .icon-chevron-right { float:left; line-height: 20px; margin:0; margin-right:5px; opacity:.25; }
 
 .table a.btn { text-decoration:none; }
 .table { width:auto; }
@@ -102,12 +103,9 @@ td input[type=text], td textarea { margin-bottom:0; }
 .cssfw-bs3 .controls .help-block { width:100%; margin-bottom:0; }
 
 .cssfw-bs3 .modal .form-horizontal .form-group { margin-right:inherit; margin-left:inherit; }
-/*.cssfw-bs3 .modal .form-horizontal .control-label.col-md-3 { width:30%; }*/
-/*.cssfw-bs3 .modal .form-horizontal .controls.col-md-offset-3 { margin-left:30%; }*/
 
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color:#52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color:#c8c8c8; }
-
-END
+'
 ))));

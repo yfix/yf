@@ -1,0 +1,124 @@
+{asset()} typeaheadjs {/asset}
+{asset()} handlebarsjs {/asset}
+
+{css()}
+.tt-dataset { color: #999; }
+.tt-highlight { color: #555; }
+.tt-menu { width: 500px; margin-top: 10px; padding: 5px 0; background: #fff; border: 1px solid #ccc; border-radius: 5px; text-shadow: none; }
+.tt-suggestion { padding: 3px 10px; line-height: 1.3em; }
+.tt-suggestion.tt-cursor { color: #fff; background-color: #0097cf; }
+.tt-suggestion p { margin: 0; }
+.tt-suggestion:hover { background: #eee; }
+.tt-selectable { cursor: pointer; }
+#yf-navbar-search-dropdown .tt-menu { max-height: 500px; overflow-y: auto; }
+
+.ProfileCard { position: relative; padding: 8px; }
+.ProfileCard-avatar { position: absolute; top: 8px; left: 8px; width: 52px; height: 52px; border: 2px solid #ccd6dd; border-radius: 5px; }
+.ProfileCard:hover .ProfileCard-avatar { border-color: #f5f8fa; }
+.ProfileCard-details { min-height: 60px; padding-left: 60px; }
+.ProfileCard-realName,
+.ProfileCard-screenName { display: inline-block; }
+.ProfileCard-realName { font-weight: 700; }
+.ProfileCard-screenName { color: #8899a6; }
+.ProfileCard-description { margin-top: 5px; font-size: 14px; line-height: 18px; }
+.ProfileCard-stats { float: right; text-align: right; }
+.ProfileCard-stat { display: inline-block; font-size: 12px; line-height: 16px; text-transform: uppercase; }
+.ProfileCard-stat-label { color: #8899a6; font-weight: 500; }
+.ProfileCard-stat + .ProfileCard-stat { margin-left: 5px; }
+.ProfileCard:hover,
+.ProfileCard.is-active { color: #fff; background: #55acee; }
+.ProfileCard:hover .ProfileCard-screenName,
+.ProfileCard:hover .ProfileCard-stat-label,
+.ProfileCard.is-active .ProfileCard-screenName,
+.ProfileCard.is-active .ProfileCard-stat-label { color: #fff; }
+.EmptyMessage { position: relative; padding: 10px; font-size: 24px; line-height: 30px; text-align: center; }
+
+{/css}
+
+<script id="result-template" type="text/x-handlebars-template">
+	<div class="ProfileCard u-cf">
+		<img class="ProfileCard-avatar" src="{{profile_image_url_https}}">
+		<div class="ProfileCard-details">
+			<div class="ProfileCard-realName">{{name}}</div>
+			<div class="ProfileCard-screenName">@{{screen_name}}</div>
+			<div class="ProfileCard-description">{{description}}</div>
+		</div>
+		<div class="ProfileCard-stats">
+			<div class="ProfileCard-stat"><span class="ProfileCard-stat-label">Tweets:</span> {{statuses_count}}</div>
+			<div class="ProfileCard-stat"><span class="ProfileCard-stat-label">Following:</span> {{friends_count}}</div>
+			<div class="ProfileCard-stat"><span class="ProfileCard-stat-label">Followers:</span> {{followers_count}}</div>
+		</div>
+	</div>
+</script>
+
+<script id="empty-template" type="text/x-handlebars-template">
+	<div class="EmptyMessage">Your search turned up 0 results. This most likely means the backend is down, yikes!</div>
+</script>
+
+{jquery()}
+	var engine, remoteHost, template, empty;
+
+	$.support.cors = true;
+
+	remoteHost = 'https://typeahead-js-twitter-api-proxy.herokuapp.com';
+	template = Handlebars.compile($("#result-template").html());
+	empty = Handlebars.compile($("#empty-template").html());
+
+	engine = new Bloodhound({
+		identify: function(o) { return o.id_str; },
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name', 'screen_name'),
+		dupDetector: function(a, b) { return a.id_str === b.id_str; },
+		prefetch: remoteHost + '/demo/prefetch',
+		remote: {
+			url: remoteHost + '/demo/search?q=%QUERY',
+			wildcard: '%QUERY'
+		}
+	});
+
+	// ensure default users are read on initialization
+	engine.get('1090217586', '58502284', '10273252', '24477185')
+
+	function engineWithDefaults(q, sync, async) {
+		if (q === '') {
+			sync(engine.get('1090217586', '58502284', '10273252', '24477185'));
+			async([]);
+		} else {
+			engine.search(q, sync, async);
+		}
+	}
+
+	$('#yf-navbar-search-input').typeahead({
+//		hint: $('.Typeahead-hint'),
+//		menu: $('.Typeahead-menu'),
+		minLength: 0,
+		limit: 10,
+//		classNames: {
+//			open: 'is-open',
+//			empty: 'is-empty',
+//			cursor: 'is-active',
+//			suggestion: 'Typeahead-suggestion',
+//			selectable: 'Typeahead-selectable'
+//		}
+	}, {
+		source: engineWithDefaults,
+		displayKey: 'screen_name',
+		templates: {
+			suggestion: template,
+			empty: empty
+		}
+	})
+//	.on('typeahead:asyncrequest', function() {
+//		$('.Typeahead-spinner').show();
+//	})
+//	.on('typeahead:asynccancel typeahead:asyncreceive', function() {
+//		$('.Typeahead-spinner').hide();
+//	});
+
+{/jquery}
+
+<form class="navbar-form navbar-left" role="search">
+	<div class="form-group" id="yf-navbar-search-dropdown">
+		<input type="text" id="yf-navbar-search-input" class="form-control" placeholder="{t(Search)}">
+	</div>
+</form>

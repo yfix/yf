@@ -10,10 +10,12 @@ fi
 # -2 means using protocol v2 only, -4 IPv4
 myssh="ssh -2 -4 root@$host"
 
-nginx_version="1.5.3"
+#nginx_version="1.5.3"
+nginx_version=`php -r 'preg_match("~nginx\-([0-9]+\.[0-9]+\.[0-9]+)\.tar\.gz~ims", file_get_contents("http://nginx.org/en/download.html"), $m); echo $m[1];'`
 if [ "$override_nginx_version" ]; then
 	nginx_version="$override_nginx_version"
 fi
+echo $nginx_version
 
 $myssh '
 nginx_version='$nginx_version'

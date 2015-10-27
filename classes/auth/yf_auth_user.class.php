@@ -49,6 +49,10 @@ class yf_auth_user {
 	public $VAR_USER_INFO			= 'user_info';
 	/** @var string field name @conf_skip */
 	public $VAR_LOCK_IP				= 'auth_lock_to_ip';
+	/** @var string field name @conf_skip */
+	public $VAR_LOCK_UA				= 'auth_lock_to_ua';
+	/** @var string field name @conf_skip */
+	public $VAR_LOCK_HOST			= 'auth_lock_to_host';
 	/** @var bool Do log into db user login actions */
 	public $DO_LOG_LOGINS			= true;
 	/** @var bool Set cookie 'member_id', useful for fast_init before session start */
@@ -57,11 +61,7 @@ class yf_auth_user {
 	public $SET_IS_LOGGED_COOKIE	= '';
 	/** @var string Site closed stpl name */
 	public $SITE_CLOSED_STPL		= 'site_closed';
-	/** @var array @conf_skip 
-	* Methods to execute after success login or logout
-	* @example	$EXEC_AFTER_LOGIN = array(array('test_method', array('Working!')));
-	* @example	$EXEC_AFTER_LOGIN = array(array(array('custom_class', 'custom_method'), array('my_param_1' => 'Working!')));
-	*/
+	/** @var array @conf_skip Methods to execute after success login or logout @example	$EXEC_AFTER_LOGIN = array(array('test_method', array('Working!')));	*/
 	public $EXEC_AFTER_LOGIN		= array();
 	/** @var array @conf_skip */
 	public $EXEC_AFTER_LOGOUT		= array();
@@ -108,10 +108,16 @@ class yf_auth_user {
 	public $SESSION_REFERER_CHECK	= false;
 	/** @var bool Lock session to IP address (to prevent hacks) @security */
 	public $SESSION_LOCK_TO_IP		= true;
+	/** @var bool Lock session to User Agent string (to prevent hacks) @security */
+	public $SESSION_LOCK_TO_UA		= false;
+	/** @var bool Lock session to hostname string (to prevent hacks) @security */
+	public $SESSION_LOCK_TO_HOST	= false;
 	/** @var bool Allow to use 'remember me in cookies' feature @security */
 	public $ALLOW_REMEMBER_ME		= true;
 	/** @var string */
 	public $USER_PASSWORD_SALT		= '';
+	/** @var string */
+	public $USER_SECURITY_CHECKS	= false;
 
 	/**
 	*/
@@ -164,20 +170,52 @@ class yf_auth_user {
 			}
 		}
 		// Check for session IP
-		if ($this->SESSION_LOCK_TO_IP && !empty($_SESSION[$this->VAR_USER_ID])) {
+		if ($this->SESSION_LOCK_TO_IP && !empty($_SESSION[$this->VAR_USER_ID]) && $_GET['task'] !== 'logout') {
 			// User has changed IP, logout immediately
-			if (!isset($_SESSION[$this->VAR_LOCK_IP]) || $_SESSION[$this->VAR_LOCK_IP] != common()->get_ip()) {
-				trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:'.$_SESSION[$this->VAR_LOCK_IP].', new_ip:'.common()->get_ip().', user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
+			$ip = common()->get_ip();
+			if (!isset($_SESSION[$this->VAR_LOCK_IP]) || $_SESSION[$this->VAR_LOCK_IP] !== $ip) {
+				trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:'.$_SESSION[$this->VAR_LOCK_IP].', new_ip:'.$ip.', user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
+				$this->_log_fail(array(
+					'reason'	=> 'auth_blocked_by_ip',
+				));
+				$_GET['task'] = 'logout';
+			}
+		}
+		// Check for session User Agent
+		if ($this->SESSION_LOCK_TO_UA && !empty($_SESSION[$this->VAR_USER_ID]) && $_GET['task'] !== 'logout') {
+			// User has changed User Agent, logout immediately
+			$ua = $_SERVER['HTTP_USER_AGENT'];
+			if (!isset($_SESSION[$this->VAR_LOCK_UA]) || $_SESSION[$this->VAR_LOCK_UA] !== $ua) {
+				trigger_error('AUTH: Attempt to use session with changed User Agent blocked, auth_ua:"'.$_SESSION[$this->VAR_LOCK_UA].'", new_ua:"'.$ua.'", user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
+				$this->_log_fail(array(
+					'reason'	=> 'auth_blocked_by_ua',
+				));
+				$_GET['task'] = 'logout';
+			}
+		}
+		// Check for session hostname
+		if ($this->SESSION_LOCK_TO_HOST && !empty($_SESSION[$this->VAR_USER_ID]) && $_GET['task'] !== 'logout') {
+			// User has changed Host, logout immediately
+			$host = $_SERVER['HTTP_HOST'];
+			if (!isset($_SESSION[$this->VAR_LOCK_HOST]) || $_SESSION[$this->VAR_LOCK_HOST] !== $host) {
+				trigger_error('AUTH: Attempt to use session with changed Host blocked, auth_host:"'.$_SESSION[$this->VAR_LOCK_HOST].'", new_host:"'.$ua.'", user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
+				$this->_log_fail(array(
+					'reason'	=> 'auth_blocked_by_host',
+				));
 				$_GET['task'] = 'logout';
 			}
 		}
 		// Check referer matched to WEB_PATH
-		if ($this->SESSION_REFERER_CHECK && (!$_SERVER['HTTP_REFERER'] || substr($_SERVER['HTTP_REFERER'], 0, strlen(WEB_PATH)) != WEB_PATH)) {
-			trigger_error('AUTH: Referer not matched and session blocked, referer:'.$_SERVER['HTTP_REFERER'], E_USER_WARNING);
+		$referer = $_SERVER['HTTP_REFERER'];
+		if ($this->SESSION_REFERER_CHECK && (!$referer || substr($referer, 0, strlen(WEB_PATH)) != WEB_PATH) && $_GET['task'] !== 'logout') {
+			trigger_error('AUTH: Referer not matched and session blocked, referer:'.$referer, E_USER_WARNING);
+			$this->_log_fail(array(
+				'reason'	=> 'auth_blocked_by_referer',
+			));
 			$_GET['task'] = 'logout';
 		}
 		// Switch between login/logout actions
-		if (isset($_GET['task']) && $_GET['task'] == 'logout') {
+		if (isset($_GET['task']) && $_GET['task'] === 'logout') {
 			return $this->_do_logout();
 		}
 		if (!empty($_COOKIE[$this->VAR_COOKIE_NAME]) && empty($_SESSION[$this->VAR_USER_ID])) {
@@ -249,6 +287,8 @@ class yf_auth_user {
 		$AUTH_LOGIN	= trim($params['login']);
 		$AUTH_PSWD	= trim($params['pswd']);
 
+		$cur_ip = common()->get_ip();
+
 		if ($this->AUTH_ONLY_HTTPS && !($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL'])) {
 			$redirect_url = '';
 			if ($_SERVER['HTTP_REFERER']) {
@@ -264,33 +304,41 @@ class yf_auth_user {
 			}
 			return js_redirect($redirect_url);
 		}
-
+		$fail_reason = false;
 		if (!empty($AUTH_LOGIN) && !empty($AUTH_PSWD)) {
 			$NEED_QUERY_DB = true;
-
-			$CUR_IP = common()->get_ip();
-			if ($this->BLOCK_BANNED_IPS) {
-				if (common()->_ip_is_banned()) {
-					$NEED_QUERY_DB = false;
-					trigger_error('AUTH: Attempt to login from banned IP ('.$CUR_IP.') as "'.$AUTH_LOGIN.'" blocked', E_USER_WARNING);
-					return js_redirect($this->URL_WRONG_LOGIN);
-				}
+			if ($this->BLOCK_BANNED_IPS && common()->_ip_is_banned()) {
+				$fail_reason = 'ip_blocked';
+				$this->_log_fail(array(
+					'login'		=> $AUTH_LOGIN,
+					'pswd'		=> $AUTH_PSWD,
+					'reason'	=> $fail_reason,
+				));
+				$msg = 'Attempt to login from banned IP ('.$cur_ip.') as "'.$AUTH_LOGIN.'" blocked';
+				common()->message_error($msg);
+				trigger_error('AUTH: '.$msg, E_USER_WARNING);
+				return js_redirect($this->URL_WRONG_LOGIN);
 			}
 			if ($this->BLOCK_FAILED_LOGINS) {
-				list($_fails_by_login) = db()->query_fetch(
-					'SELECT COUNT(*) AS `0` FROM '.db('log_auth_fails').' WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' AND login="'._es($AUTH_LOGIN).'"'
-				);
-				list($_fails_by_ip) = db()->query_fetch(
-					'SELECT COUNT(*) AS `0` FROM '.db('log_auth_fails').' WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' AND ip="'._es(common()->get_ip()).'"'
-				);
-				if ($_fails_by_login >= $this->BLOCK_FAILS_BY_LOGIN_COUNT || $_fails_by_ip >= $this->BLOCK_FAILS_BY_IP_COUNT) {
-					$NEED_QUERY_DB = false;
-					trigger_error('AUTH: Attempt to login as "'.$AUTH_LOGIN.'" blocked, fails_by_login: '.intval($_fails_by_login).', fails_by_ip: '.intval($_fails_by_ip), E_USER_WARNING);
+				$min_time = time() - $this->BLOCK_FAILED_TTL;
+				$fails_by_login = (int)db()->get_one('SELECT COUNT(*) FROM '.db('log_auth_fails').' WHERE time > '.$min_time.' AND login="'._es($AUTH_LOGIN).'"');
+				if ($fails_by_login >= $this->BLOCK_FAILS_BY_LOGIN_COUNT) {
+					$fail_reason = 'blocked_fails_by_login';
+					$msg = 'Attempt to login as "'.$AUTH_LOGIN.'" blocked';
+					common()->message_error($msg);
+					trigger_error('AUTH: '.$msg.', fails_by_login: '.$fails_by_login, E_USER_WARNING);
+				} else {
+					$fails_by_ip = (int)db()->get_one('SELECT COUNT(*) FROM '.db('log_auth_fails').' WHERE time > '.$min_time.' AND ip="'._es($cur_ip).'"');
+					if ($fails_by_ip >= $this->BLOCK_FAILS_BY_IP_COUNT) {
+						$fail_reason = 'blocked_fails_by_ip';
+						$msg = 'Attempt to login as "'.$AUTH_LOGIN.'" blocked';
+						common()->message_error($msg);
+						trigger_error('AUTH: '.$msg.', fails_by_ip: '.$fails_by_ip, E_USER_WARNING);
+					}
 				}
 			}
-
-			$PSWD_OK = false;
-			if ($NEED_QUERY_DB) {
+			if (!$fail_reason) {
+				$PSWD_OK = false;
 				$user_info = $this->_get_user_info($AUTH_LOGIN);
 				// Allow md5 passwords
 				if (strlen($user_info['password']) == 32 && md5($AUTH_PSWD. $this->USER_PASSWORD_SALT) == $user_info['password']) {
@@ -298,29 +346,108 @@ class yf_auth_user {
 				} elseif ($user_info['password'] == $AUTH_PSWD) {
 					$PSWD_OK = true;
 				}
+				if (!$PSWD_OK) {
+					$fail_reason = 'wrong_login';
+				}
 			}
-			if ($PSWD_OK) {
-				// Set member id cookie expired on session end
-				if ($this->SET_MEMBER_ID_COOKIE && preg_match('/^[a-z0-9_\-]+$/ims', $this->SET_MEMBER_ID_COOKIE)) {
-					$this->_cookie_set($this->SET_MEMBER_ID_COOKIE, $user_info['id']);
-				}
-				if ($this->SET_IS_LOGGED_COOKIE && preg_match('/^[a-z0-9_\-]+$/ims', $this->SET_IS_LOGGED_COOKIE)) {
-					$this->_cookie_set($this->SET_IS_LOGGED_COOKIE, '1');
-				}
-			} else {
+			if (!$fail_reason && $this->USER_SECURITY_CHECKS) {
+				$fail_reason = $this->_user_security_checks($user_info['id']);
+			}
+			if ($fail_reason) {
 				unset($user_info);
-				if ($this->LOG_FAILED_LOGINS) {
-					db()->insert_safe('log_auth_fails', array(
-						'time'	=> str_replace(',', '.', microtime(true)),
-						'ip'	=> common()->get_ip(),
-						'login'	=> $AUTH_LOGIN,
-						'pswd'	=> $AUTH_PSWD,
-						'reason'=> $NEED_QUERY_DB ? 'w' : 'b', // 'w' means wrong login, 'b' means blocked
-					));
-				}
+				$this->_log_fail(array(
+					'login'		=> $AUTH_LOGIN,
+					'pswd'		=> $AUTH_PSWD,
+					'reason'	=> $fail_reason,
+				));
 			}
 		}
 		return $this->_save_login_in_session($user_info, $params['no_redirect']);
+	}
+
+	/**
+	*/
+	function _user_security_checks($user_id) {
+		$user_id = (int)$user_id;
+		if (!$this->USER_SECURITY_CHECKS || !$user_id) {
+			return false;
+		}
+		$fail_reason = false;
+
+		$cur_ip = common()->get_ip();
+		$cur_country = strtoupper($_SERVER['GEOIP_COUNTRY_CODE']);
+
+		$user_settings = db()->from('user_settings')->whereid($user_id, 'user_id')->get_2d('key, value');
+
+		$fields_ip = array('ip_whitelist', 'ip_blacklist');
+		$fields_country = array('country_whitelist', 'country_blacklist');
+		foreach (array_merge($fields_ip, $fields_country) as $k) {
+			if (!strlen(trim($user_settings[$k]))) {
+				continue;
+			}
+			$tmp = array();
+			foreach (explode(';', trim($user_settings[$k])) as $v) {
+				$v = trim($v);
+				$tmp[$v] = $v;
+			}
+			$user_settings[$k] = $tmp;
+		}
+
+		// Whitelists have more priority over blacklists, IP checks have more priority over country checks
+		$country_allow = null;
+		if ($user_settings['country_whitelist']) {
+			if (isset($user_settings['country_whitelist'][$cur_country])) {
+				$country_allow = true;
+			} else {
+				$country_allow = false;
+			}
+		} elseif ($user_settings['country_blacklist'] && $cur_country && isset($user_settings['country_blacklist'][$cur_country])) {
+			$country_allow = false;
+		}
+		$ip_allow = null;
+		if ($user_settings['ip_whitelist']) {
+			if (isset($user_settings['ip_whitelist'][$cur_ip])) {
+				$ip_allow = true;
+			} else {
+				$ip_allow = false;
+			}
+		} elseif ($user_settings['ip_blacklist'] && $cur_ip && isset($user_settings['ip_blacklist'][$cur_ip])) {
+			$ip_allow = false;
+		}
+		if ($ip_allow === false) {
+			$fail_reason = 'block_ip_user_settings';
+			$msg = 'Login from your IP ('.$cur_ip.') is blocked by user security settings';
+			common()->message_error($msg);
+			trigger_error('AUTH: '.$msg, E_USER_WARNING);
+		} elseif ($country_allow === false && $ip_allow !== true) {
+			$fail_reason = 'block_country_user_settings';
+			$msg = 'Login from your country ('.$cur_country.') is blocked by user security settings';
+			common()->message_error($msg);
+			trigger_error('AUTH: '.$msg, E_USER_WARNING);
+		}
+		return $fail_reason;
+	}
+
+	/**
+	*/
+	function _log_fail($data = array()) {
+		if (!$this->LOG_FAILED_LOGINS) {
+			return false;
+		}
+		return db()->insert_safe('log_auth_fails', array(
+			'time'		=> str_replace(',', '.', microtime(true)),
+			'ip'		=> common()->get_ip(),
+			'user_id'	=> $data['user_id'] ?: $_SESSION[$this->VAR_USER_ID],
+			'login'		=> $data['login'],
+			'pswd'		=> $data['pswd'],
+			'reason'	=> $data['reason'],
+			'host'		=> $_SERVER['HTTP_HOST'],
+			'ua'		=> $_SERVER['HTTP_USER_AGENT'],
+			'referer'	=> $_SERVER['HTTP_REFERER'],
+			'query_string'	=> $_SERVER['QUERY_STRING'],
+			'site_id'	=> (int)conf('SITE_ID'),
+			'server_id'	=> (int)conf('SERVER_ID'),
+		));
 	}
 
 	/**
@@ -377,6 +504,7 @@ class yf_auth_user {
 			$this->_encrypted_error = 'user pswd_hash not matched';
 			return false;
 		}
+		$this->INSIDE_LOGIN_FROM_ADMIN = true;
 		return $this->_save_login_in_session($user_info);
 	}
 
@@ -439,10 +567,13 @@ class yf_auth_user {
 
 		} else {
 
+			session_regenerate_id($destroy = true);
 			$_SESSION[$this->VAR_USER_ID]			= $user_info['id'];
 			$_SESSION[$this->VAR_USER_GROUP_ID]		= $user_info['group'];
 			$_SESSION[$this->VAR_USER_LOGIN_TIME]	= time();
 			$_SESSION[$this->VAR_LOCK_IP]			= common()->get_ip();
+			$_SESSION[$this->VAR_LOCK_UA]			= $_SERVER['HTTP_USER_AGENT'];
+			$_SESSION[$this->VAR_LOCK_HOST]			= $_SERVER['HTTP_HOST'];
 			$main = main();
 			$main->_init_cur_user_info($main);
 			$main->USER_INFO = &$main->_user_info;
@@ -454,7 +585,13 @@ class yf_auth_user {
 			if (!empty($_POST[$this->REMEMBER_FIELD]) && $this->ALLOW_REMEMBER_ME) {
 				$encrypted_string = _class('encryption')->_safe_encrypt_with_base64($user_info['id'].'-'.$user_info[$this->LOGIN_FIELD].'-'.$user_info[$this->PSWD_FIELD].'-'.time());
 				$this->_cookie_set($this->VAR_COOKIE_NAME, $encrypted_string, time() + $this->VAR_COOKIE_LIFE_TIME);
-				$this->_cookie_set('quick_login', xsb_encode($user_info[$this->LOGIN_FIELD]), time() + 86400 * 365);
+			}
+			// Set member id cookie expired on session end
+			if ($this->SET_MEMBER_ID_COOKIE && preg_match('/^[a-z0-9_\-]+$/ims', $this->SET_MEMBER_ID_COOKIE)) {
+				$this->_cookie_set($this->SET_MEMBER_ID_COOKIE, $user_info['id']);
+			}
+			if ($this->SET_IS_LOGGED_COOKIE && preg_match('/^[a-z0-9_\-]+$/ims', $this->SET_IS_LOGGED_COOKIE)) {
+				$this->_cookie_set($this->SET_IS_LOGGED_COOKIE, '1');
 			}
 			if ($this->CHECK_MULTI_ACCOUNTS) {
 				$this->_check_multi_accounts();
@@ -485,8 +622,10 @@ class yf_auth_user {
 	/**
 	*/
 	function _success_login_redirect ($user_info = array(), $group_info = array()) {
+		if ($this->INSIDE_LOGIN_FROM_ADMIN) {
+			return js_redirect('/');
 		// Auto-redirect to the page before login form if needed
-		if (!empty($_SESSION[$this->VAR_USER_GO_URL]) && !($this->URL_SUCCESS_LOGIN && $_POST['skip_auto_url'])) {
+		} elseif (!empty($_SESSION[$this->VAR_USER_GO_URL]) && !($this->URL_SUCCESS_LOGIN && $_POST['skip_auto_url'])) {
 			$REDIRECT_URL = (substr($_SESSION[$this->VAR_USER_GO_URL], 0, 2) != './' ? './?' : ''). str_replace(WEB_PATH, '', str_replace(array('http:','https:'), '', $_SESSION[$this->VAR_USER_GO_URL]));
 			$_SESSION[$this->VAR_USER_GO_URL] = '';
 		} elseif (!empty($user_info['go_after_login'])) {
@@ -519,6 +658,8 @@ class yf_auth_user {
 			$this->VAR_USER_GROUP_ID,
 			$this->VAR_USER_LOGIN_TIME,
 			$this->VAR_LOCK_IP,
+			$this->VAR_LOCK_UA,
+			$this->VAR_LOCK_HOST,
 		);
 		foreach ((array)$_SESSION as $k => $v) {
 			if (in_array($k, $user_session_vars)) {
@@ -531,7 +672,7 @@ class yf_auth_user {
 		$main->_LOGGED_IN_USER_INFO	= &$main->_user_info;
 
 		$this->_cleanup_cookie();
-		session_destroy();
+		session_regenerate_id($destroy = true);
 
 		if ($no_redirect) {
 			return false;

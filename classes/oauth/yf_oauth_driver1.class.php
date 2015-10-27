@@ -57,14 +57,14 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			}
 			$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 			$this->_storage_set('last_time', time());
-			$params = array(
+			$params = (array)$this->url_params + (array)$this->url_params_user_info + array(
 				'oauth_version'			=> $this->oauth_version,
 				'oauth_consumer_key'	=> $this->client_id,
 				'oauth_nonce'			=> $this->_storage_get('nonce'),
 				'oauth_timestamp'		=> $this->_storage_get('last_time'),
 				'oauth_signature_method'=> 'HMAC-SHA1',
 				'oauth_token'			=> $access_token,
-			) + (array)$this->url_params + (array)$this->url_params_user_info;
+			);
 			if ($oauth_session_handle) {
 				$params['oauth_session_handle'] = $oauth_session_handle;
 			}
@@ -106,7 +106,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 		$this->_storage_set('last_time', time());
 
-		$params = array(
+		$params = (array)$this->url_params + (array)$this->url_params_access_token + array(
 			'oauth_version'			=> $this->oauth_version,
 			'oauth_consumer_key'	=> $this->client_id,
 			'oauth_nonce'			=> $this->_storage_get('nonce'),
@@ -114,7 +114,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			'oauth_signature_method'=> 'HMAC-SHA1',
 			'oauth_token'			=> $oauth_token,
 			'oauth_verifier'		=> $oauth_verifier,
-		) + (array)$this->url_params + (array)$this->url_params_access_token;
+		);
 		$url = $this->url_access_token;
 
 		$auth_header = $this->_get_oauth_header($url, $params, 'POST', $request_token['oauth_token_secret']);
@@ -174,14 +174,14 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 		$this->_storage_set('last_time', time());
 
-		$params = array(
+		$params = (array)$this->url_params + (array)$this->url_params_authorize + array(
 			'oauth_version'			=> $this->oauth_version,
 			'oauth_callback'		=> $this->redirect_uri,
 			'oauth_consumer_key'	=> $this->client_id,
 			'oauth_nonce'			=> $this->_storage_get('nonce'),
 			'oauth_timestamp'		=> $this->_storage_get('last_time'),
 			'oauth_signature_method'=> 'HMAC-SHA1',
-		) + (array)$this->url_params + (array)$this->url_params_authorize;
+		);
 		$opts = array(
 			'post'	=> array(),
 			'custom_header' => $this->_get_oauth_header($url, $params),
@@ -203,9 +203,14 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			$params = array();
 		}
 		ksort($params);
-		$params['oauth_signature'] = $this->_do_sign_request($url, (array)$params + (array)$add_to_sign, $method, $oauth_token_secret);
+		$params_to_sign = (array)$params + (array)$add_to_sign;
+		$params['oauth_signature'] = $this->_do_sign_request($url, $params_to_sign, $method, $oauth_token_secret);
 		$keyval = array();
 		foreach($params as $k => $v) {
+			if (is_null($v) || !strlen($v)) {
+				unset($params[$k]);
+				continue;
+			}
 			$keyval[$k] = $k.'="'.$v.'"';
 		}
 		$realm = '';
@@ -221,6 +226,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			}
 			$realm = 'realm="'.$realm_url.'"';
 		}
+		ksort($keyval);
 		return 'Authorization: OAuth '.$realm.' '.implode(', ', $keyval);
 	}
 
@@ -263,21 +269,20 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		if (strlen($key) < 64) {
 			$key = str_pad($key, 64, "\0");
 		}
-		return pack($pack, sha1( (str_repeat("\x5c", 64) ^ $key) .pack($pack, sha1(	(str_repeat("\x36", 64) ^ $key)	.$data )) ));
+		return pack($pack, sha1( (str_repeat("\x5c", 64) ^ $key). pack($pack, sha1(	(str_repeat("\x36", 64) ^ $key). $data )) ));
 	}
 
 	/**
 	*/
 	function _encode($value) {
-		return is_array($value) ? $this->_encode_array($value) : str_replace('%7E', '~', str_replace('+',' ', rawurlencode($value)));
-	}
-
-	/**
-	*/
-	function _encode_array($array) {
-		foreach($array as $key => $value) {
-			$array[$key] = $this->_encode($value);
+		$func = __FUNCTION__;
+		if (is_array($value)) {
+			foreach($value as $k => $v) {
+				$value[$key] = $this->$func($v);
+			}
+			return $value;
 		}
-		return $array;
+		return str_replace('%7E', '~', str_replace('+',' ', rawurlencode($value)));
+#		return rawurlencode($value);
 	}
 }

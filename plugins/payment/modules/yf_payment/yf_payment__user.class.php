@@ -9,13 +9,15 @@ class yf_payment__user {
 	}
 
 	public function balance( $options ) {
-		if( empty( main()->USER_ID ) ) { js_redirect( '/', false, 'User id empty' ); }
+		if( empty( main()->USER_ID ) ) { js_redirect( '/login_form', false, 'User id empty' ); }
 		$payment_api = _class( 'payment_api' );
 		list( $account_id,  $account  ) = $payment_api->get_account();
 		list( $currency_id, $currency ) = $payment_api->get_currency__by_id( $account );
 		list( $operation, $count ) = $payment_api->operation( $account );
 		$page_per = $payment_api->OPERATION_LIMIT;
 		$pages    = ceil( $count / $page_per );
+		// limit
+		$balance_limit_lower = $payment_api->BALANCE_LIMIT_LOWER;
 		// provider
 		$providers = $payment_api->provider( array(
 			'all' => true,
@@ -38,6 +40,7 @@ class yf_payment__user {
 		$status        = $payment_api->status();
 		$currencies    = $payment_api->currencies;
 		$currency_rate = $payment_api->currency_rate__buy();
+		$payout_currency_allow = $payment_api->payout_currency_allow;
 		// transition
 		$payment_module = $this->payment_module;
 		$payment_module->t( $currency,   'currency' );
@@ -49,23 +52,24 @@ class yf_payment__user {
 		$replace = array(
 			'user'    => $user,
 			'payment' => json_encode( array(
-				'user'                 => $user,
-				'account'              => $account,
-				'currency'             => $currency,
-				'currencies'           => $currencies,
-				'currency_rate'        => $currency_rate,
-				'operation'            => $operation,
-				'provider'             => $provider,
-				'providers'            => $providers,
-				'status'               => $status,
-				'operation_pagination' => array(
+				'balance_limit_lower'   => $balance_limit_lower,
+				'user'                  => $user,
+				'account'               => $account,
+				'currency'              => $currency,
+				'currencies'            => $currencies,
+				'currency_rate'         => $currency_rate,
+				'payout_currency_allow' => $payout_currency_allow,
+				'operation'             => $operation,
+				'provider'              => $provider,
+				'providers'             => $providers,
+				'status'                => $status,
+				'operation_pagination'  => array(
 					'count'    => $count,
 					'page_per' => $page_per,
 					'pages'    => $pages,
 					'page'     => 1,
 				),
-			) ),
-			// ), JSON_NUMERIC_CHECK ),
+			)),
 		);
 		// tpl
 		$result  = '';

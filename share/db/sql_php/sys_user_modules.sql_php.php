@@ -107,5 +107,7 @@ return array(
 	'foreign_keys' => array(
 	),
 	'options' => array(
+		'engine' => 'InnoDB',
+		'charset' => 'utf8',
 	),
 );

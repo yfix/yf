@@ -7,4 +7,5 @@ return '
   `author` varchar(255) NOT NULL,
   `active` enum(\'0\',\'1\') NOT NULL,
   PRIMARY KEY (`id`)
+  /** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ';

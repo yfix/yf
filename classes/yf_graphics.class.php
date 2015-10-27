@@ -30,7 +30,7 @@ class yf_graphics {
 	/** @var bool */
 	public $NOT_FOUND_RAISE_WARNING	= true;
 	/** @var bool */
-	public $HEADER_POWERED_BY		= true;
+	public $HEADER_POWERED_BY		= false;
 	/** @var bool */
 	public $JS_CONSOLE_ALLOW		= true;
 	/** @var string Required for the compatibility with old main class */
@@ -407,7 +407,8 @@ class yf_graphics {
 			header('Cache-Control: private, no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0');
 			header('Pragma: no-cache'); // HTTP/1.0
 		}
-		if (main()->is_ajax() || DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX')) {
+		$robots_no_index = (main()->is_ajax() || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX') || DEBUG_MODE || (defined('DEVELOP') && DEVELOP) || (defined('TEST_MODE') && TEST_MODE));
+		if ($robots_no_index) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
 		}
 // TODO: unify headers sending for 301, 302, 403, 404, also chech php_sapi_name() for strpos "cgi"

@@ -9,10 +9,12 @@
 */
 class yf_manage_sites {
 
+	const table = 'sites';
+
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('sites'))
+		return table('SELECT * FROM '.db(self::table))
 			->text('name')
 			->text('web_path')
 			->text('real_path')
@@ -25,7 +27,7 @@ class yf_manage_sites {
 	/**
 	*/
 	function edit() {
-		$a = db()->query_fetch('SELECT * FROM '.db('sites').' WHERE id='.intval($_GET['id']));
+		$a = db()->query_fetch('SELECT * FROM '.db(self::table).' WHERE id='.intval($_GET['id']));
 		if (!$a['id']) {
 			return _e('No id!');
 		}
@@ -34,9 +36,9 @@ class yf_manage_sites {
 			->validate(array(
 				'name' => 'trim|required',
 			))
-			->db_update_if_ok('sites', array('name','web_path','real_path'), 'id='.$a['id'])
+			->db_update_if_ok(self::table, array('name','web_path','real_path'), 'id='.$a['id'])
 			->on_after_update(function() {
-				cache_del(array('sites'));
+				cache_del(array(self::table));
 				common()->admin_wall_add(array('site updated: '.$_POST['name'].'', $a['id']));
 			})
 			->text('name')
@@ -53,9 +55,9 @@ class yf_manage_sites {
 			->validate(array(
 				'name' => 'trim|required',
 			))
-			->db_insert_if_ok('sites', array('name','web_path','real_path'), array())
+			->db_insert_if_ok(self::table, array('name','web_path','real_path'), array())
 			->on_after_update(function() {
-				cache_del(array('sites'));
+				cache_del(array(self::table));
 				common()->admin_wall_add(array('site added: '.$_POST['name'].'', db()->insert_id()));
 			})
 			->text('name')
@@ -68,13 +70,13 @@ class yf_manage_sites {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => 'sites'));
+		return _class('admin_methods')->delete(array('table' => self::table));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => 'sites'));
+		return _class('admin_methods')->active(array('table' => self::table));
 	}
 
 	/**

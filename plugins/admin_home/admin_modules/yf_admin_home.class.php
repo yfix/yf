@@ -196,7 +196,7 @@ class yf_admin_home {
 	/**
 	*/
 	function _url_allowed ($url = "") {
-		return _class('common_admin')->_admin_link_is_allowed($url);
+		return _class('admin_methods')->_admin_link_is_allowed($url);
 	}
 
 	/**

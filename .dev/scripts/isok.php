@@ -9,7 +9,6 @@ $required = array(
 #	'apache2',
 #	'sphinxsearch',
 #	'mysqld',
-#	'phpcgi',
 	'php5-fpm',
 	'memcached_connect',
 #	'sphinxsearch_connect',
@@ -35,9 +34,6 @@ foreach ((array)$required as $name) {
 	} elseif ($name == 'sphinxsearch') {
 		$pid = '/usr/local/sphinx/log/searchd.pid';
 		exec('pgrep searchd', $is_alive, $self_failed);
-	} elseif ($name == 'phpcgi') {
-		$pid = '/var/run/phpcgi.pid';
-		exec('pgrep php-cgi', $is_alive, $self_failed);
 	} elseif ($name == 'php5-fpm') {
 		$pid = '/var/run/php5-fpm.pid';
 		exec('pgrep php5-fpm', $is_alive, $self_failed);

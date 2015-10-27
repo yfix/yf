@@ -8,6 +8,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		tpl()->parse_string('', array(), 'style_css');
 		tpl()->parse_string('', array(), 'script_js');
 		_class('assets')->ADD_IS_DIRECT_OUT = false;
+		_class('assets')->OUT_ADD_ASSET_NAME = false;
 	}
 
 	public function setUp() {
@@ -34,6 +35,8 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '@import "test.css"'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '@import url("test.css")'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '//insert_word("[test]", "[/test]", true);'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('css', PHP_EOL.'//insert_word("[test]", "[/test]", true);'.PHP_EOL));
 
 		$f = '/tmp/yf_unit_tests_empty_style.css';
 		file_put_contents($f, 'test');

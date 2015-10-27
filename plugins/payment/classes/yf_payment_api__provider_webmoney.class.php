@@ -388,26 +388,17 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			case 'result':
 				$state = 'wait';
 				$result = $this->__api_response__result( $operation_id, $response );
-// $payment_api->dump( array( 'var' => array(
-	// 'result' => $result,
-// )));
 				return( $result );
 				break;
 			case 'success':
 				$state = 'success';
 				$result = $this->__api_response__success( $operation_id, $response );
-// $payment_api->dump( array( 'var' => array(
-	// 'success' => $result,
-// )));
 				if( is_array( $result ) ) { $state = 'fail'; }
 				break;
 			case 'fail':
 			default:
 				$state = 'fail';
 				$result = $this->__api_response__fail( $operation_id, $response );
-// $payment_api->dump( array( 'var' => array(
-	// 'fail' => $result,
-// )));
 				if( is_array( $result ) ) { $state = 'fail'; }
 				break;
 		}
@@ -436,21 +427,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			$_[ 'title' ] = iconv( 'windows-1251', 'utf-8', $_[ 'title' ] );
 		}
 		return( $_ );
-	}
-
-	public function get_currency( $options ) {
-		if( !$this->ENABLE ) { return( null ); }
-		$_       = &$options;
-		$api     = $this->api;
-		$allow   = &$this->currency_allow;
-		$default = $this->currency_default;
-		// chech: allow currency_id
-		$id     = $_[ 'currency_id' ];
-		$result = $default;
-		if( isset( $allow[ $id ] ) && $allow[ $id ][ 'active' ] ) {
-			$result = $id;
-		}
-		return( $result );
 	}
 
 	public function deposition( $options ) {

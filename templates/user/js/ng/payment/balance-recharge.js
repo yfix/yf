@@ -5,6 +5,8 @@ __ANGULAR_MODULES__.push( __NS__ );
 
 angular.module( __NS__, [
 	'payment.balance',
+	'ngSanitize',
+	'mgcrea.ngStrap',
 ])
 
 // .value( 'payment.balance.recharge.config', { payment: {}, } )
@@ -256,6 +258,18 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				this[ id ] = null;
 			}, options );
 			angular.extend( options, method.option_default );
+			angular.forEach( options, function( item, id ) {
+				if( method.option_validation_js &&
+					method.option_validation_js[ id ] &&
+					method.option_validation_js[ id ].type == 'date'
+				) {
+					if( !item || item == '0000-00-00' ) {
+						this[ id ] = null;
+					} else {
+						this[ id ] = new Date().from_mysql( item );
+					}
+				}
+			}, options );
 		}
 		$scope.action.payout = {
 			provider_id : provider_id,
@@ -268,9 +282,16 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		$scope.block_payout_provider_show = false;
 		return( true );
 	};
+	$scope.payout_currency_selected = null;
 	$scope.payout_provider_init = function() {
 		$scope.block_payout_provider_show = true;
 		$scope.action.payout = {};
+		if( $scope.payment.payout_currency_allow && !$scope.payout_currency_selected ) {
+			$scope.payout_currency_selected = $scope.payment.payout_currency_allow[ 0 ];
+		}
+	};
+	$scope.payout_currency_allow_change = function( currency_id ) {
+		$scope.payout_provider_init();
 	};
 	$scope.action_payout = function() {
 		var payout = $scope.action.payout;
@@ -280,6 +301,16 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			method_id   : payout.method_id,
 		};
 		angular.extend( options, payout.options );
+		// date
+		var method = payout.method;
+		angular.forEach( options, function( item, id ) {
+			if( method.option_validation_js &&
+				method.option_validation_js[ id ] &&
+				method.option_validation_js[ id ].type == 'date'
+			) {
+				this[ id ] = item.to_mysql_date();
+			}
+		}, options );
 		BalanceApi.payout( options );
 	};
 	// balance api
@@ -292,9 +323,15 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				$timeout.cancel( this.id );
 			},
 		},
+		_update: function( r ) {
+			angular.extend( $scope.payment, r.response.payment );
+			PaymentBalance.load({ account: r.response.payment.account });
+			$scope.amount_init();
+		},
 		operation: function( options ) {
 			var $this             = this;
 			$scope.block_wait     = true;
+			$scope.is_submitted   = true;
 			$scope.status         = false;
 			$scope.status_message = null;
 			$timeout.cancel( $this._timer );
@@ -302,17 +339,18 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				var result = PaymentApi.operation( options );
 				result.$promise.then(
 					function( r ) {
-						$scope.block_wait = false;
+						$scope.block_wait   = false;
+						$scope.is_submitted = false;
 						if( r.response && r.response.payment ) {
-							angular.extend( $scope.payment, r.response.payment );
-							PaymentBalance.load({ account: r.response.payment.account });
+							$this._update( r );
 						} else {
 							$scope.status_message = config.message.error.operation;
 							$log.error( 'balance->operation is fail operation:', r );
 						}
 					},
 					function( r ) {
-						$scope.block_wait = false;
+						$scope.block_wait   = false;
+						$scope.is_submitted = false;
 						if( r.status && r.status == 403 ) {
 							$scope.status_message = config.message.error.authentication;
 							// reload page for login
@@ -331,12 +369,14 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		payin: function( options ) {
 			var $this = this;
 			$scope.block_wait     = true;
+			$scope.is_submitted   = true;
 			$scope.status         = false;
 			$scope.status_message = null;
 			var result = PaymentApi.payin( options );
 			result.$promise.then(
 				function( r ) {
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.balance ) {
 						// provider request form
 						if( r.response.balance.form ) {
@@ -348,8 +388,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 						$scope.status            = r.response.balance.status;
 						$scope.status_message    = r.response.balance.status_message;
 						if( r.response.payment ) {
-							angular.extend( $scope.payment, r.response.payment);
-							PaymentBalance.load({ account: r.response.payment.account });
+							$this._update( r );
 						}
 						// hide block_balance_recharge
 						$this.timer.cancel();
@@ -362,7 +401,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					}
 				},
 				function( r ) {
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.balance ) {
 						$scope.status         = r.response.balance.status;
 						$scope.status_message = r.response.balance.status_message;
@@ -383,22 +423,35 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				}
 			);
 		},
+		on_payout_success: function() {
+			$( '.payment__modal.payout' ).modal( 'hide' );
+		},
+		on_payout_fail: function() {
+		},
+		on_payout_validation: function() {
+		},
 		payout: function( options ) {
 			var $this = this;
 			$scope.block_wait     = true;
+			$scope.is_submitted   = true;
 			$scope.status         = false;
 			$scope.status_message = null;
 			var result = PaymentApi.payout( options );
 			result.$promise.then(
 				function( r ) {
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.payout ) {
 						$scope.status            = r.response.payout.status;
 						$scope.status_message    = r.response.payout.status_message;
-						$scope.payout.validation = r.response.payout.options || {};
+						$scope.payout.validation = r.response.payout.options || null;
+						if( BalanceApi.on_payout_validation && $scope.payout.validation ) {
+							BalanceApi.on_payout_validation();
+						} else if( BalanceApi.on_payout_success ) {
+							BalanceApi.on_payout_success();
+						}
 						if( r.response.payment ) {
-							angular.extend( $scope.payment, r.response.payment);
-							PaymentBalance.load({ account: r.response.payment.account });
+							$this._update( r );
 						}
 					} else {
 						$scope.status_message = config.message.error.operation;
@@ -406,7 +459,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					}
 				},
 				function( r ) {
-					$scope.block_wait = false;
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
 					if( r.response && r.response.payout ) {
 						$scope.status            = r.response.payout.status;
 						$scope.status_message    = r.response.payout.status_message;
@@ -427,6 +481,54 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 				}
 			);
 		},
+		cancel: function( options ) {
+			var $this = this;
+			$scope.block_wait     = true;
+			$scope.is_submitted   = true;
+			$scope.status         = false;
+			$scope.status_message = null;
+			var result = PaymentApi.cancel( options );
+			result.$promise.then(
+				function( r ) {
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
+					if( r.response && r.response.cancel ) {
+						$scope.status            = r.response.cancel.status;
+						$scope.status_message    = r.response.cancel.status_message;
+						if( r.response.payment ) {
+							$this._update( r );
+						}
+					} else {
+						$scope.status_message = config.message.error.operation;
+						$log.error( 'balance->cancel is fail operation:', r );
+					}
+				},
+				function( r ) {
+					$scope.block_wait   = false;
+					$scope.is_submitted = false;
+					if( r.response && r.response.payout ) {
+						$scope.status            = r.response.cancel.status;
+						$scope.status_message    = r.response.cancel.status_message;
+						$log.warnig( 'balance->cancel is fail transport operation:', r );
+					} else {
+						if( r.status && r.status == 403 ) {
+							$scope.status_message = config.message.error.authentication;
+							// reload page for login
+							$timeout.cancel( $this.timer );
+							$this.timer = $timeout( function() {
+								window.location.href = ( '{url( /login_form )}' );
+							}, 3000 );
+						} else {
+							$scope.status_message = config.message.error.request;
+							$log.error( 'balance->cancel is fail transport:', r );
+						}
+					}
+				}
+			);
+		},
+	};
+	$scope.cancel = function( options ) {
+		BalanceApi.cancel( options );
 	};
 	$scope.balance_recharge = function() {
 		var amount      = +$scope.amount;
@@ -462,7 +564,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		return( true );
 	};
 	// init
-	$scope.block_wait = false;
+	$scope.block_wait   = false;
+	$scope.is_submitted = false;
 	$scope.action = {
 		'deposition' : {},
 		'payment'    : {},
@@ -472,5 +575,54 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 }])
 
 ;
+
+Date.prototype.from_mysql = function( str ) {
+	if( typeof str === 'string' ) {
+		var is_422 = false;
+		var is_224 = false;
+		if( /^\d{4}[\.\-]\d{1,2}[\.\-]\d{1,2}/.test( str ) ) {
+			is_422 = true;
+		} else if( /\d{1,2}[\.\-]\d{1,2}[\.\-]\d{4}$/.test( str ) ) {
+			is_224 = true;
+		} else {
+			return( null );
+		}
+		var t = str.split(/[-. :]/);
+		var result = null;
+		if( is_422 ) {
+			if( t.length == 3 ) {
+				result = new Date( Date.UTC( t[0], t[1] - 1, t[2] ) );
+			} else if( t.length == 6 ) {
+				result = new Date( Date.UTC( t[0], t[1] - 1, t[2], t[3] || 0, t[4] || 0, t[5] || 0 ) );
+			}
+		} else if( is_224 ) {
+			if( t.length == 3 ) {
+				result = new Date( Date.UTC( t[2], t[1] - 1, t[0] ) );
+			} else if( t.length == 6 ) {
+				result = new Date( Date.UTC( t[3], t[4] - 1, t[5], t[0] || 0, t[1] || 0, t[2] || 0 ) );
+			}
+		}
+		return( result );
+	}
+	return( null );
+};
+
+Date.prototype.to_mysql_date = function() {
+	function twoDigits(d) {
+		if(0 <= d && d < 10) return "0" + d.toString();
+		if(-10 < d && d < 0) return "-0" + (-1*d).toString();
+		return d.toString();
+	}
+	return( this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate()) );
+};
+
+Date.prototype.to_mysql_datetime = function() {
+	function twoDigits(d) {
+		if(0 <= d && d < 10) return "0" + d.toString();
+		if(-10 < d && d < 0) return "-0" + (-1*d).toString();
+		return d.toString();
+	}
+	return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate()) + " " + twoDigits(this.getUTCHours()) + ":" + twoDigits(this.getUTCMinutes()) + ":" + twoDigits(this.getUTCSeconds());
+};
 
 })();

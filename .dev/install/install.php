@@ -141,8 +141,8 @@ class yf_core_install {
 	<div class="container">
 		<div class="control-group">
 			<div class="controls">
-				<a class="btn" href="{install_web_path}">User Side</a>
-				<a class="btn" href="{install_web_path}admin/">Admin Side</a>
+				<a class="btn" target="_blank" href="{install_web_path}">User Side</a>
+				<a class="btn" target="_blank" href="{install_web_path}admin/">Admin Side</a>
 			</div>
 		</div>
 	</div>
@@ -209,11 +209,11 @@ class yf_core_install {
 	*/
 	function get_form_defaults() {
 		return array(
-			'install_yf_path'					=> dirname(dirname(__DIR__)).'/',
+			'install_yf_path'					=> $this->get_default_yf_path(),
 			'install_db_host'					=> 'localhost',
 			'install_db_name'					=> 'test_'.substr(md5(microtime()), 0, 6),
 			'install_db_user'					=> 'root',
-			'install_db_pswd'					=> '',
+			'install_db_pswd'					=> '123456',
 			'install_db_prefix'					=> 't_',
 			'install_web_path'					=> installer()->get_default_web_path(),
 			'install_admin_login'				=> 'admin',
@@ -226,6 +226,25 @@ class yf_core_install {
 			'install_checkbox_demo_data'		=> '',
 			'install_checkbox_debug_info'		=> '',
 		);
+	}
+
+	/**
+	*/
+	function get_default_yf_path() {
+		$result = null;
+		switch( true ) {
+			case is_dir( './yf/' ):
+				$result = __DIR__ .'/yf/';
+				break;
+			case is_dir( '../yf/' ):
+				$result = '../yf/' ;
+				break;
+			case is_dir( '../../yf/' ):
+				$result = '../../yf/' ;
+				break;
+		}
+		$result && $result = realpath( $result ) .'/';
+		return( $result );
 	}
 
 	/**
@@ -436,6 +455,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	*/
 	function import_base_db_structure() {
 		$import_tables = array(
+			'dashboards',
 			'static_pages',
 			'user',
 		);
@@ -469,7 +489,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		$Q = db()->query('SHOW TABLES LIKE "'.DB_PREFIX.'%"');
 		while ($A = db()->fetch_row($Q)){
 			$existing_db_tables[$A[0]] = $A[0];
-		} 
+		}
 		if (!empty($existing_db_tables)) {
 			if ($_POST['install_checkbox_db_drop_existing']) {
 				foreach ((array)$existing_db_tables as $value){

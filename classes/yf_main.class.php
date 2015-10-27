@@ -44,7 +44,7 @@ class yf_main {
 	/** @var bool */
 	public $SESSION_COOKIE_SECURE	= false;
 	/** @var bool */
-	public $SESSION_COOKIE_HTTPONLY	= false;
+	public $SESSION_COOKIE_HTTPONLY	= true;
 	/** @var string */
 	public $SESSION_REFERER_CHECK	= ''; // WEB_PATH
 	/** @var string */
@@ -276,6 +276,7 @@ class yf_main {
 	*/
 	function _after_init_hook() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->events->fire('main.after_init_begin');
 		$this->_check_site_maintenance();
 
 		$this->_do_rewrite();
@@ -322,6 +323,7 @@ class yf_main {
 		if ($this->INTRUSION_DETECTION) {
 			$this->modules['common']->intrusion_detection();
 		}
+		$this->events->fire('main.after_init');
 	}
 
 	/**
@@ -332,6 +334,7 @@ class yf_main {
 		if ($this->is_console() || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
 			return false;
 		}
+		$this->events->fire('main.before_rewrite');
         $host = $_SERVER['HTTP_HOST'];
 		$request_uri = $_SERVER['REQUEST_URI'];
 		// Override by WEB_PATH
@@ -388,6 +391,7 @@ class yf_main {
 			}
 		}
         $_SERVER['QUERY_STRING'] = http_build_query((array)$_GET);
+		$this->events->fire('main.after_rewrite');
     }
 
 	/**
@@ -1252,7 +1256,7 @@ class yf_main {
 				'params'	=> $method_params,
 				'tpl_name'	=> $tpl_name,
 				'silent'	=> (int)$silent,
-				'size'		=> strlen($body),
+				'size'		=> strlen( is_array( $body ) ? implode( $body ) : $body ),
 				'time'		=> round(microtime(true) - $_time_start, 5),
 				'trace'		=> $this->trace_string(),
 			));
@@ -1628,7 +1632,7 @@ class yf_main {
 			define('UPLOADS_PATH', PROJECT_PATH.'uploads/');
 		}
 		// Set WEB_PATH (if not done yet)
-		if (!defined('WEB_PATH'))	{
+		if (!defined('WEB_PATH')) {
 			$request_uri	= $_SERVER['REQUEST_URI'];
 			$cur_web_path	= '';
 			if ($request_uri[strlen($request_uri) - 1] == '/') {
@@ -1648,9 +1652,12 @@ class yf_main {
 			$this->web_path_was_not_defined = true;
 			define('WEB_PATH',
 				($this->is_https() ? 'https://' : 'http://')
-				.$host. ($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != '80' ? ':'.$_SERVER['SERVER_PORT'] : '')
+				.$host. ($_SERVER['SERVER_PORT'] && !in_array($_SERVER['SERVER_PORT'], array('80','443')) ? ':'.$_SERVER['SERVER_PORT'] : '')
 				.str_replace(array("\\",'//'), '/', (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/')
 			);
+		}
+		if (!defined('WEB_DOMAIN') && defined('WEB_PATH') && strlen(WEB_PATH)) {
+			define('WEB_DOMAIN', parse_url(WEB_PATH, PHP_URL_HOST));
 		}
 		// Should be different that WEB_PATH to distribute static content from other subdomain
 		if (!defined('MEDIA_PATH')) {
@@ -1719,6 +1726,33 @@ class yf_main {
 			$_COOKIE	= $this->_strip_quotes_recursive($_COOKIE);
 			$_REQUEST	= array_merge((array)$_GET, (array)$_POST, (array)$_COOKIE);
 		}
+/*
+if ($_POST) {
+	if (!verify_token()) {
+		$ini = "max_input_vars";
+		$max_vars = ini_get($ini);
+		if (extension_loaded("suhosin")) {
+			foreach (array("suhosin.request.max_vars", "suhosin.post.max_vars") as $key) {
+				$val = ini_get($key);
+				if ($val && (!$max_vars || $val < $max_vars)) {
+					$ini = $key;
+					$max_vars = $val;
+				}
+			}
+		}
+		$error = (!$_POST["token"] && $max_vars
+			? lang('Maximum number of allowed fields exceeded. Please increase %s.', "'$ini'")
+			: lang('Invalid CSRF token. Send the form again.') . ' ' . lang('If you did not send this request from Adminer then close this page.')
+		);
+	}
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
+	// posted form with no data means that post_max_size exceeded because Adminer always sends token at least
+	$error = lang('Too big POST data. Reduce the data or increase the %s configuration directive.', "'post_max_size'");
+	if (isset($_GET["sql"])) {
+		$error .= ' ' . lang('You can upload a big SQL file via FTP and import it from server.');
+	}
+}
+*/
 	}
 
 	/**
@@ -1942,7 +1976,7 @@ class yf_main {
 	/**
 	*/
 	function is_https() {
-		return isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']);
+		return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off') || (isset($_SERVER['SSL_PROTOCOL']) && $_SERVER['SSL_PROTOCOL']);
 	}
 
 	/**

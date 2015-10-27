@@ -544,10 +544,7 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$a = array();
-		$table = preg_replace(self::REGEX_TABLE_NAME_CLEANUP, '', $this->_sql['from'][0]);
-		if (preg_match(self::REGEX_AS, $table, $m)) {
-			$table = $m[1];
-		}
+		$table = $params['table'] ?: $this->get_table();
 		if (!$table) {
 			return false;
 		}

@@ -475,6 +475,8 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('good ok', self::_tpl('{if_or_empty(name1,name3,name5)}good{/if} {if_or_not_empty(name2,name4,name6)}ok{/if}', $data));
 		$this->assertEquals('good', self::_tpl('{if_not_empty(name2,name4)}good{/if}', $data));
 		$this->assertEquals('good', self::_tpl('{if_isset(name1,name3,name5)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_isset( name1 )}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_isset( name1, name3, name5 )}good{/if}', $data));
 		$this->assertEquals('good', self::_tpl('{if_and_isset(name1,name3,name5)}good{/if}', $data));
 		$this->assertEquals('good', self::_tpl('{if_or_isset(name1,name333,name555)}good{/if}', $data));
 		$this->assertEquals('good', self::_tpl('{if_not_isset(name777,name888,name999)}good{/if}', $data));

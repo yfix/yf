@@ -595,6 +595,7 @@ class yf_html {
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
 		}
+		$img_class = ($extra['img_class'] ?: 'media-object'). ($extra['img_class_add'] ? ' '.$extra['img_class_add'] : '');
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
 		$items = array();
@@ -613,7 +614,7 @@ class yf_html {
 			$items[] = '
 				<div class="media">
 					<a class="pull-left"'.($item['link'] ? ' href="'.$item['link'].'"' : '').'>'
-					.'<img class="media-object" alt="'.$item['alt'].'" src="'.$item['img'].'"'.($item['img_width'] ? ' width="'.$item['img_width'].'"' : '').($item['img_height'] ? ' height="'.$item['img_height'].'"' : '').'></a>
+					.'<img class="'.$img_class.'" alt="'.$item['alt'].'" src="'.$item['img'].'"'.($item['img_width'] ? ' width="'.$item['img_width'].'"' : '').($item['img_height'] ? ' height="'.$item['img_height'].'"' : '').'></a>
 					<div class="media-body">
 						<h4 class="media-heading">'
 						.($item['link'] ? '<a href="'.$item['link'].'">' : ''). $item['head']. ($item['link'] ? '</a>' : '')
@@ -786,7 +787,7 @@ class yf_html {
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		$extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_SELECT_BOX;
 		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
-		if (!$values) {
+		if (!$values && @!$extra[ 'ajax' ]) {
 			return false;
 		}
 		if ($extra['disabled']) {
@@ -1317,24 +1318,74 @@ class yf_html {
 	/**
 	*/
 	function select2_box($name, $values = array(), $selected = '', $extra = array()) {
+		$css   = array();
+		$style = array();
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 		} else {
 			$extra['name'] = $name;
 		}
 		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-
-		asset('jq-select2');
-
+		// put default js options here
 		$js_options = (array)$extra['js_options'] + array(
-			'width'			=> 'element',
-			'placeholder'	=> $extra['desc'],
-			// put default js options here
+			'width'       => 'element',
+			'placeholder' => @$extra['placeholder'] ?: @$extra['desc'],
 		);
-		jquery('$("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).');');
-
+		// ajax
+		$js_functions = array();
+		if( @$extra[ 'ajax_func' ] ) {
+			foreach( (array)$extra[ 'ajax_func' ] as $key => $value ) {
+				$js_options[ 'ajax' ][ $key ] = '%__'. $key .'__%';
+				$js_functions[ '"%__'. $key .'__%"' ] = $value;
+			}
+		}
+		if( @$extra[ 'ajax' ] ) {
+			$js_options += array(
+				'maximumSelectionSize' => 10,
+				'minimumInputLength'   => 1,
+				'minimumInputLength'   => 1,
+				'initSelection'        => '%__initSelection__%',
+			);
+			$js_options[ 'ajax' ] = $extra[ 'ajax' ];
+			$js_options[ 'ajax' ] += array(
+				// 'dataType'           => 'json',
+				// 'quietMillis'        => 500,
+				// 'cache'              => true,
+				'data'               => '%__data__%',
+				'results'            => '%__results__%',
+			);
+			$js_functions += array(
+				'"%__data__%"'    => 'function( term, page, context ) { return { q: term, page: page }; }',
+				'"%__results__%"' => 'function( data, page, query ) { return { results: data.items, more: data.more || false  }; }',
+				'"%__initSelection__%"' => 'function( element, callback ) {
+					var $this = $(element);
+					var id = $this.val();
+					if( id !== "" ) {
+						$.ajax("'. $js_options[ 'ajax' ][ 'url' ] .'" + "&q=" + id, {
+							dataType: "json"
+						}).done(function(data) { callback(data.items[0] || null); });
+					}
+				}',
+			);
+		}
+		asset('jq-select2');
+		// prepare js options
+		$_js_options = json_encode( $js_options );
+		$js_functions && $_js_options = str_replace( array_keys( $js_functions ), array_values( $js_functions ), $_js_options  );
+		jquery('$("#'.addslashes($extra['force_id']).'").select2('. $_js_options .');');
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
-		$extra['class'] .= 'no-chosen';
+		if( $extra[ 'ajax' ] ) {
+			$func = 'input';
+			$extra[ 'id' ] = $extra['force_id'];
+			$extra[ 'value' ] = @$extra['selected'] ?: @$extra['value'] ?: '';
+			$css[] = 'form-control';
+		}
+		$css[]   = 'no-chosen';
+			$extra[ 'class' ] && $css[] = $extra[ 'class' ];
+		// $style[] = 'padding:0.3em';
+			$extra[ 'style' ] && $style[] = $extra[ 'style' ];
+		$extra[ 'class' ] = implode( ' ', $css   );
+		$extra[ 'style' ] = implode( ';', $style );
 		return $this->$func($extra, $values, $selected);
 	}
 
@@ -1481,7 +1532,8 @@ class yf_html {
 			$a['icon']	= $args[2];
 			$a['text']	= $args[3];
 			$a['class_add']	= $args[4];
-			$a['target']= $args[5];
+			$a['target']    = $args[5];
+			$a['no_text'] = $args[6];
 		// named params
 		} elseif (isset($args['link'])) {
 			$a = $args;
@@ -1517,7 +1569,7 @@ class yf_html {
 			}
 			$icon = implode('&nbsp;', $icon);
 		}
-		return '<a'._attrs($a, array('href','title','class','style','id','rel','target','disabled')).'>'. $icon. (strlen($a['text']) ? ($icon ? '&nbsp;' : '')._prepare_html($a['text']) : '').'</a>';
+		return '<a'._attrs($a, array('href','title','class','style','id','rel','target','disabled')).'>'. $icon. ($a['no_text'] ?'' : (strlen($a['text']) ? ($icon ? '&nbsp;' : '')._prepare_html($a['text']) : '')).'</a>';
 	}
 
 	/**
@@ -1594,5 +1646,20 @@ class yf_html {
 			$this->_country_names = db()->select('code','name')->from('geo_countries')->get_2d();
 		}
 		return $this->_country_names[$code];
+	}
+
+	/**
+	*/
+	function module_menu($obj, $items = array(), $extra = array()) {
+// TODO: check $obj for methods existance and hide not existing
+// TODO: build auto-menu if items empty
+		$out = array();
+		$selected = '/'.$_GET['object'].'/'.$_GET['action'];
+		$selected2 = '/@object/'.$_GET['action'];
+		foreach ((array)$items as $i) {
+			$is_selected = (strpos($i[0], $selected) === 0) || (strpos($i[0], $selected2) === 0);
+			$out[] = a($i[0], $i[1], $i[2], $i[3], $is_selected ? 'disabled btn-primary' : '', $i[5] ?: '', $i[6]);
+		}
+		return implode($out). PHP_EOL;
 	}
 }

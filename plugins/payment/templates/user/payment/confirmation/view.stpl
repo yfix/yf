@@ -1,0 +1,60 @@
+<div class="container-block">
+<div class="user_view">
+
+<h1>{t( 'Подтверждение операции' )}</h1>
+
+{{-- result --}}
+{if_isset( status_message )}
+{if_true( status )}
+
+<p class="text-success">
+	{status_message}
+</p>
+
+{else}
+
+<p class="text-danger">
+	{status_message}
+</p>
+
+{/if}
+{/if}
+
+{{-- form --}}
+{if_isset( data, form )}
+
+<div class="b-confirmation">
+<form method="POST" action="{form.action}">
+<table class="table">
+	<tr>
+		<td>{t( 'Операция' )}</td>
+		<th>{data.title}</th>
+	</tr>
+	<tr>
+		<td>{t( 'Сумма' )}</td>
+		<th>{data.amount}</th>
+	</tr>
+{if_empty( status )}
+	<tr>
+		<td>
+			<label for="code">{t( 'Код подтверждения' )}</label>
+		</td>
+		<th>
+			<input type="text" class="form-control" id="code" name="code" placeholder="{t( 'Код подтверждения' )}" value="{form.code}">
+		</th>
+	</tr>
+	<tr>
+		<td colspan="2" class="confirmation-action">
+			<button type="submit" class="btn btn-danger" name="confirmation_action" value="cancel">{t( 'Отмена' )}</button>
+			<button type="submit" class="btn btn-success" name="confirmation_action" value="ok">{t( 'Подтверждаю' )}</button>
+		</td>
+	</tr>
+{/if}
+</table>
+</form>
+</div>
+
+{/if}
+
+</div>
+</div>

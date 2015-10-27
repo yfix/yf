@@ -9,7 +9,8 @@ class yf_table2_filter {
 	*/
 	function _init() {
 		$this->supported_conds = array(
-			'in'		=> function($a){ return ' IN( '._es($a['value']).')'; }, // "equal"
+			'in'		=> function($a){ return ' IN( '._es($a['value']).' )'; }, // "in"
+			'in_array'	=> function($a){ return ' IN( '._es($a['value']).' )'; }, // "in array"
 			'eq'		=> function($a){ return ' = "'._es($a['value']).'"'; }, // "equal"
 			'ne'		=> function($a){ return ' != "'._es($a['value']).'"'; }, // "not equal"
 			'gt'		=> function($a){ return ' > "'._es($a['value']).'"'; }, // "greater than",
@@ -157,6 +158,9 @@ class yf_table2_filter {
 			'order_by',
 			'order_direction',
 		);
+		$array_fields = array(
+			'in_array',
+		);
 		$supported_conds = &$this->supported_conds;
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
@@ -179,7 +183,7 @@ class yf_table2_filter {
 			// 'price' => array('gt', 'value' => '100')
 			// 'price' => array('between', 'value' => '1', 'and' => '10')
 			// 'name' => array('like', 'value' => 'john')
-			if (is_array($v)) {
+			if (is_array($v) && !( @is_array( $filter_params[ $k ] ) && @in_array( $filter_params[ $k ][ 'cond' ], $array_fields ) )) {
 				$cond = isset($v[0]) ? $v[0] : $v['cond'];
 				if (!$cond) {
 					continue;
@@ -195,6 +199,9 @@ class yf_table2_filter {
 				}
 				$part_on_the_right = $supported_conds[$cond]($v);
 			} else {
+				if( @is_array( $filter_params[ $k ] ) && @in_array( $filter_params[ $k ][ 'cond' ], $array_fields ) ) {
+					$v = implode( ',', array_values( $v ) );
+				}
 				if (!strlen($v)) {
 					continue;
 				}

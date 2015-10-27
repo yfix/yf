@@ -332,6 +332,14 @@ class class_rewrite_testing_shared_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://test.dev/obj/act#frag', _class('rewrite')->_correct_protocol('https://test.dev/obj/act#frag') );
 
 		main()->USE_ONLY_HTTPS = $old;
+
+		$old = $_SERVER['HTTPS'];
+		$_SERVER['HTTPS'] = 'on';
+		$this->assertTrue(main()->is_https());
+		$this->assertEquals('https://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('//test.dev/?object=obj&action=act') );
+		$this->assertEquals('https://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('http://test.dev/?object=obj&action=act') );
+		$this->assertEquals('https://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('https://test.dev/?object=obj&action=act') );
+		$_SERVER['HTTPS'] = $old;
 	}
 	public function test_https_only() {
 		$old = main()->USE_ONLY_HTTPS;

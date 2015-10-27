@@ -16,7 +16,6 @@ var ua_vers   = parseInt(navigator.appVersion);
 function insert_word(ibTag, ibClsTag, isSingle, force_id) {
 	p_obj = document.getElementById(force_id || "tag_replace");
 	var isClose = false;
-	// It's IE!
 	if ((ua_vers >= 4) && is_ie && is_win)	{
 		if (p_obj.isTextEdit) {
 			p_obj.focus();
@@ -38,7 +37,6 @@ function insert_word(ibTag, ibClsTag, isSingle, force_id) {
 			p_obj.value += ibTag;
 		}
 	}
-	// It's MOZZY!
 	else if (p_obj.selectionEnd) { 
 		var ss = p_obj.selectionStart;
 		var st = p_obj.scrollTop;
@@ -49,7 +47,7 @@ function insert_word(ibTag, ibClsTag, isSingle, force_id) {
 		var start  = (p_obj.value).substring(0, ss);
 		var middle = (p_obj.value).substring(ss, es);
 		var end    = (p_obj.value).substring(es, p_obj.textLength);
-		// text range?
+		// text range
 		if (p_obj.selectionEnd - p_obj.selectionStart > 0) {
 			middle = ibTag + middle + ibClsTag;
 		} else {
@@ -64,7 +62,6 @@ function insert_word(ibTag, ibClsTag, isSingle, force_id) {
 		p_obj.selectionEnd   = cpos;
 		p_obj.scrollTop      = st;
 	}
-	// It's CRAPPY!
 	else {
 		if (isSingle) {
 			isClose = true;

@@ -294,7 +294,11 @@ class yf_category_editor {
 					module('category_editor')->_purge_category_caches($cat_info);
 				_class( 'core_events' )->fire( 'category_editor.drag_items.after', array( array_keys( $batch ) ) );
 			}
-			no_graphics(true);
+			if (is_ajax()) {
+				no_graphics(true);
+			} else {
+				js_redirect(url('/@object/@action/@id/@page'));
+			}
 			return false;
 		}
 		if (isset($items[''])) {
