@@ -864,7 +864,7 @@ class yf_tpl {
 	/**
 	*/
 	function add_function_callback($name, $func, $params = array()) {
-		$pattern = '/\{(?P<name>'.preg_quote($name).')\(\s*["\']{0,1}(?P<args>[a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/ims';
+		$pattern = '/\{(?P<name>'.preg_quote($name).')\(\s*["\']{0,1}(?P<args>[a-z0-9_:\/\.]+?)["\']{0,1}\s*\)\}/ims';
 		if ($params['only_pattern']) {
 			return $pattern;
 		}
