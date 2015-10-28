@@ -30,7 +30,7 @@ class yf_docs {
 		$this->demo_dir = YF_PATH.'.dev/demo/';
 
 		tpl()->add_function_callback('github', function($m, $r, $name, $_this) {
-			return _class('core_api')->get_github_link($m[1]);
+			return _class('core_api')->get_github_link($m[2]);
 		});
 	}
 
