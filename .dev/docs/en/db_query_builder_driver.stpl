@@ -1,60 +1,55 @@
 <h3 id="count"><a href="#count">count</a> {github(db/db_query_builder_driver.count)}</h3>
-<p>
-	<code>count</code> function counting number of records inside requested recordset.
-	Default parameter is: <code>$id = '*', $as_sql = false</code>
-	If parameter <code>$as_sql = true</code> return simple sql command,
-	else - return query result
-	* Example:
+<p class="well">
+	function counting number of records inside requested recordset.<br>
+	Default parameter is: <code>$id = '*', $as_sql = false</code><br>
+	If parameter <code>$as_sql = true</code> return simple sql command, else - return query result
 </p>
+<pre title="Example"><code>from('table')->count();</code></pre>
 
 <h3 id="max"><a href="#max">max</a> {github(db/db_query_builder_driver.max)}</h3>
-<p>
-	<code>max</code> SQL aggregate MAX()
-	Default parameter is: <code>$pk = null, $as_sql = false</code>
-	If parameter <code>$as_sql = true</code> return simple sql command,
-	else - return query result
-	* Example:
+<p class="well">
+	SQL aggregate MAX()<br>
+	Default parameter is: <code>$pk = null, $as_sql = false</code><br>
+	If parameter <code>$as_sql = true</code> return simple sql command,	else - return query result
 </p>
+<pre title="Example"><code>from('table')->max();</code></pre>
 
 <h3 id="min"><a href="#min">min</a> {github(db/db_query_builder_driver.min)}</h3>
-<p>
-	<code>min</code> SQL aggregate MIN()
-	Default parameter is: <code>$pk = null, $as_sql = false</code>
-	If parameter <code>$as_sql = true</code> return simple sql command,
-	else - return query result
-	* Example:
+<p class="well">
+	<code>min</code> SQL aggregate MIN()<br>
+	Default parameter is: <code>$pk = null, $as_sql = false</code><br>
+	If parameter <code>$as_sql = true</code> return simple sql command,	else - return query result<br>
 </p>
+<pre title="Example"><code>from('table')->min();</code></pre>
 
 <h3 id="avg"><a href="#avg">avg</a> {github(db/db_query_builder_driver.avg)}</h3>
-<p>
-	<code>avg</code> SQL aggregate AVG()
-	Default parameter is: <code>$pk = null, $as_sql = false</code>
-	If parameter <code>$as_sql = true</code> return simple sql command,
-	else - return query result
-	* Example:
+<p class="well">
+	SQL aggregate AVG()<br>
+	Default parameter is: <code>$pk = null, $as_sql = false</code><br>
+	If parameter <code>$as_sql = true</code> return simple sql command, else - return query result
 </p>
+<pre title="Example"><code>from('table')->avg();</code></pre>
 
 <h3 id="sum"><a href="#sum">sum</a> {github(db/db_query_builder_driver.sum)}</h3>
-<p>
-	<code>sum</code> SQL aggregate SUM()
-	Default parameter is: <code>$pk = null, $as_sql = false</code>
-	If parameter <code>$as_sql = true</code> return simple sql command,
-	else - return query result
-	* Example:
+<p class="well">
+	SQL aggregate SUM()<br>
+	Default parameter is: <code>$pk = null, $as_sql = false</code><br>
+	If parameter <code>$as_sql = true</code> return simple sql command, else - return query result
 </p>
+<pre title="Example"><code>from('table')->sum();</code></pre>
 
 <h3 id="first"><a href="#first">first</a> {github(db/db_query_builder_driver.first)}</h3>
-<p>
-	<code>first</code> Return first item from resultset
-	Default parameter is: <code>$select = null, $use_cache = false</code>
+<p class="well">
+	Return first item from resultset<br>
+	Default parameter is: <code>$select = null, $use_cache = false</code><br>
 	If parameter <code>$use_cache = true</code> return cached query result
-	* Example:
 </p>
+<pre title="Example"><code>from('table')->first();</code></pre>
 
 <h3 id="last"><a href="#last">last</a> {github(db/db_query_builder_driver.last)}</h3>
-<p>
-	<code>last</code> Return last item from resultset
-	Default parameter is: <code>$select = null, $use_cache = false</code>
+<p class="well">
+	Return last item from resultset<br>
+	Default parameter is: <code>$select = null, $use_cache = false</code><br>
 	If parameter <code>$use_cache = true</code> return cached query result
-	* Example:
 </p>
+<pre title="Example"><code>from('table')->last();</code></pre>
