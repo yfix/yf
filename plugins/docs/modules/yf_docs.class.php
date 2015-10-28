@@ -32,6 +32,9 @@ class yf_docs {
 		tpl()->add_function_callback('github', function($m, $r, $name, $_this) {
 			return _class('core_api')->get_github_link($m[2]);
 		});
+		tpl()->add_function_callback('self_source', function($m, $r, $name, $_this) {
+#			return _class('core_api')->get_method_source($m[1], $m[2]);
+		});
 	}
 
 	/***/
