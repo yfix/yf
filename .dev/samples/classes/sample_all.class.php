@@ -42,6 +42,11 @@ class sample_all {
 		$ext_len = strlen($ext);
 
 		$name = preg_replace('~[^a-z0-9/_-]+~ims', '', $_GET['id']);
+		if (!strlen($name)) {
+			$all = $this->_get_texts($dir);
+			ksort($all);
+			$name = current($all);
+		}
 		if (strlen($name)) {
 			$f = $dir. $name. '.stpl';
 			if (!file_exists($f)) {
@@ -49,16 +54,6 @@ class sample_all {
 			}
 			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'docs_all_'.$name).'</section>';
 		}
-		$url = rtrim(url('/@object/@action/')).'/';
-		$data = array();
-		foreach ((array)$this->_get_texts($dir) as $name) {
-			$data[$name] = array(
-				'name'	=> $name,
-				'link'	=> $url. urlencode($name),
-			);
-		}
-		ksort($data);
-		return html()->li($data);
 	}
 
 	/***/
