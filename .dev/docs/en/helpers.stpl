@@ -1,5 +1,4 @@
-<h3>array_add</h3>
-{github(array_add)}
+<h3 id="array_add"><a href="#array_add">array_add</a> {github(array_add)}</h3>
 <p>The&nbsp;<code>array_add</code>&nbsp;function adds a given key / value pair to the array if the given key doesn't already exist in the array.</p>
 <pre><code>
 $array = array('foo' =&gt; 'bar');
@@ -7,7 +6,7 @@ $array = array('foo' =&gt; 'bar');
 $array = array_add($array, 'key', 'value');
 </code></pre>
 
-<h3>array_divide</h3>
+<h3 id="array_divide"><a href="#array_divide">array_divide</a> {github(array_divide)}</h3>
 <p>The&nbsp;<code>array_divide</code>&nbsp;function returns two arrays, one containing the keys, and the other containing the values of the original array.</p>
 <pre><code>
 $array = array('foo' =&gt; 'bar');
@@ -15,7 +14,7 @@ $array = array('foo' =&gt; 'bar');
 list($keys, $values) = array_divide($array);
 </code></pre>
 
-<h3>array_dot</h3>
+<h3 id="array_dot"><a href="#array_dot">array_dot</a> {github(array_dot)}</h3>
 <p>The&nbsp;<code>array_dot</code>&nbsp;function flattens a multi-dimensional array into a single level array that uses "dot" notation to indicate depth.</p>
 <pre><code>
 $array = array('foo' =&gt; array('bar' =&gt; 'baz'));
@@ -25,13 +24,13 @@ $array = array_dot($array);
 // array('foo.bar' =&gt; 'baz');
 </code></pre>
 
-<h3>array_except</h3>
+<h3 id="array_except"><a href="#array_except">array_except</a> {github(array_except)}</h3>
 <p>The&nbsp;<code>array_except</code>&nbsp;method removes the given key / value pairs from the array.</p>
 <pre><code>
 $array = array_except($array, array('keys', 'to', 'remove'));
 </code></pre>
 
-<h3>array_fetch</h3>
+<h3 id="array_fetch"><a href="#array_fetch">array_fetch</a> {github(array_fetch)}</h3>
 <p>The&nbsp;<code>array_fetch</code>&nbsp;method returns a flattened array containing the selected nested element.</p>
 <pre><code>
 $array = array(
@@ -44,7 +43,7 @@ $array = array_fetch($array, 'developer.name');
 // array('Taylor', 'Dayle');
 </code></pre>
 
-<h3>array_first</h3>
+<h3 id="array_first"><a href="#array_first">array_first</a> {github(array_first)}</h3>
 <p>The&nbsp;<code>array_first</code>&nbsp;method returns the first element of an array passing a given truth test.</p>
 <pre><code>
 $array = array(100, 200, 300);
@@ -59,7 +58,7 @@ return $value &gt;= 150;
 $value = array_first($array, $callback, $default);
 </code></pre>
 
-<h3>array_last</h3>
+<h3 id="array_last"><a href="#array_last">array_last</a> {github(array_last)}</h3>
 <p>The&nbsp;<code>array_last</code>&nbsp;method returns the last element of an array passing a given truth test.</p>
 <pre><code>
 $array = array(350, 400, 500, 300, 200, 100);
@@ -76,7 +75,7 @@ return $value &gt; 350;
 $value = array_last($array, $callback, $default);
 </code></pre>
 
-<h3>array_flatten</h3>
+<h3 id="array_flatten"><a href="#array_flatten">array_flatten</a> {github(array_flatten)}</h3>
 <p>The&nbsp;<code>array_flatten</code>&nbsp;method will flatten a multi-dimensional array into a single level.</p>
 <pre><code>
 $array = array('name' =&gt; 'Joe', 'languages' =&gt; array('PHP', 'Ruby'));
@@ -86,7 +85,7 @@ $array = array_flatten($array);
 // array('Joe', 'PHP', 'Ruby');
 </code></pre>
 
-<h3>array_forget</h3>
+<h3 id="array_forget"><a href="#array_forget">array_forget</a> {github(array_forget)}</h3>
 <p>The&nbsp;<code>array_forget</code>&nbsp;method will remove a given key / value pair from a deeply nested array using "dot" notation.</p>
 <pre><code>
 $array = array('names' =&gt; array('joe' =&gt; array('programmer')));
@@ -94,7 +93,7 @@ $array = array('names' =&gt; array('joe' =&gt; array('programmer')));
 array_forget($array, 'names.joe');
 </code></pre>
 
-<h3>array_get</h3>
+<h3 id="array_get"><a href="#array_get">array_get</a> {github(array_get)}</h3>
 <p>The&nbsp;<code>array_get</code>&nbsp;method will retrieve a given value from a deeply nested array using "dot" notation.</p>
 <pre><code>
 $array = array('names' =&gt; array('joe' =&gt; array('programmer')));
@@ -106,7 +105,7 @@ $value = array_get($array, 'names.joe');
 	<p><strong>Note:</strong>&nbsp;Want something like&nbsp;<code>array_get</code>&nbsp;but for objects instead? Use&nbsp;<code>object_get</code>.</p>
 </blockquote>
 
-<h3>array_only</h3>
+<h3 id="array_only"><a href="#array_only">array_only</a> {github(array_only)}</h3>
 <p>The&nbsp;<code>array_only</code>&nbsp;method will return only the specified key / value pairs from the array.</p>
 <pre><code>
 $array = array('name' =&gt; 'Joe', 'age' =&gt; 27, 'votes' =&gt; 1);
@@ -114,7 +113,7 @@ $array = array('name' =&gt; 'Joe', 'age' =&gt; 27, 'votes' =&gt; 1);
 $array = array_only($array, array('name', 'votes'));
 </code></pre>
 
-<h3>array_pluck</h3>
+<h3 id="array_pluck"><a href="#array_pluck">array_pluck</a> {github(array_pluck)}</h3>
 <p>The&nbsp;<code>array_pluck</code>&nbsp;method will pluck a list of the given key / value pairs from the array.</p>
 <pre><code>
 $array = array(array('name' =&gt; 'Taylor'), array('name' =&gt; 'Dayle'));
@@ -124,7 +123,7 @@ $array = array_pluck($array, 'name');
 // array('Taylor', 'Dayle');
 </code></pre>
 
-<h3>array_pull</h3>
+<h3 id="array_pull"><a href="#array_pull">array_pull</a> {github(array_pull)}</h3>
 <p>The&nbsp;<code>array_pull</code>&nbsp;method will return a given key / value pair from the array, as well as remove it.</p>
 <pre><code>
 $array = array('name' =&gt; 'Taylor', 'age' =&gt; 27);
@@ -132,7 +131,7 @@ $array = array('name' =&gt; 'Taylor', 'age' =&gt; 27);
 $name = array_pull($array, 'name');
 </code></pre>
 
-<h3>array_set</h3>
+<h3 id="array_set"><a href="#array_set">array_set</a> {github(array_set)}</h3>
 <p>The&nbsp;<code>array_set</code>&nbsp;method will set a value within a deeply nested array using "dot" notation.</p>
 <pre><code>
 $array = array('names' =&gt; array('programmer' =&gt; 'Joe'));
@@ -140,7 +139,7 @@ $array = array('names' =&gt; array('programmer' =&gt; 'Joe'));
 array_set($array, 'names.editor', 'Taylor');
 </code></pre>
 
-<h3>array_sort</h3>
+<h3 id="array_sort"><a href="#array_sort">array_sort</a> {github(array_sort)}</h3>
 <p>The&nbsp;<code>array_sort</code>&nbsp;method sorts the array by the results of the given Closure.</p>
 <pre><code>
 $array = array(
@@ -154,7 +153,7 @@ return $value['name'];
 }));
 </code></pre>
 
-<h3>array_where</h3>
+<h3 id="array_where"><a href="#array_where">array_where</a> {github(array_where)}</h3>
 <p>Filter the array using the given Closure.</p>
 <pre><code>
 $array = array(100, '200', 300, '400', 500);
@@ -167,25 +166,25 @@ return is_string($value);
 // Array ( [1] =&gt; 200 [3] =&gt; 400 )
 </code></pre>
 
-<h3>head</h3>
+<h3 id="head"><a href="#head">head</a> {github(head)}</h3>
 <p>Return the first element in the array. Useful for method chaining in PHP 5.3.x.</p>
 <pre><code>
 $first = head($this-&gt;returnsArray('foo'));
 </code></pre>
 
-<h3>last</h3>
+<h3 id="last"><a href="#last">last</a> {github(last)}</h3>
 <p>Return the last element in the array. Useful for method chaining.</p>
 <pre><code>
 $last = last($this-&gt;returnsArray('foo'));
 </code></pre>
 
-<h3>value</h3>
+<h3 id="value"><a href="#value">value</a> {github(value)}</h3>
 <p>If the given value is a&nbsp;<code>Closure</code>, return the value returned by the&nbsp;<code>Closure</code>. Otherwise, return the value.</p>
 <pre><code>
 $value = value(function() { return 'bar'; });
 </code></pre>
 
-<h3>with</h3>
+<h3 id="with"><a href="#with">with</a> {github(with)}</h3>
 <p>Return the given object. Useful for method chaining constructors in PHP 5.3.x.</p>
 <pre><code>
 $value = with(new Foo)-&gt;doWork();
