@@ -47,7 +47,7 @@ class sample_all {
 			if (!file_exists($f)) {
 				return _404('Not found');
 			}
-			return '<section class="page-contents">'._class('html')->well(tpl()->parse_string(file_get_contents($f), $replace, 'docs_all_'.$name)).'</section>';
+			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'docs_all_'.$name).'</section>';
 		}
 		$url = rtrim(url('/@object/@action/')).'/';
 		$data = array();
