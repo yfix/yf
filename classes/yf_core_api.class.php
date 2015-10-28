@@ -271,28 +271,17 @@ class yf_core_api {
 	/**
 	*/
 	function get_method_source($module, $method, $section = 'all') {
-		if (false !== strpos($module, '/')) {
-			list($subfolder, $module) = explode('/', $module);
-			if ($subfolder) {
-				$force_path = 'classes/'.$subfolder.'/';
-			}
-		}
-		$cls = main()->load_class_file($module, $force_path);
-/*
-$class = new ReflectionClass($loaded_module);
-var_dump($class->getMethods());
-var_dump($class->isAbstract());
-*/
-/*
 		if (!is_object($module)) {
-			$cls = $this->get_class_instance($module, $section, $force_path);
+			if (false !== strpos($module, '/')) {
+				list($subfolder, $module) = explode('/', $module);
+				if ($subfolder) {
+					$force_path = 'classes/'.$subfolder.'/';
+				}
+			}
+			$cls = main()->load_class_file($module, $force_path);
 		} else {
-			$cls = $module;
+			$cls = get_class($module);
 		}
-		if (is_object($cls)) {
-			$cls = get_class($cls);
-		}
-*/
 		$methods = $this->_cache[__FUNCTION__][$cls];
 		if (is_null($methods)) {
 			$methods = $this->get_methods_sources($cls);
@@ -682,6 +671,9 @@ var_dump($class->isAbstract());
 
 	/***/
 	function get_methods_sources($cls) {
+		if (!$cls) {
+			return false;
+		}
 		if (is_object($cls)) {
 			$cls = get_class($cls);
 		}
