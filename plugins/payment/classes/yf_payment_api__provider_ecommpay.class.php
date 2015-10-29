@@ -37,7 +37,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'icon'        => 'visa-mastercard',
 				'option' => array(
 					'payment_group_id' => 1,
-					'followup'         => 1,
+					'followup'         => 0,
 				),
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
@@ -53,7 +53,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'icon'        => 'qiwi',
 				'option' => array(
 					'payment_group_id' => 6,
-					'followup'         => 1,
+					'followup'         => 0,
 					// 'phone'                    => '380679041321',
 					// 'external_payment_type_id' => 'qw',
 				),
@@ -71,7 +71,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'icon'        => 'c24',
 				'option' => array(
 					'payment_group_id' => 28,
-					'followup'         => 1,
+					'followup'         => 0,
 					// 'external_payment_type_id' => 'qw',
 				),
 				'amount_min'  => 100,
@@ -88,7 +88,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'icon'        => 'comepay',
 				'option' => array(
 					'payment_group_id' => 29,
-					'followup'         => 1,
+					'followup'         => 0,
 					// 'external_payment_type_id' => 'qw',
 				),
 				'amount_min'  => 100,
