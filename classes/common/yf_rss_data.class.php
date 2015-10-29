@@ -230,7 +230,7 @@ class yf_rss_data {
 		$output = $this->_get_rss_feed_array($url, $TTL);
 		// Skip empty feeds
 		if (empty($output['items'])) {
-			continue;
+			return false;
 		}
 		$items = '';
 		// Process items
