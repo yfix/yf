@@ -329,7 +329,7 @@ class yf_remote_files {
 
 		$this->_curl_threads[$id] = curl_init();
 		if (!$this->_curl_threads[$id]) {
-			continue;
+			return false;
 		}
 		// Map of curl handles into url ids
 		$this->_curl_ids[$this->_curl_threads[$id]] = $id;
