@@ -140,10 +140,17 @@ class yf_bb_codes {
 				}
 				$body = preg_replace(array_keys($this->_preg_bb_codes), array_values($this->_preg_bb_codes), $body);
 				if ($this->USE_HIGHLIGHT) {
-					$body = preg_replace('/\[sql\](.*?)\[\/sql\]/imse',		'_class_safe("text_highlight", "classes/common/")->_regex_sql_tag(stripslashes("\1"))', $body);
-					$body = preg_replace('/\[html\](.*?)\[\/html\]/imse',	'_class_safe("text_highlight", "classes/common/")->_regex_html_tag(stripslashes("\1"))', $body);
+					$body = preg_replace_callback('/\[sql\](.*?)\[\/sql\]/ims',	function($m) {
+						return _class_safe('text_highlight', 'classes/common/')->_regex_sql_tag(stripslashes($m[1]));
+					}, $body);
+					$body = preg_replace_callback('/\[html\](.*?)\[\/html\]/ims', function($m) {
+						return _class_safe('text_highlight', 'classes/common/')->_regex_html_tag(stripslashes($m[1]));
+					}, $body);
 				}
-				$body = preg_replace('/\[csv\](.*?)\[\/csv\]/imse',	'$this->_parse_csv_bb_code("\1")', $body);
+				$_this = $this;
+				$body = preg_replace_callback('/\[csv\](.*?)\[\/csv\]/ims', function($m) use ($_this) {
+					return $_this->_parse_csv_bb_code($m[1]);
+				}, $body);
 			}
 			if ($this->ENABLE_SMILIES && is_array($GLOBALS['_smiles_array']) && empty($no_smilies)) {
 				if (!empty($GLOBALS['_SMILIES_CACHE'])) {
