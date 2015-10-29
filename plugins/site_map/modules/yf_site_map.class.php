@@ -433,7 +433,7 @@ class yf_site_map {
 		} else {
 			$text = str_replace('<loc>./?', '<loc>'.WEB_PATH.'?', $text);
 		}
-		$text = preg_replace('/<loc>([^\<]+)<\/loc>/imse', "'<loc>'.htmlspecialchars('\\1').'</loc>'", $text);
+		$text = preg_replace_callback('/<loc>([^\<]+)<\/loc>/ims', function($m) { return '<loc>'.htmlspecialchars($m[1]).'</loc>'; }, $text);
 		file_put_contents($_path, $text);
 	}
 
