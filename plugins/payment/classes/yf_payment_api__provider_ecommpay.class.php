@@ -52,7 +52,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'title'       => 'Qiwi',
 				'icon'        => 'qiwi',
 				'option' => array(
-					'payment_group_id' => 6,
+					// 'payment_group_id' => 6,
 					// 'followup'         => 0,
 					// 'phone'                    => '380679041321',
 					// 'external_payment_type_id' => 'qw',
