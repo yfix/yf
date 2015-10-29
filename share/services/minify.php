@@ -2,7 +2,7 @@
 <?php
 
 $config = array(
-	'git_urls' => array('https://github.com/mrclay/minify.git' => 'minify/'),
+	'git_urls' => array('https://github.com/mrclay/minify.git~2.x' => 'minify/'),
 	'require_once' => array('minify/min/lib/Minify.php'),
 	'example' => function() {
 		var_dump(class_exists('Minify'));

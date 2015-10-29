@@ -36,13 +36,32 @@ class yf_dir {
 	}
 
 	/**
+	* Compatible function, supporting PHP7+, because:
+	* http://php.net/sql_regcase   !Warning! This function has been DEPRECATED as of PHP 5.3.0. Relying on this feature is highly discouraged.
+	*/
+	function _sql_regcase($str) {
+		if (function_exists('sql_regcase')) {
+			return sql_regcase($str);
+		}
+		$res = '';
+		$chars = str_split($str);
+		foreach($chars as $char){
+			if (preg_match('/[A-Za-z]/', $char)) {
+				$res .= '['.mb_strtoupper($char, 'UTF-8').mb_strtolower($char, 'UTF-8').']';
+			} else {
+				$res .= $char;
+			}
+		}
+		return $res;
+	}
+
+	/**
 	* Recursive glob(). Note that glob and rglob does not search hidden files (starting from dot on linux/unix)
 	*/
 	function rglob($folder, $pattern = '*') {
 		$folder = rtrim($folder, '/');
-		// http://php.net/sql_regcase   !Warning! This function has been DEPRECATED as of PHP 5.3.0. Relying on this feature is highly discouraged.
 		if (false === strpos($pattern, '[')) {
-			$pattern = sql_regcase($pattern);
+			$pattern = $this->_sql_regcase($pattern);
 		}
 		$files = (array)glob($folder.'/'.$pattern, GLOB_BRACE|GLOB_NOSORT);
 		$dirs = (array)glob($folder.'/*', GLOB_BRACE|GLOB_ONLYDIR|GLOB_NOSORT);
