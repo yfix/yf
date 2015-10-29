@@ -99,6 +99,9 @@ class yf_send_mail {
 			$priority		= $params['priority'] ? $params['priority'] : 3;
 			$smtp			= $params['smtp'] ?: $smtp;
 		}
+		if (!isset($params['on_before_send']) && is_callable($this->ON_BEFORE_SEND)) {
+			$params['on_before_send'] = $this->ON_BEFORE_SEND;
+		}
 		$_prev_num_errors = count((array)main()->_all_core_error_msgs);
 		// Check required params
 		if ($this->MAIL_DEBUG_ERROR && empty($email_to)) {
@@ -132,15 +135,13 @@ class yf_send_mail {
 		}
 
 		// Load specific SMTP options (only for 'phpmailer')
-		if ( !$this->MAIL_DEBUG && empty( $smtp ) && in_array($this->USE_MAILER, array('phpmailer'))) {
+		if (!$this->MAIL_DEBUG && empty( $smtp ) && in_array($this->USE_MAILER, array('phpmailer'))) {
 			// Try to get specific SMTP settings
 			$this->SMTP_OPTIONS = $this->_process_smtp_config($email_to);
 		}
-
-		if( !$this->MAIL_DEBUG && !empty( $smtp ) ) {
+		if (!$this->MAIL_DEBUG && !empty($smtp)) {
 			$this->SMTP_OPTIONS = $smtp;
 		}
-
 		$result = false;
 		$error_message = '';
 		// Replaces 'From:' field
@@ -183,19 +184,23 @@ class yf_send_mail {
 						$mail->AddAttachment($file, $file_name );
 					}
 				}
-				if( $this->FORCE_USE_SMTP && $this->SMTP_OPTIONS[ 'smtp_host' ] ) {
+				if ($this->FORCE_USE_SMTP && $this->SMTP_OPTIONS['smtp_host']) {
 					$smtp_options = &$this->SMTP_OPTIONS;
 					$mail->IsSMTP();
-					$mail->Host       = $smtp_options[ 'smtp_host'      ];
-					$mail->Port       = $smtp_options[ 'smtp_port'      ];
-					$mail->SMTPAuth   = $smtp_options[ 'smtp_auth'      ];
-					$mail->Username   = $smtp_options[ 'smtp_user_name' ];
-					$mail->Password   = $smtp_options[ 'smtp_password'  ];
-					$mail->SMTPSecure = $smtp_options[ 'smtp_secure'    ] ?: false;
+					$mail->Host       = $smtp_options['smtp_host'];
+					$mail->Port       = $smtp_options['smtp_port'];
+					$mail->SMTPAuth   = $smtp_options['smtp_auth'];
+					$mail->Username   = $smtp_options['smtp_user_name'];
+					$mail->Password   = $smtp_options['smtp_password'];
+					$mail->SMTPSecure = $smtp_options['smtp_secure'] ?: false;
+				}
+				if (is_callable($params['on_before_send'])) {
+					$callback = $params['on_before_send'];
+					$callback($mail, $params, $this);
 				}
 				$result = $mail->Send();
-				if (is_array($email_to) && !empty( $email_to )) {
-					foreach( $email_to as $name => $email ) {
+				if (is_array($email_to) && !empty($email_to)) {
+					foreach ($email_to as $name => $email) {
 						$mail->clearAddresses();
 						$mail->AddAddress($email, $name);
 						$r = $mail->Send();
