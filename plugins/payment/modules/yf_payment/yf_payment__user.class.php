@@ -18,6 +18,7 @@ class yf_payment__user {
 		$pages    = ceil( $count / $page_per );
 		// limit
 		$balance_limit_lower = $payment_api->BALANCE_LIMIT_LOWER;
+		$payout_limit_min    = @$payment_api->PAYOUT_LIMIT_MIN ?: 1;
 		// provider
 		$providers = $payment_api->provider( array(
 			'all' => true,
@@ -53,6 +54,7 @@ class yf_payment__user {
 			'user'    => $user,
 			'payment' => json_encode( array(
 				'balance_limit_lower'   => $balance_limit_lower,
+				'payout_limit_min'      => $payout_limit_min,
 				'user'                  => $user,
 				'account'               => $account,
 				'currency'              => $currency,

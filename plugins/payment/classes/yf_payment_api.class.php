@@ -174,6 +174,7 @@ class yf_payment_api {
 	public $OPERATION_LIMIT     = 10;
 	public $IS_BALANCE_LIMIT_LOWER = true;
 	public $BALANCE_LIMIT_LOWER    = 0;
+	public $PAYOUT_LIMIT_MIN       = 0;
 
 	public $IS_PAYOUT_CONFIRMATION = false;
 	public $CONFIRMATION_TIME      = '-6 hour';
@@ -1358,9 +1359,12 @@ class yf_payment_api {
 		list( $balance, $account_result ) = $this->get_balance( $_options );
 		if( empty( $account_result ) ) { return( $account_result ); }
 		list( $account_id, $account ) = $account_result;
+		list( $currency_id, $currency ) = $this->get_currency__by_id( array(
+			'currency_id' => $account[ 'currency_id' ],
+		));
 		$data[ 'account' ] = $account;
 		// check amount
-		$decimals = $this->currency[ 'minor_units' ];
+		$decimals = $currency[ 'minor_units' ];
 		$amount   = $this->_number_float( $_[ 'amount' ], $decimals );
 		if( $amount <= 0 ) {
 			$result = array(
@@ -1387,6 +1391,18 @@ class yf_payment_api {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Недостаточно средств на счету',
+			);
+			return( $result );
+		}
+		// check payout limit min
+		$payout_limit_min = @$this->PAYOUT_LIMIT_MIN;
+		$payout_limit_min = $this->_number_float( $payout_limit_min );
+		if( @$_[ 'user_mode' ] &&
+			( $type[ 'name' ] == 'payment' && ( $balance < $payout_limit_min ) )
+			) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Минимальная сумма для вывода: '. $payout_limit_min . $currency[ 'sign' ],
 			);
 			return( $result );
 		}
