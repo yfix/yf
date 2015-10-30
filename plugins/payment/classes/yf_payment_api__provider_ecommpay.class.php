@@ -70,8 +70,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'title'       => 'C24',
 				'icon'        => 'c24',
 				'option' => array(
-					'payment_group_id' => 28,
-					'followup'         => 1,
+					// 'payment_group_id' => 28,
+					// 'followup'         => 1,
 					// 'external_payment_type_id' => 'qw',
 				),
 				'amount_min'  => 100,
