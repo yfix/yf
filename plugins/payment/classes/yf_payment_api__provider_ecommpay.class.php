@@ -579,6 +579,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( !$this->ENABLE ) { return( null ); }
 		$_ = &$options;
 		// START DUMP
+		$payment_api = $this->payment_api;
 		$payment_api->dump(array( 'name' => 'EcommPay', 'operation_id' => (int)$_[ 'operation_id' ] ));
 		if( empty( $data ) ) { return( null ); }
 		$is_array = (bool)$_[ 'is_array' ];
