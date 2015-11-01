@@ -211,7 +211,7 @@ class yf_common_num2string {
 	/**
 	* Returns number to words for money (number spelling)
 	*/
-	function num2str( $float, $currency_id = null, $lang_id = null, $set = false ){
+	function num2str($float, $currency_id = null, $lang_id = null, $set = false) {
 		$lang_id     = $this->lang_id(     $lang_id,     $set );
 		$currency_id = $this->currency_id( $currency_id, $set );
 		$words       = &$this->words[ $lang_id ];
@@ -265,20 +265,31 @@ class yf_common_num2string {
 					$result[] = (int)$digits3;
 				} else {
 					// separate by 1 digit
-					list( $d3, $d2, $d1 ) = $digits3;
+					$d3 = substr($digits3, 0, 1);
+					$d2 = substr($digits3, 1, 1);
+					$d1 = substr($digits3, 2, 1);
 					// 1xx-9xx
-					$d3 > 0  && $result[] = $digits[ 3 ][ $d3 ];
+					if ($d3 > 0) {
+						$result[] = $digits[3][$d3];
+					}
 					// 20-99
-					$d2 > 1  && $result[] = $digits[ 2 ][ $d2 ];
+					if ($d2 > 1) {
+						$result[] = $digits[2][$d2];
+					}
 					// 10-19
-					$d2 == 1 && $result[] = $digits[ 1 ][ $d1 ];
+					if ($d2 == 1) {
+						$result[] = $digits[1][$d1];
+					}
 					// 1-9
-					$d1 > 0 && $d2 != 1
-						&& ( $gender = $units[ $unit ][ 3 ] ) > -1
-						&& $result[] = $digits[ 0 ][ $gender ][ $d1 ];
+					if ($d1 > 0 && $d2 != 1) {
+						$gender = $units[$unit][3];
+						if ($gender > -1) {
+							$result[] = $digits[0][$gender][$d1];
+						}
+					}
 				}
 			}
-			$result[] = $this->morph( $digits3, $units[ $unit ] );
+			$result[] = $this->morph($digits3, $units[$unit]);
 		}
 		$result = join(' ', $result);
 		return $result;
