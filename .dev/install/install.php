@@ -311,7 +311,7 @@ class yf_core_install {
 	/**
 	*/
 	function init_yf_core() {
-		define('DB_TYPE',	'mysql5');
+		define('DB_TYPE',	'mysqli');
 		define('DB_HOST',	$_POST['install_db_host']);
 		define('DB_NAME',	$_POST['install_db_name']);
 		define('DB_USER',	$_POST['install_db_user']);
@@ -349,7 +349,7 @@ class yf_core_install {
 	*/
 	function write_db_setup() {
 		$db_setup_file_content = '<?php
-define(\'DB_TYPE\',	\'mysql5\');
+define(\'DB_TYPE\',	\'mysqli\');
 define(\'DB_HOST\',	\''.$_POST['install_db_host'].'\');
 define(\'DB_NAME\',	\''.$_POST['install_db_name'].'\');
 define(\'DB_USER\',	\''.$_POST['install_db_user'].'\');
