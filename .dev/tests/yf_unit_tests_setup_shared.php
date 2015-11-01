@@ -16,7 +16,9 @@ if (!defined('YF_PATH')) {
 }
 
 abstract class yf_unit_tests extends PHPUnit_Framework_TestCase {
-    protected $backupGlobals = false;
-    protected $backupStaticAttributes = false;
-#    protected $inIsolation = false;
+	protected $backupGlobals = false;
+	protected $backupStaticAttributes = false;
+	protected $runTestInSeparateProcess = false;
+	protected $preserveGlobalState = false;
+	protected $inIsolation = false;
 }
