@@ -5,7 +5,7 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 /* TODO:
 */
 
-class class_form_rewrite_test extends PHPUnit_Framework_TestCase {
+class class_form_rewrite_test extends yf_unit_tests {
 
 	private static $_bak_settings = array();
 

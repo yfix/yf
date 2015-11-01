@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class function_wildcard_compare_test extends PHPUnit_Framework_TestCase {
+class function_wildcard_compare_test extends yf_unit_tests {
 	public function test_basic() {
 		$this->assertFalse( wildcard_compare('regex are useful', '') );
 		$this->assertFalse( wildcard_compare('regex are * useful', '') );

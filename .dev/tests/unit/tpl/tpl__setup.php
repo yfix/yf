@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-abstract class tpl_abstract extends PHPUnit_Framework_TestCase {
+abstract class tpl_abstract extends yf_unit_tests {
 	public static $_bak = array();
 	public static function setUpBeforeClass() {
 		// Replace default style and script templates with empty strings

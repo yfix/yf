@@ -5,7 +5,7 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 /**
  * @requires extension mbstring
  */
-class class_utf8_test extends PHPUnit_Framework_TestCase {
+class class_utf8_test extends yf_unit_tests {
 	public function test_main() {
 		$str = 'Mutual Friends (пользователь должен быть у Вас в друзьях а Вы у него)';
 		$this->assertEquals(111, strlen($str));

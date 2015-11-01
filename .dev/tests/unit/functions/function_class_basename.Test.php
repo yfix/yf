@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class function_class_basename extends PHPUnit_Framework_TestCase {
+class function_class_basename extends yf_unit_tests {
 	public function test_main() {
 		$this->assertEquals('test', class_basename('test'));
 		$this->assertEquals('test', class_basename('yf_test'));

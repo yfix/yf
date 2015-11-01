@@ -3,7 +3,7 @@
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 require_once dirname(__DIR__).'/db_setup.php';
 
-abstract class db_offline_abstract extends PHPUnit_Framework_TestCase {
+abstract class db_offline_abstract extends yf_unit_tests {
 	public static $db = null;
 	public static $_er = array();
 	public static $_bak = array();

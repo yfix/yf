@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class function_common_rss_page extends PHPUnit_Framework_TestCase {
+class function_common_rss_page extends yf_unit_tests {
 	public static function setUpBeforeClass() {
 	}
 	public static function tearDownAfterClass() {

@@ -15,7 +15,7 @@ $CONF['fast_init_call'] = function($name) {
 $CONF['main']['ALLOW_FAST_INIT'] = true;
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
-class fast_init_test extends PHPUnit_Framework_TestCase {
+class fast_init_test extends yf_unit_tests {
 	public function test_do() {
 #		global $CONF;
 #var_dump($CONF);

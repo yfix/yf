@@ -5,7 +5,7 @@ require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 /**
  * @requires extension json
  */
-class function_json extends PHPUnit_Framework_TestCase {
+class function_json extends yf_unit_tests {
 	public function test_json() {
 		$a = array(
 			'test1'	=> array(0,1,2,3,4),
