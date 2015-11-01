@@ -1,6 +1,6 @@
 <?php
 
-define('DB_TYPE',       'mysql5');
+define('DB_TYPE',       'mysqli');
 define('DB_HOST',       getenv('YF_DB_HOST') ?: '127.0.0.1');
 define('DB_NAME',       getenv('YF_DB_NAME') ?: 'yf_for_unit_tests');
 define('DB_USER',       getenv('YF_DB_USER') ?: 'root');
