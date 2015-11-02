@@ -27,6 +27,11 @@
 		<testsuite name="tpl">
 			<directory>./unit/tpl/</directory>
 		</testsuite>
+		<testsuite name="plugins">
+			<directory>./acceptance/plugins/*/tests/*</directory>
+			<directory>./functional/plugins/*/tests/*</directory>
+			<directory>./unit/plugins/*/tests/*</directory>
+		</testsuite>
 	</testsuites>
 	<!--logging>
 		<log type="coverage-clover" target="artifacts/phpunit/coverage/coverage.xml" />
