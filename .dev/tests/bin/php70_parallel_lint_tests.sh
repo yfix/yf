@@ -5,6 +5,10 @@ DIR=$( cd $( dirname "${BASH_SOURCE[0]}" ) && pwd )
 (
 	cd ../;
 	binary="parallel-lint"
-	(command -v $binary > /dev/null) || binary=$DIR"/vendor/bin/"$binary
+	if [[ -f "$TRAVIS_BUILD_DIR/vendor/bin/$binary" ]]; then
+		binary=$TRAVIS_BUILD_DIR"/vendor/bin/"$binary;
+	elif [[ -f "$DIR/vendor/bin/$binary" ]]; then
+		binary=$DIR"/vendor/bin/"$binary;
+	fi
 	$binary -p php70 -e php --exclude libs --exclude vendor --exclude _tmp .
 )
