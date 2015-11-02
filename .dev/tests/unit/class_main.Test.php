@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
-class class_main_test extends PHPUnit_Framework_TestCase {
+class class_main_test extends yf_unit_tests {
 	public $test_defaults = array(
 		'ip'	=> '192.168.111.222',
 		'port'	=> '80',

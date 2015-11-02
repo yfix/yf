@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
-class class_i18n_test extends PHPUnit_Framework_TestCase {
+class class_i18n_test extends yf_unit_tests {
 	public static $no_cache = null;
 	public static function setUpBeforeClass() {
 		self::$no_cache = cache()->NO_CACHE;

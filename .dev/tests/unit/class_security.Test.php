@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
-class class_security_test extends PHPUnit_Framework_TestCase {
+class class_security_test extends yf_unit_tests {
 	public function test_xss_clean() {
 		$this->assertEquals( _class('security')->xss_clean('script'), 'script' );
 		$this->assertEquals( _class('security')->xss_clean('<script'), '&lt;script' );

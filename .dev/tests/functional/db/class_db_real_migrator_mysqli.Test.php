@@ -3,12 +3,12 @@
 require_once __DIR__.'/db_real_abstract.php';
 
 /**
- * @requires extension mysql
+ * @requires extension mysqli
  */
 class class_db_real_migrator_mysql_test extends db_real_abstract {
 	public static function setUpBeforeClass() {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
-		self::$DB_DRIVER = 'mysql5';
+		self::$DB_DRIVER = 'mysqli';
 		self::_connect();
 		self::utils()->truncate_database(self::db_name());
 	}
@@ -61,7 +61,7 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 	public function _load_fixtures_list($name) {
 		$out = array();
 		$dir = __DIR__.'/migrator_fixtures/';
-		$ext = '.sql_php.php';
+		$ext = '.sql_php';
 		foreach (glob($dir. $name. '*'. $ext) as $path) {
 			$_name = substr(basename($path), 0, -strlen($ext));
 			$out[$_name] = $path;
@@ -69,14 +69,14 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		return $out;
 	}
 	public function _load_fixture($name) {
-		$path = __DIR__.'/migrator_fixtures/'.$name.'.fixture.php';
+		$path = __DIR__.'/migrator_fixtures/'.$name.'.fixture';
 		if (!file_exists($path)) {
 			return array();
 		}
 		return include $path;
 	}
 	public function _load_expected($name) {
-		$path = __DIR__.'/migrator_fixtures/'.$name.'.expected.php';
+		$path = __DIR__.'/migrator_fixtures/'.$name.'.expected';
 		if (!file_exists($path)) {
 			return array();
 		}
@@ -197,7 +197,7 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( $mg_contents );
 		$mg_name = substr(basename($mg_path), strlen('db_migration_'), -strlen('.class.php'));
 		$this->assertNotEmpty( $mg_name );
-		$expected_file = __DIR__. '/migrator_fixtures/'.__FUNCTION__.'.class.php';
+		$expected_file = __DIR__. '/migrator_fixtures/'.__FUNCTION__.'.class.expected';
 		$this->assertNotEmpty( $expected_file );
 		$this->assertFileExists( $expected_file );
 		$expected = file_get_contents($expected_file);
@@ -223,7 +223,7 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( $mg_contents );
 		$mg_name = substr(basename($mg_path), strlen('db_migration_'), -strlen('.class.php'));
 		$this->assertNotEmpty( $mg_name );
-		$expected_file = __DIR__. '/migrator_fixtures/'.__FUNCTION__.'.class.php';
+		$expected_file = __DIR__. '/migrator_fixtures/'.__FUNCTION__.'.class.expected';
 		$this->assertNotEmpty( $expected_file );
 		$this->assertFileExists( $expected_file );
 		$expected = file_get_contents($expected_file);

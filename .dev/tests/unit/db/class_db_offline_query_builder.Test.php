@@ -3,7 +3,7 @@
 require_once __DIR__.'/db_offline_abstract.php';
 
 /**
- * @requires extension mysql
+ * @requires extension mysqli
  */
 class class_db_offline_query_builder_test extends db_offline_abstract {
 	public function test_select_star() {

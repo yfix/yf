@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
-class class_divide_pages_test extends PHPUnit_Framework_TestCase {
+class class_divide_pages_test extends yf_unit_tests {
 	public function _get_expected_html($href, $num_pages = 10, $next = 2) {
 		if (!$num_pages) {
 			return false;

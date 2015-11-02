@@ -10,7 +10,7 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 * _input_assing_params_from_validate()
 */
 
-class class_form_test extends PHPUnit_Framework_TestCase {
+class class_form_test extends yf_unit_tests {
 	private static $_bak_settings = array();
 	private static $css = array();
 	private static $action = '';

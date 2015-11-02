@@ -1,6 +1,6 @@
 <?php
 
-class class_rewrite_testing_shared_test extends PHPUnit_Framework_TestCase {
+class class_rewrite_testing_shared_test extends yf_unit_tests {
 	private static $host = 'test.dev';
 	private static $_bak_settings = array();
 

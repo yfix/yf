@@ -35,7 +35,7 @@ if (!empty($argv[1])) {
     exit();
 } else {
 	$crons = db()->get_all("SELECT * FROM ".db('cron_tasks')." WHERE active='1'");
-	foreach ($crons as $cron_info) \{
+	foreach ($crons as $cron_info) {
 		$file = $cron_info['dir'].$cron_info['name'];
 		$last_start_time = db()->get_one("SELECT time_start FROM ".db('cron_logs'). " WHERE cron_id = ".$cron_info['id']." ORDER BY time_start DESC");
 		exec('pgrep -a php | grep '.$file, $is_already_run);

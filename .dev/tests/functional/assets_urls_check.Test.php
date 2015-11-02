@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/db_real_abstract.php';
 
-class assets_urls_check_test extends PHPUnit_Framework_TestCase {
+class assets_urls_check_test extends yf_unit_tests {
 	public function get_url_size($url) {
 		if (substr($url, 0, 2) === '//') {
 			$url = 'http:'.$url;

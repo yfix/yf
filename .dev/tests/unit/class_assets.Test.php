@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class class_assets_test extends PHPUnit_Framework_TestCase {
+class class_assets_test extends yf_unit_tests {
 	public static function setUpBeforeClass() {
 		// Replace default style and script templates with empty strings
 		tpl()->parse_string('', array(), 'style_css');

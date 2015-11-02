@@ -138,6 +138,8 @@ class yf_main {
 	/** @var string @conf_skip Multi-server mode option */
 	public $SERVER_ROLE				= null;
 	/** @var bool */
+	public $CATCH_FATAL_ERRORS		= false;
+	/** @var bool */
 	public $ALLOW_DEBUG_PROFILING	= false;
 	/** @var bool @conf_skip */
 	public $PROFILING				= false;
@@ -1869,8 +1871,10 @@ if ($_POST) {
 				echo $info;
 			}
 		}
-		foreach ((array)$this->_SHUTDOWN_CODE_ARRAY as $_cur_code) {
-			call_user_func($_cur_code);
+		if (isset($this->_SHUTDOWN_CODE_ARRAY)) {
+			foreach ((array)$this->_SHUTDOWN_CODE_ARRAY as $_cur_code) {
+				call_user_func($_cur_code);
+			}
 		}
 	}
 
