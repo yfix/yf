@@ -21,8 +21,9 @@ services:
 #  - mysql -e 'create database yf_for_unit_tests;'
 #  - composer self-update
 #  - (cd ./libs/ && COMPOSER=../.dev/scripts/assets/composer.json composer install --prefer-source --no-interaction --dev)
+  - composer global require jakub-onderka/php-parallel-lint
 
-script: export YF_DB_PSWD=""; cd ./.dev/tests/bin/ && ./phpunit_run_all.sh
+script: export YF_DB_PSWD=""; cd ./.dev/tests/bin/ && ./php_parallel_lint_all.sh && ./phpunit_run_all.sh
 
 matrix:
 #  allow_failures:
