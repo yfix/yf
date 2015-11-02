@@ -29,7 +29,7 @@ class yf_payment__user {
 		));
 		$provider_user = $payment_api->provider();
 		$provider = array();
-		foreach( (array)$provider_user as &$item ) {
+		foreach( $provider_user as &$item ) {
 			$provider_id = (int)$item[ 'provider_id' ];
 			$_provider   = &$providers[ $provider_id ];
 			$_provider[ '_IS_DEPOSITION' ] && $provider[ 'payin'  ][] = $provider_id;

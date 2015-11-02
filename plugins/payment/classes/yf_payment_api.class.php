@@ -252,7 +252,7 @@ class yf_payment_api {
 	}
 
 	public function config( $options = null ) {
-		!empty( (array)$options ) && $this->CONFIG = (array)$options;
+		!empty( $options ) && $this->CONFIG = $options;
 		$config = &$this->CONFIG;
 		if( is_array( $config ) ) {
 			foreach( $config as $key => $item ) {

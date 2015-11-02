@@ -407,7 +407,7 @@ class yf_payment_api__provider_remote {
 		// finish
 		curl_close( $ch );
 		// detect content type of response
-		if( empty( @$_is_response_raw ) ) {
+		if( empty( $_is_response_raw ) ) {
 			switch( true ) {
 				case $content_type == 'application/json' || $_is_response_json:
 					$result = @json_decode( $body, true );
