@@ -17,7 +17,7 @@ env:
   - YF_DB_PSWD=
 
 before_script:
-  - composer require jakub-onderka/php-parallel-lint
+  - composer global require jakub-onderka/php-parallel-lint
 #  - if [ -n "$(hhvm --version | grep -i hiphop)" ]; then phpenv config-add .dev/tests/travis_php.ini; fi 
 #  - mysql -e 'create database yf_for_unit_tests;'
 #  - composer self-update
