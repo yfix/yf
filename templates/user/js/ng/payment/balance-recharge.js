@@ -25,6 +25,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		$scope.amount_min           = $scope.currency_min( false );
 		$scope.amount_max           = $scope.currency_max( false );
 		$scope.amount_step          = $scope.currency_step( false );
+		$scope.amount_payout_min    = $scope.currency_min( false, true );
+		$scope.amount_payout_max    = $scope.currency_max( false, true );
 		$scope.amount_currency_min  = $scope.currency_min( true );
 		$scope.amount_currency_step = $scope.currency_step( true );
 	};
@@ -94,34 +96,44 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		}
 	};
 	// currency change: min, step
-	$scope.currency_min = function( is_currency ) {
+	$scope.currency_min = function( is_currency, is_payout ) {
 		is_currency = is_currency || false;
+		is_payout   = is_payout   || false;
 		var currency = is_currency ? $scope.currency_selected : $scope.payment.currency;
 		var round, rate = 1, value = 1, offset = 0;
+		if( is_payout ) {
+			value = $scope.payment.payout_limit_min || value;
+		}
 		if( is_currency ) {
 			// currency rate
 			var currency_rate = $scope.currency_rate( currency );
 			rate  = currency_rate.rate;
 			value = currency_rate.value;
+			value = rate / value;
 		}
 		round = currency.minor_units;
-		var result = +( rate / value ).toFixed( round );
+		var result = +( +value ).toFixed( round );
 		return( result );
 	};
-	$scope.currency_max = function( is_currency ) {
+	$scope.currency_max = function( is_currency, is_payout ) {
 		var max = $scope.payment.account.balance || null;
 		is_currency = is_currency || false;
-		if( !is_currency ) { return( max ); }
+		is_payout   = is_payout   || false;
 		var currency = is_currency ? $scope.currency_selected : $scope.payment.currency;
-		var round, rate = 1, value = max, offset = 0;
+		var round, rate = 1, value = +max, offset = 0;
+		if( is_payout ) {
+			var min = $scope.payment.balance_limit_lower || 0;
+			value -= +min;
+		}
 		if( is_currency ) {
 			// currency rate
 			var currency_rate = $scope.currency_rate( currency );
 			rate  = currency_rate.rate;
 			value = currency_rate.value;
+			value = rate / value;
 		}
 		round = currency.minor_units;
-		var result = +( rate / value ).toFixed( round );
+		var result = +( +value ).toFixed( round );
 		return( result );
 	};
 	$scope.currency_step = function( is_currency ) {
