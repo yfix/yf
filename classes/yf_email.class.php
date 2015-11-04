@@ -276,6 +276,10 @@ class yf_email {
 		// $cti->setHTML($html);
 		// $cti->setCSS($css);
 		$result = $cti->convert();
+
+		$result = preg_replace('~<style[^>]*?>.+?</style>~ims', '', $result);
+		$result = preg_replace('~<script[^>]*?>.+?</script>~ims', '', $result);
+
 		if ($need_raw) {
 			preg_match('|<body.*>(.*)</body>|isU', $result, $matches);
 			$result = $matches[1] ?: $result;
