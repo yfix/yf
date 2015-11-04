@@ -3,14 +3,15 @@
 class YandexMoney {
 
 	protected $_signature_allow = array(
-		'PAYMENT_ID',
-		'PAYEE_ACCOUNT',
-		'PAYMENT_AMOUNT',
-		'PAYMENT_UNITS',
-		'PAYMENT_BATCH_NUM',
-		'PAYER_ACCOUNT',
-		'key_private',
-		'TIMESTAMPGMT',
+		'notification_type',
+		'operation_id',
+		'amount',
+		'currency',
+		'datetime',
+		'sender',
+		'codepro',
+		'notification_secret',
+		'label',
 	);
 
 	private $_key_public       = null;
@@ -44,28 +45,28 @@ class YandexMoney {
 		$data = array();
 		// add allow fields
 		foreach( (array)$this->_signature_allow as $key  ) {
-			if( $key == 'key_private' ) {
-				$data[ $key ] = $this->hash( $this->key( 'private' ) );
+			if( $key == 'notification_secret' ) {
+				$data[ $key ] = $this->key( 'private' );
 				continue;
 			}
 			if( isset( $_[ $key ] ) ) {
 				$data[ $key ] = &$_[ $key ];
 			} else {
-				$data[ $key ] = 'NULL';
+				$data[ $key ] = '';
 			}
 		}
 		// DEBUG
 		// var_dump( $data ); exit;
 		// compile string
-		$str = implode( ':', $data );
+		$str = implode( '&', $data );
 		// create signature
 		$result = $this->str_to_sign( $str );
 		return( $result );
 	}
 
 	public function hash( $str ) {
-		$result = hash( 'md5', $str, false );
-		$result = strtoupper( $result );
+		$result = hash( 'sha1', $str, false );
+		$result = $result;
 		return( $result );
 	}
 
