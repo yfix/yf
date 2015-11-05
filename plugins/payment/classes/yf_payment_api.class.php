@@ -1546,6 +1546,11 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function provider_update( $data, $options = null ) {
+		$result = $this->_object_update( 'provider', $data, $options );
+		return( $result );
+	}
+
 	protected function _object_update( $name, $data, $options = null ) {
 		if( empty( $name ) ) { return( null ); }
 		// import options
