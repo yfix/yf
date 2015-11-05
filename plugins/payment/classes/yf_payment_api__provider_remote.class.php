@@ -306,8 +306,9 @@ class yf_payment_api__provider_remote {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// options
 		$options = array(
+			CURLOPT_USERAGENT      => 'YF.Payment',
+			CURLOPT_RETURNTRANSFER => true,
 			// CURLOPT_URL            =>  $url,
-			CURLOPT_RETURNTRANSFER =>  true,
 		);
 		$header = array();
 		if( !empty( $post ) ) {
@@ -328,6 +329,10 @@ class yf_payment_api__provider_remote {
 				CURLOPT_HTTPAUTH => CURLAUTH_ANY,
 				CURLOPT_USERPWD  => $userpwd,
 			);
+		}
+		if( @$_bearer || @$_access_token ) {
+			( !@$_bearer && $_access_token ) && $_bearer = $_access_token;
+			$header[] = 'Authorization: Bearer ' . $_bearer;
 		}
 		if( @$_is_json ) {
 			$header[] = 'Content-Type: application/json; charset=utf-8';
