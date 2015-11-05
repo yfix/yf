@@ -437,6 +437,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		},
 		on_payout_success: function() {
 			$( '.payment__modal.payout' ).modal( 'hide' );
+			$( '.payment__modal.message' ).modal( 'show' );
 		},
 		on_payout_fail: function() {
 		},
