@@ -89,7 +89,7 @@ class yf_manage_payment_yandexmoney {
 		// class
 		$provider_class = &$this->provider_class;
 		// is authorize
-		$is_authorize = !!$provider_class->access_token;
+		$is_authorize = $provider_class->access_token;
 		$authorize_icon = 'fa fa-chain';
 		$authorize_class = 'btn text-success';
 		if( !$is_authorize ) {
