@@ -146,7 +146,7 @@ class yf_manage_payment_yandexmoney {
 			->check_box( 'is_confirm', array( 'desc' => 'Подтверждение', 'no_label' => true ) )
 			->row_start()
 				->submit( 'operation', 'authorize', array( 'desc' => 'Авторизация', 'icon' => 'fa fa-chain', 'class' => 'btn btn-success' ) )
-				->submit( 'operation', 'revoke_authorize', array( 'desc' => 'Отозвать авторизацию', 'icon' => 'fa fa-chain-broken', 'class' => 'btn btn-danger' ) )
+				->submit( 'operation', 'revoke_authorize', array( 'desc' => 'Отозвать авторизацию', 'icon' => 'fa fa-chain-broken', 'class' => 'btn btn-danger', 'disabled' => !$is_authorize ) )
 				->link( 'Назад' , $url[ 'list' ], array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
 			->row_end()
 		;
