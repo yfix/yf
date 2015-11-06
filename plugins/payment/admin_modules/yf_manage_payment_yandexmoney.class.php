@@ -40,7 +40,13 @@ class yf_manage_payment_yandexmoney {
 		$filter      = $_SESSION[ $filter_name ];
 		// url
 		$url = array(
+			'list' => url_admin( array(
+				'is_full_url'  => true,
+				'object'       => $object,
+				'action'       => 'show',
+			)),
 			'authorize' => url_admin( array(
+				'is_full_url'  => true,
 				'object'       => $object,
 				'action'       => 'authorize',
 			)),
@@ -71,7 +77,10 @@ class yf_manage_payment_yandexmoney {
 		// class
 		$provider_class = &$this->provider_class;
 		// request
-		$result = $provider_class->authorize_request();
+		$url = $this->_url( 'authorize' );
+		$result = $provider_class->authorize_request( array(
+			'redirect_uri' => $url,
+		));
 		return( $result );
 	}
 

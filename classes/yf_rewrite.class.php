@@ -306,7 +306,7 @@ class yf_rewrite {
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
 			$link = $this->REWRITE_PATTERNS['yf']->_build($params, $this);
 		} else {
-			$skip_url_params = array('host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path');
+			$skip_url_params = array('host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path', 'is_full_url');
 			foreach ((array)$params as $k => $v) {
 				if (in_array($k, $skip_url_params)) {
 					continue;
@@ -325,6 +325,10 @@ class yf_rewrite {
 					$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && !in_array($_port, array('80','443')) ? ':'.$_port : ''). ($_path ?: '/'). $u);
 				} else {
 					$link = ADMIN_WEB_PATH. $u;
+					if( $params[ 'is_full_url' ] ) {
+						$protocol_scheme = _class( 'api' )->_detect_protocol_scheme();
+						$link = $protocol_scheme .':'. $link;
+					}
 				}
 			} else {
 				$_host = $params['host'];

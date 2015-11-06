@@ -130,6 +130,25 @@ class yf_api {
 		$this->_send_http_content( $response );
 	}
 
+	public function _detect_protocol_scheme( $options = null ) {
+		$result = 'http';
+		if( !empty( $_SERVER[ 'HTTPS' ] ) || $_SERVER[ 'SERVER_PORT' ] == 443 ) {
+			$result .= 's';
+		}
+		return( $result );
+	}
+
+	public function _detect_protocol( $options = null ) {
+		$result = 'HTTP/1.1';
+		if( function_exists( 'php_sapi_name' ) ) { // PHP >= 4.1.0
+			$type = php_sapi_name();
+			substr( $type, 0, 3 ) == 'cgi' && $result = 'Status:';
+		} else {
+			isset( $_SERVER[ 'SERVER_PROTOCOL' ] ) && $result = $_SERVER[ 'SERVER_PROTOCOL' ];
+		}
+		return( $result );
+	}
+
 	protected function _send_http_status( $code = null, $status = null ) {
 		$code     = (int)$code;
 		$protocol = null;
@@ -138,13 +157,7 @@ class yf_api {
 			// send http code
 			if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP >= 5.4.0
 			// protocol detect
-			$protocol = 'HTTP/1.1';
-			if( function_exists( 'php_sapi_name' ) ) { // PHP >= 4.1.0
-				$type = php_sapi_name();
-				substr( $type, 0, 3 ) == 'cgi' && $protocol = 'Status:';
-			} else {
-				isset( $_SERVER[ 'SERVER_PROTOCOL' ] ) && $protocol = $_SERVER[ 'SERVER_PROTOCOL' ];
-			}
+			$protocol = $this->_detect_protocol();
 			$header = array();
 			$header[] = $protocol;
 			// status default
