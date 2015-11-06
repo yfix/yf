@@ -322,6 +322,11 @@ class yf_payment_api__provider_remote {
 				CURLOPT_POSTFIELDS => $http_post,
 			);
 		}
+		if( @$_is_post ) {
+			$options += array(
+				CURLOPT_POST => true,
+			);
+		}
 		if( @$_user ) {
 			$userpwd = $_user;
 			@$_password && $userpwd .= ':'. $_password;
@@ -412,7 +417,7 @@ class yf_payment_api__provider_remote {
 		// finish
 		curl_close( $ch );
 		// detect content type of response
-		if( empty( $_is_response_raw ) ) {
+		if( @$_is_response_raw ) {
 			switch( true ) {
 				case $content_type == 'application/json' || $_is_response_json:
 					$result = @json_decode( $body, true );
@@ -453,6 +458,15 @@ class yf_payment_api__provider_remote {
 			}
 		} else {
 			$result = $body;
+		}
+		if( @$_is_http_raw ) {
+			$result = array(
+				'status'       => $status,
+				'http_code'    => $http_code,
+				'http_message' => $message,
+				'body'         => $result,
+			);
+			return( $result );
 		}
 		return( array( $status, $result ) );
 	}

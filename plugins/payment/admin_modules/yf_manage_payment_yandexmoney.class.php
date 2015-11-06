@@ -84,8 +84,17 @@ class yf_manage_payment_yandexmoney {
 		return( $result );
 	}
 
+	function _revoke_authorize() {
+		// class
+		$provider_class = &$this->provider_class;
+		// request
+		$result = $provider_class->api_token_revoke();
+		return( $result );
+	}
+
 	function authorize() {
 		$url = &$this->url;
+		$url_authorize = $this->_url( 'authorize' );
 		// class
 		$provider_class = &$this->provider_class;
 		// is authorize
@@ -105,23 +114,39 @@ class yf_manage_payment_yandexmoney {
 			->on_post( function( $data, $extra, $rules ) {
 				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
 				if( $is_confirm ) {
-					$result = $this->_authorize();
+					$is_action = false;
+					$action    = @$_POST[ 'operation' ];
+					switch( $action ) {
+						case 'authorize':
+						case 'revoke_authorize':
+							$is_action = true;
+							break;
+					}
+					if( !$is_action ) {
+						common()->message_error( 'Неизвестное действие' );
+						return( null );
+					}
+					$action = '_'.$action;
+					$result = $this->$action();
 					if( empty( $result[ 'status' ] ) ) {
 						$level = 'error';
-						$message = 'Ошибка, авторизация YandexMoney: '. $result[ 'status_message' ];
+						$message = 'Ошибка: ';
 					} else {
 						$level = 'success';
-						$message = 'Выполнено, авторизация YandexMoney.';
+						$message = 'Выполнено: ';
 					}
+					$message .= $result[ 'status_message' ];
 					common()->add_message( $message, $level );
+					return( js_redirect( $url_authorize ) );
 				} else {
 					common()->message_info( 'Требуется подтверждение, для выполнения операции' );
 				}
 			})
-			->info( 'is_authorize', array( 'desc' => 'Авторизация', 'icon' => $authorize_icon, 'class' => $authorize_class ) )
+			->info( 'is_authorize', array( 'desc' => 'Авторизация YandexMoney', 'icon' => $authorize_icon, 'class' => $authorize_class ) )
 			->check_box( 'is_confirm', array( 'desc' => 'Подтверждение', 'no_label' => true ) )
 			->row_start()
-				->submit( 'operation', 'authorize', array( 'desc' => 'Авторизация YandexMoney', 'icon' => 'fa fa-key' ) )
+				->submit( 'operation', 'authorize', array( 'desc' => 'Авторизация', 'icon' => 'fa fa-chain', 'class' => 'btn btn-success' ) )
+				->submit( 'operation', 'revoke_authorize', array( 'desc' => 'Отозвать авторизацию', 'icon' => 'fa fa-chain-broken', 'class' => 'btn btn-danger' ) )
 				->link( 'Назад' , $url[ 'list' ], array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
 			->row_end()
 		;
