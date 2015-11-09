@@ -414,6 +414,8 @@ class yf_payment_api__provider_remote {
 			$result = sprintf( 'Ошибка транспорта: [%d] %s', $http_code, $message );
 		}
 		$content_type = curl_getinfo( $ch, CURLINFO_CONTENT_TYPE );
+		// DEBUG
+		@$_is_debug && var_dump( $content_type );
 		// finish
 		curl_close( $ch );
 		// detect content type of response
@@ -421,13 +423,17 @@ class yf_payment_api__provider_remote {
 			$result = $body;
 		} else {
 			switch( true ) {
-				case $content_type == 'application/json' || $_is_response_json:
+				case strpos( $content_type, 'application/json' ) === 0 || $_is_response_json:
 					$result = @json_decode( $body, true );
+					// DEBUG
+					@$_is_debug && var_dump( 'is_json', $result );
 					break;
 				case $content_type == 'text/html' || @$_is_response_html || @$_is_response_xml || @$_is_response_form:
 					libxml_use_internal_errors( true );
 					$xml_response = @simplexml_load_string( $body );
 					$error = libxml_get_errors();
+					// DEBUG
+					@$_is_debug && var_dump( 'is_xml', $result, $error );
 					if( $error ) {
 						libxml_clear_errors();
 						$result = array(
@@ -455,6 +461,8 @@ class yf_payment_api__provider_remote {
 							$form[ $name ] = $value;
 						}
 						!empty( $form ) && $xml_response = $form;
+						// DEBUG
+						@$_is_debug && var_dump( 'is_form', $form );
 					}
 					$result = $xml_response;
 			}
