@@ -418,6 +418,8 @@ class yf_payment_api__provider_remote {
 		curl_close( $ch );
 		// detect content type of response
 		if( @$_is_response_raw ) {
+			$result = $body;
+		} else {
 			switch( true ) {
 				case $content_type == 'application/json' || $_is_response_json:
 					$result = @json_decode( $body, true );
@@ -456,8 +458,6 @@ class yf_payment_api__provider_remote {
 					}
 					$result = $xml_response;
 			}
-		} else {
-			$result = $body;
 		}
 		if( @$_is_http_raw ) {
 			$result = array(
