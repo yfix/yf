@@ -48,7 +48,7 @@ abstract class db_real_abstract extends yf_unit_tests {
 	*/
 	public static function _connect_mysql($params = array()) {
 		$res = self::$db->connect(array(
-			'host'	=> $params['host'] ?: '127.0.0.1',
+			'host'	=> $params['host'] ?: DB_HOST,
 			'name'	=> self::$DB_NAME,
 			'user'	=> $params['user'] ?: DB_USER,
 			'pswd'	=> $params['pswd'] ?: DB_PSWD,
