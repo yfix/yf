@@ -38,6 +38,10 @@ class yf_manage_payout {
 				'action'       => 'request',
 				'operation_id' => '%operation_id',
 			)),
+			'yandexmoney_authorize' => url_admin( array(
+				'object'       => 'manage_payment_yandexmoney',
+				'action'       => 'authorize',
+			)),
 			'request_interkassa' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'request_interkassa',
@@ -552,6 +556,10 @@ class yf_manage_payout {
 		$is_processing   = $o_status[ 'name' ] == 'processing';
 		$is_confirmation = $o_status[ 'name' ] == 'confirmation';
 		$is_finish       = !( $is_progressed || $is_processing || $is_confirmation );
+		$is_payout_yandexmoney = $provider_name == 'yandexmoney';
+		if( $is_payout_yandexmoney ) {
+			$is_yandexmoney_authorize = $provider_class->is_authorization();
+		}
 		$is_payout_interkassa = (bool)$this->IS_PAYOUT_INTERKASSA && $card_method_id;
 		// processing
 		$processing = array();
@@ -625,6 +633,8 @@ class yf_manage_payout {
 			'is_processing_administration' => &$is_processing_administration,
 			'is_processing_interkassa'     => &$is_processing_interkassa,
 			'is_payout_interkassa'         => &$is_payout_interkassa,
+			'is_payout_yandexmoney'        => &$is_payout_yandexmoney,
+			'is_yandexmoney_authorize'     => &$is_yandexmoney_authorize,
 			'is_finish'                    => &$is_finish,
 			'html_amount'                  => &$html_amount,
 			'html_datetime_start'          => &$html_datetime_start,
@@ -725,7 +735,8 @@ class yf_manage_payout {
 					$request_options = &$request[ 'options' ];
 					$account_number = @$request_options[ 'account_number' ] ?:
 							@$request_options[ 'account' ] ?:
-							@$request_options[ 'card' ] ?:
+							@$request_options[ 'card'    ] ?:
+							@$request_options[ 'to'      ] ?:
 							'-'
 					;
 					$content[ $item[ 'operation_id' ] ] = array(
@@ -822,6 +833,7 @@ class yf_manage_payout {
 				'status_success'     => $this->_url( 'status_success',     array( '%operation_id' => $_operation_id ) ),
 				'status_refused'     => $this->_url( 'status_refused',     array( '%operation_id' => $_operation_id ) ),
 				'csv'                => $this->_url( 'csv',                array( '%operation_id' => $_operation_id ) ),
+				'yandexmoney_authorize'     => $this->_url( 'yandexmoney_authorize' ),
 				'provider_operation_detail' => @$url_provider_operation_detail,
 				'provider_operations'       => @$url_provider_operations,
 				'provider_payouts'          => @$url_provider_payouts,
@@ -919,6 +931,8 @@ EOS;
 			'operation_id' => $_operation_id,
 		);
 		$result = $_provider_class->api_payout( $data );
+		// DEBUG
+		// var_dump( $result ); exit;
 		$result[ 'operation_id' ] = $_operation_id;
 		if( @$result[ 'status' ] == 'success' ) {
 			// processing

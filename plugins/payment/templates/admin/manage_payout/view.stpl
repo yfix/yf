@@ -96,6 +96,11 @@
 		<div class="tab-content">
 		{if_false( is_processing_administration )}
 			<div role="tabpanel" class="tab-pane active" id="automatic">
+			{if_true( is_payout_yandexmoney )}
+				{if_false( is_yandexmoney_authorize )}
+				<a href="{url.yandexmoney_authorize}" class="btn btn-danger" target="_blank">Авторизация YandexMoney</a>
+				{/if}
+			{/if}
 			{if_false( is_processing )}
 				<a href="{url.request}" class="btn btn-success">Выполнить запрос вывода средств</a>
 			{/if}
