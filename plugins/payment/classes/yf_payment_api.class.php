@@ -2252,6 +2252,10 @@ class yf_payment_api {
 		return( $this->_number_format( $float, $decimals, '.', '' ) );
 	}
 
+	function _number_api( $float = 0, $decimals = null ) {
+		return( $this->_number_format( $float, $decimals, '.', '' ) );
+	}
+
 	function _number_from_mysql( $float = 0 ) {
 		return( $this->_number_format( $float ) );
 	}

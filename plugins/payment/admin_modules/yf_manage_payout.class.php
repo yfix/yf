@@ -850,6 +850,9 @@ class yf_manage_payout {
 				empty( $_status_header ) && $_status_header = 'Выполнено';
 				break;
 			case @$_status === 'refused':
+				$_css_panel_status = 'danger';
+				empty( $_status_header ) && $_status_header = 'Отказано';
+				break;
 			default:
 				$_css_panel_status = 'danger';
 				empty( $_status_header ) && $_status_header = 'Ошибка';

@@ -838,7 +838,7 @@ class yf_payment_api__provider_remote {
 		}
 		$payment_api->transaction_commit();
 		$result = array(
-			'status'         => true,
+			'status'         => $new_status_name,
 			'status_message' => $status_message,
 		);
 		return( $result );
