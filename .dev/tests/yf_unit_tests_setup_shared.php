@@ -6,6 +6,8 @@ $_SERVER['HTTP_HOST'] = 'test.dev';
 if (!defined('YF_PATH')) {
 	$CONF['cache']['DRIVER'] = 'tmp';
 	$CONF['cache']['NO_CACHE'] = true;
+	$CONF['MEMCACHED_HOST'] = getenv('YF_MEMCACHED_HOST') ?: '127.0.0.1';
+	$CONF['MEMCACHED_PORT'] = getenv('YF_MEMCACHED_PORT') ?: '11211';
 	define('YF_IN_UNIT_TESTS', true);
 	define('YF_PATH', dirname(dirname(__DIR__)).'/');
 	require YF_PATH.'classes/yf_main.class.php';

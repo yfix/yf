@@ -17,6 +17,7 @@ env:
   - YF_DB_PSWD=
 
 before_script:
+  - env | sort
   - composer self-update
   - composer require --prefer-source --no-interaction jakub-onderka/php-parallel-lint
 #  - if [ -n "$(hhvm --version | grep -i hiphop)" ]; then phpenv config-add .dev/tests/travis_php.ini; fi 
