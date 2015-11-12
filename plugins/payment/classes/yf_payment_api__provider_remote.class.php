@@ -241,8 +241,14 @@ class yf_payment_api__provider_remote {
 		// payway
 		$payway = null;
 		switch( $_type_name ) {
-			case 'deposition': $payway = 'payin';  break;
-			case 'payment':    $payway = 'payout'; break;
+			case 'deposition':
+				$payway = 'payin';
+				$get_currency = 'get_currency';
+				break;
+			case 'payment':
+				$payway = 'payout';
+				$get_currency = 'get_currency_payout';
+				break;
 		}
 		// method
 		$method = $this->api_method( array(
@@ -250,6 +256,23 @@ class yf_payment_api__provider_remote {
 			'method_id' => @$_method_id,
 		));
 		if( empty( $method ) ) { return( $this->result_success() ); }
+		// currency_id
+		$currency_id = $this->$get_currency( $options );
+		if( empty( $currency_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестная валюта',
+			);
+			return( $result );
+		}
+		// validation amount
+		// amount min/max
+		$result = $this->amount_limit( array(
+			'amount'      => $_amount,
+			'currency_id' => $currency_id,
+			'method'      => $method,
+		));
+		if( ! @$result[ 'status' ] ) { return( $result ); }
 		// validation options
 		if( empty( $method[ 'option_validation' ] ) ) { return( $this->result_success() ); }
 		$validation         = $method[ 'option_validation' ];
@@ -937,21 +960,30 @@ class yf_payment_api__provider_remote {
 			$max = @$_method[ 'amount' ][ 'max' ];
 			$status = false;
 			switch( true ) {
-				case isset( $min ) && $_amount < $min: $status_message = 'больше '. $min; break;
-				case isset( $max ) && $_amount > $max: $status_message = 'меньше '. $max;  break;
+				case isset( $min ) && $_amount < $min: $status_message = 'больше'; $limit = $min; break;
+				case isset( $max ) && $_amount > $max: $status_message = 'меньше'; $limit = $max; break;
 				default: $status = true; break;
 			}
 			if( empty( $status ) ) {
-					$result = array(
-						'status'         => false,
-						'status_message' => @sprintf(
-							'Сумма %s: %s должна быть %s'
-								, $_currency_id
-								, $_amount
-								, $status_message
-						),
-					);
-					return( $result );
+				$payment_api = &$this->payment_api;
+				$amount_text = $payment_api->money_text( array(
+					'value'       => $_amount,
+					'currency_id' => $_currency_id,
+				));
+				$limit_text = $payment_api->money_text( array(
+					'value'       => $limit,
+					'currency_id' => $_currency_id,
+				));
+				$result = array(
+					'status'         => false,
+					'status_message' => @sprintf(
+						'Сумма %s должна быть %s %s'
+							, $amount_text
+							, $status_message
+							, $limit_text
+					),
+				);
+				return( $result );
 			}
 		}
 		$result = array( 'status' => true );
@@ -962,7 +994,7 @@ class yf_payment_api__provider_remote {
 		if( !$this->ENABLE ) { return( null ); }
 		empty( $currency_id ) && $currency_id = $this->currency_default;
 		if( empty( $currency_id ) ) { return( null ); }
-		$payment_api = $this->payment_api;
+		$payment_api = &$this->payment_api;
 		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
 			'currency_id' => $currency_id,
 		));

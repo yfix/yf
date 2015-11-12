@@ -109,7 +109,10 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'%method' => 'card',
 				),
 				'action'     => 'payout',
-				'amount_min' => 100,
+				'amount' => array(
+					// 'min' => 10,
+					'max' => 200,
+				),
 				'fee'        => 0, // 0.1%
 				'currency' => array(
 					'USD' => array(
@@ -286,7 +289,10 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'%method' => 'qiwi',
 				),
 				'action'     => 'qiwi_payout',
-				'amount_min' => 100,
+				'amount' => array(
+					// 'min' => 10,
+					'max' => 200,
+				),
 				'fee'        => 0, // 0.1%
 				'currency' => array(
 					'USD' => array(
@@ -828,6 +834,13 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			);
 			return( $result );
 		}
+		// amount min/max
+		$result = $this->amount_limit( array(
+			'amount'      => $_amount,
+			'currency_id' => $currency_id,
+			'method'      => $method,
+		));
+		if( ! @$result[ 'status' ] ) { return( $result ); }
 		// currency conversion
 		$amount_currency = $payment_api->currency_conversion( array(
 			'conversion_type' => 'sell',
