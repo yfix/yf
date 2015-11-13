@@ -174,8 +174,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'calcKey'  => 'psPayeeAmount',
 				),
 				'amount' => array(
-					'min' => 50,
-					'max' => 10000,
+					'min' => 5,
+					'max' => 200,
 				),
 				// 'is_fee' => true,
 				'fee' => array(
@@ -231,8 +231,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'calcKey'  => 'psPayeeAmount',
 				),
 				'amount' => array(
-					'min' => 50,
-					'max' => 10000,
+					'min' => 5,
+					'max' => 200,
 				),
 				// 'is_fee' => true,
 				'fee' => array(
@@ -288,8 +288,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'calcKey'  => 'psPayeeAmount',
 				),
 				'amount' => array(
-					'min' => 50,
-					'max' => 10000,
+					'min' => 5,
+					'max' => 200,
 				),
 				// 'is_fee' => true,
 				'fee' => array(
@@ -345,8 +345,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'calcKey'  => 'psPayeeAmount',
 				),
 				'amount' => array(
-					'min' => 50,
-					'max' => 10000,
+					'min' => 5,
+					'max' => 200,
 				),
 				// 'is_fee' => true,
 				'fee' => array(
@@ -403,8 +403,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'calcKey'  => 'psPayeeAmount',
 				),
 				'amount' => array(
-					'min' => 150,
-					'max' => 15000,
+					'min' => 5,
+					'max' => 200,
 				),
 				// 'is_fee' => true,
 				'fee' => array(
@@ -533,8 +533,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'calcKey'  => 'psPayeeAmount',
 				),
 				'amount' => array(
-					'min' => 150,
-					'max' => 15000,
+					'min' => 5,
+					'max' => 200,
 				),
 				// 'is_fee' => true,
 				'fee' => array(
