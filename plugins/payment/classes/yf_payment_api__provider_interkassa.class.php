@@ -1217,23 +1217,23 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			);
 			return( $result );
 		}
-		// amount currency conversion
 		$amount = $_amount;
-		$result = $this->currency_conversion_payout( array(
-			'options' => $options,
-			'method'  => $method,
-			'amount'  => &$amount,
-		));
-		if( empty( $result[ 'status' ] ) ) { return( $result ); }
-		$amount_currency       = $result[ 'amount_currency' ];
-		$amount_currency_total = $result[ 'amount_currency_total' ];
-		$currency_id           = $result[ 'currency_id' ];
 		// amount min/max
 		$result = $this->amount_limit( array(
 			'amount'      => $amount,
 			'currency_id' => $currency_id,
 			'method'      => $method,
 		));
+		// amount currency conversion
+		$result = $this->currency_conversion_payout( array(
+			'options' => $options,
+			'method'  => $method,
+			'amount'  => $amount,
+		));
+		if( empty( $result[ 'status' ] ) ) { return( $result ); }
+		$amount_currency       = $result[ 'amount_currency' ];
+		$amount_currency_total = $result[ 'amount_currency_total' ];
+		$currency_id           = $result[ 'currency_id' ];
 		if( empty( $result[ 'status' ] ) ) { return( $result ); }
 		// default
 		$amount = @$method[ 'is_fee' ] ? $amount_currency_total : $amount_currency;
