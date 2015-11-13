@@ -103,6 +103,12 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		var round, rate = 1, value = 1, offset = 0;
 		if( is_payout ) {
 			value = $scope.payment.payout_limit_min || value;
+			var _value = ( $scope.action.payout &&
+				$scope.action.payout.method &&
+				$scope.action.payout.method.amount &&
+				$scope.action.payout.method.amount.min
+			) || 0;
+			value = _value < value ? value : _value;
 		}
 		if( is_currency ) {
 			// currency rate
@@ -124,6 +130,12 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 		if( is_payout ) {
 			var min = $scope.payment.balance_limit_lower || 0;
 			value -= +min;
+			var _value = ( $scope.action.payout &&
+				$scope.action.payout.method &&
+				$scope.action.payout.method.amount &&
+				$scope.action.payout.method.amount.max
+			) || 0;
+			value = ( _value && _value < value ) ? _value : value;
 		}
 		if( is_currency ) {
 			// currency rate
@@ -291,6 +303,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			option      : option,
 			options     : options,
 		};
+		$scope.amount_init();
 		$scope.block_payout_provider_show = false;
 		return( true );
 	};
