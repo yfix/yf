@@ -79,9 +79,9 @@ class yf_payment_test {
 		$this->number();
 	}
 
-	protected function _fast_payin() {
-		$this->payin();
-	}
+	// protected function _fast_payin() {
+		// $this->payin();
+	// }
 
 	protected function _fast_sign() {
 		$this->sign();
@@ -946,7 +946,7 @@ EOS;
 	}
 
 	// ************* test provider
-	protected function payin() {
+	public function payin() {
 		if( !empty( $_POST ) ) {
 			$payment_api = _class( 'payment_api' );
 			$dump = $payment_api->dump();
