@@ -5,6 +5,7 @@ $config = array(
 	'git_urls' => array('https://github.com/yfix/PHPExcel.git' => 'phpexcel/'),
 	'require_once' => array('phpexcel/Classes/PHPExcel.php'),
 	'example' => function() {
+        var_dump(new PHPExcel);
         return true;
 	}
 );
