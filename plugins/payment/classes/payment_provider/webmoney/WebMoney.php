@@ -28,7 +28,7 @@ class WebMoney {
 	private $_key_private      = null;
 	private $_hash_method      = null;
 
-	public function __construct( $key_public, $key_private, $hash_method = 'md5' ) {
+	public function __construct( $key_public, $key_private, $hash_method = 'sha256' ) {
 		if( empty( $key_public ) ) {
 			throw new InvalidArgumentException( 'key_public (payee purse) is empty' );
 		}

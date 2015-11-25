@@ -11,17 +11,17 @@ class yf_payment_test {
 		// 'WebMoney'    => true,
 		// 'Ecommpay'    => true,
 		'PerfectMoney' => true,
-		'YandexMoney'  => true,
+		// 'YandexMoney'  => true,
 	);
 
 	public $payin = array(
 		// 'Privat24'       => true,
 		// 'LiqPay'         => true,
 		// 'Interkassa'     => true,
-		// 'WebMoney'       => true,
+		'WebMoney'       => true,
 		'Ecommpay'       => true,
 		'PerfectMoney'   => true,
-		'YandexMoney'    => true,
+		// 'YandexMoney'    => true,
 	);
 
 	public $payout = array(
@@ -31,7 +31,7 @@ class yf_payment_test {
 		// 'WebMoney'    => true,
 		'Ecommpay'     => true,
 		'PerfectMoney' => true,
-		'YandexMoney'  => true,
+		// 'YandexMoney'  => true,
 	);
 
 	public function _init() {
@@ -260,7 +260,6 @@ class yf_payment_test {
 			// 'Privat24',
 			// 'LiqPay',
 			'Interkassa',
-			// 'YandexMoney',
 			// 'WebMoney',
 			// 'Ecommpay',
 			'PerfectMoney',
@@ -976,7 +975,7 @@ EOS;
 			}
 		}
 		$result = array();
-		$result += $this->_chunk( 'form', $_provider );
+		$result += $this->_chunk( 'payin', $_provider );
 		$this->_render( $result );
 	}
 
@@ -987,16 +986,16 @@ EOS;
 			'Interkassa',
 			'WebMoney',
 			'PerfectMoney',
-			'YandexMoney',
+			// 'YandexMoney',
 		);
 		$result = array();
 		$result += $this->_chunk( 'sign', $provider );
 		$this->_render( $result );
 	}
 
-	// *************** form
+	// *************** payin
 
-	protected function _form_privat24( $title ) {
+	protected function _payin_privat24( $title ) {
 		$options = $this->_options( $title );
 		$api     = _class( 'payment_api__provider_privat24' );
 		$form    = $api->_form( $options );
@@ -1004,7 +1003,7 @@ EOS;
 		return( array( $form, $submit ) );
 	}
 
-	protected function _form_liqpay( $title ) {
+	protected function _payin_liqpay( $title ) {
 		$options = $this->_options( $title );
 		$api = _class( 'payment_api__provider_liqpay' );
 		$form = $api->_form( $options );
@@ -1012,7 +1011,7 @@ EOS;
 		return( array( $form, $submit ) );
 	}
 
-	protected function _form_interkassa( $title ) {
+	protected function _payin_interkassa( $title ) {
 		$options = $this->_options( $title );
 		$api     = _class( 'payment_api__provider_interkassa' );
 		$is_key_private = (bool)$_GET[ 'is_key_private' ];
@@ -1027,7 +1026,7 @@ EOS;
 		return( array( $form, $submit ) );
 	}
 
-	protected function _form_yandexmoney( $title ) {
+	protected function _payin_yandexmoney( $title ) {
 		$options = $this->_options( $title );
 		$_ = &$options;
 		// fix
@@ -1062,7 +1061,7 @@ EOS;
 		return( array( $form, $submit ) );
 	}
 
-	protected function _form_WebMoney( $title ) {
+	protected function _payin_WebMoney( $title ) {
 		$url         = 'https://merchant.webmoney.ru/lmi/payment.asp';
 		$key_public  = 'Z272631242756';
 		$key_private = 'hqbGLbbdg1IGSCwB30AG';
@@ -1072,24 +1071,6 @@ EOS;
 		$url_result  = url_user( '/payment_test/provider?status=result'  );
 		$url_success = url_user( '/payment_test/provider?status=success' );
 		$url_fail    = url_user( '/payment_test/provider?status=fail'    );
-		$form =  <<<EOS
-<form id="_js_provider_webmoney_form" method="post" action="$url">
-	<input type="hidden" name="LMI_PAYMENT_AMOUNT" value="10.01">
-	<input type="hidden" name="LMI_PAYMENT_DESC_BASE64" value="{$title}">
-	<input type="hidden" name="LMI_PAYMENT_NO" value="1234">
-	<input type="hidden" name="LMI_PAYEE_PURSE" value="{$key_public}">
-	<input type="hidden" name="LMI_SIM_MODE" value="0">
-	<input type="hidden" name="LMI_RESULT_URL" value="{$url_result}">
-	<input type="hidden" name="LMI_SUCCESS_URL" value="{$url_success}">
-	<input type="hidden" name="LMI_FAIL_URL" value="{$url_fail}">
-</form>
-EOS;
-/*
-	<input type="hidden" name="FIELD_1" value="VALUE_1">
-	<input type="hidden" name="LMI_SUCCESS_METHOD" value="2">
-	<input type="hidden" name="LMI_FAIL_METHOD" value="2">
- */
-
 		$options = $this->_options( $title );
 		$api     = _class( 'payment_api__provider_webmoney' );
 		$form    = $api->_form( $options );
@@ -1097,7 +1078,7 @@ EOS;
 		return( array( $form, $submit ) );
 	}
 
-	protected function _form_ecommpay( $title ) {
+	protected function _payin_ecommpay( $title ) {
 		$options = $this->_options( $title );
 		$api     = _class( 'payment_api__provider_ecommpay' );
 		$options[ 'currency' ] = 'USD';
@@ -1107,7 +1088,7 @@ EOS;
 		return( array( $form, $submit ) );
 	}
 
-	protected function _form_perfectmoney( $title ) {
+	protected function _payin_perfectmoney( $title ) {
 		$options = $this->_options( $title );
 		$api     = _class( 'payment_api__provider_perfectmoney' );
 		$options[ 'currency' ] = 'USD';

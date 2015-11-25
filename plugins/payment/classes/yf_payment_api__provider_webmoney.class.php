@@ -5,8 +5,8 @@ _class( 'payment_api__provider_remote' );
 class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote {
 
 	public $URL         = 'https://merchant.webmoney.ru/lmi/payment.asp';
-	public $KEY_PUBLIC  = null; // merchant
-	public $KEY_PRIVATE = null; // pass
+	public $KEY_PUBLIC  = null; // purse_id
+	public $KEY_PRIVATE = null; // secret key
 	public $HASH_METHOD = 'sha256'; // signature hash method: md5, sha256; sign - not support (need payee key on server - no good idea)
 
 	public $IS_DEPOSITION = true;
@@ -38,8 +38,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 
 	public $currency_default = 'USD';
 	public $currency_allow = array(
-/*
- */
+		/*
 		'USD' => array(
 			'currency_id' => 'USD',
 			'active'      => true,
@@ -56,25 +55,28 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			'currency_id' => 'RUB',
 			'active'      => true,
 		),
+		*/
 	);
 
 	public $purse_by_currency = array(
+		/*
 		'USD' => array(
-			'id'     => 'Z272631242756',
+			'id'     => 'Zxxxxxxxxxxxx',
 			'active' => true,
 		),
 		'EUR' => array(
-			'id'     => 'E208376760367',
+			'id'     => 'Exxxxxxxxxxxx',
 			'active' => true,
 		),
 		'UAH' => array(
-			'id'     => 'U403573875538',
+			'id'     => 'Uxxxxxxxxxxxx',
 			'active' => true,
 		),
 		'RUB' => array(
-			'id'     => 'R661456872042',
+			'id'     => 'Rxxxxxxxxxxxx',
 			'active' => true,
 		),
+		*/
 	);
 
 	// public $fee = 0.1; // 2%
@@ -88,9 +90,12 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 
 	public function _init() {
 		if( !$this->ENABLE ) { return( null ); }
+		// default
+		$purse = $this->_purse_by_currency(array( 'is_key' => false ));
+		if( $purse[ 'status' ] === false ) { throw new InvalidArgumentException( $purse[ 'status_message' ] ); }
 		// load api
 		require_once( __DIR__ . '/payment_provider/webmoney/WebMoney.php' );
-		$this->api = new WebMoney( $this->KEY_PUBLIC, $this->KEY_PRIVATE, $this->HASH_METHOD );
+		$this->api = new WebMoney( $purse[ 'id' ], $purse[ 'key' ], $purse[ 'hash_method' ] );
 		$this->url_result = url_user( '/api/payment/provider?name=webmoney&operation=response' );
 		$this->url_server = url_user( '/api/payment/provider?name=webmoney&operation=response&server=true' );
 		// parent
@@ -98,7 +103,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	}
 
 	public function key( $name = 'public', $value = null ) {
-		if( !$this->ENABLE ) { return( null ); }
+		if( !$this->ENABLE || !@$this->api ) { return( null ); }
 		$value = $this->api->key( $name, $value );
 		return( $value );
 	}
@@ -110,7 +115,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	}
 
 	public function hash_method( $value = null ) {
-		if( !$this->ENABLE ) { return( null ); }
+		if( !$this->ENABLE || !@$this->api ) { return( null ); }
 		$value = $this->api->hash_method( $value );
 		return( $value );
 	}
@@ -133,16 +138,46 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function _purse_by_currency( $options ) {
+	public function _purse_by_currency( $options = null ) {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$purse = &$this->purse_by_currency;
-		if( empty( $purse[ $_currency ] )
-			|| empty( $purse[ $_currency ][ 'active' ] ) ) {
-			return( null );
+		// currency
+		$currency_id = @$_currency_id ?: @$_currency ?: @$this->currency_default;
+		if( ! @$currency_id ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестный код валюты',
+			);
+			return( $result );
 		}
-		$result = $this->purse_by_currency[ $_currency ][ 'id' ];
+		// purse
+		$purse = &$this->purse_by_currency;
+		if( ! @$purse[ $currency_id ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестная валюта',
+			);
+			return( $result );
+		}
+		if( ! @$purse[ $currency_id ][ 'active' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Валюта не активна',
+			);
+			return( $result );
+		}
+		$result = $purse[ $currency_id ];
+		// hash method
+		if( ! @$result[ 'hash_method' ] ) {
+			$result[ 'hash_method' ] = $this->HASH_METHOD;
+		}
+		// setup
+		if( @$_is_key === false ) {
+			$this->key( 'public',  $result[ 'id'  ] );
+			$this->key( 'private', $result[ 'key' ] );
+			$this->hash_method( $result[ 'hash_method' ] );
+		}
 		return( $result );
 	}
 
@@ -199,9 +234,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$_[ 'LMI_PAYMENT_AMOUNT' ] = number_format( $_[ 'LMI_PAYMENT_AMOUNT' ], 2, '.', '' );
 		// purse
 		if( empty( $_[ 'LMI_PAYEE_PURSE' ] ) ) {
-			$value = $this->_purse_by_currency( $options );
-			if( empty( $value ) ) { return( null ); }
-			$_[ 'LMI_PAYEE_PURSE' ] = $value;
+			$purse = $this->_purse_by_currency( $options );
+			if( $purse[ 'status' ] === false ) { return( null ); }
+			$_[ 'LMI_PAYEE_PURSE' ] = $purse[ 'id' ];
 			unset( $_[ 'currency' ] );
 		}
 		// description
