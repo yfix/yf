@@ -78,16 +78,16 @@ class yf_api {
 	}
 
 	// 503 Service Unavailable
-	public function _reject( $code = 503 ) {
+	public function _reject( $code = 503, $is_raw = true ) {
 		list( $protocol, $code, $status ) = $this->_send_http_status( $code );
 		$this->_send_http_type();
-		$this->_send_http_content( $status );
+		$this->_send_http_content( $status, $is_raw );
 	}
 
 	// 301 Moved Permanently
 	// 302 Moved Temporarily
 	// 302 Found
-	public function _redirect( $url, $message = null ) {
+	public function _redirect( $url, $message = null, $is_raw = true ) {
 		list( $protocol, $code, $status ) = $this->_send_http_status( 302 );
 		// location
 		$url      = $url ?: url( '/' );
@@ -95,7 +95,18 @@ class yf_api {
 		header( $location );
 		// message
 		$this->_send_http_type();
-		$this->_send_http_content( $message );
+		$this->_send_http_content( $message, $is_raw );
+	}
+
+	// 200 OK, etc
+	public function _response_raw( $message = null, $code = 200, $type = null ) {
+		$is_raw = true;
+		// code
+		list( $protocol, $code, $status ) = $this->_send_http_status( $code );
+		$this->_send_http_type( $type );
+		// message
+		$message = @$message ?: $status;
+		$this->_send_http_content( $message, $is_raw );
 	}
 
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
@@ -116,18 +127,26 @@ class yf_api {
 	protected function _call( $class = null, $class_path = null, $method = null, $options = array() ) {
 		main()->NO_GRAPHICS = true;
 		$result = $this->_firewall( $class, $class_path, $method, $options );
-		$json = json_encode( $result );
-		$response = &$json;
-		// check jsonp
-		$type = 'json';
-		if( isset( $_GET[ 'callback' ] ) ) {
-			$jsonp_callback = $_GET[ 'callback' ];
-			$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
-			$type = 'javascript';
+		if( @$result[ 'is_raw' ] ) {
+			@list( $response, $code, $type ) = $result;
+			$is_raw = true;
+		} else {
+			$is_raw = false;
+			$json = json_encode( $result );
+			$response = &$json;
+			// check jsonp
+			$type = 'json';
+			if( isset( $_GET[ 'callback' ] ) ) {
+				$jsonp_callback = $_GET[ 'callback' ];
+				$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
+				$type = 'javascript';
+			}
 		}
-		list( $protocol, $code, $status ) = $this->_send_http_status( 200 );
+		list( $protocol, $code, $status ) = $this->_send_http_status( $code );
+		// message
+		$message = @$response ?: $status;
 		$this->_send_http_type( $type );
-		$this->_send_http_content( $response );
+		$this->_send_http_content( $message, $is_raw );
 	}
 
 	public function _detect_protocol_scheme( $options = null ) {
@@ -202,10 +221,10 @@ class yf_api {
 		header( $header );
 	}
 
-	protected function _send_http_content( $response = null ) {
+	protected function _send_http_content( $response = null, $is_raw = null ) {
 		// $error = ob_get_contents();
 		// ob_end_clean();
-		if( !empty( $this->JSON_VULNERABILITY_PROTECTION ) ) { echo( ")]}',\n" ); }
+		if( !@$is_raw && @$this->JSON_VULNERABILITY_PROTECTION ) { echo( ")]}',\n" ); }
 		if( isset( $response ) ) { echo( $response ); }
 		// if( isset( $error    ) ) { echo( "\n,([{\n $error" ); }
 		exit;

@@ -340,11 +340,12 @@ class yf_payment {
 				break;
 		}
 		$result = $payment_api->_class( $provider_class, '_api_' . $method, $request );
+		if( @$result[ 'is_raw' ] ) { return( $result ); }
 // var_dump( $result );
 // exit;
-		list( $status, $status_message ) = array_values( $result );
+		@list( $status, $status_message ) = array_values( $result );
 		if( $is_server ) {
-			if( $status) {
+			if( @$status) {
 				return( array( 'status' => 'ok' ) );
 			} else {
 				$api->_error();
