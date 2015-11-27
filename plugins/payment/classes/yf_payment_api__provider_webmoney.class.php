@@ -379,7 +379,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$result = $this->__api_response__check( $operation_id, $_response );
 		if( $result !== true ) { return( $result ); }
 		// check signature
-		$signature  = &$response[ 'signature' ];
+		$signature  = &$_response[ 'signature' ];
 		$is_signature = isset( $signature );
 		if( !$is_signature ) {
 			$result = array(
