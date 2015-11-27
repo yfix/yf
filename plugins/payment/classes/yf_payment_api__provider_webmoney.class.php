@@ -351,6 +351,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		// check response
+		$response = $this->_response_parse( $response );
 		$result = $this->__api_response__check( $operation_id, $response );
 		if( $result !== true ) { return( $result ); }
 		// update operation
@@ -374,10 +375,12 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		// check response
-		$result = $this->__api_response__check( $operation_id, $response );
+		$_response = $this->_response_parse( $response );
+		$result = $this->__api_response__check( $operation_id, $_response );
 		if( $result !== true ) { return( $result ); }
 		// check signature
-		$is_signature = isset( $response[ 'signature' ] );
+		$signature  = &$response[ 'signature' ];
+		$is_signature = isset( $signature );
 		if( !$is_signature ) {
 			$result = array(
 				'status'         => false,
@@ -387,7 +390,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		$signature  = $response[ 'signature' ];
 		$_signature = $this->signature( $response, $is_request = false );
 		if( $signature != $_signature ) {
 			$result = array(
@@ -402,7 +404,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$sql_datetime = $payment_api->sql_datetime();
 		$operation_options = array(
 			'response' => array( array(
-				'data'     => $response,
+				'data'     => $_response,
 				'datetime' => $sql_datetime,
 			))
 		);
@@ -434,7 +436,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// check response options
-		$operation = $this->_get_operation( $response );
+		$_response = $this->_response_parse( $response );
+		$operation = $this->_get_operation( $_response );
 		if( !is_array( $operation[ 'options' ][ 'response' ][0][ 'data' ] ) ) {
 			$result = array(
 				'status'         => false,
@@ -451,7 +454,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			$_data[ 'LMI_SYS_INVS_NO' ] != $response[ 'LMI_SYS_INVS_NO' ]
 			|| $_data[ 'LMI_SYS_TRANS_NO' ] != $response[ 'LMI_SYS_TRANS_NO' ]
 			|| $_data[ 'LMI_SYS_TRANS_DATE' ] != $response[ 'LMI_SYS_TRANS_DATE' ]
-			|| empty( $response[ 'signature' ] )
+			|| empty( $_response[ 'signature' ] )
 		) {
 			$result = array(
 				'status'         => false,
@@ -520,17 +523,17 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		switch( $_GET[ 'status' ] ) {
 			case 'result':
 				$state = 'wait';
-				$result = $this->__api_response__result( $operation_id, $_response );
+				$result = $this->__api_response__result( $operation_id, $response );
 				return( $result );
 				break;
 			case 'success':
-				$result = $this->__api_response__success( $operation_id, $_response );
+				$result = $this->__api_response__success( $operation_id, $response );
 				if( $result !== true ) { return( $result ); }
 				$state = 'success';
 				break;
 			case 'fail':
 			default:
-				$result = $this->__api_response__fail( $operation_id, $_response );
+				$result = $this->__api_response__fail( $operation_id, $response );
 				if( $result !== true ) { return( $result ); }
 				$state = 'fail';
 				break;
