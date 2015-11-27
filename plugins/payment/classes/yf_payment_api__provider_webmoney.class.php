@@ -335,7 +335,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		}
 		// check payee purse
 		$purse = $this->_purse_by_currency( $request );
-		if( @$request[ 'key_public' ] != @$purse[ 'id' ] ) {
+		if( @$response[ 'key_public' ] != @$purse[ 'id' ] ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверный ответ: payee purse',
