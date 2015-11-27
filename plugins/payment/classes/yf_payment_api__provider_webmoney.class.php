@@ -447,14 +447,14 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		$_response = end( $operation[ 'options' ][ 'response' ] );
-		$_data = @$_response[ 'data' ];
+		$r = end( $operation[ 'options' ][ 'response' ] );
+		$_data = @$r[ 'data' ];
 		// check transaction data
 		if(
 			$_data[ 'LMI_SYS_INVS_NO' ] != $response[ 'LMI_SYS_INVS_NO' ]
 			|| $_data[ 'LMI_SYS_TRANS_NO' ] != $response[ 'LMI_SYS_TRANS_NO' ]
 			|| $_data[ 'LMI_SYS_TRANS_DATE' ] != $response[ 'LMI_SYS_TRANS_DATE' ]
-			|| empty( $_response[ 'signature' ] )
+			|| empty( $_data[ 'signature' ] )
 		) {
 			$result = array(
 				'status'         => false,
