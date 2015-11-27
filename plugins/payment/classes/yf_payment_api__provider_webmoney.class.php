@@ -416,8 +416,15 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$payment_api->dump( array( 'name' => 'WebMoney', 'operation_id' => (int)$operation_id ));
 		// response
 		$response = $_POST;
+		// prerequest is empty
+		if( empty( $response ) ) {
+			// DUMP
+			$payment_api->dump(array( 'var' => array( 'PREREQUEST' => 'is empty' )));
+			$result = array( 'is_raw' => true, 'OK' );
+			return( $result );
+		}
 		// prerequest
-		if( empty( $response ) || !empty( $response[ 'LMI_PREREQUEST' ] ) ) {
+		if( !empty( $response[ 'LMI_PREREQUEST' ] ) ) {
 			// DUMP
 			$payment_api->dump(array( 'var' => array( 'PREREQUEST' => 'YES' )));
 			$result = array( 'is_raw' => true, 'YES' );
