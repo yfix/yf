@@ -298,14 +298,86 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		return( $operation );
 	}
 
+	public function __api_response__check( $operation_id, $response ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$payment_api = $this->payment_api;
+		// check response options
+		$operation = $this->_get_operation( $response );
+		if( !is_array( $operation[ 'options' ][ 'request' ][0][ 'data' ] ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный ответ: отсутствуют данные операции',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
+		$request = $operation[ 'options' ][ 'request' ][0][ 'data' ];
+		// check operation_id
+		if( @$request[ 'operation_id' ] != @$response[ 'operation_id' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный ответ: operation_id',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
+		// check amount
+		if( @$request[ 'amount' ] != @$response[ 'amount' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный ответ: amount',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
+		// check payee purse
+		$purse = $this->_purse_by_currency( $request );
+		if( @$request[ 'key_public' ] != @$purse[ 'id' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный ответ: payee purse',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
+		return( true );
+	}
+
+	public function __api_response__prerequest( $operation_id, $response ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$payment_api = $this->payment_api;
+		// check response
+		$result = $this->__api_response__check( $operation_id, $response );
+		if( $result !== true ) { return( $result ); }
+		// update operation
+		$sql_datetime = $payment_api->sql_datetime();
+		$operation_options = array(
+			'response' => array( array(
+				'data'     => $response,
+				'datetime' => $sql_datetime,
+			)),
+		);
+		$operation_update_data = array(
+			'operation_id'    => $operation_id,
+			'options'         => $operation_options,
+		);
+		$payment_api->operation_update( $operation_update_data );
+		if( !$result[ 'status' ] ) { return( $result ); }
+		return( true );
+	}
+
 	public function __api_response__result( $operation_id, $response ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
-		$_response = $this->_response_parse( $response );
-		// public key (purse)
-		$key_public = $_response[ 'key_public' ];
+		// check response
+		$result = $this->__api_response__check( $operation_id, $response );
+		if( $result !== true ) { return( $result ); }
 		// check signature
-		$is_signature = isset( $_response[ 'signature' ] );
+		$is_signature = isset( $response[ 'signature' ] );
 		if( !$is_signature ) {
 			$result = array(
 				'status'         => false,
@@ -315,7 +387,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		$signature  = $_response[ 'signature' ];
+		$signature  = $response[ 'signature' ];
 		$_signature = $this->signature( $response, $is_request = false );
 		if( $signature != $_signature ) {
 			$result = array(
@@ -327,13 +399,13 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// save options
+		$sql_datetime = $payment_api->sql_datetime();
 		$operation_options = array(
 			'response' => array( array(
-				'data'     => $_response,
+				'data'     => $response,
 				'datetime' => $sql_datetime,
 			))
 		);
-		$payment_api = $this->payment_api;
 		$result = $payment_api->operation_update( array(
 			'operation_id' => $operation_id,
 			'options'      => $operation_options,
@@ -343,13 +415,12 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			'status'         => true,
 			'status_message' => 'Поплнение через сервис: WebMoney',
 		);
-		return( true );
+		return( $result );
 	}
 
 	public function __api_response__success( $operation_id, $response ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
-		$_response = $this->_response_parse( $response );
 		if( empty( $response[ 'LMI_SYS_INVS_NO' ] )
 			|| empty( $response[ 'LMI_SYS_TRANS_NO' ] )
 			|| empty( $response[ 'LMI_SYS_TRANS_DATE' ] )
@@ -363,8 +434,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// check response options
-		$operation = $this->_get_operation( $_response );
-		if( empty( $operation[ 'options' ] ) && empty( $operation[ 'options' ][ 'response' ] ) ) {
+		$operation = $this->_get_operation( $response );
+		if( !is_array( $operation[ 'options' ][ 'response' ][0][ 'data' ] ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверный ответ: отсутствуют данные операции',
@@ -373,13 +444,14 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		$__response = reset( $operation[ 'options' ][ 'response' ] );
-		$_data = $__response[ 'data' ];
+		$_response = end( $operation[ 'options' ][ 'response' ] );
+		$_data = @$_response[ 'data' ];
 		// check transaction data
 		if(
 			$_data[ 'LMI_SYS_INVS_NO' ] != $response[ 'LMI_SYS_INVS_NO' ]
 			|| $_data[ 'LMI_SYS_TRANS_NO' ] != $response[ 'LMI_SYS_TRANS_NO' ]
 			|| $_data[ 'LMI_SYS_TRANS_DATE' ] != $response[ 'LMI_SYS_TRANS_DATE' ]
+			|| empty( $response[ 'signature' ] )
 		) {
 			$result = array(
 				'status'         => false,
@@ -401,13 +473,12 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		);
 		// DUMP
 		$payment_api->dump(array( 'var' => $result ));
-		return( $result );
+		return( true );
 	}
 
 	public function _api_response( $request ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
-		$sql_datetime = $payment_api->sql_datetime();
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
@@ -417,20 +488,22 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// response
 		$response = $_POST;
 		// prerequest is empty
-		if( empty( $response ) ) {
+		if( ! @$response ) {
 			// DUMP
 			$payment_api->dump(array( 'var' => array( 'PREREQUEST' => 'is empty' )));
 			$result = array( 'is_raw' => true, 'OK' );
 			return( $result );
 		}
+		$_response = $this->_response_parse( $response );
 		// prerequest
-		if( !empty( $response[ 'LMI_PREREQUEST' ] ) ) {
+		if( @$response[ 'LMI_PREREQUEST' ] ) {
 			// DUMP
 			$payment_api->dump(array( 'var' => array( 'PREREQUEST' => 'YES' )));
-			$result = array( 'is_raw' => true, 'YES' );
+			$result = $this->__api_response__prerequest( $operation_id, $_response );
+			$state = ( $result === true ? 'YES' : 'NO' );
+			$result = array( 'is_raw' => true, $state );
 			return( $result );
 		}
-		$_response = $this->_response_parse( $response );
 		// check operation_id
 		if( $operation_id != (int)$_response[ 'operation_id' ] ) {
 			$result = array(
@@ -447,19 +520,19 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		switch( $_GET[ 'status' ] ) {
 			case 'result':
 				$state = 'wait';
-				$result = $this->__api_response__result( $operation_id, $response );
+				$result = $this->__api_response__result( $operation_id, $_response );
 				return( $result );
 				break;
 			case 'success':
+				$result = $this->__api_response__success( $operation_id, $_response );
+				if( $result !== true ) { return( $result ); }
 				$state = 'success';
-				$result = $this->__api_response__success( $operation_id, $response );
-				if( is_array( $result ) ) { $state = 'fail'; }
 				break;
 			case 'fail':
 			default:
+				$result = $this->__api_response__fail( $operation_id, $_response );
+				if( $result !== true ) { return( $result ); }
 				$state = 'fail';
-				$result = $this->__api_response__fail( $operation_id, $response );
-				if( is_array( $result ) ) { $state = 'fail'; }
 				break;
 		}
 		list( $status_name, $status_message ) = $this->_state( $state );
