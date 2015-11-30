@@ -87,6 +87,10 @@ class yf_payment_test {
 		$this->sign();
 	}
 
+	protected function _fast_ip_check() {
+		$this->ip_check();
+	}
+
 	// ************* test api
 	public function transaction() {
 		$payment_api = _class( 'payment_api' );
@@ -993,6 +997,39 @@ EOS;
 		$this->_render( $result );
 	}
 
+	protected function ip_check() {
+		$api = _class( 'payment_api__provider_remote' );
+		$api->ENABLE = true;
+		// $api = _class( 'api' );
+		$ips = array(
+			'212.118.48.1',
+			'212.118.48.2',
+			'212.118.48.3',
+			'212.118.49.1',
+			'212.119.49.1',
+		);
+		$allow = array(
+			'212.118.48.1'    => true,
+			'212.118.48.2'    => true,
+			'212.118.48.*'    => true,
+			'212.118.48.0/24' => true,
+			'212.118.*.*'     => false,
+		);
+		$result = array();
+		$ip = $api->_ip();
+		$result[] = 'ip: '.       var_export( $ip, true );
+		$result[] = 'ip allow: '. var_export( $allow, true );
+		foreach( $ips as $ip ) {
+			$r = $api->_check_ip( array(
+				'ip'        => $ip,
+				'ip_filter' => $allow,
+			));
+			$result[] = $ip .': '. var_export( $r, true );
+		}
+		$result = $this->_add_panel( array( 'header' => 'IP check', 'php' => $result ) );
+		return( $this->_render( $result ) );
+	}
+
 	// *************** payin
 
 	protected function _payin_privat24( $title ) {
@@ -1063,8 +1100,6 @@ EOS;
 
 	protected function _payin_WebMoney( $title ) {
 		$url         = 'https://merchant.webmoney.ru/lmi/payment.asp';
-		$key_public  = 'Z272631242756';
-		$key_private = 'hqbGLbbdg1IGSCwB30AG';
 		$title = 'Пополнение счета';
 		$title = base64_encode( $title );
 		// $title = iconv( 'utf-8', 'windows-1251', $title );
@@ -1454,12 +1489,12 @@ EOS;
 		static $count = 1;
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// action
-		$action = '';
+		$action = null;
 		if( !empty( $_action ) ) {
 			$action = implode( ' ', (array)$_action );
 		}
 		// data
-		if( @$_php ) { $data = $_php; $lang = 'php'; }
+		if( @$_php ) { $data = is_array( $_php ) ? implode( "\n", $_php ) : $_php; $lang = 'php'; }
 		elseif( @$_form ) { $data = $_form; $lang = 'html'; }
 		$html_data = array();
 		foreach( (array)$data as $item ) {

@@ -54,6 +54,70 @@ class yf_api {
 		$this->_call( $class, null, $method );
 	}
 
+	public function _ip( $options = null ) {
+		if( !empty( $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] ) ) {
+			$ips = explode( ',', $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] );
+			$ip  = reset( $ips );
+		} else {
+			$ip =
+				   $_SERVER[ 'HTTP_CLIENT_IP' ]
+				?: $_SERVER[ 'HTTP_X_REAL_IP' ]
+				?: $_SERVER[ 'REMOTE_ADDR' ]
+			;
+		}
+		$result = trim( $ip );
+		return( $result );
+	}
+
+	public function _check_ip( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// filter
+		$ip_filter = @$_ip_filter ? $_ip_filter : $this->ip_filter;
+		is_string( $ip_filter ) && $ip_filter = (array) $ip_filter;
+		if( ! is_array( $ip_filter ) ) { return( null ); }
+		$ip_filter = $this->_ip_filter_valid( $ip_filter );
+		if( ! $ip_filter ) { return( null ); }
+		// ip
+		$ip = isset( $_ip ) ? $_ip : $this->_ip();
+		foreach( $ip_filter as $range => $allow ) {
+			$result = $this->_ip_in_range( $ip, $range );
+			if( $result ) { return( $allow ); }
+		}
+		return( false );
+	}
+
+	function _ip_filter_valid( $ip_filter ) {
+		if( ! is_array( $ip_filter ) ) { return( false ); }
+		$result = array();
+		foreach( $ip_filter as $ip => $allow ) {
+			if( !$ip ) { return( false ); }
+			$r = strpos( $ip, '.*' );
+			$len = strlen( $ip );
+			if( $r > 0 && ( $len - $r ) >= 2 ) {
+				$r = explode( '.*', $ip );
+				unset( $ip_filter[ $ip ] );
+				$count = count( $r ) - 1;
+				$mask = 32 - 8 * $count;
+				$ip = $r[0] . str_repeat( '.0', $count ) .'/'. $mask;
+				$ip_filter[ $ip ] = $allow;
+			}
+			$result[ $ip ] = $allow;
+		}
+		return( $result );
+	}
+
+	function _ip_in_range( $ip, $range ) {
+		if( strpos( $range, '/' ) == false ) { $range .= '/32'; }
+		// $range is in IP/CIDR format eg 127.0.0.1/24
+		list( $range, $netmask ) = explode( '/', $range, 2 );
+		$range_decimal = ip2long( $range );
+		$ip_decimal = ip2long( $ip );
+		$wildcard_decimal = pow( 2, ( 32 - $netmask ) ) - 1;
+		$netmask_decimal = ~ $wildcard_decimal;
+		return ( ( $ip_decimal & $netmask_decimal ) == ( $range_decimal & $netmask_decimal ) );
+	}
+
 	public function _parse_request() {
 		$is_post = &$this->is_post;
 		$is_json = &$this->is_json;

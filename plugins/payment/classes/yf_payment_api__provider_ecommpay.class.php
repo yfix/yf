@@ -464,7 +464,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		'Visa, MasterCard',
 	);
 
-	public $provider_ip_allow = array(
+	public $ip_filter = array(
 		'78.140.183.154' => true,
 		'204.26.61.98'   => true,
 	);
@@ -738,7 +738,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// server notification
 		// check ip
 		$ip_allow = $this->_check_ip();
-		if( !$ip_allow ) {
+		if( $ip_allow === false ) {
 			// DUMP
 			$payment_api->dump( array( 'var' => 'ip not allow' ));
 			return( null );

@@ -326,7 +326,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			$payment_api->dump(array( 'var' => $result ));
 			return( $result );
 		}
-		$request = $operation[ 'options' ][ 'request' ][0][ 'data' ];
+		$request = @$operation[ 'options' ][ 'request' ][0][ 'data' ];
 		// check operation_id
 		if( @$request[ 'operation_id' ] != @$response[ 'operation_id' ] ) {
 			$result = array(
@@ -503,7 +503,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// START DUMP
 		$payment_api->dump( array( 'name' => 'WebMoney', 'operation_id' => (int)$operation_id ));
 		// response
-		$response = $_POST;
+		$response = @$_POST;
 		// prerequest is empty
 		if( ! @$response ) {
 			// DUMP
