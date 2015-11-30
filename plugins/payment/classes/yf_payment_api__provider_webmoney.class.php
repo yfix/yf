@@ -379,7 +379,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$result = $this->__api_response__check( $operation_id, $_response );
 		if( $result !== true ) { return( $result ); }
 		// check signature
-		$signature  = &$_response[ 'signature' ];
+		$signature  = $_response[ 'signature' ];
 		$is_signature = isset( $signature );
 		if( !$is_signature ) {
 			$result = array(
@@ -497,16 +497,16 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			$result = array( 'is_raw' => true, 'OK' );
 			return( $result );
 		}
-		$_response = $this->_response_parse( $response );
 		// prerequest
 		if( @$response[ 'LMI_PREREQUEST' ] ) {
 			// DUMP
 			$payment_api->dump(array( 'var' => array( 'PREREQUEST' => 'YES' )));
-			$result = $this->__api_response__prerequest( $operation_id, $_response );
+			$result = $this->__api_response__prerequest( $operation_id, $response );
 			$state = ( $result === true ? 'YES' : 'NO' );
 			$result = array( 'is_raw' => true, $state );
 			return( $result );
 		}
+		$_response = $this->_response_parse( $response );
 		// check operation_id
 		if( $operation_id != (int)$_response[ 'operation_id' ] ) {
 			$result = array(
