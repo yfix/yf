@@ -98,6 +98,15 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$this->api = new WebMoney( $purse[ 'id' ], $purse[ 'key' ], $purse[ 'hash_method' ] );
 		$this->url_result = url_user( '/api/payment/provider?name=webmoney&operation=response' );
 		$this->url_server = url_user( '/api/payment/provider?name=webmoney&operation=response&server=true' );
+		// DEBUG
+		$is_test = $this->is_test();
+		if( $is_test && @$_GET[ 'result_test' ] ) {
+			$result_test = $_GET[ 'result_test' ] == '1' || $_GET[ 'result_test' ] == 'true' ? 1: 0;
+			// test: 0 - success; 1 - fail.
+			// $_[ 'LMI_SIM_MODE' ] = 0;
+			// $_[ 'LMI_SIM_MODE' ] = 1;
+			$_SESSION[ 'payin' ][ 'result_test' ] = $result_test;
+		}
 		// parent
 		parent::_init();
 	}
@@ -250,9 +259,14 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			|| ( empty( $_[ 'LMI_PAYMENT_DESC' ] ) && empty( $_[ 'LMI_PAYMENT_DESC_BASE64' ] ) )
 		) { $_ = null; }
 		// DEBUG
-		// test: 0 - success; 1 - fail.
-		// $_[ 'LMI_SIM_MODE' ] = 0;
-		// $_[ 'LMI_SIM_MODE' ] = 1;
+		$is_test = $this->is_test();
+		if( $is_test && @$_SESSION[ 'payin' ][ 'result_test' ] ) {
+			$result_test = $_SESSION[ 'payin' ][ 'result_test' ];
+			// test: 0 - success; 1 - fail.
+			// $_[ 'LMI_SIM_MODE' ] = 0;
+			// $_[ 'LMI_SIM_MODE' ] = 1;
+			$_[ 'LMI_SIM_MODE' ] = $result_test;
+		}
 		return( $_ );
 	}
 
@@ -518,8 +532,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// check status
-		$test = null;
-		isset( $_response[ 'test' ] ) && $test =  (int)$_response[ 'test' ] == 1 ? true : false;
+		$is_test = null;
+		isset( $_response[ 'test' ] ) && $is_test =  (int)$_response[ 'test' ] == 1 ? true : false;
 		switch( $_GET[ 'status' ] ) {
 			case 'result':
 				$state = 'wait';
