@@ -1035,14 +1035,18 @@ EOS;
 	}
 
 	public function _api_js_cors() {
-		header('Access-Control-Allow-Origin: *');
-		// header('Access-Control-Allow-Credentials: true');
-		// header('Access-Control-Allow-Methods: OPTIONS, HEAD, GET, POST, PUT, PATCH, DELETE');
-		// header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Content-Range, Content-Disposition');
+		// check origin
+		header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'].'1');
+		header('Access-Control-Allow-Credentials: true');
+		// all origin
+		// header('Access-Control-Allow-Origin: *');
+		header('Access-Control-Allow-Methods: OPTIONS, HEAD, GET, POST, PUT, PATCH, DELETE');
+		header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Content-Range, Content-Disposition');
 		return( array(
-			'cors' => 'ok',
-			'get'  => $_GET,
-			'post' => $_POST,
+			'cors'   => 'ok',
+			'get'    => $_GET,
+			'post'   => $_POST,
+			'server' => $_SERVER,
 		));
 	}
 
