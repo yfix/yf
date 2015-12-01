@@ -81,6 +81,13 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 
 	// public $fee = 0.1; // 2%
 
+	public $ip_filter = array(
+		'212.118.48.0/24',
+		'212.158.173.0/24',
+		'91.200.28.0/24',
+		'91.227.52.0/24',
+	);
+
 	public $service_allow = array(
 		'WebMoney',
 	);
@@ -214,14 +221,14 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		}
 		// url
 		if( !empty( $_[ 'url_result' ] ) ) {
-			$_[ 'LMI_RESULT_URL'    ] =  $_[ 'url_result' ];
+			$_[ 'LMI_RESULT_URL'    ] = $_[ 'url_result' ] . '&status=result';
+			$_[ 'LMI_SUCCESS_URL'   ] = $_[ 'url_result' ] . '&status=success';
+			$_[ 'LMI_FAIL_URL'      ] = $_[ 'url_result' ] . '&status=fail';
 			$_[ 'LMI_RESULT_METHOD' ] = 1;
 			unset( $_[ 'url_result' ] );
 		}
 		if( !empty( $_[ 'url_server' ] ) ) {
 			$_[ 'LMI_RESULT_URL'     ] = $_[ 'url_server' ] . '&status=result';
-			$_[ 'LMI_SUCCESS_URL'    ] = $_[ 'url_server' ] . '&status=success';
-			$_[ 'LMI_FAIL_URL'       ] = $_[ 'url_server' ] . '&status=fail';
 			unset( $_[ 'url_server' ] );
 		}
 		$url        = $this->_url( $options, $is_server = false );
@@ -502,6 +509,15 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// START DUMP
 		$payment_api->dump( array( 'name' => 'WebMoney', 'operation_id' => (int)$operation_id ));
+		// check ip
+		if( $is_server ) {
+			$ip_allow = $this->_check_ip();
+			if( $ip_allow === false ) {
+				// DUMP
+				$payment_api->dump( array( 'var' => 'ip not allow' ));
+				return( null );
+			}
+		}
 		// response
 		$response = @$_POST;
 		// prerequest is empty
