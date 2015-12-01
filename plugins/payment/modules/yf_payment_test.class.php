@@ -91,6 +91,10 @@ class yf_payment_test {
 		$this->ip_check();
 	}
 
+	protected function _fast_js_cors() {
+		$this->js_cors();
+	}
+
 	// ************* test api
 	public function transaction() {
 		$payment_api = _class( 'payment_api' );
@@ -1028,6 +1032,69 @@ EOS;
 		}
 		$result = $this->_add_panel( array( 'header' => 'IP check', 'php' => $result ) );
 		return( $this->_render( $result ) );
+	}
+
+	public function _api_js_cors() {
+		return( array(
+			'cors' => 'ok',
+			'get'  => $_GET,
+			'post' => $_POST,
+		));
+	}
+
+	protected function js_cors() {
+		$api = _class( 'api' );
+echo <<<'EOS'
+<!DOCTYPE html>
+<html ng-app="myApp">
+	<head>
+		<meta charset="utf-8">
+		<title>JS CORS</title>
+	</head>
+	<body ng-controller="MainCtrl">
+		Cross-Origin Resource Sharing<br/>
+
+		<button ng-click="get()">GET</button>
+		Result : {{resultGet}}
+		<br/>
+		<input ng-model="movie"/><button ng-click="post(movie)">POST</button>
+		Result : {{resultPost}}
+
+		<script src="http://code.angularjs.org/1.4.8/angular.min.js"></script>
+
+		<script>
+			var app = angular.module('myApp', []);
+			app.config(function($httpProvider) {
+				//Enable cross domain calls
+				$httpProvider.defaults.useXDomain = true;
+				//Remove the header containing XMLHttpRequest used to identify ajax call
+				//that would prevent CORS from working
+				delete $httpProvider.defaults.headers.common['X-Requested-With'];
+			});
+			app.controller('MainCtrl', function($scope, $http) {
+				$scope.get = function() {
+					$http.get("http://rocky.dev/api/payment_test/js_cors").success(function(result) {
+						console.log("Success", result);
+						$scope.resultGet = result;
+					}).error(function() {
+						console.log("error");
+					});
+				};
+				$scope.post = function(value) {
+					$http.post("http://rocky.dev/api/payment_test/js_cors", { 'movie': value }).success(function(result) {
+						console.log(result);
+						$scope.resultPost = result;
+					}).error(function() {
+						console.log("error");
+					});
+				};
+			});
+		</script>
+
+	</body>
+</html>
+EOS;
+		exit;
 	}
 
 	// *************** payin
