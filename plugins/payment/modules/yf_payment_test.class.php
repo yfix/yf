@@ -1063,10 +1063,13 @@ echo <<<'EOS'
 		Cross-Origin Resource Sharing<br/>
 
 		<button ng-click="get()">GET</button>
-		Result : {{resultGet}}
 		<br/>
-		<input ng-model="movie"/><button ng-click="post(movie)">POST</button>
-		Result : {{resultPost}}
+		Result : {{resultGet|json}}
+		<hr/>
+		<input ng-model="value"/><button ng-click="post(movie)">POST</button>
+		<br/>
+		Result : {{resultPost|json}}
+		<hr/>
 
 		<script src="http://code.angularjs.org/1.4.8/angular.min.js"></script>
 
@@ -1080,19 +1083,26 @@ echo <<<'EOS'
 				delete $httpProvider.defaults.headers.common['X-Requested-With'];
 			});
 			app.controller('MainCtrl', function($scope, $http) {
+				var url_api = 'http://rocky.dev/api/payment_test/js_cors';
 				$scope.get = function() {
-					$http.get("http://rocky.dev/api/payment_test/js_cors").success(function(result) {
-						console.log("Success", result);
+					$http.post(url_api)
+					.success(function(result) {
+						console.log(result);
 						$scope.resultGet = result;
-					}).error(function() {
+					})
+					.error(function(result) {
+						$scope.resultGet = result;
 						console.log("error");
 					});
 				};
 				$scope.post = function(value) {
-					$http.post("http://rocky.dev/api/payment_test/js_cors", { 'movie': value }).success(function(result) {
+					$http.post(url_api, { value: value })
+					.success(function(result) {
 						console.log(result);
 						$scope.resultPost = result;
-					}).error(function() {
+					})
+					.error(function(result) {
+						$scope.resultPost = result;
 						console.log("error");
 					});
 				};
