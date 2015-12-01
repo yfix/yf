@@ -1036,7 +1036,7 @@ EOS;
 
 	public function _api_js_cors() {
 		// check origin
-		header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'].'1');
+		header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
 		header('Access-Control-Allow-Credentials: true');
 		// all origin
 		// header('Access-Control-Allow-Origin: *');
