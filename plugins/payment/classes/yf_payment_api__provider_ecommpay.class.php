@@ -117,6 +117,22 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					),
 				),
 			),
+			'webmoney' => array(
+				'title'       => 'WebMoney',
+				'icon'        => 'webmoney',
+				'option' => array(
+					// 'payment_group_id' => 2,
+					// 'followup'         => 0,
+				),
+				// 'amount_min'  => 100,
+				'fee'         => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'active'      => true,
+					),
+				),
+			),
 		),
 		'payout' => array(
 			'pay_card' => array(
