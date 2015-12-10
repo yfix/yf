@@ -704,7 +704,7 @@ class yf_main {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$servers = $this->get_data('servers');
 		$this->SERVER_ID = 0;
-		if (!conf('SERVER_ID') && ($servers || DEBUG_MODE)) {
+		if (!conf('SERVER_ID') && ($servers || DEBUG_MODE) && !$this->is_hhvm()) {
 			$self_ips = explode(' ', exec('hostname --all-ip-addresses'));
 			if ($self_ips) {
 				$self_ips = array_combine($self_ips, $self_ips);
