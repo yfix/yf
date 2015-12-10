@@ -728,6 +728,12 @@ class yf_debug {
 				'compress: ratio'			=> ($c_info['size_compressed'] ? round($c_info['size_original'] / $c_info['size_compressed'] * 100, 0) : 0).'%',
 			);
 		}
+		$loaded_exts = array();
+		foreach (get_loaded_extensions() as $v) {
+			$loaded_exts[] = strtolower($v);
+		}
+		asort($loaded_exts);
+
 		$data['ini'] += array(
 			'memory_usage'			=> function_exists('memory_get_usage') ? memory_get_usage() : 'n/a',
 			'memory_peak_usage'		=> function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : 'n/a',
@@ -739,7 +745,7 @@ class yf_debug {
 			'php_current_user'		=> get_current_user(),
 			'php_uname'				=> php_uname(),
 			'php_include_path'		=> get_include_path(),
-			'php_loaded_extensions'	=> implode(', ', get_loaded_extensions()),
+			'php_loaded_extensions'	=> implode(', ', $loaded_exts),
 			'php_ini_scanned_files'	=> function_exists('php_ini_scanned_files') ? php_ini_scanned_files() : '',
 		);
 		$data['session']['session_id'] = session_id();
