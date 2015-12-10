@@ -207,6 +207,8 @@ class yf_utils {
 				$text[$k] = $this->_prepare_html($v);
 			}
 			return $text;
+		} elseif (!is_string($text)) {
+			return $text;
 		}
 		$have_tr = false;
 		if (DEBUG_MODE) {
