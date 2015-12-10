@@ -156,7 +156,7 @@ class yf_i18n {
 		// Try to set PHP's locale (provide several possible values)
 		$success = setlocale(LC_ALL, $lc_all);
 // TODO: check $success
-		if (DEBUG_MODE) {
+		if (DEBUG_MODE && !is_hhvm()) {
 			debug('locale::current', array(
 				'LC_ALL'		=> setlocale(LC_ALL, 0),
 				'LC_COLLATE'	=> setlocale(LC_COLLATE, 0),
