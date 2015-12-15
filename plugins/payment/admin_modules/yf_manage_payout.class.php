@@ -734,9 +734,10 @@ class yf_manage_payout {
 				if( @$request[ 'options' ][ 'method_id' ] == $_method_id ) {
 					$request_options = &$request[ 'options' ];
 					$account_number = @$request_options[ 'account_number' ] ?:
-							@$request_options[ 'account' ] ?:
-							@$request_options[ 'card'    ] ?:
-							@$request_options[ 'to'      ] ?:
+							@$request_options[ 'account'        ] ?:
+							@$request_options[ 'card'           ] ?:
+							@$request_options[ 'to'             ] ?:
+							@$request_options[ 'customer_purse' ] ?:
 							'-'
 					;
 					$content[ $item[ 'operation_id' ] ] = array(
