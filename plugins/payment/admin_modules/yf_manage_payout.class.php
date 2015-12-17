@@ -372,6 +372,13 @@ class yf_manage_payout {
 		$fields = array( 'service', 'account', 'amount', 'currency', 'comment' );
 		$data = array();
 		$data[] = $fields;
+		// title
+		switch( true ) {
+			case defined( 'SITE_ADVERT_TITLE' ): $title = SITE_ADVERT_TITLE; break;
+			case defined( 'WEB_PATH' ): $title = parse_url( WEB_PATH, PHP_URL_HOST ); break;
+			case @$_SERVER['HTTP_HOST']: $title = $_SERVER['HTTP_HOST']; break;
+			default: $title = 'Payment'; break;
+		}
 		foreach( $items as $index => $item ) {
 			$r = @$item[ 'options' ][ 'request' ][ 0 ];
 			if( @$r[ 'options' ][ 'method_id' ] != 'webmoney' ) { continue; }
@@ -379,7 +386,10 @@ class yf_manage_payout {
 			$account  = $r[ 'options' ][ 'customer_purse' ];
 			$amount   = $r[ 'data' ][ 'amount' ];
 			$currency = $r[ 'data' ][ 'currency_id' ];
-			$comment  = $r[ 'options' ][ 'operation_title' ];
+			$comment  = $title .': '.
+				$r[ 'options' ][ 'operation_title' ]
+				.' (id: '. $r[ 'data' ][ 'operation_id' ] . ')'
+			;
 			$data[] = array( $service, $account, $amount, $currency, $comment );
 		}
 		$file_name = 'ECommPay-WebMoney__'. date( 'Y-m-d_H-i-s' ) .'.csv';
