@@ -227,6 +227,14 @@ class yf_manage_payout {
 		// class
 		$payment_api = &$this->payment_api;
 		$manage_lib  = &$this->manage_payment_lib;
+		// is action
+		if( main()->is_post() ) {
+			switch( true ) {
+				case isset( $_POST[ 'CSV_ECommPay' ] ):
+					$this->csv_ecommpay();
+					break;
+			}
+		}
 		// payment providers
 		$providers = $payment_api->provider();
 		$payment_api->provider_options( $providers, array(
@@ -267,7 +275,7 @@ class yf_manage_payout {
 			->where( 'o.direction', 'out' )
 		;
 		$sql = $db->sql();
-		return( table( $sql, array(
+		$result = table( $sql, array(
 				'filter' => $filter,
 				'filter_params' => array(
 					'status_id'   => function( $a ) use( $payment_status_in_progress_id ) {
@@ -291,6 +299,7 @@ class yf_manage_payout {
 					'__default_order'  => 'ORDER BY o.datetime_update DESC',
 				),
 			))
+			->check_box( 'operation_id', array( 'desc' => 'отметка', 'no_desc' => true ) )
 			->text( 'operation_id'  , 'операция' )
 			->text( 'provider_title', 'провайдер' )
 			->func( 'options', function( $value, $extra, $row ) use( $providers ) {
@@ -334,7 +343,54 @@ class yf_manage_payout {
 			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
 			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
 			->footer_link( 'Обновить статусы операций Подтверждения', $url[ 'confirmation_update_expired' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
-		);
+		;
+		// ECommPay
+		$provider = $payment_api->is_provider(array( 'name' => 'ecommpay' ));
+		if( $provider ) {
+			$result->footer_submit( array( 'value' => 'CSV ECommPay', 'class' => 'btn btn-info', 'icon' => 'fa fa-file-excel-o' ) );
+		}
+		return( $result );
+	}
+
+	function csv_ecommpay( $options = null ) {
+		$operation_id = &$_POST[ 'operation_id' ];
+		if( ! is_array( $operation_id ) || count( $operation_id ) < 1 ) {
+			common()->message_info( 'Отсутствуют данные' );
+			return( null );
+		}
+		// class
+		$payment_api = &$this->payment_api;
+		// var
+		$operation_id = array_keys( $operation_id );
+		$items = $payment_api->operation(array( 'operation_id' => $operation_id ));
+		if( ! is_array( $items ) || count( $items ) < 1 ) {
+			common()->message_info( 'Отсутствуют данные' );
+			return( null );
+		}
+		// data
+		$service = '19'; // ECommPay WebMoney
+		$fields = array( 'service', 'account', 'amount', 'currency', 'comment' );
+		$data = array();
+		$data[] = $fields;
+		foreach( $items as $index => $item ) {
+			$r = @$item[ 'options' ][ 'request' ][ 0 ];
+			if( @$r[ 'options' ][ 'method_id' ] != 'webmoney' ) { continue; }
+			// account
+			$account  = $r[ 'options' ][ 'customer_purse' ];
+			$amount   = $r[ 'data' ][ 'amount' ];
+			$currency = $r[ 'data' ][ 'currency_id' ];
+			$comment  = $r[ 'options' ][ 'operation_title' ];
+			$data[] = array( $service, $account, $amount, $currency, $comment );
+		}
+		$file_name = 'ECommPay-WebMoney__'. date( 'Y-m-d_H-i-s' ) .'.csv';
+		// output
+		$result = $this->_http_csv( array(
+			'file_name' => $file_name,
+			'data'      => $data,
+			// 'debug'     => true,
+		));
+		$result[ 'operation_id' ] = $_operation_id;
+		return( $this->_user_message( $result ) );
 	}
 
 	function csv_request( $options = null ) {
