@@ -1845,15 +1845,19 @@ class yf_payment_api {
 			$result &= db()->query( 'START TRANSACTION' );
 			// lock operation id
 			if( $result ) {
-				if( @(int)$_operation_id > 0 ) {
-					$sql_datetime = $this->sql_datetime();
-					$operation_id = (int)$_operation_id;
-					$data = array(
-						'operation_id'    => $operation_id,
-						'datetime_update' => $sql_datetime,
-					);
-					$r = $this->operation_update( $data );
-					$result &= @(bool)$r[ 'status' ];
+				$items = (array)$_operation_id;
+				foreach( $items as $item ) {
+					if( @(int)$item > 0 ) {
+						$sql_datetime = $this->sql_datetime();
+						$operation_id = (int)$item;
+						$data = array(
+							'operation_id'    => $operation_id,
+							'datetime_update' => $sql_datetime,
+						);
+						$_status_id && $data[ 'status_id' ] = $_status_id;
+						$r = $this->operation_update( $data );
+						$result &= @(bool)$r[ 'status' ];
+					}
 				}
 			}
 		}
