@@ -231,7 +231,7 @@ class yf_manage_payout {
 		if( main()->is_post() ) {
 			switch( true ) {
 				case isset( $_POST[ 'CSV_ECommPay' ] ):
-					$this->csv_ecommpay();
+					return( $this->_user_message( $this->csv_ecommpay() ) );
 					break;
 			}
 		}
@@ -360,12 +360,35 @@ class yf_manage_payout {
 		}
 		// class
 		$payment_api = &$this->payment_api;
+		// status: in_progress, processing
+		$object = $payment_api->get_status( array( 'name' => 'in_progress' ) );
+			list( $status_id_in_progress, $status_in_progress ) = $object;
+			if( ! @$status_id_in_progress ) { return( $object ); }
+		$object = $payment_api->get_status( array( 'name' => 'processing' ) );
+			list( $status_id_processing, $status_processing ) = $object;
+			if( ! @$status_id_processing ) { return( $object ); }
 		// var
 		$operation_id = array_keys( $operation_id );
+		// start transaction
+		$result = $payment_api->transaction_start(array( 'operation_id' => $operation_id ));
+		if( !$result ) {
+			$message = 'Ошибка установки уровня изоляции транзакции';
+			$result = array(
+				'status'         => false,
+				'status_message' => &$message,
+			);
+			$payment_api->transaction_rollback();
+			return( $result );
+		}
 		$items = $payment_api->operation(array( 'operation_id' => $operation_id ));
 		if( ! is_array( $items ) || count( $items ) < 1 ) {
-			common()->message_info( 'Отсутствуют данные' );
-			return( null );
+			$message = 'Отсутствуют данные';
+			$result = array(
+				'status'         => false,
+				'status_message' => &$message,
+			);
+			$payment_api->transaction_rollback();
+			return( $result );
 		}
 		// data
 		$service = '19'; // ECommPay WebMoney
@@ -379,28 +402,65 @@ class yf_manage_payout {
 			case @$_SERVER['HTTP_HOST']: $title = $_SERVER['HTTP_HOST']; break;
 			default: $title = 'Payment'; break;
 		}
+		$sql_datetime = $payment_api->sql_datetime();
 		foreach( $items as $index => $item ) {
-			$r = @$item[ 'options' ][ 'request' ][ 0 ];
-			if( @$r[ 'options' ][ 'method_id' ] != 'webmoney' ) { continue; }
-			// account
-			$account  = $r[ 'options' ][ 'customer_purse' ];
-			$amount   = $r[ 'data' ][ 'amount' ];
-			$currency = $r[ 'data' ][ 'currency_id' ];
+			$request = @$item[ 'options' ][ 'request' ][ 0 ];
+			if( @$request[ 'options' ][ 'method_id' ] != 'webmoney' ) { continue; }
+			// status check
+			if( $item[ 'status_id' ] != $status_id_in_progress ) { continue; }
+			// operation_id
+			$operation_id = (int)$request[ 'data' ][ 'operation_id' ];
+			// update status
+			$data_update = array(
+				'operation_id'    => $operation_id,
+				'status_id'       => $status_id_processing,
+				'datetime_update' => $sql_datetime,
+				'options' => array(
+					'processing' => array( array(
+						'provider_name' => 'administration',
+						'datetime'      => $sql_datetime,
+					)),
+				),
+			);
+			$r = $payment_api->operation_update( $data_update );
+			if( ! @(bool)$r[ 'status' ] ) {
+				$payment_api->transaction_rollback();
+				return( $r );
+			}
+			// data
+			$account  = $request[ 'options' ][ 'customer_purse' ];
+			$amount   = $request[ 'data' ][ 'amount' ];
+			$currency = $request[ 'data' ][ 'currency_id' ];
 			$comment  = $title .': '.
-				$r[ 'options' ][ 'operation_title' ]
-				.' (id: '. $r[ 'data' ][ 'operation_id' ] . ')'
+				$request[ 'options' ][ 'operation_title' ]
+				.' (id: '. $request[ 'data' ][ 'operation_id' ] . ')'
 			;
 			$data[] = array( $service, $account, $amount, $currency, $comment );
+		}
+		if( count( $data ) <= 1 ) {
+			$message = 'Отсутствуют операции со статусом: '. $status_in_progress[ 'name' ];
+			$result = array(
+				'status'         => false,
+				'status_message' => &$message,
+			);
+			$payment_api->transaction_rollback();
+			return( $result );
 		}
 		$file_name = 'ECommPay-WebMoney__'. date( 'Y-m-d_H-i-s' ) .'.csv';
 		// output
 		$result = $this->_http_csv( array(
 			'file_name' => $file_name,
 			'data'      => $data,
+			'is_return' => true,
 			// 'debug'     => true,
 		));
+		if( @$result[ 'status' ] ) {
+			$payment_api->transaction_commit();
+			exit;
+		}
+		$payment_api->transaction_rollback();
 		$result[ 'operation_id' ] = $_operation_id;
-		return( $this->_user_message( $result ) );
+		return( $result );
 	}
 
 	function csv_request( $options = null ) {
@@ -494,7 +554,14 @@ class yf_manage_payout {
 		header( 'Content-type: text/csv' );
 		header( 'Content-disposition: attachment; filename='. $_file_name );
 		echo $csv;
-		exit;
+		if( @$_is_return === false ) { exit; }
+		$result = array(
+			'csv'            => $csv,
+			'status'         => true,
+			'status_header'  => 'Экспорт в CSV',
+			'status_message' => 'Выполнено',
+		);
+		return( $result );
 	}
 
 	function _operation( $options = null ) {
