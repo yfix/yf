@@ -711,9 +711,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
-		$operation_id = @$_GET[ 'operation_id' ];
+		$operation_id = @(int)$_GET[ 'operation_id' ];
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'EcommPay', 'operation_id' => (int)$operation_id ));
+		$payment_api->dump( array( 'name' => 'EcommPay', 'operation_id' => $operation_id ));
 		// TEST DATA
 		/*
 		$_POST = array (
