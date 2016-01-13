@@ -1156,6 +1156,12 @@ EOS;
 		// find by card
 		$validate = _class( 'validate' );
 		$methods = &$provider_class->method_allow[ 'payout' ];
+		if( !@$methods ) {
+			$result = array(
+				'status_message' => 'Провайдер Интеркасса: методы вывода не найдены',
+			);
+			return( $result );
+		}
 		$is_method_id = null;
 		foreach( $methods as $method_id => $method ) {
 			$rules = &$method[ 'option_validation' ][ 'card' ];
