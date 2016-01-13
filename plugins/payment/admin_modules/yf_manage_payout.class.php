@@ -1164,7 +1164,7 @@ EOS;
 		}
 		$is_method_id = null;
 		foreach( $methods as $method_id => $method ) {
-			$rules = &$method[ 'option_validation' ][ 'card' ];
+			@$rules = &$method[ 'option_validation' ][ 'card' ];
 			if( empty( $rules ) ) { continue; }
 			$result = $validate->_input_is_valid( $_card, $rules );
 			if( $result ) { $is_method_id = $method_id; break; }
