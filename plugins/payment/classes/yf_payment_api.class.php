@@ -380,12 +380,17 @@ class yf_payment_api {
 
 	public function currency_rate( $options = null ) {
 		$_ = &$options;
+		// currency_id
+		$currency_id = $_[ 'currency_id' ]
+			?: $this->currency_id
+			?: $this->currency_id_default
+		;
 		// default 'buy'
 		$type = $_[ 'currency_rate_type' ] == 'sell' ? 'sell' : 'buy';
-		$currency_rate = &$this->currency_rate[ $type ];
+		$currency_rate = &$this->currency_rate[ $type ][ $currency_id ];
 		// cache
 		if( $_[ 'force' ] || !$currency_rate ) {
-			list( $currency_id, $currency ) = $this->get_currency__by_id();
+			list( $currency_id, $currency ) = $this->get_currency__by_id(array( 'currency_id' => $currency_id ));
 			if( $type == 'buy' ) {
 				$target = 'to';
 				$source = 'from';
