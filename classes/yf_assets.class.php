@@ -393,14 +393,27 @@ class yf_assets {
 		$pattern  = 'assets/*'.       $suffix;
 		$patterns = 'share/assets/*'. $suffix;
 		$globs = array(
-			'yf_main'				=> YF_PATH. $patterns,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $patterns,
-			'project_main'			=> PROJECT_PATH. $patterns,
-			'project_app_share'		=> APP_PATH. $patterns,
+			'yf_main'				=> YF_PATH. $pattern,
+			'yf_main2'				=> YF_PATH. $patterns,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
+			'yf_plugins2'			=> YF_PATH. 'plugins/*/'. $patterns,
+			'project_main'			=> PROJECT_PATH. $pattern,
+			'project_main2'			=> PROJECT_PATH. $patterns,
 			'project_app'			=> APP_PATH. $pattern,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $patterns,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $patterns,
+			'project_app2'			=> APP_PATH. $patterns,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'project_plugins2'		=> PROJECT_PATH. 'plugins/*/'. $patterns,
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+			'project_app_plugins2'	=> APP_PATH. 'plugins/*/'. $patterns,
 		);
+		if (is_site_path()) {
+			$globs += array(
+				'site_main'		=> SITE_PATH. $pattern,
+				'site_main2'	=> SITE_PATH. $patterns,
+				'site_plugins'	=> SITE_PATH. 'plugins/*/'. $pattern,
+				'site_plugins2'	=> SITE_PATH. 'plugins/*/'. $patterns,
+			);
+		}
 		$slen = strlen($suffix);
 		$names = array();
 		foreach($globs as $gname => $glob) {
@@ -445,6 +458,12 @@ class yf_assets {
 			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
 			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
 		);
+		if (is_site_path()) {
+			$globs += array(
+				'site_main'		=> SITE_PATH. $pattern,
+				'site_plugins'	=> SITE_PATH. 'plugins/*/'. $pattern,
+			);
+		}
 		$slen = strlen($suffix);
 		$plen = strlen($prefix);
 		$plen2 = strlen($prefix2);
@@ -489,7 +508,7 @@ class yf_assets {
 			'yf_plugins_user'	=> YF_PATH. 'plugins/'.$module.'/templates/user/'.$path,
 			'project_admin'		=> MAIN_TYPE_ADMIN ? PROJECT_PATH. 'templates/admin/'.$path : '',
 			'project_user'		=> PROJECT_PATH. 'templates/user/'.$path,
-			'site_user'			=> SITE_PATH != PROJECT_PATH ? SITE_PATH. 'templates/user/'.$path : '',
+			'site_user'			=> is_site_path() ? SITE_PATH. 'templates/user/'.$path : '',
 		);
 		$found = '';
 		foreach (array_reverse($paths, true) as $path) {
