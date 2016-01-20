@@ -279,11 +279,17 @@ class yf_form2 {
 		}
 		if (is_post()) {
 			if ($csrf_protect && !$csrf_guard->validate($_POST[$this->CONF_CSRF_NAME])) {
+				// We need this as validation now is skipping empty values
+				if (!isset($_POST[$this->CONF_CSRF_NAME])) {
+					$_POST[$this->CONF_CSRF_NAME] = '__wrong_token_'.md5(microtime()).'__';
+				}
 				$this->_params['show_alerts'] = true;
 				$this->_validate_rules[$this->CONF_CSRF_NAME] = function($in, $p, $a, &$error_msg) {
 					$error_msg = 'Invalid CSRF token. Send the form again. If you did not send this request then close this page.';
 					return false;
 				};
+				$this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
+				$this->hidden($this->CONF_CSRF_NAME);
 			}
 			$on_post = isset($extra['on_post']) ? $extra['on_post'] : $this->_on['on_post'];
 			if (is_callable($on_post)) {

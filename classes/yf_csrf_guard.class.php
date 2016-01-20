@@ -67,7 +67,7 @@ class yf_csrf_guard {
 		}
 		$token = $this->get();
 		if ($token === false) {
-			return false;
+			$result = false;
 		} elseif ($token === $token_value) {
 			$result = true;
 		} else { 
