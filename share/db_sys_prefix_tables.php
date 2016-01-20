@@ -26,6 +26,7 @@ return array (
   'log_auth' => 'log_auth',
   'log_auth_fails' => 'log_auth_fails',
   'log_core_errors' => 'log_core_errors',
+  'log_csrf_errors' => 'log_csrf_errors',
   'log_emails' => 'log_emails',
   'log_exec' => 'log_exec',
   'log_img_resizes' => 'log_img_resizes',

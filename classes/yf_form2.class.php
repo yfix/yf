@@ -284,7 +284,8 @@ class yf_form2 {
 					$_POST[$this->CONF_CSRF_NAME] = '__wrong_token_'.md5(microtime()).'__';
 				}
 				$this->_params['show_alerts'] = true;
-				$this->_validate_rules[$this->CONF_CSRF_NAME] = function($in, $p, $a, &$error_msg) {
+				$this->_validate_rules[$this->CONF_CSRF_NAME] = function($in, $p, $a, &$error_msg) use ($form_id, $csrf_guard) {
+					$csrf_guard->log_error(array('form_id' => $form_id));
 					$error_msg = 'Invalid CSRF token. Send the form again. If you did not send this request then close this page.';
 					return false;
 				};

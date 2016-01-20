@@ -4,6 +4,7 @@ return '
   `date` datetime NOT NULL,
   `ip` varchar(16) NOT NULL DEFAULT \'\',
   `url` varchar(1024) NOT NULL DEFAULT \'\',
+  `form_id` varchar(255) NOT NULL DEFAULT \'\',
   `ua` varchar(255) NOT NULL DEFAULT \'\',
   `referer` varchar(1024) NOT NULL DEFAULT \'\',
   `object` varchar(255) NOT NULL DEFAULT \'\',
