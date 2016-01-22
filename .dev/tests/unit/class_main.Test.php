@@ -23,7 +23,8 @@ class class_main_test extends yf_unit_tests {
 			$_SERVER['SERVER_ADDR'] = $server_ip ?: $_this->test_defaults['ip'];
 			$_SERVER['SERVER_PORT'] = $server_port ?: $_this->test_defaults['port'];
 			$_SERVER['HTTP_HOST'] = $server_host ?: $_this->test_defaults['host'];
-			return main()->_find_site($sites_dir);
+			$res = main()->_find_site($sites_dir);
+			return $res[0];
 		};
 	}
 	public function test__find_site_path_best_match__basic() {

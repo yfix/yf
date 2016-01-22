@@ -1463,14 +1463,28 @@ class yf_main {
 	*/
 	function _find_site($sites_dir = '') {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if (empty($sites_dir)) {
-			$sites_dir = PROJECT_PATH.'sites/';
+		if (!$sites_dir) {
+			$try_paths = array(
+				APP_PATH.'sites/',
+				PROJECT_PATH.'sites/',
+			);
+			$sites_dir = '';
+			foreach ($try_paths as $try_path) {
+				if (file_exists($try_path)) {
+					$sites_dir = $try_path;
+					break;
+				}
+			}
 		}
+		if (!$sites_dir) {
+			return array();
+		}
+		// Array of sites passed here
 		if (is_array($sites_dir)) {
 			$dirs = $sites_dir;
 		} else {
 			if (!file_exists($sites_dir)) {
-				return '';
+				return array();
 			}
 			$dirs = array_merge(
 				glob($sites_dir.'*', GLOB_ONLYDIR),
@@ -1496,7 +1510,7 @@ class yf_main {
 		uksort($sites2, $sort_by_length);
 		$sites = $sites1 + $sites2;
 		$found_site = $this->_find_site_path_best_match($sites, $_SERVER['SERVER_ADDR'], $_SERVER['SERVER_PORT'], $_SERVER['HTTP_HOST']);
-		return $found_site;
+		return array($found_site, $sites_dir);
 	}
 
 	/**
@@ -1599,16 +1613,6 @@ class yf_main {
 		}
 		// Alias
 		define('PROJECT_PATH',	INCLUDE_PATH);
-		// Website inside project FS base path. Recommended to use from now instead of REAL_PATH
-		if (!defined('SITE_PATH')) {
-			$sites_dir = PROJECT_PATH.'sites/';
-			$found_site = $this->_find_site($sites_dir);
-			define('SITE_PATH', $found_site ? $sites_dir.$found_site.'/' : PROJECT_PATH);
-		}
-		// Alias of SITE_PATH. Compatibility with old code. DEPRECATED
-		if (!defined('REAL_PATH')) {
-			define('REAL_PATH', SITE_PATH);
-		}
 		// Framework root filesystem path
 		if (!defined('YF_PATH')) {
 			define('YF_PATH', dirname(PROJECT_PATH).'/yf/');
@@ -1632,6 +1636,15 @@ class yf_main {
 		// Uploads path should be used for various uploaded content accessible from WEB_PATH
 		if (!defined('UPLOADS_PATH')) {
 			define('UPLOADS_PATH', PROJECT_PATH.'uploads/');
+		}
+		// Website inside project FS base path. Recommended to use from now instead of REAL_PATH
+		if (!defined('SITE_PATH')) {
+			list($found_site, $found_dir) = $this->_find_site();
+			define('SITE_PATH', $found_site ? $found_dir. $found_site.'/' : PROJECT_PATH);
+		}
+		// Alias of SITE_PATH. Compatibility with old code. DEPRECATED
+		if (!defined('REAL_PATH')) {
+			define('REAL_PATH', SITE_PATH);
 		}
 		// Set WEB_PATH (if not done yet)
 		if (!defined('WEB_PATH')) {
