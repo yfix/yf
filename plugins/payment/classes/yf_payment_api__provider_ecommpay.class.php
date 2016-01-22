@@ -146,7 +146,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					// 'min' => 10,
 					'max' => 200,
 				),
-				'fee'        => 0, // 0.1%
+				// 'fee'        => 0, // 0.1%
 				'currency' => array(
 					'USD' => array(
 						'currency_id' => 'USD',
@@ -326,7 +326,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					// 'min' => 10,
 					'max' => 200,
 				),
-				'fee'        => 0, // 0.1%
+				// 'fee'        => 0, // 0.1%
 				'currency' => array(
 					'USD' => array(
 						'currency_id' => 'USD',
@@ -364,6 +364,56 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				),
 				'option_validation_message' => array(
 					'account_number' => 'обязательное поле от 11 до 14 цифр, без "+"',
+				),
+			),
+			'webmoney' => array(
+				'title'      => 'WebMoney',
+				'icon'       => 'webmoney',
+				'uri'        => array(
+					'%method' => 'webmoney',
+				),
+				'action'     => 'wmpayout',
+				'amount' => array(
+					// 'min' => 10,
+					'max' => 200,
+				),
+				// 'fee'        => 0, // 0.1%
+				'currency' => array(
+					'USD' => array(
+						'currency_id' => 'USD',
+						'is_int'      => true,
+						'active'      => true,
+					),
+				),
+				'field' => array(
+					'action',
+					'site_id',
+					'amount',
+					'currency',
+					'external_id',
+					'comment',
+					'customer_purse',
+				),
+				'order' => array(
+					'customer_purse',
+				),
+				'option' => array(
+					'customer_purse' => 'Кошелек',
+				),
+				'option_validation_js' => array(
+					'customer_purse' => array(
+						'type'      => 'text',
+						'required'  => true,
+						'minlength' => 13,
+						'maxlength' => 13,
+						'pattern'   => '^(Z|R)\d{12}$',
+					),
+				),
+				'option_validation' => array(
+					'customer_purse' => 'required|length[13]|regex:~^(Z\|R)\d{12}$~',
+				),
+				'option_validation_message' => array(
+					'customer_purse' => 'обязательное поле: буква и 12 цифр',
 				),
 			),
 		),
@@ -619,7 +669,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$_ = &$options;
 		// START DUMP
 		$payment_api = $this->payment_api;
-		$payment_api->dump(array( 'name' => 'EcommPay', 'operation_id' => (int)$_[ 'operation_id' ] ));
+		$payment_api->dump(array( 'name' => 'EcommPay', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ));
 		if( empty( $data ) ) { return( null ); }
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
@@ -661,9 +711,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
-		$operation_id = @$_GET[ 'operation_id' ];
+		$operation_id = @(int)$_GET[ 'operation_id' ];
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'EcommPay', 'operation_id' => (int)$operation_id ));
+		$payment_api->dump( array( 'name' => 'EcommPay', 'operation_id' => $operation_id ));
 		// TEST DATA
 		/*
 		$_POST = array (
@@ -784,7 +834,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// START NEW DUMP
-		$payment_api->dump( array( 'is_new' => true, 'name' => 'EcommPay', 'operation_id' => (int)$operation_id ));
+		$operation_id = @(int)$_response[ 'operation_id' ];
+		$payment_api->dump( array( 'is_new' => true, 'name' => 'EcommPay', 'operation_id' => $operation_id ));
 		// deposition or payout
 		$state = $_response[ 'type_id' ];
 		$status = $this->_type_server;

@@ -227,6 +227,14 @@ class yf_manage_payout {
 		// class
 		$payment_api = &$this->payment_api;
 		$manage_lib  = &$this->manage_payment_lib;
+		// is action
+		if( main()->is_post() ) {
+			switch( true ) {
+				case isset( $_POST[ 'CSV_ECommPay' ] ):
+					return( $this->_user_message( $this->csv_ecommpay() ) );
+					break;
+			}
+		}
 		// payment providers
 		$providers = $payment_api->provider();
 		$payment_api->provider_options( $providers, array(
@@ -267,7 +275,7 @@ class yf_manage_payout {
 			->where( 'o.direction', 'out' )
 		;
 		$sql = $db->sql();
-		return( table( $sql, array(
+		$result = table( $sql, array(
 				'filter' => $filter,
 				'filter_params' => array(
 					'status_id'   => function( $a ) use( $payment_status_in_progress_id ) {
@@ -291,6 +299,7 @@ class yf_manage_payout {
 					'__default_order'  => 'ORDER BY o.datetime_update DESC',
 				),
 			))
+			->check_box( 'operation_id', array( 'desc' => 'отметка', 'no_desc' => true ) )
 			->text( 'operation_id'  , 'операция' )
 			->text( 'provider_title', 'провайдер' )
 			->func( 'options', function( $value, $extra, $row ) use( $providers ) {
@@ -334,7 +343,124 @@ class yf_manage_payout {
 			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
 			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
 			->footer_link( 'Обновить статусы операций Подтверждения', $url[ 'confirmation_update_expired' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
-		);
+		;
+		// ECommPay
+		$provider = $payment_api->is_provider(array( 'name' => 'ecommpay' ));
+		if( $provider ) {
+			$result->footer_submit( array( 'value' => 'CSV ECommPay', 'class' => 'btn btn-info', 'icon' => 'fa fa-file-excel-o' ) );
+		}
+		return( $result );
+	}
+
+	function csv_ecommpay( $options = null ) {
+		$operation_id = &$_POST[ 'operation_id' ];
+		if( ! is_array( $operation_id ) || count( $operation_id ) < 1 ) {
+			common()->message_info( 'Отсутствуют данные' );
+			return( null );
+		}
+		// class
+		$payment_api = &$this->payment_api;
+		// status: in_progress, processing
+		$object = $payment_api->get_status( array( 'name' => 'in_progress' ) );
+			list( $status_id_in_progress, $status_in_progress ) = $object;
+			if( ! @$status_id_in_progress ) { return( $object ); }
+		$object = $payment_api->get_status( array( 'name' => 'processing' ) );
+			list( $status_id_processing, $status_processing ) = $object;
+			if( ! @$status_id_processing ) { return( $object ); }
+		// var
+		$operation_id = array_keys( $operation_id );
+		// start transaction
+		$result = $payment_api->transaction_start(array( 'operation_id' => $operation_id ));
+		if( !$result ) {
+			$message = 'Ошибка установки уровня изоляции транзакции';
+			$result = array(
+				'status'         => false,
+				'status_message' => &$message,
+			);
+			$payment_api->transaction_rollback();
+			return( $result );
+		}
+		$items = $payment_api->operation(array( 'operation_id' => $operation_id ));
+		if( ! is_array( $items ) || count( $items ) < 1 ) {
+			$message = 'Отсутствуют данные';
+			$result = array(
+				'status'         => false,
+				'status_message' => &$message,
+			);
+			$payment_api->transaction_rollback();
+			return( $result );
+		}
+		// data
+		$service = '19'; // ECommPay WebMoney
+		$fields = array( 'service', 'account', 'amount', 'currency', 'comment' );
+		$data = array();
+		$data[] = $fields;
+		// title
+		switch( true ) {
+			case defined( 'SITE_ADVERT_TITLE' ): $title = SITE_ADVERT_TITLE; break;
+			case defined( 'WEB_PATH' ): $title = parse_url( WEB_PATH, PHP_URL_HOST ); break;
+			case @$_SERVER['HTTP_HOST']: $title = $_SERVER['HTTP_HOST']; break;
+			default: $title = 'Payment'; break;
+		}
+		$sql_datetime = $payment_api->sql_datetime();
+		foreach( $items as $index => $item ) {
+			$request = @$item[ 'options' ][ 'request' ][ 0 ];
+			if( @$request[ 'options' ][ 'method_id' ] != 'webmoney' ) { continue; }
+			// status check
+			if( $item[ 'status_id' ] != $status_id_in_progress ) { continue; }
+			// operation_id
+			$operation_id = (int)$request[ 'data' ][ 'operation_id' ];
+			// update status
+			$data_update = array(
+				'operation_id'    => $operation_id,
+				'status_id'       => $status_id_processing,
+				'datetime_update' => $sql_datetime,
+				'options' => array(
+					'processing' => array( array(
+						'provider_name' => 'administration',
+						'datetime'      => $sql_datetime,
+					)),
+				),
+			);
+			$r = $payment_api->operation_update( $data_update );
+			if( ! @(bool)$r[ 'status' ] ) {
+				$payment_api->transaction_rollback();
+				return( $r );
+			}
+			// data
+			$account  = $request[ 'options' ][ 'customer_purse' ];
+			$amount   = $request[ 'data' ][ 'amount' ];
+			$currency = $request[ 'data' ][ 'currency_id' ];
+			$comment  = $title .': '.
+				$request[ 'options' ][ 'operation_title' ]
+				.' (id: '. $request[ 'data' ][ 'operation_id' ] . ')'
+			;
+			$data[] = array( $service, $account, $amount, $currency, $comment );
+		}
+		if( count( $data ) <= 1 ) {
+			$message = 'Отсутствуют операции со статусом: '. $status_in_progress[ 'name' ];
+			$result = array(
+				'status'         => false,
+				'status_message' => &$message,
+			);
+			$payment_api->transaction_rollback();
+			return( $result );
+		}
+		$file_name = 'ECommPay-WebMoney__'. date( 'Y-m-d_H-i-s' ) .'.csv';
+		// output
+		$result = $this->_http_csv( array(
+			'file_name' => $file_name,
+			'data'      => $data,
+			'is_return' => true,
+			// 'debug'     => true,
+		));
+		if( @$result[ 'status' ] ) {
+			$payment_api->transaction_commit();
+			exit;
+		}
+		$payment_api->transaction_rollback();
+		$result[ 'operation_id' ] = $_operation_id;
+		return( $result );
 	}
 
 	function csv_request( $options = null ) {
@@ -428,7 +554,14 @@ class yf_manage_payout {
 		header( 'Content-type: text/csv' );
 		header( 'Content-disposition: attachment; filename='. $_file_name );
 		echo $csv;
-		exit;
+		if( @$_is_return === false ) { exit; }
+		$result = array(
+			'csv'            => $csv,
+			'status'         => true,
+			'status_header'  => 'Экспорт в CSV',
+			'status_message' => 'Выполнено',
+		);
+		return( $result );
 	}
 
 	function _operation( $options = null ) {
@@ -734,9 +867,10 @@ class yf_manage_payout {
 				if( @$request[ 'options' ][ 'method_id' ] == $_method_id ) {
 					$request_options = &$request[ 'options' ];
 					$account_number = @$request_options[ 'account_number' ] ?:
-							@$request_options[ 'account' ] ?:
-							@$request_options[ 'card'    ] ?:
-							@$request_options[ 'to'      ] ?:
+							@$request_options[ 'account'        ] ?:
+							@$request_options[ 'card'           ] ?:
+							@$request_options[ 'to'             ] ?:
+							@$request_options[ 'customer_purse' ] ?:
 							'-'
 					;
 					$content[ $item[ 'operation_id' ] ] = array(
@@ -1022,10 +1156,16 @@ EOS;
 		// find by card
 		$validate = _class( 'validate' );
 		$methods = &$provider_class->method_allow[ 'payout' ];
+		if( !@$methods ) {
+			$result = array(
+				'status_message' => 'Провайдер Интеркасса: методы вывода не найдены',
+			);
+			return( $result );
+		}
 		$is_method_id = null;
 		foreach( $methods as $method_id => $method ) {
+			if( empty( $method[ 'option_validation' ][ 'card' ] ) ) { continue; }
 			$rules = &$method[ 'option_validation' ][ 'card' ];
-			if( empty( $rules ) ) { continue; }
 			$result = $validate->_input_is_valid( $_card, $rules );
 			if( $result ) { $is_method_id = $method_id; break; }
 		}

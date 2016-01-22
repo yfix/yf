@@ -853,7 +853,7 @@ EOS;
 		return( array( 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ) );
 	}
 
-	// ************* test number
+	// ************* test currency_rate
 	protected function currency_rate() {
 		$result = array();
 		$currency__api = _class( 'payment_api__currency' );
@@ -978,6 +978,38 @@ EOS;
 		));
 		$result[] = $r;
  */
+		// finish
+		$this->_render( $result );
+	}
+
+	// ************* test currency_rate
+	public function currency_rate_current() {
+		$result = array();
+		$payment_api = _class( 'payment_api' );
+		// UNT
+		$currency_id = 'UNT';
+		$buy  = $payment_api->currency_rate__buy();
+		$sell = $payment_api->currency_rate__sell();
+		$r = $this->_add_panel( array(
+			'header' => $currency_id,
+			'php'    => var_export( array(
+				'buy'  => $buy,
+				'sell' => $sell,
+			), true ),
+		));
+		$result[] = $r;
+		// USD
+		$currency_id = 'USD';
+		$buy  = $payment_api->currency_rate__buy( array( 'currency_id' => $currency_id ));
+		$sell = $payment_api->currency_rate__sell(array( 'currency_id' => $currency_id ));
+		$r = $this->_add_panel( array(
+			'header' => $currency_id,
+			'php'    => var_export( array(
+				'buy'  => $buy,
+				'sell' => $sell,
+			), true ),
+		));
+		$result[] = $r;
 		// finish
 		$this->_render( $result );
 	}

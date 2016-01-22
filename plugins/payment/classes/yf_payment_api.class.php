@@ -380,12 +380,17 @@ class yf_payment_api {
 
 	public function currency_rate( $options = null ) {
 		$_ = &$options;
+		// currency_id
+		$currency_id = $_[ 'currency_id' ]
+			?: $this->currency_id
+			?: $this->currency_id_default
+		;
 		// default 'buy'
 		$type = $_[ 'currency_rate_type' ] == 'sell' ? 'sell' : 'buy';
-		$currency_rate = &$this->currency_rate[ $type ];
+		$currency_rate = &$this->currency_rate[ $type ][ $currency_id ];
 		// cache
 		if( $_[ 'force' ] || !$currency_rate ) {
-			list( $currency_id, $currency ) = $this->get_currency__by_id();
+			list( $currency_id, $currency ) = $this->get_currency__by_id(array( 'currency_id' => $currency_id ));
 			if( $type == 'buy' ) {
 				$target = 'to';
 				$source = 'from';
@@ -783,6 +788,15 @@ class yf_payment_api {
 				$_options = &$result[ $index ][ 'options' ];
 				$_options && $_options = (array)json_decode( $_options, true );
 			}
+		}
+		return( $result );
+	}
+
+	public function is_provider( $options = null ) {
+		$result = null;
+		$object = $this->provider( $options );
+		if( is_array( $object ) && count( $object ) == 1 ) {
+			return( $object );
 		}
 		return( $result );
 	}
@@ -1464,29 +1478,37 @@ class yf_payment_api {
 
 	public function operation( $options = null ) {
 		$_ = &$options;
-		$is_no_count    = $_[ 'no_count'     ];
-		$is_sql         = $_[ 'sql'          ];
-		$is_where       = $_[ 'where'        ];
-		$is_no_limit    = $_[ 'no_limit'     ];
-		$is_no_order_by = $_[ 'no_order_by'  ];
+		$is_no_count    = &$_[ 'no_count'     ];
+		$is_sql         = &$_[ 'sql'          ];
+		$is_where       = &$_[ 'where'        ];
+		$is_no_limit    = &$_[ 'no_limit'     ];
+		$is_no_order_by = &$_[ 'no_order_by'  ];
 		// by operation_id
+		$result = null;
 		$operation_id = &$_[ 'operation_id' ];
+		$is_array_operation_id = false;
 		if( isset( $operation_id ) ) {
 			if( ( is_int( $operation_id ) || ctype_digit( $operation_id ) ) && $operation_id > 0 ) {
 				$operation_id = (int)$operation_id;
+			} elseif( is_array( $operation_id ) && count( $operation_id ) > 0 ) {
+				$is_array_operation_id = true;
 			} else { return( null ); }
 		}
 		$db = db()->table( 'payment_operation' );
 		if( $operation_id > 0 ) {
-			$db->where( 'operation_id', $operation_id );
+			if( $is_array_operation_id ) {
+				$db->where( 'operation_id', 'in', _es( $operation_id ) );
+			} else {
+				$db->where( 'operation_id', $operation_id );
+			}
 			// sql only or fetch
 			if( $is_sql ) {
 				$result = $db->sql();
 			} else {
-				$result = $db->get();
-				if( @$result[ 'options' ] ) {
-					$_options = &$result[ 'options' ];
-					$_options = (array)json_decode( $_options, true );
+				$result = $db->all();
+				$this->_operation_fetch(array( 'data' => &$result ));
+				if( ! $is_array_operation_id ) {
+					$result = reset( $result );
 				}
 			}
 			return( $result );
@@ -1523,17 +1545,23 @@ class yf_payment_api {
 		if( !$is_no_count ) {
 			$count = $db->order_by()->limit( null )->count( '*', $is_sql );
 		}
-		if( is_array( $result ) ) {
+		$this->_operation_fetch(array( 'data' => &$result ));
+		return( array( $result, $count ) );
+	}
+
+	public function _operation_fetch( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( is_array( $_data ) ) {
 			$datetime_key = array( 'start', 'finish', 'update', );
-			foreach( $result as $index => &$item ) {
-				$_options = &$item[ 'options' ];
-				$_options && $_options = (array)json_decode( $_options, true );
+			foreach( $_data as $index => &$item ) {
+				$_item_options = &$item[ 'options' ];
+				$_item_options && $_item_options = (array)json_decode( $_item_options, true );
 				foreach( $datetime_key as $key ) {
 					$item[ '_ts_' . $key ] = strtotime( $item[ 'datetime_' . $key ] );
 				}
 			}
 		}
-		return( array( $result, $count ) );
 	}
 
 	public function balance_update( $data, $options = null ) {
@@ -1822,15 +1850,19 @@ class yf_payment_api {
 			$result &= db()->query( 'START TRANSACTION' );
 			// lock operation id
 			if( $result ) {
-				if( @(int)$_operation_id > 0 ) {
-					$sql_datetime = $this->sql_datetime();
-					$operation_id = (int)$_operation_id;
-					$data = array(
-						'operation_id'    => $operation_id,
-						'datetime_update' => $sql_datetime,
-					);
-					$r = $this->operation_update( $data );
-					$result &= @(bool)$r[ 'status' ];
+				$items = (array)$_operation_id;
+				foreach( $items as $item ) {
+					if( @(int)$item > 0 ) {
+						$sql_datetime = $this->sql_datetime();
+						$operation_id = (int)$item;
+						$data = array(
+							'operation_id'    => $operation_id,
+							'datetime_update' => $sql_datetime,
+						);
+						$_status_id && $data[ 'status_id' ] = $_status_id;
+						$r = $this->operation_update( $data );
+						$result &= @(bool)$r[ 'status' ];
+					}
 				}
 			}
 		}
