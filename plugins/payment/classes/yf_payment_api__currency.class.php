@@ -10,7 +10,65 @@ class yf_payment_api__currency {
 		'buy'  => +3.5, // 3%
 		'sell' => -2.5, // 2%
 	);
-	public $user_id         = null;
+	public $user_id     = null;
+
+	public $provider_default = 'nbu';
+	public $provider = array(
+		// country banks: 1-9
+		'nbu'  => array(
+			'id'    => 1,
+			'code'  => 'nbu',
+			'short' => 'НБУ',
+			'full'  => 'Национальный банк Украины',
+			'base'  => 'UAH',
+			'method' => array(
+				'html' => true,
+				'json' => true,
+			),
+		),
+		'cbr'  => array(
+			'id'    => 2,
+			'code'  => 'cbr',
+			'short' => 'ЦБ РФ',
+			'base'  => 'RUB',
+			'full'  => 'Центральный банк Российской Федерации',
+			'method' => array(
+				'xml' => true,
+			),
+		),
+		// other banks: 101-...
+		'p24'  => array(
+			'id'    => 101,
+			'code'  => 'p24',
+			'short' => 'Приват24',
+			'full'  => 'ПриватБанк',
+			'base'  => 'UAH',
+			'method' => array(
+				'json' => true,
+			),
+		),
+		// other site: 201-...
+		'cashex'  => array(
+			'id'    => 201,
+			'code'  => 'cashex',
+			'short' => 'CashExchange',
+			'full'  => 'CashExchange.com.ua',
+			'base'  => 'UAH',
+			'method' => array(
+				'xml'  => true,
+				'json' => true,
+			),
+		),
+	);
+
+	public $index = array();
+
+	public $provider_allow = array(
+		'nbu' => true,
+		'cbr' => true,
+	);
+
+	public $cache = array();
 
 	public $payment_api = null;
 	public $api         = null;
@@ -18,22 +76,79 @@ class yf_payment_api__currency {
 	public function _init() {
 		$this->api         = _class( 'api' );
 		$this->payment_api = _class( 'payment_api' );
+		// index
+		$index    = &$this->index;
+		$provider = &$this->provider;
+		foreach( $provider as $key => &$item ) {
+			$id = $item[ 'id' ];
+			$index[ 'provider' ][ 'id' ][ $id ] = &$item;
+		}
 	}
 
-	public function load_from_NBU( $options = null ) {
+	public function load( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		@$provider = &$this->provider[ strtolower( $_provider ) ];
+		if( ! $provider ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Загрузка курса валют: провайдер не найден',
+			);
+			return( $result );
+		}
+		// method
+		$method_id = null;
+		@$method = &$provider[ 'method' ];
+		if( @$_method ) {
+			if( !@$method[ $_method ] ) {
+				$result = array(
+					'status'         => false,
+					'status_message' => 'Загрузка курса валют: метод не найден',
+				);
+				return( $result );
+			}
+			$method_id = $_method;
+		} else {
+			if( is_array( $method ) ) {
+				foreach( $method as $id => $active ) {
+					if( $active ) { $method_id = $id; break; }
+				}
+			}
+		}
+		// load
+		$code = &$provider[ 'code' ];
+		$load = __FUNCTION__ .'__'. $code;
+			$method_id && $load .= '_'. $method_id;
+		$status = method_exists( $this, $load );
+		if( !$status ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Загрузка курса валют: обработчик не найден',
+			);
+			return( $result );
+		}
+		$result = $this->{ $load }( $options );
+		return( $result );
+	}
+
+	// Национальный банк Украины: html
+	public function load__nbu_html( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
 		$api         = $this->api;
 		$payment_api = $this->payment_api;
 		// prepare request options
-		// $url = 'http://resources.finance.ua/ru/public/currency-cash.json';
-		// $request_options = array(
-			// 'is_response_json' => true,
-		// );
-		// $result = $api->_request( $url, $post, $request_options );
 		$url = 'http://www.bank.gov.ua/control/uk/curmetal/detail/currency?period=daily';
-		$result = $api->_request( $url );
+		// request
+		$request_options = array(
+			'is_response_raw' => true,
+		);
+		@$_request_options && $request_options = array_replace_recursive(
+			$request_options, $_request_options
+		);
+		$result = $api->_request( $url, null, $request_options );
 		list( $status, $response ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		require_php_lib( 'sf_dom_crawler' );
@@ -64,7 +179,86 @@ class yf_payment_api__currency {
 		return( $data );
 	}
 
-	public function load_from_Privat24( $options = null ) {
+	// Национальный банк Украины: json
+	public function load__nbu_json( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$api         = $this->api;
+		$payment_api = $this->payment_api;
+		// prepare request options
+		$url = 'http://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json';
+		$request_options = array(
+			'is_redirect' => true,
+		);
+		@$_request_options && $request_options = array_replace_recursive(
+			$request_options, $_request_options
+		);
+		$result = $api->_request( $url, null, $request_options );
+		list( $status, $response ) = $result;
+		if( empty( $status ) ) { return( null ); }
+		// prepare
+		$count = count( $response );
+		if( $count < 1 ) { return( null ); }
+		$data = array();
+		$currencies = $payment_api->currencies;
+		foreach( $response as $i => $item ) {
+			$currency_id = $item[ 'cc' ];
+			if( empty( $currencies[ $currency_id ] ) ) { continue; }
+			$from_value = 100;
+			$to_value   = $item[ 'rate' ] * $from_value;
+			$data[] = array(
+				'from'       => $currency_id,
+				'to'         => 'UAH',
+				'from_value' => $from_value,
+				'to_value'   => $to_value,
+			);
+		}
+		return( $data );
+	}
+
+	// Центральный банк Российской Федерации: xml
+	public function load__cbr_xml( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$api         = $this->api;
+		$payment_api = $this->payment_api;
+		// prepare request options
+		$url = 'http://www.cbr.ru/scripts/XML_daily.asp';
+		$request_options = array(
+			'is_response_xml' => true,
+		);
+		@$_request_options && $request_options = array_replace_recursive(
+			$request_options, $_request_options
+		);
+		$result = $api->_request( $url, null, $request_options );
+		list( $status, $response ) = $result;
+		if( empty( $status ) ) { return( null ); }
+		// prepare
+		$count = count( $response );
+		if( $count < 1 ) { return( null ); }
+		$data = array();
+		$currencies = $payment_api->currencies;
+		foreach( $response as $i => $item ) {
+			$currency_id = (string)$item->CharCode;
+			if( empty( $currencies[ $currency_id ] ) ) { continue; }
+			$from_value = (string)$item->Nominal;
+			$to_value   = (string)$item->Value;
+				$from_value = $payment_api->_number_float( $from_value, 6, null, null, ',' );
+				$to_value   = $payment_api->_number_float( $to_value, 6, null, null, ',' );
+			$data[] = array(
+				'from'       => $currency_id,
+				'to'         => 'RUB',
+				'from_value' => $from_value,
+				'to_value'   => $to_value,
+			);
+		}
+		return( $data );
+	}
+
+	// ПриватБанк: json
+	public function load__p24_json( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
@@ -75,21 +269,56 @@ class yf_payment_api__currency {
 		$request_options = array(
 			'is_response_json' => true,
 		);
+		@$_request_options && $request_options = array_replace_recursive(
+			$request_options, $_request_options
+		);
 		$result = $api->_request( $url, null, $request_options );
 		list( $status, $response ) = $result;
-		if( empty( $status ) ) { return( $result ); }
-		return( $response );
+		if( empty( $status ) ) { return( null ); }
+		// prepare
+		$count = count( $response );
+		if( $count < 1 ) { return( null ); }
+		$data = array();
+		$currencies = $payment_api->currencies;
+		foreach( $response as $i => $item ) {
+			$currency_id = $item[ 'ccy' ];
+			if( empty( $currencies[ $currency_id ] ) ) { continue; }
+			$from_value = 100;
+			$to_value_buy  = $item[ 'buy'  ] * $from_value;
+			$to_value_sale = $item[ 'sale' ] * $from_value;
+			$data[] = array(
+				'from'       => $currency_id,
+				'to'         => 'UAH',
+				'from_value' => $from_value,
+				'to_value'   => $to_value_sale,
+			);
+			$data[] = array(
+				'from'       => 'UAH',
+				'to'         => $currency_id,
+				'from_value' => $to_value_buy,
+				'to_value'   => $from_value,
+			);
+		}
+		return( $data );
 	}
 
-	public function load_from_CashExchange( $options = null ) {
+	// CashExchange.com.ua: xml
+	public function load__cashex_xml( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
 		$api         = $this->api;
 		$payment_api = $this->payment_api;
 		// prepare request options
-		$url = 'http://cashexchange.com.ua/XmlApi.ashx';
-		$result = $api->_request( $url );
+		$url = 'http://api.cashex.com.ua/XmlApi.ashx';
+		$request_options = array(
+			'is_redirect'     => true,
+			'is_response_raw' => true,
+		);
+		@$_request_options && $request_options = array_replace_recursive(
+			$request_options, $_request_options
+		);
+		$result = $api->_request( $url, null, $request_options );
 		list( $status, $response ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		require_php_lib( 'sf_dom_crawler' );
@@ -117,6 +346,51 @@ class yf_payment_api__currency {
 				'to_value'   => 1,
 			);
 		});
+		return( $data );
+	}
+
+	// CashExchange.com.ua: xml
+	public function load__cashex_json( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$api         = $this->api;
+		$payment_api = $this->payment_api;
+		// prepare request options
+		$url = 'http://api.cashex.com.ua/api/v1/exchange';
+		$request_options = array(
+			'is_redirect'     => true,
+		);
+		@$_request_options && $request_options = array_replace_recursive(
+			$request_options, $_request_options
+		);
+		$result = $api->_request( $url, null, $request_options );
+		list( $status, $response ) = $result;
+		if( empty( $status ) ) { return( null ); }
+		// prepare
+		$count = count( $response );
+		if( $count < 1 ) { return( null ); }
+		$data = array();
+		$currencies = $payment_api->currencies;
+		foreach( $response as $i => $item ) {
+			$currency_id = $item[ 'Currency' ];
+			if( empty( $currencies[ $currency_id ] ) ) { continue; }
+			$from_value = 100;
+			$to_value_buy  = $item[ 'Buy'  ] * $from_value;
+			$to_value_sale = $item[ 'Sale' ] * $from_value;
+			$data[] = array(
+				'from'       => $currency_id,
+				'to'         => 'UAH',
+				'from_value' => $from_value,
+				'to_value'   => $to_value_sale,
+			);
+			$data[] = array(
+				'from'       => 'UAH',
+				'to'         => $currency_id,
+				'from_value' => $to_value_buy,
+				'to_value'   => $from_value,
+			);
+		}
 		return( $data );
 	}
 
@@ -167,6 +441,10 @@ class yf_payment_api__currency {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_currency_rate ) ) { return( null ); }
+		// base
+		if( !@$_base && @$_provider ) {
+			$_base = $this->provider[ $_provider ][ 'base' ];
+		}
 		// currency
 		empty( $_base        ) && $_base        = $this->base;
 		empty( $_main        ) && $_main        = $this->main;
@@ -226,23 +504,160 @@ class yf_payment_api__currency {
 	public function update( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_currency_rate ) ) { return( null ); }
+		if( !@$_provider || !@$_currency_rate ) { return( null ); }
+		$provider_id = @$this->provider[ $_provider ][ 'id' ];
+		if( !@$provider_id ) { return( null ); }
 		// var
 		$payment_api = $this->payment_api;
 		$sql_datetime = $payment_api->sql_datetime();
 		// add datetime, value
 		$decimals = 6;
 		foreach( $_currency_rate as $index => &$item ) {
+			!@$item[ 'provider_id' ] && $item[ 'provider_id' ] = $provider_id;
 			$item[ 'datetime' ] = &$sql_datetime;
 			$value = &$item[ 'from_value' ];
-			$value = $payment_api->_number_mysql( $value, $decimals );
+				$value = $payment_api->_number_mysql( $value, $decimals );
 			$value = &$item[ 'to_value' ];
-			$value = $payment_api->_number_mysql( $value, $decimals );
+				$value = $payment_api->_number_mysql( $value, $decimals );
 		}
 		// store
 		$result = db()->table( 'payment_currency_rate' )->insert( $_currency_rate
 			// , array( 'sql' => true, )
 		);
+		return( $result );
+	}
+
+	public function provider( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$result = null;
+		$provider = &$this->provider;
+		$index    = &$this->index;
+		// default
+		$_provider = strtolower( @$_provider ?: $this->provider_default );
+		// provider_id
+		if( @$_provider_id ) {
+			$_provider_id = (int)$_provider_id;
+			if( !is_array( $index[ 'provider' ][ 'id' ][ $_provider_id ] ) ) { return( $result ); }
+			$result  = $index[ 'provider' ][ 'id' ][ $_provider_id ];
+		}
+		// allow
+		if( !@$this->provider_allow[ $_provider ] ) { return( $result ); }
+		!$result && $result = $provider[ $_provider ];
+		return( $result );
+	}
+
+	public function rates( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$_type = @$_type == 'sell' ? 'sell' : 'buy';
+		if( !@$_type || !@$_currency_id ) { return( null ); }
+		$payment_api = $this->payment_api;
+		// provider
+		$provider_item = $this->provider( $options );
+		if( !$provider_item ) { return( null ); }
+		$provider    = $provider_item[ 'code' ];
+		$provider_id = $provider_item[ 'id'   ];
+		// cache
+		$currency_rate = &$this->cache[ __FUNCTION__ ][ $provider_id ][ $_type ][ $_currency_id ];
+		if( $_[ 'force' ] || !$currency_rate ) {
+			list( $currency_id, $currency ) = $payment_api->get_currency__by_id(array( 'currency_id' => $_currency_id ));
+			if( @$_type == 'buy' ) {
+				$target = 'to';
+				$source = 'from';
+			} else {
+				$target = 'from';
+				$source = 'to';
+			}
+			$key_value = $target . '_value';
+			$key_rate  = $source . '_value';
+			$sql = db()->table( 'payment_currency_rate' )
+				->where( 'provider_id', '=', $provider_id )
+				->where( $target, '=', $_currency_id )
+				// ->group_by( $source )
+				->order_by( 'datetime', 'DESC' )
+				->sql();
+			$result = db()->query_fetch_all( 'SELECT * FROM ( '. $sql .' ) as cr GROUP BY '. db()->escape_key( $source ) );
+			if( empty( $result ) ) {
+				$currency_id_default = &$payment_api->currency_id_default;
+				foreach( $payment_api->currencies as $key => $item ) {
+					if( $currency_id_default == $key ) { continue; }
+					$currency_rate[ $key ] = array(
+						'value' => 1.0,
+						'rate'  => 1.0,
+					);
+				}
+			} else {
+				foreach( $result as $id => $item ) {
+					$key   = $item[ $source    ];
+					$value = $item[ $key_value ];
+					$rate  = $item[ $key_rate  ];
+					$currency_rate[ $key ] = array(
+						'value' => (float)$value,
+						'rate'  => (float)$rate,
+					);
+				}
+			}
+		}
+		// get from db
+		return( $currency_rate );
+	}
+
+	public function rate( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$result = null;
+		$_type = @$_type == 'sell' ? 'sell' : 'buy';
+		if( !@$_to && !@$_currency_id ) { return( $result ); }
+		// provider
+		$provider = $this->provider( $options );
+		if( !$provider ) { return( $result ); }
+		// currency base
+		$from = @$_from ?: $_currency_id;
+		$to   = @$_to   ?: $provider[ 'base' ];
+		$o = array(
+			'type'        => $_type,
+			'currency_id' => $from,
+			'provider'    => $_provider,
+		);
+		$rates = $this->rates( $o );
+		$r = &$rates[ $to ];
+		if( !@$r ) { return( $result ); }
+		$result = $r[ 'rate' ] / $r[ 'value' ];
+		// round
+/*
+		if( !@$_round ) {
+			$payment_api = $this->payment_api;
+			list( $currency_id, $currency ) = $payment_api->get_currency__by_id( array(
+				'currency_id' => $to,
+			));
+			if( @!$currency_id  ) { return( $result ); }
+			$result = $payment_api->_number_float( $result, $currency[ 'minor_units' ] );
+		}
+ */
+		return( $result );
+	}
+
+	public function conversion( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		if( !@$_amount ) { return( null ); }
+		$result = $this->rate( $options );
+		if( is_null( $result ) ) { return( null ); }
+		$result *= $_amount;
+		// if( !@$_round ) {
+			$payment_api = $this->payment_api;
+			$to = @$_to ?: $_currency_id;
+			list( $currency_id, $currency ) = $payment_api->get_currency__by_id( array(
+				'currency_id' => $to,
+			));
+			if( @!$currency_id  ) { return( $result ); }
+			$result = $payment_api->_number_float( $result, $currency[ 'minor_units' ] );
+		// }
 		return( $result );
 	}
 

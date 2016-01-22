@@ -927,9 +927,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( ! @$result[ 'status' ] ) { return( $result ); }
 		// currency conversion
 		$amount_currency = $payment_api->currency_conversion( array(
-			'conversion_type' => 'sell',
-			'currency_id'     => $currency_id,
-			'amount'          => $_amount,
+			'type'        => 'sell',
+			'currency_id' => $currency_id,
+			'amount'      => $_amount,
 		));
 		if( empty( $amount_currency ) ) {
 			$result = array(

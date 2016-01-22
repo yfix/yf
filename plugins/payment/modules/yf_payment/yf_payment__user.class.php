@@ -40,7 +40,7 @@ class yf_payment__user {
 		// misc
 		$status        = $payment_api->status();
 		$currencies    = $payment_api->currencies;
-		$currency_rate = $payment_api->currency_rate__buy();
+		$currency_rate = $payment_api->currency_rates__buy();
 		$payout_currency_allow = $payment_api->payout_currency_allow;
 		// transition
 		$payment_module = $this->payment_module;

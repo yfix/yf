@@ -34,6 +34,13 @@ class yf_payment_test {
 		// 'YandexMoney'  => true,
 	);
 
+	public $currency_rates_load = array(
+		'NBU'          => true,
+		'CBR'          => true,
+		'Privat24'     => true,
+		'CashExchange' => true,
+	);
+
 	public function _init() {
 		if( !( defined( 'PAYMENT_TEST' ) && PAYMENT_TEST )
 			&& !( defined( 'TEST_MODE' ) && TEST_MODE ) ) {
@@ -71,8 +78,12 @@ class yf_payment_test {
 		// $this->payout();
 	// }
 
-	protected function _fast_currency_rate() {
-		$this->currency_rate();
+	protected function _fast_currency_rates() {
+		$this->currency_rates();
+	}
+
+	protected function _fast_currency_rates_nbu() {
+		$this->currency_rates_nbu();
 	}
 
 	protected function _fast_number() {
@@ -854,142 +865,193 @@ EOS;
 	}
 
 	// ************* test currency_rate
-	protected function currency_rate() {
-		$result = array();
-		$currency__api = _class( 'payment_api__currency' );
-		// NBU
-		/*
-		$data = array (
-			0 => array (
-				'from' => 'USD',
-				'to' => 'UAH',
-				'from_value' => '100',
-				'to_value' => '2289.8565',
-			),
-			1 => array (
-				'from' => 'EUR',
-				'to' => 'UAH',
-				'from_value' => '100',
-				'to_value' => '2478.0827',
-			),
-			2 => array (
-				'from' => 'RUB',
-				'to' => 'UAH',
-				'from_value' => '10',
-				'to_value' => '4.4490',
-			),
+	public function currency_rates_load() {
+// error_reporting(-1);
+		$provider = array(
+			'NBU',
+			'CBR',
+			'Privat24',
+			'CashExchange',
 		);
-		//*/
-		$data = $currency__api->load_from_NBU();
-		$r = $this->_add_panel( array(
-			'header' => 'НБУ',
-			'php'    => var_export( $data, true ),
-		));
-		$result[] = $r;
-		// p24
-		// $data = $currency__api->load_from_Privat24();
-		// $r = $this->_add_panel( array(
-			// 'header' => 'Приват24',
-			// 'php'    => var_export( $data, true ),
-		// ));
-		// $result[] = $r;
-		// CashExchange
-		// $data = $currency__api->load_from_CashExchange();
-		/*
-		$data = array (
-			0 => array (
-			'from'       => 'USD',
-			'to'         => 'UAH',
-			'from_value' => 1,
-			'to_value'   => '22.0428',
-			),
-			1 => array (
-			'from'       => 'UAH',
-			'to'         => 'USD',
-			'from_value' => '24.0503',
-			'to_value'   => 1,
-			),
-			2 => array (
-			'from'       => 'EUR',
-			'to'         => 'UAH',
-			'from_value' => 1,
-			'to_value'   => '23.7551',
-			),
-			3 => array (
-			'from'       => 'UAH',
-			'to'         => 'EUR',
-			'from_value' => '26.1773',
-			'to_value'   => 1,
-			),
-			4 => array (
-			'from'       => 'RUB',
-			'to'         => 'UAH',
-			'from_value' => 1,
-			'to_value'   => '0.6029',
-			),
-			5 => array (
-			'from'       => 'UAH',
-			'to'         => 'RUB',
-			'from_value' => '0.6938',
-			'to_value'   => 1,
-			),
-		); //*/
-		// reverse data
-		$data = $currency__api->reverse( array(
-			'currency_rate' => $data,
-		));
-		$r = $this->_add_panel( array(
-			'header' => 'reverse data',
-			'php'    => var_export( $data, true ),
-		));
-		$result[] = $r;
-		// prepare data
-		$data = $currency__api->prepare( array(
-			'currency_rate' => $data,
-		));
-		$r = $this->_add_panel( array(
-			'header' => 'prepare data',
-			'php'    => var_export( $data, true ),
-		));
-		$result[] = $r;
-		// correction rate
-		$data = $currency__api->correction( array(
-			'currency_rate' => $data,
-		));
-		$r = $this->_add_panel( array(
-			'header' => 'correction rate',
-			'php'    => var_export( $data, true ),
-		));
-		$result[] = $r;
-		// update
-/*
-		main()->init_modules_base();
-		main()->init_main_functions();
-		main()->init_events();
-		main()->init_cache();
-		main()->init_files();
-		main()->init_db();
-		$data = $currency__api->update( array(
-			'currency_rate' => $data,
-		));
-		$r = $this->_add_panel( array(
-			'header' => 'update',
-			'php'    => var_export( $data, true ),
-		));
-		$result[] = $r;
- */
-		// finish
+		$_provider = array();
+		foreach( $provider as $item ) {
+			if( !empty( $this->{ __FUNCTION__ }[ $item ] ) ) {
+				$_provider[] = $item;
+			}
+		}
+		$result = array();
+		$result += $this->_chunk( __FUNCTION__, $_provider );
 		$this->_render( $result );
 	}
 
+	protected function _currency_rates_load( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$php       = 'Выберите метод';
+		$method    = null;
+		$is_action = null;
+		if( @$_provider == @$_GET[ 'provider' ] && @$_method[ $_GET[ 'method' ] ] ) {
+			$is_action = true;
+			$provider  = @$_GET[ 'provider' ];
+			$method    = @$_GET[ 'method' ];
+			$is_debug  = @$_GET[ 'is_debug' ];
+			$options   = array(
+				'provider' => $provider,
+				'method'   => $method,
+				'request_options' => array(
+					'is_debug' => $is_debug,
+				),
+			);
+			// log
+			$php = [];
+			$php[] = var_export( array(
+				'provider' => $provider,
+				'method'   => $method,
+				'request'  => $options,
+			), true );
+			// start
+			$currency__api = _class( 'payment_api__currency' );
+			$result = $currency__api->load( $options );
+			$php[] = var_export( array(
+				'response'  => $result,
+			), true );
+			// end
+		}
+		// actions
+		$action = array();
+		$url = '/@object/@action?provider='. $_provider . '&method=';
+		foreach( $_method as $item => $active ) {
+			if( empty( $active ) ) { continue; }
+			$link = url_user( $url . $item );
+			$a = <<<EOS
+<a href="$link" class="btn btn-default">$item</a>
+EOS;
+			$action[] = $a;
+		}
+		return( array( 'header' => 'currency rate: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ) );
+	}
+
+	protected function _currency_rates_load_NBU( $title ) {
+		$options = array(
+			'title'    => $title,
+			'provider' => 'nbu',
+			'method'   => array(
+				'html' => true,
+				'json' => true,
+			),
+		);
+		$result = $this->_currency_rates_load( $options );
+		return( $result );
+	}
+
+	protected function _currency_rates_load_CBR() {
+		$options = array(
+			'title'    => $title,
+			'provider' => 'cbr',
+			'method'   => array(
+				'xml'  => true,
+			),
+		);
+		$result = $this->_currency_rates_load( $options );
+		return( $result );
+	}
+
+	protected function _currency_rates_load_Privat24() {
+		$options = array(
+			'title'    => $title,
+			'provider' => 'p24',
+			'method'   => array(
+				'json' => true,
+			),
+		);
+		$result = $this->_currency_rates_load( $options );
+		return( $result );
+	}
+
+	protected function _currency_rates_load_CashExchange() {
+		$options = array(
+			'title'    => $title,
+			'provider' => 'cashex',
+			'method'   => array(
+				'xml'  => true,
+				'json' => true,
+			),
+		);
+		$result = $this->_currency_rates_load( $options );
+		return( $result );
+	}
+
 	// ************* test currency_rate
-	public function currency_rate_current() {
+	public function currency_rates_current() {
 		$result = array();
 		$payment_api = _class( 'payment_api' );
+		// conversion UNT to UAH
+		$currency__api = _class( 'payment_api__currency' );
+		$data = array();
+		$provider = 'NBU';
+		$type     = 'buy';
+		$from     = 'USD';
+		$to       = 'UAH';
+		$amount   = 100;
+		$options = array(
+			'provider' => $provider,
+			'type'     => $type,
+			'amount'   => $amount,
+			'from'     => $from,
+			'to'       => $to,
+		);
+		$value = $currency__api->conversion( $options );
+		$data[] = $options + array( 'value' => $value );
+		// --
+		$options[ 'from' ] = $to;
+		$options[ 'to'   ] = $from;
+		$value = $currency__api->conversion( $options );
+		$data[] = $options + array( 'value' => $value );
+		$r = $this->_add_panel(array( 'header' => 'Conversion currency api',
+			'php' => var_export( $data, true )
+		));
+		$result[] = $r;
+		// conversion UNT to UAH
+		$data = array();
+		$currency_id = 'UAH';
+		$amount      = 100;
+		$type        = 'buy';
+		$options = array(
+			'currency_id' => $currency_id,
+			'amount'      => $amount,
+		);
+		$options[ 'type' ] = $type;
+		$data[ $type ] = $payment_api->currency_conversion( $options );
+		// --
+		$type = 'sell';
+		$options[ 'type' ] = $type;
+		$data[ $type ] = $payment_api->currency_conversion( $options );
+		$data = array(
+			'amount'   => $amount,
+			'from'     => 'UNT',
+			'to'       => $currency_id,
+		) + $data;
+		$r = $this->_add_panel(array( 'header' => 'Conversion payment api',
+			'php' => var_export( $data, true )
+		));
+		$result[] = $r;
+		// USD, EUR to UAH
+		$data = array();
+		$provider    = 'NBU';
+		$currency_id = 'USD';
+		$options = array( 'provider'    => $provider );
+		$options[ 'currency_id' ] = $currency_id;
+		$data[ $currency_id ] = $payment_api->currency_rate( $options );
+		$currency_id = 'EUR';
+		$options[ 'currency_id' ] = $currency_id;
+		$data[ $currency_id ] = $payment_api->currency_rate( $options );
+		$r = $this->_add_panel(array( 'header' => $provider, 'php' => var_export( $data, true ) ));
+		$result[] = $r;
 		// UNT
 		$currency_id = 'UNT';
-		$buy  = $payment_api->currency_rate__buy();
-		$sell = $payment_api->currency_rate__sell();
+		$buy  = $payment_api->currency_rates__buy();
+		$sell = $payment_api->currency_rates__sell();
 		$r = $this->_add_panel( array(
 			'header' => $currency_id,
 			'php'    => var_export( array(
@@ -1000,8 +1062,8 @@ EOS;
 		$result[] = $r;
 		// USD
 		$currency_id = 'USD';
-		$buy  = $payment_api->currency_rate__buy( array( 'currency_id' => $currency_id ));
-		$sell = $payment_api->currency_rate__sell(array( 'currency_id' => $currency_id ));
+		$buy  = $payment_api->currency_rates__buy( array( 'currency_id' => $currency_id ));
+		$sell = $payment_api->currency_rates__sell(array( 'currency_id' => $currency_id ));
 		$r = $this->_add_panel( array(
 			'header' => $currency_id,
 			'php'    => var_export( array(
