@@ -543,7 +543,7 @@ class yf_payment_api__currency {
 			$result  = $index[ 'provider' ][ 'id' ][ $_provider_id ];
 		}
 		// allow
-		if( !@$this->provider_allow[ $_provider ] ) { return( $result ); }
+		if( !@$_is_force && !@$this->provider_allow[ $_provider ] ) { return( $result ); }
 		!$result && $result = $provider[ $_provider ];
 		return( $result );
 	}
@@ -611,7 +611,7 @@ class yf_payment_api__currency {
 		// var
 		$result = null;
 		$_type = @$_type == 'sell' ? 'sell' : 'buy';
-		if( !@$_to && !@$_currency_id ) { return( $result ); }
+		if( !@$_from && !@$_currency_id ) { return( $result ); }
 		// provider
 		$provider = $this->provider( $options );
 		if( !$provider ) { return( $result ); }
@@ -638,6 +638,33 @@ class yf_payment_api__currency {
 			$result = $payment_api->_number_float( $result, $currency[ 'minor_units' ] );
 		}
  */
+		return( $result );
+	}
+
+	public function load_rate( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$result = null;
+		if( !@$_from && !@$_currency_id ) { return( $result ); }
+		// provider
+		$provider = $this->provider( $options );
+		if( !$provider ) { return( $result ); }
+		!$_provider && $_provider = $provider[ 'code' ];
+		// currency base
+		$from = @$_from ?: $_currency_id;
+		$to   = @$_to   ?: $provider[ 'base' ];
+		$o = array(
+			'provider' => $_provider,
+			'method'   => @$_method,
+		);
+		$rates = $this->load( $o );
+		foreach( (array)$rates as $idx => $item ) {
+			if( $item[ 'from' ] == $from ) {
+				$result = $item[ 'to_value' ] / $item[ 'from_value' ];
+				break;
+			}
+		}
 		return( $result );
 	}
 

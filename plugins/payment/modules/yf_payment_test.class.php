@@ -41,6 +41,13 @@ class yf_payment_test {
 		'CashExchange' => true,
 	);
 
+	public $currency_rate_load = array(
+		'NBU'          => true,
+		'CBR'          => true,
+		'Privat24'     => true,
+		'CashExchange' => true,
+	);
+
 	public function _init() {
 		if( !( defined( 'PAYMENT_TEST' ) && PAYMENT_TEST )
 			&& !( defined( 'TEST_MODE' ) && TEST_MODE ) ) {
@@ -929,7 +936,7 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'currency rate: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ) );
+		return( array( 'header' => 'currency rates load: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ) );
 	}
 
 	protected function _currency_rates_load_NBU( $title ) {
@@ -979,6 +986,130 @@ EOS;
 			),
 		);
 		$result = $this->_currency_rates_load( $options );
+		return( $result );
+	}
+
+	// ************* test currency rate load
+	public function currency_rate_load() {
+// error_reporting(-1);
+		$provider = array(
+			'NBU',
+			'CBR',
+			'Privat24',
+			'CashExchange',
+		);
+		$_provider = array();
+		foreach( $provider as $item ) {
+			if( !empty( $this->{ __FUNCTION__ }[ $item ] ) ) {
+				$_provider[] = $item;
+			}
+		}
+		$result = array();
+		$result += $this->_chunk( __FUNCTION__, $_provider );
+		$this->_render( $result );
+	}
+
+	protected function _currency_rate_load( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$php       = 'Выберите метод';
+		$method    = null;
+		$is_action = null;
+		if( @$_provider == @$_GET[ 'provider' ] && @$_method[ $_GET[ 'method' ] ] ) {
+			$is_action = true;
+			$provider  = @$_GET[ 'provider' ];
+			$method    = @$_GET[ 'method' ];
+			$is_debug  = @$_GET[ 'is_debug' ];
+			$options   = array(
+				'provider'    => $provider,
+				'method'      => $method,
+				'currency_id' => $_currency_id,
+				'is_force'    => true,
+				'request_options' => array(
+					'is_debug' => $is_debug,
+				),
+			);
+			// log
+			$php = [];
+			$php[] = var_export( array(
+				'provider' => $provider,
+				'method'   => $method,
+				'request'  => $options,
+			), true );
+			// start
+			$currency__api = _class( 'payment_api__currency' );
+			$result = $currency__api->load_rate( $options );
+			$php[] = var_export( array(
+				'response'  => $result,
+			), true );
+			// end
+		}
+		// actions
+		$action = array();
+		$url = '/@object/@action?provider='. $_provider . '&method=';
+		foreach( $_method as $item => $active ) {
+			if( empty( $active ) ) { continue; }
+			$link = url_user( $url . $item );
+			$a = <<<EOS
+<a href="$link" class="btn btn-default">$item</a>
+EOS;
+			$action[] = $a;
+		}
+		return( array( 'header' => 'currency rate load: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ) );
+	}
+
+	public function _currency_rate_load_NBU() {
+		$options = array(
+			'title'       => $title,
+			'provider'    => 'nbu',
+			'currency_id' => 'USD',
+			'method'   => array(
+				'html' => true,
+				'json' => true,
+			),
+		);
+		$result = $this->_currency_rate_load( $options );
+		return( $result );
+	}
+
+	public function _currency_rate_load_CBR() {
+		$options = array(
+			'title'       => $title,
+			'provider'    => 'cbr',
+			'currency_id' => 'USD',
+			'method'   => array(
+				'xml'  => true,
+			),
+		);
+		$result = $this->_currency_rate_load( $options );
+		return( $result );
+	}
+
+	public function _currency_rate_load_Privat24() {
+		$options = array(
+			'title'       => $title,
+			'provider'    => 'p24',
+			'currency_id' => 'USD',
+			'method'   => array(
+				'json' => true,
+			),
+		);
+		$result = $this->_currency_rate_load( $options );
+		return( $result );
+	}
+
+	public function _currency_rate_load_CashExchange() {
+		$options = array(
+			'title'       => $title,
+			'provider'    => 'cashex',
+			'currency_id' => 'USD',
+			'method'   => array(
+				'xml'  => true,
+				'json' => true,
+			),
+		);
+		$result = $this->_currency_rate_load( $options );
 		return( $result );
 	}
 
