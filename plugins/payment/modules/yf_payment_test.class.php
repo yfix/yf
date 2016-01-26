@@ -944,8 +944,9 @@ EOS;
 			'title'    => $title,
 			'provider' => 'nbu',
 			'method'   => array(
-				'html' => true,
 				'json' => true,
+				'xml'  => true,
+				'html' => true,
 			),
 		);
 		$result = $this->_currency_rates_load( $options );
@@ -1018,13 +1019,20 @@ EOS;
 		$is_action = null;
 		if( @$_provider == @$_GET[ 'provider' ] && @$_method[ $_GET[ 'method' ] ] ) {
 			$is_action = true;
-			$provider  = @$_GET[ 'provider' ];
-			$method    = @$_GET[ 'method' ];
-			$is_debug  = @$_GET[ 'is_debug' ];
+			$provider = @$_GET[ 'provider' ];
+			$method   = @$_GET[ 'method' ];
+			$is_debug = @$_GET[ 'is_debug' ];
+			$from     = @$_GET[ 'from' ];
+			$to       = @$_GET[ 'to' ];
+			$date     = @$_GET[ 'date' ];
+			$api      = @$_GET[ 'api' ];
 			$options   = array(
 				'provider'    => $provider,
 				'method'      => $method,
-				'currency_id' => $_currency_id,
+				'date'        => $date ?: @$_date,
+				'currency_id' => @$_currency_id,
+				'from'        => $from ?: @$_from,
+				'to'          => $to ?: @$_to,
 				'is_force'    => true,
 				'request_options' => array(
 					'is_debug' => $is_debug,
@@ -1038,10 +1046,17 @@ EOS;
 				'request'  => $options,
 			), true );
 			// start
-			$currency__api = _class( 'payment_api__currency' );
-			$result = $currency__api->load_rate( $options );
+			switch( $api ) {
+				case 'payment': $api_name = 'payment_api'; $api_method_name = 'currency_load_rate'; break;
+				default:
+				case 'currency': $api_name = 'payment_api__currency'; $api_method_name = 'load_rate'; break;
+			}
+			$api = _class( $api_name );
+			$result = $api->{ $api_method_name }( $options );
 			$php[] = var_export( array(
-				'response'  => $result,
+				'api'        => $api_name,
+				'api_method' => $api_method_name,
+				'response'   => $result,
 			), true );
 			// end
 		}
@@ -1065,8 +1080,9 @@ EOS;
 			'provider'    => 'nbu',
 			'currency_id' => 'USD',
 			'method'   => array(
-				'html' => true,
 				'json' => true,
+				'xml'  => true,
+				'html' => true,
 			),
 		);
 		$result = $this->_currency_rate_load( $options );

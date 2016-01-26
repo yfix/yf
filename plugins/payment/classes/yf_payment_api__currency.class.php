@@ -22,8 +22,9 @@ class yf_payment_api__currency {
 			'full'  => 'Национальный банк Украины',
 			'base'  => 'UAH',
 			'method' => array(
-				'html' => true,
 				'json' => true,
+				'xml'  => true,
+				'html' => true,
 			),
 		),
 		'cbr'  => array(
@@ -116,6 +117,15 @@ class yf_payment_api__currency {
 				}
 			}
 		}
+		// date
+		if( @$_date ) {
+			if( !is_numeric( $_date ) ) {
+				$date = @strtotime( $_date );
+				if( is_int( $date ) ) {
+					$options[ 'date' ] = $date;
+				}
+			}
+		}
 		// load
 		$code = &$provider[ 'code' ];
 		$load = __FUNCTION__ .'__'. $code;
@@ -141,6 +151,11 @@ class yf_payment_api__currency {
 		$payment_api = $this->payment_api;
 		// prepare request options
 		$url = 'http://www.bank.gov.ua/control/uk/curmetal/detail/currency?period=daily';
+		// date
+		if( @$_date ) {
+			$tpl = 'd.m.Y';
+			$url = 'http://www.bank.gov.ua/control/uk/curmetal/currency/search?formType=searchFormDate&time_step=daily&date='. date( $tpl, $_date );
+		}
 		// request
 		$request_options = array(
 			'is_response_raw' => true,
@@ -181,13 +196,41 @@ class yf_payment_api__currency {
 
 	// Национальный банк Украины: json
 	public function load__nbu_json( $options = null ) {
+		$result = $this->load__nbu( $options );
+		return( $result );
+	}
+
+	// Национальный банк Украины: xml
+	public function load__nbu_xml( $options = null ) {
+		$result = $this->load__nbu( $options );
+		return( $result );
+	}
+
+	// Национальный банк Украины: json, xml
+	public function load__nbu( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
 		$api         = $this->api;
 		$payment_api = $this->payment_api;
+		// base url
+		$url = 'http://bank.gov.ua/NBUStatService/v1/statdirectory/exchange';
+		$uri = array();
+		// method
+		switch( @$_method ) {
+			case 'xml':  $uri[] = 'xml';  break;
+			default:
+			case 'json': $uri[] = 'json'; break;
+		}
+		// date
+		if( @$_date ) {
+			$tpl = 'Ymd';
+			$uri[] = 'date='. date( $tpl, $_date );
+		}
+		// url
+		$uri = implode( '&', $uri );
+		$uri && $url .= '?'. $uri;
 		// prepare request options
-		$url = 'http://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json';
 		$request_options = array(
 			'is_redirect' => true,
 		);
@@ -203,6 +246,7 @@ class yf_payment_api__currency {
 		$data = array();
 		$currencies = $payment_api->currencies;
 		foreach( $response as $i => $item ) {
+			if( @$_method == 'xml' ) { $item = (array)$item; }
 			$currency_id = $item[ 'cc' ];
 			if( empty( $currencies[ $currency_id ] ) ) { continue; }
 			$from_value = 100;
@@ -226,6 +270,11 @@ class yf_payment_api__currency {
 		$payment_api = $this->payment_api;
 		// prepare request options
 		$url = 'http://www.cbr.ru/scripts/XML_daily.asp';
+		// date
+		if( @$_date ) {
+			$tpl = 'd/m/Y';
+			$url = $url .'?date_req='. date( $tpl, $_date );
+		}
 		$request_options = array(
 			'is_response_xml' => true,
 		);
@@ -651,17 +700,37 @@ class yf_payment_api__currency {
 		$provider = $this->provider( $options );
 		if( !$provider ) { return( $result ); }
 		!$_provider && $_provider = $provider[ 'code' ];
-		// currency base
+		// currency base, main
+		!@$_main && $_main = $this->main;
+		$base = $provider[ 'base' ];
 		$from = @$_from ?: $_currency_id;
-		$to   = @$_to   ?: $provider[ 'base' ];
+		$to   = @$_to   ?: $base;
+		// request
 		$o = array(
 			'provider' => $_provider,
 			'method'   => @$_method,
+			'date'     => @$_date,
 		);
-		$rates = $this->load( $o );
-		foreach( (array)$rates as $idx => $item ) {
-			if( $item[ 'from' ] == $from ) {
-				$result = $item[ 'to_value' ] / $item[ 'from_value' ];
+		// request
+		$data = $this->load( $o );
+		if( !$data ) { return( $result ); }
+		// processing
+		if( $from == $base ) {
+			$data = $this->reverse( array( 'provider' => $_provider, 'currency_rate' => $data, ));
+		}
+		if( ( $from != $base && $to != $base ) || ( $from == $_main || $to == $_main ) ) {
+			$data = $this->prepare( array( 'provider' => $_provider, 'currency_rate' => $data, ));
+		}
+		if( $from == $_main || $to == $_main ) {
+			$data = $this->correction( array( 'provider' => $_provider, 'currency_rate' => $data, ));
+		}
+		foreach( (array)$data as $idx => $item ) {
+			if( $item[ 'from' ] == $from && $item[ 'to' ] == $to ) {
+				// if( $base == $to ) {
+					$result = $item[ 'to_value'   ] / $item[ 'from_value' ];
+				// } else {
+					// $result = $item[ 'from_value' ] / $item[ 'to_value'   ];
+				// }
 				break;
 			}
 		}

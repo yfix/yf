@@ -405,6 +405,12 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function currency_load_rate( $options = null ) {
+		$currency__api = _class( 'payment_api__currency' );
+		$result = $currency__api->load_rate( $options );
+		return( $result );
+	}
+
 	public function fee( $amount, $fee ) {
 		$rt  = 0;
 		$fix = 0;

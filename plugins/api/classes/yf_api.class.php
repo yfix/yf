@@ -432,7 +432,11 @@ class yf_api {
 					// DEBUG
 					@$_is_debug && var_dump( 'is_json', $result );
 					break;
-				case @$_is_response_html || @$_is_response_xml || @$_is_response_form || strpos( $content_type, 'application/xml' ) === 0 || strpos( $content_type, 'text/html' ) === 0:
+				case @$_is_response_html || @$_is_response_xml || @$_is_response_form
+					|| strpos( $content_type, 'application/xml' ) === 0
+					|| strpos( $content_type, 'text/xml' ) === 0
+					|| strpos( $content_type, 'text/html' ) === 0
+					:
 					libxml_use_internal_errors( true );
 					$xml_response = @simplexml_load_string( $body );
 					$error = libxml_get_errors();
