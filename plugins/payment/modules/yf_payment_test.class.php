@@ -1027,13 +1027,14 @@ EOS;
 			$date     = @$_GET[ 'date' ];
 			$api      = @$_GET[ 'api' ];
 			$options   = array(
-				'provider'    => $provider,
-				'method'      => $method,
-				'date'        => $date ?: @$_date,
-				'currency_id' => @$_currency_id,
-				'from'        => $from ?: @$_from,
-				'to'          => $to ?: @$_to,
-				'is_force'    => true,
+				'provider'      => $provider,
+				'method'        => $method,
+				'date'          => $date ?: @$_date,
+				'currency_id'   => @$_currency_id,
+				'from'          => $from ?: @$_from,
+				'to'            => $to ?: @$_to,
+				'is_force'      => true,
+				// 'is_force_load' => true,
 				'request_options' => array(
 					'is_debug' => $is_debug,
 				),
@@ -1052,11 +1053,13 @@ EOS;
 				case 'currency': $api_name = 'payment_api__currency'; $api_method_name = 'load_rate'; break;
 			}
 			$api = _class( $api_name );
-			$result = $api->{ $api_method_name }( $options );
+			$result1 = $api->{ $api_method_name }( $options );
+			$result2 = $api->{ $api_method_name }( $options );
 			$php[] = var_export( array(
 				'api'        => $api_name,
 				'api_method' => $api_method_name,
-				'response'   => $result,
+				'result1'   => $result1,
+				'result2'   => $result2,
 			), true );
 			// end
 		}
