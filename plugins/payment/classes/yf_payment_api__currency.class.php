@@ -98,6 +98,7 @@ class yf_payment_api__currency {
 			);
 			return( $result );
 		}
+		$provider_id = $provider[ 'id' ];
 		// method
 		$method_id = null;
 		@$method = &$provider[ 'method' ];
@@ -118,6 +119,7 @@ class yf_payment_api__currency {
 			}
 		}
 		// date
+		$date = 0;
 		if( @$_date ) {
 			if( !is_numeric( $_date ) ) {
 				$date = @strtotime( $_date );
@@ -126,6 +128,9 @@ class yf_payment_api__currency {
 				}
 			}
 		}
+		// cache
+		@$result = $this->cache[ __FUNCTION__ ][ $provider_id ][ $method_id ][ $date ];
+		if( !@$_is_force_load && $result ) { return( $result ); }
 		// load
 		$code = &$provider[ 'code' ];
 		$load = __FUNCTION__ .'__'. $code;
@@ -139,6 +144,8 @@ class yf_payment_api__currency {
 			return( $result );
 		}
 		$result = $this->{ $load }( $options );
+		// cache
+		$this->cache[ __FUNCTION__ ][ $provider_id ][ $method_id ][ $date ] = $result;
 		return( $result );
 	}
 
@@ -610,7 +617,7 @@ class yf_payment_api__currency {
 		$provider    = $provider_item[ 'code' ];
 		$provider_id = $provider_item[ 'id'   ];
 		// cache
-		$currency_rate = &$this->cache[ __FUNCTION__ ][ $provider_id ][ $_type ][ $_currency_id ];
+		$currency_rate = $this->cache[ __FUNCTION__ ][ $provider_id ][ $_type ][ $_currency_id ];
 		if( $_[ 'force' ] || !$currency_rate ) {
 			list( $currency_id, $currency ) = $payment_api->get_currency__by_id(array( 'currency_id' => $_currency_id ));
 			if( @$_type == 'buy' ) {
@@ -710,6 +717,7 @@ class yf_payment_api__currency {
 			'provider' => $_provider,
 			'method'   => @$_method,
 			'date'     => @$_date,
+			'is_force' => @$_is_force,
 		);
 		// request
 		$data = $this->load( $o );
