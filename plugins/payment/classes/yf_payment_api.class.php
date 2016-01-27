@@ -110,7 +110,6 @@ class yf_payment_api {
 	public $currency_id_default = 'UNT';
 	public $currency_id         = null;
 	public $currency            = null;
-	public $currency_rate       = null;
 	public $currencies          = null;
 	public $currencies_default  = array(
 		'UNT' => array(
@@ -364,71 +363,52 @@ class yf_payment_api {
 		return( array( $account_id, $account ) );
 	}
 
-	public function currency_rate__buy( $options = null ) {
+	public function currency_rates__buy( $options = null ) {
 		$_ = (array)$options;
-		$_[ 'currency_rate_type' ] = 'buy';
-		$result = $this->currency_rate( $_ );
+		$_[ 'type' ] = 'buy';
+		$result = $this->currency_rates( $_ );
 		return( $result );
 	}
 
-	public function currency_rate__sell( $options = null ) {
+	public function currency_rates__sell( $options = null ) {
 		$_ = (array)$options;
-		$_[ 'currency_rate_type' ] = 'sell';
-		$result = $this->currency_rate( $_ );
+		$_[ 'type' ] = 'sell';
+		$result = $this->currency_rates( $_ );
 		return( $result );
 	}
 
-	public function currency_rate( $options = null ) {
+	public function currency_rates( $options = null ) {
 		$_ = &$options;
-		// currency_id
+		// default
 		$currency_id = $_[ 'currency_id' ]
 			?: $this->currency_id
 			?: $this->currency_id_default
 		;
-		// default 'buy'
-		$type = $_[ 'currency_rate_type' ] == 'sell' ? 'sell' : 'buy';
-		$currency_rate = &$this->currency_rate[ $type ][ $currency_id ];
-		// cache
-		if( $_[ 'force' ] || !$currency_rate ) {
-			list( $currency_id, $currency ) = $this->get_currency__by_id(array( 'currency_id' => $currency_id ));
-			if( $type == 'buy' ) {
-				$target = 'to';
-				$source = 'from';
-			} else {
-				$target = 'from';
-				$source = 'to';
-			}
-			$key_value = $target . '_value';
-			$key_rate  = $source . '_value';
-			$sql = db()->table( 'payment_currency_rate' )
-				->where( $target, '=', $currency_id )
-				// ->group_by( $source )
-				->order_by( 'datetime', 'DESC' )
-				->sql();
-			$result = db()->query_fetch_all( 'SELECT * FROM ( '. $sql .' ) as cr GROUP BY '. db()->escape_key( $source ) );
-			if( empty( $result ) ) {
-				$currency_id_default = &$this->currency_id_default;
-				foreach( $this->currencies as $key => $item ) {
-					if( $currency_id_default == $key ) { continue; }
-					$currency_rate[ $key ] = array(
-						'value' => 1.0,
-						'rate'  => 1.0,
-					);
-				}
-			} else {
-				foreach( $result as $id => $item ) {
-					$key   = $item[ $source    ];
-					$value = $item[ $key_value ];
-					$rate  = $item[ $key_rate  ];
-					$currency_rate[ $key ] = array(
-						'value' => (float)$value,
-						'rate'  => (float)$rate,
-					);
-				}
-			}
-		}
-		// get from db
-		return( $currency_rate );
+			$_[ 'currency_id' ] = &$currency_id;
+		$type = @$_[ 'type'  ] == 'sell' ? 'sell' : 'buy';
+			$_[ 'type' ] = &$type;
+		// start
+		$currency__api = _class( 'payment_api__currency' );
+		$result = $currency__api->rates( $options );
+		return( $result );
+	}
+
+	public function currency_rates__provider( $options = null ) {
+		$currency__api = _class( 'payment_api__currency' );
+		$result = $currency__api->provider( $options );
+		return( $result );
+	}
+
+	public function currency_rate( $options = null ) {
+		$currency__api = _class( 'payment_api__currency' );
+		$result = $currency__api->rate( $options );
+		return( $result );
+	}
+
+	public function currency_load_rate( $options = null ) {
+		$currency__api = _class( 'payment_api__currency' );
+		$result = $currency__api->load_rate( $options );
+		return( $result );
 	}
 
 	public function fee( $amount, $fee ) {
@@ -449,13 +429,13 @@ class yf_payment_api {
 
 	public function currency_conversion( $options = null ) {
 		$_ = &$options;
-		$conversion_type = $_[ 'conversion_type' ] == 'sell' ? 'sell' : 'buy';
-		$currency_id     = $_[ 'currency_id'     ];
-		$amount          = $_[ 'amount'          ];
+		$conversion_type = @$_[ 'type' ] == 'sell' ? 'sell' : 'buy';
+		$currency_id     = @$_[ 'currency_id'     ];
+		$amount          = @$_[ 'amount'          ];
 		if( empty( $currency_id ) || empty( $amount ) ) { return( null ); }
 		// rate
-		$currency_rate = $this->currency_rate( array(
-			'currency_rate_type' => $conversion_type,
+		$currency_rate = $this->currency_rates( array(
+			'type' => $conversion_type,
 		));
 		if( empty( $currency_rate[ $currency_id ] ) ) { return( null ); }
 		// calc
@@ -2276,24 +2256,28 @@ class yf_payment_api {
 		return( $result );
 	}
 
-	function _number_float( $float = 0, $decimals = null ) {
-		return( (float)$this->_number_format( $float, $decimals, '.', '' ) );
+	function _number_float( $float = 0, $decimals = null, $decimal_point = null, $thousands_separator = '', $decimal_point_force = null ) {
+		return( (float)$this->_number_format( $float, $decimals, $decimal_point ?: '.', $thousands_separator, $decimal_point_force ) );
 	}
 
-	function _number_mysql( $float = 0, $decimals = null ) {
-		return( $this->_number_format( $float, $decimals, '.', '' ) );
+	function _number_mysql( $float = 0, $decimals = null, $decimal_point = null, $thousands_separator = '', $decimal_point_force = null ) {
+		return( $this->_number_format( $float, $decimals, $decimal_point ?: '.', $thousands_separator, $decimal_point_force ) );
 	}
 
-	function _number_api( $float = 0, $decimals = null ) {
-		return( $this->_number_format( $float, $decimals, '.', '' ) );
+	function _number_api( $float = 0, $decimals = null, $decimal_point = null, $thousands_separator = '', $decimal_point_force = null ) {
+		return( $this->_number_format( $float, $decimals, $decimal_point ?: '.', $thousands_separator, $decimal_point_force ) );
 	}
 
 	function _number_from_mysql( $float = 0 ) {
 		return( $this->_number_format( $float ) );
 	}
 
-	function _number_format( $float = 0, $decimals = null, $decimal_point = null, $thousands_separator = null ) {
-		$locale_info = localeconv(); $_decimal_point = $locale_info[ 'decimal_point' ];
+	function _number_format( $float = 0, $decimals = null, $decimal_point = null, $thousands_separator = null, $decimal_point_force = null ) {
+		if( isset( $decimal_point_force ) ) {
+			$_decimal_point = $decimal_point_force;
+		} else {
+			$locale_info = localeconv(); $_decimal_point = $locale_info[ 'decimal_point' ];
+		}
 		$float = (float)str_replace( $_decimal_point, '.', $float );
 		!isset( $decimals            ) && $decimals            = $this->DECIMALS            ?: 2;
 		!isset( $decimal_point       ) && $decimal_point       = $this->DECIMAL_POINT       ?: ',';
