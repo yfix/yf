@@ -1673,7 +1673,7 @@ class yf_table2 {
 					$table->_pair_active = main()->get_data('pair_active');
 				}
 				$values = $table->_pair_active;
-				$val = $values[intval((bool)$row['active'])];
+				$val = $values[intval((bool)$row[strtolower($params['name'])])];
 				return !$extra['disabled'] ? '<a'._attrs($extra, array('href','class','title')).'>'. $val. '</a> ' : $val;
 			},
 		);
