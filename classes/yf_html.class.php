@@ -1152,7 +1152,7 @@ class yf_html {
 		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
 
-		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step');
+		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step','readonly');
 		return '<input'._attrs($extra, $attrs_names).'>';
 	}
 
