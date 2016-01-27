@@ -144,7 +144,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'action'     => 'payout',
 				'amount' => array(
 					// 'min' => 10,
-					'max' => 200,
+					'max' => 150,
 				),
 				// 'fee'        => 0, // 0.1%
 				'currency' => array(
@@ -324,7 +324,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'action'     => 'qiwi_payout',
 				'amount' => array(
 					// 'min' => 10,
-					'max' => 200,
+					'max' => 150,
 				),
 				// 'fee'        => 0, // 0.1%
 				'currency' => array(
@@ -375,7 +375,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'action'     => 'wmpayout',
 				'amount' => array(
 					// 'min' => 10,
-					'max' => 200,
+					'max' => 150,
 				),
 				// 'fee'        => 0, // 0.1%
 				'currency' => array(
