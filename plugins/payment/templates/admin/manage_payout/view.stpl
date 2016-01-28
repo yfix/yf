@@ -175,6 +175,15 @@
 
 {/if}
 
+{if_true( is_recreate )}
+<div class="b-action pull-left">
+	<div class="action">
+		<a href="{url.recreate}" class="btn btn-danger">Пересоздать</a>
+	</div>
+</div>
+{/if}
+
+
 {if_not_empty( operations_by_method )}
 <div class="clearfix"></div>
 <div class="b-data">
