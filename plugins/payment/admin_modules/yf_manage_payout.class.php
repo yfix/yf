@@ -70,6 +70,17 @@ class yf_manage_payout {
 				'action'       => 'cancel',
 				'operation_id' => '%operation_id',
 			)),
+			'recreate' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'recreate',
+				'operation_id' => '%operation_id',
+			)),
+			'recreate_items' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'recreate_items',
+				'operation_id' => '%operation_id',
+				'items'        => '%items',
+			)),
 			'status_processing' => url_admin( array(
 				'object'       => $object,
 				'action'       => 'status',
@@ -685,10 +696,13 @@ class yf_manage_payout {
 		));
 		$html_status_title = $status_title;
 		// is
+		$is_refused      = $o_status[ 'name' ] == 'refused';
+		$is_expired      = $o_status[ 'name' ] == 'expired';
 		$is_progressed   = $o_status[ 'name' ] == 'in_progress';
 		$is_processing   = $o_status[ 'name' ] == 'processing';
 		$is_confirmation = $o_status[ 'name' ] == 'confirmation';
 		$is_finish       = !( $is_progressed || $is_processing || $is_confirmation );
+		$is_recreate     = $is_refused || $is_expired;
 		$is_payout_yandexmoney = $provider_name == 'yandexmoney';
 		if( $is_payout_yandexmoney ) {
 			$is_yandexmoney_authorize = $provider_class->is_authorization();
@@ -759,6 +773,8 @@ class yf_manage_payout {
 			'card_method'                  => &$card_method,
 			'html_card_title'              => &$html_card_title,
 			'response'                     => &$response,
+			'is_refused'                   => &$is_refused,
+			'is_expired'                   => &$is_expired,
 			'is_progressed'                => &$is_progressed,
 			'is_processing'                => &$is_processing,
 			'is_confirmation'              => &$is_confirmation,
@@ -769,6 +785,7 @@ class yf_manage_payout {
 			'is_payout_yandexmoney'        => &$is_payout_yandexmoney,
 			'is_yandexmoney_authorize'     => &$is_yandexmoney_authorize,
 			'is_finish'                    => &$is_finish,
+			'is_recreate'                  => &$is_recreate,
 			'html_amount'                  => &$html_amount,
 			'html_datetime_start'          => &$html_datetime_start,
 			'html_datetime_update'         => &$html_datetime_update,
@@ -957,6 +974,7 @@ class yf_manage_payout {
 			'operations_by_method' => $html_operations_by_method,
 			'url' => array(
 				'list'               => $this->_url( 'list' ),
+				'recreate'           => $this->_url( 'recreate',           array( '%operation_id' => $_operation_id ) ),
 				'cancel'             => $this->_url( 'cancel',             array( '%operation_id' => $_operation_id ) ),
 				'expired'            => $this->_url( 'expired',            array( '%operation_id' => $_operation_id ) ),
 				'view'               => $this->_url( 'view',               array( '%operation_id' => $_operation_id ) ),
@@ -974,6 +992,233 @@ class yf_manage_payout {
 			)
 		);
 		$result = tpl()->parse( 'manage_payout/view', $replace );
+		return( $result );
+	}
+
+	protected function _recreate( $options = null ) {
+		// import operation
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$payment_api = &$this->payment_api;
+		$status         = false;
+		$status_message = '';
+		$result = array(
+			'status'         => &$status,
+			'status_message' => &$status_message,
+		);
+		// start transaction
+		$r = $payment_api->transaction_start(array( 'operation_id' => $_operation_id ));
+		if( !$r ) {
+			$payment_api->transaction_rollback();
+			$status_message = 'Ошибка установки уровня изоляции транзакции';
+			return( $result );
+		}
+		// operation
+		$operation = $payment_api->operation(array( 'operation_id' => @$_operation_id ));
+		$operation_id = (int)@$operation[ 'operation_id' ];
+		if( $operation_id != $_operation_id ) {
+			$payment_api->transaction_rollback();
+			$status_message = 'Операция не найдена';
+			return( $result );
+		}
+		// amount
+		$amount = (float)$operation[ 'amount' ];
+		$amounts = @preg_replace( '/[^\d\.\,]/', '|', $_amounts );
+		$amounts = @explode( '|', $amounts );
+		if( $amount != array_sum( $amounts ) ) {
+			$payment_api->transaction_rollback();
+			$status_message = 'Сумма не совпадает: '. $amount . ' != '. implode( ' + ', $amounts );
+			return( $result );
+		}
+		// balance
+		$account_id = (int)$operation[ 'account_id' ];
+		list( $balance, $account_result ) = $payment_api->get_balance(array( 'account_id' => $account_id ));
+		if( !$account_result ) {
+			$payment_api->transaction_rollback();
+			$status_message = 'Счет не найден: '. $account_id;
+			return( $result );
+		}
+		if( $balance < $amount ) {
+			$payment_api->transaction_rollback();
+			$status_message = 'Баланс '
+				. $payment_api->money_text( $balance )
+				. '; требуется '. $payment_api->money_text( $amount )
+				. '; не хватает  '. $payment_api->money_text( $amount - $balance )
+			;
+			return( $result );
+		}
+		list( $account_id, $account ) = $account_result;
+		// prepare operation
+		$sql_datetime = $payment_api->sql_datetime();
+		// status
+		$object = $payment_api->get_status( array( 'name' => 'in_progress' ) );
+		list( $status_id, $status ) = $object;
+		if( empty( $status_id ) ) {
+			$payment_api->transaction_rollback();
+			return( $object );
+		}
+		$operation_new = $operation;
+		// reset fields
+		unset( $operation_new[ 'operation_id' ] );
+		foreach( $operation_new as $key => $value ) {
+			if( strpos( $key, '_' ) === 0 ) { unset( $operation_new[ $key ] ); }
+		}
+		$operation_new[ 'status_id' ] = $status[ 'status_id' ];
+		$operation_new[ 'datetime_start'  ] = $sql_datetime;
+		$operation_new[ 'datetime_update' ] = $sql_datetime;
+		$operation_new[ 'datetime_finish' ] = null;
+		$operation_new[ 'balance'         ] = null;
+		// reset options fields
+		$operation_new__options = $operation_new[ 'options' ];
+		$object = array();
+		$object[ 'request'  ] = $operation_new__options[ 'request' ];
+		$object[ 'recreate' ] = array(
+			'admin'    => main()->ADMIN_ID,
+			'datetime' => $sql_datetime,
+		);
+		$operation_new[ 'options' ] = $object;
+		unset(
+			  $operation_new[ 'options' ][ 'request' ][ 0 ][ 'data' ][ 'fee' ]
+			, $operation_new[ 'options' ][ 'request' ][ 0 ][ 'data' ][ 'amount_currency' ]
+			, $operation_new[ 'options' ][ 'request' ][ 0 ][ 'data' ][ 'amount_currency_total' ]
+		);
+		// reset amount
+		$operation_new_items = array();
+		$table = 'payment_operation';
+		foreach( $amounts as $value ) {
+			$operation_new[ 'amount' ] = $value;
+			$operation_new[ 'options' ][ 'request' ][ 0 ][ 'options' ][ 'amount' ] = $value;
+			$operation_new[ 'options' ][ 'request' ][ 0 ][ 'data' ][ 'amount' ] = $value;
+			$operation_new[ 'options' ][ 'request' ][ 0 ][ 'datetime' ] = $sql_datetime;
+			// insert new operation
+			$sql_data = $operation_new;
+			$sql_data[ 'options' ] = json_encode( $sql_data[ 'options' ] );
+			$sql_status = db()->table( $table )->insert( $sql_data, array( 'escape' => true ) );
+			if( !$sql_status ) {
+				$payment_api->transaction_rollback();
+				$status_message = 'Ошибка ДБ при создании новой операции';
+				return( $result );
+			}
+			$operation_new_items[] = $sql_status;
+		}
+		// update balance
+		$sql_amount = $payment_api->_number_mysql( $amount );
+		$sql_data = array(
+			'account_id'      => $account_id,
+			'datetime_update' => db()->escape_val( $sql_datetime ),
+			'balance'         => "( balance - $sql_amount )",
+		);
+		$r = $payment_api->balance_update( $sql_data, array( 'is_escape' => false ) );
+		if( !$r[ 'status' ] ) {
+			$payment_api->transaction_rollback();
+			$status_message = 'Ошибка при обновлении счета';
+			return( $result );
+		}
+		$payment_api->transaction_commit();
+		$status_message = 'Создано: '. implode( ', ', $operation_new_items );
+		$result[ 'operation_id' ] = $operation_id;
+		$result[ 'items'        ] = $operation_new_items;
+		return( $result );
+	}
+
+	public function recreate() {
+		// var
+		$payment_api = &$this->payment_api;
+		$url = &$this->url;
+		$is_post = main()->is_post();
+		$operation_id = (int)@$_REQUEST[ 'operation_id' ];
+		// check
+		if( $operation_id < 1 ) {
+			$url_list = $this->_url( 'list' );
+			return( js_redirect( $url_list, false, 'Empty operation_id' ) );
+		}
+		// operation
+		$operation = $payment_api->operation(array( 'operation_id' => $operation_id ));
+		$_operation_id = (int)@$operation[ 'operation_id' ];
+		if( $operation_id != $_operation_id ) {
+			$result = array(
+				'status_header'  => 'Пересоздание операции',
+				'status_message' => 'Операция не найдена',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// amount
+		$amount = (float)$operation[ 'amount' ];
+		// form
+		$url_view = $this->_url( 'view', array( '%operation_id' => $operation_id ) );
+		$replace = array(
+			'operation_id' => $operation_id,
+			'amount_text'  => $payment_api->money_text( $amount ),
+			'amounts'      => @$_POST[ 'amounts' ],
+		);
+		$result = form( $replace )
+			->on_post( function( $data, $extra, $rules ) {
+				$is_recreate = @$_POST[ 'operation' ] == 'recreate';
+				if( $is_recreate ) {
+					$result = $this->_recreate( $_POST );
+					if( @$result[ 'status' ] ) {
+						$level = 'success';
+						$message = 'Выполнено пересоздание: ';
+					} else {
+						$level = 'error';
+						$message = 'Ошибка пересоздания: ';
+					}
+					$message .= $result[ 'status_message' ];
+					common()->add_message( $message, $level );
+					// recreated items
+					if( @$result[ 'status' ] ) {
+						$operation_id = (int)$result[ 'operation_id' ];
+						$items = implode( ',', $result[ 'items' ] );
+						$url = $this->_url( 'recreate_items', array( '%operation_id' => $operation_id, '%items' => $items ) );
+						return( js_redirect( $url, false, 'recreated items: ', $items ) );
+					}
+				}
+			})
+			->info( 'operation_id', 'Операция', array( 'class' => 'text-warning', 'class_add_controls' => 'form-control-static' ) )
+			->info( 'amount_text', 'Сумма', array( 'class' => 'text-success', 'class_add_controls' => 'form-control-static' ) )
+			->hidden( 'operation_id' )
+			->input( 'amounts', array( 'desc' => 'Сумма', 'label_tip' => 'Величина не должна превышать сумму операции. Для разбиения суммы на части используйте любой не числовой символ: 10-20-30 для суммы 50' ) )
+			->row_start()
+				->submit( 'operation', 'recreate', array( 'desc' => 'Пересоздать', 'icon' => 'fa fa-refresh' ) )
+				->link( 'Назад' , $url_view, array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
+			->row_end()
+		;
+		return( $result );
+	}
+
+	public function recreate_items() {
+		// options
+		$operation_id = @$_GET[ 'operation_id' ];
+		$items = explode( ',', @$_GET[ 'items' ] );
+		$items = array_filter( $items, 'trim' );
+		// table
+		$html = _class( 'html' );
+		$text = 'Операция';
+		$content = array();
+			$link = $html->a( array(
+				'href'      => $this->_url( 'view', array( '%operation_id' => $operation_id ) ),
+				'class_add' => 'btn-danger',
+				'target'    => '_blank',
+				'icon'      => 'fa fa-sign-out',
+				'title'     => $text,
+				'text'      => $text,
+			));
+			$content[ 'Пересоздана операция №'. $operation_id ] = $link;
+		$text = 'Вывод средств';
+		$title = 'Новая операция №';
+		foreach( $items as $operation_id ) {
+			$header = $title . $operation_id;
+			$link = $html->a( array(
+				'href'      => $this->_url( 'view', array( '%operation_id' => $operation_id ) ),
+				'class_add' => 'btn-success',
+				'target'    => '_blank',
+				'icon'      => 'fa fa-sign-out',
+				'title'     => $text,
+				'text'      => $text,
+			));
+			$content[ $header ] = $link;
+		}
+		$result = $html->simple_table( $content, array( 'no_total' => true ) );
 		return( $result );
 	}
 
