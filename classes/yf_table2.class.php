@@ -1420,6 +1420,13 @@ class yf_table2 {
 	/**
 	*/
 	function btn($name, $link, $extra = array()) {
+		if (is_array($link)) {
+			$extra = $link;
+			$link = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
 		$this->_buttons[] = array(
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
