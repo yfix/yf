@@ -49,7 +49,7 @@ class yf_admin_modules {
 			$this->_yf_plugins_classes = main()->_plugins_classes;
 		}
 		$items = array();
-		foreach ((array)db()->from('admin_modules')->order_by('name', 'asc')->get_all() as $a) {
+		foreach ((array)from('admin_modules')->order_by('name', 'asc')->all() as $a) {
 			$name = $a['name'];
 			$plugin_name = '';
 			if (isset($this->_yf_plugins_classes[$name])) {
@@ -151,7 +151,7 @@ class yf_admin_modules {
 			);
 		}
 		if ($insert_data) {
-			db()->insert('admin_modules', db()->es($insert_data));
+			db()->insert_safe('admin_modules', $insert_data);
 		}
 		// Check for missing modules
 		$delete_names = array();
