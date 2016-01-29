@@ -169,6 +169,10 @@ class yf_payment_api {
 	public $type       = null;
 	public $type_index = null;
 
+	public $DECIMALS            = 2;
+	public $DECIMAL_POINT       = ',';
+	public $THOUSANDS_SEPARATOR = '&nbsp;';
+
 	public $CONFIG              = null;
 	public $OPERATION_LIMIT     = 10;
 	public $IS_BALANCE_LIMIT_LOWER = true;
@@ -2279,9 +2283,9 @@ class yf_payment_api {
 			$locale_info = localeconv(); $_decimal_point = $locale_info[ 'decimal_point' ];
 		}
 		$float = (float)str_replace( $_decimal_point, '.', $float );
-		!isset( $decimals            ) && $decimals            = $this->DECIMALS            ?: 2;
-		!isset( $decimal_point       ) && $decimal_point       = $this->DECIMAL_POINT       ?: ',';
-		!isset( $thousands_separator ) && $thousands_separator = $this->THOUSANDS_SEPARATOR ?: '&nbsp;';
+		!isset( $decimals            ) && $decimals            = @$this->DECIMALS            ?: 2;
+		!isset( $decimal_point       ) && $decimal_point       = @$this->DECIMAL_POINT       ?: ',';
+		!isset( $thousands_separator ) && $thousands_separator = @$this->THOUSANDS_SEPARATOR ?: '&nbsp;';
 		if( empty( $this->FORCE_DECIMALS ) && (int)$float == $float  ) { $decimals = 0; }
 		$float = number_format( $float, $decimals, $decimal_point, '`' );
 		$float = str_replace( '`', $thousands_separator, $float );

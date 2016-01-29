@@ -271,16 +271,16 @@ EOS;
 		$currency__api = _class( 'payment_api__currency' );
 		$result = true;
 		$count  = 0;
+		// error_reporting(-1);
 		foreach( $this->load_provider as $item => $active ) {
 			if( !$active ) { continue; }
-			$data   = $currency__api->load(array( 'provider' => $item ));
-			if( empty( $data ) ) { return( null ); }
+			$data = $currency__api->load(array( 'provider' => $item ));
+			if( !$data ) { $result = false; continue; }
+			$count  += count( $data );
 			$data    = $currency__api->reverse( array( 'provider' => $item, 'currency_rate'    => $data, ));
 			$data    = $currency__api->prepare( array( 'provider' => $item, 'currency_rate'    => $data, ));
 			$data    = $currency__api->correction( array( 'provider' => $item, 'currency_rate' => $data, ));
-			$count  += count( $data );
-			$result = $currency__api->update( array( 'provider' => $item, 'currency_rate'     => $data, ));
-			if( !$result ) { return( array( $result, $count ) ); }
+			$result &= $currency__api->update( array( 'provider' => $item, 'currency_rate'     => $data, ));
 		}
 		return( array( $result, $count ) );
 	}
@@ -299,7 +299,7 @@ EOS;
 				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
 				if( $is_confirm ) {
 					list( $result, $count ) = $this->_update();
-					if( empty( $result ) || $result < 4 ) {
+					if( !@$result || @$count < 4 ) {
 						$level = 'error';
 						$message = 'Ошибка: обновление курса валют: '. $result;
 					} else {
@@ -321,8 +321,8 @@ EOS;
 	}
 
 	function _update_cli() {
-		list( $result, $count ) = $this->_update();
-		if( empty( $result ) || $result < 4 ) {
+		@list( $result, $count ) = $this->_update();
+		if( !@$result || @$count < 4 ) {
 			$status = 1;
 			$message = 'Currency rate update is fail: '. $result;
 		} else {

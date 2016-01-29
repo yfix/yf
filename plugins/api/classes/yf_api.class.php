@@ -427,7 +427,7 @@ class yf_api {
 			$result = $body;
 		} else {
 			switch( true ) {
-				case  $_is_response_json || strpos( $content_type, 'application/json' ) === 0:
+				case  @$_is_response_json || strpos( $content_type, 'application/json' ) === 0:
 					$result = @json_decode( $body, true );
 					// DEBUG
 					@$_is_debug && var_dump( 'is_json', $result );

@@ -128,6 +128,8 @@ class yf_payment_api__currency {
 				}
 			}
 		}
+		// DEBUG
+		// $options[ 'is_debug' ] = true;
 		// cache
 		@$result = $this->cache[ __FUNCTION__ ][ $provider_id ][ $method_id ][ $date ];
 		if( !@$_is_force_load && $result ) { return( $result ); }
@@ -245,7 +247,7 @@ class yf_payment_api__currency {
 			$request_options, $_request_options
 		);
 		$result = $api->_request( $url, null, $request_options );
-		list( $status, $response ) = $result;
+		@list( $status, $response ) = $result;
 		if( empty( $status ) ) { return( null ); }
 		// prepare
 		$count = count( $response );
@@ -283,6 +285,7 @@ class yf_payment_api__currency {
 			$url = $url .'?date_req='. date( $tpl, $_date );
 		}
 		$request_options = array(
+			'is_redirect'     => true,
 			'is_response_xml' => true,
 		);
 		@$_request_options && $request_options = array_replace_recursive(
@@ -476,8 +479,8 @@ class yf_payment_api__currency {
 		// currency
 		empty( $_main ) && $_main = $this->main;
 		// correction
-		$k_buy  = 1 + $this->rate[ buy  ] / 100;
-		$k_sell = 1 + $this->rate[ sell ] / 100;
+		$k_buy  = 1 + $this->rate[ 'buy'  ] / 100;
+		$k_sell = 1 + $this->rate[ 'sell' ] / 100;
 		$result = $_currency_rate;
 		foreach( $result as $index => &$item ) {
 			if( $item[ 'from' ] == $_main ) {
@@ -576,6 +579,7 @@ class yf_payment_api__currency {
 			$value = &$item[ 'to_value' ];
 				$value = $payment_api->_number_mysql( $value, $decimals );
 		}
+		if( !@$_currency_rate ) { return( null ); }
 		// store
 		$result = db()->table( 'payment_currency_rate' )->insert( $_currency_rate
 			// , array( 'sql' => true, )
