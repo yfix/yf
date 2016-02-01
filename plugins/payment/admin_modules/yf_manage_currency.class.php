@@ -270,19 +270,28 @@ EOS;
 	function _update() {
 		$currency__api = _class( 'payment_api__currency' );
 		$result = true;
-		$count  = 0;
+		$total  = 0;
+		$index  = 0;
+		$max    = 0;
 		// error_reporting(-1);
 		foreach( $this->load_provider as $item => $active ) {
 			if( !$active ) { continue; }
 			$data = $currency__api->load(array( 'provider' => $item ));
 			if( !$data ) { $result = false; continue; }
-			$count  += count( $data );
+			// count
+			$count = count( $data ); $max = max( $max, $count );
+			$total += $count;
+			$index++;
+			// processing
 			$data    = $currency__api->reverse( array( 'provider' => $item, 'currency_rate'    => $data, ));
 			$data    = $currency__api->prepare( array( 'provider' => $item, 'currency_rate'    => $data, ));
 			$data    = $currency__api->correction( array( 'provider' => $item, 'currency_rate' => $data, ));
 			$result &= $currency__api->update( array( 'provider' => $item, 'currency_rate'     => $data, ));
 		}
-		return( array( $result, $count ) );
+		if( ( $total / $index ) < $max ) {
+			$result = false;
+		}
+		return( $result );
 	}
 
 	function update() {
@@ -298,13 +307,13 @@ EOS;
 			->on_post( function( $data, $extra, $rules ) {
 				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
 				if( $is_confirm ) {
-					list( $result, $count ) = $this->_update();
-					if( !@$result || @$count < 4 ) {
+					$result = $this->_update();
+					if( !@$result ) {
 						$level = 'error';
-						$message = 'Ошибка: обновление курса валют: '. $result;
+						$message = 'Ошибка: обновление курса валют';
 					} else {
 						$level = 'success';
-						$message = 'Выполнено: обновление курса валют: '. $count;
+						$message = 'Выполнено: обновление курса валют';
 					}
 					common()->add_message( $message, $level );
 				} else {
@@ -321,13 +330,13 @@ EOS;
 	}
 
 	function _update_cli() {
-		@list( $result, $count ) = $this->_update();
-		if( !@$result || @$count < 4 ) {
+		$result = $this->_update();
+		if( !@$result ) {
 			$status = 1;
-			$message = 'Currency rate update is fail: '. $result;
+			$message = 'Currency rate update is fail';
 		} else {
 			$status = 0;
-			$message = 'Currency rate update is success: '. $count;
+			$message = 'Currency rate update is success';
 			;
 		}
 		echo( $message . PHP_EOL );
