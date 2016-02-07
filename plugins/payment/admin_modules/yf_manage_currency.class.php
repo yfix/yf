@@ -2,6 +2,11 @@
 
 class yf_manage_currency {
 
+	public $load_provider = array(
+		'nbu' => true,
+		'cbr' => true,
+	);
+
 	protected $object      = null;
 	protected $action      = null;
 	protected $id          = null;
@@ -42,6 +47,7 @@ class yf_manage_currency {
 
 	function _filter_form_show( $filter, $replace ) {
 		$order_fields = array(
+			'provider_id'      => 'provider_id',
 			'currency_rate_id' => 'id',
 			'datetime'         => 'дата обновления',
 			'from'             => 'валюта продажи',
@@ -49,8 +55,18 @@ class yf_manage_currency {
 		);
 		$payment_api = _class( 'payment_api' );
 		$data  = $payment_api->currencies;
-		$currenc_ids = array_keys( $data );
-		$currencies = array_combine( $currenc_ids, $currenc_ids );
+		$currency_ids = array_keys( $data );
+		$currencies = array_combine( $currency_ids, $currency_ids );
+		// currency_ids
+		$currency__api = _class( 'payment_api__currency' );
+		$provider       = &$currency__api->provider;
+		$provider_index = &$currency__api->index[ 'provider' ][ 'id' ];
+		$providers = array();
+		foreach( $provider as $key => $item ) {
+			$provider_id = $item[ 'id' ];
+			$title       = $item[ 'short' ];
+			$providers[ $provider_id ] = $title;
+		}
 		// form
 		// $min_date = db()->select( 'MIN( `datetime` )' )->from( 'payment_currency_rate' )->get_one();
 		$result = form( $replace, array(
@@ -66,6 +82,7 @@ class yf_manage_currency {
 				// 'autocomplete' => 'off',
 				// 'desc' => 'Дата обновления',
 			// ))
+			->select_box( 'provider_id', $providers, array( 'show_text' => 1, 'desc' => 'Провайдер' ) )
 			->select_box( 'from', $currencies, array( 'show_text' => 1, 'desc' => 'Валюта продажи' ) )
 			->select_box( 'to',   $currencies, array( 'show_text' => 1, 'desc' => 'Валюта покупки' ) )
 			->select_box( 'order_by', $order_fields, array( 'show_text' => 1, 'desc' => 'Сортировка' ) )
@@ -128,24 +145,29 @@ class yf_manage_currency {
 		$filter      = &$this->filter;
 		$url         = &$this->url;
 		// var
-		$html        = _class( 'html' );
-		$payment_api = _class( 'payment_api' );
+		$html          = _class( 'html' );
+		$payment_api   = _class( 'payment_api' );
+		$currency__api = _class( 'payment_api__currency' );
 		// current current rates
 		list( $currency_id, $currency ) = $payment_api->get_currency__by_id();
+		$provider       = &$currency__api->provider;
+		$provider_index = &$currency__api->index[ 'provider' ][ 'id' ];
 		// buy
-		$data = $payment_api->currency_rate__buy();
+		$data = $payment_api->currency_rates__buy();
 		$content = array();
 		foreach( $data as $id => $item ) { $content[ $id ] = sprintf( '%.3f', $item[ 'rate' ] / $item[ 'value' ] ); }
 		$html_buy = $html->simple_table( $content, array( 'no_total' => true, 'rotate_table' => true ) );
 		// sell
-		$data = $payment_api->currency_rate__sell();
+		$data = $payment_api->currency_rates__sell();
 		$content = array();
 		foreach( $data as $id => $item ) { $content[ $id ] = sprintf( '%.3f', $item[ 'rate' ] / $item[ 'value' ] ); }
 		$html_sell = $html->simple_table( $content, array( 'no_total' => true, 'rotate_table' => true ) );
+		// provider
+		$currency_rate__provider = $payment_api->currency_rates__provider();
 		// compile
 		$html = <<<EOS
 <div class="panel panel-default pull-left">
-	<div class="panel-heading">Курс валюты: $currency[name] ($currency_id, $currency[sign])</div>
+	<div class="panel-heading">$currency_rate__provider[short], курс валюты: $currency[name] ($currency_id, $currency[sign])</div>
 	<div class="panel-body">
 		<div class="pull-left">
 			<b>Покупка</b>
@@ -173,6 +195,12 @@ EOS;
 			))
 			->text( 'currency_rate_id', 'ID'  )
 			->date( 'datetime', 'дата обновления', array( 'format' => 'full', 'nowrap' => 1 ) )
+			->func( 'provider_id', function( $value, $extra, $row_info ) use( $provider_index ){
+				$id     = (int)$value;
+				$title  = $provider_index[ $id ][ 'short' ];
+				$result = $title;
+				return( $result );
+			}, array( 'desc' => 'провайдер' ) )
 			->text( 'from', 'валюта продажи' )
 			->text( 'to'  , 'валюта покупки' )
 			->text( 'from_value', 'величина продажи' )
@@ -197,6 +225,14 @@ EOS;
 			->where( 'currency_rate_id', $id )
 			->get();
 		;
+		// currency__api
+		$currency__api = _class( 'payment_api__currency' );
+		$provider       = &$currency__api->provider;
+		$provider_index = &$currency__api->index[ 'provider' ][ 'id' ];
+			$id     = (int)$replace[ 'provider_id' ];
+			$title  = $provider_index[ $id ][ 'short' ];
+			$replace[ 'provider' ] = $title;
+		// post
 		isset( $_POST ) && $replace = $_POST + $replace;
 		$result = form( $replace )
 			->validate( array(
@@ -218,6 +254,7 @@ EOS;
 			), 'currency_rate_id='. $id )
 			->info( 'currency_rate_id' , 'ID' )
 			->info_date( 'datetime', 'дата обновления' )
+			->info( 'provider', 'провайдер' )
 			->info( 'from', 'валюта продажи' )
 			->info( 'to'  , 'валюта покупки' )
 			->text( 'from_value', 'величина продажи' )
@@ -232,14 +269,29 @@ EOS;
 
 	function _update() {
 		$currency__api = _class( 'payment_api__currency' );
-		$data   = $currency__api->load_from_NBU();
-		if( empty( $data ) ) { return( null ); }
-		$data   = $currency__api->reverse( array( 'currency_rate'    => $data, ));
-		$data   = $currency__api->prepare( array( 'currency_rate'    => $data, ));
-		$data   = $currency__api->correction( array( 'currency_rate' => $data, ));
-		$count = count( $data );
-		$result = $currency__api->update( array( 'currency_rate'     => $data, ));
-		return( array( $result, $count ) );
+		$result = true;
+		$total  = 0;
+		$index  = 0;
+		$max    = 0;
+		// error_reporting(-1);
+		foreach( $this->load_provider as $item => $active ) {
+			if( !$active ) { continue; }
+			$data = $currency__api->load(array( 'provider' => $item ));
+			if( !$data ) { $result = false; continue; }
+			// count
+			$count = count( $data ); $max = max( $max, $count );
+			$total += $count;
+			$index++;
+			// processing
+			$data    = $currency__api->reverse( array( 'provider' => $item, 'currency_rate'    => $data, ));
+			$data    = $currency__api->prepare( array( 'provider' => $item, 'currency_rate'    => $data, ));
+			$data    = $currency__api->correction( array( 'provider' => $item, 'currency_rate' => $data, ));
+			$result &= $currency__api->update( array( 'provider' => $item, 'currency_rate'     => $data, ));
+		}
+		if( ( $total / $index ) < $max ) {
+			$result = false;
+		}
+		return( $result );
 	}
 
 	function update() {
@@ -255,13 +307,13 @@ EOS;
 			->on_post( function( $data, $extra, $rules ) {
 				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
 				if( $is_confirm ) {
-					list( $result, $count ) = $this->_update();
-					if( empty( $result ) || $result < 4 ) {
+					$result = $this->_update();
+					if( !@$result ) {
 						$level = 'error';
-						$message = 'Ошибка: обновление курса валют: '. $result;
+						$message = 'Ошибка: обновление курса валют';
 					} else {
 						$level = 'success';
-						$message = 'Выполнено: обновление курса валют: '. $count;
+						$message = 'Выполнено: обновление курса валют';
 					}
 					common()->add_message( $message, $level );
 				} else {
@@ -278,13 +330,13 @@ EOS;
 	}
 
 	function _update_cli() {
-		list( $result, $count ) = $this->_update();
-		if( empty( $result ) || $result < 4 ) {
+		$result = $this->_update();
+		if( !@$result ) {
 			$status = 1;
-			$message = 'Currency rate update is fail: '. $result;
+			$message = 'Currency rate update is fail';
 		} else {
 			$status = 0;
-			$message = 'Currency rate update is success: '. $count;
+			$message = 'Currency rate update is success';
 			;
 		}
 		echo( $message . PHP_EOL );

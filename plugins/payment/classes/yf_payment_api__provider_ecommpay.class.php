@@ -144,7 +144,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'action'     => 'payout',
 				'amount' => array(
 					// 'min' => 10,
-					'max' => 200,
+					'max' => 150,
 				),
 				// 'fee'        => 0, // 0.1%
 				'currency' => array(
@@ -324,7 +324,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'action'     => 'qiwi_payout',
 				'amount' => array(
 					// 'min' => 10,
-					'max' => 200,
+					'max' => 150,
 				),
 				// 'fee'        => 0, // 0.1%
 				'currency' => array(
@@ -375,7 +375,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'action'     => 'wmpayout',
 				'amount' => array(
 					// 'min' => 10,
-					'max' => 200,
+					'max' => 150,
 				),
 				// 'fee'        => 0, // 0.1%
 				'currency' => array(
@@ -669,7 +669,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$_ = &$options;
 		// START DUMP
 		$payment_api = $this->payment_api;
-		$payment_api->dump(array( 'name' => 'EcommPay', 'operation_id' => (int)$_[ 'operation_id' ] ));
+		$payment_api->dump(array( 'name' => 'EcommPay', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ));
 		if( empty( $data ) ) { return( null ); }
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
@@ -711,9 +711,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
-		$operation_id = @$_GET[ 'operation_id' ];
+		$operation_id = @(int)$_GET[ 'operation_id' ];
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'EcommPay', 'operation_id' => (int)$operation_id ));
+		$payment_api->dump( array( 'name' => 'EcommPay', 'operation_id' => $operation_id ));
 		// TEST DATA
 		/*
 		$_POST = array (
@@ -834,7 +834,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// START NEW DUMP
-		$payment_api->dump( array( 'is_new' => true, 'name' => 'EcommPay', 'operation_id' => (int)$operation_id ));
+		$operation_id = @(int)$_response[ 'operation_id' ];
+		$payment_api->dump( array( 'is_new' => true, 'name' => 'EcommPay', 'operation_id' => $operation_id ));
 		// deposition or payout
 		$state = $_response[ 'type_id' ];
 		$status = $this->_type_server;
@@ -926,9 +927,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( ! @$result[ 'status' ] ) { return( $result ); }
 		// currency conversion
 		$amount_currency = $payment_api->currency_conversion( array(
-			'conversion_type' => 'sell',
-			'currency_id'     => $currency_id,
-			'amount'          => $_amount,
+			'type'        => 'sell',
+			'currency_id' => $currency_id,
+			'amount'      => $_amount,
 		));
 		if( empty( $amount_currency ) ) {
 			$result = array(

@@ -182,6 +182,8 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		),
 	);
 
+	public $API_SERVER_HOST = 'robot.pm';
+
 	public $service_allow = array(
 		'Perfect Money',
 	);
@@ -294,8 +296,13 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		if( !$this->ENABLE ) { return( null ); }
 		if( empty( $data ) ) { return( null ); }
 		$_ = &$options;
+		// START DUMP
+		$payment_api = $this->payment_api;
+		$payment_api->dump(array( 'name' => 'PerfectMoney', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ));
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
+		// DUMP
+		$payment_api->dump(array( 'var' => $form_options ));
 		$url = &$this->URL;
 		$result = array();
 		if( $is_array ) {
@@ -321,23 +328,30 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		// var
-		$test_mode        = &$this->TEST_MODE;
-		$is_server        = !empty( $_GET[ 'server' ] );
-		$is_server_origin = gethostbyaddr( $this->_ip() ) === 'robot.pm';
-		$result = null;
+		$test_mode = &$this->TEST_MODE;
+		$is_server = !empty( $_GET[ 'server' ] );
+		$result    = null;
+		// server host
+		$ip               = $this->_ip();
+		$host             = gethostbyaddr( $ip );
+		$is_server_origin = $host === $this->API_SERVER_HOST;
 		// check operation
 		// $_operation_id = (int)$_GET[ 'operation_id' ];
 		$operation_id = (int)$_POST[ 'PAYMENT_ID' ];
 		// START DUMP
 		$payment_api->dump( array( 'name' => 'PerfectMoney', 'operation_id' => (int)$operation_id ));
 		// check origin server
-		if( !$is_server_origin && !$test_mode ) {
+		if( !$is_server && !$is_server_origin && !$test_mode ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Разрешены запросы только от сервера',
 			);
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump(array( 'var' => array( $result, array(
+				'ip'              => $ip,
+				'host'            => $host,
+				'api_server_host' => $this->API_SERVER_HOST,
+			))));
 			return( $result );
 		}
 		/* // test data
@@ -372,10 +386,29 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 		$state = null;
 		$state = @$_GET[ 'status' ]; // disable user request by comment this line
 		// server status always is success
-		if( $is_server && $is_signature_ok ) {
+		if( $is_server ) {
+			if( ! $is_signature_ok ) {
+				$result = array(
+					'status'         => false,
+					'status_message' => 'Неверная подпись',
+				);
+				// DUMP
+				$payment_api->dump(array( 'var' => $result ));
+				return( $result );
+			}
 			$state = 'success';
 		}
 		list( $status_name, $status_message ) = $this->_state( $state );
+		// check state
+		if( !$state || !$status_name ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестное состояние',
+			);
+			// DUMP
+			$payment_api->dump(array( 'var' => $result ));
+			return( $result );
+		}
 		$status = $status_name == 'success';
 		// check signature
 		if( empty( $signature ) && $status && !$test_mode ) {

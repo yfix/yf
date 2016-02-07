@@ -29,6 +29,7 @@
 
 class yf_api {
 
+	public $API_SSL_VERIFY = true;
 	public $JSON_VULNERABILITY_PROTECTION = true;
 
 	public $class   = null;
@@ -297,24 +298,43 @@ class yf_api {
 	public function _request( $url, $post = null, $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// default
-		$options = array(
-			// CURLOPT_URL            =>  $url,
-			CURLOPT_RETURNTRANSFER =>  true,
-		);
 		// options
+		$options = array(
+			CURLOPT_USERAGENT      => 'YF.API',
+			CURLOPT_RETURNTRANSFER => true,
+			// CURLOPT_URL            =>  $url,
+		);
+		$header = array();
 		if( !empty( $post ) ) {
-			$options = array(
-				CURLOPT_POST           =>  true,
-				CURLOPT_POSTFIELDS     =>  $post,
+			if( @$_is_json ) {
+				$http_post = json_encode( $post );
+			} else {
+				$http_post = http_build_query( $post );
+			}
+			$options += array(
+				CURLOPT_POST       => true,
+				CURLOPT_POSTFIELDS => $http_post,
 			);
 		}
-		if( !empty( $_is_request_json ) ) {
+		if( @$_is_post ) {
 			$options += array(
-				CURLOPT_HTTPHEADER => array(
-					'Content-Type: application/json; charset=utf-8'
-				),
+				CURLOPT_POST => true,
 			);
+		}
+		if( @$_user ) {
+			$userpwd = $_user;
+			@$_password && $userpwd .= ':'. $_password;
+			$options += array(
+				CURLOPT_HTTPAUTH => CURLAUTH_ANY,
+				CURLOPT_USERPWD  => $userpwd,
+			);
+		}
+		if( @$_bearer || @$_access_token ) {
+			( !@$_bearer && $_access_token ) && $_bearer = $_access_token;
+			$header[] = 'Authorization: Bearer ' . $_bearer;
+		}
+		if( @$_is_json ) {
+			$header[] = 'Content-Type: application/json; charset=utf-8';
 		}
 		if( $this->API_SSL_VERIFY && strpos( $url, 'https' ) !== false ) {
 			$options += array(
@@ -327,21 +347,42 @@ class yf_api {
 				CURLOPT_SSL_VERIFYPEER => false,
 			);
 		}
+		// redirect
+		$is_redirect = @$_is_redirect || @$_is_followlocation;
+		if( $is_redirect ) {
+			$options += array(
+				CURLOPT_FOLLOWLOCATION => true,
+			);
+		}
+		// add header
+		if( !empty( $_header ) ) {
+			$header = array_replace_recursive( $header, $_header );
+		}
+		!empty( $header ) && $options += array( CURLOPT_HTTPHEADER => $header );
+		// debug request header
+		$options += array(
+			CURLINFO_HEADER_OUT => true,
+		);
+		// debug response header
+		$options += array(
+			CURLOPT_VERBOSE => true,
+			CURLOPT_HEADER  => true,
+		);
 		// exec
 		$ch = curl_init( $url );
 		curl_setopt_array( $ch, $options );
-		$result = curl_exec( $ch );
+		$response = curl_exec( $ch );
 		// status
-		$http_code     = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		$http_code   = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		$http_header = curl_getinfo( $ch, CURLINFO_HEADER_OUT );
 		$error_number  = curl_errno( $ch );
 		$error_message = curl_error( $ch );
-		curl_close( $ch );
-// DEBUG
-// var_dump( $url, $options, $result, $http_code );
-// exit;
-		// result
+		// DEBUG
+		@$_is_debug && var_dump( $url, $options, $http_code, $http_header );
+		// exit;
+		// response
 		$status = null;
-		if( $result === false ) {
+		if( $response === false ) {
 			$message = sprintf( '[%d] %s', $error_number, $error_message );
 			$result = array(
 				'status'         => $status,
@@ -349,22 +390,24 @@ class yf_api {
 			);
 			return( $result );
 		}
+		// get header, body
+		$http_header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
+		$header = substr( $response, 0, $http_header_size );
+		$body   = substr( $response, $http_header_size );
+		// DEBUG
+		@$_is_debug && var_dump( $header, $body );
+		// exit;
+		// http code
+		$is_error = false;
+		$message = '';
 		switch( $http_code ) {
-			case 200:
-				$status = true;
-				break;
-			case 400:
-				$message = 'неверный запрос';
-				break;
-			case 401:
-				$message = 'неавторизован';
-				break;
-			case 403:
-				$message = 'доступ ограничен';
-				break;
-			case 404:
-				$message = 'неверный адрес';
-				break;
+			case 200: $status = true;                 break;
+			case 301: $message = 'Moved Permanently'; break;
+			case 302: $message = 'Moved Temporarily'; break;
+			case 400: $message = 'неверный запрос';   break;
+			case 401: $message = 'неавторизован';     break;
+			case 403: $message = 'доступ ограничен';  break;
+			case 404: $message = 'неверный адрес';    break;
 			default:
 				if( $http_code >= 500 ) {
 					$message = 'ошибка сервера';
@@ -374,8 +417,72 @@ class yf_api {
 		if( $http_code != 200 ) {
 			$result = sprintf( 'Ошибка транспорта: [%d] %s', $http_code, $message );
 		}
-		if( !empty( $status ) && $_is_response_json ) {
-			$result = json_decode( $result, true );
+		$content_type = curl_getinfo( $ch, CURLINFO_CONTENT_TYPE );
+		// DEBUG
+		@$_is_debug && var_dump( $content_type );
+		// finish
+		curl_close( $ch );
+		// detect content type of response
+		if( @$_is_response_raw ) {
+			$result = $body;
+		} else {
+			switch( true ) {
+				case  @$_is_response_json || strpos( $content_type, 'application/json' ) === 0:
+					$result = @json_decode( $body, true );
+					// DEBUG
+					@$_is_debug && var_dump( 'is_json', $result );
+					break;
+				case @$_is_response_html || @$_is_response_xml || @$_is_response_form
+					|| strpos( $content_type, 'application/xml' ) === 0
+					|| strpos( $content_type, 'text/xml' ) === 0
+					|| strpos( $content_type, 'text/html' ) === 0
+					:
+					libxml_use_internal_errors( true );
+					$xml_response = @simplexml_load_string( $body );
+					$error = libxml_get_errors();
+					// DEBUG
+					@$_is_debug && var_dump( 'is_xml', $result, $error );
+					if( $error ) {
+						libxml_clear_errors();
+						$result = array(
+							'status'         => null,
+							'status_message' => 'Ошибка ответа: неверная структура данных',
+							'error'          => $error,
+							'content'        => $body,
+						);
+						return( $result );
+					}
+					if( @$xml_response->getName() == 'error' ) {
+						$result = array(
+							'status'         => null,
+							'status_message' => 'Ошибка ответа: неверные данные - ' . (string)$xml_response,
+							'content'        => $body,
+						);
+						return( $result );
+					}
+					if( @$_is_response_form ) {
+						$form = array();
+						foreach( $xml_response->xpath( '//input' ) as $item ) {
+							$_item = $item->attributes();
+							$name  = (string)$_item->name;
+							$value = (string)$_item->value;
+							$form[ $name ] = $value;
+						}
+						!empty( $form ) && $xml_response = $form;
+						// DEBUG
+						@$_is_debug && var_dump( 'is_form', $form );
+					}
+					$result = $xml_response;
+			}
+		}
+		if( @$_is_http_raw ) {
+			$result = array(
+				'status'       => $status,
+				'http_code'    => $http_code,
+				'http_message' => $message,
+				'body'         => $result,
+			);
+			return( $result );
 		}
 		return( array( $status, $result ) );
 	}

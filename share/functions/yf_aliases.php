@@ -384,3 +384,6 @@ if (!function_exists('is_https')) {
 if (!function_exists('is_hhvm')) {
 	function is_hhvm() { return defined('HHVM_VERSION'); }
 }
+if (!function_exists('is_site_path')) {
+	function is_site_path() { return defined('SITE_PATH') && SITE_PATH != '' && SITE_PATH != PROJECT_PATH; }
+}

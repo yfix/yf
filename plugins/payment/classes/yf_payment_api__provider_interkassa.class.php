@@ -908,8 +908,13 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		if( !$this->ENABLE ) { return( null ); }
 		if( empty( $data ) ) { return( null ); }
 		$_ = &$options;
+		// START DUMP
+		$payment_api = $this->payment_api;
+		$payment_api->dump(array( 'name' => 'Interkassa', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ));
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
+		// DUMP
+		$payment_api->dump(array( 'var' => $form_options ));
 		$signature    = $this->api->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'ik_sign' ] = $signature;
