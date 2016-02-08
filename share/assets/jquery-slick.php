@@ -3,8 +3,8 @@
 return array(
 	'versions' => array(
 		'master' => array(
-			'js' => '//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.min.js',
-			'css' => '//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.css',
+			'js' => '//cdn.rawgit.com/yfix/slick/master/slick/slick.min.js',
+			'css' => '//cdn.rawgit.com/yfix/slick/master/slick/slick.css',
 		),
 	),
 	'require' => array(
