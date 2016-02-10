@@ -887,6 +887,7 @@ class yf_manage_payout {
 							@$request_options[ 'account'        ] ?:
 							@$request_options[ 'card'           ] ?:
 							@$request_options[ 'to'             ] ?:
+							@$request_options[ 'purse'          ] ?:
 							@$request_options[ 'customer_purse' ] ?:
 							'-'
 					;

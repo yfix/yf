@@ -406,11 +406,11 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 						'required'  => true,
 						'minlength' => 13,
 						'maxlength' => 13,
-						'pattern'   => '^(Z|R)\d{12}$',
+						'pattern'   => '^[ZR]\d{12}$',
 					),
 				),
 				'option_validation' => array(
-					'customer_purse' => 'required|length[13]|regex:~^(Z\|R)\d{12}$~',
+					'customer_purse' => 'required|length[13]|regex:~^[ZR]\d{12}$~',
 				),
 				'option_validation_message' => array(
 					'customer_purse' => 'обязательное поле: буква и 12 цифр',

@@ -214,7 +214,6 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		'limit_exceeded'              => 'error',
 		'contract_not_found'          => 'error',
 		'money_source_not_available'  => 'error',
-
 	);
 
 	public $_payout_status_message = array(
@@ -1148,7 +1147,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$status_name == 'error' || $status_name == 'external error'
 			&& $request_status = false;
 		// add error_description
-		$status_name == 'error' && $status_name == 'unknown' && $_error_description
+		$status_name == 'error' && $status == 'unknown' && $_error_description
 			&& $status_message .= ' ('. $_error_description . ')';
 		// result
 		$state = $status_name ?: $status;

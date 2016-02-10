@@ -309,7 +309,11 @@ class yf_api {
 			if( @$_is_json ) {
 				$http_post = json_encode( $post );
 			} else {
-				$http_post = http_build_query( $post );
+				if( @$_is_request_raw || @$_is_post_raw ) {
+					$http_post = $post;
+				} else {
+					$http_post = http_build_query( $post );
+				}
 			}
 			$options += array(
 				CURLOPT_POST       => true,
@@ -340,13 +344,17 @@ class yf_api {
 			$options += array(
 				CURLOPT_SSL_VERIFYPEER => true,
 				CURLOPT_SSL_VERIFYHOST => 2,
-				CURLOPT_CAINFO         => __DIR__ . '/ca.pem',
+				CURLOPT_CAINFO         => @$_CA ?: __DIR__ . '/ca.pem',
 			);
 		} else {
 			$options += array(
 				CURLOPT_SSL_VERIFYPEER => false,
 			);
 		}
+		@$_SSLCERT       && $options += array( CURLOPT_SSLCERT       => $_SSLCERT         );
+		@$_SSLCERTPASSWD && $options += array( CURLOPT_SSLCERTPASSWD => $_SSLCERTPASSWD   );
+		@$_SSLKEY        && $options += array( CURLOPT_SSLKEY        => $_SSLKEY          );
+		@$_SSLKEYPASSWD  && $options += array( CURLOPT_SSLKEYPASSWD  => $_SSLKEYPASSWD    );
 		// redirect
 		$is_redirect = @$_is_redirect || @$_is_followlocation;
 		if( $is_redirect ) {

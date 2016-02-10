@@ -28,7 +28,7 @@ class yf_payment_test {
 		// 'Privat24'    => true,
 		// 'LiqPay'      => true,
 		'Interkassa'   => true,
-		// 'WebMoney'    => true,
+		'WebMoney'     => true,
 		'Ecommpay'     => true,
 		'PerfectMoney' => true,
 		// 'YandexMoney'  => true,
@@ -510,8 +510,8 @@ EOS;
 		$php     = '';
 		$api     = _class( 'payment_api__provider_webmoney' );
 		$methods = array(
-			'payout_p2p' => true,
-			'balance'    => true,
+			'p2p'     => true,
+			'balance' => true,
 		);
 		$is_action = null;
 		if( !@empty( $methods[ $_GET[ 'method' ] ] ) ) {
@@ -522,13 +522,26 @@ EOS;
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
 			);
-			$operation_id = '_'. ( @$_GET[ 'operation_id' ] ?: '1' );
+			$operation_id = (int)( @$_GET[ 'operation_id' ] ?: '1' );
 			$amount  = @$_GET[ 'amount'  ] ?: 0.01;
 			$account = @$_GET[ 'purse' ] ?: $api->_purse_by_currency( array( 'currency_id' => 'USD' ) )[ 'id' ];
 			switch( true ) {
 				case $method_id == 'balance':
+					$purse = $api->_purse_by_currency( array( 'currency_id' => 'USD' ) );
+					$wmid = $purse[ 'wmid' ];
 					$options[ 'option' ] = array(
-						'purse' => $account,
+						'wmid' => $wmid,
+					);
+					break;
+				case $method_id == 'p2p':
+					$purse = $api->_purse_by_currency( array( 'currency_id' => 'USD' ) );
+					$desc = 'Тест оплаты '. $amount .'$';
+					$options[ 'option' ] = array(
+						'tranid'    => $operation_id,
+						'pursesrc'  => $purse[ 'id' ],
+						'pursedest' => 'Z272631242756',
+						'amount'    => $amount,
+						'desc'      => $desc,
 					);
 					break;
 			}
@@ -559,7 +572,7 @@ EOS;
 			// 'Privat24',
 			// 'LiqPay',
 			'Interkassa',
-			// 'WebMoney',
+			'WebMoney',
 			'Ecommpay',
 			'PerfectMoney',
 			'YandexMoney',
@@ -728,6 +741,63 @@ EOS;
 						// 'currency'     => 'UAH',
 						'title'        => 'Вывод средств: '. $amount . ' грн',
 						'account'      => $card,
+						'provider_force' => true,
+					);
+					break;
+			}
+			$php[] = var_export( array(
+				'method_id'      => $method_id,
+				'request'        => $options,
+			), true );
+			$result = $provider_class->api_payout( $options );
+			list( $status, $status_message ) = $result;
+			$php[] = var_export( array(
+				'response' => $result,
+			), true );
+		} else { $php = 'Выберите метод'; }
+		// actions
+		$action = array();
+		foreach( $methods as $item => $active ) {
+			if( empty( $active ) ) { continue; }
+			$link = url_user( '/@object/@action?method='. $item );
+			$a = <<<EOS
+<a href="$link" class="btn btn-default">$item</a>
+EOS;
+			$action[] = $a;
+		}
+		return( array( 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ) );
+	}
+
+	protected function _payout_WebMoney( $title ) {
+		$payment_api = _class( 'payment_api' );
+		$provider_class = $payment_api->provider_class( array(
+			'provider_name' => 'webmoney',
+		));
+		$php = '';
+		$methods = array(
+			'p2p_wmz' => true,
+		);
+		$is_action = null;
+		// process
+		if( @$methods[ $_GET[ 'method' ] ] ) {
+			$is_action = true;
+			$method_id = $_GET[ 'method' ];
+			$is_debug  = @$_GET[ 'is_debug' ];
+			$options   = array(
+				'method_id' => $method_id,
+				'is_debug'  => $is_debug,
+			);
+			$operation_id = (int)( @$_GET[ 'operation_id' ] ?: 1 );
+			$amount = @$_GET[ 'amount' ] ?: 0.01;
+			$purse  = @$_GET[ 'purse'  ] ?: 'Z272631242756';
+			switch( true ) {
+				case $method_id == 'p2p_wmz':
+					$options += array(
+						'operation_id' => $operation_id,
+						'amount'       => $amount,
+						// 'currency'     => 'UAH',
+						'title'        => 'Вывод средств: '. $amount . '$',
+						'purse'        => $purse,
 						'provider_force' => true,
 					);
 					break;
