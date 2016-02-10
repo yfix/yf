@@ -487,13 +487,6 @@ class yf_main {
 		$this->events->fire('main.after_db');
 	}
 
-	function is_db() {
-		$result = false;
-		if (is_object($this->db)) { $result = true; }
-		// if (is_object($this->db) && $this->db->_connected) { $result = true; }
-		return( $result );
-	}
-
 	/**
 	*/
 	function init_events() {
@@ -1937,6 +1930,12 @@ if ($_POST) {
 	}
 
 	/**
+	*/
+	function is_db() {
+		return is_object($this->db) ? true : false;
+	}
+
+	/**
 	* Checks whether current page was requested with POST method
 	*/
 	function is_post() {
@@ -1993,7 +1992,17 @@ if ($_POST) {
 	/**
 	*/
 	function is_https() {
-		return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off') || (isset($_SERVER['SSL_PROTOCOL']) && $_SERVER['SSL_PROTOCOL']);
+		return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && strtolower($_SERVER['HTTPS']) != 'off') 
+			|| (isset($_SERVER['SSL_PROTOCOL']) && $_SERVER['SSL_PROTOCOL'])
+			// Non-standard header used by Microsoft applications and load-balancers:
+			|| (isset($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) == 'on')
+			// http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/x-forwarded-headers.html
+			|| (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https')
+			// http://stackoverflow.com/questions/16042647/whats-the-de-facto-standard-for-a-reverse-proxy-to-tell-the-backend-ssl-is-used
+			|| (isset($_SERVER['HTTP_X_URL_SCHEME']) && strtolower($_SERVER['HTTP_X_URL_SCHEME']) == 'https')
+			// http://serverfault.com/questions/302282/how-can-i-use-haproxy-with-ssl-and-get-x-forwarded-for-headers-and-tell-php-that
+			|| (isset($_SERVER['HTTP_SCHEME']) && strtolower($_SERVER['HTTP_SCHEME']) == 'https')
+		;
 	}
 
 	/**
@@ -2018,6 +2027,12 @@ if ($_POST) {
 	*/
 	function is_banned() {
 		return (bool)$this->IS_BANNED;
+	}
+
+	/**
+	*/
+	function is_site_path() {
+		return defined('SITE_PATH') && SITE_PATH != '' && SITE_PATH != PROJECT_PATH;
 	}
 
 	/**
