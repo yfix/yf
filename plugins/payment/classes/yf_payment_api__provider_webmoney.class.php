@@ -895,7 +895,10 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			// X2: незначащие нули в конце и точка, если число целое, должны отсутствовать
 			//     например: 10.50 - не верно, 10.5 - верно, 9. - не верно, 9 - верно
 			$payment_api = $this->payment_api;
-			$data[ 'amount' ] = rtrim( $payment_api->_number_api( $data[ 'amount' ] ), '0' );
+			$amount = $payment_api->_number_api( $data[ 'amount' ] );
+			if( strpos( $amount, '.' ) !== false ) {
+				$data[ 'amount' ] = rtrim( $amount, '.0' );
+			}
 		}
 	}
 
@@ -1023,7 +1026,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$request_option[ 'SSLKEY'  ] = $this->SSL[ 'key' ];
 		// request
 // DEBUG
-// var_dump( $url, $request, $request_option );
+// var_dump( $url, $_option, $request, $request_option );
 // exit;
 		$request_option[ 'is_request_raw' ] = true;
 		$result = $this->_api_request( $url, $request, $request_option );
@@ -1168,7 +1171,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 // exit;
 		// DUMP
 		$payment_api->dump( array( 'var' => array( 'response' => $result )));
-		if( @$result[ 'status' ] === false ) { return( $result ); }
+		if( isset( $result[ 'status' ] ) && $result[ 'status' ] == false ) { return( $result ); }
 		if( ! @$result ) {
 			$result = array(
 				'status'         => false,
