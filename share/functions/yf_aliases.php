@@ -345,45 +345,5 @@ if (!function_exists('_cookie')) {
 if (!function_exists('_env')) {
 	function _env($key = null, $val = null) { return input()->env($key, $val); }
 }
-if (!function_exists('no_graphics')) {
-	function no_graphics($val = null) { return main()->no_graphics($val); }
-}
-if (!function_exists('is_dev')) {
-	function is_dev() { return (defined('DEVELOP') && DEVELOP) || (defined('TEST_MODE') && TEST_MODE); }
-}
-if (!function_exists('is_debug')) {
-	function is_debug() { return (defined('DEBUG_MODE') && DEBUG_MODE); }
-}
-if (!function_exists('is_post')) {
-	function is_post() { return ($_SERVER['REQUEST_METHOD'] == 'POST'); }
-}
-if (!function_exists('is_ajax')) {
-	function is_ajax() { return (bool)conf('IS_AJAX'); }
-}
-if (!function_exists('is_console')) {
-	function is_console() { return (bool)main()->CONSOLE_MODE; }
-}
-if (!function_exists('is_redirect')) {
-	function is_redirect() { return (bool)main()->_IS_REDIRECTING; }
-}
-if (!function_exists('is_common_page')) {
-	function is_common_page() { return !(is_post() || is_ajax() || is_redirect() || is_console()); }
-}
-if (!function_exists('is_unit_test')) {
-	function is_unit_test() { return (bool)defined('YF_IN_UNIT_TESTS'); }
-}
-if (!function_exists('is_logged_in')) {
-	function is_logged_in() { return MAIN_TYPE_ADMIN ? main()->ADMIN_ID : main()->USER_ID; }
-}
-if (!function_exists('is_spider')) {
-	function is_spider() { return (bool)conf('IS_SPIDER'); }
-}
-if (!function_exists('is_https')) {
-	function is_https() { return isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']); }
-}
-if (!function_exists('is_hhvm')) {
-	function is_hhvm() { return defined('HHVM_VERSION'); }
-}
-if (!function_exists('is_site_path')) {
-	function is_site_path() { return defined('SITE_PATH') && SITE_PATH != '' && SITE_PATH != PROJECT_PATH; }
-}
+
+require_once __DIR__.'/yf_is_funcs.php';

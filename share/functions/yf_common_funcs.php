@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__.'/yf_aliases.php';
+require_once __DIR__.'/yf_is_funcs.php';
 require_once __DIR__.'/yf_array_funcs.php';
 
 if (!function_exists('show_text')) {

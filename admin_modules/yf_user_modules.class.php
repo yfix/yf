@@ -269,34 +269,41 @@ class yf_user_modules {
 		if (!isset($this->_user_modules_array)) {
 			$this->_get_modules();
 		}
-		foreach ((array)$this->_user_modules_array as $user_module_name) {
+		foreach ((array)$this->_user_modules_array as $module_name) {
 			// Remove site prefix from module name here
-			if (substr($user_module_name, 0, strlen(YF_SITE_CLS_PREFIX)) == YF_SITE_CLS_PREFIX) {
-				$user_module_name = substr($user_module_name, strlen(YF_SITE_CLS_PREFIX));
+			if (substr($module_name, 0, strlen(YF_SITE_CLS_PREFIX)) == YF_SITE_CLS_PREFIX) {
+				$module_name = substr($module_name, strlen(YF_SITE_CLS_PREFIX));
 			}
 			$file_names = array();
 
 			$plugin_name = '';
-			if (isset($this->_yf_plugins_classes[$user_module_name])) {
-				$plugin_name = $this->_yf_plugins_classes[$user_module_name];
+			if (isset($this->_yf_plugins_classes[$module_name])) {
+				$plugin_name = $this->_yf_plugins_classes[$module_name];
 			}
-
-			$tmp = PROJECT_PATH. USER_MODULES_DIR. $user_module_name. YF_CLS_EXT;
+			$tmp = APP_PATH. USER_MODULES_DIR. $module_name. YF_CLS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['app'] = $tmp;
+			}
+			$tmp = PROJECT_PATH. USER_MODULES_DIR. $module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['project'] = $tmp;
 			}
 			if ($plugin_name) {
-				$tmp = PROJECT_PATH. 'plugins/'. $plugin_name. '/'. USER_MODULES_DIR. $user_module_name. YF_CLS_EXT;
+				$tmp = APP_PATH. 'plugins/'. $plugin_name. '/'. USER_MODULES_DIR. $module_name. YF_CLS_EXT;
+				if (file_exists($tmp)) {
+					$file_names['app_plugin'] = $tmp;
+				}
+				$tmp = PROJECT_PATH. 'plugins/'. $plugin_name. '/'. USER_MODULES_DIR. $module_name. YF_CLS_EXT;
 				if (file_exists($tmp)) {
 					$file_names['project_plugin'] = $tmp;
 				}
 			}
-			$tmp = YF_PATH. USER_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
+			$tmp = YF_PATH. USER_MODULES_DIR. YF_PREFIX. $module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['yf'] = $tmp;
 			}
 			if ($plugin_name) {
-				$tmp = YF_PATH. 'plugins/'. $plugin_name. '/'. USER_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
+				$tmp = YF_PATH. 'plugins/'. $plugin_name. '/'. USER_MODULES_DIR. YF_PREFIX. $module_name. YF_CLS_EXT;
 				if (file_exists($tmp)) {
 					$file_names['yf_plugin'] = $tmp;
 				}
@@ -307,10 +314,10 @@ class yf_user_modules {
 			foreach ((array)$file_names as $location => $file_name) {
 				$file_text = file_get_contents($file_name);
 				// Try to get methods from parent classes (if exist one)
-				$_methods = $this->_recursive_get_methods_from_extends($file_text, $user_module_name, $ONLY_PRIVATE_METHODS);
+				$_methods = $this->_recursive_get_methods_from_extends($file_text, $module_name, $ONLY_PRIVATE_METHODS);
 				foreach ($_methods as $method_name) {
 					$method_name = str_replace(YF_PREFIX, '', $method_name);
-					$methods_by_modules[$user_module_name][$method_name] = $method_name;
+					$methods_by_modules[$module_name][$method_name] = $method_name;
 				}
 				// Try to match methods in the current file
 				foreach ((array)$this->_get_methods_names_from_text($file_text, $ONLY_PRIVATE_METHODS) as $method_name) {
@@ -319,18 +326,18 @@ class yf_user_modules {
 						$_method_name = substr($method_name, strlen(YF_PREFIX));
 					}
 					// Skip constructors in PHP4 style
-					if ($_method_name == $user_module_name || $method_name == $user_module_name) {
+					if ($_method_name == $module_name || $method_name == $module_name) {
 						continue;
 					}
-					$methods_by_modules[$user_module_name][$method_name] = $method_name;
+					$methods_by_modules[$module_name][$method_name] = $method_name;
 				}
 			}
 		}
 		if (is_array($methods_by_modules)) {
 			ksort($methods_by_modules);
-			foreach ((array)$methods_by_modules as $user_module_name => $methods) {
+			foreach ((array)$methods_by_modules as $module_name => $methods) {
 				if (is_array($methods)) {
-					ksort($methods_by_modules[$user_module_name]);
+					ksort($methods_by_modules[$module_name]);
 				}
 			}
 		}

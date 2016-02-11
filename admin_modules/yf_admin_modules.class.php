@@ -272,35 +272,43 @@ class yf_admin_modules {
 		if (!isset($this->_admin_modules_array)) {
 			$this->_get_modules();
 		}
-		foreach ((array)$this->_admin_modules_array as $user_module_name) {
-			if (substr($user_module_name, 0, strlen(YF_ADMIN_CLS_PREFIX)) == YF_ADMIN_CLS_PREFIX) {
-				$user_module_name = substr($user_module_name, strlen(YF_ADMIN_CLS_PREFIX));
+		foreach ((array)$this->_admin_modules_array as $module_name) {
+			if (substr($module_name, 0, strlen(YF_ADMIN_CLS_PREFIX)) == YF_ADMIN_CLS_PREFIX) {
+				$module_name = substr($module_name, strlen(YF_ADMIN_CLS_PREFIX));
 			}
 			$plugin_name = '';
-			if (isset($this->_yf_plugins_classes[$user_module_name])) {
-				$plugin_name = $this->_yf_plugins_classes[$user_module_name];
+			if (isset($this->_yf_plugins_classes[$module_name])) {
+				$plugin_name = $this->_yf_plugins_classes[$module_name];
 			}
 			$file_names = array();
-			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $user_module_name. YF_CLS_EXT;
+			$tmp = APP_PATH. ADMIN_MODULES_DIR. $module_name. YF_CLS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['admin_app'] = $tmp;
+			}
+			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['admin'] = $tmp;
 			}
-			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. YF_ADMIN_CLS_PREFIX. $user_module_name. YF_CLS_EXT;
+			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. YF_ADMIN_CLS_PREFIX. $module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['admin_with_prefix'] = $tmp;
 			}
 			if ($plugin_name) {
-				$tmp = PROJECT_PATH. 'plugins/'. $plugin_name. '/'. ADMIN_MODULES_DIR. $user_module_name. YF_CLS_EXT;
+				$tmp = APP_PATH. 'plugins/'. $plugin_name. '/'. ADMIN_MODULES_DIR. $module_name. YF_CLS_EXT;
+				if (file_exists($tmp)) {
+					$file_names['admin_app_plugin'] = $tmp;
+				}
+				$tmp = PROJECT_PATH. 'plugins/'. $plugin_name. '/'. ADMIN_MODULES_DIR. $module_name. YF_CLS_EXT;
 				if (file_exists($tmp)) {
 					$file_names['admin_plugin'] = $tmp;
 				}
 			}
-			$tmp = YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
+			$tmp = YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['yf'] = $tmp;
 			}
 			if ($plugin_name) {
-				$tmp = YF_PATH. 'plugins/'. $plugin_name. '/'. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
+				$tmp = YF_PATH. 'plugins/'. $plugin_name. '/'. ADMIN_MODULES_DIR. YF_PREFIX. $module_name. YF_CLS_EXT;
 				if (file_exists($tmp)) {
 					$file_names['yf_plugin'] = $tmp;
 				}
@@ -311,27 +319,27 @@ class yf_admin_modules {
 			foreach ((array)$file_names as $location => $file_name) {
 				$file_text = file_get_contents($file_name);
 				// Try to get methods from parent classes (if exist one)
-				$_methods = $this->_recursive_get_methods_from_extends($file_text, ($location == 'admin_with_prefix' ? YF_ADMIN_CLS_PREFIX : ''). $user_module_name, $ONLY_PRIVATE_METHODS);
+				$_methods = $this->_recursive_get_methods_from_extends($file_text, ($location == 'admin_with_prefix' ? YF_ADMIN_CLS_PREFIX : ''). $module_name, $ONLY_PRIVATE_METHODS);
 				foreach ($_methods as $method_name) {
 					$method_name = str_replace(YF_PREFIX, '', $method_name);
-					$methods_by_modules[$user_module_name][$method_name] = $method_name;
+					$methods_by_modules[$module_name][$method_name] = $method_name;
 				}
 				// Try to match methods in the current file
 				foreach ((array)$this->_get_methods_names_from_text($file_text, $ONLY_PRIVATE_METHODS) as $method_name) {
 					$method_name = str_replace(YF_PREFIX, '', $method_name);
 					// Skip constructors in PHP4 style
-					if ($method_name == $user_module_name) {
+					if ($method_name == $module_name) {
 						continue;
 					}
-					$methods_by_modules[$user_module_name][$method_name] = $method_name;
+					$methods_by_modules[$module_name][$method_name] = $method_name;
 				}
 			}
 		}
 		if (is_array($methods_by_modules)) {
 			ksort($methods_by_modules);
-			foreach ((array)$methods_by_modules as $user_module_name => $methods) {
+			foreach ((array)$methods_by_modules as $module_name => $methods) {
 				if (is_array($methods)) {
-					ksort($methods_by_modules[$user_module_name]);
+					ksort($methods_by_modules[$module_name]);
 				}
 			}
 		}
