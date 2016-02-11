@@ -65,7 +65,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 				'title' => 'WebMoney WMZ',
 				'icon'  => 'webmoney',
 				'amount' => array(
-					// 'min' => 5,
+					'min' => 5,
 					'max' => 200,
 				),
 				// 'is_fee' => true,
