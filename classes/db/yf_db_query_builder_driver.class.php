@@ -1370,9 +1370,11 @@ abstract class yf_db_query_builder_driver {
 				}
 			}
 		} elseif (is_string($on)) {
-			$on = trim($on);
-			if (preg_match(self::REGEX_INLINE_CONDS, $on, $m)) {
-				$_on[] = $this->_escape_col_name(trim($m[1])). ' '. trim($m[2]). ' '. $this->_escape_col_name(trim($m[3]));
+			foreach (preg_split('~\s+(and)\s+~ims', $on) as $on_part) {
+				$on_part = trim($on_part);
+				if (preg_match(self::REGEX_INLINE_CONDS, $on_part, $m)) {
+					$_on[] = $this->_escape_col_name(trim($m[1])). ' '. trim($m[2]). ' '. $this->_escape_col_name(trim($m[3]));
+				}
 			}
 		} elseif (is_callable($on)) {
 			$table = trim($table);
