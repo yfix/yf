@@ -691,6 +691,14 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.id')->sql()
 		);
 		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`',
+			self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.id ')->sql()
+		);
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`',
+			self::qb()->select()->from('user as u')->join('articles as a', '  u.id 	  = 	  a.id   	')->sql()
+		);
+		$this->assertEquals(
 			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` LEFT JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`',
 			self::qb()->select()->from('user as u')->left_join('articles as a', 'u.id = a.id')->sql()
 		);
@@ -706,6 +714,14 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`',
 			self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.id', 'inner')->sql()
 		);
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`user_id` AND `u`.`order_id` = `a`.`order_id`',
+			self::qb()->select()->from('user as u')->join('articles as a', array('u.id = a.user_id', 'u.order_id = a.order_id'), 'inner')->sql()
+		);
+#		$this->assertEquals(
+#			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`user_id` AND `u`.`order_id` = `a`.`order_id`',
+#			self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.user_id and u.order_id = a.order_id', 'inner')->sql()
+#		);
 		$this->assertEquals(
 			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id` INNER JOIN `'.DB_PREFIX.'blogs` AS `b` ON `u`.`id` = `b`.`id`',
 			self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->inner_join('blogs as b', 'u.id = b.id')->sql()
