@@ -37,7 +37,11 @@ abstract class yf_db_query_builder_driver {
 	* Need to avoid calling render() without params
 	*/
 	public function __toString() {
-		return $this->render();
+		try {
+			return (string) $this->render();
+		} catch (Exception $e) {
+			return '';
+		}
 	}
 
 	/**

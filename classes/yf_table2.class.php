@@ -89,7 +89,11 @@ class yf_table2 {
 	* Need to avoid calling render() without params
 	*/
 	function __toString() {
-		return $this->render();
+		try {
+			return (string) $this->render();
+		} catch (Exception $e) {
+			return '';
+		}
 	}
 
 	/**

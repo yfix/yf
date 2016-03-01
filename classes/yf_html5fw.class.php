@@ -36,7 +36,11 @@ class yf_html5fw {
 	* Need to avoid calling render() without params
 	*/
 	function __toString() {
-		return $this->render();
+		try {
+			return (string) $this->render();
+		} catch (Exception $e) {
+			return '';
+		}
 	}
 
 	/**
