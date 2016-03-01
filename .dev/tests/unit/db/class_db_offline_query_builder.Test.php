@@ -28,10 +28,10 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			'*',
 			self::qb()->select('   *   ')->_sql['select'][0]
 		);
-		$this->assertFalse(
+		$this->assertEmpty(
 			self::qb()->select()->sql()
 		);
-		$this->assertFalse(
+		$this->assertEmpty(
 			self::qb()->select()->__toString()
 		);
 	}
