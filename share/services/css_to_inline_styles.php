@@ -3,7 +3,7 @@
 
 $config = array(
 	'require_services' => array('sf_css_selector'),
-	'git_urls' => array('https://github.com/tijsverkoyen/CssToInlineStyles.git' => 'css_to_inline_styles/'),
+	'git_urls' => array('https://github.com/tijsverkoyen/CssToInlineStyles.git~1.5.4' => 'css_to_inline_styles/'),
 	'require_once' => array(
 		'css_to_inline_styles/src/Exception.php',
 		'css_to_inline_styles/src/Specificity.php',

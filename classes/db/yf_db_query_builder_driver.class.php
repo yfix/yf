@@ -37,7 +37,11 @@ abstract class yf_db_query_builder_driver {
 	* Need to avoid calling render() without params
 	*/
 	public function __toString() {
-		return $this->render();
+		try {
+			return (string) $this->render();
+		} catch (Exception $e) {
+			return '';
+		}
 	}
 
 	/**
@@ -1350,6 +1354,7 @@ abstract class yf_db_query_builder_driver {
 			$as = current($table);
 			$table = key($table);
 		} elseif (is_string($table)) {
+			$table = trim($table);
 			// support for syntax: join('users as u', 'u.id = s.id')
 			if (preg_match(self::REGEX_AS, $table, $m)) {
 				$table = $m[1];
@@ -1359,18 +1364,29 @@ abstract class yf_db_query_builder_driver {
 		$_on = array();
 		if (is_array($on)) {
 			foreach ((array)$on as $k => $v) {
-				$_on[] = $this->_escape_col_name($k).' = '.$this->_escape_col_name($v);
+				if (is_numeric($k)) {
+					$tmp = trim($v);
+					if (preg_match(self::REGEX_INLINE_CONDS, $tmp, $m)) {
+						$_on[] = $this->_escape_col_name(trim($m[1])). ' '. trim($m[2]). ' '. $this->_escape_col_name(trim($m[3]));
+					}
+				} else {
+					$_on[] = $this->_escape_col_name(trim($k)).' = '.$this->_escape_col_name(trim($v));
+				}
 			}
 		} elseif (is_string($on)) {
-			if (preg_match(self::REGEX_INLINE_CONDS, $on, $m)) {
-				$_on[] = $this->_escape_col_name($m[1]). ' '. $m[2]. ' '. $this->_escape_col_name($m[3]);
+			foreach (preg_split('~\s+(and)\s+~ims', $on) as $on_part) {
+				$on_part = trim($on_part);
+				if (preg_match(self::REGEX_INLINE_CONDS, $on_part, $m)) {
+					$_on[] = $this->_escape_col_name(trim($m[1])). ' '. trim($m[2]). ' '. $this->_escape_col_name(trim($m[3]));
+				}
 			}
 		} elseif (is_callable($on)) {
+			$table = trim($table);
 			$_on = $on($table, $this);
 		}
 		$sql = '';
 		if (is_string($table) && !empty($_on)) {
-			$sql = $this->_escape_table_name($table). ($as ? ' AS '.$this->_escape_key($as) : '').' ON '.implode(',', $_on);
+			$sql = $this->_escape_table_name(trim($table)). ($as ? ' AS '.$this->_escape_key(trim($as)) : '').' ON '.implode(' AND ', $_on);
 		}
 		if ($sql) {
 			$this->_sql[($join_type ? $join_type.'_' : '').__FUNCTION__][] = $sql;
