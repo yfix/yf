@@ -312,12 +312,12 @@ class yf_form2 {
 				$func = $up['func'];
 				$func($up['table'], $up['fields'], $up['type'], $up['extra'], $this);
 			}
-		} else {
-			if ($csrf_protect) {
-				$this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
-				$this->hidden($this->CONF_CSRF_NAME);
-			}
-		}
+		} 
+        if ($csrf_protect) {
+            $this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
+            $this->hidden($this->CONF_CSRF_NAME);
+        }
+            
 		$r = (array)$this->_replace + (array)$replace;
 
 		if (!$headless_form) {
