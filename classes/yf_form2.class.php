@@ -30,7 +30,7 @@ class yf_form2 {
 	public $CLASS_STACKED_ROW = 'stacked-row';
 
 	public $CONF_BOXES_USE_BTN_GROUP = false;
-	public $CONF_CSRF_PROTECTION = false;
+	public $CONF_CSRF_PROTECTION = true;
 	public $CONF_CSRF_NAME = '_token';
 
 	/**
@@ -280,9 +280,11 @@ class yf_form2 {
 		if (is_post()) {
 			if ($csrf_protect && !$csrf_guard->validate($_POST[$this->CONF_CSRF_NAME])) {
 				// We need this as validation now is skipping empty values
-				if (!isset($_POST[$this->CONF_CSRF_NAME])) {
+                
+				if (!isset($_POST[$this->CONF_CSRF_NAME]) || (trim($_POST[$this->CONF_CSRF_NAME]) == '')) {
 					$_POST[$this->CONF_CSRF_NAME] = '__wrong_token_'.md5(microtime()).'__';
 				}
+                
 				$this->_params['show_alerts'] = true;
 				$this->_validate_rules[$this->CONF_CSRF_NAME] = function($in, $p, $a, &$error_msg) use ($form_id, $csrf_guard) {
 					$csrf_guard->log_error(array('form_id' => $form_id));
