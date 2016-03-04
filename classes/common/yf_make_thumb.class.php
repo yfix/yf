@@ -38,10 +38,6 @@ class yf_make_thumb {
 	public $DB_LOG_ENV				= 1;
 	/** @var string Folder for temporary images */
 	public $BAD_IMAGES_DIR			= "logs/bad_images/";
-	/** @var bool */
-	public $AUTO_FIND_PATHS	    	= 0;
-	/** @var string */
-	public $FOUND_IMAGICK_PATH		= "";
 	/** @var bool Collect wrong images */
 	public $COLLECT_BAD_IMAGES		= 0;
 	/** @var bool Delete wrong images from destination folder */
@@ -68,33 +64,11 @@ class yf_make_thumb {
 	/**
 	*/
 	function _init () {
-		// Prepare path to the temporary folder
-		if ($this->USE_TEMP_IMAGES) {
-			$tmp_dir_path = INCLUDE_PATH.$this->TEMP_IMAGES_DIR;
-			if (!file_exists($tmp_dir_path)) {
-				_class("dir")->mkdir_m($tmp_dir_path, 0777);
-			}
-		}
-		// Prepare path to the temporary folder
 		if ($this->COLLECT_BAD_IMAGES) {
 			$bad_images_path = INCLUDE_PATH. $this->BAD_IMAGES_DIR;
 			if (!file_exists($bad_images_path)) {
 				_mkdir_m($bad_images_path, 0777);
 			}
-		}
-		if (empty($this->FOUND_IMAGICK_PATH) && defined("IMAGICK_PATH") && IMAGICK_PATH != "") {
-			$this->FOUND_IMAGICK_PATH	= IMAGICK_PATH;
-		}
-		// Try to find paths to Netpbm and ImageMagick
-		if ($this->AUTO_FIND_PATHS && ($this->ALLOW_NETPBM || $this->ALLOW_IMAGICK)) {
-			$this->_try_to_find_libs();
-		}
-		// Force turn off not found libs
-		if (empty($this->FOUND_NETPBM_PATH)) {
-			$this->ALLOW_NETPBM		= false;
-		}
-		if (empty($this->FOUND_IMAGICK_PATH)) {
-			$this->ALLOW_IMAGICK	= false;
 		}
 		if (empty($this->LIBS_PRIORITY)) {
 			$this->LIBS_PRIORITY = array("gd");
@@ -117,14 +91,12 @@ class yf_make_thumb {
 	*/
 	function go($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $ext = '') {
 		$_prev_num_errors = count((array)main()->_all_core_error_msgs);
-		// Cleanup input params
 		$LIMIT_X = intval($LIMIT_X != -1 ? $LIMIT_X : THUMB_WIDTH);
 		$LIMIT_Y = intval($LIMIT_Y != -1 ? $LIMIT_Y : THUMB_HEIGHT);
 		if (empty($source_file_path) || empty($dest_file_path)) {
 			trigger_error("MAKE_THUMB: Source or destination path is missing", E_USER_WARNING);
 			return false;
 		}
-		// Check source file
 		if (!file_exists($source_file_path) || !filesize($source_file_path) || !is_readable($source_file_path)) {
 			trigger_error("MAKE_THUMB: Source file is empty", E_USER_WARNING);
 			return false;
@@ -140,53 +112,37 @@ class yf_make_thumb {
 		foreach ((array)$this->LIBS_PRIORITY as $cur_lib) {
 			$lib_result_error = false;
 			if ($cur_lib == "gd") {
-				$result_gd = $this->_use_gd($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path, $ext);
-				if (!$result_gd) {
-					$lib_result_error = true;
-				}
-				$USED_LIB = $cur_lib;
-			} elseif ($cur_lib == "netpbm" && $this->ALLOW_NETPBM) {
-				$tried_cmds[] = $this->_use_netpbm($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path);
-				$USED_LIB = $cur_lib;
+				$result = $this->_use_gd($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path, $ext);
 			} elseif ($cur_lib == "imagick" && $this->ALLOW_IMAGICK) {
-				$tried_cmds[] = $this->_use_imagick($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path);
-				$USED_LIB = $cur_lib;
+				$result = $this->_use_imagick($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path);
 			}
-			// Skip not allowed libs
-			if (empty($USED_LIB)) {
-				continue;
+			$USED_LIB = $cur_lib;
+			if (!$result) {
+				$lib_result_error = true;
 			}
-			// Save used libs order
 			$tried_libs[$USED_LIB] = $USED_LIB;
-			// Check resize result
-			clearstatcache();
 			$resize_success = false;
 			if (!$lib_result_error) {
 				$resize_success = (file_exists($dest_file_path) && filesize($dest_file_path) > 0 && is_readable($dest_file_path));
 			}
+			// Stop on first tried library
+			break;
 		}
-		// Collect bad images
 		if (!$resize_success && $this->COLLECT_BAD_IMAGES) {
 			$bad_file_path = INCLUDE_PATH. $this->BAD_IMAGES_DIR. basename($source_file_path);
 			copy($source_file_path, $bad_file_path);
 		}
-		// Do delete image if resize failed
 		if (!$resize_success && $this->DELETE_BAD_DEST_IMAGES && file_exists($dest_file_path)) {
 			unlink($dest_file_path);
 		}
 		if ($watermark_path && $dest_file_path) {
 			$this->add_watermark($dest_file_path, $watermark_path);
 		}
-		// Save log
 		if ($this->ENABLE_DEBUG_LOG && ($this->LOG_TO_FILE || $this->LOG_TO_DB)) {
-			// Try to catch last error messages
 			$error_message .= implode(PHP_EOL, $_prev_num_errors ? array_slice((array)main()->_all_core_error_msgs, $_prev_num_errors) : (array)main()->_all_core_error_msgs);
-			// Prepare log path
 			$log_file_path = INCLUDE_PATH.$this->DEBUG_LOG_FILE;
-			// Do create log dir
 			_class("dir")->mkdir_m(dirname($log_file_path));
 			$_exec_time = (float)microtime(true) - (float)$_start_time;
-			// Trying to get image info
 			if (file_exists($source_file_path)) {
 				list($_source_width, $_source_height, , ) = @getimagesize($source_file_path);
 			}
@@ -194,52 +150,9 @@ class yf_make_thumb {
 				list($_result_width, $_result_height, , ) = @getimagesize($dest_file_path);
 			}
 			$result_file_size = file_exists($dest_file_path) ? filesize($dest_file_path) : 0;
-			// Try to get user error message source
 			$backtrace = debug_backtrace();
 			$cur_trace	= $backtrace[1];
-			// Save log data
-			if ($this->LOG_TO_FILE) {
-				$log_data = "## ".date("Y-m-d H:i:s")."; ##";
-				$log_data .= PHP_EOL;
-				$log_data .= "user_id: ".main()->USER_ID."; ";
-				$log_data .= "user_group: ".main()->USER_GROUP."; ";
-				$log_data .= "referer: \"".$_SERVER["HTTP_REFERER"]."\"; ";
-				$log_data .= PHP_EOL;
-				$log_data .= "source_path: \"".$source_file_path."\"; ";
-				$log_data .= PHP_EOL;
-				$log_data .= "source_file_size: ".intval($source_size)."; ";
-				$log_data .= "source_x: \"".intval($_source_width)."\"; source_y: \"".intval($_source_height)."\"; ";
-				$log_data .= PHP_EOL;
-				$log_data .= "result_path: \"".$dest_file_path."\"; ";
-				$log_data .= PHP_EOL;
-				$log_data .= "result_file_size: ".intval($result_file_size)."; ";
-				$log_data .= "result_x: \"".intval($_result_width)."\"; result_y: \"".intval($_result_height)."\"; ";
-				$log_data .= PHP_EOL;
-				$log_data .= "result_success: \"".($resize_success ? "yes" : "no")."\"; ";
-				$log_data .= "time_spent: ".common()->_format_time_value($_exec_time)."; ";
-				$log_data .= "tried libs: \"".implode(",", $tried_libs)."\"; ";
-				$log_data .= "used lib: \"".$USED_LIB."\"; ";
-				$log_data .= "limit_x: \"".intval($LIMIT_X)."\"; limit_y: \"".intval($LIMIT_Y)."\"; ";
-				if (!empty($tried_cmds) && $this->LOG_EXEC_CMDS) {
-					$log_data .= PHP_EOL;
-					$log_data .= "tried cmds (exec):  ".implode(";", $tried_cmds)."; ";
-				}
-				$log_data .= PHP_EOL;
-				$log_data .= PHP_EOL;
-				if ($fh = @fopen($log_file_path, "a")) {
-					fwrite($fh, $log_data);
-					@fclose($fh);
-				}
-				// Prepare this log to display in browser
-				if (DEBUG_MODE) {
-					$GLOBALS['_RESIZED_IMAGES_LOG'][] = $log_data;
-				}
-			}
-			// Save into db
 			if ($this->LOG_TO_DB) {
-				if (!empty($tried_cmds) && $this->LOG_EXEC_CMDS) {
-					$other_options .= "tried cmds (exec):  ".implode(";", $tried_cmds)."; ";
-				}
 				db()->insert_safe('log_img_resizes', array(
 					'source_path'		=> $source_file_path,
 					'source_file_size'	=> intval($source_size),
@@ -355,36 +268,10 @@ class yf_make_thumb {
 	/**
 	* Use Image Magick library	http://www.imagemagick.org/
 	*/
-	function _use_imagick($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
-		// Generate correct resize command for Imagick library
-		$resize_cmd = "";
-		if ($LIMIT_X > 0 && $LIMIT_Y > 0) {
-			$resize_cmd	= intval($LIMIT_X)."x".intval($LIMIT_Y);
-		} elseif ($LIMIT_X > 0) {
-			$resize_cmd	= intval($LIMIT_X)."x";
-		} elseif ($LIMIT_Y > 0) {
-			$resize_cmd	= "x".intval($LIMIT_Y);
-		}
-		// Prepare lib command string
-		$PATH_TO_IMAGICK = $this->FOUND_IMAGICK_PATH;
-		$_source_image_info = $this->_image_info_imagick($source_file_path);
-		if ($_source_image_info["type"] == "gif") {
-			 $this->_is_gif_animated_imagick($source_file_path) ? $add_cmd = " -coalesce " : $add_cmd = " -composite ";
-		}
-		$bg = ' -background white -flatten ';
-		$imagick_cmd	= $PATH_TO_IMAGICK."convert ".$source_file_path." ".$add_cmd." ".(!empty($resize_cmd) ? "-thumbnail \"".$resize_cmd.">\"" : "")." ".(defined("THUMB_QUALITY") ? " -quality \"".intval(THUMB_QUALITY)."\"" : "").$bg." ".$dest_file_path;
-		$output = exec($imagick_cmd);
-		// Check resize result
-		$_dest_image_info = $this->_image_info_imagick($dest_file_path);
-		if ($_dest_image_info && (
-			!$_dest_image_info["width"] ||
-			!$_dest_image_info["height"] ||
-			($LIMIT_X > 0 && $_dest_image_info["width"] > $LIMIT_X) ||
-			($LIMIT_Y > 0 && $_dest_image_info["height"] > $LIMIT_Y)
-		)) {
-			unlink($dest_file_path);
-		}
-		return $imagick_cmd;
+	function _use_imagick($source, $dest, $x = -1, $y = -1) {
+		$img = new Imagick($source);
+		$img->resizeImage($x, $y, null, null, $bestfit = true);
+		return $img->writeImage($dest);
 	}
 
 	/**
@@ -392,8 +279,8 @@ class yf_make_thumb {
 	**/
     function _is_gif_animated_imagick($source_file_path){
 	    $nb_image_frame = 0;
-		$image = new Imagick($source_file_path);
-		foreach($image->deconstructImages() as $i) {
+		$img = new Imagick($source_file_path);
+		foreach($img->deconstructImages() as $i) {
 		    $nb_image_frame++;
 			if ($nb_image_frame > 1) {
 			    return true;
@@ -406,57 +293,17 @@ class yf_make_thumb {
 	* Get image info using "identify" binary from "imagemagick"
 	*/
 	function _image_info_imagick($file_path = "") {
-		$result = array();
-		if (!$file_path || !file_exists($file_path)) {
-			return $result;
-		}
-		$PATH_TO_IMAGICK = $this->FOUND_IMAGICK_PATH;
-
-		$identify_result = exec($PATH_TO_IMAGICK.'identify -format %m#%w#%h* '.$file_path);
-
-		// Parse result
-		list($result["type"], $result["width"], $result["height"]) = explode("#", substr($identify_result, 0, strpos($identify_result, "*")));
-		$result["type"] = strtolower($result["type"]);
-
-		return $result;
-	}
-
-	/**
-	* Use Image Magick library	http://www.imagemagick.org/
-	*/
-	function _try_to_find_libs () {
-		if (!$this->AUTO_FIND_PATHS) {
-			return false;
-		}
-		if ($this->ALLOW_IMAGICK && empty($this->FOUND_IMAGICK_PATH)) {
-			$paths = array();
-			$file_to_test = "convert";
-			foreach (explode(':', getenv('PATH')) as $path) {
-				$path = trim($path);
-				if (empty($path)) {
-					continue;
-				}
-				if ($path{strlen($path)-1} != $slash) {
-					$path .= $slash;
-				}
-				$paths[] = $path;
-			}
-			$paths[] = '/usr/bin/';
-			$paths[] = '/usr/local/bin/';
-			$paths[] = '/bin/';
-			$paths[] = '/sw/bin/';
-			// Now try each path in turn to see which ones work
-			$success = false;
-			foreach ((array)$paths as $_cur_path) {
-				if (!file_exists($_cur_path)) {
-					continue;
-				}
-				if (file_exists($_cur_path. $file_to_test)/* && is_executable($_cur_path. $file_to_test)*/) {
-					$success = true;
-					$this->FOUND_IMAGICK_PATH = $_cur_path;
-					break;
-				}
-			}
-		}
+		$img = new Imagick($file_path);
+		$type_by_mime = array(
+			'image/jpeg'	=> 'jpeg',
+			'image/pjpeg'	=> 'jpeg',
+			'image/png'		=> 'png',
+			'image/gif'		=> 'gif',
+		);
+		return [
+			'type'		=> $type_by_mime[$img->getImageMimeType()],
+			'width'		=> $img->getImageWidth(),
+			'height'	=> $img->getImageHeight(),
+		];
 	}
 }
