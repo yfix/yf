@@ -9,10 +9,7 @@
 */
 class yf_make_thumb {
 
-// TODO: ability resize animated gif with saving animation
-
 	/** @var array */
-// TODO: connect this
 	public $ALLOWED_MIME_TYPES = array(
 		"image/jpeg"	=> "jpeg",
 		"image/pjpeg"	=> "jpeg",
@@ -21,16 +18,10 @@ class yf_make_thumb {
 		"image/x-ms-bmp"=> "wbmp",
 	);
 	/** @var bool */
-// TODO: connect this
-	public $OUTPUT_IMAGE_TYPE	    = "jpeg";
-	/** @var bool */
-	public $ALLOW_NETPBM			= 1;
-	/** @var bool */
 	public $ALLOW_IMAGICK			= 0;
 	/** @var array */
 	public $LIBS_PRIORITY			= array(
 		"imagick",
-		"netpbm",
 		"gd",
 	);
 	/** @var bool */
@@ -45,19 +36,10 @@ class yf_make_thumb {
 	public $LOG_TO_DB				= 1;
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
 	public $DB_LOG_ENV				= 1;
-	/** @var bool Use all available libs in their order (if one fails - the try another) */
-	public $DEGRADE_GRACEFULLY		= 1;
-	/** @var bool Use temporary images (more operations but more stable) */
-// TODO: currently broken
-	public $USE_TEMP_IMAGES	    	= 1;
-	/** @var string Folder for temporary images */
-	public $TEMP_IMAGES_DIR	    	= "uploads/tmp/";
 	/** @var string Folder for temporary images */
 	public $BAD_IMAGES_DIR			= "logs/bad_images/";
 	/** @var bool */
 	public $AUTO_FIND_PATHS	    	= 0;
-	/** @var string */
-	public $FOUND_NETPBM_PATH		= "";
 	/** @var string */
 	public $FOUND_IMAGICK_PATH		= "";
 	/** @var bool Collect wrong images */
@@ -84,10 +66,6 @@ class yf_make_thumb {
 	);
 
 	/**
-	* Module constructor
-	*
-	* @access	public
-	* @return	void
 	*/
 	function _init () {
 		// Prepare path to the temporary folder
@@ -104,21 +82,8 @@ class yf_make_thumb {
 				_mkdir_m($bad_images_path, 0777);
 			}
 		}
-		// Set found paths
-		if (empty($this->FOUND_NETPBM_PATH) && defined("NETPBM_PATH") && NETPBM_PATH != "") {
-			$this->FOUND_NETPBM_PATH	= NETPBM_PATH;
-		}
 		if (empty($this->FOUND_IMAGICK_PATH) && defined("IMAGICK_PATH") && IMAGICK_PATH != "") {
 			$this->FOUND_IMAGICK_PATH	= IMAGICK_PATH;
-		}
-		// Quick check libs paths for windows
-		if (OS_WINDOWS) {
-			if ($this->FOUND_NETPBM_PATH{1} != ":") {
-				$this->FOUND_NETPBM_PATH = "";
-			}
-			if ($this->FOUND_IMAGICK_PATH{1} != ":") {
-				$this->FOUND_IMAGICK_PATH = "";
-			}
 		}
 		// Try to find paths to Netpbm and ImageMagick
 		if ($this->AUTO_FIND_PATHS && ($this->ALLOW_NETPBM || $this->ALLOW_IMAGICK)) {
@@ -168,18 +133,6 @@ class yf_make_thumb {
 			$source_size = filesize($source_file_path);
 			$_start_time = microtime(true);
 		}
-		// Use temporary image for manipulations (only if we have same paths for resizing)
-		if ($this->USE_TEMP_IMAGES && $source_file_path == $dest_file_path) {
-/*
-			$tmp_source_path	= INCLUDE_PATH. $this->TEMP_IMAGES_DIR. "resize_". common()->rand_name(32). "_source";
-			copy($source_file_path, $tmp_source_path);
-			// Check if file was created and rotate files
-			if (file_exists($tmp_source_path)) {
-				$old_source_path	= $source_file_path;
-				$source_file_path	= $tmp_source_path;
-			}
-*/
-		}
 		$USED_LIB	= "";
 		$tried_libs	= array();
 		$tried_cmds	= array();
@@ -207,38 +160,10 @@ class yf_make_thumb {
 			$tried_libs[$USED_LIB] = $USED_LIB;
 			// Check resize result
 			clearstatcache();
-// TODO: need to upgrade success checker with checking destination image dimensions
 			$resize_success = false;
 			if (!$lib_result_error) {
 				$resize_success = (file_exists($dest_file_path) && filesize($dest_file_path) > 0 && is_readable($dest_file_path));
 			}
-			// DEGRADE_GRACEFULLY, try to use another lib if previous fails
-			if (!$this->DEGRADE_GRACEFULLY) {
-				break;
-			} elseif ($this->DEGRADE_GRACEFULLY) {
-				// Possible broken lib processing result, do something with it
-				if (empty($resize_success)) {
-// TODO: test this
-/*
-					// Try to restore previous state
-					if ($this->USE_TEMP_IMAGES && !empty($tmp_source_path) && !$resize_success) {
-						copy($old_source_path, $tmp_source_path);
-					}
-*/
-				} else {
-					// Everything seems fine, stop here
-					break;
-				}
-			}
-		}
-		// Process temporary image if needed
-		if ($this->USE_TEMP_IMAGES && !empty($tmp_source_path) && $resize_success) {
-// TODO: check this
-//			copy($tmp_source_path, $old_source_path);
-		}
-		// Cleanup temp image
-		if ($this->USE_TEMP_IMAGES && !empty($tmp_source_path)) {
-//			unlink($tmp_source_path);
 		}
 		// Collect bad images
 		if (!$resize_success && $this->COLLECT_BAD_IMAGES) {
@@ -428,35 +353,6 @@ class yf_make_thumb {
 	}
 
 	/**
-	* Use NETPBM library http://netpbm.sourceforge.net/
-	*/
-	function _use_netpbm($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
-		// Not working under WIN for now (possibly can, but we have not time to make it work correctly)
-		if (OS_WINDOWS) {
-			return false;
-		}
-		// Generate correct resize command for NETPBM library
-		$pnmscale_cmd = "";
-		if ($LIMIT_X > 0 && $LIMIT_Y > 0) {
-			$pnmscale_cmd	= " -xysize ".intval($LIMIT_X)." ".intval($LIMIT_Y)." ";
-		} elseif ($LIMIT_X > 0) {
-			$pnmscale_cmd	= " -width=".intval($LIMIT_X)." ";
-		} elseif ($LIMIT_Y > 0) {
-			$pnmscale_cmd	= " -height=".intval($LIMIT_Y)." ";
-		}
-		// Prepare file paths
-		$source_file_path	= "\"".$source_file_path."\"";
-		$dest_file_path		= "\"".$dest_file_path."\"";
-		// Prepare lib command string
-		$PATH_TO_NETPBM = $this->FOUND_NETPBM_PATH;
-		$netpbm_cmd	= $PATH_TO_NETPBM."anytopnm ".$source_file_path." | ".(!empty($pnmscale_cmd) ? $PATH_TO_NETPBM."pnmscale ".$pnmscale_cmd." | " : "").$PATH_TO_NETPBM."ppmtojpeg ".(defined("THUMB_QUALITY") ? " -quality=".intval(THUMB_QUALITY) : "")." > ".$dest_file_path;
-		$output = exec($netpbm_cmd);
-		// Check resize result
-// TODO
-		return $netpbm_cmd;
-	}
-
-	/**
 	* Use Image Magick library	http://www.imagemagick.org/
 	*/
 	function _use_imagick($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
@@ -532,99 +428,23 @@ class yf_make_thumb {
 		if (!$this->AUTO_FIND_PATHS) {
 			return false;
 		}
-		// Try to find path for the NETPBM
-		if ($this->ALLOW_NETPBM/* && (NETPBM_PATH == "NETPBM_PATH" || NETPBM_PATH == "")*/ && empty($this->FOUND_NETPBM_PATH)) {
+		if ($this->ALLOW_IMAGICK && empty($this->FOUND_IMAGICK_PATH)) {
 			$paths = array();
-			if (OS_WINDOWS) {
-				$file_to_test = "pnmscale.exe";
-				foreach (explode(';', getenv('PATH')) as $path) {
-					$path = trim($path);
-					if (empty($path)) {
-						continue;
-					}
-					if ($path{strlen($path)-1} != $slash) {
-						$path .= $slash;
-					}
-					$paths[] = $path;
-				}
-				// Double-quoting the paths removes any ambiguity about the
-				// double-slashes being escaped or not
-				$paths[] = "C:\\Program Files\\netpbm\\";
-				$paths[] = "C:\\apps\\netpbm\\";
-				$paths[] = "C:\\apps\\jhead\\";
-				$paths[] = "C:\\netpbm\\";
-				$paths[] = "C:\\jhead\\";
-				$paths[] = "C:\\cygwin\\bin\\";
-			} else {
-				$file_to_test = "pnmscale";
-				foreach (explode(':', getenv('PATH')) as $path) {
-					$path = trim($path);
-					if (empty($path)) {
-						continue;
-					}
-					if ($path{strlen($path)-1} != $slash) {
-						$path .= $slash;
-					}
-					$paths[] = $path;
-				}
-				$paths[] = '/usr/bin/';
-				$paths[] = '/usr/local/bin/';
-				$paths[] = '/usr/local/netpbm/bin/';
-				$paths[] = '/bin/';
-				$paths[] = '/sw/bin/';
-			}
-			// Now try each path in turn to see which ones work
-			$success = false;
-			foreach ((array)$paths as $_cur_path) {
-				if (!file_exists($_cur_path)) {
+			$file_to_test = "convert";
+			foreach (explode(':', getenv('PATH')) as $path) {
+				$path = trim($path);
+				if (empty($path)) {
 					continue;
 				}
-				if (file_exists($_cur_path. $file_to_test)/* && is_executable($_cur_path. $file_to_test)*/) {
-					$success = true;
-					$this->FOUND_NETPBM_PATH = $_cur_path;
-					break;
+				if ($path{strlen($path)-1} != $slash) {
+					$path .= $slash;
 				}
+				$paths[] = $path;
 			}
-		}
-		// Try to find path for the ImageMagick
-		if ($this->ALLOW_IMAGICK/* && (IMAGICK_PATH == "IMAGICK_PATH" || IMAGICK_PATH == "")*/ && empty($this->FOUND_IMAGICK_PATH)) {
-			$paths = array();
-			if (OS_WINDOWS) {
-				$file_to_test = "convert.exe";
-				foreach (explode(';', getenv('PATH')) as $path) {
-					$path = trim($path);
-					if (empty($path)) {
-						continue;
-					}
-					if ($path{strlen($path)-1} != $slash) {
-						$path .= $slash;
-					}
-					$paths[] = $path;
-				}
-				// Double-quoting the paths removes any ambiguity about the
-				// double-slashes being escaped or not
-				$paths[] = "C:\\Program Files\\ImageMagick\\";
-				$paths[] = "C:\\apps\ImageMagick\\";
-				$paths[] = "C:\\ImageMagick\\";
-				$paths[] = "C:\\ImageMagick\\VisualMagick\\bin\\";
-				$paths[] = "C:\\cygwin\\bin\\";
-			} else {
-				$file_to_test = "convert";
-				foreach (explode(':', getenv('PATH')) as $path) {
-					$path = trim($path);
-					if (empty($path)) {
-						continue;
-					}
-					if ($path{strlen($path)-1} != $slash) {
-						$path .= $slash;
-					}
-					$paths[] = $path;
-				}
-				$paths[] = '/usr/bin/';
-				$paths[] = '/usr/local/bin/';
-				$paths[] = '/bin/';
-				$paths[] = '/sw/bin/';
-			}
+			$paths[] = '/usr/bin/';
+			$paths[] = '/usr/local/bin/';
+			$paths[] = '/bin/';
+			$paths[] = '/sw/bin/';
 			// Now try each path in turn to see which ones work
 			$success = false;
 			foreach ((array)$paths as $_cur_path) {
