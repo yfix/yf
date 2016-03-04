@@ -277,7 +277,7 @@ class yf_form2 {
 		}
 		if ($csrf_protect) {
 			$csrf_guard = _class('csrf_guard')->configure(array(
-				'form_id'		=> $form_id ?: 'autoid_'.++main()->_csrf_ids,
+				'form_id'		=> $form_id ?: "autoid_".$_GET['object']."_".$_GET['action']."_".++main()->_csrf_ids,
 				'token_name'	=> $this->CONF_CSRF_NAME,
 			));
 		}
