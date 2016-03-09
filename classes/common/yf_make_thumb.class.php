@@ -18,32 +18,32 @@ class yf_make_thumb {
 		'image/x-ms-bmp'=> 'wbmp',
 	];
 	/** @var bool */
-	public $ALLOW_IMAGICK			= 0;
+	public $ALLOW_IMAGICK			= true;
 	/** @var array */
 	public $LIBS_PRIORITY			= [
 		'imagick',
 		'gd',
 	];
 	/** @var bool */
-	public $ENABLE_DEBUG_LOG		= 0;
+	public $ENABLE_DEBUG_LOG		= false;
 	/** @var bool */
-	public $LOG_EXEC_CMDS			= 0;
+	public $LOG_EXEC_CMDS			= false;
 	/** @var string */
 	public $DEBUG_LOG_FILE			= 'logs/make_thumb.log';
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
-	public $LOG_TO_FILE		      	= 1;
+	public $LOG_TO_FILE		      	= true;
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
-	public $LOG_TO_DB				= 1;
+	public $LOG_TO_DB				= false;
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
-	public $DB_LOG_ENV				= 1;
+	public $DB_LOG_ENV				= true;
 	/** @var string Folder for temporary images */
 	public $BAD_IMAGES_DIR			= 'logs/bad_images/';
 	/** @var bool Collect wrong images */
-	public $COLLECT_BAD_IMAGES		= 0;
+	public $COLLECT_BAD_IMAGES		= false;
 	/** @var bool Delete wrong images from destination folder */
-	public $DELETE_BAD_DEST_IMAGES	= 1;
+	public $DELETE_BAD_DEST_IMAGES	= false;
 	/** @var bool Force resizing for images with lower sizes than limits, but possibly with not optimal size */
-	public $FORCE_PROCESSING		= 0;
+	public $FORCE_PROCESSING		= false;
 	/** @var string */
 	public $WATERMARK_ALIGN_X		= 'center';
 	/** @var string */
@@ -64,6 +64,9 @@ class yf_make_thumb {
 	/**
 	*/
 	function _init () {
+		if (!extension_loaded('imagick')) {
+			$this->ALLOW_IMAGICK = false;
+		}
 		if ($this->COLLECT_BAD_IMAGES) {
 			$bad_images_path = APP_PATH. $this->BAD_IMAGES_DIR;
 			if (!file_exists($bad_images_path)) {
