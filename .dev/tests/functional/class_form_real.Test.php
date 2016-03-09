@@ -14,6 +14,7 @@ class class_form_real_test extends db_real_abstract {
 		self::$_bak['ERROR_AUTO_REPAIR'] = self::db()->ERROR_AUTO_REPAIR;
 		self::db()->ERROR_AUTO_REPAIR = true;
 		$GLOBALS['db'] = self::db();
+		$GLOBALS['CONF']['form2']['CONF_CSRF_PROTECTION'] = false;
 	}
 	public static function tearDownAfterClass() {
 		self::utils()->truncate_database(self::db_name());
