@@ -72,6 +72,21 @@ if (!function_exists('events')) {
 if (!function_exists('services')) {
 	function services($silent = false) { return _class('services') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('redis')) {
+	function redis($silent = false) { return _class('wrapper_redis') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
+if (!function_exists('memcached')) {
+	function memcached($silent = false) { return _class('wrapper_memcached') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
+if (!function_exists('mongodb')) {
+	function mongodb($silent = false) { return _class('wrapper_mongodb') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
+if (!function_exists('couchbase')) {
+	function couchbase($silent = false) { return _class('wrapper_couchbase') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
+if (!function_exists('queue')) {
+	function queue($silent = false) { return _class('wrapper_queue') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
 // example: cache()->put()
 if (!function_exists('cache')) {
 	function cache($silent = false) { return _class('cache') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
