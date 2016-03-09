@@ -3,21 +3,29 @@
 load('session_driver', 'framework', 'classes/session/');
 class yf_session_driver_db extends yf_session_driver {
 
+	/**
+	*/
 	function open($path, $name) {
 		return true;
 	}
 
+	/**
+	*/
 	function close() {
 		// This is used for a manual call of the session gc function
 		$this->_gc(0);
 		return true;
 	} 
 
+	/**
+	*/
 	function read($ses_id) {
 		$session = db()->get('SELECT * FROM '.db('sessions').' WHERE id = "'._es($ses_id).'"');
 		return is_array($session) && !empty($session) ? $session['data'] : '';
 	} 
 
+	/**
+	*/
 	function write($ses_id, $data) {
 		$session = db()->get('SELECT * FROM '.db('sessions').' WHERE id = "'._es($ses_id).'"');
 		if (is_array($session) && !empty($session)) {
@@ -47,10 +55,14 @@ class yf_session_driver_db extends yf_session_driver {
 		return true;
 	}
 
+	/**
+	*/
 	function destroy($ses_id) {
 		return db()->query('DELETE FROM '.db('sessions').' WHERE id = "'._es($ses_id).'"');
 	}
 
+	/**
+	*/
 	function gc($life_time) {
 		// Be sure to adjust 'php_value session.gc_maxlifetime' to a large enough
 		// value.	For example, if you want user sessions to stay in your database
