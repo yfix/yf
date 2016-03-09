@@ -10,26 +10,26 @@
 class yf_make_thumb {
 
 	/** @var array */
-	public $ALLOWED_MIME_TYPES = array(
-		"image/jpeg"	=> "jpeg",
-		"image/pjpeg"	=> "jpeg",
-		"image/png"		=> "png",
-		"image/gif"		=> "gif",
-		"image/x-ms-bmp"=> "wbmp",
-	);
+	public $ALLOWED_MIME_TYPES = [
+		'image/jpeg'	=> 'jpeg',
+		'image/pjpeg'	=> 'jpeg',
+		'image/png'		=> 'png',
+		'image/gif'		=> 'gif',
+		'image/x-ms-bmp'=> 'wbmp',
+	];
 	/** @var bool */
 	public $ALLOW_IMAGICK			= 0;
 	/** @var array */
-	public $LIBS_PRIORITY			= array(
-		"imagick",
-		"gd",
-	);
+	public $LIBS_PRIORITY			= [
+		'imagick',
+		'gd',
+	];
 	/** @var bool */
 	public $ENABLE_DEBUG_LOG		= 0;
 	/** @var bool */
 	public $LOG_EXEC_CMDS			= 0;
 	/** @var string */
-	public $DEBUG_LOG_FILE			= "logs/make_thumb.log";
+	public $DEBUG_LOG_FILE			= 'logs/make_thumb.log';
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
 	public $LOG_TO_FILE		      	= 1;
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
@@ -37,7 +37,7 @@ class yf_make_thumb {
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
 	public $DB_LOG_ENV				= 1;
 	/** @var string Folder for temporary images */
-	public $BAD_IMAGES_DIR			= "logs/bad_images/";
+	public $BAD_IMAGES_DIR			= 'logs/bad_images/';
 	/** @var bool Collect wrong images */
 	public $COLLECT_BAD_IMAGES		= 0;
 	/** @var bool Delete wrong images from destination folder */
@@ -45,41 +45,41 @@ class yf_make_thumb {
 	/** @var bool Force resizing for images with lower sizes than limits, but possibly with not optimal size */
 	public $FORCE_PROCESSING		= 0;
 	/** @var string */
-	public $WATERMARK_ALIGN_X		= "center";
+	public $WATERMARK_ALIGN_X		= 'center';
 	/** @var string */
-	public $WATERMARK_ALIGN_Y		= "middle";
+	public $WATERMARK_ALIGN_Y		= 'middle';
 	/** @var array */
-	public $IMAGE_ALIGN_X	= array(
-		"center",
-		"right",
-		"left",
-	);
+	public $IMAGE_ALIGN_X	= [
+		'center',
+		'right',
+		'left',
+	];
 	/** @var array */
-	public $IMAGE_ALIGN_Y	= array(
-		"middle",
-		"top",
-		"bottom",
-	);
+	public $IMAGE_ALIGN_Y	= [
+		'middle',
+		'top',
+		'bottom',
+	];
 
 	/**
 	*/
 	function _init () {
 		if ($this->COLLECT_BAD_IMAGES) {
-			$bad_images_path = INCLUDE_PATH. $this->BAD_IMAGES_DIR;
+			$bad_images_path = APP_PATH. $this->BAD_IMAGES_DIR;
 			if (!file_exists($bad_images_path)) {
 				_mkdir_m($bad_images_path, 0777);
 			}
 		}
 		if (empty($this->LIBS_PRIORITY)) {
-			$this->LIBS_PRIORITY = array("gd");
+			$this->LIBS_PRIORITY = array('gd');
 		}
-		if(!empty($this->WATERMARK_POSITION)){
-			if(strpos($this->WATERMARK_POSITION, "-")){
-				$position = explode("-",$this->WATERMARK_POSITION);
+		if (!empty($this->WATERMARK_POSITION)) {
+			if (strpos($this->WATERMARK_POSITION, '-')) {
+				$position = explode('-',$this->WATERMARK_POSITION);
 				$this->WATERMARK_ALIGN_X = $position[0];
 				$this->WATERMARK_ALIGN_Y = $position[1];
 			}
-			if($this->WATERMARK_POSITION == "random"){
+			if ($this->WATERMARK_POSITION == 'random') {
 				$this->WATERMARK_ALIGN_X = $this->IMAGE_ALIGN_X[rand(0,2)];
 				$this->WATERMARK_ALIGN_Y = $this->IMAGE_ALIGN_Y[rand(0,2)];
 			}
@@ -89,31 +89,31 @@ class yf_make_thumb {
 	/**
 	* Make thumbnail using best available method
 	*/
-	function go($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $ext = '') {
+	function go($source_file_path = '', $dest_file_path = '', $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $ext = '') {
 		$_prev_num_errors = count((array)main()->_all_core_error_msgs);
 		$LIMIT_X = intval($LIMIT_X != -1 ? $LIMIT_X : THUMB_WIDTH);
 		$LIMIT_Y = intval($LIMIT_Y != -1 ? $LIMIT_Y : THUMB_HEIGHT);
 		if (empty($source_file_path) || empty($dest_file_path)) {
-			trigger_error("MAKE_THUMB: Source or destination path is missing", E_USER_WARNING);
+			trigger_error('MAKE_THUMB: Source or destination path is missing', E_USER_WARNING);
 			return false;
 		}
 		if (!file_exists($source_file_path) || !filesize($source_file_path) || !is_readable($source_file_path)) {
-			trigger_error("MAKE_THUMB: Source file is empty", E_USER_WARNING);
+			trigger_error('MAKE_THUMB: Source file is empty', E_USER_WARNING);
 			return false;
 		}
 		if ($this->ENABLE_DEBUG_LOG) {
 			$source_size = filesize($source_file_path);
 			$_start_time = microtime(true);
 		}
-		$USED_LIB	= "";
-		$tried_libs	= array();
-		$tried_cmds	= array();
+		$USED_LIB	= '';
+		$tried_libs	= [];
+		$tried_cmds	= [];
 		// Use libs in specified priority order
 		foreach ((array)$this->LIBS_PRIORITY as $cur_lib) {
 			$lib_result_error = false;
-			if ($cur_lib == "gd") {
+			if ($cur_lib == 'gd') {
 				$result = $this->_use_gd($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path, $ext);
-			} elseif ($cur_lib == "imagick" && $this->ALLOW_IMAGICK) {
+			} elseif ($cur_lib == 'imagick' && $this->ALLOW_IMAGICK) {
 				$result = $this->_use_imagick($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path);
 			}
 			$USED_LIB = $cur_lib;
@@ -129,7 +129,7 @@ class yf_make_thumb {
 			break;
 		}
 		if (!$resize_success && $this->COLLECT_BAD_IMAGES) {
-			$bad_file_path = INCLUDE_PATH. $this->BAD_IMAGES_DIR. basename($source_file_path);
+			$bad_file_path = APP_PATH. $this->BAD_IMAGES_DIR. basename($source_file_path);
 			copy($source_file_path, $bad_file_path);
 		}
 		if (!$resize_success && $this->DELETE_BAD_DEST_IMAGES && file_exists($dest_file_path)) {
@@ -140,8 +140,8 @@ class yf_make_thumb {
 		}
 		if ($this->ENABLE_DEBUG_LOG && ($this->LOG_TO_FILE || $this->LOG_TO_DB)) {
 			$error_message .= implode(PHP_EOL, $_prev_num_errors ? array_slice((array)main()->_all_core_error_msgs, $_prev_num_errors) : (array)main()->_all_core_error_msgs);
-			$log_file_path = INCLUDE_PATH.$this->DEBUG_LOG_FILE;
-			_class("dir")->mkdir_m(dirname($log_file_path));
+			$log_file_path = APP_PATH. $this->DEBUG_LOG_FILE;
+			_class('dir')->mkdir_m(dirname($log_file_path));
 			$_exec_time = (float)microtime(true) - (float)$_start_time;
 			if (file_exists($source_file_path)) {
 				list($_source_width, $_source_height, , ) = @getimagesize($source_file_path);
@@ -153,7 +153,7 @@ class yf_make_thumb {
 			$backtrace = debug_backtrace();
 			$cur_trace	= $backtrace[1];
 			if ($this->LOG_TO_DB) {
-				db()->insert_safe('log_img_resizes', array(
+				db()->insert_safe('log_img_resizes', [
 					'source_path'		=> $source_file_path,
 					'source_file_size'	=> intval($source_size),
 					'source_x'			=> intval($_source_width),
@@ -185,7 +185,7 @@ class yf_make_thumb {
 					'used_lib'			=> $USED_LIB,
 					'tried_libs'		=> implode(',', $tried_libs),
 					'other_options'		=> $other_options,
-				));
+				]);
 			}
 		}
 		return $resize_success;
@@ -197,7 +197,7 @@ class yf_make_thumb {
 		$img_info = getimagesize($source_img_path);
 		$source_mime_type = $this->ALLOWED_MIME_TYPES[$img_info['mime']];
 		if(!$source_mime_type){
-			$source_mime_type = "jpeg";
+			$source_mime_type = 'jpeg';
 		}
 		$img_create_func = 'imagecreatefrom'.$source_mime_type;
 		$img = $img_create_func($source_img_path);
@@ -225,16 +225,16 @@ class yf_make_thumb {
         $watermarkwidth = imagesx($thumb_watermark);
         $watermarkheight = imagesy($thumb_watermark);
 
-		$startwidth = array(
-			"left"	=> 0,
-			"right" => $width_orig - $watermarkwidth,
-			"center"=> (($width_orig - $watermarkwidth) / 2),
-		);
-		$startheight = array(
-			"top" 	=> 0,
-			"bottom"=> $height_orig - $watermarkheight,
-			"middle"=> (($height_orig - $watermarkheight) / 2),
-		);
+		$startwidth = [
+			'left'	=> 0,
+			'right' => $width_orig - $watermarkwidth,
+			'center'=> (($width_orig - $watermarkwidth) / 2),
+		];
+		$startheight = [
+			'top' 	=> 0,
+			'bottom'=> $height_orig - $watermarkheight,
+			'middle'=> (($height_orig - $watermarkheight) / 2),
+		];
         imagecopy($img, $thumb_watermark, $startwidth[$this->WATERMARK_ALIGN_X], $startheight[$this->WATERMARK_ALIGN_Y], 0, 0, $watermarkwidth, $watermarkheight);
 		$img_save_func = 'image'.$source_mime_type;
 		$img_save_func($img, $source_img_path);
@@ -244,8 +244,8 @@ class yf_make_thumb {
 	/**
 	* Use GD library
 	*/
-	function _use_gd($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $output_type = '') {
-		$I = _class("resize_images");
+	function _use_gd($source_file_path = '', $dest_file_path = '', $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $output_type = '') {
+		$I = _class('resize_images');
 		$I->reduce_only = 1;
 		if ($this->FORCE_PROCESSING) {
 			$I->force_process = true;
@@ -290,16 +290,16 @@ class yf_make_thumb {
 	 }
 
 	/**
-	* Get image info using "identify" binary from "imagemagick"
+	* Get image info using imagick extension
 	*/
-	function _image_info_imagick($file_path = "") {
+	function _image_info_imagick($file_path = '') {
 		$img = new Imagick($file_path);
-		$type_by_mime = array(
+		$type_by_mime = [
 			'image/jpeg'	=> 'jpeg',
 			'image/pjpeg'	=> 'jpeg',
 			'image/png'		=> 'png',
 			'image/gif'		=> 'gif',
-		);
+		];
 		return [
 			'type'		=> $type_by_mime[$img->getImageMimeType()],
 			'width'		=> $img->getImageWidth(),
