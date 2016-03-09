@@ -14,6 +14,10 @@ class yf_wrapper_redis {
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
+		// Support for driver-specific methods
+		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
+			return call_user_func_array(array($this->_connection, $name), $args);
+		}
 		return main()->extend_call($this, $name, $args);
 	}
 
