@@ -1039,15 +1039,4 @@ class class_assets_test extends yf_unit_tests {
 		$this->assertEquals( $expected2, trim($out) );
 #		$this->assertEquals( $expected2, _class('assets')->add_js($in)->show_js(array('filters' => 'jsmin')) );
 	}
-
-	/***/
-	public function test_filter_jsminplus() {
-		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
-		$expected = 'var a="abc",bbb="u"';
-        $this->assertEquals( $expected, _class('assets')->filters_process_input($in, 'jsminplus') );
-		$this->assertEmpty( _class('assets')->show_js() );
-		$expected2 = '<script type="text/javascript">'.PHP_EOL. $expected. PHP_EOL.'</script>';
-		$this->assertEquals( $expected2, _class('assets')->add_js($in)->filters_add_js('jsminplus')->filters_process_js()->show_js() );
-#		$this->assertEquals( $expected2, _class('assets')->add_js($in)->show_js(array('filters' => 'jsminplus')) );
-	}
 }
