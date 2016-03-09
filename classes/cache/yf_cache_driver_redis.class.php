@@ -23,14 +23,13 @@ class yf_cache_driver_redis extends yf_cache_driver {
 	/**
 	*/
 	function _init() {
-// TODO
+		$this->_connection = redis();
 	}
 
 	/**
 	*/
 	function is_ready() {
-// TODO
-		return false;
+		return $this->_connection->is_ready();
 	}
 
 	/**
