@@ -20,7 +20,8 @@ class yf_cache_driver_redis extends yf_cache_driver {
 	/**
 	*/
 	function _init() {
-		$this->_connection = redis()->connect();
+		$this->_connection = redis();
+		$this->_connection->connect();
 	}
 
 	/**
@@ -35,7 +36,9 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->get($name);
+		$res = $this->_connection->get($name);
+#		return $res === false || $res === null ? null : $res;
+		return $res;
 	}
 
 	/**
@@ -45,9 +48,9 @@ class yf_cache_driver_redis extends yf_cache_driver {
 			return null;
 		}
 		if ($ttl > 0) {
-			return $this->_connection->setex($name, $ttl, $data);
+			return $this->_connection->setex($name, $ttl, $data) ?: null;
 		}
-		return $this->_connection->set($name, $data);
+		return $this->_connection->set($name, $data) ?: null;
 	}
 
 	/**
@@ -56,7 +59,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->delete($name) > 0;
+		return $this->_connection->del($name) > 0 ? true : null;
 	}
 
 	/**
@@ -65,7 +68,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->flushDB();
+		return $this->_connection->flushDB() ?: null;
 	}
 
 	/**
@@ -82,15 +85,5 @@ class yf_cache_driver_redis extends yf_cache_driver {
 			'mem_usage'	=> $info['used_memory'],
 			'mem_avail'	=> false,
 		);
-	}
-
-	/**
-	* Returns the serializer constant to use. If Redis is compiled with
-	* igbinary support, that is used. Otherwise the default PHP serializer is used.
-	*
-	* @return integer One of the Redis::SERIALIZER_* constants
-	*/
-	function _get_serializer() {
-		return defined('Redis::SERIALIZER_IGBINARY') ? Redis::SERIALIZER_IGBINARY : Redis::SERIALIZER_PHP;
 	}
 }

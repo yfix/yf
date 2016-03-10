@@ -42,17 +42,15 @@ class class_cache_test extends yf_unit_tests {
 	}
 	public static function _get_driver_name() {
 		$called = strtolower(get_called_class());
-		if (false !== strpos($called, '_files')) {
-			return 'files';
-		} elseif (false !== strpos($called, '_memcache')) {
-			return 'memcache';
-		} elseif (false !== strpos($called, '_xcache')) {
-			return 'xcache';
-		} elseif (false !== strpos($called, '_apc')) {
-			return 'apc';
-		} else {
-			return 'tmp';
+		$allowed = array(
+			'memcache', 'xcache', 'apc', 'files', 'tmp', 'couchbase', 'mongodb', 'redis'
+		);
+		foreach ($allowed as $name) {
+			if (false !== strpos($called, '_'.$name)) {
+				return $name;
+			}
 		}
+		return 'tmp';
 	}
 	public static function _cache() {
 		return self::$_cache;
@@ -74,7 +72,8 @@ class class_cache_test extends yf_unit_tests {
 		$this->assertSame('val1', self::_cache()->get('k1'));
 
 		$this->assertTrue(self::_cache()->set('k11', 0));
-		$this->assertSame(0, self::_cache()->get('k11'));
+#		$this->assertSame(0, self::_cache()->get('k11'));
+		$this->assertEquals(0, self::_cache()->get('k11'));
 
 		$this->assertTrue(self::_cache()->set('k11_', false));
 		$this->assertFalse(self::_cache()->get('k11_'));

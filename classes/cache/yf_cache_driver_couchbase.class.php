@@ -20,7 +20,8 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 	/**
 	*/
 	function _init() {
-		$this->_connection = couchbase()->connect();
+		$this->_connection = couchbase();
+		$this->_connection->connect();
 	}
 
 	/**
@@ -35,7 +36,7 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->get($name);
+		return $this->_connection->get($name, $ttl, $params);
 	}
 
 	/**
@@ -44,10 +45,7 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		if ($ttl > 30 * 24 * 3600) {
-			$ttl = time() + $ttl;
-		}
-		return $this->_connection->set($name, $data, (int) $ttl);
+		return $this->_connection->set($name, $data, $ttl);
 	}
 
 	/**
@@ -56,7 +54,7 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->delete($name);
+		return $this->_connection->del($name) ?: null;
 	}
 
 	/**
@@ -65,7 +63,7 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->flush();
+		return $this->_connection->flush() ?: null;
 	}
 
 	/**
@@ -74,17 +72,6 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$stats   = $this->_connection->getStats();
-		$servers = $this->_connection->getServers();
-		$server  = explode(':', $servers[0]);
-		$key	 = $server[0] . ':' . '11210';
-		$stats   = $stats[$key];
-		return array(
-			'hits'		=> $stats['get_hits'],
-			'misses'	=> $stats['get_misses'],
-			'uptime'	=> $stats['uptime'],
-			'mem_usage'	=> $stats['bytes'],
-			'mem_avail'	=> $stats['limit_maxbytes'],
-		);
+		return $this->_connection->stats() ?: null;
 	}
 }

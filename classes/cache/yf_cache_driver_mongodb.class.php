@@ -23,7 +23,8 @@ class yf_cache_driver_mongodb extends yf_cache_driver {
 	/**
 	*/
 	function _init() {
-		$this->_connection = mongodb()->connect();
+		$this->_connection = mongodb();
+		$this->_connection->connect();
 	}
 
 	/**
@@ -38,15 +39,7 @@ class yf_cache_driver_mongodb extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$document = $this->_connection->findOne(array('_id' => $name), array(self::DATA_FIELD, self::EXPIRATION_FIELD));
-		if ($document === null) {
-			return null;
-		}
-		if ($this->is_expired($document)) {
-			$this->del($name);
-			return null;
-		}
-		return unserialize($document[self::DATA_FIELD]->bin);
+		return $this->_connection->get($name, $ttl, $params);
 	}
 
 	/**
@@ -55,15 +48,7 @@ class yf_cache_driver_mongodb extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$result = $this->_connection->update(
-			array('_id' => $name),
-			array('$set' => array(
-				self::EXPIRATION_FIELD => ($ttl > 0 ? new MongoDate(time() + $ttl) : null),
-				self::DATA_FIELD => new MongoBinData(serialize($data), MongoBinData::BYTE_ARRAY),
-			)),
-			array('upsert' => true, 'multiple' => false)
-		);
-		return isset($result['ok']) ? $result['ok'] == 1 : true;
+		return $this->_connection->set($name, $data, $ttl);
 	}
 
 	/**
@@ -72,8 +57,7 @@ class yf_cache_driver_mongodb extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$result = $this->_connection->remove(array('_id' => $name));
-		return isset($result['n']) ? $result['n'] == 1 : true;
+		return $this->_connection->del($name) ?: null;
 	}
 
 	/**
@@ -82,43 +66,15 @@ class yf_cache_driver_mongodb extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		// Use remove() in lieu of drop() to maintain any collection indexes
-		$result = $this->_connection->remove();
-		return isset($result['ok']) ? $result['ok'] == 1 : true;
+		return $this->_connection->flush() ?: null;
 	}
 
 	/**
 	*/
-	protected function stats() {
+	function stats() {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$serverStatus = $this->_connection->db->command(array(
-			'serverStatus' => 1,
-			'locks' => 0,
-			'metrics' => 0,
-			'recordStats' => 0,
-			'repl' => 0,
-		));
-		$collStats = $this->_connection->db->command(array('collStats' => 1));
-		return array(
-			'hits' 		=> null,
-			'misses'	=> null,
-			'uptime'	=> (isset($serverStatus['uptime']) ? (integer) $serverStatus['uptime'] : null),
-			'mem_usage' => (isset($collStats['size']) ? (integer) $collStats['size'] : null),
-			'mem_avail'	=> null,
-		);
-	}
-
-	/**
-	 * Check if the document is expired.
-	 *
-	 * @param array $document
-	 * @return boolean
-	 */
-	private function is_expired(array $document) {
-		return isset($document[self::EXPIRATION_FIELD]) &&
-			$document[self::EXPIRATION_FIELD] instanceof MongoDate &&
-			$document[self::EXPIRATION_FIELD]->sec < time();
+		return $this->_connection->stats() ?: null;
 	}
 }
