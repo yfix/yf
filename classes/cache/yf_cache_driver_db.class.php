@@ -10,12 +10,10 @@ class yf_cache_driver_db extends yf_cache_driver {
 	*/
 	function __call($name, $args) {
 		// Support for driver-specific methods
-		$db = db();
-		if (is_object($db) && method_exists($db, $name)) {
-			return call_user_func_array(array($db, $name), $args);
+		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
+			return call_user_func_array(array($this->_connection, $name), $args);
 		}
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+		return main()->extend_call($this, $name, $args);
 	}
 
 	/**

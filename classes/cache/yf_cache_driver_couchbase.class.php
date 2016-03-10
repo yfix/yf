@@ -5,31 +5,28 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 
 	/** @var object internal @conf_skip */
 	public $_connection = null;
-	/** @var boo; internal @conf_skip */
-	public $_connected_ok = false;
 
 	/**
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
 		// Support for driver-specific methods
-		if (is_object($this->_connected) && method_exists($this->_connected, $name)) {
-			return call_user_func_array(array($this->_connected, $name), $args);
+		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
+			return call_user_func_array(array($this->_connection, $name), $args);
 		}
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+		return main()->extend_call($this, $name, $args);
 	}
 
 	/**
 	*/
 	function _init() {
-// TODO
+		$this->_connection = couchbase()->connect();
 	}
 
 	/**
 	*/
 	function is_ready() {
-		return isset($this->_connection) && $this->_connected_ok;
+		return $this->_connection && $this->_connection->is_ready();
 	}
 
 	/**

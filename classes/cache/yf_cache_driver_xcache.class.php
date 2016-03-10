@@ -4,6 +4,17 @@ load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_xcache extends yf_cache_driver {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		// Support for driver-specific methods
+		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
+			return call_user_func_array(array($this->_connection, $name), $args);
+		}
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _init() {
 #		ini_set('xcache.admin.user', 'yf_xcache_admin');

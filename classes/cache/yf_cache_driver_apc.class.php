@@ -4,6 +4,17 @@ load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_apc extends yf_cache_driver {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		// Support for driver-specific methods
+		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
+			return call_user_func_array(array($this->_connection, $name), $args);
+		}
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function is_ready() {
 		return function_exists('apt_fetch');

@@ -5,31 +5,28 @@ class yf_cache_driver_redis extends yf_cache_driver {
 
 	/** @var object internal @conf_skip */
 	public $_connection = null;
-	/** @var boo; internal @conf_skip */
-	public $_connected_ok = false;
 
 	/**
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
 		// Support for driver-specific methods
-		if (is_object($this->_connected) && method_exists($this->_connected, $name)) {
-			return call_user_func_array(array($this->_connected, $name), $args);
+		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
+			return call_user_func_array(array($this->_connection, $name), $args);
 		}
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+		return main()->extend_call($this, $name, $args);
 	}
 
 	/**
 	*/
 	function _init() {
-		$this->_connection = redis();
+		$this->_connection = redis()->connect();
 	}
 
 	/**
 	*/
 	function is_ready() {
-		return $this->_connection->is_ready();
+		return $this->_connection && $this->_connection->is_ready();
 	}
 
 	/**
@@ -38,7 +35,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->redis->get($name);
+		return $this->_connection->get($name);
 	}
 
 	/**
@@ -48,9 +45,9 @@ class yf_cache_driver_redis extends yf_cache_driver {
 			return null;
 		}
 		if ($ttl > 0) {
-			return $this->redis->setex($name, $ttl, $data);
+			return $this->_connection->setex($name, $ttl, $data);
 		}
-		return $this->redis->set($name, $data);
+		return $this->_connection->set($name, $data);
 	}
 
 	/**
@@ -59,7 +56,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->redis->delete($name) > 0;
+		return $this->_connection->delete($name) > 0;
 	}
 
 	/**
@@ -68,16 +65,16 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->redis->flushDB();
+		return $this->_connection->flushDB();
 	}
 
 	/**
 	*/
-	protected function stats() {
+	function stats() {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$info = $this->redis->info();
+		$info = $this->_connection->info();
 		return array(
 			'hits'		=> false,
 			'misses'	=> false,
@@ -88,13 +85,12 @@ class yf_cache_driver_redis extends yf_cache_driver {
 	}
 
 	/**
-	 * Returns the serializer constant to use. If Redis is compiled with
-	 * igbinary support, that is used. Otherwise the default PHP serializer is
-	 * used.
-	 *
-	 * @return integer One of the Redis::SERIALIZER_* constants
-	 */
-	protected function _get_serializer() {
+	* Returns the serializer constant to use. If Redis is compiled with
+	* igbinary support, that is used. Otherwise the default PHP serializer is used.
+	*
+	* @return integer One of the Redis::SERIALIZER_* constants
+	*/
+	function _get_serializer() {
 		return defined('Redis::SERIALIZER_IGBINARY') ? Redis::SERIALIZER_IGBINARY : Redis::SERIALIZER_PHP;
 	}
 }
