@@ -53,7 +53,12 @@ class yf_wrapper_memcached {
 	function _init ($params = array()) {
 		($host = getenv('MEMCACHED_PORT') ?: conf('MEMCACHED_HOST')) && $this->DEFAULT['host'] = $host;
 		($port = getenv('MEMCACHED_PORT') ?: conf('MEMCACHED_PORT')) && $this->DEFAULT['port'] = $port;
+		$this->connect($params);
+	}
 
+	/**
+	*/
+	function connect($params = array()) {
 		$this->_connected_ok = false;
 
 		$ext_old_allowed = $this->FORCE_EXT ? in_array($this->FORCE_EXT, array('old','memcache')) : true;
@@ -88,6 +93,7 @@ class yf_wrapper_memcached {
 		if (is_object($this->_connection)) {
 			$this->_memcache_new_extension = method_exists($this->_connection, 'getMulti');
 		}
+		return $this->_connection;
 	}
 
 	/**
