@@ -22,7 +22,7 @@ class yf_wrapper_queue {
 	/**
 	*/
 	function _init() {
-		$this->connect();
+//		$this->connect();
 	}
 
 	/**
