@@ -50,10 +50,9 @@ class yf_wrapper_memcached {
 
 	/**
 	*/
-	function _init ($params = array()) {
+	function _init() {
 		($host = getenv('MEMCACHED_PORT') ?: conf('MEMCACHED_HOST')) && $this->DEFAULT['host'] = $host;
 		($port = getenv('MEMCACHED_PORT') ?: conf('MEMCACHED_PORT')) && $this->DEFAULT['port'] = $port;
-		$this->connect($params);
 	}
 
 	/**
