@@ -30,7 +30,7 @@ class yf_wrapper_redis {
 
 	/**
 	*/
-	function id_ready() {
+	function is_ready() {
 		!$this->_connection && $this->connect();
 		return (bool)$this->_connection;
 	}
