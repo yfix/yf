@@ -478,7 +478,8 @@ class yf_dynamic {
 					break;
 				}
 			}
-			$is_valid = $class_validate->$rule['func']($rule['data'], array('param' => $rule['param']), array(), $error_msg);
+			$fname = (string)$rule['func'];
+			$is_valid = $class_validate->$fname($rule['data'], array('param' => $rule['param']), array(), $error_msg);
 			if (!$is_valid) {
 				if (!$error_msg) {
 					$error_msg = t('form_validate_'.$rule['func'], array('%field' => $rule['field'], '%param' => $rule['param']));
