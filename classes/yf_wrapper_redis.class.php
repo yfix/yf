@@ -54,7 +54,7 @@ class yf_wrapper_redis {
 			$redis->connect($this->host, $this->port);
 		}
 		$this->_connection = $redis;
-		return $this->db;
+		return $this->_connection;
 	}
 
 	/**
@@ -105,5 +105,17 @@ class yf_wrapper_redis {
 	*/
 	function lrange($key, $from = 0, $to = -1) {
 		return $this->_connection->lrange($key, $from, $to);
+	}
+
+	/**
+	*/
+	function pub($channel, $what) {
+		return $this->_connection->publish($channel, $what);
+	}
+
+	/**
+	*/
+	function sub($channels, $callback) {
+		return $this->_connection->subscribe($channels, $callback);
 	}
 }
