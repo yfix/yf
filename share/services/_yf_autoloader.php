@@ -113,11 +113,13 @@ class yf_autoloader {
 			$libs_root = $this->libs_root;
 			$pear_config = $this->pear;
 			foreach ((array)$pear_config as $lib_dir => $prefix) {
-				if (strpos($class, $prefix) !== 0) {
+				if (strlen($prefix) && strpos($class, $prefix) !== 0) {
 					continue;
 				}
 				$path = $libs_root. $lib_dir. str_replace('_', '/', $class).'.php';
-				require $path;
+				if (file_exists($path)) {
+					require $path;
+				}
 				return true;
 			}
 		});
