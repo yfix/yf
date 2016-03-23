@@ -16,11 +16,12 @@ if (!defined('YF_PATH')) {
 	ini_set('display_errors', 'on');
 	error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
 }
-
+if (class_exists('PHPUnit_Framework_TestCase')) {
 abstract class yf_unit_tests extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = false;
 	protected $backupStaticAttributes = false;
 	protected $runTestInSeparateProcess = false;
 	protected $preserveGlobalState = false;
 	protected $inIsolation = false;
+}
 }
