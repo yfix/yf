@@ -87,6 +87,12 @@ if (!function_exists('couchbase')) {
 if (!function_exists('queue')) {
 	function queue($silent = false) { return _class('wrapper_queue') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('pubsub')) {
+	function pubsub($silent = false) { return _class('wrapper_pubsub') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
+if (!function_exists('job')) {
+	function job($silent = false) { return _class('wrapper_job') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
 // example: cache()->put()
 if (!function_exists('cache')) {
 	function cache($silent = false) { return _class('cache') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
