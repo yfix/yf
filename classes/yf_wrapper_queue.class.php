@@ -20,17 +20,12 @@ class yf_wrapper_queue {
 	}
 
 	/**
-	*/
-	function _init() {
-//		$this->connect();
-	}
-
-	/**
 	* Do connect to the low level driver
 	*/
 	function connect() {
 		if (!$this->_connection) {
-			$this->_connection = _class('queue_driver_'.$this->driver, 'classes/queue/')->connect();
+			$this->_connection = _class('queue_driver_'.$this->driver, 'classes/queue/');
+			$this->_connection->connect();
 		}
 		return $this->_connection;
 	}
