@@ -18,7 +18,7 @@ class class_wrapper_redis_test extends yf_unit_tests {
 		$this->assertTrue($mc->is_ready());
 		$key = 'mytestkey';
 		$val = 'mytestval';
-		if (!empty($mc->get($key))) {
+		if ($mc->get($key)) {
 			$this->assertEquals($mc->del($key), 1);
 		}
 		$this->assertEmpty($mc->get($key));
