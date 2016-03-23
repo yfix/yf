@@ -105,12 +105,57 @@ class yf_autoloader {
 	}
 
 	/***/
+	public function process_pear() {
+		if (!$this->pear) {
+			return false;
+		}
+		spl_autoload_register(function($class){
+			$libs_root = $this->libs_root;
+			$pear_config = $this->pear;
+			foreach ((array)$pear_config as $lib_dir => $prefix) {
+				if (strpos($class, $prefix) !== 0) {
+					continue;
+				}
+				$path = $libs_root. $lib_dir. str_replace('_', '/', $class).'.php';
+				require $path;
+				return true;
+			}
+		});
+	}
+
+	/***/
 	public function process_yf_autoload() {
 		$libs_root = $this->libs_root;
 		$autoload_config = $this->autoload_config;
-		if ($autoload_config) {
-			spl_autoload_register(array($this, 'yf_autoloader'));
+		if (!$autoload_config) {
+			return false;
 		}
+		spl_autoload_register(function($class) {
+			$libs_root = $this->libs_root;
+			$autoload_config = $this->autoload_config;
+			foreach ((array)$autoload_config as $lib_dir => $prefix) {
+				$no_cut_prefix = false;
+				if (substr($prefix, 0, strlen('no_cut_prefix:')) === 'no_cut_prefix:') {
+					$no_cut_prefix = true;
+				}
+				if (false !== strpos($prefix, ':')) {
+					list($tmp, $prefix) = explode(':', $prefix);
+				}
+				if (strpos($class, $prefix) !== 0) {
+					continue;
+				}
+				if ($no_cut_prefix) {
+					$path = $libs_root. $lib_dir. str_replace("\\", '/', $class).'.php';
+				} else {
+					$path = $libs_root. $lib_dir. str_replace("\\", '/', substr($class, strlen($prefix) + 1)).'.php';
+				}
+				if (!file_exists($path)) {
+					continue;
+				}
+				require $path;
+				return true;
+			}
+		});
 	}
 
 	/***/
@@ -148,24 +193,11 @@ class yf_autoloader {
 		}
 	}
 
-	/***/
-	public function process_pear() {
-# pear-style autoload
-#if (is_file($file = dirname(__FILE__).'/../'.str_replace(array('_', "\0"), array('/', ''), $class).'.php')) {
-#	require $file;
-#}
-	}
-
-	// TODO: auto-install composer into /usr/local/bin with symlink
 	// globally: curl -s http://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
 	// locally: curl -s http://getcomposer.org/installer | php
 	// ls -s /usr/local/bin/composer.phar /usr/local/bin/composer
 	public function composer_require($package) {
 		$libs_root = $this->libs_root;
-
-##		passthru('composer self-update');
-#		$cmd = 'cd '.$libs_root.' && composer require --no-interaction '.$package;
-#		passthru($cmd);
 
 		set_error_handler(function ($code, $msg) {
 			// do nothing for these types of errors
@@ -186,34 +218,6 @@ class yf_autoloader {
 
 		restore_error_handler();
 		chdir($cwd);
-	}
-
-	/***/
-	public function yf_autoloader($class) {
-		$libs_root = $this->libs_root;
-		$autoload_config = $this->autoload_config;
-		foreach ((array)$autoload_config as $lib_dir => $prefix) {
-			$no_cut_prefix = false;
-			if (substr($prefix, 0, strlen('no_cut_prefix:')) === 'no_cut_prefix:') {
-				$no_cut_prefix = true;
-			}
-			if (false !== strpos($prefix, ':')) {
-				list($tmp, $prefix) = explode(':', $prefix);
-			}
-			if (strpos($class, $prefix) !== 0) {
-				continue;
-			}
-			if ($no_cut_prefix) {
-				$path = $libs_root. $lib_dir. str_replace("\\", '/', $class).'.php';
-			} else {
-				$path = $libs_root. $lib_dir. str_replace("\\", '/', substr($class, strlen($prefix) + 1)).'.php';
-			}
-			if (!file_exists($path)) {
-				continue;
-			}
-			require $path;
-			return true;
-		}
 	}
 
 	/***/
