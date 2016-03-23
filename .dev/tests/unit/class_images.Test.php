@@ -32,7 +32,8 @@ class class_images_test extends yf_unit_tests {
 		if (file_exists($out_path)) {
 			unlink($out_path);
 		}
-		if (extension_loaded('gd')) {
+		// Try GD
+		if (extension_loaded('gd') && function_exists('imagejpeg')) {
 			$thumber->LIBS_PRIORITY = ['gd'];
 			$thumber->_init();
 			$res = common()->make_thumb($tmp_path, $out_path, 10, 10);
