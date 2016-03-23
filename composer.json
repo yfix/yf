@@ -1,13 +1,13 @@
 {
-    "name": "yfix/yf",
+	"name": "yfix/yf",
 	"type": "library",
-    "description": "YF PHP Framework",
+	"description": "YF PHP Framework",
 	"keywords": ["php","framework"],
-    "license": "MIT",
-    "authors": [{
-        "name": "yfix",
-        "email": "yfix.dev@gmail.com"
-    }],
+	"license": "MIT",
+	"authors": [{
+		"name": "yfix",
+		"email": "yfix.dev@gmail.com"
+	}],
 	"require": {
 		"php": ">=5.3.3"
 	}
