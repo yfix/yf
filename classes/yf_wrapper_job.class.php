@@ -5,6 +5,9 @@
 */
 class yf_wrapper_job {
 
+	public $driver = 'redis';
+	public $_connection = null;
+
 	public $statuses = [
 		'waiting',  // Job is still queued
 		'running',  // Job is currently running
