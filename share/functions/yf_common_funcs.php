@@ -342,10 +342,32 @@ if (!function_exists('_attrs')) {
 				if (!strlen($val)) {
 					continue;
 				}
+				if ($name == 'id') {
+					$val = fix_html_attr_id($val);
+				}
 				$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
 			}
 		}
 		return $body ? ' '.implode(' ', $body) : '';
+	}
+}
+
+if (!function_exists('fix_html_attr_id')) {
+	function fix_html_attr_id($val) {
+		$val = trim($val);
+		// fix for space-like chars
+		$val = str_replace(array(' ', "\t", "\n", "\r"), '-', $val);
+		// fix for cyryllic symbols
+		if (strlen($val) && preg_match('~[а-яА-Я]+~ims', $val)) {
+			$val = common()->make_translit($val);
+		}
+		$val = substr(strtolower($val), 0, 128);
+		// fix for not allowed chars
+		$val = preg_replace('~[^a-z0-9\_-]+~', '', $val);
+		// duplicated chars
+		$val = trim($val, '-_');
+		$val = preg_replace('~([-_])+~', '\1', $val);
+		return $val;
 	}
 }
 
