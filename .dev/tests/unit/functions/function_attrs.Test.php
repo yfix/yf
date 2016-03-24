@@ -86,4 +86,21 @@ class function_attrs_test extends yf_unit_tests {
 		$this->assertEquals(' key="k1=v1&k2=v2"', _attrs($a, array('key')));
 		$this->assertEquals(' name="test[]"', _attrs(array('name' => 'test[]'), array('name')));
 	}
+	public function test_id() {
+		$this->assertEquals(' id="myid"', _attrs(['id' => 'myid'], ['id']));
+		$this->assertEquals(' id="my-id"', _attrs(['id' => 'my-id'], ['id']));
+		$this->assertEquals(' id="my_id"', _attrs(['id' => 'my_id'], ['id']));
+		$this->assertEquals(' id="my-id"', _attrs(['id' => 'my id'], ['id']));
+		$this->assertEquals(' id="my-id"', _attrs(['id' => ' my id '], ['id']));
+		$this->assertEquals(' id="my-id"', _attrs(['id' => ' My Id '], ['id']));
+		$this->assertEquals(' id="my-id"', _attrs(['id' => ' MY ID '], ['id']));
+		$this->assertEquals(' id="my-id"', _attrs(['id' => '   MY'."\t".'ID   '], ['id']));
+		$this->assertEquals(' id="voyti"', _attrs(['id' => 'войти'], ['id']));
+		$this->assertEquals(' id="voyti"', _attrs(['id' => ' войти '], ['id']));
+		$this->assertEquals(' id="voyti"', _attrs(['id' => ' Войти '], ['id']));
+		$this->assertEquals(' id="voyti"', _attrs(['id' => ' ВОЙТИ '], ['id']));
+		$this->assertEquals(' id="voyti-voyti"', _attrs(['id' => ' ВОЙТИ ВОЙТИ '], ['id']));
+		$this->assertEquals(' id="complex-string-with-quotes"', _attrs(['id' => '"complex string \' with quotes"'], ['id']));
+		$this->assertEquals(' id="complex_string_with_quotes"', _attrs(['id' => '"_complex_string_\'_with_quotes_"'], ['id']));
+	}
 }
