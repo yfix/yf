@@ -77,4 +77,20 @@ class yf_wrapper_queue {
 		!$this->_connection && $this->connect();
 		return $this->_connection->conf($params);
 	}
+
+	/**
+	* Listen to queue
+	*/
+	function listen($qname, $callback, $params = array()) {
+		if (!$this->is_ready()) {
+			return false;
+		}
+		while (true) {
+			$data = $this->get($qname);
+			if ($data) {
+				$callback($data, $params);
+			}
+			usleep($params['usleep'] ?: 100000);
+		}
+	}
 }
