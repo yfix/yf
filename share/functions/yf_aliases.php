@@ -337,6 +337,9 @@ if (!function_exists('a')) {
 if (!function_exists('validate')) {
 	function validate($input = '', $rules = array()) { return _class('validate')->_input_is_valid($input, $rules); }
 }
+if (!function_exists('sms_send')) {
+	function sms_send($phone, $text, $params = []) { return _class('service_turbosms')->send($phone, $text, $params) ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
 if (!function_exists('_check_user_ban')) {
 	function _check_user_ban($info = array(), $user_info = array()) { return common()->check_user_ban($info, $user_info); }
 }
