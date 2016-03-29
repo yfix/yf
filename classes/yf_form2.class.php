@@ -2461,8 +2461,16 @@ class yf_form2 {
 			$form_id_field = $form->_form_id_field;
 			// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 			$data = (array)(!empty($post) ? $post : $_POST);
-			// Convert multi-dimensional arrays into single-dimensional array dot notation: array('k1' => array('k2' => 'v2'))  ==>  array('k1.k2' => 'v2')
-			$data = array_dot($data);
+			foreach ((array)$data as $k => $v) {
+				// We fix case when array key is present but have empty values like this: ['cat_id' => []]
+				if (is_array($v) && !empty($v)) {
+					// Convert multi-dimensional arrays into single-dimensional array dot notation: array('k1' => array('k2' => 'v2'))  ==>  array('k1.k2' => 'v2')
+					$dots = array_dot($v);
+					if (!empty($dots)) {
+						$data[$k] = $dots;
+					}
+				}
+			}
 			if (empty($data)) {
 				return $form;
 			}
@@ -2579,7 +2587,16 @@ class yf_form2 {
 				} elseif (is_callable($func)) {
 					$is_ok = $func($data[$name], null, $data, $error_msg);
 				} else {
-					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg, array('field' => $name));
+					if (is_array($data[$name]) && !empty($data[$name])) {
+						foreach ($data[$name] as $k => $v) {
+							$is_ok = _class('validate')->$func($v, array('param' => $param), $data, $error_msg, array('field' => $name));
+							if (!$is_ok) {
+								break;
+							}
+						}
+					} else {
+						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg, array('field' => $name));
+					}
 					if (!$is_ok && empty($error_msg)) {
 						$desc = $this->_find_field_desc($name) ?: $name;
 						$error_param = $this->_find_field_desc($param) ?: $param;
