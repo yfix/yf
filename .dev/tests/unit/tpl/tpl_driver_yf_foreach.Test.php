@@ -158,7 +158,18 @@ class tpl_driver_yf_foreach_test extends tpl_abstract {
 
 		unset(main()->modules['unittest2']);
 	}
-#	public function test_foreach_and_cond() {
-#		'{foreach(cats)}<a class=" {if(get.cat_id eq _key)} active_cat{/if}" href="{url(/offers/show)}?cat_id={_key}" > {_val}</a>{/foreach}}';
-#	}
+	public function test_foreach_and_cond() {
+		$bak = $_GET;
+		$_GET = ['cat_id' => '5', 'cat_name' => 'five'];
+		$data = ['cats' => ['5' => 'five', '6' => 'six']];
+		$this->assertEquals(
+			'<a href="#" class="active">5:five</a><a href="#">6:six</a>',
+			self::_tpl('{foreach(cats)}<a href="#"{if(get.cat_id eq _key)} class="active"{/if}>{_key}:{_val}</a>{/foreach}', $data)
+		);
+		$this->assertEquals(
+			'<a href="#" class="active">5:five</a><a href="#">6:six</a>',
+			self::_tpl('{foreach(cats)}<a href="#"{if(get.cat_name eq _val)} class="active"{/if}>{_key}:{_val}</a>{/foreach}', $data)
+		);
+		$_GET = $bak;
+	}
 }
