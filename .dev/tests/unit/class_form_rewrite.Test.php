@@ -16,6 +16,8 @@ class class_form_rewrite_test extends yf_unit_tests {
 		);
 		self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
+		$GLOBALS['CONF']['form2']['CONF_CSRF_PROTECTION'] = false;
+		_class('form2')->CONF_CSRF_PROTECTION = false;
 	}
 
 	public static function tearDownAfterClass() {
