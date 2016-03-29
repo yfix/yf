@@ -24,6 +24,8 @@ class class_form_test extends yf_unit_tests {
 		self::$_bak_settings['CONF_BOXES_USE_BTN_GROUP'] = $GLOBALS['PROJECT_CONF']['form2']['CONF_BOXES_USE_BTN_GROUP'];
 		$GLOBALS['PROJECT_CONF']['form2']['CONF_BOXES_USE_BTN_GROUP'] = false;
 		_class('form2')->CONF_BOXES_USE_BTN_GROUP = false;
+		$GLOBALS['CONF']['form2']['CONF_CSRF_PROTECTION'] = false;
+		_class('form2')->CONF_CSRF_PROTECTION = false;
 
 		$css = _class('html5fw');
 
