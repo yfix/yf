@@ -133,13 +133,15 @@ class class_form_real_test extends db_real_abstract {
 		$_SERVER['REQUEST_METHOD'] = null;
 		$_POST = [];
 	}
-	public function test_validate_multi_select() {
+	public function test_validate_post_empty_value() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$params = ['do_not_remove_errors' => 1];
 
 		$cats = [1 => 1, 2 => 2, 3 => 3, 4 => 4];
-#		$_POST = ['cat_id' => [1,2]];
-		$_POST = ['cat_id' => []];
+
+		$_POST = [
+			'cat_id' => [],
+		];
 		$this->assertTrue( main()->is_post() );
 
 		common()->USER_ERRORS = [];
@@ -150,7 +152,86 @@ class class_form_real_test extends db_real_abstract {
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$cur_error = common()->USER_ERRORS['cat_id'];
 		$this->assertNotEmpty( $cur_error );
-#		$this->assertNotEquals( $custom_error, $cur_error );
+
+		common()->USER_ERRORS = [];
+		$this->assertEmpty( common()->USER_ERRORS );
+		form($_POST, $params)
+			->multi_select('cat_id', $cats)
+			->validate(['cat_id[]' => 'required'])
+			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
+		$cur_error = common()->USER_ERRORS['cat_id'];
+		$this->assertNotEmpty( $cur_error );
+
+		$_POST = [
+			'cat_id' => ['   '],
+		];
+
+		common()->USER_ERRORS = [];
+		$this->assertEmpty( common()->USER_ERRORS );
+		form($_POST, $params)
+			->multi_select('cat_id', $cats)
+			->validate(['cat_id' => 'trim|required'])
+			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
+		$cur_error = common()->USER_ERRORS['cat_id'];
+		$this->assertNotEmpty( $cur_error );
+
+		common()->USER_ERRORS = [];
+		$_SERVER['REQUEST_METHOD'] = null;
+		$_POST = [];
+	}
+	public function test_validate_multi_select() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$params = ['do_not_remove_errors' => 1];
+
+		$cats = [1 => 1, 2 => 2, 3 => 3, 4 => 4];
+
+		$_POST = [
+			'cat_id' => [1, 2],
+		];
+		$this->assertTrue( main()->is_post() );
+
+		common()->USER_ERRORS = [];
+		$this->assertEmpty( common()->USER_ERRORS );
+		form($_POST, $params)
+			->multi_select('cat_id', $cats)
+			->validate(['cat_id' => 'trim|required|integer'])
+			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
+		$this->assertEmpty( common()->USER_ERRORS );
+
+		$_POST = [
+			'cat_id' => [1, 'bad', 'unexpected', 'values', 'and some good', 2],
+		];
+		$this->assertTrue( main()->is_post() );
+
+		common()->USER_ERRORS = [];
+		$this->assertEmpty( common()->USER_ERRORS );
+		form($_POST, $params)
+			->multi_select('cat_id', $cats)
+			->validate(['cat_id' => 'trim|required|integer'])
+			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
+		$cur_error = common()->USER_ERRORS['cat_id'];
+		$this->assertNotEmpty( $cur_error );
+
+		$_POST = [
+			'cat_id1' => [1, 2],
+			'cat_id2' => [2, 1],
+			'cat_id3' => [3],
+		];
+		$this->assertTrue( main()->is_post() );
+
+		common()->USER_ERRORS = [];
+		$this->assertEmpty( common()->USER_ERRORS );
+		form($_POST, $params)
+			->multi_select('cat_id1', $cats)
+			->multi_select('cat_id2', $cats)
+			->multi_select('cat_id3', $cats)
+			->validate([
+				'cat_id1' => 'trim|required|integer',
+				'cat_id2' => 'trim|required|integer',
+				'cat_id3' => 'trim|required|integer',
+			])
+			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
+		$this->assertEmpty( common()->USER_ERRORS );
 
 		common()->USER_ERRORS = [];
 		$_SERVER['REQUEST_METHOD'] = null;
