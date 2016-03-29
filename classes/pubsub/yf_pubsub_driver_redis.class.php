@@ -3,7 +3,9 @@
 load('pubsub_driver', 'framework', 'classes/pubsub/');
 class yf_pubsub_driver_redis extends yf_pubsub_driver {
 
-	private $_connection = null;
+	private $_is_connection  = null;
+	private $_connection_pub = null;
+	private $_connection_sub = null;
 
 	/**
 	*/
@@ -14,37 +16,40 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 	/**
 	*/
 	function conf($params = array()) {
-		!$this->_connection && $this->connect();
-		$this->_connection->conf($params);
+		!$this->_is_connection && $this->connect();
+		$this->_connection_pub->conf($params);
+		$this->_connection_sub->conf($params);
 		return $this;
 	}
 
 	/**
 	*/
 	function connect($params = array()) {
-		if (!$this->_connection) {
-			$this->_connection = clone redis($params);
-			$this->_connection->connect();
+		if (!$this->_is_connection) {
+			$this->_connection_pub = clone redis($params);
+			$this->_connection_sub = clone redis($params);
+			$this->_connection_pub->connect();
+			$this->_connection_sub->connect();
 		}
-		return $this->_connection;
+		return $this->_is_connection;
 	}
 
 	/**
 	*/
 	function is_ready() {
-		!$this->_connection && $this->connect();
+		!$this->_is_connection && $this->connect();
 		return (bool)$this->_connection;
 	}
 
 	/**
 	*/
 	function pub($channel, $what) {
-		return $this->_connection->pub($channel, $what);
+		return $this->_connection_pub->pub($channel, $what);
 	}
 
 	/**
 	*/
 	function sub($channels, $callback) {
-		return $this->_connection->sub($channels, $callback);
+		return $this->_connection_sub->sub($channels, $callback);
 	}
 }
