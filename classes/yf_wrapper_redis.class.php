@@ -21,6 +21,10 @@ class yf_wrapper_redis {
 		return main()->extend_call($this, $name, $args);
 	}
 
+	function __clone() {
+		$this->_connection = null;
+	}
+
 	/**
 	*/
 	function _init() {
