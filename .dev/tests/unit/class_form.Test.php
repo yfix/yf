@@ -27,6 +27,8 @@ class class_form_test extends yf_unit_tests {
 		$GLOBALS['CONF']['form2']['CONF_CSRF_PROTECTION'] = false;
 		_class('form2')->CONF_CSRF_PROTECTION = false;
 
+		_class('html')->_ids = [];
+
 		$css = _class('html5fw');
 
 		$css_framework = conf('css_framework') ?: 'bs2';
