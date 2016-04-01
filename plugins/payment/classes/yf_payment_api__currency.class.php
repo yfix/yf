@@ -641,7 +641,7 @@ class yf_payment_api__currency {
 				->sql();
 			$result = db()->table( 'payment_currency_rate as l' )
 				->select( 'l.*' )
-				->inner_join( "( $sql ) as r", 'l.datetime = r.latest AND l.from = r.from', true )
+				->inner_join( "( $sql ) as r", 'l.datetime = r.latest AND l.from = r.from AND l.to = r.to', true )
 				->where( 'l.provider_id', '=', $provider_id )
 				->where( "l.$target", '=', $_currency_id )
 				->order_by( 'datetime', 'DESC' )
