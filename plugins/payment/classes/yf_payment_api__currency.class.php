@@ -635,6 +635,8 @@ class yf_payment_api__currency {
 			$key_rate  = $source . '_value';
 			$sql = db()->table( 'payment_currency_rate' )
 				->select( '*', 'max( datetime ) as latest' )
+				->where( 'provider_id', '=', $provider_id )
+				->where( $target, '=', $_currency_id )
 				->group_by( $source )
 				->sql();
 			$result = db()->table( 'payment_currency_rate as l' )
