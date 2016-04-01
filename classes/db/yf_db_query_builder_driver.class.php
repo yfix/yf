@@ -1340,7 +1340,7 @@ abstract class yf_db_query_builder_driver {
 	*	inner_join('suppliers as s', array('s.supplier_id' => 'u.id'))
 	*	left_join('suppliers as s', array('s.supplier_id' => 'u.id', 's.other_id' => 'u.other_id'))
 	*/
-	public function join($table, $on, $join_type = '') {
+	public function join($table, $on, $join_type = '', $is_select = false) {
 		$join_types = array(
 			'left',
 			'right',
@@ -1386,7 +1386,12 @@ abstract class yf_db_query_builder_driver {
 		}
 		$sql = '';
 		if (is_string($table) && !empty($_on)) {
-			$sql = $this->_escape_table_name(trim($table)). ($as ? ' AS '.$this->_escape_key(trim($as)) : '').' ON '.implode(' AND ', $_on);
+			if( $is_select ) {
+				$table_name = $table;
+			} else {
+				$table_name = $this->_escape_table_name(trim($table));
+			}
+			$sql = $table_name. ($as ? ' AS '.$this->_escape_key(trim($as)) : '').' ON '.implode(' AND ', $_on);
 		}
 		if ($sql) {
 			$this->_sql[($join_type ? $join_type.'_' : '').__FUNCTION__][] = $sql;
@@ -1396,20 +1401,20 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	public function left_join($table, $on) {
-		return $this->join($table, $on, 'left');
+	public function left_join($table, $on, $is_select = false) {
+		return $this->join($table, $on, 'left', $is_select);
 	}
 
 	/**
 	*/
-	public function right_join($table, $on) {
-		return $this->join($table, $on, 'right');
+	public function right_join($table, $on, $is_select = false) {
+		return $this->join($table, $on, 'right', $is_select);
 	}
 
 	/**
 	*/
-	public function inner_join($table, $on) {
-		return $this->join($table, $on, 'inner');
+	public function inner_join($table, $on, $is_select = false) {
+		return $this->join($table, $on, 'inner', $is_select);
 	}
 
 	/**
