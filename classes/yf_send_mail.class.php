@@ -218,6 +218,7 @@ class yf_send_mail {
 			if( @$error_message && DEBUG_MODE && $this->MAIL_DEBUG_ERROR ) {
 				trigger_error( $error_message, E_USER_WARNING );
 			}
+			$this->_last_error_message = $error_message;
 		// Internal Framework mailer
 		} elseif ($this->USE_MAILER == 'internal') {
 			// Send email using old lightweight lib
