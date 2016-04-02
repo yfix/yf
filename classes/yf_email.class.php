@@ -94,7 +94,7 @@ class yf_email {
 					;
 					echo date('Y-m-d H:i:s').': '. $msg. PHP_EOL;
 				}
-				$result = common()->send_mail((array)$params);
+				$result = common()->send_mail($data);
 				if (!$result) {
 					if ($extra['verbose']) {
 						echo date('Y-m-d H:i:s').': error: '._class('send_mail')->_last_error_message. PHP_EOL;
