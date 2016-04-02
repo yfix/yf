@@ -39,6 +39,9 @@ class yf_email {
 	public $FORCE_SEND       = false;
 	public $MAIL_DEBUG       = false;
 	public $MAIL_DEBUG_ERROR = false;
+	/** @var bool Use queues to send emails in asynchronous mode */
+	public $ASYNC_SEND		= false;
+	public $QUEUE_NAME		= 'emails_queue';
 
 	/**
 	* Catch missing method call
@@ -56,6 +59,60 @@ class yf_email {
 		$this->NAME_FROM	= SITE_ADVERT_NAME;
 		$this->SITE_NAME	= SITE_ADVERT_NAME;
 		$this->SITE_URL		= SITE_ADVERT_URL;
+	}
+
+	/**
+	* Should be wrapped under supervisor and best run from console
+	* Example supervisor config entry for it:
+	*
+	* [program:yf_emails_queue]
+	* command = php index.php --object=admin_daemon --action=emails_dequeue
+	* directory = /var/www/default/www/admin/
+	* autorestart = true
+	* numprocs = 1
+	* process_name = %(program_name)s_%(process_num)s
+	* user = www-data
+	*
+	* Example of php settings to ensure daemon long working
+	*	if (is_console()) {
+	*		error_reporting(E_ALL & ~E_NOTICE);
+	*		ini_set('html_errors', 0);
+	*		set_time_limit(0);
+	*		ini_set('default_socket_timeout', -1);
+	*	}
+	*/
+	function dequeue($extra = array()) {
+		queue()->listen($this->QUEUE_NAME, function($data) use ($extra) {
+			$data = json_decode($data, true);
+			if ($data) {
+				if ($extra['verbose']) {
+					$msg = 'got item from queue; '
+						. ($data['history_id'] ? 'history_id: "'.$data['history_id'].'"; ' : '')
+						. 'mail_to: "'.$data['to_mail'].'"; '
+						. 'subj: "'.$data['subj'].'"; '
+						. 'mail_from: "'.$data['from_mail'].'"; '
+					;
+					echo date('Y-m-d H:i:s').': '. $msg. PHP_EOL;
+				}
+				$result = common()->send_mail((array)$params);
+				if (!$result) {
+					if ($extra['verbose']) {
+						echo date('Y-m-d H:i:s').': error: '._class('send_mail')->_last_error_message. PHP_EOL;
+						if (strlen($data['html']) > 500) {
+							$data['html'] = substr($data['html'], 0, 500). PHP_EOL. '...TRUNCATED_FOR_DEBUG...'. PHP_EOL;
+						}
+						var_dump($data);
+					}
+				} else {
+					if ($data['history_id']) {
+						db()->update_safe(self::table_history, array('status' => 1), 'id='.(int)$data['history_id']);
+					}
+					if ($extra['verbose']) {
+						echo date('Y-m-d H:i:s').': sent ok'. PHP_EOL;
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -141,6 +198,7 @@ class yf_email {
 			}
 			return( null );
 		}
+// TODO: remove or really use $instant_send
 		if ($instant_send) {
 			$email_id = db()->insert_id();
 			$params = array(
@@ -153,14 +211,19 @@ class yf_email {
 				'html'		=> $this->_css_to_inline_styles($html),
 				'smtp'		=> $this->_is_mailru($email_to) ? $this->SMTP_CONFIG_ALTERNATE : $this->SMTP_CONFIG_DEFAULT,
 			);
-			$result = common()->send_mail((array)$params);
-			if (!$result) {
-				if( $this->MAIL_DEBUG_ERROR ) {
-					trigger_error('Email not sent', E_USER_WARNING);
-				}
-			} else {
-				db()->update_safe(self::table_history, array('status' => 1), 'id='.(int)$email_id);
+			if ($this->ASYNC_SEND) {
+				$result = queue()->add($this->QUEUE_NAME, json_encode($params + ['history_id' => $email_id]));
 				$this->_send_copies($params);
+			} else {
+				$result = common()->send_mail((array)$params);
+				if (!$result) {
+					if ($this->MAIL_DEBUG_ERROR) {
+						trigger_error('Email not sent', E_USER_WARNING);
+					}
+				} else {
+					db()->update_safe(self::table_history, array('status' => 1), 'id='.(int)$email_id);
+					$this->_send_copies($params);
+				}
 			}
 			return $result;
 		}
@@ -180,7 +243,11 @@ class yf_email {
 			'html'		=> $this->_css_to_inline_styles($extra['html']),
 			'smtp'		=> $this->SMTP_CONFIG_DEFAULT,
 		);
-		$result = common()->send_mail((array)$params);
+		if ($this->ASYNC_SEND) {
+			$result = queue()->add($this->QUEUE_NAME, json_encode($params));
+		} else {
+			$result = common()->send_mail((array)$params);
+		}
 		$this->_send_copies($params);
 		return $result;
 	}
@@ -254,7 +321,11 @@ class yf_email {
 				continue;
 			}
 			$params['to_mail'] = $mail_to;
-			common()->send_mail((array)$params);
+			if ($this->ASYNC_SEND) {
+				queue()->add($this->QUEUE_NAME, json_encode($params));
+			} else {
+				common()->send_mail((array)$params);
+			}
 		}
 		return true;
 	}
