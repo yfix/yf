@@ -41,9 +41,9 @@ class yf_wrapper_queue {
 	/**
 	* Add new item into named queue
 	*/
-	function add($text = false, $queue = false) {
+	function add($queue, $what) {
 		!$this->_connection && $this->connect();
-		return $this->_connection->add($text, $queue);
+		return $this->_connection->add($queue, $what);
 	}
 
 	/**
