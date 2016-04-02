@@ -634,12 +634,20 @@ class yf_payment_api__currency {
 			$key_value = $target . '_value';
 			$key_rate  = $source . '_value';
 			$sql = db()->table( 'payment_currency_rate' )
+				->select( '*', 'max( datetime ) as latest' )
 				->where( 'provider_id', '=', $provider_id )
 				->where( $target, '=', $_currency_id )
-				// ->group_by( $source )
-				->order_by( 'datetime', 'DESC' )
+				->group_by( $source )
 				->sql();
-			$result = db()->query_fetch_all( 'SELECT * FROM ( '. $sql .' ) as cr GROUP BY '. db()->escape_key( $source ) );
+			$result = db()->table( 'payment_currency_rate as l' )
+				->select( 'l.*' )
+				->inner_join( "( $sql ) as r", 'l.datetime = r.latest AND l.from = r.from AND l.to = r.to', true )
+				->where( 'l.provider_id', '=', $provider_id )
+				->where( "l.$target", '=', $_currency_id )
+				->order_by( 'datetime', 'DESC' )
+				->get_all()
+				// ->sql()
+			;
 			if( empty( $result ) ) {
 				$currency_id_default = &$payment_api->currency_id_default;
 				foreach( $payment_api->currencies as $key => $item ) {

@@ -25,7 +25,10 @@ class form2_filter_sample {
 			->select_box('type', $offer_types, array('show_text' => 1, 'class_add' => 'input-medium'))
 			->select_box('currency', $currencies, array('show_text' => 1, 'class_add' => 'input-medium'))
 
-			->ui_range('amount')
+			->ui_range('amount',array(
+                'create_inputs' => false,
+                'slide_event'	=> '$( "#amount" ).val( ui.values[ 0 ] );$( "#amount_and" ).val( ui.values[ 1 ] );',
+            ))
 
 			->row_start(array('desc' => 'Amount from/to'))
 				->money('amount')
