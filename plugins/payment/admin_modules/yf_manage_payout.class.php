@@ -238,11 +238,17 @@ class yf_manage_payout {
 		// class
 		$payment_api = &$this->payment_api;
 		$manage_lib  = &$this->manage_payment_lib;
-		// is action
+		// mass actions
 		if( main()->is_post() ) {
 			switch( true ) {
 				case isset( $_POST[ 'CSV_ECommPay' ] ):
 					return( $this->_user_message( $this->csv_ecommpay() ) );
+					break;
+				case isset( $_POST[ 'Cancel' ] ):
+					return( module( 'manage_payment' )->mass_cancel() );
+					break;
+				case isset( $_POST[ 'Remove' ] ):
+					return( module( 'manage_payment' )->mass_remove() );
 					break;
 			}
 		}
@@ -352,14 +358,18 @@ class yf_manage_payout {
 			->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
 			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
 			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
-			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
-			->footer_link( 'Обновить статусы операций Подтверждения', $url[ 'confirmation_update_expired' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
 		;
+		// mass actions
+		$result->footer_submit( array( 'value' => 'Cancel', 'class' => 'btn btn-warning', 'icon' => 'fa fa-ban' ) );
+		$result->footer_submit( array( 'value' => 'Remove', 'class' => 'btn btn-danger', 'icon' => 'fa fa-remove' ) );
 		// ECommPay
 		$provider = $payment_api->is_provider(array( 'name' => 'ecommpay' ));
 		if( $provider ) {
 			$result->footer_submit( array( 'value' => 'CSV ECommPay', 'class' => 'btn btn-info', 'icon' => 'fa fa-file-excel-o' ) );
 		}
+		// other actions
+		$result->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) );
+		$result->footer_link( 'Обновить статусы операций Подтверждения', $url[ 'confirmation_update_expired' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) );
 		return( $result );
 	}
 
@@ -576,6 +586,9 @@ class yf_manage_payout {
 	}
 
 	function _operation( $options = null ) {
+		// var
+		$is_valid   = true;
+		$is_options = true;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
@@ -651,33 +664,36 @@ class yf_manage_payout {
 			empty( $o_options[ 'request' ] )
 			|| !is_array( $o_options[ 'request' ] )
 		) {
-			$result = array(
-				'status_message' => 'Параметры запроса отсутствует',
-			);
-			return( $this->_user_message( $result ) );
+			$is_options = false;
+			// $result = array(
+				// 'status_message' => 'Параметры запроса отсутствует',
+			// );
+			// return( $this->_user_message( $result ) );
 		}
-		$request = reset( $o_options[ 'request' ] );
-		// check method
-		if( empty( $request[ 'options' ][ 'method_id' ] ) ) {
-			$result = array(
-				'status_message' => 'Метод вывода средств отсутствует',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		$method_id = $request[ 'options' ][ 'method_id' ];
-		$method    = $provider_class->api_method( array(
-			'type'      => 'payout',
-			'method_id' => $method_id,
-		));
-		// detect card
-		$card = @$request[ 'options' ][ 'card' ];
-		$result = $this->interkassa_detect_card( array(
-			'card' => $card,
-		));
-		@list( $card_method_id, $card_method ) = $result;
-		$html_card_title = null;
-		if( $card_method_id ) {
-			$html_card_title = $card_method[ 'title' ];
+		if( $is_options ) {
+			$request = reset( $o_options[ 'request' ] );
+			// check method
+			if( empty( $request[ 'options' ][ 'method_id' ] ) ) {
+				$result = array(
+					'status_message' => 'Метод вывода средств отсутствует',
+				);
+				return( $this->_user_message( $result ) );
+			}
+			$method_id = $request[ 'options' ][ 'method_id' ];
+			$method    = $provider_class->api_method( array(
+				'type'      => 'payout',
+				'method_id' => $method_id,
+			));
+			// detect card
+			$card = @$request[ 'options' ][ 'card' ];
+			$result = $this->interkassa_detect_card( array(
+				'card' => $card,
+			));
+			@list( $card_method_id, $card_method ) = $result;
+			$html_card_title = null;
+			if( $card_method_id ) {
+				$html_card_title = $card_method[ 'title' ];
+			}
 		}
 		// check operation status
 		$statuses = $payment_api->get_status();
@@ -686,7 +702,7 @@ class yf_manage_payout {
 				'status_message' => 'Неизвестный статус операции: '. $o_status_id,
 			);
 			return( $this->_user_message( $result ) );
-		}
+			}
 		$o_status = $statuses[ $o_status_id ];
 		// status css
 		$status_name  = $o_status[ 'name' ];
@@ -744,7 +760,8 @@ class yf_manage_payout {
 		$html_datetime_finish = $o_datetime_finish;
 		// result
 		$result = array(
-			'is_valid'                     => true,
+			'is_valid'                     => &$is_valid,
+			'is_options'                   => &$is_options,
 			'operation_id'                 => &$operation_id,
 			'operation'                    => &$operation,
 			'processing_log'               => &$processing_log,
@@ -825,19 +842,21 @@ class yf_manage_payout {
 		$manage_lib  = &$this->manage_payment_lib;
 		// prepare view: request options
 		$content = array();
-		foreach( $_method[ 'option' ] as $key => $title ) {
-			if( !empty( $_request[ 'options' ][ $key ] ) ) {
-				$content[ $title ] = $_request[ 'options' ][ $key ];
+		if( $_is_options ) {
+			foreach( $_method[ 'option' ] as $key => $title ) {
+				if( !empty( $_request[ 'options' ][ $key ] ) ) {
+					$content[ $title ] = $_request[ 'options' ][ $key ];
+				}
 			}
+			$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
+			$html_request_options_csv = $html->a( array(
+				'href'   => $this->_url( 'csv_request', array( '%operation_id' => $_operation_id ) ),
+				'icon'   => 'fa fa-file-excel-o',
+				'title'  => 'Опции запроса: экспорт в CSV файл',
+				'text'   => 'CSV файл',
+				'target' => '_blank',
+			));
 		}
-		$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
-		$html_request_options_csv = $html->a( array(
-			'href'   => $this->_url( 'csv_request', array( '%operation_id' => $_operation_id ) ),
-			'icon'   => 'fa fa-file-excel-o',
-			'title'  => 'Опции запроса: экспорт в CSV файл',
-			'text'   => 'CSV файл',
-			'target' => '_blank',
-		));
 		// prepare view: response options
 		$content = null;
 		if( !empty( $_response ) ) {
@@ -945,6 +964,10 @@ class yf_manage_payout {
 			'Дата обновления' => $_html_datetime_update,
 			'Дата завершения' => $_html_datetime_finish,
 		);
+		if( ! $_is_options ) {
+			unset( $content[ 'Метод' ] );
+			$content[ 'Предупреждение' ] = '<span class="text-danger">параметры вывода отсутствуют</span>';
+		}
 		if( ! @$_html_card_title ) { unset( $content[ 'Тип карты' ] ); };
 		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
@@ -1851,38 +1874,6 @@ EOS;
 		}
 		echo( $message . PHP_EOL );
 		exit( $status );
-	}
-
-	function cancel() {
-		$operation_id = (int)@$_GET[ 'operation_id' ];
-		if( $operation_id < 1 ) {
-			$result = array(
-				'status_message' => 'Неверная операция',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		// processing
-		$payment_api = _class( 'payment_api' );
-		$result = $payment_api->cancel( array(
-			'operation_id' => $operation_id,
-		));
-		return( $this->_user_message( $result ) );
-	}
-
-	function expired() {
-		$operation_id = (int)@$_GET[ 'operation_id' ];
-		if( $operation_id < 1 ) {
-			$result = array(
-				'status_message' => 'Неверная операция',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		// processing
-		$payment_api = _class( 'payment_api' );
-		$result = $payment_api->expired( array(
-			'operation_id' => $operation_id,
-		));
-		return( $this->_user_message( $result ) );
 	}
 
 }

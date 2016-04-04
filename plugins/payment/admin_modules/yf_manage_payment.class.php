@@ -37,7 +37,21 @@ class yf_manage_payment {
 				'user_id'    => '%user_id',
 				'account_id' => '%account_id',
 			)),
+			'operation_remove' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'mass_remove',
+				'operation_id' => '%operation_id',
+			)),
 		);
+	}
+
+	function _url( $name, $replace = null, $url = null ) {
+		$url = @$url ?: $this->url;
+		$result = null;
+		if( empty( $url[ $name ] ) ) { return( $result ); }
+		if( !is_array( $replace ) ) { return( $url[ $name ] ); }
+		$result = str_replace( array_keys( $replace ), array_values( $replace ), $url[ $name ] );
+		return( $result );
 	}
 
 	function _filter_form_show( $filter, $replace ) {
@@ -237,6 +251,7 @@ class yf_manage_payment {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// class
 		$manage_lib  = &$this->manage_payment_lib;
+		$html       = _class( 'html' );
 		// status
 		$payment_status = &$_payment_status;
 		$result = table( $_sql, array(
@@ -283,6 +298,38 @@ class yf_manage_payment {
 			->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
 			->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
 			->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
+			->btn_func( 'Отмена', function( $row, $params, $instance_params, $table ) use( $html ) {
+				$operation_id = (int)$row[ 'operation_id' ];
+				$url = url_admin( array(
+					'object'       => 'manage_payment',
+					'action'       => 'mass_cancel',
+					'operation_id' => $operation_id,
+				));
+				$link = $html->a( array(
+					'href'  => $url,
+					'class' => 'btn btn-warning',
+					'icon'  => 'fa fa-ban',
+					'title' => 'Отмена',
+					'text'  => 'Отмена',
+				));
+				return( $link );
+			})
+			->btn_func( 'Удаление', function( $row, $params, $instance_params, $table ) use( $html ) {
+				$operation_id = (int)$row[ 'operation_id' ];
+				$url = url_admin( array(
+					'object'       => 'manage_payment',
+					'action'       => 'mass_remove',
+					'operation_id' => $operation_id,
+				));
+				$link = $html->a( array(
+					'href'  => $url,
+					'class' => 'btn btn-danger',
+					'icon'  => 'fa fa-remove',
+					'title' => 'Удаление',
+					'text'  => 'Удаление',
+				));
+				return( $link );
+			})
 		;
 		return( $result );
 	}
@@ -582,4 +629,164 @@ class yf_manage_payment {
 		}
 		return $result;
 	}
+
+	protected function _user_message( $options = null ) {
+		$url = &$this->url;
+		// import operation
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_status_message ) ) { return( null ); }
+		switch( true ) {
+			case @$_status === 'in_progress':
+				$_css_panel_status = 'warning';
+				empty( $_status_header ) && $_status_header = 'В процессе';
+				break;
+			case @$_status === 'processing':
+				$_css_panel_status = 'warning';
+				empty( $_status_header ) && $_status_header = 'Обработка';
+				break;
+			case @$_status === 'success' || @$_status === true:
+				$_css_panel_status = 'success';
+				empty( $_status_header ) && $_status_header = 'Выполнено';
+				break;
+			case @$_status === 'refused':
+				$_css_panel_status = 'danger';
+				empty( $_status_header ) && $_status_header = 'Отказано';
+				break;
+			default:
+				$_css_panel_status = 'danger';
+				empty( $_status_header ) && $_status_header = 'Ошибка';
+				break;
+		}
+		// body
+		$content = empty( $_is_html_message ) ? $_status_message : htmlentities( $_status_message, ENT_HTML5, 'UTF-8', $double_encode = false );
+		$panel_body = '<div class="panel-body">'. $content .'</div>';
+		// header
+		$content = 'Операция';
+		if( !empty( $_status_header ) ) { $content .= ': ' . $_status_header; }
+		$content = htmlentities( $content, ENT_HTML5, 'UTF-8', $double_encode = false );
+		$panel_header = '<div class="panel-heading">'. $content .'</div>';
+		// footer
+		if( !empty( $_status_footer ) ) {
+			$content = $_status_footer;
+		}
+		isset( $content ) && $panel_footer = '<div class="panel-footer">'. $content .'</div>';
+		// panel
+		$result =  <<<"EOS"
+<div class="panel panel-{$_css_panel_status}">
+	$panel_header
+	$panel_body
+	$panel_footer
+</div>
+EOS;
+		return( $result );
+	}
+
+	function _get_operation_id( $options = null ) {
+		// import operation
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$result = @$_operation_id ?: @$_GET[ 'operation_id' ] ?: @$_POST[ 'operation_id' ];
+		if( ! @$result ) {
+			$result = array(
+				'status_message' => 'Неверная операция',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		return( $result );
+	}
+
+	function cancel( $options = null ) {
+		$operation_id = (int)$this->_get_operation_id( $options );
+		if( $operation_id < 1 ) {
+			$result = array(
+				'status_message' => 'Неверная операция',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// processing
+		$payment_api = &$this->payment_api;
+		$result = $payment_api->cancel( array(
+			'operation_id' => $operation_id,
+		));
+		return( $this->_user_message( $result ) );
+	}
+
+	function expired( $options = null ) {
+		$operation_id = (int)$this->_get_operation_id( $options );
+		if( $operation_id < 1 ) {
+			$result = array(
+				'status_message' => 'Неверная операция',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// processing
+		$payment_api = &$this->payment_api;
+		$result = $payment_api->expired( array(
+			'operation_id' => $operation_id,
+		));
+		return( $this->_user_message( $result ) );
+	}
+
+	// mass actions
+
+	function mass_cancel( $options = null ) {
+		$operation_id = $this->_get_operation_id( $options );
+		is_numeric( $operation_id ) && $operation_id = array( $operation_id => 1 );
+		if( ! is_array( $operation_id ) ) {
+			$result = array(
+				'status_message' => 'Требуется массив операций',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// processing
+		$payment_api = &$this->payment_api;
+		$html = _class( 'html' );
+		$title = 'Отменено №';
+		$content = array();
+		foreach( $operation_id as $id => $selected ) {
+			$id = (int)$id;
+			if( $id < 1 ) { continue; }
+			$header = $title . $id;
+			$result = $payment_api->cancel( array(
+				'operation_id' => $id,
+			));
+			$text = $result[ 'status_message' ];
+			$link = $html->a( array(
+				'href'      => $this->_url( 'view', array( '%operation_id' => $id ) ),
+				'class_add' => @$result[ 'status' ] ? 'btn-success' : 'btn-warning',
+				'target'    => '_blank',
+				'icon'      => 'fa fa-sign-out',
+				'title'     => $text,
+				'text'      => $text,
+			));
+			$content[ $header ] = $link;
+		}
+		// table
+		$result = $html->simple_table( $content, array( 'no_total' => true ) );
+		return( $result );
+	}
+
+	function mass_remove( $options = null ) {
+		$operation_id = $this->_get_operation_id( $options );
+		is_numeric( $operation_id ) && $operation_id = array( $operation_id => 1 );
+		if( ! is_array( $operation_id ) ) {
+			$result = array(
+				'status_message' => 'Требуется массив операций',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// processing
+		$ids = array_keys( $operation_id );
+		$r = db()->table( 'payment_operation' )
+			->where( 'operation_id', 'in', _es( $ids ) )
+			->delete()
+		;
+		$result = array(
+			'operation_id'    -1,
+			'status'         => $r,
+			'status_message' => 'Удаление операций: '. implode( ', ', $ids ),
+		);
+		return( $this->_user_message( $result ) );
+	}
+
 }
