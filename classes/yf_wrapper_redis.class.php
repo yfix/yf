@@ -29,7 +29,7 @@ class yf_wrapper_redis {
 	*/
 	function _init() {
 		$this->host = getenv('REDIS_HOST') ?: conf('REDIS_HOST') ?: '127.0.0.1';
-		$this->port = getenv('REDIS_PORT') ?: conf('REDIS_PORT') ?: 6379;
+		$this->port = intval(getenv('REDIS_PORT') ?: conf('REDIS_PORT') ?: 6379);
 	}
 
 	/**
@@ -51,11 +51,11 @@ class yf_wrapper_redis {
 			$redis = new Predis\Client(array(
 			    'scheme' => 'tcp',
 			    'host'   => $this->host,
-    			'port'   => $this->port,
+    			'port'   => (int)$this->port,
 			));
 		} elseif ($this->driver == 'phpredis') {
 			$redis = new Redis();
-			$redis->connect($this->host, $this->port);
+			$redis->connect($this->host, (int)$this->port);
 		}
 		$this->_connection = $redis;
 		return $this->_connection;

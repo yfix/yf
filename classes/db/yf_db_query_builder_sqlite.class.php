@@ -9,7 +9,7 @@ class yf_db_query_builder_sqlite extends yf_db_query_builder_driver {
 	/**
 	* RIGHT JOIN and FULL OUTER JOIN not supported
 	*/
-	function right_join($table, $on) {
+	function right_join($table, $on, $is_select = false) {
 		return $this->join($table, $on, 'left');
 	}
 
