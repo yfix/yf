@@ -285,7 +285,7 @@ class yf_html {
 				$_extra_head['class'] = $_extra_head['class'] ?: $class_head;
 				$headers[] =
 					'<li'._attrs($_extra_head, array('id','class','style')).'>
-						<a '.(!$disabled ? 'href="#'.$id.'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)). $badge. '</a>
+						<a '.(!$disabled ? 'href="#'.fix_html_attr_id($id).'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)). $badge. '</a>
 					</li>';
 			}
 			$class_body = ($_extra['class'] ?: $v['class_body']) ?: $_extra['class_body'];
