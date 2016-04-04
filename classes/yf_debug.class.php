@@ -90,6 +90,7 @@ class yf_debug {
 				continue;
 			}
 			$name = substr($method, strlen('_debug_'));
+			$name = trim ($name, '_');
 			if ($this->DEBUG_CONSOLE_LIGHT && $name !== 'DEBUG_YF') {
 				continue;
 			}
