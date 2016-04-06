@@ -77,15 +77,6 @@ if (!function_exists('smart_htmlspecialchars')) {
 if (!function_exists('format_bbcode_text')) {
 	function format_bbcode_text ($body = '') { return $body ? _class('bb_codes')->_process_text($body) : ''; }
 }
-if (!function_exists('printr')) {
-	function printr($var, $do_not_echo = false) { return _class('utils')->printr($var, $do_not_echo); }
-}
-if (!function_exists('_debug_log')) {
-	function _debug_log($text, $log_level = false) { return _class('utils')->_debug_log($text, $log_level); }
-}
-if(!function_exists('d')) {
-	function d() { foreach(func_get_args() as $k => $v) { printf('<pre><b>variable[ %s ]</b>:'.PHP_EOL.'%s</pre>', $k, var_export($v, true)); } }
-}
 if (!function_exists('_mkdir_m')) {
 	function _mkdir_m ($path_to_create = '', $dir_mode = 0755, $create_index_htmls = 0, $start_folder = '') {
 		return file_exists($path_to_create) || _class('dir')->mkdir_m($path_to_create, $dir_mode, $create_index_htmls, $start_folder);

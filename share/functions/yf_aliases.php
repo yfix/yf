@@ -115,6 +115,21 @@ if (!function_exists('cache_files')) {
 if (!function_exists('trace')) {
 	function trace() { $e = new Exception(); return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), 1, -1)); }
 }
+if (!function_exists('d')) {
+	function d() {
+		global $auto_ids; $auto_id = ($auto_prefix = 'func__'.__FUNCTION__). $auto_ids[$auto_prefix]++;
+		print '<a class="btn btn-xs btn-default" data-toggle="collapse" data-target="#collapse_'.$auto_id.'">Trace</a><div id="collapse_'.$auto_id.'" class="collapse"><pre>'.print_r(trace(), true).'</pre></div>';
+		foreach (($args = func_get_args()) as $k => $v) {
+			print '<pre>'. (count($args) > 1 ? '<b>args['.(int)$k.']</b>:'.PHP_EOL : ''). var_export($v, true). '</pre>';
+		}
+	}
+}
+if (!function_exists('printr')) {
+	function printr($var, $do_not_echo = false) { return _class('utils')->printr($var, $do_not_echo); }
+}
+if (!function_exists('_debug_log')) {
+	function _debug_log($text, $log_level = false) { return _class('utils')->_debug_log($text, $log_level); }
+}
 // example: db()->query()
 // example of getting real table name: db('user') should return DB_PREFIX.'user' value;
 if (!function_exists('db')) {
