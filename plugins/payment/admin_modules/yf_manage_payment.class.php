@@ -37,7 +37,21 @@ class yf_manage_payment {
 				'user_id'    => '%user_id',
 				'account_id' => '%account_id',
 			)),
+			'operation_remove' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'mass_remove',
+				'operation_id' => '%operation_id',
+			)),
 		);
+	}
+
+	function _url( $name, $replace = null, $url = null ) {
+		$url = @$url ?: $this->url;
+		$result = null;
+		if( empty( $url[ $name ] ) ) { return( $result ); }
+		if( !is_array( $replace ) ) { return( $url[ $name ] ); }
+		$result = str_replace( array_keys( $replace ), array_values( $replace ), $url[ $name ] );
+		return( $result );
 	}
 
 	function _filter_form_show( $filter, $replace ) {
@@ -237,6 +251,7 @@ class yf_manage_payment {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// class
 		$manage_lib  = &$this->manage_payment_lib;
+		$html       = _class( 'html' );
 		// status
 		$payment_status = &$_payment_status;
 		$result = table( $_sql, array(
@@ -283,6 +298,38 @@ class yf_manage_payment {
 			->date( 'datetime_update', 'Дата'           , array( 'format' => 'full', 'nowrap' => 1 ) )
 			->date( 'datetime_start' , 'Дата начала'    , array( 'format' => 'full', 'nowrap' => 1 ) )
 			->date( 'datetime_finish', 'Дата завершения', array( 'format' => 'full', 'nowrap' => 1 ) )
+			->btn_func( 'Отмена', function( $row, $params, $instance_params, $table ) use( $html ) {
+				$operation_id = (int)$row[ 'operation_id' ];
+				$url = url_admin( array(
+					'object'       => 'manage_payment',
+					'action'       => 'mass_cancel',
+					'operation_id' => $operation_id,
+				));
+				$link = $html->a( array(
+					'href'  => $url,
+					'class' => 'btn btn-warning',
+					'icon'  => 'fa fa-ban',
+					'title' => 'Отмена',
+					'text'  => 'Отмена',
+				));
+				return( $link );
+			})
+			->btn_func( 'Удаление', function( $row, $params, $instance_params, $table ) use( $html ) {
+				$operation_id = (int)$row[ 'operation_id' ];
+				$url = url_admin( array(
+					'object'       => 'manage_payment',
+					'action'       => 'mass_remove',
+					'operation_id' => $operation_id,
+				));
+				$link = $html->a( array(
+					'href'  => $url,
+					'class' => 'btn btn-danger',
+					'icon'  => 'fa fa-remove',
+					'title' => 'Удаление',
+					'text'  => 'Удаление',
+				));
+				return( $link );
+			})
 		;
 		return( $result );
 	}
@@ -582,4 +629,5 @@ class yf_manage_payment {
 		}
 		return $result;
 	}
+
 }

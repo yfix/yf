@@ -238,12 +238,14 @@ class yf_manage_payout {
 		// class
 		$payment_api = &$this->payment_api;
 		$manage_lib  = &$this->manage_payment_lib;
-		// is action
+		// mass actions
 		if( main()->is_post() ) {
-			switch( true ) {
-				case isset( $_POST[ 'CSV_ECommPay' ] ):
-					return( $this->_user_message( $this->csv_ecommpay() ) );
-					break;
+			$is_mass = @$_POST[ 'mass' ];
+			switch( $is_mass ) {
+				case 'payout': return( $this->mass_payout() ); break;
+				case 'cancel': return( $this->mass_cancel() ); break;
+				case 'remove': return( $this->mass_remove() ); break;
+				case 'CSV_ECommPay': return( $this->_user_message( $this->csv_ecommpay() ) ); break;
 			}
 		}
 		// payment providers
@@ -352,14 +354,19 @@ class yf_manage_payout {
 			->btn( 'Вывод средств', $url[ 'view'    ], array( 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
 			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
 			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
-			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
-			->footer_link( 'Обновить статусы операций Подтверждения', $url[ 'confirmation_update_expired' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
 		;
+		// mass actions
+		$result->footer_submit( array( 'name' => 'mass', 'value' => 'payout', 'desc' => 'Вывод средств', 'class' => 'btn btn-success', 'icon' => 'fa fa-sign-out' ) );
+		$result->footer_submit( array( 'name' => 'mass', 'value' => 'cancel', 'desc' => 'Отменить'     , 'class' => 'btn btn-warning', 'icon' => 'fa fa-ban'      ) );
+		$result->footer_submit( array( 'name' => 'mass', 'value' => 'remove', 'desc' => 'Удалить'      , 'class' => 'btn btn-danger' , 'icon' => 'fa fa-remove'   ) );
 		// ECommPay
 		$provider = $payment_api->is_provider(array( 'name' => 'ecommpay' ));
 		if( $provider ) {
-			$result->footer_submit( array( 'value' => 'CSV ECommPay', 'class' => 'btn btn-info', 'icon' => 'fa fa-file-excel-o' ) );
+			$result->footer_submit( array( 'name' => 'mass', 'value' => 'CSV_ECommPay', 'desc' => 'CSV ECommPay', 'class' => 'btn btn-info', 'icon' => 'fa fa-file-excel-o' ) );
 		}
+		// other actions
+		$result->header_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) );
+		$result->header_link( 'Обновить статусы операций Подтверждения', $url[ 'confirmation_update_expired' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) );
 		return( $result );
 	}
 
@@ -449,7 +456,7 @@ class yf_manage_payout {
 			$data[] = array( $service, $account, $amount, $currency, $comment );
 		}
 		if( count( $data ) <= 1 ) {
-			$message = 'Отсутствуют операции со статусом: '. $status_in_progress[ 'name' ];
+			$message = 'Отсутствуют операции со статусом: '. $status_in_progress[ 'title' ];
 			$result = array(
 				'status'         => false,
 				'status_message' => &$message,
@@ -479,7 +486,7 @@ class yf_manage_payout {
 		$operation = $this->_operation();
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $operation ); }
+		if( empty( $_is_valid ) ) { return( $this->_user_message( $operation ) ); }
 		// var
 		$payment_api = &$this->payment_api;
 		// prepare view: request options
@@ -576,6 +583,9 @@ class yf_manage_payout {
 	}
 
 	function _operation( $options = null ) {
+		// var
+		$is_valid   = true;
+		$is_options = true;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
@@ -591,7 +601,7 @@ class yf_manage_payout {
 				'status'         => false,
 				'status_message' => 'Ошибка: операция не найдена',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// import operation
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, 'o' );
@@ -602,7 +612,7 @@ class yf_manage_payout {
 				'status'         => false,
 				'status_message' => 'Счет пользователя не найден',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		list( $account_id, $account ) = $account_result;
 		// check user
@@ -613,7 +623,7 @@ class yf_manage_payout {
 				'status'         => false,
 				'status_message' => 'Пользователь не найден: ' . $user_id,
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		$online_users = _class( 'online_users', null, null, true );
 		$user_is_online = $online_users->_is_online( $user_id );
@@ -627,7 +637,7 @@ class yf_manage_payout {
 				'status'         => false,
 				'status_message' => 'Неизвестный провайдер',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		$provider = &$providers_user[ $o_provider_id ];
 		// providers by name
@@ -644,40 +654,43 @@ class yf_manage_payout {
 			$result = array(
 				'status_message' => 'Провайдер недоступный: ' . $provider[ 'title' ],
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// check request
 		if(
 			empty( $o_options[ 'request' ] )
 			|| !is_array( $o_options[ 'request' ] )
 		) {
+			$is_options = false;
 			$result = array(
 				'status_message' => 'Параметры запроса отсутствует',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
-		$request = reset( $o_options[ 'request' ] );
-		// check method
-		if( empty( $request[ 'options' ][ 'method_id' ] ) ) {
-			$result = array(
-				'status_message' => 'Метод вывода средств отсутствует',
-			);
-			return( $this->_user_message( $result ) );
-		}
-		$method_id = $request[ 'options' ][ 'method_id' ];
-		$method    = $provider_class->api_method( array(
-			'type'      => 'payout',
-			'method_id' => $method_id,
-		));
-		// detect card
-		$card = @$request[ 'options' ][ 'card' ];
-		$result = $this->interkassa_detect_card( array(
-			'card' => $card,
-		));
-		@list( $card_method_id, $card_method ) = $result;
-		$html_card_title = null;
-		if( $card_method_id ) {
-			$html_card_title = $card_method[ 'title' ];
+		if( $is_options ) {
+			$request = reset( $o_options[ 'request' ] );
+			// check method
+			if( empty( $request[ 'options' ][ 'method_id' ] ) ) {
+				$result = array(
+					'status_message' => 'Метод вывода средств отсутствует',
+				);
+				return( $result );
+			}
+			$method_id = $request[ 'options' ][ 'method_id' ];
+			$method    = $provider_class->api_method( array(
+				'type'      => 'payout',
+				'method_id' => $method_id,
+			));
+			// detect card
+			$card = @$request[ 'options' ][ 'card' ];
+			$result = $this->interkassa_detect_card( array(
+				'card' => $card,
+			));
+			@list( $card_method_id, $card_method ) = $result;
+			$html_card_title = null;
+			if( $card_method_id ) {
+				$html_card_title = $card_method[ 'title' ];
+			}
 		}
 		// check operation status
 		$statuses = $payment_api->get_status();
@@ -685,8 +698,8 @@ class yf_manage_payout {
 			$result = array(
 				'status_message' => 'Неизвестный статус операции: '. $o_status_id,
 			);
-			return( $this->_user_message( $result ) );
-		}
+			return( $result );
+			}
 		$o_status = $statuses[ $o_status_id ];
 		// status css
 		$status_name  = $o_status[ 'name' ];
@@ -744,7 +757,8 @@ class yf_manage_payout {
 		$html_datetime_finish = $o_datetime_finish;
 		// result
 		$result = array(
-			'is_valid'                     => true,
+			'is_valid'                     => &$is_valid,
+			'is_options'                   => &$is_options,
 			'operation_id'                 => &$operation_id,
 			'operation'                    => &$operation,
 			'processing_log'               => &$processing_log,
@@ -817,7 +831,7 @@ class yf_manage_payout {
 		$operation = $this->_operation();
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $operation ); }
+		if( empty( $_is_valid ) ) { return( $this->_user_message( $operation ) ); }
 		// var
 		$url         = &$this->url;
 		$html        = _class( 'html' );
@@ -825,19 +839,21 @@ class yf_manage_payout {
 		$manage_lib  = &$this->manage_payment_lib;
 		// prepare view: request options
 		$content = array();
-		foreach( $_method[ 'option' ] as $key => $title ) {
-			if( !empty( $_request[ 'options' ][ $key ] ) ) {
-				$content[ $title ] = $_request[ 'options' ][ $key ];
+		if( $_is_options ) {
+			foreach( $_method[ 'option' ] as $key => $title ) {
+				if( !empty( $_request[ 'options' ][ $key ] ) ) {
+					$content[ $title ] = $_request[ 'options' ][ $key ];
+				}
 			}
+			$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
+			$html_request_options_csv = $html->a( array(
+				'href'   => $this->_url( 'csv_request', array( '%operation_id' => $_operation_id ) ),
+				'icon'   => 'fa fa-file-excel-o',
+				'title'  => 'Опции запроса: экспорт в CSV файл',
+				'text'   => 'CSV файл',
+				'target' => '_blank',
+			));
 		}
-		$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
-		$html_request_options_csv = $html->a( array(
-			'href'   => $this->_url( 'csv_request', array( '%operation_id' => $_operation_id ) ),
-			'icon'   => 'fa fa-file-excel-o',
-			'title'  => 'Опции запроса: экспорт в CSV файл',
-			'text'   => 'CSV файл',
-			'target' => '_blank',
-		));
 		// prepare view: response options
 		$content = null;
 		if( !empty( $_response ) ) {
@@ -945,6 +961,10 @@ class yf_manage_payout {
 			'Дата обновления' => $_html_datetime_update,
 			'Дата завершения' => $_html_datetime_finish,
 		);
+		if( ! $_is_options ) {
+			unset( $content[ 'Метод' ] );
+			$content[ 'Предупреждение' ] = '<span class="text-danger">параметры вывода отсутствуют</span>';
+		}
 		if( ! @$_html_card_title ) { unset( $content[ 'Тип карты' ] ); };
 		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
 		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
@@ -1283,11 +1303,11 @@ EOS;
 		return( $result );
 	}
 
-	function request() {
+	function _request( $options = null ) {
 		// start
 		db()->begin();
 		// check operation
-		$operation = $this->_operation();
+		$operation = $this->_operation( $options );
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_is_valid ) ) { return( $operation ); }
@@ -1296,14 +1316,14 @@ EOS;
 			$result = array(
 				'status_message' => 'Операция уже обрабатывается',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// is_progressed
 		if( !@$_is_progressed ) {
 			$result = array(
 				'status_message' => 'Операция не может быть обработана, так как изменился статус',
 			);
-			return( $this->_user_message( $result ) );
+			return( $result );
 		}
 		// var
 		$payment_api = &$this->payment_api;
@@ -1323,6 +1343,11 @@ EOS;
 		}
 		// finish
 		db()->commit();
+		return( $result );
+	}
+
+	function request() {
+		$result = $this->_request();
 		return( $this->_user_message( $result ) );
 	}
 
@@ -1333,7 +1358,7 @@ EOS;
 		$operation = $this->_operation();
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( empty( $_is_valid ) ) { return( $operation ); }
+		if( empty( $_is_valid ) ) { return( $this->_user_message( $operation ) ); }
 		// is_processing
 		if( @$_is_processing ) {
 			$result = array(
@@ -1483,7 +1508,7 @@ EOS;
 		$operation = $this->_operation( $options );
 		// import options
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		if( ! @$_is_valid ) { return( $operation ); }
+		if( empty( $_is_valid ) ) { return( $this->_user_message( $operation ) ); }
 		if( !$_is_processing_interkassa ) {
 			$result = array(
 				'status_message' => 'Данная операция не обрабатывается Интеркассой',
@@ -1552,7 +1577,7 @@ EOS;
 		// import options
 		is_array( $options   ) && extract( $options,   EXTR_PREFIX_ALL | EXTR_REFS, '_' );
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, ''  );
-		if( empty( $_is_valid ) ) { return( $operation ); }
+		if( empty( $_is_valid ) ) { return( $this->_user_message( $operation ) ); }
 		$status = $_GET[ 'status' ] ?: $__status;
 		switch( $status ) {
 			case 'success':
@@ -1853,8 +1878,22 @@ EOS;
 		exit( $status );
 	}
 
-	function cancel() {
-		$operation_id = (int)@$_GET[ 'operation_id' ];
+	function _get_operation_id( $options = null ) {
+		// import operation
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
+		$result = @$_operation_id ?: @$_GET[ 'operation_id' ] ?: @$_POST[ 'operation_id' ];
+		if( ! @$result ) {
+			$result = array(
+				'status_message' => 'Неверная операция',
+			);
+			return( $this->_user_message( $result ) );
+		}
+		return( $result );
+	}
+
+	function cancel( $options = null ) {
+		$operation_id = (int)$this->_get_operation_id( $options );
 		if( $operation_id < 1 ) {
 			$result = array(
 				'status_message' => 'Неверная операция',
@@ -1862,15 +1901,15 @@ EOS;
 			return( $this->_user_message( $result ) );
 		}
 		// processing
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		$result = $payment_api->cancel( array(
 			'operation_id' => $operation_id,
 		));
 		return( $this->_user_message( $result ) );
 	}
 
-	function expired() {
-		$operation_id = (int)@$_GET[ 'operation_id' ];
+	function expired( $options = null ) {
+		$operation_id = (int)$this->_get_operation_id( $options );
 		if( $operation_id < 1 ) {
 			$result = array(
 				'status_message' => 'Неверная операция',
@@ -1878,11 +1917,129 @@ EOS;
 			return( $this->_user_message( $result ) );
 		}
 		// processing
-		$payment_api = _class( 'payment_api' );
+		$payment_api = &$this->payment_api;
 		$result = $payment_api->expired( array(
 			'operation_id' => $operation_id,
 		));
 		return( $this->_user_message( $result ) );
+	}
+
+	// mass actions
+
+	function _mass_result( $options = null ) {
+		// import operation
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// prepare
+		$result = array(
+			'status_header'  => &$_status_header,
+			'status_message' => &$_status_message,
+			'status'         => &$_status,
+			'operation_id'   => -1,
+		);
+		return( $this->_user_message( $result ) );
+	}
+
+	function mass_payout( $options = null ) {
+		$operation_id = $this->_get_operation_id( $options );
+		is_numeric( $operation_id ) && $operation_id = array( $operation_id => 1 );
+		if( ! is_array( $operation_id ) ) {
+			return( $this->_mass_result( array(
+				'status_message' => 'Требуется массив операций',
+			)));
+		}
+		// processing
+		$payment_api = &$this->payment_api;
+		$html = _class( 'html' );
+		$title = 'Вывод средств №';
+		$content = array();
+		foreach( $operation_id as $id => $selected ) {
+			$id = (int)$id;
+			if( $id < 1 ) { continue; }
+			$header = $title . $id;
+			$result = $this->_request( array(
+				'operation_id' => $id,
+			));
+			$text = $result[ 'status_message' ];
+			$link = $html->a( array(
+				'href'      => $this->_url( 'view', array( '%operation_id' => $id ) ),
+				'class_add' => @$result[ 'status' ] ? 'btn-success' : 'btn-warning',
+				'target'    => '_blank',
+				'icon'      => 'fa fa-sign-out',
+				'title'     => $text,
+				'text'      => $text,
+			));
+			$content[ $header ] = $link;
+		}
+		// table
+		$table = $html->simple_table( $content, array( 'no_total' => true ) );
+		return( $this->_mass_result( array(
+			'status'         => true,
+			'status_message' => $table,
+		)));
+	}
+
+	function mass_cancel( $options = null ) {
+		$operation_id = $this->_get_operation_id( $options );
+		is_numeric( $operation_id ) && $operation_id = array( $operation_id => 1 );
+		if( ! is_array( $operation_id ) ) {
+			return( $this->_mass_result( array(
+				'status_header'  => 'Отмена операций',
+				'status_message' => 'Требуется массив операций',
+			)));
+		}
+		// processing
+		$payment_api = &$this->payment_api;
+		$html = _class( 'html' );
+		$title = 'Отменено №';
+		$content = array();
+		foreach( $operation_id as $id => $selected ) {
+			$id = (int)$id;
+			if( $id < 1 ) { continue; }
+			$header = $title . $id;
+			$result = $payment_api->cancel( array(
+				'operation_id' => $id,
+			));
+			$text = $result[ 'status_message' ];
+			$link = $html->a( array(
+				'href'      => $this->_url( 'view', array( '%operation_id' => $id ) ),
+				'class_add' => @$result[ 'status' ] ? 'btn-success' : 'btn-warning',
+				'target'    => '_blank',
+				'icon'      => 'fa fa-sign-out',
+				'title'     => $text,
+				'text'      => $text,
+			));
+			$content[ $header ] = $link;
+		}
+		// table
+		$table = $html->simple_table( $content, array( 'no_total' => true ) );
+		return( $this->_mass_result( array(
+			'status'         => true,
+			'status_message' => $table,
+			'status_header'  => 'Отмена операций',
+		)));
+	}
+
+	function mass_remove( $options = null ) {
+		// start
+		$operation_id = $this->_get_operation_id( $options );
+		is_numeric( $operation_id ) && $operation_id = array( $operation_id => 1 );
+		if( ! is_array( $operation_id ) ) {
+			return( $this->_mass_result( array(
+				'status_header'  => 'Удаление операций',
+				'status_message' => 'Требуется массив операций',
+			)));
+		}
+		// processing
+		$ids = array_keys( $operation_id );
+		$r = db()->table( 'payment_operation' )
+			->where( 'operation_id', 'in', _es( $ids ) )
+			->delete()
+		;
+		return( $this->_mass_result( array(
+			'status'         => $r,
+			'status_message' => 'Список: '. implode( ', ', $ids ),
+			'status_header'  => 'Удаление операций',
+		)));
 	}
 
 }

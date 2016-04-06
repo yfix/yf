@@ -1674,7 +1674,7 @@ class yf_table2 {
 				}
 				$extra['href'] = $link;
 				$extra['title'] = $params['name'];
-        		if (!$extra['no_ajax']) {                
+        		if (!$extra['no_ajax']) {
                     $extra['class'] = $table->CLASS_CHANGE_ACTIVE;
                 }
 				if (!isset($extra['data-test'])) {
@@ -1816,14 +1816,14 @@ class yf_table2 {
 					$extra = $value;
 					$value = '';
 				}
-				$value = $extra['value'] ? $extra['value'] : $value;
+				$value = $extra['value'] ?: $value;
+				$desc = $extra['desc'] ?: $value;
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $table->CLASS_ICON_SAVE);
 				$class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
-
 				$extra['type'] = 'submit';
-				$extra['name'] = trim($value);
+				$extra['name'] = trim( $extra['name'] ?: $value );
 				$extra['class'] = $class;
-				return '<button'._attrs($extra, array('type','name','class')).'><i class="'.trim($icon).'"></i> '. t($value).'</button>';
+				return '<button'._attrs($extra, array('type','name','class','value')).'><i class="'.trim($icon).'"></i> '. t($desc).'</button>';
 			}
 		);
 		if (!$extra['display_in']) {

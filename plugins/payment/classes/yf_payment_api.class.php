@@ -1490,6 +1490,7 @@ class yf_payment_api {
 				$result = $db->sql();
 			} else {
 				$result = $db->all();
+				if( !$result ) { return( $result ); }
 				$this->_operation_fetch(array( 'data' => &$result ));
 				if( ! $is_array_operation_id ) {
 					$result = reset( $result );
