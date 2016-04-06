@@ -115,6 +115,23 @@ class yf_common {
 		$themes[] = 'material_design';
 		$themes[] = 'bootstrap_theme';
 		$themes[] = 'bootstrap';
+
+		$blacklist = [
+			'flatui',
+			'journal',
+			'lumen',
+			'material_design',
+			'paper',
+			'readable',
+			'sandstone',
+			'simplex',
+			'superhero',
+		];
+		foreach($themes as $k => $name) {
+			if (in_array($name, $blacklist)) {
+				unset($themes[$k]);
+			}
+		}
 		return $themes;
 	}
 
@@ -129,6 +146,9 @@ class yf_common {
 		} elseif ($main_type === 'admin') {
 			$theme = 'slate'; // Default
 		}
+		if (isset($this->_current_theme) && !$force) {
+			return $this->_current_theme;
+		}
 		$conf_theme = conf('DEF_BOOTSTRAP_THEME_'.strtoupper($main_type)) ?: conf('DEF_BOOTSTRAP_THEME');
 		if ($conf_theme) {
 			$theme = $conf_theme;
@@ -137,6 +157,7 @@ class yf_common {
 		if (!$force && $_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
 			$theme = $_COOKIE['yf_theme'];
 		}
+		$this->_current_theme = $theme;
 		return $theme;
 	}
 
