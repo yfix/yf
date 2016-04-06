@@ -1818,10 +1818,10 @@ class yf_table2 {
 				}
 				$value = $extra['value'] ?: $value;
 				$desc = $extra['desc'] ?: $value;
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $table->CLASS_ICON_SAVE);
-				$class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
 				$extra['type'] = 'submit';
 				$extra['name'] = trim( $extra['name'] ?: $value );
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $table->CLASS_ICON_SAVE);
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
 				$extra['class'] = $class;
 				return '<button'._attrs($extra, array('type','name','class','value')).'><i class="'.trim($icon).'"></i> '. t($desc).'</button>';
 			}
