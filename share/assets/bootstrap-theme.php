@@ -3,7 +3,11 @@
 return function($assets) {
 
 $main_type = $assets->_override['main_type'] ?: MAIN_TYPE;
-$bs_theme = common()->bs_current_theme($main_type, $force = true);
+if (!(is_console() || $assets->_override['main_type'] || $main_type == 'user')) {
+	$bs_theme = common()->bs_current_theme($main_type, $force_default = false);
+} else {
+	$bs_theme = common()->bs_current_theme($main_type, $force_default = true);
+}
 $html5fw = conf('css_framework');
 $bs_major_version = $html5fw === 'bs3' ? '3' : '2';
 $require_name = 'bootstrap'. $bs_major_version;
