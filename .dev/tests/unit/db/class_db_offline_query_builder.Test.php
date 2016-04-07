@@ -726,6 +726,14 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id` INNER JOIN `'.DB_PREFIX.'blogs` AS `b` ON `u`.`id` = `b`.`id`',
 			self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->inner_join('blogs as b', 'u.id = b.id')->sql()
 		);
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id` INNER JOIN `'.DB_PREFIX.'blogs` AS `b` ON `u`.`id` = `b`.`id` AND `u`.`id2` = `b`.`id2` AND `u`.`id3` = `b`.`id3`',
+			self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->inner_join('blogs as b', array('u.id = b.id', 'u.id2 = b.id2', 'u.id3 = b.id3'))->sql()
+		);
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id` INNER JOIN `'.DB_PREFIX.'blogs` AS `b` ON `u`.`id` = `b`.`id` AND `u`.`id2` = `b`.`id2` AND `u`.`id3` = `b`.`id3`',
+			self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->inner_join('blogs as b', array('u.id' => 'b.id', 'u.id2' => 'b.id2', 'u.id3' => 'b.id3'))->sql()
+		);
 	}
 	public function test_group_by() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
