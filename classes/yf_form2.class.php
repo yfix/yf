@@ -259,7 +259,8 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra_override = array();
-		$form_id = isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : $this->_form_id;
+		//$form_id = isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : $this->_form_id;
+		$form_id = !empty($this->_form_id) ? $this->_form_id : $this->_replace['__form_id__'];
 		if ($form_id) {
 			$extra_override = $this->_get_extra_override($form_id);
 		}
@@ -275,16 +276,18 @@ class yf_form2 {
 		if ($csrf_protect && is_callable($csrf_protect)) {
 			$csrf_protect = $csrf_protect($this, $extra);
 		}
+
 		if ($csrf_protect) {
 			$csrf_guard = _class('csrf_guard')->configure(array(
-				'form_id'		=> $form_id ?: "autoid_".$_GET['object']."_".$_GET['action']."_".++main()->_csrf_ids,
+				'form_id'		=> !empty($form_id) ? $form_id : "autoid_".$_GET['object']."_".$_GET['action']."_".++main()->_csrf_ids,
 				'token_name'	=> $this->CONF_CSRF_NAME,
 			));
 		}
+
 		if (is_post()) {
-			if ($csrf_protect && !$csrf_guard->validate($_POST[$this->CONF_CSRF_NAME])) {
+			if ($csrf_protect && isset($_POST[$this->_form_id_field]) && ($_POST[$this->_form_id_field] == $this->_form_id) && !$csrf_guard->validate($_POST[$this->CONF_CSRF_NAME])) {
+
 				// We need this as validation now is skipping empty values
-                
 				if (!isset($_POST[$this->CONF_CSRF_NAME]) || (trim($_POST[$this->CONF_CSRF_NAME]) == '')) {
 					$_POST[$this->CONF_CSRF_NAME] = '__wrong_token_'.md5(microtime()).'__';
 				}
@@ -297,7 +300,9 @@ class yf_form2 {
 				};
 				$this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
 				$this->hidden($this->CONF_CSRF_NAME);
+
 			}
+
 			$on_post = isset($extra['on_post']) ? $extra['on_post'] : $this->_on['on_post'];
 			if (is_callable($on_post)) {
 				$on_post($extra, $replace, $this);
@@ -312,12 +317,13 @@ class yf_form2 {
 				$func = $up['func'];
 				$func($up['table'], $up['fields'], $up['type'], $up['extra'], $this);
 			}
-		} 
-        if ($csrf_protect) {
+		}
+
+		if ($csrf_protect) {
             $this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
             $this->hidden($this->CONF_CSRF_NAME);
         }
-            
+
 		$r = (array)$this->_replace + (array)$replace;
 
 		if (!$headless_form) {
