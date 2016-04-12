@@ -1,7 +1,8 @@
 <?php
 
 load('oauth_driver2', 'framework', 'classes/oauth/');
-abstract class oauth_driver1 extends yf_oauth_driver2 {
+
+abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 
 	protected $url_request_token = '';
 	protected $url_access_token = '';
