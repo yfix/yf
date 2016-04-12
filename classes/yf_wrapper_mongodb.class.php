@@ -19,8 +19,8 @@ class yf_wrapper_mongodb {
 	/**
 	*/
 	function _init() {
-		$this->host = getenv('MONGODB_HOST') ?: conf('MONGODB_HOST') ?: '127.0.0.1';
-		$this->port = getenv('MONGODB_PORT') ?: conf('MONGODB_PORT') ?: 27017;
+		$this->host = getenv('MONGODB_HOST') ?: conf('MONGODB_HOST') ?: @constant('MONGODB_HOST') ?: '127.0.0.1';
+		$this->port = getenv('MONGODB_PORT') ?: conf('MONGODB_PORT') ?: @constant('MONGODB_PORT') ?: 27017;
 	}
 
 	/**

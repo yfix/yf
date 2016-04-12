@@ -19,8 +19,8 @@ class yf_wrapper_couchbase {
 	/**
 	*/
 	function _init() {
-		$this->host = getenv('COUCHBASE_HOST') ?: conf('COUCHBASE_HOST') ?: '127.0.0.1';
-		$this->port = getenv('COUCHBASE_PORT') ?: conf('COUCHBASE_PORT') ?: 8092;
+		$this->host = getenv('COUCHBASE_HOST') ?: conf('COUCHBASE_HOST') ?: @constant('COUCHBASE_HOST') ?: '127.0.0.1';
+		$this->port = getenv('COUCHBASE_PORT') ?: conf('COUCHBASE_PORT') ?: @constant('COUCHBASE_PORT') ?: 8092;
 	}
 
 	/**
