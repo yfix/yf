@@ -24,6 +24,11 @@ class yf_oauth {
 		if (!$provider) {
 			return false;
 		}
+		$need_merge_accounts = isset($params['need_merge_accounts']) ? $params['need_merge_accounts'] : true;
+		if(!$need_merge_accounts && main()->USER_ID)
+		{
+			return false;
+		}
 		_class('core_events')->fire('oauth.before_login', array(
 			'provider'	=> $provider,
 			'params'	=> $params,
@@ -64,7 +69,7 @@ class yf_oauth {
 			}
 			$sys_user_info = array();
 			// merge oauth if user is logged in
-			if (main()->USER_ID) {
+			if (main()->USER_ID && $need_merge_accounts) {
 				$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval(main()->USER_ID));
 // TODO: try to merge accounts by email if it is not empty
 				if ($sys_user_info && $oauth_registration && !$oauth_registration['user_id']) {
@@ -80,27 +85,36 @@ class yf_oauth {
 			}
 			if ($oauth_registration && !$oauth_registration['user_id']) {
 				if (!$sys_user_info) {
-					$login = $normalized_info['login'] ?: $this->auto_email_prefix. $provider. '.'. $normalized_info['user_id'];
-// TODO: auto-login user if email exists or show dialog to enter email
+					// TODO: auto-login user if email exists or show dialog to enter email
 					$self_host = parse_url(WEB_PATH, PHP_URL_HOST);
 					if (!$self_host) {
 						$self_host = $_SERVER['HTTP_HOST'];
 					}
-					$email = $normalized_info['email'] ?: $login.'@'.$self_host;
-					db()->insert_safe('user', array(
-						'group'			=> 2,
-						'login'			=> $login,
-						'email'			=> $email,
-						'name'			=> $normalized_info['name'] ?: $login,
-						'nick'			=> $normalized_info['name'] ?: $login,
-						'password'		=> md5(time().'some_salt'.uniqid()),
+					if (isset($params['set_user_info']) && is_callable($params['set_user_info'])) {
+						$set_user_info = $params['set_user_info'];
+						$sys_user_id = $set_user_info($normalized_info);
+					}
+					else
+					{
+						$login = $normalized_info['login'] ?: $this->auto_email_prefix. $provider. '.'. $normalized_info['user_id'];
+
+						$email = $normalized_info['email'] ?: $login.'@'.$self_host;
+						db()->insert_safe('user', array(
+							'group'			=> 2,
+							'login'			=> $login,
+							'email'			=> $email,
+							'name'			=> $normalized_info['name'] ?: $login,
+							'nick'			=> $normalized_info['name'] ?: $login,
+							'password'		=> md5(time().'some_salt'.uniqid()),
 // TODO: make verification by email
-						'active'		=> 1,
-						'add_date'		=> time(),
-						'verify_code'	=> md5(time().'some_salt'.uniqid()),
+							'active'		=> 1,
+							'add_date'		=> time(),
+							'verify_code'	=> md5(time().'some_salt'.uniqid()),
 // TODO: add other fields: locale, lang, age, gender, location, birthday, avatar_url, profile_url
-					));
-					$sys_user_id = db()->insert_id();
+						));
+						$sys_user_id = db()->insert_id();
+					}
+
 					if ($sys_user_id) {
 						$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval($sys_user_id));
 					}

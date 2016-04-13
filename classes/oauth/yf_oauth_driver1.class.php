@@ -205,6 +205,10 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		$this->_storage_set('authorize_request', array('result' => $result, 'response' => $response));
 		if ($result && $result['oauth_token'] && $result['oauth_token_secret']) {
 			$this->_storage_set('request_token', $result);
+			if($_GET['denied'])
+			{
+				return js_redirect('/');
+			}
 			return $result;
 		}
 		return false;
