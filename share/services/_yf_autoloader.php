@@ -100,6 +100,13 @@ class yf_autoloader {
 				}
 				passthru($cmd);
 				$this->check_error(basename($lib_dir), $dir, $check_file);
+			} elseif (getenv('YF_FORCE_UPDATE_SERVICES')) {
+				if (false !== strpos($git_url, '~')) {
+					// Tag was forced, so do nothing
+				} else {
+					$cmd = 'cd '.$dir.' && git pull';
+				}
+				passthru($cmd);
 			}
 		}
 	}
