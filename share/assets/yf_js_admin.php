@@ -158,7 +158,10 @@ END
 		)),
 	),
 	'add' => array(
-		'asset' => 'yf_popover',
+		'asset' => array(
+			'yf_popover',
+			'yf_js_shift_selectable',
+		),
 	),
 	'require' => array(
 		'asset' => 'jquery',
