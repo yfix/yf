@@ -44,7 +44,7 @@ if ($bs_theme === 'bootstrap') {
 		'versions' => array(
 			'master' => array(
 				'css' => array(
-					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap.min.css',
+					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap/bootstrap.min.css',
 					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/flat-ui.min.css',
 				),
 				'js' => array(
@@ -59,13 +59,34 @@ if ($bs_theme === 'bootstrap') {
 		'versions' => array(
 			'master' => array(
 				'css' => array(
-					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/css/ripples.min.css',
-					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/css/material-wfont.min.css',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/css/ripples.min.css',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/css/bootstrap-material-design.min.css',
 				),
 				'js' => array(
-					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/js/ripples.min.js',
-					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/js/material.min.js',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/js/ripples.min.js',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/js/material.min.js',
 					'$(function(){ $.material.init(); })',
+				),
+			),
+		),
+		'require' => array(
+			'asset' => 'bootstrap3',
+		),
+		'add' => array(
+			'asset' => $fixes_name,
+		),
+	);
+} elseif ($bs_theme === 'todc_bootstrap') {
+	conf('bs3_no_default_theme', true);
+	return array(
+		'versions' => array(
+			'master' => array(
+				'css' => array(
+					'//cdn.rawgit.com/yfix/todc-bootstrap/master/dist/css/bootstrap.min.css',
+					'//cdn.rawgit.com/yfix/todc-bootstrap/master/dist/css/todc-bootstrap.min.css',
+				),
+				'js' => array(
+					'//cdn.rawgit.com/yfix/todc-bootstrap/master/dist/js/bootstrap.min.js',
 				),
 			),
 		),
@@ -98,8 +119,8 @@ if ($bs_theme === 'bootstrap') {
 	conf('bs3_no_default_theme', true);
 	return array(
 		'versions' => array(
-			'3.3.2' => array(
-				'css' => '//netdna.bootstrapcdn.com/bootswatch/3.3.2/'.$bs_theme.'/bootstrap.min.css',
+			'3.3.6' => array(
+				'css' => '//netdna.bootstrapcdn.com/bootswatch/3.3.6/'.$bs_theme.'/bootstrap.min.css',
 			),
 		),
 		'require' => array(
