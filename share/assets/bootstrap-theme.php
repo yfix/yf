@@ -44,7 +44,7 @@ if ($bs_theme === 'bootstrap') {
 		'versions' => array(
 			'master' => array(
 				'css' => array(
-					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap/bootstrap.min.css',
+					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap/css/bootstrap.min.css',
 					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/flat-ui.min.css',
 				),
 				'js' => array(
