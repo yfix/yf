@@ -113,6 +113,7 @@ class yf_common {
 		}
 		$themes[] = 'flatui';
 		$themes[] = 'material_design';
+		$themes[] = 'todc_bootstrap';
 		$themes[] = 'bootstrap_theme';
 		$themes[] = 'bootstrap';
 
@@ -121,6 +122,7 @@ class yf_common {
 			'journal',
 			'lumen',
 			'material_design',
+			'todc_bootstrap',
 			'paper',
 			'readable',
 			'sandstone',
@@ -132,6 +134,7 @@ class yf_common {
 				unset($themes[$k]);
 			}
 		}
+		asort($themes);
 		return $themes;
 	}
 
