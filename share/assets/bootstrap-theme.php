@@ -59,12 +59,10 @@ if ($bs_theme === 'bootstrap') {
 		'versions' => array(
 			'master' => array(
 				'css' => array(
-					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/css/ripples.min.css',
-					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/css/bootstrap-material-design.min.css',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.min.css',
 				),
 				'js' => array(
-					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/js/ripples.min.js',
-					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/js/material.min.js',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.iife.min.js',
 					'$(function(){ $.material.init(); })',
 				),
 			),
