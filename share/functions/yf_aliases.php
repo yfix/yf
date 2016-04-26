@@ -16,6 +16,9 @@ if (!class_exists('yf_missing_method_handler')) {
 		function __call($name, $arguments) {
 			if (!$this->_silent) {
 				trigger_error($this->_o_name.'(): missing object method: '.$name. ($this->_c_name ? ' for class: '.$this->_c_name : ''), E_USER_WARNING);
+				if (function_exists('trace') && function_exists('is_console') && is_console()) {
+					echo trace(). PHP_EOL. PHP_EOL;
+				}
 				return false;
 			}
 		}
