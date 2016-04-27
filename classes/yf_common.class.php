@@ -208,10 +208,28 @@ class yf_common {
 	/**
 	* This function generate dividing table contents per pages
 	*/
-	function divide_pages($input_data = '', $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = array()) {
+	function divide_pages($sql = '', $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = array()) {
+		if (is_array($sql)) {
+			$sql_is_array = true;
+		} elseif (is_callable($sql)) {
+			$sql_is_callable = true;
+		} elseif (is_object($sql)) {
+			if ($sql instanceof yf_db_query_builder_driver) {
+				$sql_is_query_builder = true;
+			} else {
+				$sql_is_object = true;
+			}
+		}
+		if ($sql_is_query_builder) {
+			$sql = $sql->sql();
+		} elseif ($sql_is_object) {
+			$sql = obj2arr($sql);
+		} elseif ($sql_is_callable) {
+			$sql = (array)$sql(func_get_args());
+		}
 		// Override default method for input array
-		$method = is_array($input_data) ? 'go_with_array' : 'go';
-		return _class('divide_pages', 'classes/common/')->$method($input_data, $url_path, $render_type, $records_on_page, $num_records, $tpls_path, $add_get_vars, $extra);
+		$method = is_array($sql) ? 'go_with_array' : 'go';
+		return _class('divide_pages', 'classes/common/')->$method($sql, $url_path, $render_type, $records_on_page, $num_records, $tpls_path, $add_get_vars, $extra);
 	}
 
 	/**
