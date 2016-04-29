@@ -51,6 +51,8 @@ class yf_form2_datetime {
 		}
 		$extra['value'] = empty( $extra['value'] ) ? '' : date( $_format_php, $extra['value'] );
 
+		$debug_picker = isset($extra['debug_picker']) ? $extra['debug_picker'] : (bool)@constant('DEBUG_MODE');
+
 		asset('bootstrap-datetimepicker');
 		jquery('
 			$("#'.$extra['name'].'").datetimepicker({
@@ -62,12 +64,13 @@ class yf_form2_datetime {
 					down: "icon icon-arrow-down fa fa-arrow-down"
 				}
 				'
-		        . ($extra['min_date']? ', minDate: \''.date($extra['limit_date_format'], $extra['min_date']).'\'' : '')
-		        . ($extra['max_date']? ', maxDate: \''.date($extra['limit_date_format'], $extra['max_date']).'\'' : '')
+		        . ($extra['min_date'] ? ', minDate: \''.date($extra['limit_date_format'], $extra['min_date']).'\'' : '')
+		        . ($extra['max_date'] ? ', maxDate: \''.date($extra['limit_date_format'], $extra['max_date']).'\'' : '')
 				. ($extra['default_date'] ? ', defaultDate: \''.date($extra['limit_date_format'], $extra['default_date']).'\'' : '')
 				. ($extra['side_by_side'] && $extra['no_time'] != 1 ? ', sideBySide: true' : '')
-				. ($extra['stepping']  ? ', stepping: '.$extra['stepping'] : '')
-				. ($extra['widgetPositioning']  ? ', widgetPositioning: '.$extra['widgetPositioning'] : '')
+				. ($extra['stepping'] ? ', stepping: '.$extra['stepping'] : '')
+				. ($extra['widgetPositioning'] ? ', widgetPositioning: '.$extra['widgetPositioning'] : '')
+				. ($debug_picker ? ', debug: true' : '')
 				.'
 			});
 		');
