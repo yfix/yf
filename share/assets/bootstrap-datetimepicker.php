@@ -11,6 +11,15 @@ return array(
 				'.bootstrap-datetimepicker-widget .picker-switch { width: 90%; }',
 			),
 		),
+		'4.17.37' => array(
+			'js' => array(
+				'//cdn.rawgit.com/yfix/bootstrap-datetimepicker/4.17.37/build/js/bootstrap-datetimepicker.min.js',
+			),
+			'css' => array(
+				'//cdn.rawgit.com/yfix/bootstrap-datetimepicker/4.17.37/build/css/bootstrap-datetimepicker.min.css',
+				'.bootstrap-datetimepicker-widget .picker-switch { width: 90%; }',
+			),
+		),
 	),
 	'require' => array(
 		'asset' => array(
