@@ -438,7 +438,7 @@ class yf_admin_methods {
 		if (!$filter_name) {
 			$filter_name = $_GET['object'].'__show';
 		}
-		if ($_GET['page'] == 'clear') {
+		if ($_GET['id'] == 'clear' || $_GET['page'] == 'clear') {
 			$_SESSION[$filter_name] = array();
 			// Example: &filter=admin_id:1,ip:127.0.0.1
 			if (isset($_GET['filter'])) {
