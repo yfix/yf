@@ -6,8 +6,9 @@
 class yf_wrapper_redis {
 
 	public $driver = 'phpredis'; // predis|phpredis
-	public $host = '127.0.0.1';
-	public $port = 6379;
+	public $host   = '127.0.0.1';
+	public $port   = 6379;
+	public $prefix = '';
 	private $_connection = null;
 
 	/**
@@ -28,9 +29,11 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function _init() {
-		$this->host = getenv('REDIS_HOST') ?: conf('REDIS_HOST') ?: @constant('REDIS_HOST') ?: '127.0.0.1';
-		$this->port = getenv('REDIS_PORT') ?: conf('REDIS_PORT') ?: @constant('REDIS_PORT') ?: 6379;
-		$this->port = intval($this->port);
+		$this->host   = getenv('REDIS_HOST')   ?: conf('REDIS_HOST')   ?: @constant('REDIS_HOST')   ?: '127.0.0.1';
+		$this->port   = getenv('REDIS_PORT')   ?: conf('REDIS_PORT')   ?: @constant('REDIS_PORT')   ?: 6379;
+		$this->prefix = getenv('REDIS_PREFIX') ?: conf('REDIS_PREFIX') ?: @constant('REDIS_PREFIX') ?: '';
+		$this->port   = intval($this->port);
+		$this->prefix = $this->prefix ? $this->prefix .':' : '';
 	}
 
 	/**
@@ -50,13 +53,14 @@ class yf_wrapper_redis {
 		if ($this->driver == 'predis') {
 			require_php_lib('predis');
 			$redis = new Predis\Client(array(
-			    'scheme' => 'tcp',
-			    'host'   => $this->host,
-    			'port'   => (int)$this->port,
+				'scheme' => 'tcp',
+				'host'   => $this->host,
+				'port'   => (int)$this->port,
 			));
 		} elseif ($this->driver == 'phpredis') {
 			$redis = new Redis();
 			$redis->connect($this->host, (int)$this->port);
+			$redis->setOption( Redis::OPT_PREFIX, $this->prefix );
 		}
 		$this->_connection = $redis;
 		return $this->_connection;
