@@ -17,4 +17,11 @@ return array(
 			'momentjs',
 		),
 	),
+	'info' => array(
+		'url' => 'http://fullcalendar.io/',
+		'name' => 'FullCalendar',
+		'desc' => 'A JavaScript event calendar. Customizable and open source. 
+			FullCalendar is a drag-n-drop jQuery plugin for displaying events on a full-sized calendar.',
+		'git' => 'https://github.com/yfix/fullcalendar.git',
+	),
 );
