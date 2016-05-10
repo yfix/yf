@@ -33,27 +33,6 @@ class yf_security {
 	protected $_xss_hash =	'';
 
 	/**
-	* Random hash for Cross Site Request Forgery protection cookie
-	*/
-	protected $_csrf_hash =	'';
-
-	/**
-	* Expiration time for Cross Site Request Forgery protection cookie.
-	* Defaults to two hours (in seconds).
-	*/
-	protected $_csrf_expire =	7200;
-
-	/**
-	* Token name for Cross Site Request Forgery protection cookie.
-	*/
-	protected $_csrf_token_name =	'yf_csrf_token';
-
-	/**
-	* Cookie name for Cross Site Request Forgery protection cookie.
-	*/
-	protected $_csrf_cookie_name =	'yf_csrf_token';
-
-	/**
 	* List of never allowed strings
 	*/
 	protected $_never_allowed_str =	array(
@@ -85,14 +64,6 @@ class yf_security {
 	*/
 	function __call($name, $args) {
 		return main()->extend_call($this, $name, $args);
-	}
-
-	/**
-	* YF constructor
-	*/
-	public function _init() {
-// TODO: implement CSRF protection into YF core
-		$this->_init_csrf();
 	}
 
 	/**
@@ -420,117 +391,5 @@ class yf_security {
 			$str = preg_replace('#'.$regex.'#is', '[removed]', $str);
 		}
 		return $str;
-	}
-
-	/**
-	*/
-	protected function _init_csrf() {
-		// Is CSRF protection enabled?
-		if (conf('csrf_protection') === TRUE) {
-			// CSRF config
-			foreach (array('csrf_expire', 'csrf_token_name', 'csrf_cookie_name') as $key) {
-				if (FALSE !== ($val = conf($key))) {
-					$this->{'_'.$key} = $val;
-				}
-			}
-			// Append application specific cookie prefix
-			if (conf('cookie_prefix')) {
-				$this->_csrf_cookie_name = conf('cookie_prefix').$this->_csrf_cookie_name;
-			}
-			// Set the CSRF hash
-			$this->_csrf_set_hash();
-		}
-	}
-
-	/**
-	*/
-	public function csrf_verify() {
-		// If it's not a POST request we will set the CSRF cookie
-		if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
-			return $this->csrf_set_cookie();
-		}
-		// Check if URI has been whitelisted from CSRF checks
-		if ($exclude_uris = conf('csrf_exclude_uris')) {
-// TODO: check and enable
-#			$uri = load_class('URI', 'core');
-#			if (in_array($uri->uri_string(), $exclude_uris)) {
-#				return $this;
-#			}
-		}
-		// Do the tokens exist in both the _POST and _COOKIE arrays?
-		if ( ! isset($_POST[$this->_csrf_token_name], $_COOKIE[$this->_csrf_cookie_name]) || $_POST[$this->_csrf_token_name] !== $_COOKIE[$this->_csrf_cookie_name]) {
-			$this->csrf_show_error();
-		}
-
-		// We kill this since we're done and we don't want to polute the _POST array
-		unset($_POST[$this->_csrf_token_name]);
-
-		// Regenerate on every submission?
-		if (conf('csrf_regenerate')) {
-			// Nothing should last forever
-			unset($_COOKIE[$this->_csrf_cookie_name]);
-			$this->_csrf_hash = '';
-		}
-
-		$this->_csrf_set_hash();
-		$this->csrf_set_cookie();
-
-		return $this;
-	}
-
-	/**
-	*/
-	public function csrf_set_cookie() {
-		$expire = time() + $this->_csrf_expire;
-		$secure_cookie = (bool) conf('cookie_secure');
-#		if ($secure_cookie && ! is_https())	{
-#			return FALSE;
-#		}
-		setcookie(
-			$this->_csrf_cookie_name,
-			$this->_csrf_hash,
-			$expire/*,
-			conf('cookie_path'),
-			conf('cookie_domain'),
-			$secure_cookie,
-			conf('cookie_httponly')*/
-		);
-		return $this;
-	}
-
-	/**
-	*/
-	public function csrf_show_error() {
-		_e('The action you have requested is not allowed.');
-	}
-
-	/**
-	*/
-	public function get_csrf_hash() {
-		return $this->_csrf_hash;
-	}
-
-	/**
-	*/
-	public function get_csrf_token_name() {
-		return $this->_csrf_token_name;
-	}
-
-	/**
-	* Set CSRF Hash and Cookie
-	*/
-	protected function _csrf_set_hash() {
-		if ($this->_csrf_hash === '') {
-			// If the cookie exists we will use it's value.
-			// We don't necessarily want to regenerate it with
-			// each page load since a page could contain embedded
-			// sub-pages causing this feature to fail
-			if (isset($_COOKIE[$this->_csrf_cookie_name]) && preg_match('#^[0-9a-f]{32}$#iS', $_COOKIE[$this->_csrf_cookie_name]) === 1) {
-				return $this->_csrf_hash = $_COOKIE[$this->_csrf_cookie_name];
-			}
-			$this->_csrf_hash = md5(uniqid(rand(), TRUE));
-			$this->csrf_set_cookie();
-		}
-		return $this->_csrf_hash;
 	}
 }
