@@ -1,3 +1,3 @@
 <?php
 
-return (array)db()->get_all('SELECT * FROM '.db('timezones').' WHERE active="1" ORDER BY offset ASC, name ASC');
+return (array)from('timezones')->where('active', '1')->order_by('seconds ASC', 'name ASC')->all();
