@@ -1410,6 +1410,7 @@ class yf_html {
 			'no_results_text'			=> t('No results match'),
 			'placeholder_text_multiple' => t('Select Some Options'),
 			'placeholder_text_single'	=> t('Select an Option'),
+			'search_contains'			=> true,
 			// put default js options here
 		);
 		jquery('$("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).');');
