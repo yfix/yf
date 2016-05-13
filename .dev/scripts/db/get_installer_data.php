@@ -16,6 +16,13 @@ foreach (array('', '*/', '*/*/', '*/*/*/') as $g) {
 	}
 	$fp = $paths[0];
 	if ($fp && file_exists($fp)) {
+		if (basename(dirname($fp)) == 'config') {
+			$app_path = dirname(dirname($fp)).'/';
+			$override_path = $app_path.'.dev/override.php';
+			if (file_exists($override_path)) {
+				require_once $override_path;
+			}
+		}
 		require $fp;
 		break;
 	}
