@@ -1,1249 +1,2535 @@
 <?php
 $data = array (
-  'ACDT' => 
+  'Pacific/Pago_Pago' => 
   array (
-    'code' => 'ACDT',
-    'name' => 'Australian Central Daylight Time',
-    'offset' => 'UTC+10:30',
-    'active' => 0,
-  ),
-  'ACST' => 
-  array (
-    'code' => 'ACST',
-    'name' => 'Australian Central Standard Time',
-    'offset' => 'UTC+09:30',
-    'active' => 0,
-  ),
-  'ACT' => 
-  array (
-    'code' => 'ACT',
-    'name' => 'ASEAN Common Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'ADT' => 
-  array (
-    'code' => 'ADT',
-    'name' => 'Atlantic Daylight Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'AEDT' => 
-  array (
-    'code' => 'AEDT',
-    'name' => 'Australian Eastern Daylight Time',
-    'offset' => 'UTC+11',
-    'active' => 0,
-  ),
-  'AEST' => 
-  array (
-    'code' => 'AEST',
-    'name' => 'Australian Eastern Standard Time',
-    'offset' => 'UTC+10',
-    'active' => 0,
-  ),
-  'AFT' => 
-  array (
-    'code' => 'AFT',
-    'name' => 'Afghanistan Time',
-    'offset' => 'UTC+04:30',
-    'active' => 0,
-  ),
-  'AKDT' => 
-  array (
-    'code' => 'AKDT',
-    'name' => 'Alaska Daylight Time',
-    'offset' => 'UTC-08',
-    'active' => 0,
-  ),
-  'AKST' => 
-  array (
-    'code' => 'AKST',
-    'name' => 'Alaska Standard Time',
-    'offset' => 'UTC-09',
-    'active' => 0,
-  ),
-  'AMST' => 
-  array (
-    'code' => 'AMST',
-    'name' => 'Armenia Summer Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'AMT' => 
-  array (
-    'code' => 'AMT',
-    'name' => 'Armenia Time',
-    'offset' => 'UTC+04',
-    'active' => 0,
-  ),
-  'ART' => 
-  array (
-    'code' => 'ART',
-    'name' => 'Argentina Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'AST' => 
-  array (
-    'code' => 'AST',
-    'name' => 'Atlantic Standard Time',
-    'offset' => 'UTC-04',
-    'active' => 0,
-  ),
-  'AWDT' => 
-  array (
-    'code' => 'AWDT',
-    'name' => 'Australian Western Daylight Time',
-    'offset' => 'UTC+09',
-    'active' => 0,
-  ),
-  'AWST' => 
-  array (
-    'code' => 'AWST',
-    'name' => 'Australian Western Standard Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'AZOST' => 
-  array (
-    'code' => 'AZOST',
-    'name' => 'Azores Standard Time',
-    'offset' => 'UTC-01',
-    'active' => 0,
-  ),
-  'AZT' => 
-  array (
-    'code' => 'AZT',
-    'name' => 'Azerbaijan Time',
-    'offset' => 'UTC+04',
-    'active' => 0,
-  ),
-  'BDT' => 
-  array (
-    'code' => 'BDT',
-    'name' => 'Brunei Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'BIOT' => 
-  array (
-    'code' => 'BIOT',
-    'name' => 'British Indian Ocean Time',
-    'offset' => 'UTC+06',
-    'active' => 0,
-  ),
-  'BIT' => 
-  array (
-    'code' => 'BIT',
-    'name' => 'Baker Island Time',
-    'offset' => 'UTC-12',
-    'active' => 0,
-  ),
-  'BOT' => 
-  array (
-    'code' => 'BOT',
-    'name' => 'Bolivia Time',
-    'offset' => 'UTC-04',
-    'active' => 0,
-  ),
-  'BRT' => 
-  array (
-    'code' => 'BRT',
-    'name' => 'Brasilia Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'BST' => 
-  array (
-    'code' => 'BST',
-    'name' => 'British Summer Time (British Standard Time from Feb 1968 to Oct 1971)',
-    'offset' => 'UTC+01',
-    'active' => 0,
-  ),
-  'BTT' => 
-  array (
-    'code' => 'BTT',
-    'name' => 'Bhutan Time',
-    'offset' => 'UTC+06',
-    'active' => 0,
-  ),
-  'CAT' => 
-  array (
-    'code' => 'CAT',
-    'name' => 'Central Africa Time',
-    'offset' => 'UTC+02',
-    'active' => 0,
-  ),
-  'CCT' => 
-  array (
-    'code' => 'CCT',
-    'name' => 'Cocos Islands Time',
-    'offset' => 'UTC+06:30',
-    'active' => 0,
-  ),
-  'CDT' => 
-  array (
-    'code' => 'CDT',
-    'name' => 'Cuba Daylight Time[3]',
-    'offset' => 'UTC-04',
-    'active' => 0,
-  ),
-  'CEDT' => 
-  array (
-    'code' => 'CEDT',
-    'name' => 'Central European Daylight Time',
-    'offset' => 'UTC+02',
-    'active' => 0,
-  ),
-  'CEST' => 
-  array (
-    'code' => 'CEST',
-    'name' => 'Central European Summer Time (Cf. HAEC)',
-    'offset' => 'UTC+02',
-    'active' => 0,
-  ),
-  'CET' => 
-  array (
-    'code' => 'CET',
-    'name' => 'Central European Time',
-    'offset' => 'UTC+01',
+    'offset' => 'UTC-11:00',
+    'seconds' => -39600,
     'active' => 1,
   ),
-  'CHADT' => 
+  'Pacific/Midway' => 
   array (
-    'code' => 'CHADT',
-    'name' => 'Chatham Daylight Time',
-    'offset' => 'UTC+13:45',
-    'active' => 0,
-  ),
-  'CHAST' => 
-  array (
-    'code' => 'CHAST',
-    'name' => 'Chatham Standard Time',
-    'offset' => 'UTC+12:45',
-    'active' => 0,
-  ),
-  'CHOT' => 
-  array (
-    'code' => 'CHOT',
-    'name' => 'Choibalsan',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'ChST' => 
-  array (
-    'code' => 'ChST',
-    'name' => 'Chamorro Standard Time',
-    'offset' => 'UTC+10',
-    'active' => 0,
-  ),
-  'CHUT' => 
-  array (
-    'code' => 'CHUT',
-    'name' => 'Chuuk Time',
-    'offset' => 'UTC+10',
-    'active' => 0,
-  ),
-  'CIST' => 
-  array (
-    'code' => 'CIST',
-    'name' => 'Clipperton Island Standard Time',
-    'offset' => 'UTC-08',
-    'active' => 0,
-  ),
-  'CIT' => 
-  array (
-    'code' => 'CIT',
-    'name' => 'Central Indonesia Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'CKT' => 
-  array (
-    'code' => 'CKT',
-    'name' => 'Cook Island Time',
-    'offset' => 'UTC-10',
-    'active' => 0,
-  ),
-  'CLST' => 
-  array (
-    'code' => 'CLST',
-    'name' => 'Chile Summer Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'CLT' => 
-  array (
-    'code' => 'CLT',
-    'name' => 'Chile Standard Time',
-    'offset' => 'UTC-04',
-    'active' => 0,
-  ),
-  'COST' => 
-  array (
-    'code' => 'COST',
-    'name' => 'Colombia Summer Time',
-    'offset' => 'UTC-04',
-    'active' => 0,
-  ),
-  'COT' => 
-  array (
-    'code' => 'COT',
-    'name' => 'Colombia Time',
-    'offset' => 'UTC-05',
-    'active' => 0,
-  ),
-  'CST' => 
-  array (
-    'code' => 'CST',
-    'name' => 'Cuba Standard Time',
-    'offset' => 'UTC-05',
-    'active' => 0,
-  ),
-  'CT' => 
-  array (
-    'code' => 'CT',
-    'name' => 'China time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'CVT' => 
-  array (
-    'code' => 'CVT',
-    'name' => 'Cape Verde Time',
-    'offset' => 'UTC-01',
-    'active' => 0,
-  ),
-  'CWST' => 
-  array (
-    'code' => 'CWST',
-    'name' => 'Central Western Standard Time (Australia)',
-    'offset' => 'UTC+08:45',
-    'active' => 0,
-  ),
-  'CXT' => 
-  array (
-    'code' => 'CXT',
-    'name' => 'Christmas Island Time',
-    'offset' => 'UTC+07',
-    'active' => 0,
-  ),
-  'DAVT' => 
-  array (
-    'code' => 'DAVT',
-    'name' => 'Davis Time',
-    'offset' => 'UTC+07',
-    'active' => 0,
-  ),
-  'DDUT' => 
-  array (
-    'code' => 'DDUT',
-    'name' => 'Dumont d\'Urville Time',
-    'offset' => 'UTC+10',
-    'active' => 0,
-  ),
-  'DFT' => 
-  array (
-    'code' => 'DFT',
-    'name' => 'AIX specific equivalent of Central European Time[4]',
-    'offset' => 'UTC+01',
-    'active' => 0,
-  ),
-  'EASST' => 
-  array (
-    'code' => 'EASST',
-    'name' => 'Easter Island Standard Summer Time',
-    'offset' => 'UTC-05',
-    'active' => 0,
-  ),
-  'EAST' => 
-  array (
-    'code' => 'EAST',
-    'name' => 'Easter Island Standard Time',
-    'offset' => 'UTC-06',
-    'active' => 0,
-  ),
-  'EAT' => 
-  array (
-    'code' => 'EAT',
-    'name' => 'East Africa Time',
-    'offset' => 'UTC+03',
-    'active' => 0,
-  ),
-  'ECT' => 
-  array (
-    'code' => 'ECT',
-    'name' => 'Ecuador Time',
-    'offset' => 'UTC-05',
-    'active' => 0,
-  ),
-  'EDT' => 
-  array (
-    'code' => 'EDT',
-    'name' => 'Eastern Daylight Time (North America)',
-    'offset' => 'UTC-04',
-    'active' => 0,
-  ),
-  'EEDT' => 
-  array (
-    'code' => 'EEDT',
-    'name' => 'Eastern European Daylight Time',
-    'offset' => 'UTC+03',
-    'active' => 0,
-  ),
-  'EEST' => 
-  array (
-    'code' => 'EEST',
-    'name' => 'Eastern European Summer Time',
-    'offset' => 'UTC+03',
-    'active' => 0,
-  ),
-  'EET' => 
-  array (
-    'code' => 'EET',
-    'name' => 'Eastern European Time',
-    'offset' => 'UTC+02',
+    'offset' => 'UTC-11:00',
+    'seconds' => -39600,
     'active' => 1,
   ),
-  'EGST' => 
+  'Pacific/Niue' => 
   array (
-    'code' => 'EGST',
-    'name' => 'Eastern Greenland Summer Time',
-    'offset' => 'UTC+00',
-    'active' => 0,
-  ),
-  'EGT' => 
-  array (
-    'code' => 'EGT',
-    'name' => 'Eastern Greenland Time',
-    'offset' => 'UTC-01',
-    'active' => 0,
-  ),
-  'EIT' => 
-  array (
-    'code' => 'EIT',
-    'name' => 'Eastern Indonesian Time',
-    'offset' => 'UTC+09',
-    'active' => 0,
-  ),
-  'EST' => 
-  array (
-    'code' => 'EST',
-    'name' => 'Eastern Standard Time (Australia)',
-    'offset' => 'UTC+10',
-    'active' => 0,
-  ),
-  'FET' => 
-  array (
-    'code' => 'FET',
-    'name' => 'Further-eastern European Time',
-    'offset' => 'UTC+03',
-    'active' => 0,
-  ),
-  'FJT' => 
-  array (
-    'code' => 'FJT',
-    'name' => 'Fiji Time',
-    'offset' => 'UTC+12',
-    'active' => 0,
-  ),
-  'FKST' => 
-  array (
-    'code' => 'FKST',
-    'name' => 'Falkland Islands Summer Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'FKT' => 
-  array (
-    'code' => 'FKT',
-    'name' => 'Falkland Islands Time',
-    'offset' => 'UTC-04',
-    'active' => 0,
-  ),
-  'FNT' => 
-  array (
-    'code' => 'FNT',
-    'name' => 'Fernando de Noronha Time',
-    'offset' => 'UTC-02',
-    'active' => 0,
-  ),
-  'GALT' => 
-  array (
-    'code' => 'GALT',
-    'name' => 'Galapagos Time',
-    'offset' => 'UTC-06',
-    'active' => 0,
-  ),
-  'GAMT' => 
-  array (
-    'code' => 'GAMT',
-    'name' => 'Gambier Islands',
-    'offset' => 'UTC-09',
-    'active' => 0,
-  ),
-  'GET' => 
-  array (
-    'code' => 'GET',
-    'name' => 'Georgia Standard Time',
-    'offset' => 'UTC+04',
-    'active' => 0,
-  ),
-  'GFT' => 
-  array (
-    'code' => 'GFT',
-    'name' => 'French Guiana Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'GILT' => 
-  array (
-    'code' => 'GILT',
-    'name' => 'Gilbert Island Time',
-    'offset' => 'UTC+12',
-    'active' => 0,
-  ),
-  'GIT' => 
-  array (
-    'code' => 'GIT',
-    'name' => 'Gambier Island Time',
-    'offset' => 'UTC-09',
-    'active' => 0,
-  ),
-  'GMT' => 
-  array (
-    'code' => 'GMT',
-    'name' => 'Greenwich Mean Time',
-    'offset' => 'UTC',
+    'offset' => 'UTC-11:00',
+    'seconds' => -39600,
     'active' => 1,
   ),
-  'GST' => 
+  'Pacific/Rarotonga' => 
   array (
-    'code' => 'GST',
-    'name' => 'Gulf Standard Time',
-    'offset' => 'UTC+04',
-    'active' => 0,
+    'offset' => 'UTC-10:00',
+    'seconds' => -36000,
+    'active' => 1,
   ),
-  'GYT' => 
+  'Pacific/Johnston' => 
   array (
-    'code' => 'GYT',
-    'name' => 'Guyana Time',
-    'offset' => 'UTC-04',
-    'active' => 0,
+    'offset' => 'UTC-10:00',
+    'seconds' => -36000,
+    'active' => 1,
   ),
-  'HADT' => 
+  'Pacific/Honolulu' => 
   array (
-    'code' => 'HADT',
-    'name' => 'Hawaii-Aleutian Daylight Time',
-    'offset' => 'UTC-09',
-    'active' => 0,
+    'offset' => 'UTC-10:00',
+    'seconds' => -36000,
+    'active' => 1,
   ),
-  'HAEC' => 
+  'Pacific/Tahiti' => 
   array (
-    'code' => 'HAEC',
-    'name' => 'Heure Avancée d\'Europe Centrale francised name for CEST',
-    'offset' => 'UTC+02',
-    'active' => 0,
+    'offset' => 'UTC-10:00',
+    'seconds' => -36000,
+    'active' => 1,
   ),
-  'HAST' => 
+  'Pacific/Marquesas' => 
   array (
-    'code' => 'HAST',
-    'name' => 'Hawaii-Aleutian Standard Time',
-    'offset' => 'UTC-10',
-    'active' => 0,
-  ),
-  'HKT' => 
-  array (
-    'code' => 'HKT',
-    'name' => 'Hong Kong Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'HMT' => 
-  array (
-    'code' => 'HMT',
-    'name' => 'Heard and McDonald Islands Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'HOVT' => 
-  array (
-    'code' => 'HOVT',
-    'name' => 'Khovd Time',
-    'offset' => 'UTC+07',
-    'active' => 0,
-  ),
-  'HST' => 
-  array (
-    'code' => 'HST',
-    'name' => 'Hawaii Standard Time',
-    'offset' => 'UTC-10',
-    'active' => 0,
-  ),
-  'ICT' => 
-  array (
-    'code' => 'ICT',
-    'name' => 'Indochina Time',
-    'offset' => 'UTC+07',
-    'active' => 0,
-  ),
-  'IDT' => 
-  array (
-    'code' => 'IDT',
-    'name' => 'Israel Daylight Time',
-    'offset' => 'UTC+03',
-    'active' => 0,
-  ),
-  'IOT' => 
-  array (
-    'code' => 'IOT',
-    'name' => 'Indian Ocean Time',
-    'offset' => 'UTC+03',
-    'active' => 0,
-  ),
-  'IRDT' => 
-  array (
-    'code' => 'IRDT',
-    'name' => 'Iran Daylight Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'IRKT' => 
-  array (
-    'code' => 'IRKT',
-    'name' => 'Irkutsk Time',
-    'offset' => 'UTC+09',
-    'active' => 0,
-  ),
-  'IRST' => 
-  array (
-    'code' => 'IRST',
-    'name' => 'Iran Standard Time',
-    'offset' => 'UTC+03:30',
-    'active' => 0,
-  ),
-  'IST' => 
-  array (
-    'code' => 'IST',
-    'name' => 'Israel Standard Time',
-    'offset' => 'UTC+02',
-    'active' => 0,
-  ),
-  'JST' => 
-  array (
-    'code' => 'JST',
-    'name' => 'Japan Standard Time',
-    'offset' => 'UTC+09',
-    'active' => 0,
-  ),
-  'KGT' => 
-  array (
-    'code' => 'KGT',
-    'name' => 'Kyrgyzstan time',
-    'offset' => 'UTC+06',
-    'active' => 0,
-  ),
-  'KOST' => 
-  array (
-    'code' => 'KOST',
-    'name' => 'Kosrae Time',
-    'offset' => 'UTC+11',
-    'active' => 0,
-  ),
-  'KRAT' => 
-  array (
-    'code' => 'KRAT',
-    'name' => 'Krasnoyarsk Time',
-    'offset' => 'UTC+07',
-    'active' => 0,
-  ),
-  'KST' => 
-  array (
-    'code' => 'KST',
-    'name' => 'Korea Standard Time',
-    'offset' => 'UTC+09',
-    'active' => 0,
-  ),
-  'LHST' => 
-  array (
-    'code' => 'LHST',
-    'name' => 'Lord Howe Summer Time',
-    'offset' => 'UTC+11',
-    'active' => 0,
-  ),
-  'LINT' => 
-  array (
-    'code' => 'LINT',
-    'name' => 'Line Islands Time',
-    'offset' => 'UTC+14',
-    'active' => 0,
-  ),
-  'MAGT' => 
-  array (
-    'code' => 'MAGT',
-    'name' => 'Magadan Time',
-    'offset' => 'UTC+12',
-    'active' => 0,
-  ),
-  'MART' => 
-  array (
-    'code' => 'MART',
-    'name' => 'Marquesas Islands Time',
     'offset' => 'UTC-09:30',
-    'active' => 0,
-  ),
-  'MAWT' => 
-  array (
-    'code' => 'MAWT',
-    'name' => 'Mawson Station Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'MDT' => 
-  array (
-    'code' => 'MDT',
-    'name' => 'Mountain Daylight Time (North America)',
-    'offset' => 'UTC-06',
-    'active' => 0,
-  ),
-  'MET' => 
-  array (
-    'code' => 'MET',
-    'name' => 'Middle European Time Same zone as CET',
-    'offset' => 'UTC+01',
-    'active' => 0,
-  ),
-  'MEST' => 
-  array (
-    'code' => 'MEST',
-    'name' => 'Middle European Saving Time Same zone as CEST',
-    'offset' => 'UTC+02',
-    'active' => 0,
-  ),
-  'MHT' => 
-  array (
-    'code' => 'MHT',
-    'name' => 'Marshall Islands',
-    'offset' => 'UTC+12',
-    'active' => 0,
-  ),
-  'MIST' => 
-  array (
-    'code' => 'MIST',
-    'name' => 'Macquarie Island Station Time',
-    'offset' => 'UTC+11',
-    'active' => 0,
-  ),
-  'MIT' => 
-  array (
-    'code' => 'MIT',
-    'name' => 'Marquesas Islands Time',
-    'offset' => 'UTC-09:30',
-    'active' => 0,
-  ),
-  'MMT' => 
-  array (
-    'code' => 'MMT',
-    'name' => 'Myanmar Time',
-    'offset' => 'UTC+06:30',
-    'active' => 0,
-  ),
-  'MSK' => 
-  array (
-    'code' => 'MSK',
-    'name' => 'Moscow Time',
-    'offset' => 'UTC+04',
+    'seconds' => -34200,
     'active' => 1,
   ),
-  'MST' => 
+  'Pacific/Gambier' => 
   array (
-    'code' => 'MST',
-    'name' => 'Myanmar Standard Time',
-    'offset' => 'UTC+06:30',
-    'active' => 0,
+    'offset' => 'UTC-09:00',
+    'seconds' => -32400,
+    'active' => 1,
   ),
-  'MUT' => 
+  'America/Adak' => 
   array (
-    'code' => 'MUT',
-    'name' => 'Mauritius Time',
-    'offset' => 'UTC+04',
-    'active' => 0,
+    'offset' => 'UTC-09:00',
+    'seconds' => -32400,
+    'active' => 1,
   ),
-  'MVT' => 
+  'Pacific/Pitcairn' => 
   array (
-    'code' => 'MVT',
-    'name' => 'Maldives Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
+    'offset' => 'UTC-08:00',
+    'seconds' => -28800,
+    'active' => 1,
   ),
-  'MYT' => 
+  'America/Sitka' => 
   array (
-    'code' => 'MYT',
-    'name' => 'Malaysia Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
+    'offset' => 'UTC-08:00',
+    'seconds' => -28800,
+    'active' => 1,
   ),
-  'NCT' => 
+  'America/Nome' => 
   array (
-    'code' => 'NCT',
-    'name' => 'New Caledonia Time',
-    'offset' => 'UTC+11',
-    'active' => 0,
+    'offset' => 'UTC-08:00',
+    'seconds' => -28800,
+    'active' => 1,
   ),
-  'NDT' => 
+  'America/Juneau' => 
   array (
-    'code' => 'NDT',
-    'name' => 'Newfoundland Daylight Time',
+    'offset' => 'UTC-08:00',
+    'seconds' => -28800,
+    'active' => 1,
+  ),
+  'America/Metlakatla' => 
+  array (
+    'offset' => 'UTC-08:00',
+    'seconds' => -28800,
+    'active' => 1,
+  ),
+  'America/Anchorage' => 
+  array (
+    'offset' => 'UTC-08:00',
+    'seconds' => -28800,
+    'active' => 1,
+  ),
+  'America/Yakutat' => 
+  array (
+    'offset' => 'UTC-08:00',
+    'seconds' => -28800,
+    'active' => 1,
+  ),
+  'America/Phoenix' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Hermosillo' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Dawson_Creek' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Whitehorse' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Creston' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Vancouver' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Los_Angeles' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Dawson' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Fort_Nelson' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Tijuana' => 
+  array (
+    'offset' => 'UTC-07:00',
+    'seconds' => -25200,
+    'active' => 1,
+  ),
+  'America/Mazatlan' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Swift_Current' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'Pacific/Galapagos' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Cambridge_Bay' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Guatemala' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/El_Salvador' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Managua' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Inuvik' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Boise' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Belize' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Tegucigalpa' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Ojinaga' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Chihuahua' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Costa_Rica' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Yellowknife' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Regina' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Edmonton' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Denver' => 
+  array (
+    'offset' => 'UTC-06:00',
+    'seconds' => -21600,
+    'active' => 1,
+  ),
+  'America/Rankin_Inlet' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Rainy_River' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Matamoros' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Winnipeg' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Resolute' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Chicago' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'Pacific/Easter' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Bahia_Banderas' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Atikokan' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Cancun' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Cayman' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Indiana/Tell_City' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Lima' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Merida' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Guayaquil' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Eirunepe' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/North_Dakota/Beulah' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/North_Dakota/Center' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Panama' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/North_Dakota/New_Salem' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Indiana/Knox' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Bogota' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Port-au-Prince' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Jamaica' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Mexico_City' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Monterrey' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Menominee' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Rio_Branco' => 
+  array (
+    'offset' => 'UTC-05:00',
+    'seconds' => -18000,
+    'active' => 1,
+  ),
+  'America/Indiana/Vincennes' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Indiana/Indianapolis' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Indiana/Marengo' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Guyana' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Indiana/Petersburg' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Havana' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Guadeloupe' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Indiana/Vevay' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Martinique' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Santo_Domingo' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Tortola' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Puerto_Rico' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Porto_Velho' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Port_of_Spain' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Toronto' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/St_Barthelemy' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/St_Vincent' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Thunder_Bay' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/St_Thomas' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/St_Lucia' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/St_Kitts' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Pangnirtung' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Nipigon' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Kralendijk' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/La_Paz' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Kentucky/Monticello' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Kentucky/Louisville' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Iqaluit' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Lower_Princes' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Marigot' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/New_York' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Nassau' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Montserrat' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Grenada' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Indiana/Winamac' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Manaus' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Blanc-Sablon' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Campo_Grande' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Caracas' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Grand_Turk' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Barbados' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Asuncion' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Antigua' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Anguilla' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Aruba' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Cuiaba' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Boa_Vista' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Dominica' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Curacao' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Detroit' => 
+  array (
+    'offset' => 'UTC-04:00',
+    'seconds' => -14400,
+    'active' => 1,
+  ),
+  'America/Santiago' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Moncton' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Araguaina' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/Catamarca' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Santarem' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/Cordoba' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Recife' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/Buenos_Aires' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Sao_Paulo' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/La_Rioja' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Thule' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'Atlantic/Bermuda' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Paramaribo' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'Atlantic/Stanley' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'Antarctica/Palmer' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Montevideo' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/Jujuy' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/Mendoza' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Belem' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Bahia' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Glace_Bay' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Cayenne' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Fortaleza' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Halifax' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/Ushuaia' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Goose_Bay' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/Salta' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Maceio' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/Rio_Gallegos' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'Antarctica/Rothera' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/Tucuman' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/San_Juan' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/Argentina/San_Luis' => 
+  array (
+    'offset' => 'UTC-03:00',
+    'seconds' => -10800,
+    'active' => 1,
+  ),
+  'America/St_Johns' => 
+  array (
     'offset' => 'UTC-02:30',
-    'active' => 0,
+    'seconds' => -9000,
+    'active' => 1,
   ),
-  'NFT' => 
+  'America/Noronha' => 
   array (
-    'code' => 'NFT',
-    'name' => 'Norfolk Time',
-    'offset' => 'UTC+11:30',
-    'active' => 0,
+    'offset' => 'UTC-02:00',
+    'seconds' => -7200,
+    'active' => 1,
   ),
-  'NPT' => 
+  'America/Miquelon' => 
   array (
-    'code' => 'NPT',
-    'name' => 'Nepal Time',
-    'offset' => 'UTC+05:45',
-    'active' => 0,
+    'offset' => 'UTC-02:00',
+    'seconds' => -7200,
+    'active' => 1,
   ),
-  'NST' => 
+  'Atlantic/South_Georgia' => 
   array (
-    'code' => 'NST',
-    'name' => 'Newfoundland Standard Time',
-    'offset' => 'UTC-03:30',
-    'active' => 0,
+    'offset' => 'UTC-02:00',
+    'seconds' => -7200,
+    'active' => 1,
   ),
-  'NT' => 
+  'America/Godthab' => 
   array (
-    'code' => 'NT',
-    'name' => 'Newfoundland Time',
-    'offset' => 'UTC-03:30',
-    'active' => 0,
+    'offset' => 'UTC-02:00',
+    'seconds' => -7200,
+    'active' => 1,
   ),
-  'NUT' => 
+  'Atlantic/Cape_Verde' => 
   array (
-    'code' => 'NUT',
-    'name' => 'Niue Time',
-    'offset' => 'UTC-11:30',
-    'active' => 0,
+    'offset' => 'UTC-01:00',
+    'seconds' => -3600,
+    'active' => 1,
   ),
-  'NZDT' => 
+  'America/Scoresbysund' => 
   array (
-    'code' => 'NZDT',
-    'name' => 'New Zealand Daylight Time',
-    'offset' => 'UTC+13',
-    'active' => 0,
-  ),
-  'NZST' => 
-  array (
-    'code' => 'NZST',
-    'name' => 'New Zealand Standard Time',
-    'offset' => 'UTC+12',
-    'active' => 0,
-  ),
-  'OMST' => 
-  array (
-    'code' => 'OMST',
-    'name' => 'Omsk Time',
-    'offset' => 'UTC+06',
-    'active' => 0,
-  ),
-  'ORAT' => 
-  array (
-    'code' => 'ORAT',
-    'name' => 'Oral Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'PDT' => 
-  array (
-    'code' => 'PDT',
-    'name' => 'Pacific Daylight Time (North America)',
-    'offset' => 'UTC-07',
-    'active' => 0,
-  ),
-  'PET' => 
-  array (
-    'code' => 'PET',
-    'name' => 'Peru Time',
-    'offset' => 'UTC-05',
-    'active' => 0,
-  ),
-  'PETT' => 
-  array (
-    'code' => 'PETT',
-    'name' => 'Kamchatka Time',
-    'offset' => 'UTC+12',
-    'active' => 0,
-  ),
-  'PGT' => 
-  array (
-    'code' => 'PGT',
-    'name' => 'Papua New Guinea Time',
-    'offset' => 'UTC+10',
-    'active' => 0,
-  ),
-  'PHOT' => 
-  array (
-    'code' => 'PHOT',
-    'name' => 'Phoenix Island Time',
-    'offset' => 'UTC+13',
-    'active' => 0,
-  ),
-  'PHT' => 
-  array (
-    'code' => 'PHT',
-    'name' => 'Philippine Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'PKT' => 
-  array (
-    'code' => 'PKT',
-    'name' => 'Pakistan Standard Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'PMDT' => 
-  array (
-    'code' => 'PMDT',
-    'name' => 'Saint Pierre and Miquelon Daylight time',
-    'offset' => 'UTC-02',
-    'active' => 0,
-  ),
-  'PMST' => 
-  array (
-    'code' => 'PMST',
-    'name' => 'Saint Pierre and Miquelon Standard Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'PONT' => 
-  array (
-    'code' => 'PONT',
-    'name' => 'Pohnpei Standard Time',
-    'offset' => 'UTC+11',
-    'active' => 0,
-  ),
-  'PST' => 
-  array (
-    'code' => 'PST',
-    'name' => 'Pacific Standard Time (North America)',
-    'offset' => 'UTC-08',
-    'active' => 0,
-  ),
-  'PYST' => 
-  array (
-    'code' => 'PYST',
-    'name' => 'Paraguay Summer Time (Brazil)[6]',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'PYT' => 
-  array (
-    'code' => 'PYT',
-    'name' => 'Paraguay Time (Brazil)[7]',
-    'offset' => 'UTC-04',
-    'active' => 0,
-  ),
-  'RET' => 
-  array (
-    'code' => 'RET',
-    'name' => 'Réunion Time',
-    'offset' => 'UTC+04',
-    'active' => 0,
-  ),
-  'ROTT' => 
-  array (
-    'code' => 'ROTT',
-    'name' => 'Rothera Research Station Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'SAKT' => 
-  array (
-    'code' => 'SAKT',
-    'name' => 'Sakhalin Island time',
-    'offset' => 'UTC+11',
-    'active' => 0,
-  ),
-  'SAMT' => 
-  array (
-    'code' => 'SAMT',
-    'name' => 'Samara Time',
-    'offset' => 'UTC+04',
-    'active' => 0,
-  ),
-  'SAST' => 
-  array (
-    'code' => 'SAST',
-    'name' => 'South African Standard Time',
-    'offset' => 'UTC+02',
-    'active' => 0,
-  ),
-  'SBT' => 
-  array (
-    'code' => 'SBT',
-    'name' => 'Solomon Islands Time',
-    'offset' => 'UTC+11',
-    'active' => 0,
-  ),
-  'SCT' => 
-  array (
-    'code' => 'SCT',
-    'name' => 'Seychelles Time',
-    'offset' => 'UTC+04',
-    'active' => 0,
-  ),
-  'SGT' => 
-  array (
-    'code' => 'SGT',
-    'name' => 'Singapore Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'SLT' => 
-  array (
-    'code' => 'SLT',
-    'name' => 'Sri Lanka Time',
-    'offset' => 'UTC+05:30',
-    'active' => 0,
-  ),
-  'SRT' => 
-  array (
-    'code' => 'SRT',
-    'name' => 'Suriname Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'SST' => 
-  array (
-    'code' => 'SST',
-    'name' => 'Singapore Standard Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'SYOT' => 
-  array (
-    'code' => 'SYOT',
-    'name' => 'Showa Station Time',
-    'offset' => 'UTC+03',
-    'active' => 0,
-  ),
-  'TAHT' => 
-  array (
-    'code' => 'TAHT',
-    'name' => 'Tahiti Time',
-    'offset' => 'UTC-10',
-    'active' => 0,
-  ),
-  'THA' => 
-  array (
-    'code' => 'THA',
-    'name' => 'Thailand Standard Time',
-    'offset' => 'UTC+07',
-    'active' => 0,
-  ),
-  'TFT' => 
-  array (
-    'code' => 'TFT',
-    'name' => 'Indian/Kerguelen',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'TJT' => 
-  array (
-    'code' => 'TJT',
-    'name' => 'Tajikistan Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'TKT' => 
-  array (
-    'code' => 'TKT',
-    'name' => 'Tokelau Time',
-    'offset' => 'UTC+14',
-    'active' => 0,
-  ),
-  'TLT' => 
-  array (
-    'code' => 'TLT',
-    'name' => 'Timor Leste Time',
-    'offset' => 'UTC+09',
-    'active' => 0,
-  ),
-  'TMT' => 
-  array (
-    'code' => 'TMT',
-    'name' => 'Turkmenistan Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'TOT' => 
-  array (
-    'code' => 'TOT',
-    'name' => 'Tonga Time',
-    'offset' => 'UTC+13',
-    'active' => 0,
-  ),
-  'TVT' => 
-  array (
-    'code' => 'TVT',
-    'name' => 'Tuvalu Time',
-    'offset' => 'UTC+12',
-    'active' => 0,
-  ),
-  'UCT' => 
-  array (
-    'code' => 'UCT',
-    'name' => 'Coordinated Universal Time',
     'offset' => 'UTC',
-    'active' => 0,
+    'seconds' => 0,
+    'active' => 1,
   ),
-  'ULAT' => 
+  'Atlantic/St_Helena' => 
   array (
-    'code' => 'ULAT',
-    'name' => 'Ulaanbaatar Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Banjul' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Bamako' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
   ),
   'UTC' => 
   array (
-    'code' => 'UTC',
-    'name' => 'Coordinated Universal Time',
     'offset' => 'UTC',
+    'seconds' => 0,
     'active' => 1,
   ),
-  'UYST' => 
+  'Africa/Accra' => 
   array (
-    'code' => 'UYST',
-    'name' => 'Uruguay Summer Time',
-    'offset' => 'UTC-02',
-    'active' => 0,
-  ),
-  'UYT' => 
-  array (
-    'code' => 'UYT',
-    'name' => 'Uruguay Standard Time',
-    'offset' => 'UTC-03',
-    'active' => 0,
-  ),
-  'UZT' => 
-  array (
-    'code' => 'UZT',
-    'name' => 'Uzbekistan Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'VET' => 
-  array (
-    'code' => 'VET',
-    'name' => 'Venezuelan Standard Time',
-    'offset' => 'UTC-04:30',
-    'active' => 0,
-  ),
-  'VLAT' => 
-  array (
-    'code' => 'VLAT',
-    'name' => 'Vladivostok Time',
-    'offset' => 'UTC+10',
-    'active' => 0,
-  ),
-  'VOLT' => 
-  array (
-    'code' => 'VOLT',
-    'name' => 'Volgograd Time',
-    'offset' => 'UTC+04',
-    'active' => 0,
-  ),
-  'VOST' => 
-  array (
-    'code' => 'VOST',
-    'name' => 'Vostok Station Time',
-    'offset' => 'UTC+06',
-    'active' => 0,
-  ),
-  'VUT' => 
-  array (
-    'code' => 'VUT',
-    'name' => 'Vanuatu Time',
-    'offset' => 'UTC+11',
-    'active' => 0,
-  ),
-  'WAKT' => 
-  array (
-    'code' => 'WAKT',
-    'name' => 'Wake Island Time',
-    'offset' => 'UTC+12',
-    'active' => 0,
-  ),
-  'WAST' => 
-  array (
-    'code' => 'WAST',
-    'name' => 'West Africa Summer Time',
-    'offset' => 'UTC+02',
-    'active' => 0,
-  ),
-  'WAT' => 
-  array (
-    'code' => 'WAT',
-    'name' => 'West Africa Time',
-    'offset' => 'UTC+01',
-    'active' => 0,
-  ),
-  'WEDT' => 
-  array (
-    'code' => 'WEDT',
-    'name' => 'Western European Daylight Time',
-    'offset' => 'UTC+01',
-    'active' => 0,
-  ),
-  'WEST' => 
-  array (
-    'code' => 'WEST',
-    'name' => 'Western European Summer Time',
-    'offset' => 'UTC+01',
-    'active' => 0,
-  ),
-  'WET' => 
-  array (
-    'code' => 'WET',
-    'name' => 'Western European Time',
     'offset' => 'UTC',
-    'active' => 0,
+    'seconds' => 0,
+    'active' => 1,
   ),
-  'WST' => 
+  'Africa/Bissau' => 
   array (
-    'code' => 'WST',
-    'name' => 'Western Standard Time',
-    'offset' => 'UTC+08',
-    'active' => 0,
-  ),
-  'YAKT' => 
-  array (
-    'code' => 'YAKT',
-    'name' => 'Yakutsk Time',
-    'offset' => 'UTC+09',
-    'active' => 0,
-  ),
-  'YEKT' => 
-  array (
-    'code' => 'YEKT',
-    'name' => 'Yekaterinburg Time',
-    'offset' => 'UTC+05',
-    'active' => 0,
-  ),
-  'Z' => 
-  array (
-    'code' => 'Z',
-    'name' => 'Zulu Time (Coordinated Universal Time)',
     'offset' => 'UTC',
-    'active' => 0,
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Abidjan' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Dakar' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Conakry' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Freetown' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Atlantic/Reykjavik' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Nouakchott' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Ouagadougou' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Atlantic/Azores' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'America/Danmarkshavn' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Monrovia' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Sao_Tome' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Lome' => 
+  array (
+    'offset' => 'UTC',
+    'seconds' => 0,
+    'active' => 1,
+  ),
+  'Africa/Tunis' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Atlantic/Madeira' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Kinshasa' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Algiers' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Europe/Lisbon' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Porto-Novo' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Windhoek' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Libreville' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Europe/Isle_of_Man' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Europe/Jersey' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Europe/Guernsey' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Lagos' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Europe/Dublin' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Europe/London' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Bangui' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Ndjamena' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Luanda' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/El_Aaiun' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Douala' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Atlantic/Faroe' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Casablanca' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Malabo' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Brazzaville' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Africa/Niamey' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Atlantic/Canary' => 
+  array (
+    'offset' => 'UTC+01:00',
+    'seconds' => 3600,
+    'active' => 1,
+  ),
+  'Europe/Ljubljana' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Prague' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Podgorica' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Oslo' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Monaco' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Malta' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Paris' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Madrid' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Luxembourg' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Brussels' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Belgrade' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Andorra' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Rome' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Amsterdam' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Berlin' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Bratislava' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Gibraltar' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Copenhagen' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Busingen' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Budapest' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Kaliningrad' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Cairo' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Bujumbura' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Ceuta' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Gaborone' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Blantyre' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Antarctica/Troll' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/San_Marino' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Arctic/Longyearbyen' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Zurich' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Harare' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Johannesburg' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Maseru' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Mbabane' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Tripoli' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Maputo' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Lusaka' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Kigali' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Africa/Lubumbashi' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Warsaw' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Zagreb' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Vatican' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Tirane' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Vaduz' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Stockholm' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Vienna' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Skopje' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Sarajevo' => 
+  array (
+    'offset' => 'UTC+02:00',
+    'seconds' => 7200,
+    'active' => 1,
+  ),
+  'Europe/Tallinn' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Riga' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Mariehamn' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Simferopol' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Moscow' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Athens' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Sofia' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Minsk' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Indian/Mayotte' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Kiev' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Zaporozhye' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Helsinki' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Vilnius' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Istanbul' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Kirov' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Chisinau' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Volgograd' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Indian/Comoro' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Bucharest' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Indian/Antananarivo' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Uzhgorod' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Aden' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Qatar' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Amman' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Kuwait' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Africa/Nairobi' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Africa/Mogadishu' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Africa/Khartoum' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Riyadh' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Jerusalem' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Antarctica/Syowa' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Bahrain' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Baghdad' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Beirut' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Damascus' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Hebron' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Gaza' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Africa/Kampala' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Asia/Nicosia' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Africa/Asmara' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Africa/Addis_Ababa' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Africa/Dar_es_Salaam' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Africa/Djibouti' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Africa/Juba' => 
+  array (
+    'offset' => 'UTC+03:00',
+    'seconds' => 10800,
+    'active' => 1,
+  ),
+  'Europe/Astrakhan' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Indian/Mahe' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Europe/Ulyanovsk' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Asia/Dubai' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Asia/Muscat' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Europe/Samara' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Indian/Mauritius' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Asia/Baku' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Indian/Reunion' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Asia/Tbilisi' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Asia/Yerevan' => 
+  array (
+    'offset' => 'UTC+04:00',
+    'seconds' => 14400,
+    'active' => 1,
+  ),
+  'Asia/Kabul' => 
+  array (
+    'offset' => 'UTC+04:30',
+    'seconds' => 16200,
+    'active' => 1,
+  ),
+  'Asia/Tehran' => 
+  array (
+    'offset' => 'UTC+04:30',
+    'seconds' => 16200,
+    'active' => 1,
+  ),
+  'Antarctica/Mawson' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Karachi' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Tashkent' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Aqtobe' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Dushanbe' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Oral' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Indian/Kerguelen' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Yekaterinburg' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Aqtau' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Indian/Maldives' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Ashgabat' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Samarkand' => 
+  array (
+    'offset' => 'UTC+05:00',
+    'seconds' => 18000,
+    'active' => 1,
+  ),
+  'Asia/Colombo' => 
+  array (
+    'offset' => 'UTC+05:30',
+    'seconds' => 19800,
+    'active' => 1,
+  ),
+  'Asia/Kolkata' => 
+  array (
+    'offset' => 'UTC+05:30',
+    'seconds' => 19800,
+    'active' => 1,
+  ),
+  'Asia/Kathmandu' => 
+  array (
+    'offset' => 'UTC+05:45',
+    'seconds' => 20700,
+    'active' => 1,
+  ),
+  'Antarctica/Vostok' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Indian/Chagos' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Urumqi' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Omsk' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Almaty' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Dhaka' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Novosibirsk' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Thimphu' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Bishkek' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Tomsk' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Qyzylorda' => 
+  array (
+    'offset' => 'UTC+06:00',
+    'seconds' => 21600,
+    'active' => 1,
+  ),
+  'Asia/Rangoon' => 
+  array (
+    'offset' => 'UTC+06:30',
+    'seconds' => 23400,
+    'active' => 1,
+  ),
+  'Indian/Cocos' => 
+  array (
+    'offset' => 'UTC+06:30',
+    'seconds' => 23400,
+    'active' => 1,
+  ),
+  'Asia/Ho_Chi_Minh' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Asia/Bangkok' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Asia/Novokuznetsk' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Asia/Phnom_Penh' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Asia/Pontianak' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Antarctica/Davis' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Asia/Barnaul' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Asia/Vientiane' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Asia/Krasnoyarsk' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Asia/Jakarta' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Indian/Christmas' => 
+  array (
+    'offset' => 'UTC+07:00',
+    'seconds' => 25200,
+    'active' => 1,
+  ),
+  'Asia/Brunei' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Kuala_Lumpur' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Australia/Perth' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Hong_Kong' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Antarctica/Casey' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Taipei' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Singapore' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Makassar' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Manila' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Irkutsk' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Hovd' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Shanghai' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Kuching' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Macau' => 
+  array (
+    'offset' => 'UTC+08:00',
+    'seconds' => 28800,
+    'active' => 1,
+  ),
+  'Asia/Pyongyang' => 
+  array (
+    'offset' => 'UTC+08:30',
+    'seconds' => 30600,
+    'active' => 1,
+  ),
+  'Australia/Eucla' => 
+  array (
+    'offset' => 'UTC+08:45',
+    'seconds' => 31500,
+    'active' => 1,
+  ),
+  'Pacific/Palau' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Asia/Dili' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Asia/Khandyga' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Asia/Yakutsk' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Asia/Seoul' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Asia/Tokyo' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Asia/Ulaanbaatar' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Asia/Jayapura' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Asia/Choibalsan' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Asia/Chita' => 
+  array (
+    'offset' => 'UTC+09:00',
+    'seconds' => 32400,
+    'active' => 1,
+  ),
+  'Australia/Adelaide' => 
+  array (
+    'offset' => 'UTC+09:30',
+    'seconds' => 34200,
+    'active' => 1,
+  ),
+  'Australia/Broken_Hill' => 
+  array (
+    'offset' => 'UTC+09:30',
+    'seconds' => 34200,
+    'active' => 1,
+  ),
+  'Australia/Darwin' => 
+  array (
+    'offset' => 'UTC+09:30',
+    'seconds' => 34200,
+    'active' => 1,
+  ),
+  'Pacific/Guam' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Australia/Brisbane' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Asia/Ust-Nera' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Pacific/Saipan' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Antarctica/DumontDUrville' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Pacific/Port_Moresby' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Asia/Vladivostok' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Australia/Currie' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Australia/Lindeman' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Australia/Hobart' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Australia/Melbourne' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Pacific/Chuuk' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Australia/Sydney' => 
+  array (
+    'offset' => 'UTC+10:00',
+    'seconds' => 36000,
+    'active' => 1,
+  ),
+  'Australia/Lord_Howe' => 
+  array (
+    'offset' => 'UTC+10:30',
+    'seconds' => 37800,
+    'active' => 1,
+  ),
+  'Asia/Magadan' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Antarctica/Macquarie' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Pacific/Norfolk' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Asia/Srednekolymsk' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Pacific/Kosrae' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Pacific/Pohnpei' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Pacific/Noumea' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Asia/Sakhalin' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Pacific/Bougainville' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Pacific/Efate' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Pacific/Guadalcanal' => 
+  array (
+    'offset' => 'UTC+11:00',
+    'seconds' => 39600,
+    'active' => 1,
+  ),
+  'Pacific/Fiji' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Antarctica/McMurdo' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Pacific/Tarawa' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Asia/Kamchatka' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Pacific/Wallis' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Pacific/Wake' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Pacific/Kwajalein' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Pacific/Funafuti' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Pacific/Nauru' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Pacific/Majuro' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Asia/Anadyr' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Pacific/Auckland' => 
+  array (
+    'offset' => 'UTC+12:00',
+    'seconds' => 43200,
+    'active' => 1,
+  ),
+  'Pacific/Chatham' => 
+  array (
+    'offset' => 'UTC+12:45',
+    'seconds' => 45900,
+    'active' => 1,
+  ),
+  'Pacific/Fakaofo' => 
+  array (
+    'offset' => 'UTC+13:00',
+    'seconds' => 46800,
+    'active' => 1,
+  ),
+  'Pacific/Apia' => 
+  array (
+    'offset' => 'UTC+13:00',
+    'seconds' => 46800,
+    'active' => 1,
+  ),
+  'Pacific/Tongatapu' => 
+  array (
+    'offset' => 'UTC+13:00',
+    'seconds' => 46800,
+    'active' => 1,
+  ),
+  'Pacific/Enderbury' => 
+  array (
+    'offset' => 'UTC+13:00',
+    'seconds' => 46800,
+    'active' => 1,
+  ),
+  'Pacific/Kiritimati' => 
+  array (
+    'offset' => 'UTC+14:00',
+    'seconds' => 50400,
+    'active' => 1,
   ),
 );
