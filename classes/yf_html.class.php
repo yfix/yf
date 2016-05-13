@@ -1421,6 +1421,85 @@ class yf_html {
 
 	/**
 	*/
+	function phone_select_box($name = 'phone', $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
+		}
+		if (!$extra['name']) {
+			$name = $extra['name'] = 'phone';
+		}
+		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		if (!$extra['id']) {
+			$extra['id'] = $extra['force_id'].'_input';
+		}
+
+		asset('jquery-intl-tel-input');
+
+		$countries = [];
+		foreach ((array)main()->get_data('geo_countries') as $k => $data) {
+			$countries[] = strtolower($data['code']);
+		}
+		$preferred_countries = [
+			'ua', 'by', 'ru',
+		];
+		$js_options = (array)$extra['js_options'] + [
+			'autoPlaceholder' => true,
+			'onlyCountries' => $countries,
+			'preferredCountries' => $preferred_countries,
+			// 'excludeCountries' => ["us"],
+			// 'separateDialCode' => true,
+			// 'allowDropdown' => false,
+			// 'autoHideDialCode' => false,
+			// 'dropdownContainer' => "body",
+			// 'initialCountry' => "auto",
+			// 'nationalMode' => false,
+			// 'numberType' => "MOBILE",
+			// geoIpLookup: function(callback) {
+			//   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+			//     var countryCode = (resp && resp.country) ? resp.country : "";
+			//     callback(countryCode);
+			//   });
+			// },
+		];
+		jquery('
+			var input_selector = "#'.addslashes($extra['id']).'";
+			var phone = $(input_selector);
+			var reset = function() {
+				phone.removeClass("phone-error");
+				phone.removeClass("phone-success");
+			};
+
+			phone.intlTelInput('.json_encode($js_options).');
+
+			phone.blur(function() {
+				reset();
+				if ($.trim(phone.val())) {
+					if (phone.intlTelInput("isValidNumber")) {
+						phone.addClass("phone-success");
+					} else {
+						phone.addClass("phone-error");
+					}
+				}
+			});
+
+			// on keyup / change flag: reset
+			phone.on("keyup change", reset);
+
+			$(phone).closest("form").submit(function() {
+				phone.val(phone.intlTelInput("getNumber"));
+			});
+		');
+		return $this->input($extra + array(
+			'maxlength' => 20,
+			'type' => 'tel',
+//			'pattern' => '^[0-9\s\(\)-]{7,20}$',
+		));
+	}
+
+	/**
+	*/
 	function image_select_box($name, $values = array(), $selected = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -1537,7 +1616,7 @@ class yf_html {
 			$a['icon']	= $args[2];
 			$a['text']	= $args[3];
 			$a['class_add']	= $args[4];
-			$a['target']    = $args[5];
+			$a['target']	= $args[5];
 			$a['no_text'] = $args[6];
 		// named params
 		} elseif (isset($args['link'])) {
