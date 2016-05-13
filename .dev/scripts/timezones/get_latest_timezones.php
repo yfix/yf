@@ -20,6 +20,7 @@ function get_latest_timezones() {
 			$now->setTimezone(new DateTimeZone($timezone));
 			$offsets[] = $offset = $now->getOffset();
 			$timezones[$timezone] = [
+				'name' => $timezone,
 				'offset' => $format_utc_offset($offset),
 				'seconds' => $offset,
 				'active' => 1,
@@ -31,7 +32,7 @@ function get_latest_timezones() {
 	$data = $timezones_list();
 
 	$f4 = __DIR__.'/timezones.php';
-	file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
+	file_put_contents($f4, '<?'.'php'.PHP_EOL.'return '.var_export($data, 1).';');
 	print_r($data);
 
 }

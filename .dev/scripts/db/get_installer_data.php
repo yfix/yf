@@ -39,6 +39,7 @@ mkdir('./sql/', 0755, true);
 mkdir('./data/', 0755, true);
 $db_tables_like = $db_tables_like ?: '%';
 foreach((array)db()->get_2d('SHOW TABLES LIKE "'.DB_PREFIX.$db_tables_like.'"') as $table) {
+echo $table.PHP_EOL;
 	$tname = substr($table, strlen(DB_PREFIX));
 	$db_create_sql = current(db()->get_2d('SHOW CREATE TABLE '.$table));
 	$p1 = strpos($db_create_sql, '(') + 1;
