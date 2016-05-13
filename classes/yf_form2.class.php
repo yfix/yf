@@ -259,7 +259,6 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra_override = array();
-		//$form_id = isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : $this->_form_id;
 		$form_id = $this->_form_id ?: (isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : '');
 		if ($form_id) {
 			$extra_override = $this->_get_extra_override($form_id);
@@ -2070,6 +2069,31 @@ class yf_form2 {
 	function user_select_box($name, $values = null, $extra = array(), $replace = array()) {
 		_class( 'form_api' )->{ __FUNCTION__ }($name, $values, $extra, $replace);
 		return $this->_html_control($name, $values, $extra, $replace, 'select2_box');
+	}
+
+	/**
+	*/
+	function phone_box($name, $extra = array(), $replace = array()) {
+		asset('jquery-formvalidation');
+		$form_id = $this->_form_id ?: (isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : '');
+		jquery('
+			$("#'.addslashes($form_id).'").formValidation({
+				framework: "bootstrap",
+				fields: { "'.addslashes($name).'": {
+					validators: { callback: {
+						message: "The phone number is not valid",
+						callback: function(value, validator, $field) {
+							return value === "" || $field.intlTelInput("isValidNumber");
+						}
+					}}
+				}}
+			})
+			// Revalidate the number when changing the country
+			.on("click", ".country-list", function() {
+				$("#'.$form_id.'").formValidation("revalidateField", "'.addslashes($name).'");
+			});
+		');
+		return $this->_html_control($name, $values, $extra, $replace, 'phone_box');
 	}
 
 	/**

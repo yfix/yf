@@ -1421,7 +1421,7 @@ class yf_html {
 
 	/**
 	*/
-	function phone_select_box($name = 'phone', $values = array(), $selected = '', $extra = array()) {
+	function phone_box($name = 'phone', $values = array(), $selected = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 		} else {
