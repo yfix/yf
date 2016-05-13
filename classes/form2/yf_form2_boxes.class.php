@@ -223,14 +223,13 @@ class yf_form2_boxes {
 			$name = 'timezone';
 		}
 		$data = array();
-		$row_tpl = $extra['row_tpl'] ?: '<small>%offset %code %name</small>';
+		$row_tpl = $extra['row_tpl'] ?: '<small>%offset %name</small>';
 		foreach ((array)main()->get_data('timezones') as $v) {
 			$r = array(
 				'%offset'	=> $v['offset'],
 				'%name'		=> $v['name'],
-				'%code'		=> '['.$v['code'].']',
 			);
-			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
+			$data[$v['name']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_timezones';
