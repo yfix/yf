@@ -156,9 +156,17 @@ class yf_common {
 		if ($conf_theme) {
 			$theme = $conf_theme;
 		}
+		$allow_override = conf('bs_theme_allow_override_for_'.$main_type);
 		$avail_themes = $this->bs_get_avail_themes();
-		if (!$force && $_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
-			$theme = $_COOKIE['yf_theme'];
+		if ($_GET['yf_theme'] && in_array($_GET['yf_theme'], $avail_themes) && $allow_override) {
+			$theme = $_GET['yf_theme'];
+			setcookie('yf_theme', $theme, 0, '/');
+			unset($_GET['yf_theme']);
+			js_redirect('/@object/@action/@id/@page');
+		} elseif ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
+			if (!$force || $allow_override) {
+				$theme = $_COOKIE['yf_theme'];
+			}
 		}
 		$this->_current_theme = $theme;
 		return $theme;
