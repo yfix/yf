@@ -20,6 +20,7 @@ class yf_html {
 	public $CLASS_LABEL_CHECKBOX_SELECTED = 'active';
 	public $CLASS_SELECT_BOX = 'form-control';
 	public $CLASS_SELECT_OPTION_DEFAULT = 'opt-default';
+	public $CLASS_INPUT = 'form-control';
 
 	/**
 	* Catch missing method call
@@ -1155,7 +1156,7 @@ class yf_html {
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
 		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
-		$extra['class'] = isset($extra['class']) ? $extra['class'] : 'form-control';
+		$extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_INPUT;
 		if ($extra['class_add']) {
 			$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		}
@@ -1385,7 +1386,7 @@ class yf_html {
 			$func = 'input';
 			$extra[ 'id' ] = $extra['force_id'];
 			$extra[ 'value' ] = @$extra['selected'] ?: @$extra['value'] ?: '';
-			$css[] = 'form-control';
+			$css[] = $this->CLASS_INPUT;
 		}
 		$css[]   = 'no-chosen';
 			$extra[ 'class' ] && $css[] = $extra[ 'class' ];
