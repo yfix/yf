@@ -236,6 +236,16 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+	function _get_form_id($extra = array(), $replace = array()) {
+		$form_id = $this->_form_id ?: (isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : '');
+		if (!$form_id) {
+			$form_id = 'form_'.++main()->_unique_widget_ids['form'];
+		}
+		return $form_id;
+	}
+
+	/**
 	* Render result form html, gathered by row functions
 	* Params here not required, but if provided - will be passed to form_begin()
 	*/
@@ -259,7 +269,7 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra_override = array();
-		$form_id = $this->_form_id ?: (isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : '');
+		$form_id = $this->_get_form_id($extra, $replace);
 		if ($form_id) {
 			$extra_override = $this->_get_extra_override($form_id);
 		}
@@ -278,7 +288,7 @@ class yf_form2 {
 
 		if ($csrf_protect) {
 			$csrf_guard = _class('csrf_guard')->configure(array(
-				'form_id'		=> !empty($form_id) ? $form_id : "autoid_".$_GET['object']."_".$_GET['action']."_".++main()->_csrf_ids,
+				'form_id'		=> !empty($form_id) ? $form_id : 'autoid_'.$_GET['object'].'_'.$_GET['action'].'_'.++main()->_csrf_ids,
 				'token_name'	=> $this->CONF_CSRF_NAME,
 			));
 		}
@@ -2073,24 +2083,38 @@ class yf_form2 {
 
 	/**
 	*/
-	function phone_box($name, $extra = array(), $replace = array()) {
+	function phone_box($name = '', $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
+		}
+		if (!$extra['name']) {
+			$name = $extra['name'] = 'phone';
+		}
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+
 		asset('jquery-formvalidation');
-		$form_id = $this->_form_id ?: (isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : '');
 		jquery('
-			$("#'.addslashes($form_id).'").formValidation({
+			var form = $("#'.addslashes($name).'").closest("form")
+			form.formValidation({
 				framework: "bootstrap",
-				fields: { "'.addslashes($name).'": {
-					validators: { callback: {
-						message: "The phone number is not valid",
-						callback: function(value, validator, $field) {
-							return value === "" || $field.intlTelInput("isValidNumber");
+				fields: {
+					"'.addslashes($name).'": {
+						validators: {
+							callback: {
+								message: "The phone number is not valid",
+								callback: function(value, validator, $field) {
+									return value === "" || $field.intlTelInput("isValidNumber");
+								}
+							}
 						}
-					}}
-				}}
+					}
+				}
 			})
 			// Revalidate the number when changing the country
 			.on("click", ".country-list", function() {
-				$("#'.$form_id.'").formValidation("revalidateField", "'.addslashes($name).'");
+				form.formValidation("revalidateField", "'.addslashes($name).'");
 			});
 		');
 		return $this->_html_control($name, $values, $extra, $replace, 'phone_box');
