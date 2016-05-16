@@ -1460,12 +1460,7 @@ class yf_html {
 			// 'initialCountry' => "auto",
 			// 'nationalMode' => false,
 			// 'numberType' => "MOBILE",
-			// geoIpLookup: function(callback) {
-			//   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-			//     var countryCode = (resp && resp.country) ? resp.country : "";
-			//     callback(countryCode);
-			//   });
-			// },
+			// 'utilsScript' => '//cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.5.2/js/utils.js',
 		];
 		jquery('
 			var input_selector = "#'.addslashes($extra['id']).'";
@@ -1475,7 +1470,17 @@ class yf_html {
 				phone.removeClass("phone-success");
 			};
 
-			phone.intlTelInput('.json_encode($js_options).');
+			phone.intlTelInput($.merge(
+				'.json_encode($js_options).'
+				, {
+					geoIpLookup : function(callback) {
+						$.get("//ipinfo.io", function() {}, "jsonp").always(function(resp) {
+							var countryCode = (resp && resp.country) ? resp.country : "";
+							callback(countryCode);
+						});
+					}
+				}
+			));
 
 			phone.blur(function() {
 				reset();
