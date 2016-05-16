@@ -1155,7 +1155,10 @@ class yf_html {
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
 		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
-
+		$extra['class'] = isset($extra['class']) ? $extra['class'] : 'form-control';
+		if ($extra['class_add']) {
+			$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
+		}
 		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step','readonly');
 		return '<input'._attrs($extra, $attrs_names).'>';
 	}
