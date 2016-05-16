@@ -2096,6 +2096,32 @@ class yf_form2 {
 
 		asset('jquery-formvalidation');
 		jquery('
+			var yf_phone_callback = function(value, validator, $field) {
+				var isValid = value === "" || $field.intlTelInput("isValidNumber"),
+					err	 = $field.intlTelInput("getValidationError"),
+					message = null;
+				switch (err) {
+					case intlTelInputUtils.validationError.INVALID_COUNTRY_CODE:
+						message = "'.t('The country code is not valid').'";
+						break;
+					case intlTelInputUtils.validationError.TOO_SHORT:
+						message = "'.t('The phone number is too short').'";
+						break;
+					case intlTelInputUtils.validationError.TOO_LONG:
+						message = "'.t('The phone number is too long').'";
+						break;
+					case intlTelInputUtils.validationError.NOT_A_NUMBER:
+						message = "'.t('The value is not a number').'";
+						break;
+					default:
+						message = "'.t('The phone number is not valid').'";
+						break;
+				}
+				return {
+					valid: isValid,
+					message: message
+				};
+			}
 			var form = $("#'.addslashes($name).'").closest("form")
 			form.formValidation({
 				framework: "bootstrap",
@@ -2103,10 +2129,7 @@ class yf_form2 {
 					"'.addslashes($name).'": {
 						validators: {
 							callback: {
-								message: "'._prepare_html(t('The phone number is not valid')).'",
-								callback: function(value, validator, $field) {
-									return value === "" || $field.intlTelInput("isValidNumber");
-								}
+								callback: yf_phone_callback,
 							}
 						}
 					}
