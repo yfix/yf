@@ -2103,7 +2103,7 @@ class yf_form2 {
 					"'.addslashes($name).'": {
 						validators: {
 							callback: {
-								message: "The phone number is not valid",
+								message: "'._prepare_html(t('The phone number is not valid')).'",
 								callback: function(value, validator, $field) {
 									return value === "" || $field.intlTelInput("isValidNumber");
 								}
