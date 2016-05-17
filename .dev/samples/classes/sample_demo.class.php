@@ -40,6 +40,9 @@ class sample_demo {
 		$ext = '.php';
 		$ext_len = strlen($ext);
 
+		$names = $this->_get_demos($dir);
+		ksort($names);
+
 		$name = preg_replace('~[^a-z0-9/_-]+~ims', '', $_GET['id']);
 		if (strlen($name)) {
 			$f = $dir. $name. '.php';
@@ -58,15 +61,29 @@ class sample_demo {
 					'source'	=> $body,
 				);
 			}
+			$prev = '';
+			$next = '';
+			$i = 0;
+			foreach ((array)$names as $_name) {
+				if ($name !== $_name) {
+					$prev = $_name;
+				} elseif ($name === $_name) {
+					$next = current(array_slice($names, $i + 1, 1));
+					break;
+				}
+				$i++;
+			}
 			$name_html = preg_replace('~[^0-9a-z_-]~ims', '', $name);
 			$header = 
 				'<div id="head_'.$name_html.'" class="panel">
 	                <div class="panel-heading">
 						<h1 class="panel-title">
 							<a href="'.url('/@object/@action/'.urlencode($name)).'">'.$name.'</a>
-							<div class="pull-right">
-								<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" data-target="#func_self_source_'.$name_html.'"><i class="fa fa-file-text-o"></i> source</button> '
-								._class('core_api')->_github_link_btn($self_source)
+							<div class="pull-right">'
+								. _class('core_api')->_github_link_btn($self_source)
+								. '<button class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#func_self_source_'.$name_html.'"><i class="fa fa-file-text-o"></i> source</button> '
+								. ($prev ? '<a href="'.url('/@object/@action/'.urlencode($prev)).'" class="btn btn-primary btn-xs">&lt;</a> ' : '')
+								. ($next ? '<a href="'.url('/@object/@action/'.urlencode($next)).'" class="btn btn-primary btn-xs">&gt;</a> ' : '')
 							.'</div>
 						</h1>
 					</div>
@@ -78,7 +95,7 @@ class sample_demo {
 		}
 		$url = rtrim(url('/@object/@action/')).'/';
 		$data = array();
-		foreach ((array)$this->_get_demos($dir) as $name) {
+		foreach ((array)$names as $name) {
 			$data[$name] = array(
 				'name'	=> $name,
 				'link'	=> $url. urlencode($name),
