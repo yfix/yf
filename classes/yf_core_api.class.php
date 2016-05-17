@@ -322,8 +322,17 @@ class yf_core_api {
 		} elseif ($is_func) {
 			$info = $this->get_function_source($is_func);
 		}
-		$gh_url = $info ? 'https://github.com/yfix/yf/tree/master/'.ltrim(substr(realpath($info['file']), strlen(realpath(YF_PATH))), '/').'#L'.$info['line_start'] : '';
-		return $gh_url ? '<a target="_blank" class="btn btn-primary btn-small btn-sm" href="'.$gh_url.'">Github <i class="icon icon-github fa fa-github"></i></a>': '';
+		return $this->_github_link_btn($info);
+	}
+
+	/**
+	*/
+	function _github_link_btn($info = []) {
+		if (!$info) {
+			return false;
+		}
+		$gh_url = 'https://github.com/yfix/yf/tree/master/'.ltrim(substr(realpath($info['file']), strlen(realpath(YF_PATH))), '/').'#L'.$info['line_start'];
+		return '<a target="_blank" class="btn btn-primary btn-xs" href="'.$gh_url.'"><i class="icon icon-github fa fa-github"></i> Github</a>';
 	}
 
 	/**
