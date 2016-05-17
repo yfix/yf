@@ -299,6 +299,11 @@ class yf_docs {
 
 	/***/
 	public function _sample_navbar() {
-		return _class('form2_navbar', YF_PATH.'.dev/samples/form2/')->show($source = false);
+		return implode(PHP_EOL, [
+			form_item()->country_box(['selected' => 'US', 'renderer' => 'div_box']),
+			form_item()->language_box(['selected' => 'ru', 'renderer' => 'div_box']),
+			form_item()->currency_box(['selected' => 'UAH', 'renderer' => 'div_box']),
+			form_item()->timezone_box(['selected' => 'UTC', 'renderer' => 'div_box']),
+		]);
 	}
 }
