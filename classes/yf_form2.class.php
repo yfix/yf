@@ -365,6 +365,7 @@ class yf_form2 {
 		$item_row = array();
 		$row_items = array();
 		$row = false;
+		$body_ids_to_extra = array();
 		foreach ((array)$this->_body as $k => $v) {
 			if ($v['name'] == 'row_start') {
 				$row = $k;
@@ -410,11 +411,11 @@ class yf_form2 {
 					'extra'	=> $_extra,
 				);
 			}
-			$this->_body[$k] = $func($_extra, $_replace, $this);
+			$this->_body[$k]['rendered'] = $func($_extra, $_replace, $this);
 
 			if ($this->_tabbed_mode_on) {
 				$tabbed_mode = true;
-				$tabbed_buffer[$k] = $this->_body[$k];
+				$tabbed_buffer[$k] = $this->_body[$k]['rendered'];
 				if ($v['name'] == 'tab_start') {
 					$this->_tabs_counter++;
 					$tabs_name = $this->_tabs_name ?: 'tabs_'.$this->_tabs_counter;
@@ -422,7 +423,7 @@ class yf_form2 {
 				}
 				if ($v['name'] == 'tab_start' && !$tabs_container) {
 					$tabs_container = $k;
-					$this->_body[$k] = '__TAB_START__';
+					$this->_body[$k]['rendered'] = '__TAB_START__';
 				} else {
 					unset($this->_body[$k]);
 				}
@@ -440,7 +441,7 @@ class yf_form2 {
 			$tabbed_buffer = array();
 		}
 		if ($tabs) {
-			$this->_body[$tabs_container] = _class('html')->tabs($tabs, (array)$this->_params['tabs'] + (array)$tabs_extra);
+			$this->_body[$tabs_container]['rendered'] = _class('html')->tabs($tabs, (array)$this->_params['tabs'] + (array)$tabs_extra);
 		}
 		if ($this->_params['show_alerts']) {
 			$errors = common()->_get_error_messages();
@@ -452,7 +453,36 @@ class yf_form2 {
 				$this->_body = array_slice($this->_body, 0, 1, true) + array('error_message' => implode(PHP_EOL, $e)) + array_slice($this->_body, 1, null, true);
 			}
 		}
-		$this->_rendered = implode(PHP_EOL, $this->_body);
+		if ($this->_params['stpl']) {
+			$data = [];
+			foreach ($this->_body as $k => $v) {
+				$name = $v['extra']['name'] ?: $k;
+				if ($name === 'form_action') {
+					$name = 'form_begin';
+				}
+				if (isset($data['form'][$name])) {
+					$data['form'][$name][] = $v['rendered'];
+				} else {
+					$data['form'][$name] = $v['rendered'];
+				}
+			}
+			if (!isset($data['form']['begin'])) {
+				$data['form']['begin'] = $data['form']['form_begin'];
+			}
+			if (!isset($data['form']['end'])) {
+				$data['form']['end'] = $data['form']['form_end'];
+			}
+			$this->_rendered = tpl()->parse_string($this->_params['stpl'], $data);
+			unset($data);
+		} else {
+			$rendered = [];
+			foreach ($this->_body as $k => $v) {
+				$rendered[$k] = $v['rendered'];
+			}
+			$this->_rendered = implode(PHP_EOL, $rendered);
+			unset($rendered);
+		}
+		unset($this->_body); // Save some memory
 
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
