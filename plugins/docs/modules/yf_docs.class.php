@@ -87,18 +87,24 @@ class yf_docs {
 			$target_docs	= _class('core_api')->get_method_docs('html', $name);
 
 			$items[] = 
-				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
-					<h1><a href="'.url('/@object/@action/'.$name).'">'.$name.'</a>
-						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button> '
-						.($target_source['source'] ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("'.$action.'")-&gt;'.$name.'() source</button> ' : '')
-						._class('core_api')->get_github_link($action.'.'.$name)
-						.($target_docs ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">'.$action.'::'.$name.' docs</button> ' : '')
-					.'</h1>
-					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'._prepare_html($self_source['source']).'</code></pre></div> '
-					.($target_source['source'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['source'])).'</code></pre></div> ' : '')
-					.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'._class('html')->well(nl2br($target_docs)).'</div> ' : '')
-					.'<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$obj->$name().'</div>
-				</div>';
+				'<div id="head_'.$name.'" class="panel">
+	                <div class="panel-heading">
+						<h1 class="panel-title">
+							<a href="'.url('/@object/@action/'.$name).'">'.$name.'</a>
+							<div class="pull-right">
+								<button class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#func_self_source_'.$name.'"><i class="fa fa-file-text-o"></i> '.$name.'()</button> '
+								.($target_source['source'] ? ' <button class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#func_target_source_'.$name.'"><i class="fa fa-file-text-o"></i> _class("'.$action.'")-&gt;'.$name.'()</button> ' : '')
+								._class('core_api')->get_github_link($action.'.'.$name)
+								.($target_docs ? ' <button class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">'.$action.'::'.$name.' docs</button> ' : '')
+							.'</div>
+						</h1>
+					</div>
+					<div id="func_self_source_'.$name.'" class="panel-body collapse out"><pre class="prettyprint lang-php"><code>'._prepare_html($self_source['source']).'</code></pre></div> '
+					.($target_source['source'] ? '<div id="func_target_source_'.$name.'" class="panel-body collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['source'])).'</code></pre></div> ' : '')
+					.($target_docs ? '<div id="func_target_docs_'.$name.'" class="panel-body collapse out">'._class('html')->well(nl2br($target_docs)).'</div> ' : '')
+				.'</div>
+				<section class="page-contents" id="func_out_'.$name.'">'.$obj->$name().'</section>
+			';
 		}
 		return implode(PHP_EOL, $items);
 	}
