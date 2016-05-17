@@ -2,6 +2,10 @@
 
 class yf_docs {
 
+	private $whats_new = [
+		'demo',
+	];
+
 	/**
 	* Catch missing method call
 	*/
@@ -53,7 +57,7 @@ class yf_docs {
 		}
 		$a = array();
 		foreach ($methods as $m) {
-			$a[$m] = '<h4><a href="'.url('/@object/'.$m).'">'.ucfirst($m).'</a></h4>';
+			$a[$m] = '<h4><a href="'.url('/@object/'.$m).'">'. ucfirst($m). '</a>'. (in_array($m, $this->whats_new) ? ' <sup class="text-success"><small>NEW</small></sup>' : ''). '</h4>';
 		}
 		ksort($a);
 		return implode(PHP_EOL, $a);
@@ -298,7 +302,7 @@ class yf_docs {
 			} else {
 				$url = '/@object/'. $name;
 			}
-			$links[url($url)] = t($name);
+			$links[url($url)] = t($name). (in_array($name, $this->whats_new) ? ' <sup class="text-success"><small>NEW</small></sup>' : '');
 		}
 		return html()->navlist($links);
 	}
