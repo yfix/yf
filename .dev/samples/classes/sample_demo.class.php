@@ -25,7 +25,7 @@ class sample_demo {
 				continue;
 			}
 			$items[] = array(
-				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
+				'name'	=> $name,
 				'link'	=> url('/@object/@action/'.urlencode($name)),
 			);
 		}
