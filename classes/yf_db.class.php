@@ -229,6 +229,12 @@ class yf_db {
 	}
 
 	/**
+	*/
+	function is_ready() {
+		return (bool)$this->_connected;
+	}
+
+	/**
 	* Connect db driver and then connect to db
 	*/
 	function connect($db_host = '', $db_user = '', $db_pswd = null, $db_name = null, $force = false, $params = array()) {
