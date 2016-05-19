@@ -2106,8 +2106,10 @@ class yf_form2 {
 		return $this->_html_control($name, $values, $extra, $replace, 'image_select_box');
 	}
 
+	/**
+	*/
 	function user_select_box($name, $values = null, $extra = array(), $replace = array()) {
-		_class( 'form_api' )->{ __FUNCTION__ }($name, $values, $extra, $replace);
+		_class('form_api')->{__FUNCTION__}($name, $values, $extra, $replace);
 		return $this->_html_control($name, $values, $extra, $replace, 'select2_box');
 	}
 
@@ -2122,55 +2124,74 @@ class yf_form2 {
 		if (!$extra['name']) {
 			$name = $extra['name'] = 'phone';
 		}
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-
-		asset('jquery-formvalidation');
-		jquery('
-			var yf_phone_callback = function(value, validator, $field) {
-				var isValid = value === "" || $field.intlTelInput("isValidNumber"),
-					err	 = $field.intlTelInput("getValidationError"),
-					message = null;
-				switch (err) {
-					case intlTelInputUtils.validationError.INVALID_COUNTRY_CODE:
-						message = "'.t('The country code is not valid').'";
-						break;
-					case intlTelInputUtils.validationError.TOO_SHORT:
-						message = "'.t('The phone number is too short').'";
-						break;
-					case intlTelInputUtils.validationError.TOO_LONG:
-						message = "'.t('The phone number is too long').'";
-						break;
-					case intlTelInputUtils.validationError.NOT_A_NUMBER:
-						message = "'.t('The value is not a number').'";
-						break;
-					default:
-						message = "'.t('The phone number is not valid').'";
-						break;
+		$func = function($extra, $r, $form) {
+			asset('jquery-formvalidation');
+			jquery('
+				var yf_phone_callback = function(value, validator, $field) {
+					var isValid = value === "" || $field.intlTelInput("isValidNumber"),
+						err	 = $field.intlTelInput("getValidationError"),
+						message = null;
+					switch (err) {
+						case intlTelInputUtils.validationError.INVALID_COUNTRY_CODE:
+							message = "'.t('The country code is not valid').'";
+							break;
+						case intlTelInputUtils.validationError.TOO_SHORT:
+							message = "'.t('The phone number is too short').'";
+							break;
+						case intlTelInputUtils.validationError.TOO_LONG:
+							message = "'.t('The phone number is too long').'";
+							break;
+						case intlTelInputUtils.validationError.NOT_A_NUMBER:
+							message = "'.t('The value is not a number').'";
+							break;
+						default:
+							message = "'.t('The phone number is not valid').'";
+							break;
+					}
+					return {
+						valid: isValid,
+						message: message
+					};
 				}
-				return {
-					valid: isValid,
-					message: message
-				};
-			}
-			var form = $("#'.addslashes($name).'").closest("form")
-			form.formValidation({
-				framework: "bootstrap",
-				fields: {
-					"'.addslashes($name).'": {
-						validators: {
-							callback: {
-								callback: yf_phone_callback,
+				var form = $("#'.addslashes($extra['name']).'").closest("form")
+				form.formValidation({
+					framework: "bootstrap",
+					fields: {
+						"'.addslashes($extra['name']).'": {
+							validators: {
+								callback: {
+									callback: yf_phone_callback,
+								}
 							}
 						}
 					}
-				}
-			})
-			// Revalidate the number when changing the country
-			.on("click", ".country-list", function() {
-				form.formValidation("revalidateField", "'.addslashes($name).'");
-			});
-		');
-		return $this->_html_control($name, $values, $extra, $replace, 'phone_box');
+				})
+				// Revalidate the number when changing the country
+				.on("click", ".country-list", function() {
+					form.formValidation("revalidateField", "'.addslashes($extra['name']).'");
+				});
+			');
+			$form->_prepare_inline_error($extra);
+			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+			$extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
+			$extra['value'] = &$extra['selected'];
+			$extra['id'] = $extra['id'] ?: $extra['name'];
+
+			$extra = $form->_input_assign_params_from_validate($extra);
+			$content = _class('html')->phone_box($extra);
+			if ($extra['no_label'] || $form->_params['no_label']) {
+				$extra['desc'] = '';
+			}
+			if ($extra['hide_empty'] && !strlen($content)) {
+				return '';
+			}
+			return $form->_row_html($content, $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func((array)$extra + (array)$this->_extra, (array)$replace + (array)$this->_replace, $this);
 	}
 
 	/**
