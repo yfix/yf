@@ -29,5 +29,6 @@ return function() {
 		->language_box(['selected' => 'uk'])
 		->timezone_box(['selected' => 'UTC'])
 		->country_box(['selected' => 'US'])
+		->save()
 	;
 };

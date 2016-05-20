@@ -8,6 +8,7 @@ return function() {
 		->language_box(['selected' => 'uk'])
 		->timezone_box(['selected' => 'UTC'])
 		->country_box(['selected' => 'US'])
+		->save()
 		->render()
 	;
 	return '<pre><code>'._prepare_html(print_r($form, 1)).'</code></pre>';

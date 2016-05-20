@@ -456,7 +456,7 @@ class yf_form2 {
 		if ($this->_params['stpl'] || $this->_params['return_array']) {
 			$data = [];
 			foreach ($this->_body as $k => $v) {
-				$name = $v['extra']['name'] ?: $k;
+				$name = fix_html_attr_id($v['extra']['name'] ?: $v['extra']['id'] ?: $k);
 				if ($name === 'form_action') {
 					$name = 'form_begin';
 				}
@@ -1658,9 +1658,9 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['value'] = isset($extra['value']) ? $extra['value'] : ($value ?: 'Save');
+		$extra['id'] = $extra['id'] ?: ($extra['name'] ?: strtolower($extra['value']));
 		$func = function($extra, $r, $form) {
 			$form->_prepare_inline_error($extra);
-			$extra['id'] = $extra['id'] ?: ($extra['name'] ?: strtolower($extra['value']));
 			$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
 			if (false === strpos($extra['link_url'], '/')) {
 				$extra['link_url'] = '';
