@@ -460,7 +460,13 @@ class yf_form2 {
 				if ($name === 'form_action') {
 					$name = 'form_begin';
 				}
-				if (isset($data['form'][$name])) {
+				if (isset($data['form'][$name]) && !empty($data['form'][$name])) {
+					if (!is_array($data['form'][$name])) {
+						$tmp = $data['form'][$name];
+						$data['form'][$name] = [];
+						$data['form'][$name][] = $tmp;
+						unset($tmp);
+					}
 					$data['form'][$name][] = $v['rendered'];
 				} else {
 					$data['form'][$name] = $v['rendered'];
