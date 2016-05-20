@@ -22,12 +22,14 @@ return function() {
 
 		{form.end}
 	';
-	return form((array)$_POST + (array)$a, [
-			'stpl' => $stpl,
+	return tpl()->parse_string($stpl, [
+		'form' => form((array)$_POST + (array)$a, [
+			'return_array' => true,
 		])
 		->currency_box(['selected' => 'RUB'])
 		->language_box(['selected' => 'uk'])
 		->timezone_box(['selected' => 'UTC'])
 		->country_box(['selected' => 'US'])
-	;
+		->render()
+	]);
 };

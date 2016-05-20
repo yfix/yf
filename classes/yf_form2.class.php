@@ -453,7 +453,7 @@ class yf_form2 {
 				$this->_body = array_slice($this->_body, 0, 1, true) + array('error_message' => implode(PHP_EOL, $e)) + array_slice($this->_body, 1, null, true);
 			}
 		}
-		if ($this->_params['stpl']) {
+		if ($this->_params['stpl'] || $this->_params['return_array']) {
 			$data = [];
 			foreach ($this->_body as $k => $v) {
 				$name = $v['extra']['name'] ?: $k;
@@ -472,10 +472,14 @@ class yf_form2 {
 			if (!isset($data['form']['end'])) {
 				$data['form']['end'] = $data['form']['form_end'];
 			}
-			if (false === strpos($this->_params['stpl'], ' ') && tpl()->exists($this->_params['stpl'])) {
-				$this->_rendered = tpl()->parse($this->_params['stpl'], $data);
+			if ($this->_params['return_array']) {
+				return $data['form'];
 			} else {
-				$this->_rendered = tpl()->parse_string($this->_params['stpl'], $data);
+				if (false === strpos($this->_params['stpl'], ' ') && tpl()->exists($this->_params['stpl'])) {
+					$this->_rendered = tpl()->parse($this->_params['stpl'], $data);
+				} else {
+					$this->_rendered = tpl()->parse_string($this->_params['stpl'], $data);
+				}
 			}
 			unset($data);
 		} else {
