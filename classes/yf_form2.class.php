@@ -472,7 +472,11 @@ class yf_form2 {
 			if (!isset($data['form']['end'])) {
 				$data['form']['end'] = $data['form']['form_end'];
 			}
-			$this->_rendered = tpl()->parse_string($this->_params['stpl'], $data);
+			if (false === strpos($this->_params['stpl'], ' ') && tpl()->exists($this->_params['stpl'])) {
+				$this->_rendered = tpl()->parse($this->_params['stpl'], $data);
+			} else {
+				$this->_rendered = tpl()->parse_string($this->_params['stpl'], $data);
+			}
 			unset($data);
 		} else {
 			$rendered = [];
