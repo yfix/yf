@@ -154,6 +154,21 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 		),
+		'order' => array(
+			'name' => 'order',
+			'type' => 'int',
+			'length' => 10,
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => NULL,
+			'charset' => NULL,
+			'collate' => NULL,
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
 	),
 	'indexes' => array(
 		'PRIMARY' => array(
