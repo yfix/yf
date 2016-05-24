@@ -2042,4 +2042,69 @@ EOS;
 		)));
 	}
 
+	function stats() {
+		$payment_api = &$this->payment_api;
+		// payment providers
+		$providers = $payment_api->provider();
+		$payment_api->provider_options( $providers, array(
+			'method_allow',
+		));
+		// payment status
+		$payment_status = $payment_api->get_status();
+		$name = 'in_progress';
+		$item = $payment_api->get_status( array( 'name' => $name) );
+		list( $payment_status_in_progress_id, $payment_status_in_progress ) = $item;
+		// prepare sql
+		$sql = db()->select(
+			'o.operation_id',
+			'o.account_id',
+			'o.provider_id',
+			'o.options',
+			'a.user_id',
+			'u.name as user_name',
+			'o.amount',
+			'o.balance',
+			'p.title as provider_title',
+			'o.status_id as status_id',
+			'o.datetime_start'
+			)
+			->table( 'payment_operation as o' )
+				->left_join( 'payment_provider as p', 'p.provider_id = o.provider_id' )
+				->left_join( 'payment_account  as a', 'a.account_id  = o.account_id'   )
+				->left_join( 'user as u'            , 'u.id = a.user_id'              )
+			->where( 'p.system', 'in', 0 )
+			->where( 'p.active', '>=', 1 )
+			->where( 'o.direction', 'out' )
+			->where( 'type_id', 2 ) // payout
+			->where( 'status_id', 1 ) // in_progress
+		;
+		$data = $sql->all();
+		$by_method = [];
+		$totals = [];
+		foreach ($data as $k => $v) {
+			$data[$k]['options'] = json_decode($v['options'], true);
+			$data[$k]['request'] = $data[$k]['options']['request'][0];
+			unset($data[$k]['options']);
+			$options = $data[$k]['request']['options'];
+			$payout_method = $options['method_id'];
+			if ($payout_method == 'pay_card' && substr($options['sender_phone'], 0, 2) == '38') {
+				$payout_method = 'pay_card_ukr';
+			}
+			$by_method[$payout_method]['method'] = $payout_method;
+			$by_method[$payout_method]['sum'] += $data[$k]['amount'];
+			$by_method[$payout_method]['count']++;
+		}
+		ksort($by_method);
+		foreach ($by_method as $k => $v) {
+			$totals['method'] = '_TOTAL_';
+			$totals['sum'] += $v['sum'];
+			$totals['count'] += $v['count'];
+		}
+		$by_method[] = $totals;
+		return table($by_method)
+			->text('method')
+			->text('sum')
+			->text('count')
+		;
+	}
 }
