@@ -461,22 +461,41 @@ class yf_form2 {
 					$name = 'form_begin';
 				}
 				if (isset($data['form'][$name]) && !empty($data['form'][$name])) {
-					if (!is_array($data['form'][$name])) {
-						$tmp = $data['form'][$name];
-						$data['form'][$name] = [];
-						$data['form'][$name][] = $tmp;
-						unset($tmp);
+					if (in_array($name, ['form_id','_token','token'])) {
+						// allow only once
+					} else {
+						if (!is_array($data['form'][$name])) {
+							$tmp = $data['form'][$name];
+							$data['form'][$name] = [];
+							$data['form'][$name][] = $tmp;
+							unset($tmp);
+						}
+						$data['form'][$name][] = $v['rendered'];
 					}
-					$data['form'][$name][] = $v['rendered'];
 				} else {
 					$data['form'][$name] = $v['rendered'];
 				}
 			}
+			// Fixes for easier usage
+			if ($data['form']['form_id']) {
+				$data['form']['form_begin'] .= PHP_EOL. $data['form']['form_id'];
+				unset($data['form']['form_id']);
+			}
+			if (isset($data['form']['token']) && !isset($data['form']['_token'])) {
+				$data['form']['_token'] = $data['form']['token'];
+				unset($data['form']['token']);
+			}
+			if (isset($data['form']['_token'])) {
+				$data['form']['form_begin'] .= PHP_EOL. $data['form']['_token'];
+				unset($data['form']['_token']);
+			}
 			if (!isset($data['form']['begin'])) {
 				$data['form']['begin'] = $data['form']['form_begin'];
+				unset($data['form']['form_begin']);
 			}
 			if (!isset($data['form']['end'])) {
 				$data['form']['end'] = $data['form']['form_end'];
+				unset($data['form']['form_end']);
 			}
 			if ($this->_params['return_array']) {
 				return $data['form'];
