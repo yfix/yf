@@ -4,8 +4,6 @@ return function() {
 	$stpl = '
 		{form.begin}
 
-		{form._token}
-
 		<div class="pull-left col-md-3">
 			{form.currency}
 			{form.language}
