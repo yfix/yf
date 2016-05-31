@@ -510,7 +510,7 @@ class yf_form2 {
 		} else {
 			$rendered = [];
 			foreach ($this->_body as $k => $v) {
-				$rendered[$k] = $v['rendered'];
+				$rendered[$k] = isset($v['rendered']) ? $v['rendered'] : $v;
 			}
 			$this->_rendered = implode(PHP_EOL, $rendered);
 			unset($rendered);
