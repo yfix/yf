@@ -39,9 +39,11 @@ class class_form_real_test extends db_real_abstract {
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 
+		$form_id = md5(microtime());
 		$_POST = [
 			'name'		=> 'for_unit_tests',
 			'active'	=> '1',
+			'__form_id__'	=> $form_id,
 		];
 		$this->assertTrue( main()->is_post() );
 
@@ -49,7 +51,7 @@ class class_form_real_test extends db_real_abstract {
 			->text('name')
 			->text('text')
 			->active_box()
-			->validate(['name' => 'trim|required'])
+			->validate(['name' => 'trim|required', '__form_id__' => $form_id])
 			->insert_if_ok('static_pages', ['name','text'])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 
@@ -85,9 +87,11 @@ class class_form_real_test extends db_real_abstract {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$params = ['do_not_remove_errors' => 1];
 
+		$form_id = md5(microtime());
 		$_POST = [
 			'name'		=> 'for_unit_tests',
 			'active'	=> '1',
+			'__form_id__'	=> $form_id,
 		];
 		$this->assertTrue( main()->is_post() );
 
@@ -96,7 +100,7 @@ class class_form_real_test extends db_real_abstract {
 		$custom_error = 'Such field as "%field" is empty...';
 		form($_POST, $params)
 			->text('text')
-			->validate(['text' => 'trim|required'])
+			->validate(['text' => 'trim|required', '__form_id__' => $form_id])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$cur_error = common()->USER_ERRORS['text'];
 		$this->assertNotEmpty( $cur_error );
@@ -106,7 +110,7 @@ class class_form_real_test extends db_real_abstract {
 		$this->assertEmpty( common()->USER_ERRORS );
 		form($_POST, $params)
 			->text('text', ['validate_error' => $custom_error])
-			->validate(['text' => 'trim|required'])
+			->validate(['text' => 'trim|required', '__form_id__' => $form_id])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$this->assertEquals( str_replace('%field', 'Text', $custom_error), common()->USER_ERRORS['text'] );
 
@@ -116,7 +120,7 @@ class class_form_real_test extends db_real_abstract {
 		$custom_error = ['integer' => 'Custom error: "%field" should be of type integer'];
 		form($_POST, $params)
 			->text('text', ['validate_error' => $custom_error])
-			->validate(['text' => 'trim|required|integer'])
+			->validate(['text' => 'trim|required|integer', '__form_id__' => $form_id])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$this->assertEquals( str_replace('%field', 'Text', $custom_error['integer']), common()->USER_ERRORS['text'] );
 
@@ -125,7 +129,7 @@ class class_form_real_test extends db_real_abstract {
 		$_POST['text'] = '1234';
 		form($_POST, $params)
 			->text('text', ['validate_error' => $custom_error])
-			->validate(['text' => 'trim|required|integer'])
+			->validate(['text' => 'trim|required|integer', '__form_id__' => $form_id])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$this->assertEmpty( common()->USER_ERRORS );
 
@@ -139,8 +143,10 @@ class class_form_real_test extends db_real_abstract {
 
 		$cats = [1 => 1, 2 => 2, 3 => 3, 4 => 4];
 
+		$form_id = md5(microtime());
 		$_POST = [
 			'cat_id' => [],
+			'__form_id__'	=> $form_id,
 		];
 		$this->assertTrue( main()->is_post() );
 
@@ -148,7 +154,7 @@ class class_form_real_test extends db_real_abstract {
 		$this->assertEmpty( common()->USER_ERRORS );
 		form($_POST, $params)
 			->multi_select('cat_id', $cats)
-			->validate(['cat_id' => 'required'])
+			->validate(['cat_id' => 'required', '__form_id__' => $form_id])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$cur_error = common()->USER_ERRORS['cat_id'];
 		$this->assertNotEmpty( $cur_error );
@@ -157,20 +163,21 @@ class class_form_real_test extends db_real_abstract {
 		$this->assertEmpty( common()->USER_ERRORS );
 		form($_POST, $params)
 			->multi_select('cat_id', $cats)
-			->validate(['cat_id[]' => 'required'])
+			->validate(['cat_id[]' => 'required', '__form_id__' => $form_id])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$cur_error = common()->USER_ERRORS['cat_id'];
 		$this->assertNotEmpty( $cur_error );
 
 		$_POST = [
 			'cat_id' => ['   '],
+			'__form_id__'	=> $form_id,
 		];
 
 		common()->USER_ERRORS = [];
 		$this->assertEmpty( common()->USER_ERRORS );
 		form($_POST, $params)
 			->multi_select('cat_id', $cats)
-			->validate(['cat_id' => 'trim|required'])
+			->validate(['cat_id' => 'trim|required', '__form_id__' => $form_id])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$cur_error = common()->USER_ERRORS['cat_id'];
 		$this->assertNotEmpty( $cur_error );
@@ -185,8 +192,10 @@ class class_form_real_test extends db_real_abstract {
 
 		$cats = [1 => 1, 2 => 2, 3 => 3, 4 => 4];
 
+		$form_id = md5(microtime());
 		$_POST = [
 			'cat_id' => [1, 2],
+			'__form_id__'	=> $form_id,
 		];
 		$this->assertTrue( main()->is_post() );
 
@@ -194,12 +203,13 @@ class class_form_real_test extends db_real_abstract {
 		$this->assertEmpty( common()->USER_ERRORS );
 		form($_POST, $params)
 			->multi_select('cat_id', $cats)
-			->validate(['cat_id' => 'trim|required|integer'])
+			->validate(['cat_id' => 'trim|required|integer', '__form_id__' => $form_id])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$this->assertEmpty( common()->USER_ERRORS );
 
 		$_POST = [
 			'cat_id' => [1, 'bad', 'unexpected', 'values', 'and some good', 2],
+			'__form_id__'	=> $form_id,
 		];
 		$this->assertTrue( main()->is_post() );
 
@@ -207,7 +217,7 @@ class class_form_real_test extends db_real_abstract {
 		$this->assertEmpty( common()->USER_ERRORS );
 		form($_POST, $params)
 			->multi_select('cat_id', $cats)
-			->validate(['cat_id' => 'trim|required|integer'])
+			->validate(['cat_id' => 'trim|required|integer', '__form_id__' => $form_id])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$cur_error = common()->USER_ERRORS['cat_id'];
 		$this->assertNotEmpty( $cur_error );
@@ -216,6 +226,7 @@ class class_form_real_test extends db_real_abstract {
 			'cat_id1' => [1, 2],
 			'cat_id2' => [2, 1],
 			'cat_id3' => [3],
+			'__form_id__'	=> $form_id,
 		];
 		$this->assertTrue( main()->is_post() );
 
@@ -229,6 +240,7 @@ class class_form_real_test extends db_real_abstract {
 				'cat_id1' => 'trim|required|integer',
 				'cat_id2' => 'trim|required|integer',
 				'cat_id3' => 'trim|required|integer',
+				'__form_id__' => $form_id,
 			])
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 		$this->assertEmpty( common()->USER_ERRORS );
