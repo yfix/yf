@@ -519,6 +519,11 @@ class yf_admin_methods {
 				$params[$k] = $v;
 			}
 		}
+		$toolbar_add = [];
+		if ($params['toolbar_add']) {
+			$toolbar_add = $params['toolbar_add'];
+			unset($params['toolbar_add']);
+		}
 		if ($params['file_browser'] === 'internal' && MAIN_TYPE_ADMIN) {
 			$override += array(
 				'filebrowserBrowseUrl'		=> url('/ck_file_browser'),
@@ -539,7 +544,7 @@ class yf_admin_methods {
 					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
 					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', 'Table', '-', 'Blockquote', 'Link', 'Unlink', 'Image', 'Video', 'Youtube', '-', 
 					'SpecialChar', 'FontAwesome', '-', 'Source', '-', 'Save', '-', 'Maximize'//, 'Preview'
-				),
+				) + (array)$toolbar_add, // TODO: testme
 			),
 			'language' => conf('language'),
 			'removeButtons' => 'Flash',
