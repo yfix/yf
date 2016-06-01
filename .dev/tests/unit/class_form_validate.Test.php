@@ -16,8 +16,11 @@ class class_form_validate_test extends yf_unit_tests {
 		$old = $_SERVER['REQUEST_METHOD'];
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 
+		$form_id = md5(microtime());
+		$_POST['__form_id__'] = $form_id;
+
 		$_POST['name'] = '';
-		$params = array('do_not_remove_errors' => 1);
+		$params = array('do_not_remove_errors' => 1, '__form_id__' => $form_id);
 
 		form($a, $params)
 			->text('name', array('validate' => 'required'))
@@ -51,7 +54,7 @@ class class_form_validate_test extends yf_unit_tests {
 
 		form($a, $params)
 			->text('name')
-			->validate($rules = array('name' => 'required'), $post = array('name' => ''))
+			->validate($rules = array('name' => 'required'), $post = array('name' => '', '__form_id__' => $form_id))
 			->render();
 		$this->assertEquals(array('name' => 'The Name field is required.'), common()->_get_error_messages());
 
