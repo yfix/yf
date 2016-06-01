@@ -20,8 +20,8 @@ return function() {
 			'type'			=> 'trim|required|xss_clean',
 			'amount'		=> 'trim|required|min_length[1]|max_length[10]|numeric|xss_clean',
 			'percent'		=> 'trim|required|min_length[1]|max_length[4]|numeric|xss_clean',
-			'split_period'	=> 'trim|min_length[1]|max_length[1]|xss_clean',
-			'descr'			=> 'trim|xss_clean',
+			'split_period'	=> 'trim|required|min_length[1]|max_length[1]|xss_clean',
+			'descr'			=> 'trim|required|xss_clean',
 			'duration'		=> 'required_any[duration_*]',
 			'integer'		=> 'integer',
 		])
