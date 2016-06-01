@@ -33,6 +33,7 @@ class yf_form2 {
 	public $CONF_CSRF_PROTECTION = true;
 	public $CONF_CSRF_NAME = '_token';
 	public $CONF_FORM_ID_FIELD = '__form_id__';
+	public $CONF_FORM_AUTOID_PREFIX = 'form_autoid_';
 
 	/**
 	* Catch missing method call
@@ -200,6 +201,10 @@ class yf_form2 {
 		if (!strlen($form_id)) {
 			return [];
 		}
+		$autoid_prefix = $this->CONF_FORM_AUTOID_PREFIX;
+		if (is_unit_test() || (strlen($autoid_prefix) && substr($form_id, 0, strlen($autoid_prefix)) === $autoid_prefix)) {
+			return [];
+		}
 		$extra_override = [];
 		// Data from database have highest priority, so we init it first
 		$all_attrs_override = main()->get_data('form_attributes');
@@ -248,7 +253,7 @@ class yf_form2 {
 			$form_id = $params[$this->CONF_FORM_ID_FIELD];
 		}
 		if (!$form_id) {
-			$form_id = 'form_autoid_'.strtolower($_GET['object'].'_'.$_GET['action']).'_'.++main()->_unique_widget_ids['form'];
+			$form_id = $this->CONF_FORM_AUTOID_PREFIX. strtolower($_GET['object'].'_'.$_GET['action']).'_'.++main()->_unique_widget_ids['form'];
 		}
 		$this->_form_id = $form_id;
 		return $form_id;
