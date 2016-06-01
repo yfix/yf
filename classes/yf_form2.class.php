@@ -285,22 +285,19 @@ class yf_form2 {
 		if ($csrf_protect && is_callable($csrf_protect)) {
 			$csrf_protect = $csrf_protect($this, $extra);
 		}
-
 		if ($csrf_protect) {
-			$csrf_guard = _class('csrf_guard')->configure(array(
+			$csrf_guard = _class('csrf_guard')->configure([
 				'form_id'		=> !empty($form_id) ? $form_id : 'autoid_'.$_GET['object'].'_'.$_GET['action'].'_'.++main()->_csrf_ids,
 				'token_name'	=> $this->CONF_CSRF_NAME,
-			));
+			]);
 		}
 
 		if (is_post()) {
 			if ($csrf_protect && isset($_POST[$this->_form_id_field]) && ($_POST[$this->_form_id_field] == $this->_form_id) && !$csrf_guard->validate($_POST[$this->CONF_CSRF_NAME])) {
-
 				// We need this as validation now is skipping empty values
 				if (!isset($_POST[$this->CONF_CSRF_NAME]) || (trim($_POST[$this->CONF_CSRF_NAME]) == '')) {
 					$_POST[$this->CONF_CSRF_NAME] = '__wrong_token_'.md5(microtime()).'__';
 				}
-                
 				$this->_params['show_alerts'] = true;
 				$this->_validate_rules[$this->CONF_CSRF_NAME] = function($in, $p, $a, &$error_msg) use ($form_id, $csrf_guard) {
 					$csrf_guard->log_error(['form_id' => $form_id]);
@@ -309,7 +306,6 @@ class yf_form2 {
 				};
 				$this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
 				$this->hidden($this->CONF_CSRF_NAME);
-
 			}
 
 			$on_post = isset($extra['on_post']) ? $extra['on_post'] : $this->_on['on_post'];
@@ -326,9 +322,7 @@ class yf_form2 {
 				$func = $up['func'];
 				$func($up['table'], $up['fields'], $up['type'], $up['extra'], $this);
 			}
-		}
-
-		if ($csrf_protect) {
+		} elseif ($csrf_protect) {
             $this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
             $this->hidden($this->CONF_CSRF_NAME);
         }
@@ -510,7 +504,11 @@ class yf_form2 {
 		} else {
 			$rendered = [];
 			foreach ($this->_body as $k => $v) {
-				$rendered[$k] = isset($v['rendered']) ? $v['rendered'] : $v;
+				if (is_array($v) && isset($v['rendered'])) {
+					$rendered[$k] = $v['rendered'];
+				} else {
+					$rendered[$k] = $v;
+				}
 			}
 			$this->_rendered = implode(PHP_EOL, $rendered);
 			unset($rendered);
