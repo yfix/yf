@@ -32,6 +32,7 @@ class yf_form2 {
 	public $CONF_BOXES_USE_BTN_GROUP = false;
 	public $CONF_CSRF_PROTECTION = true;
 	public $CONF_CSRF_NAME = '_token';
+	public $CONF_FORM_ID_FIELD = '__form_id__';
 
 	/**
 	* Catch missing method call
@@ -238,11 +239,44 @@ class yf_form2 {
 	/**
 	*/
 	function _get_form_id($extra = [], $replace = []) {
-		$form_id = $this->_form_id ?: (isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : '');
-		if (!$form_id) {
-			$form_id = 'form_'.++main()->_unique_widget_ids['form'];
+		$form_id = $this->_form_id;
+		$replace = $replace ?: $this->_replace;
+		$params = &$this->_params;
+		if (isset($replace[$this->CONF_FORM_ID_FIELD]) && $replace[$this->CONF_FORM_ID_FIELD]) {
+			$form_id = $replace[$this->CONF_FORM_ID_FIELD];
+		} elseif (isset($params[$this->CONF_FORM_ID_FIELD]) && $params[$this->CONF_FORM_ID_FIELD]) {
+			$form_id = $params[$this->CONF_FORM_ID_FIELD];
 		}
+		if (!$form_id) {
+			$form_id = 'form_autoid_'.strtolower($_GET['object'].'_'.$_GET['action']).'_'.++main()->_unique_widget_ids['form'];
+		}
+		$this->_form_id = $form_id;
 		return $form_id;
+	}
+
+	/**
+	*/
+	function _set_hidden_form_id($form_id = '') {
+		if ($this->_isset_hidden_form_id) {
+			return true;
+		}
+		if (!$form_id) {
+			$form_id = $this->_get_form_id();
+		}
+		$this->_replace[$this->CONF_FORM_ID_FIELD] = $form_id;
+		$this->hidden($this->CONF_FORM_ID_FIELD, ['value' => $form_id]);
+		$this->_isset_hidden_form_id = true;
+	}
+
+	/**
+	*/
+	function _set_hidden_token($csrf_guard) {
+		if ($this->_isset_hidden_token) {
+			return true;
+		}
+		$this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
+		$this->hidden($this->CONF_CSRF_NAME);
+		$this->_isset_hidden_token = true;
 	}
 
 	/**
@@ -287,13 +321,13 @@ class yf_form2 {
 		}
 		if ($csrf_protect) {
 			$csrf_guard = _class('csrf_guard')->configure([
-				'form_id'		=> !empty($form_id) ? $form_id : 'autoid_'.$_GET['object'].'_'.$_GET['action'].'_'.++main()->_csrf_ids,
+				'form_id'		=> $form_id,
 				'token_name'	=> $this->CONF_CSRF_NAME,
 			]);
 		}
-
 		if (is_post()) {
-			if ($csrf_protect && isset($_POST[$this->_form_id_field]) && ($_POST[$this->_form_id_field] == $this->_form_id) && !$csrf_guard->validate($_POST[$this->CONF_CSRF_NAME])) {
+			$is_current_form = isset($_POST[$this->CONF_FORM_ID_FIELD]) && ($_POST[$this->CONF_FORM_ID_FIELD] == $form_id);
+			if ($csrf_protect && $is_current_form && !$csrf_guard->validate($_POST[$this->CONF_CSRF_NAME])) {
 				// We need this as validation now is skipping empty values
 				if (!isset($_POST[$this->CONF_CSRF_NAME]) || (trim($_POST[$this->CONF_CSRF_NAME]) == '')) {
 					$_POST[$this->CONF_CSRF_NAME] = '__wrong_token_'.md5(microtime()).'__';
@@ -304,8 +338,7 @@ class yf_form2 {
 					$error_msg = 'Invalid CSRF token. Send the form again. If you did not send this request then close this page.';
 					return false;
 				};
-				$this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
-				$this->hidden($this->CONF_CSRF_NAME);
+				$this->_set_hidden_token($csrf_guard);
 			}
 
 			$on_post = isset($extra['on_post']) ? $extra['on_post'] : $this->_on['on_post'];
@@ -322,9 +355,9 @@ class yf_form2 {
 				$func = $up['func'];
 				$func($up['table'], $up['fields'], $up['type'], $up['extra'], $this);
 			}
-		} elseif ($csrf_protect) {
-            $this->_replace[$this->CONF_CSRF_NAME] = $csrf_guard->generate();
-            $this->hidden($this->CONF_CSRF_NAME);
+		}
+		if ($csrf_protect) {
+			$this->_set_hidden_token($csrf_guard);
         }
 
 		$r = (array)$this->_replace + (array)$replace;
@@ -467,7 +500,13 @@ class yf_form2 {
 						$data['form'][$name][] = $v['rendered'];
 					}
 				} else {
-					$data['form'][$name] = $v['rendered'];
+					$_rendered = '';
+					if (is_array($v)) {
+						$_rendered = array_key_exists('rendered', $v) ? (string)$v['rendered'] : '';
+					} else {
+						$_rendered = $v;
+					}
+					$data['form'][$name] = $_rendered;
 				}
 			}
 			// Fixes for easier usage
@@ -504,8 +543,8 @@ class yf_form2 {
 		} else {
 			$rendered = [];
 			foreach ($this->_body as $k => $v) {
-				if (is_array($v) && isset($v['rendered'])) {
-					$rendered[$k] = $v['rendered'];
+				if (is_array($v)) {
+					$rendered[$k] = array_key_exists('rendered', $v) ? (string)$v['rendered'] : '';
 				} else {
 					$rendered[$k] = $v;
 				}
@@ -565,7 +604,9 @@ class yf_form2 {
 			}
 			$extra['enctype'] = $enctype;
 			if (!isset($extra['action'])) {
-				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : url('/@object/@action/@id/@page'). $form->_params['links_add'];
+				$get_id = isset($_GET['id']) && strlen($_GET['id']) ? urlencode($_GET['id']) : '';
+				$get_page = isset($_GET['page']) && strlen($_GET['page']) ? urlencode($_GET['page']) : '';
+				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : url('/@object/@action/'.$get_id.'/'.$get_page). $form->_params['links_add'];
 			}
 			if (MAIN_TYPE_USER) {
 				if (strpos($extra['action'], 'http://') === false && strpos($extra['action'], 'https://') !== 0) {
@@ -2541,8 +2582,7 @@ class yf_form2 {
 
 		$func = function($validate_rules, $post, $extra, $form) {
 			$form->_validate_prepare($validate_rules, $extra);
-			$form_id = $form->_form_id;
-			$form_id_field = $form->_form_id_field;
+			$form_id = $form->_get_form_id();
 			// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 			$data = (array)(!empty($post) ? $post : $_POST);
 			foreach ((array)$data as $k => $v) {
@@ -2559,7 +2599,7 @@ class yf_form2 {
 				return $form;
 			}
 			// We need this to validate only correct form on page, where there can be several forms with validation at once
-			if ($form_id && $data[$form_id_field] != $form_id) {
+			if ($form_id && $data[$this->CONF_FORM_ID_FIELD] != $form_id) {
 				return $form;
 			}
 			$on_before_validate = isset($extra['on_before_validate']) ? $extra['on_before_validate'] : $form->_on['on_before_validate'];
@@ -2621,19 +2661,20 @@ class yf_form2 {
 			$this->_validate_rules[$name] = $rules;
 		}
 		$form_id = '';
-		$form_id_field = '__form_id__';
-		if (isset($this->_validate_rules[$form_id_field])) {
-			$form_id = $this->_validate_rules[$form_id_field];
-			unset($this->_validate_rules[$form_id_field]);
-		} elseif (isset($this->_params[$form_id_field])) {
-			$form_id = $this->_params[$form_id_field];
-			unset($this->_params[$form_id_field]);
+		if (isset($this->_validate_rules[$this->CONF_FORM_ID_FIELD])) {
+			$form_id = $this->_validate_rules[$this->CONF_FORM_ID_FIELD];
+			unset($this->_validate_rules[$this->CONF_FORM_ID_FIELD]);
+		} elseif (isset($this->_params[$this->CONF_FORM_ID_FIELD])) {
+			$form_id = $this->_params[$this->CONF_FORM_ID_FIELD];
+			unset($this->_params[$this->CONF_FORM_ID_FIELD]);
 		}
 		if ($form_id) {
 			$this->_form_id = $form_id;
-			$this->_form_id_field = $form_id_field;
-			$this->hidden($form_id_field, ['value' => $form_id]);
+		} else {
+			$form_id = $this->_get_form_id();
 		}
+		$this->_set_hidden_form_id($form_id);
+
 		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
 		// Prepare array of rules by form method for quick access
 		if ($this->_validate_rules) {
