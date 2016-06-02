@@ -29,9 +29,9 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function _init() {
-		$this->host   = getenv('REDIS_HOST')   ?: conf('REDIS_HOST')   ?: @constant('REDIS_HOST')   ?: '127.0.0.1';
-		$this->port   = getenv('REDIS_PORT')   ?: conf('REDIS_PORT')   ?: @constant('REDIS_PORT')   ?: 6379;
-		$this->prefix = getenv('REDIS_PREFIX') ?: conf('REDIS_PREFIX') ?: @constant('REDIS_PREFIX') ?: '';
+		$this->host   = getenv('REDIS_HOST')   ?: conf('REDIS_HOST')   ?: defined('REDIS_HOST')   ? REDIS_HOST : '127.0.0.1';
+		$this->port   = getenv('REDIS_PORT')   ?: conf('REDIS_PORT')   ?: defined('REDIS_PORT')   ? REDIS_PORT : 6379;
+		$this->prefix = getenv('REDIS_PREFIX') ?: conf('REDIS_PREFIX') ?: defined('REDIS_PREFIX') ? REDIS_PREFIX : '';
 		$this->port   = intval($this->port);
 		$this->prefix = $this->prefix ? $this->prefix .':' : '';
 	}
