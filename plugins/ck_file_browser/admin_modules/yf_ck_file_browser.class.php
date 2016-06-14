@@ -12,6 +12,8 @@ class yf_ck_file_browser {
 	);
 	public $MIN_FILE_SIZE = 50;
 	protected $base = null;
+	public $ENABLED_IMG_EDIT = true;
+	public $ENABLED_IMG_DELETE = true;
 	
 	/**
 	*/
@@ -131,6 +133,9 @@ class yf_ck_file_browser {
 	* Endpoint for pixlr editor for upload back edited image
 	*/
 	function edit() {
+		if (!$this->ENABLED_IMG_EDIT) {
+			return false;
+		}
 		$img_url= urldecode($_REQUEST['image']);
 		$title	= ltrim(str_replace('|', '/', urldecode($_REQUEST['title'])), '/');
 		$type	= strtolower($_REQUEST['type']);
@@ -178,6 +183,44 @@ class yf_ck_file_browser {
 			. '<br />path: '._prepare_html($title).', size: '.filesize($target)
 			. '<br /><a href="'.$web_path.'" target="_blank"><img src="'.$web_path.'" style="max-width: 200px; max-height: 200px;"></a>'
 			. '<br /><br />'. a(array('href' => '/@object/show/'.urlencode($title), 'title' => 'Go Next', 'target' => ''));
+	}
+
+	/**
+	* Endpoint for delete image (with backuping old)
+	*/
+	function delete_img() {
+		$res = [];
+		if ($this->ENABLED_IMG_DELETE && is_ajax() && is_post() && !empty($_POST['path'])) {
+			$fs_path = parse_url($_POST['path'], PHP_URL_PATH);
+			if (substr($fs_path, 0, strlen($this->TOP_DIR)) === $this->TOP_DIR) {
+				$fs_path = substr($fs_path, strlen($this->TOP_DIR));
+			}
+ 			$fs_path = $this->_real($this->base . '/' . trim($fs_path, '/'));
+			if (is_file($fs_path)) {
+				if ($this->_backup_deleted_img($fs_path) && unlink($fs_path)) {
+					$res = ['result' => 'OK'];
+				} else {
+					$res = ['result' => 'Error: cannot backup or delete image, maybe file or dir permissions?'];
+				}
+			}
+		}
+		return $this->_ajax_out($res);
+	}
+
+	/**
+	* copy old file as revision into separate dir
+	*/
+	function _backup_deleted_img($fs_path) {
+		if (!$fs_path || !file_exists($fs_path)) {
+			return false;
+		}
+		$ext = pathinfo($fs_path, PATHINFO_EXTENSION);
+		$path_wo_ext = substr($fs_path, strlen($this->base), -strlen('.'.$ext));
+		$revs_dir = PROJECT_PATH. 'uploads/.img_revisions/';
+		!file_exists($revs_dir) && _mkdir_m($revs_dir);
+		$revid = date('YmdHis_'.str_pad(substr(microtime(true), 11, 2), 2, '0', STR_PAD_LEFT));
+		$rev_path = $revs_dir. $revid. '__deleted__'. urlencode($path_wo_ext). '.'. $ext;
+		return file_put_contents($rev_path, file_get_contents($fs_path));
 	}
 
 	/**
@@ -326,8 +369,8 @@ class yf_ck_file_browser {
 #							. a('#', 'Choose', 'fa fa-share', '', 'btn-info')
 #							. a('#', 'View', 'fa fa-eye', '')
 #							. a('#', 'Copy', 'fa fa-copy', '')
-#							. a('#', 'Delete', 'fa fa-trash', '', 'btn-danger')
-							. a('#', 'Edit', 'fa fa-edit', '', 'btn-warning')
+							. ($this->ENABLED_IMG_DELETE ? a('#', 'Delete', 'fa fa-trash', '', 'btn-danger btn-delete') : '')
+							. ($this->ENABLED_IMG_EDIT ? a('#', 'Edit', 'fa fa-edit', '', 'btn-warning btn-edit') : '')
 						. '</div>'
 					. '</div>';
 			}
