@@ -51,7 +51,7 @@ class yf_form2_datetime {
 		}
 		$extra['value'] = empty( $extra['value'] ) ? '' : date( $_format_php, $extra['value'] );
 
-		$debug_picker = isset($extra['debug_picker']) ? $extra['debug_picker'] : (bool)@constant('DEBUG_MODE');
+		$debug_picker = isset($extra['debug_picker']) ? $extra['debug_picker'] : (! MAIN_TYPE_ADMIN && (bool)@constant('DEBUG_MODE'));
 
 		asset('bootstrap-datetimepicker');
 		jquery('
