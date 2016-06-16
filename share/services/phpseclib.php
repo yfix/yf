@@ -3,10 +3,11 @@
 
 $config = array(
 	'git_urls' => array('https://github.com/yfix/phpseclib.git' => 'phpseclib/'),
-	'pear' => array('phpseclib/phpseclib/' => ''),
+	'autoload_config' => array('phpseclib/phpseclib/' => 'phpseclib'),
 	'example' => function() {
-		$key = new Crypt_RSA();
-		var_dump($key);
+		$aes = new \phpseclib\Crypt\AES();
+		$aes->setKey('abcdefghijklmnop');
+		var_dump($aes);
 	}
 );
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);
