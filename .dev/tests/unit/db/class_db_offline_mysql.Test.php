@@ -18,9 +18,14 @@ class class_db_offline_mysql_test extends db_offline_abstract {
 		'total_sum'	=> '19,12',
 		'name'		=> 'name\'',
 	);
-	// Temporary off this test
 	public static function _need_skip_test($name) {
-		return true;
+// TODO: really debug this and enable
+//		Something is going wrong, so currently disable some tests
+		if (false !== strpos($name, '_safe')) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	public function test_db_prefix() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
