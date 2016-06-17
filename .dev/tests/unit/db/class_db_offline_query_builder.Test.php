@@ -736,7 +736,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		);
 		$this->assertEquals(
 			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` LEFT JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`',
-			self::qb()->select()->from('user as u')->left_join_raw(DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`')->sql()
+			self::qb()->select()->from('user as u')->left_join_raw('`'.db('articles').'` AS `a` ON `u`.`id` = `a`.`id`')->sql()
 		);
 
 	}
