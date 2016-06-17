@@ -1418,6 +1418,41 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Add raw joint part. Be careful with it, no escaping or wrapping here!
+	*	join_raw(left join table as t on t.id = t1.id)
+	*/
+	public function join_raw($join_type, $sql) {
+		$join_types = array(
+			'left',
+			'right',
+			'inner',
+		);
+		if (!in_array($join_type, $join_types)) {
+			$join_type = '';
+		}
+		$this->_sql[($join_type ? $join_type.'_' : ''). 'join'][] = $sql;
+		return $this;
+	}
+	
+	/**
+	*/
+	public function left_join_raw($sql) {
+		return $this->join_raw('left', $sql);
+	}
+
+	/**
+	*/
+	public function right_join_raw($sql) {
+		return $this->join_raw('right', $sql);
+	}
+
+	/**
+	*/
+	public function inner_join_raw($sql) {
+		return $this->join_raw('inner', $sql);
+	}
+	
+	/**
 	* Examples:
 	*	group_by('user_group')
 	*	group_by(array('supplier','manufacturer'))
