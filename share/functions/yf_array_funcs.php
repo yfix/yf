@@ -28,7 +28,7 @@ if ( ! function_exists('array_build')) {
 	 * @return array
 	 */
 	function array_build($array, Closure $callback)	{
-		$results = array();
+		$results = [];
 		foreach ($array as $key => $value) {
 			list($innerKey, $innerValue) = call_user_func($callback, $key, $value);
 			$results[$innerKey] = $innerValue;
@@ -45,7 +45,7 @@ if ( ! function_exists('array_divide')) {
 	 * @return array
 	 */
 	function array_divide($array) {
-		return array(array_keys($array), array_values($array));
+		return [array_keys($array), array_values($array)];
 	}
 }
 
@@ -58,7 +58,7 @@ if ( ! function_exists('array_dot')) {
 	 * @return array
 	 */
 	function array_dot($array, $prepend = '') {
-		$results = array();
+		$results = [];
 		foreach ($array as $key => $value) {
 			if (is_array($value)) {
 				$results = array_merge($results, array_dot($value, $prepend.$key.'.'));
@@ -93,7 +93,7 @@ if ( ! function_exists('array_fetch')) {
 	 */
 	function array_fetch($array, $key) {
 		foreach (explode('.', $key) as $segment) {
-			$results = array();
+			$results = [];
 			foreach ($array as $value) {
 				$value = (array) $value;
 				$results[] = $value[$segment];
@@ -143,7 +143,7 @@ if ( ! function_exists('array_flatten')) {
 	 * @return array
 	 */
 	function array_flatten($array) {
-		$return = array();
+		$return = [];
 		array_walk_recursive($array, function($x) use (&$return) { $return[] = $x; });
 		return $return;
 	}
@@ -215,7 +215,7 @@ if ( ! function_exists('array_pluck')) {
 	 * @return array
 	 */
 	function array_pluck($array, $value, $key = null) {
-		$results = array();
+		$results = [];
 		foreach ($array as $item) {
 			$itemValue = is_object($item) ? $item->{$value} : $item[$value];
 			// If the key is "null", we will just append the value to the array and keep
@@ -268,7 +268,7 @@ if ( ! function_exists('array_set')) {
 			// to hold the next value, allowing us to create the arrays to hold final
 			// values at the correct depth. Then we'll keep digging into the array.
 			if ( ! isset($array[$key]) || ! is_array($array[$key])) {
-				$array[$key] = array();
+				$array[$key] = [];
 			}
 			$array =& $array[$key];
 		}
@@ -286,7 +286,7 @@ if ( ! function_exists('array_where')) {
 	 * @return array
 	 */
 	function array_where($array, Closure $callback) {
-		$filtered = array();
+		$filtered = [];
 		foreach ($array as $key => $value) {
 			if (call_user_func($callback, $key, $value)) $filtered[$key] = $value;
 		}
