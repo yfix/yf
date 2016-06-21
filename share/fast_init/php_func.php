@@ -11,7 +11,7 @@ return function() {
 		exit('No direct access to method allowed');
 	}
 	// Get console params
-	$params = array();
+	$params = [];
 	foreach ((array)$_SERVER['argv'] as $key => $argv) {
 		if ($argv == '--params' && isset($_SERVER['argv'][$key + 1])) {
 			$params = unserialize($_SERVER['argv'][$key + 1]);

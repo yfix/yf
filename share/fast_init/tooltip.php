@@ -2,7 +2,7 @@
 
 // Fast process help tooltip
 return function() {
-	$tip_info = array();
+	$tip_info = [];
 	// Try to get tip id
 	$TIP_ID = substr($_REQUEST['id'], strlen('help_'));
 	if (empty($TIP_ID) && !main()->USE_SYSTEM_CACHE) {
