@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 	'be' => 'BY',
 	'bg' => 'BG',
 	'cs' => 'CZ',
@@ -31,4 +31,4 @@ return array(
 	'th' => 'TH',
 	'uk' => 'UA',
 	'zh' => 'CN',
-);
+];

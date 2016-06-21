@@ -1,5 +1,5 @@
 <?php
 
-return array(
+return [
 	2 => 'member',
-);
+];
