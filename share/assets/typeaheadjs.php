@@ -1,8 +1,8 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 //			'js' => '//cdn.rawgit.com/yfix/typeahead.js/master/dist/typeahead.jquery.js',
 			'js' => '//cdn.rawgit.com/yfix/typeahead.js/master/dist/typeahead.bundle.min.js',
 /*
@@ -17,9 +17,9 @@ return array(
 				.tt-selectable { cursor: pointer; }
 			',
 */
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

@@ -1,8 +1,8 @@
 <?php
 
 // based on: http://phpjs.org/functions/base64_encode/
-return array(
-	'versions' => array('master' => array(
+return [
+	'versions' => ['master' => [
 		'js' => 
 <<<END
 	function yf_base64_encode_safe(data) {
@@ -39,5 +39,5 @@ return array(
 		return out.replace("+","-").replace("/","*");
 	}
 END
-	)),
-);
+	]],
+];

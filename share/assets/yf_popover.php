@@ -1,7 +1,7 @@
 <?php
 
-return array(
-	'versions' => array('master' => array(
+return [
+	'versions' => ['master' => [
 		'jquery' => 
 			'try {
 				$(".yf_tip").popover({
@@ -11,5 +11,5 @@ return array(
 					"placement" : "bottom",
 				})
 			} catch(e) { console.log(e) }'
-	)),
-);
+	]],
+];

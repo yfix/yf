@@ -1,6 +1,6 @@
 <?php
 
-return array('versions' => array('master' => array(
+return ['versions' => ['master' => [
 	// Ideas from here: http://stackoverflow.com/a/28731847/2521354
 	'jquery' => '
 			var originalLeave = $.fn.popover.Constructor.prototype.leave;
@@ -17,11 +17,11 @@ return array('versions' => array('master' => array(
 				}
 			};
 		'
-	)),
-	'require' => array(
-		'asset' => array(
+	]],
+	'require' => [
+		'asset' => [
 			'jquery',
 			'bootstrap-theme',
-		),
-	),
-);
+		],
+	],
+];

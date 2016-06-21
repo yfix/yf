@@ -1,8 +1,8 @@
 <?php
 
-return array(
-	'require' => array(
-		'asset' => array(
+return [
+	'require' => [
+		'asset' => [
 			'jquery',
 			'angularjs',
 			// 'angular-route',
@@ -17,6 +17,6 @@ return array(
 			'ng-lib-strap',        // mgcrea/angular-strap/v2.0.0-rc.4
 			'ng-lib-select2',      // ui-select/v0.8.3
 			'ng-lib-select',       // deprecated
-		),
-	),
-);
+		],
+	],
+];

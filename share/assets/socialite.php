@@ -1,13 +1,13 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => [
 				'//cdn.rawgit.com/yfix/Socialite/master/socialite.js',
 				'//cdn.rawgit.com/yfix/Socialite/master/extensions/socialite.vkontakte.js',
 				'//cdn.rawgit.com/yfix/Socialite/master/extensions/socialite.youtube.js',
-			),
+			],
 /*
 			'css' => '
 .social-buttons { display: block; list-style: none; padding: 0; margin: 20px; }
@@ -21,9 +21,9 @@ return array(
 .social-buttons .linkedin-share { width: 60px; height: 65px; background-position: -215px 0; }
 			',
 */
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

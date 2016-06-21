@@ -2,7 +2,7 @@
 
 return function() {
 
-return array('versions' => array('master' => array(
+return ['versions' => ['master' => [
 	'css' => '
 		.popover.ajax-user-info { min-width: 350px; min-height: 300px; border: 5px solid black; }
 		.popover.ajax-user-info .popover-content { width: auto; overflow-x: visible; overflow-y: auto; }
@@ -68,19 +68,19 @@ return array('versions' => array('master' => array(
 			});
 			return yf_cache_ajax_user_info[uid];
 		}
-	')),
-	'require' => array(
-		'asset' => array(
+	']],
+	'require' => [
+		'asset' => [
 			'jquery',
 			'jquery-ajax-queue',
 			'bootstrap-theme',
 			'yf_js_popover_fix',
-		),
-	),
-	'config' => array(
+		],
+	],
+	'config' => [
 		'no_cache' => true,
 		'main_type' => 'admin',
-	),
-);
+	],
+];
 
 };

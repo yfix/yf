@@ -1,6 +1,6 @@
 <?php
 
-return array('versions' => array('master' => array('jquery' => 
+return ['versions' => ['master' => ['jquery' => 
 <<<END
 	$("form").each(function() {
 		var form = this;
@@ -57,4 +57,4 @@ return array('versions' => array('master' => array('jquery' =>
 		});
 	});
 END
-)));
+]]];

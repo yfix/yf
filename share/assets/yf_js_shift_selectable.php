@@ -1,6 +1,6 @@
 <?php
 
-return array('versions' => array('master' => array(
+return ['versions' => ['master' => [
 	// Ideas from here: https://gist.github.com/yfix/fefe5204bf42e29884724bb8d40ffb3b
 	// Usage: $form.find("input[type="checkbox"]").shiftSelectable();
 	// replace input[type="checkbox"] with the selector to match your list of checkboxes
@@ -28,8 +28,8 @@ return array('versions' => array('master' => array(
 		'jquery' => '
 			$("form").find("input[type=checkbox]").yf_shift_selectable();
 		',
-	)),
-	'require' => array(
+	]],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

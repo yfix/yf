@@ -1,17 +1,17 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => [
 				'//cdn.rawgit.com/yfix/social-likes/master/social-likes.min.js',
-			),
-			'css' => array(
+			],
+			'css' => [
 				'//cdn.rawgit.com/yfix/social-likes/master/social-likes_birman.css',
-			),
-		),
-	),
-	'require' => array(
+			],
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

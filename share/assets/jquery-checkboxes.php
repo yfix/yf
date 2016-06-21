@@ -1,15 +1,15 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/rmariuzzo/checkboxes.js/master/src/jquery.checkboxes.js',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-	'info' => array(
+	],
+	'info' => [
 		'url' => 'http://rmariuzzo.github.io/checkboxes.js',
 		'name' => 'A jQuery plugin that gives you nice powers over your checkboxes.',
 		'desc' => 'Features
@@ -21,5 +21,5 @@ return array(
 			Data API like Twitter Bootstrap.
 		',
 		'git' => 'https://github.com/rmariuzzo/checkboxes.js',
-	),
-);
+	],
+];

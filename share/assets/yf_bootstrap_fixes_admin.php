@@ -1,9 +1,9 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'css' => array('
+return [
+	'versions' => [
+		'master' => [
+			'css' => ['
 .left_area { margin-left:20px; margin-right:20px; width:410px; float:left; word-wrap:break-word; }
 @media (min-width:1650px) {
 	.left_area { margin-left:1%; margin-right:1%; width:20%; max-width:300px; }
@@ -16,22 +16,22 @@ return array(
 
 .cssfw-bs3 .table .checkbox-inline { padding-top: 0; }
 .cssfw-bs3 textarea { max-width:inherit; min-width: 100%; }
-			'),
-			'jquery' => array(
+			'],
+			'jquery' => [
 #				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
 #				'$("select").not(".portlet select").not(".no-chosen").chosen();',
-			),
-		),
-	),
-	'require' => array(
-		'asset' => array(
+			],
+		],
+	],
+	'require' => [
+		'asset' => [
 			'yf_bootstrap_fixes',
 			'jq-select2',
 #			'chosen',
-		),
-	),
-	'config' => array(
+		],
+	],
+	'config' => [
 		'no_cache' => true,
 		'main_type' => 'admin',
-	),
-);
+	],
+];

@@ -1,13 +1,13 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/brutaldesign/swipebox/master/src/js/jquery.swipebox.js',
 			'css' => '//cdn.rawgit.com/brutaldesign/swipebox/master/src/css/swipebox.css',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

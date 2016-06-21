@@ -1,14 +1,14 @@
 <?php
 
-return array(
-	'versions' => array(
-		'0.2.13' => array(
-			'js' => array(
+return [
+	'versions' => [
+		'0.2.13' => [
+			'js' => [
 				'//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.js',
-			),
-		),
-	),
-	'require' => array(
+			],
+		],
+	],
+	'require' => [
 		'js' => 'angularjs',
-	),
-);
+	],
+];

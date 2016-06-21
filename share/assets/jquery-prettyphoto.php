@@ -1,13 +1,13 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/yfix/prettyphoto/master/js/jquery.prettyPhoto.js',
 			'css' => '//cdn.rawgit.com/yfix/prettyphoto/master/css/prettyPhoto.css',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

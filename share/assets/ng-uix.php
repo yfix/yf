@@ -1,12 +1,12 @@
 <?php
 
 $path = YF_PATH . 'templates/user/js/ng/uix/';
-$js = array(
+$js = [
 	file_get_contents( $path . 'uix.js' ),
 	file_get_contents( $path . 'uix.a.directive.js' ),
 	file_get_contents( $path . 'uix.wait.directive.js' ),
 	file_get_contents( $path . 'uix.animate.directive.js' ),
-);
+];
 
 $css = <<<'EOS'
 a[ng-click] {
@@ -14,18 +14,18 @@ a[ng-click] {
 }
 EOS;
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => [
 				'content' => $js,
-			),
-			'css' => array(
+			],
+			'css' => [
 				'content' => $css,
-			),
-		),
-	),
-	'require' => array(
+			],
+		],
+	],
+	'require' => [
 		'asset' => 'ng-app',
-	),
-);
+	],
+];

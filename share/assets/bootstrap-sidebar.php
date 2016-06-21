@@ -1,16 +1,16 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/yfix/bootstrap-sidebar/master/dist/js/sidebar.js',
 			'css' => '//cdn.rawgit.com/yfix/bootstrap-sidebar/master/dist/css/sidebar.css',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+		],
+	],
+	'require' => [
+		'asset' => [
 			'jquery',
 #			'bootstrap-theme',
-		),
-	),
-);
+		],
+	],
+];

@@ -1,17 +1,17 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => [
 				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-jquery-ui.js',
-			),
-		),
-	),
-	'require' => array(
-		'asset' => array(
+			],
+		],
+	],
+	'require' => [
+		'asset' => [
 			'jquery-ui',
 			'blueimp-uploader',
-		),
-	),
-);
+		],
+	],
+];

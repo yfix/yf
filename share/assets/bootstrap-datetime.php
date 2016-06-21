@@ -1,13 +1,13 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/yfix/bootstrap-datetimepicker/master/build/js/bootstrap-datetimepicker.min.js',
 			'css' => '//cdn.rawgit.com/yfix/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

@@ -1,15 +1,15 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => 'CKEDITOR.plugins.addExternal("pbckcode", "https://cdn.rawgit.com/prbaron/pbckcode/master/plugin.js");',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'ckeditor',
-	),
-	'config' => array(
+	],
+	'config' => [
 		'no_cache' => true,
-	),
-);
+	],
+];
