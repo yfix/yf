@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'title' => 'How printers could boost clean tech',
     'head_text' => 'Researchers at PARC, famed for its computing innovations, say printers and copiers have a lot to offer on the eco-tech front.',
@@ -44,9 +44,9 @@ And naturally, it has a copier legacy. The hope is that the membranes could be p
     'meta_desc' => '',
     'add_date' => '1107236035',
     'active' => '1',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'title' => 'It\'s gadgets galore   at CTIA Wireless',
     'head_text' => 'Wireless companies are using the trade show to launch new phones and services. Sprint is adding the BlackBerry Curve 8330 to its lineup.',
@@ -73,9 +73,9 @@ Now, these were just some of the highlights and as you can tell, there\'s plenty
     'meta_desc' => '',
     'add_date' => '1207136035',
     'active' => '1',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'title' => 'Zimbabwe rivals to attend summit',
     'head_text' => 'Zimbabwe\'s Robert Mugabe and opposition leader Morgan Tsvangirai will attend an emergency regional summit.',
@@ -152,9 +152,9 @@ Meanwhile, the Food and Agriculture Organisation warned food security in Zimbabw
     'meta_desc' => '',
     'add_date' => '1443527340',
     'active' => '1',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'title' => 'Olympics to \'rebound from crisis\'',
     'head_text' => 'The head of the International Olympic Committee has said anti-China protests had created a "crisis" but that the Games in Beijing would "rebound".',
@@ -228,5 +228,5 @@ It is due to arrive in the Argentine capital, Buenos Aires, later this week.',
     'meta_desc' => '',
     'add_date' => '1443511080',
     'active' => '1',
-  ),
-);
+  ],
+];

@@ -5,11 +5,11 @@ define('YF_PATH', dirname(dirname(__DIR__)).'/');
 
 // TODO: glob(PROJECT_PATH.'share/db/sql/sys_*.sql.php')
 // TODO: glob(PROJECT_PATH.'plugins/*/share/db/sql/sys_*.sql.php')
-$paths = array(
+$paths = [
 	YF_PATH.'share/db/sql/sys_*.sql.php',
 	YF_PATH.'plugins/*/share/db/sql/sys_*.sql.php',
-);
-$sys_tables = array();
+];
+$sys_tables = [];
 foreach ($paths as $glob) {
 	foreach (glob($glob) as $f) {
 		$name = substr(basename($f), strlen('sys_'), -strlen('.sql.php'));

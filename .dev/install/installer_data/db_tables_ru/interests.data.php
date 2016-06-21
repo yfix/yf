@@ -1,8 +1,8 @@
 <?php
-return array (
+return [
   0 => 
-  array (
+  [
     'user_id' => '6',
     'keywords' => ';музыка;кино;',
-  ),
-);
+  ],
+];

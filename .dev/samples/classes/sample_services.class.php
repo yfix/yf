@@ -9,7 +9,7 @@ class sample_services {
 
 	/***/
 	function _hook_side_column() {
-		$items = array();
+		$items = [];
 		$url = url('/@object');
 		$methods = get_class_methods(_class('services'));
 		$sample_methods = get_class_methods($this);
@@ -24,10 +24,10 @@ class sample_services {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = array(
+			$items[] = [
 				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
 				'link'	=> url('/@object/@action/'.$name), // '#head_'.$name,
-			);
+			];
 		}
 		return _class('html')->navlist($items);
 	}
@@ -41,10 +41,10 @@ class sample_services {
 		asset('font-awesome4');
 		foreach ($this->_get_services() as $a) {
 			$name = $a['name'];
-			$sub = array();
+			$sub = [];
 			$sub[] = $docs->_github_link($a['path']);
 			$content = $a['content'];
-			$info = is_array($content) ? $content['info'] : array();
+			$info = is_array($content) ? $content['info'] : [];
 			if ($info['name']) {
 				$sub[] = '<b>'.t('name').'</b>: '.$info['name'];
 			}
@@ -57,29 +57,29 @@ class sample_services {
 			if ($info['git']) {
 				$sub[] = '<b>'.t('git').'</b>: <a href="'.$info['git'].'">'.$info['git'].'</a>';
 			}
-			$data[$name] = array(
+			$data[$name] = [
 				'name'	=> $name,
 				'link'	=> url('/@object/@action/#'.$name),
 				'sub'	=> $sub,
 				'id'	=> $name,
 #				'class'	=> 'btn btn-default btn-small btn-sm',
-			);
+			];
 		}
 		return html()->li($data);
 	}
 
 	/***/
 	public function _get_services() {
-		$services = array();
+		$services = [];
 		$suffix = '.php';
 		$dir = 'share/services/';
 		$pattern = $dir. '*'. $suffix;
-		$globs = array(
+		$globs = [
 			'yf_main'		=> YF_PATH. $pattern,
 			'yf_plugins'	=> YF_PATH. 'plugins/*/'. $pattern,
-		);
+		];
 		$slen = strlen($suffix);
-		$names = array();
+		$names = [];
 		foreach($globs as $gname => $glob) {
 			foreach(glob($glob) as $path) {
 				$name = substr(basename($path), 0, -$slen);
@@ -90,11 +90,11 @@ class sample_services {
 			if (substr($name, 0, 1) === '_') {
 				continue;
 			}
-			$services[$name] = array(
+			$services[$name] = [
 				'name'	=> $name,
 				'path'	=> $path,
 				'raw'	=> file_get_contents($path),
-			);
+			];
 		}
 		return $services;
 	}

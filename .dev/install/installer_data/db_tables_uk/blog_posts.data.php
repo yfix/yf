@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   6 => 
-  array (
+  [
     'id' => '6',
     'id2' => '1',
     'user_name' => 'serega',
@@ -31,9 +31,9 @@ return array (
     'activity' => '10',
     'old_id' => '0',
     'mask' => '0',
-  ),
+  ],
   7 => 
-  array (
+  [
     'id' => '7',
     'id2' => '1',
     'user_name' => 'serega',
@@ -58,9 +58,9 @@ return array (
     'activity' => '0',
     'old_id' => '0',
     'mask' => '0',
-  ),
+  ],
   8 => 
-  array (
+  [
     'id' => '8',
     'id2' => '1',
     'user_name' => 'serega',
@@ -88,9 +88,9 @@ return array (
     'activity' => '10',
     'old_id' => '0',
     'mask' => '0',
-  ),
+  ],
   9 => 
-  array (
+  [
     'id' => '9',
     'id2' => '1',
     'user_name' => 'kingargyle',
@@ -124,5 +124,5 @@ Decoded день первый
     'activity' => '10',
     'old_id' => '0',
     'mask' => '0',
-  ),
-);
+  ],
+];

@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'cat_id' => '0',
     'name' => 'about',
@@ -73,9 +73,9 @@ modification follow.</p>',
     'meta_desc' => '',
     'locale' => '0',
     'active' => '1',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'cat_id' => '0',
     'name' => 'faq',
@@ -130,9 +130,9 @@ To make easily process of searching translation, please, use language code in br
     'meta_desc' => '',
     'locale' => '0',
     'active' => '1',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'cat_id' => '0',
     'name' => 'terms',
@@ -331,9 +331,9 @@ Kiddies and grown-ups too!</p>',
     'meta_desc' => '',
     'locale' => '0',
     'active' => '1',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'cat_id' => '0',
     'name' => 'privacy',
@@ -484,5 +484,5 @@ You\'re \'Fifty North and Forty West!\'</p>',
     'meta_desc' => '',
     'locale' => '0',
     'active' => '1',
-  ),
-);
+  ],
+];

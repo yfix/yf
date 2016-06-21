@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   7 => 
-  array (
+  [
     'id' => '7',
     'forum' => '2',
     'name' => 'Seagate Barracuda 7200.7 IDE',
@@ -22,9 +22,9 @@ return array (
     'moved_to' => '',
     'approved' => '1',
     'language' => '0',
-  ),
+  ],
   8 => 
-  array (
+  [
     'id' => '8',
     'forum' => '2',
     'name' => 'цифровой дом',
@@ -45,5 +45,5 @@ return array (
     'moved_to' => '',
     'approved' => '1',
     'language' => '0',
-  ),
-);
+  ],
+];

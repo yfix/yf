@@ -18,7 +18,7 @@ function _resize($f = '', $s = '') {
 		return false;
 	}
 	if (!is_array($f)) {
-		$f = array($f => $s);
+		$f = [$f => $s];
 	}
 	foreach ((array)$f as $_f => $_s) {
 		$ts = microtime(true);
@@ -37,7 +37,7 @@ function _resize($f = '', $s = '') {
 }
 
 foreach(glob('./*/*/') as $dir) {
-	$to_resize = array();
+	$to_resize = [];
 	foreach(glob($dir.'product_*_full.jpg') as $img_full) {
 		$img_small = str_replace('_full.jpg', '_small.jpg', $img_full);
 		if (!filesize($img_full)) {

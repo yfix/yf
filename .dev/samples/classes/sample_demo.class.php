@@ -9,7 +9,7 @@ class sample_demo {
 
 	/***/
 	function _hook_side_column() {
-		$items = array();
+		$items = [];
 		$url = url('/@object');
 		$methods = $this->_get_demos();
 		$sample_methods = get_class_methods($this);
@@ -24,10 +24,10 @@ class sample_demo {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = array(
+			$items[] = [
 				'name'	=> $name,
 				'link'	=> url('/@object/@action/'.urlencode($name)),
-			);
+			];
 		}
 		return _class('html')->navlist($items);
 	}
@@ -54,12 +54,12 @@ class sample_demo {
 				$self_source = _class('core_api')->get_function_source($body);
 				$body = $body();
 			} else {
-				$self_source = array(
+				$self_source = [
 					'name'		=> $name,
 					'file'		=> $f,
 					'line_start'=> 1,
 					'source'	=> $body,
-				);
+				];
 			}
 			$prev = '';
 			$next = '';
@@ -94,12 +94,12 @@ class sample_demo {
 			return implode(PHP_EOL, [$header, '<section class="page-contents">'.tpl()->parse_string($body, $replace, 'demo_'.$name).'</section>']);
 		}
 		$url = rtrim(url('/@object/@action/')).'/';
-		$data = array();
+		$data = [];
 		foreach ((array)$names as $name) {
-			$data[$name] = array(
+			$data[$name] = [
 				'name'	=> $name,
 				'link'	=> $url. urlencode($name),
-			);
+			];
 		}
 		ksort($data);
 		return html()->li($data);
@@ -111,7 +111,7 @@ class sample_demo {
 		$dir_len = strlen($dir);
 		$ext = '.php';
 		$ext_len = strlen($ext);
-		$names = array();
+		$names = [];
 		foreach ((array)_class('dir')->rglob($dir) as $path) {
 			if (substr($path, -$ext_len) !== $ext) {
 				continue;

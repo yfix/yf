@@ -33,7 +33,7 @@ function save_url_to_file($url, $file) {
 
 function get_urls_from_css($css) {
 	preg_match_all('~url\(\'(?P<url>.*?)\'\)~ims', $css, $m);
-	$urls = array();
+	$urls = [];
 	foreach ((array)$m['url'] as $url) {
 		if (substr($url, 0, strlen('../')) === '../') {
 			$url = substr($url, strlen('../'));

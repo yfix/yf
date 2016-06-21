@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   7 => 
-  array (
+  [
     'id' => '7',
     'cat_id' => '28',
     'user_id' => '6',
@@ -57,9 +57,9 @@ return array (
     'views' => '0',
     'short_url' => '',
     'activity' => '100',
-  ),
+  ],
   8 => 
-  array (
+  [
     'id' => '8',
     'cat_id' => '28',
     'user_id' => '6',
@@ -105,9 +105,9 @@ return array (
     'views' => '0',
     'short_url' => '',
     'activity' => '0',
-  ),
+  ],
   9 => 
-  array (
+  [
     'id' => '9',
     'cat_id' => '54',
     'user_id' => '7',
@@ -171,9 +171,9 @@ return array (
     'views' => '0',
     'short_url' => '',
     'activity' => '100',
-  ),
+  ],
   10 => 
-  array (
+  [
     'id' => '10',
     'cat_id' => '54',
     'user_id' => '7',
@@ -222,9 +222,9 @@ return array (
     'views' => '0',
     'short_url' => '',
     'activity' => '0',
-  ),
+  ],
   11 => 
-  array (
+  [
     'id' => '11',
     'cat_id' => '28',
     'user_id' => '4',
@@ -319,9 +319,9 @@ return array (
     'views' => '4',
     'short_url' => '',
     'activity' => '100',
-  ),
+  ],
   12 => 
-  array (
+  [
     'id' => '12',
     'cat_id' => '52',
     'user_id' => '4',
@@ -361,9 +361,9 @@ return array (
     'views' => '1',
     'short_url' => '',
     'activity' => '100',
-  ),
+  ],
   13 => 
-  array (
+  [
     'id' => '13',
     'cat_id' => '28',
     'user_id' => '7',
@@ -411,9 +411,9 @@ return array (
     'views' => '1',
     'short_url' => '',
     'activity' => '100',
-  ),
+  ],
   14 => 
-  array (
+  [
     'id' => '14',
     'cat_id' => '54',
     'user_id' => '1',
@@ -445,5 +445,5 @@ return array (
     'views' => '1',
     'short_url' => '',
     'activity' => '0',
-  ),
-);
+  ],
+];

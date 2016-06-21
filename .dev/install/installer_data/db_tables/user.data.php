@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'group' => '2',
     'name' => '',
@@ -40,5 +40,5 @@ return array (
     'emails' => '0',
     'emailssent' => '0',
     'go_after_login' => '',
-  ),
-);
+  ],
+];

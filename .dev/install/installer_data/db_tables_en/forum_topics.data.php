@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'forum' => '1',
     'name' => 'postfix',
@@ -22,9 +22,9 @@ return array (
     'moved_to' => '',
     'approved' => '1',
     'language' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'forum' => '1',
     'name' => 'linux',
@@ -45,9 +45,9 @@ return array (
     'moved_to' => '',
     'approved' => '1',
     'language' => '0',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'forum' => '1',
     'name' => 'windows',
@@ -68,9 +68,9 @@ return array (
     'moved_to' => '',
     'approved' => '1',
     'language' => '0',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'forum' => '2',
     'name' => 'common problems',
@@ -91,9 +91,9 @@ return array (
     'moved_to' => '',
     'approved' => '1',
     'language' => '0',
-  ),
+  ],
   5 => 
-  array (
+  [
     'id' => '5',
     'forum' => '2',
     'name' => 'Feature Request',
@@ -114,9 +114,9 @@ return array (
     'moved_to' => '',
     'approved' => '1',
     'language' => '0',
-  ),
+  ],
   6 => 
-  array (
+  [
     'id' => '6',
     'forum' => '2',
     'name' => 'XSL debugging in Oxygen tutorial',
@@ -137,5 +137,5 @@ return array (
     'moved_to' => '',
     'approved' => '1',
     'language' => '0',
-  ),
-);
+  ],
+];

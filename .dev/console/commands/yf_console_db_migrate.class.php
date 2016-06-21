@@ -20,7 +20,7 @@ class yf_console_db_migrate extends Command {
 		require_once $yf_paths['db_setup_path'];
 		init_yf();
 
-		$params = array();
+		$params = [];
 		// Parse arguments like that: k1=v1 k2=v2 into array('k1' => 'v1', 'k2' => 'v2')
 		foreach ((array)$input->getArgument('params') as $p) {
 			list($k, $v) = explode('=', trim($p));
@@ -33,7 +33,7 @@ class yf_console_db_migrate extends Command {
 
 		$method = $input->getArgument('method');
 
-		$methods = array(
+		$methods = [
 			'compare'	=> 'compare',
 			'generate'	=> 'generate',
 			'create'	=> 'create',
@@ -41,7 +41,7 @@ class yf_console_db_migrate extends Command {
 			'list'		=> '_list',
 			'dump'		=> 'dump',
 			'sync'		=> 'sync',
-		);
+		];
 		if ($method && isset($methods[$method])) {
 			$func = $methods[$method];
 			$text = db()->migrator()->$func($params);
@@ -51,11 +51,11 @@ class yf_console_db_migrate extends Command {
 			$output->writeln($text);
 		} else {
 			$table = $this->getHelperSet()->get('table');
-			$rows = array();
+			$rows = [];
 			foreach ($methods as $name => $real_name) {
-				$rows[] = array($name);
+				$rows[] = [$name];
 			}
-			$table->setHeaders(array('Sub-commands'))
+			$table->setHeaders(['Sub-commands'])
 				->setRows($rows);
 			$table->render($output);
 		}

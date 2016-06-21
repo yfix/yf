@@ -3,17 +3,17 @@
 
 require dirname(__DIR__).'/bash_colors.php';
 
-$tests = array(
-	'yui_css' => array('echo "%s" | yuicompressor --type css', '.test { color:red; }', '.test{color:red}'),
-	'yui_js' => array('echo "%s" | yuicompressor --type js', 'var a = "123";', 'var a=123;'),
+$tests = [
+	'yui_css' => ['echo "%s" | yuicompressor --type css', '.test { color:red; }', '.test{color:red}'],
+	'yui_js' => ['echo "%s" | yuicompressor --type js', 'var a = "123";', 'var a=123;'],
 #	'cssembed' => array('echo "%s" | cssembed --root /', '@import (test.css)', '@import ""'),
-);
+];
 foreach ($tests as $name => $info) {
 	$cmd = $info[0];
 	$input = $info[1];
 	$expected = $info[2];
 	$ts = microtime(true);
-	$result = array();
+	$result = [];
 	$result_color = '';
 	$error = '';
 	exec(sprintf($cmd, $input).' 2>/dev/null', $result);

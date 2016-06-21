@@ -3,9 +3,9 @@
 if (!function_exists('html_table_to_array')) {
 function html_table_to_array($html) {
 	if (!preg_match_all('~<tr[^>]*>(.*?)</tr>~ims', $html, $m)) {
-		return array();
+		return [];
 	}
-	$tmp_tbl = array();
+	$tmp_tbl = [];
 	foreach ($m[1] as $v) {
 		if (!preg_match_all('~<td[^>]*>(.*?)</td>~ims', $v, $m2)) {
 			continue;

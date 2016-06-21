@@ -6,7 +6,7 @@ if (!$project_path) {
 	exit('Error: missing project_path. Example: '.basename($argv[0]).' /home/www/test2/'.PHP_EOL);
 }
 $project_path = rtrim($project_path, '/').'/';
-foreach (array('', '*/', '*/*/', '*/*/*/') as $g) {
+foreach (['', '*/', '*/*/', '*/*/*/'] as $g) {
 	$paths = glob($project_path. $g. 'db_setup.php');
 	if (!$paths || !isset($paths[0])) {
 		continue;

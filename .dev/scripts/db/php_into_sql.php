@@ -4,10 +4,10 @@
 require_once dirname(__DIR__).'/scripts_init.php';
 
 $ext = '.sql_php.php';
-$globs_php = array(
+$globs_php = [
 	'yf_main'		=> YF_PATH.'share/db/sql_php/*'.$ext,
 	'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*'.$ext,
-);
+];
 foreach ($globs_php as $glob) {
 	foreach (glob($glob) as $f) {
 		echo '== '.$f. PHP_EOL;
@@ -44,7 +44,7 @@ foreach ($globs_php as $glob) {
 		unset($sql_a[$last_index]);
 
 		// Add commented table attributes
-		$options = array();
+		$options = [];
 		foreach ((array)$data['options'] as $k => $v) {
 			if ($k == 'charset') {
 				$k = 'DEFAULT CHARSET';

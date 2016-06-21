@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   2 => 
-  array (
+  [
     'id' => '2',
     'cat_id' => '28',
     'user_id' => '1',
@@ -63,9 +63,9 @@ When new instruments came to the pilot\'s panel, and ground/air radio aids to na
     'views' => '0',
     'short_url' => 'aviation_flight_control_instruments_developed_before_world_war_i',
     'activity' => '0',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'cat_id' => '28',
     'user_id' => '1',
@@ -227,9 +227,9 @@ Alpharetta, GA 30004" ',
     'views' => '4',
     'short_url' => 'tomcats_and_boeing_777s__combat_missions_with_airborne_refuelin',
     'activity' => '0',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'cat_id' => '28',
     'user_id' => '1',
@@ -308,9 +308,9 @@ Hitler was a late convert to the U-Boat, favoring investments in air power and h
     'views' => '0',
     'short_url' => 'u_s_military_draft_and_pearl_harbor',
     'activity' => '0',
-  ),
+  ],
   5 => 
-  array (
+  [
     'id' => '5',
     'cat_id' => '54',
     'user_id' => '1',
@@ -391,9 +391,9 @@ Phone, Bluetooth interfere? If your wireless connection slows down or gets flaky
     'views' => '0',
     'short_url' => 'troubleshooting_laptop_wireless_connections',
     'activity' => '0',
-  ),
+  ],
   6 => 
-  array (
+  [
     'id' => '6',
     'cat_id' => '30',
     'user_id' => '6',
@@ -422,5 +422,5 @@ Jenny McLane is a 36 year old native of Iowa and has a knack for research on car
     'views' => '0',
     'short_url' => '2005_bmw_m5_performance_and_luxury_at_its_best_at_partstrain',
     'activity' => '0',
-  ),
-);
+  ],
+];

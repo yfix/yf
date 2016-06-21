@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   7 => 
-  array (
+  [
     'id' => '7',
     'cat_id' => '52',
     'user_id' => '4',
@@ -61,9 +61,9 @@ return array (
     'views' => '2',
     'short_url' => '',
     'activity' => '0',
-  ),
+  ],
   8 => 
-  array (
+  [
     'id' => '8',
     'cat_id' => '30',
     'user_id' => '4',
@@ -105,9 +105,9 @@ Dupont Cordura (вставки). Жесткие защитные вставки,
     'views' => '2',
     'short_url' => '',
     'activity' => '100',
-  ),
+  ],
   9 => 
-  array (
+  [
     'id' => '9',
     'cat_id' => '48',
     'user_id' => '5',
@@ -197,9 +197,9 @@ Dupont Cordura (вставки). Жесткие защитные вставки,
     'views' => '4',
     'short_url' => '',
     'activity' => '0',
-  ),
+  ],
   10 => 
-  array (
+  [
     'id' => '10',
     'cat_id' => '39',
     'user_id' => '5',
@@ -266,9 +266,9 @@ Dupont Cordura (вставки). Жесткие защитные вставки,
     'views' => '4',
     'short_url' => '',
     'activity' => '100',
-  ),
+  ],
   11 => 
-  array (
+  [
     'id' => '11',
     'cat_id' => '33',
     'user_id' => '1',
@@ -290,5 +290,5 @@ Dupont Cordura (вставки). Жесткие защитные вставки,
     'views' => '0',
     'short_url' => '',
     'activity' => '0',
-  ),
-);
+  ],
+];

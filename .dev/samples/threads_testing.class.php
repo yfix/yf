@@ -5,9 +5,9 @@ class test2 {
 	function show () {
 		$threads = _class('threads');
 		for ($i = 0; $i < 10; $i++) {
-			$threads->new_framework_thread($_GET['object'], 'console', array('id' => $i));
+			$threads->new_framework_thread($_GET['object'], 'console', ['id' => $i]);
 		}
-		$results = array();
+		$results = [];
 		while (false !== ($result = $threads->iteration())) {
 			if (!empty($result)) {
 				$results[$result[0]] = $result[1];

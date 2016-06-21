@@ -27,7 +27,7 @@ class yf_console_langs_export extends Command {
 				continue;
 			}
 			$fname = './langs_exported_'.$lang.'.csv';
-			$data = array();
+			$data = [];
 			$data['__'] = '"key";"val"';
 			foreach((array)$tr_vars as $k => $v) {
 				$k = trim($k);

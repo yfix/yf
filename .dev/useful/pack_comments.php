@@ -7,16 +7,16 @@ $GLOBALS['main'] = new yf_main("user", 1, 0);
 
 $DIR_OBJ = $GLOBALS['main']->init_class("dir", "classes/");
 
-$sub_dirs = array(
+$sub_dirs = [
 	YF_PATH."admin_modules/",
 	YF_PATH."classes/",
 	YF_PATH."modules/",
-);
+];
 $pattern_include	= "/\.class\.php\$/i";
 $pattern_exclude	= "/svn/ims";
 $pattern_find		= "/\t[\s]{0,1}\*\s[\r\n]{1,2}\t[\s]{0,1}\*\s@access\t(public|private)[\r\n]{1,2}\t[\s]{0,1}\*\s@param[\r\n]{1,2}\t[\s]{0,1}\*\s@return[\r\n]{1,2}/ims";
 $pattern_replace	= "";
-$files = array();
+$files = [];
 foreach ((array)$sub_dirs as $_dir_name) {
 	foreach ((array)$DIR_OBJ->scan_dir($_dir_name, 1, $pattern_include, $pattern_exclude) as $_file_path) {
 		$files[] = $_file_path;

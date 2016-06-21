@@ -5,7 +5,7 @@ $tmp_dir = "../gzip_cache/";
 // Base folder where include gzipped content allowed
 $doc_root = realpath(".");
 // List of known content types based on file extension.
-$known_content_types = array(
+$known_content_types = [
 	 "htm"  => "text/html",
 	 "html" => "text/html",
 	 "js"	=> "text/javascript",
@@ -16,7 +16,7 @@ $known_content_types = array(
 	 "jpeg" => "image/jpeg",
 	 "png"  => "image/png",
 	 "txt"  => "text/plain"
-);
+];
 
 ob_start();
 

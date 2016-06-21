@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'object_name' => 'blog',
     'object_id' => '1',
@@ -14,9 +14,9 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'object_name' => 'gallery',
     'object_id' => '1',
@@ -29,9 +29,9 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'object_name' => 'news',
     'object_id' => '2',
@@ -44,9 +44,9 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'object_name' => 'gallery',
     'object_id' => '1',
@@ -59,9 +59,9 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   5 => 
-  array (
+  [
     'id' => '5',
     'object_name' => 'blog',
     'object_id' => '3',
@@ -74,9 +74,9 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   6 => 
-  array (
+  [
     'id' => '6',
     'object_name' => 'news',
     'object_id' => '3',
@@ -89,9 +89,9 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   7 => 
-  array (
+  [
     'id' => '7',
     'object_name' => 'articles',
     'object_id' => '3',
@@ -104,5 +104,5 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '0',
-  ),
-);
+  ],
+];

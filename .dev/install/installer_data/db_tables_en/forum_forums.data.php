@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'parent' => '0',
     'category' => '1',
@@ -19,9 +19,9 @@ return array (
     'language' => '0',
     'options' => '',
     'user_groups' => '',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'parent' => '0',
     'category' => '1',
@@ -39,5 +39,5 @@ return array (
     'language' => '0',
     'options' => '',
     'user_groups' => '',
-  ),
-);
+  ],
+];

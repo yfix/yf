@@ -10,7 +10,7 @@ class sample_all {
 
 	/***/
 	function _hook_side_column() {
-		$items = array();
+		$items = [];
 		$url = url('/@object');
 		$methods = $this->_get_texts();
 		$sample_methods = get_class_methods($this);
@@ -25,10 +25,10 @@ class sample_all {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = array(
+			$items[] = [
 				'name'	=> $name/*. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : '')*/,
 				'link'	=> url('/@object/@action/'.urlencode($name)),
-			);
+			];
 		}
 		return _class('html')->navlist($items);
 	}
@@ -62,7 +62,7 @@ class sample_all {
 		$dir_len = strlen($dir);
 		$ext = '.stpl';
 		$ext_len = strlen($ext);
-		$names = array();
+		$names = [];
 		foreach ((array)_class('dir')->rglob($dir) as $path) {
 			if (substr($path, -$ext_len) !== $ext) {
 				continue;

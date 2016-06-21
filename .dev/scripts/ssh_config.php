@@ -31,14 +31,14 @@ if (!function_exists('ssh_exec_all')) {
 	function ssh_exec_all ($group_name = '', $cmd = '') {
 		static $server_groups, $server_groups_names, $server_groups, $server_groups_names, $servers, $servers_ids_by_group;
 		if (empty($servers)) {
-			$server_groups = array();
-			$server_groups_names = array();
+			$server_groups = [];
+			$server_groups_names = [];
 			foreach(db_pf()->get_all('SELECT * FROM '.db_pf('server_group')) as $a) {
 				$server_groups[$a['id']] = $a['name'];
 				$server_groups_names[$a['name']] = $a['id'];
 			}
 			$servers = db_pf()->get_all('SELECT * FROM '.db_pf('servers').' WHERE active="1"');
-			$servers_ids_by_group = array();
+			$servers_ids_by_group = [];
 			foreach ($servers as $a) {
 				$servers_ids_by_group[$a['group']][$a['id']] = $a['id'];
 			}
