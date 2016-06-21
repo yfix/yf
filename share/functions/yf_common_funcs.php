@@ -423,7 +423,9 @@ if (!function_exists('_var_export')) {
 function _var_export($data) {
 	$str = var_export($data, 1);
 	$str = str_replace('  ', "\t", $str);
+	$str = preg_replace('~=>[\s]+array\s\(~ims', '=> [', $str);
 	$str = str_replace('array (', '[', $str);
+	$str = str_replace(')', ']', $str);
 	$str = preg_replace('~=>[\s]+array\(~ims', '=> [', $str);
 	return $str;
 }
