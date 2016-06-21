@@ -9,19 +9,19 @@ class yf_manage_users {
 	/**
 	*/
 	function show () {
-		return table('SELECT * FROM '.db(self::table), array(
+		return table('SELECT * FROM '.db(self::table), [
 				'filter' => true,
-				'filter_params' => array(
+				'filter_params' => [
 					'login'	=> 'like',
 					'email'	=> 'like',
 					'name'	=> 'like',
-				),
-			))
+				],
+			])
 			->text('id')
 			->text('login')
 			->text('email')
 			->text('name')
-			->btn_edit(array('no_ajax' => 1))
+			->btn_edit(['no_ajax' => 1])
 			->btn_delete()
 			->btn_active()
 			->btn('log_auth', './?object=log_user_auth&action=show_for_user&id=%d')
@@ -37,14 +37,14 @@ class yf_manage_users {
 	function add() {
 		$a = $_POST;
 		$a['redirect_link'] = url('/@object');
-		return form($a, array('autocomplete' => 'off'))
-			->validate(array(
+		return form($a, ['autocomplete' => 'off'])
+			->validate([
 				'login' => 'trim|required|alpha_numeric|is_unique[user.login]',
 				'email' => 'trim|required|valid_email|is_unique[user.email]',
-			))
-			->db_insert_if_ok(self::table, array('login','email','name','active'), array('add_date' => time()))
+			])
+			->db_insert_if_ok(self::table, ['login','email','name','active'], ['add_date' => time()])
 			->on_after_update(function() {
-				common()->admin_wall_add(array('user added: '.$_POST['login'].'', db()->insert_id()));
+				common()->admin_wall_add(['user added: '.$_POST['login'].'', db()->insert_id()]);
 			})
 			->login()
 			->email()
@@ -63,14 +63,14 @@ class yf_manage_users {
 		$a = db()->query_fetch('SELECT * FROM '.db(self::table).' WHERE id='.intval($_GET['id']));
 		$a['back_link'] = url('/@object');
 		$a['redirect_link'] = url('/@object');
-		return form($a, array('autocomplete' => 'off'))
-			->validate(array(
+		return form($a, ['autocomplete' => 'off'])
+			->validate([
 				'login' => 'trim|alpha_numeric|is_unique_without[user.login.'.$id.']',
 				'email' => 'trim|required|valid_email|is_unique_without[user.email.'.$id.']',
-			))
-			->db_update_if_ok(self::table, array('login','email','name','active', 'birthday'), 'id='.$id)
+			])
+			->db_update_if_ok(self::table, ['login','email','name','active', 'birthday'], 'id='.$id)
 			->on_after_update(function() {
-				common()->admin_wall_add(array('user updated: '.$_POST['login'].'', $id));
+				common()->admin_wall_add(['user updated: '.$_POST['login'].'', $id]);
 			})
 			->login()
 			->email()
@@ -79,7 +79,7 @@ class yf_manage_users {
 			->row_start()
 				->save_and_back()
 				->link('log auth', './?object=log_user_auth&action=show_for_admin&id='.$a['id'])
-				->link('login as', './?object='.$_GET['object'].'&action=login_as&id='.$a['id'], array('display_func' => $func))
+				->link('login as', './?object='.$_GET['object'].'&action=login_as&id='.$a['id'], ['display_func' => $func])
 			->row_end()
 		;
 	}
@@ -91,7 +91,7 @@ class yf_manage_users {
 			$user_info = user($_GET['id']);
 		}
 		if (!empty($user_info)) {
-			db()->update(self::table, array('active' => (int)!$user_info['active']), $user_info['id']);
+			db()->update(self::table, ['active' => (int)!$user_info['active']], $user_info['id']);
 		}
 		cache_del(self::table);
 		if (is_ajax()) {
@@ -113,8 +113,8 @@ class yf_manage_users {
 		$hook_func_name = '_on_delete_account';
 
 		$_user_modules = module('user_modules')->_get_modules();
-		$_user_modules_methods = module('user_modules')->_get_methods(array('private' => 1));
-		$_modules_where_exists = array();
+		$_user_modules_methods = module('user_modules')->_get_methods(['private' => 1]);
+		$_modules_where_exists = [];
 		foreach  ((array)$_user_modules_methods as $module_name => $methods) {
 			if (!in_array($hook_func_name, $methods)) {
 				continue;
@@ -124,7 +124,7 @@ class yf_manage_users {
 		foreach ((array)$_modules_where_exists as $_module_name) {
 			$m = module($_module_name);
 			if (method_exists($m, $hook_func_name)) {
-				$result = $m->$hook_func_name(array('user_id' => $user_id));
+				$result = $m->$hook_func_name(['user_id' => $user_id]);
 			}
 		}
 
@@ -201,22 +201,22 @@ class yf_manage_users {
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
+		if (!in_array($_GET['action'], ['show'])) {
 			return false;
 		}
-		$order_fields = array();
+		$order_fields = [];
 		foreach (explode('|', 'name,login,email|add_date|last_login|num_logins|active') as $f) {
 			$order_fields[$f] = $f;
 		}
-		return form($r, array(
+		return form($r, [
 				'filter' => true,
-			))
+			])
 			->number('id')
 			->text('name')
 			->login('login')
 			->email('email')
-			->select_box('group', main()->get_data('user_groups'), array('show_text' => 1))
-			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->select_box('group', main()->get_data('user_groups'), ['show_text' => 1])
+			->select_box('order_by', $order_fields, ['show_text' => 1])
 			->order_box()
 			->save_and_clear();
 		;
@@ -224,13 +224,13 @@ class yf_manage_users {
 
 	/**
 	*/
-	function _hook_widget__members_stats ($params = array()) {
+	function _hook_widget__members_stats ($params = []) {
 // TODO
 	}
 
 	/**
 	*/
-	function _hook_widget__members_latest ($params = array()) {
+	function _hook_widget__members_latest ($params = []) {
 // TODO
 	}
 }

@@ -8,22 +8,22 @@ class yf_manage_emails {
 	*/
 	function show() {
 		$data = db()->from(self::table)->order_by('name ASC, locale ASC')->get_all();
-		return table($data, array(
+		return table($data, [
 				'pager_records_on_page' => 100,
 				'group_by' => 'name',
-			))
-			->text('name', array('link' => url('/@object/view/%d')))
+			])
+			->text('name', ['link' => url('/@object/view/%d')])
 			->lang('locale')
 			->text('subject')
 			->func('parent_id', function($pid) use ($data) { return $pid ? $data[$pid]['name'].' ['.strtoupper($data[$pid]['locale']).']' : ''; } )
-			->func('text', function($text) { return strlen($text); }, array('desc' => 'Text length') )
-			->btn('Raw', url('/@object/raw/%d'), array('target' => '_blank', 'btn_no_text' => 1))
-			->btn_view('Preview', url('/@object/view/%d'), array('btn_no_text' => 1))
-			->btn('Test send', url('/@object/test_send/%d'), array('icon' => 'fa fa-send', 'no_ajax' => 1, 'btn_no_text' => 1))
-			->btn_edit(array('no_ajax' => 1, 'btn_no_text' => 1))
-			->btn_delete(array('btn_no_text' => 1))
+			->func('text', function($text) { return strlen($text); }, ['desc' => 'Text length'] )
+			->btn('Raw', url('/@object/raw/%d'), ['target' => '_blank', 'btn_no_text' => 1])
+			->btn_view('Preview', url('/@object/view/%d'), ['btn_no_text' => 1])
+			->btn('Test send', url('/@object/test_send/%d'), ['icon' => 'fa fa-send', 'no_ajax' => 1, 'btn_no_text' => 1])
+			->btn_edit(['no_ajax' => 1, 'btn_no_text' => 1])
+			->btn_delete(['btn_no_text' => 1])
 			->btn_active()
-			->footer_add(array('no_ajax' => 1))
+			->footer_add(['no_ajax' => 1])
 		;
 	}
 
@@ -35,16 +35,16 @@ class yf_manage_emails {
 			return _404();
 		}
 		$cur_admin_email = db()->select('email')->from('admin')->whereid(main()->ADMIN_ID)->get_one();
-		$a = (array)$_POST + array(
+		$a = (array)$_POST + [
 			'to_email'		=> $cur_admin_email ?: SITE_ADMIN_EMAIL,
 			'to_name'		=> 'test email receiver',
 			'to_subject'	=> '[email tpl #'.$a['name'].'] '.$a['subject'],
-		) + $a;
+		] + $a;
 		return form($a)
-			->validate(array('to_email' => 'trim|email|required'))
+			->validate(['to_email' => 'trim|email|required'])
 			->on_validate_ok(function($post) use ($a) {
 				conf('language', $a['locale']);
-				$result = _class('email')->_send_email_safe($a['to_email'], $a['to_name'], $a['name'], $a, $instant_send = true, array('subject' => $a['to_subject'], 'force_send' => true));
+				$result = _class('email')->_send_email_safe($a['to_email'], $a['to_name'], $a['name'], $a, $instant_send = true, ['subject' => $a['to_subject'], 'force_send' => true]);
 				if ($result) {
 					common()->message_success('Test email sent successfully');
  				} else {
@@ -54,7 +54,7 @@ class yf_manage_emails {
 			->email('to_email')
 			->text('to_name')
 			->text('to_subject')
-			->submit(array('icon' => 'fa fa-send', 'value' => 'Send'))
+			->submit(['icon' => 'fa fa-send', 'value' => 'Send'])
 			->info('name', 'Email template')
 			->container('<iframe src="'.url('/@object/raw/@id').'" width="100%" height="600" frameborder="0" vspace="0" style="background:white;">Your browser does not support iframes!</iframe>')
 			->container('<iframe src="'.url('/@object/raw_text/@id').'" width="100%" height="600" frameborder="0" vspace="0" style="background:white;">Your browser does not support iframes!</iframe>')
@@ -68,7 +68,7 @@ class yf_manage_emails {
 		if (empty($a)) {
 			return _404();
 		}
-		list($subject, $html) = _class('email')->_get_email_text($replace, array('tpl_name' => $a['name'], 'locale' => $a['locale']));
+		list($subject, $html) = _class('email')->_get_email_text($replace, ['tpl_name' => $a['name'], 'locale' => $a['locale']]);
 		no_graphics(true);
 		$charset = conf('charset');
 		header('Content-type: text/html, charset='.$charset);
@@ -83,7 +83,7 @@ class yf_manage_emails {
 		if (empty($a)) {
 			return _404();
 		}
-		list($subject, $html) = _class('email')->_get_email_text($replace, array('tpl_name' => $a['name'], 'locale' => $a['locale']));
+		list($subject, $html) = _class('email')->_get_email_text($replace, ['tpl_name' => $a['name'], 'locale' => $a['locale']]);
 		$text = _class('email')->_text_from_html($html);
 		no_graphics(true);
 		$charset = conf('charset');
@@ -110,10 +110,10 @@ class yf_manage_emails {
 	/**
 	*/
 	function add() {
-		db()->insert_safe(self::table, array(
+		db()->insert_safe(self::table, [
 			'name' => date('YmdHis'),
 			'active' => 0,
-		));
+		]);
 		$id = db()->insert_id();
 		module_safe('manage_revisions')->add(self::table, $id, 'add');
 		return js_redirect(url('/@object/edit/'.$id));
@@ -135,38 +135,38 @@ class yf_manage_emails {
 		$parents = db()->from(self::table)->where('id != '.$a['id'])->order_by('name ASC, locale ASC')->get_2d('id, CONCAT(name," [", UPPER(locale),"]")');
 
 		$_this = $this;
-		return form((array)$_POST + (array)$a, array(
+		return form((array)$_POST + (array)$a, [
 				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
-			))
-			->validate(array(
+			])
+			->validate([
 				'__before__'=> 'trim',
 				'name'		=> 'required|alpha_dash',
 				'subject'	=> 'required',
 				'text'		=> 'required',
-			))
-			->update_if_ok(self::table, array('name','subject','text','active','parent_id','locale'))
+			])
+			->update_if_ok(self::table, ['name','subject','text','active','parent_id','locale'])
 			->on_before_update(function() use ($a, $_this) {
-				module_safe('manage_revisions')->add(array(
+				module_safe('manage_revisions')->add([
 					'object_name'	=> $_this::table,
 					'object_id'		=> $a['id'],
 					'old'			=> $a,
 					'new'			=> $_POST,
 					'action'		=> 'update',
-				));
+				]);
 			})
 			->on_after_update(function() use ($a) {
-				common()->admin_wall_add(array('Email template updated: '.$a['name'], $a['id']));
+				common()->admin_wall_add(['Email template updated: '.$a['name'], $a['id']]);
 			})
 			->container($this->_get_lang_links($a['locale'], $a['name'], 'edit'))
 			->text('name')
 			->text('subject')
-			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'._prepare_html($a['text']).'</div>', '', array(
+			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'._prepare_html($a['text']).'</div>', '', [
 				'id'	=> $div_id,
 				'wide'	=> 1,
-				'ace_editor' => array('mode' => 'html'),
-			))
+				'ace_editor' => ['mode' => 'html'],
+			])
 			->hidden($hidden_id)
-			->select_box('parent_id', $parents, array('show_text' => '== Select parent template =='))
+			->select_box('parent_id', $parents, ['show_text' => '== Select parent template =='])
 			->active_box()
 			->save_and_back()
 		;
@@ -178,14 +178,14 @@ class yf_manage_emails {
 		$id = (int)$_GET['id'];
 		if ($id) {
 			$a = $this->_get_info();
-			module_safe('manage_revisions')->add(array(
+			module_safe('manage_revisions')->add([
 				'object_name'	=> self::table,
 				'object_id'		=> $a['id'],
 				'old'			=> $a,
 				'action'		=> 'delete',
-			));
+			]);
 			db()->delete(self::table, $id);
-			common()->admin_wall_add(array('Email temptate deleted: '.$id, $id));
+			common()->admin_wall_add(['Email temptate deleted: '.$id, $id]);
 		}
 		if (is_ajax()) {
 			no_graphics(true);
@@ -202,15 +202,15 @@ class yf_manage_emails {
 		if ($a = $this->_get_info()) {
 			$n = $a;
 			$n['active'] = (int)!$a['active'];
-			module_safe('manage_revisions')->add(array(
+			module_safe('manage_revisions')->add([
 				'object_name'	=> self::table,
 				'object_id'		=> $a['id'],
 				'old'			=> $a,
 				'new'			=> $n,
 				'action'		=> 'active',
-			));
-			db()->update_safe(self::table, array('active' => (int)!$a['active']), 'id='.intval($a['id']));
-			common()->admin_wall_add(array('Email template: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
+			]);
+			db()->update_safe(self::table, ['active' => (int)!$a['active']], 'id='.intval($a['id']));
+			common()->admin_wall_add(['Email template: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']]);
 		}
 		if (is_ajax()) {
 			no_graphics(true);
@@ -278,12 +278,12 @@ class yf_manage_emails {
 			$this->pages_langs[$p['name']][$p['locale']] = $p['locale'];
 		}
 
-		$lang_links = array();
+		$lang_links = [];
 		foreach (main()->get_data('locale_langs') as $lang => $l) {
 			$is_selected = ($lang === $cur_lang);
 			$icon = 'bfh-flag-'.$this->lang_def_country[$lang];
 			if (!isset($this->pages_langs[$cur_name][$lang])) {
-				$icon = array('fa fa-plus', $icon);
+				$icon = ['fa fa-plus', $icon];
 				$class = 'btn-warning';
 			} else {
 				$class = 'btn-success'. ($is_selected ? ' disabled' : '');

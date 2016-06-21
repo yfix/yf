@@ -4,9 +4,9 @@ class yf_sitemapxml {
 	function show() {
 		header('Content-Type: text/xml', $replace = true);
 		$host = $_GET['host'] ?: $_SERVER['HTTP_HOST']; // $_GET['host'] just for debug purposes
-		$prod_hosts = main()->PRODUCTION_DOMAIN ?: array();
+		$prod_hosts = main()->PRODUCTION_DOMAIN ?: [];
 		if (is_string($prod_hosts)) {
-			$prod_hosts = array($prod_hosts);
+			$prod_hosts = [$prod_hosts];
 		}
 		if (!main()->is_dev() && in_array($host, $prod_hosts)) {
 			// Currently we have no sitemap

@@ -24,16 +24,16 @@ class yf_admin_groups {
 			return !($row['id'] == $gid);
 		};
 		$menu_id = db()->get_one('SELECT id FROM '.db('menus').' WHERE type="admin" AND active=1 LIMIT 1');
-		return table('SELECT * FROM '.db('admin_groups').' ORDER BY id ASC', array(
-				'custom_fields' => array('members_count' => 'SELECT `group`, COUNT(*) AS num FROM '.db('admin').' GROUP BY `group`'),
+		return table('SELECT * FROM '.db('admin_groups').' ORDER BY id ASC', [
+				'custom_fields' => ['members_count' => 'SELECT `group`, COUNT(*) AS num FROM '.db('admin').' GROUP BY `group`'],
 				'hide_empty' => 1,
-			))
+			])
 			->text('name')
 			->text('go_after_login')
-			->text('members_count', array('link' => url('/admin/filter_save/clear/?filter=group:%d'), 'link_field_name' => 'id'))
-			->btn_edit(array('btn_no_text' => 1))
-			->btn_delete(array('btn_no_text' => 1, 'display_func' => $func))
-			->btn_active(array('display_func' => $func))
+			->text('members_count', ['link' => url('/admin/filter_save/clear/?filter=group:%d'), 'link_field_name' => 'id'])
+			->btn_edit(['btn_no_text' => 1])
+			->btn_delete(['btn_no_text' => 1, 'display_func' => $func])
+			->btn_active(['display_func' => $func])
 			->footer_add()
 			->footer_link('Blocks', url('/blocks/show_rules/'.$admin_center_id))
 			->footer_link('Menu', url('/menus_editor/show_items/'.$menu_id))
@@ -46,14 +46,14 @@ class yf_admin_groups {
 	function add() {
 		$a = $_POST;
 		$a['redirect_link'] = url('/@object');
-		return form($a, array('autocomplete' => 'off'))
-			->validate(array(
+		return form($a, ['autocomplete' => 'off'])
+			->validate([
 				'name' => 'trim|required|alpha_dash|is_unique[admin_groups.name]'
-			))
-			->db_insert_if_ok('admin_groups', array('name','go_after_login','active'), array())
+			])
+			->db_insert_if_ok('admin_groups', ['name','go_after_login','active'], [])
 			->on_after_update(function() {
-				cache_del(array('admin_groups', 'admin_groups_details'));
-				common()->admin_wall_add(array('admin group added: '.$_POST['name'].'', db()->insert_id()));
+				cache_del(['admin_groups', 'admin_groups_details']);
+				common()->admin_wall_add(['admin group added: '.$_POST['name'].'', db()->insert_id()]);
 			})
 			->text('name','Group name')
 			->text('go_after_login','Url after login')
@@ -71,14 +71,14 @@ class yf_admin_groups {
 		$a = db()->from('admin_groups')->whereid($id)->get();
 		$a = (array)$_POST + (array)$a;
 		$a['redirect_link'] = url('/@object');
-		return form($a, array('autocomplete' => 'off'))
-			->validate(array(
+		return form($a, ['autocomplete' => 'off'])
+			->validate([
 				'name' => 'trim|required|alpha_dash|is_unique_without[admin_groups.name.'.$id.']'
-			))
-			->db_update_if_ok('admin_groups', array('name','go_after_login'), 'id='.$id)
+			])
+			->db_update_if_ok('admin_groups', ['name','go_after_login'], 'id='.$id)
 			->on_after_update(function() {
-				cache_del(array('admin_groups', 'admin_groups_details'));
-				common()->admin_wall_add(array('admin group edited: '.$_POST['name'].'', $id));
+				cache_del(['admin_groups', 'admin_groups_details']);
+				common()->admin_wall_add(['admin group edited: '.$_POST['name'].'', $id]);
 			})
 			->text('name', 'Group name')
 			->text('go_after_login', 'Url after login')
@@ -94,9 +94,9 @@ class yf_admin_groups {
 		}
 		if (!empty($_GET['id'])) {
 			db()->query('DELETE FROM '.db('admin_groups').' WHERE id='.intval($_GET['id']).' LIMIT 1');
-			common()->admin_wall_add(array('admin group deleted', $_GET['id']));
+			common()->admin_wall_add(['admin group deleted', $_GET['id']]);
 		}
-		cache_del(array('admin_groups', 'admin_groups_details'));
+		cache_del(['admin_groups', 'admin_groups_details']);
 		if (is_ajax()) {
 			no_graphics(true);
 			echo $_GET['id'];
@@ -113,13 +113,13 @@ class yf_admin_groups {
 			$group_info = db()->query_fetch('SELECT * FROM '.db('admin_groups').' WHERE id='.intval($_GET['id']));
 		}
 		if ($_GET['id'] == 1) {
-			$group_info = array();
+			$group_info = [];
 		}
 		if (!empty($group_info)) {
-			db()->UPDATE('admin_groups', array('active'	=> intval(!$group_info['active'])), 'id='.intval($_GET['id']));
-			common()->admin_wall_add(array('admin group '.$group_info['name'].' '.($group_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+			db()->UPDATE('admin_groups', ['active'	=> intval(!$group_info['active'])], 'id='.intval($_GET['id']));
+			common()->admin_wall_add(['admin group '.$group_info['name'].' '.($group_info['active'] ? 'inactivated' : 'activated'), $_GET['id']]);
 		}
-		cache_del(array('admin_groups', 'admin_groups_details'));
+		cache_del(['admin_groups', 'admin_groups_details']);
 		if (is_ajax()) {
 			no_graphics(true);
 			echo ($group_info['active'] ? 0 : 1);
@@ -130,12 +130,12 @@ class yf_admin_groups {
 
 	/**
 	*/
-	function _hook_wall_link($msg = array()) {
+	function _hook_wall_link($msg = []) {
 		$action = $msg['action'] == 'delete' ? 'show' : 'edit';
 		return url('/admin_groups/'.$action.'/'.$msg['object_id']);
 	}
 
-	function _hook_widget__admin_groups ($params = array()) {
+	function _hook_widget__admin_groups ($params = []) {
 // TODO
 	}
 

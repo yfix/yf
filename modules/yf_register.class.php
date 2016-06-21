@@ -8,29 +8,29 @@ class yf_register {
 	/**
 	*/
 	function show () {
-		$validate_rules = array(
+		$validate_rules = [
 			'__form_id__'	=> 'register_form',
-			'login'			=> array( 'trim|required|min_length[2]|max_length[12]|ajax_is_unique[user.login]|xss_clean', function($in){ return module('register')->_login_not_exists($in); } ),
-			'email'			=> array( 'trim|required|valid_email|ajax_is_unique[user.email]', function($in){ return module('register')->_email_not_exists($in); } ),
+			'login'			=> [ 'trim|required|min_length[2]|max_length[12]|ajax_is_unique[user.login]|xss_clean', function($in){ return module('register')->_login_not_exists($in); } ],
+			'email'			=> [ 'trim|required|valid_email|ajax_is_unique[user.email]', function($in){ return module('register')->_email_not_exists($in); } ],
 			'emailconf'		=> 'trim|required|valid_email|matches[email]',
 			'password'		=> 'trim|required', //|md5
 			'pswdconf'		=> 'trim|required|matches[password]', // |md5
 			'captcha'		=> 'trim|captcha',
-		);
+		];
 		$a = $_POST;
 		$a['redirect_link'] = url('/@object/success');
 // TODO: generate confirmation code and send emails
-		return form($a, array('legend' => 'Registration', 'class_add' => 'col-md-6'))
+		return form($a, ['legend' => 'Registration', 'class_add' => 'col-md-6'])
 			->validate($validate_rules)
-			->db_insert_if_ok('user', array('login','email','password'), null, array('on_success_text' => 'Your account was created successfully!'))
-			->login(array('pattern' => '^[a-zA-Z0-9]{4,32}$', 'title' => 'Only letters and numbers allowed, min 4, max 32 symbols'))
+			->db_insert_if_ok('user', ['login','email','password'], null, ['on_success_text' => 'Your account was created successfully!'])
+			->login(['pattern' => '^[a-zA-Z0-9]{4,32}$', 'title' => 'Only letters and numbers allowed, min 4, max 32 symbols'])
 			->email()
 			->email('emailconf')
 			->password()
 			->password('pswdconf')
 			->captcha()
 			->save()
-			->container(module('login_form')->oauth(array('only_icons' => 1)), array('wide' => 0))
+			->container(module('login_form')->oauth(['only_icons' => 1]), ['wide' => 0])
 		;
 	}
 
@@ -57,14 +57,14 @@ class yf_register {
 	*/
 	function _send_email_with_code ($code = '', $extra = false) {
 		$identify = !empty($extra['identify']) ? $extra['identify'] : $_POST['email'];
-		$replace = array(
+		$replace = [
 			'nick'			=> $identify,
 			'confirm_code'	=> $code,
 			'conf_link'		=> url('/@object/confirm/'.$code),
 			'conf_form_url'	=> url('/login_form/account_inactive'),
 			'admin_name'	=> SITE_ADVERT_NAME,
 			'advert_url'	=> SITE_ADVERT_URL,
-		);
+		];
 		if(isset($extra['add_replace']) && is_array($extra['add_replace'])){
 			$replace = array_merge($replace, $extra['add_replace']);
 		}
@@ -83,13 +83,13 @@ class yf_register {
 	*/
 	function _send_success_email ($extra = false) {
 		$identify = !empty($extra['identify']) ? $extra['identify'] : $_POST['email'];
-		$replace = array(
+		$replace = [
 			'code'			=> $code,
 			'nick'			=> $identify,
 			'password'		=> $_POST['password'],
 			'advert_name'	=> SITE_ADVERT_NAME,
 			'advert_url'	=> SITE_ADVERT_URL,
-		);
+		];
 		$text = tpl()->parse('@object/email_success'.(!empty($_POST['account_type']) ? '_'.$_POST['account_type'] : ''), $replace);
 		// prepare email data
 		$email_from	= SITE_ADMIN_EMAIL;
@@ -107,7 +107,7 @@ class yf_register {
 	function confirm () {
 		// Send registration confirmation email
 		if (!$this->CONFIRM_REGISTER) {
-			return tpl()->parse('@object/confirm_messages', array('msg' => 'confirm_not_needed'));
+			return tpl()->parse('@object/confirm_messages', ['msg' => 'confirm_not_needed']);
 		}
 		// Check confirmation code
 		if (!strlen($_GET['id'])) {
@@ -127,7 +127,7 @@ class yf_register {
 		}
 		// Check if user already confirmed
 		if ($target_user_info['active']) {
-			return tpl()->parse('@object/confirm_messages', array('msg' => 'already_confirmed'));
+			return tpl()->parse('@object/confirm_messages', ['msg' => 'already_confirmed']);
 		}
 		// Check if code is expired
 		if (!common()->_error_exists()) {
@@ -141,8 +141,8 @@ class yf_register {
 			}
 		}
 		if (!common()->_error_exists()) {
-			db()->update('user', array('active' => 1), $user_id);
-			return tpl()->parse('@object/confirm_messages', array('msg' => 'confirm_success'));
+			db()->update('user', ['active' => 1], $user_id);
+			return tpl()->parse('@object/confirm_messages', ['msg' => 'confirm_success']);
 		}
 		$body .= _e();
 		$body .= tpl()->parse('@object/enter_code', $replace3);
@@ -161,8 +161,8 @@ class yf_register {
 			return $this->confirm();
 		}
 		// Display form
-		$replace = array(
-		);
+		$replace = [
+		];
 		return tpl()->parse('@object/enter_code', $replace);
 	}
 
@@ -181,15 +181,15 @@ class yf_register {
 			}
 			if (!common()->_error_exists()) {
 				$code = base64_encode($user_info['id'] . 'wvcn' . time());
-				db()->update('user', array('verify_code' => $code), $user_info['id']);
-				$replace = array(
+				db()->update('user', ['verify_code' => $code], $user_info['id']);
+				$replace = [
 					'nick'			=> $user_info['nick'],
 					'confirm_code'	=> $code,
 					'conf_link'		=> url('/@object/confirm&id='.$code),
 					'conf_form_url'	=> url('/login_form/account_inactive'),
 					'admin_name'	=> SITE_ADVERT_NAME,
 					'advert_url'	=> SITE_ADVERT_URL,
-				);
+				];
 				$text = tpl()->parse('@object/email_confirm_'.$this->_account_types[$user_info['group']], $replace);
 				// Prepare email
 				$email_from	= SITE_ADMIN_EMAIL;

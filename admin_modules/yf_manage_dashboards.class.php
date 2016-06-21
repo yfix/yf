@@ -12,44 +12,44 @@ class yf_manage_dashboards {
 	/**
 	* Bootstrap CSS classes used to create configurable grid
 	*/
-	private $_col_classes = array(
+	private $_col_classes = [
 		1 => 'span12 col-md-12 column',
 		2 => 'span6 col-md-6 column',
 		3 => 'span4 col-md-4 column',
 		4 => 'span3 col-md-3 column',
 		6 => 'span2 col-md-2 column',
 		12 => 'span1 col-md-1 column',
-	);
+	];
 
 // TODO: add ability to use user module dashboards also
 
 	/**
 	*/
 	function _init () {
-		$this->_auto_info['php_item'] = array(
+		$this->_auto_info['php_item'] = [
 			'id'			=> 'php_item',
 			'name'			=> 'CLONEABLE: php item name',
 			'desc'			=> 'CLONEABLE: php item desc',
-			'configurable'	=> array(),
+			'configurable'	=> [],
 			'cloneable'		=> 1,
 			'auto_type'		=> 'php_item',
-		);
-		$this->_auto_info['block_item'] = array(
+		];
+		$this->_auto_info['block_item'] = [
 			'id'			=> 'block_item',
 			'name'			=> 'CLONEABLE: block item name',
 			'desc'			=> 'CLONEABLE: block item desc',
-			'configurable'	=> array(),
+			'configurable'	=> [],
 			'cloneable'		=> 1,
 			'auto_type'		=> 'block_item',
-		);
-		$this->_auto_info['stpl_item'] = array(
+		];
+		$this->_auto_info['stpl_item'] = [
 			'id'			=> 'stpl_item',
 			'name'			=> 'CLONEABLE: stpl item name',
 			'desc'			=> 'CLONEABLE: stpl item desc',
-			'configurable'	=> array(),
+			'configurable'	=> [],
 			'cloneable'		=> 1,
 			'auto_type'		=> 'stpl_item',
-		);
+		];
 	}
 
 	/**
@@ -59,7 +59,7 @@ class yf_manage_dashboards {
 			->text('name')
 			->text('type')
 			->btn_view()
-			->btn_edit(array('no_ajax' => 1))
+			->btn_edit(['no_ajax' => 1])
 			->btn_clone()
 			->btn_delete()
 			->btn_active()
@@ -78,7 +78,7 @@ class yf_manage_dashboards {
 		$_GET['id'] = $ds_info['id'];
 		if (!empty($ds_info['id'])) {
 			db()->query('DELETE FROM '.db('dashboards').' WHERE id='.intval($_GET['id']).' LIMIT 1');
-			common()->admin_wall_add(array('dashboard deleted: '.$ds_info['name'].'', $_GET['id']));
+			common()->admin_wall_add(['dashboard deleted: '.$ds_info['name'].'', $_GET['id']]);
 		}
 		if (is_ajax()) {
 			no_graphics(true);
@@ -101,7 +101,7 @@ class yf_manage_dashboards {
 		unset($sql['id']);
 		$sql['name'] = $sql['name'].'_clone';
 		db()->insert('dashboards', $sql);
-		common()->admin_wall_add( array('dashboard cloned: '.$ds_info['name'], db()->insert_id() ));
+		common()->admin_wall_add( ['dashboard cloned: '.$ds_info['name'], db()->insert_id() ]);
 		return js_redirect(url('/@object'));
 	}
 
@@ -113,8 +113,8 @@ class yf_manage_dashboards {
 			$ds_info = db()->get('SELECT * FROM '.db('dashboards').' WHERE id='.intval($_GET['id']));
 		}
 		if (!empty($ds_info['id'])) {
-			db()->update('dashboards', array('active' => (int)!$ds_info['active']), 'id='.intval($_GET['id']));
-			common()->admin_wall_add(array('dashboard '.$ds_info['name'].' '.($ds_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+			db()->update('dashboards', ['active' => (int)!$ds_info['active']], 'id='.intval($_GET['id']));
+			common()->admin_wall_add(['dashboard '.$ds_info['name'].' '.($ds_info['active'] ? 'inactivated' : 'activated'), $_GET['id']]);
 		}
 		if (is_ajax()) {
 			no_graphics(true);
@@ -129,23 +129,23 @@ class yf_manage_dashboards {
 	function add () {
 		if (main()->is_post()) {
 			if (!_ee()) {
-				db()->insert('dashboards', db()->es(array(
+				db()->insert('dashboards', db()->es([
 					'name'		=> $_POST['name'],
 					'type'		=> $_POST['type'],
 					'active'	=> $_POST['active'],
-				)));
+				]));
 				$new_id = db()->insert_id();
-				common()->admin_wall_add(array('dashboard added: '.$_POST['name'], $new_id));
+				common()->admin_wall_add(['dashboard added: '.$_POST['name'], $new_id]);
 				return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.$new_id);
 			}
 		}
-		$replace = array(
+		$replace = [
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
 			'back_link'		=> url('/@object'),
-		);
+		];
 		return form2($replace)
 			->text('name')
-			->radio_box('type', array('admin' => 'admin', 'user' => 'user'))
+			->radio_box('type', ['admin' => 'admin', 'user' => 'user'])
 			->active_box()
 			->save_and_back();
 	}
@@ -159,10 +159,10 @@ class yf_manage_dashboards {
 		}
 		if (main()->is_post()) {
 			if (!_ee()) {
-				db()->update('dashboards', db()->es(array(
+				db()->update('dashboards', db()->es([
 					'data'	=> json_encode($_POST['ds_data']),
-				)), 'id='.intval($ds['id']));
-				common()->admin_wall_add(array('dashboard updated: '.$ds['name'], $_GET['id']));
+				]), 'id='.intval($ds['id']));
+				common()->admin_wall_add(['dashboard updated: '.$ds['name'], $_GET['id']]);
 				return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['object']);
 			}
 		}
@@ -170,38 +170,38 @@ class yf_manage_dashboards {
 		$ds_settings = $ds['data']['settings'];
 		$num_columns = isset($this->_col_classes[$ds_settings['columns']]) ? $ds_settings['columns'] : 3;
 		foreach ((array)$ds['data']['columns'] as $column_id => $column_items) {
-			$columns[$column_id] = array(
+			$columns[$column_id] = [
 				'num'	=> $column_id,
 				'class'	=> $this->_col_classes[$num_columns],
 				'items'	=> $this->_show_edit_widget_items($column_items, $ds),
-			);
+			];
 		}
 		// Fix empty drag places
 		foreach (range(1, $num_columns) as $num) {
 			if (!$columns[$num]) {
-				$columns[$num] = array(
+				$columns[$num] = [
 					'num'	=> $num,
 					'class'	=> $this->_col_classes[$num_columns],
 					'items'	=> '',
-				);
+				];
 			}
 		}
-		$replace = array(
+		$replace = [
 			'save_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$ds['id'],
 			'columns'	=> $columns,
-		);
+		];
 		return tpl()->parse(__CLASS__.'/edit_main', $replace);
 	}
 
 	/**
 	* Designed to be used by other modules to show configured dashboard
 	*/
-	function display($params = array()) {
+	function display($params = []) {
 		if (is_string($params)) {
 			$name = $params;
 		}
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		if (!$params['name'] && $name) {
 			$params['name'] = $name;
@@ -216,9 +216,9 @@ class yf_manage_dashboards {
 	/**
 	* Similar to 'display', but for usage inside this module (action links and more)
 	*/
-	function view($params = array()) {
+	function view($params = []) {
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		$ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
 		$ds = $this->_get_dashboard_data($ds_name);
@@ -245,22 +245,22 @@ class yf_manage_dashboards {
 			$num_columns = $filled_columns;
 		}
 		foreach ((array)$ds['data']['columns'] as $column_id => $column_items) {
-			$columns[$column_id] = array(
+			$columns[$column_id] = [
 				'num'	=> $column_id,
 				'class'	=> $this->_col_classes[$num_columns],
 				'items'	=> $this->_view_widget_items($column_items, $items_configs, $ds_settings),
-			);
+			];
 		}
-		$replace = array(
+		$replace = [
 			'edit_link'	=> './?object=manage_dashboards&action=edit&id='.$ds['id'],
 			'columns'	=> $columns,
-		);
+		];
 		return tpl()->parse(__CLASS__.'/view_main', $replace);
 	}
 
 	/**
 	*/
-	function _view_widget_items ($name_ids = array(), $items_configs = array()) {
+	function _view_widget_items ($name_ids = [], $items_configs = []) {
 		$list_of_hooks = $this->_get_available_widgets_hooks();
 
 		$_orig_object = $_GET['object'];
@@ -297,7 +297,7 @@ class yf_manage_dashboards {
 						list($module_name, $method_name) = explode('.', $info['method_name']);
 					}
 				} elseif ($auto_type == 'block_item') {
-					$content = _class('core_blocks')->show_block(array('name' => $info['block_name']));
+					$content = _class('core_blocks')->show_block(['name' => $info['block_name']]);
 				} elseif ($auto_type == 'stpl_item') {
 					if (strlen($info['code'])) {
 						$content = tpl()->parse_string($info['code']);
@@ -315,13 +315,13 @@ class yf_manage_dashboards {
 				$_GET['object'] = $_orig_object; $_GET['action'] = $_orig_action;
 			}
 
-			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
+			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', [
 				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
 				'name'		=> _prepare_html($info['name']),
 				'desc'		=> $content,
 				'has_config'=> $info['configurable'] ? 1 : 0,
 				'css_class'	=> $saved_config['color'],
-			));
+			]);
 		}
 		if (!$items) {
 			return '';
@@ -333,7 +333,7 @@ class yf_manage_dashboards {
 	* This will be showed in side (left) area, catched by hooks functionality
 	*/
 	function _hook_side_column () {
-		if ($_GET['object'] != 'manage_dashboards' || !in_array($_GET['action'], array('edit','add'))) {
+		if ($_GET['object'] != 'manage_dashboards' || !in_array($_GET['action'], ['edit','add'])) {
 			return false;
 		}
 		$ds = $this->_get_dashboard_data();
@@ -349,41 +349,41 @@ class yf_manage_dashboards {
 			}
 		}
 		$ds_settings = $ds['data']['settings'];
-		$auto_items = array();
+		$auto_items = [];
 		foreach((array)$this->_auto_info as $name => $info) {
-			$auto_items[$name] = tpl()->parse(__CLASS__.'/edit_item', array(
+			$auto_items[$name] = tpl()->parse(__CLASS__.'/edit_item', [
 				'id'				=> _prepare_html($info['id']),
 				'name'				=> _prepare_html($info['name']),
 				'desc'				=> _prepare_html($info['desc']),
 				'has_config'		=> $info['configurable'] ? 1 : 0,
 				'css_class'			=> 'drag-clone-needed custom_widget_template_'.$name,
 				'options_container'	=> $this->_options_container($info, $auto_saved_config[$name], $ds),
-			));
+			]);
 		}
-		$replace = array(
+		$replace = [
 			'items' 		=> $this->_show_edit_widget_items(array_keys($avail_hooks)),
 			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$ds['id'],
 			'view_link'		=> './?object='.$_GET['object'].'&action=view&id='.$ds['id'],
 			'settings_items'=> $this->_show_ds_settings_items($ds),
 			'auto_items'	=> $auto_items,
-		);
+		];
 		return tpl()->parse(__CLASS__.'/edit_side', $replace);
 	}
 
 	/**
 	*/
-	function _show_ds_settings_items($ds = array()) {
+	function _show_ds_settings_items($ds = []) {
 		$settings = $ds['data']['settings'];
 		$columns_values = array_combine(array_keys($this->_col_classes), array_keys($this->_col_classes));
 		return form()
-			->select_box('columns', $columns_values, array('class' => 'no-chosen', 'style'=>'width:auto;', 'selected' => (int)$settings['columns']))
-			->yes_no_box('full_width', '', array('selected' => (int)$settings['full_width']))
+			->select_box('columns', $columns_values, ['class' => 'no-chosen', 'style'=>'width:auto;', 'selected' => (int)$settings['columns']])
+			->yes_no_box('full_width', '', ['selected' => (int)$settings['full_width']])
 		;
 	}
 
 	/**
 	*/
-	function _show_edit_widget_items ($column_items = array(), $ds = array()) {
+	function _show_edit_widget_items ($column_items = [], $ds = []) {
 		$items_configs = $ds['data']['items_configs'];
 		$ds_settings = $ds['data']['settings'];
 
@@ -409,14 +409,14 @@ class yf_manage_dashboards {
 			if (!$info) {
 				continue;
 			}
-			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/edit_item', array(
+			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/edit_item', [
 				'id'				=> _prepare_html($info['auto_id'].'_'.$info['auto_id']),
 				'name'				=> _prepare_html($info['name']),
 				'desc'				=> _prepare_html($info['desc']),
 				'has_config'		=> $info['configurable'] ? 1 : 0,
 				'css_class'			=> $saved_config['color'],
 				'options_container'	=> $this->_options_container($info, $saved_config, $ds),
-			));
+			]);
 		}
 		if (!$items) {
 			return '';
@@ -426,36 +426,36 @@ class yf_manage_dashboards {
 
 	/**
 	*/
-	function _options_container($info = array(), $saved = array(), $ds = array()) {
+	function _options_container($info = [], $saved = [], $ds = []) {
 		$for_section = $ds['type'] == 'user' ? 'user' : 'admin';
 
-		$a = array();
+		$a = [];
 		if ($info['cloneable']) {
-			$a[] = array('text', 'name', array('class' => 'input-medium'));
-			$a[] = array('text', 'desc', 'Description', array('class' => 'input-medium'));
+			$a[] = ['text', 'name', ['class' => 'input-medium']];
+			$a[] = ['text', 'desc', 'Description', ['class' => 'input-medium']];
 			if ($info['auto_type'] == 'php_item') {
-				$a[] = array('text', 'method_name', 'Custom class method');
+				$a[] = ['text', 'method_name', 'Custom class method'];
 			} elseif ($info['auto_type'] == 'block_item') {
-				$a[] = array('select_box', 'block_name', main()->get_data('blocks_names_'.$for_section));
+				$a[] = ['select_box', 'block_name', main()->get_data('blocks_names_'.$for_section)];
 			} elseif ($info['auto_type'] == 'stpl_item') {
-				$a[] = array('text', 'stpl_name', 'Custom template');
+				$a[] = ['text', 'stpl_name', 'Custom template'];
 			}
 #			$a[] = array('text', 'html_id', array('class' => 'input-medium'));
 #			$a[] = array('textarea', 'code');
 		}
-		$a[] = array('check_box', 'hide_header', '1', array('no_label' => 1));
-		$a[] = array('check_box', 'hide_border', '1', array('no_label' => 1));
-		$a[] = array('text', 'grid_class', array('class' => 'input-small'));
-		$a[] = array('text', 'offset_class', array('class' => 'input-small'));
+		$a[] = ['check_box', 'hide_header', '1', ['no_label' => 1]];
+		$a[] = ['check_box', 'hide_border', '1', ['no_label' => 1]];
+		$a[] = ['text', 'grid_class', ['class' => 'input-small']];
+		$a[] = ['text', 'offset_class', ['class' => 'input-small']];
 		foreach ((array)$info['configurable'] as $k => $v) {
-			$a[] = array('select_box', $k, $v);
+			$a[] = ['select_box', $k, $v];
 		}
-		return tpl()->parse(__CLASS__.'/ds_options', array(
-			'form_items'	=> form($saved, array('class' => 'form-horizontal form-condensed'))->array_to_form($a),
+		return tpl()->parse(__CLASS__.'/ds_options', [
+			'form_items'	=> form($saved, ['class' => 'form-horizontal form-condensed'])->array_to_form($a),
 			'color'			=> $saved['color'],
 			'item_id'		=> _prepare_html($info['auto_id']),
 			'auto_type'		=> $info['cloneable'] ? $info['auto_type'] : '',
-		));
+		]);
 	}
 
 	/**
@@ -493,23 +493,23 @@ class yf_manage_dashboards {
 	/**
 	*/
 	function _get_available_widgets_hooks ($for_section = 'admin') {
-		if (!in_array($for_section, array('user', 'admin'))) {
+		if (!in_array($for_section, ['user', 'admin'])) {
 			$for_section = 'admin';
 		}
 		if (isset($this->_avail_widgets[$for_section])) {
 			return $this->_avail_widgets[$for_section];
 		}
 		$method_prefix = '_hook_widget_';
-		$r = array(
+		$r = [
 			'_hook_widget__' => '',
 			'_' => '',
 			':' => '',
-		);
-		$_widgets = array();
+		];
+		$_widgets = [];
 		if ($for_section == 'admin') {
-			$methods = module('admin_modules')->_get_methods(array('private' => '1'));
+			$methods = module('admin_modules')->_get_methods(['private' => '1']);
 		} else {
-			$methods = module('user_modules')->_get_methods(array('private' => '1'));
+			$methods = module('user_modules')->_get_methods(['private' => '1']);
 		}
 		foreach ((array)$methods as $module_name => $module_methods) {
 			foreach ((array)$module_methods as $method_name) {
@@ -523,7 +523,7 @@ class yf_manage_dashboards {
 		foreach ((array)$_widgets as $module_name => $module_widgets) {
 			foreach ((array)$module_widgets as $method_name => $full_name) {
 				$auto_id = str_replace(array_keys($r), array_values($r), $full_name);
-				$widgets[$auto_id] = module_safe($module_name)->$method_name(array('describe_self' => true));
+				$widgets[$auto_id] = module_safe($module_name)->$method_name(['describe_self' => true]);
 				if (!$widgets[$auto_id]['name']) {
 unset($widgets[$auto_id]);
 continue;
@@ -545,19 +545,19 @@ continue;
 
 	/**
 	*/
-	function _hook_widget__dashboards_stats ($params = array()) {
+	function _hook_widget__dashboards_stats ($params = []) {
 // TODO
 	}
 
 	/**
 	*/
-	function _hook_widget__dashboards_list ($params = array()) {
+	function _hook_widget__dashboards_list ($params = []) {
 // TODO
 	}
 
 	/**
 	*/
-	function _hook_settings(&$selected = array()) {
+	function _hook_settings(&$selected = []) {
 /*
 		return array(
 			array('yes_no_box', 'admin_home__DISPLAY_STATS'),

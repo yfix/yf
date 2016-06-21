@@ -48,31 +48,31 @@ class yf_get_pswd {
 				$success_msg = t('Password has been sent to your email address. It should arrive in a couple of minutes.');
 			}
 		}
-		$replace = array(
+		$replace = [
 			'form_action' => './?object='.$_GET['object'],
-		);
-		$login_form = form($replace, array('legend' => 'Enter your login', 'class' => 'form-vertical'))
-			->validate(array('login' => 'trim|required'))
+		];
+		$login_form = form($replace, ['legend' => 'Enter your login', 'class' => 'form-vertical'])
+			->validate(['login' => 'trim|required'])
 			->text('login', 'Enter your login')
-			->submit('', 'Get Password', array('class' => 'btn btn-small'));
-		$email_form = form($replace, array('legend' => 'Enter your email', 'class' => 'form-vertical'))
-			->validate(array('email' => 'trim|required'))
+			->submit('', 'Get Password', ['class' => 'btn btn-small']);
+		$email_form = form($replace, ['legend' => 'Enter your email', 'class' => 'form-vertical'])
+			->validate(['email' => 'trim|required'])
 			->email('email', 'Enter your email')
-			->submit('', 'Get Password', array('class' => 'btn btn-small'));
-		return tpl()->parse(__CLASS__.'/main', array(
+			->submit('', 'Get Password', ['class' => 'btn btn-small']);
+		return tpl()->parse(__CLASS__.'/main', [
 			'error'        => _e(),
 			'success'      => !empty($success_msg) ? $success_msg : '',
 			'login_form'   => $login_form,
 			'email_form'   => $email_form,
-		));
+		]);
 	}
 
 	//
-	function _send_info_to_user ($user = array()) {
+	function _send_info_to_user ($user = []) {
 		if (empty($user)) {
 			return false;
 		}
-		$html = tpl()->parse('@object/email', array(
+		$html = tpl()->parse('@object/email', [
 			'user_name'		=> _display_name($user),
 			'password'		=> $user['password'],
 			'login'			=> $user['login'],
@@ -80,8 +80,8 @@ class yf_get_pswd {
 			'home_url'		=> url('/'),
 			'login_url'		=> url('/login_form'),
 			'faq_url'		=> url('/faq'),
-		));
-		return common()->send_mail(array(
+		]);
+		return common()->send_mail([
 			'from_mail' => SITE_ADMIN_EMAIL,
 			'from_name'	=> SITE_ADVERT_NAME,
 			'to_mail'	=> $user['email'],
@@ -97,7 +97,7 @@ class yf_get_pswd {
 			'on_success' => function($params) {
 				common()->message_success('Email was sent successfully');
 			},
-		));
+		]);
 	}
 
 	function _site_title($title){

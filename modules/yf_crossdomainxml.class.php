@@ -6,7 +6,7 @@ class yf_crossdomainxml {
 		$host = (DEBUG_MODE ? $_GET['host'] : '') ?: $_SERVER['HTTP_HOST']; // $_GET['host'] just for debug purposes
 		$prod_hosts = main()->PRODUCTION_DOMAIN ?: parse_url(WEB_PATH, PHP_URL_HOST);
 		if (is_string($prod_hosts)) {
-			$prod_hosts = array($prod_hosts);
+			$prod_hosts = [$prod_hosts];
 		}
 		// Based on example from twitter https://twitter.com/crossdomain.xml
 		if (!main()->is_dev() && in_array($host, $prod_hosts)) {

@@ -2,7 +2,7 @@
 
 class yf_advertising {
 
-    function _show($params = array()) {
+    function _show($params = []) {
 
         // Set cookie
         if (empty($_COOKIE['advertise']) && $_GET['ads_places'] == 1) {
@@ -37,8 +37,8 @@ class yf_advertising {
             }
         }
 
-        $matched_ids = array();
-        $skipped_ids = array();
+        $matched_ids = [];
+        $skipped_ids = [];
         foreach ((array)$ads as $ad) {
             // check by language
             if (!in_array($ad['id'],$skipped_ids)) {
