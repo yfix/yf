@@ -9,7 +9,7 @@ class yf_wrapper_redis {
 	public $host   = '127.0.0.1';
 	public $port   = 6379;
 	public $prefix = '';
-	private $_connection = null;
+	static $_connection = null;
 
 	/**
 	* Catch missing method call
