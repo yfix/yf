@@ -2,7 +2,7 @@
 
 class yf_manage_payment_lib {
 
-	public $css_by_status = array(
+	public $css_by_status = [
 		'processing'   => 'text-warning',
 		'in_progress'  => 'text-warning',
 		'success'      => 'text-success',
@@ -10,7 +10,7 @@ class yf_manage_payment_lib {
 		'refused'      => 'text-danger',
 		'cancelled'    => 'text-danger',
 		'confirmation' => 'text-warning',
-	);
+	];
 
 	function _init() {
 	}

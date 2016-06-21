@@ -2,7 +2,7 @@
 
 class yf_manage_shop_invoice{
 
-	public $order_address_fields = array(
+	public $order_address_fields = [
 		"name",
 		"phone",
 		"address",
@@ -11,7 +11,7 @@ class yf_manage_shop_invoice{
 		"floor",
 		"porch",
 		"intercom",
-	);
+	];
 
 	public $default_unit = "шт";
 
@@ -53,11 +53,11 @@ __INVOICE__
 		}
 		if( $_GET[ 'pdf' ] ) {
 			$html_page = str_replace( '__INVOICE__', $html, $tpl );
-			common()->pdf_page( array(
+			common()->pdf_page( [
 				'css'  => $css,
 				'html' => $html_page,
 				'file' => $id,
-			));
+			]);
 		} else {
 			$body = sprintf(
 				'<style>%s</style>%s'
@@ -92,7 +92,7 @@ __INVOICE__
 		// }
 
 		// Get products from db
-		$products_ids = array();
+		$products_ids = [];
 		// type: 0 - product; 1 - product set
 		foreach( (array)$Q as $_id => $item ) {
 			$type        = (int)$item[ 'type'       ];
@@ -101,7 +101,7 @@ __INVOICE__
 				$products_ids[ $type ][ $product_id ] = $product_id;
 			}
 		}
-		$infos = array();
+		$infos = [];
 		if( !empty( $products_ids[ 0 ] ) ) {
 			$ids = array_keys( $products_ids[ 0 ] );
 			$ids_sql = implode( ',', $ids );
@@ -129,13 +129,13 @@ __INVOICE__
 			// $price_one  = (float)$info[ 'price' ];
 			$price_one  = $_class_basket->_get_price_one( $item );
 			$price_item = $price_one * $quantity;
-			$out['products'][] = array(
+			$out['products'][] = [
 				"product_name"		=> _prepare_html($info['name']),
 				"product_units"		=> $units[ $unit ]['title'] ?: $this->default_unit,
 				"product_price_one"	=> $_class_shop->_format_price( $price_one ),
 				"product_quantity"	=> $quantity,
 				"product_item_price"=> $_class_shop->_format_price( $price_item ),
-			);
+			];
 			$price_total += $price_item;
 		}
 		foreach((array)$order_info as $k => $v){
@@ -161,7 +161,7 @@ __INVOICE__
 		$delivery_type = (int)$order_info[ 'delivery_type' ];
 		$delivery_name = $_class_delivery->_get_name_by_id( $delivery_type );
 		$region        = $_class_region->_get_user_region();
-		$replace = array(
+		$replace = [
 			'id'			=> $id,
 			'total_sum'		=> $_class_shop->_format_price( $total_sum ),
 			'user_address'	=> implode(" / ", $user_address),
@@ -181,11 +181,11 @@ __INVOICE__
 			'delivery_location' => $order_info['delivery_location'],
 			'discount'		=> $_class_shop->_format_price( $discount_price ),
 			'num_to_str'	=> $num_to_str,
-		);
-		return( array(
+		];
+		return( [
 			tpl()->parse('shop/invoice_css',  $replace),
 			tpl()->parse('shop/invoice_html', $replace),
-		));
+		]);
 	}
 
 }

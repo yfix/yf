@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'product_id' => array(
+return [
+	'fields' => [
+		'product_id' => [
 			'name' => 'product_id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'group_id' => array(
+		],
+		'group_id' => [
 			'name' => 'group_id',
 			'type' => 'int',
 			'length' => 10,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'price' => array(
+		],
+		'price' => [
 			'name' => 'price',
 			'type' => 'decimal',
 			'length' => 8,
@@ -45,12 +45,12 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+		],
+	],
+	'indexes' => [
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

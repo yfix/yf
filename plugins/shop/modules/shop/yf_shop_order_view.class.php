@@ -17,12 +17,12 @@ class yf_shop_order_view{
 			return _e("No such order");
 		}
 		if (!empty($_POST["status"])) {
-			db()->UPDATE(db('shop_orders'), array(
+			db()->UPDATE(db('shop_orders'), [
 				"status"	=> _es($_POST["status"]),
-			), "id=".intval($_GET["id"]));
+			], "id=".intval($_GET["id"]));
 			return js_redirect("./?object=shop&action=orders");
 		}
-		$products_ids = array();
+		$products_ids = [];
 		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order_id`=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
@@ -37,7 +37,7 @@ class yf_shop_order_view{
 		foreach ((array)$order_items as $_info) {
 			$_product = $products_infos[$_info["product_id"]];
 
-			$dynamic_atts = array();
+			$dynamic_atts = [];
 			if (strlen($_info["attributes"]) > 3) {
 				foreach ((array)unserialize($_info["attributes"]) as $_attr_id) {
 					$_attr_info = $products_atts[$_info["product_id"]][$_attr_id];
@@ -45,20 +45,20 @@ class yf_shop_order_view{
 					$price += $_attr_info["price"];
 				}
 			}
-			$products[$_info["product_id"]] = array(
+			$products[$_info["product_id"]] = [
 				"name"			=> _prepare_html($_product["name"]),
 				"price"			=> module('shop')->_format_price($_info["sum"]),
 				"currency"		=> _prepare_html(module('shop')->CURRENCY),
 				"quantity"		=> intval($_info["quantity"]),
 				"details_link"	=> process_url("./?object=shop&action=view&id=".$_product["id"]),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
-			);
+			];
 			$total_price += $_info["price"] * $quantity;
 		}
 		$total_price = $order_info["total_sum"];
 
 		$replace = my_array_merge($replace, _prepare_html($order_info));
-		$replace = my_array_merge($replace, array(
+		$replace = my_array_merge($replace, [
 			"form_action"	=> "./?object=shop&action=".$_GET["action"]."&id=".$_GET["id"],
 			"order_id"		=> $order_info["id"],
 			"total_sum"		=> module('shop')->_format_price($order_info["total_sum"]),
@@ -72,7 +72,7 @@ class yf_shop_order_view{
 			"date"			=> _format_date($order_info["date"], "long"),
 			"status_box"	=> module('shop')->_statuses[$order_info["status"]],
 			"back_url"		=> "./?object=shop&action=orders",
-		));
+		]);
 		return tpl()->parse("shop/order_view", $replace);
 	}
 	

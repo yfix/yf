@@ -25,17 +25,17 @@ class yf_manage_shop_express{
 		$_category = _class("_shop_categories", "modules/shop/");
 		//always add one empty row in table for ajax
 		if(empty($products)){
-			$products[] = array(
+			$products[] = [
 				'product_id'	=> '-',
 				'name'			=> '-',
 				'quantity'		=> '-',
 				'price'			=> '-',
 				'order_id'		=> '-',
-			);
+			];
 			$orders_info['-']['delivery_time'] = '-';
 		}
 		foreach((array)$products as $k => $v){
-			$replace[] = array(
+			$replace[] = [
 				"product_id"	=> $v['product_id'],
 				"name"			=> $v['name'],
 				"quantity"		=> $v['quantity'],
@@ -43,7 +43,7 @@ class yf_manage_shop_express{
 				"order_id"		=> $v['order_id'],
 				"id"			=> $v['order_id'].'_'.$v['product_id'],//unique_id
 				"time"			=> str_replace($date, "", $orders_info[$v['order_id']]['delivery_time']),
-			);
+			];
 			$table_tr[] = 'data-id="'.$v['order_id'].'_'.$v['product_id'].'" ' ;
 		}
 		if(!empty($_GET['ajax_mode'])){
@@ -58,14 +58,14 @@ class yf_manage_shop_express{
 			->footer_link("PDF ".$date." 10-12", './?object='.$_GET['object'].'&action=express_pdf&hours=10-12')
 			->footer_link("PDF ".$date." 13-15", './?object='.$_GET['object'].'&action=express_pdf&hours=13-15')
 			->footer_link("PDF ".$date." 17-20", './?object='.$_GET['object'].'&action=express_pdf&hours=17-20')
-			->render(array(
+			->render([
 				'table_attr' => 'id="express_catalog"',
 				'tr' => $table_tr
-			))
+			])
 		;
-		$replace = array(
+		$replace = [
 			'table' => $table,
-		);
+		];
 		return tpl()->parse("manage_shop/express", $replace);
 	}
 
@@ -89,18 +89,18 @@ class yf_manage_shop_express{
 			common()->message_warning("No products for this time");
 			return js_redirect("./?object=manage_shop&action=express");
 		}
-		$ids = $replace = array();
+		$ids = $replace = [];
 		$_category = _class("_shop_categories", "modules/shop/");
 		foreach((array)$products as $k => $v){
 			$p_id = $v['product_id'];
-			$item = array(
+			$item = [
 				"id"		=> $v['product_id'],
 				"name"		=> $v['name'],
 				"quantity"	=> $v['quantity'],
 				"price"		=> $v['price'],
 				"order_id"	=> $v['order_id'],
 				"unit"		=> $v['title'],
-			);
+			];
 			$alcohol = in_array($this->alcohol_category, $_category->recursive_get_parents_ids($v['cat_id']));
 			if($alcohol){
 				$replace[$v['order_id']][$p_id] = $item;
@@ -118,7 +118,7 @@ class yf_manage_shop_express{
 		}
 		$out = implode("<pagebreak />", $out);
 		if($send_mail){
-			return array("body" => $out, "name" => date("Y-m-d H-i"));
+			return ["body" => $out, "name" => date("Y-m-d H-i")];
 		}else{
 			return common()->pdf_page($out);
 		}
@@ -131,13 +131,13 @@ class yf_manage_shop_express{
 			return false;
 		foreach ((array)$items as $_info) {
 			$price_item = $_info['price'] * $_info['quantity'];
-			$out['products'][] = array(
+			$out['products'][] = [
 				"product_name"		=> _prepare_html($_info['name']),
 				"product_units"		=> $_info['unit']? : $this->default_unit,
 				"product_price_one"	=> module('shop')->_format_price($_info['price']),
 				"product_quantity"	=> intval($_info['quantity']),
 				"product_item_price"=> module('shop')->_format_price($price_item),
-			);
+			];
 			$order_ids[] = $_info['order_id'];
 			$total_sum += $price_item;
 		}
@@ -145,13 +145,13 @@ class yf_manage_shop_express{
 		$delivery_times = db()->get_2d("SELECT delivery_time FROM ".db('shop_orders')." WHERE id IN(".$order_ids.")");
 
 		$total_sum = (float)$total_sum;
-		$replace = array(
+		$replace = [
 			'order_ids'		=> $order_ids,
 			'total_sum'		=> module('shop')->_format_price($total_sum),
 			'date'			=> implode(",", array_unique($delivery_times)),
 			'products'		=> $out['products'],
 			'num_to_str'	=> common()->num2str($total_sum),
-		);
+		];
 		return tpl()->parse('shop/express_pdf', $replace);
 	}
 
@@ -169,11 +169,11 @@ class yf_manage_shop_express{
 		common()->pdf_page($pdf['body'], $pdf['name'], "F");
 		$path_to_pdf = $this->PATH_TO_PDF.$pdf['name'].".pdf";
 		$path_to_pdf = file_exists($path_to_pdf) ? $path_to_pdf : '';
-		_class('_shop_mail', 'modules/shop/')->send_by_event( array(
+		_class('_shop_mail', 'modules/shop/')->send_by_event( [
 			'event'     => 'express_ticket',
 			'message' 	=> $pdf['body'],
-			'attaches'  => array($path_to_pdf),
-		));
+			'attaches'  => [$path_to_pdf],
+		]);
 		return true;
 	}
 

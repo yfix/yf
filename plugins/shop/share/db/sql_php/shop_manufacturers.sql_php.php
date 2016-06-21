@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'cat_ids' => array(
+		],
+		'cat_ids' => [
 			'name' => 'cat_ids',
 			'type' => 'varchar',
 			'length' => 255,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 64,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'url' => array(
+		],
+		'url' => [
 			'name' => 'url',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'desc' => array(
+		],
+		'desc' => [
 			'name' => 'desc',
 			'type' => 'varchar',
 			'length' => 255,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'aliaces' => array(
+		],
+		'aliaces' => [
 			'name' => 'aliaces',
 			'type' => 'varchar',
 			'length' => 255,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'meta_keywords' => array(
+		],
+		'meta_keywords' => [
 			'name' => 'meta_keywords',
 			'type' => 'text',
 			'length' => NULL,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'meta_desc' => array(
+		],
+		'meta_desc' => [
 			'name' => 'meta_desc',
 			'type' => 'text',
 			'length' => NULL,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'image' => array(
+		],
+		'image' => [
 			'name' => 'image',
 			'type' => 'int',
 			'length' => 10,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'sort_order' => array(
+		],
+		'sort_order' => [
 			'name' => 'sort_order',
 			'type' => 'int',
 			'length' => 3,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'int',
 			'length' => 3,
@@ -165,33 +165,33 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'name' => array(
+			],
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'name' => 'name',
-			),
-		),
-		'url' => array(
+			],
+		],
+		'url' => [
 			'name' => 'url',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'url' => 'url',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

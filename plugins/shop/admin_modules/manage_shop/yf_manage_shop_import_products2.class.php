@@ -55,7 +55,7 @@ class yf_manage_shop_import_products2 {
 	private $_filter        = false;
 	private $_filter_params = false;
 
-	public $import_field = array(
+	public $import_field = [
 		0                   => 'не использовать (0)',
 		'id'                => 'идентификатор (id)',
 		'name'              => 'название (name)',
@@ -69,9 +69,9 @@ class yf_manage_shop_import_products2 {
 		'manufacturer_name' => 'производитель: название (manufacturer_name)',
 		'supplier_id'       => 'поставщик: идентификатор (supplier_id)',
 		'supplier_name'     => 'поставщик: название (supplier_name)',
-	);
+	];
 
-	public $import_field_autodetect = array(
+	public $import_field_autodetect = [
 		'id'                => '(идентификатор)|(id)',
 		'name'              => '(имя)|(название)|(наименование)|(name)',
 		'description'       => '(описание)|(description)',
@@ -84,23 +84,23 @@ class yf_manage_shop_import_products2 {
 		'manufacturer_name' => '(производитель)|(производитель:?\s*название)|(manufacturer_name)',
 		'supplier_id'       => '(поставщик:?\s*идентификатор)|(supplier_id)',
 		'supplier_name'     => '(поставщик)|(поставщик:?\s*название)|(supplier_name)',
-	);
+	];
 
-	public $import_action = array(
+	public $import_action = [
 		'update' => 'обновление',
 		'insert' => 'вставка',
-	);
+	];
 	public $import_action_default = 'update';
-	public $import_rules = array(
-		'insert' => array(
-			'key' => array(
-				array( 'name', 'cat_id',        ),
-				array( 'name', 'category_name', ),
-			),
-			'exclude' => array(
+	public $import_rules = [
+		'insert' => [
+			'key' => [
+				[ 'name', 'cat_id',        ],
+				[ 'name', 'category_name', ],
+			],
+			'exclude' => [
 				'id',
-			),
-			'include' => array(
+			],
+			'include' => [
 				'name',
 				'cat_id',
 				'manufacturer_id',
@@ -111,38 +111,38 @@ class yf_manage_shop_import_products2 {
 				'external_url',
 				'origin_url',
 				'source',
-			),
-		),
-		'update' => array(
-			'key' => array(
-				array( 'id', ),
-				array( 'supplier_id',   'articul', ),
-				array( 'supplier_name', 'articul', ),
-				array( 'name', ),
-			),
-		),
-	);
+			],
+		],
+		'update' => [
+			'key' => [
+				[ 'id', ],
+				[ 'supplier_id',   'articul', ],
+				[ 'supplier_name', 'articul', ],
+				[ 'name', ],
+			],
+		],
+	];
 	public $upload_path            = null;
 	public $upload_list            = null;
 	public $upload_list__file_name = null;
-	public $upload_list__field     = array(
+	public $upload_list__field     = [
 		'id',
 		'file_name',
 		'file_size',
 		'time',
 		'status',
-	);
-	public $upload_status          = array(
+	];
+	public $upload_status          = [
 		'upload' => 'загружен',
 		'import' => 'импортирован',
-	);
+	];
 	public $supplier = null;
 	// categories
 	public $set_cat_name = 'shop_cats';
 	public $set_cat_id   = null;
 
 	// cache
-	public $cache = array();
+	public $cache = [];
 
 	// class
 	private $_instance = false;
@@ -209,12 +209,12 @@ class yf_manage_shop_import_products2 {
 		$upload_list__field     = $this->upload_list__field;
 		$upload_list            = &$this->upload_list;
 		$data = $this->_load_csv( $upload_list__file_name );
-		$result = array();
+		$result = [];
 		if( !empty( $data ) ) {
 			foreach( $data as $item ) {
 				$id = $item[ 0 ];
 				if( empty( $id ) ) { continue; }
-				$_data = array();
+				$_data = [];
 				foreach( $upload_list__field as $idx => $field ) {
 					$_data[ $field ] = $item[ $idx ];
 				}
@@ -231,7 +231,7 @@ class yf_manage_shop_import_products2 {
 			|| setlocale( LC_ALL, 'ru_UA.utf8' )
 			|| setlocale( LC_ALL, 'en_US.utf8' );
 		if( is_readable( $file_name ) && ( $file = fopen( $file_name, 'r' ) ) !== FALSE ) {
-			$result = array();
+			$result = [];
 			while( ( $item = fgetcsv( $file, 4096, ';' ) ) !== FALSE ) {
 				$result[] = $item;
 			}
@@ -250,7 +250,7 @@ class yf_manage_shop_import_products2 {
 		if( !empty( $data  ) ) {
 			if( !empty( $data[ 0 ] ) && empty( $data[ 'id' ] ) ) {
 				$id = $data[ 0 ];
-				$item = array();
+				$item = [];
 				foreach( $upload_list__field as $idx => $field ) {
 					$item[ $field ] = $data[ $idx ];
 				}
@@ -271,7 +271,7 @@ class yf_manage_shop_import_products2 {
 		// alt method
 		$delimiter_esc = preg_quote( $delimiter, '/' );
 		$enclosure_esc = preg_quote( $enclosure, '/' );
-		$output = array();
+		$output = [];
 		foreach( $fields as $field ) {
 			if( $field === null && $mysql_null ) {
 				$output[] = 'NULL';
@@ -335,13 +335,13 @@ class yf_manage_shop_import_products2 {
 			$to   = $upload_path . $id;
 			$from = $file[ 'tmp_name' ];
 			if( move_uploaded_file( $from, $to) ) {
-				$data = array(
+				$data = [
 					$id,
 					$file[ 'name' ],
 					$file[ 'size' ],
 					$time,
 					'upload',
-				);
+				];
 				$result = $this->_save_upload_list( $data );
 				if( !$result ) {
 					$this->_reject( 'save upload file data error' );
@@ -351,10 +351,10 @@ class yf_manage_shop_import_products2 {
 					$test = $this->_upload_item__import( $result[ 'data' ][ 'options' ] );
 					$result[ 'data' ][ 'test' ] = $test;
 				}
-				$result = array(
+				$result = [
 					'data'   => $this->_data_ng(),
 					'action' => $result,
-				);
+				];
 			} else {
 				$this->_reject( 'save upload file error' );
 			}
@@ -369,12 +369,12 @@ class yf_manage_shop_import_products2 {
 				$result = $this->_upload_list__remove_all();
 				break;
 		}
-		$result = array(
-			'response'   => array(
+		$result = [
+			'response'   => [
 				'data'   => $this->_data_ng(),
 				'action' => $result,
-			),
-		);
+			],
+		];
 		return( $result );
 	}
 
@@ -400,12 +400,12 @@ class yf_manage_shop_import_products2 {
 				$result = $this->_upload_item__import( $post[ 'options' ] );
 				break;
 		}
-		$result = array(
-			'response'   => array(
+		$result = [
+			'response'   => [
 				'data'   => $this->_data_ng(),
 				'action' => $result,
-			),
-		);
+			],
+		];
 		return( $result );
 	}
 
@@ -431,25 +431,25 @@ class yf_manage_shop_import_products2 {
 		$upload_list = &$this->upload_list;
 		foreach( $upload_list as $id => $item ) {
 			if( !$this->_upload_list_item__remove( $id ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'ошибка при удалении файла: ' . $item[ 'file_name' ],
-				);
+				];
 				return( $result );
 			}
 		}
 		$this->_save_upload_list();
-		$result = array(
+		$result = [
 			'status'         => true,
 			'status_message' => 'все загруженные файлы удалены',
-		);
+		];
 		return( $result );
 	}
 
 	protected function _option_default( &$options, $key, $cols, $default ) {
 		if( empty( $options ) || empty( $key ) || empty( $cols ) ) { return( null ); }
 		if( empty( $options[ $key ] ) ) {
-			$value = array();
+			$value = [];
 			for( $i = 0; $i < $cols; $i++ ) { $value[ $i ] = $default; }
 			$options[ $key ] = $value;
 			return( true );
@@ -458,9 +458,9 @@ class yf_manage_shop_import_products2 {
 	}
 
 	protected function _upload_item__get( $id ) {
-		$result = array(
+		$result = [
 			'status' => false,
-		);
+		];
 		$upload_list = $this->upload_list;
 		// get options, items
 		$options = $this->_options_get( $id );
@@ -470,24 +470,24 @@ class yf_manage_shop_import_products2 {
 			$cols  = count( $items[ 0 ] );
 			// default
 			if( empty( $options ) ) {
-				$options = array(
+				$options = [
 					'id'     => $id,
 					'action' => $this->import_action_default,
-				);
+				];
 			}
 			$this->_option_default( $options, 'fields', $cols, 0 );
 			$this->_option_default( $options, 'keys',   $cols, 0 );
-			$result = array(
-				'data'   => array(
+			$result = [
+				'data'   => [
 					'id'      => $id,
 					'file'    => $upload_list[ $id ][ 'file_name' ],
 					'rows'    => $rows,
 					'cols'    => $cols,
 					'items'   => $items,
 					'options' => $options,
-				),
+				],
 				'status' => true,
-			);
+			];
 		} else {
 			$upload_list = $this->upload_list;
 			$file        = $upload_list[ $id ][ 'file_name' ];
@@ -497,19 +497,19 @@ class yf_manage_shop_import_products2 {
 			} else {
 				$status_message = 'файл не найден';
 			}
-			$result = array(
+			$result = [
 				'status'         => false,
 				'file'           => $file,
 				'status_message' => $status_message,
-			);
+			];
 		}
 		return( $result );
 	}
 
 	protected function _upload_item__remove( $id ) {
-		$result = array(
+		$result = [
 			'status' => false,
-		);
+		];
 		if( $this->_upload_list_item__remove( $id ) ) {
 			$result[ 'status' ] = true;
 			$this->_save_upload_list();
@@ -523,10 +523,10 @@ class yf_manage_shop_import_products2 {
 		$upload_list = $this->upload_list;
 		// item exists
 		if( !isset( $upload_list[ $id ] ) ) {
-			$result = array(
+			$result = [
 				'status_message' => 'импорт - данная операция невозможна, данный файл отсутствует',
 				'status'         => false,
-			);
+			];
 			return( $result );
 		}
 		// save import options
@@ -537,16 +537,16 @@ class yf_manage_shop_import_products2 {
 		$options_save[ 'confirm' ] = false;
 		$result      = $this->_save_json( $file_name, $_ );
 		if( FALSE === $result ) {
-			$result = array(
+			$result = [
 				'status_message' => 'импорт - невозможно сохранить параметры',
 				'status'         => false,
-			);
+			];
 			return( $result );
 		}
 		// test import items
 		$status_message = '';
 		list( $status, $status_message ) = $this->_upload_item__import_action_test( $_ );
-		$import_test = array();
+		$import_test = [];
 		$status && $import_test = $this->_upload_item__import_test( $_ );
 			empty( $import_test[ 'count_valid' ] ) && $status = false;
 		// update db
@@ -554,14 +554,14 @@ class yf_manage_shop_import_products2 {
 		if( $status && !empty( $confirm ) ) {
 			list( $status, $status_message ) = $this->_db_import( $_, $import_test );
 		}
-		$result = array(
-			'data'   => array(
+		$result = [
+			'data'   => [
 				'id'           => $id,
 				'_import_test' => $import_test,
-			),
+			],
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -578,9 +578,9 @@ class yf_manage_shop_import_products2 {
 		$status_message = '';
 		// test action, fields
 		if( empty( $action ) || empty( $fields ) ) {
-			$fields = array();
+			$fields = [];
 			foreach( $rules[ 'key' ] as $ks ) {
-				$f = array();
+				$f = [];
 				foreach( $ks as $k ) {
 					$f[] = $k;
 				}
@@ -589,13 +589,13 @@ class yf_manage_shop_import_products2 {
 			$fields = implode( ' или ', $fields );
 			$message = 'Установите поля: ';
 			$status_message = $message . $fields;
-			return( array( $status, $status_message ) );
+			return( [ $status, $status_message ] );
 		}
 		// test rules
 		if( empty( $rules ) ) {
 			$action_message = $this->import_action[ $action ];
 			$status_message = 'Отсутствуют правила для операции "'. $action_message;
-			return( array( $status, html_entity_decode( $status_message, ENT_QUOTES, 'UTF-8' ) ) );
+			return( [ $status, html_entity_decode( $status_message, ENT_QUOTES, 'UTF-8' ) ] );
 		}
 		// test fields by name
 		$fields_by_name = array_flip( $fields );
@@ -626,9 +626,9 @@ class yf_manage_shop_import_products2 {
 		}
 		$status = $is_key ? true : false;
 		if( !$status ) {
-			$fields = array();
+			$fields = [];
 			foreach( $rules[ 'key' ] as $ks ) {
-				$f = array();
+				$f = [];
 				foreach( $ks as $k ) {
 					$f[] = $k;
 				}
@@ -637,7 +637,7 @@ class yf_manage_shop_import_products2 {
 			$fields = implode( ' или ', $fields );
 			$action_message = $this->import_action[ $action ];
 			$status_message = 'Требуются поля для операции "'. $action_message .'": ' . $fields;
-			return( array( $status, html_entity_decode( $status_message, ENT_QUOTES, 'UTF-8' ) ) );
+			return( [ $status, html_entity_decode( $status_message, ENT_QUOTES, 'UTF-8' ) ] );
 		}
 		if( $status && $action == 'insert' ) {
 			$is_key = false;
@@ -652,10 +652,10 @@ class yf_manage_shop_import_products2 {
 				$fields = implode( ', ', $rules[ 'exclude' ] );
 				$action_message = $this->import_action[ $action ];
 				$status_message = 'Поля для операции "'. $action_message .'" запрещены: ' . $fields; ;
-				return( array( $status, html_entity_decode( $status_message, ENT_QUOTES, 'UTF-8' ) ) );
+				return( [ $status, html_entity_decode( $status_message, ENT_QUOTES, 'UTF-8' ) ] );
 			}
 		}
-		return( array( $status, $status_message ) );
+		return( [ $status, $status_message ] );
 	}
 
 	protected function _upload_item__import_test( $options ) {
@@ -680,7 +680,7 @@ class yf_manage_shop_import_products2 {
 				if( !$keys[ $key ] ) { unset( $fields_keys[ $name ] ); }
 			}
 		} elseif( $action == 'insert' ) {
-			$keys = array();
+			$keys = [];
 			if( !empty( $rules ) ) {
 				foreach( $rules[ 'include' ] as $key ) {
 					if( isset( $fields_keys[ $key ] ) ) { $keys[ $key ] = $fields_keys[ $key ]; }
@@ -689,21 +689,21 @@ class yf_manage_shop_import_products2 {
 			$fields_keys = $keys;
 		}
 		$_import_field = $this->import_field;
-		$result = array(
+		$result = [
 			'items'         => null,
 			'count'         => null,
 			'count_valid'   => null,
 			'count_invalid' => null,
-		);
+		];
 		$items = $this->_file_get( $id );
 		foreach( $items as $index => $item ) {
 			$valid          = true;
 			$status         = true;
 			$exists         = null;
-			$status_message = array();
-			$exists_message = array();
+			$status_message = [];
+			$exists_message = [];
 			// test row on exists
-			$where = array();
+			$where = [];
 			foreach( $fields_keys as $key => $key_index ) {
 				$where[ $key ] = $item[ $key_index ];
 			}
@@ -718,7 +718,7 @@ class yf_manage_shop_import_products2 {
 				$where[ 'cat_id' ] = (int)$category_id;
 			}
 			list( $exists, $many, $found ) = $this->_db_exists( 'shop_products',
-				array( 'where' => $where ) );
+				[ 'where' => $where ] );
 			if( $action == 'update' ) {
 				!( $exists && $many == 1 ) && $valid = false;
 					!$exists  && $status_message[] = 'не существует';
@@ -729,15 +729,15 @@ class yf_manage_shop_import_products2 {
 					&& ( $valid = false );
 			}
 			$status = $valid;
-			$result[ 'items' ][ $index ] = array(
-				'fields'         => array(),
+			$result[ 'items' ][ $index ] = [
+				'fields'         => [],
 				'valid'          => $valid,
 				'exists'         => $exists,
 				'exists_message' => '',
 				'status'         => $status,
 				'status_message' => $status_message,
 				'found'          => $found,
-			);
+			];
 			// var_dump( $where, $result[ 'items' ][ $index ] );
 			// test fields
 			if( $status ) {
@@ -794,12 +794,12 @@ class yf_manage_shop_import_products2 {
 		$exists = null;
 		$status = $valid;
 		$status_message = $status ? 'товар уже существует' : 'товар не существует';
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -818,12 +818,12 @@ class yf_manage_shop_import_products2 {
 		$exists = null;
 		$status = $valid;
 		$status_message = $status ? null : $status_message;
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -838,12 +838,12 @@ class yf_manage_shop_import_products2 {
 		$exists = null;
 		$status = $valid;
 		$status_message = $status ? null : $status_message;
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -854,12 +854,12 @@ class yf_manage_shop_import_products2 {
 		$exists = null;
 		$status = $valid;
 		$status_message = $status ? null : 'цена должна быть больше нуля';
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -870,12 +870,12 @@ class yf_manage_shop_import_products2 {
 		$exists = null;
 		$status = $valid;
 		$status_message = $status ? null : 'себестоимость должна быть больше нуля';
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -888,12 +888,12 @@ class yf_manage_shop_import_products2 {
 		$exists = null;
 		$status = $valid;
 		$status_message = $status ? null : $status_message;
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -909,12 +909,12 @@ class yf_manage_shop_import_products2 {
 		}
 		$status = $valid && $exists;
 			$status_message = $status ? null : $status_message;
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -932,13 +932,13 @@ class yf_manage_shop_import_products2 {
 		}
 		$status = $valid && $exists && $many == 1;
 			$status_message = $status ? null : $status_message;
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'many'           => $many,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -954,12 +954,12 @@ class yf_manage_shop_import_products2 {
 		}
 		$status = $valid && $exists;
 			$status_message = $status ? null : $status_message;
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -976,13 +976,13 @@ class yf_manage_shop_import_products2 {
 		}
 		$status = ( $action == 'insert' ) || ( $valid && $exists && $many == 1 );
 			$status_message = $status ? null : $status_message;
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'many'           => $many,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -998,12 +998,12 @@ class yf_manage_shop_import_products2 {
 		}
 		$status = $valid && $exists;
 			$status_message = $status ? null : $status_message;
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -1018,17 +1018,17 @@ class yf_manage_shop_import_products2 {
 			$many > 1 && $status_message = 'множество поставщиков с этим именем: ' . $many;
 		$status = ( $valid && $exists && $many == 1 );
 			$status_message = $status ? null : $status_message;
-		$result = array(
+		$result = [
 			'valid'          => $valid,
 			'exists'         => $exists,
 			'many'           => $many,
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
-	function _db_exists( $name, $options = array() ) {
+	function _db_exists( $name, $options = [] ) {
 		$cache  = &$this->cache;
 		$_     = $options;
 		$key   = $_[ 'key'   ];
@@ -1039,17 +1039,17 @@ class yf_manage_shop_import_products2 {
 		if( $is_cache ) {
 			$items = $cache[ $key ][ $value ];
 		} else {
-			$_get_options = $options + array(
+			$_get_options = $options + [
 				'name'  => $name,
-			);
+			];
 			if( !empty( $key ) && !empty( $value ) ) {
-				$_get_options[ 'where' ][] = array( $key => $value );
+				$_get_options[ 'where' ][] = [ $key => $value ];
 			}
 			$items = $this->_db_get( $_get_options );
 			// cache
 			if( !empty( $items ) && !empty( $key ) && !empty( $value ) ) {
 				$value == 'name' && $value = mb_strtolower( $value, 'UTF-8' );
-				$cache[ $key ][ $value ] = array();
+				$cache[ $key ][ $value ] = [];
 				foreach( (array)$items as $index => $_item ) {
 					if( isset( $_item[ $key ] ) ) {
 						if( isset( $_item[ 'id' ] ) ) {
@@ -1065,7 +1065,7 @@ class yf_manage_shop_import_products2 {
 		}
 		$exists = !is_null( $items );
 		$many   = count( $items );
-		return( array( $exists, $many, $items ) );
+		return( [ $exists, $many, $items ] );
 	}
 
 	function _db_get( $options ) {
@@ -1077,7 +1077,7 @@ class yf_manage_shop_import_products2 {
 		$_where = $_[ 'where' ];
 		$_limit = $_[ 'limit' ];
 		// prepare where
-		$where  = array();
+		$where  = [];
 		foreach( $_where as $field => $value ) {
 			list( $field, $value ) = $this->_field_to_sql( $field, $value );
 			if( !$field ) { return( null ); }
@@ -1116,19 +1116,19 @@ class yf_manage_shop_import_products2 {
 		$_class  = $this;
 		$_method = '_field_to_sql__' . $field;
 		$_status = method_exists( $_class, $_method );
-		if( !$_status ) { return( array( $field, _es( $value ) ) ); }
+		if( !$_status ) { return( [ $field, _es( $value ) ] ); }
 		return( $_class->$_method( $field, $value, $action ) );
 	}
 
 	protected function _field_to_sql__url( $field, $value, $action = null ) {
 		$value = common()->_propose_url_from_name( $value );
-		return( array( $field, $value ) );
+		return( [ $field, $value ] );
 	}
 
 	protected function _field_to_sql__price( $field, $value, $action = null ) {
 		$_class_price = $this->_class_price;
 		$value = $_class_price->_number_mysql( $value );
-		return( array( $field, $value ) );
+		return( [ $field, $value ] );
 	}
 
 	protected function _field_to_sql__category_name( $field, $value, $action = null ) {
@@ -1139,7 +1139,7 @@ class yf_manage_shop_import_products2 {
 			$value = reset( $name );
 			$value = (int)$value[ 'id' ];
 			$field = 'cat_id';
-			$result = array( $field, $value );
+			$result = [ $field, $value ];
 		}
 		return( $result );
 	}
@@ -1152,42 +1152,42 @@ class yf_manage_shop_import_products2 {
 			$value = reset( $name );
 			$value = (int)$value[ 'id' ];
 			$field = 'supplier_id';
-			$result = array( $field, $value );
+			$result = [ $field, $value ];
 		}
 		return( $result );
 	}
 
 	protected function _field_to_sql__manufacturer_name( $field, $value, $action = null ) {
-		if( $action == 'check' ) { return( array( $field, $value ) ); }
+		if( $action == 'check' ) { return( [ $field, $value ] ); }
 		$value = trim( $value );
 		$field = 'manufacturer_id';
-		if( empty( $value ) ) { return( array( $field, 0 ) ); }
+		if( empty( $value ) ) { return( [ $field, 0 ] ); }
 		$cache  = &$this->cache;
 		$result = null;
 		$name = $cache[ 'manufacturer' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
 		if( is_array( $name ) ) {
 			$value = reset( $name );
 			$value = (int)$value[ 'id' ];
-			$result = array( $field, $value );
+			$result = [ $field, $value ];
 		} elseif ( $action == 'insert' ) {
 			// try add
 			$url = common()->_propose_url_from_name( $value );
-			$id = (int)db()->table( 'shop_manufacturers' )->insert( array(
+			$id = (int)db()->table( 'shop_manufacturers' )->insert( [
 				'name' => _es( $value ),
 				'url'  => $url,
-			));
+			]);
 			if( !empty( $value ) ) {
-				$item = array(
+				$item = [
 					'id'   => $id,
 					'name' => $value,
 					'url'  => $url,
-				);
+				];
 				$cache_name = mb_strtolower( $item[ 'name' ], 'UTF-8' );
 				$cache[ 'manufacturer' ][ 'id' ][ $id ] = &$item;
 				$cache[ 'manufacturer' ][ 'name' ][ $cache_name ][ $id ] = &$item;
 			}
 			$value = $id;
-			$result = array( $field, $value );
+			$result = [ $field, $value ];
 		}
 		return( $result );
 	}
@@ -1203,7 +1203,7 @@ class yf_manage_shop_import_products2 {
 		// get data
 		$items = $this->_file_get( $id );
 		// prepare sql data
-		$data = array();
+		$data = [];
 		$test_items = &$test[ 'items' ];
 		// get fields, keys
 		$fields_by_name = array_flip( $fields );
@@ -1214,10 +1214,10 @@ class yf_manage_shop_import_products2 {
 		unset( $fields_by_name[ 0 ] );
 		$fields_keys      = $fields_by_name;
 		$fields_values    = $fields_by_name;
-		$sql_item_default = array(
+		$sql_item_default = [
 			'status' => 1,
 			'active' => 1,
-		);
+		];
 		if( $action == 'update' ) {
 			foreach( $fields_keys as $name => $key ) {
 				if( !$keys[ $key ] ) { unset( $fields_keys[ $name ] ); }
@@ -1233,8 +1233,8 @@ class yf_manage_shop_import_products2 {
 				$sql_item_default[ 'cat_id' ] = (int)$category_id;
 			}
 			// add field for insert relation table
-			$relation       = array( 'manufacturer_name' );
-			$relation_field = array();
+			$relation       = [ 'manufacturer_name' ];
+			$relation_field = [];
 			foreach( $relation as $item ) {
 				if( !empty( $fields_values[ $item ] ) ) {
 					$relation_field[ $item ] = $fields_values[ $item ];
@@ -1307,7 +1307,7 @@ class yf_manage_shop_import_products2 {
 				$status_message = 'Ошибка при работе с БД!';
 			}
 		}
-		return( array( $status, $status_message ) );
+		return( [ $status, $status_message ] );
 	}
 
 	protected function _file_parse__get_cache( $file_name ) {
@@ -1390,7 +1390,7 @@ class yf_manage_shop_import_products2 {
 		die( $message );
 	}
 
-	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
+	protected function _firewall( $class = null, $class_path = null, $method = null, $options = [] ) {
 		if( $class && $class_path ) {
 			$_class  = _class_safe( $class, $class_path );
 		} else {
@@ -1403,7 +1403,7 @@ class yf_manage_shop_import_products2 {
 		return( $_class->$_method( $options ) );
 	}
 
-	protected function _call( $class = null, $class_path = null, $method = null, $options = array() ) {
+	protected function _call( $class = null, $class_path = null, $method = null, $options = [] ) {
 		ob_start();
 		main()->NO_GRAPHICS = true;
 		$result = $this->_firewall( $class, $class_path, $method, $options );
@@ -1434,51 +1434,51 @@ class yf_manage_shop_import_products2 {
 
 	function _data_ng( $json = false ) {
 		$cache = &$this->cache;
-		$_url = array(
-			'product_view' => url_user( array( 'object' => 'shop',        'action' => 'product',      'id' => 0 ) ),
-			'product_edit' => url_admin( array( 'object' => 'manage_shop', 'action' => 'product_edit', 'id' => 0 ) ),
-		);
+		$_url = [
+			'product_view' => url_user( [ 'object' => 'shop',        'action' => 'product',      'id' => 0 ] ),
+			'product_edit' => url_admin( [ 'object' => 'manage_shop', 'action' => 'product_edit', 'id' => 0 ] ),
+		];
 		$_upload_list             = $this->upload_list;
 		$_upload_status           = $this->upload_status;
 		$_import_field            = $this->import_field;
 		$_import_field_autodetect = $this->import_field_autodetect;
 		$_import_action           = $this->import_action;
-		$_import_action_array = array();
+		$_import_action_array = [];
 		foreach( $_import_action as $key => $value ) {
-			$_import_action_array[] = array(
+			$_import_action_array[] = [
 				'key'   => $key,
 				'value' => $value,
-			);
+			];
 		}
 		// supplier
 		$_supplier = $cache[ 'supplier' ][ 'id' ];
-		$_supplier_array = array();
-		$_supplier_array[] = array(
+		$_supplier_array = [];
+		$_supplier_array[] = [
 			'id'    => null,
 			'title' => 'поставщик',
-		);
+		];
 		foreach( $_supplier as $id => $item ) {
 			$title = $item[ 'name' ];
-			$_supplier_array[] = array(
+			$_supplier_array[] = [
 				'id'    => $id,
 				'title' => $title . ' ('. $id .')',
-			);
+			];
 		}
 		// category
 		$_category = $cache[ 'category' ][ 'id' ];
-		$_category_array = array();
-		$_category_array[] = array(
+		$_category_array = [];
+		$_category_array[] = [
 			'id'    => null,
 			'title' => 'категория',
-		);
+		];
 		foreach( $_category as $id => $item ) {
 			$title = $item[ 'name' ];
-			$_category_array[] = array(
+			$_category_array[] = [
 				'id'    => $id,
 				'title' => $title . ' ('. $id .')',
-			);
+			];
 		}
-		$result = array(
+		$result = [
 			'_url'                     => $_url,
 			'_upload_status'           => $_upload_status,
 			'_upload_list'             => $_upload_list,
@@ -1490,7 +1490,7 @@ class yf_manage_shop_import_products2 {
 			'_supplier_array'          => $_supplier_array,
 			'_category'                => $_category,
 			'_category_array'          => $_category_array,
-		);
+		];
 		if( $json ) {
 			$result = json_encode( $result, JSON_NUMERIC_CHECK );
 		}
@@ -1498,12 +1498,12 @@ class yf_manage_shop_import_products2 {
 	}
 
 	function _data() {
-		$_sub_action = array(
+		$_sub_action = [
 			'0'      => '- не выбрано -',
 			'load'   => 'загрузить',
 			'import' => 'импортировать',
 			'delete' => 'удалить',
-		);
+		];
 		$sub_action = $_POST[ 'sub_action' ];
 		$is_sub_action = $sub_action !== '0' && isset( $_sub_action[ $sub_action ] );
 		// -----
@@ -1541,7 +1541,7 @@ class yf_manage_shop_import_products2 {
 			common()->message_warning( 'Требуется подтверждение.' );
 		}
 		// -----
-		$result = array(
+		$result = [
 			'_api_url_upload'      => $_api_url_upload,
 			'_api_url_upload_list' => $_api_url_upload_list,
 			'_api_url_upload_item' => $_api_url_upload_item,
@@ -1551,7 +1551,7 @@ class yf_manage_shop_import_products2 {
 			'_supplier'            => $_supplier,
 			'sub_action' => $sub_action,
 			'supplier'   => $supplier,
-		);
+		];
 		return( $result );
 	}
 

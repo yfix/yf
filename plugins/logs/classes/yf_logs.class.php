@@ -24,22 +24,22 @@ class yf_logs {
 	/** @var int @conf_skip Current log level limit ('0' for disabling), could be: 0|E_ERROR|E_WARNING|E_NOTICE */
 	public $CUR_LOG_LEVEL				= E_NOTICE;
 	/** @var array @conf_skip Error levels text representation */
-	public $_error_levels_names = array(
+	public $_error_levels_names = [
 		E_ERROR		=> 'error',
 		E_WARNING	=> 'warning',
 		E_NOTICE	=> 'notice',
-	);
+	];
 	/** @var bool Turn logging of user actions for the stats on/off */
 	public $LOG_USER_ACTIONS	= true;
 	/** @var array @conf_skip Available action names*/
-	public $_avail_action_names = array(
+	public $_avail_action_names = [
 		'visit',
 		'review',
 		'add_comment',
 		'del_comment',
 		'add_friend',
 		'del_friend',
-	);
+	];
 	/** @var bool Only if main()->LOG_EXEC enabled */
 	public $LOG_EXEC_USER	= false;
 	/** @var bool Only if main()->LOG_EXEC enabled */
@@ -65,7 +65,7 @@ class yf_logs {
 	/**
 	* Store user authentication in log table
 	*/
-	function store_user_auth($A = array()) {
+	function store_user_auth($A = []) {
 		// Check if looging needed
 		if (!is_array($A) || !$this->_LOGGING) {
 			return false;
@@ -78,7 +78,7 @@ class yf_logs {
 			$IP = $_SERVER['REMOTE_ADDR'];
 		}
 		if ($this->STORE_USER_AUTH) {
-			db()->INSERT('log_auth', array(
+			db()->INSERT('log_auth', [
 				'user_id'	=> intval($A['id']),
 				'login'		=> _es($A['login']),
 				'group'		=> intval($A['group']),
@@ -87,7 +87,7 @@ class yf_logs {
 				'ip'		=> $IP,
 				'user_agent'=> _es(getenv('HTTP_USER_AGENT')),
 				'referer'	=> _es(getenv('HTTP_REFERER')),
-			));
+			]);
 			conf('_log_auth_insert_id', db()->INSERT_ID());
 		}
 	}
@@ -95,7 +95,7 @@ class yf_logs {
 	/**
 	* Store user authentication in log table
 	*/
-	function _update_last_login($A = array()) {
+	function _update_last_login($A = []) {
 		// Check if looging needed
 		if (!is_array($A) || !$this->_LOGGING || !$this->UPDATE_LAST_LOGIN) {
 			return false;
@@ -111,7 +111,7 @@ class yf_logs {
 	/**
 	* Store admin authentication in log table
 	*/
-	function store_admin_auth($A = array()) {
+	function store_admin_auth($A = []) {
 		// Check if looging needed
 		if (!is_array($A) || !$this->_LOGGING) {
 			return false;
@@ -130,7 +130,7 @@ class yf_logs {
 			$IP = $_SERVER['REMOTE_ADDR'];
 		}
 		if ($this->STORE_ADMIN_AUTH) {
-			db()->INSERT('log_admin_auth', array(
+			db()->INSERT('log_admin_auth', [
 				'admin_id'	=> intval($A['id']),
 				'login'		=> _es($A['login']),
 				'group'		=> intval($A['group']),
@@ -139,7 +139,7 @@ class yf_logs {
 				'ip'		=> $IP,
 				'user_agent'=> _es(getenv('HTTP_USER_AGENT')),
 				'referer'	=> _es(getenv('HTTP_REFERER')),
-			));
+			]);
 			conf('_log_admin_auth_insert_id', db()->INSERT_ID());
 		}
 	}
@@ -147,7 +147,7 @@ class yf_logs {
 	/**
 	* Save debug log
 	*/
-	function _save_debug_log($text = '', $log_level = E_NOTICE, $trace = array(), $simple = false) {
+	function _save_debug_log($text = '', $log_level = E_NOTICE, $trace = [], $simple = false) {
 		if (empty($log_level) || !isset($this->_error_levels_names[$log_level])) {
 			$log_level = E_NOTICE;
 		}
@@ -203,14 +203,14 @@ class yf_logs {
 		if (!$this->LOG_USER_ACTIONS || !in_array($action_name, $this->_avail_action_names)) {
 			return false;
 		}
-		db()->insert_safe('log_user_action', array(
+		db()->insert_safe('log_user_action', [
 			'owner_id'		=> intval($owner_id),
 			'action_name'	=> $action_name,
 			'member_id'		=> main()->USER_ID,
 			'object_name'	=> $object_name,
 			'object_id'		=> intval($object_id),
 			'add_date'		=> time(),
-		));
+		]);
 		return true;			
 	}
 

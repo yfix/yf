@@ -10,12 +10,12 @@ class yf_shop_orders{
 					return module('shop')->order_view(true);
 				}
 			}
-			$items[] = array(
+			$items[] = [
 				"order_id"		=> $_POST["order_id"],
 				"email"			=> $_POST["email"],
 				"form_action"	=> "./?object=shop&action=orders",
 				"back_link"		=> "./?object=shop",
-			);
+			];
 		} else {
 			$sql = "SELECT * FROM ".db('shop_orders')." WHERE user_id=".intval(main()->USER_ID);
 			//$filter_sql = $this->PARENT_OBJ->USE_FILTER ? $this->PARENT_OBJ->_create_filter_sql() : "";
@@ -34,7 +34,7 @@ class yf_shop_orders{
 				} else {
 					$del = "";
 				}
-				$items[] = array(
+				$items[] = [
 					"order_id"	=> $v["id"],
 					"date"		=> _format_date($v["date"], "long"),
 					"sum"		=> module('shop')->_format_price($v["total_sum"]),
@@ -43,16 +43,16 @@ class yf_shop_orders{
 					"status"	=> $v["status"],
 					"delete_url"=> $del,
 					"view_url"	=> "./?object=shop&action=order_view&id=".$v["id"],
-				);
+				];
 			}
 		}
-		$replace = array(
+		$replace = [
 			"error_message"	=> _e(),
 			"items"			=> (array)$items,
 			"pages"			=> $pages,
 			"total"			=> intval($total),
 			"filter"		=> module('shop')->USE_FILTER ? module('shop')->_show_filter() : "",
-		);
+		];
 		return tpl()->parse("shop/order_show", $replace);
 	}
 	

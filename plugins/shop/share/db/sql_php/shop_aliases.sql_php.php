@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'source' => array(
+return [
+	'fields' => [
+		'source' => [
 			'name' => 'source',
 			'type' => 'varchar',
 			'length' => 32,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'type' => array(
+		],
+		'type' => [
 			'name' => 'type',
 			'type' => 'varchar',
 			'length' => 32,
@@ -30,8 +30,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'src_item_id' => array(
+		],
+		'src_item_id' => [
 			'name' => 'src_item_id',
 			'type' => 'int',
 			'length' => 11,
@@ -45,8 +45,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'dst_item_id' => array(
+		],
+		'dst_item_id' => [
 			'name' => 'dst_item_id',
 			'type' => 'int',
 			'length' => 11,
@@ -60,21 +60,21 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'source' => 'source',
 				'type' => 'type',
 				'src_item_id' => 'src_item_id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

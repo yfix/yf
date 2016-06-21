@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'admin_id' => array(
+return [
+	'fields' => [
+		'admin_id' => [
 			'name' => 'admin_id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'supplier_id' => array(
+		],
+		'supplier_id' => [
 			'name' => 'supplier_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,8 +30,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'main_cat_id' => array(
+		],
+		'main_cat_id' => [
 			'name' => 'main_cat_id',
 			'type' => 'int',
 			'length' => 11,
@@ -45,20 +45,20 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'admin_id' => 'admin_id',
 				'supplier_id' => 'supplier_id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

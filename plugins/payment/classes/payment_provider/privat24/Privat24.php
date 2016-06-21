@@ -2,8 +2,8 @@
 
 class Privat24 {
 
-	protected $_currency_allow = array( 'EUR', 'UAH', 'USD' );
-	protected $_signature_allow = array(
+	protected $_currency_allow = [ 'EUR', 'UAH', 'USD' ];
+	protected $_signature_allow = [
 		'amt',         // amount
 		'ccy',         // currency
 		'details',
@@ -13,7 +13,7 @@ class Privat24 {
 		'merchant',
 		// 'return_url',
 		// 'server_url',
-	);
+	];
 	protected $_key_public  = null;
 	protected $_key_private = null;
 
@@ -29,7 +29,7 @@ class Privat24 {
 	}
 
 	public function key( $name = 'public', $value = null ) {
-		if( !in_array( $name, array( 'public', 'private' ) ) ) {
+		if( !in_array( $name, [ 'public', 'private' ] ) ) {
 			return( null );
 		}
 		$_name  = '_key_' . $name;
@@ -43,7 +43,7 @@ class Privat24 {
 	public function signature( $options, $is_request = true ) {
 		$_ = &$options;
 		if( $is_request ) {
-			$request = array();
+			$request = [];
 			foreach ((array)$this->_signature_allow as $key ) {
 				$request[] = $key . '=' . $_[ $key ];
 			}

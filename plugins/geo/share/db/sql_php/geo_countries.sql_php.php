@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'code' => array(
+return [
+	'fields' => [
+		'code' => [
 			'name' => 'code',
 			'type' => 'char',
 			'length' => 2,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'code3' => array(
+		],
+		'code3' => [
 			'name' => 'code3',
 			'type' => 'char',
 			'length' => 3,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'num' => array(
+		],
+		'num' => [
 			'name' => 'num',
 			'type' => 'char',
 			'length' => 3,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 64,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name_eng' => array(
+		],
+		'name_eng' => [
 			'name' => 'name_eng',
 			'type' => 'varchar',
 			'length' => 64,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'cont' => array(
+		],
+		'cont' => [
 			'name' => 'cont',
 			'type' => 'char',
 			'length' => 2,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'tld' => array(
+		],
+		'tld' => [
 			'name' => 'tld',
 			'type' => 'char',
 			'length' => 2,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'currency' => array(
+		],
+		'currency' => [
 			'name' => 'currency',
 			'type' => 'char',
 			'length' => 3,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'area' => array(
+		],
+		'area' => [
 			'name' => 'area',
 			'type' => 'int',
 			'length' => 10,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'population' => array(
+		],
+		'population' => [
 			'name' => 'population',
 			'type' => 'int',
 			'length' => 10,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'phone_prefix' => array(
+		],
+		'phone_prefix' => [
 			'name' => 'phone_prefix',
 			'type' => 'char',
 			'length' => 10,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'languages' => array(
+		],
+		'languages' => [
 			'name' => 'languages',
 			'type' => 'varchar',
 			'length' => 256,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'geoname_id' => array(
+		],
+		'geoname_id' => [
 			'name' => 'geoname_id',
 			'type' => 'int',
 			'length' => 10,
@@ -195,8 +195,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'capital_id' => array(
+		],
+		'capital_id' => [
 			'name' => 'capital_id',
 			'type' => 'int',
 			'length' => 10,
@@ -210,8 +210,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -224,23 +224,23 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+			],
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'code' => 'code',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

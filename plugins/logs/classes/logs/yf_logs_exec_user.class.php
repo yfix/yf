@@ -18,10 +18,10 @@ class yf_logs_exec_user {
 	/** @var bool */
 	public $USE_STOP_LIST		= true;
 	/** @var array Stop-list for logging (REGEXPs allowed here) */
-	public $STOP_LIST			= array(
+	public $STOP_LIST			= [
 		'object=(aff|dynamic).*',
 #		'task=(login|logout)',
-	);
+	];
 	/** @var bool */
 	public $LOG_IS_USER_GUEST	= true;
 	/** @var bool */
@@ -59,7 +59,7 @@ class yf_logs_exec_user {
 	/** @var bool */
 	public $LOG_IS_CACHE_ON		= true;
 	/** @var bool */
-	public $EXCLUDE_IPS			= array();
+	public $EXCLUDE_IPS			= [];
 
 	/**
 	*/
@@ -68,7 +68,7 @@ class yf_logs_exec_user {
 			$this->LOG_DRIVER = 'file';
 		}
 		if (!is_array($this->LOG_DRIVER)) {
-			$this->LOG_DRIVER = array($this->LOG_DRIVER);
+			$this->LOG_DRIVER = [$this->LOG_DRIVER];
 		}
 	}
 
@@ -77,7 +77,7 @@ class yf_logs_exec_user {
 	function allow () {
 		if (!$this->LOGGING || MAIN_TYPE_ADMIN) { return false; }
 		$main = main();
-		$this->is = array(
+		$this->is = [
 			'is_logged_in'	=> (bool)$main->is_logged_in(),
 			'is_common_page'=> $main->is_common_page(),
 			'is_https'		=> $main->is_https(),
@@ -96,11 +96,11 @@ class yf_logs_exec_user {
 			'is_503'		=> $main->is_503(),
 			'is_cache_on'	=> $main->is_cache_on(),
 #			'is_mobile'		=> $main->is_mobile(),
-		);
-		$checks = array(
+		];
+		$checks = [
 			'is_user_guest'	=> !$this->is['is_logged_in'] && !$this->LOG_IS_USER_GUEST,
 			'is_user_member'=> $this->is['is_logged_in'] && !$this->LOG_IS_USER_MEMBER,
-		);
+		];
 		foreach((array)$this->is as $name => $val) {
 			if ($name === 'is_logged_in') {
 				continue;
@@ -140,7 +140,7 @@ class yf_logs_exec_user {
 			return false;
 		}
 		$is = $this->is;
-		$data = array(
+		$data = [
 			'user_id'		=> (int)$_SESSION['user_id'],
 			'user_group'	=> (int)$_SESSION['user_group'],
 			'date'			=> time(),
@@ -174,7 +174,7 @@ class yf_logs_exec_user {
 			'is_503'		=> (int)$is['is_503'],
 			'is_cache_on'	=> (int)$is['is_cache_on'],
 #			'is_mobile'		=> (int)$is['is_mobile'],
-		);
+		];
 		if (in_array('db', $this->LOG_DRIVER)) {
 			$sql = db()->insert_safe('log_exec', $data);
 			db()->_add_shutdown_query($sql);

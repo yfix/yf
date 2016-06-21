@@ -31,13 +31,13 @@ class yf_payment_api__provider_remote {
 	public $service_allow = null;
 	public $description   = null;
 
-	public $_status = array();
-	public $_status_message = array(
+	public $_status = [];
+	public $_status_message = [
 		'success'     => 'Выполнено',
 		'in_progress' => 'Ожидание',
 		'processing'  => 'Обработка',
 		'refused'     => 'Отклонено',
-	);
+	];
 
 	public $payment_api = null;
 	public $api         = null;
@@ -83,7 +83,7 @@ class yf_payment_api__provider_remote {
 		if( !is_array( $status_message ) ) { $status_message = &$this->_status_message; }
 		$name    = @$status[ $value ] ?: null;
 		$message = @$status_message[ $name ] ?: @$status_message[ $value ] ?: null;
-		return( array( $name, $message ) );
+		return( [ $name, $message ] );
 	}
 
 	public function _ip( $options = null ) {
@@ -98,10 +98,10 @@ class yf_payment_api__provider_remote {
 		// allow ip
 		$ip_filter = @$_ip_filter ? $_ip_filter : $this->ip_filter;
 		$ip = isset( $_ip ) ? $_ip : $this->_ip();
-		$result = _class( 'api' )->_check_ip( array(
+		$result = _class( 'api' )->_check_ip( [
 			'ip'        => $ip,
 			'ip_filter' => $ip_filter,
-		));
+		]);
 		return( $result );
 	}
 
@@ -136,16 +136,16 @@ class yf_payment_api__provider_remote {
 		}
 		if( is_array( $_uri ) ) {
 			// prepare uri
-			$uri = array();
+			$uri = [];
 			foreach( $_uri as $id => $value ) {
 				if( is_string( $value ) && strpos( $value, '$' ) !== false ) {
 					$v = str_replace( '$', '', $value );
 					$v = @$request_options[ $v ];
 					if( is_null( $v ) ) {
-						$result = array(
+						$result = [
 							'status'         => false,
 							'status_message' => 'error api url: required option '. $value,
-						);
+						];
 						return( $result );
 					}
 					$value = $v;
@@ -163,60 +163,60 @@ class yf_payment_api__provider_remote {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// check
 		if( empty( $_name ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Статус операции не определен',
-			);
+			];
 			return( $result );
 		}
 		if( empty( $_operation_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
-			);
+			];
 			return( $result );
 		}
 		// var
 		$payment_api = $this->payment_api;
 		// operation
-		$operation = $payment_api->operation( array( 'operation_id' => $_operation_id ) );
+		$operation = $payment_api->operation( [ 'operation_id' => $_operation_id ] );
 		if( empty( $operation ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Операция отсутствует: ' . $_operation_id,
-			);
+			];
 			return( $result );
 		}
 		// update status only in_progress
-		$object = $payment_api->get_status( array( 'status_id' => $operation[ 'status_id' ] ) );
+		$object = $payment_api->get_status( [ 'status_id' => $operation[ 'status_id' ] ] );
 		list( $status_id, $status ) = $object;
 		if( empty( $status_id ) ) { return( $object ); }
 		if( $status[ 'name' ] != 'in_progress' && $status[ 'name' ] != 'processing' ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Операция уже обработана: ' . $_operation_id,
-			);
+			];
 			return( $result );
 		}
 		// progress
-		$object = $payment_api->get_status( array( 'name' => $_name ) );
+		$object = $payment_api->get_status( [ 'name' => $_name ] );
 		list( $status_id, $status ) = $object;
 		if( empty( $status_id ) ) { return( $object ); }
 		// prepare
 		$sql_datetime = $payment_api->sql_datetime();
-		$data = array(
+		$data = [
 			'operation_id'    => $_operation_id,
 			'status_id'       => $status_id,
 			'datetime_update' => $sql_datetime,
-		);
+		];
 		if( $status[ 'name' ] == 'processing' ) {
 			// update processing
-			$data_options = array(
-				'processing' => array( array(
+			$data_options = [
+				'processing' => [ [
 					'provider_name' => 'administration',
 					'datetime'      => $sql_datetime,
-				)),
-			);
+				]],
+			];
 		}
 		!empty( $_is_finish ) && $data[ 'datetime_finish' ] = $sql_datetime;
 		if( @$data_options ) {
@@ -244,33 +244,33 @@ class yf_payment_api__provider_remote {
 				break;
 		}
 		// method
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => @$payway,
 			'method_id' => @$_method_id,
-		));
+		]);
 		if( empty( $method ) ) { return( $this->result_success() ); }
 		// currency_id
 		$currency_id = $this->$get_currency( $options );
 		if( empty( $currency_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неизвестная валюта',
-			);
+			];
 			return( $result );
 		}
 		// validation amount
 		// amount min/max
-		$result = $this->amount_limit( array(
+		$result = $this->amount_limit( [
 			'amount'      => $_amount,
 			'currency_id' => $currency_id,
 			'method'      => $method,
-		));
+		]);
 		if( ! @$result[ 'status' ] ) { return( $result ); }
 		// validation options
 		if( empty( $method[ 'option_validation' ] ) ) { return( $this->result_success() ); }
 		$validation         = $method[ 'option_validation' ];
 		$validation_message = @$method[ 'option_validation_message' ];
-		$validation_error   = array();
+		$validation_error   = [];
 		$validate = _class( 'validate' );
 		// validation processor
 		foreach( $method[ 'option' ] as $key => $item ) {
@@ -290,20 +290,20 @@ class yf_payment_api__provider_remote {
 	}
 
 	public function result_success() {
-		return( array( 'status' => true ) );
+		return( [ 'status' => true ] );
 	}
 
 	public function result_fail( $message, $options = null ) {
-		return( array( 'status' => false, 'status_message' => $message, 'options' => $options ) );
+		return( [ 'status' => false, 'status_message' => $message, 'options' => $options ] );
 	}
 
 	public function api_authorization( $method = null ) {
 		$result = null;
 		if( ! @$method[ 'is_authorization' ] ) { return( $result ); }
-		$result = array(
+		$result = [
 			'user'     => $this->API_KEY_PUBLIC,
 			'password' => $this->API_KEY_PRIVATE,
-		);
+		];
 		return( $result );
 	}
 
@@ -348,52 +348,52 @@ class yf_payment_api__provider_remote {
 		// vars
 		$payment_api = $this->payment_api;
 		// DUMP
-		$payment_api->dump(array( 'var' => array(
+		$payment_api->dump([ 'var' => [
 			'transaction' => $options,
-		)));
+		]]);
 		// response operation id
 		$operation_id = (int)( $_operation_id ?: $_response[ 'operation_id' ] );
 		if( empty( $operation_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
-			);
+			];
 			return( $result );
 		}
 		$sql_datetime = $payment_api->sql_datetime();
 		// start transaction with row lock by operation_id
-		$result = $payment_api->transaction_start(array( 'operation_id' => $operation_id ));
+		$result = $payment_api->transaction_start([ 'operation_id' => $operation_id ]);
 		if( !$result ) {
 			$message = 'Ошибка установки уровня изоляции транзакции';
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => $message,
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			// mail admin
 			$tpl = $mail_tpl . '_error';
-			$payment_api->mail( array(
+			$payment_api->mail( [
 				'subject'  => 'Ошибка платежа (id: '. $operation_id . ')',
 				'tpl'      => $tpl,
 				'user_id'  => $account[ 'user_id' ],
 				'is_admin' => true,
-				'data'    => array(
+				'data'    => [
 					'operation_id' => $operation_id,
 					'message'      => $message,
-				),
-			));
+				],
+			]);
 			return( $result );
 		}
 		// exists operation
-		$operation = $payment_api->operation( array(
+		$operation = $payment_api->operation( [
 			'operation_id' => $operation_id,
-		));
+		]);
 		if( empty( $operation ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Операция отсутствует: ' . $operation_id,
-			);
+			];
 			return( $result );
 		}
 		$operation_options = $operation[ 'options' ];
@@ -417,46 +417,46 @@ class yf_payment_api__provider_remote {
 		$amount        = $payment_api->_number_float( $operation[ 'amount' ] );
 		// check request/response operation_id
 		if( $operation_id != $_operation_id ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный код операции',
-			);
+			];
 			return( $result );
 		}
 		// get current status
 		$new_status_name = $_status_name;
-		$object = $payment_api->get_status( array( 'name' => $new_status_name ) );
+		$object = $payment_api->get_status( [ 'name' => $new_status_name ] );
 		list( $new_status_id, $new_status ) = $object;
 		if( empty( $new_status_id ) ) { return( $object ); }
 		// check request provider
-		$object = $payment_api->provider( array(
+		$object = $payment_api->provider( [
 			'is_service'  => true,
 			'provider_id' => $provider_id,
-		));
+		]);
 		if( empty( $object ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный провайдер',
-			);
+			];
 			return( $result );
 		}
 		$provider      = reset( $object );
 		$provider_name = $provider[ 'name' ];
 		// check request/response provider
 		if( !@$_provider_force && $provider_name != $_provider_name ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => "Провайдер не совпадает ($_provider_name)",
-			);
+			];
 			return( $result );
 		}
 		// check account
-		$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, ) );
+		$object = $payment_api->get_account__by_id( [ 'account_id' => $account_id, ] );
 		if( empty( $object ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный счет',
-			);
+			];
 			return( $result );
 		}
 		list( $account_id, $account ) = $object;
@@ -465,13 +465,13 @@ class yf_payment_api__provider_remote {
 		$balance    = null;
 		// get current status_name
 		$current_status_id = (int)$operation[ 'status_id' ];
-		$object = $payment_api->get_status( array( 'status_id' => $current_status_id ) );
+		$object = $payment_api->get_status( [ 'status_id' => $current_status_id ] );
 		list( $current_status_id, $current_status ) = $object;
 		if( empty( $current_status_id ) ) { return( $object ); }
 		$current_status_name = $current_status[ 'name' ];
 		// get payment type
 		$current_type_id = (int)$operation[ 'type_id' ];
-		$object = $payment_api->get_type( array( 'type_id' => $current_type_id ) );
+		$object = $payment_api->get_type( [ 'type_id' => $current_type_id ] );
 		list( $current_type_id, $current_type ) = $object;
 		if( empty( $current_type_id ) ) { return( $object ); }
 		$current_type_name = $current_type[ 'name' ];
@@ -484,12 +484,12 @@ class yf_payment_api__provider_remote {
 			( $current_type_name == 'deposition' && $current_status_name != 'success' )
 		;
 		// DUMP
-		$payment_api->dump(array( 'var' => array(
+		$payment_api->dump([ 'var' => [
 			'is_try'              => $is_try,
 			'current_type_name'   => $current_type_name,
 			'current_status_name' => $current_status_name,
 			'datetime'            => $sql_datetime,
-		)));
+		]]);
 		// prepare
 		$is_manual  = null;
 		$is_payin   = null;
@@ -534,59 +534,59 @@ class yf_payment_api__provider_remote {
 			if( $current_status_id != $new_status_id ) {
 				if( $is_update_balance ) {
 					// DUMP
-					$payment_api->dump(array( 'var' => array(
+					$payment_api->dump([ 'var' => [
 						'is_update_balance' => $is_update_balance,
-					)));
+					]]);
 					// update account
-					$_data = array(
+					$_data = [
 						'account_id'      => $account_id,
 						'datetime_update' => db()->escape_val( $sql_datetime ),
 						'balance'         => "( balance $sql_sign $sql_amount )",
-					);
-					$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
+					];
+					$_result = $payment_api->balance_update( $_data, [ 'is_escape' => false ] );
 					if( !$_result[ 'status' ] ) {
 						$payment_api->transaction_rollback();
 						$message = 'Ошибка при обновлении счета';
-						$result = array(
+						$result = [
 							'status'         => false,
 							'status_message' => $message,
-						);
+						];
 						// DUMP
-						$payment_api->dump(array( 'var' => $result ));
+						$payment_api->dump([ 'var' => $result ]);
 						// mail admin
 						$tpl = $mail_tpl . '_error';
-						$payment_api->mail( array(
+						$payment_api->mail( [
 							'subject'  => 'Ошибка платежа (id: '. $operation_id . ')',
 							'tpl'      => $tpl,
 							'user_id'  => $account[ 'user_id' ],
 							'is_admin' => true,
-							'data'    => array(
+							'data'    => [
 								'operation_id' => $operation_id,
 								'message'      => $message,
-							),
-						));
+							],
+						]);
 						return( $result );
 					}
 				}
 				// mail
 				$tpl = $mail_tpl . '_'. $new_status_name;
-				$payment_api->mail( array(
+				$payment_api->mail( [
 					'tpl'     => $tpl,
 					'user_id' => $account[ 'user_id' ],
 					'admin'   => true,
-					'data'    => array(
+					'data'    => [
 						'operation_id' => $operation_id,
 						'amount'       => $amount,
-					),
-				));
+					],
+				]);
 			}
 			if( $is_update_status ) {
 				// DUMP
-				$payment_api->dump(array( 'var' => array(
+				$payment_api->dump([ 'var' => [
 					'is_update_status' => $is_update_status,
-				)));
+				]]);
 				// get balance
-				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
+				$object = $payment_api->get_account__by_id( [ 'account_id' => $account_id, 'force' => true ] );
 				list( $account_id, $account ) = $object;
 				$balance = $account[ 'balance' ];
 				// save response
@@ -609,70 +609,70 @@ class yf_payment_api__provider_remote {
 					$_response[ 'message' ] = $message;
 				}
 				// update operation
-				$data = array(
-					'response' => array( array(
+				$data = [
+					'response' => [ [
 						'datetime'       => $sql_datetime,
 						'provider_name'  => $provider_name,
 						'state'          => $_state,
 						'status'         => $new_status_name,
 						'status_message' => @$_status_message,
 						'data'           => $_response,
-					))
-				);
-				$data = array(
+					]]
+				];
+				$data = [
 					'operation_id'    => $operation_id,
 					'status_id'       => $new_status_id,
 					'datetime_update' => $sql_datetime,
 					'options'         => $data,
-				);
-				$balance && ( $data += array(
+				];
+				$balance && ( $data += [
 					'balance'         => $balance,
 					'datetime_finish' => $sql_datetime,
-				));
+				]);
 				$result = $payment_api->operation_update( $data );
 				if( !$result[ 'status' ] ) {
 					$payment_api->transaction_rollback();
 					// mail admin
 					$tpl = $mail_tpl . '_error';
 					$message = 'Ошибка при обновлении операции';
-					$payment_api->mail( array(
+					$payment_api->mail( [
 						'subject'  => 'Ошибка платежа (id: '. $operation_id . ')',
 						'tpl'      => $tpl,
 						'user_id'  => $account[ 'user_id' ],
 						'is_admin' => true,
-						'data'    => array(
+						'data'    => [
 							'operation_id' => $operation_id,
 							'message'      => $message,
-						),
-					));
+						],
+					]);
 					return( $result );
 				}
 			}
 			@$_status_message && $status_message = $_status_message;
 			// event
 				// get updated account
-				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, ) );
+				$object = $payment_api->get_account__by_id( [ 'account_id' => $account_id, ] );
 				list( $account_id, $account ) = $object;
 				// get updated operation
-				$operation = $payment_api->operation( array(
+				$operation = $payment_api->operation( [
 					'operation_id' => $operation_id,
-				));
-			events()->fire( $event_name .'.finish', array( $account, $operation ) );
+				]);
+			events()->fire( $event_name .'.finish', [ $account, $operation ] );
 		} else {
 			$message = 'Повторный запрос на выполнение операции';
 			$status_message = $message;
 			// mail admin
 			$tpl = $mail_tpl . '_error';
-			$payment_api->mail( array(
+			$payment_api->mail( [
 				'subject'  => 'Ошибка платежа (id: '. $operation_id . ')',
 				'tpl'      => $tpl,
 				'user_id'  => $account[ 'user_id' ],
 				'is_admin' => true,
-				'data'    => array(
+				'data'    => [
 					'operation_id' => $operation_id,
 					'message'      => $message,
-				),
-			));
+				],
+			]);
 		}
 		if( ! @$status_message ) {
 			$status_message = $operation[ 'title' ] .', сумма: '. $amount;
@@ -681,10 +681,10 @@ class yf_payment_api__provider_remote {
 			}
 		}
 		$payment_api->transaction_commit();
-		$result = array(
+		$result = [
 			'status'         => $new_status_name,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -692,10 +692,10 @@ class yf_payment_api__provider_remote {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'payout',
 			'method_id' => $_method_id,
-		));
+		]);
 		$key = 'currency';
 		if( empty( $method ) || empty( $method[ $key ] ) ) { return( null ); }
 		$currency = $method[ $key ];
@@ -712,10 +712,10 @@ class yf_payment_api__provider_remote {
 		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'payout',
 			'method_id' => $_method_id,
-		));
+		]);
 		$key = 'fee';
 		if( empty( $method ) || empty( $method[ $key ] ) ) { return( null ); }
 		$result = $method[ $key ];
@@ -735,24 +735,24 @@ class yf_payment_api__provider_remote {
 			// currency_id
 			$currency_id = $this->get_currency_payout( $_options );
 			if( empty( $currency_id ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Неизвестная валюта',
-				);
+				];
 				return( $result );
 			}
 			$payment_api = &$this->payment_api;
 			// currency conversion
-			$amount_currency = $payment_api->currency_conversion( array(
+			$amount_currency = $payment_api->currency_conversion( [
 				'type'        => 'sell',
 				'currency_id' => $currency_id,
 				'amount'      => $_amount,
-			));
+			]);
 			if( empty( $amount_currency ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Невозможно произвести конвертацию валют',
-				);
+				];
 				return( $result );
 			}
 			$amount = $amount_currency;
@@ -763,13 +763,13 @@ class yf_payment_api__provider_remote {
 				$amount = $amount_currency_total;
 			}
 		}
-		$result = array(
+		$result = [
 			'status'                => true,
 			'amount'                => $amount,
 			'amount_currency'       => @$amount_currency,
 			'amount_currency_total' => @$amount_currency_total,
 			'currency_id'           => @$currency_id,
-		);
+		];
 		return( $result );
 	}
 
@@ -787,15 +787,15 @@ class yf_payment_api__provider_remote {
 			}
 			if( empty( $status ) ) {
 				$payment_api = &$this->payment_api;
-				$amount_text = $payment_api->money_text( array(
+				$amount_text = $payment_api->money_text( [
 					'value'       => $_amount,
 					'currency_id' => $_currency_id,
-				));
-				$limit_text = $payment_api->money_text( array(
+				]);
+				$limit_text = $payment_api->money_text( [
 					'value'       => $limit,
 					'currency_id' => $_currency_id,
-				));
-				$result = array(
+				]);
+				$result = [
 					'status'         => false,
 					'status_message' => @sprintf(
 						'Сумма %s должна быть %s %s'
@@ -803,11 +803,11 @@ class yf_payment_api__provider_remote {
 							, $status_message
 							, $limit_text
 					),
-				);
+				];
 				return( $result );
 			}
 		}
-		$result = array( 'status' => true );
+		$result = [ 'status' => true ];
 		return( $result );
 	}
 
@@ -816,9 +816,9 @@ class yf_payment_api__provider_remote {
 		empty( $currency_id ) && $currency_id = $this->currency_default;
 		if( empty( $currency_id ) ) { return( null ); }
 		$payment_api = &$this->payment_api;
-		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
+		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( [
 			'currency_id' => $currency_id,
-		));
+		]);
 		if( empty( $_currency_id ) ) { return( null ); }
 		// use conversion to integer by minor_units
 		$is_int = false;
@@ -847,10 +847,10 @@ class yf_payment_api__provider_remote {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// progress
 		db()->begin();
-			$result = $this->_update_status( array(
+			$result = $this->_update_status( [
 				'operation_id' => $_operation_id,
 				'name'         => 'processing',
-			));
+			]);
 				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
 		db()->commit();
 		return( $result );
@@ -863,11 +863,11 @@ class yf_payment_api__provider_remote {
 		db()->begin();
 			$result = $this->_payout_balance_update( $options );
 				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
-			$result = $this->_update_status( array(
+			$result = $this->_update_status( [
 				'operation_id' => $_operation_id,
 				'name'         => 'success',
 				'is_finish'    => true,
-			));
+			]);
 				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
 		db()->commit();
 		return( $result );
@@ -882,11 +882,11 @@ class yf_payment_api__provider_remote {
 				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
 			$result = $this->_payout_balance_update( $options );
 				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
-			$result = $this->_update_status( array(
+			$result = $this->_update_status( [
 				'operation_id' => $_operation_id,
 				'name'         => 'refused',
 				'is_finish'    => true,
-			));
+			]);
 				if( empty( $result[ 'status' ] ) ) { db()->rollback(); return( $result ); }
 		db()->commit();
 		return( $result );
@@ -935,30 +935,30 @@ class yf_payment_api__provider_remote {
 		$amount       = $payment_api->_number_float( $data[ 'amount' ] );
 		$currency_id  = $this->get_currency( $options );
 		if( empty( $operation_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
-			);
+			];
 			return( $result );
 		}
 		// currency conversion
-		$amount_currency = $payment_api->currency_conversion( array(
+		$amount_currency = $payment_api->currency_conversion( [
 			'type'        => 'buy',
 			'currency_id' => $currency_id,
 			'amount'      => $amount,
-		));
+		]);
 		if( empty( $amount_currency ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно произвести конвертацию валют',
-			);
+			];
 			return( $result );
 		}
 		// fee
 		$fee = $this->fee;
 		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
 		// prepare request form
-		$form_data  = array(
+		$form_data  = [
 			'user_id'               => $user_id,
 			'operation_id'          => $operation_id,
 			'account_id'            => $account_id,
@@ -968,41 +968,41 @@ class yf_payment_api__provider_remote {
 			'amount'                => $amount,
 			'amount_currency'       => $amount_currency,
 			'amount_currency_total' => $amount_currency_total,
-		);
-		$form_options = array(
+		];
+		$form_options = [
 			'amount'       => $amount_currency_total,
 			'currency'     => $currency_id,
 			'operation_id' => $operation_id,
 			'title'        => $data[ 'title' ],
 			'description'  => $operation_id,
-		);
+		];
 		// add options
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'payin',
 			'method_id' => @$options[ 'method_id' ],
-		));
+		]);
 		!empty( $method[ 'option' ] ) && $form_options += $method[ 'option' ];
 		// form
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
 		// save options
-		$operation_options = array(
-			'request' => array( array(
+		$operation_options = [
+			'request' => [ [
 				'data'     => $form_data,
 				'form'     => $form_options,
 				'datetime' => $operation_data[ 'sql_datetime' ],
-			))
-		);
-		$result = $payment_api->operation_update( array(
+			]]
+		];
+		$result = $payment_api->operation_update( [
 			'operation_id' => $operation_id,
 			'options'      => $operation_options,
-		));
+		]);
 		if( !$result[ 'status' ] ) { return( $result ); }
-		$result = array(
+		$result = [
 			'form'           => $form,
 			'status'         => true,
 			'status_message' => t( 'Заявка на ввод средств принята' ),
-		);
+		];
 		return( $result );
 	}
 
@@ -1021,81 +1021,81 @@ class yf_payment_api__provider_remote {
 		$amount         = $payment_api->_number_float( $data[ 'amount' ] );
 		$currency_id    = $this->get_currency_payout( $options );
 		if( empty( $operation_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
-			);
+			];
 			return( $result );
 		}
 		// currency conversion
-		$amount_currency = $payment_api->currency_conversion( array(
+		$amount_currency = $payment_api->currency_conversion( [
 			'type'        => 'sell',
 			'currency_id' => $currency_id,
 			'amount'      => $amount,
-		));
+		]);
 		if( empty( $amount_currency ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно произвести конвертацию валют',
-			);
+			];
 			return( $result );
 		}
 		// fee
 		$fee = $this->get_fee_payout( $options );
 		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
 		// check balance
-		$account_result = $payment_api->get_account( array( 'account_id' => $account_id ) );
+		$account_result = $payment_api->get_account( [ 'account_id' => $account_id ] );
 		if( empty( $account_result ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Ошибка при проверке, баланса',
-			);
+			];
 			return( $result );
 		}
 		list( $account_id, $account ) = $account_result;
 		$balance = $account[ 'balance' ];
 		if( $amount > $balance ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Недостаточно средств на счету',
-			);
+			];
 			return( $result );
 		}
 		// update account balance
 		db()->begin();
 		$sql_datetime = $operation_data[ 'sql_datetime' ];
 		$sql_amount   = $payment_api->_number_mysql( $amount );
-		$_data = array(
+		$_data = [
 			'account_id'      => $account_id,
 			'datetime_update' => db()->escape_val( $sql_datetime ),
 			'balance'         => "( balance - $sql_amount )",
-		);
-		$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
+		];
+		$_result = $payment_api->balance_update( $_data, [ 'is_escape' => false ] );
 		if( !$_result[ 'status' ] ) {
 			db()->rollback();
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Ошибка при обновлении счета',
-			);
+			];
 			return( $result );
 		}
-		$result = array(
+		$result = [
 			'status' => true,
-		);
+		];
 		// check account
-		$account_result = $payment_api->get_account( array( 'account_id' => $account_id ) );
+		$account_result = $payment_api->get_account( [ 'account_id' => $account_id ] );
 		if( empty( $account_result ) ) {
 			db()->rollback();
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Ошибка при получении, баланса',
-			);
+			];
 			return( $result );
 		}
 		list( $account_id, $account ) = $account_result;
 		// prepare
 		// save options
-		$request_data  = array(
+		$request_data  = [
 			'user_id'               => $user_id,
 			'operation_id'          => $operation_id,
 			'account_id'            => $account_id,
@@ -1105,21 +1105,21 @@ class yf_payment_api__provider_remote {
 			'amount'                => $amount,
 			'amount_currency'       => $amount_currency,
 			'amount_currency_total' => $amount_currency_total,
-		);
-		$operation_options = $payment_api->_merge( $operation_data[ 'options' ], array(
-			'request' => array( array(
+		];
+		$operation_options = $payment_api->_merge( $operation_data[ 'options' ], [
+			'request' => [ [
 				'options'  => $options,
 				'data'     => $request_data,
 				'datetime' => $operation_data[ 'sql_datetime' ],
-			))
-		));
-		$operation_update_data = array(
+			]]
+		]);
+		$operation_update_data = [
 			'operation_id'    => $operation_id,
 			'status_id'       => $data[ 'status_id' ],
 			'balance'         => $account[ 'balance' ],
 			'datetime_update' => $sql_datetime,
 			'options'         => $operation_options,
-		);
+		];
 		$result = $payment_api->operation_update( $operation_update_data );
 		if( !$result[ 'status' ] ) {
 			db()->rollback();
@@ -1127,10 +1127,10 @@ class yf_payment_api__provider_remote {
 		}
 		db()->commit();
 		// mail
-		$data = array(
+		$data = [
 			'operation_id' => $operation_id,
 			'amount'       => $amount,
-		);
+		];
 		// mail: payout request
 		$tpl = 'payout_request';
 		if( $payment_api->IS_PAYOUT_CONFIRMATION ) {
@@ -1139,17 +1139,17 @@ class yf_payment_api__provider_remote {
 			$data[ 'code' ] = $operation_data[ 'options' ][ 'confirmation' ][ 'code' ];
 		}
 		// mail
-		$payment_api->mail( array(
+		$payment_api->mail( [
 			'tpl'     => $tpl,
 			'user_id' => $account[ 'user_id' ],
 			'admin'   => true,
 			'data'    => $data,
-		));
+		]);
 		// message
-		$result = array(
+		$result = [
 			'status'         => true,
 			'status_message' => @$operation_data[ 'status_message' ] ?: t( 'Заявка на вывод средств принята' ),
-		);
+		];
 		return( $result );
 	}
 

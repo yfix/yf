@@ -26,19 +26,19 @@ class yf_test {
 			$_SESSION['force_gzip']				= intval((bool)$_POST['force_gzip']);
 			return js_redirect($_SERVER['HTTP_REFERER'], 0);
 		}
-		$_trigger = array(
+		$_trigger = [
 			0 => '<b style="color:red;">Disabled</b>',
 			1 => '<b style="color:green;">Enabled</b>',
-		);
+		];
 		// Process footer
-		$replace = array(
+		$replace = [
 			'form_action'		=> './?object='.str_replace(YF_PREFIX, '', __CLASS__).'&action='.__FUNCTION__,
 			'stpl_edit_box'		=> common()->radio_box('stpl_edit',	$_trigger, $_SESSION['stpls_inline_edit'], false, 2, $atts, false),
 			'locale_edit_box'	=> common()->radio_box('locale_edit',	$_trigger, $_SESSION['locale_vars_edit'], false, 2, $atts, false),
 			'hide_console_box'	=> common()->radio_box('hide_console',$_trigger, $_SESSION['hide_debug_console'], false, 2, $atts, false),
 			'force_gzip_box'	=> common()->radio_box('force_gzip',	$_trigger, $_SESSION['force_gzip'], false, 2, $atts, false),
 			'back_url'			=> WEB_PATH.'?object='.$_GET['object'].($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). (!empty($_GET['id']) ? '&id='.$_GET['id'] : ''). (!empty($_GET['page']) ? '&page='.$_GET['page'] : ''),
-		);
+		];
 		return tpl()->parse(__CLASS__.'/'.__FUNCTION__, $replace);
 	}
 
@@ -48,23 +48,23 @@ class yf_test {
 			return;
 		}
 
-		$methods = array();
+		$methods = [];
 		$class_name = get_class($this);
 		foreach ((array)get_class_methods($class_name) as $_method_name) {
 			// Skip unwanted methods
 			if ($_method_name{0} == '_' || $_method_name == $class_name || $_method_name == __FUNCTION__) {
 				continue;
 			}
-			$methods[] = array(
+			$methods[] = [
 				'link'	=> './?object='.$_GET['object'].'&action='.$_method_name,
 				'name'	=> $_method_name,
-			);
+			];
 		}
 		$this->_avail_methods = $methods;
 		// Process template
-		$replace = array(
+		$replace = [
 			'methods'	=> $methods,
-		);
+		];
 		return tpl()->parse(__CLASS__.'/main', $replace);
 	}
 
@@ -76,15 +76,15 @@ class yf_test {
 	//
 	function poll () {
 		$POLL_OBJ = main()->init_class('poll');
-		$body .= $POLL_OBJ->show(array(
+		$body .= $POLL_OBJ->show([
 			'object_name'	=> 'forum',
 			'object_id'		=> 1,
-		));
+		]);
 		$body .= '<br />'.PHP_EOL;
-		$body .= $POLL_OBJ->view(array(
+		$body .= $POLL_OBJ->view([
 			'object_name'	=> 'forum',
 			'object_id'		=> 1,
-		));
+		]);
 		return $body;
 	}
 
@@ -137,10 +137,10 @@ class yf_test {
 	//
 	function rate () {
 		$body .= '<img src="'.WEB_PATH.'uploads/gallery/medium/000/000/001/1_260512.jpg" /><br />';
-		$body .= module('rate')->_show_for_object(array(
+		$body .= module('rate')->_show_for_object([
 			'object_name'	=> 'gallery_photo',
 			'object_id'		=> 260512,
-		));
+		]);
 		return $body;
 	}
 
@@ -199,11 +199,11 @@ class yf_test {
 			$result .= '2) '. $OBJ->process($source). PHP_EOL;
 			$result .= '3) '. $OBJ->process($source). PHP_EOL;
 		}
-		$replace = array(
+		$replace = [
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
 			'source'		=> _prepare_html($source),
 			'result'		=> _prepare_html($result),
-		);
+		];
 		return tpl()->parse(__CLASS__.'/'.__FUNCTION__, $replace);
 	}
 
@@ -240,10 +240,10 @@ class yf_test {
 /*		'We can also put some spoilers into each other. Like this...'
 		.$this->_spoiler($head_text, $body_text);
 */
-		$replace = array(
+		$replace = [
 			'head_text' => $head_text,
 			'body_text' => $body_text,
-		);
+		];
 		return tpl()->parse($_GET['object'].'/'.__FUNCTION__, $replace);
 	}
 
@@ -266,11 +266,11 @@ class yf_test {
 				$result .= '<br /><br /><br />'.$res2;
 			}
 		}
-		$replace = array(
+		$replace = [
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
 			'result'		=> $result,
 			'source'		=> $_POST['text'] ? $_POST['text'] : '[COLOR=green][U][SIZE=7][B][I]пользовательдолженпользовательдолжен[/I][/B][/SIZE][/U][/COLOR]http://www.gooooooooooooooooooooooooggle.com',
-		);
+		];
 		return tpl()->parse($_GET['object'].'/'.__FUNCTION__, $replace);
 	}
 
@@ -317,7 +317,7 @@ class yf_test {
 		}
 		for ($i = 1; $i <= 9; $i++) {
 			$host = 'nginx'.$i.'.inffinity-internet.com';
-			$threads[$host] = array('func' => 'gethostbyname', 'name' => $host);
+			$threads[$host] = ['func' => 'gethostbyname', 'name' => $host];
 		}
 
 		echo "<br />\nNon-Threaded result: <br />\n<br />\n";

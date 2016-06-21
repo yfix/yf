@@ -6,24 +6,24 @@ class yf_log_admin_redirects {
 	*/
 	function show () {
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$default_filter = array(
+		$default_filter = [
 			'order_by' => 'date',
 			'order_direction' => 'desc',
-		);
+		];
 		$sql = 'SELECT * FROM '.db('log_redirects').' WHERE is_admin="'.strval(!$this->FOR_USER ? 1 : 0).'"';
-		return table($sql, array(
+		return table($sql, [
 				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
-				'filter_params' => array(
+				'filter_params' => [
 					'url_from'		=> 'like',
 					'url_to'		=> 'like',
 					'ip'			=> 'like',
 					'user_agent'	=> 'like',
 					'referer'		=> 'like',
-				),
-			))
+				],
+			])
 			->admin('user_id')
 			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
-			->date('date', array('format' => 'full', 'nowrap' => 1))
+			->date('date', ['format' => 'full', 'nowrap' => 1])
 			->text('user_agent')
 			->text('referer')
 			->text('url_from')
@@ -57,23 +57,23 @@ class yf_log_admin_redirects {
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
+		if (!in_array($_GET['action'], ['show'])) {
 			return false;
 		}
-		$order_fields = array();
+		$order_fields = [];
 		foreach (explode('|', 'user_id|user_group|date|ip|user_agent|referer|url_from|url_to') as $f) {
 			$order_fields[$f] = $f;
 		}
-		return form($r, array(
+		return form($r, [
 				'filter' => true,
-			))
+			])
 			->number('user_id')
 			->text('ip')
 			->text('user_agent')
 			->text('referer')
 			->text('url_from')
 			->text('url_to')
-			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->select_box('order_by', $order_fields, ['show_text' => 1])
 			->order_box()
 			->save_and_clear();
 		;
@@ -81,7 +81,7 @@ class yf_log_admin_redirects {
 
 	/**
 	*/
-	function _hook_widget__redirects_log ($params = array()) {
+	function _hook_widget__redirects_log ($params = []) {
 // TODO
 	}
 

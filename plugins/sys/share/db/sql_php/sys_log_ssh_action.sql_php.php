@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'microtime' => array(
+return [
+	'fields' => [
+		'microtime' => [
 			'name' => 'microtime',
 			'type' => 'decimal',
 			'length' => 13,
@@ -15,8 +15,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'server_id' => array(
+		],
+		'server_id' => [
 			'name' => 'server_id',
 			'type' => 'varchar',
 			'length' => 64,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'init_type' => array(
+		],
+		'init_type' => [
 			'name' => 'init_type',
 			'type' => 'enum',
 			'length' => NULL,
@@ -44,12 +44,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				'user' => 'user',
 				'admin' => 'admin',
-			),
-		),
-		'action' => array(
+			],
+		],
+		'action' => [
 			'name' => 'action',
 			'type' => 'varchar',
 			'length' => 32,
@@ -63,8 +63,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'comment' => array(
+		],
+		'comment' => [
 			'name' => 'comment',
 			'type' => 'varchar',
 			'length' => 255,
@@ -78,8 +78,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'get_object' => array(
+		],
+		'get_object' => [
 			'name' => 'get_object',
 			'type' => 'varchar',
 			'length' => 32,
@@ -93,8 +93,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'get_action' => array(
+		],
+		'get_action' => [
 			'name' => 'get_action',
 			'type' => 'varchar',
 			'length' => 32,
@@ -108,8 +108,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 11,
@@ -123,8 +123,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_group' => array(
+		],
+		'user_group' => [
 			'name' => 'user_group',
 			'type' => 'tinyint',
 			'length' => 2,
@@ -138,8 +138,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ip' => array(
+		],
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'varchar',
 			'length' => 32,
@@ -153,26 +153,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'idx_1' => array(
+		],
+	],
+	'indexes' => [
+		'idx_1' => [
 			'name' => 'idx_1',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'microtime' => 'microtime',
-			),
-		),
-		'idx_2' => array(
+			],
+		],
+		'idx_2' => [
 			'name' => 'idx_2',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'server_id' => 'server_id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

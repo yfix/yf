@@ -5,28 +5,28 @@ class yf_manage_shop_feedback{
 	*/
 	function feedback () {
 		if (empty($_SESSION[$_GET['object'].'__feedback'])) {
-			$_SESSION[$_GET['object'].'__feedback'] = array(
+			$_SESSION[$_GET['object'].'__feedback'] = [
 				'order_by' => 'add_date',
 				'order_direction' => 'desc'
-			);
+			];
 		}		
 		$sql = "SELECT f.*,p.name as product_name FROM ".db('shop_product_feedback')." AS f
 					INNER JOIN ".db('shop_products')." AS p ON f.product_id = p.id";
-		return table($sql, array(
+		return table($sql, [
 				'filter' => $_SESSION[$_GET['object'].'__feedback'],
-				'filter_params' => array(
-					'id'		=> array('like','f.id'),
-					'product_id' => array('like','f.product_id'),
-					'name'		=> array('like','f.name'),
-					'email'		=> array('like','f.email'),
-					'content'	=> array('like','f.content'),
-					'pros'		=> array('like','f.pros'),
-					'cons'		=> array('like','f.cons'),
-					'active'	=> array('eq','f.active'),
-					'add_date'	=> array('dt_between', 'f.add_date'),					
-				),
+				'filter_params' => [
+					'id'		=> ['like','f.id'],
+					'product_id' => ['like','f.product_id'],
+					'name'		=> ['like','f.name'],
+					'email'		=> ['like','f.email'],
+					'content'	=> ['like','f.content'],
+					'pros'		=> ['like','f.pros'],
+					'cons'		=> ['like','f.cons'],
+					'active'	=> ['eq','f.active'],
+					'add_date'	=> ['dt_between', 'f.add_date'],					
+				],
 				'hide_empty' => 1,
-			))
+			])
 			->text('id')
 			->user('user_id')
 			->link('product_id', './?object='.main()->_get('object').'&action=product_edit&id=%d')
@@ -37,7 +37,7 @@ class yf_manage_shop_feedback{
 			->text('rating')
 			->text('pros')
 			->text('cons')
-			->date('add_date', array('format' => 'full','nowrap' => 1))
+			->date('add_date', ['format' => 'full','nowrap' => 1])
 			->btn_active('', './?object='.main()->_get('object').'&action=feedback_activate&id=%d')				
 			->btn_delete('', './?object='.main()->_get('object').'&action=feedback_delete&id=%d')
 		;
@@ -53,7 +53,7 @@ class yf_manage_shop_feedback{
 		}
 		if ($_GET['id']) {
 			db()->query('DELETE FROM '.db('shop_product_feedback').' WHERE id='.$_GET['id']);
-			common()->admin_wall_add(array('feedback deleted: '.$_GET['id'], $_GET['id']));
+			common()->admin_wall_add(['feedback deleted: '.$_GET['id'], $_GET['id']]);
 			$this->_recalc_rating($field_info['product_id']);			
 		}
 		if ($_POST['ajax_mode']) {
@@ -75,7 +75,7 @@ class yf_manage_shop_feedback{
 			} elseif ($a['active'] == 0) {
 				$active = 1;
 			}
-			db()->update_safe(db('shop_product_feedback'), array('active' => $active), 'id='.intval($_GET['id']));
+			db()->update_safe(db('shop_product_feedback'), ['active' => $active], 'id='.intval($_GET['id']));
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;

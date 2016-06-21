@@ -24,7 +24,7 @@ class yf_manage_payment_yandexmoney {
 		$payment_api        = _class( 'payment_api'        );
 		$manage_payment_lib = module( 'manage_payment_lib' );
 		// provider
-		$provider_class = $payment_api->provider_class(array( 'provider_name' => $provider_name ));
+		$provider_class = $payment_api->provider_class([ 'provider_name' => $provider_name ]);
 		// property
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -39,23 +39,23 @@ class yf_manage_payment_yandexmoney {
 		$filter_name = $object . '__' . $action;
 		$filter      = $_SESSION[ $filter_name ];
 		// url
-		$url = array(
-			'list' => url_admin( array(
+		$url = [
+			'list' => url_admin( [
 				'is_full_url'  => true,
 				'object'       => $object,
 				'action'       => 'show',
-			)),
-			'authorize' => url_admin( array(
+			]),
+			'authorize' => url_admin( [
 				'is_full_url'  => true,
 				'object'       => $object,
 				'action'       => 'authorize',
-			)),
-			'request_interkassa' => url_admin( array(
+			]),
+			'request_interkassa' => url_admin( [
 				'object'       => $object,
 				'action'       => 'request_interkassa',
 				'operation_id' => '%operation_id',
-			)),
-		);
+			]),
+		];
 	}
 
 	function _url( $name, $replace = null ) {
@@ -78,9 +78,9 @@ class yf_manage_payment_yandexmoney {
 		$provider_class = &$this->provider_class;
 		// request
 		$url = $this->_url( 'authorize' );
-		$result = $provider_class->authorize_request( array(
+		$result = $provider_class->authorize_request( [
 			'redirect_uri' => $url,
-		));
+		]);
 		return( $result );
 	}
 
@@ -106,10 +106,10 @@ class yf_manage_payment_yandexmoney {
 			$authorize_class = 'btn text-danger';
 		}
 		// web
-		$replace = array(
+		$replace = [
 			'is_confirm'   => false,
 			'is_authorize' => $is_authorize ? 'выполнена' : 'не выполнена',
-		);
+		];
 		$result = form( $replace )
 			->on_post( function( $data, $extra, $rules ) {
 				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
@@ -142,12 +142,12 @@ class yf_manage_payment_yandexmoney {
 					common()->message_info( 'Требуется подтверждение, для выполнения операции' );
 				}
 			})
-			->info( 'is_authorize', array( 'desc' => 'Авторизация YandexMoney', 'icon' => $authorize_icon, 'class' => $authorize_class ) )
-			->check_box( 'is_confirm', array( 'desc' => 'Подтверждение', 'no_label' => true ) )
+			->info( 'is_authorize', [ 'desc' => 'Авторизация YandexMoney', 'icon' => $authorize_icon, 'class' => $authorize_class ] )
+			->check_box( 'is_confirm', [ 'desc' => 'Подтверждение', 'no_label' => true ] )
 			->row_start()
-				->submit( 'operation', 'authorize', array( 'desc' => 'Авторизация', 'icon' => 'fa fa-chain', 'class' => 'btn btn-success' ) )
-				->submit( 'operation', 'revoke_authorize', array( 'desc' => 'Отозвать авторизацию', 'icon' => 'fa fa-chain-broken', 'class' => 'btn btn-danger', 'disabled' => !$is_authorize ) )
-				->link( 'Назад' , $url[ 'list' ], array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
+				->submit( 'operation', 'authorize', [ 'desc' => 'Авторизация', 'icon' => 'fa fa-chain', 'class' => 'btn btn-success' ] )
+				->submit( 'operation', 'revoke_authorize', [ 'desc' => 'Отозвать авторизацию', 'icon' => 'fa fa-chain-broken', 'class' => 'btn btn-danger', 'disabled' => !$is_authorize ] )
+				->link( 'Назад' , $url[ 'list' ], [ 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ] )
 			->row_end()
 		;
 		return( $result );
@@ -192,7 +192,7 @@ class yf_manage_payment_yandexmoney {
 			$content  = '';
 			$operation_id = empty( $_operation_id ) ? (int)$_GET[ 'operation_id' ] :  $_operation_id;
 			if( $operation_id > 0 ) {
-				$url_view = $this->_url( 'view', array( '%operation_id' => $operation_id ) );
+				$url_view = $this->_url( 'view', [ '%operation_id' => $operation_id ] );
 				$content .= '<a href="'. $url_view .'" class="btn btn-info">Назад к операции</a>';
 			}
 			$url_list = $this->_url( 'list' );

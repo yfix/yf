@@ -30,53 +30,53 @@ class yf_manage_deposit {
 		$filter_name = $object . '__' . $action;
 		$filter      = $_SESSION[ $filter_name ];
 		// url
-		$url = array(
-			'request' => url_admin( array(
+		$url = [
+			'request' => url_admin( [
 				'object'       => $object,
 				'action'       => 'request',
 				'operation_id' => '%operation_id',
-			)),
-			'status_success' => url_admin( array(
+			]),
+			'status_success' => url_admin( [
 				'object'       => $object,
 				'action'       => 'status',
 				'status'       => 'success',
 				'operation_id' => '%operation_id',
-			)),
-			'status_refused' => url_admin( array(
+			]),
+			'status_refused' => url_admin( [
 				'object'       => $object,
 				'action'       => 'status',
 				'status'       => 'refused',
 				'operation_id' => '%operation_id',
-			)),
-			'csv' => url_admin( array(
+			]),
+			'csv' => url_admin( [
 				'object'       => $object,
 				'action'       => 'csv',
 				'operation_id' => '%operation_id',
-			)),
-			'list' => url_admin( array(
+			]),
+			'list' => url_admin( [
 				'object'       => $object,
-			)),
-			'update_expired' => url_admin( array(
+			]),
+			'update_expired' => url_admin( [
 				'object' => $object,
 				'action' => 'update_expired',
-			)),
-			'view' => url_admin( array(
+			]),
+			'view' => url_admin( [
 				'object'       => $object,
 				'action'       => 'view',
 				'operation_id' => '%operation_id',
-			)),
-			'balance' => url_admin( array(
+			]),
+			'balance' => url_admin( [
 				'object'     => 'manage_payment',
 				'action'     => 'balance',
 				'user_id'    => '%user_id',
 				'account_id' => '%account_id',
-			)),
-			'user' => url_admin( array(
+			]),
+			'user' => url_admin( [
 				'object' => 'members',
 				'action' => 'edit',
 				'id'     => '%user_id',
-			)),
-		);
+			]),
+		];
 	}
 
 	function _url( $name, $replace = null ) {
@@ -90,31 +90,31 @@ class yf_manage_deposit {
 
 	function _filter_form_show( $filter, $replace ) {
 		// order
-		$order_fields = array(
+		$order_fields = [
 			'o.operation_id'    => 'номер операций',
 			'o.amount'          => 'сумма',
 			'a.balance'         => 'баланс',
 			'o.datetime_start'  => 'дата создания',
 			'o.datetime_update' => 'дата обновления',
-		);
+		];
 		// provider
 		$payment_api = _class( 'payment_api' );
 		$providers = $payment_api->provider();
-		$providers__select_box = array();
+		$providers__select_box = [];
 		foreach( $providers as $id => $item ) {
 			$providers__select_box[ $id ] = $item[ 'title' ];
 		}
 		// status
 		$payment_status = $payment_api->get_status();
-		$payment_status__select_box = array();
+		$payment_status__select_box = [];
 		$payment_status__select_box[ -1 ] = 'ВСЕ СТАТУСЫ';
 		foreach( $payment_status as $id => $item ) {
 			$payment_status__select_box[ $id ] = $item[ 'title' ];
 		}
 		// render
-		$result = form( $replace, array(
+		$result = form( $replace, [
 				'selected' => $filter,
-			))
+			])
 			->text( 'operation_id', 'Номер операции'     )
 			->text( 'user_id'     , 'Номер пользователя' )
 			->text( 'name'        , 'Имя'                )
@@ -122,10 +122,10 @@ class yf_manage_deposit {
 			->text( 'amount__and' , 'Сумма до'           )
 			->text( 'balance'     , 'Баланс от'          )
 			->text( 'balance__and', 'Баланс до'          )
-			->select_box( 'status_id'  , $payment_status__select_box, array( 'show_text' => 'статус'    , 'desc' => 'Статус'     ) )
-			->select_box( 'provider_id', $providers__select_box     , array( 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ) )
-			->select_box( 'order_by'   , $order_fields              , array( 'show_text' => 'сортировка', 'desc' => 'Сортировка' ) )
-			->radio_box( 'order_direction', array( 'asc' => 'прямой', 'desc' => 'обратный' ), array( 'desc' => 'Направление сортировки' ) )
+			->select_box( 'status_id'  , $payment_status__select_box, [ 'show_text' => 'статус'    , 'desc' => 'Статус'     ] )
+			->select_box( 'provider_id', $providers__select_box     , [ 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ] )
+			->select_box( 'order_by'   , $order_fields              , [ 'show_text' => 'сортировка', 'desc' => 'Сортировка' ] )
+			->radio_box( 'order_direction', [ 'asc' => 'прямой', 'desc' => 'обратный' ], [ 'desc' => 'Направление сортировки' ] )
 			->save_and_clear()
 		;
 		return( $result );
@@ -136,24 +136,24 @@ class yf_manage_deposit {
 		$action      = &$this->action;
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
-		if( !in_array( $action, array( 'show' ) ) ) { return( false ); }
+		if( !in_array( $action, [ 'show' ] ) ) { return( false ); }
 		// url
-		$url_base = array(
+		$url_base = [
 			'object' => $object,
 			'action' => 'filter_save',
 			'id'     => $filter_name,
-		);
+		];
 		$result = '';
 		switch( $action ) {
 			case 'show':
 				$url_filter       = url_admin( $url_base );
-				$url_filter_clear = url_admin( $url_base + array(
+				$url_filter_clear = url_admin( $url_base + [
 					'page'   => 'clear',
-				));
-				$replace = array(
+				]);
+				$replace = [
 					'form_action' => $url_filter,
 					'clear_url'   => $url_filter_clear,
-				);
+				];
 				$result = $this->_filter_form_show( $filter, $replace );
 			break;
 		}
@@ -165,15 +165,15 @@ class yf_manage_deposit {
 		$id     = &$this->id;
 		switch( $id ) {
 			case 'manage_deposit__show':
-				$url_redirect_url = url_admin( array(
+				$url_redirect_url = url_admin( [
 					'object' => $object,
-				));
+				]);
 			break;
 		}
-		$options = array(
+		$options = [
 			'filter_name'  => $id,
 			'redirect_url' => $url_redirect_url,
-		);
+		];
 		return( _class( 'admin_methods' )->filter_save( $options ) );
 	}
 
@@ -189,12 +189,12 @@ class yf_manage_deposit {
 		// status
 		$payment_status = $payment_api->get_status();
 		$name = 'in_progress';
-		$item = $payment_api->get_status( array( 'name' => $name) );
+		$item = $payment_api->get_status( [ 'name' => $name] );
 		list( $payment_status_in_progress_id, $payment_success_in_progress ) = $item;
 		if( empty( $payment_status_in_progress_id ) ) {
-			$result = array(
+			$result = [
 				'status_message' => 'Статус платежей не найден: ' . $object_name,
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		// prepare sql
@@ -221,9 +221,9 @@ class yf_manage_deposit {
 			->where( 'o.direction', '=', 'in' )
 		;
 		$sql = $db->sql();
-		return( table( $sql, array(
+		return( table( $sql, [
 				'filter' => $filter,
-				'filter_params' => array(
+				'filter_params' => [
 					'status_id'   => function( $a ) use( $payment_status_in_progress_id ) {
 						$result = null;
 						$value  = $a[ 'value' ];
@@ -236,15 +236,15 @@ class yf_manage_deposit {
 						isset( $value ) && $result = ' o.status_id = ' . $value;
 						return( $result );
 					},
-					'provider_id'  => array( 'cond' => 'eq'     , 'field' => 'o.provider_id'   ),
-					'operation_id' => array( 'cond' => 'in'     , 'field' => 'o.operation_id'  ),
-					'user_id'      => array( 'cond' => 'in'     , 'field' => 'a.user_id'       ),
-					'name'         => array( 'cond' => 'like'   , 'field' => 'u.name'          ),
-					'balance'      => array( 'cond' => 'between', 'field' => 'a.balance'       ),
-					'amount'       => array( 'cond' => 'between', 'field' => 'o.amount'        ),
+					'provider_id'  => [ 'cond' => 'eq'     , 'field' => 'o.provider_id'   ],
+					'operation_id' => [ 'cond' => 'in'     , 'field' => 'o.operation_id'  ],
+					'user_id'      => [ 'cond' => 'in'     , 'field' => 'a.user_id'       ],
+					'name'         => [ 'cond' => 'like'   , 'field' => 'u.name'          ],
+					'balance'      => [ 'cond' => 'between', 'field' => 'a.balance'       ],
+					'amount'       => [ 'cond' => 'between', 'field' => 'o.amount'        ],
 					'__default_order'  => 'ORDER BY o.datetime_update DESC',
-				),
-			))
+				],
+			])
 			->text( 'operation_id'  , 'операция' )
 			->text( 'provider_title', 'провайдер' )
 			->text( 'amount'        , 'сумма' )
@@ -252,21 +252,21 @@ class yf_manage_deposit {
 			->func( 'user_name', function( $value, $extra, $row_info ) {
 				$result = a('/members/edit/'.$row_info[ 'user_id' ], $value . ' (id: ' . $row_info[ 'user_id' ] . ')');
 				return( $result );
-			}, array( 'desc' => 'пользователь' ) )
+			}, [ 'desc' => 'пользователь' ] )
 			->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $payment_status ) {
 				$status_name = $payment_status[ $value ][ 'name' ];
 				$title       = $payment_status[ $value ][ 'title' ];
-				$css = $manage_lib->css_by_status( array(
+				$css = $manage_lib->css_by_status( [
 					'status_name' => $status_name,
-				));
+				]);
 				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
 				return( $result );
-			}, array( 'desc' => 'статус' ) )
+			}, [ 'desc' => 'статус' ] )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Ввод средств',  $url[ 'view'    ], array( 'icon' => 'fa fa-sign-in', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
+			->btn( 'Ввод средств',  $url[ 'view'    ], [ 'icon' => 'fa fa-sign-in', 'class_add' => 'btn-primary', 'target' => '_blank' ] )
 			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'   , 'class_add' => 'btn-info'   ) )
 			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'  , 'class_add' => 'btn-info'   ) )
-			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ) )
+			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], [ 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] )
 		);
 	}
 
@@ -278,25 +278,25 @@ class yf_manage_deposit {
 		$manage_lib  = &$this->manage_payment_lib;
 		// check operation
 		$operation_id = isset( $_operation_id ) ? $_operation_id : (int)$_GET[ 'operation_id' ];
-		$operation = $payment_api->operation( array(
+		$operation = $payment_api->operation( [
 			'operation_id' => $operation_id,
-		));
+		]);
 		if( empty( $operation ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Ошибка: операция не найдена',
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		// import operation
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, 'o' );
 		// check account
-		$account_result = $payment_api->get_account( array( 'account_id' => $o_account_id ) );
+		$account_result = $payment_api->get_account( [ 'account_id' => $o_account_id ] );
 		if( empty( $account_result ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Счет пользователя не найден',
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		list( $account_id, $account ) = $account_result;
@@ -304,10 +304,10 @@ class yf_manage_deposit {
 		$user_id = $account[ 'user_id' ];
 		$user    = user( $user_id );
 		if( empty( $user ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Пользователь не найден: ' . $user_id,
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		$online_users = _class( 'online_users', null, null, true );
@@ -315,31 +315,31 @@ class yf_manage_deposit {
 		// check provider
 		$providers_user = $payment_api->provider();
 		if( empty( $providers_user[ $o_provider_id ] ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неизвестный провайдер',
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		$provider = &$providers_user[ $o_provider_id ];
 		// providers by name
-		$providers_user__by_name = array();
+		$providers_user__by_name = [];
 		foreach( $providers_user as &$item ) {
 			$provider_name = $item[ 'name' ];
 			$providers_user__by_name[ $provider_name ] = &$item;
 		}
 		$provider_name = &$provider[ 'name' ];
-		$provider_class = $payment_api->provider_class( array(
+		$provider_class = $payment_api->provider_class( [
 			'provider_name' => $provider[ 'name' ],
-		));
+		]);
 		if( empty( $provider_class ) ) {
-			$result = array(
+			$result = [
 				'status_message' => 'Провайдер недоступный: ' . $provider[ 'title' ],
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		// check request
-		$request = array();
+		$request = [];
 		if(
 			empty( $o_options[ 'request' ] )
 			|| !is_array( $o_options[ 'request' ] )
@@ -353,22 +353,22 @@ class yf_manage_deposit {
 		}
 		// check method
 		$method_id = null;
-		$method = array();
+		$method = [];
 		// check operation status
 		$statuses = $payment_api->get_status();
 		if( empty( $statuses[ $o_status_id ] ) ) {
-			$result = array(
+			$result = [
 				'status_message' => 'Неизвестный статус операции: '. $o_status_id,
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		$o_status = $statuses[ $o_status_id ];
 		// status css
 		$status_name  = $o_status[ 'name' ];
 		$status_title = $o_status[ 'title' ];
-		$css = $manage_lib->css_by_status( array(
+		$css = $manage_lib->css_by_status( [
 			'status_name' => $status_name,
-		));
+		]);
 		$html_status_title = sprintf( '<span class="%s">%s</span>', $css, $status_title );
 		// check response
 		$response = null;
@@ -384,7 +384,7 @@ class yf_manage_deposit {
 		$html_datetime_update = $o_datetime_update;
 		$html_datetime_finish = $o_datetime_finish;
 		// result
-		$result = array(
+		$result = [
 			'is_valid'                => true,
 			'operation_id'            => &$operation_id,
 			'operation'               => &$operation,
@@ -413,7 +413,7 @@ class yf_manage_deposit {
 			'html_datetime_start'     => &$html_datetime_start,
 			'html_datetime_update'    => &$html_datetime_update,
 			'html_datetime_finish'    => &$html_datetime_finish,
-		);
+		];
 		return( $result );
 	}
 
@@ -447,19 +447,19 @@ class yf_manage_deposit {
 		// prepare view: request options
 		$html_request_options = null;
 		if( !empty( $_method ) ) {
-			$content = array();
+			$content = [];
 			foreach( $_method[ 'option' ] as $key => $title ) {
 				if( !empty( $_request[ 'options' ][ $key ] ) ) {
 					$content[ $title ] = $_request[ 'options' ][ $key ];
 				}
 			}
-			$html_request_options = $html->simple_table( $content, array( 'no_total' => true ) );
+			$html_request_options = $html->simple_table( $content, [ 'no_total' => true ] );
 		}
 		// prepare view: response options
 		$content = null;
 		if( !empty( $_response ) ) {
 			$response = array_reverse( $_response );
-			$content = table( $response, array( 'no_total' => true ) )
+			$content = table( $response, [ 'no_total' => true ] )
 				->text( 'datetime', 'дата' )
 				->func( 'data', function( $value, $extra, $row ) use( $_provider_name, $_providers_user__by_name  ) {
 					// message
@@ -472,27 +472,27 @@ class yf_manage_deposit {
 						$result .= ' ('. $provider_title .')';
 					}
 					return( $result );
-				}, array( 'desc' => 'сообщение' ) )
+				}, [ 'desc' => 'сообщение' ] )
 				->func( 'data', function( $value, $extra, $row ) {
 					$result = @$row[ 'state' ] ?: @$row[ 'data' ][ 'state' ] ?: null;
 					return( $result );
-				}, array( 'desc' => 'статус' ) )
+				}, [ 'desc' => 'статус' ] )
 			;
 		}
 		$html_response = $content;
 		// prepare view: operation options
-		$user_link = $html->a( array(
-			'href'  => $this->_url( 'user', array( '%user_id' => $_user_id ) ),
+		$user_link = $html->a( [
+			'href'  => $this->_url( 'user', [ '%user_id' => $_user_id ] ),
 			'icon'  => 'fa fa-user',
 			'title' => 'Профиль',
 			'text'  => $_user[ 'name' ],
-		));
-		$balance_link = $html->a( array(
-			'href'  => $this->_url( 'balance', array( '%user_id' => $_user_id, '%account_id' => $_account_id ) ),
+		]);
+		$balance_link = $html->a( [
+			'href'  => $this->_url( 'balance', [ '%user_id' => $_user_id, '%account_id' => $_account_id ] ),
 			'title' => 'Баланс',
 			'text'  => $payment_api->money_text( $_account[ 'balance' ] ),
-		));
-		$content = array(
+		]);
+		$content = [
 			'Операция'        => $_operation_id,
 			'Пользователь'    => $user_link . $balance_link,
 			'Сумма'           => $_html_amount,
@@ -501,28 +501,28 @@ class yf_manage_deposit {
 			'Дата создания'   => $_html_datetime_start,
 			'Дата обновления' => $_html_datetime_update,
 			'Дата завершения' => $_html_datetime_finish,
-		);
-		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
-		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
+		];
+		$html_operation_options = $html->simple_table( $content, [ 'no_total' => true ] );
+		$url_view = $this->_url( 'view', [ '%operation_id' => $_operation_id ] );
 		// render
 		$is_test = $_provider_class->is_test();
 		$is_progressed = $_status[ 'name' ] == 'in_progress';
-		$replace = $operation + array(
+		$replace = $operation + [
 			'is_test'       => $is_test,
 			'is_progressed' => $is_progressed,
 			'header_data'   => $html_operation_options,
 			'request_data'  => $html_request_options,
 			'response_data' => $html_response,
-			'url' => array(
+			'url' => [
 				'list'           => $this->_url( 'list' ),
-				'view'           => $this->_url( 'view',           array( '%operation_id' => $_operation_id ) ),
-				'request'        => $this->_url( 'request',        array( '%operation_id' => $_operation_id ) ),
-				'status_success' => $this->_url( 'status_success', array( '%operation_id' => $_operation_id ) ),
-				'status_refused' => $this->_url( 'status_refused', array( '%operation_id' => $_operation_id ) ),
-				'csv'            => $this->_url( 'csv',            array( '%operation_id' => $_operation_id ) ),
+				'view'           => $this->_url( 'view',           [ '%operation_id' => $_operation_id ] ),
+				'request'        => $this->_url( 'request',        [ '%operation_id' => $_operation_id ] ),
+				'status_success' => $this->_url( 'status_success', [ '%operation_id' => $_operation_id ] ),
+				'status_refused' => $this->_url( 'status_refused', [ '%operation_id' => $_operation_id ] ),
+				'csv'            => $this->_url( 'csv',            [ '%operation_id' => $_operation_id ] ),
 				'provider_operation_detail' => $url_operation_detail,
-			)
-		);
+			]
+		];
 		$result = tpl()->parse( 'manage_deposit/view', $replace );
 		return( $result );
 	}
@@ -558,7 +558,7 @@ class yf_manage_deposit {
 			$content  = '';
 			$operation_id = empty( $_operation_id ) ? (int)$_GET[ 'operation_id' ] :  $_operation_id;
 			if( $operation_id > 0 ) {
-				$url_view = $this->_url( 'view', array( '%operation_id' => $operation_id ) );
+				$url_view = $this->_url( 'view', [ '%operation_id' => $operation_id ] );
 				$content .= '<a href="'. $url_view .'" class="btn btn-info">Назад к операции</a>';
 			}
 			$url_list = $this->_url( 'list' );
@@ -584,28 +584,28 @@ EOS;
 		if( empty( $_is_valid ) ) { return( $result ); }
 		$status = $_GET[ 'status' ];
 		// check status
-		if( !in_array( $status, array( 'success', 'refused' ) ) ) {
-			$result = array(
+		if( !in_array( $status, [ 'success', 'refused' ] ) ) {
+			$result = [
 				'status_message' => 'Неизвестный статус операции: '. $status,
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		// update status
-		$result = $_provider_class->_api_deposition( array(
+		$result = $_provider_class->_api_deposition( [
 			'provider_name' => $_provider[ 'name' ],
-			'response'      => array(
+			'response'      => [
 				'operation_id' => $_operation_id,
 				'title'        => $_operation[ 'title' ],
 				'comment'      => 'updated by admin: ' . main()->ADMIN_ID,
-			),
+			],
 			'status_name'    => $status,
 			'status_message' => $_operation[ 'title' ],
-		));
+		]);
 		if( empty( $result[ 'status' ] ) ) {
 			$result[ 'operation_id' ] = $_operation_id;
 			return( $this->_user_message( $result ) );
 		}
-		$url_view = $this->_url( 'view', array( '%operation_id' => $_operation_id ) );
+		$url_view = $this->_url( 'view', [ '%operation_id' => $_operation_id ] );
 		return( js_redirect( $url_view, false ) );
 	}
 
@@ -613,10 +613,10 @@ EOS;
 		// var
 		$payment_api = _class( 'payment_api' );
 		// update status only in_progress
-		$object = $payment_api->get_status( array( 'name' => 'in_progress' ) );
+		$object = $payment_api->get_status( [ 'name' => 'in_progress' ] );
 		list( $status_id, $status ) = $object;
 		if( empty( $status_id ) ) { return( $object ); }
-		$object = $payment_api->get_status( array( 'name' => 'expired' ) );
+		$object = $payment_api->get_status( [ 'name' => 'expired' ] );
 		list( $new_status_id, $new_status ) = $object;
 		if( empty( $new_status_id ) ) { return( $object ); }
 		// date: over 3 days
@@ -630,7 +630,7 @@ EOS;
 			->where_null( 'datetime_finish' )
 		;
 		db()->begin();
-		$result = $db->update( array(
+		$result = $db->update( [
 			'status_id'       => $new_status_id,
 			'datetime_finish' => $sql_datetime,
 /* DEBUG
@@ -638,7 +638,7 @@ EOS;
 db()->rollback();
 var_dump( $result );
 exit; //*/
-		));
+		]);
 		if( empty( $result ) ) { db()->rollback(); return( null ); }
 		db()->commit();
 		return( true );
@@ -650,9 +650,9 @@ exit; //*/
 		$is_cli = ( php_sapi_name() == 'cli' );
 		$is_cli && $this->_update_expired_cli();
 		// web
-		$replace = array(
+		$replace = [
 			'is_confirm' => false,
-		);
+		];
 		$result = form( $replace )
 			->on_post( function( $data, $extra, $rules ) {
 				$is_confirm = !empty( $_POST[ 'is_confirm' ] );
@@ -670,11 +670,11 @@ exit; //*/
 					common()->message_info( 'Требуется подтверждение, для выполнения операции' );
 				}
 			})
-			->info( 'header', array( 'value' => 'Ввод средств: обновление статуса просроченных операций', 'no_label' => true, 'class' => 'text-warning' ) )
-			->check_box( 'is_confirm', array( 'desc' => 'Подтверждение', 'no_label' => true ) )
+			->info( 'header', [ 'value' => 'Ввод средств: обновление статуса просроченных операций', 'no_label' => true, 'class' => 'text-warning' ] )
+			->check_box( 'is_confirm', [ 'desc' => 'Подтверждение', 'no_label' => true ] )
 			->row_start()
-				->submit( 'operation', 'update', array( 'desc' => 'Обновить', 'icon' => 'fa fa-refresh' ) )
-				->link( 'Назад' , $url[ 'list' ], array( 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ) )
+				->submit( 'operation', 'update', [ 'desc' => 'Обновить', 'icon' => 'fa fa-refresh' ] )
+				->link( 'Назад' , $url[ 'list' ], [ 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ] )
 			->row_end()
 		;
 		return( $result );

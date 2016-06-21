@@ -53,10 +53,10 @@ class yf_user_profile extends yf_module {
 		// Init friends module
 		$this->FRIENDS_OBJ = module("friends");
 		// Params for the comments
-		$this->_comments_params = array(
+		$this->_comments_params = [
 			"return_action" => "show",
 			"object_id"		=> intval($this->_user_info["id"]),
-		);
+		];
 		// Array of dynamic info
 		if (main()->USER_INFO_DYNAMIC) {
 			$sql = "SELECT * FROM ".db('user_data_info_fields')." WHERE active=1 ORDER BY `order`, name";
@@ -85,7 +85,7 @@ class yf_user_profile extends yf_module {
 		}
 		// Try to get user info
 		if (!empty($user_id) && empty($this->_user_info)) {
-			$this->_user_info = user($user_id, "full", array("WHERE" => array("active" => 1)));
+			$this->_user_info = user($user_id, "full", ["WHERE" => ["active" => 1]]);
 		}
 		// Set global user info (for other modules)
 		$GLOBALS['user_info'] = $this->_user_info;
@@ -115,14 +115,14 @@ class yf_user_profile extends yf_module {
 			$this->_user_info["last_update"] = $this->_user_info["add_date"];
 		}
 		// Get live quick user stats
-		$totals = _class_safe("user_stats")->_get_live_stats(array("user_id" => $this->_user_info["id"]));
+		$totals = _class_safe("user_stats")->_get_live_stats(["user_id" => $this->_user_info["id"]]);
 		
 		// Process template
 		$forum_posts = $totals["forum_posts"]?$this->_show_forum_posts():"";
 		$blog_posts = $totals["blog_posts"]?$this->_show_blog_posts():"";
 		$article_posts = $totals["articles"]?$this->_show_articles():"";
 		
-		$replace = array(
+		$replace = [
 			"user_name"			=> _display_name($this->_user_info),
 			"user_group"		=> $this->_user_info["group"],
 //			"birth_date"		=> $this->_user_info["birth_date"],
@@ -133,7 +133,7 @@ class yf_user_profile extends yf_module {
 			"last_login"		=> _format_date($this->_user_info["last_login"], "long"),
 			"num_logins"		=> intval($this->_user_info["num_logins"]),
 			"site_visits"		=> intval($this->_user_info["sitevisits"]),
-			"visits"			=> in_array($this->_user_info["group"], array(3,4)) ? intval($this->_user_info["visits"]) : "",
+			"visits"			=> in_array($this->_user_info["group"], [3,4]) ? intval($this->_user_info["visits"]) : "",
 			"info_items"		=> $this->_show_info_items(),
 			"forum_posts"		=> $forum_posts[0],
 			"forum_pages"		=> $forum_posts[1],
@@ -162,7 +162,7 @@ class yf_user_profile extends yf_module {
 			"add_review_link"	=> $this->_user_info["group"] == 3/* && ($this->_user_info["id"] != main()->USER_ID)*/ ? "./?object=reviews&action=add_for_user&id=".$this->_user_info["id"] : "./?object=login_form&go_url=reviews;add_for_user;id=".$this->_user_info["id"],
 			"stats_visit_url"	=> "./?object=".$_GET["object"]."&action=show_visits_stats",
 			"stats_friend_url"	=> "./?object=".$_GET["object"]."&action=show_friend_stats",
-		);
+		];
 		// Dynamic info
 
 #		if (main()->USER_INFO_DYNAMIC) {
@@ -179,7 +179,7 @@ class yf_user_profile extends yf_module {
 	// Show user info items
 	function _show_info_items () {
 		// Array of text fields
-		$text_fields = array(
+		$text_fields = [
 			"name"		=> "Name",
 			"group"		=> "Group",
 			"status"	=> "Agency",
@@ -192,15 +192,15 @@ class yf_user_profile extends yf_module {
 			"zip_code"	=> "Zip Code",
 			"height"	=> "Height",
 			"weight"	=> "Weight",
-		);
+		];
 		// Array of fields which value need to be retrieved from array
-		$array_fields = array(
+		$array_fields = [
 			"state"		=> "State",
 			"height"	=> "Height",
 			"weight"	=> "Weight",
-		);
+		];
 		// Array of fields with link
-		$link_fields = array(
+		$link_fields = [
 			"email"	=> "E-mail",
 			"url"	=> "Web Site",
 			"phone"	=> "Phone",
@@ -211,8 +211,8 @@ class yf_user_profile extends yf_module {
 			"msn"	=> "MSN",
 			"jabber"=> "Jabber",
 			"skype"	=> "Skype",
-		);
-		$other_fields = array(
+		];
+		$other_fields = [
 			"city",
 			"race",
 			"measurements",
@@ -227,7 +227,7 @@ class yf_user_profile extends yf_module {
 			"number_escorts", 
 			"working_hours", 
 			"cc_payments"
-		);
+		];
 		// Process not empty fields
 		foreach ((array)$text_fields as $name => $desc) {
 			$value = $this->_user_info[$name];
@@ -244,14 +244,14 @@ class yf_user_profile extends yf_module {
 			} elseif ($name == "sex") {
 				$value = t($value);
 			} elseif ($name == "status" && strtolower($value) == "agency") {
-				$parent_agency_info = user($this->_user_info["agency_id"], array("id","login","nick","email"));
+				$parent_agency_info = user($this->_user_info["agency_id"], ["id","login","nick","email"]);
 				$value = !empty($parent_agency_info) ? "<a href=\""._profile_link($parent_agency_info["id"])."\">"._prepare_html(_display_name($parent_agency_info))."</a>" : "";
 			} elseif (array_key_exists($name, $array_fields)) {
 				$value = eval("return \$this->_".$name."s[\$value];");
 			}
 			$body .= $this->_show_item($desc, $value);
 		}
-		$_login_link = tpl()->parse($_GET["object"]."/login_link", array("link" => "./?object=login_form&go_url=".$_GET["object"].";show;id=".$_GET["id"]));
+		$_login_link = tpl()->parse($_GET["object"]."/login_link", ["link" => "./?object=login_form&go_url=".$_GET["object"].";show;id=".$_GET["id"]]);
 		$website	= $this->_show_contact_item("Web Site", ($this->_user_info['approved_recip'] && $this->_ad_info["url"]) ? (main()->USER_ID ? "./?object=".$_GET["object"]."&action=go&id=".$this->_ad_info["ad_id"] : "./?object=login_form&go_url=".$_GET["object"].";go;id=".$this->_ad_info["ad_id"]) : "");
 		$email		= $this->_show_contact_item("Email",	main()->USER_ID ? "./?object=email&action=send_form&id=".$this->_user_info["id"] : "./?object=login_form&go_url=email;send_form;id=".$this->_user_info["id"]);
 		$phone		= $this->_show_item("Phone",	$this->_user_info["phone"]	? (main()->USER_ID ? $this->_user_info["phone"]	: $_login_link) : "");
@@ -292,12 +292,12 @@ class yf_user_profile extends yf_module {
 
 	// Show item
 	function _show_item($name = "", $value = "") {
-		return (!empty($name) && !empty($value)) ? tpl()->parse($_GET["object"]."/item", array("name" => $name,"value" => $value)) : "";
+		return (!empty($name) && !empty($value)) ? tpl()->parse($_GET["object"]."/item", ["name" => $name,"value" => $value]) : "";
 	}
 
 	// Show contact item
 	function _show_contact_item($name = "", $value = "") {
-		return (!empty($name) && !empty($value)) ? tpl()->parse($_GET["object"]."/item_contact", array("name" => $name,"link" => $value)) : "";
+		return (!empty($name) && !empty($value)) ? tpl()->parse($_GET["object"]."/item_contact", ["name" => $name,"link" => $value]) : "";
 	}
 
 	// Show user forum posts
@@ -351,12 +351,12 @@ class yf_user_profile extends yf_module {
 		if (empty($REPUT_INFO)) {
 			return false;
 		}
-		$replace = array(
+		$replace = [
 			"stars"				=> $reput_stars,
 			"activity_points"	=> intval($activity_points),
 			"reput_points"		=> intval($REPUT_INFO["points"]),
 			"alt_power"			=> intval($REPUT_INFO["alt_power"]),
-		);
+		];
 		return tpl()->parse($_GET["object"]."/reput_info", $replace);
 	}
 
@@ -368,10 +368,10 @@ class yf_user_profile extends yf_module {
 		}
 		$body = "";
 		foreach ((array)$INTERESTS_OBJ->_get_for_user_id($this->_user_info["id"]) as $cur_info) {
-			$replace = array(
+			$replace = [
 				"search_link"	=> $cur_info["search_link"],
 				"keyword"		=> $cur_info["keyword"],
-			);
+			];
 			$body .= tpl()->parse($_GET["object"]."/interests_item", $replace);
 			$this->_interests_array[] = $cur_info["keyword"];
 		}
@@ -389,7 +389,7 @@ class yf_user_profile extends yf_module {
 	}
 
 	// Show profile comments
-	function _show_custom_design_css ($user_info = array()) {
+	function _show_custom_design_css ($user_info = []) {
 /*
 		$OBJ = _class("custom_design");
 		return is_object($OBJ) ? $OBJ->_show_css(array(
@@ -401,7 +401,7 @@ class yf_user_profile extends yf_module {
 	}
 
 	// Check if comment delete allowed
-	function _comment_delete_allowed ($params = array()) {
+	function _comment_delete_allowed ($params = []) {
 		$delete_allowed	= main()->USER_ID && (($params["user_id"] && $params["user_id"] == main()->USER_ID) || ($params["object_id"] && main()->USER_ID == $params["object_id"]));
 		return (bool)$delete_allowed;
 	}
@@ -409,7 +409,7 @@ class yf_user_profile extends yf_module {
 	/**
 	* Hook for navigation bar
 	*/
-	function _nav_bar_items ($params = array()) {
+	function _nav_bar_items ($params = []) {
 		$NAV_BAR_OBJ = &$params["nav_bar_obj"];
 		if (!is_object($NAV_BAR_OBJ)) {
 			return false;
@@ -417,7 +417,7 @@ class yf_user_profile extends yf_module {
 		// Save old items
 		$old_items = $params["items"];
 		// Create new items
-		$items = array();
+		$items = [];
 		$items[]	= $NAV_BAR_OBJ->_nav_item("Profiles");
 		$items[]	= $NAV_BAR_OBJ->_nav_item(_display_name($this->_user_info));
 		return $items;
@@ -441,7 +441,7 @@ class yf_user_profile extends yf_module {
 		}
 		if (empty($error_message)) {
 			// Get live quick user stats
-			$totals = _class_safe("user_stats")->_get_live_stats(array("user_id" => $this->_user_info["id"]));
+			$totals = _class_safe("user_stats")->_get_live_stats(["user_id" => $this->_user_info["id"]]);
 			// Check if this user is in favorites (also check if this is own profile)
 			$DISPLAY_CONTACT_ITEMS = 0;
 			if (main()->USER_ID && $this->_user_info["id"] != main()->USER_ID) {
@@ -476,19 +476,19 @@ class yf_user_profile extends yf_module {
 			$reput_text = "";
 			$REPUT_OBJ = module("reputation");
 			if (is_object($REPUT_OBJ)) {
-				$reput_info = array(
+				$reput_info = [
 					"points"	=> $totals["reput_points"],
-				);
+				];
 				$reput_text	= $REPUT_OBJ->_show_for_user($this->_user_info["id"], $reput_info);
 			}
 			// Array of $_GET vars to skip
-			$skip_get = array("page","escort_id","q","show");
+			$skip_get = ["page","escort_id","q","show"];
 
 			if (empty($this->_user_info["last_login"])) {
 				$this->_user_info["last_login"] = $this->_user_info["add_date"];
 			}
 			// Process template
-			$replace = array(
+			$replace = [
 				"user_id"				=> intval($USER_ID),
 				"user_avatar"			=> _show_avatar($USER_ID),
 				"user_name"				=> _prepare_html(_display_name($this->_user_info)),
@@ -527,16 +527,16 @@ class yf_user_profile extends yf_module {
 				"alt_power"				=> MAIN_TYPE_ADMIN ? intval($REPUT_INFO["alt_power"]) : "",
 				"activity_points"		=> intval($totals["activity_points"]),
 				"is_admin"				=> MAIN_TYPE_ADMIN ? 1 : 0,
-			);
+			];
 			// Admin-only methods
 			if (MAIN_TYPE_ADMIN) {
-				$replace = array_merge($replace, array(
+				$replace = array_merge($replace, [
 					"login_stats"			=> process_url("./?object=log_auth_view&action=save_filter&user_id=".$this->_user_info["id"]),
 					"multi_accounts_link"	=> process_url("./?object=check_multi_accounts&action=show_by_user&id=".$this->_user_info["id"]),
 					"user_errors"			=> process_url("./?object=log_user_errors_viewer&action=save_filter&user_id=".$this->_user_info["id"]),
-					"ban_popup_link"		=> _class("manage_auto_ban", "admin_modules/")->_popup_link(array("user_id" => intval($this->_user_info["id"]))),
+					"ban_popup_link"		=> _class("manage_auto_ban", "admin_modules/")->_popup_link(["user_id" => intval($this->_user_info["id"])]),
 					"verify_link"			=> !$this->_user_info["photo_verified"] ? "./?object=manage_photo_verify&action=add&id=".intval($this->_user_info["id"]) : "",
-				));
+				]);
 			}
 			$body = tpl()->parse($_GET["object"]."/compact_info", $replace);
 		}
@@ -571,20 +571,20 @@ class yf_user_profile extends yf_module {
 		$user_infos = user($members_ids, "short");
 	
 		foreach ((array)$stats_array as $A) {
-			$replace2 = array(
+			$replace2 = [
 				"avatar"		=> _show_avatar($A["member_id"]),
 				"visit_date"	=> _format_date($A["add_date"], "long"),
 				"user_nick"		=> $user_infos[$A["member_id"]]["nick"],
 				"profile_url"	=> _profile_link($user_infos[$A["member_id"]]),
-			);
+			];
 			$items .= tpl()->parse($_GET["object"]."/visit_stats_item", $replace2);
 		}
-		$replace = array(
+		$replace = [
 			"total"			=> $total,
 			"pages"			=> $pages,
 			"items"			=> $items,
 			"back_url"		=> "./?object=".$_GET["object"],
-		);
+		];
 		return tpl()->parse($_GET["object"]."/visit_stats_main", $replace);
 	}
 
@@ -608,21 +608,21 @@ class yf_user_profile extends yf_module {
 		$user_infos = user($members_ids, "short");
 	
 		foreach ((array)$stats_array as $A) {
-			$replace2 = array(
+			$replace2 = [
 				"avatar"		=> _show_avatar($A["member_id"]),
 				"event_date"	=> _format_date($A["add_date"], "long"),
 				"user_nick"		=> $user_infos[$A["member_id"]]["nick"],
 				"event"			=> $A["action_name"],
 				"profile_url"	=> _profile_link($user_infos[$A["member_id"]]),
-			);
+			];
 			$items .= tpl()->parse($_GET["object"]."/friend_stats_item", $replace2);
 		}
-		$replace = array(
+		$replace = [
 			"total"			=> $total,
 			"pages"			=> $pages,
 			"items"			=> $items,
 			"back_url"		=> "./?object=".$_GET["object"],
-		);
+		];
 		return tpl()->parse($_GET["object"]."/friend_stats_main", $replace);
 	}
 
@@ -630,32 +630,32 @@ class yf_user_profile extends yf_module {
 	* Quick menu auto create
 	*/
 	function _quick_menu () {
-		$menu = array(
-			array(
+		$menu = [
+			[
 				"name"	=> "Manage",
 				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
+			],
+			[
 				"name"	=> "Show visits statistics",
 				"url"	=> "./?object=".$_GET["object"]."&action=show_visits_stats",
-			),
-			array(
+			],
+			[
 				"name"	=> "Show friendship statistics",
 				"url"	=> "./?object=".$_GET["object"]."&action=show_friend_stats",
-			),
-			array(
+			],
+			[
 				"name"	=> "View All Friends",
 				"url"	=> "./?object=friends&action=view_all_friends",
-			),
-			array(
+			],
+			[
 				"name"	=> "View All Friends Of",
 				"url"	=> "./?object=friends&action=view_all_friends_of",
-			),
-			array(
+			],
+			[
 				"name"	=> "",
 				"url"	=> "./?object=".$_GET["object"],
-			),
-		);
+			],
+		];
 		return $menu;	
 	}
 

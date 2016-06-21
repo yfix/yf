@@ -2,17 +2,17 @@
 
 class yf_manage_shop_price_update {
 
-	private $_fields_show = array(
+	private $_fields_show = [
 		'name',
 		'price_raw',
 		'price',
 		'old_price',
-	);
-	private $_fields_update = array(
+	];
+	private $_fields_update = [
 		'price_raw' => 'price_raw',
 		'price'     => 'price',
 		'old_price' => 'old_price',
-	);
+	];
 	private $_filter        = false;
 	private $_filter_params = false;
 
@@ -45,31 +45,31 @@ class yf_manage_shop_price_update {
 	function _form( $data ) {
 		$_class_price = $this->_class_price;
 		list( $total, $preview ) = $data;
-		$replace = array(
+		$replace = [
 			'_all'    => $total,
 			'percent' => $_class_price->_number_format( $_POST[ 'percent' ] ),
 			'add'     => $_class_price->_number_format( $_POST[ 'add'     ] ),
-		);
+		];
 		$to_field = $this->_fields_update;
 		// create form
 		$link_back = './?object=manage_shop&action=products';
 		$_form = form( $replace )
-			->row_start( array( 'desc' => 'Всего выбрано' ) )
+			->row_start( [ 'desc' => 'Всего выбрано' ] )
 				->info( '_all' )
-				->link( 'Back', $link_back , array( 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ))
+				->link( 'Back', $link_back , [ 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ])
 			->row_end()
 			->number( 'percent', 'Цена +/-, %' )
 			->number( 'add', 'Цена +/-, ' . $_class_price->CURRENCY )
-			->select_box( 'to_field', $to_field, array(
+			->select_box( 'to_field', $to_field, [
 				'selected'  => $_POST[ 'to_field' ],
 				'translate' => true,
 				'desc'      => 'Приминть к полю',
 				'tip'       => 'цена берется из поля "'. t( 'price_raw' ) . '" и применяется к данному полю' ,
-			))
+			])
 			->submit( 'preview', 'Предпросмотр' )
-			->row_start( array( 'desc' => '' ) )
+			->row_start( [ 'desc' => '' ] )
 				->submit( 'apply', 'Выполнить' )
-				->check_box( 'confirm', false, array( 'desc' => 'подтверждение', 'no_label' => true ) )
+				->check_box( 'confirm', false, [ 'desc' => 'подтверждение', 'no_label' => true ] )
 			->row_end()
 		;
 		return( $_form . $preview );
@@ -83,16 +83,16 @@ class yf_manage_shop_price_update {
 		// prepare filter
 		list( $_where, $_order ) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare( $this->_filter, $this->_filter_params );
 		// compile sql
-		$sql_filter = $this->_class_admin_products->_sql( array(
+		$sql_filter = $this->_class_admin_products->_sql( [
 			'fields' => 'DISTINCT p.*',
 			'where'  => 1 . $_where,
 			'order'  => $_order,
-		));
-		$sql_count = $this->_class_admin_products->_sql( array(
+		]);
+		$sql_count = $this->_class_admin_products->_sql( [
 			'fields' => 'COUNT(p.id)',
 			'where'  => 1 . $_where,
 			'order'  => $_order,
-		));
+		]);
 		$count = db()->get_one( $sql_count );
 		// build temp data
 		// prepare percent
@@ -120,14 +120,14 @@ class yf_manage_shop_price_update {
 		db_query( "INSERT INTO $sql_table_t $sql_filter LIMIT $limit" );
 		db_query( "UPDATE $sql_table_t SET $sql_price_update LIMIT $limit" );
 		$result = db_get_all( "SELECT $sql_fields FROM $sql_table_t as p $_order LIMIT $limit" );
-		$result_t = table( $result, array( 'no_total' => true ) )
+		$result_t = table( $result, [ 'no_total' => true ] )
 			->text( 'name' )
-			->text( 'price_raw', array( 'class' => $css_field[ 'price_raw' ] ) )
-			->text( 'price',     array( 'class' => $css_field[ 'price'     ] ) )
-			->text( 'old_price', array( 'class' => $css_field[ 'old_price' ] ) )
+			->text( 'price_raw', [ 'class' => $css_field[ 'price_raw' ] ] )
+			->text( 'price',     [ 'class' => $css_field[ 'price'     ] ] )
+			->text( 'old_price', [ 'class' => $css_field[ 'old_price' ] ] )
 		;
-		$result_t = _class('html')->panel( array( 'title' => 'Предпросмотр', 'body' => $result_t ) );
-		$result = array( $count, $result_t );
+		$result_t = _class('html')->panel( [ 'title' => 'Предпросмотр', 'body' => $result_t ] );
+		$result = [ $count, $result_t ];
 		// apply
 		if( $is_update ) {
 			db_query( "UPDATE $sql_table as p"
@@ -142,7 +142,7 @@ class yf_manage_shop_price_update {
 				}
 				$info = " ( $info )";
 			}
-			common()->admin_wall_add( array( "shop price update: percent = $_percent%; add = $_add" . $_class_price->CURRENCY . $info ) );
+			common()->admin_wall_add( [ "shop price update: percent = $_percent%; add = $_add" . $_class_price->CURRENCY . $info ] );
 		}
 		return( $result );
 	}

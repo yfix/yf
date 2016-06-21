@@ -8,14 +8,14 @@ class yf_server_file_manager {
 	/** @var string Home dir */
 	public $HOME_DIR 				= "/var/www/";
 	/** @var array Viewable and editable file extensions */
-	public $EDIT_ALLOWED_TYPES 	= array(
+	public $EDIT_ALLOWED_TYPES 	= [
 		"php",
 		"html",
 		"htaccess",
 		"txt",
-	);
+	];
 	/** @var array Denied folders */
-	public $BLACKLIST 	= array(
+	public $BLACKLIST 	= [
 		"/bin",
 		"/boot",
 		"/dev",
@@ -30,7 +30,7 @@ class yf_server_file_manager {
 		"/sbin",
 		"/dist",
 //		"/home",
-	);
+	];
 	/** @var int Maximum filesize to allow edit or view it through web interface */
 	public $MAX_EDITABLE_FILESIZE 	= 1048000;
 	/** @var string Tar file prefix (using for tar filename creation when compress files) */
@@ -97,12 +97,12 @@ class yf_server_file_manager {
 
 		$dir_contents = $this->SSH_OBJ->scan_dir($this->_server_info, $dir_name, "", "/\.(svn|git)/ims", 0);
 		if (is_array($dir_contents)) {
-			uasort($dir_contents, array(&$this, "_sort_by_type"));
+			uasort($dir_contents, [&$this, "_sort_by_type"]);
 		}
 
 		// More useful navigation
 		$_tmp_path = "";
-		$_tmp_array = array();
+		$_tmp_array = [];
 		$dir_name = rtrim($dir_name, "/");
 		if(substr_count($dir_name, "/") < 1) {
 			$allow_delete = false;
@@ -161,7 +161,7 @@ class yf_server_file_manager {
 			} else {
 				$ext_img = $this->ext_images["folder"];
 			}
-			$replace2 = array(
+			$replace2 = [
 				"name"			=> _prepare_html($_info["name"]),
 				"encoded_name"	=> $this->_urlencode($_path),
 				"ext_img"		=> $ext_img ? $ext_img : "",
@@ -176,11 +176,11 @@ class yf_server_file_manager {
 				"dir_url"		=> ($_info["type"] == "d" && $this->_check_blacklist($_path))? "./?object=".$_GET["object"]."&action=show&id=".($this->SERVER_ID ? $this->SERVER_ID."&page=" : "").$this->_urlencode($_path) : "",
 				"download_url"	=> $_info["type"] != "d" ? "./?object=".$_GET["object"]."&action=download_file&id=".($this->SERVER_ID ? $this->SERVER_ID."&page=" : "").$this->_urlencode($_path) : "",
 				"chmod_url"		=> $allow_chmod ? "./?object=".$_GET["object"]."&action=edit_chmod&id=".($this->SERVER_ID ? $this->SERVER_ID."&page=" : "").$this->_urlencode($_path) : "",
-			);
+			];
 			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
 		}
 
-		$replace = array(
+		$replace = [
 			"server_name"	=> $this->_server_info["name"],
 			"server_ip"		=> $this->_server_info["base_ip"],
 			"server_url"	=> $this->SHOW_SERVER_NAME ? $this->SERVER_INFO_URL."&id=".$this->SERVER_ID : "",
@@ -195,7 +195,7 @@ class yf_server_file_manager {
 			"group_delete_url"	=> "./?object=".$_GET["object"]."&action=group_delete&id=".$this->SERVER_ID,
 			"group_chmod_url"	=> "./?object=".$_GET["object"]."&action=edit_chmod&id=".$this->SERVER_ID,
 			"tar_url"		=> "./?object=".$_GET["object"]."&action=tar&id=".($this->SERVER_ID ? $this->SERVER_ID."&page=" : "").$this->_urlencode($dir_name),
-		);
+		];
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
@@ -206,11 +206,11 @@ class yf_server_file_manager {
 		$filename = $this->_prepare_path($this->_urldecode($this->GET_PATH));
 		
 		$file_content = $this->SSH_OBJ->read_file($this->_server_info, $filename);
-		$replace = array(
+		$replace = [
 			"filename"		=> $filename,
 			"file_content" 	=> $file_content,
 			"back_url"		=> "./?object=".$_GET["object"]."&action=show&id=".($this->SERVER_ID ? $this->SERVER_ID."&page=" : "").$this->_urlencode(dirname($filename)),
-		);
+		];
 		return tpl()->parse($_GET["object"]."/view", $replace);
 	}
 
@@ -218,7 +218,7 @@ class yf_server_file_manager {
 	* chmod
 	*/
 	function edit_chmod () {
-		$_SELECTED_FILES = array();
+		$_SELECTED_FILES = [];
 		if ($this->GET_PATH) {
 			$this->GET_PATH = $this->_urldecode($this->GET_PATH);
 			$_SELECTED_FILES[] = $this->_prepare_path($this->GET_PATH);
@@ -268,17 +268,17 @@ class yf_server_file_manager {
 			$perms = "rwxrwxrwx";
 		}
 
-		$perms_array = array(
-			array(t("read"), 	$perms{0}),
-			array(t("write"), 	$perms{1}),
-			array(t("execute"),	$perms{2}),
-			array(t("read"), 	$perms{3}),
-			array(t("write"), 	$perms{4}),
-			array(t("execute"),	$perms{5}),
-			array(t("read"),	$perms{6}),
-			array(t("write"),	$perms{7}),
-			array(t("execute"),	$perms{8}),
-		);
+		$perms_array = [
+			[t("read"), 	$perms{0}],
+			[t("write"), 	$perms{1}],
+			[t("execute"),	$perms{2}],
+			[t("read"), 	$perms{3}],
+			[t("write"), 	$perms{4}],
+			[t("execute"),	$perms{5}],
+			[t("read"),	$perms{6}],
+			[t("write"),	$perms{7}],
+			[t("execute"),	$perms{8}],
+		];
 
 //		if (!empty($_POST["user"]) || !empty($_POST["group"])) {
 		if (main()->is_post()) {
@@ -335,7 +335,7 @@ class yf_server_file_manager {
 			return js_redirect("./?object=".$_GET["object"]."&action=show&id=".($this->SERVER_ID ? $this->SERVER_ID."&page=" : "").$this->_urlencode(dirname($path)));
 		}
 
-		$replace = array(
+		$replace = [
 			"filepath"		=> _prepare_html($path),
 			"group_box"		=> $this->ALLOW_CHANGE_OWNER ? common()->select_box("group", $groups_array, count($_SELECTED_FILES) == 1 ? $file_info["group"] : "root") : "",
 			"user_box"		=> $this->ALLOW_CHANGE_OWNER ? common()->select_box("user", $users_array, count($_SELECTED_FILES) == 1 ? $file_info["user"] : "root") : "",
@@ -345,7 +345,7 @@ class yf_server_file_manager {
 			"is_folder"		=> $file_info["type"] == "d" ? 1 : 0,
 			"back_url"		=> "./?object=".$_GET["object"]."&action=show&id=".($this->SERVER_ID ? $this->SERVER_ID."&page=" : "").$this->_urlencode(dirname($path)),
 			"mass_selected"	=> _prepare_html(serialize($_SELECTED_FILES)),
-		);
+		];
 		return tpl()->parse($_GET["object"]."/chmod_form", $replace);
 	}
 
@@ -361,12 +361,12 @@ class yf_server_file_manager {
 		}
 		
 		$file_content = $this->SSH_OBJ->read_file($this->_server_info, $filename);
-		$replace = array(
+		$replace = [
 			"filename"		=> $filename,
 			"file_content" 	=> _prepare_html($file_content, 0),
 			"back_url"		=> "./?object=".$_GET["object"]."&action=show&id=".($this->SERVER_ID ? $this->SERVER_ID."&page=" : "").$this->_urlencode(dirname($filename)),
 			"form_action"	=> "./?object=".$_GET["object"]."&action=edit_file&id=".($this->SERVER_ID ? $this->SERVER_ID."&page=" : "").$this->_urlencode($filename),
-		);
+		];
 		return tpl()->parse($_GET["object"]."/edit_form", $replace);
 	}
 
@@ -514,7 +514,7 @@ class yf_server_file_manager {
 			}
 			return $path;
 		}
-		$result = str_replace(array("", "\"", "\'", "~", ".."), "", rtrim(str_replace(array("\\", "//", "///"), "/", trim($path)), "/"));
+		$result = str_replace(["", "\"", "\'", "~", ".."], "", rtrim(str_replace(["\\", "//", "///"], "/", trim($path)), "/"));
 		return strlen($result) ? $result : "/";
 	}
 
@@ -588,7 +588,7 @@ class yf_server_file_manager {
 	* check rights
 	*/
 	function _get_methods_for_check_rights(){
-		$methods = array(
+		$methods = [
 			"show",
 			"view_file",
 			"edit_chmod",
@@ -600,7 +600,7 @@ class yf_server_file_manager {
 			"delete_folder",
 			"upload_file",
 			"download_file",
-		);
+		];
 		return $methods;
 	}
 }

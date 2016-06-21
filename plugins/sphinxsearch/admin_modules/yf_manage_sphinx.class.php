@@ -35,7 +35,7 @@ class yf_manage_sphinx {
 
 	/**
 	*/
-	function _hook_settings(&$selected = array()) {
+	function _hook_settings(&$selected = []) {
 #		return array(
 #			array('yes_no_box', 'manage_sphinx__USE_STOP_WORDS'),
 #			array('number', 'manage_sphinx__MAX_MATCHES'),
@@ -73,7 +73,7 @@ class yf_manage_sphinx {
 		if (isset($this->_countries)) {
 			return $this->_countries;
 		}
-		$countries = array();
+		$countries = [];
 		$Q = db()->query("SELECT DISTINCT(country) AS code FROM ".db('sites')." WHERE country != '' AND active='1' ORDER BY country ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$countries[$A["code"]] = $A["code"];
@@ -88,30 +88,30 @@ class yf_manage_sphinx {
 	* Current config creation here
 	*/
 	function _current_config() {
-		$config_data = array();
+		$config_data = [];
 
-		$source_main = array(
-			array("type",		"mysql"),
-			array("sql_host",	DB_HOST),
-			array("sql_user",	DB_USER),
-			array("sql_pass",	DB_PSWD),
-			array("sql_db",		DB_NAME),
-			array("sql_port",	3306),
-		);
+		$source_main = [
+			["type",		"mysql"],
+			["sql_host",	DB_HOST],
+			["sql_user",	DB_USER],
+			["sql_pass",	DB_PSWD],
+			["sql_db",		DB_NAME],
+			["sql_port",	3306],
+		];
 
-		$config_data = array(
-			"indexer" => array(
-				array("mem_limit",			$this->MEM_LIMIT . "M"),
-			),
-			"searchd" => array(
-				array("log",				$this->LOG_PATH . "searchd.log"),
-				array("query_log",			$this->LOG_PATH . "query.log"),
-				array("read_timeout",		"5"),
-				array("max_children",		"200"),
-				array("pid_file",			$this->LOG_PATH . "searchd.pid"),
-				array("max_matches",		(string) $this->MAX_MATCHES),
-			),
-		);
+		$config_data = [
+			"indexer" => [
+				["mem_limit",			$this->MEM_LIMIT . "M"],
+			],
+			"searchd" => [
+				["log",				$this->LOG_PATH . "searchd.log"],
+				["query_log",			$this->LOG_PATH . "query.log"],
+				["read_timeout",		"5"],
+				["max_children",		"200"],
+				["pid_file",			$this->LOG_PATH . "searchd.pid"],
+				["max_matches",		(string) $this->MAX_MATCHES],
+			],
+		];
 /*
 		$source_homes = array(
 			// prevent main table locking when indexing
@@ -253,7 +253,7 @@ class yf_manage_sphinx {
 
 		$config_object = new sphinx_config($this->CONF_PATH . "sphinx.conf");
 
-		$non_unique = array(
+		$non_unique = [
 			"sql_group_column"			=> true,
 			"sql_date_column"			=> true,
 			"sql_str2ordinal_column"	=> true,
@@ -266,7 +266,7 @@ class yf_manage_sphinx {
 			"sql_attr_str2ordinal"		=> true,
 			"sql_query_pre"				=> true,
 			"sql_field_string"			=> true,
-		);
+		];
 
 		$config_data = $this->_current_config();
 
@@ -404,7 +404,7 @@ class yf_manage_sphinx {
 					return true;
 				}
 			} else {
-				$output = array();
+				$output = [];
 				$pidof_command = "pidof";
 
 				exec("whereis -b pidof", $output);
@@ -636,7 +636,7 @@ class yf_manage_sphinx {
 class sphinx_config
 {
 	public $loaded = false;
-	public $sections = array();
+	public $sections = [];
 
 	/**
 	* Constructor which optionally loads data from a file
@@ -693,7 +693,7 @@ class sphinx_config
 		// split the file into lines, we'll process it line by line
 		$config_file = file($filename);
 
-		$this->sections = array();
+		$this->sections = [];
 
 		$section = null;
 		$found_opening_bracket = false;
@@ -922,7 +922,7 @@ class sphinx_config_section
 	public $name;
 	public $comment;
 	public $end_comment;
-	public $variables = array();
+	public $variables = [];
 
 	/**
 	* Construct a new section

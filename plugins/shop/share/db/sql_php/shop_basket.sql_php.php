@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'char',
 			'length' => 32,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ts' => array(
+		],
+		'ts' => [
 			'name' => 'ts',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -31,8 +31,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
-		),
-		'data' => array(
+		],
+		'data' => [
 			'name' => 'data',
 			'type' => 'text',
 			'length' => NULL,
@@ -46,26 +46,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'ts' => array(
+			],
+		],
+		'ts' => [
 			'name' => 'ts',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'ts' => 'ts',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

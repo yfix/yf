@@ -21,11 +21,11 @@ class yf_shop_basket_add{
 				$_old_quantity	= (int) module('shop')->_basket_api()->get($_product_id, 'quantity');
 				$_quantity		= intval($_quantity) + intval($_old_quantity);
 				if ($_product_id && $_quantity) {
-					module('shop')->_basket_api()->set($_product_id, array(
+					module('shop')->_basket_api()->set($_product_id, [
 						"product_id"=> $_product_id,
 						"quantity"	=> $_quantity,
 						"atts"		=> $_POST["atts"][$_product_id],
-					));
+					]);
 				}
 			}
 			// Prevent double processing

@@ -2,12 +2,12 @@
 
 class yf_manage_shop_upload_images {
 
-        public $ALLOWED_MIME_TYPES = array(
+        public $ALLOWED_MIME_TYPES = [
             'application/zip' => 'zip',
             'application/x-rar' => 'rar',
             'application/x-tar' => 'tar',
             'application/x-gzip'=> 'gz',
-    );
+    ];
         public $MAX_IMAGE_SIZE = 8196;
 
         function _init(){
@@ -27,13 +27,13 @@ class yf_manage_shop_upload_images {
                 if (empty($_FILES) && empty($_POST['server_path'])) {
                         if(!$SUPPLIER_ID){
                                 $suppliers = db()->get_2d('SELECT id, name FROM '.db('shop_suppliers'));
-                                $form = form('',array('enctype' => 'multipart/form-data'))
+                                $form = form('',['enctype' => 'multipart/form-data'])
                                         ->file("archive")
-                                        ->select_box('supplier', $suppliers, array('desc' => 'Supplier', 'show_text' => 1))
+                                        ->select_box('supplier', $suppliers, ['desc' => 'Supplier', 'show_text' => 1])
                                         ->text("server_path","from server path")
                                         ->save('', "Upload");
                         } else{
-                                $form = form('',array('enctype' => 'multipart/form-data'))
+                                $form = form('',['enctype' => 'multipart/form-data'])
                                         ->file("archive")
                                         ->save('', "Upload");
                         }
@@ -83,22 +83,22 @@ class yf_manage_shop_upload_images {
                         $result = is_array($status)? $status['status'] : $status;
                         $filename = str_replace($EXTRACT_PATH, '', $v);
                         $product_id = is_array($status)? $status['id'] : "???";
-                        $items[] = array(
+                        $items[] = [
                                 "number"        => $k,
                                 "filename"        => $filename,
                                 "status"        => $result,
                                 "image"                => is_array($status)? str_replace(PROJECT_PATH, WEB_PATH, $status['img']): "",
                                 "edit_url"        => is_array($status)? "./?object=manage_shop&action=product_edit&id=".$status['id'] : "",
-                        );
+                        ];
                         $log_str = $product_id." | ".$result." | ".$filename.";\n";
                         file_put_contents($this->ARCHIVE_FOLDER.date("d-m-Y").".log", $log_str, FILE_APPEND);
                 }
-                $replace =array(
+                $replace =[
                         "items" => $items,
-                );
+                ];
                 _class('dir')->delete_dir($EXTRACT_PATH, true);
                 unlink($this->ARCHIVE_FOLDER.$new_name);
-                common()->admin_wall_add(array('archive with images uploaded by '.$SUPPLIER_INFO['name'].' '.$ADMIN_INFO['first_name'].' '.$ADMIN_INFO['last_name']));
+                common()->admin_wall_add(['archive with images uploaded by '.$SUPPLIER_INFO['name'].' '.$ADMIN_INFO['first_name'].' '.$ADMIN_INFO['last_name']]);
 
                 return tpl()->parse("manage_shop/upload_archive", $replace);
         }
@@ -140,11 +140,11 @@ class yf_manage_shop_upload_images {
                 }
 				module('manage_shop')->_product_check_first_revision('product_images', $product['id']);
                 $thumb_name = $this->resize_and_save_image($folder, $product['id'], $md5);
-                return array(
+                return [
                         'status'=>"Success",
                         'img'        => $thumb_name,
                         'id'        => $product['id'],
-                );
+                ];
         }
 
         /**
@@ -160,11 +160,11 @@ class yf_manage_shop_upload_images {
                         mkdir($new_path, 0777, true);
                 }
                 db()->begin();
-                db()->insert(db('shop_product_images'), array(
+                db()->insert(db('shop_product_images'), [
                         'product_id'    => $id,
                         'md5'           => $md5,
                         'date_uploaded' => $_SERVER['REQUEST_TIME'],
-                ));
+                ]);
                 $i = db()->insert_id();
 
                 $real_name = $new_path.'product_'.$id.'_'.$i.'.jpg';

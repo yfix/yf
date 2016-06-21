@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'loc_id' => array(
+return [
+	'fields' => [
+		'loc_id' => [
 			'name' => 'loc_id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'country' => array(
+		],
+		'country' => [
 			'name' => 'country',
 			'type' => 'char',
 			'length' => 2,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'region' => array(
+		],
+		'region' => [
 			'name' => 'region',
 			'type' => 'char',
 			'length' => 3,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'city' => array(
+		],
+		'city' => [
 			'name' => 'city',
 			'type' => 'varchar',
 			'length' => 32,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'postal_code' => array(
+		],
+		'postal_code' => [
 			'name' => 'postal_code',
 			'type' => 'char',
 			'length' => 5,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'latitude' => array(
+		],
+		'latitude' => [
 			'name' => 'latitude',
 			'type' => 'float',
 			'length' => NULL,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'longitude' => array(
+		],
+		'longitude' => [
 			'name' => 'longitude',
 			'type' => 'float',
 			'length' => NULL,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'dma_code' => array(
+		],
+		'dma_code' => [
 			'name' => 'dma_code',
 			'type' => 'int',
 			'length' => 8,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'area_code' => array(
+		],
+		'area_code' => [
 			'name' => 'area_code',
 			'type' => 'int',
 			'length' => 8,
@@ -135,26 +135,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'loc_id' => 'loc_id',
-			),
-		),
-		'country' => array(
+			],
+		],
+		'country' => [
 			'name' => 'country',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'country' => 'country',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

@@ -1,28 +1,28 @@
 <?php
 class yf_manage_shop__product_revisions {
 
-	public $temp_fields = array(
-		'product'	=> array('image', 'add_date', 'update_date', 'last_viewed_date', 'viewed', 'sold', 'status', 'origin_url', 'source', 'featured'),
-		'orders'		=> array(),
-	);
+	public $temp_fields = [
+		'product'	=> ['image', 'add_date', 'update_date', 'last_viewed_date', 'viewed', 'sold', 'status', 'origin_url', 'source', 'featured'],
+		'orders'		=> [],
+	];
 
-	public $all_queries = array(
-		'product' => array(
-			'product'             => array('table' => 'shop_products',               'field' => 'id',         'multi' => false),
-			'params'              => array('table' => 'shop_products_productparams', 'field' => 'product_id', 'multi' => true),
-			'product_to_category' => array('table' => 'shop_product_to_category',    'field' => 'product_id', 'multi' => true),
-			'product_to_region'   => array('table' => 'shop_product_to_region',      'field' => 'product_id', 'multi' => true),
-			'product_related'     => array('table' => 'shop_product_related',        'field' => 'product_id', 'multi' => true),
-			'product_to_unit'     => array('table' => 'shop_product_to_unit',        'field' => 'product_id', 'multi' => true),
-		),
-		'order' => array(
-			'orders'      => array('table' => 'shop_orders',      'field' => 'id',       'multi' => false),
-			'order_items' => array('table' => 'shop_order_items', 'field' => 'order_id', 'multi' => true),
-		),
-		'category' => array(
-			'sys_category_items' => array('table' => 'sys_category_items', 'field' => 'id', 'multi' => false),
-		),
-	);
+	public $all_queries = [
+		'product' => [
+			'product'             => ['table' => 'shop_products',               'field' => 'id',         'multi' => false],
+			'params'              => ['table' => 'shop_products_productparams', 'field' => 'product_id', 'multi' => true],
+			'product_to_category' => ['table' => 'shop_product_to_category',    'field' => 'product_id', 'multi' => true],
+			'product_to_region'   => ['table' => 'shop_product_to_region',      'field' => 'product_id', 'multi' => true],
+			'product_related'     => ['table' => 'shop_product_related',        'field' => 'product_id', 'multi' => true],
+			'product_to_unit'     => ['table' => 'shop_product_to_unit',        'field' => 'product_id', 'multi' => true],
+		],
+		'order' => [
+			'orders'      => ['table' => 'shop_orders',      'field' => 'id',       'multi' => false],
+			'order_items' => ['table' => 'shop_order_items', 'field' => 'order_id', 'multi' => true],
+		],
+		'category' => [
+			'sys_category_items' => ['table' => 'sys_category_items', 'field' => 'id', 'multi' => false],
+		],
+	];
 
 
 	function _product_check_first_revision($type = false, $ids = false) {
@@ -63,13 +63,13 @@ class yf_manage_shop__product_revisions {
 		$admin_id = main()->ADMIN_ID?:intval($_GET['admin_id']);
 		if(!empty($ids))
 			$data = json_encode($ids);
-		$insert = array(
+		$insert = [
 			'user_id'  => $admin_id,
 			'add_date' => time(),
 			'action'   => 'group',
 			'item_id'  => intval($group_id),
 			'data'     => $data ? : '',
-		);
+		];
 		db()->insert_safe($revision_db, $insert);
 	}
 
@@ -91,7 +91,7 @@ class yf_manage_shop__product_revisions {
 			return false;
 		}
 		if (!is_array($ids) && intval($ids)) {
-			$ids = array(intval($ids));
+			$ids = [intval($ids)];
 		}
 
 		$ids_with_comma = implode(',', $ids);
@@ -102,7 +102,7 @@ class yf_manage_shop__product_revisions {
 		}
 
 		$revision_db = $this->get_revision_db($type);
-		$all_data = array();
+		$all_data = [];
 
 		if ($action != 'delete') {
 			$revision_sql = 'SELECT item_id, data FROM (SELECT item_id, data FROM '.$revision_db.' WHERE item_id IN ('.$ids_with_comma.') ORDER BY id DESC) as r GROUP BY item_id';
@@ -110,7 +110,7 @@ class yf_manage_shop__product_revisions {
 			foreach ($this->all_queries[$type] as $key => $info) {
 				$sql_res = db()->query('SELECT * FROM '.db($info['table']).' WHERE '.$info['field'].' IN ('.$ids_with_comma.');');
 				foreach($ids as $k => $id){
-					$all_data[$id][$key] = array();
+					$all_data[$id][$key] = [];
 				}
 				while ($row = db()->fetch_assoc($sql_res)) {
 					$complex_key = $row[$info['field']];
@@ -123,16 +123,16 @@ class yf_manage_shop__product_revisions {
 			}
 		}
 		$add_rev_date = time();
-		$insert_array = array();
+		$insert_array = [];
 		foreach ($ids as $id) {
 			if( $action == 'delete' ) {
-				$insert_array[] = array(
+				$insert_array[] = [
 					'user_id'  => intval(main()->ADMIN_ID)?:intval($_GET['admin_id']),
 					'add_date' => $add_rev_date,
 					'action'   => $action,
 					'item_id'  => $id,
 					'data'     => '',
-				);
+				];
 				continue;
 			}
 			if(!isset($all_data[$id])){
@@ -152,13 +152,13 @@ class yf_manage_shop__product_revisions {
 				}
 			}
 
-			$insert_array[] = array(
+			$insert_array[] = [
 				'user_id'  => intval(main()->ADMIN_ID)?:intval($_GET['admin_id']),
 				'add_date' => $add_rev_date,
 				'action'   => $action,
 				'item_id'  => $id,
 				'data'     => $new_revision ? : '',
-			);
+			];
 		}
 		if (!empty($insert_array)) {
 //			$insert_array = array_chunk($insert_array, 100);
@@ -175,19 +175,19 @@ class yf_manage_shop__product_revisions {
 		$object = 'category_editor';
 		$action = 'edit_item';
 		$db_revision = $this->get_revision_db( $type );
-		return table('SELECT * FROM '.$db_revision, array(
+		return table('SELECT * FROM '.$db_revision, [
 				'filter' => $_SESSION[$_GET['object'].'__'.$_GET[ 'action' ]],
-				'filter_params' => array(
-					'action'	=> array('eq','action'),
-					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('dt_between','add_date'),
-					'item_id' 	=> array('eq','item_id'),
-				),
+				'filter_params' => [
+					'action'	=> ['eq','action'],
+					'user_id'	=> ['eq','user_id'],
+					'add_date'	=> ['dt_between','add_date'],
+					'item_id' 	=> ['eq','item_id'],
+				],
 				'hide_empty' => 1,
-			))
-			->date('add_date', array('format' => 'full', 'nowrap' => 1))
-			->link('item_id', array( 'desc' => 'Номер', 'link' => './?object='.$object.'&action='.$action.'&id=%d' ))
-			->admin('user_id', array('desc' => 'admin'))
+			])
+			->date('add_date', ['format' => 'full', 'nowrap' => 1])
+			->link('item_id', [ 'desc' => 'Номер', 'link' => './?object='.$object.'&action='.$action.'&id=%d' ])
+			->admin('user_id', ['desc' => 'admin'])
 			->text('action')
 			->btn_view('', './?object=manage_shop&action='.$type.'_revisions_view&id=%d')
 			;
@@ -199,7 +199,7 @@ class yf_manage_shop__product_revisions {
 		$id = (int)$_GET['id'];
 		$sql = 'SELECT * FROM '.$db_revision.' WHERE id='.$id;
 		$a = db()->get($sql);
-		$info = array();
+		$info = [];
 		$db = $this->get_db( $type );
 		$info = db()->get('SELECT * FROM '.$db.' WHERE id='.$a['item_id']);
 		if( empty( $info ) ) {
@@ -207,15 +207,15 @@ class yf_manage_shop__product_revisions {
 			$info[ 'item_id' ] = $a[ 'item_id' ];
 			$info[ 'name' ] = 'удаленный элемент';
 		}
-		return form($a, array(
+		return form($a, [
 			'dd_mode' => 1,
-		))
-		->link('item_id', './?object=category_editor&action=edit_item&id='.$a['item_id'], array(
+		])
+		->link('item_id', './?object=category_editor&action=edit_item&id='.$a['item_id'], [
 			'desc' => 'Edit',
-			'data' => array($a['item_id'] => $info['name']. ' [id='. $a['item_id'].']'),
-		))
+			'data' => [$a['item_id'] => $info['name']. ' [id='. $a['item_id'].']'],
+		])
 		->admin_info('user_id')
-		->info_date('add_date', array('format' => 'full'))
+		->info_date('add_date', ['format' => 'full'])
 		->info('action')
 		->link('Activate new version', './?object=manage_shop&action='.$type.'_revision_checkout&id='.$a['id'])
 		->tab_start('View_difference')
@@ -277,7 +277,7 @@ class yf_manage_shop__product_revisions {
 		db()->commit();
 
 		common()->message_success("Revision retrieved");
-		common()->admin_wall_add(array('checkout revision '.$type.': '.$id.', item: '.$item_id, $id));
+		common()->admin_wall_add(['checkout revision '.$type.': '.$id.', item: '.$item_id, $id]);
 		return js_redirect( $url );
 	}
 
@@ -285,26 +285,26 @@ class yf_manage_shop__product_revisions {
 	 */
 	function _product_images_add_revision($action, $product_id, $image_id) {
 		$images_ids = db()->get_2d('SELECT id, is_default FROM '.db('shop_product_images').' WHERE product_id = '.$product_id.' AND active=1');
-		db()->insert_safe(db('shop_product_images_revisions'),array(
+		db()->insert_safe(db('shop_product_images_revisions'),[
 			'user_id' => intval(main()->ADMIN_ID),
 			'add_date' => $_SERVER['REQUEST_TIME'],
 			'action'	=> $action,
 			'product_id' => $product_id,
 			'image_id'  => $image_id,
 			'data'		=> $images_ids ? json_encode($images_ids): '[]',
-		));
+		]);
 	}
 
 	/**
 	 */
 	function product_revisions() {
-		$filter_params = array(
-			'name'		=> array('like','p.name'),
-			'action'	=> array('eq','r.action'),
-			'user_id'	=> array('eq','r.user_id'),
-			'add_date'	=> array('dt_between','r.add_date'),
-			'item_id' 	=> array('eq','r.item_id'),
-		);
+		$filter_params = [
+			'name'		=> ['like','p.name'],
+			'action'	=> ['eq','r.action'],
+			'user_id'	=> ['eq','r.user_id'],
+			'add_date'	=> ['dt_between','r.add_date'],
+			'item_id' 	=> ['eq','r.item_id'],
+		];
 		$filter_params['cat_id'] = function($a) {
 			$top_cat_id = (int)$a['value'];
 			if ($top_cat_id) {
@@ -317,16 +317,16 @@ class yf_manage_shop__product_revisions {
 		return table('SELECT r.*, p.name, p.cat_id
 						FROM '.db('shop_product_revisions').' as r
 						INNER JOIN '.db('shop_products').' as p ON p.id=r.item_id',
-			array(
+			[
 				'filter' => $_SESSION[$_GET['object'].'__product_revisions'],
 				'filter_params' => $filter_params,
 				'hide_empty' => 1,
-			))
-			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			])
+			->date('add_date', ['format' => 'full', 'nowrap' => 1])
 			->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
 			->text('name')
 			->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
-			->admin('user_id', array('desc' => 'admin'))
+			->admin('user_id', ['desc' => 'admin'])
 			->text('action')
 			->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d')
 			;
@@ -341,15 +341,15 @@ class yf_manage_shop__product_revisions {
 		if (empty($product_info['id'])) {
 			return _e('Product not found');
 		}
-		return form($a, array(
+		return form($a, [
 			'dd_mode' => 1,
-		))
-		->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id='.$product_info['id'], array(
+		])
+		->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id='.$product_info['id'], [
 			'desc' => 'Product',
-			'data' => array($a['item_id'] => $product_info['name']. ' [id='. $a['item_id'].']'),
-		))
+			'data' => [$a['item_id'] => $product_info['name']. ' [id='. $a['item_id'].']'],
+		])
 		->admin_info('user_id')
-		->info_date('add_date', array('format' => 'full'))
+		->info_date('add_date', ['format' => 'full'])
 		->info('action')
 		->link('Activate new version', './?object=manage_shop&action=checkout_product_revision&id='.$a['id'])
 		->tab_start('View_difference')
@@ -386,27 +386,27 @@ class yf_manage_shop__product_revisions {
 	/**
 	 */
 	function product_images_revisions() {
-		return table('SELECT * FROM '.db('shop_product_images_revisions'), array(
+		return table('SELECT * FROM '.db('shop_product_images_revisions'), [
 				'filter' => $_SESSION[$_GET['object'].'__product_images_revisions'],
-				'filter_params' => array(
-					'action'	=> array('eq','action'),
-					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('dt_between','add_date'),
-					'product_id' 	=> array('eq','product_id'),
-				),
+				'filter_params' => [
+					'action'	=> ['eq','action'],
+					'user_id'	=> ['eq','user_id'],
+					'add_date'	=> ['dt_between','add_date'],
+					'product_id' 	=> ['eq','product_id'],
+				],
 				'hide_empty' => 1,
-			))
-			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			])
+			->date('add_date', ['format' => 'full', 'nowrap' => 1])
 			->link('product_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
-			->admin('user_id', array('desc' => 'admin'))
-			->image('image_id', 'Image', array('width' => '70px', 'img_path_callback' => function($_p1, $_p2, $row) {
+			->admin('user_id', ['desc' => 'admin'])
+			->image('image_id', 'Image', ['width' => '70px', 'img_path_callback' => function($_p1, $_p2, $row) {
 				$dirs = sprintf('%06s', $row['product_id']);
 				$dir2 = substr($dirs, -3, 3);
 				$dir1 = substr($dirs, -6, 3);
 				$m_path = $dir1.'/'.$dir2.'/';
 				$image = SITE_IMAGES_DIR.$m_path.'product_'.$row['product_id'].'_'.$row['image_id'].'.jpg';
 				return $image;
-            }))
+            }])
 			->text('action')
 			->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d')
 			;
@@ -436,15 +436,15 @@ class yf_manage_shop__product_revisions {
 			$changed_image = common()->shop_generate_image_name($a['product_id'], $a['image_id'], true);
 			$changed_image = tpl()->parse($_GET["object"]."/image_revision_item", $changed_image);
 		}
-		return form($a, array(
+		return form($a, [
 			'dd_mode' => 1,
-		))
-		->link('product_id', './?object='.$_GET['object'].'&action=product_edit&id='.$a['product_id'], array(
+		])
+		->link('product_id', './?object='.$_GET['object'].'&action=product_edit&id='.$a['product_id'], [
 			'desc' => t('Product'),
-			'data' => array($a['product_id'] => $a['name'].' [id='. $a['product_id'].']'),
-		))
+			'data' => [$a['product_id'] => $a['name'].' [id='. $a['product_id'].']'],
+		])
 		->admin_info('user_id', "Editor")
-		->info_date('add_date', array('format' => 'full'))
+		->info_date('add_date', ['format' => 'full'])
 		->info('action')
 //		->container($changed_image)
 		->container($images_stamp, 'Product foto')
@@ -466,22 +466,22 @@ class yf_manage_shop__product_revisions {
 		db()->begin();
 		$images = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.$product_id);
 		foreach($images as $id => $data){
-			$reset[] = array(
+			$reset[] = [
 				'id' 		=> $id,
 				'is_default'=> 0,
 				'active' 	=> 0,
-			);
+			];
 		}
 		db()->update_batch('shop_product_images', db()->es($reset));
 		if(empty($data_stamp)){
 			 db()->query('UPDATE '.db('shop_products').' SET image=0 WHERE id='.$product_id);
 		}else{
 			foreach($data_stamp as $id => $default_val){
-				$set[] = array(
+				$set[] = [
 					'id' 		=> $id,
 					'is_default'=> $default_val,
 					'active' 	=> 1,
-				);
+				];
 			}
 			db()->update_batch('shop_product_images', db()->es($set));
 			db()->query('UPDATE '.db('shop_products').' SET image=1 WHERE id='.$product_id);
@@ -490,7 +490,7 @@ class yf_manage_shop__product_revisions {
 		db()->commit();
 		module('manage_shop')->_product_cache_purge($product_id);
 		common()->message_success("Revision retrieved");
-		common()->admin_wall_add(array('shop product_image checkout revision: '.$_GET['id'], $product_id));
+		common()->admin_wall_add(['shop product_image checkout revision: '.$_GET['id'], $product_id]);
 		return js_redirect('./?object=manage_shop&action=product_edit&id='.$product_id);
 	}
 
@@ -523,26 +523,26 @@ class yf_manage_shop__product_revisions {
 
 		module('manage_shop')->_product_cache_purge($product_id);
 		common()->message_success("Revision retrieved");
-		common()->admin_wall_add(array('shop product checkout revision: '.$_GET['id'], $product_id));
+		common()->admin_wall_add(['shop product checkout revision: '.$_GET['id'], $product_id]);
 		return js_redirect('./?object=manage_shop&action=product_edit&id='.$product_id);
 	}
 
 	/**
 	 */
 	function order_revisions() {
-		return table('SELECT * FROM '.db('shop_order_revisions'), array(
+		return table('SELECT * FROM '.db('shop_order_revisions'), [
 				'filter' => $_SESSION[$_GET['object'].'__order_revisions'],
-				'filter_params' => array(
-					'action'	=> array('eq','action'),
-					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('dt_between','add_date'),
-					'item_id' 	=> array('eq','item_id'),
-				),
+				'filter_params' => [
+					'action'	=> ['eq','action'],
+					'user_id'	=> ['eq','user_id'],
+					'add_date'	=> ['dt_between','add_date'],
+					'item_id' 	=> ['eq','item_id'],
+				],
 				'hide_empty' => 1,
-			))
-			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			])
+			->date('add_date', ['format' => 'full', 'nowrap' => 1])
 			->link('item_id', './?object='.$_GET['object'].'&action=view_order&id=%d')
-			->admin('user_id', array('desc' => 'admin'))
+			->admin('user_id', ['desc' => 'admin'])
 			->text('action')
 			->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d')
 			;
@@ -557,15 +557,15 @@ class yf_manage_shop__product_revisions {
 		if (empty($order_info)) {
 			return _e('No such order');
 		}
-		return form($a, array(
+		return form($a, [
 			'dd_mode' => 1,
-		))
-		->link('item_id', './?object='.$_GET['object'].'&action=view_order&id='.$order_info['id'], array(
+		])
+		->link('item_id', './?object='.$_GET['object'].'&action=view_order&id='.$order_info['id'], [
 			'desc' => 'Order',
-			'data' => array($a['item_id'] => $order_info['name']. ' [id='. $a['item_id'].']'),
-		))
+			'data' => [$a['item_id'] => $order_info['name']. ' [id='. $a['item_id'].']'],
+		])
 		->admin_info('user_id')
-		->info_date('add_date', array('format' => 'full'))
+		->info_date('add_date', ['format' => 'full'])
 		->info('action')
 		->link('Activate new version', './?object=manage_shop&action=checkout_order_revision&id='.$a['id'])
 		->tab_start('View_difference')
@@ -614,7 +614,7 @@ class yf_manage_shop__product_revisions {
 		db()->commit();
 
 		common()->message_success("Revision retrieved");
-		common()->admin_wall_add(array('shop order checkout revision: '.$_GET['id'], $order_id));
+		common()->admin_wall_add(['shop order checkout revision: '.$_GET['id'], $order_id]);
 		return js_redirect('./?object=manage_shop&action=view_order&id='.$order_id);
 	}
 
@@ -638,7 +638,7 @@ class yf_manage_shop__product_revisions {
 			$product_id = $data['item_id'];
 			$data_stamp = json_decode($data['data'], true);
 			foreach($data_stamp as $array){
-				db()->update_safe('shop_products', array('name' => $array['name']), 'id='.$array['id']);
+				db()->update_safe('shop_products', ['name' => $array['name']], 'id='.$array['id']);
 			}
 			module('manage_shop')->_product_cache_purge($product_id);
 		}
@@ -648,7 +648,7 @@ class yf_manage_shop__product_revisions {
 		db()->commit();
 
 		common()->message_success("Group revision retrieved");
-		common()->admin_wall_add(array('checkout group revision: '.$_GET['id'], $_GET['id']));
+		common()->admin_wall_add(['checkout group revision: '.$_GET['id'], $_GET['id']]);
 		return js_redirect('./?object=manage_shop&action=clear_patterns');
 	}
 

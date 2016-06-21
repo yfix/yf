@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   686966 => 
-  array (
+  [
     'id' => '686966',
     'country' => 'UA',
     'code' => '27',
@@ -9,9 +9,9 @@ return array (
     'name_eng' => 'Zhytomyrs’ka Oblast’',
     'capital_id' => '686967',
     'active' => '1',
-  ),
+  ],
   687699 => 
-  array (
+  [
     'id' => '687699',
     'country' => 'UA',
     'code' => '26',
@@ -19,9 +19,9 @@ return array (
     'name_eng' => 'Zaporiz’ka Oblast’',
     'capital_id' => '687700',
     'active' => '1',
-  ),
+  ],
   687869 => 
-  array (
+  [
     'id' => '687869',
     'country' => 'UA',
     'code' => '25',
@@ -29,9 +29,9 @@ return array (
     'name_eng' => 'Zakarpattia Oblast',
     'capital_id' => '690548',
     'active' => '1',
-  ),
+  ],
   689064 => 
-  array (
+  [
     'id' => '689064',
     'country' => 'UA',
     'code' => '24',
@@ -39,9 +39,9 @@ return array (
     'name_eng' => 'Volyns’ka Oblast’',
     'capital_id' => '702569',
     'active' => '1',
-  ),
+  ],
   689559 => 
-  array (
+  [
     'id' => '689559',
     'country' => 'UA',
     'code' => '23',
@@ -49,9 +49,9 @@ return array (
     'name_eng' => 'Vinnyts’ka Oblast’',
     'capital_id' => '689558',
     'active' => '1',
-  ),
+  ],
   691649 => 
-  array (
+  [
     'id' => '691649',
     'country' => 'UA',
     'code' => '22',
@@ -59,9 +59,9 @@ return array (
     'name_eng' => 'Ternopil’s’ka Oblast’',
     'capital_id' => '691650',
     'active' => '1',
-  ),
+  ],
   692196 => 
-  array (
+  [
     'id' => '692196',
     'country' => 'UA',
     'code' => '21',
@@ -69,9 +69,9 @@ return array (
     'name_eng' => 'Sums’ka Oblast’',
     'capital_id' => '692194',
     'active' => '1',
-  ),
+  ],
   694422 => 
-  array (
+  [
     'id' => '694422',
     'country' => 'UA',
     'code' => '20',
@@ -79,9 +79,9 @@ return array (
     'name_eng' => 'Misto Sevastopol’',
     'capital_id' => '694423',
     'active' => '1',
-  ),
+  ],
   695592 => 
-  array (
+  [
     'id' => '695592',
     'country' => 'UA',
     'code' => '19',
@@ -89,9 +89,9 @@ return array (
     'name_eng' => 'Rivnens’ka Oblast’',
     'capital_id' => '695594',
     'active' => '1',
-  ),
+  ],
   696634 => 
-  array (
+  [
     'id' => '696634',
     'country' => 'UA',
     'code' => '18',
@@ -99,9 +99,9 @@ return array (
     'name_eng' => 'Poltavs’ka Oblast’',
     'capital_id' => '696643',
     'active' => '1',
-  ),
+  ],
   698738 => 
-  array (
+  [
     'id' => '698738',
     'country' => 'UA',
     'code' => '17',
@@ -109,9 +109,9 @@ return array (
     'name_eng' => 'Odes’ka Oblast’',
     'capital_id' => '698740',
     'active' => '1',
-  ),
+  ],
   700567 => 
-  array (
+  [
     'id' => '700567',
     'country' => 'UA',
     'code' => '16',
@@ -119,9 +119,9 @@ return array (
     'name_eng' => 'Mykolayivs’ka Oblast’',
     'capital_id' => '700569',
     'active' => '1',
-  ),
+  ],
   702549 => 
-  array (
+  [
     'id' => '702549',
     'country' => 'UA',
     'code' => '15',
@@ -129,9 +129,9 @@ return array (
     'name_eng' => 'L’vivs’ka Oblast’',
     'capital_id' => '702550',
     'active' => '1',
-  ),
+  ],
   702657 => 
-  array (
+  [
     'id' => '702657',
     'country' => 'UA',
     'code' => '14',
@@ -139,9 +139,9 @@ return array (
     'name_eng' => 'Luhans’ka Oblast’',
     'capital_id' => '702658',
     'active' => '1',
-  ),
+  ],
   703446 => 
-  array (
+  [
     'id' => '703446',
     'country' => 'UA',
     'code' => '13',
@@ -149,9 +149,9 @@ return array (
     'name_eng' => 'Kyyivs’ka Oblast’',
     'capital_id' => '0',
     'active' => '1',
-  ),
+  ],
   703447 => 
-  array (
+  [
     'id' => '703447',
     'country' => 'UA',
     'code' => '12',
@@ -159,9 +159,9 @@ return array (
     'name_eng' => 'Misto Kyyiv',
     'capital_id' => '0',
     'active' => '1',
-  ),
+  ],
   703883 => 
-  array (
+  [
     'id' => '703883',
     'country' => 'UA',
     'code' => '11',
@@ -169,9 +169,9 @@ return array (
     'name_eng' => 'Avtonomna Respublika Krym',
     'capital_id' => '693805',
     'active' => '1',
-  ),
+  ],
   705811 => 
-  array (
+  [
     'id' => '705811',
     'country' => 'UA',
     'code' => '10',
@@ -179,9 +179,9 @@ return array (
     'name_eng' => 'Kirovohrads’ka Oblast’',
     'capital_id' => '705812',
     'active' => '1',
-  ),
+  ],
   706370 => 
-  array (
+  [
     'id' => '706370',
     'country' => 'UA',
     'code' => '09',
@@ -189,9 +189,9 @@ return array (
     'name_eng' => 'Khmel’nyts’ka Oblast’',
     'capital_id' => '706369',
     'active' => '1',
-  ),
+  ],
   706442 => 
-  array (
+  [
     'id' => '706442',
     'country' => 'UA',
     'code' => '08',
@@ -199,9 +199,9 @@ return array (
     'name_eng' => 'Khersons’ka Oblast’',
     'capital_id' => '706448',
     'active' => '1',
-  ),
+  ],
   706482 => 
-  array (
+  [
     'id' => '706482',
     'country' => 'UA',
     'code' => '07',
@@ -209,9 +209,9 @@ return array (
     'name_eng' => 'Kharkivs’ka Oblast’',
     'capital_id' => '706483',
     'active' => '1',
-  ),
+  ],
   707470 => 
-  array (
+  [
     'id' => '707470',
     'country' => 'UA',
     'code' => '06',
@@ -219,9 +219,9 @@ return array (
     'name_eng' => 'Ivano-Frankivs’ka Oblast’',
     'capital_id' => '707471',
     'active' => '1',
-  ),
+  ],
   709716 => 
-  array (
+  [
     'id' => '709716',
     'country' => 'UA',
     'code' => '05',
@@ -229,9 +229,9 @@ return array (
     'name_eng' => 'Donets’ka Oblast’',
     'capital_id' => '709717',
     'active' => '1',
-  ),
+  ],
   709929 => 
-  array (
+  [
     'id' => '709929',
     'country' => 'UA',
     'code' => '04',
@@ -239,9 +239,9 @@ return array (
     'name_eng' => 'Dnipropetrovska Oblast\'',
     'capital_id' => '709930',
     'active' => '1',
-  ),
+  ],
   710720 => 
-  array (
+  [
     'id' => '710720',
     'country' => 'UA',
     'code' => '03',
@@ -249,9 +249,9 @@ return array (
     'name_eng' => 'Chernivets’ka Oblast’',
     'capital_id' => '710719',
     'active' => '1',
-  ),
+  ],
   710734 => 
-  array (
+  [
     'id' => '710734',
     'country' => 'UA',
     'code' => '02',
@@ -259,9 +259,9 @@ return array (
     'name_eng' => 'Chernihivs’ka Oblast’',
     'capital_id' => '710735',
     'active' => '1',
-  ),
+  ],
   710802 => 
-  array (
+  [
     'id' => '710802',
     'country' => 'UA',
     'code' => '01',
@@ -269,5 +269,5 @@ return array (
     'name_eng' => 'Cherkas’ka Oblast’',
     'capital_id' => '710791',
     'active' => '1',
-  ),
-);
+  ],
+];

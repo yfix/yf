@@ -45,7 +45,7 @@ class yf_logs_user_error {
 		// Do store message into database (also check if that possible)
 		if ($this->LOG_INTO_DB && is_object(db())) {
 			$error_type = 0;
-			db()->insert_safe('log_user_errors', array(
+			db()->insert_safe('log_user_errors', [
 				'error_level'	=> intval($error_type),
 				'error_text'	=> $error_message,
 				'source_file'	=> $cur_trace['file'],
@@ -63,7 +63,7 @@ class yf_logs_user_error {
 				'env_data'		=> $this->DB_LOG_ENV ? $this->_prepare_env() : '',
 				'object'		=> $_GET['object'],
 				'action'		=> $_GET['action'],
-			));
+			]);
 		}
 	}
 
@@ -75,7 +75,7 @@ class yf_logs_user_error {
 	*/
 	function _prepare_env () {
 		$this->ENV_ARRAYS = strtoupper($this->ENV_ARRAYS);
-		$data = array();
+		$data = [];
 		// Include only desired arrays
 		if (false !== strpos($this->ENV_ARRAYS, "G") && !empty($_GET)) {
 			$data["_GET"]		= $_GET;

@@ -4,9 +4,9 @@
 
 class WebMoney {
 
-	protected $_currency_allow = array( 'USD', 'EUR', 'UAH', 'RUB', );
+	protected $_currency_allow = [ 'USD', 'EUR', 'UAH', 'RUB', ];
 
-	protected $_signature_allow = array(
+	protected $_signature_allow = [
 		'LMI_PAYEE_PURSE',    // Кошелек продавца
 		'LMI_PAYMENT_AMOUNT', // Сумма платежа
 		'LMI_PAYMENT_NO',     // Внутренний номер покупки продавца
@@ -17,12 +17,12 @@ class WebMoney {
 		'LMI_SECRET_KEY',     // Secret Key
 		'LMI_PAYER_PURSE',    // Кошелек покупателя
 		'LMI_PAYER_WM',       // WMId покупателя
-	);
+	];
 
-	private $_hash_method_allow = array(
+	private $_hash_method_allow = [
 		// 'md5', // deprecated: not supported by WebMoney
 		'sha256',
-	);
+	];
 
 	private $_key_public       = null;
 	private $_key_private      = null;
@@ -43,7 +43,7 @@ class WebMoney {
 	}
 
 	public function key( $name = 'public', $value = null ) {
-		if( !in_array( $name, array( 'public', 'private' ) ) ) {
+		if( !in_array( $name, [ 'public', 'private' ] ) ) {
 			return( null );
 		}
 		$_name  = '_key_' . $name;

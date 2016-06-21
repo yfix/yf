@@ -21,102 +21,102 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	public $URL_API = 'https://w3s.wmtransfer.com/asp/%method';
 	public $API_REDIRECT_URI = null;
 
-	public $method_allow = array(
-		'order' => array(
-			'payin' => array(
+	public $method_allow = [
+		'order' => [
+			'payin' => [
 				'webmoney',
-			),
-			'payout' => array(
+			],
+			'payout' => [
 				'p2p_wmz',
-			),
-		),
-		'payin' => array(
-			'webmoney' => array(
+			],
+		],
+		'payin' => [
+			'webmoney' => [
 				'title' => 'WebMoney',
 				'icon'  => 'webmoney',
 				// 'fee'         => 2, // 0.1%
-				'currency' => array(
-					'USD' => array(
+				'currency' => [
+					'USD' => [
 						'currency_id' => 'USD',
 						'active'      => true,
-					),
-				),
-			),
-		),
-		'api' => array(
+					],
+				],
+			],
+		],
+		'api' => [
 		// XML intefaces:
 			// X2 - Перевод средств с одного кошелька на другой
-			'p2p' => array(
+			'p2p' => [
 				'is_handler' => 'X2',
-				'uri' => array(
+				'uri' => [
 					'%method' => 'XMLTransCert.asp',
-				),
-			),
+				],
+			],
 			// X9 - Получение информации о балансе на кошельках
-			'balance' => array(
+			'balance' => [
 				'is_handler' => 'X9',
-				'uri' => array(
+				'uri' => [
 					'%method' => 'XMLPursesCert.asp',
-				),
-			),
-		),
-		'payout' => array(
-			'p2p_wmz' => array(
+				],
+			],
+		],
+		'payout' => [
+			'p2p_wmz' => [
 				'title' => 'WebMoney WMZ',
 				'icon'  => 'webmoney',
-				'amount' => array(
+				'amount' => [
 					'min' => 5,
 					'max' => 200,
-				),
+				],
 				// 'is_fee' => true,
-				'fee' => array(
-					'out' => array(
+				'fee' => [
+					'out' => [
 						// 'rt'  => 0.01,
 						// 'fix' => 0.01,
-					),
-				),
+					],
+				],
 				'is_currency' => true,
-				'currency' => array(
-					'USD' => array(
+				'currency' => [
+					'USD' => [
 						'currency_id' => 'USD',
 						'active'      => true,
-					),
-				),
-				'request_field' => array(
+					],
+				],
+				'request_field' => [
 					'tranid',
 					'pursesrc',
 					'pursedest',
 					'amount',
 					'desc',
-				),
-				'field' => array(
+				],
+				'field' => [
 					'purse',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'purse',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'purse' => 'Кошелек',
-				),
-				'option_validation_js' => array(
-					'purse' => array(
+				],
+				'option_validation_js' => [
+					'purse' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 13,
 						'maxlength' => 13,
 						// 'pattern'   => '^\d+$',
 						'pattern'   => '^Z\d{12}$',
-					),
-				),
-				'option_validation' => array(
+					],
+				],
+				'option_validation' => [
 					'purse' => 'required|length[13,13]|regex:~^Z\d{12}$~',
-				),
-				'option_validation_message' => array(
+				],
+				'option_validation_message' => [
 					'purse' => 'обязательное поле Z и 12 цифр',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
 	// WebMoney root ssl certificate
 	public $CA = null;
@@ -124,47 +124,47 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	// WebMoney WebPro client ssl certificate
 	public $SSL = null;
 
-	public $_api_transform = array(
+	public $_api_transform = [
 		'title'           => 'message',
-	);
+	];
 
-	public $_api_transform_reverse = array(
+	public $_api_transform_reverse = [
 		'status'          => 'state',
 		'contract_amount' => 'amount',
 		'payment_id'      => 'external_id',
-	);
+	];
 
-	public $_api_X = array(
+	public $_api_X = [
 		'title'           => 'desc',
-	);
+	];
 
-	public $_api_X_reverse = array(
+	public $_api_X_reverse = [
 		'tranid'          => 'operation_id',
-	);
+	];
 
-	public $_options_transform = array(
+	public $_options_transform = [
 		'amount'       => 'LMI_PAYMENT_AMOUNT',
 		'title'        => 'LMI_PAYMENT_DESC',
 		'operation_id' => 'LMI_PAYMENT_NO',
 		'key_public'   => 'LMI_PAYEE_PURSE', // Z111111111111, E111111111111
-	);
+	];
 
-	public $_options_transform_reverse = array(
+	public $_options_transform_reverse = [
 		'LMI_PAYMENT_AMOUNT' => 'amount',
 		'LMI_PAYMENT_DESC'   => 'title',
 		'LMI_PAYMENT_NO'     => 'operation_id',
 		'LMI_PAYEE_PURSE'    => 'key_public',
 		'LMI_MODE'           => 'test',
 		'LMI_HASH'           => 'signature',
-	);
+	];
 
-	public $_status = array(
+	public $_status = [
 		'success' => 'success',
 		'wait'    => 'in_progress',
 		'fail'    => 'refused',
-	);
+	];
 
-	public $_payout_status = array(
+	public $_payout_status = [
 		'0'    => 'success',
 		// in_progress
 		'unknown' => 'in_progress',
@@ -215,9 +215,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		'74'   => 'in_progress',
 		// refused
 		// error
-	);
+	];
 
-	public $_payout_status_message = array(
+	public $_payout_status_message = [
 		'success' => 'Платеж проведен.',
 		// in_progress
 		'unknown' => 'Отсутствуют статус ответ',
@@ -268,10 +268,10 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		'74'   => 'Обслуживание получателя средств в WME временно приостановлено, ознакомьтесь с требованиями Гаранта по идентификации',
 		// refused
 		// error
-	);
+	];
 
 	public $currency_default = 'USD';
-	public $currency_allow = array(
+	public $currency_allow = [
 		/*
 		'USD' => array(
 			'currency_id' => 'USD',
@@ -290,10 +290,10 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			'active'      => true,
 		),
 		*/
-	);
+	];
 
 	public $purse = null;
-	public $purse_by_currency = array(
+	public $purse_by_currency = [
 		/*
 		'USD' => array(
 			'id'     => 'Zxxxxxxxxxxxx',
@@ -312,20 +312,20 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			'active' => true,
 		),
 		*/
-	);
+	];
 
 	// public $fee = 0.1; // 2%
 
-	public $ip_filter = array(
+	public $ip_filter = [
 		'212.118.48.0/24',
 		'212.158.173.0/24',
 		'91.200.28.0/24',
 		'91.227.52.0/24',
-	);
+	];
 
-	public $service_allow = array(
+	public $service_allow = [
 		'WebMoney',
-	);
+	];
 
 	public $url_result = null;
 	public $url_server = null;
@@ -333,7 +333,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	public function _init() {
 		if( !$this->ENABLE ) { return( null ); }
 		// default
-		$purse = $this->_purse_by_currency(array( 'is_key' => false ));
+		$purse = $this->_purse_by_currency([ 'is_key' => false ]);
 		if( $purse[ 'status' ] === false ) { throw new InvalidArgumentException( $purse[ 'status_message' ] ); }
 		// load api
 		$provider_path = __DIR__ . '/payment_provider/webmoney';
@@ -402,26 +402,26 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// currency
 		$currency_id = @$_currency_id ?: @$_currency ?: @$this->currency_default;
 		if( ! @$currency_id ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неизвестный код валюты',
-			);
+			];
 			return( $result );
 		}
 		// purse
 		$purse = &$this->purse_by_currency;
 		if( ! @$purse[ $currency_id ] ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неизвестная валюта',
-			);
+			];
 			return( $result );
 		}
 		if( ! @$purse[ $currency_id ][ 'active' ] ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Валюта не активна',
-			);
+			];
 			return( $result );
 		}
 		$result = $purse[ $currency_id ];
@@ -525,13 +525,13 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$_ = &$options;
 		// START DUMP
 		$payment_api = $this->payment_api;
-		$payment_api->dump(array( 'name' => 'WebMoney', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ));
+		$payment_api->dump([ 'name' => 'WebMoney', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ]);
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
 		// DUMP
-		$payment_api->dump(array( 'var' => $form_options ));
+		$payment_api->dump([ 'var' => $form_options ]);
 		$url = $this->URL;
-		$result = array();
+		$result = [];
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
@@ -559,9 +559,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$operation_id = (int)$_operation_id;
 		if( empty( $operation_id ) ) { return( null ); }
 		$payment_api = $this->payment_api;
-		$operation = $payment_api->operation( array(
+		$operation = $payment_api->operation( [
 			'operation_id' => $operation_id,
-		));
+		]);
 		if( empty( $operation ) ) { return( null ); }
 		return( $operation );
 	}
@@ -572,44 +572,44 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// check response options
 		$operation = $this->_get_operation( $response );
 		if( !is_array( $operation[ 'options' ][ 'request' ][0][ 'data' ] ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ответ: отсутствуют данные операции',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		$request = @$operation[ 'options' ][ 'request' ][0][ 'data' ];
 		// check operation_id
 		if( @$request[ 'operation_id' ] != @$response[ 'operation_id' ] ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ответ: operation_id',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		// check amount
 		if( @$request[ 'amount' ] != @$response[ 'amount' ] ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ответ: amount',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		// check payee purse
 		$purse = $this->_purse_by_currency( $request );
 		if( @$response[ 'key_public' ] != @$purse[ 'id' ] ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ответ: payee purse',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		return( true );
@@ -624,16 +624,16 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		if( $result !== true ) { return( $result ); }
 		// update operation
 		$sql_datetime = $payment_api->sql_datetime();
-		$operation_options = array(
-			'response' => array( array(
+		$operation_options = [
+			'response' => [ [
 				'data'     => $response,
 				'datetime' => $sql_datetime,
-			)),
-		);
-		$operation_update_data = array(
+			]],
+		];
+		$operation_update_data = [
 			'operation_id'    => $operation_id,
 			'options'         => $operation_options,
-		);
+		];
 		$payment_api->operation_update( $operation_update_data );
 		if( !$result[ 'status' ] ) { return( $result ); }
 		return( true );
@@ -650,41 +650,41 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$signature  = $_response[ 'signature' ];
 		$is_signature = isset( $signature );
 		if( !$is_signature ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		$_signature = $this->signature( $response, $is_request = false );
 		if( $signature != $_signature ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		// save options
 		$sql_datetime = $payment_api->sql_datetime();
-		$operation_options = array(
-			'response' => array( array(
+		$operation_options = [
+			'response' => [ [
 				'data'     => $_response,
 				'datetime' => $sql_datetime,
-			))
-		);
-		$result = $payment_api->operation_update( array(
+			]]
+		];
+		$result = $payment_api->operation_update( [
 			'operation_id' => $operation_id,
 			'options'      => $operation_options,
-		));
+		]);
 		if( !$result[ 'status' ] ) { return( $result ); }
-		$result = array(
+		$result = [
 			'status'         => true,
 			'status_message' => 'Поплнение через сервис: WebMoney',
-		);
+		];
 		return( $result );
 	}
 
@@ -695,24 +695,24 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			|| empty( $response[ 'LMI_SYS_TRANS_NO' ] )
 			|| empty( $response[ 'LMI_SYS_TRANS_DATE' ] )
 		) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ответ: отсутствуют данные транзакции',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		// check response options
 		$_response = $this->_response_parse( $response );
 		$operation = $this->_get_operation( $_response );
 		if( !is_array( $operation[ 'options' ][ 'response' ][0][ 'data' ] ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ответ: отсутствуют данные операции',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		$r = end( $operation[ 'options' ][ 'response' ] );
@@ -724,12 +724,12 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			|| $_data[ 'LMI_SYS_TRANS_DATE' ] != $response[ 'LMI_SYS_TRANS_DATE' ]
 			|| empty( $_data[ 'signature' ] )
 		) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ответ: данные операции не совпадают',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		return( true );
@@ -738,12 +738,12 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	public function __api_response__fail( $response ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
-		$result = array(
+		$result = [
 			'status'         => false,
 			'status_message' => 'Отказано в транзакции',
-		);
+		];
 		// DUMP
-		$payment_api->dump(array( 'var' => $result ));
+		$payment_api->dump([ 'var' => $result ]);
 		return( true );
 	}
 
@@ -755,13 +755,13 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'WebMoney', 'operation_id' => (int)$operation_id ));
+		$payment_api->dump( [ 'name' => 'WebMoney', 'operation_id' => (int)$operation_id ]);
 		// check ip
 		if( $is_server ) {
 			$ip_allow = $this->_check_ip();
 			if( $ip_allow === false ) {
 				// DUMP
-				$payment_api->dump( array( 'var' => 'ip not allow' ));
+				$payment_api->dump( [ 'var' => 'ip not allow' ]);
 				return( null );
 			}
 		}
@@ -770,28 +770,28 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// prerequest is empty
 		if( ! @$response ) {
 			// DUMP
-			$payment_api->dump(array( 'var' => array( 'PREREQUEST' => 'is empty' )));
-			$result = array( 'is_raw' => true, 'OK' );
+			$payment_api->dump([ 'var' => [ 'PREREQUEST' => 'is empty' ]]);
+			$result = [ 'is_raw' => true, 'OK' ];
 			return( $result );
 		}
 		// prerequest
 		if( @$response[ 'LMI_PREREQUEST' ] ) {
 			// DUMP
-			$payment_api->dump(array( 'var' => array( 'PREREQUEST' => 'YES' )));
+			$payment_api->dump([ 'var' => [ 'PREREQUEST' => 'YES' ]]);
 			$result = $this->__api_response__prerequest( $operation_id, $response );
 			$state = ( $result === true ? 'YES' : 'NO' );
-			$result = array( 'is_raw' => true, $state );
+			$result = [ 'is_raw' => true, $state ];
 			return( $result );
 		}
 		$_response = $this->_response_parse( $response );
 		// check operation_id
 		if( $operation_id != (int)$_response[ 'operation_id' ] ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный код операции',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		// check status
@@ -817,12 +817,12 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		}
 		list( $status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
-		$result = $this->_api_deposition( array(
+		$result = $this->_api_deposition( [
 			'provider_name'  => 'webmoney',
 			'response'       => $_response,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
-		));
+		]);
 		return( $result );
 	}
 
@@ -907,18 +907,18 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( ! @$_method ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не задан',
-			);
+			];
 			return( $result );
 		}
 		// data
-		$options[ 'option' ] = array(
-			'getpurses' => array(
+		$options[ 'option' ] = [
+			'getpurses' => [
 				'wmid' => @$_option[ 'wmid' ],
-			),
-		);
+			],
+		];
 		// send
 		$result = $this->api_request_send( $options );
 		return( $result );
@@ -929,28 +929,28 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( ! @$_method ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не задан',
-			);
+			];
 			return( $result );
 		}
 		// data
-		$data = array(
+		$data = [
 			'tranid'    => 0,
 			'period'    => 0,
 			'wminvid'   => 0,
 			'onlyauth'  => 1,
-		);
-		$fields = array(
+		];
+		$fields = [
 			'tranid',
 			'pursesrc',
 			'pursedest',
 			'amount',
 			'desc',
-		);
+		];
 		$this->api_request__X_fields( $data, $fields, @$_option );
-		$options[ 'option' ] = array( 'trans' => $data );
+		$options[ 'option' ] = [ 'trans' => $data ];
 		// send
 		$result = $this->api_request_send( $options );
 		return( $result );
@@ -963,17 +963,17 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// method
 		if( !@$_method ) {
-			$_method = $this->api_method( array(
+			$_method = $this->api_method( [
 				'type'      => 'api',
 				'method_id' => @$_method_id,
-			));
+			]);
 		}
 		$method = $_method;
 		if( !@$method ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не найден',
-			);
+			];
 			return( $result );
 		}
 		$options[ 'method' ] = $method;
@@ -981,10 +981,10 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		if( @$method[ 'is_handler' ] ) {
 			$handler = 'api_request__'. $method[ 'is_handler' ];
 			if( !method_exists( $this, $handler ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Опработчик метода запроса не найден',
-				);
+				];
 				return( $result );
 			}
 			$result = $this->{ $handler }( $options );
@@ -999,14 +999,14 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( ! @$_method ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не задан',
-			);
+			];
 			return( $result );
 		}
 		// request
-		$request = array();
+		$request = [];
 		if( is_string( @$_option ) ) {
 			$request = $_option;
 		} elseif( is_array( @$_option ) ) {
@@ -1017,7 +1017,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		if( isset( $object[ 'status' ] ) && $object[ 'status' ] === false ) { return( $object ); }
 		$url = $object;
 		// request options
-		$request_option = array();
+		$request_option = [];
 		@$_is_debug && $request_option[ 'is_debug' ] = true;
 		// CA
 		$request_option[ 'CA' ] = $this->CA;
@@ -1050,15 +1050,15 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// method
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'payout',
 			'method_id' => @$_method_id,
-		));
+		]);
 		if( empty( $method ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не найден',
-			);
+			];
 			return( $result );
 		}
 		$payment_api = &$this->payment_api;
@@ -1066,38 +1066,38 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$_operation_id = (int)$_operation_id;
 		$operation_id = $_operation_id;
 		if( empty( $_operation_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
-			);
+			];
 			return( $result );
 		}
 		// currency_id
 		$currency_id = $this->get_currency_payout( $options );
 		if( empty( $currency_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неизвестная валюта',
-			);
+			];
 			return( $result );
 		}
 		// purse
-		$object = $this->_purse_by_currency(array( 'currency_id' => $currency_id ));
+		$object = $this->_purse_by_currency([ 'currency_id' => $currency_id ]);
 		if( $object[ 'status' ] === false ) { return( $object ); }
 		$purse = $object;
 		// amount min/max
-		$result = $this->amount_limit( array(
+		$result = $this->amount_limit( [
 			'amount'      => $_amount,
 			'currency_id' => $currency_id,
 			'method'      => $method,
-		));
+		]);
 		if( ! @$result[ 'status' ] ) { return( $result ); }
 		// amount currency conversion
-		$result = $this->currency_conversion_payout( array(
+		$result = $this->currency_conversion_payout( [
 			'options' => $options,
 			'method'  => $method,
 			'amount'  => $_amount,
-		));
+		]);
 		if( empty( $result[ 'status' ] ) ) { return( $result ); }
 		$amount_currency       = $result[ 'amount_currency' ];
 		$amount_currency_total = $result[ 'amount_currency_total' ];
@@ -1106,7 +1106,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$amount = @$method[ 'is_fee' ] ? $amount_currency_total : $amount_currency;
 		$amount = $payment_api->_number_api( $amount, 2 );
 		// request
-		$request = array();
+		$request = [];
 		@$method[ 'request_option' ] && $request = $method[ 'request_option' ];
 		// add common fields
 		$request[ 'tranid'         ] = $this->api_request__X_tranid( $operation_id );
@@ -1121,18 +1121,18 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		@$_title           && $request[ 'title' ] = $_title;
 		@$_operation_title && $request[ 'title' ] = $_operation_title;
 		// transform
-		$this->option_transform( array(
+		$this->option_transform( [
 			'option'    => &$request,
 			'transform' => $this->_api_X,
-		));
+		]);
 		// add fields
 		foreach( $method[ 'request_field' ] as $key ) {
 			$value = &$request[ $key ];
 			if( !isset( $value ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Отсутствуют данные запроса: '. $key,
-				);
+				];
 				return( $result );
 			}
 		}
@@ -1140,28 +1140,28 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 // var_dump( $options, $request );
 // exit;
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'WebMoney', 'operation_id' => $operation_id,
-			'var' => array( 'request' => $request )
-		));
+		$payment_api->dump( [ 'name' => 'WebMoney', 'operation_id' => $operation_id,
+			'var' => [ 'request' => $request ]
+		]);
 		// update processing
 		$sql_datetime = $payment_api->sql_datetime();
-		$operation_options = array(
-			'processing' => array( array(
+		$operation_options = [
+			'processing' => [ [
 				'provider_name' => 'webmoney',
 				'datetime'      => $sql_datetime,
-			)),
-		);
-		$operation_update_data = array(
+			]],
+		];
+		$operation_update_data = [
 			'operation_id'    => $operation_id,
 			'datetime_update' => $sql_datetime,
 			'options'         => $operation_options,
-		);
+		];
 		$payment_api->operation_update( $operation_update_data );
 		// request options
-		$request_option = array(
+		$request_option = [
 			'method_id' => 'p2p',
 			'option'    => $request,
-		);
+		];
 		@$_is_debug && $request_option[ 'is_debug' ] = true;
 // DEBUG
 // var_dump( $request_option );
@@ -1170,21 +1170,21 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 // var_dump( $request, $result );
 // exit;
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'response' => $result )));
+		$payment_api->dump( [ 'var' => [ 'response' => $result ]]);
 		if( isset( $result[ 'status' ] ) && $result[ 'status' ] == false ) { return( $result ); }
 		if( ! @$result ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно отправить запрос',
-			);
+			];
 			return( $result );
 		}
 		@list( $status, $response ) = $result;
 		if( !@$response || !( @$response instanceof SimpleXMLElement ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно декодировать ответ: '. var_export( $response, true ),
-			);
+			];
 			return( $result );
 		}
 // DEBUG
@@ -1211,7 +1211,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// exit;
 		// update account, operation data
 		$payment_type = 'payment';
-		$operation_data = array(
+		$operation_data = [
 			'operation_id'   => $operation_id,
 			'provider_force' => @$_provider_force,
 			'provider_name'  => 'webmoney',
@@ -1220,14 +1220,14 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			'status_message' => $status_message,
 			'payment_type'   => $payment_type,
 			'response'       => $response,
-		);
+		];
 // DEBUG
 // var_dump( $operation_data ); exit;
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data )));
+		$payment_api->dump( [ 'var' => [ 'payment_type' => $payment_type, 'update operation' => $operation_data ]]);
 		$result = $this->{ '_api_' . $payment_type }( $operation_data );
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'update result' => $result )));
+		$payment_api->dump( [ 'var' => [ 'update result' => $result ]]);
 		return( $result );
 	}
 
@@ -1236,10 +1236,10 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$request_status = false;
 		$status_name    = false;
 		$status_message = null;
-		$result = array(
+		$result = [
 			'status'         => &$status_name,
 			'status_message' => &$status_message,
-		);
+		];
 		$state = null;
 		$error = null;
 		if( property_exists( $xml, 'retval' ) ) {
@@ -1278,7 +1278,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// result
 		$state = $status_name ?: $status;
 		$status_message = @$status_message ?: $state;
-		return( array( $request_status, $state, $result ) );
+		return( [ $request_status, $state, $result ] );
 	}
 
 }

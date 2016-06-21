@@ -8,10 +8,10 @@ class yf_manage_geo_countries {
 
 	/**
 	*/
-	private $params = array(
+	private $params = [
 		'table' => 'geo_countries',
 		'id'	=> 'code',
-	);
+	];
 
 	/**
 	*/
@@ -19,9 +19,9 @@ class yf_manage_geo_countries {
 		return table(from(self::table), [
 				'id' => 'code',
 				'filter' => true,
-				'filter_params' => array(
+				'filter_params' => [
 					'__default_order' => 'active DESC, name ASC',
-				),
+				],
 				'pager_records_on_page' => 300,
 			])
 			->text('code')
@@ -52,22 +52,22 @@ class yf_manage_geo_countries {
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
+		if (!in_array($_GET['action'], ['show'])) {
 			return false;
 		}
-		$order_fields = array(
+		$order_fields = [
 			'code' => 'code',
 			'name' => 'name',
 			'active' => 'active',
-		);
-		$per_page = array('' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500);
-		return form($r, array(
+		];
+		$per_page = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500];
+		return form($r, [
 				'filter' => true,
-			))
+			])
 			->text('name')
-			->select_box('per_page', $per_page, array('class' => 'input-small'))
-			->select_box('order_by', $order_fields, array('show_text' => 1, 'class' => 'input-medium'))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->select_box('per_page', $per_page, ['class' => 'input-small'])
+			->select_box('order_by', $order_fields, ['show_text' => 1, 'class' => 'input-medium'])
+			->radio_box('order_direction', ['asc'=>'Ascending','desc'=>'Descending'], ['horizontal' => 1, 'translate' => 1])
 			->save_and_clear();
 		;
 	}

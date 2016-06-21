@@ -6,18 +6,18 @@ class yf_manage_shop_product_sets {
 
 	function _init() {
 		// Params for the 'admin_methods'
-		$this->_table = array(
+		$this->_table = [
 			'table' => 'shop_product_sets',
-			'fields' => array(
+			'fields' => [
 				'active',
 				'cat_id',
 				'price',
 				'old_price',
 				'name',
 				'description',
-			),
+			],
 			'back_link' => './?object='.main()->_get('object').'&action=product_sets',
-		);
+		];
 
 		$this->_sql_sets_prices_total =
 			'SELECT product_set_id, SUM(qprice) AS total
@@ -36,21 +36,21 @@ class yf_manage_shop_product_sets {
 	}
 
 	function product_sets () {
-		return table('SELECT * FROM '.db('shop_product_sets'), array(
+		return table('SELECT * FROM '.db('shop_product_sets'), [
 				'filter' => $_SESSION[$_GET['object'].'__product_sets'],
-				'custom_fields' => array(
+				'custom_fields' => [
 					'products_items' => 'SELECT product_set_id, COUNT(*) AS num FROM '.db('shop_product_sets_items').' GROUP BY product_set_id',
 					'products_price' => $this->_sql_sets_prices_total,
-				),
-			))
-			->image('id', 'uploads/shop/product_sets/%d_thumb.jpg', array('width' => '50px'))
+				],
+			])
+			->image('id', 'uploads/shop/product_sets/%d_thumb.jpg', ['width' => '50px'])
 			->text('name')
 			->text('price')
 			->text('products_price')
 			->text('products_items')
 			->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
 			->btn_active('', './?object='.main()->_get('object').'&action=product_set_active&id=%d')
-			->btn_edit( '','./?object='.main()->_get('object').'&action=product_set_edit&id=%d', array( 'no_ajax' => true ) )
+			->btn_edit( '','./?object='.main()->_get('object').'&action=product_set_edit&id=%d', [ 'no_ajax' => true ] )
 			->btn_delete('','./?object='.main()->_get('object').'&action=product_set_delete&id=%d')
 			->footer_add('','./?object='.main()->_get('object').'&action=product_set_add')
 		;
@@ -88,44 +88,44 @@ class yf_manage_shop_product_sets {
 					// processing upload
 					$upload_handler = _class( 'upload_handler' );
 					$upload_handler->options( 'param_name', 'image' );
-					$result = $upload_handler->post_handler( array(
-						'image_versions' => array(
-							'image' => array(
-								'original' => array(
+					$result = $upload_handler->post_handler( [
+						'image_versions' => [
+							'image' => [
+								'original' => [
 									'file'       => $file_original
-								),
-								'big' => array(
+								],
+								'big' => [
 									'max_width'  => $max_width,
 									'max_height' => $max_height,
 									'file'       => $file_big,
 									'watermark'  => $file_watermark,
-								),
-								'thumbnail' => array(
+								],
+								'thumbnail' => [
 									'max_width'  => 324,
 									'max_height' => 216,
 									'file'       => $file_thumb,
-								),
-							)
-						),
+								],
+							]
+						],
 						// 'upload_remove' => false,
-					));
+					]);
 					if( empty( $result[ 'versions' ] ) ) {
 						$status    = false;
 						$url_thumb = false;
 					} else {
 						$status = true;
 					}
-					echo json_encode( array(
+					echo json_encode( [
 						'status' => $status,
 						'image'  => $url_thumb,
-					));
+					]);
 					exit;
 				}
 			}
-			$up = array();
+			$up = [];
 			// Add products to current set
 			if ($_POST['products_ids']) {
-				$ids = array();
+				$ids = [];
 				foreach(explode(',', $_POST['products_ids']) as $id) {
 					$id = intval($id);
 					$id && $ids[$id] = $id;
@@ -134,7 +134,7 @@ class yf_manage_shop_product_sets {
 					$ids = db()->select('id')->from('shop_products')->whereid($ids)->get_2d();
 					$ids && $ids = array_combine($ids, $ids);
 				}
-				$insert_items = array();
+				$insert_items = [];
 				if ($ids) {
 					$current_ids = array_keys( (array)db()->get_all(str_replace('%sid', $product_set_id, $this->_sql_set_list_products)) );
 					$current_ids && $current_ids = array_combine($current_ids, $current_ids);
@@ -142,11 +142,11 @@ class yf_manage_shop_product_sets {
 						if (isset($current_ids[$id])) {
 							continue;
 						}
-						$insert_items[$id] = array(
+						$insert_items[$id] = [
 							'product_set_id' => $product_set_id,
 							'product_id'     => $id,
 							'quantity'       => 1,
-						);
+						];
 					}
 				}
 				if ($insert_items) {
@@ -166,10 +166,10 @@ class yf_manage_shop_product_sets {
 					if ($item['quantity'] == $quantity) {
 						continue;
 					}
-					$qup = array(
+					$qup = [
 						'product_id'=> (int)$id,
 						'quantity'	=> (int)$quantity,
-					);
+					];
 					db()->update_safe('shop_product_sets_items', $qup, 'product_id='.(int)$id.' AND product_set_id='.(int)$product_set_id);
 				}
 			}
@@ -201,24 +201,24 @@ class yf_manage_shop_product_sets {
 		$a['products_price'] = $product_prices[$product_set_id];
 		$image = _class( '_shop_products', 'modules/shop/' )->_product_set_image( $product_set_id, $a[ 'cat_id' ], 'thumb' );
 		return form($a)
-			->upload( 'image', 'Изображение', array( 'preview' => $image ) )
+			->upload( 'image', 'Изображение', [ 'preview' => $image ] )
 		. form($a)
 			->text('name')
 			->textarea('description')
-			->text('price', array('class' => 'input-mini')) // TODO: float() input type
+			->text('price', ['class' => 'input-mini']) // TODO: float() input type
 			->info('products_price')
 			->container(
-				table(str_replace('%sid', $product_set_id, $this->_sql_set_list_products), array('pager_records_on_page' => 1000))
-				->image('id', array('width' => '50px', 'no_link' => 1, 'img_path_callback' => function($_p1, $_p2, $row) {
+				table(str_replace('%sid', $product_set_id, $this->_sql_set_list_products), ['pager_records_on_page' => 1000])
+				->image('id', ['width' => '50px', 'no_link' => 1, 'img_path_callback' => function($_p1, $_p2, $row) {
 					$image = common()->shop_get_images($row['id']);
 					return $image[0]['thumb'];
-    	        }))
-				->text('product_id', array('link' => './?object=manage_shop&action=product_edit&id=%d'))
+    	        }])
+				->text('product_id', ['link' => './?object=manage_shop&action=product_edit&id=%d'])
 				->text('name')
 				->text('price')
-				->input('quantity', array('class' => 'input-mini', 'type' => 'number'))
+				->input('quantity', ['class' => 'input-mini', 'type' => 'number'])
 				->btn_delete('', './?object='.main()->_get('object').'&action=product_set_delete&product_id=%d&id='. $product_set_id)
-				->btn_active('active', array(), array('disabled' => 1))
+				->btn_active('active', [], ['disabled' => 1])
 #				, array('wide' => 1)
 			)
 			->container(

@@ -53,7 +53,7 @@ class yf_shop_products_show{
 		if (!empty($product_info)) {
 			$group_prices = module("shop")->_get_group_prices(array_keys($product_info));
 		}
-		$items = array();
+		$items = [];
 		$counter = 1;
 		foreach ((array)$product_info as $v) {
 			$dirs = sprintf("%06s",$v["id"]);
@@ -64,7 +64,7 @@ class yf_shop_products_show{
 			$img_path = $v["url"]."_".$v["id"]."_1".module("shop")->FULL_IMG_SUFFIX.".jpg";
 			$v["_group_price"] = $group_prices[$v["id"]][module("shop")->USER_GROUP];
 			$URL_PRODUCT_ID = module("shop")->_product_id_url($v);
-			$items[$v["id"]] = array(
+			$items[$v["id"]] = [
 				"name"				=> _prepare_html($v["name"]),
 				"desc"				=> _prepare_html($v["description"]),
 				"date"				=> _format_date($v["add_date"], "long"),
@@ -76,7 +76,7 @@ class yf_shop_products_show{
 				"external_url"		=> intval((bool)$v["external_url"]),
 				"details_url"		=> ($v["external_url"]) ? $v["external_url"] : process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"counter"			=> $counter,
-			);
+			];
 			if ($counter == 4) {
 				$counter = 1;
 			} else {
@@ -86,7 +86,7 @@ class yf_shop_products_show{
 		if (empty($items)) {
 			$items = "";
 		}
-		$replace = array(
+		$replace = [
 			"search_string"	=> $str_search,
 			"items"			=> $items,
 			"pages"			=> $pages,
@@ -96,7 +96,7 @@ class yf_shop_products_show{
 			"cur_cat_id"	=> intval($_GET["id"]),
 			"cur_cat_name"	=> _prepare_html($cat_name),
 			"cats_block"	=> module("shop")->_categories_show(),
-		);
+		];
 		return tpl()->parse("shop/main", $replace);
 	}
 	

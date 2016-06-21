@@ -6,7 +6,7 @@ class yf_logs_redirect {
 
 	/**
 	*/
-	function _save_log ($params = array()) {
+	function _save_log ($params = []) {
 #		if (!$this->LOG_REDIRECTS) {
 #			return false;
 #		}
@@ -15,7 +15,7 @@ class yf_logs_redirect {
 
 		$is_https = ($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL']);
 
-		return db()->insert_safe('log_redirects', array(
+		return db()->insert_safe('log_redirects', [
 			'url_from'		=> ($is_https ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
 			'url_to'		=> $params['url_to'],
 			'reason'		=> $params['reason'],
@@ -38,6 +38,6 @@ class yf_logs_redirect {
 			'debug_mode'	=> DEBUG_MODE ? 1 : 0,
 			'exec_time'		=> str_replace(',', '.', round(microtime(true) - main()->_time_start, 4)),
 			'trace'			=> $trace,
-		));
+		]);
 	}
 }

@@ -28,33 +28,33 @@ class yf_manage_shop {
 	/** @var string Default currency */
 	public $CURRENCY		= 'грн';
 	/** @var Shipping types */
-	public $_ship_types = array(
+	public $_ship_types = [
 		1	=> 'Free',
 		2	=> 'Courier',
 		3	=> 'FedEX',
-	);
+	];
 	/** @var Payment types */
-	public $_pay_types = array(
+	public $_pay_types = [
 		1	=> 'Courier',
 		2	=> 'Authorize.Net',
-	);
+	];
 	/** @var @conf_skip */
-	public $_statuses = array();
-	public $_products_statuses = array(
+	public $_statuses = [];
+	public $_products_statuses = [
 		0	=> 'standard',
 		1	=> 'imported',
-	);
+	];
 	/** @var Company info */
-	public $COMPANY_INFO = array(
+	public $COMPANY_INFO = [
 		'company_name'		=> 'Company Name',
 		'company_address'	=> 'Company Address 1',
 		'company_address2'	=> 'Company Address 2',
 		'company_phone'		=> 'Company Phone',
 		'company_website'	=> 'Company Website',
 		'company_email'		=> 'Company Email',
-	);
+	];
 	/** @var */
-	public $ATTRIBUTES = array();
+	public $ATTRIBUTES = [];
 	/** @var @conf_skip */
 	public $ATTRIBUTES_CAT_ID = 1;
 
@@ -85,7 +85,7 @@ class yf_manage_shop {
 		}
 
 		$this->_suppliers = db()->query_fetch_all('SELECT * FROM '.db('shop_suppliers').' ORDER BY name ASC');
-		$this->_suppliers_for_select = array();
+		$this->_suppliers_for_select = [];
 		if (!$this->SUPPLIER_ID) {
 			$this->_suppliers_for_select[''] = '--NONE--';
 			foreach ((array)$this->_suppliers as $k => $v) {
@@ -99,21 +99,21 @@ class yf_manage_shop {
 		if (!file_exists($this->products_img_dir)) {
 			mkdir($this->products_img_dir, 0755, true);
 		}
-		$this->_boxes = array(
+		$this->_boxes = [
 			'status'		=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
 			'featured'		=> 'radio_box("featured",		module("manage_shop")->_featured,	$selected, false, 2, "", false)',
 			'status_prod'	=> 'select_box("status_prod",	module("manage_shop")->_status_prod,$selected, 0, 2, "", false)',
 			'status_item'	=> 'select_box("status_item",	module("manage_shop")->_order_items_status,	$selected, false, 2, "", false)',
-		);
-		$this->_featured = array(
+		];
+		$this->_featured = [
 			'0' => '<span class="negative">NO</span>',
 			'1' => '<span class="positive">YES</span>',
-		);
-		$this->_status_prod = array(
+		];
+		$this->_status_prod = [
 			''		=> '',
 			'1'	=> 'Active',
 			'0'	=> 'Inacive',
-		);
+		];
 		// Sync company info with user section
 #		$this->COMPANY_INFO = _class('shop', 'modules/')->COMPANY_INFO;
 
@@ -437,7 +437,7 @@ class yf_manage_shop {
 		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}($category_id);
 	}
 
-	function _get_products_attributes($products_ids = array()) {
+	function _get_products_attributes($products_ids = []) {
 		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}($products_ids);
 	}
 
@@ -477,39 +477,39 @@ class yf_manage_shop {
 		return js_redirect('./?object=manage_conf&category=shop');
 	}
 
-	function _show_filter($params = array()) {
+	function _show_filter($params = []) {
 		return _class('manage_shop_filter', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function filter_save($params = array()) {
+	function filter_save($params = []) {
 		return _class('manage_shop_filter', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function _hook_widget__new_products ($params = array()) {
+	function _hook_widget__new_products ($params = []) {
 		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function _hook_widget__latest_sold_products ($params = array()) {
+	function _hook_widget__latest_sold_products ($params = []) {
 		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function _hook_widget__top_sold_products ($params = array()) {
+	function _hook_widget__top_sold_products ($params = []) {
 		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function _hook_widget__latest_orders ($params = array()) {
+	function _hook_widget__latest_orders ($params = []) {
 		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function _hook_widget__top_customers ($params = array()) {
+	function _hook_widget__top_customers ($params = []) {
 		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function _hook_widget__latest_customers ($params = array()) {
+	function _hook_widget__latest_customers ($params = []) {
 		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function _hook_widget__stats ($params = array()) {
+	function _hook_widget__stats ($params = []) {
 		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
@@ -541,7 +541,7 @@ class yf_manage_shop {
 		return _class('manage_shop_invoice', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function express_pdf($params = array()) {
+	function express_pdf($params = []) {
 		return _class('manage_shop_express', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
@@ -569,19 +569,19 @@ class yf_manage_shop {
 		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}($action, $item_id);
 	}
 
-	function import2( $options = array() ) {
+	function import2( $options = [] ) {
 		return _class( 'manage_shop_import_products2', 'admin_modules/manage_shop/', 'plugins' )->{__FUNCTION__}( $options );
 	}
 
-	function import_xls($params = array()) {
+	function import_xls($params = []) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function import_xls2($params = array()) {
+	function import_xls2($params = []) {
 		return _class('manage_shop_import2', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function export_zakaz_start($params = array()) {
+	function export_zakaz_start($params = []) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
@@ -605,7 +605,7 @@ class yf_manage_shop {
 		return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->_productparams_container($params,'productparams_container_ajax');
 	}
 
-	function pics_browser($params = array()) {
+	function pics_browser($params = []) {
 		return _class('manage_shop_pics_browser', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
@@ -613,19 +613,19 @@ class yf_manage_shop {
 		return _class('manage_shop_send_sms', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function category_mapping($params = array()) {
+	function category_mapping($params = []) {
 		return _class('manage_shop_categories', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function category_mapping_add($params = array()) {
+	function category_mapping_add($params = []) {
 		return _class('manage_shop_categories', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function category_mapping_edit($params = array()) {
+	function category_mapping_edit($params = []) {
 		return _class('manage_shop_categories', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
-	function category_mapping_delete($params = array()) {
+	function category_mapping_delete($params = []) {
 		return _class('manage_shop_categories', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 

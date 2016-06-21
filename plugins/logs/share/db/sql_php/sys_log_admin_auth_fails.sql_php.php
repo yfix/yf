@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'time' => array(
+return [
+	'fields' => [
+		'time' => [
 			'name' => 'time',
 			'type' => 'decimal',
 			'length' => 13,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ip' => array(
+		],
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'varchar',
 			'length' => 16,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'login' => array(
+		],
+		'login' => [
 			'name' => 'login',
 			'type' => 'varchar',
 			'length' => 64,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'pswd' => array(
+		],
+		'pswd' => [
 			'name' => 'pswd',
 			'type' => 'varchar',
 			'length' => 64,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'reason' => array(
+		],
+		'reason' => [
 			'name' => 'reason',
 			'type' => 'char',
 			'length' => 1,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'site_id' => array(
+		],
+		'site_id' => [
 			'name' => 'site_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'server_id' => array(
+		],
+		'server_id' => [
 			'name' => 'server_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -105,19 +105,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'time' => 'time',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

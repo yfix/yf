@@ -59,11 +59,11 @@ class yf_geo_ip {
 		}
 		// Do update user's info
 		if (!empty($lon) && !empty($lat)) {
-			db()->UPDATE("user", array(
+			db()->UPDATE("user", [
 				"lon"		=> floatval($lon),
 				"lat"		=> floatval($lat),
 				"zip_code"	=> _es(empty($user_info["zip_code"]) ? $zip_code : ""),
-			), "id=".intval($user_id));
+			], "id=".intval($user_id));
 		}
 		// Sync ads lon,lat with users
 		db()->query(

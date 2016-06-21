@@ -43,7 +43,7 @@ class yf_docs {
 
 	/***/
 	public function show() {
-		$methods = array();
+		$methods = [];
 		foreach (get_class_methods($this) as $m) {
 			if ($m[0] === '_' || $m === __FUNCTION__) {
 				continue;
@@ -55,7 +55,7 @@ class yf_docs {
 			$func = in_array($id, $methods) ? $id : 'misc';
 			return $this->$func();
 		}
-		$a = array();
+		$a = [];
 		foreach ($methods as $m) {
 			$a[$m] = '<h4><a href="'.url('/@object/'.$m).'">'. ucfirst($m). '</a>'. (in_array($m, $this->whats_new) ? ' <sup class="text-success"><small>NEW</small></sup>' : ''). '</h4>';
 		}
@@ -70,7 +70,7 @@ class yf_docs {
 		if (preg_match('~^[a-z0-9_]+$~ims', $id)) {
 			$only_method = strtolower($id);
 		}
-		$methods = array();
+		$methods = [];
 		foreach(get_class_methods($obj) as $name) {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
@@ -267,18 +267,18 @@ class yf_docs {
 			}
 		}
 		$url = url('/@object');
-		$names = array();
+		$names = [];
 
 		$ext = '.class.php';
 		$ext_len = strlen($ext);
-		$globs = array(
+		$globs = [
 			'yf_dev_classes'	=> YF_PATH.'.dev/samples/classes/*'.$ext,
 			'yf_dev_form2'		=> YF_PATH.'.dev/samples/form2/*'.$ext,
 			'yf_dev_table2'		=> YF_PATH.'.dev/samples/table2/*'.$ext,
 #			'app'		=> APP_PATH.'modules/*'.$ext,
 #			'project'	=> PROJECT_PATH.'modules/*'.$ext,
-		);
-		$names = array();
+		];
+		$names = [];
 		foreach ($globs as $glob) {
 			foreach (glob($glob) as $cls) {
 				$cls = basename($cls);
@@ -289,7 +289,7 @@ class yf_docs {
 				$names[$name] = $name;
 			}
 		}
-		$links = array();
+		$links = [];
 		foreach ($names as $name) {
 			if (substr($name, 0, strlen('sample_')) === 'sample_') {
 				$name = substr($name, strlen('sample_'));

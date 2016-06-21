@@ -24,13 +24,13 @@ class yf_locale_editor_import {
 			}
 			if (!common()->_error_exists() && !isset($this->_cur_langs[$cur_locale])) {
 				if (!common()->_error_exists()) {
-					db()->INSERT('locale_langs', array(
+					db()->INSERT('locale_langs', [
 						'locale'		=> _es($cur_locale),
 						'name'			=> _es($raw_langs[$cur_locale][0]),
 						'charset'		=> _es('utf-8'),
 						'active'		=> 1,
 						'is_default'	=> 0,
-					));
+					]);
 					$this->_create_empty_vars_for_locale($cur_locale);
 					cache_del('locale_langs');
 				}
@@ -89,14 +89,14 @@ class yf_locale_editor_import {
 						}
 					}
 					if (empty($var_id)) {
-						db()->INSERT('locale_vars', array('value'	=> _es($source)));
+						db()->INSERT('locale_vars', ['value'	=> _es($source)]);
 						$var_id = db()->INSERT_ID();
 					}
-					$sql_array = array(
+					$sql_array = [
 						'var_id'	=> intval($var_id),
 						'locale'	=> _es($cur_locale),
 						'value'		=> _es($translation),
-					);
+					];
 					if (isset($cur_tr_vars[$var_id])) {
 						if ($IMPORT_MODE == 2 || $translation == $cur_tr_vars[$var_id]) continue;
 						db()->UPDATE('locale_translate', $sql_array, 'var_id='.intval($var_id).' AND locale="'._es($cur_locale).'"');
@@ -110,14 +110,14 @@ class yf_locale_editor_import {
 			}
 		}
 		if (!$_POST || common()->_error_exists()) {
-			$replace = array(
+			$replace = [
 				'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
 				'back_link'			=> './?object='.$_GET['object'],
 				'error_message'		=> _e(),
 				'langs_box'			=> $this->_box('lang_code',		-1),
 				'file_formats_box'	=> $this->_box('file_format',	'csv'),
 				'modes_box'			=> $this->_box('mode',			1),
-			);
+			];
 			return tpl()->parse($_GET['object'].'/import_vars', $replace);
 		}
 	}

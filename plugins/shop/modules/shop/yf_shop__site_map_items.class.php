@@ -17,15 +17,15 @@ class yf_shop__site_map_items{
 				unset($shop_cats[$cid]);
 				continue;
 			}
-			$sm_obj->_store_item(array(
+			$sm_obj->_store_item([
 				'url' => url('/shop/products/'.$cid),
-			));
+			]);
 		}
 		$q = db()->query('SELECT id FROM '.db('shop_products').' WHERE active="1" AND image="1"');
 		while ($a = db()->fetch_assoc($q)) {
-			$sm_obj->_store_item(array(
+			$sm_obj->_store_item([
 				'url' => url('/shop/product/'.$a['id']),
-			));
+			]);
 		}
 		return true;
 	}

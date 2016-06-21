@@ -10,16 +10,16 @@ class yf_dashboards2 {
 	 */
 
 	// not using now	
-	private $_col_classes = array(
+	private $_col_classes = [
 		1 => 'span12 col-md-12 column',
 		2 => 'span6 col-md-6 column',
 		3 => 'span4 col-md-4 column',
 		4 => 'span3 col-md-3 column',
 		6 => 'span2 col-md-2 column',
 		12 => 'span1 col-md-1 column',
-	);
+	];
 
-	private $_debug_info = array();
+	private $_debug_info = [];
 	private $_time_start;
 	// TODO: add options for items:
 	// min_height=0|(int)
@@ -36,14 +36,14 @@ class yf_dashboards2 {
 	/**
 	 * Designed to be used by other modules to show configured dashboard
 	 */
-	function display($params = array()) {
+	function display($params = []) {
 
 		$this->_time_start = microtime(true);
 		if (is_string($params)) {
 			$name = $params;
 		}
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		if (!$params['name'] && $name) {
 			$params['name'] = $name;
@@ -63,9 +63,9 @@ class yf_dashboards2 {
 	/**
 	 * Similar to 'display', but for usage inside this module (action links and more)
 	 */
-	function view($params = array()) {
+	function view($params = []) {
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		$ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
 		$this->_debug_info['name'] = $ds_name;
@@ -83,7 +83,7 @@ class yf_dashboards2 {
 	}
 
 	
-	function _get_grid($data = array()) {
+	function _get_grid($data = []) {
 
 		foreach ((array)$data as $row_id => $row_items) {
 			$cols = '';
@@ -117,23 +117,23 @@ class yf_dashboards2 {
 					}	
 				}
 			}
-			$rows [] = array(
+			$rows [] = [
 				'cols'      => $cols,
 				'id'        => $row_items['id'],
 				'class'     => trim($row_items['class'])
 
-			);
+			];
 		}
-		$replace = array(
+		$replace = [
 			'rows'	=> $rows,
-		);
+		];
 		return tpl()->parse(__CLASS__.'/view_main', $replace);
 	}
 
 
 	/**
 	 */
-	function _view_widget_items ($widgets = array()) {
+	function _view_widget_items ($widgets = []) {
 
 		$_orig_object = $_GET['object'];
 		$_orig_action = $_GET['action'];
@@ -154,7 +154,7 @@ class yf_dashboards2 {
 			 */
 				list($module_name, $method_name) = explode('.', $widgets['val']);
 			} elseif ($widgets["type"] == 'block') {
-				$content = _class('core_blocks')->show_block(array('block_id' => $info['block_name']));
+				$content = _class('core_blocks')->show_block(['block_id' => $info['block_name']]);
 			} elseif ($widgets["type"] == 'stpl') {
 			/*
 				if (strlen($info['code'])) {
@@ -178,11 +178,11 @@ class yf_dashboards2 {
 			$module_obj = module_safe($module_name);
 			if (is_object($module_obj) && method_exists($module_obj, $method_name)) {
 				$content = $module_obj->$method_name($saved_config);
-				$this->_debug_info['widgets'][] = array (
+				$this->_debug_info['widgets'][] = [
 					'class_name'   => $module_name,
 					'action'       => $method_name,
 					'time'         => round(microtime(true) - $_time_start, 5),
-				);
+				];
 			} else {
 				trigger_error(__CLASS__.': called module.method from widget not exists: '.$module_name.'.'.$method_name.'', E_USER_WARNING);
 			}

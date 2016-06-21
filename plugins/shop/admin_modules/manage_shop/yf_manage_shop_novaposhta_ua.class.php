@@ -31,11 +31,11 @@ class yf_manage_shop_novaposhta_ua {
 
 	function _form( $data ) {
 		$data_desc = $data ? 'Результат' : '';
-		$replace = array();
+		$replace = [];
 		$_form = form( $replace )
-			->row_start( array( 'desc' => '' ) )
+			->row_start( [ 'desc' => '' ] )
 				->submit( 'import', 'Импорт списка отделений' )
-				->check_box( 'confirm', false, array( 'desc' => 'подтверждение', 'no_label' => true ) )
+				->check_box( 'confirm', false, [ 'desc' => 'подтверждение', 'no_label' => true ] )
 			->row_end()
 			->container( $data, $data_desc )
 		;
@@ -44,19 +44,19 @@ class yf_manage_shop_novaposhta_ua {
 
 	function _cleanup_city( $data ) {
 		if( empty( $data ) ) { return( $data ); }
-		$result = preg_replace( array( '#([^\s])\(#' ), array( '\1 (' ), $data );
+		$result = preg_replace( [ '#([^\s])\(#' ], [ '\1 (' ], $data );
 		return( $result );
 	}
 
 	function _cleanup_tel( $data ) {
 		if( empty( $data ) ) { return( $data ); }
-		$filter = array(
+		$filter = [
 			'#(\d+)\-(\d+\-\d+\-\d+)#' => '(\1) \2',
 			'#\)(\d)#'                 => ') \1',
 			'#\)\-#'                   => ') ',
 			'#^(\d+\))#'               => '(\1',
 			'#[^\d]+$#'                => '',
-		);
+		];
 		$result = preg_replace( array_keys( $filter ), array_values( $filter ), $data );
 		return( $result );
 	}
@@ -65,7 +65,7 @@ class yf_manage_shop_novaposhta_ua {
 		$address   = null;
 		$branch_no = 1;
 		$info      = null;
-		if( empty( $data ) ) { return( array( $address, $branch_no, $info ) ); }
+		if( empty( $data ) ) { return( [ $address, $branch_no, $info ] ); }
 		// info
 		if( preg_match_all( '#([^\(\)]*)\(([^\)]+)\)([^\(\)]*)#', $data, $match ) ) {
 			$info = implode( '; ', array_reverse( $match[ 2 ] ) );
@@ -80,13 +80,13 @@ class yf_manage_shop_novaposhta_ua {
 			$data = $match[ 2 ];
 		}
 		// cleanup
-		$data = preg_replace( array( '#Відділення#' ), '', $data );
-		$filter = array(
+		$data = preg_replace( [ '#Відділення#' ], '', $data );
+		$filter = [
 			'#\s*Відділення\s*#'  => '',
 			'#Отделение,\s*#'     => '',
 			'#Отделение[^\,]\,\s*#' => '',
 			'#^\s*:\s*#'          => '',
-		);
+		];
 		// add info
 		if( preg_match( '#^\s*[:,]\s*([^:]+)\s*[:]\s*(.+)$#', $data, $match ) ) {
 			$info = $match[ 1 ] . ( empty( $info ) ? '' : '; ' . $info );
@@ -94,7 +94,7 @@ class yf_manage_shop_novaposhta_ua {
 		}
 		$data = preg_replace( array_keys( $filter ), array_values( $filter ), $data );
 		$address = trim( $data );
-		$result = array( $address, $branch_no, $info );
+		$result = [ $address, $branch_no, $info ];
 		return( $result );
 	}
 
@@ -109,7 +109,7 @@ class yf_manage_shop_novaposhta_ua {
 		$data = json_decode( $content, true );
 		if( empty( $data[ 'response' ] ) ) { return( 'Не найдено данных по адресу: ' . $url ); }
 		$count = 0;
-		$sql_data = array();
+		$sql_data = [];
 		foreach( $data[ 'response' ] as $i => $item ) {
 			$count++;
 			$city_raw    = $item[ 'cityRu'    ] ?: '';
@@ -131,7 +131,7 @@ class yf_manage_shop_novaposhta_ua {
 			$location .= empty( $address ) ? '' : $address;
 			// add info
 			$location .= empty( $info ) ? '' : " ($info)";
-			$sql_data[] = _es( array(
+			$sql_data[] = _es( [
 				'city_raw'    => $city_raw,
 				'address_raw' => $address_raw,
 				'tel_raw'     => $tel_raw,
@@ -142,16 +142,16 @@ class yf_manage_shop_novaposhta_ua {
 				'location'    => $location,
 				'tel'         => $tel,
 				'options'     => json_encode( $item, JSON_NUMERIC_CHECK ),
-			));
+			]);
 		}
 		$table_name = db( 'shop_novaposhta_ua' );
 		$count_in_db = (int)db()->get_one( "SELECT COUNT(*) FROM $table_name" );
 		$sql_result = db()->insert_on_duplicate_key_update( $table_name, $sql_data );
-		$table_result = array(
-			array( 'title' => 'Обработано: ', 'count' => $count )               ,
-			array( 'title' => 'Добавлено: ' , 'count' => $count - $count_in_db ),
-		);
-		$result = table( $table_result, array( 'no_total' => true ) )
+		$table_result = [
+			[ 'title' => 'Обработано: ', 'count' => $count ]               ,
+			[ 'title' => 'Добавлено: ' , 'count' => $count - $count_in_db ],
+		];
+		$result = table( $table_result, [ 'no_total' => true ] )
 		->text( 'title', 'Операция' )
 		->text( 'count', 'Количество' )
 		;
@@ -190,7 +190,7 @@ class yf_manage_shop_novaposhta_ua {
 		// prepare data
 		if( empty( $data ) ) { return( 'Не найдено данных по адресу: ' . $url ); }
 		$count = 0;
-		$sql_data = array();
+		$sql_data = [];
 		foreach( $data as $r ) {
 			if( ( empty( $r[ 0 ] ) && empty( $r[ 1 ] ) ) || $r[ 0 ] == 'Мiсто' ) { continue; }
 			$count++;
@@ -208,7 +208,7 @@ class yf_manage_shop_novaposhta_ua {
 			$location .= empty( $address ) ? '' : $address;
 			// add info
 			$location .= empty( $info ) ? '' : " ($info)";
-			$sql_data[] = array(
+			$sql_data[] = [
 				'city_raw'    => $r[ 0 ],
 				'address_raw' => $r[ 1 ],
 				'tel_raw'     => $r[ 2 ],
@@ -222,16 +222,16 @@ class yf_manage_shop_novaposhta_ua {
 				'time_in_2'   => $r[ 4 ],
 				'time_out_1'  => $r[ 5 ],
 				'time_out_2'  => $r[ 6 ],
-			);
+			];
 		}
 		$table_name = db( 'shop_novaposhta_ua' );
 		$count_in_db = (int)db()->get_one( "SELECT COUNT(*) FROM $table_name" );
 		db()->insert_on_duplicate_key_update( $table_name, _es( $sql_data ) );
-		$table_result = array(
-			array( 'title' => 'Обработано: ', 'count' => $count )               ,
-			array( 'title' => 'Добавлено: ' , 'count' => $count - $count_in_db ),
-		);
-		$result = table( $table_result, array( 'no_total' => true ) )
+		$table_result = [
+			[ 'title' => 'Обработано: ', 'count' => $count ]               ,
+			[ 'title' => 'Добавлено: ' , 'count' => $count - $count_in_db ],
+		];
+		$result = table( $table_result, [ 'no_total' => true ] )
 		->text( 'title', 'Операция' )
 		->text( 'count', 'Количество' )
 		;

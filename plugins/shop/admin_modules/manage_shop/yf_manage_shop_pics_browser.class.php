@@ -23,23 +23,23 @@ class yf_manage_shop_pics_browser {
 		list( $add_sql, $pages, $total_records, $page_current, $pages_total, $pages_limited ) = common()->divide_pages($sql);
 		
 		$R = db()->query($sql . $add_sql);
-		$items = array();
+		$items = [];
 		while ($A = db()->fetch_assoc($R)) {
 			$_cls_products = _class( '_shop_products', 'modules/shop/' );		
 			$image = $_cls_products->_product_image($A['product_id'],true);
 			
-			$items[] = array(
+			$items[] = [
 				'id' => $A['product_id'],
 				'image_id' => $A['id'],
 				'image' => $image['big'],
-			);
+			];
 		}
 		
-		$replace = array(
+		$replace = [
 			'items' => $items,
 			'total' => $total_records,
 			'pages' => $pages,
-		);
+		];
 		$tpl_name = 'manage_shop/pics_browser';
         return tpl()->parse( $tpl_name, $replace );
 	}

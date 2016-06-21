@@ -4,7 +4,7 @@ class yf_payment_test {
 
 	protected $options = null;
 
-	public $api = array(
+	public $api = [
 		// 'Privat24'    => true,
 		// 'LiqPay'      => true,
 		'Interkassa'   => true,
@@ -12,9 +12,9 @@ class yf_payment_test {
 		// 'Ecommpay'    => true,
 		'PerfectMoney' => true,
 		// 'YandexMoney'  => true,
-	);
+	];
 
-	public $payin = array(
+	public $payin = [
 		// 'Privat24'       => true,
 		// 'LiqPay'         => true,
 		// 'Interkassa'     => true,
@@ -22,9 +22,9 @@ class yf_payment_test {
 		'Ecommpay'       => true,
 		'PerfectMoney'   => true,
 		// 'YandexMoney'    => true,
-	);
+	];
 
-	public $payout = array(
+	public $payout = [
 		// 'Privat24'    => true,
 		// 'LiqPay'      => true,
 		'Interkassa'   => true,
@@ -32,21 +32,21 @@ class yf_payment_test {
 		'Ecommpay'     => true,
 		'PerfectMoney' => true,
 		// 'YandexMoney'  => true,
-	);
+	];
 
-	public $currency_rates_load = array(
+	public $currency_rates_load = [
 		'NBU'          => true,
 		'CBR'          => true,
 		'Privat24'     => true,
 		'CashExchange' => true,
-	);
+	];
 
-	public $currency_rate_load = array(
+	public $currency_rate_load = [
 		'NBU'          => true,
 		'CBR'          => true,
 		'Privat24'     => true,
 		'CashExchange' => true,
-	);
+	];
 
 	public function _init() {
 		if( !( defined( 'PAYMENT_TEST' ) && PAYMENT_TEST )
@@ -63,12 +63,12 @@ class yf_payment_test {
 
 	protected function _init_options() {
 		$_ = &$this->options;
-		$_ = array(
-			'url_result'   => url( '/@object/@action', array( 'test_mode' => 1 ) ),
-			'url_server'   => url( '/@object/@action', array( 'test_mode' => 1, 'server' => true ) ),
+		$_ = [
+			'url_result'   => url( '/@object/@action', [ 'test_mode' => 1 ] ),
+			'url_server'   => url( '/@object/@action', [ 'test_mode' => 1, 'server' => true ] ),
 			'operation_id' => @$_GET[ 'operation_id' ] ?: '_1',
 			'amount'       => @$_GET[ 'amount' ] ?: '0.01',
-		);
+		];
 		return( $_ );
 	}
 
@@ -117,18 +117,18 @@ class yf_payment_test {
 	public function transaction() {
 		$payment_api = _class( 'payment_api' );
 		// var
-		$result = array();
+		$result = [];
 		$operation_id = @$_GET[ 'operation_id' ];
-		$data = array( 'operation_id' => $operation_id );
+		$data = [ 'operation_id' => $operation_id ];
 		// start
 		$result[1][ 'level'  ] = $payment_api->transaction_isolation();
 
 		$result[2][ 'start'  ] = $payment_api->transaction_start( $data );
 		$result[2][ 'level'  ] = $payment_api->transaction_isolation();
 		if( $operation_id ) {
-			$operation = $payment_api->operation( array(
+			$operation = $payment_api->operation( [
 				'operation_id' => $operation_id,
-			));
+			]);
 			$result[2][ 'operation'  ] = $operation;
 		}
 		$result[2][ 'commit' ] = $payment_api->transaction_commit();
@@ -155,52 +155,52 @@ class yf_payment_test {
 		$result[8][ 'level'    ] = $payment_api->transaction_isolation();
 		// out
 		$php = var_export( $result, true );
-		$result = $this->_add_panel(  array(
+		$result = $this->_add_panel(  [
 			'header'    => 'Transaction DB',
 			'php'       => $php,
 			'is_action' => true,
-		));
+		]);
 		$this->_render( $result );
 	}
 
 	public function mail() {
-		$mail_tpl = array(
-			'payin_success' => array(
+		$mail_tpl = [
+			'payin_success' => [
 				'type'     => 'payin',
 				'status'   => 'success',
 				'is_user'  => true,
 				'is_admin' => true,
-			),
-			'payin_refused' => array(
+			],
+			'payin_refused' => [
 				'type'     => 'payin',
 				'status'   => 'refused',
 				'is_user'  => true,
 				'is_admin' => true,
-			),
+			],
 
-			'payout_success' => array(
+			'payout_success' => [
 				'type'     => 'payout',
 				'status'   => 'success',
 				'is_user'  => true
-			),
-			'payout_refused' => array(
+			],
+			'payout_refused' => [
 				'type'     => 'payout',
 				'status'   => 'refused',
 				'is_user'  => true
-			),
-			'payout_request' => array(
+			],
+			'payout_request' => [
 				'type'     => 'payout',
 				'status'   => 'request',
 				'is_user'  => true,
 				'is_admin' => true,
-			),
-			'payout_confirmation' => array(
+			],
+			'payout_confirmation' => [
 				'type'     => 'payout',
 				'status'   => 'confirmation',
 				'is_user'  => true,
 				'is_admin' => true,
-			),
-		);
+			],
+		];
 		// exec
 		$form = '';
 		if( @$_GET[ 'tpl' ] || ( @$_GET[ 'type' ] && @$_GET[ 'status' ] ) ) {
@@ -212,30 +212,30 @@ class yf_payment_test {
 			$status  = @$_GET[ 'status' ];
 			$user_id = @$_GET[ 'user_id' ] ?: 1;
 			$is_admin = !empty( $_GET[ 'is_admin' ] );
-			$result = $payment_api->mail( array(
+			$result = $payment_api->mail( [
 				'tpl'      => $tpl,
 				'type'     => $type,
 				'status'   => $status,
 				'force'    => true,
 				'user_id'  => $user_id,
 				'is_admin' => $is_admin,
-				'data'     => array(
+				'data'     => [
 					'operation_id' => 1,
 					'amount'       => 1.1,
 					'code'         => 123,
-				),
-			));
-			$form .= var_export( array(
+				],
+			]);
+			$form .= var_export( [
 				'tpl'    => $tpl,
 				'result' => $result,
-			), true );
+			], true );
 		} else { $form = 'Выберите шаблон'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $mail_tpl as $tpl => $item ) {
 			if( empty( $item ) ) { continue; }
 			// uri
-			$uri = array();
+			$uri = [];
 			$uri[] = 'tpl='. $tpl;
 			// user
 			if( @$item[ 'is_user' ] ) {
@@ -253,7 +253,7 @@ class yf_payment_test {
 				$action[] = $a;
 			}
 			// uri
-			$uri = array();
+			$uri = [];
 			$uri[] = 'type='.   $item[ 'type'   ];
 			$uri[] = 'status='. $item[ 'status' ];
 			// user
@@ -272,17 +272,17 @@ class yf_payment_test {
 				$action[] = $a;
 			}
 		}
-		$result = $this->_add_panel(  array(
+		$result = $this->_add_panel(  [
 			'header' => 'Payment mail',
 			'form'   => $form,
 			'action' => $action,
-		));
+		]);
 		$this->_render( $result );
 	}
 
 	// ************* test api
 	public function api() {
-		$provider = array(
+		$provider = [
 			// 'Privat24',
 			// 'LiqPay',
 			'Interkassa',
@@ -290,14 +290,14 @@ class yf_payment_test {
 			// 'Ecommpay',
 			'PerfectMoney',
 			'YandexMoney',
-		);
-		$_provider = array();
+		];
+		$_provider = [];
 		foreach( $provider as $item ) {
 			if( !empty( $this->api[ $item ] ) ) {
 				$_provider[] = $item;
 			}
 		}
-		$result = array();
+		$result = [];
 		$result += $this->_chunk( 'api', $_provider );
 		$this->_render( $result );
 	}
@@ -305,7 +305,7 @@ class yf_payment_test {
 	protected function _api_Interkassa( $title ) {
 		$php     = '';
 		$api     = _class( 'payment_api__provider_interkassa' );
-		$methods = array(
+		$methods = [
 			'currency'                => true,
 			'paysystem-input-payway'  => true,
 			'paysystem-output-payway' => true,
@@ -319,16 +319,16 @@ class yf_payment_test {
 			'withdraw-id'             => true,
 			'withdraw-calc'           => true,
 			'withdraw-process'        => true,
-		);
+		];
 		$is_action = null;
 		if( !@empty( $methods[ $_GET[ 'method' ] ] ) ) {
 			$is_action = true;
 			$method_id = $_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
-			);
+			];
 			$operation_id = @$_GET[ 'operation_id' ] ?: '1';
 			$amount = @$_GET[ 'amount' ] ?: 50;
 			$card   = @$_GET[ 'card'   ] ?: '5218572211211342';
@@ -339,44 +339,44 @@ class yf_payment_test {
 					}
 					break;
 				case $method_id == 'withdraw-calc':
-					$options[ 'option' ] = array(
+					$options[ 'option' ] = [
 						'amount' => $amount,
 						// 'calcKey' => 'ikPayerPrice',
 						'calcKey' => 'psPayeeAmount',
-						'details' => array(
+						'details' => [
 							'card' => $card,
-						),
+						],
 						'paywayId'  => '52efa902e4ae1a780e000001',
 						'purseId'   => '300301404317',
 						'title'     => 'Вывод средств: '. $amount . ' грн',
 						'paymentNo' => $operation_id,
-					);
+					];
 					break;
 				case $method_id == 'withdraw-process':
-					$options[ 'option' ] = array(
+					$options[ 'option' ] = [
 						'amount' => $amount,
 						// 'calcKey' => 'ikPayerPrice',
 						'calcKey' => 'psPayeeAmount',
-						'details' => array(
+						'details' => [
 							'card' => $card,
-						),
+						],
 						'paywayId'  => '52efa902e4ae1a780e000001',
 						'purseId'   => '300301404317',
 						'title'     => 'Вывод средств: '. $amount . ' грн',
 						'paymentNo' => $operation_id,
-					);
+					];
 					break;
 			}
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'request'   => $options,
-			), true );
+			], true );
 			$result = $api->api_request( $options );
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response'  => $result,
-			), true );
+			], true );
 		} else { $php = 'Выберите метод'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $methods as $item => $active ) {
 			if( empty( $active ) ) { continue; }
 			$link = url_user( '/@object/@action?method='. $item );
@@ -385,49 +385,49 @@ class yf_payment_test {
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'api: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ) );
+		return( [ 'header' => 'api: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ] );
 	}
 
 	protected function _api_PerfectMoney( $title ) {
 		$php     = '';
 		$api     = _class( 'payment_api__provider_perfectmoney' );
-		$methods = array(
+		$methods = [
 			'verify' => true,
 			'spend'  => true,
-		);
+		];
 		$is_action = null;
 		if( !@empty( $methods[ $_GET[ 'method' ] ] ) ) {
 			$is_action = true;
 			$method_id = $_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
-			);
+			];
 			$operation_id = '_'. ( @$_GET[ 'operation_id' ] ?: '1' );
 			$amount  = @$_GET[ 'amount'  ] ?: 0.01;
 			$account = @$_GET[ 'account' ] ?: $api->PURSE_ID[ 'USD' ];
 			switch( true ) {
 				case $method_id == 'verify' || $method_id == 'spend':
-					$options[ 'option' ] = array(
+					$options[ 'option' ] = [
 						'Amount'        => $amount,
 						'Memo'          => 'Вывод средств USD : '. $amount,
 						'PAYMENT_ID'    => $operation_id,
 						'Payer_Account' => $account,
 						'Payee_Account' => $account,
-					);
+					];
 					break;
 			}
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'request' => $options,
-			), true );
+			], true );
 			$result = $api->api_request( $options );
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response'  => $result,
-			), true );
+			], true );
 		} else { $php = 'Выберите метод'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $methods as $item => $active ) {
 			if( empty( $active ) ) { continue; }
 			$link = url_user( '/@object/@action?method='. $item );
@@ -436,45 +436,45 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'api: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ) );
+		return( [ 'header' => 'api: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ] );
 	}
 
 
 	protected function _api_YandexMoney( $title ) {
 		$php     = '';
 		$api     = _class( 'payment_api__provider_yandexmoney' );
-		$methods = array(
+		$methods = [
 			'revoke'            => true,
 			'account-info'      => true,
 			'operation-history' => true,
 			'operation-details' => true,
 			'request-payment'   => true,
-		);
+		];
 		$is_action = null;
 		if( !@empty( $methods[ $_GET[ 'method' ] ] ) ) {
 			$is_action = true;
 			$method_id = $_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
-			);
+			];
 			$operation_id = '_'. ( @$_GET[ 'operation_id' ] ?: '1' );
 			$amount  = @$_GET[ 'amount'  ] ?: 0.01;
 			$account = @$_GET[ 'account' ] ?: $api->PURSE_ID[ 'USD' ];
 			switch( true ) {
 				case $method_id == 'operation-history':
-					$options[ 'option' ] = array(
+					$options[ 'option' ] = [
 						'details' => 'true',
-					);
+					];
 					break;
 				case $method_id == 'operation-details':
-					$options[ 'option' ] = array(
+					$options[ 'option' ] = [
 						'operation_id' => '500141181144110002',
-					);
+					];
 					break;
 				case $method_id == 'request-payment':
-					$options[ 'option' ] = array(
+					$options[ 'option' ] = [
 						'pattern_id'   => 'p2p',
 						'to'           => '410012771676199',
 						'amount'       => '0.01',
@@ -482,19 +482,19 @@ EOS;
 						'comment'      => 'Test payout: 0.01',
 						'test_payment' => 'true',
 						'test_result'  => 'success',
-					);
+					];
 					break;
 			}
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'request' => $options,
-			), true );
+			], true );
 			$result = $api->api_request( $options );
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response'  => $result,
-			), true );
+			], true );
 		} else { $php = 'Выберите метод'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $methods as $item => $active ) {
 			if( empty( $active ) ) { continue; }
 			$link = url_user( '/@object/@action?method='. $item );
@@ -503,58 +503,58 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'api: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ) );
+		return( [ 'header' => 'api: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ] );
 	}
 
 	protected function _api_WebMoney( $title ) {
 		$php     = '';
 		$api     = _class( 'payment_api__provider_webmoney' );
-		$methods = array(
+		$methods = [
 			'p2p'     => true,
 			'balance' => true,
-		);
+		];
 		$is_action = null;
 		if( !@empty( $methods[ $_GET[ 'method' ] ] ) ) {
 			$is_action = true;
 			$method_id = $_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
-			);
+			];
 			$operation_id = (int)( @$_GET[ 'operation_id' ] ?: '1' );
 			$amount  = @$_GET[ 'amount'  ] ?: 0.01;
-			$account = @$_GET[ 'purse' ] ?: $api->_purse_by_currency( array( 'currency_id' => 'USD' ) )[ 'id' ];
+			$account = @$_GET[ 'purse' ] ?: $api->_purse_by_currency( [ 'currency_id' => 'USD' ] )[ 'id' ];
 			switch( true ) {
 				case $method_id == 'balance':
-					$purse = $api->_purse_by_currency( array( 'currency_id' => 'USD' ) );
+					$purse = $api->_purse_by_currency( [ 'currency_id' => 'USD' ] );
 					$wmid = $purse[ 'wmid' ];
-					$options[ 'option' ] = array(
+					$options[ 'option' ] = [
 						'wmid' => $wmid,
-					);
+					];
 					break;
 				case $method_id == 'p2p':
-					$purse = $api->_purse_by_currency( array( 'currency_id' => 'USD' ) );
+					$purse = $api->_purse_by_currency( [ 'currency_id' => 'USD' ] );
 					$desc = 'Тест оплаты '. $amount .'$';
-					$options[ 'option' ] = array(
+					$options[ 'option' ] = [
 						'tranid'    => $operation_id,
 						'pursesrc'  => $purse[ 'id' ],
 						'pursedest' => 'Z272631242756',
 						'amount'    => $amount,
 						'desc'      => $desc,
-					);
+					];
 					break;
 			}
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'request' => $options,
-			), true );
+			], true );
 			$result = $api->api_request( $options );
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response'  => $result,
-			), true );
+			], true );
 		} else { $php = 'Выберите метод'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $methods as $item => $active ) {
 			if( empty( $active ) ) { continue; }
 			$link = url_user( '/@object/@action?method='. $item );
@@ -563,12 +563,12 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'api: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ) );
+		return( [ 'header' => 'api: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ] );
 	}
 
 	// ************* test payout
 	public function payout() {
-		$provider = array(
+		$provider = [
 			// 'Privat24',
 			// 'LiqPay',
 			'Interkassa',
@@ -576,14 +576,14 @@ EOS;
 			'Ecommpay',
 			'PerfectMoney',
 			'YandexMoney',
-		);
-		$_provider = array();
+		];
+		$_provider = [];
 		foreach( $provider as $item ) {
 			if( !empty( $this->payout[ $item ] ) ) {
 				$_provider[] = $item;
 			}
 		}
-		$result = array();
+		$result = [];
 		$result += $this->_chunk( 'payout', $_provider );
 		$this->_render( $result );
 	}
@@ -594,7 +594,7 @@ return( (array)'opss...' );
 		$api     = _class( 'payment_api__provider_privat24' );
 		// pb
 		$method = 'pay_pb';
-		$options = array(
+		$options = [
 			// 'wait'         => 1,
 			// 'test'         => 1,
 			'operation_id' => '_1',
@@ -602,17 +602,17 @@ return( (array)'opss...' );
 			// 'currency'     => 'UAH',
 			'title'        => 'test',
 			'account'      => '5457082390236292',
-		);
+		];
 		$result = $api->api_payout( $method, $options );
 		list( $status, $status_message ) = $result;
-		$form .= var_export( array(
+		$form .= var_export( [
 			'method'   => $method,
 			'request'  => $options,
 			'response' => $result,
-		), true );
+		], true );
 		// visa
 		$method = 'pay_visa';
-		$options = array(
+		$options = [
 			// 'wait'         => 1,
 			// 'test'         => 1,
 			'operation_id' => '_1',
@@ -621,39 +621,39 @@ return( (array)'opss...' );
 			'title'        => 'test',
 			'name'         => 'Test Tst',
 			'account'      => '4731217103744338',
-		);
+		];
 		$result = $api->api_payout( $method, $options );
 		list( $status, $status_message ) = $result;
-		$form .= var_export( array(
+		$form .= var_export( [
 			'method'   => $method,
 			'request'  => $options,
 			'response' => $result,
-		), true );
-		return( array( $form ) );
+		], true );
+		return( [ $form ] );
 	}
 
 	protected function _payout_EcommPay( $title ) {
 		$payment_api = _class( 'payment_api' );
-		$provider_class = $payment_api->provider_class( array(
+		$provider_class = $payment_api->provider_class( [
 			'provider_name' => 'ecommpay',
-		));
+		]);
 		$php = '';
-		$methods = array(
+		$methods = [
 			'pay_card' => true,
 			'qiwi'     => true,
-		);
+		];
 		// process
 		if( @$methods[ $_GET[ 'method' ] ] ) {
 			$method_id = $_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
-			);
+			];
 			$operation_id = @$_GET[ 'operation_id' ] ?: '1';
 			switch( true ) {
 				case $method_id == 'pay_card':
-					$options += array(
+					$options += [
 						// 'wait'         => 1,
 						// 'test'         => 1,
 						// 'method_id'    => $method_id,
@@ -673,10 +673,10 @@ return( (array)'opss...' );
 						'sender_address'             => 'Test 123',
 						'sender_city'                => 'Test',
 						'sender_postindex'           => '123456',
-					);
+					];
 					break;
 				case $method_id == 'qiwi':
-					$options += array(
+					$options += [
 						// 'wait'         => 1,
 						// 'test'         => 1,
 						// 'method_id'    => $method_id,
@@ -685,21 +685,21 @@ return( (array)'opss...' );
 						// 'currency'     => 'UAH',
 						// 'title'        => 'test',
 						'account_number' => '12345678900',
-					);
+					];
 					break;
 			}
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'method_id' => $method_id,
 				'request'   => $options,
-			), true );
+			], true );
 			$result = $provider_class->api_payout( $options );
 			list( $status, $status_message ) = $result;
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response' => $result,
-			), true );
+			], true );
 		} else { $php = 'Выберите метод'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $methods as $item => $active ) {
 			if( empty( $active ) ) { continue; }
 			$link = url_user( '/@object/@action?method='. $item );
@@ -708,55 +708,55 @@ return( (array)'opss...' );
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'payout: ', 'php' => $php, 'action' => $action ) );
+		return( [ 'header' => 'payout: ', 'php' => $php, 'action' => $action ] );
 	}
 
 	protected function _payout_Interkassa( $title ) {
 		$payment_api = _class( 'payment_api' );
-		$provider_class = $payment_api->provider_class( array(
+		$provider_class = $payment_api->provider_class( [
 			'provider_name' => 'interkassa',
-		));
+		]);
 		$php = '';
-		$methods = array(
+		$methods = [
 			'mastercard_p2p_privat_uah' => true,
-		);
+		];
 		$is_action = null;
 		// process
 		if( @$methods[ $_GET[ 'method' ] ] ) {
 			$is_action = true;
 			$method_id = $_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
-			);
+			];
 			$operation_id = @$_GET[ 'operation_id' ] ?: '1';
 			$amount = @$_GET[ 'amount' ] ?: 50;
 			$card   = @$_GET[ 'card'   ] ?: '5218572211211342';
 			switch( true ) {
 				case $method_id == 'mastercard_p2p_privat_uah':
-					$options += array(
+					$options += [
 						'operation_id' => $operation_id,
 						'amount'       => $amount,
 						// 'currency'     => 'UAH',
 						'title'        => 'Вывод средств: '. $amount . ' грн',
 						'account'      => $card,
 						'provider_force' => true,
-					);
+					];
 					break;
 			}
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'method_id'      => $method_id,
 				'request'        => $options,
-			), true );
+			], true );
 			$result = $provider_class->api_payout( $options );
 			list( $status, $status_message ) = $result;
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response' => $result,
-			), true );
+			], true );
 		} else { $php = 'Выберите метод'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $methods as $item => $active ) {
 			if( empty( $active ) ) { continue; }
 			$link = url_user( '/@object/@action?method='. $item );
@@ -765,55 +765,55 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ) );
+		return( [ 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ] );
 	}
 
 	protected function _payout_WebMoney( $title ) {
 		$payment_api = _class( 'payment_api' );
-		$provider_class = $payment_api->provider_class( array(
+		$provider_class = $payment_api->provider_class( [
 			'provider_name' => 'webmoney',
-		));
+		]);
 		$php = '';
-		$methods = array(
+		$methods = [
 			'p2p_wmz' => true,
-		);
+		];
 		$is_action = null;
 		// process
 		if( @$methods[ $_GET[ 'method' ] ] ) {
 			$is_action = true;
 			$method_id = $_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
-			);
+			];
 			$operation_id = (int)( @$_GET[ 'operation_id' ] ?: 1 );
 			$amount = @$_GET[ 'amount' ] ?: 0.01;
 			$purse  = @$_GET[ 'purse'  ] ?: 'Z272631242756';
 			switch( true ) {
 				case $method_id == 'p2p_wmz':
-					$options += array(
+					$options += [
 						'operation_id' => $operation_id,
 						'amount'       => $amount,
 						// 'currency'     => 'UAH',
 						'title'        => 'Вывод средств: '. $amount . '$',
 						'purse'        => $purse,
 						'provider_force' => true,
-					);
+					];
 					break;
 			}
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'method_id'      => $method_id,
 				'request'        => $options,
-			), true );
+			], true );
 			$result = $provider_class->api_payout( $options );
 			list( $status, $status_message ) = $result;
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response' => $result,
-			), true );
+			], true );
 		} else { $php = 'Выберите метод'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $methods as $item => $active ) {
 			if( empty( $active ) ) { continue; }
 			$link = url_user( '/@object/@action?method='. $item );
@@ -822,55 +822,55 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ) );
+		return( [ 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ] );
 	}
 
 	protected function _payout_PerfectMoney( $title ) {
 		$payment_api = _class( 'payment_api' );
-		$provider_class = $payment_api->provider_class( array(
+		$provider_class = $payment_api->provider_class( [
 			'provider_name' => 'perfectmoney',
-		));
+		]);
 		$php = '';
-		$methods = array(
+		$methods = [
 			'perfectmoney' => true,
-		);
+		];
 		$is_action = null;
 		// process
 		if( @$methods[ $_GET[ 'method' ] ] ) {
 			$is_action = true;
 			$method_id = $_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
-			);
+			];
 			$operation_id = '_'. ( @$_GET[ 'operation_id' ] ?: '1' );
 			$amount  = @$_GET[ 'amount'  ] ?: 0.01;
 			$account = @$_GET[ 'account' ] ?: $provider_class->PURSE_ID[ 'USD' ];
 			switch( true ) {
 				case $method_id == 'perfectmoney':
-					$options += array(
+					$options += [
 						'operation_id' => $operation_id,
 						'amount'       => $amount,
 						// 'currency'     => 'USD',
 						'title'        => 'Вывод средств USD: '. $amount,
 						'account'      => $account,
 						'provider_force' => true,
-					);
+					];
 					break;
 			}
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'method_id'      => $method_id,
 				'request'        => $options,
-			), true );
+			], true );
 			$result = $provider_class->api_payout( $options );
 			list( $status, $status_message ) = $result;
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response' => $result,
-			), true );
+			], true );
 		} else { $php = 'Выберите метод'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $methods as $item => $active ) {
 			if( empty( $active ) ) { continue; }
 			$link = url_user( '/@object/@action?method='. $item );
@@ -879,35 +879,35 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ) );
+		return( [ 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ] );
 	}
 
 	protected function _payout_YandexMoney( $title ) {
 		$payment_api = _class( 'payment_api' );
-		$provider_class = $payment_api->provider_class( array(
+		$provider_class = $payment_api->provider_class( [
 			'provider_name' => 'yandexmoney',
-		));
+		]);
 		$php = '';
-		$methods = array(
+		$methods = [
 			'yandexmoney_p2p' => true,
-		);
+		];
 		$is_action = null;
 		// process
 		if( @$methods[ $_GET[ 'method' ] ] ) {
 			$is_action = true;
 			$method_id = $_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'method_id' => $method_id,
 				'is_debug'  => $is_debug,
-			);
+			];
 			$operation_id = @$_GET[ 'operation_id' ] ?: 1;
 			$amount  = @$_GET[ 'amount'  ] ?: 100;
 			$test_result1 = @$_GET[ 'test_result1' ];
 			$test_result2 = @$_GET[ 'test_result2' ];
 			switch( true ) {
 				case $method_id == 'yandexmoney_p2p':
-					$options += array(
+					$options += [
 						'operation_id'   => $operation_id,
 						'to'             => '410012771676199',
 						'amount'         => $amount,
@@ -915,21 +915,21 @@ EOS;
 						'test_result1'    => $test_result1,
 						'test_result2'    => $test_result2,
 						'provider_force' => true,
-					);
+					];
 					break;
 			}
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'method_id'      => $method_id,
 				'request'        => $options,
-			), true );
+			], true );
 			$result = $provider_class->api_payout( $options );
 			list( $status, $status_message ) = $result;
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response' => $result,
-			), true );
+			], true );
 		} else { $php = 'Выберите метод'; }
 		// actions
-		$action = array();
+		$action = [];
 		foreach( $methods as $item => $active ) {
 			if( empty( $active ) ) { continue; }
 			$link = url_user( '/@object/@action?method='. $item );
@@ -938,25 +938,25 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ) );
+		return( [ 'header' => 'payout: ', 'php' => $php, 'action' => $action, 'is_action' =>  $is_action ] );
 	}
 
 	// ************* test currency_rate
 	public function currency_rates_load() {
 // error_reporting(-1);
-		$provider = array(
+		$provider = [
 			'NBU',
 			'CBR',
 			'Privat24',
 			'CashExchange',
-		);
-		$_provider = array();
+		];
+		$_provider = [];
 		foreach( $provider as $item ) {
 			if( !empty( $this->{ __FUNCTION__ }[ $item ] ) ) {
 				$_provider[] = $item;
 			}
 		}
-		$result = array();
+		$result = [];
 		$result += $this->_chunk( __FUNCTION__, $_provider );
 		$this->_render( $result );
 	}
@@ -973,30 +973,30 @@ EOS;
 			$provider  = @$_GET[ 'provider' ];
 			$method    = @$_GET[ 'method' ];
 			$is_debug  = @$_GET[ 'is_debug' ];
-			$options   = array(
+			$options   = [
 				'provider' => $provider,
 				'method'   => $method,
-				'request_options' => array(
+				'request_options' => [
 					'is_debug' => $is_debug,
-				),
-			);
+				],
+			];
 			// log
 			$php = [];
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'provider' => $provider,
 				'method'   => $method,
 				'request'  => $options,
-			), true );
+			], true );
 			// start
 			$currency__api = _class( 'payment_api__currency' );
 			$result = $currency__api->load( $options );
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'response'  => $result,
-			), true );
+			], true );
 			// end
 		}
 		// actions
-		$action = array();
+		$action = [];
 		$url = '/@object/@action?provider='. $_provider . '&method=';
 		foreach( $_method as $item => $active ) {
 			if( empty( $active ) ) { continue; }
@@ -1006,56 +1006,56 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'currency rates load: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ) );
+		return( [ 'header' => 'currency rates load: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ] );
 	}
 
 	protected function _currency_rates_load_NBU( $title ) {
-		$options = array(
+		$options = [
 			'title'    => $title,
 			'provider' => 'nbu',
-			'method'   => array(
+			'method'   => [
 				'json' => true,
 				'xml'  => true,
 				'html' => true,
-			),
-		);
+			],
+		];
 		$result = $this->_currency_rates_load( $options );
 		return( $result );
 	}
 
 	protected function _currency_rates_load_CBR() {
-		$options = array(
+		$options = [
 			'title'    => $title,
 			'provider' => 'cbr',
-			'method'   => array(
+			'method'   => [
 				'xml'  => true,
-			),
-		);
+			],
+		];
 		$result = $this->_currency_rates_load( $options );
 		return( $result );
 	}
 
 	protected function _currency_rates_load_Privat24() {
-		$options = array(
+		$options = [
 			'title'    => $title,
 			'provider' => 'p24',
-			'method'   => array(
+			'method'   => [
 				'json' => true,
-			),
-		);
+			],
+		];
 		$result = $this->_currency_rates_load( $options );
 		return( $result );
 	}
 
 	protected function _currency_rates_load_CashExchange() {
-		$options = array(
+		$options = [
 			'title'    => $title,
 			'provider' => 'cashex',
-			'method'   => array(
+			'method'   => [
 				'xml'  => true,
 				'json' => true,
-			),
-		);
+			],
+		];
 		$result = $this->_currency_rates_load( $options );
 		return( $result );
 	}
@@ -1063,19 +1063,19 @@ EOS;
 	// ************* test currency rate load
 	public function currency_rate_load() {
 // error_reporting(-1);
-		$provider = array(
+		$provider = [
 			'NBU',
 			'CBR',
 			'Privat24',
 			'CashExchange',
-		);
-		$_provider = array();
+		];
+		$_provider = [];
 		foreach( $provider as $item ) {
 			if( !empty( $this->{ __FUNCTION__ }[ $item ] ) ) {
 				$_provider[] = $item;
 			}
 		}
-		$result = array();
+		$result = [];
 		$result += $this->_chunk( __FUNCTION__, $_provider );
 		$this->_render( $result );
 	}
@@ -1096,7 +1096,7 @@ EOS;
 			$to       = @$_GET[ 'to' ];
 			$date     = @$_GET[ 'date' ];
 			$api      = @$_GET[ 'api' ];
-			$options   = array(
+			$options   = [
 				'provider'      => $provider,
 				'method'        => $method,
 				'date'          => $date ?: @$_date,
@@ -1105,17 +1105,17 @@ EOS;
 				'to'            => $to ?: @$_to,
 				'is_force'      => true,
 				// 'is_force_load' => true,
-				'request_options' => array(
+				'request_options' => [
 					'is_debug' => $is_debug,
-				),
-			);
+				],
+			];
 			// log
 			$php = [];
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'provider' => $provider,
 				'method'   => $method,
 				'request'  => $options,
-			), true );
+			], true );
 			// start
 			switch( $api ) {
 				case 'payment': $api_name = 'payment_api'; $api_method_name = 'currency_load_rate'; break;
@@ -1125,16 +1125,16 @@ EOS;
 			$api = _class( $api_name );
 			$result1 = $api->{ $api_method_name }( $options );
 			$result2 = $api->{ $api_method_name }( $options );
-			$php[] = var_export( array(
+			$php[] = var_export( [
 				'api'        => $api_name,
 				'api_method' => $api_method_name,
 				'result1'   => $result1,
 				'result2'   => $result2,
-			), true );
+			], true );
 			// end
 		}
 		// actions
-		$action = array();
+		$action = [];
 		$url = '/@object/@action?provider='. $_provider . '&method=';
 		foreach( $_method as $item => $active ) {
 			if( empty( $active ) ) { continue; }
@@ -1144,153 +1144,153 @@ EOS;
 EOS;
 			$action[] = $a;
 		}
-		return( array( 'header' => 'currency rate load: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ) );
+		return( [ 'header' => 'currency rate load: ', 'php' => $php, 'action' => $action, 'is_action' => $is_action ] );
 	}
 
 	public function _currency_rate_load_NBU() {
-		$options = array(
+		$options = [
 			'title'       => $title,
 			'provider'    => 'nbu',
 			'currency_id' => 'USD',
-			'method'   => array(
+			'method'   => [
 				'json' => true,
 				'xml'  => true,
 				'html' => true,
-			),
-		);
+			],
+		];
 		$result = $this->_currency_rate_load( $options );
 		return( $result );
 	}
 
 	public function _currency_rate_load_CBR() {
-		$options = array(
+		$options = [
 			'title'       => $title,
 			'provider'    => 'cbr',
 			'currency_id' => 'USD',
-			'method'   => array(
+			'method'   => [
 				'xml'  => true,
-			),
-		);
+			],
+		];
 		$result = $this->_currency_rate_load( $options );
 		return( $result );
 	}
 
 	public function _currency_rate_load_Privat24() {
-		$options = array(
+		$options = [
 			'title'       => $title,
 			'provider'    => 'p24',
 			'currency_id' => 'USD',
-			'method'   => array(
+			'method'   => [
 				'json' => true,
-			),
-		);
+			],
+		];
 		$result = $this->_currency_rate_load( $options );
 		return( $result );
 	}
 
 	public function _currency_rate_load_CashExchange() {
-		$options = array(
+		$options = [
 			'title'       => $title,
 			'provider'    => 'cashex',
 			'currency_id' => 'USD',
-			'method'   => array(
+			'method'   => [
 				'xml'  => true,
 				'json' => true,
-			),
-		);
+			],
+		];
 		$result = $this->_currency_rate_load( $options );
 		return( $result );
 	}
 
 	// ************* test currency_rate
 	public function currency_rates_current() {
-		$result = array();
+		$result = [];
 		$payment_api = _class( 'payment_api' );
 		// conversion UNT to UAH
 		$currency__api = _class( 'payment_api__currency' );
-		$data = array();
+		$data = [];
 		$provider = 'NBU';
 		$type     = 'buy';
 		$from     = 'USD';
 		$to       = 'UAH';
 		$amount   = 100;
-		$options = array(
+		$options = [
 			'provider' => $provider,
 			'type'     => $type,
 			'amount'   => $amount,
 			'from'     => $from,
 			'to'       => $to,
-		);
+		];
 		$value = $currency__api->conversion( $options );
-		$data[] = $options + array( 'value' => $value );
+		$data[] = $options + [ 'value' => $value ];
 		// --
 		$options[ 'from' ] = $to;
 		$options[ 'to'   ] = $from;
 		$value = $currency__api->conversion( $options );
-		$data[] = $options + array( 'value' => $value );
-		$r = $this->_add_panel(array( 'header' => 'Conversion currency api',
+		$data[] = $options + [ 'value' => $value ];
+		$r = $this->_add_panel([ 'header' => 'Conversion currency api',
 			'php' => var_export( $data, true )
-		));
+		]);
 		$result[] = $r;
 		// conversion UNT to UAH
-		$data = array();
+		$data = [];
 		$currency_id = 'UAH';
 		$amount      = 100;
 		$type        = 'buy';
-		$options = array(
+		$options = [
 			'currency_id' => $currency_id,
 			'amount'      => $amount,
-		);
+		];
 		$options[ 'type' ] = $type;
 		$data[ $type ] = $payment_api->currency_conversion( $options );
 		// --
 		$type = 'sell';
 		$options[ 'type' ] = $type;
 		$data[ $type ] = $payment_api->currency_conversion( $options );
-		$data = array(
+		$data = [
 			'amount'   => $amount,
 			'from'     => 'UNT',
 			'to'       => $currency_id,
-		) + $data;
-		$r = $this->_add_panel(array( 'header' => 'Conversion payment api',
+		] + $data;
+		$r = $this->_add_panel([ 'header' => 'Conversion payment api',
 			'php' => var_export( $data, true )
-		));
+		]);
 		$result[] = $r;
 		// USD, EUR to UAH
-		$data = array();
+		$data = [];
 		$provider    = 'NBU';
 		$currency_id = 'USD';
-		$options = array( 'provider'    => $provider );
+		$options = [ 'provider'    => $provider ];
 		$options[ 'currency_id' ] = $currency_id;
 		$data[ $currency_id ] = $payment_api->currency_rate( $options );
 		$currency_id = 'EUR';
 		$options[ 'currency_id' ] = $currency_id;
 		$data[ $currency_id ] = $payment_api->currency_rate( $options );
-		$r = $this->_add_panel(array( 'header' => $provider, 'php' => var_export( $data, true ) ));
+		$r = $this->_add_panel([ 'header' => $provider, 'php' => var_export( $data, true ) ]);
 		$result[] = $r;
 		// UNT
 		$currency_id = 'UNT';
 		$buy  = $payment_api->currency_rates__buy();
 		$sell = $payment_api->currency_rates__sell();
-		$r = $this->_add_panel( array(
+		$r = $this->_add_panel( [
 			'header' => $currency_id,
-			'php'    => var_export( array(
+			'php'    => var_export( [
 				'buy'  => $buy,
 				'sell' => $sell,
-			), true ),
-		));
+			], true ),
+		]);
 		$result[] = $r;
 		// USD
 		$currency_id = 'USD';
-		$buy  = $payment_api->currency_rates__buy( array( 'currency_id' => $currency_id ));
-		$sell = $payment_api->currency_rates__sell(array( 'currency_id' => $currency_id ));
-		$r = $this->_add_panel( array(
+		$buy  = $payment_api->currency_rates__buy( [ 'currency_id' => $currency_id ]);
+		$sell = $payment_api->currency_rates__sell([ 'currency_id' => $currency_id ]);
+		$r = $this->_add_panel( [
 			'header' => $currency_id,
-			'php'    => var_export( array(
+			'php'    => var_export( [
 				'buy'  => $buy,
 				'sell' => $sell,
-			), true ),
-		));
+			], true ),
+		]);
 		$result[] = $r;
 		// finish
 		$this->_render( $result );
@@ -1300,15 +1300,15 @@ EOS;
 	protected function number() {
 		$value = 12345.1234;
 		$payment_api = _class( 'payment_api' );
-		$result = $payment_api->money_format( array(
+		$result = $payment_api->money_format( [
 			'format' => 'html',
 			'sign'   => true,
 			'nbsp'   => true,
 			'value'  => $value,
-		));
-		$result .= '<br>'. $payment_api->money_html( array(
+		]);
+		$result .= '<br>'. $payment_api->money_html( [
 			'value'  => $value,
-		));
+		]);
 		$result .= '<br>'. $payment_api->money_html( $value );
 		echo( $result );
 	}
@@ -1319,16 +1319,16 @@ EOS;
 			$payment_api = _class( 'payment_api' );
 			$dump = $payment_api->dump();
 			if( empty( $_GET[ 'server' ] ) ) {
-				$result = $this->_add_panel( array(
+				$result = $this->_add_panel( [
 					'header' => 'Тест ответа: ',
 					'php'    => $dump,
-				));
+				]);
 				$this->_render( $result );
 			}
 			exit();
 		}
 		$this->_init_options();
-		$provider = array(
+		$provider = [
 			'Privat24',
 			'LiqPay',
 			'Interkassa',
@@ -1336,28 +1336,28 @@ EOS;
 			'WebMoney',
 			'Ecommpay',
 			'PerfectMoney',
-		);
-		$_provider = array();
+		];
+		$_provider = [];
 		foreach( $provider as $item ) {
 			if( !empty( $this->payin[ $item ] ) ) {
 				$_provider[] = $item;
 			}
 		}
-		$result = array();
+		$result = [];
 		$result += $this->_chunk( 'payin', $_provider );
 		$this->_render( $result );
 	}
 
 	protected function sign() {
-		$provider = array(
+		$provider = [
 			'Privat24',
 			'LiqPay',
 			'Interkassa',
 			'WebMoney',
 			'PerfectMoney',
 			// 'YandexMoney',
-		);
-		$result = array();
+		];
+		$result = [];
 		$result += $this->_chunk( 'sign', $provider );
 		$this->_render( $result );
 	}
@@ -1366,32 +1366,32 @@ EOS;
 		$api = _class( 'payment_api__provider_remote' );
 		$api->ENABLE = true;
 		// $api = _class( 'api' );
-		$ips = array(
+		$ips = [
 			'212.118.48.1',
 			'212.118.48.2',
 			'212.118.48.3',
 			'212.118.49.1',
 			'212.119.49.1',
-		);
-		$allow = array(
+		];
+		$allow = [
 			'212.118.48.1'    => true,
 			'212.118.48.2'    => true,
 			'212.118.48.*'    => true,
 			'212.118.48.0/24' => true,
 			'212.118.*.*'     => false,
-		);
-		$result = array();
+		];
+		$result = [];
 		$ip = $api->_ip();
 		$result[] = 'ip: '.       var_export( $ip, true );
 		$result[] = 'ip allow: '. var_export( $allow, true );
 		foreach( $ips as $ip ) {
-			$r = $api->_check_ip( array(
+			$r = $api->_check_ip( [
 				'ip'        => $ip,
 				'ip_filter' => $allow,
-			));
+			]);
 			$result[] = $ip .': '. var_export( $r, true );
 		}
-		$result = $this->_add_panel( array( 'header' => 'IP check', 'php' => $result ) );
+		$result = $this->_add_panel( [ 'header' => 'IP check', 'php' => $result ] );
 		return( $this->_render( $result ) );
 	}
 
@@ -1403,12 +1403,12 @@ EOS;
 		// header('Access-Control-Allow-Origin: *');
 		header('Access-Control-Allow-Methods: OPTIONS, HEAD, GET, POST, PUT, PATCH, DELETE');
 		header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Content-Range, Content-Disposition');
-		return( array(
+		return( [
 			'cors'   => 'ok',
 			'get'    => $_GET,
 			'post'   => $_POST,
 			'server' => $_SERVER,
-		));
+		]);
 	}
 
 	protected function js_cors() {
@@ -1483,7 +1483,7 @@ EOS;
 		$api     = _class( 'payment_api__provider_privat24' );
 		$form    = $api->_form( $options );
 		$submit  = '<img src="https://www.privat24.ua/img/logo_big2.png" />';
-		return( array( $form, $submit ) );
+		return( [ $form, $submit ] );
 	}
 
 	protected function _payin_liqpay( $title ) {
@@ -1491,7 +1491,7 @@ EOS;
 		$api = _class( 'payment_api__provider_liqpay' );
 		$form = $api->_form( $options );
 		$submit = '<img src="//static.liqpay.com/buttons/p1ru.radius.png" />';
-		return( array( $form, $submit ) );
+		return( [ $form, $submit ] );
 	}
 
 	protected function _payin_interkassa( $title ) {
@@ -1506,7 +1506,7 @@ EOS;
 		}
 		$form    = $api->_form( $options );
 		$submit  = '<img src="https://www.interkassa.com/img/ik_logo/Logo-RU-300dpi.png" />';
-		return( array( $form, $submit ) );
+		return( [ $form, $submit ] );
 	}
 
 	protected function _payin_yandexmoney( $title ) {
@@ -1541,7 +1541,7 @@ EOS;
 EOS;
  */
 		$submit  = '<img src="http://money.yandex.ru/b/blocks/full-site/_/uDftMQXR8pQKYR9NT08a17NSQ64.svg" />';
-		return( array( $form, $submit ) );
+		return( [ $form, $submit ] );
 	}
 
 	protected function _payin_WebMoney( $title ) {
@@ -1556,7 +1556,7 @@ EOS;
 		$api     = _class( 'payment_api__provider_webmoney' );
 		$form    = $api->_form( $options );
 		$submit  = '<img src="http://wiki.webmoney.ru/images/wm/logo-wm.png" />';
-		return( array( $form, $submit ) );
+		return( [ $form, $submit ] );
 	}
 
 	protected function _payin_ecommpay( $title ) {
@@ -1566,7 +1566,7 @@ EOS;
 		$options[ 'payment_group_id' ] = '1';
 		$form    = $api->_form( $options );
 		$submit  = '<img src="https://ecommpay.com/wp-content/uploads/2014/11/logo-prefinal-blue3.png" />';
-		return( array( $form, $submit ) );
+		return( [ $form, $submit ] );
 	}
 
 	protected function _payin_perfectmoney( $title ) {
@@ -1575,7 +1575,7 @@ EOS;
 		$options[ 'currency' ] = 'USD';
 		$form    = $api->_form( $options );
 		$submit  = '<img src="https://perfectmoney.is/img/logo3.png" />';
-		return( array( $form, $submit ) );
+		return( [ $form, $submit ] );
 	}
 
 
@@ -1589,7 +1589,7 @@ EOS;
 		$api->key( 'private', 'Z1LubP64rkt4e6Uw2kmPKDoCvobz9R9n' );
 		// request
 		$method = 'request';
-		$data = array(
+		$data = [
 			'amt'         => '10.20',
 			'ccy'         => 'USD',
 			'details'     => 'Пополнение счета (Приват24)',
@@ -1600,7 +1600,7 @@ EOS;
 			'return_url'  => 'http://spori.dev/api/payment/provider?name=privat24&operation=response&operation_id=3345',
 			'server_url'  => 'http://spori.dev/api/payment/provider?name=privat24&operation=response&server=true&operation_id=3345',
 			'signature'   => '8595eea657f3ccf8f83e5662f547154502586f60',
-		);
+		];
 		$sign = $api->signature( $data, $is_request = true );
 		$status = 'fail';
 		$sign == $data[ 'signature' ] && $status = 'ok';
@@ -1613,7 +1613,7 @@ EOS;
 		$status = 'fail';
 		$sign == $signature && $status = 'ok';
 		$form .= "\nsignature $method: $status";
-		return( array( 'php' => $form ) );
+		return( [ 'php' => $form ] );
 	}
 
 	protected function _sign_liqpay() {
@@ -1624,7 +1624,7 @@ EOS;
 		$api->key( 'private', 'a0LBAPAJ2UbSSo3xxybT6gZoslPgQra30S7bCQzp' );
 		// request
 		$method = 'request';
-		$data = array(
+		$data = [
 			'amount'      => '10.28',
 			'currency'    => 'USD',
 			'description' => 'Пополнение счета (LiqPay)',
@@ -1635,14 +1635,14 @@ EOS;
 			'server_url'  => 'http://spori.dev/api/payment/provider?name=liqpay&operation=response&server=true&operation_id=3338',
 			'sandbox'     => '1',
 			'signature'   => 'wAVbeMSXbTmutsnZip7nuMiRWgo=',
-		);
+		];
 		$sign = $api->signature( $data, $is_request = true );
 		$status = 'fail';
 		$sign == $data[ 'signature' ] && $status = 'ok';
 		$form .= "\nsignature $method: $status";
 		// response
 		$method = 'response';
-		$data = array (
+		$data = [
 			'signature'           => '7GVdRWffi28gwdypt7HsvDKMV+8=',
 			'receiver_commission' => '0.00',
 			'sender_phone'        => '380679041321',
@@ -1656,12 +1656,12 @@ EOS;
 			'amount'              => '0.10',
 			'public_key'          => 'i20715277130',
 			'version'             => '2',
-		);
+		];
 		$sign = $api->signature( $data, $is_request = false );
 		$status = 'fail';
 		$sign == $data[ 'signature' ] && $status = 'ok';
 		$form .= "\nsignature $method: $status";
-		return( array( 'php' => $form ) );
+		return( [ 'php' => $form ] );
 	}
 
 	protected function _sign_interkassa() {
@@ -1671,14 +1671,14 @@ EOS;
 		$api->key( 'private',      'xXceiJgnFURU0lq9' );
 		$api->key( 'private_test', 'xXceiJgnFURU0lq9' );
 		// md5
-		$ik = array(
+		$ik = [
 			'ik_co_id' => '54be5909bf4efc7f6b8ab8f5',
 			'ik_pm_no' => 'ID_4233',
 			'ik_am'    => '100.00',
 			'ik_cur'   => 'USD',
 			'ik_desc'  => 'Event Description',
 			'ik_sign'  => '6NSxzOTqMWxxupZo6tpQKg==',
-		);
+		];
 		$method = 'md5';
 		$api->hash_method( $method );
 		$sign = $api->signature( $ik );
@@ -1686,21 +1686,21 @@ EOS;
 		$sign == $ik[ 'ik_sign' ] && $status = 'ok';
 		$form .= "\nsignature $method: $status";
 		// sha256
-		$ik = array(
+		$ik = [
 			'ik_co_id' => '54be5909bf4efc7f6b8ab8f5',
 			'ik_pm_no' => 'ID_4233',
 			'ik_am'    => '100.00',
 			'ik_cur'   => 'USD',
 			'ik_desc'  => 'Event Description',
 			'ik_sign'  => 'Z9srOHmyWMMJTj204V9pga5BXqo13LVHyxCgNaG6xwU=',
-		);
+		];
 		$method = 'sha256';
 		$api->hash_method( $method );
 		$sign = $api->signature( $ik );
 		$status = 'fail';
 		$sign == $ik[ 'ik_sign' ] && $status = 'ok';
 		$form .= "\nsignature $method: $status";
-		return( array( 'php' => $form ) );
+		return( [ 'php' => $form ] );
 	}
 
 	protected function _sign_webmoney() {
@@ -1709,7 +1709,7 @@ EOS;
 		// test signature
 		$api->key( 'private',      'hqbGLbbdg1IGSCwB30AG' );
 		// sha256
-		$data = array(
+		$data = [
 			'LMI_PAYEE_PURSE'      => 'Z272631242756',
 			'LMI_PAYMENT_AMOUNT'   => '10.01',
 			'LMI_PAYMENT_NO'       => '1234',
@@ -1726,14 +1726,14 @@ EOS;
 			'LMI_PAYMENT_DESC'     => 'Пополнение счета',
 			'LMI_LANG'             => 'ru-RU',
 			'LMI_DBLCHK'           => 'ENUM',
-		);
+		];
 		$method = 'sha256';
 		$api->hash_method( $method );
 		$sign = $api->signature( $data );
 		$status = 'fail';
 		$sign == $data[ 'LMI_HASH' ] && $status = 'ok';
 		$form .= "\nsignature $method: $status";
-		return( array( 'php' => $form ) );
+		return( [ 'php' => $form ] );
 	}
 
 	protected function _sign_PerfectMoney() {
@@ -1742,7 +1742,7 @@ EOS;
 		// test signature
 		$api->key( 'private', "ohboyi'msogood1" );
 		// with PAYMENT_ID
-		$data = array(
+		$data = [
 			'PAYMENT_ID'        => 'AB-123',
 			'PAYEE_ACCOUNT'     => 'U123456',
 			'PAYMENT_AMOUNT'    => '300.00',
@@ -1750,7 +1750,7 @@ EOS;
 			'PAYMENT_BATCH_NUM' => '789012',
 			'PAYER_ACCOUNT'     => 'U456789',
 			'TIMESTAMPGMT'      => '876543210',
-		);
+		];
 		$v2_hash = '1CC09524986EDC51F7BEA9E6973F5187';
 		$sign = $api->signature( $data );
 		$status = 'fail';
@@ -1758,7 +1758,7 @@ EOS;
 		$form .= "\nsignature with operation_id: $status";
 		$status == 'fail' && $form .= "\n$v2_hash != $sign";
 		// without PAYMENT_ID
-		$data = array(
+		$data = [
 			// 'PAYMENT_ID'        => 'AB-123',
 			'PAYEE_ACCOUNT'     => 'U123456',
 			'PAYMENT_AMOUNT'    => '300.00',
@@ -1766,14 +1766,14 @@ EOS;
 			'PAYMENT_BATCH_NUM' => '789012',
 			'PAYER_ACCOUNT'     => 'U456789',
 			'TIMESTAMPGMT'      => '876543210',
-		);
+		];
 		$v2_hash = 'CA3708D5766BD2414719FFE744D2C5CC';
 		$sign = $api->signature( $data );
 		$status = 'fail';
 		$sign == $v2_hash && $status = 'ok';
 		$form .= "\nsignature without operation_id: $status";
 		$status == 'fail' && $form .= "\n$v2_hash != $sign";
-		return( array( 'php' => $form ) );
+		return( [ 'php' => $form ] );
 	}
 
 	protected function _sign_YandexMoney() {
@@ -1833,7 +1833,7 @@ EOS;
  */
 		// without label
 		$api->key( 'private', '01234567890ABCDEF01234567890' );
-		$data = array(
+		$data = [
 			'notification_type' => 'p2p-incoming',
 			'operation_id'      => '1234567',
 			'amount'            => '300.00',
@@ -1843,7 +1843,7 @@ EOS;
 			'codepro'           => 'false',
 			'sha1_hash'         => '090a8e7ebb6982a7ad76f4c0f0fa5665d741aafa',
 			'withdraw_amount'   => '100.00',
-		);
+		];
 		$hash = $data[ 'sha1_hash' ];
 		$sign = $api->signature( $data );
 		$status = 'fail';
@@ -1859,7 +1859,7 @@ EOS;
 		$sign == $hash && $status = 'ok';
 		$form .= "\nsignature with label: $status";
 		$status == 'fail' && $form .= "\n$hash != $sign";
-		return( array( 'php' => $form ) );
+		return( [ 'php' => $form ] );
 	}
 
 	// ********************************* util
@@ -1886,7 +1886,7 @@ EOS;
 	protected function _options( $title, $options = null ) {
 		$_ = &$this->options;
 		is_array( $_ ) && extract( $_, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$result = (array)$options + array(
+		$result = (array)$options + [
 			'amount'       => $_amount,
 			'currency'     => 'UAH',
 			'operation_id' => $_operation_id,
@@ -1894,14 +1894,14 @@ EOS;
 			'description'  => "Пополнение счета ({$title}): {$_amount} грн.",
 			'url_result'   => $_url_result,
 			'url_server'   => $_url_server,
-		);
+		];
 		return( $result );
 	}
 
 	protected function _chunk( $name, $title ) {
 		if( is_array( $title ) ) {
 			$chunks = &$title;
-			$result = array();
+			$result = [];
 			foreach( $chunks as $item ) {
 				$result[ $item ] = $this->_chunk( $name, $item );
 			}
@@ -1915,12 +1915,12 @@ EOS;
 		if( $name == 'sign' ) {
 			$data[ 'lang' ] = 'http';
 		}
-		$data += array(
+		$data += [
 			'name'  => $name,
 			'title' => $title,
-		);
-		isset( $data[ 0 ] ) && $data += array( 'form'   => $data[ 0 ] );
-		isset( $data[ 1 ] ) && $data += array( 'submit' => $data[ 1 ] );
+		];
+		isset( $data[ 0 ] ) && $data += [ 'form'   => $data[ 0 ] ];
+		isset( $data[ 1 ] ) && $data += [ 'submit' => $data[ 1 ] ];
 		$result = $this->_add_chunk( $data );
 		return( $result );
 	}
@@ -1942,7 +1942,7 @@ EOS;
 		// data
 		if( @$_php ) { $data = is_array( $_php ) ? implode( "\n", $_php ) : $_php; $lang = 'php'; }
 		elseif( @$_form ) { $data = $_form; $lang = 'html'; }
-		$html_data = array();
+		$html_data = [];
 		foreach( (array)$data as $item ) {
 			$html_data[] = htmlentities( trim( $item ) );
 		}

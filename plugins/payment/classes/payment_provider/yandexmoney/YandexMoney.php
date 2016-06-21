@@ -2,7 +2,7 @@
 
 class YandexMoney {
 
-	protected $_signature_allow = array(
+	protected $_signature_allow = [
 		'notification_type',
 		'operation_id',
 		'amount',
@@ -12,7 +12,7 @@ class YandexMoney {
 		'codepro',
 		'notification_secret',
 		'label',
-	);
+	];
 
 	private $_key_public       = null;
 	private $_key_private      = null;
@@ -29,7 +29,7 @@ class YandexMoney {
 	}
 
 	public function key( $name = 'public', $value = null ) {
-		if( !in_array( $name, array( 'public', 'private' ) ) ) {
+		if( !in_array( $name, [ 'public', 'private' ] ) ) {
 			return( null );
 		}
 		$_name  = '_key_' . $name;
@@ -42,7 +42,7 @@ class YandexMoney {
 
 	public function signature( $options, $is_request = true ) {
 		$_ = &$options;
-		$data = array();
+		$data = [];
 		// add allow fields
 		foreach( (array)$this->_signature_allow as $key  ) {
 			if( $key == 'notification_secret' ) {

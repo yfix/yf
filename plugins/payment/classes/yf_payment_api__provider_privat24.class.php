@@ -12,80 +12,80 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	public $IS_PAYMENT    = true;
 
 	public $_api_request_timeout = 30;  // sec
-	public $method_allow = array(
-		'order' => array(
-			'payin' => array(
+	public $method_allow = [
+		'order' => [
+			'payin' => [
 				'private',
-			),
-			'payout' => array(
+			],
+			'payout' => [
 				'pay_pb',
 				'pay_visa',
-			),
-		),
-		'payin' => array(
-			'private' => array(
+			],
+		],
+		'payin' => [
+			'private' => [
 				'title'       => 'Приват Банк',
 				'icon'        => 'privat24',
 				'fee'         => 0, // 0.1%
-				'currency' => array(
-					'UAH' => array(
+				'currency' => [
+					'UAH' => [
 						'currency_id' => 'UAH',
 						'active'      => true,
-					),
-				),
-			),
-		),
-		'payout' => array(
-			'pay_pb' => array(
+					],
+				],
+			],
+		],
+		'payout' => [
+			'pay_pb' => [
 				'title' => 'Приват24',
 				'icon'  => 'privat24',
 				'amount_min' => 100,
-				'field' => array(
+				'field' => [
 					'b_card_or_acc',
 					'amt',
 					'ccy',
 					'details',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'account',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'account' => 'Счет',
-				),
-			),
-			'pay_visa' => array(
+				],
+			],
+			'pay_visa' => [
 				'title' => 'Visa',
 				'icon'  => 'visa',
 				'amount_min' => 100,
-				'field' => array(
+				'field' => [
 					'b_name',
 					'b_card_or_acc',
 					'amt',
 					'ccy',
 					'details',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'name',
 					'account',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'name'    => 'ФИО получателя',
 					'account' => 'Счет',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
-	public $_xml_transform = array(
+	public $_xml_transform = [
 		'amount'       => 'amt',
 		'currency'     => 'ccy',
 		'title'        => 'details',
 		'operation_id' => 'payment_id',
 		'account'      => 'b_card_or_acc',
 		'name'         => 'b_name',
-	);
+	];
 
-	public $_options_transform = array(
+	public $_options_transform = [
 		'amount'       => 'amt',
 		'currency'     => 'ccy',
 		'title'        => 'details',
@@ -96,25 +96,25 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		'url_server'   => 'server_url',
 		'public_key'   => 'merchant',
 		'key_public'   => 'merchant',
-	);
+	];
 
-	public $_options_transform_reverse = array(
+	public $_options_transform_reverse = [
 		'amt'         => 'amount',
 		'ccy'         => 'currency',
 		'details'     => 'title',
 		'ext_details' => 'description',
 		'order'       => 'operation_id',
 		'merchant'    => 'public_key',
-	);
+	];
 
-	public $_status = array(
+	public $_status = [
 		'ok'   => 'success',
 		'wait' => 'in_progress',
 		'fail' => 'refused',
-	);
+	];
 
 	public $currency_default = 'UAH';
-	public $currency_allow = array(
+	public $currency_allow = [
 /*
 		'USD' => array(
 			'currency_id' => 'USD',
@@ -125,17 +125,17 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			'active'      => true,
 		),
  */
-		'UAH' => array(
+		'UAH' => [
 			'currency_id' => 'UAH',
 			'active'      => true,
-		),
-	);
+		],
+	];
 
 	public $fee = 2; // 2%
 
-	public $service_allow = array(
+	public $service_allow = [
 		'Приват24',
-	);
+	];
 
 	public $url_result = null;
 	public $url_server = null;
@@ -179,10 +179,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 
 	public function api_payout( $method, $options ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'payout',
 			'method_id' => $method,
-		));
+		]);
 		if( !is_array( $method ) ) { return( null ); }
 		$payment_api = &$this->payment_api;
 		// import options
@@ -195,17 +195,17 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		}
 		// default
 		$_amt  = number_format( $_amt, 2, '.', '' );
-		$_ccy  = $payment_api->_default( array( $_ccy, $this->currency_default ) );
+		$_ccy  = $payment_api->_default( [ $_ccy, $this->currency_default ] );
 		$_wait = $_wait ?: $this->_api_request_timeout;
-		$_test = $payment_api->_default( array( $_test, $this->TEST_MODE ) );
+		$_test = $payment_api->_default( [ $_test, $this->TEST_MODE ] );
 		// $_test = (int)$_test;
 		foreach( $method[ 'field' ] as $name ) {
 			$value = &${ '_'.$name };
 			if( !isset( $value ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Отсутствуют данные запроса',
-				);
+				];
 				return( $result );
 			}
 		}
@@ -256,17 +256,17 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$error = libxml_get_errors();
 		if( $error ) {
 			libxml_clear_errors();
-			$result = array(
+			$result = [
 				'status'         => null,
 				'status_message' => 'Ошибка ответа: неверная структура данных',
-			);
+			];
 			return( $result );
 		}
 		if( $xml_response->getName() == 'error' ) {
-			$result = array(
+			$result = [
 				'status'         => null,
 				'status_message' => 'Ошибка ответа: неверные данные - ' . (string)$xml_response,
-			);
+			];
 			return( $result );
 		}
 		// ----- check response
@@ -274,10 +274,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$value = $key_public;
 		$r_value = (string)$xml_response->merchant->id;
 		if( $value != $r_value ) {
-			$result = array(
+			$result = [
 				'status'         => null,
 				'status_message' => 'Ошибка ответа: неверный публичный ключ (merchant)',
-			);
+			];
 			return( $result );
 		}
 		// signature
@@ -286,10 +286,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$value = $this->api->str_to_sign( $data );
 		$r_value = (string)$xml_response->merchant->signature;
 		if( $value != $r_value ) {
-			$result = array(
+			$result = [
 				'status'         => null,
 				'status_message' => 'Ошибка ответа: неверный подпись (signature)',
-			);
+			];
 			return( $result );
 		}
 		// payment
@@ -298,30 +298,30 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$value = $_payment_id;
 		$r_value = (string)$xml_response_payment->id;
 		if( $value != $r_value ) {
-			$result = array(
+			$result = [
 				'status'         => null,
 				'status_message' => 'Ошибка ответа: неверный номер операции (operation_id)',
-			);
+			];
 			return( $result );
 		}
 		// amt
 		$value = $_amt;
 		$r_value = (string)$xml_response_payment->amt;
 		if( $value != $r_value ) {
-			$result = array(
+			$result = [
 				'status'         => null,
 				'status_message' => 'Ошибка ответа: неверная сумма (amt)',
-			);
+			];
 			return( $result );
 		}
 		// ccy
 		$value = $_ccy;
 		$r_value = (string)$xml_response_payment->ccy;
 		if( $value != $r_value ) {
-			$result = array(
+			$result = [
 				'status'         => null,
 				'status_message' => 'Ошибка ответа: неверная валюта (ccy)',
-			);
+			];
 			return( $result );
 		}
 		// state
@@ -336,7 +336,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		} else {
 			$status_message = 'Платеж забракован';
 		}
-		return( array( $status, $status_message ) );
+		return( [ $status, $status_message ] );
 	}
 
 	public function _form_options( $options ) {
@@ -371,16 +371,16 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$_ = &$options;
 		// START DUMP
 		$payment_api = $this->payment_api;
-		$payment_api->dump(array( 'name' => 'Privat24', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ));
+		$payment_api->dump([ 'name' => 'Privat24', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ]);
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
 		// DUMP
-		$payment_api->dump(array( 'var' => $form_options ));
+		$payment_api->dump([ 'var' => $form_options ]);
 		$signature    = $this->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
 		$url = $this->URL . 'ishop';
-		$result = array();
+		$result = [];
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
@@ -415,18 +415,18 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		// $signature = '585b0c173ec36300a5ff77f6cbd9f195492f0c0d';
 		// check signature
 		if( empty( $signature ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
-			);
+			];
 			return( $result );
 		}
 		$_signature = $this->signature( $payment, $is_request = false );
 		if( $signature != $_signature ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
-			);
+			];
 			return( $result );
 		}
 		// update operation
@@ -435,10 +435,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$public_key = $response[ 'public_key' ];
 		$_public_key = $this->KEY_PUBLIC;
 		if( $public_key != $_public_key ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ключ (merchant)',
-			);
+			];
 			return( $result );
 		}
 		// check status
@@ -447,19 +447,19 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		if( $this->TEST_MODE && $state == 'test' ) { $state = 'ok'; }
 		list( $status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
-		$result = $this->_api_deposition( array(
+		$result = $this->_api_deposition( [
 			'provider_name'  => 'privat24',
 			'response'       => $response,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
-		));
+		]);
 		return( $result );
 	}
 
 	public function _response_parse( $response ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$options = explode( '&', $response );
-		$_ = array();
+		$_ = [];
 		foreach( (array)$options as $option ) {
 			list( $key, $value ) = explode( '=', $option );
 			$_[ $key ] = $value;

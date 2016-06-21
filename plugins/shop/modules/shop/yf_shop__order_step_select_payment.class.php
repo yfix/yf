@@ -44,14 +44,14 @@ class yf_shop__order_step_select_payment{
 		} */
 		$hidden_fields .= module('shop')->_hidden_field('card_num', $_POST['card_num']);
 		$hidden_fields .= module('shop')->_hidden_field('exp_date', $_POST['exp_date']);
-		$replace = array(
+		$replace = [
 			"form_action"	=> "./?object=shop&action=".$_GET["action"]."&id=".$SELF_METHOD_ID,
 			"error_message"	=> _e(),
 			"pay_type_box"	=> module('shop')->_box("pay_type", $DATA["pay_type"]),
 			"hidden_fields"	=> $hidden_fields,
 			"back_link"		=> "./?object=shop&action=order&id=delivery",
 			"cats_block"	=> module('shop')->_categories_show(),
-		);
+		];
 		return tpl()->parse("shop/order_select_payment", $replace);
 	}
 	

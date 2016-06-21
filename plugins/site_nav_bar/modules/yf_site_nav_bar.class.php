@@ -25,12 +25,12 @@ class yf_site_nav_bar {
 		if ($return_array) {
 			$this->_nav_item_as_array = true;
 		}
-		$items = array();
+		$items = [];
 		// Switch between specific actions
-		if (in_array($_GET['object'], array('', 'home_page'))) {
+		if (in_array($_GET['object'], ['', 'home_page'])) {
 			// Empty
 		} else {
-			if (!in_array($_GET['action'], array('', 'show'))) {
+			if (!in_array($_GET['action'], ['', 'show'])) {
 				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['object']), './?object='.$_GET['object']);
 				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['action']));
 			} else {
@@ -41,10 +41,10 @@ class yf_site_nav_bar {
 		if (!empty($this->HOOK_NAME)) {
 			$CUR_OBJ = module($_GET['object']);
 			if (is_object($CUR_OBJ) && method_exists($CUR_OBJ, $this->HOOK_NAME)) {
-				$hook_params = array(
+				$hook_params = [
 					'nav_bar_obj'	=> $this,
 					'items'			=> $items,
-				);
+				];
 				$func = $this->HOOK_NAME;
 				$hooked_items = $CUR_OBJ->$func($hook_params);
 			}
@@ -68,11 +68,11 @@ class yf_site_nav_bar {
 			$this->_nav_item_as_array = false;
 			return $items;
 		}
-		$replace = array(
+		$replace = [
 			'items'			=> implode(tpl()->parse(__CLASS__.'/div'), $items),
 			'is_logged_in'	=> intval((bool) (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0)),
 			'bookmark_page'	=> isset($bookmark_page_code) ? $bookmark_page_code : '',
-		);
+		];
 		return tpl()->parse(__CLASS__.'/main', $replace);
 	}
 
@@ -81,13 +81,13 @@ class yf_site_nav_bar {
 		if ($this->AUTO_TRANSLATE) {
 			$name = t($name);
 		}
-		$replace = array(
+		$replace = [
 			'name'			=> _prepare_html($name),
 			'link'			=> $nav_link,
 			'icon'			=> $nav_icon,
 			'as_link'		=> !empty($nav_link) ? 1 : 0,
 			'is_logged_in'	=> intval((bool) (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0)),
-		);
+		];
 		if ($this->_nav_item_as_array) {
 			return $replace;
 		}
@@ -107,11 +107,11 @@ class yf_site_nav_bar {
 	/**
 	*/
 	function _show_dropdown_menu () {
-		$items = _class('graphics')->_show_menu(array(
+		$items = _class('graphics')->_show_menu([
 			'name'				=> 'user_main_menu',
 			'force_stpl_name'	=> 'site_nav_bar/dropdown_menu',
 			'return_array'		=> 1,
-		));
+		]);
 		if (!$items) {
 			return false;
 		}
@@ -123,9 +123,9 @@ class yf_site_nav_bar {
 			}
 			$items[$id] = tpl()->parse('site_nav_bar/dropdown_menu_item', $item);
 		}
-		return tpl()->parse('site_nav_bar/dropdown_menu', array(
+		return tpl()->parse('site_nav_bar/dropdown_menu', [
 			'items' => implode('', (array)$items)
-		));
+		]);
 	}
 
 	/**
@@ -136,10 +136,10 @@ class yf_site_nav_bar {
 			return false;
 		}
 		foreach ($items as $v) {
-			$a[] = array(
+			$a[] = [
 				'link'	=> $v['as_link'] ? $v['link'] : false,
 				'name'	=> $v['name'],
-			);
+			];
 		}
 		css('.navbar { margin-bottom: 0; }');
 		return _class('html')->breadcrumbs($a);

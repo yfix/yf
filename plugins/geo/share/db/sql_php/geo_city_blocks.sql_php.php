@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'start_ip' => array(
+return [
+	'fields' => [
+		'start_ip' => [
 			'name' => 'start_ip',
 			'type' => 'int',
 			'length' => 8,
@@ -15,8 +15,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'end_ip' => array(
+		],
+		'end_ip' => [
 			'name' => 'end_ip',
 			'type' => 'int',
 			'length' => 8,
@@ -30,8 +30,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'loc_id' => array(
+		],
+		'loc_id' => [
 			'name' => 'loc_id',
 			'type' => 'int',
 			'length' => 6,
@@ -45,19 +45,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'end_ip' => 'end_ip',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];
