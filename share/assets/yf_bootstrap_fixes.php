@@ -1,6 +1,6 @@
 <?php
 
-return array('versions' => array('master' => array('css' => array(
+return ['versions' => ['master' => ['css' => [
 '
 .cke_source { min-width: 100%; }
 
@@ -108,4 +108,4 @@ td input[type=text], td textarea { margin-bottom:0; }
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color:#52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color:#c8c8c8; }
 '
-))));
+]]]];

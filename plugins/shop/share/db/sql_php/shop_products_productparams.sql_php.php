@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'product_id' => array(
+return [
+	'fields' => [
+		'product_id' => [
 			'name' => 'product_id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'productparam_id' => array(
+		],
+		'productparam_id' => [
 			'name' => 'productparam_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'value' => array(
+		],
+		'value' => [
 			'name' => 'value',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,12 +45,12 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+		],
+	],
+	'indexes' => [
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

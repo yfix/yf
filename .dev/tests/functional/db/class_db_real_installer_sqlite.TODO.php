@@ -9,7 +9,7 @@ class class_db_real_installer_sqlite_test extends db_real_abstract {
 	public static function setUpBeforeClass() {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'sqlite';
-		self::_connect(array('name' => STORAGE_PATH. DB_NAME.'.db'));
+		self::_connect(['name' => STORAGE_PATH. DB_NAME.'.db']);
 	}
 	public static function tearDownAfterClass() {
 		$db_file = STORAGE_PATH. DB_NAME.'.db';

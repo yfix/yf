@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'owner_id' => array(
+		],
+		'owner_id' => [
 			'name' => 'owner_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'action_name' => array(
+		],
+		'action_name' => [
 			'name' => 'action_name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'member_id' => array(
+		],
+		'member_id' => [
 			'name' => 'member_id',
 			'type' => 'int',
 			'length' => 11,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object_name' => array(
+		],
+		'object_name' => [
 			'name' => 'object_name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object_id' => array(
+		],
+		'object_id' => [
 			'name' => 'object_id',
 			'type' => 'int',
 			'length' => 11,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'add_date' => array(
+		],
+		'add_date' => [
 			'name' => 'add_date',
 			'type' => 'int',
 			'length' => 11,
@@ -105,19 +105,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

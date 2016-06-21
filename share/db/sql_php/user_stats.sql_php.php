@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'user_id' => array(
+return [
+	'fields' => [
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'group_id' => array(
+		],
+		'group_id' => [
 			'name' => 'group_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ads' => array(
+		],
+		'ads' => [
 			'name' => 'ads',
 			'type' => 'int',
 			'length' => 10,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'reviews' => array(
+		],
+		'reviews' => [
 			'name' => 'reviews',
 			'type' => 'int',
 			'length' => 10,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'gallery_photos' => array(
+		],
+		'gallery_photos' => [
 			'name' => 'gallery_photos',
 			'type' => 'int',
 			'length' => 10,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'blog_posts' => array(
+		],
+		'blog_posts' => [
 			'name' => 'blog_posts',
 			'type' => 'int',
 			'length' => 10,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'que_answers' => array(
+		],
+		'que_answers' => [
 			'name' => 'que_answers',
 			'type' => 'int',
 			'length' => 10,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'forum_posts' => array(
+		],
+		'forum_posts' => [
 			'name' => 'forum_posts',
 			'type' => 'int',
 			'length' => 10,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'comments' => array(
+		],
+		'comments' => [
 			'name' => 'comments',
 			'type' => 'int',
 			'length' => 10,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'articles' => array(
+		],
+		'articles' => [
 			'name' => 'articles',
 			'type' => 'int',
 			'length' => 10,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'interests' => array(
+		],
+		'interests' => [
 			'name' => 'interests',
 			'type' => 'int',
 			'length' => 10,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'favorite_users' => array(
+		],
+		'favorite_users' => [
 			'name' => 'favorite_users',
 			'type' => 'int',
 			'length' => 10,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ignored_users' => array(
+		],
+		'ignored_users' => [
 			'name' => 'ignored_users',
 			'type' => 'int',
 			'length' => 10,
@@ -195,8 +195,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'paid_orders' => array(
+		],
+		'paid_orders' => [
 			'name' => 'paid_orders',
 			'type' => 'int',
 			'length' => 10,
@@ -210,8 +210,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'friend_of' => array(
+		],
+		'friend_of' => [
 			'name' => 'friend_of',
 			'type' => 'int',
 			'length' => 10,
@@ -225,8 +225,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'friends' => array(
+		],
+		'friends' => [
 			'name' => 'friends',
 			'type' => 'int',
 			'length' => 10,
@@ -240,8 +240,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'nick' => array(
+		],
+		'nick' => [
 			'name' => 'nick',
 			'type' => 'varchar',
 			'length' => 255,
@@ -255,8 +255,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'profile_url' => array(
+		],
+		'profile_url' => [
 			'name' => 'profile_url',
 			'type' => 'varchar',
 			'length' => 255,
@@ -270,19 +270,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'user_id' => 'user_id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

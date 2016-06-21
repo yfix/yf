@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'site_id' => array(
+		],
+		'site_id' => [
 			'name' => 'site_id',
 			'type' => 'smallint',
 			'length' => 4,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 10,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'var' => array(
+		],
+		'var' => [
 			'name' => 'var',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'translation' => array(
+		],
+		'translation' => [
 			'name' => 'translation',
 			'type' => 'text',
 			'length' => NULL,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'locale' => array(
+		],
+		'locale' => [
 			'name' => 'locale',
 			'type' => 'varchar',
 			'length' => 12,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'int',
 			'length' => 10,
@@ -105,28 +105,28 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'locale_var_user_id' => array(
+			],
+		],
+		'locale_var_user_id' => [
 			'name' => 'locale_var_user_id',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'user_id' => 'user_id',
 				'var' => 'var',
 				'locale' => 'locale',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

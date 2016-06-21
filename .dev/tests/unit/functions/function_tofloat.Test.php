@@ -29,11 +29,11 @@ class function_tofloat_test extends yf_unit_tests {
 		$this->assertEquals(0, tofloat('some string not containing numbers'));
 		$this->assertEquals(1234, tofloat('01234'));
 		$this->assertEquals(-1234, tofloat('-01234'));
-		$this->assertEquals(array(12.341, 56.7811111), tofloat(array(12.341, '56,7811111')));
-		$this->assertEquals(array(12.341, -56.7811111), tofloat(array(12.341, '-56,7811111')));
-		$this->assertEquals(array(-12.341, -56.7811111), tofloat(array(-12.341, '-56,7811111')));
-		$this->assertEquals(array('k1' => 12.341, 'k2' => 56.7811111), tofloat(array('k1' => 12.341, 'k2' => '56,7811111')));
-		$this->assertEquals(array('k1' => 12.341, 'k2' => array(array(56.7811111))), tofloat(array('k1' => 12.341, 'k2' => array(array('56,7811111')))));
-		$this->assertEquals(array('k1' => 12.341, 'k2' => array(array(-56.7811111))), tofloat(array('k1' => 12.341, 'k2' => array(array('-56,7811111')))));
+		$this->assertEquals([12.341, 56.7811111], tofloat([12.341, '56,7811111']));
+		$this->assertEquals([12.341, -56.7811111], tofloat([12.341, '-56,7811111']));
+		$this->assertEquals([-12.341, -56.7811111], tofloat([-12.341, '-56,7811111']));
+		$this->assertEquals(['k1' => 12.341, 'k2' => 56.7811111], tofloat(['k1' => 12.341, 'k2' => '56,7811111']));
+		$this->assertEquals(['k1' => 12.341, 'k2' => [[56.7811111]]], tofloat(['k1' => 12.341, 'k2' => [['56,7811111']]]));
+		$this->assertEquals(['k1' => 12.341, 'k2' => [[-56.7811111]]], tofloat(['k1' => 12.341, 'k2' => [['-56,7811111']]]));
 	}
 }

@@ -24,7 +24,7 @@ class staff_model extends yf_model {
 		return 'first_name';
 	}
 	public function _rules() {
-		return array(
+		return [
 			'first_name, last_name, address_id, store_id, username, last_update' => 'required',
 			'address_id, store_id, active' => 'integer',
 			'first_name, last_name' => 'max_length[45]',
@@ -34,7 +34,7 @@ class staff_model extends yf_model {
 			'picture' => 'safe',
 			'picture, email, active, password' => 'default[NULL]',
 			'staff_id, first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update' => 'safe[on=search]',
-		);
+		];
 	}
 	public function payments() {
 		return $this->has_many('payment', 'staff_id');

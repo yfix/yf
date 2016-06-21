@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/vierbergenlars/php-semver.git' => 'php_semver/'),
-	'autoload_config' => array('php_semver/src/vierbergenlars/SemVer/' => 'vierbergenlars\SemVer'),
+$config = [
+	'git_urls' => ['https://github.com/vierbergenlars/php-semver.git' => 'php_semver/'],
+	'autoload_config' => ['php_semver/src/vierbergenlars/SemVer/' => 'vierbergenlars\SemVer'],
 	'example' => function() {
 		// Check if a version is valid
 		$semver = new vierbergenlars\SemVer\version('1.2.3');
@@ -30,5 +30,5 @@ $config = array(
 		$res = vierbergenlars\SemVer\version::lt('1.2.3', '9.8.7'); // true
 		var_dump($res);
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

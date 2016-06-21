@@ -20,11 +20,11 @@ class yf_image_manip {
 	public $ALLOW_IMAGICK			= 0;
 	/** @var array */
 // TODO: connect this
-	public $LIBS_PRIORITY			= array(
+	public $LIBS_PRIORITY			= [
 		"imagick",
 		"netpbm",
 		"gd",
-	);
+	];
 	/** @var bool */
 	public $AUTO_FIND_PATHS		= 1;
 	/** @var string */
@@ -64,7 +64,7 @@ class yf_image_manip {
 			$this->ALLOW_IMAGICK	= false;
 		}
 		if (empty($this->LIBS_PRIORITY)) {
-			$this->LIBS_PRIORITY = array("gd");
+			$this->LIBS_PRIORITY = ["gd"];
 		}
 	}
 
@@ -342,7 +342,7 @@ class yf_image_manip {
 		}
 		// Try to find path for the NETPBM
 		if ($this->ALLOW_NETPBM/* && (NETPBM_PATH == "NETPBM_PATH" || NETPBM_PATH == "")*/ && empty($this->FOUND_NETPBM_PATH)) {
-			$paths = array();
+			$paths = [];
 			if (OS_WINDOWS) {
 				$file_to_test = "pnmscale.exe";
 				foreach (explode(';', getenv('PATH')) as $path) {
@@ -397,7 +397,7 @@ class yf_image_manip {
 		}
 		// Try to find path for the ImageMagick
 		if ($this->ALLOW_IMAGICK/* && (IMAGICK_PATH == "IMAGICK_PATH" || IMAGICK_PATH == "")*/ && empty($this->FOUND_IMAGICK_PATH)) {
-			$paths = array();
+			$paths = [];
 			if (OS_WINDOWS) {
 				$file_to_test = "convert.exe";
 				foreach (explode(';', getenv('PATH')) as $path) {

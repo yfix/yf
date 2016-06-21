@@ -10,14 +10,14 @@ class yf_oauth_driver_yandex extends yf_oauth_driver2 {
 	protected $url_user = 'https://login.yandex.ru/info';
 	public $scope = '';
 	public $get_access_token_method = 'POST';
-	public $url_params_access_token = array(
+	public $url_params_access_token = [
 		'grant_type' => 'authorization_code',
-	);
+	];
 
 	/**
 	*/
-	function _get_user_info_for_auth($raw = array()) {
-		$user_info = array(
+	function _get_user_info_for_auth($raw = []) {
+		$user_info = [
 			'user_id'		=> $raw['id'],
 			'login'			=> $raw['display_name'],
 			'name'			=> $raw['real_name'],
@@ -26,7 +26,7 @@ class yf_oauth_driver_yandex extends yf_oauth_driver2 {
 #			'profile_url'	=> $raw['url'],
 			'birthday'		=> $raw['birthday'],
 			'gender'		=> $raw['sex'],
-		);
+		];
 		return $user_info;
 	}
 
@@ -43,10 +43,10 @@ class yf_oauth_driver_yandex extends yf_oauth_driver2 {
 			}
 		}
 		if (!$this->_storage_get('user')) {
-			$url = $this->url_user.'?'.http_build_query(array(
+			$url = $this->url_user.'?'.http_build_query([
 				'oauth_token'	=> $access_token,
 				'format'		=> 'json',
-			));
+			]);
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
 			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
@@ -54,7 +54,7 @@ class yf_oauth_driver_yandex extends yf_oauth_driver2 {
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			} else {
-				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
+				$this->_storage_set('user_info_request', ['result' => $result, 'response' => $response]);
 				$this->_storage_set('user', $result);
 			}
 		}

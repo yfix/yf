@@ -12,13 +12,13 @@ class yf_form2_ckeditor {
 	* 'www/' usually means PROJECT_PATH inside project working copy.
 	* P.S. You can use free CDN for ckeditor as alternate solution.
 	*/
-	function _ckeditor_html($extra = array(), $replace = array(), $form) {
+	function _ckeditor_html($extra = [], $replace = [], $form) {
 		if (!is_array($extra)) {
 			return '';
 		}
 		$params = $extra['ckeditor'];
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		js('ckeditor');
 		// Theme-wide ckeditor config inside stpl (so any engine vars can be processed or included there)

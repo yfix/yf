@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'name' => array(
+return [
+	'fields' => [
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 64,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'offset' => array(
+		],
+		'offset' => [
 			'name' => 'offset',
 			'type' => 'varchar',
 			'length' => 16,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'seconds' => array(
+		],
+		'seconds' => [
 			'name' => 'seconds',
 			'type' => 'int',
 			'length' => 11,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -59,23 +59,23 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+			],
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'name' => 'name',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   22 => 
-  array (
+  [
     'id' => '22',
     'parent' => '0',
     'forum' => '2',
@@ -23,9 +23,9 @@ return array (
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   23 => 
-  array (
+  [
     'id' => '23',
     'parent' => '0',
     'forum' => '2',
@@ -50,9 +50,9 @@ return array (
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   24 => 
-  array (
+  [
     'id' => '24',
     'parent' => '0',
     'forum' => '2',
@@ -81,9 +81,9 @@ return array (
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   25 => 
-  array (
+  [
     'id' => '25',
     'parent' => '0',
     'forum' => '2',
@@ -114,9 +114,9 @@ return array (
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   26 => 
-  array (
+  [
     'id' => '26',
     'parent' => '0',
     'forum' => '2',
@@ -137,9 +137,9 @@ return array (
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   27 => 
-  array (
+  [
     'id' => '27',
     'parent' => '0',
     'forum' => '2',
@@ -165,9 +165,9 @@ P.P.S Кстати желательно чтобы камера была с ви
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   28 => 
-  array (
+  [
     'id' => '28',
     'parent' => '0',
     'forum' => '2',
@@ -190,9 +190,9 @@ P.P.S Кстати желательно чтобы камера была с ви
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   29 => 
-  array (
+  [
     'id' => '29',
     'parent' => '0',
     'forum' => '2',
@@ -213,9 +213,9 @@ P.P.S Кстати желательно чтобы камера была с ви
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   30 => 
-  array (
+  [
     'id' => '30',
     'parent' => '0',
     'forum' => '2',
@@ -245,9 +245,9 @@ P.P.S Кстати желательно чтобы камера была с ви
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   31 => 
-  array (
+  [
     'id' => '31',
     'parent' => '0',
     'forum' => '2',
@@ -269,9 +269,9 @@ P.P.S Кстати желательно чтобы камера была с ви
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   32 => 
-  array (
+  [
     'id' => '32',
     'parent' => '0',
     'forum' => '2',
@@ -299,9 +299,9 @@ P.P.S Кстати желательно чтобы камера была с ви
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
+  ],
   33 => 
-  array (
+  [
     'id' => '33',
     'parent' => '0',
     'forum' => '2',
@@ -323,5 +323,5 @@ P.P.S Кстати желательно чтобы камера была с ви
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '10',
-  ),
-);
+  ],
+];

@@ -48,14 +48,14 @@ class yf_db_manager {
 	*/
 	function show () {
 		$data = $this->_get_tables_infos();
-		return table($data, array('id' => 'name', 'condensed' => 1, 'pager_records_on_page' => 10000))
+		return table($data, ['id' => 'name', 'condensed' => 1, 'pager_records_on_page' => 10000])
 // TODO: group actions: truncate, check, optimize, repair, drop(?)
-			->check_box('name', array('width' => '1%'))
+			->check_box('name', ['width' => '1%'])
 			->link('name', './?object='.$_GET['object'].'&action=table_show&id=%d')
-			->text('rows', array('width' => '1%'))
-			->text('data_size', array('width' => '1%'))
-			->text('engine', array('width' => '1%'))
-			->text('collation', array('width' => '1%'))
+			->text('rows', ['width' => '1%'])
+			->text('data_size', ['width' => '1%'])
+			->text('engine', ['width' => '1%'])
+			->text('collation', ['width' => '1%'])
 			->btn('Structure', './?object='.$_GET['object'].'&action=table_structure&id=%d')
 			->btn('Export', './?object='.$_GET['object'].'&action=table_export&id=%d')
 			->header_link('import sql', './?object='.$_GET['object'].'&action=import')
@@ -83,7 +83,7 @@ class yf_db_manager {
 		if (!$table) {
 			return _e('Wrong params');
 		}
-		return table2('SELECT * FROM '.db($table), array('auto_no_buttons' => 1))
+		return table2('SELECT * FROM '.db($table), ['auto_no_buttons' => 1])
 			->btn_edit('', url('/@object/table_edit/%d/?table='.$table))
 			->btn_delete('', url('/@object/table_delete/%d/?table='.$table))
 			->footer_add('', url('/@object/table_add/'.$table))
@@ -98,13 +98,13 @@ class yf_db_manager {
 		if (!$id || !$table) {
 			return _e('Wrong params');
 		}
-		$replace = _class('admin_methods')->edit(array(
+		$replace = _class('admin_methods')->edit([
 			'table' 	=> $table,
 			'links_add' => '&table='.$table,
 			'back_link'	=> url('/@object/table_show/'.$table),
-		));
+		]);
 		return form2($replace)
-			->auto(db($table), $id, array('links_add' => '&table='.$table));
+			->auto(db($table), $id, ['links_add' => '&table='.$table]);
 	}
 
 	/**
@@ -114,13 +114,13 @@ class yf_db_manager {
 		if (!$table) {
 			return _e('Wrong params');
 		}
-		$replace = _class('admin_methods')->add(array(
+		$replace = _class('admin_methods')->add([
 			'table' 	=> $table,
 			'links_add' => '&table='.$table,
 			'back_link'	=> url('/@object/table_show/'.$table),
-		));
+		]);
 		return form2($replace)
-			->auto(db($table), $id, array('links_add' => '&table='.$table));
+			->auto(db($table), $id, ['links_add' => '&table='.$table]);
 	}
 
 	/**
@@ -131,7 +131,7 @@ class yf_db_manager {
 		if (!$id || !$table) {
 			return _e('Wrong params');
 		}
-		return _class('admin_methods')->delete(array('table' => $table, 'links_add' => '&table='.$table));
+		return _class('admin_methods')->delete(['table' => $table, 'links_add' => '&table='.$table]);
 	}
 
 	/**
@@ -146,10 +146,10 @@ class yf_db_manager {
 		$body .= '<h1>'.$table.'</h1>';
 
 		$body .= '<h3>'.t('Columns').'</h3>';
-		$body .= table(db()->get_all('SHOW FULL COLUMNS FROM '.$table), array('auto_no_buttons' => 1))->auto();
+		$body .= table(db()->get_all('SHOW FULL COLUMNS FROM '.$table), ['auto_no_buttons' => 1])->auto();
 
 		$body .= '<h3>'.t('Indexes').'</h3>';
-		$body .= table(db()->get_all('SHOW INDEX FROM '.$table), array('auto_no_buttons' => 1))->auto();
+		$body .= table(db()->get_all('SHOW INDEX FROM '.$table), ['auto_no_buttons' => 1])->auto();
 
 		$body .= '<h3>'.t('SHOW CREATE TABLE').'</h3>';
 		list(, $create_table) = array_values(db()->get('SHOW CREATE TABLE '.$table));
@@ -273,13 +273,13 @@ class yf_db_manager {
 				if (substr($table_name, 0, strlen(DB_PREFIX)) != DB_PREFIX) {
 					continue;
 				}
-				$tables_infos[$table_name] = array(
+				$tables_infos[$table_name] = [
 					'name'		=> $table_name,
 					'engine'	=> $A['Engine'],
 					'rows'		=> $A['Rows'],
 					'data_size'	=> $A['Data_length'],
 					'collation'	=> $A['Collation'],
-				);
+				];
 			}
 		} else {
 			$Q = db()->query('SHOW TABLES LIKE "'.DB_PREFIX.'%"');
@@ -288,13 +288,13 @@ class yf_db_manager {
 				if (substr($table_name, 0, strlen(DB_PREFIX)) != DB_PREFIX) {
 					continue;
 				}
-				$tables_infos[$table_name] = array(
+				$tables_infos[$table_name] = [
 					'name'		=> $table_name,
 					'engine'	=> '',
 					'rows'		=> '',
 					'data_size'	=> '',
 					'collation'	=> '',
-				);
+				];
 			}
 		}
 		return $tables_infos;
@@ -333,7 +333,7 @@ class yf_db_manager {
 		}
 
 		$exec_success = false;
-		$splitted_sql = array();
+		$splitted_sql = [];
 
 		$POSTED_SQL = $_POST['sql'] ? $_POST['sql'] : urldecode($_GET['id']);
 		if (!empty($POSTED_SQL)) {
@@ -343,10 +343,10 @@ class yf_db_manager {
 				$result = db()->query($query);
 				if (!$result) {
 					$db_error = db()->error();
-					_re(t('Error while executing the query<br>@text1<br>CAUSE: @text2', array(
+					_re(t('Error while executing the query<br>@text1<br>CAUSE: @text2', [
 						'@text1' => nl2br(_prepare_html($query, 0)), 
 						'@text2' => $db_error['message'],
-					)));
+					]));
 					break;
 				}
 			}
@@ -366,13 +366,13 @@ class yf_db_manager {
 		}
 		$last_query_total = 0;
 
-		$data = array();
+		$data = [];
 		if ($last_query) {
-			$tmp_last_query = preg_replace('#/\*.*?\*/#ms', '', preg_replace('#\s+#', ' ', str_replace(array("\r","\n","\t"), ' ', trim($last_query))));
+			$tmp_last_query = preg_replace('#/\*.*?\*/#ms', '', preg_replace('#\s+#', ' ', str_replace(["\r","\n","\t"], ' ', trim($last_query))));
 			$tmp_last_query = trim($tmp_last_query, ')({}[]');
 			list($tmp_first_keyword,) = explode(' ', $tmp_last_query);
 			$tmp_first_keyword = strtoupper($tmp_first_keyword);
-			if (in_array($tmp_first_keyword, array('SELECT','SHOW','DESCRIBE','EXPLAIN'))) {
+			if (in_array($tmp_first_keyword, ['SELECT','SHOW','DESCRIBE','EXPLAIN'])) {
 
 				$last_query_total = db()->num_rows($result);
 				if (!preg_match('/\sLIMIT\s+[0-9]+/ims', $last_query) && $tmp_first_keyword == 'SELECT') {
@@ -387,18 +387,18 @@ class yf_db_manager {
 		if (!empty($data)) {
 			$fetch_result .= '<div class="alert alert-info"><pre>'._prepare_html($last_query).'</pre></div>'
 				.'Total records: <b>'.intval($last_query_total).'</b><br>';
-			$fetch_result .= table($data, array('auto_no_buttons' => 1, 'no_pages' => 1))->auto();
+			$fetch_result .= table($data, ['auto_no_buttons' => 1, 'no_pages' => 1])->auto();
 		}
-		$replace = array(
+		$replace = [
 			'form_action'		=> url('/@object/@action'),
 			'error_message'		=> _e(),
-			'sql'				=> strlen($sql) < 10000 ? nl2br(_prepare_html($sql, 0)) : t('%num queries executed successfully', array('%num' => $num_queries)),
+			'sql'				=> strlen($sql) < 10000 ? nl2br(_prepare_html($sql, 0)) : t('%num queries executed successfully', ['%num' => $num_queries]),
 			'exec_success'		=> (int)($exec_success),
 			'exec_time'			=> $_query_exec_time ? common()->_format_time_value($_query_exec_time) : '',
 			'back_link'			=> url('/@object'),
 			'num_queries'		=> intval($num_queries),
 			'fetch_result'		=> $fetch_result,
-		);
+		];
 // TODO: form display file upload to import
 		return tpl()->parse('@object/import', $replace);
 	}
@@ -406,17 +406,17 @@ class yf_db_manager {
 	/**
 	* Export SQL
 	*/
-	function table_export ($params = array()) {
+	function table_export ($params = []) {
 		$SINGLE_TABLE = !empty($_GET['table']) ? DB_PREFIX. $_GET['table'] : '';
 		if ($SINGLE_TABLE) {
 			$A = db()->query_fetch('SHOW TABLE STATUS LIKE "'.$SINGLE_TABLE.'"');
-			$_single_table_info = array(
+			$_single_table_info = [
 				'name'		=> $A['Name'],
 				'engine'	=> $A['Engine'],
 				'rows'		=> $A['Rows'],
 				'data_size'	=> $A['Data_length'],
 				'collation'	=> $A['Collation'],
-			);
+			];
 		}
 		if (!isset($this->_tables_names)) {
 			foreach ((array)db()->meta_tables() as $cur_table_name) {
@@ -455,7 +455,7 @@ class yf_db_manager {
 				$EXPORT_TYPE = $params['export_type'];
 			}
 			$EXPORTED_SQL		= '';
-			$tables_to_export = array();
+			$tables_to_export = [];
 
 			if (!empty($SINGLE_TABLE)) {
 				$tables_to_export[$SINGLE_TABLE] = $params['where'][$SINGLE_TABLE];
@@ -510,7 +510,7 @@ class yf_db_manager {
 				}
 				foreach ((array)$tables_to_export as $cur_table_name => $WHERE_COND) {
 					$sql_1 = $sql_2 = $sql_3 = $sql_4 = '';
-					$cols_names_array = array();
+					$cols_names_array = [];
 					$counter = 0;
 					if ($params['add_create_table']) {
 						$A = db()->query_fetch('SHOW CREATE TABLE '.db()->escape_key($cur_table_name));
@@ -543,7 +543,7 @@ class yf_db_manager {
 						}
 					}
 					while ($A = db()->fetch_assoc($Q)) {
-						$cols_values_array = array();
+						$cols_values_array = [];
 						foreach ((array)$meta_columns as $cur_col_name => $cur_col_info) {
 							$cols_values_array[$cur_col_name] = db()->escape_val(_es(stripslashes($A[$cur_col_name])));
 						}
@@ -650,14 +650,14 @@ class yf_db_manager {
 				return $EXPORTED_SQL;
 			}
 			if (!common()->_error_exists()) {
-				$replace2 = array(
+				$replace2 = [
 					'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
 					'back_link'	=> url('/@object'),
-				);
+				];
 				return tpl()->parse('@object/export_text_result', $replace2);
 			}
 		}
-		$replace = array(
+		$replace = [
 			'form_action'		=> url('/@object/@action'),
 			'error_message'		=> _e(),
 			'back_link'			=> url('/@object'),
@@ -667,14 +667,14 @@ class yf_db_manager {
 #			'compress_box'		=> $this->_box('compress', ''),
 			'table_num_rows'	=> intval($_single_table_info['rows']),
 			'table_size'		=> common()->format_file_size($_single_table_info['data_size']),
-		);
+		];
 		return tpl()->parse('@object/export', $replace);
 	}
 
 	/**
 	* Try quick export with mysqldump
 	*/
-	function _quick_export_with_mysqldump($tables_to_export = array()) {
+	function _quick_export_with_mysqldump($tables_to_export = []) {
 		if (count($tables_to_export) == 1) {
 			$SINGLE_TABLE = current($tables_to_export);
 		}
@@ -718,39 +718,39 @@ class yf_db_manager {
 		// Find all backups in backup folder
 		$backup_files = _class('dir')->scan_dir($backup_folder_path, true, '/\.(sql|gz)$/i');
 
-		$_files_infos = array();
+		$_files_infos = [];
 		if (!empty($backup_files)) {		
 			foreach ((array)$backup_files as $fpath) {
-				$_files_infos[] = array(
+				$_files_infos[] = [
 					'fpath'		=> $fpath,
 					'file_mtime'=> filemtime($fpath),
 					'file_size'	=> filesize($fpath),
-				);
+				];
 			}
 		}
-		usort($_files_infos, array(&$this, '_sort_by_date'));
+		usort($_files_infos, [&$this, '_sort_by_date']);
 		foreach ((array)$_files_infos as $_info) {
 			$fpath = $_info['fpath'];
 			$id = urlencode(basename($fpath));
-			$replace2 = array(
+			$replace2 = [
 				'backup_date'	=> _format_date($_info['file_mtime'], 'long'),
 				'backup_fsize'	=> common()->format_file_size($_info['file_size']),
 				'backup_name'	=> basename($fpath),
 				'delete_url'	=> url('/@object/delete_backup/'.$id),
 				'restore_url'	=> url('/@object/restore/'.$id),
 				'download_url'	=> url('/@object/export_backup/'.$id),
-			);
+			];
 			$items .= tpl()->parse('@object/backup_item', $replace2);
 		}
 
 		// Show form
-		$replace = array(
+		$replace = [
 			'items'				=> $items,
 			'form_action'		=> url('/@object/backup'),
 			'import_form_action'=> url('/@object/show_backup'),
 			'error_message'		=> _e(),
 			'back_link'			=> url('/@object'),
-		);
+		];
 		return tpl()->parse('@object/backup', $replace);
 	}
 
@@ -823,7 +823,7 @@ class yf_db_manager {
 		if (!file_exists($backup_name)) {
 			// Try our internal exporter method
 			// Prepare db export params
-			$params = array(
+			$params = [
 				'single_table'		=> '',
 				'tables'			=> '',//array(db('menus'), db('menu_items')),
 				'full_inserts'		=> 1,
@@ -831,7 +831,7 @@ class yf_db_manager {
 				'export_type'		=> 'insert',
 				'silent_mode'		=> true,
 				'add_create_table'	=> true,
-			);
+			];
 			$EXPORTED_SQL = $this->export($params);
 			if (!function_exists('_file_put_contents')) {
 				$this->_file_put_contents($backup_name, $EXPORTED_SQL);
@@ -962,13 +962,13 @@ class yf_db_manager {
 
 	/**
 	*/
-	function _hook_widget__db_tables ($params = array()) {
+	function _hook_widget__db_tables ($params = []) {
 // TODO
 	}
 
 	/**
 	*/
-	function _hook_settings(&$selected = array()) {
+	function _hook_settings(&$selected = []) {
 /*
 		return array(
 			array('yes_no_box', 'db_manager__AUTO_GET_TABLES_STATUS'),

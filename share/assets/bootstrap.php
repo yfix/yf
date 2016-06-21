@@ -1,7 +1,7 @@
 <?php
 
-return array(
-	'require' => array(
+return [
+	'require' => [
 		'asset' => 'bootstrap-theme',
-	),
-);
+	],
+];

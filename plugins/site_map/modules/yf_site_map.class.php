@@ -12,13 +12,13 @@ class yf_site_map {
 	/** @var bool Enable\disable site map generation */
 	public $SITE_MAP_ENABLED		= false;
 	/** @var array Array of site modules to include their parts of sitemap */
-	public $MODULES_TO_INCLUDE		= array();
+	public $MODULES_TO_INCLUDE		= [];
 	/** @var string Sitemap store folder */
 	public $SITEMAP_STORE_FOLDER	= 'site_map/';
 	/** @var string Sitemap file name */
 	public $SITEMAP_FILE_NAME		= 'site_map';
 	/** @var @conf_skip */
-	public $HOOK_NAMES				= array('_hook_sitemap', '_hook_site_map', '_site_map_items');
+	public $HOOK_NAMES				= ['_hook_sitemap', '_hook_site_map', '_site_map_items'];
 	/** @var mixed */
 	public $DEFAULT_LAST_UPDATE		= '';
 	/** @var mixed */
@@ -38,7 +38,7 @@ class yf_site_map {
 	/** @var bool Do not change! It's a flag which is become 'true' if number of sitemap files reached $MAX_SITEMAPS. There will be no actions after this */
 	public $LIMIT_REACHED			= false;
 	/** @var array Frequency avail values @conf_skip */
-	public $CHANGEFREQ_VALUES		= array('always','hourly','daily','weekly','monthly','yearly','never');
+	public $CHANGEFREQ_VALUES		= ['always','hourly','daily','weekly','monthly','yearly','never'];
 	/** @var string @conf_skip */
 	public $_notify_url				= '';
 	/** @var string @conf_skip */
@@ -96,7 +96,7 @@ class yf_site_map {
 			$this->MODULES_TO_INCLUDE = $this->_get_modules_from_files();
 		}
 		// Ensure uniqueness of module names
-		$tmp = array();
+		$tmp = [];
 		foreach ((array)$this->MODULES_TO_INCLUDE as $v) {
 			$tmp[$v] = $v;
 		}
@@ -267,16 +267,16 @@ class yf_site_map {
 	/**
 	* Alias for _store_item
 	*/
-	function _add ($data = array()) {
+	function _add ($data = []) {
 		return $this->_store_item($data);
 	}
 
 	/**
 	* Store sitemap item
 	*/
-	function _store_item ($data = array()) {
+	function _store_item ($data = []) {
 		if (is_string($data) && strlen($data)) {
-			$data = array('url' => $data);
+			$data = ['url' => $data];
 		}
 		if (empty($data) || empty($data['url'])) {
 			return false;
@@ -448,15 +448,15 @@ class yf_site_map {
 		$site_prefix_len = strlen(YF_SITE_CLS_PREFIX);
 
 		$pattern = USER_MODULES_DIR.'*'.YF_CLS_EXT;
-		$places = array(
+		$places = [
 			'yf_main'			=> YF_PATH. $pattern,
 			'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
 			'project_main'		=> PROJECT_PATH. $pattern,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
 			'app_main'			=> APP_PATH. $pattern,
 			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
-		);
-		$modules = array();
+		];
+		$modules = [];
 		foreach ($places as $place_name => $glob) {
 			foreach (glob($glob) as $path) {
 				if (substr($path, -$yf_cls_ext_len) !== YF_CLS_EXT) {

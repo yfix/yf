@@ -1,8 +1,8 @@
 <?php
 
-$debug_users = array(
+$debug_users = [
 	'central_test' => 'central_5555_test',
-);
+];
 $debug_code = '57';
 $debug_salt = '_5555_';
 // TODO: need to check exact robots meta tag/header contents for SEO (maybe use: noindex, follow ?)
@@ -60,7 +60,7 @@ function _debug_remove_from_url($uri = '', $qs = '') {
 	$qs = http_build_query($p);
 	return $uri. ($qs ? '?'.$qs : '');
 }
-function _debug_auth_check($users = array()) {
+function _debug_auth_check($users = []) {
 	$auth_user = trim($_SERVER['PHP_AUTH_USER']);
 	$auth_pswd = trim($_SERVER['PHP_AUTH_PW']);
 	if (!strlen($auth_user) || !strlen($auth_pswd)) {

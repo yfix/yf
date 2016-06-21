@@ -12,7 +12,7 @@ class yf_comments_integration {
 		list($comments, $titles, $user_names) = $this->_get_comments($NUM_NEWEST_COMMENTS);
 		if (!empty($comments)) {
 			foreach ((array)$comments as $comment) {
-				$replace2 = array(
+				$replace2 = [
 					'text'			=> nl2br(_cut_bb_codes(_prepare_html($comment['text']))),
 					'title'			=> _prepare_html($titles[$comment['object_name'].$comment['object_id']]),
 					'user_name'		=> $user_names[$comment['user_id']]['nick'],
@@ -20,13 +20,13 @@ class yf_comments_integration {
 					'link'			=> module('comments')->COMMENT_LINKS[$comment['object_name']].$comment['object_id'].'#cid_'.$comment['id'],
 					'where_comment'	=> $comment['object_name'],
 					'user_link'		=> './?object=user_profile&action=show&id='.$comment['user_id'],
-				);
+				];
 				$item .= tpl()->parse('comments'.'/for_home_page_item', $replace2);
 			}
 		}
-		$replace = array(
+		$replace = [
 			'items'		=> $item,
-		);
+		];
 		return tpl()->parse('comments'.'/for_home_page_main', $replace);
 	}
 
@@ -36,7 +36,7 @@ class yf_comments_integration {
 		list($comments, $titles, $user_names) = $this->_get_comments($MAX_SHOW_COMMENTS, $user_id);
 		if (!empty($comments)) {
 			foreach ((array)$comments as $comment) {
-				$replace2 = array(
+				$replace2 = [
 					'num'			=> ++$i,
 					'text'			=> nl2br(_cut_bb_codes(_prepare_html($comment['text']))),
 					'title'			=> _prepare_html($titles[$comment['object_name'].$comment['object_id']]),
@@ -44,7 +44,7 @@ class yf_comments_integration {
 					'view_link'		=> module('comments')->COMMENT_LINKS[$comment['object_name']].$comment['object_id'].'#cid_'.$comment['id'],
 					'where_comment'	=> $comment['object_name'],
 					'user_link'		=> './?object=user_profile&action=show&id='.$comment['user_id'],
-				);
+				];
 				$item .= tpl()->parse('comments'.'/for_user_profile_item', $replace2);
 			}
 		}
@@ -73,7 +73,7 @@ class yf_comments_integration {
 			$A['object_name'] == 'blog' ? $blog_ids[$A['object_id']] = $A['object_id'] : '';
 			$A['object_name'] == 'gallery' ? $gallery_ids[$A['object_id']] = $A['object_id'] : '';
 		}
-		$user_names = user($user_ids, array('nick'));
+		$user_names = user($user_ids, ['nick']);
 		if (!empty($articles_ids)) {
 			$Q = db()->query('SELECT id,title FROM '.db('articles_texts').' WHERE id IN('.implode(',',$articles_ids).')');
 			while ($A = db()->fetch_assoc($Q)) {
@@ -98,7 +98,7 @@ class yf_comments_integration {
 				$titles['gallery'.$A['id']] = $A['name'] !== '' ? $A['name'] : t('No title');
 			}
 		}
-		return array($comments, $titles, $user_names);
+		return [$comments, $titles, $user_names];
 	}
 
 	/**
@@ -121,7 +121,7 @@ class yf_comments_integration {
 			$A['object_name'] == 'blog' ? $blog_ids[$A['object_id']] = $A['object_id'] : '';
 			$A['object_name'] == 'gallery' ? $gallery_ids[$A['object_id']] = $A['object_id'] : '';
 		}
-		$user_names = user($user_ids,array('nick'));
+		$user_names = user($user_ids,['nick']);
 		if (!empty($articles_ids)) {
 			$Q = db()->query('SELECT id,title FROM '.db('articles_texts').' WHERE id IN('.implode(',',$articles_ids).')');
 			while ($A = db()->fetch_assoc($Q)) {
@@ -148,14 +148,14 @@ class yf_comments_integration {
 		}
 		if (!empty($comments)) {
 			foreach ((array)$comments as $comment) {
-				$data[] = array(
+				$data[] = [
 					'title'			=> _prepare_html(t('Comments in '). $comment['object_name'].' - '.$titles[$comment['object_name']. $comment['object_id']]),
 					'link'			=> process_url(module('comments')->COMMENT_LINKS[$comment['object_name']].$comment['object_id'].'#cid_'.$comment['id']),
 					'description'	=> nl2br(_cut_bb_codes(_prepare_html($comment['text']))),
 					'date'			=> $comment['add_date'],
 					'author'		=> $user_names[$comment['user_id']]['nick'],
 					'source'		=> '',
-				);
+				];
 			}
 		}
 		return $data;

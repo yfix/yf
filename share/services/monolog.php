@@ -1,10 +1,10 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'require_services' => array('psr_log'),
-	'git_urls' => array('https://github.com/Seldaek/monolog.git' => 'monolog/'),
-	'autoload_config' => array('monolog/src/Monolog/' => 'Monolog'),
+$config = [
+	'require_services' => ['psr_log'],
+	'git_urls' => ['https://github.com/Seldaek/monolog.git' => 'monolog/'],
+	'autoload_config' => ['monolog/src/Monolog/' => 'Monolog'],
 	'example' => function() {
 		$file = '/tmp/test_monolog.log';
 		file_exists($file) && unlink($file);
@@ -19,5 +19,5 @@ $config = array(
 
 		echo file_get_contents($file);
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

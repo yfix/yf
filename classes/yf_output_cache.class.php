@@ -17,20 +17,20 @@ class yf_output_cache extends yf_cache {
 	/** @var string Output cache dir (relative to the SITE_PATH constant) */
 	public $OUTPUT_CACHE_DIR		= 'pages_cache/';
 	/** @var array Stop-list for output caching (REGEXPs allowed here) @conf_skip */
-	public $_OC_STOP_LIST			= array(
+	public $_OC_STOP_LIST			= [
 		'object=(account|advert|aff|email|forum|manage_escorts|que|reviews|reviews_search|stats|task_loader|user_info|user_profile).*',
 		'object=search&+',
 		'task=(login|logout).*',
 		'debug_mode',
-	);
+	];
 	/** @var string Use instead of '_OC_STOP_LIST', include _ONLY_ that is matched this pattern, will be checked if non-empty */
 	public $WHITE_LIST_PATTERN		= '';
 	/** @var array Use this if you need to have some page cached different from the global setting 'OUTPUT_CACHE_TTL' 
 	*		NOTE: NOT WORKING ON WINDOWS (php < 5.3.0) ! (because we are using touch function that is broken under windows)
 	*/
-	public $CUSTOM_CACHE_TTLS		= array(
+	public $CUSTOM_CACHE_TTLS		= [
 //		'object=(user_profile)'		=> 20,
-	);
+	];
 	/** @var bool @conf_skip Tells that current page will not be cached (default) */
 	public $NO_NEED_TO_CACHE		= false;
 	/** @var bool Append string to the end of the cached file */
@@ -52,7 +52,7 @@ class yf_output_cache extends yf_cache {
 	/**
 	* Module constructor
 	*/
-	function _init ($params = array()) {
+	function _init ($params = []) {
 		// Assign group_id = 1 for guests
 		if (empty($_SESSION['user_group'])) {
 			$_SESSION['user_group'] = 1;
@@ -208,7 +208,7 @@ class yf_output_cache extends yf_cache {
 	/**
 	* Try to put current page to the output cache
 	*/
-	function _put_page_to_output_cache ($body = array()) {
+	function _put_page_to_output_cache ($body = []) {
 		$this->_check_if_need_to_cache();
 /*
 		if (!$this->OUTPUT_CACHING || $_SERVER['REQUEST_METHOD'] != 'GET' || $this->NO_NEED_TO_CACHE) {
@@ -332,7 +332,7 @@ class yf_output_cache extends yf_cache {
 	/**
 	* Refreshing cache files
 	*/
-	function refresh ($event = '', $params = array()) {
+	function refresh ($event = '', $params = []) {
 	}
 
 	/**
@@ -357,7 +357,7 @@ class yf_output_cache extends yf_cache {
 	/**
 	* Refreshing cache files (by given array of hashes)
 	*/
-	function _clean_by_hashes ($hashes = array()) {
+	function _clean_by_hashes ($hashes = []) {
 	}
 
 	/**
@@ -369,12 +369,12 @@ class yf_output_cache extends yf_cache {
 	/**
 	* Refreshing cache files (by given array of params)
 	*/
-	function _clean_by_params ($params = array()) {
+	function _clean_by_params ($params = []) {
 	}
 
 	/**
 	* Output cache file and stop
 	*/
-	function _exec_trigger ($params = array()) {
+	function _exec_trigger ($params = []) {
 	}
 }

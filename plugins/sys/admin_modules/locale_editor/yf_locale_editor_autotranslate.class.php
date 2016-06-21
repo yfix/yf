@@ -19,13 +19,13 @@ class yf_locale_editor_autotranslate {
 					SELECT var_id FROM ".db('locale_translate')." 
 					WHERE locale = '".$LOCALE_RES."' AND value != '' 
 				)");
-			$_info = array();
+			$_info = [];
 			$max_threads = 4;
-			$buffer = array();
-			$translated = array();
+			$buffer = [];
+			$translated = [];
 _debug_log("LOCALE_NUM_VARS: ".count($vars));
 			foreach ((array)$vars as $A) {
-				$translated = array();
+				$translated = [];
 				$url = $base_url."&q=".urlencode(str_replace("_", " ", $A["value"]))."&langpair=en%7C".$LOCALE_RES;
 				$_temp[$url] = $A["id"];
 				if (count($buffer) < $max_threads) {
@@ -50,14 +50,14 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 					);
 				}
 				foreach ((array)$translated as $_id => $_value) {
-					db()->REPLACE('locale_translate', array(
+					db()->REPLACE('locale_translate', [
 						'var_id'	=> intval($_id),
 						'value'		=> _es($_value),
 						'locale'	=> _es($LOCALE_RES),
-					));
+					]);
 				}
-				$buffer = array();
-				$_temp = array();
+				$buffer = [];
+				$_temp = [];
 			}
 			cache_del('locale_translate_'.$LOCALE_RES);
 			return js_redirect('./?object='.$_GET['object']);
@@ -67,11 +67,11 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		while($A = db()->fetch_assoc($Q)){
 			$locales[$A['locale']] = $A['name'];
 		}
-		$replace = array(
+		$replace = [
 			'locale_box' 		=> common()->select_box('locale', $locales),
 			'locale_editor_url' => './?object=locale_editor',
 			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
-		);
+		];
 		return tpl()->parse($_GET['object'].'/autotranslate', $replace);
 	}	
 }

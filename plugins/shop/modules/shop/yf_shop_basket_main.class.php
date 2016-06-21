@@ -5,7 +5,7 @@ class yf_shop_basket_main{
 	* basket_main
 	*/
 	function basket_main() {
-		$products_ids = array();
+		$products_ids = [];
 		$basket_contents = module('shop')->_basket_api()->get_all();
 		foreach ((array)$basket_contents as $_item_id => $_info) {
 			if ($_info["product_id"]) {
@@ -23,7 +23,7 @@ class yf_shop_basket_main{
 			$_info["_group_price"] = $group_prices[$_product_id][module('shop')->USER_GROUP];
 			$quantity2 = $basket_contents[$_info["id"]]["quantity"];
 			$price = module('shop')->_product_get_price($_info);
-			$dynamic_atts = array();
+			$dynamic_atts = [];
 			foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {
 				if ($basket_contents[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
 					$dynamic_atts[$_attr_id] = "- ".$_attr_info["name"]." ".$_attr_info["value"];
@@ -33,13 +33,13 @@ class yf_shop_basket_main{
 			$total_price += $price * $quantity2;
 			$quantity += intval($quantity2);
 		}
-		$replace = array(
+		$replace = [
 			"total_price"	=> module('shop')->_format_price($total_price),
 			"currency"		=> _prepare_html(module('shop')->CURRENCY),
 			"quantity"		=> $quantity,
 			"order_link"	=> "./?object=shop&action=basket",
 			"basket_link"	=> "./?object=shop&action=basket",
-		);
+		];
 		return tpl()->parse("shop/basket_main", $replace);
 	}
 	

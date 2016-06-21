@@ -18,7 +18,7 @@ class yf_console_core_api extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		init_yf();
 
-		$params = array();
+		$params = [];
 		// Parse arguments like that: k1=v1 k2=v2 into array('k1' => 'v1', 'k2' => 'v2')
 		foreach ((array)$input->getArgument('params') as $p) {
 			list($k, $v) = explode('=', trim($p));
@@ -43,11 +43,11 @@ class yf_console_core_api extends Command {
 			$output->writeln($text);
 		} else {
 			$table = $this->getHelperSet()->get('table');
-			$rows = array();
+			$rows = [];
 			foreach ($methods as $name) {
-				$rows[] = array($name);
+				$rows[] = [$name];
 			}
-			$table->setHeaders(array('API method'))
+			$table->setHeaders(['API method'])
 				->setRows($rows);
 			$table->render($output);
 		}

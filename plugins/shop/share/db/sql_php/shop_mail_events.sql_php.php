@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'event_id' => array(
+		],
+		'event_id' => [
 			'name' => 'event_id',
 			'type' => 'int',
 			'length' => 10,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'from_email' => array(
+		],
+		'from_email' => [
 			'name' => 'from_email',
 			'type' => 'varchar',
 			'length' => 254,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'from_name' => array(
+		],
+		'from_name' => [
 			'name' => 'from_name',
 			'type' => 'varchar',
 			'length' => 100,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'subject' => array(
+		],
+		'subject' => [
 			'name' => 'subject',
 			'type' => 'varchar',
 			'length' => 78,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'html' => array(
+		],
+		'html' => [
 			'name' => 'html',
 			'type' => 'text',
 			'length' => NULL,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'tinyint',
 			'length' => 4,
@@ -105,34 +105,34 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'event_id' => array(
+			],
+		],
+		'event_id' => [
 			'name' => 'event_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'event_id' => 'event_id',
-			),
-		),
-		'event_id_active' => array(
+			],
+		],
+		'event_id_active' => [
 			'name' => 'event_id_active',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'event_id' => 'event_id',
 				'active' => 'active',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

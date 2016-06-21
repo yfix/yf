@@ -9,7 +9,7 @@ class sample_db_utils {
 
 	/***/
 	function _hook_side_column() {
-		$items = array();
+		$items = [];
 		$url = url('/@object');
 		$methods = get_class_methods(_class('db')->utils());
 		$sample_methods = get_class_methods($this);
@@ -24,10 +24,10 @@ class sample_db_utils {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = array(
+			$items[] = [
 				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
 				'link'	=> url('/@object/@action/'.$name),
-			);
+			];
 		}
 		return _class('html')->navlist($items);
 	}

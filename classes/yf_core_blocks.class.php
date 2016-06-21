@@ -11,9 +11,9 @@ class yf_core_blocks {
 
 	public $TASK_NOT_FOUND_404_HEADER = false;
 	public $TASK_DENIED_403_HEADER = false;
-	public $FORCE_ALLOWED_CLASSES = array(
+	public $FORCE_ALLOWED_CLASSES = [
 		'api',
-	);
+	];
 
 	/**
 	* Catch missing method call
@@ -25,14 +25,14 @@ class yf_core_blocks {
 	/**
 	* Alias for the '_show_block'
 	*/
-	function show_block($params = array()) {
+	function show_block($params = []) {
 		return $this->_show_block($params);
 	}
 
 	/**
 	* Show custom block contents
 	*/
-	function _show_block($input = array()) {
+	function _show_block($input = []) {
 		if (!isset($this->_blocks_infos)) {
 			$this->_blocks_infos = main()->get_data('blocks_all');
 		}
@@ -92,10 +92,10 @@ class yf_core_blocks {
 				$cur_block_info['method_name'] = substr($cur_block_info['method_name'], strrpos($cur_block_info['method_name'], '/') + 1);
 			}
 			list($special_class_name, $special_method_name) = explode('.', $cur_block_info['method_name']);
-			$special_params = array(
+			$special_params = [
 				'block_name'	=> $block_name,
 				'block_id'		=> $block_id,
-			);
+			];
 			if (!empty($special_class_name) && !empty($special_method_name)) {
 				$obj = _class_safe($special_class_name, $special_path);
 				if (is_object($obj) && method_exists($obj, $special_method_name)) {
@@ -108,12 +108,12 @@ class yf_core_blocks {
 		}
 		$prepend = _class('core_events')->fire('block.prepend['.$block_name.']');
 
-		$body = tpl()->parse($cur_block_info['stpl_name'] ?: $block_name, array(
+		$body = tpl()->parse($cur_block_info['stpl_name'] ?: $block_name, [
 			'block_name'=> $block_name,
 			'block_id'	=> $block_id,
-		));
+		]);
 
-		$append = _class('core_events')->fire('block.append['.$block_name.']', array(&$body));
+		$append = _class('core_events')->fire('block.append['.$block_name.']', [&$body]);
 
 		return ($prepend ? implode(PHP_EOL, $prepend) : ''). $body. ($append ? implode(PHP_EOL, $append) : '');
 	}
@@ -128,11 +128,11 @@ class yf_core_blocks {
 				main()->IS_403 = true;
 			}
 			if (MAIN_TYPE_USER && !main()->USER_ID) {
-				$redir_params = array(
+				$redir_params = [
 					'%%object%%'		=> $_GET['object'],
 					'%%action%%'		=> $_GET['action'],
-					'%%add_get_vars%%'	=> str_replace('&',';',_add_get(array('object','action'))),
-				);
+					'%%add_get_vars%%'	=> str_replace('&',';',_add_get(['object','action'])),
+				];
 				$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), main()->REDIR_URL_DENIED);
 				if (!empty($redir_url)) {
 					if ($_GET['object'] == 'login_form') {
@@ -176,13 +176,13 @@ class yf_core_blocks {
 			return false;
 		}
 		$rules = main()->get_data('blocks_rules');
-		$rule_names_to_skip = array('id','block_id','rule_type','active','order');
+		$rule_names_to_skip = ['id','block_id','rule_type','active','order'];
 		foreach ((array)$rules as $rule_id => $rule_info) {
 			foreach ((array)$rule_info as $rule_name => $rule_text) {
 				if (in_array($rule_name, $rule_names_to_skip) || empty($rule_text)) {
 					continue;
 				}
-				$rule_text = trim(str_replace(array(' ',"\t","\r","\n","\"","'",',,'), '', $rule_text), ',');
+				$rule_text = trim(str_replace([' ',"\t","\r","\n","\"","'",',,'], '', $rule_text), ',');
 				$rule_text = explode(',',$rule_text);
 				$rules[$rule_id][$rule_name] = $rule_text;
 			}
@@ -199,7 +199,7 @@ class yf_core_blocks {
 		}
 		$this->CENTER_BLOCK_ID = $this->_get_center_block_id();
 
-		$rules = array();
+		$rules = [];
 		foreach ((array)$this->_blocks_rules as $rid => $rinfo) {
 			if ($rinfo != $this->CENTER_BLOCK_ID) {
 				continue;
@@ -326,20 +326,20 @@ class yf_core_blocks {
 		if (isset($this->$cache)) {
 			return $this->$cache;
 		}
-		$names = array();
+		$names = [];
 		$ext = '.class.php';
 		$dir = 'classes/';
 		$pattern = $dir. '*'. $ext;
-		$globs = array(
+		$globs = [
 			'yf_core'			=> YF_PATH. $pattern,
 			'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
 			'project_core'		=> PROJECT_PATH. $pattern,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
 			'app_core'			=> APP_PATH. $pattern,
 			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
-		);
+		];
 		$ext_len = strlen($ext);
-		$names = array();
+		$names = [];
 		$prefix = YF_PREFIX;
 		$plen = strlen($prefix);
 		foreach ($globs as $glob) {
@@ -408,7 +408,7 @@ class yf_core_blocks {
 				} else {
 					$is_banned = false;
 					if (MAIN_TYPE_USER && $main->AUTO_BAN_CHECKING) {
-						$is_banned = _class('ban_status')->_auto_check(array());
+						$is_banned = _class('ban_status')->_auto_check([]);
 					}
 					if ($is_banned) {
 						$body = _e();
@@ -419,11 +419,11 @@ class yf_core_blocks {
 			}
 		}
 		$redirect_func = function($url) {
-			$redir_params = array(
+			$redir_params = [
 				'%%object%%'		=> $OBJECT,
 				'%%action%%'		=> $ACTION,
-				'%%add_get_vars%%'	=> str_replace('&',';',_add_get(array('object','action'))),
-			);
+				'%%add_get_vars%%'	=> str_replace('&',';',_add_get(['object','action'])),
+			];
 			$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), $url);
 			if (!empty($redir_url)) {
 				redirect($redir_url, 1, tpl()->parse('system/error_not_found'));
@@ -442,7 +442,7 @@ class yf_core_blocks {
 				$u = $main->REDIR_URL_NOT_FOUND;
 				if (is_array($u) && !empty($u)) {
 					// Prefill GET keys from redirect url
-					foreach (array('object','action','id','page') as $k) {
+					foreach (['object','action','id','page'] as $k) {
 						$_GET[$k] = $u[$k];
 					}
 					if (!empty($u['object'])) {
@@ -472,7 +472,7 @@ class yf_core_blocks {
 		$block_name = 'center_area';
 		$events = _class('core_events');
 		$prepend= $events->fire('block.prepend['.$block_name.']');
-		$append	= $events->fire('block.append['.$block_name.']', array(&$body));
+		$append	= $events->fire('block.append['.$block_name.']', [&$body]);
 		$body = ($prepend ? implode(PHP_EOL, $prepend) : ''). $body. ($append ? implode(PHP_EOL, $append) : '');
 		// Singleton
 		tpl()->_CENTER_RESULT = (string)$body;

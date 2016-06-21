@@ -1,24 +1,24 @@
 <?php
 
-return array(
-	'versions' => array(
-		'4.4.5' => array(
-			'js' => array(
+return [
+	'versions' => [
+		'4.4.5' => [
+			'js' => [
 				'//cdn.ckeditor.com/4.4.5/full/ckeditor.js',
 				'//cdn.ckeditor.com/4.4.5/full/adapters/jquery.js',
-			),
-		),
-		'4.4.7' => array(
-			'js' => array(
+			],
+		],
+		'4.4.7' => [
+			'js' => [
 				'//cdn.ckeditor.com/4.4.7/full/ckeditor.js',
 				'//cdn.ckeditor.com/4.4.7/full/adapters/jquery.js',
-			),
-		),
-	),
-	'require' => array(
+			],
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-	'config' => array(
+	],
+	'config' => [
 		'no_cache' => true,
-	),
-);
+	],
+];

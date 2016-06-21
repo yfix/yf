@@ -10,11 +10,11 @@ class yf_test_ssh {
 	*/
 	function test () {
 		$_GET['id'] = preg_replace('/[^0-9\.]/i', '', substr($_GET['id'], 0, 15));
-		$server_info = array(
+		$server_info = [
 			'ssh_host'	=> $_GET['id'] ? $_GET['id'] : '192.168.1.2',
 			'ssh_user'	=> 'root',
 			'ssh_pswd'	=> '123456',
-		);
+		];
 		$ssh = _class('ssh');
 
 		$body .= '<br /><b>Test exec "ifconfig"</b><br /><br />';

@@ -43,7 +43,7 @@ class yf_shop__basket_api {
 
 	/***/
 	function clean() {
-		$_SESSION[$storage_name] = array();
+		$_SESSION[$storage_name] = [];
 		return true;
 	}
 	

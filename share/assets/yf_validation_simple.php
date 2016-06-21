@@ -2,10 +2,10 @@
 
 return function() {
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => [
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
 '
 	var yf_ajax_link_validate = "'.url_user('/dynamic/ajax_validate').'";
@@ -151,11 +151,11 @@ $(function(){
 	})
 });
 END
-		)),
-	),
-	'require' => array(
+		]],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];
 
 };

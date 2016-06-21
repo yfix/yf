@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'rental',
-	'fields' => array(
-		'rental_id' => array(
+	'fields' => [
+		'rental_id' => [
 			'name' => 'rental_id',
 			'type' => 'int',
 			'length' => 11,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`rental_id` int(11) NOT NULL AUTO_INCREMENT',
-		),
-		'rental_date' => array(
+		],
+		'rental_date' => [
 			'name' => 'rental_date',
 			'type' => 'datetime',
 			'length' => NULL,
@@ -33,8 +33,8 @@ return array(
 			'unique' => true,
 			'values' => NULL,
 			'raw' => '`rental_date` datetime NOT NULL',
-		),
-		'inventory_id' => array(
+		],
+		'inventory_id' => [
 			'name' => 'inventory_id',
 			'type' => 'mediumint',
 			'length' => 8,
@@ -49,8 +49,8 @@ return array(
 			'unique' => true,
 			'values' => NULL,
 			'raw' => '`inventory_id` mediumint(8) unsigned NOT NULL',
-		),
-		'customer_id' => array(
+		],
+		'customer_id' => [
 			'name' => 'customer_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -65,8 +65,8 @@ return array(
 			'unique' => true,
 			'values' => NULL,
 			'raw' => '`customer_id` smallint(5) unsigned NOT NULL',
-		),
-		'return_date' => array(
+		],
+		'return_date' => [
 			'name' => 'return_date',
 			'type' => 'datetime',
 			'length' => NULL,
@@ -81,8 +81,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`return_date` datetime DEFAULT NULL',
-		),
-		'staff_id' => array(
+		],
+		'staff_id' => [
 			'name' => 'staff_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -97,8 +97,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`staff_id` tinyint(3) unsigned NOT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -114,95 +114,95 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'rental_id' => 'rental_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`rental_id`)',
-		),
-		'rental_date' => array(
+		],
+		'rental_date' => [
 			'name' => 'rental_date',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'rental_date' => 'rental_date',
 				'inventory_id' => 'inventory_id',
 				'customer_id' => 'customer_id',
-			),
+			],
 			'raw' => 'UNIQUE KEY `rental_date` (`rental_date`,`inventory_id`,`customer_id`)',
-		),
-		'idx_fk_inventory_id' => array(
+		],
+		'idx_fk_inventory_id' => [
 			'name' => 'idx_fk_inventory_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'inventory_id' => 'inventory_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_inventory_id` (`inventory_id`)',
-		),
-		'idx_fk_customer_id' => array(
+		],
+		'idx_fk_customer_id' => [
 			'name' => 'idx_fk_customer_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'customer_id' => 'customer_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_customer_id` (`customer_id`)',
-		),
-		'idx_fk_staff_id' => array(
+		],
+		'idx_fk_staff_id' => [
 			'name' => 'idx_fk_staff_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'staff_id' => 'staff_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_staff_id` (`staff_id`)',
-		),
-	),
-	'foreign_keys' => array(
-		'fk_rental_customer' => array(
+		],
+	],
+	'foreign_keys' => [
+		'fk_rental_customer' => [
 			'name' => 'fk_rental_customer',
-			'columns' => array(
+			'columns' => [
 				'customer_id' => 'customer_id',
-			),
+			],
 			'ref_table' => 'customer',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'customer_id' => 'customer_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_rental_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`) ON UPDATE CASCADE',
-		),
-		'fk_rental_inventory' => array(
+		],
+		'fk_rental_inventory' => [
 			'name' => 'fk_rental_inventory',
-			'columns' => array(
+			'columns' => [
 				'inventory_id' => 'inventory_id',
-			),
+			],
 			'ref_table' => 'inventory',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'inventory_id' => 'inventory_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_rental_inventory` FOREIGN KEY (`inventory_id`) REFERENCES `inventory` (`inventory_id`) ON UPDATE CASCADE',
-		),
-		'fk_rental_staff' => array(
+		],
+		'fk_rental_staff' => [
 			'name' => 'fk_rental_staff',
-			'columns' => array(
+			'columns' => [
 				'staff_id' => 'staff_id',
-			),
+			],
 			'ref_table' => 'staff',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'staff_id' => 'staff_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_rental_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`staff_id`) ON UPDATE CASCADE',
-		),
-	),
-	'options' => array(
+		],
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

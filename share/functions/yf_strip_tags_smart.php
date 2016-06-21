@@ -31,14 +31,14 @@ function strip_tags_smart(
 	/*string*/ $s,
 	array $allowable_tags = null,
 	/*boolean*/ $is_format_spaces = true,
-	array $pair_tags = array('script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button'),
-	array $para_tags = array('p', 'td', 'th', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'form', 'title', 'pre', 'textarea')
+	array $pair_tags = ['script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button'],
+	array $para_tags = ['p', 'td', 'th', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'form', 'title', 'pre', 'textarea']
 )
 {
 	//return strip_tags($s);
 	static $_callback_type  = false;
-	static $_allowable_tags = array();
-	static $_para_tags	  = array();
+	static $_allowable_tags = [];
+	static $_para_tags	  = [];
 	#регулярное выражение для атрибутов тагов
 	#корректно обрабатывает грязный и битый HTML в однобайтовой или UTF-8 кодировке!
 	static $re_attrs_fast_safe =  '(?![a-zA-Z\d])  #утверждение, которое следует сразу после тага
@@ -86,7 +86,7 @@ function strip_tags_smart(
 	#непарные таги (открывающие, закрывающие, !DOCTYPE, MS Word namespace)
 	$re_tags = '/<[\/\!]?+ ([a-zA-Z][a-zA-Z\d]*+ (?>\:[a-zA-Z][a-zA-Z\d]*)?)' . $re_attrs_fast_safe . '>/sxS';
 
-	$patterns = array(
+	$patterns = [
 		'/<([\?\%]) .*? \\1>/sxS',	 #встроенный PHP, Perl, ASP код
 		'/<\!\[CDATA\[ .*? \]\]>/sxS', #блоки CDATA
 		#'/<\!\[  [\x20\r\n\t]* [a-zA-Z] .*?  \]>/sxS',  #:DEPRECATED: MS Word таги типа <![if! vml]>...<![endif]>
@@ -103,7 +103,7 @@ function strip_tags_smart(
 			  \]
 			  (?:--)?+
 		 >/sxS',
-	);
+	];
 	if ($pair_tags)
 	{
 		#парные таги вместе с содержимым:
@@ -186,7 +186,7 @@ function strip_tags_smart(
 		#вырезаем дублирующие пробелы
 		$s = preg_replace('/\x20\x20++/sS', ' ', trim($s));
 		#вырезаем пробелы в начале и в конце строк
-		$s = str_replace(array("\r\n\x20", "\x20\r\n"), "\r\n", $s);
+		$s = str_replace(["\r\n\x20", "\x20\r\n"], "\r\n", $s);
 		#заменяем 3 и более переносов строк на 2 переноса строк
 		#$s = preg_replace('/\r\n[\r\n]++/sS', "\r\n\r\n", $s);
 		$s = preg_replace('/[\r\n]{3,}+/sS', "\r\n\r\n", $s);

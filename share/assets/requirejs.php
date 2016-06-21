@@ -1,9 +1,9 @@
 <?php
 
-return array(
-	'versions' => array(
-		'2.1.15' => array(
+return [
+	'versions' => [
+		'2.1.15' => [
 			'js' => '//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js',
-		),
-	),
-);
+		],
+	],
+];

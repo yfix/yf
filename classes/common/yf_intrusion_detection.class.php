@@ -20,9 +20,9 @@ class yf_intrusion_detection {
 			. PATH_SEPARATOR
 			. $this->BASE_PATH
 		);
-		$this->config = array(
+		$this->config = [
 			// basic settings - customize to make the PHPIDS work at all
-			'General'	=> array(
+			'General'	=> [
 				"filter_type"		=> "xml",
 				"base_path"			=> $this->BASE_PATH,
 				"use_base_path"		=> false,
@@ -35,22 +35,22 @@ class yf_intrusion_detection {
 				//"HTML_Purifier_Cache"	=> $this->BASE_PATH."IDS/vendors/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer",
 				// define which fields contain html and need preparation before 
 				// hitting the PHPIDS rules (new in PHPIDS 0.5)
-				"html"				=> array(
+				"html"				=> [
 					"__wysiwyg",
-				),
+				],
 				// define which fields contain JSON data and should be treated as such 
 				// for fewer false positives (new in PHPIDS 0.5.3)
-				"json"				=> array(
+				"json"				=> [
 					"__jsondata",
-				),
+				],
 				// define which fields shouldn't be monitored (a[b]=c should be referenced via a.b)
-				"exceptions"		=> array(
+				"exceptions"		=> [
 					"__utmz",
 					"__utmc",
-				),
-			),
+				],
+			],
 			// If you use the PHPIDS logger you can define specific configuration here
-			'Logging'	=> array(
+			'Logging'	=> [
 				// file logging
 				"path"			=> INCLUDE_PATH. "phpids_log.txt",
 				// email logging
@@ -72,8 +72,8 @@ class yf_intrusion_detection {
 // TODO
 				//"table"			=> db('intrusions'),
 				// If you would like to use other methods than file caching you can configure them here
-			),
-			'Caching'	=> array(
+			],
+			'Caching'	=> [
 				// caching:	  session|file|database|memcached|none
 				"caching"=> "none",
 				//"expiration_time" => 600,
@@ -89,8 +89,8 @@ class yf_intrusion_detection {
 				//"port"		=> "11211",
 				//"key_prefix"	=> "PHPIDS",
 				//"tmp_path"	=> "tmp/memcache.timestamp",
-			),
-		);
+			],
+		];
 		_mkdir_m($this->config['General']['tmp_path']);
 	}
 
@@ -99,12 +99,12 @@ class yf_intrusion_detection {
 	*/
 	function check () {
 		include_once $this->BASE_PATH. 'IDS/Init.php';
-		$request = array(
+		$request = [
 			'REQUEST'	=> $_REQUEST,
 			'GET'		=> $_GET,
 			'POST'		=> $_POST,
 			'COOKIE'	=> $_COOKIE
-		);
+		];
 //		$init = IDS_Init::init(YF_PATH.'libs/phpids/'.'IDS/Config/Config.ini');
 		$init = IDS_Init::init();
 		$init->setConfig($this->config, true);

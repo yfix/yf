@@ -36,37 +36,37 @@ class yf_db_utils_helper_column {
 
 	/**
 	*/
-	public function exists($extra = array(), &$error = false) {
+	public function exists($extra = [], &$error = false) {
 		return $this->utils->column_exists($this->db_name.'.'.$this->table, $this->col, $extra, $error);
 	}
 
 	/**
 	*/
-	public function info($extra = array(), &$error = false) {
+	public function info($extra = [], &$error = false) {
 		return $this->utils->column_info($this->db_name.'.'.$this->table, $this->col, $extra, $error);
 	}
 
 	/**
 	*/
-	public function drop($extra = array(), &$error = false) {
+	public function drop($extra = [], &$error = false) {
 		return $this->utils->drop_column($this->db_name.'.'.$this->table, $this->col, $extra, $error);
 	}
 
 	/**
 	*/
-	public function add(array $data, $extra = array(), &$error = false) {
+	public function add(array $data, $extra = [], &$error = false) {
 		return $this->utils->add_column($this->db_name.'.'.$this->table, $this->col, $data, $extra, $error);
 	}
 
 	/**
 	*/
-	public function alter(array $data, $extra = array(), &$error = false) {
+	public function alter(array $data, $extra = [], &$error = false) {
 		return $this->utils->alter_column($this->db_name.'.'.$this->table, $this->col, $data, $extra, $error);
 	}
 
 	/**
 	*/
-	public function rename($new_name, $extra = array(), &$error = false) {
+	public function rename($new_name, $extra = [], &$error = false) {
 		return $this->utils->rename_column($this->db_name.'.'.$this->table, $this->col, $new_name, $extra, $error);
 	}
 }

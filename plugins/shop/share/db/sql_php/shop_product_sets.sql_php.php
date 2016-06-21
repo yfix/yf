@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'cat_id' => array(
+		],
+		'cat_id' => [
 			'name' => 'cat_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'price' => array(
+		],
+		'price' => [
 			'name' => 'price',
 			'type' => 'decimal',
 			'length' => 12,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'old_price' => array(
+		],
+		'old_price' => [
 			'name' => 'old_price',
 			'type' => 'decimal',
 			'length' => 12,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 128,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'description' => array(
+		],
+		'description' => [
 			'name' => 'description',
 			'type' => 'text',
 			'length' => NULL,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'tinyint',
 			'length' => 4,
@@ -105,19 +105,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

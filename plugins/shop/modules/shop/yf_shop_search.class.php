@@ -16,7 +16,7 @@ class yf_shop_search{
 	*/
 	function prepare_str($string) {
 		$patrn 	= "/([\[\}\]\{\%\"\'\<\>\~\!\@\#\$\%\&\*\(\)\s\-\_\\:\;\+\=\|\?\№\.\\/\^\,])+/iu";
-		$patrn2 	= array("<", ">");
+		$patrn2 	= ["<", ">"];
 		$string 	= str_replace($patrn2, "", $string);
 		$string		= _strtolower(trim($string));
 		$string 	= preg_replace($patrn, ",", $string);
@@ -42,10 +42,10 @@ class yf_shop_search{
 		}	
 		$product_ids = rtrim($product_ids, ",");
 		if ($product_ids ==""){
-			$replace = array(
+			$replace = [
 				"str_search"	=>$str_search2,
 				"form_action"	=> process_url("./?object=shop&action=search&id=fast"),
-			);
+			];
 			return tpl()->parse("shop/no_search_results", $replace);
 		} else {	
 			$replace = module('shop')->products_show($product_ids, $str_search2);

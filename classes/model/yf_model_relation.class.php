@@ -6,9 +6,9 @@
 class yf_model_relation {
 
 	protected $_model = null;
-	protected $_relation = array();
-	protected $_parent = array(); // parent model
-	protected $_related = array(); // related model
+	protected $_relation = [];
+	protected $_parent = []; // parent model
+	protected $_related = []; // related model
 
 	/**
 	*/
@@ -32,7 +32,7 @@ class yf_model_relation {
 	/**
 	* Attach related data to current model
 	*/
-	public function attach($id, $params = array()) {
+	public function attach($id, $params = []) {
 		$relation = $this->_relation;
 		$model = $this->_model;
 		$db = $model->_db;
@@ -41,10 +41,10 @@ class yf_model_relation {
 
 		if ($type === 'belongs_to_many') {
 
-			return $db->replace($pivot_table, array(
+			return $db->replace($pivot_table, [
 				$relation['other_key']		=> $id,
 				$relation['foreign_key']	=> $model->get_key(),
-			));
+			]);
 
 		}
 		return false;
@@ -53,7 +53,7 @@ class yf_model_relation {
 	/**
 	* Detach related data to current model
 	*/
-	public function detach($id, $params = array()) {
+	public function detach($id, $params = []) {
 		$relation = $this->_relation;
 		$model = $this->_model;
 		$db = $model->_db;
@@ -97,7 +97,7 @@ class yf_model_relation {
 			$foreign_key = $relation['foreign_key'];
 			$local_key = $relation['local_key'];
 
-			$cols = array();
+			$cols = [];
 			foreach ($db->utils()->columns_names($rel_table) as $col) {
 				$col = $table_alias.'.'.$col;
 				$cols[$col] = $col;
@@ -107,9 +107,9 @@ class yf_model_relation {
 			return $query
 				->whereid($id)
 				->select(implode(', ', $cols))
-				->inner_join($join_table.' AS '.$join_alias, array(
+				->inner_join($join_table.' AS '.$join_alias, [
 					$table_alias.'.'.$foreign_key => $join_alias.'.'.$local_key,
-				))->get_all();
+				])->get_all();
 
 		} elseif ($type === 'belongs_to') {
 
@@ -119,7 +119,7 @@ class yf_model_relation {
 			$join_table = $table;
 			$join_alias = 't1';
 
-			$cols = array();
+			$cols = [];
 			foreach ($db->utils()->columns_names($rel_table) as $col) {
 				$col = $table_alias.'.'.$col;
 				$cols[$col] = $col;
@@ -127,9 +127,9 @@ class yf_model_relation {
 			return $query
 				->where($join_alias.'.'.$model->get_key_name(), $id)
 				->select(implode(', ', $cols))
-				->inner_join($join_table.' AS '.$join_alias, array(
+				->inner_join($join_table.' AS '.$join_alias, [
 					$table_alias.'.'.$other_key => $join_alias.'.'.$foreign_key,
-				))->get();
+				])->get();
 
 		} elseif ($type === 'belongs_to_many') {
 
@@ -142,19 +142,19 @@ class yf_model_relation {
 			$join_table = $table;
 			$join_alias = 't2';
 
-			$cols = array();
+			$cols = [];
 			foreach ($db->utils()->columns_names($rel_table) as $col) {
 				$col = $table_alias.'.'.$col;
 				$cols[$col] = $col;
 			}
 			return $query->whereid($id)
 				->select(implode(', ', $cols))
-				->inner_join($pivot_table.' AS '.$pivot_alias, array(
+				->inner_join($pivot_table.' AS '.$pivot_alias, [
 					$table_alias.'.'.$rel_model->get_key_name() => $pivot_alias.'.'.$other_key,
-				))
-				->inner_join($join_table.' AS '.$join_alias, array(
+				])
+				->inner_join($join_table.' AS '.$join_alias, [
 					$pivot_alias.'.'.$foreign_key => $join_alias.'.'.$model->get_key_name(),
-				))
+				])
 				->get_all();
 
 		} elseif ($type === 'has_many_through') {
@@ -177,9 +177,9 @@ class yf_model_relation {
 	public function _create_pivot_table($pivot, $relation) {
 		$r = $relation;
 		$utils->create_table($pivot, function($t) use ($r) {
-			$t->int($r['local_key'], array('unsigned' => true, 'nullable' => false));
-			$t->int($r['foreign_key'], array('unsigned' => true, 'nullable' => false));
-			$t->primary(array($r['local_key'] => $r['local_key'], $r['foreign_key'] => $r['foreign_key']));
+			$t->int($r['local_key'], ['unsigned' => true, 'nullable' => false]);
+			$t->int($r['foreign_key'], ['unsigned' => true, 'nullable' => false]);
+			$t->primary([$r['local_key'] => $r['local_key'], $r['foreign_key'] => $r['foreign_key']]);
 		});
 	}
 }

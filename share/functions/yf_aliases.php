@@ -110,10 +110,10 @@ if (!function_exists('cache_del')) {
 	function cache_del($name) { return cache()->del($name); }
 }
 if (!function_exists('cache_tmp')) {
-	function cache_tmp() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(array('driver' => 'tmp')); } return $cache; }
+	function cache_tmp() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(['driver' => 'tmp']); } return $cache; }
 }
 if (!function_exists('cache_files')) {
-	function cache_files() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(array('driver' => 'files')); } return $cache; }
+	function cache_files() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(['driver' => 'files']); } return $cache; }
 }
 if (!function_exists('trace')) {
 	function trace() { $e = new Exception(); return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), 1, -1)); }
@@ -151,10 +151,10 @@ if (!function_exists('db_slave')) {
 	function db_slave($tbl = '') { return db($tbl); }
 }
 if (!function_exists('from')) {
-	function from() { return call_user_func_array(array(db(), __FUNCTION__), func_get_args()); }
+	function from() { return call_user_func_array([db(), __FUNCTION__], func_get_args()); }
 }
 if (!function_exists('select')) {
-	function select() { return call_user_func_array(array(db(), __FUNCTION__), func_get_args()); }
+	function select() { return call_user_func_array([db(), __FUNCTION__], func_get_args()); }
 }
 #if (!function_exists('insert')) {
 #	function insert() { return call_user_func_array(array(db(), __FUNCTION__.'_safe'), func_get_args()); }
@@ -166,82 +166,82 @@ if (!function_exists('t')) {
 	function t($string, $args = 0, $lang = '') { return _class('i18n')->translate_string($string, $args, $lang); }
 }
 if (!function_exists('url')) {
-	function url($params = array(), $host = '', $url_str = '') { return _class('rewrite')->_url($params, $host, $url_str); }
+	function url($params = [], $host = '', $url_str = '') { return _class('rewrite')->_url($params, $host, $url_str); }
 }
 if (!function_exists('url_user')) {
-	function url_user($params = array(), $host = '', $url_str = '') { return _class('rewrite')->_url_user($params, $host, $url_str); }
+	function url_user($params = [], $host = '', $url_str = '') { return _class('rewrite')->_url_user($params, $host, $url_str); }
 }
 if (!function_exists('url_admin')) {
-	function url_admin($params = array(), $host = '', $url_str = '') { return _class('rewrite')->_url_admin($params, $host, $url_str); }
+	function url_admin($params = [], $host = '', $url_str = '') { return _class('rewrite')->_url_admin($params, $host, $url_str); }
 }
 if (!function_exists('process_url')) {
 	function process_url($url = '', $force_rewrite = false, $for_site_id = false) { return _class('rewrite')->_process_url($url, $force_rewrite, $for_site_id); }
 }
 if (!function_exists('form')) {
-	function form($replace = array(), $params = array()) { $form = clone _class('form2'); return $form->chained_wrapper($replace, $params); }
+	function form($replace = [], $params = []) { $form = clone _class('form2'); return $form->chained_wrapper($replace, $params); }
 }
 if (!function_exists('form_item')) {
-	function form_item($replace = array(), $params = array()) {	$form = clone _class('form2'); return $form->chained_wrapper($replace, array('no_form' => 1, 'only_content' => 1, 'no_chained_mode' => 1) + (array)$params); }
+	function form_item($replace = [], $params = []) {	$form = clone _class('form2'); return $form->chained_wrapper($replace, ['no_form' => 1, 'only_content' => 1, 'no_chained_mode' => 1] + (array)$params); }
 }
 if (!function_exists('form2')) {
-	function form2($replace = array(), $params = array()) { $form = clone _class('form2'); return $form->chained_wrapper($replace, $params); }
+	function form2($replace = [], $params = []) { $form = clone _class('form2'); return $form->chained_wrapper($replace, $params); }
 }
 if (!function_exists('table')) {
-	function table($data = array(), $params = array()) { $table = clone _class('table2'); return $table->chained_wrapper($data, $params); }
+	function table($data = [], $params = []) { $table = clone _class('table2'); return $table->chained_wrapper($data, $params); }
 }
 if (!function_exists('table2')) {
-	function table2($data = array(), $params = array()) { $table = clone _class('table2'); return $table->chained_wrapper($data, $params); }
+	function table2($data = [], $params = []) { $table = clone _class('table2'); return $table->chained_wrapper($data, $params); }
 }
 if (!function_exists('js')) {
-	function js($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'js', $content_type, $params); }
+	function js($content, $content_type = 'auto', $params = []) { return _class('assets')->add($content, 'js', $content_type, $params); }
 }
 if (!function_exists('require_js')) {
-	function require_js($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'js', $content_type, $params); }
+	function require_js($content, $content_type = 'auto', $params = []) { return _class('assets')->add($content, 'js', $content_type, $params); }
 }
 if (!function_exists('css')) {
-	function css($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'css', $content_type, $params); }
+	function css($content, $content_type = 'auto', $params = []) { return _class('assets')->add($content, 'css', $content_type, $params); }
 }
 if (!function_exists('require_css')) {
-	function require_css($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'css', $content_type, $params); }
+	function require_css($content, $content_type = 'auto', $params = []) { return _class('assets')->add($content, 'css', $content_type, $params); }
 }
 if (!function_exists('asset')) {
-	function asset($content, $asset_type = 'bundle', $content_type = 'auto', $params = array()) { return _class('assets')->add($content, $asset_type, $content_type, $params); }
+	function asset($content, $asset_type = 'bundle', $content_type = 'auto', $params = []) { return _class('assets')->add($content, $asset_type, $content_type, $params); }
 }
 if (!function_exists('jquery')) {
-	function jquery($content, $params = array()) { return _class('assets')->jquery($content, $params); }
+	function jquery($content, $params = []) { return _class('assets')->jquery($content, $params); }
 }
 if (!function_exists('angularjs')) {
-	function angularjs($content, $params = array()) { return _class('assets')->angularjs($content, $params); }
+	function angularjs($content, $params = []) { return _class('assets')->angularjs($content, $params); }
 }
 if (!function_exists('backbonejs')) {
-	function backbonejs($content, $params = array()) { return _class('assets')->backbonejs($content, $params); }
+	function backbonejs($content, $params = []) { return _class('assets')->backbonejs($content, $params); }
 }
 if (!function_exists('reactjs')) {
-	function reactjs($content, $params = array()) { return _class('assets')->reactjs($content, $params); }
+	function reactjs($content, $params = []) { return _class('assets')->reactjs($content, $params); }
 }
 if (!function_exists('emberjs')) {
-	function emberjs($content, $params = array()) { return _class('assets')->emberjs($content, $params); }
+	function emberjs($content, $params = []) { return _class('assets')->emberjs($content, $params); }
 }
 if (!function_exists('sass')) {
-	function sass($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'sass', $content_type, $params); }
+	function sass($content, $content_type = 'auto', $params = []) { return _class('assets')->add($content, 'sass', $content_type, $params); }
 }
 if (!function_exists('less')) {
-	function less($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'less', $content_type, $params); }
+	function less($content, $content_type = 'auto', $params = []) { return _class('assets')->add($content, 'less', $content_type, $params); }
 }
 if (!function_exists('coffee')) {
-	function coffee($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'coffee', $content_type, $params); }
+	function coffee($content, $content_type = 'auto', $params = []) { return _class('assets')->add($content, 'coffee', $content_type, $params); }
 }
 if (!function_exists('jade')) {
-	function jade($content, $params = array()) { return _class('services')->jade($content, $params); }
+	function jade($content, $params = []) { return _class('services')->jade($content, $params); }
 }
 if (!function_exists('haml')) {
-	function haml($content, $params = array()) { return _class('services')->haml($content, $params); }
+	function haml($content, $params = []) { return _class('services')->haml($content, $params); }
 }
 if (!function_exists('tip')) {
-	function tip($text, $extra = array()) { return _class('graphics')->tip($text, $extra); }
+	function tip($text, $extra = []) { return _class('graphics')->tip($text, $extra); }
 }
 if (!function_exists('require_php_lib')) {
-	function require_php_lib($name, $params = array()) { return _class('services')->require_php_lib($name, $params); }
+	function require_php_lib($name, $params = []) { return _class('services')->require_php_lib($name, $params); }
 }
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
@@ -253,10 +253,10 @@ if (!function_exists('redirect')) {
 	function redirect($location, $rewrite = true, $text = '', $ttl = 3) { return common()->redirect($location, $rewrite, 'html', $text, $ttl); }
 }
 if (!function_exists('_302')) {
-	function _302($url, $text = '') { return common()->redirect(array('url' => $url, 'text' => $text, 'type' => '302')); }
+	function _302($url, $text = '') { return common()->redirect(['url' => $url, 'text' => $text, 'type' => '302']); }
 }
 if (!function_exists('_301')) {
-	function _301($url, $text = '') { return common()->redirect(array('url' => $url, 'text' => $text, 'type' => '301')); }
+	function _301($url, $text = '') { return common()->redirect(['url' => $url, 'text' => $text, 'type' => '301']); }
 }
 if (!function_exists('_404')) {
 	function _404($text = '') { return common()->error_404($text); }
@@ -306,10 +306,10 @@ if (!function_exists('_check_rights')) {
 // Execute command on remote server using SSH
 if (!function_exists('_ssh_exec')) {
 // TODO: rename into just "ssh" and reimplement with laravel-style
-	function _ssh_exec($server_info = array(), $cmd = '') { return _class('ssh')->exec($server_info, $cmd); }
+	function _ssh_exec($server_info = [], $cmd = '') { return _class('ssh')->exec($server_info, $cmd); }
 }
 if (!function_exists('_add_get')) {
-	function _add_get($add_skip = array()) { return common()->add_get_vars($add_skip); }
+	function _add_get($add_skip = []) { return common()->add_get_vars($add_skip); }
 }
 // Localize current piece of data
 if (!function_exists('l')) {
@@ -334,7 +334,7 @@ if (!function_exists('db_get_one')) {
 	function db_get_one($sql = '', $use_cache = true) { return db()->get_one($sql, $use_cache); }
 }
 if (!function_exists('model')) {
-	function model($name, $params = array()) { return db()->model($name, $params); }
+	function model($name, $params = []) { return db()->model($name, $params); }
 }
 // current GMT time
 if (!function_exists('gmtime')) {
@@ -347,19 +347,19 @@ if (!function_exists('sphinx_escape_string')) {
 	function sphinx_escape_string($string) { return _class('sphinxsearch')->escape_string($string); }
 }
 if (!function_exists('html')) {
-	function html(array $params = array()) { return _class('html')->chained_wrapper($params); }
+	function html(array $params = []) { return _class('html')->chained_wrapper($params); }
 }
 if (!function_exists('a')) {
-	function a() { return call_user_func_array(array(_class('html'), __FUNCTION__), func_get_args()); }
+	function a() { return call_user_func_array([_class('html'), __FUNCTION__], func_get_args()); }
 }
 if (!function_exists('validate')) {
-	function validate($input = '', $rules = array()) { return _class('validate')->_input_is_valid($input, $rules); }
+	function validate($input = '', $rules = []) { return _class('validate')->_input_is_valid($input, $rules); }
 }
 if (!function_exists('sms_send')) {
 	function sms_send($phone, $text, $params = []) { return _class('service_turbosms')->send($phone, $text, $params) ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
 if (!function_exists('_check_user_ban')) {
-	function _check_user_ban($info = array(), $user_info = array()) { return common()->check_user_ban($info, $user_info); }
+	function _check_user_ban($info = [], $user_info = []) { return common()->check_user_ban($info, $user_info); }
 }
 // Wrapper for tpl generated php code for PHP 5.3 compatibility
 if (!function_exists('_empty')) {

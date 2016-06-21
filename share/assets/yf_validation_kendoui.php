@@ -1,8 +1,8 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'jquery' => 
 <<<END
 $( 'form' ).each(function() {
@@ -64,12 +64,12 @@ $( 'form' ).each(function() {
     });
 });
 END
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'kendoui'
-	),
-	'config' => array(
+	],
+	'config' => [
 		'no_cache' => true,
-	),
-);
+	],
+];

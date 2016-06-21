@@ -16,11 +16,11 @@ class yf_module {
 	/** @var bool Use post preview or not */
 	public $USE_PREVIEW		= false;
 	/** @var array @conf_skip */
-	public $_comments_params	= array();
+	public $_comments_params	= [];
 	/** @var array @conf_skip */
-	public $_poll_params		= array();
+	public $_poll_params		= [];
 	/** @var array @conf_skip */
-	public $_tags_params		= array();
+	public $_tags_params		= [];
 
 	/**
 	* Catch missing method call
@@ -31,55 +31,55 @@ class yf_module {
 
 	/**
 	*/
-	function _view_comments($params = array()) {
+	function _view_comments($params = []) {
 		return module_safe('comments')->_show_for_object( (array)$params + (array)$this->_comments_params );
 	}
 
 	/**
 	*/
-	function _get_num_comments($params = array()) {
+	function _get_num_comments($params = []) {
 		if (!is_array($params)) {
-			$params = array('objects_ids' => $params);
+			$params = ['objects_ids' => $params];
 		}
 		return module_safe('comments')->_get_num_comments( (array)$params + (array)$this->_comments_params );
 	}
 
 	/**
 	*/
-	function _comment_is_allowed($params = array()) {
+	function _comment_is_allowed($params = []) {
 		return true;
 	}
 
 	/**
 	*/
-	function _comment_edit_allowed($params = array()) {
+	function _comment_edit_allowed($params = []) {
 		return (bool)($this->USER_ID && $params['user_id'] && $params['user_id'] == $this->USER_ID);
 	}
 
 	/**
 	*/
-	function _comment_delete_allowed($params = array()) {
+	function _comment_delete_allowed($params = []) {
 		return (bool)$this->USER_ID && $params['user_id'] && $params['user_id'] == $this->USER_ID;
 	}
 
 	/**
 	*/
-	function add_comment($params = array()) {
+	function add_comment($params = []) {
 		if ($_POST['submit'] == 'Preview') {
-			return module('preview')->_display_preview(array('text' => $_POST['text']));
+			return module('preview')->_display_preview(['text' => $_POST['text']]);
 		}
 		return module('comments')->_add( (array)$this->_comments_params + (array)$params );
 	}
 
 	/**
 	*/
-	function edit_comment($params = array()) {
+	function edit_comment($params = []) {
 		return module_safe('comments')->_edit( (array)$this->_comments_params + (array)$params );
 	}
 
 	/**
 	*/
-	function delete_comment($params = array()) {
+	function delete_comment($params = []) {
 		return module_safe('comments')->_delete( (array)$this->_comments_params + (array)$params );
 	}
 
@@ -129,14 +129,14 @@ class yf_module {
 	/**
 	* Display rate box (stars etx)
 	*/
-	function _show_rate_box($params = array()) {
+	function _show_rate_box($params = []) {
 		return module_safe('rate')->_show_for_object($params);
 	}
 
 	/**
 	* Display rate box (stars etx)
 	*/
-	function _prefetch_rate_infos($params = array()) {
+	function _prefetch_rate_infos($params = []) {
 		return module_safe('rate')->_prefetch_rate_infos($params);
 	}
 
@@ -170,9 +170,9 @@ class yf_module {
 	/**
 	* Display preview of current module (usually popup window)
 	*/
-	function display_preview($params = array(), $template = '') {
+	function display_preview($params = [], $template = '') {
 		if ($_POST != null) {
-			return _class_safe('preview')->_display_preview(array('replace' => $this->_prepare_preview()));
+			return _class_safe('preview')->_display_preview(['replace' => $this->_prepare_preview()]);
 		}
 	}
 
@@ -184,13 +184,13 @@ class yf_module {
 
 	/**
 	*/
-	function _display_submit_buttons($params = array(), $template = '') {
+	function _display_submit_buttons($params = [], $template = '') {
 		return $this->USE_PREVIEW ? _class_safe('preview')->_display_buttons() : '';
 	}
 
 	/**
 	*/
-	function _show_tags($ids = array(), $params = array()) {
+	function _show_tags($ids = [], $params = []) {
 		return module_safe('tags')->_show($ids, (array)$this->_tags_params + (array)$params );
 	}
 

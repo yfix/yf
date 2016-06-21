@@ -38,7 +38,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		if ($this->params['charset']) {
 			$dsn .= ';charset='.$this->params['charset'];
 		}
-		$attrs = array();
+		$attrs = [];
 		$attrs[PDO::ATTR_TIMEOUT] = 2;
 		if ($this->params['persist']) {
 			$attrs[PDO::ATTR_PERSISTENT] = true;
@@ -126,7 +126,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		if (!$q) {
 			return false;
 		}
-		$warnings = array();
+		$warnings = [];
 		// Example: Warning (1264): Data truncated for column 'Name' at row 1
 		while ($a = $this->fetch_row($q)) {
 			$warnings[] = printf('%s (%d): %s', $a[0], $a[1], $a[2]);

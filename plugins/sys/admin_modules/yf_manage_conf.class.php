@@ -7,21 +7,21 @@ class yf_manage_conf {
 	/**
 	*/
 	function _init() {
-		$this->_table = array(
+		$this->_table = [
 			'table' => self::table,
-			'fields' => array(
+			'fields' => [
 				'name',
 				'value',
 				'desc'
-			),
-		);
+			],
+		];
 	}
 
 	/**
 	*/
 	function show() {
 		return table('SELECT * FROM '.db(self::table).' ORDER BY `name` ASC')
-			->text('name','',array('badge' => 'info'))
+			->text('name','',['badge' => 'info'])
 			->text('value')
 			->text('desc','Description')
 			->btn_edit()
@@ -48,7 +48,7 @@ class yf_manage_conf {
 	*/
 	function edit() {
 		$replace = _class('admin_methods')->edit($this->_table);
-		$data = array();
+		$data = [];
 		if ($replace['linked_data']) {
 			$data = main()->get_data($replace['linked_data']);
 		} elseif ($replace['linked_table']) {

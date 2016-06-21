@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   5 => 
-  array (
+  [
     'id' => '5',
     'id2' => '1',
     'user_id' => '6',
@@ -28,5 +28,5 @@ return array (
     'votes_sum' => '0',
     'last_vote_date' => '0',
     'allow_tagging' => '1',
-  ),
-);
+  ],
+];

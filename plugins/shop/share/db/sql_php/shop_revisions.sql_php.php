@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'add_date' => array(
+		],
+		'add_date' => [
 			'name' => 'add_date',
 			'type' => 'int',
 			'length' => 11,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'action' => array(
+		],
+		'action' => [
 			'name' => 'action',
 			'type' => 'varchar',
 			'length' => 127,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'item_id' => array(
+		],
+		'item_id' => [
 			'name' => 'item_id',
 			'type' => 'int',
 			'length' => 11,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ip' => array(
+		],
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'char',
 			'length' => 15,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'table' => array(
+		],
+		'table' => [
 			'name' => 'table',
 			'type' => 'varchar',
 			'length' => 127,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'data' => array(
+		],
+		'data' => [
 			'name' => 'data',
 			'type' => 'text',
 			'length' => NULL,
@@ -120,26 +120,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'item_id' => array(
+			],
+		],
+		'item_id' => [
 			'name' => 'item_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'item_id' => 'item_id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

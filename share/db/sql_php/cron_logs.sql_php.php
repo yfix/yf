@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'cron_id' => array(
+		],
+		'cron_id' => [
 			'name' => 'cron_id',
 			'type' => 'int',
 			'length' => 10,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'log' => array(
+		],
+		'log' => [
 			'name' => 'log',
 			'type' => 'text',
 			'length' => NULL,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'time_start' => array(
+		],
+		'time_start' => [
 			'name' => 'time_start',
 			'type' => 'int',
 			'length' => 10,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'time_end' => array(
+		],
+		'time_end' => [
 			'name' => 'time_end',
 			'type' => 'int',
 			'length' => 10,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'time_spent' => array(
+		],
+		'time_spent' => [
 			'name' => 'time_spent',
 			'type' => 'varchar',
 			'length' => 20,
@@ -90,21 +90,21 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

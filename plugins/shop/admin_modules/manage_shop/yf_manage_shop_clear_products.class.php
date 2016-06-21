@@ -16,23 +16,23 @@ class yf_manage_shop_clear_products {
 	 *
 	 */
 	function clear_patterns () {
-		$html = table('SELECT * FROM '.db('shop_patterns'), array(
+		$html = table('SELECT * FROM '.db('shop_patterns'), [
 			'table_attr'    => 'id="patterns_list"',
 			'filter'        => $_SESSION[$_GET['object'].'__patterns'],
-			'filter_params' => array(
+			'filter_params' => [
 				'search'  => 'like',
 				'repalce' => 'like',
 				'cat_id'  => 'in',
-			),
-		))
-		->text('search', array('header_tip' => $this->SEARCH_TIP))
+			],
+		])
+		->text('search', ['header_tip' => $this->SEARCH_TIP])
 		->text('replace')
 		->text('description')
 		->func('cat_id', function($value, $extra, $row_info) {
 			$category = conf('all_cats::'.$value);
 			$category = !empty($category) ? $category['name'] : t('In all categories');
 			return '<span class="badge badge-warning">'.$category.'</span>';
-		}, array('desc' => 'Category'))
+		}, ['desc' => 'Category'])
 		->func('id', function($value, $extra, $row_info) {
 			$where = '';
 			if (!empty($row_info['cat_id'])) {
@@ -42,7 +42,7 @@ class yf_manage_shop_clear_products {
 			$sql = 'SELECT COUNT(*) AS `0` FROM '.db('shop_products').' WHERE LOWER(name) REGEXP \'[[:<:]]'.mb_strtolower($row_info['search'], 'UTF-8').'[[:>:]]\''.$where;
 			list($count) = db()->query_fetch($sql);
 			return '<span class="badge badge-info pattern_count">'.$count.'</span>';
-		}, array('desc' => 'Products for changing'))
+		}, ['desc' => 'Products for changing'])
 		->btn_func('Run', function($row_info, $params, $instance_params, $_this) {
 			if ($row_info['process']) {
 				return '<button class="btn btn-mini btn-xs run_item btn-warning" data-id="'.$row_info['id'].'"><i class="icon-refresh fa fa-refresh icon-spin fa-spin"></i> <span>'.t('Process').'...</span></button>';
@@ -57,17 +57,17 @@ class yf_manage_shop_clear_products {
 				return '<button class="btn btn-mini btn-xs btn-danger rollback_item" data-id="'.$row_info['id'].'"><i class="icon-undo fa fa-undo"></i> <span>'.t('Rollback').'</span></button>';
 			}
 		})
-		->btn('List of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', array('icon' => 'icon-th-list fa fa-th-list'))
-		->btn_edit('', './?object=manage_shop&action=clear_pattern_edit&id=%d',array('no_ajax' => 1))
+		->btn('List of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', ['icon' => 'icon-th-list fa fa-th-list'])
+		->btn_edit('', './?object=manage_shop&action=clear_pattern_edit&id=%d',['no_ajax' => 1])
 		->btn_delete('', './?object=manage_shop&action=clear_pattern_delete&id=%d')
-		->footer_add('Add pattern', './?object=manage_shop&action=clear_pattern_add',array('no_ajax' => 1));
+		->footer_add('Add pattern', './?object=manage_shop&action=clear_pattern_add',['no_ajax' => 1]);
 
-		$replace = array(
+		$replace = [
 			'pattern_run_url'      => './?object=manage_shop&action=clear_pattern_run',
 			'pattern_stop_url'     => './?object=manage_shop&action=clear_pattern_stop',
 			'pattern_status_url'   => './?object=manage_shop&action=clear_pattern_status',
 			'pattern_rollback_url' => './?object=manage_shop&action=clear_pattern_rollback',
-		);
+		];
 		$html .= tpl()->parse('manage_shop/product_clear_patterns', $replace);
 		return $html;
 	}
@@ -93,19 +93,19 @@ class yf_manage_shop_clear_products {
 		$sql = 'SELECT * FROM '.db('shop_products').' WHERE LOWER(name) REGEXP \'[[:<:]]'.mb_strtolower($pattern_info['search'], 'UTF-8').'[[:>:]]\''.$where;
 		$sql = db()->query($sql);
 		while($row = db()->fetch_assoc($sql)) {
-			$pattern_list[] = array(
+			$pattern_list[] = [
 				'id'      => $row['id'],
 				'now'     => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b class="text-warning">$1</b>', $row['name']),
 				'will_be' => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b class="text-success">'.$pattern_info['replace'].'</b>', $row['name']),
-			);
+			];
 		}
 
 		return table($pattern_list)
-			->header_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply fa fa-reply', 'class' => 'btn-warning'))
+			->header_link('Back', './?object=manage_shop&action=clear_patterns', ['icon' => 'icon-reply fa fa-reply', 'class' => 'btn-warning'])
 			->text('now')
 			->text('will_be')
-			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d', array('no_ajax' => 1))
-			->footer_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply fa fa-reply', 'class' => 'btn-warning'))
+			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d', ['no_ajax' => 1])
+			->footer_link('Back', './?object=manage_shop&action=clear_patterns', ['icon' => 'icon-reply fa fa-reply', 'class' => 'btn-warning'])
 			;
 	}
 
@@ -113,20 +113,20 @@ class yf_manage_shop_clear_products {
 	 *
 	 */
 	function clear_pattern_add () {
-		$validate_rules = array(
-			'search' => array('trim|required|xss_clean'),
-			'replace'	 => array('trim|required|xss_clean'),
-		);
+		$validate_rules = [
+			'search' => ['trim|required|xss_clean'],
+			'replace'	 => ['trim|required|xss_clean'],
+		];
 
 		$a = $_POST;
 		$a['redirect_link'] = './?object=manage_shop&action=clear_patterns';
 
-		return form($a, array('legend' => t('Add pattern')))
+		return form($a, ['legend' => t('Add pattern')])
 			->validate($validate_rules)
-			->db_insert_if_ok('shop_patterns', array('search','replace', 'cat_id'))
-			->text('search', array('tip' => $this->SEARCH_TIP))
+			->db_insert_if_ok('shop_patterns', ['search','replace', 'cat_id'])
+			->text('search', ['tip' => $this->SEARCH_TIP])
 			->text('replace')
-			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Category', 'show_text' => 1))
+			->select_box('cat_id', module('manage_shop')->_cats_for_select, ['desc' => 'Category', 'show_text' => 1])
 			->textarea('description')
 			->save();
 	}
@@ -146,20 +146,20 @@ class yf_manage_shop_clear_products {
 			return t('Wrong clean pattern');
 		}
 
-		$validate_rules = array(
-			'search'  => array('trim|required|xss_clean'),
-			'replace' => array('trim|required|xss_clean'),
-		);
+		$validate_rules = [
+			'search'  => ['trim|required|xss_clean'],
+			'replace' => ['trim|required|xss_clean'],
+		];
 
 		$a = $pattern_info;
 		$a['redirect_link'] = './?object=manage_shop&action=clear_patterns';
 
-		return form($a, array('legend' => t('Edit pattern')))
+		return form($a, ['legend' => t('Edit pattern')])
 			->validate($validate_rules)
-			->db_update_if_ok('shop_patterns', array('search','replace', 'cat_id'), 'id = '.$_GET['id'])
-			->text('search', array('tip' => $this->SEARCH_TIP))
+			->db_update_if_ok('shop_patterns', ['search','replace', 'cat_id'], 'id = '.$_GET['id'])
+			->text('search', ['tip' => $this->SEARCH_TIP])
 			->text('replace')
-			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Category', 'show_text' => 1))
+			->select_box('cat_id', module('manage_shop')->_cats_for_select, ['desc' => 'Category', 'show_text' => 1])
 			->textarea('description')
 			->save();
 	}
@@ -188,14 +188,14 @@ class yf_manage_shop_clear_products {
 
 		$pattern_info = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id = '.$_GET['id'].' AND process = 0');
 		if (empty($pattern_info)) {
-			echo json_encode(array('status' => 'already'));
+			echo json_encode(['status' => 'already']);
 			exit;
 		}
 
 		$admin_fs_path = ADMIN_SITE_PATH; // INCLUDE_PATH.'admin/
 		shell_exec('cd '.$admin_fs_path.' && php index.php --object=manage_shop --action='.$action.' --id='.$_GET['id'].' --admin_id='.main()->ADMIN_ID.' > /dev/null &');
 
-		echo json_encode(array('status' => 'done'));
+		echo json_encode(['status' => 'done']);
 		exit;
 	}
 
@@ -215,14 +215,14 @@ class yf_manage_shop_clear_products {
 
 		$pattern_info = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id = '.$_GET['id'].' AND process != 0');
 		if (empty($pattern_info)) {
-			echo json_encode(array('status' => 'non'));
+			echo json_encode(['status' => 'non']);
 			exit;
 		}
 
 		shell_exec('kill '.$pattern_info['process'].' > /dev/null &');
 		db()->query('UPDATE '.db('shop_patterns').' SET process = 0 WHERE id = '.$_GET['id'].';');
 
-		echo json_encode(array('status' => 'done'));
+		echo json_encode(['status' => 'done']);
 		exit;
 	}
 
@@ -279,10 +279,10 @@ class yf_manage_shop_clear_products {
 		$sql = 'SELECT * FROM '.db('shop_products').' WHERE LOWER(name) REGEXP \'[[:<:]]'.mb_strtolower($pattern_info['search'], 'UTF-8').'[[:>:]]\''.$where;
 		$sql = db()->query($sql);
 		while($row = db()->fetch_assoc($sql)) {
-			$update_array[] = array(
+			$update_array[] = [
 				'id'   => $row['id'],
 				'name' => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', $pattern_info['replace'], $row['name']),
-			);
+			];
 
 			$update_ids[] = $row['id'];
 		}

@@ -5,29 +5,29 @@ class yf_manage_shop_users{
 	*/
 	function users () {
 		if (empty($_SESSION[$_GET['object'].'__users'])) {
-			$_SESSION[$_GET['object'].'__users'] = array(
+			$_SESSION[$_GET['object'].'__users'] = [
 				'order_by' => 'add_date',
 				'order_direction' => 'desc'
-			);
+			];
 		}
-		return table('SELECT * FROM '.db('user'), array(
+		return table('SELECT * FROM '.db('user'), [
 				'filter' => $_SESSION[$_GET['object'].'__users'],
-				'filter_params' => array(
+				'filter_params' => [
 					'id'		=> 'like',					
 					'name'		=> 'like',
 					'email'		=> 'like',
 					'phone'		=> 'like',
 					'address'	=> 'like',			
 					'add_date'	=> 'dt_between',					
-				),
-			))
+				],
+			])
 			->text('id')
 			->text('name')
 			->text('email')
 			->text('phone')
 			->text('address')
-			->date('add_date', array('format' => 'full','nowrap' => 1))
-			->btn_edit('', './?object='.main()->_get('object').'&action=user_edit&id=%d',array('no_ajax' => 1))
+			->date('add_date', ['format' => 'full','nowrap' => 1])
+			->btn_edit('', './?object='.main()->_get('object').'&action=user_edit&id=%d',['no_ajax' => 1])
 			->btn('Login', './?object=manage_users&action=login_as&id=%d')
 			->btn_delete('', './?object='.main()->_get('object').'&action=user_delete&id=%d')
 			->btn_active('', './?object='.main()->_get('object').'&action=user_activate&id=%d')
@@ -44,7 +44,7 @@ class yf_manage_shop_users{
 		}
 		if ($_GET['id']) {
 			db()->query('DELETE FROM '.db('user').' WHERE id='.$_GET['id']);
-			common()->admin_wall_add(array('user deleted: '.$_GET['id'], $_GET['id']));
+			common()->admin_wall_add(['user deleted: '.$_GET['id'], $_GET['id']]);
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -64,7 +64,7 @@ class yf_manage_shop_users{
 			} elseif ($A['active'] == 0) {
 				$active = 1;
 			}
-			db()->UPDATE(db('user'), array('active' => $active), 'id='.intval($_GET['id']));
+			db()->UPDATE(db('user'), ['active' => $active], 'id='.intval($_GET['id']));
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -83,12 +83,12 @@ class yf_manage_shop_users{
 				return js_redirect('./?object='.main()->_get('object').'&action=users');
 			}
 		}
-		$validate_rules = array(
-			'name'		=> array( 'trim|required' ),
-			'email'		=> array( 'trim|valid_email' ),
-			'phone'		=> array( 'trim|required' ),
-			'address'	=> array( 'trim|required' ),
-		);
+		$validate_rules = [
+			'name'		=> [ 'trim|required' ],
+			'email'		=> [ 'trim|valid_email' ],
+			'phone'		=> [ 'trim|required' ],
+			'address'	=> [ 'trim|required' ],
+		];
 		$A['redirect_link'] = './?object='.$_GET['object'].'&action=users';	
 		if ($A['birthday'] !== '0000-00-00'){
 			$A['birthday'] = date('d-m-Y', strtotime($A['birthday']));
@@ -97,7 +97,7 @@ class yf_manage_shop_users{
 		}
 		return form($A)
 			->validate($validate_rules)
-			->db_update_if_ok('user', array('name','phone','address','birthday'), $_GET['id'])
+			->db_update_if_ok('user', ['name','phone','address','birthday'], $_GET['id'])
 			->on_before_update(function(&$data, $table, $fields) { 
 				$data['birthday'] = date('Y-m-d', strtotime($data['birthday'])); 
 			})
@@ -105,7 +105,7 @@ class yf_manage_shop_users{
 			->email('email')
 			->text('phone')
 			->text('address')
-			->datetime_select('birthday', 'Дата рождения', array('no_time' => 1, 'placeholder' => 'день-месяц-год', 'value' => $A['birthday']))
+			->datetime_select('birthday', 'Дата рождения', ['no_time' => 1, 'placeholder' => 'день-месяц-год', 'value' => $A['birthday']])
 			->save();
 	}
 

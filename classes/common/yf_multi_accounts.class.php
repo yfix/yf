@@ -31,10 +31,10 @@ class yf_multi_accounts {
 			return false;
 		}
 		$MULTI_ACCOUNT_FOUND = false;
-		$users_ids = array(
+		$users_ids = [
 			$source_user_id	=> $source_user_id,
 			$target_user_id => $target_user_id,
-		);
+		];
 		// Try to get multi-accounts infos
 		$Q = db()->query(
 			"SELECT user_id, ip_match, cookie_match, matching_users 

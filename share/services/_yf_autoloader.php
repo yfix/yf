@@ -4,7 +4,7 @@ class yf_autoloader {
 
 	public $libs_root = '';
 	public $is_console = false;
-	public $config_names = array(
+	public $config_names = [
 		'file',
 		'composer_names',
 		'git_urls',
@@ -14,18 +14,18 @@ class yf_autoloader {
 		'manual',
 		'require_services',
 		'example',
-	);
-	public $composer_names = array();
-	public $git_urls = array();
-	public $autoload_config = array();
-	public $pear = array();
-	public $require_services = array();
-	public $manual = array();
-	public $require_once = array();
-	public $example = array();
+	];
+	public $composer_names = [];
+	public $git_urls = [];
+	public $autoload_config = [];
+	public $pear = [];
+	public $require_services = [];
+	public $manual = [];
+	public $require_once = [];
+	public $example = [];
 
 	/***/
-	public function __construct($config = array()) {
+	public function __construct($config = []) {
 		!defined('YF_PATH') && define('YF_PATH', dirname(dirname(__DIR__)).'/');
 		$this->libs_root = YF_PATH.'libs/';
 		$this->is_console = $_SERVER['argc'] && !isset($_SERVER['REQUEST_METHOD']);
@@ -80,8 +80,8 @@ class yf_autoloader {
 		}
 		require_once $dir. 'autoload.php';
 		// Exclude raw git clone steps
-		$this->git_urls = array();
-		$this->autoload_config = array();
+		$this->git_urls = [];
+		$this->autoload_config = [];
 	}
 
 	/***/
@@ -219,7 +219,7 @@ class yf_autoloader {
 		$cwd = getcwd();
 		chdir($libs_root);
 
-		$input = new Symfony\Component\Console\Input\ArrayInput(array('command' => 'require', 'packages' => is_array($package) ? $package : array($package)));
+		$input = new Symfony\Component\Console\Input\ArrayInput(['command' => 'require', 'packages' => is_array($package) ? $package : [$package]]);
 		$input->setInteractive(false);
 		$application = new Composer\Console\Application();
 		$application->setAutoExit(false);
@@ -232,7 +232,7 @@ class yf_autoloader {
 	/***/
 	public function check_error($name, $dir, $check_file, $error_reason = 'git url or command is wrong') {
 		$libs_root = $this->libs_root;
-		$error_reasons = array();
+		$error_reasons = [];
 		if (!file_exists($check_file)) {
 			if (!is_writable($dir)) {
 				$error_reasons[] = $dir.' is not writable';

@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -17,9 +17,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -35,9 +35,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -53,9 +53,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -71,9 +71,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   5 => 
-  array (
+  [
     'id' => '5',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -89,9 +89,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   6 => 
-  array (
+  [
     'id' => '6',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -107,9 +107,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   7 => 
-  array (
+  [
     'id' => '7',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -125,9 +125,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   8 => 
-  array (
+  [
     'id' => '8',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -143,9 +143,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   9 => 
-  array (
+  [
     'id' => '9',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -161,9 +161,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   10 => 
-  array (
+  [
     'id' => '10',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -179,9 +179,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   11 => 
-  array (
+  [
     'id' => '11',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -197,9 +197,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   12 => 
-  array (
+  [
     'id' => '12',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -215,9 +215,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   13 => 
-  array (
+  [
     'id' => '13',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -233,9 +233,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   14 => 
-  array (
+  [
     'id' => '14',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -251,9 +251,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   16 => 
-  array (
+  [
     'id' => '16',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -269,9 +269,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   17 => 
-  array (
+  [
     'id' => '17',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -287,9 +287,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   18 => 
-  array (
+  [
     'id' => '18',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -305,9 +305,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   19 => 
-  array (
+  [
     'id' => '19',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -323,9 +323,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   20 => 
-  array (
+  [
     'id' => '20',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -341,9 +341,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   21 => 
-  array (
+  [
     'id' => '21',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -359,9 +359,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   22 => 
-  array (
+  [
     'id' => '22',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -377,9 +377,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   23 => 
-  array (
+  [
     'id' => '23',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -395,9 +395,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   24 => 
-  array (
+  [
     'id' => '24',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -413,9 +413,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   25 => 
-  array (
+  [
     'id' => '25',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -431,9 +431,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   26 => 
-  array (
+  [
     'id' => '26',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -449,9 +449,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   27 => 
-  array (
+  [
     'id' => '27',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -467,9 +467,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   28 => 
-  array (
+  [
     'id' => '28',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -485,9 +485,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   29 => 
-  array (
+  [
     'id' => '29',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -503,9 +503,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   30 => 
-  array (
+  [
     'id' => '30',
     'cat_id' => '1',
     'parent_id' => '38',
@@ -521,9 +521,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   31 => 
-  array (
+  [
     'id' => '31',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -539,9 +539,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   32 => 
-  array (
+  [
     'id' => '32',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -557,9 +557,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   33 => 
-  array (
+  [
     'id' => '33',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -575,9 +575,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   34 => 
-  array (
+  [
     'id' => '34',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -593,9 +593,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   35 => 
-  array (
+  [
     'id' => '35',
     'cat_id' => '1',
     'parent_id' => '39',
@@ -611,9 +611,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   36 => 
-  array (
+  [
     'id' => '36',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -629,9 +629,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   37 => 
-  array (
+  [
     'id' => '37',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -647,9 +647,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   38 => 
-  array (
+  [
     'id' => '38',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -665,9 +665,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   39 => 
-  array (
+  [
     'id' => '39',
     'cat_id' => '1',
     'parent_id' => '30',
@@ -683,9 +683,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   40 => 
-  array (
+  [
     'id' => '40',
     'cat_id' => '1',
     'parent_id' => '39',
@@ -701,9 +701,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   41 => 
-  array (
+  [
     'id' => '41',
     'cat_id' => '1',
     'parent_id' => '39',
@@ -719,9 +719,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   43 => 
-  array (
+  [
     'id' => '43',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -737,9 +737,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   44 => 
-  array (
+  [
     'id' => '44',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -755,9 +755,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   45 => 
-  array (
+  [
     'id' => '45',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -773,9 +773,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   46 => 
-  array (
+  [
     'id' => '46',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -791,9 +791,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   47 => 
-  array (
+  [
     'id' => '47',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -809,9 +809,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   48 => 
-  array (
+  [
     'id' => '48',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -827,9 +827,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   49 => 
-  array (
+  [
     'id' => '49',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -845,9 +845,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   50 => 
-  array (
+  [
     'id' => '50',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -863,9 +863,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   51 => 
-  array (
+  [
     'id' => '51',
     'cat_id' => '1',
     'parent_id' => '39',
@@ -881,9 +881,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   52 => 
-  array (
+  [
     'id' => '52',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -899,9 +899,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   53 => 
-  array (
+  [
     'id' => '53',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -917,9 +917,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   54 => 
-  array (
+  [
     'id' => '54',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -935,9 +935,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   55 => 
-  array (
+  [
     'id' => '55',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -953,9 +953,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   56 => 
-  array (
+  [
     'id' => '56',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -971,9 +971,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   57 => 
-  array (
+  [
     'id' => '57',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -989,9 +989,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   58 => 
-  array (
+  [
     'id' => '58',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -1007,9 +1007,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   59 => 
-  array (
+  [
     'id' => '59',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -1025,9 +1025,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   60 => 
-  array (
+  [
     'id' => '60',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -1043,9 +1043,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   61 => 
-  array (
+  [
     'id' => '61',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -1061,9 +1061,9 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
+  ],
   245 => 
-  array (
+  [
     'id' => '245',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -1079,5 +1079,5 @@ return array (
     'other_info' => '',
     'icon' => '',
     'featured' => '0',
-  ),
-);
+  ],
+];

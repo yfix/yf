@@ -41,14 +41,14 @@ class yf_template_editor {
 		}
 		$this->_preload_complete = true;
 		$themes_path = tpl()->_THEMES_PATH;
-		$this->_dir_array = array(
+		$this->_dir_array = [
 			'app'				=> APP_PATH. $themes_path,
 			'app_plugins'		=> APP_PATH. 'plugins/*/'. $themes_path,
 			'project'			=> PROJECT_PATH. $themes_path,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $themes_path,
 			'yf'				=> YF_PATH. $themes_path,
 			'yf_plugins' 		=> YF_PATH. 'plugins/*/'. $themes_path,
-		);
+		];
 #		foreach ((array)_class('sites_info')->info as $site_dir_array) {
 #			$this->_dir_array[$site_dir_array['name']] = $site_dir_array['REAL_PATH'].'templates/';		
 #		}
@@ -73,13 +73,13 @@ class yf_template_editor {
 		}
 		ksort($names);
 		foreach ((array)$names as $name => $paths) {
-			$links = array();
+			$links = [];
 			foreach ($paths as $path) {
 				$links[] = a('/file_manager/edit/'.urlencode($path), 'Edit '.$path, 'fa fa-edit', $found_in[$path]);
 			}
 			$body['<b>'.$name.'</b>'] = implode(' ', $links);
 		}
-		return html()->simple_table($body, array('condensed' => 1));
+		return html()->simple_table($body, ['condensed' => 1]);
 	}
 
 	/**
@@ -102,15 +102,15 @@ class yf_template_editor {
 			if ($rp == realpath($this->_dir_array[$theme_class]) && $theme_class != 'project') {
 				continue;
 			}
-			$replace3 = array(
+			$replace3 = [
 				'location'			=> $theme_class,
 				'themes_lib_dir'	=> realpath($this->_dir_array[$theme_class]),
 				'add_url'			=> './?object='.$_GET['object'].'&action=add_theme_form&location='.$theme_class,
-			);
+			];
 			$items .= tpl()->parse('@object/themes_location_item', $replace3);
  
 			foreach ((array)$theme_attr as $theme_path => $theme_name) {
-				$replace2 = array(
+				$replace2 = [
 					'num'				=> ++$i,
 					'bg_class'			=> 'bg2',
 					'name'				=> $theme_name,
@@ -118,15 +118,15 @@ class yf_template_editor {
 					'theme_url'			=> './?object='.$_GET['object'].'&action=show_stpls_in_theme&theme='.$theme_name.'&location='.$theme_class,
 					'edit_url'			=> './?object='.$_GET['object'].'&action=edit_theme&theme='.$theme_name.'&location='.$theme_class,
 					'location'			=> $theme_class,
-				);
+				];
 				$items .= tpl()->parse('@object/themes_item', $replace2);
 			}
 		}
-		$replace = array(
+		$replace = [
 			'items' 		=> $items,
 			'add_url'		=> './?object='.$_GET['object'].'&action=add_theme_form',
 			'import_url'	=> './?object='.$_GET['object'].'&action=import',
-		);
+		];
 		return tpl()->parse('@object/themes_main', $replace);
 	}
 
@@ -146,12 +146,12 @@ class yf_template_editor {
 			}
 			return js_redirect(url('/@object'));
 		}
-		$replace = array(
+		$replace = [
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&theme='.$_GET['theme'].'&location='.$_GET['location'],
 			'back_url'		=> './?object='.$_GET['object'].'&action=show',
 			'theme_name' 	=> _prepare_html($_GET['theme']),
 			'location'		=> $_GET['location'],
-		);
+		];
 		return tpl()->parse('@object/edit_theme', $replace);
 	}
 
@@ -166,7 +166,7 @@ class yf_template_editor {
 		list($items_array, $pages, $total) = common()->divide_pages($items_array, null, null, $PER_PAGE);
 		$items = implode('', $items_array);
 
-		$replace = array(
+		$replace = [
 			'items'			=> $items,
 			'pages'			=> $pages,
 			'total'			=> intval($total),
@@ -174,7 +174,7 @@ class yf_template_editor {
 			'back_url'		=> url('/@object'),
 			'form_action'	=> './?object='.$_GET['object'].'&action=save_stpl&theme='.$this->theme_name.'&location='.$_GET['location'],
 			'location'		=> $_GET['location'],
-		);
+		];
 		return tpl()->parse('@object/stpls_list_main', $replace);
 	}
 
@@ -190,10 +190,10 @@ class yf_template_editor {
 		if (!empty($items)) {
 			return $items;
 		}
-		$items = array();
+		$items = [];
 
 		$STPL_EXT = '.stpl';
-		$pattern_include = array('', '#\.stpl$#i');
+		$pattern_include = ['', '#\.stpl$#i'];
 		$pattern_exclude = '#(svn|git)#i';
 
 		$cur_theme_path = $this->_dir_array['framework']. $theme_name. '/';
@@ -241,9 +241,9 @@ class yf_template_editor {
 	/**
 	* Internal method
 	*/
-	function _show_stpls_list ($files_array = array(), $level = 0) {
+	function _show_stpls_list ($files_array = [], $level = 0) {
 		asort($files_array);
-		$body = array();
+		$body = [];
 		foreach ((array)$files_array as $cur_file_path => $file_name) {
 			if (false !== strpos($cur_file_path, '.svn')) {
 				continue;
@@ -269,11 +269,11 @@ class yf_template_editor {
 	*/
 	function _show_stpls_item ($file_path = '', $level = 0, $is_folder = false) {
 		static $i, $j;
-		$name = str_replace(array($this->_cur_theme_path.'/', '.stpl'), '', $file_path);
+		$name = str_replace([$this->_cur_theme_path.'/', '.stpl'], '', $file_path);
 		if (substr($name, 0, 6) == 'images') {
 			return false;
 		}
-		$replace = array(
+		$replace = [
 			'name'			=> $is_folder ? '<b>'.$name.'</b>' : $name,
 			'bg_class'		=> !($i++%2) ? 'bg1' : 'bg2',
 			'num'			=> !$is_folder ? ++$j : '',
@@ -281,7 +281,7 @@ class yf_template_editor {
 			'stpl_size'		=> !$is_folder ? filesize($file_path) : '',
 			'edit_stpl_url'	=> './?object='.$_GET['object'].'&action='.($is_folder ? 'edit_dir' : 'edit_stpl').'&name='.$name.'&theme='.$this->theme_name.'&location='.$_GET['location'],
 			'location'		=> $_GET['location'],
-		);
+		];
 		return tpl()->parse('@object/stpls_list_item', $replace);
 	}
 
@@ -290,7 +290,7 @@ class yf_template_editor {
 	function edit_stpl () {
 		$theme_name	= $_GET['theme'];
 		$stpl_name	= $_GET['name'];
-		if (!validate(array($theme_name, $stpl_name), 'trim|required')) {
+		if (!validate([$theme_name, $stpl_name], 'trim|required')) {
 			return _e('Template name and theme required!');
 		}
 		if (main()->is_post()) {
@@ -323,25 +323,25 @@ class yf_template_editor {
 		}
 		$stpl_text = file_get_contents($stpl_path);
 		$stpl_text = _prepare_html($stpl_text, 0);
-		$replace = array(
+		$replace = [
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&name='.$stpl_name.'&theme='.$theme_name.'&location='.$_GET['location'],
 			'theme_name'	=> $theme_name,
 			'stpl_name'		=> $stpl_name,
 			'stpl_text'		=> $stpl_text,
 			'back_url'		=> './?object='.$_GET['object'].'&action=show_stpls_in_theme&theme='.$theme_name.'&location='.$_GET['location'],
 			'location'		=> $_GET['location'],
-		);
+		];
 		$div_id = 'editor_html';
 		$hidden_id = 'stpl_text_hidden';
 		return '<h4>edit: '.$replace['stpl_name'].' for theme: '.$replace['theme_name'].', inside: '.$replace['location'].'</h4>'.
-			form($replace, array(
+			form($replace, [
 				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
-			))
-			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$stpl_text.'</div>', '', array(
+			])
+			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$stpl_text.'</div>', '', [
 				'id'	=> $div_id,
 				'wide'	=> 1,
-				'ace_editor' => array('mode' => 'html'),
-			))
+				'ace_editor' => ['mode' => 'html'],
+			])
 			->hidden($hidden_id)
 			->save_and_back();
 	}
@@ -353,10 +353,10 @@ class yf_template_editor {
 		$path = base64_decode($_GET['path']);
 		$stpl_text = file_get_contents($path);
 
-		$replace = array(
+		$replace = [
 			'stpl_text'	=> trim($stpl_text),
 			'location'	=> $path,
-		);
+		];
 		return tpl()->parse('@object/view_content', $replace);
 	}
 
@@ -364,7 +364,7 @@ class yf_template_editor {
 	* Get themes full paths and names
 	*/
 	function _get_themes () {
-		$themes = array();
+		$themes = [];
 		foreach ((array)$this->_dir_array as $glob_name => $glob) {
 			foreach (glob($glob.'*/', GLOB_ONLYDIR) as $path) {
 				$dir = basename($path);
@@ -379,7 +379,7 @@ class yf_template_editor {
 	/**
 	*/
 	function _get_themes_names () {
-		$names = array();
+		$names = [];
 		foreach ((array)$this->_get_themes() as $where => $themes) {
 			foreach ((array)$themes as $_path => $_name) {
 				$names[$where][$_name] = $_name;
@@ -424,7 +424,7 @@ class yf_template_editor {
 
 	/**
 	*/
-	function _hook_settings(&$selected = array()) {
+	function _hook_settings(&$selected = []) {
 #		return array(
 #			array('text', 'template_editor__ACE_THEME'),
 #		);

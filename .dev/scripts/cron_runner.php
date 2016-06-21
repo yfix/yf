@@ -5,10 +5,10 @@ require_once $PROJECT_PATH;
 
 if (!empty($argv[1])) {
     $time_start = microtime(true);
-    db()->insert('cron_logs', array(
+    db()->insert('cron_logs', [
 		'cron_id' 		=> intval($argv[3]),
         'time_start'    => $time_start, 
-    ));
+    ]);
 	$id = db()->insert_id();
 
 	if ($argv[2] == "include_php") {
@@ -27,11 +27,11 @@ if (!empty($argv[1])) {
 	}
 	$time_end = microtime(true);
 	$time_diff = $time_end - $time_start;
-    db()->update_safe('cron_logs', array(
+    db()->update_safe('cron_logs', [
 		'log'		=> $log,
         'time_end'  => $time_end, 
         'time_spent'=> round($time_diff, 2), 
-    ), 'id ='.intval($id));
+    ], 'id ='.intval($id));
     exit();
 } else {
 	$crons = db()->get_all("SELECT * FROM ".db('cron_tasks')." WHERE active='1'");

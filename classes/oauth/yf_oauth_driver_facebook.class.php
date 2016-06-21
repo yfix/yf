@@ -13,8 +13,8 @@ class yf_oauth_driver_facebook extends yf_oauth_driver2 {
 
 	/**
 	*/
-	function _get_user_info_for_auth($raw = array()) {
-		$user_info = array(
+	function _get_user_info_for_auth($raw = []) {
+		$user_info = [
 			'user_id'		=> $raw['id'],
 			'login'			=> $raw['email'],
 			'name'			=> $raw['name'],
@@ -24,7 +24,7 @@ class yf_oauth_driver_facebook extends yf_oauth_driver2 {
 			'locale'		=> $raw['locale'],
 			'timezone'		=> $raw['timezone'],
 			'gender'		=> $raw['gender'],
-		);
+		];
 		return $user_info;
 	}
 

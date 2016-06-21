@@ -48,7 +48,7 @@ class yf_locale_editor_user_vars {
 			}
 		}
 		// Check if var exists in the global table
-		$global_vars = array();
+		$global_vars = [];
 		if (!empty($vars_names)) {
 			foreach ((array)db()->query_fetch_all('SELECT * FROM '.db('locale_vars')." WHERE value IN('".implode("','", $vars_names)."')") as $A) {
 				$global_vars[$A['value']] = $A['id'];
@@ -63,7 +63,7 @@ class yf_locale_editor_user_vars {
 			if ($global_var_exists) {
 				$var_bg_color = $color_exists;
 			}
-			$items[] = array(
+			$items[] = [
 				'id'			=> $A['id'],
 				'bg_class'		=> $i++ % 2 ? 'bg1' : 'bg2',
 				'id'			=> intval($A['id']),
@@ -81,16 +81,16 @@ class yf_locale_editor_user_vars {
 				'edit_url'		=> './?object='.$_GET['object'].'&action=user_var_edit&id='.$A['id'],
 				'delete_url'	=> './?object='.$_GET['object'].'&action=user_var_delete&id='.$A['id'],
 				'push_url'		=> './?object='.$_GET['object'].'&action=user_var_push&id='.$A['id'],
-			);
+			];
 		}
-		$replace = array(
+		$replace = [
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''),
 			'error'			=> _e(),
 			'items'			=> $items,
 			'pages'			=> $pages,
 			'total'			=> $total,
 			'show_vars_link' => './?object='.$_GET['object'].'&action=show_vars',
-		);
+		];
 		return tpl()->parse($_GET['object'].'/user_vars_main', $replace);
 	}
 
@@ -104,16 +104,16 @@ class yf_locale_editor_user_vars {
 			return _e('No id');
 		}
 		if (main()->is_post()) {
-			db()->UPDATE('locale_user_tr', array(
+			db()->UPDATE('locale_user_tr', [
 				'name'			=> _es($_POST['name']),
 				'translation'	=> _es($_POST['translation']),
 				'last_update'	=> time(),
-			), 'id='.intval($_GET['id']));
+			], 'id='.intval($_GET['id']));
 			return js_redirect('./?object='.$_GET['object'].'&action=user_vars');
 		}
 		$DATA = my_array_merge($A, $_POST);
 
-		$replace = array(
+		$replace = [
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''),
 			'back_url'		=> process_url('./?object='.$_GET['object'].'&action=user_vars'),
 			'error'			=> _e(),
@@ -124,7 +124,7 @@ class yf_locale_editor_user_vars {
 			'translation'	=> _prepare_html($DATA['translation']),
 			'locale'		=> _prepare_html($DATA['locale']),
 			'site_id'		=> _prepare_html($DATA['site_id']),
-		);
+		];
 		return tpl()->parse($_GET['object'].'/user_vars_edit', $replace);
 	}
 
@@ -172,10 +172,10 @@ class yf_locale_editor_user_vars {
 		// Get main translation var (if exists)
 		$var_info = db()->query_fetch('SELECT * FROM '.db('locale_vars').' WHERE value="'._es($VAR_NAME).'"');
 		if (!$var_info) {
-			$var_info = array(
+			$var_info = [
 				'value'		=> _es($VAR_NAME),
 				'location'	=> '',
-			);
+			];
 			db()->INSERT('locale_vars', $var_info);
 			$var_id = db()->INSERT_ID();
 			if ($var_id) {
@@ -185,11 +185,11 @@ class yf_locale_editor_user_vars {
 		if (!$var_info['id']) {
 			return _e('No locale var id');
 		}
-		$sql_data = array(
+		$sql_data = [
 			'var_id'	=> intval($var_info['id']),
 			'value'		=> _es($EDITED_VALUE),
 			'locale'	=> _es($CUR_LOCALE),
-		);
+		];
 		// Get translation for the current locale
 		$Q = db()->query('SELECT * FROM '.db('locale_translate').' WHERE var_id='.intval($var_info['id']));
 		while ($A = db()->fetch_assoc($Q)) {

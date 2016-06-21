@@ -75,7 +75,7 @@ class yf_se_keywords {
 		// Get input params		
 		$display_limit			= intval(!empty($input["display_limit"]) && $input["display_limit"] < $this->KEYWORDS_DISPLAY_LIMIT ? $input["display_limit"] : $this->KEYWORDS_DISPLAY_LIMIT);
 		$search_words			= $input["search_words"];
-		$type					= in_array($input["display_type"], array("most_popular","random")) ? $input["display_type"] : "most_popular";
+		$type					= in_array($input["display_type"], ["most_popular","random"]) ? $input["display_type"] : "most_popular";
 		$only_from_current_site	= intval($input["only_from_current_site"]);
 		$fill_with_popular		= $input["fill_with_popular"];
 		// Most popular keywords
@@ -141,11 +141,11 @@ class yf_se_keywords {
 				break;
 			}
 			// Process items
-			$text = str_replace("+", " ", str_replace(array("\"","'"), "", $text));
-			$keywords[$text] = array(
+			$text = str_replace("+", " ", str_replace(["\"","'"], "", $text));
+			$keywords[$text] = [
 				"site_url"	=> _prepare_html($site_url),
 				"text"		=> _prepare_html($text),
-			);
+			];
 		}
 		// Emulate ORDER BY RAND()
 		if ($type != "most_popular") {
@@ -170,7 +170,7 @@ class yf_se_keywords {
 		// Check if we need to fill 
 		if (!empty($search_words) && $fill_with_popular && $need_to_fill) {
 			// Prepare most popular keywords
-			$prepared_popular = array();
+			$prepared_popular = [];
 			foreach ((array)$this->_most_popular as $text => $site_url) {
 				if ($only_from_current_site && (false === strpos($site_url, SITE_ADVERT_URL))) {
 					continue;
@@ -186,11 +186,11 @@ class yf_se_keywords {
 				$text		= $rand_key;
 				$site_url	= $prepared_popular[$text];
 				// Process items
-				$text = str_replace("+", " ", str_replace(array("\"","'"), "", $text));
-				$keywords[$text] = array(
+				$text = str_replace("+", " ", str_replace(["\"","'"], "", $text));
+				$keywords[$text] = [
 					"site_url"	=> _prepare_html($site_url),
 					"text"		=> _prepare_html($text),
-				);
+				];
 			}
 		}
 		if (isset($keywords[""])) {
@@ -201,9 +201,9 @@ class yf_se_keywords {
 			return false;
 		}
 		// Process template
-		$replace = array(
+		$replace = [
 			"keywords" => $keywords,
-		);
+		];
 		return tpl()->parse(__CLASS__."/main", $replace);
 	}
 
@@ -235,7 +235,7 @@ class yf_se_keywords {
 		}
 		$cur_se			= $this->_search_engines[$host];
 		// Process keywords
-		$parsed_url["query"] = str_replace(array("./?","./"), "", $parsed_url["query"]);
+		$parsed_url["query"] = str_replace(["./?","./"], "", $parsed_url["query"]);
 		parse_str($parsed_url["query"], $parsed_query);
 		$q_s_charset	= $parsed_query[$cur_se["q_s_charset"]];
 		$q_s_word		= $parsed_query[$cur_se["q_s_word"]];
@@ -311,7 +311,7 @@ class yf_se_keywords {
 	*/
 	function _cache_put ($cache_name = "", $data = null) {
 		if (is_null($data)) {
-			$data = array();
+			$data = [];
 		}
 		$cache_file_path = $this->_prepare_cache_path($cache_name);
 		$this->_put_cache_file($data, $cache_file_path, $data);
@@ -349,7 +349,7 @@ class yf_se_keywords {
 				return null;
 			}
 			// Get data from file
-			$data = array();
+			$data = [];
 			if (DEBUG_MODE) {
 				$_time_start = microtime(true);
 			}
@@ -366,7 +366,7 @@ class yf_se_keywords {
 	/**
 	* Do put cache file contetns
 	*/
-	function _put_cache_file ($data = array(), $cache_file = "") {
+	function _put_cache_file ($data = [], $cache_file = "") {
 		if (empty($cache_file)) {
 			return false;
 		}
@@ -388,7 +388,7 @@ class yf_se_keywords {
 	/**
 	* Create array code recursive
 	*/
-	function _create_array_code ($data = array()) {
+	function _create_array_code ($data = []) {
 		$code = "array(";
 		foreach ((array)$data as $k => $v) {
 			$code .= "'".$this->_put_safe_slashes($k)."'=>";

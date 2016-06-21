@@ -5,20 +5,20 @@ return DEBUG_MODE ? function() {
 $debug_override = conf('DEBUG_CONSOLE_OVERRIDE');
 $debug_use_popup = conf('DEBUG_CONSOLE_POPUP');
 $debug_class = 'yf_debug_console_asset';
-return array(
-	'versions' => array('master' => array(
-		'css' => array(
+return [
+	'versions' => ['master' => [
+		'css' => [
 			'content' => '
 				#debug_console { clear: both; }
 				#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }
 				#debug_console pre { color: #ccc; background: black; font-weight: bold; font-family: inherit; margin: 0; display: inline-block; width: auto; padding: 2px; border: 0; }
 				#debug_console #debug_exec_time { float:left; display:block; padding-left: 20px; padding-right: 20px; }
 			',
-			'params' => array(
+			'params' => [
 				'class' => $debug_class,
-			)
-		),
-		'jquery' => array(
+			]
+		],
+		'jquery' => [
 			'content' => '
 				$("table.debug_item a[data-hidden-toggle]", "#debug_console").on("click", function(e){
 					e.preventDefault();
@@ -43,23 +43,23 @@ return array(
 					})
 				} catch (e) { console.log(e); }
 			',
-			'params' => array(
+			'params' => [
 				'class' => $debug_class,
-			)
-		),
-	)),
-	'require' => array(
+			]
+		],
+	]],
+	'require' => [
 		'js' => 'jquery-cookie',
-	),
-	'add' => array(
-		'asset'	=> array(
+	],
+	'add' => [
+		'asset'	=> [
 			$debug_override ? 'yf_debug_console_override' : '',
 			$debug_use_popup ? 'yf_debug_popup' : '',
-		),
-	),
-	'config' => array(
+		],
+	],
+	'config' => [
 		'no_cache' => true,
-	),
-);
+	],
+];
 
 } : null;

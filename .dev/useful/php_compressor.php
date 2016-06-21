@@ -44,7 +44,7 @@ function _do_compress_php_file ($file_to_open = "", $file_to_save = "") {
 		}
 	}
 	// Do compress spaces
-	$replace_pairs = array(
+	$replace_pairs = [
 		"( "		=> "(",
 		" )"		=> ")",
 		"{ "		=> "{",
@@ -70,8 +70,8 @@ function _do_compress_php_file ($file_to_open = "", $file_to_save = "") {
 		"> "		=> ">",
 		" <"		=> "<",
 		"< "		=> "<",
-	);
-	$output = str_replace(array("\r","\n"), "", $output);
+	];
+	$output = str_replace(["\r","\n"], "", $output);
 	$output = str_replace("\t", " ", $output);
 	$output = preg_replace("/[\s\t]{2,}/ims", " ", $output);
 	$output = str_replace(array_keys($replace_pairs), array_values($replace_pairs), $output);

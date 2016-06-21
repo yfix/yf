@@ -1,8 +1,8 @@
 <?php
-return array (
+return [
   0 => 
-  array (
+  [
     'keyword' => 'подорожі',
     'users' => '1',
-  ),
-);
+  ],
+];

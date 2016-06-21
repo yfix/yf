@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'value' => array(
+		],
+		'value' => [
 			'name' => 'value',
 			'type' => 'text',
 			'length' => NULL,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'desc' => array(
+		],
+		'desc' => [
 			'name' => 'desc',
 			'type' => 'text',
 			'length' => NULL,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -74,12 +74,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				1 => '1',
 				0 => '0',
-			),
-		),
-		'linked_table' => array(
+			],
+		],
+		'linked_table' => [
 			'name' => 'linked_table',
 			'type' => 'varchar',
 			'length' => 255,
@@ -93,8 +93,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'linked_data' => array(
+		],
+		'linked_data' => [
 			'name' => 'linked_data',
 			'type' => 'varchar',
 			'length' => 255,
@@ -108,8 +108,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'linked_method' => array(
+		],
+		'linked_method' => [
 			'name' => 'linked_method',
 			'type' => 'varchar',
 			'length' => 255,
@@ -123,26 +123,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'name' => array(
+			],
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'name' => 'name',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

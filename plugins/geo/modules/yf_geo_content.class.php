@@ -13,7 +13,7 @@ class yf_geo_content {
 	}
 	
 	// JavaScript - based city select (3-step) method
-	function _city_select ($params = array()) {
+	function _city_select ($params = []) {
 		$STPL_NAME = "register/city_select";
 		if (!empty($params["stpl_name"])) {
 			$STPL_NAME = $params["stpl_name"];
@@ -34,7 +34,7 @@ class yf_geo_content {
 		if (FEATURED_COUNTRY_SELECT == 1) {
 			$_featured_countries = main()->get_data("featured_countries");
 			if (!empty($_featured_countries)) {
-				$_countries = array_merge(array("  " => "  "), $_featured_countries, $_countries);
+				$_countries = array_merge(["  " => "  "], $_featured_countries, $_countries);
 			}
 		}
 		// Get regions and cities for selected
@@ -67,7 +67,7 @@ class yf_geo_content {
 			}
 		}
 		// Prepare template
-		$replace = array(
+		$replace = [
 			"country_box"	=> common()->select_box("country",	$_countries,	$_POST["country"], false, 2, "", false),
 			"region_box"	=> common()->select_box("region",		$_regions,		$_POST["region"], false, 2, "", false),
 			"city_box"		=> common()->select_box("city",		$_cities,		$_POST["city"], false, 2, "", false),
@@ -76,7 +76,7 @@ class yf_geo_content {
 			"sel_city"		=> $_POST["city"],
 			"ajax_link"		=> process_url("./?object=".'geo_content'."&action=ajax_city"),
 			"sel_no_regions"=> intval($have_no_regions),
-		);
+		];
 		return tpl()->parse($STPL_NAME, $replace);
 	}
 
@@ -185,7 +185,7 @@ class yf_geo_content {
 		if (FEATURED_COUNTRY_SELECT == 1) {
 			$_featured_countries = main()->get_data("featured_countries");
 			if (!empty($_featured_countries)) {
-				$_countries = array_merge(array("  " => "  "), $_featured_countries, $_countries);
+				$_countries = array_merge(["  " => "  "], $_featured_countries, $_countries);
 			}
 		}
 		// Get regions and cities for selected
@@ -254,10 +254,10 @@ class yf_geo_content {
 					|| $sel_data["region_code"] != $this->_user_info["state"]
 					|| strtolower($sel_data["city_name"]) != strtolower($this->_user_info["city"])
 				) {
-					$sql_array = array(
+					$sql_array = [
 						"country"	=> _es($sel_data["country_code"]),
 						"state"		=> _es($sel_data["region_code"]),
-					);
+					];
 					if (!empty($sel_data["city_name"])) {
 						$sql_array["city"]		= _es($sel_data["city_name"]);
 					}
@@ -272,7 +272,7 @@ class yf_geo_content {
 			$something_changed = false;
 			// Switch between selected
 			if ($_POST["geo_type"] == "by_ip") {
-				$data_to_save = array(
+				$data_to_save = [
 					"country_code"	=> $ip_data["country_code"],
 					"country_name"	=> $ip_data["country_name"],
 					"region_code"	=> $ip_data["region_code"],
@@ -280,9 +280,9 @@ class yf_geo_content {
 					"longitude"		=> $ip_data["longitude"],
 					"latitude"		=> $ip_data["latitude"],
 					"zip_code"		=> strtoupper($ip_data["country_code"]) == "US" ? $ip_data["zip_code"] : "",
-				);
+				];
 			} elseif ($_POST["geo_type"] == "by_profile") {
-				$data_to_save = array(
+				$data_to_save = [
 					"country_code"	=> $this->_user_info["country"],
 					"country_name"	=> _country_name($this->_user_info["country"]),
 					"region_code"	=> $this->_user_info["state"],
@@ -290,7 +290,7 @@ class yf_geo_content {
 					"longitude"		=> $this->_user_info["lon"],
 					"latitude"		=> $this->_user_info["lat"],
 					"zip_code"		=> strtoupper($this->_user_info["country"]) == "US" ? $this->_user_info["zip_code"] : "",
-				);
+				];
 			} elseif ($_POST["geo_type"] == "by_other") {
 				if (FEATURED_COUNTRY_SELECT == 1 && substr($_POST["country"], 0, 2) == "f_") {
 					$_POST["country"] = substr($_REQUEST["country"], 2);
@@ -352,7 +352,7 @@ class yf_geo_content {
 					}
 				}
 				if ($VERIFY_OK) {
-					$data_to_save = array(
+					$data_to_save = [
 						"country_code"	=> $_POST["country"],
 						"country_name"	=> _country_name($_POST["country"]),
 						"region_code"	=> $_POST["region"],
@@ -360,7 +360,7 @@ class yf_geo_content {
 						"longitude"		=> $lon,
 						"latitude"		=> $lat,
 						"zip_code"		=> strtoupper($_POST["country"]) == "US" ? $_POST["zip_code"] : "",
-					);
+					];
 				}
 			}
 			// Save preferences inside cookie
@@ -373,7 +373,7 @@ class yf_geo_content {
 			return js_redirect("./?object=".'geo_content'."&action=change_location_result");
 		}
 		// Prepare template
-		$replace = array(
+		$replace = [
 			"form_action"		=> "./?object=".'geo_content'."&action=".__FUNCTION__,
 			"ajax_link"			=> process_url("./?object=".'geo_content'."&action=ajax_city"),
 
@@ -406,7 +406,7 @@ class yf_geo_content {
 			"sel_by_cookie"		=> !empty($sel_data) && $sel_data["_source"] == "sel_cookie" ? 1 : 0,
 			"sel_no_regions"	=> intval($have_no_regions),
 			"empty_selection"	=> empty($sel_data["country_code"]) && empty($sel_data["region_code"]) && empty($sel_data["city_name"]) ? 1 : 0,
-		);
+		];
 		return tpl()->parse('geo_content'."/change_location_form", $replace);
 	}
 
@@ -431,14 +431,14 @@ class yf_geo_content {
 			}
 		}
 		// Prepare template
-		$replace2 = array(
+		$replace2 = [
 			"form_action"		=> "./?object=".'geo_content'."&action=change_location",
 			"show_update_form"	=> main()->USER_ID && $something_changed ? 1 : 0,
 			"city"				=> _prepare_html($sel_data["city_name"]),
 			"region"			=> _prepare_html(_region_name($sel_data["region_code"], $sel_data["country_code"])),
 			"country"			=> _prepare_html(_country_name($sel_data["country_code"])),
 			"zip"				=> _prepare_html($sel_data["zip_code"]),
-		);
+		];
 		return tpl()->parse('geo_content'."/change_location_success", $replace2);
 	}
 }

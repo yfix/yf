@@ -15,122 +15,122 @@ $fixes_name = 'yf_bootstrap_fixes_'.$main_type;
 
 if ($bs_theme === 'bootstrap') {
 	conf('bs3_no_default_theme', true);
-	return array(
-		'require' => array(
+	return [
+		'require' => [
 			'asset' => $require_name,
-		),
-		'add' => array(
-			'asset' => array(
+		],
+		'add' => [
+			'asset' => [
 				'font-awesome4',
 				$fixes_name,
-			),
-		),
-	);
+			],
+		],
+	];
 } elseif ($bs_theme === 'bootstrap_theme') {
-	return array(
-		'require' => array(
+	return [
+		'require' => [
 			'asset' => $require_name,
-		),
-		'add' => array(
-			'asset' => array(
+		],
+		'add' => [
+			'asset' => [
 				'font-awesome4',
 				$fixes_name,
-			),
-		),
-	);
+			],
+		],
+	];
 } elseif ($bs_theme === 'flatui') {
 	conf('bs3_no_default_theme', true);
-	return array(
-		'versions' => array(
-			'master' => array(
-				'css' => array(
+	return [
+		'versions' => [
+			'master' => [
+				'css' => [
 					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap/css/bootstrap.min.css',
 					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/flat-ui.min.css',
-				),
-				'js' => array(
+				],
+				'js' => [
 					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/js/flat-ui.min.js',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 } elseif ($bs_theme === 'material_design') {
 	conf('bs3_no_default_theme', true);
-	return array(
-		'versions' => array(
-			'master' => array(
-				'css' => array(
+	return [
+		'versions' => [
+			'master' => [
+				'css' => [
 					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.min.css',
-				),
-				'js' => array(
+				],
+				'js' => [
 					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.iife.min.js',
 					'$(function(){ $.material.init(); })',
-				),
-			),
-		),
-		'require' => array(
+				],
+			],
+		],
+		'require' => [
 			'asset' => 'bootstrap3',
-		),
-		'add' => array(
+		],
+		'add' => [
 			'asset' => $fixes_name,
-		),
-	);
+		],
+	];
 } elseif ($bs_theme === 'todc_bootstrap') {
 	conf('bs3_no_default_theme', true);
-	return array(
-		'versions' => array(
-			'master' => array(
-				'css' => array(
+	return [
+		'versions' => [
+			'master' => [
+				'css' => [
 					'//cdn.rawgit.com/yfix/todc-bootstrap/master/dist/css/bootstrap.min.css',
 					'//cdn.rawgit.com/yfix/todc-bootstrap/master/dist/css/todc-bootstrap.min.css',
-				),
-				'js' => array(
+				],
+				'js' => [
 					'//cdn.rawgit.com/yfix/todc-bootstrap/master/dist/js/bootstrap.min.js',
-				),
-			),
-		),
-		'require' => array(
+				],
+			],
+		],
+		'require' => [
 			'asset' => 'bootstrap3',
-		),
-		'add' => array(
+		],
+		'add' => [
 			'asset' => $fixes_name,
-		),
-	);
+		],
+	];
 } elseif ($bs_major_version == 2) {
-	return array(
-		'versions' => array(
-			'2.3.2' => array(
+	return [
+		'versions' => [
+			'2.3.2' => [
 				'css' => '//netdna.bootstrapcdn.com/bootswatch/2.3.2/'.$bs_theme.'/bootstrap.min.css',
-			),
-		),
-		'require' => array(
+			],
+		],
+		'require' => [
 			'asset' => 'bootstrap2',
-		),
-		'add' => array(
-			'asset' => array(
+		],
+		'add' => [
+			'asset' => [
 				'font-awesome3',
 #				'font-awesome4',
 				$fixes_name,
-			),
-		),
-	);
+			],
+		],
+	];
 } elseif ($bs_major_version == 3) {
 	conf('bs3_no_default_theme', true);
-	return array(
-		'versions' => array(
-			'3.3.6' => array(
+	return [
+		'versions' => [
+			'3.3.6' => [
 				'css' => '//netdna.bootstrapcdn.com/bootswatch/3.3.6/'.$bs_theme.'/bootstrap.min.css',
-			),
-		),
-		'require' => array(
+			],
+		],
+		'require' => [
 			'asset' => 'bootstrap3',
-		),
-		'add' => array(
-			'asset' => array(
+		],
+		'add' => [
+			'asset' => [
 				'font-awesome4',
 				$fixes_name,
-			),
-		),
-	);
+			],
+		],
+	];
 }
 
 };

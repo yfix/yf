@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'date' => array(
+		],
+		'date' => [
 			'name' => 'date',
 			'type' => 'int',
 			'length' => 11,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'total_sum' => array(
+		],
+		'total_sum' => [
 			'name' => 'total_sum',
 			'type' => 'decimal',
 			'length' => 12,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 128,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'email' => array(
+		],
+		'email' => [
 			'name' => 'email',
 			'type' => 'varchar',
 			'length' => 50,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'phone' => array(
+		],
+		'phone' => [
 			'name' => 'phone',
 			'type' => 'varchar',
 			'length' => 40,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'address' => array(
+		],
+		'address' => [
 			'name' => 'address',
 			'type' => 'text',
 			'length' => NULL,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'house' => array(
+		],
+		'house' => [
 			'name' => 'house',
 			'type' => 'text',
 			'length' => NULL,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'apartment' => array(
+		],
+		'apartment' => [
 			'name' => 'apartment',
 			'type' => 'text',
 			'length' => NULL,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'floor' => array(
+		],
+		'floor' => [
 			'name' => 'floor',
 			'type' => 'text',
 			'length' => NULL,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'porch' => array(
+		],
+		'porch' => [
 			'name' => 'porch',
 			'type' => 'text',
 			'length' => NULL,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'intercom' => array(
+		],
+		'intercom' => [
 			'name' => 'intercom',
 			'type' => 'text',
 			'length' => NULL,
@@ -195,8 +195,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'comment' => array(
+		],
+		'comment' => [
 			'name' => 'comment',
 			'type' => 'text',
 			'length' => NULL,
@@ -210,8 +210,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'payment' => array(
+		],
+		'payment' => [
 			'name' => 'payment',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -225,8 +225,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'transaction_id' => array(
+		],
+		'transaction_id' => [
 			'name' => 'transaction_id',
 			'type' => 'varchar',
 			'length' => 40,
@@ -240,8 +240,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'delivery' => array(
+		],
+		'delivery' => [
 			'name' => 'delivery',
 			'type' => 'enum',
 			'length' => NULL,
@@ -254,12 +254,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-		'region' => array(
+			],
+		],
+		'region' => [
 			'name' => 'region',
 			'type' => 'int',
 			'length' => 11,
@@ -273,8 +273,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'status' => array(
+		],
+		'status' => [
 			'name' => 'status',
 			'type' => 'varchar',
 			'length' => 16,
@@ -288,8 +288,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'delivery_time' => array(
+		],
+		'delivery_time' => [
 			'name' => 'delivery_time',
 			'type' => 'varchar',
 			'length' => 16,
@@ -303,8 +303,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'delivery_price' => array(
+		],
+		'delivery_price' => [
 			'name' => 'delivery_price',
 			'type' => 'varchar',
 			'length' => 10,
@@ -318,8 +318,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'is_manual_delivery_price' => array(
+		],
+		'is_manual_delivery_price' => [
 			'name' => 'is_manual_delivery_price',
 			'type' => 'int',
 			'length' => 11,
@@ -333,8 +333,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'merge_id' => array(
+		],
+		'merge_id' => [
 			'name' => 'merge_id',
 			'type' => 'int',
 			'length' => 11,
@@ -348,8 +348,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'discount' => array(
+		],
+		'discount' => [
 			'name' => 'discount',
 			'type' => 'decimal',
 			'length' => 12,
@@ -363,8 +363,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'discount_add' => array(
+		],
+		'discount_add' => [
 			'name' => 'discount_add',
 			'type' => 'decimal',
 			'length' => 12,
@@ -378,19 +378,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

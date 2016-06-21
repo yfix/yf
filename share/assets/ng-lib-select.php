@@ -3,17 +3,17 @@
 	deprecated
 	use: ng-lib-select2
  */
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/angular-ui/ui-select2/master/src/select2.js',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+		],
+	],
+	'require' => [
+		'asset' => [
 			'jquery',
 			'angularjs',
 			'jq-select2',
-		),
-	),
-);
+		],
+	],
+];

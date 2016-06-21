@@ -7,11 +7,11 @@ class yf_online_users {
 	public $_ONLINE_TTL = 60;
 	public $_COOKIE_TTL = 3600;
 
-	public $_type = array(
+	public $_type = [
 		'user_id_tmp',
 		'user_id',
 		'admin_id',
-	);
+	];
 
 	function _init() {
 		$this->_type = array_combine( $this->_type, $this->_type );
@@ -27,19 +27,19 @@ class yf_online_users {
 
 	function _set_user_id() {
 		if (intval($_SESSION['admin_id']) != 0) {
-			return array($_SESSION['admin_id'], 'admin_id');
+			return [$_SESSION['admin_id'], 'admin_id'];
 		}
 		if (intval(main()->USER_ID) != 0) {
-			return array(main()->USER_ID, 'user_id');
+			return [main()->USER_ID, 'user_id'];
 		}
 		if (intval($_COOKIE['user_id_tmp']) != 0) {
-			return array($_COOKIE['user_id_tmp'], 'user_id_tmp');
+			return [$_COOKIE['user_id_tmp'], 'user_id_tmp'];
 		}
 
 		// todo: more 'smart' algorythm for user id generation
 		setcookie('user_id_tmp', rand(), $_SERVER['REQUEST_TIME'] + $this->_COOKIE_TTL);
 
-		return array($_COOKIE['user_id_tmp'], 'user_id_tmp');
+		return [$_COOKIE['user_id_tmp'], 'user_id_tmp'];
 	}
 
 	function _is_online( $user_ids, $user_type = null ) {
@@ -57,7 +57,7 @@ class yf_online_users {
 			->where_in( $user_id, 'user_ids' )
 			->get_deep_array(1)
 		;
-		$result = array();
+		$result = [];
 		foreach( $user_ids as $user_id ) {
 			$user_id = (int)$user_id;
 			$result[ $user_id ] = false;
@@ -89,17 +89,17 @@ class yf_online_users {
 	function _update() {
 		$cache_name = __CLASS__.'|'.__FUNCTION__.'|'.$this->online_user_id.'|'.$this->online_user_type;
 		if (cache()->get($cache_name) != 'OK' && intval($this->online_user_id) != 0) {
-			db()->replace_safe('users_online', array(
+			db()->replace_safe('users_online', [
 				'user_id'	=> $this->online_user_id,
 				'user_type'	=> $this->online_user_type,
 				'time'		=> $_SERVER['REQUEST_TIME'],
-			));
+			]);
 			cache()->set($cache_name, 'OK', $this->_CACHE_UPDATE_TTL);
         }
         // details not cached for current url to be shown
         if (main()->TRACK_ONLINE_DETAILS && !(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || !empty($_GET['ajax_mode'])) && intval($this->online_user_id) != 0) {
 			$ip = $this->_ip();
-			db()->replace_safe('users_online_details', array(
+			db()->replace_safe('users_online_details', [
 				'user_id'    => $this->online_user_id,
 				'user_type'  => $this->online_user_type,
 				'time'       => $_SERVER['REQUEST_TIME'],
@@ -107,7 +107,7 @@ class yf_online_users {
 				'url'        => 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'],
 				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
 				'ip'         => $ip,
-			));
+			]);
 		}
 	}
 

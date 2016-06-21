@@ -13,7 +13,7 @@ function data_get_latest_icons() {
 	$html2 = file_get_contents($f2);
 	///////////////
 	$regex2 = '~</i>[^<]*(fa\-[^<]*)<~ims';
-	$tmp = array();
+	$tmp = [];
 	preg_match_all($regex2, $html2, $m2);
 	foreach($m2[1] as $v) {
 		$v = trim($v);
@@ -21,16 +21,16 @@ function data_get_latest_icons() {
 	}
 	ksort($tmp);
 	///////////////
-	$data = array();
+	$data = [];
 	foreach ($tmp as $v) {
 		$id = $v;
 		if (!$id) {
 			continue;
 		}
-		$data[$id] = array(
+		$data[$id] = [
 			'name'	=> $id,
 			'active'=> 1,
-		);
+		];
 	}
 	//foreach (range(1,20) as $c) {
 	//	$data[$c]['active'] = 1;

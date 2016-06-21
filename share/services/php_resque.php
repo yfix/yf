@@ -1,10 +1,10 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'require_services' => array('credis', 'psr_log'),
-	'git_urls' => array('https://github.com/chrisboulton/php-resque.git' => 'php_resque/'),
-	'pear' => array('php_resque/lib/' => 'Resque'),
+$config = [
+	'require_services' => ['credis', 'psr_log'],
+	'git_urls' => ['https://github.com/chrisboulton/php-resque.git' => 'php_resque/'],
+	'pear' => ['php_resque/lib/' => 'Resque'],
 	'example' => function() {
 		Resque::setBackend('localhost:6379');
 		class My_Job {
@@ -18,7 +18,7 @@ $config = array(
 			Resque_Job_Status::STATUS_FAILED	=> 'STATUS_FAILED', // Job has failed
 			Resque_Job_Status::STATUS_COMPLETE	=> 'STATUS_COMPLETE', // Job is complete
 		];
-		$args = array('name' => 'Chris');
+		$args = ['name' => 'Chris'];
 		$token = Resque::enqueue('default', 'My_Job', $args, true);
 		echo $token. PHP_EOL;
 		$status = new Resque_Job_Status($token);
@@ -27,5 +27,5 @@ $config = array(
 		$status = new Resque_Job_Status($token);
 		echo $statuses[$status->get()]. PHP_EOL;
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

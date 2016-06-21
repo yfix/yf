@@ -8,11 +8,11 @@ abstract class yf_oauth_driver2 {
 	protected $url_user = '';
 	protected $scope = '';
 	protected $get_access_token_method = 'POST';
-	protected $url_params = array();
-	protected $url_params_authorize = array();
-	protected $url_params_access_token = array();
-	protected $url_params_user_info = array();
-	protected $storage = array();
+	protected $url_params = [];
+	protected $url_params_authorize = [];
+	protected $url_params_access_token = [];
+	protected $url_params_user_info = [];
+	protected $storage = [];
 	protected $redirect_uri = '';
 	protected $client_id = '';
 	protected $client_secret = '';
@@ -24,11 +24,11 @@ abstract class yf_oauth_driver2 {
 
 	/**
 	*/
-	abstract function _get_user_info_for_auth($raw = array());
+	abstract function _get_user_info_for_auth($raw = []);
 
 	/**
 	*/
-	function login($params = array()) {
+	function login($params = []) {
 		$config = _class('oauth')->_load_oauth_config();
 		$called_class = get_called_class();
 		if (substr($called_class, 0, strlen(YF_PREFIX)) == YF_PREFIX) {
@@ -65,14 +65,14 @@ abstract class yf_oauth_driver2 {
 			}
 		}
 #		if (!$this->_storage_get('user')) {
-			$url = $this->url_user.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_user_info + array(
+			$url = $this->url_user.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_user_info + [
 				'access_token'	=> $access_token,
-			));
+			]);
 			if ($this->get_user_info_user_bearer) {
 				$url = $this->url_user;
-				$opts = array(
-					'custom_header'	=> array('Authorization: Bearer '.$access_token),
-				);
+				$opts = [
+					'custom_header'	=> ['Authorization: Bearer '.$access_token],
+				];
 			}
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
@@ -81,7 +81,7 @@ abstract class yf_oauth_driver2 {
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			} else {
-				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
+				$this->_storage_set('user_info_request', ['result' => $result, 'response' => $response]);
 				$this->_storage_set('user', $result);
 			}
 #		}
@@ -99,17 +99,17 @@ abstract class yf_oauth_driver2 {
 		if (!$code) {
 			return $this->authorize();
 		}
-		$url_params = (array)$this->url_params + (array)$this->url_params_access_token + array(
+		$url_params = (array)$this->url_params + (array)$this->url_params_access_token + [
 			'client_id'		=> $this->client_id,
 			'client_secret' => $this->client_secret,
 			'redirect_uri' 	=> $this->redirect_uri,
 			'code'			=> $code,
-		);
+		];
 		if ($this->get_access_token_method == 'POST') {
 			$url = $this->url_access_token;
-			$opts = array(
+			$opts = [
 				'post'	=> $url_params,
-			);
+			];
 		} else {
 			$url = $this->url_access_token.'?'.http_build_query($url_params);
 		}
@@ -119,7 +119,7 @@ abstract class yf_oauth_driver2 {
 			js_redirect( $this->redirect_uri, $url_rewrite = false );
 			return false;
 		} else {
-			$this->_storage_set('access_token_request', array('result' => $result, 'response' => $response));
+			$this->_storage_set('access_token_request', ['result' => $result, 'response' => $response]);
 			$this->_storage_set('access_token', $result['access_token']);
 		}
 		return $this->_storage_get('access_token');
@@ -128,13 +128,13 @@ abstract class yf_oauth_driver2 {
 	/**
 	*/
 	function authorize() {
-		$url = $this->url_authorize.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_authorize + array(
+		$url = $this->url_authorize.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_authorize + [
 			'client_id' 	=> $this->client_id,
 			'redirect_uri' 	=> $this->redirect_uri,
 			'scope'			=> $this->scope,
 			'response_type' => 'code',
 			'state'			=> md5(microtime().rand(1,10000000)), // An unguessable random string. It is used to protect against cross-site request forgery attacks.
-		));
+		]);
 		js_redirect($url, $url_rewrite = false);
 		return false;
 	}
@@ -142,7 +142,7 @@ abstract class yf_oauth_driver2 {
 	/**
 	*/
 	function _decode_result($result, $response, $for_method = '') {
-		if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false || is_string($result) && in_array(substr(ltrim($result), 0, 1), array('[','{'))) {
+		if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false || is_string($result) && in_array(substr(ltrim($result), 0, 1), ['[','{'])) {
 			$result = json_decode($result, $assoc = true);
 		} elseif (strpos($response['content_type'], 'application/x-www-form-urlencoded') !== false) {
 			parse_str($result, $try_parsed);
@@ -150,7 +150,7 @@ abstract class yf_oauth_driver2 {
 				$result = $try_parsed;
 			}
 		}
-		if (is_string($result) && in_array(substr(ltrim($result), 0, 1), array('[','{'))) {
+		if (is_string($result) && in_array(substr(ltrim($result), 0, 1), ['[','{'])) {
 			$result = json_decode($result, $assoc = true);
 		}
 		return $result;

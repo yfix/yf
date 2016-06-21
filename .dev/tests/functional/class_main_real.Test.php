@@ -30,31 +30,31 @@ class class_main_real_test extends db_real_abstract {
 		$this->assertFalse( (bool)self::utils()->table_exists('static_pages') );
 		$this->assertEmpty( self::db()->from('static_pages')->get_all() );
 		$this->assertTrue( (bool)self::utils()->table_exists('static_pages') );
-		$data = array(
+		$data = [
 			'name'		=> 'for_unit_tests',
 			'active'	=> 1,
-		);
+		];
 		$this->assertTrue( self::db()->insert('static_pages', $data) );
 		$first = self::db()->from('static_pages')->get();
 		foreach ($data as $k => $v) {
 			$this->assertEquals($v, $first[$k]);
 		}
-		$expected = array($data['name'] => $data['name']);
+		$expected = [$data['name'] => $data['name']];
 		$this->assertEquals($expected, main()->get_data('static_pages_names'));
 	}
 	public function test_plugins_restrictions() {
-		main()->_plugins_white_list = array();
-		main()->_plugins_black_list = array();
+		main()->_plugins_white_list = [];
+		main()->_plugins_black_list = [];
 		$loaded_plugins1 = main()->_preload_plugins_list($force = true);
 		$first = key($loaded_plugins1);
-		main()->_plugins_black_list = array($first);
+		main()->_plugins_black_list = [$first];
 		$loaded_plugins2 = main()->_preload_plugins_list($force = true);
 		$this->assertNotEquals($loaded_plugins1, $loaded_plugins2);
-		main()->_plugins_white_list = array($first);
+		main()->_plugins_white_list = [$first];
 		$loaded_plugins3 = main()->_preload_plugins_list($force = true);
 		$this->assertEquals($loaded_plugins1, $loaded_plugins3);
-		main()->_plugins_white_list = array();
-		main()->_plugins_black_list = array();
+		main()->_plugins_white_list = [];
+		main()->_plugins_black_list = [];
 	}
 	public function test_extend_class_storage() {
 		$model_base = _class('model');
@@ -66,9 +66,9 @@ class class_main_real_test extends db_real_abstract {
 		if (!$model_exists) {
 			$this->assertFalse( main()->_class_exists('film_model') );
 			// unit_tests == name of the custom storage used here
-			main()->_custom_class_storages = array(
-				'film_model' => array('unit_tests' => array(__DIR__.'/model/fixtures/')),
-			);
+			main()->_custom_class_storages = [
+				'film_model' => ['unit_tests' => [__DIR__.'/model/fixtures/']],
+			];
 			$this->assertTrue( main()->_class_exists('film_model') );
 		}
 

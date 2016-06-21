@@ -10,7 +10,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 	/** @var string */
 	public $DEFAULT_CHARSET = 'utf8';
 	/** @var array */
-	public $_KNOWN_TABLE_OPTIONS = array(
+	public $_KNOWN_TABLE_OPTIONS = [
 		'ENGINE',
 		'TYPE',
 		'AUTO_INCREMENT',
@@ -34,19 +34,19 @@ class yf_db_installer_mysql extends yf_db_installer {
 		'PASSWORD',
 		'ROW_FORMAT',
 		'UNION',
-	);
+	];
 	/** @var array */
-	public $NO_REPAIR_TABLES = array();
+	public $NO_REPAIR_TABLES = [];
 
 	/**
 	* Framework construct
 	*/
 	function _init() {
 		parent::_init();
-		$this->_DEF_TABLE_OPTIONS = array(
+		$this->_DEF_TABLE_OPTIONS = [
 			'DEFAULT CHARSET'	=> $this->DEFAULT_CHARSET,
 			'ENGINE'			=> 'InnoDB',
-		);
+		];
 	}
 
 	/**
@@ -55,7 +55,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 	function repair($sql, $db_error, $db) {
 		$sql = trim($sql);
 		// #1191 Can't find FULLTEXT index matching the column list
-		if (in_array($db_error['code'], array(1191)) && $this->RESTORE_FULLTEXT_INDEX) {
+		if (in_array($db_error['code'], [1191]) && $this->RESTORE_FULLTEXT_INDEX) {
 
 			foreach ((array)conf('fulltext_needed_for') as $_fulltext_field) {
 				list($f_table, $f_field) = explode('.', $_fulltext_field);
@@ -80,7 +80,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 		// #2013 means 'Lost connection to MySQL server during query'
 		// #1205 means 'Lock wait timeout expired. Transaction was rolled back' (InnoDB)
 		// #1213 means 'Transaction deadlock. You should rerun the transaction.' (InnoDB)
-		} elseif (in_array($db_error['code'], array(2013,1205,1213)) && substr($sql, 0, strlen('SELECT ')) == 'SELECT ') {
+		} elseif (in_array($db_error['code'], [2013,1205,1213]) && substr($sql, 0, strlen('SELECT ')) == 'SELECT ') {
 
 			return $this->db_query_safe($sql, $db);
 

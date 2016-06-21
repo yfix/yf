@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'date' => array(
+		],
+		'date' => [
 			'name' => 'date',
 			'type' => 'int',
 			'length' => 10,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'query_string' => array(
+		],
+		'query_string' => [
 			'name' => 'query_string',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'request_uri' => array(
+		],
+		'request_uri' => [
 			'name' => 'request_uri',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'exec_time' => array(
+		],
+		'exec_time' => [
 			'name' => 'exec_time',
 			'type' => 'float',
 			'length' => NULL,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'num_dbq' => array(
+		],
+		'num_dbq' => [
 			'name' => 'num_dbq',
 			'type' => 'smallint',
 			'length' => 5,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'page_size' => array(
+		],
+		'page_size' => [
 			'name' => 'page_size',
 			'type' => 'int',
 			'length' => 10,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'admin_id' => array(
+		],
+		'admin_id' => [
 			'name' => 'admin_id',
 			'type' => 'int',
 			'length' => 10,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'admin_group' => array(
+		],
+		'admin_group' => [
 			'name' => 'admin_group',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ip' => array(
+		],
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'varchar',
 			'length' => 16,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_agent' => array(
+		],
+		'user_agent' => [
 			'name' => 'user_agent',
 			'type' => 'varchar',
 			'length' => 255,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'referer' => array(
+		],
+		'referer' => [
 			'name' => 'referer',
 			'type' => 'varchar',
 			'length' => 255,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'site_id' => array(
+		],
+		'site_id' => [
 			'name' => 'site_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -195,8 +195,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'server_id' => array(
+		],
+		'server_id' => [
 			'name' => 'server_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -210,26 +210,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'admin_group' => array(
+			],
+		],
+		'admin_group' => [
 			'name' => 'admin_group',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'admin_group' => 'admin_group',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

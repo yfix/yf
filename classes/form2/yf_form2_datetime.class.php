@@ -8,19 +8,19 @@ class yf_form2_datetime {
 	*			no_time // no time picker
 	*			min_date // min available date
 	*/
-	function datetime_select($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function datetime_select($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($desc)) {
 			$extra += $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
 		$extra['desc'] = $form->_prepare_desc($extra, $desc);
 		$extra['limit_date_format'] = $extra['limit_date_format'] ? $extra['limit_date_format'] : 'm/d/Y H:i';
 
-		$format = $format_php = $placeholder = array();
+		$format = $format_php = $placeholder = [];
 		$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];
 		$extra['no_time'] = isset( $extra['no_time'] ) ? $extra['no_time'] : 1;
 		if ($extra['no_date'] != 1) {
@@ -51,7 +51,7 @@ class yf_form2_datetime {
 		}
 		$extra['value'] = empty( $extra['value'] ) ? '' : date( $_format_php, $extra['value'] );
 
-		$debug_picker = isset($extra['debug_picker']) ? $extra['debug_picker'] : (bool)@constant('DEBUG_MODE');
+		$debug_picker = isset($extra['debug_picker']) ? $extra['debug_picker'] : (! MAIN_TYPE_ADMIN && (bool)@constant('DEBUG_MODE'));
 
 		asset('bootstrap-datetimepicker');
 		jquery('

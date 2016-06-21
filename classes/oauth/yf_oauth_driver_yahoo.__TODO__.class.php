@@ -25,7 +25,7 @@ class yf_oauth_driver_yahoo extends yf_oauth_driver1 {
 
 	/**
 	*/
-	function _get_user_info_for_auth($raw = array()) {
+	function _get_user_info_for_auth($raw = []) {
 /*
 		$user_info = array(
 			'user_id'		=> $raw['id'],

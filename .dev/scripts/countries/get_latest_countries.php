@@ -13,13 +13,13 @@ require_once dirname(__DIR__).'/scripts_utils.php';
 $url = $url ?: 'https://en.wikipedia.org/wiki/ISO_3166-1';
 $result_file = $result_file ?: __DIR__.'/countries.php';
 $suffix = $suffix ?: '';
-$mtpl = $mtpl ?: array(
+$mtpl = $mtpl ?: [
 	'id'	=> 1,
 	'code'	=> 1,
 	'code3' => 2,
 	'num'	=> 3,
 	'name'	=> 0,
-);
+];
 
 if (!function_exists('data_get_latest_countries')) {
 function data_get_latest_countries() {
@@ -35,22 +35,22 @@ function data_get_latest_countries() {
 	$html2 = file_get_contents($f2);
 
 	$tmp_tbl = html_table_to_array($html2);
-	$data = array();
+	$data = [];
 	foreach ($tmp_tbl as $v) {
 		$id = $v[$mtpl['id']];
 		if (!$id) {
 			continue;
 		}
-		$data[$id] = array(
+		$data[$id] = [
 			'code'	=> $id,
 			'code3' => $v[$mtpl['code3']],
 			'num'	=> $v[$mtpl['num']],
 			'name'	=> $v[$mtpl['name']],
 			'cont'	=> '',
 			'active'=> 0,
-		);
+		];
 	}
-	foreach (array('UA','RU','US','DE','FR','ES','GB') as $c) {
+	foreach (['UA','RU','US','DE','FR','ES','GB'] as $c) {
 		$data[$c]['active'] = 1;
 	}
 

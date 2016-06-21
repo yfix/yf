@@ -1,16 +1,16 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/yfix/OwlCarousel/master/owl-carousel/owl.carousel.min.js',
-			'css' => array(
+			'css' => [
 				'//cdn.rawgit.com/yfix/OwlCarousel/master/owl-carousel/owl.carousel.css',
 				'//cdn.rawgit.com/yfix/OwlCarousel/master/owl-carousel/owl.theme.css',
-			),
-		),
-	),
-	'require' => array(
+			],
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

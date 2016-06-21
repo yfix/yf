@@ -6,7 +6,7 @@ require dirname(__DIR__).'/scripts/scripts_init.php';
 
 class bench {
 	function __toString() {
-		$out = array();
+		$out = [];
 		foreach (get_class_methods($this) as $name) {
 			if ($name[0] == '_') {
 				continue;
@@ -21,23 +21,23 @@ class bench {
 	}
 	function dir_scan() {
 		$files = _class('dir')->scan(YF_PATH, 1, '-f ~gallery.*.php$~ims');
-		return array('_class("dir")->scan()', $files);
+		return ['_class("dir")->scan()', $files];
 	}
 	function dir_iterate() {
 		$files = _class('dir')->riterate(YF_PATH, '~gallery.*\.php$~ims');
-		return array('_class("dir")->riterate()', $files);
+		return ['_class("dir")->riterate()', $files];
 	}
 	function dir_scan_fast() {
 		$files = _class('dir')->scan_fast(YF_PATH, '~gallery.*.php$~ims');
-		return array('_class("dir")->scan_fast()', $files);
+		return ['_class("dir")->scan_fast()', $files];
 	}
 	function dir_rglob() {
 		$files = _class('dir')->rglob(YF_PATH, '*gallery*.php');
-		return array('_class("dir")->rglob()', $files);
+		return ['_class("dir")->rglob()', $files];
 	}
 	function dir_find() {
 		$files = _class('dir')->find(YF_PATH, '*gallery*.php');
-		return array('_class("dir")->find()', $files);
+		return ['_class("dir")->find()', $files];
 	}
 #	function dir_grep() {
 #		$files = _class('dir')->grep('~github~', YF_PATH, '*gallery*.php');

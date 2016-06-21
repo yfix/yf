@@ -61,15 +61,15 @@ class yf_email_page {
 				$send_result = common()->quick_send_mail($_POST["email"], $subject, $text_to_send);
 				// Anti-flooder
 				$_SESSION[$this->SESSION_TTL_NAME][$cur_page_md5] = time();
-				$replace2 = array(
+				$replace2 = [
 					"result" => intval((bool) $send_result),
-				);
+				];
 				return tpl()->parse("system/common/email_page_result", $replace2);
 			}
 		}
 		// Show form
 		if (empty($_POST["go"]) || common()->_error_exists()) {
-			$replace = array(
+			$replace = [
 				"error_message"	=> _e(),
 				"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
 				"name"			=> _prepare_html(isset($_POST["name"]) ? $_POST["name"] : (!empty($this->_user_info["display_name"]) ? $this->_user_info["display_name"] : $this->_user_info["name"])),
@@ -77,7 +77,7 @@ class yf_email_page {
 				"message"		=> _prepare_html(isset($_POST["message"]) ? $_POST["message"] : $text),
 				"comment"		=> _prepare_html($_POST["comment"]),
 				"page_preview"	=> isset($_POST["message"]) ? $_POST["message"] : $text,
-			);
+			];
 			return tpl()->parse("system/common/email_page_form", $replace);
 		}
 	}

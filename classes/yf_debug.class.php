@@ -45,14 +45,14 @@ class yf_debug {
 	public $SHOW_DD_TABLE			= true;
 	public $SORT_TEMPLATES_BY_NAME	= true;
 	public $ADD_ADMIN_LINKS			= true;
-	public $ADMIN_PATHS				= array(
+	public $ADMIN_PATHS				= [
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={THEME}&name={ID}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={ID}',
 		'edit_file'		=> 'object=file_manager&action=edit&id={ID}',
 		'show_db_table'	=> 'object=db_manager&action=table_show&id={ID}',
 		'sql_query'		=> 'object=db_manager&action=import&id={ID}',
 		'link'			=> '{ID}',
-	);
+	];
 
 	/**
 	* Catch missing method call
@@ -82,8 +82,8 @@ class yf_debug {
 		$main_exec_time = common()->_show_execution_time();
 		$num_db_queries = db()->NUM_QUERIES;
 
-		$debug_timings = array();
-		$methods = array();
+		$debug_timings = [];
+		$methods = [];
 		$class_name = get_class($this);
 		foreach ((array)get_class_methods($class_name) as $method) {
 			if (substr($method, 0, strlen('_debug_')) != '_debug_' || $method == $class_name || $method == __FUNCTION__) {
@@ -101,7 +101,7 @@ class yf_debug {
 			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' sec';
 			$debug_contents[$name] = $content;
 		}
-		$debug_add = array();
+		$debug_add = [];
 		_class('core_events')->fire('debug.render', $debug_add);
 		if ($debug_add) {
 			foreach((array)$debug_add as $k => $v) {
@@ -110,17 +110,17 @@ class yf_debug {
 		}
 		$debug_time = round(microtime(true) - $ts, 4);
 
-		$debug_timings_html = '<div class="span4 col-md-4">Debug panel timing: '.$debug_time.'<br />'.$this->_show_key_val_table($debug_timings, array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
+		$debug_timings_html = '<div class="span4 col-md-4">Debug panel timing: '.$debug_time.'<br />'.$this->_show_key_val_table($debug_timings, ['no_total' => 1, 'no_sort' => 1, 'no_escape' => 1]).'</div>';
 		$debug_contents['DEBUG_YF'] .= $debug_timings_html;
 
-		$data['debug_info'] = array(
+		$data['debug_info'] = [
 			'class_head'=> 'tab_info_compact',
 			'disabled'	=> 1,
 			'desc_raw'	=> '
 				<span title="'.t('Page generation time in seconds').'"><i class="icon icon-time fa fa-clock-o"></i>&nbsp;'.$exec_time.'</span>
 				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table fa fa-table"></i>&nbsp;'.intval($num_db_queries).'</span><br />
 				<span title="'.t('Debug console generation time in seconds').'"><small>D&nbsp;'.$debug_time.'</small></span>',
-		);
+		];
 		foreach ((array)$debug_contents as $name => $content) {
 			if (empty($content)) {
 				continue;
@@ -133,18 +133,18 @@ class yf_debug {
 		if (!isset($data[$cookie_active_tab])) {
 			$cookie_active_tab = '';
 		}
-		$body[] = _class('html')->tabs($data, array(
+		$body[] = _class('html')->tabs($data, [
 			'selected'		=> $cookie_active_tab ?: 'DEBUG_YF',
 			'no_auto_desc'	=> 1,
 			'links_prefix'	=> $links_prefix,
-		));
+		]);
 		return '<div id="debug_console">'.implode(PHP_EOL, $body).'</div>';
 	}
 
 	/**
 	*/
 	function _get_request_headers() {
-		$arh = array();
+		$arh = [];
 		$rx_http = '/(\AHTTP_)/';
 		foreach((array)$_SERVER as $key => $val) {
 			if (!preg_match($rx_http, $key, $m)) {
@@ -168,7 +168,7 @@ class yf_debug {
 	function _get_git_details($FS_PATH, $as_submodule = false) {
 		$git_base_path = $FS_PATH. '.git';
 		if (!file_exists($git_base_path)) {
-			return array();
+			return [];
 		}
 		$git_head_path = $git_base_path.'/HEAD';
 		$git_branch = '';
@@ -218,18 +218,18 @@ class yf_debug {
 				$url_part = str_replace(':', '/', $m['url_part']);
 			}
 		}
-		return array(
+		return [
 			'hash'	=> $git_hash,
 			'date'	=> $git_date,
 			'url'	=> 'https://'.$url_part.'/tree/',
 			'branch'=> $git_branch,
-		);
+		];
 	}
 
 	/**
 	*/
 	function _get_yf_version() {
-		$out = array();
+		$out = [];
 		$as_submodule = false;
 		if (strlen(YF_PATH) > strlen(APP_PATH) && substr(YF_PATH, 0, strlen(APP_PATH)) === APP_PATH) {
 			$as_submodule = true;
@@ -257,7 +257,7 @@ class yf_debug {
 	/**
 	*/
 	function _get_app_version() {
-		$out = array();
+		$out = [];
 		$git = $this->_get_git_details(APP_PATH);
 		$app_version_file = APP_PATH. '.app_version';
 		$app_version = file_exists($app_version_file) ? file_get_contents($app_version_file) : '';
@@ -280,14 +280,14 @@ class yf_debug {
 
 	/**
 	*/
-	function _do_debug_db_connection_queries($db, $connect_trace = array()) {
+	function _do_debug_db_connection_queries($db, $connect_trace = []) {
 		if (!$this->SHOW_DB_QUERY_LOG) {
 			return '';
 		}
 		if (!is_object($db) || !is_array($db->_LOG) || !$db->_tried_to_connect) {
 			return false;
 		}
-		$items = array();
+		$items = [];
 		$db_queries_list = $db->_LOG;
 		if ($this->SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
 			foreach ((array)$db_queries_list as $id => $log) {
@@ -341,9 +341,9 @@ class yf_debug {
 
 			$admin_link = $this->_admin_link('sql_query', urlencode($sql), true);
 			$sql = htmlspecialchars($sql);
-			$replace = array(
+			$replace = [
 				','	=> ', ', 
-			);
+			];
 			$sql = str_replace(array_keys($replace), array_values($replace), $sql);
 			if ($db->DB_PREFIX) {
 				$sql = preg_replace_callback('/([\s\t]+`?)('.preg_quote($db->DB_PREFIX, '/').'[a-z0-9_]+)(`?)/ims', function($m) use ($_this) {
@@ -355,7 +355,7 @@ class yf_debug {
 				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs">'.$exec_time.'</a>';
 			}
 			$num = $id + 1;
-			$items[] = array(
+			$items[] = [
 				'id'		=> $num,
 				'sql'		=> $sql,
 				'rows'		=> strval($log['rows']),
@@ -367,27 +367,27 @@ class yf_debug {
 				'time'		=> round($log['time'], 4),
 				'trace'		=> $_cur_trace,
 				'explain'	=> $_cur_explain,
-			);
+			];
 		}
 		$items = $this->_time_count_changes($items);
 		foreach ((array)$items as $k => $v) {
 			unset($items[$k]['time']);
 		}
-		return $this->_show_auto_table($items, array(
+		return $this->_show_auto_table($items, [
 			'first_col_width' => '1%',
 			'tr' => function($row, $id) { return $row['error'] ? ' class="error"' : ''; },
-			'caption' => array(
+			'caption' => [
 				'total_exec_time'	=> round($total_queries_exec_time, 4),
 				'connect_time'		=> round($db->_connection_time, 4),
-			),
-			'hidden_map' => array(
+			],
+			'hidden_map' => [
 				'explain'	=> 'sql',
 				'trace'		=> 'sql',
 				'error'		=> 'sql',
 				'warning'	=> 'sql',
 				'info'		=> 'sql',
-			),
-		));
+			],
+		]);
 	}
 
 	/**
@@ -409,14 +409,14 @@ class yf_debug {
 		$data['vars'] = $db->get_2d('SHOW VARIABLES');
 #		$data['global_vars'] = $db->get_2d('SHOW GLOBAL VARIABLES');
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span10 col-md-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+			$body .= '<div class="span10 col-md-10">'.$name.'<br>'.$this->_show_key_val_table($_data, ['no_total' => 1, 'skip_empty_values' => 1]).'</div>';
 		}
 		return $body;
 	}
 
 	/**
 	*/
-	function _format_db_explain_result($explain_result = array()) {
+	function _format_db_explain_result($explain_result = []) {
 		if (empty($explain_result)) {
 			return false;
 		}
@@ -439,7 +439,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _show_key_val_table($a, $params = array(), $name = '') {
+	function _show_key_val_table($a, $params = [], $name = '') {
 		if (!$a) {
 			return false;
 		}
@@ -453,16 +453,16 @@ class yf_debug {
 		if (!$params['no_escape']) {
 			$params['escape'] = 1;
 		}
-		$items = array();
+		$items = [];
 		foreach ((array)$a as $k => $v) {
 			if ($params['skip_empty_values'] && !$v) {
 				continue;
 			}
 			$v = is_array($v) ? nl2br($this->_var_export($v)) : $v;
-			$items[] = array(
+			$items[] = [
 				'key'	=> $params['escape'] ? _prepare_html($k) : $k,
 				'value'	=> $params['escape'] && strlen($v) ? '<pre>'._prepare_html($v).'</pre>' : $v,
-			);
+			];
 		}
 		if (!$items) {
 			return false;
@@ -475,9 +475,9 @@ class yf_debug {
 
 	/**
 	*/
-	function _show_auto_table($items = array(), $params = array(), $name = '') {
+	function _show_auto_table($items = [], $params = [], $name = '') {
 		if (!is_array($items)) {
-			$items = array();
+			$items = [];
 		}
 		$items = $this->_format_trace_in_items($items);
 		$total_time = 0.0;
@@ -504,7 +504,7 @@ class yf_debug {
 		$caption = $params['header'] ? '<b class="btn btn-default disabled">'.$params['header'].'</b>' : '';
 		if (!$params['no_total']) {
 			if (!is_array($params['caption'])) {
-				$params['caption'] = array();
+				$params['caption'] = [];
 			}
 			count($items) && $params['caption']['items'] = count($items);
 			$total_time && $params['caption']['total_time'] = round($total_time, 4);
@@ -512,7 +512,7 @@ class yf_debug {
 				$caption .= ' <span class="label label-info">'.$k.': '.$v.'</span>'.PHP_EOL;
 			}
 		}
-		$table = table((array)$items, array(
+		$table = table((array)$items, [
 			'table_class' 		=> 'debug_item table-condensed', 
 			'auto_no_buttons' 	=> 1,
 			'pager_records_on_page' => 10000,
@@ -521,9 +521,9 @@ class yf_debug {
 			'td'				=> $params['td'],
 			'no_total'			=> true,
 			'caption'			=> $caption ? '<div class="pull-left">'.$caption.'</div>' : '',
-		))->auto();
+		])->auto();
 		foreach ((array)$params['hidden_map'] as $name => $to) {
-			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name, 'display_func' => function($row, $info, $params) use($name) { return (bool)strlen($row[$name]); }));
+			$table->btn($name, 'javascript:void();', ['hidden_toggle' => $name, 'display_func' => function($row, $info, $params) use($name) { return (bool)strlen($row[$name]); }]);
 		}
 		return (string)$table;
 	}
@@ -531,7 +531,7 @@ class yf_debug {
 	/**
 	* Process through admin link or just return text if links disabled
 	*/
-	function _admin_link($type, $text = '', $just_link = false, $replace = array()) {
+	function _admin_link($type, $text = '', $just_link = false, $replace = []) {
 		if (!$this->ADD_ADMIN_LINKS || !isset($this->ADMIN_PATHS[$type])) {
 			return $text;
 		}
@@ -539,10 +539,10 @@ class yf_debug {
 			return '<a href="'.$text.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
 		}
 		$id = $text;
-		$replace += array(
+		$replace += [
 			'{ID}'	=> urlencode(str_replace("\\", '/', $id)),
 			'{THEME}'	=> conf('theme'),
-		);
+		];
 		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
 		$link = ADMIN_WEB_PATH. '?'. $url;
 		if ($just_link) {
@@ -580,7 +580,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _time_count_changes($items = array(), $field = 'time') {
+	function _time_count_changes($items = [], $field = 'time') {
 		$time_all = 0;
 		$time_max = 0;
 		foreach ((array)$items as $i => $v) {
@@ -619,13 +619,13 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_DEBUG_YF (&$params = array()) {
+	function _debug_DEBUG_YF (&$params = []) {
 		if (!$this->SHOW_SETTINGS) {
 			return '';
 		}
 		$cache_use = ((main()->USE_SYSTEM_CACHE || conf('USE_CACHE')) && !cache()->NO_CACHE);
 		$locale_debug = $this->_get_debug_data('locale');
-		$data['yf'] = array(
+		$data['yf'] = [
 			'MAIN_TYPE'			=> MAIN_TYPE,
 			'LANG'				=> conf('language'),
 			'IP'				=> common()->get_ip(),
@@ -697,13 +697,13 @@ class yf_debug {
 			'LOCALE_VARIANTS'	=> $locale_debug['variants'],
 			'LOCALE_DEFAULT'	=> $locale_debug['default'],
 			'LOCALE_SYSTEM'		=> implode(', ', (array)$locale_debug['system']),
-		);
+		];
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;
 		}
 
 		$ini_all = ini_get_all();
-		$ini = array(
+		$ini = [
 			'memory_limit',
 			'max_execution_time',
 			'default_socket_timeout',
@@ -715,26 +715,26 @@ class yf_debug {
 			'allow_url_fopen',
 			'error_reporting',
 			'display_errors',
-		);
+		];
 		foreach ($ini as $name) {
 			$data['ini']['php_ini&nbsp;:&nbsp;'.$name] = $ini_all[$name]['local_value'];
 		}
 		if (tpl()->COMPRESS_OUTPUT && !main()->NO_GRAPHICS) {
 			$c_info = $this->_get_debug_data('compress_output');
 
-			$data['ini'] += array(
+			$data['ini'] += [
 				'compress: size original'	=> $c_info['size_original'].' bytes',
 				'compress: size compressed'	=> $c_info['size_compressed'].' bytes',
 				'compress: ratio'			=> ($c_info['size_compressed'] ? round($c_info['size_original'] / $c_info['size_compressed'] * 100, 0) : 0).'%',
-			);
+			];
 		}
-		$loaded_exts = array();
+		$loaded_exts = [];
 		foreach (get_loaded_extensions() as $v) {
 			$loaded_exts[] = strtolower($v);
 		}
 		asort($loaded_exts);
 
-		$data['ini'] += array(
+		$data['ini'] += [
 			'memory_usage'			=> function_exists('memory_get_usage') ? memory_get_usage() : 'n/a',
 			'memory_peak_usage'		=> function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : 'n/a',
 			'sys_loadavg'			=> implode(' | ', sys_getloadavg()),
@@ -747,20 +747,20 @@ class yf_debug {
 			'php_include_path'		=> get_include_path(),
 			'php_loaded_extensions'	=> implode(', ', $loaded_exts),
 			'php_ini_scanned_files'	=> function_exists('php_ini_scanned_files') ? php_ini_scanned_files() : '',
-		);
+		];
 		$data['session']['session_id'] = session_id();
 		foreach ((array)ini_get_all('session') as $k => $v) {
 			$data['session'][$k] = $v['local_value'];
 		}
 		$a = $_POST + $_SESSION;
-		$body .= form($a, array('action' => url('/test/change_debug'), 'class' => 'form-inline', 'style' => 'padding-left:20px;'))
+		$body .= form($a, ['action' => url('/test/change_debug'), 'class' => 'form-inline', 'style' => 'padding-left:20px;'])
 			->row_start()
 				->container('Locale edit')
-				->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
+				->active_box('locale_edit', ['selected' => $_SESSION['locale_vars_edit']])
 				->container('<span style="padding-left:20px;">Debug console light</span>')
-				->active_box('debug_console_light', array('selected' => $_SESSION['debug_console_light']))
+				->active_box('debug_console_light', ['selected' => $_SESSION['debug_console_light']])
 			->row_end()
-			->save(array('class' => 'btn btn-default btn-mini btn-xs'))
+			->save(['class' => 'btn btn-default btn-mini btn-xs'])
 		;
 		foreach ($data as $name => $_data) {
 			foreach ($_data as $k => $v) {
@@ -769,21 +769,21 @@ class yf_debug {
 				}
 				$_data[$k] = _prepare_html($v);
 			}
-			$body .= '<div class="span6 col-md-6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
+			$body .= '<div class="span6 col-md-6">'.$this->_show_key_val_table($_data, ['no_total' => 1, 'no_sort' => 1, 'no_escape' => 1]).'</div>';
 		}
 		return $body;
 	}
 
 	/**
 	*/
-	function _debug_db(&$params = array()) {
+	function _debug_db(&$params = []) {
 		if (!$this->SHOW_DB_QUERY_LOG) {
 			return false;
 		}
-		$items = array();
+		$items = [];
 		$instances_trace = $this->_get_debug_data('db_instances_trace');
 		foreach ((array)$this->_get_debug_data('db_instances') as $k => $db) {
-			$connect_trace = array();
+			$connect_trace = [];
 			if (isset($instances_trace[$k])) {
 				$connect_trace = $instances_trace[$k];
 			}
@@ -792,12 +792,12 @@ class yf_debug {
 			$items['db_shutdown_queries_'.$name] = $this->_show_db_shutdown_queries($db);
 			$items['db_stats_'.$name] = $this->_show_db_stats($db);
 		}
-		return _class('html')->tabs($items, array('hide_empty' => 1));
+		return _class('html')->tabs($items, ['hide_empty' => 1]);
 	}
 
 	/**
 	*/
-	function _debug_memcached(&$params = array()) {
+	function _debug_memcached(&$params = []) {
 		if (!$this->SHOW_MEMCACHED_INFO) {
 			return '';
 		}
@@ -808,7 +808,7 @@ class yf_debug {
 		if (!is_object($mc_obj)) {
 			return '';
 		}
-		$data = array();
+		$data = [];
 		$ext = '';
 		if (method_exists($mc_obj, 'getExtendedStats')) {
 			$ext = 'memcache (old)';
@@ -822,14 +822,14 @@ class yf_debug {
 		}
 		$body .= 'PHP Extension used: '.$ext.'<br>'.PHP_EOL;
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6 col-md-6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+			$body .= '<div class="span6 col-md-6">'.$name.'<br>'.$this->_show_key_val_table($_data, ['no_total' => 1, 'skip_empty_values' => 1]).'</div>';
 		}
 		return $body;
 	}
 
 	/**
 	*/
-	function _debug_stpls(&$params = array()) {
+	function _debug_stpls(&$params = []) {
 		if (!$this->SHOW_STPLS) {
 			return '';
 		}
@@ -841,7 +841,7 @@ class yf_debug {
 		$stpl_vars = $this->_get_debug_data('STPL_REPLACE_VARS');
 		$stpl_traces = $this->_get_debug_data('STPL_TRACES');
 
-		$items = array();
+		$items = [];
 		foreach ((array)$data as $k => $v) {
 			if (empty($v['calls'])) {
 				continue;
@@ -850,9 +850,9 @@ class yf_debug {
 			$total_size += $cur_size;
 			$total_stpls_exec_time += (float)$v['exec_time'];
 
-			$items[$counter] = array(
+			$items[$counter] = [
 				'id'		=> ++$counter,
-				'name'		=> $this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $debug[$k]['storage'])),
+				'name'		=> $this->_admin_link('edit_stpl', $k, false, ['{LOCATION}' => $debug[$k]['storage']]),
 				'calls'		=> strval($v['calls']),
 				'driver'	=> strval($v['driver']),
 				'compiled'	=> (int)$v['is_compiled'],
@@ -861,30 +861,30 @@ class yf_debug {
 				'size'		=> strval($cur_size),
 				'time'		=> round($v['exec_time'], 4),
 				'trace'		=> _prepare_html($stpl_traces[$k]),
-			);
+			];
 			if (isset($stpl_vars[$counter])) {
 				$items[$counter]['vars'] = '<pre><small>'._prepare_html($this->_var_export($stpl_vars[$counter])).'</small></pre>';
 			}
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array(
+		return $this->_show_auto_table($items, [
 			'first_col_width' => '1%',
-			'caption' => array(
+			'caption' => [
 				'tpl_driver'	=> tpl()->DRIVER_NAME,
 				'compile_mode'	=> (int)tpl()->COMPILE_TEMPLATES,
 				'templates_size'=> $total_size.' bytes',
-			),
-			'hidden_map' => array(
+			],
+			'hidden_map' => [
 				'trace'		=> 'name',
 				'vars'		=> 'name',
 				'storages'	=> 'name',
-			),
-		));
+			],
+		]);
 	}
 
 	/**
 	*/
-	function _debug_rewrite(&$params = array()) {
+	function _debug_rewrite(&$params = []) {
 		if (!$this->SHOW_REWRITE_INFO) {
 			return '';
 		}
@@ -892,31 +892,31 @@ class yf_debug {
 		if (empty($data)) {
 			return '';
 		}
-		$items = array();
+		$items = [];
 		foreach ((array)$data as $k => $v) {
-			$items[] = array(
+			$items[] = [
 				'id'		=> $k + 1,
 				'source'	=> strval($v['source']),
 				'rewrited'	=> strval($this->_admin_link('link', $v['rewrited'])),
 				'time'		=> round($v['exec_time'], 4),
 				'trace'		=> $v['trace'],
-			);
+			];
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array(
+		return $this->_show_auto_table($items, [
 			'first_col_width' => '1%',
-			'caption' => array(
+			'caption' => [
 				'Rewrite processing time' => round($this->_get_debug_data('rewrite_exec_time'), 4),
-			),
-			'hidden_map' => array(
+			],
+			'hidden_map' => [
 				'trace' => 'source'
-			),
-		));
+			],
+		]);
 	}
 
 	/*
 	*/
-	function _debug_url(&$params = array()) {
+	function _debug_url(&$params = []) {
 		if (!$this->SHOW_REWRITE_INFO) {
 			return '';
 		}
@@ -926,18 +926,18 @@ class yf_debug {
 			$items[$k]['rewrited_link'] = strval($this->_admin_link('link', $v['rewrited_link']));
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'params']]);
 	}
 
 	/**
 	*/
-	function _debug_modules(&$params = array()) {
+	function _debug_modules(&$params = []) {
 		if (!$this->SHOW_LOADED_MODULES) {
 			return '';
 		}
-		$items = array();
+		$items = [];
 		foreach ((array)$this->_get_debug_data('main_load_class') as $data) {
-			$items[] = array(
+			$items[] = [
 				'id'			=> ++$counter,
 				'module'		=> $data['class_name'],
 				'loaded_class'	=> $data['loaded_class_name'],
@@ -947,26 +947,26 @@ class yf_debug {
 				'time'			=> round($data['time'], 4),
 				'trace'			=> $data['trace'],
 				'storages'		=> '<pre>'._prepare_html($this->_var_export($data['storages'])).'</pre>',
-			);
+			];
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path', 'storages' => 'path')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'path', 'storages' => 'path']]);
 	}
 
 	/**
 	*/
-	function _debug_execute(&$params = array()) {
+	function _debug_execute(&$params = []) {
 		if (!$this->SHOW_MAIN_EXECUTE) {
 			return '';
 		}
 		$items = $this->_get_debug_data('main_execute_block_time');
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'params')));
+		return $this->_show_auto_table($items, ['first_col_width' => '1%', 'hidden_map' => ['trace' => 'params']]);
 	}
 
 	/**
 	*/
-	function _debug_get_data(&$params = array()) {
+	function _debug_get_data(&$params = []) {
 		if (!$this->SHOW_MAIN_GET_DATA) {
 			return '';
 		}
@@ -978,12 +978,12 @@ class yf_debug {
 			$items[$k]['data_size'] = $size;
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'params', 'data' => 'name']]);
 	}
 
 	/**
 	*/
-	function _debug_cache_get(&$params = array()) {
+	function _debug_cache_get(&$params = []) {
 		if (!$this->SHOW_CORE_CACHE) {
 			return '';
 		}
@@ -997,12 +997,12 @@ class yf_debug {
 			$items[$k]['data_size'] = $size;
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'params', 'data' => 'name']]);
 	}
 
 	/**
 	*/
-	function _debug_cache_set(&$params = array()) {
+	function _debug_cache_set(&$params = []) {
 		if (!$this->SHOW_CORE_CACHE) {
 			return '';
 		}
@@ -1014,59 +1014,59 @@ class yf_debug {
 			$items[$k]['data_size'] = $size;
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name', 'data' => 'name']]);
 	}
 
 	/**
 	*/
-	function _debug_cache_del(&$params = array()) {
+	function _debug_cache_del(&$params = []) {
 		if (!$this->SHOW_CORE_CACHE) {
 			return '';
 		}
 		$items = $this->_get_debug_data('cache_del');
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
 	}
 
 	/**
 	*/
-	function _debug__get(&$params = array()) {
+	function _debug__get(&$params = []) {
 		if (!$this->SHOW_GET_DATA) {
 			return '';
 		}
 		$out = $this->_show_key_val_table($_GET);
 		$items = $this->_get_debug_data('input_get');
-		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
 		return $out;
 	}
 
 	/**
 	*/
-	function _debug__post(&$params = array()) {
+	function _debug__post(&$params = []) {
 		if (!$this->SHOW_POST_DATA) {
 			return '';
 		}
 		$out = $this->_show_key_val_table($_POST);
 		$items = $this->_get_debug_data('input_post');
-		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
 		return $out;
 	}
 
 	/**
 	*/
-	function _debug__cookie(&$params = array()) {
+	function _debug__cookie(&$params = []) {
 		if (!$this->SHOW_COOKIE_DATA) {
 			return '';
 		}
 		$out = $this->_show_key_val_table($_COOKIE);
 		$items = $this->_get_debug_data('input_cookie');
-		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
 		return $out;
 	}
 
 	/**
 	*/
-	function _debug__files(&$params = array()) {
+	function _debug__files(&$params = []) {
 		if (!$this->SHOW_FILES_DATA) {
 			return '';
 		}
@@ -1075,51 +1075,51 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__session(&$params = array()) {
+	function _debug__session(&$params = []) {
 		if (!$this->SHOW_SESSION_DATA) {
 			return '';
 		}
 		$items = $_SESSION;
 		foreach ((array)$items as $k => $v) {
-			$items[$k] = array(
+			$items[$k] = [
 				'key' => $k,
 				'value' => '<pre>'._prepare_html($this->_var_export($v)).'</pre>',
-			);
+			];
 		}
-		$out = $this->_show_auto_table($items, array('first_col_width' => '1%'));
+		$out = $this->_show_auto_table($items, ['first_col_width' => '1%']);
 
 		$items = $this->_get_debug_data('input_session');
-		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
 		return $out;
 	}
 
 	/**
 	*/
-	function _debug__server(&$params = array()) {
+	function _debug__server(&$params = []) {
 		if (!$this->SHOW_SERVER_DATA) {
 			return '';
 		}
 		$out = $this->_show_key_val_table($_SERVER);
 		$items = $this->_get_debug_data('input_server');
-		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
 		return $out;
 	}
 
 	/**
 	*/
-	function _debug__env(&$params = array()) {
+	function _debug__env(&$params = []) {
 		if (!$this->SHOW_ENV_DATA) {
 			return '';
 		}
 		$out = $this->_show_key_val_table($_ENV);
 		$items = $this->_get_debug_data('input_env');
-		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
 		return $out;
 	}
 
 	/**
 	*/
-	function _debug_i18n(&$params = array()) {
+	function _debug_i18n(&$params = []) {
 		if (!$this->SHOW_I18N_VARS) {
 			return '';
 		}
@@ -1128,15 +1128,15 @@ class yf_debug {
 		foreach ($items as $k => $v) {
 			$v['name'] = $this->_admin_link('edit_i18n', $v['name']);
 			$v['calls'] = (int)$calls[$v['name_orig']];
-			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k] = ['id' => ++$i] + $v;
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name', 'data' => 'name']]);
 	}
 	
 	/**
 	*/
-	function _debug_sphinxsearch(&$params = array()) {
+	function _debug_sphinxsearch(&$params = []) {
 		if (!$this->SHOW_SPHINX) {
 			return "";
 		}
@@ -1147,7 +1147,7 @@ class yf_debug {
 		$body .= 'host: '. _class('sphinxsearch')->_get_host();
 		$body .= ', version: '._class('sphinxsearch')->_get_server_version();
 
-		$sphinx_connect_debug = array();
+		$sphinx_connect_debug = [];
 		foreach ((array)$items as $id => $item) {
 			if ($item['query'] == 'sphinx connect') {
 				$sphinx_connect_debug = $item;
@@ -1158,11 +1158,11 @@ class yf_debug {
 			$item['results'] = '<pre>'._prepare_html($this->_var_export($item['results'])).'</pre>';
 			$item['meta'] = '<pre>'._prepare_html($this->_var_export($item['meta'])).'</pre>';
 			$item['describe'] = '<pre>'._prepare_html($this->_var_export($item['describe'])).'</pre>';
-			$items[$id] = array('id' => $id) + $item;
+			$items[$id] = ['id' => $id] + $item;
 		}
 		$items = $this->_time_count_changes($items);
 
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
+		$body .= $this->_show_auto_table($items, ['first_col_width' => '1%', 'hidden_map' => ['trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count']]);
 		$body .= $sphinx_connect_debug ? '<pre>'._prepare_html($this->_var_export($sphinx_connect_debug)).'</pre>' : '';
 		$body .= $this->_show_key_val_table(_class('sphinxsearch')->_get_server_status());
 		return $body;
@@ -1170,7 +1170,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_ssh(&$params = array()) {
+	function _debug_ssh(&$params = []) {
 		if (!$this->SHOW_SSH) {
 			return '';
 		}
@@ -1183,7 +1183,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_eaccelerator(&$params = array()) {
+	function _debug_eaccelerator(&$params = []) {
 		if (!$this->SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
 			return '';
 		}
@@ -1196,7 +1196,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_apc(&$params = array()) {
+	function _debug_apc(&$params = []) {
 		if (!$this->SHOW_APC_INFO || !function_exists('apc_cache_info')) {
 			return '';
 		}
@@ -1209,7 +1209,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_xcache(&$params = array()) {
+	function _debug_xcache(&$params = []) {
 		if (!$this->SHOW_XCACHE_INFO || !function_exists('xcache_get')) {
 			return '';
 		}
@@ -1223,7 +1223,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_resize_images(&$params = array()) {
+	function _debug_resize_images(&$params = []) {
 		if (!$this->SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
 			return '';
 		}
@@ -1232,12 +1232,12 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_globals(&$params = array()) {
+	function _debug_globals(&$params = []) {
 		if (!$this->SHOW_GLOBALS) {
 			return '';
 		}
-		$classes_builtin = array();
-		$classes_custom = array();
+		$classes_builtin = [];
+		$classes_custom = [];
 		foreach (get_declared_classes() as $k => $name) {
 			$r = new ReflectionClass($name);
 			$file_name = $r->getFileName();
@@ -1264,17 +1264,17 @@ class yf_debug {
 		$data['globals'] = array_filter(array_keys($GLOBALS), function($v) { return $v[0] != '_';} );
 		sort($data['globals']);
 
-		$grid = array(5,4,1,2);
+		$grid = [5,4,1,2];
 		foreach ($data as $name => $_data) {
 			$grid_num = $grid[++$i - 1];
-			$body .= '<div class="span'.$grid_num.' col-md-'.$grid_num.'">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1)).'</div>';
+			$body .= '<div class="span'.$grid_num.' col-md-'.$grid_num.'">'.$name.'<br>'.$this->_show_key_val_table($_data, ['no_total' => 1, 'no_sort' => 1]).'</div>';
 		}
 		return $body;
 	}
 
 	/**
 	*/
-	function _debug_included(&$params = array()) {
+	function _debug_included(&$params = []) {
 		if (!$this->SHOW_INCLUDED_FILES) {
 			return '';
 		}
@@ -1285,34 +1285,34 @@ class yf_debug {
 				continue;
 			}
 			$v['path'] = $this->_admin_link('edit_file', $v['path']);
-			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k] = ['id' => ++$i] + $v;
 			$total_size += $v['size'];
 		}
 		$items = $this->_time_count_changes($items);
-		return $body. $this->_show_auto_table($items, array('caption' => array('total_size' => $total_size), 'hidden_map' => array('trace' => 'path')));
+		return $body. $this->_show_auto_table($items, ['caption' => ['total_size' => $total_size], 'hidden_map' => ['trace' => 'path']]);
 	}
 
 	/**
 	*/
-	function _debug_curl_requests(&$params = array()) {
+	function _debug_curl_requests(&$params = []) {
 		if (!$this->SHOW_CURL_REQUESTS) {
 			return '';
 		}
 		$items = $this->_get_debug_data('curl_get_remote_page');
 		foreach ((array)$items as $k => $v) {
-			$items[$k] = array(
+			$items[$k] = [
 				'id' => $k + 1,
 				'info' => '<pre>'._prepare_html($this->_var_export($v['info'])).'</pre>',
 				'trace'	=> $v['trace'],
-			);
+			];
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'id')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'id']]);
 	}
 
 	/**
 	*/
-	function _debug_form2(&$params = array()) {
+	function _debug_form2(&$params = []) {
 		if (!$this->SHOW_FORM2) {
 			return '';
 		}
@@ -1320,15 +1320,15 @@ class yf_debug {
 		foreach ((array)$items as $k => $v) {
 			$v['params'] = '<pre>'._prepare_html($this->_var_export($v['params'] )).'</pre>';
 			$v['fields'] = '<pre>'._prepare_html($this->_var_export($v['fields'])).'</pre>';
-			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k] = ['id' => ++$i] + $v;
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'fields' => 'params')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'params', 'fields' => 'params']]);
 	}
 
 	/**
 	*/
-	function _debug_table2(&$params = array()) {
+	function _debug_table2(&$params = []) {
 		if (!$this->SHOW_TABLE2) {
 			return '';
 		}
@@ -1343,15 +1343,15 @@ class yf_debug {
 			if ($v['footer_links']) {
 				$v['footer_links'] = '<pre>'._prepare_html($this->_var_export($v['footer_links'])).'</pre>';
 			}
-			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k] = ['id' => ++$i] + $v;
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'header_links', 'fields' => 'header_links', 'buttons' => 'header_links')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'header_links', 'fields' => 'header_links', 'buttons' => 'header_links']]);
 	}
 
 	/**
 	*/
-	function _debug_dd_table(&$params = array()) {
+	function _debug_dd_table(&$params = []) {
 		if (!$this->SHOW_DD_TABLE) {
 			return '';
 		}
@@ -1362,15 +1362,15 @@ class yf_debug {
 			if ($v['field_types']) {
 				$v['field_types'] = '<pre>'._prepare_html($this->_var_export($v['field_types'])).'</pre>';
 			}
-			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k] = ['id' => ++$i] + $v;
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'fields')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'fields']]);
 	}
 
 	/**
 	*/
-	function _debug_profiling(&$params = array()) {
+	function _debug_profiling(&$params = []) {
 		$all_timings = main()->_timing;
 		if (!$all_timings) {
 			return false;
@@ -1378,7 +1378,7 @@ class yf_debug {
 		$ts = main()->_time_start;
 		$_last_item = end($all_timings);
 		$time_all = $_last_item[0] - $ts;
-		$items = array();
+		$items = [];
 		foreach ((array)$all_timings as $i => $v) {
 			$time_offset = $v[0] - $ts;
 			$time_change = '';
@@ -1393,7 +1393,7 @@ class yf_debug {
 					$time_warning = true;
 				}
 			}
-			$items[] = array(
+			$items[] = [
 				'i'				=> $i,
 				'time_offset'	=> round($time_offset, 4),
 				'time_change'	=> $time_change && $time_change > 0.0001 ? round($time_change, 4) : '',
@@ -1402,17 +1402,17 @@ class yf_debug {
 				'method'		=> $v[2],
 				'trace'			=> $v[3],
 				'args'			=> $v[4] ? _prepare_html($this->_var_export($v[4])) : '',
-			);
+			];
 		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'args')));
+		return $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'args']]);
 	}
 
 	/**
 	*/
-	function _debug_events(&$params = array()) {
+	function _debug_events(&$params = []) {
 		$main_ts = main()->_time_start;
-		$items = array();
-		foreach (array('listen','fire','queue') as $name) {
+		$items = [];
+		foreach (['listen','fire','queue'] as $name) {
 			$data = $this->_get_debug_data('events_'.$name);
 			if (!$data) {
 				continue;
@@ -1420,15 +1420,15 @@ class yf_debug {
 			foreach ((array)$data as $k => $v) {
 				$data[$k]['time_offset'] = round($data[$k]['time_offset'] - $main_ts, 5);
 			}
-			$items[$name] = $this->_show_auto_table($data, array('header' => $name, 'no_total_time' => 1, 'hidden_map' => array('trace' => 'name')));
+			$items[$name] = $this->_show_auto_table($data, ['header' => $name, 'no_total_time' => 1, 'hidden_map' => ['trace' => 'name']]);
 		}
-		return _class('html')->tabs($items, array('hide_empty' => 1, 'show_all' => 1, 'no_headers' => 1));
+		return _class('html')->tabs($items, ['hide_empty' => 1, 'show_all' => 1, 'no_headers' => 1]);
 	}
 
 	/**
 	*/
-	function _debug_hooks(&$params = array()) {
-		$items = array();
+	function _debug_hooks(&$params = []) {
+		$items = [];
 		$hook_name = '_hook_debug';
 		foreach (main()->modules as $module_name => $module_obj) {
 			if (!method_exists($module_obj, $hook_name)) {
@@ -1467,7 +1467,7 @@ class yf_debug {
 
 		$data  = '<div class="span4 col-md-4">dashboard name: <b>'.$items['name'].'</b><br /><br />';
 		$data .= 'Total time: <b>'.$items['total_time'].'</b><br /><br />';
-		$data .= $this->_show_auto_table($_items, array('hidden_map' => array()));
+		$data .= $this->_show_auto_table($_items, ['hidden_map' => []]);
 		$data .= '</div>';
 
 		return $data;
@@ -1475,8 +1475,8 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_assets(&$params = array()) {
-		$body = array();
+	function _debug_assets(&$params = []) {
+		$body = [];
 
 		$items = $this->_get_debug_data('assets_out');
 		$i = 0;
@@ -1484,10 +1484,10 @@ class yf_debug {
 			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
 			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
 			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
-			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k] = ['id' => ++$i] + $v;
 			$items[$k]['strlen'] = strlen($v['content']);
 		}
-		$body['assets_out'] = $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
+		$body['assets_out'] = $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'md5', 'content' => 'preview']]);
 
 		$items = $this->_get_debug_data('assets_add');
 		$i = 0;
@@ -1496,27 +1496,27 @@ class yf_debug {
 			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
 			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
 			unset($v['is_added']);
-			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k] = ['id' => ++$i] + $v;
 			$items[$k]['strlen'] = strlen($v['content']);
 		}
-		$body['assets_add_log'] = $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
+		$body['assets_add_log'] = $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'md5', 'content' => 'preview']]);
 
 		$items = $this->_get_debug_data('assets_names');
 		$i = 0;
 		foreach ((array)$items as $k => $v) {
 			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
-			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k] = ['id' => ++$i] + $v;
 			$items[$k]['strlen'] = strlen($v['content']);
 		}
-		$body['assets_names'] = $this->_show_auto_table($items, array('hidden_map' => array('content' => 'path')));
+		$body['assets_names'] = $this->_show_auto_table($items, ['hidden_map' => ['content' => 'path']]);
 
-		return _class('html')->tabs($body, array('hide_empty' => 1));
+		return _class('html')->tabs($body, ['hide_empty' => 1]);
 	}
 
 	/**
 	*/
-	function _debug_other(&$params = array()) {
-		$items = array();
+	function _debug_other(&$params = []) {
+		$items = [];
 		foreach (debug() as $k => $v) {
 			if (isset($this->_used_debug_datas[$k])) {
 				continue;

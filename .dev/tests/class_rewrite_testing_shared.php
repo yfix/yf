@@ -2,15 +2,15 @@
 
 class class_rewrite_testing_shared_test extends yf_unit_tests {
 	private static $host = 'test.dev';
-	private static $_bak_settings = array();
+	private static $_bak_settings = [];
 
 	public static function setUpBeforeClass() {
 		self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
-		$_GET = array(
+		$_GET = [
 			'object' => 'dynamic',
 			'action' => 'unit_test_form',
-		);
+		];
 		$_SERVER['HTTP_HOST'] = self::$host;
 		_class('rewrite')->DEFAULT_HOST = self::$host;
 	}
@@ -24,31 +24,31 @@ class class_rewrite_testing_shared_test extends yf_unit_tests {
 		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_url('', self::$host) );
 	}
 	public function test_rewrite_compatibility() {
-		$this->assertEquals('http://'.self::$host.'/test', _class('rewrite')->_url(array('object' => 'test'), self::$host) );
-		$this->assertEquals('http://'.self::$host.'/test', url(array('object' => 'test'), self::$host) );
+		$this->assertEquals('http://'.self::$host.'/test', _class('rewrite')->_url(['object' => 'test'], self::$host) );
+		$this->assertEquals('http://'.self::$host.'/test', url(['object' => 'test'], self::$host) );
 	}
 	public function test_rewrite_params_array() {
-		$this->assertEquals('http://'.self::$host.'/test', url(array('object' => 'test', 'host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/test', url(array('object' => 'test', 'action' => 'show', 'host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/test/my', url(array('object' => 'test', 'action' => 'my', 'host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/test/my/123', url(array('object' => 'test', 'action' => 'my', 'id' => '123', 'host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/test/123', url(array('object' => 'test', 'action' => 'show', 'id' => '123', 'host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url(array('object' => 'test', 'action' => 'my', 'id' => '123', 'page' => '456', 'host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/test/0/678', url(array('object' => 'test', 'page' => '678', 'host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/test', url(['object' => 'test', 'host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/test', url(['object' => 'test', 'action' => 'show', 'host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/test/my', url(['object' => 'test', 'action' => 'my', 'host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123', url(['object' => 'test', 'action' => 'my', 'id' => '123', 'host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/test/123', url(['object' => 'test', 'action' => 'show', 'id' => '123', 'host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url(['object' => 'test', 'action' => 'my', 'id' => '123', 'page' => '456', 'host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/test/0/678', url(['object' => 'test', 'page' => '678', 'host' => self::$host]) );
 	}
 	public function test_rewrite_task() {
-		$this->assertEquals('http://'.self::$host.'/login', url(array('task' => 'login', 'host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/logout', url(array('task' => 'logout', 'host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/login/asdf', url(array('task' => 'login', 'id' => 'asdf', 'host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/?task=abcd', url(array('task' => 'abcd'), self::$host) );
+		$this->assertEquals('http://'.self::$host.'/login', url(['task' => 'login', 'host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/logout', url(['task' => 'logout', 'host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/login/asdf', url(['task' => 'login', 'id' => 'asdf', 'host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/?task=abcd', url(['task' => 'abcd'], self::$host) );
 	}
 	public function test_rewrite_short_form() {
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456', ['host' => self::$host]) );
 
-		$this->assertEquals('http://'.self::$host.'/test', url('/test', array('host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/test/my', url('/test/my', array('host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/test/my/123', url('/test/my/123', array('host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/test', url('/test', ['host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/test/my', url('/test/my', ['host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123', url('/test/my/123', ['host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456', ['host' => self::$host]) );
 
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test') );
 		$this->assertEquals('http://'.self::$host.'/test/my', url(self::$host.'/test/my') );
@@ -69,22 +69,22 @@ class class_rewrite_testing_shared_test extends yf_unit_tests {
 		unset($_GET['debug']);
 		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456?host='.self::$host) );
 		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456/?host='.self::$host) );
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1', url('/test/my/123/456', array('k1' => 'v1')) );
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2', url('/test/my/123/456?k2=v2', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1', url('/test/my/123/456', ['k1' => 'v1']) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2', url('/test/my/123/456?k2=v2', ['k1' => 'v1']) );
 		$_GET['debug'] = '555';
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&debug='.$_GET['debug'], url('/test/my/123/456', array('k1' => 'v1')) );
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2&debug='.$_GET['debug'], url('/test/my/123/456?k2=v2', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&debug='.$_GET['debug'], url('/test/my/123/456', ['k1' => 'v1']) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2&debug='.$_GET['debug'], url('/test/my/123/456?k2=v2', ['k1' => 'v1']) );
 		unset($_GET['debug']);
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1', url('/test/my/123/456', array('k1' => 'v1')) );
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2', url('/test/my/123/456?k2=v2', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1', url('/test/my/123/456', ['k1' => 'v1']) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2', url('/test/my/123/456?k2=v2', ['k1' => 'v1']) );
 	}
 	public function test_rewrite_short_form_fragment() {
 		$this->assertEquals('http://'.self::$host.'/test#fragment', url(self::$host.'/test#fragment') );
 		$this->assertEquals('http://'.self::$host.'/test/my/123/456#login', url(self::$host.'/test/my/123/456#login') );
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456#login', url('/test/my/123/456#login', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456#login', url('/test/my/123/456#login', ['host' => self::$host]) );
 		$this->assertEquals('http://'.self::$host.'/test#frag', process_url('./?object=test#frag'));
 		$this->assertEquals('http://'.self::$host.'/#frag', url('/#frag') );
-		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2#frag', url('/test/my/123/456#frag', array('k1' => 'v1', 'k2' => 'v2')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2#frag', url('/test/my/123/456#frag', ['k1' => 'v1', 'k2' => 'v2']) );
 	}
 	public function test_rewrite_enabled_simple() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
@@ -98,39 +98,39 @@ class class_rewrite_testing_shared_test extends yf_unit_tests {
 		$this->assertEquals('http://'.self::$host.'/?object=test#frag', process_url('./?object=test#frag'));
 		$this->assertEquals('http://'.self::$host.'/?object=test', url('/test') );
 		$this->assertEquals('http://'.self::$host.'/?object=test', url('/test/') );
-		$this->assertEquals('http://'.self::$host.'/?object=test', url('/test', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test', url('/test', ['host' => self::$host]) );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my', url('/test/my') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my', url('/test/my/') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123', url('/test/my/123') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123', url('/test/my/123/') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456/') );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456', array('host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456/', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456', ['host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456/', ['host' => self::$host]) );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1', url('/test/my/123/456?k1=v1') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1', url('/test/my/123/456/?k1=v1') );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1', url('/test/my/123/456', array('k1' => 'v1')) );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2', url('/test/my/123/456', array('k1' => 'v1', 'k2' => 'v2')) );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2#frag', url('/test/my/123/456#frag', array('k1' => 'v1', 'k2' => 'v2')) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1', url('/test/my/123/456', ['k1' => 'v1']) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2', url('/test/my/123/456', ['k1' => 'v1', 'k2' => 'v2']) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2#frag', url('/test/my/123/456#frag', ['k1' => 'v1', 'k2' => 'v2']) );
 		unset($_GET['debug']);
 		$_GET['debug'] = '555';
 		$this->assertEquals('http://'.self::$host.'/?object=test&debug='.$_GET['debug'], process_url('./?object=test'));
 		$this->assertEquals('http://'.self::$host.'/?object=test&debug='.$_GET['debug'], url('/test') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&debug='.$_GET['debug'], url('/test/') );
-		$this->assertEquals('http://'.self::$host.'/?object=test&debug='.$_GET['debug'], url('/test', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&debug='.$_GET['debug'], url('/test', ['host' => self::$host]) );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&debug='.$_GET['debug'], url('/test/my') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&debug='.$_GET['debug'], url('/test/my/') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&debug='.$_GET['debug'], url('/test/my/123') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&debug='.$_GET['debug'], url('/test/my/123/') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456/') );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456', array('host' => self::$host)) );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456/', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456', ['host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456/', ['host' => self::$host]) );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&debug='.$_GET['debug'], url('/test/my/123/456?k1=v1') );
 		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&debug='.$_GET['debug'], url('/test/my/123/456/?k1=v1') );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&debug='.$_GET['debug'], url('/test/my/123/456', array('k1' => 'v1')) );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2&debug='.$_GET['debug'], url('/test/my/123/456', array('k1' => 'v1', 'k2' => 'v2')) );
-		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2&debug='.$_GET['debug'].'#frag', url('/test/my/123/456#frag', array('k1' => 'v1', 'k2' => 'v2')) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&debug='.$_GET['debug'], url('/test/my/123/456', ['k1' => 'v1']) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2&debug='.$_GET['debug'], url('/test/my/123/456', ['k1' => 'v1', 'k2' => 'v2']) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2&debug='.$_GET['debug'].'#frag', url('/test/my/123/456#frag', ['k1' => 'v1', 'k2' => 'v2']) );
 		unset($_GET['debug']);
 	}
 	public function test_rewrite_disabled() {
@@ -214,12 +214,12 @@ class class_rewrite_testing_shared_test extends yf_unit_tests {
 			./?object=obj6&action=act77&id=18&page=188
 			./?object=obj5&action=act4&id=155&page=144#frag423423
 		';
-		$links = array(
+		$links = [
 			'./?object=obj&action=act',
 			'./?object=form&action=method',
 			'./?object=obj&action=act&id=1&page=1',
 			'./?object=obj&action=act&id=1&page=1#frag',
-		);
+		];
 		$this->assertEquals($links, _class('rewrite')->_get_unique_links($html) );
 	}
 	public function test_rewrite_replace_links() {
@@ -376,12 +376,12 @@ class class_rewrite_testing_shared_test extends yf_unit_tests {
 		$old2 = main()->USE_ONLY_HTTPS;
 
 		main()->USE_ONLY_HTTPS = false;
-		main()->HTTPS_ENABLED_FOR = array(
+		main()->HTTPS_ENABLED_FOR = [
 			'object=sslme&action=hello',
 			'object=other',
 			'/sslme/hello',
 			'/other',
-		);
+		];
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
 		$this->assertEquals('http://'.self::$host.'/?object=sslme', _class('rewrite')->_correct_protocol('http://'.self::$host.'/?object=sslme') );
 		$this->assertEquals('http://'.self::$host.'/?object=sslme', _class('rewrite')->_correct_protocol('https://'.self::$host.'/?object=sslme') );

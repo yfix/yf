@@ -213,13 +213,13 @@ class yf_form2 {
 		$suffix = $form_id.'.form.php';
 		$slen = strlen($suffix);
 		$path_pattern = 'share/form/'.$form_id.'*'.$suffix;
-		$paths = array(
+		$paths = [
 			'yf_main'			=> YF_PATH. $path_pattern,
 			'yf_plugins'		=> YF_PATH. 'plugins/*'.$path_pattern,
 			'project_config'	=> CONFIG_PATH. $path_pattern,
 			'project_main'		=> PROJECT_PATH. $path_pattern,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*'.$path_pattern,
-		);
+		];
 		if (SITE_PATH != PROJECT_PATH) {
 			$paths['site_main'] = SITE_PATH. 'share/form/'.$suffix;
 		}
@@ -438,10 +438,10 @@ class yf_form2 {
 				}
 			}
 			if (DEBUG_MODE) {
-				$_debug_fields[$k] = array(
+				$_debug_fields[$k] = [
 					'name'	=> $v['name'],
 					'extra'	=> $_extra,
-				);
+				];
 			}
 			$this->_body[$k]['rendered'] = $func($_extra, $_replace, $this);
 
@@ -482,7 +482,7 @@ class yf_form2 {
 				foreach ((array)$errors as $msg) {
 					$e[] = '<div class="'.$this->CLASS_ERROR.'"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
 				}
-				$this->_body = array_slice($this->_body, 0, 1, true) + array('error_message' => implode(PHP_EOL, $e)) + array_slice($this->_body, 1, null, true);
+				$this->_body = array_slice($this->_body, 0, 1, true) + ['error_message' => implode(PHP_EOL, $e)] + array_slice($this->_body, 1, null, true);
 			}
 		}
 		if ($this->_params['stpl'] || $this->_params['return_array']) {
@@ -569,12 +569,12 @@ class yf_form2 {
 		}
 		_class('core_events')->fire('form.after_render', [$extra, $replace, $this]);
 		if (DEBUG_MODE) {
-			debug('form2[]', array(
+			debug('form2[]', [
 				'params'	=> $this->_params,
 				'fields'	=> $_debug_fields,
 				'time'		=> round(microtime(true) - $ts, 5),
 				'trace'		=> main()->trace_string(),
-			));
+			]);
 		}
 		return $this->_rendered;
 	}
@@ -1642,10 +1642,10 @@ class yf_form2 {
 	/**
 	*/
 	function order_box($name = '', $data = [], $extra = [], $replace = []) {
-		$data = $data ?: array(
+		$data = $data ?: [
 			'asc'	=> 'Ascending',
 			'desc'	=> 'Descending'
-		);
+		];
 		$extra['horizontal'] = isset($extra['horizontal']) ? $extra['horizontal'] : 1;
 		return $this->radio_box($name ?: 'order_direction', t($data), $extra, $replace);
 	}
@@ -2481,12 +2481,12 @@ class yf_form2 {
 				if (empty($field_name)) {
 					continue;
 				}
-				$str = _class('html')->input(array(
+				$str = _class('html')->input([
 					'id'	=> 'custom_'.$field_name.'_'.$r['id'],
 					'name'	=> $sub_array_name.'['.$field_name.']', // Example: custom[color]
 					'desc'	=> $field_name,
 					'value'	=> $custom_info[$field_name],
-				));
+				]);
 				$desc = ucfirst(str_replace('_', ' ', $field_name)).' [Custom]';
 				$body[] = $form->container($str, $desc);
 			}
@@ -2638,12 +2638,12 @@ class yf_form2 {
 			$form->_validated_fields = $data;
 		};
 		if ($this->_chained_mode) {
-			$this->_validate = array(
+			$this->_validate = [
 				'func'		=> $func,
 				'extra'		=> $extra,
 				'post'		=> $post,
 				'validate_rules' => $validate_rules,
-			);
+			];
 			return $this;
 		}
 		return $this;
@@ -2951,13 +2951,13 @@ class yf_form2 {
 			}
 		};
 		if ($this->_chained_mode) {
-			$this->_db_change_if_ok = array(
+			$this->_db_change_if_ok = [
 				'func'		=> $func,
 				'table'		=> $table,
 				'fields'	=> $fields,
 				'type'		=> $type,
 				'extra'		=> $extra,
-			);
+			];
 			return $this;
 		}
 		return $this;

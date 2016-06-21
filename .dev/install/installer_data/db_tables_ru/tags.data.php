@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   4 => 
-  array (
+  [
     'id' => '4',
     'object_name' => 'gallery',
     'object_id' => '5',
@@ -11,5 +11,5 @@ return array (
     'text' => 'потерянные',
     'active' => '1',
     'activity' => '0',
-  ),
-);
+  ],
+];

@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'engine' => array(
+		],
+		'engine' => [
 			'name' => 'engine',
 			'type' => 'int',
 			'length' => 10,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'text' => array(
+		],
+		'text' => [
 			'name' => 'text',
 			'type' => 'varchar',
 			'length' => 64,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'ref_url' => array(
+		],
+		'ref_url' => [
 			'name' => 'ref_url',
 			'type' => 'text',
 			'length' => NULL,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'site_url' => array(
+		],
+		'site_url' => [
 			'name' => 'site_url',
 			'type' => 'varchar',
 			'length' => 255,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'site_id' => array(
+		],
+		'site_id' => [
 			'name' => 'site_id',
 			'type' => 'int',
 			'length' => 10,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'hits' => array(
+		],
+		'hits' => [
 			'name' => 'hits',
 			'type' => 'int',
 			'length' => 10,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'int',
 			'length' => 10,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -134,44 +134,44 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				1 => '1',
 				0 => '0',
-			),
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+			],
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'text' => array(
+			],
+		],
+		'text' => [
 			'name' => 'text',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'text' => 'text',
-			),
-		),
-		'hits' => array(
+			],
+		],
+		'hits' => [
 			'name' => 'hits',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'hits' => 'hits',
-			),
-		),
-		'text_2' => array(
+			],
+		],
+		'text_2' => [
 			'name' => 'text_2',
 			'type' => 'fulltext',
-			'columns' => array(
+			'columns' => [
 				'text' => 'text',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

@@ -7,7 +7,7 @@ class yf_manage_comments {
 
 	public $TEXT_PREVIEW_LENGTH	= 0;
 
-	public $_comments_actions	= array(
+	public $_comments_actions	= [
 		'articles'		=> 'view',
 		'blog'			=> 'show_single_post',
 		'faq'			=> 'view',
@@ -17,30 +17,30 @@ class yf_manage_comments {
 		'que'			=> 'view',
 		'reviews'		=> 'view_details',
 		'user_profile'	=> 'show',
-	);
+	];
 
 	/**
 	*/
 	function show () {
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$default_filter = array(
+		$default_filter = [
 			'order_by' => 'add_date',
 			'order_direction' => 'desc',
-		);
+		];
 		$sql = 'SELECT * FROM '.db('comments');
-		return table($sql, array(
+		return table($sql, [
 				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
-				'filter_params' => array(
+				'filter_params' => [
 					'text'	=> 'like',
-				),
-			))
+				],
+			])
 #			->check_box('id')
-			->date('add_date', array('format' => 'full', 'nowrap' => 1))
-			->text('object_name', array('link' => './?object='.$_GET['object'].'&action=redirect_view&id=%d', 'link_field_name' => 'id'))
+			->date('add_date', ['format' => 'full', 'nowrap' => 1])
+			->text('object_name', ['link' => './?object='.$_GET['object'].'&action=redirect_view&id=%d', 'link_field_name' => 'id'])
 			->text('object_id', 'oid')
-			->text('text', array('max_length' => $this->TEXT_PREVIEW_LENGTH))
+			->text('text', ['max_length' => $this->TEXT_PREVIEW_LENGTH])
 			->user('user_id')
-			->text('ip', array('link' => './?object='.$_GET['object'].'&action=filter_save&page=clear&filter=ip:%d'))
+			->text('ip', ['link' => './?object='.$_GET['object'].'&action=filter_save&page=clear&filter=ip:%d'])
 			->btn_active()
 			->btn_edit()
 			->btn_delete()
@@ -71,13 +71,13 @@ class yf_manage_comments {
 				_re('Comment text required');
 			}
 			if (!common()->_error_exists()) {
-				db()->update_safe('comments', array('text' => $_POST['text']), 'id='.intval($a['id']));
+				db()->update_safe('comments', ['text' => $_POST['text']], 'id='.intval($a['id']));
 				return js_redirect('');
 			}
 		}
-		return form($a + array(
+		return form($a + [
 				'back_link'	=> './?object='.$_GET['object'],
-			))
+			])
 			->info_date('add_date', 'full')
 			->info('object_name')
 			->info('object_id')
@@ -110,7 +110,7 @@ class yf_manage_comments {
 			$a = db()->query_fetch('SELECT * FROM '.db('comments').' WHERE id='.intval($_GET['id']));
 		}
 		if (!empty($a)) {
-			db()->update('comments', array('active' => (int)!$a['active']), 'id='.intval($_GET['id']));
+			db()->update('comments', ['active' => (int)!$a['active']], 'id='.intval($_GET['id']));
 		}
 		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
@@ -129,45 +129,45 @@ class yf_manage_comments {
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
+		if (!in_array($_GET['action'], ['show'])) {
 			return false;
 		}
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
+		$r = [
 			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
 			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
-		$order_fields = array();
+		];
+		$order_fields = [];
 		foreach (explode('|', 'user_id|add_date|ip|object_name|object_id|user_name|user_email|active') as $f) {
 			$order_fields[$f] = $f;
 		}
 		foreach ((array)$this->_comments_actions as $k => $v) {
 			$object_names[$k] = $k;
 		}
-		return form($r, array(
+		return form($r, [
 				'selected'	=> $_SESSION[$filter_name],
-			))
+			])
 			->number('user_id')
 			->text('ip')
-			->select_box('object_name', $object_names, array('show_text' => 1))
+			->select_box('object_name', $object_names, ['show_text' => 1])
 			->number('object_id')
 			->text('text')
 			->active_box()
-			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->select_box('order_by', $order_fields, ['show_text' => 1])
+			->radio_box('order_direction', ['asc'=>'Ascending','desc'=>'Descending'])
 			->save_and_clear();
 		;
 	}
 
 	/**
 	*/
-	function _hook_widget__comments_stats ($params = array()) {
+	function _hook_widget__comments_stats ($params = []) {
 // TODO
 	}
 
 	/**
 	*/
-	function _hook_widget__comments_latest ($params = array()) {
+	function _hook_widget__comments_latest ($params = []) {
 // TODO
 	}
 }

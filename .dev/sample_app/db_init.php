@@ -5,7 +5,7 @@ require __DIR__.'/config/db_setup.php';
 
 $tmp_dir = '/tmp/yf_sample_app/';
 
-$_POST = array(
+$_POST = [
 	'install_project_path'				=> $tmp_dir,
 	'install_yf_path'					=> dirname(dirname(__DIR__)).'/',
 	'install_db_host'					=> DB_HOST,
@@ -23,6 +23,6 @@ $_POST = array(
 	'install_checkbox_db_drop_existing'	=> '1',
 	'install_checkbox_demo_data'		=> '',
 	'install_checkbox_debug_info'		=> '',
-);
+];
 
 require dirname(__DIR__).'/install/install.php';

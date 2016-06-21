@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'sender' => '2',
     'receiver' => '1',
@@ -9,5 +9,5 @@ return array (
     'add_date' => '1207316172',
     'action_date' => '1207316211',
     'status' => '3',
-  ),
-);
+  ],
+];

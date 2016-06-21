@@ -38,16 +38,16 @@ class yf_resize_images {
 	/** @var mixed @conf_skip Temporary resampled file stored here */
 	public $tmp_resampled	= null;
 	/** @var array @conf_skip Available image types */
-	public $_avail_types	= array (
+	public $_avail_types	= [
 		1 => 'gif',
 		2 => 'jpeg',
 		3 => 'png',
 		6 => 'wbmp',
-	);
+	];
 	/** @var bool */
 	public $SILENT_MODE	= false;
 	/** @var array */
-	public $BACKGROUND_COLOR = array( 255, 255, 255 );
+	public $BACKGROUND_COLOR = [ 255, 255, 255 ];
 
 	/**
 	*/

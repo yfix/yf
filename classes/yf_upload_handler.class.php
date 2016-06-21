@@ -4,16 +4,16 @@ require_php_lib('jquery-file-upload');
 #require_once( YF_PATH . 'libs/jquery-file-upload/server/php/UploadHandler.php' );
 class yf_upload_handler extends UploadHandler {
 
-	protected $options_default = array();
+	protected $options_default = [];
 	protected $url;
 
 	public $image_width  = 1920;
 	public $image_height = 1080;
-	public $image_types  = array(
+	public $image_types  = [
 		'jpg'  => true,
 		'jpeg' => true,
 		'png'  => true,
-	);
+	];
 
     function __construct( $options = null ) {
 		parent::__construct( null, false, null );
@@ -42,14 +42,14 @@ class yf_upload_handler extends UploadHandler {
 		$url = $this->get_url( $force = true );
 		$path = PROJECT_PATH . 'uploads/';
 		// prepare options
-		$default = array(
+		$default = [
 			'script_url'       => $url,
 			'upload_dir'       => $path,
 			'mkdir_mode'       => 0775,
 			'download_via_php' => true,
 			'delete_type'      => 'POST',
-            'image_versions'   => array(),
-		);
+            'image_versions'   => [],
+		];
 		$this->options = (array)$options + $default + $this->options_default;
 	}
 

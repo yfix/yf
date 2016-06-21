@@ -3,7 +3,7 @@
 require_once __DIR__.'/tpl__setup.php';
 
 class tpl_driver_twig_test extends tpl_abstract {
-	public static $driver_bak = array();
+	public static $driver_bak = [];
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
 		self::$driver_bak = tpl()->DRIVER_NAME;
@@ -20,19 +20,19 @@ class tpl_driver_twig_test extends tpl_abstract {
 		$this->assertEquals('Hello world', self::_tpl( 'Hello world' ));
 	}
 	public function test_complex() {
-		$data = array(
+		$data = [
 			'a_variable' => 'var_value',
-			'navigation' => array(
-				array(
+			'navigation' => [
+				[
 					'href'		=> 'http://yfix.net/',
 					'caption'	=> 'Yf website',
-				),
-				array(
+				],
+				[
 					'href'		=> 'http://google.com/',
 					'caption'	=> 'Google',
-				),
-			),
-		);
+				],
+			],
+		];
 		$tpl_string = 
 '<!DOCTYPE html>
 <html>

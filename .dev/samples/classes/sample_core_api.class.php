@@ -12,13 +12,13 @@ class sample_core_api {
 	/**
 	*/
 	function _hook_side_column() {
-		$skip_list = array(
+		$skip_list = [
 			'get_methods',
 			'get_function_source',
 			'get_method_source',
 			'get_submodule_methods',
-		);
-		$items = array();
+		];
+		$items = [];
 		$methods = get_class_methods(_class('core_api'));
 		$sample_methods = get_class_methods($this);
 		sort($methods);
@@ -32,10 +32,10 @@ class sample_core_api {
 			if ($name == 'show' || substr($name, 0, 1) == '_' || in_array($name, $skip_list)) {
 				continue;
 			}
-			$items[] = array(
+			$items[] = [
 				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
 				'link'	=> url('/@object/@action/'.$name),
-			);
+			];
 		}
 		return _class('html')->navlist($items);
 	}
@@ -52,33 +52,33 @@ class sample_core_api {
 	/**
 	*/
 	function get_all_classes($section = 'all') {
-		$data = array();
+		$data = [];
 		foreach (_class('core_api')->get_classes($section) as $_section => $modules) {
 			$i++;
 			$section_id = $i;
-			$data[$section_id] = array(
+			$data[$section_id] = [
 				'name'	=> $_section,
-			);
+			];
 			foreach ((array)$modules as $module) {
 				$i++;
 				$module_id = $i;
-				$data[$module_id] = array(
+				$data[$module_id] = [
 					'name'		=> $module,
 					'link'		=> './?object='.__CLASS__.'&action=get_methods&id='.$_section.'-'.$module,
 					'parent_id'	=> $section_id,
-				);
+				];
 			}
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 1,
 			'draggable'		=> false,
-		));
+		]);
 	}
 
 	/**
 	*/
 	function get_all_methods($section = 'all', $privacy = '') {
-		$data = array();
+		$data = [];
 		$func = 'get_methods';
 		if ($privacy == 'public') {
 			$func = 'get_public_methods';
@@ -88,24 +88,24 @@ class sample_core_api {
 		foreach (_class('core_api')->$func($section) as $module => $methods) {
 			$i++;
 			$module_id = $i;
-			$data[$module_id] = array(
+			$data[$module_id] = [
 				'name'	=> $module,
 				'link'	=> './?object='.__CLASS__.'&action=get_methods&id='.$section.'-'.$module,
-			);
+			];
 			foreach ((array)$methods as $method) {
 				$i++;
 				$method_id = $i;
-				$data[$method_id] = array(
+				$data[$method_id] = [
 					'name'		=> $method,
 					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'-'.$module.'-'.$method,
 					'parent_id'	=> $module_id,
-				);
+				];
 			}
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
-		));
+		]);
 	}
 
 	/**
@@ -123,30 +123,30 @@ class sample_core_api {
 	/**
 	*/
 	function get_all_properties($section = 'all') {
-		$data = array();
+		$data = [];
 		foreach (_class('core_api')->get_properties($section) as $module => $props) {
 			$i++;
 			$module_id = $i;
-			$data[$module_id] = array(
+			$data[$module_id] = [
 				'name'	=> $module,
 #				'link'	=> './?object='.__CLASS__.'&action=get_properties&id='.$section.'-'.$module,
-			);
+			];
 			foreach ((array)$props as $key => $val) {
 				$i++;
 				$prop_id = $i;
 				if (is_object($val) || is_callable($val) || is_resource($val)) {
 					$val = '['.gettype($val).']';
 				}
-				$data[$prop_id] = array(
+				$data[$prop_id] = [
 					'name'		=> $key/*.' = '.$val*/,
 					'parent_id'	=> $module_id,
-				);
+				];
 			}
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
-		));
+		]);
 	}
 
 	/**
@@ -159,53 +159,53 @@ class sample_core_api {
 			return _e('Missing required params');
 		}
 		$all_methods = _class('core_api')->get_methods($section);
-		$data = array();
+		$data = [];
 		foreach ((array)$all_methods[$module] as $method) {
-			$data[++$i] = array(
+			$data[++$i] = [
 				'name'	=> $method,
 				'link'	=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'-'.$module.'-'.$method,
-			);
+			];
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
-		));
+		]);
 	}
 
 	/**
 	*/
 	function get_all_submodules($section = 'all') {
-		$data = array();
+		$data = [];
 		$submodules = (array)_class('core_api')->get_submodules($section);
 		foreach ($submodules as $_section => $modules) {
 			$i++;
 			$section_id = $i;
-			$data[$section_id] = array(
+			$data[$section_id] = [
 				'name'	=> $_section,
-			);
+			];
 			foreach ((array)$modules as $module => $submodules) {
 				$i++;
 				$module_id = $i;
-				$data[$module_id] = array(
+				$data[$module_id] = [
 					'name'		=> $module,
 					'link'		=> './?object='.__CLASS__.'&action=get_methods&id='.$_section.'-'.$module,
 					'parent_id'	=> $section_id,
-				);
+				];
 				foreach ((array)$submodules as $submodule) {
 					$i++;
 					$submodule_id = $i;
-					$data[$submodule_id] = array(
+					$data[$submodule_id] = [
 						'name'		=> $submodule,
 						'link'		=> './?object='.__CLASS__.'&action=get_submodule_methods&id='.$_section.'-'.$module.'-'.$submodule,
 						'parent_id'	=> $module_id,
-					);
+					];
 				}
 			}
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 1,
 			'draggable'		=> false,
-		));
+		]);
 	}
 
 	/**
@@ -219,115 +219,115 @@ class sample_core_api {
 			return _e('Missing required params');
 		}
 		$methods = _class('core_api')->get_submodule_methods($module, $submodule, $section);
-		$data = array();
+		$data = [];
 		foreach ($methods as $name => $info) {
-			$data[++$i] = array(
+			$data[++$i] = [
 				'name'	=> $name,
 				'link'	=> './?object='.__CLASS__.'&action=get_sub_method_source&id=all.'.$module.'-'.$submodule.'-'.$name,
-			);
+			];
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 1,
 			'draggable'		=> false,
-		));
+		]);
 	}
 
 	/**
 	*/
 	function get_available_hooks() {
-		$data = array();
+		$data = [];
 		foreach (_class('core_api')->get_available_hooks() as $name => $hooks) {
 			$i++;
 			$hook_id = $i;
-			$data[$hook_id] = array(
+			$data[$hook_id] = [
 				'name'	=> $name,
 				'link'	=> './?object='.__CLASS__.'&action=get_methods&id=all.'.$module,
-			);
+			];
 			foreach ((array)$hooks as $module => $method) {
 				$i++;
 				$method_id = $i;
-				$data[$method_id] = array(
+				$data[$method_id] = [
 					'name'		=> $module.'-'.$method,
 					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'-'.$method,
 					'parent_id'	=> $hook_id,
-				);
+				];
 			}
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 1,
 			'draggable'		=> false,
-		));
+		]);
 	}
 
 	/**
 	*/
 	function get_hooks() {
-		$data = array();
+		$data = [];
 		foreach (_class('core_api')->get_all_hooks() as $module => $hooks) {
 			$i++;
 			$module_id = $i;
-			$data[$module_id] = array(
+			$data[$module_id] = [
 				'name'	=> $module,
 				'link'	=> './?object='.__CLASS__.'&action=get_methods&id=all.'.$module,
-			);
+			];
 			foreach ((array)$hooks as $name => $method) {
 				$i++;
 				$method_id = $i;
-				$data[$method_id] = array(
+				$data[$method_id] = [
 					'name'		=> $method,
 					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'-'.$method,
 					'parent_id'	=> $module_id,
-				);
+				];
 			}
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
-		));
+		]);
 	}
 
 	/**
 	*/
 	function get_widgets() {
-		$data = array();
+		$data = [];
 		foreach (_class('core_api')->get_widgets() as $module => $hooks) {
 			$i++;
 			$module_id = $i;
-			$data[$module_id] = array(
+			$data[$module_id] = [
 				'name'	=> $module,
 				'link'	=> './?object='.__CLASS__.'&action=get_methods&id=all.'.$module,
-			);
+			];
 			foreach ((array)$hooks as $name => $method) {
 				$i++;
 				$method_id = $i;
-				$data[$method_id] = array(
+				$data[$method_id] = [
 					'name'		=> $method,
 					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'-'.$method,
 					'parent_id'	=> $module_id,
-				);
+				];
 			}
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
-		));
+		]);
 
 	}
 
 	/**
 	*/
 	function get_functions() {
-		$data = array();
+		$data = [];
 		foreach (_class('core_api')->get_functions() as $name) {
-			$data[++$i] = array(
+			$data[++$i] = [
 				'name'	=> $name,
 				'link'	=> './?object='.__CLASS__.'&action=get_function_source&id='.$name,
-			);
+			];
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
-		));
+		]);
 	}
 
 	/**
@@ -450,19 +450,19 @@ class sample_core_api {
 	/**
 	*/
 	function _api_call($func) {
-		$data = array();
+		$data = [];
 		foreach (_class('core_api')->$func() as $name) {
-			$data[++$i] = array(
+			$data[++$i] = [
 				'name'	=> is_array($name) ? print_r($name, 1) : $name,
-			);
+			];
 		}
 		if (!$data) {
 			common()->message_info('Empty data');
 			return false;
 		}
-		return _class('html')->tree($data, array(
+		return _class('html')->tree($data, [
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
-		));
+		]);
 	}
 }

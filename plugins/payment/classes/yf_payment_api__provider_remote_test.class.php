@@ -7,55 +7,55 @@ class yf_payment_api__provider_remote_test extends yf_payment_api__provider_remo
 	public $IS_DEPOSITION = true;
 	public $IS_PAYMENT    = true;
 
-	public $service_allow = array(
+	public $service_allow = [
 		'Remote test',
-	);
+	];
 
-	public $method_allow = array(
-		'order' => array(
-			'payin' => array(
+	public $method_allow = [
+		'order' => [
+			'payin' => [
 				'remote_test',
-			),
-			'payout' => array(
+			],
+			'payout' => [
 				'remote_test',
-			),
-		),
-		'payin' => array(
-			'remote_test' => array(
+			],
+		],
+		'payin' => [
+			'remote_test' => [
 				'title' => 'Тест (внешний)',
 				'icon'  => 'remote_test',
-			),
-		),
-		'payout' => array(
-			'remote_test' => array(
+			],
+		],
+		'payout' => [
+			'remote_test' => [
 				'title' => 'Тест (внешний)',
 				'icon'  => 'remote_test',
-				'option' => array(
+				'option' => [
 					'card',
-				),
-				'currency' => array(
-					'USD' => array(
+				],
+				'currency' => [
+					'USD' => [
 						'currency_id' => 'USD',
 						'active'      => true,
-					),
-				),
-			),
-		),
-	);
+					],
+				],
+			],
+		],
+	];
 
 	public $currency_default = 'USD';
-	public $currency_allow = array(
-		'USD' => array(
+	public $currency_allow = [
+		'USD' => [
 			'currency_id' => 'USD',
 			'active'      => true,
-		),
-	);
+		],
+	];
 
-	public $_status = array(
+	public $_status = [
 		'0' => 'success',
 		'1' => 'processing',
 		'2' => 'refused',
-	);
+	];
 
 	public function _init() {
 		if( !$this->ENABLE ) { return( null ); }
@@ -77,10 +77,10 @@ class yf_payment_api__provider_remote_test extends yf_payment_api__provider_remo
 		// status
 		list( $status_name, $status_message ) = $this->_state( $state );
 		// response
-		$response = array(
+		$response = [
 			'operation_id' => $operation_id,
-		);
-		$operation_data = array(
+		];
+		$operation_data = [
 			'operation_id'   => $operation_id,
 			'provider_name'  => $provider_name,
 			'state'          => $state,
@@ -88,7 +88,7 @@ class yf_payment_api__provider_remote_test extends yf_payment_api__provider_remo
 			'status_message' => $status_message,
 			'payment_type'   => $payment_type,
 			'response'       => $response,
-		);
+		];
 		$result = $this->{ '_api_' . $payment_type }( $operation_data );
 		return( $result );
 	}
@@ -115,9 +115,9 @@ class yf_payment_api__provider_remote_test extends yf_payment_api__provider_remo
 		// payment
 		$result = parent::payment( $options );
 		// confirmation is ok
-		$confirmation_ok_options = array(
+		$confirmation_ok_options = [
 			'operation_id' => $operation_id,
-		);
+		];
 		$result = $payment_api->confirmation_ok( $confirmation_ok_options );
 		// payout
 		$result = $this->api_payout( $options );

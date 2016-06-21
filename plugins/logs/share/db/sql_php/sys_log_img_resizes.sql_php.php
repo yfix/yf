@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'source_path' => array(
+		],
+		'source_path' => [
 			'name' => 'source_path',
 			'type' => 'varchar',
 			'length' => 255,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'source_file_size' => array(
+		],
+		'source_file_size' => [
 			'name' => 'source_file_size',
 			'type' => 'int',
 			'length' => 10,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'source_x' => array(
+		],
+		'source_x' => [
 			'name' => 'source_x',
 			'type' => 'int',
 			'length' => 10,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'source_y' => array(
+		],
+		'source_y' => [
 			'name' => 'source_y',
 			'type' => 'int',
 			'length' => 10,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'result_path' => array(
+		],
+		'result_path' => [
 			'name' => 'result_path',
 			'type' => 'varchar',
 			'length' => 255,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'result_file_size' => array(
+		],
+		'result_file_size' => [
 			'name' => 'result_file_size',
 			'type' => 'int',
 			'length' => 10,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'result_x' => array(
+		],
+		'result_x' => [
 			'name' => 'result_x',
 			'type' => 'int',
 			'length' => 10,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'result_y' => array(
+		],
+		'result_y' => [
 			'name' => 'result_y',
 			'type' => 'int',
 			'length' => 10,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'limit_x' => array(
+		],
+		'limit_x' => [
 			'name' => 'limit_x',
 			'type' => 'int',
 			'length' => 10,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'limit_y' => array(
+		],
+		'limit_y' => [
 			'name' => 'limit_y',
 			'type' => 'int',
 			'length' => 10,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'other_options' => array(
+		],
+		'other_options' => [
 			'name' => 'other_options',
 			'type' => 'varchar',
 			'length' => 255,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'source_file' => array(
+		],
+		'source_file' => [
 			'name' => 'source_file',
 			'type' => 'varchar',
 			'length' => 255,
@@ -195,8 +195,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'source_line' => array(
+		],
+		'source_line' => [
 			'name' => 'source_line',
 			'type' => 'smallint',
 			'length' => 5,
@@ -210,8 +210,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'env_data' => array(
+		],
+		'env_data' => [
 			'name' => 'env_data',
 			'type' => 'text',
 			'length' => NULL,
@@ -225,8 +225,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 10,
@@ -240,8 +240,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_group' => array(
+		],
+		'user_group' => [
 			'name' => 'user_group',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -255,8 +255,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'is_admin' => array(
+		],
+		'is_admin' => [
 			'name' => 'is_admin',
 			'type' => 'enum',
 			'length' => NULL,
@@ -269,12 +269,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-		'site_id' => array(
+			],
+		],
+		'site_id' => [
 			'name' => 'site_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -288,8 +288,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'server_id' => array(
+		],
+		'server_id' => [
 			'name' => 'server_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -303,8 +303,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'date' => array(
+		],
+		'date' => [
 			'name' => 'date',
 			'type' => 'int',
 			'length' => 10,
@@ -318,8 +318,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ip' => array(
+		],
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'varchar',
 			'length' => 16,
@@ -333,8 +333,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'query_string' => array(
+		],
+		'query_string' => [
 			'name' => 'query_string',
 			'type' => 'varchar',
 			'length' => 255,
@@ -348,8 +348,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'request_uri' => array(
+		],
+		'request_uri' => [
 			'name' => 'request_uri',
 			'type' => 'varchar',
 			'length' => 255,
@@ -363,8 +363,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_agent' => array(
+		],
+		'user_agent' => [
 			'name' => 'user_agent',
 			'type' => 'varchar',
 			'length' => 255,
@@ -378,8 +378,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'referer' => array(
+		],
+		'referer' => [
 			'name' => 'referer',
 			'type' => 'varchar',
 			'length' => 255,
@@ -393,8 +393,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object' => array(
+		],
+		'object' => [
 			'name' => 'object',
 			'type' => 'varchar',
 			'length' => 255,
@@ -408,8 +408,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'action' => array(
+		],
+		'action' => [
 			'name' => 'action',
 			'type' => 'varchar',
 			'length' => 255,
@@ -423,8 +423,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'success' => array(
+		],
+		'success' => [
 			'name' => 'success',
 			'type' => 'enum',
 			'length' => NULL,
@@ -437,12 +437,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-		'error_text' => array(
+			],
+		],
+		'error_text' => [
 			'name' => 'error_text',
 			'type' => 'text',
 			'length' => NULL,
@@ -456,8 +456,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'process_time' => array(
+		],
+		'process_time' => [
 			'name' => 'process_time',
 			'type' => 'float',
 			'length' => NULL,
@@ -471,8 +471,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'used_lib' => array(
+		],
+		'used_lib' => [
 			'name' => 'used_lib',
 			'type' => 'varchar',
 			'length' => 32,
@@ -486,8 +486,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'tried_libs' => array(
+		],
+		'tried_libs' => [
 			'name' => 'tried_libs',
 			'type' => 'varchar',
 			'length' => 32,
@@ -501,26 +501,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'date' => array(
+			],
+		],
+		'date' => [
 			'name' => 'date',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'date' => 'date',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

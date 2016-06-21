@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'customer',
-	'fields' => array(
-		'customer_id' => array(
+	'fields' => [
+		'customer_id' => [
 			'name' => 'customer_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`customer_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT',
-		),
-		'store_id' => array(
+		],
+		'store_id' => [
 			'name' => 'store_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`store_id` tinyint(3) unsigned NOT NULL',
-		),
-		'first_name' => array(
+		],
+		'first_name' => [
 			'name' => 'first_name',
 			'type' => 'varchar',
 			'length' => 45,
@@ -49,8 +49,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`first_name` varchar(45) NOT NULL',
-		),
-		'last_name' => array(
+		],
+		'last_name' => [
 			'name' => 'last_name',
 			'type' => 'varchar',
 			'length' => 45,
@@ -65,8 +65,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`last_name` varchar(45) NOT NULL',
-		),
-		'email' => array(
+		],
+		'email' => [
 			'name' => 'email',
 			'type' => 'varchar',
 			'length' => 50,
@@ -81,8 +81,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`email` varchar(50) DEFAULT NULL',
-		),
-		'address_id' => array(
+		],
+		'address_id' => [
 			'name' => 'address_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -97,8 +97,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`address_id` smallint(5) unsigned NOT NULL',
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -113,8 +113,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`active` tinyint(1) NOT NULL DEFAULT \'1\'',
-		),
-		'create_date' => array(
+		],
+		'create_date' => [
 			'name' => 'create_date',
 			'type' => 'datetime',
 			'length' => NULL,
@@ -129,8 +129,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`create_date` datetime NOT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -146,72 +146,72 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'customer_id' => 'customer_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`customer_id`)',
-		),
-		'idx_fk_store_id' => array(
+		],
+		'idx_fk_store_id' => [
 			'name' => 'idx_fk_store_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'store_id' => 'store_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_store_id` (`store_id`)',
-		),
-		'idx_fk_address_id' => array(
+		],
+		'idx_fk_address_id' => [
 			'name' => 'idx_fk_address_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'address_id' => 'address_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_address_id` (`address_id`)',
-		),
-		'idx_last_name' => array(
+		],
+		'idx_last_name' => [
 			'name' => 'idx_last_name',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'last_name' => 'last_name',
-			),
+			],
 			'raw' => 'KEY `idx_last_name` (`last_name`)',
-		),
-	),
-	'foreign_keys' => array(
-		'fk_customer_address' => array(
+		],
+	],
+	'foreign_keys' => [
+		'fk_customer_address' => [
 			'name' => 'fk_customer_address',
-			'columns' => array(
+			'columns' => [
 				'address_id' => 'address_id',
-			),
+			],
 			'ref_table' => 'address',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'address_id' => 'address_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_customer_address` FOREIGN KEY (`address_id`) REFERENCES `address` (`address_id`) ON UPDATE CASCADE',
-		),
-		'fk_customer_store' => array(
+		],
+		'fk_customer_store' => [
 			'name' => 'fk_customer_store',
-			'columns' => array(
+			'columns' => [
 				'store_id' => 'store_id',
-			),
+			],
 			'ref_table' => 'store',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'store_id' => 'store_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_customer_store` FOREIGN KEY (`store_id`) REFERENCES `store` (`store_id`) ON UPDATE CASCADE',
-		),
-	),
-	'options' => array(
+		],
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

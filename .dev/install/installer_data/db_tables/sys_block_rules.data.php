@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 =>
-  array (
+  [
     'id' => '1',
     'block_id' => '1',
     'rule_type' => 'ALLOW',
@@ -15,9 +15,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   2 =>
-  array (
+  [
     'id' => '2',
     'block_id' => '4',
     'rule_type' => 'ALLOW',
@@ -31,9 +31,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   3 =>
-  array (
+  [
     'id' => '3',
     'block_id' => '2',
     'rule_type' => 'ALLOW',
@@ -47,9 +47,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   4 =>
-  array (
+  [
     'id' => '4',
     'block_id' => '3',
     'rule_type' => 'ALLOW',
@@ -63,9 +63,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   5 =>
-  array (
+  [
     'id' => '5',
     'block_id' => '3',
     'rule_type' => 'DENY',
@@ -79,9 +79,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   6 =>
-  array (
+  [
     'id' => '6',
     'block_id' => '6',
     'rule_type' => 'ALLOW',
@@ -95,9 +95,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   7 =>
-  array (
+  [
     'id' => '7',
     'block_id' => '7',
     'rule_type' => 'ALLOW',
@@ -111,9 +111,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   8 =>
-  array (
+  [
     'id' => '8',
     'block_id' => '8',
     'rule_type' => 'ALLOW',
@@ -127,9 +127,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   9 =>
-  array (
+  [
     'id' => '9',
     'block_id' => '9',
     'rule_type' => 'ALLOW',
@@ -143,9 +143,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   10 =>
-  array (
+  [
     'id' => '10',
     'block_id' => '10',
     'rule_type' => 'ALLOW',
@@ -159,9 +159,9 @@ return array (
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   13 =>
-  array (
+  [
     'id' => '13',
     'block_id' => '4',
     'rule_type' => 'ALLOW',
@@ -191,9 +191,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   14 =>
-  array (
+  [
     'id' => '14',
     'block_id' => '12',
     'rule_type' => 'ALLOW',
@@ -207,9 +207,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   15 =>
-  array (
+  [
     'id' => '15',
     'block_id' => '13',
     'rule_type' => 'ALLOW',
@@ -223,9 +223,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   16 =>
-  array (
+  [
     'id' => '16',
     'block_id' => '14',
     'rule_type' => 'ALLOW',
@@ -239,9 +239,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   18 =>
-  array (
+  [
     'id' => '18',
     'block_id' => '6',
     'rule_type' => 'ALLOW',
@@ -255,9 +255,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   19 =>
-  array (
+  [
     'id' => '19',
     'block_id' => '15',
     'rule_type' => 'ALLOW',
@@ -271,9 +271,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   23 =>
-  array (
+  [
     'id' => '23',
     'block_id' => '20',
     'rule_type' => 'ALLOW',
@@ -287,9 +287,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   24 =>
-  array (
+  [
     'id' => '24',
     'block_id' => '16',
     'rule_type' => 'ALLOW',
@@ -303,9 +303,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   25 =>
-  array (
+  [
     'id' => '25',
     'block_id' => '21',
     'rule_type' => 'ALLOW',
@@ -319,9 +319,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   27 =>
-  array (
+  [
     'id' => '27',
     'block_id' => '6',
     'rule_type' => 'ALLOW',
@@ -335,9 +335,9 @@ shop_supplier_panel,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   28 =>
-  array (
+  [
     'id' => '28',
     'block_id' => '4',
     'rule_type' => 'ALLOW',
@@ -363,9 +363,9 @@ invoice,',
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   34 =>
-  array (
+  [
     'id' => '34',
     'block_id' => '4',
     'rule_type' => 'ALLOW',
@@ -398,9 +398,9 @@ manage_shop.set_main_image,
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   35 =>
-  array (
+  [
     'id' => '35',
     'block_id' => '6',
     'rule_type' => 'ALLOW',
@@ -414,9 +414,9 @@ manage_shop.set_main_image,
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
+  ],
   36 =>
-  array (
+  [
     'id' => '36',
     'block_id' => '22',
     'rule_type' => 'ALLOW',
@@ -430,5 +430,5 @@ manage_shop.set_main_image,
     'site_ids' => '',
     'server_ids' => '',
     'server_roles' => '',
-  ),
-);
+  ],
+];

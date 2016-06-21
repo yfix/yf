@@ -1,67 +1,67 @@
 <?php
-return array(
-	'tables_changed' => array(
-		'test_compare_1' => array(
-			'columns_missing' => array(
-				'category_id' => array(
+return [
+	'tables_changed' => [
+		'test_compare_1' => [
+			'columns_missing' => [
+				'category_id' => [
 					'name' => 'category_id',
 					'type' => 'tinyint',
 					'length' => 3,
 					'unsigned' => true,
 					'nullable' => false,
 					'auto_inc' => true,
-				),
-				'name' => array(
+				],
+				'name' => [
 					'name' => 'name',
 					'type' => 'varchar',
 					'length' => 25,
 					'nullable' => false,
-				),
-				'last_update' => array(
+				],
+				'last_update' => [
 					'name' => 'last_update',
 					'type' => 'timestamp',
 					'nullable' => false,
 					'default' => 'CURRENT_TIMESTAMP',
 					'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
-				),
-			),
-			'columns_new' => array(
-				'id' => array(
+				],
+			],
+			'columns_new' => [
+				'id' => [
 					'name' => 'id',
 					'type' => 'int',
 					'length' => 10,
 					'nullable' => false,
-				),
-			),
-			'indexes_changed' => array(
-				'PRIMARY' => array(
-					'columns' => array(
-						'expected' => array(
+				],
+			],
+			'indexes_changed' => [
+				'PRIMARY' => [
+					'columns' => [
+						'expected' => [
 							'category_id' => 'category_id',
-						),
-						'actual' => array(
+						],
+						'actual' => [
 							'id' => 'id',
-						),
-					),
-				),
-			),
-			'foreign_keys_new' => array(
-				'fkey_prepare_sample_data' => array(
+						],
+					],
+				],
+			],
+			'foreign_keys_new' => [
+				'fkey_prepare_sample_data' => [
 					'name' => 'fkey_prepare_sample_data',
-					'columns' => array(
+					'columns' => [
 						'id' => 'id',
-					),
+					],
 					'ref_table' => 't_test_compare_2',
-					'ref_columns' => array(
+					'ref_columns' => [
 						'id' => 'id',
-					),
+					],
 					'on_update' => 'RESTRICT',
 					'on_delete' => 'RESTRICT',
-				),
-			),
-		),
-	),
-	'tables_new' => array(
+				],
+			],
+		],
+	],
+	'tables_new' => [
 		'test_compare_2' => 'test_compare_2',
-	),
-);
+	],
+];

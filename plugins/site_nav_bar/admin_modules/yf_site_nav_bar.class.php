@@ -10,12 +10,12 @@ class yf_site_nav_bar {
 
 	// Display navigation bar
 	function _show () {
-		$items = array();
+		$items = [];
 
-		if (in_array($_GET['object'], array())) {
+		if (in_array($_GET['object'], [])) {
 
 		} else {
-			if (!in_array($_GET['action'], array('', 'show'))) {
+			if (!in_array($_GET['action'], ['', 'show'])) {
 				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['object']), url_admin('/@object'));
 				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['action']));
 			} else {
@@ -30,10 +30,10 @@ class yf_site_nav_bar {
 			$CUR_OBJ = module($_GET['object']);
 		}
 		if (is_object($CUR_OBJ) && method_exists($CUR_OBJ, $this->HOOK_NAME)) {
-			$hook_params = array(
+			$hook_params = [
 				'nav_bar_obj'	=> &$this,
 				'items'			=> $items,
-			);
+			];
 			$func = $this->HOOK_NAME;
 			$hooked_items = $CUR_OBJ->$func($hook_params);
 		}
@@ -41,11 +41,11 @@ class yf_site_nav_bar {
 		if (!empty($hooked_items)) {
 			$items = $hooked_items;
 		}
-		$replace = array(
+		$replace = [
 			'items'			=> is_array($items) ? implode(tpl()->parse('site_nav_bar/div'), $items) : '',
 			'is_logged_in'	=> intval((bool) $_SESSION['user_id']),
 			'bookmark_page'	=> $bookmark_page_code,
-		);
+		];
 		return tpl()->parse('site_nav_bar/main', $replace);
 	}
 
@@ -54,13 +54,13 @@ class yf_site_nav_bar {
 		if ($this->AUTO_TRANSLATE) {
 			$name = t($name);
 		}
-		$replace = array(
+		$replace = [
 			'name'			=> _prepare_html($name),
 			'link'			=> $nav_link,
 			'icon'			=> $nav_icon,
 			'as_link'		=> !empty($nav_link) ? 1 : 0,
 			'is_logged_in'	=> intval((bool) $_SESSION['user_id']),
-		);
+		];
 		return tpl()->parse('site_nav_bar/item', $replace);
 	}
 
@@ -128,11 +128,11 @@ class yf_site_nav_bar {
 	/**
 	*/
 	function _show_dropdown_menu () {
-		$items = _class('graphics')->_show_menu(array(
+		$items = _class('graphics')->_show_menu([
 			'name'				=> 'admin_home_menu',
 			'force_stpl_name'	=> 'site_nav_bar/dropdown_menu',
 			'return_array'		=> 1,
-		));
+		]);
 		if (!$items) {
 			return false;
 		}
@@ -144,8 +144,8 @@ class yf_site_nav_bar {
 			}
 			$items[$id] = tpl()->parse('site_nav_bar/dropdown_menu_item', $item);
 		}
-		return tpl()->parse('site_nav_bar/dropdown_menu', array(
+		return tpl()->parse('site_nav_bar/dropdown_menu', [
 			'items' => implode('', (array)$items)
-		));
+		]);
 	}
 }

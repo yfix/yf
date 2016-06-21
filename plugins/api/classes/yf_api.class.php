@@ -90,7 +90,7 @@ class yf_api {
 
 	function _ip_filter_valid( $ip_filter ) {
 		if( ! is_array( $ip_filter ) ) { return( false ); }
-		$result = array();
+		$result = [];
 		foreach( $ip_filter as $ip => $allow ) {
 			if( !$ip ) { return( false ); }
 			$r = strpos( $ip, '.*' );
@@ -174,7 +174,7 @@ class yf_api {
 		$this->_send_http_content( $message, $is_raw );
 	}
 
-	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
+	protected function _firewall( $class = null, $class_path = null, $method = null, $options = [] ) {
 		$_method = '_api_' . $method;
 		// try module
 		$_class  = module_safe( $class );
@@ -189,7 +189,7 @@ class yf_api {
 		return( $_class->$_method( $request, $options ) );
 	}
 
-	protected function _call( $class = null, $class_path = null, $method = null, $options = array() ) {
+	protected function _call( $class = null, $class_path = null, $method = null, $options = [] ) {
 		main()->NO_GRAPHICS = true;
 		$result = $this->_firewall( $class, $class_path, $method, $options );
 		if( @$result[ 'is_raw' ] ) {
@@ -242,7 +242,7 @@ class yf_api {
 			if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP >= 5.4.0
 			// protocol detect
 			$protocol = $this->_detect_protocol();
-			$header = array();
+			$header = [];
 			$header[] = $protocol;
 			// status default
 			if( empty( $status ) ) {
@@ -263,7 +263,7 @@ class yf_api {
 			$header = implode( ' ', $header );
 			header( $header );
 		}
-		return( array( $protocol, $code, $status ) );
+		return( [ $protocol, $code, $status ] );
 	}
 
 	protected function _send_http_type( $type = null, $charset = null ) {
@@ -299,12 +299,12 @@ class yf_api {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// options
-		$options = array(
+		$options = [
 			CURLOPT_USERAGENT      => 'YF.API',
 			CURLOPT_RETURNTRANSFER => true,
 			// CURLOPT_URL            =>  $url,
-		);
-		$header = array();
+		];
+		$header = [];
 		if( !empty( $post ) ) {
 			if( @$_is_json ) {
 				$http_post = json_encode( $post );
@@ -315,23 +315,23 @@ class yf_api {
 					$http_post = http_build_query( $post );
 				}
 			}
-			$options += array(
+			$options += [
 				CURLOPT_POST       => true,
 				CURLOPT_POSTFIELDS => $http_post,
-			);
+			];
 		}
 		if( @$_is_post ) {
-			$options += array(
+			$options += [
 				CURLOPT_POST => true,
-			);
+			];
 		}
 		if( @$_user ) {
 			$userpwd = $_user;
 			@$_password && $userpwd .= ':'. $_password;
-			$options += array(
+			$options += [
 				CURLOPT_HTTPAUTH => CURLAUTH_ANY,
 				CURLOPT_USERPWD  => $userpwd,
-			);
+			];
 		}
 		if( @$_bearer || @$_access_token ) {
 			( !@$_bearer && $_access_token ) && $_bearer = $_access_token;
@@ -341,41 +341,41 @@ class yf_api {
 			$header[] = 'Content-Type: application/json; charset=utf-8';
 		}
 		if( $this->API_SSL_VERIFY && strpos( $url, 'https' ) !== false ) {
-			$options += array(
+			$options += [
 				CURLOPT_SSL_VERIFYPEER => true,
 				CURLOPT_SSL_VERIFYHOST => 2,
 				CURLOPT_CAINFO         => @$_CA ?: __DIR__ . '/ca.pem',
-			);
+			];
 		} else {
-			$options += array(
+			$options += [
 				CURLOPT_SSL_VERIFYPEER => false,
-			);
+			];
 		}
-		@$_SSLCERT       && $options += array( CURLOPT_SSLCERT       => $_SSLCERT         );
-		@$_SSLCERTPASSWD && $options += array( CURLOPT_SSLCERTPASSWD => $_SSLCERTPASSWD   );
-		@$_SSLKEY        && $options += array( CURLOPT_SSLKEY        => $_SSLKEY          );
-		@$_SSLKEYPASSWD  && $options += array( CURLOPT_SSLKEYPASSWD  => $_SSLKEYPASSWD    );
+		@$_SSLCERT       && $options += [ CURLOPT_SSLCERT       => $_SSLCERT         ];
+		@$_SSLCERTPASSWD && $options += [ CURLOPT_SSLCERTPASSWD => $_SSLCERTPASSWD   ];
+		@$_SSLKEY        && $options += [ CURLOPT_SSLKEY        => $_SSLKEY          ];
+		@$_SSLKEYPASSWD  && $options += [ CURLOPT_SSLKEYPASSWD  => $_SSLKEYPASSWD    ];
 		// redirect
 		$is_redirect = @$_is_redirect || @$_is_followlocation;
 		if( $is_redirect ) {
-			$options += array(
+			$options += [
 				CURLOPT_FOLLOWLOCATION => true,
-			);
+			];
 		}
 		// add header
 		if( !empty( $_header ) ) {
 			$header = array_replace_recursive( $header, $_header );
 		}
-		!empty( $header ) && $options += array( CURLOPT_HTTPHEADER => $header );
+		!empty( $header ) && $options += [ CURLOPT_HTTPHEADER => $header ];
 		// debug request header
-		$options += array(
+		$options += [
 			CURLINFO_HEADER_OUT => true,
-		);
+		];
 		// debug response header
-		$options += array(
+		$options += [
 			CURLOPT_VERBOSE => true,
 			CURLOPT_HEADER  => true,
-		);
+		];
 		// exec
 		$ch = curl_init( $url );
 		curl_setopt_array( $ch, $options );
@@ -392,10 +392,10 @@ class yf_api {
 		$status = null;
 		if( $response === false ) {
 			$message = sprintf( '[%d] %s', $error_number, $error_message );
-			$result = array(
+			$result = [
 				'status'         => $status,
 				'status_message' => 'Ошибка транспорта: ' . $message,
-			);
+			];
 			return( $result );
 		}
 		// get header, body
@@ -452,24 +452,24 @@ class yf_api {
 					@$_is_debug && var_dump( 'is_xml', $result, $error );
 					if( $error ) {
 						libxml_clear_errors();
-						$result = array(
+						$result = [
 							'status'         => null,
 							'status_message' => 'Ошибка ответа: неверная структура данных',
 							'error'          => $error,
 							'content'        => $body,
-						);
+						];
 						return( $result );
 					}
 					if( @$xml_response->getName() == 'error' ) {
-						$result = array(
+						$result = [
 							'status'         => null,
 							'status_message' => 'Ошибка ответа: неверные данные - ' . (string)$xml_response,
 							'content'        => $body,
-						);
+						];
 						return( $result );
 					}
 					if( @$_is_response_form ) {
-						$form = array();
+						$form = [];
 						foreach( $xml_response->xpath( '//input' ) as $item ) {
 							$_item = $item->attributes();
 							$name  = (string)$_item->name;
@@ -484,15 +484,15 @@ class yf_api {
 			}
 		}
 		if( @$_is_http_raw ) {
-			$result = array(
+			$result = [
 				'status'       => $status,
 				'http_code'    => $http_code,
 				'http_message' => $message,
 				'body'         => $result,
-			);
+			];
 			return( $result );
 		}
-		return( array( $status, $result ) );
+		return( [ $status, $result ] );
 	}
 
 }

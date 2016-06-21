@@ -58,11 +58,11 @@ class FrameworkIterator implements Iterator, Countable {
   
   public function __construct($path, $mask = '*') {
 	$this->index = 0;
-	$this->files = array();
+	$this->files = [];
 	$this->baselen = strlen($path) + 1;
 	$this->size = 0;
 	$this->mask = $mask;
-	$this->dirs = array();
+	$this->dirs = [];
 	
 	$this->scan($path);
   }

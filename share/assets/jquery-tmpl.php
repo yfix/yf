@@ -1,12 +1,12 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/yfix/jquery-tmpl/master/jquery.tmpl.js',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

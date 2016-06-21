@@ -1,6 +1,6 @@
 <?php
-return array(
-	0 => array(
+return [
+	0 => [
 		'customer_id' => '1',
 		'store_id' => '1',
 		'first_name' => 'MARY',
@@ -10,8 +10,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	1 => array(
+	],
+	1 => [
 		'customer_id' => '8',
 		'store_id' => '2',
 		'first_name' => 'SUSAN',
@@ -21,8 +21,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	2 => array(
+	],
+	2 => [
 		'customer_id' => '24',
 		'store_id' => '2',
 		'first_name' => 'KIMBERLY',
@@ -32,8 +32,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	3 => array(
+	],
+	3 => [
 		'customer_id' => '25',
 		'store_id' => '1',
 		'first_name' => 'DEBORAH',
@@ -43,8 +43,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	4 => array(
+	],
+	4 => [
 		'customer_id' => '32',
 		'store_id' => '1',
 		'first_name' => 'AMY',
@@ -54,8 +54,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	5 => array(
+	],
+	5 => [
 		'customer_id' => '34',
 		'store_id' => '2',
 		'first_name' => 'REBECCA',
@@ -65,8 +65,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	6 => array(
+	],
+	6 => [
 		'customer_id' => '39',
 		'store_id' => '1',
 		'first_name' => 'DEBRA',
@@ -76,8 +76,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	7 => array(
+	],
+	7 => [
 		'customer_id' => '44',
 		'store_id' => '1',
 		'first_name' => 'MARIE',
@@ -87,8 +87,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	8 => array(
+	],
+	8 => [
 		'customer_id' => '49',
 		'store_id' => '2',
 		'first_name' => 'JOYCE',
@@ -98,8 +98,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	9 => array(
+	],
+	9 => [
 		'customer_id' => '65',
 		'store_id' => '2',
 		'first_name' => 'ROSE',
@@ -109,8 +109,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	10 => array(
+	],
+	10 => [
 		'customer_id' => '66',
 		'store_id' => '2',
 		'first_name' => 'JANICE',
@@ -120,8 +120,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	11 => array(
+	],
+	11 => [
 		'customer_id' => '73',
 		'store_id' => '2',
 		'first_name' => 'BEVERLY',
@@ -131,8 +131,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	12 => array(
+	],
+	12 => [
 		'customer_id' => '82',
 		'store_id' => '1',
 		'first_name' => 'KATHRYN',
@@ -142,8 +142,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	13 => array(
+	],
+	13 => [
 		'customer_id' => '92',
 		'store_id' => '2',
 		'first_name' => 'TINA',
@@ -153,8 +153,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	14 => array(
+	],
+	14 => [
 		'customer_id' => '100',
 		'store_id' => '1',
 		'first_name' => 'ROBIN',
@@ -164,8 +164,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	15 => array(
+	],
+	15 => [
 		'customer_id' => '106',
 		'store_id' => '1',
 		'first_name' => 'CONNIE',
@@ -175,8 +175,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	16 => array(
+	],
+	16 => [
 		'customer_id' => '111',
 		'store_id' => '1',
 		'first_name' => 'CARMEN',
@@ -186,8 +186,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	17 => array(
+	],
+	17 => [
 		'customer_id' => '127',
 		'store_id' => '2',
 		'first_name' => 'ELAINE',
@@ -197,8 +197,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	18 => array(
+	],
+	18 => [
 		'customer_id' => '139',
 		'store_id' => '1',
 		'first_name' => 'AMBER',
@@ -208,8 +208,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	19 => array(
+	],
+	19 => [
 		'customer_id' => '145',
 		'store_id' => '1',
 		'first_name' => 'LUCILLE',
@@ -219,8 +219,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	20 => array(
+	],
+	20 => [
 		'customer_id' => '147',
 		'store_id' => '2',
 		'first_name' => 'JOANNE',
@@ -230,8 +230,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	21 => array(
+	],
+	21 => [
 		'customer_id' => '148',
 		'store_id' => '1',
 		'first_name' => 'ELEANOR',
@@ -241,8 +241,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	22 => array(
+	],
+	22 => [
 		'customer_id' => '150',
 		'store_id' => '2',
 		'first_name' => 'DANIELLE',
@@ -252,8 +252,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	23 => array(
+	],
+	23 => [
 		'customer_id' => '151',
 		'store_id' => '2',
 		'first_name' => 'MEGAN',
@@ -263,8 +263,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	24 => array(
+	],
+	24 => [
 		'customer_id' => '161',
 		'store_id' => '1',
 		'first_name' => 'GERALDINE',
@@ -274,8 +274,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	25 => array(
+	],
+	25 => [
 		'customer_id' => '170',
 		'store_id' => '1',
 		'first_name' => 'BEATRICE',
@@ -285,8 +285,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	26 => array(
+	],
+	26 => [
 		'customer_id' => '178',
 		'store_id' => '2',
 		'first_name' => 'MARION',
@@ -296,8 +296,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	27 => array(
+	],
+	27 => [
 		'customer_id' => '180',
 		'store_id' => '2',
 		'first_name' => 'STACY',
@@ -307,8 +307,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	28 => array(
+	],
+	28 => [
 		'customer_id' => '184',
 		'store_id' => '1',
 		'first_name' => 'VIVIAN',
@@ -318,8 +318,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	29 => array(
+	],
+	29 => [
 		'customer_id' => '197',
 		'store_id' => '2',
 		'first_name' => 'SUE',
@@ -329,8 +329,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	30 => array(
+	],
+	30 => [
 		'customer_id' => '216',
 		'store_id' => '1',
 		'first_name' => 'NATALIE',
@@ -340,8 +340,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	31 => array(
+	],
+	31 => [
 		'customer_id' => '224',
 		'store_id' => '2',
 		'first_name' => 'PEARL',
@@ -351,8 +351,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	32 => array(
+	],
+	32 => [
 		'customer_id' => '239',
 		'store_id' => '2',
 		'first_name' => 'MINNIE',
@@ -362,8 +362,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	33 => array(
+	],
+	33 => [
 		'customer_id' => '247',
 		'store_id' => '1',
 		'first_name' => 'STELLA',
@@ -373,8 +373,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	34 => array(
+	],
+	34 => [
 		'customer_id' => '252',
 		'store_id' => '2',
 		'first_name' => 'MATTIE',
@@ -384,8 +384,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	35 => array(
+	],
+	35 => [
 		'customer_id' => '261',
 		'store_id' => '1',
 		'first_name' => 'DEANNA',
@@ -395,8 +395,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	36 => array(
+	],
+	36 => [
 		'customer_id' => '266',
 		'store_id' => '2',
 		'first_name' => 'NORA',
@@ -406,8 +406,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	37 => array(
+	],
+	37 => [
 		'customer_id' => '268',
 		'store_id' => '1',
 		'first_name' => 'NINA',
@@ -417,8 +417,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	38 => array(
+	],
+	38 => [
 		'customer_id' => '269',
 		'store_id' => '1',
 		'first_name' => 'CASSANDRA',
@@ -428,8 +428,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	39 => array(
+	],
+	39 => [
 		'customer_id' => '271',
 		'store_id' => '1',
 		'first_name' => 'PENNY',
@@ -439,8 +439,8 @@ return array(
 		'active' => '0',
 		'create_date' => '2006-02-14 22:04:36',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	40 => array(
+	],
+	40 => [
 		'customer_id' => '277',
 		'store_id' => '2',
 		'first_name' => 'OLGA',
@@ -450,8 +450,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	41 => array(
+	],
+	41 => [
 		'customer_id' => '279',
 		'store_id' => '2',
 		'first_name' => 'DIANNE',
@@ -461,8 +461,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	42 => array(
+	],
+	42 => [
 		'customer_id' => '301',
 		'store_id' => '2',
 		'first_name' => 'ROBERT',
@@ -472,8 +472,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	43 => array(
+	],
+	43 => [
 		'customer_id' => '302',
 		'store_id' => '1',
 		'first_name' => 'MICHAEL',
@@ -483,8 +483,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	44 => array(
+	],
+	44 => [
 		'customer_id' => '316',
 		'store_id' => '1',
 		'first_name' => 'STEVEN',
@@ -494,8 +494,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	45 => array(
+	],
+	45 => [
 		'customer_id' => '336',
 		'store_id' => '1',
 		'first_name' => 'JOSHUA',
@@ -505,8 +505,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	46 => array(
+	],
+	46 => [
 		'customer_id' => '344',
 		'store_id' => '1',
 		'first_name' => 'HENRY',
@@ -516,8 +516,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	47 => array(
+	],
+	47 => [
 		'customer_id' => '345',
 		'store_id' => '1',
 		'first_name' => 'CARL',
@@ -527,8 +527,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	48 => array(
+	],
+	48 => [
 		'customer_id' => '359',
 		'store_id' => '2',
 		'first_name' => 'WILLIE',
@@ -538,8 +538,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	49 => array(
+	],
+	49 => [
 		'customer_id' => '366',
 		'store_id' => '1',
 		'first_name' => 'BRANDON',
@@ -549,8 +549,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	50 => array(
+	],
+	50 => [
 		'customer_id' => '397',
 		'store_id' => '1',
 		'first_name' => 'JIMMY',
@@ -560,8 +560,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	51 => array(
+	],
+	51 => [
 		'customer_id' => '406',
 		'store_id' => '1',
 		'first_name' => 'NATHAN',
@@ -571,8 +571,8 @@ return array(
 		'active' => '0',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	52 => array(
+	],
+	52 => [
 		'customer_id' => '410',
 		'store_id' => '2',
 		'first_name' => 'CURTIS',
@@ -582,8 +582,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	53 => array(
+	],
+	53 => [
 		'customer_id' => '411',
 		'store_id' => '1',
 		'first_name' => 'NORMAN',
@@ -593,8 +593,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	54 => array(
+	],
+	54 => [
 		'customer_id' => '417',
 		'store_id' => '1',
 		'first_name' => 'TRAVIS',
@@ -604,8 +604,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	55 => array(
+	],
+	55 => [
 		'customer_id' => '418',
 		'store_id' => '2',
 		'first_name' => 'JEFF',
@@ -615,8 +615,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	56 => array(
+	],
+	56 => [
 		'customer_id' => '431',
 		'store_id' => '2',
 		'first_name' => 'JOEL',
@@ -626,8 +626,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	57 => array(
+	],
+	57 => [
 		'customer_id' => '438',
 		'store_id' => '1',
 		'first_name' => 'BARRY',
@@ -637,8 +637,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	58 => array(
+	],
+	58 => [
 		'customer_id' => '449',
 		'store_id' => '2',
 		'first_name' => 'OSCAR',
@@ -648,8 +648,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	59 => array(
+	],
+	59 => [
 		'customer_id' => '459',
 		'store_id' => '1',
 		'first_name' => 'TOMMY',
@@ -659,8 +659,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	60 => array(
+	],
+	60 => [
 		'customer_id' => '464',
 		'store_id' => '1',
 		'first_name' => 'JEROME',
@@ -670,8 +670,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	61 => array(
+	],
+	61 => [
 		'customer_id' => '487',
 		'store_id' => '2',
 		'first_name' => 'HECTOR',
@@ -681,8 +681,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	62 => array(
+	],
+	62 => [
 		'customer_id' => '489',
 		'store_id' => '1',
 		'first_name' => 'RICARDO',
@@ -692,8 +692,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	63 => array(
+	],
+	63 => [
 		'customer_id' => '497',
 		'store_id' => '2',
 		'first_name' => 'GILBERT',
@@ -703,8 +703,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	64 => array(
+	],
+	64 => [
 		'customer_id' => '501',
 		'store_id' => '1',
 		'first_name' => 'RUBEN',
@@ -714,8 +714,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	65 => array(
+	],
+	65 => [
 		'customer_id' => '518',
 		'store_id' => '1',
 		'first_name' => 'GABRIEL',
@@ -725,8 +725,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	66 => array(
+	],
+	66 => [
 		'customer_id' => '533',
 		'store_id' => '1',
 		'first_name' => 'JESSIE',
@@ -736,8 +736,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	67 => array(
+	],
+	67 => [
 		'customer_id' => '541',
 		'store_id' => '2',
 		'first_name' => 'DARREN',
@@ -747,8 +747,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	68 => array(
+	],
+	68 => [
 		'customer_id' => '554',
 		'store_id' => '1',
 		'first_name' => 'DWAYNE',
@@ -758,8 +758,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	69 => array(
+	],
+	69 => [
 		'customer_id' => '560',
 		'store_id' => '1',
 		'first_name' => 'JORDAN',
@@ -769,8 +769,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	70 => array(
+	],
+	70 => [
 		'customer_id' => '562',
 		'store_id' => '1',
 		'first_name' => 'WALLACE',
@@ -780,8 +780,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	71 => array(
+	],
+	71 => [
 		'customer_id' => '566',
 		'store_id' => '1',
 		'first_name' => 'CASEY',
@@ -791,8 +791,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	72 => array(
+	],
+	72 => [
 		'customer_id' => '581',
 		'store_id' => '1',
 		'first_name' => 'VIRGIL',
@@ -802,8 +802,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	73 => array(
+	],
+	73 => [
 		'customer_id' => '587',
 		'store_id' => '1',
 		'first_name' => 'SERGIO',
@@ -813,8 +813,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	74 => array(
+	],
+	74 => [
 		'customer_id' => '590',
 		'store_id' => '2',
 		'first_name' => 'SETH',
@@ -824,8 +824,8 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-	75 => array(
+	],
+	75 => [
 		'customer_id' => '597',
 		'store_id' => '1',
 		'first_name' => 'FREDDIE',
@@ -835,5 +835,5 @@ return array(
 		'active' => '1',
 		'create_date' => '2006-02-14 22:04:37',
 		'last_update' => '2006-02-15 04:57:20',
-	),
-);
+	],
+];

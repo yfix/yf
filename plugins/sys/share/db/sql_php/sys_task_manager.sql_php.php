@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'title' => array(
+		],
+		'title' => [
 			'name' => 'title',
 			'type' => 'varchar',
 			'length' => 255,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'file' => array(
+		],
+		'file' => [
 			'name' => 'file',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'php_code' => array(
+		],
+		'php_code' => [
 			'name' => 'php_code',
 			'type' => 'text',
 			'length' => NULL,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'next_run' => array(
+		],
+		'next_run' => [
 			'name' => 'next_run',
 			'type' => 'int',
 			'length' => 10,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'week_day' => array(
+		],
+		'week_day' => [
 			'name' => 'week_day',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'month_day' => array(
+		],
+		'month_day' => [
 			'name' => 'month_day',
 			'type' => 'smallint',
 			'length' => 2,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'hour' => array(
+		],
+		'hour' => [
 			'name' => 'hour',
 			'type' => 'smallint',
 			'length' => 2,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'minute' => array(
+		],
+		'minute' => [
 			'name' => 'minute',
 			'type' => 'smallint',
 			'length' => 2,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'cronkey' => array(
+		],
+		'cronkey' => [
 			'name' => 'cronkey',
 			'type' => 'varchar',
 			'length' => 32,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'log' => array(
+		],
+		'log' => [
 			'name' => 'log',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'description' => array(
+		],
+		'description' => [
 			'name' => 'description',
 			'type' => 'text',
 			'length' => NULL,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'enabled' => array(
+		],
+		'enabled' => [
 			'name' => 'enabled',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -195,8 +195,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'key' => array(
+		],
+		'key' => [
 			'name' => 'key',
 			'type' => 'varchar',
 			'length' => 30,
@@ -210,8 +210,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'safemode' => array(
+		],
+		'safemode' => [
 			'name' => 'safemode',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -225,26 +225,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'task_next_run' => array(
+			],
+		],
+		'task_next_run' => [
 			'name' => 'task_next_run',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'next_run' => 'next_run',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

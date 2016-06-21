@@ -2,7 +2,7 @@
 
 class db_shard_hooks_test {
 	function show(){
-		module_conf('db_installer', 'create_table_post_callbacks', array(
+		module_conf('db_installer', 'create_table_post_callbacks', [
 			'^b_bets_(?P<shard>[0-9]{4}_[0-9]{2}_[0-9]{2})$' => function($table, $struct, $db, $m) {
 				// From b_bets_2014_01_01 Will produce 140101000000000
 				$auto_inc = substr(str_replace('_', '', $m['shard']), 2).'000000000';
@@ -13,7 +13,7 @@ class db_shard_hooks_test {
 				$auto_inc = substr(str_replace('_', '', $m['shard']), 2).'0000000';
 				return $db->query('ALTER TABLE '.$table.' AUTO_INCREMENT = '.$auto_inc);
 			},
-		));
+		]);
 		db()->query('DROP TABLE IF EXISTS b_bets_2020_01_01');
 		db()->query('SELECT * FROM b_bets_2020_01_01');
 		db()->query('DROP TABLE IF EXISTS b_contracts_2020_01');

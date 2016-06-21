@@ -8,7 +8,7 @@ class yf_manage_revisions {
 	/** @var bool Track content revisions */
 	public $ENABLED = true;
 	/** @var array Restrict logged revisions to specific content objects */
-	public $ALLOWED_OBJECTS = array();
+	public $ALLOWED_OBJECTS = [];
 
 	/**
 	* Should be used from admin modules.
@@ -22,7 +22,7 @@ class yf_manage_revisions {
 	*		'action'	=> 'update',
 	*	));
 	*/
-	function add ($object_name, $ids = array(), $action = null, $extra = array()) {
+	function add ($object_name, $ids = [], $action = null, $extra = []) {
 		if (!$this->ENABLED) {
 			return false;
 		}
@@ -38,9 +38,9 @@ class yf_manage_revisions {
 		}
 		$ids = $extra['object_id'] ?: ($extra['ids'] ?: $ids);
 		if ($ids && !is_array($ids)) {
-			$ids = array($ids);
+			$ids = [$ids];
 		}
-		$items = array();
+		$items = [];
 		if (is_array($extra['items'])) {
 			$items = $extra['items'];
 			if (!$items) {
@@ -49,17 +49,17 @@ class yf_manage_revisions {
 		} elseif (is_array($ids) && !empty($ids)) {
 			if (isset($extra['old']) || isset($extra['new'])) {
 				foreach ((array)$ids as $id) {
-					$items[$id] = array();
+					$items[$id] = [];
 				}
 			} else {
 				$records = (array)db()->from($object_name)->whereid($ids)->get_all();
 				foreach ((array)$ids as $id) {
 					$a = $records[$id];
 					if ($a) {
-						$items[$id] = array(
+						$items[$id] = [
 							'new'		=> $a,
 							'locale'	=> $a['locale'],
-						);
+						];
 					}
 				}
 			}
@@ -71,7 +71,7 @@ class yf_manage_revisions {
 		if (!$action) {
 			$action = 'update';
 		}
-		$to_insert = array(
+		$to_insert = [
 			'action'		=> $action,
 			'object_name'	=> $object_name,
 			'date'			=> date('Y-m-d H:i:s'),
@@ -81,7 +81,7 @@ class yf_manage_revisions {
 			'ip'			=> common()->get_ip(),
 			'url'			=> (main()->is_https() ? 'https://' : 'http://'). $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
 			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
-		);
+		];
 		foreach ((array)$items as $object_id => $data) {
 			if (!$object_id) {
 				continue;
@@ -100,13 +100,13 @@ class yf_manage_revisions {
 // TODO: do not save same data as new revision
 #				continue;
 			}
-			$sql = db()->insert_safe(self::table, $to_insert + array(
+			$sql = db()->insert_safe(self::table, $to_insert + [
 				'object_id'		=> $object_id,
 				'locale'		=> (is_array($data_old) ? $data_old['locale'] : '') ?: $extra['locale'],
 				'data_old'		=> is_array($data_old) ? 'json:'.json_encode($data_old) : (string)$data_old,
 				'data_new'		=> is_array($data_new) ? 'json:'.json_encode($data_new) : (string)$data_new,
 				'comment'		=> $data['comment'] ?: $extra['comment'],
-			), $only_sql = true);
+			], $only_sql = true);
 			db()->_add_shutdown_query($sql);
 		}
 		return true;
@@ -115,19 +115,19 @@ class yf_manage_revisions {
 	/**
 	*/
 	function show() {
-		return table(db()->from(self::table), array(
+		return table(db()->from(self::table), [
 				'filter' => true,
-				'filter_params' => array(
+				'filter_params' => [
 					'date'				=> 'daterange_dt_between',
 					'__default_order'	=> 'date DESC',
-				),
+				],
 				'hide_empty' => 1,
-			))
-			->text('id', array('link' => url('/@object/view/%id')))
-			->date('date', array('format' => 'long'))
+			])
+			->text('id', ['link' => url('/@object/view/%id')])
+			->date('date', ['format' => 'long'])
 			->func('object_id', function($in, $e, $a) { return $a['object_name']. ' | '.$a['object_id'].' | '.$a['action']; })
 			->func('ip', function($ip) { return html()->ip($ip); })
-			->admin('user_id', array('desc' => 'Editor'))
+			->admin('user_id', ['desc' => 'Editor'])
 #			->btn_view(array('btn_no_text' => 1))
 		;
 	}
@@ -173,19 +173,19 @@ class yf_manage_revisions {
 			}
 		}
 		css('pre.black { color: #ccc; background: black; font-weight: bold; font-family: inherit; margin: 0; display: inline-block; width: auto; padding: 2px; border: 0; }');
-		$admin_objects = array(
+		$admin_objects = [
 			'static_pages' => 'static_pages',
 			'news'	=> 'manage_news',
 			'faq'	=> 'manage_faq',
 			'tips'	=> 'manage_tips',
-		);
+		];
 		$url_object = $admin_objects[$a['object_name']];
 		$object_info = $a['object_name'].' | '.$a['object_id'];
-		$diff = array();
+		$diff = [];
 		if (is_array($a['data_old']) || is_array($a['data_new'])) {
 			$diff = array_diff((array)$a['data_old'], (array)$a['data_new']);
 		}
-		$a = array(
+		$a = [
 			'navigation' => ''
 				. ($prev_id ? a('/@object/@action/'.$prev_id, 'Prev: '.$prev_id, 'fa fa-backward', null, null, false).'&nbsp;' : '')
 				. '<big><b>&nbsp;'.$id.'&nbsp;</b></big>&nbsp;'
@@ -200,7 +200,7 @@ class yf_manage_revisions {
 			'data_old'	=> $a['data_old'] ? '<pre class="black">'._prepare_html(is_array($a['data_old']) ? var_export($a['data_old'], 1) : $a['data_old']).'</pre>' : '',
 			'data_new'	=> $a['data_new'] ? '<pre class="black">'._prepare_html(is_array($a['data_new']) ? var_export($a['data_new'], 1) : $a['data_new']).'</pre>' : '',
 			'diff'		=> $diff ? '<pre class="black">'._prepare_html(var_export($diff, 1)).'</pre>' : '',
-		);
+		];
 		foreach ($a as $k => $v) {
 			if (empty($v)) {
 				unset($a[$k]);
@@ -277,31 +277,31 @@ class yf_manage_revisions {
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
+		if (!in_array($_GET['action'], ['show'])) {
 			return false;
 		}
 		$min_date = db()->from(self::table)->min('date');
 		$min_date = strtotime($min_date);
 
-		$order_fields = array();
+		$order_fields = [];
 		foreach (explode('|', 'id|date|object_name|object_id|action|user_id|locale|site_id|server_id|ip') as $f) {
 			$order_fields[$f] = $f;
 		}
-		return form($r, array(
+		return form($r, [
 				'filter' => true,
-			))
-			->daterange('date', array(
+			])
+			->daterange('date', [
 				'format'		=> 'DD.MM.YYYY',
 				'min_date'		=> date('d.m.Y', $min_date ?: (time() - 86400 * 30)),
 				'max_date'		=> date('d.m.Y', time() + 86400),
 				'autocomplete'	=> 'off',
-			))
+			])
 			->number('id')
 			->number('user_id')
 			->text('object_name')
 			->text('object_id')
 			->text('action')
-			->select_box('order_by', $order_fields, array('no_translate' => 1,'show_text' => 1))
+			->select_box('order_by', $order_fields, ['no_translate' => 1,'show_text' => 1])
 			->order_box()
 			->save_and_clear()
 		;

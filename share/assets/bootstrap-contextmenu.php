@@ -1,12 +1,12 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/yfix/bootstrap-contextmenu/master/bootstrap-contextmenu.js',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

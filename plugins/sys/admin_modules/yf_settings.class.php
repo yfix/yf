@@ -6,14 +6,14 @@
 class yf_settings {
 
 	// bs2, bs3, pure, foundation, etc
-	public $css_frameworks = array(
+	public $css_frameworks = [
 		'bs2' => 'Twitter Bootstrap v2',
 		'bs3' => 'Twitter Bootstrap v3',
 #		'pure' => 'Yahoo PureCSS',
 #		'foundation' => 'Zurb Foundation',
-	);
+	];
 	// currently for: bs2, bs3
-	public $css_subthemes = array(
+	public $css_subthemes = [
 		'default'	=> 'Bootstrap',
 		'amelia'	=> 'Amelia (light)',
 		'cerulean'	=> 'Cerulean (light)',
@@ -26,38 +26,38 @@ class yf_settings {
 		'slate'		=> 'Slate (dark)',
 		'spacelab'	=> 'Spacelab (light)',
 		'united'	=> 'United (light)',
-	);
+	];
 	// TODO: add more skins from fs inside project
-	public $default_skins = array(
+	public $default_skins = [
 		'user'	=> 'User (default)',
 		'admin'	=> 'Admin (default)',
-	);
-	public $db_drivers = array(
+	];
+	public $db_drivers = [
 		'mysql'		=> 'mysql',
 		'mysqli'	=> 'mysqli',
 		'mysql_pdo'	=> 'mysql PDO',
 #		'sqlite'	=> 'sqlite',
 #		'oracle'	=> 'oracle',
 #		'postgre'	=> 'postgre',
-	);
-	public $cache_drivers = array(
+	];
+	public $cache_drivers = [
 		'memcache'	=> 'memcache',
 		'xcache'	=> 'xcache',
 #		'apc'		=> 'apc',
 		'files'		=> 'files',
-	);
-	public $tpl_drivers = array(
+	];
+	public $tpl_drivers = [
 		'yf'		=> 'YF stpl (default)',
 #		'smarty'	=> 'smarty',
 #		'fenom'		=> 'fenom',
 #		'twig'		=> 'twig',
 #		'blitz'		=> 'blitz',
-	);
+	];
 
 	/**
 	*/
 	function show() {
-		$r = array();
+		$r = [];
 		foreach ((array)conf() as $k => $v) {
 			if (is_array($v)) {
 				foreach ((array)$v as $k2 => $v2) {
@@ -143,14 +143,14 @@ class yf_settings {
 	function _get_settings($hooks_data) {
 		$settings = db()->from('settings')->order_by('`order`, item ASC')->get_all();
 		if (!$settings && $hooks_data) {
-			$settings = array();
+			$settings = [];
 			foreach ((array)$hooks_data as $k => $v) {
 				list($module_name,) = explode('___', $k);
-				$settings[] = array(
+				$settings[] = [
 					'item'	=> $module_name,
 					'value'	=> 0,
 					'order'	=> ++$i,
-				);
+				];
 			}
 			if ($settings) {
 				db()->insert_safe('settings', $settings);
@@ -163,7 +163,7 @@ class yf_settings {
 	*/
 	function display_what() {
 		$hooks_data = _class('admin_methods')->call_hooks('settings', $r);
-		$avail_hook_modules = array();
+		$avail_hook_modules = [];
 		foreach ((array)$hooks_data as $k => $v) {
 			list($module_name,) = explode('___', $k);
 			$avail_hook_modules[$module_name] = $k;
@@ -171,7 +171,7 @@ class yf_settings {
 		$settings = $this->_get_settings($hooks_data);
 		if (main()->is_post()) {
 			parse_str($_POST['sort'], $tmp);
-			$posted_sort = array();
+			$posted_sort = [];
 			foreach ((array)$tmp['sort'] as $v) {
 				$posted_sort[$v] = $v;
 			}
@@ -184,13 +184,13 @@ class yf_settings {
 				}
 				$posted_sort[$_n] = $name;
 			}
-			$to_save = array();
+			$to_save = [];
 			foreach ((array)$posted_sort as $_n => $name) {
-				$to_save[$name] = array(
+				$to_save[$name] = [
 					'item'	=> $name,
 					'value'	=> isset($_POST['check'][$_n]) ? 1 : 0,
 					'order'	=> ++$i,
-				);
+				];
 			}
 			if ($to_save) {
 				db()->query('TRUNCATE TABLE '.db('settings'));
@@ -224,9 +224,9 @@ class yf_settings {
 			</div>
 		';
 		$a['back_link'] = url('/@object');
-		return form($a, array('legend' => 'Settings items'))
+		return form($a, ['legend' => 'Settings items'])
 			->hidden('sort')
-			->container($container_html, array('wide' => 1))
+			->container($container_html, ['wide' => 1])
 			->save_and_back();
 	}
 
@@ -245,7 +245,7 @@ class yf_settings {
 	/**
 	*/
 	function _prepare_to_save($a) {
-		$to_save = array();
+		$to_save = [];
 		foreach((array)$a as $k => $v) {
 			if (is_string($v) && !strlen($v)) {
 				continue;
@@ -282,21 +282,21 @@ class yf_settings {
 
 	/**
 	*/
-	function _hook_settings(&$selected = array()) {
+	function _hook_settings(&$selected = []) {
 		$selected['site_maintenance'] = conf('site_maintenance') ?: 0;
 		$selected['main[USE_SYSTEM_CACHE]'] = module_conf('main', 'USE_SYSTEM_CACHE') || (defined('USE_CACHE') && USE_CACHE) ?: 0; // TODO: unify and simplify
 		$selected['cache[DRIVER]'] = module_conf('cache', 'DRIVER') ?: 'memcache';
 		$selected['main[ALLOW_DEBUG_PROFILING]'] = main()->ALLOW_DEBUG_PROFILING;
 		$selected['DEBUG_CONSOLE_POPUP'] = conf('DEBUG_CONSOLE_POPUP');
 
-		return array(
-			array('yes_no_box', 'site_maintenance', array('tip' => '')),
-			array('yes_no_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
-			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
+		return [
+			['yes_no_box', 'site_maintenance', ['tip' => '']],
+			['yes_no_box', 'main[USE_SYSTEM_CACHE]', ['desc' => 'use_cache']],
+			['select_box', 'cache[DRIVER]', $this->cache_drivers, ['desc' => 'cache_driver']],
 #			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
-			array('select_box', 'css_framework', $this->css_frameworks, array('show_text' => 1)), // TODO: link to edit
-			array('yes_no_box', 'main[ALLOW_DEBUG_PROFILING]', array('desc' => 'Use built-in code profiling (for DEBUG_MODE)')),
-			array('yes_no_box', 'DEBUG_CONSOLE_POPUP', array('desc' => 'Debug console as popup window (for DEBUG_MODE)')),
+			['select_box', 'css_framework', $this->css_frameworks, ['show_text' => 1]], // TODO: link to edit
+			['yes_no_box', 'main[ALLOW_DEBUG_PROFILING]', ['desc' => 'Use built-in code profiling (for DEBUG_MODE)']],
+			['yes_no_box', 'DEBUG_CONSOLE_POPUP', ['desc' => 'Debug console as popup window (for DEBUG_MODE)']],
 /*
 #			array('select_box', 'DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')), // TODO: link to edit
 			array('select_box', 'default_css_subtheme', $this->css_subthemes), // TODO: link to edit
@@ -358,7 +358,7 @@ class yf_settings {
 #				array('link', 'cache_stats', url('/@object/cache_stats')), // TODO: link, method, icon
 			'row_end',
 */
-		);
+		];
 	}
 
 	/**
@@ -367,7 +367,7 @@ class yf_settings {
 		if (!$this->_used_modules) {
 			return false;
 		}
-		$items = array();
+		$items = [];
 		$url = process_url(url('/@object'));
 		foreach ((array)$this->_used_modules as $module_name) {
 			$items[] = '<li><a href="'.$url.'#module_'.$module_name.'"><i class="icon-chevron-right fa fa-chevron-right"></i> '.t($module_name).'</a></li>';

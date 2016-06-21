@@ -24,12 +24,12 @@ class yf_input {
 			$_GET[$key] = $val;
 		}
 		if (DEBUG_MODE && function_exists('debug')) {
-			debug('input_'.__FUNCTION__.'[]', array(
+			debug('input_'.__FUNCTION__.'[]', [
 				'name'	=> $key,
 				'val'	=> $val,
 				'op'	=> $val !== null ? 'set' : 'get',
 				'trace'	=> main()->trace_string(),
-			));
+			]);
 		}
 		return $key === null ? $_GET : $_GET[$key];
 	}
@@ -42,12 +42,12 @@ class yf_input {
 			$_POST[$key] = $val;
 		}
 		if (DEBUG_MODE && function_exists('debug')) {
-			debug('input_'.__FUNCTION__.'[]', array(
+			debug('input_'.__FUNCTION__.'[]', [
 				'name'	=> $key,
 				'val'	=> $val,
 				'op'	=> $val !== null ? 'set' : 'get',
 				'trace'	=> main()->trace_string(),
-			));
+			]);
 		}
 		return $key === null ? $_POST : $_POST[$key];
 	}
@@ -60,12 +60,12 @@ class yf_input {
 			$_SESSION[$key] = $val;
 		}
 		if (DEBUG_MODE && function_exists('debug')) {
-			debug('input_'.__FUNCTION__.'[]', array(
+			debug('input_'.__FUNCTION__.'[]', [
 				'name'	=> $key,
 				'val'	=> $val,
 				'op'	=> $val !== null ? 'set' : 'get',
 				'trace'	=> main()->trace_string(),
-			));
+			]);
 		}
 		return $key === null ? $_SESSION : $_SESSION[$key];
 	}
@@ -78,12 +78,12 @@ class yf_input {
 			$_SERVER[$key] = $val;
 		}
 		if (DEBUG_MODE && function_exists('debug')) {
-			debug('input_'.__FUNCTION__.'[]', array(
+			debug('input_'.__FUNCTION__.'[]', [
 				'name'	=> $key,
 				'val'	=> $val,
 				'op'	=> $val !== null ? 'set' : 'get',
 				'trace'	=> main()->trace_string(),
-			));
+			]);
 		}
 		return $key === null ? $_SERVER : $_SERVER[$key];
 	}
@@ -97,12 +97,12 @@ class yf_input {
 			setcookie($key, $val);
 		}
 		if (DEBUG_MODE && function_exists('debug')) {
-			debug('input_'.__FUNCTION__.'[]', array(
+			debug('input_'.__FUNCTION__.'[]', [
 				'name'	=> $key,
 				'val'	=> $val,
 				'op'	=> $val !== null ? 'set' : 'get',
 				'trace'	=> main()->trace_string(),
-			));
+			]);
 		}
 		return $key === null ? $_COOKIE : $_COOKIE[$key];
 	}
@@ -115,12 +115,12 @@ class yf_input {
 			$_ENV[$key] = $val;
 		}
 		if (DEBUG_MODE && function_exists('debug')) {
-			debug('input_'.__FUNCTION__.'[]', array(
+			debug('input_'.__FUNCTION__.'[]', [
 				'name'	=> $key,
 				'val'	=> $val,
 				'op'	=> $val !== null ? 'set' : 'get',
 				'trace'	=> main()->trace_string(),
-			));
+			]);
 		}
 		return $key === null ? $_ENV : $_ENV[$key];
 	}

@@ -1,13 +1,13 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'css' => '//cdn.rawgit.com/rvera/image-picker/master/image-picker/image-picker.css',
 			'js' => '//cdn.rawgit.com/rvera/image-picker/master/image-picker/image-picker.min.js',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

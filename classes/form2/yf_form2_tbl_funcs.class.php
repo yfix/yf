@@ -5,7 +5,7 @@ class yf_form2_tbl_funcs {
 	/**
 	* For use inside table item template
 	*/
-	function tbl_link($name, $link, $extra = array(), $replace = array(), $form) {
+	function tbl_link($name, $link, $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -33,11 +33,11 @@ class yf_form2_tbl_funcs {
 			$icon = $extra['icon'] ? $extra['icon'] : _class('table2')->CLASS_ICON_BTN;
 			$extra['href'] = $link_url;
 			$extra['class'] = $extra['class'] ?: $form->CLASS_BTN_MINI. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
-			$attrs_names = array('id','name','href','class','style','target','alt','title');
+			$attrs_names = ['id','name','href','class','style','target','alt','title'];
 			return ' <a'._attrs($extra, $attrs_names).'><i class="'.$icon.'"></i>'. (!$extra['hide_text'] ? ' '.t($extra['name']) : '').'</a> ';
 		};
 		if ($form->_chained_mode) {
-			$form->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			$form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
 			return $form;
 		}
 		return $func((array)$extra + (array)$form->_extra, (array)$replace + (array)$form->_replace, $form);
@@ -46,7 +46,7 @@ class yf_form2_tbl_funcs {
 	/**
 	* For use inside table item template
 	*/
-	function tbl_link_add($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+	function tbl_link_add($name = '', $link = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -54,7 +54,7 @@ class yf_form2_tbl_funcs {
 		if (!$name) {
 			$name = 'Add';
 		}
-		$extra['link_variants'] = array('add_link','add_url');
+		$extra['link_variants'] = ['add_link','add_url'];
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = _class('table2')->CLASS_ICON_ADD;
 		}
@@ -64,7 +64,7 @@ class yf_form2_tbl_funcs {
 	/**
 	* For use inside table item template
 	*/
-	function tbl_link_edit($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+	function tbl_link_edit($name = '', $link = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -72,7 +72,7 @@ class yf_form2_tbl_funcs {
 		if (!$name) {
 			$name = 'Edit';
 		}
-		$extra['link_variants'] = array('edit_link','edit_url');
+		$extra['link_variants'] = ['edit_link','edit_url'];
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = _class('table2')->CLASS_ICON_EDIT;
 		}
@@ -85,7 +85,7 @@ class yf_form2_tbl_funcs {
 	/**
 	* For use inside table item template
 	*/
-	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+	function tbl_link_delete($name = '', $link = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -93,7 +93,7 @@ class yf_form2_tbl_funcs {
 		if (!$name) {
 			$name = 'Delete';
 		}
-		$extra['link_variants'] = array('delete_link','delete_url');
+		$extra['link_variants'] = ['delete_link','delete_url'];
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = _class('table2')->CLASS_ICON_DELETE;
 		}
@@ -106,7 +106,7 @@ class yf_form2_tbl_funcs {
 	/**
 	* For use inside table item template
 	*/
-	function tbl_link_clone($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+	function tbl_link_clone($name = '', $link = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -114,7 +114,7 @@ class yf_form2_tbl_funcs {
 		if (!$name) {
 			$name = 'Clone';
 		}
-		$extra['link_variants'] = array('clone_link','clone_url');
+		$extra['link_variants'] = ['clone_link','clone_url'];
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = _class('table2')->CLASS_ICON_CLONE;
 		}
@@ -127,7 +127,7 @@ class yf_form2_tbl_funcs {
 	/**
 	* For use inside table item template
 	*/
-	function tbl_link_view($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+	function tbl_link_view($name = '', $link = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -135,7 +135,7 @@ class yf_form2_tbl_funcs {
 		if (!$name) {
 			$name = 'View';
 		}
-		$extra['link_variants'] = array('view_link','view_url');
+		$extra['link_variants'] = ['view_link','view_url'];
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = _class('table2')->CLASS_ICON_VIEW;
 		}
@@ -148,7 +148,7 @@ class yf_form2_tbl_funcs {
 	/**
 	* For use inside table item template
 	*/
-	function tbl_link_active($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+	function tbl_link_active($name = '', $link = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -183,7 +183,7 @@ class yf_form2_tbl_funcs {
 			return ' <a href="'.$link_url.'" class="'._class('table2')->CLASS_CHANGE_ACTIVE.'">'.$extra['items'][$is_active].'</a> ';
 		};
 		if ($form->_chained_mode) {
-			$form->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			$form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
 			return $form;
 		}
 		return $func((array)$extra + (array)$form->_extra, (array)$replace + (array)$form->_replace, $form);

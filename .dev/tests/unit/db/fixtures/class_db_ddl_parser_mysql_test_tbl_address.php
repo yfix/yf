@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'address',
-	'fields' => array(
-		'address_id' => array(
+	'fields' => [
+		'address_id' => [
 			'name' => 'address_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`address_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT',
-		),
-		'address' => array(
+		],
+		'address' => [
 			'name' => 'address',
 			'type' => 'varchar',
 			'length' => 50,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`address` varchar(50) NOT NULL',
-		),
-		'address2' => array(
+		],
+		'address2' => [
 			'name' => 'address2',
 			'type' => 'varchar',
 			'length' => 50,
@@ -49,8 +49,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`address2` varchar(50) DEFAULT NULL',
-		),
-		'district' => array(
+		],
+		'district' => [
 			'name' => 'district',
 			'type' => 'varchar',
 			'length' => 20,
@@ -65,8 +65,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`district` varchar(20) NOT NULL',
-		),
-		'city_id' => array(
+		],
+		'city_id' => [
 			'name' => 'city_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -81,8 +81,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`city_id` smallint(5) unsigned NOT NULL',
-		),
-		'postal_code' => array(
+		],
+		'postal_code' => [
 			'name' => 'postal_code',
 			'type' => 'varchar',
 			'length' => 10,
@@ -97,8 +97,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`postal_code` varchar(10) DEFAULT NULL',
-		),
-		'phone' => array(
+		],
+		'phone' => [
 			'name' => 'phone',
 			'type' => 'varchar',
 			'length' => 20,
@@ -113,8 +113,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`phone` varchar(20) NOT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -130,43 +130,43 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'address_id' => 'address_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`address_id`)',
-		),
-		'idx_fk_city_id' => array(
+		],
+		'idx_fk_city_id' => [
 			'name' => 'idx_fk_city_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'city_id' => 'city_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_city_id` (`city_id`)',
-		),
-	),
-	'foreign_keys' => array(
-		'fk_address_city' => array(
+		],
+	],
+	'foreign_keys' => [
+		'fk_address_city' => [
 			'name' => 'fk_address_city',
-			'columns' => array(
+			'columns' => [
 				'city_id' => 'city_id',
-			),
+			],
 			'ref_table' => 'city',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'city_id' => 'city_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_address_city` FOREIGN KEY (`city_id`) REFERENCES `city` (`city_id`) ON UPDATE CASCADE',
-		),
-	),
-	'options' => array(
+		],
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

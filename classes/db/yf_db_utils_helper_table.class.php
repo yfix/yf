@@ -35,97 +35,97 @@ class yf_db_utils_helper_table {
 
 	/**
 	*/
-	public function exists($extra = array(), &$error = false) {
+	public function exists($extra = [], &$error = false) {
 		return $this->utils->table_exists($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function info($extra = array(), &$error = false) {
+	public function info($extra = [], &$error = false) {
 		return $this->utils->table_info($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function drop($extra = array(), &$error = false) {
+	public function drop($extra = [], &$error = false) {
 		return $this->utils->drop_table($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function create(array $data, $extra = array(), &$error = false) {
+	public function create(array $data, $extra = [], &$error = false) {
 		return $this->utils->create_table($this->db_name.'.'.$this->table, $data, $extra, $error);
 	}
 
 	/**
 	*/
-	public function alter(array $data, $extra = array(), &$error = false) {
+	public function alter(array $data, $extra = [], &$error = false) {
 		return $this->utils->alter_table($this->db_name.'.'.$this->table, $data, $extra, $error);
 	}
 
 	/**
 	*/
-	public function rename($new_name, $extra = array(), &$error = false) {
+	public function rename($new_name, $extra = [], &$error = false) {
 		return $this->utils->rename_table($this->db_name.'.'.$this->table, $new_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function truncate($extra = array(), &$error = false) {
+	public function truncate($extra = [], &$error = false) {
 		return $this->utils->truncate_table($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function check($extra = array(), &$error = false) {
+	public function check($extra = [], &$error = false) {
 		return $this->utils->check_table($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function repair($extra = array(), &$error = false) {
+	public function repair($extra = [], &$error = false) {
 		return $this->utils->repair_table($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function optimize($extra = array(), &$error = false) {
+	public function optimize($extra = [], &$error = false) {
 		return $this->utils->optimize_table($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function columns($extra = array(), &$error = false) {
+	public function columns($extra = [], &$error = false) {
 		return $this->utils->list_columns($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function column($name, $extra = array(), &$error = false) {
+	public function column($name, $extra = [], &$error = false) {
 		return $this->utils->column($this->db_name, $this->table, $name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function indexes($extra = array(), &$error = false) {
+	public function indexes($extra = [], &$error = false) {
 		return $this->utils->list_indexes($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function index($name, $extra = array(), &$error = false) {
+	public function index($name, $extra = [], &$error = false) {
 		return $this->utils->index($this->db_name, $this->table, $name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function foreign_keys($extra = array(), &$error = false) {
+	public function foreign_keys($extra = [], &$error = false) {
 		return $this->utils->list_foreign_keys($this->db_name.'.'.$this->table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function foreign_key($name, $extra = array(), &$error = false) {
+	public function foreign_key($name, $extra = [], &$error = false) {
 		return $this->utils->foreign_key($this->db_name, $this->table, $name, $extra, $error);
 	}
 }

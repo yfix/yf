@@ -9,7 +9,7 @@ class yf_manage_sphinx_config_section
 	public $name;
 	public $comment;
 	public $end_comment;
-	public $variables = array();
+	public $variables = [];
 
 	/**
 	* Construct a new section

@@ -39,7 +39,7 @@ class yf_form2_auto {
 	/**
 	* Enable automatic fields parsing mode
 	*/
-	function auto($table = '', $id = '', $params = array(), $form) {
+	function auto($table = '', $id = '', $params = [], $form) {
 		if ($params['links_add']) {
 			$form->_params['links_add'] = $params['links_add'];
 		}
@@ -49,14 +49,14 @@ class yf_form2_auto {
 			$columns = $db->meta_columns($table);
 			$info = $db->get('SELECT * FROM '.$db->es($table).' WHERE id='.intval($id));
 			if (!is_array($form->_replace)) {
-				$form->_replace = array();
+				$form->_replace = [];
 			}
 			foreach ((array)$info as $k => $v) {
 				$form->_replace[$k] = $v;
 			}
 			foreach((array)$columns as $name => $a) {
-				$_extra = array();
-				$values = array();
+				$_extra = [];
+				$values = [];
 #var_dump($a);
 				$type = $this->_field_type($a['type']);
 				$length = intval($a['length']);
@@ -71,8 +71,8 @@ class yf_form2_auto {
 					$func = 'phone';
 				} elseif ($name == 'active') {
 					$func = 'active_box';
-				} elseif (in_array($type, array('enum','set'))) {
-					if ($a['values'] == array(0,1)) {
+				} elseif (in_array($type, ['enum','set'])) {
+					if ($a['values'] == [0,1]) {
 						$func = 'yes_no_box';
 					} else {
 						$func = 'radio_box';
@@ -85,7 +85,7 @@ class yf_form2_auto {
 				} elseif ($type == 'time') {
 					$func = 'datetime_select';
 				} elseif ($type == 'int') {
-					if ((strpos($name, 'date') !== false || strpos($name, 'time') !== false) && in_array($length, array(10,11))) {
+					if ((strpos($name, 'date') !== false || strpos($name, 'time') !== false) && in_array($length, [10,11])) {
 						$func = 'datetime_select';
 					} else {
 						$func = 'number';
@@ -101,11 +101,11 @@ class yf_form2_auto {
 				} else {
 					$func = 'text';
 				}
-				if (in_array($type, array('int','char'))) {
+				if (in_array($type, ['int','char'])) {
 					$_extra['maxlength'] = $length;
 					$type == 'int' && $_extra['max'] = pow(8, $length);
 				}
-				if (in_array($type, array('int','float','double','decimal')) && $a['unsigned']) {
+				if (in_array($type, ['int','float','double','decimal']) && $a['unsigned']) {
 					$_extra['min'] = 0;
 				}
 				if ($a['default'] && !$a['nullable']) {

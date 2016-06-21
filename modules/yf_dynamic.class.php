@@ -13,12 +13,12 @@ class yf_dynamic {
 	/** @var int Quantity of finded users by user search (for 'find_users' function)*/
 	public $USER_RESULTS_LIMIT = 20;
 	/** @var array */
-	public $AJAX_VALIDATE_ALLOWED = array(
+	public $AJAX_VALIDATE_ALLOWED = [
 		'user.login',
 		'user.email',
 		'user.nick',
 		'captcha',
-	);
+	];
 
 	/**
 	* Catch missing method call
@@ -82,12 +82,12 @@ class yf_dynamic {
 			return $this->_show_error_image();
 		}
 		$ext = pathinfo($path, PATHINFO_EXTENSION);
-		$allowed_exts = array(
+		$allowed_exts = [
 			'jpg'	=> 'image/jpeg',
 			'jpeg'	=> 'image/jpeg',
 			'gif'	=> 'image/gif',
 			'png'	=> 'image/png',
-		);
+		];
 		if (!$ext || !isset($allowed_exts[$ext])) {
 			return $this->_show_error_image();
 		}
@@ -174,11 +174,11 @@ class yf_dynamic {
 			return false;
 		}
 		$atts = " onchange=\"this.form.submit();\"";
-		$replace = array(
+		$replace = [
 			'form_action'	=> './?object='.str_replace(YF_PREFIX, '', __CLASS__).'&action=change_lang',
-			'lang_box'		=> common()->select_box('lang_id', array(t('Language') => $lang_names), conf('language'), false, 2, $atts, false),
+			'lang_box'		=> common()->select_box('lang_id', [t('Language') => $lang_names], conf('language'), false, 2, $atts, false),
 			'back_url'		=> WEB_PATH.'?object='.$_GET['object'].($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). (!empty($_GET['id']) ? '&id='.$_GET['id'] : ''). (!empty($_GET['page']) ? '&page='.$_GET['page'] : ''),
-		);
+		];
 		return tpl()->parse('system/change_lang_form', $replace);
 	}
 
@@ -209,15 +209,15 @@ class yf_dynamic {
 		$var_info = db()->query_fetch($sql);
 		// Create variable record if not found
 		if (empty($var_info['id'])) {
-			$sql = array('value'	=> _es($SOURCE_VAR_NAME));
+			$sql = ['value'	=> _es($SOURCE_VAR_NAME)];
 			db()->INSERT('locale_vars', $sql);
 			$var_info['id'] = db()->INSERT_ID();
 		}
-		$sql_data = array(
+		$sql_data = [
 			'var_id'	=> intval($var_info['id']),
 			'value'		=> _es($EDITED_VALUE),
 			'locale'	=> _es($CUR_LOCALE),
-		);
+		];
 		// Check if record is already exists
 		$Q = db()->query('SELECT * FROM '.db('locale_translate').' WHERE var_id='.intval($var_info['id']));
 		while ($A = db()->fetch_assoc($Q)) {
@@ -229,7 +229,7 @@ class yf_dynamic {
 			db()->INSERT('locale_translate', $sql_data);
 		}
 		$sql = db()->UPDATE('locale_translate', $sql_data, 'var_id='.intval($var_info['id'])." AND locale='"._es($CUR_LOCALE)."'", true);
-		db()->INSERT('revisions', array(
+		db()->INSERT('revisions', [
 			'user_id'		=> intval(MAIN_TYPE_USER ? main()->USER_ID : main()->ADMIN_ID),
 			'object_name'	=> _es('locale_var'),
 			'object_id'		=> _es($var_info['id']),
@@ -238,7 +238,7 @@ class yf_dynamic {
 			'date'			=> time(),
 			'ip'			=> common()->get_ip(),
 			'comment'		=> _es('locale: '.$CUR_LOCALE),
-		));
+		]);
 		cache_del('locale_translate_'.$CUR_LOCALE);
 		return print('Save OK');
 	}
@@ -280,7 +280,7 @@ class yf_dynamic {
 				// Save file
 				file_put_contents($locale_stpl_path, $_POST['text']);
 				// Save revision
-				db()->INSERT('revisions', array(
+				db()->INSERT('revisions', [
 					'user_id'		=> intval(MAIN_TYPE_USER ? main()->USER_ID : main()->ADMIN_ID),
 					'object_name'	=> _es('locale_stpl'),
 					'object_id'		=> _es($STPL_NAME),
@@ -289,7 +289,7 @@ class yf_dynamic {
 					'date'			=> time(),
 					'ip'			=> common()->get_ip(),
 					'comment'		=> _es('saved into file: '.$locale_stpl_path),
-				));
+				]);
 				// Success output
 				$result = 'Saved successfully';
 			}
@@ -312,17 +312,17 @@ class yf_dynamic {
 		if (isset($_POST['text']) && isset($_POST['name'])) {
 			$A = db()->query_fetch('SELECT * FROM '.db('tips')." WHERE name='".$_POST["name"]."' AND locale='".$CUR_LOCALE."'");
 			if (!$A) {
-				db()->INSERT('tips', array(
+				db()->INSERT('tips', [
 					'name'		=> _es($_POST['name']),
 					'locale'	=> _es($CUR_LOCALE),
 					'text'		=> _es($_POST['text']),
 					'type' 		=> 1,
 					'active'	=> 1,
-				));
+				]);
 			} else {
-				db()->UPDATE('tips', array(
+				db()->UPDATE('tips', [
 					'text'	=> _es($_POST['text']),
-				), "name='".$_POST["name"]."' AND locale='".$CUR_LOCALE."'");
+				], "name='".$_POST["name"]."' AND locale='".$CUR_LOCALE."'");
 			}
 		}
 		cache_del('tips');
@@ -427,19 +427,19 @@ class yf_dynamic {
 
 		$allowed_params = $this->AJAX_VALIDATE_ALLOWED;
 
-		$rules = array();
-		$errors = array();
+		$rules = [];
+		$errors = [];
 		if (isset($_POST['rules']) && is_array($_POST['rules'])) {
 			$rules = $_POST['rules'];
 		} elseif (isset($_GET['rules']) && is_array($_GET['rules'])) {
 			$rules = $_GET['rules'];
 		} else {
-			$rules[] = array(
+			$rules[] = [
 				'func'	=> preg_replace('~[^a-z0-9_]+~ims', '', (isset($_POST['func']) ? $_POST['func'] : (isset($_GET['func']) ? $_GET['func'] : $_GET['id']))),
 				'data'	=> isset($_POST['data']) ? $_POST['data'] : $_GET['data'],
 				'param'	=> isset($_POST['param']) ? $_POST['param'] : $_GET['param'],
 				'field'	=> isset($_POST['field']) ? $_POST['field'] : $_GET['field'],
-			);
+			];
 		}
 		$class_validate = _class('validate');
 		$is_valid = false;
@@ -473,27 +473,27 @@ class yf_dynamic {
 				break;
 			}
 			if ($rule['param'] == 'user.email') {
-				$email_valid = $class_validate->valid_email($rule['data'], array(), array(), $error_msg);
+				$email_valid = $class_validate->valid_email($rule['data'], [], [], $error_msg);
 				if (!$email_valid) {
 					break;
 				}
 			}
 			$fname = (string)$rule['func'];
-			$is_valid = $class_validate->$fname($rule['data'], array('param' => $rule['param']), array(), $error_msg);
+			$is_valid = $class_validate->$fname($rule['data'], ['param' => $rule['param']], [], $error_msg);
 			if (!$is_valid) {
 				if (!$error_msg) {
-					$error_msg = t('form_validate_'.$rule['func'], array('%field' => $rule['field'], '%param' => $rule['param']));
+					$error_msg = t('form_validate_'.$rule['func'], ['%field' => $rule['field'], '%param' => $rule['param']]);
 				}
 				break;
 			}
 		}
 		if ($errors) {
-			$out = array('error' => $errors);
+			$out = ['error' => $errors];
 		} else {
 			if ($is_valid) {
-				$out = array('ok' => 1);
+				$out = ['ok' => 1];
 			} else {
-				$out = array('ko' => 1);
+				$out = ['ko' => 1];
 			}
 		}
 		if ($error_msg) {
@@ -530,9 +530,9 @@ class yf_dynamic {
 	/**
 	* Helper to output placeholder image, by default output is data/image
 	*/
-	function placeholder_img($extra = array()) {
+	function placeholder_img($extra = []) {
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$w = (int)$extra['width'];
 		$h = (int)$extra['height'];
@@ -540,15 +540,15 @@ class yf_dynamic {
 			$extra['src'] = url('/dynamic/placeholder/'.$w.'x'.$h);
 		} else {
 			require_once YF_PATH.'share/functions/yf_placeholder_img.php';
-			$img_data = yf_placeholder_img($w, $h, array('no_out' => true) + (array)$extra);
+			$img_data = yf_placeholder_img($w, $h, ['no_out' => true] + (array)$extra);
 			$extra['src'] = 'data:image/png;base64,'.base64_encode($img_data);
 		}
-		return '<img'._attrs($extra, array('src', 'type', 'class', 'id')).' />';
+		return '<img'._attrs($extra, ['src', 'type', 'class', 'id']).' />';
 	}
 
 	/**
 	*/
-	function preview($extra = array()) {
+	function preview($extra = []) {
 		conf('ROBOTS_NO_INDEX', true);
 		no_graphics(true);
 		if (main()->USER_ID != 1) {

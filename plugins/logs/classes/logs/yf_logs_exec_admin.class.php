@@ -10,9 +10,9 @@
 class yf_logs_exec_admin {
 
 	/** @var array Stop-list for logging (REGEXPs allowed here) */
-	public $STOP_LIST				= array(
+	public $STOP_LIST				= [
 #		'task=(login|logout)',
-	);
+	];
 	/** @var bool */
 	public $USE_STOP_LIST			= true;
 	/** @var bool */
@@ -31,7 +31,7 @@ class yf_logs_exec_admin {
 	/**
 	*/
 	function _init () {
-		if (!$this->LOG_DRIVER || !in_array($this->LOG_DRIVER, array('db', 'file'))) {
+		if (!$this->LOG_DRIVER || !in_array($this->LOG_DRIVER, ['db', 'file'])) {
 			$this->LOG_DRIVER = 'file';
 		}
 	}
@@ -74,7 +74,7 @@ class yf_logs_exec_admin {
 		if (main()->is_console()) {
 			$query_string = http_build_query($_GET);
 		}
-		$data = array(
+		$data = [
 			'admin_id'		=> (int)main()->ADMIN_ID,
 			'admin_group'	=> (int)main()->ADMIN_GROUP,
 			'date'			=> time(),
@@ -88,7 +88,7 @@ class yf_logs_exec_admin {
 			'page_size'		=> (int)tpl()->_output_body_length,
 			'site_id'		=> (int)conf('SITE_ID'),
 			'server_id'		=> (int)conf('SERVER_ID'),
-		);
+		];
 		if ($this->LOG_DRIVER == 'db') {
 			$sql = db()->insert_safe('log_admin_exec', $data, $as_sql = true);
 			db()->_add_shutdown_query($sql);

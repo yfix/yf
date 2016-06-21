@@ -1,7 +1,7 @@
 <?php
  
 class bash_colors {
-	private $fg_colors = array(
+	private $fg_colors = [
 		'black' => '0;30',
 		'dark_gray' => '1;30',
 		'blue' => '0;34',
@@ -18,8 +18,8 @@ class bash_colors {
 		'yellow' => '1;33',
 		'light_gray' => '0;37',
 		'white' => '1;37',
-	);
-	private $bg_colors = array(
+	];
+	private $bg_colors = [
 		'black' => '40',
 		'red' => '41',
 		'green' => '42',
@@ -29,7 +29,7 @@ class bash_colors {
 		'cyan' => '46',
 		'light_gray' => '47',
 		'white' => '107',
-	);
+	];
 	public function apply($string, $fg_color = null, $bg_color = null) {
 		$colored_string = '';
 		if (isset($this->fg_colors[$fg_color])) {

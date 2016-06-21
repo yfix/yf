@@ -17,10 +17,10 @@ class yf_locale_editor_export {
 				_re('Please select language to export');
 			}
 			$cur_locale = !empty($_POST['lang_code']) ? $_POST['lang_code'] : 'en';
-			$cur_lang_info = array(
+			$cur_lang_info = [
 				'locale'	=> $cur_locale,
 				'name'		=> $this->_cur_langs[$cur_locale],
-			);
+			];
 			if (!$IS_TEMPLATE) {
 				$Q = db()->query('SELECT * FROM '.db('locale_translate').' WHERE locale = "'._es($cur_locale).'"');
 				while ($A = db()->fetch_assoc($Q)) {
@@ -52,10 +52,10 @@ class yf_locale_editor_export {
 						continue;
 					}
 				}
-				$tr_array[$A['id']] = array(
+				$tr_array[$A['id']] = [
 					'source'		=> trim($source),
 					'translation'	=> trim($translation),
-				);
+				];
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -114,7 +114,7 @@ class yf_locale_editor_export {
 			}
 			$this->_used_locations[$cur_location] = $cur_location.' ('.intval($num_vars).')';
 		}
-		$replace = array(
+		$replace = [
 			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
 			'back_link'			=> './?object='.$_GET['object'],
 			'error_message'		=> _e(),
@@ -122,7 +122,7 @@ class yf_locale_editor_export {
 			'file_formats_box'	=> $this->_box('file_format',	'csv'),
 			'location_box'		=> $this->_box('location',		-1),
 			'modules_box'		=> $this->_box('module',		-1),
-		);
+		];
 		return tpl()->parse($_GET['object'].'/export_vars', $replace);
 	}
 

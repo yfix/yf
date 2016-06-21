@@ -35,11 +35,11 @@ class yf_manage_servers {
 		}
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
-			->validate(array('ip' => 'trim|required|valid_ip'))
-			->db_update_if_ok(self::table, array('ip','role','name','hostname','comment'), 'id='.$a['id'])
+			->validate(['ip' => 'trim|required|valid_ip'])
+			->db_update_if_ok(self::table, ['ip','role','name','hostname','comment'], 'id='.$a['id'])
 			->on_after_update(function() {
-				cache_del(array('servers','server_roles'));
-				common()->admin_wall_add(array('server updated: '.$_POST['ip'].'', $a['id']));
+				cache_del(['servers','server_roles']);
+				common()->admin_wall_add(['server updated: '.$_POST['ip'].'', $a['id']]);
 			})
 			->text('ip')
 			->text('role')
@@ -55,11 +55,11 @@ class yf_manage_servers {
 	function add() {
 		$a = $_POST;
 		return form($a)
-			->validate(array('ip' => 'trim|required|valid_ip|is_unique[core_servers.ip]'))
-			->db_insert_if_ok(self::table, array('ip','role','name','hostname','comment'), array())
+			->validate(['ip' => 'trim|required|valid_ip|is_unique[core_servers.ip]'])
+			->db_insert_if_ok(self::table, ['ip','role','name','hostname','comment'], [])
 			->on_after_update(function() {
-				cache_del(array('servers','server_roles'));
-				common()->admin_wall_add(array('server added: '.$_POST['ip'].'', db()->insert_id()));
+				cache_del(['servers','server_roles']);
+				common()->admin_wall_add(['server added: '.$_POST['ip'].'', db()->insert_id()]);
 			})
 			->text('ip')
 			->text('role')
@@ -73,18 +73,18 @@ class yf_manage_servers {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => self::table));
+		return _class('admin_methods')->delete(['table' => self::table]);
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => self::table));
+		return _class('admin_methods')->active(['table' => self::table]);
 	}
 
 	/**
 	*/
-	function _hook_widget__servers_list ($params = array()) {
+	function _hook_widget__servers_list ($params = []) {
 // TODO
 	}
 }

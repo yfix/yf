@@ -11,42 +11,42 @@ class yf_manage_tips {
 		foreach ((array)$data as $k => $v) {
 			$data[$k]['text'] = strip_tags($v['text']);
 		}
-		return table($data, array(
+		return table($data, [
 				'condensed' => true,
 				'pager_records_on_page' => 1000,
 				'group_by' => 'name',
-			))
-			->text('name', array('link' => url('/@object/edit/%id')))
+			])
+			->text('name', ['link' => url('/@object/edit/%id')])
 			->lang('locale')
 			->text('text')
-			->btn_edit(array('no_ajax' => 1, 'btn_no_text' => 1))
-			->btn_delete(array('btn_no_text' => 1))
+			->btn_edit(['no_ajax' => 1, 'btn_no_text' => 1])
+			->btn_delete(['btn_no_text' => 1])
 			->btn_active()
-			->header_add(array('no_ajax' => 1));
+			->header_add(['no_ajax' => 1]);
 	}
 
 	/**
 	*/
 	function add() {
-		$a = array();
+		$a = [];
 		$a['back_link'] = url('/@object');
 		!$a['locale'] && $a['locale'] = conf('language');
 		$_this = $this;
 		return form((array)$_POST + (array)$a)
-			->validate(array(
+			->validate([
 				'__before__'=> 'trim',
 				'name' => 'required',
 				'text' => 'required',
 				'locale' => 'required',
-			))
-			->insert_if_ok(self::table, array('name','text','active','locale'))
+			])
+			->insert_if_ok(self::table, ['name','text','active','locale'])
 			->on_after_update(function() use ($_this) {
 				$id = db()->insert_id();
 				module_safe('manage_revisions')->add($_this::table, $id, 'add');
 				js_redirect(url('/@object/edit/'.$id));
 			})
 			->text('name')
-			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+			->textarea('text', ['id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => ['config' => _class('admin_methods')->_get_cke_config()]])
 			->locale_box('locale')
 			->active_box()
 			->save_and_back();
@@ -62,24 +62,24 @@ class yf_manage_tips {
 		$a['back_link'] = url('/@object');
 		$_this = $this;
 		return form((array)$_POST + (array)$a)
-			->validate(array(
+			->validate([
 				'__before__'=> 'trim',
 				'name' => 'required',
 				'text' => 'required',
-			))
-			->update_if_ok(self::table, array('name','text','active','locale'))
+			])
+			->update_if_ok(self::table, ['name','text','active','locale'])
 			->on_before_update(function() use ($a, $_this) {
-				module_safe('manage_revisions')->add(array(
+				module_safe('manage_revisions')->add([
 					'object_name'	=> $_this::table,
 					'object_id'		=> $a['id'],
 					'old'			=> $a,
 					'new'			=> $_POST,
 					'action'		=> 'update',
-				));
+				]);
 			})
 			->container($this->_get_lang_links($a['locale'], $a['name'], 'edit'))
 			->text('name')
-			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+			->textarea('text', ['id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => ['config' => _class('admin_methods')->_get_cke_config()]])
 			->active_box()
 			->save_and_back();
 	}
@@ -87,19 +87,19 @@ class yf_manage_tips {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => self::table, 'revisions' => true));
+		return _class('admin_methods')->delete(['table' => self::table, 'revisions' => true]);
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => self::table, 'revisions' => true));
+		return _class('admin_methods')->active(['table' => self::table, 'revisions' => true]);
 	}
 
 	/**
 	*/
 	function clone_item() {
-		return _class('admin_methods')->clone_item(array('table' => self::table, 'revisions' => true));
+		return _class('admin_methods')->clone_item(['table' => self::table, 'revisions' => true]);
 	}
 
 	/**
@@ -112,12 +112,12 @@ class yf_manage_tips {
 			$this->pages_langs[$p['name']][$p['locale']] = $p['locale'];
 		}
 
-		$lang_links = array();
+		$lang_links = [];
 		foreach (main()->get_data('locale_langs') as $lang => $l) {
 			$is_selected = ($lang === $cur_lang);
 			$icon = 'bfh-flag-'.$this->lang_def_country[$lang];
 			if (!isset($this->pages_langs[$cur_name][$lang])) {
-				$icon = array('fa fa-plus', $icon);
+				$icon = ['fa fa-plus', $icon];
 				$class = 'btn-warning';
 			} else {
 				$class = 'btn-success'. ($is_selected ? ' disabled' : '');

@@ -26,9 +26,9 @@ class yf_manage_shop_send_sms {
 			$replace['phone'] = $_GET['phone'];
 		}
 		return form2($replace)
-			->text('phone',array('required'=>1))
-			->textarea('text',array('required'=>1))
-			->save(array('value' => 'Send sms'));
+			->text('phone',['required'=>1])
+			->textarea('text',['required'=>1])
+			->save(['value' => 'Send sms']);
 		
 	}
 	

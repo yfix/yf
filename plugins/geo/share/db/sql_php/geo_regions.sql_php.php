@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'country' => array(
+		],
+		'country' => [
 			'name' => 'country',
 			'type' => 'char',
 			'length' => 2,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'code' => array(
+		],
+		'code' => [
 			'name' => 'code',
 			'type' => 'char',
 			'length' => 2,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name_eng' => array(
+		],
+		'name_eng' => [
 			'name' => 'name_eng',
 			'type' => 'varchar',
 			'length' => 255,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'capital_id' => array(
+		],
+		'capital_id' => [
 			'name' => 'capital_id',
 			'type' => 'int',
 			'length' => 10,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -104,37 +104,37 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+			],
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'country' => array(
+			],
+		],
+		'country' => [
 			'name' => 'country',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'country' => 'country',
-			),
-		),
-		'code' => array(
+			],
+		],
+		'code' => [
 			'name' => 'code',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'code' => 'code',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

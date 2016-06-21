@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/yfix/php-amqplib.git' => 'php_amqplib/'),
-	'autoload_config' => array('php_amqplib/PhpAmqpLib/' => 'PhpAmqpLib'),
+$config = [
+	'git_urls' => ['https://github.com/yfix/php-amqplib.git' => 'php_amqplib/'],
+	'autoload_config' => ['php_amqplib/PhpAmqpLib/' => 'PhpAmqpLib'],
 	'example' => function() {
 		$host = 'localhost'; 
 		$port = '5672'; 
@@ -12,5 +12,5 @@ $config = array(
 		$connection = new PhpAmqpLib\Connection\AMQPConnection($host, $port, $login, $pswd);
 		var_dump($connection);
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

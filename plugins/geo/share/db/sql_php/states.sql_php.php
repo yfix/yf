@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 32,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'code' => array(
+		],
+		'code' => [
 			'name' => 'code',
 			'type' => 'varchar',
 			'length' => 32,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'country_code' => array(
+		],
+		'country_code' => [
 			'name' => 'country_code',
 			'type' => 'char',
 			'length' => 2,
@@ -60,40 +60,40 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'code' => array(
+			],
+		],
+		'code' => [
 			'name' => 'code',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'code' => 'code',
-			),
-		),
-		'state' => array(
+			],
+		],
+		'state' => [
 			'name' => 'state',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'name' => 'name',
-			),
-		),
-		'country_code' => array(
+			],
+		],
+		'country_code' => [
 			'name' => 'country_code',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'country_code' => 'country_code',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

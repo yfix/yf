@@ -1,12 +1,12 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/yfix/TouchSwipe-Jquery-Plugin/master/jquery.touchSwipe.min.js',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

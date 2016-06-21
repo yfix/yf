@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'user_id' => array(
+return [
+	'fields' => [
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'verified_url_1' => array(
+		],
+		'verified_url_1' => [
 			'name' => 'verified_url_1',
 			'type' => 'varchar',
 			'length' => 255,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'verified_url_2' => array(
+		],
+		'verified_url_2' => [
 			'name' => 'verified_url_2',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'verified_url_3' => array(
+		],
+		'verified_url_3' => [
 			'name' => 'verified_url_3',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'site_url' => array(
+		],
+		'site_url' => [
 			'name' => 'site_url',
 			'type' => 'varchar',
 			'length' => 255,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'whois' => array(
+		],
+		'whois' => [
 			'name' => 'whois',
 			'type' => 'text',
 			'length' => NULL,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'status' => array(
+		],
+		'status' => [
 			'name' => 'status',
 			'type' => 'enum',
 			'length' => NULL,
@@ -104,14 +104,14 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				'new' => 'new',
 				'waiting' => 'waiting',
 				'verified' => 'verified',
 				'declined' => 'declined',
-			),
-		),
-		'admin_comment' => array(
+			],
+		],
+		'admin_comment' => [
 			'name' => 'admin_comment',
 			'type' => 'text',
 			'length' => NULL,
@@ -125,8 +125,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'submit_date' => array(
+		],
+		'submit_date' => [
 			'name' => 'submit_date',
 			'type' => 'int',
 			'length' => 10,
@@ -140,8 +140,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'int',
 			'length' => 10,
@@ -155,33 +155,33 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'user_id' => 'user_id',
-			),
-		),
-		'status' => array(
+			],
+		],
+		'status' => [
 			'name' => 'status',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'status' => 'status',
-			),
-		),
-		'last_update' => array(
+			],
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'last_update' => 'last_update',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'var_id' => array(
+return [
+	'fields' => [
+		'var_id' => [
 			'name' => 'var_id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'value' => array(
+		],
+		'value' => [
 			'name' => 'value',
 			'type' => 'text',
 			'length' => NULL,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'locale' => array(
+		],
+		'locale' => [
 			'name' => 'locale',
 			'type' => 'varchar',
 			'length' => 12,
@@ -45,20 +45,20 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'var_id' => 'var_id',
 				'locale' => 'locale',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

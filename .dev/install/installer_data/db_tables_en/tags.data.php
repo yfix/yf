@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'object_name' => 'blog',
     'object_id' => '1',
@@ -11,9 +11,9 @@ return array (
     'text' => 'hello',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'object_name' => 'gallery',
     'object_id' => '3',
@@ -23,5 +23,5 @@ return array (
     'text' => 'thats africa',
     'active' => '1',
     'activity' => '0',
-  ),
-);
+  ],
+];

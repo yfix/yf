@@ -64,17 +64,17 @@ class yf_file_manager {
 
 		if (!empty($dir_contents['dirs']) || !empty($dir_contents['files'])) {
 			foreach ((array)$dir_contents['dirs'] as $k => $v) {
-				$replace2 = array(
+				$replace2 = [
 					'encoded_name'	=> urlencode($v),
 					'name'			=> $v,
-					'go_into_link'	=> './?object='.$_GET['object'].'&dir_name='.urlencode($dir_name.'/'.$v). _add_get(array('dir_name')),
+					'go_into_link'	=> './?object='.$_GET['object'].'&dir_name='.urlencode($dir_name.'/'.$v). _add_get(['dir_name']),
 					'color'			=> $this->color_dir,
 					'm_date'		=> date ('Y-m-d H:i:s', filemtime($cur_dir_name. '/'. $v)),
 					'perms'			=> $this->_get_perms($cur_dir_name. '/'. $v),
 					'size'			=> 0,
 					'is_dir'		=> 1,
 					'is_file'		=> 0,
-				);
+				];
 				$items .= tpl()->parse($_GET['object'].'/item', $replace2);
 			}
 			foreach ((array)$dir_contents['files'] as $k => $v) {
@@ -85,7 +85,7 @@ class yf_file_manager {
 				}
 				$file_size = filesize($cur_dir_name. '/'. $v);
 				$total_files_size += $file_size;
-				$replace2 = array(
+				$replace2 = [
 					'encoded_name'	=> urlencode($v),
 					'name'			=> $v,
 					'go_into_link'	=> '',
@@ -95,29 +95,29 @@ class yf_file_manager {
 					'size'			=> $file_size,
 					'is_dir'		=> 0,
 					'is_file'		=> 1,
-				);
+				];
 				$items .= tpl()->parse($_GET['object'].'/item', $replace2);
 			}
 		}
 		clearstatcache();
 
 		$_tmp_path = '';
-		$_tmp_array = array();
+		$_tmp_array = [];
 		foreach ((array)explode('/', $cur_dir_name) as $_folder) {
 			$_tmp_path .= $_folder.'/';
-			$_tmp_array[] = '<a href="./?object='.$_GET['object'].'&dir_name='.urlencode($_tmp_path)._add_get(array('dir_name')).'" class="btn btn-mini btn-xs">'._prepare_html($_folder).'</a>';
+			$_tmp_array[] = '<a href="./?object='.$_GET['object'].'&dir_name='.urlencode($_tmp_path)._add_get(['dir_name']).'" class="btn btn-mini btn-xs">'._prepare_html($_folder).'</a>';
 		}
 		if ($_tmp_array) {
 			$cur_dir_name = implode('/', $_tmp_array);
 		}
-		$replace = array(
-			'form_action'			=> './?object='.$_GET['object']._add_get(array('dir_name')).'&action=',
-			'upload_form_action'	=> './?object='.$_GET['object'].'&action=upload_file&dir_name='.$encoded_cur_dir._add_get(array('dir_name')),
-			'mkdir_form_action'		=> './?object='.$_GET['object'].'&action=make_dir&dir_name='.$encoded_cur_dir._add_get(array('dir_name')),
+		$replace = [
+			'form_action'			=> './?object='.$_GET['object']._add_get(['dir_name']).'&action=',
+			'upload_form_action'	=> './?object='.$_GET['object'].'&action=upload_file&dir_name='.$encoded_cur_dir._add_get(['dir_name']),
+			'mkdir_form_action'		=> './?object='.$_GET['object'].'&action=make_dir&dir_name='.$encoded_cur_dir._add_get(['dir_name']),
 			'cur_dir_name'			=> $cur_dir_name,
 			'encoded_dir_name'		=> $encoded_cur_dir,
-			'go_up_level_link'		=> './?object='.$_GET['object'].'&dir_name='.urlencode($path_info_up['dirname'])._add_get(array('dir_name')),
-			'go_home_link'			=> './?object='.$_GET['object']._add_get(array('dir_name')),
+			'go_up_level_link'		=> './?object='.$_GET['object'].'&dir_name='.urlencode($path_info_up['dirname'])._add_get(['dir_name']),
+			'go_home_link'			=> './?object='.$_GET['object']._add_get(['dir_name']),
 			'total_files_size'		=> intval($total_files_size),
 			'total_files'			=> intval(count($dir_contents['files'])),
 			'total_dirs'			=> intval(count($dir_contents['dirs'])),
@@ -125,7 +125,7 @@ class yf_file_manager {
 			'default_email'			=> conf('webmaster_mail'),
 			'default_chmod'			=> 755,
 			'items'					=> $items,
-		);
+		];
 		return tpl()->parse($_GET['object'].'/main', $replace);
 	}
 
@@ -133,10 +133,10 @@ class yf_file_manager {
 	* Return sorted directory contents
 	*/
 	function _get_dir_contents($abs_dir_name) {
-		$contents = array(
-			'dirs'	=> array(), 
-			'files'	=> array(),
-		);
+		$contents = [
+			'dirs'	=> [], 
+			'files'	=> [],
+		];
 		$handle = opendir($abs_dir_name);
 		while (false !== ($tmp_file = readdir($handle))) { 
 			if ($tmp_file == '.' || $tmp_file == '..') {
@@ -184,7 +184,7 @@ class yf_file_manager {
 			$file_name	= str_replace("\\", '/', $dir_name.'/'.$name);
 			$file_path	= $file_name;
 		}
-		$_tmp_array = array();
+		$_tmp_array = [];
 		$tmp_path = '/';
 		foreach ((array)explode('/', dirname($file_name)) as $_folder) {
 			if ($_folder) {
@@ -196,18 +196,18 @@ class yf_file_manager {
 			$file_name = '/'. implode('/', $_tmp_array). '/'._prepare_html(basename($file_name), 0);
 		}
 		$file_text = _prepare_html(file_get_contents($file_path), 0);
-		$replace = array(
+		$replace = [
 			'back_link'	=> url('/@object/show/'.urlencode($_REQUEST['dir_name'])),
-		);
+		];
 		$div_id = 'editor_html';
 		$hidden_id = 'file_text_hidden';
 		return '<h4>View: '.$file_name. '</h4>'.
 			form($replace)
-			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$file_text.'</div>', '', array(
+			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$file_text.'</div>', '', [
 				'id'	=> $div_id,
 				'wide'	=> 1,
-				'ace_editor' => array('mode' => common()->get_file_ext($file_path)),
-			))
+				'ace_editor' => ['mode' => common()->get_file_ext($file_path)],
+			])
 			->hidden($hidden_id)
 		;
 	}
@@ -243,7 +243,7 @@ class yf_file_manager {
 			file_put_contents($file_name, $_POST['file_text_hidden']);
 			return js_redirect('/@object/show/'.urlencode($_GET['dir_name']));
 		}
-		$_tmp_array = array();
+		$_tmp_array = [];
 		$tmp_path = '/';
 		foreach ((array)explode('/', dirname($file_name)) as $_folder) {
 			if ($_folder) {
@@ -255,10 +255,10 @@ class yf_file_manager {
 			$file_name = '/'. implode('/', $_tmp_array). '/'._prepare_html(basename($file_name), 0);
 		}
 		$file_text = _prepare_html(file_get_contents($file_path), 0);
-		$replace = array(
+		$replace = [
 			'form_action'	=> url('/@object/@action/'.urlencode($file_path)),
 			'back_link'		=> url('/@object/show/'.urlencode($_REQUEST['dir_name'])),
-		);
+		];
 		$div_id = 'editor_html';
 		$hidden_id = 'file_text_hidden';
 		$ace_mode = common()->get_file_ext($file_path);
@@ -269,14 +269,14 @@ class yf_file_manager {
 			$("#'.$div_id.'").height(h);
 		');
 		return '<h4>Edit: '.$file_name. '</h4>'.
-			form($replace, array(
+			form($replace, [
 				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
-			))
-			->container('<div id="'.$div_id.'" style="width: 100%; min-height: 500px;">'.$file_text.'</div>', '', array(
+			])
+			->container('<div id="'.$div_id.'" style="width: 100%; min-height: 500px;">'.$file_text.'</div>', '', [
 				'id'	=> $div_id,
 				'wide'	=> 1,
-				'ace_editor' => array('mode' => $ace_mode, 'hScrollBarAlwaysVisible' => false, 'vScrollBarAlwaysVisible' => false),
-			))
+				'ace_editor' => ['mode' => $ace_mode, 'hScrollBarAlwaysVisible' => false, 'vScrollBarAlwaysVisible' => false],
+			])
 			->hidden($hidden_id)
 			->save_and_back();
 	}
@@ -295,12 +295,12 @@ class yf_file_manager {
 
 		foreach ((array)$dir_contents['dirs'] as $cur_name) {
 			$dir_next = $dir_name.'/'.$cur_name;
-			$replace = array(
+			$replace = [
 				'color'			=> $this->color_dir,
 				'name'			=> $cur_name,
 				'encoded_name'	=> urlencode($dir_next),
 				'padding'		=> ($level - 1) * 30,
-			);
+			];
 			$body .= tpl()->parse($_GET['object'].'/copy_dir_item', $replace);
 			if ($level < $this->_copy_dir_deepness) {
 				$body .= $this->_get_all_dirs($dir_next, $level + 1);
@@ -313,7 +313,7 @@ class yf_file_manager {
 	*/
 	function copy_item() {
 		$dir_name = urldecode($_POST['dir_name']);
-		$items_to_copy = array();
+		$items_to_copy = [];
 		foreach ((array)$_POST as $k => $v) {
 			$tmp = substr($k, 0, 2);
 			if ($tmp != 'd_' && $tmp != 'f_') continue;
@@ -327,20 +327,20 @@ class yf_file_manager {
 			}
 			$file_name	= str_replace("\\", '/', $dir_name.'/'.$v);
 			$items_to_copy[] = $tmp.$file_name;
-			$replace2 = array(
+			$replace2 = [
 				'color'		=> $color,
 				'file_name'	=> $file_name,
 				'type'		=> $type,
-			);
+			];
 			$items .= tpl()->parse($_GET['object'].'/copy_item', $replace2);
 		}
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=copy_item2&dir_name='.$_POST['dir_name']._add_get(array('dir_name')),
+		$replace = [
+			'form_action'	=> './?object='.$_GET['object'].'&action=copy_item2&dir_name='.$_POST['dir_name']._add_get(['dir_name']),
 			'items'			=> $items,
 			'items_to_copy'	=> urlencode(serialize($items_to_copy)),
 			'dest_dirs'		=> $this->_get_all_dirs(dirname($dir_name)),
-			'back'			=> back('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name'))),
-		);
+			'back'			=> back('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(['dir_name'])),
+		];
 		return tpl()->parse($_GET['object'].'/copy', $replace);
 	}
 
@@ -381,7 +381,7 @@ class yf_file_manager {
 							}
 						}
 					}
-					js_redirect('./?object='.$_GET['object'].'&dir_name='.$_GET['dir_name']._add_get(array('dir_name')));
+					js_redirect('./?object='.$_GET['object'].'&dir_name='.$_GET['dir_name']._add_get(['dir_name']));
 				} else $body .= t('please_select_destinatin_folders');
 			} else $body .= t('please_select_items_to_copy');
 		} else $body .= t('please_select_items_to_copy');
@@ -413,7 +413,7 @@ class yf_file_manager {
 				@unlink($file_name);
 			}
 		}
-		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name')));
+		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(['dir_name']));
 	}
 
 	/**
@@ -434,7 +434,7 @@ class yf_file_manager {
 			chmod($file_name, '0'.$_POST['new_chmod']);
 		}
 		chdir($_old_dir_name);
-		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name')));
+		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(['dir_name']));
 	}
 
 	/**
@@ -449,7 +449,7 @@ class yf_file_manager {
 		$_old_dir_name	= str_replace("\\", '/', getcwd());
 		chdir($dir_name);
 
-		$item_list = array();
+		$item_list = [];
 		foreach ((array)$_POST as $k => $v) {
 			$tmp = substr($k, 0, 2);
 			if ($tmp != 'd_' && $tmp != 'f_') {
@@ -464,7 +464,7 @@ class yf_file_manager {
 		chdir($_old_dir_name);
 // TODO: replace making ZIP with php built-in http://php.net/manual/en/zip.examples.php
 #		_class_safe('pclzip', 'classes/common/')->create($item_list);
-		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name')));
+		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(['dir_name']));
 	}
 
 	/**
@@ -490,7 +490,7 @@ class yf_file_manager {
 #			_class_safe('pclzip', 'classes/common/')->extract();
 		}
 		chdir($_old_dir_name);
-		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name')));
+		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(['dir_name']));
 	}
 
 	/**
@@ -519,7 +519,7 @@ class yf_file_manager {
 				exit();
 			} else {
 				chdir($_old_dir_name);
-				return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name')));
+				return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(['dir_name']));
 			}
 		}
 	}
@@ -532,7 +532,7 @@ class yf_file_manager {
 		$_old_dir_name	= str_replace("\\", '/', getcwd());
 		chdir($dir_name);
 
-		$attach = array();
+		$attach = [];
 		foreach ((array)$_POST as $k => $v) {
 			$file_name	= str_replace("\\", '/', $dir_name.'/'.$v);
 
@@ -558,7 +558,7 @@ class yf_file_manager {
 			$result = common()->send_mail('PHP-Mailer', $email_from, $email_to, $to_name, $subject, $TEXT, $HTML, $attach);
 		}
 		chdir($_old_dir_name);
-		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name')));
+		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(['dir_name']));
 	}
 
 	/**
@@ -602,7 +602,7 @@ class yf_file_manager {
 
 	/**
 	*/
-	function _hook_widget__file_manager ($params = array()) {
+	function _hook_widget__file_manager ($params = []) {
 // TODO
 	}
 }

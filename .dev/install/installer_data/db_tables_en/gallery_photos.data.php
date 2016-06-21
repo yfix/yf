@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'id2' => '1',
     'user_id' => '1',
@@ -28,9 +28,9 @@ return array (
     'votes_sum' => '0',
     'last_vote_date' => '0',
     'allow_tagging' => '1',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'id2' => '1',
     'user_id' => '1',
@@ -57,9 +57,9 @@ return array (
     'votes_sum' => '0',
     'last_vote_date' => '0',
     'allow_tagging' => '1',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'id2' => '1',
     'user_id' => '1',
@@ -86,9 +86,9 @@ return array (
     'votes_sum' => '0',
     'last_vote_date' => '0',
     'allow_tagging' => '1',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'id2' => '1',
     'user_id' => '5',
@@ -115,5 +115,5 @@ return array (
     'votes_sum' => '0',
     'last_vote_date' => '0',
     'allow_tagging' => '1',
-  ),
-);
+  ],
+];

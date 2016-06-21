@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'actor',
-	'fields' => array(
-		'actor_id' => array(
+	'fields' => [
+		'actor_id' => [
 			'name' => 'actor_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`actor_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT',
-		),
-		'first_name' => array(
+		],
+		'first_name' => [
 			'name' => 'first_name',
 			'type' => 'varchar',
 			'length' => 45,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`first_name` varchar(45) NOT NULL',
-		),
-		'last_name' => array(
+		],
+		'last_name' => [
 			'name' => 'last_name',
 			'type' => 'varchar',
 			'length' => 45,
@@ -49,8 +49,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`last_name` varchar(45) NOT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -66,30 +66,30 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'actor_id' => 'actor_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`actor_id`)',
-		),
-		'idx_actor_last_name' => array(
+		],
+		'idx_actor_last_name' => [
 			'name' => 'idx_actor_last_name',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'last_name' => 'last_name',
-			),
+			],
 			'raw' => 'KEY `idx_actor_last_name` (`last_name`)',
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

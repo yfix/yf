@@ -17,7 +17,7 @@ class LiqPay {
 	}
 
 	public function key( $name = 'public', $value = null ) {
-		if( !in_array( $name, array( 'public', 'private' ) ) ) {
+		if( !in_array( $name, [ 'public', 'private' ] ) ) {
 			return( null );
 		}
 		$_name  = '_key_' . $name;
@@ -28,7 +28,7 @@ class LiqPay {
 		return( $_value );
 	}
 
-	public function api( $url, $options = array() ) {
+	public function api( $url, $options = [] ) {
 		$url = 'https://www.liqpay.com/api/'.$url;
 		$key_public  = $this->_key_public;
 		$key_private = $this->_key_private;
@@ -55,7 +55,7 @@ class LiqPay {
 
 	public function signature( $options, $is_request = true ) {
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$data = array();
+		$data = [];
 		array_push( $data
 			, $this->key( 'private' )
 			, $_amount

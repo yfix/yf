@@ -1,21 +1,21 @@
 <?php
 
 $path = YF_PATH . 'templates/user/js/ng/payment/';
-$content = array(
+$content = [
 	file_get_contents( $path . 'balance.js' ),
 	file_get_contents( $path . 'balance.service.js' ),
-);
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array(
+];
+return [
+	'versions' => [
+		'master' => [
+			'js' => [
 				'content' => $content,
-			),
-		),
-	),
-	'require' => array(
-		'asset' => array(
+			],
+		],
+	],
+	'require' => [
+		'asset' => [
 			'ng-app',
-		),
-	),
-);
+		],
+	],
+];

@@ -2,13 +2,13 @@
 
 return function() {
 
-return array(
-	'versions' => array('master' => array(
-		'css' => array('
-		'),
-		'js' => array('
-		'),
-		'jquery' => array(
+return [
+	'versions' => ['master' => [
+		'css' => ['
+		'],
+		'js' => ['
+		'],
+		'jquery' => [
 <<<END
 	// Prepare html for the tips inline editor
 	$("body").append("" 
@@ -117,13 +117,13 @@ return array(
 		_old_tip_text = "";
 	});
 END
-	))),
-	'require' => array(
+	]]],
+	'require' => [
 		'asset' => 'jquery',
-	),
-	'config' => array(
+	],
+	'config' => [
 		'no_cache' => true,
-	),
-);
+	],
+];
 
 };

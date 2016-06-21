@@ -107,7 +107,7 @@ class yf_url_to_absolute {
 	{
 		// multi-byte character explode
 		$inSegs  = preg_split( '!/!u', $path );
-		$outSegs = array( );
+		$outSegs = [ ];
 		foreach ( $inSegs as $seg )
 		{
 			if ( $seg == '' || $seg == '.' )

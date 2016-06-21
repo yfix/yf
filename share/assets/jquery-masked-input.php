@@ -1,12 +1,12 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/yfix/jquery.maskedinput/master/src/jquery.maskedinput.js',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

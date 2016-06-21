@@ -4,7 +4,7 @@ require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 class function_highlight_test extends yf_unit_tests {
 
-	var	$LANGS_TEST = array(
+	var	$LANGS_TEST = [
 		'photoshop cs2 download' => '<b>photoshop</b> <b>cs2</b> <b>download</b>',//English
 		'Quien esté familiarizado' => '<b>Quien</b> <b>esté</b> <b>familiarizado</b>',//Spanish
 		'poiché alcunei funzionalità' => '<b>poiché</b> <b>alcunei</b> <b>funzionalità</b>',//Italian
@@ -22,7 +22,7 @@ class function_highlight_test extends yf_unit_tests {
 		'käyttäjien myös' => '<b>käyttäjien</b> <b>myös</b>',//Greek
 		'coś się ściągnąć?' => '<b>coś</b> <b>się</b> <b>ściągnąć?</b>',//Polish
 		'möjligt för dig att hålla' => '<b>möjligt</b> <b>för</b> <b>dig</b> <b>att</b> <b>hålla</b>',//Swedish
-	);
+	];
 
 	public function test_main() {
 		foreach ((array)$this->LANGS_TEST as $test_item => $result_item){

@@ -1,16 +1,16 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '//cdn.rawgit.com/yfix/bootstrap-treeview/master/dist/bootstrap-treeview.min.js',
 			'css' => '//cdn.rawgit.com/yfix/bootstrap-treeview/master/dist/bootstrap-treeview.min.css',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+		],
+	],
+	'require' => [
+		'asset' => [
 			'jquery',
 #			'bootstrap-theme',
-		),
-	),
-);
+		],
+	],
+];

@@ -84,7 +84,7 @@ class yf_dir {
 	* Fast implementation with old functions opendir/readdir
 	*/
 	function scan_fast($start_dir, $pattern = '~.+~') {
-		$files = array();
+		$files = [];
 		$dh	= @opendir($start_dir);
 		if (!$dh) {
 			return $files;
@@ -109,7 +109,7 @@ class yf_dir {
 	* Recursive folder search, based on RecursiveDirectoryIterator 
 	*/
 	function riterate($folder, $pattern = '~.+~') {
-		$out = array();
+		$out = [];
 		$flags = FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::FOLLOW_SYMLINKS;
 		foreach(new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder, $flags)), $pattern, RegexIterator::GET_MATCH) as $path => $f) {
 			$out[] = $path;
@@ -142,7 +142,7 @@ class yf_dir {
 			return false;
 		}
 		$start_dir = rtrim($start_dir, '/');
-		$files	= array();
+		$files	= [];
 		$dh		= opendir($start_dir);
 		while (false !== ($f = readdir($dh))) {
 			if ($f == '.' || $f == '..') {
@@ -454,7 +454,7 @@ class yf_dir {
 		if (!$dir_name || !strlen($dir_name)) {
 			return 0;
 		}
-		$dir_name = rtrim(str_replace(array("\\", '//'), '/', $dir_name), '/');
+		$dir_name = rtrim(str_replace(["\\", '//'], '/', $dir_name), '/');
 		// Default dir mode
 		if (empty($dir_mode)) {
 			$dir_mode = 0777;
@@ -471,7 +471,7 @@ class yf_dir {
 		if (!strlen($start_folder)) {
 			$start_folder = INCLUDE_PATH;
 		}
-		$start_folder	= str_replace(array("\\", '//'), '/', realpath($start_folder).'/');
+		$start_folder	= str_replace(["\\", '//'], '/', realpath($start_folder).'/');
 		// Process given file name
 		if (!file_exists($dir_name)) {
 			$base_path = OS_WINDOWS ? '' : '/';
@@ -587,21 +587,21 @@ class yf_dir {
 	*/
 	function search($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find) {
 		if (!is_array($start_dirs)) {
-			$start_dirs = array($start_dirs);
+			$start_dirs = [$start_dirs];
 		}
 		if (!$pattern_find) {
 			return false;
 		}
 		if (!is_array($pattern_find)) {
-			$pattern_find = array($pattern_find);
+			$pattern_find = [$pattern_find];
 		}
-		$files = array();
+		$files = [];
 		foreach ((array)$start_dirs as $_dir_name) {
 			foreach ((array)$this->scan_dir($_dir_name, 1, $pattern_include, $pattern_exclude) as $_file_path) {
 				$files[] = $_file_path;
 			}
 		}
-		$files_matched = array();
+		$files_matched = [];
 		foreach ((array)$files as $_id => $_file_path) {
 			$contents = file_get_contents($_file_path);
 			foreach ((array)$pattern_find as $p_find) {
@@ -624,15 +624,15 @@ class yf_dir {
 	* @return array of processed files
 	*/
 	function replace($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find, $pattern_replace) {
-		$files = array();
+		$files = [];
 		if (!is_array($start_dirs)) {
-			$start_dirs = array($start_dirs);
+			$start_dirs = [$start_dirs];
 		}
 		if (!$pattern_find || !isset($pattern_replace)) {
 			return false;
 		}
 		if (!is_array($pattern_find)) {
-			$pattern_find = array($pattern_find => $pattern_replace);
+			$pattern_find = [$pattern_find => $pattern_replace];
 		}
 		foreach ((array)$start_dirs as $_dir_name) {
 			foreach ((array)$this->scan_dir($_dir_name, 1, $pattern_include, $pattern_exclude) as $_file_path) {
@@ -641,7 +641,7 @@ class yf_dir {
 		}
 		foreach ((array)$files as $_id => $_file_path) {
 			$contents = file_get_contents($_file_path);
-			$what = array();
+			$what = [];
 			foreach ((array)$pattern_find as $p_find => $p_replace) {
 				if (preg_match($p_find, $contents)) {
 					$what[$p_find] = $p_replace;
@@ -662,7 +662,7 @@ class yf_dir {
 
 	/**
 	*/
-	function grep($pattern_find, $start_dirs, $pattern_path = '*', $extra = array()) {
+	function grep($pattern_find, $start_dirs, $pattern_path = '*', $extra = []) {
 		if (!$pattern_find) {
 			return false;
 		}
@@ -670,19 +670,19 @@ class yf_dir {
 			$start_dirs = APP_PATH;
 		}
 		if (!is_array($start_dirs)) {
-			$start_dirs = array($start_dirs);
+			$start_dirs = [$start_dirs];
 		}
 		if (!is_array($pattern_find)) {
-			$pattern_find = array($pattern_find);
+			$pattern_find = [$pattern_find];
 		}
-		$files = array();
+		$files = [];
 		foreach ((array)$start_dirs as $start_dir) {
 			$start_dir = rtrim($start_dir, '/');
 			foreach ((array)$this->rglob($start_dir, $pattern_path) as $path) {
 				$files[] = $path;
 			}
 		}
-		$matched = array();
+		$matched = [];
 		foreach ((array)$files as $_id => $path) {
 			if (isset($extra['exclude_paths']) && wildcard_compare($extra['exclude_paths'], $path)) {
 				continue;
@@ -709,7 +709,7 @@ class yf_dir {
 		$linecounter = $lines;
 		$pos = -2;
 		$beginning = false;
-		$text = array();
+		$text = [];
 		while ($linecounter > 0) {
 			$t = ' ';
 			while ($t != "\n") {
@@ -759,7 +759,7 @@ class yf_dir {
 		if (!empty($pattern_include) && is_string($pattern_include)) {
 			// Examples: "-f /\.(jpg|png)$/", -d /some_dir/
 			$try_modifier = substr($pattern_include, 0, 3);
-			if (in_array($try_modifier, array('-f ', '-d '))) {
+			if (in_array($try_modifier, ['-f ', '-d '])) {
 				$pattern_include = substr($pattern_include, 3);
 				$modifier = $try_modifier;
 			}
@@ -785,7 +785,7 @@ class yf_dir {
 		if (!empty($pattern_exclude) && is_string($pattern_exclude)) {
 			// Examples: "-f /\.(jpg|png)$/", -d /some_dir/
 			$try_modifier = substr($pattern_include, 0, 3);
-			if (in_array($try_modifier, array('-f ', '-d '))) {
+			if (in_array($try_modifier, ['-f ', '-d '])) {
 				$pattern_include = substr($pattern_include, 3);
 				$modifier = $try_modifier;
 			}

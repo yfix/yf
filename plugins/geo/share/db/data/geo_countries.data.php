@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   0 => 
-  array (
+  [
     'code' => 'AD',
     'code3' => 'AND',
     'num' => '020',
@@ -17,9 +17,9 @@ return array (
     'geoname_id' => '3041565',
     'capital_id' => '3041563',
     'active' => '0',
-  ),
+  ],
   1 => 
-  array (
+  [
     'code' => 'AE',
     'code3' => 'ARE',
     'num' => '784',
@@ -35,9 +35,9 @@ return array (
     'geoname_id' => '290557',
     'capital_id' => '292968',
     'active' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'code' => 'AF',
     'code3' => 'AFG',
     'num' => '004',
@@ -53,9 +53,9 @@ return array (
     'geoname_id' => '1149361',
     'capital_id' => '1138958',
     'active' => '0',
-  ),
+  ],
   3 => 
-  array (
+  [
     'code' => 'AG',
     'code3' => 'ATG',
     'num' => '028',
@@ -71,9 +71,9 @@ return array (
     'geoname_id' => '3576396',
     'capital_id' => '3576022',
     'active' => '0',
-  ),
+  ],
   4 => 
-  array (
+  [
     'code' => 'AI',
     'code3' => 'AIA',
     'num' => '660',
@@ -89,9 +89,9 @@ return array (
     'geoname_id' => '3573511',
     'capital_id' => '3573374',
     'active' => '0',
-  ),
+  ],
   5 => 
-  array (
+  [
     'code' => 'AL',
     'code3' => 'ALB',
     'num' => '008',
@@ -107,9 +107,9 @@ return array (
     'geoname_id' => '783754',
     'capital_id' => '3183875',
     'active' => '0',
-  ),
+  ],
   6 => 
-  array (
+  [
     'code' => 'AM',
     'code3' => 'ARM',
     'num' => '051',
@@ -125,9 +125,9 @@ return array (
     'geoname_id' => '174982',
     'capital_id' => '616052',
     'active' => '0',
-  ),
+  ],
   7 => 
-  array (
+  [
     'code' => 'AO',
     'code3' => 'AGO',
     'num' => '024',
@@ -143,9 +143,9 @@ return array (
     'geoname_id' => '3351879',
     'capital_id' => '2240449',
     'active' => '0',
-  ),
+  ],
   8 => 
-  array (
+  [
     'code' => 'AQ',
     'code3' => 'ATA',
     'num' => '010',
@@ -161,9 +161,9 @@ return array (
     'geoname_id' => '6697173',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   9 => 
-  array (
+  [
     'code' => 'AR',
     'code3' => 'ARG',
     'num' => '032',
@@ -179,9 +179,9 @@ return array (
     'geoname_id' => '3865483',
     'capital_id' => '3435910',
     'active' => '0',
-  ),
+  ],
   10 => 
-  array (
+  [
     'code' => 'AS',
     'code3' => 'ASM',
     'num' => '016',
@@ -197,9 +197,9 @@ return array (
     'geoname_id' => '5880801',
     'capital_id' => '5881576',
     'active' => '0',
-  ),
+  ],
   11 => 
-  array (
+  [
     'code' => 'AT',
     'code3' => 'AUT',
     'num' => '040',
@@ -215,9 +215,9 @@ return array (
     'geoname_id' => '2782113',
     'capital_id' => '2761369',
     'active' => '0',
-  ),
+  ],
   12 => 
-  array (
+  [
     'code' => 'AU',
     'code3' => 'AUS',
     'num' => '036',
@@ -233,9 +233,9 @@ return array (
     'geoname_id' => '2077456',
     'capital_id' => '2172517',
     'active' => '0',
-  ),
+  ],
   13 => 
-  array (
+  [
     'code' => 'AW',
     'code3' => 'ABW',
     'num' => '533',
@@ -251,9 +251,9 @@ return array (
     'geoname_id' => '3577279',
     'capital_id' => '3577154',
     'active' => '0',
-  ),
+  ],
   14 => 
-  array (
+  [
     'code' => 'AX',
     'code3' => 'ALA',
     'num' => '248',
@@ -269,9 +269,9 @@ return array (
     'geoname_id' => '661882',
     'capital_id' => '3041732',
     'active' => '0',
-  ),
+  ],
   15 => 
-  array (
+  [
     'code' => 'AZ',
     'code3' => 'AZE',
     'num' => '031',
@@ -287,9 +287,9 @@ return array (
     'geoname_id' => '587116',
     'capital_id' => '587084',
     'active' => '0',
-  ),
+  ],
   16 => 
-  array (
+  [
     'code' => 'BA',
     'code3' => 'BIH',
     'num' => '070',
@@ -305,9 +305,9 @@ return array (
     'geoname_id' => '3277605',
     'capital_id' => '3191281',
     'active' => '0',
-  ),
+  ],
   17 => 
-  array (
+  [
     'code' => 'BB',
     'code3' => 'BRB',
     'num' => '052',
@@ -323,9 +323,9 @@ return array (
     'geoname_id' => '3374084',
     'capital_id' => '3374036',
     'active' => '0',
-  ),
+  ],
   18 => 
-  array (
+  [
     'code' => 'BD',
     'code3' => 'BGD',
     'num' => '050',
@@ -341,9 +341,9 @@ return array (
     'geoname_id' => '1210997',
     'capital_id' => '1185241',
     'active' => '0',
-  ),
+  ],
   19 => 
-  array (
+  [
     'code' => 'BE',
     'code3' => 'BEL',
     'num' => '056',
@@ -359,9 +359,9 @@ return array (
     'geoname_id' => '2802361',
     'capital_id' => '2800866',
     'active' => '0',
-  ),
+  ],
   20 => 
-  array (
+  [
     'code' => 'BF',
     'code3' => 'BFA',
     'num' => '854',
@@ -377,9 +377,9 @@ return array (
     'geoname_id' => '2361809',
     'capital_id' => '2357048',
     'active' => '0',
-  ),
+  ],
   21 => 
-  array (
+  [
     'code' => 'BG',
     'code3' => 'BGR',
     'num' => '100',
@@ -395,9 +395,9 @@ return array (
     'geoname_id' => '732800',
     'capital_id' => '727011',
     'active' => '0',
-  ),
+  ],
   22 => 
-  array (
+  [
     'code' => 'BH',
     'code3' => 'BHR',
     'num' => '048',
@@ -413,9 +413,9 @@ return array (
     'geoname_id' => '290291',
     'capital_id' => '290340',
     'active' => '0',
-  ),
+  ],
   23 => 
-  array (
+  [
     'code' => 'BI',
     'code3' => 'BDI',
     'num' => '108',
@@ -431,9 +431,9 @@ return array (
     'geoname_id' => '433561',
     'capital_id' => '425378',
     'active' => '0',
-  ),
+  ],
   24 => 
-  array (
+  [
     'code' => 'BJ',
     'code3' => 'BEN',
     'num' => '204',
@@ -449,9 +449,9 @@ return array (
     'geoname_id' => '2395170',
     'capital_id' => '2392087',
     'active' => '0',
-  ),
+  ],
   25 => 
-  array (
+  [
     'code' => 'BL',
     'code3' => 'BLM',
     'num' => '652',
@@ -467,9 +467,9 @@ return array (
     'geoname_id' => '3578476',
     'capital_id' => '3579132',
     'active' => '0',
-  ),
+  ],
   26 => 
-  array (
+  [
     'code' => 'BM',
     'code3' => 'BMU',
     'num' => '060',
@@ -485,9 +485,9 @@ return array (
     'geoname_id' => '3573345',
     'capital_id' => '3573197',
     'active' => '0',
-  ),
+  ],
   27 => 
-  array (
+  [
     'code' => 'BN',
     'code3' => 'BRN',
     'num' => '096',
@@ -503,9 +503,9 @@ return array (
     'geoname_id' => '1820814',
     'capital_id' => '1820906',
     'active' => '0',
-  ),
+  ],
   28 => 
-  array (
+  [
     'code' => 'BO',
     'code3' => 'BOL',
     'num' => '068',
@@ -521,9 +521,9 @@ return array (
     'geoname_id' => '3923057',
     'capital_id' => '3903987',
     'active' => '0',
-  ),
+  ],
   29 => 
-  array (
+  [
     'code' => 'BQ',
     'code3' => 'BES',
     'num' => '535',
@@ -539,9 +539,9 @@ return array (
     'geoname_id' => '7626844',
     'capital_id' => '3513563',
     'active' => '0',
-  ),
+  ],
   30 => 
-  array (
+  [
     'code' => 'BR',
     'code3' => 'BRA',
     'num' => '076',
@@ -557,9 +557,9 @@ return array (
     'geoname_id' => '3469034',
     'capital_id' => '3469058',
     'active' => '0',
-  ),
+  ],
   31 => 
-  array (
+  [
     'code' => 'BS',
     'code3' => 'BHS',
     'num' => '044',
@@ -575,9 +575,9 @@ return array (
     'geoname_id' => '3572887',
     'capital_id' => '3571824',
     'active' => '0',
-  ),
+  ],
   32 => 
-  array (
+  [
     'code' => 'BT',
     'code3' => 'BTN',
     'num' => '064',
@@ -593,9 +593,9 @@ return array (
     'geoname_id' => '1252634',
     'capital_id' => '1252416',
     'active' => '0',
-  ),
+  ],
   33 => 
-  array (
+  [
     'code' => 'BV',
     'code3' => 'BVT',
     'num' => '074',
@@ -611,9 +611,9 @@ return array (
     'geoname_id' => '3371123',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   34 => 
-  array (
+  [
     'code' => 'BW',
     'code3' => 'BWA',
     'num' => '072',
@@ -629,9 +629,9 @@ return array (
     'geoname_id' => '933860',
     'capital_id' => '933773',
     'active' => '0',
-  ),
+  ],
   35 => 
-  array (
+  [
     'code' => 'BY',
     'code3' => 'BLR',
     'num' => '112',
@@ -647,9 +647,9 @@ return array (
     'geoname_id' => '630336',
     'capital_id' => '625144',
     'active' => '0',
-  ),
+  ],
   36 => 
-  array (
+  [
     'code' => 'BZ',
     'code3' => 'BLZ',
     'num' => '084',
@@ -665,9 +665,9 @@ return array (
     'geoname_id' => '3582678',
     'capital_id' => '3582672',
     'active' => '0',
-  ),
+  ],
   37 => 
-  array (
+  [
     'code' => 'CA',
     'code3' => 'CAN',
     'num' => '124',
@@ -683,9 +683,9 @@ return array (
     'geoname_id' => '6251999',
     'capital_id' => '6094817',
     'active' => '0',
-  ),
+  ],
   38 => 
-  array (
+  [
     'code' => 'CC',
     'code3' => 'CCK',
     'num' => '166',
@@ -701,9 +701,9 @@ return array (
     'geoname_id' => '1547376',
     'capital_id' => '7304591',
     'active' => '0',
-  ),
+  ],
   39 => 
-  array (
+  [
     'code' => 'CD',
     'code3' => 'COD',
     'num' => '180',
@@ -719,9 +719,9 @@ return array (
     'geoname_id' => '203312',
     'capital_id' => '2314302',
     'active' => '0',
-  ),
+  ],
   40 => 
-  array (
+  [
     'code' => 'CF',
     'code3' => 'CAF',
     'num' => '140',
@@ -737,9 +737,9 @@ return array (
     'geoname_id' => '239880',
     'capital_id' => '2389853',
     'active' => '0',
-  ),
+  ],
   41 => 
-  array (
+  [
     'code' => 'CG',
     'code3' => 'COG',
     'num' => '178',
@@ -755,9 +755,9 @@ return array (
     'geoname_id' => '2260494',
     'capital_id' => '2260535',
     'active' => '0',
-  ),
+  ],
   42 => 
-  array (
+  [
     'code' => 'CH',
     'code3' => 'CHE',
     'num' => '756',
@@ -773,9 +773,9 @@ return array (
     'geoname_id' => '2658434',
     'capital_id' => '2661552',
     'active' => '0',
-  ),
+  ],
   43 => 
-  array (
+  [
     'code' => 'CI',
     'code3' => 'CIV',
     'num' => '384',
@@ -791,9 +791,9 @@ return array (
     'geoname_id' => '2287781',
     'capital_id' => '2279755',
     'active' => '0',
-  ),
+  ],
   44 => 
-  array (
+  [
     'code' => 'CK',
     'code3' => 'COK',
     'num' => '184',
@@ -809,9 +809,9 @@ return array (
     'geoname_id' => '1899402',
     'capital_id' => '4035715',
     'active' => '0',
-  ),
+  ],
   45 => 
-  array (
+  [
     'code' => 'CL',
     'code3' => 'CHL',
     'num' => '152',
@@ -827,9 +827,9 @@ return array (
     'geoname_id' => '3895114',
     'capital_id' => '3871336',
     'active' => '0',
-  ),
+  ],
   46 => 
-  array (
+  [
     'code' => 'CM',
     'code3' => 'CMR',
     'num' => '120',
@@ -845,9 +845,9 @@ return array (
     'geoname_id' => '2233387',
     'capital_id' => '2220957',
     'active' => '0',
-  ),
+  ],
   47 => 
-  array (
+  [
     'code' => 'CN',
     'code3' => 'CHN',
     'num' => '156',
@@ -863,9 +863,9 @@ return array (
     'geoname_id' => '1814991',
     'capital_id' => '1816670',
     'active' => '0',
-  ),
+  ],
   48 => 
-  array (
+  [
     'code' => 'CO',
     'code3' => 'COL',
     'num' => '170',
@@ -881,9 +881,9 @@ return array (
     'geoname_id' => '3686110',
     'capital_id' => '3688689',
     'active' => '0',
-  ),
+  ],
   49 => 
-  array (
+  [
     'code' => 'CR',
     'code3' => 'CRI',
     'num' => '188',
@@ -899,9 +899,9 @@ return array (
     'geoname_id' => '3624060',
     'capital_id' => '3621849',
     'active' => '0',
-  ),
+  ],
   50 => 
-  array (
+  [
     'code' => 'CU',
     'code3' => 'CUB',
     'num' => '192',
@@ -917,9 +917,9 @@ return array (
     'geoname_id' => '3562981',
     'capital_id' => '3553478',
     'active' => '0',
-  ),
+  ],
   51 => 
-  array (
+  [
     'code' => 'CV',
     'code3' => 'CPV',
     'num' => '132',
@@ -935,9 +935,9 @@ return array (
     'geoname_id' => '3374766',
     'capital_id' => '3374333',
     'active' => '0',
-  ),
+  ],
   52 => 
-  array (
+  [
     'code' => 'CW',
     'code3' => 'CUW',
     'num' => '531',
@@ -953,9 +953,9 @@ return array (
     'geoname_id' => '7626836',
     'capital_id' => '3513090',
     'active' => '0',
-  ),
+  ],
   53 => 
-  array (
+  [
     'code' => 'CX',
     'code3' => 'CXR',
     'num' => '162',
@@ -971,9 +971,9 @@ return array (
     'geoname_id' => '2078138',
     'capital_id' => '2078127',
     'active' => '0',
-  ),
+  ],
   54 => 
-  array (
+  [
     'code' => 'CY',
     'code3' => 'CYP',
     'num' => '196',
@@ -989,9 +989,9 @@ return array (
     'geoname_id' => '146669',
     'capital_id' => '146268',
     'active' => '0',
-  ),
+  ],
   55 => 
-  array (
+  [
     'code' => 'CZ',
     'code3' => 'CZE',
     'num' => '203',
@@ -1007,9 +1007,9 @@ return array (
     'geoname_id' => '3077311',
     'capital_id' => '3067696',
     'active' => '0',
-  ),
+  ],
   56 => 
-  array (
+  [
     'code' => 'DE',
     'code3' => 'DEU',
     'num' => '276',
@@ -1025,9 +1025,9 @@ return array (
     'geoname_id' => '2921044',
     'capital_id' => '2950159',
     'active' => '1',
-  ),
+  ],
   57 => 
-  array (
+  [
     'code' => 'DJ',
     'code3' => 'DJI',
     'num' => '262',
@@ -1043,9 +1043,9 @@ return array (
     'geoname_id' => '223816',
     'capital_id' => '223817',
     'active' => '0',
-  ),
+  ],
   58 => 
-  array (
+  [
     'code' => 'DK',
     'code3' => 'DNK',
     'num' => '208',
@@ -1061,9 +1061,9 @@ return array (
     'geoname_id' => '2623032',
     'capital_id' => '2618425',
     'active' => '0',
-  ),
+  ],
   59 => 
-  array (
+  [
     'code' => 'DM',
     'code3' => 'DMA',
     'num' => '212',
@@ -1079,9 +1079,9 @@ return array (
     'geoname_id' => '3575830',
     'capital_id' => '3575635',
     'active' => '0',
-  ),
+  ],
   60 => 
-  array (
+  [
     'code' => 'DO',
     'code3' => 'DOM',
     'num' => '214',
@@ -1097,9 +1097,9 @@ return array (
     'geoname_id' => '3508796',
     'capital_id' => '3492908',
     'active' => '0',
-  ),
+  ],
   61 => 
-  array (
+  [
     'code' => 'DZ',
     'code3' => 'DZA',
     'num' => '012',
@@ -1115,9 +1115,9 @@ return array (
     'geoname_id' => '2589581',
     'capital_id' => '2507480',
     'active' => '0',
-  ),
+  ],
   62 => 
-  array (
+  [
     'code' => 'EC',
     'code3' => 'ECU',
     'num' => '218',
@@ -1133,9 +1133,9 @@ return array (
     'geoname_id' => '3658394',
     'capital_id' => '3652462',
     'active' => '0',
-  ),
+  ],
   63 => 
-  array (
+  [
     'code' => 'EE',
     'code3' => 'EST',
     'num' => '233',
@@ -1151,9 +1151,9 @@ return array (
     'geoname_id' => '453733',
     'capital_id' => '588409',
     'active' => '0',
-  ),
+  ],
   64 => 
-  array (
+  [
     'code' => 'EG',
     'code3' => 'EGY',
     'num' => '818',
@@ -1169,9 +1169,9 @@ return array (
     'geoname_id' => '357994',
     'capital_id' => '360630',
     'active' => '0',
-  ),
+  ],
   65 => 
-  array (
+  [
     'code' => 'EH',
     'code3' => 'ESH',
     'num' => '732',
@@ -1187,9 +1187,9 @@ return array (
     'geoname_id' => '2461445',
     'capital_id' => '2462881',
     'active' => '0',
-  ),
+  ],
   66 => 
-  array (
+  [
     'code' => 'ER',
     'code3' => 'ERI',
     'num' => '232',
@@ -1205,9 +1205,9 @@ return array (
     'geoname_id' => '338010',
     'capital_id' => '343300',
     'active' => '0',
-  ),
+  ],
   67 => 
-  array (
+  [
     'code' => 'ES',
     'code3' => 'ESP',
     'num' => '724',
@@ -1223,9 +1223,9 @@ return array (
     'geoname_id' => '2510769',
     'capital_id' => '3117735',
     'active' => '1',
-  ),
+  ],
   68 => 
-  array (
+  [
     'code' => 'ET',
     'code3' => 'ETH',
     'num' => '231',
@@ -1241,9 +1241,9 @@ return array (
     'geoname_id' => '337996',
     'capital_id' => '344979',
     'active' => '0',
-  ),
+  ],
   69 => 
-  array (
+  [
     'code' => 'EU',
     'code3' => '',
     'num' => '',
@@ -1259,9 +1259,9 @@ return array (
     'geoname_id' => '0',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   70 => 
-  array (
+  [
     'code' => 'FI',
     'code3' => 'FIN',
     'num' => '246',
@@ -1277,9 +1277,9 @@ return array (
     'geoname_id' => '660013',
     'capital_id' => '658225',
     'active' => '0',
-  ),
+  ],
   71 => 
-  array (
+  [
     'code' => 'FJ',
     'code3' => 'FJI',
     'num' => '242',
@@ -1295,9 +1295,9 @@ return array (
     'geoname_id' => '2205218',
     'capital_id' => '2198148',
     'active' => '0',
-  ),
+  ],
   72 => 
-  array (
+  [
     'code' => 'FK',
     'code3' => 'FLK',
     'num' => '238',
@@ -1313,9 +1313,9 @@ return array (
     'geoname_id' => '3474414',
     'capital_id' => '3426691',
     'active' => '0',
-  ),
+  ],
   73 => 
-  array (
+  [
     'code' => 'FM',
     'code3' => 'FSM',
     'num' => '583',
@@ -1331,9 +1331,9 @@ return array (
     'geoname_id' => '2081918',
     'capital_id' => '2081986',
     'active' => '0',
-  ),
+  ],
   74 => 
-  array (
+  [
     'code' => 'FO',
     'code3' => 'FRO',
     'num' => '234',
@@ -1349,9 +1349,9 @@ return array (
     'geoname_id' => '2622320',
     'capital_id' => '2611396',
     'active' => '0',
-  ),
+  ],
   75 => 
-  array (
+  [
     'code' => 'FR',
     'code3' => 'FRA',
     'num' => '250',
@@ -1367,9 +1367,9 @@ return array (
     'geoname_id' => '3017382',
     'capital_id' => '2988507',
     'active' => '1',
-  ),
+  ],
   76 => 
-  array (
+  [
     'code' => 'GA',
     'code3' => 'GAB',
     'num' => '266',
@@ -1385,9 +1385,9 @@ return array (
     'geoname_id' => '2400553',
     'capital_id' => '2399697',
     'active' => '0',
-  ),
+  ],
   77 => 
-  array (
+  [
     'code' => 'GB',
     'code3' => 'GBR',
     'num' => '826',
@@ -1403,9 +1403,9 @@ return array (
     'geoname_id' => '2635167',
     'capital_id' => '2643743',
     'active' => '1',
-  ),
+  ],
   78 => 
-  array (
+  [
     'code' => 'GD',
     'code3' => 'GRD',
     'num' => '308',
@@ -1421,9 +1421,9 @@ return array (
     'geoname_id' => '3580239',
     'capital_id' => '3579925',
     'active' => '0',
-  ),
+  ],
   79 => 
-  array (
+  [
     'code' => 'GE',
     'code3' => 'GEO',
     'num' => '268',
@@ -1439,9 +1439,9 @@ return array (
     'geoname_id' => '614540',
     'capital_id' => '611717',
     'active' => '0',
-  ),
+  ],
   80 => 
-  array (
+  [
     'code' => 'GF',
     'code3' => 'GUF',
     'num' => '254',
@@ -1457,9 +1457,9 @@ return array (
     'geoname_id' => '3381670',
     'capital_id' => '3382160',
     'active' => '0',
-  ),
+  ],
   81 => 
-  array (
+  [
     'code' => 'GG',
     'code3' => 'GGY',
     'num' => '831',
@@ -1475,9 +1475,9 @@ return array (
     'geoname_id' => '3042362',
     'capital_id' => '3042287',
     'active' => '0',
-  ),
+  ],
   82 => 
-  array (
+  [
     'code' => 'GH',
     'code3' => 'GHA',
     'num' => '288',
@@ -1493,9 +1493,9 @@ return array (
     'geoname_id' => '2300660',
     'capital_id' => '2306104',
     'active' => '0',
-  ),
+  ],
   83 => 
-  array (
+  [
     'code' => 'GI',
     'code3' => 'GIB',
     'num' => '292',
@@ -1511,9 +1511,9 @@ return array (
     'geoname_id' => '2411586',
     'capital_id' => '2411585',
     'active' => '0',
-  ),
+  ],
   84 => 
-  array (
+  [
     'code' => 'GL',
     'code3' => 'GRL',
     'num' => '304',
@@ -1529,9 +1529,9 @@ return array (
     'geoname_id' => '3425505',
     'capital_id' => '3421319',
     'active' => '0',
-  ),
+  ],
   85 => 
-  array (
+  [
     'code' => 'GM',
     'code3' => 'GMB',
     'num' => '270',
@@ -1547,9 +1547,9 @@ return array (
     'geoname_id' => '2413451',
     'capital_id' => '2413876',
     'active' => '0',
-  ),
+  ],
   86 => 
-  array (
+  [
     'code' => 'GN',
     'code3' => 'GIN',
     'num' => '324',
@@ -1565,9 +1565,9 @@ return array (
     'geoname_id' => '2420477',
     'capital_id' => '2422465',
     'active' => '0',
-  ),
+  ],
   87 => 
-  array (
+  [
     'code' => 'GP',
     'code3' => 'GLP',
     'num' => '312',
@@ -1583,9 +1583,9 @@ return array (
     'geoname_id' => '3579143',
     'capital_id' => '3579732',
     'active' => '0',
-  ),
+  ],
   88 => 
-  array (
+  [
     'code' => 'GQ',
     'code3' => 'GNQ',
     'num' => '226',
@@ -1601,9 +1601,9 @@ return array (
     'geoname_id' => '2309096',
     'capital_id' => '2309527',
     'active' => '0',
-  ),
+  ],
   89 => 
-  array (
+  [
     'code' => 'GR',
     'code3' => 'GRC',
     'num' => '300',
@@ -1619,9 +1619,9 @@ return array (
     'geoname_id' => '390903',
     'capital_id' => '264371',
     'active' => '0',
-  ),
+  ],
   90 => 
-  array (
+  [
     'code' => 'GS',
     'code3' => 'SGS',
     'num' => '239',
@@ -1637,9 +1637,9 @@ return array (
     'geoname_id' => '3474415',
     'capital_id' => '3426466',
     'active' => '0',
-  ),
+  ],
   91 => 
-  array (
+  [
     'code' => 'GT',
     'code3' => 'GTM',
     'num' => '320',
@@ -1655,9 +1655,9 @@ return array (
     'geoname_id' => '3595528',
     'capital_id' => '3598132',
     'active' => '0',
-  ),
+  ],
   92 => 
-  array (
+  [
     'code' => 'GU',
     'code3' => 'GUM',
     'num' => '316',
@@ -1673,9 +1673,9 @@ return array (
     'geoname_id' => '4043988',
     'capital_id' => '4044012',
     'active' => '0',
-  ),
+  ],
   93 => 
-  array (
+  [
     'code' => 'GW',
     'code3' => 'GNB',
     'num' => '624',
@@ -1691,9 +1691,9 @@ return array (
     'geoname_id' => '2372248',
     'capital_id' => '2374775',
     'active' => '0',
-  ),
+  ],
   94 => 
-  array (
+  [
     'code' => 'GY',
     'code3' => 'GUY',
     'num' => '328',
@@ -1709,9 +1709,9 @@ return array (
     'geoname_id' => '3378535',
     'capital_id' => '3378644',
     'active' => '0',
-  ),
+  ],
   95 => 
-  array (
+  [
     'code' => 'HK',
     'code3' => 'HKG',
     'num' => '344',
@@ -1727,9 +1727,9 @@ return array (
     'geoname_id' => '1819730',
     'capital_id' => '1819729',
     'active' => '0',
-  ),
+  ],
   96 => 
-  array (
+  [
     'code' => 'HM',
     'code3' => 'HMD',
     'num' => '334',
@@ -1745,9 +1745,9 @@ return array (
     'geoname_id' => '1547314',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   97 => 
-  array (
+  [
     'code' => 'HN',
     'code3' => 'HND',
     'num' => '340',
@@ -1763,9 +1763,9 @@ return array (
     'geoname_id' => '3608932',
     'capital_id' => '3600949',
     'active' => '0',
-  ),
+  ],
   98 => 
-  array (
+  [
     'code' => 'HR',
     'code3' => 'HRV',
     'num' => '191',
@@ -1781,9 +1781,9 @@ return array (
     'geoname_id' => '3202326',
     'capital_id' => '3186886',
     'active' => '0',
-  ),
+  ],
   99 => 
-  array (
+  [
     'code' => 'HT',
     'code3' => 'HTI',
     'num' => '332',
@@ -1799,9 +1799,9 @@ return array (
     'geoname_id' => '3723988',
     'capital_id' => '3718426',
     'active' => '0',
-  ),
+  ],
   100 => 
-  array (
+  [
     'code' => 'HU',
     'code3' => 'HUN',
     'num' => '348',
@@ -1817,9 +1817,9 @@ return array (
     'geoname_id' => '719819',
     'capital_id' => '3054643',
     'active' => '0',
-  ),
+  ],
   101 => 
-  array (
+  [
     'code' => 'ID',
     'code3' => 'IDN',
     'num' => '360',
@@ -1835,9 +1835,9 @@ return array (
     'geoname_id' => '1643084',
     'capital_id' => '1642911',
     'active' => '0',
-  ),
+  ],
   102 => 
-  array (
+  [
     'code' => 'IE',
     'code3' => 'IRL',
     'num' => '372',
@@ -1853,9 +1853,9 @@ return array (
     'geoname_id' => '2963597',
     'capital_id' => '2964574',
     'active' => '0',
-  ),
+  ],
   103 => 
-  array (
+  [
     'code' => 'IL',
     'code3' => 'ISR',
     'num' => '376',
@@ -1871,9 +1871,9 @@ return array (
     'geoname_id' => '294640',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   104 => 
-  array (
+  [
     'code' => 'IM',
     'code3' => 'IMN',
     'num' => '833',
@@ -1889,9 +1889,9 @@ return array (
     'geoname_id' => '3042225',
     'capital_id' => '3042237',
     'active' => '0',
-  ),
+  ],
   105 => 
-  array (
+  [
     'code' => 'IN',
     'code3' => 'IND',
     'num' => '356',
@@ -1907,9 +1907,9 @@ return array (
     'geoname_id' => '1269750',
     'capital_id' => '1261481',
     'active' => '0',
-  ),
+  ],
   106 => 
-  array (
+  [
     'code' => 'IO',
     'code3' => 'IOT',
     'num' => '086',
@@ -1925,9 +1925,9 @@ return array (
     'geoname_id' => '1282588',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   107 => 
-  array (
+  [
     'code' => 'IQ',
     'code3' => 'IRQ',
     'num' => '368',
@@ -1943,9 +1943,9 @@ return array (
     'geoname_id' => '99237',
     'capital_id' => '98182',
     'active' => '0',
-  ),
+  ],
   108 => 
-  array (
+  [
     'code' => 'IR',
     'code3' => 'IRN',
     'num' => '364',
@@ -1961,9 +1961,9 @@ return array (
     'geoname_id' => '130758',
     'capital_id' => '112931',
     'active' => '0',
-  ),
+  ],
   109 => 
-  array (
+  [
     'code' => 'IS',
     'code3' => 'ISL',
     'num' => '352',
@@ -1979,9 +1979,9 @@ return array (
     'geoname_id' => '2629691',
     'capital_id' => '3413829',
     'active' => '0',
-  ),
+  ],
   110 => 
-  array (
+  [
     'code' => 'IT',
     'code3' => 'ITA',
     'num' => '380',
@@ -1997,9 +1997,9 @@ return array (
     'geoname_id' => '3175395',
     'capital_id' => '3169070',
     'active' => '0',
-  ),
+  ],
   111 => 
-  array (
+  [
     'code' => 'JE',
     'code3' => 'JEY',
     'num' => '832',
@@ -2015,9 +2015,9 @@ return array (
     'geoname_id' => '3042142',
     'capital_id' => '3042091',
     'active' => '0',
-  ),
+  ],
   112 => 
-  array (
+  [
     'code' => 'JM',
     'code3' => 'JAM',
     'num' => '388',
@@ -2033,9 +2033,9 @@ return array (
     'geoname_id' => '3489940',
     'capital_id' => '3489854',
     'active' => '0',
-  ),
+  ],
   113 => 
-  array (
+  [
     'code' => 'JO',
     'code3' => 'JOR',
     'num' => '400',
@@ -2051,9 +2051,9 @@ return array (
     'geoname_id' => '248816',
     'capital_id' => '250441',
     'active' => '0',
-  ),
+  ],
   114 => 
-  array (
+  [
     'code' => 'JP',
     'code3' => 'JPN',
     'num' => '392',
@@ -2069,9 +2069,9 @@ return array (
     'geoname_id' => '1861060',
     'capital_id' => '1850147',
     'active' => '0',
-  ),
+  ],
   115 => 
-  array (
+  [
     'code' => 'KE',
     'code3' => 'KEN',
     'num' => '404',
@@ -2087,9 +2087,9 @@ return array (
     'geoname_id' => '192950',
     'capital_id' => '184745',
     'active' => '0',
-  ),
+  ],
   116 => 
-  array (
+  [
     'code' => 'KG',
     'code3' => 'KGZ',
     'num' => '417',
@@ -2105,9 +2105,9 @@ return array (
     'geoname_id' => '1527747',
     'capital_id' => '1528675',
     'active' => '0',
-  ),
+  ],
   117 => 
-  array (
+  [
     'code' => 'KH',
     'code3' => 'KHM',
     'num' => '116',
@@ -2123,9 +2123,9 @@ return array (
     'geoname_id' => '1831722',
     'capital_id' => '1821306',
     'active' => '0',
-  ),
+  ],
   118 => 
-  array (
+  [
     'code' => 'KI',
     'code3' => 'KIR',
     'num' => '296',
@@ -2141,9 +2141,9 @@ return array (
     'geoname_id' => '4030945',
     'capital_id' => '2110257',
     'active' => '0',
-  ),
+  ],
   119 => 
-  array (
+  [
     'code' => 'KM',
     'code3' => 'COM',
     'num' => '174',
@@ -2159,9 +2159,9 @@ return array (
     'geoname_id' => '921929',
     'capital_id' => '921772',
     'active' => '0',
-  ),
+  ],
   120 => 
-  array (
+  [
     'code' => 'KN',
     'code3' => 'KNA',
     'num' => '659',
@@ -2177,9 +2177,9 @@ return array (
     'geoname_id' => '3575174',
     'capital_id' => '3575551',
     'active' => '0',
-  ),
+  ],
   121 => 
-  array (
+  [
     'code' => 'KP',
     'code3' => 'PRK',
     'num' => '408',
@@ -2195,9 +2195,9 @@ return array (
     'geoname_id' => '1873107',
     'capital_id' => '1871859',
     'active' => '0',
-  ),
+  ],
   122 => 
-  array (
+  [
     'code' => 'KR',
     'code3' => 'KOR',
     'num' => '410',
@@ -2213,9 +2213,9 @@ return array (
     'geoname_id' => '1835841',
     'capital_id' => '1835848',
     'active' => '0',
-  ),
+  ],
   123 => 
-  array (
+  [
     'code' => 'KW',
     'code3' => 'KWT',
     'num' => '414',
@@ -2231,9 +2231,9 @@ return array (
     'geoname_id' => '285570',
     'capital_id' => '285787',
     'active' => '0',
-  ),
+  ],
   124 => 
-  array (
+  [
     'code' => 'KY',
     'code3' => 'CYM',
     'num' => '136',
@@ -2249,9 +2249,9 @@ return array (
     'geoname_id' => '3580718',
     'capital_id' => '3580661',
     'active' => '0',
-  ),
+  ],
   125 => 
-  array (
+  [
     'code' => 'KZ',
     'code3' => 'KAZ',
     'num' => '398',
@@ -2267,9 +2267,9 @@ return array (
     'geoname_id' => '1522867',
     'capital_id' => '1526273',
     'active' => '0',
-  ),
+  ],
   126 => 
-  array (
+  [
     'code' => 'LA',
     'code3' => 'LAO',
     'num' => '418',
@@ -2285,9 +2285,9 @@ return array (
     'geoname_id' => '1655842',
     'capital_id' => '1651944',
     'active' => '0',
-  ),
+  ],
   127 => 
-  array (
+  [
     'code' => 'LB',
     'code3' => 'LBN',
     'num' => '422',
@@ -2303,9 +2303,9 @@ return array (
     'geoname_id' => '272103',
     'capital_id' => '276781',
     'active' => '0',
-  ),
+  ],
   128 => 
-  array (
+  [
     'code' => 'LC',
     'code3' => 'LCA',
     'num' => '662',
@@ -2321,9 +2321,9 @@ return array (
     'geoname_id' => '3576468',
     'capital_id' => '3576812',
     'active' => '0',
-  ),
+  ],
   129 => 
-  array (
+  [
     'code' => 'LI',
     'code3' => 'LIE',
     'num' => '438',
@@ -2339,9 +2339,9 @@ return array (
     'geoname_id' => '3042058',
     'capital_id' => '3042030',
     'active' => '0',
-  ),
+  ],
   130 => 
-  array (
+  [
     'code' => 'LK',
     'code3' => 'LKA',
     'num' => '144',
@@ -2357,9 +2357,9 @@ return array (
     'geoname_id' => '1227603',
     'capital_id' => '1248991',
     'active' => '0',
-  ),
+  ],
   131 => 
-  array (
+  [
     'code' => 'LR',
     'code3' => 'LBR',
     'num' => '430',
@@ -2375,9 +2375,9 @@ return array (
     'geoname_id' => '2275384',
     'capital_id' => '2274895',
     'active' => '0',
-  ),
+  ],
   132 => 
-  array (
+  [
     'code' => 'LS',
     'code3' => 'LSO',
     'num' => '426',
@@ -2393,9 +2393,9 @@ return array (
     'geoname_id' => '932692',
     'capital_id' => '932505',
     'active' => '0',
-  ),
+  ],
   133 => 
-  array (
+  [
     'code' => 'LT',
     'code3' => 'LTU',
     'num' => '440',
@@ -2411,9 +2411,9 @@ return array (
     'geoname_id' => '597427',
     'capital_id' => '593116',
     'active' => '0',
-  ),
+  ],
   134 => 
-  array (
+  [
     'code' => 'LU',
     'code3' => 'LUX',
     'num' => '442',
@@ -2429,9 +2429,9 @@ return array (
     'geoname_id' => '2960313',
     'capital_id' => '2960316',
     'active' => '0',
-  ),
+  ],
   135 => 
-  array (
+  [
     'code' => 'LV',
     'code3' => 'LVA',
     'num' => '428',
@@ -2447,9 +2447,9 @@ return array (
     'geoname_id' => '458258',
     'capital_id' => '456172',
     'active' => '0',
-  ),
+  ],
   136 => 
-  array (
+  [
     'code' => 'LY',
     'code3' => 'LBY',
     'num' => '434',
@@ -2465,9 +2465,9 @@ return array (
     'geoname_id' => '2215636',
     'capital_id' => '2210247',
     'active' => '0',
-  ),
+  ],
   137 => 
-  array (
+  [
     'code' => 'MA',
     'code3' => 'MAR',
     'num' => '504',
@@ -2483,9 +2483,9 @@ return array (
     'geoname_id' => '2542007',
     'capital_id' => '2538475',
     'active' => '0',
-  ),
+  ],
   138 => 
-  array (
+  [
     'code' => 'MC',
     'code3' => 'MCO',
     'num' => '492',
@@ -2501,9 +2501,9 @@ return array (
     'geoname_id' => '2993457',
     'capital_id' => '2993458',
     'active' => '0',
-  ),
+  ],
   139 => 
-  array (
+  [
     'code' => 'MD',
     'code3' => 'MDA',
     'num' => '498',
@@ -2519,9 +2519,9 @@ return array (
     'geoname_id' => '617790',
     'capital_id' => '618426',
     'active' => '0',
-  ),
+  ],
   140 => 
-  array (
+  [
     'code' => 'ME',
     'code3' => 'MNE',
     'num' => '499',
@@ -2537,9 +2537,9 @@ return array (
     'geoname_id' => '3194884',
     'capital_id' => '3193044',
     'active' => '0',
-  ),
+  ],
   141 => 
-  array (
+  [
     'code' => 'MF',
     'code3' => 'MAF',
     'num' => '663',
@@ -2555,9 +2555,9 @@ return array (
     'geoname_id' => '3578421',
     'capital_id' => '3578851',
     'active' => '0',
-  ),
+  ],
   142 => 
-  array (
+  [
     'code' => 'MG',
     'code3' => 'MDG',
     'num' => '450',
@@ -2573,9 +2573,9 @@ return array (
     'geoname_id' => '1062947',
     'capital_id' => '1070940',
     'active' => '0',
-  ),
+  ],
   143 => 
-  array (
+  [
     'code' => 'MH',
     'code3' => 'MHL',
     'num' => '584',
@@ -2591,9 +2591,9 @@ return array (
     'geoname_id' => '2080185',
     'capital_id' => '2113779',
     'active' => '0',
-  ),
+  ],
   144 => 
-  array (
+  [
     'code' => 'MK',
     'code3' => 'MKD',
     'num' => '807',
@@ -2609,9 +2609,9 @@ return array (
     'geoname_id' => '718075',
     'capital_id' => '785842',
     'active' => '0',
-  ),
+  ],
   145 => 
-  array (
+  [
     'code' => 'ML',
     'code3' => 'MLI',
     'num' => '466',
@@ -2627,9 +2627,9 @@ return array (
     'geoname_id' => '2453866',
     'capital_id' => '2460596',
     'active' => '0',
-  ),
+  ],
   146 => 
-  array (
+  [
     'code' => 'MM',
     'code3' => 'MMR',
     'num' => '104',
@@ -2645,9 +2645,9 @@ return array (
     'geoname_id' => '1327865',
     'capital_id' => '6611854',
     'active' => '0',
-  ),
+  ],
   147 => 
-  array (
+  [
     'code' => 'MN',
     'code3' => 'MNG',
     'num' => '496',
@@ -2663,9 +2663,9 @@ return array (
     'geoname_id' => '2029969',
     'capital_id' => '2028462',
     'active' => '0',
-  ),
+  ],
   148 => 
-  array (
+  [
     'code' => 'MO',
     'code3' => 'MAC',
     'num' => '446',
@@ -2681,9 +2681,9 @@ return array (
     'geoname_id' => '1821275',
     'capital_id' => '1821274',
     'active' => '0',
-  ),
+  ],
   149 => 
-  array (
+  [
     'code' => 'MP',
     'code3' => 'MNP',
     'num' => '580',
@@ -2699,9 +2699,9 @@ return array (
     'geoname_id' => '4041468',
     'capital_id' => '7828758',
     'active' => '0',
-  ),
+  ],
   150 => 
-  array (
+  [
     'code' => 'MQ',
     'code3' => 'MTQ',
     'num' => '474',
@@ -2717,9 +2717,9 @@ return array (
     'geoname_id' => '3570311',
     'capital_id' => '3570675',
     'active' => '0',
-  ),
+  ],
   151 => 
-  array (
+  [
     'code' => 'MR',
     'code3' => 'MRT',
     'num' => '478',
@@ -2735,9 +2735,9 @@ return array (
     'geoname_id' => '2378080',
     'capital_id' => '2377450',
     'active' => '0',
-  ),
+  ],
   152 => 
-  array (
+  [
     'code' => 'MS',
     'code3' => 'MSR',
     'num' => '500',
@@ -2753,9 +2753,9 @@ return array (
     'geoname_id' => '3578097',
     'capital_id' => '3578069',
     'active' => '0',
-  ),
+  ],
   153 => 
-  array (
+  [
     'code' => 'MT',
     'code3' => 'MLT',
     'num' => '470',
@@ -2771,9 +2771,9 @@ return array (
     'geoname_id' => '2562770',
     'capital_id' => '2562305',
     'active' => '0',
-  ),
+  ],
   154 => 
-  array (
+  [
     'code' => 'MU',
     'code3' => 'MUS',
     'num' => '480',
@@ -2789,9 +2789,9 @@ return array (
     'geoname_id' => '934292',
     'capital_id' => '934154',
     'active' => '0',
-  ),
+  ],
   155 => 
-  array (
+  [
     'code' => 'MV',
     'code3' => 'MDV',
     'num' => '462',
@@ -2807,9 +2807,9 @@ return array (
     'geoname_id' => '1282028',
     'capital_id' => '1282027',
     'active' => '0',
-  ),
+  ],
   156 => 
-  array (
+  [
     'code' => 'MW',
     'code3' => 'MWI',
     'num' => '454',
@@ -2825,9 +2825,9 @@ return array (
     'geoname_id' => '927384',
     'capital_id' => '927967',
     'active' => '0',
-  ),
+  ],
   157 => 
-  array (
+  [
     'code' => 'MX',
     'code3' => 'MEX',
     'num' => '484',
@@ -2843,9 +2843,9 @@ return array (
     'geoname_id' => '3996063',
     'capital_id' => '3530597',
     'active' => '0',
-  ),
+  ],
   158 => 
-  array (
+  [
     'code' => 'MY',
     'code3' => 'MYS',
     'num' => '458',
@@ -2861,9 +2861,9 @@ return array (
     'geoname_id' => '1733045',
     'capital_id' => '1735161',
     'active' => '0',
-  ),
+  ],
   159 => 
-  array (
+  [
     'code' => 'MZ',
     'code3' => 'MOZ',
     'num' => '508',
@@ -2879,9 +2879,9 @@ return array (
     'geoname_id' => '1036973',
     'capital_id' => '1040652',
     'active' => '0',
-  ),
+  ],
   160 => 
-  array (
+  [
     'code' => 'NA',
     'code3' => 'NAM',
     'num' => '516',
@@ -2897,9 +2897,9 @@ return array (
     'geoname_id' => '3355338',
     'capital_id' => '3352136',
     'active' => '0',
-  ),
+  ],
   161 => 
-  array (
+  [
     'code' => 'NC',
     'code3' => 'NCL',
     'num' => '540',
@@ -2915,9 +2915,9 @@ return array (
     'geoname_id' => '2139685',
     'capital_id' => '2139521',
     'active' => '0',
-  ),
+  ],
   162 => 
-  array (
+  [
     'code' => 'NE',
     'code3' => 'NER',
     'num' => '562',
@@ -2933,9 +2933,9 @@ return array (
     'geoname_id' => '2440476',
     'capital_id' => '2440485',
     'active' => '0',
-  ),
+  ],
   163 => 
-  array (
+  [
     'code' => 'NF',
     'code3' => 'NFK',
     'num' => '574',
@@ -2951,9 +2951,9 @@ return array (
     'geoname_id' => '2155115',
     'capital_id' => '2161314',
     'active' => '0',
-  ),
+  ],
   164 => 
-  array (
+  [
     'code' => 'NG',
     'code3' => 'NGA',
     'num' => '566',
@@ -2969,9 +2969,9 @@ return array (
     'geoname_id' => '2328926',
     'capital_id' => '2352778',
     'active' => '0',
-  ),
+  ],
   165 => 
-  array (
+  [
     'code' => 'NI',
     'code3' => 'NIC',
     'num' => '558',
@@ -2987,9 +2987,9 @@ return array (
     'geoname_id' => '3617476',
     'capital_id' => '3617763',
     'active' => '0',
-  ),
+  ],
   166 => 
-  array (
+  [
     'code' => 'NL',
     'code3' => 'NLD',
     'num' => '528',
@@ -3005,9 +3005,9 @@ return array (
     'geoname_id' => '2750405',
     'capital_id' => '2759794',
     'active' => '0',
-  ),
+  ],
   167 => 
-  array (
+  [
     'code' => 'NO',
     'code3' => 'NOR',
     'num' => '578',
@@ -3023,9 +3023,9 @@ return array (
     'geoname_id' => '3144096',
     'capital_id' => '3143244',
     'active' => '0',
-  ),
+  ],
   168 => 
-  array (
+  [
     'code' => 'NP',
     'code3' => 'NPL',
     'num' => '524',
@@ -3041,9 +3041,9 @@ return array (
     'geoname_id' => '1282988',
     'capital_id' => '1283240',
     'active' => '0',
-  ),
+  ],
   169 => 
-  array (
+  [
     'code' => 'NR',
     'code3' => 'NRU',
     'num' => '520',
@@ -3059,9 +3059,9 @@ return array (
     'geoname_id' => '2110425',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   170 => 
-  array (
+  [
     'code' => 'NU',
     'code3' => 'NIU',
     'num' => '570',
@@ -3077,9 +3077,9 @@ return array (
     'geoname_id' => '4036232',
     'capital_id' => '4036284',
     'active' => '0',
-  ),
+  ],
   171 => 
-  array (
+  [
     'code' => 'NZ',
     'code3' => 'NZL',
     'num' => '554',
@@ -3095,9 +3095,9 @@ return array (
     'geoname_id' => '2186224',
     'capital_id' => '2179537',
     'active' => '0',
-  ),
+  ],
   172 => 
-  array (
+  [
     'code' => 'OM',
     'code3' => 'OMN',
     'num' => '512',
@@ -3113,9 +3113,9 @@ return array (
     'geoname_id' => '286963',
     'capital_id' => '287286',
     'active' => '0',
-  ),
+  ],
   173 => 
-  array (
+  [
     'code' => 'PA',
     'code3' => 'PAN',
     'num' => '591',
@@ -3131,9 +3131,9 @@ return array (
     'geoname_id' => '3703430',
     'capital_id' => '3703443',
     'active' => '0',
-  ),
+  ],
   174 => 
-  array (
+  [
     'code' => 'PE',
     'code3' => 'PER',
     'num' => '604',
@@ -3149,9 +3149,9 @@ return array (
     'geoname_id' => '3932488',
     'capital_id' => '3936456',
     'active' => '0',
-  ),
+  ],
   175 => 
-  array (
+  [
     'code' => 'PF',
     'code3' => 'PYF',
     'num' => '258',
@@ -3167,9 +3167,9 @@ return array (
     'geoname_id' => '4030656',
     'capital_id' => '4033936',
     'active' => '0',
-  ),
+  ],
   176 => 
-  array (
+  [
     'code' => 'PG',
     'code3' => 'PNG',
     'num' => '598',
@@ -3185,9 +3185,9 @@ return array (
     'geoname_id' => '2088628',
     'capital_id' => '2088122',
     'active' => '0',
-  ),
+  ],
   177 => 
-  array (
+  [
     'code' => 'PH',
     'code3' => 'PHL',
     'num' => '608',
@@ -3203,9 +3203,9 @@ return array (
     'geoname_id' => '1694008',
     'capital_id' => '1701668',
     'active' => '0',
-  ),
+  ],
   178 => 
-  array (
+  [
     'code' => 'PK',
     'code3' => 'PAK',
     'num' => '586',
@@ -3221,9 +3221,9 @@ return array (
     'geoname_id' => '1168579',
     'capital_id' => '1176615',
     'active' => '0',
-  ),
+  ],
   179 => 
-  array (
+  [
     'code' => 'PL',
     'code3' => 'POL',
     'num' => '616',
@@ -3239,9 +3239,9 @@ return array (
     'geoname_id' => '798544',
     'capital_id' => '756135',
     'active' => '0',
-  ),
+  ],
   180 => 
-  array (
+  [
     'code' => 'PM',
     'code3' => 'SPM',
     'num' => '666',
@@ -3257,9 +3257,9 @@ return array (
     'geoname_id' => '3424932',
     'capital_id' => '3424934',
     'active' => '0',
-  ),
+  ],
   181 => 
-  array (
+  [
     'code' => 'PN',
     'code3' => 'PCN',
     'num' => '612',
@@ -3275,9 +3275,9 @@ return array (
     'geoname_id' => '4030699',
     'capital_id' => '4030723',
     'active' => '0',
-  ),
+  ],
   182 => 
-  array (
+  [
     'code' => 'PR',
     'code3' => 'PRI',
     'num' => '630',
@@ -3293,9 +3293,9 @@ return array (
     'geoname_id' => '4566966',
     'capital_id' => '4568127',
     'active' => '0',
-  ),
+  ],
   183 => 
-  array (
+  [
     'code' => 'PS',
     'code3' => 'PSE',
     'num' => '275',
@@ -3311,9 +3311,9 @@ return array (
     'geoname_id' => '6254930',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   184 => 
-  array (
+  [
     'code' => 'PT',
     'code3' => 'PRT',
     'num' => '620',
@@ -3329,9 +3329,9 @@ return array (
     'geoname_id' => '2264397',
     'capital_id' => '2267057',
     'active' => '0',
-  ),
+  ],
   185 => 
-  array (
+  [
     'code' => 'PW',
     'code3' => 'PLW',
     'num' => '585',
@@ -3347,9 +3347,9 @@ return array (
     'geoname_id' => '1559582',
     'capital_id' => '7303944',
     'active' => '0',
-  ),
+  ],
   186 => 
-  array (
+  [
     'code' => 'PY',
     'code3' => 'PRY',
     'num' => '600',
@@ -3365,9 +3365,9 @@ return array (
     'geoname_id' => '3437598',
     'capital_id' => '3439389',
     'active' => '0',
-  ),
+  ],
   187 => 
-  array (
+  [
     'code' => 'QA',
     'code3' => 'QAT',
     'num' => '634',
@@ -3383,9 +3383,9 @@ return array (
     'geoname_id' => '289688',
     'capital_id' => '290030',
     'active' => '0',
-  ),
+  ],
   188 => 
-  array (
+  [
     'code' => 'RE',
     'code3' => 'REU',
     'num' => '638',
@@ -3401,9 +3401,9 @@ return array (
     'geoname_id' => '935317',
     'capital_id' => '935264',
     'active' => '0',
-  ),
+  ],
   189 => 
-  array (
+  [
     'code' => 'RO',
     'code3' => 'ROU',
     'num' => '642',
@@ -3419,9 +3419,9 @@ return array (
     'geoname_id' => '798549',
     'capital_id' => '683506',
     'active' => '0',
-  ),
+  ],
   190 => 
-  array (
+  [
     'code' => 'RS',
     'code3' => 'SRB',
     'num' => '688',
@@ -3437,9 +3437,9 @@ return array (
     'geoname_id' => '6290252',
     'capital_id' => '792680',
     'active' => '0',
-  ),
+  ],
   191 => 
-  array (
+  [
     'code' => 'RU',
     'code3' => 'RUS',
     'num' => '643',
@@ -3455,9 +3455,9 @@ return array (
     'geoname_id' => '2017370',
     'capital_id' => '524901',
     'active' => '1',
-  ),
+  ],
   192 => 
-  array (
+  [
     'code' => 'RW',
     'code3' => 'RWA',
     'num' => '646',
@@ -3473,9 +3473,9 @@ return array (
     'geoname_id' => '49518',
     'capital_id' => '202061',
     'active' => '0',
-  ),
+  ],
   193 => 
-  array (
+  [
     'code' => 'SA',
     'code3' => 'SAU',
     'num' => '682',
@@ -3491,9 +3491,9 @@ return array (
     'geoname_id' => '102358',
     'capital_id' => '108410',
     'active' => '0',
-  ),
+  ],
   194 => 
-  array (
+  [
     'code' => 'SB',
     'code3' => 'SLB',
     'num' => '090',
@@ -3509,9 +3509,9 @@ return array (
     'geoname_id' => '2103350',
     'capital_id' => '2108502',
     'active' => '0',
-  ),
+  ],
   195 => 
-  array (
+  [
     'code' => 'SC',
     'code3' => 'SYC',
     'num' => '690',
@@ -3527,9 +3527,9 @@ return array (
     'geoname_id' => '241170',
     'capital_id' => '241131',
     'active' => '0',
-  ),
+  ],
   196 => 
-  array (
+  [
     'code' => 'SD',
     'code3' => 'SDN',
     'num' => '729',
@@ -3545,9 +3545,9 @@ return array (
     'geoname_id' => '366755',
     'capital_id' => '379252',
     'active' => '0',
-  ),
+  ],
   197 => 
-  array (
+  [
     'code' => 'SE',
     'code3' => 'SWE',
     'num' => '752',
@@ -3563,9 +3563,9 @@ return array (
     'geoname_id' => '2661886',
     'capital_id' => '2673730',
     'active' => '0',
-  ),
+  ],
   198 => 
-  array (
+  [
     'code' => 'SG',
     'code3' => 'SGP',
     'num' => '702',
@@ -3581,9 +3581,9 @@ return array (
     'geoname_id' => '1880251',
     'capital_id' => '1880252',
     'active' => '0',
-  ),
+  ],
   199 => 
-  array (
+  [
     'code' => 'SH',
     'code3' => 'SHN',
     'num' => '654',
@@ -3599,9 +3599,9 @@ return array (
     'geoname_id' => '3370751',
     'capital_id' => '3370903',
     'active' => '0',
-  ),
+  ],
   200 => 
-  array (
+  [
     'code' => 'SI',
     'code3' => 'SVN',
     'num' => '705',
@@ -3617,9 +3617,9 @@ return array (
     'geoname_id' => '3190538',
     'capital_id' => '3196359',
     'active' => '0',
-  ),
+  ],
   201 => 
-  array (
+  [
     'code' => 'SJ',
     'code3' => 'SJM',
     'num' => '744',
@@ -3635,9 +3635,9 @@ return array (
     'geoname_id' => '607072',
     'capital_id' => '2729907',
     'active' => '0',
-  ),
+  ],
   202 => 
-  array (
+  [
     'code' => 'SK',
     'code3' => 'SVK',
     'num' => '703',
@@ -3653,9 +3653,9 @@ return array (
     'geoname_id' => '3057568',
     'capital_id' => '3060972',
     'active' => '0',
-  ),
+  ],
   203 => 
-  array (
+  [
     'code' => 'SL',
     'code3' => 'SLE',
     'num' => '694',
@@ -3671,9 +3671,9 @@ return array (
     'geoname_id' => '2403846',
     'capital_id' => '2409306',
     'active' => '0',
-  ),
+  ],
   204 => 
-  array (
+  [
     'code' => 'SM',
     'code3' => 'SMR',
     'num' => '674',
@@ -3689,9 +3689,9 @@ return array (
     'geoname_id' => '3168068',
     'capital_id' => '3168070',
     'active' => '0',
-  ),
+  ],
   205 => 
-  array (
+  [
     'code' => 'SN',
     'code3' => 'SEN',
     'num' => '686',
@@ -3707,9 +3707,9 @@ return array (
     'geoname_id' => '2245662',
     'capital_id' => '2253354',
     'active' => '0',
-  ),
+  ],
   206 => 
-  array (
+  [
     'code' => 'SO',
     'code3' => 'SOM',
     'num' => '706',
@@ -3725,9 +3725,9 @@ return array (
     'geoname_id' => '51537',
     'capital_id' => '53654',
     'active' => '0',
-  ),
+  ],
   207 => 
-  array (
+  [
     'code' => 'SR',
     'code3' => 'SUR',
     'num' => '740',
@@ -3743,9 +3743,9 @@ return array (
     'geoname_id' => '3382998',
     'capital_id' => '3383330',
     'active' => '0',
-  ),
+  ],
   208 => 
-  array (
+  [
     'code' => 'SS',
     'code3' => 'SSD',
     'num' => '728',
@@ -3761,9 +3761,9 @@ return array (
     'geoname_id' => '7909807',
     'capital_id' => '373303',
     'active' => '0',
-  ),
+  ],
   209 => 
-  array (
+  [
     'code' => 'ST',
     'code3' => 'STP',
     'num' => '678',
@@ -3779,9 +3779,9 @@ return array (
     'geoname_id' => '2410758',
     'capital_id' => '2410763',
     'active' => '0',
-  ),
+  ],
   210 => 
-  array (
+  [
     'code' => 'SU',
     'code3' => 'SUN',
     'num' => '810',
@@ -3797,9 +3797,9 @@ return array (
     'geoname_id' => '0',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   211 => 
-  array (
+  [
     'code' => 'SV',
     'code3' => 'SLV',
     'num' => '222',
@@ -3815,9 +3815,9 @@ return array (
     'geoname_id' => '3585968',
     'capital_id' => '3583361',
     'active' => '0',
-  ),
+  ],
   212 => 
-  array (
+  [
     'code' => 'SX',
     'code3' => 'SXM',
     'num' => '534',
@@ -3833,9 +3833,9 @@ return array (
     'geoname_id' => '7609695',
     'capital_id' => '3513392',
     'active' => '0',
-  ),
+  ],
   213 => 
-  array (
+  [
     'code' => 'SY',
     'code3' => 'SYR',
     'num' => '760',
@@ -3851,9 +3851,9 @@ return array (
     'geoname_id' => '163843',
     'capital_id' => '170654',
     'active' => '0',
-  ),
+  ],
   214 => 
-  array (
+  [
     'code' => 'SZ',
     'code3' => 'SWZ',
     'num' => '748',
@@ -3869,9 +3869,9 @@ return array (
     'geoname_id' => '934841',
     'capital_id' => '934985',
     'active' => '0',
-  ),
+  ],
   215 => 
-  array (
+  [
     'code' => 'TC',
     'code3' => 'TCA',
     'num' => '796',
@@ -3887,9 +3887,9 @@ return array (
     'geoname_id' => '3576916',
     'capital_id' => '3576994',
     'active' => '0',
-  ),
+  ],
   216 => 
-  array (
+  [
     'code' => 'TD',
     'code3' => 'TCD',
     'num' => '148',
@@ -3905,9 +3905,9 @@ return array (
     'geoname_id' => '2434508',
     'capital_id' => '2427123',
     'active' => '0',
-  ),
+  ],
   217 => 
-  array (
+  [
     'code' => 'TF',
     'code3' => 'ATF',
     'num' => '260',
@@ -3923,9 +3923,9 @@ return array (
     'geoname_id' => '1546748',
     'capital_id' => '1546102',
     'active' => '0',
-  ),
+  ],
   218 => 
-  array (
+  [
     'code' => 'TG',
     'code3' => 'TGO',
     'num' => '768',
@@ -3941,9 +3941,9 @@ return array (
     'geoname_id' => '2363686',
     'capital_id' => '2365267',
     'active' => '0',
-  ),
+  ],
   219 => 
-  array (
+  [
     'code' => 'TH',
     'code3' => 'THA',
     'num' => '764',
@@ -3959,9 +3959,9 @@ return array (
     'geoname_id' => '1605651',
     'capital_id' => '1609350',
     'active' => '0',
-  ),
+  ],
   220 => 
-  array (
+  [
     'code' => 'TJ',
     'code3' => 'TJK',
     'num' => '762',
@@ -3977,9 +3977,9 @@ return array (
     'geoname_id' => '1220409',
     'capital_id' => '1221874',
     'active' => '0',
-  ),
+  ],
   221 => 
-  array (
+  [
     'code' => 'TK',
     'code3' => 'TKL',
     'num' => '772',
@@ -3995,9 +3995,9 @@ return array (
     'geoname_id' => '4031074',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   222 => 
-  array (
+  [
     'code' => 'TL',
     'code3' => 'TLS',
     'num' => '626',
@@ -4013,9 +4013,9 @@ return array (
     'geoname_id' => '1966436',
     'capital_id' => '1645457',
     'active' => '0',
-  ),
+  ],
   223 => 
-  array (
+  [
     'code' => 'TM',
     'code3' => 'TKM',
     'num' => '795',
@@ -4031,9 +4031,9 @@ return array (
     'geoname_id' => '1218197',
     'capital_id' => '162183',
     'active' => '0',
-  ),
+  ],
   224 => 
-  array (
+  [
     'code' => 'TN',
     'code3' => 'TUN',
     'num' => '788',
@@ -4049,9 +4049,9 @@ return array (
     'geoname_id' => '2464461',
     'capital_id' => '2464470',
     'active' => '0',
-  ),
+  ],
   225 => 
-  array (
+  [
     'code' => 'TO',
     'code3' => 'TON',
     'num' => '776',
@@ -4067,9 +4067,9 @@ return array (
     'geoname_id' => '4032283',
     'capital_id' => '4032402',
     'active' => '0',
-  ),
+  ],
   226 => 
-  array (
+  [
     'code' => 'TR',
     'code3' => 'TUR',
     'num' => '792',
@@ -4085,9 +4085,9 @@ return array (
     'geoname_id' => '298795',
     'capital_id' => '323786',
     'active' => '0',
-  ),
+  ],
   227 => 
-  array (
+  [
     'code' => 'TT',
     'code3' => 'TTO',
     'num' => '780',
@@ -4103,9 +4103,9 @@ return array (
     'geoname_id' => '3573591',
     'capital_id' => '3573890',
     'active' => '0',
-  ),
+  ],
   228 => 
-  array (
+  [
     'code' => 'TV',
     'code3' => 'TUV',
     'num' => '798',
@@ -4121,9 +4121,9 @@ return array (
     'geoname_id' => '2110297',
     'capital_id' => '2110394',
     'active' => '0',
-  ),
+  ],
   229 => 
-  array (
+  [
     'code' => 'TW',
     'code3' => 'TWN',
     'num' => '158',
@@ -4139,9 +4139,9 @@ return array (
     'geoname_id' => '1668284',
     'capital_id' => '1668341',
     'active' => '0',
-  ),
+  ],
   230 => 
-  array (
+  [
     'code' => 'TZ',
     'code3' => 'TZA',
     'num' => '834',
@@ -4157,9 +4157,9 @@ return array (
     'geoname_id' => '149590',
     'capital_id' => '160196',
     'active' => '0',
-  ),
+  ],
   231 => 
-  array (
+  [
     'code' => 'UA',
     'code3' => 'UKR',
     'num' => '804',
@@ -4175,9 +4175,9 @@ return array (
     'geoname_id' => '690791',
     'capital_id' => '703448',
     'active' => '1',
-  ),
+  ],
   232 => 
-  array (
+  [
     'code' => 'UG',
     'code3' => 'UGA',
     'num' => '800',
@@ -4193,9 +4193,9 @@ return array (
     'geoname_id' => '226074',
     'capital_id' => '232422',
     'active' => '0',
-  ),
+  ],
   233 => 
-  array (
+  [
     'code' => 'UM',
     'code3' => 'UMI',
     'num' => '581',
@@ -4211,9 +4211,9 @@ return array (
     'geoname_id' => '5854968',
     'capital_id' => '0',
     'active' => '0',
-  ),
+  ],
   234 => 
-  array (
+  [
     'code' => 'US',
     'code3' => 'USA',
     'num' => '840',
@@ -4229,9 +4229,9 @@ return array (
     'geoname_id' => '6252001',
     'capital_id' => '4140963',
     'active' => '1',
-  ),
+  ],
   235 => 
-  array (
+  [
     'code' => 'UY',
     'code3' => 'URY',
     'num' => '858',
@@ -4247,9 +4247,9 @@ return array (
     'geoname_id' => '3439705',
     'capital_id' => '3441575',
     'active' => '0',
-  ),
+  ],
   236 => 
-  array (
+  [
     'code' => 'UZ',
     'code3' => 'UZB',
     'num' => '860',
@@ -4265,9 +4265,9 @@ return array (
     'geoname_id' => '1512440',
     'capital_id' => '1512569',
     'active' => '0',
-  ),
+  ],
   237 => 
-  array (
+  [
     'code' => 'VA',
     'code3' => 'VAT',
     'num' => '336',
@@ -4283,9 +4283,9 @@ return array (
     'geoname_id' => '3164670',
     'capital_id' => '6691831',
     'active' => '0',
-  ),
+  ],
   238 => 
-  array (
+  [
     'code' => 'VC',
     'code3' => 'VCT',
     'num' => '670',
@@ -4301,9 +4301,9 @@ return array (
     'geoname_id' => '3577815',
     'capital_id' => '3577887',
     'active' => '0',
-  ),
+  ],
   239 => 
-  array (
+  [
     'code' => 'VE',
     'code3' => 'VEN',
     'num' => '862',
@@ -4319,9 +4319,9 @@ return array (
     'geoname_id' => '3625428',
     'capital_id' => '3646738',
     'active' => '0',
-  ),
+  ],
   240 => 
-  array (
+  [
     'code' => 'VG',
     'code3' => 'VGB',
     'num' => '092',
@@ -4337,9 +4337,9 @@ return array (
     'geoname_id' => '3577718',
     'capital_id' => '3577430',
     'active' => '0',
-  ),
+  ],
   241 => 
-  array (
+  [
     'code' => 'VI',
     'code3' => 'VIR',
     'num' => '850',
@@ -4355,9 +4355,9 @@ return array (
     'geoname_id' => '4796775',
     'capital_id' => '4795467',
     'active' => '0',
-  ),
+  ],
   242 => 
-  array (
+  [
     'code' => 'VN',
     'code3' => 'VNM',
     'num' => '704',
@@ -4373,9 +4373,9 @@ return array (
     'geoname_id' => '1562822',
     'capital_id' => '1581130',
     'active' => '0',
-  ),
+  ],
   243 => 
-  array (
+  [
     'code' => 'VU',
     'code3' => 'VUT',
     'num' => '548',
@@ -4391,9 +4391,9 @@ return array (
     'geoname_id' => '2134431',
     'capital_id' => '2135171',
     'active' => '0',
-  ),
+  ],
   244 => 
-  array (
+  [
     'code' => 'WF',
     'code3' => 'WLF',
     'num' => '876',
@@ -4409,9 +4409,9 @@ return array (
     'geoname_id' => '4034749',
     'capital_id' => '4034821',
     'active' => '0',
-  ),
+  ],
   245 => 
-  array (
+  [
     'code' => 'WS',
     'code3' => 'WSM',
     'num' => '882',
@@ -4427,9 +4427,9 @@ return array (
     'geoname_id' => '4034894',
     'capital_id' => '4035413',
     'active' => '0',
-  ),
+  ],
   246 => 
-  array (
+  [
     'code' => 'YE',
     'code3' => 'YEM',
     'num' => '887',
@@ -4445,9 +4445,9 @@ return array (
     'geoname_id' => '69543',
     'capital_id' => '71137',
     'active' => '0',
-  ),
+  ],
   247 => 
-  array (
+  [
     'code' => 'YT',
     'code3' => 'MYT',
     'num' => '175',
@@ -4463,9 +4463,9 @@ return array (
     'geoname_id' => '1024031',
     'capital_id' => '921815',
     'active' => '0',
-  ),
+  ],
   248 => 
-  array (
+  [
     'code' => 'ZA',
     'code3' => 'ZAF',
     'num' => '710',
@@ -4481,9 +4481,9 @@ return array (
     'geoname_id' => '953987',
     'capital_id' => '964137',
     'active' => '0',
-  ),
+  ],
   249 => 
-  array (
+  [
     'code' => 'ZM',
     'code3' => 'ZMB',
     'num' => '894',
@@ -4499,9 +4499,9 @@ return array (
     'geoname_id' => '895949',
     'capital_id' => '909137',
     'active' => '0',
-  ),
+  ],
   250 => 
-  array (
+  [
     'code' => 'ZW',
     'code3' => 'ZWE',
     'num' => '716',
@@ -4517,5 +4517,5 @@ return array (
     'geoname_id' => '878675',
     'capital_id' => '890299',
     'active' => '0',
-  ),
-);
+  ],
+];

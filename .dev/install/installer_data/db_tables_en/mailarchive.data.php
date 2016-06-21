@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'sender' => '1',
     'receiver' => '5',
@@ -13,9 +13,9 @@ return array (
     'r_read_time' => '0',
     'sender_ip' => '192.168.1.8',
     'activity' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'sender' => '1',
     'receiver' => '5',
@@ -27,9 +27,9 @@ return array (
     'r_read_time' => '0',
     'sender_ip' => '192.168.1.8',
     'activity' => '0',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'sender' => '6',
     'receiver' => '1',
@@ -41,5 +41,5 @@ return array (
     'r_read_time' => '0',
     'sender_ip' => '192.168.1.8',
     'activity' => '0',
-  ),
-);
+  ],
+];

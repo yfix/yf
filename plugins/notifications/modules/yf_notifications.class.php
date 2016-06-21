@@ -6,13 +6,13 @@ class yf_notifications {
 // todo: cache
 	function check() {
 		main()->NO_GRAPHICS = true;
-		$out = array();
+		$out = [];
 		
 		$online_class = _class('online_users','classes/');
 		$online_class->process();
 		// user part
         $R = db()->get_all("SELECT `id`,`notification_id` FROM `".db('notifications_receivers')."` WHERE `receiver_id`='".$online_class->online_user_id."' AND `receiver_type`='".$online_class->online_user_type."' AND `is_read`=0");
-        $notifications_ids = array();
+        $notifications_ids = [];
         foreach ((array)$R as $A) {
             $notifications_ids[$A['id']] = $A['notification_id'];
         }
@@ -20,14 +20,14 @@ class yf_notifications {
             $notifications = db()->get_all("SELECT `id`,`title`,`content`,`add_date` FROM `".db('notifications')."` WHERE `id` IN (".implode(",",$notifications_ids).")");
             $add_info = db()->get_all("SELECT `id`,`text`,`url` FROM `".db('notifications_receivers_add_info')."` WHERE `id` IN (".implode(",",array_keys($notifications_ids)).")");
             foreach ($notifications_ids as $k=>$v) {
-                $out[$k] = array(
+                $out[$k] = [
                     'id'            => $k,
                     'title'         => $notifications[$v]['title'],
                     'content'       => $notifications[$v]['content'],
                     'add_date'      => $notifications[$v]['add_date'],
                     'text'          => $add_info[$k]['text'],
                     'url'           => $add_info[$k]['url'] != '' ? process_url($add_info[$k]['url']."&notification_id=".$k) : '',
-                );
+                ];
             }
         }
 		echo json_encode($out);
@@ -52,10 +52,10 @@ class yf_notifications {
 		$tpl = file_get_contents(pathinfo(__FILE__,PATHINFO_DIRNAME)."/../templates/user/notifications/notifications_js.stpl");
 		$func_name = "url_".main()->type;
 		$obj_name = main()->type == 'admin' ? 'notifications_admin' : 'notifications';
-		$replace = array(
+		$replace = [
 			"url_check" => $func_name("/{$obj_name}/check"),
 			"url_read" => $func_name("/{$obj_name}/read"),
-		);
+		];
 		js(tpl()->parse_string($tpl, $replace));		
 		css("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.css");
 		js("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.js");
@@ -77,21 +77,21 @@ class yf_notifications {
         }
         
         
-        db()->insert(db('notifications_receivers'), array(
+        db()->insert(db('notifications_receivers'), [
             'notification_id'   => intval($notification_id),
             'receiver_type'     => 'user_id',
             'receiver_id'       => intval($user_id),
             'is_read'           => 0,
             'hash'              => $hash,
-        ));
+        ]);
         
         if (($text != '') || ($url != '')) {
             $id = db()->insert_id();
-            db()->replace(db('notifications_receivers_add_info'), array(
+            db()->replace(db('notifications_receivers_add_info'), [
                 'id'    => intval($id),
                 'text'  => _es($text),
                 'url'   => _es($url),
-            ));
+            ]);
         }
         return true;
     }

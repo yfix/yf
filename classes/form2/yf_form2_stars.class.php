@@ -4,13 +4,13 @@ class yf_form2_stars {
 
 	/**
 	*/
-	function stars($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function stars($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($desc)) {
 			$extra += $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
 		$extra['desc'] = $form->_prepare_desc($extra, $desc);
@@ -31,7 +31,7 @@ class yf_form2_stars {
 			return $form->_row_html(implode(PHP_EOL, $body), $extra, $r);
 		};
 		if ($form->_chained_mode) {
-			$form->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			$form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
 			return $form;
 		}
 		return $func($extra, $replace, $form);
@@ -47,13 +47,13 @@ class yf_form2_stars {
 	*	.rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
 	*	</style>';
 	*/
-	function stars_select($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function stars_select($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($desc)) {
 			$extra += $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
 		$extra['desc'] = $form->_prepare_desc($extra, $desc);
@@ -86,7 +86,7 @@ class yf_form2_stars {
 			return $form->_row_html(implode('', $body), $extra, $r);
 		};
 		if ($form->_chained_mode) {
-			$form->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			$form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
 			return $form;
 		}
 		return $func($extra, $replace, $form);

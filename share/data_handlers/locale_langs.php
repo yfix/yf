@@ -1,6 +1,6 @@
 <?php
 
-$data = array();
+$data = [];
 if (!main()->is_db()) {
 	return $data;
 }

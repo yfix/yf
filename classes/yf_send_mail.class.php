@@ -10,11 +10,11 @@
 class yf_send_mail {
 
 	/** @var array Allowed mailers */
-	public $_KNOWN_MAILERS			= array(
+	public $_KNOWN_MAILERS			= [
 		'simple',
 		'internal',
 		'phpmailer',
-	);
+	];
 	/** @var string Select mailer driver to use */
 	public $USE_MAILER				= 'internal';
 	/** @var string Force SMTP usage if availiable (phpmailer now support) */
@@ -39,7 +39,7 @@ class yf_send_mail {
 	/** @var string External SMTP config file */
 	public $_smtp_config_file		= 'smtp_config.php';
 	/** @var array SMTP specific options */
-	public $SMTP_OPTIONS			= array(
+	public $SMTP_OPTIONS			= [
 		'smtp_host'		=> '', // mx.test.com
 		'smtp_port'		=> '25',
 		'smtp_user_name'=> '', // admin@test.com
@@ -47,7 +47,7 @@ class yf_send_mail {
 		'smtp_auth'		=> '', // Could be: '' (default) or 'autodetect', 'login', 'plain'
 		'smtp_from'		=> '', // User's account to force send mail from
 		'smtp_secure'	=> '', // Could be: '' (default, empty for non-secure), 'ssl', 'tls'
-	);
+	];
 
 	/**
 	* Catch missing method call
@@ -79,7 +79,7 @@ class yf_send_mail {
 	/**
 	* Send emails with attachments with DEBUG ability
 	*/
-	function send ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $_deprecated_param1 = '', $force_mta_opts = array(), $priority = 3, $smtp = array()) {
+	function send ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = [], $charset = '', $_deprecated_param1 = '', $force_mta_opts = [], $priority = 3, $smtp = []) {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
@@ -116,7 +116,7 @@ class yf_send_mail {
 			$debug_mail = $this->DEBUG_TEST_ADDRESS;
 			$debug_name = "(debug: $name_to - $email_to)";
 			if ($this->USE_MAILER == 'phpmailer' && is_array($email_to)) {
-				$mails = array();
+				$mails = [];
 				$debug_name = '';
 				foreach( $email_to as $name => $email ) {
 					$debug_name = "(debug: $name - $email)";
@@ -135,7 +135,7 @@ class yf_send_mail {
 		}
 
 		// Load specific SMTP options (only for 'phpmailer')
-		if (!$this->MAIL_DEBUG && empty( $smtp ) && in_array($this->USE_MAILER, array('phpmailer'))) {
+		if (!$this->MAIL_DEBUG && empty( $smtp ) && in_array($this->USE_MAILER, ['phpmailer'])) {
 			// Try to get specific SMTP settings
 			$this->SMTP_OPTIONS = $this->_process_smtp_config($email_to);
 		}
@@ -232,7 +232,7 @@ class yf_send_mail {
 			}
 		}
 
-		$log_data = array(
+		$log_data = [
 			'email_from'         => $email_from,
 			'name_from'          => $name_from,
 			'email_to'           => implode( ', ', (array)$email_to ),
@@ -247,7 +247,7 @@ class yf_send_mail {
 			'time_start'         => $_time_start,
 			'send_success'       => $result ? 1 : 0,
 			'error_message'      => $error_message,
-		);
+		];
 		// Do log email if needed
 		if ($this->LOG_EMAILS) {
 			$error_message .= implode("\n", $_prev_num_errors ? array_slice((array)main()->_all_core_error_msgs, $_prev_num_errors) : (array)main()->_all_core_error_msgs);
@@ -265,7 +265,7 @@ class yf_send_mail {
 	/**
 	* Send emails with attachments with DEBUG ability
 	*/
-	function _simple_send ($email_from, $name_from, $email_to, $name_to, $subject, $text = '', $html = '', $attaches = array(), $charset = '', $priority = 3) {
+	function _simple_send ($email_from, $name_from, $email_to, $name_to, $subject, $text = '', $html = '', $attaches = [], $charset = '', $priority = 3) {
 		if (!strlen($charset)) {
 			$charset = conf('charset');
 		}
@@ -385,7 +385,7 @@ class yf_send_mail {
 	/**
 	* Save email log info
 	*/
-	function _save_log ($params = array()) {
+	function _save_log ($params = []) {
 		if (!$this->LOG_EMAILS) {
 			return false;
 		}
@@ -409,7 +409,7 @@ class yf_send_mail {
 				.', smtp_secure: '.$smtp['smtp_secure']
 				."\r\n";
 		}
-		return db()->insert_safe('log_emails', array(
+		return db()->insert_safe('log_emails', [
 			'email_from'	=> $params['email_from'],
 			'name_from'		=> $params['name_from'],
 			'email_to'		=> $params['email_to'],
@@ -428,7 +428,7 @@ class yf_send_mail {
 			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
 			'referer'		=> $_SERVER['HTTP_REFERER'],
 			'request_uri'	=> $_SERVER['REQUEST_URI'],
-			'env_data'		=> $this->DB_LOG_ENV ? serialize(array('_GET' => $_GET,'_POST' => $_POST)) : '',
+			'env_data'		=> $this->DB_LOG_ENV ? serialize(['_GET' => $_GET,'_POST' => $_POST]) : '',
 			'object'		=> $_GET['object'],
 			'action'		=> $_GET['action'],
 			'success'		=> intval((bool)$params['send_success']),
@@ -437,6 +437,6 @@ class yf_send_mail {
 			'mail_debug'	=> intval((bool)$params['mail_debug']),
 			'used_mailer'	=> $params['used_mailer'],
 			'other_options'	=> $other_options,
-		));
+		]);
 	}
 }

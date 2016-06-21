@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/facebook/facebook-php-sdk-v4.git' => 'facebook-php-sdk/'),
-	'autoload_config' => array('facebook-php-sdk/src/Facebook/' => 'Facebook'),
+$config = [
+	'git_urls' => ['https://github.com/facebook/facebook-php-sdk-v4.git' => 'facebook-php-sdk/'],
+	'autoload_config' => ['facebook-php-sdk/src/Facebook/' => 'Facebook'],
 	'example' => function() {
 		Facebook\FacebookSession::setDefaultApplication('YOUR_APP_ID', 'YOUR_APP_SECRET');
 		// Use one of the helper classes to get a FacebookSession object.
@@ -24,5 +24,5 @@ $config = array(
 		}
 		var_dump($session);
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'notification_id' => array(
+return [
+	'fields' => [
+		'notification_id' => [
 			'name' => 'notification_id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'receiver_id' => array(
+		],
+		'receiver_id' => [
 			'name' => 'receiver_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,8 +30,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'receiver_type' => array(
+		],
+		'receiver_type' => [
 			'name' => 'receiver_type',
 			'type' => 'enum',
 			'length' => NULL,
@@ -44,13 +44,13 @@ return array(
 			'auto_inc' => false,
 			'primary' => true,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				'user_id' => 'user_id',
 				'admin_id' => 'admin_id',
 				'user_id_tmp' => 'user_id_tmp',
-			),
-		),
-		'is_read' => array(
+			],
+		],
+		'is_read' => [
 			'name' => 'is_read',
 			'type' => 'tinyint',
 			'length' => 4,
@@ -64,21 +64,21 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'notification_id' => 'notification_id',
 				'receiver_id' => 'receiver_id',
 				'receiver_type' => 'receiver_type',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

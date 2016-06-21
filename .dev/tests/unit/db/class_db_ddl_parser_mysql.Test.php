@@ -35,7 +35,7 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 			$this->assertSame($expected, $response, 'fname: '.basename($path));
 
 			// Check that without SQL newlines or pretty formatting code works the same
-			$response = $parser->parse(str_replace(array("\r","\n"), ' ', $sql));
+			$response = $parser->parse(str_replace(["\r","\n"], ' ', $sql));
 			$this->assertSame($expected, $response);
 		}
 	}
@@ -71,24 +71,24 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		$parser->RAW_IN_RESULTS = false;
 
-		$tables_sql = array();
-		$tables_php = array();
+		$tables_sql = [];
+		$tables_php = [];
 
 		// Load install data from external files
-		$globs_sql = array(
+		$globs_sql = [
 			'yf_main'		=> YF_PATH.'share/db/sql/*.sql.php',
 			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql/*.sql.php',
-		);
+		];
 		foreach ($globs_sql as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql.php'));
 				$tables_sql[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
-		$globs_php = array(
+		$globs_php = [
 			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
 			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
-		);
+		];
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
@@ -142,24 +142,24 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		$parser->RAW_IN_RESULTS = false;
 
-		$tables_sql = array();
-		$tables_php = array();
+		$tables_sql = [];
+		$tables_php = [];
 
 		// Load install data from external files
-		$globs_sql = array(
+		$globs_sql = [
 			'yf_main'		=> YF_PATH.'share/db/sql/*.sql.php',
 			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql/*.sql.php',
-		);
+		];
 		foreach ($globs_sql as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql.php'));
 				$tables_sql[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
-		$globs_php = array(
+		$globs_php = [
 			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
 			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
-		);
+		];
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));

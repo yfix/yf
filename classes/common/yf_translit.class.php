@@ -5,7 +5,7 @@
 */
 class yf_translit {
 
-	public $pairs = array(
+	public $pairs = [
 		'а' => 'a',	'б' => 'b',	'в' => 'v',	'г' => 'g',	
 		'д' => 'd',	'е' => 'e',	'ё' => 'e',	'з' => 'z',	
 		'и' => 'i',	'й' => 'y',	'к' => 'k',	'л' => 'l',
@@ -29,7 +29,7 @@ class yf_translit {
 		'Щ' => 'SHCH', 'Ь' => '', 'Ю' => 'YU', 'Я' => 'YA',
 
 		'ї' => 'i', 'Ї' => 'Yi', 'є' => 'ie', 'Є' => 'Ye',
-	);
+	];
 
 	/**
 	* Make translit from russian or ukrainian text
@@ -54,20 +54,20 @@ class yf_translit {
 	/**
 	*/
 	function rus2uni($str, $isTo = true) {
-		$arr = array(
+		$arr = [
 			'ё' => '&#x451;',
 			'Ё' => '&#x401;'
-		);
+		];
 		for ($i=192;$i<256;$i++) {
 			$arr[chr($i)] = '&#x4'.dechex($i-176).';';
 		}
-		$str = preg_replace(array(
+		$str = preg_replace([
 			'@([а-я]) @i',
 			'@ ([а-я])@i'
-		), array(
+		], [
 			'$1&#x0a0;',
 			'&#x0a0;$1'
-		), $str);
+		], $str);
 		return strtr($str, $isTo ? $arr : array_flip($arr));
 	}
 

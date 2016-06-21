@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/yfix/php-sql-parser.git' => 'php_sql_parser/'),
-	'autoload_config' => array('php_sql_parser/src/PHPSQLParser/' => 'PHPSQLParser'),
+$config = [
+	'git_urls' => ['https://github.com/yfix/php-sql-parser.git' => 'php_sql_parser/'],
+	'autoload_config' => ['php_sql_parser/src/PHPSQLParser/' => 'PHPSQLParser'],
 	'example' => function() {
 		$parser = new \PHPSQLParser\PHPSQLParser();
 		$sql = '
@@ -16,5 +16,5 @@ $config = array(
 		$parsed = $parser->parse($sql);
 		var_export($parsed);
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

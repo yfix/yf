@@ -24,31 +24,31 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function _get_supported_field_types() {
-		return array('int','float','double','decimal','numeric','varchar','char','text','datetime','date');
+		return ['int','float','double','decimal','numeric','varchar','char','text','datetime','date'];
 	}
 
 	/**
 	*/
 	public function _get_unsigned_field_types() {
-		return array('int');
+		return ['int'];
 	}
 
 	/**
 	*/
 	public function _get_supported_table_options() {
-		return array();
+		return [];
 	}
 
 	/**
 	*/
-	public function list_databases($extra = array()) {
+	public function list_databases($extra = []) {
 		$sql = 'SHOW DATABASES';
 		return $extra['sql'] ? $sql : $this->db->get_2d($sql);
 	}
 
 	/**
 	*/
-	public function database_exists($db_name, $extra = array(), &$error = false) {
+	public function database_exists($db_name, $extra = [], &$error = false) {
 		if (!$db_name) {
 			$error = 'db_name is empty';
 			return false;
@@ -58,7 +58,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	public function database_info($db_name = '', $extra = array(), &$error = false) {
+	public function database_info($db_name = '', $extra = [], &$error = false) {
 		if (is_array($db_name)) {
 			$extra = (array)$extra + $db_name;
 			$db_name = '';
@@ -75,16 +75,16 @@ abstract class yf_db_utils_driver {
 			$error = 'db_name not exists';
 			return false;
 		}
-		return array(
+		return [
 			'name'		=> $db_name,
 			'charset'	=> $info['DEFAULT_CHARACTER_SET_NAME'],
 			'collate'	=> $info['DEFAULT_COLLATION_NAME'],
-		);
+		];
 	}
 
 	/**
 	*/
-	public function create_database($db_name, $extra = array(), &$error = false) {
+	public function create_database($db_name, $extra = [], &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
@@ -98,7 +98,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	public function drop_database($db_name, $extra = array(), &$error = false) {
+	public function drop_database($db_name, $extra = [], &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
@@ -123,15 +123,15 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	public function alter_database($db_name, $extra = array(), &$error = false) {
+	public function alter_database($db_name, $extra = [], &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
 		}
-		$allowed = array(
+		$allowed = [
 			'charset'	=> 'CHARACTER SET',
 			'collate'	=> 'COLLATE',
-		);
+		];
 		foreach ((array)$extra as $k => $v) {
 			$v = preg_replace('~[^a-z0-9_]+~i', '', $v);
 			if (isset($allowed[$k])) {
@@ -149,7 +149,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	public function rename_database($db_name, $new_name, $extra = array(), &$error = false) {
+	public function rename_database($db_name, $new_name, $extra = [], &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
@@ -180,7 +180,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	public function truncate_database($db_name, $extra = array(), &$error = false) {
+	public function truncate_database($db_name, $extra = [], &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
@@ -205,7 +205,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_tables($db_name = '', $extra = array(), &$error = false) {
+	public function list_tables($db_name = '', $extra = [], &$error = false) {
 		if (is_array($db_name)) {
 			$extra = (array)$extra + $db_name;
 			$db_name = '';
@@ -218,7 +218,7 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$no_views = isset($extra['no_views']) ? (bool)$extra['no_views'] : true;
-		$tables = array();
+		$tables = [];
 		$sql = 'SHOW FULL TABLES'. (strlen($db_name) ? ' FROM '.$this->_escape_database_name($db_name) : '');
 		foreach ((array)$this->db->get_all($sql) as $a) {
 			list($table, $type) = array_values($a);
@@ -232,7 +232,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_tables_details($db_name = '', $extra = array(), &$error = false) {
+	public function list_tables_details($db_name = '', $extra = [], &$error = false) {
 		if (is_array($db_name)) {
 			$extra = (array)$extra + $db_name;
 			$db_name = '';
@@ -244,24 +244,24 @@ abstract class yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-		$tables = array();
+		$tables = [];
 		$q = $this->db->query('SHOW TABLE STATUS'. (strlen($db_name) ? ' FROM '.$this->_escape_database_name($db_name) : ''));
 		while ($a = $this->db->fetch_assoc($q)) {
 			$table = $a['Name'];
-			$tables[$table] = array(
+			$tables[$table] = [
 				'name'		=> $table,
 				'engine'	=> $a['Engine'],
 				'rows'		=> $a['Rows'],
 				'data_size'	=> $a['Data_length'],
 				'collate'	=> $a['Collation'],
-			);
+			];
 		}
 		return $tables;
 	}
 
 	/**
 	*/
-	public function table_exists($table, $extra = array(), &$error = false) {
+	public function table_exists($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -286,7 +286,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	public function table_get_columns($table, $extra = array(), &$error = false) {
+	public function table_get_columns($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -295,7 +295,7 @@ abstract class yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		$cols = array();
+		$cols = [];
 		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_table_name($table));
 		if ($extra['just_names']) {
 			while ($a = $this->db->fetch_assoc($q)) {
@@ -312,7 +312,7 @@ abstract class yf_db_utils_driver {
 			if (!is_null($a['Default'])) {
 				$default = trim($a['Default']);
 			}
-			$cols[$name] = array(
+			$cols[$name] = [
 				'name'		=> $name,
 				'type'		=> $type,
 				'length'	=> $length ? intval($length) : null,
@@ -327,8 +327,8 @@ abstract class yf_db_utils_driver {
 				'primary'	=> $a['Key'] == 'PRI',
 				'unique'	=> $a['Key'] == 'UNI',
 				'values'	=> $values ?: null,
-			);
-			if (false !== strpos(strtolower($a['Extra']), 'on update') && in_array($type, array('timestamp','datetime'))) {
+			];
+			if (false !== strpos(strtolower($a['Extra']), 'on update') && in_array($type, ['timestamp','datetime'])) {
 				$cols[$name]['on_update'] = strtoupper($a['Extra']);
 			}
 			$cols[$name]['type_raw'] = $a['Type'];
@@ -373,7 +373,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function table_get_charset($table, $extra = array(), &$error = false) {
+	public function table_get_charset($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -409,7 +409,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function table_info($table, $extra = array(), &$error = false) {
+	public function table_info($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -434,7 +434,7 @@ WHERE table_schema = "schemaname"
 			$error = 'table_name not exists';
 			return false;
 		}
-		return array(
+		return [
 			'name'			=> $table,
 			'db_name'		=> $db_name,
 			'columns'		=> !$extra['just_info'] ? $this->table_get_columns($orig_table) : null,
@@ -448,12 +448,12 @@ WHERE table_schema = "schemaname"
 			'comment'		=> $info['Comment'],
 			'create_time'	=> $info['Create_time'],
 			'update_time'	=> $info['Update_time'],
-		);
+		];
 	}
 
 	/**
 	*/
-	public function table_simple_info($table, $extra = array(), &$error = false) {
+	public function table_simple_info($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -464,23 +464,23 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function table_options($table, $extra = array(), &$error = false) {
+	public function table_options($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
 		}
 		$info = $this->table_simple_info($table, $extra, $error);
-		return array(
+		return [
 			'engine'	=> $info['engine'],
 			'charset'	=> !$extra['just_info'] ? $this->table_get_charset($table) : null,
 			'collate'	=> $info['collate'],
 			'comment'	=> $info['comment'],
-		);
+		];
 	}
 
 	/**
 	*/
-	public function create_table($table, $extra = array(), &$error = false) {
+	public function create_table($table, $extra = [], &$error = false) {
 		// Example callable: create_table($name, function($t) { $t->int('id', 10); });
 		if (is_callable($extra)) {
 			if (strpos($table, '.') !== false) {
@@ -498,12 +498,12 @@ WHERE table_schema = "schemaname"
 				return false;
 			}
 			$obj = clone _class('db_utils_helper_create_table', 'classes/db/');
-			$extra($obj->_setup(array(
+			$extra($obj->_setup([
 				'utils'			=> $this,
 				'db_name'		=> $db_name,
 				'table_name'	=> $table,
 				'for_create'	=> true,
-			)));
+			]));
 			$sql = $obj->render();
 			return $this->db->query($sql);
 		}
@@ -533,7 +533,7 @@ WHERE table_schema = "schemaname"
 		if (empty($extra['fields'])) {
 			$data = $this->_get_table_structure_from_db_installer($table, $error);
 			if ($data['fields']) {
-				foreach (array('fields','indexes','foreign_keys','options') as $k) {
+				foreach (['fields','indexes','foreign_keys','options'] as $k) {
 					$extra[$k] = $data[$k];
 				}
 			}
@@ -543,10 +543,10 @@ WHERE table_schema = "schemaname"
 			return false;
 		}
 		// Default table options
-		$table_options = array(
+		$table_options = [
 			'engine'	=> 'InnoDB',
 			'charset'	=> 'utf8',
-		);
+		];
 		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
 			if (isset($extra['options'][$name]) && strlen($extra['options'][$name])) {
 				$table_options[$name] = $extra['options'][$name];
@@ -560,19 +560,19 @@ WHERE table_schema = "schemaname"
 			}
 		}
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
-		$sql = $parser->create(array(
+		$sql = $parser->create([
 			'name'			=> $db_name.'.'.($need_fix ? $this->db->_fix_table_name($table) : $table),
 			'fields'		=> $extra['fields'],
 			'indexes'		=> $extra['indexes'],
 			'foreign_keys'	=> $extra['foreign_keys'],
 			'options'		=> $table_options,
-		));
+		]);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	public function drop_table($table, $extra = array(), &$error = false) {
+	public function drop_table($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -588,7 +588,7 @@ WHERE table_schema = "schemaname"
 	/**
 	* Here we support only small subset of alter table options, mostly related to basic things like engine or charset
 	*/
-	public function alter_table($table, $extra = array(), &$error = false) {
+	public function alter_table($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -597,7 +597,7 @@ WHERE table_schema = "schemaname"
 			$error = 'table_name is empty';
 			return false;
 		}
-		$table_options = array();
+		$table_options = [];
 		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
 			if (isset($extra[$name]) && strlen($extra[$name])) {
 				$table_options[$name] = $real_name.'='.$extra[$name];
@@ -613,7 +613,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function rename_table($table, $new_name, $extra = array(), &$error = false) {
+	public function rename_table($table, $new_name, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -628,7 +628,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function truncate_table($table, $extra = array(), &$error = false) {
+	public function truncate_table($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -643,14 +643,14 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function columns_names($table, $extra = array(), &$error = false) {
+	public function columns_names($table, $extra = [], &$error = false) {
 		$extra['just_names'] = true;
 		return $this->table_get_columns($table, $extra, $error);
 	}
 
 	/**
 	*/
-	public function list_columns($table, $extra = array(), &$error = false) {
+	public function list_columns($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -660,7 +660,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function column_exists($table, $col_name, $extra = array(), &$error = false) {
+	public function column_exists($table, $col_name, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -671,7 +671,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function column_info($table, $col_name, $extra = array(), &$error = false) {
+	public function column_info($table, $col_name, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -682,7 +682,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function column_info_item($table, $col_name, $item_name, $extra = array(), &$error = false) {
+	public function column_info_item($table, $col_name, $item_name, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -693,7 +693,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function drop_column($table, $col_name, $extra = array(), &$error = false) {
+	public function drop_column($table, $col_name, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -708,7 +708,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function add_column($table, $data, $extra = array(), &$error = false) {
+	public function add_column($table, $data, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -724,7 +724,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function rename_column($table, $col_name, $new_name, $extra = array(), &$error = false) {
+	public function rename_column($table, $col_name, $new_name, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -742,7 +742,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
+	public function alter_column($table, $col_name, $data, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -773,7 +773,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function list_indexes($table, $extra = array(), &$error = false) {
+	public function list_indexes($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -790,7 +790,7 @@ WHERE table_schema = "schemaname"
 			return false;
 		}
 		// Possible alternative query: SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' AND TABLE_NAME = 't_user' AND COLUMN_KEY = 'PRI';
-		$indexes = array();
+		$indexes = [];
 		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->_escape_table_name($table)) as $row) {
 			$type = 'index';
 			if ($row['Key_name'] === 'PRIMARY') {
@@ -803,10 +803,10 @@ WHERE table_schema = "schemaname"
 				$type = 'spatial';
 			}
 			if (!isset($indexes[$row['Key_name']])) {
-				$indexes[$row['Key_name']] = array(
+				$indexes[$row['Key_name']] = [
 					'name'		=> $row['Key_name'],
 					'type'		=> $type,
-				);
+				];
 			}
 			$indexes[$row['Key_name']]['columns'][$row['Column_name']] = $row['Column_name'];
 		}
@@ -845,7 +845,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
+	public function add_index($table, $index_name = '', $fields = [], $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -872,12 +872,12 @@ WHERE table_schema = "schemaname"
 			return false;
 		}
 		$index_type = strtolower($extra['type'] ?: 'index');
-		$supported_types = array(
+		$supported_types = [
 			'index'		=> 'index',
 			'primary' 	=> 'primary key',
 			'unique' 	=> 'unique key',
 			'fulltext' 	=> 'fulltext key',
-		);
+		];
 		if (!isset($supported_types[$index_type])) {
 			$error = 'index type is not supported';
 			return false;
@@ -892,7 +892,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function drop_index($table, $index_name, $extra = array(), &$error = false) {
+	public function drop_index($table, $index_name, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -917,13 +917,13 @@ WHERE table_schema = "schemaname"
 	/**
 	* Alias
 	*/
-	public function alter_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
+	public function alter_index($table, $index_name = '', $fields = [], $extra = [], &$error = false) {
 		return $this->update_index($table, $index_name, $fields, $extra, $error);
 	}
 
 	/**
 	*/
-	public function update_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
+	public function update_index($table, $index_name = '', $fields = [], $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -942,7 +942,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function list_foreign_keys($table, $extra = array(), &$error = false) {
+	public function list_foreign_keys($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -962,7 +962,7 @@ WHERE table_schema = "schemaname"
 			$error = 'db_name is empty';
 			return false;
 		}
-		$keys = array();
+		$keys = [];
 		$sql = 
 			'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
 			FROM information_schema.KEY_COLUMN_USAGE
@@ -1023,7 +1023,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function drop_foreign_key($table, $index_name, $extra = array(), &$error = false) {
+	public function drop_foreign_key($table, $index_name, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -1040,7 +1040,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function add_foreign_key($table, $index_name = '', $fields = array(), $ref_table = '', $ref_fields = array(), $extra = array(), &$error = false) {
+	public function add_foreign_key($table, $index_name = '', $fields = [], $ref_table = '', $ref_fields = [], $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -1089,13 +1089,13 @@ WHERE table_schema = "schemaname"
 	/**
 	* Alias
 	*/
-	public function alter_foreign_key($table, $index_name = '', $fields = array(), $ref_table = '', $ref_fields = array(), $extra = array(), &$error = false) {
+	public function alter_foreign_key($table, $index_name = '', $fields = [], $ref_table = '', $ref_fields = [], $extra = [], &$error = false) {
 		return $this->update_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
 	}
 
 	/**
 	*/
-	public function update_foreign_key($table, $index_name = '', $fields = array(), $ref_table = '', $ref_fields = array(), $extra = array(), &$error = false) {
+	public function update_foreign_key($table, $index_name = '', $fields = [], $ref_table = '', $ref_fields = [], $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -1114,7 +1114,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function list_views($db_name = '', $extra = array(), &$error = false) {
+	public function list_views($db_name = '', $extra = [], &$error = false) {
 		if (is_array($db_name)) {
 			$extra = (array)$extra + $db_name;
 			$db_name = '';
@@ -1127,7 +1127,7 @@ WHERE table_schema = "schemaname"
 			return false;
 		}
 		$sql = 'SELECT table_name FROM information_schema.tables WHERE table_schema = '.$this->_escape_val($db_name). ' AND table_type = "VIEW"';
-		$views = array();
+		$views = [];
 		foreach ((array)$this->db->get_all($sql) as $a) {
 			$name = $a['table_name'];
 			$create_view = '';
@@ -1144,7 +1144,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function view_exists($table, $extra = array(), &$error = false) {
+	public function view_exists($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -1169,7 +1169,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function view_info($table, $extra = array(), &$error = false) {
+	public function view_info($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -1194,7 +1194,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function drop_view($table, $extra = array(), &$error = false) {
+	public function drop_view($table, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -1210,7 +1210,7 @@ WHERE table_schema = "schemaname"
 	/**
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-view.html
 	*/
-	public function create_view($table, $sql_as, $extra = array(), &$error = false) {
+	public function create_view($table, $sql_as, $extra = [], &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -1225,7 +1225,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function list_triggers($db_name = '', $extra = array(), &$error = false) {
+	public function list_triggers($db_name = '', $extra = [], &$error = false) {
 		if (is_array($db_name)) {
 			$extra = (array)$extra + $db_name;
 			$db_name = '';
@@ -1237,24 +1237,24 @@ WHERE table_schema = "schemaname"
 			$error = 'db_name is empty';
 			return false;
 		}
-		$triggers = array();
+		$triggers = [];
 		foreach ((array)$this->db->get_all('SHOW TRIGGERS FROM '.$this->_escape_database_name($db_name)) as $a) {
 			$name = $a['Trigger'];
-			$triggers[$name] = array(
+			$triggers[$name] = [
 				'name'		=> $name,
 				'table'		=> $a['Table'],
 				'event'		=> $a['Event'],
 				'timing'	=> $a['Timing'],
 				'statement'	=> $a['Statement'],
 				'definer'	=> $a['definer'],
-			);
+			];
 		}
 		return $triggers;
 	}
 
 	/**
 	*/
-	public function trigger_exists($name, $extra = array(), &$error = false) {
+	public function trigger_exists($name, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1275,7 +1275,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function trigger_info($name, $extra = array(), &$error = false) {
+	public function trigger_info($name, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1296,7 +1296,7 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function drop_trigger($name, $extra = array(), &$error = false) {
+	public function drop_trigger($name, $extra = [], &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -1308,7 +1308,7 @@ WHERE table_schema = "schemaname"
 	/**
 	* See http://dev.mysql.com/doc/refman/5.6/en/create-trigger.html
 	*/
-	public function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = array(), &$error = false) {
+	public function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1330,19 +1330,19 @@ WHERE table_schema = "schemaname"
 			$error = 'db_name is empty';
 			return false;
 		}
-		$supported_trigger_times = array(
+		$supported_trigger_times = [
 			'before',
 			'after'
-		);
+		];
 		if (!strlen($trigger_time) || !in_array(strtolower($trigger_time), $supported_trigger_times)) {
 			$error = 'trigger time is wrong';
 			return false;
 		}
-		$supported_trigger_events = array(
+		$supported_trigger_events = [
 			'insert',
 			'update',
 			'delete'
-		);
+		];
 		if (!strlen($trigger_event) || !in_array(strtolower($trigger_event), $supported_trigger_events)) {
 			$error = 'trigger event is wrong';
 			return false;
@@ -1371,13 +1371,13 @@ WHERE table_schema = "schemaname"
 		$ext = '.sql_php.php';
 		$dir = 'share/db/sql_php/';
 		$pattern = $dir. $search_table. $ext;
-		$globs = array(
+		$globs = [
 			PROJECT_PATH. 'plugins/*/'. $pattern,
 			PROJECT_PATH. $pattern,
 			CONFIG_PATH. $pattern,
 			YF_PATH. 'plugins/*/'. $pattern,
 			YF_PATH. $pattern,
-		);
+		];
 		$path = '';
 		foreach ($globs as $glob) {
 			foreach (glob($glob) as $f) {
@@ -1420,12 +1420,12 @@ WHERE table_schema = "schemaname"
 			}
 		}
 		if ($length && !is_numeric($length) && false !== strpos($length, ',')) {
-			if (in_array($type, array('real','double','float','decimal','numeric'))) {
+			if (in_array($type, ['real','double','float','decimal','numeric'])) {
 				list($length, $decimals) = explode(',',$length);
 				$length = (int)trim($length);
 				$decimals = (int)trim($decimals);
-			} elseif (in_array($type, array('enum','set'))) {
-				$values = array();
+			} elseif (in_array($type, ['enum','set'])) {
+				$values = [];
 				foreach(explode(',', $length) as $v) {
 					$v = trim(trim(trim($v),'\'"'));
 					if (strlen($v)) {
@@ -1435,20 +1435,20 @@ WHERE table_schema = "schemaname"
 				$length = '';
 			}
 		}
-		return array(
+		return [
 			'type'		=> $type,
 			'length'	=> $length,
 			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $this->_get_unsigned_field_types()) ? true : false,
 			'decimals'	=> $decimals,
 			'values'	=> $values,
-		);
+		];
 	}
 
 	/**
 	* Smart split long SQL into single queries. Usually to be able to execute them with php_mysql API functions
 	*/
 	public function split_sql($sql) {
-		$out = array();
+		$out = [];
 		// do not trim
 		$sql = rtrim($sql, "\n\r");
 		$sql_len = strlen($sql);
@@ -1551,7 +1551,7 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function _escape_database_name($name = '') {
-		$name = str_replace(array('\'', '"', '`'), '', trim($name));
+		$name = str_replace(['\'', '"', '`'], '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -1561,7 +1561,7 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function _escape_table_name($name = '') {
-		$name = str_replace(array('\'', '"', '`'), '', trim($name));
+		$name = str_replace(['\'', '"', '`'], '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -1594,7 +1594,7 @@ WHERE table_schema = "schemaname"
 		} else {
 			// split by "." and escape each value
 			if (false !== strpos($key, '.') && false === strpos($key, '(') && false === strpos($key, ' ')) {
-				$tmp = array();
+				$tmp = [];
 				foreach (explode('.', $key) as $v) {
 					$tmp[] = is_object($this->db) ? $this->db->escape_key($v) : '`'.addslashes($v).'`';
 				}
@@ -1659,10 +1659,10 @@ WHERE table_schema = "schemaname"
 	*/
 	public function database($db_name) {
 		$obj = clone _class('db_utils_helper_database', 'classes/db/');
-		$obj->_setup(array(
+		$obj->_setup([
 			'utils'		=> $this,
 			'db_name'	=> $db_name,
-		));
+		]);
 		return $obj;
 	}
 
@@ -1675,11 +1675,11 @@ WHERE table_schema = "schemaname"
 	*/
 	public function table($db_name, $table) {
 		$obj = clone _class('db_utils_helper_table', 'classes/db/');
-		$obj->_setup(array(
+		$obj->_setup([
 			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'table'		=> $table,
-		));
+		]);
 		return $obj;
 	}
 
@@ -1689,11 +1689,11 @@ WHERE table_schema = "schemaname"
 	*/
 	public function view($db_name, $view) {
 		$obj = clone _class('db_utils_helper_view', 'classes/db/');
-		$obj->_setup(array(
+		$obj->_setup([
 			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'view'		=> $view,
-		));
+		]);
 		return $obj;
 	}
 
@@ -1705,12 +1705,12 @@ WHERE table_schema = "schemaname"
 	*/
 	public function column($db_name, $table, $col) {
 		$obj = clone _class('db_utils_helper_column', 'classes/db/');
-		$obj->_setup(array(
+		$obj->_setup([
 			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'table'		=> $table,
 			'col'		=> $col,
-		));
+		]);
 		return $obj;
 	}
 
@@ -1721,12 +1721,12 @@ WHERE table_schema = "schemaname"
 	*/
 	public function index($db_name, $table, $index) {
 		$obj = clone _class('db_utils_helper_index', 'classes/db/');
-		$obj->_setup(array(
+		$obj->_setup([
 			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'table'		=> $table,
 			'index'		=> $index,
-		));
+		]);
 		return $obj;
 	}
 
@@ -1736,12 +1736,12 @@ WHERE table_schema = "schemaname"
 	*/
 	public function foreign_key($db_name, $table, $fk_name) {
 		$obj = clone _class('db_utils_helper_foreign_key', 'classes/db/');
-		$obj->_setup(array(
+		$obj->_setup([
 			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'table'		=> $table,
 			'foreign_key'=> $fk_name,
-		));
+		]);
 		return $obj;
 	}
 

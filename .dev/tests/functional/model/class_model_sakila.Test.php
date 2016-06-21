@@ -17,7 +17,7 @@ class class_model_sakila_test extends db_real_abstract {
 
 		// unit_tests == name of the custom storage used here
 		// Ensure unit_tests will be on top of the storages list
-		main()->_custom_class_storages['*_model'] = array('unit_tests' => array(__DIR__.'/fixtures/')) + (array)main()->_custom_class_storages['*_model'];
+		main()->_custom_class_storages['*_model'] = ['unit_tests' => [__DIR__.'/fixtures/']] + (array)main()->_custom_class_storages['*_model'];
 	}
 	public static function tearDownAfterClass() {
 #		self::utils()->truncate_database(self::db_name());
@@ -75,27 +75,27 @@ class class_model_sakila_test extends db_real_abstract {
 		$plen = strlen($db_prefix);
 		$innodb_has_fulltext = self::_innodb_has_fulltext();
 
-		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+		$this->assertEquals( [], self::utils()->list_tables(self::db_name()) );
 
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		$parser->RAW_IN_RESULTS = false;
 
-		$tables_php = array();
+		$tables_php = [];
 		$ext = '.sql_php.php';
-		$globs_php = array(
+		$globs_php = [
 			'fixtures'	=> __DIR__.'/fixtures/*'.$ext,
-		);
+		];
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen($ext));
 				$tables_php[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
-		$tables_data = array();
+		$tables_data = [];
 		$ext = '.data.php';
-		$globs_data = array(
+		$globs_data = [
 			'fixtures'	=> __DIR__.'/fixtures/*'.$ext,
-		);
+		];
 		foreach ($globs_data as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen($ext));
@@ -149,7 +149,7 @@ if ($i++ > 3) {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		$actors_data = include __DIR__.'/fixtures/actor.data.php';
-		$actors_data_objects = array();
+		$actors_data_objects = [];
 		foreach ($actors_data as $arr) {
 			$actors_data_objects[] = (object)$arr;
 		}
@@ -253,7 +253,7 @@ if ($i++ > 3) {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		$actors_data = include __DIR__.'/fixtures/actor.data.php';
-		$actors_data_objects = array();
+		$actors_data_objects = [];
 		foreach ($actors_data as $arr) {
 			$actors_data_objects[] = (object)$arr;
 		}
@@ -280,7 +280,7 @@ if ($i++ > 3) {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		$actors_data = include __DIR__.'/fixtures/actor.data.php';
-		$actors_data_objects = array();
+		$actors_data_objects = [];
 		foreach ($actors_data as $arr) {
 			$actors_data_objects[] = (object)$arr;
 		}

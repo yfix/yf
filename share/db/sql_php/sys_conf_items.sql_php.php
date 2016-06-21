@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'title' => array(
+		],
+		'title' => [
 			'name' => 'title',
 			'type' => 'text',
 			'length' => NULL,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'desc' => array(
+		],
+		'desc' => [
 			'name' => 'desc',
 			'type' => 'text',
 			'length' => NULL,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'group_id' => array(
+		],
+		'group_id' => [
 			'name' => 'group_id',
 			'type' => 'smallint',
 			'length' => 3,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'group_name' => array(
+		],
+		'group_name' => [
 			'name' => 'group_name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'type' => array(
+		],
+		'type' => [
 			'name' => 'type',
 			'type' => 'varchar',
 			'length' => 255,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'keyword' => array(
+		],
+		'keyword' => [
 			'name' => 'keyword',
 			'type' => 'text',
 			'length' => NULL,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'value' => array(
+		],
+		'value' => [
 			'name' => 'value',
 			'type' => 'text',
 			'length' => NULL,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'default' => array(
+		],
+		'default' => [
 			'name' => 'default',
 			'type' => 'text',
 			'length' => NULL,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'extra' => array(
+		],
+		'extra' => [
 			'name' => 'extra',
 			'type' => 'text',
 			'length' => NULL,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'eval_php' => array(
+		],
+		'eval_php' => [
 			'name' => 'eval_php',
 			'type' => 'text',
 			'length' => NULL,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'position' => array(
+		],
+		'position' => [
 			'name' => 'position',
 			'type' => 'smallint',
 			'length' => 3,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'display' => array(
+		],
+		'display' => [
 			'name' => 'display',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -195,19 +195,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

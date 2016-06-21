@@ -37,15 +37,15 @@ class tpl_driver_yf_translate_test extends tpl_abstract {
 			self::_tpl( "{t('::test::my <img src=\"https://www.google.com/images/srpr/logo3w.png\">, <b>%insert1</b>, <i>%insert2</i> translate',%insert1=\"test1\";%insert2=\"test2\")}" ));
 		$this->assertEquals('my <img src="https://www.google.com/images/srpr/logo3w.png">, <b>test1</b>, <i>test2</i>, translate value1', 
 			self::_tpl( "{t('::test::my <img src=\"https://www.google.com/images/srpr/logo3w.png\">, <b>%insert1</b>, <i>%insert2</i>, translate %replace1',%insert1=\"test1\";%insert2=\"test2\";%replace1=\"{replace1}\")}" , 
-				array("replace1" => "value1")));
+				["replace1" => "value1"]));
 	}
 	public function test_43() {
-		$this->assertEquals('my <img src="https://www.google.com/images/srpr/logo3w.png">', self::_tpl( "{catch('myimg')}<img src=\"https://www.google.com/images/srpr/logo3w.png\">{/catch}{t('::test::my @myimg')}", array("replace1" => "value1")));
-		$this->assertEquals('my <img src="https://www.google.com/images/srpr/logo3w.png">', self::_tpl( "{t('::test::my @myimg')}", array("myimg" => '<img src="https://www.google.com/images/srpr/logo3w.png">')));
-		$this->assertEquals('my <img src="https://www.google.com/images/srpr/logo3w.png">', self::_tpl( "{t('::test::my @my-img')}", array("my-img" => '<img src="https://www.google.com/images/srpr/logo3w.png">')));
+		$this->assertEquals('my <img src="https://www.google.com/images/srpr/logo3w.png">', self::_tpl( "{catch('myimg')}<img src=\"https://www.google.com/images/srpr/logo3w.png\">{/catch}{t('::test::my @myimg')}", ["replace1" => "value1"]));
+		$this->assertEquals('my <img src="https://www.google.com/images/srpr/logo3w.png">', self::_tpl( "{t('::test::my @myimg')}", ["myimg" => '<img src="https://www.google.com/images/srpr/logo3w.png">']));
+		$this->assertEquals('my <img src="https://www.google.com/images/srpr/logo3w.png">', self::_tpl( "{t('::test::my @my-img')}", ["my-img" => '<img src="https://www.google.com/images/srpr/logo3w.png">']));
 		$this->assertEquals('my <img src="https://www.google.com/images/srpr/logo3w.png">, <b>test1</b>, <i>test2</i>, translate value1', 
 			self::_tpl( "{t('::test::my @my-img, <b>%insert1</b>, <i>%insert2</i>, translate %replace1',%insert1=\"test1\";%insert2=\"test2\";%replace1=\"{replace1}\")}", 
-				array("my-img" => '<img src="https://www.google.com/images/srpr/logo3w.png">', "replace1" => "value1")));
+				["my-img" => '<img src="https://www.google.com/images/srpr/logo3w.png">', "replace1" => "value1"]));
 	}
 	public function test_47() {
 		$this->assertEquals('<a href="javascript:void(0);" onclick="external.BrowseUrl(\'#\');">License Agreement</a>', 

@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'comment' => array(
+		],
+		'comment' => [
 			'name' => 'comment',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'frequency' => array(
+		],
+		'frequency' => [
 			'name' => 'frequency',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'exec_type' => array(
+		],
+		'exec_type' => [
 			'name' => 'exec_type',
 			'type' => 'varchar',
 			'length' => 255,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'dir' => array(
+		],
+		'dir' => [
 			'name' => 'dir',
 			'type' => 'varchar',
 			'length' => 255,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'admin_id' => array(
+		],
+		'admin_id' => [
 			'name' => 'admin_id',
 			'type' => 'int',
 			'length' => 10,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'update_date' => array(
+		],
+		'update_date' => [
 			'name' => 'update_date',
 			'type' => 'int',
 			'length' => 10,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'exec_time' => array(
+		],
+		'exec_time' => [
 			'name' => 'exec_time',
 			'type' => 'int',
 			'length' => 10,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -149,25 +149,25 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+			],
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

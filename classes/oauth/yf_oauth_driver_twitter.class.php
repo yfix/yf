@@ -10,21 +10,21 @@ class yf_oauth_driver_twitter extends yf_oauth_driver1 {
 	protected $url_authenticate = 'https://api.twitter.com/oauth/authenticate';
 	protected $url_user = 'https://api.twitter.com/1.1/users/lookup.json';
 	public $header_add_realm = false;
-	public $url_params_authorize = array(
+	public $url_params_authorize = [
 		'oauth_callback' => null,
-	);
+	];
 
 	/**
 	*/
-	function _get_user_info_for_auth($raw = array()) {
-		$user_info = array(
+	function _get_user_info_for_auth($raw = []) {
+		$user_info = [
 			'user_id'		=> $raw[0]['id'],
 			'login'			=> $raw[0]['screen_name'],
 			'name'			=> $raw[0]['name'],
 #			'email'			=> $raw[0]['email'],
 			'avatar_url'	=> $raw[0]['profile_image_url'],
 			'profile_url'	=> 'https://twitter.com/'.$raw[0]['screen_name'], // Can be empty
-		);
+		];
 		return $user_info;
 	}
 }

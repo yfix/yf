@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'language',
-	'fields' => array(
-		'language_id' => array(
+	'fields' => [
+		'language_id' => [
 			'name' => 'language_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`language_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT',
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'char',
 			'length' => 20,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`name` char(20) NOT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -50,22 +50,22 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'language_id' => 'language_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`language_id`)',
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

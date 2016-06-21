@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'ip' => array(
+return [
+	'fields' => [
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'hits' => array(
+		],
+		'hits' => [
 			'name' => 'hits',
 			'type' => 'int',
 			'length' => 10,
@@ -30,19 +30,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'ip' => 'ip',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

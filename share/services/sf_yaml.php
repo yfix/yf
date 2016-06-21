@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/yfix/Yaml.git' => 'sf_yaml/'),
-	'autoload_config' => array('sf_yaml/' => 'Symfony\Component\Yaml'),
+$config = [
+	'git_urls' => ['https://github.com/yfix/Yaml.git' => 'sf_yaml/'],
+	'autoload_config' => ['sf_yaml/' => 'Symfony\Component\Yaml'],
 	'manual' => function() {
 		if (!function_exists('yaml_parse')) {
 			function yaml_parse($input) {
@@ -24,17 +24,17 @@ customer:
     given:   Dorothy
     family:  Gale
 		');
-		$php_array = array(
+		$php_array = [
 			'receipt' => 'Oz-Ware Purchase Invoice',
 			'date' => 1344200400,
-			'customer' => array(
+			'customer' => [
 				'given' => 'Dorothy',
 				'family' => 'Gale',
-			),
-		);
+			],
+		];
 
 		var_export(yaml_parse($yaml_str));
 		var_dump(yaml_dump($php_array));
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

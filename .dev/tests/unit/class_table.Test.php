@@ -26,10 +26,10 @@ class class_table_test extends yf_unit_tests {
 		$table = table();
 		$this->assertEquals('<div class="alert alert-info">No records</div>', trim($table));
 
-		$a = array(
-			array('k1' => 'v11', 'k2' => 'v21'),
-			array('k1' => 'v12', 'k2' => 'v22')
-		);
+		$a = [
+			['k1' => 'v11', 'k2' => 'v21'],
+			['k1' => 'v12', 'k2' => 'v22']
+		];
 
 		$table = @table($a)
 			->text();
@@ -85,7 +85,7 @@ class class_table_test extends yf_unit_tests {
 		$this->assertObjectHasAttribute('_ids', $table);
 		$this->assertSame(count($table->_ids), count($a));
 
-		$a = array();
+		$a = [];
 		$table = table($a);
 		$this->assertObjectHasAttribute('_total', $table);
 		$this->assertEquals($table->_total, count($a));
@@ -93,14 +93,14 @@ class class_table_test extends yf_unit_tests {
 		$this->assertObjectHasAttribute('_ids', $table);
 		$this->assertSame(count($table->_ids), count($a));
 
-		$table = table(null, array('no_records_callback' => function(){return 'Hello';}));
+		$table = table(null, ['no_records_callback' => function(){return 'Hello';}]);
 		$this->assertEquals('Hello', trim($table));
 	}
 	public function test_btn_link() {
-		$a = array(
-			array('id' => '1', 'user_id' => '122', 'product_id' => '133'),
-			array('id' => '2', 'user_id' => '222', 'product_id' => '233'),
-		);
+		$a = [
+			['id' => '1', 'user_id' => '122', 'product_id' => '133'],
+			['id' => '2', 'user_id' => '222', 'product_id' => '233'],
+		];
 		$table = table($a)
 			->text('id')
 			->btn('custom', './?object=test&uid=%d')
@@ -114,7 +114,7 @@ class class_table_test extends yf_unit_tests {
 
 		$table = table($a)
 			->text('id')
-			->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'))
+			->btn('custom', './?object=test&uid=%user_id&pid=%product_id', ['link_params' => 'user_id,product_id'])
 		;
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 			'<table class="'._class('table2')->CLASS_TABLE_MAIN.'">'.
@@ -125,8 +125,8 @@ class class_table_test extends yf_unit_tests {
 
 		$table = table($a)
 			->text('id')
-			->btn('custom1', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'))
-			->btn('custom2', './?object=test&uid=%user_id&pid=555', array('link_params' => 'user_id'))
+			->btn('custom1', './?object=test&uid=%user_id&pid=%product_id', ['link_params' => 'user_id,product_id'])
+			->btn('custom2', './?object=test&uid=%user_id&pid=555', ['link_params' => 'user_id'])
 		;
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 			'<table class="'._class('table2')->CLASS_TABLE_MAIN.'">'.
@@ -138,10 +138,10 @@ class class_table_test extends yf_unit_tests {
 			'</tbody></table>'), str_replace(PHP_EOL, '', trim($table)));
 	}
 	public function test_auto() {
-		$a = array(
-			array('id' => '1', 'user_id' => '122', 'product_id' => '133'),
-			array('id' => '2', 'user_id' => '222', 'product_id' => '233'),
-		);
+		$a = [
+			['id' => '1', 'user_id' => '122', 'product_id' => '133'],
+			['id' => '2', 'user_id' => '222', 'product_id' => '233'],
+		];
 		$table = table($a)->auto();
 
 		$web_path = 'http://'.$_SERVER['HTTP_HOST'].'/';
@@ -157,10 +157,10 @@ class class_table_test extends yf_unit_tests {
 		), str_replace(PHP_EOL, '', trim($table)));
 	}
 	public function test_rotate() {
-		$a = array(
-			array('id' => '1', 'user_id' => '122', 'product_id' => '133'),
-			array('id' => '2', 'user_id' => '222', 'product_id' => '233'),
-		);
+		$a = [
+			['id' => '1', 'user_id' => '122', 'product_id' => '133'],
+			['id' => '2', 'user_id' => '222', 'product_id' => '233'],
+		];
 		$table = table($a)
 			->text('id')
 			->text('user_id');
@@ -169,7 +169,7 @@ class class_table_test extends yf_unit_tests {
 			'<table class="'._class('table2')->CLASS_TABLE_MAIN.'"><thead><th>Id</th><th>User id</th></thead><tbody><tr><td>1</td><td>122</td></tr><tr><td>2</td><td>222</td></tr></tbody></table>'
 		), str_replace(PHP_EOL, '', trim($table)));
 
-		$table = table($a, array('rotate_table' => 1))
+		$table = table($a, ['rotate_table' => 1])
 			->text('id')
 			->text('user_id');
 
@@ -178,11 +178,11 @@ class class_table_test extends yf_unit_tests {
 		), str_replace(PHP_EOL, '', trim($table)));
 	}
 	public function test_group_by() {
-		$a = array(
-			array('id' => '1', 'user_id' => '111'),
-			array('id' => '2', 'user_id' => '111'),
-		);
-		$table = table($a, array('group_by' => 'user_id'))->text('id')->text('user_id');
+		$a = [
+			['id' => '1', 'user_id' => '111'],
+			['id' => '2', 'user_id' => '111'],
+		];
+		$table = table($a, ['group_by' => 'user_id'])->text('id')->text('user_id');
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 			'<table class="'._class('table2')->CLASS_TABLE_MAIN.'">'
 			. '<thead><th>Id</th><th>User id</th></thead><tbody><tr><td>1</td><td rowspan="2">111</td></tr><tr><td>2</td></tr>'
@@ -190,8 +190,8 @@ class class_table_test extends yf_unit_tests {
 		), str_replace(PHP_EOL, '', trim($table)));
 	}
 	public function test_table_force_class() {
-		$a = array(array('id' => '1'), array('id' => '2'));
-		$table = table($a, array('force_class' => 'test_class'))->text('id');
+		$a = [['id' => '1'], ['id' => '2']];
+		$table = table($a, ['force_class' => 'test_class'])->text('id');
 		$this->assertEquals(str_replace(PHP_EOL, '', '<table class="test_class"><thead><th>Id</th></thead><tbody><tr><td>1</td></tr><tr><td>2</td></tr></tbody></table>'), str_replace(PHP_EOL, '', trim($table)));
 	}
 	public function test_rowspan() {

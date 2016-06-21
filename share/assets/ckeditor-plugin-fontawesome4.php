@@ -1,24 +1,24 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => '
 				CKEDITOR.dtd.$removeEmpty["span"] = false;
 				CKEDITOR.plugins.addExternal("fontawesome", "https://cdn.rawgit.com/yfix/ckeditor-fontawesome4/master/fontawesome/plugin.js");
 //				CKEDITOR.config.contentsCss = "//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css",
 			',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+		],
+	],
+	'require' => [
+		'asset' => [
 			'font-awesome4',
 			'ckeditor-plugin-widget',
 			'ckeditor-plugin-lineutils',
 			'ckeditor',
-		),
-	),
-	'config' => array(
+		],
+	],
+	'config' => [
 		'no_cache' => true,
-	),
-);
+	],
+];

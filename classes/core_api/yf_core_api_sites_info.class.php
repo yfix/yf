@@ -9,7 +9,7 @@ class yf_core_api_sites_info {
 	/** @var string Name of sites index file */
 	public $_index_file_name	= "index.php";
 	/** @var array Config constants to parse */
-	public $_consts_to_parse	= array(
+	public $_consts_to_parse	= [
 		"SITE_UPLOADS_DIR",
 		"SITE_ADVERT_PHOTOS_DIR",
 		"SITE_LINKS_BANNERS_DIR",
@@ -17,7 +17,7 @@ class yf_core_api_sites_info {
 		"SITE_BLOG_IMAGES_DIR",
 		"SITE_GALLERY_DIR",
 		"DEFAULT_SKIN",
-	);
+	];
 	/** @var string @conf_skip Patterns to get constant value */
 	public $_get_const_pattern	= "/define\s*\(\s*[\"\']*##CONST_NAME##[\"\']*[\s\t]*,[\s\t]*[\"\']*([^\'\"]+)[\"\']*\s*\)/Uims";
 
@@ -57,7 +57,7 @@ class yf_core_api_sites_info {
 	function _get_sites_info () {
 		foreach ((array)$this->info as $site_id => $info) {
 			$tmp_string = "";
-			$found		= array();
+			$found		= [];
 			$config_path = $info["REAL_PATH"]. $this->_config_file_name;
 			if (!file_exists($config_path)) {
 				$config_path = $info["REAL_PATH"]. $this->_index_file_name;
@@ -82,7 +82,7 @@ class yf_core_api_sites_info {
 	/**
 	* Get site current theme
 	*/
-	function _get_site_current_theme ($SITE_INFO = array()) {
+	function _get_site_current_theme ($SITE_INFO = []) {
 		$index_file_path = $SITE_INFO["REAL_PATH"]. $this->_index_file_name;
 		if (!file_exists($index_file_path)) {
 			return false;

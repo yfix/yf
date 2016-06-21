@@ -144,7 +144,7 @@ if (!function_exists('module_conf')) {
 		if ($module && !$name) {
 			return $PROJECT_CONF[$module];
 		}
-		return conf($name, $new_value, array('PROJECT_CONF' => $module));
+		return conf($name, $new_value, ['PROJECT_CONF' => $module]);
 	}
 }
 

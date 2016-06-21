@@ -6,7 +6,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function country_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function country_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -18,15 +18,15 @@ class yf_form2_boxes {
 		if (!$name) {
 			$name = 'country';
 		}
-		$data = array();
+		$data = [];
 		$row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
 		$countries = $extra['countries'] ?: main()->get_data('geo_countries');
 		foreach ((array)$countries as $v) {
-			$r = array(
+			$r = [
 				'%icon'	=> '<i class="bfh-flag-'.strtoupper($v['code']).'"></i>',
 				'%name'	=> $v['name'],
 				'%code'	=> '['.strtoupper($v['code']).']',
-			);
+			];
 			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -38,7 +38,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function region_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function region_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -51,13 +51,13 @@ class yf_form2_boxes {
 			$name = 'region';
 		}
 		$extra['country'] = $extra['country'] ?: 'UA';
-		$data = array();
+		$data = [];
 		$row_tpl = $extra['row_tpl'] ?: '%name';
-		$regions = $extra['regions'] ?: main()->get_data('geo_regions', 0, array('country' => $extra['country']));
+		$regions = $extra['regions'] ?: main()->get_data('geo_regions', 0, ['country' => $extra['country']]);
 		foreach ((array)$regions as $v) {
-			$r = array(
+			$r = [
 				'%name'	=> $v['name'],
-			);
+			];
 			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -69,7 +69,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function city_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function city_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -82,20 +82,20 @@ class yf_form2_boxes {
 			$name = 'city';
 		}
 		$extra['country'] = $extra['country'] ?: 'UA';
-		$data = array();
+		$data = [];
 		$row_tpl = $extra['row_tpl'] ?: '%name';
-		foreach ((array)main()->get_data('geo_regions', 0, array('country' => $extra['country'])) as $v) {
-			$data[$v['name']] = array();
+		foreach ((array)main()->get_data('geo_regions', 0, ['country' => $extra['country']]) as $v) {
+			$data[$v['name']] = [];
 			$region_names[$v['id']] = $v['name'];
 		}
-		foreach ((array)main()->get_data('geo_cities', 0, array('country' => $extra['country'])) as $v) {
+		foreach ((array)main()->get_data('geo_cities', 0, ['country' => $extra['country']]) as $v) {
 			$region_name = $region_names[$v['region_id']];
 			if (!$region_name) {
 				continue;
 			}
-			$r = array(
+			$r = [
 				'%name'	=> $v['name'],
-			);
+			];
 			$data[$region_name][$v['id']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -107,7 +107,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function currency_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function currency_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -119,14 +119,14 @@ class yf_form2_boxes {
 		if (!$name) {
 			$name = 'currency';
 		}
-		$data = array();
+		$data = [];
 		$row_tpl = $extra['row_tpl'] ?: '%sign &nbsp; %name %code';
 		foreach ((array)main()->get_data('currencies') as $v) {
-			$r = array(
+			$r = [
 				'%sign'	=> $v['sign'],
 				'%name'	=> $v['name'],
 				'%code'	=> '['.$v['id'].']',
-			);
+			];
 			$data[$v['id']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -138,7 +138,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function locale_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function locale_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -150,7 +150,7 @@ class yf_form2_boxes {
 		if (!$name) {
 			$name = 'locale';
 		}
-		$data = array();
+		$data = [];
 		$row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
 
 		asset('bfh-select');
@@ -163,11 +163,11 @@ class yf_form2_boxes {
 			}
 			$lang = strtolower($v['locale']);
 			$country = strtoupper($lang_def_country[$lang]);
-			$r = array(
+			$r = [
 				'%icon'	=> ($country ? '<i class="bfh-flag-'.$country.'"></i> ' : ''),
 				'%name'	=> $v['name'],
 				'%code'	=> '['.$lang.']',
-			);
+			];
 			$data[$lang] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -179,7 +179,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function language_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function language_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -191,14 +191,14 @@ class yf_form2_boxes {
 		if (!$name) {
 			$name = 'language';
 		}
-		$data = array();
+		$data = [];
 		$row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
 		foreach ((array)main()->get_data('languages_new') as $v) {
-			$r = array(
+			$r = [
 				'%icon'	=> ($v['country'] ? '<i class="bfh-flag-'.strtoupper($v['country']).'"></i> ' : ''),
 				'%name'	=> $v['native'],
 				'%code'	=> '['.$v['code'].']',
-			);
+			];
 			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -210,7 +210,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function timezone_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function timezone_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -222,13 +222,13 @@ class yf_form2_boxes {
 		if (!$name) {
 			$name = 'timezone';
 		}
-		$data = array();
+		$data = [];
 		$row_tpl = $extra['row_tpl'] ?: '<small>%offset %name</small>';
 		foreach ((array)main()->get_data('timezones') as $v) {
-			$r = array(
+			$r = [
 				'%offset'	=> $v['offset'],
 				'%name'		=> $v['name'],
-			);
+			];
 			$data[$v['name']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -240,7 +240,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function icon_select_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -252,13 +252,13 @@ class yf_form2_boxes {
 		if (!$name) {
 			$name = 'icon';
 		}
-		$data = array();
+		$data = [];
 		$row_tpl = $extra['row_tpl'] ?: '%icon %name';
 		foreach ((array)main()->get_data('fontawesome_icons') as $icon) {
-			$r = array(
+			$r = [
 				'%icon'	=> '<i class="icon fa '.$icon.'"></i> ',
 				'%name'	=> $icon,
-			);
+			];
 			$data[$icon] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -270,7 +270,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function method_select_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -282,7 +282,7 @@ class yf_form2_boxes {
 		if (!$name) {
 			$name = 'method';
 		}
-		$data = array();
+		$data = [];
 		if ($extra['for_type'] == 'admin') {
 			$data = _class('admin_modules', 'admin_modules/')->_get_methods_for_select();
 		} else {
@@ -297,7 +297,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function template_select_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -309,7 +309,7 @@ class yf_form2_boxes {
 		if (!$name) {
 			$name = 'template';
 		}
-		$data = array();
+		$data = [];
 		if ($extra['for_type'] == 'admin') {
 			$data = _class('template_editor', 'admin_modules/')->_get_stpls_for_type('admin');
 		} else {
@@ -324,7 +324,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function location_select_box($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';

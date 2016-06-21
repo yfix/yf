@@ -21,15 +21,15 @@ if (file_exists($autoload_file)) {
 }
 
 function get_paths() {
-	$paths = array(
+	$paths = [
 		'called_path'	=> rtrim(getcwd(), '/').'/',
 		'yf_path'		=> dirname(dirname(__DIR__)).'/',
 		'app_path'		=> '',
 		'project_path'	=> '',
 		'config_path'	=> '',
 		'db_setup_path'	=> '',
-	);
-	$globs = array(
+	];
+	$globs = [
 		'',
 		'config/',
 		'*/',
@@ -40,7 +40,7 @@ function get_paths() {
 		'*/*/*/config/',
 		'../',
 		'../config/',
-	);
+	];
 	$max_deepness = substr_count($paths['called_path'], '/') - 1; // 1 level left for basedir
 	for ($i = 1; $i <= $max_deepness; $i++) {
 		$globs[] = str_repeat('../', $i).'*/';
@@ -101,19 +101,19 @@ function init_yf() {
 	error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
 }
 function get_yf_console_commands() {
-	$cmds = array();
+	$cmds = [];
 	$subfolder = 'commands/';
 	$prefix_project = 'console_';
 	$prefix_framework = 'yf_'.$prefix_project;
 	$ext = '.class.php';
-	$globs = array(
+	$globs = [
 		'project_app'			=> APP_PATH. $subfolder. $prefix_project. '*'. $ext,
 		'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $subfolder. $prefix_project. '*'. $ext,
 		'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $subfolder. $prefix_project. '*'. $ext,
 		'project_main'			=> PROJECT_PATH. $subfolder. $prefix_project. '*'. $ext,
 		'framework_plugins'		=> YF_PATH. 'plugins/*/'. $subfolder. $prefix_framework. '*'. $ext,
 		'framework_main'		=> __DIR__. '/'. $subfolder. $prefix_framework. '*'. $ext,
-	);
+	];
 	foreach ($globs as $gname => $glob) {
 		foreach (glob($glob) as $path) {
 			$name = '';

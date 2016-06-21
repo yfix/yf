@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object' => array(
+		],
+		'object' => [
 			'name' => 'object',
 			'type' => 'varchar',
 			'length' => 32,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'action' => array(
+		],
+		'action' => [
 			'name' => 'action',
 			'type' => 'varchar',
 			'length' => 32,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'query_string' => array(
+		],
+		'query_string' => [
 			'name' => 'query_string',
 			'type' => 'varchar',
 			'length' => 128,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'site_id' => array(
+		],
+		'site_id' => [
 			'name' => 'site_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'group_id' => array(
+		],
+		'group_id' => [
 			'name' => 'group_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'hash' => array(
+		],
+		'hash' => [
 			'name' => 'hash',
 			'type' => 'varchar',
 			'length' => 32,
@@ -105,29 +105,29 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'object' => array(
+			],
+		],
+		'object' => [
 			'name' => 'object',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'object' => 'object',
 				'action' => 'action',
 				'query_string' => 'query_string',
 				'site_id' => 'site_id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

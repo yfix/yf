@@ -40,7 +40,7 @@ class yf_cache {
 		}
 		// Support for driver-specific methods
 		if (is_object($this->_driver)) {
-			return call_user_func_array(array($this->_driver, $name), $args);
+			return call_user_func_array([$this->_driver, $name], $args);
 		}
 		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
@@ -59,7 +59,7 @@ class yf_cache {
 	/**
 	* Framework constructor
 	*/
-	function _init($params = array()) {
+	function _init($params = []) {
 		if (isset($this->_init_complete)) {
 			return true;
 		}
@@ -70,7 +70,7 @@ class yf_cache {
 
 	/**
 	*/
-	function _init_settings($params = array()) {
+	function _init_settings($params = []) {
 		// backwards compatibility
 		if ($this->FILES_TTL) {
 			$this->TTL = $this->FILES_TTL;
@@ -115,7 +115,7 @@ class yf_cache {
 	* We can add DEBUG_MODE checking here to not allow refresh_cache attacks, maybe add check for: conf('cache_refresh_token', 'something_random'), main()->CACHE_CONTROL_FROM_URL
 	*/
 	function _url_action_allowed($action = '') {
-		$actions = array('no_cache', 'refresh_cache');
+		$actions = ['no_cache', 'refresh_cache'];
 		$callback = conf('cache_url_action_allowed');
 		if (is_callable($callback)) {
 			return (bool)$callback($action);
@@ -125,7 +125,7 @@ class yf_cache {
 
 	/**
 	*/
-	function _connect($params = array()) {
+	function _connect($params = []) {
 		if (!$this->DRIVER) {
 			return null;
 		}
@@ -138,7 +138,7 @@ class yf_cache {
 		if ($driver) {
 			$this->_driver = _class('cache_driver_'.$driver, 'classes/cache/');
 			$this->_driver_ok = $this->_driver->is_ready();
-			$implemented = array();
+			$implemented = [];
 			foreach (get_class_methods($this->_driver) as $method) {
 				if ($method[0] != '_') {
 					$implemented[$method] = $method;
@@ -155,7 +155,7 @@ class yf_cache {
 
 	/**
 	*/
-	function _set_current_driver($params = array()) {
+	function _set_current_driver($params = []) {
 		$avail_drivers = $this->_get_avail_drivers_list();
 		$driver = '';
 		$want = isset($params['driver']) ? $params['driver'] : $this->DRIVER;
@@ -173,16 +173,16 @@ class yf_cache {
 	*/
 	function _get_avail_drivers_list() {
 		$dir = 'classes/cache/';
-		$paths = array(
+		$paths = [
 			'project'	=> PROJECT_PATH. $dir,
 			'yf_core'	=> YF_PATH. $dir,
 			'yf_plugins'=> YF_PATH. 'plugins/*/'. $dir,
-		);
+		];
 		$prefix = 'cache_driver_';
 		$suffix = '.class.php';
 		$plen = strlen($prefix);
 		$slen = strlen($suffix);
-		$drivers = array();
+		$drivers = [];
 		foreach ($paths as $path) {
 			foreach (glob($path.'*'.$prefix.'*'.$suffix) as $f) {
 				$f = basename($f);
@@ -198,7 +198,7 @@ class yf_cache {
 	/**
 	* Get data from cache
 	*/
-	function get($name, $force_ttl = 0, $params = array()) {
+	function get($name, $force_ttl = 0, $params = []) {
 		if ($name === false || $name === null) {
 			return null;
 		}
@@ -220,7 +220,7 @@ class yf_cache {
 			$result = $this->_driver->get($key_name_ns, $force_ttl, $params);
 		}
 
-		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', [
 			'name'			=> $name,
 			'name_real'		=> $key_name_ns,
 			'data'			=> $result,
@@ -230,7 +230,7 @@ class yf_cache {
 			'time'			=> round(microtime(true) - $time_start, 5),
 			'trace'			=> main()->trace_string(),
 			'did_real_work'	=> (int)$do_real_work,
-		));
+		]);
 		if ($_GET['refresh_cache'] && $this->_url_action_allowed('refresh_cache')) {
 			return null;
 		}
@@ -265,7 +265,7 @@ class yf_cache {
 			$result = $this->_driver->set($key_name_ns, $data, $ttl);
 		}
 
-		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', [
 			'name'			=> $name,
 			'name_real'		=> $key_name_ns,
 			'data'			=> $data,
@@ -274,7 +274,7 @@ class yf_cache {
 			'time'			=> round(microtime(true) - $time_start, 5),
 			'trace'			=> main()->trace_string(),
 			'did_real_work'	=> (int)$do_real_work,
-		));
+		]);
 		return $result;
 	}
 
@@ -302,13 +302,13 @@ class yf_cache {
 			$result = $this->_driver->del($key_name_ns);
 		}
 
-		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', [
 			'name'			=> $name,
 			'name_real'		=> $key_name_ns,
 			'driver'		=> $this->DRIVER,
 			'time'			=> round(microtime(true) - $time_start, 5),
 			'did_real_work'	=> (int)$do_real_work,
-		));
+		]);
 		return $result;
 	}
 
@@ -356,12 +356,12 @@ class yf_cache {
 			$result = $this->_driver->flush();
 		}
 
-		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', [
 			'data'			=> $result,
 			'driver'		=> $this->DRIVER,
 			'time'			=> microtime(true) - $time_start,
 			'did_real_work'	=> (int)$do_real_work,
-		));
+		]);
 		return $result;
 	}
 
@@ -396,7 +396,7 @@ class yf_cache {
 	/**
 	* Get several cache entries at once
 	*/
-	function multi_get($names = array(), $force_ttl = 0, $params = array()) {
+	function multi_get($names = [], $force_ttl = 0, $params = []) {
 		$do_real_work = true;
 		if (!$this->_driver_ok || $this->NO_CACHE) {
 			$do_real_work = false;
@@ -426,7 +426,7 @@ class yf_cache {
 					unset($result[$name]);
 				}
 			} else {
-				$result = array();
+				$result = [];
 				foreach ((array)$names as $name) {
 					$res = $this->get($name, $force_ttl, $params);
 					if (isset($res)) {
@@ -438,20 +438,20 @@ class yf_cache {
 				$result = null;
 			}
 		}
-		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', [
 			'names'			=> $names,
 			'data'			=> $result,
 			'driver'		=> $this->DRIVER,
 			'time'			=> microtime(true) - $time_start,
 			'did_real_work'	=> (int)$do_real_work,
-		));
+		]);
 		return $result;
 	}
 
 	/**
 	* Set several cache entries at once
 	*/
-	function multi_set($data = array(), $ttl = 0) {
+	function multi_set($data = [], $ttl = 0) {
 		$do_real_work = true;
 		if (!$this->_driver_ok || $this->NO_CACHE) {
 			$do_real_work = false;
@@ -488,19 +488,19 @@ class yf_cache {
 				$result = null;
 			}
 		}
-		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', [
 			'data'			=> $data,
 			'driver'		=> $this->DRIVER,
 			'time'			=> microtime(true) - $time_start,
 			'did_real_work'	=> (int)$do_real_work,
-		));
+		]);
 		return $result;
 	}
 
 	/**
 	* Del several cache entries at once
 	*/
-	function multi_del($names = array()) {
+	function multi_del($names = []) {
 		$do_real_work = true;
 		if (!$this->_driver_ok) {
 			$do_real_work = false;
@@ -533,13 +533,13 @@ class yf_cache {
 			}
 			$result = $failed ? null : true;
 		}
-		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', [
 			'names'			=> $names,
 			'data'			=> $result,
 			'driver'		=> $this->DRIVER,
 			'time'			=> microtime(true) - $time_start,
 			'did_real_work'	=> (int)$do_real_work,
-		));
+		]);
 		return $result;
 	}
 
@@ -576,12 +576,12 @@ class yf_cache {
 				$result = null;
 			}
 		}
-		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', [
 			'data'			=> $result,
 			'driver'		=> $this->DRIVER,
 			'time'			=> microtime(true) - $time_start,
 			'did_real_work'	=> (int)$do_real_work,
-		));
+		]);
 		return $result;
 	}
 
@@ -619,13 +619,13 @@ class yf_cache {
 				}
 			}
 		}
-		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', [
 			'prefix'		=> $prefix,
 			'data'			=> $result,
 			'driver'		=> $this->DRIVER,
 			'time'			=> microtime(true) - $time_start,
 			'did_real_work'	=> (int)$do_real_work,
-		));
+		]);
 		return $result;
 	}
 }

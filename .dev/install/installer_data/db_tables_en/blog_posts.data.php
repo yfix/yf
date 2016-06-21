@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'id2' => '1',
     'user_name' => 'test',
@@ -38,9 +38,9 @@ We all have roles to play in keeping kids safe online. Parents need to be involv
     'activity' => '0',
     'old_id' => '0',
     'mask' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'id2' => '1',
     'user_name' => 'kingargyle',
@@ -95,9 +95,9 @@ And I guess that\'s my biggest point: the goal of every single interaction shoul
     'activity' => '0',
     'old_id' => '0',
     'mask' => '0',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'id2' => '1',
     'user_name' => 'kingargyle',
@@ -140,9 +140,9 @@ In the lingo of Nancy Reagan, Firefox is a gateway drug.',
     'activity' => '0',
     'old_id' => '0',
     'mask' => '0',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'id2' => '1',
     'user_name' => 'odlman',
@@ -179,9 +179,9 @@ In my favorite hotel\'s kitchen, there\'s a big sign on the way out to the dinin
     'activity' => '0',
     'old_id' => '0',
     'mask' => '0',
-  ),
+  ],
   5 => 
-  array (
+  [
     'id' => '5',
     'id2' => '1',
     'user_name' => 'kingargyle',
@@ -214,5 +214,5 @@ Do you know what most people want? They want you to care.',
     'activity' => '0',
     'old_id' => '0',
     'mask' => '0',
-  ),
-);
+  ],
+];

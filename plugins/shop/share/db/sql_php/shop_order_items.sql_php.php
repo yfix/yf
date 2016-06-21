@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'order_id' => array(
+return [
+	'fields' => [
+		'order_id' => [
 			'name' => 'order_id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'type' => array(
+		],
+		'type' => [
 			'name' => 'type',
 			'type' => 'int',
 			'length' => 10,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'product_id' => array(
+		],
+		'product_id' => [
 			'name' => 'product_id',
 			'type' => 'int',
 			'length' => 10,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'param_id' => array(
+		],
+		'param_id' => [
 			'name' => 'param_id',
 			'type' => 'varchar',
 			'length' => 128,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 10,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'quantity' => array(
+		],
+		'quantity' => [
 			'name' => 'quantity',
 			'type' => 'int',
 			'length' => 10,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'price' => array(
+		],
+		'price' => [
 			'name' => 'price',
 			'type' => 'decimal',
 			'length' => 12,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'status' => array(
+		],
+		'status' => [
 			'name' => 'status',
 			'type' => 'int',
 			'length' => 10,
@@ -120,19 +120,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'order_id' => array(
+		],
+	],
+	'indexes' => [
+		'order_id' => [
 			'name' => 'order_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'order_id' => 'order_id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

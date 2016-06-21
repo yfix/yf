@@ -7,19 +7,19 @@ class yf_manage_shop_revisions {
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('shop_revisions'), array(
+		return table('SELECT * FROM '.db('shop_revisions'), [
 				'filter' => true,
-				'filter_params' => array(
-					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('dt_between','add_date'),
-					'action' 	=> array('eq','action'),
-					'item_id' 	=> array('eq','item_id'),
-					'ip'		=> array('like', 'ip'),
-				),
+				'filter_params' => [
+					'user_id'	=> ['eq','user_id'],
+					'add_date'	=> ['dt_between','add_date'],
+					'action' 	=> ['eq','action'],
+					'item_id' 	=> ['eq','item_id'],
+					'ip'		=> ['like', 'ip'],
+				],
 				'hide_empty' => 1,
-			))
-			->date('add_date', array('format' => '%d-%m-%Y', 'nowrap' => 1))
-			->admin('user_id', array('desc' => 'admin'))
+			])
+			->date('add_date', ['format' => '%d-%m-%Y', 'nowrap' => 1])
+			->admin('user_id', ['desc' => 'admin'])
 			->text('ip')
 			->text('action')
 			->text('item_id')
@@ -34,7 +34,7 @@ class yf_manage_shop_revisions {
 			return false;
 		}
 		if (!is_array($ids) && intval($ids)) {
-			$ids = array(intval($ids));
+			$ids = [intval($ids)];
 		}
 		$user_id = intval(main()->ADMIN_ID) ?: intval($_GET['admin_id']);
 		$add_rev_date = time();
@@ -45,7 +45,7 @@ class yf_manage_shop_revisions {
 			if ($data_stump_json == $check_equal_data) {
 				continue;
 			}
-			$insert = array(
+			$insert = [
 				'user_id'  => $user_id,
 				'add_date' => $add_rev_date,
 				'action'   => $function,
@@ -53,7 +53,7 @@ class yf_manage_shop_revisions {
 				'ip'	   => common()->get_ip(),
 				'table'		=> $db_table,
 				'data'     => $data_stump_json ? : '',
-			);
+			];
 			db()->insert_safe('shop_revisions', $insert);
 			$revisions_ids[] = db()->insert_id();
 		}
@@ -67,7 +67,7 @@ class yf_manage_shop_revisions {
 			return false;
 		}
 		if (!is_array($id) && intval($id)) {
-			$ids = array(intval($id));
+			$ids = [intval($id)];
 		}
 		$check_ids = db()->get_2d('SELECT id, item_id FROM '.db('shop_revisions').' WHERE item_id IN ('.implode(',',$ids).') AND action=\''.$function.'\'');
 		$ids = array_diff($ids, (array)$check_ids);
@@ -82,12 +82,12 @@ class yf_manage_shop_revisions {
 		if (empty($a)) {
 			return _e('Revision not found');
 		}
-		return form($a, array(
+		return form($a, [
 				'dd_mode' => 1,
-			))
+			])
 			->link('Revisions list','./?object=manage_shop_revisions')
 			->admin_info('user_id')
-			->info_date('add_date', array('format' => 'full'))
+			->info_date('add_date', ['format' => 'full'])
 			->info('action')
 			->link('Activate new version', './?object=manage_shop_revisions&action=rollback_revision&id='.$a['id'])
 			->tab_start('View_difference')
@@ -117,7 +117,7 @@ class yf_manage_shop_revisions {
 			list(,$action) = explode('__', $filter_name);
 		}
 		if ($_GET['page'] == 'clear') {
-			$_SESSION[$filter_name] = array();
+			$_SESSION[$filter_name] = [];
 		} else {
 			$_SESSION[$filter_name] = $_POST;
 			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
@@ -132,25 +132,25 @@ class yf_manage_shop_revisions {
 	/**
 	*/
 	function _show_filter() {
-		$filters = array(
+		$filters = [
 			'show'	=> function($filter_name, $replace) {
-				$fields = array('id','add_date','action','item_id','ip', 'user_id');
+				$fields = ['id','add_date','action','item_id','ip', 'user_id'];
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
 				$action = db()->get_2d('SELECT DISTINCT action FROM '.db('shop_revisions'));
 				$action = array_combine($action, $action );
-				return form($replace, array(
+				return form($replace, [
 						'filter' => true,
-					))
-					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
-					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
+					])
+					->datetime_select('add_date',      null, [ 'with_time' => 1 ] )
+					->datetime_select('add_date__and', null, [ 'with_time' => 1 ] )
 					->text('user_id', 'Админ')
 					->text('ip')
-					->select_box('action', $action, array('no_translate' => 1, 'show_text' => 1))
-					->select_box('order_by', $order_fields, array('no_translate' => 1,'show_text' => 1));
+					->select_box('action', $action, ['no_translate' => 1, 'show_text' => 1])
+					->select_box('order_by', $order_fields, ['no_translate' => 1,'show_text' => 1]);
 			},
-		);
+		];
 		$action = $_GET['action'];
 		if (isset($filters[$action])) {
 			return $filters[$action]($filter_name, $replace)
@@ -168,18 +168,18 @@ class yf_manage_shop_revisions {
 			return false;
 		}
 		$sql = 'SELECT * FROM '.db('shop_revisions').' WHERE item_id='.intval($rev['item_id']).' AND action !=\'\' ORDER BY id DESC';
-		return table($sql, array(
+		return table($sql, [
 				'caption' => t('Product revisions'),
 				'no_records_html' => '',
-				'tr' => array(
-					$rev['id'] => array('class' => 'success'),
-				),
+				'tr' => [
+					$rev['id'] => ['class' => 'success'],
+				],
 				'pager_records_on_page' => 10,
 				'btn_no_text'	=> 1,
 				'no_header'	=> 1,
-			))
-			->date('add_date', array('format' => '%d/%m/%Y', 'nowrap' => 1))
-			->admin('user_id', array('desc' => 'admin'))
+			])
+			->date('add_date', ['format' => '%d/%m/%Y', 'nowrap' => 1])
+			->admin('user_id', ['desc' => 'admin'])
 			->text('action')
 			->btn_view('', './?object=manage_shop_revisions&action=details&id=%d&page='.$_GET['page'])
 		;
@@ -212,7 +212,7 @@ class yf_manage_shop_revisions {
 		$this->new_revision($revision_data['action'], $revision_data['item_id'], $revision_data['table']);
 		db()->commit();
 		common()->message_success("Revision retrieved");
-		common()->admin_wall_add(array('Rollback common revision: '.$_GET['id'], $_GET['id']));
+		common()->admin_wall_add(['Rollback common revision: '.$_GET['id'], $_GET['id']]);
 		return js_redirect('./?object=manage_shop_revisions&action=details&id='.$_GET['id']);
 	}
 

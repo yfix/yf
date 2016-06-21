@@ -10,11 +10,11 @@
 class yf_redirect {
 
 	/** @var array @conf_skip Available redirect types */
-	public $AVAIL_TYPES = array(
+	public $AVAIL_TYPES = [
 		'html',
 		'js',
 		'http',
-	);
+	];
 	/** @var bool */
 	public $USE_DESIGN		= false;
 	/** @var bool */
@@ -32,13 +32,13 @@ class yf_redirect {
 	/** @var bool */
 	public $LOOP_TTL		= 5;
 	/** @var array of url patterns to exclude from defence */
-	public $LOOP_EXCLUDE_SOURCE	= array(
+	public $LOOP_EXCLUDE_SOURCE	= [
 		'~^/[a-z0-9_]+/filter_save/~i',
 		'~&action=filter_save&~i',
-	);
+	];
 	/** @var array of url patterns to exclude from defence */
-	public $LOOP_EXCLUDE_TARGET	= array(
-	);
+	public $LOOP_EXCLUDE_TARGET	= [
+	];
 
 	/**
 	* Catch missing method call
@@ -56,12 +56,12 @@ class yf_redirect {
 		$cur_time = time();
 		$loop_var = &$_SESSION['last_redirect_log'];
 		if (!is_array($loop_var)) {
-			$loop_var = array();
+			$loop_var = [];
 		}
-		$loop_var[] = array(
+		$loop_var[] = [
 			'time'	=> $cur_time,
 			'url'	=> $cur_url,
-		);
+		];
 		$detected = false;
 		$detect_slice = array_reverse(array_slice((array)$loop_var, -$loop_count, $loop_count, true));
 		if (count($detect_slice) < $this->LOOP_COUNT) {
@@ -69,7 +69,7 @@ class yf_redirect {
 		}
 		$exclude_source = $this->LOOP_EXCLUDE_SOURCE;
 		if ($exclude_source && !is_array($exclude_source)) {
-			$exclude_source = array($exclude_source);
+			$exclude_source = [$exclude_source];
 		}
 		// Check current/source page for exclude patterns
 		$url_path_and_query = $_SERVER['REQUEST_URI']. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : '');
@@ -81,7 +81,7 @@ class yf_redirect {
 		// Check redirect target page for exclude patterns
 		$exclude_target = $this->LOOP_EXCLUDE_TARGET;
 		if ($exclude_target && !is_array($exclude_target)) {
-			$exclude_target = array($exclude_target);
+			$exclude_target = [$exclude_target];
 		}
 		$counter = 0;
 		foreach ((array)$detect_slice as $v) {
@@ -117,7 +117,7 @@ class yf_redirect {
 	/**
 	* Common redirect method
 	*/
-	function _go($location, $rewrite = true, $redirect_type = 'js', $text = '', $ttl = 3, $params = array()) {
+	function _go($location, $rewrite = true, $redirect_type = 'js', $text = '', $ttl = 3, $params = []) {
 		if (is_array($location)) {
 			$params += $location;
 			$rewrite = isset($params['rewrite']) ? $params['rewrite'] : $rewrite;
@@ -133,7 +133,7 @@ class yf_redirect {
 		if (strpos($location, 'http://') === 0 || strpos($location, 'https://') === 0) {
 			$rewrite = false;
 		}
-		$form_method = in_array(strtoupper($params['form_method']), array('GET','POST')) ? strtoupper($params['form_method']) : 'GET';
+		$form_method = in_array(strtoupper($params['form_method']), ['GET','POST']) ? strtoupper($params['form_method']) : 'GET';
 		if ($GLOBALS['no_redirect']) {
 			return $text;
 		}
@@ -172,22 +172,22 @@ class yf_redirect {
 			$hidden_fields = '';
 			if ($form_method == 'GET') {
 				$query = parse_url($location, PHP_URL_QUERY);
-				$fields = array();
+				$fields = [];
 				if (strlen($query)) {
 					parse_str($query, $fields);
 				}
 				if ($fields) {
-					$form = form($fields, array('no_form' => 1));
+					$form = form($fields, ['no_form' => 1]);
 					foreach ((array)$fields as $k => $v) {
 						$form->hidden($k);
 					}
 					$hidden_fields = $form;
 				}
 			}
-			if (in_array($redirect_type, array('http','301','302'))) {
+			if (in_array($redirect_type, ['http','301','302'])) {
 				$ttl = 0;
 			}
-			$body .= tpl()->parse('system/redirect', array(
+			$body .= tpl()->parse('system/redirect', [
 				'mode'			=> 'debug',
 				'normal_mode'	=> $redirect_type,
 				'rewrite'		=> intval((bool)$rewrite),
@@ -196,7 +196,7 @@ class yf_redirect {
 				'ttl'			=> intval($ttl),
 				'form_method'	=> $form_method,
 				'hidden_fields'	=> $hidden_fields,
-			));
+			]);
 			if ($loop_detected) {
 				$body .= '<b style="color:red">Redirect loop detected!</b>';
 			}
@@ -204,14 +204,14 @@ class yf_redirect {
 			if ($this->FORCE_TYPE) {
 				$redirect_type = $this->FORCE_TYPE;
 			}
-			$this->_save_log(array(
+			$this->_save_log([
 				'url_to'	=> $location,
 				'reason'	=> $text,
 				'rewrite'	=> $rewrite,
 				'ttl'		=> $ttl,
 				'type'		=> $redirect_type,
-			));
-			return print common()->show_empty_page($body, array('full_width' => 1));
+			]);
+			return print common()->show_empty_page($body, ['full_width' => 1]);
 		}
 		if (empty($redirect_type) || !in_array($redirect_type, $this->AVAIL_TYPES)) {
 			$redirect_type = 'http';
@@ -228,21 +228,21 @@ class yf_redirect {
 		} elseif ($redirect_type == '301') {
 			$body = $this->_redirect_http_301($location, $text, $ttl, $params);
 		}
-		$this->_save_log(array(
+		$this->_save_log([
 			'url_to'	=> $location,
 			'reason'	=> $text,
 			'rewrite'	=> $rewrite,
 			'ttl'		=> $ttl,
 			'type'		=> $redirect_type,
-		));
-		echo $this->USE_DESIGN && !empty($body) ? common()->show_empty_page($body, array('full_width' => 1)) : $body;
+		]);
+		echo $this->USE_DESIGN && !empty($body) ? common()->show_empty_page($body, ['full_width' => 1]) : $body;
 	}
 
 	/**
 	* JavaScript redirect method (with 'degrade gracefully' feature)
 	*/
-	function _redirect_js ($location, $text = '', $ttl = 0, $params = array()) {
-		$replace = array(
+	function _redirect_js ($location, $text = '', $ttl = 0, $params = []) {
+		$replace = [
 			'mode'			=> 'js',
 			'location'		=> $location,
 			'text'			=> $text,
@@ -250,27 +250,27 @@ class yf_redirect {
 			'html_redirect'	=> $this->_redirect_html($location, $text, $ttl),
 			'js_show_text'	=> (int)((bool)$this->JS_SHOW_TEXT),
 			'form_method'	=> $params['form_method'],
-		);
+		];
 		return tpl()->parse('system/redirect', $replace);
 	}
 
 	/**
 	* HTML redirect method
 	*/
-	function _redirect_html ($location, $text = '', $ttl = 3, $params = array()) {
-		$replace = array(
+	function _redirect_html ($location, $text = '', $ttl = 3, $params = []) {
+		$replace = [
 			'mode'			=> 'html',
 			'location'		=> $location,
 			'text'			=> $text,
 			'ttl'			=> intval($ttl),
 			'form_method'	=> $params['form_method'],
-		);
+		];
 		return tpl()->parse('system/redirect', $replace);
 	}
 
 	/**
 	*/
-	function _redirect_http_302 ($location, $text = '', $ttl = 3, $params = array()) {
+	function _redirect_http_302 ($location, $text = '', $ttl = 3, $params = []) {
 		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 302 Found');
 		header('Location: '.$location);
 		return '';
@@ -278,7 +278,7 @@ class yf_redirect {
 
 	/**
 	*/
-	function _redirect_http_301 ($location, $text = '', $ttl = 3, $params = array()) {
+	function _redirect_http_301 ($location, $text = '', $ttl = 3, $params = []) {
 		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 301 Moved Permanently');
 		header('Location: '.$location);
 		return '';
@@ -286,7 +286,7 @@ class yf_redirect {
 
 	/**
 	*/
-	function _save_log ($params = array()) {
+	function _save_log ($params = []) {
 		if (!$this->LOG_REDIRECTS) {
 			return false;
 		}
@@ -295,7 +295,7 @@ class yf_redirect {
 
 		$is_https = ($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL']);
 
-		return db()->insert_safe('log_redirects', array(
+		return db()->insert_safe('log_redirects', [
 			'url_from'		=> ($is_https ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
 			'url_to'		=> $params['url_to'],
 			'reason'		=> $params['reason'],
@@ -318,6 +318,6 @@ class yf_redirect {
 			'debug_mode'	=> DEBUG_MODE ? 1 : 0,
 			'exec_time'		=> str_replace(',', '.', round(microtime(true) - main()->_time_start, 4)),
 			'trace'			=> $trace,
-		));
+		]);
 	}
 }

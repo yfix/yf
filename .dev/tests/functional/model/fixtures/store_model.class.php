@@ -17,11 +17,11 @@ class store_model extends yf_model {
 		return 'last_update';
 	}
 	public function _rules() {
-		return array(
+		return [
 			'manager_staff_id, address_id, last_update' => 'required',
 			'manager_staff_id, address_id' => 'integer',
 			'store_id, manager_staff_id, address_id, last_update' => 'safe[on=search]',
-		);
+		];
 	}
 	public function customers() {
 		return $this->has_many('customer', 'store_id');

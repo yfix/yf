@@ -1,10 +1,10 @@
 <?php
 class yf_shop__get_group_prices{
 
-	function _get_group_prices ($product_ids = array()) {
+	function _get_group_prices ($product_ids = []) {
 		if (is_numeric($product_ids)) {
 			$return_single = $product_ids;
-			$product_ids = array($product_ids);
+			$product_ids = [$product_ids];
 		}
 		// Get user groups (id > 2 - skip guest and member)
 		$user_groups = main()->get_data("user_groups");
@@ -17,7 +17,7 @@ class yf_shop__get_group_prices{
 		if (empty($user_groups) || empty($product_ids)) {
 			return false;
 		}
-		$group_prices = array();
+		$group_prices = [];
 		// Get prices per group
 		$Q = db()->query(
 			"SELECT * FROM ".db('shop_group_options')." 

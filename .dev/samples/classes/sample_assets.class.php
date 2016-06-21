@@ -9,7 +9,7 @@ class sample_assets {
 
 	/***/
 	function _hook_side_column() {
-		$items = array();
+		$items = [];
 		$url = url('/@object');
 		$methods = get_class_methods(_class('assets'));
 		$sample_methods = get_class_methods($this);
@@ -24,10 +24,10 @@ class sample_assets {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = array(
+			$items[] = [
 				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
 				'link'	=> url('/@object/@action/'.$name), // '#head_'.$name,
-			);
+			];
 		}
 		return _class('html')->navlist($items);
 	}
@@ -41,10 +41,10 @@ class sample_assets {
 		asset('font-awesome4');
 		foreach ($this->_get_assets() as $a) {
 			$name = $a['name'];
-			$sub = array();
+			$sub = [];
 			$sub[] = $docs->_github_link($a['path']);
 			$content = $a['content'];
-			$info = is_array($content) ? $content['info'] : array();
+			$info = is_array($content) ? $content['info'] : [];
 			if ($info['name']) {
 				$sub[] = '<b>'.t('name').'</b>: '.$info['name'];
 			}
@@ -57,29 +57,29 @@ class sample_assets {
 			if ($info['git']) {
 				$sub[] = '<b>'.t('git').'</b>: <a href="'.$info['git'].'">'.$info['git'].'</a>';
 			}
-			$data[$name] = array(
+			$data[$name] = [
 				'name'	=> $name,
 				'link'	=> url('/@object/@action/#'.$name),
 				'sub'	=> $sub,
 				'id'	=> $name,
 #				'class'	=> 'btn btn-default btn-small btn-sm',
-			);
+			];
 		}
 		return html()->li($data);
 	}
 
 	/***/
 	public function _get_assets() {
-		$assets = array();
+		$assets = [];
 		$suffix = '.php';
 		$dir = 'share/assets/';
 		$pattern = $dir. '*'. $suffix;
-		$globs = array(
+		$globs = [
 			'yf_main'		=> YF_PATH. $pattern,
 			'yf_plugins'	=> YF_PATH. 'plugins/*/'. $pattern,
-		);
+		];
 		$slen = strlen($suffix);
-		$names = array();
+		$names = [];
 		foreach($globs as $gname => $glob) {
 			foreach(glob($glob) as $path) {
 				$name = substr(basename($path), 0, -$slen);
@@ -87,12 +87,12 @@ class sample_assets {
 			}
 		}
 		foreach($names as $name => $path) {
-			$assets[$name] = array(
+			$assets[$name] = [
 				'name'		=> $name,
 				'path'		=> $path,
 				'content'	=> include $path,
 				'raw'		=> file_get_contents($path),
-			);
+			];
 		}
 		return $assets;
 	}

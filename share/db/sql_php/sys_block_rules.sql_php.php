@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'block_id' => array(
+		],
+		'block_id' => [
 			'name' => 'block_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'rule_type' => array(
+		],
+		'rule_type' => [
 			'name' => 'rule_type',
 			'type' => 'enum',
 			'length' => NULL,
@@ -44,12 +44,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				'DENY' => 'DENY',
 				'ALLOW' => 'ALLOW',
-			),
-		),
-		'user_groups' => array(
+			],
+		],
+		'user_groups' => [
 			'name' => 'user_groups',
 			'type' => 'varchar',
 			'length' => 255,
@@ -63,8 +63,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'methods' => array(
+		],
+		'methods' => [
 			'name' => 'methods',
 			'type' => 'text',
 			'length' => NULL,
@@ -78,8 +78,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'themes' => array(
+		],
+		'themes' => [
 			'name' => 'themes',
 			'type' => 'text',
 			'length' => NULL,
@@ -93,8 +93,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'locales' => array(
+		],
+		'locales' => [
 			'name' => 'locales',
 			'type' => 'text',
 			'length' => NULL,
@@ -108,8 +108,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'others' => array(
+		],
+		'others' => [
 			'name' => 'others',
 			'type' => 'text',
 			'length' => NULL,
@@ -123,8 +123,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -137,12 +137,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				1 => '1',
 				0 => '0',
-			),
-		),
-		'order' => array(
+			],
+		],
+		'order' => [
 			'name' => 'order',
 			'type' => 'int',
 			'length' => 10,
@@ -156,8 +156,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'site_ids' => array(
+		],
+		'site_ids' => [
 			'name' => 'site_ids',
 			'type' => 'varchar',
 			'length' => 1000,
@@ -171,8 +171,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'server_ids' => array(
+		],
+		'server_ids' => [
 			'name' => 'server_ids',
 			'type' => 'varchar',
 			'length' => 1000,
@@ -186,8 +186,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'server_roles' => array(
+		],
+		'server_roles' => [
 			'name' => 'server_roles',
 			'type' => 'varchar',
 			'length' => 1000,
@@ -201,19 +201,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

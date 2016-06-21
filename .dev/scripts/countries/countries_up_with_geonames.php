@@ -5,14 +5,14 @@ require_once dirname(__DIR__).'/scripts_init.php';
 
 $table = DB_PREFIX. 'geo_countries';
 
-$capital_ids = array();
+$capital_ids = [];
 foreach (db_geonames()->from('geo_geoname')->where('feature_code', '=', 'pplc')->get_all() as $a) {
 	$capital_ids[$a['country']] = $a['id'];
 }
 
-$to_update = array();
+$to_update = [];
 foreach (db_geonames()->from('geo_country')->get_all() as $a) {
-	$to_update[$a['code']] = array(
+	$to_update[$a['code']] = [
 		'code'			=> $a['code'],
 		'cont'			=> $a['continent'],
 		'tld'			=> substr($a['tld'], 1),
@@ -23,7 +23,7 @@ foreach (db_geonames()->from('geo_country')->get_all() as $a) {
 		'languages'		=> $a['languages'],
 		'geoname_id'	=> $a['geoname_id'],
 		'capital_id'	=> $capital_ids[$a['code']],
-	);
+	];
 }
 
 db()->update_batch_safe($table, $to_update, 'code');

@@ -12,10 +12,10 @@ if ($argv[1]) {
 $exists = false;
 $modules_dir = "";
 $f = "";
-$paths = array(
+$paths = [
 	"../../modules",
 	"../../admin_modules",
-);
+];
 foreach($paths as $path) {
 	$f = $path. "/". $module.".class.php";
 	$exists = file_exists($f);
@@ -32,17 +32,17 @@ $code = file_get_contents($f);
 
 # First we get list of good function names within module
 preg_match_all("/function[\s\t]+(?P<fname>[a-z0-9_]+)[\s\t]*\((?P<fparam>.*?)\)[\s\t]*\{/ims", $code, $m);
-$fnames = array();
+$fnames = [];
 foreach ($m["fname"] as $fname) {
 	$fnames[$fname] = $fname;
 }
-$fparams = array();
-$fparams_orig = array();
+$fparams = [];
+$fparams_orig = [];
 foreach ($m["fparam"] as $id => $fparam) {
 	$fname = $m["fname"][$id];
 	$fparam = trim($fparam);
 	$fparams_orig[$fname] = $fparam;
-	$tmp = array();
+	$tmp = [];
 	if ($fparam) {
 		foreach (explode(",", $fparam) as $fp) {
 			$fp = trim($fp);
@@ -56,7 +56,7 @@ foreach ($m["fparam"] as $id => $fparam) {
 	$tmp = $tmp ? implode(", ", $tmp) : "";
 	$fparams[$fname] = $tmp;
 }
-$fcodes = array();
+$fcodes = [];
 foreach (explode("function ", $code) as $part) {
 	preg_match("/(?P<fn2>[a-z0-9_]+)[\s\t]*\(/ims", ltrim($part), $m2);
 	if (!$m2["fn2"]) {

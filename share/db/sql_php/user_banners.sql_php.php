@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'hash' => array(
+		],
+		'hash' => [
 			'name' => 'hash',
 			'type' => 'varchar',
 			'length' => 32,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'type' => array(
+		],
+		'type' => [
 			'name' => 'type',
 			'type' => 'varchar',
 			'length' => 32,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'resolution' => array(
+		],
+		'resolution' => [
 			'name' => 'resolution',
 			'type' => 'varchar',
 			'length' => 32,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'offer_id' => array(
+		],
+		'offer_id' => [
 			'name' => 'offer_id',
 			'type' => 'int',
 			'length' => 11,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'url_list' => array(
+		],
+		'url_list' => [
 			'name' => 'url_list',
 			'type' => 'text',
 			'length' => NULL,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'image_list' => array(
+		],
+		'image_list' => [
 			'name' => 'image_list',
 			'type' => 'text',
 			'length' => NULL,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'header_list' => array(
+		],
+		'header_list' => [
 			'name' => 'header_list',
 			'type' => 'text',
 			'length' => NULL,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'desc_list' => array(
+		],
+		'desc_list' => [
 			'name' => 'desc_list',
 			'type' => 'text',
 			'length' => NULL,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'tinyint',
 			'length' => 4,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'status' => array(
+		],
+		'status' => [
 			'name' => 'status',
 			'type' => 'tinyint',
 			'length' => 4,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'add_date' => array(
+		],
+		'add_date' => [
 			'name' => 'add_date',
 			'type' => 'int',
 			'length' => 11,
@@ -195,21 +195,21 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

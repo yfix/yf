@@ -1,9 +1,9 @@
 <?php
 
-return array(
-	'versions' => array(
-		'2.1.0' => array(
+return [
+	'versions' => [
+		'2.1.0' => [
 			'js' => '//cdnjs.cloudflare.com/ajax/libs/less.js/2.1.0/less.min.js',
-		),
-	),
-);
+		],
+	],
+];

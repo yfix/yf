@@ -18,7 +18,7 @@ class yf_console_tests_unit extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		init_yf();
 
-		$params = array();
+		$params = [];
 		// Parse arguments like that: k1=v1 k2=v2 into array('k1' => 'v1', 'k2' => 'v2')
 		foreach ((array)$input->getArgument('params') as $p) {
 			list($k, $v) = explode('=', trim($p));

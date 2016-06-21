@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   613273 => 
-  array (
+  [
     'id' => '613273',
     'country' => 'UA',
     'region_id' => '692196',
@@ -11,9 +11,9 @@ return array (
     'lon' => '34.4849',
     'population' => '27695',
     'active' => '1',
-  ),
+  ],
   616743 => 
-  array (
+  [
     'id' => '616743',
     'country' => 'UA',
     'region_id' => '709716',
@@ -23,9 +23,9 @@ return array (
     'lon' => '37.5526',
     'population' => '62315',
     'active' => '1',
-  ),
+  ],
   686729 => 
-  array (
+  [
     'id' => '686729',
     'country' => 'UA',
     'region_id' => '687699',
@@ -35,9 +35,9 @@ return array (
     'lon' => '35.2742',
     'population' => '15012',
     'active' => '1',
-  ),
+  ],
   686803 => 
-  array (
+  [
     'id' => '686803',
     'country' => 'UA',
     'region_id' => '710802',
@@ -47,9 +47,9 @@ return array (
     'lon' => '30.9675',
     'population' => '19161',
     'active' => '1',
-  ),
+  ],
   686818 => 
-  array (
+  [
     'id' => '686818',
     'country' => 'UA',
     'region_id' => '709716',
@@ -59,9 +59,9 @@ return array (
     'lon' => '38.2644',
     'population' => '19121',
     'active' => '1',
-  ),
+  ],
   686875 => 
-  array (
+  [
     'id' => '686875',
     'country' => 'UA',
     'region_id' => '710802',
@@ -71,9 +71,9 @@ return array (
     'lon' => '32.0377',
     'population' => '27722',
     'active' => '1',
-  ),
+  ],
   686895 => 
-  array (
+  [
     'id' => '686895',
     'country' => 'UA',
     'region_id' => '706482',
@@ -83,9 +83,9 @@ return array (
     'lon' => '35.9818',
     'population' => '11160',
     'active' => '1',
-  ),
+  ],
   686896 => 
-  array (
+  [
     'id' => '686896',
     'country' => 'UA',
     'region_id' => '702549',
@@ -95,9 +95,9 @@ return array (
     'lon' => '24.8944',
     'population' => '22608',
     'active' => '1',
-  ),
+  ],
   686919 => 
-  array (
+  [
     'id' => '686919',
     'country' => 'UA',
     'region_id' => '705811',
@@ -107,9 +107,9 @@ return array (
     'lon' => '32.6647',
     'population' => '28318',
     'active' => '1',
-  ),
+  ],
   686928 => 
-  array (
+  [
     'id' => '686928',
     'country' => 'UA',
     'region_id' => '706482',
@@ -119,9 +119,9 @@ return array (
     'lon' => '36.3611',
     'population' => '16095',
     'active' => '1',
-  ),
+  ],
   686967 => 
-  array (
+  [
     'id' => '686967',
     'country' => 'UA',
     'region_id' => '686966',
@@ -131,9 +131,9 @@ return array (
     'lon' => '28.6767',
     'population' => '282192',
     'active' => '1',
-  ),
+  ],
   687093 => 
-  array (
+  [
     'id' => '687093',
     'country' => 'UA',
     'region_id' => '702549',
@@ -143,9 +143,9 @@ return array (
     'lon' => '23.9726',
     'population' => '12973',
     'active' => '1',
-  ),
+  ],
   687116 => 
-  array (
+  [
     'id' => '687116',
     'country' => 'UA',
     'region_id' => '689559',
@@ -155,9 +155,9 @@ return array (
     'lon' => '28.112',
     'population' => '35960',
     'active' => '1',
-  ),
+  ],
   687196 => 
-  array (
+  [
     'id' => '687196',
     'country' => 'UA',
     'region_id' => '709929',
@@ -167,9 +167,9 @@ return array (
     'lon' => '33.5003',
     'population' => '51559',
     'active' => '1',
-  ),
+  ],
   687245 => 
-  array (
+  [
     'id' => '687245',
     'country' => 'UA',
     'region_id' => '710802',
@@ -179,9 +179,9 @@ return array (
     'lon' => '30.1102',
     'population' => '15264',
     'active' => '1',
-  ),
+  ],
   687292 => 
-  array (
+  [
     'id' => '687292',
     'country' => 'UA',
     'region_id' => '696634',
@@ -191,9 +191,9 @@ return array (
     'lon' => '34.3638',
     'population' => '10393',
     'active' => '1',
-  ),
+  ],
   687432 => 
-  array (
+  [
     'id' => '687432',
     'country' => 'UA',
     'region_id' => '695592',
@@ -203,9 +203,9 @@ return array (
     'lon' => '26.2425',
     'population' => '23697',
     'active' => '1',
-  ),
+  ],
   687455 => 
-  array (
+  [
     'id' => '687455',
     'country' => 'UA',
     'region_id' => '691649',
@@ -215,9 +215,9 @@ return array (
     'lon' => '25.7762',
     'population' => '12736',
     'active' => '1',
-  ),
+  ],
   687700 => 
-  array (
+  [
     'id' => '687700',
     'country' => 'UA',
     'region_id' => '687699',
@@ -227,9 +227,9 @@ return array (
     'lon' => '35.1903',
     'population' => '796217',
     'active' => '1',
-  ),
+  ],
   687997 => 
-  array (
+  [
     'id' => '687997',
     'country' => 'UA',
     'region_id' => '698738',
@@ -239,9 +239,9 @@ return array (
     'lon' => '31.1013',
     'population' => '25000',
     'active' => '1',
-  ),
+  ],
   688105 => 
-  array (
+  [
     'id' => '688105',
     'country' => 'UA',
     'region_id' => '703883',
@@ -251,9 +251,9 @@ return array (
     'lon' => '33.3666',
     'population' => '105223',
     'active' => '1',
-  ),
+  ],
   688148 => 
-  array (
+  [
     'id' => '688148',
     'country' => 'UA',
     'region_id' => '709716',
@@ -263,9 +263,9 @@ return array (
     'lon' => '38.2114',
     'population' => '104101',
     'active' => '1',
-  ),
+  ],
   688288 => 
-  array (
+  [
     'id' => '688288',
     'country' => 'UA',
     'region_id' => '702549',
@@ -275,9 +275,9 @@ return array (
     'lon' => '23.3825',
     'population' => '13008',
     'active' => '1',
-  ),
+  ],
   688373 => 
-  array (
+  [
     'id' => '688373',
     'country' => 'UA',
     'region_id' => '709716',
@@ -287,9 +287,9 @@ return array (
     'lon' => '37.8594',
     'population' => '37600',
     'active' => '1',
-  ),
+  ],
   688533 => 
-  array (
+  [
     'id' => '688533',
     'country' => 'UA',
     'region_id' => '703883',
@@ -299,9 +299,9 @@ return array (
     'lon' => '34.1615',
     'population' => '79509',
     'active' => '1',
-  ),
+  ],
   688587 => 
-  array (
+  [
     'id' => '688587',
     'country' => 'UA',
     'region_id' => '703446',
@@ -311,9 +311,9 @@ return array (
     'lon' => '31.7625',
     'population' => '22779',
     'active' => '1',
-  ),
+  ],
   688696 => 
-  array (
+  [
     'id' => '688696',
     'country' => 'UA',
     'region_id' => '706482',
@@ -323,9 +323,9 @@ return array (
     'lon' => '36.1321',
     'population' => '10988',
     'active' => '1',
-  ),
+  ],
   688723 => 
-  array (
+  [
     'id' => '688723',
     'country' => 'UA',
     'region_id' => '703446',
@@ -335,9 +335,9 @@ return array (
     'lon' => '30.4898',
     'population' => '22080',
     'active' => '1',
-  ),
+  ],
   688746 => 
-  array (
+  [
     'id' => '688746',
     'country' => 'UA',
     'region_id' => '687869',
@@ -347,9 +347,9 @@ return array (
     'lon' => '23.0267',
     'population' => '27600',
     'active' => '1',
-  ),
+  ],
   688860 => 
-  array (
+  [
     'id' => '688860',
     'country' => 'UA',
     'region_id' => '700567',
@@ -359,9 +359,9 @@ return array (
     'lon' => '31.3308',
     'population' => '42248',
     'active' => '1',
-  ),
+  ],
   689198 => 
-  array (
+  [
     'id' => '689198',
     'country' => 'UA',
     'region_id' => '709716',
@@ -371,9 +371,9 @@ return array (
     'lon' => '37.4967',
     'population' => '23731',
     'active' => '1',
-  ),
+  ],
   689304 => 
-  array (
+  [
     'id' => '689304',
     'country' => 'UA',
     'region_id' => '706482',
@@ -383,9 +383,9 @@ return array (
     'lon' => '36.9411',
     'population' => '19486',
     'active' => '1',
-  ),
+  ],
   689378 => 
-  array (
+  [
     'id' => '689378',
     'country' => 'UA',
     'region_id' => '689064',
@@ -395,9 +395,9 @@ return array (
     'lon' => '24.3236',
     'population' => '38256',
     'active' => '1',
-  ),
+  ],
   689487 => 
-  array (
+  [
     'id' => '689487',
     'country' => 'UA',
     'region_id' => '703446',
@@ -407,9 +407,9 @@ return array (
     'lon' => '30.3705',
     'population' => '33183',
     'active' => '1',
-  ),
+  ],
   689558 => 
-  array (
+  [
     'id' => '689558',
     'country' => 'UA',
     'region_id' => '689559',
@@ -419,9 +419,9 @@ return array (
     'lon' => '28.481',
     'population' => '352115',
     'active' => '1',
-  ),
+  ],
   689736 => 
-  array (
+  [
     'id' => '689736',
     'country' => 'UA',
     'region_id' => '687699',
@@ -431,9 +431,9 @@ return array (
     'lon' => '34.915',
     'population' => '10683',
     'active' => '1',
-  ),
+  ],
   690312 => 
-  array (
+  [
     'id' => '690312',
     'country' => 'UA',
     'region_id' => '710802',
@@ -443,9 +443,9 @@ return array (
     'lon' => '31.0621',
     'population' => '19407',
     'active' => '1',
-  ),
+  ],
   690412 => 
-  array (
+  [
     'id' => '690412',
     'country' => 'UA',
     'region_id' => '703446',
@@ -455,9 +455,9 @@ return array (
     'lon' => '30.3135',
     'population' => '39700',
     'active' => '1',
-  ),
+  ],
   690509 => 
-  array (
+  [
     'id' => '690509',
     'country' => 'UA',
     'region_id' => '706482',
@@ -467,9 +467,9 @@ return array (
     'lon' => '35.6207',
     'population' => '10099',
     'active' => '1',
-  ),
+  ],
   690545 => 
-  array (
+  [
     'id' => '690545',
     'country' => 'UA',
     'region_id' => '703446',
@@ -479,9 +479,9 @@ return array (
     'lon' => '30.4149',
     'population' => '12726',
     'active' => '1',
-  ),
+  ],
   690548 => 
-  array (
+  [
     'id' => '690548',
     'country' => 'UA',
     'region_id' => '687869',
@@ -491,9 +491,9 @@ return array (
     'lon' => '22.3',
     'population' => '117878',
     'active' => '1',
-  ),
+  ],
   690688 => 
-  array (
+  [
     'id' => '690688',
     'country' => 'UA',
     'region_id' => '710802',
@@ -503,9 +503,9 @@ return array (
     'lon' => '30.2218',
     'population' => '87658',
     'active' => '1',
-  ),
+  ],
   690773 => 
-  array (
+  [
     'id' => '690773',
     'country' => 'UA',
     'region_id' => '703446',
@@ -515,9 +515,9 @@ return array (
     'lon' => '30.7461',
     'population' => '13636',
     'active' => '1',
-  ),
+  ],
   691016 => 
-  array (
+  [
     'id' => '691016',
     'country' => 'UA',
     'region_id' => '689559',
@@ -527,9 +527,9 @@ return array (
     'lon' => '28.8464',
     'population' => '16136',
     'active' => '1',
-  ),
+  ],
   691037 => 
-  array (
+  [
     'id' => '691037',
     'country' => 'UA',
     'region_id' => '706442',
@@ -539,9 +539,9 @@ return array (
     'lon' => '32.7189',
     'population' => '28800',
     'active' => '1',
-  ),
+  ],
   691179 => 
-  array (
+  [
     'id' => '691179',
     'country' => 'UA',
     'region_id' => '702549',
@@ -551,9 +551,9 @@ return array (
     'lon' => '23.5062',
     'population' => '26600',
     'active' => '1',
-  ),
+  ],
   691374 => 
-  array (
+  [
     'id' => '691374',
     'country' => 'UA',
     'region_id' => '709716',
@@ -563,9 +563,9 @@ return array (
     'lon' => '38.5969',
     'population' => '68037',
     'active' => '1',
-  ),
+  ],
   691469 => 
-  array (
+  [
     'id' => '691469',
     'country' => 'UA',
     'region_id' => '687699',
@@ -575,9 +575,9 @@ return array (
     'lon' => '35.7124',
     'population' => '34926',
     'active' => '1',
-  ),
+  ],
   691578 => 
-  array (
+  [
     'id' => '691578',
     'country' => 'UA',
     'region_id' => '703446',
@@ -587,9 +587,9 @@ return array (
     'lon' => '29.6647',
     'population' => '14388',
     'active' => '1',
-  ),
+  ],
   691650 => 
-  array (
+  [
     'id' => '691650',
     'country' => 'UA',
     'region_id' => '691649',
@@ -599,9 +599,9 @@ return array (
     'lon' => '25.6056',
     'population' => '235676',
     'active' => '1',
-  ),
+  ],
   691693 => 
-  array (
+  [
     'id' => '691693',
     'country' => 'UA',
     'region_id' => '691649',
@@ -611,9 +611,9 @@ return array (
     'lon' => '25.71',
     'population' => '13153',
     'active' => '1',
-  ),
+  ],
   691803 => 
-  array (
+  [
     'id' => '691803',
     'country' => 'UA',
     'region_id' => '698738',
@@ -623,9 +623,9 @@ return array (
     'lon' => '29.6142',
     'population' => '10396',
     'active' => '1',
-  ),
+  ],
   691904 => 
-  array (
+  [
     'id' => '691904',
     'country' => 'UA',
     'region_id' => '703446',
@@ -635,9 +635,9 @@ return array (
     'lon' => '30.4926',
     'population' => '12952',
     'active' => '1',
-  ),
+  ],
   691936 => 
-  array (
+  [
     'id' => '691936',
     'country' => 'UA',
     'region_id' => '710802',
@@ -647,9 +647,9 @@ return array (
     'lon' => '30.6948',
     'population' => '16388',
     'active' => '1',
-  ),
+  ],
   691999 => 
-  array (
+  [
     'id' => '691999',
     'country' => 'UA',
     'region_id' => '702657',
@@ -659,9 +659,9 @@ return array (
     'lon' => '38.4917',
     'population' => '130000',
     'active' => '1',
-  ),
+  ],
   692087 => 
-  array (
+  [
     'id' => '692087',
     'country' => 'UA',
     'region_id' => '705811',
@@ -671,9 +671,9 @@ return array (
     'lon' => '33.2411',
     'population' => '47946',
     'active' => '1',
-  ),
+  ],
   692093 => 
-  array (
+  [
     'id' => '692093',
     'country' => 'UA',
     'region_id' => '709716',
@@ -683,9 +683,9 @@ return array (
     'lon' => '38.2233',
     'population' => '12273',
     'active' => '1',
-  ),
+  ],
   692105 => 
-  array (
+  [
     'id' => '692105',
     'country' => 'UA',
     'region_id' => '702657',
@@ -695,9 +695,9 @@ return array (
     'lon' => '39.6524',
     'population' => '68000',
     'active' => '1',
-  ),
+  ],
   692118 => 
-  array (
+  [
     'id' => '692118',
     'country' => 'UA',
     'region_id' => '702657',
@@ -707,9 +707,9 @@ return array (
     'lon' => '38.1503',
     'population' => '18770',
     'active' => '1',
-  ),
+  ],
   692129 => 
-  array (
+  [
     'id' => '692129',
     'country' => 'UA',
     'region_id' => '687869',
@@ -719,9 +719,9 @@ return array (
     'lon' => '22.9958',
     'population' => '16507',
     'active' => '1',
-  ),
+  ],
   692194 => 
-  array (
+  [
     'id' => '692194',
     'country' => 'UA',
     'region_id' => '692196',
@@ -731,9 +731,9 @@ return array (
     'lon' => '34.8003',
     'population' => '294456',
     'active' => '1',
-  ),
+  ],
   692315 => 
-  array (
+  [
     'id' => '692315',
     'country' => 'UA',
     'region_id' => '703883',
@@ -743,9 +743,9 @@ return array (
     'lon' => '34.9747',
     'population' => '13956',
     'active' => '1',
-  ),
+  ],
   692372 => 
-  array (
+  [
     'id' => '692372',
     'country' => 'UA',
     'region_id' => '702549',
@@ -755,9 +755,9 @@ return array (
     'lon' => '23.8561',
     'population' => '61404',
     'active' => '1',
-  ),
+  ],
   692632 => 
-  array (
+  [
     'id' => '692632',
     'country' => 'UA',
     'region_id' => '702549',
@@ -767,9 +767,9 @@ return array (
     'lon' => '23.5636',
     'population' => '20087',
     'active' => '1',
-  ),
+  ],
   692818 => 
-  array (
+  [
     'id' => '692818',
     'country' => 'UA',
     'region_id' => '706370',
@@ -779,9 +779,9 @@ return array (
     'lon' => '27.2034',
     'population' => '33897',
     'active' => '1',
-  ),
+  ],
   692832 => 
-  array (
+  [
     'id' => '692832',
     'country' => 'UA',
     'region_id' => '702657',
@@ -791,9 +791,9 @@ return array (
     'lon' => '38.9107',
     'population' => '22000',
     'active' => '1',
-  ),
+  ],
   692975 => 
-  array (
+  [
     'id' => '692975',
     'country' => 'UA',
     'region_id' => '702657',
@@ -803,9 +803,9 @@ return array (
     'lon' => '38.6435',
     'population' => '84425',
     'active' => '1',
-  ),
+  ],
   693194 => 
-  array (
+  [
     'id' => '693194',
     'country' => 'UA',
     'region_id' => '706482',
@@ -815,9 +815,9 @@ return array (
     'lon' => '36.0346',
     'population' => '12378',
     'active' => '1',
-  ),
+  ],
   693301 => 
-  array (
+  [
     'id' => '693301',
     'country' => 'UA',
     'region_id' => '702549',
@@ -827,9 +827,9 @@ return array (
     'lon' => '24.2829',
     'population' => '21451',
     'active' => '1',
-  ),
+  ],
   693365 => 
-  array (
+  [
     'id' => '693365',
     'country' => 'UA',
     'region_id' => '707470',
@@ -839,9 +839,9 @@ return array (
     'lon' => '25.5694',
     'population' => '10089',
     'active' => '1',
-  ),
+  ],
   693379 => 
-  array (
+  [
     'id' => '693379',
     'country' => 'UA',
     'region_id' => '700567',
@@ -851,9 +851,9 @@ return array (
     'lon' => '32.8052',
     'population' => '14873',
     'active' => '1',
-  ),
+  ],
   693381 => 
-  array (
+  [
     'id' => '693381',
     'country' => 'UA',
     'region_id' => '709716',
@@ -863,9 +863,9 @@ return array (
     'lon' => '38.7723',
     'population' => '55587',
     'active' => '1',
-  ),
+  ],
   693457 => 
-  array (
+  [
     'id' => '693457',
     'country' => 'UA',
     'region_id' => '710802',
@@ -875,9 +875,9 @@ return array (
     'lon' => '31.8871',
     'population' => '67530',
     'active' => '1',
-  ),
+  ],
   693468 => 
-  array (
+  [
     'id' => '693468',
     'country' => 'UA',
     'region_id' => '709716',
@@ -887,9 +887,9 @@ return array (
     'lon' => '37.6167',
     'population' => '124800',
     'active' => '1',
-  ),
+  ],
   693581 => 
-  array (
+  [
     'id' => '693581',
     'country' => 'UA',
     'region_id' => '706370',
@@ -899,9 +899,9 @@ return array (
     'lon' => '26.8651',
     'population' => '33080',
     'active' => '1',
-  ),
+  ],
   693615 => 
-  array (
+  [
     'id' => '693615',
     'country' => 'UA',
     'region_id' => '703446',
@@ -911,9 +911,9 @@ return array (
     'lon' => '29.6657',
     'population' => '17452',
     'active' => '1',
-  ),
+  ],
   693709 => 
-  array (
+  [
     'id' => '693709',
     'country' => 'UA',
     'region_id' => '706442',
@@ -923,9 +923,9 @@ return array (
     'lon' => '32.9112',
     'population' => '19404',
     'active' => '1',
-  ),
+  ],
   693796 => 
-  array (
+  [
     'id' => '693796',
     'country' => 'UA',
     'region_id' => '709929',
@@ -935,9 +935,9 @@ return array (
     'lon' => '35.5179',
     'population' => '31900',
     'active' => '1',
-  ),
+  ],
   693805 => 
-  array (
+  [
     'id' => '693805',
     'country' => 'UA',
     'region_id' => '703883',
@@ -947,9 +947,9 @@ return array (
     'lon' => '34.1108',
     'population' => '358108',
     'active' => '1',
-  ),
+  ],
   693920 => 
-  array (
+  [
     'id' => '693920',
     'country' => 'UA',
     'region_id' => '710802',
@@ -959,9 +959,9 @@ return array (
     'lon' => '31.3947',
     'population' => '18689',
     'active' => '1',
-  ),
+  ],
   693942 => 
-  array (
+  [
     'id' => '693942',
     'country' => 'UA',
     'region_id' => '692196',
@@ -971,9 +971,9 @@ return array (
     'lon' => '33.4698',
     'population' => '85432',
     'active' => '1',
-  ),
+  ],
   694025 => 
-  array (
+  [
     'id' => '694025',
     'country' => 'UA',
     'region_id' => '709929',
@@ -983,9 +983,9 @@ return array (
     'lon' => '33.2571',
     'population' => '10920',
     'active' => '1',
-  ),
+  ],
   694216 => 
-  array (
+  [
     'id' => '694216',
     'country' => 'UA',
     'region_id' => '706370',
@@ -995,9 +995,9 @@ return array (
     'lon' => '27.0637',
     'population' => '46419',
     'active' => '1',
-  ),
+  ],
   694273 => 
-  array (
+  [
     'id' => '694273',
     'country' => 'UA',
     'region_id' => '710734',
@@ -1007,9 +1007,9 @@ return array (
     'lon' => '31.945',
     'population' => '11857',
     'active' => '1',
-  ),
+  ],
   694382 => 
-  array (
+  [
     'id' => '694382',
     'country' => 'UA',
     'region_id' => '709716',
@@ -1019,9 +1019,9 @@ return array (
     'lon' => '38.5167',
     'population' => '71700',
     'active' => '1',
-  ),
+  ],
   694403 => 
-  array (
+  [
     'id' => '694403',
     'country' => 'UA',
     'region_id' => '709716',
@@ -1031,9 +1031,9 @@ return array (
     'lon' => '38.1001',
     'population' => '13900',
     'active' => '1',
-  ),
+  ],
   694423 => 
-  array (
+  [
     'id' => '694423',
     'country' => 'UA',
     'region_id' => '694422',
@@ -1043,9 +1043,9 @@ return array (
     'lon' => '33.5224',
     'population' => '379200',
     'active' => '1',
-  ),
+  ],
   694677 => 
-  array (
+  [
     'id' => '694677',
     'country' => 'UA',
     'region_id' => '709716',
@@ -1055,9 +1055,9 @@ return array (
     'lon' => '37.3003',
     'population' => '24269',
     'active' => '1',
-  ),
+  ],
   694725 => 
-  array (
+  [
     'id' => '694725',
     'country' => 'UA',
     'region_id' => '702657',
@@ -1067,9 +1067,9 @@ return array (
     'lon' => '39.2323',
     'population' => '13800',
     'active' => '1',
-  ),
+  ],
   694792 => 
-  array (
+  [
     'id' => '694792',
     'country' => 'UA',
     'region_id' => '695592',
@@ -1079,9 +1079,9 @@ return array (
     'lon' => '26.6019',
     'population' => '27097',
     'active' => '1',
-  ),
+  ],
   694864 => 
-  array (
+  [
     'id' => '694864',
     'country' => 'UA',
     'region_id' => '702549',
@@ -1091,9 +1091,9 @@ return array (
     'lon' => '23.1975',
     'population' => '35197',
     'active' => '1',
-  ),
+  ],
   694910 => 
-  array (
+  [
     'id' => '694910',
     'country' => 'UA',
     'region_id' => '703883',
@@ -1103,9 +1103,9 @@ return array (
     'lon' => '33.6',
     'population' => '28322',
     'active' => '1',
-  ),
+  ],
   695274 => 
-  array (
+  [
     'id' => '695274',
     'country' => 'UA',
     'region_id' => '702657',
@@ -1115,9 +1115,9 @@ return array (
     'lon' => '38.3797',
     'population' => '62993',
     'active' => '1',
-  ),
+  ],
   695326 => 
-  array (
+  [
     'id' => '695326',
     'country' => 'UA',
     'region_id' => '689064',
@@ -1127,9 +1127,9 @@ return array (
     'lon' => '25.2691',
     'population' => '13280',
     'active' => '1',
-  ),
+  ],
   695344 => 
-  array (
+  [
     'id' => '695344',
     'country' => 'UA',
     'region_id' => '698738',
@@ -1139,9 +1139,9 @@ return array (
     'lon' => '30.0792',
     'population' => '17615',
     'active' => '1',
-  ),
+  ],
   695379 => 
-  array (
+  [
     'id' => '695379',
     'country' => 'UA',
     'region_id' => '702657',
@@ -1151,9 +1151,9 @@ return array (
     'lon' => '39.3776',
     'population' => '53600',
     'active' => '1',
-  ),
+  ],
   695464 => 
-  array (
+  [
     'id' => '695464',
     'country' => 'UA',
     'region_id' => '692196',
@@ -1163,9 +1163,9 @@ return array (
     'lon' => '33.4747',
     'population' => '48570',
     'active' => '1',
-  ),
+  ],
   695516 => 
-  array (
+  [
     'id' => '695516',
     'country' => 'UA',
     'region_id' => '695592',
@@ -1175,9 +1175,9 @@ return array (
     'lon' => '27.214',
     'population' => '11726',
     'active' => '1',
-  ),
+  ],
   695581 => 
-  array (
+  [
     'id' => '695581',
     'country' => 'UA',
     'region_id' => '709716',
@@ -1187,9 +1187,9 @@ return array (
     'lon' => '37.206',
     'population' => '11550',
     'active' => '1',
-  ),
+  ],
   695594 => 
-  array (
+  [
     'id' => '695594',
     'country' => 'UA',
     'region_id' => '695592',
@@ -1199,9 +1199,9 @@ return array (
     'lon' => '26.2274',
     'population' => '255106',
     'active' => '1',
-  ),
+  ],
   695670 => 
-  array (
+  [
     'id' => '695670',
     'country' => 'UA',
     'region_id' => '698738',
@@ -1211,9 +1211,9 @@ return array (
     'lon' => '28.2932',
     'population' => '19719',
     'active' => '1',
-  ),
+  ],
   695859 => 
-  array (
+  [
     'id' => '695859',
     'country' => 'UA',
     'region_id' => '687869',
@@ -1223,9 +1223,9 @@ return array (
     'lon' => '24.2009',
     'population' => '14674',
     'active' => '1',
-  ),
+  ],
   695912 => 
-  array (
+  [
     'id' => '695912',
     'country' => 'UA',
     'region_id' => '686966',
@@ -1235,9 +1235,9 @@ return array (
     'lon' => '29.2291',
     'population' => '15252',
     'active' => '1',
-  ),
+  ],
   695965 => 
-  array (
+  [
     'id' => '695965',
     'country' => 'UA',
     'region_id' => '709929',
@@ -1247,9 +1247,9 @@ return array (
     'lon' => '33.7106',
     'population' => '20459',
     'active' => '1',
-  ),
+  ],
   696008 => 
-  array (
+  [
     'id' => '696008',
     'country' => 'UA',
     'region_id' => '692196',
@@ -1259,9 +1259,9 @@ return array (
     'lon' => '33.8707',
     'population' => '20000',
     'active' => '1',
-  ),
+  ],
   696108 => 
-  array (
+  [
     'id' => '696108',
     'country' => 'UA',
     'region_id' => '710734',
@@ -1271,9 +1271,9 @@ return array (
     'lon' => '32.3876',
     'population' => '62823',
     'active' => '1',
-  ),
+  ],
   696280 => 
-  array (
+  [
     'id' => '696280',
     'country' => 'UA',
     'region_id' => '709716',
@@ -1283,9 +1283,9 @@ return array (
     'lon' => '37.6927',
     'population' => '10543',
     'active' => '1',
-  ),
+  ],
   696292 => 
-  array (
+  [
     'id' => '696292',
     'country' => 'UA',
     'region_id' => '687699',
@@ -1295,9 +1295,9 @@ return array (
     'lon' => '36.3442',
     'population' => '13900',
     'active' => '1',
-  ),
+  ],
   696566 => 
-  array (
+  [
     'id' => '696566',
     'country' => 'UA',
     'region_id' => '702657',
@@ -1307,9 +1307,9 @@ return array (
     'lon' => '38.378',
     'population' => '25442',
     'active' => '1',
-  ),
+  ],
   696581 => 
-  array (
+  [
     'id' => '696581',
     'country' => 'UA',
     'region_id' => '705811',
@@ -1319,9 +1319,9 @@ return array (
     'lon' => '31.4158',
     'population' => '10539',
     'active' => '1',
-  ),
+  ],
   696643 => 
-  array (
+  [
     'id' => '696643',
     'country' => 'UA',
     'region_id' => '696634',
@@ -1331,9 +1331,9 @@ return array (
     'lon' => '34.5407',
     'population' => '317847',
     'active' => '1',
-  ),
+  ],
   696660 => 
-  array (
+  [
     'id' => '696660',
     'country' => 'UA',
     'region_id' => '706370',
@@ -1343,9 +1343,9 @@ return array (
     'lon' => '27.5109',
     'population' => '22348',
     'active' => '1',
-  ),
+  ],
   696677 => 
-  array (
+  [
     'id' => '696677',
     'country' => 'UA',
     'region_id' => '687699',
@@ -1355,9 +1355,9 @@ return array (
     'lon' => '36.2536',
     'population' => '21380',
     'active' => '1',
-  ),
+  ],
   696771 => 
-  array (
+  [
     'id' => '696771',
     'country' => 'UA',
     'region_id' => '689559',
@@ -1367,9 +1367,9 @@ return array (
     'lon' => '29.2636',
     'population' => '10354',
     'active' => '1',
-  ),
+  ],
   696943 => 
-  array (
+  [
     'id' => '696943',
     'country' => 'UA',
     'region_id' => '709929',
@@ -1379,9 +1379,9 @@ return array (
     'lon' => '35.1068',
     'population' => '17103',
     'active' => '1',
-  ),
+  ],
   697183 => 
-  array (
+  [
     'id' => '697183',
     'country' => 'UA',
     'region_id' => '696634',
@@ -1391,9 +1391,9 @@ return array (
     'lon' => '32.5107',
     'population' => '16089',
     'active' => '1',
-  ),
+  ],
   697592 => 
-  array (
+  [
     'id' => '697592',
     'country' => 'UA',
     'region_id' => '702657',
@@ -1403,9 +1403,9 @@ return array (
     'lon' => '38.5481',
     'population' => '41480',
     'active' => '1',
-  ),
+  ],
   697593 => 
-  array (
+  [
     'id' => '697593',
     'country' => 'UA',
     'region_id' => '700567',
@@ -1415,9 +1415,9 @@ return array (
     'lon' => '30.8507',
     'population' => '70746',
     'active' => '1',
-  ),
+  ],
   697637 => 
-  array (
+  [
     'id' => '697637',
     'country' => 'UA',
     'region_id' => '703446',
@@ -1427,9 +1427,9 @@ return array (
     'lon' => '31.4795',
     'population' => '36527',
     'active' => '1',
-  ),
+  ],
   697650 => 
-  array (
+  [
     'id' => '697650',
     'country' => 'UA',
     'region_id' => '702657',
@@ -1439,9 +1439,9 @@ return array (
     'lon' => '38.8438',
     'population' => '29220',
     'active' => '1',
-  ),
+  ],
   697889 => 
-  array (
+  [
     'id' => '697889',
     'country' => 'UA',
     'region_id' => '709929',
@@ -1451,9 +1451,9 @@ return array (
     'lon' => '35.8705',
     'population' => '115932',
     'active' => '1',
-  ),
+  ],
   698131 => 
-  array (
+  [
     'id' => '698131',
     'country' => 'UA',
     'region_id' => '686966',
@@ -1463,9 +1463,9 @@ return array (
     'lon' => '28.8035',
     'population' => '16398',
     'active' => '1',
-  ),
+  ],
   698232 => 
-  array (
+  [
     'id' => '698232',
     'country' => 'UA',
     'region_id' => '695592',
@@ -1475,9 +1475,9 @@ return array (
     'lon' => '26.5142',
     'population' => '14251',
     'active' => '1',
-  ),
+  ],
   698428 => 
-  array (
+  [
     'id' => '698428',
     'country' => 'UA',
     'region_id' => '687699',
@@ -1487,9 +1487,9 @@ return array (
     'lon' => '35.7858',
     'population' => '17287',
     'active' => '1',
-  ),
+  ],
   698625 => 
-  array (
+  [
     'id' => '698625',
     'country' => 'UA',
     'region_id' => '705811',
@@ -1499,9 +1499,9 @@ return array (
     'lon' => '33.1159',
     'population' => '103000',
     'active' => '1',
-  ),
+  ],
   698627 => 
-  array (
+  [
     'id' => '698627',
     'country' => 'UA',
     'region_id' => '705811',
@@ -1511,9 +1511,9 @@ return array (
     'lon' => '32.2349',
     'population' => '10687',
     'active' => '1',
-  ),
+  ],
   698740 => 
-  array (
+  [
     'id' => '698740',
     'country' => 'UA',
     'region_id' => '698738',
@@ -1523,9 +1523,9 @@ return array (
     'lon' => '30.7326',
     'population' => '1001558',
     'active' => '1',
-  ),
+  ],
   698770 => 
-  array (
+  [
     'id' => '698770',
     'country' => 'UA',
     'region_id' => '700567',
@@ -1535,9 +1535,9 @@ return array (
     'lon' => '31.5498',
     'population' => '16300',
     'active' => '1',
-  ),
+  ],
   698782 => 
-  array (
+  [
     'id' => '698782',
     'country' => 'UA',
     'region_id' => '703446',
@@ -1547,9 +1547,9 @@ return array (
     'lon' => '30.6227',
     'population' => '31557',
     'active' => '1',
-  ),
+  ],
   698953 => 
-  array (
+  [
     'id' => '698953',
     'country' => 'UA',
     'region_id' => '700567',
@@ -1559,9 +1559,9 @@ return array (
     'lon' => '32.5216',
     'population' => '15646',
     'active' => '1',
-  ),
+  ],
   699035 => 
-  array (
+  [
     'id' => '699035',
     'country' => 'UA',
     'region_id' => '689064',
@@ -1571,9 +1571,9 @@ return array (
     'lon' => '24.1626',
     'population' => '57800',
     'active' => '1',
-  ),
+  ],
   699078 => 
-  array (
+  [
     'id' => '699078',
     'country' => 'UA',
     'region_id' => '705811',
@@ -1583,9 +1583,9 @@ return array (
     'lon' => '31.5285',
     'population' => '18633',
     'active' => '1',
-  ),
+  ],
   699445 => 
-  array (
+  [
     'id' => '699445',
     'country' => 'UA',
     'region_id' => '709929',
@@ -1595,9 +1595,9 @@ return array (
     'lon' => '35.2455',
     'population' => '73100',
     'active' => '1',
-  ),
+  ],
   699453 => 
-  array (
+  [
     'id' => '699453',
     'country' => 'UA',
     'region_id' => '705811',
@@ -1607,9 +1607,9 @@ return array (
     'lon' => '31.642',
     'population' => '12728',
     'active' => '1',
-  ),
+  ],
   699553 => 
-  array (
+  [
     'id' => '699553',
     'country' => 'UA',
     'region_id' => '686966',
@@ -1619,9 +1619,9 @@ return array (
     'lon' => '27.6165',
     'population' => '55925',
     'active' => '1',
-  ),
+  ],
   699675 => 
-  array (
+  [
     'id' => '699675',
     'country' => 'UA',
     'region_id' => '709716',
@@ -1631,9 +1631,9 @@ return array (
     'lon' => '38.086',
     'population' => '12200',
     'active' => '1',
-  ),
+  ],
   699753 => 
-  array (
+  [
     'id' => '699753',
     'country' => 'UA',
     'region_id' => '710734',
@@ -1643,9 +1643,9 @@ return array (
     'lon' => '33.2615',
     'population' => '14400',
     'active' => '1',
-  ),
+  ],
   699777 => 
-  array (
+  [
     'id' => '699777',
     'country' => 'UA',
     'region_id' => '706482',
@@ -1655,9 +1655,9 @@ return array (
     'lon' => '35.8708',
     'population' => '13112',
     'active' => '1',
-  ),
+  ],
   699811 => 
-  array (
+  [
     'id' => '699811',
     'country' => 'UA',
     'region_id' => '700567',
@@ -1667,9 +1667,9 @@ return array (
     'lon' => '31.7851',
     'population' => '13547',
     'active' => '1',
-  ),
+  ],
   699839 => 
-  array (
+  [
     'id' => '699839',
     'country' => 'UA',
     'region_id' => '706442',
@@ -1679,9 +1679,9 @@ return array (
     'lon' => '33.3486',
     'population' => '50672',
     'active' => '1',
-  ),
+  ],
   699917 => 
-  array (
+  [
     'id' => '699917',
     'country' => 'UA',
     'region_id' => '710734',
@@ -1691,9 +1691,9 @@ return array (
     'lon' => '31.5828',
     'population' => '15164',
     'active' => '1',
-  ),
+  ],
   699942 => 
-  array (
+  [
     'id' => '699942',
     'country' => 'UA',
     'region_id' => '710734',
@@ -1703,9 +1703,9 @@ return array (
     'lon' => '31.8869',
     'population' => '75499',
     'active' => '1',
-  ),
+  ],
   699956 => 
-  array (
+  [
     'id' => '699956',
     'country' => 'UA',
     'region_id' => '709716',
@@ -1715,9 +1715,9 @@ return array (
     'lon' => '38.1606',
     'population' => '14253',
     'active' => '1',
-  ),
+  ],
   700019 => 
-  array (
+  [
     'id' => '700019',
     'country' => 'UA',
     'region_id' => '703883',
@@ -1727,9 +1727,9 @@ return array (
     'lon' => '34.7384',
     'population' => '72534',
     'active' => '1',
-  ),
+  ],
   700051 => 
-  array (
+  [
     'id' => '700051',
     'country' => 'UA',
     'region_id' => '709929',
@@ -1739,9 +1739,9 @@ return array (
     'lon' => '34.3964',
     'population' => '130500',
     'active' => '1',
-  ),
+  ],
   700261 => 
-  array (
+  [
     'id' => '700261',
     'country' => 'UA',
     'region_id' => '706370',
@@ -1751,9 +1751,9 @@ return array (
     'lon' => '26.6417',
     'population' => '33063',
     'active' => '1',
-  ),
+  ],
   700322 => 
-  array (
+  [
     'id' => '700322',
     'country' => 'UA',
     'region_id' => '689559',
@@ -1763,9 +1763,9 @@ return array (
     'lon' => '28.8378',
     'population' => '11633',
     'active' => '1',
-  ),
+  ],
   700507 => 
-  array (
+  [
     'id' => '700507',
     'country' => 'UA',
     'region_id' => '707470',
@@ -1775,9 +1775,9 @@ return array (
     'lon' => '24.5694',
     'population' => '20154',
     'active' => '1',
-  ),
+  ],
   700550 => 
-  array (
+  [
     'id' => '700550',
     'country' => 'UA',
     'region_id' => '703883',
@@ -1787,9 +1787,9 @@ return array (
     'lon' => '35.8366',
     'population' => '11400',
     'active' => '1',
-  ),
+  ],
   700568 => 
-  array (
+  [
     'id' => '700568',
     'country' => 'UA',
     'region_id' => '702549',
@@ -1799,9 +1799,9 @@ return array (
     'lon' => '23.9852',
     'population' => '14251',
     'active' => '1',
-  ),
+  ],
   700569 => 
-  array (
+  [
     'id' => '700569',
     'country' => 'UA',
     'region_id' => '700567',
@@ -1811,9 +1811,9 @@ return array (
     'lon' => '31.9974',
     'population' => '510840',
     'active' => '1',
-  ),
+  ],
   700646 => 
-  array (
+  [
     'id' => '700646',
     'country' => 'UA',
     'region_id' => '687869',
@@ -1823,9 +1823,9 @@ return array (
     'lon' => '22.7178',
     'population' => '81633',
     'active' => '1',
-  ),
+  ],
   700696 => 
-  array (
+  [
     'id' => '700696',
     'country' => 'UA',
     'region_id' => '702549',
@@ -1835,9 +1835,9 @@ return array (
     'lon' => '23.1508',
     'population' => '11000',
     'active' => '1',
-  ),
+  ],
   700700 => 
-  array (
+  [
     'id' => '700700',
     'country' => 'UA',
     'region_id' => '709716',
@@ -1847,9 +1847,9 @@ return array (
     'lon' => '38.0639',
     'population' => '11300',
     'active' => '1',
-  ),
+  ],
   700829 => 
-  array (
+  [
     'id' => '700829',
     'country' => 'UA',
     'region_id' => '702657',
@@ -1859,9 +1859,9 @@ return array (
     'lon' => '39.6582',
     'population' => '25654',
     'active' => '1',
-  ),
+  ],
   700918 => 
-  array (
+  [
     'id' => '700918',
     'country' => 'UA',
     'region_id' => '689559',
@@ -1871,9 +1871,9 @@ return array (
     'lon' => '27.7982',
     'population' => '32500',
     'active' => '1',
-  ),
+  ],
   700997 => 
-  array (
+  [
     'id' => '700997',
     'country' => 'UA',
     'region_id' => '703883',
@@ -1883,9 +1883,9 @@ return array (
     'lon' => '34.0833',
     'population' => '30000',
     'active' => '1',
-  ),
+  ],
   701031 => 
-  array (
+  [
     'id' => '701031',
     'country' => 'UA',
     'region_id' => '703446',
@@ -1895,9 +1895,9 @@ return array (
     'lon' => '30.9823',
     'population' => '12871',
     'active' => '1',
-  ),
+  ],
   701075 => 
-  array (
+  [
     'id' => '701075',
     'country' => 'UA',
     'region_id' => '696634',
@@ -1907,9 +1907,9 @@ return array (
     'lon' => '33.6089',
     'population' => '41377',
     'active' => '1',
-  ),
+  ],
   701233 => 
-  array (
+  [
     'id' => '701233',
     'country' => 'UA',
     'region_id' => '687699',
@@ -1919,9 +1919,9 @@ return array (
     'lon' => '35.2224',
     'population' => '13216',
     'active' => '1',
-  ),
+  ],
   701347 => 
-  array (
+  [
     'id' => '701347',
     'country' => 'UA',
     'region_id' => '706482',
@@ -1931,9 +1931,9 @@ return array (
     'lon' => '36.0507',
     'population' => '23679',
     'active' => '1',
-  ),
+  ],
   701372 => 
-  array (
+  [
     'id' => '701372',
     'country' => 'UA',
     'region_id' => '710734',
@@ -1943,9 +1943,9 @@ return array (
     'lon' => '32.2157',
     'population' => '12766',
     'active' => '1',
-  ),
+  ],
   701404 => 
-  array (
+  [
     'id' => '701404',
     'country' => 'UA',
     'region_id' => '687699',
@@ -1955,9 +1955,9 @@ return array (
     'lon' => '35.3653',
     'population' => '158000',
     'active' => '1',
-  ),
+  ],
   701822 => 
-  array (
+  [
     'id' => '701822',
     'country' => 'UA',
     'region_id' => '709716',
@@ -1967,9 +1967,9 @@ return array (
     'lon' => '37.5413',
     'population' => '481626',
     'active' => '1',
-  ),
+  ],
   701855 => 
-  array (
+  [
     'id' => '701855',
     'country' => 'UA',
     'region_id' => '709929',
@@ -1979,9 +1979,9 @@ return array (
     'lon' => '34.6277',
     'population' => '50443',
     'active' => '1',
-  ),
+  ],
   702116 => 
-  array (
+  [
     'id' => '702116',
     'country' => 'UA',
     'region_id' => '686966',
@@ -1991,9 +1991,9 @@ return array (
     'lon' => '29.2383',
     'population' => '27068',
     'active' => '1',
-  ),
+  ],
   702147 => 
-  array (
+  [
     'id' => '702147',
     'country' => 'UA',
     'region_id' => '705811',
@@ -2003,9 +2003,9 @@ return array (
     'lon' => '31.6366',
     'population' => '12644',
     'active' => '1',
-  ),
+  ],
   702320 => 
-  array (
+  [
     'id' => '702320',
     'country' => 'UA',
     'region_id' => '709716',
@@ -2015,9 +2015,9 @@ return array (
     'lon' => '37.9258',
     'population' => '376610',
     'active' => '1',
-  ),
+  ],
   702337 => 
-  array (
+  [
     'id' => '702337',
     'country' => 'UA',
     'region_id' => '703446',
@@ -2027,9 +2027,9 @@ return array (
     'lon' => '29.8113',
     'population' => '11594',
     'active' => '1',
-  ),
+  ],
   702417 => 
-  array (
+  [
     'id' => '702417',
     'country' => 'UA',
     'region_id' => '706482',
@@ -2039,9 +2039,9 @@ return array (
     'lon' => '35.9291',
     'population' => '22545',
     'active' => '1',
-  ),
+  ],
   702550 => 
-  array (
+  [
     'id' => '702550',
     'country' => 'UA',
     'region_id' => '702549',
@@ -2051,9 +2051,9 @@ return array (
     'lon' => '24.0232',
     'population' => '717803',
     'active' => '1',
-  ),
+  ],
   702563 => 
-  array (
+  [
     'id' => '702563',
     'country' => 'UA',
     'region_id' => '702657',
@@ -2063,9 +2063,9 @@ return array (
     'lon' => '39.2267',
     'population' => '18830',
     'active' => '1',
-  ),
+  ],
   702569 => 
-  array (
+  [
     'id' => '702569',
     'country' => 'UA',
     'region_id' => '689064',
@@ -2075,9 +2075,9 @@ return array (
     'lon' => '25.3424',
     'population' => '213661',
     'active' => '1',
-  ),
+  ],
   702658 => 
-  array (
+  [
     'id' => '702658',
     'country' => 'UA',
     'region_id' => '702657',
@@ -2087,9 +2087,9 @@ return array (
     'lon' => '39.3171',
     'population' => '452000',
     'active' => '1',
-  ),
+  ],
   702723 => 
-  array (
+  [
     'id' => '702723',
     'country' => 'UA',
     'region_id' => '696634',
@@ -2099,9 +2099,9 @@ return array (
     'lon' => '32.9969',
     'population' => '52600',
     'active' => '1',
-  ),
+  ],
   702760 => 
-  array (
+  [
     'id' => '702760',
     'country' => 'UA',
     'region_id' => '706482',
@@ -2111,9 +2111,9 @@ return array (
     'lon' => '36.3176',
     'population' => '62311',
     'active' => '1',
-  ),
+  ],
   702874 => 
-  array (
+  [
     'id' => '702874',
     'country' => 'UA',
     'region_id' => '696634',
@@ -2123,9 +2123,9 @@ return array (
     'lon' => '33.2602',
     'population' => '11950',
     'active' => '1',
-  ),
+  ],
   702972 => 
-  array (
+  [
     'id' => '702972',
     'country' => 'UA',
     'region_id' => '702657',
@@ -2135,9 +2135,9 @@ return array (
     'lon' => '38.4421',
     'population' => '111600',
     'active' => '1',
-  ),
+  ],
   703142 => 
-  array (
+  [
     'id' => '703142',
     'country' => 'UA',
     'region_id' => '706370',
@@ -2147,9 +2147,9 @@ return array (
     'lon' => '27.6305',
     'population' => '10669',
     'active' => '1',
-  ),
+  ],
   703428 => 
-  array (
+  [
     'id' => '703428',
     'country' => 'UA',
     'region_id' => '689559',
@@ -2159,9 +2159,9 @@ return array (
     'lon' => '29.2368',
     'population' => '21393',
     'active' => '1',
-  ),
+  ],
   703448 => 
-  array (
+  [
     'id' => '703448',
     'country' => 'UA',
     'region_id' => '703447',
@@ -2171,9 +2171,9 @@ return array (
     'lon' => '30.5238',
     'population' => '2797553',
     'active' => '1',
-  ),
+  ],
   703464 => 
-  array (
+  [
     'id' => '703464',
     'country' => 'UA',
     'region_id' => '695592',
@@ -2183,9 +2183,9 @@ return array (
     'lon' => '25.8667',
     'population' => '40000',
     'active' => '1',
-  ),
+  ],
   703646 => 
-  array (
+  [
     'id' => '703646',
     'country' => 'UA',
     'region_id' => '709716',
@@ -2195,9 +2195,9 @@ return array (
     'lon' => '37.2821',
     'population' => '20700',
     'active' => '1',
-  ),
+  ],
   703656 => 
-  array (
+  [
     'id' => '703656',
     'country' => 'UA',
     'region_id' => '706482',
@@ -2207,9 +2207,9 @@ return array (
     'lon' => '37.5998',
     'population' => '32449',
     'active' => '1',
-  ),
+  ],
   703845 => 
-  array (
+  [
     'id' => '703845',
     'country' => 'UA',
     'region_id' => '709929',
@@ -2219,9 +2219,9 @@ return array (
     'lon' => '33.3804',
     'population' => '652380',
     'active' => '1',
-  ),
+  ],
   704000 => 
-  array (
+  [
     'id' => '704000',
     'country' => 'UA',
     'region_id' => '692196',
@@ -2231,9 +2231,9 @@ return array (
     'lon' => '33.3848',
     'population' => '24115',
     'active' => '1',
-  ),
+  ],
   704138 => 
-  array (
+  [
     'id' => '704138',
     'country' => 'UA',
     'region_id' => '702657',
@@ -2243,9 +2243,9 @@ return array (
     'lon' => '38.2179',
     'population' => '23538',
     'active' => '1',
-  ),
+  ],
   704143 => 
-  array (
+  [
     'id' => '704143',
     'country' => 'UA',
     'region_id' => '691649',
@@ -2255,9 +2255,9 @@ return array (
     'lon' => '25.7246',
     'population' => '21000',
     'active' => '1',
-  ),
+  ],
   704147 => 
-  array (
+  [
     'id' => '704147',
     'country' => 'UA',
     'region_id' => '696634',
@@ -2267,9 +2267,9 @@ return array (
     'lon' => '33.4204',
     'population' => '227494',
     'active' => '1',
-  ),
+  ],
   704202 => 
-  array (
+  [
     'id' => '704202',
     'country' => 'UA',
     'region_id' => '702657',
@@ -2279,9 +2279,9 @@ return array (
     'lon' => '38.9371',
     'population' => '90005',
     'active' => '1',
-  ),
+  ],
   704204 => 
-  array (
+  [
     'id' => '704204',
     'country' => 'UA',
     'region_id' => '709716',
@@ -2291,9 +2291,9 @@ return array (
     'lon' => '37.8022',
     'population' => '28200',
     'active' => '1',
-  ),
+  ],
   704362 => 
-  array (
+  [
     'id' => '704362',
     'country' => 'UA',
     'region_id' => '703883',
@@ -2303,9 +2303,9 @@ return array (
     'lon' => '33.7965',
     'population' => '30700',
     'active' => '1',
-  ),
+  ],
   704388 => 
-  array (
+  [
     'id' => '704388',
     'country' => 'UA',
     'region_id' => '706482',
@@ -2315,9 +2315,9 @@ return array (
     'lon' => '35.4402',
     'population' => '21426',
     'active' => '1',
-  ),
+  ],
   704403 => 
-  array (
+  [
     'id' => '704403',
     'country' => 'UA',
     'region_id' => '702657',
@@ -2327,9 +2327,9 @@ return array (
     'lon' => '39.7373',
     'population' => '49352',
     'active' => '1',
-  ),
+  ],
   704422 => 
-  array (
+  [
     'id' => '704422',
     'country' => 'UA',
     'region_id' => '709716',
@@ -2339,9 +2339,9 @@ return array (
     'lon' => '37.1758',
     'population' => '68263',
     'active' => '1',
-  ),
+  ],
   704492 => 
-  array (
+  [
     'id' => '704492',
     'country' => 'UA',
     'region_id' => '706370',
@@ -2351,9 +2351,9 @@ return array (
     'lon' => '26.9725',
     'population' => '19815',
     'active' => '1',
-  ),
+  ],
   704508 => 
-  array (
+  [
     'id' => '704508',
     'country' => 'UA',
     'region_id' => '709716',
@@ -2363,9 +2363,9 @@ return array (
     'lon' => '37.5563',
     'population' => '173700',
     'active' => '1',
-  ),
+  ],
   704608 => 
-  array (
+  [
     'id' => '704608',
     'country' => 'UA',
     'region_id' => '706482',
@@ -2375,9 +2375,9 @@ return array (
     'lon' => '37.7036',
     'population' => '19738',
     'active' => '1',
-  ),
+  ],
   704617 => 
-  array (
+  [
     'id' => '704617',
     'country' => 'UA',
     'region_id' => '689064',
@@ -2387,9 +2387,9 @@ return array (
     'lon' => '24.7087',
     'population' => '66400',
     'active' => '1',
-  ),
+  ],
   704670 => 
-  array (
+  [
     'id' => '704670',
     'country' => 'UA',
     'region_id' => '703447',
@@ -2399,9 +2399,9 @@ return array (
     'lon' => '30.3296',
     'population' => '13934',
     'active' => '1',
-  ),
+  ],
   704679 => 
-  array (
+  [
     'id' => '704679',
     'country' => 'UA',
     'region_id' => '698738',
@@ -2411,9 +2411,9 @@ return array (
     'lon' => '29.532',
     'population' => '40664',
     'active' => '1',
-  ),
+  ],
   704705 => 
-  array (
+  [
     'id' => '704705',
     'country' => 'UA',
     'region_id' => '696634',
@@ -2423,9 +2423,9 @@ return array (
     'lon' => '34.7586',
     'population' => '12660',
     'active' => '1',
-  ),
+  ],
   704839 => 
-  array (
+  [
     'id' => '704839',
     'country' => 'UA',
     'region_id' => '710734',
@@ -2435,9 +2435,9 @@ return array (
     'lon' => '32.2481',
     'population' => '14215',
     'active' => '1',
-  ),
+  ],
   704858 => 
-  array (
+  [
     'id' => '704858',
     'country' => 'UA',
     'region_id' => '710802',
@@ -2447,9 +2447,9 @@ return array (
     'lon' => '31.2586',
     'population' => '19000',
     'active' => '1',
-  ),
+  ],
   704885 => 
-  array (
+  [
     'id' => '704885',
     'country' => 'UA',
     'region_id' => '686966',
@@ -2459,9 +2459,9 @@ return array (
     'lon' => '29.0563',
     'population' => '25099',
     'active' => '1',
-  ),
+  ],
   704901 => 
-  array (
+  [
     'id' => '704901',
     'country' => 'UA',
     'region_id' => '686966',
@@ -2471,9 +2471,9 @@ return array (
     'lon' => '28.6385',
     'population' => '65000',
     'active' => '1',
-  ),
+  ],
   705104 => 
-  array (
+  [
     'id' => '705104',
     'country' => 'UA',
     'region_id' => '709716',
@@ -2483,9 +2483,9 @@ return array (
     'lon' => '37.7069',
     'population' => '91259',
     'active' => '1',
-  ),
+  ],
   705115 => 
-  array (
+  [
     'id' => '705115',
     'country' => 'UA',
     'region_id' => '687699',
@@ -2495,9 +2495,9 @@ return array (
     'lon' => '35.4229',
     'population' => '11540',
     'active' => '1',
-  ),
+  ],
   705135 => 
-  array (
+  [
     'id' => '705135',
     'country' => 'UA',
     'region_id' => '692196',
@@ -2507,9 +2507,9 @@ return array (
     'lon' => '33.2026',
     'population' => '91798',
     'active' => '1',
-  ),
+  ],
   705183 => 
-  array (
+  [
     'id' => '705183',
     'country' => 'UA',
     'region_id' => '706482',
@@ -2519,9 +2519,9 @@ return array (
     'lon' => '36.5262',
     'population' => '15825',
     'active' => '1',
-  ),
+  ],
   705392 => 
-  array (
+  [
     'id' => '705392',
     'country' => 'UA',
     'region_id' => '707470',
@@ -2531,9 +2531,9 @@ return array (
     'lon' => '25.0365',
     'population' => '61781',
     'active' => '1',
-  ),
+  ],
   705544 => 
-  array (
+  [
     'id' => '705544',
     'country' => 'UA',
     'region_id' => '696634',
@@ -2543,9 +2543,9 @@ return array (
     'lon' => '34.1965',
     'population' => '11692',
     'active' => '1',
-  ),
+  ],
   705730 => 
-  array (
+  [
     'id' => '705730',
     'country' => 'UA',
     'region_id' => '689064',
@@ -2555,9 +2555,9 @@ return array (
     'lon' => '25.4582',
     'population' => '16509',
     'active' => '1',
-  ),
+  ],
   705809 => 
-  array (
+  [
     'id' => '705809',
     'country' => 'UA',
     'region_id' => '702657',
@@ -2567,9 +2567,9 @@ return array (
     'lon' => '38.6428',
     'population' => '40000',
     'active' => '1',
-  ),
+  ],
   705812 => 
-  array (
+  [
     'id' => '705812',
     'country' => 'UA',
     'region_id' => '705811',
@@ -2579,9 +2579,9 @@ return array (
     'lon' => '32.2597',
     'population' => '249454',
     'active' => '1',
-  ),
+  ],
   705883 => 
-  array (
+  [
     'id' => '705883',
     'country' => 'UA',
     'region_id' => '698738',
@@ -2591,9 +2591,9 @@ return array (
     'lon' => '29.2637',
     'population' => '21754',
     'active' => '1',
-  ),
+  ],
   706165 => 
-  array (
+  [
     'id' => '706165',
     'country' => 'UA',
     'region_id' => '687869',
@@ -2603,9 +2603,9 @@ return array (
     'lon' => '23.2991',
     'population' => '27999',
     'active' => '1',
-  ),
+  ],
   706200 => 
-  array (
+  [
     'id' => '706200',
     'country' => 'UA',
     'region_id' => '710802',
@@ -2615,9 +2615,9 @@ return array (
     'lon' => '29.9681',
     'population' => '14056',
     'active' => '1',
-  ),
+  ],
   706244 => 
-  array (
+  [
     'id' => '706244',
     'country' => 'UA',
     'region_id' => '710720',
@@ -2627,9 +2627,9 @@ return array (
     'lon' => '26.4912',
     'population' => '10799',
     'active' => '1',
-  ),
+  ],
   706289 => 
-  array (
+  [
     'id' => '706289',
     'country' => 'UA',
     'region_id' => '696634',
@@ -2639,9 +2639,9 @@ return array (
     'lon' => '33.2783',
     'population' => '14117',
     'active' => '1',
-  ),
+  ],
   706352 => 
-  array (
+  [
     'id' => '706352',
     'country' => 'UA',
     'region_id' => '702549',
@@ -2651,9 +2651,9 @@ return array (
     'lon' => '24.3136',
     'population' => '10172',
     'active' => '1',
-  ),
+  ],
   706369 => 
-  array (
+  [
     'id' => '706369',
     'country' => 'UA',
     'region_id' => '706370',
@@ -2663,9 +2663,9 @@ return array (
     'lon' => '26.9965',
     'population' => '398346',
     'active' => '1',
-  ),
+  ],
   706380 => 
-  array (
+  [
     'id' => '706380',
     'country' => 'UA',
     'region_id' => '689559',
@@ -2675,9 +2675,9 @@ return array (
     'lon' => '27.9575',
     'population' => '28136',
     'active' => '1',
-  ),
+  ],
   706448 => 
-  array (
+  [
     'id' => '706448',
     'country' => 'UA',
     'region_id' => '706442',
@@ -2687,9 +2687,9 @@ return array (
     'lon' => '32.6178',
     'population' => '320477',
     'active' => '1',
-  ),
+  ],
   706466 => 
-  array (
+  [
     'id' => '706466',
     'country' => 'UA',
     'region_id' => '709716',
@@ -2699,9 +2699,9 @@ return array (
     'lon' => '38.1473',
     'population' => '64000',
     'active' => '1',
-  ),
+  ],
   706483 => 
-  array (
+  [
     'id' => '706483',
     'country' => 'UA',
     'region_id' => '706482',
@@ -2711,9 +2711,9 @@ return array (
     'lon' => '36.2527',
     'population' => '1430885',
     'active' => '1',
-  ),
+  ],
   706524 => 
-  array (
+  [
     'id' => '706524',
     'country' => 'UA',
     'region_id' => '703883',
@@ -2723,9 +2723,9 @@ return array (
     'lon' => '36.4706',
     'population' => '152195',
     'active' => '1',
-  ),
+  ],
   706571 => 
-  array (
+  [
     'id' => '706571',
     'country' => 'UA',
     'region_id' => '689559',
@@ -2735,9 +2735,9 @@ return array (
     'lon' => '28.8339',
     'population' => '25645',
     'active' => '1',
-  ),
+  ],
   706749 => 
-  array (
+  [
     'id' => '706749',
     'country' => 'UA',
     'region_id' => '696634',
@@ -2747,9 +2747,9 @@ return array (
     'lon' => '35.1295',
     'population' => '17226',
     'active' => '1',
-  ),
+  ],
   706757 => 
-  array (
+  [
     'id' => '706757',
     'country' => 'UA',
     'region_id' => '709716',
@@ -2759,9 +2759,9 @@ return array (
     'lon' => '38.089',
     'population' => '12662',
     'active' => '1',
-  ),
+  ],
   706900 => 
-  array (
+  [
     'id' => '706900',
     'country' => 'UA',
     'region_id' => '710802',
@@ -2771,9 +2771,9 @@ return array (
     'lon' => '31.46',
     'population' => '25666',
     'active' => '1',
-  ),
+  ],
   706950 => 
-  array (
+  [
     'id' => '706950',
     'country' => 'UA',
     'region_id' => '706370',
@@ -2783,9 +2783,9 @@ return array (
     'lon' => '26.5856',
     'population' => '100000',
     'active' => '1',
-  ),
+  ],
   707025 => 
-  array (
+  [
     'id' => '707025',
     'country' => 'UA',
     'region_id' => '689064',
@@ -2795,9 +2795,9 @@ return array (
     'lon' => '24.9586',
     'population' => '11042',
     'active' => '1',
-  ),
+  ],
   707052 => 
-  array (
+  [
     'id' => '707052',
     'country' => 'UA',
     'region_id' => '710802',
@@ -2807,9 +2807,9 @@ return array (
     'lon' => '32.104',
     'population' => '14547',
     'active' => '1',
-  ),
+  ],
   707099 => 
-  array (
+  [
     'id' => '707099',
     'country' => 'UA',
     'region_id' => '707470',
@@ -2819,9 +2819,9 @@ return array (
     'lon' => '24.3731',
     'population' => '67698',
     'active' => '1',
-  ),
+  ],
   707155 => 
-  array (
+  [
     'id' => '707155',
     'country' => 'UA',
     'region_id' => '689559',
@@ -2831,9 +2831,9 @@ return array (
     'lon' => '28.5261',
     'population' => '19315',
     'active' => '1',
-  ),
+  ],
   707232 => 
-  array (
+  [
     'id' => '707232',
     'country' => 'UA',
     'region_id' => '706442',
@@ -2843,9 +2843,9 @@ return array (
     'lon' => '33.2907',
     'population' => '10673',
     'active' => '1',
-  ),
+  ],
   707244 => 
-  array (
+  [
     'id' => '707244',
     'country' => 'UA',
     'region_id' => '706442',
@@ -2855,9 +2855,9 @@ return array (
     'lon' => '33.487',
     'population' => '36816',
     'active' => '1',
-  ),
+  ],
   707251 => 
-  array (
+  [
     'id' => '707251',
     'country' => 'UA',
     'region_id' => '703446',
@@ -2867,9 +2867,9 @@ return array (
     'lon' => '30.8281',
     'population' => '13245',
     'active' => '1',
-  ),
+  ],
   707292 => 
-  array (
+  [
     'id' => '707292',
     'country' => 'UA',
     'region_id' => '706482',
@@ -2879,9 +2879,9 @@ return array (
     'lon' => '37.2485',
     'population' => '53778',
     'active' => '1',
-  ),
+  ],
   707296 => 
-  array (
+  [
     'id' => '707296',
     'country' => 'UA',
     'region_id' => '706370',
@@ -2891,9 +2891,9 @@ return array (
     'lon' => '26.8213',
     'population' => '17758',
     'active' => '1',
-  ),
+  ],
   707308 => 
-  array (
+  [
     'id' => '707308',
     'country' => 'UA',
     'region_id' => '698738',
@@ -2903,9 +2903,9 @@ return array (
     'lon' => '28.8408',
     'population' => '82485',
     'active' => '1',
-  ),
+  ],
   707471 => 
-  array (
+  [
     'id' => '707471',
     'country' => 'UA',
     'region_id' => '707470',
@@ -2915,9 +2915,9 @@ return array (
     'lon' => '24.7097',
     'population' => '204200',
     'active' => '1',
-  ),
+  ],
   707489 => 
-  array (
+  [
     'id' => '707489',
     'country' => 'UA',
     'region_id' => '703446',
@@ -2927,9 +2927,9 @@ return array (
     'lon' => '29.8943',
     'population' => '10170',
     'active' => '1',
-  ),
+  ],
   707565 => 
-  array (
+  [
     'id' => '707565',
     'country' => 'UA',
     'region_id' => '703446',
@@ -2939,9 +2939,9 @@ return array (
     'lon' => '30.2505',
     'population' => '40789',
     'active' => '1',
-  ),
+  ],
   707679 => 
-  array (
+  [
     'id' => '707679',
     'country' => 'UA',
     'region_id' => '709716',
@@ -2951,9 +2951,9 @@ return array (
     'lon' => '38.2024',
     'population' => '17621',
     'active' => '1',
-  ),
+  ],
   707688 => 
-  array (
+  [
     'id' => '707688',
     'country' => 'UA',
     'region_id' => '698738',
@@ -2963,9 +2963,9 @@ return array (
     'lon' => '30.6548',
     'population' => '54102',
     'active' => '1',
-  ),
+  ],
   707695 => 
-  array (
+  [
     'id' => '707695',
     'country' => 'UA',
     'region_id' => '689559',
@@ -2975,9 +2975,9 @@ return array (
     'lon' => '29.2177',
     'population' => '10770',
     'active' => '1',
-  ),
+  ],
   707744 => 
-  array (
+  [
     'id' => '707744',
     'country' => 'UA',
     'region_id' => '710734',
@@ -2987,9 +2987,9 @@ return array (
     'lon' => '32.3942',
     'population' => '12417',
     'active' => '1',
-  ),
+  ],
   707752 => 
-  array (
+  [
     'id' => '707752',
     'country' => 'UA',
     'region_id' => '706370',
@@ -2999,9 +2999,9 @@ return array (
     'lon' => '26.5839',
     'population' => '17086',
     'active' => '1',
-  ),
+  ],
   707753 => 
-  array (
+  [
     'id' => '707753',
     'country' => 'UA',
     'region_id' => '709716',
@@ -3011,9 +3011,9 @@ return array (
     'lon' => '38.0542',
     'population' => '278550',
     'active' => '1',
-  ),
+  ],
   707758 => 
-  array (
+  [
     'id' => '707758',
     'country' => 'UA',
     'region_id' => '692196',
@@ -3023,9 +3023,9 @@ return array (
     'lon' => '33.9162',
     'population' => '35387',
     'active' => '1',
-  ),
+  ],
   707898 => 
-  array (
+  [
     'id' => '707898',
     'country' => 'UA',
     'region_id' => '687699',
@@ -3035,9 +3035,9 @@ return array (
     'lon' => '36.2563',
     'population' => '16442',
     'active' => '1',
-  ),
+  ],
   708181 => 
-  array (
+  [
     'id' => '708181',
     'country' => 'UA',
     'region_id' => '696634',
@@ -3047,9 +3047,9 @@ return array (
     'lon' => '32.4361',
     'population' => '11017',
     'active' => '1',
-  ),
+  ],
   708251 => 
-  array (
+  [
     'id' => '708251',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3059,9 +3059,9 @@ return array (
     'lon' => '30.2651',
     'population' => '12450',
     'active' => '1',
-  ),
+  ],
   708273 => 
-  array (
+  [
     'id' => '708273',
     'country' => 'UA',
     'region_id' => '702657',
@@ -3071,9 +3071,9 @@ return array (
     'lon' => '38.4954',
     'population' => '11046',
     'active' => '1',
-  ),
+  ],
   708313 => 
-  array (
+  [
     'id' => '708313',
     'country' => 'UA',
     'region_id' => '702549',
@@ -3083,9 +3083,9 @@ return array (
     'lon' => '23.6481',
     'population' => '15993',
     'active' => '1',
-  ),
+  ],
   708320 => 
-  array (
+  [
     'id' => '708320',
     'country' => 'UA',
     'region_id' => '710734',
@@ -3095,9 +3095,9 @@ return array (
     'lon' => '31.5974',
     'population' => '13601',
     'active' => '1',
-  ),
+  ],
   708366 => 
-  array (
+  [
     'id' => '708366',
     'country' => 'UA',
     'region_id' => '710802',
@@ -3107,9 +3107,9 @@ return array (
     'lon' => '31.4451',
     'population' => '15063',
     'active' => '1',
-  ),
+  ],
   708632 => 
-  array (
+  [
     'id' => '708632',
     'country' => 'UA',
     'region_id' => '706442',
@@ -3119,9 +3119,9 @@ return array (
     'lon' => '32.5242',
     'population' => '16102',
     'active' => '1',
-  ),
+  ],
   708753 => 
-  array (
+  [
     'id' => '708753',
     'country' => 'UA',
     'region_id' => '696634',
@@ -3131,9 +3131,9 @@ return array (
     'lon' => '33.2596',
     'population' => '12544',
     'active' => '1',
-  ),
+  ],
   708878 => 
-  array (
+  [
     'id' => '708878',
     'country' => 'UA',
     'region_id' => '706442',
@@ -3143,9 +3143,9 @@ return array (
     'lon' => '34.8034',
     'population' => '21663',
     'active' => '1',
-  ),
+  ],
   708898 => 
-  array (
+  [
     'id' => '708898',
     'country' => 'UA',
     'region_id' => '705811',
@@ -3155,9 +3155,9 @@ return array (
     'lon' => '29.8679',
     'population' => '15526',
     'active' => '1',
-  ),
+  ],
   708901 => 
-  array (
+  [
     'id' => '708901',
     'country' => 'UA',
     'region_id' => '689559',
@@ -3167,9 +3167,9 @@ return array (
     'lon' => '29.3898',
     'population' => '24687',
     'active' => '1',
-  ),
+  ],
   708953 => 
-  array (
+  [
     'id' => '708953',
     'country' => 'UA',
     'region_id' => '703883',
@@ -3179,9 +3179,9 @@ return array (
     'lon' => '34.103',
     'population' => '11000',
     'active' => '1',
-  ),
+  ],
   709054 => 
-  array (
+  [
     'id' => '709054',
     'country' => 'UA',
     'region_id' => '696634',
@@ -3191,9 +3191,9 @@ return array (
     'lon' => '33.991',
     'population' => '22667',
     'active' => '1',
-  ),
+  ],
   709161 => 
-  array (
+  [
     'id' => '709161',
     'country' => 'UA',
     'region_id' => '703883',
@@ -3203,9 +3203,9 @@ return array (
     'lon' => '35.3779',
     'population' => '72052',
     'active' => '1',
-  ),
+  ],
   709248 => 
-  array (
+  [
     'id' => '709248',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3215,9 +3215,9 @@ return array (
     'lon' => '29.9177',
     'population' => '51143',
     'active' => '1',
-  ),
+  ],
   709276 => 
-  array (
+  [
     'id' => '709276',
     'country' => 'UA',
     'region_id' => '687699',
@@ -3227,9 +3227,9 @@ return array (
     'lon' => '34.6574',
     'population' => '55800',
     'active' => '1',
-  ),
+  ],
   709334 => 
-  array (
+  [
     'id' => '709334',
     'country' => 'UA',
     'region_id' => '703883',
@@ -3239,9 +3239,9 @@ return array (
     'lon' => '34.3927',
     'population' => '41731',
     'active' => '1',
-  ),
+  ],
   709354 => 
-  array (
+  [
     'id' => '709354',
     'country' => 'UA',
     'region_id' => '709716',
@@ -3251,9 +3251,9 @@ return array (
     'lon' => '37.8479',
     'population' => '41758',
     'active' => '1',
-  ),
+  ],
   709429 => 
-  array (
+  [
     'id' => '709429',
     'country' => 'UA',
     'region_id' => '706370',
@@ -3263,9 +3263,9 @@ return array (
     'lon' => '26.8564',
     'population' => '15836',
     'active' => '1',
-  ),
+  ],
   709540 => 
-  array (
+  [
     'id' => '709540',
     'country' => 'UA',
     'region_id' => '695592',
@@ -3275,9 +3275,9 @@ return array (
     'lon' => '25.7343',
     'population' => '37690',
     'active' => '1',
-  ),
+  ],
   709611 => 
-  array (
+  [
     'id' => '709611',
     'country' => 'UA',
     'region_id' => '702549',
@@ -3287,9 +3287,9 @@ return array (
     'lon' => '23.5056',
     'population' => '79406',
     'active' => '1',
-  ),
+  ],
   709717 => 
-  array (
+  [
     'id' => '709717',
     'country' => 'UA',
     'region_id' => '709716',
@@ -3299,9 +3299,9 @@ return array (
     'lon' => '37.8022',
     'population' => '1024700',
     'active' => '1',
-  ),
+  ],
   709755 => 
-  array (
+  [
     'id' => '709755',
     'country' => 'UA',
     'region_id' => '707470',
@@ -3311,9 +3311,9 @@ return array (
     'lon' => '24.0094',
     'population' => '20696',
     'active' => '1',
-  ),
+  ],
   709782 => 
-  array (
+  [
     'id' => '709782',
     'country' => 'UA',
     'region_id' => '705811',
@@ -3323,9 +3323,9 @@ return array (
     'lon' => '32.7645',
     'population' => '34267',
     'active' => '1',
-  ),
+  ],
   709835 => 
-  array (
+  [
     'id' => '709835',
     'country' => 'UA',
     'region_id' => '709716',
@@ -3335,9 +3335,9 @@ return array (
     'lon' => '37.6738',
     'population' => '23900',
     'active' => '1',
-  ),
+  ],
   709900 => 
-  array (
+  [
     'id' => '709900',
     'country' => 'UA',
     'region_id' => '709716',
@@ -3347,9 +3347,9 @@ return array (
     'lon' => '37.0852',
     'population' => '35977',
     'active' => '1',
-  ),
+  ],
   709930 => 
-  array (
+  [
     'id' => '709930',
     'country' => 'UA',
     'region_id' => '709929',
@@ -3359,9 +3359,9 @@ return array (
     'lon' => '34.9833',
     'population' => '1032822',
     'active' => '1',
-  ),
+  ],
   709932 => 
-  array (
+  [
     'id' => '709932',
     'country' => 'UA',
     'region_id' => '709929',
@@ -3371,9 +3371,9 @@ return array (
     'lon' => '34.6021',
     'population' => '248575',
     'active' => '1',
-  ),
+  ],
   709960 => 
-  array (
+  [
     'id' => '709960',
     'country' => 'UA',
     'region_id' => '687699',
@@ -3383,9 +3383,9 @@ return array (
     'lon' => '34.9765',
     'population' => '20271',
     'active' => '1',
-  ),
+  ],
   710098 => 
-  array (
+  [
     'id' => '710098',
     'country' => 'UA',
     'region_id' => '706482',
@@ -3395,9 +3395,9 @@ return array (
     'lon' => '36.1211',
     'population' => '19322',
     'active' => '1',
-  ),
+  ],
   710129 => 
-  array (
+  [
     'id' => '710129',
     'country' => 'UA',
     'region_id' => '706370',
@@ -3407,9 +3407,9 @@ return array (
     'lon' => '27.4338',
     'population' => '10058',
     'active' => '1',
-  ),
+  ],
   710229 => 
-  array (
+  [
     'id' => '710229',
     'country' => 'UA',
     'region_id' => '709716',
@@ -3419,9 +3419,9 @@ return array (
     'lon' => '38.4049',
     'population' => '30200',
     'active' => '1',
-  ),
+  ],
   710374 => 
-  array (
+  [
     'id' => '710374',
     'country' => 'UA',
     'region_id' => '706482',
@@ -3431,9 +3431,9 @@ return array (
     'lon' => '36.688',
     'population' => '36519',
     'active' => '1',
-  ),
+  ],
   710400 => 
-  array (
+  [
     'id' => '710400',
     'country' => 'UA',
     'region_id' => '691649',
@@ -3443,9 +3443,9 @@ return array (
     'lon' => '25.798',
     'population' => '28855',
     'active' => '1',
-  ),
+  ],
   710473 => 
-  array (
+  [
     'id' => '710473',
     'country' => 'UA',
     'region_id' => '710802',
@@ -3455,9 +3455,9 @@ return array (
     'lon' => '32.6555',
     'population' => '11515',
     'active' => '1',
-  ),
+  ],
   710548 => 
-  array (
+  [
     'id' => '710548',
     'country' => 'UA',
     'region_id' => '702657',
@@ -3467,9 +3467,9 @@ return array (
     'lon' => '39.7962',
     'population' => '17526',
     'active' => '1',
-  ),
+  ],
   710554 => 
-  array (
+  [
     'id' => '710554',
     'country' => 'UA',
     'region_id' => '702549',
@@ -3479,9 +3479,9 @@ return array (
     'lon' => '24.2351',
     'population' => '83000',
     'active' => '1',
-  ),
+  ],
   710663 => 
-  array (
+  [
     'id' => '710663',
     'country' => 'UA',
     'region_id' => '686966',
@@ -3491,9 +3491,9 @@ return array (
     'lon' => '28.6702',
     'population' => '10082',
     'active' => '1',
-  ),
+  ],
   710687 => 
-  array (
+  [
     'id' => '710687',
     'country' => 'UA',
     'region_id' => '703883',
@@ -3503,9 +3503,9 @@ return array (
     'lon' => '32.6978',
     'population' => '11000',
     'active' => '1',
-  ),
+  ],
   710719 => 
-  array (
+  [
     'id' => '710719',
     'country' => 'UA',
     'region_id' => '710720',
@@ -3515,9 +3515,9 @@ return array (
     'lon' => '25.9403',
     'population' => '236250',
     'active' => '1',
-  ),
+  ],
   710735 => 
-  array (
+  [
     'id' => '710735',
     'country' => 'UA',
     'region_id' => '710734',
@@ -3527,9 +3527,9 @@ return array (
     'lon' => '31.2849',
     'population' => '307684',
     'active' => '1',
-  ),
+  ],
   710791 => 
-  array (
+  [
     'id' => '710791',
     'country' => 'UA',
     'region_id' => '710802',
@@ -3539,9 +3539,9 @@ return array (
     'lon' => '32.0621',
     'population' => '297568',
     'active' => '1',
-  ),
+  ],
   710915 => 
-  array (
+  [
     'id' => '710915',
     'country' => 'UA',
     'region_id' => '709716',
@@ -3551,9 +3551,9 @@ return array (
     'lon' => '37.8572',
     'population' => '14360',
     'active' => '1',
-  ),
+  ],
   710935 => 
-  array (
+  [
     'id' => '710935',
     'country' => 'UA',
     'region_id' => '706442',
@@ -3563,9 +3563,9 @@ return array (
     'lon' => '33.5403',
     'population' => '10224',
     'active' => '1',
-  ),
+  ],
   711116 => 
-  array (
+  [
     'id' => '711116',
     'country' => 'UA',
     'region_id' => '692196',
@@ -3575,9 +3575,9 @@ return array (
     'lon' => '33.8352',
     'population' => '11400',
     'active' => '1',
-  ),
+  ],
   711134 => 
-  array (
+  [
     'id' => '711134',
     'country' => 'UA',
     'region_id' => '707470',
@@ -3587,9 +3587,9 @@ return array (
     'lon' => '24.6278',
     'population' => '14729',
     'active' => '1',
-  ),
+  ],
   711348 => 
-  array (
+  [
     'id' => '711348',
     'country' => 'UA',
     'region_id' => '691649',
@@ -3599,9 +3599,9 @@ return array (
     'lon' => '25.388',
     'population' => '12082',
     'active' => '1',
-  ),
+  ],
   711350 => 
-  array (
+  [
     'id' => '711350',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3611,9 +3611,9 @@ return array (
     'lon' => '30.212',
     'population' => '42279',
     'active' => '1',
-  ),
+  ],
   711369 => 
-  array (
+  [
     'id' => '711369',
     'country' => 'UA',
     'region_id' => '702657',
@@ -3623,9 +3623,9 @@ return array (
     'lon' => '38.6722',
     'population' => '51921',
     'active' => '1',
-  ),
+  ],
   711390 => 
-  array (
+  [
     'id' => '711390',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3635,9 +3635,9 @@ return array (
     'lon' => '30.8067',
     'population' => '88506',
     'active' => '1',
-  ),
+  ],
   711416 => 
-  array (
+  [
     'id' => '711416',
     'country' => 'UA',
     'region_id' => '702549',
@@ -3647,9 +3647,9 @@ return array (
     'lon' => '25.1503',
     'population' => '23239',
     'active' => '1',
-  ),
+  ],
   711515 => 
-  array (
+  [
     'id' => '711515',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3659,9 +3659,9 @@ return array (
     'lon' => '30.2973',
     'population' => '34631',
     'active' => '1',
-  ),
+  ],
   711536 => 
-  array (
+  [
     'id' => '711536',
     'country' => 'UA',
     'region_id' => '710734',
@@ -3671,9 +3671,9 @@ return array (
     'lon' => '32.4269',
     'population' => '11363',
     'active' => '1',
-  ),
+  ],
   711587 => 
-  array (
+  [
     'id' => '711587',
     'country' => 'UA',
     'region_id' => '691649',
@@ -3683,9 +3683,9 @@ return array (
     'lon' => '26.0435',
     'population' => '10959',
     'active' => '1',
-  ),
+  ],
   711635 => 
-  array (
+  [
     'id' => '711635',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3695,9 +3695,9 @@ return array (
     'lon' => '29.9201',
     'population' => '12069',
     'active' => '1',
-  ),
+  ],
   711660 => 
-  array (
+  [
     'id' => '711660',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3707,9 +3707,9 @@ return array (
     'lon' => '30.955',
     'population' => '55000',
     'active' => '1',
-  ),
+  ],
   711669 => 
-  array (
+  [
     'id' => '711669',
     'country' => 'UA',
     'region_id' => '702549',
@@ -3719,9 +3719,9 @@ return array (
     'lon' => '23.4324',
     'population' => '36704',
     'active' => '1',
-  ),
+  ],
   711841 => 
-  array (
+  [
     'id' => '711841',
     'country' => 'UA',
     'region_id' => '698738',
@@ -3731,9 +3731,9 @@ return array (
     'lon' => '28.6149',
     'population' => '16708',
     'active' => '1',
-  ),
+  ],
   711850 => 
-  array (
+  [
     'id' => '711850',
     'country' => 'UA',
     'region_id' => '707470',
@@ -3743,9 +3743,9 @@ return array (
     'lon' => '23.8643',
     'population' => '10590',
     'active' => '1',
-  ),
+  ],
   711867 => 
-  array (
+  [
     'id' => '711867',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3755,9 +3755,9 @@ return array (
     'lon' => '30.8744',
     'population' => '16498',
     'active' => '1',
-  ),
+  ],
   711894 => 
-  array (
+  [
     'id' => '711894',
     'country' => 'UA',
     'region_id' => '706482',
@@ -3767,9 +3767,9 @@ return array (
     'lon' => '35.5276',
     'population' => '17818',
     'active' => '1',
-  ),
+  ],
   711999 => 
-  array (
+  [
     'id' => '711999',
     'country' => 'UA',
     'region_id' => '710734',
@@ -3779,9 +3779,9 @@ return array (
     'lon' => '31.3948',
     'population' => '11544',
     'active' => '1',
-  ),
+  ],
   712160 => 
-  array (
+  [
     'id' => '712160',
     'country' => 'UA',
     'region_id' => '698738',
@@ -3791,9 +3791,9 @@ return array (
     'lon' => '30.3494',
     'population' => '50201',
     'active' => '1',
-  ),
+  ],
   712165 => 
-  array (
+  [
     'id' => '712165',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3803,9 +3803,9 @@ return array (
     'lon' => '30.1121',
     'population' => '199163',
     'active' => '1',
-  ),
+  ],
   712260 => 
-  array (
+  [
     'id' => '712260',
     'country' => 'UA',
     'region_id' => '706442',
@@ -3815,9 +3815,9 @@ return array (
     'lon' => '33.4284',
     'population' => '14880',
     'active' => '1',
-  ),
+  ],
   712374 => 
-  array (
+  [
     'id' => '712374',
     'country' => 'UA',
     'region_id' => '691649',
@@ -3827,9 +3827,9 @@ return array (
     'lon' => '24.9333',
     'population' => '16962',
     'active' => '1',
-  ),
+  ],
   712423 => 
-  array (
+  [
     'id' => '712423',
     'country' => 'UA',
     'region_id' => '687869',
@@ -3839,9 +3839,9 @@ return array (
     'lon' => '22.6442',
     'population' => '25741',
     'active' => '1',
-  ),
+  ],
   712441 => 
-  array (
+  [
     'id' => '712441',
     'country' => 'UA',
     'region_id' => '686966',
@@ -3851,9 +3851,9 @@ return array (
     'lon' => '28.6024',
     'population' => '86250',
     'active' => '1',
-  ),
+  ],
   712451 => 
-  array (
+  [
     'id' => '712451',
     'country' => 'UA',
     'region_id' => '687699',
@@ -3863,9 +3863,9 @@ return array (
     'lon' => '36.7988',
     'population' => '118284',
     'active' => '1',
-  ),
+  ],
   712488 => 
-  array (
+  [
     'id' => '712488',
     'country' => 'UA',
     'region_id' => '698738',
@@ -3875,9 +3875,9 @@ return array (
     'lon' => '30.2168',
     'population' => '13762',
     'active' => '1',
-  ),
+  ],
   712559 => 
-  array (
+  [
     'id' => '712559',
     'country' => 'UA',
     'region_id' => '692196',
@@ -3887,9 +3887,9 @@ return array (
     'lon' => '34.3129',
     'population' => '17824',
     'active' => '1',
-  ),
+  ],
   712576 => 
-  array (
+  [
     'id' => '712576',
     'country' => 'UA',
     'region_id' => '694422',
@@ -3899,9 +3899,9 @@ return array (
     'lon' => '33.6098',
     'population' => '11793',
     'active' => '1',
-  ),
+  ],
   712587 => 
-  array (
+  [
     'id' => '712587',
     'country' => 'UA',
     'region_id' => '703883',
@@ -3911,9 +3911,9 @@ return array (
     'lon' => '34.6018',
     'population' => '18091',
     'active' => '1',
-  ),
+  ],
   712775 => 
-  array (
+  [
     'id' => '712775',
     'country' => 'UA',
     'region_id' => '700567',
@@ -3923,9 +3923,9 @@ return array (
     'lon' => '32.4387',
     'population' => '12657',
     'active' => '1',
-  ),
+  ],
   712787 => 
-  array (
+  [
     'id' => '712787',
     'country' => 'UA',
     'region_id' => '703446',
@@ -3935,9 +3935,9 @@ return array (
     'lon' => '31.3217',
     'population' => '10762',
     'active' => '1',
-  ),
+  ],
   712794 => 
-  array (
+  [
     'id' => '712794',
     'country' => 'UA',
     'region_id' => '706482',
@@ -3947,9 +3947,9 @@ return array (
     'lon' => '37.0205',
     'population' => '12344',
     'active' => '1',
-  ),
+  ],
   712839 => 
-  array (
+  [
     'id' => '712839',
     'country' => 'UA',
     'region_id' => '686966',
@@ -3959,9 +3959,9 @@ return array (
     'lon' => '27.6622',
     'population' => '12220',
     'active' => '1',
-  ),
+  ],
   712861 => 
-  array (
+  [
     'id' => '712861',
     'country' => 'UA',
     'region_id' => '689559',
@@ -3971,9 +3971,9 @@ return array (
     'lon' => '27.6826',
     'population' => '16641',
     'active' => '1',
-  ),
+  ],
   712886 => 
-  array (
+  [
     'id' => '712886',
     'country' => 'UA',
     'region_id' => '698738',
@@ -3983,9 +3983,9 @@ return array (
     'lon' => '29.6198',
     'population' => '19220',
     'active' => '1',
-  ),
+  ],
   712926 => 
-  array (
+  [
     'id' => '712926',
     'country' => 'UA',
     'region_id' => '706482',
@@ -3995,9 +3995,9 @@ return array (
     'lon' => '36.8595',
     'population' => '31156',
     'active' => '1',
-  ),
+  ],
   712930 => 
-  array (
+  [
     'id' => '712930',
     'country' => 'UA',
     'region_id' => '694422',
@@ -4007,9 +4007,9 @@ return array (
     'lon' => '33.6001',
     'population' => '20000',
     'active' => '1',
-  ),
+  ],
   712967 => 
-  array (
+  [
     'id' => '712967',
     'country' => 'UA',
     'region_id' => '710734',
@@ -4019,9 +4019,9 @@ return array (
     'lon' => '32.8346',
     'population' => '23379',
     'active' => '1',
-  ),
+  ],
   712969 => 
-  array (
+  [
     'id' => '712969',
     'country' => 'UA',
     'region_id' => '703883',
@@ -4031,9 +4031,9 @@ return array (
     'lon' => '33.8578',
     'population' => '26525',
     'active' => '1',
-  ),
+  ],
   713122 => 
-  array (
+  [
     'id' => '713122',
     'country' => 'UA',
     'region_id' => '709716',
@@ -4043,9 +4043,9 @@ return array (
     'lon' => '37.7425',
     'population' => '35826',
     'active' => '1',
-  ),
+  ],
   713163 => 
-  array (
+  [
     'id' => '713163',
     'country' => 'UA',
     'region_id' => '698738',
@@ -4055,9 +4055,9 @@ return array (
     'lon' => '29.4182',
     'population' => '15761',
     'active' => '1',
-  ),
+  ],
   713174 => 
-  array (
+  [
     'id' => '713174',
     'country' => 'UA',
     'region_id' => '709716',
@@ -4067,9 +4067,9 @@ return array (
     'lon' => '37.9999',
     'population' => '80500',
     'active' => '1',
-  ),
+  ],
   713203 => 
-  array (
+  [
     'id' => '713203',
     'country' => 'UA',
     'region_id' => '703883',
@@ -4079,9 +4079,9 @@ return array (
     'lon' => '33.6921',
     'population' => '26000',
     'active' => '1',
-  ),
+  ],
   713245 => 
-  array (
+  [
     'id' => '713245',
     'country' => 'UA',
     'region_id' => '709929',
@@ -4091,9 +4091,9 @@ return array (
     'lon' => '33.7137',
     'population' => '15828',
     'active' => '1',
-  ),
+  ],
   713259 => 
-  array (
+  [
     'id' => '713259',
     'country' => 'UA',
     'region_id' => '702657',
@@ -4103,9 +4103,9 @@ return array (
     'lon' => '39.0913',
     'population' => '61600',
     'active' => '1',
-  ),
+  ],
   713504 => 
-  array (
+  [
     'id' => '713504',
     'country' => 'UA',
     'region_id' => '709716',
@@ -4115,9 +4115,9 @@ return array (
     'lon' => '38.4777',
     'population' => '21307',
     'active' => '1',
-  ),
+  ],
   713513 => 
-  array (
+  [
     'id' => '713513',
     'country' => 'UA',
     'region_id' => '703883',
@@ -4127,9 +4127,9 @@ return array (
     'lon' => '34.4078',
     'population' => '30271',
     'active' => '1',
-  ),
+  ],
   713716 => 
-  array (
+  [
     'id' => '713716',
     'country' => 'UA',
     'region_id' => '702657',
@@ -4139,9 +4139,9 @@ return array (
     'lon' => '38.8167',
     'population' => '116000',
     'active' => '1',
-  ),
+  ],
   713743 => 
-  array (
+  [
     'id' => '713743',
     'country' => 'UA',
     'region_id' => '687699',
@@ -4151,9 +4151,9 @@ return array (
     'lon' => '35.1592',
     'population' => '12353',
     'active' => '1',
-  ),
+  ],
   713749 => 
-  array (
+  [
     'id' => '713749',
     'country' => 'UA',
     'region_id' => '692196',
@@ -4163,9 +4163,9 @@ return array (
     'lon' => '34.8988',
     'population' => '49818',
     'active' => '1',
-  ),
+  ],
   6559559 => 
-  array (
+  [
     'id' => '6559559',
     'country' => 'UA',
     'region_id' => '696634',
@@ -4175,9 +4175,9 @@ return array (
     'lon' => '33.6357',
     'population' => '51740',
     'active' => '1',
-  ),
+  ],
   6930327 => 
-  array (
+  [
     'id' => '6930327',
     'country' => 'UA',
     'region_id' => '703446',
@@ -4187,9 +4187,9 @@ return array (
     'lon' => '30.7343',
     'population' => '25000',
     'active' => '1',
-  ),
+  ],
   7525990 => 
-  array (
+  [
     'id' => '7525990',
     'country' => 'UA',
     'region_id' => '700567',
@@ -4199,9 +4199,9 @@ return array (
     'lon' => '31.1826',
     'population' => '39430',
     'active' => '1',
-  ),
+  ],
   8468760 => 
-  array (
+  [
     'id' => '8468760',
     'country' => 'UA',
     'region_id' => '702549',
@@ -4211,5 +4211,5 @@ return array (
     'lon' => '23.5736',
     'population' => '28807',
     'active' => '1',
-  ),
-);
+  ],
+];

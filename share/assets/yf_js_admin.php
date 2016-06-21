@@ -2,10 +2,10 @@
 
 return function() {
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array('
+return [
+	'versions' => [
+		'master' => [
+			'js' => ['
 				var _t_are_you_sure = "'.t('Are you sure').'?";
 				var _t_modal_title = "'.t('Modal edit').'";
 				var _btn_active = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> '.t('Active').'</button>\';
@@ -155,21 +155,21 @@ $(function(){
 	}
 });
 END
-		)),
-	),
-	'add' => array(
-		'asset' => array(
+		]],
+	],
+	'add' => [
+		'asset' => [
 			'yf_popover',
 			'yf_js_shift_selectable',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-	'config' => array(
+	],
+	'config' => [
 		'no_cache' => true,
 		'main_type' => 'admin',
-	),
-);
+	],
+];
 
 };

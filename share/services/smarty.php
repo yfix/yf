@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/smarty-php/smarty.git' => 'smarty/'),
-	'require_once' => array('smarty/libs/Autoloader.php'),
+$config = [
+	'git_urls' => ['https://github.com/smarty-php/smarty.git' => 'smarty/'],
+	'require_once' => ['smarty/libs/Autoloader.php'],
 	'manual' => function() {
 		Smarty_Autoloader::register();
 	},
@@ -29,5 +29,5 @@ $config = array(
 </html>';
 		echo $smarty->fetch('string:'.$str);
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

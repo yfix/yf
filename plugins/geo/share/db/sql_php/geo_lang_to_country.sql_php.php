@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'lang' => array(
+return [
+	'fields' => [
+		'lang' => [
 			'name' => 'lang',
 			'type' => 'char',
 			'length' => 2,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'country' => array(
+		],
+		'country' => [
 			'name' => 'country',
 			'type' => 'char',
 			'length' => 2,
@@ -30,20 +30,20 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'lang' => 'lang',
 				'country' => 'country',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

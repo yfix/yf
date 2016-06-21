@@ -11,7 +11,7 @@ class yf_cache_driver_db extends yf_cache_driver {
 	function __call($name, $args) {
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			return call_user_func_array(array($this->_connection, $name), $args);
+			return call_user_func_array([$this->_connection, $name], $args);
 		}
 		return main()->extend_call($this, $name, $args);
 	}
@@ -35,7 +35,7 @@ class yf_cache_driver_db extends yf_cache_driver {
 
 	/**
 	*/
-	function get($name, $ttl = 0, $params = array()) {
+	function get($name, $ttl = 0, $params = []) {
 		if (!$this->is_ready()) {
 			return null;
 		}
@@ -57,11 +57,11 @@ class yf_cache_driver_db extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return db()->replace($this->table, db()->es(array(
+		return db()->replace($this->table, db()->es([
 			'key'	=> $name,
 			'value'	=> is_array($data) || is_object($data) ? json_encode($data) : $data,
 			'time'	=> time(),
-		)));
+		]));
 	}
 
 	/**
@@ -106,12 +106,12 @@ class yf_cache_driver_db extends yf_cache_driver {
 		}
 // TODO: make this database-abstract, not bind hard into mysql SQL
 		$stats = db()->get_2d('SHOW GLOBAL STATUS');
-		return array(
+		return [
 			'hits'		=> null,
 			'misses'	=> null,
 			'uptime'	=> $stats['Uptime'],
 			'mem_usage'	=> null,
 			'mem_avail'	=> null,
-		);
+		];
 	}
 }

@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   3 => 
-  array (
+  [
     'id' => '3',
     'object_name' => 'blog',
     'object_id' => '8',
@@ -11,9 +11,9 @@ return array (
     'text' => 'Львів',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'object_name' => 'articles',
     'object_id' => '11',
@@ -23,9 +23,9 @@ return array (
     'text' => 'Львів',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   5 => 
-  array (
+  [
     'id' => '5',
     'object_name' => 'gallery',
     'object_id' => '3',
@@ -35,9 +35,9 @@ return array (
     'text' => 'сафарі',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   6 => 
-  array (
+  [
     'id' => '6',
     'object_name' => 'blog',
     'object_id' => '9',
@@ -47,9 +47,9 @@ return array (
     'text' => 'ІТфестиваль',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   7 => 
-  array (
+  [
     'id' => '7',
     'object_name' => 'blog',
     'object_id' => '8',
@@ -59,9 +59,9 @@ return array (
     'text' => 'ХРОНІКИ ЛЬВОВА',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   8 => 
-  array (
+  [
     'id' => '8',
     'object_name' => 'gallery',
     'object_id' => '5',
@@ -71,5 +71,5 @@ return array (
     'text' => 'макака',
     'active' => '1',
     'activity' => '0',
-  ),
-);
+  ],
+];

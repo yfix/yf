@@ -1,6 +1,6 @@
 <?php
-return array(
-	0 => array(
+return [
+	0 => [
 		'staff_id' => '1',
 		'first_name' => 'Mike',
 		'last_name' => 'Hillyer',
@@ -12,8 +12,8 @@ return array(
 		'username' => 'Mike',
 		'password' => '8cb2237d0679ca88db6464eac60da96345513964',
 		'last_update' => '2014-10-15 16:33:36',
-	),
-	1 => array(
+	],
+	1 => [
 		'staff_id' => '2',
 		'first_name' => 'Jon',
 		'last_name' => 'Stephens',
@@ -25,5 +25,5 @@ return array(
 		'username' => 'Jon',
 		'password' => '8cb2237d0679ca88db6464eac60da96345513964',
 		'last_update' => '2006-02-15 04:57:16',
-	),
-);
+	],
+];

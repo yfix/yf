@@ -5,13 +5,13 @@
 */
 class yf_rewrite_pattern_yf {
 
-	public $allowed_url_params = array(
+	public $allowed_url_params = [
 		'utm_source',
 		'utm_medium',
 		'utm_content',
 		'utm_campaign',
 		'utm_term',
-	);
+	];
 
 	/**
 	* Build url
@@ -38,7 +38,7 @@ class yf_rewrite_pattern_yf {
 			} elseif ($a['object'] === 'static_pages' && in_array($a['id'], $this->_get_static_pages_names())) {
 				$u = $a['id'];
 			} else {
-				$u = array();
+				$u = [];
 				if (!empty($a['object'])) {
 					$u[] = $a['object'];
 					if (empty($a['action'])) {
@@ -63,7 +63,7 @@ class yf_rewrite_pattern_yf {
 			}
 		}
 		$arr = $a;
-		$arr_out = array();
+		$arr_out = [];
 		unset($arr['object']);
 		unset($arr['action']);
 		unset($arr['host']);
@@ -94,7 +94,7 @@ class yf_rewrite_pattern_yf {
 		if ($class_rewrite->USE_WEB_PATH) {
 			$url = WEB_PATH;
 		} else {
-			$url = 'http://'. $a['host']. ($a['port'] && !in_array($a['port'], array('80','443')) ? ':'.$a['port'] : ''). '/';
+			$url = 'http://'. $a['host']. ($a['port'] && !in_array($a['port'], ['80','443']) ? ':'.$a['port'] : ''). '/';
 		}
 		return $class_rewrite->_correct_protocol($url. $u);
 	}
@@ -184,7 +184,7 @@ class yf_rewrite_pattern_yf {
 		if (!isset($this->_static_pages)) {
 			$main = main();
 			if (!$main->STATIC_PAGES_ROUTE_TOP) {
-				$this->_static_pages = array();
+				$this->_static_pages = [];
 			} else {
 				$this->_static_pages = $main->get_data('static_pages_names');
 			}

@@ -1,38 +1,38 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
 			'nullable' => false,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-		'fkey_prepare_sample_data' => array(
+			],
+		],
+	],
+	'foreign_keys' => [
+		'fkey_prepare_sample_data' => [
 			'name' => 'fkey_prepare_sample_data',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
+			],
 			'ref_table' => 'test_dump_2',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'id' => 'id',
-			),
+			],
 			'on_update' => 'RESTRICT',
 			'on_delete' => 'RESTRICT',
-		),
-	),
-	'options' => array(
+		],
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

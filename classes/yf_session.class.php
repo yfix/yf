@@ -171,12 +171,12 @@ class yf_session {
 		$this->_driver = new $session_loaded_class_name();
 		main()->set_module_conf($session_class_name, $this->_driver);
 		session_set_save_handler(
-			array($this->_driver, 'open'),
-			array($this->_driver, 'close'),
-			array($this->_driver, 'read'),
-			array($this->_driver, 'write'),
-			array($this->_driver, 'destroy'),
-			array($this->_driver, 'gc')
+			[$this->_driver, 'open'],
+			[$this->_driver, 'close'],
+			[$this->_driver, 'read'],
+			[$this->_driver, 'write'],
+			[$this->_driver, 'destroy'],
+			[$this->_driver, 'gc']
 		);
 		return $this->_driver;
 	}

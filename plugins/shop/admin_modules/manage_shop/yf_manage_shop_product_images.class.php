@@ -28,7 +28,7 @@ class yf_manage_shop_product_images{
 		module('manage_shop')->_product_images_add_revision('deleted', $_GET['id'], $_GET['key']);
 		module('manage_shop')->_product_cache_purge($_GET['id']);
 		common()->message_success("Image deleted");
-		common()->admin_wall_add(array('shop product image deleted: '.$_GET['id'], $_GET['id']));
+		common()->admin_wall_add(['shop product image deleted: '.$_GET['id'], $_GET['id']]);
 		return js_redirect($_SERVER['HTTP_REFERER']);
 	}
 
@@ -70,17 +70,17 @@ class yf_manage_shop_product_images{
 			$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
 			if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }
 			foreach((array)$images as $A) {
-				$items[] = array(
+				$items[] = [
 					'img_path' 		=> $base_url . $A['big'],
 					'thumb_path'	=> $base_url . $A['thumb'],
 					'image_key'		=> $A['id'],
-				);
+				];
 			}
 			$form_action ='./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$product_id;
-			$replace = array(
+			$replace = [
 				'form_action'=> $form_action,
 				'items'		=> $items,
-			);
+			];
 			return tpl()->parse($_GET['object'].'/set_image_items', $replace);
 		}
 	}
@@ -100,7 +100,7 @@ class yf_manage_shop_product_images{
 		module('manage_shop')->_product_image_upload($_GET['id']);
 		module('manage_shop')->_product_cache_purge($_GET['id']);
 		common()->message_success("New image uploaded");
-		common()->admin_wall_add(array('shop product image uploaded: '.$_GET['id'], $_GET['id']));
+		common()->admin_wall_add(['shop product image uploaded: '.$_GET['id'], $_GET['id']]);
 		return js_redirect($_SERVER['HTTP_REFERER']);
 	}
 
@@ -110,12 +110,12 @@ class yf_manage_shop_product_images{
 		$products_images_dir = module('manage_shop')->products_img_dir;
 
 		$d = sprintf('%09s', $product_id);
-		$replace = array(
+		$replace = [
 			'{subdir1}' => substr($d, 0, -6),
 			'{subdir2}' => substr($d, -6, 3),
 			'{subdir3}' => substr($d, -3, 3),
 			'%d'        => $product_id,
-		);
+		];
 		$url = 'uploads/shop/products/{subdir2}/{subdir3}/product_%d_%i_%s.jpg';
 		$clean_image_url = 'uploads/shop/products/{subdir2}/{subdir3}/product_%d_%i.jpg';
 
@@ -132,11 +132,11 @@ class yf_manage_shop_product_images{
 				continue;
 			}
 			db()->begin();
-			db()->insert(db('shop_product_images'), array(
+			db()->insert(db('shop_product_images'), [
 				'product_id' 	=> $product_id,
 				'md5'			=> $md5,
 				'date_uploaded' => $_SERVER['REQUEST_TIME'],
-			));
+			]);
 			$i = db()->insert_id();
 
 			$img_properties = getimagesize($v);
@@ -209,12 +209,12 @@ class yf_manage_shop_product_images{
 		}
 		foreach((array)$images as $A) {
 			$product_image_delete_url = './?object='.main()->_get('object').'&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
-			$replace2 = array(
+			$replace2 = [
 				'img_path' 		=> $base_url . $A['big'],
 				'thumb_path'	=> $base_url . $A['thumb'],
 				'del_url' 		=> $product_image_delete_url,
 				'image_key'		=> $A['id'],
-			);
+			];
 			$items .= tpl()->parse('manage_shop/image_items', $replace2);
 		}
 		$search_url = 'http://yandex.com/images/search?text='.urlencode($product_info['name']);
@@ -230,14 +230,14 @@ class yf_manage_shop_product_images{
 			}
 			cache_set($cache_key, $search_results);
 		}
-		$replace = array(
+		$replace = [
 			'form_action'    => './?object=manage_shop&action=product_image_search&id='.$product_info['id'],
 			'search_url'     => $search_url,
 			'search_results' => json_encode($search_results),
 			'product_info'   => $product_info,
 			'image'          => $items,
 			'product_url'    => './?object='.main()->_get('object').'&action=product_edit&id='.$product_info['id'],
-		);
+		];
 		return tpl()->parse($_GET['object'].'/product_image_search', $replace);
 	}
 }

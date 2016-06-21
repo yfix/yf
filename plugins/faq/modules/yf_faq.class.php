@@ -56,24 +56,24 @@ class yf_faq {
 				$(".li-level-1").hide().filter(":has(\'span.highlight\')").show();
 			})
 		');
-		$items = array();
+		$items = [];
 		foreach ((array)db()->from(self::table)->where('active', 1)->where('locale', conf('language'))->get_all() as $a) {
-			$items[$a['id']] = array(
+			$items[$a['id']] = [
 				'parent_id'	=> $a['parent_id'],
 				'name'		=> _truncate(trim($a['title']), 60, true, '...'),
 				'link'		=> url('/@object/#/faq'.$a['id']),
 				'id'		=> 'faq'.$a['id'],
-			);
+			];
 			if ($a['text']) {
-				$items['1111'.$a['id']] = array(
+				$items['1111'.$a['id']] = [
 					'parent_id'	=> $a['id'],
 					'body'		=> trim($a['text']),
-				);
+				];
 			}
 		}
-		return tpl()->parse_string($this->_tpl, array(
+		return tpl()->parse_string($this->_tpl, [
 			'items'	=> html()->li_tree($items),
-		));
+		]);
 	}
 
 	/**

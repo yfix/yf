@@ -4,14 +4,14 @@ class yf_news {
 
 	const table = 'news';
 	/** @var array @conf_skip Params for the comments */
-	public $_comments_params = array(
+	public $_comments_params = [
 		'action_name'           => 'full',
 		'object_name'           => 'news',
 		'return_action'         => 'full_news',
 		'action_for_add'        => 'add_comment',
 		'action_for_mark_spam'  => 'comments_mark_spam',
 		'tpl_name'              => 'add_comment_for_news',    
-	);
+	];
 
 	/**
 	* Catch missing method call
@@ -22,7 +22,7 @@ class yf_news {
 
 	/**
 	*/
-	function _module_action_handler($method, $dirty_args = array()) {
+	function _module_action_handler($method, $dirty_args = []) {
 		// For links like this:
 		// /news/uvazhaemie-polzovateli-i-posetiteli
 		// /news/уникальая-новость
@@ -78,20 +78,20 @@ class yf_news {
 		$sql = db()->from(self::table)->where('active', 1)->where('locale', conf('language'))->order_by('add_date', 'desc')->sql();
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		foreach ((array)db()->get_all($sql. $add_sql) as $a) {
-			$items[$a['id']] = array(
+			$items[$a['id']] = [
 				'title'			=> $a['title'],
 				'head_text'		=> $a['head_text'],
 				'full_text'		=> $a['full_text'],
 				'add_date'		=> _format_date($a['add_date'], 'long'),
 				'full_link'		=> url('/@object/show/'.($a['url'] ?: $a['id'])),
 				'num_comments'	=> (int)$num_comments[$a['id']],
-			);
+			];
 		}
-		return tpl()->parse('news/main', array(
+		return tpl()->parse('news/main', [
 			'items'	=> $items,
 			'pages'	=> $pages,
 			'total'	=> intval($total),
-		));
+		]);
 	}
 
 	/**
@@ -117,17 +117,17 @@ class yf_news {
 		$this->_current = $a;
 
 		$url = url('/@object/@action/'.($a['url'] ?: $a['id']));
-		$comments = module('comments')->_show_comments((array)$this->_comments_params + array(
+		$comments = module('comments')->_show_comments((array)$this->_comments_params + [
 			'add_form_action'	=> url('/@object/add_comment/'.$a['id']),
 			'return_path'		=> $url,
 			'object_id'         => $a['id'],
-		));
-		$comments_form = main()->USER_ID ? module('comments')->add((array)$this->_comments_params + array(
+		]);
+		$comments_form = main()->USER_ID ? module('comments')->add((array)$this->_comments_params + [
 			'add_form_action'	=> url('/@object/add_comment/'.$a['id']),
 			'return_path'		=> $url,
 			'object_id'         => $a['id'],
-		)) : '';
-		return tpl()->parse('news/full_news', array(
+		]) : '';
+		return tpl()->parse('news/full_news', [
 			'title'				=> $a['title'],
 			'head_text'			=> $a['head_text'],
 			'full_text'			=> $a['full_text'],
@@ -137,13 +137,13 @@ class yf_news {
 			'comments_form'		=> $comments_form,
 			'comments_block'	=> $comments['comments'],
 			'num_comments'		=> intval($comments['num_comments']),
-			'social'			=> html()->social_simple_share(array('horizontal' => true, 'url' => $url, 'title' => $a['title'].' | '.t('Новости'). (defined('SITE_ADVERT_NAME') ? ' | '.SITE_ADVERT_NAME : ''))),
-		));
+			'social'			=> html()->social_simple_share(['horizontal' => true, 'url' => $url, 'title' => $a['title'].' | '.t('Новости'). (defined('SITE_ADVERT_NAME') ? ' | '.SITE_ADVERT_NAME : '')]),
+		]);
 	}
 
 	/**
 	*/
-	function add_comment($params = array()) {
+	function add_comment($params = []) {
 		main()->NO_GRAPHICS = 1;
 //		$_GET['ajax_mode'] = 1;
 
@@ -153,26 +153,26 @@ class yf_news {
 			return _404('Not found');
 		}		
 		$url = url('/@object/'.($a['url'] ?: $a['id']));
-		return module('comments')->add((array)$this->_comments_params + array(
+		return module('comments')->add((array)$this->_comments_params + [
 			'add_form_action'	=> url('/@object/add_comment/'.$a['id']),
 			'return_path'		=> $url,
 			'object_id'         => $a['id'],
-		));
+		]);
 	}
 	
 	function comments_mark_spam(){
 		main()->NO_GRAPHICS = 1;
 		$_GET['ajax_mode'] = 1;
-		$params = array(
+		$params = [
 			'object_name'	=> 'news',
 			'action_name'   => 'full_news',
-		);
+		];
 		return module('comments')->mark_spam($params);
 
 	}
 	/**
 	*/
-	function _comment_is_allowed($params = array()) {
+	function _comment_is_allowed($params = []) {
 		$is_allowed = $_GET['action'] == 'view' ? true : false;
 		return $is_allowed;
 	}
@@ -180,27 +180,27 @@ class yf_news {
 	/**
 	* Hook for navigation bar
 	*/
-	function _hook_nav ($params = array()) {
-		if (in_array($_GET['action'], array('show', 'view')) && !$_GET['id'] || !$this->_current) {
+	function _hook_nav ($params = []) {
+		if (in_array($_GET['action'], ['show', 'view']) && !$_GET['id'] || !$this->_current) {
 			// Default nav bar will be shown
 			return false;
 		}
 		$nav = &$params['nav_bar_obj'];
-		return array(
+		return [
 			$nav->_nav_item('News', url('/@object')),
 			$nav->_nav_item($this->_current['title']),
-		);
+		];
 	}
 
 	/**
 	* Meta tags injection
 	*/
-	function _hook_meta($meta = array()) {
+	function _hook_meta($meta = []) {
 		$a = $this->_current;
 		if ($a) {
 			$desc = _truncate($a['meta_desc'], 250);
 			$url = url('/@object/show/'.($a['url'] ?: $a['id']));
-			$meta = array(
+			$meta = [
 				'keywords'		=> $a['meta_keywords'],
 				'news_keywords'	=> $a['meta_keywords'],
 				'description'	=> $desc,
@@ -211,7 +211,7 @@ class yf_news {
 				'og:site_name'	=> SITE_ADVERT_NAME,
 				'canonical'		=> $url,
 				'article:published_time' => date('Y-m-d', $a['add_date']),
-			) + (array)$meta;
+			] + (array)$meta;
 		}
 		return $meta;
 	}

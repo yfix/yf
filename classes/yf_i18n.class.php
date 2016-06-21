@@ -28,12 +28,12 @@ class yf_i18n {
 	/** @var string Current charset code */
 	public $CUR_CHARSET			= 'utf-8';
 	/** @var array @conf_skip Active languages */
-	public $LANGUAGES			= array();
+	public $LANGUAGES			= [];
 	/** @var array */
-	public $_HTML_ENTITIES		= array(
+	public $_HTML_ENTITIES		= [
 		'_' => '&#95;', "'" => '&#39;', '"' => '&quot;', '/' => '&frasl;', "\\"=> '&#92;', '[' => '&#91;', ']' => '&#93;',
 		'(' => '&#40;', ')' => '&#41;', '{' => '&#123;', '}' => '&#125;', '?' => '&#63;', '!' => '&#33;', '|' => '&#124;',
-	);
+	];
 	/** @var bool Allow to find vars in shared place inside files */
 	public $ALLOW_SHARED_LANG_FILES	= true;
 	/** @var bool Allow to find vars in modules sub-folders */
@@ -128,9 +128,9 @@ class yf_i18n {
 		conf('language', $this->CUR_LOCALE);
 		$this->CUR_CHARSET = conf('charset');
 // TODO: country detection connect
-		$this->CUR_COUNTRY = conf('country') ?: (in_array(strtolower($this->CUR_LOCALE), array('ru','uk')) ? 'UA' : '');
+		$this->CUR_COUNTRY = conf('country') ?: (in_array(strtolower($this->CUR_LOCALE), ['ru','uk']) ? 'UA' : '');
 
-		$lc_all = array_unique(array_filter(array(
+		$lc_all = array_unique(array_filter([
 			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE).'.'.$this->CUR_CHARSET,
 			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE),
 			$this->CUR_COUNTRY ? strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_COUNTRY).'.'.$this->CUR_CHARSET : '',
@@ -140,9 +140,9 @@ class yf_i18n {
 			'en_US.utf-8',
 			'en_US',
 			'en',
-		)));
+		]));
 		if (DEBUG_MODE) {
-			debug('locale::default', array(
+			debug('locale::default', [
 				'LC_ALL'		=> setlocale(LC_ALL, 0), // for all of the below
 				'LC_COLLATE'	=> setlocale(LC_COLLATE, 0), // for string comparison, see strcoll()
 				'LC_CTYPE'		=> setlocale(LC_CTYPE, 0), // for character classification and conversion, for example strtoupper()
@@ -150,14 +150,14 @@ class yf_i18n {
 				'LC_NUMERIC'	=> setlocale(LC_NUMERIC, 0), // for decimal separator (See also localeconv())
 				'LC_TIME'		=> setlocale(LC_TIME, 0), // for date and time formatting with strftime()
 				'LC_MESSAGES'	=> setlocale(LC_MESSAGES, 0), // for system responses (available if PHP was compiled with libintl)
-			));
-			debug('locale::variants', array('LC_ALL' => $lc_all));
+			]);
+			debug('locale::variants', ['LC_ALL' => $lc_all]);
 		}
 		// Try to set PHP's locale (provide several possible values)
 		$success = setlocale(LC_ALL, $lc_all);
 // TODO: check $success
 		if (DEBUG_MODE && !is_hhvm()) {
-			debug('locale::current', array(
+			debug('locale::current', [
 				'LC_ALL'		=> setlocale(LC_ALL, 0),
 				'LC_COLLATE'	=> setlocale(LC_COLLATE, 0),
 				'LC_CTYPE'		=> setlocale(LC_CTYPE, 0),
@@ -165,7 +165,7 @@ class yf_i18n {
 				'LC_NUMERIC'	=> setlocale(LC_NUMERIC, 0),
 				'LC_TIME'		=> setlocale(LC_TIME, 0),
 				'LC_MESSAGES'	=> setlocale(LC_MESSAGES, 0),
-			));
+			]);
 			$sys_locale = '';
 			exec('locale -a', $sys_locale);
 			debug('locale::system', $sys_locale);
@@ -207,7 +207,7 @@ class yf_i18n {
 
 		// Pre-format vars if case sensetivity
 		if ($this->VARS_IGNORE_CASE) {
-			$tmp_vars = array();
+			$tmp_vars = [];
 			foreach ((array)$this->TR_VARS[$lang] as $_var_name => $_value) {
 				$_var_name = strtolower($_var_name);
 				if ($this->REPLACE_UNDERSCORE) {
@@ -232,7 +232,7 @@ class yf_i18n {
 		$CACHE_NAME = 'locale_translate_'.$lang;
 		$data = cache_get($CACHE_NAME);
 		if (!$data && !is_array($data)) {
-			$data = array();
+			$data = [];
 			$q = db()->query(
 				'SELECT v.value AS source, t.value AS translation
 				FROM '.db('locale_vars').' AS v, '.db('locale_translate').' AS t
@@ -275,7 +275,7 @@ class yf_i18n {
 	* Load language varas from files
 	*/
 	function _load_lang_get_vars_from_files($lang) {
-		$lang_files = array();
+		$lang_files = [];
 		// Auto-find shared language vars. They will be connected in order of file system
 		// Names can be any, but better to include lang name into file name. Examples:
 		// share/langs/ru/001_other.php
@@ -286,14 +286,14 @@ class yf_i18n {
 		// plugins/shop/share/langs/ru/ru_user_register.php
 		if ($this->ALLOW_SHARED_LANG_FILES) {
 			$pattern = 'share/langs/'.$lang.'/';
-			$dirs = array(
+			$dirs = [
 				'yf_main'			=> YF_PATH. $pattern,
 				'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
 				'project_main'		=> PROJECT_PATH. $pattern,
 				'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
 				'app_main'			=> APP_PATH. $pattern,
 				'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
-			);
+			];
 			if (SITE_PATH != PROJECT_PATH) {
 				$dirs['site'] = SITE_PATH.'share/langs/'.$lang.'/';
 			}
@@ -312,12 +312,12 @@ class yf_i18n {
 		// plugins/shop/modules/shop/__locale__ru_products.php
 		if ($this->ALLOW_MODULE_FILES) {
 			$m_dir = (MAIN_TYPE_USER ? 'modules/' : 'admin_modules/');
-			$dirs = array(
+			$dirs = [
 				'yf_main'			=> YF_PATH. $m_dir,
 				'yf_plugins'		=> YF_PATH. 'plugins/*/'. $m_dir,
 				'project_main'		=> PROJECT_PATH. $m_dir,
 				'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $m_dir,
-			);
+			];
 			if (MAIN_TYPE_USER && SITE_PATH != PROJECT_PATH) {
 				$dirs['site'] = SITE_PATH. $m_dir;
 			}
@@ -451,10 +451,10 @@ class yf_i18n {
 				$output_string = $input_string;
 				if (DEBUG_MODE) {
 					if (!isset($this->_NOT_TRANSLATED)) {
-						$this->_NOT_TRANSLATED = array();
+						$this->_NOT_TRANSLATED = [];
 					}
 					if (!isset($this->_NOT_TRANSLATED[$lang])) {
-						$this->_NOT_TRANSLATED[$lang] = array();
+						$this->_NOT_TRANSLATED[$lang] = [];
 					}
 					if (!isset($this->_NOT_TRANSLATED[$lang][$input_string])) {
 						$this->_NOT_TRANSLATED[$lang][$input_string] = 0;
@@ -490,16 +490,16 @@ class yf_i18n {
 		}
 		if (DEBUG_MODE) {
 			if ($this->WRAP_VARS_FOR_INLINE_EDIT && false === strpos($output_string, 'class=localetr')) {
-				$r = array(
+				$r = [
 					' ' => '%20',
 					'='	=> '&equals;',
 					'<' => '&lt;',
 					'>' => '&gt;',
-				);
+				];
 				$svar = _prepare_html(str_replace(array_keys($r), array_values($r), $_source));
 				$output_string = '<span class=localetr svar='.$svar.'>'.$output_string.'</span>';
 			}
-			debug('i18n[]', array(
+			debug('i18n[]', [
 				'name_orig'	=> $_source,
 				'name'		=> $input_string,
 				'out'		=> $output_string,
@@ -508,7 +508,7 @@ class yf_i18n {
 				'translated'=> (int)$is_translated,
 				'time'		=> round(microtime(true) - $_start_time, 5),
 				'trace'		=> main()->trace_string(),
-			));
+			]);
 		}
 		// Put to cache
 		if ($this->USE_TRANSLATE_CACHE && empty($args)) {
@@ -524,12 +524,12 @@ class yf_i18n {
 	* {t(While searching %num folders found,%num=1001)}
 	* В процессе поиска {Найдено %num папок|0:Папок не найдено|1:Найдена %num папка|2,3,4:Найдено %num папки|11-14:Найдено %num папок|Найдено %num папок}
 	*/
-	function _process_sub_patterns($text = '', $args = array()) {
+	function _process_sub_patterns($text = '', $args = []) {
 		// Quick check for sub-patterns
 		if (false === strpos($text, '{') || !is_array($args)) {
 			return $text;
 		}
-		$new_replace = array();
+		$new_replace = [];
 
 		$pattern = '/\{([^\}\|]+?)\|([^\}]+?)\}/ims';
 		preg_match_all($pattern, $text, $m);
@@ -542,10 +542,10 @@ class yf_i18n {
 			// Parse translate variants
 			$variants = explode('|', $m[2][$_id]);
 			$common_variant = array_pop($variants);
-			$pairs = array(
+			$pairs = [
 				'other'	=> $common_variant,
-			);
-			$exacts = array();
+			];
+			$exacts = [];
 			foreach ((array)$variants as $_variant) {
 				list($_quantity, $_sub_replace) = explode(':', $_variant);
 				if (!strlen($_quantity)) {
@@ -612,7 +612,7 @@ class yf_i18n {
 		if (empty($var_name)) {
 			return false;
 		}
-		return db()->insert_safe('locale_vars', array('value' => $var_name, 'location' => ''));
+		return db()->insert_safe('locale_vars', ['value' => $var_name, 'location' => '']);
 	}
 
 	/**

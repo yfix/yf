@@ -93,7 +93,7 @@ class yf_utils {
 
 	// Show Javascript alert
 	function js_alert($text) {
-		echo "<script type='text/javascript'>alert('".str_replace(array("'", "\r", "\n"), "", $text)."')</script>";
+		echo "<script type='text/javascript'>alert('".str_replace(["'", "\r", "\n"], "", $text)."')</script>";
 	}
 
 	// Simple random password creator with specified length (max 32 symbols) //
@@ -114,7 +114,7 @@ class yf_utils {
 		$class = !empty($class) ? ' class="'.$class.'"' : '';
 		$search_words = preg_replace('/[^\d_!?\p{L}-]/imsu', ' ', $search_words);
 		$search_words = explode(' ', $search_words);
-		$prepared = array();
+		$prepared = [];
 		foreach((array)$search_words as $item){
 			if (!empty($item)) {
 				$prepared[strtolower($item)] = strlen($item);
@@ -163,7 +163,7 @@ class yf_utils {
 		if ($source_length < $length) {
 			return $text;
 		}
-		$email_pairs = array();
+		$email_pairs = [];
 		// Fast check that we do not have emails inside text
 		if (false !== strpos($text, '@')) {
 			// Do extract emails from text
@@ -226,7 +226,7 @@ class yf_utils {
 		if (DEBUG_MODE && $have_tr) {
 			$text = $tr_1. $text. $tr_2;
 		}
-		$replace = array('{' => '&#123;', '}' => '&#125;', "\\"=> '&#92;', '(' => '&#40;', ')' => '&#41;', '?' => '&#63;');
+		$replace = ['{' => '&#123;', '}' => '&#125;', "\\"=> '&#92;', '(' => '&#40;', ')' => '&#41;', '?' => '&#63;'];
 		return str_replace(array_keys($replace), array_values($replace), $text);
 	}
 
@@ -250,7 +250,7 @@ class yf_utils {
 		if (conf('HIGH_CPU_LOAD') == 1) {
 			$use_ajax = 0;
 		}
-		$replace = array(
+		$replace = [
 			'user_name'			=> $user_name,
 			'custom_title'		=> _prepare_html(conf('avatar_custom_title')),
 			'user_id'			=> $user_id,
@@ -261,9 +261,9 @@ class yf_utils {
 			'no_photo_small'	=> !$is_middle && empty($photo_src),
 			'no_photo_middle'	=> $is_middle && empty($photo_src),
 			'use_ajax'			=> intval($use_ajax),
-		);
+		];
 		$body = tpl()->parse('avatar_img', $replace);
-		return str_replace(array("\r","\n","\t"), '', trim($body));
+		return str_replace(["\r","\n","\t"], '', trim($body));
 	}
 
 	// Check if user's avatar image exists
@@ -282,7 +282,7 @@ class yf_utils {
 	}
 
 	// Display user nick name (or name before all nicks will not be transfered)
-	function _display_name($user_info = array()) {
+	function _display_name($user_info = []) {
 		if (is_string($user_info)) {
 			return $user_info;
 		}
@@ -323,8 +323,8 @@ class yf_utils {
 		$output = strftime($date_format, $date_to_show);
 		// Try to catch and replace some basic dates before 1970 year
 		if (empty($output) && preg_match('/([0-9]{4})-([0-9]{2})-([0-9]{2})/', $input_date, $m)) {
-			if (empty($type) || in_array($type, array('short'))) {
-				$r = array('%y' => $m[1], '%m'	=> $m[2], '%d' => $m[3]);
+			if (empty($type) || in_array($type, ['short'])) {
+				$r = ['%y' => $m[1], '%m'	=> $m[2], '%d' => $m[3]];
 				$output = str_replace(array_keys($r), array_values($r), $date_format);
 			}
 		}
@@ -335,7 +335,7 @@ class yf_utils {
 	function _day_suffix_eng($timestamp = 0) {
 		if (empty($timestamp)) $timestamp = time();
 		$day_number = gmstrftime ('%#d', $timestamp);
-		$sufixes	= array ('1' => 'st', '2' => 'nd', '3' => 'rd');
+		$sufixes	= ['1' => 'st', '2' => 'nd', '3' => 'rd'];
 		$new_suffix	= $sufixes[substr($day_number, -1)];
 		return !empty($new_suffix) ? $new_suffix : 'th';
 	}
@@ -385,13 +385,13 @@ class yf_utils {
 		if (!strlen($html_text)) {
 			return '';
 		}
-		$translation_table = array(
+		$translation_table = [
 			'"' => '&quot;',
 			'&' => '&amp;',
 			'\'' => '&#039;',
 			'<' => '&lt;',
 			'>' => '&gt;',
-		);
+		];
 		// Change the ampersand to translate to itself, to avoid getting &amp;
 		$translation_table[ chr(38) ] = '&';
 		// Perform replacements
@@ -447,7 +447,7 @@ class yf_utils {
 		if (!$log_level || !is_numeric($log_level)) {
 			$log_level = E_NOTICE;
 		}
-		return _class('logs')->_save_debug_log($text, $log_level, array()/*array_shift(debug_backtrace())*/, $simple);
+		return _class('logs')->_save_debug_log($text, $log_level, []/*array_shift(debug_backtrace())*/, $simple);
 	}
 
 	// fast debug function
@@ -506,7 +506,7 @@ class yf_utils {
 	}
 
 	// Display link to user's profile
-	function _profile_link($user_info = 0, $skip_get_array = array(), $do_add_get = true) {
+	function _profile_link($user_info = 0, $skip_get_array = [], $do_add_get = true) {
 		if (IS_FRONT == 1) {
 			return false;
 		}
@@ -517,7 +517,7 @@ class yf_utils {
 			$user_id = intval($user_info);
 		}
 		$output	= './?object=user_profile&action=show&id='.$user_id;
-		$output .= ($do_add_get ? common()->add_get_vars(array_merge(array('page'),(array)$skip_get_array)) : '');
+		$output .= ($do_add_get ? common()->add_get_vars(array_merge(['page'],(array)$skip_get_array)) : '');
 		$output = process_url($output);
 		return $output;
 	}
@@ -539,7 +539,7 @@ class yf_utils {
 		return $body;
 	}
 
-	function _output_cache_trigger($data = array()) {
+	function _output_cache_trigger($data = []) {
 		if (!main()->OUTPUT_CACHING) {
 			return false;
 		}
@@ -572,9 +572,9 @@ class yf_utils {
 	}
 
 	// Display link to send internal email
-	function _email_link($user_id = 0, $skip_get_array = array(), $do_add_get = true) {
+	function _email_link($user_id = 0, $skip_get_array = [], $do_add_get = true) {
 		$body = _prepare_members_link('./?object=email&action=send_form&id='.$user_id);
-		$body .= ($do_add_get ? common()->add_get_vars(array_merge(array('page'),(array)$skip_get_array)) : '');
+		$body .= ($do_add_get ? common()->add_get_vars(array_merge(['page'],(array)$skip_get_array)) : '');
 		return $body;
 	}
 
@@ -583,7 +583,7 @@ class yf_utils {
 		if (main()->USER_ID) {
 			return $url;
 		}
-		$parts = array();
+		$parts = [];
 		parse_str(substr($url, 3), $parts);
 		if (!empty($parts['object'])) {
 			return './?object=login_form&go_url='.$parts['object']. (!empty($parts['action']) ? ';'.$parts['action'] : ''). (!empty($parts['id']) ? ';id='.$parts['id'] : '');
@@ -591,7 +591,7 @@ class yf_utils {
 	}
 
 	function _range($_start = 0, $_end = 10) {
-		$data = array();
+		$data = [];
 		for ($i = $_start; $i <= $_end; $i++) {
 			$data[$i] = $i;
 		}

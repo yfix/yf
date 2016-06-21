@@ -169,15 +169,15 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	*/
 	function error() {
 		if ($this->db_connect_id) {
-			return array(
+			return [
 				'message'	=> mysql_error($this->db_connect_id),
 				'code'		=> mysql_errno($this->db_connect_id),
-			);
+			];
 		} elseif ($this->_connect_error) {
-			return array(
+			return [
 				'message'	=> 'YF: Connect error: '.$this->_connect_error,
 				'code'		=> '9999',
-			);
+			];
 		}
 		return false;
 	}
@@ -253,7 +253,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 		if (!$q) {
 			return false;
 		}
-		$warnings = array();
+		$warnings = [];
 		// Example: Warning (1264): Data truncated for column 'Name' at row 1
 		while ($a = $this->fetch_assoc($q)) {
 			$warnings[] = $a;

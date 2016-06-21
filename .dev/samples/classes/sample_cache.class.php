@@ -9,7 +9,7 @@ class sample_cache {
 
 	/***/
 	function _hook_side_column() {
-		$items = array();
+		$items = [];
 		$url = url('/@object');
 		$methods = get_class_methods(cache());
 		$sample_methods = get_class_methods($this);
@@ -24,10 +24,10 @@ class sample_cache {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = array(
+			$items[] = [
 				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
 				'link'	=> url('/@object/@action/'.$name), // '#head_'.$name,
-			);
+			];
 		}
 		return _class('html')->navlist($items);
 	}
@@ -43,7 +43,7 @@ class sample_cache {
 		!cache_files()->get('var1') && cache_files()->set('var1', 'value_files');
 
 		$cache_db = clone _class('cache');
-		$cache_db->_init(array('driver' => 'db'));
+		$cache_db->_init(['driver' => 'db']);
 		!$cache_db->get('var1') && $cache_db->set('var1', 'value_db');
 
 		return $this->_other_func().' | '.$cache_db->get('var1');

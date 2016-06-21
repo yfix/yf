@@ -20,7 +20,7 @@ class yf_sphinxsearch {
 	*	2013 - Lost connection to MySQL server during query
 	*	2020 - Got packet bigger than 'max_allowed_packet' bytes
 	*/
-	private $QUERY_RETRY_ERROR_CODES = array(2003,2006,2013,2020);
+	private $QUERY_RETRY_ERROR_CODES = [2003,2006,2013,2020];
 	/** [Resource] or null */
 	private $sphinx_connection = null;
 	/** Host:port like this: 127.0.0.1:9306 */
@@ -71,7 +71,7 @@ class yf_sphinxsearch {
 		if ($cached) {
 			list($data, $meta, $warnings, $query_error, $describe, $time_wo_cache) = $cached;
 			if (DEBUG_MODE) {
-				$this->_set_query_debug(array(
+				$this->_set_query_debug([
 					'query'			=> $sql,
 					'time'			=> $time,
 					'trace'			=> $trace,
@@ -82,12 +82,12 @@ class yf_sphinxsearch {
 					'results'		=> $data,
 					'cached'		=> 1,
 					'time_wo_cache'	=> $time_wo_cache,
-				));
+				]);
 			}
 			$GLOBALS['_SPHINX_META'] = $meta;
 			return $data;
 		}
-		$results		= array();
+		$results		= [];
 		$query_error	= '';
 		$q_error_num	= '';
 		if (!isset($this->sphinx_connection)) {
@@ -120,9 +120,9 @@ class yf_sphinxsearch {
 					$this->_save_empty_results_log($sql);
 				}
 			}
-			$meta			= array();
-			$warnings		= array();
-			$describe		= array();
+			$meta			= [];
+			$warnings		= [];
+			$describe		= [];
 			if ($need_meta || DEBUG_MODE) {
 				$meta = $this->_get_latest_meta();
 				$warnings = $this->_get_latest_warnings();
@@ -130,7 +130,7 @@ class yf_sphinxsearch {
 			}
 			$time_wo_cache = 0;
 			if (DEBUG_MODE) {
-				$this->_set_query_debug(array(
+				$this->_set_query_debug([
 					'query'	=> $sql,
 					'time'	=> $time,
 					'trace'	=> $trace,
@@ -139,12 +139,12 @@ class yf_sphinxsearch {
 					'warnings' => $warnings,
 					'describe' => $describe,
 					'results' => $results,
-				));
+				]);
 				$time_wo_cache = microtime(true) - $time;
 			}
 		}
 		if (empty($query_error) && $this->sphinx_connection) {
-			cache_set($CACHE_NAME, array($results, $meta, $warnings, $query_error, $describe, $time_wo_cache), $this->CACHE_TTL);
+			cache_set($CACHE_NAME, [$results, $meta, $warnings, $query_error, $describe, $time_wo_cache], $this->CACHE_TTL);
 		}
 		return $results;
 	}
@@ -185,11 +185,11 @@ class yf_sphinxsearch {
 			trigger_error('No connection to sphinx', E_USER_WARNING);
 		}
 		if (DEBUG_MODE) {
-			$this->_set_query_debug(array(
+			$this->_set_query_debug([
 				'query'	=> 'sphinx connect',
 				'time'	=> $time,
 				'error'	=> $query_error,
-			));
+			]);
 		}
 		// Revert default mysql connect timeout
 		if ($this->CONNECT_TIMEOUT && $orig_connect_timeout != $this->CONNECT_TIMEOUT) {
@@ -201,8 +201,8 @@ class yf_sphinxsearch {
 	/**
 	*/
 	function escape_string ($string) {
-		$from = array ( "\\", '(',')','|','-','!','@','~','"','&', '/', '^', '$', '=' );
-		$to   = array ( "\\\\", '\(','\)','\|','\-','\!','\@','\~','\"', '\&', '\/', '\^', '\$', '\=' );
+		$from = [ "\\", '(',')','|','-','!','@','~','"','&', '/', '^', '$', '=' ];
+		$to   = [ "\\\\", '\(','\)','\|','\-','\!','\@','\~','\"', '\&', '\/', '\^', '\$', '\=' ];
 		return str_replace ( $from, $to, $string );
 	}
 
@@ -255,7 +255,7 @@ class yf_sphinxsearch {
 		if (!$this->sphinx_connection) {
 			return false;
 		}
-		$describe = array();
+		$describe = [];
 		if (preg_match('/SELECT[\s\t]+.+[\s\t]+FROM[\s\t]+([a-z0-9\_]+)[\s\t]+WHERE[\s\t]+/ims', $sql, $m)) {
 			$describe_sql = 'DESCRIBE '.$m[1];
 			$q = mysql_query('DESCRIBE '.$m[1], $this->sphinx_connection);
@@ -277,7 +277,7 @@ class yf_sphinxsearch {
 		if (!$this->sphinx_connection) {
 			return false;
 		}
-		$status = array();
+		$status = [];
 		$q = mysql_query('SHOW STATUS', $this->sphinx_connection);
 		if (!is_bool($q)) {
 			while ($a = mysql_fetch_row($q)) {
@@ -311,21 +311,21 @@ class yf_sphinxsearch {
 		if (!$this->EMPTY_RESULTS_LOG_PATH) {
 			return false;
 		}
-		$out = implode('#|#', array(
+		$out = implode('#|#', [
 			date('YmdH'),
 			conf('CUR_DOMAIN_SHORT'),
 			common()->_db_escape($_SERVER['HTTP_REFERER']),
 			common()->_db_escape($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']),
 			common()->_db_escape($_SERVER['HTTP_USER_AGENT']),
 			common()->_db_escape($sql),
-		)). PHP_EOL;
+		]). PHP_EOL;
 		return file_put_contents($this->EMPTY_RESULTS_LOG_PATH, $out, FILE_APPEND);
 	}
 
 	/**
 	*/
 	function _set_query_debug($a) {
-		debug('sphinxsearch[]', array(
+		debug('sphinxsearch[]', [
 			'query'		=> $a['query'],
 			'results'	=> $a['results'],
 			'count'		=> is_array($a['results']) ? intval(count($a['results'])) : '',
@@ -337,6 +337,6 @@ class yf_sphinxsearch {
 			'cached'	=> (int)$a['cached'],
 			'time'		=> round(microtime(true) - $a['time'], 5),
 			'time_wo_cache'	=> $a['time_wo_cache'] ? round($a['time_wo_cache'], 5) : '',
-		));
+		]);
 	}
 }

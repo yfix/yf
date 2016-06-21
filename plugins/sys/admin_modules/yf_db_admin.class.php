@@ -6,21 +6,21 @@
 class yf_db_admin {
 
 	/***/
-	private	$guarded_databases = array(
+	private	$guarded_databases = [
 		'information_schema',
 		'performance_schema',
 		'mysql',
 		'sys',
-	);
+	];
 	/***/
-	private $table_params = array(
+	private $table_params = [
 		'pager_records_on_page' => 1000,
 		'id'		=> 'name',
 		'condensed'	=> 1,
 		'no_total'	=> 1,
 		'no_ajax'	=> 1,
 		'no_records_html' => '',
-	);
+	];
 
 	/***/
 	function _init() {
@@ -28,7 +28,7 @@ class yf_db_admin {
 	}
 
 	/***/
-	function _db_custom_connection($db_name, $params = array()) {
+	function _db_custom_connection($db_name, $params = []) {
 		if (!$db_name) {
 			return false;
 		}
@@ -39,10 +39,10 @@ class yf_db_admin {
 		$db_class = load_db_class();
 		if ($db_class) {
 			$instance = new $db_class('mysql5');
-			$instance->connect(array(
+			$instance->connect([
 				'name'	=> $db_name,
 				'prefix'=> '',
-			) + (array)$params);
+			] + (array)$params);
 		}
 		$this->_connections[$db_name] = $instance;
 		return $instance;
@@ -67,12 +67,12 @@ class yf_db_admin {
 	/***/
 	function databases_list() {
 		foreach ((array)db()->utils()->list_databases() as $name) {
-			$data[$name] = array(
+			$data[$name] = [
 				'name'	=> $name,
-			);
+			];
 		}
 		return table($data, $this->table_params)
-			->link('name', url('/@object/database_show/%d/'), array(), array('class' => ' '))
+			->link('name', url('/@object/database_show/%d/'), [], ['class' => ' '])
 			->btn_edit('Alter', url('/@object/database_alter/%d/'))
 			->btn_delete('Drop', url('/@object/database_drop/%d/'))
 			->header_add('Add database', url('/@object/database_create/'))
@@ -94,12 +94,12 @@ class yf_db_admin {
 		if (in_array($db_name, $this->guarded_databases)) {
 			return _e('Database is read-only');
 		}
-		$a = array(
+		$a = [
 			'name'		=> $db_name,
 			'back_link'	=> url('/@object/databases_list/'),
-		);
+		];
 		return form((array)$_POST + $a)
-			->validate(array('name' => 'trim|required|alpha_dash'))
+			->validate(['name' => 'trim|required|alpha_dash'])
 			->on_validate_ok(function($data) use ($db_name) {
 				db()->utils()->rename_database($db_name, $data['name']);
 				common()->message_success('Database was successfully renamed: '.$db_name.' => '.$data['name']);
@@ -112,12 +112,12 @@ class yf_db_admin {
 	/**
 	*/
 	function database_create() {
-		$a = array(
+		$a = [
 			'name'		=> '',
 			'back_link'	=> url('/@object/databases_list/'),
-		);
+		];
 		return form((array)$_POST + $a)
-			->validate(array('name' => 'trim|required|alpha_dash'))
+			->validate(['name' => 'trim|required|alpha_dash'])
 			->on_validate_ok(function($data) {
 				db()->utils()->create_database($data['name']);
 				common()->message_success('Database was successfully created: '.$data['name']);
@@ -134,9 +134,9 @@ class yf_db_admin {
 		if (!$db_name) {
 			return _e('Wrong name');
 		}
-		$a = array(
+		$a = [
 			'back_link'	=> url('/@object/databases_list/'),
-		);
+		];
 		return form($a)
 			->on_post(function($data) use ($db_name) {
 				db()->utils()->drop_database($db_name);
@@ -155,11 +155,11 @@ class yf_db_admin {
 			return false;
 		}
 		$db = $this->_db_custom_connection($db_name);
-		$data = array(
+		$data = [
 			'indexes'		=> (array)$db->utils()->list_all_indexes($db_name),
 			'foreign_keys'	=> (array)$db->utils()->list_all_foreign_keys($db_name),
 			'triggers'		=> (array)$db->utils()->list_all_triggers($db_name),
-		);
+		];
 		foreach ((array)$data as $k => $v) {
 			foreach ((array)$v as $table => $info) {
 				$data[$k][$table] = count($info);
@@ -181,11 +181,11 @@ class yf_db_admin {
 		}
 		$db = $this->_db_custom_connection($db_name);
 
-		return _class('html')->tabs(array(
+		return _class('html')->tabs([
 			'tables' => table(
 				function() use ($db, $db_name) {
 					foreach ((array)$db->utils()->list_tables_details() as $name => $a) {
-						$data[$name] = array(
+						$data[$name] = [
 							'name'			=> $name,
 							'engine'		=> $a['engine'],
 							'collation'		=> $a['collation'],
@@ -194,9 +194,9 @@ class yf_db_admin {
 							'indexes'		=> count($all_indexes[$name]),
 							'foreign_keys'	=> count($all_foreign[$name]),
 							'triggers'		=> count($all_triggers[$name]),
-						);
+						];
 					}; return $data;
-				}, $this->table_params + array(
+				}, $this->table_params + [
 					'feedback' => &$totals['tables'],
 					'data-postload-url' => url('/@object/database_show_ajax/'.$db_name.'/'),
 					'tr' => function($row, $_id) {
@@ -205,27 +205,27 @@ class yf_db_admin {
 #					'th' => function($_id) {
 #						return ' id="th_'.$_id.'"';
 #					},
-				))
-				->check_box('name', array('th_desc' => '#'))
+				])
+				->check_box('name', ['th_desc' => '#'])
 				->link('name', url('/@object/table_show/'.$db_name.'.%d/'))
 				->text('engine')
 				->text('collation')
 				->text('rows')
 				->text('data_size')
-				->link('indexes', url('/@object/indexes/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter indexes', 'th_id' => 'th_indexes'))
-				->link('foreign_keys', url('/@object/foreign_keys/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter foreign keys', 'th_id' => 'th_foreign_keys'))
-				->link('triggers', url('/@object/triggers/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter triggers', 'th_id' => 'th_triggers'))
-				->btn_edit('Alter table', url('/@object/table_alter/'.$db_name.'.%d/'), array('btn_no_text' => 1))
-				->btn_delete('Drop', url('/@object/table_drop/'.$db_name.'.%d/'), array('btn_no_text' => 1))
+				->link('indexes', url('/@object/indexes/'.$db_name.'.%d/'), [], ['link_field_name' => 'name', 'link_title' => 'Alter indexes', 'th_id' => 'th_indexes'])
+				->link('foreign_keys', url('/@object/foreign_keys/'.$db_name.'.%d/'), [], ['link_field_name' => 'name', 'link_title' => 'Alter foreign keys', 'th_id' => 'th_foreign_keys'])
+				->link('triggers', url('/@object/triggers/'.$db_name.'.%d/'), [], ['link_field_name' => 'name', 'link_title' => 'Alter triggers', 'th_id' => 'th_triggers'])
+				->btn_edit('Alter table', url('/@object/table_alter/'.$db_name.'.%d/'), ['btn_no_text' => 1])
+				->btn_delete('Drop', url('/@object/table_drop/'.$db_name.'.%d/'), ['btn_no_text' => 1])
 				->header_add('Create table', url('/@object/table_create/'.$db_name.'/'))
 			,
 			'views' => table(
 				function() use ($db) {
 					foreach ((array)$db->utils()->list_views() as $name) {
-						$data[$name] = array('name'	=> $name);
+						$data[$name] = ['name'	=> $name];
 					}; return $data;
-				}, $this->table_params + array('feedback' => &$totals['views']))
-				->link('name', url('/@object/view_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				}, $this->table_params + ['feedback' => &$totals['views']])
+				->link('name', url('/@object/view_show/'.$db_name.'.%d/'), [], ['class' => ' '])
 				->btn_edit('Alter', url('/@object/view_alter/'.$db_name.'.%d/'))
 				->btn_delete('Drop', url('/@object/view_drop/'.$db_name.'.%d/'))
 				->header_add('Create view', url('/@object/view_create/'.$db_name.'/', $this->btn_params))
@@ -233,10 +233,10 @@ class yf_db_admin {
 			'procedures' => table(
 				function() use ($db) {
 					foreach ((array)$db->utils()->list_procedures() as $name => $info) {
-						$data[$name] = array('name'	=> $name);
+						$data[$name] = ['name'	=> $name];
 					}; return $data;
-				}, $this->table_params + array('feedback' => &$totals['procedures']))
-				->link('name', url('/@object/procedure_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				}, $this->table_params + ['feedback' => &$totals['procedures']])
+				->link('name', url('/@object/procedure_show/'.$db_name.'.%d/'), [], ['class' => ' '])
 				->btn_edit('Alter', url('/@object/procedure_alter/'.$db_name.'.%d/'))
 				->btn_delete('Drop', url('/@object/procedure_drop/'.$db_name.'.%d/'))
 				->header_add('Create procedure', url('/@object/procedure_create/'.$db_name.'/'))
@@ -244,10 +244,10 @@ class yf_db_admin {
 			'functions' => table(
 				function() use ($db) {
 					foreach ((array)$db->utils()->list_functions() as $name => $info) {
-						$data[$name] = array('name'	=> $name);
+						$data[$name] = ['name'	=> $name];
 					}; return $data;
-				}, $this->table_params + array('feedback' => &$totals['functions']))
-				->link('name', url('/@object/function_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				}, $this->table_params + ['feedback' => &$totals['functions']])
+				->link('name', url('/@object/function_show/'.$db_name.'.%d/'), [], ['class' => ' '])
 				->btn_edit('Alter', url('/@object/function_alter/'.$db_name.'.%d/'))
 				->btn_delete('Drop', url('/@object/function_drop/'.$db_name.'.%d/'))
 				->header_add('Create function', url('/@object/function_create/'.$db_name.'/'))
@@ -255,15 +255,15 @@ class yf_db_admin {
 			'events' => table(
 				function() use ($db) {
 					foreach ((array)$db->utils()->list_events() as $name) {
-						$data[$name] = array('name'	=> $name);
+						$data[$name] = ['name'	=> $name];
 					}; return $data;
-				}, $this->table_params + array('feedback' => &$totals['events']))
-				->link('name', url('/@object/event_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				}, $this->table_params + ['feedback' => &$totals['events']])
+				->link('name', url('/@object/event_show/'.$db_name.'.%d/'), [], ['class' => ' '])
 				->btn_edit('Alter', url('/@object/event_alter/'.$db_name.'.%d/'))
 				->btn_delete('Drop', url('/@object/event_drop/'.$db_name.'.%d/'))
 				->header_add('Create event', url('/@object/event_create/'.$db_name.'/'))
 			,
-		), array('hide_empty' => 0, 'totals' => $totals));
+		], ['hide_empty' => 0, 'totals' => $totals]);
 	}
 
 	/**
@@ -276,10 +276,10 @@ class yf_db_admin {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-		return table2('SELECT * FROM '.$table, array(
+		return table2('SELECT * FROM '.$table, [
 				'auto_no_buttons' => 1,
 				'db' => $db,
-			))
+			])
 			->btn_edit('', url('/@object/table_edit/'.$db_name.'.'.$table.'.%d'))
 			->btn_delete('', url('/@object/table_delete/'.$db_name.'.'.$table.'.%d'))
 			->footer_add('Insert', url('/@object/table_add/'.$db_name.'.'.$table))
@@ -297,13 +297,13 @@ class yf_db_admin {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-		return _class('admin_methods')->edit(array(
+		return _class('admin_methods')->edit([
 			'table' 		=> $table,
 			'back_link'		=> url('/@object/table_show/'.$db_name.'.'.$table),
 			'db'			=> $db,
 			'return_form'	=> true,
 			'input_id'		=> $id,
-		));
+		]);
 	}
 
 	/**
@@ -316,12 +316,12 @@ class yf_db_admin {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-		return _class('admin_methods')->add(array(
+		return _class('admin_methods')->add([
 			'table' 		=> $table,
 			'back_link'		=> url('/@object/table_show/'.$db_name.'.'.$table),
 			'db'			=> $db,
 			'return_form'	=> true,
-		));
+		]);
 	}
 
 	/**
@@ -335,12 +335,12 @@ class yf_db_admin {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-		return _class('admin_methods')->delete(array(
+		return _class('admin_methods')->delete([
 			'table'		=> $table,
 			'back_link'	=> url('/@object/table_show/'.$db_name.'.'.$table),
 			'db'		=> $db,
 			'input_id'	=> $id,
-		));
+		]);
 	}
 
 	/**
@@ -376,9 +376,9 @@ class yf_db_admin {
 		if (!$db_name || !$table) {
 			return _e('Wrong params');
 		}
-		$a = array(
+		$a = [
 			'back_link'	=> url('/@object/databases_list/'),
-		);
+		];
 		return form($a)
 			->on_post(function($data) use ($db_name, $table) {
 				db()->utils()->drop_table($db_name, $table);
@@ -400,16 +400,16 @@ class yf_db_admin {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-		$data = array();
+		$data = [];
 		foreach ((array)db()->utils()->list_indexes($table) as $name => $info) {
 			$info['columns'] = implode(',', $info['columns']);
 			$data[$name] = $info;
 		}
-		return table2($data, $this->table_params + array(
+		return table2($data, $this->table_params + [
 				'auto_no_buttons' => 1,
 				'db' => $db,
 				'id' => 'name',
-			))
+			])
 			->btn_edit('', url('/@object/index_alter/'.$db_name.'.'.$table.'.%d'))
 			->btn_delete('', url('/@object/index_drop/'.$db_name.'.'.$table.'.%d'))
 			->footer_add('Add index', url('/@object/index_create/'.$db_name.'.'.$table))
@@ -467,15 +467,15 @@ class yf_db_admin {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-		$data = array();
+		$data = [];
 		foreach ((array)db()->utils()->list_foreign_keys($table) as $name => $info) {
 			$info['columns'] = implode(',', $info['columns']);
 			$data[$name] = $info;
 		}
-		return table2($data, $this->table_params + array(
+		return table2($data, $this->table_params + [
 				'auto_no_buttons' => 1,
 				'db' => $db,
-			))
+			])
 			->btn_edit('', url('/@object/foreign_key_alter/'.$db_name.'.'.$table.'.%d'))
 			->btn_delete('', url('/@object/foreign_key_drop/'.$db_name.'.'.$table.'.%d'))
 			->footer_add('Add foreign key', url('/@object/foreign_key_create/'.$db_name.'.'.$table))
@@ -744,45 +744,45 @@ class yf_db_admin {
 			return false;
 		}
 		list($db_name, $table, $id) = explode('.', $_GET['id']);
-		$patterns = array(
+		$patterns = [
 			'^/@object/(show|list_databases)' => 'Databases',
 			'^/@object/database_([a-z0-9_]+)' => function($m) use($db_name) {
 				$name = ucwords(str_replace('_', ' ', $m[1]));
-				return array(
-					array('Database: '.$db_name, url('/@object/database_show/'.$db_name)),
-					array($name),
-				);
+				return [
+					['Database: '.$db_name, url('/@object/database_show/'.$db_name)],
+					[$name],
+				];
 			},
 			'^/@object/table_([a-z0-9_]+)' => function($m) use($db_name, $table) {
 				$name = ucwords(str_replace('_', ' ', $m[1]));
-				return array(
-					array('Database: '.$db_name, url('/@object/database_show/'.$db_name)),
-					array('Table: '.$table, url('/@object/table_show/'.$db_name.'.'.$table)),
-					array($name),
-				);
+				return [
+					['Database: '.$db_name, url('/@object/database_show/'.$db_name)],
+					['Table: '.$table, url('/@object/table_show/'.$db_name.'.'.$table)],
+					[$name],
+				];
 			},
 			'^/@object/((?P<name2>indexes|triggers|foreign_keys)|(index|trigger|foreign_key)_(?P<name>[a-z0-9_]+))' => function($m) use($db_name, $table) {
 				$name = ucwords(str_replace('_', ' ', $m['name'] ?: $m[1]));
 				$name2 = $m['name2'] ? ucwords(str_replace('_', ' ', $m['name2'])) : '';
-				return array(
-					array('Database: '.$db_name, url('/@object/database_show/'.$db_name)),
-					array('Table: '.$table, url('/@object/table_show/'.$db_name.'.'.$table)),
-					$name2 ? array($name2, url('/@object/'.$m['name2'].'/'.$db_name.'.'.$table)) : '',
-					array($name),
-				);
+				return [
+					['Database: '.$db_name, url('/@object/database_show/'.$db_name)],
+					['Table: '.$table, url('/@object/table_show/'.$db_name.'.'.$table)],
+					$name2 ? [$name2, url('/@object/'.$m['name2'].'/'.$db_name.'.'.$table)] : '',
+					[$name],
+				];
 			},
-		);
+		];
 		_class('core_events')->listen('block.prepend[center_area]', function() use ($patterns) {
-			$a = array(
-				array(
+			$a = [
+				[
 					'name' => 'Home',
 					'link' => url('/home_page/'),
-				),
-				array(
+				],
+				[
 					'name' => 'Db admin',
 					'link' => url('/@object/'),
-				),
-			);
+				],
+			];
 			$cur_url = '/@object/'.$_GET['action'].'/'.$_GET['id'];
 			foreach ($patterns as $pattern => $val) {
 				if (!preg_match('~'.$pattern.'~is', $cur_url, $m)) {
@@ -790,20 +790,20 @@ class yf_db_admin {
 				}
 				if (is_array($val)) {
 					foreach ($val as $item) {
-						$a[] = array(
+						$a[] = [
 							'name' => $item[0] ?: $item['name'],
 							'link' => $item[1] ?: $item['link'],
-						);
+						];
 					}
 				} elseif (is_callable($val)) {
 					foreach ($val($m) as $item) {
-						$a[] = array(
+						$a[] = [
 							'name' => $item[0] ?: $item['name'],
 							'link' => $item[1] ?: $item['link'],
-						);
+						];
 					}
 				} elseif (is_string($val)) {
-					$a[] = array('name' => $val);
+					$a[] = ['name' => $val];
 				}
 			}
 			return _class('html')->breadcrumbs($a);

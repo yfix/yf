@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   6 => 
-  array (
+  [
     'id' => '6',
     'id2' => '1',
     'user_name' => 'odlman',
@@ -32,9 +32,9 @@ return array (
     'activity' => '10',
     'old_id' => '0',
     'mask' => '0',
-  ),
+  ],
   7 => 
-  array (
+  [
     'id' => '7',
     'id2' => '1',
     'user_name' => 'kingargyle',
@@ -85,5 +85,5 @@ return array (
     'activity' => '10',
     'old_id' => '0',
     'mask' => '0',
-  ),
-);
+  ],
+];

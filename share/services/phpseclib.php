@@ -1,12 +1,25 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/yfix/phpseclib.git' => 'phpseclib/'),
-	'pear' => array('phpseclib/phpseclib/' => ''),
+$config = [
+	'require_services' => [
+		'paragonie_constant_time_encoding',
+		'paragonie_random_compat',
+	],
+	'git_urls' => ['https://github.com/yfix/phpseclib.git' => 'phpseclib/'],
+	'autoload_config' => ['phpseclib/phpseclib/' => 'phpseclib'],
 	'example' => function() {
-		$key = new Crypt_RSA();
-		var_dump($key);
+		$aes = new \phpseclib\Crypt\AES(\phpseclib\Crypt\Base::MODE_CFB);
+		$aes->setKey('abcdefghijklmnop');
+		var_dump($aes);
+
+		echo PHP_EOL.'------------------'.PHP_EOL;
+
+		$a = new \phpseclib\Math\BigInteger('10');
+		$b = new \phpseclib\Math\BigInteger('20');
+		$c = new \phpseclib\Math\BigInteger('30');
+		$c = $a->modPow($b, $c);
+		echo $c->toString().PHP_EOL; // outputs 10		
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

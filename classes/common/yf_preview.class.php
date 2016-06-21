@@ -10,7 +10,7 @@
 class yf_preview {
 
 	/** @var array These variables will not be displayed in preview */
-	public $skip_fields = array(
+	public $skip_fields = [
 		"mode",
 		"f_family_text",
 		"f_size_text",
@@ -21,7 +21,7 @@ class yf_preview {
 		"parent_object",
 		"parent_action",
 		"form_action",
-	);
+	];
 	/** @var bool */
 	public $USE_BB_CODES = true;
 
@@ -30,7 +30,7 @@ class yf_preview {
 	*
 	* NOTE : parent_object & parent_action are used to determine
 	*/
-	function _display_preview($params = array(), $template = "") {
+	function _display_preview($params = [], $template = "") {
 		$replace = $params['replace'];
 		$PARENT_OBJECT = $_REQUEST["parent_object"];
 		$PARENT_ACTION = $_REQUEST["parent_action"];
@@ -61,24 +61,24 @@ class yf_preview {
 			$body = tpl()->parse(__CLASS__."/default", $replace);
 		}
 		// Process template
-		$replace2 = array(
+		$replace2 = [
 			"template" => $body,
-		);
-		return common()->show_empty_page(tpl()->parse("preview/main", $replace2), array("title" => t("Preview")));
+		];
+		return common()->show_empty_page(tpl()->parse("preview/main", $replace2), ["title" => t("Preview")]);
 	}
 
 	/**
 	* Display buttons code
 	*/
-	function _display_buttons($params = array()/*, $template = ""*/) {
-		$replace = array(
+	function _display_buttons($params = []/*, $template = ""*/) {
+		$replace = [
 			"preview_link"	=> "./?object=".$_GET["object"]."&action=display_preview",
 			"width"			=> !empty($params['width'])	? intval($params['width'])	: 400,
 			"height"		=> !empty($params['height'])? ($params['height'])		: 300,
 			"default_action"=> "",
 			"parent_object"	=> $_GET["object"],
 			"parent_action"	=> $_GET["action"],
-		);
+		];
 		return tpl()->parse(__CLASS__."/buttons", $replace);
 	}
 

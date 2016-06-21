@@ -11,15 +11,15 @@ class yf_oauth_driver_bitbucket extends yf_oauth_driver1 {
 
 	/**
 	*/
-	function _get_user_info_for_auth($raw = array()) {
-		$user_info = array(
+	function _get_user_info_for_auth($raw = []) {
+		$user_info = [
 			'user_id'		=> $raw['user']['username'],
 			'login'			=> $raw['user']['username'],
 			'name'			=> $raw['user']['display_name'],
 			'email'			=> '',
 			'avatar_url'	=> $raw['user']['avatar'],
 			'profile_url'	=> 'https://bitbucket.org/'.$raw['user']['username'],
-		);
+		];
 		return $user_info;
 	}
 }

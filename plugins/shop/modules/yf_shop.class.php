@@ -31,7 +31,7 @@ class yf_shop extends yf_module {
 	/** @var bool THIS_ITEM_OFTEN_BUY or not */
 	public $THIS_ITEM_OFTEN_BUY		= true;
 	 /** @var array forum settings (default values) */
-	public $COMPANY_INFO = array(
+	public $COMPANY_INFO = [
 		'company_name'		=> 'Shop.com ', //
 		'company_address'	=> 'Company Address 1', //
 		'company_address2'	=> 'Company Address 2', //
@@ -39,9 +39,9 @@ class yf_shop extends yf_module {
 		'company_website'	=> 'Company Website', //
 		'company_email'		=> 'Company Email', //
 		'company_title'		=> 'Shop.com ', //
-	);
+	];
 	/** @var Billing info */
-	public $_b_fields = array(
+	public $_b_fields = [
 		'b_first_name',
 		'b_last_name',
 		'b_email',
@@ -53,9 +53,9 @@ class yf_shop extends yf_module {
 		'b_state',
 		'b_country',
 		'b_company',
-	);
+	];
 	/** @var Shipping info */
-	public $_s_fields = array(
+	public $_s_fields = [
 		's_first_name',
 		's_last_name',
 		's_email',
@@ -67,64 +67,64 @@ class yf_shop extends yf_module {
 		's_state',
 		's_country',
 		's_company',
-	);
+	];
 	/** @var Required shipping and billing fields */
-	public $_required_fields = array(
+	public $_required_fields = [
 		'name',
 		'phone',
-	);
+	];
 	/** @var @conf_skip */
-	public $_statuses = array(
+	public $_statuses = [
 		'pending'			=> 'pending',
 		'pending payment'	=> 'pending payment',
 		'proccessed'		=> 'proccessed',
 		'delivery'			=> 'delivery',
 		'shipped'			=> 'shipped',
-	);
-	public $_ship_type = array(
+	];
+	public $_ship_type = [
 		1 => 'Free',
 		2 => 'Courier',
 		3 => 'FedEX',
 		4 => 'Post',
-	);
+	];
 	/** @var Shipping types */
-	public $_ship_types = array(
-		1 => array(
+	public $_ship_types = [
+		1 => [
 			'name'	=> 'Free',
 			'price'	=> 0,
-		),
-		2 => array(
+		],
+		2 => [
 			'name'	=> 'Courier',
 			'price'	=> 1,
-		),
-		3 => array(
+		],
+		3 => [
 			'name'	=> 'FedEX',
 			'price'	=> 5,
-		),
-		4 => array(
+		],
+		4 => [
 			'name'	=> 'Post',
 			'price'	=> 1,
-		),
-	);
+		],
+	];
 	/** @var Shipping types names (creating automatically inside '_init') @conf_skip */
-	public $_ship_types_name = array();
+	public $_ship_types_name = [];
 	/** @var Payment types */
-	public $_pay_types = array(
+	public $_pay_types = [
 		1 => 'Cash On Delivery',
 		2 => 'Authorize.Net',
 		3 => 'Bank Transfer',
 		4 => 'Cheque / Money Order',
-	);
+	];
 	/** @var Payment methods params */
-	public $_pay_method_params = array(
-		2 => array( // Authorize.Net
+	public $_pay_method_params = [
+		2 => [ // Authorize.Net
 			'LOGIN_ID'			=> '{CLIENT_ID}',
 			'TRANSACTION_KEY'	=> '{CLIENT_SECRET}',
 			'TEST_MODE'			=> 1,
 			'IN_PRODUCTION'		=> 0,
 			'DESCRIPTION'		=> 'Shop Description Here',
-		),
-	);
+		],
+	];
 
 	/** @var Force payment method (Set to 0 to disable) */
 	public $FORCE_PAY_METHOD	= 0;
@@ -133,18 +133,18 @@ class yf_shop extends yf_module {
 	/** @var */
 	public $ATTRIBUTES_CAT_ID	= 1;
 	/** @var Force ship method for user group (user_group => ship_type) */
-	public $FORCE_GROUP_SHIP	= array(
+	public $FORCE_GROUP_SHIP	= [
 		//3	=> 3,
-	);
+	];
 	/** @var Force payment method for user group (user_group => pay_type) */
-	public $FORCE_GROUP_PAY	= array(
+	public $FORCE_GROUP_PAY	= [
 		//3	=> 1,
-	);
-	var  $_comments_params = array(
+	];
+	var  $_comments_params = [
 		'return_action'		=> 'product_details',
 		'object_name'		=> 'shop',
 		'allow_guests_posts'=> '1',
-	);
+	];
 
 	function _init() {
 		$shop = module('shop');
@@ -166,12 +166,12 @@ class yf_shop extends yf_module {
 			_mkdir_m($shop->products_img_dir);
 		}
 
-		$shop->_boxes = array(
+		$shop->_boxes = [
 			'ship_type'	=> 'select_box("ship_type", $shop->_ship_types_names, $selected, false, 2, "", false)',
 			'pay_type'	=> 'radio_box("pay_type", $shop->_pay_types, $selected, 1, 2, "", false)',
-		);
+		];
 
-		$shop->_ship_types_names = array();
+		$shop->_ship_types_names = [];
 		foreach ((array)$shop->_ship_types as $_id => $_info) {
 			$_price_text = ' ('.($_info['price'] < 0 ? '-' : '+'). $shop->_format_price(abs($_info['price'])).')';
 			$shop->_ship_types_names[$_id] = $_info['name']. ($_info['price'] ? $_price_text : '');
@@ -208,11 +208,11 @@ class yf_shop extends yf_module {
 		return _class('shop_products_similar_by_basket', 'modules/shop/')->products_similar_by_basket($id);
 	}
 
-	function basket($params = array()) {
+	function basket($params = []) {
 		return _class('shop_basket', 'modules/shop/')->basket($params);
 	}
 
-	function basket_main($params = array()) {
+	function basket_main($params = []) {
 		return _class('shop_basket_main', 'modules/shop/')->basket_main($params);
 	}
 
@@ -292,7 +292,7 @@ class yf_shop extends yf_module {
 		return _class('shop__order_step_finish', 'modules/shop/')->_order_step_finish($FORCE_DISPLAY_FORM);
 	}
 
-	function _order_pay_authorize_net($order_info = array(), $params = array()) {
+	function _order_pay_authorize_net($order_info = [], $params = []) {
 		return _class('shop__order_pay_authorize_net', 'modules/shop/')->_order_pay_authorize_net($order_info, $params);
 	}
 
@@ -308,15 +308,15 @@ class yf_shop extends yf_module {
 		return _class('shop__hidden_field', 'modules/shop/')->_hidden_field($name, $value);
 	}
 
-	function _product_id_url($product_info = array()) {
+	function _product_id_url($product_info = []) {
 		return _class('shop__product_id_url', 'modules/shop/')->_product_id_url($product_info);
 	}
 
-	function _product_get_price($product_info = array()) {
+	function _product_get_price($product_info = []) {
 		return _class('shop__product_get_price', 'modules/shop/')->_product_get_price($product_info);
 	}
 
-	function _get_group_prices($product_ids = array()) {
+	function _get_group_prices($product_ids = []) {
 		return _class('shop__get_group_prices', 'modules/shop/')->_get_group_prices($product_ids);
 	}
 
@@ -340,11 +340,11 @@ class yf_shop extends yf_module {
 		return _class('shop__products_last_viewed', 'modules/shop/')->_products_last_viewed();
 	}
 
-	function _products_get_attributes($products_ids = array()) {
+	function _products_get_attributes($products_ids = []) {
 		return _class('shop__products_get_attributes', 'modules/shop/')->_products_get_attributes($products_ids);
 	}
 
-	function _get_select_attributes($atts = array()) {
+	function _get_select_attributes($atts = []) {
 		return _class('shop__get_select_attributes', 'modules/shop/')->_get_select_attributes($atts);
 	}
 
@@ -364,7 +364,7 @@ class yf_shop extends yf_module {
 		return _class('shop__site_map_items', 'modules/shop/')->_site_map_items($SITE_MAP_OBJ);
 	}
 
-	function _nav_bar_items($params = array()) {
+	function _nav_bar_items($params = []) {
 		return _class('shop__nav_bar_items', 'modules/shop/')->_nav_bar_items($params);
 	}
 
@@ -411,17 +411,17 @@ class yf_shop extends yf_module {
 		$A = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' AND active=1 ORDER BY is_default DESC');
 		$d = sprintf('%09s', $product_id);
 		foreach((array)$A as $img){
-	    	$replace = array(
+	    	$replace = [
 			    '{subdir2}' => substr($d, -6, 3),
 			    '{subdir3}' => substr($d, -3, 3),
 		    	'{product_id}' => $product_id,
 			    '{image_id}' => $img['id'],
-			);
-			$images[] = array(
+			];
+			$images[] = [
 				'big' 	=> str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_big.jpg'),
 				'thumb' => str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_thumb.jpg'),
 				'id'	=> $img['id'],
-			);
+			];
 		}
 		return $images;
 	}
@@ -439,11 +439,11 @@ class yf_shop extends yf_module {
 		if (!empty($media_host) && $media) {
 			$base_url = '//' . $media_host . '/';
 		}
-		$image = array(
+		$image = [
 			'big' 		=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_big.jpg',
 			'thumb' 	=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_thumb.jpg',
 			'default' 	=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'.jpg',
-		);
+		];
 		return $image;
 	}
 
@@ -451,14 +451,14 @@ class yf_shop extends yf_module {
 	* Hook to provide settigns from shop
 	*/
 	function _hook_settings() {
-		return array(
-			array('yes_no_box', 'shop__sms_order_send', 'Send SMS to user when new order arrives'),
-			array('yes_no_box', 'shop__sms_order_copy', 'Send SMS copy when new order arrives'),
-			array('text', 		'shop__sms_order_copy_to', 'Phone numbers to send SMS copy when new order arrives'),
-			array('yes_no_box', 'shop__emails_all_send', 'Send emails'),
-			array('yes_no_box', 'shop__emails_all_copy', 'Send email copies'),
-			array('text', 		'shop__emails_all_copy_to', 'Emails to copy all userland emails'),
-			array('text', 		'shop__currency', 'Currency to use in userland'),
-		);
+		return [
+			['yes_no_box', 'shop__sms_order_send', 'Send SMS to user when new order arrives'],
+			['yes_no_box', 'shop__sms_order_copy', 'Send SMS copy when new order arrives'],
+			['text', 		'shop__sms_order_copy_to', 'Phone numbers to send SMS copy when new order arrives'],
+			['yes_no_box', 'shop__emails_all_send', 'Send emails'],
+			['yes_no_box', 'shop__emails_all_copy', 'Send email copies'],
+			['text', 		'shop__emails_all_copy_to', 'Emails to copy all userland emails'],
+			['text', 		'shop__currency', 'Currency to use in userland'],
+		];
 	}
 }
