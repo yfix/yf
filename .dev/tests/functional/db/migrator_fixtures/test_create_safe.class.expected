@@ -7,66 +7,66 @@ class db_migration_%MIGRATION_NUMBER% extends yf_db_migrator {
 	*/
 	protected function up() {
 		$utils = $this->db->utils();
-		$utils->create_table('test_create_safe_1', array(
-			'fields' => array(
-				'id' => array(
+		$utils->create_table('test_create_safe_1', [
+			'fields' => [
+				'id' => [
 					'name' => 'id',
 					'type' => 'int',
 					'length' => 10,
 					'nullable' => false,
-				),
-			),
-			'indexes' => array(
-				'PRIMARY' => array(
+				],
+			],
+			'indexes' => [
+				'PRIMARY' => [
 					'name' => 'PRIMARY',
 					'type' => 'primary',
-					'columns' => array(
+					'columns' => [
 						'id' => 'id',
-					),
-				),
-			),
-			'foreign_keys' => array(
-				'fkey_prepare_sample_data' => array(
+					],
+				],
+			],
+			'foreign_keys' => [
+				'fkey_prepare_sample_data' => [
 					'name' => 'fkey_prepare_sample_data',
-					'columns' => array(
+					'columns' => [
 						'id' => 'id',
-					),
+					],
 					'ref_table' => 'test_create_safe_2',
-					'ref_columns' => array(
+					'ref_columns' => [
 						'id' => 'id',
-					),
+					],
 					'on_update' => 'RESTRICT',
 					'on_delete' => 'RESTRICT',
-				),
-			),
-			'options' => array(
+				],
+			],
+			'options' => [
 				'engine' => 'InnoDB',
 				'charset' => 'utf8',
-			),
-		));
-		$utils->create_table('test_create_safe_2', array(
-			'fields' => array(
-				'id' => array(
+			],
+		]);
+		$utils->create_table('test_create_safe_2', [
+			'fields' => [
+				'id' => [
 					'name' => 'id',
 					'type' => 'int',
 					'length' => 10,
 					'nullable' => false,
-				),
-			),
-			'indexes' => array(
-				'PRIMARY' => array(
+				],
+			],
+			'indexes' => [
+				'PRIMARY' => [
 					'name' => 'PRIMARY',
 					'type' => 'primary',
-					'columns' => array(
+					'columns' => [
 						'id' => 'id',
-					),
-				),
-			),
-			'options' => array(
+					],
+				],
+			],
+			'options' => [
 				'engine' => 'InnoDB',
 				'charset' => 'utf8',
-			),
-		));
+			],
+		]);
 	}
 
 	/**
