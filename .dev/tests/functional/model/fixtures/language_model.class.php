@@ -13,11 +13,11 @@ class language_model extends yf_model {
 		return 'name';
 	}
 	public function _rules() {
-		return array(
+		return [
 			'name, last_update' => 'required',
 			'name' => 'max_length[20]',
 			'language_id, name, last_update' => 'safe[on=search]',
-		);
+		];
 	}
 	public function films() {
 		return $this->has_many('film', 'language_id');

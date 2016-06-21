@@ -1,153 +1,153 @@
 <?php
-return array(
-	0 => array(
+return [
+	0 => [
 		'inventory_id' => '1',
 		'film_id' => '1',
 		'store_id' => '1',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	1 => array(
+	],
+	1 => [
 		'inventory_id' => '2',
 		'film_id' => '1',
 		'store_id' => '1',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	2 => array(
+	],
+	2 => [
 		'inventory_id' => '3',
 		'film_id' => '1',
 		'store_id' => '1',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	3 => array(
+	],
+	3 => [
 		'inventory_id' => '4',
 		'film_id' => '1',
 		'store_id' => '1',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	4 => array(
+	],
+	4 => [
 		'inventory_id' => '5',
 		'film_id' => '1',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	5 => array(
+	],
+	5 => [
 		'inventory_id' => '6',
 		'film_id' => '1',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	6 => array(
+	],
+	6 => [
 		'inventory_id' => '7',
 		'film_id' => '1',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	7 => array(
+	],
+	7 => [
 		'inventory_id' => '8',
 		'film_id' => '1',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	8 => array(
+	],
+	8 => [
 		'inventory_id' => '9',
 		'film_id' => '2',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	9 => array(
+	],
+	9 => [
 		'inventory_id' => '10',
 		'film_id' => '2',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	10 => array(
+	],
+	10 => [
 		'inventory_id' => '11',
 		'film_id' => '2',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	11 => array(
+	],
+	11 => [
 		'inventory_id' => '12',
 		'film_id' => '3',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	12 => array(
+	],
+	12 => [
 		'inventory_id' => '13',
 		'film_id' => '3',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	13 => array(
+	],
+	13 => [
 		'inventory_id' => '14',
 		'film_id' => '3',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	14 => array(
+	],
+	14 => [
 		'inventory_id' => '15',
 		'film_id' => '3',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	15 => array(
+	],
+	15 => [
 		'inventory_id' => '16',
 		'film_id' => '4',
 		'store_id' => '1',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	16 => array(
+	],
+	16 => [
 		'inventory_id' => '17',
 		'film_id' => '4',
 		'store_id' => '1',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	17 => array(
+	],
+	17 => [
 		'inventory_id' => '18',
 		'film_id' => '4',
 		'store_id' => '1',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	18 => array(
+	],
+	18 => [
 		'inventory_id' => '19',
 		'film_id' => '4',
 		'store_id' => '1',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	19 => array(
+	],
+	19 => [
 		'inventory_id' => '20',
 		'film_id' => '4',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	20 => array(
+	],
+	20 => [
 		'inventory_id' => '21',
 		'film_id' => '4',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	21 => array(
+	],
+	21 => [
 		'inventory_id' => '22',
 		'film_id' => '4',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	22 => array(
+	],
+	22 => [
 		'inventory_id' => '23',
 		'film_id' => '5',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	23 => array(
+	],
+	23 => [
 		'inventory_id' => '24',
 		'film_id' => '5',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-	24 => array(
+	],
+	24 => [
 		'inventory_id' => '25',
 		'film_id' => '5',
 		'store_id' => '2',
 		'last_update' => '2006-02-15 05:09:17',
-	),
-);
+	],
+];

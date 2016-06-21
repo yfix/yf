@@ -5,8 +5,8 @@ require_once dirname(__DIR__).'/db_setup.php';
 
 abstract class db_offline_abstract extends yf_unit_tests {
 	public static $db = null;
-	public static $_er = array();
-	public static $_bak = array();
+	public static $_er = [];
+	public static $_bak = [];
 	public static function setUpBeforeClass() {
 		self::$db = _class('db');
 		self::$_er = error_reporting();

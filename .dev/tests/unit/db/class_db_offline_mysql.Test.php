@@ -6,18 +6,18 @@ require_once __DIR__.'/db_offline_abstract.php';
  * @requires extension mysqli
  */
 class class_db_offline_mysql_test extends db_offline_abstract {
-	public $data_safe = array(
+	public $data_safe = [
 		'user_id'	=> 1,
 		'date'		=> '1234567890',
 		'total_sum'	=> '19,12',
 		'name'		=> 'name',
-	);
-	public $data_not_safe = array(
+	];
+	public $data_not_safe = [
 		'user_id'	=> 1,
 		'date'		=> '1234567890',
 		'total_sum'	=> '19,12',
 		'name'		=> 'name\'',
-	);
+	];
 	public static function _need_skip_test($name) {
 // TODO: really debug this and enable
 //		Something is going wrong, so currently disable some tests
@@ -99,7 +99,7 @@ class class_db_offline_mysql_test extends db_offline_abstract {
 		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` = \'1\'', self::db()->delete('table', 'id=1', $as_sql = true));
 		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` = \'1\'', self::db()->delete('table', 'id = 1', $as_sql = true));
 		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` > \'1\'', self::db()->delete('table', 'id > 1', $as_sql = true));
-		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` IN(1,2,3,4)', self::db()->delete('table', array(1,2,3,4), $as_sql = true));
+		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` IN(1,2,3,4)', self::db()->delete('table', [1,2,3,4], $as_sql = true));
 	}
 	public function test_es() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -109,12 +109,12 @@ class class_db_offline_mysql_test extends db_offline_abstract {
 		$this->assertEquals( '11.11', self::db()->es(11.11));
 		$this->assertEquals( '', self::db()->es(''));
 		$this->assertEquals( 'name\\\'', self::db()->es('name\''));
-		$this->assertEquals( array('name1\\\'', 'name2\\\''), self::db()->es(array('name1\'','name2\'')));
-		$this->assertEquals( array(array('name1\\\'', 'name2\\\'')), self::db()->es(array(array('name1\'','name2\''))));
-		$this->assertEquals( array(array(array(array(array('name1\\\''))), 'name2\\\'')), self::db()->es(array(array(array(array(array('name1\''))),'name2\''))));
-		$this->assertEquals( array(array(array(array(array('name1\\\''))), 'name2\\\'')), self::db()->escape(array(array(array(array(array('name1\''))),'name2\''))));
-		$this->assertEquals( array(array(array(array(array('name1\\\''))), 'name2\\\'')), self::db()->escape_string(array(array(array(array(array('name1\''))),'name2\''))));
-		$this->assertEquals( array(array(array(array(array('name1\\\''))), 'name2\\\'')), self::db()->real_escape_string(array(array(array(array(array('name1\''))),'name2\''))));
+		$this->assertEquals( ['name1\\\'', 'name2\\\''], self::db()->es(['name1\'','name2\'']));
+		$this->assertEquals( [['name1\\\'', 'name2\\\'']], self::db()->es([['name1\'','name2\'']]));
+		$this->assertEquals( [[[[['name1\\\'']]], 'name2\\\'']], self::db()->es([[[[['name1\'']]],'name2\'']]));
+		$this->assertEquals( [[[[['name1\\\'']]], 'name2\\\'']], self::db()->escape([[[[['name1\'']]],'name2\'']]));
+		$this->assertEquals( [[[[['name1\\\'']]], 'name2\\\'']], self::db()->escape_string([[[[['name1\'']]],'name2\'']]));
+		$this->assertEquals( [[[[['name1\\\'']]], 'name2\\\'']], self::db()->real_escape_string([[[[['name1\'']]],'name2\'']]));
 		$this->assertEquals( 'name\\\'', self::db()->es('name\''));
 		$this->assertEquals( 'name\\\'', self::db()->escape('name\''));
 		$this->assertEquals( 'name\\\'', self::db()->escape_string('name\''));

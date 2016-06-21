@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'staff',
-	'fields' => array(
-		'staff_id' => array(
+	'fields' => [
+		'staff_id' => [
 			'name' => 'staff_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`staff_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT',
-		),
-		'first_name' => array(
+		],
+		'first_name' => [
 			'name' => 'first_name',
 			'type' => 'varchar',
 			'length' => 45,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`first_name` varchar(45) NOT NULL',
-		),
-		'last_name' => array(
+		],
+		'last_name' => [
 			'name' => 'last_name',
 			'type' => 'varchar',
 			'length' => 45,
@@ -49,8 +49,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`last_name` varchar(45) NOT NULL',
-		),
-		'address_id' => array(
+		],
+		'address_id' => [
 			'name' => 'address_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -65,8 +65,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`address_id` smallint(5) unsigned NOT NULL',
-		),
-		'picture' => array(
+		],
+		'picture' => [
 			'name' => 'picture',
 			'type' => 'blob',
 			'length' => NULL,
@@ -81,8 +81,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`picture` blob',
-		),
-		'email' => array(
+		],
+		'email' => [
 			'name' => 'email',
 			'type' => 'varchar',
 			'length' => 50,
@@ -97,8 +97,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`email` varchar(50) DEFAULT NULL',
-		),
-		'store_id' => array(
+		],
+		'store_id' => [
 			'name' => 'store_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -113,8 +113,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`store_id` tinyint(3) unsigned NOT NULL',
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -129,8 +129,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`active` tinyint(1) NOT NULL DEFAULT \'1\'',
-		),
-		'username' => array(
+		],
+		'username' => [
 			'name' => 'username',
 			'type' => 'varchar',
 			'length' => 16,
@@ -145,8 +145,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`username` varchar(16) NOT NULL',
-		),
-		'password' => array(
+		],
+		'password' => [
 			'name' => 'password',
 			'type' => 'varchar',
 			'length' => 40,
@@ -161,8 +161,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`password` varchar(40) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -178,64 +178,64 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'staff_id' => 'staff_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`staff_id`)',
-		),
-		'idx_fk_store_id' => array(
+		],
+		'idx_fk_store_id' => [
 			'name' => 'idx_fk_store_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'store_id' => 'store_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_store_id` (`store_id`)',
-		),
-		'idx_fk_address_id' => array(
+		],
+		'idx_fk_address_id' => [
 			'name' => 'idx_fk_address_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'address_id' => 'address_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_address_id` (`address_id`)',
-		),
-	),
-	'foreign_keys' => array(
-		'fk_staff_address' => array(
+		],
+	],
+	'foreign_keys' => [
+		'fk_staff_address' => [
 			'name' => 'fk_staff_address',
-			'columns' => array(
+			'columns' => [
 				'address_id' => 'address_id',
-			),
+			],
 			'ref_table' => 'address',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'address_id' => 'address_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_staff_address` FOREIGN KEY (`address_id`) REFERENCES `address` (`address_id`) ON UPDATE CASCADE',
-		),
-		'fk_staff_store' => array(
+		],
+		'fk_staff_store' => [
 			'name' => 'fk_staff_store',
-			'columns' => array(
+			'columns' => [
 				'store_id' => 'store_id',
-			),
+			],
 			'ref_table' => 'store',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'store_id' => 'store_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_staff_store` FOREIGN KEY (`store_id`) REFERENCES `store` (`store_id`) ON UPDATE CASCADE',
-		),
-	),
-	'options' => array(
+		],
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

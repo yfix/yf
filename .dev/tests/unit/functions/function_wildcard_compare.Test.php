@@ -23,22 +23,22 @@ class function_wildcard_compare_test extends yf_unit_tests {
 		$this->assertTrue( wildcard_compare('on[ce]* are ?????? useful', 'once are always useful') );
 		$this->assertTrue( wildcard_compare('on[ce]* are ?????? useful', 'onccce are always useful') );
 
-		$this->assertTrue( wildcard_compare(array('one *', '* two *', 'three ???'), ' two ') );
-		$this->assertTrue( wildcard_compare(array('one *', '* two *', 'three ???'), 'one instance should match') );
-		$this->assertTrue( wildcard_compare(array('one *', '* two *', 'three ???'), 'try to match two two') );
-		$this->assertTrue( wildcard_compare(array('one *', '* two *', 'three ???'), 'three 123') );
-		$this->assertTrue( wildcard_compare(array('one *', '* two *', array('three ???')), 'three 123') );
-		$this->assertTrue( wildcard_compare(array('one *', '* two *', array(array('three ???'))), 'three 123') );
-		$this->assertTrue( wildcard_compare(array('one *', '* two *', array(array(array('three ???')))), 'three 123') );
-		$this->assertTrue( wildcard_compare(array(array(array(array('one *', '* two *', 'three ???')))), 'three 123') );
+		$this->assertTrue( wildcard_compare(['one *', '* two *', 'three ???'], ' two ') );
+		$this->assertTrue( wildcard_compare(['one *', '* two *', 'three ???'], 'one instance should match') );
+		$this->assertTrue( wildcard_compare(['one *', '* two *', 'three ???'], 'try to match two two') );
+		$this->assertTrue( wildcard_compare(['one *', '* two *', 'three ???'], 'three 123') );
+		$this->assertTrue( wildcard_compare(['one *', '* two *', ['three ???']], 'three 123') );
+		$this->assertTrue( wildcard_compare(['one *', '* two *', [['three ???']]], 'three 123') );
+		$this->assertTrue( wildcard_compare(['one *', '* two *', [[['three ???']]]], 'three 123') );
+		$this->assertTrue( wildcard_compare([[[['one *', '* two *', 'three ???']]]], 'three 123') );
 
-		$this->assertFalse( wildcard_compare(array('one *', '* two *', 'three ???'), '') );
-		$this->assertFalse( wildcard_compare(array('one *', '* two *', 'three ???'), 'one') );
-		$this->assertFalse( wildcard_compare(array('one *', '* two *', 'three ???'), 'two') );
-		$this->assertFalse( wildcard_compare(array('one *', '* two *', 'three ???'), 'three') );
-		$this->assertFalse( wildcard_compare(array('one *', '* two *', array('three ???')), 'three') );
-		$this->assertFalse( wildcard_compare(array('one *', '* two *', array(array('three ???'))), 'three') );
-		$this->assertFalse( wildcard_compare(array('one *', '* two *', array(array(array('three ???')))), 'three') );
-		$this->assertFalse( wildcard_compare(array(array(array(array('one *', '* two *', 'three ???')))), 'three') );
+		$this->assertFalse( wildcard_compare(['one *', '* two *', 'three ???'], '') );
+		$this->assertFalse( wildcard_compare(['one *', '* two *', 'three ???'], 'one') );
+		$this->assertFalse( wildcard_compare(['one *', '* two *', 'three ???'], 'two') );
+		$this->assertFalse( wildcard_compare(['one *', '* two *', 'three ???'], 'three') );
+		$this->assertFalse( wildcard_compare(['one *', '* two *', ['three ???']], 'three') );
+		$this->assertFalse( wildcard_compare(['one *', '* two *', [['three ???']]], 'three') );
+		$this->assertFalse( wildcard_compare(['one *', '* two *', [[['three ???']]]], 'three') );
+		$this->assertFalse( wildcard_compare([[[['one *', '* two *', 'three ???']]]], 'three') );
 	}
 }

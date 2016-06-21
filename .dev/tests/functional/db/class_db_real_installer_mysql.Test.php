@@ -65,15 +65,15 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$db_prefix = self::db()->DB_PREFIX;
 		$innodb_has_fulltext = self::_innodb_has_fulltext();
 
-		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+		$this->assertEquals( [], self::utils()->list_tables(self::db_name()) );
 
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		$parser->RAW_IN_RESULTS = true;
 
-		$tables_php = array();
-		$globs_php = array(
+		$tables_php = [];
+		$globs_php = [
 			'fixtures'		=> __DIR__.'/fixtures/*.php',
-		);
+		];
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), strlen('class_db_ddl_parser_mysql_test_tbl_'), -strlen('.sql'));
@@ -114,16 +114,16 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$innodb_has_fulltext = self::_innodb_has_fulltext();
 
 		self::utils()->truncate_database(self::db_name());
-		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+		$this->assertEquals( [], self::utils()->list_tables(self::db_name()) );
 
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		$parser->RAW_IN_RESULTS = false;
 
-		$tables_php = array();
-		$globs_php = array(
+		$tables_php = [];
+		$globs_php = [
 			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
 			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
-		);
+		];
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
@@ -167,16 +167,16 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$innodb_has_fulltext = self::_innodb_has_fulltext();
 
 		self::utils()->truncate_database(self::db_name());
-		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+		$this->assertEquals( [], self::utils()->list_tables(self::db_name()) );
 
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		$parser->RAW_IN_RESULTS = false;
 
-		$tables_php = array();
-		$globs_php = array(
+		$tables_php = [];
+		$globs_php = [
 			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
 			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
-		);
+		];
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
@@ -220,13 +220,13 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$innodb_has_fulltext = self::_innodb_has_fulltext();
 
 		self::utils()->truncate_database(self::db_name());
-		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+		$this->assertEquals( [], self::utils()->list_tables(self::db_name()) );
 
-		$tables_php = array();
-		$globs_php = array(
+		$tables_php = [];
+		$globs_php = [
 			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
 			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
-		);
+		];
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
@@ -238,10 +238,10 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 
 		$t1 = array_slice($tables_php, 0, 1, true);
 		$t2 = array_slice($tables_php, 1, 1, true);
-		$tables_php = array(
+		$tables_php = [
 			key($t1)	=> current($t1),
 			key($t2)	=> current($t2),
-		);
+		];
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$table = $db_prefix.$name;
 			$sql_php = $this->_fix_sql_php($sql_php);
@@ -287,13 +287,13 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$db_installer->SHARDING_BY_LANG		= true;
 
 		self::utils()->truncate_database(self::db_name());
-		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+		$this->assertEquals( [], self::utils()->list_tables(self::db_name()) );
 
-		$tables_php = array();
-		$globs_php = array(
+		$tables_php = [];
+		$globs_php = [
 			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
 			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
-		);
+		];
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
@@ -308,13 +308,13 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$t3 = array_slice($tables_php, 2, 1, true);
 		$t4 = array_slice($tables_php, 3, 1, true);
 		$t5 = array_slice($tables_php, 4, 1, true);
-		$tables_php = array(
+		$tables_php = [
 			key($t1)	=> current($t1),
 			key($t2).'_2020'	=> current($t2),
 			key($t3).'_2020_03' => current($t3),
 			key($t4).'_2020_03_28' => current($t4),
 			key($t5).'_ru' => current($t5),
-		);
+		];
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$table = $db_prefix.$name;
 			$sql_php = $this->_fix_sql_php($sql_php);
@@ -367,13 +367,13 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$db_prefix = self::db()->DB_PREFIX;
 
 		self::utils()->truncate_database(self::db_name());
-		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+		$this->assertEquals( [], self::utils()->list_tables(self::db_name()) );
 
-		$tables_php = array();
-		$globs_php = array(
+		$tables_php = [];
+		$globs_php = [
 			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
 			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
-		);
+		];
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
@@ -385,10 +385,10 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 
 		$t1 = array_slice($tables_php, 0, 1, true);
 		$t2 = array_slice($tables_php, 1, 1, true);
-		$tables_php = array(
+		$tables_php = [
 			key($t1)	=> current($t1),
 #			key($t2)	=> current($t2),
-		);
+		];
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$table = $db_prefix.$name;
 /*

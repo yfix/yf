@@ -36,30 +36,30 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 
 		$table1 = self::utils()->db->DB_PREFIX. $fname.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. $fname.'_2';
-		$data = array(
-			'fields' => array(
-				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
-			),
-			'indexes' => array(
-				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
-			),
-		);
+		$data = [
+			'fields' => [
+				'id'	=> ['name' => 'id', 'type' => 'int', 'length' => 10],
+			],
+			'indexes' => [
+				'PRIMARY' => ['name' => 'PRIMARY', 'type' => 'primary', 'columns' => ['id' => 'id']],
+			],
+		];
 		$fkey = 'fkey_'.__FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table(self::table_name($table1), $data) );
 		$this->assertNotEmpty( self::utils()->create_table(self::table_name($table2), $data) );
-		$expected = array(
+		$expected = [
 			'name' => $fkey,
-			'columns' => array('id' => 'id'),
+			'columns' => ['id' => 'id'],
 			'ref_table' => $table2,
-			'ref_columns' => array('id' => 'id'),
+			'ref_columns' => ['id' => 'id'],
 			'on_update' => 'RESTRICT',
 			'on_delete' => 'RESTRICT'
-		);
+		];
 		$this->assertNotEmpty( self::utils()->add_foreign_key(self::table_name($table1), $expected) );
 		$this->assertEquals( $expected, self::utils()->foreign_key_info(self::table_name($table1), $fkey) );
 	}
 	public function _load_fixtures_list($name) {
-		$out = array();
+		$out = [];
 		$dir = __DIR__.'/migrator_fixtures/';
 		$ext = '.sql_php';
 		foreach (glob($dir. $name. '*'. $ext) as $path) {
@@ -71,14 +71,14 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 	public function _load_fixture($name) {
 		$path = __DIR__.'/migrator_fixtures/'.$name.'.fixture';
 		if (!file_exists($path)) {
-			return array();
+			return [];
 		}
 		return include $path;
 	}
 	public function _load_expected($name) {
 		$path = __DIR__.'/migrator_fixtures/'.$name.'.expected';
 		if (!file_exists($path)) {
-			return array();
+			return [];
 		}
 		return include $path;
 	}
@@ -108,15 +108,15 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		$table1 = __FUNCTION__.'_1';
 		$table2 = __FUNCTION__.'_2';
 
-		$result = self::migrator()->compare(array('tables_sql_php' => array()));
-		$expected = array(
-			'tables_changed' => array(),
-			'tables_new' => array($table1 => $table1, $table2 => $table2),
-		);
+		$result = self::migrator()->compare(['tables_sql_php' => []]);
+		$expected = [
+			'tables_changed' => [],
+			'tables_new' => [$table1 => $table1, $table2 => $table2],
+		];
 		$this->assertEquals( $expected, $result );
 
 		foreach ((array)$this->_load_fixtures_list(__FUNCTION__) as $name => $path) {
-			$result = self::migrator()->compare(array('tables_sql_php' => $this->_load_fixture($name)));
+			$result = self::migrator()->compare(['tables_sql_php' => $this->_load_fixture($name)]);
 			$expected = $this->_load_expected($name);
 			$this->assertEquals( $expected, $result );
 		}
@@ -127,11 +127,11 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		$table1 = __FUNCTION__.'_1';
 		$table2 = __FUNCTION__.'_2';
 
-		$result = self::migrator()->generate(array('tables_sql_php' => array(), 'safe_mode' => true));
+		$result = self::migrator()->generate(['tables_sql_php' => [], 'safe_mode' => true]);
 		$expected = $this->_load_expected($table1.'_safe');
 		$this->assertEquals( $expected, $result );
 
-		$result = self::migrator()->generate(array('tables_sql_php' => array(), 'safe_mode' => false));
+		$result = self::migrator()->generate(['tables_sql_php' => [], 'safe_mode' => false]);
 		$expected = $this->_load_expected($table1.'_full');
 		$this->assertEquals( $expected, $result );
 	}
@@ -145,12 +145,12 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		$ext_sql = '.sql.php';
 		$dir_sql_php = 'share/db/sql_php/';
 		$ext_sql_php = '.sql_php.php';
-		$expected = array(
+		$expected = [
 			'sql:'.$table1		=> APP_PATH. $dir_sql. $table1. $ext_sql,
 			'sql_php:'.$table1	=> APP_PATH. $dir_sql_php. $table1. $ext_sql_php,
 			'sql:'.$table2		=> APP_PATH. $dir_sql. $table2. $ext_sql,
 			'sql_php:'.$table2	=> APP_PATH. $dir_sql_php. $table2. $ext_sql_php,
-		);
+		];
 		// Cleanup
 		foreach ($expected as $k => $file) {
 			if (file_exists($file)) {
@@ -159,7 +159,7 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 			$this->assertFileNotExists( $file );
 		}
 
-		$result = self::migrator()->dump(array('no_load_default' => true));
+		$result = self::migrator()->dump(['no_load_default' => true]);
 		$this->assertEquals( $expected, $result );
 		foreach ($expected as $k => $file) {
 			$this->assertFileExists( $file );
@@ -190,7 +190,7 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		}
 		$this->assertEmpty( $existing );
 
-		$mg_path = self::migrator()->create(array('tables_sql_php' => array(), 'safe_mode' => true, 'no_load_default' => true));
+		$mg_path = self::migrator()->create(['tables_sql_php' => [], 'safe_mode' => true, 'no_load_default' => true]);
 		$this->assertNotEmpty( $mg_path );
 		$this->assertFileExists( $mg_path );
 		$mg_contents = file_get_contents($mg_path);
@@ -216,7 +216,7 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		}
 		$this->assertEmpty( $existing );
 
-		$mg_path = self::migrator()->create(array('tables_sql_php' => array(), 'safe_mode' => false, 'no_load_default' => true));
+		$mg_path = self::migrator()->create(['tables_sql_php' => [], 'safe_mode' => false, 'no_load_default' => true]);
 		$this->assertNotEmpty( $mg_path );
 		$this->assertFileExists( $mg_path );
 		$mg_contents = file_get_contents($mg_path);
@@ -242,14 +242,14 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		}
 		$this->assertEmpty( $existing );
 
-		$mg_path = self::migrator()->create(array('tables_sql_php' => array(), 'safe_mode' => true, 'no_load_default' => true));
+		$mg_path = self::migrator()->create(['tables_sql_php' => [], 'safe_mode' => true, 'no_load_default' => true]);
 		$this->assertNotEmpty( $mg_path );
 		$this->assertFileExists( $mg_path );
 		$mg_name = substr(basename($mg_path), strlen('db_migration_'), -strlen('.class.php'));
-		$expected = array(
+		$expected = [
 			$mg_name => $mg_path,
-		);
-		$result = self::migrator()->_list(array('only_from_project' => true));
+		];
+		$result = self::migrator()->_list(['only_from_project' => true]);
 		$this->assertNotEmpty( $result );
 		$this->assertEquals( $expected, $result );
 	}
@@ -268,29 +268,29 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		}
 		$this->assertEmpty( $existing );
 
-		$mg_path = self::migrator()->create(array('tables_sql_php' => array(), 'safe_mode' => true, 'no_load_default' => true));
+		$mg_path = self::migrator()->create(['tables_sql_php' => [], 'safe_mode' => true, 'no_load_default' => true]);
 		$this->assertNotEmpty( $mg_path );
 		$this->assertFileExists( $mg_path );
 		$mg_name = substr(basename($mg_path), strlen('db_migration_'), -strlen('.class.php'));
 
 		self::utils()->truncate_database(self::db_name());
-		$expected = array('tables_changed' => array(), 'tables_new' => array());
-		$this->assertEquals( $expected, self::migrator()->compare(array('tables_sql_php' => array())) );
+		$expected = ['tables_changed' => [], 'tables_new' => []];
+		$this->assertEquals( $expected, self::migrator()->compare(['tables_sql_php' => []]) );
 
 		$apply_result = self::migrator()->apply($mg_name);
 		$this->assertNotEmpty( $apply_result );
 
-		$compare_result = self::migrator()->compare(array('tables_sql_php' => array()));
-		$expected = array(
-			'tables_changed' => array(),
-			'tables_new' => array($table1 => $table1, $table2 => $table2),
-		);
+		$compare_result = self::migrator()->compare(['tables_sql_php' => []]);
+		$expected = [
+			'tables_changed' => [],
+			'tables_new' => [$table1 => $table1, $table2 => $table2],
+		];
 		$this->assertEquals( $expected, $compare_result );
 
 		// More complex testing with dump and compare after apply
-		$dump_result = self::migrator()->dump(array('no_load_default' => true));
+		$dump_result = self::migrator()->dump(['no_load_default' => true]);
 		$this->assertNotEmpty( $dump_result );
-		$sql_php = array();
+		$sql_php = [];
 		foreach ((array)$dump_result as $name => $path) {
 			if (false === strpos($name, 'sql_php')) {
 				continue;
@@ -299,8 +299,8 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 			$sql_php[$table] = include $path;
 		}
 		$this->assertNotEmpty( $sql_php );
-		$expected = array('tables_changed' => array(), 'tables_new' => array());
-		$this->assertEquals( $expected, self::migrator()->compare(array('tables_sql_php' => $sql_php)) );
+		$expected = ['tables_changed' => [], 'tables_new' => []];
+		$this->assertEquals( $expected, self::migrator()->compare(['tables_sql_php' => $sql_php]) );
 	}
 	public function test_migration_commands_into_string() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }

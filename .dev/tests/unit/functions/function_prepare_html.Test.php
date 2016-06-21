@@ -25,10 +25,10 @@ class function_prepare_html_test extends yf_unit_tests {
 		$this->assertEquals('&lt;a href=&quot;#&quot; onclick=&quot;return confirm&#40;&#039;&#123;i18n_text&#125;&#039;&#41;&quot;&gt;Link&lt;/a&gt;', 
 			_prepare_html('<a href="#" onclick="return confirm(\'{i18n_text}\')">Link</a>'));
 
-		$this->assertEquals(array(), _prepare_html(array()));
-		$this->assertEquals(array('test'), _prepare_html(array('test')));
-		$this->assertEquals(array('k1' => '&lt;', 'k2' => '&gt;'), _prepare_html(array('k1' => '<', 'k2' => '>')));
-		$this->assertEquals(array('k1' => array(array('&lt;')), 'k2' => '&gt;'), _prepare_html(array('k1' => array(array('<')), 'k2' => '>')));
+		$this->assertEquals([], _prepare_html([]));
+		$this->assertEquals(['test'], _prepare_html(['test']));
+		$this->assertEquals(['k1' => '&lt;', 'k2' => '&gt;'], _prepare_html(['k1' => '<', 'k2' => '>']));
+		$this->assertEquals(['k1' => [['&lt;']], 'k2' => '&gt;'], _prepare_html(['k1' => [['<']], 'k2' => '>']));
 
 		$this->assertEquals('&gt;', _prepare_html('&gt;'));
 		$this->assertEquals('&#039;', _prepare_html('&#039;'));

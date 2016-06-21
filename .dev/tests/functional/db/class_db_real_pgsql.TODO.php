@@ -62,9 +62,9 @@ class class_db_real_pgsql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,1,1),(2,2,2),(3,3,3)') );
 		$this->assertEquals( 3, self::db()->affected_rows() );
 		$this->assertEquals( 3, self::db()->insert_id() );
-		$this->assertEquals( array('id' => 1), self::db()->get('SELECT id FROM '.$this->table_name($table)) );
-		$this->assertEquals( array(1 => array('id' => 1), 2 => array('id' => 2), 3 => array('id' => 3)), self::db()->get_all('SELECT id FROM '.$this->table_name($table)) );
-		$this->assertEquals( array(3 => array('id' => 3), 2 => array('id' => 2), 1 => array('id' => 1)), self::db()->get_all('SELECT id FROM '.$this->table_name($table).' ORDER BY id DESC') );
+		$this->assertEquals( ['id' => 1], self::db()->get('SELECT id FROM '.$this->table_name($table)) );
+		$this->assertEquals( [1 => ['id' => 1], 2 => ['id' => 2], 3 => ['id' => 3]], self::db()->get_all('SELECT id FROM '.$this->table_name($table)) );
+		$this->assertEquals( [3 => ['id' => 3], 2 => ['id' => 2], 1 => ['id' => 1]], self::db()->get_all('SELECT id FROM '.$this->table_name($table).' ORDER BY id DESC') );
 		$this->assertEmpty( self::db()->get('SELECT id FROM '.$this->table_name($table).' WHERE id > 9999') );
 		$this->assertEmpty( self::db()->get_all('SELECT id FROM '.$this->table_name($table).' WHERE id > 9999') );
 
@@ -73,12 +73,12 @@ class class_db_real_pgsql_test extends db_real_abstract {
 
 		$q = self::db()->query('SELECT id FROM '.$this->table_name($table));
 		$this->assertEquals( 3, self::db()->num_rows($q) );
-		$this->assertEquals( array('id' => 1), self::db()->fetch_assoc($q) );
+		$this->assertEquals( ['id' => 1], self::db()->fetch_assoc($q) );
 		$this->assertTrue( self::db()->free_result($q) );
 
-		$this->assertEquals( array('message' => '', 'code' => 0), self::db()->error() );
+		$this->assertEquals( ['message' => '', 'code' => 0], self::db()->error() );
 
-		$this->assertEquals( array(1), self::db()->fetch_row(self::db()->query('SELECT id FROM '.$this->table_name($table))) );
+		$this->assertEquals( [1], self::db()->fetch_row(self::db()->query('SELECT id FROM '.$this->table_name($table))) );
 		$obj = new stdClass();
 		$obj->id = 1;
 		$this->assertEquals( $obj, self::db()->fetch_object(self::db()->query('SELECT id FROM '.$this->table_name($table))) );

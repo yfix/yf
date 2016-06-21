@@ -6,7 +6,7 @@ class function_common_propose_url_from_name_test extends yf_unit_tests {
 	public function test_simple() {
 		$this->assertEquals('', common()->_propose_url_from_name());
 		$this->assertEquals('', common()->_propose_url_from_name(false));
-		$this->assertEquals('', common()->_propose_url_from_name(array()));
+		$this->assertEquals('', common()->_propose_url_from_name([]));
 		$this->assertEquals('', common()->_propose_url_from_name(''));
 		$this->assertEquals('', common()->_propose_url_from_name('.'));
 		$this->assertEquals('', common()->_propose_url_from_name('_'));

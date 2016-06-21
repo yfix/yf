@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'city',
-	'fields' => array(
-		'city_id' => array(
+	'fields' => [
+		'city_id' => [
 			'name' => 'city_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`city_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT',
-		),
-		'city' => array(
+		],
+		'city' => [
 			'name' => 'city',
 			'type' => 'varchar',
 			'length' => 50,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`city` varchar(50) NOT NULL',
-		),
-		'country_id' => array(
+		],
+		'country_id' => [
 			'name' => 'country_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -49,8 +49,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`country_id` smallint(5) unsigned NOT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -66,43 +66,43 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'city_id' => 'city_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`city_id`)',
-		),
-		'idx_fk_country_id' => array(
+		],
+		'idx_fk_country_id' => [
 			'name' => 'idx_fk_country_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'country_id' => 'country_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_country_id` (`country_id`)',
-		),
-	),
-	'foreign_keys' => array(
-		'fk_city_country' => array(
+		],
+	],
+	'foreign_keys' => [
+		'fk_city_country' => [
 			'name' => 'fk_city_country',
-			'columns' => array(
+			'columns' => [
 				'country_id' => 'country_id',
-			),
+			],
 			'ref_table' => 'country',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'country_id' => 'country_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_city_country` FOREIGN KEY (`country_id`) REFERENCES `country` (`country_id`) ON UPDATE CASCADE',
-		),
-	),
-	'options' => array(
+		],
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

@@ -14,12 +14,12 @@ class city_model extends yf_model {
 		return 'city';
 	}
 	public function _rules() {
-		return array(
+		return [
 			'city, country_id, last_update' => 'required',
 			'country_id' => 'integer',
 			'city' => 'max_length[50]',
 			'city_id, city, country_id, last_update' => 'safe[on=search]',
-		);
+		];
 	}
 	public function addresses() {
 		return $this->has_many('address', 'city_id');

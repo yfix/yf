@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'payment',
-	'fields' => array(
-		'payment_id' => array(
+	'fields' => [
+		'payment_id' => [
 			'name' => 'payment_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`payment_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT',
-		),
-		'customer_id' => array(
+		],
+		'customer_id' => [
 			'name' => 'customer_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`customer_id` smallint(5) unsigned NOT NULL',
-		),
-		'staff_id' => array(
+		],
+		'staff_id' => [
 			'name' => 'staff_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -49,8 +49,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`staff_id` tinyint(3) unsigned NOT NULL',
-		),
-		'rental_id' => array(
+		],
+		'rental_id' => [
 			'name' => 'rental_id',
 			'type' => 'int',
 			'length' => 11,
@@ -65,8 +65,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`rental_id` int(11) DEFAULT NULL',
-		),
-		'amount' => array(
+		],
+		'amount' => [
 			'name' => 'amount',
 			'type' => 'decimal',
 			'length' => 5,
@@ -81,8 +81,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`amount` decimal(5,2) NOT NULL',
-		),
-		'payment_date' => array(
+		],
+		'payment_date' => [
 			'name' => 'payment_date',
 			'type' => 'datetime',
 			'length' => NULL,
@@ -97,8 +97,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`payment_date` datetime NOT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -114,85 +114,85 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'payment_id' => 'payment_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`payment_id`)',
-		),
-		'idx_fk_staff_id' => array(
+		],
+		'idx_fk_staff_id' => [
 			'name' => 'idx_fk_staff_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'staff_id' => 'staff_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_staff_id` (`staff_id`)',
-		),
-		'idx_fk_customer_id' => array(
+		],
+		'idx_fk_customer_id' => [
 			'name' => 'idx_fk_customer_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'customer_id' => 'customer_id',
-			),
+			],
 			'raw' => 'KEY `idx_fk_customer_id` (`customer_id`)',
-		),
-		'fk_payment_rental' => array(
+		],
+		'fk_payment_rental' => [
 			'name' => 'fk_payment_rental',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'rental_id' => 'rental_id',
-			),
+			],
 			'raw' => 'KEY `fk_payment_rental` (`rental_id`)',
-		),
-	),
-	'foreign_keys' => array(
-		'fk_payment_customer' => array(
+		],
+	],
+	'foreign_keys' => [
+		'fk_payment_customer' => [
 			'name' => 'fk_payment_customer',
-			'columns' => array(
+			'columns' => [
 				'customer_id' => 'customer_id',
-			),
+			],
 			'ref_table' => 'customer',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'customer_id' => 'customer_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_payment_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`) ON UPDATE CASCADE',
-		),
-		'fk_payment_rental' => array(
+		],
+		'fk_payment_rental' => [
 			'name' => 'fk_payment_rental',
-			'columns' => array(
+			'columns' => [
 				'rental_id' => 'rental_id',
-			),
+			],
 			'ref_table' => 'rental',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'rental_id' => 'rental_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => 'SET NULL',
 			'raw' => 'CONSTRAINT `fk_payment_rental` FOREIGN KEY (`rental_id`) REFERENCES `rental` (`rental_id`) ON DELETE SET NULL ON UPDATE CASCADE',
-		),
-		'fk_payment_staff' => array(
+		],
+		'fk_payment_staff' => [
 			'name' => 'fk_payment_staff',
-			'columns' => array(
+			'columns' => [
 				'staff_id' => 'staff_id',
-			),
+			],
 			'ref_table' => 'staff',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'staff_id' => 'staff_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_payment_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`staff_id`) ON UPDATE CASCADE',
-		),
-	),
-	'options' => array(
+		],
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

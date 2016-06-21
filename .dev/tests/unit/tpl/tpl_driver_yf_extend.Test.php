@@ -5,10 +5,10 @@ require_once __DIR__.'/tpl__setup.php';
 class tpl_driver_yf_extend_test extends tpl_abstract {
 	public function test_extend() {
 		$old1 = tpl()->_custom_patterns_funcs;
-		tpl()->_custom_patterns_funcs = array();
+		tpl()->_custom_patterns_funcs = [];
 		$this->assertEmpty(tpl()->_custom_patterns_funcs);
 		$old2 = tpl()->_custom_patterns_index;
-		tpl()->_custom_patterns_index = array();
+		tpl()->_custom_patterns_index = [];
 		$this->assertEmpty(tpl()->_custom_patterns_index);
 
 		tpl()->add_function_callback('my_new_tpl_func', function($m, $r, $name, $_this) {

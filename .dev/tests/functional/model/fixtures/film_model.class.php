@@ -26,7 +26,7 @@ class film_model extends yf_model {
 		return 'title';
 	}
 	public function _rules() {
-		return array(
+		return [
 			'title, language_id, last_update' => 'required',
 			'language_id, original_language_id, rental_duration, length' => 'integer',
 			'title' => 'max_length[255]',
@@ -35,13 +35,13 @@ class film_model extends yf_model {
 			'description, special_features' => 'safe',
 			'description, release_year, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features' => 'default[NULL]',
 			'film_id, title, description, release_year, language_id, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features, last_update' => 'safe[on=search]',
-		);
+		];
 	}
 	public function _pivot_models() {
-		return array(
+		return [
 			'actors' => 'film_actor',
 			'categories' => 'film_category',
-		);
+		];
 	}
 	public function language() {
 		return $this->belongs_to('language', 'language_id');

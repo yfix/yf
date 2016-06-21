@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'film_category',
-	'fields' => array(
-		'film_id' => array(
+	'fields' => [
+		'film_id' => [
 			'name' => 'film_id',
 			'type' => 'smallint',
 			'length' => 5,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`film_id` smallint(5) unsigned NOT NULL',
-		),
-		'category_id' => array(
+		],
+		'category_id' => [
 			'name' => 'category_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`category_id` tinyint(3) unsigned NOT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -50,57 +50,57 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'film_id' => 'film_id',
 				'category_id' => 'category_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`film_id`,`category_id`)',
-		),
-		'fk_film_category_category' => array(
+		],
+		'fk_film_category_category' => [
 			'name' => 'fk_film_category_category',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'category_id' => 'category_id',
-			),
+			],
 			'raw' => 'KEY `fk_film_category_category` (`category_id`)',
-		),
-	),
-	'foreign_keys' => array(
-		'fk_film_category_category' => array(
+		],
+	],
+	'foreign_keys' => [
+		'fk_film_category_category' => [
 			'name' => 'fk_film_category_category',
-			'columns' => array(
+			'columns' => [
 				'category_id' => 'category_id',
-			),
+			],
 			'ref_table' => 'category',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'category_id' => 'category_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_film_category_category` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON UPDATE CASCADE',
-		),
-		'fk_film_category_film' => array(
+		],
+		'fk_film_category_film' => [
 			'name' => 'fk_film_category_film',
-			'columns' => array(
+			'columns' => [
 				'film_id' => 'film_id',
-			),
+			],
 			'ref_table' => 'film',
-			'ref_columns' => array(
+			'ref_columns' => [
 				'film_id' => 'film_id',
-			),
+			],
 			'on_update' => 'CASCADE',
 			'on_delete' => NULL,
 			'raw' => 'CONSTRAINT `fk_film_category_film` FOREIGN KEY (`film_id`) REFERENCES `film` (`film_id`) ON UPDATE CASCADE',
-		),
-	),
-	'options' => array(
+		],
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

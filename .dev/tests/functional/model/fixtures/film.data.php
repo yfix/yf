@@ -1,6 +1,6 @@
 <?php
-return array(
-	0 => array(
+return [
+	0 => [
 		'film_id' => '1',
 		'title' => 'ACADEMY DINOSAUR',
 		'description' => 'A Epic Drama of a Feminist And a Mad Scientist who must Battle a Teacher in The Canadian Rockies',
@@ -14,8 +14,8 @@ return array(
 		'rating' => 'PG',
 		'special_features' => 'Deleted Scenes,Behind the Scenes',
 		'last_update' => '2006-02-15 05:03:42',
-	),
-	1 => array(
+	],
+	1 => [
 		'film_id' => '2',
 		'title' => 'ACE GOLDFINGER',
 		'description' => 'A Astounding Epistle of a Database Administrator And a Explorer who must Find a Car in Ancient China',
@@ -29,8 +29,8 @@ return array(
 		'rating' => 'G',
 		'special_features' => 'Trailers,Deleted Scenes',
 		'last_update' => '2006-02-15 05:03:42',
-	),
-	2 => array(
+	],
+	2 => [
 		'film_id' => '3',
 		'title' => 'ADAPTATION HOLES',
 		'description' => 'A Astounding Reflection of a Lumberjack And a Car who must Sink a Lumberjack in A Baloon Factory',
@@ -44,8 +44,8 @@ return array(
 		'rating' => 'NC-17',
 		'special_features' => 'Trailers,Deleted Scenes',
 		'last_update' => '2006-02-15 05:03:42',
-	),
-	3 => array(
+	],
+	3 => [
 		'film_id' => '4',
 		'title' => 'AFFAIR PREJUDICE',
 		'description' => 'A Fanciful Documentary of a Frisbee And a Lumberjack who must Chase a Monkey in A Shark Tank',
@@ -59,8 +59,8 @@ return array(
 		'rating' => 'G',
 		'special_features' => 'Commentaries,Behind the Scenes',
 		'last_update' => '2006-02-15 05:03:42',
-	),
-	4 => array(
+	],
+	4 => [
 		'film_id' => '5',
 		'title' => 'AFRICAN EGG',
 		'description' => 'A Fast-Paced Documentary of a Pastry Chef And a Dentist who must Pursue a Forensic Psychologist in The Gulf of Mexico',
@@ -74,5 +74,5 @@ return array(
 		'rating' => 'G',
 		'special_features' => 'Deleted Scenes',
 		'last_update' => '2006-02-15 05:03:42',
-	),
-);
+	],
+];

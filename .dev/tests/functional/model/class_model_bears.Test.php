@@ -17,7 +17,7 @@ class class_model_bears_test extends db_real_abstract {
 
 		// unit_tests == name of the custom storage used here
 		// Ensure unit_tests will be on top of the storages list
-		main()->_custom_class_storages['*_model'] = array('unit_tests' => array(__DIR__.'/fixtures/')) + (array)main()->_custom_class_storages['*_model'];
+		main()->_custom_class_storages['*_model'] = ['unit_tests' => [__DIR__.'/fixtures/']] + (array)main()->_custom_class_storages['*_model'];
 	}
 	public static function tearDownAfterClass() {
 		self::utils()->truncate_database(self::db_name());
@@ -151,23 +151,23 @@ ND
 	*/
 	public function create_data() {
 		// bear 1 is named Lawly. She is extremely dangerous. Especially when hungry.
-		$bear_lawly = bear::create(array(
+		$bear_lawly = bear::create([
 			'name'         => 'Lawly',
 			'type'         => 'Grizzly',
 			'danger_level' => 8,
-		));
+		]);
 		// bear 2 is named Cerms. He has a loud growl but is pretty much harmless.
-		$bear_cerms = bear::create(array(
+		$bear_cerms = bear::create([
 			'name'         => 'Cerms',
 			'type'         => 'Black',
 			'danger_level' => 4,
-		));
+		]);
 		// bear 3 is named Adobot. He is a polar bear.
-		$bear_adobot = bear::create(array(
+		$bear_adobot = bear::create([
 			'name'         => 'Adobot',
 			'type'         => 'Polar',
 			'danger_level' => 3,
-		));
+		]);
 
 		$this->assertInternalType('object', $bear_lawly);
 		$this->assertInstanceOf('yf_model_result', $bear_lawly);
@@ -207,18 +207,18 @@ ND
 
 		// seed our fish table. our fish wont have names... because theyre going to be eaten
 		// we will use the variables we used to create the bears to get their id
-		$fish1 = fish::create(array(
+		$fish1 = fish::create([
 			'weight'  => '5',
 			'bear_id' => $bear_lawly->id
-		));
-		$fish2 = fish::create(array(
+		]);
+		$fish2 = fish::create([
 			'weight'  => '12',
 			'bear_id' => $bear_cerms->id
-		));
-		$fish3 = fish::create(array(
+		]);
+		$fish3 = fish::create([
 			'weight'  => '4',
 			'bear_id' => $bear_adobot->id
-		));
+		]);
 
 		$this->assertInternalType('object', $fish1);
 		$this->assertInstanceOf('yf_model_result', $fish1);
@@ -251,16 +251,16 @@ ND
 		$this->assertSame($bear_adobot->id, $fish3->bear_id);
 
 		// seed our trees table
-		$tree1 = tree::create(array(
+		$tree1 = tree::create([
 			'type'    => 'Redwood',
 			'age'     => '500',
 			'bear_id' => $bear_lawly->id
-		));
-		$tree2 = tree::create(array(
+		]);
+		$tree2 = tree::create([
 			'type'    => 'Oak',
 			'age'     => '400',
 			'bear_id' => $bear_lawly->id
-		));
+		]);
 
 		$this->assertInternalType('object', $tree1);
 		$this->assertInstanceOf('yf_model_result', $tree1);
@@ -287,14 +287,14 @@ ND
 		$this->assertSame($bear_lawly->id, $tree2->bear_id);
 
 		// we will create one picnic and apply all bears to this one picnic
-		$picnic_yellowstone = picnic::create(array(
+		$picnic_yellowstone = picnic::create([
 			'name'        => 'Yellowstone',
 			'taste_level' => '6'
-		));
-		$picnic_grand_canyon = picnic::create(array(
+		]);
+		$picnic_grand_canyon = picnic::create([
 			'name'        => 'Grand Canyon',
 			'taste_level' => '5'
-		));
+		]);
 
 		$this->assertInternalType('object', $picnic_yellowstone);
 		$this->assertInstanceOf('yf_model_result', $picnic_yellowstone);
@@ -329,29 +329,29 @@ ND
 		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
 
 		$this->assertEquals(
-			array('bear_id' => $bear_lawly->id, 'picnic_id' => $picnic_yellowstone->id),
+			['bear_id' => $bear_lawly->id, 'picnic_id' => $picnic_yellowstone->id],
 			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_lawly->id)->where('picnic_id', $picnic_yellowstone->id)->get()
 		);
 		$this->assertEquals(
-			array('bear_id' => $bear_lawly->id, 'picnic_id' => $picnic_grand_canyon->id),
+			['bear_id' => $bear_lawly->id, 'picnic_id' => $picnic_grand_canyon->id],
 			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_lawly->id)->where('picnic_id', $picnic_grand_canyon->id)->get()
 		);
 
 		$this->assertEquals(
-			array('bear_id' => $bear_cerms->id, 'picnic_id' => $picnic_yellowstone->id),
+			['bear_id' => $bear_cerms->id, 'picnic_id' => $picnic_yellowstone->id],
 			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_cerms->id)->where('picnic_id', $picnic_yellowstone->id)->get()
 		);
 		$this->assertEquals(
-			array('bear_id' => $bear_cerms->id, 'picnic_id' => $picnic_grand_canyon->id),
+			['bear_id' => $bear_cerms->id, 'picnic_id' => $picnic_grand_canyon->id],
 			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_cerms->id)->where('picnic_id', $picnic_grand_canyon->id)->get()
 		);
 
 		$this->assertEquals(
-			array('bear_id' => $bear_adobot->id, 'picnic_id' => $picnic_yellowstone->id),
+			['bear_id' => $bear_adobot->id, 'picnic_id' => $picnic_yellowstone->id],
 			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_adobot->id)->where('picnic_id', $picnic_yellowstone->id)->get()
 		);
 		$this->assertEquals(
-			array('bear_id' => $bear_adobot->id, 'picnic_id' => $picnic_grand_canyon->id),
+			['bear_id' => $bear_adobot->id, 'picnic_id' => $picnic_grand_canyon->id],
 			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_adobot->id)->where('picnic_id', $picnic_grand_canyon->id)->get()
 		);
 	}
@@ -360,11 +360,11 @@ ND
 	*/
 	public function create_models_alternate_methods() {
 		// Method 2
-		$bear_cool1 = model('bear')->create(array(
+		$bear_cool1 = model('bear')->create([
 			'name'         => 'Super Cool1',
 			'type'         => 'Black',
 			'danger_level' => 1
-		));
+		]);
 
 		// Method 3
 		// alternatively you can create an object, assign values, then save
@@ -425,11 +425,11 @@ ND
 		// ----------- querying models -----------
 
 		// find the bear or create it into the database
-		$bear_first1 = bear::first_or_create(array('name' => 'Lawly'));
-		$bear_first2 = bear::first_or_create(array('name' => 'Lawly2'));
+		$bear_first1 = bear::first_or_create(['name' => 'Lawly']);
+		$bear_first2 = bear::first_or_create(['name' => 'Lawly2']);
 		// find the bear or instantiate a new instance into the object we want
-		$bear_new1 = bear::first_or_new(array('name' => 'Cerms'));
-		$bear_new2 = bear::first_or_new(array('name' => 'Cerms2'));
+		$bear_new1 = bear::first_or_new(['name' => 'Cerms']);
+		$bear_new2 = bear::first_or_new(['name' => 'Cerms2']);
 		// get all the bears
 		$bears = bear::all();
 		// find a specific bear by id
@@ -477,20 +477,20 @@ ND
 
 		$this->assertInternalType('array', $bears);
 		$this->assertNotEmpty($bears);
-		$bears_array = array();
+		$bears_array = [];
 		foreach ((array)$bears as $k => $v) {
 			$bears_array[$k] = $v->get_data();
 			unset($bears_array[$k]['created_at']);
 			unset($bears_array[$k]['updated_at']);
 		}
-		$expected = array(
-			1 => array('id' => '1', 'name' => 'Lawly', 'type' => 'Grizzly', 'danger_level' => '8'),
-			2 => array('id' => '2', 'name' => 'Cerms', 'type' => 'Black', 'danger_level' => '4'),
-			3 => array('id' => '3', 'name' => 'Adobot', 'type' => 'Polar', 'danger_level' => '3'),
-			4 => array('id' => '4', 'name' => 'Super Cool1', 'type' => 'Black', 'danger_level' => '1'),
-			5 => array('id' => '5', 'name' => 'Super Cool2', 'type' => 'Black', 'danger_level' => '1'),
-			6 => array('id' => '6', 'name' => 'Lawly2', 'type' => '', 'danger_level' => '0'),
-		);
+		$expected = [
+			1 => ['id' => '1', 'name' => 'Lawly', 'type' => 'Grizzly', 'danger_level' => '8'],
+			2 => ['id' => '2', 'name' => 'Cerms', 'type' => 'Black', 'danger_level' => '4'],
+			3 => ['id' => '3', 'name' => 'Adobot', 'type' => 'Polar', 'danger_level' => '3'],
+			4 => ['id' => '4', 'name' => 'Super Cool1', 'type' => 'Black', 'danger_level' => '1'],
+			5 => ['id' => '5', 'name' => 'Super Cool2', 'type' => 'Black', 'danger_level' => '1'],
+			6 => ['id' => '6', 'name' => 'Lawly2', 'type' => '', 'danger_level' => '0'],
+		];
 		$this->assertEquals($expected, $bears_array);
 		$this->assertEquals($expected[2]['id'], $bear_id2->id);
 		$this->assertEquals($expected[2]['name'], $bear_id2->name);
@@ -582,17 +582,17 @@ ND
 	public function test_one_to_many() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
-		$trees = array();
+		$trees = [];
 		// find the trees lawly climbs
 		$lawly = bear::where('name', '=', 'Lawly')->first();
 		foreach ($lawly->trees as $tree) {
 			$trees[$tree->type] = $tree->age;
 		}
 
-		$expected = array(
+		$expected = [
 			'Redwood' => 500,
 			'Oak' => 400,
-		);
+		];
 		$this->assertEquals($expected, $trees);
 	}
 
@@ -606,7 +606,7 @@ ND
 		// get the picnics that Cerms goes to
 		$cerms = bear::where('name', '=', 'Cerms')->first();
 		// get the picnics and their names and taste levels
-		$taste_levels = array();
+		$taste_levels = [];
 		$cerms_picnics = $cerms->picnics;
 		foreach ($cerms_picnics as $picnic) {
 			$taste_levels[$picnic->name] = $picnic->taste_level;
@@ -622,16 +622,16 @@ ND
 		$this->assertInstanceOf('yf_model_result', $first_object);
 		$this->assertInstanceOf('yf_model', $first_object->_get_model());
 		$this->assertInstanceOf('picnic', $first_object->_get_model());
-		$expected = array(
+		$expected = [
 			'Yellowstone'	=> 6,
 			'Grand Canyon'	=> 5,
-		);
+		];
 		$this->assertEquals($expected, $taste_levels);
 
 		// get the bears that go to the Grand Canyon picnic
 		$grand_canyon = picnic::where('name', '=', 'Grand Canyon')->first();
 		// show the bears
-		$bears_in_grand_canyon = array();
+		$bears_in_grand_canyon = [];
 		$grand_canyon_bears = $grand_canyon->bears;
 		foreach ($grand_canyon_bears as $bear) {
 			$bears_in_grand_canyon[$bear->name] = $bear->type. ', danger: '.$bear->danger_level;
@@ -647,11 +647,11 @@ ND
 		$this->assertInstanceOf('yf_model_result', $first_object);
 		$this->assertInstanceOf('yf_model', $first_object->_get_model());
 		$this->assertInstanceOf('bear', $first_object->_get_model());
-		$expected = array(
+		$expected = [
 			'Lawly' => 'Grizzly, danger: 10',
 			'Cerms' => 'Black, danger: 4',
 			'Adobot' => 'Polar, danger: 3',
-		);
+		];
 		$this->assertEquals($expected, $bears_in_grand_canyon);
 	}
 
@@ -675,9 +675,9 @@ ND
 		$this->assertFalse((bool)self::db()->from('bears')->whereid(6)->get_one());
 
 		// delete multiple records 
-		$this->assertEquals(2, (int)self::db()->from('bears')->whereid(array(2,3))->count());
+		$this->assertEquals(2, (int)self::db()->from('bears')->whereid([2,3])->count());
 		bear::destroy(2,3);
-		$this->assertEquals(0, (int)self::db()->from('bears')->whereid(array(2,3))->count());
+		$this->assertEquals(0, (int)self::db()->from('bears')->whereid([2,3])->count());
 		$this->assertEquals(4, self::db()->from('bears')->whereid(4)->get_one());
 		$this->assertEquals(5, self::db()->from('bears')->whereid(5)->get_one());
 

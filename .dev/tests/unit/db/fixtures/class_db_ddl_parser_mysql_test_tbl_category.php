@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'category',
-	'fields' => array(
-		'category_id' => array(
+	'fields' => [
+		'category_id' => [
 			'name' => 'category_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`category_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT',
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 25,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`name` varchar(25) NOT NULL',
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'timestamp',
 			'length' => NULL,
@@ -50,22 +50,22 @@ return array(
 			'values' => NULL,
 			'on_update' => 'ON UPDATE CURRENT_TIMESTAMP',
 			'raw' => '`last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'category_id' => 'category_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`category_id`)',
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

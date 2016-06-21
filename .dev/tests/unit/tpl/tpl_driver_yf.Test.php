@@ -7,19 +7,19 @@ class tpl_driver_yf_test extends tpl_abstract {
 		$this->assertEquals('Hello world', self::_tpl( 'Hello world' ));
 	}
 	public function test_complex() {
-		$data = array(
+		$data = [
 			'a_variable' => 'var_value',
-			'navigation' => array(
-				array(
+			'navigation' => [
+				[
 					'href'		=> 'http://yfix.net/',
 					'caption'	=> 'Yf website',
-				),
-				array(
+				],
+				[
 					'href'		=> 'http://google.com/',
 					'caption'	=> 'Google',
-				),
-			),
-		);
+				],
+			],
+		];
 		$tpl_string = 
 '<!DOCTYPE html>
 <html>

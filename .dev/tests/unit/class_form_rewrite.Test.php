@@ -7,14 +7,14 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_form_rewrite_test extends yf_unit_tests {
 
-	private static $_bak_settings = array();
+	private static $_bak_settings = [];
 
 	public static function setUpBeforeClass() {
-		$_GET = array(
+		$_GET = [
 			'object' => 'dynamic',
 			'action' => 'unit_test_form',
 			'id' => 'id/with/slashes',
-		);
+		];
 		self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
 		$GLOBALS['CONF']['form2']['CONF_CSRF_PROTECTION'] = false;

@@ -18,13 +18,13 @@ class payment_model extends yf_model {
 		return 'amount';
 	}
 	public function _rules() {
-		return array(
+		return [
 			'customer_id, staff_id, amount, payment_date, last_update'	=> 'required',
 			'customer_id, staff_id, rental_id' => 'integer',
 			'amount' => 'max_length[5]',
 			'rental_id'	=> 'default[NULL]',
 			'payment_id, customer_id, staff_id, rental_id, amount, payment_date, last_update' => 'safe[on=search]',
-		);
+		];
 	}
 	public function rental() {
 		return $this->belongs_to('rental', 'rental_id');
