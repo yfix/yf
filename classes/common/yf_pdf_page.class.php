@@ -12,8 +12,8 @@ class yf_pdf_page {
 	var $PATH_TO_PDF = "uploads/pdf/";
 
 	// bug fix: mPDF reset locale setting
-	private $_LC_NUMERIC      = array();
-	private $_LC_NUMERIC_MPDF = array();
+	private $_LC_NUMERIC      = [];
+	private $_LC_NUMERIC_MPDF = [];
 
 	/**
 	*/

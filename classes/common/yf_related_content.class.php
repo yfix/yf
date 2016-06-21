@@ -10,13 +10,13 @@
 class yf_related_content {
 
 	/** @var List of words to skip when analyzing @conf_skip */
-	public $STOP_WORDS			= array('', 'a', 'an', 'the', 'and', 'of', 'i', 'to', 'is', 'in', 'with', 'for', 'as', 'that', 'on', 'at', 'this', 'my', 'was', 'our', 'it', 'you', 'we', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '10', 'about', 'after', 'all', 'almost', 'along', 'also', 'amp', 'another', 'any', 'are', 'area', 'around', 'available', 'back', 'be', 'because', 'been', 'being', 'best', 'better', 'big', 'bit', 'both', 'but', 'by', 'c', 'came', 'can', 'capable', 'control', 'could', 'course', 'd', 'dan', 'day', 'decided', 'did', 'didn', 'different', 'div', 'do', 'doesn', 'don', 'down', 'drive', 'e', 'each', 'easily', 'easy', 'edition', 'end', 'enough', 'even', 'every', 'example', 'few', 'find', 'first', 'found', 'from', 'get', 'go', 'going', 'good', 'got', 'gt', 'had', 'hard', 'has', 'have', 'he', 'her', 'here', 'how', 'if', 'into', 'isn', 'just', 'know', 'last', 'left', 'li', 'like', 'little', 'll', 'long', 'look', 'lot', 'lt', 'm', 'made', 'make', 'many', 'mb', 'me', 'menu', 'might', 'mm', 'more', 'most', 'much', 'name', 'nbsp', 'need', 'new', 'no', 'not', 'now', 'number', 'off', 'old', 'one', 'only', 'or', 'original', 'other', 'out', 'over', 'part', 'place', 'point', 'pretty', 'probably', 'problem', 'put', 'quite', 'quot', 'r', 're', 'really', 'results', 'right', 's', 'same', 'saw', 'see', 'set', 'several', 'she', 'sherree', 'should', 'since', 'size', 'small', 'so', 'some', 'something', 'special', 'still', 'stuff', 'such', 'sure', 'system', 't', 'take', 'than', 'their', 'them', 'then', 'there', 'these', 'they', 'thing', 'things', 'think', 'those', 'though', 'through', 'time', 'today', 'together', 'too', 'took', 'two', 'up', 'us', 'use', 'used', 'using', 've', 'very', 'want', 'way', 'well', 'went', 'were', 'what', 'when', 'where', 'which', 'while', 'white', 'who', 'will', 'would', 'your');
+	public $STOP_WORDS			= ['', 'a', 'an', 'the', 'and', 'of', 'i', 'to', 'is', 'in', 'with', 'for', 'as', 'that', 'on', 'at', 'this', 'my', 'was', 'our', 'it', 'you', 'we', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '10', 'about', 'after', 'all', 'almost', 'along', 'also', 'amp', 'another', 'any', 'are', 'area', 'around', 'available', 'back', 'be', 'because', 'been', 'being', 'best', 'better', 'big', 'bit', 'both', 'but', 'by', 'c', 'came', 'can', 'capable', 'control', 'could', 'course', 'd', 'dan', 'day', 'decided', 'did', 'didn', 'different', 'div', 'do', 'doesn', 'don', 'down', 'drive', 'e', 'each', 'easily', 'easy', 'edition', 'end', 'enough', 'even', 'every', 'example', 'few', 'find', 'first', 'found', 'from', 'get', 'go', 'going', 'good', 'got', 'gt', 'had', 'hard', 'has', 'have', 'he', 'her', 'here', 'how', 'if', 'into', 'isn', 'just', 'know', 'last', 'left', 'li', 'like', 'little', 'll', 'long', 'look', 'lot', 'lt', 'm', 'made', 'make', 'many', 'mb', 'me', 'menu', 'might', 'mm', 'more', 'most', 'much', 'name', 'nbsp', 'need', 'new', 'no', 'not', 'now', 'number', 'off', 'old', 'one', 'only', 'or', 'original', 'other', 'out', 'over', 'part', 'place', 'point', 'pretty', 'probably', 'problem', 'put', 'quite', 'quot', 'r', 're', 'really', 'results', 'right', 's', 'same', 'saw', 'see', 'set', 'several', 'she', 'sherree', 'should', 'since', 'size', 'small', 'so', 'some', 'something', 'special', 'still', 'stuff', 'such', 'sure', 'system', 't', 'take', 'than', 'their', 'them', 'then', 'there', 'these', 'they', 'thing', 'things', 'think', 'those', 'though', 'through', 'time', 'today', 'together', 'too', 'took', 'two', 'up', 'us', 'use', 'used', 'using', 've', 'very', 'want', 'way', 'well', 'went', 'were', 'what', 'when', 'where', 'which', 'while', 'white', 'who', 'will', 'would', 'your'];
 	/** @var @conf_skip */
 	public $_PATTERN_KWORDS	= "/\s*[\s+\.|\?|,|(|)|\-+|'|\\\"|=|;|&#0215;|\$|\/|:|{|}]\s*/i";
 	/** @var @conf_skip */
 	public $NUM_KEYWORDS		= 20;
 	/** @var @conf_skip */
-	public $DEF_PARAMS			= array(
+	public $DEF_PARAMS			= [
 		'WHAT_TO_RETURN'=> 'sql',
 		'FIELD_ID'		=> 'id',
 		'FIELD_DATE'	=> 'add_date',	// Set to -1 to disable
@@ -36,7 +36,7 @@ class yf_related_content {
 		'WEIGHT_ADD_1'	=> 1,
 		'WEIGHT_ADD_2'	=> 1,
 		'STPL_NAME'		=> 'system/common/related_content',
-	);
+	];
 
 	/**
 	* Get related content
@@ -55,7 +55,7 @@ class yf_related_content {
 	*	));
 	*
 	*/
-	function _process ($params = array()) {
+	function _process ($params = []) {
 		// THESE ARE REQUIRED!
 		$SOURCE_ARRAY	= $params['source_array'];
 		$TABLE_NAME		= $params['table_name'];
@@ -64,7 +64,7 @@ class yf_related_content {
 			trigger_error('RELATED: empty params[source_array]', E_USER_WARNING);
 			return false;
 		}
-		$WHAT_TO_RETURN	= $params['action'] && in_array($params['action'], array('sql', 'fetch', 'stpl')) ? $params['action'] : $this->DEF_PARAMS['WHAT_TO_RETURN'];
+		$WHAT_TO_RETURN	= $params['action'] && in_array($params['action'], ['sql', 'fetch', 'stpl']) ? $params['action'] : $this->DEF_PARAMS['WHAT_TO_RETURN'];
 
 		$FIELD_ID		= $params['field_id']		? _es($params['field_id'])	: $this->DEF_PARAMS['FIELD_ID'];
 		$FIELD_DATE		= $params['field_date']		? _es($params['field_date'])	: $this->DEF_PARAMS['FIELD_DATE'];
@@ -149,7 +149,7 @@ class yf_related_content {
 			return false;
 		}
 		// Prepare fields to return as string for SQL
-		$_tmp = array();
+		$_tmp = [];
 		foreach ((array)$FIELDS_RETURN as $k => $v) {
 			$_tmp[$k] = db()->escape_key($v);
 		}
@@ -200,7 +200,7 @@ class yf_related_content {
 			LIMIT ".$RECORDS_LIMIT;
 
 		// Special for the db_installer (allows to easily restore if not exists FULLTEXT INDEX on used fields)
-		$fulltext_needed_for = array();
+		$fulltext_needed_for = [];
 		if (strlen($keywords_text)) {
 			$fulltext_needed_for[] = $TABLE_NAME.".".$FIELD_TEXT;
 		}
@@ -216,8 +216,8 @@ class yf_related_content {
 		conf('fulltext_needed_for', $fulltext_needed_for);
 
 		// Try to pretty format SQL with missing lines
-		$sql = str_replace(array("\r", "\n\t\t\t\t\t\n", "\n\t\t\t\t\n", "\n\t\t\t\n"), "\n", $sql);
-		$sql = str_replace(array("\n\n\n", "\n\n"), "\n", $sql);
+		$sql = str_replace(["\r", "\n\t\t\t\t\t\n", "\n\t\t\t\t\n", "\n\t\t\t\n"], "\n", $sql);
+		$sql = str_replace(["\n\n\n", "\n\n"], "\n", $sql);
 		// RETURN RESULT HERE
 		if ($WHAT_TO_RETURN == 'sql') {
 			return $sql;
@@ -232,7 +232,7 @@ class yf_related_content {
 			}
 			// Get users infos
 			if ($FIELD_USER && $FIELD_USER != -1) {
-				$users_ids = array();
+				$users_ids = [];
 				foreach ((array)$data as $k => $v) {
 					if ($v[$FIELD_USER]) {
 						$users_ids[$v[$FIELD_USER]] = $v[$FIELD_USER];
@@ -243,7 +243,7 @@ class yf_related_content {
 				}
 			}
 			foreach ((array)$data as $k => $v) {
-				$data2[$k] = array(
+				$data2[$k] = [
 					'id'			=> intval($v[$FIELD_ID]),
 					'date'			=> _format_date($v[$FIELD_DATE]),
 					'title'			=> _prepare_html($v[$FIELD_TITLE]),
@@ -255,12 +255,12 @@ class yf_related_content {
 					'profile_link'	=> _profile_link($v[$FIELD_USER]),
 					'score'			=> _prepare_html($v[$FIELD_SCORE]),
 					'href'			=> process_url('./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.intval($v[$FIELD_ID])),
-				);
+				];
 			}
-			$replace = array(
+			$replace = [
 				'data'		=> $data2,
 				'source'	=> _prepare_html($SOURCE_ARRAY),
-			);
+			];
 			return tpl()->parse($STPL_NAME, $replace);
 		}
 	}
@@ -306,9 +306,9 @@ class yf_related_content {
 			return array_unique($fields);
 		}
 		if (!is_string($fields)) {
-			return array();
+			return [];
 		}
-		$fields_array = array();
+		$fields_array = [];
 		$fields = strtolower(preg_replace('/[^a-z0-9_,]/i', '', trim($fields)));
 		foreach ((array)explode(',', $fields) as $_item) {
 			$fields_array[$_item] = $_item;

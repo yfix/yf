@@ -5,13 +5,13 @@ class yf_form2_tinymce {
 	/**
 	* Embedding tinymce editor (http://www.tinymce.com/).
 	*/
-	function _tinymce_html($extra = array(), $replace = array(), $form) {
+	function _tinymce_html($extra = [], $replace = [], $form) {
 		if (!is_array($extra)) {
 			return '';
 		}
 		$params = $extra['tinymce'];
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		if ($form->_tinymce_scripts_included) {
 			return '';

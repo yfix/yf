@@ -11,15 +11,15 @@ class yf_oauth_driver_vimeo extends yf_oauth_driver1 {
 
 	/**
 	*/
-	function _get_user_info_for_auth($raw = array()) {
-		$user_info = array(
+	function _get_user_info_for_auth($raw = []) {
+		$user_info = [
 			'user_id'		=> $raw['user']['id'],
 #			'login'			=> $raw['login'],
 			'name'			=> $raw['user']['username'],
 #			'email'			=> $raw['email'],
 #			'avatar_url'	=> $raw['avatar_url'],
 #			'profile_url'	=> $raw['url'],
-		);
+		];
 		return $user_info;
 	}
 }

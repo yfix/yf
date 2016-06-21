@@ -28,7 +28,7 @@ class yf_tpl_driver_smarty {
 
 	/**
 	*/
-	function parse($name, $replace = array(), $params = array()) {
+	function parse($name, $replace = [], $params = []) {
 		$this->smarty->assign($replace);
 		if ($params['string']) {
 			return $this->smarty->fetch('string:'.$params['string']);

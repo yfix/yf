@@ -74,7 +74,7 @@ class yf_make_thumb {
 			}
 		}
 		if (empty($this->LIBS_PRIORITY)) {
-			$this->LIBS_PRIORITY = array('gd');
+			$this->LIBS_PRIORITY = ['gd'];
 		}
 		if (!empty($this->WATERMARK_POSITION)) {
 			if (strpos($this->WATERMARK_POSITION, '-')) {
@@ -179,7 +179,7 @@ class yf_make_thumb {
 					'user_agent'		=> $_SERVER['HTTP_USER_AGENT'],
 					'referer'			=> $_SERVER['HTTP_REFERER'],
 					'request_uri'		=> $_SERVER['REQUEST_URI'],
-					'env_data'			=> $this->DB_LOG_ENV ? serialize(array('_GET' => $_GET,'_POST' => $_POST)) : '',
+					'env_data'			=> $this->DB_LOG_ENV ? serialize(['_GET' => $_GET,'_POST' => $_POST]) : '',
 					'object'			=> $_GET['object'],
 					'action'			=> $_GET['action'],
 					'success'			=> intval((bool)$resize_success),

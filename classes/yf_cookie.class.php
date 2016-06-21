@@ -61,7 +61,7 @@ class yf_cookie {
 
 	/**
 	*/
-	function set($name, $value = '', $expire = 0, $path = null, $domain = null, $secure = null, $httponly = null, $params = array()) {
+	function set($name, $value = '', $expire = 0, $path = null, $domain = null, $secure = null, $httponly = null, $params = []) {
 		if (is_array($expire)) {
 			$params = (array)$params + $expire;
 			$expire = null;
@@ -76,7 +76,7 @@ class yf_cookie {
 
 	/**
 	*/
-	function del($name, $expire = 0, $path = null, $domain = null, $secure = null, $httponly = null, $params = array()) {
+	function del($name, $expire = 0, $path = null, $domain = null, $secure = null, $httponly = null, $params = []) {
 		return $this->set($name, '', $expire, $path, $domain, $secure, $httponly, $params);
 	}
 }

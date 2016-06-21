@@ -29,19 +29,19 @@ class yf_session_driver_db extends yf_session_driver {
 	function write($ses_id, $data) {
 		$session = db()->get('SELECT * FROM '.db('sessions').' WHERE id = "'._es($ses_id).'"');
 		if (is_array($session) && !empty($session)) {
-			db()->update_safe('sessions', array(
+			db()->update_safe('sessions', [
 				'user_id'	=> (int)$session['user_id'],
 				'user_group'=> (int)$session['user_group'],
 				'host_name'	=> common()->get_ip(),
 				'data'		=> $data,
 				'type'		=> MAIN_TYPE,
 				'last_time'	=> time(),
-			), 'id="'.db()->es($ses_id).'"');
+			], 'id="'.db()->es($ses_id).'"');
 		} elseif ($data || count($_COOKIE)) {
 			// Only save session data when when the browser sends a cookie.	This keeps
 			// crawlers out of session table. This improves speed up queries, reduces
 			// memory, and gives more useful statistics.
-			db()->insert_safe('sessions', array(
+			db()->insert_safe('sessions', [
 				'id'		=> $ses_id,
 				'user_id'	=> 0,
 				'user_group'=> 0,
@@ -50,7 +50,7 @@ class yf_session_driver_db extends yf_session_driver {
 				'host_name'	=> common()->get_ip(),
 				'data'		=> $data,
 				'type'		=> MAIN_TYPE,
-			));
+			]);
 		}
 		return true;
 	}

@@ -11,14 +11,14 @@ class yf_oauth_driver_odnoklassniki extends yf_oauth_driver2 {
 	protected $url_user = 'http://api.odnoklassniki.ru/fb.do';
 	public $scope = 'SET_STATUS;VALUABLE_ACCESS';
 	public $get_access_token_method = 'POST';
-	public $url_params_access_token = array(
+	public $url_params_access_token = [
 		'grant_type'	=> 'authorization_code',
-	);
+	];
 
 	/**
 	*/
-	function _get_user_info_for_auth($raw = array()) {
-		$user_info = array(
+	function _get_user_info_for_auth($raw = []) {
+		$user_info = [
 			'user_id'		=> $raw['uid'],
 #			'login'			=> $raw['login'],
 			'name'			=> $raw['name'],
@@ -28,7 +28,7 @@ class yf_oauth_driver_odnoklassniki extends yf_oauth_driver2 {
 			'birthday'		=> $raw['birthday'],
 			'locale'		=> $raw['locale'],
 			'gender'		=> $raw['gender'],
-		);
+		];
 		return $user_info;
 	}
 
@@ -47,12 +47,12 @@ class yf_oauth_driver_odnoklassniki extends yf_oauth_driver2 {
 		if (!$this->_storage_get('user')) {
 			$method = 'users.getCurrentUser';
 			$sign = md5('application_key='.$this->client_public. 'method='. $method. md5($access_token. $this->client_secret));
-			$url = $this->url_user.'?'.http_build_query(array(
+			$url = $this->url_user.'?'.http_build_query([
 				'access_token'		=> $access_token,
 				'application_key'	=> $this->client_public,
 				'method'			=> $method,
 				'sig'				=> $sign,
-			));
+			]);
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
 			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
@@ -60,7 +60,7 @@ class yf_oauth_driver_odnoklassniki extends yf_oauth_driver2 {
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			} else {
-				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
+				$this->_storage_set('user_info_request', ['result' => $result, 'response' => $response]);
 				$this->_storage_set('user', $result);
 			}
 		}

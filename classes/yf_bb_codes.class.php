@@ -20,7 +20,7 @@ class yf_bb_codes {
 	/** @var bool Try to highlight special text (SQL or HTML) */
 	public $USE_HIGHLIGHT		= true;
 	/** @var array CSS classes names @conf_skip */
-	public $CSS_CLASSES = array(
+	public $CSS_CLASSES = [
 		'show1'		=> 'forum1',
 		'show2'		=> 'forum2',
 		'quote'		=> 'forum_quote',
@@ -32,7 +32,7 @@ class yf_bb_codes {
 		'topic_u_2'	=> 'row4shaded',
 		'post_a_1'	=> 'post2',
 		'post_u_1'	=> 'post2shaded',
-	);
+	];
 	/** @var bool Filter 'bad words' or not */
 	public $FILTER_BAD_WORDS	= false;
 	/** @var bool Check for long words 'hacking' or not */
@@ -40,7 +40,7 @@ class yf_bb_codes {
 	/** @var bool Enable extra codes */
 	public $ENABLE_EXTRA_CODES = false;
 	/** @var array Default codes on/off */
-	public $DEFAULT_SHOW_CODES	= array(
+	public $DEFAULT_SHOW_CODES	= [
 		'font_family'	=> 0,
 		'font_size'		=> 1,
 		'font_color'	=> 1,
@@ -48,7 +48,7 @@ class yf_bb_codes {
 		'help_box'		=> 0,
 		'open_tags'		=> 0,
 		'youtube'		=> 0,
-	);
+	];
 	/** @var bool Check for unclosed bb codes every time when parsing */
 	public $CHECK_CODES_IF_CLOSED	= false;
 	/** @var bool */
@@ -75,7 +75,7 @@ class yf_bb_codes {
 			$GLOBALS['_smiles_array'] = main()->get_data('smilies');
 		}
 		$nofollow = $this->USE_NOFOLLOW_TAG ? ' rel="nofollow"' : '';
-		$this->_preg_bb_codes = array(
+		$this->_preg_bb_codes = [
 			'/\[url=[\"\']{0,1}([^\]]*?)[\"\']{0,1}\](.*?)\[\/url\]/i'=> '<a href="\1" target="blank"'.$nofollow.'>\2</a>',
 			'/\[url\](.*?)\[\/url\]/i'								=> '<a href="\1" target="blank"'.$nofollow.'>\1</a>',
 			'/\[img\]([^\[]*?)\[\/img\]/i'							=> '<div class="bb_remote_image"><img src="\1"></div>',
@@ -94,17 +94,17 @@ class yf_bb_codes {
 			'/\[hr\]/i'												=> '<hr />',
 			'/\[youtube\]([^\[]*?)\[\/youtube\]/i'					=> '<object width="425" height="350"><param name="movie" value="\1"></param><param name="wmode" value="transparent"></param><embed src="\1" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>',
 			'/\[spoiler[=]{0,1}[\"\']*([^\]]*?)[\"\']*\]([^\[]*?)\[\/spoiler\]/i'=> '<div class="spoiler_block"><div class="spoiler_head"><input type="button" class="toggle_button" value="+">\1&nbsp;</div><div class="spoiler_body">\2</div></div>',
-		);
+		];
 		if ($this->USE_CUSTOM_BB_CODES) {
 			$custom_codes = main()->get_data('custom_bbcode');
 			foreach ((array)$custom_codes as $_custom_tag => $_info) {
 				$_custom_tag = preg_quote($_custom_tag);
 				$_regex = '/\['.$_custom_tag.'[=]{0,1}([a-z0-9_-]+)'.($_info['useoption'] ? '{0,1}' : '{0}').'\](.*?)\[\/'.$_custom_tag.'\]/ims';
-				$this->_preg_bb_codes[$_regex] 	= str_replace(array('{option}', '{content}'), array('\1', '\2'), $_info['replace']);
+				$this->_preg_bb_codes[$_regex] 	= str_replace(['{option}', '{content}'], ['\1', '\2'], $_info['replace']);
 			}
 		}
 		// Prepare avail codes string (sort them by name desc)
-		$tmp_codes = array();
+		$tmp_codes = [];
 		foreach (explode('|', substr($this->_avail_codes, 1, -1)) as $_item) {
 			$tmp_codes[$_item] = $_item;
 		}
@@ -122,7 +122,7 @@ class yf_bb_codes {
 			return '';
 		}
 		$this->_preload_data();
-		$body = str_replace(array('<','>'), array('&lt;','&gt;'), $body);
+		$body = str_replace(['<','>'], ['&lt;','&gt;'], $body);
 		if ($this->FILTER_BAD_WORDS) {
 			if (!isset($GLOBALS['BAD_WORDS_ARRAY'])) {
 				$Q = db()->query('SELECT word FROM '.db('badwords').'');
@@ -161,13 +161,13 @@ class yf_bb_codes {
 						$smilies_as_image = true;
 					}
 					foreach ((array)$GLOBALS['_smiles_array'] as $smile_info) {
-						$replace = array(
+						$replace = [
 							'img_src'	=> WEB_PATH. /*tpl()->TPL_PATH. */$this->SMILIES_DIR. $smile_info['url'],
 							'img_alt'	=> _prepare_html($smile_info['emoticon']),
 							'css_class'	=> $this->CSS_CLASSES['smile'],
 							'text'		=> _prepare_html($smile_info['code']),
 							'as_image'	=> intval($smilies_as_image),
-						);
+						];
 						$this->_smilies_replace[$smile_info['code']] = tpl()->parse('system/smile_item', $replace);
 					}
 					$GLOBALS['_SMILIES_CACHE'] = $this->_smilies_replace;
@@ -189,20 +189,20 @@ class yf_bb_codes {
 
 	/**
 	*/
-	function _display_buttons ($input = array()) {
+	function _display_buttons ($input = []) {
 		$this->_preload_data();
 		$STPL_NAME = isset($input['stpl_name']) ? $input['stpl_name'] : __CLASS__.'/buttons';
 		$js_vars_code = '';
 		if (!$GLOBALS['_bb_codes_calls']++) {
-			$js_vars_code = tpl()->parse(__CLASS__.'/js_vars', array(
+			$js_vars_code = tpl()->parse(__CLASS__.'/js_vars', [
 				'max_length'			=> isset($input['max_length'])	? intval($input['max_length']) : 0,
 				'bb_codes_js_src'		=> !$GLOBALS['_bb_codes_calls'] ? WEB_PATH.'js/yf_bb_codes.js' : '',
 				'display_i18n_js_vars'	=> !$GLOBALS['_bb_codes_calls'] ? 1 : 0,
 				'emo_pop_link'			=> './?object=help&action=display_emo_pop',
 				'bb_pop_link'			=> './?object=help&action=display_bb_pop',
-			));
+			]);
 		}
-		return tpl()->parse($STPL_NAME, array(
+		return tpl()->parse($STPL_NAME, [
 			'display_font_family'	=> isset($input['font_family']) ? (int)((bool)$input['font_family'])	: $this->DEFAULT_SHOW_CODES['font_family'],
 			'display_font_size'		=> isset($input['font_size'])	? (int)((bool)$input['font_size'])		: $this->DEFAULT_SHOW_CODES['font_size'],
 			'display_font_color'	=> isset($input['font_color'])	? (int)((bool)$input['font_color'])		: $this->DEFAULT_SHOW_CODES['font_color'],
@@ -212,7 +212,7 @@ class yf_bb_codes {
 			'display_open_tags'		=> isset($input['open_tags'])	? (int)((bool)$input['open_tags'])		: $this->DEFAULT_SHOW_CODES['open_tags'],
 			'unique_id'				=> isset($input['unique_id'])	? _prepare_html($input['unique_id'])	: substr(md5(microtime(true).rand()), 0, 8),
 			'js_vars_code'			=> $js_vars_code,
-		));
+		]);
 	}
 
 	/**
@@ -221,7 +221,7 @@ class yf_bb_codes {
 	function _force_close_bb_codes ($text = '') {
 		$this->_preload_data();
 		$add_text = '';
-		$opened_codes = $closed_codes = array();
+		$opened_codes = $closed_codes = [];
 		// Try to find unclosed codes
 		if ($num_opening_bb_codes = preg_match_all('/\['.$this->_avail_codes.'[^\]]*?\]/i', $text, $m_opening)) {
 			foreach ((array)$m_opening[1] as $cur_code) {
@@ -269,7 +269,7 @@ class yf_bb_codes {
 		$output		= '';
 		$c			= 0;
 		$num_cols	= 0;
-		foreach (explode("\n", str_replace(array("\r", "<br \/>"), "", $text)) as $cur_line) {
+		foreach (explode("\n", str_replace(["\r", "<br \/>"], "", $text)) as $cur_line) {
 			$data = explode(",", $cur_line);
 			if ($c++ == 0) {
 				$output .= "<table border=\"1\" cellpadding=\"2\" cellspacing=\"1\" style=\"font: 11px verdana;border-collapse:collapse;border:1px solid gray;margin:5px;\"";

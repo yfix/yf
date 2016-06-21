@@ -25,7 +25,7 @@ class yf_tpl_driver_yf_compile {
 		$start = '<'.'?p'.'hp ';
 		$end = ' ?'.'>';
 
-		$patterns = array(
+		$patterns = [
 			// YF tpl comments
 			'/(\{\{--.*?--\}\})/ims' => function($m) use ($start, $end) {
 				return '';
@@ -143,13 +143,13 @@ class yf_tpl_driver_yf_compile {
 			'/(\{_debug_get_vars\(\)\})/i' => function($m) use ($start, $end) {
 				return $start. 'echo $this->_debug_get_vars($string);'. $end;
 			},
-		);
+		];
 		foreach ((array)$patterns as $pattern => $callback) {
 			$string = preg_replace_callback($pattern, $callback, $string);
 		}
 		// Move exec_last into very bottom of the template
 		if (false !== strpos($string, '/*exec_last_start*/')) {
-			$exec_lasts = array();
+			$exec_lasts = [];
 			$string = preg_replace_callback('~/\*exec_last_start\*/(.+?)/\*exec_last_end\*/~', function($m) use (&$exec_lasts) {
 				$exec_lasts[] = $m[0];
 				return '';
@@ -165,7 +165,7 @@ class yf_tpl_driver_yf_compile {
 	/**
 	* Compile given template into pure PHP code
 	*/
-	function _compile($name, $replace = array(), $string = "") {
+	function _compile($name, $replace = [], $string = "") {
 		$_time_start = microtime(true);
 
 		// For later check for templates changes
@@ -188,13 +188,13 @@ class yf_tpl_driver_yf_compile {
 		// Images and uploads paths compile
 		$web_path		= MAIN_TYPE_USER ? 'MEDIA_PATH' : 'ADMIN_WEB_PATH';
 		$images_path	= $web_path. '._class(\'tpl\')->TPL_PATH. _class(\'tpl\')->_IMAGES_PATH';
-		$to_replace = array(
+		$to_replace = [
 			'"images/'		=> '"'.$start. 'echo '.$images_path.';'. $end,
 			'\'images/'		=> '\''.$start. 'echo '.$images_path.';'. $end,
 			'"uploads/'		=> '"'.$start. 'echo MEDIA_PATH. _class(\'tpl\')->_UPLOADS_PATH;'. $end,
 			'\'uploads/'	=> '\''.$start. 'echo MEDIA_PATH. _class(\'tpl\')->_UPLOADS_PATH;'. $end,
 			'src="uploads/'	=> 'src="'.$start. 'echo '.$web_path.'._class(\'tpl\')->_UPLOADS_PATH;'. $end,
-		);
+		];
 		$string = str_replace(array_keys($to_replace), $to_replace, $string);
 
 		$string = '<'.'?p'.'hp if(!defined(\'YF_PATH\')) exit(); /* '.
@@ -247,7 +247,7 @@ class yf_tpl_driver_yf_compile {
 	*/
 	function _compile_prepare_cond ($cond = '', $for_right = false) {
 		$cond = trim($cond);
-		$_array_magick = array(
+		$_array_magick = [
 			'_key'	=> '$_k',
 			'_val'	=> '$_v',
 			'_num'	=> '$__f_counter',
@@ -256,7 +256,7 @@ class yf_tpl_driver_yf_compile {
 			'_last'	=> '($__f_counter == $__f_total)',
 			'_even'	=> '($__f_counter % 2)',
 			'_odd'	=> '(!($__f_counter % 2))',
-		);
+		];
 		$tmp_len = strlen($cond);
 		$tmp_first = substr($cond, 0, 1);
 		// Variable hint, starting from # or @
@@ -330,17 +330,17 @@ class yf_tpl_driver_yf_compile {
 	function _compile_if_funcs(array $m) {
 		$cond = trim($m['cond']);
 		$multiple_cond = 'AND';
-		if (in_array($cond, array('if_or','elseif_or'))) {
+		if (in_array($cond, ['if_or','elseif_or'])) {
 			$multiple_cond = 'OR';
 		}
-		if (in_array($cond, array('if','if_or','if_and'))) {
+		if (in_array($cond, ['if','if_or','if_and'])) {
 			$cond = 'if';
-		} elseif (in_array($cond, array('elseif','elseif_or','elseif_and'))) {
+		} elseif (in_array($cond, ['elseif','elseif_or','elseif_and'])) {
 			$cond = 'elseif';
 		}
 		$is_multiple = (strpos($m['left'], ',') !== false);
 		if ($is_multiple) {
-			$part_left = array();
+			$part_left = [];
 			foreach (explode(',',trim($m['left'])) as $v) {
 				$part_left[] = $this->_compile_prepare_cond($v);
 			}
@@ -349,7 +349,7 @@ class yf_tpl_driver_yf_compile {
 		}
 		$func = trim($m['func']);
 		// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
-		$funcs_map = array(
+		$funcs_map = [
 			'empty'		=> '_empty',
 			'not_ok'	=> '_empty',
 			'false' 	=> '_empty',
@@ -360,7 +360,7 @@ class yf_tpl_driver_yf_compile {
 			'ok'		=> 'not__empty',
 			'true'		=> 'not__empty',
 			'not_false'	=> 'not__empty',
-		);
+		];
 		if (isset($funcs_map[$func])) {
 			$func = $funcs_map[$func];
 		}
@@ -372,17 +372,17 @@ class yf_tpl_driver_yf_compile {
 		// Example of supported class: {if_validate:is_natural_no_zero(data)} good {/if}
 		if (false !== strpos($func, ':')) {
 			list($class_name, $_func) = explode(':', $func);
-			if (in_array($class_name, array('validate'))) {
+			if (in_array($class_name, ['validate'])) {
 				$func = '_class_safe("'.$class_name.'")->'.$_func;
 			} else {
 				return '';
 			}
 		// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
-		} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
+		} elseif (!function_exists($func) && !in_array($func, ['empty','isset'])) {
 			return '';
 		}
 		if ($is_multiple) {
-			$center_tmp = array();
+			$center_tmp = [];
 			foreach ($part_left as $v) {
 				$v = trim($v);
 				if (strlen($v)) {
@@ -409,7 +409,7 @@ class yf_tpl_driver_yf_compile {
 		$func = trim($m['func']);
 		$orig_arr_name = trim($m['key']);
 		$foreach_arr_name = $orig_arr_name;
-		$orig_arr_name = str_replace(array(',',';',' ','=','\'','"'), '__', $orig_arr_name);
+		$orig_arr_name = str_replace([',',';',' ','=','\'','"'], '__', $orig_arr_name);
 		$foreach_body = $m['body'];
 		// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
 		$no_rows_text = '';
@@ -423,12 +423,12 @@ class yf_tpl_driver_yf_compile {
 			return $start. 'echo $_v[\''.$m[1].'\'];'. $end;
 		}, $foreach_body);
 
-		$special_vars = array(
+		$special_vars = [
 			'{_key}'	=> $start. 'echo $_k;'. $end,
 			'{_val}'	=> $start. 'echo (is_array($_v) ? implode(",", $_v) : $_v);'. $end,
 			'{_num}'	=> $start. 'echo $__f_counter;'. $end,
 			'{_total}'	=> $start. 'echo $__f_total;'. $end,
-		);
+		];
 		$foreach_body = str_replace(array_keys($special_vars), $special_vars, $foreach_body);
 
 		$foreach_arr_tag = '';

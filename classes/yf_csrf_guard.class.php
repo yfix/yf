@@ -26,7 +26,7 @@ class yf_csrf_guard {
 
 	/**
 	*/
-	function configure($params = array()) {
+	function configure($params = []) {
 		if (isset($params['form_id'])) {
 			$this->FORM_ID = $params['form_id'];
 		}
@@ -108,7 +108,7 @@ class yf_csrf_guard {
 
 	/**
 	*/
-	function log_error($params = array()) {
+	function log_error($params = []) {
 		if (!$this->LOG_ERRORS) {
 			return false;
 		}
@@ -116,7 +116,7 @@ class yf_csrf_guard {
 		// slice 2 first elements (__FUNCTION__ and $this->_go) and leave only 5 more trace elements to save space
 		$trace = implode(PHP_EOL, array_slice(explode(PHP_EOL, $main->trace_string()), 2, 7));
 		$is_https = ($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL']);
-		return db()->insert_safe('log_csrf_errors', array(
+		return db()->insert_safe('log_csrf_errors', [
 			'form_id'		=> $params['form_id'],
 
 			'date'			=> date('Y-m-d H:i:s'),
@@ -159,7 +159,7 @@ class yf_csrf_guard {
 			'exec_time'		=> str_replace(',', '.', round(microtime(true) - $main->_time_start, 4)),
 			'num_dbq'		=> (int)db()->NUM_QUERIES,
 			'page_size'		=> (int)tpl()->_output_body_length,
-		));
+		]);
 	}
 
 	/**
@@ -170,7 +170,7 @@ class yf_csrf_guard {
 			return false;
 		}
 		$is = $this->is;
-		$data = array(
+		$data = [
 			'user_id'		=> (int)$_SESSION['user_id'],
 			'user_group'	=> (int)$_SESSION['user_group'],
 			'date'			=> time(),
@@ -204,7 +204,7 @@ class yf_csrf_guard {
 			'is_503'		=> (int)$is['is_503'],
 			'is_cache_on'	=> (int)$is['is_cache_on'],
 #			'is_mobile'		=> (int)$is['is_mobile'],
-		);
+		];
 		if (in_array('db', $this->LOG_DRIVER)) {
 			$sql = db()->insert_safe('log_exec', $data);
 			db()->_add_shutdown_query($sql);

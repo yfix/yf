@@ -7,7 +7,7 @@ class yf_ssh_tar {
 	/**
 	* Compress files to tar archive (local)
 	*/
-	function _local_make_tar ($files_list = array(), $archive_path = '') {
+	function _local_make_tar ($files_list = [], $archive_path = '') {
 		if (empty($files_list)) {
 			return false;
 		}

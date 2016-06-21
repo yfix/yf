@@ -4,17 +4,17 @@ class yf_rewrite {
 
 	public $DEFAULT_HOST = '';
 	public $DEFAULT_PORT = '';
-	public $special_links = array('../', './', '/');
+	public $special_links = ['../', './', '/'];
 	public $URL_ADD_BUILTIN_PARAMS = true;
-	public $PARSE_RULES = array();
-	public $BUILD_RULES = array();
-	public $allowed_url_params = array(
+	public $PARSE_RULES = [];
+	public $BUILD_RULES = [];
+	public $allowed_url_params = [
 		'utm_source',
 		'utm_medium',
 		'utm_content',
 		'utm_campaign',
 		'utm_term',
-	);
+	];
 
 	/**
 	* Catch missing method call
@@ -27,9 +27,9 @@ class yf_rewrite {
 	* YF module constructor
 	*/
 	function _init () {
-		$this->REWRITE_PATTERNS = array(
+		$this->REWRITE_PATTERNS = [
 			'yf' => _class('rewrite_pattern_yf', 'classes/rewrite/'),
-		);
+		];
 		if (!$this->DEFAULT_HOST) {
 			if (defined('WEB_DOMAIN') && strlen(WEB_DOMAIN)) {
 				$this->DEFAULT_HOST = WEB_DOMAIN;
@@ -47,11 +47,11 @@ class yf_rewrite {
 		if (!$this->DEFAULT_PORT) {
 			if (defined('WEB_PATH') && strlen(WEB_PATH)) {
 				$port = parse_url(WEB_PATH, PHP_URL_PORT);
-				if ($port && !in_array($port, array('80', '443'))) {
+				if ($port && !in_array($port, ['80', '443'])) {
 					$this->DEFAULT_PORT = $port;
 				}
 			}
-			if (!$this->DEFAULT_PORT && $_SERVER['SERVER_PORT'] && !in_array($_SERVER['SERVER_PORT'], array('80', '443'))) {
+			if (!$this->DEFAULT_PORT && $_SERVER['SERVER_PORT'] && !in_array($_SERVER['SERVER_PORT'], ['80', '443'])) {
 				$this->DEFAULT_PORT = $_SERVER['SERVER_PORT'];
 			}
 			if (!$this->DEFAULT_PORT) {
@@ -75,18 +75,18 @@ class yf_rewrite {
 		if (in_array(trim($body), $this->special_links)) {
 			$out = $this->_url('/');
 			if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
-				debug('rewrite[]', array(
+				debug('rewrite[]', [
 					'source'	=> $body,
 					'rewrited'	=> $out,
 					'trace'		=> $trace,
 					'exec_time'	=> (microtime(true) - $this->_time_start),
-				));
+				]);
 			}
 			return $out;
 		}
-		$links = $standalone ? array($body) : $this->_get_unique_links($body);
+		$links = $standalone ? [$body] : $this->_get_unique_links($body);
 		if (!empty($links) && is_array($links)) {
-			$r_array = array();
+			$r_array = [];
 			$has_special = false;
 			foreach ($links as $v) {
 				if (in_array($v, $this->special_links)) {
@@ -95,7 +95,7 @@ class yf_rewrite {
 				}
 				$url = parse_url($v);
 				parse_str($url['query'], $arr);
-				if (MAIN_TYPE_ADMIN && in_array($arr['task'], array('login','logout'))) {
+				if (MAIN_TYPE_ADMIN && in_array($arr['task'], ['login','logout'])) {
 					continue;
 				}
 				$replace = $this->_url($arr). (strlen($url['fragment']) ? '#'.$url['fragment'] : '');
@@ -116,12 +116,12 @@ class yf_rewrite {
 			}
 			if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
 				foreach ((array)$r_array as $s => $r) {
-					debug('rewrite[]', array(
+					debug('rewrite[]', [
 						'source'	=> $s,
 						'rewrited'	=> $r,
 						'trace'		=> $trace,
 						'exec_time'	=> (microtime(true) - $this->_time_start),
-					));
+					]);
 				}
 			}
 		}
@@ -134,7 +134,7 @@ class yf_rewrite {
 	/**
 	* Special processing for short links '/', './', '../'
 	*/
-	function _replace_special_links ($body = '', $links = array()) {
+	function _replace_special_links ($body = '', $links = []) {
 		$rewrite_to_url = $this->_url('/');
 		foreach ((array)$this->special_links as $link) {
 			if (!in_array($link, $links)) {
@@ -171,33 +171,33 @@ class yf_rewrite {
 			$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
 		}
 		// fix for rewrite tests
-		return str_replace(array('http:///', 'https:///'), './', $url);
+		return str_replace(['http:///', 'https:///'], './', $url);
 	}
 
 	/**
 	* Generate url for admin section, no matter from where was called
 	*/
-	function _url_admin ($params = array(), $host = '', $url_str = '') {
+	function _url_admin ($params = [], $host = '', $url_str = '') {
 		return $this->_url($params, $host, $url_str, $for_section = 'admin');
 	}
 
 	/**
 	* Generate url for user section, no matter from where was called
 	*/
-	function _url_user ($params = array(), $host = '', $url_str = '') {
+	function _url_user ($params = [], $host = '', $url_str = '') {
 		return $this->_url($params, $host, $url_str, $for_section = 'user');
 	}
 
 	/**
 	*/
-	function _url ($params = array(), $host = '', $url_str = '', $for_section = null) {
+	function _url ($params = [], $host = '', $url_str = '', $for_section = null) {
 		if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
 			$time_start = microtime(true);
 		}
 		if (!is_array($params) && is_string($params)) {
 			$url_str = trim($params);
 			$orig_url_str = $url_str;
-			$params = array();
+			$params = [];
 			$params['fragment'] = parse_url($url_str, PHP_URL_FRAGMENT);
 			if (strlen($params['fragment'])) {
 				$url_str = str_replace('#'.$params['fragment'], '', $url_str);
@@ -251,8 +251,8 @@ class yf_rewrite {
 			unset($params['_other']);
 		}
 		// Ensure correct order of params
-		$p = array();
-		foreach (array('object','action','id','page') as $name) {
+		$p = [];
+		foreach (['object','action','id','page'] as $name) {
 			if (isset($params[$name])) {
 				$p[$name] = $params[$name];
 			}
@@ -298,7 +298,7 @@ class yf_rewrite {
 		}
 		if (empty($params['port'])) {
 			$port = $port ?: $this->DEFAULT_PORT;
-			if ($port && !in_array($port, array('80', '443'))) {
+			if ($port && !in_array($port, ['80', '443'])) {
 				$params['port'] = $port;
 			}
 		}
@@ -306,7 +306,7 @@ class yf_rewrite {
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
 			$link = $this->REWRITE_PATTERNS['yf']->_build($params, $this);
 		} else {
-			$skip_url_params = array('host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path', 'is_full_url');
+			$skip_url_params = ['host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path', 'is_full_url'];
 			foreach ((array)$params as $k => $v) {
 				if (in_array($k, $skip_url_params)) {
 					continue;
@@ -322,7 +322,7 @@ class yf_rewrite {
 					$_host = $params['admin_host'];
 					$_port = $params['admin_port'] ?: '80';
 					$_path = $params['admin_path'] ?: '/admin/';
-					$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && !in_array($_port, array('80','443')) ? ':'.$_port : ''). ($_path ?: '/'). $u);
+					$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && !in_array($_port, ['80','443']) ? ':'.$_port : ''). ($_path ?: '/'). $u);
 				} else {
 					$link = ADMIN_WEB_PATH. $u;
 					if( $params[ 'is_full_url' ] ) {
@@ -334,14 +334,14 @@ class yf_rewrite {
 				$_host = $params['host'];
 				$_port = $params['port'] ?: '80';
 				$_path = $params['path'] ?: '/';
-				$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && !in_array($_port, array('80','443')) ? ':'.$_port : ''). ($_path ?: '/'). $u);
+				$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && !in_array($_port, ['80','443']) ? ':'.$_port : ''). ($_path ?: '/'). $u);
 			}
 			if ($params['fragment']) {
 				$link .= '#'.$params['fragment'];
 			}
 		}
         if (DEBUG_MODE) {
-			debug(__FUNCTION__.'[]', array(
+			debug(__FUNCTION__.'[]', [
 				'params'		=> $params,
 				'rewrited_link' => $link,
 				'host'			=> $params['host'],
@@ -349,7 +349,7 @@ class yf_rewrite {
 				'url_str'		=> $url_str,
 				'time'			=> microtime(true) - $time_start,
 				'trace' 		=> main()->trace_string(),
-			));
+			]);
 		}
 		return $link;
 	}
@@ -419,7 +419,7 @@ class yf_rewrite {
 	/**
 	*/
 	function _get_unique_links ($text = '', $for_iframe = false) {
-		$unique = array();
+		$unique = [];
 		$pattern = '/(action|location|href|src)[\s]{0,1}=[\s]{0,1}["\']?(\.\/\?[^"\'\>\s]+|\.\/)["\']?/ims';
 		preg_match_all($pattern, $text, $matches);
 		foreach ((array)$matches['2'] as $k => $v) {
@@ -433,35 +433,35 @@ class yf_rewrite {
 	/**
 	* Checks if two input urls are the same
 	*/
-	function is_urls_same($url1 = '', $url2 = '', $params = array()) {
+	function is_urls_same($url1 = '', $url2 = '', $params = []) {
 // TODO
 	}
 
 	/**
 	* Checks if given url is same as internal one
 	*/
-	function is_current_url($url = '', $params = array()) {
+	function is_current_url($url = '', $params = []) {
 // TODO
 	}
 
 	/**
 	* Generate current url, using internal params
 	*/
-	function get_current_url($params = array()) {
+	function get_current_url($params = []) {
 // TODO
 	}
 
 	/**
 	* Get user side home page url
 	*/
-	function get_user_home_url($params = array()) {
+	function get_user_home_url($params = []) {
 // TODO
 	}
 
 	/**
 	* Get admin side home page url
 	*/
-	function get_admin_home_url($params = array()) {
+	function get_admin_home_url($params = []) {
 // TODO
 	}
 }

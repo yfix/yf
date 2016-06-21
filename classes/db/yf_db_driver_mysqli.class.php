@@ -161,15 +161,15 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	*/
 	function error() {
 		if ($this->db_connect_id) {
-			return array(
+			return [
 				'message'	=> mysqli_error($this->db_connect_id),
 				'code'		=> mysqli_errno($this->db_connect_id),
-			);
+			];
 		} elseif ($this->_connect_error) {
-			return array(
+			return [
 				'message'	=> 'YF: Connect error: '.$this->_connect_error,
 				'code'		=> '9999',
-			);
+			];
 		}
 		return false;
 	}
@@ -237,7 +237,7 @@ class yf_db_driver_mysqli extends yf_db_driver {
 
 	/**
 	*/
-	function bind_params($stmt, $data = array()) {
+	function bind_params($stmt, $data = []) {
 		foreach ((array)$data as $k => $v) {
 			$var_type = substr($k, 0, 1);
 			$var_name = substr($k, 2);
@@ -256,7 +256,7 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	/**
 	* Query with preparing
 	*/
-	function query_fetch_prepared($query, $data = array()) {
+	function query_fetch_prepared($query, $data = []) {
 		$stmt = mysqli_prepare($this->db_connect_id, $query);
 		$this->bind_params($stmt, $data);
 		mysqli_stmt_execute($stmt);
@@ -276,7 +276,7 @@ class yf_db_driver_mysqli extends yf_db_driver {
 		if (!$q) {
 			return false;
 		}
-		$warnings = array();
+		$warnings = [];
 		// Example: Warning (1264): Data truncated for column 'Name' at row 1
 		while ($a = $this->fetch_assoc($q)) {
 			$warnings[] = $a;

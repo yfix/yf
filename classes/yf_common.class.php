@@ -44,7 +44,7 @@ class yf_common {
 		if (DEBUG_MODE || MAIN_TYPE_ADMIN) {
 			return false;
 		}
-		$body = array();
+		$body = [];
 		// override this method and insert your google analytics tracking code here and all other analytics codes too
 		return $body ? implode(PHP_EOL, $body) : '';
 	}
@@ -53,7 +53,7 @@ class yf_common {
 	/**
 	* Form2 chained wrapper
 	*/
-	function form2($replace = array(), $params = array()) {
+	function form2($replace = [], $params = []) {
 		$form = clone _class('form2');
 		return $form->chained_wrapper($replace, $params);
 	}
@@ -61,16 +61,16 @@ class yf_common {
 	/**
 	* Table2 chained wrapper
 	*/
-	function table2($data = array(), $params = array()) {
+	function table2($data = [], $params = []) {
 		$table = clone _class('table2');
 		return $table->chained_wrapper($data, $params);
 	}
 
 	/**
 	*/
-	function css_class_body($extra = array()) {
+	function css_class_body($extra = []) {
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$main = main();
 		$extra['css_framework']	= 'cssfw-'.strtolower(conf('css_framework'));
@@ -176,16 +176,16 @@ class yf_common {
 	*/
 	function bs_theme_html() {
 		$theme = $this->bs_current_theme();
-		return tpl()->parse('bs_theme_html', array('cur_theme' => $this->bs_current_theme()));
+		return tpl()->parse('bs_theme_html', ['cur_theme' => $this->bs_current_theme()]);
 	}
 
 	/**
 	*/
 	function bs_theme_changer() {
-		return tpl()->parse('bs_theme_changer', array(
+		return tpl()->parse('bs_theme_changer', [
 			'cur_theme' => $this->bs_current_theme(),
 			'themes'	=> $this->bs_get_avail_themes(),
-		));
+		]);
 	}
 
 	/**
@@ -216,7 +216,7 @@ class yf_common {
 	/**
 	* This function generate dividing table contents per pages
 	*/
-	function divide_pages($sql = '', $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = array()) {
+	function divide_pages($sql = '', $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = []) {
 		if (is_array($sql)) {
 			$sql_is_array = true;
 		} elseif (is_callable($sql)) {
@@ -243,7 +243,7 @@ class yf_common {
 	/**
 	* Send emails with attachments with DEBUG ability
 	*/
-	function send_mail($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3) {
+	function send_mail($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = [], $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = [], $priority = 3) {
 		return _class('send_mail')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
 	}
 
@@ -264,42 +264,42 @@ class yf_common {
 	/**
 	* This function generate select box with tree hierarhy inside
 	*/
-	function select_box($name, $values = array(), $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
+	function select_box($name, $values = [], $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		return _class('html')->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level);
 	}
 
 	/**
 	* Generate multi-select box
 	*/
-	function multi_select($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+	function multi_select($name, $values = [], $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
 		return _class('html')->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
 	* Alias for the multi_select
 	*/
-	function multi_select_box($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+	function multi_select_box($name, $values = [], $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
 		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
 	* Processing radio buttons
 	*/
-	function radio_box($box_name, $values = array(), $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0) {
+	function radio_box($box_name, $values = [], $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0) {
 		return _class('html')->radio_box($box_name, $values, $selected, $horizontal, $type, $add_str, $translate);
 	}
 
 	/**
 	* Simple check box
 	*/
-	function check_box($box_name, $values = array(), $selected = '', $add_str = '') {
+	function check_box($box_name, $values = [], $selected = '', $add_str = '') {
 		return _class('html')->check_box($box_name, $values, $selected, $add_str);
 	}
 
 	/**
 	* Processing many checkboxes at one time
 	*/
-	function multi_check_box($box_name, $values = array(), $selected = array(), $horizontal = true, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
+	function multi_check_box($box_name, $values = [], $selected = [], $horizontal = true, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
 		return _class('html')->multi_check_box($box_name, $values, $selected, $horizontal, $type, $add_str, $translate, $name_as_array);
 	}
 
@@ -352,9 +352,9 @@ class yf_common {
 		if ($timestamp == 0){
 			return 0;
 		}
-		$periods = array('year','month','day','hour','minute','second');
+		$periods = ['year','month','day','hour','minute','second'];
  		list($length_accur) = array_keys($periods, $accuracy);
-		$lengths = array(31536000, 2592000, 86400, 3600, 60, 1);
+		$lengths = [31536000, 2592000, 86400, 3600, 60, 1];
 		for ($i = 0; $timestamp > $lengths[$length_accur]; $i++) {
 			$value = intval($timestamp / $lengths[$i]);
 			if($value != 0) {
@@ -372,15 +372,15 @@ class yf_common {
 	/**
 	*/
 	function _get_time_diff_human($seconds, $delimiter = ' ', $need_return = false, $only_text = false, $need_closing_tag = false) {
-		$d = array();
-		$tr = array(
-			'years'		=> array('лет', 'год', 'года'),
-			'months'	=> array('месяцев', 'месяц', 'месяца'),
-			'days'		=> array('дней', 'день', 'дня'),
-			'hours'		=> array('часов', 'час', 'часа'),
-			'minutes'	=> array('минут', 'минута', 'минуты'),
-			'seconds'	=> array('секунд', 'секунда', 'секунды'),
-		);
+		$d = [];
+		$tr = [
+			'years'		=> ['лет', 'год', 'года'],
+			'months'	=> ['месяцев', 'месяц', 'месяца'],
+			'days'		=> ['дней', 'день', 'дня'],
+			'hours'		=> ['часов', 'час', 'часа'],
+			'minutes'	=> ['минут', 'минута', 'минуты'],
+			'seconds'	=> ['секунд', 'секунда', 'секунды'],
+		];
 		if ($need_return && is_array($need_return)) {
 			$check_format = true;
 		}
@@ -407,7 +407,7 @@ class yf_common {
 		if ($check_format && in_array('seconds', $need_return)) {
 			$d['seconds'] = $seconds;
 		}
-		$out = array();
+		$out = [];
 		foreach ($d as $name => $val) {
 			if (!$val) {
 				continue;
@@ -478,14 +478,14 @@ class yf_common {
 	/**
 	* Add variables that came from $_GET array
 	*/
-	function add_get_vars($add_skip = array()) {
+	function add_get_vars($add_skip = []) {
 		// Cache it
 		if (isset($this->_get_vars_cache)) {
 			return $this->_get_vars_cache;
 		}
 		$string = '';
 		$skip = array_merge(
-			array('task','object','action','section','id','post_id','language'),
+			['task','object','action','section','id','post_id','language'],
 			(array)$add_skip
 		);
 		foreach ((array)$_GET as $name => $value) {
@@ -571,10 +571,10 @@ class yf_common {
 	*/
 	function print_page($text = '') {
 		main()->no_graphics(true);
-		return print tpl()->parse('system/common/print_page', array(
+		return print tpl()->parse('system/common/print_page', [
 			'text'			=> $text,
 			'path_to_tpls'	=> WEB_PATH. tpl()->TPL_PATH,
-		));
+		]);
 	}
 
 	/**
@@ -608,28 +608,28 @@ class yf_common {
 	/**
 	* Create RSS 'on the fly' from the given content
 	*/
-	function rss_page($data = '', $params = array()) {
+	function rss_page($data = '', $params = []) {
 		return _class('rss_data', 'classes/common/')->show_rss_page($data, $params);
 	}
 
 	/**
 	* Get data from RSS feeds and return it as array
 	*/
-	function fetch_rss($params = array()) {
+	function fetch_rss($params = []) {
 		return _class('rss_data', 'classes/common/')->fetch_data($params);
 	}
 
 	/**
 	* Show empty page (useful for popup windows, etc)
 	*/
-	function show_empty_page($text = '', $params = array()) {
+	function show_empty_page($text = '', $params = []) {
 		main()->no_graphics(true);
-		$output = tpl()->parse('empty_page', array(
+		$output = tpl()->parse('empty_page', [
 			'text'			=> $text,
 			'title'			=> $params['title'],
 			'close_button'	=> (int)((bool)$params['close_button']),
 			'full_width'	=> (int)((bool)$params['full_width']),
-		));
+		]);
 		$output .= tpl()->_get_quick_page_info();
 		$output = tpl()->_apply_output_filters($output);
 		main()->_send_main_headers(strlen($output));
@@ -689,35 +689,35 @@ class yf_common {
 	/**
 	* Get remote file using CURL extension
 	*/
-	function get_remote_page($page_url = '', $cache_ttl = -1, $options = array(), &$requests_info = array()) {
+	function get_remote_page($page_url = '', $cache_ttl = -1, $options = [], &$requests_info = []) {
 		return _class('remote_files', 'classes/common/')->get_remote_page($page_url, $cache_ttl, $options, $requests_info);
 	}
 
 	/**
 	* Get several remote files at one time
 	*/
-	function multi_request($page_urls = array(), $options = array(), &$requests_info = array()) {
+	function multi_request($page_urls = [], $options = [], &$requests_info = []) {
 		return _class('remote_files', 'classes/common/')->_multi_request($page_urls, $options, $requests_info);
 	}
 
 	/**
 	* 'Safe' multi_request, which splits inpu array into smaller chunks to prevent server breaking
 	*/
-	function multi_request_safe($page_urls = array(), $options = array(), $chunk_size = 50) {
+	function multi_request_safe($page_urls = [], $options = [], $chunk_size = 50) {
 		return _class('remote_files', 'classes/common/')->multi_request_safe($page_urls, $options, $chunk_size);
 	}
 
 	/**
 	* Get several remote files sizes
 	*/
-	function multi_file_size($page_urls, $options = array(), $max_threads = 50) {
+	function multi_file_size($page_urls, $options = [], $max_threads = 50) {
 		return _class('remote_files', 'classes/common/')->multi_file_size($page_urls, $options, $max_threads);
 	}
 
 	/**
 	* Check if user is banned
 	*/
-	function check_user_ban($info = array(), $user_info = array()) {
+	function check_user_ban($info = [], $user_info = []) {
 		return _class('user_ban', 'classes/common/')->_check($info, $user_info);
 	}
 
@@ -742,13 +742,13 @@ class yf_common {
 	* Revert html special chars
 	*/
 	function unhtmlspecialchars($text = '') {
-		$trans_tbl = array(
+		$trans_tbl = [
 			'"' => '&quot;',
 			'&' => '&amp;',
 			'\'' => '&#039;',
 			'<' => '&lt;',
 			'>' => '&gt;',
-		);
+		];
 		$trans_tbl = array_flip($trans_tbl);
 		return strtr($string ,$trans_tbl);
 	}
@@ -772,16 +772,16 @@ class yf_common {
 	*
 	*/
 	function server_is_busy($msg = '') {
-		$replace = array(
+		$replace = [
 			'msg'	=> $msg,
-		);
+		];
 		return tpl()->parse('system/server_is_busy', $replace);
 	}
 
 	/**
 	* Get file using HTTP request (grabbed from drupal 5.1)
 	*/
-	function http_request($url, $headers = array(), $method = 'GET', $data = NULL, $retry = 3) {
+	function http_request($url, $headers = [], $method = 'GET', $data = NULL, $retry = 3) {
 		return _class('remote_files', 'classes/common/')->http_request($url, $headers, $method, $data, $retry);
 	}
 
@@ -830,7 +830,7 @@ class yf_common {
 			$_ip = preg_replace('/[^0-9\.\*]/', '', $_ip);
 			// Check as subnetwork with wildcard
 			if (false != strpos($_ip, '*')) {
-				$IP_MATCHED = preg_match('#'.str_replace(array('.', '*'), array('\\.', '.*'), $_ip).'#', $CUR_IP);
+				$IP_MATCHED = preg_match('#'.str_replace(['.', '*'], ['\\.', '.*'], $_ip).'#', $CUR_IP);
 			// Check as subnetwork in CIDR format
 			} elseif (false != strpos($_ip, '/')) {
 				$IP_MATCHED = common()->_is_ip_in_cidr($CUR_IP, $_ip);
@@ -928,7 +928,7 @@ class yf_common {
 	/**
 	* Creates tags cloud
 	*/
-	function _create_cloud($cloud_data = array(), $params = array()) {
+	function _create_cloud($cloud_data = [], $params = []) {
 		return _class('common_tags_cloud', 'classes/common/')->create($cloud_data, $params);
 	}
 
@@ -964,21 +964,21 @@ class yf_common {
 	/**
 	* Parse text using jevix
 	*/
-	function jevix_parse($text = '', $params = array()) {
+	function jevix_parse($text = '', $params = []) {
 		return _class('other_common', 'classes/common/')->jevix_parse($text, $params);
 	}
 
 	/**
 	* Parse text using jevix
 	*/
-	function text_typos($text = '', $params = array()) {
+	function text_typos($text = '', $params = []) {
 		return _class('text_typos', 'classes/')->process($text, $params);
 	}
 
 	/**
 	* Search related content based on params
 	*/
-	function related_content($params = array()) {
+	function related_content($params = []) {
 		return _class('related_content', 'classes/common/')->_process($params);
 	}
 
@@ -989,7 +989,7 @@ class yf_common {
 		if (empty($name)) {
 			return '';
 		}
-		$url = str_replace(array(';',',','.',':',' ','/'), '_', $name);
+		$url = str_replace([';',',','.',':',' ','/'], '_', $name);
 		$url = preg_replace('/[_-]{2,}/', '_', $url);
 		$url = trim(trim(trim($url), '_-'));
 
@@ -1016,7 +1016,7 @@ class yf_common {
 	* Simple trace without dumping whole objects
 	*/
 	function trace() {
-		$trace = array();
+		$trace = [];
 		foreach (debug_backtrace() as $k => $v) {
 			if (!$k) {
 				continue;
@@ -1084,7 +1084,7 @@ class yf_common {
 	/**
 	* strip_tags_smart
 	*/
-	function utf8_clean($text = '', $params = array()) {
+	function utf8_clean($text = '', $params = []) {
 		return _class('utf8_clean', 'classes/common/')->_do($text, $params);
 	}
 
@@ -1142,7 +1142,7 @@ class yf_common {
 	/**
 	* Threaded execution of the given object/action
 	*/
-	function threaded_exec($object, $action = 'show', $threads_params = array(), $max_threads = 10) {
+	function threaded_exec($object, $action = 'show', $threads_params = [], $max_threads = 10) {
 		return _class('threads')->threaded_exec($object, $action, $threads_params, $max_threads);
 	}
 
@@ -1199,14 +1199,14 @@ class yf_common {
 
 	/**
 	*/
-	function admin_wall_add($data = array()) {
+	function admin_wall_add($data = []) {
 		return _class('admin_methods')->admin_wall_add($data);
 	}
 
 	/**
 	*/
-	function user_wall_add($data = array()) {
-		return db()->insert('user_walls', db()->es(array(
+	function user_wall_add($data = []) {
+		return db()->insert('user_walls', db()->es([
 			'message'	=> isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
 			'user_id'	=> isset($data['user_id']) ? $data['user_id'] : (isset($data[1]) ? $data[1] : ''),
 			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[2]) ? $data[2] : (isset($_GET['id']) ? $_GET['id'] : '')),
@@ -1220,7 +1220,7 @@ class yf_common {
 			'site_id'	=> (int)main()->SITE_ID,
 			'read'		=> isset($data['read']) ? $data['read'] : 0,
 			'type'      => isset($data['type']) ? $data['type'] : '',
-		)));
+		]));
 	}
 
 	/**
@@ -1344,13 +1344,13 @@ class yf_common {
 	*/
 	function show_messages() {
 		if( !$this->is_messages() ) { return( false ); }
-		$body = array();
-		$level_to_style = array(
+		$body = [];
+		$level_to_style = [
 			'info'		=> 'alert alert-info',
 			'success'	=> 'alert alert-success',
 			'warning'	=> 'alert alert-warning',
 			'error'		=> 'alert alert-error alert-danger',
-		);
+		];
 		foreach ((array)$level_to_style as $level => $css_style) {
 			$messages = $_SESSION['permanent'][$level];
 			if (!is_array($messages) || !count($messages)) {
@@ -1372,7 +1372,7 @@ class yf_common {
 			return false;
 		}
 		if (!isset($this->USER_ERRORS)) {
-			$this->USER_ERRORS = array();
+			$this->USER_ERRORS = [];
 		}
 		if ($error_key) {
 			$this->USER_ERRORS[$error_key] = $text;
@@ -1408,7 +1408,7 @@ class yf_common {
 		if ($key) {
 			unset($this->USER_ERRORS[$key]);
 		} else {
-			$this->USER_ERRORS = array();
+			$this->USER_ERRORS = [];
 		}
 	}
 
@@ -1421,7 +1421,7 @@ class yf_common {
 			return t($cur_error_msg);
 		}
 		if (!isset($this->USER_ERRORS)) {
-			$this->USER_ERRORS = array();
+			$this->USER_ERRORS = [];
 		}
 		if (strlen($cur_error_msg)) {
 			$this->USER_ERRORS[] = $cur_error_msg;
@@ -1444,10 +1444,10 @@ class yf_common {
 		if (empty($items)) {
 			return '';
 		}
-		$replace = array(
+		$replace = [
 			'items' => $items,
 			'error' => 'error', // DO NOT REMOVE THIS!!! NEEDED TO AVOID INFINITE LOOP INSIDE TPL CLASS
-		);
+		];
 		return tpl()->parse('system/error_message', $replace);
 	}
 
@@ -1468,10 +1468,10 @@ class yf_common {
 			return false;
 		}
 		// Prepare template
-		$replace = array(
+		$replace = [
 			'text'	=> $error_msg,
 			'key'	=> $error_key,
-		);
+		];
 		return tpl()->parse('system/error_inline', $replace);
 	}
 
@@ -1491,7 +1491,7 @@ class yf_common {
 			no_graphics(true);
 			$body .= '<b>404 Not found</b><br />'. PHP_EOL. '<i>'.$msg.'</i>';
 			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
-			return print common()->show_empty_page($body, array('full_width' => 1));
+			return print common()->show_empty_page($body, ['full_width' => 1]);
 		}
 		return $this->_show_error_message($msg);
 	}
@@ -1512,7 +1512,7 @@ class yf_common {
 			no_graphics(true);
 			$body .= '<b>404 Not found</b><br />'. PHP_EOL. '<i>'.$msg.'</i>';
 			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
-			return print common()->show_empty_page($body, array('full_width' => 1));
+			return print common()->show_empty_page($body, ['full_width' => 1]);
 		}
 		return $this->_show_error_message($msg);
 	}
@@ -1527,10 +1527,10 @@ class yf_common {
 		$name_in_session = '_user_notices';
 		$items = $_SESSION[$name_in_session];
 		if (!$keep) {
-			$_SESSION[$name_in_session] = array();
+			$_SESSION[$name_in_session] = [];
 			unset($_SESSION[$name_in_session]);
 		}
-		return $items ? tpl()->parse('system/user_notices', array('items' => $items)) : '';
+		return $items ? tpl()->parse('system/user_notices', ['items' => $items]) : '';
 	}
 
 	/**

@@ -76,31 +76,31 @@ class yf_text_highlight {
 	* wrap style:code and quote table HTML generator
 	*/
 	function _wrap_style($type = 'quote', $extra = "") {
-		$used = array(
-		   'quote' => array(
+		$used = [
+		   'quote' => [
 				'title'		=> 'QUOTE',
 				'css_top'	=> 'quotetop',
 				'css_main'	=> 'quotemain',
-			),
-		   'code'  => array(
+			],
+		   'code'  => [
 				'title'		=> 'CODE',
 				'css_top'	=> 'codetop',
 				'css_main'	=> 'codemain',
-			),
-		   'sql'   => array(
+			],
+		   'sql'   => [
 				'title'		=> 'SQL',
 				'css_top'	=> 'sqltop',
 				'css_main'	=> 'sqlmain',
-			),
-		   'html'  => array(
+			],
+		   'html'  => [
 				'title'		=> 'HTML',
 				'css_top'	=> 'htmltop',
 				'css_main'	=> 'htmlmain',
-			),
-		);
-		return array(
+			],
+		];
+		return [
 			'START' => "<div class='".$used[$type]['css_top']."'>".$used[$type]['title']. $extra."</div><div class='".$used[$type]['css_main']."'>",
 			'END'   => "</div>"
-		);
+		];
 	}
 }

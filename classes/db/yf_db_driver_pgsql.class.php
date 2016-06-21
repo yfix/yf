@@ -58,15 +58,15 @@ class yf_db_driver_pgsql extends yf_db_driver {
 	*/
 	function error() {
 		if ($this->db_connect_id) {
-			return array(
+			return [
 				'message'	=> pg_last_error($this->db_connect_id),
 				'code'		=> '8888',
-			);
+			];
 		} elseif ($this->_connect_error) {
-			return array(
+			return [
 				'message'	=> 'YF: Connect error: '.$this->_connect_error,
 				'code'		=> '9999',
-			);
+			];
 		}
 		return false;
 	}

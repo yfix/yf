@@ -10,7 +10,7 @@
 class yf_client_utils {
 
 	/** @conf_skip */
-	private $CACHE = array();
+	private $CACHE = [];
 
 	/**
 	* Get user IP address
@@ -21,11 +21,11 @@ class yf_client_utils {
 		if (isset($this->CACHE[$cache_name])) {
 			return $this->CACHE[$cache_name];
 		}
-		$ip_storage = array(
+		$ip_storage = [
 			'HTTP_X_FORWARDED_FOR',
 			'HTTP_X_REAL_IP',
 			'REMOTE_ADDR'
-		);
+		];
 		$ignore_ips = $this->_get_ignore_ips();
 		foreach ((array)$ip_storage as $element) {
 			if (!empty($_SERVER[$element])) {
@@ -54,7 +54,7 @@ class yf_client_utils {
 	*/
 // TODO: add unit tests for this
 	function _check_ip($ip, $ignore_ips = '', $check_type = 'force') {
-		$masks = array(
+		$masks = [
 			'0.0.0.0/8',		// Current network (only valid as source address)	RFC 1700
 			'10.0.0.0/8',		// Private network	RFC 1918
 			'127.0.0.0/8',		// Loopback	RFC 3330
@@ -71,7 +71,7 @@ class yf_client_utils {
 			'224.0.0.0/4',		// Multicasts (former Class D network)	RFC 3171
 			'240.0.0.0/4',		// Reserved (former Class E network)	RFC 1700
 			'255.255.255.255/',	// Broadcast
-		);
+		];
 		$ip = preg_replace('/[^\d\.]/', ',',  $ip);	
 		$ips = explode(',',$ip);
 		foreach ((array)$ips as $item) {
@@ -162,11 +162,11 @@ class yf_client_utils {
 			$USER_BROWSER_VER	= 0;
 			$USER_BROWSER_AGENT	= 'OTHER';
 		}
-		$result = array(
+		$result = [
 			'USER_OS'			=> $USER_OS,
 			'USER_BROWSER_VER'	=> $USER_BROWSER_VER,
 			'USER_BROWSER_AGENT'=> $USER_BROWSER_AGENT,
-		);
+		];
 		return $result;
 	}
 }

@@ -5,11 +5,11 @@
 */
 class yf_core_api {
 
-	var $section_paths = array(
+	var $section_paths = [
 		'core'	=> 'classes/',
 		'user'	=> 'modules/',
 		'admin'	=> 'admin_modules/',
-	);
+	];
 	/** @security Project code needed to be defended from easy traversing */
 	var $SOURCE_ONLY_FRAMEWORK = false;
 
@@ -34,8 +34,8 @@ class yf_core_api {
 	* This method will search and call all found hook methods from active modules
 	* @example: call_hooks('settings', $params)
 	*/
-	function call_hooks($hook_name, &$params = array(), $section = 'all') {
-		$data = array();
+	function call_hooks($hook_name, &$params = [], $section = 'all') {
+		$data = [];
 		foreach ((array)$this->get_hooks($hook_name) as $module => $methods) {
 			foreach ((array)$methods as $method) {
 				$obj = $this->get_class_instance($module, $section);
@@ -48,7 +48,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_hooks($hook_name, $section = 'all') {
-		$hooks = array();
+		$hooks = [];
 		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
 			foreach ((array)$_hooks as $name => $method_name) {
 				if ($name == $hook_name) {
@@ -62,7 +62,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_available_hooks($section = 'all') {
-		$avail_hooks = array();
+		$avail_hooks = [];
 		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
 			foreach ((array)$_hooks as $name => $method_name) {
 				$avail_hooks[$name][$module] = $method_name;
@@ -75,7 +75,7 @@ class yf_core_api {
 	*/
 	function get_all_hooks($section = 'all', $hooks_prefix = '_hook_') {
 		$hooks_pl = strlen($hooks_prefix);
-		$hooks = array();
+		$hooks = [];
 		foreach ((array)$this->get_private_methods($section) as $module => $methods) {
 			foreach ((array)$methods as $method) {
 				if (substr($method, 0, $hooks_pl) != $hooks_prefix) {
@@ -97,7 +97,7 @@ class yf_core_api {
 	*/
 	function get_widgets($section = 'all', $prefix = 'widget__') {
 		$prefix_len = strlen($prefix);
-		$data = array();
+		$data = [];
 		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
 			foreach ((array)$_hooks as $name => $method_name) {
 				if (substr($name, 0, $prefix_len) != $prefix) {
@@ -124,7 +124,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_private_methods($section = 'all') {
-		$data = array();
+		$data = [];
 		foreach ((array)$this->get_methods($section) as $module => $methods) {
 			foreach ((array)$methods as $method) {
 				if ($method[0] == '_') {
@@ -138,7 +138,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_public_methods($section = 'all') {
-		$data = array();
+		$data = [];
 		foreach ((array)$this->get_methods($section) as $module => $methods) {
 			foreach ((array)$methods as $method) {
 				if ($method[0] != '_') {
@@ -152,7 +152,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_methods($section = 'all') {
-		$methods = array();
+		$methods = [];
 		foreach ((array)$this->get_classes($section) as $_section => $modules) {
 			foreach ((array)$modules as $module) {
 				$obj = $this->get_class_instance($module, $_section);
@@ -170,7 +170,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_properties($section = 'all') {
-		$props = array();
+		$props = [];
 		foreach ((array)$this->get_classes($section) as $_section => $modules) {
 			foreach ((array)$modules as $module) {
 				$obj = $this->get_class_instance($module, $_section);
@@ -188,18 +188,18 @@ class yf_core_api {
 	/**
 	*/
 	function get_classes($section = 'all') {
-		if (!in_array($section, array('all', 'user', 'admin', 'core'))) {
+		if (!in_array($section, ['all', 'user', 'admin', 'core'])) {
 			$section = 'all';
 		}
-		$modules = array();
-		if (in_array($section, array('all', 'core'))) {
-			$modules['core'] = $this->get_classes_by_params(array('folder' => $this->section_paths['core']));
+		$modules = [];
+		if (in_array($section, ['all', 'core'])) {
+			$modules['core'] = $this->get_classes_by_params(['folder' => $this->section_paths['core']]);
 		}
-		if (in_array($section, array('all', 'user'))) {
-			$modules['user'] = $this->get_classes_by_params(array('folder' => $this->section_paths['user']));
+		if (in_array($section, ['all', 'user'])) {
+			$modules['user'] = $this->get_classes_by_params(['folder' => $this->section_paths['user']]);
 		}
-		if (in_array($section, array('all', 'admin'))) {
-			$modules['admin'] = $this->get_classes_by_params(array('folder' => $this->section_paths['admin']));
+		if (in_array($section, ['all', 'admin'])) {
+			$modules['admin'] = $this->get_classes_by_params(['folder' => $this->section_paths['admin']]);
 		}
 		return $modules;
 	}
@@ -207,7 +207,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_submodules($section = 'all') {
-		$data = array();
+		$data = [];
 		foreach ($this->section_paths as $_section => $folder) {
 			if ($section != 'all' && $section != $_section) {
 				continue;
@@ -216,9 +216,9 @@ class yf_core_api {
 			if ($_section == 'core') {
 				continue;
 			}
-			$_data = array();
-			$paths = array();
-			$this->get_classes_by_params(array('folder' => $folder.'*/'), $paths);
+			$_data = [];
+			$paths = [];
+			$this->get_classes_by_params(['folder' => $folder.'*/'], $paths);
 			foreach ((array)$paths as $name => $_paths) {
 				if (!is_array($_paths)) {
 					continue;
@@ -256,14 +256,14 @@ class yf_core_api {
 	*/
 	function get_function_source($name) {
 		$r = new ReflectionFunction($name);
-		$info = array(
+		$info = [
 			'name'		=> $r->getName(),
 			'file'		=> $r->getFileName(),
 			'line_start'=> $r->getStartLine(),
 			'line_end' 	=> $r->getEndline(),
 			'params'	=> $r->getParameters(),
 			'comment'	=> $r->getDocComment(),
-		);
+		];
 		$info['source'] = $this->get_file_slice($info['file'], $info['line_start'], $info['line_end']);
 		return $info;
 	}
@@ -510,7 +510,7 @@ class yf_core_api {
 	function get_assets() {
 // TODO: other folders, plugins
 		$folder = 'share/assets/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+		return $this->get_classes_by_params(['folder' => $folder, 'suffix' => '.php']);
 	}
 
 	/**
@@ -518,63 +518,63 @@ class yf_core_api {
 	function get_services() {
 // TODO: other folders, plugins
 		$folder = 'share/services/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+		return $this->get_classes_by_params(['folder' => $folder, 'suffix' => '.php']);
 	}
 
 	/**
 	*/
 	function get_assets_filters() {
 		$folder = 'classes/assets/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.class.php'));
+		return $this->get_classes_by_params(['folder' => $folder, 'suffix' => '.class.php']);
 	}
 
 	/**
 	*/
 	function get_event_listeners() {
 		$folder = 'share/events/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+		return $this->get_classes_by_params(['folder' => $folder, 'suffix' => '.php']);
 	}
 
 	/**
 	*/
 	function get_cron_jobs() {
 		$folder = 'share/cron_jobs/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+		return $this->get_classes_by_params(['folder' => $folder, 'suffix' => '.php']);
 	}
 
 	/**
 	*/
 	function get_fast_init() {
 		$folder = 'share/fast_init/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php', 'prefix' => 'func__fast_'));
+		return $this->get_classes_by_params(['folder' => $folder, 'suffix' => '.php', 'prefix' => 'func__fast_']);
 	}
 
 	/**
 	*/
 	function get_data_handlers() {
 		$folder = 'share/data_handlers/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+		return $this->get_classes_by_params(['folder' => $folder, 'suffix' => '.php']);
 	}
 
 	/**
 	*/
 	function get_tables_sql_php() {
 		$folder = 'share/db/sql_php/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.sql_php.php'));
+		return $this->get_classes_by_params(['folder' => $folder, 'suffix' => '.sql_php.php']);
 	}
 
 	/**
 	*/
 	function get_migrations() {
 		$folder = 'share/db/migrations/';
-		return $this->get_classes_by_params(array('folder' => $folder));
+		return $this->get_classes_by_params(['folder' => $folder]);
 	}
 
 	/**
 	*/
 	function get_models() {
 		$folder = 'share/models/';
-		return $this->get_classes_by_params(array('folder' => $folder));
+		return $this->get_classes_by_params(['folder' => $folder]);
 	}
 
 	/**
@@ -582,7 +582,7 @@ class yf_core_api {
 	function get_plugins() {
 		$folder = '';
 		$suffix = '/';
-		$libs = array();
+		$libs = [];
 		foreach ($this->get_globs($folder, $suffix) as $gname => $glob) {
 			if (false === strpos($gname, '_plugins')) {
 				continue;
@@ -607,7 +607,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_libs($folder = 'libs/') {
-		$libs = array();
+		$libs = [];
 		$suffix = '/';
 		foreach ($this->get_globs($folder, $suffix) as $glob) {
 			foreach (glob($glob) as $path) {
@@ -626,14 +626,14 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_classes_by_params($extra = array(), &$paths = array()) {
+	function get_classes_by_params($extra = [], &$paths = []) {
 		$prefix = isset($extra['prefix']) ? $extra['prefix'] : YF_PREFIX;
 		$suffix = isset($extra['suffix']) ? $extra['suffix'] : YF_CLS_EXT;
 		$folder = isset($extra['folder']) ? $extra['folder'] : $this->section_paths['core'];
 
 		$prefix_len = strlen($prefix);
 		$suffix_len = strlen($suffix);
-		$classes = array();
+		$classes = [];
 		foreach ($this->get_globs($folder, $suffix) as $glob) {
 			foreach (glob($glob) as $path) {
 				$name = substr(basename($path), 0, -$suffix_len);
@@ -655,7 +655,7 @@ class yf_core_api {
 	function get_globs($folder, $suffix = '') {
 		$suffix = $suffix ?: YF_CLS_EXT;
 
-		$globs = array();
+		$globs = [];
 		if (!$this->SOURCE_ONLY_FRAMEWORK) {
 			$globs['app']				= APP_PATH. $folder.'*'.$suffix;
 			$globs['app_plugins']		= APP_PATH. 'plugins/*/'.$folder.'*'.$suffix;
@@ -686,19 +686,19 @@ class yf_core_api {
 		if (is_object($cls)) {
 			$cls = get_class($cls);
 		}
-		$data = array();
+		$data = [];
 		$class = new ReflectionClass($cls);
 		foreach ($class->getMethods() as $v) {
 			$name = $v->name;
 			$r = new ReflectionMethod($cls, $name);
-			$info = array(
+			$info = [
 				'name'		=> $name,
 				'file'		=> $r->getFileName(),
 				'line_start'=> $r->getStartLine(),
 				'line_end'	=> $r->getEndLine(),
 				'params'	=> $r->getParameters(),
 				'comment'	=> $r->getDocComment(),
-			);
+			];
 			$info['source'] = $this->get_file_slice($info['file'], $info['line_start'], $info['line_end']);
 			$data[$name] = $info;
 		}

@@ -16,15 +16,15 @@ class yf_oauth_driver_github extends yf_oauth_driver2 {
 
 	/**
 	*/
-	function _get_user_info_for_auth($raw = array()) {
-		$user_info = array(
+	function _get_user_info_for_auth($raw = []) {
+		$user_info = [
 			'user_id'		=> $raw['id'],
 			'login'			=> $raw['login'],
 			'name'			=> $raw['login'],
 			'email'			=> current($raw['emails']),
 			'avatar_url'	=> $raw['avatar_url'],
 			'profile_url'	=> $raw['html_url'],
-		);
+		];
 		return $user_info;
 	}
 
@@ -41,9 +41,9 @@ class yf_oauth_driver_github extends yf_oauth_driver2 {
 			}
 		}
 		if (!$this->_storage_get('user')) {
-			$url = $this->url_user.'?'.http_build_query(array(
+			$url = $this->url_user.'?'.http_build_query([
 				'access_token'	=> $access_token,
-			));
+			]);
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
 			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
@@ -51,14 +51,14 @@ class yf_oauth_driver_github extends yf_oauth_driver2 {
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			} else {
-				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
+				$this->_storage_set('user_info_request', ['result' => $result, 'response' => $response]);
 				$user = $result;
 
 				// Emails
-				$url_emails = $this->url_user_emails.'?'.http_build_query(array(
+				$url_emails = $this->url_user_emails.'?'.http_build_query([
 					'access_token'	=> $access_token,
-				));
-				$result = common()->get_remote_page($url_emails, $cache = false, $opts = array(), $response);
+				]);
+				$result = common()->get_remote_page($url_emails, $cache = false, $opts = [], $response);
 				$result = $this->_decode_result($result, $response, __FUNCTION__);
 				$user['emails'] = $result;
 

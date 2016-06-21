@@ -8,7 +8,7 @@ class yf_table2_filter {
 	/**
 	*/
 	function _init() {
-		$this->supported_conds = array(
+		$this->supported_conds = [
 			'in'		=> function($a){ return ' IN( '._es($a['value']).' )'; }, // "in"
 			'in_array'	=> function($a){ return ' IN( '._es($a['value']).' )'; }, // "in array"
 			'eq'		=> function($a){ return ' = "'._es($a['value']).'"'; }, // "equal"
@@ -144,23 +144,23 @@ class yf_table2_filter {
 				}
 				return $result;
 			},
-		);
+		];
 	}
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $table = null) {
+	function _filter_sql_prepare($filter_data = [], $filter_params = [], $__sql = '', $table = null) {
 		if (!$filter_data) {
 			return '';
 		}
 		$db = is_object($table->_params['db']) ? $table->_params['db'] : db();
-		$special_fields = array(
+		$special_fields = [
 			'order_by',
 			'order_direction',
-		);
-		$array_fields = array(
+		];
+		$array_fields = [
 			'in_array',
-		);
+		];
 		$supported_conds = &$this->supported_conds;
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
@@ -240,7 +240,7 @@ class yf_table2_filter {
 				}
 				// Field with __and on the end of its name is special one for 'between' condition
 				if ($func) {
-					$part_on_the_right = $func(array('value' => $v, 'and' => $filter_data[$k.'__and']), $filter_data);
+					$part_on_the_right = $func(['value' => $v, 'and' => $filter_data[$k.'__and']], $filter_data);
 				}
 			}
 			if (!strlen($left_part)) {
@@ -267,17 +267,17 @@ class yf_table2_filter {
 			if ($filter_data['order_direction']) {
 				$direction = strtoupper($filter_data['order_direction']);
 			}
-			if ($direction && in_array($direction, array('ASC','DESC'))) {
+			if ($direction && in_array($direction, ['ASC','DESC'])) {
 				$order_sql .= ' '.$direction;
 			}
 		}
-		return array($filter_sql, $order_sql);
+		return [$filter_sql, $order_sql];
 	}
 
 	/**
 	* Simple filtering of the given array. Need to support table() raw array data with filtering
 	*/
-	function _filter_array(&$data, $filter = array(), $filter_params = array(), $table = null) {
+	function _filter_array(&$data, $filter = [], $filter_params = [], $table = null) {
 		if (!$data || !$filter) {
 			return false;
 		}

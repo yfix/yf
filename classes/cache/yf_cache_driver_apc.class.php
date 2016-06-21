@@ -9,7 +9,7 @@ class yf_cache_driver_apc extends yf_cache_driver {
 	function __call($name, $args) {
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			return call_user_func_array(array($this->_connection, $name), $args);
+			return call_user_func_array([$this->_connection, $name], $args);
 		}
 		return main()->extend_call($this, $name, $args);
 	}
@@ -22,7 +22,7 @@ class yf_cache_driver_apc extends yf_cache_driver {
 
 	/**
 	*/
-	function get($name, $ttl = 0, $params = array()) {
+	function get($name, $ttl = 0, $params = []) {
 		if (!$this->is_ready()) {
 			return null;
 		}
@@ -77,12 +77,12 @@ class yf_cache_driver_apc extends yf_cache_driver {
 		}
 		$info = apc_cache_info();
 		$sma  = apc_sma_info();
-		return array(
+		return [
 			'hits'		=> isset($info['num_hits'])   ? $info['num_hits']   : $info['nhits'],
 			'misses'	=> isset($info['num_misses']) ? $info['num_misses'] : $info['nmisses'],
 			'uptime'	=> isset($info['start_time']) ? $info['start_time'] : $info['stime'],
 			'mem_usage'	=> $info['mem_size'],
 			'mem_avail'	=> $sma['avail_mem'],
-		);
+		];
 	}
 }

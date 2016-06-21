@@ -36,31 +36,31 @@ class yf_db_utils_helper_foreign_key {
 
 	/**
 	*/
-	public function exists($extra = array(), &$error = false) {
+	public function exists($extra = [], &$error = false) {
 		return $this->utils->foreign_key_exists($this->db_name.'.'.$this->table, $this->foreign_key, $extra, $error);
 	}
 
 	/**
 	*/
-	public function info($extra = array(), &$error = false) {
+	public function info($extra = [], &$error = false) {
 		return $this->utils->foreign_key_info($this->db_name.'.'.$this->table, $this->foreign_key, $extra, $error);
 	}
 
 	/**
 	*/
-	public function drop($extra = array(), &$error = false) {
+	public function drop($extra = [], &$error = false) {
 		return $this->utils->drop_foreign_key($this->db_name.'.'.$this->table, $this->foreign_key, $extra, $error);
 	}
 
 	/**
 	*/
-	public function add(array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+	public function add(array $fields, $ref_table, array $ref_fields, $extra = [], &$error = false) {
 		return $this->utils->add_foreign_key($this->db_name.'.'.$this->table, $this->foreign_key, $fields, $ref_table, $ref_fields, $extra, $error);
 	}
 
 	/**
 	*/
-	public function update(array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+	public function update(array $fields, $ref_table, array $ref_fields, $extra = [], &$error = false) {
 		return $this->utils->update_foreign_key($this->db_name.'.'.$this->table, $this->foreign_key, $fields, $ref_table, $ref_fields, $extra, $error);
 	}
 }

@@ -36,31 +36,31 @@ class yf_db_utils_helper_index {
 
 	/**
 	*/
-	public function exists($extra = array(), &$error = false) {
+	public function exists($extra = [], &$error = false) {
 		return $this->utils->index_exists($this->db_name.'.'.$this->table, $this->index, $extra, $error);
 	}
 
 	/**
 	*/
-	public function info($extra = array(), &$error = false) {
+	public function info($extra = [], &$error = false) {
 		return $this->utils->index_info($this->db_name.'.'.$this->table, $this->index, $extra, $error);
 	}
 
 	/**
 	*/
-	public function drop($extra = array(), &$error = false) {
+	public function drop($extra = [], &$error = false) {
 		return $this->utils->drop_index($this->db_name.'.'.$this->table, $this->index, $extra, $error);
 	}
 
 	/**
 	*/
-	public function add(array $data, $extra = array(), &$error = false) {
+	public function add(array $data, $extra = [], &$error = false) {
 		return $this->utils->add_index($this->db_name.'.'.$this->table, $this->index, $data, $extra, $error);
 	}
 
 	/**
 	*/
-	public function update(array $data, $extra = array(), &$error = false) {
+	public function update(array $data, $extra = [], &$error = false) {
 		return $this->utils->update_index($this->db_name.'.'.$this->table, $this->index, $data, $extra, $error);
 	}
 }

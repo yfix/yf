@@ -34,17 +34,17 @@ class yf_services {
 
 	/**
 	*/
-	function require_php_lib($name, $params = array()) {
+	function require_php_lib($name, $params = []) {
 		if (isset($this->php_libs[$name])) {
 			return $this->php_libs[$name];
 		}
 		$dir = 'share/services/';
 		$file = $name.'.php';
-		$paths = array(
+		$paths = [
 			'app'		=> APP_PATH. $dir. $file,
 			'project'	=> PROJECT_PATH. $dir. $file,
 			'yf'		=> YF_PATH. $dir. $file,
-		);
+		];
 		$found_path = '';
 		foreach ($paths as $location => $path) {
 			if (file_exists($path)) {
@@ -65,7 +65,7 @@ class yf_services {
 	/**
 	* phpmailer fresh instance, intended to use its helper methods
 	*/
-	function phpmailer($content, $params = array()) {
+	function phpmailer($content, $params = []) {
 		$this->require_php_lib('phpmailer');
 		return new PHPMailer(true);
 	}
@@ -73,7 +73,7 @@ class yf_services {
 	/**
 	* Process and output JADE content
 	*/
-	function jade($content, $params = array()) {
+	function jade($content, $params = []) {
 		$this->require_php_lib('jade_php');
 		$dumper = new \Everzet\Jade\Dumper\PHPDumper();
 		$parser = new \Everzet\Jade\Parser(new \Everzet\Jade\Lexer\Lexer());
@@ -83,7 +83,7 @@ class yf_services {
 
 	/**
 	*/
-	function sass($content, $params = array()) {
+	function sass($content, $params = []) {
 		$this->require_php_lib('scssphp');
 		$scss = new scssc();
 		return $scss->compile($content);
@@ -91,7 +91,7 @@ class yf_services {
 
 	/**
 	*/
-	function less($content, $params = array()) {
+	function less($content, $params = []) {
 		$this->require_php_lib('lessphp');
 		$less = new \lessc;
 		return $less->compile($content);
@@ -99,20 +99,20 @@ class yf_services {
 
 	/**
 	*/
-	function coffee($content, $params = array()) {
+	function coffee($content, $params = []) {
 		$this->require_php_lib('coffeescript_php');
-		return \CoffeeScript\Compiler::compile($content, array('header' => false));
+		return \CoffeeScript\Compiler::compile($content, ['header' => false]);
 	}
 
 	/**
 	* Process and output HAML content
 	*/
-	function haml($content, $params = array()) {
+	function haml($content, $params = []) {
 		$this->require_php_lib('mthaml');
 		$haml = new MtHaml\Environment('php');
-		$executor = new MtHaml\Support\Php\Executor($haml, array(
+		$executor = new MtHaml\Support\Php\Executor($haml, [
 			'cache' => sys_get_temp_dir().'/haml',
-		));
+		]);
 		$path = tempnam(sys_get_temp_dir(), 'haml');
 		file_put_contents($path, $content);
 		return $executor->render($path, $params);
@@ -120,19 +120,19 @@ class yf_services {
 
 	/**
 	*/
-	function markdown($content, $params = array()) {
+	function markdown($content, $params = []) {
 // TODO: mthaml consists one of these
 	}
 
 	/**
 	*/
-	function yaml($content, $params = array()) {
+	function yaml($content, $params = []) {
 // TODO
 	}
 
 	/**
 	*/
-	function google_translate($text, $lang_from, $lang_to, $params = array(), &$cache_used = false) {
+	function google_translate($text, $lang_from, $lang_to, $params = [], &$cache_used = false) {
 		if (!strlen($text) || !$lang_from || !$lang_to) {
 			return false;
 		}
@@ -149,14 +149,14 @@ class yf_services {
 			} catch (Exception $e) {
 				echo 'Error: exception caught: '.$e->getMessage(). PHP_EOL;
 			}
-			db()->insert_safe($table, array(
+			db()->insert_safe($table, [
 				'md5'			=> $md5,
 				'lang_from'		=> $lang_from,
 				'lang_to'		=> $lang_to,
 				'source'		=> $text,
 				'translated'	=> $translated,
 				'date'			=> date('Y-m-d H:i:s'),
-			));
+			]);
 		}
 		return $translated;
 	}

@@ -27,7 +27,7 @@ class yf_db_driver_pdo_pgsql extends yf_db_driver_pdo {
 			$dsn .= ';port='.$this->params['port'];
 		}
 		$dsn .= ';dbname='.($this->params['name'] ?: 'template1');
-		$attrs = array();
+		$attrs = [];
 		$attrs[PDO::ATTR_TIMEOUT] = 2;
 		if ($this->params['persist']) {
 			$attrs[PDO::ATTR_PERSISTENT] = true;

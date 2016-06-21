@@ -4,7 +4,7 @@ class yf_assets_filter_dartjs {
 
 	/**
 	*/
-	public function apply($in, $params = array()) {
+	public function apply($in, $params = []) {
 // TODO
 	}
 }

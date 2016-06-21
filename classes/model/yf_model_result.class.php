@@ -27,7 +27,7 @@ class yf_model_result {
 	*/
 	public function __call($name, $args) {
 		$this->_sync_model_data();
-		return call_user_func_array(array($this->_model, $name), $args);
+		return call_user_func_array([$this->_model, $name], $args);
 	}
 
 	/**

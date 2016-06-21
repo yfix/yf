@@ -11,12 +11,12 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 	protected $scope = '';
 	protected $oauth_version = '1.0';
 	protected $access_token_use_header = true;
-	protected $url_params = array();
-	protected $url_params_authorize = array();
-	protected $url_params_authenticate = array();
-	protected $url_params_request_token = array();
-	protected $url_params_access_token = array();
-	protected $url_params_user_info = array();
+	protected $url_params = [];
+	protected $url_params_authorize = [];
+	protected $url_params_authenticate = [];
+	protected $url_params_request_token = [];
+	protected $url_params_access_token = [];
+	protected $url_params_user_info = [];
 	protected $field_user_id = 'user_id';
 	protected $header_add_realm = false;
 
@@ -61,9 +61,9 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 				if (false !== strpos($url, '{user_id}')) {
 					$url = str_replace('{user_id}', $user_id, $url);
 				} else {
-					$_url_params += array(
+					$_url_params += [
 						'user_id'	=> $user_id,
-					);
+					];
 				}
 			}
 			if ($_url_params) {
@@ -71,21 +71,21 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			}
 			$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 			$this->_storage_set('last_time', time());
-			$params = (array)$this->url_params + (array)$this->url_params_user_info + array(
+			$params = (array)$this->url_params + (array)$this->url_params_user_info + [
 					'oauth_version'			=> $this->oauth_version,
 					'oauth_consumer_key'	=> $this->client_id,
 					'oauth_nonce'			=> $this->_storage_get('nonce'),
 					'oauth_timestamp'		=> $this->_storage_get('last_time'),
 					'oauth_signature_method'=> 'HMAC-SHA1',
 					'oauth_token'			=> $access_token,
-				);
+				];
 			if ($oauth_session_handle) {
 				$params['oauth_session_handle'] = $oauth_session_handle;
 			}
 			$auth_header = $this->_get_oauth_header($url, $params, 'GET', $access_token_secret);
-			$opts = array(
+			$opts = [
 				'custom_header' => $auth_header,
-			);
+			];
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
 			if (isset($result['error']) || isset($result['err']) || substr($response['http_code'], 0, 1) == '4') {
@@ -93,7 +93,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			} else {
-				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
+				$this->_storage_set('user_info_request', ['result' => $result, 'response' => $response]);
 				$this->_storage_set('user', $result);
 			}
 		}
@@ -120,7 +120,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 		$this->_storage_set('last_time', time());
 
-		$params = (array)$this->url_params + (array)$this->url_params_access_token + array(
+		$params = (array)$this->url_params + (array)$this->url_params_access_token + [
 				'oauth_version'			=> $this->oauth_version,
 				'oauth_consumer_key'	=> $this->client_id,
 				'oauth_nonce'			=> $this->_storage_get('nonce'),
@@ -128,31 +128,31 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 				'oauth_signature_method'=> 'HMAC-SHA1',
 				'oauth_token'			=> $oauth_token,
 				'oauth_verifier'		=> $oauth_verifier,
-			);
+			];
 		$url = $this->url_access_token;
 
 		$auth_header = $this->_get_oauth_header($url, $params, 'POST', $request_token['oauth_token_secret']);
 		if ($this->access_token_use_header) {
-			$opts = array(
-				'post'	=> array(
+			$opts = [
+				'post'	=> [
 					'oauth_verifier' => $oauth_verifier,
-				),
+				],
 				'custom_header' => $auth_header,
-			);
+			];
 		} else {
-			$opts = array(
+			$opts = [
 				'post'	=> $params,
 				'custom_header' => $auth_header,
-			);
+			];
 		}
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + (array)$response, __FUNCTION__);
+		$result = $this->_decode_result($result, ['content_type' => 'application/x-www-form-urlencoded'] + (array)$response, __FUNCTION__);
 		if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
 			common()->message_error('OAuth login error #44. Please contact support');
 			js_redirect( $this->redirect_uri, $url_rewrite = false );
 			return false;
 		} else {
-			$this->_storage_set('access_token_request', array('result' => $result, 'response' => $response));
+			$this->_storage_set('access_token_request', ['result' => $result, 'response' => $response]);
 			$this->_storage_set('access_token', $result['oauth_token']);
 			$this->_storage_set('access_token_secret', $result['oauth_token_secret']);
 			$this->_storage_set('oauth_session_handle', $result['oauth_session_handle']);
@@ -169,9 +169,9 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		if ($_GET['denied'] == $request_token_info['oauth_token'] || !$request_token_info || !isset($request_token_info['oauth_token'])) {
 			return $this->authorize();
 		}
-		$url = $this->url_authenticate.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_authenticate + array(
+		$url = $this->url_authenticate.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_authenticate + [
 					'oauth_token' 	=> $request_token_info['oauth_token'],
-				));
+				]);
 		js_redirect($url, $url_rewrite = false);
 		return false;
 	}
@@ -188,21 +188,21 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 		$this->_storage_set('last_time', time());
 
-		$params = (array)$this->url_params + (array)$this->url_params_authorize + array(
+		$params = (array)$this->url_params + (array)$this->url_params_authorize + [
 				'oauth_version'			=> $this->oauth_version,
 				'oauth_callback'		=> $this->redirect_uri,
 				'oauth_consumer_key'	=> $this->client_id,
 				'oauth_nonce'			=> $this->_storage_get('nonce'),
 				'oauth_timestamp'		=> $this->_storage_get('last_time'),
 				'oauth_signature_method'=> 'HMAC-SHA1',
-			);
-		$opts = array(
-			'post'	=> array(),
+			];
+		$opts = [
+			'post'	=> [],
 			'custom_header' => $this->_get_oauth_header($url, $params),
-		);
+		];
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + (array)$response, __FUNCTION__);
-		$this->_storage_set('authorize_request', array('result' => $result, 'response' => $response));
+		$result = $this->_decode_result($result, ['content_type' => 'application/x-www-form-urlencoded'] + (array)$response, __FUNCTION__);
+		$this->_storage_set('authorize_request', ['result' => $result, 'response' => $response]);
 		if ($result && $result['oauth_token'] && $result['oauth_token_secret']) {
 			$this->_storage_set('request_token', $result);
 			if($_GET['denied'])
@@ -216,14 +216,14 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 
 	/**
 	 */
-	function _get_oauth_header($url, $params, $method = 'POST', $oauth_token_secret = '', $add_to_sign = array()) {
+	function _get_oauth_header($url, $params, $method = 'POST', $oauth_token_secret = '', $add_to_sign = []) {
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		ksort($params);
 		$params_to_sign = (array)$params + (array)$add_to_sign;
 		$params['oauth_signature'] = $this->_do_sign_request($url, $params_to_sign, $method, $oauth_token_secret);
-		$keyval = array();
+		$keyval = [];
 		foreach($params as $k => $v) {
 			if (is_null($v) || !strlen($v)) {
 				unset($params[$k]);
@@ -252,13 +252,13 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 	 */
 	function _do_sign_request($url, $params, $method = 'POST', $oauth_token_secret = '') {
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
-		$sign_str = array();
+		$sign_str = [];
 
 		$url_query_string = parse_url($url, PHP_URL_QUERY);
 		if ($url_query_string) {
-			$qs_array = array();
+			$qs_array = [];
 			parse_str($url_query_string, $qs_array);
 			foreach ((array)$qs_array as $k => $v) {
 				$params[$k] = $v;

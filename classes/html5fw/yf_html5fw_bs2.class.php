@@ -30,11 +30,11 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 
 	/**
 	*/
-	function form_row ($content, $extra = array(), $replace = array(), $form) {
+	function form_row ($content, $extra = [], $replace = [], $form) {
 		$name = $extra['name'];
 		$is_html_array = (false !== strpos($name, '['));
 		if ($is_html_array) {
-			$name_dotted = str_replace(array('[',']'), array('.',''), trim($name,']['));
+			$name_dotted = str_replace(['[',']'], ['.',''], trim($name,']['));
 		}
 		$no_label = false;
 		if (isset($form->_params['no_label'])) {
@@ -43,12 +43,12 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		if (isset($extra['no_label'])) {
 			$no_label = $extra['no_label'];
 		}
-		$_css_group_map = array(
+		$_css_group_map = [
 			'errors'	=> $this->CLASS_ERROR,
 			'success'	=> $this->CLASS_SUCCESS,
 			'warnings'	=> $this->CLASS_WARNING,
 			'infos'		=> $this->CLASS_INFO,
-		);
+		];
 		foreach ($_css_group_map as $_a => $_css_class) {
 			if (isset($extra[$_a][$name]) || ($is_html_array && isset($extra[$_a][$name_dotted]))) {
 				if ($extra['stacked']) {
@@ -88,11 +88,11 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 
 		$label_tip_html = $extra['label_tip'] ? trim(' '.tip($extra['label_tip'], $replace)) : '';
 
-		$label = ($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']). $label_tip_html.'</label>'.PHP_EOL : '');
+		$label = ($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, ['id','class','style','for']).'>'.t($extra['desc']). $label_tip_html.'</label>'.PHP_EOL : '');
 
-		$row_start = '<div'._attrs($form_group_extra, array('id','class','style')).'>'.PHP_EOL
+		$row_start = '<div'._attrs($form_group_extra, ['id','class','style']).'>'.PHP_EOL
 			.$label
-			.(!$extra['wide'] ? '<div'._attrs($controls_extra, array('id','class','style')).'>'.PHP_EOL : '');
+			.(!$extra['wide'] ? '<div'._attrs($controls_extra, ['id','class','style']).'>'.PHP_EOL : '');
 
 		$row_end =
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
@@ -104,7 +104,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 
 		$show_input_group = ($extra['append'] || $extra['prepend']);
 
-		$before_content_html = $show_input_group ? '<div'._attrs($input_group_extra, array('id','class','style')).'>'.PHP_EOL : '';
+		$before_content_html = $show_input_group ? '<div'._attrs($input_group_extra, ['id','class','style']).'>'.PHP_EOL : '';
 		$before_content_html .= $extra['prepend'] ? '<span class="'.$this->CLASS_ADDON.($extra['class_prepend'] ? ' '.$extra['class_prepend']: '').'">'.$extra['prepend'].'</span>'.PHP_EOL : '';
 
 		$after_content_html = $extra['append'] ? '<span class="'.$this->CLASS_ADDON.($extra['class_append'] ? ' '.$extra['class_append']: '').'">'.$extra['append'].'</span>'.PHP_EOL : '';
@@ -129,13 +129,13 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		} elseif ($extra['only_row_end']) {
 			return $row_end;
 		} elseif ($extra['stacked']) {
-			$extra_stacked = is_array($extra['stacked']) ? $extra['stacked'] : array();
+			$extra_stacked = is_array($extra['stacked']) ? $extra['stacked'] : [];
 			if ($extra['class_stacked'] && !isset($extra_stacked['class'])) {
 				$extra_stacked['class'] = $extra['class_stacked'];
 			}
 			$extra_stacked['class'] = ($extra_stacked['class'] ?: $this->CLASS_STACKED_ITEM). ' '.($extra_stacked['class_add'] ?: $extra['class_add_stacked']);
 			return 
-				'<span'._attrs($extra_stacked, array('id', 'class', 'style')).'>'
+				'<span'._attrs($extra_stacked, ['id', 'class', 'style']).'>'
 				.($extra['show_label'] ? $label : '')
 				.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
 				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
@@ -154,7 +154,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 	/**
 	* Generate form row using dl>dt,dd html tags. Useful for user profle and other simple table-like content
 	*/
-	function form_dd_row($content, $extra = array(), $replace = array(), $form) {
+	function form_dd_row($content, $extra = [], $replace = [], $form) {
 		$dd_class = $form->_params['dd_class'] ?: 'span6';
 
 		$class_wrapper = $extra['class_wrapper'] ?: 'dl-horizontal';

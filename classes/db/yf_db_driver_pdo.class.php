@@ -92,15 +92,15 @@ abstract class yf_db_driver_pdo extends yf_db_driver {
 	function error() {
 		if ($this->db_connect_id) {
 			$info = $this->db_connect_id->errorInfo();
-			return array(
+			return [
 				'message'	=> $info[2],
 				'code'		=> $info[1],
-			);
+			];
 		} elseif ($this->_connect_error) {
-			return array(
+			return [
 				'message'	=> 'YF: Connect error: '.$this->_connect_error,
 				'code'		=> '9999',
-			);
+			];
 		}
 		return false;
 	}

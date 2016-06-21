@@ -64,14 +64,14 @@ class yf_tpl {
 	/** @var string Current tempalte engine dirver to use */
 	public $DRIVER_NAME				= 'yf';
 	/** @var array Global scope tags (included in any parsed template) */
-	public $_global_tags			= array();
+	public $_global_tags			= [];
 	/** @var array @conf_skip  For '_process_conditions', Will be availiable in conditions with such form: {if('get.object' eq 'login_form')} Hello from login form {/if} */
-	public $_avail_arrays = array(
+	public $_avail_arrays = [
 		'get' => '_GET',
 		'post' => '_POST',
 		'server' => '_SERVER',
 		'env' => '_ENV',
-	);
+	];
 
 	/**
 	* Catch missing method call
@@ -108,7 +108,7 @@ class yf_tpl {
 		$this->TPL_PATH = $this->_THEMES_PATH. conf('theme'). '/';
 
 		if ($this->COMPRESS_OUTPUT) {
-			$this->register_output_filter(array($this, '_simple_cleanup_callback'), 'simple_cleanup');
+			$this->register_output_filter([$this, '_simple_cleanup_callback'], 'simple_cleanup');
 		}
 		if ($this->ALLOW_LANG_BASED_STPLS) {
 			$this->_lang_theme_path = PROJECT_PATH. $this->_THEMES_PATH. conf('theme'). '.'.conf('language').'/';
@@ -140,7 +140,7 @@ class yf_tpl {
 		$this->_init_global_tags();
 
 		if (DEBUG_MODE) {
-			$this->register_output_filter(array($this, '_debug_mode_callback'), 'debug_mode');
+			$this->register_output_filter([$this, '_debug_mode_callback'], 'debug_mode');
 		}
 		if (main()->is_console()) {
 			$this->OB_CATCH_CONTENT = false;
@@ -165,13 +165,13 @@ class yf_tpl {
 	* Global scope tags
 	*/
 	function _init_global_tags() {
-		$data = array(
+		$data = [
 			'main_user_id'	=> (int)main()->USER_ID,
 			'is_logged_in'  => intval((bool) main()->USER_ID),
 			'site_id'       => (int)conf('SITE_ID'),
 			'lang'          => conf('language'),
 			'tpl_path'      => MEDIA_PATH. $this->TPL_PATH,
-		);
+		];
 		foreach ($data as $k => $v) {
 			$this->_global_tags[$k] = $v;
 		}
@@ -204,8 +204,8 @@ class yf_tpl {
 			}
 			// If setting exists - assign it to the location
 			if (!empty($go) && empty($_GET['object'])) {
-				$go = str_replace(array('./?','./'), '', $go);
-				$tmp_array = array();
+				$go = str_replace(['./?','./'], '', $go);
+				$tmp_array = [];
 				parse_str($go, $tmp_array);
 				foreach ((array)$tmp_array as $k => $v) {
 					$_GET[$k] = $v;
@@ -245,19 +245,19 @@ class yf_tpl {
 			$body['content'] = $this->_init_main_stpl($tpl_name);
 			$this->_CENTER_RESULT = '';
 			if ($this->CUSTOM_META_INFO && $init_type == 'user') {
-				$this->register_output_filter(array($this, '_custom_replace_callback'), 'custom_replace');
+				$this->register_output_filter([$this, '_custom_replace_callback'], 'custom_replace');
 			}
 			if ($init_type == 'user' && _class('graphics')->IFRAME_CENTER && (false === strpos($_SERVER['QUERY_STRING'], 'center_area=1'))) {
-				$this->register_output_filter(array($this, '_replace_for_iframe_callback'), 'replace_for_iframe');
+				$this->register_output_filter([$this, '_replace_for_iframe_callback'], 'replace_for_iframe');
 			}
 		}
 		if (!main()->no_graphics()) {
 			// Replace images paths with their absolute ones
 			if ($this->REWRITE_MODE && $init_type != 'admin') {
-				$this->register_output_filter(array($this, '_rewrite_links_callback'), 'rewrite_links');
+				$this->register_output_filter([$this, '_rewrite_links_callback'], 'rewrite_links');
 			}
 			if ($this->TIDY_OUTPUT && $init_type != 'admin') {
-				$this->register_output_filter(array($this, '_tidy_cleanup_callback'), 'tidy_cleanup');
+				$this->register_output_filter([$this, '_tidy_cleanup_callback'], 'tidy_cleanup');
 			}
 			$body['content'] = $this->_apply_output_filters($body['content']);
 			if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -331,7 +331,7 @@ class yf_tpl {
 	/**
 	* Simple template parser (*.stpl)
 	*/
-	function parse($name, $replace = array(), $params = array()) {
+	function parse($name, $replace = [], $params = []) {
 		$name = strtolower(trim($name));
 		// Support for the driver name in prefix, example: "twig:user/account", "smarty:user/account"
 		if (strpos($name, ':') !== false) {
@@ -347,15 +347,15 @@ class yf_tpl {
 			$name = substr($name, $yfp_len);
 		}
 		if (false !== strpos($name, '@')) {
-			$r = array(
+			$r = [
 				'@object'	=> $_GET['object'],
 				'@action'	=> $_GET['action'],
 				'@id'		=> $_GET['id'],
-			);
+			];
 			$name = str_replace(array_keys($r), array_values($r), $name);
 		}
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		$string = $params['string'] ?: false;
 		$params['replace_images'] = $params['replace_images'] ?: true;
@@ -391,7 +391,7 @@ class yf_tpl {
 	/**
 	* Wrapper to parse given template string
 	*/
-	function parse_string($string = '', $replace = array(), $name = '', $params = array()) {
+	function parse_string($string = '', $replace = [], $name = '', $params = []) {
 		if (!strlen($string)) {
 			$string = ' ';
 		}
@@ -405,7 +405,7 @@ class yf_tpl {
 	/**
 	* Wrapper on parse(), silently failing if template not exists
 	*/
-	function parse_if_exists($name, $replace = array(), $params = array()) {
+	function parse_if_exists($name, $replace = [], $params = []) {
 		return $this->exists($name) ? $this->parse($name, $replace, $params) : '';
 	}
 
@@ -427,7 +427,7 @@ class yf_tpl {
 
 	/**
 	*/
-	function _parse_set_debug_info($name = '', $replace = array(), $params = array(), $string = '', $stpl_time_start) {
+	function _parse_set_debug_info($name = '', $replace = [], $params = [], $string = '', $stpl_time_start) {
 		if (!DEBUG_MODE) {
 			return false;
 		}
@@ -514,7 +514,7 @@ class yf_tpl {
 			}
 			$def_theme = $this->_get_def_user_theme();
 			// Storages are defined in specially crafted `order`, so do not change it unless you have strong reason
-			$storages = array();
+			$storages = [];
 			$site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
 			$dev_path = '.dev/'.main()->HOSTNAME.'/';
 			// Developer overrides
@@ -542,7 +542,7 @@ class yf_tpl {
 				$storages['inherit_project2'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 			}
 			// in admin mode: not include main, style_css, script_js templates from project place
-			if (MAIN_TYPE_ADMIN && !in_array($stpl_name, array('main'))) {
+			if (MAIN_TYPE_ADMIN && !in_array($stpl_name, ['main'])) {
 				$storages['app_admin_user'] = APP_PATH. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
 				$storages['project_admin_user'] = PROJECT_PATH. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
 			}
@@ -658,13 +658,13 @@ class yf_tpl {
 	/**
 	* If content need to be cleaned from unused tags - do that
 	*/
-	function _process_clear_unused($string, $replace = array(), $name = '') {
+	function _process_clear_unused($string, $replace = [], $name = '') {
 		return preg_replace('/\{[\w_]+\}/i', '', $string);
 	}
 
 	/**
 	*/
-	function _process_eval_string($string, $replace = array(), $name = '') {
+	function _process_eval_string($string, $replace = [], $name = '') {
 		return eval('return "'.str_replace('"', '\"', $string).'";');
 	}
 
@@ -685,7 +685,7 @@ class yf_tpl {
 		if (DEBUG_MODE) {
 			debug('compress_output::size_original', strlen($text));
 		}
-		$text = str_replace(array("\r","\n","\t"), '', $text);
+		$text = str_replace(["\r","\n","\t"], '', $text);
 		$text = preg_replace('#[\s]{2,}#ms', ' ', $text);
 		// Remove html comments
 		$text = preg_replace('#<\!--[\w\s\-\/]*?-->#ms', '', $text);
@@ -723,10 +723,10 @@ class yf_tpl {
 		if (!class_exists('tidy') || !extension_loaded('tidy')) {
 			return $text;
 		}
-		$tidy_default_config = array(
+		$tidy_default_config = [
 			'alt-text' => '',
 			'output-xhtml' => true,
-		);
+		];
 		$tidy = new tidy;
 		$tidy->parseString($text, $this->_TIDY_CONFIG ?: $tidy_default_config, conf('charset'));
 		$tidy->cleanRepair();
@@ -756,12 +756,12 @@ class yf_tpl {
 	/**
 	* Wrapper function for t/translate/i18n calls inside templates
 	*/
-	function _i18n_wrapper($input = '', $replace = array()) {
+	function _i18n_wrapper($input = '', $replace = []) {
 		if (!strlen($input)) {
 			return '';
 		}
 		$input = stripslashes(trim($input, '"\''));
-		$args = array();
+		$args = [];
 		// Complex case with substitutions
 		if (preg_match('/(?P<text>.+?)["\']{1},[\s\t]*%(?P<args>[a-z]+.+)$/ims', $input, $m)) {
 			foreach (explode(';%', $m['args']) as $arg) {
@@ -769,8 +769,8 @@ class yf_tpl {
 				if (false !== strpos($arg, '=')) {
 					list($attr_name, $attr_val) = explode('=', trim($arg));
 				}
-				$attr_name  = trim(str_replace(array("'",'"'), '', $attr_name));
-				$attr_val   = trim(str_replace(array("'",'"'), '', $attr_val));
+				$attr_name  = trim(str_replace(["'",'"'], '', $attr_name));
+				$attr_val   = trim(str_replace(["'",'"'], '', $attr_val));
 				$args['%'.$attr_name] = $attr_val;
 			}
 			$text_to_translate = $m['text'];
@@ -781,7 +781,7 @@ class yf_tpl {
 		// Do replacement of the template vars on the last stage
 		// example: @replace1 will be got from $replace['replace1'] array item
 		if (false !== strpos($output, '@') && !empty($replace)) {
-			$r = array();
+			$r = [];
 			foreach ((array)$replace as $k => $v) {
 				$r['@'.$k] = $v;
 			}
@@ -794,7 +794,7 @@ class yf_tpl {
 	* Wrapper for translation method (for call from templates or other)
 	*/
 	function _translate_for_stpl($string = '', $args_from_tpl = '', $lang = '') {
-		$args = array();
+		$args = [];
 		if (is_string($args_from_tpl) && strlen($args_from_tpl)) {
 			$args = _attrs_string2array($args_from_tpl);
 		}
@@ -805,7 +805,7 @@ class yf_tpl {
 	* Wrapper around 'url()' function, called like this inside templates:
 	* {url(object=home_page;action=test)}
 	*/
-	function _url_wrapper($params = array()){
+	function _url_wrapper($params = []){
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($params) && strlen($params)) {
 			// Url like this: /object/action/id
@@ -815,12 +815,12 @@ class yf_tpl {
 				$params = _attrs_string2array($params);
 			} else {
 				list($object, $action, $id, $page) = explode(';', str_replace(',', ';', $params));
-				$params = array(
+				$params = [
 					'object'	=> $object,
 					'action'	=> $action,
 					'id'		=> $id,
 					'page'		=> $page,
-				);
+				];
 			}
 		}
 		return url($params);
@@ -832,13 +832,13 @@ class yf_tpl {
 	function _replace_images_paths($string = '') {
 		$images_path  = (MAIN_TYPE_USER ? $this->MEDIA_PATH : ADMIN_WEB_PATH). $this->TPL_PATH. $this->_IMAGES_PATH;
 		$uploads_path = $this->MEDIA_PATH. $this->_UPLOADS_PATH;
-		$r = array(
+		$r = [
 			'"images/'		=> '"'.$images_path,
 			'\'images/'		=> '\''.$images_path,
 			'src="uploads/'	=> 'src="'.$uploads_path,
 			'"uploads/'		=> '"'.$uploads_path,
 			'\'uploads/'	=> '\''.$uploads_path,
-		);
+		];
 		return str_replace(array_keys($r), array_values($r), $string);
 	}
 
@@ -849,7 +849,7 @@ class yf_tpl {
 			$filters = explode('|', $filters);
 		}
 		if (!is_array($filters)) {
-			$filters = array($filters);
+			$filters = [$filters];
 		}
 		foreach ($filters as $fname) {
 			if (is_callable($fname)) {
@@ -863,7 +863,7 @@ class yf_tpl {
 
 	/**
 	*/
-	function add_function_callback($name, $func, $params = array()) {
+	function add_function_callback($name, $func, $params = []) {
 		$pattern = '/\{(?P<name>'.preg_quote($name).')\(\s*["\']{0,1}(?P<args>[a-z0-9_:\/\.]+?)["\']{0,1}\s*\)\}/ims';
 		if ($params['only_pattern']) {
 			return $pattern;
@@ -873,7 +873,7 @@ class yf_tpl {
 
 	/**
 	*/
-	function add_section_callback($name, $func, $params = array()) {
+	function add_section_callback($name, $func, $params = []) {
 		$pattern = '/\{(?P<name>'.preg_quote($name).')\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<body>.+?)\s*{\/(\1)\}/ims';
 		if ($params['only_pattern']) {
 			return $pattern;

@@ -4,7 +4,7 @@ class yf_send_mail_phpmailer {
 
 	/**
 	*/
-	function send ($params = array(), &$error = null, $mail) {
+	function send ($params = [], &$error = null, $mail) {
 		require_php_lib('phpmailer');
 
 		// defaults to using php 'mail()'

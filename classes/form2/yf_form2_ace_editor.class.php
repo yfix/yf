@@ -4,14 +4,14 @@ class yf_form2_ace_editor {
 
 	/**
 	*/
-	function _ace_editor_html($extra = array(), $replace = array(), $form) {
+	function _ace_editor_html($extra = [], $replace = [], $form) {
 		$extra['id'] = $extra['id'] ?: 'editor_html';
 		asset('ace-editor');
-		$opts = array(
+		$opts = [
 			'fontSize' => ($extra['ace_editor']['font-size'] ?: '16px'),
 #			'theme' => 'ace/theme/'.($extra['ace_editor']['theme'] ?: 'tomorrow_night'),
 #			'mode' => 'ace/mode/'.($extra['ace_editor']['mode'] ?: 'html'),
-		);
+		];
 		$jq = '
 			try {
 				var ace_editor = ace.edit("'.addslashes($extra['id']).'");

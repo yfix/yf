@@ -3,7 +3,7 @@
 class yf_oauth {
 
 	private $auto_email_prefix = 'oauth.';
-	private $_providers = array();
+	private $_providers = [];
 
 	/**
 	* Catch missing method call
@@ -20,7 +20,7 @@ class yf_oauth {
 
 	/**
 	*/
-	function login($provider, $params = array()) {
+	function login($provider, $params = []) {
 		if (!$provider) {
 			return false;
 		}
@@ -29,11 +29,11 @@ class yf_oauth {
 		{
 			return false;
 		}
-		_class('core_events')->fire('oauth.before_login', array(
+		_class('core_events')->fire('oauth.before_login', [
 			'provider'	=> $provider,
 			'params'	=> $params,
-		));
-		$normalized_info = array();
+		]);
+		$normalized_info = [];
 		$driver = _class('oauth_driver_'.$provider, 'classes/oauth/');
 		$oauth_user_info = $driver->login($params);
 		if ($oauth_user_info) {
@@ -42,7 +42,7 @@ class yf_oauth {
 		if ($normalized_info['user_id']) {
 			$oauth_registration = db()->get('SELECT * FROM '.db('oauth_users').' WHERE provider="'._es($provider).'" AND provider_uid="'._es($normalized_info['user_id']).'"');
 			if (!$oauth_registration) {
-				db()->insert_safe('oauth_users', array(
+				db()->insert_safe('oauth_users', [
 					'provider'		=> $provider,
 					'provider_uid'	=> $normalized_info['user_id'],
 					'login'			=> $normalized_info['user_id'],
@@ -55,19 +55,19 @@ class yf_oauth {
 					'add_date'		=> time(),
 //					'user_id'		=> 0, // Here it is 0, will be updated later if OK
 					'user_id'		=> 'NULL', // Here it is NULL, will be updated later if OK
-				));
+				]);
 				$oauth_user_id = db()->insert_id();
 				if ($oauth_user_id) {
 					$oauth_registration = db()->get('SELECT * FROM '.db('oauth_users').' WHERE provider="'._es($provider).'" AND provider_uid="'._es($normalized_info['user_id']).'" AND id='.intval($oauth_user_id));
 				}
-				_class('core_events')->fire('oauth.insert', array(
+				_class('core_events')->fire('oauth.insert', [
 					'provider'	=> $provider,
 					'params'	=> $params,
 					'oauth_id'	=> $oauth_user_id,
 					'oauth_info'=> $oauth_registration,
-				));
+				]);
 			}
-			$sys_user_info = array();
+			$sys_user_info = [];
 			// merge oauth if user is logged in
 			if (main()->USER_ID && $need_merge_accounts) {
 				$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval(main()->USER_ID));
@@ -99,7 +99,7 @@ class yf_oauth {
 						$login = $normalized_info['login'] ?: $this->auto_email_prefix. $provider. '.'. $normalized_info['user_id'];
 
 						$email = $normalized_info['email'] ?: $login.'@'.$self_host;
-						db()->insert_safe('user', array(
+						db()->insert_safe('user', [
 							'group'			=> 2,
 							'login'			=> $login,
 							'email'			=> $email,
@@ -111,24 +111,24 @@ class yf_oauth {
 							'add_date'		=> time(),
 							'verify_code'	=> md5(time().'some_salt'.uniqid()),
 // TODO: add other fields: locale, lang, age, gender, location, birthday, avatar_url, profile_url
-						));
+						]);
 						$sys_user_id = db()->insert_id();
 					}
 
 					if ($sys_user_id) {
 						$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval($sys_user_id));
 					}
-					_class('core_events')->fire('oauth.user_added', array(
+					_class('core_events')->fire('oauth.user_added', [
 						'provider'	=> $provider,
 						'params'	=> $params,
 						'oauth_info'=> $oauth_registration,
 						'user_id'	=> $sys_user_id,
 						'user_info'	=> $sys_user_info,
-					));
+					]);
 				}
 				// Link oauth record with system user account
 				if ($sys_user_info['id']) {
-					db()->update_safe('oauth_users', array('user_id' => $sys_user_info['id']), 'id='.intval($oauth_registration['id']));
+					db()->update_safe('oauth_users', ['user_id' => $sys_user_info['id']], 'id='.intval($oauth_registration['id']));
 					$oauth_registration['user_id'] = $sys_user_info['id'];
 				}
 			}
@@ -163,10 +163,10 @@ class yf_oauth {
 		if (isset($this->_providers_loaded)) {
 			return $this->_providers;
 		}
-		$paths = array(
+		$paths = [
 			YF_PATH. 'classes/oauth/',
 			PROJECT_PATH. 'classes/oauth/',
-		);
+		];
 		foreach ((array)_class('dir')->scan($paths, 1, '-f /yf_oauth_driver_[a-z0-9_-]+\.class\.php$/i') as $path) {
 			$name = trim(substr(trim(basename($path)), strlen('yf_oauth_driver_'), -strlen('.class.php')));
 			if (!$name) {

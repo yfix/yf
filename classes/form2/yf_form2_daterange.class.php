@@ -5,13 +5,13 @@ class yf_form2_daterange {
 	/**
 	* Daterange picker http://www.daterangepicker.com/#examples
 	*/
-	function daterange_select($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function daterange_select($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($desc)) {
 			$extra += $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
 		$extra['desc'] = $form->_prepare_desc($extra, $desc);

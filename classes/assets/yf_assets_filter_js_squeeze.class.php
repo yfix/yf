@@ -4,7 +4,7 @@ class yf_assets_filter_js_squeeze {
 
 	/**
 	*/
-	public function apply($in, $params = array()) {
+	public function apply($in, $params = []) {
 		require_php_lib('jsqueeze');
 
 		!isset($params['single_line']) && $params['single_line'] = true;

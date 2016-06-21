@@ -16,7 +16,7 @@ class yf_charts {
 	/**
 	* http://omnipotent.net/jquery.sparkline
 	*/
-	function jquery_sparklines($data, $extra = array()) {
+	function jquery_sparklines($data, $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (!is_array($data) || !$data) {
 			return false;
@@ -80,28 +80,28 @@ class yf_charts {
 			break;
 		}
 		if ($count == 1) {
-			$data = array(
+			$data = [
 				'1'	=> $data,
-			);
+			];
 		}
 		foreach ((array)$data as $name => $data_items){
 			foreach ((array)$data_items as $date => $val){
-				$items[] = array(
+				$items[] = [
 					'date'	=> $date,
 					'name'	=> $name,
 					'val'	=> $val,
-				);
+				];
 			}
 		}
 		if (!$params['not_include_js']) {
 			$incude_js = $this->_include_js();
 		}
-		return $incude_js.tpl()->parse('charts/chart', array(
+		return $incude_js.tpl()->parse('charts/chart', [
 			'items'		=> $items,
 			'id'		=> 'chart'.rand(),
 			'width'		=> is_numeric($width)?$width.'px':$width,
 			'height'	=> is_numeric($height)?$height.'px':$height,
-		));
+		]);
 	}
 
 	/**
@@ -118,21 +118,21 @@ class yf_charts {
 			if (is_array($value)) {
 				break;
 			}
-			$data[$key] = array(
+			$data[$key] = [
 				'val' => $value,
 				'link' => ''
-			);
+			];
 		}
 		if (!$params['not_include_js']) {
 			$incude_js = $this->_include_js();
 		}
-		return $incude_js. tpl()->parse('charts/chart_bar', array(
+		return $incude_js. tpl()->parse('charts/chart_bar', [
 			'data'		=> $data,
 			'ticks'		=> $this->_get_ticks($data),
 			'direction'	=> $direction,
 			'id'		=> 'bar'.rand(),
 			'width'		=> is_numeric($width)?$width.'px':$width,
-		));
+		]);
 	}
 	
 	/**
@@ -145,12 +145,12 @@ class yf_charts {
 		if (!$params['not_include_js']) {
 			$incude_js = $this->_include_js();
 		}
-		return $incude_js. tpl()->parse('charts/chart_pie', array(
+		return $incude_js. tpl()->parse('charts/chart_pie', [
 			'data'		=> $data,
 			'id'		=> 'pie'.rand(),
 			'width'		=> is_numeric($width)?$width.'px':$width,
 			'height'	=> is_numeric($height)?$height.'px':$height,
-		));
+		]);
 	}
 
 	/**

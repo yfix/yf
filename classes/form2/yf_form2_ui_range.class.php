@@ -4,7 +4,7 @@ class yf_form2_ui_range {
 
 	/**
 	*/
-	function ui_range($name, $desc = '', $extra = array(), $replace = array(), $form) {
+	function ui_range($name, $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($desc)) {
 			$extra += $desc;
 			$desc = '';
@@ -155,7 +155,7 @@ class yf_form2_ui_range {
 			return $form->_row_html($body, $extra, $r);
 		};
 		if ($form->_chained_mode) {
-			$form->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			$form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
 			return $form;
 		}
 		return $func($extra, $replace, $form);

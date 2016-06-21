@@ -47,19 +47,19 @@ class yf_utf8 {
 		// Check for outdated PCRE library
 		// Note: we check if U+E2 is in the range U+E0 - U+E1. This test returns TRUE on old PCRE versions.
 		if (preg_match('/[à-á]/u', 'â')) {
-			return array($this->UNICODE_ERROR, t('The PCRE library in your PHP installation is outdated. This will cause problems when handling Unicode text. If you are running PHP 4.3.3 or higher, make sure you are using the PCRE library supplied by PHP. Please refer to the <a href="@url">PHP PCRE documentation</a> for more information.', array('@url' => 'http://www.php.net/pcre')));
+			return [$this->UNICODE_ERROR, t('The PCRE library in your PHP installation is outdated. This will cause problems when handling Unicode text. If you are running PHP 4.3.3 or higher, make sure you are using the PCRE library supplied by PHP. Please refer to the <a href="@url">PHP PCRE documentation</a> for more information.', ['@url' => 'http://www.php.net/pcre'])];
 		}
 		// Check for mbstring extension
 		if (!function_exists('mb_strlen')) {
-			return array($this->UNICODE_SINGLEBYTE, t('Operations on Unicode strings are emulated on a best-effort basis. Install the <a href="@url">PHP mbstring extension</a> for improved Unicode support.', array('@url' => 'http://www.php.net/mbstring')));
+			return [$this->UNICODE_SINGLEBYTE, t('Operations on Unicode strings are emulated on a best-effort basis. Install the <a href="@url">PHP mbstring extension</a> for improved Unicode support.', ['@url' => 'http://www.php.net/mbstring'])];
 		}
 		// Check mbstring configuration
 		if (ini_get('mbstring.func_overload') != 0) {
-			return array($this->UNICODE_ERROR, t('Multibyte string function overloading in PHP is active and must be disabled. Check the php.ini <em>mbstring.func_overload</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
+			return [$this->UNICODE_ERROR, t('Multibyte string function overloading in PHP is active and must be disabled. Check the php.ini <em>mbstring.func_overload</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', ['@url' => 'http://www.php.net/mbstring'])];
 		}
 		mb_internal_encoding('utf-8');
 		mb_language('uni');
-		return array($this->UNICODE_MULTIBYTE, '');
+		return [$this->UNICODE_MULTIBYTE, ''];
 	}
 
 	/**
@@ -92,14 +92,14 @@ class yf_utf8 {
 			$encoding = $match[1];
 		}
 		// Unsupported encodings are converted here into UTF-8.
-		$php_supported = array('utf-8', 'iso-8859-1', 'us-ascii');
+		$php_supported = ['utf-8', 'iso-8859-1', 'us-ascii'];
 		if (!in_array(strtolower($encoding), $php_supported)) {
 			$out = $this->convert_to_utf8($data, $encoding);
 			if ($out !== FALSE) {
 				$encoding = 'utf-8';
 				$data = preg_replace('#^(<\?xml[^>]+encoding)="([^"]+)"#', '\\1="utf-8"', $out);
 			} else {
-				_debug_log(t('Can not convert XML encoding %s to UTF-8.', array('%s' => $encoding)));
+				_debug_log(t('Can not convert XML encoding %s to UTF-8.', ['%s' => $encoding]));
 				return 0;
 			}
 		}
@@ -124,7 +124,7 @@ class yf_utf8 {
 		} else if (function_exists('recode_string')) {
 			$out = recode_string($encoding .'..utf-8', $data);
 		} else {
-			_debug_log(t('Unsupported encoding %s. Please install iconv, GNU recode or mbstring for PHP.', array('%s' => $encoding)));
+			_debug_log(t('Unsupported encoding %s. Please install iconv, GNU recode or mbstring for PHP.', ['%s' => $encoding]));
 			return FALSE;
 		}
 		return $out;
@@ -220,9 +220,9 @@ class yf_utf8 {
 	*/
 	function mime_header_decode($header) {
 		// First step: encoded chunks followed by other encoded chunks (need to collapse whitespace)
-		$header = preg_replace_callback('/=\?([^?]+)\?(Q|B)\?([^?]+|\?(?!=))\?=\s+(?==\?)/', array($this, '_mime_header_decode'), $header);
+		$header = preg_replace_callback('/=\?([^?]+)\?(Q|B)\?([^?]+|\?(?!=))\?=\s+(?==\?)/', [$this, '_mime_header_decode'], $header);
 		// Second step: remaining chunks (do not collapse whitespace)
-		return preg_replace_callback('/=\?([^?]+)\?(Q|B)\?([^?]+|\?(?!=))\?=/', array($this, '_mime_header_decode'), $header);
+		return preg_replace_callback('/=\?([^?]+)\?(Q|B)\?([^?]+|\?(?!=))\?=/', [$this, '_mime_header_decode'], $header);
 	}
 
 	/**
@@ -247,18 +247,18 @@ class yf_utf8 {
 	* @param $text The text to decode entities in.
 	* @param $exclude  An array of characters which should not be decoded. For example, array('<', '&', '"'). This affects both named and numerical entities.
 	*/
-	function decode_entities($text, $exclude = array()) {
+	function decode_entities($text, $exclude = []) {
 		static $table;
 		// We store named entities in a table for quick processing.
 		if (!isset($table)) {
 			// Get all named HTML entities.
-			$table = array_flip(array(
+			$table = array_flip([
 				'"' => '&quot;',
 				'&' => '&amp;',
 				'\'' => '&#039;',
 				'<' => '&lt;',
 				'>' => '&gt;',
-			));
+			]);
 			// PHP gives us ISO-8859-1 data, we need UTF-8.
 			$table = array_map('utf8_encode', $table);
 			// Add apostrophe (XML)
@@ -344,7 +344,7 @@ class yf_utf8 {
 		// Use C-locale for ASCII-only uppercase
 		$text = strtoupper($text);
 		// Case flip Latin-1 accented letters
-		$text = preg_replace_callback('/\xC3[\xA0-\xB6\xB8-\xBE]/', array($this, '_unicode_caseflip'), $text);
+		$text = preg_replace_callback('/\xC3[\xA0-\xB6\xB8-\xBE]/', [$this, '_unicode_caseflip'], $text);
 		return $text;
 	}
 
@@ -364,7 +364,7 @@ class yf_utf8 {
 		// Use C-locale for ASCII-only lowercase
 		$text = strtolower($text);
 		// Case flip Latin-1 accented letters
-		$text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', array($this, '_unicode_caseflip'), $text);
+		$text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', [$this, '_unicode_caseflip'], $text);
 		return $text;
 	}
 
@@ -476,7 +476,7 @@ class yf_utf8 {
 	* UTF8 analog for built-in wordwrap. Note: no mbstring equivalent
 	*/
 	function wordwrap($str, $width = 75, $break = "\n", $cut = false) {
-		$splitedArray	= array();
+		$splitedArray	= [];
 		$lines			= explode("\n", $str);
 		foreach ((array)$lines as $line) {
 			$lineLength = strlen($line);

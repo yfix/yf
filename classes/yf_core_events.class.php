@@ -19,10 +19,10 @@
 */
 class yf_core_events {
 
-	protected $listeners = array();
-	protected $wildcards = array();
-	protected $sorted = array();
-	protected $firing = array();
+	protected $listeners = [];
+	protected $wildcards = [];
+	protected $sorted = [];
+	protected $firing = [];
 
 	/**
 	* Catch missing method call
@@ -41,13 +41,13 @@ class yf_core_events {
 	 */
 	public function listen($events, $listener, $priority = 0) {
 		if (DEBUG_MODE) {
-			debug('events_'.__FUNCTION__.'[]', array(
+			debug('events_'.__FUNCTION__.'[]', [
 				'name'			=> $events,
 				'listener'		=> is_callable($listener) ? 'Closure' : $listener,
 				'priority'		=> $priority,
 				'time_offset'	=> microtime(true),
 				'trace'			=> trace(),
-			));
+			]);
 		}
 		foreach ((array) $events as $event) {
 			if ($this->_str_contains($event, '*')) {
@@ -66,14 +66,14 @@ class yf_core_events {
 	 * @param  array   $payload
 	 * @return void
 	 */
-	public function queue($event, $payload = array()) {
+	public function queue($event, $payload = []) {
 		if (DEBUG_MODE) {
-			debug('events_'.__FUNCTION__.'[]', array(
+			debug('events_'.__FUNCTION__.'[]', [
 				'name'			=> $event,
 				'payload_len'	=> count($payload).' items',
 				'time_offset'	=> microtime(true),
 				'trace'			=> trace(),
-			));
+			]);
 		}
 		$this->listen($event.'_queue', function() use ($event, $payload) {
 			$this->fire($event, $payload);
@@ -99,22 +99,22 @@ class yf_core_events {
 	 * @param  bool    $halt
 	 * @return array|null
 	 */
-	public function fire($event, $payload = array(), $halt = false) {
+	public function fire($event, $payload = [], $halt = false) {
 		if (DEBUG_MODE) {
-			debug('events_'.__FUNCTION__.'[]', array(
+			debug('events_'.__FUNCTION__.'[]', [
 				'name'			=> $event,
 				'payload_len'	=> count($payload).' items',
 				'halt'			=> $halt,
 				'time_offset'	=> microtime(true),
 				'trace'			=> trace(),
-			));
+			]);
 		}
-		$responses = array();
+		$responses = [];
 		// If an array is not given to us as the payload, we will turn it into one so
 		// we can easily use call_user_func_array on the listeners, passing in the
 		// payload to each of them so that they receive each of these arguments.
 		if ( ! is_array($payload)) {
-			$payload = array($payload);
+			$payload = [$payload];
 		}
 		$this->firing[] = $event;
 		foreach ($this->get_listeners($event) as $listener) {
@@ -166,7 +166,7 @@ class yf_core_events {
 	 * @param  array   $payload
 	 * @return mixed
 	 */
-	public function until($event, $payload = array()) {
+	public function until($event, $payload = []) {
 		return $this->fire($event, $payload, true);
 	}
 
@@ -210,7 +210,7 @@ class yf_core_events {
 	 * @return array
 	 */
 	protected function _get_wildcard_listeners($event_name) {
-		$wildcards = array();
+		$wildcards = [];
 		foreach ($this->wildcards as $key => $listeners) {
 			if ($this->_str_is($key, $event_name)) {
 				$wildcards = array_merge($wildcards, $listeners);
@@ -226,7 +226,7 @@ class yf_core_events {
 	 * @return array
 	 */
 	protected function _sort_listeners($eventName) {
-		$this->sorted[$eventName] = array();
+		$this->sorted[$eventName] = [];
 		// If listeners exist for the given event, we will sort them by the priority
 		// so that we can call them in the correct order. We will cache off these
 		// sorted event listeners so we do not have to re-sort on every events.

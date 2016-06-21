@@ -9,43 +9,43 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 	*/
 	public function _get_supported_field_types() {
 // TODO
-		return array(
+		return [
 			'bit','int','real','float','double','decimal','numeric',
 			'varchar','char','tinytext','mediumtext','longtext','text',
 			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
 			'timestamp','datetime','time','date','year',
 			'enum','set',
-		);
+		];
 	}
 
 	/**
 	*/
 	public function _get_unsigned_field_types() {
 // TODO
-		return array(
+		return [
 			'bit','int','real','double','float','decimal','numeric'
-		);
+		];
 	}
 
 	/**
 	*/
 	public function _get_supported_table_options() {
 // TODO
-		return array(
+		return [
 			'conn_limit' => 'CONNECTION LIMIT',
-		);
+		];
 	}
 
 	/**
 	*/
-	public function list_databases($extra = array()) {
+	public function list_databases($extra = []) {
 		$sql = 'SELECT datname,datname FROM pg_database WHERE datistemplate = false';
 		return $extra['sql'] ? $sql : $this->db->get_2d($sql);
 	}
 
 	/**
 	*/
-	public function database_info($db_name = '', $extra = array(), &$error = false) {
+	public function database_info($db_name = '', $extra = [], &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -58,21 +58,21 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'db_name not exists';
 			return false;
 		}
-		return array(
+		return [
 			'name'	=> $db_name,
-		);
+		];
 	}
 
 	/**
 	*/
-	public function alter_database($db_name, $extra = array(), &$error = false) {
+	public function alter_database($db_name, $extra = [], &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
 		}
-		$allowed = array(
+		$allowed = [
 			'conn_limit' => 'CONNECTION LIMIT',
-		);
+		];
 		foreach ((array)$extra as $k => $v) {
 			$v = preg_replace('~[^a-z0-9_]+~i', '', $v);
 			if (isset($allowed[$k])) {
@@ -90,7 +90,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_tables($db_name = '', $extra = array(), &$error = false) {
+	public function list_tables($db_name = '', $extra = [], &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -104,27 +104,27 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 				AND "table_schema" = \'public\'
 			ORDER BY table_schema,table_name';
 		$tables = $this->db->get_2d($sql);
-		return $tables ? array_combine($tables, $tables) : array();
+		return $tables ? array_combine($tables, $tables) : [];
 	}
 
 	/**
 	*/
-	public function list_tables_details($db_name = '', $extra = array(), &$error = false) {
+	public function list_tables_details($db_name = '', $extra = [], &$error = false) {
 		foreach((array)$this->list_tables($db_name, $extra, $error) as $table) {
-			$tables[$table] = array(
+			$tables[$table] = [
 				'name'		=> $table,
 				'engine'	=> null,
 				'rows'		=> null,
 				'data_size'	=> null,
 				'collate'	=> null,
-			);
+			];
 		}
 		return $tables;
 	}
 
 	/**
 	*/
-	public function table_get_columns($table, $extra = array(), &$error = false) {
+	public function table_get_columns($table, $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table_name is empty';
 			return false;
@@ -134,7 +134,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function table_info($table, $extra = array(), &$error = false) {
+	public function table_info($table, $extra = [], &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -155,7 +155,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_indexes($table, $extra = array(), &$error = false) {
+	public function list_indexes($table, $extra = [], &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -172,7 +172,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
+	public function add_index($table, $index_name = '', $fields = [], $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -186,7 +186,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_foreign_keys($table, $extra = array(), &$error = false) {
+	public function list_foreign_keys($table, $extra = [], &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -207,7 +207,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_views($db_name = '', $extra = array(), &$error = false) {
+	public function list_views($db_name = '', $extra = [], &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -221,7 +221,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function create_view($table, $sql_as, $extra = array(), &$error = false) {
+	public function create_view($table, $sql_as, $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table is empty';
 			return false;
@@ -231,7 +231,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_triggers($db_name = '', $extra = array(), &$error = false) {
+	public function list_triggers($db_name = '', $extra = [], &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -244,7 +244,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = array(), &$error = false) {
+	public function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -266,19 +266,19 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-		$supported_trigger_times = array(
+		$supported_trigger_times = [
 			'before',
 			'after'
-		);
+		];
 		if (!strlen($trigger_time) || !in_array(strtolower($trigger_time), $supported_trigger_times)) {
 			$error = 'trigger time is wrong';
 			return false;
 		}
-		$supported_trigger_events = array(
+		$supported_trigger_events = [
 			'insert',
 			'update',
 			'delete'
-		);
+		];
 		if (!strlen($trigger_event) || !in_array(strtolower($trigger_event), $supported_trigger_events)) {
 			$error = 'trigger event is wrong';
 			return false;
@@ -299,7 +299,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 	/**
 	* Create part of SQL for "CREATE TABLE" from array of params
 	*/
-	public function _compile_create_table($data, $extra = array(), &$error = false) {
+	public function _compile_create_table($data, $extra = [], &$error = false) {
 // TODO: use code from mysql and adapt it
 	}
 

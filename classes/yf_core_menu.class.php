@@ -42,7 +42,7 @@ class yf_core_menu {
 	*		4 => 'Divider',
 	*	);
 	*/
-	function _show_menu($params = array()) {
+	function _show_menu($params = []) {
 		$return_array	= isset($params['return_array']) ? $params['return_array'] : false;
 		$force_stpl_name= isset($params['force_stpl_name']) ? $params['force_stpl_name'] : false;
 		$menu_name		= $params['name'];
@@ -54,11 +54,11 @@ class yf_core_menu {
 		if (!$cur_menu_info['active']) {
 			return false;
 		}
-		_class('core_events')->fire('core.before_menu', array(
+		_class('core_events')->fire('core.before_menu', [
 			'name'		=> $menu_name,
 			'info'		=> $cur_menu_info,
 			'params'	=> $params,
-		));
+		]);
 		if ($force_stpl_name) {
 			$cur_menu_info['stpl_name'] = $force_stpl_name;
 		}
@@ -79,7 +79,7 @@ class yf_core_menu {
 		$ICONS_DIR = _class('graphics')->ICONS_PATH;
 		$MEDIA_PATH = _class('graphics')->MEDIA_PATH;
 
-		$item_links = array();
+		$item_links = [];
 		$cur_page_id = null;
 		foreach ((array)$menu_items as $i => $item) {
 			$is_cur_page = false;
@@ -103,7 +103,7 @@ class yf_core_menu {
 		foreach ((array)$menu_items as $i => $item) {
 			$id = $item['id'];
 			$item_counter++;
-			$_next_info	= isset($menu_items[$i + 1]) ? $menu_items[$i + 1] : array();
+			$_next_info	= isset($menu_items[$i + 1]) ? $menu_items[$i + 1] : [];
 			$_next_level = isset($_next_info['level']) ? (int)$_next_info['level'] : 0;
 			$icon = trim($item['icon']);
 			$icon_path = '';
@@ -119,7 +119,7 @@ class yf_core_menu {
 					}
 				}
 			}
-			$items[$item['id']] = array(
+			$items[$item['id']] = [
 				'item_id'		=> intval($item['id']),
 				'parent_id'		=> intval($item['parent_id']),
 				'bg_class'		=> !($item_counter % 2) ? 'bg1' : 'bg2',
@@ -137,24 +137,24 @@ class yf_core_menu {
 				'is_cur_page'	=> (int)($id === $cur_page_id),
 				'have_children'	=> intval((bool)$item['have_children']),
 				'next_level_diff'=> intval(abs($item['level'] - $_next_level)),
-			);
+			];
 			// Save current level for the next iteration
 			$_prev_level = $item['level'];
 		}
-		_class('core_events')->fire('core.after_menu', array(
+		_class('core_events')->fire('core.after_menu', [
 			'name'		=> $menu_name,
 			'items'		=> $items,
 			'params'	=> $params,
-		));
+		]);
 		if ($return_array) {
 			return $items;
 		}
 		foreach ((array)$items as $id => $item) {
 			$items[$id] = tpl()->parse($stpl_item, $item);
 		}
-		return tpl()->parse($stpl_main, array(
+		return tpl()->parse($stpl_main, [
 			'items' => implode(PHP_EOL, (array)$items),
-		));
+		]);
 	}
 
 	/**
@@ -175,11 +175,11 @@ class yf_core_menu {
 		if (false !== strpos($cur_menu_info['method_name'], '.')) {
 			list($special_class_name, $special_method_name) = explode('.', $cur_menu_info['method_name']);
 		}
-		$special_params = array(
+		$special_params = [
 			'menu_name'	=> $menu_name,
 			'menu_id'	=> $menu_id,
-		);
-		$menu_items = array();
+		];
+		$menu_items = [];
 		if (!empty($special_class_name) && !empty($special_method_name)) {
 			$menu_items = _class($special_class_name, $special_path)->$special_method_name($special_params);
 		} else {
@@ -224,7 +224,7 @@ class yf_core_menu {
 	/**
 	*/
 	function _apply_custom_fields($cur_menu_info, $menu_items) {
-		$custom_fields = array();
+		$custom_fields = [];
 		if ($cur_menu_info['custom_fields']) {
 			foreach (explode(',', str_replace(';', ',', trim($cur_menu_info['custom_fields']))) as $f) {
 				$f = trim($f);
@@ -235,7 +235,7 @@ class yf_core_menu {
 		}
 		if ($this->USE_DYNAMIC_ATTS && $custom_fields) {
 			foreach ((array)$menu_items as $item_id => $item_info) {
-				$custom_attrs = array();
+				$custom_attrs = [];
 				if (!strlen($item_info['other_info'])) {
 					continue;
 				}
@@ -250,10 +250,10 @@ class yf_core_menu {
 
 	/**
 	*/
-	function _cleanup_menu_items($menu_items = array()) {
+	function _cleanup_menu_items($menu_items = []) {
 		$center_block_id = _class('graphics')->_get_center_block_id();
 
-		$out = array();
+		$out = [];
 		foreach ((array)$menu_items as $item_id => $item) {
 			if (empty($item)) {
 				continue;
@@ -331,12 +331,12 @@ class yf_core_menu {
 	/**
 	* Template for the custom class method for menu block (useful to inherit)
 	*/
-	function _custom_menu_items($params = array()) {
+	function _custom_menu_items($params = []) {
 		// Example what passes by params
-		$params = array(
+		$params = [
 			'menu_name'	=> $menu_name,
 			'menu_id'	=> $menu_id,
-		);
+		];
 		return false;
 	}
 
@@ -358,14 +358,14 @@ class yf_core_menu {
 		$CUR_SITE		= (int)conf('SITE_ID');
 		$CUR_SERVER		= (int)conf('SERVER_ID');
 
-		$items_ids		= array();
-		$items_array	= array();
+		$items_ids		= [];
+		$items_array	= [];
 		foreach ((array)$this->_menu_items[$menu_id] as $item) {
 			if ($skip_item_id == $item['id']) {
 				continue;
 			}
 			if (!empty($item['user_groups'])) {
-				$user_groups = array();
+				$user_groups = [];
 				foreach (explode(',',$item['user_groups']) as $v) {
 					if (!empty($v)) {
 						$user_groups[$v] = $v;
@@ -376,7 +376,7 @@ class yf_core_menu {
 				}
 			}
 			if (!empty($item['site_ids'])) {
-				$site_ids = array();
+				$site_ids = [];
 				foreach (explode(',',$item['site_ids']) as $v) {
 					if (!empty($v)) {
 						$site_ids[$v] = $v;
@@ -387,7 +387,7 @@ class yf_core_menu {
 				}
 			}
 			if (!empty($item['server_ids'])) {
-				$server_ids = array();
+				$server_ids = [];
 				foreach (explode(',',$item['server_ids']) as $v) {
 					if (!empty($v)) {
 						$server_ids[$v] = $v;
@@ -405,8 +405,8 @@ class yf_core_menu {
 	/**
 	* Get and sort items ordered array (recursively)
 	*/
-	function _recursive_sort_items($items = array(), $skip_item_id = 0) {
-		$children = array();
+	function _recursive_sort_items($items = [], $skip_item_id = 0) {
+		$children = [];
 		foreach ((array)$items as $id => $info) {
 			$parent_id = $info['parent_id'];
 			if ($skip_item_id == $id) {
@@ -415,9 +415,9 @@ class yf_core_menu {
 			$children[$parent_id][$id] = $id;
 		}
 		$ids = $this->_count_levels(0, $children);
-		$new_items = array();
+		$new_items = [];
 		foreach ((array)$ids as $id => $level) {
-			$new_items[$id] = $items[$id] + array('level' => $level);
+			$new_items[$id] = $items[$id] + ['level' => $level];
 		}		
 		return $new_items;
 	}
@@ -425,7 +425,7 @@ class yf_core_menu {
 	/**
 	*/
 	function _count_levels($start_id = 0, &$children, $level = 0) {
-		$ids = array();
+		$ids = [];
 		foreach ((array)$children[$start_id] as $id => $_tmp) {
 			$ids[$id] = $level;
 			if (isset($children[$id])) {

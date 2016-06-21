@@ -3,7 +3,7 @@
 load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_tmp extends yf_cache_driver {
 
-	public $storage = array();
+	public $storage = [];
 	protected $hits = 0;
 	protected $misses = 0;
 
@@ -18,7 +18,7 @@ class yf_cache_driver_tmp extends yf_cache_driver {
 	/**
 	*/
 	function __clone() {
-		$this->storage = array();
+		$this->storage = [];
 	}
 
 	/**
@@ -29,7 +29,7 @@ class yf_cache_driver_tmp extends yf_cache_driver {
 
 	/**
 	*/
-	function get($name, $ttl = 0, $params = array()) {
+	function get($name, $ttl = 0, $params = []) {
 		if (isset($this->storage[$name])) {
 			$this->_hits++;
 		} else {
@@ -55,7 +55,7 @@ class yf_cache_driver_tmp extends yf_cache_driver {
 	/**
 	*/
 	function flush() {
-		$this->storage = array();
+		$this->storage = [];
 		return true;
 	}
 
@@ -68,12 +68,12 @@ class yf_cache_driver_tmp extends yf_cache_driver {
 	/**
 	*/
 	function stats() {
-		return array(
+		return [
 			'hits'		=> $this->hits,
 			'misses'	=> $this->misses,
 			'uptime'	=> null,
 			'mem_usage'	=> memory_get_usage(),
 			'mem_avail'	=> null,
-		);
+		];
 	}
 }

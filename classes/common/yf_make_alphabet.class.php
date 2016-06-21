@@ -44,6 +44,6 @@ class yf_make_alphabet {
 		elseif	($chars[0] != '1' && $chars[1] == '1')	$like = " AND ".$q_var." LIKE '".$chars[0]."%' ";
 		elseif	($chars[0] == '1' && $chars[1] != '1')	$like = " AND ".$q_var." REGEXP '^[a-zA-Z0-9\_\-\s]{1}".$chars[1].".*' ";
 		else											$like = " AND ".$q_var." LIKE '".$chars[0].$chars[1]."%' ";
-		return array($html, $like);
+		return [$html, $like];
 	}
 }

@@ -8,14 +8,14 @@ class yf_dashboards {
 	/**
 	* Bootstrap CSS classes used to create configurable grid
 	*/
-	private $_col_classes = array(
+	private $_col_classes = [
 		1 => 'span12 col-md-12 column',
 		2 => 'span6 col-md-6 column',
 		3 => 'span4 col-md-4 column',
 		4 => 'span3 col-md-3 column',
 		6 => 'span2 col-md-2 column',
 		12 => 'span1 col-md-1 column',
-	);
+	];
 
 // TODO: add options for items:
 // min_height=0|(int)
@@ -26,41 +26,41 @@ class yf_dashboards {
 	/**
 	*/
 	function _init () {
-		$this->_auto_info['php_item'] = array(
+		$this->_auto_info['php_item'] = [
 			'id'			=> 'php_item',
 			'name'			=> 'CLONEABLE: php item name',
 			'desc'			=> 'CLONEABLE: php item desc',
-			'configurable'	=> array(),
+			'configurable'	=> [],
 			'cloneable'		=> 1,
 			'auto_type'		=> 'php_item',
-		);
-		$this->_auto_info['block_item'] = array(
+		];
+		$this->_auto_info['block_item'] = [
 			'id'			=> 'php_item',
 			'name'			=> 'CLONEABLE: block item name',
 			'desc'			=> 'CLONEABLE: block item desc',
-			'configurable'	=> array(),
+			'configurable'	=> [],
 			'cloneable'		=> 1,
 			'auto_type'		=> 'block_item',
-		);
-		$this->_auto_info['stpl_item'] = array(
+		];
+		$this->_auto_info['stpl_item'] = [
 			'id'			=> 'stpl_item',
 			'name'			=> 'CLONEABLE: stpl item name',
 			'desc'			=> 'CLONEABLE: stpl item desc',
-			'configurable'	=> array(),
+			'configurable'	=> [],
 			'cloneable'		=> 1,
 			'auto_type'		=> 'stpl_item',
-		);
+		];
 	}
 
 	/**
 	* Designed to be used by other modules to show configured dashboard
 	*/
-	function display($params = array()) {
+	function display($params = []) {
 		if (is_string($params)) {
 			$name = $params;
 		}
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		if (!$params['name'] && $name) {
 			$params['name'] = $name;
@@ -75,9 +75,9 @@ class yf_dashboards {
 	/**
 	* Similar to 'display', but for usage inside this module (action links and more)
 	*/
-	function view($params = array()) {
+	function view($params = []) {
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		$ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
 		$ds = $this->_get_dashboard_data($ds_name);
@@ -112,22 +112,22 @@ class yf_dashboards {
 					$css_class_override = $item_config['grid_class'];
 				}
 			}
-			$columns[$column_id] = array(
+			$columns[$column_id] = [
 				'num'	=> $column_id,
 				'class'	=> $css_class_override ?: $this->_col_classes[$num_columns],
 				'items'	=> $this->_view_widget_items($column_items, $items_configs, $ds_settings),
-			);
+			];
 		}
-		$replace = array(
+		$replace = [
 #			'edit_link'	=> DEBUG_MODE ? ADMIN_WEB_PATH.'?object=manage_dashboards&action=edit&id='.$ds['id'] : '',
 			'columns'	=> $columns,
-		);
+		];
 		return tpl()->parse(__CLASS__.'/view_main', $replace);
 	}
 
 	/**
 	*/
-	function _view_widget_items ($name_ids = array(), $items_configs = array()) {
+	function _view_widget_items ($name_ids = [], $items_configs = []) {
 		$list_of_hooks = $this->_get_available_widgets_hooks();
 
 		$_orig_object = $_GET['object'];
@@ -164,7 +164,7 @@ class yf_dashboards {
 						list($module_name, $method_name) = explode('.', $info['method_name']);
 					}
 				} elseif ($auto_type == 'block_item') {
-					$content = _class('core_blocks')->show_block(array('block_id' => $info['block_name']));
+					$content = _class('core_blocks')->show_block(['block_id' => $info['block_name']]);
 				} elseif ($auto_type == 'stpl_item') {
 					if (strlen($info['code'])) {
 						$content = tpl()->parse_string($info['code']);
@@ -189,7 +189,7 @@ class yf_dashboards {
 				$_GET['action'] = $_orig_action;
 			}
 
-			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
+			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', [
 				'id'			=> $info['auto_id'].'_'.$info['auto_id'],
 				'name'			=> _prepare_html($info['name']),
 				'content'		=> $content,
@@ -197,7 +197,7 @@ class yf_dashboards {
 				'css_class'		=> $saved_config['color'],
 				'hide_header'	=> $saved_config['hide_header'],
 				'hide_border'	=> $saved_config['hide_border'],
-			));
+			]);
 		}
 		if (!$items) {
 			return '';
@@ -232,13 +232,13 @@ class yf_dashboards {
 			return $this->_avail_widgets;
 		}
 		$method_prefix = '_hook_widget_';
-		$r = array(
+		$r = [
 			'_hook_widget__' => '',
 			'_' => '',
 			':' => '',
-		);
-		$_widgets = array();
-		foreach ((array)_class('user_modules', 'admin_modules/')->_get_methods(array('private' => '1')) as $module_name => $module_methods) {
+		];
+		$_widgets = [];
+		foreach ((array)_class('user_modules', 'admin_modules/')->_get_methods(['private' => '1']) as $module_name => $module_methods) {
 			foreach ((array)$module_methods as $method_name) {
 				if (substr($method_name, 0, strlen($method_prefix)) != $method_prefix) {
 					continue;
@@ -247,11 +247,11 @@ class yf_dashboards {
 				$_widgets[$module_name][$method_name] = $full_name;
 			}
 		}
-		$widgets = array();
+		$widgets = [];
 		foreach ((array)$_widgets as $module_name => $module_widgets) {
 			foreach ((array)$module_widgets as $method_name => $full_name) {
 				$auto_id = str_replace(array_keys($r), array_values($r), $full_name);
-				$widgets[$auto_id] = module_safe($module_name)->$method_name(array('describe_self' => true));
+				$widgets[$auto_id] = module_safe($module_name)->$method_name(['describe_self' => true]);
 				if (!$widgets[$auto_id]['name']) {
 unset($widgets[$auto_id]);
 continue;

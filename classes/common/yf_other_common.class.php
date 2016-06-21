@@ -33,7 +33,7 @@ class yf_other_common {
 		// Cut non-needed info
 		$data = preg_replace("/NOTICE: The expiration date .+?(Registrant:)/ims", "\\1", $data, 1); 
 		$data = preg_replace("/.+?(   Domain Name: )/ims", "\\1", $data, 1);
-		$data = preg_replace("/([ ]{2,})/i", " ", str_replace(array("\t","\r"), array(" ","\n"), trim($data)));
+		$data = preg_replace("/([ ]{2,})/i", " ", str_replace(["\t","\r"], [" ","\n"], trim($data)));
 		$data = preg_replace("/([\n]{2,})/i", "\n", $data);
 		
 		return $data;
@@ -80,7 +80,7 @@ class yf_other_common {
 			}
 			return false;
 		}
-		$geo_data = array(
+		$geo_data = [
 			"country_code"	=> $A["country"],
 			"country_name"	=> _country_name($A["country"]),
 			"region_code"	=> $A["region"],
@@ -89,7 +89,7 @@ class yf_other_common {
 			"area_code"		=> $A["area_code"],
 			"longitude"		=> $A["longitude"],
 			"latitude"		=> $A["latitude"],
-		);
+		];
 		return $geo_data;
 	}
 
@@ -98,7 +98,7 @@ class yf_other_common {
 	*/
 	function _is_ip_to_skip ($cur_ip = "") {
 		// Taken from http://en.wikipedia.org/wiki/IPv4
-		$ips_to_exclude = array(
+		$ips_to_exclude = [
 			"0.0.0.0/8",		// Current network (only valid as source address)	RFC 1700
 			"10.0.0.0/8",		// Private network	RFC 1918
 			"127.0.0.0/8",		// Loopback	RFC 3330
@@ -115,7 +115,7 @@ class yf_other_common {
 			"224.0.0.0/4",		// Multicasts (former Class D network)	RFC 3171
 			"240.0.0.0/4",		// Reserved (former Class E network)	RFC 1700
 			"255.255.255.255",	// Broadcast
-		);
+		];
 		foreach ((array)$ips_to_exclude as $_cur_cidr) {
 			if (common()->_is_ip_in_cidr($cur_ip, $_cur_cidr)) {
 				return true;
@@ -156,9 +156,9 @@ class yf_other_common {
 	*/
 	function _my_split ($text = "", $split_token = "", $split_length = 0) {
 		if (!strlen($split_token) || !$split_length) {
-			return array($text);
+			return [$text];
 		}
-		$splitted = array();
+		$splitted = [];
 
 		$text_length	= strlen($text);
 		$num_parts		= ceil($text_length / $split_length);
@@ -182,7 +182,7 @@ class yf_other_common {
 	* //$cloud_data - array like (key => array(text, num))
 	* $cloud_data - array like (text => num)
 	*/
-	function _create_cloud($cloud_data = array(), $params = array()) {
+	function _create_cloud($cloud_data = [], $params = []) {
 		
 		if (empty($cloud_data)) {
 			return "";
@@ -217,12 +217,12 @@ class yf_other_common {
 			} else {
 				$_cloud_fsize = 1;
 			}
-			$replace2 = array(
+			$replace2 = [
 				"num"			=> $_num,
 				"tag_text"		=> $_text,
 				"tag_search_url"=> "./?object=".$params["object"]."&action=".$params["action"]."&id=".$params["id_prefix"].($params["amp_encode"] ? str_replace(urlencode("&"), urlencode(urlencode("&")), urlencode($_text)) : urlencode($_text)),
 				"cloud_fsize"	=> $_cloud_fsize,
-			);
+			];
 			$items .= tpl()->parse("tags/cloud_item", $replace2);
 		}
 		return $items;
@@ -303,7 +303,7 @@ class yf_other_common {
 	/**
 	* Parse given text using "jevix" lib
 	*/
-	function jevix_parse ($text = "", $params = array()) {
+	function jevix_parse ($text = "", $params = []) {
 		// Initialize jevix
 		if (!isset($this->JEVIX)) {
 			$this->JEVIX = false;
@@ -321,22 +321,22 @@ class yf_other_common {
 		// next param
 		$this->JEVIX->cfgAllowTags(
 			isset($params["allow_tags"]) ? $params["allow_tags"] : 
-			array('a', 'img', 'i', 'b', 'u', 'em', 'strong', 'nobr', 'li', 'ol', 'ul', 'sup', 'abbr', 'pre', 'acronym', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'adabracut', 'br', 'code')
+			['a', 'img', 'i', 'b', 'u', 'em', 'strong', 'nobr', 'li', 'ol', 'ul', 'sup', 'abbr', 'pre', 'acronym', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'adabracut', 'br', 'code']
 		);
 		// next param
 		$this->JEVIX->cfgSetTagShort(
 			isset($params["tag_short"]) ? $params["tag_short"] : 
-			array('br','img')
+			['br','img']
 		);
 		// next param
 		$this->JEVIX->cfgSetTagPreformatted(
 			isset($params["tag_pre"]) ? $params["tag_pre"] : 
-			array('pre')
+			['pre']
 		);
 		// next param
 		$this->JEVIX->cfgSetTagCutWithContent(
 			isset($params["cut_with_content"]) ? $params["cut_with_content"] : 
-			array('script', 'object', 'iframe', 'style')
+			['script', 'object', 'iframe', 'style']
 		);
 		// next param
 		$this->JEVIX->cfgSetXHTMLMode(
@@ -360,46 +360,46 @@ class yf_other_common {
 		);
 		// next param
 		isset($params["allow_tag_params"]) ? "" : $params["allow_tag_params"] = 
-			array(
-				'a'		=> array('title', 'href'),
-				'img'	=> array('src', 'alt' => '#text', 'title', 'align' => array('right', 'left', 'center'), 'width' => '#int', 'height' => '#int', 'hspace' => '#int', 'vspace' => '#int'),
-			);
+			[
+				'a'		=> ['title', 'href'],
+				'img'	=> ['src', 'alt' => '#text', 'title', 'align' => ['right', 'left', 'center'], 'width' => '#int', 'height' => '#int', 'hspace' => '#int', 'vspace' => '#int'],
+			];
 		foreach ((array)$params["allow_tag_params"] as $k => $v) {
 			$this->JEVIX->cfgAllowTagParams($k, $v);
 		}
 		// next param
 		isset($params["tag_params_required"]) ? "" : $params["tag_params_required"] = 
-			array(
+			[
 				'img'	=> 'src',
 				'a'		=> 'href',
-			);
+			];
 		foreach ((array)$params["tag_params_required"] as $k => $v) {
 			$this->JEVIX->cfgSetTagParamsRequired($k, $v);
 		}
 		// next param
 		isset($params["tag_childs"]) ? "" : $params["tag_childs"] = 
-			array(
+			[
 				'ul'	=> 'li',
-			);
+			];
 		foreach ((array)$params["tag_childs"] as $k => $v) {
 			$this->JEVIX->cfgSetTagChilds($k, $v, true, true);
 		}
 		// next param
 		isset($params["tag_params_auto_add"]) ? "" : $params["tag_params_auto_add"] = 
-			array(
-				'a'		=> array('rel' => 'nofollow'),
-				'img'	=> array('width' => '300', 'height' => '300'),
-			);
+			[
+				'a'		=> ['rel' => 'nofollow'],
+				'img'	=> ['width' => '300', 'height' => '300'],
+			];
 		foreach ((array)$params["tag_params_auto_add"] as $k => $v) {
 			$this->JEVIX->cfgSetTagParamsAutoAdd($k, $v);
 		}
 		// next param
 		isset($params["auto_replace"]) ? "" : $params["auto_replace"] = 
-			array(
+			[
 				'+/-'	=> '±',
 				'(c)'	=> '©',
 				'(r)'	=> '®',
-			);
+			];
 		foreach ((array)$params["auto_replace"] as $k => $v) {
 			$this->JEVIX->cfgSetAutoReplace($k, $v);
 		}
@@ -453,9 +453,9 @@ class yf_other_common {
 		if ($c_from == $c_to) {
 			return $number;
 		}
-		$allowed_currencies = array(
+		$allowed_currencies = [
 			"GBP", "USD", "RUB", "UAH", "MXN", "ARS", "CHF", "CAD"
-		);
+		];
 		$cache_name = "currency_rates";
 		if (main()->USE_SYSTEM_CACHE) {
 			$rates = main()->get_data($cache_name);

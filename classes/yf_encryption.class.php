@@ -14,10 +14,10 @@ class yf_encryption {
 	/** @var int Define which cryptographic algorithm to use */
 	public $USE_CIPHER		= 4;
 	/** @var array Available algorithms (sorted in speed descending order) */
-	public $_avail_ciphers	= array(
+	public $_avail_ciphers	= [
 		4	=> 'CAST_256',
 		0	=> 'CAST_128',
-	);
+	];
 	/** @var string Secret key */
 	public $_secret_key	= 'secret__13457890'; // Padded for 16 bytes
 	/** @var mixed @conf_skip Mcrypt cipher constant value */
@@ -64,10 +64,10 @@ class yf_encryption {
 			$this->_mcrypt_cipher = constant('MCRYPT_'.$this->_avail_ciphers[$this->USE_CIPHER]);
 		} else {/*if ($this->_cur_cipher_id !== $this->USE_CIPHER) {*/
 			require_php_lib('phpcrypt');
-			$cipher_id_to_name = array(
+			$cipher_id_to_name = [
 				0	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_128,
 				4	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_256,
-			);
+			];
 			$this->_cur_cipher = new PHP_Crypt\PHP_Crypt($this->_secret_key, $cipher_id_to_name[$this->USE_CIPHER], PHP_Crypt\PHP_Crypt::MODE_CBC);
 		}
 	}
@@ -110,13 +110,13 @@ class yf_encryption {
 	* Examples: _class('encyption')->set_cipher('cast128'), _class('encyption')->set_cipher('CAST_128')
 	*/
 	function set_cipher($name) {
-		$name = str_replace(array('_','-',' '), '', strtolower(trim($name)));
+		$name = str_replace(['_','-',' '], '', strtolower(trim($name)));
 		if (!strlen($name)) {
 			return $this;
 		}
-		$name_to_id = array();
+		$name_to_id = [];
 		foreach((array)$this->_avail_ciphers as $id => $n) {
-			$n = str_replace(array('_','-',' '), '', strtolower(trim($n)));
+			$n = str_replace(['_','-',' '], '', strtolower(trim($n)));
 			$name_to_id[$n] = $id;
 		}
 		if (isset($name_to_id[$name])) {
@@ -209,20 +209,20 @@ class yf_encryption {
 	/**
 	*/
 	function _safe_base64_encode($text) {
-		$r = array(
+		$r = [
 			'/' => '*',
-		);
+		];
 		return str_replace(array_keys($r), array_values($r), base64_encode($text));
 	}
 
 	/**
 	*/
 	function _safe_base64_decode($text) {
-		$r = array(
+		$r = [
 			'*' => '/',
 			' ' => '+',
 			'%20' => '+',
-		);
+		];
 		return base64_decode(str_replace(array_keys($r), array_values($r), $text));
 	}
 

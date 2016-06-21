@@ -10,7 +10,7 @@ class yf_model {
 
 	protected $_db = null;
 	protected $_table = null;
-	protected $_fillable = array();
+	protected $_fillable = [];
 	protected $_primary_key = null;
 	protected $_primary_id = null;
 	const CREATED_AT = 'created_at';
@@ -18,7 +18,7 @@ class yf_model {
 
 	/**
 	*/
-	public function __construct($args = array(), $params = array()) {
+	public function __construct($args = [], $params = []) {
 		$this->set_db_object($params['db']);
 		$this->set_data($args);
 	}
@@ -27,10 +27,10 @@ class yf_model {
 	* We cleanup object properties when cloning
 	*/
 	public function __clone() {
-		$persist_properties = array(
+		$persist_properties = [
 			'_table',
 			'_fillable',
-		);
+		];
 		foreach ((array)get_object_vars($this) as $k => $v) {
 			if (!in_array($k, $persist_properties)) {
 				$this->$k = null;
@@ -49,10 +49,10 @@ class yf_model {
 		if (strpos($name, $where_prefix) !== false) {
 			$name = substr($name, strlen($where_prefix));
 			array_unshift($args, 't0.'.$name);
-			return call_user_func_array(array($this, 'where'), $args);
+			return call_user_func_array([$this, 'where'], $args);
 		} elseif (strpos($name, $scope_prefix) !== false) {
 			if (method_exists($this, $name)) {
-				return call_user_func_array(array($this, $name), $args);
+				return call_user_func_array([$this, $name], $args);
 			}
 		} elseif (strpos($name, $get_prefix) !== false) {
 			$accessor = $get_prefix. $name;
@@ -78,13 +78,13 @@ class yf_model {
 		if (strpos($name, $where_prefix) !== false) {
 			$name = substr($name, strlen($where_prefix));
 			array_unshift($args, 't0.'.$name);
-			return call_user_func_array(array($obj, 'where'), $args);
+			return call_user_func_array([$obj, 'where'], $args);
 		} elseif (strpos($name, $scope_prefix) !== false) {
 			if (method_exists($obj, $name)) {
-				return call_user_func_array(array($obj, $name), $args);
+				return call_user_func_array([$obj, $name], $args);
 			}
 		}
-		return call_user_func_array(array($obj, $method), $args);
+		return call_user_func_array([$obj, $method], $args);
 	}
 
 	/**
@@ -199,7 +199,7 @@ class yf_model {
 	* Return current model data
 	*/
 	public function get_data() {
-		$data = array();
+		$data = [];
 		foreach (get_object_vars($this) as $var => $value) {
 			if (substr($var, 0, 1) === '_') {
 				continue;
@@ -212,7 +212,7 @@ class yf_model {
 	/**
 	* Set current model data
 	*/
-	public function set_data($data = array()) {
+	public function set_data($data = []) {
 		if ($data instanceof yf_model_result) {
 			$data = $data->get_data();
 		}
@@ -238,7 +238,7 @@ class yf_model {
 	/**
 	* Return new instance of the given model
 	*/
-	public function new_instance($args = array()) {
+	public function new_instance($args = []) {
 		$model = new static($args);
 		return $model;
 	}
@@ -246,7 +246,7 @@ class yf_model {
 	/**
 	* Return new instance of model result
 	*/
-	public function new_result($result = array()) {
+	public function new_result($result = []) {
 		return new yf_model_result($result, $this);
 	}
 
@@ -260,7 +260,7 @@ class yf_model {
 	/**
 	* Return new query builder instance
 	*/
-	public function new_query($params = array()) {
+	public function new_query($params = []) {
 		if (is_null($params['where'])) {
 			unset($params['where']);
 		}
@@ -271,12 +271,12 @@ class yf_model {
 		$builder = $this->_db->query_builder();
 		$builder->_model = $this;
 		$builder->_with = $this->_with;
-		$builder->_result_wrapper = array($this, 'new_result');
+		$builder->_result_wrapper = [$this, 'new_result'];
 		$builder->_remove_as_from_delete = true;
 		$builder->from($table.' AS t0');
-		foreach (array('select','where','where_or','whereid','order_by','having','group_by') as $part) {
+		foreach (['select','where','where_or','whereid','order_by','having','group_by'] as $part) {
 			if ($params[$part]) {
-				call_user_func_array(array($builder, $part), is_array($params[$part]) ? $params[$part] : array($params[$part]));
+				call_user_func_array([$builder, $part], is_array($params[$part]) ? $params[$part] : [$params[$part]]);
 			}
 		}
 		// limit => [10,30] or limit => 5
@@ -285,7 +285,7 @@ class yf_model {
 			$offset = is_numeric($params['limit']) ? null : $params['limit'][1];
 			$builder->limit($count, $offset);
 		}
-		foreach (array('join','left_join','inner_join','right_join') as $func) {
+		foreach (['join','left_join','inner_join','right_join'] as $func) {
 			if ($params[$func]) {
 				$join = $params[$func];
 				$builder->$func($join['table'], $join['on']);
@@ -307,7 +307,7 @@ class yf_model {
 	*/
 	public static function select() {
 		$obj = isset($this) ? $this : new static();
-		return $obj->new_query(array(__FUNCTION__ => func_get_args()));
+		return $obj->new_query([__FUNCTION__ => func_get_args()]);
 	}
 
 	/**
@@ -315,7 +315,7 @@ class yf_model {
 	*/
 	public static function where() {
 		$obj = isset($this) ? $this : new static();
-		return $obj->new_query(array(__FUNCTION__ => func_get_args()));
+		return $obj->new_query([__FUNCTION__ => func_get_args()]);
 	}
 
 	/**
@@ -325,7 +325,7 @@ class yf_model {
 	public static function find() {
 		$obj = isset($this) ? $this : new static();
 		$pk = $obj->get_key_name();
-		$result = $obj->new_query(array('where' => func_get_args()))->get();
+		$result = $obj->new_query(['where' => func_get_args()])->get();
 		if (!$result || !$result->$pk) {
 			return null;
 		}
@@ -339,7 +339,7 @@ class yf_model {
 	*/
 	public static function all() {
 		$obj = isset($this) ? $this : new static();
-		return $obj->new_query(array('where' => func_get_args()))->get_all();
+		return $obj->new_query(['where' => func_get_args()])->get_all();
 	}
 
 	/**
@@ -347,7 +347,7 @@ class yf_model {
 	*/
 	public static function count() {
 		$obj = isset($this) ? $this : new static();
-		return (int)$obj->new_query(array('where' => func_get_args()))->count();
+		return (int)$obj->new_query(['where' => func_get_args()])->count();
 	}
 
 	/**
@@ -369,16 +369,16 @@ class yf_model {
 	public static function first_or_create() {
 		$obj = isset($this) ? $this : new static();
 		$args = func_get_args();
-		$first = $obj->new_query(array(
+		$first = $obj->new_query([
 			'where' => $args,
 			'order_by' => $obj->get_key_name().' asc',
 			'limit' => 1,
-		))->get();
+		])->get();
 		if (is_object($first)) {
 			$obj->set_data($first);
 			return $first;
 		}
-		return call_user_func_array(array($obj, 'create'), $args);
+		return call_user_func_array([$obj, 'create'], $args);
 	}
 
 	/**
@@ -387,16 +387,16 @@ class yf_model {
 	public static function first_or_new() {
 		$obj = isset($this) ? $this : new static();
 		$args = func_get_args();
-		$first = $obj->new_query(array(
+		$first = $obj->new_query([
 			'where' => $args,
 			'order_by' => $obj->get_key_name().' asc',
 			'limit' => 1,
-		))->get();
+		])->get();
 		if (is_object($first)) {
 			$obj->set_data($first);
 			return $first;
 		}
-		return call_user_func_array(array($obj, 'new_instance'), $args);
+		return call_user_func_array([$obj, 'new_instance'], $args);
 	}
 
 	/**
@@ -419,7 +419,7 @@ class yf_model {
 		if (isset($data[self::UPDATED_AT])) {
 			$data[self::UPDATED_AT] = date('Y-m-d H:i:s');
 		}
-		return $this->new_query(array('whereid' => $this->get_key()))->update($data);
+		return $this->new_query(['whereid' => $this->get_key()])->update($data);
 	}
 
 	/**
@@ -428,7 +428,7 @@ class yf_model {
 	public function joining_table($related) {
 		$base = class_basename($this, '', '_model');
 		$related = class_basename($related, '', '_model');
-		$models = array($related, $base);
+		$models = [$related, $base];
 		// Now that we have the model names in an array we can just sort them and
 		// use the implode function to join them together with an underscores,
 		// which is typically used by convention within the database system.
@@ -446,14 +446,14 @@ class yf_model {
 			$relation = $caller['function'];
 		}
 		$instance = $this->_db->model($related);
-		return $this->new_relation(array(
+		return $this->new_relation([
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key ?: $this->get_foreign_key(),
 			'local_key'		=> $local_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
-		));
+		]);
 	}
 
 	/**
@@ -465,14 +465,14 @@ class yf_model {
 			$relation = $caller['function'];
 		}
 		$instance = $this->_db->model($related);
-		return $this->new_relation(array(
+		return $this->new_relation([
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key ?: strtolower($relation).'_id',
 			'other_key'		=> $other_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
-		));
+		]);
 	}
 
 	/**
@@ -484,14 +484,14 @@ class yf_model {
 			$relation = $caller['function'];
 		}
 		$instance = $this->_db->model($related);
-		return $this->new_relation(array(
+		return $this->new_relation([
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key ?: $this->get_foreign_key(),
 			'local_key'		=> $local_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
-		));
+		]);
 	}
 
 	/**
@@ -503,7 +503,7 @@ class yf_model {
 			$relation = $caller['function'];
 		}
 		$instance = $this->_db->model($related);
-		return $this->new_relation(array(
+		return $this->new_relation([
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
@@ -511,7 +511,7 @@ class yf_model {
 			'foreign_key'	=> $foreign_key ?: $this->get_foreign_key(),
 			'other_key'		=> $other_key ?: $instance->get_foreign_key(),
 			'query'			=> $instance->new_query(),
-		));
+		]);
 	}
 
 	/**
@@ -523,7 +523,7 @@ class yf_model {
 			$relation = $caller['function'];
 		}
 		$instance = $this->_db->model($related);
-		return $this->new_relation(array(
+		return $this->new_relation([
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
@@ -531,7 +531,7 @@ class yf_model {
 			'foreign_key'	=> $instance->get_table().'.'.($foreign_key ?: $this->get_foreign_key()),
 			'local_key'		=> $local_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
-		));
+		]);
 	}
 
 	/**
@@ -579,7 +579,7 @@ class yf_model {
 	/**
 	* Relation querying method $posts = model('post')->has('comments', '>=', 3)->get();
 	*/
-	public function has($relation, $where = array()) {
+	public function has($relation, $where = []) {
 // TODO
 		return $this;
 	}
@@ -602,7 +602,7 @@ class yf_model {
 	* Delete matching record(s) from database
 	*/
 	public function delete() {
-		return $this->new_query(array('where' => func_get_args()))->limit(1)->delete();
+		return $this->new_query(['where' => func_get_args()])->limit(1)->delete();
 	}
 
 	/**
@@ -610,20 +610,20 @@ class yf_model {
 	*/
 	public static function destroy() {
 		$obj = isset($this) ? $this : new static();
-		return $obj->new_query(array('where' => func_get_args()))->delete();
+		return $obj->new_query(['where' => func_get_args()])->delete();
 	}
 
 	/**
 	* Update only model's timestamps
 	*/
 	public function touch() {
-		return $this->new_query(array('where' => func_get_args()))->update(array(self::UPDATED_AT => date('Y-m-d H:i:s')));
+		return $this->new_query(['where' => func_get_args()])->update([self::UPDATED_AT => date('Y-m-d H:i:s')]);
 	}
 
 	/**
 	* Linking with the table builder
 	*/
-	public function table($params = array()) {
+	public function table($params = []) {
 		$sql = $this->new_query((array)$params['query_builder'])->sql();
 		$filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: $_GET['object'].'__'.$_GET['action']);
 		$params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: $_SESSION[$filter_name]);
@@ -633,7 +633,7 @@ class yf_model {
 	/**
 	* Linking with the form builder
 	*/
-	public function form($whereid, $data = array(), $params = array()) {
+	public function form($whereid, $data = [], $params = []) {
 		$a = (array)$this->new_query((array)$params['query_builder'])->whereid($whereid)->get();
 		return form($a + (array)$data, $params);
 	}
@@ -641,12 +641,12 @@ class yf_model {
 	/**
 	* Linking with the form builder
 	*/
-	public function filter_form($data = array(), $params = array()) {
+	public function filter_form($data = [], $params = []) {
 		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
-		$a = array(
+		$a = [
 			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
 			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
-		);
+		];
 		$params['selected'] = $params['selected'] ?: $_SESSION[$filter_name];
 		return form($a + (array)$data, $params);
 	}
@@ -654,14 +654,14 @@ class yf_model {
 	/**
 	* Model validation will be here
 	*/
-	public function validate($rules = array(), $params = array()) {
+	public function validate($rules = [], $params = []) {
 // TODO
 	}
 
 	/**
 	* Html widget connetion
 	*/
-	public function html($name, $params = array()) {
+	public function html($name, $params = []) {
 // TODO
 	}
 }

@@ -7,7 +7,7 @@ class yf_ssh_files {
 	/**
 	* Read remote file
 	*/
-	function read_file ($server_info = array(), $remote_file = "", $local_file = "") {
+	function read_file ($server_info = [], $remote_file = "", $local_file = "") {
 		$local_file		= trim($local_file);
 		$remote_file	= _class('ssh')->_prepare_path($remote_file);
 		if (!_class('ssh')->_INIT_OK || !$server_info || !strlen($remote_file)) {
@@ -65,7 +65,7 @@ class yf_ssh_files {
 	/**
 	* Write local file into remote file
 	*/
-	function write_file ($server_info = array(), $local_file = "", $remote_file = "") {
+	function write_file ($server_info = [], $local_file = "", $remote_file = "") {
 		$local_file		= trim($local_file);
 		$remote_file	= _class('ssh')->_prepare_path($remote_file);
 		if (!_class('ssh')->_INIT_OK || !$server_info || !strlen($local_file) || !strlen($remote_file)) {
@@ -122,7 +122,7 @@ class yf_ssh_files {
 	/**
 	* Write string into remote file
 	*/
-	function write_string ($server_info = array(), $string = "", $remote_file = "") {
+	function write_string ($server_info = [], $string = "", $remote_file = "") {
 		$remote_file	= _class('ssh')->_prepare_path($remote_file);
 		if (!_class('ssh')->_INIT_OK || !$server_info || !$string || (!strlen($remote_file) && !is_array($string))) {
 			return false;
@@ -177,7 +177,7 @@ class yf_ssh_files {
 						$first_local_dir = trim(substr($_local_tmp_dir, 0, strpos($_local_tmp_dir, "/", 1)), "/");
 						$_cwd = trim(_class('ssh')->exec($server_info, "pwd"));
 			
-						$_tmp_dir = _class('ssh')->_prepare_path($_remote_dir. "/". str_replace(array(".tar", ".gz", ".bz"), "", basename($archive_path)));
+						$_tmp_dir = _class('ssh')->_prepare_path($_remote_dir. "/". str_replace([".tar", ".gz", ".bz"], "", basename($archive_path)));
 
 						_class('ssh')->mkdir_m($server_info, $_tmp_dir);
 			
@@ -262,7 +262,7 @@ class yf_ssh_files {
 	/**
 	* Check if file exists remotely
 	*/
-	function file_exists($server_info = array(), $path = "") {
+	function file_exists($server_info = [], $path = "") {
 		$path = _class('ssh')->_prepare_path($path);
 		if (strlen($path)) {
 			$command = "echo \"if [ -e '".$path."' ]; then echo 1; else echo 0; fi\" | bash";
@@ -276,7 +276,7 @@ class yf_ssh_files {
 	/**
 	* Get selected file info
 	*/
-	function file_info ($server_info = array(), $path = "") {
+	function file_info ($server_info = [], $path = "") {
 		$path = _class('ssh')->_prepare_path($path);
 		if (!_class('ssh')->_INIT_OK || !strlen($path) || !$server_info) {
 			return false;
@@ -290,16 +290,16 @@ class yf_ssh_files {
 	/**
 	* Resolve full path for the given file, dir or link
 	*/
-	function realpath($server_info = array(), $path = "") {
+	function realpath($server_info = [], $path = "") {
 		return trim(_class('ssh')->exec($server_info, "realpath ".$path), "'`\"\t\n ");
 	}
 
 	/**
 	* Scan remote dir and return array of files details
 	*/
-	function scan_dir ($server_info = array(), $start_dir = "", $pattern_include = "", $pattern_exclude = "", $level = 0, $single_file = "") {
+	function scan_dir ($server_info = [], $start_dir = "", $pattern_include = "", $pattern_exclude = "", $level = 0, $single_file = "") {
 		if (is_array($start_dir)) {
-			$_merged_contents = array();
+			$_merged_contents = [];
 			foreach ((array)$start_dir as $_start_dir) {
 				$_cur_contents = (array)_class('ssh')->scan_dir ($server_info, $_start_dir, $pattern_include, $pattern_exclude, $level, $single_file);
 				$_merged_contents += (array)$_cur_contents;
@@ -332,7 +332,7 @@ class yf_ssh_files {
 			."";
 		$pattern = "/([ldrwxst\-]{10})[\s]+([0-9]+)[\s]+(\w+)[\s]+(\w+)[\s]+([0-9]+)[\s]+(".$time_pattern.")[\s]+(.*)/i";
 		preg_match_all($pattern, $tmp, $m);
-		$files = array();
+		$files = [];
 		foreach ((array)$m[0] as $id => $_matched_all) {
 			$_name = trim($m[7][$id]);
 			if ($_name == "." || $_name == "..") {
@@ -340,7 +340,7 @@ class yf_ssh_files {
 			}
 			$_perms	= trim($m[1][$id]);
 			// Compatibility with sticky bit, setuid, setgid (http://en.wikipedia.org/wiki/File_system_permissions)
-			$_perms = str_replace(array("s", "S", "t", "T"), array("x", "-", "x", "-"), $_perms);
+			$_perms = str_replace(["s", "S", "t", "T"], ["x", "-", "x", "-"], $_perms);
 			// could be: enum("f","d","l");
 			$_type	= $_perms{0} == "d" ? "d" : ($_perms{0} == "l" ? "l" : "f");
 			// Remove link target from name and place it in separate var
@@ -379,7 +379,7 @@ class yf_ssh_files {
 					}
 				}
 			}
-			$files[($start_dir != "/" ? $start_dir : "")."/".$_name] = array(
+			$files[($start_dir != "/" ? $start_dir : "")."/".$_name] = [
 				"name"	=> $_name,
 				"type"	=> $_type,
 				"perms"	=> $_perms,
@@ -389,7 +389,7 @@ class yf_ssh_files {
 				"size"	=> $_size,
 				"date"	=> $_date,
 				"link"	=> $_link,
-			);
+			];
 		}
 		if (is_array($files)) {
 			ksort($files);
@@ -401,7 +401,7 @@ class yf_ssh_files {
 	/**
 	* Alias for the mkdir_m
 	*/
-	function mkdir($server_info = array(), $dir_name = "", $dir_mode = 755, $create_index_htmls = 0, $start_folder = "") {
+	function mkdir($server_info = [], $dir_name = "", $dir_mode = 755, $create_index_htmls = 0, $start_folder = "") {
 		return _class('ssh')->mkdir_m($server_info, $dir_name, $dir_mode, $create_index_htmls, $start_folder);
 	}
 
@@ -415,7 +415,7 @@ class yf_ssh_files {
 	* @param	$start_folder		string
 	* @return	int		Status code
 	*/
-	function mkdir_m($server_info = array(), $dir_name = "", $dir_mode = 755, $create_index_htmls/*!not implemented here!*/ = 0, $start_folder = "/") {
+	function mkdir_m($server_info = [], $dir_name = "", $dir_mode = 755, $create_index_htmls/*!not implemented here!*/ = 0, $start_folder = "/") {
 		if (!_class('ssh')->_INIT_OK || !$server_info) {
 			return false;
 		}
@@ -424,7 +424,7 @@ class yf_ssh_files {
 			if (!strlen($start_folder)) {
 				$start_folder = "/";
 			}
-			$_cmd = array();
+			$_cmd = [];
 			foreach ((array)$dir_name as $_dir_name => $_dir_mode) {
 				$_dir_name = _class('ssh')->_prepare_path($_dir_name);
 				if (!strlen($_dir_name)) {
@@ -469,7 +469,7 @@ class yf_ssh_files {
 	/**
 	* Remove remote dir
 	*/
-	function rmdir($server_info = array(), $path = "") {
+	function rmdir($server_info = [], $path = "") {
 		$path = _class('ssh')->_prepare_path($path);
 		// Do not allow to change folders with less than 1 level deep from "/", 
 		// for example: deny for "/var",
@@ -485,7 +485,7 @@ class yf_ssh_files {
 	/**
 	* Unlink remote file or link
 	*/
-	function unlink($server_info = array(), $path = "") {
+	function unlink($server_info = [], $path = "") {
 		$path = _class('ssh')->_prepare_path($path);
 		_class('ssh')->_log($server_info, __FUNCTION__, "path: ".$path."");
 		return _class('ssh')->exec($server_info, "unlink '".$path."'");
@@ -494,9 +494,9 @@ class yf_ssh_files {
 	/**
 	* Chmod remote file
 	*/
-	function chmod($server_info = array(), $path = "", $new_mode = null, $recursively = false) {
+	function chmod($server_info = [], $path = "", $new_mode = null, $recursively = false) {
 		if (is_array($path)) {
-			$_bulk_cmd = array();
+			$_bulk_cmd = [];
 			foreach ((array)$path as $_path => $_new_mode) {
 				$_path = _class('ssh')->_prepare_path($_path);
 				if (substr_count($_path, "/") <= 1) {
@@ -527,9 +527,9 @@ class yf_ssh_files {
 	/**
 	* Chown remote file
 	*/
-	function chown($server_info = array(), $path = "", $new_owner = "", $new_group = "", $recursively = false) {
+	function chown($server_info = [], $path = "", $new_owner = "", $new_group = "", $recursively = false) {
 		if (is_array($path)) {
-			$_bulk_cmd = array();
+			$_bulk_cmd = [];
 			foreach ((array)$path as $_path => $_new_owner) {
 				$_path = _class('ssh')->_prepare_path($_path);
 				if (substr_count($_path, "/") <= 1) {
@@ -562,7 +562,7 @@ class yf_ssh_files {
 	/**
 	* Rename remote file, dir or link
 	*/
-	function rename($server_info = array(), $old_name = "", $new_name = "") {
+	function rename($server_info = [], $old_name = "", $new_name = "") {
 		$old_name = _class('ssh')->_prepare_path($old_name);
 		$new_name = _class('ssh')->_prepare_path($new_name);
 		if (!strlen($old_name) || !strlen($new_name)) {
@@ -583,7 +583,7 @@ class yf_ssh_files {
 	/**
 	* Copy remote dir structure into local one (bulk method)
 	*/
-	function download_dir ($server_info = array(), $remote_dir = "", $local_dir = "", $pattern_include = "", $pattern_exclude = "", $level = null) {
+	function download_dir ($server_info = [], $remote_dir = "", $local_dir = "", $pattern_include = "", $pattern_exclude = "", $level = null) {
 		$local_dir	= _class('ssh')->_prepare_path($local_dir);
 		$remote_dir	= _class('ssh')->_prepare_path($remote_dir);
 		if (!_class('ssh')->_INIT_OK || !$server_info || !strlen($local_dir) || !strlen($remote_dir)) {
@@ -629,7 +629,7 @@ class yf_ssh_files {
 	/**
 	* Copy local dir structure into remote one (bulk method)
 	*/
-	function upload_dir ($server_info = array(), $local_dir = '', $remote_dir = '', $pattern_include = '', $pattern_exclude = '', $level = null) {
+	function upload_dir ($server_info = [], $local_dir = '', $remote_dir = '', $pattern_include = '', $pattern_exclude = '', $level = null) {
 		$local_dir	= _class('ssh')->_prepare_path($local_dir);
 		$remote_dir	= _class('ssh')->_prepare_path($remote_dir);
 		if (!_class('ssh')->_INIT_OK || !$server_info || !strlen($local_dir) || !strlen($remote_dir)) {
@@ -656,7 +656,7 @@ class yf_ssh_files {
 					$first_local_dir = trim(substr($local_dir, 0, strpos($local_dir, '/', 1)), '/');
 					$_cwd = trim(_class('ssh')->exec($server_info, 'pwd'));
 
-					$_tmp_dir = _class('ssh')->_prepare_path($remote_dir. '/'. str_replace(array('.tar', '.gz', '.bz'), '', basename($archive_path)));
+					$_tmp_dir = _class('ssh')->_prepare_path($remote_dir. '/'. str_replace(['.tar', '.gz', '.bz'], '', basename($archive_path)));
 					_class('ssh')->mkdir_m($server_info, $_tmp_dir);
 
 					$cmd = "cd '".$_tmp_dir."';"

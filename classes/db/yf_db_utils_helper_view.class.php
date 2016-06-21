@@ -35,25 +35,25 @@ class yf_db_utils_helper_view {
 
 	/**
 	*/
-	public function exists($extra = array(), &$error = false) {
+	public function exists($extra = [], &$error = false) {
 		return $this->utils->view_exists($this->db_name.'.'.$this->view, $extra, $error);
 	}
 
 	/**
 	*/
-	public function info($extra = array(), &$error = false) {
+	public function info($extra = [], &$error = false) {
 		return $this->utils->view_info($this->db_name.'.'.$this->view, $extra, $error);
 	}
 
 	/**
 	*/
-	public function drop($extra = array(), &$error = false) {
+	public function drop($extra = [], &$error = false) {
 		return $this->utils->drop_view($this->db_name.'.'.$this->view, $extra, $error);
 	}
 
 	/**
 	*/
-	public function create($sql_as, $extra = array(), &$error = false) {
+	public function create($sql_as, $extra = [], &$error = false) {
 		return $this->utils->create_view($this->db_name.'.'.$this->view, $sql_as, $extra, $error);
 	}
 }

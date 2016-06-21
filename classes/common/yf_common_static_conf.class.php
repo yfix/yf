@@ -2,46 +2,46 @@
 
 class yf_common_static_conf {
 
-	public $type_list = array(
-		'order_status' => array(
+	public $type_list = [
+		'order_status' => [
 			'0' => 'in process',
 			'1' => 'confirmed',
 			'2' => 'paid',
 			'3' => 'delivering',
 			'4' => 'completed',
 			'5' => 'rejected',
-		),
-		'order_items_status' => array(
+		],
+		'order_items_status' => [
 			'0' => 'in process',
 			'1' => 'ready',
 			'2' => 'cancelled',
-		),
-		'payment_methods' => array(
+		],
+		'payment_methods' => [
 			'0' => 'cash',
 			'1' => 'credit_card',
 			'2' => 'onlymoney',
-		),
-		'product_revisions' => array(
+		],
+		'product_revisions' => [
 			'edit'		=> '_edit',
 			'checkout'	=> '_checkout',
 			'first'		=> '_first',
 			'correct_name'=> '_correct_name',
-		),
-		'order_revisions' => array(
+		],
+		'order_revisions' => [
 			'edit'		=> '_edit',
 			'checkout'	=> '_checkout',
 			'merge'		=> '_merge',
 			'first'		=> '_first',
-		),
-		'images_revisions' => array(
+		],
+		'images_revisions' => [
 			'deleted'	=> '_deleted',
 			'checkout'	=> '_checkout',
 			'updated'	=> '_updated',
 			'import'	=> '_import',
 			'first'		=> '_first',
 			'change_main'=>'_change_main',
-		),
-	);
+		],
+	];
 
 	/*
 	 * Returns all types with empty param 'type'
@@ -63,7 +63,7 @@ class yf_common_static_conf {
 				if ($translate === false) {
 					return $selected_types;
 				}
-				$translated_selected_types = array();
+				$translated_selected_types = [];
 				foreach ($selected_types as $key => $value) {
 					$translated_selected_types[$key] = t($value);
 				}
