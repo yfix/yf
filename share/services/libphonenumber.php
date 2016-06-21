@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/yfix/libphonenumber-for-php.git' => 'libphonenumber/'),
-	'autoload_config' => array('libphonenumber/src/libphonenumber/' => 'libphonenumber'),
+$config = [
+	'git_urls' => ['https://github.com/yfix/libphonenumber-for-php.git' => 'libphonenumber/'],
+	'autoload_config' => ['libphonenumber/src/libphonenumber/' => 'libphonenumber'],
 	'example' => function() {
 		$swissNumberStr = '044 668 18 00';
 		$phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
@@ -14,5 +14,5 @@ $config = array(
 			var_dump($e);
 		}
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

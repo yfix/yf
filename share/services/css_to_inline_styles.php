@@ -1,14 +1,14 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'require_services' => array('sf_css_selector'),
-	'git_urls' => array('https://github.com/tijsverkoyen/CssToInlineStyles.git~1.5.4' => 'css_to_inline_styles/'),
-	'require_once' => array(
+$config = [
+	'require_services' => ['sf_css_selector'],
+	'git_urls' => ['https://github.com/tijsverkoyen/CssToInlineStyles.git~1.5.4' => 'css_to_inline_styles/'],
+	'require_once' => [
 		'css_to_inline_styles/src/Exception.php',
 		'css_to_inline_styles/src/Specificity.php',
 		'css_to_inline_styles/src/CssToInlineStyles.php',
-	),
+	],
 	'example' => function() {
 		$body = '<style type="text/css">body{color:red;}</style>';
 		$html = '
@@ -39,5 +39,5 @@ $config = array(
 #			$result = $matches[ 1 ] ?: $result;
 #		}
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

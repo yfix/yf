@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/twigphp/Twig.git' => 'twig/'),
-	'require_once' => array('twig/lib/Twig/Autoloader.php'),
+$config = [
+	'git_urls' => ['https://github.com/twigphp/Twig.git' => 'twig/'],
+	'require_once' => ['twig/lib/Twig/Autoloader.php'],
 	'manual' => function() {
 		Twig_Autoloader::register();
 	},
@@ -23,8 +23,8 @@ $config = array(
 		{{ a_variable }}
 	</body>
 </html>';
-		$replace = array();
+		$replace = [];
 		echo $twig->render($str, $replace);
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

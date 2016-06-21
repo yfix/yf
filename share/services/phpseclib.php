@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
+$config = [
 	'require_services' => [
 		'paragonie_constant_time_encoding',
 		'paragonie_random_compat',
@@ -21,5 +21,5 @@ $config = array(
 		$c = $a->modPow($b, $c);
 		echo $c->toString().PHP_EOL; // outputs 10		
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);
