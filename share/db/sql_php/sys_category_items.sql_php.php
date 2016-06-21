@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'cat_id' => array(
+		],
+		'cat_id' => [
 			'name' => 'cat_id',
 			'type' => 'int',
 			'length' => 10,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'parent_id' => array(
+		],
+		'parent_id' => [
 			'name' => 'parent_id',
 			'type' => 'int',
 			'length' => 10,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'desc' => array(
+		],
+		'desc' => [
 			'name' => 'desc',
 			'type' => 'text',
 			'length' => NULL,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'meta_keywords' => array(
+		],
+		'meta_keywords' => [
 			'name' => 'meta_keywords',
 			'type' => 'text',
 			'length' => NULL,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'meta_desc' => array(
+		],
+		'meta_desc' => [
 			'name' => 'meta_desc',
 			'type' => 'text',
 			'length' => NULL,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'url' => array(
+		],
+		'url' => [
 			'name' => 'url',
 			'type' => 'varchar',
 			'length' => 255,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'type_id' => array(
+		],
+		'type_id' => [
 			'name' => 'type_id',
 			'type' => 'int',
 			'length' => 10,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'order' => array(
+		],
+		'order' => [
 			'name' => 'order',
 			'type' => 'int',
 			'length' => 10,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -164,12 +164,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				1 => '1',
 				0 => '0',
-			),
-		),
-		'restricted' => array(
+			],
+		],
+		'restricted' => [
 			'name' => 'restricted',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -183,8 +183,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_groups' => array(
+		],
+		'user_groups' => [
 			'name' => 'user_groups',
 			'type' => 'varchar',
 			'length' => 255,
@@ -198,8 +198,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'other_info' => array(
+		],
+		'other_info' => [
 			'name' => 'other_info',
 			'type' => 'text',
 			'length' => NULL,
@@ -213,8 +213,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'icon' => array(
+		],
+		'icon' => [
 			'name' => 'icon',
 			'type' => 'varchar',
 			'length' => 255,
@@ -228,8 +228,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'image' => array(
+		],
+		'image' => [
 			'name' => 'image',
 			'type' => 'enum',
 			'length' => NULL,
@@ -242,12 +242,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				1 => '1',
 				0 => '0',
-			),
-		),
-		'featured' => array(
+			],
+		],
+		'featured' => [
 			'name' => 'featured',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -261,8 +261,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'hide' => array(
+		],
+		'hide' => [
 			'name' => 'hide',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -276,8 +276,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'filter' => array(
+		],
+		'filter' => [
 			'name' => 'filter',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -291,8 +291,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'origin_url' => array(
+		],
+		'origin_url' => [
 			'name' => 'origin_url',
 			'type' => 'varchar',
 			'length' => 255,
@@ -306,8 +306,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'force_wo_image' => array(
+		],
+		'force_wo_image' => [
 			'name' => 'force_wo_image',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -321,19 +321,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

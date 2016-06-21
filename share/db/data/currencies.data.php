@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   'AED' => 
-  array (
+  [
     'id' => 'AED',
     'name' => 'UAE Dirham',
     'sign' => 'د.إ',
@@ -11,9 +11,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'AFN' => 
-  array (
+  [
     'id' => 'AFN',
     'name' => 'Afghani',
     'sign' => '؋',
@@ -23,9 +23,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ALL' => 
-  array (
+  [
     'id' => 'ALL',
     'name' => 'Lek',
     'sign' => 'L',
@@ -35,9 +35,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'AMD' => 
-  array (
+  [
     'id' => 'AMD',
     'name' => 'Armenian Dram',
     'sign' => 'դր.',
@@ -47,9 +47,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ANG' => 
-  array (
+  [
     'id' => 'ANG',
     'name' => 'Netherlands Antillean Guilder',
     'sign' => 'ƒ',
@@ -59,9 +59,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'AOA' => 
-  array (
+  [
     'id' => 'AOA',
     'name' => 'Kwanza',
     'sign' => 'Kz',
@@ -71,9 +71,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ARS' => 
-  array (
+  [
     'id' => 'ARS',
     'name' => 'Argentine Peso',
     'sign' => '$',
@@ -83,9 +83,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'AUD' => 
-  array (
+  [
     'id' => 'AUD',
     'name' => 'Australian Dollar',
     'sign' => '$',
@@ -95,9 +95,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'AWG' => 
-  array (
+  [
     'id' => 'AWG',
     'name' => 'Aruban Florin',
     'sign' => 'ƒ',
@@ -107,9 +107,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'AZN' => 
-  array (
+  [
     'id' => 'AZN',
     'name' => 'Azerbaijanian Manat',
     'sign' => '',
@@ -119,9 +119,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BAM' => 
-  array (
+  [
     'id' => 'BAM',
     'name' => 'Convertible Mark',
     'sign' => '',
@@ -131,9 +131,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BBD' => 
-  array (
+  [
     'id' => 'BBD',
     'name' => 'Barbados Dollar',
     'sign' => '$',
@@ -143,9 +143,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BDT' => 
-  array (
+  [
     'id' => 'BDT',
     'name' => 'Taka',
     'sign' => '৳',
@@ -155,9 +155,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BGN' => 
-  array (
+  [
     'id' => 'BGN',
     'name' => 'Bulgarian Lev',
     'sign' => 'лв',
@@ -167,9 +167,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BHD' => 
-  array (
+  [
     'id' => 'BHD',
     'name' => 'Bahraini Dinar',
     'sign' => '.د.ب',
@@ -179,9 +179,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BIF' => 
-  array (
+  [
     'id' => 'BIF',
     'name' => 'Burundi Franc',
     'sign' => 'Fr',
@@ -191,9 +191,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BMD' => 
-  array (
+  [
     'id' => 'BMD',
     'name' => 'Bermudian Dollar',
     'sign' => '$',
@@ -203,9 +203,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BND' => 
-  array (
+  [
     'id' => 'BND',
     'name' => 'Brunei Dollar',
     'sign' => '$',
@@ -215,9 +215,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BOB' => 
-  array (
+  [
     'id' => 'BOB',
     'name' => 'Boliviano',
     'sign' => 'Bs.',
@@ -227,9 +227,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BOV' => 
-  array (
+  [
     'id' => 'BOV',
     'name' => 'Mvdol',
     'sign' => '',
@@ -239,9 +239,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BRL' => 
-  array (
+  [
     'id' => 'BRL',
     'name' => 'Brazilian Real',
     'sign' => 'R$',
@@ -251,9 +251,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BSD' => 
-  array (
+  [
     'id' => 'BSD',
     'name' => 'Bahamian Dollar',
     'sign' => '$',
@@ -263,9 +263,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BTN' => 
-  array (
+  [
     'id' => 'BTN',
     'name' => 'Ngultrum',
     'sign' => 'Nu.',
@@ -275,9 +275,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BWP' => 
-  array (
+  [
     'id' => 'BWP',
     'name' => 'Pula',
     'sign' => 'P',
@@ -287,9 +287,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BYR' => 
-  array (
+  [
     'id' => 'BYR',
     'name' => 'Belarussian Ruble',
     'sign' => 'Br',
@@ -299,9 +299,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'BZD' => 
-  array (
+  [
     'id' => 'BZD',
     'name' => 'Belize Dollar',
     'sign' => '$',
@@ -311,9 +311,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CAD' => 
-  array (
+  [
     'id' => 'CAD',
     'name' => 'Canadian Dollar',
     'sign' => '$',
@@ -323,9 +323,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CDF' => 
-  array (
+  [
     'id' => 'CDF',
     'name' => 'Congolese Franc',
     'sign' => 'Fr',
@@ -335,9 +335,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CHE' => 
-  array (
+  [
     'id' => 'CHE',
     'name' => 'WIR Euro',
     'sign' => '',
@@ -347,9 +347,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CHF' => 
-  array (
+  [
     'id' => 'CHF',
     'name' => 'Swiss Franc',
     'sign' => 'Fr',
@@ -359,9 +359,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '1',
-  ),
+  ],
   'CHW' => 
-  array (
+  [
     'id' => 'CHW',
     'name' => 'WIR Franc',
     'sign' => '',
@@ -371,9 +371,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CLF' => 
-  array (
+  [
     'id' => 'CLF',
     'name' => 'Unidades de fomento',
     'sign' => '',
@@ -383,9 +383,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CLP' => 
-  array (
+  [
     'id' => 'CLP',
     'name' => 'Chilean Peso',
     'sign' => '$',
@@ -395,9 +395,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CNY' => 
-  array (
+  [
     'id' => 'CNY',
     'name' => 'Yuan Renminbi',
     'sign' => '',
@@ -407,9 +407,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'COP' => 
-  array (
+  [
     'id' => 'COP',
     'name' => 'Colombian Peso',
     'sign' => '$',
@@ -419,9 +419,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'COU' => 
-  array (
+  [
     'id' => 'COU',
     'name' => 'Unidad de Valor Real',
     'sign' => '',
@@ -431,9 +431,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CRC' => 
-  array (
+  [
     'id' => 'CRC',
     'name' => 'Costa Rican Colon',
     'sign' => '₡',
@@ -443,9 +443,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CUC' => 
-  array (
+  [
     'id' => 'CUC',
     'name' => 'Peso Convertible',
     'sign' => '$',
@@ -455,9 +455,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CUP' => 
-  array (
+  [
     'id' => 'CUP',
     'name' => 'Cuban Peso',
     'sign' => '$',
@@ -467,9 +467,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CVE' => 
-  array (
+  [
     'id' => 'CVE',
     'name' => 'Cape Verde Escudo',
     'sign' => '',
@@ -479,9 +479,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'CZK' => 
-  array (
+  [
     'id' => 'CZK',
     'name' => 'Czech Koruna',
     'sign' => 'Kč',
@@ -491,9 +491,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'DJF' => 
-  array (
+  [
     'id' => 'DJF',
     'name' => 'Djibouti Franc',
     'sign' => 'Fr',
@@ -503,9 +503,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'DKK' => 
-  array (
+  [
     'id' => 'DKK',
     'name' => 'Danish Krone',
     'sign' => 'kr',
@@ -515,9 +515,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'DOP' => 
-  array (
+  [
     'id' => 'DOP',
     'name' => 'Dominican Peso',
     'sign' => '$',
@@ -527,9 +527,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'DZD' => 
-  array (
+  [
     'id' => 'DZD',
     'name' => 'Algerian Dinar',
     'sign' => 'د.ج',
@@ -539,9 +539,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'EGP' => 
-  array (
+  [
     'id' => 'EGP',
     'name' => 'Egyptian Pound',
     'sign' => '',
@@ -551,9 +551,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ERN' => 
-  array (
+  [
     'id' => 'ERN',
     'name' => 'Nakfa',
     'sign' => 'Nfk',
@@ -563,9 +563,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ETB' => 
-  array (
+  [
     'id' => 'ETB',
     'name' => 'Ethiopian Birr',
     'sign' => 'Br',
@@ -575,9 +575,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'EUR' => 
-  array (
+  [
     'id' => 'EUR',
     'name' => 'Euro',
     'sign' => '€',
@@ -587,9 +587,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '1',
-  ),
+  ],
   'FJD' => 
-  array (
+  [
     'id' => 'FJD',
     'name' => 'Fiji Dollar',
     'sign' => '$',
@@ -599,9 +599,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'FKP' => 
-  array (
+  [
     'id' => 'FKP',
     'name' => 'Falkland Islands Pound',
     'sign' => '£',
@@ -611,9 +611,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'GBP' => 
-  array (
+  [
     'id' => 'GBP',
     'name' => 'Pound Sterling',
     'sign' => '£',
@@ -623,9 +623,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'GEL' => 
-  array (
+  [
     'id' => 'GEL',
     'name' => 'Lari',
     'sign' => 'ლ',
@@ -635,9 +635,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'GHS' => 
-  array (
+  [
     'id' => 'GHS',
     'name' => 'Ghana Cedi',
     'sign' => '₵',
@@ -647,9 +647,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'GIP' => 
-  array (
+  [
     'id' => 'GIP',
     'name' => 'Gibraltar Pound',
     'sign' => '£',
@@ -659,9 +659,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'GMD' => 
-  array (
+  [
     'id' => 'GMD',
     'name' => 'Dalasi',
     'sign' => 'D',
@@ -671,9 +671,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'GNF' => 
-  array (
+  [
     'id' => 'GNF',
     'name' => 'Guinea Franc',
     'sign' => 'Fr',
@@ -683,9 +683,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'GTQ' => 
-  array (
+  [
     'id' => 'GTQ',
     'name' => 'Quetzal',
     'sign' => 'Q',
@@ -695,9 +695,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'GYD' => 
-  array (
+  [
     'id' => 'GYD',
     'name' => 'Guyana Dollar',
     'sign' => '$',
@@ -707,9 +707,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'HKD' => 
-  array (
+  [
     'id' => 'HKD',
     'name' => 'Hong Kong Dollar',
     'sign' => '$',
@@ -719,9 +719,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'HNL' => 
-  array (
+  [
     'id' => 'HNL',
     'name' => 'Lempira',
     'sign' => 'L',
@@ -731,9 +731,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'HRK' => 
-  array (
+  [
     'id' => 'HRK',
     'name' => 'Croatian Kuna',
     'sign' => 'kn',
@@ -743,9 +743,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'HTG' => 
-  array (
+  [
     'id' => 'HTG',
     'name' => 'Gourde',
     'sign' => 'G',
@@ -755,9 +755,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'HUF' => 
-  array (
+  [
     'id' => 'HUF',
     'name' => 'Forint',
     'sign' => 'Ft',
@@ -767,9 +767,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'IDR' => 
-  array (
+  [
     'id' => 'IDR',
     'name' => 'Rupiah',
     'sign' => 'Rp',
@@ -779,9 +779,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ILS' => 
-  array (
+  [
     'id' => 'ILS',
     'name' => 'New Israeli Sheqel',
     'sign' => '₪',
@@ -791,9 +791,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'INR' => 
-  array (
+  [
     'id' => 'INR',
     'name' => 'Indian Rupee',
     'sign' => '',
@@ -803,9 +803,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'IQD' => 
-  array (
+  [
     'id' => 'IQD',
     'name' => 'Iraqi Dinar',
     'sign' => 'ع.د',
@@ -815,9 +815,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'IRR' => 
-  array (
+  [
     'id' => 'IRR',
     'name' => 'Iranian Rial',
     'sign' => '﷼',
@@ -827,9 +827,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ISK' => 
-  array (
+  [
     'id' => 'ISK',
     'name' => 'Iceland Krona',
     'sign' => 'kr',
@@ -839,9 +839,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'JMD' => 
-  array (
+  [
     'id' => 'JMD',
     'name' => 'Jamaican Dollar',
     'sign' => '$',
@@ -851,9 +851,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'JOD' => 
-  array (
+  [
     'id' => 'JOD',
     'name' => 'Jordanian Dinar',
     'sign' => 'د.ا',
@@ -863,9 +863,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'JPY' => 
-  array (
+  [
     'id' => 'JPY',
     'name' => 'Yen',
     'sign' => '¥',
@@ -875,9 +875,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '1',
-  ),
+  ],
   'KES' => 
-  array (
+  [
     'id' => 'KES',
     'name' => 'Kenyan Shilling',
     'sign' => 'Sh',
@@ -887,9 +887,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'KGS' => 
-  array (
+  [
     'id' => 'KGS',
     'name' => 'Som',
     'sign' => '',
@@ -899,9 +899,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'KHR' => 
-  array (
+  [
     'id' => 'KHR',
     'name' => 'Riel',
     'sign' => '៛',
@@ -911,9 +911,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'KMF' => 
-  array (
+  [
     'id' => 'KMF',
     'name' => 'Comoro Franc',
     'sign' => 'Fr',
@@ -923,9 +923,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'KPW' => 
-  array (
+  [
     'id' => 'KPW',
     'name' => 'North Korean Won',
     'sign' => '₩',
@@ -935,9 +935,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'KRW' => 
-  array (
+  [
     'id' => 'KRW',
     'name' => 'Won',
     'sign' => '₩',
@@ -947,9 +947,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'KWD' => 
-  array (
+  [
     'id' => 'KWD',
     'name' => 'Kuwaiti Dinar',
     'sign' => 'د.ك',
@@ -959,9 +959,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'KYD' => 
-  array (
+  [
     'id' => 'KYD',
     'name' => 'Cayman Islands Dollar',
     'sign' => '$',
@@ -971,9 +971,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'KZT' => 
-  array (
+  [
     'id' => 'KZT',
     'name' => 'Tenge',
     'sign' => '₸',
@@ -983,9 +983,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'LAK' => 
-  array (
+  [
     'id' => 'LAK',
     'name' => 'Kip',
     'sign' => '₭',
@@ -995,9 +995,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'LBP' => 
-  array (
+  [
     'id' => 'LBP',
     'name' => 'Lebanese Pound',
     'sign' => 'ل.ل',
@@ -1007,9 +1007,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'LKR' => 
-  array (
+  [
     'id' => 'LKR',
     'name' => 'Sri Lanka Rupee',
     'sign' => '',
@@ -1019,9 +1019,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'LRD' => 
-  array (
+  [
     'id' => 'LRD',
     'name' => 'Liberian Dollar',
     'sign' => '$',
@@ -1031,9 +1031,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'LSL' => 
-  array (
+  [
     'id' => 'LSL',
     'name' => 'Loti',
     'sign' => 'L',
@@ -1043,9 +1043,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'LTL' => 
-  array (
+  [
     'id' => 'LTL',
     'name' => 'Lithuanian Litas',
     'sign' => 'Lt',
@@ -1055,9 +1055,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'LVL' => 
-  array (
+  [
     'id' => 'LVL',
     'name' => 'Latvian Lats',
     'sign' => 'Ls',
@@ -1067,9 +1067,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'LYD' => 
-  array (
+  [
     'id' => 'LYD',
     'name' => 'Libyan Dinar',
     'sign' => 'ل.د',
@@ -1079,9 +1079,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MAD' => 
-  array (
+  [
     'id' => 'MAD',
     'name' => 'Moroccan Dirham',
     'sign' => 'د. م.',
@@ -1091,9 +1091,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MDL' => 
-  array (
+  [
     'id' => 'MDL',
     'name' => 'Moldovan Leu',
     'sign' => 'L',
@@ -1103,9 +1103,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MGA' => 
-  array (
+  [
     'id' => 'MGA',
     'name' => 'Malagasy Ariary',
     'sign' => 'Ar',
@@ -1115,9 +1115,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MKD' => 
-  array (
+  [
     'id' => 'MKD',
     'name' => 'Denar',
     'sign' => 'ден',
@@ -1127,9 +1127,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MMK' => 
-  array (
+  [
     'id' => 'MMK',
     'name' => 'Kyat',
     'sign' => 'Ks',
@@ -1139,9 +1139,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MNT' => 
-  array (
+  [
     'id' => 'MNT',
     'name' => 'Tugrik',
     'sign' => '₮',
@@ -1151,9 +1151,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MOP' => 
-  array (
+  [
     'id' => 'MOP',
     'name' => 'Pataca',
     'sign' => 'P',
@@ -1163,9 +1163,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MRO' => 
-  array (
+  [
     'id' => 'MRO',
     'name' => 'Ouguiya',
     'sign' => 'UM',
@@ -1175,9 +1175,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MUR' => 
-  array (
+  [
     'id' => 'MUR',
     'name' => 'Mauritius Rupee',
     'sign' => '₨',
@@ -1187,9 +1187,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MVR' => 
-  array (
+  [
     'id' => 'MVR',
     'name' => 'Rufiyaa',
     'sign' => '.ރ',
@@ -1199,9 +1199,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MWK' => 
-  array (
+  [
     'id' => 'MWK',
     'name' => 'Kwacha',
     'sign' => 'MK',
@@ -1211,9 +1211,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MXN' => 
-  array (
+  [
     'id' => 'MXN',
     'name' => 'Mexican Peso',
     'sign' => '$',
@@ -1223,9 +1223,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MXV' => 
-  array (
+  [
     'id' => 'MXV',
     'name' => 'Mexican Unidad de Inversion (UDI)',
     'sign' => '',
@@ -1235,9 +1235,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MYR' => 
-  array (
+  [
     'id' => 'MYR',
     'name' => 'Malaysian Ringgit',
     'sign' => 'RM',
@@ -1247,9 +1247,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'MZN' => 
-  array (
+  [
     'id' => 'MZN',
     'name' => 'Mozambique Metical',
     'sign' => 'MT',
@@ -1259,9 +1259,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'NAD' => 
-  array (
+  [
     'id' => 'NAD',
     'name' => 'Namibia Dollar',
     'sign' => '$',
@@ -1271,9 +1271,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'NGN' => 
-  array (
+  [
     'id' => 'NGN',
     'name' => 'Naira',
     'sign' => '₦',
@@ -1283,9 +1283,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'NIO' => 
-  array (
+  [
     'id' => 'NIO',
     'name' => 'Cordoba Oro',
     'sign' => 'C$',
@@ -1295,9 +1295,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'NOK' => 
-  array (
+  [
     'id' => 'NOK',
     'name' => 'Norwegian Krone',
     'sign' => 'kr',
@@ -1307,9 +1307,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'NPR' => 
-  array (
+  [
     'id' => 'NPR',
     'name' => 'Nepalese Rupee',
     'sign' => '₨',
@@ -1319,9 +1319,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'NZD' => 
-  array (
+  [
     'id' => 'NZD',
     'name' => 'New Zealand Dollar',
     'sign' => '$',
@@ -1331,9 +1331,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'OMR' => 
-  array (
+  [
     'id' => 'OMR',
     'name' => 'Rial Omani',
     'sign' => 'ر.ع.',
@@ -1343,9 +1343,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'PAB' => 
-  array (
+  [
     'id' => 'PAB',
     'name' => 'Balboa',
     'sign' => 'B/.',
@@ -1355,9 +1355,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'PEN' => 
-  array (
+  [
     'id' => 'PEN',
     'name' => 'Nuevo Sol',
     'sign' => 'S/.',
@@ -1367,9 +1367,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'PGK' => 
-  array (
+  [
     'id' => 'PGK',
     'name' => 'Kina',
     'sign' => 'K',
@@ -1379,9 +1379,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'PHP' => 
-  array (
+  [
     'id' => 'PHP',
     'name' => 'Philippine Peso',
     'sign' => '₱',
@@ -1391,9 +1391,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'PKR' => 
-  array (
+  [
     'id' => 'PKR',
     'name' => 'Pakistan Rupee',
     'sign' => '₨',
@@ -1403,9 +1403,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'PLN' => 
-  array (
+  [
     'id' => 'PLN',
     'name' => 'Zloty',
     'sign' => 'zł',
@@ -1415,9 +1415,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'PYG' => 
-  array (
+  [
     'id' => 'PYG',
     'name' => 'Guarani',
     'sign' => '₲',
@@ -1427,9 +1427,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'QAR' => 
-  array (
+  [
     'id' => 'QAR',
     'name' => 'Qatari Rial',
     'sign' => 'ر.ق',
@@ -1439,9 +1439,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'RON' => 
-  array (
+  [
     'id' => 'RON',
     'name' => 'New Romanian Leu',
     'sign' => 'L',
@@ -1451,9 +1451,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'RSD' => 
-  array (
+  [
     'id' => 'RSD',
     'name' => 'Serbian Dinar',
     'sign' => '',
@@ -1463,9 +1463,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'RUB' => 
-  array (
+  [
     'id' => 'RUB',
     'name' => 'Russian Ruble',
     'sign' => 'р.',
@@ -1475,9 +1475,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '1',
-  ),
+  ],
   'RWF' => 
-  array (
+  [
     'id' => 'RWF',
     'name' => 'Rwanda Franc',
     'sign' => 'Fr',
@@ -1487,9 +1487,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SAR' => 
-  array (
+  [
     'id' => 'SAR',
     'name' => 'Saudi Riyal',
     'sign' => 'ر.س',
@@ -1499,9 +1499,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SBD' => 
-  array (
+  [
     'id' => 'SBD',
     'name' => 'Solomon Islands Dollar',
     'sign' => '$',
@@ -1511,9 +1511,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SCR' => 
-  array (
+  [
     'id' => 'SCR',
     'name' => 'Seychelles Rupee',
     'sign' => '₨',
@@ -1523,9 +1523,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SDG' => 
-  array (
+  [
     'id' => 'SDG',
     'name' => 'Sudanese Pound',
     'sign' => '£',
@@ -1535,9 +1535,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SEK' => 
-  array (
+  [
     'id' => 'SEK',
     'name' => 'Swedish Krona',
     'sign' => 'kr',
@@ -1547,9 +1547,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SGD' => 
-  array (
+  [
     'id' => 'SGD',
     'name' => 'Singapore Dollar',
     'sign' => '$',
@@ -1559,9 +1559,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SHP' => 
-  array (
+  [
     'id' => 'SHP',
     'name' => 'Saint Helena Pound',
     'sign' => '£',
@@ -1571,9 +1571,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SLL' => 
-  array (
+  [
     'id' => 'SLL',
     'name' => 'Leone',
     'sign' => 'Le',
@@ -1583,9 +1583,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SOS' => 
-  array (
+  [
     'id' => 'SOS',
     'name' => 'Somali Shilling',
     'sign' => 'Sh',
@@ -1595,9 +1595,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SRD' => 
-  array (
+  [
     'id' => 'SRD',
     'name' => 'Surinam Dollar',
     'sign' => '$',
@@ -1607,9 +1607,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SSP' => 
-  array (
+  [
     'id' => 'SSP',
     'name' => 'South Sudanese Pound',
     'sign' => '£',
@@ -1619,9 +1619,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'STD' => 
-  array (
+  [
     'id' => 'STD',
     'name' => 'Dobra',
     'sign' => 'Db',
@@ -1631,9 +1631,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SVC' => 
-  array (
+  [
     'id' => 'SVC',
     'name' => 'El Salvador Colon',
     'sign' => '₡',
@@ -1643,9 +1643,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SYP' => 
-  array (
+  [
     'id' => 'SYP',
     'name' => 'Syrian Pound',
     'sign' => '',
@@ -1655,9 +1655,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'SZL' => 
-  array (
+  [
     'id' => 'SZL',
     'name' => 'Lilangeni',
     'sign' => 'L',
@@ -1667,9 +1667,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'THB' => 
-  array (
+  [
     'id' => 'THB',
     'name' => 'Baht',
     'sign' => '฿',
@@ -1679,9 +1679,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'TJS' => 
-  array (
+  [
     'id' => 'TJS',
     'name' => 'Somoni',
     'sign' => 'ЅМ',
@@ -1691,9 +1691,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'TMT' => 
-  array (
+  [
     'id' => 'TMT',
     'name' => 'Turkmenistan New Manat',
     'sign' => 'm',
@@ -1703,9 +1703,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'TND' => 
-  array (
+  [
     'id' => 'TND',
     'name' => 'Tunisian Dinar',
     'sign' => 'د.ت',
@@ -1715,9 +1715,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'TOP' => 
-  array (
+  [
     'id' => 'TOP',
     'name' => 'Pa’anga',
     'sign' => 'T$',
@@ -1727,9 +1727,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'TRY' => 
-  array (
+  [
     'id' => 'TRY',
     'name' => 'Turkish Lira',
     'sign' => '',
@@ -1739,9 +1739,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'TTD' => 
-  array (
+  [
     'id' => 'TTD',
     'name' => 'Trinidad and Tobago Dollar',
     'sign' => '$',
@@ -1751,9 +1751,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'TWD' => 
-  array (
+  [
     'id' => 'TWD',
     'name' => 'New Taiwan Dollar',
     'sign' => '$',
@@ -1763,9 +1763,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'TZS' => 
-  array (
+  [
     'id' => 'TZS',
     'name' => 'Tanzanian Shilling',
     'sign' => 'Sh',
@@ -1775,9 +1775,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'UAH' => 
-  array (
+  [
     'id' => 'UAH',
     'name' => 'Hryvnia',
     'sign' => '₴',
@@ -1787,9 +1787,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '1',
-  ),
+  ],
   'UGX' => 
-  array (
+  [
     'id' => 'UGX',
     'name' => 'Uganda Shilling',
     'sign' => 'Sh',
@@ -1799,9 +1799,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'USD' => 
-  array (
+  [
     'id' => 'USD',
     'name' => 'US Dollar',
     'sign' => '$',
@@ -1811,9 +1811,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '1',
-  ),
+  ],
   'USN' => 
-  array (
+  [
     'id' => 'USN',
     'name' => 'US Dollar (Next day)',
     'sign' => '',
@@ -1823,9 +1823,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'USS' => 
-  array (
+  [
     'id' => 'USS',
     'name' => 'US Dollar (Same day)',
     'sign' => '',
@@ -1835,9 +1835,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'UYI' => 
-  array (
+  [
     'id' => 'UYI',
     'name' => 'Uruguay Peso en Unidades Indexadas (URUIURUI)',
     'sign' => '',
@@ -1847,9 +1847,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'UYU' => 
-  array (
+  [
     'id' => 'UYU',
     'name' => 'Peso Uruguayo',
     'sign' => '$',
@@ -1859,9 +1859,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'UZS' => 
-  array (
+  [
     'id' => 'UZS',
     'name' => 'Uzbekistan Sum',
     'sign' => '',
@@ -1871,9 +1871,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'VEF' => 
-  array (
+  [
     'id' => 'VEF',
     'name' => 'Bolivar',
     'sign' => 'Bs F',
@@ -1883,9 +1883,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'VND' => 
-  array (
+  [
     'id' => 'VND',
     'name' => 'Dong',
     'sign' => '₫',
@@ -1895,9 +1895,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'VUV' => 
-  array (
+  [
     'id' => 'VUV',
     'name' => 'Vatu',
     'sign' => 'Vt',
@@ -1907,9 +1907,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'WST' => 
-  array (
+  [
     'id' => 'WST',
     'name' => 'Tala',
     'sign' => 'T',
@@ -1919,9 +1919,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XAF' => 
-  array (
+  [
     'id' => 'XAF',
     'name' => 'CFA Franc BEAC',
     'sign' => 'Fr',
@@ -1931,9 +1931,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XAG' => 
-  array (
+  [
     'id' => 'XAG',
     'name' => 'Silver',
     'sign' => '',
@@ -1943,9 +1943,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XAU' => 
-  array (
+  [
     'id' => 'XAU',
     'name' => 'Gold',
     'sign' => '',
@@ -1955,9 +1955,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XBA' => 
-  array (
+  [
     'id' => 'XBA',
     'name' => 'Bond Markets Unit European Composite Unit (EURCO)',
     'sign' => '',
@@ -1967,9 +1967,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XBB' => 
-  array (
+  [
     'id' => 'XBB',
     'name' => 'Bond Markets Unit European Monetary Unit (E.M.U.-6)',
     'sign' => '',
@@ -1979,9 +1979,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XBC' => 
-  array (
+  [
     'id' => 'XBC',
     'name' => 'Bond Markets Unit European Unit of Account 9 (E.U.A.-9)',
     'sign' => '',
@@ -1991,9 +1991,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XBD' => 
-  array (
+  [
     'id' => 'XBD',
     'name' => 'Bond Markets Unit European Unit of Account 17 (E.U.A.-17)',
     'sign' => '',
@@ -2003,9 +2003,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XCD' => 
-  array (
+  [
     'id' => 'XCD',
     'name' => 'East Caribbean Dollar',
     'sign' => '$',
@@ -2015,9 +2015,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XDR' => 
-  array (
+  [
     'id' => 'XDR',
     'name' => 'SDR (Special Drawing Right)',
     'sign' => '',
@@ -2027,9 +2027,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XFU' => 
-  array (
+  [
     'id' => 'XFU',
     'name' => 'UIC-Franc',
     'sign' => '',
@@ -2039,9 +2039,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XOF' => 
-  array (
+  [
     'id' => 'XOF',
     'name' => 'CFA Franc BCEAO',
     'sign' => 'Fr',
@@ -2051,9 +2051,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XPD' => 
-  array (
+  [
     'id' => 'XPD',
     'name' => 'Palladium',
     'sign' => '',
@@ -2063,9 +2063,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XPF' => 
-  array (
+  [
     'id' => 'XPF',
     'name' => 'CFP Franc',
     'sign' => 'Fr',
@@ -2075,9 +2075,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XPT' => 
-  array (
+  [
     'id' => 'XPT',
     'name' => 'Platinum',
     'sign' => '',
@@ -2087,9 +2087,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XSU' => 
-  array (
+  [
     'id' => 'XSU',
     'name' => 'Sucre',
     'sign' => '',
@@ -2099,9 +2099,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XTS' => 
-  array (
+  [
     'id' => 'XTS',
     'name' => 'Codes specifically reserved for testing purposes',
     'sign' => '',
@@ -2111,9 +2111,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XUA' => 
-  array (
+  [
     'id' => 'XUA',
     'name' => 'ADB Unit of Account',
     'sign' => '',
@@ -2123,9 +2123,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'XXX' => 
-  array (
+  [
     'id' => 'XXX',
     'name' => 'The codes assigned for transactions where no currency is involve',
     'sign' => '',
@@ -2135,9 +2135,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'YER' => 
-  array (
+  [
     'id' => 'YER',
     'name' => 'Yemeni Rial',
     'sign' => '﷼',
@@ -2147,9 +2147,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ZAR' => 
-  array (
+  [
     'id' => 'ZAR',
     'name' => 'Rand',
     'sign' => 'R',
@@ -2159,9 +2159,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ZMW' => 
-  array (
+  [
     'id' => 'ZMW',
     'name' => 'Zambian Kwacha',
     'sign' => 'ZK',
@@ -2171,9 +2171,9 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
+  ],
   'ZWL' => 
-  array (
+  [
     'id' => 'ZWL',
     'name' => 'Zimbabwe Dollar',
     'sign' => '$',
@@ -2183,5 +2183,5 @@ return array (
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
-  ),
-);
+  ],
+];

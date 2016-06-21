@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'ip' => array(
+return [
+	'fields' => [
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'char',
 			'length' => 15,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'matching_users' => array(
+		],
+		'matching_users' => [
 			'name' => 'matching_users',
 			'type' => 'longtext',
 			'length' => NULL,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'matching_ips' => array(
+		],
+		'matching_ips' => [
 			'name' => 'matching_ips',
 			'type' => 'longtext',
 			'length' => NULL,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'num_m_users' => array(
+		],
+		'num_m_users' => [
 			'name' => 'num_m_users',
 			'type' => 'int',
 			'length' => 10,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'num_m_ips' => array(
+		],
+		'num_m_ips' => [
 			'name' => 'num_m_ips',
 			'type' => 'int',
 			'length' => 10,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'int',
 			'length' => 10,
@@ -90,19 +90,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'ip' => 'ip',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

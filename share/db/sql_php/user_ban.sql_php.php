@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'mediumint',
 			'length' => 6,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_name' => array(
+		],
+		'user_name' => [
 			'name' => 'user_name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'email' => array(
+		],
+		'email' => [
 			'name' => 'email',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'passwd' => array(
+		],
+		'passwd' => [
 			'name' => 'passwd',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'text' => array(
+		],
+		'text' => [
 			'name' => 'text',
 			'type' => 'varchar',
 			'length' => 255,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'tel' => array(
+		],
+		'tel' => [
 			'name' => 'tel',
 			'type' => 'varchar',
 			'length' => 255,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'fax' => array(
+		],
+		'fax' => [
 			'name' => 'fax',
 			'type' => 'varchar',
 			'length' => 255,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'url' => array(
+		],
+		'url' => [
 			'name' => 'url',
 			'type' => 'varchar',
 			'length' => 255,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'recip_url' => array(
+		],
+		'recip_url' => [
 			'name' => 'recip_url',
 			'type' => 'varchar',
 			'length' => 255,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ban_ads' => array(
+		],
+		'ban_ads' => [
 			'name' => 'ban_ads',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ban_reviews' => array(
+		],
+		'ban_reviews' => [
 			'name' => 'ban_reviews',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ban_images' => array(
+		],
+		'ban_images' => [
 			'name' => 'ban_images',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ban_email' => array(
+		],
+		'ban_email' => [
 			'name' => 'ban_email',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -195,8 +195,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ban_forum' => array(
+		],
+		'ban_forum' => [
 			'name' => 'ban_forum',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -210,19 +210,19 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 10,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object_id' => array(
+		],
+		'object_id' => [
 			'name' => 'object_id',
 			'type' => 'int',
 			'length' => 10,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'offer_id' => array(
+		],
+		'offer_id' => [
 			'name' => 'offer_id',
 			'type' => 'int',
 			'length' => 10,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'amount' => array(
+		],
+		'amount' => [
 			'name' => 'amount',
 			'type' => 'decimal',
 			'length' => 10,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'add_time' => array(
+		],
+		'add_time' => [
 			'name' => 'add_time',
 			'type' => 'int',
 			'length' => 10,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object' => array(
+		],
+		'object' => [
 			'name' => 'object',
 			'type' => 'varchar',
 			'length' => 255,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'action' => array(
+		],
+		'action' => [
 			'name' => 'action',
 			'type' => 'varchar',
 			'length' => 255,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'tpl_name' => array(
+		],
+		'tpl_name' => [
 			'name' => 'tpl_name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'comment' => array(
+		],
+		'comment' => [
 			'name' => 'comment',
 			'type' => 'varchar',
 			'length' => 255,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'recalculation' => array(
+		],
+		'recalculation' => [
 			'name' => 'recalculation',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -165,49 +165,49 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'tpl_name' => array(
+			],
+		],
+		'tpl_name' => [
 			'name' => 'tpl_name',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'tpl_name' => 'tpl_name',
-			),
-		),
-		'offer_id' => array(
+			],
+		],
+		'offer_id' => [
 			'name' => 'offer_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'offer_id' => 'offer_id',
-			),
-		),
-		'object_id' => array(
+			],
+		],
+		'object_id' => [
 			'name' => 'object_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'object_id' => 'object_id',
-			),
-		),
-		'user_id' => array(
+			],
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'user_id' => 'user_id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

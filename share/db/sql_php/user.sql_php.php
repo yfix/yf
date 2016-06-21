@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'group' => array(
+		],
+		'group' => [
 			'name' => 'group',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'nick' => array(
+		],
+		'nick' => [
 			'name' => 'nick',
 			'type' => 'varchar',
 			'length' => 64,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'login' => array(
+		],
+		'login' => [
 			'name' => 'login',
 			'type' => 'varchar',
 			'length' => 64,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'email' => array(
+		],
+		'email' => [
 			'name' => 'email',
 			'type' => 'varchar',
 			'length' => 50,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'password' => array(
+		],
+		'password' => [
 			'name' => 'password',
 			'type' => 'varchar',
 			'length' => 32,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'phone' => array(
+		],
+		'phone' => [
 			'name' => 'phone',
 			'type' => 'varchar',
 			'length' => 40,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'city' => array(
+		],
+		'city' => [
 			'name' => 'city',
 			'type' => 'varchar',
 			'length' => 40,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'state' => array(
+		],
+		'state' => [
 			'name' => 'state',
 			'type' => 'varchar',
 			'length' => 20,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'country' => array(
+		],
+		'country' => [
 			'name' => 'country',
 			'type' => 'varchar',
 			'length' => 30,
@@ -165,8 +165,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'zip_code' => array(
+		],
+		'zip_code' => [
 			'name' => 'zip_code',
 			'type' => 'varchar',
 			'length' => 16,
@@ -180,8 +180,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'address' => array(
+		],
+		'address' => [
 			'name' => 'address',
 			'type' => 'varchar',
 			'length' => 255,
@@ -195,8 +195,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'sex' => array(
+		],
+		'sex' => [
 			'name' => 'sex',
 			'type' => 'enum',
 			'length' => NULL,
@@ -209,12 +209,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				'Female' => 'Female',
 				'Male' => 'Male',
-			),
-		),
-		'age' => array(
+			],
+		],
+		'age' => [
 			'name' => 'age',
 			'type' => 'smallint',
 			'length' => 2,
@@ -228,8 +228,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'birth_date' => array(
+		],
+		'birth_date' => [
 			'name' => 'birth_date',
 			'type' => 'date',
 			'length' => NULL,
@@ -243,8 +243,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'visits' => array(
+		],
+		'visits' => [
 			'name' => 'visits',
 			'type' => 'smallint',
 			'length' => 6,
@@ -258,8 +258,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'tinyint',
 			'length' => 1,
@@ -273,8 +273,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'add_date' => array(
+		],
+		'add_date' => [
 			'name' => 'add_date',
 			'type' => 'int',
 			'length' => 10,
@@ -288,8 +288,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'int',
 			'length' => 10,
@@ -303,8 +303,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'last_login' => array(
+		],
+		'last_login' => [
 			'name' => 'last_login',
 			'type' => 'int',
 			'length' => 10,
@@ -318,8 +318,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'num_logins' => array(
+		],
+		'num_logins' => [
 			'name' => 'num_logins',
 			'type' => 'smallint',
 			'length' => 6,
@@ -333,8 +333,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'last_view' => array(
+		],
+		'last_view' => [
 			'name' => 'last_view',
 			'type' => 'int',
 			'length' => 10,
@@ -348,8 +348,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'num_views' => array(
+		],
+		'num_views' => [
 			'name' => 'num_views',
 			'type' => 'int',
 			'length' => 10,
@@ -363,8 +363,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'verify_code' => array(
+		],
+		'verify_code' => [
 			'name' => 'verify_code',
 			'type' => 'varchar',
 			'length' => 32,
@@ -378,8 +378,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'profile_url' => array(
+		],
+		'profile_url' => [
 			'name' => 'profile_url',
 			'type' => 'varchar',
 			'length' => 64,
@@ -393,8 +393,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'admin_comments' => array(
+		],
+		'admin_comments' => [
 			'name' => 'admin_comments',
 			'type' => 'text',
 			'length' => NULL,
@@ -408,8 +408,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ip' => array(
+		],
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'varchar',
 			'length' => 15,
@@ -423,8 +423,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'photo_verified' => array(
+		],
+		'photo_verified' => [
 			'name' => 'photo_verified',
 			'type' => 'enum',
 			'length' => NULL,
@@ -437,12 +437,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-		'avatar' => array(
+			],
+		],
+		'avatar' => [
 			'name' => 'avatar',
 			'type' => 'varchar',
 			'length' => 255,
@@ -456,8 +456,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'priority' => array(
+		],
+		'priority' => [
 			'name' => 'priority',
 			'type' => 'int',
 			'length' => 11,
@@ -471,8 +471,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'lon' => array(
+		],
+		'lon' => [
 			'name' => 'lon',
 			'type' => 'decimal',
 			'length' => 8,
@@ -486,8 +486,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'lat' => array(
+		],
+		'lat' => [
 			'name' => 'lat',
 			'type' => 'decimal',
 			'length' => 8,
@@ -501,8 +501,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'has_avatar' => array(
+		],
+		'has_avatar' => [
 			'name' => 'has_avatar',
 			'type' => 'enum',
 			'length' => NULL,
@@ -515,12 +515,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-		'contact_by_email' => array(
+			],
+		],
+		'contact_by_email' => [
 			'name' => 'contact_by_email',
 			'type' => 'enum',
 			'length' => NULL,
@@ -533,12 +533,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				1 => '1',
 				0 => '0',
-			),
-		),
-		'emails' => array(
+			],
+		],
+		'emails' => [
 			'name' => 'emails',
 			'type' => 'smallint',
 			'length' => 6,
@@ -552,8 +552,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'emailssent' => array(
+		],
+		'emailssent' => [
 			'name' => 'emailssent',
 			'type' => 'smallint',
 			'length' => 6,
@@ -567,8 +567,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'go_after_login' => array(
+		],
+		'go_after_login' => [
 			'name' => 'go_after_login',
 			'type' => 'varchar',
 			'length' => 255,
@@ -582,77 +582,77 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'login' => array(
+			],
+		],
+		'login' => [
 			'name' => 'login',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'login' => 'login',
-			),
-		),
-		'nick' => array(
+			],
+		],
+		'nick' => [
 			'name' => 'nick',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'nick' => 'nick',
-			),
-		),
-		'active' => array(
+			],
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'active' => 'active',
-			),
-		),
-		'group' => array(
+			],
+		],
+		'group' => [
 			'name' => 'group',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'group' => 'group',
-			),
-		),
-		'email' => array(
+			],
+		],
+		'email' => [
 			'name' => 'email',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'email' => 'email',
-			),
-		),
-		'has_avatar' => array(
+			],
+		],
+		'has_avatar' => [
 			'name' => 'has_avatar',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'has_avatar' => 'has_avatar',
-			),
-		),
-		'priority' => array(
+			],
+		],
+		'priority' => [
 			'name' => 'priority',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'priority' => 'priority',
-			),
-		),
-		'country' => array(
+			],
+		],
+		'country' => [
 			'name' => 'country',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'country' => 'country',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'InnoDB',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

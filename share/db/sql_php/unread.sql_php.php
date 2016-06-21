@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'module_name' => array(
+return [
+	'fields' => [
+		'module_name' => [
 			'name' => 'module_name',
 			'type' => 'varchar',
 			'length' => 30,
@@ -15,8 +15,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object_id' => array(
+		],
+		'object_id' => [
 			'name' => 'object_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 11,
@@ -45,12 +45,12 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+		],
+	],
+	'indexes' => [
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

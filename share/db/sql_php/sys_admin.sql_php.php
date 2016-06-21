@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'first_name' => array(
+		],
+		'first_name' => [
 			'name' => 'first_name',
 			'type' => 'varchar',
 			'length' => 64,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'last_name' => array(
+		],
+		'last_name' => [
 			'name' => 'last_name',
 			'type' => 'varchar',
 			'length' => 64,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'login' => array(
+		],
+		'login' => [
 			'name' => 'login',
 			'type' => 'varchar',
 			'length' => 64,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'password' => array(
+		],
+		'password' => [
 			'name' => 'password',
 			'type' => 'varchar',
 			'length' => 64,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'group' => array(
+		],
+		'group' => [
 			'name' => 'group',
 			'type' => 'int',
 			'length' => 10,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -104,12 +104,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-		'add_date' => array(
+			],
+		],
+		'add_date' => [
 			'name' => 'add_date',
 			'type' => 'int',
 			'length' => 10,
@@ -123,8 +123,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'last_login' => array(
+		],
+		'last_login' => [
 			'name' => 'last_login',
 			'type' => 'int',
 			'length' => 10,
@@ -138,8 +138,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'num_logins' => array(
+		],
+		'num_logins' => [
 			'name' => 'num_logins',
 			'type' => 'smallint',
 			'length' => 6,
@@ -153,8 +153,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'go_after_login' => array(
+		],
+		'go_after_login' => [
 			'name' => 'go_after_login',
 			'type' => 'varchar',
 			'length' => 255,
@@ -168,8 +168,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'email' => array(
+		],
+		'email' => [
 			'name' => 'email',
 			'type' => 'varchar',
 			'length' => 255,
@@ -183,26 +183,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'login' => array(
+			],
+		],
+		'login' => [
 			'name' => 'login',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'login' => 'login',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];
