@@ -199,7 +199,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertEquals( $data['fields'], $this->_cleanup_columns_info($result) );
 	}
 	protected function _cleanup_columns_info($a) {
-		$skip_info = ['primary', 'unique', 'type_raw',	'collate'];
+		$skip_info = ['primary', 'unique', 'type_raw', 'collate', 'row_format'];
 		foreach ((array)$a as $col => $info) {
 			foreach ((array)$info as $k => $v) {
 				if (is_null($v) || in_array($k, $skip_info) || ($k === 'auto_inc' && $v === false)) {
@@ -228,7 +228,6 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 			'name' => $table,
 			'db_name' => $this->db_name(),
 			'columns' => $data['fields'],
-			'row_format' => 'Compact',
 			'collate' => 'utf8_general_ci',
 			'engine' => 'InnoDB',
 			'rows' => '0',
