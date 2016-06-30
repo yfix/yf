@@ -242,6 +242,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($received) {
 			$received['columns'] = $this->_cleanup_columns_info($received['columns']);
 			$received['create_time'] = '2014-01-01 01:01:01';
+			unset($received['row_format']);
 		}
 		$this->assertEquals( $expected, $received );
 	}
