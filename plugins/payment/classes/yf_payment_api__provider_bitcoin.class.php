@@ -205,7 +205,7 @@ class yf_payment_api__provider_bitcoin extends yf_payment_api__provider_remote {
 
     //create at blockchain.info address for transfer
     public function _get_wallet($options){
-        $_SESSION['wallet_options'] = $options;
+        //$_SESSION['wallet_options'] = $options;
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
         if(empty($_operation_id)) {
             return false;
@@ -241,20 +241,19 @@ class yf_payment_api__provider_bitcoin extends yf_payment_api__provider_remote {
     public function _api_deposition($options){
         if( !$this->ENABLE ) { return( null ); }
         $payment_api = $this->payment_api;
-        $_SESSION['_api_deposition-options-'.time()] = $options;
+
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
         if(empty($_operation_id)) {
             return false;
         }
         $result = $this->_api_transaction( $options );
-        $_SESSION['_api_deposition-transaction-result-'.time()] = $options;
+
         // update operation
         $operation = $payment_api->operation( [
             'operation_id' => $_operation_id,
         ]);
         $wallet = $this->_get_wallet(array_merge($options, ['amount'=>$operation['amount']]));
 
-        $_SESSION['_api_deposition-operation-'.time()] = $operation;
         $data = [
             'operation_id'    => $_operation_id,
             'status_id'       => $operation['status_id'],
@@ -262,9 +261,9 @@ class yf_payment_api__provider_bitcoin extends yf_payment_api__provider_remote {
             'options'         => $wallet,
         ];
 
-        $_SESSION['_api_deposition-wallet-'.time()] = $wallet;
+        //$_SESSION['_api_deposition-wallet-'.time()] = $wallet;
         $result = $payment_api->operation_update( $data );
-        $_SESSION['_api_deposition-result-'.time()] = $result;
+        //$_SESSION['_api_deposition-result-'.time()] = $result;
         $payment_api->transaction_commit();
         if($result['status'] === true){
             $wallet_object = json_decode($wallet['response']['result'], true);
