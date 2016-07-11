@@ -765,7 +765,7 @@ class yf_payment_api {
 		}
 		// by default: all, not system
 		else {
-			$result = $provider_index[ 'system' ][ 1 ];
+			$result = $provider_index[ 'system' ][ 0 ];
 		}
 		if( is_array( $result ) ) {
 			foreach( $result as $index => $item ) {
