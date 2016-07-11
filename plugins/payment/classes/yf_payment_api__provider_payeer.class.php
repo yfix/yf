@@ -8,15 +8,14 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
 
     public $KEY = null;
     public $URL_API = 'https://payeer.com/ajax/api/api.php';
+    public $URL_MERCHANT_API = 'https://payeer.com/merchant/';
     public $IS_DEPOSITION = true;
     public $IS_PAYMENT    = true;
 
     public $url_server = '';
 
-    public $SECRET_ADD_STRING= 'HGbfgqov346CBg8dfhGdbjkgtWiv';
-
-    public $MESSAGE_SUCCESS = 'ok';
-    public $MESSAGE_FAIL = 'fail';
+    public $MESSAGE_SUCCESS = 'success';
+    public $MESSAGE_FAIL = 'error';
 
     public $ACCOUNT = '';
     public $API_ID = '';
@@ -114,93 +113,79 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         return( $result );
     }
 
-    public function _external_show_message($message){
-        echo $message;
+    public function _external_show_message($status){
+        echo $_POST['m_orderid'].'|'.$status;
         die();
     }
 
     public function _external_response(){
-        $operation_id = $_GET['operation_id'];
-        $secret = $_GET['secret'];
-        $payment_api = $this->payment_api;
-        $operation = $payment_api->operation( [
-            'operation_id' => $operation_id,
-        ]);
+        if (!in_array($_SERVER['REMOTE_ADDR'], array('185.71.65.92', '185.71.65.189'))) return;
 
-
-        if(!empty($operation['operation_id'])){
-            // update status only in_progress
-            $object = $payment_api->get_status( [ 'status_id' => $operation[ 'status_id' ] ] );
-            list( $status_id, $status ) = $object;
-
-            if( empty( $status_id ) ) {
-                return $this->_external_show_message($this->MESSAGE_FAIL);
+        $response_status = 'fail';
+        if (isset($_POST['m_operation_id']) && isset($_POST['m_sign']))
+        {
+            $arHash = array($_POST['m_operation_id'],
+                $_POST['m_operation_ps'],
+                $_POST['m_operation_date'],
+                $_POST['m_operation_pay_date'],
+                $_POST['m_shop'],
+                $_POST['m_orderid'],
+                $_POST['m_amount'],
+                $_POST['m_curr'],
+                $_POST['m_desc'],
+                $_POST['m_status'],
+                $this->API_PASS_MERCHANT);
+            $sign_hash = strtoupper(hash('sha256', implode(':', $arHash)));
+            if ($_POST['m_sign'] == $sign_hash && $_POST['m_status'] == 'success')
+            {
+                $response_status = 'success';
             }
+        }
 
-            if($status[ 'name' ] == 'in_progress'){
-                $provider_id = $operation['provider_id'];
-                $provider = $payment_api->provider(['provider_id'=>$provider_id]);
-                if(!empty($provider[$provider_id]['name']) && $provider[$provider_id]['name'] == $this->PROVIDER_NAME){
-                    $response = $operation['options'];
-                    if(!empty($response['response']['secret'])){
-                        $real_secret = $response['response']['secret'];
-                        if($real_secret == $secret){
-                            $transaction_hash = $_GET['transaction_hash'];
-                            $value_in_satoshi = $_GET['value'];
-                            $value_in_btc = $value_in_satoshi / 100000000;
+        if($response_status == 'success') {
+            $operation_id = $_POST['m_orderid'];
+            $payment_api = $this->payment_api;
+            $operation = $payment_api->operation([
+                'operation_id' => $operation_id,
+            ]);
+            if (!empty($operation['operation_id'])) {
+                // update status only in_progress
+                $object = $payment_api->get_status(['status_id' => $operation['status_id']]);
+                list($status_id, $status) = $object;
 
-                            $amount = $value_in_btc * $operation['amount']/$response['response']['amount_currency'];
-                            //d($payment_api->_operation_balance_update(['operation_id'=>$operation_id]));
+                if (empty($status_id)) {
+                    return $this->_external_show_message($this->MESSAGE_FAIL);
+                }
 
-                            $ip = common()->get_ip();
-                            $response['external_response'] = [
-                                'get' => $_GET,
-                                'ip' => $ip,
-                                'datetime' => $payment_api->sql_datetime(),
-                                'action' => 'approve',
-                            ];
-                            if(abs($amount-$operation['amount'])>0.01){
-                                //need update operation amount
-                                $action = 'update amount from '.$operation['amount'].' to '.$amount;
-                                $response['external_response'] = [
-                                    'datetime' => $payment_api->sql_datetime(),
-                                    'action' => $action,
-                                ];
-                                $update_data = [
-                                    'operation_id'    => $operation_id,
-                                    'status_id'       => $operation['status_id'],
-                                    'datetime_update' => $payment_api->sql_datetime(),
-                                    'amount'          => $amount,
-                                    'options'         => $response,
-                                ];
-                                $result = $payment_api->operation_update( $update_data );
-                                if(!$result['status']){
-                                    return $this->_external_show_message($this->MESSAGE_FAIL);
-                                }
-                            }
-                            else {
-                                $update_data = [
-                                    'operation_id'    => $operation_id,
-                                    'status_id'       => $operation['status_id'],
-                                    'datetime_update' => $payment_api->sql_datetime(),
-                                    'options'         => $response,
-                                ];
-                                $result = $payment_api->operation_update( $update_data );
-                            }
-                            $status = 'success';
-                            $operation_data = [
-                                'operation_id'   => $operation_id,
-                                'provider_name'  => $this->PROVIDER_NAME,
-                                'state'          => 0,
-                                'status_name'    => $status,
-                                'status_message' => 'ok',
-                                'payment_type'   => 'deposition',
-                                'response'       => [],
-                            ];
-                            $result_update_balance = $this->_api_transaction($operation_data);
-                            if($result_update_balance['status'] == $status){
-                                return $this->_external_show_message($this->MESSAGE_SUCCESS);
-                            }
+                if ($status['name'] == 'in_progress') {
+                    $provider_id = $operation['provider_id'];
+                    $provider = $payment_api->provider(['provider_id' => $provider_id]);
+                    if (!empty($provider[$provider_id]['name']) && $provider[$provider_id]['name'] == $this->PROVIDER_NAME) {
+                        $ip = common()->get_ip();
+                        $response['external_response'] = [
+                            'post' => $_POST,
+                            'ip' => $ip,
+                            'datetime' => $payment_api->sql_datetime(),
+                            'action' => 'approve',
+                        ];
+                        $update_data = [
+                            'operation_id' => $operation_id,
+                            'status_id' => $operation['status_id'],
+                            'datetime_update' => $payment_api->sql_datetime(),
+                            'options' => $response,
+                        ];
+                        $result = $payment_api->operation_update($update_data);
+                        $operation_data = [
+                            'operation_id' => $operation_id,
+                            'provider_name' => $this->PROVIDER_NAME,
+                            'state' => 0,
+                            'status_name' => $response_status,
+                            'payment_type' => 'deposition',
+                            'response' => [],
+                        ];
+                        $result_update_balance = $this->_api_transaction($operation_data);
+                        if ($result_update_balance['status'] == $status) {
+                            return $this->_external_show_message($this->MESSAGE_SUCCESS);
                         }
                     }
                 }
@@ -210,36 +195,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
     }
 
 
-    public function _response_info($options){
+    public function _form_options( $options ) {
+        if( !$this->ENABLE ) { return( null ); }
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-        if(empty($_operation_id)) {
-            return false;
-        }
-        $payment_api = $this->payment_api;
-        $secret = hash('sha256', uniqid($this->SECRET_ADD_STRING, true));
-
-        //info from our site
-        $shop = [
-            'm_shop' => $this->API_ID_MERCHANT,
-            'm_orderid' => $_operation_id,
-            'm_amount' => $_amount,
-            'm_curr' => 'USD',
-            'm_desc' => base64_encode('some comment'),
-            //'m_sign' => $secret,
-            //'operation_id' => $_operation_id,
-            //'secret' => $secret,
-            //'ip' => common()->get_ip(),
-        ];
-
-        $shop['sign'] = strtoupper(hash('sha256', implode(':', array_merge($shop, array($this->API_PASS_MERCHANT)))));
-        $shop = json_encode($shop);
-
-        //payment system
-        $ps = json_encode([
-            'id' => 26808,
-            'curr' => 'USD',
-        ]);
-
+        if(empty($_operation_id)) { return( null ); }
 
         //payment systems
         /*
@@ -252,56 +211,149 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
          * 57568699 Visa (account)
          */
 
-        $url_options = [
-            'post' => [
-                'account' => $this->ACCOUNT,
-                'apiId' => $this->API_ID,
-                'apiPass' => $this->API_PASS,
-                'action' => 'merchant',
-                'lang' => 'ru',
-                'shop' => $shop,
-                'ps' => $ps,
-            ],
+        $_currency = !empty($_currency) ?$_currency : 'USD';
+        $_title = !empty($_title) ?$_title : 'Пополнение счёта';
+        $_ = [
+            'm_shop' => $this->API_ID_MERCHANT,
+            'm_orderid' => $_operation_id,
+            'm_amount' => number_format($_amount, 2, '.', ''),
+            'm_curr' => $_currency,
+            'm_desc' => base64_encode($_title),
         ];
-        $request_result = common()->get_remote_page($this->URL_API, false, $url_options);
+        $arHash = [];
+        foreach($_ as $key=>$value){
+            $arHash[] = $value;
+        }
+        $arHash[] = $this->API_PASS_MERCHANT;
+        $_['m_sign'] = strtoupper(hash('sha256', implode(':', $arHash)));
+        $_['lang'] = 'ru';
+        return( $_ );
+    }
+
+
+    public function _form( $data, $options = null ) {
+        if( !$this->ENABLE ) { return( null ); }
+        // START DUMP
+        $payment_api = $this->payment_api;
+        $payment_api->dump([ 'name' => 'Payeer', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ]);
+        if( empty( $data ) ) { return( null ); }
+        $is_array = (bool)$_[ 'is_array' ];
+        $form_options = $this->_form_options( $data );
+        // DUMP
+        $payment_api->dump([ 'var' => $form_options ]);
+        if( empty( $form_options ) ) { return( null ); }
+        $url = $this->URL_MERCHANT_API;
+        $result = [];
+        if( $is_array ) {
+            $result[ 'url' ] = $url;
+        } else {
+            $result[] = '<form id="_js_provider_payeer_form" method="get" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
+        }
+        foreach ((array)$form_options as $key => $value ) {
+            if( $is_array ) {
+                $result[ 'data' ][ $key ] = $value;
+            } else {
+                $result[] = sprintf( '<input type="hidden" name="%s" value="%s" />', $key, $value );
+            }
+        }
+        if( !$is_array ) {
+            $result[] = '</form>';
+            $result = implode( PHP_EOL, $result );
+        }
+        return( $result );
+    }
+
+    public function signature( $options ) {
+        return strtoupper(hash('sha256', implode(':', array_merge($options, array($this->API_PASS_MERCHANT)))));
+    }
+
+
+    /*public function _payin_response($options){
+        is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+        if(empty($_operation_id)) {
+            return false;
+        }
+        $payment_api = $this->payment_api;
+
+        //info from our site
+        $_currency = !empty($_currency) ?$_currency : 'USD';
+        $_title = !empty($_title) ?$_title : 'Пополнение счёта';
+        $url_options = [
+            'm_shop' => $this->API_ID_MERCHANT,
+            'm_orderid' => $_operation_id,
+            'm_amount' => $_amount,
+            'm_curr' => $_currency,
+            'm_desc' => base64_encode($_title),
+        ];
+
+
+        $arHash = [];
+        foreach($url_options as $key=>$value){
+            $arHash[] = $value;
+        }
+        $arHash[] = $this->API_PASS_MERCHANT;
+        $url_options['m_sign'] = strtoupper(hash('sha256', implode(':', $arHash)));
+        $url_options['form[ps]'] = $_ps_id ? $_ps_id : 26808;
+        $url_options['form[curr['.$url_options['form[ps]'].']]'] = $_currency;
+        $url = $this->_create_url($this->URL_MERCHANT_API, $url_options);
+
+        //$request_result = common()->get_remote_page($this->URL_API, false, $url_options);
+        $request_result = common()->get_remote_page($url);
         $request_result_array = empty($request_result) ? '' : json_decode($request_result, true);
 
+        //$url_options['m_key'] = substr($this->API_PASS, 0, 4).preg_replace('~(.)~u', '*', substr($this->API_PASS, 4));
         $result = [
             'response' => [
                 'datetime'      => $payment_api->sql_datetime(),
                 'provider_name' => $this->PROVIDER_NAME,
-                'full_url'      => $this->URL_API,
                 'url_options'  => $url_options,
-                //'secret'        => $secret,
                 'operation_id'  => $_operation_id,
-                //'callback'      => $callback,
-                'result'        => $request_result,
+                'result'        => $request_result_array,
+                'url'           => $url,
                 'amount'        => $_amount,
-                //'amount_currency' => $amount_currency
             ]
         ];
+        return $result;
+    }*/
+
+    public function _create_api_response($options){
+        $url_options = [
+            'account' => $this->ACCOUNT,
+            'apiId' => $this->API_ID,
+            'apiPass' => $this->API_PASS,
+        ];
+        $url_options = array_merge($url_options, $options);
+        $request_result = common()->get_remote_page($this->URL_API, false, $url_options);
+        $request_result_array = empty($request_result) ? '' : json_decode($request_result, true);
         return $request_result_array;
     }
 
-
-    public function _get_payment_systems() {
-        $url_options = [
-            'post' => [
-                'account' => $this->ACCOUNT,
-                'apiId' => $this->API_ID,
-                'apiPass' => $this->API_PASS,
-                'action' => 'getPaySystems',
-            ],
-        ];
-        $request_result = common()->get_remote_page($this->URL_API, false, $url_options);
-        return json_decode($request_result, true);
-
+    public function _create_url($url, $data = []){
+        $add_string = '';
+        if(count($data)>0) {
+            foreach ($data as $key => $value) {
+                //$add_string[] = urlencode($key).'='.urlencode($value);
+                $add_string[] = "$key=$value";
+            }
+            $add_string = implode('&', $add_string);
+            $first_separator = '?';
+            if(stripos($url, '?') > 0){
+                $first_separator = '&';
+            }
+            $add_string = $first_separator.$add_string;
+        }
+        return $url.$add_string;
     }
 
-    public function _api_deposition($options){
+    public function _get_payment_systems() {
+        return $this->_create_api_response(['action' => 'getPaySystems']);
+    }
+
+    /*public function _api_deposition($options){
         if( !$this->ENABLE ) { return( null ); }
         $payment_api = $this->payment_api;
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+        $payment_api->dump([ 'name' => 'Payeer', 'operation_id' => @(int)$_operation_id]);
         if(empty($_operation_id)) {
             return false;
         }
@@ -310,23 +362,26 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         $operation = $payment_api->operation( [
             'operation_id' => $_operation_id,
         ]);
-        $response_info = $this->_response_info($options, ['amount'=>$operation['amount']]);
-        //$_SESSION['_api_deposition-response-info-'.time()] = $response_info;
+        $payin_response = $this->_payin_response(array_merge($options, ['amount'=>$operation['amount']]));
+        $payment_api->dump([ 'response_info' => $payin_response ]);
 
         $data = [
             'operation_id'    => $_operation_id,
             'status_id'       => $operation['status_id'],
             'datetime_update' => $payment_api->sql_datetime(),
-            'options'         => $response_info,
+            'options'         => $payin_response,
         ];
 
         $result = $payment_api->operation_update( $data );
         $payment_api->transaction_commit();
         if($result['status'] === true){
-            $response_object = json_decode($response_info['response']['result'], true);
-            //$address = $response_object['address'];
-            //$result['show_address'] = 1;
-            //$result['address'] = $address;
+            $response_result = $payin_response['response']['result'];
+            if(empty($response_result['errors'])){
+                $result = $response_result;
+            }
+            else {
+                $result = ['error_message' => 'Невозможно подключиться по апи, возможно доступ по апи для вашего сайта не подтверждён.'];
+            }
         }
         return( $result );
     }
@@ -335,31 +390,5 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         if( !$this->ENABLE ) { return( null ); }
         $result = $this->_api_response( $options );
         return( $result );
-    }
-
-    public function api_payout( $options ) {
-        $result = $this->_api_response( $options );
-        return( $result );
-    }
-
-
-    public function payment( $options ) {
-        if( !$this->ENABLE ) { return( null ); }
-        // import options
-        is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-        // class
-        $payment_api = $this->payment_api;
-        // var
-        $operation_id  = $_data[ 'operation_id' ];
-        // payment
-        $result = parent::payment( $options );
-        // confirmation is ok
-        $confirmation_ok_options = array(
-            'operation_id' => $operation_id,
-        );
-        $result = $payment_api->confirmation_ok( $confirmation_ok_options );
-        // payout
-        $result = $this->api_payout( $options );
-        return( $result );
-    }
+    }*/
 }
