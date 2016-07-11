@@ -166,11 +166,14 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			],
 		],
 		'payout' => [
+			// changed: 2016-07-01 16:07:07
 			'visa_p2p_privat_uah' => [
+			// 'visa_p2p_tasprivat_uah' => [
 				'title' => 'Visa (Privat24, UAH)',
 				'icon'  => 'visa',
 				'request_option' => [
 					'paywayId' => '52e7f883e4ae1a2406000000', // visa_p2p_privat_uah
+					// 'paywayId' => '5763bad33d1eaf04218b456a', // visa_p2p_tasprivat_uah
 					'calcKey'  => 'psPayeeAmount',
 				],
 				'amount' => [
@@ -223,11 +226,14 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'card' => 'обязательное поле от 13 до 16 цифр',
 				],
 			],
-			'visa_p2p_notprivat_uah' => [
+			// changed: 2016-07-01 16:07:07
+			// 'visa_p2p_notprivat_uah' => [
+			'visa_p2p_tasnotprivat_uah' => [
 				'title'      => 'Visa (UAH)',
 				'icon'       => 'visa',
 				'request_option'     => [
-					'paywayId' => '52ef9b77e4ae1a3008000000', // visa_p2p_notprivat_uah
+					// 'paywayId' => '52ef9b77e4ae1a3008000000', // visa_p2p_notprivat_uah
+					'paywayId' => '576658923d1eaf77398b4568', // visa_p2p_notprivat_uah
 					'calcKey'  => 'psPayeeAmount',
 				],
 				'amount' => [
@@ -280,11 +286,14 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'card' => 'обязательное поле от 13 до 16 цифр',
 				],
 			],
+			// changed: 2016-07-01 16:07:07
 			'mastercard_p2p_privat_uah' => [
+			// 'mastercard_p2p_tasprivat_uah' => [
 				'title'      => 'MasterCard (Privat24, UAH)',
 				'icon'       => 'mastercard',
 				'request_option'     => [
 					'paywayId' => '52efa902e4ae1a780e000001', // mastercard_p2p_privat_uah
+					// 'paywayId' => '5763bb6e3d1eaf4b218b4567', // mastercard_p2p_tasprivat_uah
 					'calcKey'  => 'psPayeeAmount',
 				],
 				'amount' => [
@@ -337,11 +346,14 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'card' => 'обязательное поле от 13 до 16 цифр',
 				],
 			],
-			'mastercard_p2p_notprivat_uah' => [
+			// changed: 2016-07-01 16:07:07
+			// 'mastercard_p2p_notprivat_uah' => [
+			'mastercard_p2p_tasnotprivat_uah' => [
 				'title'      => 'MasterCard (UAH)',
 				'icon'       => 'mastercard',
 				'request_option'     => [
-					'paywayId' => '52efa871e4ae1a3008000002', // mastercard_p2p_notprivat_uah
+					// 'paywayId' => '52efa871e4ae1a3008000002', // mastercard_p2p_notprivat_uah
+					'paywayId' => '576658ac3d1eaf82398b4567', // mastercard_p2p_tasnotprivat_uah
 					'calcKey'  => 'psPayeeAmount',
 				],
 				'amount' => [
