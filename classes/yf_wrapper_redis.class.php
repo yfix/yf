@@ -56,7 +56,12 @@ class yf_wrapper_redis {
 		} elseif ($this->driver == 'phpredis') {
 			$redis = new Redis();
 if (is_unit_test()) {
-	echo '<pre>'; var_dump($this); echo '</pre>';
+	echo '<pre>'; 
+	var_dump($this); 
+	var_dump(getenv('REDIS_HOST'));
+	var_dump(conf('REDIS_HOST'));
+	var_dump(REDIS_HOST);
+	echo '</pre>';
 }
 			$redis->connect($this->host, (int)$this->port);
 			$redis->setOption( Redis::OPT_PREFIX, $this->prefix );
