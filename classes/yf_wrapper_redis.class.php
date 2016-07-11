@@ -35,14 +35,28 @@ class yf_wrapper_redis {
 
 	/**
 	*/
+	function _get_conf($name, $default) {
+		if ($val = getenv($name)) {
+			return $val;
+		}
+		if ($val = conf($name)) {
+			return $val;
+		}
+		if (defined($name) && ($val = constant($name)) != $name) {
+			return $val;
+		}
+		return $default;
+	}
+
+	/**
+	*/
 	function connect($params = []) {
 		if ($this->_connection) {
 			return $this->_connection;
 		}
-		$this->host   = getenv('REDIS_HOST')   ?: conf('REDIS_HOST')   ?: defined('REDIS_HOST')   ? REDIS_HOST : '127.0.0.1';
-		$this->port   = getenv('REDIS_PORT')   ?: conf('REDIS_PORT')   ?: defined('REDIS_PORT')   ? REDIS_PORT : 6379;
-		$this->prefix = getenv('REDIS_PREFIX') ?: conf('REDIS_PREFIX') ?: defined('REDIS_PREFIX') ? REDIS_PREFIX : '';
-		$this->port   = intval($this->port);
+		$this->host   = $this->_get_conf('REDIS_HOST', '127.0.0.1');
+		$this->port   = (int)$this->_get_conf('REDIS_PORT', '6379');
+		$this->prefix = $this->_get_conf('REDIS_PREFIX', '');
 		$this->prefix = $this->prefix ? $this->prefix .':' : '';
 
 		$redis = null;
@@ -55,14 +69,6 @@ class yf_wrapper_redis {
 			]);
 		} elseif ($this->driver == 'phpredis') {
 			$redis = new Redis();
-if (is_unit_test()) {
-	echo '<pre>'; 
-	var_dump($this); 
-	var_dump(getenv('REDIS_HOST'));
-	var_dump(conf('REDIS_HOST'));
-	var_dump(REDIS_HOST);
-	echo '</pre>';
-}
 			$redis->connect($this->host, (int)$this->port);
 			$redis->setOption( Redis::OPT_PREFIX, $this->prefix );
 		}
