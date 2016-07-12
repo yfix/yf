@@ -23,6 +23,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
     public $API_ID_MERCHANT = '';
     public $API_PASS_MERCHANT = '';
 
+    public $external_response_errors = [];
 
     public $service_allow = array(
         'payeer',
@@ -84,16 +85,14 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
     public function _api_response( $options ) {
         // import options
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+        $this->payment_api->dump([ 'name' => 'Payeer', 'operation_id' => @(int)$_POST['m_orderid'], 'ip' => common()->get_ip() ]);
 
-        $this->payment_api->dump([ 'response' =>
-            [
-                'POST' => $_POST,
-                'GET' => $_GET,
-                'SERVER' => $_SERVER
-            ]]);
-
-        if(!empty($_GET['m_orderid'])){
+        if(!empty($_POST['m_orderid'])){
             $this->_external_response();
+        }
+        else{
+            $this->external_response_errors[] = 'm_orderid not found';
+            $this->_dump_error_message($this->external_response_errors);
         }
         $operation_id  = $_data[ 'operation_id' ];
         $provider_name = $_provider[ 'name' ];
@@ -121,36 +120,52 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
     }
 
     public function _external_show_message($status){
-        echo $_GET['m_orderid'].'|'.$status;
+        $operation_id = !empty($_POST['m_orderid']) ? intval($_POST['m_orderid']) : false;
+        $message = $operation_id.'|'.$status;
+        $this->payment_api->dump([ 'message' => $message, ]);
+        $this->_dump_error_message($this->external_response_errors);
+        echo $message;
         die();
+    }
+
+    public function _dump_error_message($errors){
+        $this->payment_api->dump([
+            'errors' => $errors,
+        ]);
     }
 
     public function _external_response(){
         $ip = common()->get_ip();
-        if (!in_array($ip, array('185.71.65.92', '185.71.65.189'))) return;
+        if (!in_array($ip, array('185.71.65.92', '185.71.65.189'))) {
+            $this->external_response_errors[] = 'Invalid sender IP address '.$ip;
+            return false;
+        }
 
         $response_status = 'fail';
-        if (isset($_GET['m_operation_id']) && isset($_GET['m_sign']))
+        if (isset($_POST['m_operation_id']) && isset($_POST['m_sign']))
         {
-            $arHash = array($_GET['m_operation_id'],
-                $_GET['m_operation_ps'],
-                $_GET['m_operation_date'],
-                $_GET['m_operation_pay_date'],
-                $_GET['m_shop'],
-                $_GET['m_orderid'],
-                $_GET['m_amount'],
-                $_GET['m_curr'],
-                $_GET['m_desc'],
-                $_GET['m_status'],
+            $arHash = array($_POST['m_operation_id'],
+                $_POST['m_operation_ps'],
+                $_POST['m_operation_date'],
+                $_POST['m_operation_pay_date'],
+                $_POST['m_shop'],
+                $_POST['m_orderid'],
+                $_POST['m_amount'],
+                $_POST['m_curr'],
+                $_POST['m_desc'],
+                $_POST['m_status'],
                 $this->API_PASS_MERCHANT);
             $sign_hash = strtoupper(hash('sha256', implode(':', $arHash)));
-            if ($_GET['m_sign'] == $sign_hash && $_GET['m_status'] == 'success')
+            if ($_POST['m_sign'] == $sign_hash && $_POST['m_status'] == 'success')
             {
                 $response_status = 'success';
             }
+            else {
+                $this->external_response_errors[] = 'Invalid signature';
+            }
         }
         if($response_status == 'success') {
-            $operation_id = $_GET['m_orderid'];
+            $operation_id = intval($_POST['m_orderid']);
             $payment_api = $this->payment_api;
             $operation = $payment_api->operation([
                 'operation_id' => $operation_id,
@@ -161,6 +176,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 list($status_id, $status) = $object;
 
                 if (empty($status_id)) {
+                    $this->external_response_errors[] = 'Unknown status_id';
                     return $this->_external_show_message($this->MESSAGE_FAIL);
                 }
 
@@ -194,8 +210,22 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         if ($result_update_balance['status'] == $response_status) {
                             return $this->_external_show_message($this->MESSAGE_SUCCESS);
                         }
+                        else {
+                            $this->external_response_errors[] = 'Invalid transaction status, we have '.$result_update_balance['status'].', needed '.$response_status;
+                        }
+                    }
+                    else {
+                        $this->external_response_errors[] = 'Invalid provider, we have '.
+                            (!empty($provider[$provider_id]['name']) ? $provider[$provider_id]['name'] : '').
+                            ', needed '.$this->PROVIDER_NAME;
                     }
                 }
+                else {
+                    $this->external_response_errors[] = 'Invalid operation status, now it\'s '.$status['name'].', needed in_progress';
+                }
+            }
+            else {
+                $this->external_response_errors[] = 'Unknown operation_id '.$_POST['m_orderid'];
             }
         }
         return $this->_external_show_message($this->MESSAGE_FAIL);
