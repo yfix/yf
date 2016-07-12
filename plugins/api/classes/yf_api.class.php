@@ -32,23 +32,53 @@ class yf_api {
 	public $API_SSL_VERIFY = true;
 	public $JSON_VULNERABILITY_PROTECTION = true;
 
-	public $class   = null;
-	public $method  = null;
-	public $is_post = null;
-	public $is_json = null;
-	public $request = null;
+	public $class          = null;
+	public $method         = null;
+	public $is_head        = null;
+	public $is_get         = null;
+	public $is_post        = null;
+	public $is_json        = null;
+	public $is_jsonp       = null;
+	public $is_put         = null;
+	public $is_patch       = null;
+	public $is_delete      = null;
+	public $request_method = null;
+	public $request        = null;
 
 	function _init() {
+		ini_set( 'html_errors', 0 );
 		// ob_start();
-		$class   = &$this->class;
-		$method  = &$this->method;
-		$is_post = &$this->is_post;
+		$class  = &$this->class;
+		$method = &$this->method;
+		$is_head        = &$this->is_head;
+		$is_get         = &$this->is_get;
+		$is_post        = &$this->is_post;
+		$is_json        = &$this->is_json;
+		$is_jsonp       = &$this->is_jsonp;
+		$is_put         = &$this->is_put;
+		$is_patch       = &$this->is_patch;
+		$is_delete      = &$this->is_delete;
+		$request_method = &$this->request_method;
 		// setup
 		$object = $_GET[ 'object' ];
 		if( empty( $object ) || $object != 'api' ) { return( null ); }
 		$class  = $_GET[ 'action' ];
 		$method = $_GET[ 'id'     ];
-		$is_post = isset( $_POST );
+		// http method
+		$request_method = @$_SERVER[ 'REQUEST_METHOD' ] ?: 'GET';
+		switch( $request_method ) {
+			case 'GET':    $is_get    = true; break;
+			case 'POST':   $is_post   = true; break;
+			case 'PUT':    $is_put    = true; break;
+			case 'PATCH':  $is_patch  = true; break;
+			case 'DELETE': $is_delete = true; break;
+		}
+		if( strpos( @$_SERVER[ 'CONTENT_TYPE' ], 'application/json' ) !== false ) {
+			$is_json = true;
+		}
+		if( $is_get && is_string( @$_GET[ 'callback' ] ) ) {
+			$is_jsonp = true;
+		}
 		// override
 		$class == 'show' && $class = $_REQUEST[ 'object' ];
 		!$method && $method = $_REQUEST[ 'action' ];
@@ -205,6 +235,7 @@ class yf_api {
 				$jsonp_callback = $_GET[ 'callback' ];
 				$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
 				$type = 'javascript';
+                $this->is_jsonp = true;
 			}
 		}
 		list( $protocol, $code, $status ) = $this->_send_http_status( $code );
@@ -289,7 +320,7 @@ class yf_api {
 	protected function _send_http_content( $response = null, $is_raw = null ) {
 		// $error = ob_get_contents();
 		// ob_end_clean();
-		if( !@$is_raw && @$this->JSON_VULNERABILITY_PROTECTION ) { echo( ")]}',\n" ); }
+		if( !@$is_raw && !$this->is_jsonp && @$this->JSON_VULNERABILITY_PROTECTION ) { echo( ")]}',\n" ); }
 		if( isset( $response ) ) { echo( $response ); }
 		// if( isset( $error    ) ) { echo( "\n,([{\n $error" ); }
 		exit;
