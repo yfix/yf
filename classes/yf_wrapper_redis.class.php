@@ -28,19 +28,24 @@ class yf_wrapper_redis {
 
 	/**
 	*/
-	function _init() {
-		$this->host   = getenv('REDIS_HOST')   ?: conf('REDIS_HOST')   ?: defined('REDIS_HOST')   ? REDIS_HOST : '127.0.0.1';
-		$this->port   = getenv('REDIS_PORT')   ?: conf('REDIS_PORT')   ?: defined('REDIS_PORT')   ? REDIS_PORT : 6379;
-		$this->prefix = getenv('REDIS_PREFIX') ?: conf('REDIS_PREFIX') ?: defined('REDIS_PREFIX') ? REDIS_PREFIX : '';
-		$this->port   = intval($this->port);
-		$this->prefix = $this->prefix ? $this->prefix .':' : '';
+	function is_ready() {
+		!$this->_connection && $this->connect();
+		return (bool)$this->_connection;
 	}
 
 	/**
 	*/
-	function is_ready() {
-		!$this->_connection && $this->connect();
-		return (bool)$this->_connection;
+	function _get_conf($name, $default) {
+		if ($val = getenv($name)) {
+			return $val;
+		}
+		if ($val = conf($name)) {
+			return $val;
+		}
+		if (defined($name) && ($val = constant($name)) != $name) {
+			return $val;
+		}
+		return $default;
 	}
 
 	/**
@@ -49,6 +54,11 @@ class yf_wrapper_redis {
 		if ($this->_connection) {
 			return $this->_connection;
 		}
+		$this->host   = $this->_get_conf('REDIS_HOST', '127.0.0.1');
+		$this->port   = (int)$this->_get_conf('REDIS_PORT', '6379');
+		$this->prefix = $this->_get_conf('REDIS_PREFIX', '');
+		$this->prefix = $this->prefix ? $this->prefix .':' : '';
+
 		$redis = null;
 		if ($this->driver == 'predis') {
 			require_php_lib('predis');
