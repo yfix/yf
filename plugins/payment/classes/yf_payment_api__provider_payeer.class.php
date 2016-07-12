@@ -84,8 +84,15 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
     public function _api_response( $options ) {
         // import options
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-        // var
-        if(!empty($_GET['operation_id'])){
+
+        $this->payment_api->dump([ 'response' =>
+            [
+                'POST' => $_POST,
+                'GET' => $_GET,
+                'SERVER' => $_SERVER
+            ]]);
+
+        if(!empty($_GET['m_orderid'])){
             $this->_external_response();
         }
         $operation_id  = $_data[ 'operation_id' ];
@@ -114,36 +121,36 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
     }
 
     public function _external_show_message($status){
-        echo $_POST['m_orderid'].'|'.$status;
+        echo $_GET['m_orderid'].'|'.$status;
         die();
     }
 
     public function _external_response(){
-        if (!in_array($_SERVER['REMOTE_ADDR'], array('185.71.65.92', '185.71.65.189'))) return;
+        $ip = common()->get_ip();
+        if (!in_array($ip, array('185.71.65.92', '185.71.65.189'))) return;
 
         $response_status = 'fail';
-        if (isset($_POST['m_operation_id']) && isset($_POST['m_sign']))
+        if (isset($_GET['m_operation_id']) && isset($_GET['m_sign']))
         {
-            $arHash = array($_POST['m_operation_id'],
-                $_POST['m_operation_ps'],
-                $_POST['m_operation_date'],
-                $_POST['m_operation_pay_date'],
-                $_POST['m_shop'],
-                $_POST['m_orderid'],
-                $_POST['m_amount'],
-                $_POST['m_curr'],
-                $_POST['m_desc'],
-                $_POST['m_status'],
+            $arHash = array($_GET['m_operation_id'],
+                $_GET['m_operation_ps'],
+                $_GET['m_operation_date'],
+                $_GET['m_operation_pay_date'],
+                $_GET['m_shop'],
+                $_GET['m_orderid'],
+                $_GET['m_amount'],
+                $_GET['m_curr'],
+                $_GET['m_desc'],
+                $_GET['m_status'],
                 $this->API_PASS_MERCHANT);
             $sign_hash = strtoupper(hash('sha256', implode(':', $arHash)));
-            if ($_POST['m_sign'] == $sign_hash && $_POST['m_status'] == 'success')
+            if ($_GET['m_sign'] == $sign_hash && $_GET['m_status'] == 'success')
             {
                 $response_status = 'success';
             }
         }
-
         if($response_status == 'success') {
-            $operation_id = $_POST['m_orderid'];
+            $operation_id = $_GET['m_orderid'];
             $payment_api = $this->payment_api;
             $operation = $payment_api->operation([
                 'operation_id' => $operation_id,
@@ -161,9 +168,9 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     $provider_id = $operation['provider_id'];
                     $provider = $payment_api->provider(['provider_id' => $provider_id]);
                     if (!empty($provider[$provider_id]['name']) && $provider[$provider_id]['name'] == $this->PROVIDER_NAME) {
-                        $ip = common()->get_ip();
                         $response['external_response'] = [
                             'post' => $_POST,
+                            'get' => $_GET,
                             'ip' => $ip,
                             'datetime' => $payment_api->sql_datetime(),
                             'action' => 'approve',
@@ -184,7 +191,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                             'response' => [],
                         ];
                         $result_update_balance = $this->_api_transaction($operation_data);
-                        if ($result_update_balance['status'] == $status) {
+                        if ($result_update_balance['status'] == $response_status) {
                             return $this->_external_show_message($this->MESSAGE_SUCCESS);
                         }
                     }
