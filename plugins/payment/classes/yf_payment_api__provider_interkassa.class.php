@@ -172,8 +172,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'title' => 'Visa (Privat24, UAH)',
 				'icon'  => 'visa',
 				'request_option' => [
-					// 'paywayId' => '52e7f883e4ae1a2406000000', // visa_p2p_privat_uah
-					'paywayId' => '5763bad33d1eaf04218b456a', // visa_p2p_tasprivat_uah
+					'paywayId' => '52e7f883e4ae1a2406000000', // visa_p2p_privat_uah
+					// 'paywayId' => '5763bad33d1eaf04218b456a', // visa_p2p_tasprivat_uah
 					'calcKey'  => 'psPayeeAmount',
 				],
 				'amount' => [
@@ -292,8 +292,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'title'      => 'MasterCard (Privat24, UAH)',
 				'icon'       => 'mastercard',
 				'request_option'     => [
-					// 'paywayId' => '52efa902e4ae1a780e000001', // mastercard_p2p_privat_uah
-					'paywayId' => '5763bb6e3d1eaf4b218b4567', // mastercard_p2p_tasprivat_uah
+					'paywayId' => '52efa902e4ae1a780e000001', // mastercard_p2p_privat_uah
+					// 'paywayId' => '5763bb6e3d1eaf4b218b4567', // mastercard_p2p_tasprivat_uah
 					'calcKey'  => 'psPayeeAmount',
 				],
 				'amount' => [
