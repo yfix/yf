@@ -38,21 +38,6 @@ if ($bs_theme === 'bootstrap') {
 			],
 		],
 	];
-} elseif ($bs_theme === 'flatui') {
-	conf('bs3_no_default_theme', true);
-	return [
-		'versions' => [
-			'master' => [
-				'css' => [
-					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap/css/bootstrap.min.css',
-					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/flat-ui.min.css',
-				],
-				'js' => [
-					'//cdn.rawgit.com/yfix/Flat-UI/master/dist/js/flat-ui.min.js',
-				],
-			],
-		],
-	];
 } elseif ($bs_theme === 'material_design') {
 	conf('bs3_no_default_theme', true);
 	return [
