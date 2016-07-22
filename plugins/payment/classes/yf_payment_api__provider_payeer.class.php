@@ -77,7 +77,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     'to' => 'Аккаунт Payeer',
                 ],
                 'option_validation_js' => [
-                    'customer_purse' => [
+                    'to' => [
                         'type'      => 'text',
                         'required'  => true,
                         'minlength' => 2,
@@ -86,10 +86,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'option_validation' => [
-                    'customer_purse' => 'required|minlength[2]maxlength[200]|xss_clean',
+                    'to' => 'required|regex:~^.{2,200}$~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'customer_purse' => 'обязательное поле: Ваш Payeer аккаунт ',
+                    'to' => 'вы должны указать верный Payeer аккаунт',
                 ],
             ),
         ),

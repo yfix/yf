@@ -90,14 +90,14 @@ RESPONSE:
                         'required'  => true,
                         'minlength' => 26,
                         'maxlength' => 35,
-                        'pattern'   => '^[13][A-Za-z0-9]{25.34}$',
+                        'pattern'   => '^[13][A-Za-z0-9]{25,34}$',
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|minlength[26]maxlength[35]|xss_clean',
+                    'to' => 'required|regex:~^[13][A-Za-z0-9]{25,34}$~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'to' => 'обязательное поле: адрес вашего Bitcoin кошелька',
+                    'to' => 'вы должны указать верный Bitcoin кошелёк',
                 ],
 
             ),
