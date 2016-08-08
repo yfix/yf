@@ -3,7 +3,6 @@
 require_once __DIR__.'/db_real_abstract.php';
 
 /**
- * @requires extension sqlite3
  */
 class class_db_real_query_builder_sqlite_test extends db_real_abstract {
 	public static function setUpBeforeClass() {
@@ -19,7 +18,8 @@ class class_db_real_query_builder_sqlite_test extends db_real_abstract {
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public static function _need_skip_test($name) {
-		return false;
+		$sqlite_version = self::db()->get_server_version();
+		return extension_loaded('sqlite') && version_compare($sqlite_version, '3.7.11', '>');
 	}
 	public function _need_single_inserts() {
 		$sqlite_version = self::db()->get_server_version();

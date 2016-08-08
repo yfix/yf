@@ -25,10 +25,10 @@ class yf_payment_api__provider_bitcoin extends yf_payment_api__provider_remote {
     public $method_allow = array(
         'order' => array(
             'payin' => array(
-                'bitcoin',
+                'blockchain',
             ),
             'payout' => array(
-                'bitcoin',
+                'blockchain',
             ),
         ),
         'payin' => array(
@@ -43,6 +43,22 @@ class yf_payment_api__provider_bitcoin extends yf_payment_api__provider_remote {
                 ],
             ),
         ),
+
+        /*
+         * http://localhost:3000/merchant/$guid/payment?password=$main_password&second_password=$second_password&to=$address&amount=$amount&from=$from&fee=$fee&note=$note
+
+$main_password Your Main Blockchain Wallet password
+$second_password Your second Blockchain Wallet password if double encryption is enabled.
+$to Recipient Bitcoin Address.
+$amount Amount to send in satoshi.
+$from Send from a specific Bitcoin Address (Optional)
+$fee Transaction fee value in satoshi (Must be greater than default fee) (Optional)
+$note A public note to include with the transaction -- can only be attached when outputs are greater than 0.005 BTC. (Optional)
+RESPONSE:
+{ "message" : "Response Message" , "tx_hash": "Transaction Hash", "notice" : "Additional Message" }
+{ "message" : "Sent 0.1 BTC to 1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq" , "tx_hash" : "f322d01ad784e5deeb25464a5781c3b20971c1863679ca506e702e3e33c18e9c" , "notice" : "Some funds are pending confirmation and cannot be spent yet (Value 0.001 BTC)" }
+         */
+
         'payout' => array(
             'blockchain' => array(
                 'title' => 'Bitcoin',
@@ -53,6 +69,37 @@ class yf_payment_api__provider_bitcoin extends yf_payment_api__provider_remote {
                         'active'      => true,
                     ),
                 ),
+                'field' => [
+                    '$main_password',
+                    '$second_password',
+                    '$to',
+                    '$amount',
+                    '$from',
+                    '$fee',
+                    '$note',
+                ],
+                'order' => [
+                    'to',
+                ],
+                'option' => [
+                    'to' => 'Адрес кошелька'
+                ],
+                'option_validation_js' => [
+                    'to' => [
+                        'type'      => 'text',
+                        'required'  => true,
+                        'minlength' => 26,
+                        'maxlength' => 35,
+                        'pattern'   => '^[13][A-Za-z0-9]{25,34}$',
+                    ],
+                ],
+                'option_validation' => [
+                    'to' => 'required|regex:~^[13][A-Za-z0-9]{25,34}$~u|xss_clean',
+                ],
+                'option_validation_message' => [
+                    'to' => 'вы должны указать верный Bitcoin кошелёк',
+                ],
+
             ),
         ),
     );

@@ -66,7 +66,6 @@ td input[type=text], td textarea { margin-bottom:0; }
 	.cssfw-bs2 .navbar .breadcrumb { float:left; margin:2px 10px; }
 }
 
-.cssfw-bs3 .navbar-header { width:99%; padding-right:1%; }
 .cssfw-bs3 .navbar .breadcrumb { margin:0 7px; }
 @media (min-width:768px) {
 	.cssfw-bs3 .navbar .breadcrumb { float:left; margin:7px 10px; }

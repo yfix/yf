@@ -1078,7 +1078,26 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	}
 	public function test_user_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertNotEmpty( self::utils()->user_exists('root@localhost') );
+		$db_params = self::utils()->db->db->params;
+		$variants = array_unique([
+			$db_params['user'].'@'.$db_params['host'],
+			$db_params['user'].'@localhost',
+			$db_params['user'].'@127.0.0.1',
+			$db_params['user'].'@%',
+			'root@'.$db_params['host'],
+			'root@localhost',
+			'root@127.0.0.1',
+			'root@%',
+		]);
+		$at_least_one_exists = false;
+		foreach ($variants as $user) {
+			$exists = self::utils()->user_exists($user);
+			if ($exists) {
+				$at_least_one_exists = true;
+				break;
+			}
+		}
+		$this->assertTrue( $at_least_one_exists, 'Check that at least one system user from possible list really exists' );
 	}
 
 	public function test_escape_database_name() {

@@ -665,6 +665,10 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			'SELECT * FROM `'.DB_PREFIX.'user` WHERE id BETWEEN 1 AND 5',
 			self::qb()->from('user')->where_raw('id BETWEEN 1 AND 5')->sql()
 		);
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` = ""',
+			self::qb()->from('user')->where_raw('`name` = ""')->sql()
+		);
 	}
 	public function test_where_between() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }

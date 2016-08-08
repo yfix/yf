@@ -16,6 +16,7 @@ return [
 
 .cssfw-bs3 .table .checkbox-inline { padding-top: 0; }
 .cssfw-bs3 textarea { max-width:inherit; min-width: 100%; }
+.cssfw-bs3 .navbar-header { width:99%; padding-right:1%; }
 			'],
 			'jquery' => [
 #				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
