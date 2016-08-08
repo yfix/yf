@@ -26,7 +26,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 				'interkassa',
 			],
 			'payout' => [
-				'visa_p2p_privat_uah',
+				// 'visa_p2p_privat_uah',
+				'visa_p2p_tasprivat_uah',
 			],
 		],
 		'api' => [
