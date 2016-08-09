@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/JavaScript-Canvas-to-Blob/master/js/canvas-to-blob.min.js',
+			'js' => '//rawgit.yfix.net/yfix/JavaScript-Canvas-to-Blob/master/js/canvas-to-blob.min.js',
 		],
 	],
 	'require' => [

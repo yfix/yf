@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/jquery.transit/master/jquery.transit.js',
+			'js' => '//rawgit.yfix.net/yfix/jquery.transit/master/jquery.transit.js',
 		],
 	],
 	'require' => [

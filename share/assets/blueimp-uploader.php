@@ -4,18 +4,18 @@ return [
 	'versions' => [
 		'master' => [
 			'css' => [
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload.css',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui.css',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/css/jquery.fileupload.css',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui.css',
 			],
 			'js' => [
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.iframe-transport.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-ui.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-process.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-image.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-audio.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-video.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-validate.js',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.iframe-transport.js',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.fileupload.js',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.fileupload-ui.js',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.fileupload-process.js',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.fileupload-image.js',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.fileupload-audio.js',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.fileupload-video.js',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.fileupload-validate.js',
 			],
 		],
 	],
@@ -34,8 +34,8 @@ return [
 	],
 	'noscript' => [
 		'css' => [
-			'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-noscript.css',
-			'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui-noscript.css',
+			'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/css/jquery.fileupload-noscript.css',
+			'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui-noscript.css',
 		],
 	],
 	'info' => [

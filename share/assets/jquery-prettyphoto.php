@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/prettyphoto/master/js/jquery.prettyPhoto.js',
-			'css' => '//cdn.rawgit.com/yfix/prettyphoto/master/css/prettyPhoto.css',
+			'js' => '//rawgit.yfix.net/yfix/prettyphoto/master/js/jquery.prettyPhoto.js',
+			'css' => '//rawgit.yfix.net/yfix/prettyphoto/master/css/prettyPhoto.css',
 		],
 	],
 	'require' => [

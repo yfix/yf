@@ -4,7 +4,7 @@ return [
 	'versions' => [
 		'master' => [
 			'js' => [
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-angular.js',
+				'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.fileupload-angular.js',
 			],
 		],
 	],

@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/clu3/bootstro.js/master/bootstro.js',
-			'css' => '//cdn.rawgit.com/clu3/bootstro.js/master/bootstro.css',
+			'js' => '//rawgit.yfix.net/clu3/bootstro.js/master/bootstro.js',
+			'css' => '//rawgit.yfix.net/clu3/bootstro.js/master/bootstro.css',
 		],
 	],
 	'require' => [

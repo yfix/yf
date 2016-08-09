@@ -4,7 +4,7 @@ return [
 	'versions' => [
 		'master' => [
 			'js' => [
-				'//cdn.rawgit.com/yfix/bootstrap-maxlength/master/bootstrap-maxlength.min.js',
+				'//rawgit.yfix.net/yfix/bootstrap-maxlength/master/bootstrap-maxlength.min.js',
 			],
 		],
 	],

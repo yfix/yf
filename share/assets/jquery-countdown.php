@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/jQuery.countdown/master/dist/jquery.countdown.min.js',
+			'js' => '//rawgit.yfix.net/yfix/jQuery.countdown/master/dist/jquery.countdown.min.js',
 		],
 	],
 	'require' => [

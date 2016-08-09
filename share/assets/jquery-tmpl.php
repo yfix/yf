@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/jquery-tmpl/master/jquery.tmpl.js',
+			'js' => '//rawgit.yfix.net/yfix/jquery-tmpl/master/jquery.tmpl.js',
 		],
 	],
 	'require' => [

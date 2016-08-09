@@ -7,8 +7,8 @@ return [
 			'css' => '//cdn.jsdelivr.net/bootstrap.daterangepicker/1/daterangepicker-bs3.css',
 		],
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/bootstrap-daterangepicker/master/daterangepicker.js',
-			'css' => '//cdn.rawgit.com/yfix/bootstrap-daterangepicker/master/daterangepicker-bs3.css',
+			'js' => '//rawgit.yfix.net/yfix/bootstrap-daterangepicker/master/daterangepicker.js',
+			'css' => '//rawgit.yfix.net/yfix/bootstrap-daterangepicker/master/daterangepicker-bs3.css',
 		],
 	],
 	'require' => [

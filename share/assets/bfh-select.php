@@ -12,9 +12,9 @@ $bfh_css_fixes = '
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/js/bootstrap-formhelpers.min.js',
+			'js' => '//rawgit.yfix.net/yfix/bootstrap-form-helpers/master/dist/js/bootstrap-formhelpers.min.js',
 			'css' => [
-				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/css/bootstrap-formhelpers.min.css',
+				'//rawgit.yfix.net/yfix/bootstrap-form-helpers/master/dist/css/bootstrap-formhelpers.min.css',
 				$bfh_css_fixes,
 			],
 		],

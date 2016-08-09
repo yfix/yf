@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => 'CKEDITOR.plugins.addExternal("pbckcode", "https://cdn.rawgit.com/prbaron/pbckcode/master/plugin.js");',
+			'js' => 'CKEDITOR.plugins.addExternal("pbckcode", "https://rawgit.yfix.net/prbaron/pbckcode/master/plugin.js");',
 		],
 	],
 	'require' => [

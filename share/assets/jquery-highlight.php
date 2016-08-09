@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/bartaz/sandbox.js/master/jquery.highlight.js',
+			'js' => '//rawgit.yfix.net/bartaz/sandbox.js/master/jquery.highlight.js',
 		],
 	],
 	'require' => [

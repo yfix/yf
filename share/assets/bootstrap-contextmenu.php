@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/bootstrap-contextmenu/master/bootstrap-contextmenu.js',
+			'js' => '//rawgit.yfix.net/yfix/bootstrap-contextmenu/master/bootstrap-contextmenu.js',
 		],
 	],
 	'require' => [

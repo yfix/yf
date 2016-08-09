@@ -5,7 +5,7 @@ return [
 		'master' => [
 			'js' => '
 				CKEDITOR.dtd.$removeEmpty["span"] = false;
-				CKEDITOR.plugins.addExternal("fontawesome", "https://cdn.rawgit.com/yfix/ckeditor-fontawesome4/master/fontawesome/plugin.js");
+				CKEDITOR.plugins.addExternal("fontawesome", "https://rawgit.yfix.net/yfix/ckeditor-fontawesome4/master/fontawesome/plugin.js");
 //				CKEDITOR.config.contentsCss = "//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css",
 			',
 		],

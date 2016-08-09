@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/rmariuzzo/checkboxes.js/master/src/jquery.checkboxes.js',
+			'js' => '//rawgit.yfix.net/rmariuzzo/checkboxes.js/master/src/jquery.checkboxes.js',
 		],
 	],
 	'require' => [

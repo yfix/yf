@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'css' => '//cdn.rawgit.com/yfix/yamm3/master/yamm/yamm.css',
+			'css' => '//rawgit.yfix.net/yfix/yamm3/master/yamm/yamm.css',
 		],
 	],
 	'require' => [

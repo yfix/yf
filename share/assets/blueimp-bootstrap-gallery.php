@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-			'css' => '//cdn.rawgit.com/yfix/Bootstrap-Image-Gallery/master/css/bootstrap-image-gallery.min.css',
-			'js' => '//cdn.rawgit.com/yfix/Bootstrap-Image-Gallery/master/js/bootstrap-image-gallery.min.js',
+			'css' => '//rawgit.yfix.net/yfix/Bootstrap-Image-Gallery/master/css/bootstrap-image-gallery.min.css',
+			'js' => '//rawgit.yfix.net/yfix/Bootstrap-Image-Gallery/master/js/bootstrap-image-gallery.min.js',
 		],
 	],
 	'require' => [

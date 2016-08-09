@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-			'css' => '//cdn.rawgit.com/yfix/gridster.js/master/dist/jquery.gridster.min.css',
-			'js' => '//cdn.rawgit.com/yfix/gridster.js/master/dist/jquery.gridster.with-extras.min.js',
+			'css' => '//rawgit.yfix.net/yfix/gridster.js/master/dist/jquery.gridster.min.css',
+			'js' => '//rawgit.yfix.net/yfix/gridster.js/master/dist/jquery.gridster.with-extras.min.js',
 		],
 	],
 	'require' => [

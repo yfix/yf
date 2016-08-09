@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => 'CKEDITOR.plugins.addExternal("widget", "https://cdn.rawgit.com/ckeditor/ckeditor-releases/master/plugins/widget/plugin.js");',
+			'js' => 'CKEDITOR.plugins.addExternal("widget", "https://rawgit.yfix.net/ckeditor/ckeditor-releases/master/plugins/widget/plugin.js");',
 		],
 	],
 	'require' => [

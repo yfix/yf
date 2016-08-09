@@ -2,14 +2,14 @@
 
 $path = $DIR_TO_CHECK ?: ($argv[1] ?: dirname(dirname(dirname(__DIR__))).'/');
 
-$grep_regex = '//(cdn|netdna)';
+$grep_regex = '//(cdn|netdna|rawgit)';
 $min_regex = '~\{[^\}]*?min[^\}]*?\}~';
-$url_regex = '~(?P<url>//(cdn|netdna).+?\.(js|css))[\'"\{]+~ims';
+$url_regex = '~(?P<url>//(cdn|netdna|rawgit).+?\.(js|css))[\'"\{]+~ims';
 
 $matches = [];
-// /home/www/yf/.dev/samples/assets_prototype.php:			'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-validate.js',
+// /home/www/yf/.dev/samples/assets_prototype.php:			'//rawgit.yfix.net/yfix/jQuery-File-Upload/master/js/jquery.fileupload-validate.js',
 exec('egrep "'.$grep_regex.'" --include="*.php" -r "'.$path.'" --exclude-dir="libs" | grep -v "'.basename(__FILE__).'"', $matches);
-// /home/www/yf/templates/admin/ng_app_lib.stpl:    <link href="//cdn.rawgit.com/mgcrea/angular-motion/master/dist/angular-motion{js_min}.css" rel="stylesheet">
+// /home/www/yf/templates/admin/ng_app_lib.stpl:    <link href="//rawgit.yfix.net/mgcrea/angular-motion/master/dist/angular-motion{js_min}.css" rel="stylesheet">
 exec('egrep "'.$grep_regex.'" --include="*.stpl" -r "'.$path.'" --exclude-dir="libs"', $matches);
 
 foreach ((array)$matches as $k => $v) {

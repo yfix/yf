@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/bootstrap-treeview/master/dist/bootstrap-treeview.min.js',
-			'css' => '//cdn.rawgit.com/yfix/bootstrap-treeview/master/dist/bootstrap-treeview.min.css',
+			'js' => '//rawgit.yfix.net/yfix/bootstrap-treeview/master/dist/bootstrap-treeview.min.js',
+			'css' => '//rawgit.yfix.net/yfix/bootstrap-treeview/master/dist/bootstrap-treeview.min.css',
 		],
 	],
 	'require' => [

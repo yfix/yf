@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/jQuery-Mask-Plugin/master/dist/jquery.mask.min.js',
+			'js' => '//rawgit.yfix.net/yfix/jQuery-Mask-Plugin/master/dist/jquery.mask.min.js',
 		],
 	],
 	'require' => [

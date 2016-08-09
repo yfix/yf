@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/desandro/imagesloaded/master/imagesloaded.pkgd.min.js',
+			'js' => '//rawgit.yfix.net/desandro/imagesloaded/master/imagesloaded.pkgd.min.js',
 		],
 	],
 	'require' => [

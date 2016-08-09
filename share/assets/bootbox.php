@@ -4,7 +4,7 @@ return [
 	'versions' => [
 		'4.2.0' => [
 		//	'js' => '//oss.maxcdn.com/bootbox/4.2.0/bootbox.min.js',
-			'js' => '//cdn.rawgit.com/yfix/bootbox/yyv/bootbox.js',
+			'js' => '//rawgit.yfix.net/yfix/bootbox/yyv/bootbox.js',
 		],
 	],
 	'require' => [

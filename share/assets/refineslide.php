@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/refineslide/master/jquery.refineslide.min.js',
-			'css' => '//cdn.rawgit.com/yfix/refineslide/master/refineslide.css',
+			'js' => '//rawgit.yfix.net/yfix/refineslide/master/jquery.refineslide.min.js',
+			'css' => '//rawgit.yfix.net/yfix/refineslide/master/refineslide.css',
 		],
 	],
 	'info' => [

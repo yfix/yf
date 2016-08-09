@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/yf_caret/master/jquery.caret.min.js',
+			'js' => '//rawgit.yfix.net/yfix/yf_caret/master/jquery.caret.min.js',
 		],
 	],
 	'require' => [

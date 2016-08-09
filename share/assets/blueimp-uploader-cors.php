@@ -4,8 +4,8 @@ return [
 	'versions' => [
 		'master' => [
 			'js' => [
-				'//cdn.rawgit.com/yfix/JQuery-File-Upload/master/js/cors/jquery.postmessage-transport.js',
-				'//cdn.rawgit.com/yfix/JQuery-File-Upload/master/js/cors/jquery.xdr-transport.js',
+				'//rawgit.yfix.net/yfix/JQuery-File-Upload/master/js/cors/jquery.postmessage-transport.js',
+				'//rawgit.yfix.net/yfix/JQuery-File-Upload/master/js/cors/jquery.xdr-transport.js',
 			],
 		],
 	],

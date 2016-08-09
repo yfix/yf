@@ -3,11 +3,11 @@
 return [
 	'versions' => [
 		'2.7.1' => [
-			'css' => '//cdn.rawgit.com/yfix/fullcalendar/v2.7.1/dist/fullcalendar.min.css',
+			'css' => '//rawgit.yfix.net/yfix/fullcalendar/v2.7.1/dist/fullcalendar.min.css',
 			'js' => [
-				'//cdn.rawgit.com/yfix/fullcalendar/v2.7.1/dist/fullcalendar.min.js',
-				'//cdn.rawgit.com/yfix/fullcalendar/v2.7.1/dist/gcal.js',
-				'//cdn.rawgit.com/yfix/fullcalendar/v2.7.1/dist/lang-all.js',
+				'//rawgit.yfix.net/yfix/fullcalendar/v2.7.1/dist/fullcalendar.min.js',
+				'//rawgit.yfix.net/yfix/fullcalendar/v2.7.1/dist/gcal.js',
+				'//rawgit.yfix.net/yfix/fullcalendar/v2.7.1/dist/lang-all.js',
 			],
 		],
 	],

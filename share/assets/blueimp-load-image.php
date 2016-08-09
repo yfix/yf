@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/JavaScript-Load-Image/master/js/load-image.all.min.js',
+			'js' => '//rawgit.yfix.net/yfix/JavaScript-Load-Image/master/js/load-image.all.min.js',
 		],
 	],
 	'require' => [

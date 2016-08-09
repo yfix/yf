@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/jquery_lazyload/master/jquery.lazyload.js',
+			'js' => '//rawgit.yfix.net/yfix/jquery_lazyload/master/jquery.lazyload.js',
 		],
 	],
 	'require' => [

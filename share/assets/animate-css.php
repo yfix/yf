@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'css' => '//cdn.rawgit.com/yfix/animate.css/master/animate.min.css',
+			'css' => '//rawgit.yfix.net/yfix/animate.css/master/animate.min.css',
 		],
 	],
 	'info' => [

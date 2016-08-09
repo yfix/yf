@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/jquery.maskedinput/master/src/jquery.maskedinput.js',
+			'js' => '//rawgit.yfix.net/yfix/jquery.maskedinput/master/src/jquery.maskedinput.js',
 		],
 	],
 	'require' => [

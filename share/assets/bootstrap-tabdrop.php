@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/jschab/bootstrap-tabdrop/master/js/bootstrap-tabdrop.js',
-			'css' => '//cdn.rawgit.com/jschab/bootstrap-tabdrop/master/css/tabdrop.css',
+			'js' => '//rawgit.yfix.net/jschab/bootstrap-tabdrop/master/js/bootstrap-tabdrop.js',
+			'css' => '//rawgit.yfix.net/jschab/bootstrap-tabdrop/master/css/tabdrop.css',
 		],
 	],
 	'require' => [

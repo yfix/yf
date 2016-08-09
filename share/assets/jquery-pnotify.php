@@ -3,10 +3,10 @@
 return [
 	'versions' => [
 		'1.2.0' => [
-			'js' => '//cdn.rawgit.com/yfix/jquery-pnotify/1.2.0/jquery.pnotify.js',
+			'js' => '//rawgit.yfix.net/yfix/jquery-pnotify/1.2.0/jquery.pnotify.js',
 			'css' => [
-				'//cdn.rawgit.com/yfix/jquery-pnotify/1.2.0/jquery.pnotify.default.css',
-				'//cdn.rawgit.com/yfix/jquery-pnotify/1.2.0/jquery.pnotify.default.icons.css',
+				'//rawgit.yfix.net/yfix/jquery-pnotify/1.2.0/jquery.pnotify.default.css',
+				'//rawgit.yfix.net/yfix/jquery-pnotify/1.2.0/jquery.pnotify.default.icons.css',
 			],
 		],
 		'3.0.0' => [

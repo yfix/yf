@@ -6,7 +6,7 @@ css('
 
 .social-buttons { display: block; list-style: none; padding: 0; margin: 20px; }
 .social-buttons > li { display: block; margin: 0; padding: 10px; float: left; }
-.social-buttons .socialite { display: block; position: relative; background: url("//cdn.rawgit.com/yfix/Socialite/master/images/social-sprite.png") 0 0 no-repeat; }
+.social-buttons .socialite { display: block; position: relative; background: url("//rawgit.yfix.net/yfix/Socialite/master/images/social-sprite.png") 0 0 no-repeat; }
 .social-buttons .socialite-loaded { background: none !important; }
 /*
 .social-buttons .twitter-share { width: 55px; height: 65px; background-position: 0 0; }

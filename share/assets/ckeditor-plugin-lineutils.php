@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => 'CKEDITOR.plugins.addExternal("lineutils", "https://cdn.rawgit.com/ckeditor/ckeditor-releases/master/plugins/lineutils/plugin.js");',
+			'js' => 'CKEDITOR.plugins.addExternal("lineutils", "https://rawgit.yfix.net/ckeditor/ckeditor-releases/master/plugins/lineutils/plugin.js");',
 		],
 	],
 	'require' => [

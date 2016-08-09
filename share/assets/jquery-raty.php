@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/raty/master/lib/jquery.raty.js',
-			'css' => '//cdn.rawgit.com/yfix/raty/master/lib/jquery.raty.css',
+			'js' => '//rawgit.yfix.net/yfix/raty/master/lib/jquery.raty.js',
+			'css' => '//rawgit.yfix.net/yfix/raty/master/lib/jquery.raty.css',
 		],
 	],
 	'require' => [

@@ -65,11 +65,11 @@ if ($bs_theme === 'bootstrap') {
 		'versions' => [
 			'master' => [
 				'css' => [
-					'//cdn.rawgit.com/yfix/todc-bootstrap/master/dist/css/bootstrap.min.css',
-					'//cdn.rawgit.com/yfix/todc-bootstrap/master/dist/css/todc-bootstrap.min.css',
+					'//rawgit.yfix.net/yfix/todc-bootstrap/master/dist/css/bootstrap.min.css',
+					'//rawgit.yfix.net/yfix/todc-bootstrap/master/dist/css/todc-bootstrap.min.css',
 				],
 				'js' => [
-					'//cdn.rawgit.com/yfix/todc-bootstrap/master/dist/js/bootstrap.min.js',
+					'//rawgit.yfix.net/yfix/todc-bootstrap/master/dist/js/bootstrap.min.js',
 				],
 			],
 		],

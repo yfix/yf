@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-//			'js' => '//cdn.rawgit.com/yfix/typeahead.js/master/dist/typeahead.jquery.js',
-			'js' => '//cdn.rawgit.com/yfix/typeahead.js/master/dist/typeahead.bundle.min.js',
+//			'js' => '//rawgit.yfix.net/yfix/typeahead.js/master/dist/typeahead.jquery.js',
+			'js' => '//rawgit.yfix.net/yfix/typeahead.js/master/dist/typeahead.bundle.min.js',
 /*
 			'css' => '
 				.tt-dataset { color: #999; }

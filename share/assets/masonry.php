@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/desandro/masonry/master/dist/masonry.pkgd.min.js',
+			'js' => '//rawgit.yfix.net/desandro/masonry/master/dist/masonry.pkgd.min.js',
 		],
 	],
 	'require' => [

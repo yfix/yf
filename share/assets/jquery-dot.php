@@ -3,7 +3,7 @@
 return [
 	'versions' => [
 		'master' => [
-			'js' => '//cdn.rawgit.com/yfix/jquery-dot/master/src/js/jquery.dotdotdot.js',
+			'js' => '//rawgit.yfix.net/yfix/jquery-dot/master/src/js/jquery.dotdotdot.js',
 		],
 	],
 	'require' => [

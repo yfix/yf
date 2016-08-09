@@ -3,8 +3,8 @@
 return [
 	'versions' => [
 		'master' => [
-			'css' => '//cdn.rawgit.com/yfix/blueimp-gallery/master/css/blueimp-gallery.min.css',
-			'js' => '//cdn.rawgit.com/yfix/blueimp-gallery/master/js/jquery.blueimp-gallery.min.js',
+			'css' => '//rawgit.yfix.net/yfix/blueimp-gallery/master/css/blueimp-gallery.min.css',
+			'js' => '//rawgit.yfix.net/yfix/blueimp-gallery/master/js/jquery.blueimp-gallery.min.js',
 		],
 	],
 	'require' => [
