@@ -28,7 +28,9 @@ class yf_logs_exec_admin {
 	/** @var bool */
 	public $LOGGING					= true;
 	/** @var array */
-	public $EXCLUDE_IPS			= [];
+	public $EXCLUDE_IPS	= [
+		'127.0.0.1',
+	];
 	/** @var array */
 	public $EXCLUDE_USER_AGENTS	= [
 		'zabbix',
