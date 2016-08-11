@@ -4,12 +4,58 @@
 */
 class yf_logs_redirect {
 
+	/** @var bool */
+	public $LOG_REDIRECTS = true;
+	/** @var array Stop-list for logging (REGEXPs allowed here) */
+	public $EXCLUDE_URL_FROM = [
+		'object=(aff|dynamic).*',
+#		'task=(login|logout)',
+	];
+	/** @var array */
+	public $EXCLUDE_IPS	= [
+		'127.0.0.1',
+	];
+	/** @var array */
+	public $EXCLUDE_USER_AGENTS	= [
+		'zabbix',
+		'acceptance_tests',
+	];
+
 	/**
 	*/
 	function _save_log ($params = []) {
-#		if (!$this->LOG_REDIRECTS) {
-#			return false;
-#		}
+		if (!$this->LOG_REDIRECTS) {
+			return false;
+		}
+		if ($this->EXCLUDE_URL_FROM) {
+			foreach ((array)$this->EXCLUDE_URL_FROM as $pattern) {
+				if (preg_match('~'.$pattern.'~i', $_SERVER['QUERY_STRING'])) {
+					$checks['exclude_url_from'] = true;
+					break;
+				}
+			}
+		}
+		$ip = common()->get_ip();
+		if ($this->EXCLUDE_IPS) {
+			if ($ip && (isset($this->EXCLUDE_IPS[$ip]) || in_array($ip, $this->EXCLUDE_IPS))) {
+				$checks['exclude_ip'] = true;
+			}
+		}
+		if ($this->EXCLUDE_USER_AGENTS) {
+			$ua = $_SERVER['HTTP_USER_AGENT'];
+			foreach ((array)$this->EXCLUDE_USER_AGENTS as $pattern) {
+				if (preg_match('~'.$pattern.'~i', $ua)) {
+					$checks['exclude_ua'] = true;
+				}
+			}
+		}
+		$this->checks = $checks;
+		foreach ((array)$checks as $name => $is_denied) {
+			if ($is_denied) {
+				$this->log_denied_because = $name;
+				return false;
+			}
+		}
 		// slice 2 first elements (__FUNCTION__ and $this->_go) and leave only 5 more trace elements to save space
 		$trace = implode(PHP_EOL, array_slice(explode(PHP_EOL, main()->trace_string()), 2, 7));
 
@@ -22,7 +68,7 @@ class yf_logs_redirect {
 			'use_rewrite'	=> (int)$params['rewrite'],
 			'redirect_type'	=> $params['type'],
 			'date'			=> gmdate('Y-m-d H:i:s'),
-			'ip'			=> $_SERVER['REMOTE_ADDR'],
+			'ip'			=> $ip,
 			'query_string'	=> $_SERVER['QUERY_STRING'],
 			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
 			'referer'		=> $_SERVER['HTTP_REFERER'],
