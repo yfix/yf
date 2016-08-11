@@ -27,6 +27,13 @@ class yf_logs_exec_admin {
 	public $LOG_DIR_NAME			= 'logs/log_admin_exec/';
 	/** @var bool */
 	public $LOGGING					= true;
+	/** @var array */
+	public $EXCLUDE_IPS			= [];
+	/** @var array */
+	public $EXCLUDE_USER_AGENTS	= [
+		'zabbix',
+		'acceptance_tests',
+	];
 
 	/**
 	*/
@@ -59,6 +66,27 @@ class yf_logs_exec_admin {
 		if ($this->FILTER_BOTS && !main()->USER_ID) {
 			$SPIDER_NAME = common()->_is_spider($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
 			if ($SPIDER_NAME) {
+				return false;
+			}
+		}
+		if ($this->EXCLUDE_IPS) {
+			$ip = common()->get_ip();
+			if ($ip && (isset($this->EXCLUDE_IPS[$ip]) || in_array($ip, $this->EXCLUDE_IPS))) {
+				$checks['exclude_ip'] = true;
+			}
+		}
+		if ($this->EXCLUDE_USER_AGENTS) {
+			$ua = $_SERVER['HTTP_USER_AGENT'];
+			foreach ((array)$this->EXCLUDE_USER_AGENTS as $pattern) {
+				if (preg_match('~'.$pattern.'~i', $ua)) {
+					$checks['exclude_ua'] = true;
+				}
+			}
+		}
+		$this->checks = $checks;
+		foreach ((array)$checks as $name => $is_denied) {
+			if ($is_denied) {
+				$this->log_denied_because = $name;
 				return false;
 			}
 		}
