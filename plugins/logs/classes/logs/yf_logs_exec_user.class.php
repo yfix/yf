@@ -58,8 +58,12 @@ class yf_logs_exec_user {
 	public $LOG_IS_503			= true;
 	/** @var bool */
 	public $LOG_IS_CACHE_ON		= true;
-	/** @var bool */
+	/** @var array */
 	public $EXCLUDE_IPS			= [];
+	/** @var array */
+	public $EXCLUDE_USER_AGENTS	= [
+		'zabbix',
+	];
 
 	/**
 	*/
@@ -109,8 +113,8 @@ class yf_logs_exec_user {
 			$checks[$name] = $val && !$this->$conf;
 		}
 		if ($this->USE_STOP_LIST) {
-			foreach ((array)$this->STOP_LIST as $_cur_pattern) {
-				if (preg_match('/'.$_cur_pattern.'/i', $_SERVER['QUERY_STRING'])) {
+			foreach ((array)$this->STOP_LIST as $pattern) {
+				if (preg_match('~'.$pattern.'~i', $_SERVER['QUERY_STRING'])) {
 					$checks['in_stop_list'] = true;
 					break;
 				}
@@ -120,6 +124,14 @@ class yf_logs_exec_user {
 			$ip = common()->get_ip();
 			if ($ip && (isset($this->EXCLUDE_IPS[$ip]) || in_array($ip, $this->EXCLUDE_IPS))) {
 				$checks['exclude_ip'] = true;
+			}
+		}
+		if ($this->EXCLUDE_USER_AGENTS) {
+			$ua = $_SERVER['HTTP_USER_AGENT'];
+			foreach ((array)$this->EXCLUDE_USER_AGENTS as $pattern) {
+				if (preg_match('~'.$pattern.'~i', $ua)) {
+					$checks['exclude_ua'] = true;
+				}
 			}
 		}
 		$this->checks = $checks;
