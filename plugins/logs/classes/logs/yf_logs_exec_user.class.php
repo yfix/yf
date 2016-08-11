@@ -63,6 +63,7 @@ class yf_logs_exec_user {
 	/** @var array */
 	public $EXCLUDE_USER_AGENTS	= [
 		'zabbix',
+		'acceptance_tests',
 	];
 
 	/**
