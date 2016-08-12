@@ -52,7 +52,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo module_conf(\''.$m[1].'\',\''.$m[2].'\');'. $end;
 			},
 			// ifs compiling. NOTE: pattern differs from original adding \#\. symbols, etc
-			'/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%#-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\-\#]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims' => function($m) use ($start, $end, $_this) {
+			'/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%#-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\.\-\#]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims' => function($m) use ($start, $end, $_this) {
 				return $start. $_this->_compile_prepare_ifs($m). $end;
 			},
 			// if_funcs compiling
@@ -225,7 +225,7 @@ class yf_tpl_driver_yf_compile {
 		$add_cond = trim($m['multi_conds']);
 		if ($add_cond) {
 			$_this = $this;
-			$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\-\#]*)["\']{0,1}/ims';
+			$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\.\-\#]*)["\']{0,1}/ims';
 			$add_cond = preg_replace_callback($pattern, function($m) use ($_this) {
 				$a_cond	= trim($m['cond']);
 				$a_left	= $_this->_compile_prepare_cond($m['left']);
@@ -292,7 +292,7 @@ class yf_tpl_driver_yf_compile {
 			$cond = str_replace("'", "\\'", substr($cond, strlen('const.')));
 			$cond = '(defined(\''.$cond.'\') ? constant(\''.$cond.'\') : null)';
 		// Global array element or sub array
-		} elseif (false !== strpos($cond, '.')) {
+		} elseif (!$for_right && false !== strpos($cond, '.')) {
 			$cond = $this->_cond_sub_array($cond);
 		} elseif ($tmp_len) {
 			$cond = str_replace("'", "\\'", $cond);

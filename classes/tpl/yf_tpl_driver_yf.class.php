@@ -569,7 +569,7 @@ class yf_tpl_driver_yf {
 		$_this = $this;
 
 		// Process common ifs matches. Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
-		$pattern = '/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w#-]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims';
+		$pattern = '/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\.#-]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
 			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
@@ -582,7 +582,7 @@ class yf_tpl_driver_yf {
 			}
 			$add_cond = trim($m['multi_conds']);
 			if ($add_cond) {
-				$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\-\#]*)["\']{0,1}/ims';
+				$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\-\.\#]*)["\']{0,1}/ims';
 				$add_cond = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 					$a_cond	= trim($m['cond']);
 					$a_left	= $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
@@ -755,7 +755,7 @@ class yf_tpl_driver_yf {
 				$c = addslashes(substr($val, strlen('const.')));
 				$a = '(defined(\''.$c.'\') ? constant(\''.$c.'\') : null)';
 			// Global array element or sub array
-			} elseif (false !== strpos($val, '.')) {
+			} elseif (!$for_right && false !== strpos($val, '.')) {
 				$a = $this->_cond_sub_array($val, $replace, $for_right);
 			} elseif ($for_right && is_string($val)) {
 				$a = '\''.addslashes($val).'\'';
