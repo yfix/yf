@@ -404,6 +404,18 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 
 		tpl()->_avail_arrays = $old;
 	}
+	public function test_avail_arrays_server() {
+		$old = tpl()->_avail_arrays;
+		$_SERVER['HTTP_HOST'] = 'example.com';
+		tpl()->_avail_arrays = ['server' => '_SERVER'];
+
+		$this->assertEquals('', self::_tpl( '{server.not_exists}' ));
+		$this->assertEquals($_SERVER['HTTP_HOST'], self::_tpl( '{server.HTTP_HOST}' ));
+		$this->assertEquals('good', self::_tpl( '{if(server.HTTP_HOST ne something)}good{else}bad{/if}' ));
+		$this->assertEquals('good', self::_tpl( '{if(server.HTTP_HOST eq "'.$_SERVER['HTTP_HOST'].'")}good{else}bad{/if}' ));
+
+		tpl()->_avail_arrays = $old;
+	}
 	public function test_foreach_val_array() {
 		$data = ['k1' => 'v1', 'k4' => [1,2,3]];
 		$this->assertEquals(' k1=v1  k4=1,2,3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', ['data' => $data]));
