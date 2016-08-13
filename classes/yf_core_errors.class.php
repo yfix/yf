@@ -28,7 +28,7 @@ class yf_core_errors {
 	* NOTE: $error_log_filename will only be used if you have log_errors Off and ;error_log filename in php.ini 
 	* if log_errors is On, and error_log is set, the filename in error_log will be used. 
 	*/ 
-	public $error_log_filename		= 'error_logs.log';
+	public $error_log_filename		= 'yf_core_errors.log';
 	/** @var string The recipient email to mail errors to */
 	public $email_to				= '';
 	/** @var string Recipient address */
@@ -81,10 +81,11 @@ class yf_core_errors {
 		if (conf('ERROR_REPORTING')) {
 			error_reporting((int)conf('ERROR_REPORTING'));
 		}
-		$this->set_mail_receiver('yf_framework_site_admin', defined('SITE_ADMIN_EMAIL') ? SITE_ADMIN_EMAIL : 'php_test@127.0.0.1');
-		$this->set_log_file_name(defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : INCLUDE_PATH. 'error_logs.log');
+		$this->error_log_filename = APP_PATH. 'logs/'.$this->error_log_filename;
+		$this->set_log_file_name(defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : $this->error_log_filename);
 		$this->set_flags(defined('error_handler_FLAGS') ? error_handler_FLAGS : '110000');
 		$this->set_reporting_level();
+		$this->set_mail_receiver('yf_framework_site_admin', defined('SITE_ADMIN_EMAIL') ? SITE_ADMIN_EMAIL : 'php_test@127.0.0.1');
 		ini_set('ignore_repeated_errors', 1);
 		ini_set('ignore_repeated_source', 1);
 		set_error_handler([$this, 'error_handler'], $this->NO_NOTICES ? E_ALL ^ E_NOTICE : E_ALL);
@@ -324,7 +325,7 @@ class yf_core_errors {
 		} else {
 			$log_dir = dirname($this->error_log_filename);
 			if (!file_exists($log_dir)) {
-				_mkdir_m($log_dir);
+				mkdir($log_dir, 0755, true);
 			}
 			error_log($msg, 3, $this->error_log_filename);
 		}
@@ -343,6 +344,10 @@ class yf_core_errors {
 	* Method that changes the filename of the generated log file.
 	*/
 	function set_log_file_name($filename) { 
+		$dir = dirname($filename);
+		if (!file_exists($dir)) {
+			mkdir($dir, 0755, true);
+		}
 		$this->error_log_filename = $filename;
 	}
 

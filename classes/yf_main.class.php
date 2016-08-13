@@ -126,7 +126,7 @@ class yf_main {
 	/** @var int Error reporting level for DEBUG_MODE enabled */
 	public $ERROR_REPORTING_DEBUG	= 22519; // 22519 = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
 	/** @var string Log errors switcher, keep empty to disable logging */
-	public $ERROR_LOG_PATH			= '{PROJECT_PATH}error_php.log';
+	public $ERROR_LOG_PATH			= '{LOGS_PATH}yf_core_errors.log';
 	/** @var mixed Development mode, enable dev overrides layer, can containg string with developer name */
 	public $DEV_MODE				= false;
 	/** @var string Server host name */
