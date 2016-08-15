@@ -657,6 +657,7 @@ class yf_payment_api__provider_remote {
 				$operation = $payment_api->operation( [
 					'operation_id' => $operation_id,
 				]);
+			events()->fire( $event_name .'.'. $new_status_name, [ $account, $operation ] );
 			events()->fire( $event_name .'.finish', [ $account, $operation ] );
 		} else {
 			$message = 'Повторный запрос на выполнение операции';
