@@ -154,7 +154,7 @@ class yf_logs {
 		if (empty($this->CUR_LOG_LEVEL) || $log_level > $this->CUR_LOG_LEVEL) {
 			return false;
 		}
-		$LOGS_DIR = INCLUDE_PATH.'logs/';
+		$LOGS_DIR = APP_PATH.'logs/';
 		_mkdir_m($LOGS_DIR);
 
 		$log_data = '';
