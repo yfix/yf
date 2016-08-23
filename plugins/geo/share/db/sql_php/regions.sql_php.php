@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'code' => array(
+return [
+	'fields' => [
+		'code' => [
 			'name' => 'code',
 			'type' => 'char',
 			'length' => 2,
@@ -15,8 +15,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'country' => array(
+		],
+		'country' => [
 			'name' => 'country',
 			'type' => 'char',
 			'length' => 2,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name' => array(
+		],
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -59,30 +59,30 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				1 => '1',
 				0 => '0',
-			),
-		),
-	),
-	'indexes' => array(
-		'country' => array(
+			],
+		],
+	],
+	'indexes' => [
+		'country' => [
 			'name' => 'country',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'country' => 'country',
-			),
-		),
-		'code' => array(
+			],
+		],
+		'code' => [
 			'name' => 'code',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'code' => 'code',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

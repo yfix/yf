@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'key' => array(
+return [
+	'fields' => [
+		'key' => [
 			'name' => 'key',
 			'type' => 'varchar',
 			'length' => 64,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'value' => array(
+		],
+		'value' => [
 			'name' => 'value',
 			'type' => 'longtext',
 			'length' => NULL,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'time' => array(
+		],
+		'time' => [
 			'name' => 'time',
 			'type' => 'int',
 			'length' => 10,
@@ -45,20 +45,20 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'key' => 'key',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'InnoDB',
-	),
-);
+	],
+];

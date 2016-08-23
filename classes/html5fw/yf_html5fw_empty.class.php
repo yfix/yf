@@ -4,13 +4,13 @@ class yf_html5fw_empty {
 
 	/**
 	*/
-	function form_render_out ($content, $extra = array(), $replace = array(), $form) {
+	function form_render_out ($content, $extra = [], $replace = [], $form) {
 		return $content;
 	}
 
 	/**
 	*/
-	function form_row ($content, $extra = array(), $replace = array(), $form) {
+	function form_row ($content, $extra = [], $replace = [], $form) {
 		$row_start = 
 			'<div>'.PHP_EOL
 				.($extra['desc'] && !$extra['no_label'] ? '<label for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
@@ -48,15 +48,15 @@ class yf_html5fw_empty {
 
 	/**
 	*/
-	function form_dd_row($content, $extra = array(), $replace = array(), $form) {
+	function form_dd_row($content, $extra = [], $replace = [], $form) {
 // TODO
 		return $this->form_row($content, $extra, $replace, $form);
 	}
 
 	/**
 	*/
-	function _add_rich_editor($extra = array(), $replace = array(), $form) {
-		$out = array();
+	function _add_rich_editor($extra = [], $replace = [], $form) {
+		$out = [];
 		if (isset($extra['ace_editor']) && $extra['ace_editor']) {
 			$out[] = $form->_ace_editor_html($extra, $replace);
 		}

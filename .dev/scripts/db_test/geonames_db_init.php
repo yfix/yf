@@ -37,7 +37,7 @@ $PROJECT_CONF['db']['RECONNECT_NUM_TRIES'] = 1;
 $PROJECT_CONF['db']['FIX_DATA_SAFE'] = 0;
 $_GET['object'] = 'not_exists';
 #####
-if (!defined('YF_PATH')) {
+if (!function_exists('main')) {
 	define('YF_PATH', dirname(dirname(dirname(__DIR__))).'/');
 	require YF_PATH.'classes/yf_main.class.php';
 	new yf_main('admin', $no_db_connect = false, $auto_init_all = false);

@@ -1,16 +1,16 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
+return [
+	'versions' => [
+		'master' => [
 			'js' => 'http://owlcarousel.owlgraphic.com/assets/owlcarousel/owl.carousel.js',
-			'css' => array(
+			'css' => [
 				'http://owlcarousel.owlgraphic.com/assets/owlcarousel/assets/owl.carousel.min.css',
 				'http://owlcarousel.owlgraphic.com/assets/owlcarousel/assets/owl.theme.default.min.css',
-			),
-		),
-	),
-	'require' => array(
+			],
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

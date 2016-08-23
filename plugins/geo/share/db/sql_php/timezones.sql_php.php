@@ -1,22 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'code' => array(
-			'name' => 'code',
-			'type' => 'char',
-			'length' => 6,
-			'decimals' => NULL,
-			'unsigned' => NULL,
-			'nullable' => false,
-			'default' => '',
-			'charset' => NULL,
-			'collate' => NULL,
-			'auto_inc' => false,
-			'primary' => true,
-			'unique' => false,
-			'values' => NULL,
-		),
-		'name' => array(
+return [
+	'fields' => [
+		'name' => [
 			'name' => 'name',
 			'type' => 'varchar',
 			'length' => 64,
@@ -27,26 +12,11 @@ return array(
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
-			'primary' => false,
+			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'name_eng' => array(
-			'name' => 'name_eng',
-			'type' => 'varchar',
-			'length' => 64,
-			'decimals' => NULL,
-			'unsigned' => NULL,
-			'nullable' => false,
-			'default' => '',
-			'charset' => NULL,
-			'collate' => NULL,
-			'auto_inc' => false,
-			'primary' => false,
-			'unique' => false,
-			'values' => NULL,
-		),
-		'offset' => array(
+		],
+		'offset' => [
 			'name' => 'offset',
 			'type' => 'varchar',
 			'length' => 16,
@@ -60,8 +30,23 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'active' => array(
+		],
+		'seconds' => [
+			'name' => 'seconds',
+			'type' => 'int',
+			'length' => 11,
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => '0',
+			'charset' => NULL,
+			'collate' => NULL,
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		],
+		'active' => [
 			'name' => 'active',
 			'type' => 'enum',
 			'length' => NULL,
@@ -74,23 +59,23 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+			],
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
-				'code' => 'code',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			'columns' => [
+				'name' => 'name',
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

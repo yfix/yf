@@ -1,8 +1,8 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/yfix/geoip-api-php.git' => 'geoip_api_php/'),
+$config = [
+	'git_urls' => ['https://github.com/yfix/geoip-api-php.git' => 'geoip_api_php/'],
 	'manual' => function($loader) {
 		if (!extension_loaded('geoip')) {
 			require_once $loader->libs_root.'geoip_api_php/src/geoip.inc';
@@ -21,5 +21,5 @@ $config = array(
 			echo geoip_country_code_by_name('80.24.24.24'). PHP_EOL;
 		}
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

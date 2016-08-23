@@ -9,7 +9,7 @@ class sample_form {
 
 	/***/
 	function _hook_side_column() {
-		$items = array();
+		$items = [];
 		$url = url('/@object');
 		$methods = get_class_methods(_class('form2'));
 		$sample_methods = get_class_methods($this);
@@ -24,10 +24,10 @@ class sample_form {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = array(
+			$items[] = [
 				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
 				'link'	=> '#head_'.$name,
-			);
+			];
 		}
 		return _class('html')->navlist($items);
 	}
@@ -54,21 +54,21 @@ class sample_form {
 				return $obj->show();
 			}
 			foreach ($names as $name) {
-				$data[$name] = array(
+				$data[$name] = [
 					'name'	=> $name,
 					'link'	=> url('/@object/@action/@id/'. $name),
-				);
+				];
 			}
 			return html()->li($data);
 		}
 		$ext = '.class.php';
 		$ext_len = strlen($ext);
-		$globs = array(
+		$globs = [
 			'yf_dev'	=> YF_PATH.'.dev/samples/form2/*'.$ext,
 #			'app'		=> APP_PATH.'modules/*'.$ext,
 #			'project'	=> PROJECT_PATH.'modules/*'.$ext,
-		);
-		$names = array();
+		];
+		$names = [];
 		foreach ($globs as $glob) {
 			foreach (glob($glob) as $cls) {
 				$cls = basename($cls);
@@ -79,12 +79,12 @@ class sample_form {
 				$names[$name] = $name;
 			}
 		}
-		$links = array();
+		$links = [];
 		foreach ($names as $name) {
-			$data[$name] = array(
+			$data[$name] = [
 				'name'	=> $name,
 				'link'	=> url('/@object/@action/'. $name),
-			);
+			];
 		}
 		return html()->li($data);
 	}

@@ -67,16 +67,16 @@ class yf_html_datetime {
 		}
 		$d .= '</select>'.PHP_EOL;
 		// Process order
-		$tmp_array = array(
+		$tmp_array = [
 			'y'	=> '{%year%}',
 			'm'	=> '{%month%}',
 			'd'	=> '{%day%}',
-		);
+		];
 		if (empty($show_what)) {
 			$show_what = 'ymd';
 		}
 		$show_what = str_replace(array_keys($tmp_array), array_values($tmp_array), $show_what);
-		return str_replace(array_values($tmp_array), array($y,$m,$d), $show_what);
+		return str_replace(array_values($tmp_array), [$y,$m,$d], $show_what);
 	}
 
 	/**
@@ -178,16 +178,16 @@ class yf_html_datetime {
 			$d .= '<option '.(($day == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
 		$d .= '</select>'.PHP_EOL;
-		$tmp_array = array(
+		$tmp_array = [
 			'y'	=> '{%year%}',
 			'm'	=> '{%month%}',
 			'd'	=> '{%day%}',
-		);
+		];
 		if (empty($show_what)) {
 			$show_what = 'ymd';
 		}
 		$show_what = str_replace(array_keys($tmp_array), array_values($tmp_array), $show_what);
-		return str_replace(array_values($tmp_array), array($y,$m,$d), $show_what);
+		return str_replace(array_values($tmp_array), [$y,$m,$d], $show_what);
 	}
 
 	/**
@@ -248,7 +248,7 @@ class yf_html_datetime {
 	* Month name
 	*/
 	function _months ($num, $lang = '') {
-		$m_array = array(
+		$m_array = [
 			'January',
 			'February',
 			'March',
@@ -261,7 +261,7 @@ class yf_html_datetime {
 			'October',
 			'November',
 			'December',
-		);
+		];
 		$num--;
 		return (($num > 12) || ($num < 0)) ? $num : $m_array[$num];
 	}

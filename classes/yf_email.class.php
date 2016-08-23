@@ -22,23 +22,26 @@ class yf_email {
 	/** @var string */
 	public $SITE_URL	= '';
 	/** @var array List of emails addresses to send all copies to */
-	public $SEND_ALL_COPY_TO = array(
-	);
+	public $SEND_ALL_COPY_TO = [
+	];
 	/** @var array List of emails addresses to send user-addressing email copies to */
-	public $SEND_ADMIN_COPY_TO = array(
-	);
+	public $SEND_ADMIN_COPY_TO = [
+	];
 	/** @var array List of emails addresses to send admin-addressing email copies to */
-	public $SEND_USER_COPY_TO = array(
-	);
+	public $SEND_USER_COPY_TO = [
+	];
 	/** @var */
-	public $SMTP_CONFIG_DEFAULT = array(
-	);
+	public $SMTP_CONFIG_DEFAULT = [
+	];
 	/** @var */
-	public $SMTP_CONFIG_ALTERNATE = array(
-	);
+	public $SMTP_CONFIG_ALTERNATE = [
+	];
 	public $FORCE_SEND       = false;
 	public $MAIL_DEBUG       = false;
 	public $MAIL_DEBUG_ERROR = false;
+	/** @var bool Use queues to send emails in asynchronous mode */
+	public $ASYNC_SEND		= false;
+	public $QUEUE_NAME		= 'emails_queue';
 
 	/**
 	* Catch missing method call
@@ -59,10 +62,64 @@ class yf_email {
 	}
 
 	/**
+	* Should be wrapped under supervisor and best run from console
+	* Example supervisor config entry for it:
+	*
+	* [program:yf_emails_queue]
+	* command = php index.php --object=admin_daemon --action=emails_dequeue
+	* directory = /var/www/default/www/admin/
+	* autorestart = true
+	* numprocs = 1
+	* process_name = %(program_name)s_%(process_num)s
+	* user = www-data
+	*
+	* Example of php settings to ensure daemon long working
+	*	if (is_console()) {
+	*		error_reporting(E_ALL & ~E_NOTICE);
+	*		ini_set('html_errors', 0);
+	*		set_time_limit(0);
+	*		ini_set('default_socket_timeout', -1);
+	*	}
+	*/
+	function dequeue($extra = []) {
+		queue()->listen($this->QUEUE_NAME, function($data) use ($extra) {
+			$data = json_decode($data, true);
+			if ($data) {
+				if ($extra['verbose']) {
+					$msg = 'got item from queue; '
+						. ($data['history_id'] ? 'history_id: "'.$data['history_id'].'"; ' : '')
+						. 'mail_to: "'.$data['to_mail'].'"; '
+						. 'subj: "'.$data['subj'].'"; '
+						. 'mail_from: "'.$data['from_mail'].'"; '
+					;
+					echo date('Y-m-d H:i:s').': '. $msg. PHP_EOL;
+				}
+				$result = common()->send_mail($data);
+				if (!$result) {
+					if ($extra['verbose']) {
+						echo date('Y-m-d H:i:s').': error: '._class('send_mail')->_last_error_message. PHP_EOL;
+						if (strlen($data['html']) > 500) {
+							$data['html'] = substr($data['html'], 0, 500). PHP_EOL. '...TRUNCATED_FOR_DEBUG...'. PHP_EOL;
+						}
+						var_dump($data);
+					}
+				} else {
+					if ($data['history_id']) {
+						db()->update_safe(self::table_history, ['status' => 1], 'id='.(int)$data['history_id']);
+					}
+					if ($extra['verbose']) {
+						echo date('Y-m-d H:i:s').': sent ok'. PHP_EOL;
+					}
+				}
+			}
+		});
+	}
+
+	/**
 	*/
 	function _is_mailru ($email) {
 		list(,$host) = explode('@', $email);
-		if (in_array($host, array('mail.ru','bk.ru','inbox.ru','mail.ua','list.ru'))) {
+		if (in_array($host, ['mail.ru','bk.ru','inbox.ru','mail.ua','list.ru'])) {
 			return true;
 		}
 		return false;
@@ -70,7 +127,7 @@ class yf_email {
 
 	/**
 	*/
-	function _send_email_to_user($user_id, $template_name, $data = array(), $instant_send = true, $require_verified_email = false, $is_wall_update = true, $template_group = '') {
+	function _send_email_to_user($user_id, $template_name, $data = [], $instant_send = true, $require_verified_email = false, $is_wall_update = true, $template_group = '') {
 		$instant_send = false;
 		$user_data = db()->from('user')->whereid($user_id)->get();
 		if (empty($user_data)) {
@@ -90,7 +147,7 @@ class yf_email {
 			return false;
 		}
 		if ($is_wall_update && $template_group != '') {
-			$a = array();
+			$a = [];
 			if ($user_data['email_wall_updates_config'] != '') {
 				$data_config = json_decode($user_data['email_wall_updates_config'], true);
 				foreach ($data_config as $v) {
@@ -109,7 +166,7 @@ class yf_email {
 	/**
 	* send_email_from_admin
 	*/
-	function _send_email_safe($email_to, $name_to, $template_name, $data = array(), $instant_send = true, $override = array()) {
+	function _send_email_safe($email_to, $name_to, $template_name, $data = [], $instant_send = true, $override = []) {
 		$is_test = ( defined( 'TEST_MODE' ) && TEST_MODE )
 			&& empty( $override[ 'force_send' ] )
 			&& empty( $this->FORCE_SEND )
@@ -124,26 +181,27 @@ class yf_email {
 		if (empty($name_to)) {
 			$name_to = $email_to;
 		}
-		list($subject, $html) = $this->_get_email_text($data, array('tpl_name' => $template_name));
+		list($subject, $html) = $this->_get_email_text($data, ['tpl_name' => $template_name]);
 		if ($override['subject']) {
 			$subject = $override['subject'];
 		}
-		db()->insert_safe(self::table_history, array(
+		db()->insert_safe(self::table_history, [
 			'email_to'	=> $email_to,
 			'name_to'	=> $name_to,
 			'subject'	=> $subject,
 			'text'		=> $html,
 			'date'		=> $_SERVER['REQUEST_TIME'],
-		));
+		]);
 		if (!$html) {
 			if( $this->MAIL_DEBUG_ERROR ) {
 				trigger_error('Email body is empty', E_USER_WARNING);
 			}
 			return( null );
 		}
+// TODO: remove or really use $instant_send
 		if ($instant_send) {
 			$email_id = db()->insert_id();
-			$params = array(
+			$params = [
 				'from_mail'	=> $this->EMAIL_FROM,
 				'from_name'	=> $this->NAME_FROM,
 				'to_mail'	=> $email_to,
@@ -152,15 +210,20 @@ class yf_email {
 				'text'		=> $this->_text_from_html($html),
 				'html'		=> $this->_css_to_inline_styles($html),
 				'smtp'		=> $this->_is_mailru($email_to) ? $this->SMTP_CONFIG_ALTERNATE : $this->SMTP_CONFIG_DEFAULT,
-			);
-			$result = common()->send_mail((array)$params);
-			if (!$result) {
-				if( $this->MAIL_DEBUG_ERROR ) {
-					trigger_error('Email not sent', E_USER_WARNING);
-				}
-			} else {
-				db()->update_safe(self::table_history, array('status' => 1), 'id='.(int)$email_id);
+			];
+			if ($this->ASYNC_SEND) {
+				$result = queue()->add($this->QUEUE_NAME, json_encode($params + ['history_id' => $email_id]));
 				$this->_send_copies($params);
+			} else {
+				$result = common()->send_mail((array)$params);
+				if (!$result) {
+					if ($this->MAIL_DEBUG_ERROR) {
+						trigger_error('Email not sent', E_USER_WARNING);
+					}
+				} else {
+					db()->update_safe(self::table_history, ['status' => 1], 'id='.(int)$email_id);
+					$this->_send_copies($params);
+				}
 			}
 			return $result;
 		}
@@ -169,8 +232,8 @@ class yf_email {
 
 	/**
 	*/
-	function _send_to_default_admin($extra = array()) {
-		$params = array(
+	function _send_to_default_admin($extra = []) {
+		$params = [
 			'from_mail' => $this->EMAIL_FROM,
 			'from_name' => $this->NAME_FROM,
 			'to_mail'   => $this->ADMIN_EMAIL,
@@ -179,15 +242,19 @@ class yf_email {
 			'text'		=> $this->_text_from_html($extra['html']),
 			'html'		=> $this->_css_to_inline_styles($extra['html']),
 			'smtp'		=> $this->SMTP_CONFIG_DEFAULT,
-		);
-		$result = common()->send_mail((array)$params);
+		];
+		if ($this->ASYNC_SEND) {
+			$result = queue()->add($this->QUEUE_NAME, json_encode($params));
+		} else {
+			$result = common()->send_mail((array)$params);
+		}
 		$this->_send_copies($params);
 		return $result;
 	}
 
 	/**
 	*/
-	function _get_email_text($replace = array(), $extra = array()){
+	function _get_email_text($replace = [], $extra = []){
 		if ($extra['tpl_name']) {
 			$lang = $extra['locale'] ?: conf('language');
 			$a = db()->from(self::table_tpls)->where('name', $extra['tpl_name'])->where('locale', $lang)->get();
@@ -205,34 +272,34 @@ class yf_email {
 				$parent = db()->from(self::table_tpls)->whereid($a['parent_id'])->get();
 			}
 			if ($parent) {
-				$body = tpl()->parse_string($parent['text'], array(
+				$body = tpl()->parse_string($parent['text'], [
 					'main_content' => $body,
-				));
+				]);
 			}
 		}
 		$subject = strip_tags($a['subject']);
 		if (empty($subject) && empty($body)) {
 			return false;
 		}
-		$replace = (array)$replace + array(
+		$replace = (array)$replace + [
 			'site_name'			=> $this->SITE_NAME,
 			'site_url'			=> $this->SITE_URL,
 			'unsubscribe_url'	=> url_user('/unsubscribe/show/'.$extra['tpl_name'].'-'.time()),
-		);
-		return array(
+		];
+		return [
 			tpl()->parse_string($subject, $replace),
 			tpl()->parse_string($body, $replace),
-		);
+		];
 	}
 
 	/**
 	* Send copies, mostly for debug and more control on what is going on
 	*/
-	function _send_copies($params = array()) {
+	function _send_copies($params = []) {
 		if (!$params) {
 			return false;
 		}
-		$copy_to = array();
+		$copy_to = [];
 		foreach ((array)$this->SEND_ALL_COPY_TO as $mail_to) {
 			$copy_to[$mail_to] = $mail_to;
 		}
@@ -254,14 +321,18 @@ class yf_email {
 				continue;
 			}
 			$params['to_mail'] = $mail_to;
-			common()->send_mail((array)$params);
+			if ($this->ASYNC_SEND) {
+				queue()->add($this->QUEUE_NAME, json_encode($params));
+			} else {
+				common()->send_mail((array)$params);
+			}
 		}
 		return true;
 	}
 
 	/**
 	*/
-	function _css_to_inline_styles($html = '', $extra = array()) {
+	function _css_to_inline_styles($html = '', $extra = []) {
 		if (!strlen($html) || false === strpos($html, '<')/* || false === strpos($html, 'style=')*/) {
 			return $html;
 		}
@@ -311,7 +382,7 @@ class yf_email {
 	* source article: http://nadeausoftware.com/articles/2007/09/php_tip_how_strip_html_tags_web_page
 	*/
 	function strip_html_tags($text) {
-		$r = array(
+		$r = [
 			// Remove invisible content
 			'@<head[^>]*?>.*?</head>@siu'			=> ' ',
 			'@<style[^>]*?>.*?</style>@siu'			=> ' ',
@@ -330,7 +401,7 @@ class yf_email {
 			'@</?((form)|(button)|(fieldset)|(legend)|(input))@iu'		=> "\n\$0",
 			'@</?((label)|(select)|(optgroup)|(option)|(textarea))@iu'	=> "\n\$0",
 			'@</?((frameset)|(frame)|(iframe))@iu'						=> "\n\$0",
-		);
+		];
 		$text = preg_replace(array_keys($r), array_values($r), $text);
 		return strip_tags($text);
 	}

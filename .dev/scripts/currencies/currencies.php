@@ -1,7 +1,7 @@
 <?php
-$data = array (
+$data = [
   'AFN' => 
-  array (
+  [
     'id' => 'AFN',
     'name' => 'Afghani',
     'number' => 971,
@@ -10,9 +10,9 @@ $data = array (
     'country_code' => '',
     'sign' => '؋',
     'active' => '0',
-  ),
+  ],
   'EUR' => 
-  array (
+  [
     'id' => 'EUR',
     'name' => 'Euro',
     'number' => 978,
@@ -21,9 +21,9 @@ $data = array (
     'country_code' => '',
     'sign' => '€',
     'active' => 1,
-  ),
+  ],
   'ALL' => 
-  array (
+  [
     'id' => 'ALL',
     'name' => 'Lek',
     'number' => 8,
@@ -32,9 +32,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'L',
     'active' => '0',
-  ),
+  ],
   'DZD' => 
-  array (
+  [
     'id' => 'DZD',
     'name' => 'Algerian Dinar',
     'number' => 12,
@@ -43,9 +43,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'د.ج',
     'active' => '0',
-  ),
+  ],
   'USD' => 
-  array (
+  [
     'id' => 'USD',
     'name' => 'US Dollar',
     'number' => 840,
@@ -54,9 +54,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => 1,
-  ),
+  ],
   'AOA' => 
-  array (
+  [
     'id' => 'AOA',
     'name' => 'Kwanza',
     'number' => 973,
@@ -65,9 +65,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Kz',
     'active' => '0',
-  ),
+  ],
   'XCD' => 
-  array (
+  [
     'id' => 'XCD',
     'name' => 'East Caribbean Dollar',
     'number' => 951,
@@ -76,9 +76,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'ARS' => 
-  array (
+  [
     'id' => 'ARS',
     'name' => 'Argentine Peso',
     'number' => 32,
@@ -87,9 +87,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'AMD' => 
-  array (
+  [
     'id' => 'AMD',
     'name' => 'Armenian Dram',
     'number' => 51,
@@ -98,9 +98,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'դր.',
     'active' => '0',
-  ),
+  ],
   'AWG' => 
-  array (
+  [
     'id' => 'AWG',
     'name' => 'Aruban Florin',
     'number' => 533,
@@ -109,9 +109,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ƒ',
     'active' => '0',
-  ),
+  ],
   'AUD' => 
-  array (
+  [
     'id' => 'AUD',
     'name' => 'Australian Dollar',
     'number' => 36,
@@ -120,9 +120,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'AZN' => 
-  array (
+  [
     'id' => 'AZN',
     'name' => 'Azerbaijanian Manat',
     'number' => 944,
@@ -131,9 +131,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'BSD' => 
-  array (
+  [
     'id' => 'BSD',
     'name' => 'Bahamian Dollar',
     'number' => 44,
@@ -142,9 +142,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'BHD' => 
-  array (
+  [
     'id' => 'BHD',
     'name' => 'Bahraini Dinar',
     'number' => 48,
@@ -153,9 +153,9 @@ $data = array (
     'country_code' => '',
     'sign' => '.د.ب',
     'active' => '0',
-  ),
+  ],
   'BDT' => 
-  array (
+  [
     'id' => 'BDT',
     'name' => 'Taka',
     'number' => 50,
@@ -164,9 +164,9 @@ $data = array (
     'country_code' => '',
     'sign' => '৳',
     'active' => '0',
-  ),
+  ],
   'BBD' => 
-  array (
+  [
     'id' => 'BBD',
     'name' => 'Barbados Dollar',
     'number' => 52,
@@ -175,9 +175,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'BYR' => 
-  array (
+  [
     'id' => 'BYR',
     'name' => 'Belarussian Ruble',
     'number' => 974,
@@ -186,9 +186,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Br',
     'active' => '0',
-  ),
+  ],
   'BZD' => 
-  array (
+  [
     'id' => 'BZD',
     'name' => 'Belize Dollar',
     'number' => 84,
@@ -197,9 +197,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'XOF' => 
-  array (
+  [
     'id' => 'XOF',
     'name' => 'CFA Franc BCEAO',
     'number' => 952,
@@ -208,9 +208,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => '0',
-  ),
+  ],
   'BMD' => 
-  array (
+  [
     'id' => 'BMD',
     'name' => 'Bermudian Dollar',
     'number' => 60,
@@ -219,9 +219,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'BTN' => 
-  array (
+  [
     'id' => 'BTN',
     'name' => 'Ngultrum',
     'number' => 64,
@@ -230,9 +230,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Nu.',
     'active' => '0',
-  ),
+  ],
   'INR' => 
-  array (
+  [
     'id' => 'INR',
     'name' => 'Indian Rupee',
     'number' => 356,
@@ -241,9 +241,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'BOB' => 
-  array (
+  [
     'id' => 'BOB',
     'name' => 'Boliviano',
     'number' => 68,
@@ -252,9 +252,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Bs.',
     'active' => '0',
-  ),
+  ],
   'BOV' => 
-  array (
+  [
     'id' => 'BOV',
     'name' => 'Mvdol',
     'number' => 984,
@@ -263,9 +263,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'BAM' => 
-  array (
+  [
     'id' => 'BAM',
     'name' => 'Convertible Mark',
     'number' => 977,
@@ -274,9 +274,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'BWP' => 
-  array (
+  [
     'id' => 'BWP',
     'name' => 'Pula',
     'number' => 72,
@@ -285,9 +285,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'P',
     'active' => '0',
-  ),
+  ],
   'NOK' => 
-  array (
+  [
     'id' => 'NOK',
     'name' => 'Norwegian Krone',
     'number' => 578,
@@ -296,9 +296,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'kr',
     'active' => '0',
-  ),
+  ],
   'BRL' => 
-  array (
+  [
     'id' => 'BRL',
     'name' => 'Brazilian Real',
     'number' => 986,
@@ -307,9 +307,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'R$',
     'active' => '0',
-  ),
+  ],
   'BND' => 
-  array (
+  [
     'id' => 'BND',
     'name' => 'Brunei Dollar',
     'number' => 96,
@@ -318,9 +318,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'BGN' => 
-  array (
+  [
     'id' => 'BGN',
     'name' => 'Bulgarian Lev',
     'number' => 975,
@@ -329,9 +329,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'лв',
     'active' => '0',
-  ),
+  ],
   'BIF' => 
-  array (
+  [
     'id' => 'BIF',
     'name' => 'Burundi Franc',
     'number' => 108,
@@ -340,9 +340,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => '0',
-  ),
+  ],
   'KHR' => 
-  array (
+  [
     'id' => 'KHR',
     'name' => 'Riel',
     'number' => 116,
@@ -351,9 +351,9 @@ $data = array (
     'country_code' => '',
     'sign' => '៛',
     'active' => '0',
-  ),
+  ],
   'XAF' => 
-  array (
+  [
     'id' => 'XAF',
     'name' => 'CFA Franc BEAC',
     'number' => 950,
@@ -362,9 +362,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => '0',
-  ),
+  ],
   'CAD' => 
-  array (
+  [
     'id' => 'CAD',
     'name' => 'Canadian Dollar',
     'number' => 124,
@@ -373,9 +373,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'CVE' => 
-  array (
+  [
     'id' => 'CVE',
     'name' => 'Cape Verde Escudo',
     'number' => 132,
@@ -384,9 +384,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'KYD' => 
-  array (
+  [
     'id' => 'KYD',
     'name' => 'Cayman Islands Dollar',
     'number' => 136,
@@ -395,9 +395,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'CLF' => 
-  array (
+  [
     'id' => 'CLF',
     'name' => 'Unidades de fomento',
     'number' => 990,
@@ -406,9 +406,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'CLP' => 
-  array (
+  [
     'id' => 'CLP',
     'name' => 'Chilean Peso',
     'number' => 152,
@@ -417,9 +417,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'CNY' => 
-  array (
+  [
     'id' => 'CNY',
     'name' => 'Yuan Renminbi',
     'number' => 156,
@@ -428,9 +428,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'COP' => 
-  array (
+  [
     'id' => 'COP',
     'name' => 'Colombian Peso',
     'number' => 170,
@@ -439,9 +439,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'COU' => 
-  array (
+  [
     'id' => 'COU',
     'name' => 'Unidad de Valor Real',
     'number' => 970,
@@ -450,9 +450,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'KMF' => 
-  array (
+  [
     'id' => 'KMF',
     'name' => 'Comoro Franc',
     'number' => 174,
@@ -461,9 +461,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => '0',
-  ),
+  ],
   'CDF' => 
-  array (
+  [
     'id' => 'CDF',
     'name' => 'Congolese Franc',
     'number' => 976,
@@ -472,9 +472,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => '0',
-  ),
+  ],
   'NZD' => 
-  array (
+  [
     'id' => 'NZD',
     'name' => 'New Zealand Dollar',
     'number' => 554,
@@ -483,9 +483,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'CRC' => 
-  array (
+  [
     'id' => 'CRC',
     'name' => 'Costa Rican Colon',
     'number' => 188,
@@ -494,9 +494,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₡',
     'active' => '0',
-  ),
+  ],
   'HRK' => 
-  array (
+  [
     'id' => 'HRK',
     'name' => 'Croatian Kuna',
     'number' => 191,
@@ -505,9 +505,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'kn',
     'active' => '0',
-  ),
+  ],
   'CUC' => 
-  array (
+  [
     'id' => 'CUC',
     'name' => 'Peso Convertible',
     'number' => 931,
@@ -516,9 +516,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'CUP' => 
-  array (
+  [
     'id' => 'CUP',
     'name' => 'Cuban Peso',
     'number' => 192,
@@ -527,9 +527,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'ANG' => 
-  array (
+  [
     'id' => 'ANG',
     'name' => 'Netherlands Antillean Guilder',
     'number' => 532,
@@ -538,9 +538,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ƒ',
     'active' => '0',
-  ),
+  ],
   'CZK' => 
-  array (
+  [
     'id' => 'CZK',
     'name' => 'Czech Koruna',
     'number' => 203,
@@ -549,9 +549,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Kč',
     'active' => '0',
-  ),
+  ],
   'DKK' => 
-  array (
+  [
     'id' => 'DKK',
     'name' => 'Danish Krone',
     'number' => 208,
@@ -560,9 +560,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'kr',
     'active' => '0',
-  ),
+  ],
   'DJF' => 
-  array (
+  [
     'id' => 'DJF',
     'name' => 'Djibouti Franc',
     'number' => 262,
@@ -571,9 +571,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => '0',
-  ),
+  ],
   'DOP' => 
-  array (
+  [
     'id' => 'DOP',
     'name' => 'Dominican Peso',
     'number' => 214,
@@ -582,9 +582,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'EGP' => 
-  array (
+  [
     'id' => 'EGP',
     'name' => 'Egyptian Pound',
     'number' => 818,
@@ -593,9 +593,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'SVC' => 
-  array (
+  [
     'id' => 'SVC',
     'name' => 'El Salvador Colon',
     'number' => 222,
@@ -604,9 +604,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₡',
     'active' => '0',
-  ),
+  ],
   'ERN' => 
-  array (
+  [
     'id' => 'ERN',
     'name' => 'Nakfa',
     'number' => 232,
@@ -615,9 +615,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Nfk',
     'active' => '0',
-  ),
+  ],
   'ETB' => 
-  array (
+  [
     'id' => 'ETB',
     'name' => 'Ethiopian Birr',
     'number' => 230,
@@ -626,9 +626,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Br',
     'active' => '0',
-  ),
+  ],
   'FKP' => 
-  array (
+  [
     'id' => 'FKP',
     'name' => 'Falkland Islands Pound',
     'number' => 238,
@@ -637,9 +637,9 @@ $data = array (
     'country_code' => '',
     'sign' => '£',
     'active' => '0',
-  ),
+  ],
   'FJD' => 
-  array (
+  [
     'id' => 'FJD',
     'name' => 'Fiji Dollar',
     'number' => 242,
@@ -648,9 +648,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'XPF' => 
-  array (
+  [
     'id' => 'XPF',
     'name' => 'CFP Franc',
     'number' => 953,
@@ -659,9 +659,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => '0',
-  ),
+  ],
   'GMD' => 
-  array (
+  [
     'id' => 'GMD',
     'name' => 'Dalasi',
     'number' => 270,
@@ -670,9 +670,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'D',
     'active' => '0',
-  ),
+  ],
   'GEL' => 
-  array (
+  [
     'id' => 'GEL',
     'name' => 'Lari',
     'number' => 981,
@@ -681,9 +681,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ლ',
     'active' => '0',
-  ),
+  ],
   'GHS' => 
-  array (
+  [
     'id' => 'GHS',
     'name' => 'Ghana Cedi',
     'number' => 936,
@@ -692,9 +692,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₵',
     'active' => '0',
-  ),
+  ],
   'GIP' => 
-  array (
+  [
     'id' => 'GIP',
     'name' => 'Gibraltar Pound',
     'number' => 292,
@@ -703,9 +703,9 @@ $data = array (
     'country_code' => '',
     'sign' => '£',
     'active' => '0',
-  ),
+  ],
   'GTQ' => 
-  array (
+  [
     'id' => 'GTQ',
     'name' => 'Quetzal',
     'number' => 320,
@@ -714,9 +714,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Q',
     'active' => '0',
-  ),
+  ],
   'GBP' => 
-  array (
+  [
     'id' => 'GBP',
     'name' => 'Pound Sterling',
     'number' => 826,
@@ -725,9 +725,9 @@ $data = array (
     'country_code' => '',
     'sign' => '£',
     'active' => '0',
-  ),
+  ],
   'GNF' => 
-  array (
+  [
     'id' => 'GNF',
     'name' => 'Guinea Franc',
     'number' => 324,
@@ -736,9 +736,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => '0',
-  ),
+  ],
   'GYD' => 
-  array (
+  [
     'id' => 'GYD',
     'name' => 'Guyana Dollar',
     'number' => 328,
@@ -747,9 +747,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'HTG' => 
-  array (
+  [
     'id' => 'HTG',
     'name' => 'Gourde',
     'number' => 332,
@@ -758,9 +758,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'G',
     'active' => '0',
-  ),
+  ],
   'HNL' => 
-  array (
+  [
     'id' => 'HNL',
     'name' => 'Lempira',
     'number' => 340,
@@ -769,9 +769,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'L',
     'active' => '0',
-  ),
+  ],
   'HKD' => 
-  array (
+  [
     'id' => 'HKD',
     'name' => 'Hong Kong Dollar',
     'number' => 344,
@@ -780,9 +780,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'HUF' => 
-  array (
+  [
     'id' => 'HUF',
     'name' => 'Forint',
     'number' => 348,
@@ -791,9 +791,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Ft',
     'active' => '0',
-  ),
+  ],
   'ISK' => 
-  array (
+  [
     'id' => 'ISK',
     'name' => 'Iceland Krona',
     'number' => 352,
@@ -802,9 +802,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'kr',
     'active' => '0',
-  ),
+  ],
   'IDR' => 
-  array (
+  [
     'id' => 'IDR',
     'name' => 'Rupiah',
     'number' => 360,
@@ -813,9 +813,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Rp',
     'active' => '0',
-  ),
+  ],
   'XDR' => 
-  array (
+  [
     'id' => 'XDR',
     'name' => 'SDR (Special Drawing Right)',
     'number' => 960,
@@ -824,9 +824,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'IRR' => 
-  array (
+  [
     'id' => 'IRR',
     'name' => 'Iranian Rial',
     'number' => 364,
@@ -835,9 +835,9 @@ $data = array (
     'country_code' => '',
     'sign' => '﷼',
     'active' => '0',
-  ),
+  ],
   'IQD' => 
-  array (
+  [
     'id' => 'IQD',
     'name' => 'Iraqi Dinar',
     'number' => 368,
@@ -846,9 +846,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ع.د',
     'active' => '0',
-  ),
+  ],
   'ILS' => 
-  array (
+  [
     'id' => 'ILS',
     'name' => 'New Israeli Sheqel',
     'number' => 376,
@@ -857,9 +857,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₪',
     'active' => '0',
-  ),
+  ],
   'JMD' => 
-  array (
+  [
     'id' => 'JMD',
     'name' => 'Jamaican Dollar',
     'number' => 388,
@@ -868,9 +868,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'JPY' => 
-  array (
+  [
     'id' => 'JPY',
     'name' => 'Yen',
     'number' => 392,
@@ -879,9 +879,9 @@ $data = array (
     'country_code' => '',
     'sign' => '¥',
     'active' => 1,
-  ),
+  ],
   'JOD' => 
-  array (
+  [
     'id' => 'JOD',
     'name' => 'Jordanian Dinar',
     'number' => 400,
@@ -890,9 +890,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'د.ا',
     'active' => '0',
-  ),
+  ],
   'KZT' => 
-  array (
+  [
     'id' => 'KZT',
     'name' => 'Tenge',
     'number' => 398,
@@ -901,9 +901,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₸',
     'active' => '0',
-  ),
+  ],
   'KES' => 
-  array (
+  [
     'id' => 'KES',
     'name' => 'Kenyan Shilling',
     'number' => 404,
@@ -912,9 +912,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Sh',
     'active' => '0',
-  ),
+  ],
   'KPW' => 
-  array (
+  [
     'id' => 'KPW',
     'name' => 'North Korean Won',
     'number' => 408,
@@ -923,9 +923,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₩',
     'active' => '0',
-  ),
+  ],
   'KRW' => 
-  array (
+  [
     'id' => 'KRW',
     'name' => 'Won',
     'number' => 410,
@@ -934,9 +934,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₩',
     'active' => '0',
-  ),
+  ],
   'KWD' => 
-  array (
+  [
     'id' => 'KWD',
     'name' => 'Kuwaiti Dinar',
     'number' => 414,
@@ -945,9 +945,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'د.ك',
     'active' => '0',
-  ),
+  ],
   'KGS' => 
-  array (
+  [
     'id' => 'KGS',
     'name' => 'Som',
     'number' => 417,
@@ -956,9 +956,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'LAK' => 
-  array (
+  [
     'id' => 'LAK',
     'name' => 'Kip',
     'number' => 418,
@@ -967,9 +967,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₭',
     'active' => '0',
-  ),
+  ],
   'LVL' => 
-  array (
+  [
     'id' => 'LVL',
     'name' => 'Latvian Lats',
     'number' => 428,
@@ -978,9 +978,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Ls',
     'active' => '0',
-  ),
+  ],
   'LBP' => 
-  array (
+  [
     'id' => 'LBP',
     'name' => 'Lebanese Pound',
     'number' => 422,
@@ -989,9 +989,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ل.ل',
     'active' => '0',
-  ),
+  ],
   'LSL' => 
-  array (
+  [
     'id' => 'LSL',
     'name' => 'Loti',
     'number' => 426,
@@ -1000,9 +1000,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'L',
     'active' => '0',
-  ),
+  ],
   'ZAR' => 
-  array (
+  [
     'id' => 'ZAR',
     'name' => 'Rand',
     'number' => 710,
@@ -1011,9 +1011,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'R',
     'active' => '0',
-  ),
+  ],
   'LRD' => 
-  array (
+  [
     'id' => 'LRD',
     'name' => 'Liberian Dollar',
     'number' => 430,
@@ -1022,9 +1022,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'LYD' => 
-  array (
+  [
     'id' => 'LYD',
     'name' => 'Libyan Dinar',
     'number' => 434,
@@ -1033,9 +1033,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ل.د',
     'active' => '0',
-  ),
+  ],
   'CHF' => 
-  array (
+  [
     'id' => 'CHF',
     'name' => 'Swiss Franc',
     'number' => 756,
@@ -1044,9 +1044,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => 1,
-  ),
+  ],
   'LTL' => 
-  array (
+  [
     'id' => 'LTL',
     'name' => 'Lithuanian Litas',
     'number' => 440,
@@ -1055,9 +1055,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Lt',
     'active' => '0',
-  ),
+  ],
   'MOP' => 
-  array (
+  [
     'id' => 'MOP',
     'name' => 'Pataca',
     'number' => 446,
@@ -1066,9 +1066,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'P',
     'active' => '0',
-  ),
+  ],
   'MKD' => 
-  array (
+  [
     'id' => 'MKD',
     'name' => 'Denar',
     'number' => 807,
@@ -1077,9 +1077,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ден',
     'active' => '0',
-  ),
+  ],
   'MGA' => 
-  array (
+  [
     'id' => 'MGA',
     'name' => 'Malagasy Ariary',
     'number' => 969,
@@ -1088,9 +1088,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Ar',
     'active' => '0',
-  ),
+  ],
   'MWK' => 
-  array (
+  [
     'id' => 'MWK',
     'name' => 'Kwacha',
     'number' => 454,
@@ -1099,9 +1099,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'MK',
     'active' => '0',
-  ),
+  ],
   'MYR' => 
-  array (
+  [
     'id' => 'MYR',
     'name' => 'Malaysian Ringgit',
     'number' => 458,
@@ -1110,9 +1110,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'RM',
     'active' => '0',
-  ),
+  ],
   'MVR' => 
-  array (
+  [
     'id' => 'MVR',
     'name' => 'Rufiyaa',
     'number' => 462,
@@ -1121,9 +1121,9 @@ $data = array (
     'country_code' => '',
     'sign' => '.ރ',
     'active' => '0',
-  ),
+  ],
   'MRO' => 
-  array (
+  [
     'id' => 'MRO',
     'name' => 'Ouguiya',
     'number' => 478,
@@ -1132,9 +1132,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'UM',
     'active' => '0',
-  ),
+  ],
   'MUR' => 
-  array (
+  [
     'id' => 'MUR',
     'name' => 'Mauritius Rupee',
     'number' => 480,
@@ -1143,9 +1143,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₨',
     'active' => '0',
-  ),
+  ],
   'XUA' => 
-  array (
+  [
     'id' => 'XUA',
     'name' => 'ADB Unit of Account',
     'number' => 965,
@@ -1154,9 +1154,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'MXN' => 
-  array (
+  [
     'id' => 'MXN',
     'name' => 'Mexican Peso',
     'number' => 484,
@@ -1165,9 +1165,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'MXV' => 
-  array (
+  [
     'id' => 'MXV',
     'name' => 'Mexican Unidad de Inversion (UDI)',
     'number' => 979,
@@ -1176,9 +1176,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'MDL' => 
-  array (
+  [
     'id' => 'MDL',
     'name' => 'Moldovan Leu',
     'number' => 498,
@@ -1187,9 +1187,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'L',
     'active' => '0',
-  ),
+  ],
   'MNT' => 
-  array (
+  [
     'id' => 'MNT',
     'name' => 'Tugrik',
     'number' => 496,
@@ -1198,9 +1198,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₮',
     'active' => '0',
-  ),
+  ],
   'MAD' => 
-  array (
+  [
     'id' => 'MAD',
     'name' => 'Moroccan Dirham',
     'number' => 504,
@@ -1209,9 +1209,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'د. م.',
     'active' => '0',
-  ),
+  ],
   'MZN' => 
-  array (
+  [
     'id' => 'MZN',
     'name' => 'Mozambique Metical',
     'number' => 943,
@@ -1220,9 +1220,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'MT',
     'active' => '0',
-  ),
+  ],
   'MMK' => 
-  array (
+  [
     'id' => 'MMK',
     'name' => 'Kyat',
     'number' => 104,
@@ -1231,9 +1231,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Ks',
     'active' => '0',
-  ),
+  ],
   'NAD' => 
-  array (
+  [
     'id' => 'NAD',
     'name' => 'Namibia Dollar',
     'number' => 516,
@@ -1242,9 +1242,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'NPR' => 
-  array (
+  [
     'id' => 'NPR',
     'name' => 'Nepalese Rupee',
     'number' => 524,
@@ -1253,9 +1253,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₨',
     'active' => '0',
-  ),
+  ],
   'NIO' => 
-  array (
+  [
     'id' => 'NIO',
     'name' => 'Cordoba Oro',
     'number' => 558,
@@ -1264,9 +1264,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'C$',
     'active' => '0',
-  ),
+  ],
   'NGN' => 
-  array (
+  [
     'id' => 'NGN',
     'name' => 'Naira',
     'number' => 566,
@@ -1275,9 +1275,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₦',
     'active' => '0',
-  ),
+  ],
   'OMR' => 
-  array (
+  [
     'id' => 'OMR',
     'name' => 'Rial Omani',
     'number' => 512,
@@ -1286,9 +1286,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ر.ع.',
     'active' => '0',
-  ),
+  ],
   'PKR' => 
-  array (
+  [
     'id' => 'PKR',
     'name' => 'Pakistan Rupee',
     'number' => 586,
@@ -1297,9 +1297,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₨',
     'active' => '0',
-  ),
+  ],
   'PAB' => 
-  array (
+  [
     'id' => 'PAB',
     'name' => 'Balboa',
     'number' => 590,
@@ -1308,9 +1308,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'B/.',
     'active' => '0',
-  ),
+  ],
   'PGK' => 
-  array (
+  [
     'id' => 'PGK',
     'name' => 'Kina',
     'number' => 598,
@@ -1319,9 +1319,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'K',
     'active' => '0',
-  ),
+  ],
   'PYG' => 
-  array (
+  [
     'id' => 'PYG',
     'name' => 'Guarani',
     'number' => 600,
@@ -1330,9 +1330,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₲',
     'active' => '0',
-  ),
+  ],
   'PEN' => 
-  array (
+  [
     'id' => 'PEN',
     'name' => 'Nuevo Sol',
     'number' => 604,
@@ -1341,9 +1341,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'S/.',
     'active' => '0',
-  ),
+  ],
   'PHP' => 
-  array (
+  [
     'id' => 'PHP',
     'name' => 'Philippine Peso',
     'number' => 608,
@@ -1352,9 +1352,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₱',
     'active' => '0',
-  ),
+  ],
   'PLN' => 
-  array (
+  [
     'id' => 'PLN',
     'name' => 'Zloty',
     'number' => 985,
@@ -1363,9 +1363,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'zł',
     'active' => '0',
-  ),
+  ],
   'QAR' => 
-  array (
+  [
     'id' => 'QAR',
     'name' => 'Qatari Rial',
     'number' => 634,
@@ -1374,9 +1374,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ر.ق',
     'active' => '0',
-  ),
+  ],
   'RON' => 
-  array (
+  [
     'id' => 'RON',
     'name' => 'New Romanian Leu',
     'number' => 946,
@@ -1385,9 +1385,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'L',
     'active' => '0',
-  ),
+  ],
   'RUB' => 
-  array (
+  [
     'id' => 'RUB',
     'name' => 'Russian Ruble',
     'number' => 643,
@@ -1396,9 +1396,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'р.',
     'active' => 1,
-  ),
+  ],
   'RWF' => 
-  array (
+  [
     'id' => 'RWF',
     'name' => 'Rwanda Franc',
     'number' => 646,
@@ -1407,9 +1407,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Fr',
     'active' => '0',
-  ),
+  ],
   'SHP' => 
-  array (
+  [
     'id' => 'SHP',
     'name' => 'Saint Helena Pound',
     'number' => 654,
@@ -1418,9 +1418,9 @@ $data = array (
     'country_code' => '',
     'sign' => '£',
     'active' => '0',
-  ),
+  ],
   'WST' => 
-  array (
+  [
     'id' => 'WST',
     'name' => 'Tala',
     'number' => 882,
@@ -1429,9 +1429,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'T',
     'active' => '0',
-  ),
+  ],
   'STD' => 
-  array (
+  [
     'id' => 'STD',
     'name' => 'Dobra',
     'number' => 678,
@@ -1440,9 +1440,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Db',
     'active' => '0',
-  ),
+  ],
   'SAR' => 
-  array (
+  [
     'id' => 'SAR',
     'name' => 'Saudi Riyal',
     'number' => 682,
@@ -1451,9 +1451,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ر.س',
     'active' => '0',
-  ),
+  ],
   'RSD' => 
-  array (
+  [
     'id' => 'RSD',
     'name' => 'Serbian Dinar',
     'number' => 941,
@@ -1462,9 +1462,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'SCR' => 
-  array (
+  [
     'id' => 'SCR',
     'name' => 'Seychelles Rupee',
     'number' => 690,
@@ -1473,9 +1473,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₨',
     'active' => '0',
-  ),
+  ],
   'SLL' => 
-  array (
+  [
     'id' => 'SLL',
     'name' => 'Leone',
     'number' => 694,
@@ -1484,9 +1484,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Le',
     'active' => '0',
-  ),
+  ],
   'SGD' => 
-  array (
+  [
     'id' => 'SGD',
     'name' => 'Singapore Dollar',
     'number' => 702,
@@ -1495,9 +1495,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'XSU' => 
-  array (
+  [
     'id' => 'XSU',
     'name' => 'Sucre',
     'number' => 994,
@@ -1506,9 +1506,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'SBD' => 
-  array (
+  [
     'id' => 'SBD',
     'name' => 'Solomon Islands Dollar',
     'number' => 90,
@@ -1517,9 +1517,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'SOS' => 
-  array (
+  [
     'id' => 'SOS',
     'name' => 'Somali Shilling',
     'number' => 706,
@@ -1528,9 +1528,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Sh',
     'active' => '0',
-  ),
+  ],
   'SSP' => 
-  array (
+  [
     'id' => 'SSP',
     'name' => 'South Sudanese Pound',
     'number' => 728,
@@ -1539,9 +1539,9 @@ $data = array (
     'country_code' => '',
     'sign' => '£',
     'active' => '0',
-  ),
+  ],
   'LKR' => 
-  array (
+  [
     'id' => 'LKR',
     'name' => 'Sri Lanka Rupee',
     'number' => 144,
@@ -1550,9 +1550,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'SDG' => 
-  array (
+  [
     'id' => 'SDG',
     'name' => 'Sudanese Pound',
     'number' => 938,
@@ -1561,9 +1561,9 @@ $data = array (
     'country_code' => '',
     'sign' => '£',
     'active' => '0',
-  ),
+  ],
   'SRD' => 
-  array (
+  [
     'id' => 'SRD',
     'name' => 'Surinam Dollar',
     'number' => 968,
@@ -1572,9 +1572,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'SZL' => 
-  array (
+  [
     'id' => 'SZL',
     'name' => 'Lilangeni',
     'number' => 748,
@@ -1583,9 +1583,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'L',
     'active' => '0',
-  ),
+  ],
   'SEK' => 
-  array (
+  [
     'id' => 'SEK',
     'name' => 'Swedish Krona',
     'number' => 752,
@@ -1594,9 +1594,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'kr',
     'active' => '0',
-  ),
+  ],
   'CHE' => 
-  array (
+  [
     'id' => 'CHE',
     'name' => 'WIR Euro',
     'number' => 947,
@@ -1605,9 +1605,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'CHW' => 
-  array (
+  [
     'id' => 'CHW',
     'name' => 'WIR Franc',
     'number' => 948,
@@ -1616,9 +1616,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'SYP' => 
-  array (
+  [
     'id' => 'SYP',
     'name' => 'Syrian Pound',
     'number' => 760,
@@ -1627,9 +1627,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'TWD' => 
-  array (
+  [
     'id' => 'TWD',
     'name' => 'New Taiwan Dollar',
     'number' => 901,
@@ -1638,9 +1638,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'TJS' => 
-  array (
+  [
     'id' => 'TJS',
     'name' => 'Somoni',
     'number' => 972,
@@ -1649,9 +1649,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ЅМ',
     'active' => '0',
-  ),
+  ],
   'TZS' => 
-  array (
+  [
     'id' => 'TZS',
     'name' => 'Tanzanian Shilling',
     'number' => 834,
@@ -1660,9 +1660,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Sh',
     'active' => '0',
-  ),
+  ],
   'THB' => 
-  array (
+  [
     'id' => 'THB',
     'name' => 'Baht',
     'number' => 764,
@@ -1671,9 +1671,9 @@ $data = array (
     'country_code' => '',
     'sign' => '฿',
     'active' => '0',
-  ),
+  ],
   'TOP' => 
-  array (
+  [
     'id' => 'TOP',
     'name' => 'Pa’anga',
     'number' => 776,
@@ -1682,9 +1682,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'T$',
     'active' => '0',
-  ),
+  ],
   'TTD' => 
-  array (
+  [
     'id' => 'TTD',
     'name' => 'Trinidad and Tobago Dollar',
     'number' => 780,
@@ -1693,9 +1693,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'TND' => 
-  array (
+  [
     'id' => 'TND',
     'name' => 'Tunisian Dinar',
     'number' => 788,
@@ -1704,9 +1704,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'د.ت',
     'active' => '0',
-  ),
+  ],
   'TRY' => 
-  array (
+  [
     'id' => 'TRY',
     'name' => 'Turkish Lira',
     'number' => 949,
@@ -1715,9 +1715,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'TMT' => 
-  array (
+  [
     'id' => 'TMT',
     'name' => 'Turkmenistan New Manat',
     'number' => 934,
@@ -1726,9 +1726,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'm',
     'active' => '0',
-  ),
+  ],
   'UGX' => 
-  array (
+  [
     'id' => 'UGX',
     'name' => 'Uganda Shilling',
     'number' => 800,
@@ -1737,9 +1737,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Sh',
     'active' => '0',
-  ),
+  ],
   'UAH' => 
-  array (
+  [
     'id' => 'UAH',
     'name' => 'Hryvnia',
     'number' => 980,
@@ -1748,9 +1748,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₴',
     'active' => 1,
-  ),
+  ],
   'AED' => 
-  array (
+  [
     'id' => 'AED',
     'name' => 'UAE Dirham',
     'number' => 784,
@@ -1759,9 +1759,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'د.إ',
     'active' => '0',
-  ),
+  ],
   'USN' => 
-  array (
+  [
     'id' => 'USN',
     'name' => 'US Dollar (Next day)',
     'number' => 997,
@@ -1770,9 +1770,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'USS' => 
-  array (
+  [
     'id' => 'USS',
     'name' => 'US Dollar (Same day)',
     'number' => 998,
@@ -1781,9 +1781,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'UYI' => 
-  array (
+  [
     'id' => 'UYI',
     'name' => 'Uruguay Peso en Unidades Indexadas (URUIURUI)',
     'number' => 940,
@@ -1792,9 +1792,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'UYU' => 
-  array (
+  [
     'id' => 'UYU',
     'name' => 'Peso Uruguayo',
     'number' => 858,
@@ -1803,9 +1803,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'UZS' => 
-  array (
+  [
     'id' => 'UZS',
     'name' => 'Uzbekistan Sum',
     'number' => 860,
@@ -1814,9 +1814,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'VUV' => 
-  array (
+  [
     'id' => 'VUV',
     'name' => 'Vatu',
     'number' => 548,
@@ -1825,9 +1825,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Vt',
     'active' => '0',
-  ),
+  ],
   'VEF' => 
-  array (
+  [
     'id' => 'VEF',
     'name' => 'Bolivar',
     'number' => 937,
@@ -1836,9 +1836,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'Bs F',
     'active' => '0',
-  ),
+  ],
   'VND' => 
-  array (
+  [
     'id' => 'VND',
     'name' => 'Dong',
     'number' => 704,
@@ -1847,9 +1847,9 @@ $data = array (
     'country_code' => '',
     'sign' => '₫',
     'active' => '0',
-  ),
+  ],
   'YER' => 
-  array (
+  [
     'id' => 'YER',
     'name' => 'Yemeni Rial',
     'number' => 886,
@@ -1858,9 +1858,9 @@ $data = array (
     'country_code' => '',
     'sign' => '﷼',
     'active' => '0',
-  ),
+  ],
   'ZMW' => 
-  array (
+  [
     'id' => 'ZMW',
     'name' => 'Zambian Kwacha',
     'number' => 967,
@@ -1869,9 +1869,9 @@ $data = array (
     'country_code' => '',
     'sign' => 'ZK',
     'active' => '0',
-  ),
+  ],
   'ZWL' => 
-  array (
+  [
     'id' => 'ZWL',
     'name' => 'Zimbabwe Dollar',
     'number' => 932,
@@ -1880,9 +1880,9 @@ $data = array (
     'country_code' => '',
     'sign' => '$',
     'active' => '0',
-  ),
+  ],
   'XBA' => 
-  array (
+  [
     'id' => 'XBA',
     'name' => 'Bond Markets Unit European Composite Unit (EURCO)',
     'number' => 955,
@@ -1891,9 +1891,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XBB' => 
-  array (
+  [
     'id' => 'XBB',
     'name' => 'Bond Markets Unit European Monetary Unit (E.M.U.-6)',
     'number' => 956,
@@ -1902,9 +1902,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XBC' => 
-  array (
+  [
     'id' => 'XBC',
     'name' => 'Bond Markets Unit European Unit of Account 9 (E.U.A.-9)',
     'number' => 957,
@@ -1913,9 +1913,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XBD' => 
-  array (
+  [
     'id' => 'XBD',
     'name' => 'Bond Markets Unit European Unit of Account 17 (E.U.A.-17)',
     'number' => 958,
@@ -1924,9 +1924,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XFU' => 
-  array (
+  [
     'id' => 'XFU',
     'name' => 'UIC-Franc',
     'number' => 0,
@@ -1935,9 +1935,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XTS' => 
-  array (
+  [
     'id' => 'XTS',
     'name' => 'Codes specifically reserved for testing purposes',
     'number' => 963,
@@ -1946,9 +1946,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XXX' => 
-  array (
+  [
     'id' => 'XXX',
     'name' => 'The codes assigned for transactions where no currency is involved',
     'number' => 999,
@@ -1957,9 +1957,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XAU' => 
-  array (
+  [
     'id' => 'XAU',
     'name' => 'Gold',
     'number' => 959,
@@ -1968,9 +1968,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XPD' => 
-  array (
+  [
     'id' => 'XPD',
     'name' => 'Palladium',
     'number' => 964,
@@ -1979,9 +1979,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XPT' => 
-  array (
+  [
     'id' => 'XPT',
     'name' => 'Platinum',
     'number' => 962,
@@ -1990,9 +1990,9 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
+  ],
   'XAG' => 
-  array (
+  [
     'id' => 'XAG',
     'name' => 'Silver',
     'number' => 961,
@@ -2001,5 +2001,5 @@ $data = array (
     'country_code' => '',
     'sign' => '',
     'active' => '0',
-  ),
-);
+  ],
+];

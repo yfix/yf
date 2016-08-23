@@ -15,7 +15,7 @@ class yf_common_tags_cloud {
 	* Creates tags cloud
 	* $cloud_data - array like (key => array(text, num))  OR   $cloud_data - array like (text => num)
 	*/
-	function create($cloud_data = array(), $params = array()) {
+	function create($cloud_data = [], $params = []) {
 		if (empty($cloud_data)) {
 			return '';
 		}
@@ -45,12 +45,12 @@ class yf_common_tags_cloud {
 			} else {
 				$_cloud_fsize = 1;
 			}
-			$replace2 = array(
+			$replace2 = [
 				'num'			=> $_num,
 				'tag_text'		=> $_text,
 				'tag_search_url'=> './?object='.$params['object'].'&action='.$params['action'].'&id='.$params['id_prefix'].($params['amp_encode'] ? str_replace(urlencode('&'), urlencode(urlencode('&')), urlencode($_text)) : urlencode($_text)),
 				'cloud_fsize'	=> $_cloud_fsize,
-			);
+			];
 			$items .= tpl()->parse('tags/cloud_item', $replace2);
 		}
 		return $items;

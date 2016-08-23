@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'event_id' => '1',
     'from_email' => NULL,
@@ -14,5 +14,5 @@ Yours,
 {advert_name}
 Please visit us at {advert_url} db',
     'active' => '0',
-  ),
-);
+  ],
+];

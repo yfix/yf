@@ -30,8 +30,8 @@ if (!function_exists('my_array_merge')) {
 		return $a1;
 	}
 }
-$PROJECT_CONF = my_array_merge((array)$PROJECT_CONF, array(
-	'main'	=> array(
+$PROJECT_CONF = my_array_merge((array)$PROJECT_CONF, [
+	'main'	=> [
 		'USE_CUSTOM_ERRORS'		=> 1,
 //		'USE_SYSTEM_CACHE'		=> 1,
 //		'NO_CACHE_HEADERS'		=> 1,
@@ -43,40 +43,40 @@ $PROJECT_CONF = my_array_merge((array)$PROJECT_CONF, array(
 //		'OUTPUT_GZIP_COMPRESS'	=> 1,
 //		'LOG_EXEC'				=> 1,
 		'STATIC_PAGES_ROUTE_TOP'=> 1,
-	),
-	'auth_user' => array(
+	],
+	'auth_user' => [
 		'URL_SUCCESS_LOGIN' => './?object=account', 
-		'EXEC_AFTER_LOGIN'		=> array(
-			array('_add_login_activity'),
-		),
-	),
-	'send_mail'	=> array(
+		'EXEC_AFTER_LOGIN'		=> [
+			['_add_login_activity'],
+		],
+	],
+	'send_mail'	=> [
 		'USE_MAILER'	=> 'phpmailer',
-	),
-	'tpl' => array(
+	],
+	'tpl' => [
 		'ALLOW_LANG_BASED_STPLS' => 1,
 //		'REWRITE_MODE'			=> 1,
 //		'CUSTOM_META_INFO'		=> 1,
-	),
-	'graphics'	=> array(
+	],
+	'graphics'	=> [
 //		'META_KEYWORDS'			=> 'keyword',
 //		'META_DESCRIPTION'		=> 'description',
-	),
-	'i18n' => array(
+	],
+	'i18n' => [
 		'TRACK_TRANSLATED'  => 1,
-	),
-	'rewrite'	=> array(
+	],
+	'rewrite'	=> [
 		'_rewrite_add_extension'	=> '/',
-	),
-	'comments'	=> array(
+	],
+	'comments'	=> [
 		'USE_TREE_MODE' => 1,
-	),
-	'logs'	=> array(
+	],
+	'logs'	=> [
 		'_LOGGING'			=> 1,
 		'STORE_USER_AUTH'	=> 1,
 		'UPDATE_LAST_LOGIN'	=> 1,
-	),
-));
+	],
+]);
 
 $OVERRIDE_CONF_FILE = dirname(__DIR__).'/.dev/override_conf_after.php';
 if (file_exists($OVERRIDE_CONF_FILE)) {

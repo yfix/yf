@@ -1,15 +1,15 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => '//cdn.rawgit.com/CWSpear/bootstrap-hover-dropdown/master/bootstrap-hover-dropdown.min.js',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/CWSpear/bootstrap-hover-dropdown/master/bootstrap-hover-dropdown.min.js',
+		],
+	],
+	'require' => [
+		'asset' => [
 			'jquery',
 			'bootstrap-theme',
-		),
-	),
-);
+		],
+	],
+];

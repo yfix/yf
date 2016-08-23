@@ -10,12 +10,12 @@
 class yf_upload_image {
 
 	/** @var array */
-	public $ALLOWED_MIME_TYPES = array(
+	public $ALLOWED_MIME_TYPES = [
 		'image/jpeg'	=> 'jpeg',
 		'image/pjpeg'	=> 'jpeg',
 		'image/png'		=> 'png',
 		'image/gif'		=> 'gif',
-	);
+	];
 
 	/**
 	* Do upload image to server

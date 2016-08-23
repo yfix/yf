@@ -4,7 +4,7 @@ class yf_send_mail_internal {
 
 	/**
 	*/
-	function send ($params = array(), &$error = null, $mail) {
+	function send ($params = [], &$error = null, $mail) {
 		if (!strlen($params['charset'])) {
 			$params['charset'] = conf('charset');
 		}

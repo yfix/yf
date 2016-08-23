@@ -1,8 +1,8 @@
 <?php
-return array (
+return [
   9999 => 
-  array (
+  [
     'name' => 'Main Server',
     'active' => 1,
-  ),
-);
+  ],
+];

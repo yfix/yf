@@ -10,7 +10,7 @@
 class yf_rss_data {
 
 	/** @var array @conf_skip Known item field names */
-	public $avail_item_fields	= array(
+	public $avail_item_fields	= [
 		'title',
 		'link',
 		'description',
@@ -19,9 +19,9 @@ class yf_rss_data {
 		'author',
 		'comments',
 		'guid',
-	);
+	];
 	/** @var array @conf_skip Valid format strings */
-	public $avail_formats		= array(
+	public $avail_formats		= [
 		'RSS0.91',
 		'RSS1.0',
 		'RSS2.0',
@@ -31,7 +31,7 @@ class yf_rss_data {
 		'ATOM0.3',
 		'HTML',
 		'JS',
-	);
+	];
 	/** @var string */
 	public $FEEDS_CACHE_PATH	= 'uploads/rss_cache/';
 	/** @var string */
@@ -57,7 +57,7 @@ class yf_rss_data {
 	/**
 	* Show given array as RSS page
 	*/
-	function show_rss_page ($data = array(), $params = array()) {
+	function show_rss_page ($data = [], $params = []) {
 		require_php_lib('yf_feedcreator');
 		$rss = new UniversalFeedCreator();
 		if (!isset($params['use_cached']) || !empty($params['use_cached'])) {
@@ -134,7 +134,7 @@ class yf_rss_data {
 	/**
 	* Get data from RSS feeds and return it as array
 	*/
-	function fetch_data ($params = array()) {
+	function fetch_data ($params = []) {
 		// Templates names
 		$STPL_MAIN	= !empty($params['stpl_main']) ? $params['stpl_main'] : 'system/common/get_rss_page_main';
 		$STPL_ITEM	= !empty($params['stpl_item']) ? $params['stpl_item'] : 'system/common/get_rss_page_item';
@@ -153,12 +153,12 @@ class yf_rss_data {
 			// Try to find cached items
 			if (!empty($this->_latest_cached_items[$feed_id])) {
 				foreach ((array)$this->_latest_cached_items[$feed_id] as $item_info) {
-					$output['items'][] = array(
+					$output['items'][] = [
 						'url'		=> $item_info['link'],
 						'title'		=> $item_info['title'],
 						'text'		=> $item_info['text'],
 						'pub_date'	=> $item_info['pub_date'],
-					);
+					];
 					if ($item_info['pub_date'] > $max_cache_date) {
 						$max_cache_date = $item_info['add_date'];
 					}
@@ -181,7 +181,7 @@ class yf_rss_data {
 				$cache_md5 = md5($item_info['url']. $item_info['title']);
 				// Do save cache record
 				if (!isset($this->_latest_cached_items[$feed_id][$cache_md5])) {
-					db()->REPLACE('rss_items', array(
+					db()->REPLACE('rss_items', [
 						'feed_id'	=> intval($feed_id),
 						'add_date'	=> time(),
 						'link'		=> _es($item_info['url']),
@@ -191,23 +191,23 @@ class yf_rss_data {
 						'author'	=> _es($item_info['author']),
 						'cache_md5'	=> _es($cache_md5),
 						'guid'		=> _es($item_info['guid']),
-					));
+					]);
 				}
 				// Process template
-				$replace2 = array(
+				$replace2 = [
 					'item_url'	=> $item_info['url'],
 					'item_title'=> $item_info['title'],
 					'item_text'	=> $item_info['text'],
-				);
+				];
 				$items .= tpl()->parse($STPL_ITEM, $replace2);
 			}
 			// Process template
-			$replace = array(
+			$replace = [
 				'channel_url'	=> $feed_info['url'],
 				'channel_title'	=> $feed_info['title'],
 				'channel_desc'	=> $feed_info['desc'],
 				'items'			=> $items,
-			);
+			];
 			$body .= tpl()->parse($STPL_MAIN, $replace);
 		}
 		return $body;
@@ -216,7 +216,7 @@ class yf_rss_data {
 	/**
 	* Get and display data from given RSS feed
 	*/
-	function get_data ($url = '', $params = array()) {
+	function get_data ($url = '', $params = []) {
 		if (!$url) {
 			return false;
 		}
@@ -238,20 +238,20 @@ class yf_rss_data {
 			if ($LIMIT && $i++ > $LIMIT) {
 				break;
 			}
-			$replace2 = array(
+			$replace2 = [
 				'item_url'	=> $item_info['url'],
 				'item_title'=> $item_info['title'],
 				'item_text'	=> $item_info['text'],
-			);
+			];
 			$items .= tpl()->parse($STPL_ITEM, $replace2);
 		}
 		// Process template
-		$replace = array(
+		$replace = [
 			'channel_url'	=> $url,
 			'channel_title'	=> $params['title'],
 			'channel_desc'	=> $params['desc'],
 			'items'			=> $items,
-		);
+		];
 		return tpl()->parse($STPL_MAIN, $replace);
 	}
 
@@ -277,10 +277,10 @@ class yf_rss_data {
 		if (!$success) {
 			return false;
 		}
-		$output = array(
+		$output = [
 			'channel'	=> null,
 			'items'		=> null,
-		);
+		];
 		$totalChannels = $rssDoc->getChannelCount();
 		// special handling for feed encoding
 		$this->_decode_func = $this->_feed_encoding($rssDoc);
@@ -290,22 +290,22 @@ class yf_rss_data {
 			return false;
 		}
 		$cur_ch_image	= $cur_channel->getImage();
-		$_ch_image = array();
+		$_ch_image = [];
 		if (is_object($cur_ch_image)) {
-			$_ch_image = array(
+			$_ch_image = [
 				'title'	=> $this->_decode_text($cur_ch_image->getTitle()),
 				'link'	=> $this->_decode_text($cur_ch_image->getLink()),
 				'url'	=> $this->_decode_text($cur_ch_image->getUrl()),
 				'width'	=> intval($cur_ch_image->getWidth()),
-			);
+			];
 		}
-		$output['channel'] = array(
+		$output['channel'] = [
 			'url'		=> $cur_channel->getLink(),
 			'title'		=> $this->_decode_text($cur_channel->getTitle()),
 			'desc'		=> $this->_decode_text($cur_channel->getDescription()),
 			'webmaster'	=> $this->_decode_text($cur_channel->getWebMaster()),
 			'image'		=> $_ch_image,
-		);
+		];
 		// Get number of items
 		$actual_items = $cur_channel->getItemCount();
 		$total_items = ($num_items > $actual_items) ? $actual_items : $num_items;
@@ -313,15 +313,15 @@ class yf_rss_data {
 		for ($j = 0; $j < $total_items; $j++) {
 			$currItem	= $cur_channel->getItem($j);
 			$cur_enc	= $currItem->getEnclosure();
-			$_enclosure = array();
+			$_enclosure = [];
 			if (is_object($cur_enc)) {
-				$_enclosure = array(
+				$_enclosure = [
 					'url'		=> $this->_decode_text($cur_enc->getUrl()),
 					'length'	=> intval($cur_enc->getLength()),
 					'type'		=> $this->_decode_text($cur_enc->getType()),
-				);
+				];
 			}
-			$output['items'][$j] = array(
+			$output['items'][$j] = [
 				'url'		=> $currItem->getLink(),
 				'title'		=> $this->_decode_text($currItem->getTitle()),
 				'text'		=> $this->_decode_text($currItem->getDescription()),
@@ -329,7 +329,7 @@ class yf_rss_data {
 				'author'	=> $this->_decode_text($currItem->getAuthor()),
 				'comments'	=> $this->_decode_text($currItem->getComments()),
 				'enclosure'	=> $_enclosure,
-			);
+			];
 		}
 		// Do cache array
 		if ($this->USE_ARRAY_CACHE) {

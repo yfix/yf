@@ -8,9 +8,9 @@ class yf_validate {
 	/** @var int Minimal nick length */
 	public $MIN_NICK_LENGTH		= 2;
 	/** @var array Allowed nick symbols (display for user) */
-	public $NICK_ALLOWED_SYMBOLS	= array('a-z','0-9','_','\-','@','#',' ');
+	public $NICK_ALLOWED_SYMBOLS	= ['a-z','0-9','_','\-','@','#',' '];
 	/** @var array Reserved words for the profile url (default) */
-	public $reserved_words = array('login', 'logout', 'admin', 'admin_modules', 'classes', 'modules', 'functions', 'uploads', 'fonts', 'pages_cache', 'core_cache', 'templates');
+	public $reserved_words = ['login', 'logout', 'admin', 'admin_modules', 'classes', 'modules', 'functions', 'uploads', 'fonts', 'pages_cache', 'core_cache', 'templates'];
 
 	/**
 	* Catch missing method call
@@ -42,17 +42,17 @@ class yf_validate {
 	/**
 	* Method by form-less checking of any custom data for validity
 	*/
-	public function _input_is_valid($input, $validate_rules = array()) {
+	public function _input_is_valid($input, $validate_rules = []) {
 		if (!is_array($input)) {
-			$input = array('input' => $input);
+			$input = ['input' => $input];
 		}
-		$rules = array();
+		$rules = [];
 		$global_rules = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
 		foreach ((array)$global_rules as $name => $_rules) {
 			$rules[$name] = $_rules;
 		}
 		if (!is_array($validate_rules)) {
-			$validate_rules = array('__before__' => $validate_rules);
+			$validate_rules = ['__before__' => $validate_rules];
 		}
 		foreach ((array)$validate_rules as $name => $_rules) {
 			$rules[$name] = $_rules;
@@ -77,7 +77,7 @@ class yf_validate {
 
 	/**
 	*/
-	public function _do_check_data_is_valid($rules = array(), &$data) {
+	public function _do_check_data_is_valid($rules = [], &$data) {
 		$validate_ok = true;
 		$_all = '__all__';
 		if (isset($rules[$_all])) {
@@ -112,9 +112,9 @@ class yf_validate {
 				} elseif (is_callable($func)) {
 					$is_ok = $func($data[$name], null, $data, $error_msg);
 				} else {
-					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
+					$is_ok = _class('validate')->$func($data[$name], ['param' => $param], $data, $error_msg);
 					if (!$is_ok && empty($error_msg)) {
-						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
+						$error_msg = t('form_validate_'.$func, ['%field' => $name, '%param' => $param]);
 					}
 				}
 				// In this case we do not track error if field is empty and not required
@@ -147,7 +147,7 @@ class yf_validate {
 	* 	'__before__' => 'trim',
 	* 	'__after__' => 'some_method2|some_method3',
 	*/
-	public function _validate_rules_cleanup($validate_rules = array()) {
+	public function _validate_rules_cleanup($validate_rules = []) {
 		// Trim names with spaces
 		foreach ((array)$validate_rules as $name => $raw) {
 			$trimmed = trim($name);
@@ -173,9 +173,9 @@ class yf_validate {
 				// Merge with existing rules with same key, for example we want to mass add some more rule to existing.
 				if (isset($validate_rules[$_name])) {
 					if (!is_array($validate_rules[$_name])) {
-						$validate_rules[$_name] = array($validate_rules[$_name]);
+						$validate_rules[$_name] = [$validate_rules[$_name]];
 					}
-					$validate_rules[$_name] = array_merge($validate_rules[$_name], is_array($raw) ? $raw : array($raw));
+					$validate_rules[$_name] = array_merge($validate_rules[$_name], is_array($raw) ? $raw : [$raw]);
 				} else {
 					$validate_rules[$_name] = $raw;
 				}
@@ -185,7 +185,7 @@ class yf_validate {
 
 		// Add these rules to all validation rules, before them
 		$_name = '__before__';
-		$all_before = array();
+		$all_before = [];
 		if (isset($validate_rules[$_name])) {
 			$all_before = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
 			unset($validate_rules[$_name]);
@@ -193,7 +193,7 @@ class yf_validate {
 
 		// Add these rules to all validation rules, after them
 		$_name = '__after__';
-		$all_after = array();
+		$all_after = [];
 		if (isset($validate_rules[$_name])) {
 			$all_after = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
 			unset($validate_rules[$_name]);
@@ -202,13 +202,13 @@ class yf_validate {
 
 		// Special case when only __before__ or __after__ passed
 		if ((!empty($all_after) || !empty($all_before)) && empty($validate_rules)) {
-			$validate_rules = array('__all__' => '');
+			$validate_rules = ['__all__' => ''];
 		}
-		$out = array();
+		$out = [];
 		foreach ((array)$validate_rules as $name => $raw) {
 			$is_html_array = (false !== strpos($name, '['));
 			if ($is_html_array) {
-				$name = str_replace(array('[',']'), array('.',''), trim($name,']['));
+				$name = str_replace(['[',']'], ['.',''], trim($name,']['));
 			}
 			$rules = (array)$this->_validate_rules_array_from_raw($raw);
 			if ($all_before) {
@@ -254,10 +254,10 @@ class yf_validate {
 					unset($rules[$k]);
 					continue;
 				}
-				$rules[$k] = array(
+				$rules[$k] = [
 					0 => $val,
 					1 => $param,
-				);
+				];
 			}
 			if ($rules) {
 				$out[$name] = array_values($rules); // array_values needed here to make array keys straight, unit tests will pass fine
@@ -270,7 +270,7 @@ class yf_validate {
 	* This method used by validate() function to do standalone validation processing
 	*/
 	public function _validate_rules_array_from_raw($raw = '') {
-		$rules = array();
+		$rules = [];
 		// esxape '|' to '\|'
 		$delimeter = '|';
 		$delimeter_regexp = '~(?<![^\\\]\\\)' . preg_quote( $delimeter, '~' ) . '~';
@@ -279,7 +279,7 @@ class yf_validate {
 			// foreach((array)explode('|', $raw) as $_item) {
 			foreach((array)preg_split( $delimeter_regexp, $raw ) as $_item) {
 				$_item = str_replace( '\|', '|', $_item );
-				$rules[] = array($_item, null);
+				$rules[] = [$_item, null];
 			}
 		} elseif (is_array($raw)) {
 			foreach((array)$raw as $_raw) {
@@ -287,14 +287,14 @@ class yf_validate {
 					// foreach((array)explode('|', $_raw) as $_item) {
 					foreach((array)preg_split( $delimeter_regexp, $_raw ) as $_item) {
 						$_item = str_replace( '\|', '|', $_item );
-						$rules[] = array($_item, null);
+						$rules[] = [$_item, null];
 					}
 				} elseif (is_callable($_raw)) {
-					$rules[] = array($_raw, null);
+					$rules[] = [$_raw, null];
 				}
 			}
 		} elseif (is_callable($raw)) {
-			$rules[] = array($raw, null);
+			$rules[] = [$raw, null];
 		}
 		return $rules;
 	}
@@ -328,7 +328,7 @@ class yf_validate {
 	* Most popular are: md5 sha1 sha224 sha256 sha384 sha512 ripemd128 ripemd160 ripemd256 ripemd320 gost crc32
 	* Example usage: ["password" => 'trim|min_length[6]|max_length[32]|hash_not_empty[sha256]']
 	*/
-	public function hash_not_empty(&$in, $params = array()) {
+	public function hash_not_empty(&$in, $params = []) {
 		$hash_name = is_array($params) ? $params['param'] : $params;
 		if (strlen($in) && $hash_name) {
 			$in = hash($hash_name, $in);
@@ -357,7 +357,7 @@ class yf_validate {
 	* Returns true when selected other passed field will be non-empty
 	* Examples: required_if[other_field]
 	*/
-	public function required_if($in, $params = array(), $fields = array()) {
+	public function required_if($in, $params = [], $fields = []) {
 		$param = trim(is_array($params) ? $params['param'] : $params);
 		if (!strlen($param)) {
 			return false;
@@ -372,7 +372,7 @@ class yf_validate {
 	* Returns true when _ANY_ of passed fields will be non-empty
 	* Examples: required_any[duration_*] or required_any[duration_day,duration_week,duration_month]
 	*/
-	public function required_any($in, $params = array(), $fields = array()) {
+	public function required_any($in, $params = [], $fields = []) {
 		$param = trim(is_array($params) ? $params['param'] : $params);
 		$wildcard = false;
 		// Example: duration_day,duration_week,duration_month
@@ -403,7 +403,7 @@ class yf_validate {
 	* Returns FALSE if field does not match field(s) in parameter.
 	* Example: matches[password_again]
 	*/
-	public function matches($in, $params = array(), $fields = array()) {
+	public function matches($in, $params = [], $fields = []) {
 		$field = is_array($params) ? $params['param'] : $params;
 		return isset($fields[$field], $_POST[$field]) ? ($in === $_POST[$field]) : false;
 	}
@@ -412,7 +412,7 @@ class yf_validate {
 	* Returns FALSE if form field(s) defined in parameter are not filled in.
 	* Example: depends_on[field_name]
 	*/
-	public function depends_on($in, $params = array(), $fields = array()) {
+	public function depends_on($in, $params = [], $fields = []) {
 		$field = is_array($params) ? $params['param'] : $params;
 		return isset($fields[$field], $_POST[$field]);
 	}
@@ -421,14 +421,14 @@ class yf_validate {
 	* The field under validation must be a valid URL according to the checkdnsrr PHP function.
 	*/
 	public function active_url($in) {
-		return checkdnsrr(str_replace(array('http://', 'https://', 'ftp://'), '', strtolower($in)));
+		return checkdnsrr(str_replace(['http://', 'https://', 'ftp://'], '', strtolower($in)));
 	}
 
 	/**
 	* The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function.
 	* Examples: after_date[2012-01-01], after_date[day ago]
 	*/
-	public function after_date($in, $params = array()) {
+	public function after_date($in, $params = []) {
 		$param = is_array($params) ? $params['param'] : $params;
 		if (!$param) {
 			return false;
@@ -448,7 +448,7 @@ class yf_validate {
 	* The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function.
 	* Example: before_date[2020-12-31], after_date[+1 day]
 	*/
-	public function before_date($in, $params = array()) {
+	public function before_date($in, $params = []) {
 		$param = is_array($params) ? $params['param'] : $params;
 		if (!$param) {
 			return false;
@@ -481,7 +481,7 @@ class yf_validate {
 	/**
 	* The field under validation must match the format defined according to the date_parse_from_format PHP function.
 	*/
-	public function valid_date_format($in, $params = array()) {
+	public function valid_date_format($in, $params = []) {
 		$param = is_array($params) ? $params['param'] : $params;
 		$parsed = date_parse_from_format($param, $in);
 		return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
@@ -498,7 +498,7 @@ class yf_validate {
 	* The field under validation must have a size between the given min and max. Strings, numerics, and files are evaluated in the same fashion as the size rule.
 	* Examples: between[a,z]  between[44,99]
 	*/
-	public function between($in, $params = array()) {
+	public function between($in, $params = []) {
 		$param = is_array($params) ? $params['param'] : $params;
 		list($min, $max) = explode(',', $param);
 		return $in >= $min && $in <= $max;
@@ -508,9 +508,9 @@ class yf_validate {
 	* Returns FALSE if field contains characters not in the parameter.
 	* Example: chars[a,b,c,d,1,2,3,4]
 	*/
-	public function chars($in, $params = array()) {
+	public function chars($in, $params = []) {
 		$param = is_array($params) ? $params['param'] : $params;
-		$chars = array();
+		$chars = [];
 		foreach (explode(',', trim($param)) as $char) {
 			$char = trim($char);
 			if (strlen($char)) {
@@ -529,7 +529,7 @@ class yf_validate {
 	* Examples: is_unique[user.login]
 	* Alias
 	*/
-	public function unique($in, $params = array()) {
+	public function unique($in, $params = []) {
 		return $this->is_unique($in, $params);
 	}
 
@@ -537,7 +537,7 @@ class yf_validate {
 	* Returns TRUE if given field value is unique inside given database table.field
 	* Examples: is_unique[user.login]
 	*/
-	public function is_unique($in, $params = array()) {
+	public function is_unique($in, $params = []) {
 		if (!$in) {
 			return true;
 		}
@@ -562,7 +562,7 @@ class yf_validate {
 	* Returns TRUE if given field value is unique inside given database table.field.pk_value
 	* Examples: is_unique_without[user.id.1]
 	*/
-	public function is_unique_without($in, $params = array()) {
+	public function is_unique_without($in, $params = []) {
 		if (!$in) {
 			return true;
 		}
@@ -589,7 +589,7 @@ class yf_validate {
 	* Returns TRUE if given field value exists inside database
 	* Examples: exists[user.email]
 	*/
-	public function exists($in, $params = array()) {
+	public function exists($in, $params = []) {
 		if (!$in) {
 			return false;
 		}
@@ -615,7 +615,7 @@ class yf_validate {
 	* Example: regex_match[/^[a-z0-9]+$/]
 	* Alias
 	*/
-	public function regex($in, $params = array()) {
+	public function regex($in, $params = []) {
 		return $this->regex_match($in, $params);
 	}
 
@@ -623,7 +623,7 @@ class yf_validate {
 	* Custom regex matching.
 	* Example: regex_match[/^[a-z0-9]+$/]
 	*/
-	public function regex_match($in, $params = array()) {
+	public function regex_match($in, $params = []) {
 		$regex = is_array($params) ? $params['param'] : $params;
 		return (bool) preg_match($regex, $in);
 	}
@@ -632,7 +632,7 @@ class yf_validate {
 	* Returns TRUE if given field value differs from compared field value
 	* Example: differs[address_2]
 	*/
-	public function differs($in, $params = array(), $fields = array()) {
+	public function differs($in, $params = [], $fields = []) {
 		$field = is_array($params) ? $params['param'] : $params;
 		return ! (isset($fields[$field]) && $_POST[$field] === $in);
 	}
@@ -671,20 +671,20 @@ class yf_validate {
 	* Returns TRUE if given field contains valid url. Checking is done in combination of regexp and php built-in filter_val() to ensure most correct results
 	* Alias
 	*/
-	public function url($in, $params = array()) {
+	public function url($in, $params = []) {
 		return $this->valid_url($in, $params);
 	}
 
 	/**
 	* Returns TRUE if given field contains valid url. Checking is done in combination of regexp and php built-in filter_val() to ensure most correct results
 	*/
-	public function valid_url($in, $params = array()) {
+	public function valid_url($in, $params = []) {
 		if (empty($in)) {
 			return false;
 		} elseif (preg_match('/^(?:([^:]*)\:)?\/\/(.+)$/', $in, $matches)) {
 			if (empty($matches[2])) {
 				return false;
-			} elseif ( ! in_array($matches[1], array('http', 'https'), true)) {
+			} elseif ( ! in_array($matches[1], ['http', 'https'], true)) {
 				return false;
 			}
 			$in = $matches[2];
@@ -735,7 +735,7 @@ class yf_validate {
 	/**
 	* Returns TRUE if given field contains valid IP address, ipv4 by default, ipv6 supported too
 	*/
-	public function valid_ip($in, $params = array()) {
+	public function valid_ip($in, $params = []) {
 		$which = is_array($params) ? $params['param'] : $params;
 		return $this->_valid_ip($in, $which);
 	}
@@ -744,7 +744,7 @@ class yf_validate {
 	* Returns TRUE if given field length is no more than specified, excluding exact length.
 	* Example: min_length[10]
 	*/
-	public function min_length($in, $params = array()) {
+	public function min_length($in, $params = []) {
 		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
@@ -758,7 +758,7 @@ class yf_validate {
 	* Returns TRUE if given field length is more than specified, including exact length.
 	* Example: max_length[10]
 	*/
-	public function max_length($in, $params = array()) {
+	public function max_length($in, $params = []) {
 		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
@@ -772,7 +772,7 @@ class yf_validate {
 	* Returns TRUE if given field length is more than specified, including exact length.
 	* Example: exact_length[10]
 	*/
-	public function exact_length($in, $params = array()) {
+	public function exact_length($in, $params = []) {
 		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
@@ -786,7 +786,7 @@ class yf_validate {
 	* Returns FALSE if the field is too long or too short.
 	* Examples: length[1,30] - between 1 and 30 characters long. length[30] - exactly 30 characters long
 	*/
-	public function length($in, $params = array()) {
+	public function length($in, $params = []) {
 		$val = is_array($params) ? $params['param'] : $params;
 		if (false === strpos($val, ',')) {
 			return $this->exact_length($in, $params);
@@ -809,7 +809,7 @@ class yf_validate {
 	* Returns TRUE if given field value is a number and greater than specified, not including exact value
 	* Example: greater_than[10]
 	*/
-	public function greater_than($in, $params = array()) {
+	public function greater_than($in, $params = []) {
 		$min = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in > $min) : false;
 	}
@@ -817,7 +817,7 @@ class yf_validate {
 	/**
 	* Alias
 	*/
-	public function gt($in, $params = array()) {
+	public function gt($in, $params = []) {
 		return $this->greater_than($in, $params);
 	}
 
@@ -825,7 +825,7 @@ class yf_validate {
 	* Returns TRUE if given field value is a number and less than specified, not including exact value
 	* Example: less_than[10]
 	*/
-	public function less_than($in, $params = array()) {
+	public function less_than($in, $params = []) {
 		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in < $max) : false;
 	}
@@ -833,7 +833,7 @@ class yf_validate {
 	/**
 	* Alias
 	*/
-	public function lt($in, $params = array()) {
+	public function lt($in, $params = []) {
 		return $this->less_than($in, $params);
 	}
 
@@ -841,7 +841,7 @@ class yf_validate {
 	* Returns TRUE if given field value is a number and greater than specified, including exact value
 	* Example: greater_than_equal_to[10]
 	*/
-	public function greater_than_equal_to($in, $params = array()) {
+	public function greater_than_equal_to($in, $params = []) {
 		$min = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in >= $min) : false;
 	}
@@ -849,7 +849,7 @@ class yf_validate {
 	/**
 	* Alias
 	*/
-	public function gte($in, $params = array()) {
+	public function gte($in, $params = []) {
 		return $this->greater_than_equal_to($in, $params);
 	}
 
@@ -857,7 +857,7 @@ class yf_validate {
 	* Returns TRUE if given field value is a number and less than specified, including exact value
 	* Example: less_than_equal_to[10]
 	*/
-	public function less_than_equal_to($in, $params = array()) {
+	public function less_than_equal_to($in, $params = []) {
 		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in <= $max) : false;
 	}
@@ -865,7 +865,7 @@ class yf_validate {
 	/**
 	* Alias
 	*/
-	public function lte($in, $params = array()) {
+	public function lte($in, $params = []) {
 		return $this->less_than_equal_to($in, $params);
 	}
 
@@ -1023,7 +1023,7 @@ class yf_validate {
 	/**
 	* Cleanup input phone to match international notation. Examples good: +380631234567, 063 123 45 67. See more valid examples inside unit tests.
 	*/
-	public function phone_cleanup($in, $params = array(), $fields = array(), &$error = '') {
+	public function phone_cleanup($in, $params = [], $fields = [], &$error = '') {
 		$error = false;
 		$country_prefix = $params['param'] ?: '38';
 		$p_len = strlen($country_prefix);
@@ -1049,7 +1049,7 @@ class yf_validate {
 	/**
 	* Ensures input phone has valid international format.
 	*/
-	public function valid_phone($in, $params = array(), $fields = array(), &$error = '') {
+	public function valid_phone($in, $params = [], $fields = [], &$error = '') {
 		$phone = $this->phone_cleanup($in, $params, $fields, $error);
 		return empty($error) ? true : false;
 	}
@@ -1066,9 +1066,9 @@ class yf_validate {
 		}
 		$_nick_pattern = implode('', $this->NICK_ALLOWED_SYMBOLS);
 		if (empty($TEXT_TO_CHECK) || (strlen($TEXT_TO_CHECK) < $this->MIN_NICK_LENGTH)) {
-			_re(t('Nick must have at least @num symbols', array('@num' => $this->MIN_NICK_LENGTH)));
+			_re(t('Nick must have at least @num symbols', ['@num' => $this->MIN_NICK_LENGTH]));
 		} elseif (!preg_match('/^['.$_nick_pattern.']+$/iu', $TEXT_TO_CHECK)) {
-			_re(t('Nick can contain only these characters: @text1', array('@text1' => _prepare_html(stripslashes(implode('" , "', $this->NICK_ALLOWED_SYMBOLS))))));
+			_re(t('Nick can contain only these characters: @text1', ['@text1' => _prepare_html(stripslashes(implode('" , "', $this->NICK_ALLOWED_SYMBOLS)))]));
 			if (!$OVERRIDE_MODE) {
 				$_POST[$name_in_form] = preg_replace('/[^'.$_nick_pattern.']+/iu', '', $_POST[$name_in_form]);
 			}
@@ -1076,7 +1076,7 @@ class yf_validate {
 // TODO: convert into query buidler
 			$NICK_ALREADY_EXISTS = ($this->db->query_num_rows('SELECT id FROM '.$this->db->_real_name('user').' WHERE nick="'.$this->db->es($TEXT_TO_CHECK).'"') >= 1);
 			if ($NICK_ALREADY_EXISTS) {
-				_re(t('Nick "@name" is already reserved. Please try another one.', array('@name' => $TEXT_TO_CHECK)));
+				_re(t('Nick "@name" is already reserved. Please try another one.', ['@name' => $TEXT_TO_CHECK]));
 			}
 		}
 	}
@@ -1214,21 +1214,21 @@ class yf_validate {
 	/**
 	* Alias
 	*/
-	public function valid_image($in, $params = array(), $fields = array()) {
+	public function valid_image($in, $params = [], $fields = []) {
 		return $this->image($in, $params, $fields);
 	}
 
 	/**
 	* The file under validation must be an image (jpeg, png, bmp, or gif)
 	*/
-	public function image($in, $params = array(), $fields = array()) {
+	public function image($in, $params = [], $fields = []) {
 // TODO
 	}
 
 	/**
 	* The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
 	*/
-	public function mime($in, $params = array(), $fields = array()) {
+	public function mime($in, $params = [], $fields = []) {
 // TODO
 	}
 
@@ -1236,28 +1236,28 @@ class yf_validate {
 	* Returns FALSE if credit card is not valid.
 	* Examples: credit_card[mastercard]
 	*/
-	public function credit_card($in, $params = array(), $fields = array()) {
+	public function credit_card($in, $params = [], $fields = []) {
 // TODO
 	}
 
 	/**
 	* Same as is_unique(), but tells form validator to include ajax form checking
 	*/
-	public function ajax_is_unique($in, $params = array(), $fields = array()) {
+	public function ajax_is_unique($in, $params = [], $fields = []) {
 		return $this->is_unique($in, $params, $fields);
 	}
 
 	/**
 	* Same as is_unique_without(), but tells form validator to include ajax form checking
 	*/
-	public function ajax_is_unique_without($in, $params = array(), $fields = array()) {
+	public function ajax_is_unique_without($in, $params = [], $fields = []) {
 		return $this->is_unique_without($in, $params, $fields);
 	}
 
 	/**
 	* Same as exists(), but tells form validator to include ajax form checking
 	*/
-	public function ajax_exists($in, $params = array(), $fields = array()) {
+	public function ajax_exists($in, $params = [], $fields = []) {
 		return $this->exists($in, $params, $fields);
 	}
 }

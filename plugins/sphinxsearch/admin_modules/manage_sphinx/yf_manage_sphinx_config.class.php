@@ -9,7 +9,7 @@
 class yf_manage_sphinx_config {
 
 	public $loaded = false;
-	public $sections = array();
+	public $sections = [];
 
 	/**
 	* Constructor which optionally loads data from a file
@@ -55,7 +55,7 @@ class yf_manage_sphinx_config {
 		// split the file into lines, we'll process it line by line
 		$config_file = file($filename);
 
-		$this->sections = array();
+		$this->sections = [];
 
 		$section = null;
 		$found_opening_bracket = false;

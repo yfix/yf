@@ -12,7 +12,7 @@ class yf_shop__order_create{
 		// Verify products
 		if (!common()->_error_exists()) {
 			// Get products from db
-			$products_ids = array();
+			$products_ids = [];
 			foreach ((array)$basket_contents as $_item_id => $_info) {
 				if ($_info["product_id"]) {
 					$products_ids[$_info["product_id"]] = $_info["product_id"];
@@ -30,7 +30,7 @@ class yf_shop__order_create{
 		// Save into database
 		if (!common()->_error_exists()) {
 			// Insert order into db
-			$order_sql = array(
+			$order_sql = [
 				"date"		=> time(),
 				"user_id"	=> intval(main()->USER_ID),
 				"ship_type"	=> intval($_POST["ship_type"]),
@@ -38,7 +38,7 @@ class yf_shop__order_create{
 				"card_num"	=> $_POST["card_num"],
 				"exp_date"	=> $_POST["exp_date"],
 				"status"	=> "", // To ensure consistency later
-			);
+			];
 			foreach ((array)module('shop')->_b_fields as $_field) {
 				$order_sql[$_field] = $_POST[$_field];
 			}
@@ -55,7 +55,7 @@ class yf_shop__order_create{
 				$quantity = $basket_contents[$_info["id"]]["quantity"];
 				$price = module('shop')->_product_get_price($_info);
 
-				$dynamic_atts = array();
+				$dynamic_atts = [];
 				foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {
 					if ($basket_contents[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
 						$dynamic_atts[$_attr_id] = "- ".$_attr_info["name"]." ".$_attr_info["value"];
@@ -65,22 +65,22 @@ class yf_shop__order_create{
 				}
 				$total_price += $price * $quantity;
 				// Insert order into db
-				db()->INSERT(db('shop_order_items'), array(
+				db()->INSERT(db('shop_order_items'), [
 					"order_id"		=> intval($ORDER_ID),
 					"product_id"	=> intval($_info["id"]),
 					"user_id"		=> intval(main()->USER_ID),
 					"quantity"		=> intval($quantity),
 					"sum"			=> floatval($price * $quantity),
 					"attributes"	=> _es(serialize($_atts_to_save)),
-				));
+				]);
 			}
 			$total_price += (float)module('shop')->_ship_types[$_POST["ship_type"]]["price"];
 			// Update order
-			db()->UPDATE(db('shop_orders'), array(
+			db()->UPDATE(db('shop_orders'), [
 				"status"		=> "pending",
 				"total_sum"	=> floatval($total_price),
 				"hash"			=> md5(microtime(true)."#".main()->USER_ID."#".$total_price),
-			), "id=".intval($ORDER_ID));
+			], "id=".intval($ORDER_ID));
 		}
 		if (!common()->_error_exists()) {
 			return $ORDER_ID;

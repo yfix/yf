@@ -28,7 +28,7 @@ class class_divide_pages_test extends yf_unit_tests {
 		$this->assertEquals( 0, conf('user_per_page') );
 		$this->assertEquals( 0, conf('admin_per_page') );
 
-		$_GET = array();
+		$_GET = [];
 		$_GET['object'] = __CLASS__;
 		$_GET['action'] = __FUNCTION__;
 		$_GET['id'] = 12345678;
@@ -38,7 +38,7 @@ class class_divide_pages_test extends yf_unit_tests {
 		$data = range(1, $per_page * $num_pages);
 
 		$sql = 'SELECT * FROM user';
-		$expect_for_sql = array_values(array(
+		$expect_for_sql = array_values([
 			'limit_sql'		=> ' LIMIT 0, '.$per_page,
 			'pages_html'	=> $this->_get_expected_html($href.'&page=', $num_pages),
 			'total_records'	=> count($data),
@@ -47,7 +47,7 @@ class class_divide_pages_test extends yf_unit_tests {
 			'limited_pages' => 0,
 			'per_page'		=> $per_page,
 			'requested_page'=> 0,
-		));
+		]);
 		$result = common()->divide_pages($sql, $href, '', '', $num_records = count($data));
 		$result[1] = $this->_cleanup_html($result[1]);
 		$this->assertEquals( $expect_for_sql, $result );
@@ -66,7 +66,7 @@ class class_divide_pages_test extends yf_unit_tests {
 		$result[1] = $this->_cleanup_html($result[1]);
 		$this->assertEquals( $expect_for_sql, $result );
 */
-		$expect_for_array = array_values(array(
+		$expect_for_array = array_values([
 			'items'			=> array_slice($data, 0, $per_page, true),
 			'pages_html'	=> $this->_get_expected_html($href.'&page=', $num_pages),
 			'total_records'	=> count($data),
@@ -75,7 +75,7 @@ class class_divide_pages_test extends yf_unit_tests {
 			'limited_pages' => 0,
 			'per_page'		=> $per_page,
 			'requested_page'=> 0,
-		));
+		]);
 
 		$result = common()->divide_pages($data, $href);
 		$result[1] = $this->_cleanup_html($result[1]);

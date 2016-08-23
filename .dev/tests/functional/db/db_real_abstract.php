@@ -10,7 +10,7 @@ abstract class db_real_abstract extends yf_unit_tests {
 	public static $DB_NAME = '';
 	public static $DB_DRIVER = '';
 	public static $CI_SERVER = '';
-	public static $_bak = array();
+	public static $_bak = [];
 
 	/**
 	*/
@@ -20,7 +20,7 @@ abstract class db_real_abstract extends yf_unit_tests {
 
 	/**
 	*/
-	public static function _connect($params = array()) {
+	public static function _connect($params = []) {
 		self::$DB_NAME = $params['name'] ?: DB_NAME;
 		if ($params['driver']) {
 			self::$DB_DRIVER = $params['driver'];
@@ -46,36 +46,36 @@ abstract class db_real_abstract extends yf_unit_tests {
 
 	/**
 	*/
-	public static function _connect_mysql($params = array()) {
-		$res = self::$db->connect(array(
+	public static function _connect_mysql($params = []) {
+		$res = self::$db->connect([
 			'host'	=> $params['host'] ?: DB_HOST,
 			'name'	=> self::$DB_NAME,
 			'user'	=> $params['user'] ?: DB_USER,
 			'pswd'	=> $params['pswd'] ?: DB_PSWD,
 			'prefix'=> $params['prefix'] ?: DB_PREFIX,
 			'force' => true,
-		));
+		]);
 		return !empty($res) ? true : false;
 	}
 
 	/**
 	*/
-	public static function _connect_sqlite($params = array()) {
+	public static function _connect_sqlite($params = []) {
 		return self::_connect_mysql($params);
 	}
 
 	/**
 	*/
-	public static function _connect_pgsql($params = array()) {
+	public static function _connect_pgsql($params = []) {
 		self::$DB_NAME = $params['name'] ?: (is_string(getenv('YF_DB_PG_NAME')) ? getenv('YF_DB_PG_NAME') : DB_NAME);
-		$res = self::$db->connect(array(
+		$res = self::$db->connect([
 			'host'	=> $params['host'] ?: (is_string(getenv('YF_DB_PG_HOST')) ? getenv('YF_DB_PG_HOST') : '127.0.0.1'),
 			'name'	=> self::$DB_NAME,
 			'user'	=> $params['user'] ?: (is_string(getenv('YF_DB_PG_USER')) ? getenv('YF_DB_PG_USER') : 'yf'),
 			'pswd'	=> is_string($params['pswd']) ? $params['pswd'] : (is_string(getenv('YF_DB_PG_PSWD')) ? getenv('YF_DB_PG_PSWD') : DB_PSWD),
 			'prefix'=> $params['prefix'] ?: (is_string(getenv('YF_DB_PG_PREFIX')) ? getenv('YF_DB_PG_PREFIX') : DB_PREFIX),
 			'force' => true,
-		));
+		]);
 		return !empty($res) ? true : false;
 	}
 

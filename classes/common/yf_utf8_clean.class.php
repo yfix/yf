@@ -10,7 +10,7 @@
 class yf_utf8_clean {
 
 	/** @var @conf_skip */
-	public $UTF8_LOWER_ACCENTS = array(
+	public $UTF8_LOWER_ACCENTS = [
 	  'à' => 'a', 'ô' => 'o', 'ď' => 'd', 'ḟ' => 'f', 'ë' => 'e', 'š' => 's', 'ơ' => 'o',
 	  'ß' => 'ss', 'ă' => 'a', 'ř' => 'r', 'ț' => 't', 'ň' => 'n', 'ā' => 'a', 'ķ' => 'k',
 	  'ŝ' => 's', 'ỳ' => 'y', 'ņ' => 'n', 'ĺ' => 'l', 'ħ' => 'h', 'ṗ' => 'p', 'ó' => 'o',
@@ -26,9 +26,9 @@ class yf_utf8_clean {
 	  'â' => 'a', 'ľ' => 'l', 'ẅ' => 'w', 'ż' => 'z', 'ī' => 'i', 'ã' => 'a', 'ġ' => 'g',
 	  'ṁ' => 'm', 'ō' => 'o', 'ĩ' => 'i', 'ù' => 'u', 'į' => 'i', 'ź' => 'z', 'á' => 'a',
 	  'û' => 'u', 'þ' => 'th', 'ð' => 'dh', 'æ' => 'ae', 'µ' => 'u', 'ĕ' => 'e', '€'=>'€','£'=>'£',' '=>' ','﻿'=>'﻿',
-	);
+	];
 	/** @var @conf_skip */
-	public $UTF8_UPPER_ACCENTS = array(
+	public $UTF8_UPPER_ACCENTS = [
 	  'À' => 'A', 'Ô' => 'O', 'Ď' => 'D', 'Ḟ' => 'F', 'Ë' => 'E', 'Š' => 'S', 'Ơ' => 'O',
 	  'Ă' => 'A', 'Ř' => 'R', 'Ț' => 'T', 'Ň' => 'N', 'Ā' => 'A', 'Ķ' => 'K',
 	  'Ŝ' => 'S', 'Ỳ' => 'Y', 'Ņ' => 'N', 'Ĺ' => 'L', 'Ħ' => 'H', 'Ṗ' => 'P', 'Ó' => 'O',
@@ -44,7 +44,7 @@ class yf_utf8_clean {
 	  'Â' => 'A', 'Ľ' => 'L', 'Ẅ' => 'W', 'Ż' => 'Z', 'Ī' => 'I', 'Ã' => 'A', 'Ġ' => 'G',
 	  'Ṁ' => 'M', 'Ō' => 'O', 'Ĩ' => 'I', 'Ù' => 'U', 'Į' => 'I', 'Ź' => 'Z', 'Á' => 'A',
 	  'Û' => 'U', 'Þ' => 'Th', 'Ð' => 'Dh', 'Æ' => 'Ae', 'Ĕ' => 'E', '€'=>'€','£'=>'£',' '=>' ','﻿'=>'﻿',
-	);
+	];
 	
 	/**
 	* Constructor
@@ -71,7 +71,7 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 	/**
 	* Do clean
 	*/
-	function _do ($text = '', $params = array()) {
+	function _do ($text = '', $params = []) {
 		if (!strlen($text)) {
 			return '';
 		}
@@ -163,7 +163,7 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 	* Alternate experimental method 2 (same speed, same results)
 	*/
 	function _unaccent_test2($string = '') {
-		$transliteration =  array(
+		$transliteration =  [
 			'À' => 'A','Á' => 'A','Â' => 'A','Ã' => 'A','Ä' => 'A',
 			'Å' => 'A','Æ' => 'A','Ā' => 'A','Ą' => 'A','Ă' => 'A',
 			'Ç' => 'C','Ć' => 'C','Č' => 'C','Ĉ' => 'C','Ċ' => 'C',
@@ -201,7 +201,7 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 			'ū' => 'u','ů' => 'u','ű' => 'u','ŭ' => 'u','ũ' => 'u',
 			'ų' => 'u','ŵ' => 'w','ÿ' => 'y','ý' => 'y','ŷ' => 'y',
 			'ż' => 'z','ź' => 'z','ž' => 'z','ß' => 'ss','ſ' => 'ss'
-		);
+		];
 		$string = strtr($string, $transliteration);
 		return $string;
 	}
@@ -213,15 +213,15 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 	function _unaccent_test3($text = '') {
 		static $search;
 		if (!$search) {
-			$search = array();
+			$search = [];
 			// Get the HTML entities table into an array
-			$trans = array(
+			$trans = [
 				'"' => '&quot;',
 				'&' => '&amp;',
 				'\'' => '&#039;',
 				'<' => '&lt;',
 				'>' => '&gt;',
-			);
+			];
 			// Go through the entity mappings one-by-one
 			foreach ((array)$trans as $literal => $entity) {
 			  // Make sure we don't process any other characters

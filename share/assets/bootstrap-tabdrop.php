@@ -1,16 +1,16 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => '//cdn.rawgit.com/jschab/bootstrap-tabdrop/master/js/bootstrap-tabdrop.js',
-			'css' => '//cdn.rawgit.com/jschab/bootstrap-tabdrop/master/css/tabdrop.css',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/jschab/bootstrap-tabdrop/master/js/bootstrap-tabdrop.js',
+			'css' => '//rawgit.yfix.net/jschab/bootstrap-tabdrop/master/css/tabdrop.css',
+		],
+	],
+	'require' => [
+		'asset' => [
 			'jquery',
 			'bootstrap-theme',
-		),
-	),
-);
+		],
+	],
+];

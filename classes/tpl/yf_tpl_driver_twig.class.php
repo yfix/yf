@@ -24,7 +24,7 @@ class yf_tpl_driver_twig {
 
 	/**
 	*/
-	function parse($name, $replace = array(), $params = array()) {
+	function parse($name, $replace = [], $params = []) {
 		if ($params['string']) {
 			return $this->twig->render($params['string'], $replace);
 		}

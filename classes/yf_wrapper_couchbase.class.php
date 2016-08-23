@@ -11,7 +11,7 @@ class yf_wrapper_couchbase {
 	function __call($name, $args) {
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			return call_user_func_array(array($this->_connection, $name), $args);
+			return call_user_func_array([$this->_connection, $name], $args);
 		}
 		return main()->extend_call($this, $name, $args);
 	}
@@ -19,8 +19,8 @@ class yf_wrapper_couchbase {
 	/**
 	*/
 	function _init() {
-		$this->host = getenv('COUCHBASE_HOST') ?: conf('COUCHBASE_HOST') ?: '127.0.0.1';
-		$this->port = getenv('COUCHBASE_PORT') ?: conf('COUCHBASE_PORT') ?: 8092;
+		$this->host = getenv('COUCHBASE_HOST') ?: conf('COUCHBASE_HOST') ?: @constant('COUCHBASE_HOST') ?: '127.0.0.1';
+		$this->port = getenv('COUCHBASE_PORT') ?: conf('COUCHBASE_PORT') ?: @constant('COUCHBASE_PORT') ?: 8092;
 	}
 
 	/**
@@ -31,7 +31,7 @@ class yf_wrapper_couchbase {
 
 	/**
 	*/
-	function connect($params = array()) {
+	function connect($params = []) {
 // TODO
 	}
 

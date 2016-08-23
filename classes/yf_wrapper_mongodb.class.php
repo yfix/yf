@@ -11,7 +11,7 @@ class yf_wrapper_mongodb {
 	function __call($name, $args) {
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			return call_user_func_array(array($this->_connection, $name), $args);
+			return call_user_func_array([$this->_connection, $name], $args);
 		}
 		return main()->extend_call($this, $name, $args);
 	}
@@ -19,8 +19,8 @@ class yf_wrapper_mongodb {
 	/**
 	*/
 	function _init() {
-		$this->host = getenv('MONGODB_HOST') ?: conf('MONGODB_HOST') ?: '127.0.0.1';
-		$this->port = getenv('MONGODB_PORT') ?: conf('MONGODB_PORT') ?: 27017;
+		$this->host = getenv('MONGODB_HOST') ?: conf('MONGODB_HOST') ?: @constant('MONGODB_HOST') ?: '127.0.0.1';
+		$this->port = getenv('MONGODB_PORT') ?: conf('MONGODB_PORT') ?: @constant('MONGODB_PORT') ?: 27017;
 	}
 
 	/**
@@ -31,7 +31,7 @@ class yf_wrapper_mongodb {
 
 	/**
 	*/
-	function connect($params = array()) {
+	function connect($params = []) {
 // TODO
 	}
 

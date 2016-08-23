@@ -9,13 +9,20 @@ if (!$project_path) {
 	exit('Error: missing project_path. Example: '.basename(__FILE__).' /home/www/test2/'.PHP_EOL);
 }
 $project_path = rtrim($project_path, '/').'/';
-foreach (array('', '*/', '*/*/', '*/*/*/') as $g) {
+foreach (['', '*/', '*/*/', '*/*/*/'] as $g) {
 	$paths = glob($project_path. $g. 'db_setup.php');
 	if (!$paths || !isset($paths[0])) {
 		continue;
 	}
 	$fp = $paths[0];
 	if ($fp && file_exists($fp)) {
+		if (basename(dirname($fp)) == 'config') {
+			$app_path = dirname(dirname($fp)).'/';
+			$override_path = $app_path.'.dev/override.php';
+			if (file_exists($override_path)) {
+				require_once $override_path;
+			}
+		}
 		require $fp;
 		break;
 	}
@@ -39,6 +46,7 @@ mkdir('./sql/', 0755, true);
 mkdir('./data/', 0755, true);
 $db_tables_like = $db_tables_like ?: '%';
 foreach((array)db()->get_2d('SHOW TABLES LIKE "'.DB_PREFIX.$db_tables_like.'"') as $table) {
+echo $table.PHP_EOL;
 	$tname = substr($table, strlen(DB_PREFIX));
 	$db_create_sql = current(db()->get_2d('SHOW CREATE TABLE '.$table));
 	$p1 = strpos($db_create_sql, '(') + 1;

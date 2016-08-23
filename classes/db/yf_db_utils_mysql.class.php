@@ -8,37 +8,37 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	public function _get_supported_field_types() {
-		return array(
+		return [
 			'bit','tinyint','smallint','mediumint','bigint','integer','int',
 			'real','float','double','decimal','numeric',
 			'varchar','char','tinytext','mediumtext','longtext','text',
 			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
 			'timestamp','datetime','time','date','year',
 			'enum','set',
-		);
+		];
 	}
 
 	/**
 	*/
 	public function _get_unsigned_field_types() {
-		return array(
+		return [
 			'bit','tinyint','smallint','mediumint','bigint','integer','int',
 			'real','double','float','decimal','numeric'
-		);
+		];
 	}
 
 	/**
 	*/
 	public function _get_supported_table_options() {
-		return array(
+		return [
 			'engine'	=> 'ENGINE',
 			'charset'	=> 'DEFAULT CHARSET',
-		);
+		];
 	}
 
 	/**
 	*/
-	public function truncate_database($db_name, $extra = array(), &$error = false) {
+	public function truncate_database($db_name, $extra = [], &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
@@ -85,7 +85,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	* Note: The 'SHOW PROCEDURE|FUNCTION CODE' feature is disabled; you need MySQL built with '--with-debug' to have it working (code:1289)
 	*/
-	public function list_procedures($db_name = '', $extra = array(), &$error = false) {
+	public function list_procedures($db_name = '', $extra = [], &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -93,9 +93,9 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-		$data = array();
+		$data = [];
 		foreach ((array)$this->db->get_all('SHOW PROCEDURE STATUS') as $a) {
-			$_a = array();
+			$_a = [];
 			foreach ((array)$a as $k => $v) {
 				$_a[strtolower($k)] = $v;
 			}
@@ -108,7 +108,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function procedure_exists($name, $extra = array(), &$error = false) {
+	public function procedure_exists($name, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -122,7 +122,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function procedure_info($name, $extra = array(), &$error = false) {
+	public function procedure_info($name, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -136,7 +136,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function drop_procedure($name, $extra = array(), &$error = false) {
+	public function drop_procedure($name, $extra = [], &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -148,7 +148,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-procedure.html
 	*/
-	public function create_procedure($name, $sql_body, $sql_params = '', $extra = array(), &$error = false) {
+	public function create_procedure($name, $sql_body, $sql_params = '', $extra = [], &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -162,10 +162,10 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	* Note: // The 'SHOW PROCEDURE|FUNCTION CODE' feature is disabled; you need MySQL built with '--with-debug' to have it working (code:1289)
 	*/
-	public function list_functions($extra = array(), &$error = false) {
-		$data = array();
+	public function list_functions($extra = [], &$error = false) {
+		$data = [];
 		foreach ((array)$this->db->get_all('SHOW FUNCTION STATUS') as $a) {
-			$_a = array();
+			$_a = [];
 			foreach ((array)$a as $k => $v) {
 				$_a[strtolower($k)] = $v;
 			}
@@ -178,7 +178,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function function_exists($name, $extra = array(), &$error = false) {
+	public function function_exists($name, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -192,7 +192,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function function_info($name, $extra = array(), &$error = false) {
+	public function function_info($name, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -206,7 +206,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function drop_function($name, $extra = array(), &$error = false) {
+	public function drop_function($name, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -228,7 +228,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-function.html
 	*/
-	public function create_function($name, $sql_body, $sql_returns_type, $sql_params = '', $extra = array(), &$error = false) {
+	public function create_function($name, $sql_body, $sql_returns_type, $sql_params = '', $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -252,7 +252,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_events($db_name = '', $extra = array(), &$error = false) {
+	public function list_events($db_name = '', $extra = [], &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -260,10 +260,10 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-		$events = array();
+		$events = [];
 		foreach ((array)$this->db->get_all('SHOW EVENTS FROM '.$this->_escape_database_name($db_name)) as $a) {
 			$name = $a['Name'];
-			$events[$name] = array(
+			$events[$name] = [
 				'name'			=> $name,
 				'db'			=> $a['Db'],
 				'definer'		=> $a['definer'],
@@ -276,14 +276,14 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 				'ends'			=> $a['Ends'],
 				'status'		=> $a['Status'],
 				'originator'	=> $a['Originator'],
-			);
+			];
 		}
 		return $events;
 	}
 
 	/**
 	*/
-	public function event_exists($name, $extra = array(), &$error = false) {
+	public function event_exists($name, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -304,7 +304,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function event_info($name, $extra = array(), &$error = false) {
+	public function event_info($name, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -325,7 +325,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function drop_event($name, $extra = array(), &$error = false) {
+	public function drop_event($name, $extra = [], &$error = false) {
 		if (!strlen($name)) {
 			$error = 'event name is empty';
 			return false;
@@ -338,7 +338,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	* See: https://dev.mysql.com/doc/refman/5.6/en/create-event.html
 	* Example: CREATE EVENT e_totals  ON SCHEDULE AT '2006-02-10 23:59:00'  DO INSERT INTO test.totals VALUES (NOW());
 	*/
-	public function create_event($name, $event_shedule, $event_body, $extra = array(), &$error = false) {
+	public function create_event($name, $event_shedule, $event_body, $extra = [], &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -361,11 +361,11 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'event body is empty';
 			return false;
 		}
-		$supported_event_intervals = array(
+		$supported_event_intervals = [
 			'YEAR', 'QUARTER', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 
 			'WEEK', 'SECOND', 'YEAR_MONTH', 'DAY_HOUR', 'DAY_MINUTE', 'DAY_SECOND', 
 			'HOUR_MINUTE', 'HOUR_SECOND', 'MINUTE_SECOND',
-		);
+		];
 // TODO: implement strict shedule contents checks
 		$sql = 'CREATE EVENT IF NOT EXISTS '.$this->_escape_table_name($db_name.'.'.$name).' '. PHP_EOL
 			. 'ON SCHEDULE '.$event_shedule. PHP_EOL
@@ -375,10 +375,10 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_users($extra = array(), &$error = false) {
-		$users = array();
+	public function list_users($extra = [], &$error = false) {
+		$users = [];
 		foreach ((array)$this->db->get_all('SELECT * FROM mysql.user') as $a) {
-			$user = array();
+			$user = [];
 			foreach ((array)$a as $k => $v) {
 				$user[strtolower($k)] = $v;
 			}
@@ -390,21 +390,21 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function user_exists($name, $extra = array(), &$error = false) {
+	public function user_exists($name, $extra = [], &$error = false) {
 		$users = $this->list_users($extra, $error);
 		return (bool)isset($users[$name]);
 	}
 
 	/**
 	*/
-	public function user_info($name, $extra = array(), &$error = false) {
+	public function user_info($name, $extra = [], &$error = false) {
 		$users = $this->list_users($extra, $error);
 		return isset($users[$name]) ? $users[$name] : false;
 	}
 
 	/**
 	*/
-	public function delete_user($name, $extra = array(), &$error = false) {
+	public function delete_user($name, $extra = [], &$error = false) {
 		list($host, $user) = explode('@', $name);
 		$sql = 'DELETE FROM mysql.user WHERE host='.$this->_escape_val($host).' AND user='.$this->_escape_val($user);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
@@ -412,7 +412,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function add_user($name, array $data, $extra = array(), &$error = false) {
+	public function add_user($name, array $data, $extra = [], &$error = false) {
 		list($host, $user) = explode('@', $name);
 // TODO: allow add only password in addition to host and user
 #		return $this->db->insert('mysql.user WHERE user='.$this->_escape_val($name));
@@ -426,7 +426,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function update_user($name, array $data, $extra = array(), &$error = false) {
+	public function update_user($name, array $data, $extra = [], &$error = false) {
 		list($host, $user) = explode('@', $name);
 // TODO: allow update only password
 #		return $this->db->update('mysql.user WHERE user='.$this->_escape_val($name));
@@ -440,7 +440,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function check_table($table, $extra = array(), &$error = false) {
+	public function check_table($table, $extra = [], &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -451,7 +451,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function optimize_table($table, $extra = array(), &$error = false) {
+	public function optimize_table($table, $extra = [], &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -462,7 +462,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function repair_table($table, $extra = array(), &$error = false) {
+	public function repair_table($table, $extra = [], &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -473,13 +473,13 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	public function list_collations($extra = array()) {
+	public function list_collations($extra = []) {
 		return $this->db->get_all('SHOW COLLATION');
 	}
 
 	/**
 	*/
-	public function list_charsets($extra = array()) {
+	public function list_charsets($extra = []) {
 		return $this->db->get_all('SHOW CHARACTER SET');
 	}
 }

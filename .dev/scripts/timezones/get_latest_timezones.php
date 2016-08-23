@@ -3,38 +3,36 @@
 
 require_once dirname(__DIR__).'/scripts_utils.php';
 
+// http://www.iana.org/time-zones
+// http://www.iana.org/time-zones/repository/releases/tzdata2016d.tar.gz
+// pecl install timezonedb
 function get_latest_timezones() {
-
-	$url = 'https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations';
-	$f2 = __DIR__.'/'.basename($url).'.table.html';
-	if (!file_exists($f2)) {
-		$html1 = file_get_contents($url);
-		$regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';
-		preg_match($regex1, $html1, $m1);
-		file_put_contents($f2, $m1[1]);
-	}
-	$html2 = file_get_contents($f2);
-	//#############
-	$tmp_tbl = html_table_to_array($html2);
-	//#############
-	$data = array();
-	foreach ($tmp_tbl as $v) {
-		$id = $v[0];
-		if (!$id) {
-			continue;
+	$timezones_list = function() {
+		$timezones = [];
+		$offsets = [];
+		$now = new DateTime();
+		$format_utc_offset = function($offset) {
+			$hours = intval($offset / 3600);
+			$minutes = abs(intval($offset % 3600 / 60));
+			return 'UTC' . ($offset ? sprintf('%+03d:%02d', $hours, $minutes) : '');
+		};
+		foreach (DateTimeZone::listIdentifiers() as $timezone) {
+			$now->setTimezone(new DateTimeZone($timezone));
+			$offsets[] = $offset = $now->getOffset();
+			$timezones[$timezone] = [
+				'name' => $timezone,
+				'offset' => $format_utc_offset($offset),
+				'seconds' => $offset,
+				'active' => 1,
+			];
 		}
-		$data[$id] = array(
-			'code'	=> $id,
-			'name'	=> $v[1],
-			'offset'=> $v[2],
-			'active'=> 0,
-		);
-	}
-	foreach (array('UTC','GMT','CET','EET','MSK') as $c) {
-		$data[$c]['active'] = 1;
-	}
+		array_multisort($offsets, $timezones);
+		return $timezones;
+	};
+	$data = $timezones_list();
+
 	$f4 = __DIR__.'/timezones.php';
-	file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
+	file_put_contents($f4, '<?'.'php'.PHP_EOL.'return '.var_export($data, 1).';');
 	print_r($data);
 
 }

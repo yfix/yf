@@ -1,13 +1,13 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => '//cdn.rawgit.com/yfix/FlipClock/master/compiled/flipclock.min.js',
-			'css' => '//cdn.rawgit.com/yfix/FlipClock/master/compiled/flipclock.css',
-		),
-	),
-	'require' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/yfix/FlipClock/master/compiled/flipclock.min.js',
+			'css' => '//rawgit.yfix.net/yfix/FlipClock/master/compiled/flipclock.css',
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

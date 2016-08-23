@@ -29,16 +29,16 @@ class yf_manage_faq {
 	function _show_for_lang($lang) {
 		$_GET['page'] = $lang; // Needed for html()->tree links
 		$all = $this->_get_items($lang);
-		$items = array();
+		$items = [];
 		foreach ($all as $a) {
-			$items[$a['id']] = array(
+			$items[$a['id']] = [
 				'parent_id'	=> $a['parent_id'],
 				'name'		=> _truncate($a['title'], 60, true, '...'),
 				'link'		=> url('/@object/edit/'.$a['id'].'/@page'),
 				'active'	=> $a['active'],
-			);
+			];
 		}
-		return html()->tree($items, array(
+		return html()->tree($items, [
 			'form_action'	=> url('/@object/save/@id/@page'),
 			'draggable' 	=> true,
 			'class_add' 	=> 'no_hide_controls',
@@ -48,20 +48,20 @@ class yf_manage_faq {
 			'no_expand'		=> true,
 			'opened_levels'	=> 10, // very deep
 			'show_controls' => function($id, $item) {
-				$form = form_item($item + array(
+				$form = form_item($item + [
 					'add_link'		=> url('/@object/add/'.$id.'/@page'),
 					'edit_link'		=> url('/@object/edit/'.$id.'/@page'),
 					'delete_link'	=> url('/@object/delete/'.$id.'/@page'),
 					'active_link'	=> url('/@object/active/'.$id.'/@page'),
-				));
-				return implode(PHP_EOL, array(
-					$form->tbl_link_add(array('hide_text' => 1, 'no_ajax' => 1)),
-					$form->tbl_link_edit(array('hide_text' => 1, 'no_ajax' => 1)),
-					$form->tbl_link_delete(array('hide_text' => 1, 'no_ajax' => 1)),
+				]);
+				return implode(PHP_EOL, [
+					$form->tbl_link_add(['hide_text' => 1, 'no_ajax' => 1]),
+					$form->tbl_link_edit(['hide_text' => 1, 'no_ajax' => 1]),
+					$form->tbl_link_delete(['hide_text' => 1, 'no_ajax' => 1]),
 					$form->tbl_link_active(),
-				));
+				]);
 			},
-		));
+		]);
 	}
 
 	/**
@@ -73,25 +73,25 @@ class yf_manage_faq {
 		}
 		$items = $this->_recursive_get_items($lang);
 		$old_info = $this->_auto_update_items_orders($lang);
-		$batch = array();
-		$old = array();
+		$batch = [];
+		$old = [];
 		foreach ((array)json_decode((string)$_POST['items'], $assoc = true) as $order_id => $info) {
 			$item_id = (int)$info['item_id'];
 			if (!$item_id || !isset($items[$item_id])) {
 				continue;
 			}
 			$parent_id = (int)$info['parent_id'];
-			$new_data = array(
+			$new_data = [
 				'id'		=> $item_id,
 				'order'		=> intval($order_id),
 				'parent_id'	=> intval($parent_id),
-			);
+			];
 			$old_info = $cur_items[$item_id];
-			$old_data = array(
+			$old_data = [
 				'id'		=> $item_id,
 				'order'		=> intval($old_info['order']),
 				'parent_id'	=> intval($old_info['parent_id']),
-			);
+			];
 			if ($new_data != $old_data) {
 				$batch[$item_id] = $new_data;
 				$old[$item_id] = $old_data;
@@ -117,18 +117,18 @@ class yf_manage_faq {
 	function add() {
 		$a['locale'] = substr($_GET['page'], 0, 2) ?: 'ru';
 		$a['parent_id'] = (int)$_GET['id'];
-		$parent = $a['parent_id'] ? (array)from(self::table)->whereid($a['parent_id'])->get() : array();
+		$parent = $a['parent_id'] ? (array)from(self::table)->whereid($a['parent_id'])->get() : [];
 		if (!$a['locale'] && $parent['locale']) {
 			$a['locale'] = $parent['locale'];
 		}
 		$a['back_link'] = url('/@object');
 		$_this = $this;
 		return form((array)$_POST + (array)$a)
-			->validate(array(
+			->validate([
 				'title' => 'trim|required',
 				'text' => 'trim',
-			))
-			->db_insert_if_ok(self::table, array('title','text','parent_id','active','locale'), array('add_date' => time(), 'author_id' => main()->ADMIN_ID))
+			])
+			->db_insert_if_ok(self::table, ['title','text','parent_id','active','locale'], ['add_date' => time(), 'author_id' => main()->ADMIN_ID])
 			->on_after_update(function() use ($_this) {
 				$id = db()->insert_id();
 				module_safe('manage_revisions')->add($_this::table, $id, 'add');
@@ -136,9 +136,9 @@ class yf_manage_faq {
 			})
 			->hidden('locale')
 			->info_lang('locale')
-			->select_box('parent_id', $this->_get_parents_for_select($a['locale']), array('desc' => t('Parent item')))
+			->select_box('parent_id', $this->_get_parents_for_select($a['locale']), ['desc' => t('Parent item')])
 			->text('title')
-			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+			->textarea('text', ['id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => ['config' => _class('admin_methods')->_get_cke_config()]])
 			->active_box()
 			->save_and_back()
 		;
@@ -155,8 +155,8 @@ class yf_manage_faq {
 			return _404();
 		}
 		// Prevent execution of template tags when editing page content
-		$exec_fix = array('{' => '&#123;', '}' => '&#125;');
-		$keys_to_fix = array('text');
+		$exec_fix = ['{' => '&#123;', '}' => '&#125;'];
+		$keys_to_fix = ['text'];
 		foreach ((array)$keys_to_fix as $k) {
 			if (false !== strpos($a[$k], '{') && false !== strpos($a[$k], '}')) {
 				$a[$k] = str_replace(array_keys($exec_fix), array_values($exec_fix), $a[$k]);
@@ -173,25 +173,25 @@ class yf_manage_faq {
 		$a['back_link'] = url('/@object');
 		$_this = $this;
 		return form($a)
-			->validate(array(
+			->validate([
 				'title' => 'trim|required',
 				'text' => 'trim',
-			))
-			->update_if_ok(self::table, array('title','text','active','locale','parent_id'))
+			])
+			->update_if_ok(self::table, ['title','text','active','locale','parent_id'])
 			->on_before_update(function() use ($a, $_this) {
-				module_safe('manage_revisions')->add(array(
+				module_safe('manage_revisions')->add([
 					'object_name'	=> $_this::table,
 					'object_id'		=> $a['id'],
 					'old'			=> $a,
 					'new'			=> $_POST,
 					'action'		=> 'update',
-				));
+				]);
 			})
 			->on_after_update(function(){ js_redirect(url('/@object')); })
 			->info_lang('locale')
-			->select_box('parent_id', $this->_get_parents_for_select($a['locale'], $a['id']), array('desc' => t('Parent item')))
+			->select_box('parent_id', $this->_get_parents_for_select($a['locale'], $a['id']), ['desc' => t('Parent item')])
 			->text('title')
-			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+			->textarea('text', ['id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => ['config' => _class('admin_methods')->_get_cke_config()]])
 			->active_box()
 			->save_and_back()
 		;
@@ -203,12 +203,12 @@ class yf_manage_faq {
 		$id = (int)$_GET['id'];
 		if ($id) {
 			$a = from(self::table)->whereid($id)->get();
-			module_safe('manage_revisions')->add(array(
+			module_safe('manage_revisions')->add([
 				'object_name'	=> self::table,
 				'object_id'		=> $a['id'],
 				'old'			=> $a,
 				'action'		=> 'delete',
-			));
+			]);
 			db()->delete(self::table, $id);
 		}
 		if (is_ajax()) {
@@ -229,14 +229,14 @@ class yf_manage_faq {
 		if ($a) {
 			$n = $a;
 			$n['active'] = (int)!$a['active'];
-			module_safe('manage_revisions')->add(array(
+			module_safe('manage_revisions')->add([
 				'object_name'	=> self::table,
 				'object_id'		=> $a['id'],
 				'old'			=> $a,
 				'new'			=> $n,
 				'action'		=> 'active',
-			));
-			db()->update_safe(self::table, array('active' => (int)!$a['active']), $id);
+			]);
+			db()->update_safe(self::table, ['active' => (int)!$a['active']], $id);
 		}
 		if (is_ajax()) {
 			no_graphics(true);
@@ -254,16 +254,16 @@ class yf_manage_faq {
 		}
 		$items = $this->_recursive_get_items($lang);
 		$new_order = 1;
-		$batch = array();
+		$batch = [];
 		foreach ((array)$items as $item_id => $info) {
 			if (!$info) {
 				continue;
 			}
 			if ($info['order'] != $new_order) {
-				$batch[$item_id] = array(
+				$batch[$item_id] = [
 					'id'	=> $item_id,
 					'order' => $new_order,
-				);
+				];
 				$items[$item_id]['order'] = $new_order;
 			}
 			$new_order++;
@@ -277,7 +277,7 @@ class yf_manage_faq {
 	/**
 	*/
 	function _get_parents_for_select($lang, $skip_id = null) {
-		$data = array(0 => '-- TOP --');
+		$data = [0 => '-- TOP --'];
 		foreach ((array)$this->_recursive_get_items($lang) as $id => $info) {
 			if (empty($id)) {
 				continue;
@@ -293,9 +293,9 @@ class yf_manage_faq {
 	/**
 	*/
 	function _get_items($lang) {
-		$items = array();
+		$items = [];
 		foreach ((array)from(self::table)->where('locale', $lang)->order_by('order ASC')->all() as $id => $item) {
-			$items[$id] = $item + array('have_children' => 0);
+			$items[$id] = $item + ['have_children' => 0];
 		}
 		foreach ((array)$items as $id => $item) {
 			$parent_id = $item['parent_id'];
@@ -325,8 +325,8 @@ class yf_manage_faq {
 	/**
 	* Get and sort items ordered array (recursively)
 	*/
-	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
-		$children = array();
+	function _recursive_sort_items($items = [], $skip_item_id = 0, $parent_id = 0, $level = 0) {
+		$children = [];
 		foreach ((array)$items as $id => $info) {
 			$parent_id = $info['parent_id'];
 			if ($skip_item_id == $id) {
@@ -335,9 +335,9 @@ class yf_manage_faq {
 			$children[$parent_id][$id] = $id;
 		}
 		$ids = $this->_count_levels(0, $children);
-		$new_items = array();
+		$new_items = [];
 		foreach ((array)$ids as $id => $level) {
-			$new_items[$id] = $items[$id] + array('level' => $level);
+			$new_items[$id] = $items[$id] + ['level' => $level];
 		}		
 		return $new_items;
 	}
@@ -345,7 +345,7 @@ class yf_manage_faq {
 	/**
 	*/
 	function _count_levels($start_id = 0, &$children, $level = 0) {
-		$ids = array();
+		$ids = [];
 		foreach ((array)$children[$start_id] as $id => $_tmp) {
 			$ids[$id] = $level;
 			if (isset($children[$id])) {

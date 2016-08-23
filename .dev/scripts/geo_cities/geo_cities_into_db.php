@@ -7,13 +7,13 @@ $lang = 'ru';
 $table = DB_PREFIX. 'geo_cities';
 if ( ! db()->utils()->table_exists($table) || $force) {
 	db()->utils()->drop_table($table);
-	db()->utils()->create_table($table, array(), $error);
+	db()->utils()->create_table($table, [], $error);
 }
-$country_ids = array();
+$country_ids = [];
 foreach (db_geonames()->select('code','geoname_id')->from('geo_country')->get_2d() as $code => $id) {
 	$id && $country_ids[$code] = $id;
 }
-$region_ids = array();
+$region_ids = [];
 foreach (db_geonames()->select('code','geoname_id')->from('geo_admin1')->get_2d() as $code => $id) {
 	$id && $region_ids[$code] = $id;
 }
@@ -30,9 +30,9 @@ if ($lang) {
 		ORDER BY g.country, a.name COLLATE utf8_unicode_ci
 	';
 }
-$to_update = array();
+$to_update = [];
 foreach (db_geonames()->get_all($sql) as $a) {
-	$to_update[$a['id']] = array(
+	$to_update[$a['id']] = [
 		'id'			=> $a['id'],
 		'country'		=> $a['country'],
 		'name'			=> $a['name'],
@@ -41,12 +41,12 @@ foreach (db_geonames()->get_all($sql) as $a) {
 		'lat'			=> todecimal($a['latitude'], 6),
 		'lon'			=> todecimal($a['longitude'], 6),
 		'region_id'		=> $region_ids[$a['country'].'.'.$a['admin1']],
-	);
+	];
 }
 db()->replace_safe($table, $to_update);
 
 db()->query('DELETE FROM '.$table.' WHERE country != "ua"') or print_r(db()->error());
-db()->update($table, array('active' => 1), 'country = "ua"');
+db()->update($table, ['active' => 1], 'country = "ua"');
 
 echo 'Trying to get 2 first records: '.PHP_EOL;
 print_r(db()->get_all('SELECT * FROM '.$table.' LIMIT 2'));

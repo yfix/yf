@@ -9,7 +9,7 @@
 */
 class yf_diff {
 
-	public $diff_types = array();
+	public $diff_types = [];
 
 	public $module_path = '';
 
@@ -20,12 +20,12 @@ class yf_diff {
 #		$this->module_path = YF_PATH.'libs/php-diff/lib/';
 		require_php_lib('php_diff');
 
-		$this->diff_types = array(
+		$this->diff_types = [
 			'side_by_side' => 'SideBySide',
 			'inline'       => 'Inline',
 			'unified'      => 'Unified',
 			'context'      => 'Context'
-		);
+		];
 	}
 
 	/**
@@ -39,12 +39,12 @@ class yf_diff {
 #		require_once $this->module_path.'Diff.php';
 
 		// Options for generating the diff
-		$options = array(
+		$options = [
 			//'context' => 300,
 			//'ignoreNewLines' => true,
 			//'ignoreWhitespace' => true,
 			//'ignoreCase' => true,
-		);
+		];
 
 		//Prepare content	
 		$str1 = explode("\n", $str1);

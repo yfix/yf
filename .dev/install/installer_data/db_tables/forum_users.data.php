@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'status' => 'a',
     'name' => '',
@@ -32,5 +32,5 @@ return array (
     'topics_per_page' => '0',
     'dst_status' => '0',
     'language' => '0',
-  ),
-);
+  ],
+];

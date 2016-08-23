@@ -3,7 +3,7 @@
 require_once __DIR__.'/tpl__setup.php';
 
 class tpl_driver_smarty_test extends tpl_abstract {
-	public static $driver_bak = array();
+	public static $driver_bak = [];
 #	protected function setUp() {
 #		if (defined('HHVM_VERSION')) {
 #			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
@@ -28,22 +28,22 @@ class tpl_driver_smarty_test extends tpl_abstract {
 		$this->assertEquals('Hello world', self::_tpl( 'Hello world' ));
 	}
 	public function test_condition() {
-		$this->assertEquals('GOOD', self::_tpl( '{if $key1 eq "val1"}GOOD{/if}', array('key1' => 'val1') ));
+		$this->assertEquals('GOOD', self::_tpl( '{if $key1 eq "val1"}GOOD{/if}', ['key1' => 'val1'] ));
 	}
 	public function test_complex() {
-		$data = array(
+		$data = [
 			'a_variable' => 'var_value',
-			'navigation' => array(
-				array(
+			'navigation' => [
+				[
 					'href'		=> 'http://yfix.net/',
 					'caption'	=> 'Yf website',
-				),
-				array(
+				],
+				[
 					'href'		=> 'http://google.com/',
 					'caption'	=> 'Google',
-				),
-			),
-		);
+				],
+			],
+		];
 		$tpl_string = 
 '<!DOCTYPE html>
 <html>

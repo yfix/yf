@@ -5,28 +5,28 @@
 */
 class yf_log_user_auth_fails {
 
-	private $_reasons = array(
+	private $_reasons = [
 		'w' => 'Wrong login',
 		'b' => 'Blocked',
-	);
+	];
 
 	/**
 	*/
 	function show () {
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$default_filter = array(
+		$default_filter = [
 			'order_by' => 'time',
 			'order_direction' => 'desc',
-		);
+		];
 		$sql = 'SELECT * FROM '.db('log_auth_fails');
-		return table($sql, array(
+		return table($sql, [
 				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
-				'filter_params' => array(
+				'filter_params' => [
 					'name'	=> 'like',
-				),
-			))
-			->text('reason', array('data' => $this->_reasons))
-			->date('time', array('format' => 'full', 'nowrap' => 1))
+				],
+			])
+			->text('reason', ['data' => $this->_reasons])
+			->date('time', ['format' => 'full', 'nowrap' => 1])
 			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
 			->text('login')
 			->text('pswd')
@@ -52,26 +52,26 @@ class yf_log_user_auth_fails {
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
+		if (!in_array($_GET['action'], ['show'])) {
 			return false;
 		}
-		$order_fields = array();
+		$order_fields = [];
 		foreach (explode('|', 'login|time|ip|user_agent|referer') as $f) {
 			$order_fields[$f] = $f;
 		}
-		return form($r, array(
+		return form($r, [
 				'filter' => true,
-			))
+			])
 			->text('login')
 			->text('ip')
-			->select_box('reason', $this->_reasons, array('show_text' => 1))
-			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->select_box('reason', $this->_reasons, ['show_text' => 1])
+			->select_box('order_by', $order_fields, ['show_text' => 1])
 			->order_box()
 			->save_and_clear();
 		;
 	}
 
-	function _hook_widget__user_auth_fails ($params = array()) {
+	function _hook_widget__user_auth_fails ($params = []) {
 // TODO
 	}
 }

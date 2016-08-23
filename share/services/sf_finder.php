@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/yfix/Finder.git' => 'sf_finder/'),
-	'autoload_config' => array('sf_finder/' => 'Symfony\Component\Finder'),
+$config = [
+	'git_urls' => ['https://github.com/yfix/Finder.git' => 'sf_finder/'],
+	'autoload_config' => ['sf_finder/' => 'Symfony\Component\Finder'],
 	'example' => function() {
 		$finder = new \Symfony\Component\Finder\Finder();
 		$iterator = $finder
@@ -18,5 +18,5 @@ $config = array(
 	    	print $file->getRealpath(). PHP_EOL;
 		}
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

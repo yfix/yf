@@ -24,7 +24,7 @@ class yf_tpl_driver_fenom {
 
 	/**
 	*/
-	function parse($name, $replace = array(), $params = array()) {
+	function parse($name, $replace = [], $params = []) {
 		if ($params['string']) {
 			$tpl = $this->fenom->compileCode($params['string'], $name);
 			return $tpl->fetch($replace);

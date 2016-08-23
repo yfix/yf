@@ -29,11 +29,11 @@ class yf_login_form {
 	/**
 	*/
 	function _admin_login_form() {
-		return form(array('form_action' => './?task=login'), array('no_label' => 1, 'class' => 'form-horizontal col-md-4 col-md-offset-3 form-no-label'))
-			->validate(array('login' => 'trim|required', 'password' => 'trim|required'))
-			->login(array('class' => 'input-medium'))
-			->password(array('class' => 'input-medium'))
-			->submit(array('value' => 'Enter'))
+		return form(['form_action' => './?task=login'], ['no_label' => 1, 'class' => 'form-horizontal col-md-4 col-md-offset-3 form-no-label'])
+			->validate(['login' => 'trim|required', 'password' => 'trim|required'])
+			->login(['class' => 'input-medium'])
+			->password(['class' => 'input-medium'])
+			->submit(['value' => 'Enter'])
 		;
 	}
 
@@ -43,21 +43,21 @@ class yf_login_form {
 		if (conf('_login_form_displayed')) {
 			return '';
 		}
-		return form(array('form_action' => './?task=login'), array(
+		return form(['form_action' => './?task=login'], [
 				'class'		=> 'form-horizontal form-condensed form-no-labels col-md-10',
 				'no_label'	=> 1,
 				'hide_empty' => 1,
-			))
-			->validate(array(
+			])
+			->validate([
 				'__form_id__' => 'login_small_form',
 				$this->LOGIN_FIELD => 'trim|required',
 				'password' => 'trim|required',
-			))
-			->login($this->LOGIN_FIELD, '', array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
-			->password(array('class' => 'input-medium'))
+			])
+			->login($this->LOGIN_FIELD, '', ['class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'])
+			->password(['class' => 'input-medium'])
 			->check_box('remember_me')
-			->container($this->oauth(array('only_icons' => 1)), array('wide' => 1))
-			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
+			->container($this->oauth(['only_icons' => 1]), ['wide' => 1])
+			->submit(['value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'])
 		;
 	}
 
@@ -93,23 +93,23 @@ class yf_login_form {
 		// To prevent multiple login forms displayed on one page
 		conf('_login_form_displayed', true);
 
-		return form(array('form_action' => './?task=login'), array(
+		return form(['form_action' => './?task=login'], [
 				'class' => 'form-horizontal',
 				'legend' => 'Member Login',
 				'hide_empty' => 1,
-			))
-			->validate(array(
+			])
+			->validate([
 				'__form_id__' => 'login_full_form',
 				$this->LOGIN_FIELD => 'trim|required',
 				'password' => 'trim|required',
-			))
-			->login($this->LOGIN_FIELD, '', array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
-			->password(array('class' => 'input-medium'))
-			->check_box('remember_me', '', array('no_label' => 1))
-			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
-			->container($this->oauth(array('only_icons' => 1)), array('wide' => 0))
-			->link('Retrieve lost password', './?object=get_pswd', array('class' => 'btn btn-mini btn-xs'))
-			->hidden('action', null, array('value' => 'login'))
+			])
+			->login($this->LOGIN_FIELD, '', ['class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'])
+			->password(['class' => 'input-medium'])
+			->check_box('remember_me', '', ['no_label' => 1])
+			->submit(['value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'])
+			->container($this->oauth(['only_icons' => 1]), ['wide' => 0])
+			->link('Retrieve lost password', './?object=get_pswd', ['class' => 'btn btn-mini btn-xs'])
+			->hidden('action', null, ['value' => 'login'])
 		;
 	}
 
@@ -125,16 +125,16 @@ class yf_login_form {
 	* Account Inactive
 	*/
 	function account_inactive () {
-		$replace = array(
+		$replace = [
 			'login_form_url'	=> process_url('./?object=login_form'),
-		);
+		];
 		return tpl()->parse(__CLASS__.'/account_inactive', $replace);
 	}
 
 	/**
 	* Endpoint for oauth logins
 	*/
-	function oauth ($params = array()) {
+	function oauth ($params = []) {
 		if (!isset($params['only_icons'])) {
 			$params['only_icons'] = 1;
 		}
@@ -146,14 +146,14 @@ class yf_login_form {
 			}
 		}
 #		$allowed_objects = array('login','login_form','register','user_profile','profile')
-		$allowed_objects = array('login_form', 'user_profile', 'profile');
+		$allowed_objects = ['login_form', 'user_profile', 'profile'];
 		$def_object = 'login_form';
 		$url_object = in_array($_GET['object'], $allowed_objects) ? $_GET['object'] : 'login_form';
 		$url_action = __FUNCTION__;
 		if (in_array($_GET['object'], $allowed_objects) && $_GET['id'] && preg_match('/^[a-z0-9_-]+$/ims', $_GET['id'])) {
 			return _class('oauth')->login($_GET['id']);
 		}
-		$body = array();
+		$body = [];
 		foreach ((array)$providers as $name => $settings) {
 			if ($name[0] == '_') {
 				continue;

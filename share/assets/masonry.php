@@ -1,12 +1,12 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => '//cdn.rawgit.com/desandro/masonry/master/dist/masonry.pkgd.min.js',
-		),
-	),
-	'require' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/desandro/masonry/master/dist/masonry.pkgd.min.js',
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

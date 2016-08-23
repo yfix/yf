@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'id2' => '1',
     'user_id' => '1',
@@ -19,9 +19,9 @@ return array (
     'add_date' => '1207235934',
     'active' => '1',
     'allow_tagging' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'id2' => '1',
     'user_id' => '1',
@@ -39,9 +39,9 @@ return array (
     'add_date' => '1207560946',
     'active' => '1',
     'allow_tagging' => '0',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'id2' => '1',
     'user_id' => '5',
@@ -59,5 +59,5 @@ return array (
     'add_date' => '1207908744',
     'active' => '1',
     'allow_tagging' => '0',
-  ),
-);
+  ],
+];

@@ -20,7 +20,7 @@ class yf_console_core_generate extends Command {
 		require_once $yf_paths['db_setup_path'];
 		init_yf();
 
-		$params = array();
+		$params = [];
 		// Parse arguments like that: k1=v1 k2=v2 into array('k1' => 'v1', 'k2' => 'v2')
 		foreach ((array)$input->getArgument('params') as $p) {
 			list($k, $v) = explode('=', trim($p));

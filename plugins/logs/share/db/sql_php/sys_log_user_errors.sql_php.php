@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'error_level' => array(
+		],
+		'error_level' => [
 			'name' => 'error_level',
 			'type' => 'smallint',
 			'length' => 5,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'error_text' => array(
+		],
+		'error_text' => [
 			'name' => 'error_text',
 			'type' => 'text',
 			'length' => NULL,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'source_file' => array(
+		],
+		'source_file' => [
 			'name' => 'source_file',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'source_line' => array(
+		],
+		'source_line' => [
 			'name' => 'source_line',
 			'type' => 'smallint',
 			'length' => 5,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'env_data' => array(
+		],
+		'env_data' => [
 			'name' => 'env_data',
 			'type' => 'text',
 			'length' => NULL,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_id' => array(
+		],
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 10,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_group' => array(
+		],
+		'user_group' => [
 			'name' => 'user_group',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'is_admin' => array(
+		],
+		'is_admin' => [
 			'name' => 'is_admin',
 			'type' => 'enum',
 			'length' => NULL,
@@ -134,12 +134,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-		'site_id' => array(
+			],
+		],
+		'site_id' => [
 			'name' => 'site_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -153,8 +153,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'server_id' => array(
+		],
+		'server_id' => [
 			'name' => 'server_id',
 			'type' => 'tinyint',
 			'length' => 3,
@@ -168,8 +168,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'date' => array(
+		],
+		'date' => [
 			'name' => 'date',
 			'type' => 'int',
 			'length' => 10,
@@ -183,8 +183,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ip' => array(
+		],
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'varchar',
 			'length' => 16,
@@ -198,8 +198,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'query_string' => array(
+		],
+		'query_string' => [
 			'name' => 'query_string',
 			'type' => 'varchar',
 			'length' => 255,
@@ -213,8 +213,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'request_uri' => array(
+		],
+		'request_uri' => [
 			'name' => 'request_uri',
 			'type' => 'varchar',
 			'length' => 255,
@@ -228,8 +228,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_agent' => array(
+		],
+		'user_agent' => [
 			'name' => 'user_agent',
 			'type' => 'varchar',
 			'length' => 255,
@@ -243,8 +243,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'referer' => array(
+		],
+		'referer' => [
 			'name' => 'referer',
 			'type' => 'varchar',
 			'length' => 255,
@@ -258,8 +258,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object' => array(
+		],
+		'object' => [
 			'name' => 'object',
 			'type' => 'varchar',
 			'length' => 255,
@@ -273,8 +273,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'action' => array(
+		],
+		'action' => [
 			'name' => 'action',
 			'type' => 'varchar',
 			'length' => 255,
@@ -288,33 +288,33 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'error_level' => array(
+			],
+		],
+		'error_level' => [
 			'name' => 'error_level',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'error_level' => 'error_level',
-			),
-		),
-		'date' => array(
+			],
+		],
+		'date' => [
 			'name' => 'date',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'date' => 'date',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

@@ -3,7 +3,7 @@
 ini_set('display_errors', 'off');
 error_reporting(0);
 
-$required = array(
+$required = [
 #	'memcached',
 	'nginx',
 #	'apache2',
@@ -13,7 +13,7 @@ $required = array(
 	'memcached_connect',
 #	'sphinxsearch_connect',
 	'mysqld_connect',
-);
+];
 $sphinxsearch_host = '127.0.0.1:3308';
 $mysql_user = 'root';
 $mysql_pswd = '123456';

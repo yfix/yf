@@ -5,7 +5,7 @@ require_php_lib('jquery-file-upload');
 class yf_form2_file_handler extends UploadHandler {
 
     function process($options = null, $initialize = true, $error_messages = null) {
-        $this->options = array(
+        $this->options = [
             'upload_dir' => INCLUDE_PATH.'uploads/'.$_GET['object'].'/',
             'upload_url' => WEB_PATH.'uploads/'.$_GET['object'].'/',
             'mkdir_mode' => 0755,
@@ -14,16 +14,16 @@ class yf_form2_file_handler extends UploadHandler {
             // DELETE requests. This is a parameter sent to the client:
             'access_control_allow_origin' => '*',
             'access_control_allow_credentials' => false,
-            'access_control_allow_methods' => array(
+            'access_control_allow_methods' => [
                 'HEAD',
                 'GET',
                 'POST'
-            ),
-            'access_control_allow_headers' => array(
+            ],
+            'access_control_allow_headers' => [
                 'Content-Type',
                 'Content-Range',
                 'Content-Disposition'
-            ),
+            ],
             // Defines which files can be displayed inline when downloaded:
             'inline_file_types' => '/\.(gif|jpe?g|png)$/i',
             // Defines which files (based on their names) are accepted for upload:
@@ -55,15 +55,15 @@ class yf_form2_file_handler extends UploadHandler {
             // Command or path for to the ImageMagick identify binary:
             'identify_bin' => 'identify',
 			
-			'versions' => array(
+			'versions' => [
 				
-			),
-            'image_versions' => array(
+			],
+            'image_versions' => [
                 // The empty image version key defines options for the original image:
-                '' => array(
+                '' => [
                     // Automatically rotate images based on EXIF meta data:
                     'auto_orient' => true
-                ),
+                ],
                 // Uncomment the following to create medium sized images:
                 /*
                 'medium' => array(
@@ -80,8 +80,8 @@ class yf_form2_file_handler extends UploadHandler {
                     'max_height' => 80
                 )
 				*/
-            )
-        );
+            ]
+        ];
         if ($options) {
             $this->options = $options + $this->options;
         }

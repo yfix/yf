@@ -4,11 +4,11 @@ class yf_form2_validate {
 
 	/**
 	*/
-	function _input_assign_params_from_validate($extra = array(), $form) {
+	function _input_assign_params_from_validate($extra = [], $form) {
 		$name = $extra['name'];
 		$is_html_array = (false !== strpos($name, '['));
 		if ($is_html_array) {
-			$name = str_replace(array('[',']'), array('.',''), trim($name,']['));
+			$name = str_replace(['[',']'], ['.',''], trim($name,']['));
 		}
 		$vr = &$form->_validate_rules_names[$name];
 /*
@@ -61,13 +61,13 @@ class yf_form2_validate {
 			$extra['required'] = 1;
 			$extra['class_add_form_group'] = trim($extra['class_add_form_group'].' '.$form->CLASS_REQUIRED);
 		}
-		foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
+		foreach (['ajax_is_unique','ajax_is_unique_without','ajax_exists'] as $rule) {
 			$_rule = str_replace('ajax_', '', $rule);
 			if (isset($vr[$rule])) {
 				$extra['data-ajax-validate'][$_rule] = $vr[$rule];
 			}
 		}
-		foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
+		foreach (['ajax_is_unique','ajax_is_unique_without','ajax_exists'] as $rule) {
 			$_rule = str_replace('ajax_', '', $rule);
 			if (isset($vr[$rule])) {
 				$extra['data-ajax-validate'][$_rule] = $vr[$rule];

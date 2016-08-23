@@ -4,7 +4,7 @@ class yf_shop__order_pay_authorize_net{
 	/**
 	* Order payment method by authorize.net
 	*/
-	function _order_pay_authorize_net($params = array()) {
+	function _order_pay_authorize_net($params = []) {
 		$order_info = $params["order_info"];
 		$params		= $params["params"];
 
@@ -49,7 +49,7 @@ class yf_shop__order_pay_authorize_net{
 		}
 
 		// Required authorise.net fields
-		$_fields_and_values = array(
+		$_fields_and_values = [
 			"x_login"						=> substr($login_id, 0, 20),
 			"x_amount"					=> substr($amount, 0, 15),
 			"x_description"			=> substr($description, 0, 255),
@@ -70,15 +70,15 @@ class yf_shop__order_pay_authorize_net{
 			//"x_receipt_link_method"	=> "LINK",
 			//"x_receipt_link_text"	=> "Return to our online store",
 			//"x_receipt_link_URL"	=> process_url("./?object=shop"),
-		);
+		];
 		// Test mode only
 		if ($TEST_MODE) {
-			$_fields_and_values = my_array_merge($_fields_and_values, array(
+			$_fields_and_values = my_array_merge($_fields_and_values, [
 				"x_card_num"	=> "370000000000002",
 				"x_exp_date"		=> "1220",
-			));
+			]);
 		}
-		$_order_fields_values = array(
+		$_order_fields_values = [
 			"x_cust_id"				=> substr($order_info["user_id"], 0, 20),
 			"x_customer_ip"			=> substr($_SERVER["REMOTE_ADDR"], 0, 20),
 			"x_card_num"			=> substr($order_info["card_num"], 0, 50),
@@ -102,19 +102,19 @@ class yf_shop__order_pay_authorize_net{
 			"x_ship_to_zip"			=> substr($order_info["s_zip_code"], 0, 20),
 			"x_ship_to_country"		=> substr($order_info["s_country"], 0, 60),
 			"x_ship_to_company"		=> substr($order_info["s_company"], 0, 50),
-		);
+		];
 
 		$_fields_and_values = my_array_merge($_fields_and_values, $_order_fields_values);
 
-		$_data_to_post = array();
+		$_data_to_post = [];
 		foreach ((array)$_fields_and_values as $k => $v) {
 			$_data_to_post[$k] = $k.'='. urlencode(str_replace('|', '', $v));
 		}
 		$_data_to_post = implode("&", $_data_to_post);
 
-		db()->UPDATE(db('shop_orders'), array(
+		db()->UPDATE(db('shop_orders'), [
 			"status"	=> "pending payment",
-		), "id=".intval($order_info['id']));
+		], "id=".intval($order_info['id']));
 
 		// Try to post data
 		$ch = curl_init();
@@ -152,9 +152,9 @@ class yf_shop__order_pay_authorize_net{
 
 		} else {
 
-			db()->UPDATE(db('shop_orders'), array(
+			db()->UPDATE(db('shop_orders'), [
 				"status"	=> "processed",
-			), "id=".intval($order_info['id']));
+			], "id=".intval($order_info['id']));
 		}
 
 		// Display order result

@@ -1,10 +1,10 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'require_services' => array('composer', 'jsonlint'),
-	'git_urls' => array('https://github.com/dflydev/dflydev-embedded-composer.git' => 'embedded-composer/'),
-	'autoload_config' => array('embedded-composer/src/Dflydev/EmbeddedComposer/' => 'Dflydev\EmbeddedComposer'),
+$config = [
+	'require_services' => ['composer', 'jsonlint'],
+	'git_urls' => ['https://github.com/dflydev/dflydev-embedded-composer.git' => 'embedded-composer/'],
+	'autoload_config' => ['embedded-composer/src/Dflydev/EmbeddedComposer/' => 'Dflydev\EmbeddedComposer'],
 	'example' => function() {
 		$classLoader = new Composer\Autoload\ClassLoader();
 		$embedded_composer_builder = new Dflydev\EmbeddedComposer\Core\EmbeddedComposerBuilder($classLoader, './');
@@ -16,5 +16,5 @@ $config = array(
 		$out = $embedded_composer->findPackage('dflydev/embedded-composer');
 		var_dump($out);
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

@@ -39,7 +39,7 @@ class yf_manage_advertising {
 		}
 		$info = db()->query_fetch('SELECT * FROM '.db('advertising').' WHERE id='.$_GET['id']);
 		$editor =  db()->query_fetch('SELECT * FROM '.db('sys_admin').' WHERE id='.$info['edit_user_id']);
-		$replace = array(
+		$replace = [
 			'form_action' 	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'ad'			=> $info['ad'],
 			'editor'		=> $editor['first_name'].' '.$editor['last_name'],
@@ -52,7 +52,7 @@ class yf_manage_advertising {
 			'active'		=> $info['active'],
 			'error_message'	=> _e(),
 			'back_link'		=> './?object='.$_GET['object'].'&action=listing',
-		);
+		];
 		return form2($replace)
 			->info('ad','Placeholder')
 			->info('editor','Last editor')
@@ -60,8 +60,8 @@ class yf_manage_advertising {
 			->text('customer','Customer')
 			->text('ad','Placeholder')
 			->textarea('html', 'Content')
-			->date_box('date_start','', array('desc' => 'Date start'))
-			->date_box('date_end','', array('desc' => 'Date end'))
+			->date_box('date_start','', ['desc' => 'Date start'])
+			->date_box('date_end','', ['desc' => 'Date end'])
 			->active_box()
 			->save_and_back();
 	}
@@ -73,14 +73,14 @@ class yf_manage_advertising {
 		// Do delete records
 		if (!empty($_GET['id'])) {
 			db()->query('DELETE FROM `'.db('advertising').'` WHERE `id`='.$_GET['id'].' LIMIT 1');
-			common()->admin_wall_add(array('advertising deleted: '.$_GET['id'], $_GET['id']));
+			common()->admin_wall_add(['advertising deleted: '.$_GET['id'], $_GET['id']]);
 		}
-		$log = array(
+		$log = [
 			'ads_id' 	=>	$_GET['id'],
 			'author_id'	=>	$_SESSION['admin_id'],
 			'action'	=> 'delete',
 			'date'		=> time(),
-		);
+		];
 		db()->INSERT('log_ads_changes', $log);
 		return js_redirect('./?object='.$_GET['object'].'&action=listing');
 	}
@@ -96,12 +96,12 @@ class yf_manage_advertising {
 		return table2($sql)
 			->text('id')
 			->text('ad')
-			->func('html', function($field, $params) { return _prepare_html($field); }, array('desc' => 'Content'))
+			->func('html', function($field, $params) { return _prepare_html($field); }, ['desc' => 'Content'])
 			->date('date_end')
 			->text('customer')
 			->func('edit_user_id', function($field, $params) { 
 				$author = db()->query_fetch('SELECT first_name, last_name FROM '.db('sys_admin').' WHERE id ='.$field);
-				return $author['first_name'].' '.$author['last_name'];}, array('desc' => 'Editor'))
+				return $author['first_name'].' '.$author['last_name'];}, ['desc' => 'Editor'])
 			->btn_active()
 			->btn_edit()
 			->btn_delete()
@@ -114,7 +114,7 @@ class yf_manage_advertising {
 	*/
 	function save(){
 		$_GET['id'] = intval($_GET['id']);
-		$update = array(
+		$update = [
 			'ad'			=> _es($_POST['ad']),
 			'customer'		=> _es($_POST['customer']),
 			'date_start'	=> strtotime($_POST['date_start']['month'].'/'.$_POST['date_start']['day'].'/'.$_POST['date_start']['year']),
@@ -123,7 +123,7 @@ class yf_manage_advertising {
 			'edit_user_id'	=> $_SESSION['admin_id'],
 			'edit_date'		=> time(),
 			'active'		=> intval($_POST['active']),
-		);
+		];
 		//Write update data into DB
 		if($_GET['id']){
 			db()->UPDATE('advertising', $update, 'id='.intval($_GET['id']));
@@ -132,14 +132,14 @@ class yf_manage_advertising {
 			db()->INSERT('advertising', $update);
 			$max_id = db()->query_fetch_row('SELECT MAX(id) FROM '.db('advertising'));
 		}
-		$log = array(
+		$log = [
 			'ads_id'		=>	$_GET['id'] ? $_GET['id'] : $max_id[0],
 			'author_id'		=>	$_SESSION['admin_id'],	
 			'date'			=> time(),
 			'action'		=> $_GET['id'] ? 'edit' : 'add',
-		);
+		];
 		db()->INSERT('log_ads_changes', $log);
-		common()->admin_wall_add(array('advertising updated: '.$_GET['id'], $_GET['id']));
+		common()->admin_wall_add(['advertising updated: '.$_GET['id'], $_GET['id']]);
 		// Return user back
 		return js_redirect('./?object='.$_GET['object'].'&action=listing&ad='.$_POST['ad']);
 	} 

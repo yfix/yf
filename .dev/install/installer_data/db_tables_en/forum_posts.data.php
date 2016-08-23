@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'parent' => '0',
     'forum' => '1',
@@ -52,9 +52,9 @@ Empty set (0.00sec)[/B]',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'id' => '2',
     'parent' => '0',
     'forum' => '1',
@@ -81,9 +81,9 @@ file?[/I]',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   3 => 
-  array (
+  [
     'id' => '3',
     'parent' => '0',
     'forum' => '1',
@@ -117,9 +117,9 @@ it! (and uninstall the previous version.)[/B]',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   4 => 
-  array (
+  [
     'id' => '4',
     'parent' => '0',
     'forum' => '1',
@@ -144,9 +144,9 @@ What will it be when I will have to manage and/or develop ... OpenGL ... Apache 
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   5 => 
-  array (
+  [
     'id' => '5',
     'parent' => '0',
     'forum' => '1',
@@ -171,9 +171,9 @@ If you don\'t learn something today; Then the day is wasted.[/U]',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   6 => 
-  array (
+  [
     'id' => '6',
     'parent' => '0',
     'forum' => '1',
@@ -203,9 +203,9 @@ _________________[/B][/I]',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   7 => 
-  array (
+  [
     'id' => '7',
     'parent' => '0',
     'forum' => '1',
@@ -237,9 +237,9 @@ One last thing. When I reboot I have to redo the config.',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   8 => 
-  array (
+  [
     'id' => '8',
     'parent' => '0',
     'forum' => '1',
@@ -264,9 +264,9 @@ Adam Williamson | Editor, Mandriva Community Newsletter | Mandriva Club Monkey |
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   9 => 
-  array (
+  [
     'id' => '9',
     'parent' => '0',
     'forum' => '1',
@@ -287,9 +287,9 @@ Adam Williamson | Editor, Mandriva Community Newsletter | Mandriva Club Monkey |
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   10 => 
-  array (
+  [
     'id' => '10',
     'parent' => '0',
     'forum' => '1',
@@ -310,9 +310,9 @@ Adam Williamson | Editor, Mandriva Community Newsletter | Mandriva Club Monkey |
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   11 => 
-  array (
+  [
     'id' => '11',
     'parent' => '0',
     'forum' => '1',
@@ -333,9 +333,9 @@ Adam Williamson | Editor, Mandriva Community Newsletter | Mandriva Club Monkey |
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   12 => 
-  array (
+  [
     'id' => '12',
     'parent' => '0',
     'forum' => '1',
@@ -360,9 +360,9 @@ REGSVR32 SHMEDIA.DLL',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   13 => 
-  array (
+  [
     'id' => '13',
     'parent' => '0',
     'forum' => '2',
@@ -387,9 +387,9 @@ I\'ve never had any problems using the standalone version (8.1 or 8.2) and this 
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   14 => 
-  array (
+  [
     'id' => '14',
     'parent' => '0',
     'forum' => '2',
@@ -415,9 +415,9 @@ Regards',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   15 => 
-  array (
+  [
     'id' => '15',
     'parent' => '0',
     'forum' => '2',
@@ -438,9 +438,9 @@ Regards',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   16 => 
-  array (
+  [
     'id' => '16',
     'parent' => '0',
     'forum' => '2',
@@ -464,9 +464,9 @@ Regards',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   17 => 
-  array (
+  [
     'id' => '17',
     'parent' => '0',
     'forum' => '2',
@@ -491,9 +491,9 @@ Thanks!',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   18 => 
-  array (
+  [
     'id' => '18',
     'parent' => '0',
     'forum' => '2',
@@ -527,9 +527,9 @@ Example from a (simplified) DITA rule:
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   19 => 
-  array (
+  [
     'id' => '19',
     'parent' => '0',
     'forum' => '2',
@@ -555,9 +555,9 @@ Thank you',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   20 => 
-  array (
+  [
     'id' => '20',
     'parent' => '0',
     'forum' => '2',
@@ -594,9 +594,9 @@ So far I have found these to be useful:
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
+  ],
   21 => 
-  array (
+  [
     'id' => '21',
     'parent' => '0',
     'forum' => '2',
@@ -622,5 +622,5 @@ Regards',
     'poster_ip' => '192.168.1.25',
     'language' => '0',
     'activity' => '0',
-  ),
-);
+  ],
+];

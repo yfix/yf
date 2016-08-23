@@ -3,7 +3,7 @@
 require_once __DIR__.'/tpl__setup.php';
 
 class tpl_driver_fenom_test extends tpl_abstract {
-	public static $driver_bak = array();
+	public static $driver_bak = [];
 	public static function setUpBeforeClass() {
 		self::$driver_bak = tpl()->DRIVER_NAME;
 		tpl()->_set_default_driver('fenom');
@@ -18,19 +18,19 @@ class tpl_driver_fenom_test extends tpl_abstract {
 		$this->assertEquals('Hello world', self::_tpl( 'Hello world' ));
 	}
 	public function test_complex() {
-		$data = array(
+		$data = [
 			'a_variable' => 'var_value',
-			'navigation' => array(
-				array(
+			'navigation' => [
+				[
 					'href'		=> 'http://yfix.net/',
 					'caption'	=> 'Yf website',
-				),
-				array(
+				],
+				[
 					'href'		=> 'http://google.com/',
 					'caption'	=> 'Google',
-				),
-			),
-		);
+				],
+			],
+		];
 		$tpl_string = 
 '<!DOCTYPE html>
 <html>

@@ -1,17 +1,17 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array(
-				'content' => '//cdn.rawgit.com/yfix/JavaScript-Templates/master/js/tmpl.min.js',
-				'params' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => [
+				'content' => '//rawgit.yfix.net/yfix/JavaScript-Templates/master/js/tmpl.min.js',
+				'params' => [
 //					'out_before' => 'blueimp-uploader',
-				),
-			),
-		),
-	),
-	'require' => array(
+				],
+			],
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

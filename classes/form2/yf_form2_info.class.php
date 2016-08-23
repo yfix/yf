@@ -6,14 +6,14 @@ class yf_form2_info {
 
 	/**
 	*/
-	function user_info($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function user_info($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		$name = 'user_name';
 		$user_id = $form->_replace['user_id'];
 
 		$db = ($form->_params['db'] ?: $extra['db']) ?: db();
 
 		$user_info = $db->get('SELECT login,email,phone,nick,id AS user_name FROM '.$db->_fix_table_name('user').' WHERE id='.intval($user_id));
-		$user_name = array();
+		$user_name = [];
 // TODO: add tpl param
 		if ($user_info) {
 			if (strlen($user_info['id'])) {
@@ -38,7 +38,7 @@ class yf_form2_info {
 
 	/**
 	*/
-	function admin_info($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function admin_info($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		$name = 'admin_name';
 		$user_id = $form->_replace['user_id'];
 
@@ -46,7 +46,7 @@ class yf_form2_info {
 
 		$user_info = $db->get('SELECT login,id AS user_name FROM '.$db->_fix_table_name('admin').' WHERE id='.intval($user_id));
 // TODO: add tpl param
-		$user_name = array();
+		$user_name = [];
 		if ($user_info) {
 			if (strlen($user_info['id'])) {
 				$user_name[] = $user_info['id'];

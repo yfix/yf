@@ -18,7 +18,7 @@ class yf_queue_driver_amqp extends yf_queue_driver {
 
 	/**
 	*/
-	function conf($params = array()) {
+	function conf($params = []) {
 		if (is_array($params) && !empty($params)) {
 			isset($params['host'])	&& $this->host	= $params['host'];
 			isset($params['port'])	&& $this->port	= $params['port'];
@@ -30,7 +30,7 @@ class yf_queue_driver_amqp extends yf_queue_driver {
 
 	/**
 	*/
-	function connect($params = array()) {
+	function connect($params = []) {
 		if (!$this->_connection) {
 			if ($params) {
 				$this->conf($params);
@@ -63,7 +63,7 @@ class yf_queue_driver_amqp extends yf_queue_driver {
 			echo $e->getMessage();
 			return false;
 		}
-		$prepared = new \PhpAmqpLib\Message\AMQPMessage(trim($what), array('delivery_mode' => 2));
+		$prepared = new \PhpAmqpLib\Message\AMQPMessage(trim($what), ['delivery_mode' => 2]);
 		$channel->basic_publish($prepared, '', $queue);
 
 		return true;
@@ -125,7 +125,7 @@ class yf_queue_driver_amqp extends yf_queue_driver {
 			return false;
 		}
 		$msg = true;
-		$all_msgs = array();
+		$all_msgs = [];
 		while($msg){
 			$msg = $channel->basic_get($queue);
 			$channel->basic_cancel($msg->delivery_info['delivery_tag']);

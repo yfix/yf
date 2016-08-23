@@ -2,6 +2,10 @@
 
 class yf_docs {
 
+	private $whats_new = [
+		'demo',
+	];
+
 	/**
 	* Catch missing method call
 	*/
@@ -39,7 +43,7 @@ class yf_docs {
 
 	/***/
 	public function show() {
-		$methods = array();
+		$methods = [];
 		foreach (get_class_methods($this) as $m) {
 			if ($m[0] === '_' || $m === __FUNCTION__) {
 				continue;
@@ -51,9 +55,9 @@ class yf_docs {
 			$func = in_array($id, $methods) ? $id : 'misc';
 			return $this->$func();
 		}
-		$a = array();
+		$a = [];
 		foreach ($methods as $m) {
-			$a[$m] = '<h4><a href="'.url('/@object/'.$m).'">'.ucfirst($m).'</a></h4>';
+			$a[$m] = '<h4><a href="'.url('/@object/'.$m).'">'. ucfirst($m). '</a>'. (in_array($m, $this->whats_new) ? ' <sup class="text-success"><small>NEW</small></sup>' : ''). '</h4>';
 		}
 		ksort($a);
 		return implode(PHP_EOL, $a);
@@ -66,7 +70,7 @@ class yf_docs {
 		if (preg_match('~^[a-z0-9_]+$~ims', $id)) {
 			$only_method = strtolower($id);
 		}
-		$methods = array();
+		$methods = [];
 		foreach(get_class_methods($obj) as $name) {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
@@ -87,18 +91,24 @@ class yf_docs {
 			$target_docs	= _class('core_api')->get_method_docs('html', $name);
 
 			$items[] = 
-				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
-					<h1><a href="'.url('/@object/@action/'.$name).'">'.$name.'</a>
-						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button> '
-						.($target_source['source'] ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("'.$action.'")-&gt;'.$name.'() source</button> ' : '')
-						._class('core_api')->get_github_link($action.'.'.$name)
-						.($target_docs ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">'.$action.'::'.$name.' docs</button> ' : '')
-					.'</h1>
-					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'._prepare_html($self_source['source']).'</code></pre></div> '
-					.($target_source['source'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['source'])).'</code></pre></div> ' : '')
-					.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'._class('html')->well(nl2br($target_docs)).'</div> ' : '')
-					.'<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$obj->$name().'</div>
-				</div>';
+				'<div id="head_'.$name.'" class="panel">
+	                <div class="panel-heading">
+						<h1 class="panel-title">
+							<a href="'.url('/@object/@action/'.$name).'">'.$name.'</a>
+							<div class="pull-right">
+								<button class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#func_self_source_'.$name.'"><i class="fa fa-file-text-o"></i> '.$name.'()</button> '
+								.($target_source['source'] ? ' <button class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#func_target_source_'.$name.'"><i class="fa fa-file-text-o"></i> _class("'.$action.'")-&gt;'.$name.'()</button> ' : '')
+								._class('core_api')->get_github_link($action.'.'.$name)
+								.($target_docs ? ' <button class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">'.$action.'::'.$name.' docs</button> ' : '')
+							.'</div>
+						</h1>
+					</div>
+					<div id="func_self_source_'.$name.'" class="panel-body collapse out"><pre class="prettyprint lang-php"><code>'._prepare_html($self_source['source']).'</code></pre></div> '
+					.($target_source['source'] ? '<div id="func_target_source_'.$name.'" class="panel-body collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['source'])).'</code></pre></div> ' : '')
+					.($target_docs ? '<div id="func_target_docs_'.$name.'" class="panel-body collapse out">'._class('html')->well(nl2br($target_docs)).'</div> ' : '')
+				.'</div>
+				<section class="page-contents" id="func_out_'.$name.'">'.$obj->$name().'</section>
+			';
 		}
 		return implode(PHP_EOL, $items);
 	}
@@ -257,18 +267,18 @@ class yf_docs {
 			}
 		}
 		$url = url('/@object');
-		$names = array();
+		$names = [];
 
 		$ext = '.class.php';
 		$ext_len = strlen($ext);
-		$globs = array(
+		$globs = [
 			'yf_dev_classes'	=> YF_PATH.'.dev/samples/classes/*'.$ext,
 			'yf_dev_form2'		=> YF_PATH.'.dev/samples/form2/*'.$ext,
 			'yf_dev_table2'		=> YF_PATH.'.dev/samples/table2/*'.$ext,
 #			'app'		=> APP_PATH.'modules/*'.$ext,
 #			'project'	=> PROJECT_PATH.'modules/*'.$ext,
-		);
-		$names = array();
+		];
+		$names = [];
 		foreach ($globs as $glob) {
 			foreach (glob($glob) as $cls) {
 				$cls = basename($cls);
@@ -279,7 +289,7 @@ class yf_docs {
 				$names[$name] = $name;
 			}
 		}
-		$links = array();
+		$links = [];
 		foreach ($names as $name) {
 			if (substr($name, 0, strlen('sample_')) === 'sample_') {
 				$name = substr($name, strlen('sample_'));
@@ -292,13 +302,18 @@ class yf_docs {
 			} else {
 				$url = '/@object/'. $name;
 			}
-			$links[url($url)] = t($name);
+			$links[url($url)] = t($name). (in_array($name, $this->whats_new) ? ' <sup class="text-success"><small>NEW</small></sup>' : '');
 		}
 		return html()->navlist($links);
 	}
 
 	/***/
 	public function _sample_navbar() {
-		return _class('form2_navbar', YF_PATH.'.dev/samples/form2/')->show($source = false);
+		return implode(PHP_EOL, [
+			form_item()->country_box(['selected' => 'US', 'renderer' => 'div_box']),
+			form_item()->language_box(['selected' => 'ru', 'renderer' => 'div_box']),
+			form_item()->currency_box(['selected' => 'UAH', 'renderer' => 'div_box']),
+			form_item()->timezone_box(['selected' => 'UTC', 'renderer' => 'div_box']),
+		]);
 	}
 }

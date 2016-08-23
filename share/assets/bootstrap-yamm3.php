@@ -1,15 +1,15 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'css' => '//cdn.rawgit.com/yfix/yamm3/master/yamm/yamm.css',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+return [
+	'versions' => [
+		'master' => [
+			'css' => '//rawgit.yfix.net/yfix/yamm3/master/yamm/yamm.css',
+		],
+	],
+	'require' => [
+		'asset' => [
 			'jquery',
 #			'bootstrap-theme',
-		),
-	),
-);
+		],
+	],
+];

@@ -4,30 +4,30 @@ class yf_manage_shop_coupons {
 	/**
 	*/
 	function _init() {
-        $this->_statuses = array(
+        $this->_statuses = [
             '0' => 'not used',
             '1' => 'used',
-        );
+        ];
 	}
 
 	/**
 	*/
 	function coupons() {
-		return table('SELECT * FROM '.db('shop_coupons'), array(
+		return table('SELECT * FROM '.db('shop_coupons'), [
 //				'filter' => $_SESSION[$_GET['object'].'__coupons'],
-			))
+			])
 			->text('code')
             ->user('user_id')
-            ->text('total_sum', array('nowrap' => 1))                
-            ->date('time_start', array('format' => 'full', 'nowrap' => 1))
-            ->date('time_end', array('format' => 'full', 'nowrap' => 1))
+            ->text('total_sum', ['nowrap' => 1])                
+            ->date('time_start', ['format' => 'full', 'nowrap' => 1])
+            ->date('time_end', ['format' => 'full', 'nowrap' => 1])
             ->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
             ->link('order_id', './?object=manage_shop&action=view_order&id=%d')
             ->link('status', '', $this->_statuses)
-			->btn_edit('', './?object='.main()->_get('object').'&action=coupon_edit&id=%d',array('no_ajax' => 1))
-			->btn_view('', './?object='.main()->_get('object').'&action=coupon_view&id=%d',array('no_ajax' => 1))
+			->btn_edit('', './?object='.main()->_get('object').'&action=coupon_edit&id=%d',['no_ajax' => 1])
+			->btn_view('', './?object='.main()->_get('object').'&action=coupon_view&id=%d',['no_ajax' => 1])
 			->btn_delete('', './?object='.main()->_get('object').'&action=coupon_delete&id=%d')
-			->footer_add('', './?object='.main()->_get('object').'&action=coupon_add',array('no_ajax' => 1)) 
+			->footer_add('', './?object='.main()->_get('object').'&action=coupon_add',['no_ajax' => 1]) 
 		;
 	}
 
@@ -41,7 +41,7 @@ class yf_manage_shop_coupons {
 		}
 		if (!empty($info['id'])) {
 			db()->query('DELETE FROM '.db('shop_coupons').' WHERE id='.intval($_GET['id']).' LIMIT 1');
-			common()->admin_wall_add(array('coupon deleted: '.$_GET['id'], $_GET['id']));
+			common()->admin_wall_add(['coupon deleted: '.$_GET['id'], $_GET['id']]);
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -65,7 +65,7 @@ class yf_manage_shop_coupons {
                 }
             }
 			if (!common()->_error_exists()) {
-				$sql_array = array(
+				$sql_array = [
 					'code'          => $this->_cleanup_code($_POST['code']),
 					'user_id'       => intval($_POST['user_id']),
 					'sum'           => intval($_POST['sum']),
@@ -74,26 +74,26 @@ class yf_manage_shop_coupons {
 					'order_id'      => intval($_POST['order_id']),
                     'time_start'    => strtotime($_POST['time_start']),
                     'time_end'      => strtotime($_POST['time_end']),
-				);
+				];
 				db()->insert(db('shop_coupons'), db()->es($sql_array));
-				common()->admin_wall_add(array('shop coupon added: '.$this->_cleanup_code($_POST['code']), db()->insert_id()));
+				common()->admin_wall_add(['shop coupon added: '.$this->_cleanup_code($_POST['code']), db()->insert_id()]);
     			return js_redirect('./?object='.main()->_get('object').'&action=coupons');            
 			}
 		}
 
-		$replace = array(
+		$replace = [
 			'form_action'		=> './?object='.main()->_get('object').'&action=coupon_add',
 			'back_url'			=> './?object='.main()->_get('object').'&action=coupons',
-		);
+		];
 		return form($replace)
 			->text('code')
             ->integer('user_id')
             ->integer('sum')                
             ->select_box('status', $this->_statuses)
-			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0))
+			->select_box('cat_id', module('manage_shop')->_cats_for_select, ['desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0])
             ->integer('order_id')
-            ->datetime_select('time_start',      null, array( 'with_time' => 1 ) )
-            ->datetime_select('time_end',        null, array( 'with_time' => 1 ) )
+            ->datetime_select('time_start',      null, [ 'with_time' => 1 ] )
+            ->datetime_select('time_end',        null, [ 'with_time' => 1 ] )
 			->save_and_back();
 	}
 
@@ -116,7 +116,7 @@ class yf_manage_shop_coupons {
                 }
             }
 			if (!common()->_error_exists()) {
-				$sql_array = array(
+				$sql_array = [
 					'code'          => $this->_cleanup_code($_POST['code']),
 					'user_id'       => intval($_POST['user_id']),
 					'sum'           => intval($_POST['sum']),
@@ -125,13 +125,13 @@ class yf_manage_shop_coupons {
 					'order_id'      => intval($_POST['order_id']),
                     'time_start'    => strtotime($_POST['time_start']),
                     'time_end'      => strtotime($_POST['time_end']),
-				);
+				];
 				db()->update('shop_coupons', db()->es($sql_array), 'id='.$_GET['id']); 
-				common()->admin_wall_add(array('shop coupon updated: '.$this->_cleanup_code($_POST['code']), $_GET['id']));
+				common()->admin_wall_add(['shop coupon updated: '.$this->_cleanup_code($_POST['code']), $_GET['id']]);
     			return js_redirect('./?object='.main()->_get('object').'&action=coupons');            
 			}
 		}
-		$replace = array(
+		$replace = [
 			'code'             => $coupon_info['code'],
 			'user_id'          => $coupon_info['user_id'],
 			'sum'              => $coupon_info['sum'],
@@ -142,16 +142,16 @@ class yf_manage_shop_coupons {
 			'time_end'         => date('d.m.Y I:s',$coupon_info['time_end']),
 			'form_action'      => './?object='.main()->_get('object').'&action=coupon_edit&id='.$coupon_info['id'],
 			'back_url'         => './?object='.main()->_get('object').'&action=coupons',
-		);
+		];
 		return form($replace)
 			->text('code')
             ->integer('user_id')
             ->integer('sum')                
             ->select_box('status', $this->_statuses)
-			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0))
+			->select_box('cat_id', module('manage_shop')->_cats_for_select, ['desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0])
             ->integer('order_id')
-            ->datetime_select('time_start',      null, array( 'with_time' => 1 ) )
-            ->datetime_select('time_end',        null, array( 'with_time' => 1 ) )
+            ->datetime_select('time_start',      null, [ 'with_time' => 1 ] )
+            ->datetime_select('time_end',        null, [ 'with_time' => 1 ] )
 			->save_and_back();
 	}
  
@@ -167,17 +167,17 @@ class yf_manage_shop_coupons {
         $cats = _class('cats')->_get_items_names_cached('shop_cats');
         $info['cat_id'] = $cats[$info['cat_id']];
         
-        $out = form2($info, array('dd_mode' => 1, 'big_labels' => true))
+        $out = form2($info, ['dd_mode' => 1, 'big_labels' => true])
 			->info('code')
             ->user_info('user_id')                
-            ->info_date('time_start', array('format' => 'full'))                
-            ->info_date('time_end', array('format' => 'full'))
+            ->info_date('time_start', ['format' => 'full'])                
+            ->info_date('time_end', ['format' => 'full'])
 			->info('sum')
 			->info('status')
             ->info('cat_id')
         ;
         $out .= table("SELECT * FROM ".db('shop_coupons_log')." WHERE `code`='".$info['code']."' ORDER BY `time` DESC")
-            ->date('time', array('format' => 'full', 'nowrap' => 1))
+            ->date('time', ['format' => 'full', 'nowrap' => 1])
 			->text('action')
 		;
 

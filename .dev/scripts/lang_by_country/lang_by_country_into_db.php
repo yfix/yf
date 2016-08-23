@@ -3,15 +3,15 @@
 
 require_once dirname(__DIR__).'/scripts_init.php';
 
-$data = array();
+$data = [];
 foreach((array)db()->select('code','languages')->from('countries')->get_2d() as $code => $langs) {
 	foreach (explode(',', $langs) as $lang) {
 		$lang = substr($lang, 0, 2);
 		if ($lang) {
-			$data[$code.'.'.$lang] = array(
+			$data[$code.'.'.$lang] = [
 				'lang'		=> $lang,
 				'country'	=> $code,
-			);
+			];
 		}
 	}
 }

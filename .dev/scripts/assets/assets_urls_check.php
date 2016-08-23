@@ -7,7 +7,7 @@ function get_url_size($url) {
 	if (substr($url, 0, 2) === '//') {
 		$url = 'http:'.$url;
 	}
-	return strlen(file_get_contents($url, false, stream_context_create(array('http' => array('timeout' => 5)))));
+	return strlen(file_get_contents($url, false, stream_context_create(['http' => ['timeout' => 5]])));
 }
 
 foreach ($data['urls'] as $url) {

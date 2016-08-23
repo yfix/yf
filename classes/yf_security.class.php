@@ -8,7 +8,7 @@ class yf_security {
 	/**
 	* List of sanitize filename strings
 	*/
-	public $filename_bad_chars = array(
+	public $filename_bad_chars = [
 		'../', '<!--', '-->', '<', '>',
 		"'", '"', '&', '$', '#',
 		'{', '}', '[', ']', '=',
@@ -25,7 +25,7 @@ class yf_security {
 		'%3f',		// ?
 		'%3b',		// ;
 		'%3d'		// =
-	);
+	];
 
 	/**
 	* Random Hash for protecting URLs.
@@ -33,30 +33,9 @@ class yf_security {
 	protected $_xss_hash =	'';
 
 	/**
-	* Random hash for Cross Site Request Forgery protection cookie
-	*/
-	protected $_csrf_hash =	'';
-
-	/**
-	* Expiration time for Cross Site Request Forgery protection cookie.
-	* Defaults to two hours (in seconds).
-	*/
-	protected $_csrf_expire =	7200;
-
-	/**
-	* Token name for Cross Site Request Forgery protection cookie.
-	*/
-	protected $_csrf_token_name =	'yf_csrf_token';
-
-	/**
-	* Cookie name for Cross Site Request Forgery protection cookie.
-	*/
-	protected $_csrf_cookie_name =	'yf_csrf_token';
-
-	/**
 	* List of never allowed strings
 	*/
-	protected $_never_allowed_str =	array(
+	protected $_never_allowed_str =	[
 		'document.cookie'	=> '[removed]',
 		'document.write'	=> '[removed]',
 		'.parentNode'		=> '[removed]',
@@ -67,32 +46,24 @@ class yf_security {
 		'-->'				=> '--&gt;',
 		'<![CDATA['			=> '&lt;![CDATA[',
 		'<comment>'			=> '&lt;comment&gt;'
-	);
+	];
 
 	/**
 	* List of never allowed regex replacements
 	*/
-	protected $_never_allowed_regex = array(
+	protected $_never_allowed_regex = [
 		'javascript\s*:',
 		'expression\s*(\(|&\#40;)', // CSS and IE
 		'vbscript\s*:', // IE, surprise!
 		'Redirect\s+302',
 		"([\"'])?data\s*:[^\\1]*?base64[^\\1]*?,[^\\1]*?\\1?"
-	);
+	];
 
 	/**
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
 		return main()->extend_call($this, $name, $args);
-	}
-
-	/**
-	* YF constructor
-	*/
-	public function _init() {
-// TODO: implement CSRF protection into YF core
-		$this->_init_csrf();
 	}
 
 	/**
@@ -127,8 +98,8 @@ class yf_security {
 
 		// Convert character entities to ASCII
 		// This permits our tests below to work reliably. We only convert entities that are within tags since  these are the ones that will pose security problems.
-		$str = preg_replace_callback("/[a-z]+=([\'\"]).*?\\1/si", array($this, '_convert_attribute'), $str);
-		$str = preg_replace_callback('/<\w+.*/si', array($this, '_decode_entity'), $str);
+		$str = preg_replace_callback("/[a-z]+=([\'\"]).*?\\1/si", [$this, '_convert_attribute'], $str);
+		$str = preg_replace_callback('/<\w+.*/si', [$this, '_decode_entity'], $str);
 
 		// Remove Invisible Characters Again!
 		$str = $this->remove_invisible_characters($str);
@@ -153,20 +124,20 @@ class yf_security {
 			// do the long opening tags.
 			$str = preg_replace('/<\?(php)/i', '&lt;?\\1', $str);
 		} else {
-			$str = str_replace(array('<?', '?'.'>'), array('&lt;?', '?&gt;'), $str);
+			$str = str_replace(['<?', '?'.'>'], ['&lt;?', '?&gt;'], $str);
 		}
 
 		// Compact any exploded words
 		// This corrects words like:  j a v a s c r i p t,  These words are compacted back to their correct state.
-		$words = array(
+		$words = [
 			'javascript', 'expression', 'vbscript', 'script', 'base64',
 			'applet', 'alert', 'document', 'write', 'cookie', 'window'
-		);
+		];
 		foreach ($words as $word) {
 			$word = implode('\s*', str_split($word)).'\s*';
 			// We only want to do this when it is followed by a non-word character
 			// That way valid stuff like "dealer to" does not become "dealerto"
-			$str = preg_replace_callback('#('.substr($word, 0, -3).')(\W)#is', array($this, '_compact_exploded_words'), $str);
+			$str = preg_replace_callback('#('.substr($word, 0, -3).')(\W)#is', [$this, '_compact_exploded_words'], $str);
 		}
 
 		// Remove disallowed Javascript in links or img tags
@@ -174,10 +145,10 @@ class yf_security {
 		do {
 			$original = $str;
 			if (preg_match('/<a/i', $str)) {
-				$str = preg_replace_callback('#<a\s+([^>]*?)(?:>|$)#si', array($this, '_js_link_removal'), $str);
+				$str = preg_replace_callback('#<a\s+([^>]*?)(?:>|$)#si', [$this, '_js_link_removal'], $str);
 			}
 			if (preg_match('/<img/i', $str)) {
-				$str = preg_replace_callback('#<img\s+([^>]*?)(?:\s?/?>|$)#si', array($this, '_js_img_removal'), $str);
+				$str = preg_replace_callback('#<img\s+([^>]*?)(?:\s?/?>|$)#si', [$this, '_js_img_removal'], $str);
 			}
 			if (preg_match('/script|xss/i', $str)) {
 				$str = preg_replace('#</*(?:script|xss).*?>#si', '[removed]', $str);
@@ -192,7 +163,7 @@ class yf_security {
 		// If a tag containing any of the words in the list below is found, the tag gets converted to entities.
 		// So this: <blink> Becomes: &lt;blink&gt;
 		$naughty = 'alert|applet|audio|basefont|base|behavior|bgsound|blink|body|embed|expression|form|frameset|frame|head|html|ilayer|iframe|input|isindex|layer|link|meta|object|plaintext|style|script|textarea|title|video|xml|xss';
-		$str = preg_replace_callback('#<(/*\s*)('.$naughty.')([^><]*)([><]*)#is', array($this, '_sanitize_naughty_html'), $str);
+		$str = preg_replace_callback('#<(/*\s*)('.$naughty.')([^><]*)([><]*)#is', [$this, '_sanitize_naughty_html'], $str);
 
 		// Sanitize naughty scripting elements
 		// Similar to above, only instead of looking for  tags it looks for PHP and JavaScript commands that are disallowed. Rather than removing the
@@ -251,7 +222,7 @@ class yf_security {
 	/**
 	*/
 	public function remove_invisible_characters($str, $url_encoded = TRUE) {
-		$non_displayables = array();
+		$non_displayables = [];
 		// every control character except newline (dec 10),
 		// carriage return (dec 13) and horizontal tab (dec 09)
 		if ($url_encoded) {
@@ -285,7 +256,7 @@ class yf_security {
 	/**
 	*/
 	public function strip_image_tags($str) {
-		return preg_replace(array('#<img\s+.*?src\s*=\s*["\'](.+?)["\'].*?\>#', '#<img\s+.*?src\s*=\s*(.+?).*?\>#'), '\\1', $str);
+		return preg_replace(['#<img\s+.*?src\s*=\s*["\'](.+?)["\'].*?\>#', '#<img\s+.*?src\s*=\s*(.+?).*?\>#'], '\\1', $str);
 	}
 
 	/**
@@ -309,14 +280,14 @@ class yf_security {
 	*/
 	protected function _remove_evil_attributes($str, $is_image)	{
 		// All javascript event handlers (e.g. onload, onclick, onmouseover), style, and xmlns
-		$evil_attributes = array('on\w*', 'style', 'xmlns', 'formaction');
+		$evil_attributes = ['on\w*', 'style', 'xmlns', 'formaction'];
 		if ($is_image === TRUE) {
 			// Adobe Photoshop puts XML metadata into JFIF images, including namespacing, so we have to allow this for images.
 			unset($evil_attributes[array_search('xmlns', $evil_attributes)]);
 		}
 		do {
 			$count = 0;
-			$attribs = array();
+			$attribs = [];
 			// find occurrences of illegal attribute strings with quotes (042 and 047 are octal quotes)
 			preg_match_all('/('.implode('|', $evil_attributes).')\s*=\s*(\042|\047)([^\\2]*?)(\\2)/is', $str, $matches, PREG_SET_ORDER);
 			foreach ($matches as $attr)	{
@@ -342,7 +313,7 @@ class yf_security {
 		// encode opening brace
 		return '&lt;'.$matches[1].$matches[2].$matches[3]
 			// encode captured opening or closing brace to prevent recursive vectors:
-			.str_replace(array('>', '<'), array('&gt;', '&lt;'), $matches[4]);
+			.str_replace(['>', '<'], ['&gt;', '&lt;'], $matches[4]);
 	}
 
 	/**
@@ -353,7 +324,7 @@ class yf_security {
 		return str_replace($match[1], preg_replace(
 			'#href=.*?(?:alert\(|alert&\#40;|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|data\s*:)#si',
 			'',
-			$this->_filter_attributes(str_replace(array('<', '>'), '', $match[1]))
+			$this->_filter_attributes(str_replace(['<', '>'], '', $match[1]))
 		),
 		$match[0]);
 	}
@@ -366,7 +337,7 @@ class yf_security {
 		return str_replace($match[1], preg_replace(
 			'#src=.*?(?:alert\(|alert&\#40;|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si',
 			'',
-			$this->_filter_attributes(str_replace(array('<', '>'), '', $match[1]))
+			$this->_filter_attributes(str_replace(['<', '>'], '', $match[1]))
 		),
 		$match[0]);
 	}
@@ -374,7 +345,7 @@ class yf_security {
 	/**
 	*/
 	protected function _convert_attribute($match) {
-		return str_replace(array('>', '<', "\\"), array('&gt;', '&lt;', "\\\\"), $match[0]);
+		return str_replace(['>', '<', "\\"], ['&gt;', '&lt;', "\\\\"], $match[0]);
 	}
 
 	/**
@@ -420,117 +391,5 @@ class yf_security {
 			$str = preg_replace('#'.$regex.'#is', '[removed]', $str);
 		}
 		return $str;
-	}
-
-	/**
-	*/
-	protected function _init_csrf() {
-		// Is CSRF protection enabled?
-		if (conf('csrf_protection') === TRUE) {
-			// CSRF config
-			foreach (array('csrf_expire', 'csrf_token_name', 'csrf_cookie_name') as $key) {
-				if (FALSE !== ($val = conf($key))) {
-					$this->{'_'.$key} = $val;
-				}
-			}
-			// Append application specific cookie prefix
-			if (conf('cookie_prefix')) {
-				$this->_csrf_cookie_name = conf('cookie_prefix').$this->_csrf_cookie_name;
-			}
-			// Set the CSRF hash
-			$this->_csrf_set_hash();
-		}
-	}
-
-	/**
-	*/
-	public function csrf_verify() {
-		// If it's not a POST request we will set the CSRF cookie
-		if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
-			return $this->csrf_set_cookie();
-		}
-		// Check if URI has been whitelisted from CSRF checks
-		if ($exclude_uris = conf('csrf_exclude_uris')) {
-// TODO: check and enable
-#			$uri = load_class('URI', 'core');
-#			if (in_array($uri->uri_string(), $exclude_uris)) {
-#				return $this;
-#			}
-		}
-		// Do the tokens exist in both the _POST and _COOKIE arrays?
-		if ( ! isset($_POST[$this->_csrf_token_name], $_COOKIE[$this->_csrf_cookie_name]) || $_POST[$this->_csrf_token_name] !== $_COOKIE[$this->_csrf_cookie_name]) {
-			$this->csrf_show_error();
-		}
-
-		// We kill this since we're done and we don't want to polute the _POST array
-		unset($_POST[$this->_csrf_token_name]);
-
-		// Regenerate on every submission?
-		if (conf('csrf_regenerate')) {
-			// Nothing should last forever
-			unset($_COOKIE[$this->_csrf_cookie_name]);
-			$this->_csrf_hash = '';
-		}
-
-		$this->_csrf_set_hash();
-		$this->csrf_set_cookie();
-
-		return $this;
-	}
-
-	/**
-	*/
-	public function csrf_set_cookie() {
-		$expire = time() + $this->_csrf_expire;
-		$secure_cookie = (bool) conf('cookie_secure');
-#		if ($secure_cookie && ! is_https())	{
-#			return FALSE;
-#		}
-		setcookie(
-			$this->_csrf_cookie_name,
-			$this->_csrf_hash,
-			$expire/*,
-			conf('cookie_path'),
-			conf('cookie_domain'),
-			$secure_cookie,
-			conf('cookie_httponly')*/
-		);
-		return $this;
-	}
-
-	/**
-	*/
-	public function csrf_show_error() {
-		_e('The action you have requested is not allowed.');
-	}
-
-	/**
-	*/
-	public function get_csrf_hash() {
-		return $this->_csrf_hash;
-	}
-
-	/**
-	*/
-	public function get_csrf_token_name() {
-		return $this->_csrf_token_name;
-	}
-
-	/**
-	* Set CSRF Hash and Cookie
-	*/
-	protected function _csrf_set_hash() {
-		if ($this->_csrf_hash === '') {
-			// If the cookie exists we will use it's value.
-			// We don't necessarily want to regenerate it with
-			// each page load since a page could contain embedded
-			// sub-pages causing this feature to fail
-			if (isset($_COOKIE[$this->_csrf_cookie_name]) && preg_match('#^[0-9a-f]{32}$#iS', $_COOKIE[$this->_csrf_cookie_name]) === 1) {
-				return $this->_csrf_hash = $_COOKIE[$this->_csrf_cookie_name];
-			}
-			$this->_csrf_hash = md5(uniqid(rand(), TRUE));
-			$this->csrf_set_cookie();
-		}
-		return $this->_csrf_hash;
 	}
 }

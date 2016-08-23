@@ -18,7 +18,7 @@ class yf_db {
 	/** @var int @conf_skip Number of queries */
 	public $NUM_QUERIES				= 0;
 	/** @var array Query log array */
-	public $_LOG					= array();
+	public $_LOG					= [];
 	/** @var int Tables cache lifetime (while developing need to be short) (else need to be very large) */
 	public $TABLE_NAMES_CACHE_TTL	= 3600; // 1*3600*24 = 1 day
 	/** @var bool Auto-connect on/off */
@@ -42,7 +42,7 @@ class yf_db {
 	/** @var bool Use locking for reconnects or not */
 	public $RECONNECT_USE_LOCKING	= false;
 	/** @var array List of mysql error codes to use for reconnect tries. See also http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html */
-	public $RECONNECT_MYSQL_ERRORS	= array(1053, 1317, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055);
+	public $RECONNECT_MYSQL_ERRORS	= [1053, 1317, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055];
 	/** @var string */
 	public $RECONNECT_LOCK_FILE_NAME	= 'db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock';
 	/** @var int Time in seconds between unlock reconnect */
@@ -72,7 +72,7 @@ class yf_db {
 	/** @var bool Add additional engine details to the SQL as comment for later use */
 	public $INSTRUMENT_QUERIES		= false;
 	/** @var array */
-	public $_instrument_items		= array();
+	public $_instrument_items		= [];
 	/** @var bool Currently only in DEBUG_MODE */
 	public $SHOW_QUERY_WARNINGS		= true;
 	/** @var bool Currently only in DEBUG_MODE */
@@ -116,7 +116,7 @@ class yf_db {
 	/** @var bool Trigger to act silently or not in *_safe methods */
 	public $FIX_DATA_SAFE_SILENT	= false;
 	/** @var array Filled automatically from generated file */
-	public $_need_sys_prefix		= array();
+	public $_need_sys_prefix		= [];
 
 	/**
 	* Constructor
@@ -156,11 +156,11 @@ class yf_db {
 	function get_driver_family($db_type = '') {
 		$db_type = strtolower($db_type ?: $this->DB_TYPE);
 		// Get current abstract db type
-		$families = array(
-			'mysql'	=> array('db_type','mysql','mysqli','pdo_mysql','mysql5','mysql4','mysql41'),
-			'pgsql'	=> array('pgsql','pdo_pgsql','postgre','postgres','postgres7','postgres8','postgres9'),
-			'sqlite'=> array('sqlite','sqlite3','pdo_sqlite'),
-		);
+		$families = [
+			'mysql'	=> ['db_type','mysql','mysqli','pdo_mysql','mysql5','mysql4','mysql41'],
+			'pgsql'	=> ['pgsql','pdo_pgsql','postgre','postgres','postgres7','postgres8','postgres9'],
+			'sqlite'=> ['sqlite','sqlite3','pdo_sqlite'],
+		];
 		foreach ($families as $family => $aliases) {
 			if (in_array($db_type, $aliases)) {
 				$name = $family;
@@ -194,10 +194,10 @@ class yf_db {
 		}
 		// Set shutdown function
 		if ($this->USE_SHUTDOWN_QUERIES) {
-			register_shutdown_function(array(&$this, '_execute_shutdown_queries'));
+			register_shutdown_function([&$this, '_execute_shutdown_queries']);
 		}
 		if ($this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
-			register_shutdown_function(array($this, '_log_queries'));
+			register_shutdown_function([$this, '_log_queries']);
 		}
 		// Turn off tables repairing if we are dealing with slave server
 		if ($this->DB_REPLICATION_SLAVE) {
@@ -211,11 +211,11 @@ class yf_db {
 		if ($this->_need_sys_prefix) {
 			return $this->_need_sys_prefix;
 		}
-		$paths = array(
+		$paths = [
 			'app'	=> APP_PATH. 'share/db_sys_prefix_tables.php',
 			'yf'	=> YF_PATH. 'share/db_sys_prefix_tables.php',
-		);
-		$data = array();
+		];
+		$data = [];
 		foreach ($paths as $path) {
 			if (file_exists($path)) {
 				$_data = require $path;
@@ -229,15 +229,21 @@ class yf_db {
 	}
 
 	/**
+	*/
+	function is_ready() {
+		return (bool)$this->_connected;
+	}
+
+	/**
 	* Connect db driver and then connect to db
 	*/
-	function connect($db_host = '', $db_user = '', $db_pswd = null, $db_name = null, $force = false, $params = array()) {
+	function connect($db_host = '', $db_user = '', $db_pswd = null, $db_name = null, $force = false, $params = []) {
 		if (is_array($db_host)) {
 			$params = $db_host;
 			$db_host = '';
 		}
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		if ($params['reconnect'] || $params['force']) {
 			$force = true;
@@ -274,7 +280,7 @@ class yf_db {
 					trigger_error('DB: Wrong driver', $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
 					break;
 				}
-				$implemented = array();
+				$implemented = [];
 				foreach (get_class_methods($this->db) as $method) {
 					if ($method[0] != '_') {
 						$implemented[$method] = $method;
@@ -312,7 +318,7 @@ class yf_db {
 	/**
 	*/
 	function _get_connect_params() {
-		return array(
+		return [
 			'host'		=> $this->DB_HOST,
 			'user'		=> $this->DB_USER,
 			'pswd'		=> $this->DB_PSWD,
@@ -323,18 +329,18 @@ class yf_db {
 			'socket'	=> $this->DB_SOCKET,
 			'charset'	=> $this->DB_CHARSET,
 			'allow_auto_create_db' => $this->ALLOW_AUTO_CREATE_DB,
-		);
+		];
 	}
 
 	/**
 	*/
-	function _set_connect_params($db_host = '', $db_user = '', $db_pswd = null, $db_name = null, $force = false, $params = array()) {
+	function _set_connect_params($db_host = '', $db_user = '', $db_pswd = null, $db_name = null, $force = false, $params = []) {
 		if (is_array($db_host)) {
 			$params = $db_host;
 			$db_host = '';
 		}
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		if ($params['reconnect'] || $params['force']) {
 			$force = true;
@@ -374,7 +380,7 @@ class yf_db {
 	/**
 	* Prepare statement to execute
 	*/
-	function prepare($sql, $params = array()) {
+	function prepare($sql, $params = []) {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
@@ -387,7 +393,7 @@ class yf_db {
 	/**
 	* Execute prepared statement
 	*/
-	function execute($stmt, $params = array()) {
+	function execute($stmt, $params = []) {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
@@ -435,7 +441,7 @@ class yf_db {
 			// Try to reconnect if we see some these errors: http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html
 			if ($this->get_driver_family() === 'mysql' && in_array($db_error['code'], $this->RECONNECT_MYSQL_ERRORS)) {
 				$this->db = null;
-				$reconnect_successful = $this->connect(array('reconnect' => true));
+				$reconnect_successful = $this->connect(['reconnect' => true]);
 				if ($reconnect_successful) {
 					$result = $this->db->query($sql);
 				}
@@ -443,7 +449,7 @@ class yf_db {
 		}
 		$log_allowed = (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES);
 		if ($log_allowed) {
-			$log_id = $this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace_string() : array(), $db_error);
+			$log_id = $this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace_string() : [], $db_error);
 		}
 		if (!$result && $query_allowed && $db_error && $this->ERROR_AUTO_REPAIR) {
 			$result	= $this->_repair_table($sql, $db_error);
@@ -459,7 +465,7 @@ class yf_db {
 		}
 		$need_insert_id = false;
 		$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
-		if (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE'))) {
+		if (in_array($_sql_type, ['INSERT', 'UPDATE', 'REPLACE'])) {
 			$need_insert_id = true;
 		}
 		$this->_last_insert_id = $result && $need_insert_id ? (int)$this->db->insert_id() : 0;
@@ -497,7 +503,7 @@ class yf_db {
 
 	/**
 	*/
-	function _query_log($sql, $_trace = array(), $db_error = false) {
+	function _query_log($sql, $_trace = [], $db_error = false) {
 		$_log_allowed = true;
 		// Save memory on high number of query log entries
 		if ($this->LOGGED_QUERIES_LIMIT && count($this->_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
@@ -508,7 +514,7 @@ class yf_db {
 		}
 		$warnings = null;
 		$info = null;
-		$this->_LOG[] = array(
+		$this->_LOG[] = [
 			'sql'		=> $sql,
 			'rows'		=> 0,
 			'insert_id'	=> 0,
@@ -516,7 +522,7 @@ class yf_db {
 			'info'		=> $info,
 			'time'		=> 0,
 			'trace'		=> $_trace,
-		);
+		];
 		return count($this->_LOG) - 1;
 	}
 
@@ -537,7 +543,7 @@ class yf_db {
 			$rows = null;
 			if ($_sql_type == 'SELECT') {
 				$rows = $this->num_rows($result);
-			} elseif (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE', 'DELETE', 'SHOW'))) {
+			} elseif (in_array($_sql_type, ['INSERT', 'UPDATE', 'REPLACE', 'DELETE', 'SHOW'])) {
 				$rows = $this->_last_affected_rows;
 			}
 		}
@@ -560,7 +566,7 @@ class yf_db {
 
 	/**
 	*/
-	function multi_query($sql = array()) {
+	function multi_query($sql = []) {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
@@ -568,7 +574,7 @@ class yf_db {
 			return false;
 		}
 		if (!$this->db->HAS_MULTI_QUERY) {
-			$result = array();
+			$result = [];
 			foreach ((array)$sql as $k => $_sql) {
 				$result[$k] = $this->query($_sql);
 			}
@@ -581,7 +587,7 @@ class yf_db {
 	/**
 	* Alias of insert() with auto-escaping of data
 	*/
-	function insert_safe($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false, $extra = array()) {
+	function insert_safe($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false, $extra = []) {
 		$data = $this->_fix_data_safe($table, $data, $extra);
 		return $this->insert($table, $this->es($data), $only_sql, $replace, $ignore, $on_duplicate_key_update, $extra);
 	}
@@ -589,7 +595,7 @@ class yf_db {
 	/**
 	* Insert array of values into table
 	*/
-	function insert($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false, $extra = array()) {
+	function insert($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false, $extra = []) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
@@ -607,7 +613,7 @@ class yf_db {
 			return $sql;
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
-			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+			$this->_save_query_revision(__FUNCTION__, $table, ['data' => $sql]);
 		}
 		return $this->query($sql);
 	}
@@ -615,14 +621,14 @@ class yf_db {
 	/**
 	* Alias, forced to add INSERT IGNORE
 	*/
-	function insert_ignore($table, $data, $only_sql = false, $replace = false, $extra = array()) {
+	function insert_ignore($table, $data, $only_sql = false, $replace = false, $extra = []) {
 		return $this->insert($table, $data, $only_sql, $replace, $ignore = true, $on_duplicate_key_update = false, $extra);
 	}
 
 	/**
 	* Alias, forced to add INSERT ... ON DUPLICATE KEY UPDATE
 	*/
-	function insert_on_duplicate_key_update($table, $data, $only_sql = false, $replace = false, $extra = array()) {
+	function insert_on_duplicate_key_update($table, $data, $only_sql = false, $replace = false, $extra = []) {
 		$on_duplicate_key_update = true && ($this->get_driver_family() === 'mysql');
 		return $this->insert($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update, $extra);
 	}
@@ -630,8 +636,8 @@ class yf_db {
 	/**
 	* Alias of replace() with data auto-escape
 	*/
-	function replace_safe($table, $data, $only_sql = false, $extra = array()) {
-		$replace = true && in_array($this->get_driver_family(), array('mysql','sqlite'));
+	function replace_safe($table, $data, $only_sql = false, $extra = []) {
+		$replace = true && in_array($this->get_driver_family(), ['mysql','sqlite']);
 		return $this->insert_safe($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update = false, $extra);
 	}
 
@@ -639,14 +645,14 @@ class yf_db {
 	* Replace array of values into table
 	*/
 	function replace($table, $data, $only_sql = false) {
-		$replace = true && in_array($this->get_driver_family(), array('mysql','sqlite'));
+		$replace = true && in_array($this->get_driver_family(), ['mysql','sqlite']);
 		return $this->insert($table, $data, $only_sql, $replace);
 	}
 
 	/**
 	* Alias of update() with data auto-escape
 	*/
-	function update_safe($table, $data, $where, $only_sql = false, $extra = array()) {
+	function update_safe($table, $data, $where, $only_sql = false, $extra = []) {
 		$data = $this->_fix_data_safe($table, $data, $extra);
 		return $this->update($table, $this->es($data), $where, $only_sql);
 	}
@@ -654,7 +660,7 @@ class yf_db {
 	/**
 	* Update table with given values
 	*/
-	function update($table, $data, $where, $only_sql = false, $extra = array()) {
+	function update($table, $data, $where, $only_sql = false, $extra = []) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
@@ -669,7 +675,7 @@ class yf_db {
 			return $sql;
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
-			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+			$this->_save_query_revision(__FUNCTION__, $table, ['data' => $sql]);
 		}
 		return $this->query($sql);
 	}
@@ -743,7 +749,7 @@ class yf_db {
 		if (!$keys) {
 			return false;
 		}
-		$out = array();
+		$out = [];
 		foreach ((array)$result as $id => $data) {
 			if (isset($keys[1])) {
 				$out[$data[$keys[0]]] = $data[$keys[1]];
@@ -767,7 +773,7 @@ class yf_db {
 		if (!$max_levels || $max_levels > 4) {
 			$max_levels = 4;
 		}
-		$out = array();
+		$out = [];
 		$q = $this->query($sql);
 		if (!$q) {
 			return false;
@@ -781,7 +787,7 @@ class yf_db {
 			$levels = $max_levels;
 		}
 		$k = array_keys($row);
-		$a = array();
+		$a = [];
 		do {
 			if ($levels == 1) {
 				$a[ $row[$k[0]] ] = $row;
@@ -831,7 +837,7 @@ class yf_db {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
-		$params = array();
+		$params = [];
 		if (is_array($use_cache)) {
 			$params = $use_cache;
 			$use_cache = isset($params['use_cache']) ? $params['use_cache'] : true;
@@ -886,7 +892,7 @@ class yf_db {
 		if ($this->NO_CACHE) {
 			$use_cache = false;
 		}
-		$data = array();
+		$data = [];
 		if ($use_cache) {
 			$data = cache_get($cache_key);
 		}
@@ -908,7 +914,7 @@ class yf_db {
 		if ($this->NO_CACHE) {
 			$use_cache = false;
 		}
-		$data = array();
+		$data = [];
 		if ($use_cache) {
 			$data = cache_get($cache_key);
 		}
@@ -1187,7 +1193,7 @@ class yf_db {
 	function delete($table, $where, $as_sql = false) {
 		$sql = $this->from($table)->delete($where, $_as_sql = true);
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS && !$as_sql) {
-			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+			$this->_save_query_revision(__FUNCTION__, $table, ['data' => $sql]);
 		}
 		return $as_sql ? $sql : $this->query($sql);
 	}
@@ -1221,7 +1227,7 @@ class yf_db {
 			$_this = $this;
 			$fname = __FUNCTION__;
 			$params['slice_callback'] = function($_data) use ($_this, $fname, $table, $index) {
-				$_this->_save_query_revision($fname, $table, array('data' => $_data, 'index' => $index));
+				$_this->_save_query_revision($fname, $table, ['data' => $_data, 'index' => $index]);
 			};
 		}
 		return $this->query_builder()->update_batch($table, $data, $index, $only_sql, $params);
@@ -1237,21 +1243,21 @@ class yf_db {
 	* Query builder shortcut
 	*/
 	function select() {
-		return call_user_func_array(array($this->query_builder(), __FUNCTION__), func_get_args());
+		return call_user_func_array([$this->query_builder(), __FUNCTION__], func_get_args());
 	}
 
 	/**
 	* Query builder shortcut
 	*/
 	function from() {
-		return call_user_func_array(array($this->query_builder(), __FUNCTION__), func_get_args());
+		return call_user_func_array([$this->query_builder(), __FUNCTION__], func_get_args());
 	}
 
 	/**
 	* Query builder shortcut
 	*/
 	function table() {
-		return call_user_func_array(array($this->query_builder(), __FUNCTION__), func_get_args());
+		return call_user_func_array([$this->query_builder(), __FUNCTION__], func_get_args());
 	}
 
 	/**
@@ -1299,7 +1305,7 @@ class yf_db {
 	/**
 	* ORM shortcut
 	*/
-	function model($name, $params = array()) {
+	function model($name, $params = []) {
 		$model = $this->_model_load($name);
 		$params && $model->_set_params($params);
 		return $model;
@@ -1314,13 +1320,13 @@ class yf_db {
 		$custom_storages = &$main->_custom_class_storages;
 		$wildcard = '*_model';
 		if (!isset($$custom_storages[$wildcard]['yf'])) {
-			$yf_models_basic_storages = array(
-				'project_app_path'	=> array(APP_PATH.'models/'),
-				'project_plugins'	=> array(PROJECT_PATH.'plugins/*/share/models/'),
-				'project'			=> array(PROJECT_PATH.'share/models/'),
-				'yf_plugins'		=> array(YF_PATH.'plugins/*/share/models/'),
-				'yf'				=> array(YF_PATH.'share/models/'),
-			);
+			$yf_models_basic_storages = [
+				'project_app_path'	=> [APP_PATH.'models/'],
+				'project_plugins'	=> [PROJECT_PATH.'plugins/*/share/models/'],
+				'project'			=> [PROJECT_PATH.'share/models/'],
+				'yf_plugins'		=> [YF_PATH.'plugins/*/share/models/'],
+				'yf'				=> [YF_PATH.'share/models/'],
+			];
 			foreach ($yf_models_basic_storages as $k => $v) {
 				if (!isset($custom_storages[$wildcard][$k])) {
 					$custom_storages[$wildcard][$k] = $v;
@@ -1400,12 +1406,12 @@ class yf_db {
 	* Get reconnect lock file name
 	*/
 	function _get_reconnect_lock_path() {
-		$pairs = array(
+		$pairs = [
 			'[DB_HOST]'	=> $this->DB_HOST,
 			'[DB_NAME]'	=> $this->DB_NAME,
 			'[DB_USER]'	=> $this->DB_USER,
 			'[DB_PORT]'	=> $this->DB_PORT,
-		);
+		];
 		return STORAGE_PATH. str_replace(array_keys($pairs), array_values($pairs), $this->RECONNECT_LOCK_FILE_NAME);
 	}
 
@@ -1416,7 +1422,7 @@ class yf_db {
 		if ($this->NO_CACHE) {
 			$no_cache = true;
 		}
-		$data = array();
+		$data = [];
 		if (!$no_cache) {
 			$data = cache_tmp()->get($cache_name);
 		}
@@ -1431,7 +1437,7 @@ class yf_db {
 
 	/**
 	*/
-	function _fix_data_safe($table, $data = array(), $extra = array()) {
+	function _fix_data_safe($table, $data = [], $extra = []) {
 		if (!$this->FIX_DATA_SAFE) {
 			return $data;
 		}
@@ -1449,8 +1455,8 @@ class yf_db {
 			$is_data_3d = is_array($cur_row) ? 1 : 0;
 			break;
 		}
-		$not_existing_cols = array();
-		$fixed_nulls = array();
+		$not_existing_cols = [];
+		$fixed_nulls = [];
 		if ($is_data_3d) {
 			foreach ((array)$data as $k => $_data) {
 				foreach ((array)$_data as $name => $v) {
@@ -1552,14 +1558,14 @@ class yf_db {
 		}
 		$driver_family = $this->get_driver_family();
 		$code = $db_error['code'];
-		if ($driver_family === 'mysql' && !in_array($code, array(
+		if ($driver_family === 'mysql' && !in_array($code, [
 			1191, // Can't find FULLTEXT index matching the column list
 			2013, // Lost connection to MySQL server during query
 			1205, // Lock wait timeout expired. Transaction was rolled back (InnoDB)
 			1213, // Transaction deadlock. You should rerun the transaction. (InnoDB)
 			1146, // Table %s doesn't exist
 			1054, // Unknown column %s
-		))) {
+		])) {
 			return false;
 		}
 		return _class('db_installer_'.$driver_family, 'classes/db/')->repair($sql, $db_error, $this);
@@ -1567,7 +1573,7 @@ class yf_db {
 
 	/**
 	*/
-	function _save_query_revision($method, $table, $params = array()) {
+	function _save_query_revision($method, $table, $params = []) {
 		if (($allowed_methods = $this->QUERY_REVISIONS_METHODS)) {
 			if (!in_array($method, $allowed_methods)) {
 				return false;
@@ -1578,7 +1584,7 @@ class yf_db {
 				return false;
 			}
 		}
-		$to_insert = array(
+		$to_insert = [
 			'date'			=> date('Y-m-d H:i:s'),
 			'data_new'		=> is_array($params['data']) ? 'json:'.json_encode($params['data']) : (string)$params['data'],
 			'data_old'		=> is_array($params['data_old']) ? 'json:'.json_encode($params['data_olf']) : (string)$params['data_old'],
@@ -1590,15 +1596,15 @@ class yf_db {
 			'ip'			=> common()->get_ip(),
 			'query_method'	=> $method,
 			'query_table'	=> $table,
-			'extra'			=> json_encode(array(
+			'extra'			=> json_encode([
 				'get_object'	=> $_GET['object'],
 				'get_action'	=> $_GET['action'],
 				'get_id'		=> $_GET['id'],
 				'get_page'		=> $_GET['page'],
 				'trace'			=> array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5),
-			)),
+			]),
 			'url'			=> (main()->is_https() ? 'https://' : 'http://'). $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
-		);
+		];
 		$sql = $this->insert_safe('sys_db_revisions', $to_insert, $only_sql = true);
 		$this->_add_shutdown_query($sql);
 	}
@@ -1607,7 +1613,7 @@ class yf_db {
 	* Simple trace without dumping whole objects
 	*/
 	function _trace() {
-		$trace = array();
+		$trace = [];
 		foreach (debug_backtrace() as $k => $v) {
 			if (!$k) {
 				continue;
@@ -1633,9 +1639,9 @@ class yf_db {
 		if (!$this->INSTRUMENT_QUERIES) {
 			return false;
 		}
-		$cpu_usage = function_exists('getrusage') ? getrusage() : array();
+		$cpu_usage = function_exists('getrusage') ? getrusage() : [];
 		$ip = common()->get_ip();
-		$this->_instrument_items = array(
+		$this->_instrument_items = [
 			'memory_usage'		=> function_exists('memory_get_usage') ? memory_get_usage() : '',
 			'cpu_user'			=> $cpu_usage['ru_utime.tv_sec'] * 1e6 + $cpu_usage['ru_utime.tv_usec'],
 			'cpu_system'		=> $cpu_usage['ru_stime.tv_sec'] * 1e6 + $cpu_usage['ru_stime.tv_usec'],
@@ -1651,7 +1657,7 @@ class yf_db {
 			'request_uri'		=> $_SERVER['REQUEST_URI'],
 			'http_host'			=> $_SERVER['HTTP_HOST'],
 			'ip'				=> $ip,
-		);
+		];
 		return true;
 	}
 
@@ -1668,7 +1674,7 @@ class yf_db {
 	/**
 	* Add instrumentation info to the query for highload SQL debug and profile
 	*/
-	function _instrument_query($query_sql = '', $keys = array('request_id', 'session_id', 'SESSION_user_id', 'GET_object', 'GET_action')) {
+	function _instrument_query($query_sql = '', $keys = ['request_id', 'session_id', 'SESSION_user_id', 'GET_object', 'GET_action']) {
 		$query_header = '';
 		if (!$query_sql) {
 			return '';
@@ -1682,9 +1688,9 @@ class yf_db {
 			if (!$val) {
 				continue;
 			}
-			$val = str_replace(array("\t","\n","\0"), '', $val);
+			$val = str_replace(["\t","\n","\0"], '', $val);
 			// all other chars are safe in comments
-			$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key));
+			$key = strtolower(str_replace([': ',"\t","\n","\0"], '', $key));
 			// Add the requested instrumentation keys
 			$query_header .= "\t".$key.': '.$this->es($val);
 		}
@@ -1811,7 +1817,7 @@ class yf_db {
 	*/
 	function _mysql_escape_mimic($string) {
 		if (is_array($string)) {
-	        return array_map(array($this, __FUNCTION__), $string);
+	        return array_map([$this, __FUNCTION__], $string);
 		}
 		if (is_null($string) || $string === 'NULL') {
 			return 'NULL';
@@ -1822,6 +1828,6 @@ class yf_db {
 		} elseif (is_bool($string)) {
 			return (int)$string;
 		}
-        return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $string);
+        return str_replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'], $string);
 	}
 }

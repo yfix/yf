@@ -20,15 +20,15 @@ class yf_payment__user {
 		$balance_limit_lower = $payment_api->BALANCE_LIMIT_LOWER;
 		$payout_limit_min    = @$payment_api->PAYOUT_LIMIT_MIN ?: 1;
 		// provider
-		$providers = $payment_api->provider( array(
+		$providers = $payment_api->provider( [
 			'all' => true,
-		));
-		$payment_api->provider_options( $providers, array(
+		]);
+		$payment_api->provider_options( $providers, [
 			'IS_DEPOSITION', 'IS_PAYMENT',
 			'method_allow', 'fee', 'currency_allow', 'description',
-		));
+		]);
 		$provider_user = $payment_api->provider();
-		$provider = array();
+		$provider = [];
 		foreach( $provider_user as &$item ) {
 			$provider_id = (int)$item[ 'provider_id' ];
 			$_provider   = &$providers[ $provider_id ];
@@ -50,9 +50,9 @@ class yf_payment__user {
 		$payment_module->t( $providers );
 		$payment_module->t( $status );
 		// tpl
-		$replace = array(
+		$replace = [
 			'user'    => $user,
-			'payment' => json_encode( array(
+			'payment' => json_encode( [
 				'balance_limit_lower'   => $balance_limit_lower,
 				'payout_limit_min'      => $payout_limit_min,
 				'user'                  => $user,
@@ -65,14 +65,14 @@ class yf_payment__user {
 				'provider'              => $provider,
 				'providers'             => $providers,
 				'status'                => $status,
-				'operation_pagination'  => array(
+				'operation_pagination'  => [
 					'count'    => $count,
 					'page_per' => $page_per,
 					'pages'    => $pages,
 					'page'     => 1,
-				),
-			)),
-		);
+				],
+			]),
+		];
 		// tpl
 		$result  = '';
 		$result .= tpl()->parse( 'payment/user/balance_ctrl', $replace );

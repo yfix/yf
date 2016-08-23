@@ -1,7 +1,7 @@
 <?php
 
 // TODO: use continents table with additional params
-return array(
+return [
 	'N'	=> 'North America',
 	'E'	=> 'Europe',
 	'A'	=> 'Asia',
@@ -9,4 +9,4 @@ return array(
 	'F'	=> 'Africa',
 	'U'	=> 'Australia / Oceania',
 	'Q'	=> 'Antartica',
-);
+];

@@ -30,7 +30,7 @@ if (!isset($CONF['fast_init_route']) || !is_callable($CONF['fast_init_route'])) 
 }
 
 if (!isset($CONF['fast_init_route_table'])) {
-	$CONF['fast_init_route_table'] = array(
+	$CONF['fast_init_route_table'] = [
 		'/dynamic/placeholder'   => 'placeholder',
 		'/help/show_tip'         => 'tooltip',
 		'/dynamic/php_func'      => 'php_func',
@@ -40,7 +40,7 @@ if (!isset($CONF['fast_init_route_table'])) {
 		'/search/autocomplete'   => 'search_autocomplete',
 		'/category/rss_for_cat'  => 'rss_export',
 		'/payment_test/'         => 'payment_test',
-	);
+	];
 }
 
 $fname = $fast_init_route($CONF['fast_init_route_table']);
@@ -54,12 +54,12 @@ if (!isset($CONF['fast_init_call']) || !is_callable($CONF['fast_init_call'])) {
 		$dir = 'share/fast_init/';
 		$suffix = '.php';
 		$pattern = $dir. $f_name. $suffix;
-		$globs = array(
+		$globs = [
 			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
 			'project_app'			=> APP_PATH. $pattern,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
 			'yf_main'				=> YF_PATH. $pattern,
-		);
+		];
 		foreach($globs as $gname => $glob) {
 			foreach(glob($glob) as $path) {
 				$func = include $path;

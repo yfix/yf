@@ -1,15 +1,15 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => 'CKEDITOR.plugins.addExternal("youtube", "https://cdn.rawgit.com/fonini/ckeditor-youtube-plugin/master/youtube/plugin.js");',
-		),
-	),
-	'require' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => 'CKEDITOR.plugins.addExternal("youtube", "https://rawgit.yfix.net/fonini/ckeditor-youtube-plugin/master/youtube/plugin.js");',
+		],
+	],
+	'require' => [
 		'asset' => 'ckeditor',
-	),
-	'config' => array(
+	],
+	'config' => [
 		'no_cache' => true,
-	),
-);
+	],
+];

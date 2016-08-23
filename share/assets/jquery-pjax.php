@@ -1,12 +1,12 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => '//cdn.rawgit.com/yfix/jquery-pjax/master/jquery.pjax.js',
-		),
-	),
-	'require' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/yfix/jquery-pjax/master/jquery.pjax.js',
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

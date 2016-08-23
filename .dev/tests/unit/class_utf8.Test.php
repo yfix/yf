@@ -24,11 +24,11 @@ class class_utf8_test extends yf_unit_tests {
 	}
 	public function test_strings() {
 		$sentence = 'пользователь должен быть у Вас в друзьях а Вы у него';
-		$testcase = array(
+		$testcase = [
 			'tHe QUIcK bRoWn' => 'QUI',
 			'frànçAIS' => 'çAI',
 			'über-åwesome' => '-åw',
-		);
+		];
 		foreach ((array)$testcase as $input => $output) {
 			$this->assertEquals(_substr($input, 4, 3), $output);
 		}

@@ -13,7 +13,7 @@ class yf_queue_driver_redis extends yf_queue_driver {
 
 	/**
 	*/
-	function conf($params = array()) {
+	function conf($params = []) {
 		!$this->_connection && $this->connect();
 		$this->_connection->conf($params);
 		return $this;
@@ -21,7 +21,7 @@ class yf_queue_driver_redis extends yf_queue_driver {
 
 	/**
 	*/
-	function connect($params = array()) {
+	function connect($params = []) {
 		if (!$this->_connection) {
 			$this->_connection = redis($params);
 			$this->_connection->connect();

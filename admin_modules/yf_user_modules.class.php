@@ -10,11 +10,11 @@
 class yf_user_modules {
 
 	/** @var array @conf_skip */
-	public $_MODULES_TO_SKIP	= array(
+	public $_MODULES_TO_SKIP	= [
 		'rewrite',
-	);
+	];
 	/** @var string @conf_skip Pattern for files */
-	public $_include_pattern	= array('', '#\.(php|stpl)$#');
+	public $_include_pattern	= ['', '#\.(php|stpl)$#'];
 	/** @var string @conf_skip Description file pattern */
 	public $_desc_file_pattern	= '#[a-z0-9_]\.xml$#i';
 	/** @var string @conf_skip Class method pattern */
@@ -40,8 +40,8 @@ class yf_user_modules {
 				$active = 0;
 			}
 			if (isset($active) && $where) {
-				db()->update('user_modules', array('active' => $active), $where);
-				cache_del(array('user_modules','user_modules_for_select'));
+				db()->update('user_modules', ['active' => $active], $where);
+				cache_del(['user_modules','user_modules_for_select']);
 			}
 			return js_redirect(url('/@object'));
 		}
@@ -50,26 +50,26 @@ class yf_user_modules {
 			$this->_yf_plugins = main()->_preload_plugins_list();
 			$this->_yf_plugins_classes = main()->_plugins_classes;
 		}
-		$items = array();
+		$items = [];
 		foreach ((array)db()->get_all('SELECT * FROM '.db('user_modules').' ORDER BY name ASC') as $a) {
 			$name = $a['name'];
 			$plugin_name = '';
 			if (isset($this->_yf_plugins_classes[$name])) {
 				$plugin_name = $this->_yf_plugins_classes[$name];
 			}
-			$locations = array();
+			$locations = [];
 			$dir = USER_MODULES_DIR;
-			$places = array(
-				'framework' => array('dir' => YF_PATH. $dir, 'file' => YF_PREFIX. $name. YF_CLS_EXT),
-				'project'	=> array('dir' => ADMIN_SITE_PATH. $dir, 'file' => $name. YF_CLS_EXT),
-				'app'		=> array('dir' => APP_PATH. $dir, 'file' => $name. YF_CLS_EXT),
-			);
+			$places = [
+				'framework' => ['dir' => YF_PATH. $dir, 'file' => YF_PREFIX. $name. YF_CLS_EXT],
+				'project'	=> ['dir' => ADMIN_SITE_PATH. $dir, 'file' => $name. YF_CLS_EXT],
+				'app'		=> ['dir' => APP_PATH. $dir, 'file' => $name. YF_CLS_EXT],
+			];
 			if ($plugin_name) {
-				$places += array(
-					'framework_plugin'	=> array('dir' => YF_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => YF_PREFIX. $name. YF_CLS_EXT),
-					'project_plugin'	=> array('dir' => PROJECT_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => $name. YF_CLS_EXT),
-					'app_plugin'		=> array('dir' => APP_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => $name. YF_CLS_EXT),
-				);
+				$places += [
+					'framework_plugin'	=> ['dir' => YF_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => YF_PREFIX. $name. YF_CLS_EXT],
+					'project_plugin'	=> ['dir' => PROJECT_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => $name. YF_CLS_EXT],
+					'app_plugin'		=> ['dir' => APP_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => $name. YF_CLS_EXT],
+				];
 			}
 			foreach ((array)$places as $pname => $p) {
 				$path = $p['dir']. $p['file'];
@@ -77,22 +77,22 @@ class yf_user_modules {
 					$locations[$pname] = url('/file_manager/edit/'.urlencode($path));
 				}
 			}
-			$items[] = array(
+			$items[] = [
 				'name'		=> $a['name'],
 				'active'	=> $a['active'],
 				'locations'	=> $locations,
-			);
+			];
 		}
-		return table($items, array(
+		return table($items, [
 				'condensed' => 1,
 				'pager_records_on_page' => 10000,
 				'filter' => true,
-				'filter_params' => array(
+				'filter_params' => [
 					'name' => 'like',
-				),
-			))
+				],
+			])
 			->form()
-			->check_box('name', array('field_desc' => '#', 'width' => '1%'))
+			->check_box('name', ['field_desc' => '#', 'width' => '1%'])
 			->text('name')
 			->func('locations', function($field, $params, $row) {
 				foreach ((array)$field as $loc => $link) {
@@ -100,11 +100,11 @@ class yf_user_modules {
 				}
 				return implode(PHP_EOL, (array)$out);
 			})
-			->btn('conf', url('/conf_editor/user_modules/%d'), array('id' => 'name'))
-			->btn_active(array('id' => 'name'))
-			->footer_submit(array('value' => 'activate selected'))
-			->footer_submit(array('value' => 'disable selected'))
-			->footer_link('Refresh list', url('/@object/refresh_modules_list'), array('icon' => 'icon-refresh fa fa-refresh'))
+			->btn('conf', url('/conf_editor/user_modules/%d'), ['id' => 'name'])
+			->btn_active(['id' => 'name'])
+			->footer_submit(['value' => 'activate selected'])
+			->footer_submit(['value' => 'disable selected'])
+			->footer_link('Refresh list', url('/@object/refresh_modules_list'), ['icon' => 'icon-refresh fa fa-refresh'])
 		;
 	}
 
@@ -115,9 +115,9 @@ class yf_user_modules {
 			$module_info = db()->query_fetch('SELECT * FROM '.db('user_modules').' WHERE name="'._es($_GET['id']).'" LIMIT 1');
 		}
 		if (!empty($module_info)) {
-			db()->UPDATE('user_modules', array('active' => (int)!$module_info['active']), 'id='.intval($module_info['id']));
+			db()->UPDATE('user_modules', ['active' => (int)!$module_info['active']], 'id='.intval($module_info['id']));
 		}
-		cache_del(array('user_modules','user_modules_for_select'));
+		cache_del(['user_modules','user_modules_for_select']);
 		if (is_ajax()) {
 			no_graphics(true);
 			echo ($module_info['active'] ? 0 : 1);
@@ -142,21 +142,21 @@ class yf_user_modules {
 
 		$refreshed_modules = $this->_get_modules_from_files($include_framework = true, $with_sub_modules = false);
 
-		$insert_data = array();
+		$insert_data = [];
 		foreach ((array)$refreshed_modules as $cur_module_name) {
 			if (isset($all_user_modules_array[$cur_module_name])) {
 				continue;
 			}
-			$insert_data[$cur_module_name] = array(
+			$insert_data[$cur_module_name] = [
 				'name'   => $cur_module_name,
 				'active' => 0,
-			);
+			];
 		}
 		if ($insert_data) {
 			db()->insert('user_modules', db()->es($insert_data));
 		}
 		// Check for missing modules
-		$delete_names = array();
+		$delete_names = [];
 		foreach ((array)$all_user_modules_array as $cur_module_name) {
 			if (!isset($refreshed_modules[$cur_module_name])) {
 				$delete_names[$cur_module_name] = $cur_module_name;
@@ -165,7 +165,7 @@ class yf_user_modules {
 		if ($delete_names) {
 			db()->query('DELETE FROM '.db('user_modules').' WHERE name IN("'.implode('","', _es($delete_names)).'")');
 		}
-		cache_del(array('user_modules','user_modules_for_select'));
+		cache_del(['user_modules','user_modules_for_select']);
 		if (!$silent) {
 			return js_redirect(url('/@object'));
 		}
@@ -174,14 +174,14 @@ class yf_user_modules {
 	/**
 	* Get available user modules
 	*/
-	function _get_modules ($params = array()) {
+	function _get_modules ($params = []) {
 		// Need to prevent multiple calls
 		if (isset($this->_user_modules_array)) {
 			return $this->_user_modules_array;
 		}
 		$with_all			= isset($params['with_all']) ? $params['with_all'] : 1;
 		$with_sub_modules	= isset($params['with_sub_modules']) ? $params['with_sub_modules'] : 0;
-		$user_modules_array	= array();
+		$user_modules_array	= [];
 		// Insert value for all modules
 		if ($with_all) {
 			$user_modules_array[''] = t('-- ALL --');
@@ -200,14 +200,14 @@ class yf_user_modules {
 	* Get available user modules from the project modules folder
 	*/
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
-		$modules = array();
+		$modules = [];
 
 		$yf_prefix_len = strlen(YF_PREFIX);
 		$yf_cls_ext_len = strlen(YF_CLS_EXT);
 		$site_prefix_len = strlen(YF_SITE_CLS_PREFIX);
 
 		$pattern = USER_MODULES_DIR.'*'.YF_CLS_EXT;
-		$places = array();
+		$places = [];
 #$with_sub_modules
 /*
 			if (!$with_sub_modules) {
@@ -217,17 +217,17 @@ class yf_user_modules {
 			}
 */
 		if ($include_framework) {
-			$places += array(
+			$places += [
 				'yf_main'			=> YF_PATH. $pattern,
 				'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
-			);
+			];
 		}
-		$places += array(
+		$places += [
 			'project_main'		=> PROJECT_PATH. $pattern,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
 			'app_main'			=> APP_PATH. $pattern,
 			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
-		);
+		];
 		foreach ($places as $place_name => $glob) {
 			foreach (glob($glob) as $path) {
 				if (substr($path, -$yf_cls_ext_len) !== YF_CLS_EXT) {
@@ -256,12 +256,12 @@ class yf_user_modules {
 	/**
 	* Get available user methods
 	*/
-	function _get_methods ($params = array()) {
-		$ONLY_PRIVATE_METHODS = array();
+	function _get_methods ($params = []) {
+		$ONLY_PRIVATE_METHODS = [];
 		if (isset($params['private'])) {
 			$ONLY_PRIVATE_METHODS = $params['private'];
 		}
-		$methods_by_modules = array();
+		$methods_by_modules = [];
 		if (!isset($this->_yf_plugins)) {
 			$this->_yf_plugins = main()->_preload_plugins_list();
 			$this->_yf_plugins_classes = main()->_plugins_classes;
@@ -274,7 +274,7 @@ class yf_user_modules {
 			if (substr($module_name, 0, strlen(YF_SITE_CLS_PREFIX)) == YF_SITE_CLS_PREFIX) {
 				$module_name = substr($module_name, strlen(YF_SITE_CLS_PREFIX));
 			}
-			$file_names = array();
+			$file_names = [];
 
 			$plugin_name = '';
 			if (isset($this->_yf_plugins_classes[$module_name])) {
@@ -350,7 +350,7 @@ class yf_user_modules {
 	function _recursive_get_methods_from_extends ($file_text = '', $user_module_name = '', $ONLY_PRIVATE_METHODS = false) {
 // TODO: need to add 'site__' and 'adm__' functionality
 		$extends_file_path = '';
-		$methods = array();
+		$methods = [];
 		// Check if cur class extends some other class
 		if (preg_match($this->_extends_pattern, $file_text, $matches_extends)) {
 			$class_name_1 = $matches_extends[1];
@@ -394,7 +394,7 @@ class yf_user_modules {
 	* Get methods names from given source text
 	*/
 	function _get_methods_names_from_text ($text = '', $ONLY_PRIVATE_METHODS = false) {
-		$methods = array();
+		$methods = [];
 		if (empty($text)) {
 			return $methods;
 		}
@@ -417,11 +417,11 @@ class yf_user_modules {
 	/**
 	* Get methods names for usage inside select boxes
 	*/
-	function _get_methods_for_select ($params = array()) {
+	function _get_methods_for_select ($params = []) {
 		$cache_name = 'user_modules_for_select';
 		$data = cache_get($cache_name);
 		if (!$data) {
-			$data = array('' => '-- All --');
+			$data = ['' => '-- All --'];
 			foreach ((array)$this->_get_methods($params) as $module_name => $module_methods) {
 				$data[$module_name] = $module_name.' -> *';
 				foreach ((array)$module_methods as $method_name) {
@@ -445,24 +445,24 @@ class yf_user_modules {
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
+		if (!in_array($_GET['action'], ['show'])) {
 			return false;
 		}
-		$order_fields = array();
+		$order_fields = [];
 		foreach (explode('|', 'name|active') as $f) {
 			$order_fields[$f] = $f;
 		}
-		$locations = array();
+		$locations = [];
 		foreach (explode('|', 'framework|framework_p2|framework_plugin|project|project_p2|project_plugin|site') as $f) {
 			$locations[$f] = $f;
 		}
-		return form($r, array(
+		return form($r, [
 				'filter' => true,
-			))
+			])
 			->text('name')
-			->select_box('locations', $locations, array('show_text' => 1))
+			->select_box('locations', $locations, ['show_text' => 1])
 			->active_box()
-			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->select_box('order_by', $order_fields, ['show_text' => 1])
 			->order_box()
 			->save_and_clear();
 		;
@@ -470,13 +470,13 @@ class yf_user_modules {
 
 	/**
 	*/
-	function _hook_widget__user_modules ($params = array()) {
+	function _hook_widget__user_modules ($params = []) {
 // TODO
 	}
 
 	/**
 	*/
-	function _hook_settings(&$selected = array()) {
+	function _hook_settings(&$selected = []) {
 #		return array(
 #			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
 #		);

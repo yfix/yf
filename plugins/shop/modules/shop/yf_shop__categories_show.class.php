@@ -2,7 +2,7 @@
 class yf_shop__categories_show{
 
 	function _categories_show() {
-		$shop_cats = array();
+		$shop_cats = [];
 		foreach ((array)module("shop")->_shop_cats_for_select as $_cat_id => $_cat_name) {
 			if (!$_cat_name) {
 				continue;
@@ -12,9 +12,9 @@ class yf_shop__categories_show{
 		if (empty($shop_cats)) {
 			$shop_cats = "";
 		}
-		return tpl()->parse("shop/cats_block", array(
+		return tpl()->parse("shop/cats_block", [
 			"shop_cats" => $shop_cats
-		));
+		]);
 	}
 	
 }

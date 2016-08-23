@@ -55,7 +55,7 @@ if (!function_exists('xsb_decode')) {
 	function xsb_decode($string) { return _class('utils')->xsb_decode($string); }
 }
 if (!function_exists('_display_name')) {
-	function _display_name ($user_info = array()) {
+	function _display_name ($user_info = []) {
 		if (is_string($user_info)) {
 			return $user_info;
 		}
@@ -76,15 +76,6 @@ if (!function_exists('smart_htmlspecialchars')) {
 }
 if (!function_exists('format_bbcode_text')) {
 	function format_bbcode_text ($body = '') { return $body ? _class('bb_codes')->_process_text($body) : ''; }
-}
-if (!function_exists('printr')) {
-	function printr($var, $do_not_echo = false) { return _class('utils')->printr($var, $do_not_echo); }
-}
-if (!function_exists('_debug_log')) {
-	function _debug_log($text, $log_level = false) { return _class('utils')->_debug_log($text, $log_level); }
-}
-if(!function_exists('d')) {
-	function d() { foreach(func_get_args() as $k => $v) { printf('<pre><b>variable[ %s ]</b>:'.PHP_EOL.'%s</pre>', $k, var_export($v, true)); } }
 }
 if (!function_exists('_mkdir_m')) {
 	function _mkdir_m ($path_to_create = '', $dir_mode = 0755, $create_index_htmls = 0, $start_folder = '') {
@@ -109,13 +100,13 @@ if (!function_exists('_prepare_for_stpl_exec')) {
 	function _prepare_for_stpl_exec($source = '') { return preg_replace('/[^a-z0-9\-_\s]/ims', '', $source); }
 }
 if (!function_exists('_profile_link')) {
-	function _profile_link ($user_info = 0, $skip_get_array = array(), $do_add_get = true) { return _class('utils')->_profile_link($user_info, $skip_get_array, $do_add_get); }
+	function _profile_link ($user_info = 0, $skip_get_array = [], $do_add_get = true) { return _class('utils')->_profile_link($user_info, $skip_get_array, $do_add_get); }
 }
 if (!function_exists('_error_need_login')) {
 	function _error_need_login($go_after_login = '') { return _class('utils')->_error_need_login($go_after_login); }
 }
 if (!function_exists('_output_cache_trigger')) {
-	function _output_cache_trigger($data = array()) { return main()->OUTPUT_CACHING ? _class('output_cache')->_exec_trigger($data) : false; }
+	function _output_cache_trigger($data = []) { return main()->OUTPUT_CACHING ? _class('output_cache')->_exec_trigger($data) : false; }
 }
 if (!function_exists('_country_name')) {
 	function _country_name ($code = '') { return _class('utils')->_country_name($code); }
@@ -124,14 +115,14 @@ if (!function_exists('_region_name')) {
 	function _region_name ($region_code = '', $country_code = '') { return _class('utils')->_region_name ($region_code, $country_code); }
 }
 if (!function_exists('_email_link')) {
-	function _email_link ($user_id = 0, $skip_get_array = array(), $do_add_get = true) { return _class('utils')->_email_link($user_id, $skip_get_array, $do_add_get); }
+	function _email_link ($user_id = 0, $skip_get_array = [], $do_add_get = true) { return _class('utils')->_email_link($user_id, $skip_get_array, $do_add_get); }
 }
 if (!function_exists('_prepare_members_link')) {
 	function _prepare_members_link ($url = '') { return _class('utils')->_prepare_members_link($url); }
 }
 if (!function_exists('_range')) {
 	function _range ($_start = 0, $_end = 10) {
-		$data = array();
+		$data = [];
 		for ($i = $_start; $i <= $_end; $i++) {
 			$data[$i] = $i;
 		}
@@ -247,9 +238,9 @@ if (!function_exists('todecimal')) {
 // Used by tpl, form, table to convert str like this: k1=v1,k2=v2;k3=v3
 if (!function_exists('_attrs_string2array')) {
 	function _attrs_string2array($string = '', $strip_quotes = true) {
-		$output_array = array();
+		$output_array = [];
 		if (!is_string($string)) {
-			return array();
+			return [];
 		}
 		foreach (explode(';', str_replace(',', ';', trim($string))) as $tmp_string) {
 			$tmp_string = trim($tmp_string);
@@ -280,12 +271,12 @@ if (!function_exists('_htmlchars')) {
 			}
 			return $str;
 		}
-		$replace = array(
+		$replace = [
 			'"' => '&quot;',
 			"'" => '&apos;',
 			'<'	=> '&lt;',
 			'>'	=> '&gt;',
-		);
+		];
 		return str_replace(array_keys($replace), array_values($replace), $str);
 	}
 }
@@ -296,7 +287,7 @@ if (!function_exists('_attr_class_clean')) {
 		if (!strlen($class) || strpos($class, ' ') === false) {
 			return $class;
 		}
-		$tmp = array();
+		$tmp = [];
 		foreach (explode(' ', trim($class)) as $v) {
 			$v = trim($v);
 			if (strlen($v)) {
@@ -310,8 +301,8 @@ if (!function_exists('_attr_class_clean')) {
 // Build string of html attributes, used by high-level html generators like form, table, html
 if (!function_exists('_attrs')) {
 	function _attrs($extra, $names) {
-		$body = array();
-		$a = array();
+		$body = [];
+		$a = [];
 		foreach ((array)$names as $name) {
 			if (strlen($name) && isset($extra[$name])) {
 				$a[$name] = $extra[$name];
@@ -356,7 +347,7 @@ if (!function_exists('fix_html_attr_id')) {
 	function fix_html_attr_id($val) {
 		$val = trim($val);
 		// fix for space-like chars
-		$val = str_replace(array(' ', "\t", "\n", "\r"), '-', $val);
+		$val = str_replace([' ', "\t", "\n", "\r"], '-', $val);
 		// fix for cyryllic symbols
 		if (strlen($val) && preg_match('~[а-яА-Я]+~ims', $val)) {
 			$val = common()->make_translit($val);
@@ -377,10 +368,10 @@ if (!function_exists('load_db_class')) {
 		if ($_loaded_class) {
 			return $_loaded_class;
 		}
-		$classes = array(
+		$classes = [
 			'db'	=> INCLUDE_PATH.'classes/db.class.php',
 			'yf_db'	=> YF_PATH.'classes/yf_db.class.php',
-		);
+		];
 		foreach ((array)$classes as $cl => $f) {
 			if (!file_exists($f)) {
 				continue;
@@ -396,7 +387,7 @@ if (!function_exists('load_db_class')) {
 }
 
 if (!function_exists('cache_memcached_connect')) {
-function cache_memcached_connect($params = array()) {
+function cache_memcached_connect($params = []) {
 	global $memcache_obj, $CONF;
 	if (isset($memcache_obj)) {
 		return $memcache_obj;
@@ -404,10 +395,10 @@ function cache_memcached_connect($params = array()) {
 	if (!$params) {
 		$conf_host = $CONF['MEMCACHED_HOST'];
 		$conf_port = $CONF['MEMCACHED_PORT'];
-		$params = array(
+		$params = [
 			'host'	=> $conf_host ?: '127.0.0.1',
 			'port'	=> $conf_port ?: 11211,
-		);
+		];
 	}
 	$memcache_obj = null;
 	if (class_exists('Memcached')) {
@@ -432,8 +423,10 @@ if (!function_exists('_var_export')) {
 function _var_export($data) {
 	$str = var_export($data, 1);
 	$str = str_replace('  ', "\t", $str);
-	$str = str_replace('array (', 'array(', $str);
-	$str = preg_replace('~=>[\s]+array\(~ims', '=> array(', $str);
+	$str = preg_replace('~=>[\s]+array\s\(~ims', '=> [', $str);
+	$str = str_replace('array (', '[', $str);
+	$str = str_replace(')', ']', $str);
+	$str = preg_replace('~=>[\s]+array\(~ims', '=> [', $str);
 	return $str;
 }
 }
@@ -458,11 +451,11 @@ if (!function_exists('class_basename')) {
 	function class_basename($class, $prefix = '', $suffix = '') {
 		$class = is_object($class) ? get_class($class) : $class;
 		$class = basename(str_replace("\\", '/', $class));
-		$prefixes = array(
+		$prefixes = [
 			'yf'	=> YF_PREFIX,
 			'site'	=> 'site__',
 			'admin'	=> 'adm__',
-		);
+		];
 		if ($prefix) {
 			$prefixes['custom'] = $prefix;
 		}
@@ -486,7 +479,7 @@ if (!function_exists('base64_encode_safe')) {
 		if (!strlen($in) || preg_match('~^[a-z0-9=\*-]{2,2000}$~i', $in)) {
 			return $in;
 		}
-		return str_replace(array('/', '+'), array('*', '-'), base64_encode($in));
+		return str_replace(['/', '+'], ['*', '-'], base64_encode($in));
 	}
 }
 if (!function_exists('base64_decode_safe')) {
@@ -494,6 +487,6 @@ if (!function_exists('base64_decode_safe')) {
 		if (!strlen($in) || !preg_match('~^[a-z0-9=\*-]{2,2000}$~i', $in)) {
 			return $in;
 		}
-		return base64_decode(str_replace(array('*', '-'), array('/', '+'), $in));
+		return base64_decode(str_replace(['*', '-'], ['/', '+'], $in));
 	}
 }

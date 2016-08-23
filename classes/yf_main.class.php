@@ -82,7 +82,7 @@ class yf_main {
 	/** @var bool Use only HTTPS protocol and check if not - the redirect to the HTTPS */
 	public $USE_ONLY_HTTPS			= false;
 	/** @var array List of patterns for https-enabled pages */
-	public $HTTPS_ENABLED_FOR		= array( /* 'object=shop', */ );
+	public $HTTPS_ENABLED_FOR		= [ /* 'object=shop', */ ];
 	/** @var bool Track user last visit */
 	public $TRACK_USER_PAGE_VIEWS	= false;
 	/** @var bool Track online status */
@@ -120,13 +120,13 @@ class yf_main {
 	/** @var array @conf_skip Current user session info */
 	public $USER_INFO				= null;
 	/** @var array List of objects/actions for which no db connection is required. @example: 'object' => array('action1', 'action2') */
-	public $NO_DB_FOR				= array('internal' => array(), 'dynamic' => array('php_func'));
+	public $NO_DB_FOR				= ['internal' => [], 'dynamic' => ['php_func']];
 	/** @var int Error reporting level for production/non-debug mode (int from built-in constants) */
 	public $ERROR_REPORTING_PROD	= 0;
 	/** @var int Error reporting level for DEBUG_MODE enabled */
 	public $ERROR_REPORTING_DEBUG	= 22519; // 22519 = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
 	/** @var string Log errors switcher, keep empty to disable logging */
-	public $ERROR_LOG_PATH			= '{PROJECT_PATH}error_php.log';
+	public $ERROR_LOG_PATH			= '{LOGS_PATH}yf_core_errors.log';
 	/** @var mixed Development mode, enable dev overrides layer, can containg string with developer name */
 	public $DEV_MODE				= false;
 	/** @var string Server host name */
@@ -148,7 +148,7 @@ class yf_main {
 	* Engine constructor
 	* Depends on type that is given to it initialize user section or administrative backend
 	*/
-	function __construct($type = 'user', $no_db_connect = false, $auto_init_all = false, $_conf = array()) {
+	function __construct($type = 'user', $no_db_connect = false, $auto_init_all = false, $_conf = []) {
 		if (!isset($this->_time_start)) {
 			$this->_time_start = microtime(true);
 		}
@@ -208,7 +208,7 @@ class yf_main {
 				$this->init_auth();
 				$this->init_content();
 			}
-			register_shutdown_function(array($this, '_framework_destruct'));
+			register_shutdown_function([$this, '_framework_destruct']);
 		} catch (Exception $e) {
 			$msg = 'MAIN: Caught exception: '.print_r($e->getMessage(), 1). PHP_EOL. $e->getTraceAsString();
 			trigger_error($msg, E_USER_WARNING);
@@ -227,17 +227,17 @@ class yf_main {
 	* Micro-framework 'fast_init' inside big YF framework. We use it when some actions need to be done at top speed.
 	*/
 	function try_fast_init() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if (!$this->ALLOW_FAST_INIT) {
 			return false;
 		}
 		global $CONF; // Do not remove this, it is needed for extending fast init
 
-		$paths = array(
+		$paths = [
 			'app'		=> APP_PATH.'share/fast_init.php',
 			'project'	=> PROJECT_PATH.'share/fast_init.php',
 			'yf'		=> YF_PATH.'share/fast_init.php',
-		);
+		];
 		foreach ($paths as $path) {
 			if (file_exists($path)) {
 				include_once $path;
@@ -251,7 +251,7 @@ class yf_main {
 	* Allows to call code here before we begin initializing engine parts
 	*/
 	function _before_init_hook() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->NO_GRAPHICS = $GLOBALS['no_graphics'];
 		$GLOBALS['no_graphics'] = &$this->NO_GRAPHICS;
 		if (defined('DEBUG_MODE') && DEBUG_MODE) {
@@ -262,7 +262,7 @@ class yf_main {
 	/**
 	*/
 	function _check_site_maintenance() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if (MAIN_TYPE_USER && !$this->is_console() && !DEBUG_MODE && conf('site_maintenance')) {
 			$this->NO_GRAPHICS = true;
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
@@ -277,7 +277,7 @@ class yf_main {
 	* Allows to call code here before we begin with graphics
 	*/
 	function _after_init_hook() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->events->fire('main.after_init_begin');
 		$this->_check_site_maintenance();
 
@@ -296,7 +296,7 @@ class yf_main {
 		if ($this->TRACK_USER_PAGE_VIEWS && $this->USER_ID) {
 			$this->_add_shutdown_code(function(){
 				if (!main()->NO_GRAPHICS) {
-					db()->update_safe('user', array('last_view' => time(), 'num_views' => ++$this->_user_info['num_views']), $this->USER_ID);
+					db()->update_safe('user', ['last_view' => time(), 'num_views' => ++$this->_user_info['num_views']], $this->USER_ID);
 				}
 			});
 		}
@@ -332,7 +332,7 @@ class yf_main {
 	* Url rewriting engine init and apply if rewrite is enabled
 	*/
     function _do_rewrite() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if ($this->is_console() || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
 			return false;
 		}
@@ -400,7 +400,7 @@ class yf_main {
 	* conf(), module_conf() wrappers
 	*/
 	function init_conf_functions() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$path = dirname(__DIR__).'/share/functions/yf_conf.php';
 		if (file_exists($path)) {
 			$this->include_module($path, 1);
@@ -411,7 +411,7 @@ class yf_main {
 	* main(), _class(), module(), db(), tpl(), common() wrappers and more
 	*/
 	function init_main_functions() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$path = dirname(__DIR__).'/share/functions/yf_aliases.php';
 		if (file_exists($path)) {
 			$this->include_module($path, 1);
@@ -422,9 +422,9 @@ class yf_main {
 	* Initialization of required files
 	*/
 	function init_files() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		$include_files = array();
-		$required_files = array();
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
+		$include_files = [];
+		$required_files = [];
 		$this->events && $this->events->fire('main.before_files');
 		if ($this->NO_DB_CONNECT == 0) {
 			$include_files[] = CONFIG_PATH. 'db_setup.php';
@@ -436,11 +436,11 @@ class yf_main {
 		foreach ((array)conf('required_files::'.MAIN_TYPE) as $path) {
 			$required_files[] = $path;
 		}
-		$funcs_paths = array(
+		$funcs_paths = [
 			'app'		=> APP_PATH.'share/functions/common_funcs.php',
 			'project'	=> PROJECT_PATH.'share/functions/common_funcs.php',
 			'yf'		=> YF_PATH.'share/functions/'.YF_PREFIX.'common_funcs.php',
-		);
+		];
 		foreach ($funcs_paths as $path) {
 			if (file_exists($path)) {
 				$required_files[] = $path;
@@ -457,14 +457,14 @@ class yf_main {
 	/**
 	*/
 	function init_modules_base() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		$this->modules = array();
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
+		$this->modules = [];
 	}
 
 	/**
 	*/
 	function init_db() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->events->fire('main.before_db');
 		// Check if current object/action not required db connection
 		$get_object = $_GET['object'];
@@ -490,22 +490,22 @@ class yf_main {
 	/**
 	*/
 	function init_events() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->events = $this->_class('core_events');
 		// Load event listeners from supported locations
 		$ext = '.listener.php';
 		$dir = 'share/events/';
 		$pattern = $dir. '*'. $ext;
-		$globs = array(
+		$globs = [
 			'yf_core'			=> YF_PATH. $pattern,
 			'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
 			'project_core'		=> PROJECT_PATH. $pattern,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
 			'app_core'			=> APP_PATH. $pattern,
 			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
-		);
+		];
 		$ext_len = strlen($ext);
-		$names = array();
+		$names = [];
 		foreach ($globs as $glob) {
 			foreach (glob($glob) as $path) {
 				$name = substr(basename($path), 0, -$ext_len);
@@ -521,14 +521,14 @@ class yf_main {
 	/**
 	*/
 	function init_common() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->common = $this->_class('common');
 	}
 
 	/**
 	*/
 	function init_tpl() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->events->fire('main.before_tpl');
 		$this->tpl = $this->_class('tpl');
 		$this->events->fire('main.after_tpl');
@@ -537,7 +537,7 @@ class yf_main {
 	/**
 	*/
 	function init_content() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->events->fire('main.before_content');
 
 		$this->tpl->init_graphics();
@@ -553,7 +553,7 @@ class yf_main {
 	/**
 	*/
 	function init_cache() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->events->fire('main.before_cache');
 		$CACHE_DRIVER = conf('CACHE_DRIVER');
 		if ($CACHE_DRIVER) {
@@ -566,7 +566,7 @@ class yf_main {
 	/**
 	*/
 	function init_error_reporting() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if ($this->USE_CUSTOM_ERRORS) {
 			$this->error_handler = $this->_class('core_errors');
 		}
@@ -578,7 +578,7 @@ class yf_main {
 	/**
 	*/
 	function init_server_health() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		// Server health result (needed to correctly self turn off faulty box from frontend requests)
 		if (!$this->is_console() && $this->SERVER_HEALTH_CHECK && $this->SERVER_HEALTH_FILE && file_exists($this->SERVER_HEALTH_FILE)) {
 			$health_result = file_get_contents($this->SERVER_HEALTH_FILE);
@@ -599,7 +599,7 @@ class yf_main {
 	/**
 	*/
 	function init_firephp() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if (!$this->FIREPHP_ENABLE) {
 			return false;
 		}
@@ -615,7 +615,7 @@ class yf_main {
 	/**
 	*/
 	function spider_detection() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if (!$this->SPIDERS_DETECTION) {
 			return false;
 		}
@@ -639,7 +639,7 @@ class yf_main {
 	/**
 	*/
 	function init_session() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->events->fire('main.before_session');
 		$skip = false;
 		if (isset($this->_session_init_complete) || $this->is_console() || conf('SESSION_OFF') || $this->SESSION_OFF) {
@@ -657,7 +657,7 @@ class yf_main {
 	* Initialization settings stored in the database
 	*/
 	function init_settings() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$lang = 'en'; // default lang
 		if (defined('DEFAULT_LANG') && DEFAULT_LANG != '') {
 			$lang = DEFAULT_LANG;
@@ -675,7 +675,7 @@ class yf_main {
 	* Try to find current site if not done yet
 	*/
 	function init_site_id() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if (!conf('SITE_ID')) {
 			$site_id = 1;
 			foreach ((array)$this->get_data('sites') as $site) {
@@ -694,7 +694,7 @@ class yf_main {
 	* Try to find current server if not done yet
 	*/
 	function init_server_id() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$servers = $this->get_data('servers');
 		$this->SERVER_ID = 0;
 		if (!conf('SERVER_ID') && ($servers || DEBUG_MODE) && !$this->is_hhvm()) {
@@ -708,9 +708,9 @@ class yf_main {
 					$this->SERVER_ID = (int)$server['id'];
 					break;
 				}
-				$server_ips = array();
+				$server_ips = [];
 				if ($self_ips) {
-					foreach (explode(',', str_replace(array(',',';',PHP_EOL,"\t",' '), ',', trim($server['ip']))) as $v) {
+					foreach (explode(',', str_replace([',',';',PHP_EOL,"\t",' '], ',', trim($server['ip']))) as $v) {
 						$v = trim($v);
 						$v && $server_ips[$v] = $v;
 					}
@@ -732,7 +732,7 @@ class yf_main {
 	* Try to find current server role if not done yet
 	*/
 	function init_server_role() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->SERVER_ROLE = 'default';
 		if (!conf('SERVER_ROLE') && $this->SERVER_INFO['role']) {
 			$this->SERVER_ROLE = $this->SERVER_INFO['role'];
@@ -745,7 +745,7 @@ class yf_main {
 	* Starting localization engine
 	*/
 	function init_locale() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if ($_GET['no_lang'] || conf('no_locale')) {
 			return false;
 		}
@@ -756,7 +756,7 @@ class yf_main {
 	* Init authentication
 	*/
 	function init_auth() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		$this->events->fire('main.before_auth');
 		if (defined('SITE_DEFAULT_PAGE')) {
 			conf('SITE_DEFAULT_PAGE', SITE_DEFAULT_PAGE);
@@ -809,14 +809,14 @@ class yf_main {
 			include_once ($path_to_module);
 		}
 		if (DEBUG_MODE) {
-			debug('included_files[]', array(
+			debug('included_files[]', [
 				'path'		=> $path_to_module,
 				'exists'	=> (int)$file_exists,
 				'required'	=> (int)$is_required,
 				'size'		=> $file_exists ? filesize($path_to_module) : '',
 				'time'		=> round(microtime(true) - $_time_start, 5),
 				'trace'		=> $this->trace_string(),
-			));
+			]);
 		}
 	}
 
@@ -852,16 +852,16 @@ class yf_main {
 		if ($class_name == 'main') {
 			return $this;
 		}
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		// Strict installed modules check (currently only for user modules)
 		if ($this->STRICT_MODULES_INIT && empty($custom_path)) {
 			if (!isset($this->installed_user_modules)) {
 				$this->installed_user_modules = $this->get_data('user_modules');
 			}
 			if (MAIN_TYPE_USER) {
-				$skip_array = array(
+				$skip_array = [
 					'rewrite',
-				);
+				];
 				if (!in_array($class_name, $skip_array) && !isset($this->installed_user_modules[$class_name])) {
 					return false;
 				}
@@ -869,7 +869,7 @@ class yf_main {
 				if (!isset($this->installed_admin_modules)) {
 					$this->installed_admin_modules = $this->get_data('admin_modules');
 				}
-				$skip_array = array();
+				$skip_array = [];
 				if (!in_array($class_name, $skip_array)	&& !isset($this->installed_admin_modules[$class_name]) && !isset($this->installed_user_modules[$class_name])) {
 					return false;
 				}
@@ -890,21 +890,21 @@ class yf_main {
 	/**
 	*/
 	function _preload_plugins_list($force = false) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if (isset($this->_plugins) && !$force) {
 			return $this->_plugins;
 		}
 		$white_list = (array)$this->_plugins_white_list;
 		$black_list = (array)$this->_plugins_black_list;
 		// Order matters for plugins_classes !!
-		$sets = array(
+		$sets = [
 			'framework'	=> YF_PATH.'plugins/*/',
 			'project'	=> PROJECT_PATH.'plugins/*/',
 			'app'		=> APP_PATH.'plugins/*/',
-		);
+		];
 		$_plen = strlen(YF_PREFIX);
-		$plugins = array();
-		$plugins_classes = array();
+		$plugins = [];
+		$plugins_classes = [];
 		$ext = YF_CLS_EXT; // default is .class.php
 		foreach ((array)$sets as $set => $pattern) {
 			foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT) as $d) {
@@ -916,7 +916,7 @@ class yf_main {
 					break;
 				}
 				$dlen = strlen($d);
-				$classes = array();
+				$classes = [];
 				foreach (array_merge(glob($d.'*/*'.$ext), glob($d.'*/*/*'.$ext)) as $f) {
 					$cname = str_replace($ext, '', basename($f));
 					$cdir = dirname(substr($f, $dlen)).'/';
@@ -1022,33 +1022,33 @@ class yf_main {
 		$yf_plugins_classes = &$this->_plugins_classes;
 
 		// Order of storages matters a lot!
-		$storages = array();
+		$storages = [];
 		if (conf('DEV_MODE')) {
 			if ($site_path_dev && $site_path_dev != $project_path_dev) {
-				$storages['dev_site'] = array($SITE_PATH. $site_path_dev);
+				$storages['dev_site'] = [$SITE_PATH. $site_path_dev];
 			}
-			$storages['dev_app'] = array(APP_PATH. $project_path_dev);
-			$storages['dev_project'] = array(PROJECT_PATH. $project_path_dev);
+			$storages['dev_app'] = [APP_PATH. $project_path_dev];
+			$storages['dev_project'] = [PROJECT_PATH. $project_path_dev];
 		}
 		if (strlen($site_path)) {
 			$def_path = 'classes/';
 			if (substr($site_path, 0, strlen($def_path)) !== $def_path) {
 				if (strlen(YF_PATH) > 3 && substr($site_path, 0, strlen(YF_PATH)) === YF_PATH) {
-					$storages['site'] = array($site_path);
+					$storages['site'] = [$site_path];
 				} elseif (strlen(APP_PATH) > 3 && substr($site_path, 0, strlen(APP_PATH)) === APP_PATH) {
-					$storages['site'] = array($site_path);
+					$storages['site'] = [$site_path];
 				} elseif (strlen(PROJECT_PATH) > 3 && substr($site_path, 0, strlen(PROJECT_PATH)) === PROJECT_PATH) {
-					$storages['site'] = array($site_path);
+					$storages['site'] = [$site_path];
 				}
 			}
 			if (!isset($storages['site']) && strlen($SITE_PATH. $site_path) && ($SITE_PATH. $site_path) != (PROJECT_PATH. $project_path)) {
-				$storages['site'] = array($SITE_PATH. $site_path);
+				$storages['site'] = [$SITE_PATH. $site_path];
 			}
 		}
-		$storages['app_site_hook'] = array(APP_PATH. $site_path, $cur_hook_prefix);
-		$storages['app'] = array(APP_PATH. $project_path);
-		$storages['project_site_hook'] = array($SITE_PATH. $site_path, $cur_hook_prefix);
-		$storages['project'] = array(PROJECT_PATH. $project_path);
+		$storages['app_site_hook'] = [APP_PATH. $site_path, $cur_hook_prefix];
+		$storages['app'] = [APP_PATH. $project_path];
+		$storages['project_site_hook'] = [$SITE_PATH. $site_path, $cur_hook_prefix];
+		$storages['project'] = [PROJECT_PATH. $project_path];
 		$plugin_name = '';
 		if (isset($yf_plugins[$class_name]) || isset($yf_plugins_classes[$class_name])) {
 			if (isset($yf_plugins_classes[$class_name])) {
@@ -1062,33 +1062,33 @@ class yf_main {
 			$plugin_subdir = 'plugins/'.$plugin_name.'/';
 
 			if ($site_path && $site_path != $project_path) {
-				$storages['plugins_site'] = array($SITE_PATH. $plugin_subdir. $site_path);
+				$storages['plugins_site'] = [$SITE_PATH. $plugin_subdir. $site_path];
 			}
 			if (isset($plugin_info['app'])) {
-				$storages['plugins_app'] = array(APP_PATH. $plugin_subdir. $project_path);
+				$storages['plugins_app'] = [APP_PATH. $plugin_subdir. $project_path];
 				if (MAIN_TYPE_ADMIN) {
-					$storages['plugins_admin_user_app']	= array(APP_PATH. $plugin_subdir. $project_path2);
+					$storages['plugins_admin_user_app']	= [APP_PATH. $plugin_subdir. $project_path2];
 				}
 			} elseif (isset($plugin_info['project'])) {
-				$storages['plugins_project'] = array(PROJECT_PATH. $plugin_subdir. $project_path);
+				$storages['plugins_project'] = [PROJECT_PATH. $plugin_subdir. $project_path];
 				if (MAIN_TYPE_ADMIN) {
-					$storages['plugins_admin_user_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path2);
+					$storages['plugins_admin_user_project']	= [PROJECT_PATH. $plugin_subdir. $project_path2];
 				}
 			}
 		}
-		$storages['framework'] = array(YF_PATH. $fwork_path, YF_PREFIX);
+		$storages['framework'] = [YF_PATH. $fwork_path, YF_PREFIX];
 		if ($plugin_name) {
 			if (isset($plugin_info['framework'])) {
-				$storages['plugins_framework'] = array(YF_PATH. $plugin_subdir. $fwork_path, YF_PREFIX);
+				$storages['plugins_framework'] = [YF_PATH. $plugin_subdir. $fwork_path, YF_PREFIX];
 				if (MAIN_TYPE_ADMIN) {
-					$storages['plugins_admin_user_framework'] = array(YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX);
+					$storages['plugins_admin_user_framework'] = [YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX];
 				}
 			}
 		}
 		if (MAIN_TYPE_ADMIN) {
-			$storages['admin_user_app']	= array(APP_PATH. $project_path2);
-			$storages['admin_user_project']	= array(PROJECT_PATH. $project_path2);
-			$storages['admin_user_framework'] = array(YF_PATH. USER_MODULES_DIR, YF_PREFIX);
+			$storages['admin_user_app']	= [APP_PATH. $project_path2];
+			$storages['admin_user_project']	= [PROJECT_PATH. $project_path2];
+			$storages['admin_user_framework'] = [YF_PATH. USER_MODULES_DIR, YF_PREFIX];
 		}
 		// Extending storages on-the-fly. Examples:
 		// main()->_custom_class_storages = array(
@@ -1136,7 +1136,7 @@ class yf_main {
 			}
 		}
 		if (DEBUG_MODE) {
-			debug('main_load_class[]', array(
+			debug('main_load_class[]', [
 				'class_name'		=> $class_name,
 				'loaded_class_name'	=> $loaded_class_name,
 				'loaded_path'		=> $loaded_path,
@@ -1144,7 +1144,7 @@ class yf_main {
 				'storages'			=> $storages,
 				'time'				=> (microtime(true) - $_time_start),
 				'trace'				=> $this->trace_string(),
-			));
+			]);
 		}
 		return $loaded_class_name;
 	}
@@ -1153,7 +1153,7 @@ class yf_main {
 	* Main $_GET tasks handler
 	*/
 	function tasks($allowed_check = false) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		return $this->_class('core_blocks')->tasks($allowed_check);
 	}
 
@@ -1161,7 +1161,7 @@ class yf_main {
 	* Prepare name for call_class_method cache
 	*/
 	function _get_exec_cache_name($class_name = '', $custom_path = '', $method_name = '', $method_params = '', $tpl_name = '') {
-		$params = array(
+		$params = [
 			'[FUNCTION]'=> 'call_class_method',
 			'[CLASS]'	=> $class_name,
 			'[METHOD]'	=> $method_name,
@@ -1169,7 +1169,7 @@ class yf_main {
 			'[DOMAIN]'	=> defined('CUR_DOMAIN_LONG') ? CUR_DOMAIN_LONG : $_SERVER['HTTP_HOST'],
 			'[CATEGORY]'=> conf('current_category'),
 			'[DEBUG]'	=> intval(DEBUG_MODE),
-		);
+		];
 		return str_replace(array_keys($params), array_values($params), $this->EXEC_CACHE_NAME_TPL);
 	}
 
@@ -1224,7 +1224,7 @@ class yf_main {
 		}
 		$result = $obj->$method_name($method_params);
 		if ($use_cache) {
-			$this->modules['cache']->set($cache_name, array($result));
+			$this->modules['cache']->set($cache_name, [$result]);
 		}
 		return $result;
 	}
@@ -1240,12 +1240,12 @@ class yf_main {
 		if (!$body) {
 			$body = '';
 		}
-		$this->events->fire('main.execute', array(
+		$this->events->fire('main.execute', [
 			'body' => &$body,
 			'args' => func_get_args()
-		));
+		]);
 		if (DEBUG_MODE) {
-			debug('main_execute_block_time[]', array(
+			debug('main_execute_block_time[]', [
 				'class'		=> $class_name,
 				'method'	=> $method_name,
 				'params'	=> $method_params,
@@ -1254,7 +1254,7 @@ class yf_main {
 				'size'		=> strlen( is_array( $body ) ? implode( $body ) : $body ),
 				'time'		=> round(microtime(true) - $_time_start, 5),
 				'trace'		=> $this->trace_string(),
-			));
+			]);
 		}
 		return $body;
 	}
@@ -1307,7 +1307,7 @@ class yf_main {
 	/**
 	* Get named data array
 	*/
-	function get_data($name = '', $force_ttl = 0, $params = array()) {
+	function get_data($name = '', $force_ttl = 0, $params = []) {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
@@ -1345,7 +1345,7 @@ class yf_main {
 					$data = $handler($params);
 				}
 				if (!$data) {
-					$data = array();
+					$data = [];
 				}
 			}
 			// Do not put empty data if database could not connected (not hiding mistakes with empty get_data)
@@ -1357,7 +1357,7 @@ class yf_main {
 			}
 		}
 		if (DEBUG_MODE) {
-			debug('main_get_data[]', array(
+			debug('main_get_data[]', [
 				'name'		=> $name,
 				'real_name'	=> $name_to_save,
 				'data'		=> $data,
@@ -1366,7 +1366,7 @@ class yf_main {
 				'force_ttl'	=> $force_ttl,
 				'time'		=> round(microtime(true) - $time_start, 5),
 				'trace'		=> $this->trace_string(),
-			));
+			]);
 		}
 		return $data;
 	}
@@ -1374,7 +1374,7 @@ class yf_main {
 	/**
 	* Put named data array
 	*/
-	function put_data($name = '', $data = array()) {
+	function put_data($name = '', $data = []) {
 		if (empty($this->USE_SYSTEM_CACHE)) {
 			return false;
 		}
@@ -1388,25 +1388,25 @@ class yf_main {
 	* Load common data handlers array from file
 	*/
 	function _load_data_handlers() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if ($this->_data_handlers_loaded) {
 			return false;
 		}
-		$this->data_handlers = array();
-		$handlers = array();
+		$this->data_handlers = [];
+		$handlers = [];
 		$this->events && $this->events->fire('main.load_data_handlers');
 
 		$suffix = '.php';
 		$dir = 'share/data_handlers/';
 		$pattern = $dir. '*'. $suffix;
-		$globs = array(
+		$globs = [
 			'yf_main'				=> YF_PATH. $pattern,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
 			'project_main'			=> PROJECT_PATH. $pattern,
 			'project_app'			=> APP_PATH. $pattern,
 			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
 			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
-		);
+		];
 		$strlen_suffix = strlen($suffix);
 		foreach($globs as $gname => $glob) {
 			foreach(glob($glob) as $path) {
@@ -1414,11 +1414,11 @@ class yf_main {
 				$handlers[$name] = $path;
 			}
 		}
-		$aliases = array(
+		$aliases = [
 			'category_sets'	=> 'cats_blocks',
 			'sys_sites'		=> 'sites',
 			'sys_servers'	=> 'servers',
-		);
+		];
 		foreach ((array)$aliases as $from => $to) {
 			$handlers[$from] = $handlers[$to];
 		}
@@ -1432,7 +1432,7 @@ class yf_main {
 	* Simple trace without dumping whole objects
 	*/
 	function trace() {
-		$trace = array();
+		$trace = [];
 		foreach (debug_backtrace() as $k => $v) {
 			if (!$k) {
 				continue;
@@ -1455,12 +1455,12 @@ class yf_main {
 	* Search for sites configuration overrides (in subfolder ./sites/)
 	*/
 	function _find_site($sites_dir = '') {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		if (!$sites_dir) {
-			$try_paths = array(
+			$try_paths = [
 				APP_PATH.'sites/',
 				PROJECT_PATH.'sites/',
-			);
+			];
 			$sites_dir = '';
 			foreach ($try_paths as $try_path) {
 				if (file_exists($try_path)) {
@@ -1470,21 +1470,21 @@ class yf_main {
 			}
 		}
 		if (!$sites_dir) {
-			return array();
+			return [];
 		}
 		// Array of sites passed here
 		if (is_array($sites_dir)) {
 			$dirs = $sites_dir;
 		} else {
 			if (!file_exists($sites_dir)) {
-				return array();
+				return [];
 			}
 			$dirs = array_merge(
 				glob($sites_dir.'*', GLOB_ONLYDIR),
 				glob($sites_dir.'.*', GLOB_ONLYDIR)
 			);
 		}
-		$sites = $sites1 = $sites2 = array();
+		$sites = $sites1 = $sites2 = [];
 		foreach((array)$dirs as $v) {
 			$v = strtolower(basename($v));
 			if ($v == '.' || $v == '..') {
@@ -1503,7 +1503,7 @@ class yf_main {
 		uksort($sites2, $sort_by_length);
 		$sites = $sites1 + $sites2;
 		$found_site = $this->_find_site_path_best_match($sites, $_SERVER['SERVER_ADDR'], $_SERVER['SERVER_PORT'], $_SERVER['HTTP_HOST']);
-		return array($found_site, $sites_dir);
+		return [$found_site, $sites_dir];
 	}
 
 	/**
@@ -1515,7 +1515,7 @@ class yf_main {
 		$sip = explode('.', $server_ip);
 		$sh = array_reverse(explode('.', $server_host));
 		$sh2 = explode('.', $server_host);
-		$variants = array(
+		$variants = [
 			$server_ip.':'.$server_port,
 			$server_ip,
 			$sip[0].'.'.$sip[1].'.'.$sip[2].'.:'.$server_port,
@@ -1535,7 +1535,7 @@ class yf_main {
 			$sh2[0].'.:'.$server_port,
 			$sh2[0].'.',
 			':'.$server_port,
-		);
+		];
 		foreach (array_intersect($sites, $variants) as $sname) {
 			return $sname;
 		}
@@ -1546,7 +1546,7 @@ class yf_main {
 	* Check and try to fix required constants
 	*/
 	function init_constants() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		// Save current working directory (to restore it later when execute shutdown functions)
 		$this->_CWD = getcwd();
 
@@ -1601,7 +1601,7 @@ class yf_main {
 				define('INCLUDE_PATH', (MAIN_TYPE_ADMIN ? dirname($_path) : $_path).'/');
 			} else {
 				$cur_script_path = dirname(realpath(getenv('SCRIPT_FILENAME')));
-				define('INCLUDE_PATH', str_replace(array("\\",'//'), array('/','/'), (MAIN_TYPE_ADMIN ? dirname($cur_script_path) : $cur_script_path).'/'));
+				define('INCLUDE_PATH', str_replace(["\\",'//'], ['/','/'], (MAIN_TYPE_ADMIN ? dirname($cur_script_path) : $cur_script_path).'/'));
 			}
 		}
 		// Alias
@@ -1660,8 +1660,8 @@ class yf_main {
 			$this->web_path_was_not_defined = true;
 			define('WEB_PATH',
 				($this->is_https() ? 'https://' : 'http://')
-				.$host. ($_SERVER['SERVER_PORT'] && !in_array($_SERVER['SERVER_PORT'], array('80','443')) ? ':'.$_SERVER['SERVER_PORT'] : '')
-				.str_replace(array("\\",'//'), '/', (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/')
+				.$host. ($_SERVER['SERVER_PORT'] && !in_array($_SERVER['SERVER_PORT'], ['80','443']) ? ':'.$_SERVER['SERVER_PORT'] : '')
+				.str_replace(["\\",'//'], '/', (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/')
 			);
 		}
 		if (!defined('WEB_DOMAIN') && defined('WEB_PATH') && strlen(WEB_PATH)) {
@@ -1707,7 +1707,7 @@ class yf_main {
 		if ($_GET['action'] == $_GET['object']) {
 			$_GET['action'] = '';
 		}
-		$_GET['object'] = str_replace(array('yf_','-'), array('','_'), preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim( $_GET['object'] ))));
+		$_GET['object'] = str_replace(['yf_','-'], ['','_'], preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim( $_GET['object'] ))));
 		$_GET['action'] = str_replace('-', '_', preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim( $_GET['action'] ))));
 		if (!$_GET['action']) {
 			$_GET['action'] = defined('DEFAULT_ACTION') ? DEFAULT_ACTION : 'show';
@@ -1721,7 +1721,7 @@ class yf_main {
 	* Try to set required PHP runtime params
 	*/
 	function init_php_params() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
 		ini_set('url_rewriter.tags', '');
 		ini_set('magic_quotes_runtime',	0);
@@ -1767,7 +1767,7 @@ if ($_POST) {
 	* Send main headers
 	*/
 	function _send_main_headers($content_length = 0) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		return $this->_class('graphics')->_send_main_headers($content_length);
 		$this->events->fire('main.http_headers');
 	}
@@ -1777,7 +1777,7 @@ if ($_POST) {
 	*/
 	function _strip_quotes_recursive($mixed) {
 		if (is_array($mixed)) {
-			return array_map(array($this, __FUNCTION__), $mixed);
+			return array_map([$this, __FUNCTION__], $mixed);
 		} else {
 			return stripslashes($mixed);
 		}
@@ -1786,7 +1786,7 @@ if ($_POST) {
 	/**
 	*/
 	function _init_cur_user_info(&$obj) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), array());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), []];
 		if (MAIN_TYPE_ADMIN) {
 			$obj->USER_ID		= $_GET['user_id'];
 			$obj->ADMIN_ID		= (int)$_SESSION['admin_id'];
@@ -1815,9 +1815,9 @@ if ($_POST) {
 			return $str;
 		}
 		if (!isset($this->_paths_replace_pairs)) {
-			$pairs = array();
+			$pairs = [];
 			// Note: order matters
-			$path_names = array(
+			$path_names = [
 				'ADMIN_WEB_PATH',
 				'ADMIN_SITE_PATH',
 				'UPLOADS_PATH',
@@ -1830,7 +1830,7 @@ if ($_POST) {
 				'CONFIG_PATH',
 				'STORAGE_PATH',
 				'LOGS_PATH',
-			);
+			];
 			foreach ($path_names as $name) {
 				$val = constant($name);
 				$pairs[$name] = $val; // Example: YF_PATH
@@ -1863,7 +1863,7 @@ if ($_POST) {
 	* Framework destructor handler
 	*/
 	function _framework_destruct() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
 		// Restore startup working directory
 		chdir($this->_CWD);
 
@@ -1871,7 +1871,7 @@ if ($_POST) {
 
 		if ($this->CATCH_FATAL_ERRORS) {
 			$error = error_get_last();
-			if (in_array($error, array(E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, E_USER_ERROR, E_RECOVERABLE_ERROR))) {
+			if (in_array($error, [E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, E_USER_ERROR, E_RECOVERABLE_ERROR])) {
 				$info = '['.gmdate('Y-m-d H:i:s').'] [SHUTDOWN] file:'.$error['file'].' | ln:'.$error['line'].' | msg:'.$error['message'] .PHP_EOL;
 				file_put_contents(PROJECT_PATH. 'fatal_log.txt', $info, FILE_APPEND);
 				echo $info;
@@ -2087,7 +2087,7 @@ if ($_POST) {
 		if (!$this->is_console()) {
 			try {
 				require_php_lib('mobile_detect');
-				$detect = new Mobile_Detect(array(), strtolower($_SERVER['HTTP_USER_AGENT']));
+				$detect = new Mobile_Detect([], strtolower($_SERVER['HTTP_USER_AGENT']));
 				$this->_is_mobile = (bool)$detect->isMobile();
 			} catch (Exception $e) { }
 		}
@@ -2139,7 +2139,7 @@ if ($_POST) {
 
 	/**
 	*/
-	function require_php_lib($name, $params = array()) {
+	function require_php_lib($name, $params = []) {
 		return $this->_class('services')->require_php_lib($name, $params);
 	}
 }

@@ -18,7 +18,7 @@ class yf_auth_user {
 	/** @var string Login field name to use @conf_skip */
 	public $LOGIN_FIELD				= 'login';
 	/** @var string Alternative login field name to use @conf_skip */
-	public $LOGIN_ALIAS				= array('email','phone');
+	public $LOGIN_ALIAS				= ['email','phone'];
 	/** @var string Password field name to use @conf_skip */
 	public $PSWD_FIELD				= 'password';
 	/** @var string Remeber field name to use @conf_skip */
@@ -62,9 +62,9 @@ class yf_auth_user {
 	/** @var string Site closed stpl name */
 	public $SITE_CLOSED_STPL		= 'site_closed';
 	/** @var array @conf_skip Methods to execute after success login or logout @example	$EXEC_AFTER_LOGIN = array(array('test_method', array('Working!')));	*/
-	public $EXEC_AFTER_LOGIN		= array();
+	public $EXEC_AFTER_LOGIN		= [];
 	/** @var array @conf_skip */
-	public $EXEC_AFTER_LOGOUT		= array();
+	public $EXEC_AFTER_LOGOUT		= [];
 	/** @var string	*/
 // TODO: be able to import cookies settings from main()->_init_session()
 	public $COOKIE_PATH				= '/';
@@ -81,13 +81,13 @@ class yf_auth_user {
 	/** @var bool Catch ref codes */
 	public $CATCH_REF_CODES			= false;
 	/** @var array Pages where we do not need to track online stats @conf_skip */
-	public $ONLINE_SKIP_PAGES		= array(
+	public $ONLINE_SKIP_PAGES		= [
 		'user_profile->compact_info',
 		'help->show_tip',
 		'forum->compact_topic_repliers',
 		'aff',
 		'task_loader'
-	);
+	];
 	/** @var bool Store cookie with geo info for guests */
 	public $TRACK_GEO_LOCATION		= false;
 	/** @var bool Save failed logins @security */
@@ -175,9 +175,9 @@ class yf_auth_user {
 			$ip = common()->get_ip();
 			if (!isset($_SESSION[$this->VAR_LOCK_IP]) || $_SESSION[$this->VAR_LOCK_IP] !== $ip) {
 				trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:'.$_SESSION[$this->VAR_LOCK_IP].', new_ip:'.$ip.', user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
-				$this->_log_fail(array(
+				$this->_log_fail([
 					'reason'	=> 'auth_blocked_by_ip',
-				));
+				]);
 				$_GET['task'] = 'logout';
 			}
 		}
@@ -187,9 +187,9 @@ class yf_auth_user {
 			$ua = $_SERVER['HTTP_USER_AGENT'];
 			if (!isset($_SESSION[$this->VAR_LOCK_UA]) || $_SESSION[$this->VAR_LOCK_UA] !== $ua) {
 				trigger_error('AUTH: Attempt to use session with changed User Agent blocked, auth_ua:"'.$_SESSION[$this->VAR_LOCK_UA].'", new_ua:"'.$ua.'", user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
-				$this->_log_fail(array(
+				$this->_log_fail([
 					'reason'	=> 'auth_blocked_by_ua',
-				));
+				]);
 				$_GET['task'] = 'logout';
 			}
 		}
@@ -199,9 +199,9 @@ class yf_auth_user {
 			$host = $_SERVER['HTTP_HOST'];
 			if (!isset($_SESSION[$this->VAR_LOCK_HOST]) || $_SESSION[$this->VAR_LOCK_HOST] !== $host) {
 				trigger_error('AUTH: Attempt to use session with changed Host blocked, auth_host:"'.$_SESSION[$this->VAR_LOCK_HOST].'", new_host:"'.$ua.'", user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
-				$this->_log_fail(array(
+				$this->_log_fail([
 					'reason'	=> 'auth_blocked_by_host',
-				));
+				]);
 				$_GET['task'] = 'logout';
 			}
 		}
@@ -209,9 +209,9 @@ class yf_auth_user {
 		$referer = $_SERVER['HTTP_REFERER'];
 		if ($this->SESSION_REFERER_CHECK && (!$referer || substr($referer, 0, strlen(WEB_PATH)) != WEB_PATH) && $_GET['task'] !== 'logout') {
 			trigger_error('AUTH: Referer not matched and session blocked, referer:'.$referer, E_USER_WARNING);
-			$this->_log_fail(array(
+			$this->_log_fail([
 				'reason'	=> 'auth_blocked_by_referer',
-			));
+			]);
 			$_GET['task'] = 'logout';
 		}
 		// Switch between login/logout actions
@@ -226,17 +226,17 @@ class yf_auth_user {
 				$this->_do_login_with_encrypted();
 			}
 			if (empty($_SESSION[$this->VAR_USER_ID])) {
-				$this->_do_login(array(
+				$this->_do_login([
 					'login'	=> $_POST[$this->LOGIN_FIELD],
 					'pswd'	=> $_POST[$this->PSWD_FIELD],
-				));
+				]);
 			}
 		}
 		// Check if current user session has expired
 		if ($this->STORE_ONLINE_USERS) {
 			$online_users = &main()->_online_users;
 			if (!isset($online_users)) {
-				$online_users = array();
+				$online_users = [];
 				$sql = 'SELECT id, user_id FROM '.db('online'). (MAIN_TYPE_USER ? ' WHERE type != "admin"' : ''). ($this->ONLINE_MAX_IDS ? ' LIMIT '.intval($this->ONLINE_MAX_IDS) : '');
 				foreach ((array)db()->get_2d($sql) as $online_id => $user_id) {
 					$online_users[$online_id] = $user_id;
@@ -259,8 +259,8 @@ class yf_auth_user {
 			$go = defined('SITE_DEFAULT_PAGE') ? SITE_DEFAULT_PAGE : conf('site_first_page');
 			// Check if default url is not empty and then use it
 			if (!empty($go)) {
-				$go = str_replace(array('./?','./'), '', $go);
-				$tmp_array = array();
+				$go = str_replace(['./?','./'], '', $go);
+				$tmp_array = [];
 				parse_str($go, $tmp_array);
 				foreach ((array)$tmp_array as $k => $v) {
 					$_GET[$k] = $v;
@@ -283,7 +283,7 @@ class yf_auth_user {
 	/**
 	* Try to log in user
 	*/
-	function _do_login ($params = array()) {
+	function _do_login ($params = []) {
 		$AUTH_LOGIN	= trim($params['login']);
 		$AUTH_PSWD	= trim($params['pswd']);
 
@@ -297,7 +297,7 @@ class yf_auth_user {
 			if (!$redirect_url) {
 				$request_uri	= getenv('REQUEST_URI');
 				$cur_web_path	= $request_uri[strlen($request_uri) - 1] == '/' ? substr($request_uri, 0, -1) : dirname($request_uri);
-				$redirect_url	= 'https://'.getenv('HTTP_HOST').str_replace(array("\\","//"), array('/','/'), (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/');
+				$redirect_url	= 'https://'.getenv('HTTP_HOST').str_replace(["\\","//"], ['/','/'], (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/');
 			}
 			if ($params['no_redirect']) {
 				return false;
@@ -309,11 +309,11 @@ class yf_auth_user {
 			$NEED_QUERY_DB = true;
 			if ($this->BLOCK_BANNED_IPS && common()->_ip_is_banned()) {
 				$fail_reason = 'ip_blocked';
-				$this->_log_fail(array(
+				$this->_log_fail([
 					'login'		=> $AUTH_LOGIN,
 					'pswd'		=> $AUTH_PSWD,
 					'reason'	=> $fail_reason,
-				));
+				]);
 				$msg = 'Attempt to login from banned IP ('.$cur_ip.') as "'.$AUTH_LOGIN.'" blocked';
 				common()->message_error($msg);
 				trigger_error('AUTH: '.$msg, E_USER_WARNING);
@@ -355,11 +355,11 @@ class yf_auth_user {
 			}
 			if ($fail_reason) {
 				unset($user_info);
-				$this->_log_fail(array(
+				$this->_log_fail([
 					'login'		=> $AUTH_LOGIN,
 					'pswd'		=> $AUTH_PSWD,
 					'reason'	=> $fail_reason,
-				));
+				]);
 			}
 		}
 		return $this->_save_login_in_session($user_info, $params['no_redirect']);
@@ -379,13 +379,13 @@ class yf_auth_user {
 
 		$user_settings = db()->from('user_settings')->whereid($user_id, 'user_id')->get_2d('key, value');
 
-		$fields_ip = array('ip_whitelist', 'ip_blacklist');
-		$fields_country = array('country_whitelist', 'country_blacklist');
+		$fields_ip = ['ip_whitelist', 'ip_blacklist'];
+		$fields_country = ['country_whitelist', 'country_blacklist'];
 		foreach (array_merge($fields_ip, $fields_country) as $k) {
 			if (!strlen(trim($user_settings[$k]))) {
 				continue;
 			}
-			$tmp = array();
+			$tmp = [];
 			foreach (explode(';', trim($user_settings[$k])) as $v) {
 				$v = trim($v);
 				$tmp[$v] = $v;
@@ -430,11 +430,11 @@ class yf_auth_user {
 
 	/**
 	*/
-	function _log_fail($data = array()) {
+	function _log_fail($data = []) {
 		if (!$this->LOG_FAILED_LOGINS) {
 			return false;
 		}
-		return db()->insert_safe('log_auth_fails', array(
+		return db()->insert_safe('log_auth_fails', [
 			'time'		=> str_replace(',', '.', microtime(true)),
 			'ip'		=> common()->get_ip(),
 			'user_id'	=> $data['user_id'] ?: $_SESSION[$this->VAR_USER_ID],
@@ -447,7 +447,7 @@ class yf_auth_user {
 			'query_string'	=> $_SERVER['QUERY_STRING'],
 			'site_id'	=> (int)conf('SITE_ID'),
 			'server_id'	=> (int)conf('SERVER_ID'),
-		));
+		]);
 	}
 
 	/**
@@ -459,7 +459,7 @@ class yf_auth_user {
 			$this->_encrypted_error = 'GET_id is not like an encrypted string';
 			return false;
 		}
-		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(array('http://', 'https://'), '//', INCLUDE_PATH).'")) FROM '.db('admin').' WHERE id=1');
+		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(['http://', 'https://'], '//', INCLUDE_PATH).'")) FROM '.db('admin').' WHERE id=1');
 		if (!$secret_key) {
 			$this->_encrypted_error = 'secret key generation failed';
 			return false;
@@ -518,9 +518,9 @@ class yf_auth_user {
 		$login_aliases = $this->LOGIN_ALIAS;
 		if ($login_aliases) {
 			if (!is_array($login_aliases)) {
-				$login_aliases = array($login_aliases);
+				$login_aliases = [$login_aliases];
 			}
-			$alias_sql = array();
+			$alias_sql = [];
 			foreach ((array)$login_aliases as $alias) {
 				$alias = trim($alias);
 				if (preg_match('/^[a-z0-9_]+$/ims', $alias)) {
@@ -536,7 +536,7 @@ class yf_auth_user {
 
 	/**
 	*/
-	function _is_user_inactive ($user_info = array()) {
+	function _is_user_inactive ($user_info = []) {
 		if (empty($user_info)) {
 			return true;
 		}
@@ -549,14 +549,14 @@ class yf_auth_user {
 	/**
 	* Alias
 	*/
-	function auto_login ($user_info = array(), $no_redirect_on_success = false) {
+	function auto_login ($user_info = [], $no_redirect_on_success = false) {
 		return $this->_save_login_in_session ($user_info, $no_redirect_on_success);
 	}
 
 	/**
 	* Save auth information in session
 	*/
-	function _save_login_in_session ($user_info = array(), $no_redirect_on_success = false) {
+	function _save_login_in_session ($user_info = [], $no_redirect_on_success = false) {
 		if (empty($user_info['id'])) {
 
 			return js_redirect($this->URL_WRONG_LOGIN);
@@ -599,7 +599,7 @@ class yf_auth_user {
 			$this->_update_user_info_on_login($user_info);
 			$this->_update_online_info();
 			$this->_exec_method_on_action('login');
-			$group_info = array();
+			$group_info = [];
 			if (!empty($user_info['group'])) {
 				$groups = main()->get_data('user_groups_details');
 				$group_info = $groups[$user_info['group']];
@@ -621,12 +621,12 @@ class yf_auth_user {
 
 	/**
 	*/
-	function _success_login_redirect ($user_info = array(), $group_info = array()) {
+	function _success_login_redirect ($user_info = [], $group_info = []) {
 		if ($this->INSIDE_LOGIN_FROM_ADMIN) {
 			return js_redirect('/');
 		// Auto-redirect to the page before login form if needed
 		} elseif (!empty($_SESSION[$this->VAR_USER_GO_URL]) && !($this->URL_SUCCESS_LOGIN && $_POST['skip_auto_url'])) {
-			$REDIRECT_URL = (substr($_SESSION[$this->VAR_USER_GO_URL], 0, 2) != './' ? './?' : ''). str_replace(WEB_PATH, '', str_replace(array('http:','https:'), '', $_SESSION[$this->VAR_USER_GO_URL]));
+			$REDIRECT_URL = (substr($_SESSION[$this->VAR_USER_GO_URL], 0, 2) != './' ? './?' : ''). str_replace(WEB_PATH, '', str_replace(['http:','https:'], '', $_SESSION[$this->VAR_USER_GO_URL]));
 			$_SESSION[$this->VAR_USER_GO_URL] = '';
 		} elseif (!empty($user_info['go_after_login'])) {
 			$REDIRECT_URL = $user_info['go_after_login'];
@@ -653,14 +653,14 @@ class yf_auth_user {
 			}
 		}
 		$this->_exec_method_on_action('logout');
-		$user_session_vars = array(
+		$user_session_vars = [
 			$this->VAR_USER_ID,
 			$this->VAR_USER_GROUP_ID,
 			$this->VAR_USER_LOGIN_TIME,
 			$this->VAR_LOCK_IP,
 			$this->VAR_LOCK_UA,
 			$this->VAR_LOCK_HOST,
-		);
+		];
 		foreach ((array)$_SESSION as $k => $v) {
 			if (in_array($k, $user_session_vars)) {
 				unset($_SESSION[$k]);
@@ -691,12 +691,12 @@ class yf_auth_user {
 			return _e('Target user not found');
 		}
 		$t = time();
-		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(array('http://', 'https://'), '//', INCLUDE_PATH).'")) FROM '.db('admin').' WHERE id=1');
+		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(['http://', 'https://'], '//', INCLUDE_PATH).'")) FROM '.db('admin').' WHERE id=1');
 		$to_encode = 'userid-'.$a['id'].'-'.$t.'-'.md5($a['password']);
 		$integrity_hash = md5($to_encode);
 		$encrypted = _class('encryption')->_safe_encrypt_with_base64($to_encode.'-'.$integrity_hash, $secret_key);
 		if (tpl()->REWRITE_MODE) {
-			$url = url_user(array('task' => 'login', 'id' => $encrypted), parse_url(WEB_PATH, PHP_URL_HOST));
+			$url = url_user(['task' => 'login', 'id' => $encrypted], parse_url(WEB_PATH, PHP_URL_HOST));
 		} else {
 			$url = WEB_PATH.'?task=login&id='.$encrypted;
 		}
@@ -717,11 +717,11 @@ class yf_auth_user {
 		if (time() < ($cookie_created + $this->VAR_COOKIE_LIFE_TIME) && !empty($login) && !empty($password)) {
 			// Empty redirect address (in every case)
 			$_SESSION[$this->VAR_USER_GO_URL] = null;
-			$this->_do_login(array(
+			$this->_do_login([
 				'login'			=> $login,
 				'pswd'			=> $password,
 				'no_redirect'	=> 1,
-			));
+			]);
 		} else {
 			$this->_cleanup_cookie();
 		}
@@ -757,7 +757,7 @@ class yf_auth_user {
 		}
 		foreach ((array)$callbacks as $callback) {
 			if (is_callable($callback)) {
-				call_user_func_array($callback, array('self' => $this));
+				call_user_func_array($callback, ['self' => $this]);
 			}
 		}
 	}
@@ -773,7 +773,7 @@ class yf_auth_user {
 		if (empty($_COOKIE[$_SPECIAL_NAME])) {
 			return $this->_set_special_cookie($_SESSION[$this->VAR_USER_ID]);
 		}
-		$cookie_users = array();
+		$cookie_users = [];
 		foreach (explode('_', $_COOKIE[$_SPECIAL_NAME]) as $_user_id) {
 			$cookie_users[$_user_id] = $_user_id;
 		}
@@ -788,18 +788,18 @@ class yf_auth_user {
 		}
 		$matching_users = implode(',', $cookie_users);
 		if (empty($data)) {
-			db()->insert_safe('check_multi_accounts', array(
+			db()->insert_safe('check_multi_accounts', [
 				'user_id'		=> intval($_SESSION[$this->VAR_USER_ID]),
 				'matching_users'=> $matching_users,
 				'last_update'	=> time(),
 				'cookie_match'	=> 1,
-			));
+			]);
 		} else {
-			db()->update_safe('check_multi_accounts', array(
+			db()->update_safe('check_multi_accounts', [
 				'matching_users'=> $matching_users,
 				'last_update'	=> time(),
 				'cookie_match'	=> 1,
-			), 'user_id='.intval($_SESSION[$this->VAR_USER_ID]));
+			], 'user_id='.intval($_SESSION[$this->VAR_USER_ID]));
 		}
 		$this->_set_special_cookie($_COOKIE[$_SPECIAL_NAME].'_'.$_SESSION[$this->VAR_USER_ID]);
 		main()->_HAS_MULTI_ACCOUNTS = true;
@@ -825,7 +825,7 @@ class yf_auth_user {
 				return false;
 			}
 		}
-		$data = array(
+		$data = [
 			'id'			=> _es(session_id()),
 			'user_id'		=> intval($_SESSION[$this->VAR_USER_ID]),
 			'user_group'	=> intval($_SESSION[$this->VAR_USER_GROUP_ID]),
@@ -835,7 +835,7 @@ class yf_auth_user {
 			'user_agent'	=> _es($_SERVER['HTTP_USER_AGENT']),
 			'query_string'	=> _es($_SERVER['QUERY_STRING']),
 			'site_id'		=> (int)conf('SITE_ID'),
-		);
+		];
 		$sql = db()->REPLACE('online', $data, 1);
 		db()->_add_shutdown_query($sql);
 		return $data;
@@ -877,7 +877,7 @@ class yf_auth_user {
 		}
 		// Try to get data from 'mod_geoip'
 		if (empty($geo_data) && !empty($_SERVER['GEOIP_LATITUDE'])) {
-			$geo_data = array(
+			$geo_data = [
 				'country_code'	=> $_SERVER['GEOIP_COUNTRY_CODE'],
 				'country_name'	=> $_SERVER['GEOIP_COUNTRY_NAME'],
 				'region_code'	=> $_SERVER['GEOIP_REGION'],
@@ -886,7 +886,7 @@ class yf_auth_user {
 				'area_code'		=> $_SERVER['GEOIP_AREA_CODE'],
 				'longitude'		=> $_SERVER['GEOIP_LONGITUDE'],
 				'latitude'		=> $_SERVER['GEOIP_LATITUDE'],
-			);
+			];
 			$geo_data['_source'] = 'mod_geoip';
 		}
 		// Try to get data from 'geo_city_location' table

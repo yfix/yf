@@ -21,7 +21,7 @@ class EcommPay {
 	}
 
 	public function key( $name = 'public', $value = null ) {
-		if( !in_array( $name, array( 'public', 'private', 'private_test' ) ) ) {
+		if( !in_array( $name, [ 'public', 'private', 'private_test' ] ) ) {
 			return( null );
 		}
 		$_name  = '_key_' . $name;
@@ -34,7 +34,7 @@ class EcommPay {
 
 	public function options_to_str( array $options, $is_request = true, $level = 1 ) {
 		if( $level > $this->options_level_max ) { return( null ); }
-		$result = array();
+		$result = [];
 		ksort( $options );
 		foreach( $options as $key => $value ) {
 			$_value = null;
@@ -67,7 +67,7 @@ class EcommPay {
 
 	public function signature( array $options, $is_request = true ) {
 		$_ = $options;
-		$request = array();
+		$request = [];
 		// compile string
 		unset( $_[ 'signature' ], $_[ 'sign' ] );
 		$str = $this->options_to_str( $_, $is_request );

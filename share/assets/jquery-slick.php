@@ -1,13 +1,13 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => '//cdn.rawgit.com/yfix/slick/master/slick/slick.min.js',
-			'css' => '//cdn.rawgit.com/yfix/slick/master/slick/slick.css',
-		),
-	),
-	'require' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/yfix/slick/master/slick/slick.min.js',
+			'css' => '//rawgit.yfix.net/yfix/slick/master/slick/slick.css',
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

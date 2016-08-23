@@ -3,11 +3,11 @@
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 class class_cache_test extends yf_unit_tests {
-	public static $_cache = array();
+	public static $_cache = [];
 	public static function _cache_init() {
 		main()->modules['cache'] = null;
 		self::$_cache = clone _class('cache');
-		self::$_cache->_init(array('driver' => self::_get_driver_name()));
+		self::$_cache->_init(['driver' => self::_get_driver_name()]);
 		self::$_cache->_driver = clone self::$_cache->_driver;
 		if (self::_get_driver_name() == 'memcache') {
 			if (false !== strpos(strtolower(get_called_class()), '_memcached')) {
@@ -42,9 +42,9 @@ class class_cache_test extends yf_unit_tests {
 	}
 	public static function _get_driver_name() {
 		$called = strtolower(get_called_class());
-		$allowed = array(
+		$allowed = [
 			'memcache', 'xcache', 'apc', 'files', 'tmp', 'couchbase', 'mongodb', 'redis'
-		);
+		];
 		foreach ($allowed as $name) {
 			if (false !== strpos($called, '_'.$name)) {
 				return $name;
@@ -82,8 +82,8 @@ class class_cache_test extends yf_unit_tests {
 		$this->assertTrue(self::_cache()->flush());
 		$this->assertTrue(self::_cache()->set('k2', 'some_data'));
 		$this->assertSame('some_data', self::_cache()->get('k2'));
-		$this->assertTrue(self::_cache()->set('k2_', array()));
-		$this->assertSame(array(), self::_cache()->get('k2_'));
+		$this->assertTrue(self::_cache()->set('k2_', []));
+		$this->assertSame([], self::_cache()->get('k2_'));
 		$this->assertTrue(self::_cache()->set('k3_', false));
 		$this->assertFalse(self::_cache()->get('k3_'));
 	}
@@ -110,50 +110,50 @@ class class_cache_test extends yf_unit_tests {
 		$this->assertTrue(self::_cache()->set('k2', 'v2'));
 		$list_keys_result = self::_cache()->list_keys();
 		if ($list_keys_result !== false && $list_keys_result !== null) {
-			$this->assertSame(array('k1', 'k2'), self::_cache()->list_keys());
+			$this->assertSame(['k1', 'k2'], self::_cache()->list_keys());
 			$this->assertTrue(self::_cache()->set('k3', 'v3'));
-			$this->assertSame(array('k1', 'k2', 'k3'), self::_cache()->list_keys());
+			$this->assertSame(['k1', 'k2', 'k3'], self::_cache()->list_keys());
 		}
 	}
 	public function test_multi_get() {
 		$this->assertTrue(self::_cache()->flush());
 		$this->assertTrue(self::_cache()->set('k17', 'v1'));
 		$this->assertTrue(self::_cache()->set('k27', 'v2'));
-		$this->assertSame(array('k17' => 'v1', 'k27' => 'v2'), self::_cache()->multi_get(array('k17', 'k27')));
+		$this->assertSame(['k17' => 'v1', 'k27' => 'v2'], self::_cache()->multi_get(['k17', 'k27']));
 		$this->assertSame('v1', self::_cache()->get('k17'));
 		$this->assertSame('v2', self::_cache()->get('k27'));
 
 		$this->assertTrue(self::_cache()->flush());
 		$this->assertTrue(self::_cache()->set('k18', 'v1'));
 		$this->assertTrue(self::_cache()->set('k28', false));
-		$this->assertSame(array('k18' => 'v1', 'k28' => false), self::_cache()->multi_get(array('k18', 'k28')));
+		$this->assertSame(['k18' => 'v1', 'k28' => false], self::_cache()->multi_get(['k18', 'k28']));
 		$this->assertSame('v1', self::_cache()->get('k18'));
 		$this->assertFalse(self::_cache()->get('k28'));
 	}
 	public function test_multi_set() {
 		$this->assertTrue(self::_cache()->flush());
-		$this->assertNull(self::_cache()->multi_get(array('k111', 'k222')));
-		$this->assertTrue(self::_cache()->multi_set(array('k111' => 'v1', 'k222' => 'v2')));
-		$this->assertSame(array('k111' => 'v1', 'k222' => 'v2'), self::_cache()->multi_get(array('k111', 'k222')));
+		$this->assertNull(self::_cache()->multi_get(['k111', 'k222']));
+		$this->assertTrue(self::_cache()->multi_set(['k111' => 'v1', 'k222' => 'v2']));
+		$this->assertSame(['k111' => 'v1', 'k222' => 'v2'], self::_cache()->multi_get(['k111', 'k222']));
 
 		$this->assertTrue(self::_cache()->flush());
-		$this->assertNull(self::_cache()->multi_get(array('k113', 'k223')));
-		$this->assertTrue(self::_cache()->multi_set(array('k113' => 'v1', 'k223' => false)));
-		$this->assertSame(array('k113' => 'v1', 'k223' => false), self::_cache()->multi_get(array('k113', 'k223')));
+		$this->assertNull(self::_cache()->multi_get(['k113', 'k223']));
+		$this->assertTrue(self::_cache()->multi_set(['k113' => 'v1', 'k223' => false]));
+		$this->assertSame(['k113' => 'v1', 'k223' => false], self::_cache()->multi_get(['k113', 'k223']));
 	}
 	public function test_multi_del() {
 		$this->assertTrue(self::_cache()->flush());
-		$this->assertNull(self::_cache()->multi_get(array('k133', 'k233')));
+		$this->assertNull(self::_cache()->multi_get(['k133', 'k233']));
 
-		$this->assertTrue(self::_cache()->multi_set(array('k133' => 'v1', 'k233' => 'v2')));
-		$this->assertSame(array('k133' => 'v1', 'k233' => 'v2'), self::_cache()->multi_get(array('k133', 'k233')));
+		$this->assertTrue(self::_cache()->multi_set(['k133' => 'v1', 'k233' => 'v2']));
+		$this->assertSame(['k133' => 'v1', 'k233' => 'v2'], self::_cache()->multi_get(['k133', 'k233']));
 
 		$this->assertTrue(self::_cache()->set('k333', 'v3'));
 		$this->assertTrue(self::_cache()->set('k444', false));
-		$this->assertSame(array('k333' => 'v3', 'k444' => false), self::_cache()->multi_get(array('k333', 'k444')));
+		$this->assertSame(['k333' => 'v3', 'k444' => false], self::_cache()->multi_get(['k333', 'k444']));
 
-		$this->assertTrue(self::_cache()->multi_del(array('k133', 'k233')));
-		$this->assertNull(self::_cache()->multi_get(array('k133', 'k233')));
+		$this->assertTrue(self::_cache()->multi_del(['k133', 'k233']));
+		$this->assertNull(self::_cache()->multi_get(['k133', 'k233']));
 		$this->assertSame('v3', self::_cache()->get('k333'));
 		$this->assertFalse(self::_cache()->get('k444'));
 	}
@@ -162,8 +162,8 @@ class class_cache_test extends yf_unit_tests {
 			return ;
 		}
 		$this->assertTrue(self::_cache()->flush());
-		$this->assertTrue(self::_cache()->multi_set(array('k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13')));
-		$this->assertSame(array('k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13'), self::_cache()->multi_get(array('k118', 'k218', 'k138')));
+		$this->assertTrue(self::_cache()->multi_set(['k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13']));
+		$this->assertSame(['k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13'], self::_cache()->multi_get(['k118', 'k218', 'k138']));
 		$this->assertTrue(self::_cache()->del_by_prefix('k1'));
 		$list_keys_result = self::_cache()->list_keys();
 		if ($list_keys_result !== false && $list_keys_result !== null) {

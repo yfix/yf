@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'user_id' => array(
+return [
+	'fields' => [
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'bigint',
 			'length' => 20,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_type' => array(
+		],
+		'user_type' => [
 			'name' => 'user_type',
 			'type' => 'enum',
 			'length' => NULL,
@@ -29,13 +29,13 @@ return array(
 			'auto_inc' => false,
 			'primary' => true,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				'user_id' => 'user_id',
 				'user_id_tmp' => 'user_id_tmp',
 				'admin_id' => 'admin_id',
-			),
-		),
-		'time' => array(
+			],
+		],
+		'time' => [
 			'name' => 'time',
 			'type' => 'int',
 			'length' => 11,
@@ -49,8 +49,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'ip' => array(
+		],
+		'ip' => [
 			'name' => 'ip',
 			'type' => 'varchar',
 			'length' => 16,
@@ -64,8 +64,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'session_id' => array(
+		],
+		'session_id' => [
 			'name' => 'session_id',
 			'type' => 'varchar',
 			'length' => 255,
@@ -79,8 +79,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'user_agent' => array(
+		],
+		'user_agent' => [
 			'name' => 'user_agent',
 			'type' => 'varchar',
 			'length' => 255,
@@ -94,8 +94,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'url' => array(
+		],
+		'url' => [
 			'name' => 'url',
 			'type' => 'varchar',
 			'length' => 255,
@@ -109,20 +109,20 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'user_id' => 'user_id',
 				'user_type' => 'user_type',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

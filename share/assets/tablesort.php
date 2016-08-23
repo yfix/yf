@@ -1,9 +1,9 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js',
-		),
-	),
-);
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/tristen/tablesort/gh-pages/tablesort.min.js',
+		],
+	],
+];

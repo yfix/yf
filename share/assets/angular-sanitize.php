@@ -1,15 +1,15 @@
 <?php
 
-return array(
-	'versions' => array(
-		'1.2.26' => array(
+return [
+	'versions' => [
+		'1.2.26' => [
 			'js' => '//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.26/angular-sanitize.min.js',
-		),
-		'1.3.8' => array(
+		],
+		'1.3.8' => [
 			'js' => '//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-sanitize.min.js',
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'js' => 'angularjs',
-	),
-);
+	],
+];

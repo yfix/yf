@@ -36,15 +36,15 @@ class yf_manage_assets {
 	/**
 	*/
 	function _menu() {
-		return html()->module_menu($this, array(
-			array('/@object/cache_info/', 'Cache info', 'fa fa-info'),
-			array('/@object/cache_purge/', 'Cache purge', 'fa fa-recycle'),
-			array('/@object/cache_fill/', 'Cache fill', 'fa fa-refresh'),
-			array('/@object/combine/', 'Combine', 'fa fa-rocket'),
-			array('/@object/settings/', 'Settings', 'fa fa-wrench'),
-			array('/@object/search_used/', 'Search used', 'fa fa-search'),
-			array('/@object/upload/', 'Upload', 'fa fa-upload'),
-		)). '<br /><br />'.PHP_EOL;
+		return html()->module_menu($this, [
+			['/@object/cache_info/', 'Cache info', 'fa fa-info'],
+			['/@object/cache_purge/', 'Cache purge', 'fa fa-recycle'],
+			['/@object/cache_fill/', 'Cache fill', 'fa fa-refresh'],
+			['/@object/combine/', 'Combine', 'fa fa-rocket'],
+			['/@object/settings/', 'Settings', 'fa fa-wrench'],
+			['/@object/search_used/', 'Search used', 'fa fa-search'],
+			['/@object/upload/', 'Upload', 'fa fa-upload'],
+		]). '<br /><br />'.PHP_EOL;
 	}
 
 	/**
@@ -56,7 +56,7 @@ class yf_manage_assets {
 	/**
 	*/
 	function search_used() {
-		$exclude_paths = array(
+		$exclude_paths = [
 			'*/.git/*',
 			'*/.dev/*',
 			'*/test/*',
@@ -64,10 +64,10 @@ class yf_manage_assets {
 			'*/cache/*',
 			'*/test*.class.php',
 			'*/'.YF_PREFIX.'test*.class.php',
-		);
+		];
 		$regex_php = '~[\s](asset|js|css)\([\s"\']+(?P<name>[^\(\)\{\}\$]+)[\s"\']+\)~ims';
-		$raw_in_php = _class('dir')->grep($regex_php, APP_PATH, '*.php', array('exclude_paths' => $exclude_paths));
-		$names = array();
+		$raw_in_php = _class('dir')->grep($regex_php, APP_PATH, '*.php', ['exclude_paths' => $exclude_paths]);
+		$names = [];
 		foreach ((array)$raw_in_php as $path => $matches) {
 			$lines = file($path);
 			foreach ((array)$matches as $raw) {
@@ -84,7 +84,7 @@ class yf_manage_assets {
 			}
 		}
 		$regex_tpl = '~\{(asset|js|css)\(\)\}\s+(?P<name>[^\{\}\(\)\$]+?)\s+\{\/\1\}~ims';
-		$raw_in_tpl = _class('dir')->grep($regex_tpl, APP_PATH, '*.stpl', array('exclude_paths' => $exclude_paths));
+		$raw_in_tpl = _class('dir')->grep($regex_tpl, APP_PATH, '*.stpl', ['exclude_paths' => $exclude_paths]);
 		foreach ((array)$raw_in_tpl as $path => $matches) {
 			$lines = file($path);
 			foreach ((array)$matches as $raw) {
@@ -101,10 +101,10 @@ class yf_manage_assets {
 			}
 		}
 		$assets = _class('assets');
-		$names_by_type = array(
-			'user'	=> array(),
-			'admin'	=> array(),
-		);
+		$names_by_type = [
+			'user'	=> [],
+			'admin'	=> [],
+		];
 		foreach ((array)$names as $k => $v) {
 			if (substr($k, 0, 2) === '//' || substr($k, 0, 7) === 'http://' || substr($k, 0, 8) === 'https://') {
 				unset($names[$k]);
@@ -126,7 +126,7 @@ class yf_manage_assets {
 		ksort($names);
 		ksort($names_by_type['user']);
 		ksort($names_by_type['admin']);
-		$table = array();
+		$table = [];
 		foreach ((array)$names as $name) {
 			$table[$name] = '<small>'.implode('<br>', array_keys($by_path[$name])).'</small>';
 		}
@@ -149,7 +149,7 @@ class yf_manage_assets {
 		$contents[] = 'Combined info:'.PHP_EOL.shell_exec('ls -l '.preg_replace('~\{[^\}]+\}~ims', '*', $combined_dir_tpl));
 
 		$cache_dir = substr($cache_dir_tpl, 0, strpos($cache_dir_tpl, '{'));
-		$tmp = array();
+		$tmp = [];
 		foreach ((array)_class('dir')->rglob($cache_dir) as $path) {
 			if (is_dir($path) || substr($path, -5, 5) === '.info') {
 				continue;
@@ -196,7 +196,7 @@ class yf_manage_assets {
 
 		$dir = _class('dir');
 		$enabled_langs = main()->get_data('languages');
-		$main_types = array('user', 'admin');
+		$main_types = ['user', 'admin'];
 		foreach ((array)$main_types as $main_type) {
 			$assets->_override['main_type'] = $main_type;
 			foreach ((array)$enabled_langs as $lang) {
@@ -232,7 +232,7 @@ class yf_manage_assets {
 
 		$dir = _class('dir');
 		$enabled_langs = main()->get_data('languages');
-		$main_types = array('user', 'admin');
+		$main_types = ['user', 'admin'];
 		foreach ((array)$main_types as $main_type) {
 			$assets->_override['main_type'] = $main_type;
 			foreach ((array)$enabled_langs as $lang) {
@@ -251,7 +251,7 @@ class yf_manage_assets {
 					}
 					$out = $assets->show($out_type);
 					$combined_dir = dirname($assets->_get_combined_path($_out_type = ''));
-					$tmp = array();
+					$tmp = [];
 					foreach ((array)$dir->rglob($combined_dir) as $path) {
 						if (is_dir($path) || substr($path, -5, 5) === '.info') {
 							continue;

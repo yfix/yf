@@ -2,7 +2,7 @@
 class yf_shop_products_related{
 
 	function products_related ($id = "") {
-		$product_related_data = array();
+		$product_related_data = [];
 		$sql = "SELECT * FROM ".db('shop_product_related') . " WHERE product_id = ". $id;
 		$product = db()->query($sql);
 		while ($A = db()->fetch_assoc($product)){

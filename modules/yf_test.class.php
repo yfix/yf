@@ -14,7 +14,7 @@ class yf_test {
 		if (!DEBUG_MODE) {
 			return;
 		}
-		$methods = array();
+		$methods = [];
 		$class_name = get_class($this);
 		foreach ((array)get_class_methods($class_name) as $_method_name) {
 			if ($_method_name{0} == '_' || $_method_name == $class_name || $_method_name == __FUNCTION__) {
@@ -44,8 +44,8 @@ class yf_test {
 		}
 		$a = $_POST + $_SESSION;
 		return form($a)
-			->active_box('debug_console_light', array('selected' => $_SESSION['debug_console_light']))
-			->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
+			->active_box('debug_console_light', ['selected' => $_SESSION['debug_console_light']])
+			->active_box('locale_edit', ['selected' => $_SESSION['locale_vars_edit']])
 //			->active_box('stpl_edit', array('selected' => $_SESSION['stpls_inline_edit']))
 			->save()
 		;
@@ -53,14 +53,14 @@ class yf_test {
 
 	/**
 	*/
-	function oauth($params = array()) {
+	function oauth($params = []) {
 		return module('login_form')->oauth($params);
 	}
 
 	/**
 	* Css frameworks lister
 	*/
-	function html5fw($params = array()) {
+	function html5fw($params = []) {
 		main()->no_graphics(true);
 		_class('assets')->clean_all();
 		if (!$params['use_yf_fixes'] && !$_GET['use_yf_fixes']) {
@@ -69,7 +69,7 @@ class yf_test {
 		}
 		asset('bootstrap-theme');
 
-		$links = array();
+		$links = [];
 		$prefix = 'html5fw_';
 		foreach (get_class_methods($this) as $name) {
 			if ($name[0] !== '_' && substr($name, 0, strlen($prefix)) === $prefix) {
@@ -82,13 +82,13 @@ class yf_test {
 
 	/**
 	*/
-	function html5fw_empty($params = array()) {
+	function html5fw_empty($params = []) {
 		return $this->_html5fw_test('empty', function($fw, $params) { }, $params);
 	}
 
 	/**
 	*/
-	function html5fw_bs2($params = array()) {
+	function html5fw_bs2($params = []) {
 		return $this->_html5fw_test('bs2', function($fw, $params) {
 			asset('bootstrap-theme');
 		}, $params);
@@ -96,7 +96,7 @@ class yf_test {
 
 	/**
 	*/
-	function html5fw_bs3($params = array()) {
+	function html5fw_bs3($params = []) {
 		return $this->_html5fw_test('bs3', function($fw, $params) {
 			asset('bootstrap-theme');
 		}, $params);
@@ -104,7 +104,7 @@ class yf_test {
 
 	/**
 	*/
-	function html5fw_foundation($params = array()) {
+	function html5fw_foundation($params = []) {
 		return $this->_html5fw_test('foundation', function($fw, $params) {
 			asset('foundation');
 		}, $params);
@@ -112,7 +112,7 @@ class yf_test {
 
 	/**
 	*/
-	function html5fw_pure($params = array()) {
+	function html5fw_pure($params = []) {
 		return $this->_html5fw_test('pure', function($fw, $params) {
 			asset('purecss');
 		}, $params);
@@ -120,7 +120,7 @@ class yf_test {
 
 	/**
 	*/
-	function html5fw_semantic_ui($params = array()) {
+	function html5fw_semantic_ui($params = []) {
 		return $this->_html5fw_test('semantic_ui', function($fw, $params) {
 			asset('semantic-ui');
 		}, $params);
@@ -128,7 +128,7 @@ class yf_test {
 
 	/**
 	*/
-	function html5fw_uikit($params = array()) {
+	function html5fw_uikit($params = []) {
 		return $this->_html5fw_test('uikit', function($fw, $params) {
 			asset('uikit');
 		}, $params);
@@ -136,7 +136,7 @@ class yf_test {
 
 	/**
 	*/
-	function html5fw_maxmert($params = array()) {
+	function html5fw_maxmert($params = []) {
 		return $this->_html5fw_test('maxmert', function($fw, $params) {
 			asset('maxmertkit');
 		}, $params);
@@ -145,7 +145,7 @@ class yf_test {
 	/**
 	* Css frameworks acceptance testing unified method
 	*/
-	function _html5fw_test($fw = 'bs2', $callback, $params = array()) {
+	function _html5fw_test($fw = 'bs2', $callback, $params = []) {
 		main()->no_graphics(true);
 		_class('assets')->clean_all();
 		if (!$params['use_yf_fixes'] && !$_GET['use_yf_fixes']) {
@@ -159,7 +159,7 @@ class yf_test {
 		$method = $_GET['id'];
 		$obj = _class('test_html5fw_'.$fw, 'modules/test/');
 		if (!$method) {
-			$links = array();
+			$links = [];
 			foreach (get_class_methods($obj) as $name) {
 				if ($name[0] !== '_') {
 					$links[url('/@object/@action/'.$name)] = $name;
@@ -209,7 +209,7 @@ class yf_test {
 	function coffee() {
 		require_php_lib('coffeescript_php');
 		$raw = 'alert "I knew it!" if elvis?';
-		$js = \CoffeeScript\Compiler::compile($raw, array('header' => false));
+		$js = \CoffeeScript\Compiler::compile($raw, ['header' => false]);
 		coffee($raw);
 		return 'COFFEE: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>JS: <pre>'._prepare_html($js).'</pre>';
 	}
@@ -235,12 +235,12 @@ div
 	*/
 	function placeholder() {
 		$body[] = module('dynamic')->placeholder_img();
-		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello'));
-		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => 'f00'));
-		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => 'fff', 'color_bg' => '000'));
-		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => 'fff', 'color_bg' => '000', 'width' => '120', 'height' => '70'));
-		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => '000', 'color_bg' => 'fff', 'width' => '120', 'height' => '70', 'opacity_bg' => 127));
-		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => '00f', 'width' => '120', 'height' => '70', 'transparent_bg' => true));
+		$body[] = module('dynamic')->placeholder_img(['text' => 'Hello']);
+		$body[] = module('dynamic')->placeholder_img(['text' => 'Hello', 'color_text' => 'f00']);
+		$body[] = module('dynamic')->placeholder_img(['text' => 'Hello', 'color_text' => 'fff', 'color_bg' => '000']);
+		$body[] = module('dynamic')->placeholder_img(['text' => 'Hello', 'color_text' => 'fff', 'color_bg' => '000', 'width' => '120', 'height' => '70']);
+		$body[] = module('dynamic')->placeholder_img(['text' => 'Hello', 'color_text' => '000', 'color_bg' => 'fff', 'width' => '120', 'height' => '70', 'opacity_bg' => 127]);
+		$body[] = module('dynamic')->placeholder_img(['text' => 'Hello', 'color_text' => '00f', 'width' => '120', 'height' => '70', 'transparent_bg' => true]);
 #		$font_path = '/usr/share/fonts/roboto/Roboto-Bold.ttf';
 #		$body[] = module('dynamic')->placeholder_img(array('text' => 'Hello', 'color_text' => '00f', 'width' => '120', 'height' => '70', 'transparent_bg' => true, 'font_name' => 'roboto/Roboto-Bold.ttf'));
 		$body[] = $this->_transparent_png();

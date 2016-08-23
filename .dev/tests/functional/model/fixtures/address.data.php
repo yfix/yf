@@ -1,6 +1,6 @@
 <?php
-return array(
-	0 => array(
+return [
+	0 => [
 		'address_id' => '1',
 		'address' => '47 MySakila Drive',
 		'address2' => NULL,
@@ -9,8 +9,8 @@ return array(
 		'postal_code' => '',
 		'phone' => '',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	1 => array(
+	],
+	1 => [
 		'address_id' => '2',
 		'address' => '28 MySQL Boulevard',
 		'address2' => NULL,
@@ -19,8 +19,8 @@ return array(
 		'postal_code' => '',
 		'phone' => '',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	2 => array(
+	],
+	2 => [
 		'address_id' => '3',
 		'address' => '23 Workhaven Lane',
 		'address2' => NULL,
@@ -29,8 +29,8 @@ return array(
 		'postal_code' => '',
 		'phone' => '14033335568',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	3 => array(
+	],
+	3 => [
 		'address_id' => '4',
 		'address' => '1411 Lillydale Drive',
 		'address2' => NULL,
@@ -39,8 +39,8 @@ return array(
 		'postal_code' => '',
 		'phone' => '6172235589',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	4 => array(
+	],
+	4 => [
 		'address_id' => '5',
 		'address' => '1913 Hanoi Way',
 		'address2' => '',
@@ -49,8 +49,8 @@ return array(
 		'postal_code' => '35200',
 		'phone' => '28303384290',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	5 => array(
+	],
+	5 => [
 		'address_id' => '12',
 		'address' => '478 Joliet Way',
 		'address2' => '',
@@ -59,8 +59,8 @@ return array(
 		'postal_code' => '77948',
 		'phone' => '657282285970',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	6 => array(
+	],
+	6 => [
 		'address_id' => '28',
 		'address' => '96 Tafuna Way',
 		'address2' => '',
@@ -69,8 +69,8 @@ return array(
 		'postal_code' => '99865',
 		'phone' => '934730187245',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	7 => array(
+	],
+	7 => [
 		'address_id' => '29',
 		'address' => '934 San Felipe de Puerto Plata Street',
 		'address2' => '',
@@ -79,8 +79,8 @@ return array(
 		'postal_code' => '99780',
 		'phone' => '196495945706',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	8 => array(
+	],
+	8 => [
 		'address_id' => '36',
 		'address' => '176 Mandaluyong Place',
 		'address2' => '',
@@ -89,8 +89,8 @@ return array(
 		'postal_code' => '65213',
 		'phone' => '627705991774',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	9 => array(
+	],
+	9 => [
 		'address_id' => '38',
 		'address' => '61 Tama Street',
 		'address2' => '',
@@ -99,8 +99,8 @@ return array(
 		'postal_code' => '94065',
 		'phone' => '708403338270',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	10 => array(
+	],
+	10 => [
 		'address_id' => '43',
 		'address' => '306 Antofagasta Place',
 		'address2' => '',
@@ -109,8 +109,8 @@ return array(
 		'postal_code' => '3989',
 		'phone' => '378318851631',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	11 => array(
+	],
+	11 => [
 		'address_id' => '48',
 		'address' => '1998 Halifax Drive',
 		'address2' => '',
@@ -119,8 +119,8 @@ return array(
 		'postal_code' => '76022',
 		'phone' => '177727722820',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	12 => array(
+	],
+	12 => [
 		'address_id' => '53',
 		'address' => '725 Isesaki Place',
 		'address2' => '',
@@ -129,8 +129,8 @@ return array(
 		'postal_code' => '74428',
 		'phone' => '876295323994',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	13 => array(
+	],
+	13 => [
 		'address_id' => '69',
 		'address' => '698 Otsu Street',
 		'address2' => '',
@@ -139,8 +139,8 @@ return array(
 		'postal_code' => '71110',
 		'phone' => '409983924481',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	14 => array(
+	],
+	14 => [
 		'address_id' => '70',
 		'address' => '1150 Kimchon Manor',
 		'address2' => '',
@@ -149,8 +149,8 @@ return array(
 		'postal_code' => '96109',
 		'phone' => '663449333709',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	15 => array(
+	],
+	15 => [
 		'address_id' => '77',
 		'address' => '1947 Poos de Caldas Boulevard',
 		'address2' => '',
@@ -159,8 +159,8 @@ return array(
 		'postal_code' => '60951',
 		'phone' => '427454485876',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	16 => array(
+	],
+	16 => [
 		'address_id' => '86',
 		'address' => '927 Baha Blanca Parkway',
 		'address2' => '',
@@ -169,8 +169,8 @@ return array(
 		'postal_code' => '9495',
 		'phone' => '821972242086',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	17 => array(
+	],
+	17 => [
 		'address_id' => '96',
 		'address' => '984 Effon-Alaiye Avenue',
 		'address2' => '',
@@ -179,8 +179,8 @@ return array(
 		'postal_code' => '17119',
 		'phone' => '132986892228',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	18 => array(
+	],
+	18 => [
 		'address_id' => '104',
 		'address' => '1913 Kamakura Place',
 		'address2' => '',
@@ -189,8 +189,8 @@ return array(
 		'postal_code' => '97287',
 		'phone' => '942570536750',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	19 => array(
+	],
+	19 => [
 		'address_id' => '110',
 		'address' => '1867 San Juan Bautista Tuxtepec Avenue',
 		'address2' => '',
@@ -199,8 +199,8 @@ return array(
 		'postal_code' => '78311',
 		'phone' => '547003310357',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	20 => array(
+	],
+	20 => [
 		'address_id' => '115',
 		'address' => '1378 Alvorada Avenue',
 		'address2' => '',
@@ -209,8 +209,8 @@ return array(
 		'postal_code' => '75834',
 		'phone' => '272234298332',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	21 => array(
+	],
+	21 => [
 		'address_id' => '131',
 		'address' => '801 Hagonoy Drive',
 		'address2' => '',
@@ -219,8 +219,8 @@ return array(
 		'postal_code' => '8439',
 		'phone' => '237426099212',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	22 => array(
+	],
+	22 => [
 		'address_id' => '143',
 		'address' => '1029 Dzerzinsk Manor',
 		'address2' => '',
@@ -229,8 +229,8 @@ return array(
 		'postal_code' => '57519',
 		'phone' => '33173584456',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	23 => array(
+	],
+	23 => [
 		'address_id' => '149',
 		'address' => '999 Sanaa Loop',
 		'address2' => '',
@@ -239,8 +239,8 @@ return array(
 		'postal_code' => '3439',
 		'phone' => '918032330119',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	24 => array(
+	],
+	24 => [
 		'address_id' => '151',
 		'address' => '1337 Lincoln Parkway',
 		'address2' => '',
@@ -249,8 +249,8 @@ return array(
 		'postal_code' => '99457',
 		'phone' => '597815221267',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	25 => array(
+	],
+	25 => [
 		'address_id' => '152',
 		'address' => '1952 Pune Lane',
 		'address2' => '',
@@ -259,8 +259,8 @@ return array(
 		'postal_code' => '92150',
 		'phone' => '354615066969',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	26 => array(
+	],
+	26 => [
 		'address_id' => '154',
 		'address' => '781 Shimonoseki Drive',
 		'address2' => '',
@@ -269,8 +269,8 @@ return array(
 		'postal_code' => '95444',
 		'phone' => '632316273199',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	27 => array(
+	],
+	27 => [
 		'address_id' => '155',
 		'address' => '1560 Jelets Boulevard',
 		'address2' => '',
@@ -279,8 +279,8 @@ return array(
 		'postal_code' => '77777',
 		'phone' => '189446090264',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	28 => array(
+	],
+	28 => [
 		'address_id' => '165',
 		'address' => '97 Shimoga Avenue',
 		'address2' => '',
@@ -289,8 +289,8 @@ return array(
 		'postal_code' => '44660',
 		'phone' => '177167004331',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	29 => array(
+	],
+	29 => [
 		'address_id' => '174',
 		'address' => '1877 Ezhou Lane',
 		'address2' => '',
@@ -299,8 +299,8 @@ return array(
 		'postal_code' => '63337',
 		'phone' => '264541743403',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	30 => array(
+	],
+	30 => [
 		'address_id' => '182',
 		'address' => '1891 Rizhao Boulevard',
 		'address2' => '',
@@ -309,8 +309,8 @@ return array(
 		'postal_code' => '47288',
 		'phone' => '391065549876',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	31 => array(
+	],
+	31 => [
 		'address_id' => '184',
 		'address' => '1410 Benin City Parkway',
 		'address2' => '',
@@ -319,8 +319,8 @@ return array(
 		'postal_code' => '29747',
 		'phone' => '104150372603',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	32 => array(
+	],
+	32 => [
 		'address_id' => '188',
 		'address' => '741 Ambattur Manor',
 		'address2' => '',
@@ -329,8 +329,8 @@ return array(
 		'postal_code' => '43310',
 		'phone' => '302590383819',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	33 => array(
+	],
+	33 => [
 		'address_id' => '201',
 		'address' => '817 Bradford Loop',
 		'address2' => '',
@@ -339,8 +339,8 @@ return array(
 		'postal_code' => '89459',
 		'phone' => '264286442804',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	34 => array(
+	],
+	34 => [
 		'address_id' => '220',
 		'address' => '1201 Qomsheh Manor',
 		'address2' => '',
@@ -349,8 +349,8 @@ return array(
 		'postal_code' => '21464',
 		'phone' => '873492228462',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	35 => array(
+	],
+	35 => [
 		'address_id' => '228',
 		'address' => '60 Poos de Caldas Street',
 		'address2' => '',
@@ -359,8 +359,8 @@ return array(
 		'postal_code' => '82338',
 		'phone' => '963063788669',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	36 => array(
+	],
+	36 => [
 		'address_id' => '243',
 		'address' => '47 Syktyvkar Lane',
 		'address2' => '',
@@ -369,8 +369,8 @@ return array(
 		'postal_code' => '22236',
 		'phone' => '63937119031',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	37 => array(
+	],
+	37 => [
 		'address_id' => '251',
 		'address' => '1473 Changhwa Parkway',
 		'address2' => '',
@@ -379,8 +379,8 @@ return array(
 		'postal_code' => '75933',
 		'phone' => '266798132374',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	38 => array(
+	],
+	38 => [
 		'address_id' => '256',
 		'address' => '1497 Yuzhou Drive',
 		'address2' => '',
@@ -389,8 +389,8 @@ return array(
 		'postal_code' => '3433',
 		'phone' => '246810237916',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	39 => array(
+	],
+	39 => [
 		'address_id' => '266',
 		'address' => '862 Xintai Lane',
 		'address2' => '',
@@ -399,8 +399,8 @@ return array(
 		'postal_code' => '30065',
 		'phone' => '265153400632',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	40 => array(
+	],
+	40 => [
 		'address_id' => '271',
 		'address' => '1587 Loja Manor',
 		'address2' => '',
@@ -409,8 +409,8 @@ return array(
 		'postal_code' => '5410',
 		'phone' => '621625204422',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	41 => array(
+	],
+	41 => [
 		'address_id' => '273',
 		'address' => '1519 Ilorin Place',
 		'address2' => '',
@@ -419,8 +419,8 @@ return array(
 		'postal_code' => '49298',
 		'phone' => '357445645426',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	42 => array(
+	],
+	42 => [
 		'address_id' => '274',
 		'address' => '920 Kumbakonam Loop',
 		'address2' => '',
@@ -429,8 +429,8 @@ return array(
 		'postal_code' => '75090',
 		'phone' => '685010736240',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	43 => array(
+	],
+	43 => [
 		'address_id' => '276',
 		'address' => '1675 Xiangfan Manor',
 		'address2' => '',
@@ -439,8 +439,8 @@ return array(
 		'postal_code' => '11763',
 		'phone' => '271149517630',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	44 => array(
+	],
+	44 => [
 		'address_id' => '282',
 		'address' => '556 Baybay Manor',
 		'address2' => '',
@@ -449,8 +449,8 @@ return array(
 		'postal_code' => '55802',
 		'phone' => '363982224739',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	45 => array(
+	],
+	45 => [
 		'address_id' => '284',
 		'address' => '600 Bradford Street',
 		'address2' => '',
@@ -459,8 +459,8 @@ return array(
 		'postal_code' => '96204',
 		'phone' => '117592274996',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	46 => array(
+	],
+	46 => [
 		'address_id' => '306',
 		'address' => '1883 Maikop Lane',
 		'address2' => '',
@@ -469,8 +469,8 @@ return array(
 		'postal_code' => '68469',
 		'phone' => '96110042435',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	47 => array(
+	],
+	47 => [
 		'address_id' => '307',
 		'address' => '1908 Gaziantep Place',
 		'address2' => '',
@@ -479,8 +479,8 @@ return array(
 		'postal_code' => '58979',
 		'phone' => '108053751300',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	48 => array(
+	],
+	48 => [
 		'address_id' => '321',
 		'address' => '651 Pathankot Loop',
 		'address2' => '',
@@ -489,8 +489,8 @@ return array(
 		'postal_code' => '59811',
 		'phone' => '139378397418',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	49 => array(
+	],
+	49 => [
 		'address_id' => '341',
 		'address' => '1920 Weifang Avenue',
 		'address2' => '',
@@ -499,8 +499,8 @@ return array(
 		'postal_code' => '15643',
 		'phone' => '869507847714',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	50 => array(
+	],
+	50 => [
 		'address_id' => '349',
 		'address' => '1516 Escobar Drive',
 		'address2' => '',
@@ -509,8 +509,8 @@ return array(
 		'postal_code' => '46069',
 		'phone' => '64536069371',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	51 => array(
+	],
+	51 => [
 		'address_id' => '350',
 		'address' => '1628 Nagareyama Lane',
 		'address2' => '',
@@ -519,8 +519,8 @@ return array(
 		'postal_code' => '60079',
 		'phone' => '20064292617',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	52 => array(
+	],
+	52 => [
 		'address_id' => '364',
 		'address' => '1623 Kingstown Drive',
 		'address2' => '',
@@ -529,8 +529,8 @@ return array(
 		'postal_code' => '91299',
 		'phone' => '296394569728',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	53 => array(
+	],
+	53 => [
 		'address_id' => '371',
 		'address' => '1912 Emeishan Drive',
 		'address2' => '',
@@ -539,8 +539,8 @@ return array(
 		'postal_code' => '33050',
 		'phone' => '99883471275',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	54 => array(
+	],
+	54 => [
 		'address_id' => '402',
 		'address' => '616 Hagonoy Avenue',
 		'address2' => '',
@@ -549,8 +549,8 @@ return array(
 		'postal_code' => '46043',
 		'phone' => '604177838256',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	55 => array(
+	],
+	55 => [
 		'address_id' => '411',
 		'address' => '264 Bhimavaram Manor',
 		'address2' => '',
@@ -559,8 +559,8 @@ return array(
 		'postal_code' => '54749',
 		'phone' => '302526949177',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	56 => array(
+	],
+	56 => [
 		'address_id' => '415',
 		'address' => '432 Garden Grove Street',
 		'address2' => '',
@@ -569,8 +569,8 @@ return array(
 		'postal_code' => '65630',
 		'phone' => '615964523510',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	57 => array(
+	],
+	57 => [
 		'address_id' => '416',
 		'address' => '1445 Carmen Parkway',
 		'address2' => '',
@@ -579,8 +579,8 @@ return array(
 		'postal_code' => '70809',
 		'phone' => '598912394463',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	58 => array(
+	],
+	58 => [
 		'address_id' => '422',
 		'address' => '289 Santo Andr Manor',
 		'address2' => '',
@@ -589,8 +589,8 @@ return array(
 		'postal_code' => '72410',
 		'phone' => '214976066017',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	59 => array(
+	],
+	59 => [
 		'address_id' => '423',
 		'address' => '437 Chungho Drive',
 		'address2' => '',
@@ -599,8 +599,8 @@ return array(
 		'postal_code' => '59489',
 		'phone' => '491271355190',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	60 => array(
+	],
+	60 => [
 		'address_id' => '436',
 		'address' => '287 Cuautla Boulevard',
 		'address2' => '',
@@ -609,8 +609,8 @@ return array(
 		'postal_code' => '72736',
 		'phone' => '82619513349',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	61 => array(
+	],
+	61 => [
 		'address_id' => '443',
 		'address' => '1836 Korla Parkway',
 		'address2' => '',
@@ -619,8 +619,8 @@ return array(
 		'postal_code' => '55405',
 		'phone' => '689681677428',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	62 => array(
+	],
+	62 => [
 		'address_id' => '454',
 		'address' => '956 Nam Dinh Manor',
 		'address2' => '',
@@ -629,8 +629,8 @@ return array(
 		'postal_code' => '21872',
 		'phone' => '474047727727',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	63 => array(
+	],
+	63 => [
 		'address_id' => '464',
 		'address' => '76 Kermanshah Manor',
 		'address2' => '',
@@ -639,8 +639,8 @@ return array(
 		'postal_code' => '23343',
 		'phone' => '762361821578',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	64 => array(
+	],
+	64 => [
 		'address_id' => '469',
 		'address' => '1872 Toulon Loop',
 		'address2' => '',
@@ -649,8 +649,8 @@ return array(
 		'postal_code' => '7939',
 		'phone' => '928809465153',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	65 => array(
+	],
+	65 => [
 		'address_id' => '492',
 		'address' => '185 Mannheim Lane',
 		'address2' => '',
@@ -659,8 +659,8 @@ return array(
 		'postal_code' => '23661',
 		'phone' => '589377568313',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	66 => array(
+	],
+	66 => [
 		'address_id' => '494',
 		'address' => '591 Sungai Petani Drive',
 		'address2' => '',
@@ -669,8 +669,8 @@ return array(
 		'postal_code' => '46400',
 		'phone' => '37247325001',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	67 => array(
+	],
+	67 => [
 		'address_id' => '502',
 		'address' => '1515 Korla Way',
 		'address2' => '',
@@ -679,8 +679,8 @@ return array(
 		'postal_code' => '57197',
 		'phone' => '959467760895',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	68 => array(
+	],
+	68 => [
 		'address_id' => '506',
 		'address' => '414 Mandaluyong Street',
 		'address2' => '',
@@ -689,8 +689,8 @@ return array(
 		'postal_code' => '16370',
 		'phone' => '52709222667',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	69 => array(
+	],
+	69 => [
 		'address_id' => '524',
 		'address' => '680 A Corua (La Corua) Manor',
 		'address2' => '',
@@ -699,8 +699,8 @@ return array(
 		'postal_code' => '49806',
 		'phone' => '158326114853',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	70 => array(
+	],
+	70 => [
 		'address_id' => '539',
 		'address' => '1332 Gaziantep Lane',
 		'address2' => '',
@@ -709,8 +709,8 @@ return array(
 		'postal_code' => '22813',
 		'phone' => '383353187467',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	71 => array(
+	],
+	71 => [
 		'address_id' => '547',
 		'address' => '379 Lublin Parkway',
 		'address2' => '',
@@ -719,8 +719,8 @@ return array(
 		'postal_code' => '74568',
 		'phone' => '921960450089',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	72 => array(
+	],
+	72 => [
 		'address_id' => '560',
 		'address' => '1447 Imus Place',
 		'address2' => '',
@@ -729,8 +729,8 @@ return array(
 		'postal_code' => '12905',
 		'phone' => '62127829280',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	73 => array(
+	],
+	73 => [
 		'address_id' => '566',
 		'address' => '1229 Varanasi (Benares) Manor',
 		'address2' => '',
@@ -739,8 +739,8 @@ return array(
 		'postal_code' => '40195',
 		'phone' => '817740355461',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	74 => array(
+	],
+	74 => [
 		'address_id' => '568',
 		'address' => '1342 Sharja Way',
 		'address2' => '',
@@ -749,8 +749,8 @@ return array(
 		'postal_code' => '93655',
 		'phone' => '946114054231',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	75 => array(
+	],
+	75 => [
 		'address_id' => '572',
 		'address' => '539 Hami Way',
 		'address2' => '',
@@ -759,8 +759,8 @@ return array(
 		'postal_code' => '52196',
 		'phone' => '525518075499',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	76 => array(
+	],
+	76 => [
 		'address_id' => '587',
 		'address' => '760 Miyakonojo Drive',
 		'address2' => '',
@@ -769,8 +769,8 @@ return array(
 		'postal_code' => '64682',
 		'phone' => '294449058179',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	77 => array(
+	],
+	77 => [
 		'address_id' => '593',
 		'address' => '1402 Zanzibar Boulevard',
 		'address2' => '',
@@ -779,8 +779,8 @@ return array(
 		'postal_code' => '71102',
 		'phone' => '387448063440',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	78 => array(
+	],
+	78 => [
 		'address_id' => '596',
 		'address' => '1759 Niznekamsk Avenue',
 		'address2' => '',
@@ -789,8 +789,8 @@ return array(
 		'postal_code' => '39414',
 		'phone' => '864392582257',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-	79 => array(
+	],
+	79 => [
 		'address_id' => '603',
 		'address' => '1103 Quilmes Boulevard',
 		'address2' => '',
@@ -799,5 +799,5 @@ return array(
 		'postal_code' => '52137',
 		'phone' => '644021380889',
 		'last_update' => '2006-02-15 04:45:30',
-	),
-);
+	],
+];

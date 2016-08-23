@@ -27,7 +27,7 @@ return function() {
 	// Get type of display
 	$TYPE	= 'main';
 	$_type	= $_GET['id']{0};
-	if (strlen($_GET['id']) && in_array($_type, array('f','t'))) {
+	if (strlen($_GET['id']) && in_array($_type, ['f','t'])) {
 		if ($_type == 'f') {
 			$TYPE	= 'forum';
 		} elseif ($_type == 't') {
@@ -80,16 +80,16 @@ return function() {
 	}
 // TODO: need to move to the framework
 	$TPL_PATH = "templates/new_1/";
-	$body = str_replace(array("{body}","{css_path}"), array($body, WEB_PATH.$TPL_PATH), file_get_contents(INCLUDE_PATH.$TPL_PATH."forum/low/main.stpl"));
+	$body = str_replace(["{body}","{css_path}"], [$body, WEB_PATH.$TPL_PATH], file_get_contents(INCLUDE_PATH.$TPL_PATH."forum/low/main.stpl"));
 	// Replace relative links to their full paths
 	$images_path	= WEB_PATH. $TPL_PATH. "images/";
 	// Array of pairs "match->replace" for str_replace
-	$to_replace = array(
+	$to_replace = [
 		"\"images/"			=> "\"".$images_path,
 		"'images/"			=> "'".$images_path,
 		"src=\"uploads/"	=> "src=\"".WEB_PATH."uploads/",
 		"'./?"				=> "'".WEB_PATH."?",
-	);
+	];
 	$body = str_replace(array_keys($to_replace), array_values($to_replace), $body);
 
 	echo $body;

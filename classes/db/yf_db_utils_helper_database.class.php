@@ -34,91 +34,91 @@ class yf_db_utils_helper_database {
 
 	/**
 	*/
-	public function info($extra = array(), &$error = false) {
+	public function info($extra = [], &$error = false) {
 		return $this->utils->database_info($this->db_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function exists($extra = array(), &$error = false) {
+	public function exists($extra = [], &$error = false) {
 		return $this->utils->database_exists($this->db_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function drop($extra = array(), &$error = false) {
+	public function drop($extra = [], &$error = false) {
 		return $this->utils->drop_database($this->db_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function create(array $data, $extra = array(), &$error = false) {
+	public function create(array $data, $extra = [], &$error = false) {
 		return $this->utils->create_database($this->db_name, $data, $extra, $error);
 	}
 
 	/**
 	*/
-	public function alter(array $data, $extra = array(), &$error = false) {
+	public function alter(array $data, $extra = [], &$error = false) {
 		return $this->utils->alter_database($this->db_name, $data, $extra, $error);
 	}
 
 	/**
 	*/
-	public function rename($new_name, $extra = array(), &$error = false) {
+	public function rename($new_name, $extra = [], &$error = false) {
 		return $this->utils->rename_database($this->db_name, $new_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function truncate($extra = array(), &$error = false) {
+	public function truncate($extra = [], &$error = false) {
 		return $this->utils->truncate_database($this->db_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function tables($extra = array(), &$error = false) {
+	public function tables($extra = [], &$error = false) {
 		return $this->utils->list_tables($this->db_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function table($name, $extra = array(), &$error = false) {
+	public function table($name, $extra = [], &$error = false) {
 		return $this->utils->table($this->db_name, $name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function views($extra = array(), &$error = false) {
+	public function views($extra = [], &$error = false) {
 		return $this->utils->list_views($this->db_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function view($name, $extra = array(), &$error = false) {
+	public function view($name, $extra = [], &$error = false) {
 		return $this->utils->view($this->db_name, $name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function triggers($extra = array(), &$error = false) {
+	public function triggers($extra = [], &$error = false) {
 		return $this->utils->list_triggers($this->db_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function trigger($name, $extra = array(), &$error = false) {
+	public function trigger($name, $extra = [], &$error = false) {
 		return $this->utils->trigger($this->db_name, $name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function events($extra = array(), &$error = false) {
+	public function events($extra = [], &$error = false) {
 		return $this->utils->list_events($this->db_name, $extra, $error);
 	}
 
 	/**
 	*/
-	public function event($name, $extra = array(), &$error = false) {
+	public function event($name, $extra = [], &$error = false) {
 		return $this->utils->event($this->db_name, $name, $extra, $error);
 	}
 }

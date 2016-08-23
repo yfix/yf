@@ -16,182 +16,182 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 	public $URL_API = 'https://money.yandex.ru/%method';
 	public $API_REDIRECT_URI = null;
 
-	public $method_allow = array(
-		'order' => array(
-			'payin' => array(
+	public $method_allow = [
+		'order' => [
+			'payin' => [
 				'yandexmoney',
-			),
-			'payout' => array(
+			],
+			'payout' => [
 				'yandexmoney_p2p',
-			),
-		),
-		'payin' => array(
-			'yandexmoney' => array(
+			],
+		],
+		'payin' => [
+			'yandexmoney' => [
 				'title' => 'Яндекс.Деньги',
 				'icon'  => 'yandexmoney',
 				'fee'         => 2, // 0.1%
-				'currency' => array(
-					'RUB' => array(
+				'currency' => [
+					'RUB' => [
 						'currency_id' => 'RUB',
 						'active'      => true,
-					),
-				),
-			),
-		),
-		'api' => array(
-			'authorize' => array(
-				'uri' => array(
+					],
+				],
+			],
+		],
+		'api' => [
+			'authorize' => [
+				'uri' => [
 					'%method' => 'oauth/authorize',
-				),
-			),
-			'token' => array(
-				'uri' => array(
+				],
+			],
+			'token' => [
+				'uri' => [
 					'%method' => 'oauth/token',
-				),
-			),
+				],
+			],
 			// token revoke
-			'revoke' => array(
+			'revoke' => [
 				'is_authorization' => true,
-				'request' => array(
+				'request' => [
 					'is_post'     => true,
 					'is_http_raw' => true,
-				),
-				'uri' => array(
+				],
+				'uri' => [
 					'%method' => 'api/revoke',
-				),
-			),
+				],
+			],
 			// account-info
-			'account-info' => array(
+			'account-info' => [
 				'is_authorization' => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'api/account-info',
-				),
-			),
+				],
+			],
 			// operation-history
-			'operation-history' => array(
+			'operation-history' => [
 				'is_authorization' => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'api/operation-history',
-				),
-			),
+				],
+			],
 			// operation-details
-			'operation-details' => array(
+			'operation-details' => [
 				'is_authorization' => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'api/operation-details',
-				),
-			),
+				],
+			],
 			// request-payment
-			'request-payment' => array(
+			'request-payment' => [
 				'is_authorization' => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'api/request-payment',
-				),
-			),
-			'process-payment' => array(
+				],
+			],
+			'process-payment' => [
 				'is_authorization' => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'api/process-payment',
-				),
-			),
-		),
+				],
+			],
+		],
 		/**
 		 * Ограничения на выплаты:
 		 *   Идентифицированный: 250 000 руб.
 		 *   Именной:             60 000 руб.
 		 *   Анонимный:           15 000 руб.
 		 */
-		'payout' => array(
-			'yandexmoney_p2p' => array(
+		'payout' => [
+			'yandexmoney_p2p' => [
 				'title' => 'YandexMoney',
 				'icon'  => 'yandexmoney',
-				'amount' => array(
+				'amount' => [
 					'min' => 5,
 					'max' => 200,
-				),
+				],
 				'is_fee' => true,
-				'fee' => array(
-					'out' => array(
+				'fee' => [
+					'out' => [
 						'rt'  => 0.5,
 						// 'fix' => 10,
-					),
-				),
+					],
+				],
 				'is_currency' => true,
-				'currency' => array(
-					'RUB' => array(
+				'currency' => [
+					'RUB' => [
 						'currency_id' => 'RUB',
 						'active'      => true,
-					),
-				),
-				'request_option' => array(
+					],
+				],
+				'request_option' => [
 					'pattern_id' => 'p2p',
-				),
-				'request_field' => array(
+				],
+				'request_field' => [
 					'pattern_id',
 					'to',
 					'amount',
 					'label',
 					'comment',
 					'message',
-				),
-				'field' => array(
+				],
+				'field' => [
 					'to',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'to',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'to' => 'Номер счета',
-				),
-				'option_validation_js' => array(
-					'to' => array(
+				],
+				'option_validation_js' => [
+					'to' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 11,
 						'maxlength' => 26,
 						// 'pattern'   => '^\d+$',
 						'pattern'   => '^41001[0-9]{4,19}(?:[1-9]{2})$',
-					),
-				),
-				'option_validation' => array(
+					],
+				],
+				'option_validation' => [
 					'to' => 'required|length[11,26]|regex:~^41001[0-9]{4,19}(?:[1-9]{2})$~',
-				),
-				'option_validation_message' => array(
+				],
+				'option_validation_message' => [
 					'to' => 'обязательное поле от 11 до 26 цифр',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
-	public $_api_transform = array(
+	public $_api_transform = [
 		'title'           => 'message',
-	);
+	];
 
-	public $_api_transform_reverse = array(
+	public $_api_transform_reverse = [
 		'status'          => 'state',
 		'contract_amount' => 'amount',
 		'payment_id'      => 'external_id',
-	);
+	];
 
-	public $_options_transform = array(
+	public $_options_transform = [
 		'amount'       => 'sum',
 		'title'        => 'targets',     // payment title
 		'operation_id' => 'label',
-	);
+	];
 
-	public $_options_transform_reverse = array(
+	public $_options_transform_reverse = [
 		'sum'          => 'amount',
 		'targets'      => 'title',
 		'operation_id' => 'external_id',
 		'label'        => 'operation_id',
-	);
+	];
 
-	public $_status = array(
+	public $_status = [
 		'success' => 'success',
 		'fail'    => 'refused',
-	);
+	];
 
-	public $_payout_status = array(
+	public $_payout_status = [
 		'success'                     => 'success',
 		'in_progress'                 => 'in_progress',
 		// refused
@@ -214,9 +214,9 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		'limit_exceeded'              => 'error',
 		'contract_not_found'          => 'error',
 		'money_source_not_available'  => 'error',
-	);
+	];
 
-	public $_payout_status_message = array(
+	public $_payout_status_message = [
 		'success'                     => 'Платеж проведен.',
 		'in_progress'                 => 'Авторизация платежа не завершена. Повторите запрос спустя некоторое время.',
 		// refused
@@ -239,19 +239,19 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		'limit_exceeded'              => 'Превышен один из лимитов на операции.',
 		'contract_not_found'          => 'Отсутствует созданный (но не подтвержденный) платеж с заданным request_id.',
 		'money_source_not_available'  => 'Запрошенный метод платежа (money_source) недоступен для данного платежа.',
-	);
+	];
 
 	public $currency_default = 'RUB';
-	public $currency_allow = array(
-		'RUB' => array(
+	public $currency_allow = [
+		'RUB' => [
 			'currency_id' => 'RUB',
 			'active'      => true,
-		),
-	);
+		],
+	];
 
-	public $service_allow = array(
+	public $service_allow = [
 		'Яндекс.Деньги',
-	);
+	];
 
 	public $url_result    = null;
 	public $url_server    = null;
@@ -279,7 +279,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$this->url_server    = url_user( '/api/payment/provider?name=yandexmoney&operation=response&server=true' );
 		$this->url_authorize = url_user( '/api/payment/provider?name=yandexmoney&operation=authorize&server=true' );
 		// provider options
-		list( $provider_id, $provider ) = $payment_api->get_provider(array( 'name' => $provider_name ));
+		list( $provider_id, $provider ) = $payment_api->get_provider([ 'name' => $provider_name ]);
 		$access_token = @$provider[ 'options' ][ 'authorize' ][ 'access_token' ];
 			!is_string( $access_token ) && $access_token = null;
 	}
@@ -370,13 +370,13 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$_ = &$options;
 		// START DUMP
 		$payment_api = $this->payment_api;
-		$payment_api->dump(array( 'name' => 'YandexMoney', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ));
+		$payment_api->dump([ 'name' => 'YandexMoney', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ]);
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
 		// DUMP
-		$payment_api->dump(array( 'var' => $form_options ));
+		$payment_api->dump([ 'var' => $form_options ]);
 		$url = &$this->URL;
-		$result = array();
+		$result = [];
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
@@ -407,7 +407,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		if( $this->is_test() ) {
 			$operation_id = (int)$_GET[ 'operation_id' ];
 			$this->key( 'private', '01234567890ABCDEF01234567890' );
-			$_POST = array (
+			$_POST = [
 				'notification_type' => 'p2p-incoming',
 				'operation_id'      => '1234567',
 				'amount'            => '300.00',
@@ -419,32 +419,32 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 				'withdraw_amount'   => '100.00',
 				// shop_id:operation_id may be exists
 				'label' => $this->SHOP_ID . ':' . $operation_id,
-			);
+			];
 		} // */
 		// check shop_id, operation
 		@list( $shop_id, $operation_id ) = explode( ':', $_POST[ 'label' ] );
 		$operation_id = (int)$operation_id;
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'YandexMoney', 'operation_id' => $operation_id ));
+		$payment_api->dump( [ 'name' => 'YandexMoney', 'operation_id' => $operation_id ]);
 		if( $shop_id != $this->SHOP_ID ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не верный идентификатор магазина',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		// response
 		$response = $_POST;
 		// operation_id
 		if( empty( $operation_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		// signature
@@ -456,12 +456,12 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$_signature = $this->signature( $response, false );
 		$is_signature_ok = $signature == $_signature;
 		if( !$is_signature_ok ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		// check status
@@ -478,7 +478,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		// get response
 		$_response = $this->_response_parse( $response );
 		// check operation data
-		$operation = $payment_api->operation( array( 'operation_id' => $operation_id ) );
+		$operation = $payment_api->operation( [ 'operation_id' => $operation_id ] );
 		$_operation_id = @$operation[ 'operation_id' ];
 		$amount        = @$_response[ 'amount'       ];
 		// $_amount       = @$operation[ 'amount'       ];
@@ -487,23 +487,23 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 			// && ( $amount == $_amount || $this->is_test() )
 		;
 		if( !$is_operation_ok ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверные данные запроса',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		$_response[ 'operation_id' ] = $operation_id;
 		$_response[ 'shop_id'      ] = $shop_id;
 		// update account, operation data
-		$result = $this->_api_deposition( array(
+		$result = $this->_api_deposition( [
 			'provider_name'  => 'yandexmoney',
 			'response'       => $_response,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
-		));
+		]);
 		return( $result );
 	}
 
@@ -531,9 +531,9 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// request
-		$request = array(
+		$request = [
 			'method_id' => 'revoke',
-		);
+		];
 		$result = $this->api_request( $request );
 		$http_code = (int)$result[ 'http_code' ];
 		$status         = null;
@@ -553,16 +553,16 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 				break;
 		}
 		if( !is_null( $status ) ) {
-			$r = $payment_api->provider_update( array(
+			$r = $payment_api->provider_update( [
 				'provider_id' => $provider_id,
-				'options'     => array( 'redirect_uri' => null, 'authorize' => null ),
-			), array( 'is_replace' => true ) );
+				'options'     => [ 'redirect_uri' => null, 'authorize' => null ],
+			], [ 'is_replace' => true ] );
 			if( !@$r[ 'status' ] ) { return( $r ); }
 		}
-		$result = array(
+		$result = [
 			'status'         => $status,
 			'status_message' => $status_message,
-		);
+		];
 		return( $result );
 	}
 
@@ -583,47 +583,47 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$provider_id   = &$this->provider_id;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$request_options = array();
+		$request_options = [];
 		// redirect uri
 		$redirect_hash = null;
 		if( @$_redirect_uri ) {
 			$redirect_hash = substr( md5( $_redirect_uri . time() ), 0, 8 );
-			$r = $payment_api->provider_update( array(
+			$r = $payment_api->provider_update( [
 				'provider_id' => $provider_id,
-				'options'     => array( 'redirect_uri' => array(
-					$redirect_hash => array(
+				'options'     => [ 'redirect_uri' => [
+					$redirect_hash => [
 						'value'    => $_redirect_uri,
 						'datetime' => $payment_api->sql_datetime(),
-					),
-				)),
-			), array( 'is_replace' => true ) );
+					],
+				]],
+			], [ 'is_replace' => true ] );
 			if( !@$r[ 'status' ] ) { return( $r ); }
 		}
 		// request options
-		$API_REDIRECT_URI = $this->_get_api_redirect_uri( array(
+		$API_REDIRECT_URI = $this->_get_api_redirect_uri( [
 			'redirect_hash' => $redirect_hash,
-		));
-		$default = array(
+		]);
+		$default = [
 			'client_id'     => $this->API_KEY_PUBLIC,
 			'client_secret' => $this->API_KEY_PRIVATE,
 			'redirect_uri'  => $API_REDIRECT_URI,
 			'response_type' => 'code',
 			'instance_name' => 'admin',
 			'scope'         => 'account-info operation-history operation-details incoming-transfers payment-p2p money-source("wallet")',
-		);
+		];
 		$request_options = $default;
 		$method_id = 'authorize';
 		is_array( $_option ) && $request_options = array_replace_recursive( $request_options, $_option );
 		// method
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'api',
 			'method_id' => $method_id,
-		));
+		]);
 		if( empty( $method ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не найден',
-			);
+			];
 			return( $result );
 		}
 		// url
@@ -631,7 +631,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		if( isset( $object[ 'status' ] ) && $object[ 'status' ] === false ) { return( $object ); }
 		$url = $object;
 		// form
-		$result = array();
+		$result = [];
 		$result[] = '<form id="_js_provider_yandexmoney_authorize_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
 		foreach( $request_options as $key => $value ) {
 			$result[] = sprintf( '<input type="hidden" name="%s" value="%s" />', $key, htmlentities( $value, ENT_COMPAT | ENT_HTML5, 'UTF-8', false ) );
@@ -655,62 +655,62 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$is_server     = !empty( $_GET[ 'server' ] );
 		$redirect_uri  = null;
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'YandexMoney-authorize' ));
+		$payment_api->dump( [ 'name' => 'YandexMoney-authorize' ]);
 		// token
 		$code          = &$_GET[ 'code' ];
 		$redirect_hash = &$_GET[ 'redirect_hash' ];
 		$redirect_uri  = &$provider[ 'options' ][ 'redirect_uri' ][ $redirect_hash ][ 'value' ];
 		// DUMP
-		$payment_api->dump( array( 'var' => array(
+		$payment_api->dump( [ 'var' => [
 			'code'          => $code,
 			'redirect_hash' => $redirect_hash,
-		)));
+		]]);
 		if( $code && $redirect_hash ) {
-			$API_REDIRECT_URI = $this->_get_api_redirect_uri( array(
+			$API_REDIRECT_URI = $this->_get_api_redirect_uri( [
 				'redirect_hash' => $redirect_hash,
-			));
-			$request = array(
+			]);
+			$request = [
 				'method_id' => 'token',
-				'option' => array(
+				'option' => [
 					'client_id'     => $this->API_KEY_PUBLIC,
 					'client_secret' => $this->API_KEY_PRIVATE,
 					'redirect_uri'  => $API_REDIRECT_URI,
 					'grant_type'    => 'authorization_code',
 					'code'          => $code,
-				),
-			);
+				],
+			];
 			// DUMP
-			$payment_api->dump( array( 'var' => array(
+			$payment_api->dump( [ 'var' => [
 				'token request' => $request,
-			)));
+			]]);
 			list( $status, $response ) = $this->api_request( $request );
 			// DUMP
-			$payment_api->dump( array( 'var' => array(
+			$payment_api->dump( [ 'var' => [
 				'token response status' => $status,
 				'token response'        => $response,
-			)));
+			]]);
 			// store access_token
 			if( @$status && @$response[ 'access_token' ] ) {
 				$access_token = &$this->access_token;
 				$access_token = $response[ 'access_token' ];
 				$provider_id = &$this->provider_id;
-				$r = $payment_api->provider_update( array(
+				$r = $payment_api->provider_update( [
 					'provider_id' => $provider_id,
-					'options'     => array(
-						'authorize' => array(
+					'options'     => [
+						'authorize' => [
 							'access_token' => $access_token,
 							'datetime'     => $payment_api->sql_datetime(),
-						),
-						'redirect_uri' => array( $redirect_hash => null ),
-					),
-				), array( 'is_replace' => true ) );
+						],
+						'redirect_uri' => [ $redirect_hash => null ],
+					],
+				], [ 'is_replace' => true ] );
 				if( !@$r[ 'status' ] ) { return( $r ); }
 			}
 		} else {
 			// DUMP
-			$payment_api->dump( array( 'var' => array(
+			$payment_api->dump( [ 'var' => [
 				'error' => 'No code or redirect_hash',
-			)));
+			]]);
 		}
 		// redirect
 		$redirect_uri = $redirect_uri ?: '/payments';
@@ -725,17 +725,17 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 	public function api_authorization( &$options ) {
 		$result = $this->is_authorization();
 		if( !$result ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Требуется авторизация YandexMoney',
-			);
+			];
 			return( $result );
 		}
 		$options[ 'access_token' ] = $this->access_token;
-		$result = array(
+		$result = [
 			'status'         => true,
 			'status_message' => 'Авторизация имеется',
-		);
+		];
 		return( $result );
 	}
 
@@ -745,32 +745,32 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		if( is_string( $options ) ) { $_method_id = $options; }
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// method
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'api',
 			'method_id' => @$_method_id,
-		));
+		]);
 		if( empty( $method ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не найден',
-			);
+			];
 			return( $result );
 		}
 		// method handler
 		if( !empty( $method[ 'is_handler' ] ) ) {
 			$handler = 'api_request__'. $method[ 'is_handler' ];
 			if( !method_exists( $this, $handler ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Опработчик метода запроса не найден',
-				);
+				];
 				return( $result );
 			}
 			$result = $this->{ $handler }( $options );
 			return( $result );
 		}
 		// request
-		$request = array();
+		$request = [];
 		is_array( @$_option ) && $request = $_option;
 // DEBUG
 // var_dump( $url, $request, $request_option );
@@ -784,16 +784,16 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		if( isset( $object[ 'status' ] ) && $object[ 'status' ] === false ) { return( $object ); }
 		$url = $object;
 		// request options
-		$request_option = array();
+		$request_option = [];
 		@$_is_debug && $request_option[ 'is_debug' ] = true;
 		if( @$method[ 'is_authorization' ] ) {
 			$result = $this->api_authorization( $request_option );
 			if( !@$result[ 'status' ] ) { return( $result ); }
 		}
 		// header
-		is_array( $method[ 'header' ] ) && $request_option = array_replace_recursive( $request_option, array( 'header' => $method[ 'header' ] ) );
+		is_array( $method[ 'header' ] ) && $request_option = array_replace_recursive( $request_option, [ 'header' => $method[ 'header' ] ] );
 		is_array( $method[ 'request' ] ) && $request_option = array_replace_recursive( $request_option, $method[ 'request' ] );
-		is_array( $_header ) && $request_option = array_replace_recursive( $request_option, array( 'header' => $_header ) );
+		is_array( $_header ) && $request_option = array_replace_recursive( $request_option, [ 'header' => $_header ] );
 		// request
 // DEBUG
 // var_dump( $url, $request, $request_option );
@@ -809,15 +809,15 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// method
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'payout',
 			'method_id' => @$_method_id,
-		));
+		]);
 		if( empty( $method ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не найден',
-			);
+			];
 			return( $result );
 		}
 		$payment_api = &$this->payment_api;
@@ -825,34 +825,34 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$_operation_id = (int)$_operation_id;
 		$operation_id = $_operation_id;
 		if( empty( $_operation_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
-			);
+			];
 			return( $result );
 		}
 		// currency_id
 		$currency_id = $this->get_currency_payout( $options );
 		if( empty( $currency_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неизвестная валюта',
-			);
+			];
 			return( $result );
 		}
 		// amount min/max
-		$result = $this->amount_limit( array(
+		$result = $this->amount_limit( [
 			'amount'      => $_amount,
 			'currency_id' => $currency_id,
 			'method'      => $method,
-		));
+		]);
 		if( ! @$result[ 'status' ] ) { return( $result ); }
 		// amount currency conversion
-		$result = $this->currency_conversion_payout( array(
+		$result = $this->currency_conversion_payout( [
 			'options' => $options,
 			'method'  => $method,
 			'amount'  => $_amount,
-		));
+		]);
 		if( empty( $result[ 'status' ] ) ) { return( $result ); }
 		$amount_currency       = $result[ 'amount_currency' ];
 		$amount_currency_total = $result[ 'amount_currency_total' ];
@@ -861,7 +861,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$amount = @$method[ 'is_fee' ] ? $amount_currency_total : $amount_currency;
 		$amount = $payment_api->_number_api( $amount, 2 );
 		// request
-		$request = array();
+		$request = [];
 		@$method[ 'request_option' ] && $request = $method[ 'request_option' ];
 		// add common fields
 		$request[ 'label'        ] = ( @$this->SHOP_ID ?: 'shop id' ) . ':' . $operation_id;
@@ -872,58 +872,58 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		@$_to && $request[ 'to' ] = $_to;
 		// test
 		if( $this->is_test() ) {
-			$request += array(
+			$request += [
 				'test_payment' => 'true',
 				'test_result'  => @$_test_result1 ?: 'success',
 				// 'test_result'  => 'account_blocked',
 				// 'test_result'  => 'illegal_params',
-			);
+			];
 		}
 		// title
 		@$_title           && $request[ 'title' ] = $_title;
 		@$_operation_title && $request[ 'title' ] = $_operation_title;
 		// transform
-		$this->option_transform( array(
+		$this->option_transform( [
 			'option'    => &$request,
 			'transform' => $this->_api_transform,
-		));
+		]);
 		// add fields
 		$request[ 'comment' ] = &$request[ 'message' ];
 		foreach( $method[ 'field' ] as $key ) {
 			$value = &$request[ $key ];
 			if( !isset( $value ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Отсутствуют данные запроса: '. $key,
-				);
+				];
 				return( $result );
 			}
 		}
 // DEBUG
 // var_dump( $options,$request ); exit;
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'YandexMoney', 'operation_id' => $operation_id,
-			'var' => array( 'request' => $request )
-		));
+		$payment_api->dump( [ 'name' => 'YandexMoney', 'operation_id' => $operation_id,
+			'var' => [ 'request' => $request ]
+		]);
 		// update processing
 		$sql_datetime = $payment_api->sql_datetime();
-		$operation_options = array(
-			'processing' => array( array(
+		$operation_options = [
+			'processing' => [ [
 				'provider_name' => 'yandexmoney',
 				'datetime'      => $sql_datetime,
-			)),
-		);
-		$operation_update_data = array(
+			]],
+		];
+		$operation_update_data = [
 			'operation_id'    => $operation_id,
 			'datetime_update' => $sql_datetime,
 			'options'         => $operation_options,
-		);
+		];
 		$payment_api->operation_update( $operation_update_data );
 		// request options
-		$request_option = array(
+		$request_option = [
 			'method_id' => 'request-payment',
 			'option'    => $request,
-		);
+		];
 		@$_is_debug && $request_option[ 'is_debug' ] = true;
 		// DEBUG
 		// var_dump( $request_option );
@@ -931,13 +931,13 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		// DEBUG
 		// var_dump( $result );
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'response' => $result )));
+		$payment_api->dump( [ 'var' => [ 'response' => $result ]]);
 		if( @$result[ 'status' ] === false ) { return( $result ); }
 		if( ! @$result ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно отправить запрос',
-			);
+			];
 			return( $result );
 		}
 		@list( $status, $response ) = $result;
@@ -960,10 +960,10 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 			'recipient_identified'     => false,
 		); //*/
 		if( !@$response ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно декодировать ответ: '. var_export( $response, true ),
-			);
+			];
 			return( $result );
 		}
 		// transform reverse
@@ -981,13 +981,13 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$request_id = @$response[ 'request_id' ];
 		if( $request_status && $state == 'success' ) {
 			if( !$request_id ) {
-				$result = array(
+				$result = [
 					'status'         => 'error',
 					'status_message' => 'Неверный ответ: отсутствует request_id',
-				);
+				];
 				return( $result );
 			} else {
-				$request_option =  array( 'request_id' => $request_id ) + $options;
+				$request_option =  [ 'request_id' => $request_id ] + $options;
 				list( $request_status, $state, $result ) = $this->_payout_process( $request_option );
 				// DEBUG
 				// var_dump( $request_status, $state, $result ); exit;
@@ -1001,7 +1001,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		// exit;
 		// update account, operation data
 		$payment_type = 'payment';
-		$operation_data = array(
+		$operation_data = [
 			'operation_id'   => $operation_id,
 			'provider_force' => @$_provider_force,
 			'provider_name'  => 'yandexmoney',
@@ -1010,14 +1010,14 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 			'status_message' => $status_message,
 			'payment_type'   => $payment_type,
 			'response'       => $response,
-		);
+		];
 // DEBUG
 // var_dump( $operation_data ); exit;
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data )));
+		$payment_api->dump( [ 'var' => [ 'payment_type' => $payment_type, 'update operation' => $operation_data ]]);
 		$result = $this->{ '_api_' . $payment_type }( $operation_data );
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'update result' => $result )));
+		$payment_api->dump( [ 'var' => [ 'update result' => $result ]]);
 		return( $result );
 	}
 
@@ -1026,55 +1026,55 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( ! @$_request_id ) {
-			$result = array(
+			$result = [
 				'status'         => 'processing',
 				'status_message' => 'Ошибка: отсутствует request_id',
-			);
-			return( array( null, $result ) );
+			];
+			return( [ null, $result ] );
 		}
 		$payment_api = &$this->payment_api;
-		$request = array(
+		$request = [
 			'request_id' => $_request_id,
-		);
+		];
 		// test
 		if( $this->is_test() ) {
-			$request += array(
+			$request += [
 				'test_payment' => 'true',
 				'test_result'  => @$_test_result2 ?: 'success',
 				// 'test_result'  => 'payment_refused',
 				// 'test_result'  => 'not_enough_funds',
-			);
+			];
 		}
 		// process
-		$request_option = array(
+		$request_option = [
 			'method_id' => 'process-payment',
 			'option'    => $request,
-		);
+		];
 		@$_is_debug && $request_option[ 'is_debug' ] = true;
 		// DEBUG
 		// var_dump( 'process:', $request_option );
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'process request' => $request_option )));
+		$payment_api->dump( [ 'var' => [ 'process request' => $request_option ]]);
 		$result = $this->api_request( $request_option );
 		// DEBUG
 		// var_dump( 'process:', $result ); exit;
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'process response' => $result )));
-		if( @$result[ 'status' ] === false ) { return( array( null, $result ) ); }
+		$payment_api->dump( [ 'var' => [ 'process response' => $result ]]);
+		if( @$result[ 'status' ] === false ) { return( [ null, $result ] ); }
 		if( ! @$result ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно отправить запрос',
-			);
-			return( array( null, $result ) );
+			];
+			return( [ null, $result ] );
 		}
 		@list( $status, $response ) = $result;
 		if( !@$response ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно декодировать ответ: '. var_export( $response, true ),
-			);
-			return( array( null, $result ) );
+			];
+			return( [ null, $result ] );
 		}
 		// transform reverse
 		foreach( $this->_api_transform_reverse as $from => $to ) {
@@ -1097,10 +1097,10 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		$request_status = false;
 		$status_name    = false;
 		$status_message = null;
-		$result = array(
+		$result = [
 			'status'         => &$status_name,
 			'status_message' => &$status_message,
-		);
+		];
 		$state = &$_state;
 		$error = &$_error;
 		// DEBUG state
@@ -1152,7 +1152,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		// result
 		$state = $status_name ?: $status;
 		$status_message = @$status_message ?: $state;
-		return( array( $request_status, $state, $result ) );
+		return( [ $request_status, $state, $result ] );
 	}
 
 }

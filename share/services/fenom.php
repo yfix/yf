@@ -1,10 +1,10 @@
 #!/usr/bin/php
 <?php
 
-$config = array(
-	'git_urls' => array('https://github.com/bzick/fenom.git' => 'fenom/'),
-	'autoload_config' => array('fenom/src/Fenom/' => 'Fenom'),
-	'require_once' => array('fenom/src/Fenom.php'),
+$config = [
+	'git_urls' => ['https://github.com/bzick/fenom.git' => 'fenom/'],
+	'autoload_config' => ['fenom/src/Fenom/' => 'Fenom'],
+	'require_once' => ['fenom/src/Fenom.php'],
 	'example' => function() {
 		$fenom = Fenom::factory('.', '/tmp', Fenom::AUTO_ESCAPE/* | Fenom::FORCE_COMPILE | Fenom::DISABLE_CACHE*/);
 		$str = '<!DOCTYPE html>
@@ -22,8 +22,8 @@ $config = array(
 </html>';
 
 		$tpl = $fenom->compileCode($str, $name);
-		$replace = array();
+		$replace = [];
 		echo $tpl->fetch($replace);
 	}
-);
+];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

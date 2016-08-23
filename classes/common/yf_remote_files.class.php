@@ -55,7 +55,7 @@ class yf_remote_files {
 	* Correctly escaping spaces symbols inside url, while not touching other symbols that will be encoded by urlencode (not needed here)
 	*/
 	function _fix_url($url = '') {
-		return str_replace(array(' ',"\t","\r","\n"), array('%20','%20','',''), trim($url));
+		return str_replace([' ',"\t","\r","\n"], ['%20','%20','',''], trim($url));
 	}
 
 	/**
@@ -68,7 +68,7 @@ class yf_remote_files {
 		move_uploaded_file($tmp_file_path, $new_tmp_file_path);
 		// Prepare CURL
 		$url_to_post = REMOTE_STORAGE_URL.'?action=upload';
-		$array_to_post[] = 'file_name='.urlencode(WEB_PATH. str_replace(array(INCLUDE_PATH, REAL_PATH, WEB_PATH), '', $new_tmp_file_path));
+		$array_to_post[] = 'file_name='.urlencode(WEB_PATH. str_replace([INCLUDE_PATH, REAL_PATH, WEB_PATH], '', $new_tmp_file_path));
 		$array_to_post[] = 'new_path='.urlencode($new_path);
 		$array_to_post[] = 'new_file_name='.urlencode($new_file_name);
 		if ($ch = curl_init()) {
@@ -101,7 +101,7 @@ class yf_remote_files {
 	function file_is_exists ($path_to_file = '') {
 		// Check if file is remote
 		$uri	= @parse_url($path_to_file);
-		return (int)(bool) (in_array($uri['scheme'], array('http', 'https', 'ftp')) && !empty($uri['host']) ? $this->filemtime_remote($path_to_file) : file_exists($path_to_file));
+		return (int)(bool) (in_array($uri['scheme'], ['http', 'https', 'ftp']) && !empty($uri['host']) ? $this->filemtime_remote($path_to_file) : file_exists($path_to_file));
 	}
 
 	/**
@@ -209,7 +209,7 @@ class yf_remote_files {
 	* @param	array	$url_options	Array of request options
 	* @return	string
 	*/
-	function get_remote_page($url = '', $cache_ttl = -1, $url_options = array(), &$requests_info = array()) {
+	function get_remote_page($url = '', $cache_ttl = -1, $url_options = [], &$requests_info = []) {
 		if (empty($url)) {
 			return false;
 		}
@@ -217,7 +217,7 @@ class yf_remote_files {
 			$cache_ttl = -1;
 		}
 		if (!is_array($url_options)) {
-			$url_options = array();
+			$url_options = [];
 		}
 		$id = $url;
 		$result = '';
@@ -237,16 +237,16 @@ class yf_remote_files {
 		$url = $this->_fix_url($url);
 
 		$p = @parse_url($url);
-		if (!array_key_exists('scheme', $p) || !array_key_exists('host', $p) || !in_array($p['scheme'], array('http', 'https', 'ftp'))) {
+		if (!array_key_exists('scheme', $p) || !array_key_exists('host', $p) || !in_array($p['scheme'], ['http', 'https', 'ftp'])) {
 			return false;
 		}
 		if (!isset($GLOBALS['_curl_requests_info'])) {
-			$GLOBALS['_curl_requests_info'] = array();
+			$GLOBALS['_curl_requests_info'] = [];
 		}
 		if (!$ch = curl_init()) {
 			return false;
 		}
-		$file_handles	= array();
+		$file_handles	= [];
 
 		$is_ftp_url = ($p['scheme'] == 'ftp');
 
@@ -301,7 +301,7 @@ class yf_remote_files {
 		$requests_info = $info;
 		$GLOBALS['_curl_requests_info'][$id] = $info;
 		if (DEBUG_MODE && !main()->is_console()) {
-			debug('curl_get_remote_page[]', array('info' => $info, 'trace' => main()->trace_string()));
+			debug('curl_get_remote_page[]', ['info' => $info, 'trace' => main()->trace_string()]);
 		}
 
 		curl_close ($ch);
@@ -367,20 +367,20 @@ class yf_remote_files {
 	* @param	array	$options	Array of request options
 	* @return	array				Result array of fetched urls
 	*/
-	function _multi_request($urls, $options = array(), $max_threads = 0, &$requests_info = array()) {
+	function _multi_request($urls, $options = [], $max_threads = 0, &$requests_info = []) {
 		if (!$max_threads) {
 			$max_threads = $this->CURL_DEF_MAX_THREADS;
 		}
 		if (!is_array($urls) && is_string($urls)) {
-			$urls = array($urls);
+			$urls = [$urls];
 		}
 
-		$result					= array();
-		$ftp_calls				= array();
-		$all_url_options		= array();
-		$this->_curl_threads	= array();
-		$this->_file_handles	= array();
-		$this->_curl_ids 		= array();
+		$result					= [];
+		$ftp_calls				= [];
+		$all_url_options		= [];
+		$this->_curl_threads	= [];
+		$this->_file_handles	= [];
+		$this->_curl_ids 		= [];
 
 		$this->_mh = curl_multi_init();
 
@@ -417,7 +417,7 @@ class yf_remote_files {
 			$url = $this->_fix_url($url);
 			// Check url parts for correctness
 			$p = @parse_url($url);
-			if (!array_key_exists('scheme', $p) || !array_key_exists('host', $p) || !in_array($p['scheme'], array('http', 'https', 'ftp'))) {
+			if (!array_key_exists('scheme', $p) || !array_key_exists('host', $p) || !in_array($p['scheme'], ['http', 'https', 'ftp'])) {
 				$result[$id] = false;
 				continue;
 			}
@@ -426,10 +426,10 @@ class yf_remote_files {
 			if ($is_ftp_url) {
 				$ftp_calls[$id] = $url_data;
 			} else {
-				$http_queue[$id] = array(
+				$http_queue[$id] = [
 					'url'		=> $url,
 					'options'	=> $url_options,
-				);
+				];
 				$all_url_options[$id] = $url_options;
 			}
 		}
@@ -443,7 +443,7 @@ class yf_remote_files {
 			unset($http_queue[$id]);
 		}
 
-		$GLOBALS['_curl_requests_info'] = array();
+		$GLOBALS['_curl_requests_info'] = [];
 
 		// execute the handles in the efficient way
 		$running = null;
@@ -481,7 +481,7 @@ class yf_remote_files {
 				$info['CURL_ERRNO']	= curl_errno($c);
 				$info['CURL_ERROR']	= curl_error($c);
 				if (DEBUG_MODE && !main()->is_console()) {
-					debug('curl_get_remote_page[]', array('info' => $info, 'trace' => main()->trace_string()));
+					debug('curl_get_remote_page[]', ['info' => $info, 'trace' => main()->trace_string()]);
 				}
 				$requests_info = $info;
 				$GLOBALS['_curl_requests_info'][$id] = $info;
@@ -516,7 +516,7 @@ class yf_remote_files {
 
 		// Ftp single-threade fallback (because of php bug)
 		foreach ((array)$ftp_calls as $id => $url_data) {
-			$url_options = array();
+			$url_options = [];
 			if (isset($options[$id]) && is_array($options[$id])) {
 				$url_options = $options[$id];
 			} else {
@@ -551,14 +551,14 @@ class yf_remote_files {
 	/**
 	* Alias for the _multi_request()
 	*/
-	function multi_request($urls, $options = array(), $max_threads = 0, &$requests_info = array()) {
+	function multi_request($urls, $options = [], $max_threads = 0, &$requests_info = []) {
 		return $this->_multi_request($urls, $options, $max_threads, $requests_info);
 	}
 
 	/**	
 	* Useful for debugging array of alredy set options
 	*/
-	function pretty_dump_curl_opts($curl_opts = array()) {
+	function pretty_dump_curl_opts($curl_opts = []) {
 		if (!isset($this->_curlopt_consts)) {
 			$all_consts = get_defined_constants(true);
 			foreach ((array)$all_consts['curl'] as $name => $id) {
@@ -569,7 +569,7 @@ class yf_remote_files {
 				}
 			}
 		}
-		$dump = array();
+		$dump = [];
 		foreach ((array)$curl_opts as $k => $v) {
 			if (isset($this->_curlopt_consts[$k])) {
 				$dump[$this->_curlopt_consts[$k]] = $v;
@@ -583,8 +583,8 @@ class yf_remote_files {
 	/**
 	* Unified set CURL options for multi_request and get_remote_page
 	*/
-	function _set_curl_options($url_options = array(), $is_ftp_url = false) {
-		$curl_opts = array();
+	function _set_curl_options($url_options = [], $is_ftp_url = false) {
+		$curl_opts = [];
 
 		$user_agent			= isset($url_options['user_agent']) ? $url_options['user_agent'] : $this->DEF_USER_AGENT;
 		$curlopt_interface	= isset($url_options['interface']) ? $url_options['interface'] : $this->CURL_DEF_INTERFACE;
@@ -608,7 +608,7 @@ class yf_remote_files {
 		// Custom HTTP header string to add into request
 		if ($custom_header) {
 			// CURLOPT_HTTPHEADER An array of HTTP header fields to set, in the format array('Content-type: text/plain', 'Content-length: 100') 
-			$curl_opts[CURLOPT_HTTPHEADER]	= !is_array($custom_header) ? array($custom_header) : $custom_header;
+			$curl_opts[CURLOPT_HTTPHEADER]	= !is_array($custom_header) ? [$custom_header] : $custom_header;
 		}
 		// We not need to check SSL here
 		$curl_opts[CURLOPT_SSL_VERIFYPEER] = 0;
@@ -701,9 +701,9 @@ class yf_remote_files {
 	/**
 	* 'Safe' multi_request, which splits input array into smaller chunks to prevent server breaking
 	*/
-	function multi_request_safe($page_urls = array(), $options = array(), $chunk_size = 50) {
-		$response = array();
-		$overall_multi_info = array();
+	function multi_request_safe($page_urls = [], $options = [], $chunk_size = 50) {
+		$response = [];
+		$overall_multi_info = [];
 		foreach (array_chunk($page_urls, $chunk_size, true) as $chunked_urls) {
 			$tmp_response = $this->multi_request($chunked_urls, $options);
 			foreach ((array)$tmp_response as $k => $v) {
@@ -722,21 +722,21 @@ class yf_remote_files {
 	/**
 	* Get remote file size threaded
 	*/
-	function multi_file_size($page_urls, $options = array(), $max_threads = 50) {
+	function multi_file_size($page_urls, $options = [], $max_threads = 50) {
 		if (empty($max_threads)) {
 			$max_threads = $this->CURL_DEF_MAX_THREADS;
 		}
 		if (empty($options)) {
-			$options = array(
+			$options = [
 				'method_head'	=> 1,
 				'max_redirects'	=> 5,
 				'user_agent'	=> '',
 				'referer'		=> '',
 				'no_autoreferer'=> 1,
-			);
+			];
 		}
 		$response = $this->_multi_request($page_urls, $options);
-		$sizes = array();
+		$sizes = [];
 		foreach ((array)$page_urls as $k => $v) {
 			$info = $GLOBALS['_curl_requests_info'][$k];
 			$sizes[$k] = (int)$info['download_content_length'];
@@ -768,7 +768,7 @@ class yf_remote_files {
 	* @param $retry  An integer representing how many times to retry the request in case of a redirect.
 	* @return An object containing the HTTP request headers, response code, headers, data, and redirect status.
 	*/
-	function http_request($url, $headers = array(), $method = 'GET', $data = NULL, $retry = 3) {
+	function http_request($url, $headers = [], $method = 'GET', $data = NULL, $retry = 3) {
 		$result = new stdClass();
 		// Parse the URL, and make sure we can handle the schema.
 		$uri = parse_url($url);
@@ -799,14 +799,14 @@ class yf_remote_files {
 			$path .= '?'. $uri['query'];
 		}
 		// Create HTTP request.
-		$defaults = array(
+		$defaults = [
 			// RFC 2616: 'non-standard ports MUST, default ports MAY be included'.
 			// We don't add the port to prevent from breaking rewrite rules checking
 			// the host that do not take into account the port number.
 			'Host' => 'Host: '.$host,
 			'User-Agent' => 'User-Agent: YF (+http://yfix.dev/)',
 			'Content-Length' => 'Content-Length: '. strlen($data)
-		);
+		];
 		foreach ((array)$headers as $header => $value) {
 			$defaults[$header] = $header .': '. $value;
 		}
@@ -831,7 +831,7 @@ class yf_remote_files {
 		$split = preg_split("/\r\n|\n|\r/", $split);
 	
 		list($protocol, $code, $text) = explode(' ', trim(array_shift($split)), 3);
-		$result->headers = array();
+		$result->headers = [];
 	
 		// Parse headers.
 		while ($line = trim(array_shift($split))) {
@@ -845,13 +845,13 @@ class yf_remote_files {
 				$result->headers[$header] = trim($value);
 			}
 		}
-		$responses = array(
+		$responses = [
 			100 => 'Continue', 101 => 'Switching Protocols',
 			200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content',
 			300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 307 => 'Temporary Redirect',
 			400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Time-out', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Large', 415 => 'Unsupported Media Type', 416 => 'Requested range not satisfiable', 417 => 'Expectation Failed',
 			500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Time-out', 505 => 'HTTP Version not supported'
-		);
+		];
 		// RFC 2616 states that all unknown HTTP codes must be treated the same as the base code in their class.
 		if (!isset($responses[$code])) {
 			$code = floor($code / 100) * 100;
@@ -898,7 +898,7 @@ class yf_remote_files {
 		if ($ip == $uri['host']) {
 			return false;
 		} 
-		$allowed_codes = array(
+		$allowed_codes = [
 			'200',	// OK
 			'300',	// Multiple Choices
 			'301',	// Moved Permanently
@@ -906,7 +906,7 @@ class yf_remote_files {
 			'303',	// See Other (since HTTP/1.1)
 			'304',	// Not Modified
 			'307',	// Temporary Redirect (since HTTP/1.1)
-		);
+		];
 		$headers = common()->http_request($url);
 		if (in_array($headers->code, $allowed_codes)) {
 			return true;
@@ -934,7 +934,7 @@ class yf_remote_files {
 		}
 		// Check availability of DNS MX records
 		if ($result && $check_mx) {
-			$mailers = array();
+			$mailers = [];
 			// Construct array of available mailservers
 			if (function_exists('getmxrr')) {
 				if (getmxrr($domain, $mxhosts, $mxweight)) {
@@ -951,7 +951,7 @@ class yf_remote_files {
 						$_nslookup[$i++] = $_value;
 					}
 				}
-				$_mx = array();
+				$_mx = [];
 				foreach ((array)$_nslookup as $_key => $_value) {
 					preg_match('/MX preference = ([0-9]+), mail exchanger = (.+)$/i', $_value, $_m);
 					if (empty($_m[2])) {
@@ -1001,12 +1001,12 @@ class yf_remote_files {
 					if ($debug) {
 						$_debug_info .= $mailers[$n].' replied: '.$response.PHP_EOL;
 					}
-					$cmds = array(
+					$cmds = [
 						'HELO '.$this->SMTP_PROBE_HOST,  // Be sure to set this correctly!
 						'MAIL FROM: <'.$this->SMTP_PROBE_ADDRESS.'>',
 						'RCPT TO: <'.$email.'>',
 						'QUIT',
-					);
+					];
 					// Hard error on connect -> break out
 					if (!$meta['timed_out'] && !preg_match('/^2\d\d[ -]/', $response)) {
 						$_error_msg .= 'Error: '.$mailers[$n].' said: '.$response.PHP_EOL;
@@ -1025,7 +1025,7 @@ class yf_remote_files {
 							break 2;
 						}
 						// Check if greylisted
-						if ($_cmd_num == 2 && in_array(intval(substr($response, 0, 3)), array(450,451))) {
+						if ($_cmd_num == 2 && in_array(intval(substr($response, 0, 3)), [450,451])) {
 							$_debug_info .= 'Greylisted address: '.$mailers[$n].' said: '.$response;
 							continue 2;
 						}
@@ -1087,11 +1087,11 @@ class yf_remote_files {
 			return false;
 		}
 		$reverse_ip = implode('.', array_reverse(explode('.', $ip)));
-		$dnsbl_lists = array(
+		$dnsbl_lists = [
 			'bl.spamcop.net',
 			'list.dsbl.org',
 			'sbl.spamhaus.org'
-		);
+		];
 		foreach ((array)$dnsbl_lists as $dnsbl_list) {
 			if (checkdnsrr($reverse_ip . '.' . $dnsbl_list . '.', 'A')) {
 				return $reverse_ip . '.' . $dnsbl_list;
@@ -1136,9 +1136,9 @@ class yf_remote_files {
 		if (isset($uri['query'])) {
 			$path .= '?'. $uri['query'];
 		}
-		$defaults = array(
+		$defaults = [
 			'Host' => 'Host: '.$host,
-		);
+		];
 		foreach ((array)$headers as $header => $value) {
 			$defaults[$header] = $header .': '. $value;
 		}
@@ -1160,7 +1160,7 @@ class yf_remote_files {
 		$split = preg_split("/\r\n|\n|\r/", $split);
 		list($protocol, $code, $text) = explode(' ', trim(array_shift($split)), 3);
 		// Parse headers.
-		$result['headers'] = array();
+		$result['headers'] = [];
 		while ($line = trim(array_shift($split))) {
 			list($header, $value) = explode(':', $line, 2);
 			if (isset($result['headers'][$header]) && $header == 'Set-Cookie') {
@@ -1169,13 +1169,13 @@ class yf_remote_files {
 				$result['headers'][$header] = trim($value);
 			}
 		}
-		$responses = array(
+		$responses = [
 			100, 101,
 			200, 201, 202, 203, 204, 205, 206,
 			300, 301, 302, 303, 304, 305, 307,
 			400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417,
 			500, 501, 502, 503, 504, 505,
-		);
+		];
 		if (!in_array($code, $responses)) {
 			$code = floor($code / 100) * 100;
 		}
@@ -1200,7 +1200,7 @@ class yf_remote_files {
 
 		$time_end = microtime(true);
 
-		$result['emulate_curl_info'] = array(
+		$result['emulate_curl_info'] = [
 			'url'				=> $url,
 			'content_type'		=> $result['headers']['Content-Type'],
 			'http_code'			=> $code,
@@ -1223,7 +1223,7 @@ class yf_remote_files {
 			'redirect_time'		=> 0,
 			'CURL_ERRNO'		=> 0,
 			'CURL_ERROR'		=> '',
-		);
+		];
 		return $result;
 	}
 }

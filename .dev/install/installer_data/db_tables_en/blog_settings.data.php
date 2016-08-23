@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   0 => 
-  array (
+  [
     'user_id' => '1',
     'blog_title' => 'inet safety',
     'blog_desc' => '',
@@ -14,9 +14,9 @@ return array (
     'num_views' => '44',
     'user_nick' => 'test',
     'allow_tagging' => '0',
-  ),
+  ],
   1 => 
-  array (
+  [
     'user_id' => '5',
     'blog_title' => 'The dark side',
     'blog_desc' => '',
@@ -29,9 +29,9 @@ return array (
     'num_views' => '2',
     'user_nick' => 'odlman',
     'allow_tagging' => '0',
-  ),
+  ],
   2 => 
-  array (
+  [
     'user_id' => '6',
     'blog_title' => 'Who answers the phone?',
     'blog_desc' => '',
@@ -44,5 +44,5 @@ return array (
     'num_views' => '26',
     'user_nick' => 'kingargyle',
     'allow_tagging' => '0',
-  ),
-);
+  ],
+];

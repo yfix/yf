@@ -10,9 +10,9 @@
 class yf_logs_exec_admin {
 
 	/** @var array Stop-list for logging (REGEXPs allowed here) */
-	public $STOP_LIST				= array(
+	public $STOP_LIST				= [
 #		'task=(login|logout)',
-	);
+	];
 	/** @var bool */
 	public $USE_STOP_LIST			= true;
 	/** @var bool */
@@ -27,11 +27,20 @@ class yf_logs_exec_admin {
 	public $LOG_DIR_NAME			= 'logs/log_admin_exec/';
 	/** @var bool */
 	public $LOGGING					= true;
+	/** @var array */
+	public $EXCLUDE_IPS	= [
+		'127.0.0.1',
+	];
+	/** @var array */
+	public $EXCLUDE_USER_AGENTS	= [
+		'zabbix',
+		'acceptance_tests',
+	];
 
 	/**
 	*/
 	function _init () {
-		if (!$this->LOG_DRIVER || !in_array($this->LOG_DRIVER, array('db', 'file'))) {
+		if (!$this->LOG_DRIVER || !in_array($this->LOG_DRIVER, ['db', 'file'])) {
 			$this->LOG_DRIVER = 'file';
 		}
 	}
@@ -62,6 +71,27 @@ class yf_logs_exec_admin {
 				return false;
 			}
 		}
+		if ($this->EXCLUDE_IPS) {
+			$ip = common()->get_ip();
+			if ($ip && (isset($this->EXCLUDE_IPS[$ip]) || in_array($ip, $this->EXCLUDE_IPS))) {
+				$checks['exclude_ip'] = true;
+			}
+		}
+		if ($this->EXCLUDE_USER_AGENTS) {
+			$ua = $_SERVER['HTTP_USER_AGENT'];
+			foreach ((array)$this->EXCLUDE_USER_AGENTS as $pattern) {
+				if (preg_match('~'.$pattern.'~i', $ua)) {
+					$checks['exclude_ua'] = true;
+				}
+			}
+		}
+		$this->checks = $checks;
+		foreach ((array)$checks as $name => $is_denied) {
+			if ($is_denied) {
+				$this->log_denied_because = $name;
+				return false;
+			}
+		}
 		$exec_time = str_replace(',', '.', common()->_format_time_value($GLOBALS['time_end'] ?: microtime(true) - main()->_time_start));
 		$query_string = $_SERVER['QUERY_STRING'];
 // TODO: use parse_url here
@@ -74,7 +104,7 @@ class yf_logs_exec_admin {
 		if (main()->is_console()) {
 			$query_string = http_build_query($_GET);
 		}
-		$data = array(
+		$data = [
 			'admin_id'		=> (int)main()->ADMIN_ID,
 			'admin_group'	=> (int)main()->ADMIN_GROUP,
 			'date'			=> time(),
@@ -88,7 +118,7 @@ class yf_logs_exec_admin {
 			'page_size'		=> (int)tpl()->_output_body_length,
 			'site_id'		=> (int)conf('SITE_ID'),
 			'server_id'		=> (int)conf('SERVER_ID'),
-		);
+		];
 		if ($this->LOG_DRIVER == 'db') {
 			$sql = db()->insert_safe('log_admin_exec', $data, $as_sql = true);
 			db()->_add_shutdown_query($sql);

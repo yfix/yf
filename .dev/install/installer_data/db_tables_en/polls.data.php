@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   1 => 
-  array (
+  [
     'id' => '1',
     'object_name' => 'blog',
     'object_id' => '3',
@@ -14,5 +14,5 @@ i don\'t know',
     'votes' => '2',
     'multiple' => '',
     'active' => '1',
-  ),
-);
+  ],
+];

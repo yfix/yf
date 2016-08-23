@@ -1,8 +1,8 @@
 <?php
-return array(
+return [
 	'name' => 'film_text',
-	'fields' => array(
-		'film_id' => array(
+	'fields' => [
+		'film_id' => [
 			'name' => 'film_id',
 			'type' => 'smallint',
 			'length' => 6,
@@ -17,8 +17,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`film_id` smallint(6) NOT NULL',
-		),
-		'title' => array(
+		],
+		'title' => [
 			'name' => 'title',
 			'type' => 'varchar',
 			'length' => 255,
@@ -33,8 +33,8 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`title` varchar(255) NOT NULL',
-		),
-		'description' => array(
+		],
+		'description' => [
 			'name' => 'description',
 			'type' => 'text',
 			'length' => NULL,
@@ -49,31 +49,31 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`description` text',
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'film_id' => 'film_id',
-			),
+			],
 			'raw' => 'PRIMARY KEY (`film_id`)',
-		),
-		'idx_title_description' => array(
+		],
+		'idx_title_description' => [
 			'name' => 'idx_title_description',
 			'type' => 'fulltext',
-			'columns' => array(
+			'columns' => [
 				'title' => 'title',
 				'description' => 'description',
-			),
+			],
 			'raw' => 'FULLTEXT KEY `idx_title_description` (`title`,`description`)',
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
 		'engine' => 'MyISAM',
 		'charset' => 'utf8',
-	),
-);
+	],
+];

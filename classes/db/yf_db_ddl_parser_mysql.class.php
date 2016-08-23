@@ -18,7 +18,7 @@ class yf_db_ddl_parser_mysql {
 
 	/**
 	*/
-	function create (array $data, $params = array()) {
+	function create (array $data, $params = []) {
 		if (!strlen($data['name']) || empty($data['fields'])) {
 			return false;
 		}
@@ -32,7 +32,7 @@ class yf_db_ddl_parser_mysql {
 		foreach ((array)$data['foreign_keys'] as $name => $v) {
 			$lines[] = $this->create_fk_line($name, $v);
 		}
-		$options = array();
+		$options = [];
 		foreach ((array)$data['options'] as $k => $v) {
 			if ($k == 'charset') {
 				$k = 'DEFAULT CHARSET';
@@ -45,7 +45,7 @@ class yf_db_ddl_parser_mysql {
 	/**
 	* Useful for ALTER TABLE
 	*/
-	function create_column_line ($name = '', $v = array(), $params = array()) {
+	function create_column_line ($name = '', $v = [], $params = []) {
 		if (is_array($name)) {
 			$v = $name;
 			$name = $v['name'];
@@ -56,7 +56,7 @@ class yf_db_ddl_parser_mysql {
 			$v['length'] = $this->_get_int_def_length($v['type']);
 		}
 		$type_braces = (isset($v['length']) && is_numeric($v['length']) ? '('.$v['length']. (isset($v['decimals']) && is_numeric($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
-		if (in_array($v['type'], array('enum','set')) && is_array($v['values']) && count($v['values'])) {
+		if (in_array($v['type'], ['enum','set']) && is_array($v['values']) && count($v['values'])) {
 			$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
 		}
 		$def = false;
@@ -67,7 +67,7 @@ class yf_db_ddl_parser_mysql {
 		} elseif (!is_null($v['default'])) {
 			$def = '\''.$v['default'].'\'';
 		}
-		return $this->_implode_line(array(
+		return $this->_implode_line([
 			'name'		=> $this->escape_key($name),
 			'type'		=> $v['type']. $type_braces,
 			'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
@@ -77,13 +77,13 @@ class yf_db_ddl_parser_mysql {
 			'default'	=> $def ? 'DEFAULT '.$def : '',
 			'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
 			'on_update'	=> $v['on_update'] ?: '',
-		));
+		]);
 	}
 
 	/**
 	* Useful for ALTER INDEX
 	*/
-	function create_index_line ($name = '', $v = array(), $params = array()) {
+	function create_index_line ($name = '', $v = [], $params = []) {
 		if (is_array($name)) {
 			$v = $name;
 			$name = $v['name'];
@@ -103,22 +103,22 @@ class yf_db_ddl_parser_mysql {
 		if ($name != 'PRIMARY') {
 			$name = strtolower($name);
 		}
-		return $this->_implode_line(array(
+		return $this->_implode_line([
 			'type'		=> $type,
-			'name'		=> strlen($name) && !is_numeric($name) && in_array($v['type'], array('index', 'unique', 'fulltext', 'spatial')) ? $this->escape_key($name) : '',
+			'name'		=> strlen($name) && !is_numeric($name) && in_array($v['type'], ['index', 'unique', 'fulltext', 'spatial']) ? $this->escape_key($name) : '',
 			'columns'	=> strtolower('('.implode(',', $this->escape_key($v['columns'])).')'),
-		));
+		]);
 	}
 
 	/**
 	* Useful for ALTER FOREIGN KEY
 	*/
-	function create_fk_line ($name = '', $v = array(), $params = array()) {
+	function create_fk_line ($name = '', $v = [], $params = []) {
 		if (is_array($name)) {
 			$v = $name;
 			$name = $v['name'];
 		}
-		return $this->_implode_line(array(
+		return $this->_implode_line([
 			'begin'			=> 'CONSTRAINT',
 			'name'			=> $this->escape_key(strtolower($name)),
 			'fk'			=> 'FOREIGN KEY',
@@ -128,7 +128,7 @@ class yf_db_ddl_parser_mysql {
 			'ref_columns'	=> strtolower('('.implode(',', $this->escape_key($v['ref_columns'])).')'),
 			'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.strtoupper(str_replace('_', ' ', $v['on_delete'])) : '',
 			'on_update'		=> $v['on_update'] ? 'ON UPDATE '.strtoupper(str_replace('_', ' ', $v['on_update'])) : '',
-		));
+		]);
 	}
 
 	/**
@@ -137,16 +137,16 @@ class yf_db_ddl_parser_mysql {
 		$parsed = $this->parser->parse($sql);
 
 		$table_name = $parsed['TABLE']['no_quotes']['parts'][0] ?: '';
-		$tmp_create_def = $parsed['TABLE']['create-def']['sub_tree'] ?: array();
-		$tmp_options = $parsed['TABLE']['options'] ?: array();
+		$tmp_create_def = $parsed['TABLE']['create-def']['sub_tree'] ?: [];
+		$tmp_options = $parsed['TABLE']['options'] ?: [];
 
-		$struct = array(
+		$struct = [
 			'name'	=> $table_name,
-			'fields' => array(),
-			'indexes' => array(),
-			'foreign_keys' => array(),
-			'options' => array(),
-		);
+			'fields' => [],
+			'indexes' => [],
+			'foreign_keys' => [],
+			'options' => [],
+		];
 
 		foreach ((array)$tmp_create_def as $v) {
 			if ($v['expr_type'] == 'column-def') {
@@ -178,12 +178,12 @@ class yf_db_ddl_parser_mysql {
 								$decimals = $v3['decimals'];
 							} elseif ($v3['expr_type'] == 'default-value') {
 								$default = trim($v3['base_expr'], '"\'');
-							} elseif ($v3['expr_type'] == 'reserved' && in_array($v3['base_expr'], array('enum', 'set'))) {
+							} elseif ($v3['expr_type'] == 'reserved' && in_array($v3['base_expr'], ['enum', 'set'])) {
 								$type = $v3['base_expr'];
 								if ($v3['sub_tree']['expr_type'] != 'bracket_expression') {
 									continue;
 								}
-								$values = array();
+								$values = [];
 								foreach ((array)$v3['sub_tree']['sub_tree'] as $v4) {
 									if ($v4['expr_type'] == 'const') {
 										$_val = trim($v4['base_expr'], '"\'');
@@ -204,7 +204,7 @@ class yf_db_ddl_parser_mysql {
 						// http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
 						// As of MySQL 5.6.5, TIMESTAMP and DATETIME columns can be automatically initializated and updated to the current date and time (that is, the current timestamp). 
 						// Before 5.6.5, this is true only for TIMESTAMP, and for at most one TIMESTAMP column per table
-						if (in_array($type, array('timestamp','datetime'))) {
+						if (in_array($type, ['timestamp','datetime'])) {
 							$try = 'ON UPDATE CURRENT_TIMESTAMP';
 							if (strpos($v2['base_expr'], $try) !== false) {
 								$on_update = $try;
@@ -226,7 +226,7 @@ class yf_db_ddl_parser_mysql {
 				if (strpos($type, 'int') !== false && !$length) {
 					$length = $this->_get_int_def_length($type);
 				}
-				$struct['fields'][$name] = array(
+				$struct['fields'][$name] = [
 					'name'		=> $name,
 					'type'		=> $type,
 					'length'	=> $length ? intval($length) : null,
@@ -240,7 +240,7 @@ class yf_db_ddl_parser_mysql {
 					'primary'	=> $primary,
 					'unique'	=> $unique,
 					'values'	=> !empty($values) ? $values : null,
-				);
+				];
 				if ($on_update) {
 					$struct['fields'][$name]['on_update'] = $on_update;
 				}
@@ -250,7 +250,7 @@ class yf_db_ddl_parser_mysql {
 			} elseif ($v['expr_type'] == 'primary-key') {
 				$name = 'PRIMARY';
 				$type = 'primary';
-				$columns = array();
+				$columns = [];
 				foreach ((array)$v['sub_tree'] as $v2) {
 					if ($v2['expr_type'] == 'column-list') {
 						foreach ((array)$v2['sub_tree'] as $v3) {
@@ -261,11 +261,11 @@ class yf_db_ddl_parser_mysql {
 						}
 					}
 				}
-				$struct['indexes'][$name] = array(
+				$struct['indexes'][$name] = [
 					'name'		=> $name,
 					'type'		=> strtolower($type),
 					'columns'	=> $columns,
-				);
+				];
 				if ($this->RAW_IN_RESULTS) {
 					$struct['indexes'][$name]['raw'] = $v['base_expr'];
 				}
@@ -280,7 +280,7 @@ class yf_db_ddl_parser_mysql {
 				} elseif (substr($base, 0, strlen('SPATIAL')) == 'SPATIAL' || $v['expr_type'] == 'spatial-index') {
 					$type = 'spatial';
 				}
-				$columns = array();
+				$columns = [];
 				foreach ((array)$v['sub_tree'] as $v2) {
 					if ($v2['expr_type'] == 'const') {
 						$name = trim($v2['base_expr'], '"\'`');
@@ -302,19 +302,19 @@ class yf_db_ddl_parser_mysql {
 				if ($name != 'PRIMARY') {
 					$name = strtolower($name);
 				}
-				$struct['indexes'][$name] = array(
+				$struct['indexes'][$name] = [
 					'name'		=> $name,
 					'type'		=> strtolower($type),
 					'columns'	=> $columns,
-				);
+				];
 				if ($this->RAW_IN_RESULTS) {
 					$struct['indexes'][$name]['raw'] = $v['base_expr'];
 				}
 			} elseif ($v['expr_type'] == 'foreign-key') {
 				$name = null;
-				$columns = array();
+				$columns = [];
 				$ref_table = null;
-				$ref_columns = array();
+				$ref_columns = [];
 				$on_update = null;
 				$on_delete = null;
 				foreach ((array)$v['sub_tree'] as $v2) {
@@ -348,21 +348,21 @@ class yf_db_ddl_parser_mysql {
 					$name = 'fk_'.(count($struct['foreign_keys']) + 1);
 				}
 				$name = strtolower($name);
-				$struct['foreign_keys'][$name] = array(
+				$struct['foreign_keys'][$name] = [
 					'name'			=> $name,
 					'columns'		=> $columns,
 					'ref_table'		=> $ref_table,
 					'ref_columns'	=> $ref_columns,
 					'on_update'		=> $on_update ? strtoupper($on_update) : null,
 					'on_delete'		=> $on_delete ? strtoupper($on_delete) : null,
-				);
+				];
 				if ($this->RAW_IN_RESULTS) {
 					$struct['foreign_keys'][$name]['raw'] = $v['base_expr'];
 				}
 			}
 		}
 		foreach ((array)$tmp_options as $v) {
-			$name = array();
+			$name = [];
 			$val = '';
 			foreach ((array)$v['sub_tree'] as $v2) {
 				if ($v2['expr_type'] == 'reserved') {
@@ -372,9 +372,9 @@ class yf_db_ddl_parser_mysql {
 				}
 			}
 			$name = strtolower(implode(' ', $name));
-			if (in_array($name, array('default charset', 'default character set', 'charset', 'character set'))) {
+			if (in_array($name, ['default charset', 'default character set', 'charset', 'character set'])) {
 				$name = 'charset';
-			} elseif (in_array($name, array('engine'))) {
+			} elseif (in_array($name, ['engine'])) {
 				$name = 'engine';
 			}
 			$struct['options'][$name] = $val;
@@ -404,13 +404,13 @@ class yf_db_ddl_parser_mysql {
 	/**
 	*/
 	function _get_int_def_length ($type) {
-		$a = array(
+		$a = [
 			'tinyint'	=> 3,
 			'smallint'	=> 5,
 			'mediumint'	=> 8,
 			'int'		=> 11,
 			'bigint'	=> 20,
-		);
+		];
 		return $a[$type] ?: 11;
 	}
 

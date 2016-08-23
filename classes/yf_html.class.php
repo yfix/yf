@@ -20,6 +20,7 @@ class yf_html {
 	public $CLASS_LABEL_CHECKBOX_SELECTED = 'active';
 	public $CLASS_SELECT_BOX = 'form-control';
 	public $CLASS_SELECT_OPTION_DEFAULT = 'opt-default';
+	public $CLASS_INPUT = 'form-control';
 
 	/**
 	* Catch missing method call
@@ -69,8 +70,8 @@ class yf_html {
 	/**
 	* Get and sort items ordered array (recursively)
 	*/
-	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0) {
-		$children = array();
+	function _recursive_sort_items($items = [], $skip_item_id = 0, $parent_id = 0) {
+		$children = [];
 		foreach ((array)$items as $id => $info) {
 			$parent_id = (int)$info['parent_id'];
 			if ($skip_item_id == $id) {
@@ -79,9 +80,9 @@ class yf_html {
 			$children[$parent_id][$id] = $id;
 		}
 		$ids = $this->_count_levels(0, $children);
-		$new_items = array();
+		$new_items = [];
 		foreach ((array)$ids as $id => $level) {
-			$new_items[$id] = $items[$id] + array('level' => $level);
+			$new_items[$id] = $items[$id] + ['level' => $level];
 		}
 		return $new_items;
 	}
@@ -89,7 +90,7 @@ class yf_html {
 	/**
 	*/
 	function _count_levels($start_id = 0, &$children, $level = 0) {
-		$ids = array();
+		$ids = [];
 		foreach ((array)$children[$start_id] as $id => $_tmp) {
 			$ids[$id] = $level;
 			if (isset($children[$id])) {
@@ -106,7 +107,7 @@ class yf_html {
 	* Example:
 	*	return html()->dd_table(db()->get_2d('SELECT * FROM '.db('countries')));
 	*/
-	function chained_wrapper($params = array()) {
+	function chained_wrapper($params = []) {
 		$this->_chained_mode = true;
 		$this->_params = $params;
 		return $this;
@@ -114,15 +115,15 @@ class yf_html {
 
 	/**
 	*/
-	function simple_table($replace = array(), $extra = array()) {
+	function simple_table($replace = [], $extra = []) {
 		if (!$replace) {
 			return false;
 		}
 		$key_name = isset($extra['key']['name']) ? $extra['key']['name'] : 'key';
 		$val_name = isset($extra['val']['name']) ? $extra['val']['name'] : 'val';
 
-		$key_extra = isset($extra['key']['extra']) ? $extra['key']['extra'] : array();
-		$val_extra = isset($extra['val']['extra']) ? $extra['val']['extra'] : array();
+		$key_extra = isset($extra['key']['extra']) ? $extra['key']['extra'] : [];
+		$val_extra = isset($extra['val']['extra']) ? $extra['val']['extra'] : [];
 
 		$key_func = isset($extra['key']['func']) ? $extra['key']['func'] : 'text';
 		if (!is_string($key_func) && is_callable($key_func)) {
@@ -135,12 +136,12 @@ class yf_html {
 			$val_func = 'func';
 		}
 
-		$data = array();
+		$data = [];
 		foreach ((array)$replace as $k => $v) {
-			$data[] = array(
+			$data[] = [
 				$key_name => $k,
 				$val_name => $v,
-			);
+			];
 		}
 
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
@@ -158,23 +159,23 @@ class yf_html {
 
 	/**
 	*/
-	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
+	function dd_table($replace = [], $field_types = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (DEBUG_MODE) {
 			$ts = microtime(true);
 		}
-		$form = form($replace, array(
+		$form = form($replace, [
 			'legend' => $replace['title'],
 			'no_form' => 1,
 			'dd_mode' => 1,
 			'dd_class' => 'span6 col-md-6',
-		));
+		]);
 		foreach ((array)$replace as $name => $val) {
 			$func = 'container';
-			$_extra = array(
+			$_extra = [
 				'desc' => $name,
 				'value' => $val,
-			);
+			];
 			$ft = $field_types[$name];
 			if (isset($ft)) {
 				if (is_array($ft)) {
@@ -201,20 +202,20 @@ class yf_html {
 		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
 		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6 col-md-6';
 		if (DEBUG_MODE) {
-			debug('dd_table[]', array(
+			debug('dd_table[]', [
 				'fields'		=> $replace,
 				'field_types'	=> $field_types,
 				'extra'			=> $extra,
 				'time'			=> round(microtime(true) - $ts, 5),
 				'trace'			=> main()->trace_string(),
-			));
+			]);
 		}
 		return '<div class="row-fluid" id="'.$extra['id'].'">'.$legend.'<div class="'.$div_class.'">'.$form.'</div></div>';
 	}
 
 	/**
 	*/
-	function modal($extra = array()) {
+	function modal($extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$def_style = $extra['inline'] ? 'position: relative; top: auto; left: auto; right: auto; bottom: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%; display: block; overflow-y: auto;' : '';
 		$extra['style'] = $extra['style'] ?: $def_style;
@@ -235,24 +236,24 @@ class yf_html {
 
 	/**
 	*/
-	function tabs($tabs = array(), $extra = array()) {
+	function tabs($tabs = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 
-		$extra_by_id = array();
+		$extra_by_id = [];
 		if (isset($extra['by_id'])) {
 			$extra_by_id = (array)$extra['by_id'];
 			unset($extra['by_id']);
 		}
 		$links_prefix = $extra['links_prefix'] ?: 'tab_';
 
-		$headers = array();
-		$items = array();
+		$headers = [];
+		$items = [];
 		foreach ((array)$tabs as $k => $v) {
 			$desc_raw = null;
 			$disabled = null;
 			if (!is_array($v)) {
 				$content = $v;
-				$v = array();
+				$v = [];
 			} else {
 				$content = $v['content'];
 				$desc_raw = $v['desc_raw'];
@@ -284,8 +285,8 @@ class yf_html {
 				$_extra_head = (array)$_extra['tab_head'];
 				$_extra_head['class'] = $_extra_head['class'] ?: $class_head;
 				$headers[] =
-					'<li'._attrs($_extra_head, array('id','class','style')).'>
-						<a '.(!$disabled ? 'href="#'.$id.'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)). $badge. '</a>
+					'<li'._attrs($_extra_head, ['id','class','style']).'>
+						<a '.(!$disabled ? 'href="#'.fix_html_attr_id($id).'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)). $badge. '</a>
 					</li>';
 			}
 			$class_body = ($_extra['class'] ?: $v['class_body']) ?: $_extra['class_body'];
@@ -299,7 +300,7 @@ class yf_html {
 			$_extra_body = (array)$_extra['tab_body'];
 			$_extra_body['id'] = $_extra_body['id'] ?: $id;
 			$_extra_body['class'] = $_extra_body['class'] ?: $class_body;
-			$items[] = '<div'._attrs($_extra_body, array('id','class','style')).'>'.$content.'</div>';
+			$items[] = '<div'._attrs($_extra_body, ['id','class','style']).'>'.$content.'</div>';
 		}
 		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
 		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';
@@ -308,13 +309,13 @@ class yf_html {
 
 	/**
 	*/
-	function accordion($data = array(), $extra = array()) {
+	function accordion($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$items = array();
+		$items = [];
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$content = $v;
-				$v = array();
+				$v = [];
 			} else {
 				$content = $v['body'];
 			}
@@ -348,14 +349,14 @@ class yf_html {
 
 	/**
 	*/
-	function carousel($data = array(), $extra = array()) {
+	function carousel($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$items = array();
-		$headers = array();
+		$items = [];
+		$headers = [];
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
-				$v = array();
+				$v = [];
 			} else {
 				$img_src = $v['img'];
 			}
@@ -390,7 +391,7 @@ class yf_html {
 
 	/**
 	*/
-	function alert($data = array(), $extra = array()) {
+	function alert($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$close_btn = (!$extra['no_close'] && !$data['no_close']) ? '<button type="button" class="close" data-dismiss="alert">×</button>' : '';
 		$head = is_array($data) ? $data['head'] : '';
@@ -409,9 +410,9 @@ class yf_html {
 
 	/**
 	*/
-	function navbar($data = array(), $extra = array()) {
+	function navbar($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$items = array();
+		$items = [];
 		$brand = '';
 		if (isset($data['brand'])) {
 			$b = $data['brand'];
@@ -440,9 +441,9 @@ class yf_html {
 
 	/**
 	*/
-	function breadcrumbs($data = array(), $extra = array()) {
+	function breadcrumbs($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$items = array();
+		$items = [];
 		$divider = $extra['divider'] ?: ''; // '/'
 		$show_divider = !$this->_is_bs3 && strlen($divider);
 		$len = count($data);
@@ -463,14 +464,14 @@ class yf_html {
 
 	/**
 	*/
-	function thumbnails($data = array(), $extra = array()) {
-		$items = array();
+	function thumbnails($data = [], $extra = []) {
+		$items = [];
 		$columns = (int)$extra['columns'] ?: 3;
 		$row_class = 'span'.round(12 / $columns).' col-md-'.round(12 / $columns);
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
-				$v = array();
+				$v = [];
 			} else {
 				$img_src = $v['img'];
 			}
@@ -484,7 +485,7 @@ class yf_html {
 					</div>
 				</'.$tag.'>';
 		}
-		$body = array();
+		$body = [];
 		$tag = $this->_is_bs3 ? 'div' : 'ul';
 		foreach (array_chunk($items, $columns) as $_items) {
 			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
@@ -495,13 +496,13 @@ class yf_html {
 
 	/**
 	*/
-	function progress_bar($data = array(), $extra = array()) {
+	function progress_bar($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$items = array();
+		$items = [];
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
 				$val = $v;
-				$v = array();
+				$v = [];
 			} else {
 				$val = $v['val'];
 			}
@@ -515,7 +516,7 @@ class yf_html {
 
 	/**
 	*/
-	function pagination($data = array(), $extra = array()) {
+	function pagination($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (isset($data['prev'])) {
 			$prev = $data['prev'];
@@ -525,7 +526,7 @@ class yf_html {
 			$next = $data['next'];
 			unset($data['next']);
 		}
-		$items = array();
+		$items = [];
 // TODO: auto-detect current page and need of first. last
 		if ($prev) {
 			$items[] = '<li><a href="'.$prev.'">'.t('Prev').'</a></li>';
@@ -545,7 +546,7 @@ class yf_html {
 
 	/**
 	*/
-	function panel($data = array(), $extra = array()) {
+	function panel($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		return
 			'<div class="panel panel-primary'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
@@ -558,14 +559,14 @@ class yf_html {
 
 	/**
 	*/
-	function jumbotron($data = array(), $extra = array()) {
+	function jumbotron($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		return '<div class="jumbotron'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><h1>'.$data['head'].'</h1>'.$data['body'].'</div>';
 	}
 
 	/**
 	*/
-	function well($body = '', $extra = array()) {
+	function well($body = '', $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (!$extra['class']) {
 			$extra['class'] = 'well-lg';
@@ -575,13 +576,13 @@ class yf_html {
 
 	/**
 	*/
-	function list_group($data = array(), $extra = array()) {
+	function list_group($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$items = array();
+		$items = [];
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
 				$body = $v;
-				$v = array();
+				$v = [];
 			} else {
 				$body = $v['body'];
 			}
@@ -594,7 +595,7 @@ class yf_html {
 
 	/**
 	*/
-	function media_objects($data = array(), $extra = array()) {
+	function media_objects($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
@@ -602,10 +603,10 @@ class yf_html {
 		$img_class = ($extra['img_class'] ?: 'media-object'). ($extra['img_class_add'] ? ' '.$extra['img_class_add'] : '');
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
-		$items = array();
+		$items = [];
 		foreach ((array)$data as $id => $item) {
 			$next_id = $keys[$keys_counter[$id] + 1];
-			$next_item = $next_id ? $data[$next_id] : array();
+			$next_item = $next_id ? $data[$next_id] : [];
 			$close_num_levels = 1;
 			if ($next_item) {
 				$close_num_levels = $item['level'] - $next_item['level'] + 1;
@@ -635,14 +636,14 @@ class yf_html {
 
 	/**
 	*/
-	function menu($data = array(), $extra = array()) {
+	function menu($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
 		}
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
-		$items = array();
+		$items = [];
 		$ul_opened = false;
 		foreach ((array)$data as $id => $item) {
 			$next_item = $data[ $keys[$keys_counter[$id] + 1] ];
@@ -687,12 +688,12 @@ class yf_html {
 
 	/**
 	*/
-	function grid($data = array(), $extra = array()) {
+	function grid($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$rows = array();
+		$rows = [];
 		$ul_opened = false;
 		foreach ((array)$data as $id => $row) {
-			$items = array();
+			$items = [];
 			$row_col = count($row) ? floor(12 / count($row)) : 1;
 			if ($row_col < 1) {
 				$row_col = 1;
@@ -713,14 +714,14 @@ class yf_html {
 
 	/**
 	*/
-	function navlist($data = array(), $extra = array()) {
+	function navlist($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$items = array();
+		$items = [];
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$name = $v;
 				$link = $k;
-				$v = array();
+				$v = [];
 			} else {
 				$name = $v['name'];
 				$link = $v['link'];
@@ -734,13 +735,13 @@ class yf_html {
 
 	/**
 	*/
-	function li($data = array(), $extra = array()) {
+	function li($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$items = array();
+		$items = [];
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
 				$body = $v;
-				$v = array();
+				$v = [];
 			} else {
 				$body = $v['body'] ?: $v['name'];
 			}
@@ -755,24 +756,24 @@ class yf_html {
 				continue;
 			}
 		}
-		return '<ul'._attrs(array('id','class','style'), $extra).'>'.implode(PHP_EOL, (array)$items).'</ul>';
+		return '<ul'._attrs(['id','class','style'], $extra).'>'.implode(PHP_EOL, (array)$items).'</ul>';
 	}
 
 	/**
 	*/
-	function tree($data = array(), $extra = array()) {
+	function tree($data = [], $extra = []) {
 		return _class('html_tree', 'classes/html/')->tree($data, $extra);
 	}
 
 	/**
 	*/
-	function li_tree($data = array(), $extra = array()) {
+	function li_tree($data = [], $extra = []) {
 		return _class('html_tree', 'classes/html/')->li_tree($data, $extra);
 	}
 
 	/**
 	*/
-	function select_box($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0) {
+	function select_box($name, $values = [], $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		// Passing params as array
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -797,7 +798,7 @@ class yf_html {
 		if ($extra['disabled']) {
 			$extra['disabled'] = 'disabled';
 		}
-		$body = array();
+		$body = [];
 		if ($level == 0) {
 			$extra['force_id'] && $id = $extra['force_id'];
 			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
@@ -808,13 +809,13 @@ class yf_html {
 				$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
 			}
 			$extra['name'] = $name;
-			$body[] = '<select'._attrs($extra, array('name','id','class','style','disabled','required')). ($add_str ? ' '.$add_str : '').'>';
+			$body[] = '<select'._attrs($extra, ['name','id','class','style','disabled','required']). ($add_str ? ' '.$add_str : '').'>';
 		}
 		$selected = strval($selected);
 		if ($show_text && $level == 0) {
 			$def_opt_text = $show_text;
 			if ($show_text == 1) {
-				$def_opt_text = str_replace(array('%name%','%select%'), array(t($name), t('Select')), $this->SELECT_BOX_DEF_OPT_TPL);
+				$def_opt_text = str_replace(['%name%','%select%'], [t($name), t('Select')], $this->SELECT_BOX_DEF_OPT_TPL);
 			}
 			$body[] = '<option value="" class="'.$this->CLASS_SELECT_OPTION_DEFAULT.'">'. $def_opt_text. '</option>';
 		}
@@ -843,7 +844,7 @@ class yf_html {
 
 	/**
 	*/
-	function multi_select($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+	function multi_select($name, $values = [], $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
 		// Passing params as array
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -871,7 +872,7 @@ class yf_html {
 		if (!is_array($selected)) {
 			$selected = strval($selected);
 		}
-		$body = array();
+		$body = [];
 		if ($level == 0) {
 			$extra['force_id'] && $id = $extra['force_id'];
 			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
@@ -883,12 +884,12 @@ class yf_html {
 			}
 			$extra['multiple'] = 'multiple';
 			$extra['name'] = $name ? $name.'[]' : '';
-			$body[] = '<select'._attrs($extra, array('name','id','class','style','multiple','disabled','required')). ($add_str ? ' '.trim($add_str) : '').'>';
+			$body[] = '<select'._attrs($extra, ['name','id','class','style','multiple','disabled','required']). ($add_str ? ' '.trim($add_str) : '').'>';
 		}
 		if ($show_text && $level == 0) {
 			$def_opt_text = $show_text;
 			if ($show_text == 1) {
-				$def_opt_text = str_replace(array('%name%','%select%'), array(t($name), t('Select')), $this->SELECT_BOX_DEF_OPT_TPL);
+				$def_opt_text = str_replace(['%name%','%select%'], [t($name), t('Select')], $this->SELECT_BOX_DEF_OPT_TPL);
 			}
 			$body[] = '<option value="" class="'.$this->CLASS_SELECT_OPTION_DEFAULT.'">'. $def_opt_text. '</option>';
 		}
@@ -922,13 +923,13 @@ class yf_html {
 	/**
 	* Alias
 	*/
-	function multi_select_box($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+	function multi_select_box($name, $values = [], $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
 		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
 	*/
-	function radio_box($name, $values = array(), $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0) {
+	function radio_box($name, $values = [], $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -955,7 +956,7 @@ class yf_html {
 		$id_prefix = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$extra['force_id'] && $id_prefix = $extra['force_id'];
 		$counter = 0;
-		$body = array();
+		$body = [];
 		if ($extra['outer_label']) {
 			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
 		}
@@ -968,7 +969,7 @@ class yf_html {
 			$is_selected = (strval($type == 1 ? $val_name : $value) == $selected);
 			$id = $id_prefix.'_'.++$counter;
 			if ($this->BOXES_USE_STPL) {
-				$body[] = tpl()->parse('system/common/radio_box_item', array(
+				$body[] = tpl()->parse('system/common/radio_box_item', [
 					'name'			=> $name,
 					'value'			=> $value,
 					'selected'		=> $is_selected ? 'checked="checked"' : '',
@@ -977,7 +978,7 @@ class yf_html {
 					'horizontal'	=> intval((bool)$horizontal),
 					'id'			=> $id,
 					'extra'			=> $extra,
-				));
+				]);
 			} else {
 				$label_extra = $extra['label_extra'];
 				$label_extra['class'] = ($label_extra['class'] ?: $this->CLASS_LABEL_RADIO). ($horizontal ? ' '.$this->CLASS_LABEL_RADIO_INLINE : '');
@@ -987,7 +988,7 @@ class yf_html {
 				if ($is_selected) {
 					$label_extra['class'] .= ' '.$this->CLASS_LABEL_RADIO_SELECTED;
 				}
-				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
+				$body[] = '<label'._attrs($label_extra, ['id', 'class', 'style']).'>'
 							. '<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
 							. '<span>'. t($val_name). '</span>'
 						. '</label>'.PHP_EOL;
@@ -999,13 +1000,13 @@ class yf_html {
 	/**
 	* Simple check box
 	*/
-	function check_box($name = '', $value = '', $selected = '', $add_str = '', $extra = array()) {
+	function check_box($name = '', $value = '', $selected = '', $add_str = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$extra['name'] = strlen($name) ? $name : (strlen($extra['name']) ? $extra['name'] : 'checkbox');
 		$extra['value'] = strlen($value) ? $value : (strlen($extra['value']) ? $extra['value'] : '1');
@@ -1032,13 +1033,13 @@ class yf_html {
 		if ($selected) {
 			$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_SELECTED;
 		}
-		$body = array();
+		$body = [];
 		if ($extra['outer_label']) {
 			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
 		}
 		$extra['type'] = 'checkbox';
-		$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
-				. '<input'._attrs($extra, array('type','name','id','value','checked','class','style','disabled','required')). ($add_str ? ' '.$add_str : '')
+		$body[] = '<label'._attrs($label_extra, ['id', 'class', 'style']).'>'
+				. '<input'._attrs($extra, ['type','name','id','value','checked','class','style','disabled','required']). ($add_str ? ' '.$add_str : '')
 				. '> &nbsp;<span>'. ($translate ? t($extra['desc']) : $extra['desc']). '</span>' // Please do not remove whitespace before &nbsp; :)
 			. '</label>';
 		return implode(PHP_EOL, $body);
@@ -1047,7 +1048,7 @@ class yf_html {
 	/**
 	* Processing many checkboxes at one time
 	*/
-	function multi_check_box($name, $values = array(), $selected = array(), $horizontal = true, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
+	function multi_check_box($name, $values = [], $selected = [], $horizontal = true, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -1074,7 +1075,7 @@ class yf_html {
 		if (!is_array($selected)) {
 			$selected = strval($selected);
 		}
-		$body = array();
+		$body = [];
 		if ($extra['outer_label']) {
 			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
 		}
@@ -1117,7 +1118,7 @@ class yf_html {
 				$desc = ($translate ? t($value) : $value);
 			}
 			if ($this->BOXES_USE_STPL) {
-				$body[] = tpl()->parse('system/common/check_box_item', array(
+				$body[] = tpl()->parse('system/common/check_box_item', [
 					'name'		=> $val_name,
 					'value'		=> $key,
 					'desc'		=> $desc,
@@ -1126,9 +1127,9 @@ class yf_html {
 					'label'		=> $translate ? t($value) : $value,
 					'id'		=> $id,
 					'extra'		=> $extra,
-				));
+				]);
 			} else {
-				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
+				$body[] = '<label'._attrs($label_extra, ['id', 'class', 'style']).'>'
 							. '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" value="'.$key.'"'
 							. ($is_selected ? ' '.$sel_text : '') . ($add_str ? ' '.trim($add_str) : '')
 							. '> &nbsp;'. '<span>'.$desc.'</span>'  // Please do not remove whitespace :)
@@ -1141,13 +1142,13 @@ class yf_html {
 	/**
 	* Simple input form control
 	*/
-	function input($name = '', $value = '', $extra = array()) {
+	function input($name = '', $value = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'text');
 		$extra['value'] = $extra['value'] ?: $value;
@@ -1155,21 +1156,24 @@ class yf_html {
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
 		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
-
-		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step','readonly');
+		$extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_INPUT;
+		if ($extra['class_add']) {
+			$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
+		}
+		$attrs_names = ['name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step','readonly'];
 		return '<input'._attrs($extra, $attrs_names).'>';
 	}
 
 	/**
 	* Simple textarea form control
 	*/
-	function textarea($name = '', $value = '', $extra = array()) {
+	function textarea($name = '', $value = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'text');
 		$extra['value'] = $extra['value'] ?: $value;
@@ -1179,13 +1183,13 @@ class yf_html {
 		$extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
 		$extra['contenteditable'] = (!isset($extra['contenteditable']) || $extra['contenteditable']) ? 'true' : false;
 
-		$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size','disabled','readonly','autocomplete','autofocus');
+		$attrs_names = ['id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size','disabled','readonly','autocomplete','autofocus'];
 		return '<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']).'</textarea>';
 	}
 
 	/**
 	*/
-	function div_box($name, $values = array(), $selected = '', $extra = array()) {
+	function div_box($name, $values = [], $selected = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -1203,7 +1207,7 @@ class yf_html {
 		}
 		$selected = strval($selected);
 
-		$items = array();
+		$items = [];
 		$selected_val = '';
 		foreach ((array)$values as $key => $cur_value) {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
@@ -1214,7 +1218,7 @@ class yf_html {
 				$selected_val = $val;
 			}
 		}
-		$body = array();
+		$body = [];
 		$body[] = '<li class="dropdown" style="list-style-type:none;" id="'.$extra['id'].'">';
 		$body[] = '<a class="dropdown-toggle" data-toggle="dropdown">'.($selected_val ?: $desc).'&nbsp;<span class="caret"></span></a>';
 		$body[] = '<ul class="dropdown-menu">';
@@ -1228,7 +1232,7 @@ class yf_html {
 
 	/**
 	*/
-	function button_box($name, $values = array(), $selected = '', $extra = array()) {
+	function button_box($name, $values = [], $selected = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -1246,7 +1250,7 @@ class yf_html {
 		}
 		$selected = strval($selected);
 
-		$items = array();
+		$items = [];
 		$selected_val = '';
 		foreach ((array)$values as $key => $cur_value) {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
@@ -1261,7 +1265,7 @@ class yf_html {
 		$extra['class_add'] && $class .= ' '.$extra['class_add'];
 		$text = $selected_val ?: $desc;
 
-		$body = array();
+		$body = [];
 		$body[] = '<div class="btn-group" id="'.$extra['id'].'">';
 		if ($extra['button_split']) {
 			$body[] = '<button class="btn">'.$text.'</button>';
@@ -1280,14 +1284,14 @@ class yf_html {
 
 	/**
 	*/
-	function button_split_box($name, $values = array(), $selected = '', $extra = array()) {
+	function button_split_box($name, $values = [], $selected = '', $extra = []) {
 		$extra['button_split'] = true;
 		return $this->button_box ($name, $values, $selected, $extra);
 	}
 
 	/**
 	*/
-	function list_box($name, $values = array(), $selected = '', $extra = array()) {
+	function list_box($name, $values = [], $selected = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -1310,7 +1314,7 @@ class yf_html {
 		$extra['data-value']	= strval($selected);
 		$extra['data-filter']	= isset($extra['data-filter']) ? $extra['data-filter'] : (count($values) > 10 ? 'true' : '');
 
-		$body .= '<div'._attrs($extra, array('id','class','style')).'>';
+		$body .= '<div'._attrs($extra, ['id','class','style']).'>';
 		foreach ((array)$values as $key => $cur_value) {
 			$body .= '<div data-value="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</div>'.PHP_EOL;
 		}
@@ -1321,9 +1325,9 @@ class yf_html {
 
 	/**
 	*/
-	function select2_box($name, $values = array(), $selected = '', $extra = array()) {
-		$css   = array();
-		$style = array();
+	function select2_box($name, $values = [], $selected = '', $extra = []) {
+		$css   = [];
+		$style = [];
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 		} else {
@@ -1331,12 +1335,12 @@ class yf_html {
 		}
 		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		// put default js options here
-		$js_options = (array)$extra['js_options'] + array(
+		$js_options = (array)$extra['js_options'] + [
 			'width'       => 'element',
 			'placeholder' => @$extra['placeholder'] ?: @$extra['desc'],
-		);
+		];
 		// ajax
-		$js_functions = array();
+		$js_functions = [];
 		if( @$extra[ 'ajax_func' ] ) {
 			foreach( (array)$extra[ 'ajax_func' ] as $key => $value ) {
 				$js_options[ 'ajax' ][ $key ] = '%__'. $key .'__%';
@@ -1344,21 +1348,21 @@ class yf_html {
 			}
 		}
 		if( @$extra[ 'ajax' ] ) {
-			$js_options += array(
+			$js_options += [
 				'maximumSelectionSize' => 10,
 				'minimumInputLength'   => 1,
 				'minimumInputLength'   => 1,
 				'initSelection'        => '%__initSelection__%',
-			);
+			];
 			$js_options[ 'ajax' ] = $extra[ 'ajax' ];
-			$js_options[ 'ajax' ] += array(
+			$js_options[ 'ajax' ] += [
 				// 'dataType'           => 'json',
 				// 'quietMillis'        => 500,
 				// 'cache'              => true,
 				'data'               => '%__data__%',
 				'results'            => '%__results__%',
-			);
-			$js_functions += array(
+			];
+			$js_functions += [
 				'"%__data__%"'    => 'function( term, page, context ) { return { q: term, page: page }; }',
 				'"%__results__%"' => 'function( data, page, query ) { return { results: data.items, more: data.more || false  }; }',
 				'"%__initSelection__%"' => 'function( element, callback ) {
@@ -1370,7 +1374,7 @@ class yf_html {
 						}).done(function(data) { callback(data.items[0] || null); });
 					}
 				}',
-			);
+			];
 		}
 		asset('jq-select2');
 		// prepare js options
@@ -1382,7 +1386,7 @@ class yf_html {
 			$func = 'input';
 			$extra[ 'id' ] = $extra['force_id'];
 			$extra[ 'value' ] = @$extra['selected'] ?: @$extra['value'] ?: '';
-			$css[] = 'form-control';
+			$css[] = $this->CLASS_INPUT;
 		}
 		$css[]   = 'no-chosen';
 			$extra[ 'class' ] && $css[] = $extra[ 'class' ];
@@ -1395,7 +1399,7 @@ class yf_html {
 
 	/**
 	*/
-	function chosen_box($name, $values = array(), $selected = '', $extra = array()) {
+	function chosen_box($name, $values = [], $selected = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 		} else {
@@ -1405,13 +1409,14 @@ class yf_html {
 
 		asset('chosen');
 
-		$js_options = (array)$extra['js_options'] + array(
+		$js_options = (array)$extra['js_options'] + [
 			'disable_search_threshold'	=> 10,
 			'no_results_text'			=> t('No results match'),
 			'placeholder_text_multiple' => t('Select Some Options'),
 			'placeholder_text_single'	=> t('Select an Option'),
+			'search_contains'			=> true,
 			// put default js options here
-		);
+		];
 		jquery('$("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).');');
 
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
@@ -1420,7 +1425,91 @@ class yf_html {
 
 	/**
 	*/
-	function image_select_box($name, $values = array(), $selected = '', $extra = array()) {
+	function phone_box($name = 'phone', $values = [], $selected = '', $extra = []) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
+		}
+		if (!$extra['name']) {
+			$name = $extra['name'] = 'phone';
+		}
+		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		if (!$extra['id']) {
+			$extra['id'] = $extra['force_id'].'_input';
+		}
+
+		asset('jquery-intl-tel-input');
+
+		$countries = [];
+		foreach ((array)main()->get_data('geo_countries') as $k => $data) {
+			$countries[] = strtolower($data['code']);
+		}
+		$preferred_countries = [
+			'ua', 'by', 'ru',
+		];
+		$js_options = (array)$extra['js_options'] + [
+			'autoPlaceholder' => true,
+			'onlyCountries' => $countries,
+			'preferredCountries' => $preferred_countries,
+			// 'excludeCountries' => ["us"],
+			// 'separateDialCode' => true,
+			// 'allowDropdown' => false,
+			// 'autoHideDialCode' => false,
+			// 'dropdownContainer' => "body",
+			// 'initialCountry' => "auto",
+			// 'nationalMode' => false,
+			// 'numberType' => "MOBILE",
+			// 'utilsScript' => '//cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.5.2/js/utils.js',
+		];
+		jquery('
+			var input_selector = "#'.addslashes($extra['id']).'";
+			var phone = $(input_selector);
+			var reset = function() {
+				phone.removeClass("phone-error");
+				phone.removeClass("phone-success");
+			};
+
+			phone.intlTelInput($.merge(
+				'.json_encode($js_options).'
+				, {
+					geoIpLookup : function(callback) {
+						$.get("//ipinfo.io", function() {}, "jsonp").always(function(resp) {
+							var countryCode = (resp && resp.country) ? resp.country : "";
+							callback(countryCode);
+						});
+					}
+				}
+			));
+
+			phone.blur(function() {
+				reset();
+				if ($.trim(phone.val())) {
+					if (phone.intlTelInput("isValidNumber")) {
+						phone.addClass("phone-success");
+					} else {
+						phone.addClass("phone-error");
+					}
+				}
+			});
+
+			// on keyup / change flag: reset
+			phone.on("keyup change", reset);
+
+			$(phone).closest("form").submit(function() {
+				phone.val(phone.intlTelInput("getNumber"));
+			});
+		');
+		return $this->input($extra + [
+			'maxlength' => 20,
+			'type' => 'tel',
+//			'pattern' => '^[0-9\s\(\)-]{7,20}$',
+		]);
+	}
+
+	/**
+	*/
+	function image_select_box($name, $values = [], $selected = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 		} else {
@@ -1433,9 +1522,9 @@ class yf_html {
 		asset('masonry');
 		$extra['class_add'] = trim($extra['class_add']. ' image-picker masonry');
 
-		$js_options = (array)$extra['js_options'] + array(
+		$js_options = (array)$extra['js_options'] + [
 			// put default js options here
-		);
+		];
 		jquery('
 			var select_box = $("#'.addslashes($extra['force_id']).'")
 			select_box.imagepicker('.json_encode($js_options).');
@@ -1501,13 +1590,13 @@ class yf_html {
 
 	/**
 	*/
-	function tooltip($text = '', $extra = array()) {
+	function tooltip($text = '', $extra = []) {
 		if (is_array($text)) {
 			$extra = (array)$extra + $text;
 			$text = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 #		css('.popover { width:auto; min-width: 100px;}');
 		$extra['text'] = $extra['text'] ?: $text;
@@ -1518,7 +1607,7 @@ class yf_html {
 		$extra['data-toggle'] = $extra['data-toggle'] ?: 'popover';
 		$extra['data-container'] = $extra['data-container'] ?: 'body';
 		$extra['data-html']	= $extra['data-html'] ?: 'true';
-		return (!$extra['no_nbsp'] ? '&nbsp;' : ''). '<span'._attrs($extra, array('id','class','style')).'><i class="'.$extra['icon'].'"></i></span>';
+		return (!$extra['no_nbsp'] ? '&nbsp;' : ''). '<span'._attrs($extra, ['id','class','style']).'><i class="'.$extra['icon'].'"></i></span>';
 	}
 
 	/**
@@ -1526,7 +1615,7 @@ class yf_html {
 	*/
 	function a() {
 		$args = func_get_args();
-		$a = array();
+		$a = [];
 		// numerics params
 		if (isset($args[0]) && is_array($args[0])) {
 			$a = $args[0];
@@ -1536,7 +1625,7 @@ class yf_html {
 			$a['icon']	= $args[2];
 			$a['text']	= $args[3];
 			$a['class_add']	= $args[4];
-			$a['target']    = $args[5];
+			$a['target']	= $args[5];
 			$a['no_text'] = $args[6];
 		// named params
 		} elseif (isset($args['link'])) {
@@ -1564,16 +1653,16 @@ class yf_html {
 		}
 		$icon = '';
 		if (isset($a['icon'])) {
-			$icon = array();
+			$icon = [];
 			if (!is_array($a['icon'])) {
-				$a['icon'] = array($a['icon']);
+				$a['icon'] = [$a['icon']];
 			}
 			foreach ((array)$a['icon'] as $i) {
 				$icon[] = '<i class="'.$i.'"></i>';
 			}
 			$icon = implode('&nbsp;', $icon);
 		}
-		return '<a'._attrs($a, array('href','title','class','style','id','rel','target','disabled')).'>'. $icon. ($a['no_text'] ?'' : (strlen($a['text']) ? ($icon ? '&nbsp;' : '')._prepare_html($a['text']) : '')).'</a>';
+		return '<a'._attrs($a, ['href','title','class','style','id','rel','target','disabled']).'>'. $icon. ($a['no_text'] ?'' : (strlen($a['text']) ? ($icon ? '&nbsp;' : '')._prepare_html($a['text']) : '')).'</a>';
 	}
 
 	/**
@@ -1581,7 +1670,7 @@ class yf_html {
 	*/
 	function icon() {
 		$args = func_get_args();
-		$a = array();
+		$a = [];
 		// numerics params
 		if (isset($args[0]) && is_array($args[0])) {
 			$a = $a[0];
@@ -1615,7 +1704,7 @@ class yf_html {
 		asset('bfh-select');
 
 		$args = func_get_args();
-		$a = array();
+		$a = [];
 		// numerics params
 		if (isset($args[0]) && is_array($args[0])) {
 			$a = $a[0];
@@ -1654,10 +1743,10 @@ class yf_html {
 
 	/**
 	*/
-	function module_menu($obj, $items = array(), $extra = array()) {
+	function module_menu($obj, $items = [], $extra = []) {
 // TODO: check $obj for methods existance and hide not existing
 // TODO: build auto-menu if items empty
-		$out = array();
+		$out = [];
 		$selected = '/'.$_GET['object'].'/'.$_GET['action'];
 		$selected2 = '/@object/'.$_GET['action'];
 		foreach ((array)$items as $i) {

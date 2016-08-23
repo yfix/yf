@@ -1,9 +1,9 @@
 <?php
 
-$data = array();
+$data = [];
 $Q = db()->query('SELECT * FROM '.db('widgets').' ORDER BY object ASC, action ASC');
 while ($A = db()->fetch_assoc($Q)) {
-	$cur_themes = array();
+	$cur_themes = [];
 	foreach (explode(';', $A['theme']) as $v) {
 		$v = intval($v);
 		if (!empty($v)) {

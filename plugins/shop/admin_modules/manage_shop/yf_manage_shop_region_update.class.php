@@ -30,12 +30,12 @@ class yf_manage_shop_region_update {
 	}
 
 	function _data() {
-		$_sub_action = array(
+		$_sub_action = [
 			'0'      => '- не выбрано -',
 			'add'    => 'добавить',
 			'delete' => 'удалить',
 			'clean'  => 'очистить',
-		);
+		];
 			$sub_action = $_POST[ 'sub_action' ];
 				$is_sub_action = $sub_action !== '0' && isset( $_sub_action[ $sub_action ] );
 		// -----
@@ -59,16 +59,16 @@ class yf_manage_shop_region_update {
 		// prepare filter
 		list( $_where, $_order ) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare( $this->_filter, $this->_filter_params );
 		// compile sql
-		$sql_filter = $this->_class_admin_products->_sql( array(
+		$sql_filter = $this->_class_admin_products->_sql( [
 			'fields' => 'DISTINCT p.id',
 			'where'  => 1 . $_where,
 			'order'  => $_order,
-		));
-		$sql_count = $this->_class_admin_products->_sql( array(
+		]);
+		$sql_count = $this->_class_admin_products->_sql( [
 			'fields' => 'COUNT(p.id)',
 			'where'  => 1 . $_where,
 			'order'  => $_order,
-		));
+		]);
 		$total = (int)db()->get_one( $sql_count );
 		// update
 		$apply   = $_POST[ 'apply'   ];
@@ -79,14 +79,14 @@ class yf_manage_shop_region_update {
 		if( $is_update ) {
 			// prepare data
 			$sql_table_action = 'shop_product_to_region';
-			$data             = array();
+			$data             = [];
 			$sub_action_count = null;
 			$ids  = db()->get_2d( $sql_filter );
 			// ----- add regions to products
 			if( $sub_action == 'add' ) {
 				foreach( $ids as $id ) {
 					foreach( $region as $r_id ) {
-						$data[] = array( 'product_id' => $id, 'region_id' => $r_id );
+						$data[] = [ 'product_id' => $id, 'region_id' => $r_id ];
 					}
 				}
 				db_query( 'START TRANSACTION' );
@@ -95,18 +95,18 @@ class yf_manage_shop_region_update {
 				db_query( 'COMMIT' );
 			// ----- delete regions to products
 			} elseif( $sub_action == 'delete' ||  $sub_action == 'clean' ) {
-				$sql_product_ids = array( 'product_id', 'in', $ids    );
+				$sql_product_ids = [ 'product_id', 'in', $ids    ];
 				if( $sub_action == 'clean' ) {
-					$data = array( '__args__' => array(
+					$data = [ '__args__' => [
 						$sql_product_ids,
-					));
+					]];
 				} else {
-					$sql_region_ids  = array( 'region_id',  'in', $region );
-					$data = array( '__args__' => array(
+					$sql_region_ids  = [ 'region_id',  'in', $region ];
+					$data = [ '__args__' => [
 						$sql_product_ids,
 						'and',
 						$sql_region_ids,
-					));
+					]];
 				}
 				db_query( 'START TRANSACTION' );
 					db()->delete( $sql_table_action, $data );
@@ -126,13 +126,13 @@ class yf_manage_shop_region_update {
 			common()->message_warning( 'Требуется подтверждение.' );
 		}
 		// -----
-		$result = array(
+		$result = [
 			'total'       => $total,
 			'_sub_action' => $_sub_action,
 				'sub_action' => $sub_action,
 			'_region'     => $_region,
 				'region'     => $region,
-		);
+		];
 		return( $result );
 	}
 
@@ -140,24 +140,24 @@ class yf_manage_shop_region_update {
 		// create form
 		$link_back = './?object=manage_shop&action=products';
 		$_form = form( $data )
-			->row_start( array( 'desc' => 'Всего выбрано' ) )
+			->row_start( [ 'desc' => 'Всего выбрано' ] )
 				->info( 'total' )
-				->link( 'Back', $link_back , array( 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ))
+				->link( 'Back', $link_back , [ 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ])
 			->row_end()
-			->select2_box( array(
+			->select2_box( [
 				'desc'     => 'Действие',
 				'name'     => 'sub_action',
 				'values'   => $data[ '_sub_action' ],
-			))
-			->select2_box( array(
+			])
+			->select2_box( [
 				'desc'     => 'Регион',
 				'name'     => 'region',
 				'multiple' => true,
 				'values'   => $data[ '_region' ],
-			))
-			->row_start( array( 'desc' => '' ) )
+			])
+			->row_start( [ 'desc' => '' ] )
 				->submit( 'apply', 'Выполнить' )
-				->check_box( 'confirm', false, array( 'desc' => 'подтверждение', 'no_label' => true ) )
+				->check_box( 'confirm', false, [ 'desc' => 'подтверждение', 'no_label' => true ] )
 			->row_end()
 		;
 		return( $_form );

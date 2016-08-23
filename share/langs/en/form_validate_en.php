@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 	'form_validate_active_url'				=> 'The %field field must contain a valid working URL.',
 	'form_validate_after_date'				=> 'The %field field must contain date after %param.',
 	'form_validate_ajax_exists'				=> 'The %field field must exist.',
@@ -71,4 +71,4 @@ return array(
 	'form_validate_valid_url'				=> 'The %field field must contain a valid URL.',
 	'form_validate_valid_phone'				=> 'The %field field must contain a valid phone number.',
 	'form_validate_xss_clean'				=> 'The %field field not passed XSS filter.',
-);
+];

@@ -9,32 +9,25 @@ $bfh_css_fixes = '
 	.bfh-selectbox-options a { padding-left: 10px; }
 	a.bfh-selectbox-toggle:hover { color: #333; }
 ';
-return array(
-	'versions' => array(
-#		'2.3.0' => array(
-#			'js' => '//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/js/bootstrap-formhelpers.min.js',
-#			'css' => array(
-#				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/2.3.0/dist/css/bootstrap-formhelpers.min.css',
-#				$bfh_css_fixes,
-#			),
-#		),
-		'master' => array(
-			'js' => '//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/js/bootstrap-formhelpers.min.js',
-			'css' => array(
-				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/css/bootstrap-formhelpers.min.css',
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/yfix/bootstrap-form-helpers/master/dist/js/bootstrap-formhelpers.min.js',
+			'css' => [
+				'//rawgit.yfix.net/yfix/bootstrap-form-helpers/master/dist/css/bootstrap-formhelpers.min.css',
 				$bfh_css_fixes,
-			),
-		),
-	),
-	'require' => array(
+			],
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-	'info' => array(
+	],
+	'info' => [
 		'url' => 'http://bootstrapformhelpers.com/',
 		'name' => 'Bootstrap Form Helpers',
 		'desc' => 'Extend Bootstrap\'s components with Bootstrap Form Helpers custom jQuery plugins.',
 		'git' => 'https://github.com/yfix/bootstrap-form-helpers.git',
-	),
-);
+	],
+];
 
 };

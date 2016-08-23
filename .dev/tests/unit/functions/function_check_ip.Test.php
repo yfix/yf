@@ -5,7 +5,7 @@ require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 class function_check_ip_test extends yf_unit_tests {
 
 	public function test_1() {
-		$test_array = array(
+		$test_array = [
 			'172.19.177.198, 170.51.255.218'	=> '170.51.255.218',
 			'172.19.177.198, 10.21.0.218'		=> '',
 			'172.44.141.63, 189.204.26.200'		=> '189.204.26.200',
@@ -21,14 +21,14 @@ class function_check_ip_test extends yf_unit_tests {
 			'213.86.127.9","remote_addr_ip":"94.23.1.212"'		=> '213.86.127.9',
 			'213.86.127.13","remote_addr_ip":"94.23.1.212"'	=> '213.86.127.13',
 			'102.219.202.23, 124.81.238.226'	=> '124.81.238.226',
-		);
-		$ignore_ips = array(
+		];
+		$ignore_ips = [
 			'172.19.177.198',
 			'172.44.141.63',
 			'50.23.132.250',
 			'188.165.140.51',
 			'102.219.202.23',
-		);
+		];
 		$ignore_ips = array_combine($ignore_ips, $ignore_ips);
 		foreach ((array)$test_array as $test_ip => $expect_ip) {
 			$_SERVER['HTTP_X_FORWARDED_FOR'] = $key;

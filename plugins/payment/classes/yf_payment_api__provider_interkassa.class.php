@@ -20,132 +20,133 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	public $URL_API          = 'https://api.interkassa.com/v1/%method';
 	public $API_ACCOUNT      = null; // api header: Ik-Api-Account-Id
 
-	public $method_allow = array(
-		'order' => array(
-			'payin' => array(
+	public $method_allow = [
+		'order' => [
+			'payin' => [
 				'interkassa',
-			),
-			'payout' => array(
-				'visa_p2p_privat_uah',
-			),
-		),
-		'api' => array(
+			],
+			'payout' => [
+				// 'visa_p2p_privat_uah',
+				'visa_p2p_tasprivat_uah',
+			],
+		],
+		'api' => [
 			// Список используемых в системе валют и курсов
-			'currency' => array(
-				'uri' => array(
+			'currency' => [
+				'uri' => [
 					'%method' => 'currency',
-				),
+				],
 				// 'option' => array(
 					// 'active' => true,
 				// ),
-			),
+			],
 			// Список платежных направлений на ввод, включенных в системе ИК
-			'paysystem-input-payway' => array(
-				'uri' => array(
+			'paysystem-input-payway' => [
+				'uri' => [
 					'%method' => 'paysystem-input-payway',
-				),
-			),
+				],
+			],
 			// Список платежных направлений на вывод, включенных в системе ИК
-			'paysystem-output-payway' => array(
-				'uri' => array(
+			'paysystem-output-payway' => [
+				'uri' => [
 					'%method' => 'paysystem-output-payway',
-				),
-			),
+				],
+			],
 			// Список аккаунтов, доступных пользователю
-			'account' => array(
+			'account' => [
 				'is_authorization' => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'account',
-				),
-			),
+				],
+			],
 			// Список касс, привязанных к аккаунту
-			'checkout' => array(
+			'checkout' => [
 				'is_authorization' => true,
 				'is_api_account'   => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'checkout',
-				),
-			),
+				],
+			],
 			// Список бизнес касс, привязанных к аккаунту
-			'checkout-b' => array(
+			'checkout-b' => [
 				'is_authorization' => true,
 				'is_handler'       => 'checkout_b',
-			),
+			],
 			// Список кошельков, привязанных к аккаунту, с их параметрами
-			'purse' => array(
+			'purse' => [
 				'is_authorization' => true,
 				'is_api_account'   => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'purse',
-				),
-			),
+				],
+			],
 			// Позволяет получить выгрузку платежей
-			'co-invoice' => array(
+			'co-invoice' => [
 				'is_authorization' => true,
 				'is_api_account'   => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'co-invoice',
-				),
-			),
-			'co-invoice-id' => array(
+				],
+			],
+			'co-invoice-id' => [
 				'is_authorization' => true,
 				'is_api_account'   => true,
 				'url' => 'https://api.interkassa.com/v1/%method/%id',
-				'uri' => array(
+				'uri' => [
 					'%method' => 'co-invoice',
 					'%id'     => '$id',
-				),
-			),
+				],
+			],
 			// GET
 			// - список осуществленных выводов
 			// - информацию по конкретному выводу
 			// POST
 			// - создать новый вывод в системе
-			'withdraw' => array(
+			'withdraw' => [
 				'is_authorization' => true,
 				'is_api_account'   => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'withdraw',
-				),
-			),
-			'withdraw-id' => array(
+				],
+			],
+			'withdraw-id' => [
 				'is_authorization' => true,
 				'is_api_account'   => true,
 				'url' => 'https://api.interkassa.com/v1/%method/%id',
-				'uri' => array(
+				'uri' => [
 					'%method' => 'withdraw',
 					'%id'     => '$id',
-				),
-			),
-			'withdraw-calc' => array(
+				],
+			],
+			'withdraw-calc' => [
 				'is_authorization' => true,
 				'is_api_account'   => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'withdraw',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'action' => 'calc',
-				),
-			),
-			'withdraw-process' => array(
+				],
+			],
+			'withdraw-process' => [
 				'is_authorization' => true,
 				'is_api_account'   => true,
-				'uri' => array(
+				'uri' => [
 					'%method' => 'withdraw',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'action' => 'process',
 					// 'action' => 'calc', // DEBUG
-				),
-			),
-		),
-		'payin' => array(
-			'interkassa' => array(
+				],
+			],
+		],
+		'payin' => [
+			'interkassa' => [
 				'title'       => 'Visa, MasterCard',
 				'icon'        => 'interkassa',
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
-				'currency' => array(
+				'currency' => [
 					// 'USD' => array(
 						// 'currency_id' => 'USD',
 						// 'active'      => true,
@@ -154,280 +155,292 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 						// 'currency_id' => 'EUR',
 						// 'active'      => true,
 					// ),
-					'UAH' => array(
+					'UAH' => [
 						'currency_id' => 'UAH',
 						'active'      => true,
-					),
+					],
 					// 'RUB' => array(
 						// 'currency_id' => 'RUB',
 						// 'active'      => true,
 					// ),
-				),
-			),
-		),
-		'payout' => array(
-			'visa_p2p_privat_uah' => array(
+				],
+			],
+		],
+		'payout' => [
+			// changed: 2016-07-01 16:07:07
+			// 'visa_p2p_privat_uah' => [
+			'visa_p2p_tasprivat_uah' => [
 				'title' => 'Visa (Privat24, UAH)',
 				'icon'  => 'visa',
-				'request_option' => array(
-					'paywayId' => '52e7f883e4ae1a2406000000', // visa_p2p_privat_uah
+				'request_option' => [
+					// 'paywayId' => '52e7f883e4ae1a2406000000', // visa_p2p_privat_uah
+					'paywayId' => '5763bad33d1eaf04218b456a', // visa_p2p_tasprivat_uah
 					'calcKey'  => 'psPayeeAmount',
-				),
-				'amount' => array(
+				],
+				'amount' => [
 					'min' => 5,
 					'max' => 200,
-				),
+				],
 				// 'is_fee' => true,
-				'fee' => array(
-					'out' => array(
+				'fee' => [
+					'out' => [
 						'rt'  => 1,
 						'fix' => 10,
-					),
-				),
+					],
+				],
 				'is_currency' => true,
-				'currency' => array(
-					'UAH' => array(
+				'currency' => [
+					'UAH' => [
 						'currency_id' => 'UAH',
 						'active'      => true,
-					),
-				),
-				'request_field' => array(
+					],
+				],
+				'request_field' => [
 					'amount',
 					'paymentNo',
 					'purseId',
 					'paywayId',
-				),
-				'field' => array(
+				],
+				'field' => [
 					'card',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'card',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'card' => 'Номер карты',
-				),
-				'option_validation_js' => array(
-					'card'                       => array(
+				],
+				'option_validation_js' => [
+					'card'                       => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 13,
 						'maxlength' => 16,
 						// 'pattern'   => '^\d+$',
 						'pattern'   => '^4((40588)|(14949)|(32339)|(32334)|(32338)|(32340)|(40535)|(73117)|(73121)|(13051)|(40509)|(24600)|(62708)|(76065)|(17649)|(32337)|(62705)|(14943)|(14961)|(14962)|(32575)|(58121)|(58122)|(14939)|(14960)|(24657)|(34156)|(32335)|(23396)|(73118)|(32336)|(40129)|(76339)|(14963)|(73114)|(04030)|(58120)|(10653))[0-9]{7}(?:[0-9]{3})?$',
-					),
-				),
-				'option_validation' => array(
+					],
+				],
+				'option_validation' => [
 					'card' => 'required|length[13,16]|regex:~^4((40588)\|(14949)\|(32339)\|(32334)\|(32338)\|(32340)\|(40535)\|(73117)\|(73121)\|(13051)\|(40509)\|(24600)\|(62708)\|(76065)\|(17649)\|(32337)\|(62705)\|(14943)\|(14961)\|(14962)\|(32575)\|(58121)\|(58122)\|(14939)\|(14960)\|(24657)\|(34156)\|(32335)\|(23396)\|(73118)\|(32336)\|(40129)\|(76339)\|(14963)\|(73114)\|(04030)\|(58120)\|(10653))[0-9]{7}(?:[0-9]{3})?$~',
-				),
-				'option_validation_message' => array(
+				],
+				'option_validation_message' => [
 					'card' => 'обязательное поле от 13 до 16 цифр',
-				),
-			),
-			'visa_p2p_notprivat_uah' => array(
+				],
+			],
+			// changed: 2016-07-01 16:07:07
+			// 'visa_p2p_notprivat_uah' => [
+			'visa_p2p_tasnotprivat_uah' => [
 				'title'      => 'Visa (UAH)',
 				'icon'       => 'visa',
-				'request_option'     => array(
-					'paywayId' => '52ef9b77e4ae1a3008000000', // visa_p2p_notprivat_uah
+				'request_option'     => [
+					// 'paywayId' => '52ef9b77e4ae1a3008000000', // visa_p2p_notprivat_uah
+					'paywayId' => '576658923d1eaf77398b4568', // visa_p2p_notprivat_uah
 					'calcKey'  => 'psPayeeAmount',
-				),
-				'amount' => array(
+				],
+				'amount' => [
 					'min' => 5,
 					'max' => 200,
-				),
+				],
 				// 'is_fee' => true,
-				'fee' => array(
-					'out' => array(
+				'fee' => [
+					'out' => [
 						'rt'  => 1,
 						'fix' => 20,
-					),
-				),
+					],
+				],
 				'is_currency' => true,
-				'currency' => array(
-					'UAH' => array(
+				'currency' => [
+					'UAH' => [
 						'currency_id' => 'UAH',
 						'active'      => true,
-					),
-				),
-				'request_field' => array(
+					],
+				],
+				'request_field' => [
 					'amount',
 					'paymentNo',
 					'purseId',
 					'paywayId',
-				),
-				'field' => array(
+				],
+				'field' => [
 					'card',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'card',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'card' => 'Номер карты',
-				),
-				'option_validation_js' => array(
-					'card'                       => array(
+				],
+				'option_validation_js' => [
+					'card'                       => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 13,
 						'maxlength' => 16,
 						// 'pattern'   => '^\d+$',
 						'pattern'   => '^4(?:(?!(40588)|(14949)|(32339)|(32334)|(32338)|(32340)|(40535)|(73117)|(73121)|(13051)|(40509)|(24600)|(62708)|(76065)|(17649)|(32337)|(62705)|(14943)|(14961)|(14962)|(32575)|(58121)|(58122)|(14939)|(14960)|(24657)|(34156)|(32335)|(23396)|(73118)|(32336)|(40129)|(76339)|(14963)|(73114)|(04030)|(58120)|(10653)))[0-9]{12}(?:[0-9]{3})?$',
-					),
-				),
-				'option_validation' => array(
+					],
+				],
+				'option_validation' => [
 					'card' => 'required|length[13,16]|regex:~^4(?:(?!(40588)\|(14949)\|(32339)\|(32334)\|(32338)\|(32340)\|(40535)\|(73117)\|(73121)\|(13051)\|(40509)\|(24600)\|(62708)\|(76065)\|(17649)\|(32337)\|(62705)\|(14943)\|(14961)\|(14962)\|(32575)\|(58121)\|(58122)\|(14939)\|(14960)\|(24657)\|(34156)\|(32335)\|(23396)\|(73118)\|(32336)\|(40129)\|(76339)\|(14963)\|(73114)\|(04030)\|(58120)\|(10653)))[0-9]{12}(?:[0-9]{3})?$~',
-				),
-				'option_validation_message' => array(
+				],
+				'option_validation_message' => [
 					'card' => 'обязательное поле от 13 до 16 цифр',
-				),
-			),
-			'mastercard_p2p_privat_uah' => array(
+				],
+			],
+			// changed: 2016-07-01 16:07:07
+			// 'mastercard_p2p_privat_uah' => [
+			'mastercard_p2p_tasprivat_uah' => [
 				'title'      => 'MasterCard (Privat24, UAH)',
 				'icon'       => 'mastercard',
-				'request_option'     => array(
-					'paywayId' => '52efa902e4ae1a780e000001', // mastercard_p2p_privat_uah
+				'request_option'     => [
+					// 'paywayId' => '52efa902e4ae1a780e000001', // mastercard_p2p_privat_uah
+					'paywayId' => '5763bb6e3d1eaf4b218b4567', // mastercard_p2p_tasprivat_uah
 					'calcKey'  => 'psPayeeAmount',
-				),
-				'amount' => array(
+				],
+				'amount' => [
 					'min' => 5,
 					'max' => 200,
-				),
+				],
 				// 'is_fee' => true,
-				'fee' => array(
-					'out' => array(
+				'fee' => [
+					'out' => [
 						'rt'  => 1,
 						'fix' => 10,
-					),
-				),
+					],
+				],
 				'is_currency' => true,
-				'currency' => array(
-					'UAH' => array(
+				'currency' => [
+					'UAH' => [
 						'currency_id' => 'UAH',
 						'active'      => true,
-					),
-				),
-				'request_field' => array(
+					],
+				],
+				'request_field' => [
 					'amount',
 					'paymentNo',
 					'purseId',
 					'paywayId',
-				),
-				'field' => array(
+				],
+				'field' => [
 					'card',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'card',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'card' => 'Номер карты',
-				),
-				'option_validation_js' => array(
-					'card'                       => array(
+				],
+				'option_validation_js' => [
+					'card'                       => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 13,
 						'maxlength' => 16,
 						// 'pattern'   => '^\d+$',
 						'pattern'   => '^((535145)|(536354)|(532957)|(521153)|(530217)|(545708)|(516915)|(558335)|(532032)|(544013)|(521152)|(516874)|(557721)|(545709)|(521857)|(516933)|(670509)|(676246)|(516875)|(516798)|(552324)|(558424)|(516936)|(513399)|(517691))[0-9]{7}(?:[0-9]{3})?$',
-					),
-				),
-				'option_validation' => array(
+					],
+				],
+				'option_validation' => [
 					'card' => 'required|length[13,16]|regex:~^((535145)\|(536354)\|(532957)\|(521153)\|(530217)\|(545708)\|(516915)\|(558335)\|(532032)\|(544013)\|(521152)\|(516874)\|(557721)\|(545709)\|(521857)\|(516933)\|(670509)\|(676246)\|(516875)\|(516798)\|(552324)\|(558424)\|(516936)\|(513399)\|(517691))[0-9]{7}(?:[0-9]{3})?$~',
-				),
-				'option_validation_message' => array(
+				],
+				'option_validation_message' => [
 					'card' => 'обязательное поле от 13 до 16 цифр',
-				),
-			),
-			'mastercard_p2p_notprivat_uah' => array(
+				],
+			],
+			// changed: 2016-07-01 16:07:07
+			// 'mastercard_p2p_notprivat_uah' => [
+			'mastercard_p2p_tasnotprivat_uah' => [
 				'title'      => 'MasterCard (UAH)',
 				'icon'       => 'mastercard',
-				'request_option'     => array(
-					'paywayId' => '52efa871e4ae1a3008000002', // mastercard_p2p_notprivat_uah
+				'request_option'     => [
+					// 'paywayId' => '52efa871e4ae1a3008000002', // mastercard_p2p_notprivat_uah
+					'paywayId' => '576658ac3d1eaf82398b4567', // mastercard_p2p_tasnotprivat_uah
 					'calcKey'  => 'psPayeeAmount',
-				),
-				'amount' => array(
+				],
+				'amount' => [
 					'min' => 5,
 					'max' => 200,
-				),
+				],
 				// 'is_fee' => true,
-				'fee' => array(
-					'out' => array(
+				'fee' => [
+					'out' => [
 						'rt'  => 1,
 						'fix' => 20,
-					),
-				),
+					],
+				],
 				'is_currency' => true,
-				'currency' => array(
-					'UAH' => array(
+				'currency' => [
+					'UAH' => [
 						'currency_id' => 'UAH',
 						'active'      => true,
-					),
-				),
-				'request_field' => array(
+					],
+				],
+				'request_field' => [
 					'amount',
 					'paymentNo',
 					'purseId',
 					'paywayId',
-				),
-				'field' => array(
+				],
+				'field' => [
 					'card',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'card',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'card' => 'Номер карты',
-				),
-				'option_validation_js' => array(
-					'card'                       => array(
+				],
+				'option_validation_js' => [
+					'card'                       => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 13,
 						'maxlength' => 16,
 						// 'pattern'   => '^\d+$',
 						'pattern'   => '^(?:(?!(535145)|(536354)|(532957)|(521153)|(530217)|(545708)|(516915)|(558335)|(532032)|(544013)|(521152)|(516874)|(557721)|(545709)|(521857)|(516933)|(670509)|(676246)|(516875)|(516798)|(552324)|(558424)|(516936)|(513399)|(517691)))[5-6]{1}[0-9]{12}(?:[0-9]{3})?$',
-					),
-				),
-				'option_validation' => array(
+					],
+				],
+				'option_validation' => [
 					'card' => 'required|length[13,16]|regex:~^(?:(?!(535145)\|(536354)\|(532957)\|(521153)\|(530217)\|(545708)\|(516915)\|(558335)\|(532032)\|(544013)\|(521152)\|(516874)\|(557721)\|(545709)\|(521857)\|(516933)\|(670509)\|(676246)\|(516875)\|(516798)\|(552324)\|(558424)\|(516936)\|(513399)\|(517691)))[5-6]{1}[0-9]{12}(?:[0-9]{3})?$~',
-				),
-				'option_validation_message' => array(
+				],
+				'option_validation_message' => [
 					'card' => 'обязательное поле от 13 до 16 цифр',
-				),
-			),
+				],
+			],
 			// X-Plat
-			'visa_xplat_transfer_rub' => array(
+			'visa_xplat_transfer_rub' => [
 				'title' => 'Visa (РФ, RUB)',
 				'icon'  => 'visa',
-				'request_option' => array(
+				'request_option' => [
 					'paywayId' => '53983b55bf4efc80714160ca',
 					'calcKey'  => 'psPayeeAmount',
-				),
-				'amount' => array(
+				],
+				'amount' => [
 					'min' => 5,
 					'max' => 200,
-				),
+				],
 				// 'is_fee' => true,
-				'fee' => array(
-					'out' => array(
+				'fee' => [
+					'out' => [
 						'rt'  => 2,
 						'fix' => 0,
 						'min' => 60,
-					),
-				),
+					],
+				],
 				'is_currency' => true,
-				'currency' => array(
-					'RUB' => array(
+				'currency' => [
+					'RUB' => [
 						'currency_id' => 'RUB',
 						'active'      => true,
-					),
-				),
-				'request_field' => array(
+					],
+				],
+				'request_field' => [
 					'amount',
 					'paymentNo',
 					'purseId',
 					'paywayId',
-				),
-				'field' => array(
+				],
+				'field' => [
 					'cardNumber',
 					'phone',
 					'lname',
@@ -435,8 +448,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname',
 					'passport',
 					'seconddocnumber',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'cardNumber',
 					'phone',
 					'lname',
@@ -444,8 +457,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname',
 					'passport',
 					'seconddocnumber',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'cardNumber'      => 'Номер карты РФ',
 					'phone'           => 'Номер телефона РФ',
 					'lname'           => 'Фамилия',
@@ -453,59 +466,59 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname'           => 'Отчество',
 					'passport'        => 'Серия и номер паспорта РФ',
 					'seconddocnumber' => 'ИНН',
-				),
-				'option_validation_js' => array(
-					'cardNumber' => array(
+				],
+				'option_validation_js' => [
+					'cardNumber' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 16,
 						'maxlength' => 19,
 						'pattern'   => '^\d{16,19}$',
-					),
-					'phone' => array(
+					],
+					'phone' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 11,
 						'maxlength' => 11,
 						'pattern'   => '^79\d{9}$',
-					),
-					'lname' => array(
+					],
+					'lname' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 3,
 						'maxlength' => 40,
 						'pattern'   => '^[а-яА-ЯёЁЇїa-zA-Z]{3,40}$',
-					),
-					'fname' => array(
+					],
+					'fname' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 3,
 						'maxlength' => 40,
 						'pattern'   => '^[а-яА-ЯёЁЇїa-zA-Z]{3,40}$',
-					),
-					'mname' => array(
+					],
+					'mname' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 3,
 						'maxlength' => 40,
 						'pattern'   => '^[а-яА-ЯёЁЇїa-zA-Z]{3,40}$',
-					),
-					'passport' => array(
+					],
+					'passport' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 10,
 						'maxlength' => 11,
 						'pattern'   => '^(\d{4})( )?(\d{6})$',
-					),
-					'seconddocnumber' => array(
+					],
+					'seconddocnumber' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 6,
 						'maxlength' => 14,
 						'pattern'   => '^\d{6,14}$',
-					),
-				),
-				'option_validation' => array(
+					],
+				],
+				'option_validation' => [
 					'cardNumber'      => 'required|length[16,19]|regex : ~^\d{16,19}$~',
 					'phone'           => 'required|length[11,11]|regex : ~^79\d{9}$~',
 					'lname'           => 'required|length[3,40]|regex  : ~[а-яА-ЯёЁЇїa-zA-Z]{3,40}~',
@@ -513,8 +526,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname'           => 'required|length[3,40]|regex  : ~[а-яА-ЯёЁЇїa-zA-Z]{3,40}~',
 					'passport'        => 'required|length[10,11]|regex : ~^(\d{4})( )?(\d{6})$~',
 					'seconddocnumber' => 'required|length[6,14]|regex : ~^\d{6,14}$~',
-				),
-				'option_validation_message' => array(
+				],
+				'option_validation_message' => [
 					'cardNumber'      => 'обязательное поле от 16 до 19 цифр',
 					'phone'           => 'обязательное поле 11 цифр',
 					'lname'           => 'обязательное поле от 3 до 40 символов',
@@ -522,42 +535,42 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname'           => 'обязательное поле от 3 до 40 символов',
 					'passport'        => 'обязательное поле 10 цифр (пример: 1234 123456)',
 					'seconddocnumber' => 'обязательное поле от 6 до 14 цифр',
-				),
-			),
+				],
+			],
 			// X-Plat
-			'mastercard_xplat_transfer_rub' => array(
+			'mastercard_xplat_transfer_rub' => [
 				'title' => 'MasterCard (РФ, RUB)',
 				'icon'  => 'mastercard',
-				'request_option' => array(
+				'request_option' => [
 					'paywayId' => '53983b55bf4efc80714160cb',
 					'calcKey'  => 'psPayeeAmount',
-				),
-				'amount' => array(
+				],
+				'amount' => [
 					'min' => 5,
 					'max' => 200,
-				),
+				],
 				// 'is_fee' => true,
-				'fee' => array(
-					'out' => array(
+				'fee' => [
+					'out' => [
 						'rt'  => 2,
 						'fix' => 0,
 						'min' => 60,
-					),
-				),
+					],
+				],
 				'is_currency' => true,
-				'currency' => array(
-					'RUB' => array(
+				'currency' => [
+					'RUB' => [
 						'currency_id' => 'RUB',
 						'active'      => true,
-					),
-				),
-				'request_field' => array(
+					],
+				],
+				'request_field' => [
 					'amount',
 					'paymentNo',
 					'purseId',
 					'paywayId',
-				),
-				'field' => array(
+				],
+				'field' => [
 					'cardNumber',
 					'phone',
 					'lname',
@@ -565,8 +578,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname',
 					'passport',
 					'seconddocnumber',
-				),
-				'order' => array(
+				],
+				'order' => [
 					'cardNumber',
 					'phone',
 					'lname',
@@ -574,8 +587,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname',
 					'passport',
 					'seconddocnumber',
-				),
-				'option' => array(
+				],
+				'option' => [
 					'cardNumber'      => 'Номер карты РФ',
 					'phone'           => 'Номер телефона РФ',
 					'lname'           => 'Фамилия',
@@ -583,59 +596,59 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname'           => 'Отчество',
 					'passport'        => 'Серия и номер паспорта РФ',
 					'seconddocnumber' => 'ИНН',
-				),
-				'option_validation_js' => array(
-					'cardNumber' => array(
+				],
+				'option_validation_js' => [
+					'cardNumber' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 16,
 						'maxlength' => 19,
 						'pattern'   => '^\d{16,19}$',
-					),
-					'phone' => array(
+					],
+					'phone' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 11,
 						'maxlength' => 11,
 						'pattern'   => '^79\d{9}$',
-					),
-					'lname' => array(
+					],
+					'lname' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 3,
 						'maxlength' => 40,
 						'pattern'   => '^[а-яА-ЯёЁЇїa-zA-Z]{3,40}$',
-					),
-					'fname' => array(
+					],
+					'fname' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 3,
 						'maxlength' => 40,
 						'pattern'   => '^[а-яА-ЯёЁЇїa-zA-Z]{3,40}$',
-					),
-					'mname' => array(
+					],
+					'mname' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 3,
 						'maxlength' => 40,
 						'pattern'   => '^[а-яА-ЯёЁЇїa-zA-Z]{3,40}$',
-					),
-					'passport' => array(
+					],
+					'passport' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 10,
 						'maxlength' => 11,
 						'pattern'   => '^(\d{4})( )?(\d{6})$',
-					),
-					'seconddocnumber' => array(
+					],
+					'seconddocnumber' => [
 						'type'      => 'text',
 						'required'  => true,
 						'minlength' => 6,
 						'maxlength' => 14,
 						'pattern'   => '^\d{6,14}$',
-					),
-				),
-				'option_validation' => array(
+					],
+				],
+				'option_validation' => [
 					'cardNumber'      => 'required|length[16,19]|regex : ~^\d{16,19}$~',
 					'phone'           => 'required|length[11,11]|regex : ~^79\d{9}$~',
 					'lname'           => 'required|length[3,40]|regex  : ~[а-яА-ЯёЁЇїa-zA-Z]{3,40}~',
@@ -643,8 +656,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname'           => 'required|length[3,40]|regex  : ~[а-яА-ЯёЁЇїa-zA-Z]{3,40}~',
 					'passport'        => 'required|length[10,11]|regex : ~^(\d{4})( )?(\d{6})$~',
 					'seconddocnumber' => 'required|length[6,14]|regex : ~^\d{6,14}$~',
-				),
-				'option_validation_message' => array(
+				],
+				'option_validation_message' => [
 					'cardNumber'      => 'обязательное поле от 16 до 19 цифр',
 					'phone'           => 'обязательное поле 11 цифр',
 					'lname'           => 'обязательное поле от 3 до 40 символов',
@@ -652,22 +665,22 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 					'mname'           => 'обязательное поле от 3 до 40 символов',
 					'passport'        => 'обязательное поле 10 цифр (пример: 1234 123456)',
 					'seconddocnumber' => 'обязательное поле от 6 до 14 цифр',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
-	public $_api_transform = array(
+	public $_api_transform = [
 		'operation_id'   => 'paymentNo',
 		'transaction_id' => 'trnId',
 		'account'        => 'card',
-	);
+	];
 
-	public $_api_transform_reverse = array(
+	public $_api_transform_reverse = [
 		'code'           => 'state',
-	);
+	];
 
-	public $_options_transform = array(
+	public $_options_transform = [
 		'amount'       => 'ik_am',
 		'currency'     => 'ik_cur',
 		'title'        => 'ik_desc',
@@ -676,27 +689,27 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		'public_key'   => 'ik_co_id',
 		'key_public'   => 'ik_co_id',
 		'test'         => 'test_mode',
-	);
+	];
 
-	public $_options_transform_reverse = array(
+	public $_options_transform_reverse = [
 		'ik_am'     => 'amount',
 		'ik_cur'    => 'currency',
 		'ik_desc'   => 'title',
 		'ik_x_desc' => 'description',
 		'ik_pm_no'  => 'operation_id',
 		'ik_co_id'  => 'key_public',
-	);
+	];
 
-	public $_status = array(
+	public $_status = [
 		'success'    => 'success',
 		'new'        => 'processing',
 		'waitAccept' => 'processing',
 		'process'    => 'processing',
 		'fail'       => 'refused',
 		'canceled'   => 'refused',
-	);
+	];
 
-	public $_payin_status = array(
+	public $_payin_status = [
 		//     status          description                  финальный
 		2  => 'processing', // Ожидает оплаты             - Нет
 		3  => 'processing', // Обрабатывается             - Нет
@@ -705,9 +718,9 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		7  => 'success',    // Зачислен                   - Да
 		8  => 'refused',    // Отменен платежной системой - Да
 		9  => 'refused',    // Возвращен                  - Да
-	);
+	];
 
-	public $_payin_status_message = array(
+	public $_payin_status_message = [
 		2  => 'Ожидает оплаты',
 		3  => 'Обрабатывается',
 		4  => 'В процессе возврата',
@@ -715,9 +728,9 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		7  => 'Зачислен',
 		8  => 'Отменен платежной системой',
 		9  => 'Возвращен',
-	);
+	];
 
-	public $_payout_status = array(
+	public $_payout_status = [
 		//     status          description                    финальный
 		1  => 'processing', // Ожидает проверки модерацией  - Нет
 		2  => 'processing', // Проверен модерацией          - Нет
@@ -730,9 +743,9 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		9  => 'refused',    // Отменен                      - Да
 		11 => 'refused',    // Возвращен                    - Да
 		12 => 'processing', // Создан, но еще не проведен   - Нет
-	);
+	];
 
-	public $_payout_status_message = array(
+	public $_payout_status_message = [
 		1  => 'Ожидает проверки модерацией',
 		2  => 'Проверен модерацией',
 		3  => 'Отозван модерацией',
@@ -744,31 +757,31 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		9  => 'Отменен',
 		11 => 'Возвращен',
 		12 => 'Создан, но еще не проведен',
-	);
+	];
 
 	public $currency_default = 'USD';
-	public $currency_allow = array(
-		'USD' => array(
+	public $currency_allow = [
+		'USD' => [
 			'currency_id' => 'USD',
 			'active'      => true,
-		),
-		'EUR' => array(
+		],
+		'EUR' => [
 			'currency_id' => 'EUR',
 			'active'      => true,
-		),
-		'UAH' => array(
+		],
+		'UAH' => [
 			'currency_id' => 'UAH',
 			'active'      => true,
-		),
-		'RUB' => array(
+		],
+		'RUB' => [
 			'currency_id' => 'RUB',
 			'active'      => true,
-		),
-	);
+		],
+	];
 
 	// public $fee = 5; // 5%
 
-	public $service_allow = array(
+	public $service_allow = [
 		'Visa',
 		'Mastercard',
 		// 'WebMoney',
@@ -802,7 +815,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		// 'Салоны связи «Связной»',
 		// 'Салоны связи «Цифроград»',
 		// 'Салоны связи «Сотовый мир»',
-	);
+	];
 
 	public $url_result = null;
 	public $url_server = null;
@@ -910,16 +923,16 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$_ = &$options;
 		// START DUMP
 		$payment_api = $this->payment_api;
-		$payment_api->dump(array( 'name' => 'Interkassa', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ));
+		$payment_api->dump([ 'name' => 'Interkassa', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ]);
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
 		// DUMP
-		$payment_api->dump(array( 'var' => $form_options ));
+		$payment_api->dump([ 'var' => $form_options ]);
 		$signature    = $this->api->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'ik_sign' ] = $signature;
 		$url = &$this->URL;
-		$result = array();
+		$result = [];
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
@@ -948,7 +961,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'Interkassa', 'operation_id' => (int)$operation_id ));
+		$payment_api->dump( [ 'name' => 'Interkassa', 'operation_id' => (int)$operation_id ]);
 		/* // test data
 		$this->key( 'private',      'xXceiJgnFURU0lq9' );
 		$this->key( 'private_test', 'AxlrteZIreEpMddf' );
@@ -1019,22 +1032,22 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$signature = $response[ 'ik_sign' ];
 		// check signature
 		if( !$test_mode && empty( $signature ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		$_signature = $this->signature( $response, false );
 		if( !( $test_mode && empty( $signature ) ) && $signature != $_signature ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
-			);
+			];
 			// DUMP
-			$payment_api->dump(array( 'var' => $result ));
+			$payment_api->dump([ 'var' => $result ]);
 			return( $result );
 		}
 		// update operation
@@ -1043,10 +1056,10 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$key_public = $_response[ 'key_public' ];
 		$_key_public = $this->key( 'public' );
 		if( $key_public != $_key_public ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ключ (ik_co_id)',
-			);
+			];
 			return( $result );
 		}
 		// check status
@@ -1055,12 +1068,12 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		// test
 		// $_response[ 'operation_id' ] = '3304';
 		// update account, operation data
-		$result = $this->_api_deposition( array(
+		$result = $this->_api_deposition( [
 			'provider_name'  => 'interkassa',
 			'response'       => $_response,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
-		));
+		]);
 		return( $result );
 	}
 
@@ -1084,10 +1097,10 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			|| !empty( $account[ 'code' ] )
 			|| empty( $account[ 'data' ] )
 		) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Ошибка при запросе бизнес счета',
-			);
+			];
 			return( $result );
 		}
 		// find business account_id
@@ -1099,12 +1112,12 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			}
 		}
 		// get business account
-		$request_option = array(
+		$request_option = [
 			'method_id' => 'checkout',
-			'header'    => array(
+			'header'    => [
 				'Ik-Api-Account-Id: '. $account_id,
-			),
-		);
+			],
+		];
 		$result = $this->api_request( $request_option );
 		return( $result );
 	}
@@ -1114,11 +1127,11 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$account_id = @$this->API_ACCOUNT;
 		if( empty( $account_id ) ) { return( null ); }
 		// business account id
-		$result = array(
-			'header'    => array(
+		$result = [
+			'header'    => [
 				'Ik-Api-Account-Id: '. $account_id,
-			),
-		);
+			],
+		];
 		return( $result );
 	}
 
@@ -1128,32 +1141,32 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		if( is_string( $options ) ) { $_method_id = $options; }
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// method
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'api',
 			'method_id' => @$_method_id,
-		));
+		]);
 		if( empty( $method ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не найден',
-			);
+			];
 			return( $result );
 		}
 		// method handler
 		if( !empty( $method[ 'is_handler' ] ) ) {
 			$handler = 'api_request__'. $method[ 'is_handler' ];
 			if( !method_exists( $this, $handler ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Опработчик метода запроса не найден',
-				);
+				];
 				return( $result );
 			}
 			$result = $this->{ $handler }( $options );
 			return( $result );
 		}
 		// request
-		$request = array();
+		$request = [];
 		!empty( $_option ) && $request = $_option;
 // DEBUG
 // var_dump( $url, $request, $request_option );
@@ -1167,7 +1180,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		if( isset( $object[ 'status' ] ) && $object[ 'status' ] === false ) { return( $object ); }
 		$url = $object;
 		// request options
-		$request_option = array();
+		$request_option = [];
 		@$_is_debug && $request_option[ 'is_debug' ] = true;
 			// api authorization
 			$_request_option = $this->api_authorization( $method );
@@ -1176,7 +1189,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			$_request_option = $this->api_account( $method );
 			is_array( $_request_option ) && $request_option = array_merge_recursive( $request_option, $_request_option );
 			// header
-			is_array( $_header ) && $request_option = array_merge_recursive( $request_option, array( 'header' => $_header ) );
+			is_array( $_header ) && $request_option = array_merge_recursive( $request_option, [ 'header' => $_header ] );
 		// test
 		if( $this->is_test() ) {
 			switch( $_method_id ) {
@@ -1200,15 +1213,15 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// method
-		$method = $this->api_method( array(
+		$method = $this->api_method( [
 			'type'      => 'payout',
 			'method_id' => @$_method_id,
-		));
+		]);
 		if( empty( $method ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Метод запроса не найден',
-			);
+			];
 			return( $result );
 		}
 		$payment_api = &$this->payment_api;
@@ -1216,25 +1229,25 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$_operation_id = (int)$_operation_id;
 		$operation_id = $_operation_id;
 		if( empty( $_operation_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
-			);
+			];
 			return( $result );
 		}
 		$amount = $_amount;
 		// amount min/max
-		$result = $this->amount_limit( array(
+		$result = $this->amount_limit( [
 			'amount'      => $amount,
 			'currency_id' => $currency_id,
 			'method'      => $method,
-		));
+		]);
 		// amount currency conversion
-		$result = $this->currency_conversion_payout( array(
+		$result = $this->currency_conversion_payout( [
 			'options' => $options,
 			'method'  => $method,
 			'amount'  => $amount,
-		));
+		]);
 		if( empty( $result[ 'status' ] ) ) { return( $result ); }
 		$amount_currency       = $result[ 'amount_currency' ];
 		$amount_currency_total = $result[ 'amount_currency_total' ];
@@ -1243,38 +1256,38 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		// default
 		$amount = @$method[ 'is_fee' ] ? $amount_currency_total : $amount_currency;
 		// request
-		$request = array();
+		$request = [];
 		@$method[ 'request_option' ] && $request = $method[ 'request_option' ];
 		// add common fields
 		!@$request[ 'purseId' ] && $request[ 'purseId' ] = $this->PURSE_ID[ $currency_id ];
 		if( ! @$request[ 'purseId' ] ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Требуется настройка кошелька',
-			);
+			];
 			return( $result );
 		}
 		$request[ 'amount'       ] = $amount;
 		$request[ 'operation_id' ] = $operation_id;
 		// transform
-		$this->option_transform( array(
+		$this->option_transform( [
 			'option'    => &$request,
 			'transform' => $this->_api_transform,
-		));
+		]);
 		// add details
-		$request[ 'details' ] = array();
+		$request[ 'details' ] = [];
 		$request_details = $options;
-		$this->option_transform( array(
+		$this->option_transform( [
 			'option'    => &$request_details,
 			'transform' => $this->_api_transform,
-		));
+		]);
 		foreach( $method[ 'field' ] as $key ) {
 			$value = &$request_details[ $key ];
 			if( !isset( $value ) ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Отсутствуют данные запроса: '. $key,
-				);
+				];
 				return( $result );
 			}
 			$request[ 'details' ][ $key ] = &$request_details[ $key ];
@@ -1282,37 +1295,37 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 // DEBUG
 // var_dump( $request );
 		// START DUMP
-		$payment_api->dump( array( 'name' => 'Interkassa', 'operation_id' => $operation_id,
-			'var' => array( 'request' => $request )
-		));
+		$payment_api->dump( [ 'name' => 'Interkassa', 'operation_id' => $operation_id,
+			'var' => [ 'request' => $request ]
+		]);
 		// update processing
 		$sql_datetime = $payment_api->sql_datetime();
-		$operation_options = array(
-			'processing' => array( array(
+		$operation_options = [
+			'processing' => [ [
 				'provider_name' => 'interkassa',
 				'datetime'      => $sql_datetime,
-			)),
-		);
-		$operation_update_data = array(
+			]],
+		];
+		$operation_update_data = [
 			'operation_id'    => $operation_id,
 			'datetime_update' => $sql_datetime,
 			'options'         => $operation_options,
-		);
+		];
 		$payment_api->operation_update( $operation_update_data );
 		// request options
-		$request_option = array(
+		$request_option = [
 			'method_id' => 'withdraw-process',
 			'option'    => $request,
 			'is_debug'  => @$_is_debug,
-		);
+		];
 		$result = $this->api_request( $request_option );
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'response' => $result )));
+		$payment_api->dump( [ 'var' => [ 'response' => $result ]]);
 		if( empty( $result ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно отправить запрос',
-			);
+			];
 			return( $result );
 		}
 		@list( $status, $response ) = $result;
@@ -1366,10 +1379,10 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			'message' => 'Success',
 		); //*/
 		if( !@$response ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Невозможно декодировать ответ: '. var_export( $response, true ),
-			);
+			];
 			return( $result );
 		}
 		// transform reverse
@@ -1380,10 +1393,10 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			}
 		}
 		// result
-		$result = array(
+		$result = [
 			'status'         => &$status_name,
 			'status_message' => &$status_message,
-		);
+		];
 		$status_name         = false;
 		$status_message = null;
 		$state = (int)$response[ 'state' ];
@@ -1412,10 +1425,10 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		}
 		$data[ '_transaction' ] = &$response[ 'data' ][ 'transaction' ];
 		// test mode
-		$this->is_test() && $data += array (
+		$this->is_test() && $data += [
 			'state' => 1,
 			'id'    => 401040, // need real interkassa operation id
-		);
+		];
 		// check status
 		$state = (int)$data[ 'state' ];
 		list( $status_name, $status_message ) = $this->_state( $state
@@ -1425,7 +1438,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$status_message = @$status_message ?: @$data[ 'stateName' ];
 		// update account, operation data
 		$payment_type = 'payment';
-		$operation_data = array(
+		$operation_data = [
 			'operation_id'   => $operation_id,
 			'provider_force' => @$_provider_force,
 			'provider_name'  => 'interkassa',
@@ -1434,14 +1447,14 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			'status_message' => $status_message,
 			'payment_type'   => $payment_type,
 			'response'       => $data,
-		);
+		];
 // DEBUG
 // var_dump( $operation_data ); exit;
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'payment_type' => $payment_type, 'update operation' => $operation_data )));
+		$payment_api->dump( [ 'var' => [ 'payment_type' => $payment_type, 'update operation' => $operation_data ]]);
 		$result = $this->{ '_api_' . $payment_type }( $operation_data );
 		// DUMP
-		$payment_api->dump( array( 'var' => array( 'update result' => $result )));
+		$payment_api->dump( [ 'var' => [ 'update result' => $result ]]);
 		return( $result );
 	}
 

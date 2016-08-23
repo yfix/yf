@@ -1,16 +1,16 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => '//cdn.rawgit.com/yfix/bootstrap-sidebar/master/dist/js/sidebar.js',
-			'css' => '//cdn.rawgit.com/yfix/bootstrap-sidebar/master/dist/css/sidebar.css',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/yfix/bootstrap-sidebar/master/dist/js/sidebar.js',
+			'css' => '//rawgit.yfix.net/yfix/bootstrap-sidebar/master/dist/css/sidebar.css',
+		],
+	],
+	'require' => [
+		'asset' => [
 			'jquery',
 #			'bootstrap-theme',
-		),
-	),
-);
+		],
+	],
+];

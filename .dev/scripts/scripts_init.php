@@ -6,14 +6,21 @@ if (!$project_path) {
 	exit('Error: missing project_path. Example: '.basename($argv[0]).' /home/www/test2/'.PHP_EOL);
 }
 $project_path = rtrim($project_path, '/').'/';
-foreach (array('', '*/', '*/*/', '*/*/*/') as $g) {
+foreach (['', '*/', '*/*/', '*/*/*/'] as $g) {
 	$paths = glob($project_path. $g. 'db_setup.php');
 	if (!$paths || !isset($paths[0])) {
 		continue;
 	}
 	$fp = $paths[0];
 	if ($fp && file_exists($fp)) {
-		require $fp;
+		if (basename(dirname($fp)) == 'config') {
+			$app_path = dirname(dirname($fp)).'/';
+			$override_path = $app_path.'.dev/override.php';
+			if (file_exists($override_path)) {
+				require_once $override_path;
+			}
+		}
+		require_once $fp;
 		break;
 	}
 }
@@ -22,7 +29,7 @@ $PROJECT_CONF['db']['RECONNECT_NUM_TRIES'] = 1;
 $PROJECT_CONF['db']['FIX_DATA_SAFE'] = 0;
 $_GET['object'] = 'not_exists';
 #####
-if (!defined('YF_PATH')) {
+if (!function_exists('main')) {
 	define('YF_PATH', dirname(dirname(__DIR__)).'/');
 	require YF_PATH.'classes/yf_main.class.php';
 	new yf_main('admin', $no_db_connect = false, $auto_init_all = false);

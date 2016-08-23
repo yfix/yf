@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'id' => array(
+return [
+	'fields' => [
+		'id' => [
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'city_raw' => array(
+		],
+		'city_raw' => [
 			'name' => 'city_raw',
 			'type' => 'varchar',
 			'length' => 255,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'address_raw' => array(
+		],
+		'address_raw' => [
 			'name' => 'address_raw',
 			'type' => 'varchar',
 			'length' => 255,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => true,
 			'values' => NULL,
-		),
-		'tel_raw' => array(
+		],
+		'tel_raw' => [
 			'name' => 'tel_raw',
 			'type' => 'varchar',
 			'length' => 255,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'city' => array(
+		],
+		'city' => [
 			'name' => 'city',
 			'type' => 'varchar',
 			'length' => 255,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'branch_no' => array(
+		],
+		'branch_no' => [
 			'name' => 'branch_no',
 			'type' => 'int',
 			'length' => 11,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'address' => array(
+		],
+		'address' => [
 			'name' => 'address',
 			'type' => 'varchar',
 			'length' => 255,
@@ -105,8 +105,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'info' => array(
+		],
+		'info' => [
 			'name' => 'info',
 			'type' => 'varchar',
 			'length' => 255,
@@ -120,8 +120,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'location' => array(
+		],
+		'location' => [
 			'name' => 'location',
 			'type' => 'varchar',
 			'length' => 255,
@@ -135,8 +135,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'tel' => array(
+		],
+		'tel' => [
 			'name' => 'tel',
 			'type' => 'varchar',
 			'length' => 255,
@@ -150,8 +150,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'options' => array(
+		],
+		'options' => [
 			'name' => 'options',
 			'type' => 'text',
 			'length' => NULL,
@@ -165,48 +165,48 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'id' => 'id',
-			),
-		),
-		'city_raw__address_raw' => array(
+			],
+		],
+		'city_raw__address_raw' => [
 			'name' => 'city_raw__address_raw',
 			'type' => 'unique',
-			'columns' => array(
+			'columns' => [
 				'city_raw' => 'city_raw',
 				'address_raw' => 'address_raw',
-			),
-		),
-		'city' => array(
+			],
+		],
+		'city' => [
 			'name' => 'city',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'city' => 'city',
-			),
-		),
-		'branch_no' => array(
+			],
+		],
+		'branch_no' => [
 			'name' => 'branch_no',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'branch_no' => 'branch_no',
-			),
-		),
-		'address' => array(
+			],
+		],
+		'address' => [
 			'name' => 'address',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'address' => 'address',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

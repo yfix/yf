@@ -18,7 +18,7 @@ class yf_shop__order_step_finish{
 		if (empty($order_info)) {
 			return _e("No such order");
 		}
-		$products_ids = array();
+		$products_ids = [];
 		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order_id`=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
@@ -35,7 +35,7 @@ class yf_shop__order_step_finish{
 			$_product = $products_infos[$_product_id];
 			$price = $_info["sum"];
 
-			$dynamic_atts = array();
+			$dynamic_atts = [];
 			if (strlen($_info["attributes"]) > 3) {
 				foreach ((array)unserialize($_info["attributes"]) as $_attr_id) {
 					$_attr_info = $products_atts[$_info["product_id"]][$_attr_id];
@@ -46,7 +46,7 @@ class yf_shop__order_step_finish{
 
 			$URL_PRODUCT_ID = module('shop')->_product_id_url($_product);
 
-			$products[$_info["product_id"]] = array(
+			$products[$_info["product_id"]] = [
 				"name"			=> _prepare_html($_product["name"]),
 				"price"			=> module('shop')->_format_price($price),
 				"sum"			=> module('shop')->_format_price($_info["sum"]),
@@ -56,7 +56,7 @@ class yf_shop__order_step_finish{
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 				"cat_name"		=> _prepare_html(module('shop')->_shop_cats[$_product["cat_id"]]),
 				"cat_url"		=> process_url("./?object=shop&action=products_show&id=".(module('shop')->_shop_cats_all[$_product["cat_id"]]['url'])),
-			);
+			];
 			$total_price += $price * $quantity;
 		}
 		$total_price = $order_info["total_sum"];
@@ -67,19 +67,19 @@ class yf_shop__order_step_finish{
 			$order_info ["phone"]= $order_info["phone"];
 		}
 		$order_info = my_array_merge(module('shop')->COMPANY_INFO, $order_info);
-		$replace2 = my_array_merge($order_info ,array(
+		$replace2 = my_array_merge($order_info ,[
 			"id"		=> $_GET["id"],
 			"products"	=> $products,
 			"ship_cost"	=> module('shop')->_format_price(0),
 			"total_cost"=> module('shop')->_format_price($total_price),
 			"password"	=> "", // Security!
-		));
+		]);
 		// Prepare email template
 		$message = tpl()->parse("shop/invoice_email", $replace2);
 
 		common()->quick_send_mail($order_info["email"], "invoice #".$_GET["id"], $message); 
 
-		$replace = my_array_merge($replace2, array(
+		$replace = my_array_merge($replace2, [
 			"error_message"	=> _e(),
 			"products"		=> $products,
 			"ship_price"	=> module('shop')->_format_price(module('shop')->_ship_types_names[$order_info["ship_type"]]),
@@ -88,7 +88,7 @@ class yf_shop__order_step_finish{
 			"hash"			=> _prepare_html($order_info["hash"]),
 			"back_link"		=> "./?object=shop&action=show",
 			"cats_block"	=> module('shop')->_categories_show(),
-		));
+		]);
 		return tpl()->parse("shop/order_finish", $replace);
 	}
 	

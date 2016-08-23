@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   8 => 
-  array (
+  [
     'id' => '8',
     'object_name' => 'blog',
     'object_id' => '7',
@@ -14,9 +14,9 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '2',
-  ),
+  ],
   9 => 
-  array (
+  [
     'id' => '9',
     'object_name' => 'blog',
     'object_id' => '7',
@@ -31,9 +31,9 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '2',
-  ),
+  ],
   10 => 
-  array (
+  [
     'id' => '10',
     'object_name' => 'news',
     'object_id' => '6',
@@ -46,9 +46,9 @@ return array (
     'ip' => '192.168.1.25',
     'active' => '1',
     'activity' => '0',
-  ),
+  ],
   11 => 
-  array (
+  [
     'id' => '11',
     'object_name' => 'blog',
     'object_id' => '7',
@@ -61,5 +61,5 @@ return array (
     'ip' => '192.168.1.8',
     'active' => '1',
     'activity' => '0',
-  ),
-);
+  ],
+];

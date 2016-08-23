@@ -1,6 +1,6 @@
 <?php
 
-return array('versions' => array('master' => array('js' => '
+return ['versions' => ['master' => ['js' => '
 /*
 * jQuery.ajaxQueue - A queue for ajax requests
 * 
@@ -55,8 +55,8 @@ $.ajaxQueue = function( ajaxOpts ) {
 };
 
 })(jQuery);
-	')),
-	'require' => array(
+	']],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

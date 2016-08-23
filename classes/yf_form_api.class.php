@@ -23,7 +23,7 @@ class yf_form_api {
 		$api->JSON_VULNERABILITY_PROTECTION = false;
 		// admin only
 		if( !main()->ADMIN_ID ) { return $api->_forbidden(); }
-		$result = array();
+		$result = [];
 		// prepare query
 		$db = db()->table( 'user' );
 		// limit
@@ -42,12 +42,12 @@ class yf_form_api {
 			$db->order_by( 'name' );
 		}
 		// prepare text fields
-		$fields_text = array( 'name', 'login', 'email', 'first_name', 'last_name', 'nick', 'phone' );
+		$fields_text = [ 'name', 'login', 'email', 'first_name', 'last_name', 'nick', 'phone' ];
 		foreach( $fields_text as $item ) {
 			$db->where_or( $item, 'like', '%'. _es( $q ) .'%' );
 		}
 		// prepare int fields
-		$fields_int = array( 'id' );
+		$fields_int = [ 'id' ];
 		if( $q_is_int ) {
 			foreach( $fields_int as $item ) {
 				$db->where_or( $item, '=', $q_int );
@@ -66,16 +66,16 @@ class yf_form_api {
 		// var_dump( $data ); exit;
 		// empty
 		if( !$data ) {
-			$result = array(
+			$result = [
 				'more'  => false,
-				'items' => array(),
-			);
+				'items' => [],
+			];
 			return( $result );
 		}
 		// prepare data
-		$fields_json = array( 'login', 'name', 'email' );
+		$fields_json = [ 'login', 'name', 'email' ];
 		foreach( $data as $idx => $item ) {
-			$fields = array();
+			$fields = [];
 			foreach( $fields_json as $field ) {
 				$f = &$item[ $field ];
 				if( !empty( $f ) ) {
@@ -83,15 +83,15 @@ class yf_form_api {
 				}
 			}
 			$fields = empty( $fields ) ? '': implode( '; ', $fields );
-			$result[] = array(
+			$result[] = [
 				'id' => $item[ 'id' ],
 				'text' => sprintf( '%u: %s', $item[ 'id' ], $fields ),
-			);
+			];
 		}
-		$result = array(
+		$result = [
 			'more'  => $more,
 			'items' => $result
-		);
+		];
 		return( $result );
 	}
 

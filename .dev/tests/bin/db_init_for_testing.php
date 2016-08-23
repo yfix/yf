@@ -7,7 +7,7 @@
 $tmp_dir = '/tmp/yf_for_unit_tests/';
 #chdir($tmp_dir);
 
-$_POST = array(
+$_POST = [
 	'install_project_path'				=> $tmp_dir,
 	'install_yf_path'					=> dirname(dirname(__DIR__)).'/',
 	'install_db_host'					=> 'localhost',
@@ -25,6 +25,6 @@ $_POST = array(
 	'install_checkbox_db_drop_existing'	=> '1',
 	'install_checkbox_demo_data'		=> '',
 	'install_checkbox_debug_info'		=> '',
-);
+];
 
 require dirname(dirname(__DIR__)).'/install/install.php';

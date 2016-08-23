@@ -8,7 +8,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	public $KEY_PUBLIC  = null;
 	public $KEY_PRIVATE = null;
 
-	public $_options_transform = array(
+	public $_options_transform = [
 		'title'        => 'description',
 		'operation_id' => 'order_id',
 		'url_result'   => 'result_url',
@@ -16,48 +16,48 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		'key_public'   => 'public_key',
 		'test'         => 'sandbox',
 		'test_mode'    => 'sandbox',
-	);
+	];
 
-	public $_options_transform_reverse = array(
+	public $_options_transform_reverse = [
 		'description' => 'title',
 		'order_id'    => 'operation_id',
 		'public_key'  => 'key_public',
-	);
+	];
 
-	public $_status = array(
+	public $_status = [
 		'success'     => 'success',
 		'wait_secure' => 'in_progress',
 		'failure'     => 'refused',
-	);
+	];
 
 	public $currency_default = 'UAH';
-	public $currency_allow = array(
-		'USD' => array(
+	public $currency_allow = [
+		'USD' => [
 			'currency_id' => 'USD',
 			'active'      => true,
-		),
-		'EUR' => array(
+		],
+		'EUR' => [
 			'currency_id' => 'EUR',
 			'active'      => true,
-		),
-		'UAH' => array(
+		],
+		'UAH' => [
 			'currency_id' => 'UAH',
 			'active'      => true,
-		),
-		'RUB' => array(
+		],
+		'RUB' => [
 			'currency_id' => 'RUB',
 			'active'      => true,
-		),
-	);
+		],
+	];
 
 	public $fee = 2.75; // 2.75%
 
-	public $service_allow = array(
+	public $service_allow = [
 		'Visa',
 		'MasterCard',
 		'LiqPay',
 		'Наличные через терминал ПриватБанк',
-	);
+	];
 
 	public $url_result = null;
 	public $url_server = null;
@@ -125,16 +125,16 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		$_ = &$options;
 		// START DUMP
 		$payment_api = $this->payment_api;
-		$payment_api->dump(array( 'name' => 'LiqPay', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ));
+		$payment_api->dump([ 'name' => 'LiqPay', 'operation_id' => @(int)$_[ 'data' ][ 'operation_id' ] ]);
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
 		// DUMP
-		$payment_api->dump(array( 'var' => $form_options ));
+		$payment_api->dump([ 'var' => $form_options ]);
 		$signature    = $this->signature( $form_options, $is_request = true );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
 		$url = &$this->URL;
-		$result = array();
+		$result = [];
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
@@ -174,15 +174,15 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 				'description' => 'Поплнение счета (LiqPay)',
 			);
 //*/
-		$_response = (array)$this->api->api( 'payment/status', array(
+		$_response = (array)$this->api->api( 'payment/status', [
 			'order_id' => $operation_id,
-		));
+		]);
 		// chech response
 		if( empty( $_response ) || $_response[ 'result' ] != 'ok' ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Ошибка при проверке статуса операции',
-			);
+			];
 			return( $result );
 		}
 		// update operation
@@ -193,12 +193,12 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		if( $this->TEST_MODE && $state == 'sandbox' ) { $state = 'success'; }
 		list( $status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
-		$result = $this->_api_deposition( array(
+		$result = $this->_api_deposition( [
 			'provider_name'  => 'liqpay',
 			'response'       => $response,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
-		));
+		]);
 		return( $result );
 	}
 
@@ -242,19 +242,19 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		// check response signature
 		$signature = $_POST[ 'signature' ];
 		if( empty( $signature ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
-			);
+			];
 			return( $result );
 		}
 		// calc signature
 		$_signature = $this->signature( $_POST, $is_request = false );
 		if( $signature != $_signature ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
-			);
+			];
 			return( $result );
 		}
 		// update operation
@@ -263,10 +263,10 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		$public_key = $response[ 'key_public' ];
 		$_public_key = $this->key( 'public' );
 		if( $public_key != $_public_key ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ключ (merchant)',
-			);
+			];
 			return( $result );
 		}
 		// check status
@@ -275,12 +275,12 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		if( $this->TEST_MODE && $state == 'sandbox' ) { $state = 'success'; }
 		list( $status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
-		$result = $this->_api_deposition( array(
+		$result = $this->_api_deposition( [
 			'provider_name'  => 'liqpay',
 			'response'       => $response,
 			'status_name'    => $status_name,
 			'status_message' => $status_message,
-		));
+		]);
 		return( $result );
 	}
 

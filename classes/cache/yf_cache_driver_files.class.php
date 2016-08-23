@@ -33,7 +33,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 
 	/**
 	*/
-	function get($name, $ttl = 0, $params = array()) {
+	function get($name, $ttl = 0, $params = []) {
 		if (!$this->is_ready()) {
 			return null;
 		}
@@ -82,7 +82,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$keys = array();
+		$keys = [];
 		foreach ((array)$this->_get_all_files() as $path) {
 			$name = substr(trim(basename($path)), strlen($this->FILE_PREFIX), -strlen($this->FILE_EXT));
 			if ($name) {
@@ -133,7 +133,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 		if ($last_modified < (time() - $ttl)) {
 			return null;
 		}
-		$data = array();
+		$data = [];
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -150,7 +150,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 	/**
 	* Do put cache file contents
 	*/
-	function _put_cache_file ($data = array(), $path = '') {
+	function _put_cache_file ($data = [], $path = '') {
 		if (empty($path)) {
 			return null;
 		}
@@ -169,12 +169,12 @@ class yf_cache_driver_files extends yf_cache_driver {
 		foreach ($this->_get_all_files() as $file) {
 			$usage += filesize($file);
 		}
-		return array(
+		return [
 			'hits'		=> null,
 			'misses'	=> null,
 			'uptime'	=> null,
 			'mem_usage'	=> $usage,
 			'mem_avail'	=> disk_free_space($this->CACHE_DIR),
-		);
+		];
 	}
 }

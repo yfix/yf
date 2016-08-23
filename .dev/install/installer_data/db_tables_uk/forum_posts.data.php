@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   7 => 
-  array (
+  [
     'id' => '7',
     'parent' => '2',
     'forum' => '0',
@@ -22,9 +22,9 @@ return array (
     'poster_ip' => '',
     'language' => '1',
     'activity' => '0',
-  ),
+  ],
   8 => 
-  array (
+  [
     'id' => '8',
     'parent' => '2',
     'forum' => '0',
@@ -45,9 +45,9 @@ return array (
     'poster_ip' => '',
     'language' => '1',
     'activity' => '0',
-  ),
+  ],
   9 => 
-  array (
+  [
     'id' => '9',
     'parent' => '2',
     'forum' => '0',
@@ -68,9 +68,9 @@ return array (
     'poster_ip' => '',
     'language' => '1',
     'activity' => '0',
-  ),
+  ],
   10 => 
-  array (
+  [
     'id' => '10',
     'parent' => '2',
     'forum' => '0',
@@ -91,5 +91,5 @@ return array (
     'poster_ip' => '',
     'language' => '1',
     'activity' => '0',
-  ),
-);
+  ],
+];

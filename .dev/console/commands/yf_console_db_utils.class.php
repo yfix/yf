@@ -20,7 +20,7 @@ class yf_console_db_utils extends Command {
 		require_once $yf_paths['db_setup_path'];
 		init_yf();
 
-		$params = array();
+		$params = [];
 		// Parse arguments like that: k1=v1 k2=v2 into array('k1' => 'v1', 'k2' => 'v2')
 		foreach ((array)$input->getArgument('params') as $p) {
 			list($k, $v) = explode('=', trim($p));
@@ -33,7 +33,7 @@ class yf_console_db_utils extends Command {
 
 		$method = $input->getArgument('method');
 
-		$methods = array();
+		$methods = [];
 		$methods[] = 'conf';
 		foreach (get_class_methods( db()->utils() ) as $v) {
 			if (substr($v, 0, 1) !== '_') {
@@ -43,7 +43,7 @@ class yf_console_db_utils extends Command {
 		$methods = array_combine($methods, $methods);
 
 		if ($method == 'conf' || $method == 'get_conf') {
-			$vars = array(
+			$vars = [
 				'DB_TYPE'	=> DB_TYPE,
 				'DB_HOST'	=> DB_HOST,
 				'DB_NAME'	=> DB_NAME,
@@ -51,7 +51,7 @@ class yf_console_db_utils extends Command {
 				'DB_PSWD'	=> DB_PSWD,
 				'DB_PREFIX'	=> DB_PREFIX,
 				'DB_CHARSET'=> DB_CHARSET,
-			);
+			];
 			$output->writeln( _var_export($vars) );
 		} elseif ($method && isset($methods[$method])) {
 			$func = $methods[$method];
@@ -62,11 +62,11 @@ class yf_console_db_utils extends Command {
 			$output->writeln($text);
 		} else {
 			$table = $this->getHelperSet()->get('table');
-			$rows = array();
+			$rows = [];
 			foreach ($methods as $name => $real_name) {
-				$rows[] = array($name);
+				$rows[] = [$name];
 			}
-			$table->setHeaders(array('Sub-commands'))
+			$table->setHeaders(['Sub-commands'])
 				->setRows($rows);
 			$table->render($output);
 		}

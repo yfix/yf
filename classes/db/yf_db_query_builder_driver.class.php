@@ -90,8 +90,8 @@ abstract class yf_db_query_builder_driver {
 	* Return JOINs sql string
 	*/
 	public function _render_joins() {
-		$a = array();
-		foreach (array('join','left_join','inner_join','right_join') as $name) {
+		$a = [];
+		foreach (['join','left_join','inner_join','right_join'] as $name) {
 			$a[$name] = $this->_sql_part_to_array($name);
 			if (empty($a[$name])) {
 				unset($a[$name]);
@@ -104,18 +104,18 @@ abstract class yf_db_query_builder_driver {
 	* Return WHERE sql string
 	*/
 	public function _render_where() {
-		$a = array();
-		foreach (array('where','where_or') as $name) {
+		$a = [];
+		foreach (['where','where_or'] as $name) {
 			$a[$name] = $this->_sql_part_to_array($name);
 			if (empty($a[$name])) {
 				unset($a[$name]);
 			}
 		}
 		if (isset($a['where_or']) && !isset($a['where'])) {
-			$a = array(
+			$a = [
 				'where' => 'WHERE',
 				'where_or' => trim(substr($a['where_or'], 0, strlen('OR '))),
-			);
+			];
 		}
 		return $a ? implode(' ', $a) : false;
 	}
@@ -141,13 +141,13 @@ abstract class yf_db_query_builder_driver {
 		if (!isset($sql_data)) {
 			$sql_data = &$this->_sql;
 		}
-		$a = array();
+		$a = [];
 		// Save 1 call of select()
 		if (empty($sql_data['select']) && !empty($sql_data['from'])) {
 			$this->select();
 		}
 		if (empty($sql_data['select']) || empty($sql_data['from'])) {
-			return array();
+			return [];
 		}
 		// HAVING without GROUP BY makes no sense
 		if (!empty($sql_data['having']) && empty($sql_data['group_by'])) {
@@ -165,7 +165,7 @@ abstract class yf_db_query_builder_driver {
 			}
 			$a[$name] = $this->_sql_part_to_array($name, $sql_data[$name], $config, $return_raw);
 		}
-		$unions = array();
+		$unions = [];
 		foreach ((array)$sql_data['union'] as $query) {
 			$subquery = $this->subquery($query);
 			if ($subquery) {
@@ -182,7 +182,7 @@ abstract class yf_db_query_builder_driver {
 			$a['union'] = implode(PHP_EOL, $unions);
 		}
 		$lock = $sql_data['lock'];
-		if (in_array($lock, array('lock_for_update', 'shared_lock'))) {
+		if (in_array($lock, ['lock_for_update', 'shared_lock'])) {
 			$a['lock'] = ($lock === 'lock_for_update' ? 'FOR UPDATE' : 'LOCK IN SHARE MODE');
 		}
 		return $a;
@@ -191,20 +191,20 @@ abstract class yf_db_query_builder_driver {
 	/**
 	*/
 	public function _get_sql_parts_config($part = null) {
-		$config = array(
-			'select'		=> array('separator' => ',', 'operator' => 'SELECT'),
-			'from'			=> array('separator' => ',', 'operator' => 'FROM'),
-			'join'			=> array('separator' => 'JOIN', 'operator' => 'JOIN'),
-			'left_join'		=> array('separator' => 'LEFT JOIN', 'operator' => 'LEFT JOIN'),
-			'inner_join'	=> array('separator' => 'INNER JOIN', 'operator' => 'INNER JOIN'),
-			'right_join'	=> array('separator' => 'RIGHT JOIN', 'operator' => 'RIGHT JOIN'),
-			'where'			=> array('separator' => 'AND', 'operator' => 'WHERE'),
-			'where_or'		=> array('separator' => 'OR', 'operator' => 'OR'),
-			'group_by'		=> array('separator' => ',', 'operator' => 'GROUP BY'),
-			'having'		=> array('separator' => 'AND', 'operator' => 'HAVING'),
-			'order_by'		=> array('separator' => ',', 'operator' => 'ORDER BY'),
-			'limit'			=> array(),
-		);
+		$config = [
+			'select'		=> ['separator' => ',', 'operator' => 'SELECT'],
+			'from'			=> ['separator' => ',', 'operator' => 'FROM'],
+			'join'			=> ['separator' => 'JOIN', 'operator' => 'JOIN'],
+			'left_join'		=> ['separator' => 'LEFT JOIN', 'operator' => 'LEFT JOIN'],
+			'inner_join'	=> ['separator' => 'INNER JOIN', 'operator' => 'INNER JOIN'],
+			'right_join'	=> ['separator' => 'RIGHT JOIN', 'operator' => 'RIGHT JOIN'],
+			'where'			=> ['separator' => 'AND', 'operator' => 'WHERE'],
+			'where_or'		=> ['separator' => 'OR', 'operator' => 'OR'],
+			'group_by'		=> ['separator' => ',', 'operator' => 'GROUP BY'],
+			'having'		=> ['separator' => 'AND', 'operator' => 'HAVING'],
+			'order_by'		=> ['separator' => ',', 'operator' => 'ORDER BY'],
+			'limit'			=> [],
+		];
 		return isset($part) ? $config[$part] : $config;
 	}
 
@@ -222,26 +222,26 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$operator = $config['operator'];
-		$out = array();
+		$out = [];
 		if (is_array($data)) {
 			if (!isset($config['separator'])) {
 				return false;
 			}
 			if ($return_raw) {
-				$out = array(
+				$out = [
 					'operator' => $operator,
 					'separator' => $config['separator'],
 					'condition' => $data,
-				);
+				];
 			} else {
 				$out = ($operator ? $operator.' ' : ''). implode(' '.$config['separator'].' ', $data);
 			}
 		} else {
 			if ($return_raw) {
-				$out = array(
+				$out = [
 					'operator' => ($operator ? $operator.' ' : ''),
 					'condition' => $data,
-				);
+				];
 			} else {
 				$out = ($operator ? $operator.' ' : ''). $data;
 			}
@@ -326,16 +326,16 @@ abstract class yf_db_query_builder_driver {
 		if (!$table) {
 			return false;
 		}
-		$where = array(
+		$where = [
 			$this->_render_where(),
 			$this->_render_limit(),
-		);
+		];
 		// Implode only non-empty array items
 		$where = implode(' ', array_filter($where, 'strlen'));
 		$key_escaped = $this->_escape_col_name($field);
 		$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.$key_escaped.' = '.$key_escaped.' '.($step < 0 ? '-' : '+'). ' '.abs(intval($step)). (!empty($where) ? ' '.$where : '');
 		if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
-			$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql, 'where' => $where));
+			$this->db->_save_query_revision(__FUNCTION__, $table, ['data' => $sql, 'where' => $where]);
 		}
 		return $as_sql ? $sql : $this->db->query($sql);
 	}
@@ -429,12 +429,12 @@ abstract class yf_db_query_builder_driver {
 		if (!$q) {
 			return false;
 		}
-		$buffer = array();
+		$buffer = [];
 		while ($a = $this->db->fetch_assoc($q)) {
 			$buffer[] = $a;
 			if (count($buffer) >= $num) {
 				$callback($buffer);
-				$buffer = array();
+				$buffer = [];
 			}
 		}
 		if (count($buffer)) {
@@ -513,19 +513,19 @@ abstract class yf_db_query_builder_driver {
 		$remove_as_from_delete = true;
 		if ($remove_as_from_delete) {
 			$table = $this->get_table();
-			$this->_sql['from'] = $table ? array($this->_escape_table_name($table)) : false;
+			$this->_sql['from'] = $table ? [$this->_escape_table_name($table)] : false;
 		}
 		$from = $this->_render_from();
 		if (empty($from)) {
 			return false;
 		}
 		$where = $this->_render_where();
-		$sql = array(
+		$sql = [
 			'DELETE',
 			$from,
 			$where,
 			$this->_render_limit(),
-		);
+		];
 		// Implode only non-empty array items
 		$sql = implode(' ', array_filter($sql, 'strlen'));
 		if ($as_sql) {
@@ -533,7 +533,7 @@ abstract class yf_db_query_builder_driver {
 		}
 		if ($sql) {
 			if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
-				$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $where));
+				$this->db->_save_query_revision(__FUNCTION__, $table, ['data' => $where]);
 			}
 			return $this->db->query($sql);
 		}
@@ -543,11 +543,11 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Insert data into table from query params
 	*/
-	public function insert(array $data, $params = array()) {
+	public function insert(array $data, $params = []) {
 		if (empty($data)) {
 			return false;
 		}
-		$a = array();
+		$a = [];
 		$table = $params['table'] ?: $this->get_table();
 		if (!$table) {
 			return false;
@@ -558,7 +558,7 @@ abstract class yf_db_query_builder_driver {
 		}
 		if ($sql) {
 			if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
-				$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $data));
+				$this->db->_save_query_revision(__FUNCTION__, $table, ['data' => $data]);
 			}
 			$result = $this->db->query($sql);
 			$insert_id = $result ? $this->db->insert_id() : false;
@@ -570,7 +570,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Insert data from query params SQL into other table
 	*/
-	public function insert_into($table, $params = array()) {
+	public function insert_into($table, $params = []) {
 		if (!$table) {
 			return false;
 		}
@@ -589,7 +589,7 @@ abstract class yf_db_query_builder_driver {
 			. ($fields_escaped ? ' ('. $fields_escaped. ')' : '')
 			. ' '. PHP_EOL. $select_sql;
 		if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
-			$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+			$this->db->_save_query_revision(__FUNCTION__, $table, ['data' => $sql]);
 		}
 		return $params['sql'] ? $sql : $this->db->query($sql);
 	}
@@ -597,7 +597,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Return SQL string with INSERT/REPLACE statement for given dataset
 	*/
-	public function compile_insert($table, $data, $params = array()) {
+	public function compile_insert($table, $data, $params = []) {
 		if (!strlen($table) || !is_array($data)) {
 			return false;
 		}
@@ -608,13 +608,13 @@ abstract class yf_db_query_builder_driver {
 			$replace = false;
 		}
 		$escape = isset($params['escape']) ? (bool)$params['escape'] : true;
-		$values_array = array();
+		$values_array = [];
 		// Try to check if array is two-dimensional
 		foreach ((array)$data as $cur_row) {
 			$is_multiple = is_array($cur_row) ? 1 : 0;
 			break;
 		}
-		$cols = array();
+		$cols = [];
 		if ($is_multiple) {
 			foreach ((array)$data as $cur_row) {
 				if (empty($cols)) {
@@ -662,7 +662,7 @@ abstract class yf_db_query_builder_driver {
 				.PHP_EOL.implode(', ', $values_array);
 			if ($on_duplicate_key_update) {
 				$sql .= PHP_EOL.' ON DUPLICATE KEY UPDATE ';
-				$tmp = array();
+				$tmp = [];
 				foreach ((array)$cols as $col => $col_escaped) {
 					if ($col == $primary_col) {
 						continue;
@@ -678,7 +678,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Update current dataset, mathcing query params
 	*/
-	public function update(array $data, $params = array()) {
+	public function update(array $data, $params = []) {
 		$table = $params['table'] ?: $this->get_table();
 		if (!$table) {
 			return false;
@@ -711,7 +711,7 @@ abstract class yf_db_query_builder_driver {
 		}
 		if ($sql) {
 			if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
-				$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+				$this->db->_save_query_revision(__FUNCTION__, $table, ['data' => $sql]);
 			}
 			$result = $this->db->query($sql);
 		}
@@ -721,7 +721,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Return SQL string with UPDATE statement for given dataset
 	*/
-	public function compile_update($table, array $data, $where, $params = array()) {
+	public function compile_update($table, array $data, $where, $params = []) {
 		if (empty($table) || empty($data) || empty($where)) {
 			return false;
 		}
@@ -729,7 +729,7 @@ abstract class yf_db_query_builder_driver {
 		if (is_numeric($where)) {
 			$where = 'id='.intval($where);
 		}
-		$tmp_data = array();
+		$tmp_data = [];
 		$escape = isset($params['escape']) ? (bool)$params['escape'] : true;
 		foreach ((array)$data as $k => $v) {
 			if (empty($k)) {
@@ -757,7 +757,7 @@ abstract class yf_db_query_builder_driver {
 	*	update_batch('user', $data, 'id')
 	*	update_batch('user', $data, array('id', 'cat_id'))
 	*/
-	public function update_batch($table, array $data, $index = null, $only_sql = false, $params = array()) {
+	public function update_batch($table, array $data, $index = null, $only_sql = false, $params = []) {
 		if (!$index) {
 			$index = $this->get_key_name($table);
 		}
@@ -782,13 +782,13 @@ abstract class yf_db_query_builder_driver {
 				$out .= $sql.';'.PHP_EOL;
 			} else {
 				if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
-					$this->db->_save_query_revision(__FUNCTION__, $table, array('data' => $sql));
+					$this->db->_save_query_revision(__FUNCTION__, $table, ['data' => $sql]);
 				}
 				$this->db->query($sql);
 				$affected_rows += $this->db->affected_rows();
 			}
 		}
-		$this->_qb_set = array();
+		$this->_qb_set = [];
 		if ( ! $only_sql) {
 			$out = $affected_rows;
 		}
@@ -805,7 +805,7 @@ abstract class yf_db_query_builder_driver {
 		$index_is_array = is_array($index);
 		foreach ((array)$key as $k => $v) {
 			$index_set = FALSE;
-			$clean = array();
+			$clean = [];
 			foreach ((array)$v as $k2 => $v2) {
 				if ($index_is_array && in_array($k2, $index)) {
 					$index_set = TRUE;
@@ -826,9 +826,9 @@ abstract class yf_db_query_builder_driver {
 	* Related to update_batch()
 	*/
 	public function _get_update_batch_sql($table, $values, $index) {
-		$ids = array();
-		$final = array();
-		$where = array();
+		$ids = [];
+		$final = [];
+		$where = [];
 		$index_is_array = is_array($index);
 		if ($index_is_array) {
 			foreach ($index as $ik => $idx_col) {
@@ -842,7 +842,7 @@ abstract class yf_db_query_builder_driver {
 					if (in_array($field, $index)) {
 						continue;
 					}
-					$when = array();
+					$when = [];
 					foreach ($index as $idx_col) {
 						$when[] = $idx_col.' = '.$val[$idx_col];
 					}
@@ -883,10 +883,10 @@ abstract class yf_db_query_builder_driver {
 	public function select() {
 		$sql = '';
 		$fields = func_get_args();
-		if (!count($fields) || $fields === array(array())) {
+		if (!count($fields) || $fields === [[]]) {
 			$sql = '*';
 		} else {
-			$a = array();
+			$a = [];
 			$fields = $this->_split_by_comma($fields);
 			foreach ((array)$fields as $k => $v) {
 				if (is_string($v)) {
@@ -934,7 +934,7 @@ abstract class yf_db_query_builder_driver {
 	* Alias for "from"
 	*/
 	public function table() {
-		return call_user_func_array(array($this, 'from'), func_get_args());
+		return call_user_func_array([$this, 'from'], func_get_args());
 	}
 
 	/**
@@ -952,7 +952,7 @@ abstract class yf_db_query_builder_driver {
 		if (!count($tables)) {
 			return $this;
 		}
-		$a = array();
+		$a = [];
 		$tables = $this->_split_by_comma($tables);
 		foreach ((array)$tables as $k => $v) {
 			if (is_string($v)) {
@@ -1086,7 +1086,7 @@ abstract class yf_db_query_builder_driver {
 	* Alias for whereid()
 	*/
 	public function where_in() {
-		return call_user_func_array(array($this, 'whereid'), func_get_args());
+		return call_user_func_array([$this, 'whereid'], func_get_args());
 	}
 
 	/**
@@ -1146,7 +1146,7 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function where_any($key, $op = '=', $query) {
 		return $this->where_raw(
-			$this->_escape_col_name($key).' '.(in_array($op, array('=','>','<','>=','<=','!=','<>')) ? $op : '=').' ANY '.$this->subquery($query)
+			$this->_escape_col_name($key).' '.(in_array($op, ['=','>','<','>=','<=','!=','<>']) ? $op : '=').' ANY '.$this->subquery($query)
 		);
 	}
 
@@ -1155,7 +1155,7 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function where_all($key, $op = '=', $query) {
 		return $this->where_raw(
-			$this->_escape_col_name($key).' '.(in_array($op, array('=','>','<','>=','<=','!=','<>')) ? $op : '=').' ALL '.$this->subquery($query)
+			$this->_escape_col_name($key).' '.(in_array($op, ['=','>','<','>=','<=','!=','<>']) ? $op : '=').' ALL '.$this->subquery($query)
 		);
 	}
 
@@ -1195,13 +1195,13 @@ abstract class yf_db_query_builder_driver {
 				$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
 			}
 		}
-		$avail_imploders = array('AND','OR','XOR');
+		$avail_imploders = ['AND','OR','XOR'];
 		$imploder = 'AND';
 		if ($func_name === 'where_or') {
 			$imploder = 'OR';
 		}
 		if (!$sql && $count) {
-			$a = array();
+			$a = [];
 			foreach ((array)$where as $k => $v) {
 				if (is_string($v)) {
 					$v = trim($v);
@@ -1242,7 +1242,7 @@ abstract class yf_db_query_builder_driver {
 						$a[] = $tmp;
 					// array('field1' => 'val1', 'field2' => 'val2')
 					} else {
-						$tmp = array();
+						$tmp = [];
 						foreach ($v as $k2 => $v2) {
 							if (is_string($v2)) {
 								$v2 = trim($v2);
@@ -1296,7 +1296,7 @@ abstract class yf_db_query_builder_driver {
 		// Think that we dealing with 2 arguments passing like this: where('id', 1)
 		// Also this will match: where('id', array(1,2,3))
 		if (strlen($left) && !empty($op) && !is_array($right) && !strlen($right)) {
-			if (strlen($op) && !in_array($op, array('=','!=','<','>','<=','>=','like','not like','is null','is not null','in','not in'))) {
+			if (strlen($op) && !in_array($op, ['=','!=','<','>','<=','>=','like','not like','is null','is not null','in','not in'])) {
 				$right = $op;
 				$op = '=';
 			} elseif (is_array($op) && $this->_is_where_all_numeric($op)) {
@@ -1340,12 +1340,12 @@ abstract class yf_db_query_builder_driver {
 	*	inner_join('suppliers as s', array('s.supplier_id' => 'u.id'))
 	*	left_join('suppliers as s', array('s.supplier_id' => 'u.id', 's.other_id' => 'u.other_id'))
 	*/
-	public function join($table, $on, $join_type = '') {
-		$join_types = array(
+	public function join($table, $on, $join_type = '', $is_select = false) {
+		$join_types = [
 			'left',
 			'right',
 			'inner',
-		);
+		];
 		if (!in_array($join_type, $join_types)) {
 			$join_type = '';
 		}
@@ -1361,7 +1361,7 @@ abstract class yf_db_query_builder_driver {
 				$as = $m[2];
 			}
 		}
-		$_on = array();
+		$_on = [];
 		if (is_array($on)) {
 			foreach ((array)$on as $k => $v) {
 				if (is_numeric($k)) {
@@ -1386,7 +1386,12 @@ abstract class yf_db_query_builder_driver {
 		}
 		$sql = '';
 		if (is_string($table) && !empty($_on)) {
-			$sql = $this->_escape_table_name(trim($table)). ($as ? ' AS '.$this->_escape_key(trim($as)) : '').' ON '.implode(' AND ', $_on);
+			if( $is_select ) {
+				$table_name = $table;
+			} else {
+				$table_name = $this->_escape_table_name(trim($table));
+			}
+			$sql = $table_name. ($as ? ' AS '.$this->_escape_key(trim($as)) : '').' ON '.implode(' AND ', $_on);
 		}
 		if ($sql) {
 			$this->_sql[($join_type ? $join_type.'_' : '').__FUNCTION__][] = $sql;
@@ -1396,22 +1401,57 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	public function left_join($table, $on) {
-		return $this->join($table, $on, 'left');
+	public function left_join($table, $on, $is_select = false) {
+		return $this->join($table, $on, 'left', $is_select);
 	}
 
 	/**
 	*/
-	public function right_join($table, $on) {
-		return $this->join($table, $on, 'right');
+	public function right_join($table, $on, $is_select = false) {
+		return $this->join($table, $on, 'right', $is_select);
 	}
 
 	/**
 	*/
-	public function inner_join($table, $on) {
-		return $this->join($table, $on, 'inner');
+	public function inner_join($table, $on, $is_select = false) {
+		return $this->join($table, $on, 'inner', $is_select);
 	}
 
+	/**
+	* Add raw joint part. Be careful with it, no escaping or wrapping here!
+	*	join_raw(left join table as t on t.id = t1.id)
+	*/
+	public function join_raw($join_type, $sql) {
+		$join_types = [
+			'left',
+			'right',
+			'inner',
+		];
+		if (!in_array($join_type, $join_types)) {
+			$join_type = '';
+		}
+		$this->_sql[($join_type ? $join_type.'_' : ''). 'join'][] = $sql;
+		return $this;
+	}
+	
+	/**
+	*/
+	public function left_join_raw($sql) {
+		return $this->join_raw('left', $sql);
+	}
+
+	/**
+	*/
+	public function right_join_raw($sql) {
+		return $this->join_raw('right', $sql);
+	}
+
+	/**
+	*/
+	public function inner_join_raw($sql) {
+		return $this->join_raw('inner', $sql);
+	}
+	
 	/**
 	* Examples:
 	*	group_by('user_group')
@@ -1423,7 +1463,7 @@ abstract class yf_db_query_builder_driver {
 		if (!count($items)) {
 			return $this;
 		}
-		$a = array();
+		$a = [];
 		$items = $this->_split_by_comma($items);
 		foreach ((array)$items as $k => $v) {
 			if (is_string($v)) {
@@ -1466,7 +1506,7 @@ abstract class yf_db_query_builder_driver {
 		if (!count($where)) {
 			return $this;
 		}
-		$a = array();
+		$a = [];
 		$where = $this->_split_by_comma($where);
 		foreach ((array)$where as $k => $v) {
 			if (is_string($v)) {
@@ -1477,7 +1517,7 @@ abstract class yf_db_query_builder_driver {
 					$a[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
 				} else {
 					$v = strtoupper(trim($v));
-					if (in_array($v, array('AND','OR','XOR'))) {
+					if (in_array($v, ['AND','OR','XOR'])) {
 						$a[] = $v;
 					}
 				}
@@ -1487,7 +1527,7 @@ abstract class yf_db_query_builder_driver {
 					$a[] = $this->_process_where_cond($v[0], $v[1], $v[2]);
 				// array('field1' => 'val1', 'field2' => 'val2')
 				} else {
-					$tmp = array();
+					$tmp = [];
 					foreach ($v as $k2 => $v2) {
 						$v2 = trim($v2);
 						$_tmp = '';
@@ -1532,10 +1572,10 @@ abstract class yf_db_query_builder_driver {
 			unset( $this->_sql[__FUNCTION__] );
 			return $this;
 		}
-		if ($count === 2 && !empty($items[0]) && in_array(trim(strtoupper($items[1])), array('ASC','DESC'))) {
-			$items = array(array($items[0] => $items[1]));
+		if ($count === 2 && !empty($items[0]) && in_array(trim(strtoupper($items[1])), ['ASC','DESC'])) {
+			$items = [[$items[0] => $items[1]]];
 		}
-		$a = array();
+		$a = [];
 		$items = $this->_split_by_comma($items);
 		foreach ((array)$items as $k => $v) {
 			if (is_string($v)) {
@@ -1548,8 +1588,8 @@ abstract class yf_db_query_builder_driver {
 					$a[] = $this->_escape_expr($v).' ASC';
 				}
 			} elseif (is_array($v)) {
-				if (count($v) === 2 && !empty($v[0]) && in_array(trim(strtoupper($v[1])), array('ASC','DESC'))) {
-					$v = array($v[0] => $v[1]);
+				if (count($v) === 2 && !empty($v[0]) && in_array(trim(strtoupper($v[1])), ['ASC','DESC'])) {
+					$v = [$v[0] => $v[1]];
 				}
 				foreach ((array)$v as $k2 => $v2) {
 					if (!is_string($v2)) {
@@ -1561,7 +1601,7 @@ abstract class yf_db_query_builder_driver {
 					} else {
 						$direction = 'ASC';
 						$v2 = trim($v2);
-						if (is_string($k2) && in_array(strtoupper($v2), array('ASC','DESC'))) {
+						if (is_string($k2) && in_array(strtoupper($v2), ['ASC','DESC'])) {
 							$direction = $v2;
 							$v2 = trim($k2);
 						}
@@ -1737,7 +1777,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	*/
 	public function _ids_sql_from_array(array $ids) {
-		$out = array();
+		$out = [];
 		foreach ((array)$ids as $v) {
 			if (is_array($v)) {
 				$func = __FUNCTION__;

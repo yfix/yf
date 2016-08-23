@@ -1,13 +1,13 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => '//cdn.rawgit.com/yfix/jstree/master/dist/jstree.min.js',
-			'css' => '//cdn.rawgit.com/yfix/jstree/master/dist/themes/default/style.min.css',
-		),
-	),
-	'require' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => '//rawgit.yfix.net/yfix/jstree/master/dist/jstree.min.js',
+			'css' => '//rawgit.yfix.net/yfix/jstree/master/dist/themes/default/style.min.css',
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

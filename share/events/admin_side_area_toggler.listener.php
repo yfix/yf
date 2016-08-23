@@ -4,10 +4,10 @@ MAIN_TYPE_ADMIN && events()->listen('block.prepend[center_area]', function() {
 	if (!is_common_page()) {
 		return ;
 	}
-	$icons = array(
+	$icons = [
 		'open'		=> 'icon icon-chevron-right fa fa-chevron-right',
 		'closed'	=> 'icon icon-chevron-left fa fa-chevron-left',
-	);
+	];
 	$id = 'yf_side_panel_toggler';
 	$cookie_name = 'yf_side_panel_hidden';
 	$is_hidden = (bool)$_COOKIE[$cookie_name];

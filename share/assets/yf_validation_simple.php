@@ -2,10 +2,10 @@
 
 return function() {
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => [
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
 '
 	var yf_ajax_link_validate = "'.url_user('/dynamic/ajax_validate').'";
@@ -20,7 +20,9 @@ return array(
 ',
 <<<END
 $(function(){
-	$("input[data-ajax-validate]", "form").on("blur", function(i){
+	$("input[data-ajax-validate]", "form")
+	.not("[data-fv-field]")
+	.on("blur", function(i) {
 		var _this = $(this);
 		var _val = _this.val();
 		if (!_val.length) {
@@ -115,7 +117,10 @@ $(function(){
 	}
 
 	// HTML5 custom validation messages
-	$("input, textarea", "form, select").not("[type=submit]").not("[type=image]")/*.not("[data-ajax-validate]")*/.on("change keyup invalid valid", function() {
+	$("input, textarea", "form, select")
+	.filter(":not([type=submit]):not([type=image])")
+	.filter(function() { return $(this).data("data-fv-field") != undefined; })
+	.on("change keyup invalid valid", function() {
 		var _this = $(this)
 		var textfield = _this.get(0);
 		var control_group = _this.closest(".control-group");
@@ -146,11 +151,11 @@ $(function(){
 	})
 });
 END
-		)),
-	),
-	'require' => array(
+		]],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];
 
 };

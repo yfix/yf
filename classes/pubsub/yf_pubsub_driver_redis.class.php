@@ -15,7 +15,7 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 
 	/**
 	*/
-	function conf($params = array()) {
+	function conf($params = []) {
 		!$this->_is_connection && $this->connect();
 		$this->_connection_pub->conf($params);
 		$this->_connection_sub->conf($params);
@@ -24,7 +24,7 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 
 	/**
 	*/
-	function connect($params = array()) {
+	function connect($params = []) {
 		if (!$this->_is_connection) {
 			$this->_connection_pub = clone redis($params);
 			$this->_connection_sub = clone redis($params);

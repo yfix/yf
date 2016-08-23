@@ -3,9 +3,9 @@
 return DEBUG_MODE ? function() {
 	$assets = _class('assets');
 	$bs2_slate_css = '//netdna.bootstrapcdn.com/bootswatch/2.3.2/slate/bootstrap.min.css';
-	return array(
-		'versions' => array('master' => array(
-			'js' => array(
+	return [
+		'versions' => ['master' => [
+			'js' => [
 				'content' => '
 					var debug_console_override_head = [
 						\'<l\' + \'ink href="'.$bs2_slate_css.'" rel="stylesheet">\',
@@ -14,13 +14,13 @@ return DEBUG_MODE ? function() {
 						\'<sc\' + \'ript src="'.$assets->get_asset('bootstrap2', 'js').'"></sc\' + \'ript>\'
 					];
 				',
-				'params' => array(
+				'params' => [
 					'class' => 'yf_debug_console_asset',
-				),
-			),
-		)),
-		'config' => array(
+				],
+			],
+		]],
+		'config' => [
 			'no_cache' => true,
-		),
-	);
+		],
+	];
 } : null;

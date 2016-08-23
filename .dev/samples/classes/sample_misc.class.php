@@ -9,7 +9,7 @@ class sample_misc {
 
 	/***/
 	function _hook_side_column() {
-		$items = array();
+		$items = [];
 		$url = url('/@object');
 		$methods = $this->_get_misc_docs();
 		$sample_methods = get_class_methods($this);
@@ -24,10 +24,10 @@ class sample_misc {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = array(
+			$items[] = [
 				'name'	=> $name. (!in_array($name, $sample_methods) ? ' <sup class="text-error text-danger"><small>TODO</small></sup>' : ''),
 				'link'	=> url('/@object/@action/'.urlencode($name)),
-			);
+			];
 		}
 		return _class('html')->navlist($items);
 	}
@@ -54,12 +54,12 @@ class sample_misc {
 			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'doc_'.$name).'</section>';
 		}
 		$url = rtrim(url('/@object/@action/')).'/';
-		$data = array();
+		$data = [];
 		foreach ((array)$this->_get_misc_docs($dir) as $name) {
-			$data[$name] = array(
+			$data[$name] = [
 				'name'	=> $name,
 				'link'	=> $url. urlencode($name),
-			);
+			];
 		}
 		ksort($data);
 		return html()->li($data);
@@ -71,7 +71,7 @@ class sample_misc {
 		$dir_len = strlen($dir);
 		$ext = '.stpl';
 		$ext_len = strlen($ext);
-		$names = array();
+		$names = [];
 		foreach ((array)_class('dir')->rglob($dir) as $path) {
 			if (substr($path, -$ext_len) !== $ext) {
 				continue;

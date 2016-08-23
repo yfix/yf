@@ -26,7 +26,7 @@ class yf_captcha {
 	/** @var int Result image height (in pixels) */
 	public $image_height	= 30;
 	/** @var array Allowed symbols to use in randomizer */
-	public $symbols_array	= array();
+	public $symbols_array	= [];
 	/** @var int Number of symbols to generate */
 	public $num_symbols		= 5;
 	/** @var int Middle value (will be bounced randomly with +2 and -2) */
@@ -42,39 +42,39 @@ class yf_captcha {
 	/** @var int @conf_skip Image background color */
 	public $bg_color		= 0x00ffffff; // @var 0x AA RR GG BB (alpha, red, green, blue)
 	/** @var array @conf_skip Colors arrays */
-	public $text_colors		= array(
+	public $text_colors		= [
 		0x162A7C8F,
 		0x1628508C,
 		0x16A12F9B,
 		0x1619621D,
 		0x16622A19,
-	);
+	];
 	/** @var array @conf_skip */
-	public $rect_colors		= array(
+	public $rect_colors		= [
 		0x702A7C8F,
 		0x7028508C,
 		0x70A12F9B,
 		0x7019621D,
 		0x70622A19,
-	);
+	];
 	/** @var array @conf_skip */
-	public $line_colors		= array(
+	public $line_colors		= [
 		0x202A7C8F,
 		0x2028508C,
-	);
+	];
 	/** @var array @conf_skip */
-	public $ellipse_colors	= array(
+	public $ellipse_colors	= [
 		0x702A7C8F,
 		0x7028508C,
 		0x70A12F9B,
 		0x7019621D,
 		0x70622A19,
-	);
+	];
 	/** @var array @conf_skip */
-	public $pixel_colors	= array(
+	public $pixel_colors	= [
 		0x202A7C8F,
 		0x2028508C,
-	);
+	];
 	/** @var CAPTCHA enabled */
 	public $ENABLED = true;
 
@@ -97,7 +97,7 @@ class yf_captcha {
 		$lib_path	= PROJECT_PATH. 'fonts/';
 		$fwork_path	= YF_PATH. 'share/captcha_fonts/';
 		$path = file_exists($lib_path) ? $lib_path : $fwork_path;
-		$this->set_font_path(array($path.'pioneer.ttf', $path.'banco.ttf', $path.'glast.ttf'));
+		$this->set_font_path([$path.'pioneer.ttf', $path.'banco.ttf', $path.'glast.ttf']);
 		$this->set_symbols_array(1);
 	}
 
@@ -124,7 +124,7 @@ class yf_captcha {
 	/**
 	* Set symbols array contetns
 	*/
-	function set_symbols_array($input = array()) {
+	function set_symbols_array($input = []) {
 		if (empty($input)) {
 			return false;
 		}
@@ -183,7 +183,7 @@ class yf_captcha {
 	/**
 	* Show HTML block for the CAPTCHA image (complete, with input and it's validation)
 	*/
-	function show_block($location = '', $stpl_name = '', $extra = array()) {
+	function show_block($location = '', $stpl_name = '', $extra = []) {
 		if (!$this->ENABLED) {
 			return false;
 		}
@@ -202,13 +202,13 @@ class yf_captcha {
 		if (empty($stpl_name)) {
 			$stpl_name = 'system/captcha_block';
 		}
-		$replace = array(
+		$replace = [
 			'img_src'		=> process_url($location),
 			'num_symbols'	=> intval($this->num_symbols),
 			'input_attrs'	=> $extra['input_attrs'],
 			//'value'			=> $extra['value'],
 			'value'			=> '',
-		);
+		];
 		return tpl()->parse($stpl_name, $replace);
 	}
 

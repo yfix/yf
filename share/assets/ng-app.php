@@ -14,24 +14,24 @@ $css = <<<'EOS'
 }
 EOS;
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => [
 				'content' => $js,
-				'params' => array(
+				'params' => [
 					'is_last' => true,
-				),
-			),
-			'css' => array(
+				],
+			],
+			'css' => [
 				'content' => $css,
-			),
-		),
-	),
-	'require' => array(
-		'asset' => array(
+			],
+		],
+	],
+	'require' => [
+		'asset' => [
 			'ng-modules',
 			'angular-full',
-		),
-	),
-);
+		],
+	],
+];

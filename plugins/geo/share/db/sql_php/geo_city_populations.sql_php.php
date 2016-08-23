@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'country' => array(
+return [
+	'fields' => [
+		'country' => [
 			'name' => 'country',
 			'type' => 'char',
 			'length' => 2,
@@ -15,8 +15,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'city' => array(
+		],
+		'city' => [
 			'name' => 'city',
 			'type' => 'varchar',
 			'length' => 32,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'region' => array(
+		],
+		'region' => [
 			'name' => 'region',
 			'type' => 'char',
 			'length' => 3,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'population' => array(
+		],
+		'population' => [
 			'name' => 'population',
 			'type' => 'int',
 			'length' => 8,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'latitude' => array(
+		],
+		'latitude' => [
 			'name' => 'latitude',
 			'type' => 'float',
 			'length' => NULL,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'longitude' => array(
+		],
+		'longitude' => [
 			'name' => 'longitude',
 			'type' => 'float',
 			'length' => NULL,
@@ -90,26 +90,26 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'country' => array(
+		],
+	],
+	'indexes' => [
+		'country' => [
 			'name' => 'country',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'country' => 'country',
-			),
-		),
-		'population' => array(
+			],
+		],
+		'population' => [
 			'name' => 'population',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'population' => 'population',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

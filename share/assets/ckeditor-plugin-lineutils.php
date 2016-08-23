@@ -1,17 +1,17 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => 'CKEDITOR.plugins.addExternal("lineutils", "https://cdn.rawgit.com/ckeditor/ckeditor-releases/master/plugins/lineutils/plugin.js");',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => 'CKEDITOR.plugins.addExternal("lineutils", "https://rawgit.yfix.net/ckeditor/ckeditor-releases/master/plugins/lineutils/plugin.js");',
+		],
+	],
+	'require' => [
+		'asset' => [
 			'ckeditor',
-		),
-	),
-	'config' => array(
+		],
+	],
+	'config' => [
 		'no_cache' => true,
-	),
-);
+	],
+];

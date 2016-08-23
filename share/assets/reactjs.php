@@ -1,9 +1,9 @@
 <?php
 
-return array(
-	'versions' => array(
-		'0.12.1' => array(
-			'js' => '//cdnjs.cloudflare.com/ajax/libs/react/0.12.1/react-with-addons.min.js',
-		),
-	),
-);
+return [
+	'versions' => [
+		'15.0.1' => [
+			'js' => '//cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-with-addons.min.js',
+		],
+	],
+];

@@ -14,7 +14,7 @@ class yf_wrapper_queue {
 	function __call($name, $args) {
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			return call_user_func_array(array($this->_connection, $name), $args);
+			return call_user_func_array([$this->_connection, $name], $args);
 		}
 		return main()->extend_call($this, $name, $args);
 	}
@@ -41,9 +41,9 @@ class yf_wrapper_queue {
 	/**
 	* Add new item into named queue
 	*/
-	function add($text = false, $queue = false) {
+	function add($queue, $what) {
 		!$this->_connection && $this->connect();
-		return $this->_connection->add($text, $queue);
+		return $this->_connection->add($queue, $what);
 	}
 
 	/**
@@ -73,7 +73,7 @@ class yf_wrapper_queue {
 	/**
 	* Configure driver
 	*/
-	function conf($params = array()) {
+	function conf($params = []) {
 		!$this->_connection && $this->connect();
 		return $this->_connection->conf($params);
 	}
@@ -81,7 +81,7 @@ class yf_wrapper_queue {
 	/**
 	* Listen to queue
 	*/
-	function listen($qname, $callback, $params = array()) {
+	function listen($qname, $callback, $params = []) {
 		if (!$this->is_ready()) {
 			return false;
 		}

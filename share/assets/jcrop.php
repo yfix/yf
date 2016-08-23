@@ -1,13 +1,13 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'css' => '//cdn.rawgit.com/yfix/Jcrop/master/css/jquery.Jcrop.min.css',
-			'js' => '//cdn.rawgit.com/yfix/Jcrop/master/js/jquery.Jcrop.min.js',
-		),
-	),
-	'require' => array(
+return [
+	'versions' => [
+		'master' => [
+			'css' => '//rawgit.yfix.net/yfix/Jcrop/master/css/jquery.Jcrop.min.css',
+			'js' => '//rawgit.yfix.net/yfix/Jcrop/master/js/jquery.Jcrop.min.js',
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

@@ -13,10 +13,10 @@ class yf_manage_currencies {
 	*/
 	function show() {
 		$filter_name = $_GET['object'].'__show';
-		return table('SELECT * FROM '.db('currencies'), array(
+		return table('SELECT * FROM '.db('currencies'), [
 				'filter' => $_SESSION[$filter_name],
-				'filter_params' => array('name' => 'like'),
-			))
+				'filter_params' => ['name' => 'like'],
+			])
 			->text('id')
 			->text('name')
 			->text('sign')
@@ -36,11 +36,11 @@ class yf_manage_currencies {
 		}
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
-			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_update_if_ok('currencies', array('name','sign','active'), 'id="'._es($a['id']).'"')
+			->validate(['name' => 'trim|required|alpha-dash'])
+			->db_update_if_ok('currencies', ['name','sign','active'], 'id="'._es($a['id']).'"')
 			->on_after_update(function() {
-				cache_del(array('currencies'));
-				common()->admin_wall_add(array('icon updated: '.$_POST['name'].'', $a['id']));
+				cache_del(['currencies']);
+				common()->admin_wall_add(['icon updated: '.$_POST['name'].'', $a['id']]);
 			})
 			->text('name')
 			->text('sign')
@@ -53,11 +53,11 @@ class yf_manage_currencies {
 	function add() {
 		$a = $_POST;
 		return form($a)
-			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_insert_if_ok('currencies', array('name','id','sign','active'), array())
+			->validate(['name' => 'trim|required|alpha-dash'])
+			->db_insert_if_ok('currencies', ['name','id','sign','active'], [])
 			->on_after_update(function() {
-				cache_del(array('currencies'));
-				common()->admin_wall_add(array('icon added: '.$_POST['name'].'', db()->insert_id()));
+				cache_del(['currencies']);
+				common()->admin_wall_add(['icon added: '.$_POST['name'].'', db()->insert_id()]);
 			})
 			->text('id')
 			->text('name')
@@ -69,13 +69,13 @@ class yf_manage_currencies {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => 'currencies'));
+		return _class('admin_methods')->delete(['table' => 'currencies']);
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => 'currencies'));
+		return _class('admin_methods')->active(['table' => 'currencies']);
 	}
 
 	/**
@@ -87,33 +87,33 @@ class yf_manage_currencies {
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
+		if (!in_array($_GET['action'], ['show'])) {
 			return false;
 		}
 		$filter_name = $_GET['object'].'__show';
-		$r = array(
+		$r = [
 			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
 			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
-		$order_fields = array(
+		];
+		$order_fields = [
 			'name' => 'name',
-		);
-		$per_page = array('' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000);
-		return form($r, array(
+		];
+		$per_page = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000];
+		return form($r, [
 				'selected'	=> $_SESSION[$filter_name],
 				'class' => 'form-vertical',
-			))
-			->text('name', array('class' => 'input-medium'))
-			->select_box('per_page', $per_page, array('class' => 'input-small'))
-			->select_box('order_by', $order_fields, array('show_text' => 1, 'class' => 'input-medium'))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			])
+			->text('name', ['class' => 'input-medium'])
+			->select_box('per_page', $per_page, ['class' => 'input-small'])
+			->select_box('order_by', $order_fields, ['show_text' => 1, 'class' => 'input-medium'])
+			->radio_box('order_direction', ['asc'=>'Ascending','desc'=>'Descending'], ['horizontal' => 1, 'translate' => 1])
 			->save_and_clear();
 		;
 	}
 
 	/**
 	*/
-	function _hook_widget__currencies_list ($params = array()) {
+	function _hook_widget__currencies_list ($params = []) {
 // TODO
 	}
 }

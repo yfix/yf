@@ -10,14 +10,14 @@ function data_get_latest_currencies() {
 	}
 	$xml_string = file_get_contents($f);
 	$xml = simplexml_load_string($xml_string);
-	$data = array();
+	$data = [];
 	foreach ($xml->CcyTbl->CcyNtry as $item) {
 		$item = (array)$item;
 		$id = $item['Ccy'];
 		if (!$id) {
 			continue;
 		}
-		$data[$id] = array(
+		$data[$id] = [
 			'id'	=> $item['Ccy'],
 			'name'	=> $item['CcyNm'],
 			'number'=> (int)$item['CcyNbr'],
@@ -26,7 +26,7 @@ function data_get_latest_currencies() {
 			'country_code' => '', // TODO
 			'sign'	=> '', // TODO
 			'active' => '0',
-		);
+		];
 	}
 	///////////
 	$url2 = 'https://en.wikipedia.org/wiki/List_of_circulating_currencies';
@@ -40,7 +40,7 @@ function data_get_latest_currencies() {
 	$html3 = file_get_contents($f3);
 	$regex31 = '~<tr[^>]*>(.*?)</tr>~ims';
 	preg_match_all($regex31, $html3, $m31);
-	$tmp_tbl = array();
+	$tmp_tbl = [];
 	foreach ($m31[1] as $v31) {
 		$regex32 = '~<td[^>]*>(.*?)</td>~ims';
 		preg_match_all($regex32, $v31, $m32);
@@ -72,7 +72,7 @@ function data_get_latest_currencies() {
 			$data[$id]['sign'] = $sign;
 		}
 	}
-	foreach (array('USD','EUR','CHF','JPY','UAH','RUB') as $c) {
+	foreach (['USD','EUR','CHF','JPY','UAH','RUB'] as $c) {
 		$data[$c]['active'] = 1;
 	}
 

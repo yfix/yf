@@ -30,80 +30,80 @@ class yf_manage_transfer {
 		$filter_name = $object . '__' . $action;
 		$filter      = $_SESSION[ $filter_name ];
 		// url
-		$url = array(
+		$url = [
 			'api_user_search' => url_admin( '/api/manage_transfer/user_search' ),
-			'create' => url_admin( array(
+			'create' => url_admin( [
 				'object'       => $object,
 				'action'       => 'create',
-			)),
-			'list' => url_admin( array(
+			]),
+			'list' => url_admin( [
 				'object'       => $object,
-			)),
-			'view' => url_admin( array(
+			]),
+			'view' => url_admin( [
 				'object'       => $object,
 				'action'       => 'view',
 				'operation_id' => '%operation_id',
-			)),
-			'balance' => url_admin( array(
+			]),
+			'balance' => url_admin( [
 				'object'     => 'manage_payment',
 				'action'     => 'balance',
 				'user_id'    => '%user_id',
 				'account_id' => '%account_id',
-			)),
-			'user' => url_admin( array(
+			]),
+			'user' => url_admin( [
 				'object' => 'members',
 				'action' => 'edit',
 				'id'     => '%user_id',
-			)),
+			]),
 
-			'request' => url_admin( array(
+			'request' => url_admin( [
 				'object'       => $object,
 				'action'       => 'request',
 				'operation_id' => '%operation_id',
-			)),
-			'request_interkassa' => url_admin( array(
+			]),
+			'request_interkassa' => url_admin( [
 				'object'       => $object,
 				'action'       => 'request_interkassa',
 				'operation_id' => '%operation_id',
-			)),
-			'check_interkassa' => url_admin( array(
+			]),
+			'check_interkassa' => url_admin( [
 				'object'       => $object,
 				'action'       => 'check_interkassa',
 				'operation_id' => '%operation_id',
-			)),
-			'check_all_interkassa' => url_admin( array(
+			]),
+			'check_all_interkassa' => url_admin( [
 				'object'       => $object,
 				'action'       => 'check_all_interkassa',
-			)),
-			'status_processing' => url_admin( array(
+			]),
+			'status_processing' => url_admin( [
 				'object'       => $object,
 				'action'       => 'status',
 				'status'       => 'processing',
 				'operation_id' => '%operation_id',
-			)),
-			'status_success' => url_admin( array(
+			]),
+			'status_success' => url_admin( [
 				'object'       => $object,
 				'action'       => 'status',
 				'status'       => 'success',
 				'operation_id' => '%operation_id',
-			)),
-			'status_refused' => url_admin( array(
+			]),
+			'status_refused' => url_admin( [
 				'object'       => $object,
 				'action'       => 'status',
 				'status'       => 'refused',
 				'operation_id' => '%operation_id',
-			)),
-			'csv' => url_admin( array(
+			]),
+			'csv' => url_admin( [
 				'object'       => $object,
 				'action'       => 'csv',
 				'operation_id' => '%operation_id',
-			)),
-			'csv_request' => url_admin( array(
+			]),
+			'csv_request' => url_admin( [
 				'object'       => $object,
 				'action'       => 'csv_request',
 				'operation_id' => '%operation_id',
-			)),
-		);
+			]),
+		];
 	}
 
 	function _url( $name, $replace = null ) {
@@ -117,31 +117,31 @@ class yf_manage_transfer {
 
 	function _filter_form_show( $filter, $replace ) {
 		// order
-		$order_fields = array(
+		$order_fields = [
 			'o.operation_id'    => 'номер операций',
 			'o.amount'          => 'сумма',
 			'a.balance'         => 'баланс',
 			'o.datetime_start'  => 'дата создания',
 			'o.datetime_update' => 'дата обновления',
-		);
+		];
 		// provider
 		$payment_api = &$this->payment_api;
 		$providers = $payment_api->provider();
-		$providers__select_box = array();
+		$providers__select_box = [];
 		foreach( $providers as $id => $item ) {
 			$providers__select_box[ $id ] = $item[ 'title' ];
 		}
 		// status
 		$payment_status = $payment_api->get_status();
-		$payment_status__select_box = array();
+		$payment_status__select_box = [];
 		$payment_status__select_box[ -1 ] = 'ВСЕ СТАТУСЫ';
 		foreach( $payment_status as $id => $item ) {
 			$payment_status__select_box[ $id ] = $item[ 'title' ];
 		}
 		// render
-		$result = form( $replace, array(
+		$result = form( $replace, [
 				'selected' => $filter,
-			))
+			])
 			->text( 'operation_id', 'Номер операции'     )
 			->text( 'user_id'     , 'Номер пользователя' )
 			->text( 'name'        , 'Имя'                )
@@ -149,10 +149,10 @@ class yf_manage_transfer {
 			->text( 'amount__and' , 'Сумма до'           )
 			->text( 'balance'     , 'Баланс от'          )
 			->text( 'balance__and', 'Баланс до'          )
-			->select_box( 'status_id'  , $payment_status__select_box, array( 'show_text' => 'статус'    , 'desc' => 'Статус'     ) )
-			->select_box( 'provider_id', $providers__select_box     , array( 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ) )
-			->select_box( 'order_by'   , $order_fields              , array( 'show_text' => 'сортировка', 'desc' => 'Сортировка' ) )
-			->radio_box( 'order_direction', array( 'asc' => 'прямой', 'desc' => 'обратный' ), array( 'desc' => 'Направление сортировки' ) )
+			->select_box( 'status_id'  , $payment_status__select_box, [ 'show_text' => 'статус'    , 'desc' => 'Статус'     ] )
+			->select_box( 'provider_id', $providers__select_box     , [ 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ] )
+			->select_box( 'order_by'   , $order_fields              , [ 'show_text' => 'сортировка', 'desc' => 'Сортировка' ] )
+			->radio_box( 'order_direction', [ 'asc' => 'прямой', 'desc' => 'обратный' ], [ 'desc' => 'Направление сортировки' ] )
 			->save_and_clear()
 		;
 		return( $result );
@@ -163,24 +163,24 @@ class yf_manage_transfer {
 		$action      = &$this->action;
 		$filter_name = &$this->filter_name;
 		$filter      = &$this->filter;
-		if( !in_array( $action, array( 'show' ) ) ) { return( false ); }
+		if( !in_array( $action, [ 'show' ] ) ) { return( false ); }
 		// url
-		$url_base = array(
+		$url_base = [
 			'object' => $object,
 			'action' => 'filter_save',
 			'id'     => $filter_name,
-		);
+		];
 		$result = '';
 		switch( $action ) {
 			case 'show':
 				$url_filter       = url_admin( $url_base );
-				$url_filter_clear = url_admin( $url_base + array(
+				$url_filter_clear = url_admin( $url_base + [
 					'page'   => 'clear',
-				));
-				$replace = array(
+				]);
+				$replace = [
 					'form_action' => $url_filter,
 					'clear_url'   => $url_filter_clear,
-				);
+				];
 				$result = $this->_filter_form_show( $filter, $replace );
 			break;
 		}
@@ -192,15 +192,15 @@ class yf_manage_transfer {
 		$id     = &$this->id;
 		switch( $id ) {
 			case 'manage_payout__show':
-				$url_redirect_url = url_admin( array(
+				$url_redirect_url = url_admin( [
 					'object' => $object,
-				));
+				]);
 			break;
 		}
-		$options = array(
+		$options = [
 			'filter_name'  => $id,
 			'redirect_url' => $url_redirect_url,
-		);
+		];
 		return( _class( 'admin_methods' )->filter_save( $options ) );
 	}
 
@@ -215,29 +215,29 @@ class yf_manage_transfer {
 		$manage_lib  = &$this->manage_payment_lib;
 		// payment providers
 		$providers = $payment_api->provider();
-		$payment_api->provider_options( $providers, array(
+		$payment_api->provider_options( $providers, [
 			'method_allow',
-		));
+		]);
 		// payment status
 		$payment_status = $payment_api->get_status();
 		$name = 'in_progress';
-		$item = $payment_api->get_status( array( 'name' => $name) );
+		$item = $payment_api->get_status( [ 'name' => $name] );
 		list( $payment_status_in_progress_id, $payment_status_in_progress ) = $item;
 		if( empty( $payment_status_in_progress_id ) ) {
-			$result = array(
+			$result = [
 				'status_message' => 'Статус платежей не найден: ' . $name,
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		// payment type
 		$payment_type = $payment_api->get_type();
 		$name = 'transfer';
-		$item = $payment_api->get_type( array( 'name' => $name) );
+		$item = $payment_api->get_type( [ 'name' => $name] );
 		list( $payment_type_transfer_id, $payment_type_transfer ) = $item;
 		if( empty( $payment_type_transfer_id ) ) {
-			$result = array(
+			$result = [
 				'status_message' => 'Тип платежей не найден: ' . $name,
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		// prepare sql
@@ -267,9 +267,9 @@ class yf_manage_transfer {
 			// ->where( 'o.direction', 'out' )
 		;
 		$sql = $db->sql();
-		return( table( $sql, array(
+		return( table( $sql, [
 				'filter' => $filter,
-				'filter_params' => array(
+				'filter_params' => [
 					'status_id'   => function( $a ) use( $payment_status_in_progress_id ) {
 						$result = null;
 						$value  = $a[ 'value' ];
@@ -282,15 +282,15 @@ class yf_manage_transfer {
 						isset( $value ) && $result = ' o.status_id = ' . $value;
 						return( $result );
 					},
-					'provider_id'  => array( 'cond' => 'eq',      'field' => 'o.provider_id'  ),
-					'operation_id' => array( 'cond' => 'in',      'field' => 'o.operation_id' ),
-					'user_id'      => array( 'cond' => 'in',      'field' => 'a.user_id'      ),
-					'name'         => array( 'cond' => 'like',    'field' => 'u.name'         ),
-					'balance'      => array( 'cond' => 'between', 'field' => 'a.balance'      ),
-					'amount'       => array( 'cond' => 'between', 'field' => 'o.amount'       ),
+					'provider_id'  => [ 'cond' => 'eq',      'field' => 'o.provider_id'  ],
+					'operation_id' => [ 'cond' => 'in',      'field' => 'o.operation_id' ],
+					'user_id'      => [ 'cond' => 'in',      'field' => 'a.user_id'      ],
+					'name'         => [ 'cond' => 'like',    'field' => 'u.name'         ],
+					'balance'      => [ 'cond' => 'between', 'field' => 'a.balance'      ],
+					'amount'       => [ 'cond' => 'between', 'field' => 'o.amount'       ],
 					'__default_order'  => 'ORDER BY o.datetime_update DESC',
-				),
-			))
+				],
+			])
 			->text( 'operation_id'  , 'операция'  )
 			->text( 'provider_title', 'провайдер' )
 			->text( 'title'         , 'название'  )
@@ -332,32 +332,32 @@ class yf_manage_transfer {
 				}
 				$result = sprintf( '<div class="text-center">%s %s %s</div>', $user, $user_dir, $user2 );
 				return( $result );
-			}, array( 'desc' => 'пользователь' ) )
+			}, [ 'desc' => 'пользователь' ] )
 			->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $payment_status ) {
 				$status_name = $payment_status[ $value ][ 'name' ];
 				$title       = $payment_status[ $value ][ 'title' ];
-				$css = $manage_lib->css_by_status( array(
+				$css = $manage_lib->css_by_status( [
 					'status_name' => $status_name,
-				));
+				]);
 				$result = sprintf( '<span class="%s">%s</span>', $css, $title );
 				return( $result );
-			}, array( 'desc' => 'статус' ) )
+			}, [ 'desc' => 'статус' ] )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Просмотр', $url[ 'view' ], array( 'icon' => 'fa fa-eye', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
-			->header_link( 'Перевод', $url[ 'create' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ) )
-			->footer_link( 'Перевод', $url[ 'create' ], array( 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ) )
+			->btn( 'Просмотр', $url[ 'view' ], [ 'icon' => 'fa fa-eye', 'class_add' => 'btn-primary', 'target' => '_blank' ] )
+			->header_link( 'Перевод', $url[ 'create' ], [ 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ] )
+			->footer_link( 'Перевод', $url[ 'create' ], [ 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ] )
 		);
 	}
 
 	function create() {
-		@$replace = array() + $_POST;
+		@$replace = [] + $_POST;
 		$_this = $this;
-		$result = form( $replace, array( 'autocomplete' => 'off' ) )
-			->validate(array(
+		$result = form( $replace, [ 'autocomplete' => 'off' ] )
+			->validate([
 				'from[user_id]' => 'trim|required|numeric|greater_than[0]|exists[user.id]',
 				'to[user_id]'   => 'trim|required|numeric|greater_than[0]|exists[user.id]',
 				'amount'        => 'trim|required|numeric|greater_than[0]',
-			))
+			])
 			->on_validate_ok( function( $data, $extra, $rules ) use( &$_this ) {
 				$is_error    = false;
 				$is_continue = $_POST[ 'operation' ] === 'transfer_and_continue';
@@ -373,30 +373,30 @@ class yf_manage_transfer {
 					$message = $message ?: 'Операция не выполнена';
 					$is_error = true;
 				}
-				common()->$message_type( $message, array( 'translate' => false ) );
+				common()->$message_type( $message, [ 'translate' => false ] );
 				if( $is_error ) { return( $result ); }
 				// redirect
 				$url = $_this->_url( 'list' );
 				$is_continue && $url = $_this->_url( 'create' );
 				return( js_redirect( $url, false, $_operation ) );
 			})
-			->user_select_box( array(
+			->user_select_box( [
 				'name'        => 'from[user_id]',
 				'desc'        => 'От пользователя',
 				'placeholder' => 'id, name, mail, etc',
-			))
-			->user_select_box( array(
+			])
+			->user_select_box( [
 				'name'        => 'to[user_id]',
 				'desc'        => 'К пользователя',
 				'placeholder' => 'id, name, mail, etc',
-			))
+			])
 			// ->text( 'from[user_id]'  , 'От пользователя' )
 			// ->text( 'to[user_id]'    , 'К пользователю'  )
 			->text( 'amount'         , 'Сумма'           )
 			->text( 'operation_title', 'Название'        )
-			->row_start(array( 'desc' => 'Операция' ))
-				->submit( 'operation', 'transfer', array( 'desc' => 'Перечислить' ) )
-				->submit( 'operation', 'transfer_and_continue', array( 'desc' => 'Перечислить и продолжить' ) )
+			->row_start([ 'desc' => 'Операция' ])
+				->submit( 'operation', 'transfer', [ 'desc' => 'Перечислить' ] )
+				->submit( 'operation', 'transfer_and_continue', [ 'desc' => 'Перечислить и продолжить' ] )
 			->row_end()
 		;
 		return( $result );
@@ -417,25 +417,25 @@ class yf_manage_transfer {
 		$manage_lib  = &$this->manage_payment_lib;
 		// check operation
 		$operation_id = isset( $_operation_id ) ? $_operation_id : (int)$_GET[ 'operation_id' ];
-		$operation = $payment_api->operation( array(
+		$operation = $payment_api->operation( [
 			'operation_id' => $operation_id,
-		));
+		]);
 		if( empty( $operation ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Ошибка: операция не найдена',
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		// import operation
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, 'o' );
 		// check account
-		$account_result = $payment_api->get_account( array( 'account_id' => $o_account_id ) );
+		$account_result = $payment_api->get_account( [ 'account_id' => $o_account_id ] );
 		if( empty( $account_result ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Счет пользователя не найден',
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		list( $account_id, $account ) = $account_result;
@@ -443,74 +443,74 @@ class yf_manage_transfer {
 		$user_id = $account[ 'user_id' ];
 		$user    = user( $user_id );
 		if( empty( $user ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Пользователь не найден: ' . $user_id,
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		$online_users = _class( 'online_users', null, null, true );
 		$user_is_online = $online_users->_is_online( $user_id );
 		// check provider
 		// $providers_user = $payment_api->provider();
-		$providers_user = $payment_api->provider(array( 'all' => true ));
-		$payment_api->provider_options( $providers_user, array(
+		$providers_user = $payment_api->provider([ 'all' => true ]);
+		$payment_api->provider_options( $providers_user, [
 			'method_allow',
-		));
+		]);
 		if( empty( $providers_user[ $o_provider_id ] ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Неизвестный провайдер',
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		$provider = &$providers_user[ $o_provider_id ];
 		// providers by name
-		$providers_user__by_name = array();
+		$providers_user__by_name = [];
 		foreach( $providers_user as &$item ) {
 			$provider_name = $item[ 'name' ];
 			$providers_user__by_name[ $provider_name ] = &$item;
 		}
 		$provider_name = &$provider[ 'name' ];
-		$provider_class = $payment_api->provider_class( array(
+		$provider_class = $payment_api->provider_class( [
 			'provider_name' => $provider_name,
-		));
+		]);
 		if( empty( $provider_class ) ) {
-			$result = array(
+			$result = [
 				'status_message' => 'Провайдер недоступный: ' . $provider[ 'title' ],
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		// check operation status
 		$statuses = $payment_api->get_status();
 		if( empty( $statuses[ $o_status_id ] ) ) {
-			$result = array(
+			$result = [
 				'status_message' => 'Неизвестный статус операции: '. $o_status_id,
-			);
+			];
 			return( $this->_user_message( $result ) );
 		}
 		$o_status = $statuses[ $o_status_id ];
 		// status css
 		$status_name  = $o_status[ 'name' ];
 		$status_title = $o_status[ 'title' ];
-		$css = $manage_lib->css_by_status( array(
+		$css = $manage_lib->css_by_status( [
 			'status_name' => $status_name,
-		));
+		]);
 		$html_status_title = $status_title;
 		// is
 		$is_progressed = $o_status[ 'name' ] == 'in_progress';
 		$is_processing = $o_status[ 'name' ] == 'processing';
 		$is_finish     = !( $is_progressed || $is_processing );
 		// processing
-		$processing = array();
+		$processing = [];
 		$is_processing_self = false;
 		if( is_array( $o_options[ 'processing' ] ) ) {
 			$processing_log = array_reverse( $o_options[ 'processing' ] );
 			$processing     = reset( $processing_log );
 			if( @$processing[ 'provider_name' ] && $processing[ 'provider_name' ] != $provider_name ) {
-				@list( $processing_provider_id, $processing_provider ) = $payment_api->get_provider( array(
+				@list( $processing_provider_id, $processing_provider ) = $payment_api->get_provider( [
 					'name' => $processing[ 'provider_name' ],
-				));
+				]);
 				if( $is_processing && $processing_provider ) {
 					$html_status_title = $status_title . ' ('. $processing_provider[ 'title' ] .')';
 				}
@@ -526,7 +526,7 @@ class yf_manage_transfer {
 		$html_datetime_update = $o_datetime_update;
 		$html_datetime_finish = $o_datetime_finish;
 		// result
-		$result = array(
+		$result = [
 			'is_valid'                     => true,
 			'operation_id'                 => &$operation_id,
 			'operation'                    => &$operation,
@@ -558,7 +558,7 @@ class yf_manage_transfer {
 			'html_datetime_start'          => &$html_datetime_start,
 			'html_datetime_update'         => &$html_datetime_update,
 			'html_datetime_finish'         => &$html_datetime_finish,
-		);
+		];
 		return( $result );
 	}
 
@@ -590,7 +590,7 @@ class yf_manage_transfer {
 		$payment_api = &$this->payment_api;
 		$manage_lib  = &$this->manage_payment_lib;
 		// prepare view: operations log
-		list( $data, $count ) = $payment_api->operation( array(
+		list( $data, $count ) = $payment_api->operation( [
 			'where' =>
 				'account_id = '. $_account_id
 				.' AND type_id = '. $_operation[ 'type_id' ]
@@ -599,10 +599,10 @@ class yf_manage_transfer {
 				.' AND direction = "'. $_operation[ 'direction' ] .'"'
 			,
 			'limit' => 10,
-		));
+		]);
 		$html_operations_log = null;
 		if( @count( $data ) > 0 ) {
-			$html_operations_log = table( $data, array( 'no_total' => true ) )
+			$html_operations_log = table( $data, [ 'no_total' => true ] )
 				->text( 'operation_id'  , 'операция' )
 				->func( 'options', function( $value, $extra, $row ) {
 					$direction = &$row[ 'direction' ];
@@ -624,36 +624,36 @@ class yf_manage_transfer {
 					}
 					$result = sprintf( '<div class="text-center">%s %s</div>', $user_dir, $user2 );
 					return( $result );
-				}, array( 'desc' => 'пользователь' ) )
+				}, [ 'desc' => 'пользователь' ] )
 				->func( 'amount', function( $value, $extra, $row ) use( $payment_api ) {
 					$result = $payment_api->money_html( $value );
 					return( $result );
-				}, array( 'desc' => 'сумма' ) )
+				}, [ 'desc' => 'сумма' ] )
 				->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $_statuses ) {
 					$status_name = $_statuses[ $value ][ 'name' ];
 					$title       = $_statuses[ $value ][ 'title' ];
-					$css = $manage_lib->css_by_status( array(
+					$css = $manage_lib->css_by_status( [
 						'status_name' => $status_name,
-					));
+					]);
 					$result = sprintf( '<span class="%s">%s</span>', $css, $title );
 					return( $result );
-				}, array( 'desc' => 'статус' ) )
+				}, [ 'desc' => 'статус' ] )
 				->text( 'date' , 'дата' )
-				->btn( 'Просмотр', $url[ 'view'    ], array( 'icon' => 'fa fa-eye', 'class_add' => 'btn-primary', 'target' => '_blank' ) )
+				->btn( 'Просмотр', $url[ 'view'    ], [ 'icon' => 'fa fa-eye', 'class_add' => 'btn-primary', 'target' => '_blank' ] )
 			;
 		}
 		// prepare view: operation options
-		$user_link = $html->a( array(
-			'href'  => $this->_url( 'user', array( '%user_id' => $_user_id ) ),
+		$user_link = $html->a( [
+			'href'  => $this->_url( 'user', [ '%user_id' => $_user_id ] ),
 			'icon'  => 'fa fa-user',
 			'title' => 'Профиль',
 			'text'  => $_user[ 'name' ],
-		));
-		$balance_link = $html->a( array(
-			'href'  => $this->_url( 'balance', array( '%user_id' => $_user_id, '%account_id' => $_account_id ) ),
+		]);
+		$balance_link = $html->a( [
+			'href'  => $this->_url( 'balance', [ '%user_id' => $_user_id, '%account_id' => $_account_id ] ),
 			'title' => 'Баланс',
 			'text'  => $payment_api->money_text( $_operation[ 'balance' ] ),
-		));
+		]);
 		// user
 		$direction = &$_operation[ 'direction' ];
 		switch( $direction ) {
@@ -674,15 +674,15 @@ class yf_manage_transfer {
 			$name = db()->table( 'user' )->select( 'name' )->where( 'id', $user2_id )->get_one();
 			$user2_link = a('/members/edit/'.$user2_id, $name );
 		}
-		$operation_id2 && $operation2_link = a( array(
-			'href'  => $this->_url( 'view', array( '%operation_id' => $operation_id2 ) ),
+		$operation_id2 && $operation2_link = a( [
+			'href'  => $this->_url( 'view', [ '%operation_id' => $operation_id2 ] ),
 			'title' => 'Операция',
 			'icon'  => 'fa fa-eye',
 			'text'  => $operation_id2,
-		));
+		]);
 		$html_user = sprintf( '<span>%s %s %s %s</span>', $user_link, $user_dir, $user2_link, $operation2_link );
 		// compile
-		$content = array(
+		$content = [
 			'Операция'        => $_operation_id,
 			'Провайдер'       => $_provider[ 'title' ],
 			'Пользователь'    => $html_user,
@@ -692,17 +692,17 @@ class yf_manage_transfer {
 			'Дата создания'   => $_html_datetime_start,
 			'Дата обновления' => $_html_datetime_update,
 			'Дата завершения' => $_html_datetime_finish,
-		);
-		$html_operation_options = $html->simple_table( $content, array( 'no_total' => true ) );
+		];
+		$html_operation_options = $html->simple_table( $content, [ 'no_total' => true ] );
 		// render
-		$replace = $operation + array(
+		$replace = $operation + [
 			'header_data'    => $html_operation_options,
 			'operations_log' => $html_operations_log,
-			'url' => array(
+			'url' => [
 				'list' => $this->_url( 'list' ),
-				'view' => $this->_url( 'view', array( '%operation_id' => $_operation_id ) ),
-			)
-		);
+				'view' => $this->_url( 'view', [ '%operation_id' => $_operation_id ] ),
+			]
+		];
 		$result = tpl()->parse( 'manage_transfer/view', $replace );
 		return( $result );
 	}
@@ -746,7 +746,7 @@ class yf_manage_transfer {
 			$content  = '';
 			$operation_id = empty( $_operation_id ) ? (int)$_GET[ 'operation_id' ] :  $_operation_id;
 			if( $operation_id > 0 ) {
-				$url_view = $this->_url( 'view', array( '%operation_id' => $operation_id ) );
+				$url_view = $this->_url( 'view', [ '%operation_id' => $operation_id ] );
 				$content .= '<a href="'. $url_view .'" class="btn btn-info">Назад к операции</a>';
 			}
 			$url_list = $this->_url( 'list' );

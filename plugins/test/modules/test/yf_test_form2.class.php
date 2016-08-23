@@ -7,13 +7,13 @@ class yf_test_form2 {
 	/**
 	*/
 	function test () {
-		$data = array(
+		$data = [
 			'0'	=> 'value0',
 			'1'	=> 'value1',
 			'2'	=> 'value2',
-		);
-		$methods = array();
-		$except = array('auto', 'validate', 'db_update_if_ok', 'db_insert_if_ok', 'form_begin', 'form_end', 'render', 'custom_fields', 'tpl_row','row_start','row_end','navbar_start','navbar_end');
+		];
+		$methods = [];
+		$except = ['auto', 'validate', 'db_update_if_ok', 'db_insert_if_ok', 'form_begin', 'form_end', 'render', 'custom_fields', 'tpl_row','row_start','row_end','navbar_start','navbar_end'];
 		foreach (get_class_methods(form()) as $m) {
 			if ($m[0] == '_' || in_array($m, $except)) {
 				continue;
@@ -25,11 +25,11 @@ class yf_test_form2 {
 		$form = form();
 		foreach ($methods as $m) {
 			if (false !== strpos($m, '_box') || false !== strpos($m, 'select')) {
-				$item = form('', array('no_form' => 1))->$m($m, $data, array('stacked' => 1));
+				$item = form('', ['no_form' => 1])->$m($m, $data, ['stacked' => 1]);
 			} else {
-				$item = form('', array('no_form' => 1))->$m($m, array('stacked' => 1));
+				$item = form('', ['no_form' => 1])->$m($m, ['stacked' => 1]);
 			}
-			$form->container($item, array('desc' => $m));
+			$form->container($item, ['desc' => $m]);
 		}
 		return $form;
 /*

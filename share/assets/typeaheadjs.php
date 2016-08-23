@@ -1,10 +1,10 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-//			'js' => '//cdn.rawgit.com/yfix/typeahead.js/master/dist/typeahead.jquery.js',
-			'js' => '//cdn.rawgit.com/yfix/typeahead.js/master/dist/typeahead.bundle.min.js',
+return [
+	'versions' => [
+		'master' => [
+//			'js' => '//rawgit.yfix.net/yfix/typeahead.js/master/dist/typeahead.jquery.js',
+			'js' => '//rawgit.yfix.net/yfix/typeahead.js/master/dist/typeahead.bundle.min.js',
 /*
 			'css' => '
 				.tt-dataset { color: #999; }
@@ -17,9 +17,9 @@ return array(
 				.tt-selectable { cursor: pointer; }
 			',
 */
-		),
-	),
-	'require' => array(
+		],
+	],
+	'require' => [
 		'asset' => 'jquery',
-	),
-);
+	],
+];

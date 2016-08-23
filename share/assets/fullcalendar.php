@@ -1,20 +1,27 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'css' => '//cdn.rawgit.com/yfix/fullcalendar/master/dist/fullcalendar.min.css',
-			'js' => array(
-				'//cdn.rawgit.com/yfix/fullcalendar/master/dist/fullcalendar.min.js',
-#				'//cdn.rawgit.com/yfix/fullcalendar/master/dist/gcal.js',
-				'//cdn.rawgit.com/yfix/fullcalendar/master/dist/lang-all.js',
-			),
-		),
-	),
-	'require' => array(
-		'js' => array(
+return [
+	'versions' => [
+		'2.7.1' => [
+			'css' => '//rawgit.yfix.net/yfix/fullcalendar/v2.7.1/dist/fullcalendar.min.css',
+			'js' => [
+				'//rawgit.yfix.net/yfix/fullcalendar/v2.7.1/dist/fullcalendar.min.js',
+				'//rawgit.yfix.net/yfix/fullcalendar/v2.7.1/dist/gcal.js',
+				'//rawgit.yfix.net/yfix/fullcalendar/v2.7.1/dist/lang-all.js',
+			],
+		],
+	],
+	'require' => [
+		'js' => [
 			'jquery',
 			'momentjs',
-		),
-	),
-);
+		],
+	],
+	'info' => [
+		'url' => 'http://fullcalendar.io/',
+		'name' => 'FullCalendar',
+		'desc' => 'A JavaScript event calendar. Customizable and open source. 
+			FullCalendar is a drag-n-drop jQuery plugin for displaying events on a full-sized calendar.',
+		'git' => 'https://github.com/yfix/fullcalendar.git',
+	],
+];

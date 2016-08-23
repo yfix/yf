@@ -12,7 +12,7 @@ class yf_spider_detection {
 	/** @const */
 	const data_dir = 'share/spiders/';
 	/** @var */
-	public $well_known_bots = array(
+	public $well_known_bots = [
 		'googlebot'				=> 'Google',
 		'google.com/bot'		=> 'Google',
 		'mediapartners-google'	=> 'Google',
@@ -36,9 +36,9 @@ class yf_spider_detection {
 		'crawler'				=> 'Crawler',
 		'http-java-client'		=> 'Bot',
 		'python-urllib'			=> 'Bot',
-	);
+	];
 	/** @var */
-	public $browsers_keywords = array(
+	public $browsers_keywords = [
 		'opera',
 		'presto',
 		'gecko',
@@ -49,7 +49,7 @@ class yf_spider_detection {
 		'webkit',
 		'chrome',
 		'safari',
-	);
+	];
 
 	/**
 	* new method checking for spider by ip address (database from http://www.iplists.com/)
@@ -124,18 +124,18 @@ class yf_spider_detection {
 		}
 		$ext = '.txt';
 		$ext_len = strlen($ext);
-		$globs = array(
+		$globs = [
 			'app'		=> APP_PATH. self::data_dir. '*'. $ext,
 			'project'	=> PROJECT_PATH. self::data_dir. '*'. $ext,
 			'yf'		=> YF_PATH. self::data_dir. '*'. $ext,
-		);
-		$paths = array();
+		];
+		$paths = [];
 		foreach ((array)$globs as $glob) {
 			foreach (glob($glob) as $path) {
 				$paths[] = $path;
 			}
 		}
-		$data = array();
+		$data = [];
 		foreach ((array)$paths as $path) {
 			if (!$path) {
 				continue;
@@ -175,18 +175,18 @@ class yf_spider_detection {
 		}
 		$ext = '.txt';
 		$ext_len = strlen($ext);
-		$globs = array(
+		$globs = [
 			'app'		=> APP_PATH. self::data_dir. '*'. $ext,
 			'project'	=> PROJECT_PATH. self::data_dir. '*'. $ext,
 			'yf'		=> YF_PATH. self::data_dir. '*'. $ext,
-		);
-		$paths = array();
+		];
+		$paths = [];
 		foreach ((array)$globs as $glob) {
 			foreach (glob($glob) as $path) {
 				$paths[] = $path;
 			}
 		}
-		$data = array();
+		$data = [];
 		foreach ((array)$paths as $path) {
 			if (!$path) {
 				continue;
@@ -230,8 +230,8 @@ class yf_spider_detection {
 		}
 
 		$sql = '';
-		$full_ips = array();
-		$ips_without_1_dot = array();
+		$full_ips = [];
+		$ips_without_1_dot = [];
 		foreach ((array)$spiders_ips as $ip => $_s_name) {
 			$dots = substr_count($ip, '.');
 			if ($dots == 3) {
@@ -268,7 +268,7 @@ class yf_spider_detection {
 		}
 		// Prepare search engines list
 		if (!isset($this->_cache_se_hosts)) {
-			$tmp = array();
+			$tmp = [];
 			foreach (main()->get_data('search_engines') as $A) {
 				$_host = trim($A['search_url']);
 				if (substr($_host, 0, 4) == 'www.') {

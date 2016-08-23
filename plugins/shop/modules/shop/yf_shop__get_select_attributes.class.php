@@ -1,18 +1,18 @@
 <?php
 class yf_shop__get_select_attributes{
 
-	function _get_select_attributes($atts = array()) {
+	function _get_select_attributes($atts = []) {
 		if (empty($atts)) {
-			return array();
+			return [];
 		}
 		// Group by attribute name
-		$_atts_by_name = array();
+		$_atts_by_name = [];
 		foreach ((array)$atts as $_info) {
 			$_atts_products_ids[$_info["name"]] = $_info["product_id"];
 			$_price_text = " (".($_info["price"] < 0 ? "-" : "+"). module("shop")->_format_price(abs($_info["price"])).")";
 			$_atts_by_name[$_info["name"]][$_info["value"]] = $_info["value"]. ($_info["price"] ? $_price_text : "");
 		}
-		$result = array();
+		$result = [];
 		foreach ((array)$_atts_by_name as $_name => $_info) {
 			$_product_id = $_atts_products_ids[$_name];
 			$_box = "";
@@ -22,10 +22,10 @@ class yf_shop__get_select_attributes{
 			} else {
 				$_box = current($_info)."\n<input type=\"hidden\" name=\"".$_box_name."\" value=\""._prepare_html(current($_info))."\" />";
 			}
-			$result[$_name] = array(
+			$result[$_name] = [
 				"name"	=> _prepare_html($_name),
 				"box"	=> $_box,
-			);
+			];
 		}
 		return $result;
 	}

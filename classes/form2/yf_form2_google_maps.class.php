@@ -2,13 +2,13 @@
 
 class yf_form2_google_maps {
 
-	function google_maps($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
+	function google_maps($name = '', $desc = '', $extra = [], $replace = [], $form) {
 		if (is_array($desc)) {
 			$extra += $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		
 		asset('google-maps-api');
@@ -22,14 +22,14 @@ class yf_form2_google_maps {
 			// Compatibility with filter			
 			$start_lat = 49;
 			$start_lng = 32;
-			$replace = array(
+			$replace = [
 				'start_lat' => $start_lat,
 				'start_lng' => $start_lng,
 				'start_zoom' => $extra['start_zoom'],
 				'markers_limit' => $extra['markers_limit'],
 				'name' => $extra['name'],
 				'value' => $r[$extra['name']],
-			);
+			];
 			if ($extra['disable_edit_mode']) {
 				$body = tpl()->parse('form2/google_maps_view',$replace);
 			} else {
@@ -38,7 +38,7 @@ class yf_form2_google_maps {
 			return $form->_row_html($body, $extra, $r);
 		};
 		if ($form->_chained_mode) {
-			$form->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			$form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
 			return $form;
 		}
 		return $func($extra, $replace, $form);

@@ -28,7 +28,7 @@ class yf_core_errors {
 	* NOTE: $error_log_filename will only be used if you have log_errors Off and ;error_log filename in php.ini 
 	* if log_errors is On, and error_log is set, the filename in error_log will be used. 
 	*/ 
-	public $error_log_filename		= 'error_logs.log';
+	public $error_log_filename		= 'yf_core_errors.log';
 	/** @var string The recipient email to mail errors to */
 	public $email_to				= '';
 	/** @var string Recipient address */
@@ -52,7 +52,7 @@ class yf_core_errors {
 	/** @var bool Quickly turn off notices */
 	public $NO_NOTICES				= true;
 	/** @var array @conf_skip Standard error types */
-	public $error_types = array(
+	public $error_types = [
 		1		=> 'E_ERROR',
 		2		=> 'E_WARNING',
 		4		=> 'E_PARSE',
@@ -69,7 +69,7 @@ class yf_core_errors {
 		4096	=> 'E_RECOVERABLE_ERROR',
 		8192	=> 'E_DEPRECATED',
 		16384	=> 'E_USER_DEPRECATED',
-	);
+	];
 
 	/**
 	* Constructor
@@ -81,16 +81,17 @@ class yf_core_errors {
 		if (conf('ERROR_REPORTING')) {
 			error_reporting((int)conf('ERROR_REPORTING'));
 		}
-		$this->set_mail_receiver('yf_framework_site_admin', defined('SITE_ADMIN_EMAIL') ? SITE_ADMIN_EMAIL : 'php_test@127.0.0.1');
-		$this->set_log_file_name(defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : INCLUDE_PATH. 'error_logs.log');
+		$this->error_log_filename = APP_PATH. 'logs/'.$this->error_log_filename;
+		$this->set_log_file_name(defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : $this->error_log_filename);
 		$this->set_flags(defined('error_handler_FLAGS') ? error_handler_FLAGS : '110000');
 		$this->set_reporting_level();
+		$this->set_mail_receiver('yf_framework_site_admin', defined('SITE_ADMIN_EMAIL') ? SITE_ADMIN_EMAIL : 'php_test@127.0.0.1');
 		ini_set('ignore_repeated_errors', 1);
 		ini_set('ignore_repeated_source', 1);
-		set_error_handler(array($this, 'error_handler'), $this->NO_NOTICES ? E_ALL ^ E_NOTICE : E_ALL);
-		register_shutdown_function(array($this, 'error_handler_destructor'));
+		set_error_handler([$this, 'error_handler'], $this->NO_NOTICES ? E_ALL ^ E_NOTICE : E_ALL);
+		register_shutdown_function([$this, 'error_handler_destructor']);
 		
-		set_exception_handler(array($this,  'exception_handler' ));
+		set_exception_handler([$this,  'exception_handler' ]);
 	}
 
 	/**
@@ -132,7 +133,7 @@ class yf_core_errors {
 		}
 
 		// build your tracelines
-		$result = array();
+		$result = [];
 		foreach ($trace as $key => $stackPoint) {
 			$result[] = sprintf(
 				$traceline,
@@ -140,7 +141,7 @@ class yf_core_errors {
 				isset($stackPoint['file']) ? $stackPoint['file'] : '',
 				isset($stackPoint['line']) ? $stackPoint['line'] : '',
 				isset($stackPoint['function']) ? $stackPoint['function'] : '',
-				implode(', ', isset($stackPoint['args']) ? $stackPoint['args'] : array())
+				implode(', ', isset($stackPoint['args']) ? $stackPoint['args'] : [])
 			);
 		}
 		// trace always ends with {main}
@@ -214,7 +215,7 @@ class yf_core_errors {
 		} elseif ($error_type == E_DEPRECATED) {
 			return true;
 		} 
-		if (in_array($error_type, array(E_USER_ERROR, E_USER_WARNING, E_WARNING))) {
+		if (in_array($error_type, [E_USER_ERROR, E_USER_WARNING, E_WARNING])) {
 			$msg = $this->error_types[$error_type].':'.$error_msg;
 			main()->_last_core_error_msg	= $msg;
 			main()->_all_core_error_msgs[]	= $msg;
@@ -229,10 +230,10 @@ class yf_core_errors {
 			if ($this->USE_COMPACT_FORMAT) {
 				$DIVIDER = '#@#';
 			}
-			$msg = array(
+			$msg = [
 				date('Y-m-d H:i:s'),
 				$this->error_types[$error_type],
-				str_replace(array("\r",PHP_EOL), '', $error_msg).';',
+				str_replace(["\r",PHP_EOL], '', $error_msg).';',
 				'SOURCE='.implode(';', $trace),
 				'SID='.conf('SITE_ID'),
 				'IP='.$IP,
@@ -245,7 +246,7 @@ class yf_core_errors {
 				$this->_log_display_array('COOKIE'),
 				$this->_log_display_array('SESSION'),
 				'UA='.$_SERVER['HTTP_USER_AGENT'],
-			);
+			];
 			$msg = implode($DIVIDER, $msg). PHP_EOL;
 		}
 		if ($save_log) {
@@ -260,7 +261,7 @@ class yf_core_errors {
 		if ($send_mail) {
 			$this->mail_buffer .= $msg;
 		}
-		$data = array(
+		$data = [
 			'error_level'	=> intval($error_type),
 			'error_text'	=> $error_msg,
 			'source_file'	=> $error_file,
@@ -279,7 +280,7 @@ class yf_core_errors {
 			'object'		=> $_GET['object'],
 			'action'		=> $_GET['action'],
 			'trace'			=> implode(PHP_EOL, $trace),
-		);
+		];
 		if ($save_in_db && is_object(db()) && !empty(db()->_connected)) {
 			$sql = db()->insert_safe('log_core_errors', $data, true);
 			db()->_add_shutdown_query($sql);
@@ -306,7 +307,7 @@ class yf_core_errors {
 		if (empty($A)) {
 			return '';
 		}
-		$output = str_replace(array("\r",PHP_EOL), '', var_export($A, 1));
+		$output = str_replace(["\r",PHP_EOL], '', var_export($A, 1));
 		$output = preg_replace('/^array \((.*?)[\,]{0,1}\)$/i', "\$1", $output);
 		return '_'.$array_name.'='.$output;
 	}
@@ -324,7 +325,7 @@ class yf_core_errors {
 		} else {
 			$log_dir = dirname($this->error_log_filename);
 			if (!file_exists($log_dir)) {
-				_mkdir_m($log_dir);
+				mkdir($log_dir, 0755, true);
 			}
 			error_log($msg, 3, $this->error_log_filename);
 		}
@@ -343,13 +344,17 @@ class yf_core_errors {
 	* Method that changes the filename of the generated log file.
 	*/
 	function set_log_file_name($filename) { 
+		$dir = dirname($filename);
+		if (!file_exists($dir)) {
+			mkdir($dir, 0755, true);
+		}
 		$this->error_log_filename = $filename;
 	}
 
 	/**
 	* Method that changes the logging flags.
 	*/
-	function set_flags($input = array()) {
+	function set_flags($input = []) {
 		$this->LOG_ERRORS_TO_FILE		= (bool) $input{0};
 		$this->LOG_WARNINGS_TO_FILE		= (bool) $input{1};
 		$this->LOG_NOTICES_TO_FILE		= (bool) $input{2};
@@ -376,7 +381,7 @@ class yf_core_errors {
 	* Method that returns the error handler to error_handler()
 	*/
 	function return_handler() { 
-		set_error_handler(array($this, 'error_handler'));
+		set_error_handler([$this, 'error_handler']);
 	}
 
 	/**
@@ -391,7 +396,7 @@ class yf_core_errors {
 	*/
 	function _prepare_env() {
 		$this->ENV_ARRAYS = strtoupper($this->ENV_ARRAYS);
-		$data = array();
+		$data = [];
 		// Include only desired arrays
 		if (false !== strpos($this->ENV_ARRAYS, 'G') && !empty($_GET)) {
 			$data['_GET']		= $_GET;

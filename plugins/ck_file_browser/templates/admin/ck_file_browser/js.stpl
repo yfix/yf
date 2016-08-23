@@ -9,6 +9,7 @@ var bconf = {
 	url_copy		: '{url(/@object/copy_node)}',
 	url_contents	: '{url(/@object/get_content/%id)}',
 	url_edit		: '{url(/@object/edit)}',
+	url_del_img		: '{url(/@object/delete_img)}',
 	t_are_you_sure	: '{t(Are you sure?)}',
 	t_select_file	: '{t('Select a file from the tree')}',
 	__last			: null
@@ -47,26 +48,40 @@ function refreshjstree() {
 	}
 
 	$('#data').on("click", '.ck_select_image .img-actions a.btn', function() {
-		var img = $(this).closest('.ck_select_image').find('.img-select img')
+		var _this = $(this)
+		var img = _this.closest('.ck_select_image').find('.img-select img')
 		var img_src = img.attr('src')
 		if (img_src.substr(0,2) == '//') {
 			img_src = 'http:' + img_src
 		}
-		var url_edit = bconf.url_edit
-		if (url_edit.substr(0,2) == '//') {
-			url_edit = 'http:' + url_edit
+		var img_uploads_path = img.data('uploads-path');
+		if (_this.hasClass('btn-delete')) {
+			if (confirm(bconf.t_are_you_sure)) {
+				$.post(bconf.url_del_img, {'path' : img_src})
+					.always(function(data) {
+						console.log(data)
+						_this.closest('.ck_select_image').remove()
+					 })
+					.fail(function() {
+						alert("error");
+					})
+			}
+		} else if (_this.hasClass('btn-edit')) {
+			var url_edit = bconf.url_edit
+			if (url_edit.substr(0,2) == '//') {
+				url_edit = 'http:' + url_edit
+			}
+			var pixlr_url = 'http://www.pixlr.com/editor/'
+				+ '?target=' + encodeURIComponent(url_edit)
+				+ '&method=GET'
+				+ '&referer=' + encodeURIComponent(url_edit)
+				+ '&image=' + encodeURIComponent(img_src)
+				+ '&title=' + encodeURIComponent(img_uploads_path.split('.')[0])
+				+ '&locktarget=true'
+				+ '&locktitle=true'
+			console.log(pixlr_url)
+			window.location.href = pixlr_url;
 		}
-		var img_uploads_path = img.data('uploads-path')
-		var pixlr_url = 'http://www.pixlr.com/editor/'
-			+ '?target=' + encodeURIComponent(url_edit)
-			+ '&method=GET'
-			+ '&referer=' + encodeURIComponent(url_edit)
-			+ '&image=' + encodeURIComponent(img_src)
-			+ '&title=' + encodeURIComponent(img_uploads_path.split('.')[0])
-			+ '&locktarget=true'
-			+ '&locktitle=true'
-		console.log(pixlr_url)
-		window.location.href = pixlr_url;
 		return false;
 	});
 

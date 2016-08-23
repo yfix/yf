@@ -7,7 +7,7 @@ class yf_table2_image {
 
 	/**
 	*/
-	function image($name, $path, $link = '', $extra = array(), $table) {
+	function image($name, $path, $link = '', $extra = [], $table) {
 		if (is_array($path)) {
 			$extra = (array)$extra + $path;
 			$path = '';
@@ -17,7 +17,7 @@ class yf_table2_image {
 			$link = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if (!$link) {
 			$link = $extra['link'] ?: WEB_PATH. $path;
@@ -25,7 +25,7 @@ class yf_table2_image {
 		if (!isset($extra['width'])) {
 			$extra['width'] = '50px';
 		}
-		$table->_fields[] = array(
+		$table->_fields[] = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -39,12 +39,12 @@ class yf_table2_image {
 				$web_path = isset( $extra['web_path'] ) ? $extra['web_path'] : WEB_PATH;
 				// Make 3-level dir path
 				$d = sprintf('%09s', $id);
-				$replace = array(
+				$replace = [
 					'{subdir1}'	=> substr($d, 0, -6),
 					'{subdir2}'	=> substr($d, -6, 3),
 					'{subdir3}'	=> substr($d, -3, 3),
 					'%d'		=> $id,
-				);
+				];
 				if (isset($extra['img_path_callback']) && is_callable($extra['img_path_callback'])) {
 					$img_path = $extra['img_path_callback']($field, $params, $row, $instance_params);
 				} else {
@@ -89,7 +89,7 @@ class yf_table2_image {
 					.'">'
 					.($link_url ? '</a>' : '');
 			}
-		);
+		];
 		return $table;
 	}
 }

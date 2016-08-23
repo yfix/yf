@@ -1,17 +1,17 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'js' => 'CKEDITOR.plugins.addExternal("save", "https://cdn.rawgit.com/ckeditor/ckeditor-releases/master/plugins/save/plugin.js");',
-		),
-	),
-	'require' => array(
-		'asset' => array(
+return [
+	'versions' => [
+		'master' => [
+			'js' => 'CKEDITOR.plugins.addExternal("save", "https://rawgit.yfix.net/ckeditor/ckeditor-releases/master/plugins/save/plugin.js");',
+		],
+	],
+	'require' => [
+		'asset' => [
 			'ckeditor',
-		),
-	),
-	'config' => array(
+		],
+	],
+	'config' => [
 		'no_cache' => true,
-	),
-);
+	],
+];

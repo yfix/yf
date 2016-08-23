@@ -15,7 +15,7 @@ class yf_cache_driver_mongodb extends yf_cache_driver {
 	function __call($name, $args) {
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			return call_user_func_array(array($this->_connection, $name), $args);
+			return call_user_func_array([$this->_connection, $name], $args);
 		}
 		return main()->extend_call($this, $name, $args);
 	}
@@ -35,7 +35,7 @@ class yf_cache_driver_mongodb extends yf_cache_driver {
 
 	/**
 	*/
-	function get($name, $ttl = 0, $params = array()) {
+	function get($name, $ttl = 0, $params = []) {
 		if (!$this->is_ready()) {
 			return null;
 		}

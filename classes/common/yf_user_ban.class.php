@@ -12,7 +12,7 @@ class yf_user_ban {
 	/** @var bool Use preg_match or simple strpos */
 	public $USE_REGEXES	= 1;
 	/** @var array */
-	public $BAN_CHECKS		= array();
+	public $BAN_CHECKS		= [];
 
 	/**
 	*/
@@ -31,7 +31,7 @@ class yf_user_ban {
 	* @param	array	User info (optional)
 	* @return
 	*/
-	function _check ($input = array(), $user_info = array()) {
+	function _check ($input = [], $user_info = []) {
 		// Default banned status
 		$BANNED_STATUS = false;
 		// Nothing to check
@@ -39,7 +39,7 @@ class yf_user_ban {
 			return $BANNED_STATUS;
 		}
 		// Default user ban fields
-		$ban_fields = array(
+		$ban_fields = [
 			"ban_ads"			=> 0,
 			"ban_reviews"		=> 0,
 			"ban_images"		=> 0,
@@ -49,7 +49,7 @@ class yf_user_ban {
 			"ban_blog"			=> 0,
 			"ban_bad_contact"	=> 0,
 			"ban_reput"			=> 0,
-		);
+		];
 		// Start process ban checks
 		foreach ((array)$this->BAN_CHECKS as $CUR_CHECKS) {
 			// Process input fields
@@ -74,7 +74,7 @@ class yf_user_ban {
 			}
 		}
 		// Create SQL query for the user table
-		$sql3 = array();
+		$sql3 = [];
 		foreach ((array)$ban_fields as $ban_name => $new_ban_value) {
 			// No need to change ban status
 			if ($new_ban_value == 0) {
@@ -102,7 +102,7 @@ class yf_user_ban {
 	/**
 	* Try to find ban reason
 	*/
-	function _try_to_find ($input_name = "", $CUR_CHECKS = array(), $where_search = "") {
+	function _try_to_find ($input_name = "", $CUR_CHECKS = [], $where_search = "") {
 		// Default value
 		$IS_FOUND	= false;
 		$WHAT_FOUND	= "";
@@ -112,7 +112,7 @@ class yf_user_ban {
 			return $IS_FOUND;
 		}
 		// Switch between active checks
-		if (strlen($what_to_find) && in_array($input_name, array("name", "email", "password", "phone", "fax", "url", "recip_url"))) {
+		if (strlen($what_to_find) && in_array($input_name, ["name", "email", "password", "phone", "fax", "url", "recip_url"])) {
 			$IS_FOUND = $this->_search_item($where_search, $what_to_find);
 			$_where_searched = $where_search;
 		}
@@ -145,7 +145,7 @@ class yf_user_ban {
 				$_where_searched = "fax";
 			}
 		}
-		if (in_array($input_name, array("ad_text","forum_text","comment_text","email_text"))) {
+		if (in_array($input_name, ["ad_text","forum_text","comment_text","email_text"])) {
 			if (strlen($what_to_find)) {
 				$IS_FOUND = $this->_search_item($where_search, $what_to_find);
 				$_where_searched = $where_search;

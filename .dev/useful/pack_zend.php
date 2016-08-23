@@ -12,16 +12,16 @@ $ADD_SOURCE_FILE_NAMES		= 1;
 
 $pattern_require = "/(require_once[\s\t]*[\"\'\(]+([^\'\"\(\)]+?)[\'\"\)]+[\s\t]*;[\s\t]*)/ims";
 //-----------------------------------------------------------
-$GLOBALS['CLASSES']			= array();
-$GLOBALS['CLASSES_PATHS']	= array();
+$GLOBALS['CLASSES']			= [];
+$GLOBALS['CLASSES_PATHS']	= [];
 $GLOBALS["BUILT_IN_CLASSES"]= array_merge(get_declared_classes(), spl_classes(), get_declared_interfaces());
-$GLOBALS["INHERIT_TREE"]	= array();
-$GLOBALS["INHERIT_CHILDREN"]= array();
-$GLOBALS["INHERIT_PARENTS"]	= array();
-$GLOBALS["INHERIT_TOP"]		= array();
-$GLOBALS["INHERIT_NONE"]	= array();
-$GLOBALS["ABSTRACT_CLASSES"]= array();
-$GLOBALS["INTERFACES"]		= array();
+$GLOBALS["INHERIT_TREE"]	= [];
+$GLOBALS["INHERIT_CHILDREN"]= [];
+$GLOBALS["INHERIT_PARENTS"]	= [];
+$GLOBALS["INHERIT_TOP"]		= [];
+$GLOBALS["INHERIT_NONE"]	= [];
+$GLOBALS["ABSTRACT_CLASSES"]= [];
+$GLOBALS["INTERFACES"]		= [];
 //-----------------------------------------------------------
 $time_start = array_sum(explode(" ", microtime()));
 //-----------------------------------------------------------
@@ -72,7 +72,7 @@ function _do_compress_php_file ($file_to_open = "", $file_to_save = "") {
 			}
 		}
 	}
-	$output = str_replace(array("\r","\n"), "", $output);
+	$output = str_replace(["\r","\n"], "", $output);
 	$output = str_replace("\t", " ", $output);
 	$output = preg_replace("/[\s\t]{2,}/ims", " ", $output);
 	// Write the file
@@ -97,8 +97,8 @@ function _mkdir_m($dir_name, $dir_mode = 0755, $create_index_htmls = 0, $start_f
 	if (!strlen($start_folder)) {
 		$start_folder = INCLUDE_PATH;
 	}
-	$start_folder	= str_replace(array("\\", "//"), "/", realpath($start_folder)."/");
-	$dir_name		= str_replace(array("\\", "//"), "/", $dir_name);
+	$start_folder	= str_replace(["\\", "//"], "/", realpath($start_folder)."/");
+	$dir_name		= str_replace(["\\", "//"], "/", $dir_name);
 	$old_mask = umask(0);
 	// Default dir mode
 	if (empty($dir_mode)) {
@@ -151,7 +151,7 @@ function scan_dir ($start_dir, $FLAT_MODE = true, $include_pattern = "", $exclud
 	if (substr($start_dir, -1) == "/") {
 		$start_dir = substr($start_dir, 0, -1);
 	}
-	$files	= array();
+	$files	= [];
 	$dh		= opendir($start_dir);
 	while (false !== ($f = readdir($dh))) {
 		if ($f == "." || $f == "..") {
@@ -194,7 +194,7 @@ function scan_dir ($start_dir, $FLAT_MODE = true, $include_pattern = "", $exclud
 * Get values from the multi-dimensional array
 */
 function array_values_recursive($ary) {
-	$lst = array();
+	$lst = [];
 	foreach (array_keys($ary) as $k) {
 		$v = $ary[$k];
 		if (is_scalar($v)) {
@@ -212,7 +212,7 @@ function array_values_recursive($ary) {
 function _build_inherit_parents ($parent = "") {
 	$next_parent = $GLOBALS["INHERIT_TREE"][$parent];
 
-	$parents = array();
+	$parents = [];
 	$parents[$parent] = $next_parent;
 	if (!$next_parent) {
 		$GLOBALS["INHERIT_TOP"][$parent]++;
@@ -248,7 +248,7 @@ foreach ((array)$files_to_compress as $cur_file_path) {
 }
 
 // Get classes names and paths
-$new_files_to_compile = array();
+$new_files_to_compile = [];
 foreach ((array)scan_dir($packed_dir, 1, "#.*\.(php)\$#", $exclude_pattern_user) as $cur_file_path) {
 	$class_name = str_replace("/", "_", str_replace("\/", "/", substr($cur_file_path, strlen($packed_dir), -4)));
 	$GLOBALS['CLASSES'][$class_name] = $class_name;
@@ -286,7 +286,7 @@ ksort($GLOBALS["INHERIT_NONE"]);
 ksort($GLOBALS["INHERIT_TOP"]);
 
 // Build result array
-$CLASSES_NEW = array();
+$CLASSES_NEW = [];
 foreach (array_keys($GLOBALS["ABSTRACT_CLASSES"]) as $v) {
 	if (!isset($CLASSES_NEW[$v])) {
 		$CLASSES_NEW[$v] = $v;

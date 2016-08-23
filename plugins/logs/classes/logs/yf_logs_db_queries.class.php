@@ -53,7 +53,7 @@ class yf_logs_db_queries {
 					continue;
 				}
 				// Get explain info about queries
-				$_explain_result = array();
+				$_explain_result = [];
 				if (substr(db()->DB_TYPE, 0, 5) == 'mysql' && preg_match('/^[\(]*select/ims', $text)) {
 					$_explain_result = db()->query_fetch_all('EXPLAIN '.$text);
 				}
@@ -87,7 +87,7 @@ class yf_logs_db_queries {
 	* @access	private
 	* @return	string
 	*/
-	function _format_db_explain_result($explain_result = array()) {
+	function _format_db_explain_result($explain_result = []) {
 		if (empty($explain_result)) {
 			return false;
 		}

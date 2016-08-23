@@ -13,12 +13,12 @@ class yf_admin_wall {
 	*/
 	function show() {
 		$sql = 'SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC';
-		return table($sql, array(
+		return table($sql, [
 				'filter' => true,
-				'filter_params' => array(
+				'filter_params' => [
 					'message'	=> 'like',
-				),
-			))
+				],
+			])
 			->date('add_date')
 			->text('message')
 			->text('object')
@@ -59,7 +59,7 @@ class yf_admin_wall {
 	function filter_save() {
 		$filter_name = $_GET['object'].'__view';
 		if ($_GET['page'] == 'clear') {
-			$_SESSION[$filter_name] = array();
+			$_SESSION[$filter_name] = [];
 		} else {
 			$_SESSION[$filter_name] = $_POST;
 			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
@@ -74,21 +74,21 @@ class yf_admin_wall {
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
+		if (!in_array($_GET['action'], ['show'])) {
 			return false;
 		}
-		$order_fields = array();
+		$order_fields = [];
 		foreach (explode('|', 'add_date|message|object|action|object_id|admin_id') as $v) {
 			$order_fields[$v] = $v;
 		}
-		return form($r, array(
+		return form($r, [
 				'filter' => true,
-			))
+			])
 			->text('message')
 			->text('object')
 			->text('action')
 			->integer('object_id')
-			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->select_box('order_by', $order_fields, ['show_text' => 1])
 			->order_box()
 			->save_and_clear();
 		;
@@ -96,20 +96,20 @@ class yf_admin_wall {
 
 	/**
 	*/
-	function _hook_widget__admin_wall ($params = array()) {
-		$meta = array(
+	function _hook_widget__admin_wall ($params = []) {
+		$meta = [
 			'name' => 'Admin wall',
 			'desc' => 'Latest events for admin',
-			'configurable' => array(
+			'configurable' => [
 //				'order_by'	=> array('id','name','active'),
-			),
-		);
+			],
+		];
 		if ($params['describe_self']) {
 			return $meta;
 		}
 		$config = $params;
 		$sql = 'SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC';
-		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'pages_on_top' => 1, 'pager_path' => './?object='.$_GET['object'].'&action=show'))
+		return table($sql, ['no_header' => 1, 'btn_no_text' => 1, 'pages_on_top' => 1, 'pager_path' => './?object='.$_GET['object'].'&action=show'])
 			->date('add_date')
 			->admin('user_id')
 			->text('message')
@@ -119,7 +119,7 @@ class yf_admin_wall {
 
 	/**
 	*/
-	function _hook_settings(&$selected = array()) {
+	function _hook_settings(&$selected = []) {
 #		return array(
 #			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
 #		);

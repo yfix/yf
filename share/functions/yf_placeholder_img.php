@@ -3,18 +3,18 @@
 /**
 * Simple replacement for http://placehold.it/
 */
-function yf_placeholder_img($w = 100, $h = 100, $params = array()) {
+function yf_placeholder_img($w = 100, $h = 100, $params = []) {
 	$w = abs((int)$w ?: 100);
 	$h = abs((int)$h ?: 100);
 	$text = $params['text'] ?: $w.' x '.$h;
 
-	$font_try_paths = $params['font_paths'] ?: array(
+	$font_try_paths = $params['font_paths'] ?: [
 		'/usr/share/fonts/',
 		'/usr/share/fonts/dejavu/',
 		'/usr/share/fonts/truetype/',
 		'/usr/share/fonts/truetype/dejavu/',
 		'/usr/share/fonts/truetype/ttf-dejavu/', // Centos
-	);
+	];
 	$font_name = $params['font_name'] ?: 'DejaVuSans-Bold.ttf';
 	$font = '';
 	foreach ($font_try_paths as $path) {

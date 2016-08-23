@@ -17,25 +17,25 @@ function data_get_latest_languages() {
 	////////////////
 	$tmp_tbl = html_table_to_array($html2);
 	////////////////
-	$data = array();
+	$data = [];
 	foreach ($tmp_tbl as $v) {
 		$id = $v[4];
 		if (!$id) {
 			continue;
 		}
-		$data[$id] = array(
+		$data[$id] = [
 			'code'	=> $id,
 			'name'	=> $v[2],
 			'native'=> trim($v[3]),
 			'code3' => $v[5],
 			'country'=> '',
 			'active'=> 0,
-		);
+		];
 	}
-	foreach (array('en','ru','uk') as $c) {
+	foreach (['en','ru','uk'] as $c) {
 		$data[$c]['active'] = 1;
 	}
-	$lang_to_country = array(
+	$lang_to_country = [
 		'en' => 'us',
 		'ru' => 'ru',
 		'uk' => 'ua',
@@ -67,7 +67,7 @@ function data_get_latest_languages() {
 		'ko' => 'kp',
 		'ja' => 'jp',
 		'zh' => 'cn',
-	);
+	];
 	foreach ($lang_to_country as $lang => $country) {
 		$data[$lang]['country'] = $country;
 	}

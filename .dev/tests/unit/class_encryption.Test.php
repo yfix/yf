@@ -9,7 +9,7 @@ class class_encryption_test extends yf_unit_tests {
 	private static $secret = 'my_secret_padded_to_24_b';
 	private static $to_encode = 'testing long string containing different symols:;.,%^&*()';
 	private static $cipher = 'CAST_128';
-	private static $_bak_settings = array();
+	private static $_bak_settings = [];
 
 	public static function setUpBeforeClass() {
 		self::$_bak_settings['USE_MCRYPT'] = _class('encryption')->USE_MCRYPT;

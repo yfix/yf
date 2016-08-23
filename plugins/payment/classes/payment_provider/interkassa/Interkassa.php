@@ -4,9 +4,9 @@
 
 class Interkassa {
 
-	protected $_currency_allow = array( 'USD', 'EUR', 'UAH', 'RUB', );
+	protected $_currency_allow = [ 'USD', 'EUR', 'UAH', 'RUB', ];
 
-	protected $_signature_allow = array(
+	protected $_signature_allow = [
 		'ik_co_id',    // * Checkout ID, /^[\w\-]{1,36}$/D 4f269503a1da92c807000002 Идентификатор кассы. Обязательный параметр. См.настройки кассы.
 		'ik_pm_no',    // Payment No., /^[\w\-]{1,32}$/D 14533;ID_4233 Номер платежа. Сохраняется в биллинге Интеркассы.Позволяет идентифицировать платеж в системе, а также связать с заказами в вашем биллинге. Проверяетсяуникальность, если в настройках кассы установленаданная опция. Опциональный параметр.
 		'ik_cur',      // Currency, /^.{3}$/ USD; EUR; UAH Валюта платежа. Обязательный параметр, если к кассе подключено больше чем одна валюта. См. настройки кассы.
@@ -42,16 +42,16 @@ class Interkassa {
 		'ik_inv_st',   // Invoice State, success; fail Состояние платежа. Возможные значения: Дополнительные new — новый, waitAccept —ожидает оплаты, process —обрабатывается, success —успешно проведен, canceled—отменен, fail—не проведен.
 		'ik_ps_price', // Paysystem Price, 25.32; Сумма платежа в платежной системе.
 		'ik_co_rfn',   // Checkout Refund, 24.94; Сумма зачисления на счет кассы.
-	);
-	protected $_signature_allow_x = array(
+	];
+	protected $_signature_allow_x = [
 		'_ik_x_', // not in manual, but allow %)
 		'ik_x_', // ik_x_[name] - X Prefix, ik_x_field1 = somedata; ik_x_baggage1 = code123; Префикс дополнительных полей. Позволяет передавать дополнительные поля на SCI, после чего эти параметры включаются в данные уведомления о совершенном платеже на страницу взаимодействия.  Для создания вы можете воспользоваться нашим генератором платежной формы
-	);
+	];
 
-	private $_hash_method_allow = array(
+	private $_hash_method_allow = [
 		'md5',
 		'sha256',
-	);
+	];
 
 	private $_key_public       = null;
 	private $_key_private      = null;
@@ -79,7 +79,7 @@ class Interkassa {
 	}
 
 	public function key( $name = 'public', $value = null ) {
-		if( !in_array( $name, array( 'public', 'private', 'private_test' ) ) ) {
+		if( !in_array( $name, [ 'public', 'private', 'private_test' ] ) ) {
 			return( null );
 		}
 		$_name  = '_key_' . $name;
@@ -116,7 +116,7 @@ class Interkassa {
 
 	public function signature( $options, $is_request = true ) {
 		$_ = &$options;
-		$request = array();
+		$request = [];
 		// add allow fields
 		foreach( (array)$this->_signature_allow as $key  ) {
 			isset( $_[ $key ] ) && $request[ $key ] = &$_[ $key ];

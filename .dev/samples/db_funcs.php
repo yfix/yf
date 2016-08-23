@@ -5,10 +5,10 @@ function load_db_class() {
 	if ($_loaded_class) {
 		return $_loaded_class;
 	}
-	$classes = array(
+	$classes = [
 		'db'	=> INCLUDE_PATH.'classes/db.class.php',
 		'yf_db'	=> YF_PATH.'classes/yf_db.class.php',
-	);
+	];
 	foreach ((array)$classes as $cl => $f) {
 		if (!file_exists($f)) {
 			continue;

@@ -1,7 +1,7 @@
 <?php
-return array (
+return [
   4 => 
-  array (
+  [
     'id' => '4',
     'group' => '2',
     'name' => '',
@@ -40,9 +40,9 @@ return array (
     'emails' => '0',
     'emailssent' => '0',
     'go_after_login' => '',
-  ),
+  ],
   5 => 
-  array (
+  [
     'id' => '5',
     'group' => '2',
     'name' => '',
@@ -81,9 +81,9 @@ return array (
     'emails' => '2',
     'emailssent' => '0',
     'go_after_login' => '',
-  ),
+  ],
   6 => 
-  array (
+  [
     'id' => '6',
     'group' => '2',
     'name' => '',
@@ -122,9 +122,9 @@ return array (
     'emails' => '0',
     'emailssent' => '1',
     'go_after_login' => '',
-  ),
+  ],
   7 => 
-  array (
+  [
     'id' => '7',
     'group' => '2',
     'name' => '',
@@ -163,5 +163,5 @@ return array (
     'emails' => '0',
     'emailssent' => '0',
     'go_after_login' => '',
-  ),
-);
+  ],
+];

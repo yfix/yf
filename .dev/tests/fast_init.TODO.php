@@ -1,7 +1,7 @@
 <?php
 
-$CONF['fast_init_route_table'] = array(
-);
+$CONF['fast_init_route_table'] = [
+];
 $CONF['fast_init_route'] = function($table) {
 // TODO
 	var_dump(func_get_args());

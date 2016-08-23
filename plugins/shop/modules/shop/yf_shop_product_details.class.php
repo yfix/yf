@@ -43,11 +43,11 @@ class yf_shop_product_details{
 				if ($i != $product_info["image"]) {
 					$thumb_temp = module("shop")->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.module("shop")->THUMB_SUFFIX.".jpg";
 					$img_temp = module("shop")->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.module("shop")->FULL_IMG_SUFFIX.".jpg";
-					$replace2 = array(
+					$replace2 = [
 						"thumb_path"=> $thumb_temp,
 						"img_path" 	=> $img_temp,
 						"name"		=> $product_info["url"],
-					);
+					];
 					$image .= tpl()->parse("shop/image_items", $replace2);
 				}
 			}
@@ -61,7 +61,7 @@ class yf_shop_product_details{
 		if (module("shop")->products_similar_by_basket == true){
 			$products_similar_by_basket = module("shop")->products_similar_by_basket ( $product_info["id"] );
 		}
-		$replace = array(
+		$replace = [
 			"name"					=> _prepare_html($product_info["name"]),
 			"model"					=> _prepare_html($product_info["model"]),
 			"desc"					=> $product_info["description"],
@@ -86,7 +86,7 @@ class yf_shop_product_details{
 			"products_similar_by_price"	=> $products_similar_by_price,
 			"products_similar_by_basket"=> $products_similar_by_basket,
 			"product_related"		=> module("shop")->products_related($product_info["id"]),
-		);
+		];
 		db()->query("UPDATE ".db('shop_products')." SET viewed = viewed+1 , last_viewed_date = ".time()."  WHERE ".$add_sql."'");
 		return tpl()->parse("shop/details", $replace);
 	}

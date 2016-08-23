@@ -18,9 +18,9 @@ class function_htmlchars_test extends yf_unit_tests {
 		$this->assertEquals('&gt;', _htmlchars('>'));
 		$this->assertEquals('&lt;script&gt;', _htmlchars('<script>'));
 
-		$this->assertEquals(array('test'), _htmlchars(array('test')));
-		$this->assertEquals(array('k1' => '&lt;', 'k2' => '&gt;'), _htmlchars(array('k1' => '<', 'k2' => '>')));
-		$this->assertEquals(array('k1' => array(array('&lt;')), 'k2' => '&gt;'), _htmlchars(array('k1' => array(array('<')), 'k2' => '>')));
+		$this->assertEquals(['test'], _htmlchars(['test']));
+		$this->assertEquals(['k1' => '&lt;', 'k2' => '&gt;'], _htmlchars(['k1' => '<', 'k2' => '>']));
+		$this->assertEquals(['k1' => [['&lt;']], 'k2' => '&gt;'], _htmlchars(['k1' => [['<']], 'k2' => '>']));
 
 		$this->assertEquals('&gt;', _htmlchars('&gt;'));
 		$this->assertEquals('&#039;', _htmlchars('&#039;'));

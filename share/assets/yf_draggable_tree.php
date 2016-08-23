@@ -1,9 +1,9 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'css' => array(
+return [
+	'versions' => [
+		'master' => [
+			'css' => [
 	'.draggable_menu { width:70%; }
 	.draggable_menu li { list-style-type: none; }
 	.draggable_menu dl { font-weight:bold; position: relative; display: block; margin:0; border-top: 1px solid #444; }
@@ -15,8 +15,8 @@ return array(
 	.draggable_menu ul.closed { display: none; }
 	.draggable_menu .controls_over { display: none; }
 	.icon-move, .fa-arrows { cursor: move; }',
-			),
-			'js' => array(
+			],
+			'js' => [
 <<<END
 $(function(){
 	var orig_items = { };
@@ -175,10 +175,10 @@ END
 		}
 	}
 END
-			),
-		),
-	),
-	'require' => array(
+			],
+		],
+	],
+	'require' => [
 		'asset' => 'jquery-ui',
-	),
-);
+	],
+];

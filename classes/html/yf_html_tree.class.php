@@ -12,7 +12,7 @@ class yf_html_tree {
 
 	/**
 	*/
-	function tree($data = array(), $extra = array()) {
+	function tree($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if ($data) {
 			$data = $this->_parent->_recursive_sort_items($data);
@@ -20,11 +20,11 @@ class yf_html_tree {
 		asset('yf_draggable_tree');
 
 		$items = implode(PHP_EOL, (array)$this->_tree_items($data, $extra));
-		$r = array(
+		$r = [
 			'form_action'	=> isset($extra['form_action']) ? $extra['form_action'] : url('/@object/@action/@id/@page'),
 			'add_link'		=> isset($extra['add_link']) ? $extra['add_link'] : url('/@object/add_item/@id/@page'),
 			'back_link'		=> isset($extra['back_link']) ? $extra['back_link'] : url('/@object/show_items/@id/@page'),
-		);
+		];
 		$form_class = 'draggable_form'. ($extra['form_class'] ? ' '.$extra['form_class'] : ''). ($extra['class_add'] ? ' '.$extra['class_add'] : '');
 		$add_link_class = 'btn btn-mini btn-xs btn-default'. (!$extra['add_no_ajax'] ? ' ajax_add' : '');
 		return 
@@ -42,13 +42,13 @@ class yf_html_tree {
 	/**
 	* This pure-php method needed to greatly speedup page rendering time for 100+ items
 	*/
-	function _tree_items(&$data, $extra = array()) {
+	function _tree_items(&$data, $extra = []) {
 		if ($extra['show_controls'] && !is_callable($extra['show_controls'])) {
-			$r = array(
+			$r = [
 				'edit_link'		=> isset($extra['edit_link']) ? $extra['edit_link'] : url('/@object/edit_item/%d/@page'),
 				'delete_link'	=> isset($extra['delete_link']) ? $extra['delete_link'] : url('/@object/delete_item/%d/@page'),
 				'clone_link'	=> isset($extra['clone_link']) ? $extra['clone_link'] : url('/@object/clone_item/%d/@page'),
-			);
+			];
 			$form_controls = form_item($r)->tbl_link_edit()
 				. form_item($r)->tbl_link_delete()
 				. form_item($r)->tbl_link_clone()
@@ -58,7 +58,7 @@ class yf_html_tree {
 		$is_draggable = isset($extra['draggable']) ? $extra['draggable'] : true;
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
-		$items = array();
+		$items = [];
 		$ul_opened = false;
 		foreach ((array)$data as $id => $item) {
 			$next_item = $data[ $keys[$keys_counter[$id] + 1] ];
@@ -121,7 +121,7 @@ class yf_html_tree {
 
 	/**
 	*/
-	function li_tree($data = array(), $extra = array()) {
+	function li_tree($data = [], $extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if ($data) {
 			$data = $this->_parent->_recursive_sort_items($data);
@@ -132,7 +132,7 @@ class yf_html_tree {
 		$opened_levels = isset($extra['opened_levels']) ? $extra['opened_levels'] : 1;
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
-		$items = array();
+		$items = [];
 		$ul_opened = false;
 		foreach ((array)$data as $id => $item) {
 			$next_item = $data[ $keys[$keys_counter[$id] + 1] ];

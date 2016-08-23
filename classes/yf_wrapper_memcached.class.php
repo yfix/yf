@@ -6,11 +6,11 @@
 class yf_wrapper_memcached {
 
 	/** @var array internal @conf_skip */
-	public $DEFAULT	= array(
+	public $DEFAULT	= [
 		'port'		=> 11211,
 		'host'		=> '127.0.0.1', // !!! DO NOT USE 'localhost' on Ubuntu 10.04 (and maybe others) due to memcached bug
 		'persistent'=> false,
-	);
+	];
 	/** @var object internal @conf_skip */
 	private $_connection = null;
 	/** @var boo; internal @conf_skip */
@@ -26,7 +26,7 @@ class yf_wrapper_memcached {
 	function __call($name, $args) {
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			return call_user_func_array(array($this->_connection, $name), $args);
+			return call_user_func_array([$this->_connection, $name], $args);
 		}
 		return main()->extend_call($this, $name, $args);
 	}
@@ -51,17 +51,17 @@ class yf_wrapper_memcached {
 	/**
 	*/
 	function _init() {
-		($host = getenv('MEMCACHED_PORT') ?: conf('MEMCACHED_HOST')) && $this->DEFAULT['host'] = $host;
-		($port = getenv('MEMCACHED_PORT') ?: conf('MEMCACHED_PORT')) && $this->DEFAULT['port'] = $port;
+		($host = getenv('MEMCACHED_PORT') ?: conf('MEMCACHED_HOST') ?: @constant('MEMCACHED_HOST')) && $this->DEFAULT['host'] = $host;
+		($port = getenv('MEMCACHED_PORT') ?: conf('MEMCACHED_PORT') ?: @constant('MEMCACHED_PORT')) && $this->DEFAULT['port'] = $port;
 	}
 
 	/**
 	*/
-	function connect($params = array()) {
+	function connect($params = []) {
 		$this->_connected_ok = false;
 
-		$ext_old_allowed = $this->FORCE_EXT ? in_array($this->FORCE_EXT, array('old','memcache')) : true;
-		$ext_new_allowed = $this->FORCE_EXT ? in_array($this->FORCE_EXT, array('new','memcached')) : true;
+		$ext_old_allowed = $this->FORCE_EXT ? in_array($this->FORCE_EXT, ['old','memcache']) : true;
+		$ext_new_allowed = $this->FORCE_EXT ? in_array($this->FORCE_EXT, ['new','memcached']) : true;
 
 		if ($ext_new_allowed && class_exists('Memcached')) {
 			$this->_connection = new Memcached;
@@ -69,9 +69,9 @@ class yf_wrapper_memcached {
 			$this->_connection = new Memcache;
 		}
 		if (is_object($this->_connection)) {
-			$mc_params = array($this->DEFAULT);
+			$mc_params = [$this->DEFAULT];
 			if (isset($params['memcache']) && !empty($params['memcache'])) {
-				$mc_params = is_array($params['memcache']) ? $params['memcache'] : array($params['memcache']);
+				$mc_params = is_array($params['memcache']) ? $params['memcache'] : [$params['memcache']];
 			}
 			$failed = true;
 			foreach ((array)$mc_params as $server) {
@@ -103,7 +103,7 @@ class yf_wrapper_memcached {
 
 	/**
 	*/
-	function get($name, $ttl = 0, $params = array()) {
+	function get($name, $ttl = 0, $params = []) {
 		if (!$this->is_ready()) {
 			return null;
 		}
@@ -186,12 +186,12 @@ class yf_wrapper_memcached {
 
 	/**
 	*/
-	function multi_get(array $names, $ttl = 0, $params = array()) {
+	function multi_get(array $names, $ttl = 0, $params = []) {
 		if (!$this->is_ready()) {
 			return null;
 		}
 		if (!$this->_memcache_new_extension) {
-			$result = array();
+			$result = [];
 			foreach ((array)$names as $name) {
 				$res = $this->get($name);
 				if (isset($res)) {
@@ -262,12 +262,12 @@ class yf_wrapper_memcached {
 			return null;
 		}
 		$stats = $this->_connection->getStats();
-		return array(
+		return [
 			'hits'   	=> $stats['get_hits'],
 			'misses' 	=> $stats['get_misses'],
 			'uptime' 	=> $stats['uptime'],
 			'mem_usage'	=> $stats['bytes'],
 			'mem_avail'	=> $stats['limit_maxbytes'],
-		);
+		];
 	}
 }

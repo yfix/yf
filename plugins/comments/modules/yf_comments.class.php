@@ -45,12 +45,12 @@ class yf_comments {
 	/** @var int Edit limit time */
 	public $EDIT_LIMIT_TIME			= 604800; // week
 	/** @var array Comment links @conf_skip */
-	public $COMMENT_LINKS = array(
+	public $COMMENT_LINKS = [
 		'news'		=> './?object=news&action=full_news&id=',
 		'articles'	=> './?object=articles&action=view&id=',
 		'blog'		=> './?object=blog&action=show_single_post&id=',
 		'gallery'	=> './?object=gallery&action=show_medium_size&id=',
-	);
+	];
 	/** @var int */
 	public $NUM_RSS 	= 10;
 	/** @var string @conf_skip */
@@ -75,7 +75,7 @@ class yf_comments {
 	/**
 	* Display comments block for given object name
 	*/
-	function _show_for_object ($params = array()) {
+	function _show_for_object ($params = []) {
 		if ($this->USE_TREE_MODE) {
 			return $this->_show_for_object_tree($params);
 		} 
@@ -104,7 +104,7 @@ class yf_comments {
 			module('unread')->_set_read('comments', array_keys($comments_array));
 		}
 		if (!empty($users_ids)) {
-			foreach ((array)user($users_ids, array('id','name',$this->_user_nick_field,'photo_verified')) as $A) {
+			foreach ((array)user($users_ids, ['id','name',$this->_user_nick_field,'photo_verified']) as $A) {
 				$users_names[$A['id']] = _display_name($A);
 				$GLOBALS['verified_photos'][$A['id']] = $A['photo_verified'];
 			} 
@@ -119,25 +119,25 @@ class yf_comments {
 		}
 		if ($view_email_allowed_check_method) {
 			$m = $this->_view_email_allowed_method;
-			$view_email = (bool)module($_GET['object'])->$m( array('object_id' => $OBJECT_ID) );
+			$view_email = (bool)module($_GET['object'])->$m( ['object_id' => $OBJECT_ID] );
 		}
 		
 		foreach ((array)$comments_array as $comment_info) {
 			if ($edit_allowed_check_method) {
 				$m = $this->_edit_allowed_method;
-				$edit_allowed	= (bool)module($_GET['object'])->$m( array(
+				$edit_allowed	= (bool)module($_GET['object'])->$m( [
 					'user_id'	=> $comment_info['user_id'],
 					'object_id'	=> $comment_info['object_id'],
-				) );
+				] );
 			} else {
 				$edit_allowed	= main()->USER_ID && $comment_info['user_id'] == main()->USER_ID;
 			}
 			if ($delete_allowed_check_method) {
 				$m = $this->_delete_allowed_method;
-				$delete_allowed	= (bool)module($_GET['object'])->$m( array(
+				$delete_allowed	= (bool)module($_GET['object'])->$m( [
 					'user_id' => $comment_info['user_id'],
 					'object_id' => $comment_info['object_id']
-				) );
+				] );
 			} else {
 				$delete_allowed = main()->USER_ID && $comment_info['user_id'] == main()->USER_ID;
 			}
@@ -145,11 +145,11 @@ class yf_comments {
 				$edit_allowed	= true;
 				$delete_allowed = true;
 			}
-			$comment_info['text'] = str_replace(array("\\\\","\\'","\\\""), array("\\","'","\""), $comment_info['text']);
+			$comment_info['text'] = str_replace(["\\\\","\\'","\\\""], ["\\","'","\""], $comment_info['text']);
 			if (($comment_info['text'] == '__comment was deleted__') && ($comment_info['user_id'] == '0')) {
 				$comment_info['text'] = t('comment was deleted');
 			}
-			$replace2 = array(
+			$replace2 = [
 				'need_div'				=> intval($i > 0),
 				'bg_class'				=> !(++$i % 2) ? 'bg1' : 'bg2',
 				'comment_id'			=> intval($comment_info['id']),
@@ -160,11 +160,11 @@ class yf_comments {
 				'user_email_link'		=> $comment_info['user_id'] ? _email_link($comment_info['user_id']) : '',
 				'add_date'				=> _format_date($comment_info['add_date'], 'long'),
 				'comment_text'			=> $this->_format_text($comment_info['text']),
-				'edit_comment_link'		=> $edit_allowed ? './?object='.$_GET['object'].'&action=edit_comment&id='.$comment_info['id']._add_get(array('page')) : '',
-				'delete_comment_link'	=> $delete_allowed ? './?object='.$_GET['object'].'&action=delete_comment&id='.$comment_info['id']._add_get(array('page')) : '',
-				'reput_text'			=> is_object($REPUT_OBJ) && isset($users_names[$comment_info['user_id']]) ? $REPUT_OBJ->_show_for_user($comment_info['user_id'], $users_reput_info[$comment_info['user_id']], false, array('comments', $comment_info['id'])) : '',
+				'edit_comment_link'		=> $edit_allowed ? './?object='.$_GET['object'].'&action=edit_comment&id='.$comment_info['id']._add_get(['page']) : '',
+				'delete_comment_link'	=> $delete_allowed ? './?object='.$_GET['object'].'&action=delete_comment&id='.$comment_info['id']._add_get(['page']) : '',
+				'reput_text'			=> is_object($REPUT_OBJ) && isset($users_names[$comment_info['user_id']]) ? $REPUT_OBJ->_show_for_user($comment_info['user_id'], $users_reput_info[$comment_info['user_id']], false, ['comments', $comment_info['id']]) : '',
 				'user_id'				=> $comment_info['user_id'],
-			);
+			];
 			$items .= tpl()->parse($STPL_NAME_ITEM, $replace2);
 		}
 		if (main()->USER_ID) {
@@ -175,20 +175,20 @@ class yf_comments {
 		if ($params['allow_guests_posts']) {
 			$add_comment_form = $this->_add($params);
 		}
-		$replace = array(
+		$replace = [
 			'comments'			=> $items,
 			'comments_pages'	=> $pages,
 			'num_comments'		=> intval($total),
 			'add_comment_form'	=> $add_comment_form,
 			'login_link'		=> empty(main()->USER_ID) && MAIN_TYPE_USER ? './?object=login_form&go_url='.$OBJECT_NAME.';'.$_GET['action'].';id='.$OBJECT_ID : '',
-		);
+		];
 		return tpl()->parse($STPL_NAME_MAIN, $replace);
 	}
 
 	/**
 	* Display comments tree
 	*/
-	function _show_for_object_tree ($params = array()) {
+	function _show_for_object_tree ($params = []) {
 		$OBJECT_NAME	= !empty($params['object_name'])	? $params['object_name'] : $_GET['object'];
 		$OBJECT_ID		= !empty($params['object_id'])		? intval($params['object_id']) : intval($_GET['id']);
 		$STPL_NAME_MAIN = !empty($params['stpl_main'])		? $params['stpl_main'] : 'comments/main_tree';
@@ -216,7 +216,7 @@ class yf_comments {
 		}
 		// Try to get users names
 		if (!empty($users_ids)) {
-			foreach ((array)user($users_ids, array('id','name',$this->_user_nick_field,'photo_verified')) as $A) {
+			foreach ((array)user($users_ids, ['id','name',$this->_user_nick_field,'photo_verified']) as $A) {
 				$users_names[$A['id']] = _display_name($A);
 				$GLOBALS['verified_photos'][$A['id']] = $A['photo_verified'];
 			} 
@@ -232,13 +232,13 @@ class yf_comments {
 
 		if ($view_email_allowed_check_method) {
 			$m = $this->_view_email_allowed_method;
-			$view_email = (bool)module($_GET['object'])->$m(array(
+			$view_email = (bool)module($_GET['object'])->$m([
 				'object_id' => $OBJECT_ID
-			));
+			]);
 		}
 
 		$this->_comment_array = $comments_array_ids;
-		$this->_comment_tree_array = array();
+		$this->_comment_tree_array = [];
 		if (!empty($this->_comment_array)) {
 			foreach ((array)$this->_comment_array as $key => $value) {
 				if ($value == 0) {
@@ -254,19 +254,19 @@ class yf_comments {
 			
 			if ($edit_allowed_check_method) {
 				$m = $this->_edit_allowed_method;
-				$edit_allowed	= (bool)module($_GET['object'])->$m(array(
+				$edit_allowed	= (bool)module($_GET['object'])->$m([
 					'user_id' => $comment_info['user_id'],
 					'object_id' => $comment_info['object_id']
-				));
+				]);
 			} else {
 				$edit_allowed	= main()->USER_ID && $comment_info['user_id'] == main()->USER_ID;
 			}
 			if ($delete_allowed_check_method) {
 				$m = $this->_delete_allowed_method;
-				$delete_allowed	= (bool)module($_GET['object'])->$m(array(
+				$delete_allowed	= (bool)module($_GET['object'])->$m([
 					'user_id' => $comment_info['user_id'],
 					'object_id' => $comment_info['object_id']
-				));
+				]);
 			} else {
 				$delete_allowed = main()->USER_ID && $comment_info['user_id'] == main()->USER_ID;
 			}
@@ -274,11 +274,11 @@ class yf_comments {
 				$edit_allowed	= true;
 				$delete_allowed = true;
 			}
-			$comment_info['text'] = str_replace(array("\\\\","\\'","\\\""), array("\\","'","\""), $comment_info['text']);
+			$comment_info['text'] = str_replace(["\\\\","\\'","\\\""], ["\\","'","\""], $comment_info['text']);
 			if (($comment_info['text'] == '__comment was deleted__') AND ($comment_info['user_id'] == '0')){
 				$comment_info['text'] = t(str_replace('__', '', $comment_info['text']));
 			}
-			$replace2 = array(
+			$replace2 = [
 				'user_id'					=> intval($comment_info['user_id']),
 				'user_name'					=> _prepare_html(!empty($comment_info['user_id']) ? $users_names[$comment_info['user_id']] : $comment_info['user_name']),
 				'user_email'				=> $view_email ? _prepare_html($comment_info['user_email']) : '',
@@ -287,13 +287,13 @@ class yf_comments {
 				'user_email_link'			=> $comment_info['user_id'] ? _email_link($comment_info['user_id']) : '',
 				'add_date'					=> _format_date($comment_info['add_date'], 'long'),
 				'comment_text'				=> $this->_format_text($comment_info['text']),
-				'edit_comment_link'			=> $edit_allowed ? './?object='.$_GET['object'].'&action=edit_comment&id='.$comment_info['id']._add_get(array('page')) : '',
-				'delete_comment_link'		=> $delete_allowed ? './?object='.$_GET['object'].'&action=delete_comment&id='.$comment_info['id']._add_get(array('page')) : '',
+				'edit_comment_link'			=> $edit_allowed ? './?object='.$_GET['object'].'&action=edit_comment&id='.$comment_info['id']._add_get(['page']) : '',
+				'delete_comment_link'		=> $delete_allowed ? './?object='.$_GET['object'].'&action=delete_comment&id='.$comment_info['id']._add_get(['page']) : '',
 				'current_link'				=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'].'#cid_'.$comment_info['id'],
-				'reput_text'				=> is_object($REPUT_OBJ) && isset($users_names[$comment_info['user_id']]) ? $REPUT_OBJ->_show_for_user($comment_info['user_id'], $users_reput_info[$comment_info['user_id']], false, array('comments', $comment_info['id'])) : '',
+				'reput_text'				=> is_object($REPUT_OBJ) && isset($users_names[$comment_info['user_id']]) ? $REPUT_OBJ->_show_for_user($comment_info['user_id'], $users_reput_info[$comment_info['user_id']], false, ['comments', $comment_info['id']]) : '',
 				'id'						=> $comment_info['id'],
 				'comment_margin_left'		=> $level * 30,
-			);
+			];
 			$items .= tpl()->parse($STPL_NAME_ITEM, $replace2);
 		}
 		if (!empty(main()->USER_ID)) {
@@ -304,49 +304,49 @@ class yf_comments {
 		if ($params['allow_guests_posts']) {
 			$add_comment_form = $this->_add($params);
 		}
-		$replace = array(
+		$replace = [
 			'comments'				=> $items,
 			'comments_pages'		=> $pages,
 			'num_comments'			=> intval($total),
 			'add_comment_form'		=> $add_comment_form,
 			'login_link'			=> empty(main()->USER_ID) && MAIN_TYPE_USER ? './?object=login_form&go_url='.$OBJECT_NAME.';'.$_GET['action'].';id='.$OBJECT_ID : '',
 			'add_comment_action'	=> $FORM_ACTION,
-		);
+		];
 		return tpl()->parse($STPL_NAME_MAIN, $replace);
 	}
 
 	/**
 	* Form to add comments
 	*/
-	function _add ($params = array()) {
+	function _add ($params = []) {
 		return $this->_load_sub_module('comments_manage')->_add($params);
 	}
 
 	/**
 	* Do edit own comment
 	*/
-	function _edit ($params = array()) {
+	function _edit ($params = []) {
 		return $this->_load_sub_module('comments_manage')->_edit($params);
 	}
 
 	/**
 	* Do delete comment
 	*/
-	function _delete ($params = array()) {
+	function _delete ($params = []) {
 		return $this->_load_sub_module('comments_manage')->_delete($params);
 	}
 
 	/**
 	* Get number of comments for the given objects ids
 	*/
-	function _get_num_comments ($params = array()) {
+	function _get_num_comments ($params = []) {
 		$OBJECT_NAME	= !empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
 		$OBJECTS_IDS	= !empty($params['objects_ids']) ? $params['objects_ids'] : '';
 		if (empty($OBJECTS_IDS)) {
 			return false;
 		}
 		$tmp_array = explode(',', $OBJECTS_IDS);
-		$OBJECTS_IDS = array();
+		$OBJECTS_IDS = [];
 		foreach ((array)$tmp_array as $cur_id) {
 			if (empty($cur_id)) {
 				continue;
@@ -390,12 +390,12 @@ class yf_comments {
 		}
 		foreach ((array)$comment as $id => $parent_id) {
 			if ((!in_array($id, $this->_comment_array)) and (!in_array($id, $this->_comment_tree_array))) {
-				$this->_comment_tree_array[] = array('id' => $id, 'level' => $level);
+				$this->_comment_tree_array[] = ['id' => $id, 'level' => $level];
 				continue;
 			}
 			if (in_array($id, $this->_comment_array)) {
-				$this->_comment_tree_array[] = array('id' => $id, 'level' => $level);
-				$temp_array = array();
+				$this->_comment_tree_array[] = ['id' => $id, 'level' => $level];
+				$temp_array = [];
 				foreach ((array)$this->_comment_array as $key => $value){
 					if($value == $id) $temp_array[$key] = $value;
 				}
@@ -446,11 +446,11 @@ class yf_comments {
 			$ids[$A['id']] = $A['id'];
 		}
 		$link = process_url('./?object=comments&action=view_unread');
-		$unread = array(
+		$unread = [
 			'count'	=> count($ids),
 			'ids'	=> $ids,
 			'link'	=> $link,
-		);
+		];
 		return $unread;
 	}
 	
@@ -484,10 +484,10 @@ class yf_comments {
 				$comments_info[$A['id']] = $A;
 			}
 		}
-		$replace = array(
+		$replace = [
 			'items'		=> $comments_info,
 			'pages'		=> $pages,
-		);
+		];
 		return tpl()->parse($_GET['object'].'/unread', $replace);
 	}
 }

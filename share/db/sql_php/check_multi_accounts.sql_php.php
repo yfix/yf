@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'user_id' => array(
+return [
+	'fields' => [
+		'user_id' => [
 			'name' => 'user_id',
 			'type' => 'int',
 			'length' => 10,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'matching_users' => array(
+		],
+		'matching_users' => [
 			'name' => 'matching_users',
 			'type' => 'longtext',
 			'length' => NULL,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'matching_ips' => array(
+		],
+		'matching_ips' => [
 			'name' => 'matching_ips',
 			'type' => 'longtext',
 			'length' => NULL,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'num_m_users' => array(
+		],
+		'num_m_users' => [
 			'name' => 'num_m_users',
 			'type' => 'int',
 			'length' => 10,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'num_m_ips' => array(
+		],
+		'num_m_ips' => [
 			'name' => 'num_m_ips',
 			'type' => 'int',
 			'length' => 10,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'last_update' => array(
+		],
+		'last_update' => [
 			'name' => 'last_update',
 			'type' => 'int',
 			'length' => 10,
@@ -90,8 +90,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'cookie_match' => array(
+		],
+		'cookie_match' => [
 			'name' => 'cookie_match',
 			'type' => 'enum',
 			'length' => NULL,
@@ -104,12 +104,12 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-		'ip_match' => array(
+			],
+		],
+		'ip_match' => [
 			'name' => 'ip_match',
 			'type' => 'enum',
 			'length' => NULL,
@@ -122,37 +122,37 @@ return array(
 			'auto_inc' => false,
 			'primary' => false,
 			'unique' => false,
-			'values' => array(
+			'values' => [
 				0 => '0',
 				1 => '1',
-			),
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+			],
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'user_id' => 'user_id',
-			),
-		),
-		'ip_match' => array(
+			],
+		],
+		'ip_match' => [
 			'name' => 'ip_match',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'ip_match' => 'ip_match',
-			),
-		),
-		'cookie_match' => array(
+			],
+		],
+		'cookie_match' => [
 			'name' => 'cookie_match',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'cookie_match' => 'cookie_match',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

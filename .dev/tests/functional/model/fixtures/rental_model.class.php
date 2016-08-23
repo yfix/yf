@@ -19,13 +19,13 @@ class rental_model extends yf_model {
 		return 'rental_date';
 	}
 	public function _rules() {
-		return array(
+		return [
 			'rental_date, inventory_id, customer_id, staff_id, last_update' => 'required',
 			'inventory_id, customer_id, staff_id' => 'integer',
 			'return_date' => 'safe',
 			'return_date' => 'default[NULL]',
 			'rental_id, rental_date, inventory_id, customer_id, return_date, staff_id, last_update' => 'safe[on=search]',
-		);
+		];
 	}
 	public function payments() {
 		return $this->has_many('payment', 'rental_id');

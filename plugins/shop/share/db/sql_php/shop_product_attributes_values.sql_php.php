@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'category_id' => array(
+return [
+	'fields' => [
+		'category_id' => [
 			'name' => 'category_id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object_name' => array(
+		],
+		'object_name' => [
 			'name' => 'object_name',
 			'type' => 'varchar',
 			'length' => 50,
@@ -30,8 +30,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'object_id' => array(
+		],
+		'object_id' => [
 			'name' => 'object_id',
 			'type' => 'int',
 			'length' => 11,
@@ -45,8 +45,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'field_id' => array(
+		],
+		'field_id' => [
 			'name' => 'field_id',
 			'type' => 'int',
 			'length' => 11,
@@ -60,8 +60,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'value' => array(
+		],
+		'value' => [
 			'name' => 'value',
 			'type' => 'text',
 			'length' => NULL,
@@ -75,8 +75,8 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'add_value' => array(
+		],
+		'add_value' => [
 			'name' => 'add_value',
 			'type' => 'text',
 			'length' => NULL,
@@ -90,12 +90,12 @@ return array(
 			'primary' => false,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+		],
+	],
+	'indexes' => [
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

@@ -1,8 +1,8 @@
 <?php
 
-$debug_users = array(
+$debug_users = [
 	'yf_test' => 'yf_test',
-);
+];
 $debug_salt = '_5555_';
 $robots_options = 'noindex, nofollow, noarchive, nosnippet';
 
@@ -29,7 +29,7 @@ if (!$console_mode) {
 		exit();
 	}
 }
-function _basic_auth_check($users = array()) {
+function _basic_auth_check($users = []) {
 	$auth_user = trim($_SERVER['PHP_AUTH_USER']);
 	$auth_pswd = trim($_SERVER['PHP_AUTH_PW']);
 	if (!strlen($auth_user) || !strlen($auth_pswd)) {

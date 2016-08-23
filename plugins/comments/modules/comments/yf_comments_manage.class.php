@@ -8,7 +8,7 @@ class yf_comments_manage {
 	/**
 	* Form to add comments
 	*/
-	function _add ($params = array()) {
+	function _add ($params = []) {
 		if (empty(main()->USER_ID) && MAIN_TYPE_USER && !$params['allow_guests_posts']) {
 			return '';
 		}
@@ -58,10 +58,10 @@ class yf_comments_manage {
 				}
 			}
 			if (!common()->_error_exists() && MAIN_TYPE_USER) {
-				$info_for_check = array(
+				$info_for_check = [
 					'comment_text'	=> $_POST['text'],
 					'user_id'		=> main()->USER_ID,
-				);
+				];
 				$USER_BANNED = _check_user_ban($info_for_check, module('comments')->_user_info);
 				if ($USER_BANNED) {
 					module('comments')->_user_info = user(main()->USER_ID);
@@ -81,7 +81,7 @@ class yf_comments_manage {
 					ORDER BY add_date DESC LIMIT 1'
 				);
 				if (!empty($FLOOD_DETECTED)) {
-					_re('Please wait %num seconds before post comment.', array('%num' => intval(module('comments')->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED['add_date'])) ));
+					_re('Please wait %num seconds before post comment.', ['%num' => intval(module('comments')->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED['add_date'])) ]);
 				}
 			}
 			
@@ -108,7 +108,7 @@ class yf_comments_manage {
 						$_POST['text'] = $BB_CODES_OBJ->_force_close_bb_codes($_POST['text']);
 					}
 				}
-				db()->INSERT('comments', array(
+				db()->INSERT('comments', [
 					'object_name'		=> _es($OBJECT_NAME),
 					'object_id'			=> intval($OBJECT_ID),
 					'parent_id'			=> intval(isset($_POST['parent_id'])?$_POST['parent_id']:0),
@@ -119,10 +119,10 @@ class yf_comments_manage {
 					'add_date'			=> time(),
 					'active'			=> 1,
 					'ip'				=> _es(common()->get_ip()),
-				));
+				]);
 				$RECORD_ID = db()->INSERT_ID();
 
-				$try_trigger_callback = array(module($_GET['object']), module('comments')->_on_update_trigger);
+				$try_trigger_callback = [module($_GET['object']), module('comments')->_on_update_trigger];
 				if (is_callable($try_trigger_callback)) {
 					call_user_func($try_trigger_callback, $params);
 				}
@@ -137,7 +137,7 @@ class yf_comments_manage {
 			}else{
 				$view_user_email = '0';
 			}
-			$replace = array(
+			$replace = [
 				'form_action'		=> $FORM_ACTION,
 				'error_message'		=> $error_message,
 				'user_name'			=> $_POST['user_name'],
@@ -148,11 +148,11 @@ class yf_comments_manage {
 				'object_id'			=> intval($OBJECT_ID),
 				'use_captcha'		=> intval((bool)module($_GET['object'])->USE_CAPTCHA),
 				'captcha_block'		=> module($_GET['object'])->_captcha_block(),
-				'bb_codes_block'	=> module('comments')->USE_BB_CODES ? _class('bb_codes')->_display_buttons(array('unique_id' => 'text')) : '',
+				'bb_codes_block'	=> module('comments')->USE_BB_CODES ? _class('bb_codes')->_display_buttons(['unique_id' => 'text']) : '',
 				'submit_buttons'	=> _class_safe('preview')->_display_buttons(),
 				'js_check'			=> intval((bool)module('comments')->JS_TEXT_CHECKING),
 				'parent_id'			=> intval($_POST['parent_id']),
-			);
+			];
 			$body = tpl()->parse($STPL_NAME_ADD, $replace);
 		}
 		return $body;
@@ -161,7 +161,7 @@ class yf_comments_manage {
 	/**
 	* Do edit own comment
 	*/
-	function _edit ($params = array()) {
+	function _edit ($params = []) {
 		if (empty(main()->USER_ID) && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
@@ -187,10 +187,10 @@ class yf_comments_manage {
 		$edit_allowed_check_method	= is_object(module($_GET['object'])) && method_exists(module($_GET['object']), module('comments')->_edit_allowed_method);
 		if ($edit_allowed_check_method) {
 			$m = module('comments')->_edit_allowed_method;
-			$edit_allowed	= (bool)module($_GET['object'])->$m(array(
+			$edit_allowed	= (bool)module($_GET['object'])->$m([
 				'user_id' => $comment_info['user_id'],
 				'object_id' => $comment_info['object_id']
-			));
+			]);
 		} else {
 			$edit_allowed = main()->USER_ID && $comment_info['user_id'] == main()->USER_ID;
 		}
@@ -207,7 +207,7 @@ class yf_comments_manage {
 		if (!$edit_allowed) {
 			return _e('You are not allowed to perform this action');
 		}
-		$user_info = user($comment_info['user_id'], array('id','name',module('comments')->_user_nick_field,'photo_verified'), array('WHERE' => array('active' => 1)));
+		$user_info = user($comment_info['user_id'], ['id','name',module('comments')->_user_nick_field,'photo_verified'], ['WHERE' => ['active' => 1]]);
 		if (count($_POST) > 0 && !isset($_POST['_not_for_comments'])) {
 			$_POST['text'] = substr($_POST['text'], 0, module('comments')->MAX_POST_TEXT_LENGTH);
 			if (empty($_POST['text'])) {
@@ -217,10 +217,10 @@ class yf_comments_manage {
 				module($_GET['object'])->_captcha_check();
 			}
 			if (!common()->_error_exists() && MAIN_TYPE_USER) {
-				$info_for_check = array(
+				$info_for_check = [
 					'comment_text'	=> $_POST['text'],
 					'user_id'		=> main()->USER_ID,
-				);
+				];
 				$USER_BANNED = _check_user_ban($info_for_check, module('comments')->_user_info);
 				if ($USER_BANNED) {
 					module('comments')->_user_info = user(main()->USER_ID);
@@ -241,7 +241,7 @@ class yf_comments_manage {
 					ORDER BY add_date DESC 
 					LIMIT 1');
 				if (!empty($FLOOD_DETECTED)) {
-					_re('Please wait %num seconds before post comment.', array('%num' => intval(module('comments')->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED['add_date'])) ));
+					_re('Please wait %num seconds before post comment.', ['%num' => intval(module('comments')->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED['add_date'])) ]);
 				}
 			}
 			
@@ -262,11 +262,11 @@ class yf_comments_manage {
 						$_POST['text'] = $BB_CODES_OBJ->_force_close_bb_codes($_POST['text']);
 					}
 				}
-				db()->UPDATE('comments', array(
+				db()->UPDATE('comments', [
 					'text' 			=> _es($_POST['text']),
-				), 'id='.intval($comment_info['id']));
+				], 'id='.intval($comment_info['id']));
 
-				$try_trigger_callback = array(module($_GET['object']), module('comments')->_on_update_trigger);
+				$try_trigger_callback = [module($_GET['object']), module('comments')->_on_update_trigger];
 				if (is_callable($try_trigger_callback)) {
 					call_user_func($try_trigger_callback, $params);
 				}
@@ -278,7 +278,7 @@ class yf_comments_manage {
 		}
 		$error_message = _e();
 		if (empty($_POST['go']) || !empty($error_message)) {
-			$replace = array(
+			$replace = [
 				'form_action'		=> $FORM_ACTION,
 				'error_message'		=> $error_message,
 				'user_id'			=> intval(main()->USER_ID),
@@ -292,9 +292,9 @@ class yf_comments_manage {
 				'object_id'			=> intval($OBJECT_ID),
 				'use_captcha'		=> intval((bool)module($_GET['object'])->USE_CAPTCHA),
 				'captcha_block'		=> module($_GET['object'])->_captcha_block(),
-				'bb_codes_block'	=> module('comments')->USE_BB_CODES ? _class('bb_codes')->_display_buttons(array('unique_id' => 'text')) : '',
+				'bb_codes_block'	=> module('comments')->USE_BB_CODES ? _class('bb_codes')->_display_buttons(['unique_id' => 'text']) : '',
 				'js_check'			=> intval((bool)module('comments')->JS_TEXT_CHECKING),
-			);
+			];
 			$body = tpl()->parse($STPL_NAME_EDIT, $replace);
 		}
 		return $body;
@@ -303,7 +303,7 @@ class yf_comments_manage {
 	/**
 	* Do delete comment
 	*/
-	function _delete ($params = array()) {
+	function _delete ($params = []) {
 		if (empty(main()->USER_ID) && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
@@ -336,10 +336,10 @@ class yf_comments_manage {
 		$delete_allowed_check_method	= is_object($module_obj) && method_exists($module_obj, module('comments')->_delete_allowed_method);
 		if ($delete_allowed_check_method) {
 			$m = module('comments')->_delete_allowed_method;
-			$delete_allowed	= (bool)module($_GET['object'])->$m(array(
+			$delete_allowed	= (bool)module($_GET['object'])->$m([
 				'user_id' => $comment_info['user_id'],
 				'object_id' => $comment_info['object_id']
-			));
+			]);
 		} else {
 			$delete_allowed = main()->USER_ID && $comment_info['user_id'] == main()->USER_ID;
 		}
@@ -367,10 +367,10 @@ class yf_comments_manage {
 				LIMIT 1');
 
 			if ($have_children) {
-				db()->UPDATE('comments', array(
+				db()->UPDATE('comments', [
 					'text'		=> '__comment was deleted__',
 					'user_id'	=> 0,
-				), 'id='.intval($_GET['id']));
+				], 'id='.intval($_GET['id']));
 			} else {
 				db()->query('DELETE FROM '.db('comments').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 			}
@@ -378,7 +378,7 @@ class yf_comments_manage {
 			db()->query('DELETE FROM '.db('comments').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 		}
 		// Execute custom on_update trigger (if exists one)
-		$try_trigger_callback = array(module($_GET['object']), module('comments')->_on_update_trigger);
+		$try_trigger_callback = [module($_GET['object']), module('comments')->_on_update_trigger];
 		if (is_callable($try_trigger_callback)) {
 			call_user_func($try_trigger_callback, $params);
 		}

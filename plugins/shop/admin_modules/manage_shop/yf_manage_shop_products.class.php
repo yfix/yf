@@ -4,29 +4,29 @@
 */
 class yf_manage_shop_products{
 
-	var $_filter_params = array(
-		'id'              => array('in','p.id'),
-		'name'            => array('like','p.name'),
-		'price'           => array('between','p.price'),
-		'articul'         => array('like','p.articul'),
-		'supplier_id'     => array('eq','p.supplier_id'),
-		'manufacturer_id' => array('eq','p.manufacturer_id'),
-		'active'          => array('eq','p.active'),
-		'status'          => array('eq','p.status'),
-		'image'           => array('eq','p.image'),
-		'quantity'        => array('field' => 'p.quantity'),
-		'add_date'        => array('dt_between', 'p.add_date'),
-		'update_date'     => array('field' => 'p.update_date'),
-	);
+	var $_filter_params = [
+		'id'              => ['in','p.id'],
+		'name'            => ['like','p.name'],
+		'price'           => ['between','p.price'],
+		'articul'         => ['like','p.articul'],
+		'supplier_id'     => ['eq','p.supplier_id'],
+		'manufacturer_id' => ['eq','p.manufacturer_id'],
+		'active'          => ['eq','p.active'],
+		'status'          => ['eq','p.status'],
+		'image'           => ['eq','p.image'],
+		'quantity'        => ['field' => 'p.quantity'],
+		'add_date'        => ['dt_between', 'p.add_date'],
+		'update_date'     => ['field' => 'p.update_date'],
+	];
 
 	/**
 	*/
 	function _init () {
 		if (empty($_SESSION['manage_shop__products'])) {
-			$_SESSION['manage_shop__products'] = array(
+			$_SESSION['manage_shop__products'] = [
 			  'order_by' => 'id',
 			  'order_direction' => 'desc',
-			);
+			];
 		}
 		// This is needed, as it is currently impossible to set callback function inside class variable
 		$this->_filter_params['cat_id'] = function($a) {
@@ -44,12 +44,12 @@ class yf_manage_shop_products{
 		};
 	}
 
-	function _sql( $options = array() ) {
+	function _sql( $options = [] ) {
 		// get options
 		$_ = &$options;
-			$fields = (array)$_[ 'fields' ] ?: array();
-			$where  = (array)$_[ 'where'  ] ?: array();
-			$order  = (array)$_[ 'order'  ] ?: array();
+			$fields = (array)$_[ 'fields' ] ?: [];
+			$where  = (array)$_[ 'where'  ] ?: [];
+			$order  = (array)$_[ 'order'  ] ?: [];
 		// init
 		$sql_fields = '*';
 		$sql_where = '';
@@ -78,27 +78,27 @@ class yf_manage_shop_products{
 	function products () {
 		$sql = $this->_sql();
 
-		return table($sql, array(
+		return table($sql, [
 				'filter' => $_SESSION[$_GET['object'].'__products'],
 				'filter_params' => $this->_filter_params,
 				'hide_empty' => 1,
 				'pager_sql_callback' => function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
-			))
-			->image('id', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
+			])
+			->image('id', ['width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
 				$image = common()->shop_get_images($row['id']);
 				return $image[0]['thumb'];
-            }))
-			->text('name', array('link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name', 'link_field_name' => 'id', 'data-test' => 'site_link'))
+            }])
+			->text('name', ['link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name', 'link_field_name' => 'id', 'data-test' => 'site_link'])
 			->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
 			->text('price')
 			->text('quantity')
-			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			->date('add_date', ['format' => 'full', 'nowrap' => 1])
 			->text('articul')
-			->btn_edit('', './?object='.main()->_get('object').'&action=product_edit&id=%d', array('no_ajax' => 1, 'btn_no_text' => 1))
-			->btn_delete('', './?object='.main()->_get('object').'&action=product_delete&id=%d', array('btn_no_text' => 1))
+			->btn_edit('', './?object='.main()->_get('object').'&action=product_edit&id=%d', ['no_ajax' => 1, 'btn_no_text' => 1])
+			->btn_delete('', './?object='.main()->_get('object').'&action=product_delete&id=%d', ['btn_no_text' => 1])
 			->btn_clone('', './?object='.main()->_get('object').'&action=product_clone&id=%d')
 			->btn_active('', './?object='.main()->_get('object').'&action=product_activate&id=%d')
-			->footer_add('Add product', './?object='.main()->_get('object').'&action=product_add',array('no_ajax' => 1))
+			->footer_add('Add product', './?object='.main()->_get('object').'&action=product_add',['no_ajax' => 1])
 			->footer_link('Attributes', './?object='.main()->_get('object').'&action=attributes')
 			->footer_link('Categories', './?object=category_editor&action=show_items&id=shop_cats')
 			->footer_link('Orders', './?object='.main()->_get('object').'&action=show_orders')
@@ -115,12 +115,12 @@ class yf_manage_shop_products{
 		$old_supplier_id = '';
 		ini_set("memory_limit","1024M");
 		$sql = $this->_sql();
-		$filter_arr = main()->is_post() ? array('supplier_id' => intval($_POST['supplier_id'])) : $_SESSION[$_GET['object'].'__products'];
+		$filter_arr = main()->is_post() ? ['supplier_id' => intval($_POST['supplier_id'])] : $_SESSION[$_GET['object'].'__products'];
 		list( $_where, $_order ) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_arr, $this->_filter_params, $sql);
-		$sql = $this->_sql( array(
+		$sql = $this->_sql( [
 			'where'  => 1 . $_where,
 			'order'  => $_order,
-		));
+		]);
 
 		if (file_exists(YF_PATH."libs/phpexcel/PHPExcel.php")) {
 			require_once(YF_PATH."libs/phpexcel/PHPExcel.php");
@@ -161,9 +161,9 @@ class yf_manage_shop_products{
 	*/
 	function _get_product( $id ) {
 		$id = (int)$id;
-		$sql = $this->_sql( array(
+		$sql = $this->_sql( [
 			'where'  => 'p.id=' . $id,
-		));
+		]);
 		return db()->get($sql);
 	}
 
@@ -179,7 +179,7 @@ class yf_manage_shop_products{
 			} elseif ($a['active'] == 0) {
 				$active = 1;
 			}
-			db()->update_safe(db('shop_products'), array('active' => $active), 'id='.intval($_GET['id']));
+			db()->update_safe(db('shop_products'), ['active' => $active], 'id='.intval($_GET['id']));
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -204,7 +204,7 @@ class yf_manage_shop_products{
 			db()->query('DELETE FROM '.db('shop_product_productparams').' WHERE product_id='.$_GET['id']);
 			db()->query('DELETE FROM '.db('shop_products').' WHERE id='.$_GET['id']);
 			module("manage_shop")->_product_add_revision('delete',$_GET['id']);
-			common()->admin_wall_add(array('shop product deleted: '.$_GET['id'], $_GET['id']));
+			common()->admin_wall_add(['shop product deleted: '.$_GET['id'], $_GET['id']]);
 		}
 		return js_redirect('./?object='.main()->_get('object').'action=products');
 	}
@@ -227,59 +227,59 @@ class yf_manage_shop_products{
 
 		db()->insert('shop_products', $sql);
 		$new_product_id = db()->insert_id();
-		common()->admin_wall_add(array('shop product cloned: '.$a['name'], $new_product_id));
+		common()->admin_wall_add(['shop product cloned: '.$a['name'], $new_product_id]);
 
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_products_productparams')."` WHERE `product_id`='{$old_product_id}'");
 		db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.$new_product_id);
 		foreach ((array)$arr as $v) {
-			db()->INSERT('shop_products_productparams', array(
+			db()->INSERT('shop_products_productparams', [
 				'product_id' => $new_product_id,
 				'productparam_id' => $v['productparam_id'],
 				'value' => $v['value'],
-			));
+			]);
 		}
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_category')."` WHERE `product_id`='{$old_product_id}'");
 		db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$new_product_id);
 		foreach ((array)$arr as $v) {
-			db()->INSERT('shop_product_to_category', array(
+			db()->INSERT('shop_product_to_category', [
 				'product_id' => $new_product_id,
 				'category_id' => $v['category_id'],
-			));
+			]);
 		}
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_region')."` WHERE `product_id`='{$old_product_id}'");
 		db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$new_product_id);
 		foreach ((array)$arr as $v) {
-			db()->INSERT('shop_product_to_region', array(
+			db()->INSERT('shop_product_to_region', [
 				'product_id' => $new_product_id,
 				'region_id' => $v['region_id'],
-			));
+			]);
 		}
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_related')."` WHERE `product_id`='{$old_product_id}'");
 		db()->query('DELETE FROM '.db('shop_product_related').' WHERE product_id='.$new_product_id);
 		foreach ((array)$arr as $v) {
-			db()->INSERT('shop_product_related', array(
+			db()->INSERT('shop_product_related', [
 				'product_id' => $new_product_id,
 				'related_id' => $v['related_id'],
-			));
+			]);
 		}
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_unit')."` WHERE `product_id`='{$old_product_id}'");
 		db()->query('DELETE FROM '.db('shop_product_to_unit').' WHERE product_id='.$new_product_id);
 		foreach ((array)$arr as $v) {
-			db()->INSERT('shop_product_to_unit', array(
+			db()->INSERT('shop_product_to_unit', [
 				'product_id' => $new_product_id,
 				'unit_id' => $v['unit_id'],
-			));
+			]);
 		}
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`='{$old_product_id}' AND `active`=1");
 		db()->query('DELETE FROM '.db('shop_product_images').' WHERE product_id='.$new_product_id);
 		foreach ((array)$arr as $v) {
-			db()->INSERT('shop_product_images', array(
+			db()->INSERT('shop_product_images', [
 				'product_id' 	=> $new_product_id,
 				'is_default' 	=> $v['is_default'],
 				'md5'			=> $v['md5'],
 				'date_uploaded'	=> time(),
 				'active'		=> $v['active'],
-			));
+			]);
 			$old_img_names[] = '/product_'.$old_product_id.'_'.$v['id'];
 			$new_img_names[] = '/product_'.$new_product_id.'_'.db()->insert_id();
 		}
@@ -324,18 +324,18 @@ class yf_manage_shop_products{
 
 		$sql = 'SELECT * FROM '.db('shop_products').' WHERE active="1" AND id IN ('.$product_info .')  ORDER BY name';
 		$product = db()->query_fetch_all($sql);
-		$products = array();
+		$products = [];
 		foreach ((array)$product as $v) {
-			$products []  = array (
+			$products []  = [
 				'product_id'	=> $v['id'],
 				'name'			=> $v['name'],
-			);
+			];
 		}
 		print json_encode($products);
 		exit(); // To prevent printing additional debug info later and break JS
 	}
 
-	function _search_autocomplete( $options = array() ) {
+	function _search_autocomplete( $options = [] ) {
 		main()->NO_GRAPHICS = true;
 		// prepare options
 		$_ = &$options;
@@ -345,10 +345,10 @@ class yf_manage_shop_products{
 		// prepare search words
 		if( empty( $_GET[ 'search_word' ] ) ) { exit(); }
 		$words = mb_split( '\s', mb_strtolower( _es( $_GET[ 'search_word' ] ) ) );
-		$sql_words = str_replace( array( '%', '_', '*', '?' ), array( '\%', '\_', '%', '_' ), $words );
+		$sql_words = str_replace( [ '%', '_', '*', '?' ], [ '\%', '\_', '%', '_' ], $words );
 		$sql_words  = '%' . implode( '%', $sql_words ) . '%';
 		// prepare search ids
-		$ids = array();
+		$ids = [];
 		foreach( $words as $i => $w ) {
 			$id = (int)$w;
 			if( $id < 1 ) { continue; }
@@ -359,11 +359,11 @@ class yf_manage_shop_products{
 			$sql_ids = 'OR id IN(' . implode( ',', $ids ) . ')';
 		}
 		// collect sql where
-		$sql_where = array();
+		$sql_where = [];
 		// prepare exclude ids
 		if( !empty( $_GET[ 'exclude' ] ) ) {
 			$exclude = $_GET[ 'exclude' ];
-			$ids = array();
+			$ids = [];
 			foreach( $exclude as $id ) {
 				$id = (int)$id;
 				if( $id < 1 ) { continue; }
@@ -393,31 +393,31 @@ class yf_manage_shop_products{
 		);
 		$result = db()->get_all( $sql );
 		if( empty( $result ) ) { exit(); }
-		$json = array();
+		$json = [];
 		foreach( $result as $i ){
 			$id = (int)$i[ 'id' ];
 			$text = "[$id] $i[name]";
-			$json[] = array(
+			$json[] = [
 				'id'   => $id,
 				'text' => $text,
-			);
+			];
 		}
 		echo( json_encode( $json ) );
 		exit();
 	}
 
 	function category_search_autocomplete () {
-		$options = array(
+		$options = [
 			'table' => 'sys_category_items',
 			'where' => 'cat_id = ' . (int)_class( 'cats' )->_get_cat_id_by_name( 'shop_cats' ),
-		);
+		];
 		$this->_search_autocomplete( $options );
 	}
 
 	function product_search_autocomplete () {
-		$options = array(
+		$options = [
 			'table' => 'shop_products',
-		);
+		];
 		$this->_search_autocomplete( $options );
 	}
 

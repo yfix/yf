@@ -11,14 +11,14 @@ class yf_oauth_driver_google extends yf_oauth_driver2 {
 #	protected $url_user = 'https://www.googleapis.com/plus/v1/people/me';
 	public $scope = 'email profile https://www.googleapis.com/auth/plus.login';
 	public $get_access_token_method = 'POST';
-	public $url_params_access_token = array(
+	public $url_params_access_token = [
 		'grant_type'	=> 'authorization_code',
-	);
+	];
 
 	/**
 	*/
-	function _get_user_info_for_auth($raw = array()) {
-		$user_info = array(
+	function _get_user_info_for_auth($raw = []) {
+		$user_info = [
 			'user_id'		=> $raw['id'],
 			'login'			=> $raw['email'],
 			'name'			=> $raw['name'],
@@ -27,7 +27,7 @@ class yf_oauth_driver_google extends yf_oauth_driver2 {
 			'profile_url'	=> $raw['link'],
 			'gender'		=> $raw['gender'],
 			'locale'		=> $raw['locale'],
-		);
+		];
 		return $user_info;
 	}
 }

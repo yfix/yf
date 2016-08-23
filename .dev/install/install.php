@@ -73,7 +73,7 @@ class yf_core_install {
 
 	/**
 	*/
-	function show_html($page = 'form', $vars = array(), $errors = array()) {
+	function show_html($page = 'form', $vars = [], $errors = []) {
 		if (php_sapi_name() == 'cli' || !$_SERVER['PHP_SELF']) {
 			return print '__CONSOLE_INSTALL__'.PHP_EOL;
 		}
@@ -157,7 +157,7 @@ class yf_core_install {
 			$body .= '<div class="alert alert-danger">'.$error.'</div>';
 		}
 		$body .= installer()->main_layout_html($html);
-		$replace = array();
+		$replace = [];
 		foreach ((array)$vars as $k => $v) {
 			$replace['{'.$k.'}'] = htmlspecialchars($v, ENT_QUOTES);
 		}
@@ -168,7 +168,7 @@ class yf_core_install {
 	/**
 	*/
 	function bs_get_avail_themes() {
-		return array('amelia','cerulean','cosmo','cyborg','flatly','journal','readable','simplex','slate','spacelab','spruce','superhero','united');
+		return ['amelia','cerulean','cosmo','cyborg','flatly','journal','readable','simplex','slate','spacelab','spruce','superhero','united'];
 	}
 
 	/**
@@ -185,7 +185,7 @@ class yf_core_install {
 	/**
 	*/
 	function get_form_keys() {
-		return array(
+		return [
 			'install_yf_path'					=> 'Filesystem path to YF',
 			'install_db_host'					=> 'Database Host',
 			'install_db_name'					=> 'Database Name',
@@ -202,13 +202,13 @@ class yf_core_install {
 			'install_checkbox_db_drop_existing'	=> 'Drop Existing Tables',
 			'install_checkbox_demo_data'		=> 'Load Demo Data',
 			'install_checkbox_debug_info'		=> 'Show Debug Info',
-		);
+		];
 	}
 
 	/**
 	*/
 	function get_form_defaults() {
-		return array(
+		return [
 			'install_yf_path'					=> $this->get_default_yf_path(),
 			'install_db_host'					=> 'localhost',
 			'install_db_name'					=> 'test_'.substr(md5(microtime()), 0, 6),
@@ -225,7 +225,7 @@ class yf_core_install {
 			'install_checkbox_db_drop_existing'	=> '1',
 			'install_checkbox_demo_data'		=> '',
 			'install_checkbox_debug_info'		=> '',
-		);
+		];
 	}
 
 	/**
@@ -252,7 +252,7 @@ class yf_core_install {
 	function get_default_web_path() {
 		$request_uri	= $_SERVER['REQUEST_URI'];
 		$cur_web_path	= $request_uri[strlen($request_uri) - 1] == '/' ? substr($request_uri, 0, -1) : dirname($request_uri);
-		return '//'.$_SERVER['HTTP_HOST'].str_replace(array("\\",'//'), '/', $cur_web_path.'/');
+		return '//'.$_SERVER['HTTP_HOST'].str_replace(["\\",'//'], '/', $cur_web_path.'/');
 	}
 
 	/**
@@ -264,9 +264,9 @@ class yf_core_install {
 	/**
 	*/
 	function prepare_vars() {
-		$vars = array(
+		$vars = [
 			'FORM_ACTION'	=> $_SERVER['PHP_SELF'],
-		);
+		];
 		$defaults = installer()->get_form_defaults();
 		foreach ((array)installer()->get_form_keys() as $k => $desc) {
 			$val = isset($_POST[$k]) ? $_POST[$k] : $defaults[$k];
@@ -298,7 +298,7 @@ class yf_core_install {
 
 	/**
 	*/
-	function pre_init_yf_core($vars = array()) {
+	function pre_init_yf_core($vars = []) {
 		if (defined('YF_PATH')) {
 			return false;
 		}
@@ -454,18 +454,18 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	/**
 	*/
 	function import_base_db_structure() {
-		$import_tables = array(
+		$import_tables = [
 			'dashboards',
 			'static_pages',
 			'user',
-		);
+		];
 		$suffix = '.sql.php';
 		$suffix_len = strlen($suffix);
-		$sql_paths = array(
+		$sql_paths = [
 			'yf'		=> YF_PATH.'share/db/sql/sys_*'.$suffix,
 			'yf_plugins'=> YF_PATH.'plugins/*/share/db/sql/sys_*'.$suffix,
 			'yf_install'=> INSTALLER_PATH.'installer_data/db_tables/*'.$suffix,
-		);
+		];
 		foreach ((array)$sql_paths as $pattern) {
 			foreach ((array)glob($pattern) as $f) {
 				$import_tables[] = substr(basename($f), 0, -$suffix_len);
@@ -522,7 +522,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		if ($lang && $lang != 'en') {
 			$data_paths[$lang] = INSTALLER_PATH.'installer_data/db_tables_'.$lang.'/*'.$suffix;
 		}
-		$tables = array();
+		$tables = [];
 		foreach ((array)$data_paths as $pattern) {
 			foreach ((array)glob($pattern) as $f) {
 				$tables[] = substr(basename($f), 0, -$suffix_len);
@@ -545,7 +545,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 				$this->import_table_data($_table, $dir);
 			}
 		}
-		db()->update_safe('sys_menu_items', array('active' => 1), '1=1');
+		db()->update_safe('sys_menu_items', ['active' => 1], '1=1');
 		return installer();
 	}
 
@@ -554,7 +554,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	function write_htaccess($rewrite_enabled = true) {
 		if ($rewrite_enabled) {
 			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'installer_data/htaccess.txt');
-			db()->update_safe('sys_settings', array('value' => 1), 'id=4');
+			db()->update_safe('sys_settings', ['value' => 1], 'id=4');
 		} else {
 			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'installer_data/htaccess2.txt');
 		}
@@ -567,7 +567,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	function set_admin_login_pswd() {
 #		db()->_connected &&
 #		db()->utils()->table_exists('sys_admin') &&
-		db()->replace_safe('sys_admin', array(
+		db()->replace_safe('sys_admin', [
 			'id'		=> 1,
 			'login'		=> $_POST['install_admin_login'],
 			'password'	=> md5($_POST['install_admin_pswd']),
@@ -575,7 +575,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			'add_date'	=> time(),
 			'group'		=> 1,
 			'active'	=> 1,
-		));
+		]);
 		return installer();
 	}
 
@@ -591,14 +591,14 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	function show_form() {
 		$vars = installer()->prepare_vars();
 		installer()->pre_init_yf_core($vars);
-		$form_items = array();
-		$validate_rules = array();
+		$form_items = [];
+		$validate_rules = [];
 		foreach (installer()->get_form_keys() as $id => $desc) {
 			$type = 'text';
 			if (strpos($id, '_checkbox_') !== false) {
 				$type = 'check_box';
 			}
-			$form_items[$id] = array($type, $id, $desc);
+			$form_items[$id] = [$type, $id, $desc];
 			$validate_rules[$id] = 'trim|required';
 		}
 		$defaults = installer()->get_form_defaults();
@@ -627,7 +627,7 @@ function installer() {
 /////////////////////////////
 
 
-$errors = array();
+$errors = [];
 if (empty($_POST)) { // Initial page
 #	installer()->show_form();
 	installer()->show_html('form', installer()->prepare_vars());

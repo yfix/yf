@@ -17,7 +17,7 @@ class class_model_basic_test extends db_real_abstract {
 
 		// unit_tests == name of the custom storage used here
 		// Ensure unit_tests will be on top of the storages list
-		main()->_custom_class_storages['*_model'] = array('unit_tests' => array(__DIR__.'/fixtures/')) + (array)main()->_custom_class_storages['*_model'];
+		main()->_custom_class_storages['*_model'] = ['unit_tests' => [__DIR__.'/fixtures/']] + (array)main()->_custom_class_storages['*_model'];
 	}
 	public static function tearDownAfterClass() {
 		self::utils()->truncate_database(self::db_name());
@@ -69,7 +69,7 @@ class class_model_basic_test extends db_real_abstract {
 		self::utils()->create_table(__FUNCTION__, function($t) {
 			$t->increments('id');
 		});
-		$m::create(array('id' => 1));
+		$m::create(['id' => 1]);
 		$m::find(1);
 		$m_short = __FUNCTION__;
 #		$m_short::find(1);
@@ -86,8 +86,8 @@ class class_model_basic_test extends db_real_abstract {
 			->string('gender')
 			->int('popularity');
 		});
-		$m1 = $m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
-		$m2 = $m::create(array('name' => 'Michael', 'gender' => 'm', 'popularity' => 12));
+		$m1 = $m::create(['name' => 'Susan', 'gender' => 'w', 'popularity' => 8]);
+		$m2 = $m::create(['name' => 'Michael', 'gender' => 'm', 'popularity' => 12]);
 
 # 		$m::where_popular('>','10')->count();
 #		$m::where_gender('w')->get();
@@ -127,10 +127,10 @@ ND
 		});
 		$m = __FUNCTION__.'_model';
 #		test_scopes::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
-		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
-		$m::create(array('name' => 'Michael', 'gender' => 'm', 'popularity' => 12));
-		$m::create(array('name' => 'Marilyn', 'gender' => 'w', 'popularity' => 11));
-		$m::create(array('name' => 'Brigitte', 'gender' => 'w', 'popularity' => 11));
+		$m::create(['name' => 'Susan', 'gender' => 'w', 'popularity' => 8]);
+		$m::create(['name' => 'Michael', 'gender' => 'm', 'popularity' => 12]);
+		$m::create(['name' => 'Marilyn', 'gender' => 'w', 'popularity' => 11]);
+		$m::create(['name' => 'Brigitte', 'gender' => 'w', 'popularity' => 11]);
 
 #		$m::popular()->order_by('name')->get();
 #		$m::popular()->women()->order_by('name', 'desc')->get();
@@ -165,7 +165,7 @@ ND
 			->int('popularity');
 		});
 		$m = __FUNCTION__.'_model';
-		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
+		$m::create(['name' => 'Susan', 'gender' => 'w', 'popularity' => 8]);
 
 // TODO: complete functionality for accesors and mutators
 
@@ -192,7 +192,7 @@ ND
 			->string('gender')
 			->int('popularity');
 		});
-		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
+		$m::create(['name' => 'Susan', 'gender' => 'w', 'popularity' => 8]);
 
 # $m->creating(function($model)) { if(!$model->is_valid()) return false; };
 # $m->created(function($model)) { };
@@ -241,7 +241,7 @@ ND
 			}
 ND
 		);
-		$m::create(array('name' => 'Monaco'));
+		$m::create(['name' => 'Monaco']);
 	}
 
 	/***/

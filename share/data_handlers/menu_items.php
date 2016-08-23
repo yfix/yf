@@ -1,8 +1,8 @@
 <?php
 
-$data = array();
+$data = [];
 foreach ((array)db()->get_all('SELECT * FROM '.db('menu_items').' WHERE active="1" ORDER BY `order` ASC') as $item) {
-	$data[$item['menu_id']][$item['id']] = $item + array('have_children' => 0);
+	$data[$item['menu_id']][$item['id']] = $item + ['have_children' => 0];
 }
 foreach ((array)$data as $menu_id => $items) {
 	foreach ((array)$items as $id => $item) {

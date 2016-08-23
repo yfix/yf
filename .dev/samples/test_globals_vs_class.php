@@ -13,7 +13,7 @@ class Config {
 	function __construct( $var = NULL ) {
 		isset( $var )
 			and $this->_var = $var
-			 or $this->_var = array();
+			 or $this->_var = [];
 	}
 	public function Instance() {
 		if( !isset( self::$__instance ) ) {
@@ -34,18 +34,18 @@ function wrap_class_var( $name, $value = NULL ) {
 	return( Config::Instance()->variable( $name, $value ) );
 }
 
-$GLOBALS[ 'var' ] = array(
+$GLOBALS[ 'var' ] = [
 	false => false,
 	true  => true,
 	1	 => 1,
 	'name_string' => 'string_value',
-	'name_array'  => array(
+	'name_array'  => [
 		1			  => 1,
 		'name_string1' => 'string_value1',
 		'name_string2' => 'string_value2',
 		'name_string3' => 'string_value3',
-	),
-);
+	],
+];
 
 $total = 1e5;
 printf( 'Total iterations: %g'.PHP_EOL, $total );

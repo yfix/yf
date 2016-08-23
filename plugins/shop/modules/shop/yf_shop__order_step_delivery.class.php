@@ -34,13 +34,13 @@ class yf_shop__order_step_delivery{
 
 		$SELF_METHOD_ID = substr(__FUNCTION__, strlen("_order_step_"));
 
-		$replace = my_array_merge((array)$replace, array(
+		$replace = my_array_merge((array)$replace, [
 			"form_action"	=> "./?object=shop&action=".$_GET["action"]."&id=".$SELF_METHOD_ID,
 			"error_message"	=> _e(),
 			"ship_type_box"	=> module('shop')->_box("ship_type", $force_ship_type ? $force_ship_type : $_POST["ship_type"]),
 			"back_link"		=> "./?object=shop&action=order",
 			"cats_block"	=> module('shop')->_categories_show(),
-		));
+		]);
 		return tpl()->parse("shop/order_delivery", $replace);
 	}
 	

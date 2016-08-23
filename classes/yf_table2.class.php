@@ -56,7 +56,7 @@ class yf_table2 {
 
 	public $_total = 0;
 	public $_pages = '';
-	public $_ids = array();
+	public $_ids = [];
 
 	/**
 	* Catch missing method call
@@ -99,7 +99,7 @@ class yf_table2 {
 	/**
 	* Wrapper for chained mode call from common()->table2()
 	*/
-	function chained_wrapper($sql = '', $params = array()) {
+	function chained_wrapper($sql = '', $params = []) {
 		$this->_chained_mode = true;
 		$this->_sql = $sql;
 		$this->_params = (array)$params;
@@ -109,14 +109,14 @@ class yf_table2 {
 	/**
 	* Wrapper for template engine
 	*/
-	function tpl_row($type = 'input', $name, $desc = '', $extra = array()) {
+	function tpl_row($type = 'input', $name, $desc = '', $extra = []) {
 		return $this->$type($name, $desc, $extra);
 	}
 
 	/**
 	* Enabling automatic fields parsing mode
 	*/
-	function auto($params = array()) {
+	function auto($params = []) {
 		$this->_params['auto'] = true;
 		foreach ((array)$params as $k => $v) {
 			$this->_params[$k] = $v;
@@ -127,7 +127,7 @@ class yf_table2 {
 	/**
 	* Render result table html, gathered by row functions
 	*/
-	function render($params = array()) {
+	function render($params = []) {
 		if (DEBUG_MODE) {
 			$ts = microtime(true);
 		}
@@ -152,7 +152,7 @@ class yf_table2 {
 		if (main()->is_post()) {
 			$on_post = isset($params['on_post']) ? $params['on_post'] : $this->_on['on_post'];
 			if (!is_array($on_post)) {
-				$on_post = array($on_post);
+				$on_post = [$on_post];
 			}
 			foreach ((array)$on_post as $func_on_post) {
 				if (is_callable($func_on_post)) {
@@ -168,7 +168,7 @@ class yf_table2 {
 		if ($params['custom_fields'] && $data && $ids) {
 			$this->_render_add_custom_fields($params, $data, $ids);
 		}
-		$to_hide = array();
+		$to_hide = [];
 		if ($data && $params['hide_empty']) {
 			foreach ((array)current($data) as $k => $v) {
 				$to_hide[$k] = $k;
@@ -183,7 +183,7 @@ class yf_table2 {
 		}
 		if ($params['group_by'] && $data) {
 			if (!is_array($params['group_by'])) {
-				$params['group_by'] = array($params['group_by']);
+				$params['group_by'] = [$params['group_by']];
 			}
 			foreach ((array)$params['group_by'] as $group_by) {
 				$this->_rowspan[$group_by] = $this->_data_group_by($data, $group_by);
@@ -191,14 +191,14 @@ class yf_table2 {
 		}
 		$on_before_render = isset($params['on_before_render']) ? $params['on_before_render'] : $this->_on['on_before_render'];
 		if (!is_array($on_before_render)) {
-			$on_before_render = array($on_before_render);
+			$on_before_render = [$on_before_render];
 		}
 		foreach ((array)$on_before_render as $func_on_before_render) {
 			if (is_callable($func_on_before_render)) {
 				$func_on_before_render($params, $data, $this);
 			}
 		}
-		_class('core_events')->fire('table.before_render', array('this' => $this));
+		_class('core_events')->fire('table.before_render', ['this' => $this]);
 
 		if ($params['as_json']) {
 			$body = $this->_render_as_json($params, $a, $to_hide);
@@ -208,7 +208,7 @@ class yf_table2 {
 
 		$on_after_render = isset($params['on_after_render']) ? $params['on_after_render'] : $this->_on['on_after_render'];
 		if (!is_array($on_after_render)) {
-			$on_after_render = array($on_after_render);
+			$on_after_render = [$on_after_render];
 		}
 		foreach ((array)$on_after_render as $func_on_after_render) {
 			if (is_callable($func_on_after_render)) {
@@ -221,15 +221,15 @@ class yf_table2 {
 		if (DEBUG_MODE) {
 			$this->_render_debug_info($params, $ts, main()->trace_string());
 		}
-		_class('core_events')->fire('table.after_render', array('this' => $this));
+		_class('core_events')->fire('table.after_render', ['this' => $this]);
 		return $body;
 	}
 
 	/**
 	*/
 	function _data_group_by($data, $group_by) {
-		$index = array();
-		$inverse = array();
+		$index = [];
+		$inverse = [];
 		foreach ($data as $id => $row) {
 			if (!isset($row[$group_by])) {
 				continue;
@@ -240,7 +240,7 @@ class yf_table2 {
 				$inverse[$val] = $id;
 			}
 		}
-		$rowspan = array();
+		$rowspan = [];
 		foreach (array_count_values($index) as $val => $num) {
 			$id = $inverse[$val];
 			$rowspan[$id] = $num;
@@ -252,23 +252,23 @@ class yf_table2 {
 	* Render table as JSON-encoded string
 	*/
 	function _render_as_json(&$params, &$a, &$to_hide) {
-		$header_links = array();
+		$header_links = [];
 		foreach ((array)$this->_header_links as $info) {
 			$func = &$info['func'];
 			$header_links[] = $func($info, $params, $this).PHP_EOL;
 		}
-		$footer_links = array();
+		$footer_links = [];
 		foreach ((array)$this->_footer_links as $info) {
 			$func = &$info['func'];
 			$footer_links[] = $func($info, $params, $this).PHP_EOL;
 		}
-		return json_encode(array(
+		return json_encode([
 			'data'			=> &$a['data'],
 			'pages'			=> &$a['pages'],
 			'total'			=> &$a['total'],
 			'header_links'	=> $header_links,
 			'footer_links'	=> $footer_links,
-		));
+		]);
 	}
 
 	/**
@@ -281,7 +281,7 @@ class yf_table2 {
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $a['pages'] : '').PHP_EOL;
 
-		$header_links = array();
+		$header_links = [];
 		foreach ((array)$this->_header_links as $info) {
 			$name = $info['name'];
 			$func = &$info['func'];
@@ -305,7 +305,7 @@ class yf_table2 {
 			if (!$params['no_header'] && !$params['rotate_table']) {
 				$thead_attrs = '';
 				if (isset($params['thead'])) {
-					$thead_attrs = is_array($params['thead']) ? _attrs($params['thead'], array('class', 'id')) : ' '.$params['thead'];
+					$thead_attrs = is_array($params['thead']) ? _attrs($params['thead'], ['class', 'id']) : ' '.$params['thead'];
 				}
 				$body .= '<thead'.$thead_attrs.'>'.PHP_EOL;
 				$data1row = current($data);
@@ -334,7 +334,7 @@ class yf_table2 {
 					}
 					$th_attrs = '';
 					if (isset($info['extra']['th'])) {
-						$th_attrs .= is_array($info['extra']['th']) ? ' '._attrs($info['extra']['th'], array('class','id','width')) : ' '.$info['extra']['th'];
+						$th_attrs .= is_array($info['extra']['th']) ? ' '._attrs($info['extra']['th'], ['class','id','width']) : ' '.$info['extra']['th'];
 					} elseif (isset($info['extra']['th_id'])) {
 						$th_attrs .= $info['extra']['th_id'] ? ' id="'.$info['extra']['th_id'].'"' : '';
 					}
@@ -381,7 +381,7 @@ class yf_table2 {
 				}
 			}
 		}
-		$footer_links = array();
+		$footer_links = [];
 		foreach ((array)$this->_footer_links as $info) {
 			$name = $info['name'];
 			$func = &$info['func'];
@@ -407,7 +407,7 @@ class yf_table2 {
 		if ($params['rotate_table']) {
 			$default_per_page = 10;
 		}
-		$pager = array(
+		$pager = [
 			'path'				=> $params['pager_path'],
 			'type'				=> $params['pager_type'],
 			'records_on_page'	=> $params['pager_records_on_page'] ?: $default_per_page,
@@ -415,9 +415,9 @@ class yf_table2 {
 			'stpl_path'			=> $params['pager_stpl_path'] ?: '',
 			'add_get_vars'		=> $params['pager_add_get_vars'] ?: 1,
 			'sql_callback'		=> $params['pager_sql_callback'] ?: null,
-		);
+		];
 		$sql = $this->_sql;
-		$ids = array();
+		$ids = [];
 		if (is_array($sql)) {
 			$sql_is_array = true;
 		} elseif (is_callable($sql)) {
@@ -498,7 +498,7 @@ class yf_table2 {
 			$pages = $pager['out'][1];
 			$total = $pager['out'][2];
 
-			$items = array();
+			$items = [];
 			$q = $db->query($sql. $add_sql);
 			while ($a = $db->fetch_assoc($q)) {
 				if (isset($a['id'])) {
@@ -515,12 +515,12 @@ class yf_table2 {
 		$this->_ids = $ids;
 		$this->_pager = $pager;
 
-		return array(
+		return [
 			'data'	=> $data,
 			'pages'	=> $pages,
 			'total'	=> $total,
 			'ids'	=> $ids,
-		);
+		];
 	}
 
 	/**
@@ -529,7 +529,7 @@ class yf_table2 {
 	function _render_auto(&$params, &$data) {
 		if ($params['auto'] && $data) {
 			$field_names = array_keys((array)current((array)$data));
-			$skip_fields = array();
+			$skip_fields = [];
 			foreach ((array)$this->_params['hidden_map'] as $field => $container) {
 				$skip_fields[$field] = $field;
 			}
@@ -537,7 +537,7 @@ class yf_table2 {
 				if (isset($skip_fields[$f])) {
 					continue;
 				}
-				$_extra = array();
+				$_extra = [];
 				if (++$counter == 1 && $this->_params['first_col_width']) {
 					$_extra['width'] = $this->_params['first_col_width'];
 				}
@@ -583,7 +583,7 @@ class yf_table2 {
 		}
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$ids_sql = implode(',', $ids);
-		$custom_foreign_fields = array();
+		$custom_foreign_fields = [];
 		$db_func_orig = 'get_2d';
 		foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
 			$foreign_field = $this->_params['custom_fields_id'];
@@ -592,7 +592,7 @@ class yf_table2 {
 			if (is_array($custom_sql)) {
 				list($custom_sql, $param2, $param3) = $custom_sql;
 				// Check if second param is name of db method
-				if (in_array($param2, array('get', 'get_2d', 'get_all'))) {
+				if (in_array($param2, ['get', 'get_2d', 'get_all'])) {
 					$db_func = $param2;
 					$param3 && $foreign_field = $param3;
 				} else {
@@ -603,7 +603,7 @@ class yf_table2 {
 			// good example is 'user_id' instead of 'id'
 			if ($foreign_field) {
 				if ($foreign_field != 'id') {
-					$_ids = array();
+					$_ids = [];
 					foreach((array)$data as $k => $v) {
 						$_ids[$v[$foreign_field]] = $v[$foreign_field];
 					}
@@ -641,23 +641,23 @@ class yf_table2 {
 		if (!DEBUG_MODE) {
 			return false;
 		}
-		$_fields = array();
+		$_fields = [];
 		foreach ((array)$this->_fields as $k => $v) {
-			$_fields[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			$_fields[$k] = ['func' => '%lambda%', 'data' => '%data%'] + $v;
 		}
-		$_header_links = array();
+		$_header_links = [];
 		foreach ((array)$this->_header_links as $k => $v) {
-			$_header_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			$_header_links[$k] = ['func' => '%lambda%', 'data' => '%data%'] + $v;
 		}
-		$_footer_links = array();
+		$_footer_links = [];
 		foreach ((array)$this->_footer_links as $k => $v) {
-			$_footer_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			$_footer_links[$k] = ['func' => '%lambda%', 'data' => '%data%'] + $v;
 		}
-		$_buttons = array();
+		$_buttons = [];
 		foreach ((array)$this->_buttons as $k => $v) {
-			$_buttons[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			$_buttons[$k] = ['func' => '%lambda%', 'data' => '%data%'] + $v;
 		}
-		!is_hhvm() && debug('table2[]', array(
+		!is_hhvm() && debug('table2[]', [
 			'params'		=> $params,
 			'fields'		=> $_fields,
 			'buttons'		=> $_buttons,
@@ -665,15 +665,15 @@ class yf_table2 {
 			'footer_links'	=> $_footer_links,
 			'time'			=> round(microtime(true) - $ts, 5),
 			'trace'			=> $trace ?: main()->trace_string(),
-		));
+		]);
 	}
 
 	/**
 	*/
-	function _render_table_contents($data, $params = array(), $to_hide = array()) {
+	function _render_table_contents($data, $params = [], $to_hide = []) {
 		$tbody_attrs = '';
 		if (isset($params['tbody'])) {
-			$tbody_attrs = is_array($params['tbody']) ? _attrs($params['tbody'], array('class', 'id')) : ' '.$params['tbody'];
+			$tbody_attrs = is_array($params['tbody']) ? _attrs($params['tbody'], ['class', 'id']) : ' '.$params['tbody'];
 		}
 		$body .= '<tbody'.$tbody_attrs.'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
@@ -710,10 +710,10 @@ class yf_table2 {
 
 	/**
 	*/
-	function _render_table_contents_rotated($data = array(), $params, $to_hide = array()) {
+	function _render_table_contents_rotated($data = [], $params, $to_hide = []) {
 		$tbody_attrs = '';
 		if (isset($params['tbody'])) {
-			$tbody_attrs = is_array($params['tbody']) ? _attrs($params['tbody'], array('class', 'id')) : ' '.$params['tbody'];
+			$tbody_attrs = is_array($params['tbody']) ? _attrs($params['tbody'], ['class', 'id']) : ' '.$params['tbody'];
 		}
 		$body .= '<tbody'.$tbody_attrs.'>'.PHP_EOL;
 		foreach ((array)$this->_fields as $info) {
@@ -807,7 +807,7 @@ class yf_table2 {
 			$trans = explode('|', $trans);
 		}
 		if (!is_array($trans)) {
-			$trans = array($trans);
+			$trans = [$trans];
 		}
 		foreach ($trans as $fname) {
 			if (is_callable($fname)) {
@@ -821,7 +821,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $table = null) {
+	function _filter_sql_prepare($filter_data = [], $filter_params = [], $__sql = '', $table = null) {
 		if (!$filter_data) {
 			return '';
 		}
@@ -831,7 +831,7 @@ class yf_table2 {
 	/**
 	* Simple filtering of the given array. Need to support table() raw array data with filtering
 	*/
-	function _filter_array(&$data, $filter = array(), $filter_params = array()) {
+	function _filter_array(&$data, $filter = [], $filter_params = []) {
 		if (!$data || !$filter) {
 			return false;
 		}
@@ -853,7 +853,7 @@ class yf_table2 {
 	* Supported: success, warning, important, info, inverse
 	* Also support array of badges/labels/classes where will try to find match for a field value
 	*/
-	function _apply_badges($text, $extra = array(), $field = null) {
+	function _apply_badges($text, $extra = [], $field = null) {
 		if ($extra['badge']) {
 			$badge = is_array($extra['badge']) && isset($extra['badge'][$field]) ? $extra['badge'][$field] : $extra['badge'];
 			if ($badge) {
@@ -888,14 +888,14 @@ class yf_table2 {
 			$attrs = $params;
 		}
 		if (is_array($attrs)) {
-			$attrs = _attrs($attrs, array('class', 'style'));
+			$attrs = _attrs($attrs, ['class', 'style']);
 		}
 		return $attrs ? ' '.$attrs : '';
 	}
 
 	/**
 	*/
-	function _show_tip($value = '', $name = '', $row = array()) {
+	function _show_tip($value = '', $name = '', $row = []) {
 		$tip = '';
 		if (is_string($value)) {
 			$tip = $value;
@@ -921,7 +921,7 @@ class yf_table2 {
 			return '';
 		}
 		if (!is_array($hidden_data)) {
-			$hidden_data = array($hidden_data);
+			$hidden_data = [$hidden_data];
 		}
 		$body = '';
 		foreach ((array)$hidden_data as $data) {
@@ -951,7 +951,7 @@ class yf_table2 {
 		}
 		$is_link_allowed = true;
 		if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-			if (in_array($link, array('','#','javascript:void();'))) {
+			if (in_array($link, ['','#','javascript:void();'])) {
 				$is_link_allowed = true;
 			} else {
 				$is_link_allowed = _class('admin_methods')->_admin_link_is_allowed($link);
@@ -963,11 +963,11 @@ class yf_table2 {
 	/**
 	* Example: ->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'));
 	*/
-	function _process_link_params($link, $row = array(), $extra = array()) {
+	function _process_link_params($link, $row = [], $extra = []) {
 		if (!strlen($link) || empty($row) || false === strpos($link, '%')) {
 			return $link;
 		}
-		$params = array();
+		$params = [];
 		if (isset($extra['link_params'])) {
 			foreach (explode(',', $extra['link_params']) as $lp) {
 				$lp = trim($lp);
@@ -994,34 +994,34 @@ class yf_table2 {
 	/**
 	* Register callback for TR element
 	*/
-	function tr($func, $extra = array()) {
-		$this->_callbacks['tr'][] = array($func, $extra);
+	function tr($func, $extra = []) {
+		$this->_callbacks['tr'][] = [$func, $extra];
 		return $this;
 	}
 
 	/**
 	* Register callback for TD element
 	*/
-	function td($func, $extra = array()) {
-		$this->_callbacks['td'][] = array($func, $extra);
+	function td($func, $extra = []) {
+		$this->_callbacks['td'][] = [$func, $extra];
 		return $this;
 	}
 
 	/**
 	*/
-	function text($name, $desc = '', $extra = array()) {
+	function text($name, $desc = '', $extra = []) {
 		// Shortcut: use second param as $extra
 		if (is_array($desc)) {
 			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
 		}
-		$this->_fields[] = array(
+		$this->_fields[] = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -1065,7 +1065,7 @@ class yf_table2 {
 				if ($link) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ?: $name;
-					$link = $table->_process_link_params($link, $row, $extra + array('id' => $link_id));
+					$link = $table->_process_link_params($link, $row, $extra + ['id' => $link_id]);
 					$is_link_allowed = $table->_is_link_allowed($link);
 				}
 				$icon = $extra['icon'] ? '<i class="'.trim($extra['icon']).'"></i>&nbsp;' : '';
@@ -1100,7 +1100,7 @@ class yf_table2 {
 					if ($extra['hidden_toggle']) {
 						$extra['data-hidden-toggle'] = $extra['hidden_toggle'];
 					}
-					$body .= strlen($link_text) ? '<a'._attrs($extra, array('href','class','title')).'>'. $icon. _prepare_html($link_text).'</a>' : '';
+					$body .= strlen($link_text) ? '<a'._attrs($extra, ['href','class','title']).'>'. $icon. _prepare_html($link_text).'</a>' : '';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
@@ -1110,26 +1110,26 @@ class yf_table2 {
 				$body .= $extra['hidden_data'] ? $table->_hidden_data_container($row, $params, $instance_params) : '';
 				return $table->_apply_badges($body, $orig_extra, $field);
 			}
-		);
+		];
 		return $this;
 	}
 
 	/**
 	*/
-	function text_padded($name, $extra = array()) {
+	function text_padded($name, $extra = []) {
 		$extra['padding'] = true;
 		return $this->text($name, $extra);
 	}
 
 	/**
 	*/
-	function link($name, $link = '', $data = '', $extra = array()) {
+	function link($name, $link = '', $data = '', $extra = []) {
 		if (is_array($link)) {
 			$extra = (array)$extra + $link;
 			$link = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if ($link) {
 			$extra['link'] = $link;
@@ -1143,13 +1143,13 @@ class yf_table2 {
 	/**
 	* Currently designed only for admin usage
 	*/
-	function user($name = '', $extra = array()) {
+	function user($name = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		$name = $extra['name'] ?: $name;
 		if (!$extra['link']) {
@@ -1161,7 +1161,7 @@ class yf_table2 {
 				return false;
 			}
 			$field = $name;
-			$user_ids = array();
+			$user_ids = [];
 			foreach ((array)$data as $a) {
 				$id = $a[$field];
 				if (!$id) {
@@ -1191,8 +1191,8 @@ class yf_table2 {
 			if (!$id) {
 				return false;
 			}
-			$out = array();
-			$user_ids = array();
+			$out = [];
+			$user_ids = [];
 			if (is_numeric($id)) {
 				$user_ids[$id] = $id;
 			} elseif (is_array($id)) {
@@ -1221,13 +1221,13 @@ class yf_table2 {
 	/**
 	* Currently designed only for admin usage
 	*/
-	function admin($name = '', $link = '', $data = '', $extra = array()) {
+	function admin($name = '', $link = '', $data = '', $extra = []) {
 		if (is_array($link)) {
 			$extra = (array)$extra + $link;
 			$link = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if (!$name) {
 			$name = 'user_id';
@@ -1243,13 +1243,13 @@ class yf_table2 {
 		}
 		$extra['data'] = $data ?: $extra['data'];
 		$_name = 'user';
-		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), "")) AS user_name FROM '.db('admin').' WHERE id IN(%ids)', $name);
+		$this->_params['custom_fields'][$_name] = ['SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), "")) AS user_name FROM '.db('admin').' WHERE id IN(%ids)', $name];
 		return $this->text($_name, '', $extra);
 	}
 
 	/**
 	*/
-	function date($name, $desc = '', $extra = array()) {
+	function date($name, $desc = '', $extra = []) {
 		if (is_array($desc)) {
 			$extra = (array)$extra + $desc;
 			$desc = '';
@@ -1257,7 +1257,7 @@ class yf_table2 {
 		if (!$desc) {
 			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
-		$this->_fields[] = array(
+		$this->_fields[] = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -1267,13 +1267,13 @@ class yf_table2 {
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $extra['format']));
 				return $table->_apply_badges($text, $extra, $field);
 			}
-		);
+		];
 		return $this;
 	}
 
 	/**
 	*/
-	function stars($name, $desc = '', $extra = array()) {
+	function stars($name, $desc = '', $extra = []) {
 		if (is_array($desc)) {
 			$extra = (array)$extra + $desc;
 			$desc = '';
@@ -1281,7 +1281,7 @@ class yf_table2 {
 		if (!$desc) {
 			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
-		$this->_fields[] = array(
+		$this->_fields[] = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -1303,20 +1303,20 @@ class yf_table2 {
 				}
 				return implode(PHP_EOL, $body);
 			}
-		);
+		];
 		return $this;
 	}
 
 	/**
 	*/
-	function image($name, $path, $link = '', $extra = array()) {
+	function image($name, $path, $link = '', $extra = []) {
 		return _class('table2_image', 'classes/table2/')->image($name, $path, $link = '', $extra, $this);
 	}
 
 	/**
 	* Callback function will be populated with these params: function($field, $params, $row, $instance_params) {}
 	*/
-	function func($name, $func = null, $extra = array()) {
+	function func($name, $func = null, $extra = []) {
 		if (!is_string($name) && is_callable($name)) {
 			if (is_array($func)) {
 				$extra = (array)$extra + $func;
@@ -1331,20 +1331,20 @@ class yf_table2 {
 			$this->_params['custom_fields'][$name] = $func;
 		}
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$this->_fields[] = array(
+		$this->_fields[] = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'desc'	=> $desc,
 			'func'	=> $func,
-		);
+		];
 		return $this;
 	}
 
 	/**
 	* Column counter, knows about pagination
 	*/
-	function rownum($extra = array()) {
+	function rownum($extra = []) {
 		$table = $this;
 		$func = function($val, $extra, $row) use ($table) {
 			$pager = $table->_pager;
@@ -1357,7 +1357,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function allow_deny($name, $extra = array()) {
+	function allow_deny($name, $extra = []) {
 		if (!isset($this->_pair_allow_deny)) {
 			$this->_pair_allow_deny = str_replace('class="', 'disabled class="', main()->get_data('pair_allow_deny'));
 		}
@@ -1371,7 +1371,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function yes_no($name = '', $extra = array()) {
+	function yes_no($name = '', $extra = []) {
 		if (!isset($this->_pair_yes_no)) {
 			$this->_pair_yes_no = str_replace('class="', 'disabled class="', main()->get_data('pair_yes_no'));
 		}
@@ -1387,12 +1387,12 @@ class yf_table2 {
 	* Show multiple selected data items
 	* Example of data: $this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id IN(%ids)', $name);
 	*/
-	function data($name, $data = array(), $extra = array()) {
+	function data($name, $data = [], $extra = []) {
 		$this->form();
 		$extra['data'] = $data;
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
-			$out = array();
+			$out = [];
 			foreach (explode(',', trim(trim(str_replace(','.PHP_EOL, ',', $field),','))) as $k => $v) {
 				$v = trim($v);
 				if (!strlen($v)) {
@@ -1403,14 +1403,14 @@ class yf_table2 {
 				}
 			}
 			$body = $out ? implode('<br>', $out) : t('--All--');
-			return '<small>'.str_replace(array(' ', "\t"), '&nbsp;', $body).'</small>';
+			return '<small>'.str_replace([' ', "\t"], '&nbsp;', $body).'</small>';
 		}, $extra);
 	}
 
 	/**
 	* Display language with default country flag for language
 	*/
-	function lang($name, $data = array(), $extra = array()) {
+	function lang($name, $data = [], $extra = []) {
 		$_this = $this;
 		return $this->func($name, function($lang) use ($_this) {
 			asset('bfh-select');
@@ -1423,15 +1423,15 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn($name, $link, $extra = array()) {
+	function btn($name, $link, $extra = []) {
 		if (is_array($link)) {
 			$extra = $link;
 			$link = '';
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
-		$this->_buttons[] = array(
+		$this->_buttons[] = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -1452,7 +1452,7 @@ class yf_table2 {
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $table->CLASS_ICON_BTN);
 				$link = trim($params['link']. $instance_params['links_add']);
 				if (strlen($link)) {
-					$link = $table->_process_link_params($link, $row, $extra + array('id' => $id));
+					$link = $table->_process_link_params($link, $row, $extra + ['id' => $id]);
 					if (!$table->_is_link_allowed($link)) {
 						return '';
 					}
@@ -1484,41 +1484,41 @@ class yf_table2 {
 				}
 				$renderer = $extra['renderer'] ?: 'a';
 				if ($renderer == 'a') {
-					$body = '<a'._attrs($extra, array('href','class','target','title')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+					$body = '<a'._attrs($extra, ['href','class','target','title']).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 				} elseif ($renderer == 'button') {
-					$body = '<button'._attrs($extra, array('class','target','title')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
+					$body = '<button'._attrs($extra, ['class','target','title']).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
 				}
 
 				$body .= $extra['hidden_data'] ? $table->_hidden_data_container($row, $params, $instance_params) : '';
 				return $body;
 			},
-		);
+		];
 		return $this;
 	}
 
 	/**
 	* Callback function will be populated with these params: function($row, $params, $instance_params) {}
 	*/
-	function btn_func($name, $func, $extra = array()) {
+	function btn_func($name, $func, $extra = []) {
 		if (!$desc && isset($extra['desc'])) {
 			$desc = $extra['desc'];
 		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
-		$this->_buttons[] = array(
+		$this->_buttons[] = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'desc'	=> $desc,
 			'func'	=> $func,
-		);
+		];
 		return $this;
 	}
 
 	/**
 	*/
-	function btn_edit($name = '', $link = '', $extra = array()) {
+	function btn_edit($name = '', $link = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = '';
@@ -1530,7 +1530,7 @@ class yf_table2 {
 			$link = url('/@object/edit/%d');
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_EDIT;
@@ -1546,7 +1546,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_delete($name = '', $link = '', $extra = array()) {
+	function btn_delete($name = '', $link = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = '';
@@ -1558,7 +1558,7 @@ class yf_table2 {
 			$link = url('/@object/delete/%d');
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_DELETE;
@@ -1574,7 +1574,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_clone($name = '', $link = '', $extra = array()) {
+	function btn_clone($name = '', $link = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = '';
@@ -1586,7 +1586,7 @@ class yf_table2 {
 			$link = url('/@object/clone_item/%d');
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_CLONE;
@@ -1602,7 +1602,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_view($name = '', $link = '', $extra = array()) {
+	function btn_view($name = '', $link = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = '';
@@ -1614,7 +1614,7 @@ class yf_table2 {
 			$link = url('/@object/view/%d');
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_VIEW;
@@ -1630,7 +1630,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_active($name = '', $link = '', $extra = array()) {
+	function btn_active($name = '', $link = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = '';
@@ -1641,7 +1641,7 @@ class yf_table2 {
 		if (!$link) {
 			$link = url('/@object/active/%d');
 		}
-		$this->_buttons[] = array(
+		$this->_buttons[] = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -1658,7 +1658,7 @@ class yf_table2 {
 				$id = $override_id ? $override_id : 'id';
 				$link = $params['link']. $instance_params['links_add'];
 				if (strlen($link)) {
-					$link = $table->_process_link_params($link, $row, $extra + array('id' => $id));
+					$link = $table->_process_link_params($link, $row, $extra + ['id' => $id]);
 					if (!$table->_is_link_allowed($link)) {
 						return '';
 					}
@@ -1674,7 +1674,7 @@ class yf_table2 {
 				}
 				$extra['href'] = $link;
 				$extra['title'] = $params['name'];
-        		if (!$extra['no_ajax']) {                
+        		if (!$extra['no_ajax']) {
                     $extra['class'] = $table->CLASS_CHANGE_ACTIVE;
                 }
 				if (!isset($extra['data-test'])) {
@@ -1685,23 +1685,23 @@ class yf_table2 {
 				}
 				$values = $table->_pair_active;
 				$val = $values[intval((bool)$row[strtolower($params['name'])])];
-				return !$extra['disabled'] ? '<a'._attrs($extra, array('href','class','title')).'>'. $val. '</a> ' : $val;
+				return !$extra['disabled'] ? '<a'._attrs($extra, ['href','class','title']).'>'. $val. '</a> ' : $val;
 			},
-		);
+		];
 		return $this;
 	}
 
 	/**
 	*/
-	function header_link($name, $link, $extra = array()) {
+	function header_link($name, $link, $extra = []) {
 		$extra['display_in'] = 'header';
 		return $this->footer_link($name, $link, $extra);
 	}
 
 	/**
 	*/
-	function footer_link($name, $link, $extra = array()) {
-		$item = array(
+	function footer_link($name, $link, $extra = []) {
+		$item = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -1711,7 +1711,7 @@ class yf_table2 {
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = $params['link']. $instance_params['links_add'];
 				if (strlen($link)) {
-					$link = $table->_process_link_params($link, $row, $extra + array('id' => $id));
+					$link = $table->_process_link_params($link, $row, $extra + ['id' => $id]);
 					if (!$table->_is_link_allowed($link)) {
 						return '';
 					}
@@ -1735,9 +1735,9 @@ class yf_table2 {
 					$class .= ' '.$table->CLASS_NO_AJAX;
 				}
 				$extra['class'] = $class;
-				return '<a'._attrs($extra, array('href','class','title')).'><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				return '<a'._attrs($extra, ['href','class','title']).'><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
-		);
+		];
 		if (!$extra['display_in']) {
 			$extra['display_in'] = 'footer';
 		}
@@ -1752,7 +1752,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function header_add($name = '', $link = '', $extra = array()) {
+	function header_add($name = '', $link = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
@@ -1763,7 +1763,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function footer_add($name = '', $link = '', $extra = array()) {
+	function footer_add($name = '', $link = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
@@ -1775,7 +1775,7 @@ class yf_table2 {
 			$link = url('/@object/add');
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_ADD;
@@ -1788,7 +1788,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function header_submit($name = '', $extra = array()) {
+	function header_submit($name = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
@@ -1799,12 +1799,12 @@ class yf_table2 {
 
 	/**
 	*/
-	function footer_submit($name = '', $extra = array()) {
+	function footer_submit($name = '', $extra = []) {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
 		}
-		$item = array(
+		$item = [
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -1816,16 +1816,16 @@ class yf_table2 {
 					$extra = $value;
 					$value = '';
 				}
-				$value = $extra['value'] ? $extra['value'] : $value;
+				$value = $extra['value'] ?: $value;
+				$desc = $extra['desc'] ?: $value;
+				$extra['type'] = 'submit';
+				$extra['name'] = trim( $extra['name'] ?: $value );
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $table->CLASS_ICON_SAVE);
 				$class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
-
-				$extra['type'] = 'submit';
-				$extra['name'] = trim($value);
 				$extra['class'] = $class;
-				return '<button'._attrs($extra, array('type','name','class')).'><i class="'.trim($icon).'"></i> '. t($value).'</button>';
+				return '<button'._attrs($extra, ['type','name','class','value']).'><i class="'.trim($icon).'"></i> '. t($desc).'</button>';
 			}
-		);
+		];
 		if (!$extra['display_in']) {
 			$extra['display_in'] = 'footer';
 		}
@@ -1841,7 +1841,7 @@ class yf_table2 {
 	/**
 	* Simply tells that current table should consist of form inside
 	*/
-	function form($action = '', $method = '', $extra = array()) {
+	function form($action = '', $method = '', $extra = []) {
 		if (isset($this->_form_params) && !$extra['force']) {
 			return $this;
 		}
@@ -1853,17 +1853,17 @@ class yf_table2 {
 			$extra = $method;
 			$method = '';
 		}
-		$this->_form_params = array(
+		$this->_form_params = [
 			'action'=> $action ?: url('/@object/@action/@id'),
 			'method'=> $method ?: 'POST',
 			'extra'	=> (array)$extra,
-		);
+		];
 		return $this;
 	}
 
 	/**
 	*/
-	function input($name, $extra = array()) {
+	function input($name, $extra = []) {
 		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
@@ -1874,25 +1874,25 @@ class yf_table2 {
 			if ($extra['propose_url_from'] && !strlen($value)) {
 				$value = common()->_propose_url_from_name($row[$extra['propose_url_from']]);
 			}
-			return $padding. _class('html')->input(array(
+			return $padding. _class('html')->input([
 				'id'	=> 'input_'.$params['name'].'_'.$row['id'],
 				'name'	=> $params['name'].'['.$row['id'].']',
 				'desc'	=> $params['name'],
 				'value'	=> $value,
-			) + (array)$extra);
+			] + (array)$extra);
 		}, $extra);
 	}
 
 	/**
 	*/
-	function input_padded($name, $extra = array()) {
+	function input_padded($name, $extra = []) {
 		$extra['padding'] = true;
 		return $this->input($name, $extra);
 	}
 
 	/**
 	*/
-	function icon($name, $extra = array()) {
+	function icon($name, $extra = []) {
 		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$icon = trim($field);
@@ -1917,12 +1917,12 @@ class yf_table2 {
 
 	/**
 	*/
-	function check_box($name, $extra = array()) {
+	function check_box($name, $extra = []) {
 		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if (!is_array($extra)) {
-				$extra = array();
+				$extra = [];
 			}
 			if (!$extra['name']) {
 				$extra['name'] = $params['name'];
@@ -1938,12 +1938,12 @@ class yf_table2 {
 
 	/**
 	*/
-	function radio_box($name, $extra = array()) {
+	function radio_box($name, $extra = []) {
 		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if (!is_array($extra)) {
-				$extra = array();
+				$extra = [];
 			}
 			if (!$extra['name']) {
 				$extra['name'] = $params['name'];
@@ -1959,12 +1959,12 @@ class yf_table2 {
 
 	/**
 	*/
-	function select_box($name, $extra = array()) {
+	function select_box($name, $extra = []) {
 		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if (!is_array($extra)) {
-				$extra = array();
+				$extra = [];
 			}
 			if (!$extra['name']) {
 				$extra['name'] = $params['name'];

@@ -50,7 +50,7 @@ class yf_admin_home {
 		
 		if ($this->SHOW_CUR_SETTINGS && $_SESSION["admin_group"] == 1) {
 			// Current settings
-			$replace2 = array(
+			$replace2 = [
 				"rewrite_mode" 		=> (int)conf("rewrite_mode"),
 				"output_caching" 	=> (int)conf("output_caching"),
 //				"gzip_compress"		=> (int)conf("gzip_compress"),
@@ -61,21 +61,21 @@ class yf_admin_home {
 				"mail_debug"		=> (int)conf("mail_debug"),
 				"site_enabled"		=> (int)conf("site_enabled"),
 				"settings_link"		=> $this->_url_allowed("./?object=settings"),
-			);
+			];
 			$cur_settings = tpl()->parse($_GET["object"]."/cur_settings", $replace2);
 		} else {
 			$this->DISPLAY_STATS = false;
 		}
 
 		if ($this->SHOW_GENERAL_INFO && $_SESSION["admin_group"] == 1) {
-			$replace3 = array(
+			$replace3 = [
 				"php_ver" 				=> phpversion(),
 				"mysql_serv_ver" 		=> db()->get_server_version(),
 				"mysql_host_info"		=> db()->get_host_info(),
 				"db_name"				=> DB_NAME,
 				"db_size"				=> $admin_statistics_array["db_size"],
 				"project_dir_size"		=> $admin_statistics_array["project_dir_size"],
-			);
+			];
 			$general_info = tpl()->parse($_GET["object"]."/general_info", $replace3);
 		}
 
@@ -98,13 +98,13 @@ class yf_admin_home {
 			foreach ((array)$A as $V1) {
 				$sql_parts[] = "SELECT 'total_".strtolower($V1["name"])."' AS '0', COUNT(id) AS '1' FROM ".db('user')." WHERE `group`='".$V1["id"]."' AND active='1'";
 			}
-			$sql_parts2 = array(
+			$sql_parts2 = [
 				"SELECT 'forum_topics' AS '0', COUNT(id) AS '1' FROM ".db('forum_topics')." WHERE 1=1",
 				"SELECT 'forum_posts' AS '0', COUNT(id) AS '1' FROM ".db('forum_posts')." WHERE 1=1",
 				"SELECT 'gallery_photos' AS '0', COUNT(id) AS '1' FROM ".db('gallery_photos')." WHERE 1=1",
 				"SELECT 'blog_posts' AS '0', COUNT(id) AS '1' FROM ".db('blog_posts')." WHERE 1=1",
 				"SELECT 'articles' AS '0', COUNT(id) AS '1' FROM ".db('articles_texts')." WHERE 1=1",
-			);
+			];
 			$sql_parts = array_merge($sql_parts, $sql_parts2);
 			$sql = "(\r\n".implode("\r\n) UNION ALL (\r\n",$sql_parts)."\r\n)";
 			$B = db()->query_fetch_all($sql);
@@ -119,7 +119,7 @@ class yf_admin_home {
 			$statistics = tpl()->parse($_GET["object"]."/statistics", $admin_statistics_array);
 		}
 
-		$replace = array(
+		$replace = [
 			"proj_conf_link"	=> file_exists($proj_conf_path) ? "./?object=file_manager&action=edit_item&f_=".basename($proj_conf_path)."&dir_name=".urlencode(dirname($proj_conf_path)) : "",
 			"current_date"		=> _format_date(time(), "long"),
 			"my_id"				=> $_SESSION["admin_id"],
@@ -131,7 +131,7 @@ class yf_admin_home {
 			"custom_content"	=> $this->_custom_content(),
 			"suggests"			=> $this->_show_suggesting_messages(),
 			// Common actions here
-		);
+		];
 		
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
@@ -140,9 +140,9 @@ class yf_admin_home {
 	*/
 	function _show_suggesting_messages () {
 		$admin_modules = module("admin_modules")->_get_modules();
-		$user_modules_methods = module("admin_modules")->_get_methods(array("private" => "1")); 
+		$user_modules_methods = module("admin_modules")->_get_methods(["private" => "1"]); 
 
-		$suggests = array();
+		$suggests = [];
 		foreach ((array)$user_modules_methods as $module_name => $module_methods) {
 			if (!isset($admin_modules[$module_name])) {
 				continue;
@@ -159,9 +159,9 @@ class yf_admin_home {
 			}
 		}
 		if (!empty($suggests)){
-			$replace = array(
+			$replace = [
 				"suggests"		=> $suggests,
-			);
+			];
 			return tpl()->parse(__CLASS__."/suggests", $replace);
 		}
 	}
@@ -173,11 +173,11 @@ class yf_admin_home {
 		$STPL_MENU_MAIN = "admin_home/menu";
 		$STPL_MENU_ITEM	= $STPL_MENU_MAIN."_item";
 
-		$items = _class("graphics")->_show_menu(array(
+		$items = _class("graphics")->_show_menu([
 			"name"	=> "admin_home_menu",
 			"return_array"	=> 1,
 			"force_stpl_name"	=> $STPL_MENU_MAIN,
-		));
+		]);
 
 		foreach ((array)$items as $id => $item) {
 			$item["need_clear"] = 0;
@@ -190,7 +190,7 @@ class yf_admin_home {
 			}
 			$items[$id] = tpl()->parse($STPL_MENU_ITEM, $item);
 		}
-		return tpl()->parse($STPL_MENU_MAIN, array("items" => implode("", (array)$items)));
+		return tpl()->parse($STPL_MENU_MAIN, ["items" => implode("", (array)$items)]);
 	}
 
 	/**
@@ -217,7 +217,7 @@ class yf_admin_home {
 
 	/**
 	*/
-	function _hook_widget__admin_home ($params = array()) {
+	function _hook_widget__admin_home ($params = []) {
 // TODO: purge cache (memcached), disable site (maintenance), change default language, change default template, enable/disable other features here
 	}
 
@@ -229,7 +229,7 @@ class yf_admin_home {
 
 	/**
 	*/
-	function _hook_settings(&$selected = array()) {
+	function _hook_settings(&$selected = []) {
 #		return array(
 #			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
 #			array('number', 'admin_home__ADMIN_HOME_CACHE_TIME'),

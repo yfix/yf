@@ -4,10 +4,10 @@
 require_once dirname(__DIR__).'/scripts_init.php';
 
 $ext = '.sql.php';
-$globs_sql = array(
+$globs_sql = [
 	'yf_main'		=> YF_PATH.'share/db/sql/*'.$ext,
 	'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql/*'.$ext,
-);
+];
 foreach ($globs_sql as $glob) {
 	foreach (glob($glob) as $f) {
 		echo '== '.$f. PHP_EOL;

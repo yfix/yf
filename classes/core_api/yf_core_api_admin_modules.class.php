@@ -5,7 +5,7 @@
 class yf_core_api_admin_modules {
 
 	/** @var string @conf_skip Pattern for files */
-	public $_include_pattern	= array('', '#\.(php|stpl)$#');
+	public $_include_pattern	= ['', '#\.(php|stpl)$#'];
 	/** @var string @conf_skip Description file pattern */
 	public $_desc_file_pattern	= '#[a-z0-9_]\.xml$#i';
 	/** @var string @conf_skip Class method pattern */
@@ -18,13 +18,13 @@ class yf_core_api_admin_modules {
 	/**
 	* Get available modules
 	*/
-	function _get_modules ($params = array()) {
+	function _get_modules ($params = []) {
 		// Need to prevent multiple calls
 		if (isset($this->_admin_modules_array)) {
 			return $this->_admin_modules_array;
 		}
 		$with_sub_modules	= isset($params['with_sub_modules']) ? $params['with_sub_modules'] : 0;
-		$admin_modules_array	= array();
+		$admin_modules_array	= [];
 		$Q = db()->query('SELECT * FROM '.db('admin_modules').' WHERE active="1"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$admin_modules_array[$A['name']] = $A['name'];
@@ -39,7 +39,7 @@ class yf_core_api_admin_modules {
 	* Get available modules from files
 	*/
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
-		$admin_modules_array = array();
+		$admin_modules_array = [];
 
 		$pattern_include = '-f ~/'.preg_quote(ADMIN_MODULES_DIR,'~').'.*'.preg_quote(YF_CLS_EXT,'~').'$~';
 		$pattern_no_submodules = '~/'.preg_quote(ADMIN_MODULES_DIR,'~').'[^/]+'.preg_quote(YF_CLS_EXT,'~').'$~ims';
@@ -154,12 +154,12 @@ class yf_core_api_admin_modules {
 	/**
 	* Get available methods
 	*/
-	function _get_methods ($params = array()) {
-		$ONLY_PRIVATE_METHODS = array();
+	function _get_methods ($params = []) {
+		$ONLY_PRIVATE_METHODS = [];
 		if (isset($params['private'])) {
 			$ONLY_PRIVATE_METHODS = $params['private'];
 		}
-		$methods_by_modules = array();
+		$methods_by_modules = [];
 		if (!isset($this->_yf_plugins)) {
 			$this->_yf_plugins = main()->_preload_plugins_list();
 			$this->_yf_plugins_classes = main()->_plugins_classes;
@@ -175,7 +175,7 @@ class yf_core_api_admin_modules {
 			if (isset($this->_yf_plugins_classes[$user_module_name])) {
 				$plugin_name = $this->_yf_plugins_classes[$user_module_name];
 			}
-			$file_names = array();
+			$file_names = [];
 			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $user_module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['admin'] = $tmp;
@@ -238,7 +238,7 @@ class yf_core_api_admin_modules {
 	*/
 	function _recursive_get_methods_from_extends ($file_text = '', $user_module_name = '', $_type = 'admin', $ONLY_PRIVATE_METHODS = false) {
 		$extends_file_path = '';
-		$methods = array();
+		$methods = [];
 // TODO: connect plugins
 		// Check if cur class extends some other class
 		if (preg_match($this->_extends_pattern, $file_text, $matches_extends)) {
@@ -293,7 +293,7 @@ class yf_core_api_admin_modules {
 	* Get methods names from given source text
 	*/
 	function _get_methods_names_from_text ($text = '', $ONLY_PRIVATE_METHODS = false) {
-		$methods = array();
+		$methods = [];
 		if (empty($text)) {
 			return $methods;
 		}

@@ -2,13 +2,13 @@
 
 return function() {
 	$lang = conf('language');
-	$lang_files = array(
+	$lang_files = [
 		'en' => 'en_US',
 		'ru' => 'ru_RU',
 		'ua' => 'ua_UA',
-	);
-	return array(
-		'versions' => array('master' => array('jquery' => 
+	];
+	return [
+		'versions' => ['master' => ['jquery' => 
 			'$("form[data-fv-framework]").formValidation({
 				framework: "bootstrap"
 				, icon: {
@@ -45,16 +45,16 @@ return function() {
         }
     })
 */
-			;')
-		),
-		'require' => array(
-			'asset' => array(
+			;']
+		],
+		'require' => [
+			'asset' => [
 				'bootstrap-theme',
 				'jquery-formvalidation',
-			),
-		),
-		'config' => array(
+			],
+		],
+		'config' => [
 			'no_cache' => true,
-		),
-	);
+		],
+	];
 };

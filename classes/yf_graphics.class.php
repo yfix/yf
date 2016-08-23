@@ -98,7 +98,7 @@ class yf_graphics {
 // TODO: maybe need to check permissions at first
 		$obj = module_safe($_GET['object']);
 		if (is_object($obj)) {
-			$hook_names = array('_hook_title', '_site_title');
+			$hook_names = ['_hook_title', '_site_title'];
 			foreach ($hook_names as $method_name) {
 				if (method_exists($obj, $method_name)) {
 					$title = $obj->$method_name($title);
@@ -118,12 +118,12 @@ class yf_graphics {
 	/**
 	* Show metatags
 	*/
-	function show_metatags($meta = array()) {
+	function show_metatags($meta = []) {
 		if (empty($meta)) {
 			$meta = $this->META_DEFAULT;
 		}
 		if (!is_array($meta)) {
-			$meta = array();
+			$meta = [];
 		}
 		$meta['charset']	= $meta['charset'] ?: (conf('charset') ?: 'utf-8');
 		$meta['keywords']	= $meta['keywords'] ?: (conf('meta_keywords') ?: $this->META_KEYWORDS);
@@ -132,7 +132,7 @@ class yf_graphics {
 // TODO: maybe need to check permissions at first
 		$obj = module_safe($_GET['object']);
 		if (is_object($obj)) {
-			$hook_names = array('_hook_meta_tags', '_hook_meta');
+			$hook_names = ['_hook_meta_tags', '_hook_meta'];
 			foreach ($hook_names as $method_name) {
 				if (method_exists($obj, $method_name)) {
 					$meta = $obj->$method_name($meta);
@@ -166,7 +166,7 @@ class yf_graphics {
 		if ($robots_no_index) {
 			$meta['robots'] = 'noindex,nofollow,noarchive,nosnippet';
 		}
-		$out = array();
+		$out = [];
 		foreach ((array)$meta as $name => $values) {
 			$name = trim($name);
 			if (!strlen($name) || !$values) {
@@ -174,14 +174,14 @@ class yf_graphics {
 			}
 			$_name = _prepare_html($name);
 			if (!is_array($values)) {
-				$values = array($values);
+				$values = [$values];
 			}
 			foreach ((array)$values as $value) {
 				$value = trim($value);
 				if (!strlen($name) || !strlen($value)) {
 					continue;
 				}
-				$value = str_replace(array("\r\n\r\n\r\n", "\r\n\r\n", "\r\n", "\r", "\n"), ' ', $value);
+				$value = str_replace(["\r\n\r\n\r\n", "\r\n\r\n", "\r\n", "\r", "\n"], ' ', $value);
 				$value = _prepare_html($value);
 				if ($name === 'canonical') {
 					$out[$name] = '<link rel="canonical" href="'.$value.'" />';
@@ -218,14 +218,14 @@ class yf_graphics {
 	/**
 	* Alias for the '_show_block'
 	*/
-	function show_block($params = array()) {
+	function show_block($params = []) {
 		return $this->_show_block($params);
 	}
 
 	/**
 	* Show custom block contents
 	*/
-	function _show_block($input = array()) {
+	function _show_block($input = []) {
 		return _class('core_blocks')->_show_block($input);
 	}
 
@@ -291,13 +291,13 @@ class yf_graphics {
 				$admin_info		= db()->query_fetch('SELECT * FROM '.db('admin').' WHERE id='.$admin_id);
 				$admin_groups	= main()->get_data('admin_groups');
 
-				$body .= tpl()->parse('system/admin_welcome', array(
+				$body .= tpl()->parse('system/admin_welcome', [
 					'id'		=> intval($admin_id),
 					'name'		=> _prepare_html($admin_info['first_name'].' '.$admin_info['last_name']),
 					'group'		=> _prepare_html(t($admin_groups[$admin_group])),
 					'time'		=> _format_date($login_time),
 					'edit_link'	=> './?object=admin_account',
-				));
+				]);
 				if ($_SESSION['admin_prev_info']) {
 					$body .= '<li><a href="./?task=login&id=prev_info"><i class="icon icon-arrow-up fa fa-arrow-up"></i> '.t('Login back').'</a></li>';
 				}
@@ -311,13 +311,13 @@ class yf_graphics {
 				$user_info   = user($user_id);
 				$user_groups = main()->get_data('user_groups');
 
-				$body .= tpl()->parse('system/user_welcome', array(
+				$body .= tpl()->parse('system/user_welcome', [
 					'id'        => intval($user_info['id']),
 					'name'      => _prepare_html(_display_name($user_info)),
 					'group'     => _prepare_html(t($user_groups[$user_group])),
 					'time'      => _format_date($login_time),
 					'user_info' => $user_info,
-				));
+				]);
 			}
 		}
 		return $body;
@@ -328,7 +328,7 @@ class yf_graphics {
 	*/
 	function show_welcome2() {
 		if (MAIN_TYPE_ADMIN) {
-			$body = t('You logged in as %user at %date', array('%date' => date('H:i:s', $_SESSION['admin_login_time']), '%user' => t('admin')));
+			$body = t('You logged in as %user at %date', ['%date' => date('H:i:s', $_SESSION['admin_login_time']), '%user' => t('admin')]);
 		}
 		return $body;
 	}
@@ -350,14 +350,14 @@ class yf_graphics {
 	/**
 	* Show menu
 	*/
-	function _show_menu($input = array()) {
+	function _show_menu($input = []) {
 		return _class('core_menu')->_show_menu($input);
 	}
 
 	/**
 	* Template for the custom class method for menu block (useful to inherit)
 	*/
-	function _custom_menu_items($params = array()) {
+	function _custom_menu_items($params = []) {
 		return _class('core_menu')->_custom_menu_items($params);
 	}
 
@@ -374,14 +374,14 @@ class yf_graphics {
 	function show_help(){
 		$module_name = $_GET['object'];
 		$action_name = $_GET['action'];
-		$replace = array(
+		$replace = [
 			'action'	=> $action_name,
-		);
+		];
 		$STPL_NAME = $module_name.'/help';
 		if (tpl()->_stpl_exists($STPL_NAME)) {
 			$body = tpl()->parse($STPL_NAME, $replace);
 		}
-		return tpl()->parse('system/help_wrapper', array('body' => nl2br(trim($body))));
+		return tpl()->parse('system/help_wrapper', ['body' => nl2br(trim($body))]);
 	}
 
 	/**
@@ -439,7 +439,7 @@ class yf_graphics {
 	/**
 	* Display user geo location block
 	*/
-	function _show_user_geo_block($params = array()) {
+	function _show_user_geo_block($params = []) {
 		if (!main()->USE_GEO_IP) {
 			return false;
 		}
@@ -447,21 +447,21 @@ class yf_graphics {
 		if (empty($geo_data)) {
 			return false;
 		}
-		$replace = array(
+		$replace = [
 			'country_name'			=> _prepare_html($geo_data['country_name']),
 			'country_code_lower'	=> strtolower($geo_data['country_code']),
 			'region_code'			=> _prepare_html($geo_data['region_code']),
 			'region_name'			=> _prepare_html(_region_name($geo_data['region_code'], $geo_data['country_code'])),
 			'city_name'				=> _prepare_html($geo_data['city_name']),
 			'change_link'			=> './?object=geo_content&action=change_location',
-		);
+		];
 		return tpl()->parse('user_geo_block', $replace);
 	}
 
 	/**
 	* Generate typos for the given text
 	*/
-	function _generate_typos($params = array()) {
+	function _generate_typos($params = []) {
 		return _class('graphics_typos', $this->SUB_MODULES_PATH)->get_all_with_stpl($params['text'], $params);
 	}
 
@@ -509,10 +509,10 @@ class yf_graphics {
 				$page_subheader = _ucwords(str_replace('_', ' ', $_GET['action']));
 			}
 		}
-		$replace = array(
+		$replace = [
 			'header'	=> $page_header ? t($page_header) : '',
 			'subheader'	=> $page_subheader ? t($page_subheader) : '',
-		);
+		];
 		return tpl()->parse('system/page_header', $replace);
 	}
 
@@ -527,10 +527,10 @@ class yf_graphics {
 			return false;
 		}
 		if (MAIN_TYPE_ADMIN) {
-			$data[-1] = array(
+			$data[-1] = [
 				'name'	=> 'module settings',
 				'url'	=> './?object=conf_editor&action=admin_modules&id='.strtolower($_GET['object']),
-			);
+			];
 		}
 		$method_name = '_quick_menu';
 // TODO: need to check permissions at first
@@ -546,19 +546,19 @@ class yf_graphics {
 			if (!$_item['name']) {
 				continue;
 			}
-			$replace2 = array(
+			$replace2 = [
 				'item_name'	=> _prepare_html(t($_item['name'])),
 				'item_url'	=> $_item['url'],
-			);
+			];
 			$items .= tpl()->parse('system/quick_menu_item', $replace2);
 
 		}
 		if (!$items) {
 			return false;
 		}
-		$replace = array(
+		$replace = [
 			'items'	=> $items,
-		);
+		];
 		return tpl()->parse('system/quick_menu_main', $replace);
 	}
 
@@ -571,9 +571,9 @@ class yf_graphics {
 	* tip(array('text' => 'Some inline help text', 'icon' => 'fa-eye'))
 	* tip('Some inline help text', array('icon' => 'fa-eye'))
 	*/
-	function tip($in = null, $extra = array()) {
+	function tip($in = null, $extra = []) {
 		if (!is_array($extra)) {
-			$extra = array();
+			$extra = [];
 		}
 		if (is_array($in) && isset($in['text'])) {
 			$extra = (array)$extra + $in;
@@ -584,7 +584,7 @@ class yf_graphics {
 			// 'Some inline help text'
 			// 'Some inline help text';'fa-eye'
 			// 'Some inline help text';'fa-eye';'my_tip_class'
-			$raw = explode(';', str_replace(array('\'','"'), '', $in['raw']));
+			$raw = explode(';', str_replace(['\'','"'], '', $in['raw']));
 			$extra['text']	= trim($raw[0]);
 			if ($raw[1] === 'return_text=1' || $raw[1] === 'text=1') {
 				$return_text = true;
@@ -606,7 +606,7 @@ class yf_graphics {
 		if (!isset($this->_tips)) {
 			$this->_tips = (array)main()->get_data('tips');
 		}
-		$tip = array();
+		$tip = [];
 		if (isset($this->_tips[$extra['text']])) {
 			$lang = conf('language');
 			// Exact match for current language

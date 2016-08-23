@@ -6,7 +6,7 @@
 class yf_tpl_driver_yf {
 
 	/** @var array @conf_skip For "_process_ifs" */
-	public $_cond_operators	= array(
+	public $_cond_operators	= [
 		'eq' => '==',
 		'ne' => '!=',
 		'gt' => '>',
@@ -14,17 +14,17 @@ class yf_tpl_driver_yf {
 		'ge' => '>=',
 		'le' => '<=',
 		'mod'=> '%',
-	);
+	];
 	/** @var array @conf_skip For '_process_ifs' */
-	public $_math_operators	= array(
+	public $_math_operators	= [
 		'and' => '&&',
 		'xor' => 'xor',
 		'or'  => '||',
 		'+'   => '+',
 		'-'   => '-'
-	);
+	];
 	/** @var @conf_skip */
-	public $CACHE = array();
+	public $CACHE = [];
 
 	/**
 	* YF constructor
@@ -34,19 +34,19 @@ class yf_tpl_driver_yf {
 		if (!function_exists('preg_match_all')) {
 			trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_ERROR);
 		}
-		$this->CACHE = array(
-			'stpl' => array()
-		);
+		$this->CACHE = [
+			'stpl' => []
+		];
 		if (defined('FRAMEWORK_IS_COMPILED')) {
 			conf('FRAMEWORK_IS_COMPILED', (bool)FRAMEWORK_IS_COMPILED);
 		}
 		if (conf('FRAMEWORK_IS_COMPILED') && $this->AUTO_LOAD_PACKED_STPLS) {
 			foreach ((array)conf('_compiled_stpls') as $_cur_name => $_cur_text) {
-				$this->CACHE[$_cur_name] = array(
+				$this->CACHE[$_cur_name] = [
 					'string'		=> $_cur_text,
 					'calls'			=> 0,
 					'force_storage' => 'cache',
-				);
+				];
 			}
 		}
 		$this->_init_patterns();
@@ -70,14 +70,14 @@ class yf_tpl_driver_yf {
 	/**
 	* Compile given template into pure PHP code
 	*/
-	function _compile($name, $replace = array(), $string = '', $params = array()) {
+	function _compile($name, $replace = [], $string = '', $params = []) {
 		return _class('tpl_driver_yf_compile', 'classes/tpl/')->_compile($name, $replace, $string, $params);
 	}
 
 	/**
 	* Simple template parser (*.stpl)
 	*/
-	function parse($name, $replace = array(), $params = array()) {
+	function parse($name, $replace = [], $params = []) {
 		$string = $params['string'] ?: false;
 
 		$this->_fix_replace($replace, $name);
@@ -132,7 +132,7 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
-	function _parse_get_php_tpl($name, $replace = array(), $params = array()) {
+	function _parse_get_php_tpl($name, $replace = [], $params = []) {
 		if (!$this->tpl->ALLOW_PHP_TEMPLATES) {
 			return null;
 		}
@@ -152,7 +152,7 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
-	function _get_compiled_string($name, $replace = array(), $params = array()) {
+	function _get_compiled_string($name, $replace = [], $params = []) {
 		$compiled_string = null;
 # TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
 		$compiled_storage = 'files';
@@ -166,7 +166,7 @@ class yf_tpl_driver_yf {
 					$compiled_mtime = filemtime($compiled_path);
 					if ((time() - $compiled_mtime) < $this->tpl->COMPILE_TTL) {
 						$compiled_string = file_get_contents($compiled_path);
-						$this->_compiled_cache[$compiled_cache_name] = array($compiled_string, $compiled_mtime);
+						$this->_compiled_cache[$compiled_cache_name] = [$compiled_string, $compiled_mtime];
 					}
 				}
 			}
@@ -195,7 +195,7 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
-	function _parse_get_compiled($name, $replace = array(), $params = array()) {
+	function _parse_get_compiled($name, $replace = [], $params = []) {
 		if (!$this->tpl->COMPILE_TEMPLATES) {
 			return null;
 		}
@@ -230,7 +230,7 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
-	function _parse_get_cached($name, array &$replace, $params = array(), $string = false) {
+	function _parse_get_cached($name, array &$replace, $params = [], $string = false) {
 		$force_storage = $params['force_storage'];
 		if (isset($this->CACHE[$name]) && !$params['no_cache'] && !$force_storage) {
 			$string = $this->CACHE[$name]['string'];
@@ -257,10 +257,10 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
-	function _process_includes($string, $replace = array(), $name = '') {
+	function _process_includes($string, $replace = [], $name = '') {
 		$_this = $this;
 		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/ims';
-		$extra = array();
+		$extra = [];
 		$func = function($m) use ($replace, $name, $_this, $extra) {
 			$if_exists = ($m[1] === 'include_if_exists');
 			$stpl_name = $m[2];
@@ -278,14 +278,14 @@ class yf_tpl_driver_yf {
 			}
 			$prevent_name = $name.'__'.$m[0];
 			// Here we merge/override incoming $replace with parsed params, to be passed to included template
-			foreach ((array)explode(';', str_replace(array('\'','"'), '', $_replace)) as $v) {
+			foreach ((array)explode(';', str_replace(['\'','"'], '', $_replace)) as $v) {
 				list($a_name, $a_val) = explode('=', trim($v));
 				$a_name	= trim($a_name);
 				if (strlen($a_name)) {
 					$replace[$a_name] = trim($a_val);
 				}
 			}
-			return $_this->parse($stpl_name, $replace, array('force_storage' => $force_storage));
+			return $_this->parse($stpl_name, $replace, ['force_storage' => $force_storage]);
 		};
 		return preg_replace_callback($pattern, $func, $string);
 	}
@@ -301,8 +301,8 @@ class yf_tpl_driver_yf {
 		$regex_sub_pairs = '~\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}~ims';
 		$has_sub_pairs = preg_match($regex_sub_pairs, $string);
 		// Prepare pairs array of simple string replaces
-		$pairs = array();
-		$cleanup_keys = array();
+		$pairs = [];
+		$cleanup_keys = [];
 		foreach ((array)$replace as $item => $value) {
 			if (is_object($value) && !method_exists($value, 'render')) {
 				$replace[$item] = obj2arr($value);
@@ -350,7 +350,7 @@ class yf_tpl_driver_yf {
 #		}
 		// Cleanup, using regex pairs
 		if ($cleanup_keys) {
-			$regex_pairs = array();
+			$regex_pairs = [];
 			foreach ($cleanup_keys as $k => $v) {
 				$regex_pairs['~\{'.preg_quote($k, '~').'\.[a-z0-9_-]+\}~i'] = '';
 			}
@@ -376,7 +376,7 @@ class yf_tpl_driver_yf {
 	/**
 	* Replace '{execute' patterns
 	*/
-	function _process_executes($string, array &$replace, $name = '', $params = array()) {
+	function _process_executes($string, array &$replace, $name = '', $params = []) {
 		if (empty($string)) {
 			return $string;
 		}
@@ -410,7 +410,7 @@ class yf_tpl_driver_yf {
 	* Replace '{exec_last' patterns
 	* This code block needed to be executed inside template after all other patterns
 	*/
-	function _process_executes_last($string, array &$replace, $name = '', $params = array()) {
+	function _process_executes_last($string, array &$replace, $name = '', $params = []) {
 		if (empty($string)) {
 			return $string;
 		}
@@ -430,7 +430,7 @@ class yf_tpl_driver_yf {
 	/**
 	* Replace JS/CSS related patterns
 	*/
-	function _process_js_css($string, $replace = array(), $name = '') {
+	function _process_js_css($string, $replace = [], $name = '') {
 		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var)}
 		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
 		// Custom lib smart inclusion. Examples: {jquery()} $.click('.red', function(alert('hello'))) {/jquery}
@@ -446,11 +446,11 @@ class yf_tpl_driver_yf {
 	/**
 	* Replace standard patterns
 	*/
-	function _replace_std_patterns($string, $name = '', array &$replace, $params = array()) {
+	function _replace_std_patterns($string, $name = '', array &$replace, $params = []) {
 		$_this = $this;
 		$tpl = tpl();
 
-		$patterns = array(
+		$patterns = [
 			// Insert constant here (cutoff for eval_code). Examples: {const("SITE_NAME")}
 			'/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i' => function($m) {
 				return defined($m[1]) ? constant($m[1]) : '';
@@ -469,11 +469,11 @@ class yf_tpl_driver_yf {
 			},
 			// Trims whitespaces, removes. Examples: {cleanup()}some content here{/cleanup}
 			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims' => function($m) {
-				return trim(str_replace(array("\r","\n","\t"), '', stripslashes($m[1])));
+				return trim(str_replace(["\r","\n","\t"], '', stripslashes($m[1])));
 			},
 			// Display help tooltip. Examples: {tip('register.login')} or {tip('Some inline help text')} or {tip('Some inline help text';'fa-eye')}
 			'/\{(tip|itip)\(\s*["\']{0,1}(?P<raw>[^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name) {
-				return _class_safe('graphics')->tip(array('raw' => $m['raw'], 'replace' => $replace, 'tpl_name' => $name));
+				return _class_safe('graphics')->tip(['raw' => $m['raw'], 'replace' => $replace, 'tpl_name' => $name]);
 			},
 			// Display user level single (inline) error message by its name (keyword). Examples: {e('login')} or {user_error('name_field')}
 			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims' => function($m) {
@@ -481,7 +481,7 @@ class yf_tpl_driver_yf {
 			},
 			// Advertising. Examples: {ad('AD_ID')}
 			'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) {
-				return module_safe('advertising')->_show(array('ad' => $m[1]));
+				return module_safe('advertising')->_show(['ad' => $m[1]]);
 			},
 			// Url generation with params. Examples: {url(object=home_page;action=test)}
 			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($tpl) {
@@ -501,7 +501,7 @@ class yf_tpl_driver_yf {
 				$val = $replace[$m[1]][$m[2]];
 				return $tpl->_process_var_filters($val ?: $class_prop, $m[3]);
 			},
-		);
+		];
 		// Evaluate custom PHP code pattern. Examples: {eval_code(print_r(_class('forum')))}
 		if ($tpl->ALLOW_EVAL_PHP_CODE) {
 			$patterns['/(\{eval_code\()([^\}]+?)(\)\})/i'] = function($m) {
@@ -565,11 +565,11 @@ class yf_tpl_driver_yf {
 			return $string;
 		}
 		// Important!
-		$string = str_replace(array('<'.'?', '?'.'>'), array('&lt;?', '?&gt;'), $string);
+		$string = str_replace(['<'.'?', '?'.'>'], ['&lt;?', '?&gt;'], $string);
 		$_this = $this;
 
 		// Process common ifs matches. Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
-		$pattern = '/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w#-]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims';
+		$pattern = '/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\.#-]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
 			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
@@ -582,7 +582,7 @@ class yf_tpl_driver_yf {
 			}
 			$add_cond = trim($m['multi_conds']);
 			if ($add_cond) {
-				$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\-\#]*)["\']{0,1}/ims';
+				$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\-\.\#]*)["\']{0,1}/ims';
 				$add_cond = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 					$a_cond	= trim($m['cond']);
 					$a_left	= $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
@@ -604,17 +604,17 @@ class yf_tpl_driver_yf {
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
 			$multiple_cond = 'AND';
-			if (in_array($cond, array('if_or','elseif_or'))) {
+			if (in_array($cond, ['if_or','elseif_or'])) {
 				$multiple_cond = 'OR';
 			}
-			if (in_array($cond, array('if','if_or','if_and'))) {
+			if (in_array($cond, ['if','if_or','if_and'])) {
 				$cond = 'if';
-			} elseif (in_array($cond, array('elseif','elseif_or','elseif_and'))) {
+			} elseif (in_array($cond, ['elseif','elseif_or','elseif_and'])) {
 				$cond = 'elseif';
 			}
 			$is_multiple = (strpos($m['left'], ',') !== false);
 			if ($is_multiple) {
-				$part_left = array();
+				$part_left = [];
 				foreach (explode(',',trim($m['left'])) as $v) {
 					$part_left[] = $_this->_prepare_cond_text($v, $replace, $stpl_name);
 				}
@@ -623,7 +623,7 @@ class yf_tpl_driver_yf {
 			}
 			$func = trim($m['func']);
 			// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));',
-			$funcs_map = array(
+			$funcs_map = [
 				'empty'		=> '_empty',
 				'not_ok'	=> '_empty',
 				'false' 	=> '_empty',
@@ -634,7 +634,7 @@ class yf_tpl_driver_yf {
 				'ok'		=> 'not__empty',
 				'true'		=> 'not__empty',
 				'not_false'	=> 'not__empty',
-			);
+			];
 			if (isset($funcs_map[$func])) {
 				$func = $funcs_map[$func];
 			}
@@ -646,14 +646,14 @@ class yf_tpl_driver_yf {
 			// Example of supported class: {if_validate:is_natural_no_zero(data)} good {/if}
 			if (false !== strpos($func, ':')) {
 				list($class_name, $_func) = explode(':', $func);
-				if (in_array($class_name, array('validate'))) {
+				if (in_array($class_name, ['validate'])) {
 					$func = '_class_safe("'.$class_name.'")->'.$_func;
 				} else {
 					return '';
 				}
 			// Special processing of isset
 			} elseif ($func === '_isset') {
-				$part_left = array();
+				$part_left = [];
 				if ($is_multiple) {
 					foreach (explode(',',$m['left']) as $v) {
 						$part_left[] = $_this->_cond_sub_array(trim($v), $replace);
@@ -662,11 +662,11 @@ class yf_tpl_driver_yf {
 					$part_left = $_this->_cond_sub_array($m['left'], $replace);
 				}
 			// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if}
-			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
+			} elseif (!function_exists($func) && !in_array($func, ['empty','isset'])) {
 				return '';
 			}
 			if ($is_multiple) {
-				$center_tmp = array();
+				$center_tmp = [];
 				foreach ($part_left as $v) {
 					$v = trim($v);
 					if (strlen($v)) {
@@ -703,8 +703,8 @@ class yf_tpl_driver_yf {
 	/**
 	* Prepare text for '_process_ifs' method
 	*/
-	function _prepare_cond_text ($cond = '', $replace = array(), $stpl_name = '', $for_right = false) {
-		$prepared_array = array();
+	function _prepare_cond_text ($cond = '', $replace = [], $stpl_name = '', $for_right = false) {
+		$prepared_array = [];
 		$cond = str_replace("\t", '', trim($cond));
 		foreach (explode(' ', $cond) as $val) {
 			$a = '';
@@ -755,7 +755,7 @@ class yf_tpl_driver_yf {
 				$c = addslashes(substr($val, strlen('const.')));
 				$a = '(defined(\''.$c.'\') ? constant(\''.$c.'\') : null)';
 			// Global array element or sub array
-			} elseif (false !== strpos($val, '.')) {
+			} elseif (!$for_right && false !== strpos($val, '.')) {
 				$a = $this->_cond_sub_array($val, $replace, $for_right);
 			} elseif ($for_right && is_string($val)) {
 				$a = '\''.addslashes($val).'\'';
@@ -773,7 +773,7 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
-	function _cond_sub_array ($cond, $replace = array(), $for_right = false) {
+	function _cond_sub_array ($cond, $replace = [], $for_right = false) {
 		$pos = strpos($cond, '.');
 		if ($pos === false) {
 			return '$replace[\''.addslashes($cond).'\']';
@@ -797,7 +797,7 @@ class yf_tpl_driver_yf {
 	function _range_foreach ($max) {
 		$max = intval($max);
 		if ($max < 1) {
-			return array();
+			return [];
 		}
 		$limit = 10000; // Mostly for security (prevent buffer overflows) and for avoid mistakes
 		if ($max > $limit) {
@@ -809,7 +809,7 @@ class yf_tpl_driver_yf {
 	/**
 	* Foreach patterns processing
 	*/
-	function _process_foreaches ($string = '', $replace = array(), $stpl_name = '') {
+	function _process_foreaches ($string = '', $replace = [], $stpl_name = '') {
 		if (false === strpos($string, '{/foreach') || empty($string)) {
 			return $string;
 		}
@@ -820,7 +820,7 @@ class yf_tpl_driver_yf {
 			$func = trim($m['func']);
 			$key_to_cycle = trim($m['key']);
 			$orig_key_to_cycle = $key_to_cycle;
-			$key_to_cycle = str_replace(array(',',';',' ','=','\'','"'), '__', $key_to_cycle);
+			$key_to_cycle = str_replace([',',';',' ','=','\'','"'], '__', $key_to_cycle);
 			if (empty($key_to_cycle)) {
 				return '';
 			}
@@ -837,7 +837,7 @@ class yf_tpl_driver_yf {
 			$has_var_filters = preg_match($var_filter_pattern, $sub_template);
 
 			$data = null;
-			$sub_array = array();
+			$sub_array = [];
 			// Ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
 			if ($func === 'foreach_exec') {
 				if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $orig_key_to_cycle, $m_exec)) {
@@ -891,8 +891,8 @@ class yf_tpl_driver_yf {
 			// Process sub template (only cycle within correct keys)
 			$_total = (int)count($sub_array);
 			$_i = 0;
-			$output = array();
-			$sub_replace  = array();
+			$output = [];
+			$sub_replace  = [];
 			foreach ((array)$sub_array as $sub_k => $sub_v) {
 				$_i++;
 				$cur_output = $sub_template;
@@ -900,7 +900,7 @@ class yf_tpl_driver_yf {
 				$_is_last   = (int)($_i == $_total);
 				$_is_odd	= (int)($_i % 2);
 				$_is_even   = (int)(!$_is_odd);
-				$sub_replace = array(
+				$sub_replace = [
 					'_num'   => $_i,
 					'_total' => $_total,
 					'_key'   => $sub_k,
@@ -909,13 +909,13 @@ class yf_tpl_driver_yf {
 					'_last'  => $_is_last,
 					'_even'  => $_is_odd,
 					'_odd'   => $_is_even,
-				);
+				];
 				if (is_array($sub_v)) {
 					foreach ($sub_v as $k => $v) {
 						$sub_replace[$key_to_cycle.'.'.$k] = $v;
 					}
 				}
-				$sub_tpl_replace = array();
+				$sub_tpl_replace = [];
 				foreach ($sub_replace as $k => $v) {
 					$sub_tpl_replace['{'.$k.'}'] = $v;
 				}
@@ -940,12 +940,12 @@ class yf_tpl_driver_yf {
 	* Collect all template vars and display in pretty way
 	*/
 	function _debug_get_vars ($string = '') {
-		$not_replaced = array();
-		$patterns = array(
+		$not_replaced = [];
+		$patterns = [
 			'/\{([a-z0-9\_]{1,64})\}/ims',
 			'/\{if\([\'"]*([a-z0-9\_]{1,64})[\'"]*[^\}\)]+?\)\}/ims',
 			'/\{foreach\([\'"]*([a-z0-9\_]{1,64})[\'"]*\)\}/ims',
-		);
+		];
 		// Parse simple vars
 		foreach ((array)$patterns as $pattern) {
 			if (!preg_match_all($pattern, $string, $m)) {
@@ -953,7 +953,7 @@ class yf_tpl_driver_yf {
 			}
 			$cur_matches = $m[1];
 			foreach ((array)$cur_matches as $v) {
-				$v = str_replace(array('{','}'), '', $v);
+				$v = str_replace(['{','}'], '', $v);
 				// Skip internal vars
 				if ($v{0} === '_' || $v === 'else') {
 					continue;
@@ -975,9 +975,9 @@ class yf_tpl_driver_yf {
 	/**
 	* Wrapper for '_PATTERN_INCLUDE', allows you to include stpl, optionally pass $replace params to it
 	*/
-	function _include_stpl ($stpl_name = '', $params = '', $replace = array(), $if_exists = false) {
+	function _include_stpl ($stpl_name = '', $params = '', $replace = [], $if_exists = false) {
 		if (!is_array($replace)) {
-			$replace = array();
+			$replace = [];
 		}
 		$force_storage = '';
 		// Force to include template from special storage, example: @framework:script_js
@@ -994,7 +994,7 @@ class yf_tpl_driver_yf {
 	/**
 	* For compiled templates
 	*/
-	function call_custom_pattern($crc32_or_name, $args = '', $body = null, $replace = array(), $stpl_name = '') {
+	function call_custom_pattern($crc32_or_name, $args = '', $body = null, $replace = [], $stpl_name = '') {
 		$tpl = tpl();
 		$pattern = $tpl->_custom_patterns_index[$crc32_or_name];
 		if (strlen($pattern)) {
@@ -1003,6 +1003,6 @@ class yf_tpl_driver_yf {
 		if (!$func || !is_callable($func)) {
 			return $body;
 		}
-		return $func(array('args' => $args, 'body' => $body), $replace, $stpl_name, $this);
+		return $func(['args' => $args, 'body' => $body], $replace, $stpl_name, $this);
 	}
 }

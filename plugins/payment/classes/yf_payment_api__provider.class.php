@@ -37,11 +37,11 @@ class yf_payment_api__provider {
 	}
 
 	public function result_success() {
-		return( array( 'status' => true ) );
+		return( [ 'status' => true ] );
 	}
 
 	public function result_fail( $message ) {
-		return( array( 'status' => false, 'status_message' => $message ) );
+		return( [ 'status' => false, 'status_message' => $message ] );
 	}
 
 	public function deposition( $options ) {
@@ -58,37 +58,37 @@ class yf_payment_api__provider {
 
 	public function transfer( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$_options = array(
+		$_options = [
 			'options'           => &$options[ 'options' ],
 			'provider'          => &$options[ 'provider' ],
-			'operation_options' => array(
+			'operation_options' => [
 				'from'   => $options[ 'options' ][ 'from'   ],
 				'to'     => $options[ 'options' ][ 'to'     ],
 				'amount' => $options[ 'options' ][ 'amount' ],
-			),
-		);
+			],
+		];
 		$_options[ 'operation_options' ][ 'from' ][ 'operation_id' ] = &$options[ 'data' ][ 'from' ][ 'operation_id' ];
 		$_options[ 'operation_options' ][ 'to'   ][ 'operation_id' ] = &$options[ 'data' ][ 'to'   ][ 'operation_id' ];
 		// from
-		$options_from = $_options + array(
+		$options_from = $_options + [
 			'data'              => &$options[ 'data' ][ 'from' ],
 			'operation_data'    => &$options[ 'operation_data' ][ 'from' ],
-		);
+		];
 		$options_from[ 'operation_options' ][ 'direction' ] = 'out';
 		$result_from = $this->_transaction( $options_from );
 		// to
-		$options_to = $_options + array(
+		$options_to = $_options + [
 			'data'           => &$options[ 'data' ][ 'to' ],
 			'operation_data' => &$options[ 'operation_data' ][ 'to' ],
-		);
+		];
 		$options_from[ 'operation_options' ][ 'direction' ] = 'in';
 		$result_to = $this->_transaction( $options_to );
-		$result = array(
+		$result = [
 			'status'         => $result_from[ 'status' ] & $result_to[ 'status' ],
 			'status_message' => $result_from[ 'status_message' ],
 			'from'           => $result_from,
 			'to'             => $result_to,
-		);
+		];
 		return( $result );
 	}
 
@@ -109,10 +109,10 @@ class yf_payment_api__provider {
 		$amount       = $payment_api->_number_float( $data[ 'amount' ] );
 		// operation_id
 		if( empty( $operation_id ) ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Не определен код операции',
-			);
+			];
 			return( $result );
 		}
 		// update account balance
@@ -129,26 +129,26 @@ class yf_payment_api__provider {
 				$sql_sign = '+';
 				break;
 		}
-		$_data = array(
+		$_data = [
 			'account_id'      => $account_id,
 			'datetime_update' => db()->escape_val( $sql_datetime ),
 			'balance'         => "( balance $sql_sign $sql_amount )",
-		);
+		];
 		db()->begin();
-		$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
+		$_result = $payment_api->balance_update( $_data, [ 'is_escape' => false ] );
 		if( !$_result[ 'status' ] ) {
 			db()->rollback();
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Ошибка при обновлении счета',
-			);
+			];
 			return( $result );
 		}
-		$result = array(
+		$result = [
 			'status' => true,
-		);
+		];
 		// get status
-		$object = $payment_api->get_status( array( 'name' => 'success' ) );
+		$object = $payment_api->get_status( [ 'name' => 'success' ] );
 		list( $payment_status_id, $payment_status ) = $object;
 		if( empty( $payment_status_id ) ) {
 			db()->rollback();
@@ -159,18 +159,18 @@ class yf_payment_api__provider {
 			$result[ 'status_message' ] .= ' ' . $payment_api->currency[ 'short' ];
 		}
 		// check account
-		$account_result = $payment_api->get_account( array( 'account_id' => $account_id ) );
+		$account_result = $payment_api->get_account( [ 'account_id' => $account_id ] );
 		if( empty( $account_result ) ) { $status = false; }
 			list( $account_id, $account ) = $account_result;
 		// update operation status
-		$_data = array(
+		$_data = [
 			'operation_id'    => $operation_id,
 			'status_id'       => $payment_status_id,
 			'balance'         => $account[ 'balance' ],
 			'options'         => $operation_options,
 			'datetime_update' => $sql_datetime,
 			'datetime_finish' => $sql_datetime,
-		);
+		];
 		$_result = $payment_api->operation_update( $_data );
 		if( !$_result[ 'status' ] ) {
 			db()->rollback();

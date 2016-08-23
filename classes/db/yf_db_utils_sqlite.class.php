@@ -8,49 +8,49 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	/**
 	*/
 	function _get_supported_field_types() {
-		return array(
+		return [
 			'int','int2','int8','integer','tinyint','smallint','mediumint','bigint','unsigned big int',
 			'real','float','double','double precision','decimal','numeric','boolean',
 			'varchar','character','text','varying character','nchar','native character','nvarchar','blob','clob',
 			'datetime','date',
-		);
+		];
 	}
 
 	/**
 	*/
 	function _get_unsigned_field_types() {
-		return array(
+		return [
 			'unsigned big int',
-		);
+		];
 	}
 
 	/**
 	*/
 	function _get_supported_table_options() {
-		return array();
+		return [];
 	}
 
 	/**
 	*/
-	function list_tables($db_name = '', $extra = array(), &$error = false) {
+	function list_tables($db_name = '', $extra = [], &$error = false) {
 		$tables = $this->db->get_2d('SELECT name FROM sqlite_master WHERE type = "table" AND name <> "sqlite_sequence"');
-		return $tables ? array_combine($tables, $tables) : array();
+		return $tables ? array_combine($tables, $tables) : [];
 	}
 
 	/**
 	*/
-	function list_tables_details($db_name = '', $extra = array(), &$error = false) {
+	function list_tables_details($db_name = '', $extra = [], &$error = false) {
 		return $this->list_tables($db_name, $extra, $error);
 	}
 
 	/**
 	*/
-	function table_get_columns($table, $extra = array(), &$error = false) {
+	function table_get_columns($table, $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table_name is empty';
 			return false;
 		}
-		$cols = array();
+		$cols = [];
 		$q = $this->db->query('PRAGMA table_info('.$this->_escape_table_name($table).')');
 		while ($a = $this->db->fetch_assoc($q)) {
 			$name = $a['name'];
@@ -61,7 +61,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			}
 			$length = '';
 			$unsigned = false;
-			$cols[$name] = array(
+			$cols[$name] = [
 				'name'		=> $name,
 				'type'		=> $type,
 				'length'	=> $length,
@@ -77,7 +77,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 				'unique'	=> $a['pk'] == 1,
 				'type_raw'	=> $a['type'],
 				'values'	=> null,
-			);
+			];
 			$cols[$name]['type_raw'] = $a['type'];
 		}
 		return $cols;
@@ -85,7 +85,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 
 	/**
 	*/
-	function table_info($table, $extra = array(), &$error = false) {
+	function table_info($table, $extra = [], &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -94,7 +94,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		return array(
+		return [
 			'name'			=> $table,
 			'db_name'		=> null,
 			'columns'		=> $this->table_get_columns($orig_table),
@@ -108,7 +108,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			'comment'		=> null,
 			'create_time'	=> null,
 			'update_time'	=> null,
-		);
+		];
 	}
 
 	/**
@@ -119,7 +119,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 
 	/**
 	*/
-	function rename_table($table, $new_name, $extra = array(), &$error = false) {
+	function rename_table($table, $new_name, $extra = [], &$error = false) {
 		if (!$table || !$new_name) {
 			$error = 'table_name is empty';
 			return false;
@@ -130,7 +130,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 
 	/**
 	*/
-	function truncate_table($table, $extra = array(), &$error = false) {
+	function truncate_table($table, $extra = [], &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -141,7 +141,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_column($table, $col_name, $extra = array(), &$error = false) {
+	function drop_column($table, $col_name, $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -162,7 +162,7 @@ COMMIT;
 
 	/**
 	*/
-	function rename_column($table, $col_name, $new_name, $extra = array(), &$error = false) {
+	function rename_column($table, $col_name, $new_name, $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -184,7 +184,7 @@ COMMIT;
 
 	/**
 	*/
-	function list_indexes($table, $extra = array(), &$error = false) {
+	function list_indexes($table, $extra = [], &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -196,7 +196,7 @@ COMMIT;
 			$error = 'db_name is empty';
 			return false;
 		}
-		$indexes = array();
+		$indexes = [];
 		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->_escape_table_name($table)) as $row) {
 			$type = 'key';
 			if ($row['Key_name'] === 'PRIMARY') {
@@ -206,10 +206,10 @@ COMMIT;
 			} elseif ($row['Index_type'] == 'FULLTEXT') {
 				$type = 'fulltext';
 			}
-			$indexes[$row['Key_name']] = array(
+			$indexes[$row['Key_name']] = [
 				'name'		=> $row['Key_name'],
 				'type'		=> $type,
-			);
+			];
 			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
 		}
 		return $indexes;
@@ -217,7 +217,7 @@ COMMIT;
 
 	/**
 	*/
-	function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
+	function add_index($table, $index_name = '', $fields = [], $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -233,12 +233,12 @@ COMMIT;
 			return false;
 		}
 		$index_type = strtolower($extra['type'] ?: 'index');
-		$supported_types = array(
+		$supported_types = [
 			'index'		=> 'index',
 			'primary' 	=> 'primary key',
 			'unique' 	=> 'unique key',
 			'fulltext' 	=> 'fulltext key',
-		);
+		];
 		if (!isset($supported_types[$index_type])) {
 			$error = 'index type is not supported';
 			return false;
@@ -253,7 +253,7 @@ COMMIT;
 
 	/**
 	*/
-	function drop_index($table, $index_name, $extra = array(), &$error = false) {
+	function drop_index($table, $index_name, $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -277,7 +277,7 @@ COMMIT;
 
 	/**
 	*/
-	function list_foreign_keys($table, $extra = array(), &$error = false) {
+	function list_foreign_keys($table, $extra = [], &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -286,13 +286,13 @@ COMMIT;
 			$error = 'table_name is empty';
 			return false;
 		}
-		$keys = array();
+		$keys = [];
 // TODO: port code from mysql
 	}
 
 	/**
 	*/
-	function drop_foreign_key($table, $index_name, $extra = array(), &$error = false) {
+	function drop_foreign_key($table, $index_name, $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -313,7 +313,7 @@ COMMIT;
 
 	/**
 	*/
-	function list_views($db_name = '', $extra = array(), &$error = false) {
+	function list_views($db_name = '', $extra = [], &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -326,7 +326,7 @@ COMMIT;
 
 	/**
 	*/
-	function drop_view($table, $extra = array(), &$error = false) {
+	function drop_view($table, $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'view name is empty';
 			return false;
@@ -337,7 +337,7 @@ COMMIT;
 
 	/**
 	*/
-	function create_view($table, $sql_as, $extra = array(), &$error = false) {
+	function create_view($table, $sql_as, $extra = [], &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table is empty';
 			return false;
@@ -348,18 +348,18 @@ COMMIT;
 
 	/**
 	*/
-	function list_triggers($db_name = '', $extra = array(), &$error = false) {
-		$triggers = array();
+	function list_triggers($db_name = '', $extra = [], &$error = false) {
+		$triggers = [];
 		foreach ((array)$this->db->get_all('SHOW TRIGGERS FROM '.$this->_escape_database_name($db_name)) as $a) {
 			$name = $a['Trigger'];
-			$triggers[$name] = array(
+			$triggers[$name] = [
 				'name'		=> $name,
 				'table'		=> $a['Table'],
 				'event'		=> $a['Event'],
 				'timing'	=> $a['Timing'],
 				'statement'	=> $a['Statement'],
 				'definer'	=> $a['definer'],
-			);
+			];
 		}
 		return $triggers;
 	}
@@ -390,33 +390,33 @@ COMMIT;
 			}
 		}
 		if ($length && !is_numeric($length) && false !== strpos($length, ',')) {
-			if (in_array($type, array('real','double','float','decimal','numeric'))) {
+			if (in_array($type, ['real','double','float','decimal','numeric'])) {
 				list($length, $decimals) = explode(',',$length);
 				$length = (int)trim($length);
 				$decimals = (int)trim($decimals);
 			}
 		}
-		return array(
+		return [
 			'type'		=> $type,
 			'length'	=> $length,
 			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $this->_get_unsigned_field_types()) ? true : false,
 			'decimals'	=> $decimals,
 			'values'	=> null,
-		);
+		];
 	}
 
 	/**
 	* Create part of SQL for "CREATE TABLE" from array of params
 	*/
-	function _compile_create_table($data, $extra = array(), &$error = false) {
+	function _compile_create_table($data, $extra = [], &$error = false) {
 		if (!is_array($data) || !count($data)) {
 			return false;
 		}
 		// 1-dimensional array detected, convert it into 2-dimensional
 		if (isset($data['name']) && is_string($data['name'])) {
-			$data = array($data);
+			$data = [$data];
 		}
-		$items = array();
+		$items = [];
 		foreach ((array)$data as $v) {
 			$name = $v['name'];
 			if (!$v['key'] && !$name && !$extra['no_name']) {
@@ -467,7 +467,7 @@ COMMIT;
 	/**
 	*/
 	public function _escape_database_name($name = '') {
-		$name = str_replace(array('\'', '"', '`'), '', trim($name));
+		$name = str_replace(['\'', '"', '`'], '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -477,7 +477,7 @@ COMMIT;
 	/**
 	*/
 	function _escape_table_name($name = '') {
-		$name = str_replace(array('\'', '"', '`'), '', trim($name));
+		$name = str_replace(['\'', '"', '`'], '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -510,7 +510,7 @@ COMMIT;
 		} else {
 			// split by "." and escape each value
 			if (false !== strpos($key, '.') && false === strpos($key, '(') && false === strpos($key, ' ')) {
-				$tmp = array();
+				$tmp = [];
 				foreach (explode('.', $key) as $v) {
 					$tmp[] = is_object($this->db) ? $this->db->escape_key($v) : '`'.addslashes($v).'`';
 				}

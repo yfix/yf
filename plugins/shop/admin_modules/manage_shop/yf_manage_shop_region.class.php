@@ -2,14 +2,14 @@
 
 class yf_manage_shop_region {
 
-	private $_table = array(
+	private $_table = [
 		'table' => 'shop_regions',
-		'fields' => array(
+		'fields' => [
 			'active',
 			'value',
-		),
+		],
 		'no_escape' => true,
-	);
+	];
 
 	private $_instance = false;
 	private $_class_region        = false;
@@ -24,13 +24,13 @@ class yf_manage_shop_region {
 		$_uri_object = "./?object=$_object";
 		$_uri_action = "$_uri_object&action=$_module";
 
-		$this->_uri = array(
+		$this->_uri = [
 			'show'   => $_uri_action,
 			'add'    => $_uri_action . '_add',
 			'edit'   => $_uri_action . '_edit'   . '&id=%d',
 			'delete' => $_uri_action . '_delete' . '&id=%d',
 			'active' => $_uri_action . '_active' . '&id=%d',
-		);
+		];
 		$this->_table[ 'back_link' ] = $this->_uri[ 'show' ];
 		$_instance = $this; $this->_instance = $_instance;
 		$this->_table[ 'on_after_update' ] = function( &$fields ) use( $_instance ) {
@@ -63,22 +63,22 @@ class yf_manage_shop_region {
 
 	function region() {
 		$session_key = $_GET[ 'object' ] . '__' . $_GET[ 'action' ];
-		$filter = array(
+		$filter = [
 			'filter'        => $_SESSION[ $session_key ],
-			'filter_params' => array(
+			'filter_params' => [
 				'id'    => 'in',
 				'value' => 'like'
-			),
+			],
 			// // 'hide_empty'    => 1,
-		);
+		];
 
 		$table = table( 'SELECT * FROM ' . db( 'shop_regions' ), $filter )
 			->text( 'id',    'Номер'    )
 			->text( 'value', 'Название' )
-			->btn_edit(   '', $this->_uri[ 'edit'   ], array( 'no_ajax' => 1 ) )
+			->btn_edit(   '', $this->_uri[ 'edit'   ], [ 'no_ajax' => 1 ] )
 			->btn_delete( '', $this->_uri[ 'delete' ] )
 			->btn_active( '', $this->_uri[ 'active' ] )
-			->footer_add( '', $this->_uri[ 'add'    ], array( 'no_ajax' => 1 ) );
+			->footer_add( '', $this->_uri[ 'add'    ], [ 'no_ajax' => 1 ] );
 		;
 		return( $table );
 	}

@@ -1,7 +1,7 @@
 <?php
-return array(
-	'fields' => array(
-		'product_id' => array(
+return [
+	'fields' => [
+		'product_id' => [
 			'name' => 'product_id',
 			'type' => 'int',
 			'length' => 11,
@@ -15,8 +15,8 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'category_id' => array(
+		],
+		'category_id' => [
 			'name' => 'category_id',
 			'type' => 'int',
 			'length' => 11,
@@ -30,34 +30,34 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-	),
-	'indexes' => array(
-		'PRIMARY' => array(
+		],
+	],
+	'indexes' => [
+		'PRIMARY' => [
 			'name' => 'PRIMARY',
 			'type' => 'primary',
-			'columns' => array(
+			'columns' => [
 				'product_id' => 'product_id',
 				'category_id' => 'category_id',
-			),
-		),
-		'product_id' => array(
+			],
+		],
+		'product_id' => [
 			'name' => 'product_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'product_id' => 'product_id',
-			),
-		),
-		'category_id' => array(
+			],
+		],
+		'category_id' => [
 			'name' => 'category_id',
 			'type' => 'index',
-			'columns' => array(
+			'columns' => [
 				'category_id' => 'category_id',
-			),
-		),
-	),
-	'foreign_keys' => array(
-	),
-	'options' => array(
-	),
-);
+			],
+		],
+	],
+	'foreign_keys' => [
+	],
+	'options' => [
+	],
+];

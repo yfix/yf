@@ -6,11 +6,11 @@
 abstract class yf_db_installer {
 
 	/** @var array */
-	public $TABLES_SQL				= array();
+	public $TABLES_SQL				= [];
 	/** @var array */
-	public $TABLES_SQL_PHP			= array();
+	public $TABLES_SQL_PHP			= [];
 	/** @var array */
-	public $TABLES_DATA				= array();
+	public $TABLES_DATA				= [];
 	/** @var bool */
 	public $USE_CACHE				= true;
 	/** @var bool */
@@ -67,15 +67,15 @@ abstract class yf_db_installer {
 		// Preload db installer SQL CREATE TABLE DDL statements
 		$ext = '.sql.php';
 		$dir = 'share/db/sql/*'.$ext;
-		$globs_sql = array(
+		$globs_sql = [
 			'yf_main'				=> YF_PATH. $dir,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
 			'project_app'			=> APP_PATH. $dir,
 			'project_main'			=> PROJECT_PATH. $dir,
 			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
 			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
-		);
-		$t_names = array();
+		];
+		$t_names = [];
 		foreach ($globs_sql as $glob) {
 			foreach (glob($glob) as $path) {
 				$t_name = substr(basename($path), 0, -strlen($ext));
@@ -90,15 +90,15 @@ abstract class yf_db_installer {
 		// Preload db installer PHP array of CREATE TABLE DDL statements
 		$ext = '.sql_php.php';
 		$dir = 'share/db/sql_php/*'.$ext;
-		$globs_sql_php = array(
+		$globs_sql_php = [
 			'yf_main'				=> YF_PATH. $dir,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
 			'project_app'			=> APP_PATH. $dir,
 			'project_main'			=> PROJECT_PATH. $dir,
 			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
 			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
-		);
-		$t_names = array();
+		];
+		$t_names = [];
 		foreach ($globs_sql_php as $glob) {
 			foreach (glob($glob) as $path) {
 				$t_name = substr(basename($path), 0, -strlen($ext));
@@ -113,15 +113,15 @@ abstract class yf_db_installer {
 		// Preload db installer data PHP arrays needed to be inserted after CREATE TABLE == initial data
 		$ext = '.data.php';
 		$dir = 'share/db/data/*'.$ext;
-		$globs_data = array(
+		$globs_data = [
 			'yf_main'				=> YF_PATH. $dir,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
 			'project_app'			=> APP_PATH. $dir,
 			'project_main'			=> PROJECT_PATH. $dir,
 			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
 			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
-		);
-		$t_names = array();
+		];
+		$t_names = [];
 		foreach ($globs_data as $glob) {
 			foreach (glob($glob) as $path) {
 				$t_name = substr(basename($path), 0, -strlen($ext));
@@ -223,7 +223,7 @@ abstract class yf_db_installer {
 		if (!in_array($db->DB_PREFIX.$table_name, $avail_tables)) {
 			return false;
 		}
-		$sql_php = array();
+		$sql_php = [];
 		// Try to get already pregenerated data
 		if (!$sql_php) {
 			$sql_php = $this->TABLES_SQL_PHP[$table_name];
@@ -371,11 +371,11 @@ abstract class yf_db_installer {
 	*	);
 	*/
 	public function create_table_pre_hook($full_table_name, $sql_php, $db) {
-		_class('core_events')->fire('db.before_create_table', array(
+		_class('core_events')->fire('db.before_create_table', [
 			'table'		=> $full_table_name,
 			'sql_php'	=> $sql_php,
 			'db'		=> $db,
-		));
+		]);
 		foreach ((array)$this->create_table_pre_callbacks as $regex => $func) {
 			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
 				continue;
@@ -389,11 +389,11 @@ abstract class yf_db_installer {
 	* This method can be inherited in project with custom rules inside.
 	*/
 	public function create_table_post_hook($full_table_name, $sql_php, $db) {
-		_class('core_events')->fire('db.after_create_table', array(
+		_class('core_events')->fire('db.after_create_table', [
 			'table'		=> $full_table_name,
 			'sql_php'	=> $sql_php,
 			'db'		=> $db,
-		));
+		]);
 		foreach ((array)$this->create_table_post_callbacks as $regex => $func) {
 			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
 				continue;
@@ -407,12 +407,12 @@ abstract class yf_db_installer {
 	* This method can be inherited in project with custom rules inside
 	*/
 	public function alter_table_pre_hook($table_name, $column_name, $sql_php, $db) {
-		_class('core_events')->fire('db.before_alter_table', array(
+		_class('core_events')->fire('db.before_alter_table', [
 			'table'		=> $table_name,
 			'column'	=> $column_name,
 			'sql_php'	=> $sql_php,
 			'db'		=> $db,
-		));
+		]);
 		foreach ((array)$this->alter_table_pre_callbacks as $table_regex => $func) {
 			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
 				continue;
@@ -426,12 +426,12 @@ abstract class yf_db_installer {
 	* This method can be inherited in project with custom rules inside
 	*/
 	public function alter_table_post_hook($table_name, $column_name, $sql_php, $db) {
-		_class('core_events')->fire('db.after_alter_table', array(
+		_class('core_events')->fire('db.after_alter_table', [
 			'table'		=> $table_name,
 			'column'	=> $column_name,
 			'sql_php'	=> $sql_php,
 			'db'		=> $db,
-		));
+		]);
 		foreach ((array)$this->alter_table_post_callbacks as $table_regex => $func) {
 			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
 				continue;
@@ -451,7 +451,7 @@ abstract class yf_db_installer {
 	/**
 	*/
 	public function get_all_struct_array ($only_what, $db) {
-		$structs_array = array();
+		$structs_array = [];
 		foreach ((array)$db->meta_tables() as $full_table_name) {
 			$structs_array[substr($full_table_name, strlen($db->DB_PREFIX))] = $this->get_table_struct_array_by_name($full_table_name, $db);
 		}

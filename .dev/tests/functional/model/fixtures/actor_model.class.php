@@ -13,16 +13,16 @@ class actor_model extends yf_model {
 		return 'first_name';
 	}
 	public function _rules() {
-		return array(
+		return [
 			'first_name, last_name, last_update' => 'required',
 			'first_name, last_name' => 'max_length[45]',
 			'actor_id, first_name, last_name, last_update' => 'safe[on=search]',
-		);
+		];
 	}
 	public function _pivot_models() {
-		return array(
+		return [
 			'films' => 'film_actor',
-		);
+		];
 	}
 	public function films() {
 		return $this->belongs_to_many('film', 'film_actor', 'actor_id', 'film_id');

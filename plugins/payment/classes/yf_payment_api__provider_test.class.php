@@ -7,9 +7,9 @@ class yf_payment_api__provider_test extends yf_payment_api__provider {
 	public $IS_DEPOSITION = true;
 	// public $IS_PAYMENT    = true;
 
-	public $service_allow = array(
+	public $service_allow = [
 		'Тест',
-	);
+	];
 
 	public function _init() {
 		if( !$this->ENABLE ) { return( null ); }

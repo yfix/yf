@@ -6,70 +6,70 @@ class yf_payment_api__currency {
 	public $main        = 'UNT';
 	public $main_shadow = 'USD';
 
-	public $rate = array(
+	public $rate = [
 		'buy'  => +3.5, // 3%
 		'sell' => -2.5, // 2%
-	);
+	];
 	public $user_id     = null;
 
 	public $provider_default = 'nbu';
-	public $provider = array(
+	public $provider = [
 		// country banks: 1-9
-		'nbu'  => array(
+		'nbu'  => [
 			'id'    => 1,
 			'code'  => 'nbu',
 			'short' => 'НБУ',
 			'full'  => 'Национальный банк Украины',
 			'base'  => 'UAH',
-			'method' => array(
+			'method' => [
 				'json' => true,
 				'xml'  => true,
 				'html' => true,
-			),
-		),
-		'cbr'  => array(
+			],
+		],
+		'cbr'  => [
 			'id'    => 2,
 			'code'  => 'cbr',
 			'short' => 'ЦБ РФ',
 			'base'  => 'RUB',
 			'full'  => 'Центральный банк Российской Федерации',
-			'method' => array(
+			'method' => [
 				'xml' => true,
-			),
-		),
+			],
+		],
 		// other banks: 101-...
-		'p24'  => array(
+		'p24'  => [
 			'id'    => 101,
 			'code'  => 'p24',
 			'short' => 'Приват24',
 			'full'  => 'ПриватБанк',
 			'base'  => 'UAH',
-			'method' => array(
+			'method' => [
 				'json' => true,
-			),
-		),
+			],
+		],
 		// other site: 201-...
-		'cashex'  => array(
+		'cashex'  => [
 			'id'    => 201,
 			'code'  => 'cashex',
 			'short' => 'CashExchange',
 			'full'  => 'CashExchange.com.ua',
 			'base'  => 'UAH',
-			'method' => array(
+			'method' => [
 				'xml'  => true,
 				'json' => true,
-			),
-		),
-	);
+			],
+		],
+	];
 
-	public $index = array();
+	public $index = [];
 
-	public $provider_allow = array(
+	public $provider_allow = [
 		'nbu' => true,
 		'cbr' => true,
-	);
+	];
 
-	public $cache = array();
+	public $cache = [];
 
 	public $payment_api = null;
 	public $api         = null;
@@ -92,10 +92,10 @@ class yf_payment_api__currency {
 		// var
 		@$provider = &$this->provider[ strtolower( $_provider ) ];
 		if( ! $provider ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Загрузка курса валют: провайдер не найден',
-			);
+			];
 			return( $result );
 		}
 		$provider_id = $provider[ 'id' ];
@@ -104,10 +104,10 @@ class yf_payment_api__currency {
 		@$method = &$provider[ 'method' ];
 		if( @$_method ) {
 			if( !@$method[ $_method ] ) {
-				$result = array(
+				$result = [
 					'status'         => false,
 					'status_message' => 'Загрузка курса валют: метод не найден',
-				);
+				];
 				return( $result );
 			}
 			$method_id = $_method;
@@ -139,10 +139,10 @@ class yf_payment_api__currency {
 			$method_id && $load .= '_'. $method_id;
 		$status = method_exists( $this, $load );
 		if( !$status ) {
-			$result = array(
+			$result = [
 				'status'         => false,
 				'status_message' => 'Загрузка курса валют: обработчик не найден',
-			);
+			];
 			return( $result );
 		}
 		$result = $this->{ $load }( $options );
@@ -166,9 +166,9 @@ class yf_payment_api__currency {
 			$url = 'http://www.bank.gov.ua/control/uk/curmetal/currency/search?formType=searchFormDate&time_step=daily&date='. date( $tpl, $_date );
 		}
 		// request
-		$request_options = array(
+		$request_options = [
 			'is_response_raw' => true,
-		);
+		];
 		@$_request_options && $request_options = array_replace_recursive(
 			$request_options, $_request_options
 		);
@@ -180,25 +180,25 @@ class yf_payment_api__currency {
 		$table = $crawler->filter( '.content > table' )->eq( 3 );
 		$count = $table->count();
 		if( $count < 1 ) { return( null ); }
-		$table_data = array();
+		$table_data = [];
 		$table->filter( 'tr' )->each( function( $node, $i ) use( &$table_data ) {
-			$table_data[] = $node->filter( 'td' )->extract( array( '_text' ) );
+			$table_data[] = $node->filter( 'td' )->extract( [ '_text' ] );
 		});
 		$count = count( $table_data );
 		if( $count < 1 ) { return( null ); }
-		$data = array();
+		$data = [];
 		$currencies = $payment_api->currencies;
 		foreach( $table_data as $i => $item ) {
 			$currency_id = $item[ 1 ];
 			if( empty( $currencies[ $currency_id ] ) ) { continue; }
 			$from_value = $item[ 2 ];
 			$to_value   = $item[ 4 ];
-			$data[] = array(
+			$data[] = [
 				'from'       => $currency_id,
 				'to'         => 'UAH',
 				'from_value' => $from_value,
 				'to_value'   => $to_value,
-			);
+			];
 		}
 		return( $data );
 	}
@@ -224,7 +224,7 @@ class yf_payment_api__currency {
 		$payment_api = $this->payment_api;
 		// base url
 		$url = 'http://bank.gov.ua/NBUStatService/v1/statdirectory/exchange';
-		$uri = array();
+		$uri = [];
 		// method
 		switch( @$_method ) {
 			case 'xml':  $uri[] = 'xml';  break;
@@ -240,9 +240,9 @@ class yf_payment_api__currency {
 		$uri = implode( '&', $uri );
 		$uri && $url .= '?'. $uri;
 		// prepare request options
-		$request_options = array(
+		$request_options = [
 			'is_redirect' => true,
-		);
+		];
 		@$_request_options && $request_options = array_replace_recursive(
 			$request_options, $_request_options
 		);
@@ -252,7 +252,7 @@ class yf_payment_api__currency {
 		// prepare
 		$count = count( $response );
 		if( $count < 1 ) { return( null ); }
-		$data = array();
+		$data = [];
 		$currencies = $payment_api->currencies;
 		foreach( $response as $i => $item ) {
 			if( @$_method == 'xml' ) { $item = (array)$item; }
@@ -260,12 +260,12 @@ class yf_payment_api__currency {
 			if( empty( $currencies[ $currency_id ] ) ) { continue; }
 			$from_value = 100;
 			$to_value   = $item[ 'rate' ] * $from_value;
-			$data[] = array(
+			$data[] = [
 				'from'       => $currency_id,
 				'to'         => 'UAH',
 				'from_value' => $from_value,
 				'to_value'   => $to_value,
-			);
+			];
 		}
 		return( $data );
 	}
@@ -284,10 +284,10 @@ class yf_payment_api__currency {
 			$tpl = 'd/m/Y';
 			$url = $url .'?date_req='. date( $tpl, $_date );
 		}
-		$request_options = array(
+		$request_options = [
 			'is_redirect'     => true,
 			'is_response_xml' => true,
-		);
+		];
 		@$_request_options && $request_options = array_replace_recursive(
 			$request_options, $_request_options
 		);
@@ -297,7 +297,7 @@ class yf_payment_api__currency {
 		// prepare
 		$count = count( $response );
 		if( $count < 1 ) { return( null ); }
-		$data = array();
+		$data = [];
 		$currencies = $payment_api->currencies;
 		foreach( $response as $i => $item ) {
 			$currency_id = (string)$item->CharCode;
@@ -306,12 +306,12 @@ class yf_payment_api__currency {
 			$to_value   = (string)$item->Value;
 				$from_value = $payment_api->_number_float( $from_value, 6, null, null, ',' );
 				$to_value   = $payment_api->_number_float( $to_value, 6, null, null, ',' );
-			$data[] = array(
+			$data[] = [
 				'from'       => $currency_id,
 				'to'         => 'RUB',
 				'from_value' => $from_value,
 				'to_value'   => $to_value,
-			);
+			];
 		}
 		return( $data );
 	}
@@ -325,9 +325,9 @@ class yf_payment_api__currency {
 		$payment_api = $this->payment_api;
 		// prepare request options
 		$url = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=3';
-		$request_options = array(
+		$request_options = [
 			'is_response_json' => true,
-		);
+		];
 		@$_request_options && $request_options = array_replace_recursive(
 			$request_options, $_request_options
 		);
@@ -337,7 +337,7 @@ class yf_payment_api__currency {
 		// prepare
 		$count = count( $response );
 		if( $count < 1 ) { return( null ); }
-		$data = array();
+		$data = [];
 		$currencies = $payment_api->currencies;
 		foreach( $response as $i => $item ) {
 			$currency_id = $item[ 'ccy' ];
@@ -345,18 +345,18 @@ class yf_payment_api__currency {
 			$from_value = 100;
 			$to_value_buy  = $item[ 'buy'  ] * $from_value;
 			$to_value_sale = $item[ 'sale' ] * $from_value;
-			$data[] = array(
+			$data[] = [
 				'from'       => $currency_id,
 				'to'         => 'UAH',
 				'from_value' => $from_value,
 				'to_value'   => $to_value_sale,
-			);
-			$data[] = array(
+			];
+			$data[] = [
 				'from'       => 'UAH',
 				'to'         => $currency_id,
 				'from_value' => $to_value_buy,
 				'to_value'   => $from_value,
-			);
+			];
 		}
 		return( $data );
 	}
@@ -370,10 +370,10 @@ class yf_payment_api__currency {
 		$payment_api = $this->payment_api;
 		// prepare request options
 		$url = 'http://api.cashex.com.ua/XmlApi.ashx';
-		$request_options = array(
+		$request_options = [
 			'is_redirect'     => true,
 			'is_response_raw' => true,
-		);
+		];
 		@$_request_options && $request_options = array_replace_recursive(
 			$request_options, $_request_options
 		);
@@ -386,24 +386,24 @@ class yf_payment_api__currency {
 		$count = $table->count();
 		if( $count < 1 ) { return( null ); }
 		$currencies = $payment_api->currencies;
-		$data = array();
+		$data = [];
 		$table->each( function( $node, $i ) use( &$currencies, &$data ) {
 			$currency_id = $node->filter( 'currency' )->text();
 			if( empty( $currencies[ $currency_id ] ) ) { return; }
 			$buy  = $node->filter( 'buy' )->text();
 			$sale = $node->filter( 'sale' )->text();
-			$data[] = array(
+			$data[] = [
 				'from'       => $currency_id,
 				'to'         => 'UAH',
 				'from_value' => 1,
 				'to_value'   => $buy,
-			);
-			$data[] = array(
+			];
+			$data[] = [
 				'from'       => 'UAH',
 				'to'         => $currency_id,
 				'from_value' => $sale,
 				'to_value'   => 1,
-			);
+			];
 		});
 		return( $data );
 	}
@@ -417,9 +417,9 @@ class yf_payment_api__currency {
 		$payment_api = $this->payment_api;
 		// prepare request options
 		$url = 'http://api.cashex.com.ua/api/v1/exchange';
-		$request_options = array(
+		$request_options = [
 			'is_redirect'     => true,
-		);
+		];
 		@$_request_options && $request_options = array_replace_recursive(
 			$request_options, $_request_options
 		);
@@ -429,7 +429,7 @@ class yf_payment_api__currency {
 		// prepare
 		$count = count( $response );
 		if( $count < 1 ) { return( null ); }
-		$data = array();
+		$data = [];
 		$currencies = $payment_api->currencies;
 		foreach( $response as $i => $item ) {
 			$currency_id = $item[ 'Currency' ];
@@ -437,18 +437,18 @@ class yf_payment_api__currency {
 			$from_value = 100;
 			$to_value_buy  = $item[ 'Buy'  ] * $from_value;
 			$to_value_sale = $item[ 'Sale' ] * $from_value;
-			$data[] = array(
+			$data[] = [
 				'from'       => $currency_id,
 				'to'         => 'UAH',
 				'from_value' => $from_value,
 				'to_value'   => $to_value_sale,
-			);
-			$data[] = array(
+			];
+			$data[] = [
 				'from'       => 'UAH',
 				'to'         => $currency_id,
 				'from_value' => $to_value_buy,
 				'to_value'   => $from_value,
-			);
+			];
 		}
 		return( $data );
 	}
@@ -462,12 +462,12 @@ class yf_payment_api__currency {
 		foreach( $_currency_rate as $i => $item ) {
 			$from = $item[ 'from' ];
 			$to   = $item[ 'to'   ];
-			$result[] = array(
+			$result[] = [
 				'from'       => $item[ 'to'         ],
 				'to'         => $item[ 'from'       ],
 				'from_value' => $item[ 'to_value'   ],
 				'to_value'   => $item[ 'from_value' ],
-			);
+			];
 		}
 		return( $result );
 	}
@@ -509,8 +509,8 @@ class yf_payment_api__currency {
 		empty( $_main        ) && $_main        = $this->main;
 		empty( $_main_shadow ) && $_main_shadow = $this->main_shadow;
 		// create index
-		$index = array();
-		$currencies = array();
+		$index = [];
+		$currencies = [];
 		foreach( $_currency_rate as $i => &$item ) {
 			$from = $item[ 'from' ];
 			$to   = $item[ 'to'   ];
@@ -533,12 +533,12 @@ class yf_payment_api__currency {
 				) {
 					$from_value = $index[ $id1 .'-'. $_base ][ 'from_value' ] / $index[ $id2 .'-'. $_base ][ 'from_value' ];
 					$to_value = $index[ $id1 .'-'. $_base ][ 'to_value' ] / $index[ $id2 .'-'. $_base ][ 'to_value' ];
-					$_currency_rate[] = array(
+					$_currency_rate[] = [
 						'from'       => $id1,
 						'to'         => $id2,
 						'from_value' => $from_value,
 						'to_value'   => $to_value,
-					);
+					];
 				}
 			}
 		}
@@ -623,7 +623,7 @@ class yf_payment_api__currency {
 		// cache
 		$currency_rate = $this->cache[ __FUNCTION__ ][ $provider_id ][ $_type ][ $_currency_id ];
 		if( $_[ 'force' ] || !$currency_rate ) {
-			list( $currency_id, $currency ) = $payment_api->get_currency__by_id(array( 'currency_id' => $_currency_id ));
+			list( $currency_id, $currency ) = $payment_api->get_currency__by_id([ 'currency_id' => $_currency_id ]);
 			if( @$_type == 'buy' ) {
 				$target = 'to';
 				$source = 'from';
@@ -634,30 +634,38 @@ class yf_payment_api__currency {
 			$key_value = $target . '_value';
 			$key_rate  = $source . '_value';
 			$sql = db()->table( 'payment_currency_rate' )
+				->select( '*', 'max( datetime ) as latest' )
 				->where( 'provider_id', '=', $provider_id )
 				->where( $target, '=', $_currency_id )
-				// ->group_by( $source )
-				->order_by( 'datetime', 'DESC' )
+				->group_by( $source )
 				->sql();
-			$result = db()->query_fetch_all( 'SELECT * FROM ( '. $sql .' ) as cr GROUP BY '. db()->escape_key( $source ) );
+			$result = db()->table( 'payment_currency_rate as l' )
+				->select( 'l.*' )
+				->inner_join( "( $sql ) as r", 'l.datetime = r.latest AND l.from = r.from AND l.to = r.to', true )
+				->where( 'l.provider_id', '=', $provider_id )
+				->where( "l.$target", '=', $_currency_id )
+				->order_by( 'datetime', 'DESC' )
+				->get_all()
+				// ->sql()
+			;
 			if( empty( $result ) ) {
 				$currency_id_default = &$payment_api->currency_id_default;
 				foreach( $payment_api->currencies as $key => $item ) {
 					if( $currency_id_default == $key ) { continue; }
-					$currency_rate[ $key ] = array(
+					$currency_rate[ $key ] = [
 						'value' => 1.0,
 						'rate'  => 1.0,
-					);
+					];
 				}
 			} else {
 				foreach( $result as $id => $item ) {
 					$key   = $item[ $source    ];
 					$value = $item[ $key_value ];
 					$rate  = $item[ $key_rate  ];
-					$currency_rate[ $key ] = array(
+					$currency_rate[ $key ] = [
 						'value' => (float)$value,
 						'rate'  => (float)$rate,
-					);
+					];
 				}
 			}
 		}
@@ -678,11 +686,11 @@ class yf_payment_api__currency {
 		// currency base
 		$from = @$_from ?: $_currency_id;
 		$to   = @$_to   ?: $provider[ 'base' ];
-		$o = array(
+		$o = [
 			'type'        => $_type,
 			'currency_id' => $from,
 			'provider'    => $_provider,
-		);
+		];
 		$rates = $this->rates( $o );
 		$r = &$rates[ $to ];
 		if( !@$r ) { return( $result ); }
@@ -717,24 +725,24 @@ class yf_payment_api__currency {
 		$from = @$_from ?: $_currency_id;
 		$to   = @$_to   ?: $base;
 		// request
-		$o = array(
+		$o = [
 			'provider' => $_provider,
 			'method'   => @$_method,
 			'date'     => @$_date,
 			'is_force' => @$_is_force,
-		);
+		];
 		// request
 		$data = $this->load( $o );
 		if( !$data ) { return( $result ); }
 		// processing
 		if( $from == $base ) {
-			$data = $this->reverse( array( 'provider' => $_provider, 'currency_rate' => $data, ));
+			$data = $this->reverse( [ 'provider' => $_provider, 'currency_rate' => $data, ]);
 		}
 		if( ( $from != $base && $to != $base ) || ( $from == $_main || $to == $_main ) ) {
-			$data = $this->prepare( array( 'provider' => $_provider, 'currency_rate' => $data, ));
+			$data = $this->prepare( [ 'provider' => $_provider, 'currency_rate' => $data, ]);
 		}
 		if( $from == $_main || $to == $_main ) {
-			$data = $this->correction( array( 'provider' => $_provider, 'currency_rate' => $data, ));
+			$data = $this->correction( [ 'provider' => $_provider, 'currency_rate' => $data, ]);
 		}
 		foreach( (array)$data as $idx => $item ) {
 			if( $item[ 'from' ] == $from && $item[ 'to' ] == $to ) {
@@ -760,9 +768,9 @@ class yf_payment_api__currency {
 		// if( !@$_round ) {
 			$payment_api = $this->payment_api;
 			$to = @$_to ?: $_currency_id;
-			list( $currency_id, $currency ) = $payment_api->get_currency__by_id( array(
+			list( $currency_id, $currency ) = $payment_api->get_currency__by_id( [
 				'currency_id' => $to,
-			));
+			]);
 			if( @!$currency_id  ) { return( $result ); }
 			$result = $payment_api->_number_float( $result, $currency[ 'minor_units' ] );
 		// }

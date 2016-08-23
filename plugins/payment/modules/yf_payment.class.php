@@ -4,19 +4,19 @@ class yf_payment {
 
 	public $URL_REDIRECT = '/payment';
 
-	public $transition = array(
-		'default' => array(
+	public $transition = [
+		'default' => [
 			'title' => true,
-		),
-		'status' => array(
+		],
+		'status' => [
 			'status_message' => true,
-		),
-		'currency' => array(
+		],
+		'currency' => [
 			'name'  => true,
 			'short' => true,
 			'sign'  => true,
-		),
-	);
+		],
+	];
 
 	private $_class_path = null;
 
@@ -50,21 +50,21 @@ class yf_payment {
 		// var
 		$api         = _class( 'api'         );
 		$payment_api = _class( 'payment_api' );
-		$result = array();
+		$result = [];
 		// check input data
 		list( $account_id, $account  ) = $payment_api->get_account();
 		if( empty( $account_id ) ) { js_redirect( '/login_form', false, 'User id empty' ); }
 		// operation
-		$operation = $payment_api->operation( array(
+		$operation = $payment_api->operation( [
 			'operation_id' => $_operation_id,
-		));
+		]);
 		if( !$operation ) {
-			$result = array(
+			$result = [
 				'status'         => false,
-				'status_message' => t( 'Операция отсутствует (id: %operation_id)', array(
+				'status_message' => t( 'Операция отсутствует (id: %operation_id)', [
 					'%operation_id' => $_operation_id,
-				)),
-			);
+				]),
+			];
 			return( $this->_operation_tpl( $result ) );
 		}
 		// user
@@ -73,18 +73,18 @@ class yf_payment {
 		// import operation
 		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, 'o' );
 		// prepare data
-		$data = array(
+		$data = [
 			'title'  => $o_title,
 			'amount' => $payment_api->money_html( $o_amount ),
-		);
-		$form = array(
+		];
+		$form = [
 			'code' => @$__code ?: @$_code,
 			'action' => url_user( $_SERVER[ 'REQUEST_URI' ] ),
-		);
-		$result = array(
+		];
+		$result = [
 			'data' => $data,
 			'form' => $form,
-		);
+		];
 		return( $result );
 	}
 
@@ -120,10 +120,10 @@ class yf_payment {
 		is_array( $_POST ) && extract( $_POST, EXTR_PREFIX_ALL | EXTR_REFS, 'p' );
 		// var
 		$payment_api = _class( 'payment_api' );
-		$result = $payment_api->confirmation_code_check( array(
+		$result = $payment_api->confirmation_code_check( [
 			'operation_id' => @$_operation_id,
 			'code'         => @$p_code,
-		));
+		]);
 		return( $result );
 	}
 
@@ -132,9 +132,9 @@ class yf_payment {
 		is_array( $_GET ) && extract( $_GET, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
 		$payment_api = _class( 'payment_api' );
-		$result = $payment_api->cancel_user( array(
+		$result = $payment_api->cancel_user( [
 			'operation_id' => @$_operation_id,
-		));
+		]);
 		return( $result );
 	}
 
@@ -144,9 +144,9 @@ class yf_payment {
 		is_array( $_GET ) && extract( $_GET, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
 		$payment_api = _class( 'payment_api' );
-		$result += $payment_api->cancel_user( array(
+		$result += $payment_api->cancel_user( [
 			'operation_id' => @$_operation_id,
-		));
+		]);
 		// result
 		return( $this->_operation_tpl( $result ) );
 	}
@@ -167,14 +167,14 @@ class yf_payment {
 		if( empty( $account_id ) ) { $api->_forbidden(); }
 		list( $currency_id, $currency ) = $payment_api->get_currency__by_id( $account );
 		$this->t( $currency, 'currency' );
-		$response = array(
-			'response' => array(
-				'balance' => array(
+		$response = [
+			'response' => [
+				'balance' => [
 					'account'  => $account,
 					'currency' => $currency,
-				),
-			),
-		);
+				],
+			],
+		];
 		return( $response );
 	}
 
@@ -189,21 +189,21 @@ class yf_payment {
 		list( $operation, $count ) = $payment_api->operation( $account );
 		$page_per = $payment_api->OPERATION_LIMIT;
 		$pages    = ceil( $count / $page_per );
-		$response = array(
-			'response' => array(
+		$response = [
+			'response' => [
 				'balance'   => $balance,
-				'payment' => array(
+				'payment' => [
 					'account'   => $account,
 					'operation' => $operation,
-					'operation_pagination' => array(
+					'operation_pagination' => [
 						'count'    => $count,
 						'page_per' => $page_per,
 						'pages'    => $pages,
 						'page'     => 1,
-					),
-				),
-			),
-		);
+					],
+				],
+			],
+		];
 		return( $response );
 	}
 
@@ -222,9 +222,9 @@ class yf_payment {
 		// foreach( array( 'amount', 'currency_id', 'provider_id', 'page', 'method_id', 'account', 'name' ) as $key ) {
 			// isset( $request[ 'options' ][ $key ] ) && $_request[ $key ] = &$request[ 'options' ][ $key ];
 		// }
-		$request += array(
+		$request += [
 			'operation_title' => 'Выплата со счета',
-		);
+		];
 		$payout = $payment_api->payment_user( $request );
 		// need user authentication
 		if( $payout[ 'status' ] === -1 ) { $api->_forbidden(); }
@@ -233,21 +233,21 @@ class yf_payment {
 		list( $operation, $count ) = $payment_api->operation( $account );
 		$page_per = $payment_api->OPERATION_LIMIT;
 		$pages    = ceil( $count / $page_per );
-		$response = array(
-			'response' => array(
+		$response = [
+			'response' => [
 				'payout'  => $payout,
-				'payment' => array(
+				'payment' => [
 					'account'   => $account,
 					'operation' => $operation,
-					'operation_pagination' => array(
+					'operation_pagination' => [
 						'count'    => $count,
 						'page_per' => $page_per,
 						'pages'    => $pages,
 						'page'     => 1,
-					),
-				),
-			),
-		);
+					],
+				],
+			],
+		];
 		return( $response );
 	}
 
@@ -259,29 +259,29 @@ class yf_payment {
 		// need user authentication
 		if( empty( $account_id ) ) { $api->_forbidden(); }
 		$page = $request[ 'page' ];
-		$operation_options = array(
+		$operation_options = [
 			'account_id' => $account_id,
 			'page'       => $page,
 			'count'      => $count,
-		);
+		];
 		list( $operation, $count ) = $payment_api->operation( $operation_options );
 		$this->t( $operation );
 		$page_per = $payment_api->OPERATION_LIMIT;
 		$pages    = ceil( $count / $page_per );
-		$response = array(
-			'response' => array(
-				'payment' => array(
+		$response = [
+			'response' => [
+				'payment' => [
 					'account'   => $account,
 					'operation' => $operation,
-					'operation_pagination' => array(
+					'operation_pagination' => [
 						'count'    => $count,
 						'page_per' => $page_per,
 						'pages'    => $pages,
 						'page'     => $page,
-					),
-				),
-			),
-		);
+					],
+				],
+			],
+		];
 		return( $response );
 	}
 
@@ -296,21 +296,21 @@ class yf_payment {
 		list( $operation, $count ) = $payment_api->operation( $account );
 		$page_per = $payment_api->OPERATION_LIMIT;
 		$pages    = ceil( $count / $page_per );
-		$response = array(
-			'response' => array(
+		$response = [
+			'response' => [
 				'cancel'  => $object,
-				'payment' => array(
+				'payment' => [
 					'account'   => $account,
 					'operation' => $operation,
-					'operation_pagination' => array(
+					'operation_pagination' => [
 						'count'    => $count,
 						'page_per' => $page_per,
 						'pages'    => $pages,
 						'page'     => 1,
-					),
-				),
-			),
-		);
+					],
+				],
+			],
+		];
 		return( $response );
 	}
 
@@ -320,10 +320,10 @@ class yf_payment {
 		$provider_name = $_GET[ 'name' ];
 		if( empty( $provider_name ) ) { return( $api->_reject() ); }
 		// check provider
-		$object = $payment_api->provider( array(
+		$object = $payment_api->provider( [
 			'is_service' => true,
 			'name'       => $provider_name,
-		));
+		]);
 		if( empty( $object ) ) { return( $api->_reject() ); }
 		$is_server = !empty( $_GET[ 'server' ] );
 		// provider handler
@@ -346,7 +346,7 @@ class yf_payment {
 		@list( $status, $status_message ) = array_values( $result );
 		if( $is_server ) {
 			if( @$status) {
-				return( array( 'status' => 'ok' ) );
+				return( [ 'status' => 'ok' ] );
 			} else {
 				$api->_error();
 			}
@@ -361,8 +361,8 @@ class yf_payment {
 
 	public function _api_balance( $request, $options ) {
 		// security
-		$_request = array();
-		foreach( array( 'operation_id', 'amount', 'currency_id', 'provider_id', 'page', 'method_id', 'account', 'name' ) as $key ) {
+		$_request = [];
+		foreach( [ 'operation_id', 'amount', 'currency_id', 'provider_id', 'page', 'method_id', 'account', 'name' ] as $key ) {
 			isset( $request[ 'options' ][ $key ] ) && $_request[ $key ] = &$request[ 'options' ][ $key ];
 		}
 		// route
@@ -378,7 +378,7 @@ class yf_payment {
 				$response = $this->_payin( $_request, $options );
 				break;
 			case 'payout':
-				$_request = array();
+				$_request = [];
 				$response = $this->_payout( $request, $options );
 				break;
 			case 'operation':
