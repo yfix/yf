@@ -42,6 +42,7 @@ class yf_email {
 	/** @var bool Use queues to send emails in asynchronous mode */
 	public $ASYNC_SEND		= false;
 	public $QUEUE_NAME		= 'emails_queue';
+	public $DEQUEUE_USLEEP	= 500000; // 0.5 sec
 
 	/**
 	* Catch missing method call
@@ -112,7 +113,7 @@ class yf_email {
 					}
 				}
 			}
-		});
+		}, ['usleep' => $this->DEQUEUE_USLEEP]);
 	}
 
 	/**
