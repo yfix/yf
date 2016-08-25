@@ -7,6 +7,28 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	public $db_connect_id	= null;
 	/** @var string */
 	public $SQL_MODE		= '';
+	/** @var int */
+	public $CONNECT_TIMEOUT	= 5;
+	/** @var array of ini settings to apply before connect */
+	public $INI_OPTS = [
+		'mysqli.reconnect' => true,
+	];
+	/** @var array of strings */
+	public $SQL_AFTER_CONNECT = [
+		'SET SQL_MODE = ""',
+		'SET interactive_timeout = 3600',
+		'SET wait_timeout = 3600',
+	];
+	/** @var array of strings */
+	public $SQL_AFTER_CONNECT_CONSOLE = [
+		'SET SQL_MODE = ""',
+		'SET interactive_timeout = 86400',
+		'SET wait_timeout = 86400',
+	];
+	/** @var array of callables */
+	public $ON_BEFORE_CONNECT = [];
+	/** @var array of callables */
+	public $ON_AFTER_CONNECT = [];
 
 	/**
 	*/
@@ -31,6 +53,15 @@ class yf_db_driver_mysqli extends yf_db_driver {
 
 	/**
 	*/
+	function _on_before_connect_default() {
+		if (is_console()) {
+			$this->params['persist'] = true;
+			$this->SQL_AFTER_CONNECT = $this->SQL_AFTER_CONNECT_CONSOLE;
+		}
+	}
+
+	/**
+	*/
 	function connect() {
 		$this->db_connect_id = mysqli_init();
 		if (!$this->db_connect_id) {
@@ -38,19 +69,34 @@ class yf_db_driver_mysqli extends yf_db_driver {
 			$this->db_connect_id = null;
 			return false;
 		}
+		foreach ((array)$this->INI_OPTS as $ini_name => $ini_val) {
+			ini_set($ini_name, $ini_val);
+		}
+		if (!$this->ON_BEFORE_CONNECT) {
+			$this->ON_BEFORE_CONNECT[] = function() {
+				return $this->_on_before_connect_default();
+			};
+		}
+		foreach ((array)$this->ON_BEFORE_CONNECT as $func) {
+			if (is_callable($func)) {
+				$func($this);
+			}
+		}
 		if ($this->params['socket']) {
 			$connect_host = $this->params['socket'];
 		} else {
 			$connect_port = $this->params['port'] && $this->params['port'] != $this->DEF_PORT ? $this->params['port'] : '';
 			$connect_host = ($this->params['persist'] ? 'p:' : '').$this->params['host']. ($connect_port ? ':'.$connect_port : '');
 		}
-		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, 2);
+		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, $this->CONNECT_TIMEOUT);
 		$is_connected = mysqli_real_connect($this->db_connect_id, $this->params['host'], $this->params['user'], $this->params['pswd'], '', $this->params['port'], $this->params['socket'], $this->params['ssl'] ? MYSQLI_CLIENT_SSL : 0);
 		if (!$is_connected) {
 			$this->_connect_error = 'cannot_connect_to_server';
 			return false;
 		} else {
-			$this->query('SET SQL_MODE="'.$this->real_escape_string($this->SQL_MODE).'"');
+			foreach ((array)$this->SQL_AFTER_CONNECT as $sql) {
+				$this->query($sql);
+			}
 		}
 		if ($this->params['name'] != '') {
 			$dbselect = $this->select_db($this->params['name']);
@@ -63,6 +109,11 @@ class yf_db_driver_mysqli extends yf_db_driver {
 			}
 			if (!$dbselect) {
 				$this->_connect_error = 'cannot_select_db';
+			}
+			foreach ((array)$this->ON_AFTER_CONNECT as $func) {
+				if (is_callable($func)) {
+					$func($this, $dbselect);
+				}
 			}
 			return $dbselect;
 		}
