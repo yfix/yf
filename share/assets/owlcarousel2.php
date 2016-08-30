@@ -2,11 +2,11 @@
 
 return [
 	'versions' => [
-		'master' => [
-			'js' => 'http://owlcarousel.owlgraphic.com/assets/owlcarousel/owl.carousel.js',
+		'2.1.6' => [
+			'js' => '//rawgit.yfix.net/yfix/OwlCarousel2/2.1.6/dist/owl.carousel.min.js',
 			'css' => [
-				'http://owlcarousel.owlgraphic.com/assets/owlcarousel/assets/owl.carousel.min.css',
-				'http://owlcarousel.owlgraphic.com/assets/owlcarousel/assets/owl.theme.default.min.css',
+				'//rawgit.yfix.net/yfix/OwlCarousel2/2.1.6/dist/assets/owl.carousel.min.css',
+				'//rawgit.yfix.net/yfix/OwlCarousel2/2.1.6/dist/assets/owl.theme.default.min.css',
 			],
 		],
 	],
