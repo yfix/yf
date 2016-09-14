@@ -63,28 +63,15 @@ class yf_rewrite_pattern_yf {
 			}
 		}
 		$arr = $a;
-		$arr_out = [];
-		unset($arr['object']);
-		unset($arr['action']);
-		unset($arr['host']);
-		unset($arr['port']);
-		unset($arr['id']);
-		unset($arr['page']);
 		$fragment = $arr['fragment'];
-		unset($arr['fragment']);
 		$lang = $arr['lang'];
-		unset($arr['lang']);
+		unset($arr['object'], $arr['action'], $arr['host'], $arr['port'], $arr['id'], $arr['page'], $arr['fragment'], $arr['lang']);
 #		foreach ((array)$class_rewrite->allowed_url_params as $name) {
 #			if (isset($_GET[$name]) && preg_match('~^[a-z0-9_-]+$~i', $_GET[$name])) {
 #				$arr[$name] = $_GET[$name];
 #			}
 #		}
-		foreach ((array)$arr as $k => $v) {
-			$arr_out[] = $k.'='.$v;
-		}
-		if (!empty($arr_out)) {
-			$u .= (strpos($u, '?') === false ? '?' : '&'). implode('&', $arr_out);
-		}
+		$u .= (strpos($u, '?') === false ? '?' : '&'). urldecode(http_build_query($arr));
 		if ($fragment) {
 			$u .= '#'.$fragment;
 		}
