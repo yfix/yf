@@ -88,18 +88,33 @@ class yf_rewrite {
 		if (!empty($links) && is_array($links)) {
 			$r_array = [];
 			$has_special = false;
-			foreach ($links as $v) {
-				if (in_array($v, $this->special_links)) {
+			foreach ($links as $link) {
+				if (in_array($link, $this->special_links)) {
 					$has_special = true;
 					continue;
 				}
-				$url = parse_url($v);
+				$arr = [];
+				$url = parse_url($link);
 				parse_str($url['query'], $arr);
 				if (MAIN_TYPE_ADMIN && in_array($arr['task'], ['login','logout'])) {
 					continue;
 				}
+				// Support for custom url params
+				$tmp = $arr;
+				foreach (['object','action','id','page'] as $v) {
+					if (isset($tmp[$v])) {
+						unset($tmp[$v]);
+					}
+				}
+				if (count($tmp) > 0) {
+					foreach ($tmp as $k => $v) {
+						unset($arr[$k]);
+					}
+					$arr['_other'] = urldecode(http_build_query($tmp));
+				}
+				unset($tmp);
 				$replace = $this->_url($arr). (strlen($url['fragment']) ? '#'.$url['fragment'] : '');
-				$r_array[$v] = $replace;
+				$r_array[$link] = $replace;
 			}
 			// Fix for bug with similar shorter links, sort by length DESC
 			uksort($r_array, function ($a, $b) {
@@ -243,9 +258,39 @@ class yf_rewrite {
 			parse_str(trim($params['_other'], '&?'), $tmp);
 			foreach ((array)$tmp as $k => $v) {
 				$k = trim($k);
-				$v = trim($v);
-				if (strlen($k) && strlen($v)) {
-					$params[$k] = $v;
+				if (!strlen($k)) {
+					continue;
+				}
+				if (is_array($v)) {
+					foreach ($v as $k1 => $v1) {
+						$k1 = trim($k1);
+						if (!strlen($k1)) {
+							continue;
+						}
+						if (is_array($v1)) {
+							foreach ($v1 as $k2 => $v2) {
+								$k2 = trim($k2);
+								if (!strlen($k2)) {
+									continue;
+								}
+// TODO: support for several deepness levels of url arrays
+								$v2 = trim($v2);
+								if (strlen($v2)) {
+									$params[$k][$k1][$k2] = $v2;
+								}
+							}
+						} else {
+							$v1 = trim($v1);
+							if (strlen($v1)) {
+								$params[$k][$k1] = $v1;
+							}
+						}
+					}
+				} else {
+					$v = trim($v);
+					if (strlen($v)) {
+						$params[$k] = $v;
+					}
 				}
 			}
 			unset($params['_other']);
@@ -306,15 +351,15 @@ class yf_rewrite {
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
 			$link = $this->REWRITE_PATTERNS['yf']->_build($params, $this);
 		} else {
-			$skip_url_params = ['host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path', 'is_full_url'];
+			$arr_out = [];
 			foreach ((array)$params as $k => $v) {
-				if (in_array($k, $skip_url_params)) {
+				if (in_array($k, ['host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path', 'is_full_url'])) {
 					continue;
 				}
-				$arr_out[] = $k.'='.$v;
+				$arr_out[$k] = $v;
 			}
 			if (!empty($arr_out)) {
-				$u .= (strpos($u, '?') === false ? '?' : '&'). implode('&', $arr_out);
+				$u .= (strpos($u, '?') === false ? '?' : '&'). urldecode(http_build_query($arr_out));
 			}
 			$http_protocol = main()->USE_ONLY_HTTPS ? 'https' : 'http';
 			if ($for_section == 'admin') {
