@@ -71,7 +71,9 @@ class yf_rewrite_pattern_yf {
 #				$arr[$name] = $_GET[$name];
 #			}
 #		}
-		$u .= (strpos($u, '?') === false ? '?' : '&'). urldecode(http_build_query($arr));
+		if (!empty($arr)) {
+			$u .= (strpos($u, '?') === false ? '?' : '&'). urldecode(http_build_query($arr));
+		}
 		if ($fragment) {
 			$u .= '#'.$fragment;
 		}
