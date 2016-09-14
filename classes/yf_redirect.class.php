@@ -177,6 +177,25 @@ class yf_redirect {
 					parse_str($query, $fields);
 				}
 				if ($fields) {
+					$tmp = [];
+					// Fix for fields sub-arrays
+					foreach ($fields as $k => $v) {
+						if (is_array($v)) {
+							foreach ($v as $k1 => $v1) {
+								if (is_array($v1)) {
+									foreach ($v1 as $k2 => $v2) {
+										$tmp[$k.'['.$k1.']['.$k2.']'] = $v2;
+									}
+								} else {
+									$tmp[$k.'['.$k1.']'] = $v1;
+								}
+							}
+						} else {
+							$tmp[$k] = $v;
+						}
+					}
+					$fields = $tmp;
+					unset($tmp);
 					$form = form($fields, ['no_form' => 1]);
 					foreach ((array)$fields as $k => $v) {
 						$form->hidden($k);
