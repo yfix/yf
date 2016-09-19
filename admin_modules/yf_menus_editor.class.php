@@ -57,7 +57,7 @@ class yf_menus_editor {
 			->text('stpl_name')
 			->text('method_name')
 			->text('custom_fields')
-			->btn('Drag items', url('/@object/drag_items/@id'), ['icon' => 'icon-move fa fa-arrows', 'btn_no_text' => 1])
+			->btn('Drag items', url('/@object/drag_items/%id'), ['icon' => 'icon-move fa fa-arrows', 'btn_no_text' => 1])
 			->btn('View Items', url('/@object/show_items/%d'), ['btn_no_text' => 1])
 			->btn_clone('', url('/@object/clone_menu/%d'), ['btn_no_text' => 1])
 #			->btn('Export', url('/@object/export/%d'), array('btn_no_text' => 1, 'icon' => 'fa fa-angle-double-up'))
