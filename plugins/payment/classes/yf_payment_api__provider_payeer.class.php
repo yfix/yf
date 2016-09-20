@@ -43,6 +43,171 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
             'payeer' => array(
                 'title' => 'Payeer',
                 'icon'  => 'payeer',
+                'ps' => '2609',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+                'currency' => [
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                ],
+                'currency' => [
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'qiwi' => array(
+                'title'       => 'Qiwi',
+                'icon'        => 'qiwi',
+                'ps' => '20916096',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+                'currency' => [
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                ],
+                'currency' => [
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'advcash' => array(
+                'title'       => 'Advcash',
+                'icon'        => 'advcash',
+                'ps' => '88106414',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+                'currency' => [
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                ],
+                'currency' => [
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'btc-e' => array(
+                'title'       => 'BTC-E',
+                'icon'        => 'btc-e',
+                'ps' => '35228575',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+                'currency' => [
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'okpay' => array(
+                'title'       => 'OkPay',
+                'icon'        => 'okpay',
+                'ps' => '1577275',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'paxum' => array(
+                'title'       => 'Paxum',
+                'icon'        => 'paxum',
+                'ps' => '29669322',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'litecoin' => array(
+                'title'       => 'Litecoin',
+                'icon'        => 'litecoin',
+                'ps' => '101525097',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'Dogecoin' => array(
+                'title'       => 'OkPay',
+                'icon'        => 'okpay',
+                'ps' => '101531593',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'visa' => array(
+                'title'       => 'Visa',
+                'icon'        => 'visa',
+                'ps' => '84686071',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'mastercard' => array(
+                'title'       => 'Mastercard',
+                'icon'        => 'mastercard',
+                'ps' => '49239803',
+                'currency' => [
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                ],
+            ),
+            'bitcoin' => array(
+                'title'       => 'Bitcoin',
+                'icon'        => 'bitcoin',
+                'ps' => '45955149',
                 'currency' => [
                     'USD' => [
                         'currency_id' => 'USD',
@@ -80,16 +245,316 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     'to' => [
                         'type'      => 'text',
                         'required'  => true,
-                        'minlength' => 2,
-                        'maxlength' => 200,
-                        'pattern'   => '^.{2,200}$',
+                        'minlength' => 5,
+                        'maxlength' => 20,
+                        'pattern'   => '^P[0-9]+$',
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|regex:~^.{2,200}$~u|xss_clean',
+                    'to' => 'required|regex:~^P[0-9]+$~u|xss_clean',
                 ],
                 'option_validation_message' => [
                     'to' => 'вы должны указать верный Payeer аккаунт',
+                ],
+            ),
+
+            'visa' => array(
+                'title' => 'Visa',
+                'icon'  => 'visa',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+                'action'     => 'output',
+                'ps' => '57568699',
+                'field' => [
+                    'action',
+                    'sumIn',
+                    'ps',
+                    'curIn',
+                    'curOut',
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'order' => [
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'option' => [
+                    'param_ACCOUNT_NUMBER' => 'Карта Visa',
+                ],
+                'option_validation_js' => [
+                    'to' => [
+                        'type'      => 'text',
+                        'required'  => true,
+                        'minlength' => 15,
+                        'maxlength' => 17,
+                        'pattern'   => '^([45]{1}[\d]{15}|[6]{1}[\d]{17})$',
+                    ],
+                ],
+                'option_validation' => [
+                    'to' => 'required|regex:~^([45]{1}[\d]{15}\|[6]{1}[\d]{17})$~u|xss_clean',
+                ],
+                'option_validation_message' => [
+                    'to' => 'вы должны указать верную карту Visa',
+                ],
+            ),
+
+            'mastercard' => array(
+                'title' => 'Mastercard',
+                'icon'  => 'mastercard',
+                'currency' => [
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+                'action'     => 'output',
+                'ps' => '57644634',
+                'field' => [
+                    'action',
+                    'sumIn',
+                    'ps',
+                    'curIn',
+                    'curOut',
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'order' => [
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'option' => [
+                    'param_ACCOUNT_NUMBER' => 'Карта Mastercard',
+                ],
+                'option_validation_js' => [
+                    'to' => [
+                        'type'      => 'text',
+                        'required'  => true,
+                        'minlength' => 15,
+                        'maxlength' => 17,
+                        'pattern'   => '^([45]{1}[\d]{15}|[6]{1}[\d]{17})$',
+                    ],
+                ],
+                'option_validation' => [
+                    'to' => 'required|regex:~^([45]{1}[\d]{15}\|[6]{1}[\d]{17})$~u|xss_clean',
+                ],
+                'option_validation_message' => [
+                    'to' => 'вы должны указать верную карту Mastercard',
+                ],
+            ),
+
+            'maestro' => array(
+                'title' => 'Maestro',
+                'icon'  => 'maestro',
+                'currency' => [
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+                'action'     => 'transfer',
+                'ps' => '57766314',
+                'field' => [
+                    'action',
+                    'sum',
+                    'curIn',
+                    'curOut',
+                    'to',
+                ],
+                'order' => [
+                    'to',
+                ],
+                'option' => [
+                    'to' => 'Карта Maestro',
+                ],
+                'option_validation_js' => [
+                    'to' => [
+                        'type'      => 'text',
+                        'required'  => true,
+                        'minlength' => 15,
+                        'maxlength' => 17,
+                        'pattern'   => '^([45]{1}[\d]{15}|[6]{1}[\d]{15,17})',
+                    ],
+                ],
+                'option_validation' => [
+                    'to' => 'required|regex:~^([45]{1}[\d]{15}|[6]{1}[\d]{15,17})~u|xss_clean',
+                ],
+                'option_validation_message' => [
+                    'to' => 'вы должны указать верную карту Maestro',
+                ],
+            ),
+
+            'okpay' => array(
+                'title' => 'OkPay',
+                'icon'  => 'okpay',
+                'currency' => [
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                ],
+                'action'     => 'output',
+                'ps' => '1652561',
+                'field' => [
+                    'action',
+                    'sumIn',
+                    'ps',
+                    'curIn',
+                    'curOut',
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'order' => [
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'option' => [
+                    'param_ACCOUNT_NUMBER' => 'Кошелёк OkPay',
+                ],
+                'option_validation_js' => [
+                    'param_ACCOUNT_NUMBER' => [
+                        'type'      => 'text',
+                        'required'  => true,
+                        'minlength' => 6,
+                        'maxlength' => 200,
+                        'pattern'   => '^([O]{1}[K]{1}[\d]{9}|.*@.*)$',
+                    ],
+                ],
+                'option_validation' => [
+                    'to' => 'required|regex:~^([O]{1}[K]{1}[\d]{9}\|.*@.*)$~u|xss_clean',
+                ],
+                'option_validation_message' => [
+                    'to' => 'вы должны указать верную кошелёк OkPay',
+                ],
+            ),
+
+            'paxum' => array(
+                'title' => 'Paxum',
+                'icon'  => 'paxum',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+                'action'     => 'output',
+                'ps' => '35470493',
+                'field' => [
+                    'action',
+                    'sumIn',
+                    'ps',
+                    'curIn',
+                    'curOut',
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'order' => [
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'option' => [
+                    'param_ACCOUNT_NUMBER' => 'Кошелёк Paxum',
+                ],
+                'option_validation_js' => [
+                    'param_ACCOUNT_NUMBER' => [
+                        'type'      => 'text',
+                        'required'  => true,
+                        'minlength' => 6,
+                        'maxlength' => 200,
+                        'pattern'   => '^.*@.*\.[a-z]{2,6}$',
+                    ],
+                ],
+                'option_validation' => [
+                    'to' => 'required|regex:~^.*@.*\.[a-z]{2,6}$~u|xss_clean',
+                ],
+                'option_validation_message' => [
+                    'to' => 'вы должны указать верную кошелёк Paxum',
+                ],
+            ),
+
+            'qiwi' => array(
+                'title' => 'Qiwi',
+                'icon'  => 'qiwi',
+                'currency' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+                'action'     => 'output',
+                'ps' => '26808',
+                'field' => [
+                    'action',
+                    'sumIn',
+                    'ps',
+                    'curIn',
+                    'curOut',
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'order' => [
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'option' => [
+                    'param_ACCOUNT_NUMBER' => 'Кошелёк Qiwi',
+                ],
+                'option_validation_js' => [
+                    'param_ACCOUNT_NUMBER' => [
+                        'type'      => 'text',
+                        'required'  => true,
+                        'minlength' => 8,
+                        'maxlength' => 19,
+                        'pattern'   => '^\+(91|994|82|372|375|374|44|998|972|66|90|81|1|507|7|77|380|371|370|996|9955|992|373|84)[0-9]{6,14}$',
+                    ],
+                ],
+                'option_validation' => [
+                    'to' => 'required|regex:~^\+(91\|994\|82\|372\|375\|374\|44\|998\|972\|66\|90\|81\|1\|507\|7\|77\|380\|371\|370\|996\|9955\|992\|373\|84)[0-9]{6,14}$~u|xss_clean',
+                ],
+                'option_validation_message' => [
+                    'to' => 'вы должны указать верную кошелёк Qiwi',
+                ],
+            ),
+            'bitcoin' => array(
+                'title' => 'Bitcoin',
+                'icon'  => 'bitcoin',
+                'currency' => [
+                    'BTC' => [
+                        'currency_id' => 'BTC',
+                        'active'      => true,
+                    ],
+                ],
+                'action'     => 'output',
+                'ps' => '189279909',
+                'field' => [
+                    'action',
+                    'sumIn',
+                    'ps',
+                    'curIn',
+                    'curOut',
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'order' => [
+                    'param_ACCOUNT_NUMBER',
+                ],
+                'option' => [
+                    'param_ACCOUNT_NUMBER' => 'Кошелёк Bitcoin',
+                ],
+                'option_validation_js' => [
+                    'param_ACCOUNT_NUMBER' => [
+                        'type'      => 'text',
+                        'required'  => true,
+                        'minlength' => 2,
+                        'maxlength' => 200,
+                        'pattern'   => '^([A-Za-z0-9]+)$',
+                    ],
+                ],
+                'option_validation' => [
+                    'to' => 'required|regex:~^([A-Za-z0-9]+)$~u|xss_clean',
+                ],
+                'option_validation_message' => [
+                    'to' => 'вы должны указать верный кошелёк Bitcoin',
                 ],
             ),
         ),
@@ -99,6 +564,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
     public $currency_allow = array(
         'USD' => array(
             'currency_id' => 'USD',
+            'active'      => true,
+        ),
+        'RUB' => array(
+            'currency_id' => 'RUB',
             'active'      => true,
         ),
     );
@@ -275,17 +744,6 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
         if(empty($_operation_id)) { return( null ); }
 
-        //payment systems
-        /*
-         * 26808 QIWI
-         * 1136053 Payeer
-         * 57378077 Yandex.Money
-         * 57644634 MASTERCARD (account)
-         * 27322260 Mastercard (account, person)
-         * 27313794 Visa (account, person)
-         * 57568699 Visa (account)
-         */
-
         $_currency = !empty($_currency) ?$_currency : 'USD';
         $_title = !empty($_title) ?$_title : 'Пополнение счёта';
         $_ = [
@@ -302,7 +760,9 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         $arHash[] = $this->API_PASS_MERCHANT;
         $_['m_sign'] = strtoupper(hash('sha256', implode(':', $arHash)));
         $_['lang'] = 'ru';
-        return( $_ );
+        $_['form[ps]'] = $_ps;
+        $_['form[curr['.$_ps.']]'] = $_currency;
+        return( $_);
     }
 
 
@@ -322,13 +782,13 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         if( $is_array ) {
             $result[ 'url' ] = $url;
         } else {
-            $result[] = '<form id="_js_provider_payeer_form" method="get" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
+            $result[] = '<form id="_js_provider_payeer_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
         }
         foreach ((array)$form_options as $key => $value ) {
             if( $is_array ) {
                 $result[ 'data' ][ $key ] = $value;
             } else {
-                $result[] = sprintf( '<input type="hidden" name="%s" value="%s" />', $key, $value );
+                $result[] = sprintf( '<input type="hidden" name="%s" value=\'%s\' />', $key, $value );
             }
         }
         if( !$is_array ) {
@@ -341,55 +801,6 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
     public function signature( $options ) {
         return strtoupper(hash('sha256', implode(':', array_merge($options, array($this->API_PASS_MERCHANT)))));
     }
-
-
-    /*public function _payin_response($options){
-        is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-        if(empty($_operation_id)) {
-            return false;
-        }
-        $payment_api = $this->payment_api;
-
-        //info from our site
-        $_currency = !empty($_currency) ?$_currency : 'USD';
-        $_title = !empty($_title) ?$_title : 'Пополнение счёта';
-        $url_options = [
-            'm_shop' => $this->API_ID_MERCHANT,
-            'm_orderid' => $_operation_id,
-            'm_amount' => $_amount,
-            'm_curr' => $_currency,
-            'm_desc' => base64_encode($_title),
-        ];
-
-
-        $arHash = [];
-        foreach($url_options as $key=>$value){
-            $arHash[] = $value;
-        }
-        $arHash[] = $this->API_PASS_MERCHANT;
-        $url_options['m_sign'] = strtoupper(hash('sha256', implode(':', $arHash)));
-        $url_options['form[ps]'] = $_ps_id ? $_ps_id : 26808;
-        $url_options['form[curr['.$url_options['form[ps]'].']]'] = $_currency;
-        $url = $this->_create_url($this->URL_MERCHANT_API, $url_options);
-
-        //$request_result = common()->get_remote_page($this->URL_API, false, $url_options);
-        $request_result = common()->get_remote_page($url);
-        $request_result_array = empty($request_result) ? '' : json_decode($request_result, true);
-
-        //$url_options['m_key'] = substr($this->API_PASS, 0, 4).preg_replace('~(.)~u', '*', substr($this->API_PASS, 4));
-        $result = [
-            'response' => [
-                'datetime'      => $payment_api->sql_datetime(),
-                'provider_name' => $this->PROVIDER_NAME,
-                'url_options'  => $url_options,
-                'operation_id'  => $_operation_id,
-                'result'        => $request_result_array,
-                'url'           => $url,
-                'amount'        => $_amount,
-            ]
-        ];
-        return $result;
-    }*/
 
     public function _create_api_response($options){
         $url_options = [
@@ -407,7 +818,6 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         $add_string = '';
         if(count($data)>0) {
             foreach ($data as $key => $value) {
-                //$add_string[] = urlencode($key).'='.urlencode($value);
                 $add_string[] = "$key=$value";
             }
             $add_string = implode('&', $add_string);
@@ -424,49 +834,93 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         return $this->_create_api_response(['action' => 'getPaySystems']);
     }
 
-    /*public function _api_deposition($options){
-        if( !$this->ENABLE ) { return( null ); }
-        $payment_api = $this->payment_api;
-        is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-        $payment_api->dump([ 'name' => 'Payeer', 'operation_id' => @(int)$_operation_id]);
-        if(empty($_operation_id)) {
-            return false;
-        }
-        $result = $this->_api_transaction( $options );
-        // update operation
-        $operation = $payment_api->operation( [
-            'operation_id' => $_operation_id,
-        ]);
-        $payin_response = $this->_payin_response(array_merge($options, ['amount'=>$operation['amount']]));
-        $payment_api->dump([ 'response_info' => $payin_response ]);
-
-        $data = [
-            'operation_id'    => $_operation_id,
-            'status_id'       => $operation['status_id'],
-            'datetime_update' => $payment_api->sql_datetime(),
-            'options'         => $payin_response,
-        ];
-
-        $result = $payment_api->operation_update( $data );
-        $payment_api->transaction_commit();
-        if($result['status'] === true){
-            $response_result = $payin_response['response']['result'];
-            if(empty($response_result['errors'])){
-                $result = $response_result;
-            }
-            else {
-                $result = ['error_message' => 'Невозможно подключиться по апи, возможно доступ по апи для вашего сайта не подтверждён.'];
-            }
-        }
-        return( $result );
-    }
-
     public function deposition( $options ) {
         if( !$this->ENABLE ) { return( null ); }
-        $result = $this->_api_response( $options );
-        return( $result );
-    }*/
+        $payment_api = $this->payment_api;
+        $_              = $options;
+        $data           = &$_[ 'data'           ];
+        $options        = &$_[ 'options'        ];
+        $operation_data = &$_[ 'operation_data' ];
+        // prepare data
+        $user_id      = (int)$operation_data[ 'user_id' ];
+        $operation_id = (int)$data[ 'operation_id' ];
+        $account_id   = (int)$data[ 'account_id'   ];
+        $provider_id  = (int)$data[ 'provider_id'  ];
+        $ps = isset($options[ 'method_id' ]) ? $this->method_allow['payin'][$options[ 'method_id' ]]['ps'] : -1;
+        $amount       = $payment_api->_number_float( $data[ 'amount' ] );
+        $currency_id  = $this->get_currency( $options );
+        if( empty( $operation_id ) ) {
+            $result = [
+                'status'         => false,
+                'status_message' => 'Не определен код операции',
+            ];
+            return( $result );
+        }
+        // currency conversion
+        $amount_currency = $payment_api->currency_conversion( [
+            'type'        => 'buy',
+            'currency_id' => $currency_id,
+            'amount'      => $amount,
+        ]);
+        if( empty( $amount_currency ) ) {
+            $result = [
+                'status'         => false,
+                'status_message' => 'Невозможно произвести конвертацию валют',
+            ];
+            return( $result );
+        }
+        // fee
+        $fee = $this->fee;
+        $amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+        // prepare request form
+        $form_data  = [
+            'user_id'               => $user_id,
+            'operation_id'          => $operation_id,
+            'account_id'            => $account_id,
+            'provider_id'           => $provider_id,
+            'currency_id'           => $currency_id,
+            'fee'                   => $fee,
+            'amount'                => $amount,
+            'amount_currency'       => $amount_currency,
+            'amount_currency_total' => $amount_currency_total,
+        ];
+        $form_options = [
+            'amount'       => $amount_currency_total,
+            'currency'     => $currency_id,
+            'operation_id' => $operation_id,
+            'title'        => $data[ 'title' ],
+            'description'  => $operation_id,
+            'ps' => $ps,
+        ];
+        // add options
+        $method = $this->api_method( [
+            'type'      => 'payin',
+            'method_id' => @$options[ 'method_id' ],
+        ]);
+        !empty( $method[ 'option' ] ) && $form_options += $method[ 'option' ];
+        // form
+        $form = $this->_form( $form_options );
 
+        // save options
+        $operation_options = [
+            'request' => [ [
+                'data'     => $form_data,
+                'form'     => $form_options,
+                'datetime' => $operation_data[ 'sql_datetime' ],
+            ]]
+        ];
+        $result = $payment_api->operation_update( [
+            'operation_id' => $operation_id,
+            'options'      => $operation_options,
+        ]);
+        if( !$result[ 'status' ] ) { return( $result ); }
+        $result = [
+            'form'           => $form,
+            'status'         => true,
+            'status_message' => t( 'Заявка на ввод средств принята' ),
+        ];
+        return( $result );
+    }
 
 
     public function api_payout( $options = null ) {
@@ -529,15 +983,22 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         $fee = $this->get_fee_payout( $options );
         $amount_currency_total = $payment_api->fee( $amount_currency, $fee );
 
-
-        // default
-        // $_currency = $currency_id;
-        // $_amount = $this->_amount_payout( $amount_currency_total, $_currency, $is_request = true );
         $_amount = $this->_amount_payout( $_amount, $currency_id, $method, $is_request = true );
 
         !isset( $_comment ) && $_comment = t( 'Вывод средств (id: ' . $_operation_id . ')' );
         !isset( $_action  ) && $_action = $method[ 'action' ];
-        $_sum = $_amount;
+
+        if(in_array('sum', $method[ 'field' ])) {
+            $_sum = $amount_currency;
+        }
+        elseif(in_array('sumIn', $method[ 'field' ])) {
+            $_sumIn = $amount_currency;
+        }
+
+        if(isset($method['ps'])) {
+            $_ps = $method['ps'];
+        }
+
         $_curIn = $_curOut = $currency_id;
 
         // check required
@@ -558,6 +1019,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         $payment_api->dump( [ 'name' => 'Payeer', 'operation_id' => $operation_id,
             'var' => [ 'request' => $request ]
         ]);
+
 
         $response = $this->_create_api_response($request);
         // DUMP
