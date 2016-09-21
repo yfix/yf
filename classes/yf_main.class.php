@@ -1873,7 +1873,7 @@ if ($_POST) {
 			$error = error_get_last();
 			if (in_array($error, [E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, E_USER_ERROR, E_RECOVERABLE_ERROR])) {
 				$info = '['.gmdate('Y-m-d H:i:s').'] [SHUTDOWN] file:'.$error['file'].' | ln:'.$error['line'].' | msg:'.$error['message'] .PHP_EOL;
-				file_put_contents(PROJECT_PATH. 'fatal_log.txt', $info, FILE_APPEND);
+				file_put_contents(LOGS_PATH. 'fatal_log.txt', $info, FILE_APPEND);
 				echo $info;
 			}
 		}
