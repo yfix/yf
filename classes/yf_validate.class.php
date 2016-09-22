@@ -908,6 +908,13 @@ class yf_validate {
 	}
 
 	/**
+	* Returns TRUE if given field value contains only latin1 letters, lower and uppercase allowed, and dash and underscore and dots symbols.
+	*/
+	public function alpha_dash_dots($in) {
+		return (bool) preg_match('/^[a-z0-9_\.-]+$/i', $in);
+	}
+
+	/**
 	* Same as alpha(), but including unicode characters too
 	*/
 	public function unicode_alpha($in) {
