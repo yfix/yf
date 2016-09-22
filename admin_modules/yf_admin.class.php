@@ -58,7 +58,7 @@ class yf_admin {
 		return form($a, ['autocomplete' => 'off'])
 			->validate([
 				'__before__'	=> 'trim',
-				'login'			=> 'required|alpha_numeric|is_unique_without[admin.login.'.$id.']',
+				'login'			=> 'required|alpha_dash_dots|is_unique_without[admin.login.'.$id.']',
 				'email'			=> 'required|valid_email|is_unique_without[admin.email.'.$id.']',
 				'first_name'	=> 'required',
 				'last_name'		=> 'required',
@@ -94,7 +94,7 @@ class yf_admin {
 		return form($a, ['autocomplete' => 'off'])
 			->validate([
 				'__before__'	=> 'trim',
-				'login'			=> 'required|alpha_numeric|is_unique[admin.login]',
+				'login'			=> 'required|alpha_dash_dots|is_unique[admin.login]',
 				'email'			=> 'required|valid_email|is_unique[admin.email]',
 				'first_name'	=> 'required',
 				'last_name'		=> 'required',
