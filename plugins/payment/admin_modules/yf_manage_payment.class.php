@@ -199,7 +199,16 @@ class yf_manage_payment {
 		if ($num_chart) {
 			$num_chart = '<div title="'.t('Транзакции в системе по дням').'" style="margin-bottom: 10px;">'.$num_chart.'</div>';
 		}
-		$sql = db()->select( 'u.id as id', 'u.id as user_id', 'u.name as name', 'u.email as email', 'pa.balance as balance', 'pa.account_id as account_id' )
+		$sql = db()->select(
+				'u.id as id',
+				'u.id as user_id',
+				'pa.balance as balance',
+				'pa.account_id as account_id',
+				'u.name as name',
+				'u.login as login',
+				'u.nick as nick',
+				'u.email as email'
+			)
 			->table( 'user as u' )
 			->left_join( 'payment_account as pa', 'pa.user_id = u.id' )
 			->sql();
@@ -218,7 +227,11 @@ class yf_manage_payment {
 			->on_before_render(function($p, $data, $table) use ($_this) {
 			})
 			->text( 'id', 'Номер'  )
-			->text( 'name', 'Имя', ['link' => url('/members/edit/%id')] )
+			->func( 'user_name', function( $value, $extra, $row ) {
+				$name = $row['name'] ?: $row['login'] ?: $row['nick'] ?: $row['email'];
+				$result = a('/members/edit/'.$row[ 'user_id' ], $name . ' (id: ' . $row[ 'user_id' ] . ')');
+				return( $result );
+			}, [ 'desc' => 'пользователь' ] )
 			->text( 'email'  , 'Почта'  )
 			->text( 'balance', 'Баланс' )
 			->func('id', function($in, $e, $a, $p, $table) use ($_this) {

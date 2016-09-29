@@ -204,13 +204,16 @@ class yf_manage_deposit {
 			'o.provider_id',
 			'o.options',
 			'a.user_id',
-			'u.name as user_name',
 			'o.amount',
 			// 'a.balance',
 			'o.balance',
 			'p.title as provider_title',
 			'o.status_id as status_id',
-			'o.datetime_start'
+			'o.datetime_start',
+			'u.name as user_name',
+			'u.login as user_login',
+			'u.nick as user_nick',
+			'u.email as user_email'
 			)
 			->table( 'payment_operation as o' )
 				->left_join( 'payment_provider as p', 'p.provider_id = o.provider_id' )
@@ -249,8 +252,9 @@ class yf_manage_deposit {
 			->text( 'provider_title', 'провайдер' )
 			->text( 'amount'        , 'сумма' )
 			->text( 'balance'       , 'баланс' )
-			->func( 'user_name', function( $value, $extra, $row_info ) {
-				$result = a('/members/edit/'.$row_info[ 'user_id' ], $value . ' (id: ' . $row_info[ 'user_id' ] . ')');
+			->func( 'user_name', function( $value, $extra, $row ) {
+				$name = $row['user_name'] ?: $row['user_login'] ?: $row['user_nick'] ?: $row['user_email'];
+				$result = a('/members/edit/'.$row[ 'user_id' ], $name . ' (id: ' . $row[ 'user_id' ] . ')');
 				return( $result );
 			}, [ 'desc' => 'пользователь' ] )
 			->func( 'status_id', function( $value, $extra, $row ) use( $manage_lib, $payment_status ) {
