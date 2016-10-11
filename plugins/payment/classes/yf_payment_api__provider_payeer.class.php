@@ -145,17 +145,6 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
             ),
-            'paxum' => array(
-                'title'       => 'Paxum',
-                'icon'        => 'paxum',
-                'ps' => '29669322',
-                'currency' => [
-                    'USD' => [
-                        'currency_id' => 'USD',
-                        'active'      => true,
-                    ],
-                ],
-            ),
             'litecoin' => array(
                 'title'       => 'Litecoin',
                 'icon'        => 'litecoin',
@@ -167,9 +156,9 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
             ),
-            'Dogecoin' => array(
-                'title'       => 'OkPay',
-                'icon'        => 'okpay',
+            'dogecoin' => array(
+                'title'       => 'Dogecoin',
+                'icon'        => 'dogecoin',
                 'ps' => '101531593',
                 'currency' => [
                     'USD' => [
@@ -181,7 +170,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
             'visa' => array(
                 'title'       => 'Visa',
                 'icon'        => 'visa',
-                'ps' => '84686071',
+                'ps' => '21433878',
                 'currency' => [
                     'USD' => [
                         'currency_id' => 'USD',
@@ -196,7 +185,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
             'mastercard' => array(
                 'title'       => 'Mastercard',
                 'icon'        => 'mastercard',
-                'ps' => '49239803',
+                'ps' => '49398264',
                 'currency' => [
                     'EURO' => [
                         'currency_id' => 'EURO',
