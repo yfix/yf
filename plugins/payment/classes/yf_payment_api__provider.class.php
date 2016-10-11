@@ -177,6 +177,7 @@ class yf_payment_api__provider {
 			return( $_result );
 		}
 		db()->commit();
+		events()->fire( 'payment.balance_refresh', [ $account ] );
 		return( $result );
 	}
 

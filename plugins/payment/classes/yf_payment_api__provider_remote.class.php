@@ -659,6 +659,7 @@ class yf_payment_api__provider_remote {
 				]);
 			events()->fire( $event_name .'.'. $new_status_name, [ $account, $operation ] );
 			events()->fire( $event_name .'.finish', [ $account, $operation ] );
+			events()->fire( 'payment.balance_refresh', [ $account ] );
 		} else {
 			$message = 'Повторный запрос на выполнение операции';
 			$status_message = $message;
@@ -1127,6 +1128,7 @@ class yf_payment_api__provider_remote {
 			return( $result );
 		}
 		db()->commit();
+		events()->fire( 'payment.balance_refresh', [ $account ] );
 		// mail
 		$data = [
 			'operation_id' => $operation_id,
