@@ -2,7 +2,7 @@
 
 /**
 * Special methods for user authentification
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -65,6 +65,8 @@ class yf_auth_user {
 	public $EXEC_AFTER_LOGIN		= [];
 	/** @var array @conf_skip */
 	public $EXEC_AFTER_LOGOUT		= [];
+	/** @var array @conf_skip */
+	public $EXEC_AFTER_INIT			= [];
 	/** @var string	*/
 // TODO: be able to import cookies settings from main()->_init_session()
 	public $COOKIE_PATH				= '/';
@@ -278,6 +280,7 @@ class yf_auth_user {
 				main()->USER_INFO = $_SESSION[$this->VAR_USER_INFO];
 			}
 		}
+		$this->_exec_method_on_action('init');
 	}
 
 	/**
@@ -751,6 +754,8 @@ class yf_auth_user {
 			$callbacks = $this->EXEC_AFTER_LOGIN;
 		} elseif ($action == 'logout') {
 			$callbacks = $this->EXEC_AFTER_LOGOUT;
+		} elseif ($action == 'init') {
+			$callbacks = $this->EXEC_AFTER_INIT;
 		}
 		if (empty($callbacks) || !is_array($callbacks)) {
 			return false;
@@ -777,7 +782,7 @@ class yf_auth_user {
 		foreach (explode('_', $_COOKIE[$_SPECIAL_NAME]) as $_user_id) {
 			$cookie_users[$_user_id] = $_user_id;
 		}
-		if ($_COOKIE[$_SPECIAL_NAME] == $_SESSION[$this->VAR_USER_ID] 
+		if ($_COOKIE[$_SPECIAL_NAME] == $_SESSION[$this->VAR_USER_ID]
 			|| (count($cookie_users) > 1 && isset($cookie_users[$_SESSION[$this->VAR_USER_ID]]))
 		) {
 			return false;
