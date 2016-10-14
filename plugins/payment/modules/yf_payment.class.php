@@ -164,7 +164,7 @@ class yf_payment {
 		$payment_api = _class( 'payment_api' );
 		// update account, operation
 		list( $account_id,  $account  ) = $payment_api->get_account();
-		if( empty( $account_id ) ) { $api->_forbidden(); }
+		if( empty( $account_id ) ) { $api->_reject(); }
 		list( $currency_id, $currency ) = $payment_api->get_currency__by_id( $account );
 		$this->t( $currency, 'currency' );
 		$response = [

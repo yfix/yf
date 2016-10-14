@@ -2,7 +2,7 @@
 
 /**
 * Special methods for admin authentification
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -39,6 +39,8 @@ class yf_auth_admin {
 	public $EXEC_AFTER_LOGIN		= [];
 	/** @var array @conf_skip */
 	public $EXEC_AFTER_LOGOUT		= [];
+	/** @var array @conf_skip */
+	public $EXEC_AFTER_INIT			= [];
 	/** @var bool Do log into db admin login actions */
 	public $DO_LOG_LOGINS			= true;
 	/** @var bool Save failed logins @security */
@@ -152,6 +154,7 @@ class yf_auth_admin {
 				main()->ADMIN_INFO = &$_SESSION[$this->VAR_ADMIN_INFO];
 			}
 		}
+		$this->_exec_method_on_action('init');
 	}
 
 	/**
@@ -215,6 +218,8 @@ class yf_auth_admin {
 			$_SESSION[$this->VAR_LOCK_IP]			= common()->get_ip();
 			$_SESSION[$this->VAR_LOCK_UA]			= $_SERVER['HTTP_USER_AGENT'];
 			$_SESSION[$this->VAR_LOCK_HOST]			= $_SERVER['HTTP_HOST'];
+			$main = main();
+			$main->_init_cur_user_info($main);
 
 			// Auto-redirect to the page before login form if needed
 			if (!empty($_SESSION[$this->VAR_ADMIN_GO_URL])) {
@@ -353,7 +358,7 @@ class yf_auth_admin {
 			$this->VAR_LOCK_UA,
 			$this->VAR_LOCK_HOST,
 		];
-		// Unset session variables except user id and group 
+		// Unset session variables except user id and group
 		// (in case when session contains both user and admin info)
 		foreach ((array)$_SESSION as $k => $v) {
 			if (in_array($k, $admin_session_vars)) {
@@ -379,16 +384,18 @@ class yf_auth_admin {
 	*/
 	function _exec_method_on_action($action = 'login') {
 		if ($action == 'login') {
-			$CALLBACKS = $this->EXEC_AFTER_LOGIN;
+			$callbacks = $this->EXEC_AFTER_LOGIN;
 		} elseif ($action == 'logout') {
-			$CALLBACKS = $this->EXEC_AFTER_LOGOUT;
+			$callbacks = $this->EXEC_AFTER_LOGOUT;
+		} elseif ($action == 'init') {
+			$callbacks = $this->EXEC_AFTER_INIT;
 		}
-		if (empty($CALLBACKS)) {
+		if (empty($callbacks) || !is_array($callbacks)) {
 			return false;
 		}
-		foreach ((array)$CALLBACKS as $cur_method) {
-			if (is_callable($cur_method[0])) {
-				call_user_func_array($cur_method[0], $cur_method[1]);
+		foreach ((array)$callbacks as $callback) {
+			if (is_callable($callback)) {
+				call_user_func_array($callback, ['self' => $this]);
 			}
 		}
 	}
