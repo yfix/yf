@@ -153,8 +153,18 @@ class yf_manage_payment_operation {
 	function filter_save() {
 		$object = &$this->object;
 		$id     = &$this->id;
+		switch( $id ) {
+			case 'clear':
+				$url_redirect_url = url_admin( [
+					'object' => $object,
+					'action' => 'show',
+				]);
+				$id = 'manage_payment_operation__show';
+			break;
+		}
 		$options = [
 			'filter_name'  => $id,
+			'redirect_url' => $url_redirect_url,
 		];
 		return( _class( 'admin_methods' )->filter_save( $options ) );
 	}
