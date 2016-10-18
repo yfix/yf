@@ -273,7 +273,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     'param_ACCOUNT_NUMBER' => 'Карта Visa',
                 ],
                 'option_validation_js' => [
-                    'to' => [
+                    'param_ACCOUNT_NUMBER' => [
                         'type'      => 'text',
                         'required'  => true,
                         'minlength' => 15,
@@ -282,10 +282,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|regex:~^([45]{1}[\d]{15}\|[6]{1}[\d]{17})$~u|xss_clean',
+                    'param_ACCOUNT_NUMBER' => 'required|regex:~^([45]{1}[\d]{15}\|[6]{1}[\d]{17})$~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'to' => 'вы должны указать верную карту Visa',
+                    'param_ACCOUNT_NUMBER' => 'вы должны указать верную карту Visa',
                 ],
             ),
 
@@ -315,7 +315,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     'param_ACCOUNT_NUMBER' => 'Карта Mastercard',
                 ],
                 'option_validation_js' => [
-                    'to' => [
+                    'param_ACCOUNT_NUMBER' => [
                         'type'      => 'text',
                         'required'  => true,
                         'minlength' => 15,
@@ -324,10 +324,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|regex:~^([45]{1}[\d]{15}\|[6]{1}[\d]{17})$~u|xss_clean',
+                    'param_ACCOUNT_NUMBER' => 'required|regex:~^([45]{1}[\d]{15}\|[6]{1}[\d]{17})$~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'to' => 'вы должны указать верную карту Mastercard',
+                    'param_ACCOUNT_NUMBER' => 'вы должны указать верную карту Mastercard',
                 ],
             ),
 
@@ -340,23 +340,24 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'active'      => true,
                     ],
                 ],
-                'action'     => 'transfer',
+                'action'     => 'output',
                 'ps' => '57766314',
                 'field' => [
                     'action',
-                    'sum',
+                    'sumIn',
+                    'ps',
                     'curIn',
                     'curOut',
-                    'to',
+                    'param_ACCOUNT_NUMBER',
                 ],
                 'order' => [
-                    'to',
+                    'param_ACCOUNT_NUMBER',
                 ],
                 'option' => [
-                    'to' => 'Карта Maestro',
+                    'param_ACCOUNT_NUMBER' => 'Карта Maestro',
                 ],
                 'option_validation_js' => [
-                    'to' => [
+                    'param_ACCOUNT_NUMBER' => [
                         'type'      => 'text',
                         'required'  => true,
                         'minlength' => 15,
@@ -365,10 +366,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|regex:~^([45]{1}[\d]{15}|[6]{1}[\d]{15,17})~u|xss_clean',
+                    'param_ACCOUNT_NUMBER' => 'required|regex:~^([45]{1}[\d]{15}|[6]{1}[\d]{15,17})~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'to' => 'вы должны указать верную карту Maestro',
+                    'param_ACCOUNT_NUMBER' => 'вы должны указать верную карту Maestro',
                 ],
             ),
 
@@ -411,10 +412,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|regex:~^([O]{1}[K]{1}[\d]{9}\|.*@.*)$~u|xss_clean',
+                    'param_ACCOUNT_NUMBER' => 'required|regex:~^([O]{1}[K]{1}[\d]{9}\|.*@.*)$~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'to' => 'вы должны указать верную кошелёк OkPay',
+                    'param_ACCOUNT_NUMBER' => 'вы должны указать верную кошелёк OkPay',
                 ],
             ),
 
@@ -453,10 +454,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|regex:~^.*@.*\.[a-z]{2,6}$~u|xss_clean',
+                    'param_ACCOUNT_NUMBER' => 'required|regex:~^.*@.*\.[a-z]{2,6}$~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'to' => 'вы должны указать верную кошелёк Paxum',
+                    'param_ACCOUNT_NUMBER' => 'вы должны указать верную кошелёк Paxum',
                 ],
             ),
 
@@ -499,10 +500,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|regex:~^\+(91\|994\|82\|372\|375\|374\|44\|998\|972\|66\|90\|81\|1\|507\|7\|77\|380\|371\|370\|996\|9955\|992\|373\|84)[0-9]{6,14}$~u|xss_clean',
+                    'param_ACCOUNT_NUMBER' => 'required|regex:~^\+(91\|994\|82\|372\|375\|374\|44\|998\|972\|66\|90\|81\|1\|507\|7\|77\|380\|371\|370\|996\|9955\|992\|373\|84)[0-9]{6,14}$~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'to' => 'вы должны указать верную кошелёк Qiwi',
+                    'param_ACCOUNT_NUMBER' => 'вы должны указать верную кошелёк Qiwi',
                 ],
             ),
             'bitcoin' => array(
@@ -540,10 +541,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|regex:~^([A-Za-z0-9]+)$~u|xss_clean',
+                    'param_ACCOUNT_NUMBER' => 'required|regex:~^([A-Za-z0-9]+)$~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'to' => 'вы должны указать верный кошелёк Bitcoin',
+                    'param_ACCOUNT_NUMBER' => 'вы должны указать верный кошелёк Bitcoin',
                 ],
             ),
         ),
