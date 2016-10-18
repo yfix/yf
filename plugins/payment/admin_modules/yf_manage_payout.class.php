@@ -240,7 +240,8 @@ class yf_manage_payout {
 	function _show_quick_filter () {
 		$a = [];
 		$status_names = from('payment_status')->get_2d('status_id, title');
-		$count_by_status = select(['status_id', 'COUNT(*) AS num'])->from('payment_operation')->group_by('status_id')->get_2d();
+		$count_by_status = select(['status_id', 'COUNT(*) AS num'])->from('payment_operation')
+			->where('direction', '=', 'out')->group_by('status_id')->get_2d();
 		$statuses_display = [
 			1 => 'text-warning',
 			2 => 'text-success',
@@ -269,7 +270,9 @@ class yf_manage_payout {
 		$data = [];
 		$sql = select('FROM_UNIXTIME(UNIX_TIMESTAMP(datetime_start), "%Y-%m-%d") AS day', 'COUNT(*) AS count')
 			->from('payment_operation')->where('datetime_start', '>', $min_time)
-			->group_by('FROM_UNIXTIME(UNIX_TIMESTAMP(datetime_start), "%Y-%m-%d")');
+			->group_by('FROM_UNIXTIME(UNIX_TIMESTAMP(datetime_start), "%Y-%m-%d")')
+			->where('direction', '=', 'out')
+		;
 		foreach ((array)$sql->all() as $a) {
 			$data[$a['day']] = $a['count'];
 		}

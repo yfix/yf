@@ -12,6 +12,8 @@ class yf_manage_payment_operation {
 	public $payment_api        = null;
 	public $manage_payment_lib = null;
 
+	/**
+	*/
 	function _init() {
 		// class
 		$this->payment_api        = _class( 'payment_api'        );
@@ -55,6 +57,8 @@ class yf_manage_payment_operation {
 		];
 	}
 
+	/**
+	*/
 	function _url( $name, $replace = null ) {
 		$url = &$this->url;
 		$result = null;
@@ -64,6 +68,8 @@ class yf_manage_payment_operation {
 		return( $result );
 	}
 
+	/**
+	*/
 	function _filter_form_show( $filter, $replace ) {
 		// order
 		$order_fields = [
@@ -111,6 +117,8 @@ class yf_manage_payment_operation {
 		return( $result );
 	}
 
+	/**
+	*/
 	function _show_filter() {
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -140,6 +148,8 @@ class yf_manage_payment_operation {
 		return( $result );
 	}
 
+	/**
+	*/
 	function filter_save() {
 		$object = &$this->object;
 		$id     = &$this->id;
@@ -149,6 +159,76 @@ class yf_manage_payment_operation {
 		return( _class( 'admin_methods' )->filter_save( $options ) );
 	}
 
+	/**
+	*/
+	function _show_quick_filter () {
+		$a = [];
+		$status_names = from('payment_status')->get_2d('status_id, title');
+		$count_by_status = select(['status_id', 'COUNT(*) AS num'])->from('payment_operation')
+			->group_by('status_id')->get_2d();
+		$statuses_display = [
+			1 => 'text-warning',
+			2 => 'text-success',
+			5 => 'text-warning',
+			3 => 'text-danger',
+			6 => 'text-danger',
+			4 => 'text-muted',
+			7 => 'text-info',
+		];
+		foreach ((array)$statuses_display as $status_id => $css_class) {
+			if ($count_by_status[$status_id]) {
+				$name = $status_names[$status_id];
+				$a[] = a('/@object/filter_save/clear/?filter=status_id:'.$status_id, $name, 'fa fa-filter', $name, $css_class, '');
+			}
+		}
+		$a[] = a('/@object/filter_save/clear/', 'Clear filter', 'fa fa-close', '', '', '');
+		return $a ? '<div class="pull-right">'.implode(PHP_EOL, $a).'</div>' : '';
+	}
+
+	/**
+	*/
+	function _get_daily_data($days = null) {
+		$time = time();
+		$days = $days ?: 60;
+		$min_time = $time - $days * 86400;
+		$data = [];
+		$sql = select('FROM_UNIXTIME(UNIX_TIMESTAMP(datetime_start), "%Y-%m-%d") AS day', 'COUNT(*) AS count')
+			->from('payment_operation')->where('datetime_start', '>', $min_time)
+			->group_by('FROM_UNIXTIME(UNIX_TIMESTAMP(datetime_start), "%Y-%m-%d")')
+		;
+		foreach ((array)$sql->all() as $a) {
+			$data[$a['day']] = $a['count'];
+		}
+		if (!$data) {
+			return false;
+		}
+		$dates = [];
+		foreach (range($days, 0) as $days_ago) {
+			$date = date('Y-m-d', $time - $days_ago * 86400);
+			$dates[$date] = $days_ago;
+		}
+		$out = [];
+		$_data = null;
+		foreach ($dates as $date => $days_ago) {
+			$_data = $data[$date];
+			// Trim empty values from left side
+			if (!$out && !$_data) {
+				continue;
+			}
+			$out[$date] = $_data;
+		}
+		// Trim values from the right side too
+		foreach (array_reverse($out, $preserve_keys = true) as $k => $v) {
+			if ($v) {
+				break;
+			}
+			unset($out[$k]);
+		}
+		return $out;
+	}
+
+	/**
+	*/
 	function show() {
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -208,7 +288,7 @@ class yf_manage_payment_operation {
 		;
 		$sql = $db->sql();
 		$_this = $this;
-		return( table( $sql, [
+		$result = table( $sql, [
 				'filter' => $filter,
 				'filter_params' => [
 					'status_id'   => function( $a ) use( $payment_status_in_progress_id ) {
@@ -302,7 +382,19 @@ class yf_manage_payment_operation {
 			}, [ 'desc' => 'действия' ] )
 			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] )
 			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] )
-		);
-	}
+		;
 
+		$data_daily = $this->_get_daily_data($last_days = 180);
+		$data_chart = _class('charts')->jquery_sparklines($data_daily);
+
+		$quick_filter = $this->_show_quick_filter();
+
+		return
+			'<div class="col-md-12">' .
+				( $data_chart ? '<div class="col-md-6" title="'.t('Транзакции по дням').'">'.$data_chart.'</div>' : '') .
+				( $quick_filter ? '<div class="col-md-6 pull-right" title="'.t('Быстрый фильтр').'">'.$quick_filter.'</div>' : '') .
+			'</div>' .
+			$result
+		;
+	}
 }
