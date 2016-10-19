@@ -463,6 +463,8 @@ class yf_manage_payout {
 		;
 	}
 
+	/**
+	*/
 	function csv_ecommpay( $options = null ) {
 		$operation_id = &$_POST[ 'operation_id' ];
 		if( ! is_array( $operation_id ) || count( $operation_id ) < 1 ) {
@@ -574,6 +576,8 @@ class yf_manage_payout {
 		return( $result );
 	}
 
+	/**
+	*/
 	function csv_request( $options = null ) {
 		// check operation
 		$operation = $this->_operation();
@@ -604,6 +608,8 @@ class yf_manage_payout {
 		return( $this->_user_message( $result ) );
 	}
 
+	/**
+	*/
 	function _save_csv( $file_name, $data = null ) {
 		// setlocale( LC_ALL, 'ru_RU.utf8' )
 			// || setlocale( LC_ALL, 'ru_UA.utf8' )
@@ -645,6 +651,8 @@ class yf_manage_payout {
 		return( $result );
 	}
 
+	/**
+	*/
 	function _http_csv( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -675,6 +683,8 @@ class yf_manage_payout {
 		return( $result );
 	}
 
+	/**
+	*/
 	function _operation( $options = null ) {
 		// var
 		$is_valid   = true;
@@ -918,7 +928,6 @@ class yf_manage_payout {
 	 *   'method'
 	 *   etc: see _operation()
 	 */
-
 	function view() {
 		// check operation
 		$operation = $this->_operation();
@@ -1109,6 +1118,8 @@ class yf_manage_payout {
 		return( $result );
 	}
 
+	/**
+	*/
 	protected function _recreate( $options = null ) {
 		// import operation
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -1235,6 +1246,8 @@ class yf_manage_payout {
 		return( $result );
 	}
 
+	/**
+	*/
 	public function recreate() {
 		// var
 		$payment_api = &$this->payment_api;
@@ -1300,6 +1313,8 @@ class yf_manage_payout {
 		return( $result );
 	}
 
+	/**
+	*/
 	public function recreate_items() {
 		// options
 		$operation_id = @$_GET[ 'operation_id' ];
@@ -1336,6 +1351,8 @@ class yf_manage_payout {
 		return( $result );
 	}
 
+	/**
+	*/
 	protected function _user_message( $options = null ) {
 		$url = &$this->url;
 		// import operation
@@ -1396,6 +1413,8 @@ EOS;
 		return( $result );
 	}
 
+	/**
+	*/
 	function _request( $options = null ) {
 		// start
 		db()->begin();
@@ -1439,11 +1458,15 @@ EOS;
 		return( $result );
 	}
 
+	/**
+	*/
 	function request() {
 		$result = $this->_request();
 		return( $this->_user_message( $result ) );
 	}
 
+	/**
+	*/
 	function request_interkassa() {
 		// start
 		db()->begin();
@@ -1497,6 +1520,8 @@ EOS;
 		return( $this->_user_message( $result ) );
 	}
 
+	/**
+	*/
 	function interkassa_detect_card( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -1543,6 +1568,8 @@ EOS;
 		return( $result );
 	}
 
+	/**
+	*/
 	function status_interkassa( $options = null ) {
 		// import operation
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -1596,6 +1623,8 @@ EOS;
 		return( $result );
 	}
 
+	/**
+	*/
 	function _check_interkassa( $options = null ) {
 		// check operation
 		$operation = $this->_operation( $options );
@@ -1659,11 +1688,15 @@ EOS;
 		return( $result );
 	}
 
+	/**
+	*/
 	function check_interkassa() {
 		$result = $this->_check_interkassa();
 		return( $this->_user_message( $result ) );
 	}
 
+	/**
+	*/
 	function _status( $options = null ) {
 		// check operation
 		$operation = $this->_operation( $options );
@@ -1711,11 +1744,15 @@ EOS;
 		return( js_redirect( $url_view, false ) );
 	}
 
+	/**
+	*/
 	function status( $options = null ) {
 		$result = $this->_status( $options );
 		return( $this->_user_message( $result ) );
 	}
 
+	/**
+	*/
 	function _array2csv(array &$array, $delim = ';') {
 		if (count($array) == 0) {
 			return null;
@@ -1781,6 +1818,8 @@ EOS;
 		exit;
 	}
 
+	/**
+	*/
 	function _check_all_interkassa() {
 		// var
 		$html        = _class( 'html' );
@@ -1817,6 +1856,8 @@ EOS;
 		return( $result );
 	}
 
+	/**
+	*/
 	function check_all_interkassa( $options = null ) {
 		// command line interface
 		$is_cli = ( php_sapi_name() == 'cli' );
@@ -1867,6 +1908,8 @@ EOS;
 		return( $result . $html_result );
 	}
 
+	/**
+	*/
 	function _check_all_interkassa_cli( $options = null ) {
 		$result = $this->_check_all_interkassa();
 		if( empty( $result ) ) {
@@ -1885,6 +1928,8 @@ EOS;
 		exit( $status );
 	}
 
+	/**
+	*/
 	function _confirmation_update_expired() {
 		// var
 		$payment_api = _class( 'payment_api' );
@@ -1921,6 +1966,8 @@ EOS;
 		return( $result );
 	}
 
+	/**
+	*/
 	function confirmation_update_expired() {
 		$url = &$this->url;
 		// command line interface
@@ -1957,6 +2004,8 @@ EOS;
 		return( $result );
 	}
 
+	/**
+	*/
 	function _confirmation_update_expired_cli() {
 		$result = $this->_confirmation_update_expired();
 		if( empty( $result ) ) {
@@ -1971,6 +2020,8 @@ EOS;
 		exit( $status );
 	}
 
+	/**
+	*/
 	function _get_operation_id( $options = null ) {
 		// import operation
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -1985,6 +2036,8 @@ EOS;
 		return( $result );
 	}
 
+	/**
+	*/
 	function cancel( $options = null ) {
 		$operation_id = (int)$this->_get_operation_id( $options );
 		if( $operation_id < 1 ) {
@@ -2001,6 +2054,8 @@ EOS;
 		return( $this->_user_message( $result ) );
 	}
 
+	/**
+	*/
 	function expired( $options = null ) {
 		$operation_id = (int)$this->_get_operation_id( $options );
 		if( $operation_id < 1 ) {
@@ -2019,6 +2074,8 @@ EOS;
 
 	// mass actions
 
+	/**
+	*/
 	function _mass_result( $options = null ) {
 		// import operation
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -2032,6 +2089,8 @@ EOS;
 		return( $this->_user_message( $result ) );
 	}
 
+	/**
+	*/
 	function mass_payout( $options = null ) {
 		$operation_id = $this->_get_operation_id( $options );
 		is_numeric( $operation_id ) && $operation_id = [ $operation_id => 1 ];
@@ -2071,6 +2130,8 @@ EOS;
 		]));
 	}
 
+	/**
+	*/
 	function mass_cancel( $options = null ) {
 		$operation_id = $this->_get_operation_id( $options );
 		is_numeric( $operation_id ) && $operation_id = [ $operation_id => 1 ];
@@ -2112,6 +2173,8 @@ EOS;
 		]));
 	}
 
+	/**
+	*/
 	function mass_remove( $options = null ) {
 		// start
 		$operation_id = $this->_get_operation_id( $options );
@@ -2135,6 +2198,8 @@ EOS;
 		]));
 	}
 
+	/**
+	*/
 	function stats() {
 		$payment_api = &$this->payment_api;
 		// payment providers
