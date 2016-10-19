@@ -342,16 +342,26 @@ class yf_manage_payment_operation {
 					'name' => function($a) {
 						$v = $a['value'];
 						$like = 'LIKE "'._es($v).'%"';
-						return is_numeric($v) ? 'u.id = '.(int)$v : '(u.name '.$like.' OR u.nick '.$like.' OR u.login '.$like.' OR u.email '.$like.')';
+						if (is_numeric($v)) {
+							return 'u.id = '.(int)$v;
+						} elseif (false !== strpos($v, ',')) {
+							return 'u.id IN('._es($v).')';
+						} else {
+							return '(u.name '.$like.' OR u.nick '.$like.' OR u.login '.$like.' OR u.email '.$like.')';
+						}
 					},
 					'title' => function($a) {
 						$v = $a['value'];
 						$like = 'LIKE "'._es($v).'%"';
-						return is_numeric($v) ? 'o.operation_id = '.(int)$v : '(o.title '.$like.' OR o.options '.$like.')';
+						if (is_numeric($v)) {
+							return 'o.operation_id = '.(int)$v;
+						} elseif (false !== strpos($v, ',')) {
+							return 'o.operation_id IN('._es($v).')';
+						} else {
+							return '(o.title '.$like.' OR o.options '.$like.')';
+						}
 					},
 					'provider_id' => ['cond' => 'eq', 'field' => 'o.provider_id'],
-					'operation_id' => ['cond' => 'in', 'field' => 'o.operation_id'],
-					'user_id' => ['cond' => 'in', 'field' => 'a.user_id'],
 					'balance' => ['cond' => 'between', 'field' => 'a.balance'],
 					'amount' => ['cond' => 'between', 'field' => 'o.amount'],
 					'datetime_start' => 'daterange_dt_between',
