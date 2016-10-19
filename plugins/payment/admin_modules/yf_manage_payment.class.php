@@ -12,6 +12,8 @@ class yf_manage_payment {
 	public $payment_api        = null;
 	public $manage_payment_lib = null;
 
+	/**
+	*/
 	function _init() {
 		// class
 		$this->payment_api        = _class( 'payment_api'        );
@@ -45,6 +47,8 @@ class yf_manage_payment {
 		];
 	}
 
+	/**
+	*/
 	function _url( $name, $replace = null, $url = null ) {
 		$url = @$url ?: $this->url;
 		$result = null;
@@ -54,48 +58,54 @@ class yf_manage_payment {
 		return( $result );
 	}
 
+	/**
+	*/
 	function _filter_form_show( $filter, $replace ) {
 		$order_fields = [];
-		foreach( explode( '|', 'name|email|add_date|last_login|num_logins|active|balance' ) as $f ) {
+		foreach( explode( '|', 'user_id|name|email|add_date|last_login|num_logins|active|balance' ) as $f ) {
 			$order_fields[ $f ] = $f;
 		}
-		$result = form( $replace, [
+		return form($replace, [
+				'filter' => true,
 				'selected' => $filter,
 			])
-			->text( 'user_id'     , 'Номер(а) пользователя' )
-			->text( 'name'        , 'Имя'                   )
-			->text( 'email'       , 'Почта'                 )
-			->text( 'balance'     , 'Баланс от'             )
-			->text( 'balance__and', 'Баланс до'             )
-			->select_box( 'group', main()->get_data( 'user_groups' ), [ 'show_text' => 1 ] )
-			->select_box( 'order_by', $order_fields, [ 'show_text' => 1, 'desc' => 'Сортировка' ] )
-			->radio_box( 'order_direction', [ 'asc' => 'прямой', 'desc' => 'обратный' ], [ 'desc' => 'Направление сортировки' ] )
+			->text('user_id', 'Номер(а) пользователя', ['no_label' => 1])
+			->text('name', 'Имя', ['no_label' => 1])
+			->text('email', 'Почта', ['no_label' => 1])
+			->row_start()
+				->number('balance', 'Баланс от')
+				->number('balance__and', 'Баланс до')
+			->row_end()
+			->select_box('group', main()->get_data('user_groups'), ['show_text' => 1, 'no_label' => 1])
+			->row_start()
+				->select_box('order_by', $order_fields, ['show_text' => 1, 'desc' => 'Сортировка'])
+				->select_box('order_direction', ['asc' => '⇑', 'desc' => '⇓'])
+			->row_end()
 			->save_and_clear()
 		;
-		return( $result );
 	}
 
+	/**
+	*/
 	function _filter_form_balance( $filter, $replace ) {
 		$order_fields = [];
 		foreach( explode( '|', 'operation_id|datetime_update|datetime_start|datetime_finish|title|amount|balance' ) as $f ) {
 			$order_fields[ $f ] = $f;
 		}
-		// provider
 		$payment_api = _class( 'payment_api' );
 		$providers = $payment_api->provider();
 		$providers__select_box = [];
 		foreach( $providers as $id => $item ) {
 			$providers__select_box[ $id ] = $item[ 'title' ];
 		}
-		// status
 		$payment_status = $payment_api->get_status();
 		$payment_status__select_box = [];
 		$payment_status__select_box[ -1 ] = 'ВСЕ СТАТУСЫ';
 		foreach( $payment_status as $id => $item ) {
 			$payment_status__select_box[ $id ] = $item[ 'title' ];
 		}
-		// render
-		$result = form( $replace, [
+		return form($replace, [
+				'filter' => true,
 				'selected' => $filter,
 			])
 			->hidden( 'user_id'    )
@@ -111,9 +121,10 @@ class yf_manage_payment {
 			->radio_box( 'order_direction', [ 'asc' => 'прямой', 'desc' => 'обратный' ], [ 'desc' => 'Направление сортировки' ] )
 			->save_and_clear()
 		;
-		return( $result );
 	}
 
+	/**
+	*/
 	function _show_filter() {
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -161,6 +172,8 @@ class yf_manage_payment {
 		return( $result );
 	}
 
+	/**
+	*/
 	function filter_save() {
 		$object = &$this->object;
 		$id     = &$this->id;
@@ -188,6 +201,8 @@ class yf_manage_payment {
 		return( _class( 'admin_methods' )->filter_save( $options ) );
 	}
 
+	/**
+	*/
 	function show() {
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -252,6 +267,8 @@ class yf_manage_payment {
 		;
 	}
 
+	/**
+	*/
 	function _operation_sql( $options = null ) {
 		$payment_api = _class( 'payment_api' );
 		list( $sql ) = $payment_api->operation( $options );
@@ -259,6 +276,8 @@ class yf_manage_payment {
 		return( $result );
 	}
 
+	/**
+	*/
 	function _operation_table( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -347,6 +366,8 @@ class yf_manage_payment {
 		return( $result );
 	}
 
+	/**
+	*/
 	function balance() {
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -642,5 +663,4 @@ class yf_manage_payment {
 		}
 		return $result;
 	}
-
 }
