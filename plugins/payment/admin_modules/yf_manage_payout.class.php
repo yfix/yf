@@ -14,6 +14,8 @@ class yf_manage_payout {
 	public $payment_api        = null;
 	public $manage_payment_lib = null;
 
+	/**
+	*/
 	function _init() {
 		// class
 		$this->payment_api        = _class( 'payment_api'        );
@@ -131,6 +133,8 @@ class yf_manage_payout {
 		];
 	}
 
+	/**
+	*/
 	function _url( $name, $replace = null ) {
 		$url = &$this->url;
 		$result = null;
@@ -140,8 +144,9 @@ class yf_manage_payout {
 		return( $result );
 	}
 
+	/**
+	*/
 	function _filter_form_show( $filter, $replace ) {
-		// order
 		$order_fields = [
 			'o.operation_id'    => 'номер операций',
 			'o.amount'          => 'сумма',
@@ -149,40 +154,69 @@ class yf_manage_payout {
 			'o.datetime_start'  => 'дата создания',
 			'o.datetime_update' => 'дата обновления',
 		];
-		// provider
 		$payment_api = &$this->payment_api;
 		$providers = $payment_api->provider();
 		$providers__select_box = [];
 		foreach( $providers as $id => $item ) {
 			$providers__select_box[ $id ] = $item[ 'title' ];
 		}
-		// status
 		$payment_status = $payment_api->get_status();
 		$payment_status__select_box = [];
 		$payment_status__select_box[ -1 ] = 'ВСЕ СТАТУСЫ';
 		foreach( $payment_status as $id => $item ) {
 			$payment_status__select_box[ $id ] = $item[ 'title' ];
 		}
-		// render
-		$result = form( $replace, [
+		$min_date = from('payment_operation')->one('UNIX_TIMESTAMP(MIN(datetime_start))');
+		return form($replace, [
+				'filter' => true,
 				'selected' => $filter,
 			])
-			->text( 'operation_id', 'Номер операции'     )
-			->text( 'user_id'     , 'Номер пользователя' )
-			->text( 'name'        , 'Имя'                )
-			->text( 'amount'      , 'Сумма от'           )
-			->text( 'amount__and' , 'Сумма до'           )
-			->text( 'balance'     , 'Баланс от'          )
-			->text( 'balance__and', 'Баланс до'          )
-			->select_box( 'status_id'  , $payment_status__select_box, [ 'show_text' => 'статус'    , 'desc' => 'Статус'     ] )
-			->select_box( 'provider_id', $providers__select_box     , [ 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ] )
-			->select_box( 'order_by'   , $order_fields              , [ 'show_text' => 'сортировка', 'desc' => 'Сортировка' ] )
-			->radio_box( 'order_direction', [ 'asc' => 'прямой', 'desc' => 'обратный' ], [ 'desc' => 'Направление сортировки' ] )
+			->daterange('datetime_start', [
+				'format'		=> 'YYYY-MM-DD',
+				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', time() + 86400),
+				'autocomplete'	=> 'off',
+				'desc'			=> 'Дата создания',
+				'no_label'		=> 1,
+			])
+			->daterange('datetime_update', [
+				'format'		=> 'YYYY-MM-DD',
+				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', time() + 86400),
+				'autocomplete'	=> 'off',
+				'desc'			=> 'Дата обновления',
+				'no_label'		=> 1,
+			])
+			->daterange('datetime_finish', [
+				'format'		=> 'YYYY-MM-DD',
+				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', time() + 86400),
+				'autocomplete'	=> 'off',
+				'desc'			=> 'Дата окончания',
+				'no_label'		=> 1,
+			])
+			->text('name', 'Имя или номер пользователя', ['no_label' => 1])
+			->text('title', 'Название, номер или детали операции', ['no_label' => 1])
+			->row_start()
+				->number('amount', 'Сумма от')
+				->number('amount__and', 'Сумма до')
+			->row_end()
+			->row_start()
+				->number('balance', 'Баланс от')
+				->number('balance__and', 'Баланс до')
+			->row_end()
+			->select_box('status_id', $payment_status__select_box, ['no_label' => 1, 'show_text' => '= Статус =', 'desc' => 'Статус'])
+			->select_box('provider_id', $providers__select_box, ['no_label' => 1, 'show_text' => '= Провайдер =', 'desc' => 'Провайдер'])
+			->row_start()
+				->select_box('order_by', $order_fields, ['show_text' => '= Сортировка =', 'desc' => 'Сортировка'])
+				->select_box('order_direction', ['asc' => '⇑', 'desc' => '⇓'])
+			->row_end()
 			->save_and_clear()
 		;
-		return( $result );
 	}
 
+	/**
+	*/
 	function _show_filter() {
 		$object      = &$this->object;
 		$action      = &$this->action;
@@ -212,6 +246,8 @@ class yf_manage_payout {
 		return( $result );
 	}
 
+	/**
+	*/
 	function filter_save() {
 		$object = &$this->object;
 		$id     = &$this->id;
@@ -384,11 +420,33 @@ class yf_manage_payout {
 						return( $result );
 					},
 					'provider_id'  => [ 'cond' => 'eq',      'field' => 'o.provider_id'  ],
-					'operation_id' => [ 'cond' => 'in',      'field' => 'o.operation_id' ],
-					'user_id'      => [ 'cond' => 'in',      'field' => 'a.user_id'      ],
-					'name'         => [ 'cond' => 'like',    'field' => 'u.name'         ],
 					'balance'      => [ 'cond' => 'between', 'field' => 'a.balance'      ],
 					'amount'       => [ 'cond' => 'between', 'field' => 'o.amount'       ],
+					'name' => function($a) {
+						$v = $a['value'];
+						$like = 'LIKE "'._es($v).'%"';
+						if (is_numeric($v)) {
+							return 'u.id = '.(int)$v;
+						} elseif (false !== strpos($v, ',')) {
+							return 'u.id IN('._es($v).')';
+						} else {
+							return '(u.name '.$like.' OR u.nick '.$like.' OR u.login '.$like.' OR u.email '.$like.')';
+						}
+					},
+					'title' => function($a) {
+						$v = $a['value'];
+						$like = 'LIKE "'._es($v).'%"';
+						if (is_numeric($v)) {
+							return 'o.operation_id = '.(int)$v;
+						} elseif (false !== strpos($v, ',')) {
+							return 'o.operation_id IN('._es($v).')';
+						} else {
+							return '(o.title '.$like.' OR o.options '.$like.')';
+						}
+					},
+					'datetime_start' => 'daterange_dt_between',
+					'datetime_update' => 'daterange_dt_between',
+					'datetime_finish' => 'daterange_dt_between',
 					'__default_order'  => 'ORDER BY o.datetime_update DESC',
 				],
 			])
