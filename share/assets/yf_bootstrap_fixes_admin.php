@@ -17,10 +17,26 @@ return [
 .cssfw-bs3 .table .checkbox-inline { padding-top: 0; }
 .cssfw-bs3 textarea { max-width:inherit; min-width: 100%; }
 .cssfw-bs3 .navbar-header { width:99%; padding-right:1%; }
+
+.cssfw-bs3 .stacked-item .form-control { display: inline-block; }
+.cssfw-bs3 .stacked-item input[type=number], 
+.cssfw-bs3 .form-group .small-number { width: 120px; }
+.cssfw-bs3 .form-group select[name=order_by] { width:150px; }
+.cssfw-bs3 .form-group select[name=order_direction] { width:40px; font-weight:bold; padding:0; font-size: 16px; }
 			'],
 			'jquery' => [
 #				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
 #				'$("select").not(".portlet select").not(".no-chosen").chosen();',
+				'var filter_timeout;
+				$(".left_area form").on("change", function(e){
+					var form = $(this)
+					clearTimeout(filter_timeout);
+					// do stuff when user has been idle for selected time
+					filter_timeout = setTimeout(function() {
+						console.log("filter submit")
+						form.submit()
+					}, 1000);
+				})',
 			],
 		],
 	],
