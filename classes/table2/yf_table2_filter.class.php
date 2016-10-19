@@ -87,7 +87,7 @@ class yf_table2_filter {
 					return false;
 				}
 				$only_date_regex = '~^[0-9]{2,4}[\.-][0-9]{2,4}[\.-][0-9]{2,4}$~';
-				list($from, $to) = explode('-', $value);
+				list($from, $to) = explode(' - ', $value);
 				$from = trim($from);
 				if (preg_match($only_date_regex, $from)) {
 					$from .= ' 00:00:00';
@@ -96,8 +96,8 @@ class yf_table2_filter {
 				if (preg_match($only_date_regex, $to)) {
 					$to .= ' 23:59:59';
 				}
-				!empty($from) && $from = strtotime($from);
-				!empty($to) && $to = strtotime($to);
+				!empty($from) && $from = strtotime(str_replace('.', '-', $from));
+				!empty($to) && $to = strtotime(str_replace('.', '-', $to));
 				if ($from && $to) {
 					if ($from > $to) {
 						$tmp = $from;
@@ -118,7 +118,7 @@ class yf_table2_filter {
 					return false;
 				}
 				$only_date_regex = '~^[0-9]{2,4}[\.-][0-9]{2,4}[\.-][0-9]{2,4}$~';
-				list($from, $to) = explode('-', $value);
+				list($from, $to) = explode(' - ', $value);
 				$from = trim($from);
 				if (preg_match($only_date_regex, $from)) {
 					$from .= ' 00:00:00';
@@ -128,8 +128,8 @@ class yf_table2_filter {
 					$to .= ' 23:59:59';
 				}
 				$format = 'Y-m-d H-i-s';
-				!empty($from) && $from = date($format, strtotime($from));
-				!empty($to) && $to = date($format, strtotime($to));
+				!empty($from) && $from = date($format, strtotime(str_replace('.', '-', $from)));
+				!empty($to) && $to = date($format, strtotime(str_replace('.', '-', $to)));
 				if ($from && $to) {
 					if ($from > $to) {
 						$tmp = $from;
