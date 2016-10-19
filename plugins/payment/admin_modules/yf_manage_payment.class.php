@@ -62,12 +62,29 @@ class yf_manage_payment {
 	*/
 	function _filter_form_show( $filter, $replace ) {
 		$order_fields = [];
-		foreach( explode( '|', 'user_id|name|email|add_date|last_login|num_logins|active|balance' ) as $f ) {
+		foreach( explode( '|', 'user_id|name|email|add_date|last_login|num_logins|active|balance|datetime_create|datetime_update' ) as $f ) {
 			$order_fields[ $f ] = $f;
 		}
+		$min_date = from('payment_account')->one('UNIX_TIMESTAMP(MIN(datetime_create))');
 		return form($replace, [
 				'filter' => true,
 				'selected' => $filter,
+			])
+			->daterange('datetime_create', [
+				'format'		=> 'YYYY-MM-DD',
+				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', time() + 86400),
+				'autocomplete'	=> 'off',
+				'desc'			=> 'Дата создания',
+				'no_label'		=> 1,
+			])
+			->daterange('datetime_update', [
+				'format'		=> 'YYYY-MM-DD',
+				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', time() + 86400),
+				'autocomplete'	=> 'off',
+				'desc'			=> 'Дата обновления',
+				'no_label'		=> 1,
 			])
 			->text('user_id', 'Номер(а) пользователя', ['no_label' => 1])
 			->text('name', 'Имя', ['no_label' => 1])
@@ -104,6 +121,7 @@ class yf_manage_payment {
 		foreach( $payment_status as $id => $item ) {
 			$payment_status__select_box[ $id ] = $item[ 'title' ];
 		}
+		$min_date = from('payment_account')->one('UNIX_TIMESTAMP(MIN(datetime_create))');
 		return form($replace, [
 				'filter' => true,
 				'selected' => $filter,
@@ -115,8 +133,14 @@ class yf_manage_payment {
 			->select_box( 'status_id'  , $payment_status__select_box, [ 'show_text' => 'статус'    , 'desc' => 'Статус'     ] )
 			->select_box( 'provider_id', $providers__select_box     , [ 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ] )
 			->radio_box( 'direction', [ '' => 'все', 'in' => 'приход', 'out' => 'расход' ], [ 'desc' => 'Направление' ] )
-			->datetime_select( 'datetime_update',      'Дата с',  [ 'with_time' => 1 ] )
-			->datetime_select( 'datetime_update__and', 'Дата до', [ 'with_time' => 1 ] )
+			->daterange('datetime_update', [
+				'format'		=> 'YYYY-MM-DD',
+				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', time() + 86400),
+				'autocomplete'	=> 'off',
+				'desc'			=> 'Дата обновления',
+				'no_label'		=> 1,
+			])
 			->select_box( 'order_by', $order_fields, [ 'show_text' => 1, 'desc' => 'Сортировка' ] )
 			->radio_box( 'order_direction', [ 'asc' => 'прямой', 'desc' => 'обратный' ], [ 'desc' => 'Направление сортировки' ] )
 			->save_and_clear()
@@ -236,6 +260,8 @@ class yf_manage_payment {
 					'name'    => 'like',
 					'balance' => 'between',
 					'email'   => 'like',
+					'datetime_create' => 'daterange_dt_between',
+					'datetime_update' => 'daterange_dt_between',
 				],
 				'hide_empty' => true,
 			])
@@ -291,7 +317,8 @@ class yf_manage_payment {
 				'filter_params' => [
 					'operation_id'    => 'in',
 					'title'           => 'like',
-					'datetime_update' => [ 'datetime_between', 'datetime_update' ],
+					'datetime_create' => 'daterange_dt_between',
+					'datetime_update' => 'daterange_dt_between',
 				],
 			])
 			->text( 'operation_id'   , 'Номер'           )
