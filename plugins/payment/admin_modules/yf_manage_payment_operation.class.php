@@ -92,53 +92,31 @@ class yf_manage_payment_operation {
 		foreach( $payment_status as $id => $item ) {
 			$payment_status__select_box[ $id ] = $item[ 'title' ];
 		}
-
-css('
-.cssfw-bs3 .stacked-item .form-control { display: inline-block; }
-.cssfw-bs3 .stacked-item input[type=number], 
-.cssfw-bs3 .form-group .small-number { width: 120px; }
-.cssfw-bs3 .form-group select[name=order_by] { width:150px; }
-.cssfw-bs3 .form-group select[name=order_direction] { width:40px; font-weight:bold; padding:0; font-size: 16px; }
-');
-
-jquery('
-	var filter_timeout;
-	$(".left_area form").on("change", function(e){
-		var form = $(this)
-		clearTimeout(filter_timeout);
-		// do stuff when user has been idle for selected time
-		filter_timeout = setTimeout(function() {
-			console.log("filter submit")
-			form.submit()
-		}, 1000);
-	})
-');
-
 		$min_date = from('payment_operation')->one('UNIX_TIMESTAMP(MIN(datetime_start))');
 		return form($replace, [
 				'filter' => true,
 				'selected' => $filter,
 			])
 			->daterange('datetime_start', [
-				'format'		=> 'YYYY.MM.DD',
-				'min_date'		=> date('Y.m.d', $min_date ?: (time() - 86400 * 30)),
-				'max_date'		=> date('Y.m.d', time() + 86400),
+				'format'		=> 'YYYY-MM-DD',
+				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', time() + 86400),
 				'autocomplete'	=> 'off',
 				'desc'			=> 'Дата создания',
 				'no_label'		=> 1,
 			])
 			->daterange('datetime_update', [
-				'format'		=> 'YYYY.MM.DD',
-				'min_date'		=> date('Y.m.d', $min_date ?: (time() - 86400 * 30)),
-				'max_date'		=> date('Y.m.d', time() + 86400),
+				'format'		=> 'YYYY-MM-DD',
+				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', time() + 86400),
 				'autocomplete'	=> 'off',
 				'desc'			=> 'Дата обновления',
 				'no_label'		=> 1,
 			])
 			->daterange('datetime_finish', [
-				'format'		=> 'YYYY.MM.DD',
-				'min_date'		=> date('Y.m.d', $min_date ?: (time() - 86400 * 30)),
-				'max_date'		=> date('Y.m.d', time() + 86400),
+				'format'		=> 'YYYY-MM-DD',
+				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', time() + 86400),
 				'autocomplete'	=> 'off',
 				'desc'			=> 'Дата окончания',
 				'no_label'		=> 1,
