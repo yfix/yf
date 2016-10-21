@@ -468,9 +468,9 @@ class yf_db {
 		if (in_array($_sql_type, ['INSERT', 'UPDATE', 'REPLACE'])) {
 			$need_insert_id = true;
 		}
-		$this->_last_insert_id = $result && $need_insert_id ? (int)$this->db->insert_id() : 0;
+		$this->_last_insert_id = $result && $need_insert_id ? (int)$this->db->insert_id() : null;
 		if ($this->GATHER_AFFECTED_ROWS) {
-			$this->_last_affected_rows = $result ? (int)$this->db->affected_rows() : 0;
+			$this->_last_affected_rows = $result ? (int)$this->db->affected_rows() : null;
 		}
 		// This part needed to update debug log after executing query, but ensure correct order of queries
 		if ($log_allowed) {
@@ -516,11 +516,11 @@ class yf_db {
 		$info = null;
 		$this->_LOG[] = [
 			'sql'		=> $sql,
-			'rows'		=> 0,
-			'insert_id'	=> 0,
+			'rows'		=> '',
+			'insert_id'	=> '',
 			'error'		=> $db_error,
 			'info'		=> $info,
-			'time'		=> 0,
+			'time'		=> '',
 			'trace'		=> $_trace,
 		];
 		return count($this->_LOG) - 1;
@@ -541,11 +541,11 @@ class yf_db {
 				$_sql_type = 'SHOW';
 			}
 			$rows = null;
-			if ($_sql_type == 'SELECT') {
-				$rows = $this->num_rows($result);
-			} elseif (in_array($_sql_type, ['INSERT', 'UPDATE', 'REPLACE', 'DELETE', 'SHOW'])) {
+#			if ($_sql_type == 'SELECT') {
+#				$rows = $this->num_rows($result);
+#			} elseif (in_array($_sql_type, ['INSERT', 'UPDATE', 'REPLACE', 'DELETE', 'SHOW'])) {
 				$rows = $this->_last_affected_rows;
-			}
+#			}
 		}
 		$log['time'] = $time;
 		$log['rows'] = $rows;
