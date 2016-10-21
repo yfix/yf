@@ -46,11 +46,11 @@ class yf_debug {
 	public $SORT_TEMPLATES_BY_NAME	= true;
 	public $ADD_ADMIN_LINKS			= true;
 	public $ADMIN_PATHS				= [
-		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={THEME}&name={ID}',
-		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={ID}',
-		'edit_file'		=> 'object=file_manager&action=edit&id={ID}',
-		'show_db_table'	=> 'object=db_manager&action=table_show&id={ID}',
-		'sql_query'		=> 'object=db_manager&action=import&id={ID}',
+		'edit_stpl'		=> '?object=template_editor&action=edit_stpl&location={LOCATION}&theme={THEME}&name={ID}',
+		'edit_i18n'		=> '?object=locale_editor&action=edit_var&id={ID}',
+		'edit_file'		=> '?object=file_manager&action=edit&id={ID}',
+		'show_db_table'	=> '?object=db_manager&action=table_show&id={ID}',
+		'sql_query'		=> '?object=db_manager&action=import&id={ID}',
 		'link'			=> '{ID}',
 	];
 
@@ -339,7 +339,7 @@ class yf_debug {
 			$_cur_explain = isset($db_explain_results[$id]) ? $this->_format_db_explain_result($db_explain_results[$id]) : '';
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
 
-			$admin_link = $this->_admin_link('sql_query', urlencode($sql), true);
+			$admin_link = $this->_admin_link('sql_query', $sql, true);
 			$sql = htmlspecialchars($sql);
 			$replace = [
 				','	=> ', ', 
@@ -352,7 +352,7 @@ class yf_debug {
 			}
 			$exec_time = round($log['time'], 4);
 			if ($admin_link && $this->ADD_ADMIN_LINKS) {
-				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs">'.$exec_time.'</a>';
+				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs" rel="nofollow,noindex" target="_blank">'.$exec_time.'</a>';
 			}
 			$num = $id + 1;
 			$items[] = [
@@ -536,19 +536,25 @@ class yf_debug {
 			return $text;
 		}
 		if ($type == 'link') {
-			return '<a href="'.$text.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
+			return '<a href="'.$text.'" class="btn btn-default btn-mini btn-xs" rel="nofollow,noindex" target="_blank">'.$text.'</a>';
 		}
 		$id = $text;
 		$replace += [
 			'{ID}'	=> urlencode(str_replace("\\", '/', $id)),
 			'{THEME}'	=> conf('theme'),
 		];
-		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
-		$link = ADMIN_WEB_PATH. '?'. $url;
+		$url_tpl = $this->ADMIN_PATHS[$type];
+		if ($type == 'show_db_table') {
+			$url_tpl = 'adminer.php?server='.DB_HOST.'&username='.DB_USER.'&db='.DB_NAME.'&table={ID}';
+		} elseif ($type == 'sql_query') {
+			$url_tpl = 'adminer.php?server='.DB_HOST.'&username='.DB_USER.'&db='.DB_NAME.'&sql={ID}';
+		}
+		$url = str_replace(array_keys($replace), array_values($replace), $url_tpl);
+		$link = ADMIN_WEB_PATH. $url;
 		if ($just_link) {
 			return $link;
 		}
-		return '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
+		return '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs" rel="nofollow,noindex" target="_blank">'.$text.'</a>';
 	}
 
 	/**
