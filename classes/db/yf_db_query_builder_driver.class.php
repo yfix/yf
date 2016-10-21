@@ -883,7 +883,6 @@ abstract class yf_db_query_builder_driver {
 	public function select() {
 		$sql = '';
 		$fields = func_get_args();
-d($fields);
 		if (!count($fields) || $fields === []) {
 			$sql = '*';
 		} else {
