@@ -9,7 +9,7 @@ class yf_payment_handler {
 		if( @$_user_id < 1 ) { return( null ); }
 		$user_id = (int)$_user_id;
 		$api         = _class( 'api'         );
-		$payment     = _class( 'payment'     );
+		$payment     = module( 'payment'     );
 		$payment_api = _class( 'payment_api' );
 		// get account by user_id
 		list( $account_id,  $account  ) = $payment_api->get_account([ 'user_id' => $user_id ]);
