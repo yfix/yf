@@ -133,11 +133,14 @@ class yf_oauth {
 				}
 			}
 			if ($oauth_registration['user_id'] && !$sys_user_info['id']) {
-				$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval($oauth_registration['user_id']));
+				//login omly active user
+				$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE active = 1 and id='.intval($oauth_registration['user_id']));
 			}
 			// Auto-login user if everything fine
 			if ($oauth_registration['user_id'] && $sys_user_info['id'] && !main()->USER_ID) {
 				_class('auth_user', 'classes/auth/')->_save_login_in_session($sys_user_info);
+			}else{
+				common()->message_error('Sorry, but some info you have entered is wrong.');
 			}
 		}
 		if (DEBUG_MODE) {
