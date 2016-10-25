@@ -755,7 +755,7 @@ abstract class yf_db_query_builder_driver {
 	* Update multiple database records at once.
 	* Examples:
 	*	update_batch('user', $data, 'id')
-	*	update_batch('user', $data, array('id', 'cat_id'))
+	*	update_batch('user', $data, ['id', 'cat_id'])
 	*/
 	public function update_batch($table, array $data, $index = null, $only_sql = false, $params = []) {
 		if (!$index) {
@@ -875,15 +875,15 @@ abstract class yf_db_query_builder_driver {
 	* Examples:
 	*	select('id, name, age')
 	*	select('id', 'name', 'age')
-	*	select(array('id', 'name', 'age'))
+	*	select(['id', 'name', 'age'])
 	*	select('u.id as user_id, u.name as user_name')
 	*	select('DISTINCT user_id')
-	*	select(array('COUNT(u.id)' => 'num'));
+	*	select(['COUNT(u.id)' => 'num']);
 	*/
 	public function select() {
 		$sql = '';
 		$fields = func_get_args();
-		if (!count($fields) || $fields === [[]]) {
+		if (!count($fields) || $fields === []) {
 			$sql = '*';
 		} else {
 			$a = [];
@@ -942,9 +942,9 @@ abstract class yf_db_query_builder_driver {
 	*	from('users')
 	*	from('users as u')
 	*	from('users as u', 'products as p')
-	*	from(array('users' => 'u'))
-	*	from(array('users' => 'u', 'suppliers' => 's'))
-	*	from(array('users' => 'u'), array('suppliers' => 's'))
+	*	from(['users' => 'u'])
+	*	from(['users' => 'u', 'suppliers' => 's'])
+	*	from(['users' => 'u'), array('suppliers' => 's'])
 	*/
 	public function from() {
 		$sql = '';
@@ -997,12 +997,12 @@ abstract class yf_db_query_builder_driver {
 	* Examples:
 	*	where('id', '1')
 	*	where('id > 5')
-	*	where(array('id' => '5'))
-	*	where(array('id','>','1'),'and',array('name','!=','peter'))
+	*	where(['id' => '5'])
+	*	where(['id','>','1'],'and', ['name','!=','peter'])
 	*	where(1)
 	*	where(1,2,3)
-	*	where('id', array(1,2,3))
-	*	where(array('id' => array(1,2,3)))
+	*	where('id', [1,2,3])
+	*	where(['id' => [1,2,3]])
 	*/
 	public function where() {
 		return $this->_process_where(func_get_args(), __FUNCTION__);
@@ -1012,7 +1012,7 @@ abstract class yf_db_query_builder_driver {
 	* Examples:
 	*	where_or('id', '1')
 	*	where_or('id > 5')
-	*	where_or(array('id' => '5'))
+	*	where_or(['id' => '5'])
 	*
 	*	Note: for more examples see "where()"
 	*/
@@ -1032,8 +1032,8 @@ abstract class yf_db_query_builder_driver {
 	*	whereid(1)
 	*	whereid(1, 'id')
 	*	whereid(1, 'user_id')
-	*	whereid(array(1,2,3))
-	*	whereid(array(1,2,3), 'user_id')
+	*	whereid([1,2,3])
+	*	whereid([1,2,3], 'user_id')
 	*	whereid(1,2,3)
 	*	whereid(1,2,3,'user_id')
 	*/
@@ -1104,7 +1104,7 @@ abstract class yf_db_query_builder_driver {
 	* Shortcut for IS NULL checking for field(s)
 	*	where_null('pid')		=> `pid` IS NULL
 	*	where_null('pid','uid','gid')		=> `pid` IS NULL AND `uid` IS NULL AND `gid` IS NULL
-	*	where_null(array('pid','uid','gid'))		=> `pid` IS NULL AND `uid` IS NULL AND `gid` IS NULL
+	*	where_null(['pid','uid','gid'])		=> `pid` IS NULL AND `uid` IS NULL AND `gid` IS NULL
 	*/
 	public function where_null() {
 		$func = __FUNCTION__;
@@ -1181,7 +1181,7 @@ abstract class yf_db_query_builder_driver {
 		if ($count = count($where)) {
 			$all_numeric = $this->_is_where_all_numeric($where);
 			if ($all_numeric) {
-				// where(array(1,2,3))
+				// where([1,2,3])
 				if (count($where) === 1 && isset($where[0])) {
 					$where = $where[0];
 				}
@@ -1229,7 +1229,7 @@ abstract class yf_db_query_builder_driver {
 						}
 					}
 				} elseif (is_array($v)) {
-					// array('field', 'condition', 'value'), example: array('id','>','1')
+					// ['field', 'condition', 'value'], example: ['id','>','1']
 					$_count_v = count($v);
 					if (($_count_v === 3 || $_count_v === 2) && isset($v[0]) && !preg_match(self::REGEX_INLINE_CONDS, $v[0])) {
 						$tmp = $this->_process_where_cond($v[0], $v[1], $v[2]);
@@ -1240,7 +1240,7 @@ abstract class yf_db_query_builder_driver {
 							$a[] = $imploder;
 						}
 						$a[] = $tmp;
-					// array('field1' => 'val1', 'field2' => 'val2')
+					// ['field1' => 'val1', 'field2' => 'val2']
 					} else {
 						$tmp = [];
 						foreach ($v as $k2 => $v2) {
@@ -1294,7 +1294,7 @@ abstract class yf_db_query_builder_driver {
 		}
 		$right_generated = '';
 		// Think that we dealing with 2 arguments passing like this: where('id', 1)
-		// Also this will match: where('id', array(1,2,3))
+		// Also this will match: where('id', [1,2,3])
 		if (strlen($left) && !empty($op) && !is_array($right) && !strlen($right)) {
 			if (strlen($op) && !in_array($op, ['=','!=','<','>','<=','>=','like','not like','is null','is not null','in','not in'])) {
 				$right = $op;
@@ -1334,11 +1334,11 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Examples:
 	*	join('suppliers', 'products.supplier_id = 'suppliers.id'))
-	*	join('suppliers as s', 's.supplier_id = 'u.id'))
-	*	join(array('suppliers' => 's'), 's.supplier_id = 'u.id'))
-	*	join(array('suppliers' => 's'), 's.supplier_id = 'u.id'), 'inner')
-	*	inner_join('suppliers as s', array('s.supplier_id' => 'u.id'))
-	*	left_join('suppliers as s', array('s.supplier_id' => 'u.id', 's.other_id' => 'u.other_id'))
+	*	join('suppliers as s', 's.supplier_id = 'u.id')
+	*	join(['suppliers' => 's', 's.supplier_id = 'u.id'])
+	*	join(['suppliers' => 's', 's.supplier_id = 'u.id'], 'inner')
+	*	inner_join('suppliers as s', ['s.supplier_id' => 'u.id'])
+	*	left_join('suppliers as s', ['s.supplier_id' => 'u.id', 's.other_id' => 'u.other_id'])
 	*/
 	public function join($table, $on, $join_type = '', $is_select = false) {
 		$join_types = [
@@ -1455,7 +1455,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Examples:
 	*	group_by('user_group')
-	*	group_by(array('supplier','manufacturer'))
+	*	group_by(['supplier','manufacturer'])
 	*/
 	public function group_by() {
 		$sql = '';
@@ -1497,8 +1497,8 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Examples:
 	*	having('COUNT(*)','>','1')
-	*	having(array('COUNT(*)','>','1'))
-	*	having(array('COUNT(id)','>','1'), array('COUNT(gid)','>','2'))
+	*	having(['COUNT(*)','>','1'])
+	*	having(['COUNT(id)','>','1'], ['COUNT(gid)','>','2'])
 	*/
 	public function having() {
 		$sql = '';
@@ -1522,10 +1522,10 @@ abstract class yf_db_query_builder_driver {
 					}
 				}
 			} elseif (is_array($v)) {
-				// array('field', 'condition', 'value'), example: array('id','>','1')
+				// ['field', 'condition', 'value'], example: ['id','>','1']
 				if (count($v) == 3 && isset($v[0])) {
 					$a[] = $this->_process_where_cond($v[0], $v[1], $v[2]);
-				// array('field1' => 'val1', 'field2' => 'val2')
+				// ['field1' => 'val1', 'field2' => 'val2']
 				} else {
 					$tmp = [];
 					foreach ($v as $k2 => $v2) {
@@ -1561,8 +1561,8 @@ abstract class yf_db_query_builder_driver {
 	* Examples:
 	*	order_by('user_group')
 	* 	order_by('field','asc')
-	*	order_by(array('supplier' => 'desc', 'manufacturer' => 'asc')),
-	*	order_by(array('field1','asc'), array('field2','desc'), array('field3','asc'))
+	*	order_by(['supplier' => 'desc', 'manufacturer' => 'asc']),
+	*	order_by(['field1','asc'], ['field2','desc'], ['field3','asc'])
 	*/
 	public function order_by() {
 		$sql = '';
