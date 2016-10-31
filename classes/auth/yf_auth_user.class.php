@@ -15,6 +15,14 @@ class yf_auth_user {
 	public $ONLINE_AUTO_CLEAN		= 1800; // Default value for cleaning up inactive online users
 	/** @var int Online TTL if inactive */
 	public $ONLINE_MAX_IDS			= 1000; // Max number of online records (to prevent server flooding)
+	/** @var array Pages where we do not need to track online stats @conf_skip */
+	public $ONLINE_SKIP_PAGES		= [
+		'user_profile->compact_info',
+		'help->show_tip',
+		'forum->compact_topic_repliers',
+		'aff',
+		'task_loader'
+	];
 	/** @var string Login field name to use @conf_skip */
 	public $LOGIN_FIELD				= 'login';
 	/** @var string Alternative login field name to use @conf_skip */
@@ -82,14 +90,6 @@ class yf_auth_user {
 	public $CHECK_MULTI_ACCOUNTS	= false;
 	/** @var bool Catch ref codes */
 	public $CATCH_REF_CODES			= false;
-	/** @var array Pages where we do not need to track online stats @conf_skip */
-	public $ONLINE_SKIP_PAGES		= [
-		'user_profile->compact_info',
-		'help->show_tip',
-		'forum->compact_topic_repliers',
-		'aff',
-		'task_loader'
-	];
 	/** @var bool Store cookie with geo info for guests */
 	public $TRACK_GEO_LOCATION		= false;
 	/** @var bool Save failed logins @security */
@@ -120,6 +120,8 @@ class yf_auth_user {
 	public $USER_PASSWORD_SALT		= '';
 	/** @var string */
 	public $USER_SECURITY_CHECKS	= false;
+	/** @var string */
+	public $FORCE_LOGOUT_INACTIVE	= true;
 
 	/**
 	*/
@@ -177,9 +179,7 @@ class yf_auth_user {
 			$ip = common()->get_ip();
 			if (!isset($_SESSION[$this->VAR_LOCK_IP]) || $_SESSION[$this->VAR_LOCK_IP] !== $ip) {
 				trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:'.$_SESSION[$this->VAR_LOCK_IP].', new_ip:'.$ip.', user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
-				$this->_log_fail([
-					'reason'	=> 'auth_blocked_by_ip',
-				]);
+				$this->_log_fail(['reason' => 'auth_blocked_by_ip']);
 				$_GET['task'] = 'logout';
 			}
 		}
@@ -189,9 +189,7 @@ class yf_auth_user {
 			$ua = $_SERVER['HTTP_USER_AGENT'];
 			if (!isset($_SESSION[$this->VAR_LOCK_UA]) || $_SESSION[$this->VAR_LOCK_UA] !== $ua) {
 				trigger_error('AUTH: Attempt to use session with changed User Agent blocked, auth_ua:"'.$_SESSION[$this->VAR_LOCK_UA].'", new_ua:"'.$ua.'", user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
-				$this->_log_fail([
-					'reason'	=> 'auth_blocked_by_ua',
-				]);
+				$this->_log_fail(['reason' => 'auth_blocked_by_ua']);
 				$_GET['task'] = 'logout';
 			}
 		}
@@ -201,9 +199,7 @@ class yf_auth_user {
 			$host = $_SERVER['HTTP_HOST'];
 			if (!isset($_SESSION[$this->VAR_LOCK_HOST]) || $_SESSION[$this->VAR_LOCK_HOST] !== $host) {
 				trigger_error('AUTH: Attempt to use session with changed Host blocked, auth_host:"'.$_SESSION[$this->VAR_LOCK_HOST].'", new_host:"'.$ua.'", user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
-				$this->_log_fail([
-					'reason'	=> 'auth_blocked_by_host',
-				]);
+				$this->_log_fail(['reason'	=> 'auth_blocked_by_host']);
 				$_GET['task'] = 'logout';
 			}
 		}
@@ -211,10 +207,19 @@ class yf_auth_user {
 		$referer = $_SERVER['HTTP_REFERER'];
 		if ($this->SESSION_REFERER_CHECK && (!$referer || substr($referer, 0, strlen(WEB_PATH)) != WEB_PATH) && $_GET['task'] !== 'logout') {
 			trigger_error('AUTH: Referer not matched and session blocked, referer:'.$referer, E_USER_WARNING);
-			$this->_log_fail([
-				'reason'	=> 'auth_blocked_by_referer',
-			]);
+			$this->_log_fail(['reason'	=> 'auth_blocked_by_referer']);
 			$_GET['task'] = 'logout';
+		}
+		// This code needed to auto-logout previously logged-in user, but disabled later
+		if ($this->FORCE_LOGOUT_INACTIVE && $_SESSION[$this->VAR_USER_ID] && $_GET['task'] !== 'logout') {
+			$main = main();
+			$main->_init_cur_user_info($main);
+			$user = &$main->_user_info;
+			if (isset($user['id']) && !$user['active']) {
+				trigger_error('AUTH: Force logout inactive account', E_USER_WARNING);
+				$this->_log_fail(['reason'	=> 'auth_logout_inactive']);
+				$_GET['task'] = 'logout';
+			}
 		}
 		// Switch between login/logout actions
 		if (isset($_GET['task']) && $_GET['task'] === 'logout') {
@@ -544,6 +549,18 @@ class yf_auth_user {
 			return true;
 		}
 		if (empty($user_info['active'])) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	*/
+	function _is_user_hidden ($user_info = []) {
+		if (empty($user_info)) {
+			return true;
+		}
+		if (empty($user_info['hidden'])) {
 			return true;
 		}
 		return false;
