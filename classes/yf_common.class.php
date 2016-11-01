@@ -243,8 +243,27 @@ class yf_common {
 	/**
 	* Send emails with attachments with DEBUG ability
 	*/
-	function send_mail($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = [], $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = [], $priority = 3) {
-		return _class('send_mail')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
+	function send_mail($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = [], $charset = '', $old_param1 = '', $force_mta_opts = [], $priority = null, $smtp = []) {
+		if (is_array($email_from)) {
+			$params = $email_from;
+			$params['email_from'] = $params['from_mail'];
+		}
+		if (!is_array($params)) {
+			$params = [];
+		}
+		$params['email_from']	= $params['from_mail'] ?: $params['email_from'] ?: $email_from;
+		$params['name_from']	= $params['from_name'] ?: $params['name_from'] ?: $name_from;
+		$params['email_to']		= $params['to_mail'] ?: $params['email_to'] ?: $email_to;
+		$params['name_to']		= $params['to_name'] ?: $params['name_to'] ?: $name_to;
+		$params['subject']		= $params['subj'] ?: $params['subject'] ?: $subject;
+		$params['text']			= $params['text'] ?: $text;
+		$params['html']			= $params['html'] ?: $html;
+		$params['attaches']		= $params['attach'] ?: $params['attaches'] ?: $attaches;
+		$params['charset']		= $params['charset'] ?: $charset;
+		$params['mta_params']	= $params['force_mta_opts'] ?: $params['mta_params'] ?: $force_mta_opts;
+		$params['priority']		= $params['priority'] ?: $priority ?: 3;
+		$params['smtp']			= $params['smtp'] ?: $smtp;
+		return _class('send_mail')->send($params);
 	}
 
 	/**
