@@ -1,7 +1,7 @@
 <?php
 
 load('mail_driver', 'framework', 'classes/mail/');
-class yf_mail_driver_aws_ses extends yf_mail_driver {
+class yf_mail_driver_sparkpost extends yf_mail_driver {
 
 	/**
 	* Catch missing method call
