@@ -6,7 +6,7 @@ $config = [
 	'git_urls' => ['https://github.com/mailgun/mailgun-php.git' => 'mailgun/'],
 	'autoload_config' => ['mailgun/src/Mailgun/' => 'Mailgun'],
 	'example' => function() {
-		$mg_client = new Mailgun\Mailgun('key-58a678f54f1ed41f0ab36f791e5b6384');
+		$mg_client = new Mailgun\Mailgun('example key');
 		var_dump($mg_client);
 	}
 ];
