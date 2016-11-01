@@ -18,15 +18,15 @@ class yf_send_mail_driver_simple {
 	/**
 	*/
 	function send($params = []) {
-		!is_array($params['additional_headers']) && $params['additional_headers'] = [];
-		$params['email_from'] && $params['additional_headers']['from'] = 'From: '.$params['email_from'];
-		$params['reply_to'] && $params['additional_headers']['reply_to'] = 'Reply-To: '.$params['reply_to'];
+		!is_array($params['headers']) && $params['headers'] = [];
+		$params['email_from'] && $params['headers']['from'] = 'From: '.$params['email_from'];
+		$params['reply_to'] && $params['headers']['reply_to'] = 'Reply-To: '.$params['reply_to'];
 		return mail(
-			$email_to
-			, $subject
-			, $text
-			, implode("\r\n", $params['additional_headers'])
-			, $params['additional_params']
+			$params['email_to']
+			, $params['subject']
+			, $params['text']
+			, implode("\r\n", $params['headers'])
+			, $params['mta_params']
 		);
 	}
 }

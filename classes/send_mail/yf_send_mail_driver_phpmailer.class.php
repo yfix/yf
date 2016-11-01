@@ -22,12 +22,12 @@ class yf_send_mail_driver_phpmailer {
 
 		$mail = new PHPMailer(true); // defaults to using php 'mail()'
 		try {
-			$mail->CharSet  = $params['charset'] ?: $this->PARENT->DEFAULT_CHARSET;
+			$mail->CharSet  = $params['charset'] ?: conf('charset') ?: $this->PARENT->DEFAULT_CHARSET ?: 'utf-8';
 			$mail->From     = $params['email_from'];
 			$mail->FromName = $params['name_from'];
 			if (DEBUG_MODE && $this->PARENT->MAIL_DEBUG) {
 				$mail->SMTPDebug = 1;
-				$mail->Debugoutput = 'error_log';
+				$mail->Debugoutput = $params['phpmailer_debug_output'] ?: 'error_log';
 			}
 			if (is_array($params['email_to'])) {
 				list($name, $email) = each($params['email_to']);
@@ -85,6 +85,10 @@ class yf_send_mail_driver_phpmailer {
 		}
 		if (!$result) {
 			$error_message .= $mail->ErrorInfo;
+		}
+		if (is_callable($params['on_after_send'])) {
+			$callback = $params['on_after_send'];
+			$callback($mail, $params, $result, $error_message, $this->PARENT);
 		}
 		if (@$error_message && DEBUG_MODE && $this->PARENT->MAIL_DEBUG_ERROR) {
 			trigger_error($error_message, E_USER_WARNING);
