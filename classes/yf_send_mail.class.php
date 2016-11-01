@@ -92,6 +92,7 @@ class yf_send_mail {
 	* Send emails with attachments with DEBUG ability
 	*/
 	function send($params = []) {
+		$driver = strtolower($params['driver'] ?: $this->DRIVER);
 		if (DEBUG_MODE || $this->LOG_EMAILS) {
 			$time_start = microtime(true);
 		}
@@ -109,7 +110,7 @@ class yf_send_mail {
 		if ($this->MAIL_DEBUG && $this->DEBUG_TEST_ADDRESS) {
 			$debug_mail = $this->DEBUG_TEST_ADDRESS;
 			$debug_name = '(debug: '.$name_to.' - '.$email_to.')';
-			if ($this->DRIVER == 'phpmailer' && is_array($email_to)) {
+			if ($driver == 'phpmailer' && is_array($email_to)) {
 				$mails = [];
 				$debug_name = '';
 				foreach ($email_to as $name => $email) {
@@ -128,7 +129,7 @@ class yf_send_mail {
 			}
 		}
 		$smtp = [];
-		$driver_supports_smtp = in_array($this->DRIVER, $this->DRIVERS_WITH_SMTP_SUPPORT);
+		$driver_supports_smtp = in_array($driver, $this->DRIVERS_WITH_SMTP_SUPPORT);
 		if ($driver_supports_smtp) {
 			if (!$smtp && isset($params['smtp']) && is_callable($params['smtp'])) {
 				$callable = $params['smtp'];
@@ -155,13 +156,13 @@ class yf_send_mail {
 
 		// Go send with selected driver
 		$error_message = '';
-		$result = _class('mail_driver_'.strtolower($this->DRIVER), 'classes/mail/')->send($params, $error_message);
+		$result = _class('mail_driver_'.$driver, 'classes/mail/')->send($params, $error_message);
 
 		if ($this->LOG_EMAILS || DEBUG_MODE) {
 			$log = $params + [
 				'email_to'           => is_array($params['email_to']) ? implode(', ', $params['email_to']) : $params['email_to'],
 				'mail_debug'         => $this->MAIL_DEBUG,
-				'used_mailer'        => $this->DRIVER,
+				'used_mailer'        => $driver,
 				'smtp_options'       => $driver_supports_smtp ? $smtp : '',
 				'time_start'         => $time_start,
 				'send_success'       => $result ? 1 : 0,
