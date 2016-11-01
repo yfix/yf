@@ -9,8 +9,10 @@
 */
 class yf_send_mail {
 
-	/** @var string Select mailer driver to use */
+	/** @var string Default mail driver */
 	public $DRIVER					= 'phpmailer';
+	/** @var callable */
+	public $DRIVERS_WITH_SMTP_SUPPORT = ['phpmailer'];
 	/** @var string */
 	public $DEFAULT_CHARSET			= 'utf-8';
 	/** @var string */
@@ -31,11 +33,25 @@ class yf_send_mail {
 	public $ALLOW_ATTACHMENTS		= true;
 	/** @var bool Replaces 'From' with $smtp['smtp_from'] */
 	public $REPLACE_FIELD_FROM		= true;
-	/** @var callable */
+	/** @var callable Callback example:
+		'ON_BEFORE_SEND' => function($mail, $params) {
+			$mail->XMailer = 'Example Mailer';
+			$mail->Version = '2.0.0';
+			$mail->ReturnPath = $params['from_mail'];
+			$mail->AddReplyTo($params['from_mail']);
+			$mail->SMTPOptions = [
+			    'ssl' => [
+			        'verify_peer' => false,
+			        'verify_peer_name' => false,
+			        'allow_self_signed' => true,
+			    ]
+			];
+		},
+	*/
 	public $ON_BEFORE_SEND 			= null;
 	/** @var callable */
 	public $ON_AFTER_SEND 			= null;
-	/** @var array SMTP specific options */
+	/** @var array|callable SMTP specific options */
 	public $SMTP_OPTIONS			= [
 		'smtp_host'		=> '', // mx.test.com
 		'smtp_port'		=> '25',
@@ -111,34 +127,58 @@ class yf_send_mail {
 				$params['name_to']  = $debug_name;
 			}
 		}
-		if ($this->REPLACE_FIELD_FROM && $this->DRIVER != 'internal' && !empty($this->SMTP_OPTIONS['smtp_from_mail'])) {
-			$params['email_from'] = $this->SMTP_OPTIONS['smtp_from_mail'];
-			$params['name_from']  = $this->SMTP_OPTIONS['smtp_from_name'] ?: $params['name_from'];
+		$smtp = [];
+		$driver_supports_smtp = in_array($this->DRIVER, $this->DRIVERS_WITH_SMTP_SUPPORT);
+		if ($driver_supports_smtp) {
+			if (!$smtp && isset($params['smtp']) && is_callable($params['smtp'])) {
+				$callable = $params['smtp'];
+				$smtp = $callable($params, $this);
+				unset($callable);
+			}
+			if (!$smtp && isset($params['smtp']['smtp_host']) && $params['smtp']['smtp_host']) {
+				$smtp = $params['smtp'];
+			}
+			if (!$smtp && isset($this->SMTP_OPTIONS) && is_callable($this->SMTP_OPTIONS)) {
+				$callable = $this->SMTP_OPTIONS;
+				$smtp = $callable($params, $this);
+				unset($callable);
+			}
+			if (!$smtp && isset($this->SMTP_OPTIONS['smtp_host']) && $this->SMTP_OPTIONS['smtp_host']) {
+				$smtp = $this->SMTP_OPTIONS;
+			}
+			if ($this->REPLACE_FIELD_FROM && $smtp['smtp_from_mail']) {
+				$params['email_from'] = $smtp['smtp_from_mail'];
+				$params['name_from'] = $smtp['smtp_from_name'] ?: $params['name_from'];
+			}
 		}
+		$params['smtp'] = $smtp;
+
 		// Go send with selected driver
 		$error_message = '';
-		$result = _class('send_mail_driver_'.$this->DRIVER, 'classes/send_mail/')->send($params, $error_message);
+		$result = _class('send_mail_driver_'.strtolower($this->DRIVER), 'classes/send_mail/')->send($params, $error_message);
 
-		$log = $params + [
-			'email_to'           => is_array($params['email_to']) ? implode(', ', $params['email_to']) : $params['email_to'],
-			'mail_debug'         => $this->MAIL_DEBUG,
-			'used_mailer'        => $this->DRIVER,
-			'smtp_options'       => $this->DRIVER != 'internal' ? $this->SMTP_OPTIONS : '',
-			'time_start'         => $time_start,
-			'send_success'       => $result ? 1 : 0,
-			'error_message'      => $error_message,
-		];
-		if ($this->LOG_EMAILS) {
-			$log['error_message'] .= implode("\n", $_prev_num_errors 
-				? array_slice((array)main()->_all_core_error_msgs, $_prev_num_errors)
-				: (array)main()->_all_core_error_msgs
-			);
-			_class('send_mail_log', 'classes/send_mail/')->save($log);
-		}
-		if (DEBUG_MODE) {
-			$time_end = microtime(true);
-			$log_data['time'] = $time_end - $time_start;
-			$GLOBALS['_send_mail_debug'][] = $log;
+		if ($this->LOG_EMAILS || DEBUG_MODE) {
+			$log = $params + [
+				'email_to'           => is_array($params['email_to']) ? implode(', ', $params['email_to']) : $params['email_to'],
+				'mail_debug'         => $this->MAIL_DEBUG,
+				'used_mailer'        => $this->DRIVER,
+				'smtp_options'       => $driver_supports_smtp ? $smtp : '',
+				'time_start'         => $time_start,
+				'send_success'       => $result ? 1 : 0,
+				'error_message'      => $error_message,
+			];
+			if ($this->LOG_EMAILS) {
+				$log['error_message'] .= implode("\n", $_prev_num_errors 
+					? array_slice((array)main()->_all_core_error_msgs, $_prev_num_errors)
+					: (array)main()->_all_core_error_msgs
+				);
+				_class('send_mail_log', 'classes/send_mail/')->save($log);
+			}
+			if (DEBUG_MODE) {
+				$time_end = microtime(true);
+				$log_data['time'] = $time_end - $time_start;
+				$GLOBALS['_send_mail_debug'][] = $log;
+			}
 		}
 		return $result;
 	}
