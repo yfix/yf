@@ -9,10 +9,12 @@
 */
 class yf_send_mail {
 
-	/** @var string */
-	public $DEFAULT_CHARSET			= 'utf-8';
 	/** @var string Select mailer driver to use */
 	public $DRIVER					= 'phpmailer';
+	/** @var string */
+	public $DEFAULT_CHARSET			= 'utf-8';
+	/** @var string */
+	public $DEFAULT_MAILER_NAME		= 'YF PHP Mailer';
 	/** @var bool */
 	public $MAIL_DEBUG				= false;
 	/** @var bool */
@@ -27,8 +29,12 @@ class yf_send_mail {
 	public $DB_LOG_ENV				= false;
 	/** @var bool */
 	public $ALLOW_ATTACHMENTS		= true;
-	/** @var bool Replaces 'From' with $this->SMTP_OPTIONS['from'] */
+	/** @var bool Replaces 'From' with $smtp['smtp_from'] */
 	public $REPLACE_FIELD_FROM		= true;
+	/** @var callable */
+	public $ON_BEFORE_SEND 			= null;
+	/** @var callable */
+	public $ON_AFTER_SEND 			= null;
 	/** @var array SMTP specific options */
 	public $SMTP_OPTIONS			= [
 		'smtp_host'		=> '', // mx.test.com
@@ -50,7 +56,7 @@ class yf_send_mail {
 	/**
 	* Module constructor
 	*/
-	function _init () {
+	function _init() {
 		define('LOG_MAIL_PATH', PROJECT_PATH.'logs/email/');
 		$mail_debug = conf('mail_debug');
 		if (isset($mail_debug)) {
@@ -69,12 +75,15 @@ class yf_send_mail {
 	/**
 	* Send emails with attachments with DEBUG ability
 	*/
-	function send ($params = []) {
+	function send($params = []) {
 		if (DEBUG_MODE || $this->LOG_EMAILS) {
 			$time_start = microtime(true);
 		}
 		if (!isset($params['on_before_send']) && is_callable($this->ON_BEFORE_SEND)) {
 			$params['on_before_send'] = $this->ON_BEFORE_SEND;
+		}
+		if (!isset($params['on_after_send']) && is_callable($this->ON_AFTER_SEND)) {
+			$params['on_after_send'] = $this->ON_AFTER_SEND;
 		}
 		$_prev_num_errors = count((array)main()->_all_core_error_msgs);
 		if ($this->MAIL_DEBUG_ERROR && empty($params['email_to'])) {
