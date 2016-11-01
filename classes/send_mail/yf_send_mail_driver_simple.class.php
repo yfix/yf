@@ -26,7 +26,7 @@ class yf_send_mail_driver_simple {
 			, $params['subject']
 			, $params['text']
 			, implode("\r\n", $params['headers'])
-			, $params['mta_params']
+			, implode('', $params['mta_params'])
 		);
 	}
 }

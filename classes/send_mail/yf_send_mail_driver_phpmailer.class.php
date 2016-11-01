@@ -50,12 +50,7 @@ class yf_send_mail_driver_phpmailer {
 					$mail->AddAttachment($file, $file_name);
 				}
 			}
-			$smtp = [];
-			if (isset($params['smtp']) && !empty($params['smtp']['smtp_host'])) {
-				$smtp = $params['smtp'];
-			} elseif ($this->PARENT->SMTP_OPTIONS['smtp_host']) {
-				$smtp = $this->PARENT->SMTP_OPTIONS;
-			}
+			$smtp = $params['smtp'];
 			if ($smtp['smtp_host']) {
 				$mail->IsSMTP();
 				$mail->Host       = $smtp['smtp_host'];

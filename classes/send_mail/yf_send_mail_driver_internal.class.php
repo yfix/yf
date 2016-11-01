@@ -82,8 +82,8 @@ class yf_send_mail_driver_internal {
 			$params['email_to']
 			, $params['subject']
 			, $msg
-			, implode("\r\n", $params['headers'] ?: [])
-			, $params['mta_params']
+			, $headers
+			, implode('', $params['mta_params'])
 		);
 	}
 }
