@@ -73,7 +73,8 @@ class yf_manage_emails {
 		$charset = conf('charset');
 		header('Content-type: text/html, charset='.$charset);
 		header('Content-language: '.conf('language'));
-		return print $html;
+		print $html;
+		exit;
 	}
 
 	/**
@@ -89,7 +90,8 @@ class yf_manage_emails {
 		$charset = conf('charset');
 		header('Content-type: text/plain, charset='.$charset);
 		header('Content-language: '.conf('language'));
-		return print $text;
+		print $text;
+		exit;
 	}
 
 	/**
