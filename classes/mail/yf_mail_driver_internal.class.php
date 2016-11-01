@@ -1,6 +1,7 @@
 <?php
 
-class yf_send_mail_driver_internal {
+load('mail_driver', 'framework', 'classes/mail/');
+class yf_mail_driver_internal extends yf_mail_driver {
 
 	/**
 	* Catch missing method call
@@ -17,7 +18,7 @@ class yf_send_mail_driver_internal {
 
 	/**
 	*/
-	function send ($params = [], &$error_message = '') {
+	function send(array $params = [], &$error_message = '') {
 		$CRLF = "\r\n";
 		$TAB = "\t";
 

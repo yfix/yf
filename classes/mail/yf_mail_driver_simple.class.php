@@ -1,6 +1,7 @@
 <?php
 
-class yf_send_mail_driver_simple {
+load('mail_driver', 'framework', 'classes/mail/');
+class yf_mail_driver_simple extends yf_mail_driver {
 
 	/**
 	* Catch missing method call
@@ -17,7 +18,7 @@ class yf_send_mail_driver_simple {
 
 	/**
 	*/
-	function send($params = []) {
+	function send(array $params = [], &$error_message = '') {
 		!is_array($params['headers']) && $params['headers'] = [];
 		$params['email_from'] && $params['headers']['from'] = 'From: '.$params['email_from'];
 		$params['reply_to'] && $params['headers']['reply_to'] = 'Reply-To: '.$params['reply_to'];

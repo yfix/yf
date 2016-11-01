@@ -155,7 +155,7 @@ class yf_send_mail {
 
 		// Go send with selected driver
 		$error_message = '';
-		$result = _class('send_mail_driver_'.strtolower($this->DRIVER), 'classes/send_mail/')->send($params, $error_message);
+		$result = _class('mail_driver_'.strtolower($this->DRIVER), 'classes/mail/')->send($params, $error_message);
 
 		if ($this->LOG_EMAILS || DEBUG_MODE) {
 			$log = $params + [
@@ -172,7 +172,7 @@ class yf_send_mail {
 					? array_slice((array)main()->_all_core_error_msgs, $_prev_num_errors)
 					: (array)main()->_all_core_error_msgs
 				);
-				_class('send_mail_log', 'classes/send_mail/')->save($log);
+				_class('mail_log', 'classes/mail/')->save($log);
 			}
 			if (DEBUG_MODE) {
 				$time_end = microtime(true);

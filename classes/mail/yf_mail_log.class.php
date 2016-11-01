@@ -1,6 +1,6 @@
 <?php
 
-class yf_send_mail_log {
+class yf_mail_log {
 
 	/**
 	* Catch missing method call
@@ -18,7 +18,7 @@ class yf_send_mail_log {
 	/**
 	* Save email log info
 	*/
-	function save($params = []) {
+	function save(array $params = []) {
 		// Try to get user error message source
 		$backtrace = debug_backtrace();
 		$cur_trace	= $backtrace[2];
