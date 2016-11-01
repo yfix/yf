@@ -167,10 +167,10 @@ class yf_email {
 	/**
 	* send_email_from_admin
 	*/
-	function _send_email_safe($email_to, $name_to, $template_name, $data = [], $instant_send = true, $override = []) {
-		$is_test = ( defined( 'TEST_MODE' ) && TEST_MODE )
-			&& empty( $override[ 'force_send' ] )
-			&& empty( $this->FORCE_SEND )
+	function _send_email_safe($email_to, $name_to, $template_name, $data = [], $old_param1 = null, $override = []) {
+		$is_test = (defined('TEST_MODE') && TEST_MODE) 
+			&& empty($override['force_send'])
+			&& empty($this->FORCE_SEND)
 		;
 		if ($is_test) {
 			common()->message_error('Test mode enabled. Email real sending is disabled');
@@ -194,41 +194,37 @@ class yf_email {
 			'date'		=> $_SERVER['REQUEST_TIME'],
 		]);
 		if (!$html) {
-			if( $this->MAIL_DEBUG_ERROR ) {
+			if ($this->MAIL_DEBUG_ERROR) {
 				trigger_error('Email body is empty', E_USER_WARNING);
 			}
-			return( null );
+			return null;
 		}
-// TODO: remove or really use $instant_send
-		if ($instant_send) {
-			$email_id = db()->insert_id();
-			$params = [
-				'from_mail'	=> $this->EMAIL_FROM,
-				'from_name'	=> $this->NAME_FROM,
-				'to_mail'	=> $email_to,
-				'to_name'	=> $name_to,
-				'subj'		=> $subject,
-				'text'		=> $this->_text_from_html($html),
-				'html'		=> $this->_css_to_inline_styles($html),
-				'smtp'		=> $this->_is_mailru($email_to) ? $this->SMTP_CONFIG_ALTERNATE : $this->SMTP_CONFIG_DEFAULT,
-			];
-			if ($this->ASYNC_SEND) {
-				$result = queue()->add($this->QUEUE_NAME, json_encode($params + ['history_id' => $email_id]));
-				$this->_send_copies($params);
-			} else {
-				$result = common()->send_mail((array)$params);
-				if (!$result) {
-					if ($this->MAIL_DEBUG_ERROR) {
-						trigger_error('Email not sent', E_USER_WARNING);
-					}
-				} else {
-					db()->update_safe(self::table_history, ['status' => 1], 'id='.(int)$email_id);
-					$this->_send_copies($params);
+		$email_id = db()->insert_id();
+		$params = [
+			'from_mail'	=> $this->EMAIL_FROM,
+			'from_name'	=> $this->NAME_FROM,
+			'to_mail'	=> $email_to,
+			'to_name'	=> $name_to,
+			'subj'		=> $subject,
+			'text'		=> $this->_text_from_html($html),
+			'html'		=> $this->_css_to_inline_styles($html),
+			'smtp'		=> $this->_is_mailru($email_to) ? $this->SMTP_CONFIG_ALTERNATE : $this->SMTP_CONFIG_DEFAULT,
+		];
+		if ($this->ASYNC_SEND) {
+			$result = queue()->add($this->QUEUE_NAME, json_encode($params + ['history_id' => $email_id]));
+			$this->_send_copies($params);
+		} else {
+			$result = common()->send_mail((array)$params);
+			if (!$result) {
+				if ($this->MAIL_DEBUG_ERROR) {
+					trigger_error('Email not sent', E_USER_WARNING);
 				}
+			} else {
+				db()->update_safe(self::table_history, ['status' => 1], 'id='.(int)$email_id);
+				$this->_send_copies($params);
 			}
-			return $result;
 		}
-		return true;
+		return $result;
 	}
 
 	/**
