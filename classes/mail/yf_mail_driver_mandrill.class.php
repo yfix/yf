@@ -65,7 +65,7 @@ class yf_mail_driver_mandrill extends yf_mail_driver {
 #			],
 #		],
 #	],
-#	'tags' => array('password-resets'),
+#	'tags' => ['password-resets'],
 #	'subaccount' => 'customer-123',
 #	'google_analytics_domains' => ['example.com'],
 #	'google_analytics_campaign' => 'message.from_email@example.com',
@@ -73,7 +73,7 @@ class yf_mail_driver_mandrill extends yf_mail_driver {
 #	'recipient_metadata' => [
 #		[
 #			'rcpt' => 'recipient.email@example.com',
-#			'values' => array('user_id' => 123456)
+#			'values' => ['user_id' => 123456],
 #		]
 #	],
 #	'attachments' => [
