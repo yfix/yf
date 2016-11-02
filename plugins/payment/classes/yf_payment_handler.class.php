@@ -1,4 +1,3 @@
-
 <?php
 
 class yf_payment_handler {
