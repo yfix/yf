@@ -1666,6 +1666,24 @@ class yf_html {
 	}
 
 	/**
+	* Active toggler
+	*/
+	function btn_active($url = '', $active = 0) {
+		!$url && $url = url('/@object/active/@id');
+		$pairs = [
+			'class' => ['btn-warning', 'btn-success'],
+			'icon' => ['fa fa-ban', 'fa fa-check'],
+			'title' => [t('Disabled'), t('Active')],
+		];
+		return $this->a($url
+			, $pairs['title'][$active]
+			, $pairs['icon'][$active]
+			, ''
+			, 'change_active active_short '.$pairs['class'][$active]
+		);
+	}
+
+	/**
 	* Icon container
 	*/
 	function icon() {
