@@ -12,6 +12,12 @@ return [
 				var _btn_inactive = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> '.t('Disabled').'</button>\';
 				var _btn_yes = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> '.t('Yes').'</button>\';
 				var _btn_no = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> '.t('No').'</button>\';
+				var _btn_active_short_class = \'btn-success\';
+				var _btn_inactive_short_class = \'btn-warning\';
+				var _btn_active_short_icon = \'fa fa-check\';
+				var _btn_inactive_short_icon = \'fa fa-ban\';
+				var _btn_active_short_title = \''.t('Active').'\';
+				var _btn_inactive_short_title = \''.t('Disabled').'\';
 			',
 <<<END
 $(function(){
@@ -54,7 +60,15 @@ $(function(){
 	$(document).on("click", ".change_active", function(){
 		var _obj = this;
 		$.post(_obj.href, {ajax_mode: 1}, function(data){
-			_obj.innerHTML = (data == "1") ? _btn_active : _btn_inactive;
+			var a = $(_obj).closest("a")
+			var ok = (data == "1")
+			if (a.hasClass("active_short")) {
+				a.toggleClass(_btn_inactive_short_class).toggleClass(_btn_active_short_class);
+				a.attr("title", ok ? _btn_active_short_title : _btn_inactive_short_title);
+				a.find("i.fa").toggleClass(_btn_inactive_short_icon).toggleClass(_btn_active_short_icon);
+			} else {
+				_obj.innerHTML = (data == "1") ? _btn_active : _btn_inactive;
+			}
 		});
 		return false; // Do not allow new page
 	});
