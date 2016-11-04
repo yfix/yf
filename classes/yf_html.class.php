@@ -1719,7 +1719,7 @@ class yf_html {
 		$ip = $a['ip'];
 		$code = strtoupper($this->_get_ip_country($ip));
 		$name = _prepare_html($this->_get_country_name($code));
-		return a('http://whois.domaintools.com/'.urlencode($ip), $ip. ' | '. $code. ' | '. $name, ($code ? 'bfh-flag-'.$code : ''), $ip);
+		return a('http://www.infobyip.com/ip-'.urlencode($ip).'.html', $ip. ' | '. $code. ' | '. $name, ($code ? 'bfh-flag-'.$code : ''), $ip);
 	}
 
 	/**
