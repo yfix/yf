@@ -38,6 +38,9 @@ class yf_mail_driver_sendinblue extends yf_mail_driver {
 #				'attachment' => [], // Provide the absolute URL of the attachment/
 			];
 			$result = $sb->send_email($data);
+			if ($result['code'] != 'success') {
+				$error_message = $result['message'];
+			}
 		} catch(Exception $e) {
 			$error_message = 'A sendinblue error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
 		}
@@ -49,6 +52,6 @@ class yf_mail_driver_sendinblue extends yf_mail_driver {
 			$callback($mail, $params, $result, $error_message, $this->PARENT);
 		}
 		$this->PARENT->_last_error_message = $error_message;
-		return $result && !$error_message ? true : false;
+		return $result && $result['code'] == 'success' && !$error_message ? true : false;
 	}
 }
