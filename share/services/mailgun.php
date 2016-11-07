@@ -2,7 +2,7 @@
 <?php
 
 $config = [
-	'require_services' => [/* 'guzzlehttp_psr7', */'phphttp_httplug', 'phphttp_discovery', 'phphttp_multipart_stream_builder', 'phphttp_message',
+	'require_services' => [ 'guzzlehttp_psr7', 'phphttp_httplug', 'phphttp_discovery', 'phphttp_multipart_stream_builder', 'phphttp_message',
 		'phphttp_client_common',
 		'webmozart_assert',
 	],
