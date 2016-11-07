@@ -29,18 +29,18 @@ class yf_mail_driver_mailgun extends yf_mail_driver {
 	function send(array $params = [], &$error_message = '') {
 		require_php_lib('mailgun');
 
+		$error_message = null;
 		try {
-			$mg = new Mailgun($this->key);
+			$mg = new Mailgun\Mailgun($this->key);
+			$opts = $this->PARENT->ALLOW_ATTACHMENTS ? ['attachment' => array_values($params['attaches'])] : [];
 			// Now, compose and send your message.
-			$mg->sendMessage($this->domain, [
+			$result = $mg->sendMessage($this->domain, [
 				'from'    => $params['email_from'],
 				'to'      => $params['email_to'],
 				'subject' => $params['subject'], 
 				'text'    => $params['text'],
-				'text'    => $params['html'],
-			], [
-				'attachment' => $this->PARENT->ALLOW_ATTACHMENTS ? array_values($params['attaches']) : [],
-			]);
+				'html'    => $params['html'],
+			], $opts);
 		} catch(Exception $e) {
 			$error_message = 'A mailgun error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
 		}
@@ -52,6 +52,6 @@ class yf_mail_driver_mailgun extends yf_mail_driver {
 			$callback($mail, $params, $result, $error_message, $this->PARENT);
 		}
 		$this->PARENT->_last_error_message = $error_message;
-#		return $result ? $result['status'] == 'sent' : false;
+		return $result && !$error_message ? true : false;
 	}
 }
