@@ -62,6 +62,6 @@ class yf_mail_driver_sendgrid extends yf_mail_driver {
 			$callback($mail, $params, $result, $error_message, $this->PARENT);
 		}
 		$this->PARENT->_last_error_message = $error_message;
-		return $response && !$error_message == 200 ? true : false;
+		return $response && !$error_message ? true : false;
 	}
 }
