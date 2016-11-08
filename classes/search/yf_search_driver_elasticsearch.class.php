@@ -1,7 +1,7 @@
 <?php
 
-load('mail_driver', 'framework', 'classes/mail/');
-class yf_mail_driver_sparkpost extends yf_mail_driver {
+load('search_driver', 'framework', 'classes/mail/');
+class yf_search_driver_elasticsearch extends yf_search_driver {
 
 	/**
 	* Catch missing method call
@@ -18,7 +18,7 @@ class yf_mail_driver_sparkpost extends yf_mail_driver {
 
 	/**
 	*/
-	function send(array $params = [], &$error_message = '') {
+	function search(array $params = [], &$error_message = '') {
 // TODO
 	}
 }
