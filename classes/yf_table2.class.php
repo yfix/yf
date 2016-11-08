@@ -478,7 +478,11 @@ class yf_table2 {
 				if (strpos($sql, '/*FILTER*/') !== false) {
 					$sql = str_replace('/*FILTER*/', ' '.$filter_sql.' ', $sql);
 				} elseif (strpos($sql_upper, 'WHERE') === false) {
-					$sql .= ' WHERE 1 '.$filter_sql;
+					if (strpos($sql_upper, 'GROUP BY') === false) {
+						$sql .= ' WHERE 1 '.$filter_sql;
+					} else {
+						$sql = str_replace('GROUP BY', ' WHERE 1 '.$filter_sql.' GROUP BY', $sql);
+					}
 				} else {
 					$sql .= ' '.$filter_sql;
 				}
