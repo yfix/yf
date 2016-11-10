@@ -6,10 +6,10 @@ return [
 	'versions' => [
 		'3.3.7' => [
 			'css' => [
-				'//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
-				! conf('bs3_no_default_theme') ? '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css' : '',
+				'//rawgit.yfix.net/twbs/bootstrap/v3.3.7/dist/css/bootstrap.min.css',
+				! conf('bs3_no_default_theme') ? '//rawgit.yfix.net/twbs/bootstrap/v3.3.7/dist/css/bootstrap-theme.min.css' : '',
 			],
-			'js' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js',
+			'js' => '//rawgit.yfix.net/twbs/bootstrap/v3.3.7/dist/js/bootstrap.min.js',
 		],
 	],
 	'require' => [
