@@ -1114,6 +1114,7 @@ class yf_payment_api {
 		$result = $this->cancel( $options );
 		return( $result );
 	}
+
 	public function cancel( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
@@ -1137,6 +1138,20 @@ class yf_payment_api {
 			];
 			$this->transaction_rollback();
 			return( $result );
+		}
+		if( @$_user_mode ) {
+			$account_result = $this->get_account( $options );
+			if( empty( $account_result ) ) { return( $account_result ); }
+			list( $account_id, $account ) = $account_result;
+			// check user account
+			if( $operation[ 'account_id' ] != $account_id ) {
+				$result = [
+					'status'         => false,
+					'status_message' => 'Операция пользователя отсутствует: ' . $_operation_id,
+				];
+				$this->transaction_rollback();
+				return( $result );
+			}
 		}
 		// status
 		$object = $this->get_status( [ 'status_id' => $operation[ 'status_id' ] ] );
