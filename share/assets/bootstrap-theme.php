@@ -102,8 +102,8 @@ if ($bs_theme === 'bootstrap') {
 	conf('bs3_no_default_theme', true);
 	return [
 		'versions' => [
-			'3.3.6' => [
-				'css' => '//netdna.bootstrapcdn.com/bootswatch/3.3.6/'.$bs_theme.'/bootstrap.min.css',
+			'3.3.7' => [
+				'css' => '//rawgit.yfix.net/thomaspark/bootswatch/v3.3.7/'.$bs_theme.'/bootstrap.min.css',
 			],
 		],
 		'require' => [
