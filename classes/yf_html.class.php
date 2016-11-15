@@ -546,14 +546,15 @@ class yf_html {
 
 	/**
 	*/
-	function panel($data = [], $extra = []) {
+	function panel($extra = []) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['class'] = $extra['class'] ?: 'panel panel-default';
 		return
-			'<div class="panel panel-primary'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
+			'<div class="'.implode(' ', array_filter([$extra['class'], $extra['class_add']])).'" id="'.$extra['id'].'">
 				<div class="panel-heading">
-					<h3 class="panel-title">'.$data['title'].'</h3>
+					<h3 class="panel-title">'.$extra['title'].'</h3>
 				</div>
-				<div class="panel-body">'.$data['body'].'</div>
+				<div class="panel-body">'.$extra['body'].'</div>
 			</div>';
 	}
 
