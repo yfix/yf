@@ -12,6 +12,7 @@ class yf_wrapper_queue {
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
+		!$this->_connection && $this->connect();
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
 			return call_user_func_array([$this->_connection, $name], $args);

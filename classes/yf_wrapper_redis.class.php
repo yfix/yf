@@ -15,6 +15,7 @@ class yf_wrapper_redis {
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
+		!$this->_connection && $this->connect();
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
 			return call_user_func_array([$this->_connection, $name], $args);
@@ -79,6 +80,7 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function conf($opt = []) {
+		!$this->_connection && $this->connect();
 		foreach ((array)$opt as $k => $v) {
 			$this->_connection->setOption($k, $v);
 		}
@@ -87,54 +89,63 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function get($key) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->get($key);
 	}
 
 	/**
 	*/
 	function set($key, $val) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->set($key, $val);
 	}
 
 	/**
 	*/
 	function del($key) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->del($key);
 	}
 
 	/**
 	*/
 	function lpush($key, $val) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->lpush($key, $val);
 	}
 
 	/**
 	*/
 	function rpop($key) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->rpop($key);
 	}
 
 	/**
 	*/
 	function lrem($key, $num) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->lrem($key, $num);
 	}
 
 	/**
 	*/
 	function lrange($key, $from = 0, $to = -1) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->lrange($key, $from, $to);
 	}
 
 	/**
 	*/
 	function pub($channel, $what) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->publish($channel, $what);
 	}
 
 	/**
 	*/
 	function sub($channels, $callback) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->subscribe($channels, $callback);
 	}
 }
