@@ -14,6 +14,8 @@ class yf_redirect {
 		'html',
 		'js',
 		'http',
+		'refresh',
+		'hybrid',
 	];
 	/** @var bool */
 	public $USE_DESIGN		= false;
@@ -117,7 +119,7 @@ class yf_redirect {
 	/**
 	* Common redirect method
 	*/
-	function _go($location, $rewrite = true, $redirect_type = 'js', $text = '', $ttl = 3, $params = []) {
+	function _go($location, $rewrite = true, $redirect_type = 'hybrid', $text = '', $ttl = 3, $params = []) {
 		if (is_array($location)) {
 			$params += $location;
 			$rewrite = isset($params['rewrite']) ? $params['rewrite'] : $rewrite;
@@ -203,7 +205,7 @@ class yf_redirect {
 					$hidden_fields = $form;
 				}
 			}
-			if (in_array($redirect_type, ['http','301','302'])) {
+			if (in_array($redirect_type, ['http','hybrid','refresh','301','302'])) {
 				$ttl = 0;
 			}
 			$body .= tpl()->parse('system/redirect', [
@@ -233,7 +235,7 @@ class yf_redirect {
 			return print common()->show_empty_page($body, ['full_width' => 1]);
 		}
 		if (empty($redirect_type) || !in_array($redirect_type, $this->AVAIL_TYPES)) {
-			$redirect_type = 'http';
+			$redirect_type = 'hybrid';
 		}
 		if ($this->FORCE_TYPE) {
 			$redirect_type = $this->FORCE_TYPE;
@@ -246,6 +248,10 @@ class yf_redirect {
 			$body = $this->_redirect_http_302($location, $text, $ttl, $params);
 		} elseif ($redirect_type == '301') {
 			$body = $this->_redirect_http_301($location, $text, $ttl, $params);
+		} elseif ($redirect_type == 'refresh') {
+			$body = $this->_redirect_http_refresh($location, $text, $ttl, $params);
+		} elseif ($redirect_type == 'hybrid') {
+			$body = $this->_redirect_hybrid($location, $text, $ttl, $params);
 		}
 		$this->_save_log([
 			'url_to'	=> $location,
@@ -258,10 +264,24 @@ class yf_redirect {
 	}
 
 	/**
+	* Hybrid redirect method (HTTP refresh + JS)
+	*/
+	function _redirect_hybrid ($location, $text = '', $ttl = 0, $params = []) {
+		$this->_redirect_http_refresh($location, $text, $ttl, $params);
+		return tpl()->parse('system/redirect', [
+			'mode'			=> 'hybrid',
+			'location'		=> $location,
+			'text'			=> $text,
+			'ttl'			=> intval($ttl),
+			'form_method'	=> $params['form_method'],
+		]);
+	}
+
+	/**
 	* JavaScript redirect method (with 'degrade gracefully' feature)
 	*/
 	function _redirect_js ($location, $text = '', $ttl = 0, $params = []) {
-		$replace = [
+		return tpl()->parse('system/redirect', [
 			'mode'			=> 'js',
 			'location'		=> $location,
 			'text'			=> $text,
@@ -269,27 +289,25 @@ class yf_redirect {
 			'html_redirect'	=> $this->_redirect_html($location, $text, $ttl),
 			'js_show_text'	=> (int)((bool)$this->JS_SHOW_TEXT),
 			'form_method'	=> $params['form_method'],
-		];
-		return tpl()->parse('system/redirect', $replace);
+		]);
 	}
 
 	/**
 	* HTML redirect method
 	*/
-	function _redirect_html ($location, $text = '', $ttl = 3, $params = []) {
-		$replace = [
+	function _redirect_html ($location, $text = '', $ttl = 0, $params = []) {
+		return tpl()->parse('system/redirect', [
 			'mode'			=> 'html',
 			'location'		=> $location,
 			'text'			=> $text,
 			'ttl'			=> intval($ttl),
 			'form_method'	=> $params['form_method'],
-		];
-		return tpl()->parse('system/redirect', $replace);
+		]);
 	}
 
 	/**
 	*/
-	function _redirect_http_302 ($location, $text = '', $ttl = 3, $params = []) {
+	function _redirect_http_302 ($location, $text = '', $ttl = 0, $params = []) {
 		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 302 Found');
 		header('Location: '.$location);
 		return '';
@@ -297,9 +315,17 @@ class yf_redirect {
 
 	/**
 	*/
-	function _redirect_http_301 ($location, $text = '', $ttl = 3, $params = []) {
+	function _redirect_http_301 ($location, $text = '', $ttl = 0, $params = []) {
 		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 301 Moved Permanently');
 		header('Location: '.$location);
+		return '';
+	}
+
+	/**
+	*/
+	function _redirect_http_refresh ($location, $text = '', $ttl = 0, $params = []) {
+		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 302 Found');
+		header('Refresh: '.$ttl.'; url='.$location);
 		return '';
 	}
 

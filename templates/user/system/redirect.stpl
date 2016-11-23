@@ -1,11 +1,12 @@
-{if("mode" eq "js")}
-	{if("js_show_text" eq "1")}
+{if(mode eq js or mode eq hybrid)}
+
+{{--if(js_show_text eq 1)}
 	<div align="center" id="redirect_text" style="display:none;">
 		<b>{text}</b><br /><br />
 		<i>{t(You_will_be_redirected_in)} {ttl} {t(seconds)}</i><br /><br />
 		<a href="{location}">{t(Click here if you don&#39;t want to wait or have some trouble with auto redirect)}.</a>
 	</div>
-	{/if}
+{/if--}}
 
 {js()}
 var _elm = document.getElementById("redirect_text");
@@ -19,16 +20,20 @@ var _interval = window.setInterval(function(){
 }, (_redirect_tll || 0.1) * 1000);
 {/js}
 
-<noscript>{html_redirect}</noscript>
+{{--<noscript>{html_redirect}</noscript>--}}
 
 {/if}
-{if("mode" eq "html")}
-<meta http-equiv="Refresh" content="{ttl}; Url='{location}'" /><br />
+{if(mode eq html)}
+
+<meta http-equiv="Refresh" content="{ttl}; Url='{location}'" />
+{{--
+<br />
 <div align="center">
 	<b>{text}</b><br /><br />
 	<i>{t(You_will_be_redirected_in)} {ttl} {t(seconds)}</i><br /><br />
 	<a href="{location}">{t(Click here if you don&#39;t want to wait or have some trouble with auto redirect)}.</a>
 </div>
+--}}
 {/if}
 {if("mode" eq "debug")}
 <form action="{location}" method="{if(form_method ne "")}{form_method}{else}GET{/if}">
@@ -39,4 +44,5 @@ var _interval = window.setInterval(function(){
 	{t(Redirect mode)}: <b>{normal_mode}</b>;
 	{t(Text)}: <b>{text}</b>;
 </form>
+
 {/if}
