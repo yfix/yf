@@ -411,6 +411,11 @@ class yf_graphics {
 		if ($robots_no_index) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
 		}
+		// We need this to make nginx cache correctly working
+		if ($uid = main()->USER_ID) {
+			header('X-Logged-In: 1');
+			header('X-Member-Id: '.$uid);
+		}
 // TODO: unify headers sending for 301, 302, 403, 404, also chech php_sapi_name() for strpos "cgi"
 // http://stackoverflow.com/questions/3258634/php-how-to-send-http-response-code
 #			http_response_code(404); // 5.4+
