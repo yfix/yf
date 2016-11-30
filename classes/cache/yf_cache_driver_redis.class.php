@@ -10,6 +10,9 @@ class yf_cache_driver_redis extends yf_cache_driver {
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
+		if (!$this->is_ready()) {
+			return null;
+		}
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
 			return call_user_func_array([$this->_connection, $name], $args);
@@ -19,9 +22,32 @@ class yf_cache_driver_redis extends yf_cache_driver {
 
 	/**
 	*/
+	function _get_conf($name, $default = null, array $params = []) {
+		if (isset($params[$name]) && $val = $params[$name]) {
+			return $val;
+		}
+		if ($val = getenv($name)) {
+			return $val;
+		}
+		if ($val = conf($name)) {
+			return $val;
+		}
+		if (defined($name) && ($val = constant($name)) != $name) {
+			return $val;
+		}
+		return $default;
+	}
+
+	/**
+	*/
 	function _init() {
+		$override = [
+			'REDIS_HOST'	=> $this->_get_conf('REDIS_CACHE_HOST'),
+			'REDIS_PORT'	=> $this->_get_conf('REDIS_CACHE_PORT'),
+			'REDIS_PREFIX'	=> $this->_get_conf('REDIS_CACHE_PREFIX'),
+		];
 		$this->_connection = redis();
-		$this->_connection->connect();
+		$this->_connection->connect($override);
 	}
 
 	/**
@@ -38,7 +64,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		}
 		$res = $this->_connection->get($name);
 #		return $res === false || $res === null ? null : $res;
-		return $res;
+		return $res ? json_decode($res, true) : null;
 	}
 
 	/**
@@ -47,6 +73,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
+		$data = json_encode($data);
 		if ($ttl > 0) {
 			return $this->_connection->setex($name, $ttl, $data) ?: null;
 		}
