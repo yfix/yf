@@ -96,6 +96,9 @@ if (!function_exists('pubsub')) {
 if (!function_exists('job')) {
 	function job($silent = false) { return _class('wrapper_job') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('getset')) {
+	function getset($key, callable $func, $ttl = 0, array $params = []) { return main()->getset($key, $func, $ttl, $params); }
+}
 // example: cache()->put()
 if (!function_exists('cache')) {
 	function cache($silent = false) { return _class('cache') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
