@@ -13,6 +13,24 @@ class yf_queue_driver_redis extends yf_queue_driver {
 
 	/**
 	*/
+	function _get_conf($name, $default = null, array $params = []) {
+		if (isset($params[$name]) && $val = $params[$name]) {
+			return $val;
+		}
+		if ($val = getenv($name)) {
+			return $val;
+		}
+		if ($val = conf($name)) {
+			return $val;
+		}
+		if (defined($name) && ($val = constant($name)) != $name) {
+			return $val;
+		}
+		return $default;
+	}
+
+	/**
+	*/
 	function conf($params = []) {
 		!$this->_connection && $this->connect();
 		$this->_connection->conf($params);
@@ -23,8 +41,13 @@ class yf_queue_driver_redis extends yf_queue_driver {
 	*/
 	function connect($params = []) {
 		if (!$this->_connection) {
+			$override = [
+				'REDIS_HOST'	=> $this->_get_conf('REDIS_QUEUE_HOST'),
+				'REDIS_PORT'	=> $this->_get_conf('REDIS_QUEUE_PORT'),
+				'REDIS_PREFIX'	=> $this->_get_conf('REDIS_QUEUE_PREFIX'),
+			];
 			$this->_connection = redis($params);
-			$this->_connection->connect();
+			$this->_connection->connect($override);
 		}
 		return $this->_connection;
 	}
