@@ -1679,10 +1679,9 @@ class yf_db {
 		if (!$query_sql) {
 			return '';
 		}
-		// the first frame is the original caller
-		$frame = array_pop(debug_backtrace());
-		// Add the PHP source location
-		$query_header = '-- File: '.$frame['file']."\t".'Line: '.$frame['line']."\t".'Function: '.$frame['function']."\t";
+		$trace = trace($skip_before = 3, $skip_after = 2);
+		$trace = str_replace(["\t","\n","\0"], '', $trace);
+		$query_header = '-- '.$trace."\t";
 		foreach ((array)$keys as $x => $key) {
 			$val = $this->_get_debug_item($key);
 			if (!$val) {

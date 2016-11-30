@@ -119,7 +119,7 @@ if (!function_exists('cache_files')) {
 	function cache_files() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(['driver' => 'files']); } return $cache; }
 }
 if (!function_exists('trace')) {
-	function trace() { $e = new Exception(); return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), 1, -1)); }
+	function trace($skip_before = 1, $skip_after = 1) { $e = new Exception(); return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), $skip_before, -$skip_after)); }
 }
 if (!function_exists('d')) {
 	function d() {
