@@ -174,9 +174,10 @@ class yf_cache {
 	function _get_avail_drivers_list() {
 		$dir = 'classes/cache/';
 		$paths = [
-			'project'	=> PROJECT_PATH. $dir,
-			'yf_core'	=> YF_PATH. $dir,
-			'yf_plugins'=> YF_PATH. 'plugins/*/'. $dir,
+			'app_core'		=> APP_PATH. $dir,
+			'app_plugins'	=> APP_PATH. 'plugins/*/'. $dir,
+			'yf_core'		=> YF_PATH. $dir,
+			'yf_plugins'	=> YF_PATH. 'plugins/*/'. $dir,
 		];
 		$prefix = 'cache_driver_';
 		$suffix = '.class.php';
@@ -196,9 +197,26 @@ class yf_cache {
 	}
 
 	/**
+	* Get data from cache, if data is empty - then execute callback and store result in cache
+	*/
+	function getset($name, callable $func, $ttl = 0, array $params = []) {
+		if ($name === false || $name === null || !is_string($name)) {
+			return null;
+		}
+		$result = $this->get($name, $ttl, $params);
+		if ($result === null) {
+			$result = $func($name, $ttl, $params, $this);
+			if ($result !== null) {
+				$this->set($name, $result, $ttl);
+			}
+		}
+		return $result;
+	}
+
+	/**
 	* Get data from cache
 	*/
-	function get($name, $force_ttl = 0, $params = []) {
+	function get($name, $force_ttl = 0, array $params = []) {
 		if ($name === false || $name === null) {
 			return null;
 		}
