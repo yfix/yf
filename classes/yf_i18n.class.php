@@ -59,7 +59,8 @@ class yf_i18n {
 #			$locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
 #			var_dump($locale);
 		}
-		conf('languages', main()->get_data('locale_langs'));
+		$data_langs = main()->get_data('locale_langs');
+		conf('languages', $data_langs);
 		// Force default language as it set in locale editor
 		foreach ((array)conf('languages') as $lang_info) {
 			if ($lang_info['is_default'] == 1) {
