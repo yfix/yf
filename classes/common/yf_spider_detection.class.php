@@ -157,8 +157,11 @@ class yf_spider_detection {
 				}
 			}
 		}
-		cache_set($cache_name, $data);
-		$this->_cache[$cache_name] = $data;
+		$prev_cached_data = $this->_cache[$cache_name];
+		if ($data && !is_array($prev_cached_data)) {
+			cache_set($cache_name, $data);
+			$this->_cache[$cache_name] = $data;
+		}
 		return $data;
 	}
 
@@ -212,8 +215,11 @@ class yf_spider_detection {
 				}
 			}
 		}
-		cache_set($cache_name, $data);
-		$this->_cache[$cache_name] = $data;
+		$prev_cached_data = $this->_cache[$cache_name];
+		if ($data && !is_array($prev_cached_data)) {
+			cache_set($cache_name, $data);
+			$this->_cache[$cache_name] = $data;
+		}
 		return $data;
 	}
 
