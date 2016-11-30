@@ -224,6 +224,23 @@ class yf_main {
 	}
 
 	/**
+	* Get named data with callback with optional caching
+	*/
+	function getset($name, callable $func, $ttl = 0, array $params = []) {
+		if (!is_string($name) || !$name) {
+			return null;
+		}
+		$enabled = $this->USE_SYSTEM_CACHE;
+		$enabled && $cache = cache();
+		$enabled && $result = $cache->get($name, $ttl, $params);
+		if (!$result && !is_array($result)) {
+			$result = $func($name, $ttl, $params);
+			$enabled && $cache->set($name, $result, $ttl);
+		}
+		return $result;
+	}
+
+	/**
 	* Micro-framework 'fast_init' inside big YF framework. We use it when some actions need to be done at top speed.
 	*/
 	function try_fast_init() {
