@@ -1424,12 +1424,12 @@ class yf_db {
 		}
 		$data = [];
 		if (!$no_cache) {
-			$data = cache_tmp()->get($cache_name);
+			$data = cache()->get($cache_name);
 		}
 		if (!$data) {
 			$data = $this->meta_columns($table);
 			if (!$no_cache) {
-				cache_tmp()->set($cache_name, $data);
+				cache()->set($cache_name, $data);
 			}
 		}
 		return $data;
