@@ -5,6 +5,8 @@ class yf_cache_driver_redis extends yf_cache_driver {
 
 	/** @var object internal @conf_skip */
 	public $_connection = null;
+	/** @var int */
+	public $DEFAULT_TTL = 3600;
 
 	/**
 	* Catch missing method call
@@ -74,10 +76,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 			return null;
 		}
 		$data = json_encode($data);
-		if ($ttl > 0) {
-			return $this->_connection->setex($name, $ttl, $data) ?: null;
-		}
-		return $this->_connection->set($name, $data) ?: null;
+		return $this->_connection->setex($name, $ttl ?: $this->DEFAULT_TTL, $data) ?: null;
 	}
 
 	/**
