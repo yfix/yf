@@ -1694,12 +1694,19 @@ abstract class yf_db_query_builder_driver {
 	public function get_key_name($table = '') {
 		$pk = '';
 		if (strlen($table)) {
-			$utils = $this->db->utils();
-			if ($utils->table_exists($table)) {
-				$primary_index = $utils->index_info($table, 'PRIMARY');
-				if (isset($primary_index['columns'])) {
-					$pk = current($primary_index['columns']);
+			if (main()->USE_SYSTEM_CACHE) {
+				$cache_name = get_class($this).'|'.__FUNCTION__.'|'.$table.'|'.$this->db->DB_HOST.'|'.$this->db->DB_PORT.'|'.$this->db->DB_NAME.'|'.$this->db->DB_PREFIX;
+			}
+			$cache_name && $pk = cache()->get($cache_name);
+			if (!$pk) {
+				$utils = $this->db->utils();
+				if ($utils->table_exists($table)) {
+					$primary_index = $utils->index_info($table, 'PRIMARY');
+					if (isset($primary_index['columns'])) {
+						$pk = current($primary_index['columns']);
+					}
 				}
+				$cache_name && cache()->set($cache_name, $pk);
 			}
 		} elseif ($model = $this->get_model()) {
 			$pk = $model->get_key_name();
