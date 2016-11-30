@@ -15,6 +15,24 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 
 	/**
 	*/
+	function _get_conf($name, $default = null, array $params = []) {
+		if (isset($params[$name]) && $val = $params[$name]) {
+			return $val;
+		}
+		if ($val = getenv($name)) {
+			return $val;
+		}
+		if ($val = conf($name)) {
+			return $val;
+		}
+		if (defined($name) && ($val = constant($name)) != $name) {
+			return $val;
+		}
+		return $default;
+	}
+
+	/**
+	*/
 	function conf($params = []) {
 		!$this->_is_connection && $this->connect();
 		$this->_connection_pub->conf($params);
@@ -26,10 +44,15 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 	*/
 	function connect($params = []) {
 		if (!$this->_is_connection) {
+			$override = [
+				'REDIS_HOST'	=> $this->_get_conf('REDIS_PUBSUB_HOST'),
+				'REDIS_PORT'	=> $this->_get_conf('REDIS_PUBSUB_PORT'),
+				'REDIS_PREFIX'	=> $this->_get_conf('REDIS_PUBSUB_PREFIX'),
+			];
 			$this->_connection_pub = clone redis($params);
+			$this->_connection_pub->connect($override);
 			$this->_connection_sub = clone redis($params);
-			$this->_connection_pub->connect();
-			$this->_connection_sub->connect();
+			$this->_connection_sub->connect($override);
 		}
 		return $this->_is_connection;
 	}
