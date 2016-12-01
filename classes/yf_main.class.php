@@ -233,7 +233,13 @@ class yf_main {
 		$enabled = $this->USE_SYSTEM_CACHE;
 		$enabled && $cache = cache();
 		$enabled && $result = $cache->get($name, $ttl, $params);
-		if (!$result && !is_array($result)) {
+		$need_result = true;
+		if ($result) {
+			$need_result = false;
+		} elseif (is_array($result) || (is_string($result) && ($result === '' || $result === '0' || $result === 'false'))) {
+			$need_result = false;
+		}
+		if ($need_result) {
 			$result = $func($name, $ttl, $params);
 			$enabled && $cache->set($name, $result, $ttl);
 		}
