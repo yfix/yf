@@ -230,7 +230,7 @@ class yf_main {
 		if (!is_string($name) || !$name) {
 			return null;
 		}
-		$enabled = $this->USE_SYSTEM_CACHE;
+		$enabled = $this->USE_SYSTEM_CACHE && !$params['no_cache'];
 		$enabled && $cache = cache();
 		$enabled && $result = $cache->get($name, $ttl, $params);
 		$need_result = true;
