@@ -6,6 +6,10 @@
 class yf_csrf_guard {
 
 	public $ENABLED = true;
+	public $ENABLED_FOR = [
+		'admin' => false,
+		'user' => true,
+	];
 	public $HASH_ALGO = 'sha256';
 	public $FORM_ID = null;
 	public $TOKEN_NAME = '_token';
@@ -63,7 +67,7 @@ class yf_csrf_guard {
 	/**
 	*/
 	function validate($token_value) {
-		if (!$this->ENABLED) {
+		if (!$this->ENABLED || !$this->ENABLED_FOR[MAIN_TYPE]) {
 			return true;
 		}
 		$token = $this->get();
