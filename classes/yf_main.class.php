@@ -230,6 +230,9 @@ class yf_main {
 		if (!is_string($name) || !$name) {
 			return null;
 		}
+		$refresh = $params['refresh_cache'];
+		$refresh && $params['no_cache'] = true;
+
 		$enabled = $this->USE_SYSTEM_CACHE && !$params['no_cache'];
 		$enabled && $cache = cache();
 		$enabled && $result = $cache->get($name, $ttl, $params);
@@ -241,7 +244,9 @@ class yf_main {
 		}
 		if ($need_result) {
 			$result = $func($name, $ttl, $params);
-			$enabled && $cache->set($name, $result, $ttl);
+			if ($enabled || $refresh) {
+				$cache->set($name, $result, $ttl);
+			}
 		}
 		return $result;
 	}
