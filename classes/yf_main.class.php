@@ -234,7 +234,9 @@ class yf_main {
 		$refresh && $params['no_cache'] = true;
 
 		$enabled = $this->USE_SYSTEM_CACHE && !$params['no_cache'];
-		$enabled && $cache = cache();
+		if ($enabled || $refresh) {
+			$cache = cache();
+		}
 		$enabled && $result = $cache->get($name, $ttl, $params);
 		$need_result = true;
 		if ($result) {
