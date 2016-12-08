@@ -104,20 +104,33 @@ class yf_ck_file_browser {
 
 	/**
 	*/
+	function upload_image() {
+		return $this->upload_file();
+	}
+
+	/**
+	*/
 	function upload_file() {
+		no_graphics(true);
+		if (!MAIN_TYPE_ADMIN) {
+			return print 'access denied';
+		}
+// TODO: tons of additional security checks
 		$error = '';
 		$upload_dir = $this->base .'/'. $_GET['id'];
-		$file = $_FILES['file'];
+		if (!file_exists($upload_dir)) {
+			mkdir($upload_dir, 0755, true);
+		}
+		$file = $_FILES['file'] ?: $_FILES['upload'] ?: current($_FILES);
 		if (empty($file['tmp_name'])) {
 			$error = 'File upload error';
 		} else {
-			$file_name = $file['name'];
-			$file_path = $upload_dir.'/'.$file_name;
+			$file_path = $upload_dir.'/'.$file['name'];
 			if (file_exists($file_path)) {
 				$error = 'File already exists';
 			} else {
-				move_uploaded_file($file['tmp_name'], $file_path);
-				if (!file_exists($file_path)) {
+				$result = move_uploaded_file($file['tmp_name'], $file_path);
+				if (!$result || !file_exists($file_path)) {
 					$error = 'Cannot upload file to this dir';
 				}
 			}
@@ -125,8 +138,27 @@ class yf_ck_file_browser {
 		if ($error) {
 			echo '<script>alert("'._prepare_html( t($error) ).'");</script>';
 		} else {
-			echo '<script>try { parent.refreshjstree(); } catch(e) { console.log(e) }</script>';
+			if ($_GET['CKEditorFuncNum']) {
+				return $this->_ck_show_message('Uploaded OK', str_replace(PROJECT_PATH, WEB_PATH, $file_path));
+			} else {
+				echo '<script>try { parent.refreshjstree(); } catch(e) { console.log(e) }</script>';
+			}
 		}
+		exit;
+	}
+
+	/**
+	*/
+	function _ck_show_message($message, $url = '') {
+		$funcNum = $_GET['CKEditorFuncNum'];
+		echo '<script type="text/javascript">
+			try {
+				window.opener.CKEDITOR.tools.callFunction('.$funcNum.', "'.$url.'", "'.$message.'");
+			} catch (e) {
+				window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$url.'", "'.$message.'");
+			}
+		</script>';
+		exit;
 	}
 
 	/**
