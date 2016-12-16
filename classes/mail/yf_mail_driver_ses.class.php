@@ -50,7 +50,7 @@ class yf_mail_driver_ses extends yf_mail_driver {
 			$msg_id = $result->get('MessageId');
 		} catch(Exception $e) {
 			if (DEBUG_MODE) {
-				d($e->getMessage());
+				d(_prepare_html($e->getMessage()));
 			}
 			$error_message = 'SES error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
 		}
