@@ -39,7 +39,11 @@ class yf_manage_emails {
 			'to_email'		=> $cur_admin_email ?: SITE_ADMIN_EMAIL,
 			'to_name'		=> 'test email receiver',
 			'to_subject'	=> '[email tpl #'.$a['name'].'] '.$a['subject'],
+			'no_async'		=> intval((bool)$_GET['no_async']),
 		] + $a;
+		if ($a['no_async']) {
+			_class('email')->ASYNC_SEND = false;
+		}
 		return form($a)
 			->validate(['to_email' => 'trim|email|required'])
 			->on_validate_ok(function($post) use ($a) {
@@ -54,6 +58,7 @@ class yf_manage_emails {
 			->email('to_email')
 			->text('to_name')
 			->text('to_subject')
+			->hidden('no_async')
 			->submit(['icon' => 'fa fa-send', 'value' => 'Send'])
 			->info('name', 'Email template')
 			->container('<iframe src="'.url('/@object/raw/@id').'" width="100%" height="600" frameborder="0" vspace="0" style="background:white;">Your browser does not support iframes!</iframe>')
