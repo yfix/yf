@@ -434,12 +434,12 @@ class yf_admin_modules {
 		if (!$data) {
 			$data = ['' => '-- All --'];
 			foreach ((array)$this->_get_methods($params) as $module_name => $module_methods) {
-				$data[$module_name] = $module_name.' -> *';
+				$data[$module_name] = $module_name.'.*';
 				foreach ((array)$module_methods as $method_name) {
 					if ($method_name == $module_name) {
 						continue;
 					}
-					$data[$module_name.'.'.$method_name] = $module_name.' -> '.$method_name;
+					$data[$module_name.'.'.$method_name] = $module_name.'.'.$method_name;
 				}
 			}
 			cache_set($cache_name, $data);
