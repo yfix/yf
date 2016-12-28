@@ -1872,7 +1872,7 @@ class yf_table2 {
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if ($extra['padding'] && $row['level']) {
-				$padding = '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>';
+				$padding = '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px; float: left; font-size: 25px; line-height: 30px;">&#9492;</span>';
 			}
 			$value = $field;
 			if ($extra['propose_url_from'] && !strlen($value)) {
@@ -1883,6 +1883,7 @@ class yf_table2 {
 				'name'	=> $params['name'].'['.$row['id'].']',
 				'desc'	=> $params['name'],
 				'value'	=> $value,
+				'style' => $extra['padding'] && $row['level'] ? 'width:calc(100% - '.($row['level'] * 20 + 30).'px)' : '',
 			] + (array)$extra);
 		}, $extra);
 	}
