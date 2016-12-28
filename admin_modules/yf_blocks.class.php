@@ -83,7 +83,8 @@ class yf_blocks {
 				'hide_empty' => 1,
 				'group_by' => 'name',
 			])
-			->link('name', url('/@object/show_rules/%d'), '', ['link_field_name' => 'id'])
+#			->link('name', url('/@object/show_rules/%d'), '', ['link_field_name' => 'id'])
+			->text('name')
 			->text('type')
 			->text('num_rules')
 			->text('stpl_name', 'Template')
