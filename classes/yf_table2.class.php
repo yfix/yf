@@ -1688,7 +1688,11 @@ class yf_table2 {
 					$table->_pair_active = main()->get_data('pair_active');
 				}
 				$values = $table->_pair_active;
-				$val = $values[intval((bool)$row[strtolower($params['name'])])];
+				$is_active = intval((bool)$row[strtolower($params['name'])]);
+				$val = $values[$is_active];
+				if ($extra['short']) {
+					return html()->btn_active($link, $is_active, $extra);
+				}
 				return !$extra['disabled'] ? '<a'._attrs($extra, ['href','class','title']).'>'. $val. '</a> ' : $val;
 			},
 		];
