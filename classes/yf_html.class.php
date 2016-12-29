@@ -1669,18 +1669,19 @@ class yf_html {
 	/**
 	* Active toggler
 	*/
-	function btn_active($url = '', $active = 0) {
+	function btn_active($url = '', $active = 0, $extra = []) {
 		!$url && $url = url('/@object/active/@id');
 		$pairs = [
 			'class' => ['btn-warning', 'btn-success'],
 			'icon' => ['fa fa-ban', 'fa fa-check'],
 			'title' => [t('Disabled'), t('Active')],
 		];
-		return $this->a($url
+		$class = ($extra['class'] ?: 'change_active'). ($extra['class_add'] ? ' '.$extra['class_add'] : '');
+		return $extra['disabled'] ? $pairs['class'][$active] : $this->a($url
 			, $pairs['title'][$active]
 			, $pairs['icon'][$active]
 			, ''
-			, 'change_active active_short '.$pairs['class'][$active]
+			, $class.' active_short '.$pairs['class'][$active]
 		);
 	}
 
