@@ -80,24 +80,6 @@ if ($bs_theme === 'bootstrap') {
 			'asset' => $fixes_name,
 		],
 	];
-} elseif ($bs_major_version == 2) {
-	return [
-		'versions' => [
-			'2.3.2' => [
-				'css' => '//netdna.bootstrapcdn.com/bootswatch/2.3.2/'.$bs_theme.'/bootstrap.min.css',
-			],
-		],
-		'require' => [
-			'asset' => 'bootstrap2',
-		],
-		'add' => [
-			'asset' => [
-				'font-awesome3',
-#				'font-awesome4',
-				$fixes_name,
-			],
-		],
-	];
 } elseif ($bs_major_version == 3) {
 	conf('bs3_no_default_theme', true);
 	return [
