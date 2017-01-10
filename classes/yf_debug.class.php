@@ -10,7 +10,7 @@
 class yf_debug {
 
 	public $SHOW_DB_QUERY_LOG		= true;
-	public $SHOW_DB_STATS			= true;
+	public $SHOW_DB_STATS			= false;
 	public $SHOW_DB_EXPLAIN_QUERY	= true;
 	public $SHOW_SPHINX				= true;
 	public $SHOW_SSH				= true;
@@ -31,6 +31,7 @@ class yf_debug {
 	public $SHOW_GLOBALS			= true;
 	public $SHOW_NOT_TRANSLATED		= true;
 	public $SHOW_I18N_VARS			= true;
+	public $SHOW_INPUT_DATA			= true;
 	public $SHOW_GET_DATA			= true;
 	public $SHOW_POST_DATA			= true;
 	public $SHOW_COOKIE_DATA		= true;
@@ -1036,47 +1037,23 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__get(&$params = []) {
-		if (!$this->SHOW_GET_DATA) {
+	function _debug_input(&$params = []) {
+		if (!$this->SHOW_INPUT_DATA) {
 			return '';
 		}
-		$out = $this->_show_key_val_table($_GET);
-		$items = $this->_get_debug_data('input_get');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
-
-	/**
-	*/
-	function _debug__post(&$params = []) {
-		if (!$this->SHOW_POST_DATA) {
-			return '';
+		$body = [];
+		foreach (['GET','POST','FILES','COOKIE','SERVER','ENV'] as $name) {
+			$enabled_var = 'SHOW_'.$name.'_DATA';
+			$enabled = $this->$enabled_var;
+			if ($enabled) {
+				$val = '_'.$name;
+				$out = $this->_show_key_val_table($GLOBALS[$val]);
+				$items = $this->_get_debug_data('input_'.strtolower($name));
+				$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
+				$body[] = '<div class="col-md-12"><h3>_'.$name.'</h3>'.$out.'</div>';
+			}
 		}
-		$out = $this->_show_key_val_table($_POST);
-		$items = $this->_get_debug_data('input_post');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
-
-	/**
-	*/
-	function _debug__cookie(&$params = []) {
-		if (!$this->SHOW_COOKIE_DATA) {
-			return '';
-		}
-		$out = $this->_show_key_val_table($_COOKIE);
-		$items = $this->_get_debug_data('input_cookie');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
-
-	/**
-	*/
-	function _debug__files(&$params = []) {
-		if (!$this->SHOW_FILES_DATA) {
-			return '';
-		}
-		return $this->_show_key_val_table($_FILES);
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -1092,34 +1069,20 @@ class yf_debug {
 				'value' => '<pre>'._prepare_html($this->_var_export($v)).'</pre>',
 			];
 		}
-		$out = $this->_show_auto_table($items, ['first_col_width' => '1%']);
+		$out = '<div class="col-md-6">'.$this->_show_auto_table($items, ['first_col_width' => '1%']).'</div>';
+
+		$data['session_id'] = session_id();
+		foreach ((array)ini_get_all('session') as $k => $v) {
+			$data[$k] = $v['local_value'];
+		}
+		foreach ($data as $k => $v) {
+			$data[$k] = _prepare_html($v);
+		}
+		$out .= '<div class="col-md-6">'.$this->_show_key_val_table($data, ['no_total' => 1, 'no_sort' => 1, 'no_escape' => 1]).'</div>';
 
 		$items = $this->_get_debug_data('input_session');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
+		$items && $out .= '<div class="col-md-6">'.$this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]).'</div>';
 
-	/**
-	*/
-	function _debug__server(&$params = []) {
-		if (!$this->SHOW_SERVER_DATA) {
-			return '';
-		}
-		$out = $this->_show_key_val_table($_SERVER);
-		$items = $this->_get_debug_data('input_server');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
-
-	/**
-	*/
-	function _debug__env(&$params = []) {
-		if (!$this->SHOW_ENV_DATA) {
-			return '';
-		}
-		$out = $this->_show_key_val_table($_ENV);
-		$items = $this->_get_debug_data('input_env');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
 		return $out;
 	}
 
