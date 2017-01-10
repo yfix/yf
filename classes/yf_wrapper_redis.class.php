@@ -64,11 +64,13 @@ class yf_wrapper_redis {
 		$this->port   = (int)$this->_get_conf('REDIS_PORT', '6379', $params);
 		$this->prefix = $this->_get_conf('REDIS_PREFIX', '', $params);
 		$this->prefix = $this->prefix ? $this->prefix .':' : '';
+		$this->opt_connect_timeout = $this->_get_conf('REDIS_OPT_CONNECT_TIMEOUT', '1', $params);
+		$this->opt_connect_delay = $this->_get_conf('REDIS_OPT_CONNECT_DELAY', '100', $params);
 
 		$redis = null;
 		if ($this->driver == 'phpredis') {
 			$redis = new Redis();
-			$redis->connect($this->host, (int)$this->port);
+			$redis->connect($this->host, (int)$this->port, (float)$this->opt_connect_timeout, null, (int)$this->opt_connect_delay);
 			$redis->setOption( Redis::OPT_PREFIX, $this->prefix );
 		} elseif ($this->driver == 'predis') {
 			require_php_lib('predis');
