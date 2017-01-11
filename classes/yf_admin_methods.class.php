@@ -72,11 +72,11 @@ class yf_admin_methods {
 		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
-		return table('SELECT * FROM '.$db->es($table), [
-				'id'			=> $params['id'] ?: 'id',
-				'filter'		=> $_SESSION[$filter_name],
-				'filter_params' => $params['filter_params'],
-			])->auto();
+		return table(from($table), [
+			'id'			=> $params['id'] ?: 'id',
+			'filter'		=> $_SESSION[$filter_name],
+			'filter_params' => $params['filter_params'],
+		])->auto();
 	}
 
 	/**
@@ -114,7 +114,7 @@ class yf_admin_methods {
 			}
 			$fields = array_keys($columns);
 		}
-		if (main()->is_post()) {
+		if (is_post()) {
 			if (!common()->_error_exists()) {
 				$sql = [];
 				foreach ((array)$fields as $f) {
@@ -194,7 +194,8 @@ class yf_admin_methods {
 			}
 		}
 		$fields	= $params['fields'];
-		$primary_field = $params['id'] ? $params['id'] : 'id';
+		$primary_field = $params['id'] ?: $params['primary'] ?: 'id';
+		$secondary_field = $params['secondary'] ?: 'name';
 		$id = isset($params['input_'.$primary_field]) ? $params['input_'.$primary_field] : $_GET['id'];
 		if (!$fields) {
 			$columns = $db->meta_columns($table);
@@ -203,7 +204,10 @@ class yf_admin_methods {
 			}
 			$fields = array_keys($columns);
 		}
-		$a = $db->get('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($id).'"');
+		$a = $db->from($table)->where($primary_field, '=', $id)->get();
+		if (!$a && $secondary_field && in_array($secondary_field, $fields)) {
+			$a = $db->from($table)->where($secondary_field, '=', $id)->get();
+		}
 		if (!$a) {
 			$error = 'Wrong id';
 			if ($params['return_form']) {
@@ -213,7 +217,7 @@ class yf_admin_methods {
 				return $replace;
 			}
 		}
-		if (main()->is_post()) {
+		if (is_post()) {
 			if (!common()->_error_exists()) {
 				$sql = [];
 				foreach ((array)$fields as $f) {
