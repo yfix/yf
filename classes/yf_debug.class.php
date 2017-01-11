@@ -20,9 +20,9 @@ class yf_debug {
 	public $SHOW_RESIZED_IMAGES_LOG	= true;
 	public $SHOW_INCLUDED_FILES		= true;
 	public $SHOW_LOADED_MODULES		= true;
+	public $SHOW_REDIS_INFO			= true;
 	public $SHOW_MEMCACHED_INFO		= true;
 	public $SHOW_DASHBOARD_INFO		= true;
-	public $SHOW_EACCELERATOR_INFO	= true;
 	public $SHOW_XCACHE_INFO		= true;
 	public $SHOW_APC_INFO			= true;
 	public $SHOW_MAIN_GET_DATA		= true;
@@ -804,6 +804,22 @@ class yf_debug {
 
 	/**
 	*/
+	function _debug_redis(&$params = []) {
+		if (!$this->SHOW_REDIS_INFO) {
+			return '';
+		}
+// general redis
+// cache redis
+// sessions redis
+// conf redis
+#		if (strpos(strtolower(cache()->DRIVER), 'redis') === false) {
+#			return '';
+#		}
+#		return print_r(redis()->info(), 1);
+	}
+
+	/**
+	*/
 	function _debug_memcached(&$params = []) {
 		if (!$this->SHOW_MEMCACHED_INFO) {
 			return '';
@@ -1148,19 +1164,6 @@ class yf_debug {
 			return '';
 		}
 		return $this->_show_key_val_table(_class('ssh')->_debug);
-	}
-
-	/**
-	*/
-	function _debug_eaccelerator(&$params = []) {
-		if (!$this->SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
-			return '';
-		}
-		$eaccel_stats = eaccelerator_info();
-		foreach ((array)ini_get_all('eaccelerator') as $_k => $_v) {
-			$eaccel_stats[$_k] = $_v['local_value'];
-		}
-		return $this->_show_key_val_table($eaccel_stats);
 	}
 
 	/**
