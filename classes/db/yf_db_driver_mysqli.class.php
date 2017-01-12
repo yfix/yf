@@ -64,7 +64,7 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	*/
 	function connect() {
 		$this->db_connect_id = mysqli_init();
-		if (!$this->db_connect_id) {
+		if (!$this->db_connect_id || mysqli_connect_errno()) {
 			$this->_connect_error = 'cannot_connect_to_server';
 			$this->db_connect_id = null;
 			return false;
@@ -213,7 +213,12 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	/**
 	*/
 	function error() {
-		if ($this->db_connect_id) {
+		if (mysqli_connect_errno()) {
+			return [
+				'message'	=> mysqli_connect_error(),
+				'code'		=> mysqli_connect_errno(),
+			];
+		} elseif ($this->db_connect_id) {
 			return [
 				'message'	=> mysqli_error($this->db_connect_id),
 				'code'		=> mysqli_errno($this->db_connect_id),
