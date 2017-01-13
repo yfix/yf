@@ -35,7 +35,26 @@ class yf_pcntl_signal {
 			isset( $_is_exit      ) && $is_exit      = $_is_exit;
 			isset( $_is_terminate ) && $is_terminate = $_is_terminate;
 			isset( $_is_silent    ) && $is_silent    = $_is_silent;
-			var_dump( 'init', $is_exit, $is_terminate, $is_silent );
+			// ini
+			ini_set( 'html_errors', 0 );
+			error_reporting( E_ALL & ~E_NOTICE );
+			if( isset( $_is_error ) && $_is_error ) {
+				ini_set( 'display_errors',         true );
+				ini_set( 'display_startup_errors', true );
+			}
+			// timeout
+			if( isset( $_ttl ) && $_ttl > 0 ) {
+				$ttl = (int)$_ttl;
+				$r = 5; // 5%
+				$d = $ttl * $r / 100;
+				$t1 = $ttl - $d;
+				$t2 = $ttl + $d;
+				$t = mt_rand( $ttl - $d, $ttl + $d );
+				( $ttl > 0 && $t < 1 ) && $t = 1;
+				echo 'ttl: '. $t .PHP_EOL;
+				set_time_limit( $t );
+			}
+			ini_set( 'default_socket_timeout', -1 );
 		}
 	}
 	public static function _signal_init( $options = null ) {
