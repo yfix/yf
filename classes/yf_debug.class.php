@@ -816,6 +816,22 @@ class yf_debug {
 #			return '';
 #		}
 #		return print_r(redis()->info(), 1);
+		$redis_main = redis();
+#		$redis_cache = strpos(strtolower(cache()->DRIVER), 'redis') !== false ? cache()->_driver->_connection : null;
+
+		$items = (array)$redis_main->_log;
+		foreach ($items as $k => $v) {
+			$data = $this->_var_export($v['args']);
+##			$size = $v['data'] === null ? 'NULL' : strlen($data);
+			$items[$k]['args'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
+#			$items[$k]['data_size'] = $size;
+		}
+		$items = $this->_time_count_changes($items);
+		$body[] = $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'args']]);
+
+		$body[] = $this->_show_key_val_table($redis_main->info());
+
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
