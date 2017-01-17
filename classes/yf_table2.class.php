@@ -1234,7 +1234,7 @@ class yf_table2 {
 			$extra = [];
 		}
 		if (!$name) {
-			$name = 'user_id';
+			$name = $extra['name'] ?: 'user_id';
 		}
 		if ($link) {
 			$extra['link'] = $link;
@@ -1258,8 +1258,11 @@ class yf_table2 {
 			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
+			$desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
 		}
 		$this->_fields[] = [
 			'type'	=> __FUNCTION__,
@@ -1282,8 +1285,11 @@ class yf_table2 {
 			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
+			$desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
 		}
 		$this->_fields[] = [
 			'type'	=> __FUNCTION__,
@@ -1527,14 +1533,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
-		if (!$name) {
-			$name = 'Edit';
-		}
-		if (!$link) {
-			$link = url('/@object/edit/%d');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'Edit';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/edit/%d');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_EDIT;
@@ -1555,14 +1561,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
-		if (!$name) {
-			$name = 'Delete';
-		}
-		if (!$link) {
-			$link = url('/@object/delete/%d');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'Delete';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/delete/%d');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_DELETE;
@@ -1583,14 +1589,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
-		if (!$name) {
-			$name = 'Clone';
-		}
-		if (!$link) {
-			$link = url('/@object/clone_item/%d');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'Clone';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/clone_item/%d');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_CLONE;
@@ -1611,14 +1617,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
-		if (!$name) {
-			$name = 'View';
-		}
-		if (!$link) {
-			$link = url('/@object/view/%d');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'View';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/view/%d');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_VIEW;
@@ -1639,11 +1645,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!$name) {
-			$name = 'Active';
+			$name = $extra['name'] ?: 'Active';
 		}
 		if (!$link) {
-			$link = url('/@object/active/%d');
+			$link = $extra['link'] ?: url('/@object/active/%d');
 		}
 		$this->_buttons[] = [
 			'type'	=> __FUNCTION__,
@@ -1776,14 +1785,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = $extra['name'];
 		}
-		if (!$name) {
-			$name = 'add';
-		}
-		if (!$link) {
-			$link = url('/@object/add');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'add';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/add');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_ADD;
