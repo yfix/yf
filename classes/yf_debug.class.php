@@ -799,7 +799,7 @@ class yf_debug {
 			$items['db_shutdown_queries_'.$name] = $this->_show_db_shutdown_queries($db);
 			$items['db_stats_'.$name] = $this->_show_db_stats($db);
 		}
-		return _class('html')->tabs($items, ['hide_empty' => 1]);
+		return $items ? _class('html')->tabs($items, ['hide_empty' => 1]) : null;
 	}
 
 	/**
@@ -823,8 +823,8 @@ class yf_debug {
 				$items[$counter] = [
 					'id'	=> ++$counter,
 					'func'	=> a('https://redis.io/commands/'.$v['func'], $v['func']),
-					'args'	=> '<pre><small>'._prepare_html(substr(implode(PHP_EOL, $v['args']), 0, 1000)).'</small></pre>',
-					'result'=> $v['result'] ? '<pre><small>'._prepare_html($v['result']).'</small></pre>' : null,
+					'args'	=> $v['args'] ? '<pre><small>'._prepare_html(substr(implode(PHP_EOL, $v['args']), 0, 1000)).'</small></pre>' : '',
+					'result'=> $v['result'] ? '<pre><small>'._prepare_html($this->_var_export($v['result'])).'</small></pre>' : null,
 					'time'	=> round($v['exec_time'], 5),
 					'trace'	=> _prepare_html($v['trace']),
 				];
@@ -834,7 +834,7 @@ class yf_debug {
 			$items[-1] = ['id' => 'TOTAL', 'time' => round($totals['time'], 5)] + array_map(function(){}, last($items));
 
 			$logs = $this->_show_auto_table($items, [
-				'hidden_map' => ['trace' => 'args'],
+				'hidden_map' => ['trace' => 'args', 'result' => 'time'],
 				'no_total' => 1, 
 				'skip_empty_values' => 1,
 				'caption' => $iname,
@@ -843,7 +843,7 @@ class yf_debug {
 			$tabs[$iname] = '<div class="col-md-8">'.$logs.'</div>'
 				. '<div class="col-md-4">'.$this->_show_key_val_table($instance->info(), ['no_total' => 1, 'skip_empty_values' => 1]).'</div>';
 		}
-		return _class('html')->tabs($tabs, ['hide_empty' => 1]);
+		return $tabs ? _class('html')->tabs($tabs, ['hide_empty' => 1]) : null;
 	}
 
 	/**
