@@ -23,6 +23,8 @@ return [
 .cssfw-bs3 .form-group .small-number { width: 120px; }
 .cssfw-bs3 .form-group select[name=order_by] { width:150px; }
 .cssfw-bs3 .form-group select[name=order_direction] { width:40px; font-weight:bold; padding:0; font-size: 16px; }
+
+.form-horizontal .radio, .form-horizontal .checkbox { min-height: 10px; }
 			'],
 			'jquery' => [
 #				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
