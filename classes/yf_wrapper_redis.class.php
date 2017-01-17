@@ -10,17 +10,27 @@ class yf_wrapper_redis {
 	public $port   = 6379;
 	public $prefix = '';
 	static $_connection = null;
+	public $_log = [];
+	public $LOG_LIMIT = 1000;
 
 	/**
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
+		if (DEBUG_MODE) {
+			$time_start = microtime(true);
+		}
 		!$this->_connection && $this->connect();
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			return call_user_func_array([$this->_connection, $name], $args);
+			$result = call_user_func_array([$this->_connection, $name], $args);
+		} else {
+			$result = main()->extend_call($this, $name, $args);
 		}
-		return main()->extend_call($this, $name, $args);
+		if (DEBUG_MODE) {
+			$this->_query_log($name, $args, $result, microtime(true) - $time_start);
+		}
+		return $result;
 	}
 
 	/**
@@ -95,55 +105,6 @@ class yf_wrapper_redis {
 
 	/**
 	*/
-	function get($key) {
-		!$this->_connection && $this->connect();
-		return $this->_connection->get($key);
-	}
-
-	/**
-	*/
-	function set($key, $val) {
-		!$this->_connection && $this->connect();
-		return $this->_connection->set($key, $val);
-	}
-
-	/**
-	*/
-	function del($key) {
-		!$this->_connection && $this->connect();
-		return $this->_connection->del($key);
-	}
-
-	/**
-	*/
-	function lpush($key, $val) {
-		!$this->_connection && $this->connect();
-		return $this->_connection->lpush($key, $val);
-	}
-
-	/**
-	*/
-	function rpop($key) {
-		!$this->_connection && $this->connect();
-		return $this->_connection->rpop($key);
-	}
-
-	/**
-	*/
-	function lrem($key, $num) {
-		!$this->_connection && $this->connect();
-		return $this->_connection->lrem($key, $num);
-	}
-
-	/**
-	*/
-	function lrange($key, $from = 0, $to = -1) {
-		!$this->_connection && $this->connect();
-		return $this->_connection->lrange($key, $from, $to);
-	}
-
-	/**
-	*/
 	function pub($channel, $what) {
 		!$this->_connection && $this->connect();
 		return $this->_connection->publish($channel, $what);
@@ -154,5 +115,30 @@ class yf_wrapper_redis {
 	function sub($channels, $callback) {
 		!$this->_connection && $this->connect();
 		return $this->_connection->subscribe($channels, $callback);
+	}
+
+	/**
+	*/
+	function _query_log($func, $args = [], $result = null, $exec_time = 0.0) {
+		// Save memory on high number of query log entries
+		if ($this->LOG_LIMIT && count($this->_log) >= $this->LOG_LIMIT) {
+			return false;
+		}
+		$this->_log[] = [
+			'func'		=> $func,
+			'args'		=> $args,
+			'result'	=> $result,
+			'exec_time'	=> round($exec_time, 5),
+			'trace'		=> $this->_trace_string(2),
+		];
+		return count($this->_log) - 1;
+	}
+
+	/**
+	* Print nice
+	*/
+	function _trace_string($from = 1, $to = 1) {
+		$e = new Exception();
+		return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), $from, -$to));
 	}
 }

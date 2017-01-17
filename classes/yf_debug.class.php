@@ -514,7 +514,7 @@ class yf_debug {
 			}
 		}
 		$table = table((array)$items, [
-			'table_class' 		=> 'debug_item table-condensed', 
+			'table_class' 		=> 'debug_item table-condensed',
 			'auto_no_buttons' 	=> 1,
 			'pager_records_on_page' => 10000,
 			'hidden_map'		=> $params['hidden_map'],
@@ -808,14 +808,42 @@ class yf_debug {
 		if (!$this->SHOW_REDIS_INFO) {
 			return '';
 		}
-// general redis
-// cache redis
-// sessions redis
-// conf redis
-#		if (strpos(strtolower(cache()->DRIVER), 'redis') === false) {
-#			return '';
-#		}
-#		return print_r(redis()->info(), 1);
+		$instances = [
+			'redis_default' => redis(),
+			'redis_cache' => strpos(strtolower(cache()->DRIVER), 'redis') !== false ? cache()->_driver->_connection : null,
+		];
+		$tabs = [];
+		foreach((array)$instances as $iname => $instance) {
+			if (!$instance || !$instance->_log || ($iname != 'redis_default' && $instance === $instances['redis_default'])) {
+				continue;
+			}
+			$items = [];
+			$totals = [];
+			foreach ((array)$instance->_log as $k => $v) {
+				$items[$counter] = [
+					'id'	=> ++$counter,
+					'func'	=> a('https://redis.io/commands/'.$v['func'], $v['func']),
+					'args'	=> '<pre><small>'._prepare_html(substr(implode(PHP_EOL, $v['args']), 0, 1000)).'</small></pre>',
+					'result'=> $v['result'] ? '<pre><small>'._prepare_html($v['result']).'</small></pre>' : null,
+					'time'	=> round($v['exec_time'], 5),
+					'trace'	=> _prepare_html($v['trace']),
+				];
+				$totals['time'] += $v['exec_time'];
+			}
+			$items = $this->_time_count_changes($items);
+			$items[-1] = ['id' => 'TOTAL', 'time' => round($totals['time'], 5)] + array_map(function(){}, last($items));
+
+			$logs = $this->_show_auto_table($items, [
+				'hidden_map' => ['trace' => 'args'],
+				'no_total' => 1, 
+				'skip_empty_values' => 1,
+				'caption' => $iname,
+				'tr' => function($row, $id, $rid) { return $id == -1 ? ['class' => 'active'] : []; }
+			]);
+			$tabs[$iname] = '<div class="col-md-8">'.$logs.'</div>'
+				. '<div class="col-md-4">'.$this->_show_key_val_table($instance->info(), ['no_total' => 1, 'skip_empty_values' => 1]).'</div>';
+		}
+		return _class('html')->tabs($tabs, ['hide_empty' => 1]);
 	}
 
 	/**
