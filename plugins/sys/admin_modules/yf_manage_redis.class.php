@@ -88,17 +88,58 @@ class yf_manage_redis {
 	*/
 	function edit() {
 		$i = preg_replace('~[^a-z0-9_]+~ims', '', trim($_GET['i']));
-		$id = preg_replace('~[^a-z0-9_]+~ims', '', trim($_GET['id']));
 		if (!$i || !isset($this->instances[$i])) {
-			return implode(PHP_EOL, array_map(function($in){ return a('/@object/?i='.$in, $in, 'fa fa-cog', $in, '', ''); }, array_keys($this->instances)));
+			return js_redirect('/@object');
 		}
 		$r = &$this->instances[$i];
-// TODO
+		$key = trim($_GET['id']);
+		if (strpos($key, REDIS_PREFIX) === 0) {
+			$key = substr($key, strlen(REDIS_PREFIX) + 1);
+		}
+		if (!$r->exists($key)) {
+			return _e('No such key');
+		}
+		$type = $this->types[$r->type($key)];
+		$len = '?';
+		$data = '';
+		if ($type == 'STRING') {
+			$len = $r->strlen($key);
+			$data = $r->get($key);
+		} elseif ($type == 'HASH') {
+			$len = $r->hlen($key);
+			$data = $r->hgetall($key);
+		} elseif ($type == 'SET') {
+			$len = $r->scard($key);
+			$data = $r->smembers($key);
+		}
+		if (is_array($data)) {
+			$data = html()->simple_table($data);
+		}
+		$ttl = $r->ttl($key);
+		return html()->simple_table([
+			'key'	=> $key,
+			'type'	=> $type,
+			'len'	=> $len,
+			'ttl'	=> $ttl,
+		]). '<br>'. $data;
 	}
 
 	/**
 	*/
 	function delete() {
+		$i = preg_replace('~[^a-z0-9_]+~ims', '', trim($_GET['i']));
+		if (!$i || !isset($this->instances[$i])) {
+			return js_redirect('/@object');
+		}
+		$r = &$this->instances[$i];
+		$key = trim($_GET['id']);
+		if (strpos($key, REDIS_PREFIX) === 0) {
+			$key = substr($key, strlen(REDIS_PREFIX) + 1);
+		}
+		if (!$r->exists($key)) {
+			return _e('No such key');
+		}
+		$type = $this->types[$r->type($key)];
 // TODO
 	}
 
