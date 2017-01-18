@@ -138,7 +138,7 @@ class yf_pcntl_signal {
 				$is_terminate_by_signal = true;
 				break;
 			default:
-				if( !@$is_silent ) {
+				if( !$is_silent ) {
 					echo 'Signal not handled: '. $signo .PHP_EOL;
 				}
 		}
