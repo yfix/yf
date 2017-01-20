@@ -58,6 +58,18 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Clone this object while keeping all vars
+	*/
+	public function clone() {
+		$bak = get_object_vars($this);
+		$new = clone $this;
+		foreach ((array)$bak as $k => $v) {
+			$new->$k = $v;
+		}
+		return $new;
+	}
+
+	/**
 	* Create text SQL from params
 	*/
 	public function render() {
