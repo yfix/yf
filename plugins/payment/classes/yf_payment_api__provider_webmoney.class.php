@@ -592,7 +592,12 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// check amount
-		if( @$request[ 'amount' ] != @$response[ 'amount' ] ) {
+		$fail_amount = (empty($request[ 'amount_currency' ]) || empty($response[ 'amount' ]) ) ? true : false;
+		if(!$fail_amount) {
+			$request_amount = floatval($request['amount_currency']);
+			$response_amount = floatval($response['amount']);
+		}
+		if($fail_amount || abs($response_amount-$request_amount)>0.001){
 			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ответ: amount',
