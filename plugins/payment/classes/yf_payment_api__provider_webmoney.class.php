@@ -25,6 +25,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		'order' => [
 			'payin' => [
 				'webmoney',
+				//'wmr',
+				//'card',
 			],
 			'payout' => [
 				'p2p_wmz',
@@ -41,6 +43,47 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 						'active'      => true,
 					],
 				],
+				'currency_allow' => [
+					'USD' => [
+						'currency_id' => 'USD',
+						'active'      => true,
+					],
+				],
+			],
+			'wmr' => [
+				'title' => 'WebMoney RUB',
+				'icon'  => 'webmoney',
+				'currency' => [
+					'RUB' => [
+						'currency_id' => 'RUB',
+						'active'      => true,
+					],
+				],
+				'currency_allow' => [
+					'RUB' => [
+						'currency_id' => 'RUB',
+						'active'      => true,
+					],
+				],
+			],
+			'card' => [
+				'title'       => 'Visa, MasterCard',
+				'icon'        => 'visa-mastercard',
+				'currency' => [
+					'RUB' => [
+						'currency_id' => 'RUB',
+						'active'      => true,
+					],
+				],
+				'currency_allow' => [
+					'RUB' => [
+						'currency_id' => 'RUB',
+						'active'      => true,
+					],
+				],
+				'option'=> [
+					'at'=>'authtype_16'
+				]
 			],
 		],
 		'api' => [
@@ -272,21 +315,21 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 
 	public $currency_default = 'USD';
 	public $currency_allow = [
-		/*
 		'USD' => array(
 			'currency_id' => 'USD',
 			'active'      => true,
 		),
+		/*'RUB' => array(
+			'currency_id' => 'RUB',
+			'active'      => true,
+		),
+
 		'EUR' => array(
 			'currency_id' => 'EUR',
 			'active'      => true,
 		),
 		'UAH' => array(
 			'currency_id' => 'UAH',
-			'active'      => true,
-		),
-		'RUB' => array(
-			'currency_id' => 'RUB',
 			'active'      => true,
 		),
 		*/
@@ -531,6 +574,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// DUMP
 		$payment_api->dump([ 'var' => $form_options ]);
 		$url = $this->URL;
+		if(!empty($data['at'])){
+			$url .= '?at='.$data['at'];
+		}
 		$result = [];
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
