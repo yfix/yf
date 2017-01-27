@@ -26,21 +26,21 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
 
     public $external_response_errors = [];
 
-    public $service_allow = array(
+    public $service_allow = [
         'payeer',
-    );
+    ];
 
-    public $method_allow = array(
-        'order' => array(
-            'payin' => array(
+    public $method_allow =[
+        'order' => [
+            'payin' => [
                 'payeer',
-            ),
-            'payout' => array(
+            ],
+            'payout' => [
                 'payeer',
-            ),
-        ),
-        'payin' => array(
-            'payeer' => array(
+            ],
+        ],
+        'payin' => [
+            'payeer' => [
                 'title' => 'Payeer',
                 'icon'  => 'payeer',
                 'ps' => '2609',
@@ -49,21 +49,31 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'currency_id' => 'USD',
                         'active'      => true,
                     ],
-                ],
-                'currency' => [
                     'EURO' => [
                         'currency_id' => 'EURO',
                         'active'      => true,
                     ],
-                ],
-                'currency' => [
                     'RUB' => [
                         'currency_id' => 'RUB',
                         'active'      => true,
                     ],
                 ],
-            ),
-            'qiwi' => array(
+                'currency_allow' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+            'qiwi' => [
                 'title'       => 'Qiwi',
                 'icon'        => 'qiwi',
                 'ps' => '20916096',
@@ -72,21 +82,31 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'currency_id' => 'USD',
                         'active'      => true,
                     ],
-                ],
-                'currency' => [
                     'EURO' => [
                         'currency_id' => 'EURO',
                         'active'      => true,
                     ],
-                ],
-                'currency' => [
                     'RUB' => [
                         'currency_id' => 'RUB',
                         'active'      => true,
                     ],
                 ],
-            ),
-            'advcash' => array(
+                'currency_allow' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+            'advcash' => [
                 'title'       => 'Advcash',
                 'icon'        => 'advcash',
                 'ps' => '88106414',
@@ -95,21 +115,31 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'currency_id' => 'USD',
                         'active'      => true,
                     ],
-                ],
-                'currency' => [
                     'EURO' => [
                         'currency_id' => 'EURO',
                         'active'      => true,
                     ],
-                ],
-                'currency' => [
                     'RUB' => [
                         'currency_id' => 'RUB',
                         'active'      => true,
                     ],
                 ],
-            ),
-            'btc-e' => array(
+                'currency_allow' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+            'btc-e' => [
                 'title'       => 'BTC-E',
                 'icon'        => 'btc-e',
                 'ps' => '35228575',
@@ -118,15 +148,23 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'currency_id' => 'USD',
                         'active'      => true,
                     ],
-                ],
-                'currency' => [
                     'RUB' => [
                         'currency_id' => 'RUB',
                         'active'      => true,
                     ],
                 ],
-            ),
-            'okpay' => array(
+                'currency_allow' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+            'okpay' => [
                 'title'       => 'OkPay',
                 'icon'        => 'okpay',
                 'ps' => '1577275',
@@ -144,8 +182,22 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'active'      => true,
                     ],
                 ],
-            ),
-            'litecoin' => array(
+                'currency_allow' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                    'RUB' => [
+                        'currency_id' => 'RUB',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+            'litecoin' => [
                 'title'       => 'Litecoin',
                 'icon'        => 'litecoin',
                 'ps' => '101525097',
@@ -155,8 +207,14 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'active'      => true,
                     ],
                 ],
-            ),
-            'dogecoin' => array(
+                'currency_allow' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+            'dogecoin' => [
                 'title'       => 'Dogecoin',
                 'icon'        => 'dogecoin',
                 'ps' => '101531593',
@@ -166,8 +224,14 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'active'      => true,
                     ],
                 ],
-            ),
-            'visa' => array(
+                'currency_allow' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+            'visa' => [
                 'title'       => 'Visa',
                 'icon'        => 'visa',
                 'ps' => '21433878',
@@ -181,8 +245,18 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'active'      => true,
                     ],
                 ],
-            ),
-            'mastercard' => array(
+                'currency_allow' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+            'mastercard' => [
                 'title'       => 'Mastercard',
                 'icon'        => 'mastercard',
                 'ps' => '49398264',
@@ -192,8 +266,14 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'active'      => true,
                     ],
                 ],
-            ),
-            'bitcoin' => array(
+                'currency_allow' => [
+                    'EURO' => [
+                        'currency_id' => 'EURO',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+            'bitcoin' => [
                 'title'       => 'Bitcoin',
                 'icon'        => 'bitcoin',
                 'ps' => '45955149',
@@ -203,10 +283,16 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                         'active'      => true,
                     ],
                 ],
-            ),
-        ),
-        'payout' => array(
-            'payeer' => array(
+                'currency_allow' => [
+                    'USD' => [
+                        'currency_id' => 'USD',
+                        'active'      => true,
+                    ],
+                ],
+            ],
+        ],
+        'payout' => [
+            'payeer' => [
                 'title' => 'Payeer',
                 'icon'  => 'payeer',
                 'currency' => [
@@ -245,9 +331,9 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 'option_validation_message' => [
                     'to' => 'вы должны указать верный Payeer аккаунт',
                 ],
-            ),
+            ],
 
-            'visa' => array(
+            'visa' => [
                 'title' => 'Visa',
                 'icon'  => 'visa',
                 'currency' => [
@@ -287,9 +373,9 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 'option_validation_message' => [
                     'param_ACCOUNT_NUMBER' => 'вы должны указать верную карту Visa',
                 ],
-            ),
+            ],
 
-            'mastercard' => array(
+            'mastercard' => [
                 'title' => 'Mastercard',
                 'icon'  => 'mastercard',
                 'currency' => [
@@ -329,9 +415,9 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 'option_validation_message' => [
                     'param_ACCOUNT_NUMBER' => 'вы должны указать верную карту Mastercard',
                 ],
-            ),
+            ],
 
-            'maestro' => array(
+            'maestro' => [
                 'title' => 'Maestro',
                 'icon'  => 'maestro',
                 'currency' => [
@@ -371,9 +457,9 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 'option_validation_message' => [
                     'param_ACCOUNT_NUMBER' => 'вы должны указать верную карту Maestro',
                 ],
-            ),
+            ],
 
-            'okpay' => array(
+            'okpay' => [
                 'title' => 'OkPay',
                 'icon'  => 'okpay',
                 'currency' => [
@@ -417,9 +503,9 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 'option_validation_message' => [
                     'param_ACCOUNT_NUMBER' => 'вы должны указать верную кошелёк OkPay',
                 ],
-            ),
+            ],
 
-            'paxum' => array(
+            'paxum' => [
                 'title' => 'Paxum',
                 'icon'  => 'paxum',
                 'currency' => [
@@ -459,9 +545,9 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 'option_validation_message' => [
                     'param_ACCOUNT_NUMBER' => 'вы должны указать верную кошелёк Paxum',
                 ],
-            ),
+            ],
 
-            'qiwi' => array(
+            'qiwi' => [
                 'title' => 'Qiwi',
                 'icon'  => 'qiwi',
                 'currency' => [
@@ -505,8 +591,8 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 'option_validation_message' => [
                     'param_ACCOUNT_NUMBER' => 'вы должны указать верную кошелёк Qiwi',
                 ],
-            ),
-            'bitcoin' => array(
+            ],
+            'bitcoin' => [
                 'title' => 'Bitcoin',
                 'icon'  => 'bitcoin',
                 'currency' => [
@@ -546,21 +632,21 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 'option_validation_message' => [
                     'param_ACCOUNT_NUMBER' => 'вы должны указать верный кошелёк Bitcoin',
                 ],
-            ),
-        ),
-    );
+            ],
+        ],
+    ];
 
     public $currency_default = 'USD';
-    public $currency_allow = array(
-        'USD' => array(
+    public $currency_allow = [
+        'USD' => [
             'currency_id' => 'USD',
             'active'      => true,
-        ),
-        'RUB' => array(
+        ],
+        'RUB' => [
             'currency_id' => 'RUB',
             'active'      => true,
-        ),
-    );
+        ],
+    ];
 
     public function _init() {
         if( !$this->ENABLE ) { return( null ); }
@@ -597,10 +683,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         // status
         list( $status_name, $status_message ) = $this->_state( $state );
         // response
-        $response = array(
+        $response = [
             'operation_id' => $operation_id,
-        );
-        $operation_data = array(
+        ];
+        $operation_data = [
             'operation_id'   => $operation_id,
             'provider_name'  => $provider_name,
             'state'          => $state,
@@ -608,7 +694,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
             'status_message' => $status_message,
             'payment_type'   => $payment_type,
             'response'       => $response,
-        );
+        ];
         $result = $this->{ '_api_' . $payment_type }( $operation_data );
         return( $result );
     }
@@ -641,7 +727,8 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
         $response_status = 'fail';
         if (isset($_POST['m_operation_id']) && isset($_POST['m_sign']))
         {
-            $arHash = array($_POST['m_operation_id'],
+            $arHash = [
+                $_POST['m_operation_id'],
                 $_POST['m_operation_ps'],
                 $_POST['m_operation_date'],
                 $_POST['m_operation_pay_date'],
@@ -651,7 +738,8 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
                 $_POST['m_curr'],
                 $_POST['m_desc'],
                 $_POST['m_status'],
-                $this->API_PASS_MERCHANT);
+                $this->API_PASS_MERCHANT
+            ];
             $sign_hash = strtoupper(hash('sha256', implode(':', $arHash)));
             if ($_POST['m_sign'] == $sign_hash && $_POST['m_status'] == 'success')
             {
@@ -789,7 +877,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
     }
 
     public function signature( $options ) {
-        return strtoupper(hash('sha256', implode(':', array_merge($options, array($this->API_PASS_MERCHANT)))));
+        return strtoupper(hash('sha256', implode(':', array_merge($options, [$this->API_PASS_MERCHANT]))));
     }
 
     public function _create_api_response($options){
