@@ -443,7 +443,11 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// currency
-		$currency_id = @$_currency_id ?: @$_currency ?: @$this->currency_default;
+		if(is_post() && !empty($_POST['LMI_PAYEE_PURSE'])) {
+			$first_letter = _substr($_POST['LMI_PAYEE_PURSE'], 0, 1);
+			$response_currency = ($first_letter == 'Z') ? 'USD' : ($first_letter == 'R') ? 'RUB' : false;
+		}
+		$currency_id = @$_currency_id ?: @$_currency ?: @$response_currency?: @$this->currency_default;
 		if( ! @$currency_id ) {
 			$result = [
 				'status'         => false,
@@ -716,7 +720,15 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 				'status_message' => 'Неверная подпись',
 			];
 			// DUMP
-			$payment_api->dump([ 'var' => $result ]);
+			$payment_api->dump(
+				[ 'var' =>
+					[
+						$result,
+						'$signature' => $signature,
+						'$_signature' => $_signature,
+						'purse' => $this->_purse_by_currency(['is_key'=>false]),
+					]
+				]);
 			return( $result );
 		}
 		// save options
