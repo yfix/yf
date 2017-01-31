@@ -445,7 +445,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// currency
 		if(is_post() && !empty($_POST['LMI_PAYEE_PURSE'])) {
 			$first_letter = _substr($_POST['LMI_PAYEE_PURSE'], 0, 1);
-			$response_currency = ($first_letter == 'Z') ? 'USD' : ($first_letter == 'R') ? 'RUB' : false;
+			$response_currency = ($first_letter == 'Z') ? 'USD' : (($first_letter == 'R') ? 'RUB' : false);
 		}
 		$currency_id = @$_currency_id ?: @$_currency ?: @$response_currency?: @$this->currency_default;
 		if( ! @$currency_id ) {
