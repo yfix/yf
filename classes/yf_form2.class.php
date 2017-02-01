@@ -2092,6 +2092,24 @@ class yf_form2 {
 
 	/**
 	*/
+	function button_check_box($name, $values, $extra = [], $replace = []) {
+		return $this->_html_control($name, $values, $extra, $replace, 'button_check_box');
+	}
+
+	/**
+	*/
+	function button_radio_box($name, $values, $extra = [], $replace = []) {
+		return $this->_html_control($name, $values, $extra, $replace, 'button_radio_box');
+	}
+
+	/**
+	*/
+	function button_yes_no_box($name, $values, $extra = [], $replace = []) {
+		return $this->_html_control($name, $values, $extra, $replace, 'button_yes_no_box');
+	}
+
+	/**
+	*/
 	function select2_box($name, $values = null, $extra = [], $replace = []) {
 		return $this->_html_control($name, $values, $extra, $replace, 'select2_box');
 	}

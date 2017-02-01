@@ -18,6 +18,8 @@ class yf_html {
 	public $CLASS_LABEL_CHECKBOX = 'checkbox';
 	public $CLASS_LABEL_CHECKBOX_INLINE = 'checkbox-inline';
 	public $CLASS_LABEL_CHECKBOX_SELECTED = 'active';
+	public $CLASS_LABEL_BTN_RADIO = 'btn btn-xs btn-primary';
+	public $CLASS_LABEL_BTN_CHECKBOX = 'btn btn-xs btn-primary';
 	public $CLASS_SELECT_BOX = 'form-control';
 	public $CLASS_SELECT_OPTION_DEFAULT = 'opt-default';
 	public $CLASS_INPUT = 'form-control';
@@ -930,6 +932,59 @@ class yf_html {
 
 	/**
 	*/
+	function button_yes_no_box($name, $values = [], $selected = '') {
+		$def = $this->CLASS_LABEL_BTN_RADIO;
+		$values = [
+			['class' => $def.' btn-warning', 'html' => '<i class="fa fa-ban"></i> '.t('No').'</span>'],
+			['class' => $def.' btn-success', 'html' => '<i class="fa fa-check"></i> '.t('Yes').'</span>'],
+		];
+		return $this->button_radio_box($name, $values, $selected);
+	}
+
+	/**
+	*/
+	function button_radio_box($name, $values = [], $selected = '') {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		!is_array($extra) && $extra = [];
+		$label_extra = $extra['label_extra'];
+		$extra = [
+			'name' => $name,
+			'values' => $values,
+			'selected' => $selected,
+			'use_stpl' => false,
+			'label_extra' => [
+				'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_RADIO). ($extra['horizontal'] ? ' '.$this->CLASS_LABEL_RADIO_INLINE : ''),
+			],
+		] + $extra;
+		return '<div class="btn-group" data-toggle="buttons">'.$this->radio_box($extra).'</div>';
+	}
+
+	/**
+	*/
+	function button_check_box($name, $values = [], $selected = '') {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		!is_array($extra) && $extra = [];
+		$label_extra = $extra['label_extra'];
+		$extra = [
+			'name' => $name,
+			'values' => $values,
+			'selected' => $selected,
+			'use_stpl' => false,
+			'label_extra' => [
+				'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_CHECKBOX),
+			],
+		] + $extra;
+		return '<div class="btn-group" data-toggle="buttons">'.$this->check_box($extra).'</div>';
+	}
+
+	/**
+	*/
 	function radio_box($name, $values = [], $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -962,14 +1017,17 @@ class yf_html {
 			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
 		}
 		$orig_extra = $extra;
+		$use_stpl = isset($extra['use_stpl']) ? $extra['use_stpl'] : $this->BOXES_USE_STPL;
 		foreach ((array)$values as $value => $val_name) {
+			$label_extra_class = '';
 			if (is_array($val_name)) {
 				$extra = (array)$orig_extra + (array)$val_name['extra'];
+				$label_extra_class = $val_name['class'];
 				$val_name = $val_name['html'];
 			}
 			$is_selected = (strval($type == 1 ? $val_name : $value) == $selected);
 			$id = $id_prefix.'_'.++$counter;
-			if ($this->BOXES_USE_STPL) {
+			if ($use_stpl) {
 				$body[] = tpl()->parse('system/common/radio_box_item', [
 					'name'			=> $name,
 					'value'			=> $value,
@@ -982,17 +1040,18 @@ class yf_html {
 				]);
 			} else {
 				$label_extra = $extra['label_extra'];
-				$label_extra['class'] = ($label_extra['class'] ?: $this->CLASS_LABEL_RADIO). ($horizontal ? ' '.$this->CLASS_LABEL_RADIO_INLINE : '');
+				$label_extra['class'] = ($label_extra_class ?: $label_extra['class'] ?: $this->CLASS_LABEL_RADIO). ($horizontal ? ' '.$this->CLASS_LABEL_RADIO_INLINE : '');
 				if ($extra['class_add_label_radio']) {
 					$label_extra['class'] .= ' '.$extra['class_add_label_radio'];
 				}
 				if ($is_selected) {
 					$label_extra['class'] .= ' '.$this->CLASS_LABEL_RADIO_SELECTED;
 				}
-				$body[] = '<label'._attrs($label_extra, ['id', 'class', 'style']).'>'
-							. '<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
-							. '<span>'. t($val_name). '</span>'
-						. '</label>'.PHP_EOL;
+				$body[] = 
+					'<label'._attrs($label_extra, ['id', 'class', 'style']).'>'
+					. '<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
+					. '<span>'. t($val_name). '</span>'
+					. '</label>'.PHP_EOL;
 			}
 		}
 		return implode(PHP_EOL, $body);

@@ -639,6 +639,21 @@ class sample_html {
 	}
 
 	/***/
+	function button_radio_box() {
+		return _class('html')->button_radio_box('input_name', ['k1' => 'key1', 'k2' => 'key2']);
+	}
+
+	/***/
+	function button_yes_no_box() {
+		return _class('html')->button_yes_no_box('input_name', ['k1' => 'key1', 'k2' => 'key2']);
+	}
+
+	/***/
+	function button_check_box() {
+		return _class('html')->button_check_box('input_name', ['k1' => 'key1', 'k2' => 'key2']);
+	}
+
+	/***/
 	function radio_box() {
 		return _class('html')->radio_box('input_name', ['k1' => 'key1', 'k2' => 'key2']);
 	}
