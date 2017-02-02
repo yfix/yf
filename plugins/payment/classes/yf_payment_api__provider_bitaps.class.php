@@ -11,6 +11,11 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
     public $CONFIRMATIONS = 6;
     public $FEE_LEVEL = 'low';
     public $MARKET_NAME = 'average';
+    public $SERVICE_FEE = 20000;//satoshi
+    public $SERVICE_AMOUNT_MIN = 30000;//satoshi
+    public $SATOSHI_TO_BTC = 100000000;
+    public $RATE_VARIATION_PC = 1;//%
+    public $SATOHI_DEVIATION = 1000;
 
     public $IS_DEPOSITION = true;
     public $IS_PAYMENT    = true;
@@ -44,7 +49,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'fee' => 0.0002,
-                'amount_min' => 0.00003,
+                'amount_min' => 0.0003,
             ],
         ],
 
@@ -107,24 +112,20 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
     }
 
     public function _api_response( $options ) {
+        $operation_id = isset($_GET['operation_id']) ? intval($_GET['operation_id']): '';
+        $this->payment_api->dump([ 'name' => 'Bitaps', 'operation_id' => $operation_id]);
         // import options
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 
-        $options['id'] = $_POST['id'] ? : '';
-        $options['posData'] = $_POST['posData'] ? : '';
-        $options['status'] = $_POST['status'] ? : '';
-        $options['btcPrice'] = $_POST['btcPrice'] ? : '';
-        $options['currency'] = $_POST['currency'] ? : '';
-        $options['btcPaid'] = $_POST['btcPaid'] ? : '';
-        $options['rate'] = $_POST['rate'] ? : '';
-        $options['exceptionStatus'] = !empty($_POST['exceptionStatus'])  && $_POST['exceptionStatus'] != 'false' ? $_POST['exceptionStatus'] : false;
-
         $is_response_error = false;
-        if(!empty($options['id'])) {
-            $pos_data = json_decode($options['posData'], true);
-            if(!empty($pos_data['orderId']) && !empty($pos_data['secret'])){
-                $this->_external_response($options);
-            }
+        $options['address'] = $_POST['address'] ? : '';
+        $options['invoice'] = $_POST['invoice'] ? : '';
+        $options['code'] = $_POST['code'] ? : '';
+        $options['amount'] = $_POST['amount'] ? : '';
+        $options['confirmations'] = $_POST['confirmations'] ? : '';
+        $options['payout_service_fee'] = $_POST['payout_service_fee'] ? : '';
+        if(!empty($operation_id)) {
+            $this->_external_response($options);
         }
         else {
             $is_response_error = true;
@@ -166,11 +167,12 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
 
     //process response from bitaps, where we get info about transaction
     public function _external_response($options){
-        $pos_data = json_decode($options['posData'], true);
-        $operation_id = intval($pos_data['orderId']);
+        $operation_id = $options['operation_id'];
+        $payment_code = $options['code']?:'';
+        $address = $options['address']?:'';
+        $confirmations = $options['confirmations']?:'';
         $ip = common()->get_ip();
-        $secret = $pos_data['secret'];
-        $this->payment_api->dump([ 'name' => 'Bitpay', 'operation_id' => $operation_id, 'ip' => $ip ]);
+
         $payment_api = $this->payment_api;
         $operation = $payment_api->operation( [
             'operation_id' => $operation_id,
@@ -198,35 +200,25 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                             'datetime' => $payment_api->sql_datetime()
                         ]
                     ];
-                    if(!empty($operation['options']['request']['secret'])){
+                    if(!empty($operation['options']['request']['invoice']['payment_code'])){
 
-                        $real_secret = $operation['options']['request']['secret'];
-                        if($real_secret == $secret){
-                            if(in_array($options['status'], $this->success_statuses)) {
-                                $operation_add_options['external_response']['action'] = 'approve';
-                                $update_data = [
-                                    'operation_id'    => $operation_id,
-                                    'options'         => $operation_add_options,
-                                ];
-                                $payment_api->operation_update( $update_data );
-                                $status_name = 'success';
-                                $status_message = 'ok';
+                        $real_payment_code = $operation['options']['request']['invoice']['payment_code'];
+                        $real_address = $operation['options']['request']['invoice']['address'];
+                        if($real_payment_code == $payment_code && $confirmations>=$this->CONFIRMATIONS && $real_address==$address){
+                            $need_update_amount = false;
+                            $amount_currency_satoshi = $operation['options']['request']['amount_currency_satoshi'];
+                            $real_amount_currency_satoshi = $options['amount']-$options['payout_service_fee'];
+                            if(abs($amount_currency_satoshi-$real_amount_currency_satoshi)>$this->SATOHI_DEVIATION){
+                                $need_update_amount = true;
                             }
-                            if(in_array($options['status'], $this->fail_statuses)) {
-                                $status_name = $options['status'] == 'expired'? $options['status']: 'cancelled';
-                                $status_message = 'fail';
-                                $operation_add_options['external_response']['action'] = $status_name;
-                                $update_data = [
-                                    'operation_id'    => $operation_id,
-                                    'options'         => $operation_add_options,
-                                ];
-                                $payment_api->operation_update( $update_data );
+                            $unt_to_btc = $this->payment_api->currency_rate(['from'=>'UNT', 'to'=>'BTC']);
+                            $unt_to_btc_request = $operation['options']['request']['unt_to_btc'];
+                            $rate_variation_pc = abs(1-$unt_to_btc/$unt_to_btc_request)*100;
+                            if($this->RATE_VARIATION_PC<$rate_variation_pc){
+                                $need_update_amount = true;
                             }
-                            if(in_array($options['status'], $this->partial_statuses)){
-                                $currency = $options['currency'] ? : 'USD';
-                                $currency_rate = $this->payment_api->currency_rate(['from'=>$currency, 'to'=>'UNT']);
-
-                                $amount = $options['btcPaid']*$options['rate']*$currency_rate;
+                            if($need_update_amount) {
+                                $amount = $real_amount_currency_satoshi*$unt_to_btc/$this->SATOSHI_TO_BTC;
                                 //need update operation amount
                                 $action = 'update amount from '.$operation['amount'].' to '.$amount;
                                 $operation_add_options['external_response']['action'] = $action;
@@ -312,21 +304,24 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
             return( $result );
         }
         // fee
-        $fee = $this->fee;
-        $amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+        $fee=$this->SERVICE_FEE/$this->SATOSHI_TO_BTC;
+        $amount_currency_total = $amount_currency+$fee;
 
-
-        $invoice_data = $this->_create_invoice();
-        $usd_to_unt = $payment_api->currency_conversion( [
-            'type'        => 'buy',
-            'currency_id' => 'USD',
-            'amount'      => 1,
-        ]);
+        $invoice_data = $this->_create_invoice($operation_id);
+        $unt_to_btc = $this->payment_api->currency_rate(['from'=>'UNT', 'to'=>'BTC']);
         $data = [
             'operation_id'    => $operation_id,
             //'status_id'       => $operation['status_id'],
             'datetime_update' => $payment_api->sql_datetime(),
-            'options'         => ['request'=>['invoice'=>$invoice_data,'usd_to_unt'=>$usd_to_unt, 'usd_to_btc'=>$amount*$usd_to_unt/$amount_currency, 'course_date'=>$payment_api->sql_datetime()]],
+            'options'         => ['request'=>[
+                'invoice'=>$invoice_data,
+                'fee'=>$fee,
+                'unt_to_btc'=>$unt_to_btc,
+                'course_date'=>$payment_api->sql_datetime(),
+                'amount_currency'=>$amount_currency,
+                'amount_currency_total'=>$amount_currency_total,
+                'fee'=>$fee,
+            ]],
         ];
 
         $result = $payment_api->operation_update( $data );
@@ -360,9 +355,9 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
 
 
 
-    public function _create_invoice() {
+    public function _create_invoice($operation_id) {
         $result = '';
-        $callback_url = urlencode($this->url_server);
+        $callback_url = urlencode($this->url_server.'&operation_id='.$operation_id);
         $url = $this->URL_API.'create/payment/'.$this->PAYOUT_ADDRESS.'/'.$callback_url.'confirmations='.$this->CONFIRMATIONS.'&fee_level='.$this->FEE_LEVEL;
         $request_result = common()->get_remote_page($url);
         if(!empty($request_result)){
