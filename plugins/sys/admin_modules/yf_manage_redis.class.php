@@ -10,13 +10,7 @@ class yf_manage_redis {
 		Redis::REDIS_HASH => 'HASH',
 		Redis::REDIS_NOT_FOUND => '?',
 	];
-	public $skip = [
-#		'cache:*',
-		'channel-subscribe:*',
-		'channel-subscribe-ts:*',
-		'channels_by_socket:*',
-		'socket_by_user:*',
-	];
+	public $auto_skip_count = 10;
 
 	/**
 	*/
@@ -30,7 +24,8 @@ class yf_manage_redis {
 	/**
 	*/
 	function show() {
-		$i = preg_replace('~[^a-z0-9_]+~ims', '', trim($_GET['i']));
+		$i = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['i']));
+		$g = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['g']));
 		if (!$i || !isset($this->instances[$i])) {
 			return implode(PHP_EOL, array_map(function($in){ return a('/@object/?i='.$in, $in, 'fa fa-cog', $in, '', ''); }, array_keys($this->instances)));
 		}
@@ -39,11 +34,42 @@ class yf_manage_redis {
 		$data = [];
 
 		$plen = strlen(REDIS_PREFIX);
-		foreach((array)$r->keys('*') as $key) {
+		$keys = $r->keys('*');
+		$groups = [];
+		foreach((array)$keys as $key) {
 			if (strpos($key, REDIS_PREFIX) === 0) {
 				$key = substr($key, $plen + 1);
 			}
-			if (wildcard_compare($this->skip, $key)) {
+			if (false !== strpos($key, ':')) {
+				$gname = strstr($key, ':', true);
+				$groups[$gname]++;
+			}
+		}
+		arsort($groups);
+		$filters = [];
+		$skip = [];
+		if ($g) {
+			$filters[] = a('/@object/?i='.$i, 'Clear filter', 'fa fa-close', '', '', '');
+		}
+		foreach ((array)$groups as $name => $count) {
+			if ($count > 1) {
+				$filters[] = a('/@object/?i='.$i.'&g='.urlencode($name), '', 'fa fa-filter', $name.'&nbsp;('.$count.')', '', '');
+			} else {
+				unset($groups[$name]);
+			}
+			if ($count > $this->auto_skip_count) {
+				$skip[] = $name.':*';
+			}
+		}
+		foreach((array)$keys as $key) {
+			if (strpos($key, REDIS_PREFIX) === 0) {
+				$key = substr($key, $plen + 1);
+			}
+			if ($g) {
+				if (strpos($key, $g.':') !== 0) {
+					continue;
+				}
+			} elseif ($skip && wildcard_compare($skip, $key)) {
 				continue;
 			}
 			$data[$key]['id'] = $key;
@@ -78,7 +104,8 @@ class yf_manage_redis {
 		$config = $r->config('get', '*');
 		ksort($config);
 
-		return '<div class="col-md-8"><h2>'.$i.'</h2>'.$table.'</div>'
+		return ($filters ? '<div class="col-md-12">'.implode($filters).'</div>' : '')
+			. '<div class="col-md-8"><h2>'.$i.'</h2>'.$table.'</div>'
 			. '<div class="col-md-4"><h2>Info</h2>'._class('html')->simple_table($info).'</div>'
 			. '<div class="col-md-4"><h2>Config</h2>'._class('html')->simple_table($config, ['key' => ['extra' => ['width' => '40%']]]).'</div>'
 		;
