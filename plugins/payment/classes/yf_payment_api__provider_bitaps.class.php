@@ -239,6 +239,10 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                                     $status_message = 'ok';
                                 }
                             }
+                            else {
+                                $status_name = 'success';
+                                $status_message = 'ok';
+                            }
                             $operation_data = [
                                 'operation_id'   => $operation_id,
                                 'provider_name'  => $this->PROVIDER_NAME,
