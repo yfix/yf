@@ -15,7 +15,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
     public $SERVICE_AMOUNT_MIN = 30000;//satoshi
     public $SATOSHI_TO_BTC = 100000000;
     public $RATE_VARIATION_PC = 1;//%
-    public $SATOHI_DEVIATION = 1000;
+    public $SATOHI_DEVIATION = 1;
 
     public $IS_DEPOSITION = true;
     public $IS_PAYMENT    = true;
@@ -118,6 +118,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 
         $is_response_error = false;
+        $options['operation_id'] = $operation_id;
         $options['address'] = $_POST['address'] ? : '';
         $options['invoice'] = $_POST['invoice'] ? : '';
         $options['code'] = $_POST['code'] ? : '';
@@ -206,19 +207,19 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                         $real_address = $operation['options']['request']['invoice']['address'];
                         if($real_payment_code == $payment_code && $confirmations>=$this->CONFIRMATIONS && $real_address==$address){
                             $need_update_amount = false;
-                            $amount_currency_satoshi = $operation['options']['request']['amount_currency_satoshi'];
+                            $request_amount_currency_satoshi = $operation['options']['request']['amount_currency_satoshi'];
                             $real_amount_currency_satoshi = $options['amount']-$options['payout_service_fee'];
-                            if(abs($amount_currency_satoshi-$real_amount_currency_satoshi)>$this->SATOHI_DEVIATION){
+                            if(abs($request_amount_currency_satoshi-$real_amount_currency_satoshi)>=$this->SATOHI_DEVIATION){
                                 $need_update_amount = true;
                             }
-                            $unt_to_btc = $this->payment_api->currency_rate(['from'=>'UNT', 'to'=>'BTC']);
-                            $unt_to_btc_request = $operation['options']['request']['unt_to_btc'];
-                            $rate_variation_pc = abs(1-$unt_to_btc/$unt_to_btc_request)*100;
-                            if($this->RATE_VARIATION_PC<$rate_variation_pc){
+                            $current_unt_to_btc = $this->payment_api->currency_rate(['from'=>'BTC', 'to'=>'UNT']);
+                            $request_unt_to_btc = $operation['options']['request']['unt_to_btc'];
+                            $rate_variation_pc = abs(1-$current_unt_to_btc/$request_unt_to_btc)*100;
+                            if($rate_variation_pc>$this->RATE_VARIATION_PC){
                                 $need_update_amount = true;
                             }
                             if($need_update_amount) {
-                                $amount = $real_amount_currency_satoshi*$unt_to_btc/$this->SATOSHI_TO_BTC;
+                                $amount = $real_amount_currency_satoshi*$current_unt_to_btc/$this->SATOSHI_TO_BTC;
                                 //need update operation amount
                                 $action = 'update amount from '.$operation['amount'].' to '.$amount;
                                 $operation_add_options['external_response']['action'] = $action;
@@ -260,9 +261,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
     }
     public function _form( $invoice_id, $url ) {
         if( !$this->ENABLE ) { return( null ); }
-        // START DUMP
         $payment_api = $this->payment_api;
-
         if( empty( $invoice_id ) || empty($url) ) { return( null ); }
         $form = '';
         return $form ;
@@ -305,10 +304,11 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
         }
         // fee
         $fee=$this->SERVICE_FEE/$this->SATOSHI_TO_BTC;
+        $amount_currency_satoshi = $amount_currency*$this->SATOSHI_TO_BTC;
         $amount_currency_total = $amount_currency+$fee;
 
         $invoice_data = $this->_create_invoice($operation_id);
-        $unt_to_btc = $this->payment_api->currency_rate(['from'=>'UNT', 'to'=>'BTC']);
+        $unt_to_btc = $this->payment_api->currency_rate(['from'=>'BTC', 'to'=>'UNT']);
         $data = [
             'operation_id'    => $operation_id,
             //'status_id'       => $operation['status_id'],
@@ -319,6 +319,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                 'unt_to_btc'=>$unt_to_btc,
                 'course_date'=>$payment_api->sql_datetime(),
                 'amount_currency'=>$amount_currency,
+                'amount_currency_satoshi'=>$amount_currency_satoshi,
                 'amount_currency_total'=>$amount_currency_total,
                 'fee'=>$fee,
             ]],
@@ -347,13 +348,6 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
         }
         return( $result );
     }
-
-
-
-
-
-
-
 
     public function _create_invoice($operation_id) {
         $result = '';
