@@ -37,9 +37,9 @@ class yf_manage_redis {
 	/**
 	*/
 	function show() {
-		$i = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['i']));
-		$g = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['g']));
-		$t = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['t']));
+		$i = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['i'])); // instance
+		$g = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['g'])); // group
+		$t = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['t'])); // type
 		if (!$i || !isset($this->instances[$i])) {
 			if (count($this->instances) == 1) {
 				return js_redirect('/@object/?i='.key($this->instances));
@@ -105,6 +105,8 @@ class yf_manage_redis {
 				$len = $r->hlen($key);
 			} elseif ($data[$key]['type'] == 'SET') {
 				$len = $r->scard($key);
+			} elseif ($data[$key]['type'] == 'LIST') {
+				$len = $r->llen($key);
 			}
 			$data[$key]['len'] = $len;
 			$data[$key]['ttl'] = $r->ttl($key);
@@ -116,7 +118,7 @@ class yf_manage_redis {
 			$filters[] = a('/@object/?i='.$i.'&t='.strtolower($type), '', 'fa fa-cog', $type.'&nbsp;('.$count.')', 'btn-info', '');
 		}
 
-		$table = table($data, ['condensed' => true, 'pager_records_on_page' => 10000])
+		$table = table($data, ['condensed' => true, 'hide_empty' => true, 'pager_records_on_page' => 10000])
 			->check_box('id')
 			->text('id', ['desc' => 'key', 'link' => url('/@object/edit/?id=%id&i='.$i)])
 			->text('type')
@@ -160,15 +162,37 @@ class yf_manage_redis {
 		if ($type == 'STRING') {
 			$len = $r->strlen($key);
 			$data = $r->get($key);
+			$data = '<pre style="background:black; color:white; font-weight:bold;">'._prepare_html($data).'</pre>'
+				. (in_array(substr($data, 0, 1), ['{','[']) ? 'JSON decoded:<pre style="background:black; color:white; font-weight:bold;">'.var_export(json_decode($data, true), true).'</pre>' : '');
 		} elseif ($type == 'HASH') {
 			$len = $r->hlen($key);
 			$data = $r->hgetall($key);
 		} elseif ($type == 'SET') {
 			$len = $r->scard($key);
 			$data = $r->smembers($key);
+		} elseif ($type == 'LIST') {
+			$len = $r->llen($key);
+			$data = $r->lrange($key, 0, 10000);
 		}
+# TODO: save
 		if (is_array($data)) {
-			$data = html()->simple_table($data);
+			$tmp = [];
+			foreach ($data as $k => $v) {
+				$auto_date = (is_numeric($v) && substr($v, 0, 2) == '14' && in_array(strlen($v), [10,12,13,14]) ? '&nbsp;<i class="text-info">('.date('Y-m-d H:i:s', substr($v, 0, 10)).')</i>' : '');
+				$tmp[] = [
+					'id' => $k,
+					'val' => _prepare_html($v). $auto_date,
+				];
+			}
+			$data = $tmp;
+			unset($tmp);
+			$data = table($data, ['condensed' => true, 'hide_empty' => true, 'pager_records_on_page' => 10000])
+				->check_box('id')
+				->text('id', ['desc' => 'key', 'link' => url('/@object/edit/?id=%id&i='.$i)])
+				->text('val')
+				->btn_delete(['btn_no_text' => 1, 'no_ajax' => 1, 'class_add' => 'btn-danger'])
+				->footer_submit('mass_delete', ['class' => 'btn btn-xs btn-danger', 'icon' => 'fa fa-trash'])
+			;
 		}
 		$ttl = $r->ttl($key);
 		return html()->simple_table([
