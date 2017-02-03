@@ -39,6 +39,7 @@ class yf_manage_redis {
 	function show() {
 		$i = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['i']));
 		$g = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['g']));
+		$t = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['t']));
 		if (!$i || !isset($this->instances[$i])) {
 			if (count($this->instances) == 1) {
 				return js_redirect('/@object/?i='.key($this->instances));
@@ -65,8 +66,8 @@ class yf_manage_redis {
 		arsort($groups);
 		$filters = [];
 		$skip = [];
-		if ($g) {
-			$filters[] = a('/@object/?i='.$i, 'Clear filter', 'fa fa-close', '', '', '');
+		if ($g || $t) {
+			$filters[] = a('/@object/?i='.$i, 'Clear filter', 'fa fa-close', '', 'btn-primary', '');
 		}
 		foreach ((array)$groups as $name => $count) {
 			if ($count > 1) {
@@ -78,6 +79,7 @@ class yf_manage_redis {
 				$skip[] = $name.':*';
 			}
 		}
+		$avail_types = [];
 		foreach((array)$keys as $key) {
 			if (strpos($key, REDIS_PREFIX) === 0) {
 				$key = substr($key, $plen + 1);
@@ -89,8 +91,13 @@ class yf_manage_redis {
 			} elseif ($skip && wildcard_compare($skip, $key)) {
 				continue;
 			}
+			$type = $this->types[$r->type($key)];
+			if ($t && strtoupper($type) != strtoupper($t)) {
+				continue;
+			}
+			$avail_types[$type]++;
 			$data[$key]['id'] = $key;
-			$data[$key]['type'] = $this->types[$r->type($key)];
+			$data[$key]['type'] = $type;
 			$len = '?';
 			if ($data[$key]['type'] == 'STRING') {
 				$len = $r->strlen($key);
@@ -104,15 +111,19 @@ class yf_manage_redis {
 			$data[$key]['ttl'] == -1 && $data[$key]['ttl'] = '';
 		}
 		ksort($data);
+		arsort($avail_types);
+		foreach($avail_types as $type => $count) {
+			$filters[] = a('/@object/?i='.$i.'&t='.strtolower($type), '', 'fa fa-cog', $type.'&nbsp;('.$count.')', 'btn-info', '');
+		}
 
 		$table = table($data, ['condensed' => true, 'pager_records_on_page' => 10000])
 			->check_box('id')
-			->text('id', ['desc' => 'key'/*, 'transform' => function($in){ return '<b>'.$in.'</b>'; }*/, 'link' => url('/@object/edit/?id=%id&i='.$i)])
+			->text('id', ['desc' => 'key', 'link' => url('/@object/edit/?id=%id&i='.$i)])
 			->text('type')
 			->text('len')
 			->text('ttl')
-#			->btn_edit(['btn_no_text' => 1, 'no_ajax' => 1, 'link' => url('/@object/edit/?id=%id&i='.$i)])
-#			->btn_delete(['btn_no_text' => 1, 'no_ajax' => 1])
+			->btn_delete(['btn_no_text' => 1, 'no_ajax' => 1, 'class_add' => 'btn-danger'])
+			->footer_submit('mass_delete', ['class' => 'btn btn-xs btn-danger', 'icon' => 'fa fa-trash'])
 		;
 
 		$info = $r->info();
@@ -121,7 +132,7 @@ class yf_manage_redis {
 		$config = $r->config('get', '*');
 		ksort($config);
 
-		return ($filters ? '<div class="col-md-12">'.implode($filters).'</div>' : '')
+		return ($filters ? '<div class="col-md-12">'.implode(' ', $filters).'</div>' : '')
 			. '<div class="col-md-6"><h2>'.$i.' ('.count($keys).')</h2>'.$table.'</div>'
 			. '<div class="col-md-3"><h2>Config</h2>'.html()->simple_table($config, ['val' => ['extra' => ['width' => '40%']]]).'</div>'
 			. '<div class="col-md-3"><h2>Info</h2>'.html()->simple_table($info, ['val' => ['extra' => ['width' => '40%']]]).'</div>'
