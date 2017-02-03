@@ -15,10 +15,23 @@ class yf_manage_redis {
 	/**
 	*/
 	function _init() {
-		$this->instances = [
-			'redis_default' => redis(),
-			'redis_cache' => strpos(strtolower(cache()->DRIVER), 'redis') !== false ? cache()->_driver->_connection : null,
-		];
+		$i_default = redis();
+		$i_cache = strpos(strtolower(cache()->DRIVER), 'redis') !== false ? cache()->_driver->_connection : null;
+		$are_same = function($i1, $i2) {
+			if (!is_object($i1) || !is_object($i2)) {
+				return false;
+			}
+			foreach (['driver','host','port','prefix'] as $param) {
+				if ($i1->$param !== $i2->$param) {
+					return false;
+				}
+			}
+			return true;
+		};
+		$this->instances = array_filter([
+			'redis_default' => $i_default,
+			'redis_cache' => $are_same($i_default, $i_cache) ? null : $i_cache,
+		]);
 	}
 
 	/**
@@ -27,7 +40,11 @@ class yf_manage_redis {
 		$i = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['i']));
 		$g = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['g']));
 		if (!$i || !isset($this->instances[$i])) {
-			return implode(PHP_EOL, array_map(function($in){ return a('/@object/?i='.$in, $in, 'fa fa-cog', $in, '', ''); }, array_keys($this->instances)));
+			if (count($this->instances) == 1) {
+				return js_redirect('/@object/?i='.key($this->instances));
+			} else {
+				return implode(PHP_EOL, array_map(function($in){ return a('/@object/?i='.$in, $in, 'fa fa-cog', $in, '', ''); }, array_keys($this->instances)));
+			}
 		}
 		$r = &$this->instances[$i];
 
@@ -105,9 +122,9 @@ class yf_manage_redis {
 		ksort($config);
 
 		return ($filters ? '<div class="col-md-12">'.implode($filters).'</div>' : '')
-			. '<div class="col-md-8"><h2>'.$i.'</h2>'.$table.'</div>'
-			. '<div class="col-md-4"><h2>Info</h2>'._class('html')->simple_table($info).'</div>'
-			. '<div class="col-md-4"><h2>Config</h2>'._class('html')->simple_table($config, ['key' => ['extra' => ['width' => '40%']]]).'</div>'
+			. '<div class="col-md-6"><h2>'.$i.' ('.count($keys).')</h2>'.$table.'</div>'
+			. '<div class="col-md-3"><h2>Config</h2>'.html()->simple_table($config, ['val' => ['extra' => ['width' => '40%']]]).'</div>'
+			. '<div class="col-md-3"><h2>Info</h2>'.html()->simple_table($info, ['val' => ['extra' => ['width' => '40%']]]).'</div>'
 		;
 	}
 
