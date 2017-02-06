@@ -719,7 +719,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
 
     public function _external_response(){
         $ip = common()->get_ip();
-        if (!in_array($ip, array('185.71.65.92', '185.71.65.189'))) {
+        if (!in_array($ip, array('185.71.65.92', '185.71.65.189', '149.202.17.210'))) {
             $this->external_response_errors[] = 'Invalid sender IP address '.$ip;
             return false;
         }
