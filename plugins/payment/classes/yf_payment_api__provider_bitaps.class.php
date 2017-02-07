@@ -9,7 +9,9 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
 
     public $PAYOUT_ADDRESS = '';//your bitcoin address for get bitcoins
     public $CONFIRMATIONS = 6;
-    public $FEE_LEVEL = 'low';
+    public $FEE_LEVEL = 'low';//bitcoin network fee
+    public $DEFAULT_FEE_LEVEL_LOW = 80;//satoshi per byte
+    public $AVERAGE_TRANSACTION_SIZE = 226;//bytes
     public $MARKET_NAME = 'average';
     public $SERVICE_FEE = 20000;//satoshi
     public $SERVICE_AMOUNT_MIN = 30000;//satoshi
@@ -307,7 +309,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
             return( $result );
         }
         // fee
-        $fee=$this->SERVICE_FEE/$this->SATOSHI_TO_BTC;
+        $fee=($this->SERVICE_FEE+$this->_fee_by_level($this->FEE_LEVEL)*$this->AVERAGE_TRANSACTION_SIZE)/$this->SATOSHI_TO_BTC;
         $amount_currency_satoshi = $amount_currency*$this->SATOSHI_TO_BTC;
         $amount_currency_total = $amount_currency+$fee;
 
@@ -365,6 +367,18 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
             }
         }
         return $result;
+    }
+
+    public function _fee_by_level($fee_level) {
+        $url = $this->URL_API.'fee';
+        $request_result = common()->get_remote_page($url);
+        $request_data = @json_decode($request_result,true);
+        if(is_array($request_data) && isset($request_data[$fee_level])) {
+            return $request_data[$fee_level];
+        }
+        else {
+            return $this->DEFAULT_FEE_LEVEL_LOW;
+        }
     }
 
     public function _usd_to_btc_rate() {
