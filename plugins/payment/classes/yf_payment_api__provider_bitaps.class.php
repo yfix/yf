@@ -204,13 +204,14 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                         ]
                     ];
                     if(!empty($operation['options']['request']['invoice']['payment_code'])){
-
                         $real_payment_code = $operation['options']['request']['invoice']['payment_code'];
                         $real_address = $operation['options']['request']['invoice']['address'];
                         if($real_payment_code == $payment_code && $confirmations>=$this->CONFIRMATIONS && $real_address==$address){
                             $need_update_amount = false;
                             $request_amount_currency_satoshi = $operation['options']['request']['amount_currency_satoshi'];
-                            $real_amount_currency_satoshi = $options['amount']-$options['payout_service_fee'];
+                            $payout_service_fee = $options['payout_service_fee'] ? intval($options['payout_service_fee']) : 0;
+                            $payout_miner_fee = $options['payout_miner_fee'] ? intval($options['payout_miner_fee']) : 0;
+                            $real_amount_currency_satoshi = $options['amount']-$payout_service_fee-$payout_miner_fee;
                             if(abs($request_amount_currency_satoshi-$real_amount_currency_satoshi)>=$this->SATOHI_DEVIATION){
                                 $need_update_amount = true;
                             }
