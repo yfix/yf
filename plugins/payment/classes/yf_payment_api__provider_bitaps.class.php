@@ -356,7 +356,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
     public function _create_invoice($operation_id) {
         $result = '';
         $callback_url = urlencode($this->url_server.'&operation_id='.$operation_id);
-        $url = $this->URL_API.'create/payment/'.$this->PAYOUT_ADDRESS.'/'.$callback_url.'confirmations='.$this->CONFIRMATIONS.'&fee_level='.$this->FEE_LEVEL;
+        $url = $this->URL_API.'create/payment/'.$this->PAYOUT_ADDRESS.'/'.$callback_url.'?confirmations='.$this->CONFIRMATIONS.'&fee_level='.$this->FEE_LEVEL;
         $request_result = common()->get_remote_page($url);
         if(!empty($request_result)){
             $data = @json_decode($request_result, true);
