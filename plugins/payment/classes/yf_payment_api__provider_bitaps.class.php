@@ -127,6 +127,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
         $options['amount'] = $_POST['amount'] ? : '';
         $options['confirmations'] = $_POST['confirmations'] ? : '';
         $options['payout_service_fee'] = $_POST['payout_service_fee'] ? : '';
+        $options['payout_miner_fee'] = $_POST['payout_miner_fee'] ? : '';
         if(!empty($operation_id)) {
             $this->_external_response($options);
         }
