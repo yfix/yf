@@ -17,7 +17,8 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
     public $SERVICE_AMOUNT_MIN = 30000;//satoshi
     public $SATOSHI_TO_BTC = 100000000;
     public $RATE_VARIATION_PC = 1;//%
-    public $SATOHI_DEVIATION = 1;
+    public $FEE_VARIATION_PC = 5;//%
+    public $AMOUNT_SATOSHI_DEVIATION = 100;
 
     public $IS_DEPOSITION = true;
     public $IS_PAYMENT    = true;
@@ -127,6 +128,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
         $options['amount'] = $_POST['amount'] ? : '';
         $options['confirmations'] = $_POST['confirmations'] ? : '';
         $options['payout_service_fee'] = $_POST['payout_service_fee'] ? : '';
+        $options['payout_miner_fee'] = $_POST['payout_miner_fee'] ? : '';
         if(!empty($operation_id)) {
             $this->_external_response($options);
         }
@@ -209,18 +211,36 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                         if($real_payment_code == $payment_code && $confirmations>=$this->CONFIRMATIONS && $real_address==$address){
                             $need_update_amount = false;
                             $request_amount_currency_satoshi = $operation['options']['request']['amount_currency_satoshi'];
+
+                            $request_fee = $operation['options']['request']['fee'];
+                            $request_fee_satoshi = $request_fee*$this->SATOSHI_TO_BTC;
+
+                            $request_amount_currency_total = $operation['options']['request']['amount_currency_total'];
+                            $request_amount_currency_total_satoshi = $request_amount_currency_total*$this->SATOSHI_TO_BTC;
+
                             $payout_service_fee = $options['payout_service_fee'] ? intval($options['payout_service_fee']) : 0;
                             $payout_miner_fee = $options['payout_miner_fee'] ? intval($options['payout_miner_fee']) : 0;
                             $real_amount_currency_satoshi = $options['amount']-$payout_service_fee-$payout_miner_fee;
-                            if(abs($request_amount_currency_satoshi-$real_amount_currency_satoshi)>=$this->SATOHI_DEVIATION){
+                            $real_amount_currency_total_satoshi = $options['amount'];
+
+                            $fee_variation_pc = abs(1-$request_fee_satoshi/($payout_miner_fee+$payout_service_fee))*100;
+                            if($fee_variation_pc>=$this->FEE_VARIATION_PC){
+                                //fee variation
                                 $need_update_amount = true;
                             }
+                            if(abs($request_amount_currency_total_satoshi-$real_amount_currency_total_satoshi)>=$this->AMOUNT_SATOSHI_DEVIATION){
+                                //amount variation
+                                $need_update_amount = true;
+                            }
+
                             $current_unt_to_btc = $this->payment_api->currency_rate(['from'=>'BTC', 'to'=>'UNT']);
                             $request_unt_to_btc = $operation['options']['request']['unt_to_btc'];
                             $rate_variation_pc = abs(1-$current_unt_to_btc/$request_unt_to_btc)*100;
                             if($rate_variation_pc>$this->RATE_VARIATION_PC){
+                                //BTC rate variation
                                 $need_update_amount = true;
                             }
+
                             if($need_update_amount) {
                                 $amount = $real_amount_currency_satoshi*$current_unt_to_btc/$this->SATOSHI_TO_BTC;
                                 //need update operation amount
