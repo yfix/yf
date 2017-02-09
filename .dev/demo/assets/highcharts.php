@@ -1,12 +1,13 @@
 <?php
 
 js([
-	'//code.highcharts.com/highcharts.js',
-	'//code.highcharts.com/modules/exporting.js',
-	'//code.highcharts.com/js/themes/gray.js',
+	'//rawgit.yfix.net/highcharts/highcharts-dist/master/highcharts.js',
+#	'//rawgit.yfix.net/highcharts/highcharts-dist/master/modules/exporting.js',
+	'//rawgit.yfix.net/highcharts/highcharts-dist/master/js/themes/gray.js',
 ]);
+
 jquery('
-$.getJSON("https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?", function (data) {
+$.getJSON("'.WEB_PATH.'docs/jsonp?filename=usdeur.json&callback=?", function (data) {
     Highcharts.chart("hc-container", {
         chart: {
             zoomType: "x"
