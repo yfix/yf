@@ -1456,12 +1456,16 @@ class yf_db {
 			break;
 		}
 		$not_existing_cols = [];
+		$virtual_cols = [];
 		$fixed_nulls = [];
 		if ($is_data_3d) {
 			foreach ((array)$data as $k => $_data) {
 				foreach ((array)$_data as $name => $v) {
 					if (!isset($cols[$name])) {
 						$not_existing_cols[$name] = $name;
+						unset($data[$k][$name]);
+					} elseif (isset($cols[$name]['virtual']) && $cols[$name]['virtual']) {
+						$virtual_cols[$name] = $name;
 						unset($data[$k][$name]);
 					} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
 						$fixed_nulls[$name] = $name;
@@ -1474,6 +1478,9 @@ class yf_db {
 				if (!isset($cols[$name])) {
 					$not_existing_cols[$name] = $name;
 					unset($data[$name]);
+				} elseif (isset($cols[$name]['virtual']) && $cols[$name]['virtual']) {
+					$virtual_cols[$name] = $name;
+					unset($data[$name]);
 				} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
 					$fixed_nulls[$name] = $name;
 					unset($data[$name]);
@@ -1483,6 +1490,9 @@ class yf_db {
 		if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
 			if ($not_existing_cols) {
 				trigger_error(__CLASS__.'->'.__FUNCTION__.': not existing columns for table "'.$table.'", columns: '.implode(', ', $not_existing_cols), E_USER_NOTICE);
+			}
+			if ($virtual_cols) {
+				trigger_error(__CLASS__.'->'.__FUNCTION__.': removed virtual columns for table "'.$table.'", columns: '.implode(', ', $virtual_cols), E_USER_NOTICE);
 			}
 			if ($fixed_nulls) {
 				trigger_error(__CLASS__.'->'.__FUNCTION__.': fixed nulls for table "'.$table.'", columns: '.implode(', ', $fixed_nulls), E_USER_NOTICE);
