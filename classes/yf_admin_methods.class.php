@@ -436,33 +436,43 @@ class yf_admin_methods {
 	/**
 	*/
 	function filter_save($params = []) {
-		$params += (array)$this->params;
-
-		$filter_name = $params['filter_name'] ?: $this->_params['filter_name'];
-		if (!$filter_name) {
-			$filter_name = $_GET['object'].'__show';
+		if (!is_array($params)) {
+			$params = [];
 		}
-		if ($_GET['id'] == 'clear' || $_GET['page'] == 'clear') {
-			$_SESSION[$filter_name] = [];
+		$filter_save_silent = $params['filter_save_silent'] ?: $this->_params['filter_save_silent'];
+		$redirect_url = $params['redirect_url'] ?: $this->_params['redirect_url'];
+		$filter_data = $params['filter_data'] ?: $_GET['filter'];
+		$filter_name = $params['filter_name'] ?: $this->_params['filter_name'] ?: $_GET['object'].'__show';
+		$need_clear = $params['filter_clear'] ?: ($_GET['id'] == 'clear' || $_GET['page'] == 'clear');
+
+		$data = $_SESSION[$filter_name];
+		if ($need_clear) {
+			$data = [];
+		}
+		if ($need_clear || $filter_save_silent) {
 			// Example: &filter=admin_id:1,ip:127.0.0.1
-			if (isset($_GET['filter'])) {
-				foreach (explode(',', $_GET['filter']) as $item) {
+			if ($filter_data) {
+				foreach (explode(',', $filter_data) as $item) {
 					list($k,$v) = explode(':', $item);
 					if ($k && isset($v)) {
-						$_SESSION[$filter_name][$k] = $v;
+						$data[$k] = $v;
 					}
 				}
 			}
-		} else {
-			$_SESSION[$filter_name] = $_POST;
+		} elseif ($_POST) {
+			$data = $_POST;
 			foreach (explode('|', 'clear_url|form_id|submit|_token') as $f) {
-				if (isset($_SESSION[$filter_name][$f])) {
-					unset($_SESSION[$filter_name][$f]);
+				if (isset($data[$f])) {
+					unset($data[$f]);
 				}
 			}
 		}
-		$redrect_url = $params['redirect_url'] ?: url('/@object/'. str_replace($_GET['object'].'__', '', $filter_name) );
-		return js_redirect($redrect_url);
+		$_SESSION[$filter_name] = $data;
+
+		if ($filter_save_silent) {
+			return $data;
+		}
+		return js_redirect($redirect_url ?: url('/@object/'. str_replace($_GET['object'].'__', '', $filter_name)));
 	}
 
 	/**
