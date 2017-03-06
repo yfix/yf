@@ -2317,6 +2317,7 @@ EOS;
 			$totals['count'] += $v['count'];
 		}
 		$by_method[] = $totals;
+		$by_method = array_filter($by_method);
 		return table($by_method)
 			->text('method')
 			->text('sum')
