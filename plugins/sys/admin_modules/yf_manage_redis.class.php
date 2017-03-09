@@ -119,12 +119,13 @@ class yf_manage_redis {
 		}
 
 		$table = table($data, ['condensed' => true, 'hide_empty' => true, 'pager_records_on_page' => 10000])
+			->form(url('/@object/edit/?i='.$i))
 			->check_box('id')
 			->text('id', ['desc' => 'key', 'link' => url('/@object/edit/?id=%id&i='.$i)])
 			->text('type')
 			->text('len')
 			->text('ttl')
-			->btn_delete(['btn_no_text' => 1, 'no_ajax' => 1, 'class_add' => 'btn-danger'])
+			->btn_delete(['btn_no_text' => 1, 'no_ajax' => 1, 'class_add' => 'btn-danger', 'link' => url('/@object/delete/?&i='.$i.'&num=%id')])
 			->footer_submit('mass_delete', ['class' => 'btn btn-xs btn-danger', 'icon' => 'fa fa-trash'])
 		;
 
@@ -144,35 +145,39 @@ class yf_manage_redis {
 	/**
 	*/
 	function edit() {
+		if (is_post() && isset($_POST['mass_delete']) && $_POST['id']) {
+			$_GET['action'] = 'delete';
+			return $this->delete();
+		}
 		$i = preg_replace('~[^a-z0-9_]+~ims', '', trim($_GET['i']));
 		if (!$i || !isset($this->instances[$i])) {
 			return js_redirect('/@object');
 		}
 		$r = &$this->instances[$i];
-		$key = trim($_GET['id']);
-		if (strpos($key, REDIS_PREFIX) === 0) {
-			$key = substr($key, strlen(REDIS_PREFIX) + 1);
+		$id = trim($_GET['id']);
+		if (strpos($id, REDIS_PREFIX) === 0) {
+			$id = substr($id, strlen(REDIS_PREFIX) + 1);
 		}
-		if (!$r->exists($key)) {
+		if (!$r->exists($id)) {
 			return _e('No such key');
 		}
-		$type = $this->types[$r->type($key)];
+		$type = $this->types[$r->type($id)];
 		$len = '?';
 		$data = '';
 		if ($type == 'STRING') {
-			$len = $r->strlen($key);
-			$data = $r->get($key);
+			$len = $r->strlen($id);
+			$data = $r->get($id);
 			$data = '<pre style="background:black; color:white; font-weight:bold;">'._prepare_html($data).'</pre>'
 				. (in_array(substr($data, 0, 1), ['{','[']) ? 'JSON decoded:<pre style="background:black; color:white; font-weight:bold;">'.var_export(json_decode($data, true), true).'</pre>' : '');
 		} elseif ($type == 'HASH') {
-			$len = $r->hlen($key);
-			$data = $r->hgetall($key);
+			$len = $r->hlen($id);
+			$data = $r->hgetall($id);
 		} elseif ($type == 'SET') {
-			$len = $r->scard($key);
-			$data = $r->smembers($key);
+			$len = $r->scard($id);
+			$data = $r->smembers($id);
 		} elseif ($type == 'LIST') {
-			$len = $r->llen($key);
-			$data = $r->lrange($key, 0, 10000);
+			$len = $r->llen($id);
+			$data = $r->lrange($id, 0, 10000);
 		}
 # TODO: save
 		if (is_array($data)) {
@@ -187,16 +192,17 @@ class yf_manage_redis {
 			$data = $tmp;
 			unset($tmp);
 			$data = table($data, ['condensed' => true, 'hide_empty' => true, 'pager_records_on_page' => 10000])
+				->form(url('/@object/edit/?i='.$i.'&id='.$id))
 				->check_box('id')
-				->text('id', ['desc' => 'key', 'link' => url('/@object/edit/?id=%id&i='.$i)])
+				->text('id', ['desc' => 'key', 'link' => url('/@object/edit/?&i='.$i.'&id='.$_GET['id'].'&num=%id')])
 				->text('val')
-				->btn_delete(['btn_no_text' => 1, 'no_ajax' => 1, 'class_add' => 'btn-danger'])
+				->btn_delete(['btn_no_text' => 1, 'no_ajax' => 1, 'class_add' => 'btn-danger', 'link' => url('/@object/delete/?&i='.$i.'&id='.$_GET['id'].'&num=%id')])
 				->footer_submit('mass_delete', ['class' => 'btn btn-xs btn-danger', 'icon' => 'fa fa-trash'])
 			;
 		}
-		$ttl = $r->ttl($key);
+		$ttl = $r->ttl($id);
 		return html()->simple_table([
-			'key'	=> $key,
+			'key'	=> $id,
 			'type'	=> $type,
 			'len'	=> $len,
 			'ttl'	=> $ttl,
@@ -211,15 +217,87 @@ class yf_manage_redis {
 			return js_redirect('/@object');
 		}
 		$r = &$this->instances[$i];
-		$key = trim($_GET['id']);
-		if (strpos($key, REDIS_PREFIX) === 0) {
-			$key = substr($key, strlen(REDIS_PREFIX) + 1);
+		$id = trim($_GET['id']);
+		if (strpos($id, REDIS_PREFIX) === 0) {
+			$id = substr($id, strlen(REDIS_PREFIX) + 1);
 		}
-		if (!$r->exists($key)) {
-			return _e('No such key');
+		$keys_to_del = [];
+		if ($id) {
+			// Submit mass_delete from edit
+			if (is_post()) {
+				foreach ((array)$_POST['id'] as $k => $tmp) {
+					$k = trim($k);
+					if (strpos($k, REDIS_PREFIX) === 0) {
+						$k = substr($k, strlen(REDIS_PREFIX) + 1);
+					}
+					if (strlen($k)) {
+						$keys_to_del[$k] = $k;
+					}
+				}
+			// Click on delete link from edit
+			} elseif (isset($_GET['num'])) {
+				$k = trim($_GET['num']);
+				if (strpos($k, REDIS_PREFIX) === 0) {
+					$k = substr($k, strlen(REDIS_PREFIX) + 1);
+				}
+				if (strlen($k)) {
+					$keys_to_del[$k] = $k;
+				}
+			}
+			$this->_do_delete($r, $id, $keys_to_del);
+			return js_redirect('/@object/edit/?i='.$i.'&id='.$id);
+		} else {
+			// Submit mass_delete from keys listing
+			if (is_post()) {
+				foreach ((array)$_POST['id'] as $k => $tmp) {
+					$k = trim($k);
+					if (strpos($k, REDIS_PREFIX) === 0) {
+						$k = substr($k, strlen(REDIS_PREFIX) + 1);
+					}
+					if (strlen($k)) {
+						$keys_to_del[$k] = $k;
+					}
+				}
+				$this->_do_delete($r, $id, $keys_to_del);
+			// Click on delete link from keys listing
+			} elseif (isset($_GET['num'])) {
+				$k = trim($_GET['num']);
+				if (strpos($k, REDIS_PREFIX) === 0) {
+					$k = substr($k, strlen(REDIS_PREFIX) + 1);
+				}
+				if (strlen($k)) {
+					$r->del($k);
+				}
+			}
+			return js_redirect('/@object/?i='.$i);
 		}
-		$type = $this->types[$r->type($key)];
-// TODO
+	}
+
+	/**
+	*/
+	function _do_delete($r, $id, $keys_to_del = []) {
+		if (!$keys_to_del) {
+			return false;
+		}
+		$type = $this->types[$r->type($id)];
+		if ($type == 'STRING') {
+			$r->del($keys_to_del);
+		} elseif ($type == 'HASH') {
+			foreach ((array)$keys_to_del as $k) {
+				$r->hdel($id, $k);
+			}
+		} elseif ($type == 'SET') {
+			foreach ((array)$keys_to_del as $k) {
+				$r->srem($id, $k);
+			}
+		} elseif ($type == 'LIST') {
+			// https://groups.google.com/forum/#!topic/redis-db/c-IpJ0YWa9I
+			foreach ((array)$keys_to_del as $k) {
+				$r->lset($id, $k, '__deleted__');
+			}
+			$r->lrem($id, '__deleted__');
+		}
+		return true;
 	}
 
 	/**
