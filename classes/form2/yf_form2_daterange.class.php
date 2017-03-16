@@ -36,6 +36,14 @@ class yf_form2_daterange {
 */
 		$extra['placeholder'] = $extra['placeholder'] ?: $_placeholder;
 
+		if ($extra['min_date'] && strlen($extra['min_date']) == 10) {
+			$time = time();
+			$extra += [
+				'min_date'		=> date('Y-m-d', $extra['min_date'] ?: ($time - 86400 * 30)),
+				'max_date'		=> date('Y-m-d', $time + 86400),
+				'autocomplete'	=> 'off',
+			];
+		}
 		// Compatibility with filter
 		if (!strlen($extra['value'])) {
 			if (isset($extra['selected'])) {
@@ -51,7 +59,7 @@ class yf_form2_daterange {
 
 		asset('bootstrap-daterangepicker');
 		jquery('$("input#'.$extra['name'].'").daterangepicker({
-			format: "'.($extra['format'] ?: 'DD.MM.YYYY').'",
+			format: "'.($extra['format'] ?: 'YYYY-MM-DD').'",
 			minDate: "'.$extra['min_date'].'",
 			maxDate: "'.$extra['max_date'].'",
 			startDate: "'.($extra['start_date'] ?: $extra['min_date']).'",
