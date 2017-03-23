@@ -279,23 +279,27 @@ class yf_manage_redis {
 		if (!$keys_to_del) {
 			return false;
 		}
-		$type = $this->types[$r->type($id)];
-		if ($type == 'STRING') {
+		if ($id) {
+			$type = $this->types[$r->type($id)];
+			if ($type == 'STRING') {
+				$r->del($keys_to_del);
+			} elseif ($type == 'HASH') {
+				foreach ((array)$keys_to_del as $k) {
+					$r->hdel($id, $k);
+				}
+			} elseif ($type == 'SET') {
+				foreach ((array)$keys_to_del as $k) {
+					$r->srem($id, $k);
+				}
+			} elseif ($type == 'LIST') {
+				// https://groups.google.com/forum/#!topic/redis-db/c-IpJ0YWa9I
+				foreach ((array)$keys_to_del as $k) {
+					$r->lset($id, $k, '__deleted__');
+				}
+				$r->lrem($id, '__deleted__');
+			}
+		} else {
 			$r->del($keys_to_del);
-		} elseif ($type == 'HASH') {
-			foreach ((array)$keys_to_del as $k) {
-				$r->hdel($id, $k);
-			}
-		} elseif ($type == 'SET') {
-			foreach ((array)$keys_to_del as $k) {
-				$r->srem($id, $k);
-			}
-		} elseif ($type == 'LIST') {
-			// https://groups.google.com/forum/#!topic/redis-db/c-IpJ0YWa9I
-			foreach ((array)$keys_to_del as $k) {
-				$r->lset($id, $k, '__deleted__');
-			}
-			$r->lrem($id, '__deleted__');
 		}
 		return true;
 	}
