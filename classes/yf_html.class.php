@@ -1786,7 +1786,7 @@ class yf_html {
 		$a = [];
 		// numerics params
 		if (isset($args[0]) && is_array($args[0])) {
-			$a = $a[0];
+			$a = $args[0];
 		} elseif (isset($args[0])) {
 			$a['ip'] = $args[0];
 		}
@@ -1798,7 +1798,7 @@ class yf_html {
 		$ip = $a['ip'];
 		$code = strtoupper($this->_get_ip_country($ip));
 		$name = _prepare_html($this->_get_country_name($code));
-		return a('http://www.infobyip.com/ip-'.urlencode($ip).'.html', $ip. ' | '. $code. ' | '. $name, ($code ? 'bfh-flag-'.$code : ''), $ip);
+		return a('http://www.infobyip.com/ip-'.urlencode($ip).'.html', $ip. ' | '. $code. ' | '. $name, ($code ? 'bfh-flag-'.$code : ''), $ip, $a['class']);
 	}
 
 	/**
