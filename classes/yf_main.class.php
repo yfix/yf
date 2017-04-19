@@ -814,6 +814,7 @@ class yf_main {
 		if (!is_object($this->auth)) {
 			return trigger_error('MAIN: Cannot load needed auth module', E_USER_ERROR);
 		}
+		$this->events->fire('main.after_auth');
 	}
 
 	/**
