@@ -366,7 +366,7 @@ class yf_manage_payment {
 				]);
 				$link = $html->a( [
 					'href'  => $url,
-					'class' => 'btn btn-warning',
+					'class' => 'btn btn-xs btn-warning',
 					'icon'  => 'fa fa-ban',
 					'title' => 'Отмена',
 					'text'  => 'Отмена',
@@ -382,7 +382,7 @@ class yf_manage_payment {
 				]);
 				$link = $html->a( [
 					'href'  => $url,
-					'class' => 'btn btn-danger',
+					'class' => 'btn btn-xs btn-danger',
 					'icon'  => 'fa fa-remove',
 					'title' => 'Удаление',
 					'text'  => 'Удаление',
@@ -423,6 +423,8 @@ class yf_manage_payment {
 			$form = form()->link( 'Назад', $url_back, [ 'class' => 'btn', 'icon' => 'fa fa-chevron-left' ] );
 			return( $form );
 		}
+		$user = user( $user_id );
+		$uname = $user['name'] ?: $user['login'] ?: $user['email'];
 		// prepare url
 		$url_form_action = url_admin( [
 			'object'     => $object,
@@ -507,14 +509,13 @@ class yf_manage_payment {
 					return( js_redirect( $url ) );
 				}
 			})
-			->float( 'amount', 'Сумма' )
-			->text( 'title', 'Название' )
-			->select_box( 'provider_name', $providers_form, [ 'show_text' => 1, 'desc' => 'Провайдер', 'tip' => 'Выбрать провайдера возможно только для пополнения. Списание возможно только от Администратора.' ] )
-			->row_start( [
-				'desc' => 'Операция',
-			])
+			->row_start()
+				->container('<div class="controls"><label>'.a('/members/edit/'.$user_id, t('Edit user'), 'fa fa-user', $uname.'&nbsp;['.$user_id.']', '').'<br> account_id: '.(int)$account_id.' &nbsp;</label></div>')
+				->float( 'amount', 'Сумма' )
+				->text( 'title', 'Название' )
+				->hidden( 'provider_name', 'administration')
 				->submit( 'operation', 'deposition', [ 'desc' => 'Пополнить' ] )
-				->submit( 'operation', 'payment',    [ 'desc' => 'Списать', 'tip' => 'Списание возможно только от Администратора.' ] )
+				->submit( 'operation', 'payment',    [ 'desc' => 'Списать' ] )
 			->row_end()
 		;
 		if( $account_id > 0 ) {
@@ -554,7 +555,6 @@ class yf_manage_payment {
 			$currency && $currency_str = ' ' . $currency[ 'short' ];
 			$balance = $account[ 'balance' ];
 		}
-		$user = user( $user_id );
 		$url_user = a( '/members/edit/'.$user_id, $user[ 'name' ] );
 		$replace += [
 			'user'     => $user,
@@ -565,7 +565,7 @@ class yf_manage_payment {
 			],
 		];
 		$header = tpl()->parse( 'manage_payment/balance_header', $replace );
-		$result = $header . $form . '<hr>' . $table;
+		$result = $header . $form . $table;
 		return( $result );
 	}
 

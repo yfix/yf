@@ -421,14 +421,14 @@ class yf_manage_payment_operation {
 				if( !$is_system ) {
 					$is_in && $action[] = $html->a( [
 						'href'   => $_this->_url( 'payin', [ '%operation_id' => $value ] ),
-						'class_add' => 'btn-primary',
+						'class_add' => 'btn-xs btn-primary',
 						'icon'   => 'fa fa-sign-in',
 						'text'   => 'Ввод средств',
 						'target' => '_blank',
 					]);
 					$is_out && $action[] = $html->a( [
 						'href'   => $_this->_url( 'payout', [ '%operation_id' => $value ] ),
-						'class_add' => 'btn-primary',
+						'class_add' => 'btn-xs btn-primary',
 						'icon'   => 'fa fa-sign-out',
 						'text'   => 'Вывод средств',
 						'target' => '_blank',
@@ -437,8 +437,8 @@ class yf_manage_payment_operation {
 				$action && $result = implode( '', $action );
 				return( $result );
 			}, [ 'desc' => 'действия' ] )
-			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] )
-			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] )
+			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-xs btn-primary', 'icon' => 'fa fa-refresh' ] )
+			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-xs btn-primary', 'icon' => 'fa fa-refresh' ] )
 		;
 
 		$data_daily = $this->_get_daily_data($last_days = 180);
