@@ -510,7 +510,7 @@ class yf_manage_payment {
 				}
 			})
 			->row_start()
-				->container('<div class="controls"><label>'.a('/members/edit/'.$user_id, t('Edit user'), 'fa fa-user', $uname.'&nbsp;['.$user_id.']', '').'<br> account_id: '.(int)$account_id.' &nbsp;</label></div>')
+				->container('<div class="controls"><label>'.a('/members/edit/'.$user_id, t('Edit user'), 'fa fa-user', $uname.'&nbsp;['.$user_id.']', '').'<br><small>account_id: </small>'.(int)$account_id.' &nbsp;</label></div>')
 				->float( 'amount', 'Сумма' )
 				->text( 'title', 'Название' )
 				->hidden( 'provider_name', 'administration')
