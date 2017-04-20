@@ -473,7 +473,7 @@ class yf_form2 {
 			$tabbed_buffer = [];
 		}
 		if ($tabs) {
-			$this->_body[$tabs_container]['rendered'] = _class('html')->tabs($tabs, (array)$this->_params['tabs'] + (array)$tabs_extra);
+			$this->_body[$tabs_container]['rendered'] = html()->tabs($tabs, (array)$this->_params['tabs'] + (array)$tabs_extra);
 		}
 		if ($this->_params['show_alerts']) {
 			$errors = common()->_get_error_messages();
@@ -1610,7 +1610,8 @@ class yf_form2 {
 				$extra['selected'] = $form->_params['selected'][$extra['name']];
 			}
 			$extra = $form->_input_assign_params_from_validate($extra);
-			return $form->_row_html(_class('html')->radio_box($extra), $extra, $r);
+			$renderer = $extra['renderer'] ?: 'radio_box';
+			return $form->_row_html(html()->$renderer($extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
@@ -1622,21 +1623,47 @@ class yf_form2 {
 	/**
 	*/
 	function allow_deny_box($name = '', $desc = '', $extra = [], $replace = []) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!isset($this->_pair_allow_deny)) {
 			$this->_pair_allow_deny = main()->get_data('pair_allow_deny');
 		}
 		$extra['items'] = $this->_pair_allow_deny;
-		return $this->active_box($name, $desc, $extra, $replace);
+		if ($this->_params['filter'] || $extra['v2']) {
+			$extra['no_label'] = 1;
+			$extra['label_right'] = 1;
+			$extra['renderer'] = 'button_allow_deny_box';
+		}
+		$func = 'active_box';
+		return $this->$func($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = [], $replace = []) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!isset($this->_pair_yes_no)) {
 			$this->_pair_yes_no = main()->get_data('pair_yes_no');
 		}
 		$extra['items'] = $this->_pair_yes_no;
-		return $this->active_box($name, $desc, $extra, $replace);
+		if ($this->_params['filter'] || $extra['v2']) {
+			$extra['no_label'] = 1;
+			$extra['label_right'] = 1;
+			$extra['renderer'] = 'button_yes_no_box';
+		}
+		$func = 'active_box';
+		return $this->$func($name, $desc, $extra, $replace);
 	}
 
 	/**
