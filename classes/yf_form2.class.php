@@ -1292,7 +1292,6 @@ class yf_form2 {
 			$extra = [];
 		}
 		$extra['type'] = 'number';
-		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'sm';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '10';
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -1335,7 +1334,6 @@ class yf_form2 {
 		}
 		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : ($this->_params['currency'] ?: '<i class="'.$this->CLASS_ICON_CURRENCY.'"></i>');
 		$extra['append'] = isset($extra['append']) ? $extra['append'] : ''; // '.00';
-		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'sm';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '8';
 		return $this->decimal($name, $desc, $extra, $replace);
 	}
