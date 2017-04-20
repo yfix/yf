@@ -1613,6 +1613,11 @@ class yf_form2 {
 				$extra['selected'] = $form->_params['selected'][$extra['name']];
 			}
 			$extra = $form->_input_assign_params_from_validate($extra);
+			if ($this->_params['filter'] && !$extra['renderer']) {
+				$extra['no_label'] = 1;
+				$extra['label_right'] = 1;
+				$extra['renderer'] = 'button_yes_no_box';
+			}
 			$renderer = $extra['renderer'] ?: 'radio_box';
 			return $form->_row_html(html()->$renderer($extra), $extra, $r);
 		};
