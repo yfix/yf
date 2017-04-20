@@ -932,18 +932,29 @@ class yf_html {
 
 	/**
 	*/
-	function button_yes_no_box($name, $values = [], $selected = '') {
-		$def = $this->CLASS_LABEL_BTN_RADIO;
+	function button_yes_no_box($name, $values = [], $selected = null) {
+		$def_cls = $this->CLASS_LABEL_BTN_RADIO;
 		$values = [
-			['class' => $def.' btn-warning', 'html' => '<i class="fa fa-ban"></i> '.t('No').'</span>'],
-			['class' => $def.' btn-success', 'html' => '<i class="fa fa-check"></i> '.t('Yes').'</span>'],
+			['class' => $def_cls.' btn-warning', 'html' => '<i class="fa fa-ban"></i> '.t('No').'</span>'],
+			['class' => $def_cls.' btn-success', 'html' => '<i class="fa fa-check"></i> '.t('Yes').'</span>'],
 		];
 		return $this->button_radio_box($name, $values, $selected);
 	}
 
 	/**
 	*/
-	function button_radio_box($name, $values = [], $selected = '') {
+	function button_allow_deny_box($name, $values = [], $selected = null) {
+		$def_cls = $this->CLASS_LABEL_BTN_RADIO;
+		$values = [
+			['class' => $def_cls.' btn-warning', 'html' => '<i class="fa fa-ban"></i> '.t('Deny').'</span>'],
+			['class' => $def_cls.' btn-success', 'html' => '<i class="fa fa-check"></i> '.t('Allow').'</span>'],
+		];
+		return $this->button_radio_box($name, $values, $selected);
+	}
+
+	/**
+	*/
+	function button_radio_box($name, $values = [], $selected = null, $extra = []) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -951,15 +962,16 @@ class yf_html {
 		!is_array($extra) && $extra = [];
 		$label_extra = $extra['label_extra'];
 		$extra = [
-			'name' => $name,
-			'values' => $values,
-			'selected' => $selected,
+			'name' => $name ?: $extra['name'],
+			'values' => isset($values) ? $values : $extra['values'],
+			'selected' => isset($selected) ? $selected : $extra['selected'],
 			'use_stpl' => false,
 			'label_extra' => [
 				'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_RADIO). ($extra['horizontal'] ? ' '.$this->CLASS_LABEL_RADIO_INLINE : ''),
 			],
 		] + $extra;
-		return '<div class="btn-group" data-toggle="buttons">'.$this->radio_box($extra).'</div>';
+		$label_right = $extra['label_right'] ? '<label class="text">&nbsp;'.$extra['desc'].'</label>' : '';
+		return '<div class="btn-group" data-toggle="buttons">'. $this->radio_box($extra). $label_right. '</div>';
 	}
 
 	/**
@@ -980,7 +992,8 @@ class yf_html {
 				'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_CHECKBOX),
 			],
 		] + $extra;
-		return '<div class="btn-group" data-toggle="buttons">'.$this->check_box($extra).'</div>';
+		$label_right = $extra['label_right'] ? '<label class="text">&nbsp;'.$extra['desc'].'</label>' : '';
+		return '<div class="btn-group" data-toggle="buttons">'. $this->check_box($extra). $label_right. '</div>';
 	}
 
 	/**
