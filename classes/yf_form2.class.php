@@ -1038,7 +1038,10 @@ class yf_form2 {
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['class'] = $form->CLASS_FORM_CONTROL. $form->_prepare_css_class('', $r[$extra['name']], $extra);
-			// Supported: mini, small, medium, large, xlarge, xxlarge
+			if ($this->_params['filter'] && !isset($extra['sizing'])) {
+				$extra['sizing'] = 'sm';
+			}
+			// Supported: sm, lg
 			if ($extra['sizing']) {
 				$extra['class'] .= ' input-'.$extra['sizing'];
 			}
@@ -1289,7 +1292,7 @@ class yf_form2 {
 			$extra = [];
 		}
 		$extra['type'] = 'number';
-		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
+		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'sm';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '10';
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -1332,7 +1335,7 @@ class yf_form2 {
 		}
 		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : ($this->_params['currency'] ?: '<i class="'.$this->CLASS_ICON_CURRENCY.'"></i>');
 		$extra['append'] = isset($extra['append']) ? $extra['append'] : ''; // '.00';
-		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
+		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'sm';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '8';
 		return $this->decimal($name, $desc, $extra, $replace);
 	}
@@ -1707,7 +1710,14 @@ class yf_form2 {
 			$button_text = $extra['desc'];
 			$extra['desc'] = '';
 			$extra['buttons_controls'] = true;
-
+			if ($this->_params['filter'] && !isset($extra['sizing'])) {
+				$extra['sizing'] = 'sm';
+			}
+			// Supported: xs, sm, md, lg
+			if ($extra['sizing']) {
+				$extra['class'] .= ' btn-'.$extra['sizing'];
+				$extra['link_class'] .= ' btn-'.$extra['sizing'];
+			}
 			$attrs_names = ['type','name','id','class','style','value','disabled','target'];
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
@@ -1987,7 +1997,9 @@ class yf_form2 {
 			$extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $extra['name'];
 			$extra = $form->_input_assign_params_from_validate($extra);
-
+			if ($this->_params['filter']) {
+				$extra['class_add'] .= ' input-sm';
+			}
 			$func = $extra['func_html_control'];
 			$content = _class('html')->$func($extra);
 			if ($extra['no_label'] || $form->_params['no_label']) {

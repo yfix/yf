@@ -970,7 +970,7 @@ class yf_html {
 				'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_RADIO). ($extra['horizontal'] ? ' '.$this->CLASS_LABEL_RADIO_INLINE : ''),
 			],
 		] + $extra;
-		$label_right = $extra['label_right'] ? '<label class="text">&nbsp;'.$extra['desc'].'</label>' : '';
+		$label_right = $extra['label_right'] ? '<label class="text">&nbsp;<small>'.$extra['desc'].'</small></label>' : '';
 		return '<div class="btn-group" data-toggle="buttons">'. $this->radio_box($extra). $label_right. '</div>';
 	}
 
@@ -992,7 +992,7 @@ class yf_html {
 				'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_CHECKBOX),
 			],
 		] + $extra;
-		$label_right = $extra['label_right'] ? '<label class="text">&nbsp;'.$extra['desc'].'</label>' : '';
+		$label_right = $extra['label_right'] ? '<label class="text">&nbsp;<small>'.$extra['desc'].'</small></label>' : '';
 		return '<div class="btn-group" data-toggle="buttons">'. $this->check_box($extra). $label_right. '</div>';
 	}
 
