@@ -357,38 +357,12 @@ class yf_manage_payment {
 			->date( 'datetime_update', 'Дата'           , [ 'format' => 'full', 'nowrap' => 1 ] )
 			->date( 'datetime_start' , 'Дата начала'    , [ 'format' => 'full', 'nowrap' => 1 ] )
 			->date( 'datetime_finish', 'Дата завершения', [ 'format' => 'full', 'nowrap' => 1 ] )
-			->btn_func( 'Отмена', function( $row, $params, $instance_params, $table ) use( $html ) {
-				$operation_id = (int)$row[ 'operation_id' ];
-				$url = url_admin( [
-					'object'       => 'manage_payment',
-					'action'       => 'mass_cancel',
-					'operation_id' => $operation_id,
-				]);
-				$link = $html->a( [
-					'href'  => $url,
-					'class' => 'btn btn-xs btn-warning',
-					'icon'  => 'fa fa-ban',
-					'title' => 'Отмена',
-					'text'  => 'Отмена',
-				]);
-				return( $link );
-			})
-			->btn_func( 'Удаление', function( $row, $params, $instance_params, $table ) use( $html ) {
-				$operation_id = (int)$row[ 'operation_id' ];
-				$url = url_admin( [
-					'object'       => 'manage_payment',
-					'action'       => 'mass_remove',
-					'operation_id' => $operation_id,
-				]);
-				$link = $html->a( [
-					'href'  => $url,
-					'class' => 'btn btn-xs btn-danger',
-					'icon'  => 'fa fa-remove',
-					'title' => 'Удаление',
-					'text'  => 'Удаление',
-				]);
-				return( $link );
-			})
+#			->btn_func('Отмена', function($row) {
+#				return a('/manage_payment/cancel/'.(int)$row['operation_id'], 'Отмена', 'fa fa-ban', 'Отмена', 'btn btn-xs btn-warning', '', '');
+#			})
+#			->btn_func('Удаление', function($row) {
+#				return a('/manage_payment/remove/'.(int)$row['operation_id'], 'Удаление', 'fa fa-remove', 'Удаление', 'btn btn-xs btn-warning', '', '');
+#			})
 		;
 		return( $result );
 	}
