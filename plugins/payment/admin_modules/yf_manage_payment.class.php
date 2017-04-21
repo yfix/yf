@@ -538,7 +538,7 @@ class yf_manage_payment {
 				'currency' => $currency_str,
 			],
 		];
-		$header = tpl()->parse( 'manage_payment/balance_header', $replace );
+		$header = tpl()->parse_if_exists( 'manage_payment/balance_header', $replace );
 		$result = $header . $form . $table;
 		return( $result );
 	}
