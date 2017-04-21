@@ -428,26 +428,6 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
     }
 
 
-    public function payment( $options ) {
-        if( !$this->ENABLE ) { return( null ); }
-        // import options
-        is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-        // class
-        $payment_api = $this->payment_api;
-        // var
-        $operation_id  = $_data[ 'operation_id' ];
-        // payment
-        $result = parent::payment( $options );
-        // confirmation is ok
-        $confirmation_ok_options = array(
-            'operation_id' => $operation_id,
-        );
-        $result = $payment_api->confirmation_ok( $confirmation_ok_options );
-        // payout
-        $result = $this->api_payout( $options );
-        return( $result );
-    }
-
     public function api_payout( $options = null ) {
         if( !$this->ENABLE ) { return( null ); }
         // import options
