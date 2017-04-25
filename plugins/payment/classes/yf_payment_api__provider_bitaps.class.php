@@ -686,7 +686,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                     }
                 }
                 else{
-                    return common()->show_error_message('Провайдер '.$this->PROVIDER_NAME.' не найден');
+                    return common()->_show_error_message('Провайдер '.$this->PROVIDER_NAME.' не найден');
                 }
                 break;
             case 'payin':
