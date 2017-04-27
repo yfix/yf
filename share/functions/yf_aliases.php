@@ -213,18 +213,6 @@ if (!function_exists('asset')) {
 if (!function_exists('jquery')) {
 	function jquery($content, $params = []) { return _class('assets')->jquery($content, $params); }
 }
-if (!function_exists('angularjs')) {
-	function angularjs($content, $params = []) { return _class('assets')->angularjs($content, $params); }
-}
-if (!function_exists('backbonejs')) {
-	function backbonejs($content, $params = []) { return _class('assets')->backbonejs($content, $params); }
-}
-if (!function_exists('reactjs')) {
-	function reactjs($content, $params = []) { return _class('assets')->reactjs($content, $params); }
-}
-if (!function_exists('emberjs')) {
-	function emberjs($content, $params = []) { return _class('assets')->emberjs($content, $params); }
-}
 if (!function_exists('sass')) {
 	function sass($content, $content_type = 'auto', $params = []) { return _class('assets')->add($content, 'sass', $content_type, $params); }
 }
