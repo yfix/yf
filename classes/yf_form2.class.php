@@ -212,20 +212,18 @@ class yf_form2 {
 		// Search for override params inside shared files
 		$suffix = $form_id.'.form.php';
 		$slen = strlen($suffix);
-		$path_pattern = 'share/form/'.$form_id.'*'.$suffix;
+		$pattern = '{,plugins/*/}{,share/}form/'.$form_id.'*'.$suffix;
 		$paths = [
-			'yf_main'			=> YF_PATH. $path_pattern,
-			'yf_plugins'		=> YF_PATH. 'plugins/*'.$path_pattern,
-			'project_config'	=> CONFIG_PATH. $path_pattern,
-			'project_main'		=> PROJECT_PATH. $path_pattern,
-			'project_plugins'	=> PROJECT_PATH. 'plugins/*'.$path_pattern,
+			'frawework'	=> YF_PATH. $pattern,
+			'config'	=> CONFIG_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
 		];
 		if (SITE_PATH != PROJECT_PATH) {
-			$paths['site_main'] = SITE_PATH. 'share/form/'.$suffix;
+			$paths['site'] = SITE_PATH. $pattern;
 		}
 		$names = [];
 		foreach ((array)$paths as $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$slen);
 				$names[$name] = $path;
 			}

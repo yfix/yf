@@ -590,7 +590,7 @@ class yf_core_api {
 			if (substr($glob, -4) == '*/*/') {
 				$glob = substr($glob, 0, -2);
 			}
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				if (!is_dir($path)) {
 					continue;
 				}
@@ -610,7 +610,7 @@ class yf_core_api {
 		$libs = [];
 		$suffix = '/';
 		foreach ($this->get_globs($folder, $suffix) as $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				if (!is_dir($path)) {
 					continue;
 				}
@@ -635,7 +635,7 @@ class yf_core_api {
 		$suffix_len = strlen($suffix);
 		$classes = [];
 		foreach ($this->get_globs($folder, $suffix) as $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$suffix_len);
 				if (substr($name, 0, $prefix_len) == $prefix) {
 					$name = substr($name, $prefix_len);

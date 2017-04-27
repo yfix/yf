@@ -390,36 +390,22 @@ class yf_assets {
 		}
 		$assets   = [];
 		$suffix   = '.php';
-		$pattern  = 'assets/*'.       $suffix;
-		$patterns = 'share/assets/*'. $suffix;
+		$pattern  = '{,plugins/*/}{assets/*,share/assets/*}'. $suffix;
 		$globs = [
-			'yf_main'				=> YF_PATH. $pattern,
-			'yf_main2'				=> YF_PATH. $patterns,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
-			'yf_plugins2'			=> YF_PATH. 'plugins/*/'. $patterns,
-			'project_main'			=> PROJECT_PATH. $pattern,
-			'project_main2'			=> PROJECT_PATH. $patterns,
-			'project_app'			=> APP_PATH. $pattern,
-			'project_app2'			=> APP_PATH. $patterns,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'project_plugins2'		=> PROJECT_PATH. 'plugins/*/'. $patterns,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
-			'project_app_plugins2'	=> APP_PATH. 'plugins/*/'. $patterns,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		if (is_site_path()) {
-			$globs += [
-				'site_main'		=> SITE_PATH. $pattern,
-				'site_main2'	=> SITE_PATH. $patterns,
-				'site_plugins'	=> SITE_PATH. 'plugins/*/'. $pattern,
-				'site_plugins2'	=> SITE_PATH. 'plugins/*/'. $patterns,
-			];
+			$globs['site'] = SITE_PATH. $pattern;
 		}
 		$slen = strlen($suffix);
 		$names = [];
 		foreach($globs as $gname => $glob) {
-			foreach(glob($glob) as $path) {
+			foreach(glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$slen);
 				$names[$name] = $path;
+				$names_paths[$name][$gname] = $path;
 			}
 		}
 		// This double iterating code ensures we can inherit/replace assets with same name inside project
@@ -448,28 +434,21 @@ class yf_assets {
 		$suffix = '.class.php';
 		$prefix = 'assets_filter_';
 		$prefix2 = YF_PREFIX;
-		$dir = 'classes/assets/';
-		$pattern = $dir. '*'. $prefix. '*'. $suffix;
+		$pattern = '{,plugins/*/}classes/{assets,assets_filters}/*'. $prefix. '*'. $suffix;
 		$globs = [
-			'yf_main'				=> YF_PATH. $pattern,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
-			'project_main'			=> PROJECT_PATH. $pattern,
-			'project_app'			=> APP_PATH. $pattern,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		if (is_site_path()) {
-			$globs += [
-				'site_main'		=> SITE_PATH. $pattern,
-				'site_plugins'	=> SITE_PATH. 'plugins/*/'. $pattern,
-			];
+			$globs['site'] = SITE_PATH. $pattern;
 		}
 		$slen = strlen($suffix);
 		$plen = strlen($prefix);
 		$plen2 = strlen($prefix2);
 		$names = [];
 		foreach($globs as $gname => $glob) {
-			foreach(glob($glob) as $path) {
+			foreach(glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$slen);
 				if (substr($name, 0, $plen2) === $prefix2) {
 					$name = substr($name, $plen2);
@@ -528,34 +507,6 @@ class yf_assets {
 	*/
 	function jquery($content, $params = []) {
 		return $this->helper_js_library(__FUNCTION__, $content, $params + ['wrap' => '$(function(){'.PHP_EOL.'%s'.PHP_EOL.'})' ]);
-	}
-
-	/**
-	* Helper
-	*/
-	function angularjs($content, $params = []) {
-		return $this->helper_js_library(__FUNCTION__, $content, $params);
-	}
-
-	/**
-	* Helper
-	*/
-	function backbonejs($content, $params = []) {
-		return $this->helper_js_library(__FUNCTION__, $content, $params);
-	}
-
-	/**
-	* Helper
-	*/
-	function reactjs($content, $params = []) {
-		return $this->helper_js_library(__FUNCTION__, $content, $params);
-	}
-
-	/**
-	* Helper
-	*/
-	function emberjs($content, $params = []) {
-		return $this->helper_js_library(__FUNCTION__, $content, $params);
 	}
 
 	/**

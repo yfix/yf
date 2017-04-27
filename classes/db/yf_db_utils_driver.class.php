@@ -1373,18 +1373,15 @@ WHERE table_schema = "schemaname"
 			$search_table = $table;
 		}
 		$ext = '.sql_php.php';
-		$dir = 'share/db/sql_php/';
-		$pattern = $dir. $search_table. $ext;
+		$pattern = '{,plugins/*/}{,share/}db/sql_php/'. $search_table. $ext;
 		$globs = [
-			PROJECT_PATH. 'plugins/*/'. $pattern,
 			PROJECT_PATH. $pattern,
 			CONFIG_PATH. $pattern,
-			YF_PATH. 'plugins/*/'. $pattern,
 			YF_PATH. $pattern,
 		];
 		$path = '';
 		foreach ($globs as $glob) {
-			foreach (glob($glob) as $f) {
+			foreach (glob($glob, GLOB_BRACE) as $f) {
 				$path = $f;
 				break 2;
 			}

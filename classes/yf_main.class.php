@@ -1504,8 +1504,8 @@ class yf_main {
 				return [];
 			}
 			$dirs = array_merge(
-				glob($sites_dir.'*', GLOB_ONLYDIR),
-				glob($sites_dir.'.*', GLOB_ONLYDIR)
+				glob($sites_dir.'*', GLOB_ONLYDIR|GLOB_BRACE),
+				glob($sites_dir.'.*', GLOB_ONLYDIR|GLOB_BRACE)
 			);
 		}
 		$sites = $sites1 = $sites2 = [];
