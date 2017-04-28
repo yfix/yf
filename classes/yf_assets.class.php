@@ -540,6 +540,9 @@ class yf_assets {
 		if (strpos($name, ':') !== false) {
 			list($name, $version) = explode(':', $name);
 		}
+		if (strpos($name, '#') !== false) {
+			list($name, $version) = explode('#', $name);
+		}
 		if (!$name) {
 			return null;
 		}
@@ -551,16 +554,60 @@ class yf_assets {
 		if (!is_string($asset_data) && is_callable($asset_data)) {
 			$asset_data = $asset_data($this);
 		}
-		if (!is_array($asset_data['versions'])) {
-			return null;
+$this->USE_BOWER = true;
+		if ($asset_data['bower'] && $this->USE_BOWER) {
+			$b = $asset_data['bower'];
+			return $this->bower_get($b['name'], $version, $b[$asset_type]);
+		} else {
+			if (!is_array($asset_data['versions'])) {
+				return null;
+			}
+			$version = $this->find_version_best_match($version, array_keys($asset_data['versions']));
+			if (!$version || !isset($asset_data['versions'][$version])) {
+				return null;
+			}
+			$version_info = $asset_data['versions'][$version];
+			$content = $version_info[$asset_type];
+			return $content;
 		}
-		$version = $this->find_version_best_match($version, array_keys($asset_data['versions']));
-		if (!$version || !isset($asset_data['versions'][$version])) {
-			return null;
+	}
+
+	/**
+	*/
+	public function bower_get($name, $version = '', $files = []) {
+		if (!isset($this->_bowerphp[$name])) {
+			$this->_bowerphp[$name] = $name;
+			$bowerphp_bin = '/usr/local/share/composer/vendor/bin/bowerphp';
+			if (!file_exists($bowerphp_bin)) {
+				exec('/usr/local/bin/composer global require beelab/bowerphp', $out, $ret);
+				if (!file_exists($bowerphp_bin)) {
+					return false;
+				}
+			}
+			$bower_component_dir = APP_PATH.'bower_components/'.$name.'/';
+			if (!file_exists($bower_component_dir.'bower.json')) {
+				exec('cd '.APP_PATH.' && '.$bowerphp_bin.' install '.$name, $out, $ret);
+				if (!file_exists($bower_component_dir)) {
+					return false;
+				}
+			}
+			$www_dir = PROJECT_PATH.'uploads/bower_components/'.$name.'/';
+			$web = [];
+			foreach ($files as $from => $to) {
+				if (is_numeric($from)) {
+					$from = $to;
+				}
+				$dir_to = $www_dir. ''. dirname($to);
+				if (!file_exists($dir_to)) {
+					mkdir($dir_to, 0755, true);
+				}
+				copy($bower_component_dir. $from, $www_dir. $to);
+#				symlink($bower_component_dir. $from, $www_dir. $to);
+				$web[] = WEB_PATH. substr($www_dir, strlen(PROJECT_PATH)). $to;
+			}
+			$this->_bowerphp[$name] = $web;
 		}
-		$version_info = $asset_data['versions'][$version];
-		$content = $version_info[$asset_type];
-		return $content;
+		return $web;
 	}
 
 	/**
