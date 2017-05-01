@@ -286,21 +286,18 @@ class yf_i18n {
 		// share/langs/ru/ru_user_register.php
 		// plugins/shop/share/langs/ru/ru_user_register.php
 		if ($this->ALLOW_SHARED_LANG_FILES) {
-			$pattern = 'share/langs/'.$lang.'/';
-			$dirs = [
-				'yf_main'			=> YF_PATH. $pattern,
-				'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
-				'project_main'		=> PROJECT_PATH. $pattern,
-				'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
-				'app_main'			=> APP_PATH. $pattern,
-				'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
+			$pattern = '{,plugins/*/}{,share/}langs/'.$lang.'/*.php';
+			$globs = [
+				'framework'	=> YF_PATH. $pattern,
+				'project'	=> PROJECT_PATH. $pattern,
+				'app'		=> APP_PATH. $pattern,
 			];
 			if (SITE_PATH != PROJECT_PATH) {
-				$dirs['site'] = SITE_PATH.'share/langs/'.$lang.'/';
+				$globs['site'] = SITE_PATH. $pattern;
 			}
 			// Order matters! Project vars will have ability to override vars from franework
-			foreach ($dirs as $dir) {
-				foreach ((array)glob($dir.'*.php') as $f) {
+			foreach ($globs as $glob) {
+				foreach ((array)glob($glob, GLOB_BRACE) as $f) {
 					$lang_files[basename($f)] = $f;
 				}
 			}
@@ -312,19 +309,18 @@ class yf_i18n {
 		// modules/shop/__locale__ru_products.php
 		// plugins/shop/modules/shop/__locale__ru_products.php
 		if ($this->ALLOW_MODULE_FILES) {
-			$m_dir = (MAIN_TYPE_USER ? 'modules/' : 'admin_modules/');
-			$dirs = [
-				'yf_main'			=> YF_PATH. $m_dir,
-				'yf_plugins'		=> YF_PATH. 'plugins/*/'. $m_dir,
-				'project_main'		=> PROJECT_PATH. $m_dir,
-				'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $m_dir,
+			$pattern = '{,plugins/*/}'.(MAIN_TYPE_USER ? 'modules/' : 'admin_modules/').'/*/__locale__'.$lang.'*.php';
+			$globs = [
+				'framework'	=> YF_PATH. $pattern,
+				'project'	=> PROJECT_PATH. $pattern,
+				'app'		=> APP_PATH. $pattern,
 			];
 			if (MAIN_TYPE_USER && SITE_PATH != PROJECT_PATH) {
-				$dirs['site'] = SITE_PATH. $m_dir;
+				$globs['site'] = SITE_PATH. $pattern;
 			}
 			// Order matters! Project vars will have ability to override vars from franework
-			foreach ($dirs as $dir) {
-				foreach ((array)glob($dir.'/*/__locale__'.$lang.'*.php') as $f) {
+			foreach ($globs as $globs) {
+				foreach ((array)glob($glob, GLOB_BRACE) as $f) {
 					$lang_files[basename($f)] = $f;
 				}
 			}

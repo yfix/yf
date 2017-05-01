@@ -390,36 +390,22 @@ class yf_assets {
 		}
 		$assets   = [];
 		$suffix   = '.php';
-		$pattern  = 'assets/*'.       $suffix;
-		$patterns = 'share/assets/*'. $suffix;
+		$pattern  = '{,plugins/*/}{assets/*,share/assets/*}'. $suffix;
 		$globs = [
-			'yf_main'				=> YF_PATH. $pattern,
-			'yf_main2'				=> YF_PATH. $patterns,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
-			'yf_plugins2'			=> YF_PATH. 'plugins/*/'. $patterns,
-			'project_main'			=> PROJECT_PATH. $pattern,
-			'project_main2'			=> PROJECT_PATH. $patterns,
-			'project_app'			=> APP_PATH. $pattern,
-			'project_app2'			=> APP_PATH. $patterns,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'project_plugins2'		=> PROJECT_PATH. 'plugins/*/'. $patterns,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
-			'project_app_plugins2'	=> APP_PATH. 'plugins/*/'. $patterns,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		if (is_site_path()) {
-			$globs += [
-				'site_main'		=> SITE_PATH. $pattern,
-				'site_main2'	=> SITE_PATH. $patterns,
-				'site_plugins'	=> SITE_PATH. 'plugins/*/'. $pattern,
-				'site_plugins2'	=> SITE_PATH. 'plugins/*/'. $patterns,
-			];
+			$globs['site'] = SITE_PATH. $pattern;
 		}
 		$slen = strlen($suffix);
 		$names = [];
 		foreach($globs as $gname => $glob) {
-			foreach(glob($glob) as $path) {
+			foreach(glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$slen);
 				$names[$name] = $path;
+				$names_paths[$name][$gname] = $path;
 			}
 		}
 		// This double iterating code ensures we can inherit/replace assets with same name inside project
@@ -448,28 +434,21 @@ class yf_assets {
 		$suffix = '.class.php';
 		$prefix = 'assets_filter_';
 		$prefix2 = YF_PREFIX;
-		$dir = 'classes/assets/';
-		$pattern = $dir. '*'. $prefix. '*'. $suffix;
+		$pattern = '{,plugins/*/}classes/{assets,assets_filters}/*'. $prefix. '*'. $suffix;
 		$globs = [
-			'yf_main'				=> YF_PATH. $pattern,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
-			'project_main'			=> PROJECT_PATH. $pattern,
-			'project_app'			=> APP_PATH. $pattern,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		if (is_site_path()) {
-			$globs += [
-				'site_main'		=> SITE_PATH. $pattern,
-				'site_plugins'	=> SITE_PATH. 'plugins/*/'. $pattern,
-			];
+			$globs['site'] = SITE_PATH. $pattern;
 		}
 		$slen = strlen($suffix);
 		$plen = strlen($prefix);
 		$plen2 = strlen($prefix2);
 		$names = [];
 		foreach($globs as $gname => $glob) {
-			foreach(glob($glob) as $path) {
+			foreach(glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$slen);
 				if (substr($name, 0, $plen2) === $prefix2) {
 					$name = substr($name, $plen2);
@@ -531,34 +510,6 @@ class yf_assets {
 	}
 
 	/**
-	* Helper
-	*/
-	function angularjs($content, $params = []) {
-		return $this->helper_js_library(__FUNCTION__, $content, $params);
-	}
-
-	/**
-	* Helper
-	*/
-	function backbonejs($content, $params = []) {
-		return $this->helper_js_library(__FUNCTION__, $content, $params);
-	}
-
-	/**
-	* Helper
-	*/
-	function reactjs($content, $params = []) {
-		return $this->helper_js_library(__FUNCTION__, $content, $params);
-	}
-
-	/**
-	* Helper
-	*/
-	function emberjs($content, $params = []) {
-		return $this->helper_js_library(__FUNCTION__, $content, $params);
-	}
-
-	/**
 	* Helper for JS library code
 	*/
 	function helper_js_library($lib_name, $content, $params = []) {
@@ -589,6 +540,9 @@ class yf_assets {
 		if (strpos($name, ':') !== false) {
 			list($name, $version) = explode(':', $name);
 		}
+		if (strpos($name, '#') !== false) {
+			list($name, $version) = explode('#', $name);
+		}
 		if (!$name) {
 			return null;
 		}
@@ -600,16 +554,60 @@ class yf_assets {
 		if (!is_string($asset_data) && is_callable($asset_data)) {
 			$asset_data = $asset_data($this);
 		}
-		if (!is_array($asset_data['versions'])) {
-			return null;
+$this->USE_BOWER = true;
+		if ($asset_data['bower'] && $this->USE_BOWER) {
+			$b = $asset_data['bower'];
+			return $this->bower_get($b['name'], $version, $b[$asset_type]);
+		} else {
+			if (!is_array($asset_data['versions'])) {
+				return null;
+			}
+			$version = $this->find_version_best_match($version, array_keys($asset_data['versions']));
+			if (!$version || !isset($asset_data['versions'][$version])) {
+				return null;
+			}
+			$version_info = $asset_data['versions'][$version];
+			$content = $version_info[$asset_type];
+			return $content;
 		}
-		$version = $this->find_version_best_match($version, array_keys($asset_data['versions']));
-		if (!$version || !isset($asset_data['versions'][$version])) {
-			return null;
+	}
+
+	/**
+	*/
+	public function bower_get($name, $version = '', $files = []) {
+		if (!isset($this->_bowerphp[$name])) {
+			$this->_bowerphp[$name] = $name;
+			$bowerphp_bin = '/usr/local/share/composer/vendor/bin/bowerphp';
+			if (!file_exists($bowerphp_bin)) {
+				exec('/usr/local/bin/composer global require beelab/bowerphp', $out, $ret);
+				if (!file_exists($bowerphp_bin)) {
+					return false;
+				}
+			}
+			$bower_component_dir = APP_PATH.'bower_components/'.$name.'/';
+			if (!file_exists($bower_component_dir.'bower.json')) {
+				exec('cd '.APP_PATH.' && '.$bowerphp_bin.' install '.$name, $out, $ret);
+				if (!file_exists($bower_component_dir)) {
+					return false;
+				}
+			}
+			$www_dir = PROJECT_PATH.'uploads/bower_components/'.$name.'/';
+			$web = [];
+			foreach ($files as $from => $to) {
+				if (is_numeric($from)) {
+					$from = $to;
+				}
+				$dir_to = $www_dir. ''. dirname($to);
+				if (!file_exists($dir_to)) {
+					mkdir($dir_to, 0755, true);
+				}
+				copy($bower_component_dir. $from, $www_dir. $to);
+#				symlink($bower_component_dir. $from, $www_dir. $to);
+				$web[] = WEB_PATH. substr($www_dir, strlen(PROJECT_PATH)). $to;
+			}
+			$this->_bowerphp[$name] = $web;
 		}
-		$version_info = $asset_data['versions'][$version];
-		$content = $version_info[$asset_type];
-		return $content;
+		return $web;
 	}
 
 	/**

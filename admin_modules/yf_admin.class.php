@@ -108,6 +108,11 @@ class yf_admin {
 		$a['password'] = '';
 		$display = ($this->display_func)($a);
 		$a = (array)$_POST + $a;
+		$up = ['login','email','first_name','last_name','go_after_login','password'];
+		if ($display) {
+			$up[] = 'group';
+			$up[] = 'active';
+		}
 		return 
 			'<div class="col-md-6">'
 			. form($a, ['autocomplete' => 'off', 'show_alerts' => 1])
@@ -120,8 +125,8 @@ class yf_admin {
 				'password'		=> 'password_update',
 				'group'			=> $display ? 'required|exists[admin_groups.id]' : '',
 			])
-			->db_update_if_ok(self::table, ['login','email','first_name','last_name','go_after_login','password'] + ($display ? ['group','active'] : []))
-			->on_after_update(function() use ($a) {
+			->db_update_if_ok(self::table, $up)
+			->on_after_update(function() use ($a, $id) {
 				common()->admin_wall_add([t('admin account edited: %login', ['%login' => $_POST['login']]), $id]);
 			})
 			->login()

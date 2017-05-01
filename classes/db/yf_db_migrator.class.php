@@ -359,18 +359,15 @@ abstract class yf_db_migrator {
 		$existing_sql_php = [];
 		// Preload db installer PHP array of CREATE TABLE DDL statements
 		$ext = '.sql_php.php';
-		$dir = 'share/db/sql_php/*'.$ext;
+		$pattern = '{,plugins/*/}{,share/}db/sql_php/*'.$ext;
 		$globs_sql_php = [
-			'yf_main'				=> YF_PATH. $dir,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
-			'project_app'			=> APP_PATH. $dir,
-			'project_main'			=> PROJECT_PATH. $dir,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
-			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		$t_names = [];
 		foreach ($globs_sql_php as $gname => $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$t_name = substr(basename($path), 0, -strlen($ext));
 				$t_names[$t_name] = $path;
 				$existing_files_sql_php[$t_name][$gname] = $path;
@@ -810,21 +807,18 @@ abstract class yf_db_migrator {
 	public function _list($params = []) {
 		$prefix = 'db_migration_';
 		$ext = '.class.php';
-		$dir = 'share/db/migrations/'.$prefix.'*'.$ext;
+		$pattern = '{,plugins/*/}{,share/}db/migrations/'.$prefix.'*'.$ext;
 		$globs = [
-			'yf_main'				=> YF_PATH. $dir,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
-			'project_app'			=> APP_PATH. $dir,
-			'project_main'			=> PROJECT_PATH. $dir,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
-			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		$migratons = [];
 		foreach ($globs as $gname => $glob) {
-			if ($params['only_from_project'] && substr($gname, 0, strlen('project_')) !== 'project_') {
+			if ($params['only_from_project'] && substr($gname, 0, strlen('project')) !== 'project') {
 				continue;
 			}
-			foreach (glob($glob) as $f) {
+			foreach (glob($glob, GLOB_BRACE) as $f) {
 				$name = substr(basename($f), strlen($prefix), -strlen($ext));
 				$migrations[$name] = $f;
 			}

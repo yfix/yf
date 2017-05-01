@@ -8,8 +8,12 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
     public $URL_API = 'https://bitaps.com/api/';
 
     public $PAYOUT_ADDRESS = '';//your bitcoin address for get bitcoins
+    public $REDEEM_ADDRESS = '';//your bitcoin address for payout bitcoins
+    public $REDEEM_CODE = '';//code for make payouts
+    public $REDEEM_INVOICE = '';
     public $CONFIRMATIONS = 6;
     public $FEE_LEVEL = 'low';//bitcoin network fee
+    public $CUSTOM_FEE = 1;//bitcoin network custom fee
     public $DEFAULT_FEE_LEVEL_LOW = 80;//satoshi per byte
     public $AVERAGE_TRANSACTION_SIZE = 226;//bytes
     public $MARKET_NAME = 'average';
@@ -67,17 +71,17 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'field' => [
-                    '$to',
-                    '$amount',
+                    'address',
+                    'amount',
                 ],
                 'order' => [
-                    'to',
+                    'address',
                 ],
                 'option' => [
-                    'to' => 'Адрес кошелька'
+                    'address' => 'Адрес кошелька'
                 ],
                 'option_validation_js' => [
-                    'to' => [
+                    'address' => [
                         'type'      => 'text',
                         'required'  => true,
                         'minlength' => 26,
@@ -86,10 +90,10 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                     ],
                 ],
                 'option_validation' => [
-                    'to' => 'required|regex:~^[13][A-Za-z0-9]{25,34}$~u|xss_clean',
+                    'address' => 'required|regex:~^[13][A-Za-z0-9]{25,34}$~u|xss_clean',
                 ],
                 'option_validation_message' => [
-                    'to' => 'вы должны указать верный Bitcoin кошелёк',
+                    'address' => 'вы должны указать верный Bitcoin кошелёк',
                 ],
 
             ],
@@ -116,7 +120,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
 
     public function _api_response( $options ) {
         $operation_id = isset($_GET['operation_id']) ? intval($_GET['operation_id']): '';
-        $this->payment_api->dump([ 'name' => 'Bitaps', 'operation_id' => $operation_id]);
+        $this->payment_api->dump([ 'name' => ucfirst($this->PROVIDER_NAME), 'operation_id' => $operation_id]);
         // import options
         is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 
@@ -423,29 +427,277 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
         return $qrcode;
     }
 
-    public function api_payout( $options ) {
-        $result = $this->_api_response( $options );
+
+    public function api_payout( $options = null ) {
+        if( !$this->ENABLE ) { return( null ); }
+        // import options
+        is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+        // method
+        $method = $this->api_method( [
+            'type'      => 'payout',
+            'method_id' => $_method_id,
+        ]);
+        if( empty( $method ) ) {
+            $result = [
+                'status'         => false,
+                'status_message' => 'Метод запроса не найден',
+            ];
+            return( $result );
+        }
+        $payment_api = &$this->payment_api;
+        // operation_id
+        $_operation_id = (int)$_operation_id;
+        //$operation_id = $_operation_id;
+        if( empty( $_operation_id ) ) {
+            $result = [
+                'status'         => false,
+                'status_message' => 'Не определен код операции',
+            ];
+            return( $result );
+        }
+        // currency_id
+        $currency_id = $this->get_currency_payout( $options );
+        if( empty( $currency_id ) ) {
+            $result = [
+                'status'         => false,
+                'status_message' => 'Неизвестная валюта',
+            ];
+            return( $result );
+        }
+        // amount min/max
+        $result = $this->amount_limit( [
+            'amount'      => $_amount,
+            'currency_id' => $currency_id,
+            'method'      => $method,
+        ]);
+        if( ! @$result[ 'status' ] ) { return( $result ); }
+        // currency conversion
+        $amount_currency = $payment_api->currency_conversion( [
+            'type'        => 'sell',
+            'currency_id' => $currency_id,
+            'amount'      => $_amount,
+        ]);
+        if( empty( $amount_currency ) ) {
+            $result = [
+                'status'         => false,
+                'status_message' => 'Невозможно произвести конвертацию валют',
+            ];
+            return( $result );
+        }
+        // fee
+        $fee = $this->get_fee_payout( $options );
+        $amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+        $miners_fee = $this->_fee_by_level($this->FEE_LEVEL)*$this->AVERAGE_TRANSACTION_SIZE/$this->SATOSHI_TO_BTC;
+        $_amount = $amount_currency_total-$miners_fee;
+
+        if($_amount<=0){
+            $result = [
+                'status'         => false,
+                'status_message' => 'Сумма для вывода меньше комиссии сети',
+            ];
+            return( $result );
+        }
+
+        // check required
+        $request = [];
+        foreach( $method[ 'field' ] as $key ) {
+            $value = @${ '_'.$key };
+            if( !isset( $value ) ) {
+                $result = [
+                    'status'         => false,
+                    'status_message' => 'Отсутствуют данные запроса: '. $key,
+                ];
+                continue;
+                // return( $result );
+            }
+            $request[ $key ] = &${ '_'.$key };
+        }
+        // START DUMP
+        $payment_api->dump( [ 'name' => ucfirst($this->PROVIDER_NAME), 'operation_id' => $operation_id,
+            'var' => [ 'request' => $request ]
+        ]);
+
+
+        $response = $this->_create_payout($request);
+        // DUMP
+        $payment_api->dump( [ 'var' => [ 'response'=> $response ]]);
+        $sql_datetime = $payment_api->sql_datetime();
+
+        if( empty( $response ) ) {
+            $result = [
+                'status'         => false,
+                'status_message' => 'Невозможно отправить запрос',
+            ];
+            return( $result );
+        }
+
+        if( !empty( $response['error'] ) ) {
+            $result = [
+                'status'         => false,
+                'status_message' => $response['error'],
+            ];
+            return( $result );
+        }
+        else {
+            if($response['status'] == 'success') {
+                $status = 'processing';
+                $object = $payment_api->get_status(['name' => $status]);
+                list($status_id, $status) = $object;
+                $status_message = 'Выплата средств в обаботке.';
+                $result = [
+                    'status' => $response['status'],
+                    'status_message' => $status_message,
+                ];
+
+                $payment_api->dump(['var' => ['result' => $result]]);
+                $operation_options = [
+                    'processing' => [[
+                        'provider_name' => $this->PROVIDER_NAME,
+                        'datetime' => $sql_datetime,
+                    ]],
+                    'response' => [[
+                        'datetime' => $sql_datetime,
+                        'provider_name' => $this->PROVIDER_NAME,
+                        'state' => 0,
+                        'status_name' => $status,
+                        'status_message' => $status_message,
+                        'data' => $response,
+                    ]],
+                ];
+                $operation_update_data = [
+                    'operation_id' => $_operation_id,
+                    'datetime_update' => $sql_datetime,
+                    'status_id' => $status_id,
+                    'options' => $operation_options,
+                ];
+                $payment_api->operation_update( $operation_update_data );
+            }
+            else{
+                $result = [
+                    'status'         => false,
+                    'status_message' => $response['status'],
+                ];
+                return( $result );
+            }
+        }
         return( $result );
     }
 
 
-    public function payment( $options ) {
-        if( !$this->ENABLE ) { return( null ); }
-        // import options
-        is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-        // class
-        $payment_api = $this->payment_api;
-        // var
-        $operation_id  = $_data[ 'operation_id' ];
-        // payment
-        $result = parent::payment( $options );
-        // confirmation is ok
-        $confirmation_ok_options = array(
-            'operation_id' => $operation_id,
-        );
-        $result = $payment_api->confirmation_ok( $confirmation_ok_options );
-        // payout
-        $result = $this->api_payout( $options );
-        return( $result );
+
+    public function _create_payout($options){
+        $amount_currency_satoshi = $options['amount']*$this->SATOSHI_TO_BTC;
+        $url_options = [
+            'redeemcode' => $this->REDEEM_CODE,
+            'address' => $options['address'],
+            'amount' => $amount_currency_satoshi,
+            'fee_level' => $this->FEE_LEVEL,
+            //'custom_fee'=>$this->CUSTOM_FEE,
+        ];
+        $url = $this->URL_API.'use/redeemcode';
+        $result = '';
+        $result = @common()->get_remote_page($url, false, ['post' => json_encode($url_options)]);
+        /* Example:
+         * $result = '{"fee": 31200, "tx_hash": "0b9474f58a2f2069b12e2ae32fba252d0d303fafdef3a6ed26a21c2f94085fb0", "status": "success"}';
+         */
+        if(!empty($result)){
+            $result = @json_decode($result, true);
+        }
+        return $result;
+    }
+
+    public function _check_payout_operation($operation_id){
+        $payment_api = &$this->payment_api;
+        $operation = $payment_api->operation(['operation_id'=>$operation_id]);
+        $address = $operation['options']['request'][0]['options']['address'] ? : false;
+        $tx_hash = $operation['options']['response'][ count($operation['options']['response'])-1]['data']['tx_hash'] ? : false;
+        if($address && $tx_hash) {
+            $url = $this->URL_API.'address/transactions/' . $address . '/0/received/confirmed';
+            $result = @common()->get_remote_page($url, false);
+            if (!empty($result)) {
+                $result = @json_decode($result, true);
+                if($result && count($result)){
+                    foreach($result as $transaction){
+                        if($transaction[1] ==$tx_hash && $transaction[4] == 'confirmed' && $transaction[5] >=$this->CONFIRMATIONS){
+                            $payment_api->dump(['name' => ucfirst($this->PROVIDER_NAME), 'operation_id' => $operation_id]);
+
+                            $status = 'success';
+                            $object = $payment_api->get_status(['name' => $status]);
+                            list($status_id, $status) = $object;
+                            $status_message = 'Транзакция прошла успешно';
+
+                            $result = [
+                                'status' => $status,
+                                'status_message' => $status_message,
+                            ];
+
+                            $payment_api->dump(['var' => ['result' => $result]]);
+                            $sql_datetime = $payment_api->sql_datetime();
+
+                            $operation_options = [
+                                'response' => [[
+                                    'datetime' => $sql_datetime,
+                                    'provider_name' => $this->PROVIDER_NAME,
+                                    'state' => 0,
+                                    'status_name' => $status,
+                                    'status_message' => $status_message,
+                                    'data' => $transaction,
+                                ]],
+                            ];
+
+                            $operation_update_data = [
+                                'operation_id' => $operation_id,
+                                'datetime_update' => $sql_datetime,
+                                'status_id' => $status_id,
+                                'options' => $operation_options,
+                            ];
+
+                            $payment_api->operation_update( $operation_update_data );
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public function _check_operations($type = 'payout'){
+        $payment_api = &$this->payment_api;
+        $successful_operations = [];
+        switch($type){
+            case 'payout':
+                $provider = $payment_api->get_provider(['name'=>$this->PROVIDER_NAME]);
+                $provider_id = $provider[1]['provider_id'] ? : false;
+                $status = 'processing';
+                $object = $payment_api->get_status(['name' => $status]);
+                list($status_id, $status) = $object;
+                if($provider_id && $status_id){
+                    $where = 'direction=\'out\' and provider_id='.$provider_id.' and status_id='.$status_id;
+                    $operations = $payment_api->operation(['where'=>$where, 'no_limit'=>true]);
+                    if($operations && count($operations)>1 && $operations[1]>0){
+                        foreach($operations[0] as $operation){
+                            $operation_id = intval($operation['operation_id']);
+                            $operation_is_success = $this->_check_payout_operation($operation_id);
+                            if($operation_is_success){
+                                $successful_operations[] = $operation_id;
+                            }
+                        }
+                    }
+                }
+                else{
+                    return common()->_show_error_message('Провайдер '.$this->PROVIDER_NAME.' не найден');
+                }
+                break;
+            case 'payin':
+                break;
+        }
+        if(count($successful_operations)){
+            $result = 'Операции '.implode(', ', $successful_operations).' успешно завершены';
+        }
+        else {
+            $result = 'Нет новых успешно завершённых операций';
+        }
+        return $result;
     }
 }

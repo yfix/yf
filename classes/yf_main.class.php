@@ -524,22 +524,19 @@ class yf_main {
 		$this->events = $this->_class('core_events');
 		// Load event listeners from supported locations
 		$ext = '.listener.php';
-		$dir = 'share/events/';
-		$pattern = $dir. '*'. $ext;
+		$pattern = '{,plugins/*/}{,share/}events/*'. $ext;
 		$globs = [
-			'yf_core'			=> YF_PATH. $pattern,
-			'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
-			'project_core'		=> PROJECT_PATH. $pattern,
-			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'app_core'			=> APP_PATH. $pattern,
-			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		$ext_len = strlen($ext);
 		$names = [];
-		foreach ($globs as $glob) {
-			foreach (glob($glob) as $path) {
+		foreach ($globs as $gname => $glob) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$ext_len);
 				$names[$name] = $path;
+				$locations[$name][$gname] = $path;
 			}
 		}
 		// This double iterating code allows to inherit/replace listeners with same name in project
@@ -814,6 +811,7 @@ class yf_main {
 		if (!is_object($this->auth)) {
 			return trigger_error('MAIN: Cannot load needed auth module', E_USER_ERROR);
 		}
+		$this->events->fire('main.after_auth');
 	}
 
 	/**
@@ -937,7 +935,7 @@ class yf_main {
 		$plugins_classes = [];
 		$ext = YF_CLS_EXT; // default is .class.php
 		foreach ((array)$sets as $set => $pattern) {
-			foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT) as $d) {
+			foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT|GLOB_BRACE) as $d) {
 				$pname = basename($d);
 				if ($white_list && wildcard_compare($white_list, $pname)) {
 					// result is good, do not check black list if name found here, inside white list
@@ -947,7 +945,7 @@ class yf_main {
 				}
 				$dlen = strlen($d);
 				$classes = [];
-				foreach (array_merge(glob($d.'*/*'.$ext), glob($d.'*/*/*'.$ext)) as $f) {
+				foreach (glob($d.'*{/,/*/}*'.$ext, GLOB_BRACE) as $f) {
 					$cname = str_replace($ext, '', basename($f));
 					$cdir = dirname(substr($f, $dlen)).'/';
 					if (substr($cname, 0, $_plen) == YF_PREFIX) {
@@ -1427,19 +1425,15 @@ class yf_main {
 		$this->events && $this->events->fire('main.load_data_handlers');
 
 		$suffix = '.php';
-		$dir = 'share/data_handlers/';
-		$pattern = $dir. '*'. $suffix;
+		$pattern = '{,plugins/*/}{,share/}data_handlers/*'. $suffix;
 		$globs = [
-			'yf_main'				=> YF_PATH. $pattern,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
-			'project_main'			=> PROJECT_PATH. $pattern,
-			'project_app'			=> APP_PATH. $pattern,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+			'framework'		=> YF_PATH. $pattern,
+			'project'		=> PROJECT_PATH. $pattern,
+			'app'			=> APP_PATH. $pattern,
 		];
 		$strlen_suffix = strlen($suffix);
 		foreach($globs as $gname => $glob) {
-			foreach(glob($glob) as $path) {
+			foreach(glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$strlen_suffix);
 				$handlers[$name] = $path;
 			}
@@ -1510,8 +1504,8 @@ class yf_main {
 				return [];
 			}
 			$dirs = array_merge(
-				glob($sites_dir.'*', GLOB_ONLYDIR),
-				glob($sites_dir.'.*', GLOB_ONLYDIR)
+				glob($sites_dir.'*', GLOB_ONLYDIR|GLOB_BRACE),
+				glob($sites_dir.'.*', GLOB_ONLYDIR|GLOB_BRACE)
 			);
 		}
 		$sites = $sites1 = $sites2 = [];

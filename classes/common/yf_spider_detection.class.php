@@ -9,8 +9,6 @@
 */
 class yf_spider_detection {
 
-	/** @const */
-	const data_dir = 'share/spiders/';
 	/** @var */
 	public $well_known_bots = [
 		'googlebot'				=> 'Google',
@@ -79,7 +77,8 @@ class yf_spider_detection {
 #					return false;
 #				}
 #			}
-			if ($uas = $this->load_spiders_uas()) {
+			$uas = getset('spiders_uas', function(){ return $this->load_spiders_uas(); });
+			if ($uas) {
 				foreach ((array)$uas as $_test_ua => $name) {
 					if (!$_test_ua) {
 						continue;
@@ -91,7 +90,8 @@ class yf_spider_detection {
 			}
 		}
 		if ($CHECK_IP) {
-			if ($ips = $this->load_spiders_ips()) {
+			$ips = getset('spiders_ips', function(){ return $this->load_spiders_ips(); });
+			if ($ips) {
 				$ip_tmp = explode('.', $ip);
 				$ip_digits_4 = implode('.', $ip_tmp);
 				unset($ip_tmp[3]);
@@ -115,23 +115,17 @@ class yf_spider_detection {
 	* Return spiders IPs array
 	*/
 	function load_spiders_ips () {
-		$cache_name	= 'spiders_ip';
-		if (isset($this->_cache[$cache_name])) {
-			return $this->_cache[$cache_name];
-		}
-		if ($this->_cache[$cache_name] = cache_get($cache_name)) {
-			return $this->_cache[$cache_name];
-		}
 		$ext = '.txt';
 		$ext_len = strlen($ext);
+		$pattern = '{,plugins/*/}share/spiders/*'. $ext;
 		$globs = [
-			'app'		=> APP_PATH. self::data_dir. '*'. $ext,
-			'project'	=> PROJECT_PATH. self::data_dir. '*'. $ext,
-			'yf'		=> YF_PATH. self::data_dir. '*'. $ext,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		$paths = [];
 		foreach ((array)$globs as $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$paths[] = $path;
 			}
 		}
@@ -157,11 +151,6 @@ class yf_spider_detection {
 				}
 			}
 		}
-		$prev_cached_data = $this->_cache[$cache_name];
-		if ($data && !is_array($prev_cached_data)) {
-			cache_set($cache_name, $data);
-			$this->_cache[$cache_name] = $data;
-		}
 		return $data;
 	}
 
@@ -169,23 +158,17 @@ class yf_spider_detection {
 	* Return spiders UAs array
 	*/
 	function load_spiders_uas () {
-		$cache_name	= 'spiders_ua';
-		if (isset($this->_cache[$cache_name])) {
-			return $this->_cache[$cache_name];
-		}
-		if ($this->_cache[$cache_name] = cache_get($cache_name)) {
-			return $this->_cache[$cache_name];
-		}
 		$ext = '.txt';
 		$ext_len = strlen($ext);
+		$pattern = '{,plugins/*/}share/spiders/*'. $ext;
 		$globs = [
-			'app'		=> APP_PATH. self::data_dir. '*'. $ext,
-			'project'	=> PROJECT_PATH. self::data_dir. '*'. $ext,
-			'yf'		=> YF_PATH. self::data_dir. '*'. $ext,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		$paths = [];
 		foreach ((array)$globs as $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$paths[] = $path;
 			}
 		}
@@ -214,11 +197,6 @@ class yf_spider_detection {
 					}
 				}
 			}
-		}
-		$prev_cached_data = $this->_cache[$cache_name];
-		if ($data && !is_array($prev_cached_data)) {
-			cache_set($cache_name, $data);
-			$this->_cache[$cache_name] = $data;
 		}
 		return $data;
 	}

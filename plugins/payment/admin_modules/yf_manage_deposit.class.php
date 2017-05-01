@@ -402,10 +402,10 @@ class yf_manage_deposit {
 				return( $result );
 			}, [ 'desc' => 'статус' ] )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Ввод средств',  $url[ 'view'    ], [ 'icon' => 'fa fa-sign-in', 'class_add' => 'btn-primary', 'target' => '_blank' ] )
-			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'   , 'class_add' => 'btn-info'   ) )
-			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'  , 'class_add' => 'btn-info'   ) )
-			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], [ 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] )
+			->btn( 'Ввод средств',  $url[ 'view'    ], [ 'icon' => 'fa fa-sign-in', 'class_add' => 'btn-xs btn-primary', 'target' => '_blank' ] )
+			// ->btn( 'Пользователь' , $url[ 'user'    ], array( 'icon' => 'fa fa-user'   , 'class_add' => 'btn-xs btn-info'   ) )
+			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'  , 'class_add' => 'btn-xs btn-info'   ) )
+			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], [ 'class' => 'btn btn-xs btn-primary', 'icon' => 'fa fa-refresh' ] )
 		;
 
 		$data_daily = $this->_get_daily_data($last_days = 180);
@@ -715,10 +715,10 @@ class yf_manage_deposit {
 			$operation_id = empty( $_operation_id ) ? (int)$_GET[ 'operation_id' ] :  $_operation_id;
 			if( $operation_id > 0 ) {
 				$url_view = $this->_url( 'view', [ '%operation_id' => $operation_id ] );
-				$content .= '<a href="'. $url_view .'" class="btn btn-info">Назад к операции</a>';
+				$content .= '<a href="'. $url_view .'" class="btn btn-xs btn-info">Назад к операции</a>';
 			}
 			$url_list = $this->_url( 'list' );
-			$content .= '<a href="'. $url_list .'" class="btn btn-primary">Список операции</a>';
+			$content .= '<a href="'. $url_list .'" class="btn btn-xs btn-primary">Список операции</a>';
 		}
 		isset( $content ) && $panel_footer = '<div class="panel-footer">'. $content .'</div>';
 		// panel
@@ -831,7 +831,7 @@ EOS;
 			->check_box( 'is_confirm', [ 'desc' => 'Подтверждение', 'no_label' => true ] )
 			->row_start()
 				->submit( 'operation', 'update', [ 'desc' => 'Обновить', 'icon' => 'fa fa-refresh' ] )
-				->link( 'Назад' , $url[ 'list' ], [ 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ] )
+				->link( 'Назад' , $url[ 'list' ], [ 'class' => 'btn btn-xs btn-default', 'icon' => 'fa fa-chevron-left' ] )
 			->row_end()
 		;
 		return( $result );
