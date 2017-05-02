@@ -87,15 +87,17 @@ class yf_assets {
 	/** @bool */
 	public $ALLOW_GET_FROM_CDN = false;
 	/** @array */
-	public $ASSETS_GET_PRIORITY = ['bower','github','cdn','raw'];
-	/** @string */
-	public $BOWER_TARGET_DIR_TPL = '{project_path}/uploads/bower_components/{name}/{version}/';
+	public $ASSETS_GET_PRIORITY = ['bower','github','cdn','versions'];
 	/** @string */
 	public $BOWER_COMPONENTS_DIR_TPL = '{app_path}/bower_components/{name}/';
+	/** @string */
+	public $BOWER_TARGET_DIR_TPL = '{project_path}/uploads/bower_components/{name}/{version}/';
 	/** @string */
 	public $GITHUB_RAW_URL_TPL = 'https://raw.githubusercontent.com/{repo}/{branch}/';
 	/** @string */
 	public $GITHUB_TARGET_DIR_TPL = '{project_path}/uploads/github_cache/{repo}/{version}/';
+	/** @string */
+	public $CDN_TARGET_DIR_TPL = '{project_path}/uploads/cdn_cache/{name}/{version}/';
 
 	/**
 	* Catch missing method call
@@ -549,32 +551,37 @@ class yf_assets {
 		if (!is_string($asset_data) && is_callable($asset_data)) {
 			$asset_data = $asset_data($this);
 		}
-# foreach ($this->ASSETS_GET_PRIORITY)
-		if ($this->ALLOW_GET_FROM_BOWER && $asset_data['bower'] && $asset_data['bower'][$asset_type]) {
-			$data = $asset_data['bower'];
-			$name = $data['name'];
-			strpos($name, '#') !== false && list($name, $version) = explode('#', $name);
-			$version = $version ?: $data['version'] ?: 'master';
-			return $this->get_asset_from_bower($name, $version, $files = $data[$asset_type]);
-		} elseif ($this->ALLOW_GET_FROM_GITHUB && $asset_data['github'] && $asset_data['github'][$asset_type]) {
-			$data = $asset_data['github'];
-			$name = $data['name'];
-			strpos($name, '#') !== false && list($name, $version) = explode('#', $name);
-			$version = $version ?: $data['version'] ?: 'master';
-			return $this->get_asset_from_github($name, $version, $files = $data[$asset_type]);
-		} elseif ($this->ALLOW_GET_FROM_CDN && $asset_data['cdn'] && $asset_data['cdn'][$asset_type]) {
-#			$data = $asset_data['cdn'];
-		} else {
-			if (!is_array($asset_data['versions'])) {
-				return null;
+		foreach ((array)$this->ASSETS_GET_PRIORITY as $method) {
+			if (in_array($method, ['bower','github'])) {
+				$data = $asset_data[$method] ?: [];
+				$_files = $data[$asset_type];
+				if ($_files) {
+					$_name = $data['name'] ?: $name;
+					strpos($_name, '#') !== false && list($_name, $_version) = explode('#', $_name);
+					$_version = $version ?: $_version ?: $data['version'] ?: 'master';
+				}
 			}
-			$version = $this->find_version_best_match($version, array_keys($asset_data['versions']));
-			if (!$version || !isset($asset_data['versions'][$version])) {
-				return null;
+			if ($method == 'bower' && $this->ALLOW_GET_FROM_BOWER && $_files) {
+				return $this->get_asset_from_bower($_name, $_version, $_files);
+			} elseif ($method == 'github' && $this->ALLOW_GET_FROM_GITHUB && $_files) {
+				return $this->get_asset_from_github($_name, $_version, $_files);
+			} elseif ($method == 'cdn' && $this->ALLOW_GET_FROM_CDN && isset($asset_data[$method]) && isset($asset_data[$method][$asset_type])) {
+				$data = $asset_data[$method];
+				$_version = $version ?: $data['version'] ?: 'master';
+				return $this->get_asset_from_cdn($name, $_version, $data[$asset_type], $data['url']);
+			} elseif ($method == 'versions') {
+				if (!is_array($asset_data[$method])) {
+					return null;
+				}
+				$data = $asset_data[$method] ?: [];
+				$version = $this->find_version_best_match($version, array_keys($data));
+				if (!$version || !isset($data[$version])) {
+					return null;
+				}
+				$version_info = $data[$version];
+				$content = $version_info[$asset_type];
+				return $content;
 			}
-			$version_info = $asset_data['versions'][$version];
-			$content = $version_info[$asset_type];
-			return $content;
 		}
 	}
 
@@ -589,18 +596,7 @@ class yf_assets {
 		if (isset($cache[$name])) {
 			return $cache[$name];
 		}
-		!isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
-		$replace = [
-			'{site_path}'	=> rtrim(SITE_PATH,'/'),
-			'{app_path}'	=> rtrim(APP_PATH,'/'),
-			'{project_path}'=> rtrim(PROJECT_PATH,'/'),
-			'{repo}'		=> $name,
-			'{name}'		=> $name,
-			'{version}'		=> $version,
-			'{main_type}'	=> $this->_override['main_type'] ?: MAIN_TYPE,
-			'{host}'		=> $this->_override['host'] ?: $_SERVER['HTTP_HOST'],
-			'{lang}'		=> $this->_cache_language,
-		];
+		$replace = $this->_get_asset_tpl_replace($name, $version);
 		$target_dir = str_replace(['///','//'], '/', str_replace(array_keys($replace), array_values($replace), $this->BOWER_TARGET_DIR_TPL));
 		// Pre-check if all required files are there
 		$need_to_continue = false;
@@ -676,21 +672,9 @@ class yf_assets {
 		if (isset($cache[$name])) {
 			return $cache[$name];
 		}
-		!isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
-		$replace = [
-			'{site_path}'	=> rtrim(SITE_PATH,'/'),
-			'{app_path}'	=> rtrim(APP_PATH,'/'),
-			'{project_path}'=> rtrim(PROJECT_PATH,'/'),
-			'{repo}'		=> $name,
-			'{name}'		=> $name,
-			'{version}'		=> $version,
-			'{branch}'		=> $version,
-			'{main_type}'	=> $this->_override['main_type'] ?: MAIN_TYPE,
-			'{host}'		=> $this->_override['host'] ?: $_SERVER['HTTP_HOST'],
-			'{lang}'		=> $this->_cache_language,
-		];
+		$replace = $this->_get_asset_tpl_replace($name, $version);
 		$target_dir = str_replace(['///','//'], '/', str_replace(array_keys($replace), array_values($replace), $this->GITHUB_TARGET_DIR_TPL));
-		// Please do not replace 2 slashes inside github url
+		// Please do not replace 2 slashes inside url
 		$github_url = str_replace(array_keys($replace), array_values($replace), $this->GITHUB_RAW_URL_TPL);
 		$web = [];
 		foreach ((array)$files as $from => $to) {
@@ -711,6 +695,60 @@ class yf_assets {
 		}
 		$cache[$name] = $web;
 		return $cache[$name];
+	}
+
+	/**
+	*/
+	public function get_asset_from_cdn($name, $version = 'master', $files = [], $cdn_url_tpl) {
+		if (!$name || !$files || !$cdn_url_tpl) {
+			return false;
+		}
+		!$version && $version = 'master';
+		$cache = &$this->_cache_cdn;
+		if (isset($cache[$name])) {
+			return $cache[$name];
+		}
+		$replace = $this->_get_asset_tpl_replace($name, $version);
+		$target_dir = str_replace(['///','//'], '/', str_replace(array_keys($replace), array_values($replace), $this->CDN_TARGET_DIR_TPL));
+		// Please do not replace 2 slashes inside url
+		$cdn_url = str_replace(array_keys($replace), array_values($replace), $cdn_url_tpl);
+		$web = [];
+		foreach ((array)$files as $from => $to) {
+			if (is_numeric($from)) {
+				$from = $to;
+			}
+			$to_path = rtrim($target_dir,'/').'/'.ltrim($to,'/');
+			if (!file_exists($to_path)) {
+				$url = rtrim($cdn_url,'/').'/'.ltrim($from,'/');
+				$data = $this->_url_get_contents($url);
+				if (strlen($data)) {
+					$dir_to = dirname($to_path);
+					!file_exists($dir_to) && mkdir($dir_to, 0755, true);
+					file_put_contents($to_path, $data);
+				}
+			}
+			$web[] = WEB_PATH. substr($to_path, strlen(PROJECT_PATH));
+		}
+		$cache[$name] = $web;
+		return $cache[$name];
+	}
+
+	/**
+	*/
+	public function _get_asset_tpl_replace($name, $version = 'master') {
+		!isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
+		return [
+			'{site_path}'	=> rtrim(SITE_PATH,'/'),
+			'{app_path}'	=> rtrim(APP_PATH,'/'),
+			'{project_path}'=> rtrim(PROJECT_PATH,'/'),
+			'{repo}'		=> $name,
+			'{name}'		=> $name,
+			'{version}'		=> $version,
+			'{branch}'		=> $version,
+			'{main_type}'	=> $this->_override['main_type'] ?: MAIN_TYPE,
+			'{host}'		=> $this->_override['host'] ?: $_SERVER['HTTP_HOST'],
+			'{lang}'		=> $this->_cache_language,
+		];
 	}
 
 	/**
