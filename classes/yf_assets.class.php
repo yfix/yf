@@ -1,12 +1,8 @@
 <?php
 
-// TODO: requirejs integration, auto-generate its config with switcher on/off
-// TODO: support for multiple media servers
-// TODO: Fallback to local: window.Foundation || document.write('<script src="/js/vendor/foundation.min.js"><\/script>')
-// TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
-// TODO: move to web accessible folder only after completion to ensure atomicity
-// TODO: decide with images: jpeg, png, gif, sprites
 // TODO: compare versions with require_php_lib('php_semver')
+// TODO: decide with images: jpeg, png, gif, sprites
+// TODO: requirejs integration, auto-generate its config with switcher on/off
 
 class yf_assets {
 
@@ -16,61 +12,61 @@ class yf_assets {
 	protected $assets = [];
 	/** @array All filters to apply stored here */
 	protected $filters = [];
-	/***/
+	/** @array */
 	public $supported_asset_types = [
 		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'bundle', 'asset'/*, 'img', 'font'*/
 	];
-	/***/
+	/** @array */
 	public $inherit_asset_types_map = [
 		'js' => ['jquery'],
 	];
-	/***/
+	/** @array */
 	public $supported_content_types = [
 		'asset', 'url', 'file', 'inline',
 	];
-	/***/
+	/** @array */
 	public $supported_out_types = [
 		'js', 'css'/*, 'images', 'fonts',*/
 	];
-	/** @bool Set to blank to disable */
+	/** @string Set to blank to disable */
 	public $MAIN_TPL_CSS = 'style_css';
-	/** @bool Set to blank to disable */
+	/** @string Set to blank to disable */
 	public $MAIN_TPL_JS = 'script_js';
 	/** @bool Needed to ensure smooth transition of existing codebase. If enabled - then each add() call will immediately return generated content */
 	public $ADD_IS_DIRECT_OUT = false;
-	/** @bool */
+	/** @int */
 	public $URL_TIMEOUT = 15;
-	/** @bool */
+	/** @int */
 	public $URL_FILE_CACHE_TTL = 3600;
 	/** @bool */
 	public $USE_CACHE = false;
-	/** @bool */
+	/** @int */
 	public $CACHE_TTL = 86400;
-	/** @bool */ // '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
+	/** @string */ // '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
 	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{lang}/{asset_name}/{version}/{out_type}/'; // shorter variant
 	/** @bool */
 	public $CACHE_INLINE_ALLOW = true;
-	/** @bool */
+	/** @int */
 	public $CACHE_INLINE_MIN_SIZE = 1000;
 	/** @bool */
 	public $CACHE_IMAGES_USE_DATA_URI = false;
-	/** @bool */
+	/** @int */
 	public $CACHE_IMAGES_DATA_URI_MAX_SIZE = 5000;
 	/** @bool */
 	public $CACHE_OUT_ADD_MTIME = true;
 	/** @bool Skip auto-generate cached files on production */
 	public $FORCE_LOCAL_STORAGE = false;
-	/** @bool */
+	/** @int */
 	public $FORCE_LOCAL_TTL = 86400000; // 1000 days * 24 hours * 60 minutes * 60 seconds == almost forever
 	/** @bool */
 	public $INLINE_ASSETS_USE_DATA_URI = false;
 	/** @bool */
 	public $FILE_ASSETS_USE_DATA_URI = false;
-	/** @bool */
+	/** @int */
 	public $FILE_ASSETS_DATA_URI_MAX_SIZE = 5000;
 	/** @bool */
 	public $COMBINE = false;
-	/** @bool */
+	/** @string */
 	public $COMBINED_VERSION_TPL = '{year}{month}';
 	/** @bool Do not generate combined file on-the-fly */
 	public $COMBINED_LOCK = false;
@@ -85,9 +81,21 @@ class yf_assets {
 	/** @bool */
 	public $ALLOW_URL_CONTROL = true;
 	/** @bool */
-	public $USE_BOWER = false;
+	public $ALLOW_GET_FROM_BOWER = false;
 	/** @bool */
-	public $USE_GITHUB = false;
+	public $ALLOW_GET_FROM_GITHUB = false;
+	/** @bool */
+	public $ALLOW_GET_FROM_CDN = false;
+	/** @array */
+	public $ASSETS_GET_PRIORITY = ['bower','github','cdn','raw'];
+	/** @string */
+	public $BOWER_TARGET_DIR_TPL = '{project_path}/uploads/bower_components/{name}/{version}/';
+	/** @string */
+	public $BOWER_COMPONENTS_DIR_TPL = '{app_path}/bower_components/{name}/';
+	/** @string */
+	public $GITHUB_RAW_URL_TPL = 'https://raw.githubusercontent.com/{repo}/{branch}/';
+	/** @string */
+	public $GITHUB_TARGET_DIR_TPL = '{project_path}/uploads/github_cache/{repo}/{version}/';
 
 	/**
 	* Catch missing method call
@@ -237,17 +245,6 @@ class yf_assets {
 		$this->ADD_IS_DIRECT_OUT = $bak['ADD_IS_DIRECT_OUT'];
 		$this->USE_CACHE = $bak['USE_CACHE'];
 		$this->COMBINE = $bak['COMBINE'];
-	}
-
-	/**
-	* Get file by path or url, using local cache inside /tmp/assets/
-	*/
-	public function _file_get($path) {
-		$cache_dir = dirname($cache_path);
-		if (!file_exists($cache_dir)) {
-			mkdir($cache_dir, 0755, $recurse = true);
-		}
-		return $out;
 	}
 
 	/**
@@ -552,19 +549,20 @@ class yf_assets {
 		if (!is_string($asset_data) && is_callable($asset_data)) {
 			$asset_data = $asset_data($this);
 		}
-		if ($this->USE_BOWER && $asset_data['bower'] && $asset_data['bower'][$asset_type]) {
+# foreach ($this->ASSETS_GET_PRIORITY)
+		if ($this->ALLOW_GET_FROM_BOWER && $asset_data['bower'] && $asset_data['bower'][$asset_type]) {
 			$data = $asset_data['bower'];
 			$name = $data['name'];
 			strpos($name, '#') !== false && list($name, $version) = explode('#', $name);
 			$version = $version ?: $data['version'] ?: 'master';
-			return $this->bower_get($name, $version, $files = $data[$asset_type]);
-		} elseif ($this->USE_GITHUB && $asset_data['github'] && $asset_data['github'][$asset_type]) {
+			return $this->get_asset_from_bower($name, $version, $files = $data[$asset_type]);
+		} elseif ($this->ALLOW_GET_FROM_GITHUB && $asset_data['github'] && $asset_data['github'][$asset_type]) {
 			$data = $asset_data['github'];
 			$name = $data['name'];
 			strpos($name, '#') !== false && list($name, $version) = explode('#', $name);
 			$version = $version ?: $data['version'] ?: 'master';
-			return $this->github_get($name, $version, $files = $data[$asset_type]);
-		} elseif ($this->USE_CDN && $asset_data['cdn'] && $asset_data['cdn'][$asset_type]) {
+			return $this->get_asset_from_github($name, $version, $files = $data[$asset_type]);
+		} elseif ($this->ALLOW_GET_FROM_CDN && $asset_data['cdn'] && $asset_data['cdn'][$asset_type]) {
 #			$data = $asset_data['cdn'];
 		} else {
 			if (!is_array($asset_data['versions'])) {
@@ -582,16 +580,28 @@ class yf_assets {
 
 	/**
 	*/
-	public function bower_get($name, $version = 'master', $files = []) {
+	public function get_asset_from_bower($name, $version = 'master', $files = []) {
 		if (!$name || !$files) {
 			return false;
 		}
 		!$version && $version = 'master';
-		if (isset($this->_cache_bowerphp[$name])) {
-			return $this->_cache_bowerphp[$name];
+		$cache = &$this->_cache_bowerphp;
+		if (isset($cache[$name])) {
+			return $cache[$name];
 		}
-		$this->_cache_bowerphp[$name] = $name;
-		$www_dir = PROJECT_PATH.'uploads/bower_components/'.$name.'/'.$version.'/';
+		!isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
+		$replace = [
+			'{site_path}'	=> rtrim(SITE_PATH,'/'),
+			'{app_path}'	=> rtrim(APP_PATH,'/'),
+			'{project_path}'=> rtrim(PROJECT_PATH,'/'),
+			'{repo}'		=> $name,
+			'{name}'		=> $name,
+			'{version}'		=> $version,
+			'{main_type}'	=> $this->_override['main_type'] ?: MAIN_TYPE,
+			'{host}'		=> $this->_override['host'] ?: $_SERVER['HTTP_HOST'],
+			'{lang}'		=> $this->_cache_language,
+		];
+		$target_dir = str_replace(['///','//'], '/', str_replace(array_keys($replace), array_values($replace), $this->BOWER_TARGET_DIR_TPL));
 		// Pre-check if all required files are there
 		$need_to_continue = false;
 		$web = [];
@@ -599,7 +609,7 @@ class yf_assets {
 			if (is_numeric($from)) {
 				$from = $to;
 			}
-			$to_path = $www_dir. $to;
+			$to_path = $target_dir. $to;
 			if (!file_exists($to_path)) {
 				$need_to_continue = true;
 				break;
@@ -607,12 +617,23 @@ class yf_assets {
 			$web[] = WEB_PATH. substr($to_path, strlen(PROJECT_PATH));
 		}
 		if (!$need_to_continue) {
-			$this->_cache_bowerphp[$name] = $web;
-			return $this->_cache_bowerphp[$name];
+			$cache[$name] = $web;
+			return $cache[$name];
 		}
+		$need_bower_run = true;
 		// Start full variant if something is missing on previous step
-		$bower_component_dir = APP_PATH.'bower_components/'.$name.'/';
-		if (!file_exists($bower_component_dir.'bower.json')) {
+		$bower_component_dir = str_replace(['///','//'], '/', str_replace(array_keys($replace), array_values($replace), $this->BOWER_COMPONENTS_DIR_TPL));
+		if (file_exists($bower_component_dir.'bower.json')) {
+			if ($version == 'master') {
+				$need_bower_run = false;
+			} else {
+				$bconf = json_decode(file_get_contents($bower_component_dir.'bower.json'), true);
+				if ($bconf['version'] && $bconf['version'] == $version) {
+					$need_bower_run = false;
+				}
+			}
+		}
+		if ($need_bower_run) {
 			$bowerphp_bin = '/usr/local/share/composer/vendor/bin/bowerphp';
 			if (!file_exists($bowerphp_bin)) {
 				exec('/usr/local/bin/composer global require beelab/bowerphp', $out, $ret);
@@ -620,7 +641,7 @@ class yf_assets {
 					return false;
 				}
 			}
-			exec('cd '.APP_PATH.' && '.$bowerphp_bin.' install '.$name, $out, $ret);
+			exec('cd '.APP_PATH.' && '.$bowerphp_bin.' install '.$name.'#'.$version, $out, $ret);
 			if (!file_exists($bower_component_dir)) {
 				return false;
 			}
@@ -630,57 +651,66 @@ class yf_assets {
 			if (is_numeric($from)) {
 				$from = $to;
 			}
-			$dir_to = $www_dir. ''. dirname($to);
-			if (!file_exists($dir_to)) {
-				mkdir($dir_to, 0755, true);
+			$from_path = $bower_component_dir. $from;
+			$to_path = $target_dir. $to;
+			if (!file_exists($to_path) || filesize($from_path) != filesize($to_path)) {
+				$dir_to = dirname($to_path);
+				!file_exists($dir_to) && mkdir($dir_to, 0755, true);
+				// Copy instead of symlink to allow to delete or miss source bower components dir
+				file_put_contents($to_path, file_get_contents($from_path));
 			}
-			$to_path = $www_dir. $to;
-			// Copy instead of symlink to allow to delete or miss source bower components dir
-			copy($bower_component_dir. $from, $to_path);
 			$web[] = WEB_PATH. substr($to_path, strlen(PROJECT_PATH));
 		}
-		$this->_cache_bowerphp[$name] = $web;
-		return $this->_cache_bowerphp[$name];
+		$cache[$name] = $web;
+		return $cache[$name];
 	}
 
 	/**
 	*/
-	public function github_get($name, $version = 'master', $files = []) {
+	public function get_asset_from_github($name, $version = 'master', $files = []) {
 		if (!$name || !$files) {
 			return false;
 		}
 		!$version && $version = 'master';
-		if (isset($this->_cache_github[$name])) {
-			return $this->_cache_github[$name];
+		$cache = &$this->_cache_github;
+		if (isset($cache[$name])) {
+			return $cache[$name];
 		}
-		$this->_cache_github[$name] = $name;
-		$url_tpl = 'https://raw.githubusercontent.com/{repo}/{branch}/{path}';
-		$cache_dir = PROJECT_PATH.'uploads/github_cache/';
+		!isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
+		$replace = [
+			'{site_path}'	=> rtrim(SITE_PATH,'/'),
+			'{app_path}'	=> rtrim(APP_PATH,'/'),
+			'{project_path}'=> rtrim(PROJECT_PATH,'/'),
+			'{repo}'		=> $name,
+			'{name}'		=> $name,
+			'{version}'		=> $version,
+			'{branch}'		=> $version,
+			'{main_type}'	=> $this->_override['main_type'] ?: MAIN_TYPE,
+			'{host}'		=> $this->_override['host'] ?: $_SERVER['HTTP_HOST'],
+			'{lang}'		=> $this->_cache_language,
+		];
+		$target_dir = str_replace(['///','//'], '/', str_replace(array_keys($replace), array_values($replace), $this->GITHUB_TARGET_DIR_TPL));
+		// Please do not replace 2 slashes inside github url
+		$github_url = str_replace(array_keys($replace), array_values($replace), $this->GITHUB_RAW_URL_TPL);
 		$web = [];
 		foreach ((array)$files as $from => $to) {
 			if (is_numeric($from)) {
 				$from = $to;
 			}
-			$url = str_replace(['{repo}','{branch}','{path}'], [$name,$version,ltrim($from,'/')], $url_tpl);
-			$to_path = $cache_dir.''.$name.'/'.$version.'/'.ltrim($to,'/');
-			if (file_exists($cache_dir. $to)) {
-				continue;
+			$to_path = rtrim($target_dir,'/').'/'.ltrim($to,'/');
+			if (!file_exists($to_path)) {
+				$url = rtrim($github_url,'/').'/'.ltrim($from,'/');
+				$data = $this->_url_get_contents($url);
+				if (strlen($data)) {
+					$dir_to = dirname($to_path);
+					!file_exists($dir_to) && mkdir($dir_to, 0755, true);
+					file_put_contents($to_path, $data);
+				}
 			}
-			$data = file_get_contents($url, false, stream_context_create([
-				'http' => ['timeout' => $this->URL_TIMEOUT]
-			]));
-			if (!$data) {
-				continue;
-			}
-			$dir_to = dirname($to_path);
-			if (!file_exists($dir_to)) {
-				mkdir($dir_to, 0755, true);
-			}
-			file_put_contents($to_path, $data);
 			$web[] = WEB_PATH. substr($to_path, strlen(PROJECT_PATH));
 		}
-		$this->_cache_github[$name] = $web;
-		return $this->_cache_github[$name];
+		$cache[$name] = $web;
+		return $cache[$name];
 	}
 
 	/**
@@ -1087,6 +1117,8 @@ class yf_assets {
 
 	/**
 	*/
+# TODO: be able to turn off
+# TODO: check if really working
 	public function get_sass_content($params = []) {
 		$out = [];
 		$content = $this->get_content('sass');
@@ -1104,6 +1136,8 @@ class yf_assets {
 
 	/**
 	*/
+# TODO: be able to turn off
+# TODO: check if really working
 	public function get_less_content($params = []) {
 		$out = [];
 		$content = $this->get_content('less');
@@ -1121,6 +1155,8 @@ class yf_assets {
 
 	/**
 	*/
+# TODO: be able to turn off
+# TODO: check if really working
 	public function get_coffee_content($params = []) {
 		$out = [];
 		$content = $this->get_content('coffee');
@@ -1141,6 +1177,8 @@ class yf_assets {
 		$is_ajax = main()->is_ajax();
 		// Move down inlined content
 		$all_content = $this->get_content($out_type);
+# TODO: be able to turn off
+# TODO: check if really working
 #		if ($out_type === 'css') {
 #			$all_content = (array)$all_content + (array)$this->get_sass_content($params);
 #			$all_content = (array)$all_content + (array)$this->get_less_content($params);
