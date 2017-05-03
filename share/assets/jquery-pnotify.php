@@ -10,8 +10,15 @@ return [
 			],
 		],
 		'3.0.0' => [
-			'js' => '//cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.min.js',
-			'css' => '//cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.min.css',
+			'js' => [
+				'//cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.min.js',
+				'//cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.buttons.min.js',
+				'//cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.confirm.min.js',
+			],
+			'css' => [
+				'//cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.min.css',
+				'//cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.buttons.min.css',
+			],
 		],
 	],
 	'require' => [

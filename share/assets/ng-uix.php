@@ -1,5 +1,7 @@
 <?php
 
+return function() {
+
 $path = YF_PATH . 'templates/user/js/ng/uix/';
 $js = [
 	file_get_contents( $path . 'uix.js' ),
@@ -29,3 +31,5 @@ return [
 		'asset' => 'ng-app',
 	],
 ];
+
+};
