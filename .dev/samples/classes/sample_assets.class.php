@@ -33,6 +33,33 @@ class sample_assets {
 	}
 
 	/***/
+	function demo() {
+		$name = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['page'] ?: $_GET['id']));
+		if (!$name) {
+			return _404();
+		}
+		$cls_assets = _class($assets);
+		$all = $this->_get_assets();
+		if (!isset($all[$name])) {
+			return _404();
+		}
+		$content = $all[$name]['content'];
+		if (is_callable($content)) {
+			$content = $content($cls_assets);
+		}
+		asset($name);
+		$out[] = '<pre><code>'._prepare_html(var_export($content, true)).'</code></pre>';
+		if (isset($content['demo'])) {
+			$demo = $content['demo'];
+			if (is_callable($demo)) {
+				$demo = $demo();
+			}
+			$out[] = $demo;
+		}
+		return implode('<br>'.PHP_EOL, $out);
+	}
+
+	/***/
 	function show() {
 		if ($_GET['id']) {
 			return _class('docs')->_show_for($this);
@@ -59,7 +86,7 @@ class sample_assets {
 			}
 			$data[$name] = [
 				'name'	=> $name,
-				'link'	=> url('/@object/@action/#'.$name),
+				'link'	=> url('/@object/@action/demo/'.$name),
 				'sub'	=> $sub,
 				'id'	=> $name,
 #				'class'	=> 'btn btn-default btn-small btn-sm',
@@ -72,16 +99,16 @@ class sample_assets {
 	public function _get_assets() {
 		$assets = [];
 		$suffix = '.php';
-		$dir = 'share/assets/';
-		$pattern = $dir. '*'. $suffix;
-		$globs = [
-			'yf_main'		=> YF_PATH. $pattern,
-			'yf_plugins'	=> YF_PATH. 'plugins/*/'. $pattern,
-		];
 		$slen = strlen($suffix);
+		$pattern  = '{,plugins/*/}{assets/*,share/assets/*}'. $suffix;
+		$globs = [
+			'framework' => YF_PATH. $pattern,
+#			'project'	=> PROJECT_PATH. $pattern,
+#			'app'		=> APP_PATH. $pattern,
+		];
 		$names = [];
 		foreach($globs as $gname => $glob) {
-			foreach(glob($glob) as $path) {
+			foreach(glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$slen);
 				$names[$name] = $path;
 			}
