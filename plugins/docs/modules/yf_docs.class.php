@@ -297,7 +297,7 @@ class yf_docs {
 		];
 		$names = [];
 		foreach ($globs as $glob) {
-			foreach (glob($glob) as $cls) {
+			foreach (glob($glob, GLOB_BRACE) as $cls) {
 				$cls = basename($cls);
 				if ($cls == __CLASS__) {
 					continue;
