@@ -48,7 +48,6 @@ class sample_assets {
 			$content = $content($cls_assets);
 		}
 		asset($name);
-		$out[] = '<pre><code>'._prepare_html(var_export($content, true)).'</code></pre>';
 		if (isset($content['demo'])) {
 			$demo = $content['demo'];
 			if (is_callable($demo)) {
@@ -56,6 +55,7 @@ class sample_assets {
 			}
 			$out[] = $demo;
 		}
+		$out[] = '<pre><code>'._prepare_html(var_export($content, true)).'</code></pre>';
 		return implode('<br>'.PHP_EOL, $out);
 	}
 
