@@ -8,7 +8,7 @@ return [
 			'//rawgit.yfix.net/highcharts/highcharts-dist/v5.0.10/js/modules/exporting.js',
 		],
 		'css' => [
-			'//rawgit.yfix.net/highcharts/highcharts-dist/v5.0.10/css/highcharts.css',
+#			'//rawgit.yfix.net/highcharts/highcharts-dist/v5.0.10/css/highcharts.css',
 		],
 	]],
 	'github' => [
@@ -20,7 +20,7 @@ return [
 			'js/modules/exporting.js',
 		],
 		'css' => [
-			'css/highcharts.css',
+#			'css/highcharts.css',
 		],
 	],
 	'require' => ['asset' => 'jquery'],
