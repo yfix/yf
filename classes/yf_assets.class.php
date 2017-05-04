@@ -1108,7 +1108,9 @@ class yf_assets {
 		}
 		// Skip any related content, that was specially cached or listed, but not need to be included here
 		if (in_array($content_type, ['url','file']) && in_array($asset_type, ['js','css'])) {
-			if (pathinfo($content, PATHINFO_EXTENSION) != $asset_type) {
+			// This line needed to strip query string from file name like this:
+			// /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
+			if (pathinfo(parse_url($content, PHP_URL_PATH), PATHINFO_EXTENSION) != $asset_type) {
 				$content = '';
 			}
 		}
