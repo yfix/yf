@@ -98,6 +98,12 @@ class yf_assets {
 	public $GITHUB_TARGET_DIR_TPL = '{project_path}/uploads/github_cache/{repo}/{version}/';
 	/** @string */
 	public $CDN_TARGET_DIR_TPL = '{project_path}/uploads/cdn_cache/{name}/{version}/';
+	/** @bool */
+	public $ALLOW_CONTENT_SASS = false;
+	/** @bool */
+	public $ALLOW_CONTENT_LESS = false;
+	/** @bool */
+	public $ALLOW_CONTENT_COFFEE = false;
 
 	/**
 	* Catch missing method call
@@ -562,13 +568,13 @@ class yf_assets {
 				}
 			}
 			if ($method == 'bower' && $this->ALLOW_GET_FROM_BOWER && $_files) {
-				return $this->get_asset_from_bower($_name, $_version, $_files);
+				return $this->get_asset_from_bower($_name, $_version, $data, $asset_type);
 			} elseif ($method == 'github' && $this->ALLOW_GET_FROM_GITHUB && $_files) {
-				return $this->get_asset_from_github($_name, $_version, $_files);
+				return $this->get_asset_from_github($_name, $_version, $data, $asset_type);
 			} elseif ($method == 'cdn' && $this->ALLOW_GET_FROM_CDN && isset($asset_data[$method]) && isset($asset_data[$method][$asset_type])) {
 				$data = $asset_data[$method];
 				$_version = $version ?: $data['version'] ?: 'master';
-				return $this->get_asset_from_cdn($name, $_version, $data[$asset_type], $data['url']);
+				return $this->get_asset_from_cdn($name, $_version, $data, $asset_type);
 			} elseif ($method == 'versions') {
 				if (!is_array($asset_data[$method])) {
 					return null;
@@ -587,12 +593,13 @@ class yf_assets {
 
 	/**
 	*/
-	public function get_asset_from_bower($name, $version = 'master', $files = []) {
-		if (!$name || !$files) {
+	public function get_asset_from_bower($name, $version = 'master', $asset_data = [], $asset_type) {
+		if (!$name || !$asset_data || !isset($asset_data[$asset_type])) {
 			return false;
 		}
+		$files = $asset_data[$asset_type];
 		!$version && $version = 'master';
-		$cache = &$this->_cache_bowerphp;
+		$cache = &$this->_cache_bowerphp[$asset_type];
 		if (isset($cache[$name])) {
 			return $cache[$name];
 		}
@@ -663,12 +670,13 @@ class yf_assets {
 
 	/**
 	*/
-	public function get_asset_from_github($name, $version = 'master', $files = []) {
-		if (!$name || !$files) {
+	public function get_asset_from_github($name, $version = 'master', $asset_data = [], $asset_type) {
+		if (!$name || !$asset_data || !isset($asset_data[$asset_type])) {
 			return false;
 		}
+		$files = $asset_data[$asset_type];
 		!$version && $version = 'master';
-		$cache = &$this->_cache_github;
+		$cache = &$this->_cache_github[$asset_type];
 		if (isset($cache[$name])) {
 			return $cache[$name];
 		}
@@ -699,12 +707,14 @@ class yf_assets {
 
 	/**
 	*/
-	public function get_asset_from_cdn($name, $version = 'master', $files = [], $cdn_url_tpl) {
-		if (!$name || !$files || !$cdn_url_tpl) {
+	public function get_asset_from_cdn($name, $version = 'master', $asset_data = [], $asset_type) {
+		if (!$name || !$asset_data || !isset($asset_data[$asset_type]) || !$asset_data['url']) {
 			return false;
 		}
+		$cdn_url_tpl = $asset_data['url'];
+		$files = $asset_data[$asset_type];
 		!$version && $version = 'master';
-		$cache = &$this->_cache_cdn;
+		$cache = &$this->_cache_cdn[$asset_type];
 		if (isset($cache[$name])) {
 			return $cache[$name];
 		}
@@ -1161,9 +1171,11 @@ class yf_assets {
 
 	/**
 	*/
-# TODO: be able to turn off
 # TODO: check if really working
 	public function get_sass_content($params = []) {
+		if (!$this->ALLOW_CONTENT_SASS) {
+			return [];
+		}
 		$out = [];
 		$content = $this->get_content('sass');
 		if (empty($content)) {
@@ -1180,9 +1192,11 @@ class yf_assets {
 
 	/**
 	*/
-# TODO: be able to turn off
 # TODO: check if really working
 	public function get_less_content($params = []) {
+		if (!$this->ALLOW_CONTENT_LESS) {
+			return [];
+		}
 		$out = [];
 		$content = $this->get_content('less');
 		if (empty($content)) {
@@ -1199,9 +1213,11 @@ class yf_assets {
 
 	/**
 	*/
-# TODO: be able to turn off
 # TODO: check if really working
 	public function get_coffee_content($params = []) {
+		if (!$this->ALLOW_CONTENT_COFFEE) {
+			return [];
+		}
 		$out = [];
 		$content = $this->get_content('coffee');
 		if (empty($content)) {
@@ -1221,14 +1237,12 @@ class yf_assets {
 		$is_ajax = main()->is_ajax();
 		// Move down inlined content
 		$all_content = $this->get_content($out_type);
-# TODO: be able to turn off
-# TODO: check if really working
-#		if ($out_type === 'css') {
-#			$all_content = (array)$all_content + (array)$this->get_sass_content($params);
-#			$all_content = (array)$all_content + (array)$this->get_less_content($params);
-#		} elseif ($out_type === 'js') {
-#			$all_content = (array)$all_content + (array)$this->get_coffee_content($params);
-#		}
+		if ($out_type === 'css') {
+			$this->ALLOW_CONTENT_SASS && $all_content = (array)$all_content + (array)$this->get_sass_content($params);
+			$this->ALLOW_CONTENT_LESS && $all_content = (array)$all_content + (array)$this->get_less_content($params);
+		} elseif ($out_type === 'js') {
+			$this->ALLOW_CONTENT_COFFEE && $all_content = (array)$all_content + (array)$this->get_coffee_content($params);
+		}
 		$top = [];
 		$bottom = [];
 		$last = [];

@@ -38,4 +38,13 @@ return [
 		'desc' => 'Extend Bootstrap\'s components with Bootstrap Form Helpers custom jQuery plugins.',
 		'git' => 'https://github.com/yfix/bootstrap-form-helpers.git',
 	],
+	'demo' => function() {
+		$vals = ['k1' => 'v1', 'k2' => 'v2'];
+		$body[] = '<div class="bfh-selectbox">';
+		foreach ((array)$vals as $key => $val) {
+			$body[] = '<div data-value="'.$key.'">'.$val.'</div>';
+		}
+		$body[] = '</div>';
+		return implode(PHP_EOL, $body);
+	},
 ];
