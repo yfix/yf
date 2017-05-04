@@ -1096,6 +1096,12 @@ class yf_assets {
 			$name = $params['name'];
 			unset($params['name']);
 		}
+		// Skip any related content, that was specially cached or listed, but not need to be included here
+		if (in_array($content_type, ['url','file']) && in_array($asset_type, ['js','css'])) {
+			if (pathinfo($content, PATHINFO_EXTENSION) != $asset_type) {
+				$content = '';
+			}
+		}
 		return $this->content[$asset_type][$md5] = [
 			'content_type'	=> $content_type,
 			'content'		=> $content,
