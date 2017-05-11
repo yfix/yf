@@ -4,7 +4,9 @@ return [
 	'versions' => [
 		'master' => [
 			'css' => ['
-.left_area .bs-docs-sidenav, .right_area .bs-docs-sidenav { position:fixed; height: calc(100% - 80px); overflow-y: auto; }
+@media (min-width:1200px) {
+	.left_area .bs-docs-sidenav, .right_area .bs-docs-sidenav { position:fixed; height: calc(100% - 80px); overflow-y: auto; }
+}
 .dl-horizontal dt { width:50%; margin-right:10px; }
 ul#slide_menu .dropdown-divider { font-weight:bold; border-bottom:1px solid; }
 			'],

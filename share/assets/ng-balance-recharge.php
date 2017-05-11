@@ -1,5 +1,7 @@
 <?php
 
+return function() {
+
 $path = YF_PATH . 'templates/user/js/ng/payment/';
 $content = [
 	file_get_contents( $path . 'balance-recharge.js' ),
@@ -21,3 +23,5 @@ return [
 		],
 	],
 ];
+
+};

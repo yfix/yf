@@ -1,5 +1,7 @@
 <?php
 
+return function() {
+
 $js = <<<'EOS'
 (function () { 'use strict';
 angular.element( document ).ready( function() {
@@ -35,3 +37,5 @@ return [
 		],
 	],
 ];
+
+};
