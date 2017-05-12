@@ -1790,6 +1790,39 @@ class yf_html {
 	}
 
 	/**
+	* Country container
+	*/
+	function country() {
+		asset('bfh-select');
+
+		$args = func_get_args();
+		$a = [];
+		// numerics params
+		if (isset($args[0]) && is_array($args[0])) {
+			$a = $args[0];
+		} elseif (isset($args[0])) {
+			$a['code'] = $args[0];
+			$a['link']	= $args[1];
+			$a['class']	= $args[2];
+		}
+		if (isset($args['extra']) && is_array($args['extra'])) {
+			foreach($args['extra'] as $k => $v) {
+				$a[$k] = $v;
+			}
+		}
+		$code = strtoupper($a['code']);
+		if (!$code) {
+			return false;
+		}
+		$name = _prepare_html($this->_get_country_name($code));
+		if ($a['link']) {
+			return a(str_replace('%code', $code, $a['link']), $code.' | '.$name, 'bfh-flag-'.$code, '', $a['class']);
+		} else {
+			return $this->icon('bfh-flag-'.$code);
+		}
+	}
+
+	/**
 	* IP container
 	*/
 	function ip() {
