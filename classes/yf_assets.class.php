@@ -399,7 +399,7 @@ class yf_assets {
 		}
 		$assets   = [];
 		$suffix   = '.php';
-		$pattern  = '{,plugins/*/}{assets/*,share/assets/*}'. $suffix;
+		$pattern  = '{,plugins/*/}{assets/,share/assets/}{*,*/*}'. $suffix;
 		$globs = [
 			'framework'	=> YF_PATH. $pattern,
 			'project'	=> PROJECT_PATH. $pattern,

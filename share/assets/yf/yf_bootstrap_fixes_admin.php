@@ -25,6 +25,11 @@ return [
 .cssfw-bs3 .form-group select[name=order_direction] { width:40px; font-weight:bold; padding:0; font-size: 16px; }
 
 .form-horizontal .radio, .form-horizontal .checkbox { min-height: 10px; }
+
+.table-very-condensed>thead>tr>th, .table-very-condensed>tbody>tr>th, .table-very-condensed>tfoot>tr>th, .table-very-condensed>thead>tr>td, .table-very-condensed>tbody>tr>td, .table-very-condensed>tfoot>tr>td {
+    padding: 1px 5px;
+    line-height: 1.3;
+}
 			'],
 			'jquery' => [
 #				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',

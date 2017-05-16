@@ -30,6 +30,7 @@ class yf_table2 {
 	public $CLASS_FOOTER_LINKS = 'controls';
 	public $CLASS_HEADER_LINKS = 'controls';
 	public $CLASS_CONDENSED = 'table-condensed';
+	public $CLASS_VERY_CONDENSED = 'table-very-condensed';
 	public $CLASS_NO_RECORDS = 'alert alert-info';
 	public $CLASS_HIGHLIGHT = 'badge-warning';
 	public $CLASS_TPL_ICON = 'icon icon-%name fa fa-%name';
@@ -297,6 +298,8 @@ class yf_table2 {
 			}
 			if ($params['condensed']) {
 				$params['table_class'] .= ' '.$this->CLASS_CONDENSED;
+			} elseif ($params['very_condensed']) {
+				$params['table_class'] .= ' '.$this->CLASS_VERY_CONDENSED;
 			}
 			$table_class = isset($params['force_class']) ? $params['force_class'] : trim(trim($this->CLASS_TABLE_MAIN.' '.$params['table_class']).' '.$params['table_class_add']);
 			$table_attrs = (isset($params['table_attr']) ? ' '.$params['table_attr'] : '');
