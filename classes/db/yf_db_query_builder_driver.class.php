@@ -21,6 +21,10 @@ abstract class yf_db_query_builder_driver {
 	* Catch missing method call
 	*/
 	public function __call($name, $args) {
+		// keep compatibility with php5.6, where word "clone" is reserved in class methods
+		if ($name == 'clone') {
+			return call_user_func_array([$this,'_clone'], $args);
+		}
 		return main()->extend_call($this, $name, $args);
 	}
 
@@ -45,6 +49,18 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Clone this object while keeping all vars
+	*/
+	public function _clone() {
+		$bak = get_object_vars($this);
+		$new = clone $this;
+		foreach ((array)$bak as $k => $v) {
+			$new->$k = $v;
+		}
+		return $new;
+	}
+
+	/**
 	*/
 	public function dump_json () {
 		return json_encode($this->exec());
@@ -55,18 +71,6 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function sql() {
 		return $this->render();
-	}
-
-	/**
-	* Clone this object while keeping all vars
-	*/
-	public function clone() {
-		$bak = get_object_vars($this);
-		$new = clone $this;
-		foreach ((array)$bak as $k => $v) {
-			$new->$k = $v;
-		}
-		return $new;
 	}
 
 	/**
