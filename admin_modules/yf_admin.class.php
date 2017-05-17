@@ -106,7 +106,8 @@ class yf_admin {
 		$a['back_link'] = url('/@object');
 		$a['redirect_link'] = url('/@object');
 		$a['password'] = '';
-		$display = ($this->display_func)($a);
+		$func = $this->display_func;
+		$display = $func($a);
 		$a = (array)$_POST + $a;
 		$up = ['login','email','first_name','last_name','go_after_login','password'];
 		if ($display) {
@@ -204,7 +205,8 @@ class yf_admin {
 		$pair_active = str_replace('class="', 'disabled class="', main()->get_data('pair_active'));
 		$pair_yes_no = str_replace('class="', 'disabled class="', main()->get_data('pair_yes_no'));
 
-		$allowed = ($this->display_func)($admin);
+		$func = $this->display_func;
+		$allowed = $func($admin);
 
 		$actions = [];
 		$actions[] = $pair_active[$admin['active']];
@@ -348,7 +350,8 @@ class yf_admin {
 	function delete() {
 		$id = (int)$_GET['id'];
 		$id && $a = from(self::table)->whereid($id)->get();
-		$allowed = ($this->display_func)($a);
+		$func = $this->display_func;
+		$allowed = $func($a);
 		if ($a['id'] && $allowed) {
 			db()->delete(self::table, $id);
 			common()->admin_wall_add(['admin account deleted', $id]);
@@ -366,7 +369,8 @@ class yf_admin {
 	function active () {
 		$id = (int)$_GET['id'];
 		$id && $a = from(self::table)->whereid($id)->get();
-		$allowed = ($this->display_func)($a);
+		$func = $this->display_func;
+		$allowed = $func($a);
 		if ($a['id'] && $allowed) {
 			db()->update_safe(self::table, ['active' => (int)!$a['active']], $id);
 			common()->admin_wall_add(['admin account '.($a['active'] ? 'inactivated' : 'activated'), $id]);
