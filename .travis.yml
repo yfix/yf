@@ -31,5 +31,5 @@ notifications:
 #    on_success: change  # options: [always|never|change] default: always
 #    on_failure: always  # options: [always|never|change] default: always
 
-#dist: trusty
-#sudo: false
+dist: trusty
+sudo: false
