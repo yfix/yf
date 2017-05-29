@@ -33,7 +33,7 @@ class yf_wrapper_ethereum {
 			$formatted = $this->_format_response($ret);
 			
 			if(isset($formatted->error)) {
-				throw new Exception($formatted->error->message, $formatted->error->code);
+				throw new Exception($formatted->error->code . " : " . $formatted->error->message);
 			} else {
 				return $formatted;
 			}
