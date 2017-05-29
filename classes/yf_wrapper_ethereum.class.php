@@ -33,12 +33,12 @@ class yf_wrapper_ethereum {
 			$formatted = $this->_format_response($ret);
 			
 			if(isset($formatted->error)) {
-				throw new RPCException($formatted->error->message, $formatted->error->code);
+				throw new Exception($formatted->error->message, $formatted->error->code);
 			} else {
 				return $formatted;
 			}
 		} else {
-			throw new RPCException("Server did not respond");
+			throw new Exception("Server did not respond");
 		}
 	}
 	
@@ -50,7 +50,7 @@ class yf_wrapper_ethereum {
 		try {
 			$ret = $this->_request($method, $params);
 			return $ret->result;
-		} catch(RPCException $e) {
+		} catch(Exception $e) {
 			throw $e;
 		}
 	}
