@@ -55,6 +55,8 @@ class yf_tpl {
 	public $COMPILED_DIR			= 'stpls_compiled/';
 	/** @var string @conf_skip */
 	public $_STPL_EXT				= '.stpl';
+	/** @var string @conf_skip Ability to use files with these extensions as templates */
+	public $ALLOWED_EXTS			= ['tpl','stpl','html'];
 	/** @var string @conf_skip */
 	public $_THEMES_PATH			= 'templates/';
 	/** @var string @conf_skip */
@@ -227,10 +229,12 @@ class yf_tpl {
 				}
 			}
 			if ($this->GET_STPLS_FROM_DB && $this->FROM_DB_GET_ALL) {
-				$Q = db()->query('SELECT name,text FROM '.db('templates').' WHERE theme_name="'.conf('theme').'" AND active="1"');
-				while ($A = db()->fetch_assoc($Q)) {
-					$this->_TMP_FROM_DB[$A['name']] = stripslashes($A['text']);
+				$tmp = from('templates')->where('theme_name', conf('theme'))->where('active','1')->get_2d('name,text');
+				foreach((array)$data as $k => $v) {
+					$tmp[$k] = stripslashes($v);
 				}
+				$this->_TMP_FROM_DB = $tmp;
+				unset($tmp);
 			}
 			if (!$skip_prefetch) {
 				if (main()->is_console()) {
@@ -471,25 +475,78 @@ class yf_tpl {
 	}
 
 	/**
+	*/
+	function _get_cached_paths($name = '') {
+		$cache_name = __FUNCTION__.'_'.MAIN_TYPE;
+		if (isset($this->$cache_name)) {
+			return $this->$cache_name;
+		}
+		$this->$cache_name = getset('tpl_get_cached_paths', function(){
+			$allowed_exts = $this->ALLOWED_EXTS;
+			$templates_dir = trim($this->_THEMES_PATH,'/');
+			$pattern  = '{,plugins/*/}'.$templates_dir.'/*/{*,*/*,*/*/*}.*';
+			$globs = [
+				'framework'	=> YF_PATH. $pattern,
+				'project'	=> PROJECT_PATH. $pattern,
+				'app'		=> APP_PATH. $pattern,
+			];
+			$plens = [
+				'framework'	=> strlen(YF_PATH),
+				'project'	=> strlen(PROJECT_PATH),
+				'app'		=> strlen(APP_PATH),
+			];
+			$site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
+			if (is_site_path()) {
+				$globs['site'] = $site_path. $pattern;
+				$plens['site'] = strlen($site_path);
+			}
+			$names = [];
+			foreach($globs as $gname => $glob) {
+				foreach(glob($glob, GLOB_BRACE|GLOB_NOSORT) as $path) {
+					$name = substr($path, $plens[$gname]);
+					$ext = pathinfo($name, PATHINFO_EXTENSION);
+					if (!$ext || !in_array($ext, $allowed_exts)) {
+						continue;
+					}
+					$p = explode('/', $name);
+					$p[0] == 'plugins' && $p = array_slice($p, 2);
+					$theme = '';
+					if ($p[0] == $templates_dir) {
+						$theme = $p[1];
+						$p = array_slice($p, 2);
+					}
+					$name = implode('/', $p);
+					$name = substr($name, 0, -strlen('.'.$ext));
+					$names[$name][$gname][$theme] = $path;
+				}
+			}
+			return $names;
+		});
+		return $this->$cache_name;
+	}
+
+	/**
 	* Read template file contents (or get it from DB)
 	*/
 	function _get_template_file($file_name = '', $force_storage = '', $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
-		$string	 = false;
-		$NOT_FOUND  = false;
-		$storage	= 'inline';
-		// Support for the framework calls
+		$string = false;
+		$NOT_FOUND = false;
+		$storage = 'inline';
 		$l = strlen(YF_PREFIX);
 		if (substr($file_name, 0, $l) == YF_PREFIX) {
 			$file_name = substr($file_name, $l);
 		}
-		$class_name = '';
-		if (false !== strpos($file_name, '/')) {
-			$class_name = current(explode('/', $file_name));
+		$stpl_ext = $this->_STPL_EXT;
+		$path_ext = pathinfo($file_name, PATHINFO_EXTENSION);
+		$path_ext && $path_ext = '.'.$path_ext;
+		// Allowed extension overrides
+		if (!$path_ext || !in_array($path_ext, $this->ALLOWED_EXTS)) {
+			$file_name .= $stpl_ext;
 		}
-		$file_name  .= $this->_STPL_EXT;
 		// Fix double extesion
-		$file_name  = str_replace($this->_STPL_EXT.$this->_STPL_EXT, $this->_STPL_EXT, $file_name);
-		$stpl_name  = str_replace($this->_STPL_EXT, '', $file_name);
+		$file_name  = str_replace($stpl_ext. $stpl_ext, $stpl_ext, $file_name);
+		$stpl_name  = str_replace([$stpl_ext, $path_ext], '', $file_name);
+
 		if ($this->GET_STPLS_FROM_DB || $force_storage == 'db') {
 			if ($this->FROM_DB_GET_ALL) {
 				if (!empty($this->_TMP_FROM_DB[$stpl_name])) {
@@ -499,7 +556,7 @@ class yf_tpl {
 					$NOT_FOUND = true;
 				}
 			} else {
-				$text = db()->get_one('SELECT text FROM '.db('templates').' WHERE theme_name="'.conf('theme').'" AND name="'._es($stpl_name).'" AND active="1"');
+				$text = from('templates')->where('theme_name', conf('theme'))->where('name', $stpl_name)->where('active','1')->one('text');
 				if (isset($text)) {
 					$string = stripslashes($text);
 				} else {
@@ -508,91 +565,84 @@ class yf_tpl {
 			}
 			$storage = 'db';
 		} else {
-			if (!isset($this->_yf_plugins)) {
-				$this->_yf_plugins = main()->_preload_plugins_list();
-				$this->_yf_plugins_classes = main()->_plugins_classes;
-			}
 			$def_theme = $this->_get_def_user_theme();
+			$all_tpls_paths = $this->_get_cached_paths();
+			$paths = $all_tpls_paths[$stpl_name];
 			// Storages are defined in specially crafted `order`, so do not change it unless you have strong reason
 			$storages = [];
 			$site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
-			$dev_path = '.dev/'.main()->HOSTNAME.'/';
-			// Developer overrides
-			if (conf('DEV_MODE')) {
-				if ($site_path && $site_path != PROJECT_PATH) {
-					$storages['dev_site'] = $site_path. $dev_path. $this->TPL_PATH. $file_name;
-				}
-				$storages['dev_app'] = APP_PATH. $dev_path. $this->TPL_PATH. $file_name;
-				$storages['dev_project'] = PROJECT_PATH. $dev_path. $this->TPL_PATH. $file_name;
-			}
-			if ($this->ALLOW_LANG_BASED_STPLS) {
-				$storages['lang_project'] = $this->_lang_theme_path. $file_name;
-			}
-			if ($site_path && $site_path != PROJECT_PATH) {
-				$storages['site'] = $site_path. $this->TPL_PATH. $file_name;
-			}
-			$storages['app'] = APP_PATH. $this->TPL_PATH. $file_name;
-			$storages['project'] = PROJECT_PATH. $this->TPL_PATH. $file_name;
-			if ($this->_INHERITED_SKIN) {
-				$storages['inherit_app'] = APP_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
-				$storages['inherit_project'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
-			}
-			if ($this->_INHERITED_SKIN2) {
-				$storages['inherit_app2'] = APP_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
-				$storages['inherit_project2'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
-			}
-			// in admin mode: not include main, style_css, script_js templates from project place
-			if (MAIN_TYPE_ADMIN && !in_array($stpl_name, ['main'])) {
-				$storages['app_admin_user'] = APP_PATH. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
-				$storages['project_admin_user'] = PROJECT_PATH. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
-			}
-			// Load template from plugins. Should stay in subdir like this:
-			// YF_PATH.'plugins/news/templates/user/news/main.stpl' => tpl()->parse('news/main')		
-			$plugin_name = '';
-			if ($class_name && (isset($this->_yf_plugins[$class_name]) || isset($this->_yf_plugins_classes[$class_name]))) {
-				if (isset($this->_yf_plugins_classes[$class_name])) {
-					$plugin_name = $this->_yf_plugins_classes[$class_name];
-				} elseif (isset($this->_yf_plugins[$class_name])) {
-					$plugin_name = $class_name;
-				}
-			}
-			if ($plugin_name) {
-				$plugin_subdir = 'plugins/'.$plugin_name.'/';
+			$theme = conf('theme');
 
-				$storages['plugins_app'] = APP_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
-				$storages['plugins_project'] = PROJECT_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
-				if ($this->_INHERITED_SKIN) {
-					$storages['plugins_inherit_app'] = APP_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
-					$storages['plugins_inherit_project'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
-				}
-				if ($this->_INHERITED_SKIN2) {
-					$storages['plugins_inherit_app2'] = APP_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
-					$storages['plugins_inherit_project2'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
-				}
-			}
-			$storages['framework'] = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
-			if ($plugin_name) {
-				$storages['plugins_framework'] = YF_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
-				if (MAIN_TYPE_ADMIN) {
-					$storages['plugins_user_app'] = APP_PATH. $plugin_subdir. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
-					$storages['plugins_user_section'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
-					$storages['plugins_framework_user']	= YF_PATH. $plugin_subdir. $this->_THEMES_PATH. 'user/'. $file_name;
-				}
-			}
-			// user section within admin
-			if (MAIN_TYPE_ADMIN) {
-				$storages['framework_user']	= YF_PATH. $this->_THEMES_PATH. 'user/'. $file_name;
-			}
-			// Try storages one-by-one in inheritance `order`, stop when found
-			$storage = '';
-			foreach ((array)$storages as $_storage => $file_path) {
+			$storages = [
+				'dev',
+				'site_lang',
+				'site',
+				'site_inherit',
+				'site_inherit2',
+				'app_lang',
+				'app',
+				'app_inherit',
+				'app_inherit2',
+				'app_user',
+				'project',
+				'project_user',
+				'framework',
+				'framework_user',
+			];
+			$storages = array_filter($storages);
+			foreach((array)$storages as $_storage) {
 				if ($force_storage && $force_storage != $_storage) {
 					continue;
 				}
-				if (!$this->_stpl_path_exists($file_path)) {
+				$file_path = '';
+				if (in_array($_storage, ['app','project','framework'])) {
+					$_theme = $_storage == 'framework' ? MAIN_TYPE : $theme;
+					if (isset($paths[$_storage][$_theme])) {
+						$file_path = $paths[$_storage][$_theme];
+					}
+				} elseif (in_array($_storage, ['app_user','project_user','framework_user']) && MAIN_TYPE_ADMIN && !in_array($stpl_name, ['main'])) {
+					$s = substr($_storage, 0, -strlen('_user'));
+					if (isset($paths[$s]['user'])) {
+						$file_path = $paths[$s]['user'];
+					}
+				} elseif ($_storage == 'site') {
+					if (isset($paths[$_storage][$_theme])) {
+						$file_path = $paths[$_storage][$_theme];
+					}
+				} elseif (in_array($_storage, ['app_lang','site_lang']) && $this->ALLOW_LANG_BASED_STPLS) {
+					$lang = conf('language');
+					$_theme = $theme.'.'.$lang;
+					$s = substr($_storage, 0, -strlen('_lang'));
+					if (isset($paths[$s][$_theme])) {
+						$file_path = $paths[$s][$_theme];
+					}
+				} elseif (in_array($_storage, ['app_inherit','site_inherit']) && $this->_INHERITED_SKIN) {
+					$_theme = $this->_INHERITED_SKIN;
+					$s = substr($_storage, 0, -strlen('_inherit'));
+					if (isset($paths[$s][$_theme])) {
+						$file_path = $paths[$s][$_theme];
+					}
+				} elseif (in_array($_storage, ['app_inherit2','site_inherit2']) && $this->_INHERITED_SKIN2) {
+					$_theme = $this->_INHERITED_SKIN2;
+					$s = substr($_storage, 0, -strlen('_inherit2'));
+					if (isset($paths[$s][$_theme])) {
+						$file_path = $paths[$s][$_theme];
+					}
+				} elseif (in_array($_storage, ['dev'])) {
+#					// Developer overrides
+#					$dev_path = '.dev/'.main()->HOSTNAME.'/';
+#					if (conf('DEV_MODE')) {
+#						if ($site_path && $site_path != PROJECT_PATH) {
+#							$storages['dev_site'] = $site_path. $dev_path. $this->TPL_PATH. $file_name;
+#						}
+#						$storages['dev_app'] = APP_PATH. $dev_path. $this->TPL_PATH. $file_name;
+#						$storages['dev_project'] = PROJECT_PATH. $dev_path. $this->TPL_PATH. $file_name;
+#					}
+				}
+				if (!$file_path || !$this->_stpl_path_exists($file_path)) {
 					continue;
 				}
-				$string = file_get_contents($file_path);
+				$string = $this->_stpl_path_get($file_path);
 				if ($string !== false) {
 					$storage = $_storage;
 					break;
@@ -635,17 +685,21 @@ class yf_tpl {
 		if (!empty($this->_def_user_theme)) {
 			return $this->_def_user_theme;
 		}
-/*
-		$SITES_INFO = _class('sites_info', 'classes/')->info;
-		$FIRST_SITE_INFO = array_shift($SITES_INFO);
-		if (file_exists(PROJECT_PATH. $this->_THEMES_PATH. $FIRST_SITE_INFO['DEFAULT_SKIN']. '/')) {
-			$this->_def_user_theme = $FIRST_SITE_INFO['DEFAULT_SKIN'];
-		}
-*/
+#		$sites = conf('sites_info');
+#		$first = array_shift($sites);
+#		if (file_exists(PROJECT_PATH. $this->_THEMES_PATH. $first['DEFAULT_SKIN']. '/')) {
+#			$this->_def_user_theme = $first['DEFAULT_SKIN'];
+#		}
 		if (empty($this->_def_user_theme)) {
 			$this->_def_user_theme = 'user';
 		}
 		return $this->_def_user_theme;
+	}
+
+	/**
+	*/
+	function _stpl_path_get($file_name) {
+		return file_get_contents($file_name);
 	}
 
 	/**
