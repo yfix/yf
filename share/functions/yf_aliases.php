@@ -78,6 +78,9 @@ if (!function_exists('services')) {
 if (!function_exists('redis')) {
 	function redis($silent = false) { return _class('wrapper_redis') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('ethereum')) {
+	function ethereum($silent = false) { return _class('wrapper_ethereum') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
 if (!function_exists('memcached')) {
 	function memcached($silent = false) { return _class('wrapper_memcached') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }

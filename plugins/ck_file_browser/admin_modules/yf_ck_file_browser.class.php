@@ -117,7 +117,8 @@ class yf_ck_file_browser {
 		}
 // TODO: tons of additional security checks
 		$error = '';
-		$upload_dir = $this->base .'/'. $_GET['id'];
+		$add_path = $_GET['path'] ? urldecode($_GET['path']).'/': '';
+		$upload_dir = $this->base .'/'.$add_path. $_GET['id'];
 		if (!file_exists($upload_dir)) {
 			mkdir($upload_dir, 0755, true);
 		}
