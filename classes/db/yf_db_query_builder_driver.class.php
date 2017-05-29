@@ -21,6 +21,10 @@ abstract class yf_db_query_builder_driver {
 	* Catch missing method call
 	*/
 	public function __call($name, $args) {
+		// keep compatibility with php5.6, where word "clone" is reserved in class methods
+		if ($name == 'clone') {
+			return call_user_func_array([$this,'_clone'], $args);
+		}
 		return main()->extend_call($this, $name, $args);
 	}
 
@@ -42,6 +46,18 @@ abstract class yf_db_query_builder_driver {
 		} catch (Exception $e) {
 			return '';
 		}
+	}
+
+	/**
+	* Clone this object while keeping all vars
+	*/
+	public function _clone() {
+		$bak = get_object_vars($this);
+		$new = clone $this;
+		foreach ((array)$bak as $k => $v) {
+			$new->$k = $v;
+		}
+		return $new;
 	}
 
 	/**
@@ -604,6 +620,7 @@ abstract class yf_db_query_builder_driver {
 		$replace = isset($params['replace']) ? $params['replace'] : false;
 		$ignore = isset($params['ignore']) ? $params['ignore'] : false;
 		$on_duplicate_key_update = isset($params['on_duplicate_key_update']) ? $params['on_duplicate_key_update'] : false;
+		$delayed = isset($params['delayed']) ? $params['delayed'] : false;
 		if (is_string($replace)) {
 			$replace = false;
 		}
@@ -656,10 +673,12 @@ abstract class yf_db_query_builder_driver {
 		$sql = '';
 		$primary_col = $this->get_key_name($table);
 		if (count($cols) && count($values_array)) {
-			$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '')
-				.' INTO '.$this->_escape_table_name($table).PHP_EOL
-				.' ('.implode(', ', $cols).') VALUES '
-				.PHP_EOL.implode(', ', $values_array);
+			$sql = ($replace ? 'REPLACE' : 'INSERT')
+				. ($delayed ? ' DELAYED' : '')
+				. ($ignore ? ' IGNORE' : '')
+				.' INTO '.$this->_escape_table_name($table). PHP_EOL
+				.' ('.implode(', ', $cols).') VALUES '. PHP_EOL
+				. implode(', ', $values_array);
 			if ($on_duplicate_key_update) {
 				$sql .= PHP_EOL.' ON DUPLICATE KEY UPDATE ';
 				$tmp = [];
@@ -746,7 +765,14 @@ abstract class yf_db_query_builder_driver {
 		}
 		$sql = '';
 		if (count($tmp_data)) {
-			$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
+			$sql = 'UPDATE '
+				. ($params['ignore'] ? 'IGNORE ' : '')
+				. $this->_escape_table_name($table)
+				. ' SET '.implode(', ', $tmp_data)
+				. ($where ? ' WHERE '.$where : '')
+				. ($params['order_by'] ? ' ORDER BY '.$params['order_by'] : '')
+				. ($params['limit'] ? ' LIMIT '.(int)$params['limit'] : '')
+			;
 		}
 		return $sql ?: false;
 	}

@@ -30,6 +30,7 @@ class yf_table2 {
 	public $CLASS_FOOTER_LINKS = 'controls';
 	public $CLASS_HEADER_LINKS = 'controls';
 	public $CLASS_CONDENSED = 'table-condensed';
+	public $CLASS_VERY_CONDENSED = 'table-very-condensed';
 	public $CLASS_NO_RECORDS = 'alert alert-info';
 	public $CLASS_HIGHLIGHT = 'badge-warning';
 	public $CLASS_TPL_ICON = 'icon icon-%name fa fa-%name';
@@ -297,6 +298,8 @@ class yf_table2 {
 			}
 			if ($params['condensed']) {
 				$params['table_class'] .= ' '.$this->CLASS_CONDENSED;
+			} elseif ($params['very_condensed']) {
+				$params['table_class'] .= ' '.$this->CLASS_VERY_CONDENSED;
 			}
 			$table_class = isset($params['force_class']) ? $params['force_class'] : trim(trim($this->CLASS_TABLE_MAIN.' '.$params['table_class']).' '.$params['table_class_add']);
 			$table_attrs = (isset($params['table_attr']) ? ' '.$params['table_attr'] : '');
@@ -1234,7 +1237,7 @@ class yf_table2 {
 			$extra = [];
 		}
 		if (!$name) {
-			$name = 'user_id';
+			$name = $extra['name'] ?: 'user_id';
 		}
 		if ($link) {
 			$extra['link'] = $link;
@@ -1258,8 +1261,11 @@ class yf_table2 {
 			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
+			$desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
 		}
 		$this->_fields[] = [
 			'type'	=> __FUNCTION__,
@@ -1282,8 +1288,11 @@ class yf_table2 {
 			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
+			$desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
 		}
 		$this->_fields[] = [
 			'type'	=> __FUNCTION__,
@@ -1527,14 +1536,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
-		if (!$name) {
-			$name = 'Edit';
-		}
-		if (!$link) {
-			$link = url('/@object/edit/%d');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'Edit';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/edit/%d');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_EDIT;
@@ -1555,14 +1564,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
-		if (!$name) {
-			$name = 'Delete';
-		}
-		if (!$link) {
-			$link = url('/@object/delete/%d');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'Delete';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/delete/%d');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_DELETE;
@@ -1583,14 +1592,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
-		if (!$name) {
-			$name = 'Clone';
-		}
-		if (!$link) {
-			$link = url('/@object/clone_item/%d');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'Clone';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/clone_item/%d');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_CLONE;
@@ -1611,14 +1620,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
-		if (!$name) {
-			$name = 'View';
-		}
-		if (!$link) {
-			$link = url('/@object/view/%d');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'View';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/view/%d');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_VIEW;
@@ -1639,11 +1648,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = '';
 		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!$name) {
-			$name = 'Active';
+			$name = $extra['name'] ?: 'Active';
 		}
 		if (!$link) {
-			$link = url('/@object/active/%d');
+			$link = $extra['link'] ?: url('/@object/active/%d');
 		}
 		$this->_buttons[] = [
 			'type'	=> __FUNCTION__,
@@ -1688,7 +1700,11 @@ class yf_table2 {
 					$table->_pair_active = main()->get_data('pair_active');
 				}
 				$values = $table->_pair_active;
-				$val = $values[intval((bool)$row[strtolower($params['name'])])];
+				$is_active = intval((bool)$row[strtolower($params['name'])]);
+				$val = $values[$is_active];
+				if ($extra['short']) {
+					return html()->btn_active($link, $is_active, $extra);
+				}
 				return !$extra['disabled'] ? '<a'._attrs($extra, ['href','class','title']).'>'. $val. '</a> ' : $val;
 			},
 		];
@@ -1772,14 +1788,14 @@ class yf_table2 {
 			$extra = $name;
 			$name = $extra['name'];
 		}
-		if (!$name) {
-			$name = 'add';
-		}
-		if (!$link) {
-			$link = url('/@object/add');
-		}
 		if (!is_array($extra)) {
 			$extra = [];
+		}
+		if (!$name) {
+			$name = $extra['name'] ?: 'add';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: url('/@object/add');
 		}
 		if (!$extra['no_ajax']) {
 			$extra['class_add'] .= ' '.$this->CLASS_AJAX_ADD;
@@ -1872,7 +1888,7 @@ class yf_table2 {
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if ($extra['padding'] && $row['level']) {
-				$padding = '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>';
+				$padding = '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px; float: left; font-size: 25px; line-height: 30px;">&#9492;</span>';
 			}
 			$value = $field;
 			if ($extra['propose_url_from'] && !strlen($value)) {
@@ -1883,6 +1899,7 @@ class yf_table2 {
 				'name'	=> $params['name'].'['.$row['id'].']',
 				'desc'	=> $params['name'],
 				'value'	=> $value,
+				'style' => $extra['padding'] && $row['level'] ? 'width:calc(100% - '.($row['level'] * 20 + 30).'px)' : '',
 			] + (array)$extra);
 		}, $extra);
 	}

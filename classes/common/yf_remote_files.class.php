@@ -593,12 +593,12 @@ class yf_remote_files {
 
 		$curl_opts[CURLOPT_RETURNTRANSFER]	= 1;
 		$curl_opts[CURLOPT_FOLLOWLOCATION]	= 1; // follow redirects
-		$curl_opts[CURLOPT_MAXREDIRS]		= $url_options['max_redirects'] ? $url_options['max_redirects'] : $this->CURL_DEF_MAX_REDIRECTS;
+		$curl_opts[CURLOPT_MAXREDIRS]		= $url_options['max_redirects'] ?: $this->CURL_DEF_MAX_REDIRECTS;
 		$curl_opts[CURLOPT_FILETIME]		= 1;
 		$curl_opts[CURLOPT_FRESH_CONNECT]	= 0;
 		$curl_opts[CURLOPT_DNS_CACHE_TIMEOUT]= 3600;
-		$curl_opts[CURLOPT_CONNECTTIMEOUT]	= $url_options['connect_timeout'] ? $url_options['connect_timeout'] : $this->CURL_DEF_CONNECT_TIMEOUT;
-		$curl_opts[CURLOPT_TIMEOUT]			= $url_options['timeout'] ? $url_options['timeout'] : $this->CURL_DEF_TIMEOUT; // timeout on response 
+		$curl_opts[CURLOPT_CONNECTTIMEOUT]	= $url_options['connect_timeout'] ?: $this->CURL_DEF_CONNECT_TIMEOUT;
+		$curl_opts[CURLOPT_TIMEOUT]			= $url_options['timeout'] ?: $this->CURL_DEF_TIMEOUT; // timeout on response 
 		if ($user_agent) {
 			$curl_opts[CURLOPT_USERAGENT]	= $user_agent;
 		}
@@ -726,15 +726,16 @@ class yf_remote_files {
 		if (empty($max_threads)) {
 			$max_threads = $this->CURL_DEF_MAX_THREADS;
 		}
-		if (empty($options)) {
-			$options = [
-				'method_head'	=> 1,
-				'max_redirects'	=> 5,
-				'user_agent'	=> '',
-				'referer'		=> '',
-				'no_autoreferer'=> 1,
-			];
+		if (!is_array($options)) {
+			$options = [];
 		}
+		$options += [
+			'method_head'	=> 1,
+			'max_redirects'	=> 5,
+			'user_agent'	=> '',
+			'referer'		=> '',
+			'no_autoreferer'=> 1,
+		];
 		$response = $this->_multi_request($page_urls, $options);
 		$sizes = [];
 		foreach ((array)$page_urls as $k => $v) {
@@ -742,6 +743,10 @@ class yf_remote_files {
 			$sizes[$k] = (int)$info['download_content_length'];
 			if ($sizes[$k] < 0) {
 				$sizes[$k] = 0;
+			}
+			if ($options['only_http_code'] && $info['http_code'] != $options['only_http_code']) {
+				$sizes[$k] = 0;
+				continue;
 			}
 			// Try to fix case when content-length appeared > 1 times and second time it is 0
 			// so curl return 0 as content length

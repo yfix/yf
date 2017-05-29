@@ -343,9 +343,9 @@ class yf_manage_transfer {
 				return( $result );
 			}, [ 'desc' => 'статус' ] )
 			->text( 'datetime_start', 'дата создания' )
-			->btn( 'Просмотр', $url[ 'view' ], [ 'icon' => 'fa fa-eye', 'class_add' => 'btn-primary', 'target' => '_blank' ] )
-			->header_link( 'Перевод', $url[ 'create' ], [ 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ] )
-			->footer_link( 'Перевод', $url[ 'create' ], [ 'class' => 'btn btn-primary', 'icon' => 'fa fa-mail-forward' ] )
+			->btn( 'Просмотр', $url[ 'view' ], [ 'icon' => 'fa fa-eye', 'class_add' => 'btn-xs btn-primary', 'target' => '_blank' ] )
+			->header_link( 'Перевод', $url[ 'create' ], [ 'class' => 'btn btn-xs btn-primary', 'icon' => 'fa fa-mail-forward' ] )
+			->footer_link( 'Перевод', $url[ 'create' ], [ 'class' => 'btn btn-xs btn-primary', 'icon' => 'fa fa-mail-forward' ] )
 		);
 	}
 
@@ -639,7 +639,7 @@ class yf_manage_transfer {
 					return( $result );
 				}, [ 'desc' => 'статус' ] )
 				->text( 'date' , 'дата' )
-				->btn( 'Просмотр', $url[ 'view'    ], [ 'icon' => 'fa fa-eye', 'class_add' => 'btn-primary', 'target' => '_blank' ] )
+				->btn( 'Просмотр', $url[ 'view'    ], [ 'icon' => 'fa fa-eye', 'class_add' => 'btn-xs btn-primary', 'target' => '_blank' ] )
 			;
 		}
 		// prepare view: operation options
@@ -747,10 +747,10 @@ class yf_manage_transfer {
 			$operation_id = empty( $_operation_id ) ? (int)$_GET[ 'operation_id' ] :  $_operation_id;
 			if( $operation_id > 0 ) {
 				$url_view = $this->_url( 'view', [ '%operation_id' => $operation_id ] );
-				$content .= '<a href="'. $url_view .'" class="btn btn-info">Назад к операции</a>';
+				$content .= '<a href="'. $url_view .'" class="btn btn-xs btn-info">Назад к операции</a>';
 			}
 			$url_list = $this->_url( 'list' );
-			$content .= '<a href="'. $url_list .'" class="btn btn-primary">Список операции</a>';
+			$content .= '<a href="'. $url_list .'" class="btn btn-xs btn-primary">Список операции</a>';
 		}
 		isset( $content ) && $panel_footer = '<div class="panel-footer">'. $content .'</div>';
 		// panel

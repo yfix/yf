@@ -18,6 +18,8 @@ class yf_html {
 	public $CLASS_LABEL_CHECKBOX = 'checkbox';
 	public $CLASS_LABEL_CHECKBOX_INLINE = 'checkbox-inline';
 	public $CLASS_LABEL_CHECKBOX_SELECTED = 'active';
+	public $CLASS_LABEL_BTN_RADIO = 'btn btn-xs btn-primary';
+	public $CLASS_LABEL_BTN_CHECKBOX = 'btn btn-xs btn-primary';
 	public $CLASS_SELECT_BOX = 'form-control';
 	public $CLASS_SELECT_OPTION_DEFAULT = 'opt-default';
 	public $CLASS_INPUT = 'form-control';
@@ -930,6 +932,72 @@ class yf_html {
 
 	/**
 	*/
+	function button_yes_no_box($name, $values = [], $selected = null) {
+		$def_cls = $this->CLASS_LABEL_BTN_RADIO;
+		$values = [
+			['class' => $def_cls.' btn-warning', 'html' => '<i class="fa fa-ban"></i> '.t('No').'</span>'],
+			['class' => $def_cls.' btn-success', 'html' => '<i class="fa fa-check"></i> '.t('Yes').'</span>'],
+		];
+		return $this->button_radio_box($name, $values, $selected);
+	}
+
+	/**
+	*/
+	function button_allow_deny_box($name, $values = [], $selected = null) {
+		$def_cls = $this->CLASS_LABEL_BTN_RADIO;
+		$values = [
+			['class' => $def_cls.' btn-warning', 'html' => '<i class="fa fa-ban"></i> '.t('Deny').'</span>'],
+			['class' => $def_cls.' btn-success', 'html' => '<i class="fa fa-check"></i> '.t('Allow').'</span>'],
+		];
+		return $this->button_radio_box($name, $values, $selected);
+	}
+
+	/**
+	*/
+	function button_radio_box($name, $values = [], $selected = null, $extra = []) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		!is_array($extra) && $extra = [];
+		$label_extra = $extra['label_extra'];
+		$extra = [
+			'name' => $name ?: $extra['name'],
+			'values' => isset($values) ? $values : $extra['values'],
+			'selected' => isset($selected) ? $selected : $extra['selected'],
+			'use_stpl' => false,
+			'label_extra' => [
+				'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_RADIO). ($extra['horizontal'] ? ' '.$this->CLASS_LABEL_RADIO_INLINE : ''),
+			],
+		] + $extra;
+		$label_right = $extra['label_right'] ? '<label class="text">&nbsp;<small>'.$extra['desc'].'</small></label>' : '';
+		return '<div class="btn-group" data-toggle="buttons">'. $this->radio_box($extra). $label_right. '</div>';
+	}
+
+	/**
+	*/
+	function button_check_box($name, $values = [], $selected = '') {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		!is_array($extra) && $extra = [];
+		$label_extra = $extra['label_extra'];
+		$extra = [
+			'name' => $name,
+			'values' => $values,
+			'selected' => $selected,
+			'use_stpl' => false,
+			'label_extra' => [
+				'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_CHECKBOX),
+			],
+		] + $extra;
+		$label_right = $extra['label_right'] ? '<label class="text">&nbsp;<small>'.$extra['desc'].'</small></label>' : '';
+		return '<div class="btn-group" data-toggle="buttons">'. $this->check_box($extra). $label_right. '</div>';
+	}
+
+	/**
+	*/
 	function radio_box($name, $values = [], $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -962,14 +1030,17 @@ class yf_html {
 			$body[] = '<label class="outer-label">'.$extra['outer_label'].'</label>';
 		}
 		$orig_extra = $extra;
+		$use_stpl = isset($extra['use_stpl']) ? $extra['use_stpl'] : $this->BOXES_USE_STPL;
 		foreach ((array)$values as $value => $val_name) {
+			$label_extra_class = '';
 			if (is_array($val_name)) {
 				$extra = (array)$orig_extra + (array)$val_name['extra'];
+				$label_extra_class = $val_name['class'];
 				$val_name = $val_name['html'];
 			}
 			$is_selected = (strval($type == 1 ? $val_name : $value) == $selected);
 			$id = $id_prefix.'_'.++$counter;
-			if ($this->BOXES_USE_STPL) {
+			if ($use_stpl) {
 				$body[] = tpl()->parse('system/common/radio_box_item', [
 					'name'			=> $name,
 					'value'			=> $value,
@@ -982,17 +1053,18 @@ class yf_html {
 				]);
 			} else {
 				$label_extra = $extra['label_extra'];
-				$label_extra['class'] = ($label_extra['class'] ?: $this->CLASS_LABEL_RADIO). ($horizontal ? ' '.$this->CLASS_LABEL_RADIO_INLINE : '');
+				$label_extra['class'] = ($label_extra_class ?: $label_extra['class'] ?: $this->CLASS_LABEL_RADIO). ($horizontal ? ' '.$this->CLASS_LABEL_RADIO_INLINE : '');
 				if ($extra['class_add_label_radio']) {
 					$label_extra['class'] .= ' '.$extra['class_add_label_radio'];
 				}
 				if ($is_selected) {
 					$label_extra['class'] .= ' '.$this->CLASS_LABEL_RADIO_SELECTED;
 				}
-				$body[] = '<label'._attrs($label_extra, ['id', 'class', 'style']).'>'
-							. '<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
-							. '<span>'. t($val_name). '</span>'
-						. '</label>'.PHP_EOL;
+				$body[] = 
+					'<label'._attrs($label_extra, ['id', 'class', 'style']).'>'
+					. '<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
+					. '<span>'. t($val_name). '</span>'
+					. '</label>'.PHP_EOL;
 			}
 		}
 		return implode(PHP_EOL, $body);
@@ -1669,18 +1741,19 @@ class yf_html {
 	/**
 	* Active toggler
 	*/
-	function btn_active($url = '', $active = 0) {
+	function btn_active($url = '', $active = 0, $extra = []) {
 		!$url && $url = url('/@object/active/@id');
 		$pairs = [
 			'class' => ['btn-warning', 'btn-success'],
 			'icon' => ['fa fa-ban', 'fa fa-check'],
 			'title' => [t('Disabled'), t('Active')],
 		];
-		return $this->a($url
+		$class = ($extra['class'] ?: 'change_active'). ($extra['class_add'] ? ' '.$extra['class_add'] : '');
+		return $extra['disabled'] ? $pairs['class'][$active] : $this->a($url
 			, $pairs['title'][$active]
 			, $pairs['icon'][$active]
 			, ''
-			, 'change_active active_short '.$pairs['class'][$active]
+			, $class.' active_short '.$pairs['class'][$active]
 		);
 	}
 
@@ -1717,6 +1790,39 @@ class yf_html {
 	}
 
 	/**
+	* Country container
+	*/
+	function country() {
+		asset('bfh-select');
+
+		$args = func_get_args();
+		$a = [];
+		// numerics params
+		if (isset($args[0]) && is_array($args[0])) {
+			$a = $args[0];
+		} elseif (isset($args[0])) {
+			$a['code'] = $args[0];
+			$a['link']	= $args[1];
+			$a['class']	= $args[2];
+		}
+		if (isset($args['extra']) && is_array($args['extra'])) {
+			foreach($args['extra'] as $k => $v) {
+				$a[$k] = $v;
+			}
+		}
+		$code = strtoupper($a['code']);
+		if (!$code) {
+			return false;
+		}
+		$name = _prepare_html($this->_get_country_name($code));
+		if ($a['link']) {
+			return a(str_replace('%code', $code, $a['link']), $code.' | '.$name, 'bfh-flag-'.$code, '', $a['class']);
+		} else {
+			return $this->icon('bfh-flag-'.$code);
+		}
+	}
+
+	/**
 	* IP container
 	*/
 	function ip() {
@@ -1726,7 +1832,7 @@ class yf_html {
 		$a = [];
 		// numerics params
 		if (isset($args[0]) && is_array($args[0])) {
-			$a = $a[0];
+			$a = $args[0];
 		} elseif (isset($args[0])) {
 			$a['ip'] = $args[0];
 		}
@@ -1738,7 +1844,7 @@ class yf_html {
 		$ip = $a['ip'];
 		$code = strtoupper($this->_get_ip_country($ip));
 		$name = _prepare_html($this->_get_country_name($code));
-		return a('http://www.infobyip.com/ip-'.urlencode($ip).'.html', $ip. ' | '. $code. ' | '. $name, ($code ? 'bfh-flag-'.$code : ''), $ip);
+		return a('http://www.infobyip.com/ip-'.urlencode($ip).'.html', $ip. ' | '. $code. ' | '. $name, ($code ? 'bfh-flag-'.$code : ''), $ip, $a['class']);
 	}
 
 	/**

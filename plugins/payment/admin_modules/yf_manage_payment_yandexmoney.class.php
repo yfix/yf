@@ -100,10 +100,10 @@ class yf_manage_payment_yandexmoney {
 		// is authorize
 		$is_authorize = $provider_class->access_token;
 		$authorize_icon = 'fa fa-chain';
-		$authorize_class = 'btn text-success';
+		$authorize_class = 'btn btn-xs text-success';
 		if( !$is_authorize ) {
 			$authorize_icon .= '-broken';
-			$authorize_class = 'btn text-danger';
+			$authorize_class = 'btn btn-xs text-danger';
 		}
 		// web
 		$replace = [
@@ -145,9 +145,9 @@ class yf_manage_payment_yandexmoney {
 			->info( 'is_authorize', [ 'desc' => 'Авторизация YandexMoney', 'icon' => $authorize_icon, 'class' => $authorize_class ] )
 			->check_box( 'is_confirm', [ 'desc' => 'Подтверждение', 'no_label' => true ] )
 			->row_start()
-				->submit( 'operation', 'authorize', [ 'desc' => 'Авторизация', 'icon' => 'fa fa-chain', 'class' => 'btn btn-success' ] )
-				->submit( 'operation', 'revoke_authorize', [ 'desc' => 'Отозвать авторизацию', 'icon' => 'fa fa-chain-broken', 'class' => 'btn btn-danger', 'disabled' => !$is_authorize ] )
-				->link( 'Назад' , $url[ 'list' ], [ 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ] )
+				->submit( 'operation', 'authorize', [ 'desc' => 'Авторизация', 'icon' => 'fa fa-chain', 'class' => 'btn btn-xs btn-success' ] )
+				->submit( 'operation', 'revoke_authorize', [ 'desc' => 'Отозвать авторизацию', 'icon' => 'fa fa-chain-broken', 'class' => 'btn btn-xs btn-danger', 'disabled' => !$is_authorize ] )
+				->link( 'Назад' , $url[ 'list' ], [ 'class' => 'btn btn-xs btn-default', 'icon' => 'fa fa-chevron-left' ] )
 			->row_end()
 		;
 		return( $result );
@@ -193,10 +193,10 @@ class yf_manage_payment_yandexmoney {
 			$operation_id = empty( $_operation_id ) ? (int)$_GET[ 'operation_id' ] :  $_operation_id;
 			if( $operation_id > 0 ) {
 				$url_view = $this->_url( 'view', [ '%operation_id' => $operation_id ] );
-				$content .= '<a href="'. $url_view .'" class="btn btn-info">Назад к операции</a>';
+				$content .= '<a href="'. $url_view .'" class="btn btn-xs btn-info">Назад к операции</a>';
 			}
 			$url_list = $this->_url( 'list' );
-			$content .= '<a href="'. $url_list .'" class="btn btn-primary">Список операции</a>';
+			$content .= '<a href="'. $url_list .'" class="btn btn-xs btn-primary">Список операции</a>';
 		}
 		isset( $content ) && $panel_footer = '<div class="panel-footer">'. $content .'</div>';
 		// panel

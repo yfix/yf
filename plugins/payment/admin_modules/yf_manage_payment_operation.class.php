@@ -93,34 +93,20 @@ class yf_manage_payment_operation {
 			$payment_status__select_box[ $id ] = $item[ 'title' ];
 		}
 		$min_date = from('payment_operation')->one('UNIX_TIMESTAMP(MIN(datetime_start))');
+		$date_params = [
+			'format'		=> 'YYYY-MM-DD',
+			'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
+			'max_date'		=> date('Y-m-d', time() + 86400),
+			'autocomplete'	=> 'off',
+			'no_label'		=> 1,
+		];
 		return form($replace, [
 				'filter' => true,
 				'selected' => $filter,
 			])
-			->daterange('datetime_start', [
-				'format'		=> 'YYYY-MM-DD',
-				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
-				'max_date'		=> date('Y-m-d', time() + 86400),
-				'autocomplete'	=> 'off',
-				'desc'			=> 'Дата создания',
-				'no_label'		=> 1,
-			])
-			->daterange('datetime_update', [
-				'format'		=> 'YYYY-MM-DD',
-				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
-				'max_date'		=> date('Y-m-d', time() + 86400),
-				'autocomplete'	=> 'off',
-				'desc'			=> 'Дата обновления',
-				'no_label'		=> 1,
-			])
-			->daterange('datetime_finish', [
-				'format'		=> 'YYYY-MM-DD',
-				'min_date'		=> date('Y-m-d', $min_date ?: (time() - 86400 * 30)),
-				'max_date'		=> date('Y-m-d', time() + 86400),
-				'autocomplete'	=> 'off',
-				'desc'			=> 'Дата окончания',
-				'no_label'		=> 1,
-			])
+			->daterange('datetime_start', $date_params + ['desc' => 'Дата создания'])
+			->daterange('datetime_update', $date_params + ['desc' => 'Дата обновления'])
+			->daterange('datetime_finish', $date_params + ['desc' => 'Дата окончания'])
 			->text('name', 'Имя или номер пользователя', ['no_label' => 1])
 			->text('title', 'Название, номер или детали операции', ['no_label' => 1])
 			->row_start()
@@ -133,13 +119,13 @@ class yf_manage_payment_operation {
 			->row_end()
 			->select_box('status_id', $payment_status__select_box, ['no_label' => 1, 'show_text' => '= Статус =', 'desc' => 'Статус'])
 			->select_box('provider_id', $providers__select_box, ['no_label' => 1, 'show_text' => '= Провайдер =', 'desc' => 'Провайдер'])
-			->radio_box('system', ['' => 'все', '1' => 'системный', '0' => 'внешний'], ['no_label' => 1, 'title' => 'Тип провайдера'])
-			->radio_box('direction', ['' => 'все', 'in' => 'приход', 'out' => 'расход'], ['no_label' => 1, 'title' => 'Направление платежа'])
+			->select_box('system', ['1' => 'системный', '0' => 'внешний'], ['no_label' => 1, 'show_text' => '= Тип провайдера ='])
+			->select_box('direction', ['in' => 'приход', 'out' => 'расход'], ['no_label' => 1, 'show_text' => '= Направление платежа ='])
 			->row_start()
 				->select_box('order_by', $order_fields, ['show_text' => '= Сортировка =', 'desc' => 'Сортировка'])
 				->select_box('order_direction', ['asc' => '⇑', 'desc' => '⇓'])
 			->row_end()
-			->save_and_clear()
+			->save_and_clear()		
 		;
 	}
 
@@ -421,14 +407,14 @@ class yf_manage_payment_operation {
 				if( !$is_system ) {
 					$is_in && $action[] = $html->a( [
 						'href'   => $_this->_url( 'payin', [ '%operation_id' => $value ] ),
-						'class_add' => 'btn-primary',
+						'class_add' => 'btn-xs btn-primary',
 						'icon'   => 'fa fa-sign-in',
 						'text'   => 'Ввод средств',
 						'target' => '_blank',
 					]);
 					$is_out && $action[] = $html->a( [
 						'href'   => $_this->_url( 'payout', [ '%operation_id' => $value ] ),
-						'class_add' => 'btn-primary',
+						'class_add' => 'btn-xs btn-primary',
 						'icon'   => 'fa fa-sign-out',
 						'text'   => 'Вывод средств',
 						'target' => '_blank',
@@ -437,8 +423,8 @@ class yf_manage_payment_operation {
 				$action && $result = implode( '', $action );
 				return( $result );
 			}, [ 'desc' => 'действия' ] )
-			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] )
-			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] )
+			->footer_link( 'Обновить просроченные операции', $url[ 'update_expired' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-xs btn-primary', 'icon' => 'fa fa-refresh' ] )
+			->footer_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], [ 'title' => 'Обновить просроченные операции (только для ввода средств)', 'class' => 'btn btn-xs btn-primary', 'icon' => 'fa fa-refresh' ] )
 		;
 
 		$data_daily = $this->_get_daily_data($last_days = 180);

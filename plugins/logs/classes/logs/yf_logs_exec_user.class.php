@@ -170,6 +170,7 @@ class yf_logs_exec_user {
 			'country'		=> (string)(conf('country') ?: $_SERVER['GEOIP_COUNTRY_CODE']),
 			'lang'			=> (string)conf('language'),
 			'utm_source'	=> strval($_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_SESSION['utm_source'])),
+			'cpa_uid'		=> strval($_COOKIE['cpa_uid'] ?: $_SESSION['cpa_uid']),
 			'is_common_page'=> (int)$is['is_common_page'],
 			'is_https'		=> (int)$is['is_https'],
 			'is_post'		=> (int)$is['is_post'],

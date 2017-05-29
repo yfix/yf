@@ -25,6 +25,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		'order' => [
 			'payin' => [
 				'webmoney',
+				//'wmr',
+				//'card',
 			],
 			'payout' => [
 				'p2p_wmz',
@@ -41,6 +43,47 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 						'active'      => true,
 					],
 				],
+				'currency_allow' => [
+					'USD' => [
+						'currency_id' => 'USD',
+						'active'      => true,
+					],
+				],
+			],
+			'wmr' => [
+				'title' => 'WebMoney RUB',
+				'icon'  => 'webmoney',
+				'currency' => [
+					'RUB' => [
+						'currency_id' => 'RUB',
+						'active'      => true,
+					],
+				],
+				'currency_allow' => [
+					'RUB' => [
+						'currency_id' => 'RUB',
+						'active'      => true,
+					],
+				],
+			],
+			'card' => [
+				'title'       => 'Visa, MasterCard',
+				'icon'        => 'visa-mastercard',
+				'currency' => [
+					'RUB' => [
+						'currency_id' => 'RUB',
+						'active'      => true,
+					],
+				],
+				'currency_allow' => [
+					'RUB' => [
+						'currency_id' => 'RUB',
+						'active'      => true,
+					],
+				],
+				'option'=> [
+					'at'=>'authtype_16'
+				]
 			],
 		],
 		'api' => [
@@ -272,21 +315,21 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 
 	public $currency_default = 'USD';
 	public $currency_allow = [
-		/*
 		'USD' => array(
 			'currency_id' => 'USD',
 			'active'      => true,
 		),
+		/*'RUB' => array(
+			'currency_id' => 'RUB',
+			'active'      => true,
+		),
+
 		'EUR' => array(
 			'currency_id' => 'EUR',
 			'active'      => true,
 		),
 		'UAH' => array(
 			'currency_id' => 'UAH',
-			'active'      => true,
-		),
-		'RUB' => array(
-			'currency_id' => 'RUB',
 			'active'      => true,
 		),
 		*/
@@ -400,7 +443,11 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// currency
-		$currency_id = @$_currency_id ?: @$_currency ?: @$this->currency_default;
+		if(is_post() && !empty($_POST['LMI_PAYEE_PURSE'])) {
+			$first_letter = _substr($_POST['LMI_PAYEE_PURSE'], 0, 1);
+			$response_currency = ($first_letter == 'Z') ? 'USD' : (($first_letter == 'R') ? 'RUB' : false);
+		}
+		$currency_id = @$_currency_id ?: @$_currency ?: @$response_currency?: @$this->currency_default;
 		if( ! @$currency_id ) {
 			$result = [
 				'status'         => false,
@@ -531,6 +578,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// DUMP
 		$payment_api->dump([ 'var' => $form_options ]);
 		$url = $this->URL;
+		if(!empty($data['at'])){
+			$url .= '?at='.$data['at'];
+		}
 		$result = [];
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
@@ -592,7 +642,12 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// check amount
-		if( @$request[ 'amount' ] != @$response[ 'amount' ] ) {
+		$fail_amount = (empty($request[ 'amount_currency' ]) || empty($response[ 'amount' ]) ) ? true : false;
+		if(!$fail_amount) {
+			$request_amount = floatval($request['amount_currency']);
+			$response_amount = floatval($response['amount']);
+		}
+		if($fail_amount || abs($response_amount-$request_amount)>0.001){
 			$result = [
 				'status'         => false,
 				'status_message' => 'Неверный ответ: amount',
@@ -665,7 +720,15 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 				'status_message' => 'Неверная подпись',
 			];
 			// DUMP
-			$payment_api->dump([ 'var' => $result ]);
+			$payment_api->dump(
+				[ 'var' =>
+					[
+						$result,
+						'$signature' => $signature,
+						'$_signature' => $_signature,
+						'purse' => $this->_purse_by_currency(['is_key'=>false]),
+					]
+				]);
 			return( $result );
 		}
 		// save options

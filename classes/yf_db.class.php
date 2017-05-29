@@ -588,6 +588,13 @@ class yf_db {
 	* Alias of insert() with auto-escaping of data
 	*/
 	function insert_safe($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false, $extra = []) {
+		if (!is_array($extra)) {
+			$extra = [];
+		}
+		if (is_array($only_sql)) {
+			$extra += $only_sql;
+			$only_sql = $extra['only_sql'];
+		}
 		$data = $this->_fix_data_safe($table, $data, $extra);
 		return $this->insert($table, $this->es($data), $only_sql, $replace, $ignore, $on_duplicate_key_update, $extra);
 	}
@@ -602,10 +609,20 @@ class yf_db {
 		if (!strlen($table) || !is_array($data)) {
 			return false;
 		}
-		if (is_string($replace)) {
-			$replace = false;
+		if (!is_array($extra)) {
+			$extra = [];
 		}
-		$sql = $this->query_builder()->compile_insert($table, $data, compact('replace', 'ignore', 'on_duplicate_key_update'));
+		if (is_array($only_sql)) {
+			$extra += $only_sql;
+			$only_sql = $extra['only_sql'];
+		}
+		isset($extra['only_sql']) && $only_sql = $extra['only_sql'];
+		isset($extra['replace']) && $replace = $extra['replace'];
+		isset($extra['ignore']) && $ignore = $extra['ignore'];
+		isset($extra['on_duplicate_key_update']) && $on_duplicate_key_update = $extra['on_duplicate_key_update'];
+		is_string($replace) && $replace = false;
+
+		$sql = $this->query_builder()->compile_insert($table, $data, compact('replace', 'ignore', 'on_duplicate_key_update') + $extra);
 		if (!$sql) {
 			return false;
 		}
@@ -629,7 +646,7 @@ class yf_db {
 	* Alias, forced to add INSERT ... ON DUPLICATE KEY UPDATE
 	*/
 	function insert_on_duplicate_key_update($table, $data, $only_sql = false, $replace = false, $extra = []) {
-		$on_duplicate_key_update = true && ($this->get_driver_family() === 'mysql');
+		$on_duplicate_key_update = (true && ($this->get_driver_family() === 'mysql'));
 		return $this->insert($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update, $extra);
 	}
 
@@ -637,7 +654,7 @@ class yf_db {
 	* Alias of replace() with data auto-escape
 	*/
 	function replace_safe($table, $data, $only_sql = false, $extra = []) {
-		$replace = true && in_array($this->get_driver_family(), ['mysql','sqlite']);
+		$replace = (true && in_array($this->get_driver_family(), ['mysql','sqlite']));
 		return $this->insert_safe($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update = false, $extra);
 	}
 
@@ -645,7 +662,7 @@ class yf_db {
 	* Replace array of values into table
 	*/
 	function replace($table, $data, $only_sql = false) {
-		$replace = true && in_array($this->get_driver_family(), ['mysql','sqlite']);
+		$replace = (true && in_array($this->get_driver_family(), ['mysql','sqlite']));
 		return $this->insert($table, $data, $only_sql, $replace);
 	}
 
@@ -667,7 +684,15 @@ class yf_db {
 		if (empty($table) || empty($data) || empty($where)) {
 			return false;
 		}
-		$sql = $this->query_builder()->compile_update($table, $data, $where);
+		if (!is_array($extra)) {
+			$extra = [];
+		}
+		if (is_array($only_sql)) {
+			$extra += $only_sql;
+			$only_sql = $extra['only_sql'];
+		}
+		isset($extra['only_sql']) && $only_sql = $extra['only_sql'];
+		$sql = $this->query_builder()->compile_update($table, $data, $where, $extra);
 		if (!$sql) {
 			return false;
 		}
@@ -1456,12 +1481,16 @@ class yf_db {
 			break;
 		}
 		$not_existing_cols = [];
+		$virtual_cols = [];
 		$fixed_nulls = [];
 		if ($is_data_3d) {
 			foreach ((array)$data as $k => $_data) {
 				foreach ((array)$_data as $name => $v) {
 					if (!isset($cols[$name])) {
 						$not_existing_cols[$name] = $name;
+						unset($data[$k][$name]);
+					} elseif (isset($cols[$name]['virtual']) && $cols[$name]['virtual']) {
+						$virtual_cols[$name] = $name;
 						unset($data[$k][$name]);
 					} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
 						$fixed_nulls[$name] = $name;
@@ -1474,6 +1503,9 @@ class yf_db {
 				if (!isset($cols[$name])) {
 					$not_existing_cols[$name] = $name;
 					unset($data[$name]);
+				} elseif (isset($cols[$name]['virtual']) && $cols[$name]['virtual']) {
+					$virtual_cols[$name] = $name;
+					unset($data[$name]);
 				} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
 					$fixed_nulls[$name] = $name;
 					unset($data[$name]);
@@ -1483,6 +1515,9 @@ class yf_db {
 		if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
 			if ($not_existing_cols) {
 				trigger_error(__CLASS__.'->'.__FUNCTION__.': not existing columns for table "'.$table.'", columns: '.implode(', ', $not_existing_cols), E_USER_NOTICE);
+			}
+			if ($virtual_cols) {
+				trigger_error(__CLASS__.'->'.__FUNCTION__.': removed virtual columns for table "'.$table.'", columns: '.implode(', ', $virtual_cols), E_USER_NOTICE);
 			}
 			if ($fixed_nulls) {
 				trigger_error(__CLASS__.'->'.__FUNCTION__.': fixed nulls for table "'.$table.'", columns: '.implode(', ', $fixed_nulls), E_USER_NOTICE);

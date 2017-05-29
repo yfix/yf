@@ -17,6 +17,13 @@ class yf_make_thumb {
 		'image/gif'		=> 'gif',
 		'image/x-ms-bmp'=> 'wbmp',
 	];
+
+	public $IMAGICK_MIME_TYPES_NEED_TRANSPARENCY = [
+		'PNG'		=> 'PNG32',
+		'GIF'		=> 'PNG32',
+	];
+
+
 	/** @var bool */
 	public $ALLOW_IMAGICK			= true;
 	/** @var array */
@@ -273,7 +280,14 @@ class yf_make_thumb {
 	*/
 	function _use_imagick($source, $dest, $x = -1, $y = -1) {
 		$img = new Imagick($source);
-		$img->resizeImage($x, $y, null, null, $bestfit = true);
+		$image_format = $img->getImageFormat();
+		if(isset($this->IMAGICK_MIME_TYPES_NEED_TRANSPARENCY[$image_format])) {
+			$img->setImageCompressionQuality(85);
+			$img->resizeImage($x, $y, Imagick::FILTER_LANCZOS, 1.1, $bestfit = true);
+		}
+		else {
+			$img->resizeImage($x, $y, null, null, $bestfit = true);
+		}
 		return $img->writeImage($dest);
 	}
 

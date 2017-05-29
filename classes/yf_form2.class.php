@@ -212,20 +212,18 @@ class yf_form2 {
 		// Search for override params inside shared files
 		$suffix = $form_id.'.form.php';
 		$slen = strlen($suffix);
-		$path_pattern = 'share/form/'.$form_id.'*'.$suffix;
+		$pattern = '{,plugins/*/}{,share/}form/'.$form_id.'*'.$suffix;
 		$paths = [
-			'yf_main'			=> YF_PATH. $path_pattern,
-			'yf_plugins'		=> YF_PATH. 'plugins/*'.$path_pattern,
-			'project_config'	=> CONFIG_PATH. $path_pattern,
-			'project_main'		=> PROJECT_PATH. $path_pattern,
-			'project_plugins'	=> PROJECT_PATH. 'plugins/*'.$path_pattern,
+			'frawework'	=> YF_PATH. $pattern,
+			'config'	=> CONFIG_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
 		];
 		if (SITE_PATH != PROJECT_PATH) {
-			$paths['site_main'] = SITE_PATH. 'share/form/'.$suffix;
+			$paths['site'] = SITE_PATH. $pattern;
 		}
 		$names = [];
 		foreach ((array)$paths as $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$name = substr(basename($path), 0, -$slen);
 				$names[$name] = $path;
 			}
@@ -473,7 +471,7 @@ class yf_form2 {
 			$tabbed_buffer = [];
 		}
 		if ($tabs) {
-			$this->_body[$tabs_container]['rendered'] = _class('html')->tabs($tabs, (array)$this->_params['tabs'] + (array)$tabs_extra);
+			$this->_body[$tabs_container]['rendered'] = html()->tabs($tabs, (array)$this->_params['tabs'] + (array)$tabs_extra);
 		}
 		if ($this->_params['show_alerts']) {
 			$errors = common()->_get_error_messages();
@@ -1038,7 +1036,10 @@ class yf_form2 {
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['class'] = $form->CLASS_FORM_CONTROL. $form->_prepare_css_class('', $r[$extra['name']], $extra);
-			// Supported: mini, small, medium, large, xlarge, xxlarge
+			if ($this->_params['filter'] && !isset($extra['sizing'])) {
+				$extra['sizing'] = 'sm';
+			}
+			// Supported: sm, lg
 			if ($extra['sizing']) {
 				$extra['class'] .= ' input-'.$extra['sizing'];
 			}
@@ -1289,7 +1290,6 @@ class yf_form2 {
 			$extra = [];
 		}
 		$extra['type'] = 'number';
-		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '10';
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -1332,7 +1332,6 @@ class yf_form2 {
 		}
 		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : ($this->_params['currency'] ?: '<i class="'.$this->CLASS_ICON_CURRENCY.'"></i>');
 		$extra['append'] = isset($extra['append']) ? $extra['append'] : ''; // '.00';
-		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '8';
 		return $this->decimal($name, $desc, $extra, $replace);
 	}
@@ -1610,7 +1609,13 @@ class yf_form2 {
 				$extra['selected'] = $form->_params['selected'][$extra['name']];
 			}
 			$extra = $form->_input_assign_params_from_validate($extra);
-			return $form->_row_html(_class('html')->radio_box($extra), $extra, $r);
+			if ($this->_params['filter'] && !$extra['renderer']) {
+				$extra['no_label'] = 1;
+				$extra['label_right'] = 1;
+				$extra['renderer'] = 'button_yes_no_box';
+			}
+			$renderer = $extra['renderer'] ?: 'radio_box';
+			return $form->_row_html(html()->$renderer($extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
@@ -1622,21 +1627,47 @@ class yf_form2 {
 	/**
 	*/
 	function allow_deny_box($name = '', $desc = '', $extra = [], $replace = []) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!isset($this->_pair_allow_deny)) {
 			$this->_pair_allow_deny = main()->get_data('pair_allow_deny');
 		}
 		$extra['items'] = $this->_pair_allow_deny;
-		return $this->active_box($name, $desc, $extra, $replace);
+		if ($this->_params['filter'] || $extra['v2']) {
+			$extra['no_label'] = 1;
+			$extra['label_right'] = 1;
+			$extra['renderer'] = 'button_allow_deny_box';
+		}
+		$func = 'active_box';
+		return $this->$func($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = [], $replace = []) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = [];
+		}
 		if (!isset($this->_pair_yes_no)) {
 			$this->_pair_yes_no = main()->get_data('pair_yes_no');
 		}
 		$extra['items'] = $this->_pair_yes_no;
-		return $this->active_box($name, $desc, $extra, $replace);
+		if ($this->_params['filter'] || $extra['v2']) {
+			$extra['no_label'] = 1;
+			$extra['label_right'] = 1;
+			$extra['renderer'] = 'button_yes_no_box';
+		}
+		$func = 'active_box';
+		return $this->$func($name, $desc, $extra, $replace);
 	}
 
 	/**
@@ -1680,7 +1711,14 @@ class yf_form2 {
 			$button_text = $extra['desc'];
 			$extra['desc'] = '';
 			$extra['buttons_controls'] = true;
-
+			if ($this->_params['filter'] && !isset($extra['sizing'])) {
+				$extra['sizing'] = 'sm';
+			}
+			// Supported: xs, sm, md, lg
+			if ($extra['sizing']) {
+				$extra['class'] .= ' btn-'.$extra['sizing'];
+				$extra['link_class'] .= ' btn-'.$extra['sizing'];
+			}
 			$attrs_names = ['type','name','id','class','style','value','disabled','target'];
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
@@ -1960,7 +1998,9 @@ class yf_form2 {
 			$extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $extra['name'];
 			$extra = $form->_input_assign_params_from_validate($extra);
-
+			if ($this->_params['filter']) {
+				$extra['class_add'] .= ' input-sm';
+			}
 			$func = $extra['func_html_control'];
 			$content = _class('html')->$func($extra);
 			if ($extra['no_label'] || $form->_params['no_label']) {
@@ -2088,6 +2128,24 @@ class yf_form2 {
 	*/
 	function button_split_box($name, $values, $extra = [], $replace = []) {
 		return $this->_html_control($name, $values, $extra, $replace, 'button_split_box');
+	}
+
+	/**
+	*/
+	function button_check_box($name, $values, $extra = [], $replace = []) {
+		return $this->_html_control($name, $values, $extra, $replace, 'button_check_box');
+	}
+
+	/**
+	*/
+	function button_radio_box($name, $values, $extra = [], $replace = []) {
+		return $this->_html_control($name, $values, $extra, $replace, 'button_radio_box');
+	}
+
+	/**
+	*/
+	function button_yes_no_box($name, $values, $extra = [], $replace = []) {
+		return $this->_html_control($name, $values, $extra, $replace, 'button_yes_no_box');
 	}
 
 	/**

@@ -66,18 +66,15 @@ abstract class yf_db_installer {
 	public function load_data() {
 		// Preload db installer SQL CREATE TABLE DDL statements
 		$ext = '.sql.php';
-		$dir = 'share/db/sql/*'.$ext;
+		$pattern = '{,plugins/*/}{,share/}db/sql/*'.$ext;
 		$globs_sql = [
-			'yf_main'				=> YF_PATH. $dir,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
-			'project_app'			=> APP_PATH. $dir,
-			'project_main'			=> PROJECT_PATH. $dir,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
-			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		$t_names = [];
 		foreach ($globs_sql as $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$t_name = substr(basename($path), 0, -strlen($ext));
 				$t_names[$t_name] = $path;
 			}
@@ -89,18 +86,15 @@ abstract class yf_db_installer {
 
 		// Preload db installer PHP array of CREATE TABLE DDL statements
 		$ext = '.sql_php.php';
-		$dir = 'share/db/sql_php/*'.$ext;
+		$pattern = '{,plugins/*/}{,share/}db/sql_php/*'.$ext;
 		$globs_sql_php = [
-			'yf_main'				=> YF_PATH. $dir,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
-			'project_app'			=> APP_PATH. $dir,
-			'project_main'			=> PROJECT_PATH. $dir,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
-			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		$t_names = [];
 		foreach ($globs_sql_php as $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$t_name = substr(basename($path), 0, -strlen($ext));
 				$t_names[$t_name] = $path;
 			}
@@ -112,18 +106,15 @@ abstract class yf_db_installer {
 
 		// Preload db installer data PHP arrays needed to be inserted after CREATE TABLE == initial data
 		$ext = '.data.php';
-		$dir = 'share/db/data/*'.$ext;
+		$pattern = '{,plugins/*/}{,share/}db/data/*'.$ext;
 		$globs_data = [
-			'yf_main'				=> YF_PATH. $dir,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
-			'project_app'			=> APP_PATH. $dir,
-			'project_main'			=> PROJECT_PATH. $dir,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
-			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		$t_names = [];
 		foreach ($globs_data as $glob) {
-			foreach (glob($glob) as $path) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
 				$t_name = substr(basename($path), 0, -strlen($ext));
 				$t_names[$t_name] = $path;
 			}

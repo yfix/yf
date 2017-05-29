@@ -9,6 +9,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 
 	public $URL_API          = 'https://gate.ecommpay.com/%method/json/';
 	public $URL_API_TEST     = 'https://gate-sandbox.ecommpay.com/%method/json/';
+	public $URL_BIN_INFO 		 = 'https://bins.payout.com/api/v1/bins/'; //get Bank info by first 6 digits card number, free request daily limit = 1000
+	public $ALLOW_CARDS_COUNTRIES = [];//['UA'=>'Украине','US'=>'США'] or empty array if every country allow
 
 	public $method_allow = [
 		'order' => [
@@ -572,6 +574,37 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'account_number'             => @str_replace( [ ' ', '-', '+', ], '', $user[ 'phone' ] ),
 			];
 		}
+
+
+		if(count($this->ALLOW_CARDS_COUNTRIES)){
+			$countries = [];
+			foreach ($this->ALLOW_CARDS_COUNTRIES as $country) {
+				$countries[] = t($country);
+			}
+			$countries_validation_message = 'карта должна быть выпущена в ' . implode(', ', $countries);
+			$this->method_allow['payout']['pay_card']['option_validation_message']['card'] .= ', '.$countries_validation_message;
+			$this->method_allow['payout']['pay_card']['option_validation']['card']= [
+				'__before__'=>'required|is_natural|length[13,19]',
+				'__after__'=>
+					function($in, $tmp1 = null, $tmp2 = null, &$error_msg = null) use ($countries_validation_message){
+						$bin = substr($in, 0, 6);
+						$url = $this->URL_BIN_INFO.$bin;
+						$request_result = common()->get_remote_page($url);
+
+						$request_data = !empty($request_result) ? @json_decode($request_result, true) : false;
+						if($request_data && isset($request_data['country_code'])){
+							if(isset($this->ALLOW_CARDS_COUNTRIES[$request_data['country_code']])){
+								return true;
+							}
+							else {
+								$error_msg = $countries_validation_message;
+								return false;
+							}
+						}
+						return true;
+					}];
+		}
+
 		// parent
 		parent::_init();
 	}

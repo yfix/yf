@@ -722,7 +722,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		return( $result );
 	}
 
-	public function api_authorization( &$options ) {
+	public function api_authorization( $method = null ) {
 		$result = $this->is_authorization();
 		if( !$result ) {
 			$result = [
@@ -731,7 +731,6 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 			];
 			return( $result );
 		}
-		$options[ 'access_token' ] = $this->access_token;
 		$result = [
 			'status'         => true,
 			'status_message' => 'Авторизация имеется',
@@ -788,6 +787,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 		@$_is_debug && $request_option[ 'is_debug' ] = true;
 		if( @$method[ 'is_authorization' ] ) {
 			$result = $this->api_authorization( $request_option );
+			$request_option[ 'access_token' ] = $this->access_token;
 			if( !@$result[ 'status' ] ) { return( $result ); }
 		}
 		// header

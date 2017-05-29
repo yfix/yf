@@ -172,20 +172,18 @@ class yf_cache {
 	/**
 	*/
 	function _get_avail_drivers_list() {
-		$dir = 'classes/cache/';
-		$paths = [
-			'app_core'		=> APP_PATH. $dir,
-			'app_plugins'	=> APP_PATH. 'plugins/*/'. $dir,
-			'yf_core'		=> YF_PATH. $dir,
-			'yf_plugins'	=> YF_PATH. 'plugins/*/'. $dir,
-		];
 		$prefix = 'cache_driver_';
 		$suffix = '.class.php';
 		$plen = strlen($prefix);
 		$slen = strlen($suffix);
+		$pattern = '{,plugins/*/}classes/cache/*'.$prefix.'*'.$suffix;
+		$globs = [
+			'app'		=> APP_PATH. $pattern,
+			'framework'	=> YF_PATH. $pattern,
+		];
 		$drivers = [];
-		foreach ($paths as $path) {
-			foreach (glob($path.'*'.$prefix.'*'.$suffix) as $f) {
+		foreach ($globs as $glob) {
+			foreach (glob($glob, GLOB_BRACE) as $f) {
 				$f = basename($f);
 				$name = substr($f, strpos($f, $prefix) + $plen, -$slen);
 				if ($name) {

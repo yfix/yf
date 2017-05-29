@@ -495,17 +495,17 @@ class yf_manage_payout {
 			// ->btn( 'Счет'         , $url[ 'balance' ], array( 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
 		;
 		// mass actions
-		$result->footer_submit( [ 'name' => 'mass', 'value' => 'payout', 'desc' => 'Вывод средств', 'class' => 'btn btn-success', 'icon' => 'fa fa-sign-out' ] );
-		$result->footer_submit( [ 'name' => 'mass', 'value' => 'cancel', 'desc' => 'Отменить'     , 'class' => 'btn btn-warning', 'icon' => 'fa fa-ban'      ] );
-		$result->footer_submit( [ 'name' => 'mass', 'value' => 'remove', 'desc' => 'Удалить'      , 'class' => 'btn btn-danger' , 'icon' => 'fa fa-remove'   ] );
+		$result->footer_submit( [ 'name' => 'mass', 'value' => 'payout', 'desc' => 'Вывод средств', 'class' => 'btn btn-xs btn-success', 'icon' => 'fa fa-sign-out' ] );
+		$result->footer_submit( [ 'name' => 'mass', 'value' => 'cancel', 'desc' => 'Отменить'     , 'class' => 'btn btn-xs btn-warning', 'icon' => 'fa fa-ban'      ] );
+		$result->footer_submit( [ 'name' => 'mass', 'value' => 'remove', 'desc' => 'Удалить'      , 'class' => 'btn btn-xs btn-danger' , 'icon' => 'fa fa-remove'   ] );
 		// ECommPay
 		$provider = $payment_api->is_provider([ 'name' => 'ecommpay' ]);
 		if( $provider ) {
-			$result->footer_submit( [ 'name' => 'mass', 'value' => 'CSV_ECommPay', 'desc' => 'CSV ECommPay', 'class' => 'btn btn-info', 'icon' => 'fa fa-file-excel-o' ] );
+			$result->footer_submit( [ 'name' => 'mass', 'value' => 'CSV_ECommPay', 'desc' => 'CSV ECommPay', 'class' => 'btn btn-xs btn-info', 'icon' => 'fa fa-file-excel-o' ] );
 		}
 		// other actions
-		$result->header_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], [ 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] );
-		$result->header_link( 'Обновить статусы операций Подтверждения', $url[ 'confirmation_update_expired' ], [ 'class' => 'btn btn-primary', 'icon' => 'fa fa-refresh' ] );
+		$result->header_link( 'Обновить статусы операций Интеркассы', $url[ 'check_all_interkassa' ], [ 'class' => 'btn btn-xs btn-primary', 'icon' => 'fa fa-refresh' ] );
+		$result->header_link( 'Обновить статусы операций Подтверждения', $url[ 'confirmation_update_expired' ], [ 'class' => 'btn btn-xs btn-primary', 'icon' => 'fa fa-refresh' ] );
 
 		$data_daily = $this->_get_daily_data($last_days = 180);
 		$data_chart = _class('charts')->jquery_sparklines($data_daily);
@@ -1093,7 +1093,7 @@ class yf_manage_payout {
 					return( $result );
 				}, [ 'desc' => 'статус' ] )
 				->text( 'date' , 'дата' )
-				->btn( 'Вывод средств', $url[ 'view'    ], [ 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-primary', 'target' => '_blank' ] )
+				->btn( 'Вывод средств', $url[ 'view'    ], [ 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-xs btn-primary', 'target' => '_blank' ] )
 			;
 		}
 		// prepare view: operation options
@@ -1365,7 +1365,7 @@ class yf_manage_payout {
 			->input( 'amounts', [ 'desc' => 'Сумма', 'label_tip' => 'Величина не должна превышать сумму операции. Для разбиения суммы на части используйте любой не числовой символ: 10-20-30 для суммы 50' ] )
 			->row_start()
 				->submit( 'operation', 'recreate', [ 'desc' => 'Пересоздать', 'icon' => 'fa fa-refresh' ] )
-				->link( 'Назад' , $url_view, [ 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ] )
+				->link( 'Назад' , $url_view, [ 'class' => 'btn btn-xs btn-default', 'icon' => 'fa fa-chevron-left' ] )
 			->row_end()
 		;
 		return( $result );
@@ -1384,7 +1384,7 @@ class yf_manage_payout {
 		$content = [];
 			$link = $html->a( [
 				'href'      => $this->_url( 'view', [ '%operation_id' => $operation_id ] ),
-				'class_add' => 'btn-danger',
+				'class_add' => 'btn-xs btn-danger',
 				'target'    => '_blank',
 				'icon'      => 'fa fa-sign-out',
 				'title'     => $text,
@@ -1397,7 +1397,7 @@ class yf_manage_payout {
 			$header = $title . $operation_id;
 			$link = $html->a( [
 				'href'      => $this->_url( 'view', [ '%operation_id' => $operation_id ] ),
-				'class_add' => 'btn-success',
+				'class_add' => 'btn-xs btn-success',
 				'target'    => '_blank',
 				'icon'      => 'fa fa-sign-out',
 				'title'     => $text,
@@ -1454,10 +1454,10 @@ class yf_manage_payout {
 			$operation_id = empty( $_operation_id ) ? (int)$_GET[ 'operation_id' ] :  $_operation_id;
 			if( $operation_id > 0 ) {
 				$url_view = $this->_url( 'view', [ '%operation_id' => $operation_id ] );
-				$content .= '<a href="'. $url_view .'" class="btn btn-info">Назад к операции</a>';
+				$content .= '<a href="'. $url_view .'" class="btn btn-xs btn-info">Назад к операции</a>';
 			}
 			$url_list = $this->_url( 'list' );
-			$content .= '<a href="'. $url_list .'" class="btn btn-primary">Список операции</a>';
+			$content .= '<a href="'. $url_list .'" class="btn btn-xs btn-primary">Список операции</a>';
 		}
 		isset( $content ) && $panel_footer = '<div class="panel-footer">'. $content .'</div>';
 		// panel
@@ -1942,7 +1942,7 @@ EOS;
 						foreach( $result as $operation_id => $item ) {
 							$link = $html->a( [
 								'href'      => $this->_url( 'view', [ '%operation_id' => $operation_id ] ),
-								'class_add' => 'btn-primary',
+								'class_add' => 'btn-xs btn-primary',
 								'target'    => '_blank',
 								'icon'      => 'fa fa-sign-out',
 								'title'     => 'Вывод средств №'. $operation_id,
@@ -1960,7 +1960,7 @@ EOS;
 			->check_box( 'is_confirm', [ 'desc' => 'Подтверждение', 'no_label' => true ] )
 			->row_start()
 				->submit( 'operation', 'update', [ 'desc' => 'Обновить статусы операций Интеркассы', 'icon' => 'fa fa-refresh' ] )
-				->link( 'Назад' , $this->_url( 'list' ), [ 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ] )
+				->link( 'Назад' , $this->_url( 'list' ), [ 'class' => 'btn btn-xs btn-default', 'icon' => 'fa fa-chevron-left' ] )
 			->row_end()
 		;
 		return( $result . $html_result );
@@ -2056,7 +2056,7 @@ EOS;
 			->check_box( 'is_confirm', [ 'desc' => 'Подтверждение', 'no_label' => true ] )
 			->row_start()
 				->submit( 'operation', 'update', [ 'desc' => 'Обновить', 'icon' => 'fa fa-refresh' ] )
-				->link( 'Назад' , $url[ 'list' ], [ 'class' => 'btn btn-default', 'icon' => 'fa fa-chevron-left' ] )
+				->link( 'Назад' , $url[ 'list' ], [ 'class' => 'btn btn-xs btn-default', 'icon' => 'fa fa-chevron-left' ] )
 			->row_end()
 		;
 		return( $result );
@@ -2172,7 +2172,7 @@ EOS;
 			$text = $result[ 'status_message' ];
 			$link = $html->a( [
 				'href'      => $this->_url( 'view', [ '%operation_id' => $id ] ),
-				'class_add' => @$result[ 'status' ] ? 'btn-success' : 'btn-warning',
+				'class_add' => 'btn-xs '.(@$result[ 'status' ] ? 'btn-success' : 'btn-warning'),
 				'target'    => '_blank',
 				'icon'      => 'fa fa-sign-out',
 				'title'     => $text,
@@ -2214,7 +2214,7 @@ EOS;
 			$text = $result[ 'status_message' ];
 			$link = $html->a( [
 				'href'      => $this->_url( 'view', [ '%operation_id' => $id ] ),
-				'class_add' => @$result[ 'status' ] ? 'btn-success' : 'btn-warning',
+				'class_add' => 'btn-xs '.(@$result[ 'status' ] ? 'btn-success' : 'btn-warning'),
 				'target'    => '_blank',
 				'icon'      => 'fa fa-sign-out',
 				'title'     => $text,
@@ -2317,6 +2317,7 @@ EOS;
 			$totals['count'] += $v['count'];
 		}
 		$by_method[] = $totals;
+		$by_method = array_filter($by_method);
 		return table($by_method)
 			->text('method')
 			->text('sum')

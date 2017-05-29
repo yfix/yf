@@ -312,6 +312,7 @@ abstract class yf_db_utils_driver {
 			if (!is_null($a['Default'])) {
 				$default = trim($a['Default']);
 			}
+			$extra_lower = strtolower($a['Extra']);
 			$cols[$name] = [
 				'name'		=> $name,
 				'type'		=> $type,
@@ -323,13 +324,16 @@ abstract class yf_db_utils_driver {
 // TODO: detect charset for column
 				'charset'	=> null,
 				'collate'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
-				'auto_inc'	=> false !== strpos(strtolower($a['Extra']), 'auto_increment') ? true : false,
+				'auto_inc'	=> false !== strpos($extra_lower, 'auto_increment') ? true : false,
 				'primary'	=> $a['Key'] == 'PRI',
 				'unique'	=> $a['Key'] == 'UNI',
 				'values'	=> $values ?: null,
 			];
-			if (false !== strpos(strtolower($a['Extra']), 'on update') && in_array($type, ['timestamp','datetime'])) {
+			if (false !== strpos($extra_lower, 'on update') && in_array($type, ['timestamp','datetime'])) {
 				$cols[$name]['on_update'] = strtoupper($a['Extra']);
+			}
+			if (false !== strpos($extra_lower, 'virtual') || false !== strpos($extra_lower, 'generated')) {
+				$cols[$name]['virtual'] = true;
 			}
 			$cols[$name]['type_raw'] = $a['Type'];
 		}
@@ -1369,18 +1373,15 @@ WHERE table_schema = "schemaname"
 			$search_table = $table;
 		}
 		$ext = '.sql_php.php';
-		$dir = 'share/db/sql_php/';
-		$pattern = $dir. $search_table. $ext;
+		$pattern = '{,plugins/*/}{,share/}db/sql_php/'. $search_table. $ext;
 		$globs = [
-			PROJECT_PATH. 'plugins/*/'. $pattern,
 			PROJECT_PATH. $pattern,
 			CONFIG_PATH. $pattern,
-			YF_PATH. 'plugins/*/'. $pattern,
 			YF_PATH. $pattern,
 		];
 		$path = '';
 		foreach ($globs as $glob) {
-			foreach (glob($glob) as $f) {
+			foreach (glob($glob, GLOB_BRACE) as $f) {
 				$path = $f;
 				break 2;
 			}

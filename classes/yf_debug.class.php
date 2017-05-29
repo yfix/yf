@@ -10,7 +10,7 @@
 class yf_debug {
 
 	public $SHOW_DB_QUERY_LOG		= true;
-	public $SHOW_DB_STATS			= true;
+	public $SHOW_DB_STATS			= false;
 	public $SHOW_DB_EXPLAIN_QUERY	= true;
 	public $SHOW_SPHINX				= true;
 	public $SHOW_SSH				= true;
@@ -20,9 +20,9 @@ class yf_debug {
 	public $SHOW_RESIZED_IMAGES_LOG	= true;
 	public $SHOW_INCLUDED_FILES		= true;
 	public $SHOW_LOADED_MODULES		= true;
+	public $SHOW_REDIS_INFO			= true;
 	public $SHOW_MEMCACHED_INFO		= true;
 	public $SHOW_DASHBOARD_INFO		= true;
-	public $SHOW_EACCELERATOR_INFO	= true;
 	public $SHOW_XCACHE_INFO		= true;
 	public $SHOW_APC_INFO			= true;
 	public $SHOW_MAIN_GET_DATA		= true;
@@ -31,6 +31,7 @@ class yf_debug {
 	public $SHOW_GLOBALS			= true;
 	public $SHOW_NOT_TRANSLATED		= true;
 	public $SHOW_I18N_VARS			= true;
+	public $SHOW_INPUT_DATA			= true;
 	public $SHOW_GET_DATA			= true;
 	public $SHOW_POST_DATA			= true;
 	public $SHOW_COOKIE_DATA		= true;
@@ -513,7 +514,7 @@ class yf_debug {
 			}
 		}
 		$table = table((array)$items, [
-			'table_class' 		=> 'debug_item table-condensed', 
+			'table_class' 		=> 'debug_item table-condensed',
 			'auto_no_buttons' 	=> 1,
 			'pager_records_on_page' => 10000,
 			'hidden_map'		=> $params['hidden_map'],
@@ -798,7 +799,51 @@ class yf_debug {
 			$items['db_shutdown_queries_'.$name] = $this->_show_db_shutdown_queries($db);
 			$items['db_stats_'.$name] = $this->_show_db_stats($db);
 		}
-		return _class('html')->tabs($items, ['hide_empty' => 1]);
+		return $items ? _class('html')->tabs($items, ['hide_empty' => 1]) : null;
+	}
+
+	/**
+	*/
+	function _debug_redis(&$params = []) {
+		if (!$this->SHOW_REDIS_INFO) {
+			return '';
+		}
+		$instances = [
+			'redis_default' => redis(),
+			'redis_cache' => strpos(strtolower(cache()->DRIVER), 'redis') !== false ? cache()->_driver->_connection : null,
+		];
+		$tabs = [];
+		foreach((array)$instances as $iname => $instance) {
+			if (!$instance || !$instance->_log || ($iname != 'redis_default' && $instance === $instances['redis_default'])) {
+				continue;
+			}
+			$items = [];
+			$totals = [];
+			foreach ((array)$instance->_log as $k => $v) {
+				$items[$counter] = [
+					'id'	=> ++$counter,
+					'func'	=> a('https://redis.io/commands/'.$v['func'], $v['func']),
+					'args'	=> $v['args'] ? '<pre><small>'._prepare_html(substr(implode(PHP_EOL, $v['args']), 0, 1000)).'</small></pre>' : '',
+					'result'=> $v['result'] ? '<pre><small>'._prepare_html($this->_var_export($v['result'])).'</small></pre>' : null,
+					'time'	=> round($v['exec_time'], 5),
+					'trace'	=> _prepare_html($v['trace']),
+				];
+				$totals['time'] += $v['exec_time'];
+			}
+			$items = $this->_time_count_changes($items);
+			$items[-1] = ['id' => 'TOTAL', 'time' => round($totals['time'], 5)] + array_map(function(){}, last($items));
+
+			$logs = $this->_show_auto_table($items, [
+				'hidden_map' => ['trace' => 'args', 'result' => 'time'],
+				'no_total' => 1, 
+				'skip_empty_values' => 1,
+				'caption' => $iname,
+				'tr' => function($row, $id, $rid) { return $id == -1 ? ['class' => 'active'] : []; }
+			]);
+			$tabs[$iname] = '<div class="col-md-8">'.$logs.'</div>'
+				. '<div class="col-md-4">'.$this->_show_key_val_table($instance->info(), ['no_total' => 1, 'skip_empty_values' => 1]).'</div>';
+		}
+		return $tabs ? _class('html')->tabs($tabs, ['hide_empty' => 1]) : null;
 	}
 
 	/**
@@ -1036,47 +1081,23 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__get(&$params = []) {
-		if (!$this->SHOW_GET_DATA) {
+	function _debug_input(&$params = []) {
+		if (!$this->SHOW_INPUT_DATA) {
 			return '';
 		}
-		$out = $this->_show_key_val_table($_GET);
-		$items = $this->_get_debug_data('input_get');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
-
-	/**
-	*/
-	function _debug__post(&$params = []) {
-		if (!$this->SHOW_POST_DATA) {
-			return '';
+		$body = [];
+		foreach (['GET','POST','FILES','COOKIE','SERVER','ENV'] as $name) {
+			$enabled_var = 'SHOW_'.$name.'_DATA';
+			$enabled = $this->$enabled_var;
+			if ($enabled) {
+				$val = '_'.$name;
+				$out = $this->_show_key_val_table($GLOBALS[$val]);
+				$items = $this->_get_debug_data('input_'.strtolower($name));
+				$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
+				$body[] = '<div class="col-md-12"><h3>_'.$name.'</h3>'.$out.'</div>';
+			}
 		}
-		$out = $this->_show_key_val_table($_POST);
-		$items = $this->_get_debug_data('input_post');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
-
-	/**
-	*/
-	function _debug__cookie(&$params = []) {
-		if (!$this->SHOW_COOKIE_DATA) {
-			return '';
-		}
-		$out = $this->_show_key_val_table($_COOKIE);
-		$items = $this->_get_debug_data('input_cookie');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
-
-	/**
-	*/
-	function _debug__files(&$params = []) {
-		if (!$this->SHOW_FILES_DATA) {
-			return '';
-		}
-		return $this->_show_key_val_table($_FILES);
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -1092,34 +1113,20 @@ class yf_debug {
 				'value' => '<pre>'._prepare_html($this->_var_export($v)).'</pre>',
 			];
 		}
-		$out = $this->_show_auto_table($items, ['first_col_width' => '1%']);
+		$out = '<div class="col-md-6">'.$this->_show_auto_table($items, ['first_col_width' => '1%']).'</div>';
+
+		$data['session_id'] = session_id();
+		foreach ((array)ini_get_all('session') as $k => $v) {
+			$data[$k] = $v['local_value'];
+		}
+		foreach ($data as $k => $v) {
+			$data[$k] = _prepare_html($v);
+		}
+		$out .= '<div class="col-md-6">'.$this->_show_key_val_table($data, ['no_total' => 1, 'no_sort' => 1, 'no_escape' => 1]).'</div>';
 
 		$items = $this->_get_debug_data('input_session');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
+		$items && $out .= '<div class="col-md-6">'.$this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]).'</div>';
 
-	/**
-	*/
-	function _debug__server(&$params = []) {
-		if (!$this->SHOW_SERVER_DATA) {
-			return '';
-		}
-		$out = $this->_show_key_val_table($_SERVER);
-		$items = $this->_get_debug_data('input_server');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
-		return $out;
-	}
-
-	/**
-	*/
-	function _debug__env(&$params = []) {
-		if (!$this->SHOW_ENV_DATA) {
-			return '';
-		}
-		$out = $this->_show_key_val_table($_ENV);
-		$items = $this->_get_debug_data('input_env');
-		$items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
 		return $out;
 	}
 
@@ -1185,19 +1192,6 @@ class yf_debug {
 			return '';
 		}
 		return $this->_show_key_val_table(_class('ssh')->_debug);
-	}
-
-	/**
-	*/
-	function _debug_eaccelerator(&$params = []) {
-		if (!$this->SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
-			return '';
-		}
-		$eaccel_stats = eaccelerator_info();
-		foreach ((array)ini_get_all('eaccelerator') as $_k => $_v) {
-			$eaccel_stats[$_k] = $_v['local_value'];
-		}
-		return $this->_show_key_val_table($eaccel_stats);
 	}
 
 	/**
