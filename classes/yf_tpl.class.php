@@ -662,7 +662,7 @@ class yf_tpl {
 		}
 		if (DEBUG_MODE) {
 			$this->driver->debug[$stpl_name]['storage'] = $storage;
-			$this->driver->debug[$stpl_name]['storages'] = $storages;
+			$this->driver->debug[$stpl_name]['storages'] = $paths;
 		}
 		if ($RETURN_TEMPLATE_PATH) {
 			return $file_path;
