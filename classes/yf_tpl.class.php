@@ -532,6 +532,7 @@ class yf_tpl {
 		$string = false;
 		$NOT_FOUND = false;
 		$storage = 'inline';
+		$file_name = trim(trim(trim($file_name), '/'));
 		$l = strlen(YF_PREFIX);
 		if (substr($file_name, 0, $l) == YF_PREFIX) {
 			$file_name = substr($file_name, $l);
