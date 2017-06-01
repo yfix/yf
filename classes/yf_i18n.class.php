@@ -9,6 +9,25 @@
 */
 class yf_i18n {
 
+	/** @var array Enabled methods for current lang detection */
+	public $CURRENT_LANG_PRIORITIES = [
+#		'url',		// force override by url param
+#		'session',	// saved selection inside session
+#		'cookie',	// saved selection inside cookie, usually for came back user
+#		'user',		// user saved setting
+#		'http',		// from http accept
+#		'country',	// default lang by detected country
+#		'conf',		// set with $CONF
+		'admin',	// set inside admin web panel
+#		'site',		// site/domain default
+#		'app',		// App default, usually set inside conf
+	];
+	/** @var string Current locale code */
+	public $CUR_LOCALE			= 'en';
+	/** @var string Current charset code */
+	public $CUR_CHARSET			= 'utf-8';
+	/** @var array @conf_skip Active languages */
+	public $LANGUAGES			= [];
 	/** @var bool Replace underscore '_' into space ' ' in translate_string */
 	public $REPLACE_UNDERSCORE	= true;
 	/** @var bool Translation on/off */
@@ -23,17 +42,6 @@ class yf_i18n {
 	public $VARS_IGNORE_CASE	= true;
 	/** @var bool */
 	public $TRACK_FIRST_LETTER_CASE	= true;
-	/** @var string Current locale code */
-	public $CUR_LOCALE			= 'en';
-	/** @var string Current charset code */
-	public $CUR_CHARSET			= 'utf-8';
-	/** @var array @conf_skip Active languages */
-	public $LANGUAGES			= [];
-	/** @var array */
-	public $_HTML_ENTITIES		= [
-		'_' => '&#95;', "'" => '&#39;', '"' => '&quot;', '/' => '&frasl;', "\\"=> '&#92;', '[' => '&#91;', ']' => '&#93;',
-		'(' => '&#40;', ')' => '&#41;', '{' => '&#123;', '}' => '&#125;', '?' => '&#63;', '!' => '&#33;', '|' => '&#124;',
-	];
 	/** @var bool Allow to find vars in shared place inside files */
 	public $ALLOW_SHARED_LANG_FILES	= true;
 	/** @var bool Allow to find vars in modules sub-folders */
@@ -42,6 +50,11 @@ class yf_i18n {
 	public $ALLOW_USER_TRANSLATE	= false;
 	/** @var bool In-Memory cachig */
 	public $USE_TRANSLATE_CACHE		= true;
+	/** @var array @conf_skip */
+	public $_HTML_ENTITIES		= [
+		'_' => '&#95;', "'" => '&#39;', '"' => '&quot;', '/' => '&frasl;', "\\"=> '&#92;', '[' => '&#91;', ']' => '&#93;',
+		'(' => '&#40;', ')' => '&#41;', '{' => '&#123;', '}' => '&#125;', '?' => '&#63;', '!' => '&#33;', '|' => '&#124;',
+	];
 
 	/**
 	* Catch missing method call
@@ -54,124 +67,44 @@ class yf_i18n {
 	* Framework constructor
 	*/
 	function _init() {
-		if (function_exists('locale_accept_from_http')) {
-// TODO: use this method for language detection
-#			$locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
-#			var_dump($locale);
-		}
-		$data_langs = main()->get_data('locale_langs');
-		conf('languages', $data_langs);
-		// Force default language as it set in locale editor
-		foreach ((array)conf('languages') as $lang_info) {
-			if ($lang_info['is_default'] == 1) {
-				$this->CUR_LOCALE = $lang_info['locale'];
-				break;
-			}
-		}
-		// Default language (could be set for site)
-		if (defined('DEFAULT_LANG') && DEFAULT_LANG != '') {
-			$this->CUR_LOCALE = DEFAULT_LANG;
-		}
-		if ($this->ALLOW_SESSION_LANG && MAIN_TYPE_USER) {
-			// Catch language if it comes from $_GET
-			if (!empty($_GET['language']) && conf('languages::'.$_GET['language'])) {
-				if ($_SESSION['user_lang'] != $_GET['language']) {
-					$_SESSION['user_lang'] == $_GET['language'];
-				}
-			}
-			if (MAIN_TYPE_USER && !empty($_SESSION['user_lang']) && conf('languages::'.$_SESSION['user_lang'])) {
-				$this->CUR_LOCALE = $_SESSION['user_lang'];
-			}
-		}
-		// Force to get all available vars (try to find and insert new ones)
-		if (DEBUG_MODE && $this->AUTO_FIND_VARS && $this->TRANSLATE_ENABLED) {
-			$is_db = main()->is_db();
-			if( $is_db ) {
-				$q = db()->query('SELECT id, value FROM '.db('locale_vars').'');
-				while ($a = db()->fetch_assoc($q)) {
-					$this->TR_ALL_VARS[$a['value']] = $a['id'];
-				}
-			}
-			if (!empty($this->TR_ALL_VARS)) {
-				ksort($this->TR_ALL_VARS);
-			}
+		$this->_get_langs();
+		$this->_get_current_lang();
+		if (DEBUG_MODE && $this->AUTO_FIND_VARS && $this->TRANSLATE_ENABLED && main()->is_db()) {
+			$this->TR_ALL_VARS = from('locale_vars')->get_2d('value,id');
+			$this->TR_ALL_VARS && ksort($this->TR_ALL_VARS);
 		}
 	}
 
 	/**
-	*/
-	function _init_inline_editor() {
-		if (!DEBUG_MODE || !isset($_SESSION['locale_vars_edit'])) {
-			return false;
-		}
-		$is_enabled = intval((bool)$_SESSION['locale_vars_edit']);
-		$this->TRACK_TRANSLATED		= $is_enabled;
-		main()->INLINE_EDIT_LOCALE	= $is_enabled;
-
-		if ($is_enabled && main()->is_common_page()) {
-			$this->WRAP_VARS_FOR_INLINE_EDIT = true;
-			asset('yf_js_inline_editor');
-		}
-	}
-
-	/**
-	* Constructor
 	*/
 	function init_locale() {
-		$this->_load_lang($this->CUR_LOCALE);
-		// Get charset from the current language
-		$charset = conf('languages::'.$this->CUR_LOCALE.'::charset');
-		// Force UTF-8 for the admin section
-		if (MAIN_TYPE_ADMIN && $this->CUR_LOCALE == 'en') {
-			$charset = 'utf-8';
-		}
-		conf('charset', !empty($charset) ? $charset : $this->CUR_CHARSET);
-		conf('language', $this->CUR_LOCALE);
-		$this->CUR_CHARSET = conf('charset');
-// TODO: country detection connect
-		$this->CUR_COUNTRY = conf('country') ?: (in_array(strtolower($this->CUR_LOCALE), ['ru','uk']) ? 'UA' : '');
-
+		$langs = $this->LANGUAGES ?: $this->_get_langs();
+		$lang = strtolower($this->_get_current_lang());
+		$charset = strtolower($this->_get_current_charset());
+		$country = strtoupper($this->_get_current_country());
 		$lc_all = array_unique(array_filter([
-			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE).'.'.$this->CUR_CHARSET,
-			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE),
-			$this->CUR_COUNTRY ? strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_COUNTRY).'.'.$this->CUR_CHARSET : '',
-			$this->CUR_COUNTRY ? strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_COUNTRY) : '',
-			strtolower($this->CUR_LOCALE),
-			strtolower(conf('languages::'.$this->CUR_LOCALE.'::name')),
+			$lang.'_'.$lang.'.'.$charset,
+			$lang.'_'.$lang,
+			$country ? $lang.'_'.$country.'.'.$charset : '',
+			$country ? $lang.'_'.$country : '',
+			$lang,
+			$langs[$lang]['name'],
 			'en_US.utf-8',
 			'en_US',
 			'en',
 		]));
 		if (DEBUG_MODE) {
-			debug('locale::default', [
-				'LC_ALL'		=> setlocale(LC_ALL, 0), // for all of the below
-				'LC_COLLATE'	=> setlocale(LC_COLLATE, 0), // for string comparison, see strcoll()
-				'LC_CTYPE'		=> setlocale(LC_CTYPE, 0), // for character classification and conversion, for example strtoupper()
-				'LC_MONETARY'	=> setlocale(LC_MONETARY, 0), // for localeconv()
-				'LC_NUMERIC'	=> setlocale(LC_NUMERIC, 0), // for decimal separator (See also localeconv())
-				'LC_TIME'		=> setlocale(LC_TIME, 0), // for date and time formatting with strftime()
-				'LC_MESSAGES'	=> setlocale(LC_MESSAGES, 0), // for system responses (available if PHP was compiled with libintl)
-			]);
+			debug('locale::default', $this->_get_locale_details());
 			debug('locale::variants', ['LC_ALL' => $lc_all]);
 		}
-		// Try to set PHP's locale (provide several possible values)
 		$success = setlocale(LC_ALL, $lc_all);
-// TODO: check $success
 		if (DEBUG_MODE && !is_hhvm()) {
-			debug('locale::current', [
-				'LC_ALL'		=> setlocale(LC_ALL, 0),
-				'LC_COLLATE'	=> setlocale(LC_COLLATE, 0),
-				'LC_CTYPE'		=> setlocale(LC_CTYPE, 0),
-				'LC_MONETARY'	=> setlocale(LC_MONETARY, 0),
-				'LC_NUMERIC'	=> setlocale(LC_NUMERIC, 0),
-				'LC_TIME'		=> setlocale(LC_TIME, 0),
-				'LC_MESSAGES'	=> setlocale(LC_MESSAGES, 0),
-			]);
+			debug('locale::current', $this->_get_locale_details());
 			$sys_locale = '';
 			exec('locale -a', $sys_locale);
 			debug('locale::system', $sys_locale);
 		}
-
+		$this->_load_lang($lang);
 		$this->_init_inline_editor();
 	}
 
@@ -179,24 +112,126 @@ class yf_i18n {
 	* Get current language
 	*/
 	function _get_current_lang() {
+		$langs = $this->LANGUAGES ?: $this->_get_langs();
+
 		$FORCE_LOCALE = conf('FORCE_LOCALE');
-		if ($FORCE_LOCALE && conf('languages::'.$FORCE_LOCALE)) {
+		if ($FORCE_LOCALE && $langs[$FORCE_LOCALE]) {
 			return $FORCE_LOCALE;
 		}
+		if (isset($this->_called[__FUNCTION__])) {
+			return $this->CUR_LOCALE;
+		}
+		$app_lang = (defined('DEFAULT_LANG') && DEFAULT_LANG != '') ? DEFAULT_LANG : '';
+		$conf_lang = conf('language');
+		$url_lang = $_GET['language'] ?: $_GET['lang'];
+		$session_lang = &$_SESSION[MAIN_TYPE.'_lang'];
+		$cookie_lang = $_COOKIE[MAIN_TYPE.'_lang'];
+		$def_lang = function() use ($langs) { foreach ((array)$langs as $a) { if ($a['is_default']) return $a['locale']; } };
+		$http_lang = function() use ($langs) {
+			if (!function_exists('locale_accept_from_http')) { return false; }
+#			$locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+#			$lang = substr($locale, 0, 2);
+# d($locale);
+#			return $lang;
+		};
+		$uid = main()->USER_ID;
+/*
+		if ($this->ALLOW_SESSION_LANG && MAIN_TYPE_USER) {
+# TODO: move out set of session lang from url
+			if ($url_lang && $langs[$url_lang]) {
+				if ($session_lang != $url_lang) {
+					$session_lang == $url_lang;
+				}
+			}
+			if (MAIN_TYPE_USER && $session_lang && $langs[$session_lang]) {
+#				$this->CUR_LOCALE = $session_lang;
+			}
+		}
+*/
+		$lang = '';
+		foreach ($this->CURRENT_LANG_PRIORITIES as $priority) {
+			if ($priority == 'url') {
+				$lang = $url_lang;
+			} elseif ($priority == 'session' && $this->ALLOW_SESSION_LANG) {
+				$lang = $session_lang;
+			} elseif ($priority == 'cookie') {
+				$lang = $cookie_lang;
+			} elseif ($priority == 'http') {
+				$lang = $http_lang;
+			} elseif ($priority == 'conf') {
+				$lang = $conf_lang;
+			} elseif ($priority == 'admin') {
+				$lang = $def_lang;
+			} elseif ($priority == 'app') {
+				$lang = $app_lang;
+			} elseif ($priority == 'user' && $uid) {
+				$u = from('user')->whereid($uid)->limit(1)->get();
+				$u && $lang = $u['lang'] ?: $u['language'] ?: $u['locale'];
+			} elseif ($priority == 'country') {
+# TODO
+			} elseif ($priority == 'site') {
+# TODO
+			}
+			if ($lang) {
+				break;
+			}
+		}
+		!$lang && $lang = $this->CUR_LOCALE;
+		!isset($langs[$lang]) && $lang = 'en';
+		$lang = strtolower($lang);
+		$this->CUR_LOCALE = $lang;
+		conf('language', $this->CUR_LOCALE);
+
+		$this->_called[__FUNCTION__] = true;
 		return $this->CUR_LOCALE;
+	}
+
+	/**
+	*/
+	function _get_langs() {
+		if ($this->LANGUAGES) {
+			return $this->LANGUAGES;
+		}
+		$langs = main()->get_data('locale_langs');
+		conf('languages', $langs);
+		return $this->LANGUAGES = $langs;
+	}
+
+	/**
+	*/
+	function _get_current_country() {
+		$country = strtoupper(
+			conf('country') 
+			?: $_SERVER['GEOIP_COUNTRY_CODE'] 
+			?: (in_array(strtolower($this->CUR_LOCALE), ['ru','uk']) ? 'UA' : '')
+		);
+		$this->CUR_COUNTRY = $country;
+		conf('country', $this->CUR_COUNTRY);
+		return $country;
+	}
+
+	/**
+	*/
+	function _get_current_charset() {
+		$langs = $this->LANGUAGES ?: $this->_get_langs();
+		$charset = $langs[$this->CUR_LOCALE]['charset'];
+		if (MAIN_TYPE_ADMIN && $this->CUR_LOCALE == 'en') {
+			$charset = 'utf-8';
+		}
+		$charset = strtolower($charset ?: 'utf-8');
+		$this->CUR_CHARSET = $charset;
+		conf('charset', $charset ?: $this->CUR_CHARSET);
+		return $charset;
 	}
 
 	/**
 	* Load language
 	*/
 	function _load_lang($lang = '') {
-		// Get all translation for the current language (if needed)
 		if (!$this->TRANSLATE_ENABLED) {
 			return false;
 		}
-		if (!$lang) {
-			$lang = $this->_get_current_lang();
-		}
+		!$lang && $lang = $this->_get_current_lang();
 		if (!$lang || isset($this->_loaded[$lang])) {
 			return false;
 		}
@@ -206,21 +241,19 @@ class yf_i18n {
 		$this->_load_lang_get_vars_from_files($lang);
 		$this->_load_lang_get_user_translate($lang, main()->USER_ID);
 
-		// Pre-format vars if case sensetivity
 		if ($this->VARS_IGNORE_CASE) {
-			$tmp_vars = [];
-			foreach ((array)$this->TR_VARS[$lang] as $_var_name => $_value) {
-				$_var_name = strtolower($_var_name);
+			$tmp = [];
+			foreach ((array)$this->TR_VARS[$lang] as $name => $val) {
+				$name = strtolower($name);
 				if ($this->REPLACE_UNDERSCORE) {
-					$_var_name = str_replace(' ', '_', $_var_name);
-					$_var_name = str_replace("'", '&#39;', $_var_name);
+					$name = str_replace(' ', '_', $name);
+					$name = str_replace("'", '&#39;', $name);
 				}
-				$tmp_vars[$_var_name] = $_value;
+				$tmp[$name] = $val;
 			}
-			$this->TR_VARS[$lang] = $tmp_vars;
-			unset($tmp_vars);
+			$this->TR_VARS[$lang] = $tmp;
+			unset($tmp);
 		}
-//		conf('language', $lang);
 		$this->_loaded[$lang] = true;
 	}
 
@@ -228,25 +261,18 @@ class yf_i18n {
 	* Default storage of translations
 	*/
 	function _load_lang_get_vars_from_db($lang) {
-		$is_db = main()->is_db();
-		if( !$is_db ) { return( null ); }
-		$CACHE_NAME = 'locale_translate_'.$lang;
-		$data = cache_get($CACHE_NAME);
-		if (!$data && !is_array($data)) {
-			$data = [];
-			$q = db()->query(
-				'SELECT v.value AS source, t.value AS translation
+		$data = getset('locale_translate_'.$lang, function(){
+			if (!main()->is_db()) {
+				return [];
+			}
+			$sql = 'SELECT v.value AS source, t.value AS translation
 				FROM '.db('locale_vars').' AS v, '.db('locale_translate').' AS t
 				WHERE t.var_id=v.id
 					AND t.locale="'._es($lang).'"
 					AND t.value != ""
-					AND t.value != v.value'
-			);
-			while ($a = db()->fetch_assoc($q)) {
-				$data[$a['source']] = $a['translation'];
-			}
-			cache_set($CACHE_NAME, $data);
-		}
+					AND t.value != v.value';
+			return db()->get_2d($sql);
+		});
 		foreach ((array)$data as $k => $v) {
 			$this->TR_VARS[$lang][$k] = $v;
 		}
@@ -257,18 +283,23 @@ class yf_i18n {
 	*/
 	function _load_lang_get_user_translate($lang, $user_id) {
 		$user_id = intval($user_id);
-		if ($this->ALLOW_USER_TRANSLATE && $user_id) {
-			$q = db()->query(
-				'SELECT name, translation
+		if (!$this->ALLOW_USER_TRANSLATE || !$user_id) {
+			return false;
+		}
+		$data = getset('locale_user_translate_'.$lang.'_'.$user_id, function(){
+			if (!main()->is_db()) {
+				return [];
+			}
+			$sql = 'SELECT name, translation
 				FROM '.db('locale_user_tr').'
 				WHERE user_id='.intval($user_id).'
 					AND locale="'._es($lang).'"
 					AND translation != ""
-					AND translation != name'
-			);
-			while ($a = db()->fetch_assoc($q)) {
-				$this->TR_VARS[$lang][$a['name']] = $a['translation'];
-			}
+					AND translation != name';
+			return db()->get_2d($sql);
+		});
+		foreach ((array)$data as $k => $v) {
+			$this->TR_VARS[$lang][$k] = $v;
 		}
 	}
 
@@ -276,14 +307,13 @@ class yf_i18n {
 	* Load language varas from files
 	*/
 	function _load_lang_get_vars_from_files($lang) {
-		$lang_files = [];
+		$files = [];
 		// Auto-find shared language vars. They will be connected in order of file system
 		// Names can be any, but better to include lang name into file name. Examples:
 		// share/langs/ru/001_other.php
 		// share/langs/ru/002_other2.php
 		// share/langs/ru/other.php
 		// share/langs/ru/ru_shop.php
-		// share/langs/ru/ru_user_register.php
 		// plugins/shop/share/langs/ru/ru_user_register.php
 		if ($this->ALLOW_SHARED_LANG_FILES) {
 			$pattern = '{,plugins/*/}{,share/}langs/'.$lang.'/*.php';
@@ -298,7 +328,7 @@ class yf_i18n {
 			// Order matters! Project vars will have ability to override vars from franework
 			foreach ($globs as $glob) {
 				foreach ((array)glob($glob, GLOB_BRACE) as $f) {
-					$lang_files[basename($f)] = $f;
+					$files[basename($f)] = $f;
 				}
 			}
 		}
@@ -309,7 +339,8 @@ class yf_i18n {
 		// modules/shop/__locale__ru_products.php
 		// plugins/shop/modules/shop/__locale__ru_products.php
 		if ($this->ALLOW_MODULE_FILES) {
-			$pattern = '{,plugins/*/}'.(MAIN_TYPE_USER ? 'modules/' : 'admin_modules/').'/*/__locale__'.$lang.'*.php';
+			$modules = (MAIN_TYPE_USER ? 'modules' : 'admin_modules');
+			$pattern = '{,plugins/*/}'.$modules.'/*/__locale__'.$lang.'*.php';
 			$globs = [
 				'framework'	=> YF_PATH. $pattern,
 				'project'	=> PROJECT_PATH. $pattern,
@@ -321,14 +352,11 @@ class yf_i18n {
 			// Order matters! Project vars will have ability to override vars from franework
 			foreach ($globs as $globs) {
 				foreach ((array)glob($glob, GLOB_BRACE) as $f) {
-					$lang_files[basename($f)] = $f;
+					$files[basename($f)] = $f;
 				}
 			}
 		}
-		//
-		// Inside each file $data array will be searched for
-		//
-		foreach ((array)$lang_files as $path) {
+		foreach ((array)$files as $path) {
 			$data = include $path;
 			foreach ((array)$data as $_source => $_trans) {
 				$_source = str_replace(' ', '_', strtolower($_source));
@@ -358,7 +386,7 @@ class yf_i18n {
 	*
 	* @code
 	*	$msg = t('You must log in below or <a href="%url">create a new account</a> before viewing the next page.',
-	*			array('%url' => process_url('./?object=user&action=register')));
+	*			array('%url' => url('/user/register')));
 	* @endcode
 	*
 	* We have ability to use custom prefix for vars with same names in different places with different translations
@@ -370,123 +398,103 @@ class yf_i18n {
 	* @param	$args	array	Optional array of items to replace after translation
 	* @return string Translation result
 	*/
-	function translate_string($input_string, $args = 0, $lang = '') {
-		if (DEBUG_MODE) {
-			$_start_time = microtime(true);
+	function translate_string($in, $args = 0, $lang = '') {
+		if (!$in) {
+			return $in;
 		}
+		DEBUG_MODE && $_start_time = microtime(true);
 		$lang = strval($lang);
-		if (!$lang) {
-			$lang = $this->_get_current_lang();
-		}
-		if (!isset($this->_loaded[$lang])) {
-			$this->_load_lang($lang);
-		}
+		!$lang && $lang = $this->_get_current_lang();
+		!isset($this->_loaded[$lang]) && $this->_load_lang($lang);
 		if (!$lang || !$this->_loaded[$lang]) {
-			return $input_string;
+			return $in;
 		}
 		if (is_array($args) && isset($args[''])) {
 			unset($args['']);
 		}
-		if (is_array($input_string)) {
-			foreach ((array)$input_string as $k => $v) {
-				$input_string[$k] = $this->translate_string($v, $args, $lang);
+		if (is_array($in)) {
+			$func = __FUNCTION__;
+			foreach ((array)$in as $k => $v) {
+				$in[$k] = $this->$func($v, $args, $lang);
 			}
-			return $input_string;
+			return $in;
 		}
-		if (!$input_string) {
-			return $input_string;
-		}
-		$input_string = trim($input_string);
+		$in = trim($in);
 
-		DEBUG_MODE && $this->_calls[$input_string]++;
+		DEBUG_MODE && $this->_calls[$in]++;
 
 		if ($this->USE_TRANSLATE_CACHE && empty($args)) {
-			$CACHE_NAME = $lang.'#____#'.$input_string;
+			$CACHE_NAME = $lang.'#____#'.$in;
 			if (isset($this->_LOCALE_CACHE[$CACHE_NAME])) {
 				return $this->_LOCALE_CACHE[$CACHE_NAME];
 			}
 		}
 		$is_translated = false;
-		$_source = $input_string;
-		$output_string = $input_string;
-		// Try to find prefix (starts with '::')
-		$_prefix = '';
-		$_prefix_length = 0;
-		if ($input_string{0} == ':' && $input_string{1} == ':') {
-			$_prefix = substr($input_string, 0, strpos($input_string, '::', 2) + 2);
-			$_prefix_length = strlen($_prefix);
-			$input_string = substr($input_string, $_prefix_length);
+		$_source = $in;
+		$out = $in;
+
+		$prefix = '';
+		$plen = 0;
+		if (strpos($in, '::') === 0) {
+			$prefix = substr($in, 0, strpos($in, '::', 2) + 2);
+			$plen = strlen($prefix);
+			$in = substr($in, $plen);
 		}
 		if ($this->TRANSLATE_ENABLED) {
-			// Prepare for case ignore
+			$t = &$this->TR_VARS[$lang];
 			if ($this->VARS_IGNORE_CASE) {
-				$first_input_string = $input_string;
-				$input_string = strtolower($input_string);
+				$first = $in;
+				$in = strtolower($in);
 				if ($this->REPLACE_UNDERSCORE) {
-					$input_string = str_replace('&nbsp;', ' ', $input_string);
-					$input_string = str_replace(' ', '_', $input_string);
+					$in = str_replace('&nbsp;', ' ', $in);
+					$in = str_replace(' ', '_', $in);
 				}
 			}
-			// Try to find prefix (starts with '::') again
-			if (!strlen($_prefix) && isset($this->TR_VARS[$lang]['::'.$_GET['object'].'::'. $input_string])) {
-				$_prefix = '::'.$_GET['object'].'::';
+			if (!strlen($prefix) && isset($t['::'.$_GET['object'].'::'. $in])) {
+				$prefix = '::'.$_GET['object'].'::';
 			}
-			// First try to translate var with prefix
-			if (strlen($_prefix) && isset($this->TR_VARS[$lang][$_prefix. $input_string])) {
-				$output_string = $this->TR_VARS[$lang][$_prefix. $input_string];
+			if (strlen($prefix) && isset($t[$prefix. $in])) {
+				$out = $t[$prefix. $in];
 				$is_translated = true;
-			// Then common var
-			} elseif (isset($this->TR_VARS[$lang][$input_string])) {
-				$output_string = $this->TR_VARS[$lang][$input_string];
+			} elseif (isset($t[$in])) {
+				$out = $t[$in];
 				$is_translated = true;
-			// Then try _un_html_entities
-			} elseif (($var_un_html = $this->_un_html_entities($input_string)) && isset($this->TR_VARS[$lang][$var_un_html])) {
-				$output_string = $this->TR_VARS[$lang][$var_un_html];
+			} elseif (($var_un_html = $this->_un_html_entities($in)) && isset($t[$var_un_html])) {
+				$out = $t[$var_un_html];
 				$is_translated = true;
-			// Last - is untranslated
 			} else {
-				$output_string = $input_string;
+				$out = $in;
 				if (DEBUG_MODE) {
-					if (!isset($this->_NOT_TRANSLATED)) {
-						$this->_NOT_TRANSLATED = [];
-					}
-					if (!isset($this->_NOT_TRANSLATED[$lang])) {
-						$this->_NOT_TRANSLATED[$lang] = [];
-					}
-					if (!isset($this->_NOT_TRANSLATED[$lang][$input_string])) {
-						$this->_NOT_TRANSLATED[$lang][$input_string] = 0;
-					}
-					$this->_NOT_TRANSLATED[$lang][$input_string]++;
-					// Check if such variable exists
-					if ($this->AUTO_FIND_VARS && !isset($this->TR_ALL_VARS[$input_string])) {
-						$this->insert_var($input_string);
+					!isset($this->_NOT_TRANSLATED[$lang][$in]) && $this->_NOT_TRANSLATED[$lang][$in] = 0;
+					$this->_NOT_TRANSLATED[$lang][$in]++;
+					if ($this->AUTO_FIND_VARS && !isset($this->TR_ALL_VARS[$in])) {
+						$this->insert_var($in);
 					}
 				}
 			}
 		}
 		if ($this->REPLACE_UNDERSCORE && !$is_translated) {
-			$output_string = str_replace('_', ' ', $_source);
-			if ($_prefix_length) {
-				$output_string = substr($output_string, $_prefix_length);
+			$out = str_replace('_', ' ', $_source);
+			if ($plen) {
+				$out = substr($out, $plen);
 			}
 		}
 		if (!empty($args) && is_array($args)) {
-			$output_string = $this->_process_sub_patterns($output_string, $args);
-			$output_string = strtr($output_string, $args);
+			$out = $this->_process_sub_patterns($out, $args);
+			$out = strtr($out, $args);
 		}
 		if ($this->TRACK_FIRST_LETTER_CASE && $is_translated) {
-			$input = $this->VARS_IGNORE_CASE ? $first_input_string : $input_string;
-
-			$first_s = substr($input, 0, 1);
-			$first_t = _substr($output_string, 0, 1);
-			$first_s_lower = strtolower($first_s) == $first_s;
-			$first_t_lower = _strtolower($first_t) == $first_t;
-			if (!$first_s_lower && $first_t_lower) {
-				$output_string = _strtoupper($first_t). _substr($output_string, 1);
+			$input = $this->VARS_IGNORE_CASE ? $first : $in;
+			$f_s = substr($input, 0, 1);
+			$f_t = _substr($out, 0, 1);
+			$f_s_lower = strtolower($f_s) == $f_s;
+			$f_t_lower = _strtolower($f_t) == $f_t;
+			if (!$f_s_lower && $f_t_lower) {
+				$out = _strtoupper($f_t). _substr($out, 1);
 			}
 		}
 		if (DEBUG_MODE) {
-			if ($this->WRAP_VARS_FOR_INLINE_EDIT && false === strpos($output_string, 'class=localetr')) {
+			if ($this->WRAP_VARS_FOR_INLINE_EDIT && false === strpos($out, 'class=localetr')) {
 				$r = [
 					' ' => '%20',
 					'='	=> '&equals;',
@@ -494,12 +502,12 @@ class yf_i18n {
 					'>' => '&gt;',
 				];
 				$svar = _prepare_html(str_replace(array_keys($r), array_values($r), $_source));
-				$output_string = '<span class=localetr svar='.$svar.'>'.$output_string.'</span>';
+				$out = '<span class=localetr svar='.$svar.'>'.$out.'</span>';
 			}
 			debug('i18n[]', [
 				'name_orig'	=> $_source,
-				'name'		=> $input_string,
-				'out'		=> $output_string,
+				'name'		=> $in,
+				'out'		=> $out,
 				'lang'		=> $lang,
 				'args'		=> $args ?: '',
 				'translated'=> (int)$is_translated,
@@ -507,11 +515,10 @@ class yf_i18n {
 				'trace'		=> main()->trace_string(),
 			]);
 		}
-		// Put to cache
 		if ($this->USE_TRANSLATE_CACHE && empty($args)) {
-			$this->_LOCALE_CACHE[$CACHE_NAME] = $output_string;
+			$this->_LOCALE_CACHE[$CACHE_NAME] = $out;
 		}
-		return $output_string;
+		return $out;
 	}
 
 	/**
@@ -522,7 +529,6 @@ class yf_i18n {
 	* В процессе поиска {Найдено %num папок|0:Папок не найдено|1:Найдена %num папка|2,3,4:Найдено %num папки|11-14:Найдено %num папок|Найдено %num папок}
 	*/
 	function _process_sub_patterns($text = '', $args = []) {
-		// Quick check for sub-patterns
 		if (false === strpos($text, '{') || !is_array($args)) {
 			return $text;
 		}
@@ -536,7 +542,6 @@ class yf_i18n {
 				continue;
 			}
 			$number = intval($args[$m2[0]]);
-			// Parse translate variants
 			$variants = explode('|', $m[2][$_id]);
 			$common_variant = array_pop($variants);
 			$pairs = [
@@ -549,7 +554,7 @@ class yf_i18n {
 					continue;
 				}
 				// Exact value?
-				if ($_quantity{0} == '#') {
+				if (strpos($_quantity, '#') === 0) {
 					$i = intval(substr($_quantity, 1));
 					$exacts[$i] = $_sub_replace;
 				// Check if we have range here
@@ -609,7 +614,37 @@ class yf_i18n {
 		if (empty($var_name)) {
 			return false;
 		}
-		return db()->insert_safe('locale_vars', ['value' => $var_name, 'location' => '']);
+		return db()->insert_safe('locale_vars', ['value' => $var_name, 'location' => ''], ['ignore' => true]);
+	}
+
+	/**
+	*/
+	function _init_inline_editor() {
+		if (!DEBUG_MODE || !isset($_SESSION['locale_vars_edit'])) {
+			return false;
+		}
+		$is_enabled = intval((bool)$_SESSION['locale_vars_edit']);
+		$this->TRACK_TRANSLATED		= $is_enabled;
+		main()->INLINE_EDIT_LOCALE	= $is_enabled;
+
+		if ($is_enabled && main()->is_common_page()) {
+			$this->WRAP_VARS_FOR_INLINE_EDIT = true;
+			asset('yf_js_inline_editor');
+		}
+	}
+
+	/**
+	*/
+	function _get_locale_details() {
+		return [
+			'LC_ALL'		=> setlocale(LC_ALL, 0), // for all of the below
+			'LC_COLLATE'	=> setlocale(LC_COLLATE, 0), // for string comparison, see strcoll()
+			'LC_CTYPE'		=> setlocale(LC_CTYPE, 0), // for character classification and conversion, for example strtoupper()
+			'LC_MONETARY'	=> setlocale(LC_MONETARY, 0), // for localeconv()
+			'LC_NUMERIC'	=> setlocale(LC_NUMERIC, 0), // for decimal separator (See also localeconv())
+			'LC_TIME'		=> setlocale(LC_TIME, 0), // for date and time formatting with strftime()
+			'LC_MESSAGES'	=> setlocale(LC_MESSAGES, 0), // for system responses (available if PHP was compiled with libintl)
+		];
 	}
 
 	/**
