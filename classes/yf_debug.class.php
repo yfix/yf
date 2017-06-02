@@ -701,9 +701,11 @@ class yf_debug {
 			'HTTP_IN_HEADERS'	=> $this->_get_request_headers(),
 			'HTTP_OUT_HEADERS'	=> headers_list(),
 			'LOCALE_CURRENT'	=> $locale_debug['current'],
-			'LOCALE_VARIANTS'	=> $locale_debug['variants'],
 			'LOCALE_DEFAULT'	=> $locale_debug['default'],
+			'LOCALE_LC_VARIANTS'=> implode(', ', (array)$locale_debug['lc_variants']['LC_ALL']),
 			'LOCALE_SYSTEM'		=> implode(', ', (array)$locale_debug['system']),
+			'LANG_VARIANTS'		=> $locale_debug['lang_variants'],
+			'LANG_SELECTED_FROM'=> $locale_debug['lang_selected'],
 		];
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;

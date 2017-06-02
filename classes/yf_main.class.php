@@ -685,12 +685,12 @@ class yf_main {
 	*/
 	function init_settings() {
 		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-		$lang = 'en'; // default lang
-		if (defined('DEFAULT_LANG') && DEFAULT_LANG != '') {
-			$lang = DEFAULT_LANG;
-		}
-		conf('language', $lang);
-		conf('charset',	'utf-8');
+#		$lang = 'en'; // default lang
+#		if (defined('DEFAULT_LANG') && DEFAULT_LANG != '') {
+#			$lang = DEFAULT_LANG;
+#		}
+#		conf('language', $lang);
+#		conf('charset',	'utf-8');
 		$output_caching = conf('output_caching');
 		if (isset($output_caching)) {
 			$this->OUTPUT_CACHING = $output_caching;

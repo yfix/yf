@@ -11,16 +11,16 @@ class yf_i18n {
 
 	/** @var array Enabled methods for current lang detection */
 	public $CURRENT_LANG_PRIORITIES = [
-#		'url',		// force override by url param
-#		'session',	// saved selection inside session
-#		'cookie',	// saved selection inside cookie, usually for came back user
-#		'user',		// user saved setting
-#		'http',		// from http accept
-#		'country',	// default lang by detected country
-#		'conf',		// set with $CONF
+		'url',		// force override by url param
+		'session',	// saved selection inside session
+		'cookie',	// saved selection inside cookie, usually for came back user
+		'user',		// user saved setting
+		'http',		// from http accept
+		'country',	// default lang by detected country
+		'conf',		// set with $CONF
 		'admin',	// set inside admin web panel
-#		'site',		// site/domain default
-#		'app',		// App default, usually set inside conf
+		'site',		// site/domain default
+		'app',		// App default, usually set inside conf
 	];
 	/** @var string Current locale code */
 	public $CUR_LOCALE			= 'en';
@@ -51,7 +51,7 @@ class yf_i18n {
 	/** @var bool In-Memory cachig */
 	public $USE_TRANSLATE_CACHE		= true;
 	/** @var array @conf_skip */
-	public $_HTML_ENTITIES		= [
+	private static $HTML_ENTS = [
 		'_' => '&#95;', "'" => '&#39;', '"' => '&quot;', '/' => '&frasl;', "\\"=> '&#92;', '[' => '&#91;', ']' => '&#93;',
 		'(' => '&#40;', ')' => '&#41;', '{' => '&#123;', '}' => '&#125;', '?' => '&#63;', '!' => '&#33;', '|' => '&#124;',
 	];
@@ -68,7 +68,6 @@ class yf_i18n {
 	*/
 	function _init() {
 		$this->_get_langs();
-		$this->_get_current_lang();
 		if (DEBUG_MODE && $this->AUTO_FIND_VARS && $this->TRANSLATE_ENABLED && main()->is_db()) {
 			$this->TR_ALL_VARS = from('locale_vars')->get_2d('value,id');
 			$this->TR_ALL_VARS && ksort($this->TR_ALL_VARS);
@@ -83,19 +82,22 @@ class yf_i18n {
 		$charset = strtolower($this->_get_current_charset());
 		$country = strtoupper($this->_get_current_country());
 		$lc_all = array_unique(array_filter([
-			$lang.'_'.$lang.'.'.$charset,
-			$lang.'_'.$lang,
 			$country ? $lang.'_'.$country.'.'.$charset : '',
+			$country ? $lang.'_'.$country.'.'.str_replace('-', '', $charset) : '',
 			$country ? $lang.'_'.$country : '',
 			$lang,
 			$langs[$lang]['name'],
 			'en_US.utf-8',
+			'en_US.utf8',
 			'en_US',
+			'en_GB.utf-8',
+			'en_GB.utf8',
+			'en_GB',
 			'en',
 		]));
 		if (DEBUG_MODE) {
 			debug('locale::default', $this->_get_locale_details());
-			debug('locale::variants', ['LC_ALL' => $lc_all]);
+			debug('locale::lc_variants', ['LC_ALL' => $lc_all]);
 		}
 		$success = setlocale(LC_ALL, $lc_all);
 		if (DEBUG_MODE && !is_hhvm()) {
@@ -111,78 +113,91 @@ class yf_i18n {
 	/**
 	* Get current language
 	*/
-	function _get_current_lang() {
+	function _get_current_lang($force = false) {
 		$langs = $this->LANGUAGES ?: $this->_get_langs();
 
 		$FORCE_LOCALE = conf('FORCE_LOCALE');
-		if ($FORCE_LOCALE && $langs[$FORCE_LOCALE]) {
+		if ($FORCE_LOCALE && isset($langs[$FORCE_LOCALE])) {
 			return $FORCE_LOCALE;
 		}
-		if (isset($this->_called[__FUNCTION__])) {
+		if (isset($this->_called[__FUNCTION__]) && !$force) {
 			return $this->CUR_LOCALE;
 		}
-		$app_lang = (defined('DEFAULT_LANG') && DEFAULT_LANG != '') ? DEFAULT_LANG : '';
-		$conf_lang = conf('language');
-		$url_lang = $_GET['language'] ?: $_GET['lang'];
-		$session_lang = &$_SESSION[MAIN_TYPE.'_lang'];
-		$cookie_lang = $_COOKIE[MAIN_TYPE.'_lang'];
-		$def_lang = function() use ($langs) { foreach ((array)$langs as $a) { if ($a['is_default']) return $a['locale']; } };
-		$http_lang = function() use ($langs) {
-			if (!function_exists('locale_accept_from_http')) { return false; }
-#			$locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
-#			$lang = substr($locale, 0, 2);
-# d($locale);
-#			return $lang;
+		$l = []; // contains all possible variants
+		$l['app'] = (defined('DEFAULT_LANG') && DEFAULT_LANG != '') ? DEFAULT_LANG : '';
+		$l['conf'] = conf('language');
+		$l['url'] = $_GET['language'] ?: $_GET['lang'];
+		$l['session'] = $this->ALLOW_SESSION_LANG ? $_SESSION[MAIN_TYPE.'_lang'] : '';
+		$l['cookie'] = $_COOKIE[MAIN_TYPE.'_lang'];
+		$l['admin'] = function() use ($langs) {
+			foreach ((array)$langs as $a) {
+				if ($a['is_default']) return $a['locale'];
+			}
 		};
-		$uid = main()->USER_ID;
-/*
-		if ($this->ALLOW_SESSION_LANG && MAIN_TYPE_USER) {
-# TODO: move out set of session lang from url
-			if ($url_lang && $langs[$url_lang]) {
-				if ($session_lang != $url_lang) {
-					$session_lang == $url_lang;
-				}
-			}
-			if (MAIN_TYPE_USER && $session_lang && $langs[$session_lang]) {
-#				$this->CUR_LOCALE = $session_lang;
-			}
-		}
-*/
-		$lang = '';
-		foreach ($this->CURRENT_LANG_PRIORITIES as $priority) {
-			if ($priority == 'url') {
-				$lang = $url_lang;
-			} elseif ($priority == 'session' && $this->ALLOW_SESSION_LANG) {
-				$lang = $session_lang;
-			} elseif ($priority == 'cookie') {
-				$lang = $cookie_lang;
-			} elseif ($priority == 'http') {
-				$lang = $http_lang;
-			} elseif ($priority == 'conf') {
-				$lang = $conf_lang;
-			} elseif ($priority == 'admin') {
-				$lang = $def_lang;
-			} elseif ($priority == 'app') {
-				$lang = $app_lang;
-			} elseif ($priority == 'user' && $uid) {
+		$l['user'] = function() {
+			$uid = main()->USER_ID;
+			if ($uid && MAIN_TYPE_USER && main()->is_db()) {
 				$u = from('user')->whereid($uid)->limit(1)->get();
 				$u && $lang = $u['lang'] ?: $u['language'] ?: $u['locale'];
-			} elseif ($priority == 'country') {
-# TODO
-			} elseif ($priority == 'site') {
-# TODO
 			}
-			if ($lang) {
+			return $lang;
+		};
+		$l['http'] = function() {
+			if (!function_exists('locale_accept_from_http')) {
+				return false;
+			}
+			$locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+			$lang = substr($locale, 0, 2);
+			return $lang;
+		};
+		$l['site'] = function() {
+# TODO
+			return $lang;
+		};
+		$l['country'] = function() {
+# TODO
+			return $lang;
+		};
+
+		$priorities = &$this->CURRENT_LANG_PRIORITIES;
+
+		$array_del_by_val = function(&$a, $del_val) {
+			if (($k = array_search($del_val, $a)) !== false) unset($a[$k]);
+		};
+		!$this->ALLOW_SESSION_LANG && $array_del_by_val($priorities, 'session');
+
+		foreach ((array)$l as $k => $v) {
+			if (!in_array($k, $priorities)) {
+				unset($l[$k]);
+				continue;
+			}
+			if (is_callable($v)) {
+				$l[$k] = $v();
+			}
+		}
+		$lang = '';
+		$selected = '';
+		foreach ($priorities as $priority) {
+			if (isset($l[$priority])) {
+				$lang = $l[$priority];
+			}
+			if ($lang && isset($langs[$lang])) {
+				$selected = $priority;
 				break;
 			}
 		}
 		!$lang && $lang = $this->CUR_LOCALE;
 		!isset($langs[$lang]) && $lang = 'en';
 		$lang = strtolower($lang);
+
 		$this->CUR_LOCALE = $lang;
 		conf('language', $this->CUR_LOCALE);
 
 		$this->_called[__FUNCTION__] = true;
+
+		debug('locale::lang_variants', $l);
+		debug('locale::lang_selected', $selected);
+
 		return $this->CUR_LOCALE;
 	}
 
@@ -604,7 +619,7 @@ class yf_i18n {
 	* Convert HTML entities to their text sysmbols
 	*/
 	function _un_html_entities($text = '') {
-		return str_replace(array_values($this->_HTML_ENTITIES), array_keys($this->_HTML_ENTITIES), $text);
+		return str_replace(array_values(self::$HTML_ENTS), array_keys(self::$HTML_ENTS), $text);
 	}
 
 	/**
