@@ -698,14 +698,15 @@ class yf_debug {
 			'REQUEST_METHOD'	=> $_SERVER['REQUEST_METHOD'],
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
 			'NO_CACHE_HEADERS'	=> (int)main()->NO_CACHE_HEADERS,
-			'HTTP_IN_HEADERS'	=> $this->_get_request_headers(),
-			'HTTP_OUT_HEADERS'	=> headers_list(),
+			'LANG_SELECTED_FROM'=> $locale_debug['lang_selected'].' ('.$locale_debug['lang_variants'][$locale_debug['lang_selected']].')',
+			'LANG_PRIORITIES'	=> implode(', ', (array)$locale_debug['lang_priorities']),
+			'LANG_VARIANTS'		=> $locale_debug['lang_variants'],
 			'LOCALE_CURRENT'	=> $locale_debug['current'],
 			'LOCALE_DEFAULT'	=> $locale_debug['default'],
 			'LOCALE_LC_VARIANTS'=> implode(', ', (array)$locale_debug['lc_variants']['LC_ALL']),
 			'LOCALE_SYSTEM'		=> implode(', ', (array)$locale_debug['system']),
-			'LANG_VARIANTS'		=> $locale_debug['lang_variants'],
-			'LANG_SELECTED_FROM'=> $locale_debug['lang_selected'],
+			'HTTP_IN_HEADERS'	=> $this->_get_request_headers(),
+			'HTTP_OUT_HEADERS'	=> headers_list(),
 		];
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;

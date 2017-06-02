@@ -124,16 +124,9 @@ class yf_i18n {
 			return $this->CUR_LOCALE;
 		}
 		$l = []; // contains all possible variants
-		$l['app'] = (defined('DEFAULT_LANG') && DEFAULT_LANG != '') ? DEFAULT_LANG : '';
-		$l['conf'] = conf('language');
 		$l['url'] = $_GET['language'] ?: $_GET['lang'];
 		$l['session'] = $this->ALLOW_SESSION_LANG ? $_SESSION[MAIN_TYPE.'_lang'] : '';
 		$l['cookie'] = $_COOKIE[MAIN_TYPE.'_lang'];
-		$l['admin'] = function() use ($langs) {
-			foreach ((array)$langs as $a) {
-				if ($a['is_default']) return $a['locale'];
-			}
-		};
 		$l['user'] = function() {
 			$uid = main()->USER_ID;
 			if ($uid && MAIN_TYPE_USER && main()->is_db()) {
@@ -150,14 +143,21 @@ class yf_i18n {
 			$lang = substr($locale, 0, 2);
 			return $lang;
 		};
-		$l['site'] = function() {
-# TODO
-			return $lang;
-		};
 		$l['country'] = function() {
 # TODO
 			return $lang;
 		};
+		$l['conf'] = conf('language');
+		$l['admin'] = function() use ($langs) {
+			foreach ((array)$langs as $a) {
+				if ($a['is_default']) return $a['locale'];
+			}
+		};
+		$l['site'] = function() {
+# TODO
+			return $lang;
+		};
+		$l['app'] = (defined('DEFAULT_LANG') && DEFAULT_LANG != '') ? DEFAULT_LANG : null;
 
 		$priorities = &$this->CURRENT_LANG_PRIORITIES;
 
@@ -196,6 +196,7 @@ class yf_i18n {
 		$this->_called[__FUNCTION__] = true;
 
 		debug('locale::lang_variants', $l);
+		debug('locale::lang_priorities', $priorities);
 		debug('locale::lang_selected', $selected);
 
 		return $this->CUR_LOCALE;
