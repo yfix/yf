@@ -27,6 +27,38 @@ class yf_locale_editor {
 	public $LOCATIONS_EDIT_LINKS	= true;
 	/** @var bool Ignore case on import/export */
 	public $VARS_IGNORE_CASE		= true;
+	/** @var array @conf_skip */
+	private static $per_page_values = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000];
+	/** @var array @conf_skip */
+	private static $HELP = [
+		'edit' => [
+			'en' => '
+Translation variants depending on input number (optional).
+
+<u class="text-primary">Definition</u>
+{<b class="text-warning">source_variable</b>|<b class="text-warning">default_translation</b>}
+<u class="text-primary">or</u>
+{<b class="text-warning">source_variable</b>|<b class="text-warning">last_number</b>:translation|<b class="text-warning">default_translation</b>}
+
+<u class="text-primary">Params</u>
+<u class="text-warning">source_variable</u>
+string, starts with "%", no spaces (example: %var_with_underscore)
+<u class="text-warning">last_number</u>
+* int (example: "5")
+* list (example: "2,3,4")
+* range (example: "10-12")
+* exact (example: "#1" match only "1", not "11","21","31")
+<u class="text-warning">default_translation</u>
+Fallback when no numbers matched (any string)
+
+<u class="text-primary">Examples</u>
+* В процессе поиска
+{Найдено %num папок|0:Папок не найдено|1:Найдена %num папка|2,3,4:Найдено %num папки|11-14:Найдено %num папок|Найдено %num папок}
+
+* {%num horas|#1:%num hora|%num horas}
+			',
+		],
+	];
 
 	/**
 	*/
@@ -49,11 +81,6 @@ class yf_locale_editor {
 
 	/**
 	*/
-	function _init () {
-	}
-
-	/**
-	*/
 	function _preload_data () {
 		if ($this->_preload_complete) {
 			return true;
@@ -63,16 +90,6 @@ class yf_locale_editor {
 		asset('bfh-select');
 		$this->lang_def_country = main()->get_data('lang_def_country');
 
-		$this->_boxes = [
-			'lang_code'		=> 'select_box("lang_code",		$this->_langs,			$selected, false, 2, "", false)',
-			'cur_langs'		=> 'select_box("lang_code",		$this->_cur_langs,		$selected, false, 2, "", false)',
-			'file_format'	=> 'radio_box("file_format",	$this->_file_formats,	$selected, true, 2, "", false)',
-			'mode'			=> 'radio_box("mode",			$this->_modes,			$selected, true, 2, "", false)',
-			'search_type'	=> 'radio_box("search_type",	$this->_search_types,	$selected, false, 2, "", false)',
-			'location'		=> 'select_box("location",		$this->_used_locations,	$selected, false, 2, "", false)',
-			'module'		=> 'select_box("module",		$this->_modules,		$selected, false, 2, "", false)',
-		];
-
 		$this->_modules = _class('admin_methods')->find_active_modules();
 
 		$langs = [];
@@ -81,8 +98,8 @@ class yf_locale_editor {
 		}
 		$this->_langs = $langs;
 
-		$this->_cur_langs_array = db()->get_all('SELECT * FROM '.db('locale_langs').' ORDER BY is_default DESC, locale ASC');
-		if (empty($this->_cur_langs_array)) {
+		$this->_cur_langs_array = from('locale_langs')->order_by('is_default DESC, locale ASC')->all();
+		if (!$this->_cur_langs_array) {
 			db()->insert_safe('locale_langs', [
 				'locale'	=> 'en',
 				'name'		=> t('English'),
@@ -90,7 +107,7 @@ class yf_locale_editor {
 				'active'	=> 1,
 				'is_default'=> 1,
 			]);
-			js_redirect('/@object/@action');
+			return js_redirect('/@object/@action');
 		}
 
 		$langs_for_search[''] = t('All languages');
@@ -139,7 +156,6 @@ class yf_locale_editor {
 			->func('locale', function($lang) use ($_this) {
 				return html()->icon('bfh-flag-'.$_this->lang_def_country[$lang], strtoupper($lang));
 			})
-#			->text('locale', array('badge' => 'default', 'transform' => 'strtoupper'))
 			->text('name')
 			->text('charset')
 			->text('tr_count', 'Num vars')
@@ -149,15 +165,13 @@ class yf_locale_editor {
 			->btn_delete('', url('/@object/lang_delete/%d'), ['display_func' => $no_actions_if_default, 'btn_no_text' => 1])
 			->btn('Make default', url('/@object/lang_default/%d'), ['class_add' => 'btn-info', 'display_func' => $no_actions_if_default, 'btn_no_text' => 1])
 			->btn_active('', url('/@object/lang_active/%d'), ['display_func' => $no_actions_if_default])
-			->footer_link('Manage files', url('/@object/show_files'))
-			->footer_link('Manage vars', url('/@object/show_vars'))
-			->footer_add('Add language', url('/@object/lang_add'), ['no_ajax' => 1])
-#			->footer_link('Import vars', url('/@object/import_vars'), array('icon' => 'icon-signin'))
-#			->footer_link('Export vars', url('/@object/export_vars'), array('icon' => 'icon-signout'))
-#			->footer_link('Collect vars', url('/@object/collect_vars'))
-#			->footer_link('Cleanup vars', url('/@object/cleanup_vars'))
-#			->footer_link('Import vars', url('/@object/import_vars'))
-#			->footer_link('Export vars', url('/@object/export_vars'))
+			->footer_add('Add language', url('/@object/lang_add'), ['no_ajax' => 1, 'class_add' => 'btn-warning'])
+			->footer_link('Files', url('/@object/files'))
+			->footer_link('Vars', url('/@object/vars'))
+#			->footer_link('Import', url('/@object/import_vars'), array('icon' => 'icon-signin'))
+#			->footer_link('Export', url('/@object/export_vars'), array('icon' => 'icon-signout'))
+#			->footer_link('Collect', url('/@object/collect_vars'))
+#			->footer_link('Cleanup', url('/@object/cleanup_vars'))
 #			->footer_link('User vars', url('/@object/user_vars'))
 		;
 	}
@@ -223,7 +237,7 @@ class yf_locale_editor {
 	function lang_active() {
 		$id = intval($_GET['id']);
 		if ($id) {
-			$a = db()->from('locale_langs')->whereid($id)->get();
+			$a = from('locale_langs')->whereid($id)->get();
 		}
 		if (!empty($a) && !$a['is_default']) {
 			db()->update('locale_langs', ['active' => intval(!$a['active'])], 'id='.(int)$id);
@@ -243,7 +257,7 @@ class yf_locale_editor {
 	function lang_default() {
 		$id = intval($_GET['id']);
 		if ($id) {
-			$a = db()->from('locale_langs')->whereid($id)->get();
+			$a = from('locale_langs')->whereid($id)->get();
 		}
 		if (!empty($info) && !$info['is_default']) {
 			db()->update('locale_langs', ['is_default' => 0], '1=1');
@@ -264,7 +278,7 @@ class yf_locale_editor {
 	function lang_delete() {
 		$id = intval($_GET['id']);
 		if ($id) {
-			$a = db()->from('locale_langs')->whereid($id)->get();
+			$a = from('locale_langs')->whereid($id)->get();
 		}
 		if ($a) {
 			db()->query('DELETE FROM '.db('locale_langs').' WHERE id='.intval($id).' LIMIT 1');
@@ -283,34 +297,46 @@ class yf_locale_editor {
 	/**
 	*/
 	function _get_vars_from_files($lang) {
-		$lang_files = [];
+		$files = [];
 		// Auto-find shared language vars. They will be connected in order of file system
 		// Names can be any, but better to include lang name into file name. Examples:
 		// share/langs/ru/001_other.php
 		// share/langs/ru/002_other2.php
 		// share/langs/ru/other.php
 		// share/langs/ru/ru_shop.php
-		// share/langs/ru/ru_user_register.php
 		// plugins/shop/share/langs/ru/ru_user_register.php
-		$pattern = 'share/langs/'.$lang.'/';
-		$dirs = [
-			'yf_main'			=> YF_PATH. $pattern,
-			'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
-			'project_main'		=> PROJECT_PATH. $pattern,
-			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'app_main'			=> APP_PATH. $pattern,
-			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
+		$pattern = '{,plugins/*/}{,share/}langs/'.$lang.'/*.php';
+		$globs = [
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
 		// Order matters! Project vars will have ability to override vars from franework
-		foreach ($dirs as $dir) {
-			foreach ((array)glob($dir.'*.php') as $f) {
-				$lang_files[basename($f)] = $f;
+		foreach ($globs as $glob) {
+			foreach ((array)glob($glob, GLOB_BRACE) as $f) {
+				$files[basename($f)] = $f;
 			}
 		}
-		//
-		// Inside each file $data array will be searched for
-		//
-		foreach ((array)$lang_files as $path) {
+		// Auto-find vars for user modules. They will be connected in order of file system
+		// Names must begin with __locale__{lang} and then any name. Examples:
+		// modules/shop/__locale__ru.php
+		// modules/shop/__locale__ru_orders.php
+		// modules/shop/__locale__ru_products.php
+		// plugins/shop/modules/shop/__locale__ru_products.php
+		$modules = 'modules';
+		$pattern = '{,plugins/*/}'.$modules.'/*/__locale__'.$lang.'*.php';
+		$globs = [
+			'framework'	=> YF_PATH. $pattern,
+			'project'	=> PROJECT_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
+		];
+		// Order matters! Project vars will have ability to override vars from franework
+		foreach ($globs as $globs) {
+			foreach ((array)glob($glob, GLOB_BRACE) as $f) {
+				$files[basename($f)] = $f;
+			}
+		}
+		foreach ((array)$files as $path) {
 			$data = include $path;
 			foreach ((array)$data as $_source => $_trans) {
 				$_source = str_replace(' ', '_', strtolower($_source));
@@ -318,12 +344,12 @@ class yf_locale_editor {
 				$tr_files[$_source] = $path;
 			}
 		}
-		return [$tr_vars, $tr_files, $lang_files];
+		return [$tr_vars, $tr_files, $files];
 	}
 
 	/**
 	*/
-	function show_files() {
+	function files() {
 		$self_page_css = 'body.get-object-'.$_GET['object'];
 		css('
 			'.$self_page_css.' li.li-header { list-style: none; display:none; }
@@ -381,8 +407,8 @@ class yf_locale_editor {
 				'link'		=> url('/file_manager/view/'.urlencode($path)),
 				'id'		=> 'lang_file_'.$i,
 			];
-			$div_id = 'editor_html_'.$i;
-			$hidden_id = 'file_text_hidden_'.$i;
+			$div_id = 'editor_html_'.$lang.'_'.$i;
+			$hidden_id = 'file_text_hidden_'.$lang.'_'.$i;
 			$items['1111'.$i] = [
 				'parent_id'	=> $i,
 				'body'		=> form()
@@ -397,7 +423,7 @@ class yf_locale_editor {
 
 	/**
 	*/
-	function show_vars() {
+	function _get_all_vars_from_files() {
 		$vars = [];
 		foreach ((array)$this->_cur_langs as $lang => $lang_name) {
 			list($lang_vars, $var_files) = $this->_get_vars_from_files($lang);
@@ -405,22 +431,36 @@ class yf_locale_editor {
 				if (!$source) {
 					continue;
 				}
-				$vars[$source.'|'.$lang] = [
-					'locale'		=> (string)$lang,
-#					'source'		=> (string)_wordwrap($source, 100, PHP_EOL, true),
-					'source'		=> (string)str_replace('_', ' ', $source),
-					'translation'	=> (string)$translation,
-					'files'			=> (string)$var_files[$source],
-				];
+				!is_array($vars[$source]) && $vars[$source] = [];
+				$vars[$source]['id'] = $source;
+				$vars[$source]['source'] = (string)str_replace('_', ' ', $source);
+				$vars[$source]['files'][$var_files[$source]] = $var_files[$source];
+				$vars[$source]['locale'][$lang] = $lang;
+				$vars[$source]['translation'][$lang] = $translation;
 			}
 		}
+		return $vars;
+	}
+
+	/**
+	*/
+	function vars() {
+		$vars = $this->_get_all_vars_from_files();
+
+		asset('bfh-select');
+		$lang_def_country = main()->get_data('lang_def_country');
+		$edit_link_tpl = url('/@object/var_edit/%id');
+
 		ksort($vars);
-		$_this = $this;
-		return table($vars, ['pager_records_on_page' => 1000, 'group_by' => 'source', 'id' => 'source'])
+		return table($vars, ['pager_records_on_page' => 10000, 'id' => 'source', 'very_condensed' => 1])
 			->text('source')
-			->lang('locale')
-#			->text('translation')
-			->btn_edit('', url('/@object/edit_var/%source'), ['btn_no_text' => 1])
+			->func('locale', function($in,$e,$a,$t) use ($lang_def_country) {
+				foreach ((array)$in as $lang) {
+					$out[] = '<span class="btn btn-xs btn-primary disabled">'.html()->icon('bfh-flag-'.$lang_def_country[$lang], strtoupper($lang)).'</span>';
+				}
+				return implode(' ', $out);
+			})
+			->btn_edit('', url('/@object/var_edit/%source'), ['btn_no_text' => 1])
 #			->btn_func('files', function($row, $extra, $replace, $table) {
 #				$path = $row['files'];
 #				$show_path = $path;
@@ -433,46 +473,99 @@ class yf_locale_editor {
 
 	/**
 	*/
-	function __old__show_vars() {
-		if (array_key_exists('mass_delete', $_POST)) {
-			return $this->mass_delete_vars();
+	function _get_var_info($id) {
+		$id = trim($id);
+		if (!strlen($id)) {
+			return [];
 		}
-		$sql = 'SELECT v.id, v.value, IFNULL(GROUP_CONCAT(DISTINCT CONCAT("<b class=badge>", UPPER(t.locale), "</b> ", t.value) SEPARATOR "'.PHP_EOL.'<br>"), "") AS translation
-			FROM '.db('locale_vars').' AS v 
-			LEFT JOIN '.db('locale_translate').' AS t ON t.var_id = v.id
-			LEFT JOIN '.db('locale_langs').' AS l ON t.locale = l.locale
-			WHERE 1
-				/*FILTER*/
-			GROUP BY v.id
-				/*ORDER*/';
+		$a = [];
+		if (is_numeric($id)) {
+			$a = from('locale_vars')->whereid($id)->limit(1)->get();
+		} else {
+			$id = urldecode($id);
+			$a = from('locale_vars')->where_raw('LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) = "'._es($id).'"')->get();
+			if ($a) {
+				$id = $a['id'];
+			} else {
+				db()->insert_safe('locale_vars', ['value' => $id]);
+				$id = db()->insert_id();
+				$id && $a = from('locale_vars')->whereid($id)->limit(1)->get();
+			}
+		}
+		return $a;
+	}
+	/**
+	*/
+	function var_edit() {
+		$a = $this->_get_var_info($_GET['id']);
+		if (!$a) {
+			return _e('Wrong var id');
+		}
+		$var_db = $a;
 
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		return table($sql, [
-				'pager_records_on_page' => $_SESSION[$filter_name]['per_page'],
-				'filter' => $_SESSION[$filter_name],
-				'filter_params' => [
-					'value'			=> function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; },
-#					'value'			=> array('cond' => 'like', 'field' => 'v.value'),
-					'translation'	=> ['like', 't.value'],
-					'locale'		=> ['eq', 't.locale'],
-				],
-			])
-			->check_box('id', ['width' => '1%', 'desc' => ''])
-			->text('value', ['wordwrap' => '40', 'hl_filter' => 1])
-			->text('translation', ['wordwrap' => '40', 'hl_filter' => 1])
-			->btn_edit('', url('/@object/edit_var/%d'))
-			->btn_delete('', url('/@object/delete_var/%d'))
-			->footer_add('', url('/@object='.$_GET['object'].'&action=add_var'))
-			->footer_submit('mass_delete', ['icon' => 'icon-trash', 'class' => 'btn-danger'])
-			->header_add('', url('/@object/add_var'))
-#			->footer_link('collect_vars', url('/@object/collect_vars'))
-#			->footer_link('cleanup_vars', url('/@object/cleanup_vars'))
+		$langs = [];
+		foreach ((array)$this->_cur_langs_array as $l) {
+			$langs[$l['locale']] = $l['name'];
+		}
+
+		$vars = $this->_get_all_vars_from_files();
+		$var = $vars[$a['value']];
+		foreach ((array)$langs as $lcode => $lname) {
+			$a['translation_'.$lcode] = $var['translation'][$lcode];
+		}
+
+		// Override from db
+		$var_tr_db = from('locale_translate')->where('var_id', (int)$a['id'])->get_2d('locale,value');
+		foreach ((array)$var_tr_db as $lcode => $tr) {
+			$a['translation_'.$lcode] = $tr;
+		}
+
+		$a['back_link'] = url('/@object/vars');
+		$a['redirect_link'] = url('/@object/@action/@id');
+
+		$form = form($a);
+		$form->info('value', ['no_translate' => 1]);
+		foreach ((array)$langs as $lcode => $lname) {
+			$form->textarea('translation_'.$lcode, ['desc' => $lname]);
+		}
+		$form->on_post(function($a,$r,$f) use ($langs, $var, $var_db, $var_tr_db) {
+			$up = [];
+			$var_id = $a['id'];
+			foreach ((array)$langs as $lcode => $lname) {
+				$p = &$_POST;
+				$posted = trim($p['translation_'.$lcode]);
+				$existed = trim($a['translation_'.$lcode]);
+				// if posted val is empty - we mean empty translation
+				if ($posted != $existed && (strlen($posted) || strlen($existed))) {
+					$up[$lcode] = [
+						'var_id' => $var_id,
+						'locale' => $lcode,
+						'value' => $posted,
+					];
+				}
+			}
+			// $up && common()->admin_wall_add(['locale var updated: '.$a['value'], $id]);
+			$up && db()->replace('locale_translate', $up);
+			return js_redirect($data['redirect_link']);
+		});
+		$form->save_and_back();
+		$form->render($a);
+		$help = $this->_help('edit');
+
+		$storages = [];
+		$var['files'] && $storages[] = '<div class="col-md-offset-3"><h3>Files</h3><b>'.implode('<br>', $var['files']).'</b></div>';
+		$var_tr_db && $storages[] = '<div class="col-md-offset-3"><h3>Db</h3><b>'.implode('<br>', array_keys($var_tr_db)).'</b></div>';
+
+		return 
+			'<div class="col-md-8">'.$form. implode($storages). '</div>'.
+			'<div class="col-md-4">'.$help.'</div>'
 		;
 	}
 
 	/**
 	*/
-	function add_var() {
+	function var_add() {
+/*
 		if (is_post()) {
 			$_POST['var_name'] = _strtolower(str_replace(' ', '_', $_POST['var_name']));
 			$var_info = db()->get('SELECT * FROM '.db('locale_vars').' WHERE LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) = "'._es($_POST['var_name']).'"');
@@ -504,94 +597,25 @@ class yf_locale_editor {
 					cache_del($cnames);
 				}
 				common()->admin_wall_add(['locale var added: '.$_POST['var_name']]);
-				return js_redirect($INSERT_ID ? url('/@object/edit_var/'.intval($INSERT_ID)) : url('/@object/show_vars'));
+				return js_redirect($INSERT_ID ? url('/@object/var_edit/'.intval($INSERT_ID)) : url('/@object/vars'));
 			}
 		}
 		$r = (array)$_POST + [
-			'back_link'		=> url('/@object/show_vars'),
+			'back_link'		=> url('/@object/vars'),
 		];
 		$form = form($r)->text('var_name');
 		foreach ((array)$this->_cur_langs_array as $info) {
 			$form->textarea('var_tr__'.$info['locale'], $info['name']);
 		}
 		return $form->save_and_back();
+*/
 	}
 
-	/**
-	*/
-	function edit_var() {
-		$_GET['id'] = trim($_GET['id']);
-		// Try to find numeric id for the given string var
-		if (!empty($_GET['id']) && !is_numeric($_GET['id'])) {
-			$_GET['id'] = urldecode($_GET['id']);
-			$var_info = db()->query_fetch(
-				'SELECT * FROM '.db('locale_vars').' WHERE LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) = "'._es($_GET['id']).'"'
-			);
-			if ($var_info) {
-				$_GET['id'] = $var_info['id'];
-			} else {
-				db()->insert_safe('locale_vars', ['value' => $_GET['id']]);
-				$_GET['id'] = db()->INSERT_ID();
-			}
-		}
-		$_GET['id'] = intval($_GET['id']);
-
-		$var_info = db()->query_fetch('SELECT * FROM '.db('locale_vars').' WHERE id='.intval($_GET['id']));
-		if (empty($var_info['id'])) {
-			_re('No such var!', 'id');
-			return _e();
-		}
-
-		$Q = db()->query('SELECT * FROM '.db('locale_translate').' WHERE var_id='.intval($var_info['id']));
-		while ($A = db()->fetch_assoc($Q)) {
-			$var_tr[$A['locale']] = $A['value'];
-		}
-
-		if (is_post()) {
-			if (!_ee()) {
-				foreach ((array)$this->_cur_langs_array as $lang_id => $lang_info) {
-					if (!isset($_POST[$lang_info['locale']])) {
-						continue;
-					}
-					$sql_data = [
-						'var_id'	=> intval($var_info['id']),
-						'value'		=> _es($_POST[$lang_info['locale']]),
-						'locale'	=> _es($lang_info['locale']),
-					];
-					if (isset($var_tr[$lang_info['locale']])) {
-						db()->UPDATE('locale_translate', $sql_data, 'var_id='.intval($var_info['id'])." AND locale='"._es($lang_info["locale"])."'");
-					} else {
-						db()->INSERT('locale_translate', $sql_data);
-					}
-					cache_del('locale_translate_'.$lang_info['locale']);
-				}
-				common()->admin_wall_add(['locale var updated: '.$var_info['value'], $_GET['id']]);
-				return js_redirect('/@object/show_vars');
-			}
-		}
-		foreach ((array)$this->_cur_langs_array as $lang_id => $lang_info) {
-			// Paste default value for the english locale (if translation is absent)
-			$tr_value = !isset($var_tr[$lang_info['locale']]) && $lang_info['locale'] == 'en' ? $var_info['value'] : $var_tr[$lang_info['locale']];
-			$langs[$lang_info['locale']] = [
-				'locale'	=> $lang_info['locale'],
-				'name'		=> _prepare_html($lang_info['name']),
-				'tr_value'	=> _prepare_html(trim($tr_value)),
-			];
-		}
-		$replace = [
-			'form_action'	=> url('/@object/@action/@id'),
-			'back_link'		=> url('/@object/show_vars'),
-			'error_message'	=> _e(),
-			'langs'			=> $langs,
-			'var_value'		=> _prepare_html($var_info['value']),
-			'location'		=> $this->DISPLAY_VARS_LOCATIONS ? $this->_prepare_locations($var_info['location']) : '',
-		];
-		return tpl()->parse('@object/edit_var', $replace);
-	}
 
 	/**
 	*/
 	function mass_delete_vars() {
+/*
 		$ids_to_delete = [];
 		foreach ((array)$_POST['items'] as $_cur_id) {
 			if (empty($_cur_id)) {
@@ -604,12 +628,13 @@ class yf_locale_editor {
 			db()->query('DELETE FROM '.db('locale_translate').' WHERE var_id IN('.implode(',',$ids_to_delete).')');
 			common()->admin_wall_add(['locale vars mass deletion: '.implode(',',$ids_to_delete)]);
 		}
-		return js_redirect('/@object/show_vars');
+		return js_redirect('/@object/vars');
+*/
 	}
 
 	/**
 	*/
-	function delete_var() {
+	function var_delete() {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
 			$var_info = db()->query_fetch('SELECT * FROM '.db('locale_vars').' WHERE id='.intval($_GET['id']));
@@ -623,7 +648,7 @@ class yf_locale_editor {
 			no_graphics(true);
 			echo $_GET['id'];
 		} else {
-			return js_redirect('/@object/show_vars');
+			return js_redirect('/@object/vars');
 		}
 	}
 
@@ -699,14 +724,11 @@ class yf_locale_editor {
 	*/
 	function collect_vars () {
 // TODO: move out into submodule
-		// Select all known variables from db
 		$Q = db()->query('SELECT * FROM '.db('locale_vars').' ORDER BY value ASC');
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_locale_vars[$A['value']] = $A;
 		}
-		// Try to get variables from the source code
 		$vars_from_code = $this->_parse_source_code_for_vars();
-		// Process vars and update or insert if records are outdated
 		foreach ((array)$vars_from_code as $cur_var_name => $var_files_info) {
 			$location_array = [];
 			foreach ((array)$var_files_info as $file_name => $line_numbers) {
@@ -717,15 +739,13 @@ class yf_locale_editor {
 				'value'		=> _es($cur_var_name),
 				'location'	=> $location,
 			];
-			// If variable exists - use update
 			if (isset($this->_locale_vars[$cur_var_name])) {
 				db()->UPDATE('locale_vars', $sql_array, 'id='.intval($this->_locale_vars[$cur_var_name]['id']));
 			} else {
 				db()->INSERT('locale_vars', $sql_array);
 			}
 		}
-		// Return user back
-		js_redirect('/@object/show_vars');
+		js_redirect('/@object/vars');
 	}
 
 	/**
@@ -765,7 +785,6 @@ class yf_locale_editor {
 	function _parse_source_code_for_vars ($params = []) {
 // TODO: move out into submodule
 		$vars_array = [];
-		// Avail params: only_framework, only_project, only_stpls, only_php, only_module
 
 		$php_path_pattern	= '';
 		$stpl_path_pattern	= '';
@@ -774,59 +793,45 @@ class yf_locale_editor {
 			$this->_include_stpl_pattern	= ['#/templates#', '#\.stpl$#'];
 			$stpl_path_pattern = '#templates/[^/]+/'.$params['only_module'].'/#';
 		}
-		// Get source files from the framework
 		if (!$params['only_project']) {
 			if (!$params['only_stpls']) {
 				$yf_framework_php_files	= _class('dir')->scan_dir(YF_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
 			}
 			if (!$params['only_php']) {
-				$yf_framework_stpl_files	= _class('dir')->scan_dir(YF_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
+				$yf_framework_stpl_files = _class('dir')->scan_dir(YF_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
 			}
 		}
-		// Get source files from the current project
 		if (!$params['only_framework']) {
 			if (!$params['only_stpls']) {
-				$cur_project_php_files		= _class('dir')->scan_dir(INCLUDE_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
+				$cur_project_php_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
 			}
 			if (!$params['only_php']) {
-				$cur_project_stpl_files		= _class('dir')->scan_dir(INCLUDE_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
+				$cur_project_stpl_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
 			}
 		}
-		// Get PHP files from the framework (classes and functions only)
 		foreach ((array)$yf_framework_php_files as $file_name) {
-			// Create short file name
 			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_php_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
 			}
 		}
-		// Get PHP files from the current project (classes and functions only)
 		foreach ((array)$cur_project_php_files as $file_name) {
-			// Create short file name
 			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_php_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
 			}
 		}
-		// Get STPL files from the framework
 		foreach ((array)$yf_framework_stpl_files as $file_name) {
-			// Create short file name
 			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_stpl_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
 			}
 		}
-		// Get STPL files from the current project
 		foreach ((array)$cur_project_stpl_files as $file_name) {
-			// Create short file name
 			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
 			if ($stpl_path_pattern && !preg_match($stpl_path_pattern, $short_file_name)) {
 				continue;
 			}
-			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_stpl_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
 			}
@@ -844,14 +849,11 @@ class yf_locale_editor {
 		if (empty($file_name)) {
 			return $vars_array;
 		}
-		// Get file source as array
 		$file_source_array = file($file_name);
 		$match	= preg_match_all($pattern, implode(PHP_EOL, $file_source_array), $matches);
-		// Skip files with no translate vars
 		if (empty($matches[0])) {
 			return $vars_array;
 		}
-		// Add variable
 		foreach ((array)$matches[2] as $match_number => $cur_var_name) {
 			$code_lines		= [];
 			$cur_var_name	= trim($cur_var_name, "\"'");
@@ -877,16 +879,13 @@ class yf_locale_editor {
 		if (empty($source_text)) {
 			return false;
 		}
-		// Do not process links if turned off
 		if (!$this->LOCATIONS_EDIT_LINKS) {
 			return _prepare_html($source_text);
 		}
-		// Try to find separate links
 		$body = [];
 		foreach ((array)explode(';', $source_text) as $cur_source) {
 			$cur_file_name = trim(substr($cur_source, 0, strpos($cur_source, ':')));
 			$path_to = '';
-			// Try to find real file
 			if (file_exists(REAL_PATH.$cur_file_name)) {
 				$path_to = REAL_PATH;
 			} elseif (file_exists(INCLUDE_PATH.$cur_file_name)) {
@@ -894,7 +893,6 @@ class yf_locale_editor {
 			} elseif (file_exists(YF_PATH.$cur_file_name)) {
 				$path_to = YF_PATH;
 			}
-			// Check if file is found
 			if (empty($path_to)) {
 				$body[] = $cur_source;
 			} else {
@@ -916,7 +914,6 @@ class yf_locale_editor {
 		if (!empty($force_locale)) {
 			$locale = $force_locale;
 		} else {
-			// Try to find default locale
 			foreach ((array)$this->_cur_langs_array as $A) {
 				if ($A['is_default']) {
 					$locale = $A['locale'];
@@ -927,13 +924,10 @@ class yf_locale_editor {
 				$locale = $def_locale;
 			}
 		}
-		// Check if we found default locale
 		if (!empty($locale)) {
-			// Select all known variables from db
 			$Q = db()->query("SELECT * FROM ".db('locale_vars')." WHERE id NOT IN(SELECT var_id FROM ".db('locale_translate')." WHERE locale='"._es($locale)."')");
 			while ($A = db()->fetch_assoc($Q)) {
-				// Do create empty records
-				db()->INSERT('locale_translate', [
+				db()->insert('locale_translate', [
 					'var_id'	=> $A['id'],
 					'value'		=> '',
 					'locale'	=> $locale,
@@ -951,89 +945,53 @@ class yf_locale_editor {
 	}
 
 	/**
-	* Do get current languages from db
 	*/
 	function _get_locales () {
-		$Q = db()->query('SELECT * FROM '.db('locale_langs').' ORDER BY is_default DESC, locale ASC');
-		while ($A = db()->fetch_assoc($Q)) {
-			$data[$A['locale']] = $A['name'];
-		}
-		return $data;
+		return from('locale_langs')->order_by(['is_default DESC', 'locale ASC'])->get_2d('locale,name');
 	}
 
 	/**
 	*/
 	function filter_save() {
-		$filter_name = $_GET['object'].'__show_vars';
-		if ($_GET['page'] == 'clear') {
-			$_SESSION[$filter_name] = [];
-		} else {
-			$_SESSION[$filter_name] = $_POST;
-			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
-				if (isset($_SESSION[$filter_name][$f])) {
-					unset($_SESSION[$filter_name][$f]);
-				}
-			}
-		}
-		return js_redirect('/@object/'. str_replace($_GET['object'].'__', '', $filter_name));
+		return _class('admin_methods')->filter_save();
 	}
 
 	/**
 	*/
 	function _show_filter() {
-		if (!in_array($_GET['action'], ['show_vars'])) {
+		if (!in_array($_GET['action'], ['vars'])) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = [
-			'form_action'	=> url('/@object/filter_save/'.$filter_name),
-			'clear_url'		=> url('/@object/filter_save/'.$filter_name.'/clear'),
-		];
-		$order_fields = [
-			'v.value'     => 'value',
-		];
+		$order_fields = [];
+		foreach (explode('|', 'id|locale|source|translation') as $f) {
+			$order_fields[$f] = $f;
+		}
 		$langs_for_select = $this->_langs_for_search;
-		$per_page = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000];
-		return form($r, [
-				'selected'	=> $_SESSION[$filter_name],
-//				'class'		=> 'form-inline',
-			])
+		return form($r, ['filter' => true])
 			->text('value', 'Source var')
 			->text('translation')
 			->select_box('locale', $langs_for_select)
-			->select_box('per_page', $per_page)
-			->select_box('order_by', $order_fields, ['show_text' => 1])
-			->radio_box('order_direction', ['asc'=>'Ascending','desc'=>'Descending'])
+			->row_start()
+				->select_box('order_by', $order_fields, ['show_text' => '= Сортировка =', 'desc' => 'Сортировка'])
+				->select_box('order_direction', ['asc' => '⇑', 'desc' => '⇓'])
+				->select_box('per_page', self::$per_page_values, ['style' => 'width:100px', 'no_label' => 1])
+			->row_end()
 			->save_and_clear();
 		;
 	}
 
 	/**
 	*/
-	function _box ($name = '', $selected = '') {
-		if (empty($name) || empty($this->_boxes[$name])) {
+	function _help($section, $lang = '') {
+		$help = self::$HELP[$section];
+		if (!isset($help)) {
 			return false;
-		} else {
-			return eval('return common()->'.$this->_boxes[$name].';');
 		}
+		css('
+			pre.docs-text { background-color: transparent; border: 0; font-family: inherit; font-size: inherit; font-weight: bold; }
+			pre.docs-text > code { color: white; }
+		');
+		$lang = $lang ?: conf('language');
+		return '<pre class="docs-text"><code><span class="text-info">'.trim($help[$lang] ?: $help['en'] ?: current($help)).'</span></code></pre>';
 	}
-
-	/**
-	*/
-	function _hook_widget__installed_locales ($params = []) {
-// TODO
-	}
-
-	/**
-	*/
-	function _hook_widget__locale_stats ($params = []) {
-// TODO
-	}
-
-	/**
-	*/
-	function _hook_widget__latest_locale_vars ($params = []) {
-// TODO
-	}
-
 }
