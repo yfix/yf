@@ -1,9 +1,0 @@
-<form method="post" action="{form_action}" class="form-horizontal">
-	{form_row("info","id")}
-	{form_row("info","user_id")}
-	{form_row("info","locale")}
-	{form_row("info","site_id")}
-	{form_row("text","name")}
-	{form_row("text","translation")}
-	{form_row("save_and_back")}
-</form>

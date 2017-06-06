@@ -461,39 +461,9 @@ Fallback when no numbers matched (any string)
 				return implode(' ', $out);
 			})
 			->btn_edit('', url('/@object/var_edit/%source'), ['btn_no_text' => 1])
-#			->btn_func('files', function($row, $extra, $replace, $table) {
-#				$path = $row['files'];
-#				$show_path = $path;
-#				$show_path = substr($show_path, 0, strlen(APP_PATH)) === APP_PATH ? substr($show_path, strlen(APP_PATH)) : $show_path;
-#				$show_path = substr($show_path, 0, strlen(YF_PATH)) === YF_PATH ? substr($show_path, strlen(YF_PATH)) : $show_path;
-#				return a('/file_manager/view/'.urlencode($path), $show_path, 'fa fa-eye');
-#			})
 		;
 	}
 
-	/**
-	*/
-	function _get_var_info($id) {
-		$id = trim($id);
-		if (!strlen($id)) {
-			return [];
-		}
-		$a = [];
-		if (is_numeric($id)) {
-			$a = from('locale_vars')->whereid($id)->limit(1)->get();
-		} else {
-			$id = urldecode($id);
-			$a = from('locale_vars')->where_raw('LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) = "'._es($id).'"')->get();
-			if ($a) {
-				$id = $a['id'];
-			} else {
-				db()->insert_safe('locale_vars', ['value' => $id]);
-				$id = db()->insert_id();
-				$id && $a = from('locale_vars')->whereid($id)->limit(1)->get();
-			}
-		}
-		return $a;
-	}
 	/**
 	*/
 	function var_edit() {
@@ -560,6 +530,30 @@ Fallback when no numbers matched (any string)
 			'<div class="col-md-8">'.$form. implode($storages). '</div>'.
 			'<div class="col-md-4">'.$help.'</div>'
 		;
+	}
+
+	/**
+	*/
+	function _get_var_info($id) {
+		$id = trim($id);
+		if (!strlen($id)) {
+			return [];
+		}
+		$a = [];
+		if (is_numeric($id)) {
+			$a = from('locale_vars')->whereid($id)->limit(1)->get();
+		} else {
+			$id = urldecode($id);
+			$a = from('locale_vars')->where_raw('LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) = "'._es($id).'"')->get();
+			if ($a) {
+				$id = $a['id'];
+			} else {
+				db()->insert_safe('locale_vars', ['value' => $id]);
+				$id = db()->insert_id();
+				$id && $a = from('locale_vars')->whereid($id)->limit(1)->get();
+			}
+		}
+		return $a;
 	}
 
 	/**
