@@ -6,8 +6,14 @@ class yf_locale_editor_import {
 
 	/**
 	*/
-	function import_vars() {
-		if (main()->is_post()) {
+	function _init () {
+		$this->_parent = module('locale_editor');
+	}
+
+	/**
+	*/
+	function import() {
+		if (is_post()) {
 			if (empty($_FILES['import_file']['name'])) {
 				_re('Please select file to process', 'name');
 			}
@@ -43,33 +49,12 @@ class yf_locale_editor_import {
 				move_uploaded_file($_FILES['import_file']['tmp_name'], $new_file_path);
 
 				if ($file_format == 'csv') {
-
 					$handle = fopen($new_file_path, 'r');
 					while (($data = fgetcsv($handle, 2048, ";", "\"")) !== false) {
 						if ($i++ == 0) continue; // Skip header
 						$found_vars[trim($data[0])] = trim($data[1]);
 					}
 					fclose($handle);
-
-				} elseif ($file_format == 'xml') {
-
-					$xml_parser = xml_parser_create();
-					xml_parse_into_struct($xml_parser, file_get_contents($new_file_path), $xml_values);
-					foreach ((array)$xml_values as $k => $v) {
-						if ($v['type'] != 'complete') continue;
-						if ($v['tag'] == 'SOURCE') {
-							$source = $v['value'];
-						}
-						if ($v['tag'] == 'TRANSLATION') {
-							$translation = $v['value'];
-						}
-						if (!empty($source) && !empty($translation)) {
-							$found_vars[trim($source)] = trim($translation);
-							$source			= '';
-							$translation	= '';
-						}
-					}
-					xml_parser_free($xml_parser);
 				}
 				$Q = db()->query("SELECT id, ".($this->VARS_IGNORE_CASE ? "LOWER(REPLACE(CONVERT(value USING utf8), ' ', '_'))" : "value")." AS val FROM ".db('locale_vars')." ORDER BY val ASC");
 				while ($A = db()->fetch_assoc($Q)) $cur_vars_array[$A["id"]] = $A["val"];
@@ -120,6 +105,31 @@ class yf_locale_editor_import {
 			];
 			return tpl()->parse($_GET['object'].'/import_vars', $replace);
 		}
+/*
+<div class="editform">
+<form method="post" action="{form_action}" enctype="multipart/form-data">
+	<p class="first">
+		<label for="import_file">{t(Language File)}</label>
+		<input type="file" id="import_file" name="import_file" size="40">
+	</p>
+	<p>
+		<label for="file_formats_box">{t(File Format)}</label>
+		{file_formats_box}
+	</p>
+	<p>
+		<label for="langs_box">{t(Language Name)}</label>
+		{langs_box}<br /><small>({t(Choose the language you want to add strings into. If you choose a language which is not yet set up, then it will be added.)})</small>
+	</p>
+	<p>
+		<label for="modes_box">{t(Mode)}</label>
+		{modes_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="  {t(Import)}   " name="go" />
+	</div>
+</form>
+</div>
+*/
 	}
 
 }

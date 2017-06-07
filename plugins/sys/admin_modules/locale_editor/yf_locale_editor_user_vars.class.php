@@ -5,6 +5,12 @@
 class yf_locale_editor_user_vars {
 
 	/**
+	*/
+	function _init () {
+		$this->_parent = module('locale_editor');
+	}
+
+	/**
 	* Display list of user-specific vars
 	*/
 	function user_vars() {
@@ -92,6 +98,43 @@ class yf_locale_editor_user_vars {
 			'show_vars_link' => './?object='.$_GET['object'].'&action=show_vars',
 		];
 		return tpl()->parse($_GET['object'].'/user_vars_main', $replace);
+/*
+<form action="{form_action}" method="post" name="" class="form-horizontal">
+<caption>{t(total)}: {total}</caption>
+<table class="table table-bordered table-striped table-hover">
+	<thead>
+		<th><input type="checkbox" id="my_check_all" name="check_all" onclick="my_toggle_boxes(this.form);" alt="{t(SELECT ALL)}"></th>
+		<th>{t(Name)}</th>
+		<th>{t(Translation)}</th>
+		<th>{t(User id)}</th>
+		<th>{t(Updated)}</th>
+		<th>{t(Locale)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+	<tbody>
+{foreach("items")}
+		<tr valign="top">
+			<td><input type="checkbox" name="items[]" value="{#.id}"></td>
+			<td align="left"><b style="background:{#.var_bg_color};">{#.name}</b></td>
+			<td align="left">{#.translation}</td>
+			<td><small><a href="{#.user_link}">{#.user_name}</a></small></td>
+			<td nowrap><small>{#.last_update}</small></td>
+			<td><b>{#.locale}</b></td>
+			<td nowrap>
+				<a href="{#.edit_url}" class="btn"><i class="icon icon-edit fa fa-edit"></i> {t(Edit)}</a>
+				<a href="{#.delete_url}" class="btn" onclick="return confirm("{t(Are you sure)} ?");"><i class="icon icon-trash fa fa-trash"></i> {t(Delete)}</a>
+				<a href="{#.push_url}" class="btn" onclick="return confirm("{t(Are you sure)} ?");"> {t(Push)}</a>
+			</td>
+		</tr>
+{/foreach}
+	</tbody>
+</table>
+
+<input type="submit" class="btn" name="multi-push" value="{t(PUSH SELECTED)}" onclick="return confirm('{t(Are you sure)}?');" />
+<input type="submit" class="btn" name="multi-delete" value="{t(DELETE SELECTED)}" onclick="return confirm('{t(Are you sure)}?');" />
+
+</form>
+*/
 	}
 
 	/**

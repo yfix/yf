@@ -5,125 +5,137 @@
 class yf_locale_editor_export {
 
 	/**
-	* Export vars
 	*/
-	function export_vars() {
-		if (main()->is_post()) {
-			if (empty($_POST['file_format']) || !isset($this->_file_formats[$_POST['file_format']])) {
-				_re('Please select file format');
-			}
-			$IS_TEMPLATE = intval((bool)$_POST['is_template']);
-			if (empty($_POST['lang_code']) && !$IS_TEMPLATE) {
-				_re('Please select language to export');
-			}
-			$cur_locale = !empty($_POST['lang_code']) ? $_POST['lang_code'] : 'en';
-			$cur_lang_info = [
-				'locale'	=> $cur_locale,
-				'name'		=> $this->_cur_langs[$cur_locale],
-			];
-			if (!$IS_TEMPLATE) {
-				$Q = db()->query('SELECT * FROM '.db('locale_translate').' WHERE locale = "'._es($cur_locale).'"');
-				while ($A = db()->fetch_assoc($Q)) {
-					$tr_vars[$A['var_id']] = $A['value'];
-				}
-			}
-			$Q = db()->query('SELECT * FROM '.db('locale_vars').' ORDER BY value ASC');
-			while ($A = db()->fetch_assoc($Q)) {
-				$source			= $A['value'];
-				$translation	= $IS_TEMPLATE ? $A['value'] : $tr_vars[$A['id']];
-				// Skip not translated vars
-				if (!$IS_TEMPLATE && empty($translation)) {
-					continue;
-				}
-				// Export only for specified location
-				if (!$IS_TEMPLATE && !empty($_POST['location']) && (false === strpos($A['location'], $_POST['location']))) {
-					continue;
-				}
-				// Export only for specified module
-				if (!empty($_POST['module'])) {
-					$is_admin_module = false;
-					if (substr($_POST['module'], 0, strlen('admin:')) == 'admin:') {
-						$_POST['module'] = substr($_POST['module'], strlen('admin:'));
-						$is_admin_module = true;
-					}
-					if ((false === strpos($A['location'], ($is_admin_module ? ADMIN_MODULES_DIR : USER_MODULES_DIR).$_POST['module'].'.class.php'))
-						&& (false === strpos($A['location'], '/'.$_POST['module'].'/') || false === strpos($A['location'], '.stpl'))
-					) {
-						continue;
-					}
-				}
-				$tr_array[$A['id']] = [
-					'source'		=> trim($source),
-					'translation'	=> trim($translation),
-				];
-			}
-			// Check for errors
-			if (!common()->_error_exists()) {
-				// Get vars to export
-				if ($_POST['file_format'] == 'csv') {
-					$body .= "source;translation".PHP_EOL;
-					// Process vars
-					foreach ((array)$tr_array as $info) {
-						$body .= "\"".str_replace("\"","\"\"",$info["source"])."\";\"".
-							str_replace("\"","\"\"",$info["translation"])."\"".PHP_EOL;
-					}
-					// Generate result file_name
-					$file_name = $cur_lang_info["locale"]."_translation.csv";
-				} elseif ($_POST["file_format"] == "xml") {
-					// Generate XML string
-					$body .= "<!DOCTYPE tr><tr>".PHP_EOL;
-					$body .= "\t<info>".PHP_EOL;
-					$body .= "\t\t<locale>"._prepare_html($cur_lang_info["locale"])."</locale>".PHP_EOL;
-					$body .= "\t\t<lang_name>"._prepare_html($cur_lang_info["name"])."</lang_name>".PHP_EOL;
-					$body .= "\t</info>".PHP_EOL;
-					// Process vars
-					foreach ((array)$tr_array as $info) {
-						$body .= "\t<message>".PHP_EOL;
-						$body .= "\t\t<source>"._prepare_html($info["source"])."</source>".PHP_EOL;
-						$body .= "\t\t<translation>"._prepare_html($info["translation"])."</translation>".PHP_EOL;
-						$body .= "\t</message>".PHP_EOL;
-					}
-					$body .= "</tr>";
-					// Generate result file_name
-					$file_name = $cur_lang_info["locale"]."_translation.xml";
-				}
-			}
-			if (!common()->_error_exists()) {
-				if (empty($body)) {
-					_re("Error while exporting data");
-				}
-			}
-			if (!common()->_error_exists()) {
-				main()->NO_GRAPHICS = true;
-
-				header("Content-Type: application/force-download; name=\"".$file_name."\"");
-				header("Content-Type: text/".$_POST["file_format"].";charset=utf-8");
-				header("Content-Transfer-Encoding: binary");
-				header("Content-Length: ".strlen($body));
-				header("Content-Disposition: attachment; filename=\"".$file_name."\"");
-
-				echo $body;
-				exit();
-			}
-		}
-
-		$this->_used_locations[''] = t('-- ALL --');
-		foreach ((array)$this->_get_all_vars_locations() as $cur_location => $num_vars) {
-			if (empty($num_vars)) {
-				continue;
-			}
-			$this->_used_locations[$cur_location] = $cur_location.' ('.intval($num_vars).')';
-		}
-		$replace = [
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
-			'back_link'			=> './?object='.$_GET['object'],
-			'error_message'		=> _e(),
-			'langs_box'			=> $this->_box('cur_langs',		-1),
-			'file_formats_box'	=> $this->_box('file_format',	'csv'),
-			'location_box'		=> $this->_box('location',		-1),
-			'modules_box'		=> $this->_box('module',		-1),
-		];
-		return tpl()->parse($_GET['object'].'/export_vars', $replace);
+	function _init () {
+		$this->_parent = module('locale_editor');
 	}
 
+	/**
+	* Export vars
+	*/
+	function export() {
+#		$plugins = [];
+		$a['back_link'] = url('/@object/vars');
+		$a['redirect_link'] = $a['back_link'];
+		return form($a + (array)$_POST)
+			->validate([
+				'lang' => 'required',
+				'format' => 'required'
+			])
+			->on_validate_ok(function(){
+				$p = &$_POST;
+				$lang = $p['lang'];
+				$to_export = [];
+				foreach ((array)$this->_parent->_get_all_vars() as $source => $a) {
+					if (!isset($a['translation'][$lang])) {
+						continue;
+					}
+					$tr = $a['translation'][$lang];
+					if (!strlen($tr)) {
+						continue;
+					}
+					$to_export[$source] = $tr;
+				}
+				if (!$to_export) {
+					return false;
+				}
+				$format = $p['format'];
+				$name = 'export_'.$lang.'_translation.'.$format;
+				$body = '';
+				if ($format == 'csv') {
+					$tmp = [];
+					foreach((array)$to_export as $k => $v) {
+						$tmp[] = [
+							'source' => $k,
+							'translation' => $v,
+						];
+					}
+					$to_export = $tmp;
+					unset($tmp);
+					$body = $this->_gen_csv($to_export);
+				}
+				$format == 'json'	&& $body = $this->_gen_json($to_export);
+				$format == 'yaml'	&& $body = $this->_gen_yaml($to_export);
+				$format == 'php'	&& $body = $this->_gen_php($to_export);
+				if ($body) {
+					return $this->_http_out($name, $body, $format, $p['no_download']);
+				}
+			})
+			->select_box('lang', $this->_parent->_cur_langs)
+			->select_box('format', $this->_parent->_import_export_file_formats)
+#			->select_box('module', $this->_parent->_modules)
+#			->select_box('plugin', $plugins)
+			->yes_no_box('is_template')
+			->yes_no_box('no_download')
+			->save_and_back('Export')
+		;
+	}
+
+	/**
+	*/
+	function _gen_csv(array $data = [], $delim = "\t", $enc = '"') {
+		if (count($data) === 0) {
+			return false;
+		}
+		ob_start();
+		$df = fopen('php://output', 'w');
+		fputcsv($df, array_keys(reset($data)), $delim, $enc);
+		foreach ($data as $row) {
+			fputcsv($df, $row, $delim, $enc);
+		}
+		fclose($df);
+		return ob_get_clean();
+	}
+
+	/**
+	*/
+	function _gen_json(array $data = []) {
+		if (count($data) === 0) {
+			return false;
+		}
+		return json_encode($data, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
+	}
+
+	/**
+	*/
+	function _gen_yaml(array $data = []) {
+		if (count($data) === 0) {
+			return false;
+		}
+		return trim(yaml_emit($data, YAML_UTF8_ENCODING, YAML_CRLN_BREAK), '.-'.PHP_EOL);
+	}
+
+	/**
+	*/
+	function _gen_php(array $data = []) {
+		if (count($data) === 0) {
+			return false;
+		}
+		return '<?'.'php'.PHP_EOL.'return '._var_export($data, 1).';'.PHP_EOL;
+	}
+
+	/**
+	*/
+	function _http_out($name, $body, $format, $no_download = false) {
+		no_graphics(true);
+		$mime_map = [
+			'csv'	=> 'text/csv',
+			'json'	=> 'text/json',
+			'yaml'	=> 'text/plain',
+			'php'	=> 'text/plain',
+		];
+		!$name && $name = 'export_translation.'.$format;
+
+		header('Content-Type: '.$mime_map[$format].';charset=utf-8');
+		header('Content-Length: '.strlen($body));
+		if (!$no_download) {
+			header('Content-Type: application/force-download');
+			header('Content-Type: application/octet-stream');
+			header('Content-Type: application/download');
+			header('Content-Disposition: attachment; filename="'.$name.'"');
+			header('Content-Transfer-Encoding: binary');
+		}
+		echo $body;
+		exit();
+	}
 }

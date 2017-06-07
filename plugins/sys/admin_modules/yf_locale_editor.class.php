@@ -9,28 +9,16 @@
 */
 class yf_locale_editor {
 
-	/** @var string @conf_skip PHP files to parse */
-	public $_include_php_pattern	= ['#\/(admin_modules|classes|functions|modules)#', '#\.php$#'];
-	/** @var string @conf_skip STPL Files to parse */
-	public $_include_stpl_pattern	= ['#\/(templates)#', '#\.stpl$#'];
-	/** @var string @conf_skip Exclude files from parser */
-	public $_exclude_pattern		= ['#\/(commands|docs|libs|scripts|sql|storage|tests)#', ''];
-	/** @var string @conf_skip Search vars in PHP files */
-	public $_translate_php_pattern	= "/[\(\{\.\,\s\t=]+?(t)[\s\t]*?\([\s\t]*?('[^'\$]+?'|\"[^\"\$]+?\")/ims";
-	/** @var string @conf_skip Search vars in STPL files */
-	public $_translate_stpl_pattern= "/\{(t)\([\"']*([\s\w\-\.\,\:\;\%\&\#\/\<\>]*)[\"']*[,]*[^\)\}]*\)\}/is";
+	/** @var bool Ignore case on import/export */
+	public $VARS_IGNORE_CASE		= true;
 	/** @var bool Display vars locations */
 	public $DISPLAY_VARS_LOCATIONS	= true;
 	/** @var bool Display links to edit source files (in location) */
 	public $LOCATIONS_EDIT_LINKS	= true;
 	/** @var bool Ignore case on import/export */
-	public $VARS_IGNORE_CASE		= true;
-	/** @var bool Ignore case on import/export */
 	public $FILE_MANAGER_ALLOWED	= false;
 	/** @var bool @conf_skip */
-	private	$_preload_complete = false;
-	/** @var array @conf_skip */
-	private static $per_page_values = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000];
+	private	$_preload_complete		= false;
 	/** @var array @conf_skip */
 	private static $HELP = [
 		'edit' => [
@@ -109,27 +97,24 @@ Fallback when no numbers matched (any string)
 				'active'	=> 1,
 				'is_default'=> 1,
 			]);
-			return js_redirect('/@object/@action');
+			return js_redirect('/@object/@action/@id');
 		}
-
-		$langs_for_search[''] = t('All languages');
+		$cur_langs = [];
 		foreach ((array)$this->_cur_langs_array as $A) {
-			$langs_for_search[$A['locale']] = t($A['name']);
 			$cur_langs[$A['locale']] = t($A['name']);
 		}
-		$this->_langs_for_search = $langs_for_search;
 		$this->_cur_langs = $cur_langs;
-// TODO: add support for these file formats for import/export:
-// * JSON
-// * PHP
-// * GNU Gettext (.po)  http://www.gutenberg.org/wiki/Gutenberg:GNU_Gettext_Translation_How-To, https://en.wikipedia.org/wiki/Gettext
-		$this->_file_formats = [
+
+		$this->_import_export_file_formats = [
+			'php'	=> t('PHP array file format'),
+			'json'	=> t('JSON file format'),
+			'yaml'	=> t('YAML file format'),
 			'csv'	=> t('CSV, compatible with MS Excel'),
-			'xml'	=> t('XML'),
 		];
-		$this->_modes = [
-			1	=> t('Strings in the uploaded file replace existing ones, new ones are added'),
-			2	=> t('Existing strings are kept, only new strings are added'),
+
+		$this->_import_modes = [
+			1 => t('Strings in the uploaded file replace existing ones, new ones are added'),
+			2 => t('Existing strings are kept, only new strings are added'),
 		];
 	}
 
@@ -137,8 +122,8 @@ Fallback when no numbers matched (any string)
 	* Display all project languages
 	*/
 	function show() {
-#		$tr_vars = db()->get_2d('SELECT locale, COUNT(var_id) AS num FROM '.db('locale_translate').' WHERE value != "" GROUP BY locale');
-#		$total_vars = (int)db()->get_one('SELECT COUNT(*) FROM '.db('locale_vars'));
+#		$tr_vars = from('locale_translate')->where_raw('value != ""')->group_by('locale')->get_2d('locale, COUNT(var_id)');
+#		$total_vars = (int)from('locale_vars')->one('COUNT(*)');
 
 		$data = [];
 		foreach ((array)$this->_cur_langs_array as $v) {
@@ -476,6 +461,19 @@ Fallback when no numbers matched (any string)
 
 	/**
 	*/
+	function _get_all_vars() {
+		$vars = $this->_get_all_vars_from_files();
+		$vars_db = $this->_get_all_vars_from_db();
+		foreach((array)$vars_db as $source => $a) {
+			foreach($a as $k => $v) {
+				$vars[$source][$k] = $v;
+			}
+		}
+		return $vars;
+	}
+
+	/**
+	*/
 	function vars() {
 		$vars = $this->_get_all_vars_from_files();
 		$vars_db = $this->_get_all_vars_from_db();
@@ -666,15 +664,84 @@ Fallback when no numbers matched (any string)
 	* Cleanup variables (Delete not translated or missed vars)
 	*/
 	function cleanup () {
-		$cls = 'locale_editor'; return _class($cls.'_cleanup', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+		$deleted = 0;
+		// translations without parents
+		db()->query('DELETE FROM '.db('locale_translate').' WHERE var_id NOT IN( 
+			SELECT id FROM '.db('locale_vars').' 
+		)');
+		$deleted += db()->affected_rows();
+		// parents without translations
+		db()->query('DELETE FROM '.db('locale_vars').' WHERE id NOT IN(
+			SELECT var_id FROM '.db('locale_translate').'
+		)');
+		$deleted += db()->affected_rows();
+		// empty translations
+		db()->query('DELETE FROM '.db('locale_translate').' WHERE value = ""');
+		$deleted += db()->affected_rows();
+		// same or empty translations
+		$sql = '
+			DELETE p1 
+			FROM '.db('locale_translate').' AS p1
+			INNER JOIN (
+				SELECT t.var_id, t.locale 
+				FROM '.db('locale_translate').' AS t
+				INNER JOIN '.db('locale_vars').' AS v ON t.var_id = v.id
+				WHERE t.value = v.value OR t.value = ""
+			) AS p2
+			ON p1.locale = p2.locale AND p1.var_id = p2.var_id
+		';
+		db()->query($sql);
+		$deleted += db()->affected_rows();
+		// Special for the ignore case case
+		if ($this->VARS_IGNORE_CASE) {
+			// Delete non-changed translations
+			$sql = '
+				DELETE p1 
+				FROM '.db('locale_translate').' AS p1
+				INNER JOIN (
+					SELECT t.var_id, t.locale 
+					FROM '.db('locale_translate').' AS t
+					INNER JOIN '.db('locale_vars').' AS v ON t.var_id = v.id
+					WHERE LOWER(REPLACE(CONVERT(t.value USING utf8), " ", "_")) = LOWER(REPLACE(CONVERT(v.value USING utf8), " ", "_"))
+				) AS p2
+				ON p1.locale = p2.locale AND p1.var_id = p2.var_id
+			';
+			db()->query($sql);
+			$deleted += db()->affected_rows();
+			// Delete duplicated records
+			$sql = '
+				DELETE p1 
+				FROM '.db('locale_vars').' AS p1
+				INNER JOIN (
+					SELECT id FROM '.db('locale_vars').'
+					GROUP BY LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) 
+					HAVING COUNT(*) > 1
+				) AS p2
+				USING (id)
+			';
+			db()->query($sql);
+			$deleted += db()->affected_rows();
+		}
+		// translations without parents
+		db()->query('DELETE FROM '.db('locale_translate').' WHERE var_id NOT IN( 
+			SELECT id FROM '.db('locale_vars').' 
+		)');
+		$deleted += db()->affected_rows();
+		// parents without translations
+		db()->query('DELETE FROM '.db('locale_vars').' WHERE id NOT IN(
+			SELECT var_id FROM '.db('locale_translate').'
+		)');
+		$deleted += db()->affected_rows();
+		common()->message_success('Deleted records: '.(int)$deleted);
+		return js_redirect('/@object/vars');
 	}
 
 	/**
-	* Automatic translator via Google translate
+	* Export vars
 	*/
-	function autotranslate() {
+	function export() {
 # TODO: testme
-#		$cls = 'locale_editor'; return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+		$cls = 'locale_editor'; return _class($cls.'_export', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
@@ -686,11 +753,11 @@ Fallback when no numbers matched (any string)
 	}
 
 	/**
-	* Export vars
+	* Automatic translator via Google translate
 	*/
-	function export() {
+	function autotranslate() {
 # TODO: testme
-#		$cls = 'locale_editor'; return _class($cls.'_export', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+#		$cls = 'locale_editor'; return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
@@ -726,7 +793,6 @@ Fallback when no numbers matched (any string)
 	* Collect vars from source files, no framework, just project and given module name (internal use only method)
 	*/
 	function collect_vars_for_module () {
-// TODO: move out into submodule
 		no_graphics(true);
 
 		$module_name = preg_replace('/[^a-z0-9\_]/i', '', _strtolower(trim($_GET['id'])));
@@ -750,7 +816,13 @@ Fallback when no numbers matched (any string)
 	* Parse source code for translate variables
 	*/
 	function _parse_source_code_for_vars ($params = []) {
-// TODO: move out into submodule
+# TODO: test and optimize
+		$_include_php_pattern	= ['#\/(admin_modules|classes|functions|modules)#', '#\.php$#'];
+		$_include_stpl_pattern	= ['#\/(templates)#', '#\.stpl$#'];
+		$_exclude_pattern		= ['#\/(commands|docs|libs|scripts|sql|storage|tests)#', ''];
+		$_translate_php_pattern	= "/[\(\{\.\,\s\t=]+?(t)[\s\t]*?\([\s\t]*?('[^'\$]+?'|\"[^\"\$]+?\")/ims";
+		$_translate_stpl_pattern= "/\{(t)\([\"']*([\s\w\-\.\,\:\;\%\&\#\/\<\>]*)[\"']*[,]*[^\)\}]*\)\}/is";
+
 		$vars_array = [];
 
 		$php_path_pattern	= '';
@@ -762,35 +834,35 @@ Fallback when no numbers matched (any string)
 		}
 		if (!$params['only_project']) {
 			if (!$params['only_stpls']) {
-				$yf_framework_php_files	= _class('dir')->scan_dir(YF_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
+				$yf_framework_php_files	= _class('dir')->scan_dir(YF_PATH, true, $_include_php_pattern, $_exclude_pattern);
 			}
 			if (!$params['only_php']) {
-				$yf_framework_stpl_files = _class('dir')->scan_dir(YF_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
+				$yf_framework_stpl_files = _class('dir')->scan_dir(YF_PATH, true, $_include_stpl_pattern, $_exclude_pattern);
 			}
 		}
 		if (!$params['only_framework']) {
 			if (!$params['only_stpls']) {
-				$cur_project_php_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
+				$cur_project_php_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $_include_php_pattern, $_exclude_pattern);
 			}
 			if (!$params['only_php']) {
-				$cur_project_stpl_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
+				$cur_project_stpl_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $_include_stpl_pattern, $_exclude_pattern);
 			}
 		}
 		foreach ((array)$yf_framework_php_files as $file_name) {
 			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_php_pattern) as $cur_var_name => $code_lines) {
+			foreach ((array)$this->_get_vars_from_file_name($file_name, $_translate_php_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
 			}
 		}
 		foreach ((array)$cur_project_php_files as $file_name) {
 			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_php_pattern) as $cur_var_name => $code_lines) {
+			foreach ((array)$this->_get_vars_from_file_name($file_name, $_translate_php_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
 			}
 		}
 		foreach ((array)$yf_framework_stpl_files as $file_name) {
 			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_stpl_pattern) as $cur_var_name => $code_lines) {
+			foreach ((array)$this->_get_vars_from_file_name($file_name, $_translate_stpl_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
 			}
 		}
@@ -799,7 +871,7 @@ Fallback when no numbers matched (any string)
 			if ($stpl_path_pattern && !preg_match($stpl_path_pattern, $short_file_name)) {
 				continue;
 			}
-			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_stpl_pattern) as $cur_var_name => $code_lines) {
+			foreach ((array)$this->_get_vars_from_file_name($file_name, $_translate_stpl_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
 			}
 		}
@@ -811,7 +883,6 @@ Fallback when no numbers matched (any string)
 	* Get vars from the given file name
 	*/
 	function _get_vars_from_file_name($file_name = '', $pattern = '') {
-// TODO: move out into submodule
 		$vars_array = [];
 		if (empty($file_name)) {
 			return $vars_array;
@@ -842,11 +913,9 @@ Fallback when no numbers matched (any string)
 	* Return array of all used locations in vars
 	*/
 	function _get_all_vars_locations() {
-// TODO: move out into submodule
 		$used_locations = [];
-		$Q = db()->query('SELECT * FROM '.db('locale_vars').'');
-		while ($A = db()->fetch_assoc($Q)) {
-			foreach ((array)explode(';', $A['location']) as $cur_location) {
+		foreach ((array)from('locale_vars')->where_raw('location != ""')->get_2d('location,location AS l2') as $location) {
+			foreach ((array)explode(';', $location) as $cur_location) {
 				$cur_location = trim(substr($cur_location, 0, strpos($cur_location, ':')));
 				if (empty($cur_location)) {
 					continue;
@@ -854,7 +923,9 @@ Fallback when no numbers matched (any string)
 				$used_locations[$cur_location]++;
 			}
 		}
-		if (!empty($used_locations)) ksort($used_locations);
+		if (!empty($used_locations)) {
+			ksort($used_locations);
+		}
 		return $used_locations;
 	}
 
@@ -888,15 +959,15 @@ Fallback when no numbers matched (any string)
 		foreach (explode('|', 'id|locale|source|translation') as $f) {
 			$order_fields[$f] = $f;
 		}
-		$langs_for_select = $this->_langs_for_search;
+		$per_page = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000];
 		return form($r, ['filter' => true])
 			->text('value', 'Source var')
 			->text('translation')
-			->select_box('locale', $langs_for_select)
+			->select_box('locale', $this->_cur_langs)
 			->row_start()
 				->select_box('order_by', $order_fields, ['show_text' => '= Сортировка =', 'desc' => 'Сортировка'])
 				->select_box('order_direction', ['asc' => '⇑', 'desc' => '⇓'])
-				->select_box('per_page', self::$per_page_values, ['style' => 'width:100px', 'no_label' => 1])
+				->select_box('per_page', $per_page, ['style' => 'width:100px', 'no_label' => 1])
 			->row_end()
 			->save_and_clear();
 		;

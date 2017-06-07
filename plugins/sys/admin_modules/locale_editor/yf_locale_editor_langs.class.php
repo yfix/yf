@@ -5,6 +5,12 @@
 class yf_locale_editor_langs {
 
 	/**
+	*/
+	function _init () {
+		$this->_parent = module('locale_editor');
+	}
+
+	/**
 	* Some of the common languages with their English and native names
 	* Based on ISO 639 and http://people.w3.org/rishida/names/languages.html
 	*/

@@ -5,6 +5,12 @@
 class yf_locale_editor_autotranslate {
 
 	/**
+	*/
+	function _init () {
+		$this->_parent = module('locale_editor');
+	}
+
+	/**
 	* Automatic translator via Google translate
 	*/
 	function autotranslate() {
