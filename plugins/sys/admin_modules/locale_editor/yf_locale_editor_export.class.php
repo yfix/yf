@@ -22,53 +22,60 @@ class yf_locale_editor_export {
 				'lang' => 'required',
 				'format' => 'required'
 			])
-			->on_validate_ok(function(){
-				$p = &$_POST;
-				$lang = $p['lang'];
-				$to_export = [];
-				foreach ((array)$this->_parent->_get_all_vars() as $source => $a) {
-					if (!isset($a['translation'][$lang])) {
-						continue;
-					}
-					$tr = $a['translation'][$lang];
-					if (!strlen($tr)) {
-						continue;
-					}
-					$to_export[$source] = $tr;
-				}
-				if (!$to_export) {
-					return false;
-				}
-				$format = $p['format'];
-				$name = 'export_'.$lang.'_translation.'.$format;
-				$body = '';
-				if ($format == 'csv') {
-					$tmp = [];
-					foreach((array)$to_export as $k => $v) {
-						$tmp[] = [
-							'source' => $k,
-							'translation' => $v,
-						];
-					}
-					$to_export = $tmp;
-					unset($tmp);
-					$body = $this->_gen_csv($to_export);
-				}
-				$format == 'json'	&& $body = $this->_gen_json($to_export);
-				$format == 'yaml'	&& $body = $this->_gen_yaml($to_export);
-				$format == 'php'	&& $body = $this->_gen_php($to_export);
-				if ($body) {
-					return $this->_http_out($name, $body, $format, $p['no_download']);
-				}
-			})
+			->on_validate_ok(array(&$this, '_on_validate_ok'))
 			->select_box('lang', $this->_parent->_cur_langs)
 			->select_box('format', $this->_parent->_import_export_file_formats)
 #			->select_box('module', $this->_parent->_modules)
 #			->select_box('plugin', $plugins)
-			->yes_no_box('is_template')
-			->yes_no_box('no_download')
+#			->yes_no_box('is_template')
+			->yes_no_box('just_dump')
 			->save_and_back('Export')
 		;
+	}
+
+	/**
+	*/
+	function _on_validate_ok() {
+		$p = &$_POST;
+		$lang = $p['lang'];
+		$to_export = [];
+		foreach ((array)$this->_parent->_get_all_vars() as $source => $a) {
+			if (!isset($a['translation'][$lang])) {
+				continue;
+			}
+			$tr = $a['translation'][$lang];
+			if (!strlen($tr)) {
+				continue;
+			}
+			$to_export[$source] = $tr;
+		}
+		if (!$to_export) {
+			common()->message_error('Export failed, no translations');
+			return false;
+		}
+		$format = $p['format'];
+		$name = 'export_'.$lang.'_translation.'.$format;
+		$body = '';
+		if ($format == 'csv') {
+			$tmp = [];
+			foreach((array)$to_export as $k => $v) {
+				$tmp[] = [
+					'source' => $k,
+					'translation' => $v,
+				];
+			}
+			$to_export = $tmp;
+			unset($tmp);
+			$body = $this->_gen_csv($to_export);
+		}
+		$format == 'json'	&& $body = $this->_gen_json($to_export);
+		$format == 'yaml'	&& $body = $this->_gen_yaml($to_export);
+		$format == 'php'	&& $body = $this->_gen_php($to_export);
+		if (!strlen($body)) {
+			common()->message_error('Export failed, empty out');
+			return false;
+		}
+		return $this->_http_out($name, $body, $format, $p['just_dump']);
 	}
 
 	/**
@@ -102,7 +109,7 @@ class yf_locale_editor_export {
 		if (count($data) === 0) {
 			return false;
 		}
-		return trim(yaml_emit($data, YAML_UTF8_ENCODING, YAML_CRLN_BREAK), '.-'.PHP_EOL);
+		return trim(trim(yaml_emit($data, YAML_UTF8_ENCODING, YAML_CRLN_BREAK), '.-'.PHP_EOL));
 	}
 
 	/**
@@ -116,7 +123,7 @@ class yf_locale_editor_export {
 
 	/**
 	*/
-	function _http_out($name, $body, $format, $no_download = false) {
+	function _http_out($name, $body, $format, $just_dump = false) {
 		no_graphics(true);
 		$mime_map = [
 			'csv'	=> 'text/csv',
@@ -126,15 +133,17 @@ class yf_locale_editor_export {
 		];
 		!$name && $name = 'export_translation.'.$format;
 
-		header('Content-Type: '.$mime_map[$format].';charset=utf-8');
-		header('Content-Length: '.strlen($body));
-		if (!$no_download) {
+		if ($just_dump) {
+			header('Content-Type: text/plain;charset=utf-8');
+		} else {
+			header('Content-Type: '.$mime_map[$format].';charset=utf-8');
 			header('Content-Type: application/force-download');
 			header('Content-Type: application/octet-stream');
 			header('Content-Type: application/download');
 			header('Content-Disposition: attachment; filename="'.$name.'"');
 			header('Content-Transfer-Encoding: binary');
 		}
+		header('Content-Length: '.strlen($body));
 		echo $body;
 		exit();
 	}

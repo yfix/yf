@@ -740,7 +740,6 @@ Fallback when no numbers matched (any string)
 	* Export vars
 	*/
 	function export() {
-# TODO: testme
 		$cls = 'locale_editor'; return _class($cls.'_export', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
@@ -749,7 +748,7 @@ Fallback when no numbers matched (any string)
 	*/
 	function import() {
 # TODO: testme
-#		$cls = 'locale_editor'; return _class($cls.'_import', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+		$cls = 'locale_editor'; return _class($cls.'_import', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
