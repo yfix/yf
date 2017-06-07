@@ -666,8 +666,7 @@ Fallback when no numbers matched (any string)
 	* Cleanup variables (Delete not translated or missed vars)
 	*/
 	function cleanup () {
-# TODO: testme
-#		$cls = 'locale_editor'; return _class($cls.'_cleanup', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+		$cls = 'locale_editor'; return _class($cls.'_cleanup', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
