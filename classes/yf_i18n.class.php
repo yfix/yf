@@ -28,8 +28,6 @@ class yf_i18n {
 	public $CUR_CHARSET			= 'utf-8';
 	/** @var array @conf_skip Active languages */
 	public $LANGUAGES			= [];
-	/** @var bool Replace underscore '_' into space ' ' in translate_string */
-	public $REPLACE_UNDERSCORE	= true;
 	/** @var bool Translation on/off */
 	public $TRANSLATE_ENABLED	= true;
 	/** @var bool Try to find and insert not existed vars (only if DEBUG_MODE && TRANSLATE_ENABLED) */
@@ -260,11 +258,7 @@ class yf_i18n {
 		if ($this->VARS_IGNORE_CASE) {
 			$tmp = [];
 			foreach ((array)$this->TR_VARS[$lang] as $name => $val) {
-				$name = strtolower($name);
-				if ($this->REPLACE_UNDERSCORE) {
-					$name = str_replace(' ', '_', $name);
-					$name = str_replace("'", '&#39;', $name);
-				}
+				$name = _strtolower($name);
 				$tmp[$name] = $val;
 			}
 			$this->TR_VARS[$lang] = $tmp;
@@ -460,11 +454,7 @@ class yf_i18n {
 			$t = &$this->TR_VARS[$lang];
 			if ($this->VARS_IGNORE_CASE) {
 				$first = $in;
-				$in = strtolower($in);
-				if ($this->REPLACE_UNDERSCORE) {
-					$in = str_replace('&nbsp;', ' ', $in);
-					$in = str_replace(' ', '_', $in);
-				}
+				$in = _strtolower($in);
 			}
 			if (!strlen($prefix) && isset($t['::'.$_GET['object'].'::'. $in])) {
 				$prefix = '::'.$_GET['object'].'::';
@@ -489,24 +479,32 @@ class yf_i18n {
 				}
 			}
 		}
-		if ($this->REPLACE_UNDERSCORE && !$is_translated) {
-			$out = str_replace('_', ' ', $_source);
+		if (!empty($args) && is_array($args)) {
+			$tmp_out = $out;
+			$out = $this->_process_sub_patterns($out, $args);
+			if ($out != $tmp_out) {
+				$is_translated = true;
+			}
+			$out = strtr($out, $args);
+		}
+		if (!$is_translated) {
+			$out = $first;
 			if ($plen) {
 				$out = substr($out, $plen);
 			}
-		}
-		if (!empty($args) && is_array($args)) {
-			$out = $this->_process_sub_patterns($out, $args);
-			$out = strtr($out, $args);
-		}
-		if ($this->TRACK_FIRST_LETTER_CASE && $is_translated) {
-			$input = $this->VARS_IGNORE_CASE ? $first : $in;
-			$f_s = substr($input, 0, 1);
-			$f_t = _substr($out, 0, 1);
-			$f_s_lower = strtolower($f_s) == $f_s;
-			$f_t_lower = _strtolower($f_t) == $f_t;
-			if (!$f_s_lower && $f_t_lower) {
-				$out = _strtoupper($f_t). _substr($out, 1);
+			if (!empty($args) && is_array($args)) {
+				$out = strtr($out, $args);
+			}
+		} elseif ($is_translated) {
+			if ($this->TRACK_FIRST_LETTER_CASE) {
+				$input = $in;
+				$f_s = substr($input, 0, 1);
+				$f_t = _substr($out, 0, 1);
+				$f_s_lower = strtolower($f_s) == $f_s;
+				$f_t_lower = _strtolower($f_t) == $f_t;
+				if (!$f_s_lower && $f_t_lower) {
+					$out = _strtoupper($f_t). _substr($out, 1);
+				}
 			}
 		}
 		if (DEBUG_MODE) {
