@@ -25,6 +25,8 @@ class yf_locale_editor {
 	public $LOCATIONS_EDIT_LINKS	= true;
 	/** @var bool Ignore case on import/export */
 	public $VARS_IGNORE_CASE		= true;
+	/** @var bool Ignore case on import/export */
+	public $FILE_MANAGER_ALLOWED	= false;
 	/** @var bool @conf_skip */
 	private	$_preload_complete = false;
 	/** @var array @conf_skip */
@@ -255,7 +257,7 @@ Fallback when no numbers matched (any string)
 		$id && $a = from('locale_langs')->whereid($id)->get();
 		if (!empty($a) && !$a['is_default']) {
 			db()->update_safe('locale_langs', ['is_default' => 0], '1 = 1');
-			db()->update_safe('locale_langs', ['is_default' => 1], 'id = '.(int)$id));
+			db()->update_safe('locale_langs', ['is_default' => 1], 'id = '.(int)$id);
 			common()->admin_wall_add(['locale lang '.$a['name'].' made default', $id]);
 			cache_del(['locale_langs']);
 		}
@@ -354,11 +356,11 @@ Fallback when no numbers matched (any string)
 			} elseif (substr($name, 0, $app_path_len) === APP_PATH) {
 				$name = '[APP] '.substr($name, $app_path_len);
 			}
-			$name .= ' (vars: '.$vars_by_path[$path].')';
+			$name .= ' <span class="text-info">[vars: '.(int)$vars_by_path[$path].']</span>';
 			$items[$i] = [
 				'parent_id'	=> 0,
 				'name'		=> $name,
-				'link'		=> url('/file_manager/view/'.urlencode($path)),
+				'link'		=> $this->FILE_MANAGER_ALLOWED ? url('/file_manager/view/'.urlencode($path)) : 'javascript:void()',
 				'id'		=> 'lang_file_'.$i,
 			];
 			$div_id = 'editor_html_'.$lang.'_'.$i;
