@@ -276,9 +276,9 @@ class yf_i18n {
 				return [];
 			}
 			$sql = 'SELECT v.value AS source, t.value AS translation
-				FROM '.db('locale_vars').' AS v, '.db('locale_translate').' AS t
-				WHERE t.var_id=v.id
-					AND t.locale="'._es($lang).'"
+				FROM '.db('locale_vars').' AS v
+				INNER JOIN '.db('locale_translate').' AS t ON t.var_id = v.id
+				WHERE t.locale = "'._es($lang).'"
 					AND t.value != ""
 					AND t.value != v.value';
 			return db()->get_2d($sql);
@@ -302,8 +302,8 @@ class yf_i18n {
 			}
 			$sql = 'SELECT name, translation
 				FROM '.db('locale_user_tr').'
-				WHERE user_id='.intval($user_id).'
-					AND locale="'._es($lang).'"
+				WHERE user_id = '.intval($user_id).'
+					AND locale = "'._es($lang).'"
 					AND translation != ""
 					AND translation != name';
 			return db()->get_2d($sql);
