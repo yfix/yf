@@ -29,7 +29,7 @@ class yf_locale_editor_export {
 #			->select_box('plugin', $plugins)
 #			->yes_no_box('is_template')
 			->yes_no_box('just_dump')
-			->save_and_back('Export')
+			->save_and_back('', ['desc' => 'Export'])
 		;
 	}
 

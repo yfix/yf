@@ -455,6 +455,7 @@ Fallback when no numbers matched (any string)
 				$vars[$source]['locale'][$lang] = $lang;
 				$vars[$source]['translation'][$lang] = $tr;
 			}
+			$vars[$source]['var_id'] = $vid;
 		}
 		return $vars;
 	}
@@ -583,8 +584,10 @@ Fallback when no numbers matched (any string)
 		}
 		$files && $storages[] = '<div class="col-md-offset-3"><h3>Files</h3><b>'.implode('<br>', $files).'</b></div>';
 		$langs_in_db_icons = [];
-		foreach(array_keys($var_tr_db) as $lang) {
-			$langs_in_db_icons[$lang] = $this->_lang_icon($lang, true);
+		if ($var_tr_db) {
+			foreach((array)array_keys($var_tr_db) as $lang) {
+				$langs_in_db_icons[$lang] = $this->_lang_icon($lang, true);
+			}
 		}
 		$var_tr_db && $storages[] = '<div class="col-md-offset-3"><h3>Db</h3><b>'.implode(' ', $langs_in_db_icons).'</b></div>';
 
@@ -816,6 +819,7 @@ Fallback when no numbers matched (any string)
 	*/
 	function _parse_source_code_for_vars ($params = []) {
 # TODO: test and optimize
+# TODO: collect angular variables like this: {{'var'|translate}}
 		$_include_php_pattern	= ['#\/(admin_modules|classes|functions|modules)#', '#\.php$#'];
 		$_include_stpl_pattern	= ['#\/(templates)#', '#\.stpl$#'];
 		$_exclude_pattern		= ['#\/(commands|docs|libs|scripts|sql|storage|tests)#', ''];
