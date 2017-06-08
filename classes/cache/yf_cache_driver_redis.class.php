@@ -75,7 +75,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$data = json_encode($data);
+		$data = json_encode($data, JSON_PRETTY_PRINT);
 		return $this->_connection->setex($name, $ttl ?: $this->DEFAULT_TTL, $data) ?: null;
 	}
 

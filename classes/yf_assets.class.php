@@ -1630,7 +1630,7 @@ class yf_assets {
 				$data[$k] = $v;
 			}
 		}
-		return file_put_contents($cache_path.'.info', json_encode($data));
+		return file_put_contents($cache_path.'.info', json_encode($data, JSON_PRETTY_PRINT));
 	}
 
 	/**

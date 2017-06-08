@@ -1451,7 +1451,7 @@ class yf_html {
 		}
 		asset('jq-select2');
 		// prepare js options
-		$_js_options = json_encode( $js_options );
+		$_js_options = json_encode($js_options, JSON_PRETTY_PRINT);
 		$js_functions && $_js_options = str_replace( array_keys( $js_functions ), array_values( $js_functions ), $_js_options  );
 		jquery('$("#'.addslashes($extra['force_id']).'").select2('. $_js_options .');');
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
@@ -1490,7 +1490,7 @@ class yf_html {
 			'search_contains'			=> true,
 			// put default js options here
 		];
-		jquery('$("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).');');
+		jquery('$("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options, JSON_PRETTY_PRINT).');');
 
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		return $this->$func($extra, $values, $selected);
@@ -1544,7 +1544,7 @@ class yf_html {
 			};
 
 			phone.intlTelInput($.merge(
-				'.json_encode($js_options).'
+				'.json_encode($js_options, JSON_PRETTY_PRINT).'
 				, {
 					geoIpLookup : function(callback) {
 						$.get("//ipinfo.io", function() {}, "jsonp").always(function(resp) {
@@ -1600,7 +1600,7 @@ class yf_html {
 		];
 		jquery('
 			var select_box = $("#'.addslashes($extra['force_id']).'")
-			select_box.imagepicker('.json_encode($js_options).');
+			select_box.imagepicker('.json_encode($js_options, JSON_PRETTY_PRINT).');
 
 			var container = select_box.next("ul.thumbnails");
 			container.imagesLoaded(function(){
