@@ -369,7 +369,7 @@ if (!function_exists('load_db_class')) {
 			return $_loaded_class;
 		}
 		$classes = [
-			'db'	=> INCLUDE_PATH.'classes/db.class.php',
+			'db'	=> APP_PATH.'classes/db.class.php',
 			'yf_db'	=> YF_PATH.'classes/yf_db.class.php',
 		];
 		foreach ((array)$classes as $cl => $f) {
@@ -473,20 +473,16 @@ if (!function_exists('class_basename')) {
 	}
 }
 
-// base64 safe for use in urls
+# base64 safe for use in urls
+# https://en.wikipedia.org/wiki/Base64#Implementations_and_history
+# https://tools.ietf.org/html/rfc7515#appendix-C
 if (!function_exists('base64_encode_safe')) {
 	function base64_encode_safe($in) {
-		if (!strlen($in) || preg_match('~^[a-z0-9=\*-]{2,2000}$~i', $in)) {
-			return $in;
-		}
-		return str_replace(['/', '+'], ['*', '-'], base64_encode($in));
+		return rtrim(strtr(base64_encode($in), '+/', '-_'), '=');
 	}
 }
 if (!function_exists('base64_decode_safe')) {
 	function base64_decode_safe($in) {
-		if (!strlen($in) || !preg_match('~^[a-z0-9=\*-]{2,2000}$~i', $in)) {
-			return $in;
-		}
-		return base64_decode(str_replace(['*', '-'], ['/', '+'], $in));
+		return base64_decode(strtr($in, '-_', '+/'));
 	}
 }

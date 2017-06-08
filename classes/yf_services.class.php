@@ -38,27 +38,37 @@ class yf_services {
 		if (isset($this->php_libs[$name])) {
 			return $this->php_libs[$name];
 		}
-		$dir = 'share/services/';
-		$file = $name.'.php';
-		$paths = [
-			'app'		=> APP_PATH. $dir. $file,
-			'project'	=> PROJECT_PATH. $dir. $file,
-			'yf'		=> YF_PATH. $dir. $file,
-		];
-		$found_path = '';
-		foreach ($paths as $location => $path) {
-			if (file_exists($path)) {
-				$found_path = $path;
-				break;
+		if (!isset($this->_paths_cache)) {
+			$suffix = '.php';
+			$pattern = '{,plugins/*/}{services/,share/services/}{*,*/*}'. $suffix;
+			$globs = [
+				'framework'	=> YF_PATH. $pattern,
+				'app'		=> APP_PATH. $pattern,
+			];
+			if (is_site_path()) {
+				$globs['site'] = SITE_PATH. $pattern;
+			}
+			$slen = strlen($suffix);
+			$paths = [];
+			foreach((array)$globs as $gname => $glob) {
+				foreach(glob($glob, GLOB_BRACE) as $_path) {
+					$_name = substr(basename($_path), 0, -$slen);
+					$paths[$_name] = $_path;
+				}
+			}
+			// This double iterating code ensures we can inherit/replace services with same name inside project
+			foreach((array)$paths as $_name => $_path) {
+				$this->_paths_cache[$_name] = $_path;
 			}
 		}
-		if (!$found_path) {
-			throw new Exception('main '.__FUNCTION__.' not found: '.$name);
+		$path = $this->_paths_cache[$name];
+		if (!$path || !file_exists($path)) {
+			throw new Exception('services '.__FUNCTION__.' "'.$name.'" not found');
 			return false;
 		}
 		ob_start();
-		require_once $found_path;
-		$this->php_libs[$name] = $found_path;
+		require_once $path;
+		$this->php_libs[$name] = $path;
 		return ob_get_clean();
 	}
 
@@ -116,6 +126,22 @@ class yf_services {
 		$path = tempnam(sys_get_temp_dir(), 'haml');
 		file_put_contents($path, $content);
 		return $executor->render($path, $params);
+	}
+
+	/**
+	*/
+	function base58_encode($in) {
+		$this->require_php_lib('base58');
+		$base58 = new StephenHill\Base58();
+		return $base58->encode($in);
+	}
+
+	/**
+	*/
+	function base58_decode($in) {
+		$this->require_php_lib('base58');
+		$base58 = new StephenHill\Base58();
+		return $base58->decode($in);
 	}
 
 	/**
