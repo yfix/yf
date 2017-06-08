@@ -234,13 +234,13 @@ class yf_main {
 		$refresh && $params['no_cache'] = true;
 
 		$enabled = $this->USE_SYSTEM_CACHE && !$params['no_cache'];
-		if ($enabled || $refresh) {
-			$cache = cache();
-		}
 		// speed optimization with 2nd layer of caching
 		$memory_enabled = ($params['no_cache'] || $refresh || $this->is_console()) ? false : true;
 		if ($memory_enabled && isset($this->_getset_cache[$name])) {
 			return $this->_getset_cache[$name];
+		}
+		if ($enabled || $refresh) {
+			$cache = cache();
 		}
 		$enabled && $result = $cache->get($name, $ttl, $params);
 		$need_result = true;
@@ -254,9 +254,9 @@ class yf_main {
 			if ($enabled || $refresh) {
 				$cache->set($name, $result, $ttl);
 			}
-			if ($memory_enabled || $refresh) {
-				$this->_getset_cache[$name] = $result;
-			}
+		}
+		if ($memory_enabled || $refresh) {
+			$this->_getset_cache[$name] = $result;
 		}
 		return $result;
 	}
@@ -1333,61 +1333,43 @@ class yf_main {
 	* Get named data array
 	*/
 	function get_data($name = '', $force_ttl = 0, $params = []) {
-		if (DEBUG_MODE) {
-			$time_start = microtime(true);
-		}
+		DEBUG_MODE && $time_start = microtime(true);
 		if (empty($name)) {
 			return null;
 		}
-		$cache_used = false;
-		$data = null;
-		$cache_obj_available = is_object($this->modules['cache']);
-		if (!empty($this->USE_SYSTEM_CACHE) && $cache_obj_available) {
-			$data = $this->modules['cache']->get($name, $force_ttl, $params);
-			$cache_used = true;
-		}
-		$no_cache = false;
-		if (empty($data) && !is_array($data)) {
-			if (!$this->_data_handlers_loaded) {
-				$this->_load_data_handlers();
+		$cache_name = MAIN_TYPE.':'.$name;
+		// Example: geo_regions, ["country" => "UA", "lang" => "ru"] will be saved as geo_regions:country_UA:lang_ru
+		if (!empty($params) && is_array($params)) {
+			foreach ((array)$params as $k => $v) {
+				strlen($k) && strlen($v) && $cache_name .= ':'.$k.'_'.$v;
 			}
-			$name_to_save = $name;
-			$params_to_eval = '';
-			// Example: geo_regions, array(country => UA)  will be saved as geo_regions_countryUA
-			if (!empty($params) && is_array($params)) {
-				foreach ((array)$params as $k => $v) {
-					$name_to_save .= '_'.$k. $v;
-				}
+		}
+		if (is_object($this->db) && !$this->db->_connected) {
+#			$params['no_cache'] = true;
+		}
+		$data = $this->getset('get_data:'.$cache_name, function() use ($name, $params) {
+			!$this->_data_handlers_loaded && $this->_load_data_handlers();
+			if (!isset($this->data_handlers[$name])) {
+				return [];
 			}
 			$handler = $this->data_handlers[$name];
-			if (!empty($handler)) {
-				if (is_string($handler)) {
-					$data = include $handler;
-					if (is_callable($data)) {
-						$data = $data($params);
-					}
-				} elseif (is_callable($handler)) {
-					$data = $handler($params);
+			if (is_string($handler)) {
+				$data = include $handler;
+				if (is_callable($data)) {
+					$data = $data($params);
 				}
-				if (!$data) {
-					$data = [];
-				}
+			} elseif (is_callable($handler)) {
+				$data = $handler($params);
 			}
-			// Do not put empty data if database could not connected (not hiding mistakes with empty get_data)
-			if (empty($data) && is_object($this->db) && !$this->db->_connected) {
-				$no_cache = true;
-			}
-			if ($this->USE_SYSTEM_CACHE && !$no_cache && $cache_obj_available) {
-				$this->modules['cache']->set($name_to_save, $data);
-			}
-		}
+			return $data ?: [];
+		}, $force_ttl, $params);
+
 		if (DEBUG_MODE) {
 			debug('main_get_data[]', [
 				'name'		=> $name,
-				'real_name'	=> $name_to_save,
+				'cache_name'=> $cache_name,
 				'data'		=> $data,
 				'params'	=> $params,
-				'cache_used'=> (int)$cache_used,
 				'force_ttl'	=> $force_ttl,
 				'time'		=> round(microtime(true) - $time_start, 5),
 				'trace'		=> $this->trace_string(),
