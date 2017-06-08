@@ -237,6 +237,11 @@ class yf_main {
 		if ($enabled || $refresh) {
 			$cache = cache();
 		}
+		// speed optimization with 2nd layer of caching
+		$memory_enabled = ($params['no_cache'] || $refresh || $this->is_console()) ? false : true;
+		if ($memory_enabled && isset($this->_getset_cache[$name])) {
+			return $this->_getset_cache[$name];
+		}
 		$enabled && $result = $cache->get($name, $ttl, $params);
 		$need_result = true;
 		if ($result) {
@@ -248,6 +253,9 @@ class yf_main {
 			$result = $func($name, $ttl, $params);
 			if ($enabled || $refresh) {
 				$cache->set($name, $result, $ttl);
+			}
+			if ($memory_enabled || $refresh) {
+				$this->_getset_cache[$name] = $result;
 			}
 		}
 		return $result;
@@ -265,7 +273,6 @@ class yf_main {
 
 		$paths = [
 			'app'		=> APP_PATH.'share/fast_init.php',
-			'project'	=> PROJECT_PATH.'share/fast_init.php',
 			'yf'		=> YF_PATH.'share/fast_init.php',
 		];
 		foreach ($paths as $path) {
@@ -458,7 +465,6 @@ class yf_main {
 		$this->events && $this->events->fire('main.before_files');
 		if ($this->NO_DB_CONNECT == 0) {
 			$include_files[] = CONFIG_PATH. 'db_setup.php';
-			$include_files[] = PROJECT_PATH. 'db_setup.php';
 		}
 		foreach ((array)conf('include_files::'.MAIN_TYPE) as $path) {
 			$include_files[] = $path;
@@ -468,7 +474,6 @@ class yf_main {
 		}
 		$funcs_paths = [
 			'app'		=> APP_PATH.'share/functions/common_funcs.php',
-			'project'	=> PROJECT_PATH.'share/functions/common_funcs.php',
 			'yf'		=> YF_PATH.'share/functions/'.YF_PREFIX.'common_funcs.php',
 		];
 		foreach ($funcs_paths as $path) {
@@ -527,7 +532,6 @@ class yf_main {
 		$pattern = '{,plugins/*/}{,share/}events/*'. $ext;
 		$globs = [
 			'framework'	=> YF_PATH. $pattern,
-			'project'	=> PROJECT_PATH. $pattern,
 			'app'		=> APP_PATH. $pattern,
 		];
 		$ext_len = strlen($ext);
@@ -685,12 +689,6 @@ class yf_main {
 	*/
 	function init_settings() {
 		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-#		$lang = 'en'; // default lang
-#		if (defined('DEFAULT_LANG') && DEFAULT_LANG != '') {
-#			$lang = DEFAULT_LANG;
-#		}
-#		conf('language', $lang);
-#		conf('charset',	'utf-8');
 		$output_caching = conf('output_caching');
 		if (isset($output_caching)) {
 			$this->OUTPUT_CACHING = $output_caching;
@@ -927,7 +925,6 @@ class yf_main {
 		// Order matters for plugins_classes !!
 		$sets = [
 			'framework'	=> YF_PATH.'plugins/*/',
-			'project'	=> PROJECT_PATH.'plugins/*/',
 			'app'		=> APP_PATH.'plugins/*/',
 		];
 		$_plen = strlen(YF_PREFIX);
@@ -1428,7 +1425,6 @@ class yf_main {
 		$pattern = '{,plugins/*/}{,share/}data_handlers/*'. $suffix;
 		$globs = [
 			'framework'		=> YF_PATH. $pattern,
-			'project'		=> PROJECT_PATH. $pattern,
 			'app'			=> APP_PATH. $pattern,
 		];
 		$strlen_suffix = strlen($suffix);
@@ -1577,9 +1573,7 @@ class yf_main {
 		$this->_ORIGINAL_VARS_GET = $_GET;
 		$this->_ORIGINAL_VARS_SERVER = $_SERVER;
 
-		if (!defined('DEBUG_MODE')) {
-			define('DEBUG_MODE', false);
-		}
+		!defined('DEBUG_MODE') && define('DEBUG_MODE', false);
 		if (DEBUG_MODE) {
 			ini_set('display_errors', 'stdout');
 		}
@@ -1609,14 +1603,13 @@ class yf_main {
 				}
 			}
 		}
+		defined('DEV_MODE') && conf('DEV_MODE', DEV_MODE);
+		$this->DEV_MODE = conf('DEV_MODE');
+
 		define('OS_WINDOWS', substr(PHP_OS, 0, 3) == 'WIN');
 
-		if (defined('DEV_MODE')) {
-			conf('DEV_MODE', DEV_MODE);
-		}
-		$this->DEV_MODE = conf('DEV_MODE');
 		$this->HOSTNAME = php_uname('n');
-		// Check required params
+
 		if (!defined('INCLUDE_PATH')) {
 			if ($this->is_console()) {
 				$_trace = debug_backtrace();
@@ -1631,38 +1624,24 @@ class yf_main {
 		// Alias
 		define('PROJECT_PATH',	INCLUDE_PATH);
 		// Framework root filesystem path
-		if (!defined('YF_PATH')) {
-			define('YF_PATH', dirname(PROJECT_PATH).'/yf/');
-		}
+		!defined('YF_PATH') && define('YF_PATH', dirname(PROJECT_PATH).'/yf/');
 		// Project-level application path, where will be other important subfolders like: APP_PATH.'www/', APP_PATH.'docs/', APP_PATH.'tests/',
-		if (!defined('APP_PATH')) {
-			define('APP_PATH', dirname(PROJECT_PATH).'/');
-		}
+		!defined('APP_PATH') && define('APP_PATH', dirname(PROJECT_PATH).'/');
 		// Filesystem path for configuration files, including db_setup.php and so on
-		if (!defined('CONFIG_PATH')) {
-			define('CONFIG_PATH', APP_PATH.'config/');
-		}
+		!defined('CONFIG_PATH') && define('CONFIG_PATH', APP_PATH.'config/');
 		// Filesystem path for various storage needs: logs, sessions, other files that should not be accessible from WEB
-		if (!defined('STORAGE_PATH')) {
-			define('STORAGE_PATH', APP_PATH.'storage/');
-		}
+		!defined('STORAGE_PATH') && define('STORAGE_PATH', APP_PATH.'storage/');
 		// Filesystem path to logs, usually should be at least one level up from WEB_PATH to be not accessible from web server
-		if (!defined('LOGS_PATH')) {
-			define('LOGS_PATH', STORAGE_PATH.'logs/');
-		}
+		!defined('LOGS_PATH') && define('LOGS_PATH', STORAGE_PATH.'logs/');
 		// Uploads path should be used for various uploaded content accessible from WEB_PATH
-		if (!defined('UPLOADS_PATH')) {
-			define('UPLOADS_PATH', PROJECT_PATH.'uploads/');
-		}
+		!defined('UPLOADS_PATH') && define('UPLOADS_PATH', PROJECT_PATH.'uploads/');
 		// Website inside project FS base path. Recommended to use from now instead of REAL_PATH
 		if (!defined('SITE_PATH')) {
 			list($found_site, $found_dir) = $this->_find_site();
 			define('SITE_PATH', $found_site ? $found_dir. $found_site.'/' : PROJECT_PATH);
 		}
 		// Alias of SITE_PATH. Compatibility with old code. DEPRECATED
-		if (!defined('REAL_PATH')) {
-			define('REAL_PATH', SITE_PATH);
-		}
+		!defined('REAL_PATH') && define('REAL_PATH', SITE_PATH);
 		// Set WEB_PATH (if not done yet)
 		if (!defined('WEB_PATH')) {
 			$request_uri	= $_SERVER['REQUEST_URI'];
@@ -1692,15 +1671,9 @@ class yf_main {
 			define('WEB_DOMAIN', parse_url(WEB_PATH, PHP_URL_HOST));
 		}
 		// Should be different that WEB_PATH to distribute static content from other subdomain
-		if (!defined('MEDIA_PATH')) {
-			define('MEDIA_PATH', WEB_PATH);
-		}
-		if (!defined('ADMIN_SITE_PATH')) {
-			define('ADMIN_SITE_PATH', SITE_PATH.'admin/');
-		}
-		if (!defined('ADMIN_WEB_PATH')) {
-			define('ADMIN_WEB_PATH', WEB_PATH.'admin/');
-		}
+		!defined('MEDIA_PATH') && define('MEDIA_PATH', WEB_PATH);
+		!defined('ADMIN_SITE_PATH') && define('ADMIN_SITE_PATH', SITE_PATH.'admin/');
+		!defined('ADMIN_WEB_PATH') && define('ADMIN_WEB_PATH', WEB_PATH.'admin/');
 		// Check if current page is called via AJAX call from javascript
 		conf('IS_AJAX', (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || !empty($_GET['ajax_mode'])) ? 1 : 0);
 
@@ -1736,9 +1709,7 @@ class yf_main {
 		if (!$_GET['action']) {
 			$_GET['action'] = defined('DEFAULT_ACTION') ? DEFAULT_ACTION : 'show';
 		}
-		if (!conf('css_framework')) {
-			conf('css_framework', 'bs2');
-		}
+		!conf('css_framework') && conf('css_framework', 'bs3');
 	}
 
 	/**
