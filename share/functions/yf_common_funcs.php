@@ -486,3 +486,15 @@ if (!function_exists('base64_decode_safe')) {
 		return base64_decode(strtr($in, '-_', '+/'));
 	}
 }
+
+# https://en.wikipedia.org/wiki/Base58
+if (!function_exists('base58_encode')) {
+	function base58_encode($in) {
+		return services()->base58_encode($in);
+	}
+}
+if (!function_exists('base58_decode')) {
+	function base58_decode($in) {
+		return services()->base58_decode($in);
+	}
+}
