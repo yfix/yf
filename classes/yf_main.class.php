@@ -237,7 +237,7 @@ class yf_main {
 		// speed optimization with 2nd layer of caching
 		$memory_enabled = ($params['no_cache'] || $refresh || $this->is_console()) ? false : true;
 		if ($memory_enabled && isset($this->_getset_cache[$name])) {
-			return $this->_getset_cache[$name];
+			return $this->_getset_cache[$name]['result'];
 		}
 		if ($enabled || $refresh) {
 			$cache = cache();
@@ -256,7 +256,7 @@ class yf_main {
 			}
 		}
 		if ($memory_enabled || $refresh) {
-			$this->_getset_cache[$name] = $result;
+			$this->_getset_cache[$name]['result'] = $result;
 		}
 		return $result;
 	}

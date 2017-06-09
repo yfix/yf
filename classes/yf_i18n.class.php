@@ -281,7 +281,7 @@ class yf_i18n {
 				WHERE t.locale = "'._es($lang).'"
 					AND t.value != ""
 					AND t.value != v.value';
-			return db()->get_2d($sql);
+			return db()->get_2d($sql) ?: [];
 		});
 		foreach ((array)$data as $k => $v) {
 			$this->TR_VARS[$lang][$k] = $v;
@@ -306,7 +306,7 @@ class yf_i18n {
 					AND locale = "'._es($lang).'"
 					AND translation != ""
 					AND translation != name';
-			return db()->get_2d($sql);
+			return db()->get_2d($sql) ?: [];
 		});
 		foreach ((array)$data as $k => $v) {
 			$this->TR_VARS[$lang][$k] = $v;
