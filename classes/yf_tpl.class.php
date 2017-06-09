@@ -476,7 +476,7 @@ class yf_tpl {
 
 	/**
 	*/
-	function _get_cached_paths($name = '') {
+	function _get_cached_paths() {
 		$cache_name = __FUNCTION__.'_'.MAIN_TYPE;
 		if (isset($this->$cache_name)) {
 			return $this->$cache_name;

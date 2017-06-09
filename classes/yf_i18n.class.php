@@ -271,7 +271,7 @@ class yf_i18n {
 	* Default storage of translations
 	*/
 	function _load_lang_get_vars_from_db($lang) {
-		$data = getset('locale_translate_'.$lang, function(){
+		$data = getset('locale_translate_'.$lang, function() use ($lang) {
 			if (!main()->is_db()) {
 				return [];
 			}
@@ -296,7 +296,7 @@ class yf_i18n {
 		if (!$this->ALLOW_USER_TRANSLATE || !$user_id) {
 			return false;
 		}
-		$data = getset('locale_user_translate_'.$lang.'_'.$user_id, function(){
+		$data = getset('locale_user_translate_'.$lang.'_'.$user_id, function() use ($lang, $user_id) {
 			if (!main()->is_db()) {
 				return [];
 			}
