@@ -16,13 +16,22 @@ class yf_locale_editor_import {
 		$a['back_link'] = url('/@object/vars');
 		$a['redirect_link'] = $a['back_link'];
 		!$a['lang'] && $a['lang'] = 'en';
+		// To ensure that currently active langs are in top of the list
+		$langs = [];
+		foreach ((array)$this->_parent->_cur_langs as $lang => $name) {
+			$langs[$lang] = $name;
+		}
+		$langs[''] = '-------------';
+		foreach ((array)$this->_parent->_langs as $lang => $name) {
+			$langs[$lang] = $name;
+		}
 		return form($a + (array)$_POST)
 			->validate([
 				'lang' => 'required',
 				'format' => 'required'
 			])
 			->on_validate_ok(array(&$this, '_on_validate_ok'))
-			->select_box('lang', $this->_parent->_langs)
+			->select_box('lang', $langs)
 			->select_box('format', $this->_parent->_import_export_file_formats)
 			->file('file')
 			->yes_no_box('keep_existing')
@@ -154,7 +163,7 @@ class yf_locale_editor_import {
 				}
 			}
 			foreach ((array)$to_update as $source => $tr) {
-				$var_id = (int)$ids['var_id'];
+				$var_id = (int)$ids[$source];
 				if (!$var_id) {
 					$failed[$source] = $tr;
 					$stats['failed']++;
