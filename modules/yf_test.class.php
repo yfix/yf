@@ -182,7 +182,7 @@ class yf_test {
 	/**
 	*/
 	function sass() {
-		require_php_lib('scssphp');
+		require_php_lib('scss');
 		$raw = '
 			$color: #abc;
 			body { background-color: lighten($color, 20%); }
@@ -196,7 +196,7 @@ class yf_test {
 	/**
 	*/
 	function less() {
-		require_php_lib('lessphp');
+		require_php_lib('less');
 		$raw = 'body { padding: 3 + 4px }';
 		$less = new \lessc;
 		$css = $less->compile($raw);
@@ -207,7 +207,7 @@ class yf_test {
 	/**
 	*/
 	function coffee() {
-		require_php_lib('coffeescript_php');
+		require_php_lib('coffeescript');
 		$raw = 'alert "I knew it!" if elvis?';
 		$js = \CoffeeScript\Compiler::compile($raw, ['header' => false]);
 		coffee($raw);
@@ -217,7 +217,7 @@ class yf_test {
 	/**
 	*/
 	function jade() {
-		require_php_lib('jade_php');
+		require_php_lib('jade');
 		$raw = '
 div
   address

@@ -2,7 +2,10 @@
 <?php
 
 $config = [
-	'require_services' => ['random_compat','phpasn1'],
+	'require_services' => [
+		'random_compat',
+		'phpasn1',
+	],
 	'git_urls' => ['https://github.com/phpecc/phpecc.git' => 'mdanter_ecc/'],
 	'autoload_config' => ['mdanter_ecc/src/' => 'Mdanter\Ecc'],
 	'example' => function() {

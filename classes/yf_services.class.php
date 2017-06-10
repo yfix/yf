@@ -84,7 +84,7 @@ class yf_services {
 	* Process and output JADE content
 	*/
 	function jade($content, $params = []) {
-		$this->require_php_lib('jade_php');
+		$this->require_php_lib('jade');
 		$dumper = new \Everzet\Jade\Dumper\PHPDumper();
 		$parser = new \Everzet\Jade\Parser(new \Everzet\Jade\Lexer\Lexer());
 		$jade   = new \Everzet\Jade\Jade($parser, $dumper);
@@ -94,7 +94,7 @@ class yf_services {
 	/**
 	*/
 	function sass($content, $params = []) {
-		$this->require_php_lib('scssphp');
+		$this->require_php_lib('scss');
 		$scss = new scssc();
 		return $scss->compile($content);
 	}
@@ -102,7 +102,7 @@ class yf_services {
 	/**
 	*/
 	function less($content, $params = []) {
-		$this->require_php_lib('lessphp');
+		$this->require_php_lib('less');
 		$less = new \lessc;
 		return $less->compile($content);
 	}
@@ -110,7 +110,7 @@ class yf_services {
 	/**
 	*/
 	function coffee($content, $params = []) {
-		$this->require_php_lib('coffeescript_php');
+		$this->require_php_lib('coffeescript');
 		return \CoffeeScript\Compiler::compile($content, ['header' => false]);
 	}
 
@@ -130,6 +130,12 @@ class yf_services {
 
 	/**
 	*/
+	function markdown($content, $params = []) {
+// TODO: mthaml consists one of these
+	}
+
+	/**
+	*/
 	function base58_encode($in) {
 		$this->require_php_lib('base58');
 		$base58 = new StephenHill\Base58();
@@ -142,18 +148,6 @@ class yf_services {
 		$this->require_php_lib('base58');
 		$base58 = new StephenHill\Base58();
 		return $base58->decode($in);
-	}
-
-	/**
-	*/
-	function markdown($content, $params = []) {
-// TODO: mthaml consists one of these
-	}
-
-	/**
-	*/
-	function yaml($content, $params = []) {
-// TODO
 	}
 
 	/**

@@ -2,7 +2,13 @@
 <?php
 
 $config = [
-	'require_services' => ['sf_process', 'monolog', 'psr_log', 'evenement', 'temporary_fs'],
+	'require_services' => [
+		'sf_process',
+		'monolog',
+		'psr_log',
+		'evenement',
+		'temporary_fs',
+	],
 	'git_urls' => ['https://github.com/alchemy-fr/BinaryDriver.git' => 'binary_driver/'],
 	'autoload_config' => ['binary_driver/src/Alchemy/BinaryDriver/' => 'Alchemy\BinaryDriver'],
 	'example' => function() {

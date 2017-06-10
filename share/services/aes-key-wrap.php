@@ -2,7 +2,10 @@
 <?php
 
 $config = [
-	'require_services' => ['beberlei_assert','sf_polyfill_mbstring'],
+	'require_services' => [
+		'beberlei_assert',
+		'sf_polyfill_mbstring',
+	],
 	'git_urls' => ['https://github.com/Spomky-Labs/aes-key-wrap.git' => 'aes-key-wrap/'],
 	'autoload_config' => ['aes-key-wrap/src/' => 'AESKW'],
 	'example' => function() {

@@ -61,7 +61,7 @@ class yf_ssh {
 			$this->DRIVER = 'phpseclib';
 		}
 		if ($this->DRIVER == 'phpseclib') {
-			require_php_lib('phpseclib');
+			require_php_lib('phpseclib_v1');
 		}
 		if ($this->DRIVER == 'phpseclib' && !class_exists('Net_SSH2')) {
 			trigger_error('phpseclib Net_SSH2 not found', E_USER_WARNING);

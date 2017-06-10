@@ -2,8 +2,8 @@
 <?php
 
 $config = [
-	'git_urls' => ['https://github.com/yfix/coffeescript-php.git' => 'coffeescript_php/'],
-	'require_once' => ['coffeescript_php/src/CoffeeScript/Init.php'],
+	'git_urls' => ['https://github.com/yfix/coffeescript-php.git' => 'coffeescript/'],
+	'require_once' => ['coffeescript/src/CoffeeScript/Init.php'],
 	'manual' => function() {
 		\CoffeeScript\Init::load();
 	},

@@ -2,8 +2,8 @@
 <?php
 
 $config = [
-	'git_urls' => ['https://github.com/yfix/jade.php.git' => 'jade_php/'],
-	'autoload_config' => ['jade_php/src/Everzet/' => 'Everzet'],
+	'git_urls' => ['https://github.com/yfix/jade.php.git' => 'jade/'],
+	'autoload_config' => ['jade/src/Everzet/' => 'Everzet'],
 	'example' => function() {
 		$template = '
 div

@@ -2,12 +2,13 @@
 <?php
 
 $config = [
-	'git_urls' => ['https://github.com/yfix/geoip-api-php.git' => 'geoip_api_php/'],
+	'git_urls' => ['https://github.com/yfix/geoip-api-php.git' => 'geoip_api/'],
 	'manual' => function($loader) {
 		if (!extension_loaded('geoip')) {
-			require_once $loader->libs_root.'geoip_api_php/src/geoip.inc';
-			require_once $loader->libs_root.'geoip_api_php/src/geoipcity.inc';
-			require_once $loader->libs_root.'geoip_api_php/src/timezone.php';
+			$d = $loader->libs_root.'geoip_api/src';
+			foreach (['geoip.inc','geoipcity.inc','timezone.php'] as $f) {
+				require_once $d. '/'. $f;
+			}
 		}
 	},
 	'example' => function() {

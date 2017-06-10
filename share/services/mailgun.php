@@ -2,7 +2,16 @@
 <?php
 
 $config = [
-	'require_services' => ['phphttp_httplug', 'phphttp_discovery', 'phphttp_multipart_stream_builder', 'phphttp_message', 'phphttp_client_common', 'webmozart_assert', 'phphttp_curl_client', 'guzzlehttp_psr7'],
+	'require_services' => [
+		'phphttp_httplug',
+		'phphttp_discovery',
+		'phphttp_multipart_stream_builder',
+		'phphttp_message',
+		'phphttp_client_common',
+		'webmozart_assert',
+		'phphttp_curl_client',
+		'guzzlehttp_psr7'
+	],
 	'git_urls' => ['https://github.com/mailgun/mailgun-php.git' => 'mailgun/'],
 	'autoload_config' => ['mailgun/src/Mailgun/' => 'Mailgun'],
 	'example' => function() {

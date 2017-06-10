@@ -2,7 +2,6 @@
 <?php
 
 $config = [
-	'require_services' => [],
 	'git_urls' => ['https://github.com/php-fig/http-message.git' => 'http-message/'],
 	'autoload_config' => ['http-message/src/' => 'Psr\Http\Message'],
 	'example' => function() {

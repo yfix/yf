@@ -2,7 +2,13 @@
 <?php
 
 $config = [
-	'require_services' => ['guzzle', 'sf_browserkit', 'sf_css_selector', 'sf_dom_crawler', 'promise'],
+	'require_services' => [
+		'guzzle',
+		'sf_browserkit',
+		'sf_css_selector',
+		'sf_dom_crawler',
+		'promise'
+	],
 	'git_urls' => ['https://github.com/yfix/goutte.git' => 'goutte/'],
 	'autoload_config' => ['goutte/Goutte/' => 'Goutte'],
 	'example' => function() {

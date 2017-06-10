@@ -2,7 +2,10 @@
 <?php
 
 $config = [
-	'require_services' => ['composer', 'jsonlint'],
+	'require_services' => [
+		'composer',
+		'jsonlint'
+	],
 	'git_urls' => ['https://github.com/dflydev/dflydev-embedded-composer.git' => 'embedded-composer/'],
 	'autoload_config' => ['embedded-composer/src/Dflydev/EmbeddedComposer/' => 'Dflydev\EmbeddedComposer'],
 	'example' => function() {

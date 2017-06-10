@@ -2,7 +2,7 @@
 <?php
 
 $config = [
-	'require_services' => ['guzzle'],
+	'require_services' => ['guzzlehttp_guzzle'],
 	'git_urls' => ['https://github.com/yfix/google-translate-php.git' => 'google-translate-php/'],
 	'autoload_config' => ['google-translate-php/src/Stichoza/GoogleTranslate/' => 'Stichoza\GoogleTranslate'],
 	'example' => function() {

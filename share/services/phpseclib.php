@@ -6,7 +6,7 @@ $config = [
 		'paragonie_constant_time_encoding',
 		'paragonie_random_compat',
 	],
-	'git_urls' => ['https://github.com/yfix/phpseclib.git' => 'phpseclib/'],
+	'git_urls' => ['https://github.com/phpseclib/phpseclib.git~2.0' => 'phpseclib/'],
 	'autoload_config' => ['phpseclib/phpseclib/' => 'phpseclib'],
 	'example' => function() {
 		$aes = new \phpseclib\Crypt\AES(\phpseclib\Crypt\Base::MODE_CFB);

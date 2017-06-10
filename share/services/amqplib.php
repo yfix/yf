@@ -2,8 +2,8 @@
 <?php
 
 $config = [
-	'git_urls' => ['https://github.com/yfix/php-amqplib.git' => 'php_amqplib/'],
-	'autoload_config' => ['php_amqplib/PhpAmqpLib/' => 'PhpAmqpLib'],
+	'git_urls' => ['https://github.com/yfix/php-amqplib.git' => 'amqplib/'],
+	'autoload_config' => ['amqplib/PhpAmqpLib/' => 'PhpAmqpLib'],
 	'example' => function() {
 		$host = 'localhost'; 
 		$port = '5672'; 

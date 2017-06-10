@@ -2,7 +2,12 @@
 <?php
 
 $config = [
-	'require_services' => ['phphttp_httplug', 'phphttp_message_factory', 'phphttp_message', 'phphttp_discovery'],
+	'require_services' => [
+		'phphttp_httplug',
+		'phphttp_message_factory',
+		'phphttp_message',
+		'phphttp_discovery',
+	],
 	'git_urls' => ['https://github.com/php-http/curl-client.git' => 'phphttp_curl_client/'],
 	'autoload_config' => ['phphttp_curl_client/src/' => 'Http\Client\Curl'],
 	'example' => function() {

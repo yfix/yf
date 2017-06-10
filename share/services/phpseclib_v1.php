@@ -2,10 +2,11 @@
 <?php
 
 $config = [
-	'git_urls' => ['https://github.com/yfix/ApnsPHP.git' => 'apns_php/'],
-	'require_once' => ['apns_php/ApnsPHP/Autoload.php'],
+	'git_urls' => ['https://github.com/phpseclib/phpseclib.git~1.0' => 'phpseclib_v1/'],
+	'pear' => ['phpseclib_v1/phpseclib/' => ''],
 	'example' => function() {
-		echo (int)class_exists('ApnsPHP_Push_Server');
+		$key = new Crypt_RSA();
+		var_dump($key);
 	}
 ];
 if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);

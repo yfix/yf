@@ -2,7 +2,13 @@
 <?php
 
 $config = [
-	'require_services' => ['json_schema', 'jsonlint', 'sf_console', 'sf_finder', 'sf_process'],
+	'require_services' => [
+		'json_schema',
+		'jsonlint',
+		'sf_console',
+		'sf_finder',
+		'sf_process'
+	],
 	'git_urls' => ['https://github.com/composer/composer.git' => 'composer/'],
 	'autoload_config' => ['composer/src/Composer/' => 'Composer'],
 	'example' => function() {

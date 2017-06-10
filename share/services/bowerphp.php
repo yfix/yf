@@ -2,7 +2,15 @@
 <?php
 
 $config = [
-	'require_services' => ['sf_console', 'sf_finder', 'sf_filesystem', 'sf_process', 'php_semver', 'php_github_api', 'json_pretty'],
+	'require_services' => [
+		'sf_console',
+		'sf_finder',
+		'sf_filesystem',
+		'sf_process',
+		'php_semver',
+		'php_github_api',
+		'json_pretty'
+	],
 	'git_urls' => ['https://github.com/Bee-Lab/bowerphp.git' => 'bowerphp/'],
 	'autoload_config' => ['bowerphp/src/Bowerphp/' => 'Bowerphp'],
 	'example' => function() {

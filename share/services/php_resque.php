@@ -2,7 +2,10 @@
 <?php
 
 $config = [
-	'require_services' => ['credis', 'psr_log'],
+	'require_services' => [
+		'credis',
+		'psr_log'
+	],
 	'git_urls' => ['https://github.com/chrisboulton/php-resque.git' => 'php_resque/'],
 	'pear' => ['php_resque/lib/' => 'Resque'],
 	'example' => function() {

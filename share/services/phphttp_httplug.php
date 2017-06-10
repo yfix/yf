@@ -2,7 +2,10 @@
 <?php
 
 $config = [
-	'require_services' => ['psr_http_message', 'phphttp_promise'],
+	'require_services' => [
+		'psr_http_message',
+		'phphttp_promise',
+	],
 	'git_urls' => ['https://github.com/php-http/httplug.git' => 'phphttp_httplug/'],
 	'autoload_config' => ['phphttp_httplug/src/' => 'Http\Client'],
 	'example' => function() {

@@ -2,8 +2,8 @@
 <?php
 
 $config = [
-	'git_urls' => ['https://github.com/vendethiel/Sprockets-PHP.git' => 'sprockets_php/'],
-	'autoload_config' => ['sprockets_php/lib/Sprockets/' => 'Sprockets'],
+	'git_urls' => ['https://github.com/vendethiel/Sprockets-PHP.git' => 'sprockets/'],
+	'autoload_config' => ['sprockets/lib/Sprockets/' => 'Sprockets'],
 	'example' => function() {
 		$pipeline = new Sprockets\Pipeline($paths);
 		var_dump($pipeline);

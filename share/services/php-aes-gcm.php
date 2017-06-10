@@ -2,7 +2,10 @@
 <?php
 
 $config = [
-	'require_services' => ['beberlei_assert','sf_polyfill_mbstring'],
+	'require_services' => [
+		'beberlei_assert',
+		'sf_polyfill_mbstring'
+	],
 	'git_urls' => ['https://github.com/Spomky-Labs/php-aes-gcm.git' => 'php-aes-gcm/'],
 	'require_once' => ['php-aes-gcm/src/AESGCM.php'],
 	'example' => function() {

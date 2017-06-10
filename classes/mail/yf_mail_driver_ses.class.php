@@ -27,7 +27,7 @@ class yf_mail_driver_ses extends yf_mail_driver {
 	* https://eu-west-1.console.aws.amazon.com/ses/home?region=eu-west-1#verified-senders-domain
 	*/
 	function send(array $params = [], &$error_message = '') {
-		require_php_lib('aws_sdk_v3');
+		require_php_lib('aws_sdk');
 
 		$error_message = null;
 		try {

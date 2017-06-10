@@ -2,7 +2,13 @@
 <?php
 
 $config = [
-	'require_services' => ['sf_event_dispatcher', 'sf_http_foundation', 'sf_debug', 'psr_log', 'sf_routing'],
+	'require_services' => [
+		'sf_event_dispatcher',
+		'sf_http_foundation',
+		'sf_debug',
+		'psr_log',
+		'sf_routing'
+	],
 	'git_urls' => ['https://github.com/symfony/HttpKernel.git' => 'sf_http_kernel/'],
 	'autoload_config' => ['sf_http_kernel/' => 'Symfony\Component\HttpKernel'],
 	'example' => function() {

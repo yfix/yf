@@ -1183,7 +1183,7 @@ class yf_assets {
 		if (empty($content)) {
 			return [];
 		}
-		require_php_lib('scssphp');
+		require_php_lib('scss');
 		$scss = new scssc();
 		foreach ((array)$content as $md5 => $v) {
 			$v['content'] = $scss->compile($v['content']);
@@ -1204,7 +1204,7 @@ class yf_assets {
 		if (empty($content)) {
 			return [];
 		}
-		require_php_lib('lessphp');
+		require_php_lib('less');
 		$less = new lessc();
 		foreach ((array)$content as $md5 => $v) {
 			$v['content'] = $less->compile($v['content']);
@@ -1225,7 +1225,7 @@ class yf_assets {
 		if (empty($content)) {
 			return [];
 		}
-		require_php_lib('coffeescript_php');
+		require_php_lib('coffeescript');
 		foreach ((array)$content as $md5 => $v) {
 			$v['content'] = \CoffeeScript\Compiler::compile($v['content'], ['header' => false]);
 			$out[$md5] = $v;

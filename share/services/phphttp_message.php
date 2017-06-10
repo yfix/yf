@@ -2,7 +2,11 @@
 <?php
 
 $config = [
-	'require_services' => ['psr_http_message', 'phphttp_message_factory', 'clue_stream_filter'],
+	'require_services' => [
+		'psr_http_message',
+		'phphttp_message_factory',
+		'clue_stream_filter',
+	],
 	'git_urls' => ['https://github.com/php-http/message.git' => 'phphttp_message/'],
 	'autoload_config' => ['phphttp_message/src/' => 'Http\Message'],
 	'example' => function() {

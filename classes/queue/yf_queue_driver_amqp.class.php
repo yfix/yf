@@ -35,7 +35,7 @@ class yf_queue_driver_amqp extends yf_queue_driver {
 			if ($params) {
 				$this->conf($params);
 			}
-			require_php_lib('php_amqplib');
+			require_php_lib('amqplib');
 			$this->_connection = new \PhpAmqpLib\Connection\AMQPConnection($this->host, $this->port, $this->login, $this->pswd);
 		}
 		return $this->_connection;

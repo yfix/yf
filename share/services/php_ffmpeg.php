@@ -2,7 +2,12 @@
 <?php
 
 $config = [
-	'require_services' => ['binary_driver', 'doctrine_cache', 'evenement', 'temporary_fs'],
+	'require_services' => [
+		'binary_driver',
+		'doctrine_cache',
+		'evenement',
+		'temporary_fs'
+	],
 	'git_urls' => ['https://github.com/yfix/PHP-FFMpeg' => 'php-ffmpeg/'],
 	'autoload_config' => ['php-ffmpeg/src/FFMpeg/' => 'FFMpeg'],
 	'example' => function() {

@@ -2,7 +2,11 @@
 <?php
 
 $config = [
-	'require_services' => ['psr_http_message', 'phphttp_message_factory', 'phphttp_discovery'],
+	'require_services' => [
+		'psr_http_message',
+		'phphttp_message_factory',
+		'phphttp_discovery'
+	],
 	'git_urls' => ['https://github.com/php-http/multipart-stream-builder.git' => 'phphttp_multipart_stream_builder/'],
 	'autoload_config' => ['phphttp_multipart_stream_builder/src/' => 'Http\Message\MultipartStream'],
 	'example' => function() {
