@@ -45,9 +45,6 @@ class yf_services {
 				'framework'	=> YF_PATH. $pattern,
 				'app'		=> APP_PATH. $pattern,
 			];
-			if (is_site_path()) {
-				$globs['site'] = SITE_PATH. $pattern;
-			}
 			$slen = strlen($suffix);
 			$paths = [];
 			foreach((array)$globs as $gname => $glob) {

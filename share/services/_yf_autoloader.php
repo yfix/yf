@@ -179,6 +179,39 @@ class yf_autoloader {
 		}
 	}
 
+	/**
+	*/
+	function _get_lib_path($name, $params = []) {
+		if (isset($this->php_libs[$name])) {
+			return $this->php_libs[$name];
+		}
+		if (!isset($this->_paths_cache)) {
+			$suffix = '.php';
+			$pattern = '{,plugins/*/}{services/,share/services/}{*,*/*}'. $suffix;
+			$globs = [
+				'framework'	=> YF_PATH. $pattern,
+			];
+			defined('APP_PATH') && $globs['app'] = APP_PATH. $pattern;
+			$slen = strlen($suffix);
+			$paths = [];
+			foreach((array)$globs as $gname => $glob) {
+				foreach(glob($glob, GLOB_BRACE) as $_path) {
+					$_name = substr(basename($_path), 0, -$slen);
+					if (!$_name == '_yf_autoloader') {
+						continue;
+					}
+					$paths[$_name] = $_path;
+				}
+			}
+			// This double iterating code ensures we can inherit/replace services with same name inside project
+			foreach((array)$paths as $_name => $_path) {
+				$this->_paths_cache[$_name] = $_path;
+			}
+		}
+		$this->php_libs[$name] = $path;
+		return $this->_paths_cache[$name];
+	}
+
 	/***/
 	public function process_require_services() {
 		$libs_root = $this->libs_root;
@@ -187,9 +220,8 @@ class yf_autoloader {
 			return false;
 		}
 		ob_start();
-# TODO: scan all services dirs inside app, framework and their plugins and find needed
 		foreach ((array)$require_services as $name) {
-			require_once __DIR__.'/'.$name.'.php';
+			require_once $this->_get_lib_path($name);
 		}
 		ob_end_clean();
 	}
