@@ -16,6 +16,7 @@ class yf_locale_editor_import {
 		$a['back_link'] = url('/@object/vars');
 		$a['redirect_link'] = $a['back_link'];
 		!$a['lang'] && $a['lang'] = 'en';
+		!isset($a['keep_existing']) && $a['keep_existing'] = 1;
 		// To ensure that currently active langs are in top of the list
 		$langs = [];
 		foreach ((array)$this->_parent->_cur_langs as $lang => $name) {

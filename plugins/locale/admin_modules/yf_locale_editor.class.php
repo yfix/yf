@@ -11,10 +11,6 @@ class yf_locale_editor {
 
 	/** @var bool Ignore case on import/export */
 	public $VARS_IGNORE_CASE		= true;
-	/** @var bool Display vars locations */
-	public $DISPLAY_VARS_LOCATIONS	= true;
-	/** @var bool Display links to edit source files (in location) */
-	public $LOCATIONS_EDIT_LINKS	= true;
 	/** @var bool Ignore case on import/export */
 	public $FILE_MANAGER_ALLOWED	= false;
 	/** @var bool @conf_skip */
@@ -750,16 +746,7 @@ Fallback when no numbers matched (any string)
 	* Import vars
 	*/
 	function import() {
-# TODO: testme
 		$cls = 'locale_editor'; return _class($cls.'_import', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
-	}
-
-	/**
-	* Automatic translator via Google translate
-	*/
-	function autotranslate() {
-# TODO: testme
-#		$cls = 'locale_editor'; return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
@@ -767,169 +754,15 @@ Fallback when no numbers matched (any string)
 	*/
 	function collect () {
 # TODO: testme
-		foreach((array)from('locale_vars')->order_by('LOWER(CONVERT(value USING utf8)) ASC')->all() as $a) {
-			$this->_locale_vars[$a['value']] = $a;
-		}
-		$vars_from_code = $this->_parse_source_code_for_vars();
-		foreach ((array)$vars_from_code as $cur_var_name => $var_files_info) {
-			$location_array = [];
-			foreach ((array)$var_files_info as $file_name => $line_numbers) {
-				$location_array[] = $file_name.':'.$line_numbers;
-			}
-			$location	= implode('; ', $location_array);
-			$sql_array	= [
-				'value'		=> _es($cur_var_name),
-				'location'	=> $location,
-			];
-#			if (isset($this->_locale_vars[$cur_var_name])) {
-#				db()->update_safe('locale_vars', $sql_array, 'id='.intval($this->_locale_vars[$cur_var_name]['id']));
-#			} else {
-#				db()->insert_safe('locale_vars', $sql_array);
-#			}
-		}
-# TODO: show some report after completion: where and how many found
-#		return js_redirect('/@object/vars');
+		$cls = 'locale_editor'; return _class($cls.'_collect', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
-	* Collect vars from source files, no framework, just project and given module name (internal use only method)
+	* Automatic translator via Google translate API
 	*/
-	function collect_vars_for_module () {
-		no_graphics(true);
-
-		$module_name = preg_replace('/[^a-z0-9\_]/i', '', _strtolower(trim($_GET['id'])));
-		if (!$module_name) {
-			return print 'Error, no module name';
-		}
-
-		$vars = $this->_parse_source_code_for_vars([
-			'only_project'	=> 1,
-			'only_module'	=> $module_name,
-		]);
-
-		echo '<pre>';
-		foreach ((array)$vars as $var => $paths) {
-			echo $var.PHP_EOL;
-		}
-		echo '</pre>';
-	}
-
-	/**
-	* Parse source code for translate variables
-	*/
-	function _parse_source_code_for_vars ($params = []) {
-# TODO: test and optimize
-# TODO: collect angular variables like this: {{'var'|translate}}
-		$_include_php_pattern	= ['#\/(admin_modules|classes|functions|modules)#', '#\.php$#'];
-		$_include_stpl_pattern	= ['#\/(templates)#', '#\.stpl$#'];
-		$_exclude_pattern		= ['#\/(commands|docs|libs|scripts|sql|storage|tests)#', ''];
-		$_translate_php_pattern	= "/[\(\{\.\,\s\t=]+?(t)[\s\t]*?\([\s\t]*?('[^'\$]+?'|\"[^\"\$]+?\")/ims";
-		$_translate_stpl_pattern= "/\{(t)\([\"']*([\s\w\-\.\,\:\;\%\&\#\/\<\>]*)[\"']*[,]*[^\)\}]*\)\}/is";
-
-		$vars_array = [];
-
-		$php_path_pattern	= '';
-		$stpl_path_pattern	= '';
-		if ($params['only_module']) {
-			$this->_include_php_pattern	= ['#/(modules)#', '#'.preg_quote($params['only_module'], '#').'\.class\.php$#'];
-			$this->_include_stpl_pattern	= ['#/templates#', '#\.stpl$#'];
-			$stpl_path_pattern = '#templates/[^/]+/'.$params['only_module'].'/#';
-		}
-		if (!$params['only_project']) {
-			if (!$params['only_stpls']) {
-				$yf_framework_php_files	= _class('dir')->scan_dir(YF_PATH, true, $_include_php_pattern, $_exclude_pattern);
-			}
-			if (!$params['only_php']) {
-				$yf_framework_stpl_files = _class('dir')->scan_dir(YF_PATH, true, $_include_stpl_pattern, $_exclude_pattern);
-			}
-		}
-		if (!$params['only_framework']) {
-			if (!$params['only_stpls']) {
-				$cur_project_php_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $_include_php_pattern, $_exclude_pattern);
-			}
-			if (!$params['only_php']) {
-				$cur_project_stpl_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $_include_stpl_pattern, $_exclude_pattern);
-			}
-		}
-		foreach ((array)$yf_framework_php_files as $file_name) {
-			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			foreach ((array)$this->_get_vars_from_file_name($file_name, $_translate_php_pattern) as $cur_var_name => $code_lines) {
-				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
-			}
-		}
-		foreach ((array)$cur_project_php_files as $file_name) {
-			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			foreach ((array)$this->_get_vars_from_file_name($file_name, $_translate_php_pattern) as $cur_var_name => $code_lines) {
-				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
-			}
-		}
-		foreach ((array)$yf_framework_stpl_files as $file_name) {
-			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			foreach ((array)$this->_get_vars_from_file_name($file_name, $_translate_stpl_pattern) as $cur_var_name => $code_lines) {
-				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
-			}
-		}
-		foreach ((array)$cur_project_stpl_files as $file_name) {
-			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			if ($stpl_path_pattern && !preg_match($stpl_path_pattern, $short_file_name)) {
-				continue;
-			}
-			foreach ((array)$this->_get_vars_from_file_name($file_name, $_translate_stpl_pattern) as $cur_var_name => $code_lines) {
-				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
-			}
-		}
-		ksort($vars_array);
-		return $vars_array;
-	}
-
-	/**
-	* Get vars from the given file name
-	*/
-	function _get_vars_from_file_name($file_name = '', $pattern = '') {
-		$vars_array = [];
-		if (empty($file_name)) {
-			return $vars_array;
-		}
-		$file_source_array = file($file_name);
-		$match	= preg_match_all($pattern, implode(PHP_EOL, $file_source_array), $matches);
-		if (empty($matches[0])) {
-			return $vars_array;
-		}
-		foreach ((array)$matches[2] as $match_number => $cur_var_name) {
-			$code_lines		= [];
-			$cur_var_name	= trim($cur_var_name, "\"'");
-			foreach ((array)$file_source_array as $line_number => $line_text) {
-				if (false === strpos($line_text, $matches[0][$match_number])) {
-					continue;
-				}
-				$code_lines[] = $line_number;
-			}
-			if (empty($code_lines) || empty($cur_var_name)) {
-				continue;
-			}
-			$vars_array[$cur_var_name] = implode(',',$code_lines);
-		}
-		return $vars_array;
-	}
-
-	/**
-	* Return array of all used locations in vars
-	*/
-	function _get_all_vars_locations() {
-		$used_locations = [];
-		foreach ((array)from('locale_vars')->where_raw('location != ""')->get_2d('location,location AS l2') as $location) {
-			foreach ((array)explode(';', $location) as $cur_location) {
-				$cur_location = trim(substr($cur_location, 0, strpos($cur_location, ':')));
-				if (empty($cur_location)) {
-					continue;
-				}
-				$used_locations[$cur_location]++;
-			}
-		}
-		if (!empty($used_locations)) {
-			ksort($used_locations);
-		}
-		return $used_locations;
+	function autotranslate() {
+# TODO: testme
+		$cls = 'locale_editor'; return _class($cls.'_autotranslate', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
