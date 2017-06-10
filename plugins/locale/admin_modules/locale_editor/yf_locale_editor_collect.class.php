@@ -14,185 +14,151 @@ class yf_locale_editor_collect {
 	* Collect variables from app and framework source files
 	*/
 	function collect() {
-		$a['back_link'] = url('/@object/vars');
-		$a['redirect_link'] = $a['back_link'];
-		!$a['lang'] && $a['lang'] = 'en';
-		!isset($a['keep_existing']) && $a['keep_existing'] = 1;
-		// To ensure that currently active langs are in top of the list
-		$langs = [];
-		foreach ((array)$this->_parent->_cur_langs as $lang => $name) {
-			$langs[$lang] = $name;
-		}
-		$langs[''] = '-------------';
-		foreach ((array)$this->_parent->_langs as $lang => $name) {
-			$langs[$lang] = $name;
+		$defaults = [
+			'back_link' => url('/@object/vars'),
+			'redirect_link' => url('/@object/vars'),
+			'include_app' => 1,
+			'include_framework' => 1,
+			'find_php' => 1,
+			'find_stpl' => 1,
+			'find_angular' => 1,
+			'include_admin' => 1,
+			'min_length' => 5,
+		];
+		foreach ((array)$defaults as $k => $v) {
+			!isset($a[$k]) && $a[$k] = $v;
 		}
 		return form($a + (array)$_POST)
 			->validate([
-				'lang' => 'required',
+				'min_length' => 'required',
 			])
 			->on_validate_ok(array(&$this, '_on_validate_ok'))
-			->select_box('lang', $langs)
-#			->yes_no_box('keep_existing')
-			->save_and_back('', ['desc' => 'Import'])
+			->yes_no_box('include_app')
+			->yes_no_box('include_framework')
+			->yes_no_box('find_php')
+			->yes_no_box('find_stpl')
+			->yes_no_box('find_angular')
+			->yes_no_box('include_admin')
+			->number('min_length', ['class_add' => 'input-small'])
+			->save_and_back('', ['desc' => 'Collect'])
 		;
 	}
 
 	/**
 	*/
 	function _on_validate_ok() {
-		$p = &$_POST;
-#		$lang = $p['lang'];
-#		$keep_existing = $p['keep_existing'];
-		$all_vars = $this->_parent->_get_all_vars();
+		$found_vars = $this->_parse_sources();
 
-#		if (!$to_tr) {
-#			common()->message_error('Translate failed, no suitable variables found');
-#			return false;
-#		}
-d($to_tr);
-# TODO: testme
-		$vars_from_code = $this->_parse_sources();
-		foreach ((array)$vars_from_code as $cur_var_name => $var_files_info) {
-			$location_array = [];
-			foreach ((array)$var_files_info as $file_name => $line_numbers) {
-				$location_array[] = $file_name.':'.$line_numbers;
+		$sql = [];
+		foreach ((array)$found_vars as $var => $files) {
+			$locations = [];
+			foreach ((array)$files as $file => $lines) {
+				$locations[] = $file.':'.$lines;
 			}
-			$location	= implode('; ', $location_array);
-			$sql_array	= [
-				'value'		=> _es($cur_var_name),
-				'location'	=> $location,
+			$sql[$var] = [
+				'value'		=> $var,
+				'location'	=> implode('; ', $locations),
 			];
-#			if (isset($this->_locale_vars[$cur_var_name])) {
-#				db()->update_safe('locale_vars', $sql_array, 'id='.intval($this->_locale_vars[$cur_var_name]['id']));
-#			} else {
-#				db()->insert_safe('locale_vars', $sql_array);
-#			}
+			$stats['updated']++;
 		}
-# TODO: show some report after completion: where and how many found
-#		cache_del('locale_translate_'.$lang);
+		if ($sql) {
+			db()->replace_safe('locale_vars', $sql);
+		}
+		$stats['updated']	&& common()->message_success($stats['updated'].' existing variable(s) successfully updated');
+#		$stats['inserted']	&& common()->message_success($stats['inserted'].' new variable(s) successfully inserted');
+#		!$stats	&& common()->message_info('Collect done, nothing changed');
+
 		return js_redirect('/@object/vars');
 	}	
-
-	/**
-	* Collect vars from source files, no framework, just project and given module name (internal use only method)
-	*/
-	function collect_for_module () {
-		no_graphics(true);
-
-		$module_name = preg_replace('/[^a-z0-9\_]/i', '', _strtolower(trim($_GET['id'])));
-		if (!$module_name) {
-			return print 'Error, no module name';
-		}
-
-		$vars = $this->_parse_sources([
-			'only_project'	=> 1,
-			'only_module'	=> $module_name,
-		]);
-
-		echo '<pre>';
-		foreach ((array)$vars as $var => $paths) {
-			echo $var.PHP_EOL;
-		}
-		echo '</pre>';
-	}
 
 	/**
 	* Parse source code for translate variables
 	*/
 	function _parse_sources ($params = []) {
-# TODO: test and optimize
+		$params = &$_POST;
+
+		$scan = function($top, $type) {
+			$dirs_map = [
+				'framework' => YF_PATH,
+				'app' => APP_PATH,
+			];
+			$globs = [
+				'php' => '{,plugins/*/}{classes,modules}/{*,*/*,*/*/*}.php',
+				'stpl' => '{,plugins/*/,www/}{templates}/*/{*,*/*,*/*/*}.stpl',
+#				'ng' => '{,plugins/*/,www/}{templates}/*/{*,*/*,*/*/*}.stpl',
+			];
+			$files = glob($dirs_map[$top].''.$globs[$type], GLOB_BRACE);
+			foreach ((array)$files as $k => $file) {
+				if (false !== strpos($file, '/test/')) {
+					unset($files[$k]);
+				} elseif (false !== strpos($file, '/templates/admin/')) {
+					unset($files[$k]);
+				}
+			}
+			return $files;
+		};
+		$files = [];
+		if ($params['include_framework']) {
+			$params['find_php'] && $files['framework']['php'] = $scan('framework', 'php');
+			$params['find_stpl'] && $files['framework']['stpl'] = $scan('framework', 'stpl');
+#			$params['find_angular'] && $files['framework']['ng'] = $scan('framework', 'ng');
+		}
+		if ($params['include_app']) {
+			$params['find_php'] && $files['app']['php'] = $scan('app', 'php');
+			$params['find_stpl'] && $files['app']['stpl'] = $scan('app', 'stpl');
+#			$params['find_angular'] && $files['app']['ng'] = $scan('app', 'ng');
+		}
+		$collect_in_file = function($file, $type) {
+			if (!$file) {
+				return [];
+			}
+			$pspaces = '\s'."\t";
+			$pquotes = '"\'';
+			$patterns_translate	= [
+# TODO: try tokenizer for php
+				'php'	=> '~[\(\{\.,='.$pspaces.']+?'.'t'.'['.$pspaces.']*?\(['.$pspaces.']*?(?<var>\'[^\'$]+?\'|"[^"$]+?")~ims',
+				'stpl'	=> '~\{t\(['.$pquotes.']*(?<var>['.$pspaces.'\w\-\.,:;%&#/><]*)['.$pquotes.']*[,]*[^\)\}]*\)\}~is',
 # TODO: collect angular variables like this: {{'var'|translate}}
-		$_include_php_pattern	= ['#\/(admin_modules|classes|functions|modules)#', '#\.php$#'];
-		$_include_stpl_pattern	= ['#\/(templates)#', '#\.stpl$#'];
-		$_exclude_pattern		= ['#\/(commands|docs|libs|scripts|sql|storage|tests)#', ''];
-		$_translate_php_pattern	= "/[\(\{\.\,\s\t=]+?(t)[\s\t]*?\([\s\t]*?('[^'\$]+?'|\"[^\"\$]+?\")/ims";
-		$_translate_stpl_pattern= "/\{(t)\([\"']*([\s\w\-\.\,\:\;\%\&\#\/\<\>]*)[\"']*[,]*[^\)\}]*\)\}/is";
-
-		$vars_array = [];
-
-		$php_path_pattern	= '';
-		$stpl_path_pattern	= '';
-		if ($params['only_module']) {
-			$_include_php_pattern	= ['#/(modules)#', '#'.preg_quote($params['only_module'], '#').'\.class\.php$#'];
-			$_include_stpl_pattern	= ['#/templates#', '#\.stpl$#'];
-			$stpl_path_pattern = '#templates/[^/]+/'.$params['only_module'].'/#';
-		}
-		if (!$params['only_project']) {
-			if (!$params['only_stpls']) {
-				$yf_framework_php_files	= _class('dir')->scan_dir(YF_PATH, true, $_include_php_pattern, $_exclude_pattern);
+#				'ng'	=> '~~is',
+			];
+			$vars = [];
+			$farray = file($file);
+			$match	= preg_match_all($patterns_translate[$type], implode(PHP_EOL, $farray), $m);
+			if (empty($m[0])) {
+				return $vars;
 			}
-			if (!$params['only_php']) {
-				$yf_framework_stpl_files = _class('dir')->scan_dir(YF_PATH, true, $_include_stpl_pattern, $_exclude_pattern);
-			}
-		}
-		if (!$params['only_framework']) {
-			if (!$params['only_stpls']) {
-				$cur_project_php_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $_include_php_pattern, $_exclude_pattern);
-			}
-			if (!$params['only_php']) {
-				$cur_project_stpl_files = _class('dir')->scan_dir(INCLUDE_PATH, true, $_include_stpl_pattern, $_exclude_pattern);
-			}
-		}
-		foreach ((array)$yf_framework_php_files as $file_name) {
-			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			foreach ((array)$this->_collect_in_file($file_name, $_translate_php_pattern) as $cur_var_name => $code_lines) {
-				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
-			}
-		}
-		foreach ((array)$cur_project_php_files as $file_name) {
-			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			foreach ((array)$this->_collect_in_file($file_name, $_translate_php_pattern) as $cur_var_name => $code_lines) {
-				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
-			}
-		}
-		foreach ((array)$yf_framework_stpl_files as $file_name) {
-			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			foreach ((array)$this->_collect_in_file($file_name, $_translate_stpl_pattern) as $cur_var_name => $code_lines) {
-				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
-			}
-		}
-		foreach ((array)$cur_project_stpl_files as $file_name) {
-			$short_file_name = str_replace([REAL_PATH, INCLUDE_PATH, YF_PATH], '', $file_name);
-			if ($stpl_path_pattern && !preg_match($stpl_path_pattern, $short_file_name)) {
-				continue;
-			}
-			foreach ((array)$this->_collect_in_file($file_name, $_translate_stpl_pattern) as $cur_var_name => $code_lines) {
-				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
-			}
-		}
-		ksort($vars_array);
-		return $vars_array;
-	}
-
-	/**
-	* Get vars from the given file name
-	*/
-	function _collect_in_file($file_name = '', $pattern = '') {
-		$vars_array = [];
-		if (empty($file_name)) {
-			return $vars_array;
-		}
-		$file_source_array = file($file_name);
-		$match	= preg_match_all($pattern, implode(PHP_EOL, $file_source_array), $matches);
-		if (empty($matches[0])) {
-			return $vars_array;
-		}
-		foreach ((array)$matches[2] as $match_number => $cur_var_name) {
-			$code_lines		= [];
-			$cur_var_name	= trim($cur_var_name, "\"'");
-			foreach ((array)$file_source_array as $line_number => $line_text) {
-				if (false === strpos($line_text, $matches[0][$match_number])) {
+			foreach ((array)$m['var'] as $mnum => $var) {
+				$lines = [];
+				$var = trim($var, '"\'');
+				foreach ((array)$farray as $line_num => $line_text) {
+					if (false === strpos($line_text, $m[0][$mnum])) {
+						continue;
+					}
+					$lines[] = $line_num;
+				}
+				if (empty($lines) || empty($var)) {
 					continue;
 				}
-				$code_lines[] = $line_number;
+				$vars[$var] = implode(',', $lines);
 			}
-			if (empty($code_lines) || empty($cur_var_name)) {
-				continue;
+			return $vars;
+		};
+		$vars = [];
+		foreach ((array)$files as $top => $types) {
+			foreach ((array)$types as $type => $paths) {
+				foreach ((array)$paths as $path) {
+					if (!$path) {
+						continue;
+					}
+					$short_path = str_replace([APP_PATH, YF_PATH], '', $path);
+					foreach ((array)$collect_in_file($path, $type) as $var => $lines) {
+						$vars[$var][$short_path] = $lines;
+					}
+				}
 			}
-			$vars_array[$cur_var_name] = implode(',',$code_lines);
 		}
-		return $vars_array;
+		$vars && ksort($vars);
+		return $vars;
 	}
 
 	/**

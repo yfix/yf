@@ -150,7 +150,8 @@ Fallback when no numbers matched (any string)
 			->btn('Make default', url('/@object/lang_default/%d'), ['class_add' => 'btn-info', 'display_func' => $no_actions_if_default, 'btn_no_text' => 1])
 			->btn_active('', url('/@object/lang_active/%d'), ['display_func' => $no_actions_if_default])
 			->footer_add('Add', url('/@object/lang_add'), ['no_ajax' => 1, 'class_add' => 'btn-warning'])
-			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-warning'])
+			->header_link('Translate', url('/@object/autotranslate'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-success'])
+			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-flask', 'class_add' => 'btn-warning'])
 			->header_link('Cleanup', url('/@object/cleanup'), ['icon' => 'fa fa-eraser', 'class_add' => 'btn-danger'])
 			->header_link('Import', url('/@object/import'), ['icon' => 'fa fa-download', 'class_add' => 'btn-info'])
 			->header_link('Export', url('/@object/export'), ['icon' => 'fa fa-upload', 'class_add' => 'btn-info'])
@@ -310,7 +311,8 @@ Fallback when no numbers matched (any string)
 			$body[] = $this->_show_files_for_lang($lang, $lang_files, $var_files);
 		}
 		$links = table([], ['no_records_html' => ''])
-			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-warning'])
+			->header_link('Translate', url('/@object/autotranslate'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-success'])
+			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-flask', 'class_add' => 'btn-warning'])
 			->header_link('Cleanup', url('/@object/cleanup'), ['icon' => 'fa fa-eraser', 'class_add' => 'btn-danger'])
 			->header_link('Import', url('/@object/import'), ['icon' => 'fa fa-download', 'class_add' => 'btn-info'])
 			->header_link('Export', url('/@object/export'), ['icon' => 'fa fa-upload', 'class_add' => 'btn-info'])
@@ -501,7 +503,8 @@ Fallback when no numbers matched (any string)
 			->btn_edit('', url('/@object/var_edit/%source'), ['btn_no_text' => 1])
 			->header_add('', url('/@object/var_add'), ['btn_no_text' => 1, 'class_add' => 'btn-warning', 'no_ajax' => 1])
 			->footer_add('', url('/@object/var_add'), ['btn_no_text' => 1, 'class_add' => 'btn-warning', 'no_ajax' => 1])
-			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-warning'])
+			->header_link('Translate', url('/@object/autotranslate'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-success'])
+			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-flask', 'class_add' => 'btn-warning'])
 			->header_link('Cleanup', url('/@object/cleanup'), ['icon' => 'fa fa-eraser', 'class_add' => 'btn-danger'])
 			->header_link('Import', url('/@object/import'), ['icon' => 'fa fa-download', 'class_add' => 'btn-info'])
 			->header_link('Export', url('/@object/export'), ['icon' => 'fa fa-upload', 'class_add' => 'btn-info'])
@@ -753,7 +756,6 @@ Fallback when no numbers matched (any string)
 	* Collect vars from source files (Framework included)
 	*/
 	function collect () {
-# TODO: testme
 		$cls = 'locale_editor'; return _class($cls.'_collect', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
@@ -761,7 +763,6 @@ Fallback when no numbers matched (any string)
 	* Automatic translator via Google translate API
 	*/
 	function autotranslate() {
-# TODO: testme
 		$cls = 'locale_editor'; return _class($cls.'_autotranslate', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
