@@ -131,7 +131,9 @@ class yf_services {
 	/**
 	*/
 	function markdown($content, $params = []) {
-// TODO: mthaml consists one of these
+		$this->require_php_lib('parsedown');
+		$parsedown = new Parsedown();
+		return $parsedown->text($input);
 	}
 
 	/**

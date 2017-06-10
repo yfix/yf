@@ -49,7 +49,7 @@ class yf_locale_editor_collect {
 #		if (!$to_tr) {
 #			common()->message_error('Translate failed, no suitable variables found');
 #			return false;
-		}
+#		}
 d($to_tr);
 # TODO: testme
 		$vars_from_code = $this->_parse_sources();

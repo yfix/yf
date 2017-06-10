@@ -94,7 +94,7 @@ class yf_autoloader {
 			if (!file_exists($check_file)) {
 				if (false !== strpos($git_url, '~')) {
 					list($git_url, $git_tag) = explode('~', $git_url);
-					$cmd = '(git clone --depth 1 --branch '.$git_tag.' --single-branch '.$git_url.' '.$dir.' && cd '.$dir.' && git checkout -b '.$git_tag.')';
+					$cmd = '(git clone --depth 1 --branch "'.$git_tag.'" --single-branch '.$git_url.' '.$dir.' && cd '.$dir.' && git checkout "'.$git_tag.'")';
 				} else {
 					$cmd = 'git clone --depth 1 '.$git_url.' '.$dir;
 				}

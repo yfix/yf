@@ -4,10 +4,16 @@
 $config = [
 	'require_services' => [
 		'json_schema',
+		'composer_ca_bundle',
+		'composer_semver',
+		'composer_spdx_licenses',
 		'jsonlint',
 		'sf_console',
 		'sf_finder',
-		'sf_process'
+		'sf_process',
+		'phar_utils',
+		'cli_prompt',
+		'psr_log',
 	],
 	'git_urls' => ['https://github.com/composer/composer.git' => 'composer/'],
 	'autoload_config' => ['composer/src/Composer/' => 'Composer'],
