@@ -23,7 +23,7 @@ class yf_locale_editor_collect {
 			'find_stpl' => 1,
 			'find_angular' => 1,
 			'include_admin' => 1,
-			'min_length' => 5,
+			'min_length' => 3,
 		];
 		foreach ((array)$defaults as $k => $v) {
 			!isset($a[$k]) && $a[$k] = $v;
@@ -47,6 +47,8 @@ class yf_locale_editor_collect {
 	/**
 	*/
 	function _on_validate_ok() {
+		$p = $_POST;
+
 		$found_vars = $this->_parse_sources();
 
 		$sql = [];
@@ -54,6 +56,10 @@ class yf_locale_editor_collect {
 			$locations = [];
 			foreach ((array)$files as $file => $lines) {
 				$locations[] = $file.':'.$lines;
+			}
+			$var = trim($var);
+			if (_strlen($var) < $p['min_length']) {
+				continue;
 			}
 			$sql[$var] = [
 				'value'		=> $var,
@@ -75,7 +81,7 @@ class yf_locale_editor_collect {
 	* Parse source code for translate variables
 	*/
 	function _parse_sources ($params = []) {
-		$params = &$_POST;
+		$params = $params ?: $_POST;
 
 		$scan = function($top, $type) {
 			$dirs_map = [

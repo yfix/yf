@@ -486,7 +486,15 @@ Fallback when no numbers matched (any string)
 
 		ksort($vars);
 		return table($vars, ['pager_records_on_page' => 10000, 'id' => 'source', 'very_condensed' => 1])
-			->text('source', ['transform' => '_prepare_html', 'desc' => 'Var name'])
+			->func('source', function($in,$e,$a,$t) {
+				return _wordwrap(_prepare_html($in), 120, '<br>');
+			}, ['desc' => 'Var name'])
+			->func('source', function($in,$e,$a,$t) use ($vars_db) {
+				return isset($vars_db[$in]['translation']) ? (string)implode(',',array_keys($vars_db[$in]['translation'])) : '';
+			}, ['desc' => 'Db override'])
+			->func('id', function($in,$e,$a,$t) {
+				return isset($a['files']) ? (int)count($a['files']) : '';
+			}, ['desc' => 'Num files'])
 			->func('id', function($in,$e,$a,$t) {
 				$trs = $a['locale'];
 				foreach ((array)$trs as $lang) {
@@ -494,13 +502,8 @@ Fallback when no numbers matched (any string)
 				}
 				return $out ? implode(' ', $out) : '';
 			}, ['desc' => 'Langs'])
-			->func('source', function($in,$e,$a,$t) use ($vars_db) {
-				return isset($vars_db[$in]['translation']) ? (string)implode(',',array_keys($vars_db[$in]['translation'])) : '';
-			}, ['desc' => 'Db override'])
-			->func('id', function($in,$e,$a,$t) {
-				return isset($a['files']) ? (int)count($a['files']) : '';
-			}, ['desc' => 'Num files'])
 			->btn_edit('', url('/@object/var_edit/%source'), ['btn_no_text' => 1])
+			->btn_delete('', url('/@object/var_delete/%source'), ['btn_no_text' => 1, 'display_func' => function($a) { return $a['var_id'] ? 1 : 0; }])
 			->header_add('', url('/@object/var_add'), ['btn_no_text' => 1, 'class_add' => 'btn-warning', 'no_ajax' => 1])
 			->footer_add('', url('/@object/var_add'), ['btn_no_text' => 1, 'class_add' => 'btn-warning', 'no_ajax' => 1])
 			->header_link('Translate', url('/@object/autotranslate'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-success'])
@@ -623,7 +626,6 @@ Fallback when no numbers matched (any string)
 			$id = (int)$a['id'];
 			db()->delete('locale_vars', $id);
 			db()->delete('locale_translate', 'var_id = '.(int)$id);
-			common()->admin_wall_add(['locale var deleted: '.$a['value'], $id]);
 		}
 		if (is_ajax()) {
 			no_graphics(true);
