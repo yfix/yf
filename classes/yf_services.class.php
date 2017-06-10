@@ -50,6 +50,9 @@ class yf_services {
 			foreach((array)$globs as $gname => $glob) {
 				foreach(glob($glob, GLOB_BRACE) as $_path) {
 					$_name = substr(basename($_path), 0, -$slen);
+					if ($_name == '_yf_autoloader') {
+						continue;
+					}
 					$paths[$_name] = $_path;
 				}
 			}
