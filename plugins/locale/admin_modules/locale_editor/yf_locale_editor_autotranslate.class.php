@@ -28,7 +28,8 @@ class yf_locale_editor_autotranslate {
 			$langs[$lang] = $name;
 		}
 		$display_func = function() { return !is_post(); };
-		return form($a + (array)$_POST)
+		return $this->_parent->_header_links(). '<br>'. 
+			form($a + (array)$_POST)
 			->validate([
 				'lang_from' => 'required',
 				'lang_to' => 'required',

@@ -115,6 +115,21 @@ Fallback when no numbers matched (any string)
 	}
 
 	/**
+	*/
+	function _header_links() {
+		$is_current = function($action) { return $_GET['action'] == $action ? ' disabled' : ''; };
+		return table([], ['no_records_html' => ''])
+			->header_link('Translate', url('/@object/autotranslate'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-success '. $is_current('autotranslate')])
+			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-flask', 'class_add' => 'btn-warning '. $is_current('collect')])
+			->header_link('Cleanup', url('/@object/cleanup'), ['icon' => 'fa fa-eraser', 'class_add' => 'btn-danger '. $is_current('cleanup')])
+			->header_link('Import', url('/@object/import'), ['icon' => 'fa fa-download', 'class_add' => 'btn-info '. $is_current('import')])
+			->header_link('Export', url('/@object/export'), ['icon' => 'fa fa-upload', 'class_add' => 'btn-info '. $is_current('export')])
+			->header_link('Files', url('/@object/files'), ['icon' => 'fa fa-files-o', 'class_add' => 'btn-primary '. $is_current('files')])
+			->header_link('Vars', url('/@object/vars'), ['icon' => 'fa fa-bars', 'class_add' => 'btn-primary '. $is_current('vars')])
+		;
+	}
+
+	/**
 	* Display all project languages
 	*/
 	function show() {
@@ -132,7 +147,8 @@ Fallback when no numbers matched (any string)
 			return $row['is_default'] ? false : true;
 		};
 		$_this = $this;
-		return table($data, [
+		return $this->_header_links(). 
+			table($data, [
 				'pager_records_on_page' => 1000,
 				'hide_empty' => 1,
 				'no_total' => 1,
@@ -150,13 +166,6 @@ Fallback when no numbers matched (any string)
 			->btn('Make default', url('/@object/lang_default/%d'), ['class_add' => 'btn-info', 'display_func' => $no_actions_if_default, 'btn_no_text' => 1])
 			->btn_active('', url('/@object/lang_active/%d'), ['display_func' => $no_actions_if_default])
 			->footer_add('Add', url('/@object/lang_add'), ['no_ajax' => 1, 'class_add' => 'btn-warning'])
-			->header_link('Translate', url('/@object/autotranslate'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-success'])
-			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-flask', 'class_add' => 'btn-warning'])
-			->header_link('Cleanup', url('/@object/cleanup'), ['icon' => 'fa fa-eraser', 'class_add' => 'btn-danger'])
-			->header_link('Import', url('/@object/import'), ['icon' => 'fa fa-download', 'class_add' => 'btn-info'])
-			->header_link('Export', url('/@object/export'), ['icon' => 'fa fa-upload', 'class_add' => 'btn-info'])
-			->header_link('Files', url('/@object/files'), ['icon' => 'fa fa-files-o', 'class_add' => 'btn-primary'])
-			->header_link('Vars', url('/@object/vars'), ['icon' => 'fa fa-bars', 'class_add' => 'btn-primary'])
 		;
 	}
 
@@ -310,15 +319,7 @@ Fallback when no numbers matched (any string)
 			$body[] = '<h3>'.$this->_lang_icon($lang, false).'</h3>';
 			$body[] = $this->_show_files_for_lang($lang, $lang_files, $var_files);
 		}
-		$links = table([], ['no_records_html' => ''])
-			->header_link('Translate', url('/@object/autotranslate'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-success'])
-			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-flask', 'class_add' => 'btn-warning'])
-			->header_link('Cleanup', url('/@object/cleanup'), ['icon' => 'fa fa-eraser', 'class_add' => 'btn-danger'])
-			->header_link('Import', url('/@object/import'), ['icon' => 'fa fa-download', 'class_add' => 'btn-info'])
-			->header_link('Export', url('/@object/export'), ['icon' => 'fa fa-upload', 'class_add' => 'btn-info'])
-			->header_link('Vars', url('/@object/vars'), ['icon' => 'fa fa-bars', 'class_add' => 'btn-primary'])
-		;
-		return $links . implode(PHP_EOL, $body);
+		return $this->_header_links(). implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -485,7 +486,8 @@ Fallback when no numbers matched (any string)
 		$edit_link_tpl = url('/@object/var_edit/%id');
 
 		ksort($vars);
-		return table($vars, ['pager_records_on_page' => 10000, 'id' => 'source', 'very_condensed' => 1])
+		return $this->_header_links().
+			table($vars, ['pager_records_on_page' => 10000, 'id' => 'source', 'very_condensed' => 1])
 			->func('source', function($in,$e,$a,$t) {
 				return _wordwrap(_prepare_html($in), 120, '<br>');
 			}, ['desc' => 'Var name'])
@@ -506,12 +508,6 @@ Fallback when no numbers matched (any string)
 			->btn_delete('', url('/@object/var_delete/%source'), ['btn_no_text' => 1, 'display_func' => function($a) { return $a['var_id'] ? 1 : 0; }])
 			->header_add('', url('/@object/var_add'), ['btn_no_text' => 1, 'class_add' => 'btn-warning', 'no_ajax' => 1])
 			->footer_add('', url('/@object/var_add'), ['btn_no_text' => 1, 'class_add' => 'btn-warning', 'no_ajax' => 1])
-			->header_link('Translate', url('/@object/autotranslate'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-success'])
-			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-flask', 'class_add' => 'btn-warning'])
-			->header_link('Cleanup', url('/@object/cleanup'), ['icon' => 'fa fa-eraser', 'class_add' => 'btn-danger'])
-			->header_link('Import', url('/@object/import'), ['icon' => 'fa fa-download', 'class_add' => 'btn-info'])
-			->header_link('Export', url('/@object/export'), ['icon' => 'fa fa-upload', 'class_add' => 'btn-info'])
-			->header_link('Files', url('/@object/files'), ['icon' => 'fa fa-files-o', 'class_add' => 'btn-primary'])
 		;
 	}
 

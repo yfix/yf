@@ -17,7 +17,8 @@ class yf_locale_editor_export {
 #		$plugins = [];
 		$a['back_link'] = url('/@object/vars');
 		$a['redirect_link'] = $a['back_link'];
-		return form($a + (array)$_POST)
+		return $this->_parent->_header_links(). '<br>'. 
+			form($a + (array)$_POST)
 			->validate([
 				'lang' => 'required',
 				'format' => 'required'

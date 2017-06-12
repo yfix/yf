@@ -29,7 +29,8 @@ class yf_locale_editor_collect {
 			!isset($a[$k]) && $a[$k] = $v;
 		}
 		$display_func = function() { return !is_post(); };
-		return form($a + (array)$_POST)
+		return $this->_parent->_header_links(). '<br>'. 
+			form($a + (array)$_POST)
 			->validate(['min_length' => 'required'])
 			->on_validate_ok(function($data,$e,$vr,$form) { return $this->_on_validate_ok($form); })
 			->yes_no_box('include_app', ['display_func' => $display_func])

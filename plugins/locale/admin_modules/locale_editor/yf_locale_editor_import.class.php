@@ -26,7 +26,8 @@ class yf_locale_editor_import {
 		foreach ((array)$this->_parent->_langs as $lang => $name) {
 			$langs[$lang] = $name;
 		}
-		return form($a + (array)$_POST)
+		return $this->_parent->_header_links(). '<br>'. 
+			form($a + (array)$_POST)
 			->validate([
 				'lang' => 'required',
 				'format' => 'required'
