@@ -74,7 +74,7 @@ class yf_locale_editor_collect {
 		!$stats	&& common()->message_info('Collect done, nothing changed');
 
 		$form->container(a(['href' => '/@object/@action', 'title' => 'Back', 'icon' => 'fa fa-arrow-left', 'class' => 'btn btn-primary btn-small', 'target' => '']), ['wide' => true]);
-		$form->container($this->_parent->_pre_text(_var_export(_prepare_html($found_vars), 1)), ['wide' => true]);
+		$form->container($this->_parent->_pre_text(_prepare_html(_var_export($found_vars), 1)), ['wide' => true]);
 	}
 
 	/**
