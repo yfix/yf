@@ -27,22 +27,23 @@ class yf_locale_editor_autotranslate {
 		foreach ((array)$this->_parent->_langs as $lang => $name) {
 			$langs[$lang] = $name;
 		}
+		$display_func = function() { return !is_post(); };
 		return form($a + (array)$_POST)
 			->validate([
 				'lang_from' => 'required',
 				'lang_to' => 'required',
 			])
-			->on_validate_ok(array(&$this, '_on_validate_ok'))
-			->select_box('lang_from', $this->_parent->_cur_langs)
-			->select_box('lang_to', $langs)
-			->yes_no_box('keep_existing')
-			->save_and_back('', ['desc' => 'Translate'])
+			->on_validate_ok(function($data,$e,$vr,$form) { return $this->_on_validate_ok($form); })
+			->select_box('lang_from', $this->_parent->_cur_langs, ['display_func' => $display_func])
+			->select_box('lang_to', $langs, ['display_func' => $display_func])
+			->yes_no_box('keep_existing', ['display_func' => $display_func])
+			->save_and_back('', ['desc' => 'Translate', 'display_func' => $display_func])
 		;
 	}
 
 	/**
 	*/
-	function _on_validate_ok() {
+	function _on_validate_ok($form) {
 		$p = &$_POST;
 		$lang = $p['lang_to'];
 		$lang_from = $p['lang_from'] ?: 'en';
@@ -61,6 +62,8 @@ class yf_locale_editor_autotranslate {
 			common()->message_info('Translate finished, 0 variables to translate');
 			return js_redirect('/@object/@action');
 		}
+		set_time_limit(600);
+
 		$to_update = [];
 		$services = services();
 		// var_id can be empty if it is got from files
@@ -92,6 +95,8 @@ class yf_locale_editor_autotranslate {
 		!$stats	&& common()->message_info('Translate done, nothing changed');
 
 		cache_del('locale_translate_'.$lang);
-		return js_redirect('/@object/vars');
+
+		$form->container(a(['href' => '/@object/@action', 'title' => 'Back', 'icon' => 'fa fa-arrow-left', 'class' => 'btn btn-primary btn-small', 'target' => '']), ['wide' => true]);
+		$form->container($this->_parent->_pre_text(_var_export(_prepare_html($to_update), 1)), ['wide' => true]);
 	}	
 }

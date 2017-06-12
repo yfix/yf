@@ -31,7 +31,7 @@ class yf_locale_editor_import {
 				'lang' => 'required',
 				'format' => 'required'
 			])
-			->on_validate_ok(array(&$this, '_on_validate_ok'))
+			->on_validate_ok(function($data,$e,$vr,$form) { return $this->_on_validate_ok($form); })
 			->select_box('lang', $langs)
 			->select_box('format', $this->_parent->_import_export_file_formats)
 			->file('file')
@@ -42,7 +42,7 @@ class yf_locale_editor_import {
 
 	/**
 	*/
-	function _on_validate_ok() {
+	function _on_validate_ok($form) {
 		$p = &$_POST;
 		$f = &$_FILES['file'];
 

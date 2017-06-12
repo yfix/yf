@@ -819,12 +819,18 @@ Fallback when no numbers matched (any string)
 		if (!isset($help)) {
 			return false;
 		}
+		$lang = $lang ?: conf('language');
+		return $this->_pre_text(trim($help[$lang] ?: $help['en'] ?: current($help)));
+	}
+
+	/**
+	*/
+	function _pre_text($text = '', $class = 'text-info') {
 		css('
 			pre.docs-text { background-color: transparent; border: 0; font-family: inherit; font-size: inherit; font-weight: bold; }
 			pre.docs-text > code { color: white; }
 		');
-		$lang = $lang ?: conf('language');
-		return '<pre class="docs-text"><code><span class="text-info">'.trim($help[$lang] ?: $help['en'] ?: current($help)).'</span></code></pre>';
+		return '<pre class="docs-text"><code><span class="'.$class.'">'.$text.'</span></code></pre>';
 	}
 
 	/**
