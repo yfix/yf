@@ -2596,6 +2596,27 @@ class yf_form2 {
 
 	/**
 	*/
+	function _remove_items_by_name($name = '') {
+		if (is_array($name)) {
+			$func = __FUNCTION__;
+			foreach((array)$name as $_name) {
+				$this->$func($_name);
+			}
+			return true;
+		}
+		if (!$name) {
+			return false;
+		}
+		foreach ((array)$this->_body as $k => $v) {
+			if ($v['name'] == $name) {
+				unset($this->_body[$k]);
+			}
+		}
+		return true;
+	}
+
+	/**
+	*/
 	function tbl_link($name, $link, $extra = [], $replace = []) {
 		return _class('form2_tbl_funcs', 'classes/form2/')->{__FUNCTION__}($name, $link, $extra, $replace, $this);
 	}
@@ -2667,7 +2688,7 @@ class yf_form2 {
 			}
 			$on_before_validate = isset($extra['on_before_validate']) ? $extra['on_before_validate'] : $form->_on['on_before_validate'];
 			if (is_callable($on_before_validate)) {
-				$on_before_validate($form->_validate_rules, $data);
+				$on_before_validate($form->_validate_rules, $data, $this);
 			}
 			$events = _class('core_events');
 			$events->fire('form.before_validate', [$form->_validate_rules, $data]);
@@ -2677,20 +2698,20 @@ class yf_form2 {
 				$form->_validate_ok = true;
 				$on_validate_ok = isset($extra['on_validate_ok']) ? $extra['on_validate_ok'] : $form->_on['on_validate_ok'];
 				if (is_callable($on_validate_ok)) {
-					$on_validate_ok($data, $extra, $form->_validate_rules);
+					$on_validate_ok($data, $extra, $form->_validate_rules, $this);
 				}
 				$events->fire('form.validate_ok', [$form->_validate_rules, $data, $extra]);
 			} else {
 				$form->_validate_ok = false;
 				$on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $form->_on['on_validate_error'];
 				if (is_callable($on_validate_error)) {
-					$on_validate_error($data, $extra, $form->_validate_rules);
+					$on_validate_error($data, $extra, $form->_validate_rules, $this);
 				}
 				$events->fire('form.validate_error', [$form->_validate_rules, $data, $extra]);
 			}
 			$on_after_validate = isset($extra['on_after_validate']) ? $extra['on_after_validate'] : $form->_on['on_after_validate'];
 			if (is_callable($on_after_validate)) {
-				$on_after_validate($form->_validate_ok, $form->_validate_rules, $data, $extra);
+				$on_after_validate($form->_validate_ok, $form->_validate_rules, $data, $extra, $this);
 			}
 			$events->fire('form.after_validate', [$form->_validate_ok, $form->_validate_rules, $data, $extra]);
 			$form->_validated_fields = $data;
@@ -2971,7 +2992,7 @@ class yf_form2 {
 			// Callback/hook function implementation
 			$on_before_update = isset($extra['on_before_update']) ? $extra['on_before_update'] : $form->_on['on_before_update'];
 			if ($data && $table && is_callable($on_before_update)) {
-				$on_before_update($data, $table, $fields, $type, $extra);
+				$on_before_update($data, $table, $fields, $type, $extra, $this);
 			}
 			_class('core_events')->fire('form.before_update', [$data, $table, $fields, $type, $extra]);
 			if ($data && $table) {
@@ -2989,7 +3010,7 @@ class yf_form2 {
 				// Callback/hook function implementation
 				$on_after_update = isset($extra['on_after_update']) ? $extra['on_after_update'] : $form->_on['on_after_update'];
 				if (is_callable($on_after_update)) {
-					$on_after_update($data, $table, $fields, $type, $extra);
+					$on_after_update($data, $table, $fields, $type, $extra, $this);
 				}
 				_class('core_events')->fire('form.after_update', [$data, $table, $fields, $type, $extra]);
 				$on_success_text = isset($extra['on_success_text']) ? $extra['on_success_text'] : $form->_on['on_success_text'];
