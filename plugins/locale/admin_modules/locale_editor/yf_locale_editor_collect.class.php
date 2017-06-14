@@ -80,7 +80,7 @@ class yf_locale_editor_collect {
 		}
 		// replace with insert/update to not change var ids
 		if ($data_new) {
-			db()->insert_safe('locale_vars', $data_new);
+			db()->insert_safe('locale_vars', $data_new, ['ignore' => true]);
 		}
 		if ($data_existing) {
 			db()->update_batch_safe('locale_vars', $data_existing);
@@ -161,7 +161,6 @@ class yf_locale_editor_collect {
 		$pspaces = '\s'."\t";
 		$pquotes = '"\'';
 		$patterns_translate	= [
-# TODO: try tokenizer for php
 			'php'	=> '~[\(\{\.,='.$pspaces.']+?'.'t'.'['.$pspaces.']*?\(['.$pspaces.']*?(?P<var>\'[^\'$]+?\'|"[^"$]+?")~ims',
 			'stpl'	=> '~\{t\(\s*["\']{0,1}(?P<var>.+?)["\']{0,1}\s*\)\}~ims',
 			'ng'	=> '~\{\{['.$pspaces.$pquotes.']*(?P<var>[^\|\}]+?)['.$pspaces.$pquotes.']*\|['.$pspaces.']*'.'translate'.'['.$pspaces.']*\}\}~is',
@@ -172,6 +171,8 @@ class yf_locale_editor_collect {
 			return [];
 		} elseif ($type == 'ng' && false === strpos($raw, '{{')) {
 			return [];
+		} elseif ($type == 'php') {
+			return $this->_php_vars($file, $params);
 		}
 		$vars = [];
 		$farray = file($file);
@@ -224,5 +225,47 @@ class yf_locale_editor_collect {
 			$out = $in;
 		}
 		return $out;
+	}
+
+	/**
+	* try tokenizer for php
+	*/
+	function _php_vars($file, $params = []) {
+		$code = file_get_contents($file);
+
+		$GLOBALS['_locale_editor_collect_vars'] = [];
+
+		require_php_lib('php_parser');
+		$parser = (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7);
+		$traverser = new PhpParser\NodeTraverser;
+		$traverser->addVisitor(
+			new class extends PhpParser\NodeVisitorAbstract {
+				public function leaveNode(PhpParser\Node $node) {
+					if ( ! ($node instanceof PhpParser\Node\Expr\FuncCall)) {
+						return;
+					}
+					if ($node->name->parts[0] !== 't') {
+						return;
+					}
+					$arg = $node->args[0]->value;
+					if (! ($arg instanceof PhpParser\Node\Scalar\String_)) {
+						return;
+					}
+					$var = $arg->value;
+					$line = $arg->getAttribute('startLine');
+					$GLOBALS['_locale_editor_collect_vars'][$var][$line] = $line;
+				}
+			}
+		);
+		$stmts = $parser->parse($code);
+		$stmts = $traverser->traverse($stmts);
+
+		foreach ((array)$GLOBALS['_locale_editor_collect_vars'] as $var => $lines) {
+			$var = _strtolower($var);
+			$vars[$var] = implode(',', $lines);
+		}
+		unset($GLOBALS['_locale_editor_collect_vars']);
+
+		return $vars;
 	}
 }
