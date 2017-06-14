@@ -28,24 +28,24 @@ class yf_locale_editor_autotranslate {
 			$langs[$lang] = $name;
 		}
 		$display_func = function() { return !is_post(); };
-		return $this->_parent->_header_links(). '<br>'. 
+		return $this->_parent->_header_links(). '<div class="col-md-12"><br>'. 
 			form($a + (array)$_POST)
 			->validate([
 				'lang_from' => 'required',
 				'lang_to' => 'required',
 			])
-			->on_validate_ok(function($data,$e,$vr,$form) { return $this->_on_validate_ok($form); })
+			->on_validate_ok(function($data,$e,$vr,$form) { return $this->_on_validate_ok($data, $form); })
 			->select_box('lang_from', $this->_parent->_cur_langs, ['display_func' => $display_func])
 			->select_box('lang_to', $langs, ['display_func' => $display_func])
 			->yes_no_box('keep_existing', ['display_func' => $display_func])
 			->save_and_back('', ['desc' => 'Translate', 'display_func' => $display_func])
-		;
+		.'</div>';
 	}
 
 	/**
 	*/
-	function _on_validate_ok($form) {
-		$p = &$_POST;
+	function _on_validate_ok($form = null) {
+		$p = $params ?: $_POST;
 		$lang = $p['lang_to'];
 		$lang_from = $p['lang_from'] ?: 'en';
 		$keep_existing = $p['keep_existing'];
@@ -55,13 +55,15 @@ class yf_locale_editor_autotranslate {
 				continue;
 			}
 			$tr = $a['translation'][$lang];
+d($tr, $source);
 			if (!strlen($tr) || $tr == $source) {
 				$to_tr[$source] = $a['var_id'];
 			}
 		}
 		if (!$to_tr) {
 			common()->message_info('Translate finished, 0 variables to translate');
-			return js_redirect('/@object/@action');
+#			return js_redirect('/@object/@action');
+			return ;
 		}
 		set_time_limit(600);
 
@@ -83,6 +85,7 @@ class yf_locale_editor_autotranslate {
 				$var_id = (int)db()->insert_id();
 			}
 			if ($var_id) {
+# TODO: count update and insert separately
 				db()->replace_safe('locale_translate', [
 					'var_id' => (int)$var_id,
 					'locale' => $lang,

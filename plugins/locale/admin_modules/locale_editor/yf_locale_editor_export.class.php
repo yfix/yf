@@ -17,13 +17,13 @@ class yf_locale_editor_export {
 #		$plugins = [];
 		$a['back_link'] = url('/@object/vars');
 		$a['redirect_link'] = $a['back_link'];
-		return $this->_parent->_header_links(). '<br>'. 
+		return $this->_parent->_header_links(). '<div class="col-md-12"><br>'. 
 			form($a + (array)$_POST)
 			->validate([
 				'lang' => 'required',
 				'format' => 'required'
 			])
-			->on_validate_ok(function($data,$e,$vr,$form) { return $this->_on_validate_ok($form); })
+			->on_validate_ok(function($data,$e,$vr,$form) { return $this->_on_validate_ok($data, $form); })
 			->select_box('lang', $this->_parent->_cur_langs)
 			->select_box('format', $this->_parent->_import_export_file_formats)
 #			->select_box('module', $this->_parent->_modules)
@@ -31,13 +31,13 @@ class yf_locale_editor_export {
 #			->yes_no_box('is_template')
 			->yes_no_box('just_dump')
 			->save_and_back('', ['desc' => 'Export'])
-		;
+		.'</div>';
 	}
 
 	/**
 	*/
-	function _on_validate_ok($form) {
-		$p = &$_POST;
+	function _on_validate_ok($params = [], $form) {
+		$p = $params ?: $_POST;
 		$lang = $p['lang'];
 		$to_export = [];
 		foreach ((array)$this->_parent->_get_all_vars() as $source => $a) {

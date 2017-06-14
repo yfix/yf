@@ -79,8 +79,8 @@ Fallback when no numbers matched (any string)
 		$this->_modules = _class('admin_methods')->find_active_modules();
 
 		$langs = [];
-		foreach ((array)$this->_get_iso639_list() as $lang_code => $lang_params) {
-			$langs[$lang_code] = t($lang_params[0]).(!empty($lang_params[1]) ? ' ('.$lang_params[1].') ' : '');
+		foreach ((array)$this->_get_iso639_list() as $code => $v) {
+			$langs[$code] = t($v[0]). ($v[1] ? ' ('.$v[1].') ' : '');
 		}
 		$this->_langs = $langs;
 
@@ -95,19 +95,16 @@ Fallback when no numbers matched (any string)
 			]);
 			return js_redirect('/@object/@action/@id');
 		}
-		$cur_langs = [];
-		foreach ((array)$this->_cur_langs_array as $A) {
-			$cur_langs[$A['locale']] = t($A['name']);
+		$this->_cur_langs = [];
+		foreach ((array)$this->_cur_langs_array as $a) {
+			$this->_cur_langs[$a['locale']] = t($a['name']);
 		}
-		$this->_cur_langs = $cur_langs;
-
 		$this->_import_export_file_formats = [
 			'php'	=> t('PHP array file format'),
 			'json'	=> t('JSON file format'),
 			'yaml'	=> t('YAML file format'),
 			'csv'	=> t('CSV, compatible with MS Excel'),
 		];
-
 		$this->_import_modes = [
 			1 => t('Strings in the uploaded file replace existing ones, new ones are added'),
 			2 => t('Existing strings are kept, only new strings are added'),
@@ -116,16 +113,43 @@ Fallback when no numbers matched (any string)
 
 	/**
 	*/
+	function _show_quick_filter () {
+		if (!in_array($_GET['action'], ['vars'])) {
+			return false;
+		}
+		$filter = _class('admin_methods')->_get_filter(['filter_name' => $_GET['object'].'__show']);
+		$is_current = function($item) use ($filter) { return $filter[$name] ? ' disabled' : ''; };
+		$a = [];
+		$a[] = a('/@object/filter_save/clear/?filter=in_db:1', 'Filter in db', 'fa fa-database', '', 'btn-info', '');
+		$a[] = a('/@object/filter_save/clear/?filter=in_files:1', 'Filter in files', 'fa fa-file', '', 'btn-info', '');
+		$a[] = a('/@object/filter_save/clear/?filter=has_tr:1', 'Filter has translations', 'fa fa-asterisk', '', 'btn-info', '');
+		foreach ((array)$this->_cur_langs as $lang => $name) {
+			$a[] = a('/@object/filter_save/clear/?filter=locale:'.$lang, 'Filter translations for '.$name, 'bfh-flag-'.$this->lang_def_country[$lang], strtoupper($lang), 'btn-default', '');
+		}
+		$a[] = a('/@object/filter_save/clear/', 'Clear filter', 'fa fa-close', '', 'btn-primary', '');
+		return $a ? '<div class="pull-right">'.implode(PHP_EOL, $a).'</div>' : '';
+	}
+
+	/**
+	*/
 	function _header_links() {
 		$is_current = function($action) { return $_GET['action'] == $action ? ' disabled' : ''; };
-		return table([], ['no_records_html' => ''])
+		$header_links = table([], ['no_records_html' => ''])
+			->header_link('Langs', url('/@object/show'), ['icon' => 'fa fa-globe', 'class_add' => 'btn-default '. $is_current('show')])
 			->header_link('Translate', url('/@object/autotranslate'), ['icon' => 'fa fa-cogs', 'class_add' => 'btn-success '. $is_current('autotranslate')])
 			->header_link('Collect', url('/@object/collect'), ['icon' => 'fa fa-flask', 'class_add' => 'btn-warning '. $is_current('collect')])
 			->header_link('Cleanup', url('/@object/cleanup'), ['icon' => 'fa fa-eraser', 'class_add' => 'btn-danger '. $is_current('cleanup')])
 			->header_link('Import', url('/@object/import'), ['icon' => 'fa fa-download', 'class_add' => 'btn-info '. $is_current('import')])
 			->header_link('Export', url('/@object/export'), ['icon' => 'fa fa-upload', 'class_add' => 'btn-info '. $is_current('export')])
 			->header_link('Files', url('/@object/files'), ['icon' => 'fa fa-files-o', 'class_add' => 'btn-primary '. $is_current('files')])
-			->header_link('Vars', url('/@object/vars'), ['icon' => 'fa fa-bars', 'class_add' => 'btn-primary '. $is_current('vars')])
+			->header_link('Sources', url('/@object/sources'), ['icon' => 'fa fa-bars', 'class_add' => 'btn-primary '. $is_current('sources')])
+			->header_link('Vars', url('/@object/vars'), ['icon' => 'fa fa-language', 'class_add' => 'btn-primary '. $is_current('vars')])
+		;
+		return
+			'<div class="col-md-12">'.
+				'<div class="col-md-6">'.$header_links.'</div>'.
+				'<div class="col-md-6 pull-right" title="'.t('Quick filter').'">'.$this->_show_quick_filter().'</div>'.
+			'</div>'
 		;
 	}
 
@@ -133,9 +157,20 @@ Fallback when no numbers matched (any string)
 	* Display all project languages
 	*/
 	function show() {
-#		$tr_vars = from('locale_translate')->where_raw('value != ""')->group_by('locale')->get_2d('locale, COUNT(var_id)');
-#		$total_vars = (int)from('locale_vars')->one('COUNT(*)');
-
+		$all_vars = $this->_get_all_vars();
+		$total_vars = count($all_vars);
+		$tr_vars = [];
+		foreach ((array)$all_vars as $source => $v) {
+			if (!isset($v['translation'])) {
+				continue;
+			}
+			foreach ((array)$v['translation'] as $lang => $tr) {
+				if (!$tr || $tr == $source) {	
+					continue;
+				}
+				$tr_vars[$lang]++;
+			}
+		}
 		$data = [];
 		foreach ((array)$this->_cur_langs_array as $v) {
 			$id = $v['locale'];
@@ -324,6 +359,31 @@ Fallback when no numbers matched (any string)
 
 	/**
 	*/
+	function sources() {
+		$vars = $this->_get_all_vars_from_db();
+		$files = [];
+		foreach ((array)$vars as $source => $a) {
+			if (!$a['location']) {
+				continue;
+			}
+			$source = trim($source);
+			foreach(explode(';', $a['location']) as $raw) {
+				list($file, $lines) = explode(':', $raw);
+				$file = trim($file);
+				$lines = trim($lines);
+				$file && $files[$file][$source]++;
+			}
+		}
+		ksort($files);
+		foreach ((array)$files as $k => $v) {
+			ksort($v);
+			$files[$k] = '<small>'.implode('<br>', _prepare_html(array_keys($v))).'</small>';
+		}
+		return $this->_header_links(). html()->simple_table($files);
+	}
+
+	/**
+	*/
 	function _show_files_for_lang($lang, $lang_files, $var_files) {
 		$yf_path_len = strlen(YF_PATH);
 		$app_path_len = strlen(APP_PATH);
@@ -445,16 +505,20 @@ Fallback when no numbers matched (any string)
 		foreach((array)from('locale_translate')->where_raw('locale IN("'.implode('","',$lang_ids).'")')->all() as $a) {
 			$tr_all[$a['var_id']][$a['locale']] = $a['value'];
 		}
-		foreach ((array)from('locale_vars')->get_2d('value,id') as $source => $vid) {
+		foreach ((array)from('locale_vars')->all() as $a) {
+			$var_id = $a['id'];
+			$source = $a['value'];
 			$this->VARS_IGNORE_CASE && $source = _strtolower($source);
 			$vars[$source]['id'] = $source;
 			$vars[$source]['source'] = $source;
-			$trs = $tr_all[$vid];
+			$trs = $tr_all[$var_id];
 			foreach((array)$trs as $lang => $tr) {
 				$vars[$source]['locale'][$lang] = $lang;
 				$vars[$source]['translation'][$lang] = $tr;
 			}
-			$vars[$source]['var_id'] = $vid;
+			$vars[$source]['var_id'] = $var_id;
+			$vars[$source]['location'] = $a['location'];
+			$vars[$source]['add_date'] = $a['add_date'];
 		}
 		return $vars;
 	}
@@ -482,6 +546,24 @@ Fallback when no numbers matched (any string)
 				$vars[$source][$k] = $v;
 			}
 		}
+		$filter = _class('admin_methods')->_get_filter(['filter_name' => $_GET['object'].'__show']);
+		if ($filter) {
+			foreach ((array)$vars as $source => $a) {
+				if ($filter['in_db'] && !$a['var_id']) {
+					unset($vars[$source]);
+					continue;
+				} elseif ($filter['in_files'] && !$a['files']) {
+					unset($vars[$source]);
+					continue;
+				} elseif ($filter['has_tr'] && !$a['translation']) {
+					unset($vars[$source]);
+					continue;
+				} elseif ($filter['locale'] && !$a['translation'][$filter['locale']]) {
+					unset($vars[$source]);
+					continue;
+				}
+			}
+		}
 
 		$edit_link_tpl = url('/@object/var_edit/%id');
 
@@ -504,6 +586,9 @@ Fallback when no numbers matched (any string)
 				}
 				return $out ? implode(' ', $out) : '';
 			}, ['desc' => 'Langs'])
+			->func('source', function($in,$e,$a,$t) {
+				return isset($a['add_date']) ? '<small>'.$a['add_date'].'</small>' : '';
+			}, ['desc' => 'Add date'])
 			->btn_edit('', url('/@object/var_edit/%source'), ['btn_no_text' => 1])
 			->btn_delete('', url('/@object/var_delete/%source'), ['btn_no_text' => 1, 'display_func' => function($a) { return $a['var_id'] ? 1 : 0; }])
 			->header_add('', url('/@object/var_add'), ['btn_no_text' => 1, 'class_add' => 'btn-warning', 'no_ajax' => 1])
@@ -664,104 +749,87 @@ Fallback when no numbers matched (any string)
 	* Cleanup variables (Delete not translated or missed vars)
 	*/
 	function cleanup () {
-		$deleted = 0;
-		// translations without parents
-		db()->query('DELETE FROM '.db('locale_translate').' WHERE var_id NOT IN( 
-			SELECT id FROM '.db('locale_vars').' 
-		)');
-		$deleted += db()->affected_rows();
-		// parents without translations
-		db()->query('DELETE FROM '.db('locale_vars').' WHERE id NOT IN(
-			SELECT var_id FROM '.db('locale_translate').'
-		)');
-		$deleted += db()->affected_rows();
-		// empty translations
-		db()->query('DELETE FROM '.db('locale_translate').' WHERE value = ""');
-		$deleted += db()->affected_rows();
-		// same or empty translations
-		$sql = '
-			DELETE p1 
-			FROM '.db('locale_translate').' AS p1
-			INNER JOIN (
-				SELECT t.var_id, t.locale 
-				FROM '.db('locale_translate').' AS t
-				INNER JOIN '.db('locale_vars').' AS v ON t.var_id = v.id
-				WHERE t.value = v.value OR t.value = ""
-			) AS p2
-			ON p1.locale = p2.locale AND p1.var_id = p2.var_id
-		';
-		db()->query($sql);
-		$deleted += db()->affected_rows();
-		// Special for the ignore case case
-		if ($this->VARS_IGNORE_CASE) {
-			// Delete non-changed translations
-			$sql = '
-				DELETE p1 
-				FROM '.db('locale_translate').' AS p1
-				INNER JOIN (
-					SELECT t.var_id, t.locale 
-					FROM '.db('locale_translate').' AS t
-					INNER JOIN '.db('locale_vars').' AS v ON t.var_id = v.id
-					WHERE LOWER(REPLACE(CONVERT(t.value USING utf8), " ", "_")) = LOWER(REPLACE(CONVERT(v.value USING utf8), " ", "_"))
-				) AS p2
-				ON p1.locale = p2.locale AND p1.var_id = p2.var_id
-			';
-			db()->query($sql);
-			$deleted += db()->affected_rows();
-			// Delete duplicated records
-			$sql = '
-				DELETE p1 
-				FROM '.db('locale_vars').' AS p1
-				INNER JOIN (
-					SELECT id FROM '.db('locale_vars').'
-					GROUP BY LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) 
-					HAVING COUNT(*) > 1
-				) AS p2
-				USING (id)
-			';
-			db()->query($sql);
-			$deleted += db()->affected_rows();
-		}
-		// translations without parents
-		db()->query('DELETE FROM '.db('locale_translate').' WHERE var_id NOT IN( 
-			SELECT id FROM '.db('locale_vars').' 
-		)');
-		$deleted += db()->affected_rows();
-		// parents without translations
-		db()->query('DELETE FROM '.db('locale_vars').' WHERE id NOT IN(
-			SELECT var_id FROM '.db('locale_translate').'
-		)');
-		$deleted += db()->affected_rows();
-		common()->message_success('Deleted records: '.(int)$deleted);
-		return js_redirect('/@object/vars');
+		$cls = 'locale_editor';
+		$func = __FUNCTION__;
+		return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->$func();
 	}
 
 	/**
 	* Export vars
 	*/
 	function export() {
-		$cls = 'locale_editor'; return _class($cls.'_export', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+		$cls = 'locale_editor';
+		$func = __FUNCTION__;
+		return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->$func();
 	}
 
 	/**
 	* Import vars
 	*/
 	function import() {
-		$cls = 'locale_editor'; return _class($cls.'_import', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+		$cls = 'locale_editor';
+		$func = __FUNCTION__;
+		return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->$func();
 	}
 
 	/**
 	* Collect vars from source files (Framework included)
 	*/
 	function collect () {
-		$cls = 'locale_editor'; return _class($cls.'_collect', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+		$cls = 'locale_editor';
+		$func = __FUNCTION__;
+		return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->$func();
 	}
 
 	/**
 	* Automatic translator via Google translate API
 	*/
 	function autotranslate() {
-		$cls = 'locale_editor'; return _class($cls.'_autotranslate', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+		$cls = 'locale_editor';
+		$func = __FUNCTION__;
+		return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->$func();
+	}
+
+	/**
+	*/
+	function update_files_back() {
+# TODO
+	}
+
+	/**
+	*/
+	function swap_translations() {
+# TODO
+	}
+
+	/**
+	* Display list of user-specific vars
+	*/
+	function user_vars() {
+# TODO: cleanup
+#		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+	}
+
+	/**
+	*/
+	function user_var_edit() {
+# TODO: cleanup
+#		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+	}
+
+	/**
+	*/
+	function user_var_delete() {
+# TODO: cleanup
+#		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
+	}
+
+	/**
+	* Push user var into main traslation table
+	*/
+	function user_var_push($FORCE_ID = false) {
+# TODO: cleanup
+#		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}($FORCE_ID);
 	}
 
 	/**
@@ -781,7 +849,7 @@ Fallback when no numbers matched (any string)
 	/**
 	*/
 	function filter_save() {
-		return _class('admin_methods')->filter_save();
+		return _class('admin_methods')->filter_save(['redirect_url' => url('/@object/vars')]);
 	}
 
 	/**
@@ -827,31 +895,5 @@ Fallback when no numbers matched (any string)
 			pre.docs-text > code { color: white; }
 		');
 		return '<pre class="docs-text"><code><span class="'.$class.'">'.$text.'</span></code></pre>';
-	}
-
-	/**
-	* Display list of user-specific vars
-	*/
-	function user_vars() {
-		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
-	}
-
-	/**
-	*/
-	function user_var_edit() {
-		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
-	}
-
-	/**
-	*/
-	function user_var_delete() {
-		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
-	}
-
-	/**
-	* Push user var into main traslation table
-	*/
-	function user_var_push($FORCE_ID = false) {
-		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}($FORCE_ID);
 	}
 }

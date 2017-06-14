@@ -26,26 +26,26 @@ class yf_locale_editor_import {
 		foreach ((array)$this->_parent->_langs as $lang => $name) {
 			$langs[$lang] = $name;
 		}
-		return $this->_parent->_header_links(). '<br>'. 
+		return $this->_parent->_header_links(). '<div class="col-md-12"><br>'. 
 			form($a + (array)$_POST)
 			->validate([
 				'lang' => 'required',
 				'format' => 'required'
 			])
-			->on_validate_ok(function($data,$e,$vr,$form) { return $this->_on_validate_ok($form); })
+			->on_validate_ok(function($data,$e,$vr,$form) { return $this->_on_validate_ok($data, $form); })
 			->select_box('lang', $langs)
 			->select_box('format', $this->_parent->_import_export_file_formats)
 			->file('file')
 			->yes_no_box('keep_existing')
 			->save_and_back('', ['desc' => 'Import'])
-		;
+		.'</div>';
 	}
 
 	/**
 	*/
-	function _on_validate_ok($form) {
-		$p = &$_POST;
-		$f = &$_FILES['file'];
+	function _on_validate_ok($params = [], $form) {
+		$p = $params ?: $_POST;
+		$f = $_FILES['file'];
 
 		$lang = $p['lang'];
 		$format = $p['format'];
@@ -130,6 +130,7 @@ class yf_locale_editor_import {
 					$stats['failed']++;
 					continue;
 				}
+# TODO: replace with insert/update to not change var ids
 				db()->replace_safe('locale_translate', [
 					'var_id' => (int)$var_id,
 					'locale' => $lang,
