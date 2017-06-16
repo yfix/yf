@@ -456,6 +456,7 @@ class yf_i18n {
 				$first = $in;
 				$in = _strtolower($in);
 			}
+			// Search for namespaced variable with current module name inside, even when prefix was not explicitely passed
 			$module = $_GET['object'];
 			if (!strlen($prefix) && $module && isset($t['::'.$module.'::'. $in])) {
 				$prefix = '::'.$module.'::';
@@ -490,9 +491,6 @@ class yf_i18n {
 		}
 		if (!$is_translated) {
 			$out = $first;
-			if ($plen) {
-				$out = substr($out, $plen);
-			}
 			if (!empty($args) && is_array($args)) {
 				$out = strtr($out, $args);
 			}
