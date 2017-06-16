@@ -2,6 +2,7 @@
 
 define('APP_PATH', __DIR__.'/_tmp/');
 define('STORAGE_PATH', __DIR__.'/_tmp/');
+define('CONFIG_PATH', __DIR__.'/');
 $_SERVER['HTTP_HOST'] = 'test.dev';
 if (!function_exists('main')) {
 	$CONF['cache']['DRIVER'] = 'tmp';
