@@ -153,38 +153,6 @@ class class_assets_test extends yf_unit_tests {
 	}
 
 	/***/
-	public function test_angularjs() {
-		$url = _class('assets')->get_asset('angularjs', 'js');
-		$this->assertNotEmpty($url);
-		angularjs('alert("Hello");');
-		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
-	}
-
-	/***/
-	public function test_backbonejs() {
-		$url = _class('assets')->get_asset('backbonejs', 'js');
-		$this->assertNotEmpty($url);
-		backbonejs('alert("Hello");');
-		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
-	}
-
-	/***/
-	public function test_reactjs() {
-		$url = _class('assets')->get_asset('reactjs', 'js');
-		$this->assertNotEmpty($url);
-		reactjs('alert("Hello");');
-		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
-	}
-
-	/***/
-	public function test_emberjs() {
-		$url = _class('assets')->get_asset('emberjs', 'js');
-		$this->assertNotEmpty($url);
-		emberjs('alert("Hello");');
-		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
-	}
-
-	/***/
 	public function test_basic() {
 		$url = '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css';
 		$expected = '<link href="'.$url.'" rel="stylesheet" />';
