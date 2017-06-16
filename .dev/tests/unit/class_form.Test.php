@@ -318,22 +318,22 @@ class class_form_test extends yf_unit_tests {
 		$this->assertEquals('<input name="test" type="email" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->email('test')) );
 	}
 	public function test_number() {
-		$this->assertEquals('<input name="test" type="number" id="test" class="form-control input-small" placeholder="Test" maxlength="10">', trim(self::form_no_chain($r)->number('test')) );
+		$this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="10">', trim(self::form_no_chain($r)->number('test')) );
 	}
 	public function test_integer() {
-		$this->assertEquals('<input name="test" type="number" id="test" class="form-control input-small" placeholder="Test" maxlength="10">', trim(self::form_no_chain($r)->integer('test')) );
+		$this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="10">', trim(self::form_no_chain($r)->integer('test')) );
 	}
 	public function test_float() {
-		$this->assertEquals('<input name="test" type="number" id="test" class="form-control input-small" placeholder="Test" maxlength="10" step="0.01">', trim(self::form_no_chain($r)->float('test')) );
+		$this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="10" step="0.01">', trim(self::form_no_chain($r)->float('test')) );
 	}
 	public function test_decimal() {
-		$this->assertEquals('<input name="test" type="number" id="test" class="form-control input-small" placeholder="Test" maxlength="10" step="0.01">', trim(self::form_no_chain($r)->decimal('test')) );
+		$this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="10" step="0.01">', trim(self::form_no_chain($r)->decimal('test')) );
 	}
 	public function test_money() {
-		$this->assertEquals('<input name="test" type="number" id="test" class="form-control input-small" placeholder="Test" maxlength="8" step="0.01">', trim(self::form_no_chain($r)->money('test')) );
+		$this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="8" step="0.01">', trim(self::form_no_chain($r)->money('test')) );
 	}
 	public function test_price() {
-		$this->assertEquals('<input name="test" type="number" id="test" class="form-control input-small" placeholder="Test" maxlength="8" min="0" step="0.01">', trim(self::form_no_chain($r)->price('test')) );
+		$this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="8" min="0" step="0.01">', trim(self::form_no_chain($r)->price('test')) );
 	}
 	public function test_url() {
 		$this->assertEquals('<input name="url" type="url" id="url" class="form-control" placeholder="Url">', trim(self::form_no_chain($r)->url()) );
