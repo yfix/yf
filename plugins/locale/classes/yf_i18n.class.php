@@ -456,8 +456,9 @@ class yf_i18n {
 				$first = $in;
 				$in = _strtolower($in);
 			}
-			if (!strlen($prefix) && isset($t['::'.$_GET['object'].'::'. $in])) {
-				$prefix = '::'.$_GET['object'].'::';
+			$module = $_GET['object'];
+			if (!strlen($prefix) && $module && isset($t['::'.$module.'::'. $in])) {
+				$prefix = '::'.$module.'::';
 			}
 			if (strlen($prefix) && isset($t[$prefix. $in])) {
 				$out = $t[$prefix. $in];
@@ -469,7 +470,7 @@ class yf_i18n {
 				$out = $t[$var_un_html];
 				$is_translated = true;
 			} else {
-				$out = $in;
+				$out = $first;
 				if (DEBUG_MODE) {
 					!isset($this->_NOT_TRANSLATED[$lang][$in]) && $this->_NOT_TRANSLATED[$lang][$in] = 0;
 					$this->_NOT_TRANSLATED[$lang][$in]++;
@@ -497,10 +498,10 @@ class yf_i18n {
 			}
 		} elseif ($is_translated) {
 			if ($this->TRACK_FIRST_LETTER_CASE) {
-				$input = $in;
-				$f_s = substr($input, 0, 1);
+				$input = $first;
+				$f_s = _substr($input, 0, 1);
 				$f_t = _substr($out, 0, 1);
-				$f_s_lower = strtolower($f_s) == $f_s;
+				$f_s_lower = _strtolower($f_s) == $f_s;
 				$f_t_lower = _strtolower($f_t) == $f_t;
 				if (!$f_s_lower && $f_t_lower) {
 					$out = _strtoupper($f_t). _substr($out, 1);
