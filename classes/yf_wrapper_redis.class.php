@@ -5,6 +5,7 @@
 */
 class yf_wrapper_redis {
 
+	public $name   = 'REDIS'; // instance name
 	public $driver = 'phpredis'; // predis|phpredis
 	public $host   = '127.0.0.1';
 	public $port   = 6379;
@@ -49,6 +50,9 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function _get_conf($name, $default = null, array $params = []) {
+		if( $this->name && $name ) {
+			$name = implode( '_', [ $this->name, $name ] );
+		}
 		if (isset($params[$name]) && $val = $params[$name]) {
 			return $val;
 		}
@@ -70,12 +74,12 @@ class yf_wrapper_redis {
 		if ($this->_connection) {
 			return $this->_connection;
 		}
-		$this->host   = $this->_get_conf('REDIS_HOST', '127.0.0.1', $params);
-		$this->port   = (int)$this->_get_conf('REDIS_PORT', '6379', $params);
-		$this->prefix = $this->_get_conf('REDIS_PREFIX', '', $params);
+		$this->host   = $this->_get_conf('HOST', '127.0.0.1', $params);
+		$this->port   = (int)$this->_get_conf('PORT', '6379', $params);
+		$this->prefix = $this->_get_conf('PREFIX', '', $params);
 		$this->prefix = $this->prefix ? $this->prefix .':' : '';
-		$this->opt_connect_timeout = $this->_get_conf('REDIS_OPT_CONNECT_TIMEOUT', '1', $params);
-		$this->opt_connect_delay = $this->_get_conf('REDIS_OPT_CONNECT_DELAY', '100', $params);
+		$this->opt_connect_timeout = $this->_get_conf('OPT_CONNECT_TIMEOUT', '1', $params);
+		$this->opt_connect_delay = $this->_get_conf('OPT_CONNECT_DELAY', '100', $params);
 
 		$redis = null;
 		if ($this->driver == 'phpredis') {
