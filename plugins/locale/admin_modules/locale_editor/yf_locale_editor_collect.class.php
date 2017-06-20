@@ -237,6 +237,8 @@ class yf_locale_editor_collect {
 
 		require_php_lib('php_parser');
 		$parser = (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7);
+		$stmts = $parser->parse($code);
+
 		$traverser = new PhpParser\NodeTraverser;
 		$traverser->addVisitor(
 			new class extends PhpParser\NodeVisitorAbstract {
@@ -257,7 +259,6 @@ class yf_locale_editor_collect {
 				}
 			}
 		);
-		$stmts = $parser->parse($code);
 		$stmts = $traverser->traverse($stmts);
 
 		foreach ((array)$GLOBALS['_locale_editor_collect_vars'] as $var => $lines) {
