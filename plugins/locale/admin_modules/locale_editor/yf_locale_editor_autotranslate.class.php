@@ -56,8 +56,15 @@ class yf_locale_editor_autotranslate {
 
 		$to_tr = [];
 		foreach ((array)$this->_parent->_get_all_vars() as $source => $a) {
+			// Fix for source vars written in russian
+			if ($lang_from == 'en' && preg_match('~[а-яА-Я]+~imsu', $source)) {
+				continue;
+			}
 			$tr = isset($a['translation'][$lang]) ? $a['translation'][$lang] : null;
-			if (!strlen($tr) || $tr == $source) {
+			if ($keep_existing && $tr) {
+				continue;
+			}
+			if (!strlen($tr) || _strtolower($tr) == _strtolower($source)) {
 				$to_tr[$source] = $a['var_id'];
 			}
 			if (count($to_tr) >= $max_items) {
@@ -76,15 +83,32 @@ class yf_locale_editor_autotranslate {
 		$failed = [];
 		// var_id can be empty if it is got from files
 		foreach ((array)$to_tr as $source => $var_id) {
-			$tr = $services->google_translate(str_replace('_', ' ', $source), $lang_from, $lang);
-			if (strlen($tr) && $tr != $source) {
-				$to_update[$source] = $tr;
+			$source_for_tr = $source;
+			// cutoff all vars starting from % or @
+			$map = [];
+			$need_map = (false !== strpos($source_for_tr, '%') || false !== strpos($source_for_tr, '@'));
+			if ($need_map && preg_match_all('~(?<var>[%@][a-z0-9_-]+)~ims', $source_for_tr, $m)) {
+				foreach ((array)$m['var'] as $i => $str) {
+					$map[$str] = '{'.$i.'}';
+				}
+				if ($map) {
+					$source_for_tr = strtr($source_for_tr, $map);
+				}
+			}
+			$source_for_tr = str_replace('_', ' ', $source_for_tr);
+			$tr = $services->google_translate($source_for_tr, $lang_from, $lang);
+			if (strlen($tr) && $map) {
+				$tr = strtr($tr, array_flip($map));
+			}
+			if (strlen($tr) && _strtolower($tr) != _strtolower($source)) {
+				$to_update[$source] = _strtolower($tr);
 			} else {
 				$not_tr[$source] = $tr;
 				$stats['failed']++;
 			}
 		}
 		$to_replace = [];
+		$existing_tr = from('locale_translate')->where('locale', $lang)->get_2d('var_id,value');
 		foreach ((array)$to_update as $source => $tr) {
 			$var_id = $to_tr[$source];
 			if (!$var_id) {
@@ -92,13 +116,13 @@ class yf_locale_editor_autotranslate {
 				$var_id = (int)db()->insert_id();
 			}
 			if ($var_id) {
-# TODO: $keep_existing
-# TODO: do not replace same records to not change CURRENT_TIMESTAMP
-				$to_replace[$var_id] = [
-					'var_id' => (int)$var_id,
-					'locale' => $lang,
-					'value'  => $tr,
-				];
+				if (isset($existing_tr[$var_id]) && $existing_tr[$var_id] != $tr) {
+					$to_replace[$var_id] = [
+						'var_id' => (int)$var_id,
+						'locale' => $lang,
+						'value'  => $tr,
+					];
+				}
 				$stats['updated']++;
 			}
 		}
