@@ -568,17 +568,6 @@ class yf_payment_api__provider_remote {
 						return( $result );
 					}
 				}
-				// mail
-				$tpl = $mail_tpl . '_'. $new_status_name;
-				$payment_api->mail( [
-					'tpl'     => $tpl,
-					'user_id' => $account[ 'user_id' ],
-					'admin'   => true,
-					'data'    => [
-						'operation_id' => $operation_id,
-						'amount'       => $amount,
-					],
-				]);
 			}
 			if( $is_update_status ) {
 				// DUMP
@@ -646,6 +635,19 @@ class yf_payment_api__provider_remote {
 						],
 					]);
 					return( $result );
+				}
+				elseif($is_update_balance){
+					// mail
+					$tpl = $mail_tpl . '_'. $new_status_name;
+					$payment_api->mail( [
+						'tpl'     => $tpl,
+						'user_id' => $account[ 'user_id' ],
+						'admin'   => true,
+						'data'    => [
+							'operation_id' => $operation_id,
+							'amount'       => $amount,
+						],
+					]);
 				}
 			}
 			@$_status_message && $status_message = $_status_message;
@@ -988,9 +990,10 @@ class yf_payment_api__provider_remote {
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
 		// save options
+		$data = array_merge($form_data, ['method_id'=>@$options[ 'method_id' ]]);
 		$operation_options = [
 			'request' => [ [
-				'data'     => $form_data,
+				'data'     => $data,
 				'form'     => $form_options,
 				'datetime' => $operation_data[ 'sql_datetime' ],
 			]]
