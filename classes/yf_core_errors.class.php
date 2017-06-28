@@ -28,7 +28,7 @@ class yf_core_errors {
 	* NOTE: $error_log_filename will only be used if you have log_errors Off and ;error_log filename in php.ini 
 	* if log_errors is On, and error_log is set, the filename in error_log will be used. 
 	*/ 
-	public $error_log_filename		= 'yf_core_errors.log';
+	public $error_log_filename		= 'yf_core_errors{suffix}.log';
 	/** @var string The recipient email to mail errors to */
 	public $email_to				= '';
 	/** @var string Recipient address */
@@ -72,6 +72,29 @@ class yf_core_errors {
 	];
 
 	/**
+	*/
+	function _get_file_path() {
+		$main = main();
+		$is = [
+			'unit'		=> $main->is_unit_test(),
+			'admin'		=> $main->is_admin(),
+			'console'	=> $main->is_console(),
+			'ajax'		=> $main->is_ajax(),
+			'debug'		=> $main->is_debug(),
+		];
+		$suffix = '';
+		foreach ($is as $name => $enabled) {
+			if ($enabled) {
+				$suffix .= '_'.$name;
+			}
+		}
+		$file_path = defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : APP_PATH. 'logs/'.$this->error_log_filename;
+		$file_path = str_replace('{suffix}', $suffix, $file_path);
+		$this->error_log_filename = $file_path;
+		return $this->error_log_filename;
+	}
+
+	/**
 	* Constructor
 	*/
 	function __construct() {
@@ -81,8 +104,10 @@ class yf_core_errors {
 		if (conf('ERROR_REPORTING')) {
 			error_reporting((int)conf('ERROR_REPORTING'));
 		}
-		$this->error_log_filename = APP_PATH. 'logs/'.$this->error_log_filename;
-		$this->set_log_file_name(defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : $this->error_log_filename);
+
+		$file_path = $this->_get_file_path();
+		$this->set_log_file_name($file_path);
+
 		$this->set_flags(defined('error_handler_FLAGS') ? error_handler_FLAGS : '110000');
 		$this->set_reporting_level();
 		$this->set_mail_receiver('yf_framework_site_admin', defined('SITE_ADMIN_EMAIL') ? SITE_ADMIN_EMAIL : 'php_test@127.0.0.1');
