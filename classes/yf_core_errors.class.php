@@ -77,7 +77,8 @@ class yf_core_errors {
 		$main = main();
 		$is = [
 			'unit'		=> $main->is_unit_test(),
-			'admin'		=> $main->is_admin(),
+			'admin'		=> MAIN_TYPE == 'admin',
+			'user'		=> MAIN_TYPE == 'user',
 			'console'	=> $main->is_console(),
 			'ajax'		=> $main->is_ajax(),
 			'debug'		=> $main->is_debug(),
