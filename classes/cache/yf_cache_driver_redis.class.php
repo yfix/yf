@@ -48,7 +48,18 @@ class yf_cache_driver_redis extends yf_cache_driver {
 			'REDIS_PORT'	=> $this->_get_conf('REDIS_CACHE_PORT'),
 			'REDIS_PREFIX'	=> $this->_get_conf('REDIS_CACHE_PREFIX'),
 		];
-		$this->_connection = redis();
+		$is_override = false;
+		foreach ((array)$override as $k => $v) {
+			if ($v) {
+				$is_override = true;
+				break;
+			}
+		}
+		if ($is_override) {
+			$this->_connection = clone redis();
+		} else {
+			$this->_connection = redis();
+		}
 		$this->_connection->connect($override);
 	}
 

@@ -46,7 +46,18 @@ class yf_queue_driver_redis extends yf_queue_driver {
 				'REDIS_PORT'	=> $this->_get_conf('REDIS_QUEUE_PORT'),
 				'REDIS_PREFIX'	=> $this->_get_conf('REDIS_QUEUE_PREFIX'),
 			];
-			$this->_connection = redis($params);
+			$is_override = false;
+			foreach ((array)$override as $k => $v) {
+				if ($v) {
+					$is_override = true;
+					break;
+				}
+			}
+			if ($is_override) {
+				$this->_connection = clone redis($params);
+			} else {
+				$this->_connection = redis($params);
+			}
 			$this->_connection->connect($override);
 		}
 		return $this->_connection;
