@@ -17,6 +17,46 @@ class yf_manage_redis {
 	function _init() {
 		$i_default = redis();
 		$i_cache = strpos(strtolower(cache()->DRIVER), 'redis') !== false ? cache()->_driver->_connection : null;
+		if (ini_get('session.save_handler') == 'redis' && preg_match('~tcp://(?P<host>[a-z0-9_-]+):(?P<port>[0-9]+)~ims', ini_get('session.save_path'), $m)) {
+			$i_sessions = clone redis();
+			$i_sessions->connect([
+				'REDIS_HOST' => $m['host'],
+				'REDIS_PORT' => $m['port'],
+				'REDIS_PREFIX' => 'PHPREDIS_SESSION',
+			]);
+		}
+		if ($this->_get_conf('REDIS_LOG_HOST')) {
+			$i_log = clone redis();
+			$i_log->connect([
+				'REDIS_HOST' => $this->_get_conf('REDIS_LOG_HOST'),
+				'REDIS_PORT' => $this->_get_conf('REDIS_LOG_PORT'),
+				'REDIS_PREFIX' => $this->_get_conf('REDIS_LOG_PREFIX'),
+			]);
+		}
+		if ($this->_get_conf('REDIS_QUEUE_HOST')) {
+			$i_queue = clone redis();
+			$i_queue->connect([
+				'REDIS_HOST' => $this->_get_conf('REDIS_QUEUE_HOST'),
+				'REDIS_PORT' => $this->_get_conf('REDIS_QUEUE_PORT'),
+				'REDIS_PREFIX' => $this->_get_conf('REDIS_QUEUE_PREFIX'),
+			]);
+		}
+		if ($this->_get_conf('REDIS_PUBSUB_HOST')) {
+			$i_pubsub = clone redis();
+			$i_pubsub->connect([
+				'REDIS_HOST' => $this->_get_conf('REDIS_PUBSUB_HOST'),
+				'REDIS_PORT' => $this->_get_conf('REDIS_PUBSUB_PORT'),
+				'REDIS_PREFIX' => $this->_get_conf('REDIS_PUBSUB_PREFIX'),
+			]);
+		}
+		if ($this->_get_conf('REDIS_CONF_HOST')) {
+			$i_conf = clone redis();
+			$i_conf->connect([
+				'REDIS_HOST' => $this->_get_conf('REDIS_CONF_HOST'),
+				'REDIS_PORT' => $this->_get_conf('REDIS_CONF_PORT'),
+				'REDIS_PREFIX' => $this->_get_conf('REDIS_CONF_PREFIX'),
+			]);
+		}
 		$are_same = function($i1, $i2) {
 			if (!is_object($i1) || !is_object($i2)) {
 				return false;
@@ -29,9 +69,32 @@ class yf_manage_redis {
 			return true;
 		};
 		$this->instances = array_filter([
-			'redis_default' => $i_default,
-			'redis_cache' => $are_same($i_default, $i_cache) ? null : $i_cache,
+			'redis_default'	=> $i_default,
+			'redis_cache'	=> $are_same($i_default, $i_cache) ? null : $i_cache,
+			'redis_sessions'=> $are_same($i_default, $i_sessions) ? null : $i_sessions,
+			'redis_log'		=> $are_same($i_default, $i_log) ? null : $i_log,
+			'redis_queue'	=> $are_same($i_default, $i_queue) ? null : $i_queue,
+			'redis_pubsub'	=> $are_same($i_default, $i_pubsub) ? null : $i_pubsub,
+			'redis_conf'	=> $are_same($i_default, $i_conf) ? null : $i_conf,
 		]);
+	}
+
+	/**
+	*/
+	function _get_conf($name, $default = null, array $params = []) {
+		if (isset($params[$name]) && $val = $params[$name]) {
+			return $val;
+		}
+		if ($val = getenv($name)) {
+			return $val;
+		}
+		if ($val = conf($name)) {
+			return $val;
+		}
+		if (defined($name) && ($val = constant($name)) != $name) {
+			return $val;
+		}
+		return $default;
 	}
 
 	/**
@@ -51,12 +114,13 @@ class yf_manage_redis {
 
 		$data = [];
 
-		$plen = strlen(REDIS_PREFIX);
+		$prefix = $r->prefix;
+		$plen = strlen($prefix);
 		$keys = $r->keys('*');
 		$groups = [];
 		foreach((array)$keys as $key) {
-			if (strpos($key, REDIS_PREFIX) === 0) {
-				$key = substr($key, $plen + 1);
+			if (strpos($key, $prefix) === 0) {
+				$key = substr($key, $plen);
 			}
 			if (false !== strpos($key, ':')) {
 				$gname = strstr($key, ':', true);
@@ -71,7 +135,8 @@ class yf_manage_redis {
 		}
 		foreach ((array)$groups as $name => $count) {
 			if ($count > 1) {
-				$filters[] = a('/@object/?i='.$i.'&g='.urlencode($name), '', 'fa fa-filter', $name.'&nbsp;('.$count.')', '', '');
+				$is_selected = $g && strtolower($g) == strtolower($name);
+				$filters[] = a('/@object/?i='.$i.'&g='.urlencode($name), '', 'fa fa-filter', $name.'&nbsp;('.$count.')', $is_selected ? 'btn-warning' : '', '');
 			} else {
 				unset($groups[$name]);
 			}
@@ -79,22 +144,35 @@ class yf_manage_redis {
 				$skip[] = $name.':*';
 			}
 		}
-		$avail_types = [];
-		foreach((array)$keys as $key) {
-			if (strpos($key, REDIS_PREFIX) === 0) {
-				$key = substr($key, $plen + 1);
-			}
-			if ($g) {
-				if (strpos($key, $g.':') !== 0) {
+		$get_display_keys = function($keys, $skip) use ($r, $g, $t, $plen) {
+			$display_keys = [];
+			$prefix = $r->prefix;
+			foreach((array)$keys as $key) {
+				if (strpos($key, $prefix) === 0) {
+					$key = substr($key, $plen);
+				}
+				if ($g) {
+					if (strpos($key, $g.':') !== 0) {
+						continue;
+					}
+				} elseif ($skip && wildcard_compare($skip, $key)) {
 					continue;
 				}
-			} elseif ($skip && wildcard_compare($skip, $key)) {
-				continue;
+				$type = $this->types[$r->type($key)];
+				if ($t && strtoupper($type) != strtoupper($t)) {
+					continue;
+				}
+				$display_keys[$key] = $type;
 			}
-			$type = $this->types[$r->type($key)];
-			if ($t && strtoupper($type) != strtoupper($t)) {
-				continue;
-			}
+			return $display_keys;
+		};
+		$display_keys = $get_display_keys($keys, $skip);
+		if ($keys && !$display_keys && $skip) {
+			$skip = [];
+			$display_keys = $get_display_keys($keys, $skip);
+		}
+		$avail_types = [];
+		foreach((array)$display_keys as $key => $type) {
 			$avail_types[$type]++;
 			$data[$key]['id'] = $key;
 			$data[$key]['type'] = $type;
@@ -115,7 +193,8 @@ class yf_manage_redis {
 		ksort($data);
 		arsort($avail_types);
 		foreach($avail_types as $type => $count) {
-			$filters[] = a('/@object/?i='.$i.'&t='.strtolower($type), '', 'fa fa-cog', $type.'&nbsp;('.$count.')', 'btn-info', '');
+			$is_selected = $t && strtolower($t) == strtolower($type);
+			$filters[] = a('/@object/?i='.$i.'&t='.strtolower($type), '', 'fa fa-cog', $type.'&nbsp;('.$count.')', $is_selected ? 'btn-warning' : 'btn-info', '');
 		}
 
 		$table = table($data, ['condensed' => true, 'hide_empty' => true, 'pager_records_on_page' => 10000])
@@ -134,6 +213,15 @@ class yf_manage_redis {
 
 		$config = $r->config('get', '*');
 		ksort($config);
+
+		$i_select = array_combine(array_keys($this->instances), array_keys($this->instances));
+		$filters[] = '<div class="i_select col-md-1 pull-right">'.html()->chosen_box('i_select', $i_select, $i).'</div>';
+		jquery('
+			var base_url = "'.url('/@object').'";
+			$("div.i_select select[name=i_select]").on("change", function(){
+				window.location.href = base_url + "&i=" + $(this).val();
+			})
+		');
 
 		return ($filters ? '<div class="col-md-12">'.implode(' ', $filters).'</div>' : '')
 			. '<div class="col-md-6"><h2>'.$i.' ('.count($keys).')</h2>'.$table.'</div>'
@@ -154,9 +242,10 @@ class yf_manage_redis {
 			return js_redirect('/@object');
 		}
 		$r = &$this->instances[$i];
+		$prefix = $r->prefix;
 		$id = trim($_GET['id']);
-		if (strpos($id, REDIS_PREFIX) === 0) {
-			$id = substr($id, strlen(REDIS_PREFIX) + 1);
+		if (strpos($id, $prefix) === 0) {
+			$id = substr($id, strlen($prefix) + 1);
 		}
 		if (!$r->exists($id)) {
 			return _e('No such key');
@@ -217,9 +306,11 @@ class yf_manage_redis {
 			return js_redirect('/@object');
 		}
 		$r = &$this->instances[$i];
+		$prefix = $r->prefix;
+		$plen = strlen($prefix);
 		$id = trim($_GET['id']);
-		if (strpos($id, REDIS_PREFIX) === 0) {
-			$id = substr($id, strlen(REDIS_PREFIX) + 1);
+		if (strpos($id, $prefix) === 0) {
+			$id = substr($id, $plen);
 		}
 		$keys_to_del = [];
 		if ($id) {
@@ -227,8 +318,8 @@ class yf_manage_redis {
 			if (is_post()) {
 				foreach ((array)$_POST['id'] as $k => $tmp) {
 					$k = trim($k);
-					if (strpos($k, REDIS_PREFIX) === 0) {
-						$k = substr($k, strlen(REDIS_PREFIX) + 1);
+					if (strpos($k, $prefix) === 0) {
+						$k = substr($k, $plen);
 					}
 					if (strlen($k)) {
 						$keys_to_del[$k] = $k;
@@ -237,8 +328,8 @@ class yf_manage_redis {
 			// Click on delete link from edit
 			} elseif (isset($_GET['num'])) {
 				$k = trim($_GET['num']);
-				if (strpos($k, REDIS_PREFIX) === 0) {
-					$k = substr($k, strlen(REDIS_PREFIX) + 1);
+				if (strpos($k, $prefix) === 0) {
+					$k = substr($k, $plen);
 				}
 				if (strlen($k)) {
 					$keys_to_del[$k] = $k;
@@ -251,8 +342,8 @@ class yf_manage_redis {
 			if (is_post()) {
 				foreach ((array)$_POST['id'] as $k => $tmp) {
 					$k = trim($k);
-					if (strpos($k, REDIS_PREFIX) === 0) {
-						$k = substr($k, strlen(REDIS_PREFIX) + 1);
+					if (strpos($k, $prefix) === 0) {
+						$k = substr($k, $plen);
 					}
 					if (strlen($k)) {
 						$keys_to_del[$k] = $k;
@@ -262,8 +353,8 @@ class yf_manage_redis {
 			// Click on delete link from keys listing
 			} elseif (isset($_GET['num'])) {
 				$k = trim($_GET['num']);
-				if (strpos($k, REDIS_PREFIX) === 0) {
-					$k = substr($k, strlen(REDIS_PREFIX) + 1);
+				if (strpos($k, $prefix) === 0) {
+					$k = substr($k, $plen);
 				}
 				if (strlen($k)) {
 					$r->del($k);
