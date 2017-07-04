@@ -67,13 +67,22 @@ class yf_debug {
 	*/
 	function _init() {
 		$this->_NOT_TRANSLATED_FILE = PROJECT_PATH. 'logs/not_translated_'. conf('language'). '.php';
-		$this->DEBUG_CONSOLE_LIGHT = intval((bool)$_SESSION['debug_console_light']);
+		$name = 'debug_console_light';
+		$this->DEBUG_CONSOLE_LIGHT = intval((bool)(isset($_SESSION[$name]) ? $_SESSION[$name] : $_GET[$name]));
+		$name = 'debug_console_hidden';
+		$this->DEBUG_CONSOLE_HIDDEN = intval((bool)(isset($_SESSION[$name]) ? $_SESSION[$name] : $_GET[$name]));
+		if ($this->DEBUG_CONSOLE_HIDDEN) {
+			$this->DEBUG_CONSOLE_LIGHT = true;
+		}
 	}
 
 	/**
 	* Create simple table with debug info
 	*/
 	function go() {
+		if ($this->DEBUG_CONSOLE_HIDDEN) {
+			return false;
+		}
 		$ts = microtime(true);
 		// Do hide console if needed
 		if ($_SESSION['hide_debug_console'] || $_GET['hide_debug_console']) {
