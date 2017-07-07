@@ -418,7 +418,11 @@ class yf_table2 {
 			'stpl_path'			=> $params['pager_stpl_path'] ?: '',
 			'add_get_vars'		=> $params['pager_add_get_vars'] ?: 1,
 			'sql_callback'		=> $params['pager_sql_callback'] ?: null,
+			'extra'				=> $params['extra'] ?: [],
 		];
+		if (!$pager['extra']['sql_callback'] && $pager['sql_callback']) {
+			$pager['extra']['sql_callback'] = &$pager['sql_callback'];
+		}
 		$sql = $this->_sql;
 		$ids = [];
 		if (is_array($sql)) {
@@ -447,7 +451,7 @@ class yf_table2 {
 			if ($params['filter']) {
 				$this->_filter_array($data, $params['filter'], $params['filter_params']);
 			}
-			$pager['out'] = common()->divide_pages(null, null, null, $pager['records_on_page'], count($data));
+			$pager['out'] = common()->divide_pages(null, null, null, $pager['records_on_page'], count($data), $pager['stpl_path'], $pager['add_get_vars'], $pager['extra']);
 			$pages = $pager['out'][1];
 			if (count($data) > $pager['records_on_page']) {
 				$slice_start = (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $pager['records_on_page'];
