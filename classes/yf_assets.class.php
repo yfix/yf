@@ -617,7 +617,7 @@ class yf_assets {
 				$need_to_continue = true;
 				break;
 			}
-			$web[] = WEB_PATH. substr($to_path, strlen(PROJECT_PATH));
+			$web[] = MEDIA_PATH. substr($to_path, strlen(PROJECT_PATH));
 		}
 		if (!$need_to_continue) {
 			$cache[$name] = $web;
@@ -662,7 +662,7 @@ class yf_assets {
 				// Copy instead of symlink to allow to delete or miss source bower components dir
 				file_put_contents($to_path, file_get_contents($from_path));
 			}
-			$web[] = WEB_PATH. substr($to_path, strlen(PROJECT_PATH));
+			$web[] = MEDIA_PATH. substr($to_path, strlen(PROJECT_PATH));
 		}
 		$cache[$name] = $web;
 		return $cache[$name];
@@ -699,7 +699,7 @@ class yf_assets {
 					file_put_contents($to_path, $data);
 				}
 			}
-			$web[] = WEB_PATH. substr($to_path, strlen(PROJECT_PATH));
+			$web[] = MEDIA_PATH. substr($to_path, strlen(PROJECT_PATH));
 		}
 		$cache[$name] = $web;
 		return $cache[$name];
@@ -737,7 +737,7 @@ class yf_assets {
 					file_put_contents($to_path, $data);
 				}
 			}
-			$web[] = WEB_PATH. substr($to_path, strlen(PROJECT_PATH));
+			$web[] = MEDIA_PATH. substr($to_path, strlen(PROJECT_PATH));
 		}
 		$cache[$name] = $web;
 		return $cache[$name];
@@ -1918,7 +1918,7 @@ class yf_assets {
 				return $this->$func($out_type, 'url', $url, $params);
 			}
 		}
-		if ($content_type === 'url' && $this->SHORTEN_LOCAL_URL) {
+		if ($content_type === 'url' && $this->SHORTEN_LOCAL_URL && MEDIA_PATH == WEB_PATH) {
 			$slen = strlen($media_path);
 			if (substr($str, 0, $slen) === $media_path) {
 				$str = '/'.substr($str, $slen);
