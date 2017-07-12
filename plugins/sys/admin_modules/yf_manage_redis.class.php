@@ -256,8 +256,15 @@ class yf_manage_redis {
 		if ($type == 'STRING') {
 			$len = $r->strlen($id);
 			$data = $r->get($id);
-			$data = '<pre style="background:black; color:white; font-weight:bold;">'._prepare_html($data).'</pre>'
-				. (in_array(substr($data, 0, 1), ['{','[']) ? 'JSON decoded:<pre style="background:black; color:white; font-weight:bold;">'.var_export(json_decode($data, true), true).'</pre>' : '');
+			$like_json = in_array(substr($data, 0, 1), ['{','[']);
+			if ($like_json) {
+#				$php_exported = _var_export(json_decode($data, true), true);
+				$data = json_encode(json_decode($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+			}
+			$cur_url = url('/@object/edit/?i='.$i.'&id='.$id);
+			$data = ($php_exported ? '<a href="'.$cur_url.'#json_pretty" class="btn btn-xs btn-info">RAW</a>&nbsp;&nbsp;<a href="'.$cur_url.'#php_export" class="btn btn-xs btn-info">PHP ARRAY</a><br><br>' : '')
+				.'<pre id="json_pretty" style="background:black; color:white; font-weight:bold;">'._prepare_html($data).'</pre>'
+				. ($php_exported ? 'JSON PHP VAR EXPORTED:<pre id="php_export" style="background:black; color:white; font-weight:bold;">'.$php_exported.'</pre>' : '');
 		} elseif ($type == 'HASH') {
 			$len = $r->hlen($id);
 			$data = $r->hgetall($id);
