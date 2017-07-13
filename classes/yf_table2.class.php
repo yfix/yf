@@ -304,54 +304,8 @@ class yf_table2 {
 			$table_class = isset($params['force_class']) ? $params['force_class'] : trim(trim($this->CLASS_TABLE_MAIN.' '.$params['table_class']).' '.$params['table_class_add']);
 			$table_attrs = (isset($params['table_attr']) ? ' '.$params['table_attr'] : '');
 			$body .= '<table class="'.trim($table_class).'"'.$table_attrs.'>'.PHP_EOL;
-
 			if (!$params['no_header'] && !$params['rotate_table']) {
-				$thead_attrs = '';
-				if (isset($params['thead'])) {
-					$thead_attrs = is_array($params['thead']) ? _attrs($params['thead'], ['class', 'id']) : ' '.$params['thead'];
-				}
-				$body .= '<thead'.$thead_attrs.'>'.PHP_EOL;
-				$data1row = current($data);
-				// Needed to correctly process null values, when some other rows contain real data there
-				foreach ((array)$data1row as $k => $v) {
-					$data1row[$k] = strval($v);
-				}
-				foreach ((array)$this->_fields as $info) {
-					$name = $info['name'];
-					if (!isset($data1row[$name])) {
-						// Fix for anonymous auto-named func data
-						if ($info['type'] === 'func' && is_callable($info['func'])) {
-							foreach ((array)$data as $k => $v) {
-								$data[$k][$info['name']] = '';
-							}
-						} else {
-							continue;
-						}
-					}
-					if (isset($to_hide[$name])) {
-						continue;
-					}
-					$info['extra'] = (array)$info['extra'];
-					if (++$counter2 == 1 && $this->_params['first_col_width']) {
-						$info['extra']['width'] = $this->_params['first_col_width'];
-					}
-					$th_attrs = '';
-					if (isset($info['extra']['th'])) {
-						$th_attrs .= is_array($info['extra']['th']) ? ' '._attrs($info['extra']['th'], ['class','id','width']) : ' '.$info['extra']['th'];
-					} elseif (isset($info['extra']['th_id'])) {
-						$th_attrs .= $info['extra']['th_id'] ? ' id="'.$info['extra']['th_id'].'"' : '';
-					}
-					$th_attrs .= $info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '';
-					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="'.str_replace('%name', $params['th_icon_prepend'], $this->CLASS_TPL_ICON).'"></i> ' : '');
-					$th_icon_append = ($params['th_icon_append'] ? ' <i class="'.str_replace('%name', $params['th_icon_append'], $this->CLASS_TPL_ICON).'"></i>' : '');
-					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip'], $name) : '';
-					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
-					$body .= '<th'.$th_attrs.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
-				}
-				if ($this->_buttons) {
-					$body .= '<th>'.(isset($params['actions_desc']) ? t($params['actions_desc']) : t('Actions')).'</th>'.PHP_EOL;
-				}
-				$body .= '</thead>'.PHP_EOL;
+				$body .= $this->_render_thead($params, $a, $to_hide);
 			}
 			$sortable_url = $params['sortable'];
 			if ($sortable_url && strlen($sortable_url) <= 5) {
@@ -361,6 +315,9 @@ class yf_table2 {
 				$body .= $this->_render_table_contents_rotated($data, $params, $to_hide);
 			} else {
 				$body .= $this->_render_table_contents($data, $params, $to_hide);
+			}
+			if ($params['totals'] && !$params['no_header'] && !$params['rotate_table']) {
+				$body .= $this->_render_totals($params, $a, $to_hide);
 			}
 			if ($params['show_total']) {
 				$params['caption'] .= PHP_EOL.' '.t('Total records:').':'.$a['total']. PHP_EOL;
@@ -401,6 +358,87 @@ class yf_table2 {
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $a['pages'] : '').PHP_EOL;
 		return trim($body);
+	}
+
+	/**
+	*/
+	function _render_thead(&$params, &$a, &$to_hide) {
+		$data = &$a['data'];
+		$thead_attrs = '';
+		if (isset($params['thead'])) {
+			$thead_attrs = is_array($params['thead']) ? _attrs($params['thead'], ['class', 'id']) : ' '.$params['thead'];
+		}
+		$body .= '<thead'.$thead_attrs.'>'.PHP_EOL;
+		$data1row = current($data);
+		// Needed to correctly process null values, when some other rows contain real data there
+		foreach ((array)$data1row as $k => $v) {
+			$data1row[$k] = strval($v);
+		}
+		foreach ((array)$this->_fields as $info) {
+			$name = $info['name'];
+			if (!isset($data1row[$name])) {
+				// Fix for anonymous auto-named func data
+				if ($info['type'] === 'func' && is_callable($info['func'])) {
+					foreach ((array)$data as $k => $v) {
+						$data[$k][$info['name']] = '';
+					}
+				} else {
+					continue;
+				}
+			}
+			if (isset($to_hide[$name])) {
+				continue;
+			}
+			$info['extra'] = (array)$info['extra'];
+			if (++$counter2 == 1 && $this->_params['first_col_width']) {
+				$info['extra']['width'] = $this->_params['first_col_width'];
+			}
+			$th_attrs = '';
+			if (isset($info['extra']['th'])) {
+				$th_attrs .= is_array($info['extra']['th']) ? ' '._attrs($info['extra']['th'], ['class','id','width']) : ' '.$info['extra']['th'];
+			} elseif (isset($info['extra']['th_id'])) {
+				$th_attrs .= $info['extra']['th_id'] ? ' id="'.$info['extra']['th_id'].'"' : '';
+			}
+			$th_attrs .= $info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '';
+			$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="'.str_replace('%name', $params['th_icon_prepend'], $this->CLASS_TPL_ICON).'"></i> ' : '');
+			$th_icon_append = ($params['th_icon_append'] ? ' <i class="'.str_replace('%name', $params['th_icon_append'], $this->CLASS_TPL_ICON).'"></i>' : '');
+			$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip'], $name) : '';
+			$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
+			$body .= '<th'.$th_attrs.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
+		}
+		if ($this->_buttons) {
+			$body .= '<th>'.(isset($params['actions_desc']) ? t($params['actions_desc']) : t('Actions')).'</th>'.PHP_EOL;
+		}
+		$body .= '</thead>'.PHP_EOL;
+		return $body;
+	}
+
+	/**
+	*/
+	function _render_totals(&$params, &$a, &$to_hide) {
+		$data = &$a['data'];
+		$total_fields = $params['totals'];
+
+		$tfoot_attrs = '';
+		if (isset($params['tfoot'])) {
+			$tfoot_attrs = is_array($params['tfoot']) ? _attrs($params['tfoot'], ['class', 'id']) : ' '.$params['tfoot'];
+		}
+		$body .= '<tfoot'.$tfoot_attrs.'>'.PHP_EOL;
+		foreach ((array)$this->_fields as $info) {
+			$name = $info['name'];
+			if (!isset($total_fields[$name])) {
+				$body .= '<th></th>'.PHP_EOL;
+				continue;
+			}
+			$total_value = $total_fields[$name];
+			if (is_callable($total_value)) {
+				$total_value = $total_value($this, $info, $params, $a);
+			}
+			$body .= '<th'.$th_attrs.'>'. $th_icon_prepend. $total_value. $th_icon_prepend. $tip. '</th>'.PHP_EOL;
+		}
+		$body .= '</tfoot>'.PHP_EOL;
+
+		return $body;
 	}
 
 	/**
@@ -503,6 +541,7 @@ class yf_table2 {
 						$sql .= ' '.$order_sql;
 					}
 				}
+				$this->_sql_with_filter = $sql;
 			}
 			$pager['out'] = common()->divide_pages($sql, $pager['path'], $pager['type'], $pager['records_on_page'], $pager['num_records'], $pager['stpl_path'], $pager['add_get_vars'], $pager['extra']);
 			$add_sql = $pager['out'][0];
