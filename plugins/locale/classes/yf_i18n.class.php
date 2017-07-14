@@ -379,7 +379,7 @@ class yf_i18n {
 		foreach ((array)$files as $path) {
 			$data = include $path;
 			foreach ((array)$data as $_source => $_trans) {
-				$_source = str_replace(' ', '_', strtolower($_source));
+				$_source = _strtolower($_source);
 				$this->TR_VARS[$lang][$_source] = $_trans;
 			}
 		}
