@@ -436,6 +436,9 @@ class yf_table2 {
 			}
 			$body .= '<th'.$th_attrs.'>'. $th_icon_prepend. $total_value. $th_icon_prepend. $tip. '</th>'.PHP_EOL;
 		}
+		if ($this->_buttons) {
+			$body .= '<th>'.t('TOTALS').'</th>'.PHP_EOL;
+		}
 		$body .= '</tfoot>'.PHP_EOL;
 
 		return $body;
