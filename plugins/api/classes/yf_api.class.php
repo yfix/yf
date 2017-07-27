@@ -45,6 +45,10 @@ class yf_api {
 	public $request_method = null;
 	public $request        = null;
 
+	public $language_id    = null;
+
+	public $class_i18n     = null;
+
 	function _init() {
 		ini_set( 'html_errors', 0 );
 		// ob_start();
@@ -64,6 +68,12 @@ class yf_api {
 		if( empty( $object ) || $object != 'api' ) { return( null ); }
 		$class  = $_GET[ 'action' ];
 		$method = $_GET[ 'id'     ];
+		// language_id
+		$language_id = &$_GET[ 'language_id' ];
+		$this->language_id = $language_id;
+		conf( 'language', $language_id );
+		$this->class_i18n = _class( 'i18n' );
+		$this->class_i18n->CUR_LOCALE = $language_id;
 		// http method
 		$request_method = @$_SERVER[ 'REQUEST_METHOD' ] ?: 'GET';
 		switch( $request_method ) {
