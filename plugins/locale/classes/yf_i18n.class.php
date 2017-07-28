@@ -108,10 +108,12 @@ class yf_i18n {
 		$this->_init_inline_editor();
 	}
 
-	function _get_default_lang(){
+	/**
+	*/
+	function _get_default_lang() {
 		$langs = $this->LANGUAGES ?: $this->_get_langs();
-		foreach($langs as $lang_name=>$lang_obj){
-			if($lang_obj['is_default'] == 1){
+		foreach ((array)$langs as $lang_name => $lang_obj) {
+			if ($lang_obj['is_default'] == 1) {
 				return $lang_name;
 			}
 		}
