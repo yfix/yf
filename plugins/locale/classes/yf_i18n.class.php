@@ -130,8 +130,8 @@ class yf_i18n {
 		if ($FORCE_LOCALE && isset($langs[$FORCE_LOCALE])) {
 			return $FORCE_LOCALE;
 		}
-		if (isset($this->_called[__FUNCTION__]) && !$force) {
-			return $this->CUR_LOCALE;
+		if ($this->_called[__FUNCTION__] && !$force) {
+			return $this->_called[__FUNCTION__];
 		}
 		$l = []; // contains all possible variants
 		$l['url'] = $_GET['language'] ?: $_GET['lang'];
@@ -196,14 +196,16 @@ class yf_i18n {
 				break;
 			}
 		}
-		!$lang && $lang = $this->CUR_LOCALE;
-		!isset($langs[$lang]) && $lang = 'en';
+		!$lang && $this->CUR_LOCALE && $lang = $this->CUR_LOCALE;
+		if (!isset($langs[$lang])) {
+			$lang = 'en';
+		}
 		$lang = strtolower($lang);
 
-		$this->CUR_LOCALE = $lang;
-		conf('language', $this->CUR_LOCALE);
+		$lang && $this->CUR_LOCALE = $lang;
+		$this->CUR_LOCALE && conf('language', $this->CUR_LOCALE);
 
-		$this->_called[__FUNCTION__] = true;
+		$this->_called[__FUNCTION__] = $this->CUR_LOCALE;
 
 		debug('locale::lang_variants', $l);
 		debug('locale::lang_priorities', $priorities);
