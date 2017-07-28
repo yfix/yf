@@ -63,6 +63,7 @@ class yf_api {
 		$is_put         = &$this->is_put;
 		$is_patch       = &$this->is_patch;
 		$is_delete      = &$this->is_delete;
+		$is_request     = &$this->is_request;
 		$request_method = &$this->request_method;
 		// setup
 		$object = $_GET[ 'object' ];
@@ -216,8 +217,10 @@ class yf_api {
 	}
 
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = [] ) {
+		$is_request = &$this->is_request;
 		$_method = '_api_' . $method;
 		// try module
+		$is_request = true;
 		$_class  = module_safe( $class );
 		$_status = method_exists( $_class, $_method );
 		if( !$_status ) {
@@ -227,7 +230,6 @@ class yf_api {
 		}
 		if( !$_status ) { $this->_reject(); }
 		$request = $this->_parse_request();
-		$this->is_request = true;
 		return( $_class->$_method( $request, $options ) );
 	}
 
