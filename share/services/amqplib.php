@@ -2,7 +2,7 @@
 <?php
 
 $config = [
-	'git_urls' => ['https://github.com/yfix/php-amqplib.git' => 'amqplib/'],
+	'git_urls' => ['https://github.com/php-amqplib/php-amqplib.git' => 'amqplib/'],
 	'autoload_config' => ['amqplib/PhpAmqpLib/' => 'PhpAmqpLib'],
 	'example' => function() {
 		$host = 'localhost'; 

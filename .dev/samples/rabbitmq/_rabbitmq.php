@@ -2,10 +2,11 @@
 
 $conf = require __DIR__.'/_conf.php';
 
+# DOCS https://github.com/pdezwart/php-amqp/tree/master/tests
 $cnn = new AMQPConnection([
 	'host' => $conf['host'] ?: 'localhost',
 	'vhost' => $conf['vhost'] ?: '/',
-	'port' => $conf['port'] ?: 5763,
+	'port' => $conf['port'] ?: 5672,
 	'login' => $conf['login'] ?: 'user',
 	'password' => $conf['password'] ?: 'password'
 ]);
@@ -13,14 +14,14 @@ $cnn->connect();
 
 $ch = new AMQPChannel($cnn);
 
-$ex = new AMQPExchange($ch);
-$ex->setName('test-exchange');
-$ex->setType(AMQP_EX_TYPE_FANOUT);
-$ex->declareExchange();
+$pubsub_ex_name = 'test-pubsub-exchange';
+$pubsub_q_name = 'test-pubsub-queue';
+$pubsub_topic_name = 'test-pubsub-topic';
 
-$routing_key = 'test-queue';
+$queues_ex_name = 'test-queue-exchange';
+$queues_q_name = 'test-queue-queue';
+$queues_topic_name = 'test-queue-topic';
 
-$queue = new AMQPQueue($ch);
-$queue->setName($routing_key);
-$queue->setFlags(AMQP_DURABLE);
-$queue->declareQueue();
+$rpc_ex_name = 'test-rpc-exchange';
+$rpc_q_name = 'test-rpc-queue';
+$rpc_topic_name = 'test-rpc-topic';
