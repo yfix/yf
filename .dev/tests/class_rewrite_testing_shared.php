@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__.'/yf_unit_tests_setup.php';
 class class_rewrite_testing_shared_test extends yf_unit_tests {
 	private static $host = 'test.dev';
 	private static $_bak_settings = [];
@@ -414,5 +415,17 @@ class class_rewrite_testing_shared_test extends yf_unit_tests {
 	}
 	public function test_process_url() {
 		$this->assertEquals('http://google.com/some_url', process_url('http://google.com/some_url') );
+	}
+	public function test_rewrite_langs() {
+		$this->assertEquals('http://'.self::$host.'/en/test', url('/test', ['host' => self::$host, 'lang' => 'en']) );
+		$this->assertEquals('http://'.self::$host.'/ru/test', url('/test', ['host' => self::$host, 'lang' => 'ru']) );
+		$this->assertEquals('http://'.self::$host.'/en/test', url('/test?lang=en', ['host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/ru/test', url('/test?lang=ru', ['host' => self::$host]) );
+		$this->assertEquals('http://'.self::$host.'/en/test/my', url('/test/my', ['host' => self::$host, 'lang' => 'en']) );
+		$this->assertEquals('http://'.self::$host.'/ru/test/my', url('/test/my', ['host' => self::$host, 'lang' => 'ru']) );
+		$this->assertEquals('http://'.self::$host.'/en/test/my/123', url('/test/my/123', ['host' => self::$host, 'lang' => 'en']) );
+		$this->assertEquals('http://'.self::$host.'/ru/test/my/123', url('/test/my/123', ['host' => self::$host, 'lang' => 'ru']) );
+		$this->assertEquals('http://'.self::$host.'/en/test/my/123/456', url('/test/my/123/456', ['host' => self::$host, 'lang' => 'en']) );
+		$this->assertEquals('http://'.self::$host.'/ru/test/my/123/456', url('/test/my/123/456', ['host' => self::$host, 'lang' => 'ru']) );
 	}
 }
