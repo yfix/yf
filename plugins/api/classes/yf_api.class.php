@@ -42,8 +42,13 @@ class yf_api {
 	public $is_put         = null;
 	public $is_patch       = null;
 	public $is_delete      = null;
+	public $is_request     = null;
 	public $request_method = null;
 	public $request        = null;
+
+	public $language_id    = null;
+
+	public $class_i18n     = null;
 
 	function _init() {
 		ini_set( 'html_errors', 0 );
@@ -58,12 +63,19 @@ class yf_api {
 		$is_put         = &$this->is_put;
 		$is_patch       = &$this->is_patch;
 		$is_delete      = &$this->is_delete;
+		$is_request     = &$this->is_request;
 		$request_method = &$this->request_method;
 		// setup
 		$object = $_GET[ 'object' ];
 		if( empty( $object ) || $object != 'api' ) { return( null ); }
 		$class  = $_GET[ 'action' ];
 		$method = $_GET[ 'id'     ];
+		// language_id
+		$language_id = &$_GET[ 'language_id' ];
+		$this->language_id = $language_id;
+		conf( 'language', $language_id );
+		$this->class_i18n = _class( 'i18n' );
+		$this->class_i18n->CUR_LOCALE = $language_id;
 		// http method
 		$request_method = @$_SERVER[ 'REQUEST_METHOD' ] ?: 'GET';
 		switch( $request_method ) {
@@ -205,8 +217,10 @@ class yf_api {
 	}
 
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = [] ) {
+		$is_request = &$this->is_request;
 		$_method = '_api_' . $method;
 		// try module
+		$is_request = true;
 		$_class  = module_safe( $class );
 		$_status = method_exists( $_class, $_method );
 		if( !$_status ) {
@@ -235,7 +249,7 @@ class yf_api {
 				$jsonp_callback = $_GET[ 'callback' ];
 				$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
 				$type = 'javascript';
-                $this->is_jsonp = true;
+				$this->is_jsonp = true;
 			}
 		}
 		list( $protocol, $code, $status ) = $this->_send_http_status( $code );
