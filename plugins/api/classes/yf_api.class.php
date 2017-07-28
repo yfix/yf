@@ -42,6 +42,7 @@ class yf_api {
 	public $is_put         = null;
 	public $is_patch       = null;
 	public $is_delete      = null;
+	public $is_request     = null;
 	public $request_method = null;
 	public $request        = null;
 
@@ -226,6 +227,7 @@ class yf_api {
 		}
 		if( !$_status ) { $this->_reject(); }
 		$request = $this->_parse_request();
+		$this->is_request = true;
 		return( $_class->$_method( $request, $options ) );
 	}
 
@@ -245,7 +247,7 @@ class yf_api {
 				$jsonp_callback = $_GET[ 'callback' ];
 				$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
 				$type = 'javascript';
-                $this->is_jsonp = true;
+				$this->is_jsonp = true;
 			}
 		}
 		list( $protocol, $code, $status ) = $this->_send_http_status( $code );
