@@ -56,25 +56,49 @@ class yf_wrapper_rabbitmq {
 		if ($this->driver == 'pecl') {
 			$this->_connection = new AMQPConnection([
 				'host'	=> $this->host,
-				'vhost'	=> $this->vhost,
 				'port'	=> $this->port,
 				'login'	=> $this->login,
 				'password' => $this->password,
+				'vhost'	=> $this->vhost,
 			]);
 			$this->_connection->connect();
 		} elseif ($this->driver == 'amqplib') {
-#			require_php_lib('amqplib');
-#			$this->_connection = new \PhpAmqpLib\Connection\AMQPConnection($this->host, $this->port, $this->login, $this->password);
+			require_php_lib('amqplib');
+			$this->_connection = new \PhpAmqpLib\Connection\AMQPConnection(
+				$this->host,
+				$this->port,
+				$this->login,
+				$this->password,
+				$this->vhost
+			);
 		}
 		return $this->_connection;
 	}
 
 	/**
 	*/
+	function disconnect() {
+		if ($this->driver == 'pecl') {
+			unset($this->_connection);
+		} elseif ($this->driver == 'amqplib') {
+			$cnn = $this->_connection;
+			$ch = $cnn->channel();
+			$ch->close();
+			return $cnn->close();
+		}
+	}
+
+	/**
+	*/
 	function init_channel($params = []) {
 		if (!$this->_channel) {
-			$cnn = $this->connect($params);
-			$this->_channel = new AMQPChannel($cnn);
+			if ($this->driver == 'pecl') {
+				$cnn = $this->connect($params);
+				$this->_channel = new AMQPChannel($cnn);
+			} elseif ($this->driver == 'amqplib') {
+				$cnn = $this->connect($params);
+				$this->_channel = $cnn->channel();
+			}
 		}
 		return $this->_channel;
 	}
@@ -86,12 +110,16 @@ class yf_wrapper_rabbitmq {
 			return null;
 		}
 		if (!isset($this->_exchange[$name])) {
-			$ch = $this->init_channel($params);
-			$ex = new AMQPExchange($ch);
-			$ex->setName($name);
-			$ex->setType($params['exchange_type'] ?: AMQP_EX_TYPE_FANOUT);
-			$ex->declareExchange();
-			$this->_exchange[$name] = $ex;
+			if ($this->driver == 'pecl') {
+				$ch = $this->init_channel($params);
+				$ex = new AMQPExchange($ch);
+				$ex->setName($name);
+				$ex->setType($params['exchange_type'] ?: AMQP_EX_TYPE_FANOUT);
+				$ex->declareExchange();
+				$this->_exchange[$name] = $ex;
+			} elseif ($this->driver == 'amqplib') {
+# TODO
+			}
 		}
 		return $this->_exchange[$name];
 	}
@@ -103,12 +131,14 @@ class yf_wrapper_rabbitmq {
 			return null;
 		}
 		if (!isset($this->_queue[$name])) {
-			$ch = $this->init_channel($params);
-			$q = new AMQPQueue($ch);
-			$q->setName($name);
-			$q->setFlags($params['queue_flags'] ?: AMQP_DURABLE);
-			$q->declareQueue();
-			$this->_queue[$name] = $q;
+			if ($this->driver == 'pecl') {
+				$ch = $this->init_channel($params);
+				$q = new AMQPQueue($ch);
+				$q->setName($name);
+				$q->setFlags($params['queue_flags'] ?: AMQP_DURABLE);
+				$q->declareQueue();
+				$this->_queue[$name] = $q;
+			}
 		}
 		return $this->_queue[$name];
 	}
@@ -167,7 +197,10 @@ class yf_wrapper_rabbitmq {
 			$ex = $this->_init_exchange($channel);
 			$ex->publish($what, $this->routing_key);
 		} elseif ($this->driver == 'amqplib') {
-# TODO
+			$ch = $this->_connection->channel();
+			$ch->exchange_declare($channel, 'fanout', false, false, false);
+			$msg = new \PhpAmqpLib\Message\AMQPMessage($what);
+			$ch->basic_publish($msg, $channel);
 		}
 	}
 
@@ -184,7 +217,14 @@ class yf_wrapper_rabbitmq {
 			$q = $this->_init_queue($channel);
 			return $q->consume($callback, AMQP_AUTOACK);
 		} elseif ($this->driver == 'amqplib') {
-# TODO
+			$ch = $this->_connection->channel();
+			$ch->exchange_declare($channel, $e_type = 'fanout', $e_passive = false, $e_durable = false, $e_auto_delete = false);
+			list($queue_name, ,) = $ch->queue_declare($q_name = '', $q_passive = false, $q_durable = false, $q_exclusive = true, $q_auto_delete = false, $q_nowait = false, $qparams = []);
+			$ch->queue_bind($queue_name, $channel);
+			$ch->basic_consume($queue_name, $c_tag = '', $c_no_local = false, $c_no_ack = true, $c_exclusive = false, $c_nowait = false, $callback);
+			while (count($ch->callbacks)) {
+				$channel->wait();
+			}
 		}
 	}
 }

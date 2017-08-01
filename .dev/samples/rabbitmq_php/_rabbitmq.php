@@ -9,6 +9,7 @@ $connection = new \PhpAmqpLib\Connection\AMQPStreamConnection(
 	$conf['host'] ?: 'localhost',
 	$conf['port'] ?: 5672,
 	$conf['login'] ?: 'user',
-	$conf['password'] ?: 'password'
+	$conf['password'] ?: 'password',
+	$conf['vhost'] ?: '/'
 );
 $channel = $connection->channel();
