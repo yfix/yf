@@ -120,6 +120,13 @@ class yf_i18n {
 		return false;
 	}
 
+	function _set_current_lang($lang = null) {
+		if( !$lang ) { return( $lang ); }
+		$this->_called[ '_get_current_lang' ] = $lang;
+		$this->CUR_LOCALE = $lang;
+		return( $lang );
+	}
+
 	/**
 	* Get current language
 	*/
@@ -229,8 +236,8 @@ class yf_i18n {
 	*/
 	function _get_current_country() {
 		$country = strtoupper(
-			conf('country') 
-			?: $_SERVER['GEOIP_COUNTRY_CODE'] 
+			conf('country')
+			?: $_SERVER['GEOIP_COUNTRY_CODE']
 			?: (in_array(strtolower($this->CUR_LOCALE), ['ru','uk']) ? 'UA' : '')
 		);
 		$this->CUR_COUNTRY = $country;

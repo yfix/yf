@@ -73,9 +73,8 @@ class yf_api {
 		// language_id
 		$language_id = &$_GET[ 'language_id' ];
 		$this->language_id = $language_id;
-		conf( 'language', $language_id );
 		$this->class_i18n = _class( 'i18n' );
-		$this->class_i18n->CUR_LOCALE = $language_id;
+		$this->class_i18n->_set_current_lang( $language_id );
 		// http method
 		$request_method = @$_SERVER[ 'REQUEST_METHOD' ] ?: 'GET';
 		switch( $request_method ) {
