@@ -6,6 +6,12 @@ require_once __DIR__.'/db_real_abstract.php';
  * @requires extension amqp
  */
 class class_wrapper_rabbitmq_test extends yf_unit_tests {
+	protected function setUp() {
+		if (!defined('TESTING_RABBITMQ_ENABLED')) {
+			$this->markTestSkipped('RabbitMQ tests not enabled.');
+			return ;
+    	}
+	}
 	public function test_ready_driver_pecl() {
 		$r = clone rabbitmq();
 		$r->driver = 'pecl';
