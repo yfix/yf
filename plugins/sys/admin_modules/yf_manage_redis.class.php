@@ -82,14 +82,17 @@ class yf_manage_redis {
 	/**
 	*/
 	function _get_conf($name, $default = null, array $params = []) {
-		if (isset($params[$name]) && $val = $params[$name]) {
-			return $val;
+		global $CONF;
+		if (isset($params[$name])) {
+			return $params[$name];
 		}
-		if ($val = getenv($name)) {
-			return $val;
+		$from_env = getenv($name);
+		if ($from_env !== false) {
+			return $from_env;
 		}
-		if ($val = conf($name)) {
-			return $val;
+		if (isset($CONF[$name])) {
+			$from_conf = $CONF[$name];
+			return $from_conf;
 		}
 		if (defined($name) && ($val = constant($name)) != $name) {
 			return $val;
@@ -103,6 +106,8 @@ class yf_manage_redis {
 		$i = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['i'])); // instance
 		$g = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['g'])); // group
 		$t = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['t'])); // type
+		$page = (int)$_GET['page'] ?: 1; // page
+		$per_page = 2000;
 		if (!$i || !isset($this->instances[$i])) {
 			if (count($this->instances) == 1) {
 				return js_redirect('/@object/?i='.key($this->instances));
@@ -116,10 +121,22 @@ class yf_manage_redis {
 
 		$prefix = $r->prefix;
 		$plen = strlen($prefix);
+
 		$keys = $r->keys('*');
+# TODO:
+#		$r->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
+#		$keys = $r->scan($it, '*', $per_page);
+
+		$pager = '';
+		$total_keys = count($keys);
+		if ($total_keys >= $per_page) {
+			$keys = array_slice($keys, $per_page * ($page - 1), $per_page * $page, true);
+			list(,$pager,) = common()->divide_pages('', '', '', $per_page, $total_keys);
+		}
+
 		$groups = [];
 		foreach((array)$keys as $key) {
-			if (strpos($key, $prefix) === 0) {
+			if ($plen && strpos($key, $prefix) === 0) {
 				$key = substr($key, $plen);
 			}
 			if (false !== strpos($key, ':')) {
@@ -148,7 +165,7 @@ class yf_manage_redis {
 			$display_keys = [];
 			$prefix = $r->prefix;
 			foreach((array)$keys as $key) {
-				if (strpos($key, $prefix) === 0) {
+				if ($plen && strpos($key, $prefix) === 0) {
 					$key = substr($key, $plen);
 				}
 				if ($g) {
@@ -224,7 +241,7 @@ class yf_manage_redis {
 		');
 
 		return ($filters ? '<div class="col-md-12">'.implode(' ', $filters).'</div>' : '')
-			. '<div class="col-md-6"><h2>'.$i.' ('.count($keys).')</h2>'.$table.'</div>'
+			. '<div class="col-md-6"><h2>'.$i.' <small>('.($pager ? count($keys).' from total ' : ''). $total_keys.')</small></h2>'.$pager.$table.'</div>'
 			. '<div class="col-md-3"><h2>Config</h2>'.html()->simple_table($config, ['val' => ['extra' => ['width' => '40%']]]).'</div>'
 			. '<div class="col-md-3"><h2>Info</h2>'.html()->simple_table($info, ['val' => ['extra' => ['width' => '40%']]]).'</div>'
 		;
