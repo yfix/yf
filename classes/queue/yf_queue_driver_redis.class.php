@@ -14,14 +14,17 @@ class yf_queue_driver_redis extends yf_queue_driver {
 	/**
 	*/
 	function _get_conf($name, $default = null, array $params = []) {
-		if (isset($params[$name]) && $val = $params[$name]) {
-			return $val;
+		if (isset($params[$name])) {
+			return $params[$name];
 		}
-		if ($val = getenv($name)) {
-			return $val;
+		$from_env = getenv($name);
+		if ($from_env !== false) {
+			return $from_env;
 		}
-		if ($val = conf($name)) {
-			return $val;
+		global $CONF;
+		if (isset($CONF[$name])) {
+			$from_conf = $CONF[$name];
+			return $from_conf;
 		}
 		if (defined($name) && ($val = constant($name)) != $name) {
 			return $val;
