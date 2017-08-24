@@ -17,6 +17,11 @@ class yf_wrapper_redlock {
 	*/
 	public function _init() {
 		$this->setup();
+		if (!$this->instances) {
+			$redis = redis();
+			$redis->connect();
+			$this->instances[] = $redis;
+		}
 	}
 
 	/**
