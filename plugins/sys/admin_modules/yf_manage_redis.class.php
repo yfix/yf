@@ -124,8 +124,8 @@ class yf_manage_redis {
 
 		$keys = $r->keys('*');
 # TODO:
-#		$r->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
-#		$keys = $r->scan($it, '*', $per_page);
+#		$r->_connection->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
+#		$keys = $r->_connection->scan($it, '*', $per_page);
 
 		$pager = '';
 		$total_keys = count($keys);

@@ -78,6 +78,9 @@ if (!function_exists('services')) {
 if (!function_exists('redis')) {
 	function redis($silent = false) { return _class('wrapper_redis') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('redlock')) {
+	function redlock($silent = false) { return _class('wrapper_redlock') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
 if (!function_exists('rabbitmq')) {
 	function rabbitmq($silent = false) { return _class('wrapper_rabbitmq') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
