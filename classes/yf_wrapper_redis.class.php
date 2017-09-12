@@ -10,6 +10,14 @@ class yf_wrapper_redis {
 	public $host   = '127.0.0.1';
 	public $port   = 6379;
 	public $prefix = '';
+	public $timeout        = 0;
+	public $retry_interval = 100;
+	public $read_timeout   = 0;
+	public $is_conf        = false;
+
+	public $call_try   = 3;
+	public $call_delay = 1000000; // msec
+
 	static $_connection = null;
 	public $_log = [];
 	public $LOG_LIMIT = 1000;
@@ -21,10 +29,21 @@ class yf_wrapper_redis {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		!$this->_connection && $this->connect();
+		! $this->is_connection() && $this->reconnect();
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			$result = call_user_func_array([$this->_connection, $name], $args);
+			$call_try = $this->call_try;
+			while( $call_try > 0 ) {
+				try {
+					$result = call_user_func_array([$this->_connection, $name], $args);
+					break;
+				} catch( Exception $e ) {
+					$result = null;
+					--$call_try;
+					usleep( $this->call_delay );
+					$this->reconnect();
+				}
+			}
 		} else {
 			$result = main()->extend_call($this, $name, $args);
 		}
@@ -42,8 +61,21 @@ class yf_wrapper_redis {
 
 	/**
 	*/
+	function is_connection() {
+		$result = $this->_connection;
+		if( $this->driver == 'phpredis' ) {
+			// $result = $result
+				// && $this->_connection->isConnected()
+				// && $this->_connection->getReadTimeout()
+			// ;
+		}
+		return( $result );
+	}
+
+	/**
+	*/
 	function is_ready() {
-		!$this->_connection && $this->connect();
+		! $this->is_connection() && $this->reconnect();
 		return (bool)$this->_connection;
 	}
 
@@ -73,21 +105,44 @@ class yf_wrapper_redis {
 
 	/**
 	*/
+	function reconnect() {
+		$this->_connection = null;
+		$this->connect();
+	}
+
+	/**
+	*/
 	function connect($params = []) {
 		if ($this->_connection) {
 			return $this->_connection;
 		}
-		$this->host   = $this->_get_conf('HOST', '127.0.0.1', $params);
-		$this->port   = (int)$this->_get_conf('PORT', '6379', $params);
-		$this->prefix = $this->_get_conf('PREFIX', '', $params);
-		$this->prefix = $this->prefix ? $this->prefix .':' : '';
-		$this->opt_connect_timeout = $this->_get_conf('OPT_CONNECT_TIMEOUT', '1', $params);
-		$this->opt_connect_delay = $this->_get_conf('OPT_CONNECT_DELAY', '100', $params);
+		if( !$this->is_conf ) {
+			$this->is_conf = true;
+			$this->host   = $this->_get_conf('HOST', '127.0.0.1', $params);
+			$this->port   = (int)$this->_get_conf('PORT', '6379', $params);
+			$this->prefix = $this->_get_conf('PREFIX', '', $params);
+			$this->prefix = $this->prefix ? $this->prefix .':' : '';
+			$this->timeout         = $this->_get_conf( 'TIMEOUT',           0, $params ); // float, sec
+			$this->retry_interval  = $this->_get_conf( 'RETRY_INTERVAL',  100, $params ); // int,   msec
+			$this->read_timeout    = $this->_get_conf( 'READ_TIMEOUT',      0, $params ); // float, msec
+		}
 
 		$redis = null;
 		if ($this->driver == 'phpredis') {
 			$redis = new Redis();
-			$redis->connect($this->host, (int)$this->port/*, (float)$this->opt_connect_timeout, null, (int)$this->opt_connect_delay*/);
+			// connect:
+			//   host             : string
+			//   port             : int,
+			//   timeout          : float, value in seconds (optional, default: 0 - unlimited)
+			//   reserved         : NULL
+			//   retry_interval   : int, value in milliseconds (optional)
+			//   read_timeout     : float, value in seconds (optional, default: 0 - unlimited)
+			$redis->connect( $this->host, (int)$this->port,
+				(float)$this->timeout,
+				null,
+				(int)$this->retry_interval
+				// (float)$this->read_timeout
+			);
 			$redis->setOption( Redis::OPT_PREFIX, $this->prefix );
 		} elseif ($this->driver == 'predis') {
 			require_php_lib('predis');
@@ -104,7 +159,7 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function conf($opt = []) {
-		!$this->_connection && $this->connect();
+		! $this->is_connection() && $this->reconnect();
 		foreach ((array)$opt as $k => $v) {
 			$this->_connection->setOption($k, $v);
 		}
@@ -113,14 +168,14 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function pub($channel, $what) {
-		!$this->_connection && $this->connect();
+		! $this->is_connection() && $this->reconnect();
 		return $this->_connection->publish($channel, $what);
 	}
 
 	/**
 	*/
 	function sub($channels, $callback) {
-		!$this->_connection && $this->connect();
+		! $this->is_connection() && $this->reconnect();
 		return $this->_connection->subscribe($channels, $callback);
 	}
 
