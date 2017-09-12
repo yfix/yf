@@ -32,23 +32,28 @@ class yf_wrapper_redis {
 		! $this->is_connection() && $this->reconnect();
 		// Support for driver-specific methods
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
-			$call_try = $this->call_try;
-			while( $call_try > 0 ) {
-				try {
-					$result = call_user_func_array([$this->_connection, $name], $args);
-					break;
-				} catch( Exception $e ) {
-					$result = null;
-					--$call_try;
-					usleep( $this->call_delay );
-					$this->reconnect();
-				}
-			}
+			$result = $this->call_try( $name, $args );
 		} else {
 			$result = main()->extend_call($this, $name, $args);
 		}
 		if (DEBUG_MODE) {
 			$this->_query_log($name, $args, $result, microtime(true) - $time_start);
+		}
+		return $result;
+	}
+
+	function call_try( $name, $args ) {
+		$call_try = $this->call_try;
+		while( $call_try > 0 ) {
+			try {
+				$result = call_user_func_array([$this->_connection, $name], $args);
+				break;
+			} catch( Exception $e ) {
+				$result = null;
+				--$call_try;
+				usleep( $this->call_delay );
+				$this->reconnect();
+			}
 		}
 		return $result;
 	}
@@ -64,10 +69,7 @@ class yf_wrapper_redis {
 	function is_connection() {
 		$result = $this->_connection;
 		if( $this->driver == 'phpredis' ) {
-			// $result = $result
-				// && $this->_connection->isConnected()
-				// && $this->_connection->getReadTimeout()
-			// ;
+			$result = $result && $this->_connection->isConnected();
 		}
 		return( $result );
 	}
@@ -124,7 +126,7 @@ class yf_wrapper_redis {
 			$this->prefix = $this->prefix ? $this->prefix .':' : '';
 			$this->timeout         = $this->_get_conf( 'TIMEOUT',           0, $params ); // float, sec
 			$this->retry_interval  = $this->_get_conf( 'RETRY_INTERVAL',  100, $params ); // int,   msec
-			$this->read_timeout    = $this->_get_conf( 'READ_TIMEOUT',      0, $params ); // float, msec
+			$this->read_timeout    = $this->_get_conf( 'READ_TIMEOUT',     -1, $params ); // float, sec, for subscribe
 		}
 
 		$redis = null;
@@ -136,14 +138,14 @@ class yf_wrapper_redis {
 			//   timeout          : float, value in seconds (optional, default: 0 - unlimited)
 			//   reserved         : NULL
 			//   retry_interval   : int, value in milliseconds (optional)
-			//   read_timeout     : float, value in seconds (optional, default: 0 - unlimited)
+			// ? read_timeout     : float, value in seconds (optional, default: 0 - unlimited)
 			$redis->connect( $this->host, (int)$this->port,
 				(float)$this->timeout,
 				null,
 				(int)$this->retry_interval
-				// (float)$this->read_timeout
 			);
-			$redis->setOption( Redis::OPT_PREFIX, $this->prefix );
+			$redis->setOption( Redis::OPT_PREFIX,       $this->prefix       );
+			$redis->setOption( Redis::OPT_READ_TIMEOUT, $this->read_timeout );
 		} elseif ($this->driver == 'predis') {
 			require_php_lib('predis');
 			$redis = new Predis\Client([
@@ -169,14 +171,15 @@ class yf_wrapper_redis {
 	*/
 	function pub($channel, $what) {
 		! $this->is_connection() && $this->reconnect();
-		return $this->_connection->publish($channel, $what);
+		$result = $this->call_try( 'publish', [ $channel, $what ] );
+		return( $result );
 	}
 
 	/**
 	*/
 	function sub($channels, $callback) {
 		! $this->is_connection() && $this->reconnect();
-		return $this->_connection->subscribe($channels, $callback);
+		$result = $this->call_try( 'subscribe', [ $channels, $callback ] );
 	}
 
 	/**
