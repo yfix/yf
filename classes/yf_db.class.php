@@ -708,7 +708,7 @@ class yf_db {
 	/**
 	* Execute database query and fetch result as assoc array (for queries that returns only 1 row)
 	*/
-	function query_fetch(&$sql, $use_cache = true, $assoc = true) {
+	function query_fetch($sql, $use_cache = true, $assoc = true, $return_sql = false) {
 		if (!strlen($sql)) {
 			return false;
 		}
@@ -725,6 +725,10 @@ class yf_db {
 			if (!preg_match('~\s+LIMIT\s+[0-9,\s]+$~ims', strtoupper($sql))) {
 				$sql .= ' LIMIT 1';
 			}
+		}
+		// Mostly for unit tests, not a real use case
+		if ($return_sql) {
+			return $sql;
 		}
 		$q = $this->query($sql);
 		if (!empty($q)) {
@@ -750,18 +754,18 @@ class yf_db {
 	/**
 	* Alias
 	*/
-	function get(&$sql, $use_cache = true) {
-		return $this->query_fetch($sql, $use_cache, true);
+	function get($sql, $use_cache = true, $assoc = true, $return_sql = false) {
+		return $this->query_fetch($sql, $use_cache, $assoc, $return_sql);
 	}
 
 	/**
 	* Alias, return first value
 	*/
-	function get_one(&$sql, $use_cache = true) {
+	function get_one($sql, $use_cache = true, $return_sql = false) {
 		if (!strlen($sql)) {
 			return false;
 		}
-		$result = $this->query_fetch($sql, $use_cache, true);
+		$result = $this->query_fetch($sql, $use_cache, $assoc = true, $return_sql);
 		if (!$result) {
 			return false;
 		}
