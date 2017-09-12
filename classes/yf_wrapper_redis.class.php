@@ -34,15 +34,15 @@ class yf_wrapper_redis {
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
 			$call_try = $this->call_try;
 			while( $call_try > 0 ) {
-				try {
+				// try {
 					$result = call_user_func_array([$this->_connection, $name], $args);
 					break;
-				} catch( Exception $e ) {
-					$result = null;
-					--$call_try;
-					usleep( $this->call_delay );
-					$this->reconnect();
-				}
+				// } catch( Exception $e ) {
+					// $result = null;
+					// --$call_try;
+					// usleep( $this->call_delay );
+					// $this->reconnect();
+				// }
 			}
 		} else {
 			$result = main()->extend_call($this, $name, $args);
