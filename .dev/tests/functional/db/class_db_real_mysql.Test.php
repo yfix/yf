@@ -536,6 +536,65 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$received = self::db()->get_deep_array('SELECT id, id2, id3 FROM '.$this->table_name($table), $max_levels = 1);
 		$this->assertEquals( $expected, $received );
 	}
+	public function test_get_and_limit() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
+		$data = [
+			1 => ['id' => '1', 'id2' => '11', 'id3' => '111'],
+			2 => ['id' => '2', 'id2' => '22', 'id3' => '222'],
+			3 => ['id' => '3', 'id2' => '33', 'id3' => '333'],
+		];
+		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
+
+		$expected = $data[1];
+		$sql = 'SELECT id, id2, id3 FROM '.$this->table_name($table);
+		$sql_before = $sql;
+		$received = self::db()->get($sql);
+		$sql_after = $sql;
+		$this->assertEquals( $expected, $received );
+		$this->assertEquals( $sql_before.' LIMIT 1', $sql_after );
+
+		$expected = $data[1];
+		$sql = 'SELECT id, id2, id3 FROM '.$this->table_name($table).' limit 1';
+		$sql_before = $sql;
+		$received = self::db()->get($sql);
+		$sql_after = $sql;
+		$this->assertEquals( $expected, $received );
+		$this->assertEquals( $sql_before, $sql_after );
+
+		$expected = $data[1];
+		$sql = 'SELECT id, id2, id3 FROM '.$this->table_name($table).' limit 0,1';
+		$sql_before = $sql;
+		$received = self::db()->get($sql);
+		$sql_after = $sql;
+		$this->assertEquals( $expected, $received );
+		$this->assertEquals( $sql_before, $sql_after );
+
+		$expected = $data[1];
+		$sql = 'SELECT id, id2, id3 FROM '.$this->table_name($table).' limit 1;';
+		$sql_before = $sql;
+		$received = self::db()->get($sql);
+		$sql_after = $sql;
+		$this->assertEquals( $expected, $received );
+		$this->assertEquals( rtrim($sql_before,';'), $sql_after );
+
+		$expected = $data[1];
+		$sql = 'SELECT id, id2, id3 FROM '.$this->table_name($table).'	  LiMit	 1	  ;	  ';
+		$sql_before = $sql;
+		$received = self::db()->get($sql);
+		$sql_after = $sql;
+		$this->assertEquals( $expected, $received );
+		$this->assertEquals( rtrim(rtrim(rtrim($sql_before),';')), $sql_after );
+
+		$expected = $data[1];
+		$sql = 'SELECT * FROM (SELECT id, id2, id3 FROM '.$this->table_name($table).' limit 1) AS tmp';
+		$sql_before = $sql;
+		$received = self::db()->get($sql);
+		$sql_after = $sql;
+		$this->assertEquals( $expected, $received );
+		$this->assertEquals( $sql_before.' LIMIT 1', $sql_after );
+	}
 	public function test_model() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertTrue( is_object(self::db()->model()) );
