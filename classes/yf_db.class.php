@@ -708,16 +708,22 @@ class yf_db {
 	/**
 	* Execute database query and fetch result as assoc array (for queries that returns only 1 row)
 	*/
-	function query_fetch($query, $use_cache = true, $assoc = true) {
+	function query_fetch($sql, $use_cache = true, $assoc = true) {
+		if (!strlen($sql)) {
+			return false;
+		}
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
 		$storage = &$this->_db_results_cache;
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && isset($storage[$query])) {
-			return $storage[$query];
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && isset($storage[$sql])) {
+			return $storage[$sql];
 		}
 		$data = null;
-		$q = $this->query($query);
+		if ($this->get_driver_family() === 'mysql' && strtoupper(substr(ltrim($sql), 0, 6)) === 'SELECT' && !preg_match('~\s+LIMIT\s+[0-9,\s]+$~ims', strtoupper($sql))) {
+			$sql .= ' LIMIT 1';
+		}
+		$q = $this->query($sql);
 		if (!empty($q)) {
 			if ($assoc) {
 				$data = @$this->db->fetch_assoc($q);
@@ -726,8 +732,8 @@ class yf_db {
 			}
 			$this->free_result($q);
 			// Store result in variable cache
-			if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && !isset($storage[$query])) {
-				$storage[$query] = $data;
+			if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && !isset($storage[$sql])) {
+				$storage[$sql] = $data;
 				// Permanently turn off queries cache (and free some memory) if case of limit reached
 				if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
 					$this->ALLOW_CACHE_QUERIES = false;
@@ -741,15 +747,18 @@ class yf_db {
 	/**
 	* Alias
 	*/
-	function get($query, $use_cache = true) {
-		return $this->query_fetch($query, $use_cache, true);
+	function get($sql, $use_cache = true) {
+		return $this->query_fetch($sql, $use_cache, true);
 	}
 
 	/**
 	* Alias, return first value
 	*/
-	function get_one($query, $use_cache = true) {
-		$result = $this->query_fetch($query, $use_cache, true);
+	function get_one($sql, $use_cache = true) {
+		if (!strlen($sql)) {
+			return false;
+		}
+		$result = $this->query_fetch($sql, $use_cache, true);
 		if (!$result) {
 			return false;
 		}
@@ -765,8 +774,11 @@ class yf_db {
 	* Example: 'SELECT id, name FROM p_static_pages' => array('1' => 'page1', '2' => 'page2')
 	* Example: 'SELECT name FROM p_static_pages' => array('page1', 'page2')
 	*/
-	function get_2d($query, $use_cache = true) {
-		$result = $this->query_fetch_all($query, $use_cache, true);
+	function get_2d($sql, $use_cache = true) {
+		if (!strlen($sql)) {
+			return false;
+		}
+		$result = $this->query_fetch_all($sql, $use_cache, true);
 		// Get 1st and 2nd keys from first sub-array
 		if (is_array($result) && $result) {
 			$keys = array_keys(current($result));
@@ -795,6 +807,9 @@ class yf_db {
 	*	]]]
 	*/
 	function get_deep_array($sql, $max_levels = 0, $use_cache = true) {
+		if (!strlen($sql)) {
+			return false;
+		}
 		if (!$max_levels || $max_levels > 4) {
 			$max_levels = 4;
 		}
@@ -830,35 +845,38 @@ class yf_db {
 	/**
 	* Alias
 	*/
-	function query_fetch_assoc($query, $use_cache = true) {
-		return $this->query_fetch($query, $use_cache, true);
+	function query_fetch_assoc($sql, $use_cache = true) {
+		return $this->query_fetch($sql, $use_cache, true);
 	}
 
 	/**
 	* Same as 'query_fetch' except fetching as row not assoc
 	*/
-	function query_fetch_row($query, $use_cache = true) {
-		return $this->query_fetch($query, $use_cache, false);
+	function query_fetch_row($sql, $use_cache = true) {
+		return $this->query_fetch($sql, $use_cache, false);
 	}
 
 	/**
 	* Alias
 	*/
-	function get_all($query, $key_name = null, $use_cache = true) {
-		return $this->query_fetch_all($query, $key_name, $use_cache);
+	function get_all($sql, $key_name = null, $use_cache = true) {
+		return $this->query_fetch_all($sql, $key_name, $use_cache);
 	}
 
 	/**
 	* Alias
 	*/
-	function all($query, $key_name = null, $use_cache = true) {
-		return $this->query_fetch_all($query, $key_name, $use_cache);
+	function all($sql, $key_name = null, $use_cache = true) {
+		return $this->query_fetch_all($sql, $key_name, $use_cache);
 	}
 
 	/**
 	* Execute database query and fetch result into assotiative array
 	*/
-	function query_fetch_all($query, $key_name = null, $use_cache = true) {
+	function query_fetch_all($sql, $key_name = null, $use_cache = true) {
+		if (!strlen($sql)) {
+			return false;
+		}
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
@@ -868,16 +886,16 @@ class yf_db {
 			$use_cache = isset($params['use_cache']) ? $params['use_cache'] : true;
 		}
 		$storage = &$this->_db_results_cache;
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && isset($storage[$query])) {
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && isset($storage[$sql])) {
 			if ($params['as_objects']) {
-				foreach ((array)$storage[$query] as $k => $v) {
-					$storage[$query][$k] = (object)$v;
+				foreach ((array)$storage[$sql] as $k => $v) {
+					$storage[$sql][$k] = (object)$v;
 				}
 			}
-			return $storage[$query];
+			return $storage[$sql];
 		}
 		$data = null;
-		$q = $this->query($query);
+		$q = $this->query($sql);
 		if ($q) {
 			// If $key_name is specified - then save to $data using it as key
 			while ($a = @$this->db->fetch_assoc($q)) {
@@ -892,8 +910,8 @@ class yf_db {
 			@$this->free_result($q);
 		}
 		// Store result in variable cache
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && !isset($storage[$query])) {
-			$storage[$query] = $data;
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && !isset($storage[$sql])) {
+			$storage[$sql] = $data;
 			// Permanently turn off queries cache (and free some memory) if case of limit reached
 			if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
 				$this->ALLOW_CACHE_QUERIES = false;
@@ -911,8 +929,8 @@ class yf_db {
 	/**
 	* Execute database query and fetch result as assoc array (for queries that returns only 1 row)
 	*/
-	function query_fetch_cached($query, $cache_ttl = 600) {
-		$cache_key = 'SQL_'.__FUNCTION__.'_'.$this->DB_HOST.'_'.$this->DB_NAME.'_'.abs(crc32($query));
+	function query_fetch_cached($sql, $cache_ttl = 600) {
+		$cache_key = 'SQL_'.__FUNCTION__.'_'.$this->DB_HOST.'_'.$this->DB_NAME.'_'.abs(crc32($sql));
 		$use_cache = true;
 		if ($this->NO_CACHE) {
 			$use_cache = false;
@@ -922,7 +940,7 @@ class yf_db {
 			$data = cache_get($cache_key);
 		}
 		if (!$data) {
-			$data = $this->query_fetch($query);
+			$data = $this->query_fetch($sql);
 			if ($use_cache) {
 				cache_set($cache_key, $data);
 			}
@@ -933,8 +951,8 @@ class yf_db {
 	/**
 	* Alias with core cache
 	*/
-	function query_fetch_all_cached($query, $key_name = null, $cache_ttl = 600) {
-		$cache_key = 'SQL_'.__FUNCTION__.'_'.$this->DB_HOST.'_'.$this->DB_NAME.'_'.abs(crc32($query));
+	function query_fetch_all_cached($sql, $key_name = null, $cache_ttl = 600) {
+		$cache_key = 'SQL_'.__FUNCTION__.'_'.$this->DB_HOST.'_'.$this->DB_NAME.'_'.abs(crc32($sql));
 		$use_cache = true;
 		if ($this->NO_CACHE) {
 			$use_cache = false;
@@ -944,7 +962,7 @@ class yf_db {
 			$data = cache_get($cache_key);
 		}
 		if (!$data) {
-			$data = $this->query_fetch_all($query, $key_name);
+			$data = $this->query_fetch_all($sql, $key_name);
 			if ($use_cache) {
 				cache_set($cache_key, $data);
 			}
@@ -955,25 +973,25 @@ class yf_db {
 	/**
 	* Alias
 	*/
-	function get_cached($query, $cache_ttl = 600) {
-		return $this->query_fetch_cached($query, $cache_ttl);
+	function get_cached($sql, $cache_ttl = 600) {
+		return $this->query_fetch_cached($sql, $cache_ttl);
 	}
 
 	/**
 	* Alias
 	*/
-	function get_all_cached($query, $key_name = null, $cache_ttl = 600) {
-		return $this->query_fetch_all_cached($query, $key_name, $cache_ttl);
+	function get_all_cached($sql, $key_name = null, $cache_ttl = 600) {
+		return $this->query_fetch_all_cached($sql, $key_name, $cache_ttl);
 	}
 
 	/**
 	* Execute database query and the calculate number of rows
 	*/
-	function query_num_rows($query) {
+	function query_num_rows($sql) {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
-		$Q = $this->query($query);
+		$Q = $this->query($sql);
 		$result = $this->db->num_rows($Q);
 		$this->free_result($Q);
 		return $result;
@@ -1709,14 +1727,14 @@ class yf_db {
 	/**
 	* Add instrumentation info to the query for highload SQL debug and profile
 	*/
-	function _instrument_query($query_sql = '', $keys = ['request_id', 'session_id', 'SESSION_user_id', 'GET_object', 'GET_action']) {
-		$query_header = '';
-		if (!$query_sql) {
+	function _instrument_query($sql = '', $keys = ['request_id', 'session_id', 'SESSION_user_id', 'GET_object', 'GET_action']) {
+		$header = '';
+		if (!$sql) {
 			return '';
 		}
 		$trace = trace($skip_before = 3, $skip_after = 2);
 		$trace = str_replace(["\t","\n","\0"], '', $trace);
-		$query_header = '-- '.$trace."\t";
+		$header = '-- '.$trace."\t";
 		foreach ((array)$keys as $x => $key) {
 			$val = $this->_get_debug_item($key);
 			if (!$val) {
@@ -1726,9 +1744,9 @@ class yf_db {
 			// all other chars are safe in comments
 			$key = strtolower(str_replace([': ',"\t","\n","\0"], '', $key));
 			// Add the requested instrumentation keys
-			$query_header .= "\t".$key.': '.$this->es($val);
+			$header .= "\t".$key.': '.$this->es($val);
 		}
-		return $query_header. PHP_EOL. $query_sql;
+		return $header. PHP_EOL. $sql;
 	}
 
 	/**

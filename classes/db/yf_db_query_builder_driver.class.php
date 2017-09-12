@@ -370,6 +370,7 @@ abstract class yf_db_query_builder_driver {
 		if (is_object($this->get_model())) {
 			return $this->order_by($this->get_key_name().' asc')->limit(1)->get($select, $use_cache);
 		} else {
+			$this->limit(1);
 			return $this->get($select, $use_cache);
 		}
 	}
@@ -381,6 +382,7 @@ abstract class yf_db_query_builder_driver {
 		if (is_object($this->get_model())) {
 			return $this->order_by($this->get_key_name().' desc')->limit(1)->get($select, $use_cache);
 		} else {
+			$this->limit(1);
 			$result = $this->get_all($select, $use_cache);
 			if (is_array($result) && count($result)) {
 				return end($result);
@@ -397,6 +399,7 @@ abstract class yf_db_query_builder_driver {
 		if (isset($select)) {
 			$this->select($select);
 		}
+		$this->limit(1);
 		$sql = $this->sql();
 		if ($sql) {
 			$result = $this->db->get($sql, $use_cache);
@@ -422,6 +425,7 @@ abstract class yf_db_query_builder_driver {
 		if (strlen($field)) {
 			$this->select($field);
 		}
+		$this->limit(1);
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_one($sql, $use_cache);
