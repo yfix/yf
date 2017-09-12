@@ -45,6 +45,22 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 
 	/**
 	*/
+	function pub_conf($params = []) {
+		!$this->_is_connection && $this->connect();
+		$this->_connection_pub->conf($params);
+		return $this;
+	}
+
+	/**
+	*/
+	function sub_conf($params = []) {
+		!$this->_is_connection && $this->connect();
+		$this->_connection_sub->conf($params);
+		return $this;
+	}
+
+	/**
+	*/
 	function connect($params = []) {
 		if (!$this->_is_connection) {
 			$override = [
