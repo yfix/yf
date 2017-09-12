@@ -34,15 +34,15 @@ class yf_wrapper_redis {
 		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
 			$call_try = $this->call_try;
 			while( $call_try > 0 ) {
-				// try {
+				try {
 					$result = call_user_func_array([$this->_connection, $name], $args);
 					break;
-				// } catch( Exception $e ) {
-					// $result = null;
-					// --$call_try;
-					// usleep( $this->call_delay );
-					// $this->reconnect();
-				// }
+				} catch( Exception $e ) {
+					$result = null;
+					--$call_try;
+					usleep( $this->call_delay );
+					$this->reconnect();
+				}
 			}
 		} else {
 			$result = main()->extend_call($this, $name, $args);
@@ -116,7 +116,7 @@ class yf_wrapper_redis {
 		if ($this->_connection) {
 			return $this->_connection;
 		}
-		if( !$this->is_conf ) {
+		// if( !$this->is_conf ) {
 			$this->is_conf = true;
 			$this->host   = $this->_get_conf('HOST', '127.0.0.1', $params);
 			$this->port   = (int)$this->_get_conf('PORT', '6379', $params);
@@ -125,7 +125,7 @@ class yf_wrapper_redis {
 			$this->timeout         = $this->_get_conf( 'TIMEOUT',           0, $params ); // float, sec
 			$this->retry_interval  = $this->_get_conf( 'RETRY_INTERVAL',  100, $params ); // int,   msec
 			$this->read_timeout    = $this->_get_conf( 'READ_TIMEOUT',      0, $params ); // float, msec
-		}
+		// }
 
 		$redis = null;
 		if ($this->driver == 'phpredis') {
