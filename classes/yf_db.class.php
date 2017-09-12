@@ -708,7 +708,7 @@ class yf_db {
 	/**
 	* Execute database query and fetch result as assoc array (for queries that returns only 1 row)
 	*/
-	function query_fetch($sql, $use_cache = true, $assoc = true) {
+	function query_fetch(&$sql, $use_cache = true, $assoc = true) {
 		if (!strlen($sql)) {
 			return false;
 		}
@@ -720,8 +720,11 @@ class yf_db {
 			return $storage[$sql];
 		}
 		$data = null;
-		if ($this->get_driver_family() === 'mysql' && strtoupper(substr(ltrim($sql), 0, 6)) === 'SELECT' && !preg_match('~\s+LIMIT\s+[0-9,\s]+$~ims', strtoupper($sql))) {
-			$sql .= ' LIMIT 1';
+		if ($this->get_driver_family() === 'mysql' && strtoupper(substr(ltrim($sql), 0, 6)) === 'SELECT') {
+			$sql = rtrim(rtrim(rtrim($sql),';'));
+			if (!preg_match('~\s+LIMIT\s+[0-9,\s]+$~ims', strtoupper($sql))) {
+				$sql .= ' LIMIT 1';
+			}
 		}
 		$q = $this->query($sql);
 		if (!empty($q)) {
@@ -747,14 +750,14 @@ class yf_db {
 	/**
 	* Alias
 	*/
-	function get($sql, $use_cache = true) {
+	function get(&$sql, $use_cache = true) {
 		return $this->query_fetch($sql, $use_cache, true);
 	}
 
 	/**
 	* Alias, return first value
 	*/
-	function get_one($sql, $use_cache = true) {
+	function get_one(&$sql, $use_cache = true) {
 		if (!strlen($sql)) {
 			return false;
 		}
