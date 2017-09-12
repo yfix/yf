@@ -140,8 +140,8 @@ class yf_wrapper_redis {
 			$redis->connect( $this->host, (int)$this->port,
 				(float)$this->timeout,
 				null,
-				(int)$this->retry_interval,
-				(float)$this->read_timeout
+				(int)$this->retry_interval
+				// (float)$this->read_timeout
 			);
 			$redis->setOption( Redis::OPT_PREFIX, $this->prefix );
 		} elseif ($this->driver == 'predis') {
