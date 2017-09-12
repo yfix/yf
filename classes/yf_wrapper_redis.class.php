@@ -64,10 +64,10 @@ class yf_wrapper_redis {
 	function is_connection() {
 		$result = $this->_connection;
 		if( $this->driver == 'phpredis' ) {
-			$result = $result
-				&& $this->_connection->isConnected()
-				&& $this->_connection->getReadTimeout()
-			;
+			// $result = $result
+				// && $this->_connection->isConnected()
+				// && $this->_connection->getReadTimeout()
+			// ;
 		}
 		return( $result );
 	}
