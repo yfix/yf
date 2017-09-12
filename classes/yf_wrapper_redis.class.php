@@ -16,7 +16,7 @@ class yf_wrapper_redis {
 	public $is_conf        = false;
 
 	public $call_try   = 3;
-	public $call_delay = 100000; // msec
+	public $call_delay = 1000000; // msec
 
 	static $_connection = null;
 	public $_log = [];
