@@ -61,6 +61,7 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function __clone() {
+		$this->disconnect();
 		$this->_connection = null;
 	}
 
@@ -117,6 +118,7 @@ class yf_wrapper_redis {
 		if( $this->driver == 'phpredis' ) {
 			$this->_connection->close();
 		}
+		return( true );
 	}
 
 	/**
