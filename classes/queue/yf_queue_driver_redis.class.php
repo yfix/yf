@@ -7,12 +7,6 @@ class yf_queue_driver_redis extends yf_queue_driver {
 
 	/**
 	*/
-	function _init() {
-		$this->connect();
-	}
-
-	/**
-	*/
 	function _get_conf($name, $default = null, array $params = []) {
 		if (isset($params[$name])) {
 			return $params[$name];
@@ -38,6 +32,12 @@ class yf_queue_driver_redis extends yf_queue_driver {
 		!$this->_connection && $this->connect();
 		$this->_connection->conf($params);
 		return $this;
+	}
+
+	/**
+	*/
+	function reconnect() {
+		$this->_connection->reconnect();
 	}
 
 	/**
@@ -76,24 +76,28 @@ class yf_queue_driver_redis extends yf_queue_driver {
 	/**
 	*/
 	function add($queue, $what) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->lpush($queue, $what);
 	}
 
 	/**
 	*/
 	function get($queue) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->rpop($queue);
 	}
 
 	/**
 	*/
 	function del($queue) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->lrem($queue, 1);
 	}
 
 	/**
 	*/
 	function all($queue) {
+		!$this->_connection && $this->connect();
 		return $this->_connection->lrange($queue, 0, -1);
 	}
 }

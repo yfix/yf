@@ -3,15 +3,9 @@
 load('pubsub_driver', 'framework', 'classes/pubsub/');
 class yf_pubsub_driver_redis extends yf_pubsub_driver {
 
-	private $_is_connection  = null;
-	private $_connection_pub = null;
-	private $_connection_sub = null;
-
-	/**
-	*/
-	function _init() {
-		$this->connect();
-	}
+	public $_is_connection  = null;
+	public $_connection_pub = null;
+	public $_connection_sub = null;
 
 	/**
 	*/
@@ -72,8 +66,16 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 			$this->_connection_pub->connect($override);
 			$this->_connection_sub = clone redis($params);
 			$this->_connection_sub->connect($override);
+			$this->_is_connection = true;
 		}
 		return $this->_is_connection;
+	}
+
+	/**
+	*/
+	function reconnect() {
+		$this->_connection_pub->reconnect();
+		$this->_connection_sub->reconnect();
 	}
 
 	/**
@@ -86,12 +88,14 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 	/**
 	*/
 	function pub($channel, $what) {
+		!$this->_is_connection && $this->connect();
 		return $this->_connection_pub->pub($channel, $what);
 	}
 
 	/**
 	*/
 	function sub($channels, $callback) {
+		!$this->_is_connection && $this->connect();
 		return $this->_connection_sub->sub($channels, $callback);
 	}
 }

@@ -108,8 +108,15 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function reconnect() {
-		$this->_connection = null;
+		$this->disconnect();
 		$this->connect();
+	}
+
+	function disconnect() {
+		if( ! $this->is_connection() ) { return( null ); }
+		if( $this->driver == 'phpredis' ) {
+			$this->_connection->close();
+		}
 	}
 
 	/**
@@ -145,7 +152,7 @@ class yf_wrapper_redis {
 				(int)$this->retry_interval
 			);
 			$redis->setOption( Redis::OPT_PREFIX,       $this->prefix       );
-			$redis->setOption( Redis::OPT_READ_TIMEOUT, $this->read_timeout );
+			$redis->setOption( Redis::OPT_READ_TIMEOUT, $this->read_timeout ); // float, sec
 		} elseif ($this->driver == 'predis') {
 			require_php_lib('predis');
 			$redis = new Predis\Client([
@@ -180,6 +187,7 @@ class yf_wrapper_redis {
 	function sub($channels, $callback) {
 		! $this->is_connection() && $this->reconnect();
 		$result = $this->call_try( 'subscribe', [ $channels, $callback ] );
+		return( $result );
 	}
 
 	/**
