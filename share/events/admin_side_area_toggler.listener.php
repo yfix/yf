@@ -1,7 +1,7 @@
 <?php
 
 MAIN_TYPE_ADMIN && events()->listen('block.prepend[center_area]', function() {
-	if (!is_common_page()) {
+	if (!is_common_page() || main()->NO_SIDE_AREA_TOGGLER) {
 		return ;
 	}
 	$icons = [
