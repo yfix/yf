@@ -13,7 +13,7 @@ class yf_wrapper_redis {
 	public $timeout        = 0;
 	public $retry_interval = 100;
 	public $read_timeout   = 0;
-	public $is_conf        = false;
+	public $_is_conf       = false;
 
 	public $call_try   = 3;
 	public $call_delay = 1000000; // msec
@@ -63,6 +63,7 @@ class yf_wrapper_redis {
 	function __clone() {
 		$this->disconnect();
 		$this->_connection = null;
+		$this->_is_conf    = null;
 	}
 
 	/**
@@ -127,8 +128,8 @@ class yf_wrapper_redis {
 		if ($this->_connection) {
 			return $this->_connection;
 		}
-		if( !$this->is_conf ) {
-			$this->is_conf = true;
+		if( !$this->_is_conf ) {
+			$this->_is_conf = true;
 			$this->host   = $this->_get_conf('HOST', '127.0.0.1', $params);
 			$this->port   = (int)$this->_get_conf('PORT', '6379', $params);
 			$this->prefix = $this->_get_conf('PREFIX', '', $params);
