@@ -26,7 +26,6 @@ class yf_wrapper_redis {
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
-echo 'redis __call---------'.PHP_EOL;
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
