@@ -12,7 +12,7 @@ class yf_wrapper_redis {
 	public $prefix = '';
 	public $timeout        = 0;
 	public $retry_interval = 100;
-	public $read_timeout   = 0;
+	public $read_timeout   = -1;
 	public $_is_conf       = false;
 
 	public $call_try   = 3;
@@ -43,17 +43,24 @@ class yf_wrapper_redis {
 	}
 
 	function call_try( $name, $args ) {
+		$result   = null;
 		$call_try = $this->call_try;
 		while( $call_try > 0 ) {
 			try {
 				$result = call_user_func_array([$this->_connection, $name], $args);
-				break;
+				$is_retry = false;
+			} catch( RedisException $e ) {
+				// read timeout
+				if( $e->getCode() === 0 ) {
+					$is_retry = false;
+				}
 			} catch( Exception $e ) {
-				$result = null;
-				--$call_try;
-				usleep( $this->call_delay );
-				$this->reconnect();
+				$is_retry = true;
 			}
+			if( !$is_retry ) { break; }
+			--$call_try;
+			usleep( $this->call_delay );
+			$this->reconnect();
 		}
 		return $result;
 	}
@@ -136,17 +143,17 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function connect($params = []) {
-		if ($this->_connection && $this->is_connection()) {
-			return $this->_connection;
+		$redis = &$this->_connection;
+		if ($redis && $this->is_connection()) {
+			return $redis;
 		}
 		if( !$this->_is_conf ) {
 			$this->_is_conf = true;
 			$this->set_conf( $params );
 		}
 
-		$redis = null;
 		if ($this->driver == 'phpredis') {
-			$redis = new Redis();
+			!$redis && $redis = new Redis();
 			// connect:
 			//   host             : string
 			//   port             : int,
@@ -163,7 +170,7 @@ class yf_wrapper_redis {
 			$redis->setOption( Redis::OPT_READ_TIMEOUT, $this->read_timeout ); // float, sec
 		} elseif ($this->driver == 'predis') {
 			require_php_lib('predis');
-			$redis = new Predis\Client([
+			$redis && $redis = new Predis\Client([
 				'scheme' => 'tcp',
 				'host'   => $this->host,
 				'port'   => (int)$this->port,
@@ -178,6 +185,13 @@ class yf_wrapper_redis {
 	function conf($opt = []) {
 		! $this->is_connection() && $this->reconnect();
 		foreach ((array)$opt as $k => $v) {
+			if( $this->driver == 'phpredis' ) {
+				switch( $k ) {
+					case Redis::OPT_READ_TIMEOUT:
+						$this->read_timeout = $v;
+						break;
+				}
+			}
 			$this->_connection->setOption($k, $v);
 		}
 	}

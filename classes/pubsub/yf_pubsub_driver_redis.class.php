@@ -62,11 +62,17 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 				'REDIS_PORT'	=> $this->_get_conf('REDIS_PUBSUB_PORT'),
 				'REDIS_PREFIX'	=> $this->_get_conf('REDIS_PUBSUB_PREFIX'),
 			];
-			$this->_connection_pub = clone redis($params);
+			$this->_connection_pub = clone redis();
 			$this->_connection_pub->connect($override);
-			$this->_connection_sub = clone redis($params);
+			$this->_connection_sub = clone redis();
 			$this->_connection_sub->connect($override);
 			$this->_is_connection = true;
+		}
+		if( !$this->_connection_pub->is_connection() ) {
+			$this->_connection_pub->reconnect();
+		}
+		if( !$this->_connection_sub->is_connection() ) {
+			$this->_connection_sub->reconnect();
 		}
 		return $this->_is_connection;
 	}

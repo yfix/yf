@@ -3,7 +3,7 @@
 load('queue_driver', 'framework', 'classes/queue/');
 class yf_queue_driver_redis extends yf_queue_driver {
 
-	private $_connection = null;
+	public $_connection = null;
 
 	/**
 	*/
@@ -57,9 +57,9 @@ class yf_queue_driver_redis extends yf_queue_driver {
 				}
 			}
 			if ($is_override) {
-				$this->_connection = clone redis($params);
+				$this->_connection = clone redis();
 			} else {
-				$this->_connection = redis($params);
+				$this->_connection = redis();
 			}
 			$this->_connection->connect($override);
 		}
