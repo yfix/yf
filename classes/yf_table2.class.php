@@ -277,12 +277,12 @@ class yf_table2 {
 	*/
 	function _render_as_html(&$params, &$a, &$to_hide) {
 		$body = '';
+		$header_links = [];
 		if (MAIN_TYPE_ADMIN && !$params['no_pages'] && !$params['no_total'] && $a['total']) {
-			$body .= '<div class="'.$this->CLASS_TOTAL_RECORDS.'" style="margin: 0 5px;">'.t('Total').':&nbsp;'.$a['total'].'</div>'.PHP_EOL;
+			$header_links[] = '<div class="'.$this->CLASS_TOTAL_RECORDS.'" style="margin: 0 5px;">'.t('Total').':&nbsp;'.$a['total'].'</div>'.PHP_EOL;
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $a['pages'] : '').PHP_EOL;
 
-		$header_links = [];
 		foreach ((array)$this->_header_links as $info) {
 			$name = $info['name'];
 			$func = &$info['func'];
