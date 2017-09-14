@@ -4,6 +4,7 @@ load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_redis extends yf_cache_driver {
 
 	/** @var object internal @conf_skip */
+	public $_conf = null;
 	public $_connection = null;
 	/** @var int */
 	public $DEFAULT_TTL = 3600;
@@ -43,30 +44,50 @@ class yf_cache_driver_redis extends yf_cache_driver {
 	/**
 	*/
 	function _init() {
-		$override = [
-			'REDIS_HOST'	=> $this->_get_conf('REDIS_CACHE_HOST'),
-			'REDIS_PORT'	=> $this->_get_conf('REDIS_CACHE_PORT'),
-			'REDIS_PREFIX'	=> $this->_get_conf('REDIS_CACHE_PREFIX'),
+		$params = [
+			'REDIS_HOST'   => $this->_get_conf('REDIS_CACHE_HOST'),
+			'REDIS_PORT'   => $this->_get_conf('REDIS_CACHE_PORT'),
+			'REDIS_PREFIX' => $this->_get_conf('REDIS_CACHE_PREFIX'),
 		];
-		$is_override = false;
-		foreach ((array)$override as $k => $v) {
+		$this->connect( $params );
+	}
+
+	function connect( $params = [] ) {
+		if( !$params ) {
+			if( $this->_conf ) {
+				$params = $this->_conf;
+				if( $this->is_connection() ) {
+					$this->_connection->reconnect();
+					return( $this->_connection );
+				}
+			}
+		}
+		$is_params = false;
+		foreach ((array)$params as $k => $v) {
 			if ($v) {
-				$is_override = true;
+				$is_params = true;
+				$this->_conf = $params;
 				break;
 			}
 		}
-		if ($is_override) {
+		if ($is_params) {
 			$this->_connection = clone redis();
 		} else {
 			$this->_connection = redis();
 		}
-		$this->_connection->connect($override);
+		$this->_connection->connect($params);
+		return( $this->_connection );
+	}
+
+	function is_connection() {
+		return (bool)$this->_connection;
 	}
 
 	/**
 	*/
 	function is_ready() {
-		return $this->_connection && $this->_connection->is_ready();
+		! $this->is_connection() && $this->connect();
+		return $this->is_connection();
 	}
 
 	/**

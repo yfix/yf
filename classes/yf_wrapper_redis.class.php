@@ -63,7 +63,7 @@ class yf_wrapper_redis {
 	function __clone() {
 		$this->disconnect();
 		$this->_connection = null;
-		$this->_is_conf    = null;
+		$this->_is_conf    = false;
 	}
 
 	/**
@@ -79,8 +79,22 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function is_ready() {
-		! $this->is_connection() && $this->reconnect();
 		return (bool)$this->_connection;
+	}
+
+	/**
+	*/
+	function reconnect() {
+		$this->disconnect();
+		$this->connect();
+	}
+
+	function disconnect() {
+		if( ! $this->is_connection() ) { return( null ); }
+		if( $this->driver == 'phpredis' ) {
+			$this->_connection->close();
+		}
+		return( true );
 	}
 
 	/**
@@ -109,34 +123,25 @@ class yf_wrapper_redis {
 
 	/**
 	*/
-	function reconnect() {
-		$this->disconnect();
-		$this->connect();
-	}
-
-	function disconnect() {
-		if( ! $this->is_connection() ) { return( null ); }
-		if( $this->driver == 'phpredis' ) {
-			$this->_connection->close();
-		}
-		return( true );
+	function set_conf($params = []) {
+		$this->host   = $this->_get_conf('HOST', '127.0.0.1', $params);
+		$this->port   = (int)$this->_get_conf('PORT', '6379', $params);
+		$this->prefix = $this->_get_conf('PREFIX', '', $params);
+		$this->prefix = $this->prefix ? $this->prefix .':' : '';
+		$this->timeout         = $this->_get_conf( 'TIMEOUT',           0, $params ); // float, sec
+		$this->retry_interval  = $this->_get_conf( 'RETRY_INTERVAL',  100, $params ); // int,   msec
+		$this->read_timeout    = $this->_get_conf( 'READ_TIMEOUT',     -1, $params ); // float, sec, for subscribe
 	}
 
 	/**
 	*/
 	function connect($params = []) {
-		if ($this->_connection) {
+		if ($this->_connection && $this->is_connection()) {
 			return $this->_connection;
 		}
 		if( !$this->_is_conf ) {
 			$this->_is_conf = true;
-			$this->host   = $this->_get_conf('HOST', '127.0.0.1', $params);
-			$this->port   = (int)$this->_get_conf('PORT', '6379', $params);
-			$this->prefix = $this->_get_conf('PREFIX', '', $params);
-			$this->prefix = $this->prefix ? $this->prefix .':' : '';
-			$this->timeout         = $this->_get_conf( 'TIMEOUT',           0, $params ); // float, sec
-			$this->retry_interval  = $this->_get_conf( 'RETRY_INTERVAL',  100, $params ); // int,   msec
-			$this->read_timeout    = $this->_get_conf( 'READ_TIMEOUT',     -1, $params ); // float, sec, for subscribe
+			$this->set_conf( $params );
 		}
 
 		$redis = null;
