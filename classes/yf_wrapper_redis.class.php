@@ -136,7 +136,7 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function connect($params = []) {
-		if ($this->_connection) {
+		if ($this->_connection && $this->is_connection()) {
 			return $this->_connection;
 		}
 		if( !$this->_is_conf ) {
