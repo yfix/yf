@@ -37,31 +37,25 @@ class yf_queue_driver_redis extends yf_queue_driver {
 	/**
 	*/
 	function reconnect() {
-		$this->_connection->reconnect();
+		$this->_connection && $this->_connection->reconnect();
 	}
 
 	/**
 	*/
-	function connect($params = []) {
+	function connect( $options = [] ) {
 		if (!$this->_connection) {
-			$override = [
-				'REDIS_HOST'	=> $this->_get_conf('REDIS_QUEUE_HOST'),
-				'REDIS_PORT'	=> $this->_get_conf('REDIS_QUEUE_PORT'),
-				'REDIS_PREFIX'	=> $this->_get_conf('REDIS_QUEUE_PREFIX'),
-			];
-			$is_override = false;
-			foreach ((array)$override as $k => $v) {
-				if ($v) {
-					$is_override = true;
-					break;
-				}
+			if( !$options ) {
+				$options = [
+					'REDIS_HOST'	=> $this->_get_conf('REDIS_QUEUE_HOST'),
+					'REDIS_PORT'	=> $this->_get_conf('REDIS_QUEUE_PORT'),
+					'REDIS_PREFIX'	=> $this->_get_conf('REDIS_QUEUE_PREFIX'),
+				];
 			}
-			if ($is_override) {
-				$this->_connection = clone redis();
-			} else {
-				$this->_connection = redis();
-			}
-			$this->_connection->connect($override);
+			$this->_connection = redis()->factory( $options );
+			$this->_connection->connect();
+		}
+		if( !$this->_connection->is_connection() ) {
+			$this->reconnect();
 		}
 		return $this->_connection;
 	}

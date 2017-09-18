@@ -76,7 +76,7 @@ if (!function_exists('services')) {
 	function services($silent = false) { return _class('services') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
 if (!function_exists('redis')) {
-	function redis($silent = false) { return _class('wrapper_redis') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+	function redis( $options = [] ) { return $options ? _class('wrapper_redis')->factory( $options ) : _class('wrapper_redis'); }
 }
 if (!function_exists('redlock')) {
 	function redlock($silent = false) { return _class('wrapper_redlock') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }

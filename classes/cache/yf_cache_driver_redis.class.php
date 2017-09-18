@@ -43,51 +43,33 @@ class yf_cache_driver_redis extends yf_cache_driver {
 
 	/**
 	*/
-	function _init() {
-		$params = [
-			'REDIS_HOST'   => $this->_get_conf('REDIS_CACHE_HOST'),
-			'REDIS_PORT'   => $this->_get_conf('REDIS_CACHE_PORT'),
-			'REDIS_PREFIX' => $this->_get_conf('REDIS_CACHE_PREFIX'),
-		];
-		$this->connect( $params );
+	function reconnect() {
+		$this->_connection && $this->_connection->reconnect();
 	}
 
-	function connect( $params = [] ) {
-		if( !$params ) {
-			if( $this->_conf ) {
-				$params = $this->_conf;
-				if( $this->is_connection() ) {
-					$this->_connection->reconnect();
-					return( $this->_connection );
-				}
+	function connect( $options = [] ) {
+		if( !$this->_connection ) {
+			if( !$options ) {
+				$options = [
+					'REDIS_HOST'   => $this->_get_conf('REDIS_CACHE_HOST'),
+					'REDIS_PORT'   => $this->_get_conf('REDIS_CACHE_PORT'),
+					'REDIS_PREFIX' => $this->_get_conf('REDIS_CACHE_PREFIX'),
+				];
 			}
+			$this->_connection = redis()->factory( $options );
+			$this->_connection->connect();
 		}
-		$is_params = false;
-		foreach ((array)$params as $k => $v) {
-			if ($v) {
-				$is_params = true;
-				$this->_conf = $params;
-				break;
-			}
+		if( !$this->_connection->is_connection() ) {
+			$this->reconnect();
 		}
-		if ($is_params) {
-			$this->_connection = clone redis();
-		} else {
-			$this->_connection = redis();
-		}
-		$this->_connection->connect($params);
 		return( $this->_connection );
-	}
-
-	function is_connection() {
-		return (bool)$this->_connection;
 	}
 
 	/**
 	*/
 	function is_ready() {
-		! $this->is_connection() && $this->connect();
-		return $this->is_connection();
+		!$this->_connection && $this->connect();
+		return (bool)$this->_connection;
 	}
 
 	/**
