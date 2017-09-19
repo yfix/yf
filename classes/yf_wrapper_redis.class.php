@@ -5,7 +5,7 @@
 */
 class yf_wrapper_redis {
 
-	public $name   = 'REDIS'; // instance name
+	public $name   = 'REDIS';    // instance name
 	public $driver = 'phpredis'; // predis|phpredis
 
 	public $client = null;
@@ -105,7 +105,6 @@ class yf_wrapper_redis {
 	*/
 	function __clone() {
 		$this->is_clone  = true;
-		$this->disconnect();
 		$this->client    = null;
 		$this->config    = [];
 		$this->is_config = false;
@@ -118,9 +117,9 @@ class yf_wrapper_redis {
 		$result = is_object( $client );
 		if( !$result ) { return( $result ); }
 		if( $this->driver == 'phpredis' ) {
-			$result = $result && $client->isConnected();
+			$result = $client->isConnected();
 		} elseif ( $this->driver == 'predis' ) {
-			$result = $result && $client->isConnected();
+			$result = $client->isConnected();
 		}
 		return( $result );
 	}
@@ -140,10 +139,11 @@ class yf_wrapper_redis {
 
 	function disconnect() {
 		if( ! $this->is_connection() ) { return( null ); }
+		$client = &$this->client;
 		if( $this->driver == 'phpredis' ) {
-			$this->client->close();
+			$client->close();
 		} elseif ($this->driver == 'predis') {
-			$this->client->disconnect();
+			$client->disconnect();
 		}
 		return( true );
 	}
@@ -201,6 +201,10 @@ class yf_wrapper_redis {
 	/**
 	*/
 	function set_config( $options = [] ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( @$_name ) { $this->name = $_name; }
+		// config
 		$config = &$this->config;
 		$config[ 'database' ] = $this->_get_conf( 'database', $options );
 		$config[ 'host'     ] = $this->_get_conf( 'host',     $options );
@@ -219,6 +223,7 @@ class yf_wrapper_redis {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( @$_is_new || @$_is_force ) { return( true ); }
+		if( @$_name && $_name != $this->name ) { return( true ); }
 		$config = &$this->config;
 		foreach( $this->config_default as $key => $default ) {
 			$value = null;
@@ -244,26 +249,24 @@ class yf_wrapper_redis {
 		$is_diff = $this->diff_config( $options );
 		if( !$is_diff ) { return( $this ); }
 		if( $this->is_clone ) {
-			$_this = &$this;
+			$self = &$this;
 		} else {
-			$_new = clone $this;
-			$_this = &$_new;
+			$self = clone $this;
 		}
-		if( !$_this->is_config ) {
-			$_this->is_config = true;
-			$_this->set_config( $options );
+		if( !$self->is_config ) {
+			$self->is_config = true;
+			$self->set_config( $options );
 		}
-		return( $_this );
+		return( $self );
 	}
 
 	/**
 	*/
-	function _connect( $self = null ) {
-		if( !$self ) { return( null ); }
-		$redis = &$self->client;
-		if( $self->is_connection() ) { return $redis; }
-		$config = &$self->config;
-		if( $self->driver == 'phpredis' ) {
+	function _connect() {
+		$redis = &$this->client;
+		if( $this->is_connection() ) { return $redis; }
+		$config = &$this->config;
+		if( $this->driver == 'phpredis' ) {
 			// connect:
 			//   host             : string
 			//   port             : int,
@@ -280,7 +283,7 @@ class yf_wrapper_redis {
 			// after connect, only
 			$config[ 'prefix'       ] && $redis->setOption( Redis::OPT_PREFIX,              $config[ 'prefix'       ] );
 			$config[ 'read_timeout' ] && $redis->setOption( Redis::OPT_READ_TIMEOUT, (float)$config[ 'read_timeout' ] ); // float, sec
-		} elseif ( $self->driver == 'predis' ) {
+		} elseif ( $this->driver == 'predis' ) {
 			$redis->connect();
 		}
 		return $redis;
@@ -299,7 +302,7 @@ class yf_wrapper_redis {
 			$self->is_config = true;
 			$self->set_config( $options );
 		}
-		return( $self->_connect( $self ) );
+		return( $self->_connect() );
 	}
 
 	/**
