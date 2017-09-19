@@ -18,40 +18,35 @@ class yf_manage_redis {
 		$i_default = redis();
 		$i_cache = strpos(strtolower(cache()->DRIVER), 'redis') !== false ? cache()->_driver->_connection : null;
 		if (ini_get('session.save_handler') == 'redis' && preg_match('~tcp://(?P<host>[a-z0-9_-]+):(?P<port>[0-9]+)~ims', ini_get('session.save_path'), $m)) {
-			$i_sessions = clone redis();
-			$i_sessions->connect([
+			$i_sessions = redis()->factory([
 				'REDIS_HOST' => $m['host'],
 				'REDIS_PORT' => $m['port'],
 				'REDIS_PREFIX' => 'PHPREDIS_SESSION',
 			]);
 		}
 		if ($this->_get_conf('REDIS_LOG_HOST')) {
-			$i_log = clone redis();
-			$i_log->connect([
+			$i_log = redis()->factory([
 				'REDIS_HOST' => $this->_get_conf('REDIS_LOG_HOST'),
 				'REDIS_PORT' => $this->_get_conf('REDIS_LOG_PORT'),
 				'REDIS_PREFIX' => $this->_get_conf('REDIS_LOG_PREFIX'),
 			]);
 		}
 		if ($this->_get_conf('REDIS_QUEUE_HOST')) {
-			$i_queue = clone redis();
-			$i_queue->connect([
+			$i_queue = redis()->factory([
 				'REDIS_HOST' => $this->_get_conf('REDIS_QUEUE_HOST'),
 				'REDIS_PORT' => $this->_get_conf('REDIS_QUEUE_PORT'),
 				'REDIS_PREFIX' => $this->_get_conf('REDIS_QUEUE_PREFIX'),
 			]);
 		}
 		if ($this->_get_conf('REDIS_PUBSUB_HOST')) {
-			$i_pubsub = clone redis();
-			$i_pubsub->connect([
+			$i_pubsub = redis()->factory([
 				'REDIS_HOST' => $this->_get_conf('REDIS_PUBSUB_HOST'),
 				'REDIS_PORT' => $this->_get_conf('REDIS_PUBSUB_PORT'),
 				'REDIS_PREFIX' => $this->_get_conf('REDIS_PUBSUB_PREFIX'),
 			]);
 		}
 		if ($this->_get_conf('REDIS_CONF_HOST')) {
-			$i_conf = clone redis();
-			$i_conf->connect([
+			$i_conf = redis()->factory([
 				'REDIS_HOST' => $this->_get_conf('REDIS_CONF_HOST'),
 				'REDIS_PORT' => $this->_get_conf('REDIS_CONF_PORT'),
 				'REDIS_PREFIX' => $this->_get_conf('REDIS_CONF_PREFIX'),
@@ -62,7 +57,7 @@ class yf_manage_redis {
 				return false;
 			}
 			foreach (['driver','host','port','prefix'] as $param) {
-				if ($i1->$param !== $i2->$param) {
+				if ($i1->config[ $param ] !== $i2->config[ $param ]) {
 					return false;
 				}
 			}

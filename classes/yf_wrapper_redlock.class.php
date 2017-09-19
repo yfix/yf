@@ -105,8 +105,7 @@ class yf_wrapper_redlock {
 		if (empty($this->instances)) {
 			foreach ((array)$this->servers as $server) {
 				list($host, $port, $timeout) = $server;
-				$redis = new \Redis();
-				$redis->connect($host, $port, $timeout);
+				$redis = redis()->factory([ 'host' => $host, 'port' => $port, 'timeout' => $timeout ]);
 				$this->instances[] = $redis;
 			}
 		}
