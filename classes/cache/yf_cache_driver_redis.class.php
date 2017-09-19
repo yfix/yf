@@ -75,9 +75,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 	/**
 	*/
 	function get($name, $ttl = 0, $params = []) {
-		if (!$this->is_ready()) {
-			return null;
-		}
+		if (!$this->is_ready()) { return null; }
 		$res = $this->_connection->get($name);
 #		return $res === false || $res === null ? null : $res;
 		return $res ? json_decode($res, true) : null;
@@ -86,9 +84,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 	/**
 	*/
 	function set($name, $data, $ttl = 0) {
-		if (!$this->is_ready()) {
-			return null;
-		}
+		if (!$this->is_ready()) { return null; }
 		$data = json_encode($data, JSON_PRETTY_PRINT);
 		return $this->_connection->setex($name, $ttl ?: $this->DEFAULT_TTL, $data) ?: null;
 	}
@@ -96,27 +92,21 @@ class yf_cache_driver_redis extends yf_cache_driver {
 	/**
 	*/
 	function del($name) {
-		if (!$this->is_ready()) {
-			return null;
-		}
+		if (!$this->is_ready()) { return null; }
 		return $this->_connection->del($name) > 0 ? true : null;
 	}
 
 	/**
 	*/
 	function flush() {
-		if (!$this->is_ready()) {
-			return null;
-		}
+		if (!$this->is_ready()) { return null; }
 		return $this->_connection->flushDB() ?: null;
 	}
 
 	/**
 	*/
 	function stats() {
-		if (!$this->is_ready()) {
-			return null;
-		}
+		if (!$this->is_ready()) { return null; }
 		$info = $this->_connection->info();
 		return [
 			'hits'		=> false,
@@ -126,4 +116,5 @@ class yf_cache_driver_redis extends yf_cache_driver {
 			'mem_avail'	=> false,
 		];
 	}
+
 }

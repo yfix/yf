@@ -94,4 +94,5 @@ class yf_queue_driver_redis extends yf_queue_driver {
 		!$this->_connection && $this->connect();
 		return $this->_connection->lrange($queue, 0, -1);
 	}
+
 }

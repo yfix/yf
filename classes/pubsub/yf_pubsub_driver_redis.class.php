@@ -55,6 +55,18 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 
 	/**
 	*/
+	function reconnect_pub() {
+		$this->_connection_pub->reconnect();
+	}
+
+	/**
+	*/
+	function reconnect_sub() {
+		$this->_connection_sub->reconnect();
+	}
+
+	/**
+	*/
 	function connect( $options = [] ) {
 		if (!$this->_is_connection) {
 			if( !$options ) {
@@ -70,19 +82,12 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 			$this->_is_connection = true;
 		}
 		if( !$this->_connection_pub->is_connection() ) {
-			$this->_connection_pub->reconnect();
+			$this->reconnect_pub();
 		}
 		if( !$this->_connection_sub->is_connection() ) {
-			$this->_connection_sub->reconnect();
+			$this->reconnect_sub();
 		}
 		return $this->_is_connection;
-	}
-
-	/**
-	*/
-	function reconnect() {
-		$this->_connection_pub->reconnect();
-		$this->_connection_sub->reconnect();
 	}
 
 	/**
@@ -105,4 +110,5 @@ class yf_pubsub_driver_redis extends yf_pubsub_driver {
 		!$this->_is_connection && $this->connect();
 		return $this->_connection_sub->sub($channels, $callback);
 	}
+
 }
