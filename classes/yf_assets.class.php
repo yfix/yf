@@ -420,7 +420,7 @@ class yf_assets {
 		// This double iterating code ensures we can inherit/replace assets with same name inside project
 		foreach($names as $name => $path) {
 			$assets[$name] = include $path;
-			if (DEBUG_INFO) {
+			if (defined('DEBUG_INFO') && DEBUG_INFO) {
 				debug('assets_names[]', [
 					'name'		=> $name,
 					'path'		=> $path,

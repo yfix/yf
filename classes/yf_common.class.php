@@ -1344,8 +1344,10 @@ class yf_common {
 			return false;
 		}
 		$is_translate = true;
-			isset( $options[ 'translate' ] ) && $is_translate = (bool)$options[ 'translate' ];
-		if( $is_translate ) { $text = t( $text ); }
+		isset($options['translate']) && $is_translate = (bool)$options['translate'];
+		if ($is_translate) {
+			$text = t($text);
+		}
 		if ($key) {
 			$_SESSION['permanent'][$level][$key] = $text;
 		} else {
@@ -1355,14 +1357,16 @@ class yf_common {
 	}
 
 	function is_messages() {
-		$result = @count( $_SESSION[ 'permanent' ] ) > 0;
-		return( $result );
+		$result = isset($_SESSION['permanent']) && count($_SESSION['permanent']) > 0;
+		return $result;
 	}
 
 	/**
 	*/
 	function show_messages() {
-		if( !$this->is_messages() ) { return( false ); }
+		if (!$this->is_messages()) {
+			return false;
+		}
 		$body = [];
 		$level_to_style = [
 			'info'		=> 'alert alert-info',
