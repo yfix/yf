@@ -105,11 +105,11 @@ class yf_common {
 			$css_fw = conf('css_framework');
 		}
 		if (!$css_fw) {
-			$css_fw = 'bs2';
+			$css_fw = 'bs3';
 		}
 		$cache_dir = YF_PATH.'.dev/assets_cache/bootswatch/';
-		if ($css_fw === 'bs2' || $css_fw === 'bs3') {
-			$themes = explode(PHP_EOL, trim(file_get_contents($cache_dir. '/themes_'.$css_fw.'.txt')));
+		if (in_array($css_fw, ['bs2', 'bs3', 'bs4'])) {
+			$themes = explode(PHP_EOL, trim(file_get_contents($cache_dir. '/themes_tw'.$css_fw.'.txt')));
 		}
 		$themes[] = 'flatui';
 		$themes[] = 'material_design';

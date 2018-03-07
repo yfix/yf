@@ -671,7 +671,7 @@ class yf_debug {
 			'WEB_PATH'			=> WEB_PATH,
 			'MEDIA_PATH'		=> MEDIA_PATH,
 			'ADMIN_WEB_PATH'	=> ADMIN_WEB_PATH,
-			'CSS_FRAMEWORK'		=> conf('css_framework') ?: 'bs2',
+			'CSS_FRAMEWORK'		=> conf('css_framework') ?: 'bs3',
 			'BOOTSTRAP_THEME'	=> common()->bs_current_theme() ?: $_COOKIE['yf_theme'] ?: (conf('DEF_BOOTSTRAP_THEME_'.strtoupper(MAIN_TYPE)) ?: conf('DEF_BOOTSTRAP_THEME')),
 			'TPL_DRIVER'		=> tpl()->DRIVER_NAME,
 			'TPL_COMPILE'		=> (int)tpl()->COMPILE_TEMPLATES,
