@@ -65,7 +65,7 @@ class class_cache_test extends yf\tests\wrapper {
 	}
 	public function test_get() {
 		$this->assertTrue(self::_cache()->flush());
-		$this->assertNull(@self::_cache()->get());
+		$this->assertNull(@self::_cache()->get(null));
 		$this->assertNull(self::_cache()->get('k1'));
 
 		$this->assertTrue(self::_cache()->set('k1', 'val1'));
