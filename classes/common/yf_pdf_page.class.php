@@ -18,12 +18,11 @@ class yf_pdf_page {
 	/**
 	*/
 	function __construct() {
-		$path = "libs/mPDF/mpdf.php";
-		if(file_exists(YF_PATH.$path)){
-			require_once (YF_PATH.$path);
-		}else{
-			require_once (PROJECT_PATH.$path);
-		}
+# TODO: check and enable
+		return false;
+
+		require_php_lib('mpdf');
+
 		$this->_LC_NUMERIC = localeconv();
 			// params:
 			// coding, format, font size, font name

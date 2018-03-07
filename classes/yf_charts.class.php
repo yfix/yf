@@ -196,7 +196,7 @@ class yf_charts {
 		if (empty($data)) {
 			return;
 		}
-		include_once YF_PATH.'libs/yf_open_flash_chart/open-flash-chart.php';
+		require_php_lib('yf_open_flash_chart');
 
 		$width = isset($params['width'])?$params['width']:'90%';
 		$height = isset($params['height'])?$params['height']:'90%';
@@ -245,7 +245,7 @@ class yf_charts {
 		if (empty($data)) {
 			return;
 		}
-		include_once YF_PATH.'libs/yf_open_flash_chart/open-flash-chart.php';
+		require_php_lib('yf_open_flash_chart');
 
 		$width = isset($params['width']) ? $params['width'] : '90%';
 		$height = isset($params['height']) ? $params['height'] : '90%';

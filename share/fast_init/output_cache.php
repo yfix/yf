@@ -54,48 +54,7 @@ return function() {
 		'---'.($_SESSION['user_group'] <= 1 ? 'guest' : 'member')
 	);
 	$CACHE_CONTENTS = '';
-/*
-	// Memcached code
-	if ($MODULE_CONF['USE_MEMCACHED']) {
-		$params = conf('MEMCACHED_PARAMS');
-		$failed = true;
-		if (isset($PARAMS) && is_array($PARAMS)) {
-			$mc_obj = null;
-			if (class_exists('Memcached')) {
-				$mc_obj = new Memcached();
-			} elseif (class_exists('Memcache')) {
-				$mc_obj = new Memcache();
-			} else {
-				$client_path = YF_PATH.'libs/memcached/memcached_client.class.php';
-				if (file_exists($client_path)) {
-					include $client_path;
-				}
-				if (class_exists('memcached_client')) {
-					$mc_obj = new memcached_client();
-				}
-			}
-			if (is_object($mc_obj)) {
-				$mc_params = (isset($params['memcache']) && !empty($params['memcache'])) 
-					? (is_array($params['memcache']) ? $params['memcache'] : array($params['memcache'])) 
-					: array($this->MEMCACHE_DEF_PARAMS);
-				$failed = true;
-				foreach ((array)$mc_params as $server) {
-					if (!is_array($server) || !isset($server['host'])) {
-						continue;
-					}
-					$server['port'] = isset($server['port']) ? (int)$server['port'] : 11211;
-					$server['persistent'] = isset($server['persistent']) ? (bool) $server['persistent'] : true;
-					if ($mc_obj->addServer($server['host'], $server['port'], $server['persistent'])) {
-						$failed = false;
-					}
-				}
-			}
-		}
-		if (!$failed) {
-			$CACHE_CONTENTS = $_memcache->get('oc_'.$cur_cache_name);
-		}
-	}
-*/
+
 	// File-based method
 	if (!$CACHE_CONTENTS) {
 		$cache_dir	= REAL_PATH. 'pages_cache/';

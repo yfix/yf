@@ -301,117 +301,6 @@ class yf_other_common {
 	}
 
 	/**
-	* Parse given text using "jevix" lib
-	*/
-	function jevix_parse ($text = "", $params = []) {
-		// Initialize jevix
-		if (!isset($this->JEVIX)) {
-			$this->JEVIX = false;
-
-			require(YF_PATH. "libs/jevix/jevix.class.php");
-
-			if (class_exists("Jevix")) {
-				$this->JEVIX = new Jevix();
-			}
-		}
-		if (!is_object($this->JEVIX)) {
-			trigger_error("COMMON: Jevix lib init fails", E_USER_WARNING);
-			return $text;
-		}
-		// next param
-		$this->JEVIX->cfgAllowTags(
-			isset($params["allow_tags"]) ? $params["allow_tags"] : 
-			['a', 'img', 'i', 'b', 'u', 'em', 'strong', 'nobr', 'li', 'ol', 'ul', 'sup', 'abbr', 'pre', 'acronym', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'adabracut', 'br', 'code']
-		);
-		// next param
-		$this->JEVIX->cfgSetTagShort(
-			isset($params["tag_short"]) ? $params["tag_short"] : 
-			['br','img']
-		);
-		// next param
-		$this->JEVIX->cfgSetTagPreformatted(
-			isset($params["tag_pre"]) ? $params["tag_pre"] : 
-			['pre']
-		);
-		// next param
-		$this->JEVIX->cfgSetTagCutWithContent(
-			isset($params["cut_with_content"]) ? $params["cut_with_content"] : 
-			['script', 'object', 'iframe', 'style']
-		);
-		// next param
-		$this->JEVIX->cfgSetXHTMLMode(
-			isset($params["xhtml_mode"]) ? $params["xhtml_mode"] : 
-			true
-		);
-		// next param
-		$this->JEVIX->cfgSetAutoBrMode(
-			isset($params["auto_br_mode"]) ? $params["auto_br_mode"] : 
-			true
-		);
-		// next param
-		$this->JEVIX->cfgSetAutoLinkMode(
-			isset($params["auto_link_mode"]) ? $params["auto_link_mode"] : 
-			true
-		);
-		// next param
-		$this->JEVIX->cfgSetTagNoTypography(
-			isset($params["tag_to_typography"]) ? $params["tag_to_typography"] : 
-			'code'
-		);
-		// next param
-		isset($params["allow_tag_params"]) ? "" : $params["allow_tag_params"] = 
-			[
-				'a'		=> ['title', 'href'],
-				'img'	=> ['src', 'alt' => '#text', 'title', 'align' => ['right', 'left', 'center'], 'width' => '#int', 'height' => '#int', 'hspace' => '#int', 'vspace' => '#int'],
-			];
-		foreach ((array)$params["allow_tag_params"] as $k => $v) {
-			$this->JEVIX->cfgAllowTagParams($k, $v);
-		}
-		// next param
-		isset($params["tag_params_required"]) ? "" : $params["tag_params_required"] = 
-			[
-				'img'	=> 'src',
-				'a'		=> 'href',
-			];
-		foreach ((array)$params["tag_params_required"] as $k => $v) {
-			$this->JEVIX->cfgSetTagParamsRequired($k, $v);
-		}
-		// next param
-		isset($params["tag_childs"]) ? "" : $params["tag_childs"] = 
-			[
-				'ul'	=> 'li',
-			];
-		foreach ((array)$params["tag_childs"] as $k => $v) {
-			$this->JEVIX->cfgSetTagChilds($k, $v, true, true);
-		}
-		// next param
-		isset($params["tag_params_auto_add"]) ? "" : $params["tag_params_auto_add"] = 
-			[
-				'a'		=> ['rel' => 'nofollow'],
-				'img'	=> ['width' => '300', 'height' => '300'],
-			];
-		foreach ((array)$params["tag_params_auto_add"] as $k => $v) {
-			$this->JEVIX->cfgSetTagParamsAutoAdd($k, $v);
-		}
-		// next param
-		isset($params["auto_replace"]) ? "" : $params["auto_replace"] = 
-			[
-				'+/-'	=> '±',
-				'(c)'	=> '©',
-				'(r)'	=> '®',
-			];
-		foreach ((array)$params["auto_replace"] as $k => $v) {
-			$this->JEVIX->cfgSetAutoReplace($k, $v);
-		}
-		// Go with parsing
-		$errors = null;
-		$res = $this->JEVIX->parse($text, $this->JEVIX_ERRORS);
-
-//		print_r($this->JEVIX_ERRORS);
-		return $res;
-	}
-
-	/**
 	* Get country by IP address using maxmind API (http://geolite.maxmind.com/download/geoip/api/php/)
 	* @return 2-byte $country_code (uppercased) or false if something wrong
 	*/
@@ -425,11 +314,7 @@ class yf_other_common {
 			if (!file_exists($db_path)) {
 				return false;
 			}
-			$lib_path = YF_PATH."libs/geoip/geoip.inc";
-			if (!file_exists($lib_path)) {
-				return false;
-			}
-			include_once($lib_path);
+			require_php_lib('geoip_api');
 			if (function_exists("geoip_open")) {
 				$this->_geoip_obj = geoip_open($db_path, GEOIP_MEMORY_CACHE);
 			}

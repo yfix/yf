@@ -99,8 +99,6 @@ class yf_main {
 	public $CACHE_CONTROL_FROM_URL	= false;
 	/** @var bool Check server health status and return 503 if not OK (great to use with nginx upstream) */
 	public $SERVER_HEALTH_CHECK		= false;
-	/** @var bool Definies if we should connect firephp library */
-	public $FIREPHP_ENABLE			= false;
 	/** @var bool Logging of every engine call */
 	public $LOG_EXEC				= false;
 	/** @var int Execute method cache lifetime (in seconds), set to 0 to use cache module default value */
@@ -182,7 +180,6 @@ class yf_main {
 			$this->init_constants();
 			$this->init_php_params();
 			$this->set_module_conf('main', $this); // // Load project config for self
-			$this->init_firephp();
 			$this->init_server_health();
 			$this->try_fast_init();
 			$this->init_modules_base();
@@ -624,22 +621,6 @@ class yf_main {
 			conf('HIGH_CPU_LOAD', $load[0] > $this->OVERLOAD_CPU_LOAD ? 1 : 0);
 		} else {
 			conf('HIGH_CPU_LOAD', 0);
-		}
-	}
-
-	/**
-	*/
-	function init_firephp() {
-		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-		if (!$this->FIREPHP_ENABLE) {
-			return false;
-		}
-		if (function_exists('fb') && class_exists('FirePHP')) {
-			return true;
-		}
-		$f = YF_PATH.'libs/firephp-core/lib/FirePHPCore/fb.php';
-		if (file_exists($f)) {
-			include_once $f;
 		}
 	}
 

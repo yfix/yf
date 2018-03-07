@@ -13,26 +13,24 @@ class yf_intrusion_detection {
 	* Contructor
 	*/
 	function _init () {
-		$this->BASE_PATH = YF_PATH.'libs/phpids/';
-		// set the include path properly for PHPIDS
-		set_include_path(
-			get_include_path()
-			. PATH_SEPARATOR
-			. $this->BASE_PATH
-		);
+# TODO: check and enable
+		return false;
+
+		require_php_lib('phpids');
+
 		$this->config = [
 			// basic settings - customize to make the PHPIDS work at all
 			'General'	=> [
 				"filter_type"		=> "xml",
-				"base_path"			=> $this->BASE_PATH,
+#				"base_path"			=> $this->BASE_PATH,
 				"use_base_path"		=> false,
-				"filter_path"		=> $this->BASE_PATH."IDS/default_filter.xml",
-				"tmp_path"			=> INCLUDE_PATH. "uploads/tmp/",
+#				"filter_path"		=> $this->BASE_PATH."IDS/default_filter.xml",
+#				"tmp_path"			=> INCLUDE_PATH. "uploads/tmp/",
 				"scan_keys"			=> false,
 				// in case you want to use a different HTMLPurifier source, specify it here
 				// By default, those files are used that are being shipped with PHPIDS
-				//"HTML_Purifier_Path"	=> $this->BASE_PATH."IDS/vendors/htmlpurifier/HTMLPurifier.auto.php",
-				//"HTML_Purifier_Cache"	=> $this->BASE_PATH."IDS/vendors/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer",
+#				//"HTML_Purifier_Path"	=> $this->BASE_PATH."IDS/vendors/htmlpurifier/HTMLPurifier.auto.php",
+#				//"HTML_Purifier_Cache"	=> $this->BASE_PATH."IDS/vendors/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer",
 				// define which fields contain html and need preparation before 
 				// hitting the PHPIDS rules (new in PHPIDS 0.5)
 				"html"				=> [
@@ -52,7 +50,7 @@ class yf_intrusion_detection {
 			// If you use the PHPIDS logger you can define specific configuration here
 			'Logging'	=> [
 				// file logging
-				"path"			=> INCLUDE_PATH. "phpids_log.txt",
+#				"path"			=> INCLUDE_PATH. "phpids_log.txt",
 				// email logging
 				// note that enabling safemode you can prevent spam attempts,
 				// see documentation
@@ -78,7 +76,7 @@ class yf_intrusion_detection {
 				"caching"=> "none",
 				//"expiration_time" => 600,
 				// file cache	
-				//"path"			=> INCLUDE_PATH. "uploads/tmp/default_filter.cache",
+#				//"path"			=> INCLUDE_PATH. "uploads/tmp/default_filter.cache",
 				// database cache
 				//"wrapper"		=> "mysql:host=".DB_HOST.";port=3306;dbname=".DB_NAME,
 				//"user"		=> DB_USER
@@ -98,14 +96,12 @@ class yf_intrusion_detection {
 	* Do check
 	*/
 	function check () {
-		include_once $this->BASE_PATH. 'IDS/Init.php';
 		$request = [
 			'REQUEST'	=> $_REQUEST,
 			'GET'		=> $_GET,
 			'POST'		=> $_POST,
 			'COOKIE'	=> $_COOKIE
 		];
-//		$init = IDS_Init::init(YF_PATH.'libs/phpids/'.'IDS/Config/Config.ini');
 		$init = IDS_Init::init();
 		$init->setConfig($this->config, true);
 		$ids = new IDS_Monitor($request, $init);

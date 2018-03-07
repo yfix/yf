@@ -50,7 +50,12 @@ class yf_utf8_clean {
 	* Constructor
 	*/
 	function _init () {
-		include_once (YF_PATH. 'libs/yf_utf8_funcs/utils/ascii.php');
+# TODO: check and enable
+		return false;
+
+		require_php_lib('yf_utf8_funcs');
+
+#		include_once 'yf_utf8_funcs/utils/ascii.php';
 /*
 		// russian ones here
 		foreach (range('а','я') as $v) {

@@ -1,7 +1,6 @@
 <?php
 
 require_php_lib('jquery-file-upload');
-#require_once YF_PATH.'libs/jquery-file-upload/server/php/UploadHandler.php';
 class yf_form2_file_handler extends UploadHandler {
 
     function process($options = null, $initialize = true, $error_messages = null) {

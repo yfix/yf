@@ -606,7 +606,7 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_libs($folder = 'libs/') {
+	function get_libs($folder = 'vendor/') {
 		$libs = [];
 		$suffix = '/';
 		foreach ($this->get_globs($folder, $suffix) as $glob) {

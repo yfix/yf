@@ -17,7 +17,6 @@ class yf_diff {
 	 *
 	 */
 	function __construct() {
-#		$this->module_path = YF_PATH.'libs/php-diff/lib/';
 		require_php_lib('php_diff');
 
 		$this->diff_types = [
@@ -36,8 +35,6 @@ class yf_diff {
 	function get_diff($str1, $str2, $type = 'side_by_side') {
 		$type = isset($this->diff_types[$type]) ? $this->diff_types[$type] : current($this->diff_types);
 		
-#		require_once $this->module_path.'Diff.php';
-
 		// Options for generating the diff
 		$options = [
 			//'context' => 300,
@@ -53,7 +50,6 @@ class yf_diff {
 		// Initialize the diff class
 		$diff = new Diff($str1, $str2, $options);
 		
-#		require_once $this->module_path.'Diff/Renderer/Html/'.$type.'.php';
 		$diff_type_class = 'Diff_Renderer_Html_'.$type;
 		$renderer = new $diff_type_class;
 		return $this->custom_style().$diff->Render($renderer);

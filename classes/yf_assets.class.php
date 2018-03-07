@@ -375,8 +375,8 @@ class yf_assets {
 			return true;
 		}
 		$paths = [
-			'app'	=> APP_PATH.'libs/vendor/autoload.php',
-			'yf'	=> YF_PATH.'libs/vendor/autoload.php',
+			'app'	=> APP_PATH.'vendor/autoload.php',
+			'yf'	=> YF_PATH.'vendor/autoload.php',
 			'server'=> '/usr/local/share/composer/vendor/autoload.php',
 		];
 		$path_loaded = '';
