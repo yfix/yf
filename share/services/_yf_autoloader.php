@@ -27,7 +27,7 @@ class yf_autoloader {
 	/***/
 	public function __construct($config = []) {
 		!defined('YF_PATH') && define('YF_PATH', dirname(dirname(__DIR__)).'/');
-		$this->libs_root = YF_PATH.'libs/';
+		$this->libs_root = YF_PATH.'vendor/';
 		$this->is_console = $_SERVER['argc'] && !isset($_SERVER['REQUEST_METHOD']);
 
 		foreach ($this->config_names as $name) {
