@@ -117,7 +117,7 @@ class yf_test {
 	* PHPAmiler testing
 	*/
 	function phpmailer () {
-		require_once(YF_PATH.'libs/phpmailer/PHPMailerAutoload.php');
+		require_php_lib('phpmailer');
 		$mail			 = new PHPMailer(); // defaults to using php 'mail()'
 		$body			 = file_get_contents(INCLUDE_PATH. 'uploads/mail_test.html');
 		$mail->SetFrom('yuri.vysotskiy@gmail.com', 'YFix Team');

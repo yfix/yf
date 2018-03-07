@@ -168,12 +168,8 @@ class yf_manage_shop_novaposhta_ua {
 		$file_path = sys_get_temp_dir() ?: '/tmp';
 		$file_name = tempnam( $file_path, 'import' );
 		$file = fopen( $file_name, 'w+' ); fwrite( $file, $content ); fclose( $file );
-		// init Excel reader
-		if( file_exists( YF_PATH.'libs/phpexcel/PHPExcel.php' ) ) {
-			require_once( YF_PATH.'libs/phpexcel/PHPExcel.php' );
-		} else {
-			require_once( INCLUDE_PATH.'libs/phpexcel/PHPExcel.php' );
-		}
+
+		require_php_lib('phpexcel');
 		// parse file
 		$reader = PHPExcel_IOFactory::createReader( 'Excel5' );
 		$reader->setReadDataOnly( true );

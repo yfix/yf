@@ -1331,11 +1331,7 @@ class yf_manage_shop_import_products2 {
 		$type           = pathinfo( $file_name, PATHINFO_EXTENSION );
 		$format_default = ( $type == 'xls' ? 'Excel5' : 'Excel2007' );
 		// init Excel reader
-		if( file_exists( YF_PATH.'libs/phpexcel/PHPExcel.php' ) ) {
-			require_once( YF_PATH.'libs/phpexcel/PHPExcel.php' );
-		} else {
-			require_once( INCLUDE_PATH.'libs/phpexcel/PHPExcel.php' );
-		}
+		require_php_lib('phpexcel');
 		// parse file
 		$format = PHPExcel_IOFactory::identify( $file_name );
 		$format = $format ?: $format_default;
