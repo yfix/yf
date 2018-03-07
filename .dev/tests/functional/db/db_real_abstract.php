@@ -3,7 +3,7 @@
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 require_once dirname(__DIR__).'/db_setup.php';
 
-abstract class db_real_abstract extends yf_unit_tests {
+abstract class db_real_abstract extends yf\tests\wrapper {
 
 	public static $db = null;
 	public static $server_version = '';

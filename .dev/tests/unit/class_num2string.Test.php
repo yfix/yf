@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
-class class_num2string_test extends yf_unit_tests {
+class class_num2string_test extends yf\tests\wrapper {
 
 	public function test_num2str_uah_ru() {
 #		$this->assertEquals( 'пятьсот пятьдесят пять триллионов четыреста сорок четыре милиарда триста тридцать три миллиона двести двадцать две тысячи сто одиннадцать гривен 99 копеек', common()->num2str( '555 444 333 222 111.999', 'uah', 'ru' ) );

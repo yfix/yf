@@ -5,7 +5,7 @@ require_once __DIR__.'/db_real_abstract.php';
 /**
  * @requires extension redis
  */
-class class_wrapper_queue_redis_test extends yf_unit_tests {
+class class_wrapper_queue_redis_test extends yf\tests\wrapper {
 	protected function setUp() {
 #		if (!defined('TESTING_REDIS_ENABLED')) {
 #			$this->markTestSkipped('Redis tests not enabled.');

@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class function_obj2arr extends yf_unit_tests {
+class function_obj2arr extends yf\tests\wrapper {
 	private function _get_test_obj() {
 		$o = new stdClass();
 		$o->key1 = 'val1';

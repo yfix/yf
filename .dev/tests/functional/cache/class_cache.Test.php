@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class class_cache_test extends yf_unit_tests {
+class class_cache_test extends yf\tests\wrapper {
 	public static $_cache = [];
 	public static function _cache_init() {
 		main()->modules['cache'] = null;

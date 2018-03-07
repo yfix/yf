@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
-class class_form_validate_test extends yf_unit_tests {
+class class_form_validate_test extends yf\tests\wrapper {
 	public static function setUpBeforeClass() {
 		$GLOBALS['CONF']['form2']['CONF_CSRF_PROTECTION'] = false;
 		_class('form2')->CONF_CSRF_PROTECTION = false;

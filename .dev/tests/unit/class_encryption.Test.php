@@ -5,7 +5,7 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 /**
  * @requires extension mcrypt
  */
-class class_encryption_test extends yf_unit_tests {
+class class_encryption_test extends yf\tests\wrapper {
 	private static $secret = 'my_secret_padded_to_24_b';
 	private static $to_encode = 'testing long string containing different symols:;.,%^&*()';
 	private static $cipher = 'CAST_128';

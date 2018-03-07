@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
-class class_bb_codes_test extends yf_unit_tests {
+class class_bb_codes_test extends yf\tests\wrapper {
 	public static $_er = [];
 	public static function setUpBeforeClass() {
 		self::$_er = error_reporting();

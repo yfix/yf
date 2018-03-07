@@ -10,7 +10,7 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 * rotated mode
 */
 
-class class_table_test extends yf_unit_tests {
+class class_table_test extends yf\tests\wrapper {
 	public static function setUpBeforeClass() {
 		$_GET['object'] = 'dynamic';
 		$_GET['action'] = 'unit_test_table';

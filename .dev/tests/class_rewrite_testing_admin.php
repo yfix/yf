@@ -4,7 +4,7 @@ require __DIR__.'/yf_unit_tests_setup_admin.php';
 #require __DIR__.'/class_rewrite_testing_shared.php';
 #class class_rewrite_testing_admin_test extends class_rewrite_testing_shared_test {
 #}
-class class_rewrite_testing_admin_test extends yf_unit_tests {
+class class_rewrite_testing_admin_test extends yf\tests\wrapper {
 	private static $host = 'test.dev';
 	private static $_bak_settings = [];
 

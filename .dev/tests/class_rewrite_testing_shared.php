@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__.'/yf_unit_tests_setup.php';
-class class_rewrite_testing_shared_test extends yf_unit_tests {
+class class_rewrite_testing_shared_test extends yf\tests\wrapper {
 	private static $host = 'test.dev';
 	private static $_bak_settings = [];
 

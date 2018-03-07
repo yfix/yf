@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
-class class_html_test extends yf_unit_tests {
+class class_html_test extends yf\tests\wrapper {
 	public function test_select_box() {
 		$html = html();
 		$def_class = $html->CLASS_SELECT_BOX;

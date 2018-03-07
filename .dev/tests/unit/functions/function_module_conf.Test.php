@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class function_module_conf_test extends yf_unit_tests {
+class function_module_conf_test extends yf\tests\wrapper {
 	public static $_bak = [];
 	public static function setUpBeforeClass() {
 		self::$_bak = $GLOBALS['PROJECT_CONF'];

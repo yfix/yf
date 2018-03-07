@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/db_real_abstract.php';
 
-class class_wrapper_memcached_test extends yf_unit_tests {
+class class_wrapper_memcached_test extends yf\tests\wrapper {
 	protected function setUp() {
 		if (!extension_loaded('memcache') && !extension_loaded('memcached')) {
 			$this->markTestSkipped('PHP extension required: memcache or memcached.');

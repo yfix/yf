@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/db_real_abstract.php';
 
-class assets_urls_check_test extends yf_unit_tests {
+class assets_urls_check_test extends yf\tests\wrapper {
 	public function get_url_contents($url, $timeout = 5) {
 		try {
 			$content = file_get_contents($url, false, stream_context_create(['http' => ['timeout' => $timeout]]));

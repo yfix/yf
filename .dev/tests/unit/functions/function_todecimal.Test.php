@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class function_todecimal_test extends yf_unit_tests {
+class function_todecimal_test extends yf\tests\wrapper {
 	public function test_main() {
 		$this->assertEquals('0', todecimal(''));
 		$this->assertEquals('1', todecimal(1));

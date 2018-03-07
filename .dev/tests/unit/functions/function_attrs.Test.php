@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class function_attrs_test extends yf_unit_tests {
+class function_attrs_test extends yf\tests\wrapper {
 	public function test_negative() {
 		$this->assertEquals('', @_attrs());
 		$this->assertEquals('', @_attrs(null));

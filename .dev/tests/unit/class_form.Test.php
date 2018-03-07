@@ -10,7 +10,7 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 * _input_assing_params_from_validate()
 */
 
-class class_form_test extends yf_unit_tests {
+class class_form_test extends yf\tests\wrapper {
 	private static $_bak_settings = [];
 	private static $css = [];
 	private static $action = '';

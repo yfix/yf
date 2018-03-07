@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class function_prepare_html_test extends yf_unit_tests {
+class function_prepare_html_test extends yf\tests\wrapper {
 	public function test_prepare_html() {
 		$this->assertEquals('test', _prepare_html('test'));
 		$this->assertEquals('test'.PHP_EOL.'test', _prepare_html('test'.PHP_EOL.'test'));
