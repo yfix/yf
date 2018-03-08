@@ -114,7 +114,7 @@ echo $file."\n";
   }
   
   public function count() {
-	return count($this->files);
+	return count((array)$this->files);
   }
   
   public function getSize() {
@@ -139,7 +139,7 @@ $phar = new Phar($name, 0, 'pf');
 
 $iter = new FrameworkIterator($path);
 
-echo "Building: ".number_format(count($iter)).' files in '.number_format(count($iter->getDirs())).' folders ('.number_format($iter->getSize())." bytes) ...\n\n";
+echo "Building: ".number_format(count((array)$iter)).' files in '.number_format(count((array)$iter->getDirs())).' folders ('.number_format($iter->getSize())." bytes) ...\n\n";
 
 $phar->buildFromIterator($iter);
 

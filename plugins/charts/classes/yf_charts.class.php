@@ -76,7 +76,7 @@ class yf_charts {
 		$width = isset($params['width'])?$params['width']:'90%';
 		$height = isset($params['height'])?$params['height']:'90%';
 		foreach ((array)$data as $data_item) {
-			$count = count($data_item);
+			$count = count((array)$data_item);
 			break;
 		}
 		if ($count == 1) {

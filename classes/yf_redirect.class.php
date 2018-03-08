@@ -66,7 +66,7 @@ class yf_redirect {
 		];
 		$detected = false;
 		$detect_slice = array_reverse(array_slice((array)$loop_var, -$loop_count, $loop_count, true));
-		if (count($detect_slice) < $this->LOOP_COUNT) {
+		if (count((array)$detect_slice) < $this->LOOP_COUNT) {
 			return false;
 		}
 		$exclude_source = $this->LOOP_EXCLUDE_SOURCE;

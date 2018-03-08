@@ -1,6 +1,6 @@
 <?php
 
-load('oauth_driver1', 'framework', 'classes/oauth/');
+load('oauth_driver1', '', 'classes/oauth/');
 class yf_oauth_driver_bitbucket extends yf_oauth_driver1 {
 
 	protected $url_request_token = 'https://bitbucket.org/api/1.0/oauth/request_token';

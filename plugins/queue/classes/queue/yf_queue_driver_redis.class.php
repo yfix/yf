@@ -1,6 +1,6 @@
 <?php
 
-load('queue_driver', 'framework', 'classes/queue/');
+load('queue_driver', '', 'classes/queue/');
 class yf_queue_driver_redis extends yf_queue_driver {
 
 	public $_connection = null;

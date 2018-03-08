@@ -213,7 +213,7 @@ class yf_settings {
 			}
 			$hooks = $hooks_data[$avail_hook_modules[$name]];
 			$is_checked = $s['value'] ? 1 : 0;
-			$container_html .= '<li class="item" id="liitem_'.str_replace('_', '', $name).'"><a style="cursor:move;"><i class="icon icon-move fa fa-arrows"></i> '.t($name).' ('.(count($hooks)).')'
+			$container_html .= '<li class="item" id="liitem_'.str_replace('_', '', $name).'"><a style="cursor:move;"><i class="icon icon-move fa fa-arrows"></i> '.t($name).' ('.(count((array)$hooks)).')'
 				.' <input type="checkbox" name="check['.str_replace('_', '', $name).']" value="1" style="float:right;"'.($is_checked ? ' checked="checked"' : '').'></a></li>'.PHP_EOL;
 		}
 		$container_html .= '
@@ -253,7 +253,7 @@ class yf_settings {
 						unset($v[$k2]);
 					}
 				}
-				if (!count($v)) {
+				if (!count((array)$v)) {
 					continue;
 				}
 			}

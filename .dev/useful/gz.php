@@ -126,14 +126,14 @@ $src_uri = $_GET["uri"];
 
 $uri_parts = explode("/", $src_uri);
 
-for ($i = 0; $i < count($uri_parts) - 1; $i++) {
+for ($i = 0; $i < count((array)$uri_parts) - 1; $i++) {
 	$uri_dir .= $uri_parts[$i] . "/";
 }
 
 $file_name = end($uri_parts);
 
 $file_parts = explode(".", $file_name);
-if (count($file_parts) > 1) {
+if (count((array)$file_parts) > 1) {
 	$file_extension = end($file_parts);
 	$content_type = $known_content_types[$file_extension];
 }

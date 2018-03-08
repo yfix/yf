@@ -468,7 +468,7 @@ class yf_user_profile extends yf_module {
 				if (is_object($INTERESTS_OBJ)) {
 					$user_interests = $INTERESTS_OBJ->_get_for_user_id($user_id);
 					if (!empty($user_interests) && is_array($user_interests)) {
-						$totals["interests"] = count($user_interests);
+						$totals["interests"] = count((array)$user_interests);
 					}
 				}
 			}

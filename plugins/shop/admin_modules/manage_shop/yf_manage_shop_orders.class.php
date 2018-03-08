@@ -205,7 +205,7 @@ class yf_manage_shop_orders{
 					}
 				}
 			}
-			if (count($sql)>0) {
+			if (count((array)$sql)>0) {
 				db()->update_safe(db('shop_orders'), $sql, 'id='.intval($_GET['id']));
 			}
 			if ($recount_price) {

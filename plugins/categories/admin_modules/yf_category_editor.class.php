@@ -407,7 +407,7 @@ class yf_category_editor {
 		}
 
 		$cat_items_to_display = array_values($cat_items);
-		$num_cat_items = count($cat_items_to_display);
+		$num_cat_items = count((array)$cat_items_to_display);
 
 		$ICONS_DIR = _class('graphics')->ICONS_PATH;
 		$MEDIA_PATH = _class('graphics')->MEDIA_PATH;

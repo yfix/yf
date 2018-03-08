@@ -479,7 +479,7 @@ class yf_auth_user {
 			return false;
 		}
 		$d = explode('-', $decrypted);
-		if (count($d) != 5) {
+		if (count((array)$d) != 5) {
 			$this->_encrypted_error = 'decrypted string is not a valid array';
 			return false;
 		}
@@ -800,7 +800,7 @@ class yf_auth_user {
 			$cookie_users[$_user_id] = $_user_id;
 		}
 		if ($_COOKIE[$_SPECIAL_NAME] == $_SESSION[$this->VAR_USER_ID]
-			|| (count($cookie_users) > 1 && isset($cookie_users[$_SESSION[$this->VAR_USER_ID]]))
+			|| (count((array)$cookie_users) > 1 && isset($cookie_users[$_SESSION[$this->VAR_USER_ID]]))
 		) {
 			return false;
 		}

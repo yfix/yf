@@ -217,7 +217,7 @@ class yf_table2 {
 			}
 		}
 		if (array_key_exists('feedback', $params)) {
-			$params['feedback']['total'] = count($data);
+			$params['feedback']['total'] = count((array)$data);
 		}
 		if (DEBUG_MODE) {
 			$this->_render_debug_info($params, $ts, main()->trace_string());
@@ -492,14 +492,14 @@ class yf_table2 {
 			if ($params['filter']) {
 				$this->_filter_array($data, $params['filter'], $params['filter_params']);
 			}
-			$pager['out'] = common()->divide_pages(null, null, null, $pager['records_on_page'], count($data), $pager['stpl_path'], $pager['add_get_vars'], $pager['extra']);
+			$pager['out'] = common()->divide_pages(null, null, null, $pager['records_on_page'], count((array)$data), $pager['stpl_path'], $pager['add_get_vars'], $pager['extra']);
 			$pages = $pager['out'][1];
-			if (count($data) > $pager['records_on_page']) {
+			if (count((array)$data) > $pager['records_on_page']) {
 				$slice_start = (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $pager['records_on_page'];
 				$slice_end = $pager['records_on_page'];
 				$data = array_slice($data, $slice_start, $slice_end, $preserve_keys = true);
 			}
-			$total = count($data);
+			$total = count((array)$data);
 			$ids = array_keys($data);
 		} elseif (strlen($sql)) {
 			if (is_object($params['db'])) {

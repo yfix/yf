@@ -2,7 +2,7 @@
 
 /**
 */
-load('db_utils_driver', 'framework', 'classes/db/');
+load('db_utils_driver', '', 'classes/db/');
 class yf_db_utils_pgsql extends yf_db_utils_driver {
 
 	/**

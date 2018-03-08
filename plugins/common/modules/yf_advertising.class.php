@@ -109,7 +109,7 @@ class yf_advertising {
 				$out[] = $ads[$k]['html'];
 			}		
 		}
-		$out_key = rand(0, count($out)-1);
+		$out_key = rand(0, count((array)$out)-1);
 		return $out[$out_key];
     }
 }

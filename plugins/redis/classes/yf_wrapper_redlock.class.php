@@ -37,7 +37,7 @@ class yf_wrapper_redlock {
 		}
 		$this->retry_delay = $params['retry_delay'] ?: 200;
 		$this->retry_count = $params['retry_count'] ?: 3;
-		$this->quorum  = min(count($this->servers), (count($this->servers) / 2 + 1));
+		$this->quorum  = min(count((array)$this->servers), (count((array)$this->servers) / 2 + 1));
 	}
 
 	/**

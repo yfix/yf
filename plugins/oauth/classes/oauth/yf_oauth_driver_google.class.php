@@ -1,6 +1,6 @@
 <?php
 
-load('oauth_driver2', 'framework', 'classes/oauth/');
+load('oauth_driver2', '', 'classes/oauth/');
 class yf_oauth_driver_google extends yf_oauth_driver2 {
 
 	// Register for API client_id and client_secret here: https://cloud.google.com/console#/project

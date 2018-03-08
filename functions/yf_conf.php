@@ -50,7 +50,7 @@ if (!function_exists('conf')) {
 				}
 				if (is_array($a) && !empty($a)) {
 					$_key = $a[0];
-					$c = count($a);
+					$c = count((array)$a);
 					$last_key = $a[$c - 1];
 					$base = null;
 
@@ -87,7 +87,7 @@ if (!function_exists('conf')) {
 		if (is_array($a) && !empty($a)) {
 			$name = $a[0];
 			$v = &$ARR[$name];
-			$c = count($a);
+			$c = count((array)$a);
 			$last_key = $a[$c - 1];
 			$base = null;
 
@@ -162,7 +162,7 @@ if (!function_exists('debug')) {
 		$arr_name = 'DEBUG';
 		if ($max_items && !is_null($new_value) && substr($name, -2) == '[]') {
 			$v = conf(substr($name, 0, -2), null, $arr_name);
-			if (is_array($v) && count($v) >= $max_items) {
+			if (is_array($v) && count((array)$v) >= $max_items) {
 				return false;
 			}
 		}

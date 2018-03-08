@@ -29,14 +29,14 @@ echo 'memory = '.memory_get_usage().PHP_EOL;
 
 $ts = microtime(true);
 $_a = obj2arr($a);
-echo 'obj2arr: '.round(microtime(true) - $ts, 4).', count = '.count($_a).PHP_EOL;
+echo 'obj2arr: '.round(microtime(true) - $ts, 4).', count = '.count((array)$_a).PHP_EOL;
 unset($_a);
 
 echo 'memory = '.memory_get_usage().PHP_EOL;
 
 $ts = microtime(true);
 $_a = object_to_array($a);
-echo 'object_to_array: '.round(microtime(true) - $ts, 4).', count = '.count($_a).PHP_EOL;
+echo 'object_to_array: '.round(microtime(true) - $ts, 4).', count = '.count((array)$_a).PHP_EOL;
 unset($_a);
 
 echo 'memory = '.memory_get_usage().PHP_EOL;

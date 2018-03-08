@@ -341,7 +341,7 @@ class yf_wrapper_redis {
 	*/
 	function _query_log($func, $args = [], $result = null, $exec_time = 0.0) {
 		// Save memory on high number of query log entries
-		if ($this->LOG_LIMIT && count($this->log) >= $this->LOG_LIMIT) {
+		if ($this->LOG_LIMIT && count((array)$this->log) >= $this->LOG_LIMIT) {
 			return false;
 		}
 		$this->log[] = [
@@ -351,7 +351,7 @@ class yf_wrapper_redis {
 			'exec_time'	=> round($exec_time, 5),
 			'trace'		=> $this->_trace_string(2),
 		];
-		return count($this->log) - 1;
+		return count((array)$this->log) - 1;
 	}
 
 	/**

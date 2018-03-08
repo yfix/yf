@@ -673,7 +673,7 @@ class yf_tpl_driver_yf {
 						$center_tmp[] = ($negate ? '!' : ''). $func.'('.$v.')';
 					}
 				}
-				if (!count($center_tmp)) {
+				if (!count((array)$center_tmp)) {
 					$center_cond = ($negate ? '!' : ''). $func. '($replace["___not_existing_key__"])';
 				} else {
 					$center_cond = '('.implode(') '.$multiple_cond.' (', $center_tmp).')';
@@ -768,7 +768,7 @@ class yf_tpl_driver_yf {
 				$prepared_array[] = $a;
 			}
 		}
-		return count($prepared_array) ? implode(' ', $prepared_array) : 'null';
+		return count((array)$prepared_array) ? implode(' ', $prepared_array) : 'null';
 	}
 
 	/**
@@ -889,7 +889,7 @@ class yf_tpl_driver_yf {
 				return $no_rows_text;
 			}
 			// Process sub template (only cycle within correct keys)
-			$_total = (int)count($sub_array);
+			$_total = (int)count((array)$sub_array);
 			$_i = 0;
 			$output = [];
 			$sub_replace  = [];

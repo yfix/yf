@@ -146,7 +146,7 @@ abstract class yf_oauth_driver2 {
 			$result = json_decode($result, $assoc = true);
 		} elseif (strpos($response['content_type'], 'application/x-www-form-urlencoded') !== false) {
 			parse_str($result, $try_parsed);
-			if (is_array($try_parsed) && count($try_parsed) > 1) {
+			if (is_array($try_parsed) && count((array)$try_parsed) > 1) {
 				$result = $try_parsed;
 			}
 		}

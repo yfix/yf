@@ -17,7 +17,7 @@ class yf_shop__get_select_attributes{
 			$_product_id = $_atts_products_ids[$_name];
 			$_box = "";
 			$_box_name = "atts[".intval($_product_id)."][".$_name."]";
-			if (count($_info) > 1) {
+			if (count((array)$_info) > 1) {
 				$_box = common()->select_box($_box_name, $_info, $selected, false, 2, "", false);
 			} else {
 				$_box = current($_info)."\n<input type=\"hidden\" name=\"".$_box_name."\" value=\""._prepare_html(current($_info))."\" />";

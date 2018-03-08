@@ -84,7 +84,7 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$sql_php = $this->_fix_sql_php($sql_php);
-			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
+			$this->assertTrue( is_array($sql_php) && count((array)$sql_php) && $sql_php );
 			$sql_php['name'] = $db_prefix.$name;
 			$sql = $parser->create($sql_php);
 			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
@@ -134,7 +134,7 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$sql_php = $this->_fix_sql_php($sql_php);
-			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
+			$this->assertTrue( is_array($sql_php) && count((array)$sql_php) && $sql_php );
 			$sql_php['name'] = $db_prefix.$name;
 			$sql = $parser->create($sql_php);
 			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
@@ -187,7 +187,7 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$sql_php = $this->_fix_sql_php($sql_php);
-			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
+			$this->assertTrue( is_array($sql_php) && count((array)$sql_php) && $sql_php );
 			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
 			$this->assertTrue( (bool)self::db()->query('SELECT * FROM '.self::table_name($db_prefix.$name).' LIMIT 1'), 'selecting from table: '.$db_prefix.$name );
 			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
@@ -245,7 +245,7 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$table = $db_prefix.$name;
 			$sql_php = $this->_fix_sql_php($sql_php);
-			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
+			$this->assertTrue( is_array($sql_php) && count((array)$sql_php) && $sql_php );
 			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($table)) );
 			$this->assertTrue( (bool)self::db()->query('SELECT * FROM '.self::table_name($table).' LIMIT 1'), 'selecting from table: '.$table );
 			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($table)) );
@@ -318,7 +318,7 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$table = $db_prefix.$name;
 			$sql_php = $this->_fix_sql_php($sql_php);
-			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
+			$this->assertTrue( is_array($sql_php) && count((array)$sql_php) && $sql_php );
 			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($table)) );
 			$this->assertTrue( (bool)self::db()->query('SELECT * FROM '.self::table_name($table).' LIMIT 1'), 'selecting from table: '.$table );
 			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($table)) );
@@ -414,7 +414,7 @@ var_dump('insert_id: '.self::db()->insert_id());
 */
 /*
 			$sql_php = $this->_fix_sql_php($sql_php);
-			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
+			$this->assertTrue( is_array($sql_php) && count((array)$sql_php) && $sql_php );
 			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($table)) );
 			$this->assertTrue( (bool)self::db()->query('SELECT * FROM '.self::table_name($table).' LIMIT 1'), 'selecting from table: '.$table );
 			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($table)) );

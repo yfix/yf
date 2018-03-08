@@ -37,7 +37,7 @@ class yf_comments_manage {
 		if (!$COMMENT_IS_ALLOWED) {
 			return false;
 		}
-		if (count($_POST) > 0 && !isset($_POST['_not_for_comments'])) {
+		if (count((array)$_POST) > 0 && !isset($_POST['_not_for_comments'])) {
 			if (isset($_POST['text2']) && !isset($_POST['text'])) {
 				$_POST['text'] = $_POST['text2'];
 				unset($_POST['text2']);
@@ -208,7 +208,7 @@ class yf_comments_manage {
 			return _e('You are not allowed to perform this action');
 		}
 		$user_info = user($comment_info['user_id'], ['id','name',module('comments')->_user_nick_field,'photo_verified'], ['WHERE' => ['active' => 1]]);
-		if (count($_POST) > 0 && !isset($_POST['_not_for_comments'])) {
+		if (count((array)$_POST) > 0 && !isset($_POST['_not_for_comments'])) {
 			$_POST['text'] = substr($_POST['text'], 0, module('comments')->MAX_POST_TEXT_LENGTH);
 			if (empty($_POST['text'])) {
 				_re('Comment text required');
@@ -391,7 +391,7 @@ class yf_comments_manage {
 	function _spam_check($text){
 		preg_match_all(module('comments')->HTML_LINK_REGEX, $text, $result);
 		preg_match_all(module('comments')->BBCODE_LINK_REGEX, $text, $result2);
-		$count_links = count($result[1]) + count($result2[1]);
+		$count_links = count((array)$result[1]) + count((array)$result2[1]);
 		if (empty(main()->USER_ID)) {
 			if ($count_links > 1) {
 				_re('Too many links');

@@ -2,6 +2,6 @@
 
 /**
 */
-load('db_migrator', 'framework', 'classes/db/');
+load('db_migrator', '', 'classes/db/');
 class yf_db_migrator_mysql extends yf_db_migrator {
 }

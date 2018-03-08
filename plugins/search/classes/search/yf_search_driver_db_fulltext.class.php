@@ -1,6 +1,6 @@
 <?php
 
-load('search_driver', 'framework', 'classes/mail/');
+load('search_driver', '', 'classes/search/');
 class yf_search_driver_db_fulltext extends yf_search_driver {
 
 	/**

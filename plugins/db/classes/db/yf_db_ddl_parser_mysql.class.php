@@ -56,7 +56,7 @@ class yf_db_ddl_parser_mysql {
 			$v['length'] = $this->_get_int_def_length($v['type']);
 		}
 		$type_braces = (isset($v['length']) && is_numeric($v['length']) ? '('.$v['length']. (isset($v['decimals']) && is_numeric($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
-		if (in_array($v['type'], ['enum','set']) && is_array($v['values']) && count($v['values'])) {
+		if (in_array($v['type'], ['enum','set']) && is_array($v['values']) && count((array)$v['values'])) {
 			$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
 		}
 		$def = false;
@@ -297,7 +297,7 @@ class yf_db_ddl_parser_mysql {
 					}
 				}
 				if (!$name) {
-					$name = 'idx_'.(count($struct['indexes']) + 1);
+					$name = 'idx_'.(count((array)$struct['indexes']) + 1);
 				}
 				if ($name != 'PRIMARY') {
 					$name = strtolower($name);
@@ -345,7 +345,7 @@ class yf_db_ddl_parser_mysql {
 					}
 				}
 				if (!$name) {
-					$name = 'fk_'.(count($struct['foreign_keys']) + 1);
+					$name = 'fk_'.(count((array)$struct['foreign_keys']) + 1);
 				}
 				$name = strtolower($name);
 				$struct['foreign_keys'][$name] = [

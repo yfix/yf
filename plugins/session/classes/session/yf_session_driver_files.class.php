@@ -1,6 +1,6 @@
 <?php 
 
-load('session_driver', 'framework', 'classes/session/');
+load('session_driver', '', 'classes/session/');
 class yf_session_driver_files extends yf_session_driver {
 
 	public $CUR_SESSION_NAME	= 'PHPSESSID';

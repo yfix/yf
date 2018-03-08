@@ -492,7 +492,7 @@ class yf_remote_files {
 				}
 				unset($http_queue[$id]);
 				// Get next http url from queue to process (related to max_threads)
-				if (count($http_queue)) {
+				if (count((array)$http_queue)) {
 					list($new_id, $new_details) = each($http_queue);
 					$this->_curl_use_http_queue_item($new_id, $new_details);
 					// Remove queue item to not process url again
@@ -943,7 +943,7 @@ class yf_remote_files {
 			// Construct array of available mailservers
 			if (function_exists('getmxrr')) {
 				if (getmxrr($domain, $mxhosts, $mxweight)) {
-					for ($i = 0; $i < count($mxhosts); $i++){
+					for ($i = 0; $i < count((array)$mxhosts); $i++){
 						$mxs[$mxhosts[$i]] = $mxweight[$i];
 					}
 					asort($mxs);
@@ -971,7 +971,7 @@ class yf_remote_files {
 			if (empty($mailers) && checkdnsrr($domain, 'A')) {
 				$mailers[0] = gethostbyname($domain);
 			}
-			$total = count($mailers);
+			$total = count((array)$mailers);
 			if (!$total) {
 				$_error_msg .= 'No usable DNS records found for domain "'.$domain.'"'.PHP_EOL;
 			} else {

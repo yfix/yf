@@ -610,13 +610,13 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
         $payment_api = &$this->payment_api;
         $operation = $payment_api->operation(['operation_id'=>$operation_id]);
         $address = $operation['options']['request'][0]['options']['address'] ? : false;
-        $tx_hash = $operation['options']['response'][ count($operation['options']['response'])-1]['data']['tx_hash'] ? : false;
+        $tx_hash = $operation['options']['response'][ count((array)$operation['options']['response'])-1]['data']['tx_hash'] ? : false;
         if($address && $tx_hash) {
             $url = $this->URL_API.'address/transactions/' . $address . '/0/received/confirmed';
             $result = @common()->get_remote_page($url, false);
             if (!empty($result)) {
                 $result = @json_decode($result, true);
-                if($result && count($result)){
+                if($result && count((array)$result)){
                     foreach($result as $transaction){
                         if($transaction[1] ==$tx_hash && $transaction[4] == 'confirmed' && $transaction[5] >=$this->CONFIRMATIONS){
                             $payment_api->dump(['name' => ucfirst($this->PROVIDER_NAME), 'operation_id' => $operation_id]);
@@ -675,7 +675,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
                 if($provider_id && $status_id){
                     $where = 'direction=\'out\' and provider_id='.$provider_id.' and status_id='.$status_id;
                     $operations = $payment_api->operation(['where'=>$where, 'no_limit'=>true]);
-                    if($operations && count($operations)>1 && $operations[1]>0){
+                    if($operations && count((array)$operations)>1 && $operations[1]>0){
                         foreach($operations[0] as $operation){
                             $operation_id = intval($operation['operation_id']);
                             $operation_is_success = $this->_check_payout_operation($operation_id);
@@ -692,7 +692,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote {
             case 'payin':
                 break;
         }
-        if(count($successful_operations)){
+        if(count((array)$successful_operations)){
             $result = 'Операции '.implode(', ', $successful_operations).' успешно завершены';
         }
         else {

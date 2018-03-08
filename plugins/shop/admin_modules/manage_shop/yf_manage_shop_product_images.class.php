@@ -20,7 +20,7 @@ class yf_manage_shop_product_images{
 							WHERE product_id='.intval($_GET['id']).'
 								AND id='.intval($_GET['key']).'
 								AND active=1');
-		if (count($A) == 0){
+		if (count((array)$A) == 0){
 			return _e('Image not found');
 		}
 		module('manage_shop')->_product_check_first_revision('product_images', $_GET['id']);
@@ -37,7 +37,7 @@ class yf_manage_shop_product_images{
 	function _product_image_delete ($id, $k) {
 		db()->query('UPDATE '.db('shop_product_images').' SET active=0, is_default=0 WHERE product_id='.$id.' AND id='.$k);
 		$A = db()->get_all('SELECT * FROM '.db('shop_product_images').' WHERE product_id='.$id.' AND active=1');
-		if (count($A) == 0) {
+		if (count((array)$A) == 0) {
 			db()->query('UPDATE '.db('shop_products').' SET image=0 WHERE id='.$id);
 		}
 		return true;

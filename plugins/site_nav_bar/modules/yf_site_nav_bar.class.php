@@ -54,7 +54,7 @@ class yf_site_nav_bar {
 			return false;
 		}
 		// Stop here if gathered nothing
-		if (count($items) < 1) {
+		if (count((array)$items) < 1) {
 			return false;
 		}
 		// Hook have max priority
@@ -132,7 +132,7 @@ class yf_site_nav_bar {
 	*/
 	function _breadcrumbs () {
 		$items = $this->_show($return_array = true);
-		if (count($items) <= 1) {
+		if (count((array)$items) <= 1) {
 			return false;
 		}
 		foreach ($items as $v) {

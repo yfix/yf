@@ -109,7 +109,7 @@ class yf_logs_db_queries {
 			$body .= $k. str_repeat(' ', $max_row_lengths[$k] - strlen($k) + 1).'|';
 		}
 		$body .= "\r\n";
-		$body .= '|'.str_repeat('-', array_sum($max_row_lengths) + count($max_row_lengths) * 2 - 1)."|\r\n";
+		$body .= '|'.str_repeat('-', array_sum($max_row_lengths) + count((array)$max_row_lengths) * 2 - 1)."|\r\n";
 		// Data
 		foreach ((array)$explain_result as $_num => $_data) {
 			$body .= '|';

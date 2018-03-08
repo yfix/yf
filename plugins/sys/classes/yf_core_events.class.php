@@ -70,7 +70,7 @@ class yf_core_events {
 		if (DEBUG_MODE) {
 			debug('events_'.__FUNCTION__.'[]', [
 				'name'			=> $event,
-				'payload_len'	=> count($payload).' items',
+				'payload_len'	=> count((array)$payload).' items',
 				'time_offset'	=> microtime(true),
 				'trace'			=> trace(),
 			]);
@@ -103,7 +103,7 @@ class yf_core_events {
 		if (DEBUG_MODE) {
 			debug('events_'.__FUNCTION__.'[]', [
 				'name'			=> $event,
-				'payload_len'	=> count($payload).' items',
+				'payload_len'	=> count((array)$payload).' items',
 				'halt'			=> $halt,
 				'time_offset'	=> microtime(true),
 				'trace'			=> trace(),

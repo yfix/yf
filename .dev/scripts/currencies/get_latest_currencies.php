@@ -50,10 +50,10 @@ function data_get_latest_currencies() {
 	foreach($tmp_tbl as $v) {
 		$id = '';
 		$sign = '';
-		if (count($v) == 5) {
+		if (count((array)$v) == 5) {
 			$id = $v[2];
 			$sign = $v[1];
-		} elseif (count($v) == 6) {
+		} elseif (count((array)$v) == 6) {
 			$id = $v[3];
 			$sign = $v[2];
 		}

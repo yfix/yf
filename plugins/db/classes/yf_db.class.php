@@ -132,7 +132,7 @@ class yf_db {
 		}
 		$this->DB_PREFIX = !empty($db_prefix) ? $db_prefix : DB_PREFIX;
 		// Check if this is primary database connection
-		$debug_index = $DEBUG['db_instances'] ? count($DEBUG['db_instances']) : 0;
+		$debug_index = $DEBUG['db_instances'] ? count((array)$DEBUG['db_instances']) : 0;
 		if ($debug_index < 1) {
 			$this->IS_PRIMARY_CONNECTION = true;
 		} else {
@@ -212,7 +212,7 @@ class yf_db {
 		}
 		$paths = [
 			'app'	=> APP_PATH. 'share/db_sys_prefix_tables.php',
-			'yf'	=> YF_PATH. 'share/db_sys_prefix_tables.php',
+			'yf'	=> YF_PATH. 'plugins/db/share/db_sys_prefix_tables.php',
 		];
 		$data = [];
 		foreach ($paths as $path) {
@@ -505,7 +505,7 @@ class yf_db {
 	function _query_log($sql, $_trace = [], $db_error = false) {
 		$_log_allowed = true;
 		// Save memory on high number of query log entries
-		if ($this->LOGGED_QUERIES_LIMIT && count($this->_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
+		if ($this->LOGGED_QUERIES_LIMIT && count((array)$this->_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
 			$_log_allowed = false;
 		}
 		if (!$_log_allowed) {
@@ -522,7 +522,7 @@ class yf_db {
 			'time'		=> '',
 			'trace'		=> $_trace,
 		];
-		return count($this->_LOG) - 1;
+		return count((array)$this->_LOG) - 1;
 	}
 
 	/**
@@ -741,7 +741,7 @@ class yf_db {
 			if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && !isset($storage[$sql])) {
 				$storage[$sql] = $data;
 				// Permanently turn off queries cache (and free some memory) if case of limit reached
-				if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
+				if ($this->CACHE_QUERIES_LIMIT && count((array)$storage) > $this->CACHE_QUERIES_LIMIT) {
 					$this->ALLOW_CACHE_QUERIES = false;
 					$storage = null;
 				}
@@ -825,7 +825,7 @@ class yf_db {
 			return false;
 		}
 		$row = $this->fetch_assoc($q);
-		$levels = count($row);
+		$levels = count((array)$row);
 		if (!is_array($row) || !$levels) {
 			return false;
 		}
@@ -919,7 +919,7 @@ class yf_db {
 		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && !isset($storage[$sql])) {
 			$storage[$sql] = $data;
 			// Permanently turn off queries cache (and free some memory) if case of limit reached
-			if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
+			if ($this->CACHE_QUERIES_LIMIT && count((array)$storage) > $this->CACHE_QUERIES_LIMIT) {
 				$this->ALLOW_CACHE_QUERIES = false;
 				$storage = null;
 			}

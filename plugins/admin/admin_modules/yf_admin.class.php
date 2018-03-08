@@ -236,7 +236,7 @@ class yf_admin {
 		if ($is_online) {
 			$online_info = '<small class="text-success"><b>'
 				.a('#', t('Last visit time').': '. date('Y-m-d H:i:s', $online_last_time), 'fa fa-clock-o', $online_minutes_ago.' '.t('minutes ago'), 'btn-success').' '
-				.a('#', t('Websockets'), 'fa fa-link', count($online_sockets), '')
+				.a('#', t('Websockets'), 'fa fa-link', count((array)$online_sockets), '')
 			.'</b></small>';
 		}
 

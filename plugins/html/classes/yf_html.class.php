@@ -448,7 +448,7 @@ class yf_html {
 		$items = [];
 		$divider = $extra['divider'] ?: ''; // '/'
 		$show_divider = !$this->_is_bs3 && strlen($divider);
-		$len = count($data);
+		$len = count((array)$data);
 		$data = _prepare_html($data);
 		foreach ((array)$data as $k => $v) {
 			$is_last = (++$i == $len);
@@ -697,7 +697,7 @@ class yf_html {
 		$ul_opened = false;
 		foreach ((array)$data as $id => $row) {
 			$items = [];
-			$row_col = count($row) ? floor(12 / count($row)) : 1;
+			$row_col = count((array)$row) ? floor(12 / count((array)$row)) : 1;
 			if ($row_col < 1) {
 				$row_col = 1;
 			}
@@ -1385,7 +1385,7 @@ class yf_html {
 		$extra['class'] = 'bfh-selectbox '.$extra['class_add'];
 		$extra['data-name']		= $name;
 		$extra['data-value']	= strval($selected);
-		$extra['data-filter']	= isset($extra['data-filter']) ? $extra['data-filter'] : (count($values) > 10 ? 'true' : '');
+		$extra['data-filter']	= isset($extra['data-filter']) ? $extra['data-filter'] : (count((array)$values) > 10 ? 'true' : '');
 
 		$body .= '<div'._attrs($extra, ['id','class','style']).'>';
 		foreach ((array)$values as $key => $cur_value) {

@@ -222,7 +222,7 @@ class yf_wrapper_rabbitmq {
 			list($queue_name, ,) = $ch->queue_declare($q_name = '', $q_passive = false, $q_durable = false, $q_exclusive = true, $q_auto_delete = false, $q_nowait = false, $qparams = []);
 			$ch->queue_bind($queue_name, $channel);
 			$ch->basic_consume($queue_name, $c_tag = '', $c_no_local = false, $c_no_ack = true, $c_exclusive = false, $c_nowait = false, $callback);
-			while (count($ch->callbacks)) {
+			while (count((array)$ch->callbacks)) {
 				$channel->wait();
 			}
 		}

@@ -249,7 +249,7 @@ class yf_common_num2string {
 		}
 		// processing number digits
 		$digits_array = str_split($number, 3);
-		$units_count = count($digits_array) - 1;
+		$units_count = count((array)$digits_array) - 1;
 		foreach ($digits_array as $unit => $digits3) {
 			$unit = $units_count - $unit;
 			// skip zero if not dollar or cent

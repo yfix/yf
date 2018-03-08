@@ -20,6 +20,6 @@
 <?php } else { ?>
 	</li>
 	<?php if ($replace['next_level_diff'] != '0') { ?>
-		<?php $__f_total = count($replace['next_level_diff']); foreach (is_array($replace['next_level_diff']) ? $replace['next_level_diff'] : range(1, (int)$replace['next_level_diff']) as $_k => $_v) {$__f_counter++; ?></ul><?php } ?>
+		<?php $__f_total = count((array)$replace['next_level_diff']); foreach (is_array($replace['next_level_diff']) ? $replace['next_level_diff'] : range(1, (int)$replace['next_level_diff']) as $_k => $_v) {$__f_counter++; ?></ul><?php } ?>
 	<?php } ?>
 <?php } ?>

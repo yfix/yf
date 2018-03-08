@@ -1345,7 +1345,7 @@ class yf_common {
 	}
 
 	function is_messages() {
-		$result = isset($_SESSION['permanent']) && count($_SESSION['permanent']) > 0;
+		$result = isset($_SESSION['permanent']) && count((array)$_SESSION['permanent']) > 0;
 		return $result;
 	}
 
@@ -1364,7 +1364,7 @@ class yf_common {
 		];
 		foreach ((array)$level_to_style as $level => $css_style) {
 			$messages = $_SESSION['permanent'][$level];
-			if (!is_array($messages) || !count($messages)) {
+			if (!is_array($messages) || !count((array)$messages)) {
 				continue;
 			}
 			$body[] = '<div class="'.$css_style.'"><button type="button" class="close" data-dismiss="alert">×</button>'.implode('<br />'.PHP_EOL, $messages).'</div>';
@@ -1400,7 +1400,7 @@ class yf_common {
 		if (!empty($error_key)) {
 			return (bool)$this->USER_ERRORS[$error_key];
 		}
-		return isset($this->USER_ERRORS) && count($this->USER_ERRORS) ? true : false;
+		return isset($this->USER_ERRORS) && count((array)$this->USER_ERRORS) ? true : false;
 	}
 
 	/**

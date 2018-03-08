@@ -91,7 +91,7 @@ class yf_template_editor {
 		if (empty($num_stpls_array)) {
 			foreach ((array)$themes as $theme_class => $theme_attr) {
 				foreach ((array)$theme_attr as $theme_path => $theme_name) {
-					$num_stpls_array[$theme_name][$this->_dir_array[$theme_class]] = count($this->_get_stpls_in_theme($theme_name, $this->_dir_array[$theme_class]));
+					$num_stpls_array[$theme_name][$this->_dir_array[$theme_class]] = count((array)$this->_get_stpls_in_theme($theme_name, $this->_dir_array[$theme_class]));
 				}
 			}
 			cache_set($this->CACHE_NAME, $num_stpls_array);

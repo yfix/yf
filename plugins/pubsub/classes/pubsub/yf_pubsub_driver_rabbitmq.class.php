@@ -1,6 +1,6 @@
 <?php
 
-load('pubsub_driver', 'framework', 'classes/pubsub/');
+load('pubsub_driver', '', 'classes/pubsub/');
 class yf_pubsub_driver_rabbitmq extends yf_pubsub_driver {
 
 	private $_is_connection  = null;

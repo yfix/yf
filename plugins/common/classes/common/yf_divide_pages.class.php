@@ -109,10 +109,10 @@ class yf_divide_pages {
 	* Divide pages using given array
 	*/
 	function go_with_array ($items_array = [], $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = []) {
-		$result = $this->go(null, $url_path, $render_type, $records_on_page, $num_records ?: count($items_array), $tpls_path, $add_get_vars, $extra);
+		$result = $this->go(null, $url_path, $render_type, $records_on_page, $num_records ?: count((array)$items_array), $tpls_path, $add_get_vars, $extra);
 		$per_page = $result[6];
 		$requested_page = $result[7];
-		if (count($items_array) > $per_page) {
+		if (count((array)$items_array) > $per_page) {
 			$items_array = array_slice($items_array, (empty($requested_page) ? 0 : $requested_page - 1) * $per_page, $per_page, true);
 		}
 		$result[0] = $items_array;
@@ -124,7 +124,7 @@ class yf_divide_pages {
 	function get_total_records($sql = '', $num_records = 0, $extra = []) {
 		$sql_callback	= $extra['sql_callback'];
 		if (is_array($sql)) {
-			$total_records = count($sql);
+			$total_records = count((array)$sql);
 		} elseif (empty($num_records) && !empty($sql)) {
 			$sql = trim($sql);
 			$_need_std_num_rows		= true;

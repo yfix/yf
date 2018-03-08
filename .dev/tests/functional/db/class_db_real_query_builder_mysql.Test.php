@@ -373,12 +373,12 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'2' => ['id' => '2', 'id2' => '22', 'id3' => '222'],
 		];
 		$this->assertTrue( (bool)self::db()->insert_safe($t1, $data) );
-		$this->assertSame( count($data), (int)self::db()->from($t1)->count() );
+		$this->assertSame( count((array)$data), (int)self::db()->from($t1)->count() );
 		$this->assertSame( 0, (int)self::db()->from($t2)->count() );
 
 		$this->assertTrue( (bool)self::qb()->from($t1)->insert_into($t2) );
-		$this->assertSame( count($data), (int)self::db()->from($t1)->count() );
-		$this->assertSame( count($data), (int)self::db()->from($t2)->count() );
+		$this->assertSame( count((array)$data), (int)self::db()->from($t1)->count() );
+		$this->assertSame( count((array)$data), (int)self::db()->from($t2)->count() );
 		$this->assertSame( $data, self::db()->from($t2)->all() );
 
 		$this->assertTrue( (bool)self::qb()->from($t2)->delete() );
@@ -399,7 +399,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'4' => ['id' => '4', 'id2' => '22', 'id3' => '333'],
 		];
 		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
-		$this->assertSame( count($data), (int)self::db()->from($t)->count() );
+		$this->assertSame( count((array)$data), (int)self::db()->from($t)->count() );
 
 		$this->assertTrue( (bool)self::qb()->table($t)->update(['id2' => '1111']) );
 		$expected = [
@@ -413,7 +413,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::qb()->from($t)->delete() );
 		$this->assertSame( 0, (int)self::db()->from($t)->count() );
 		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
-		$this->assertSame( count($data), (int)self::db()->from($t)->count() );
+		$this->assertSame( count((array)$data), (int)self::db()->from($t)->count() );
 		$this->assertTrue( (bool)self::qb()->table($t)->whereid(2)->update(['id2' => '1111']) );
 		$expected = [
 			['id2' => $data[1]['id2']],

@@ -1,6 +1,6 @@
 <?php
 
-load('oauth_driver2', 'framework', 'classes/oauth/');
+load('oauth_driver2', '', 'classes/oauth/');
 class yf_oauth_driver_disqus extends yf_oauth_driver2 {
 
 	protected $url_authorize = 'https://disqus.com/api/oauth/2.0/authorize/';

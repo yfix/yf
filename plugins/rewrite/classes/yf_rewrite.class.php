@@ -106,7 +106,7 @@ class yf_rewrite {
 						unset($tmp[$v]);
 					}
 				}
-				if (count($tmp) > 0) {
+				if (count((array)$tmp) > 0) {
 					foreach ($tmp as $k => $v) {
 						unset($arr[$k]);
 					}

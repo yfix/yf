@@ -48,7 +48,7 @@ class yf_geo_content {
 			);
 			while ($A = db()->fetch_assoc($Q)) $_regions[$A["code"]] = $A["name"];
 			// Maybe country without regions ?
-			if (count($_regions) == 1) {
+			if (count((array)$_regions) == 1) {
 				$have_no_regions = true;
 			}
 			// Get cities list
@@ -199,7 +199,7 @@ class yf_geo_content {
 			);
 			while ($A = db()->fetch_assoc($Q)) $_regions[$A["code"]] = $A["name"];
 			// Maybe country without regions ?
-			if (count($_regions) == 1) {
+			if (count((array)$_regions) == 1) {
 				$have_no_regions = true;
 			}
 			// Get cities list

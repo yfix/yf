@@ -159,7 +159,7 @@ if ( ! function_exists('array_forget')) {
 	 */
 	function array_forget(&$array, $key) {
 		$keys = explode('.', $key);
-		while (count($keys) > 1) {
+		while (count((array)$keys) > 1) {
 			$key = array_shift($keys);
 			if ( ! isset($array[$key]) || ! is_array($array[$key])) {
 				return;
@@ -262,7 +262,7 @@ if ( ! function_exists('array_set')) {
 	function array_set(&$array, $key, $value) {
 		if (is_null($key)) return $array = $value;
 		$keys = explode('.', $key);
-		while (count($keys) > 1) {
+		while (count((array)$keys) > 1) {
 			$key = array_shift($keys);
 			// If the key doesn't exist at this depth, we will just create an empty array
 			// to hold the next value, allowing us to create the arrays to hold final

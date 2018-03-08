@@ -1,6 +1,6 @@
 <?php
 
-load('oauth_driver2', 'framework', 'classes/oauth/');
+load('oauth_driver2', '', 'classes/oauth/');
 class yf_oauth_driver_amazon extends yf_oauth_driver2 {
 /*
 	protected $url_authorize = 'https://www.amazon.com/ap/oa';

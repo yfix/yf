@@ -384,7 +384,7 @@ abstract class yf_db_query_builder_driver {
 		} else {
 			$this->limit(1);
 			$result = $this->get_all($select, $use_cache);
-			if (is_array($result) && count($result)) {
+			if (is_array($result) && count((array)$result)) {
 				return end($result);
 			} else {
 				return null;
@@ -452,12 +452,12 @@ abstract class yf_db_query_builder_driver {
 		$buffer = [];
 		while ($a = $this->db->fetch_assoc($q)) {
 			$buffer[] = $a;
-			if (count($buffer) >= $num) {
+			if (count((array)$buffer) >= $num) {
 				$callback($buffer);
 				$buffer = [];
 			}
 		}
-		if (count($buffer)) {
+		if (count((array)$buffer)) {
 			$callback($buffer);
 		}
 		return $this;
@@ -652,7 +652,7 @@ abstract class yf_db_query_builder_driver {
 				}
 				$values_array[] = '('.implode(', ', $_cur_values).PHP_EOL.')';
 			}
-		} elseif (count($data)) {
+		} elseif (count((array)$data)) {
 			$cols	= array_keys($data);
 			$values = array_values($data);
 			foreach ((array)$values as $k => $v) {
@@ -676,7 +676,7 @@ abstract class yf_db_query_builder_driver {
 		}
 		$sql = '';
 		$primary_col = $this->get_key_name($table);
-		if (count($cols) && count($values_array)) {
+		if (count((array)$cols) && count((array)$values_array)) {
 			$sql = ($replace ? 'REPLACE' : 'INSERT')
 				. ($delayed ? ' DELAYED' : '')
 				. ($ignore ? ' IGNORE' : '')
@@ -768,7 +768,7 @@ abstract class yf_db_query_builder_driver {
 			$tmp_data[$k] = $_k. ' = '. $_v;
 		}
 		$sql = '';
-		if (count($tmp_data)) {
+		if (count((array)$tmp_data)) {
 			$sql = 'UPDATE '
 				. ($params['ignore'] ? 'IGNORE ' : '')
 				. $this->_escape_table_name($table)
@@ -795,13 +795,13 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$this->_set_update_batch_data($data, $index);
-		if (count($this->_qb_set) === 0) {
+		if (count((array)$this->_qb_set) === 0) {
 			return false;
 		}
 		$affected_rows = 0;
 		$records_at_once = 100;
 		$out = '';
-		for ($i = 0, $total = count($this->_qb_set); $i < $total; $i += $records_at_once) {
+		for ($i = 0, $total = count((array)$this->_qb_set); $i < $total; $i += $records_at_once) {
 			$_data = array_slice($this->_qb_set, $i, $records_at_once);
 			$sql = $this->_get_update_batch_sql($table, $_data, $index);
 			if (is_callable($params['split_callback'])) {
@@ -913,7 +913,7 @@ abstract class yf_db_query_builder_driver {
 	public function select() {
 		$sql = '';
 		$fields = func_get_args();
-		if (!count($fields) || $fields === []) {
+		if (!count((array)$fields) || $fields === []) {
 			$sql = '*';
 		} else {
 			$a = [];
@@ -979,7 +979,7 @@ abstract class yf_db_query_builder_driver {
 	public function from() {
 		$sql = '';
 		$tables = func_get_args();
-		if (!count($tables)) {
+		if (!count((array)$tables)) {
 			return $this;
 		}
 		$a = [];
@@ -1070,7 +1070,7 @@ abstract class yf_db_query_builder_driver {
 	public function whereid() {
 		$id = func_get_args();
 		$pk = '';
-		if (count($id) > 1) {
+		if (count((array)$id) > 1) {
 			$last = array_pop($id);
 			if (!empty($last) && !is_numeric($last)) {
 				$pk = $last;
@@ -1078,10 +1078,10 @@ abstract class yf_db_query_builder_driver {
 				$id[] = $last;
 			}
 		}
-		if (is_array($id) && count($id) === 1) {
+		if (is_array($id) && count((array)$id) === 1) {
 			$id = reset($id);
 		}
-		if (is_array($id) && count($id) === 1) {
+		if (is_array($id) && count((array)$id) === 1) {
 			$key = key($id);
 			if (!is_numeric($key)) {
 				$pk = $key;
@@ -1092,9 +1092,9 @@ abstract class yf_db_query_builder_driver {
 			$pk = $this->get_key_name();
 		}
 		$sql = '';
-		if (is_array($id) && count($id) > 1) {
+		if (is_array($id) && count((array)$id) > 1) {
 			$ids = $this->_ids_sql_from_array($id);
-			if (count($ids) > 1) {
+			if (count((array)$ids) > 1) {
 				$sql = $this->_escape_col_name($pk).' IN('.implode(',', $ids).')';
 			} else {
 				$sql = $this->_process_where_cond($pk, '=', reset($ids));
@@ -1208,18 +1208,18 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function _process_where(array $where, $func_name = 'where', $return_array = false) {
 		$sql = '';
-		if ($count = count($where)) {
+		if ($count = count((array)$where)) {
 			$all_numeric = $this->_is_where_all_numeric($where);
 			if ($all_numeric) {
 				// where([1,2,3])
-				if (count($where) === 1 && isset($where[0])) {
+				if (count((array)$where) === 1 && isset($where[0])) {
 					$where = $where[0];
 				}
 				return $this->whereid($where);
 			}
 		}
 		$where = $this->_split_by_comma($where);
-		$count = count($where);
+		$count = count((array)$where);
 		if (($count === 3 || $count === 2) && is_string($where[0]) && (is_string($where[1]) || is_numeric($where[1]) || is_array($where[1]))) {
 			if (!preg_match(self::REGEX_INLINE_CONDS, $where[0]) && !preg_match(self::REGEX_INLINE_CONDS, $where[1])) {
 				$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
@@ -1236,7 +1236,7 @@ abstract class yf_db_query_builder_driver {
 				if (is_string($v)) {
 					$v = trim($v);
 				}
-				$count_a = count($a);
+				$count_a = count((array)$a);
 				$need_imploder = false;
 				if ($count_a && !in_array($a[$count_a - 1], $avail_imploders)) {
 					$need_imploder = true;
@@ -1260,7 +1260,7 @@ abstract class yf_db_query_builder_driver {
 					}
 				} elseif (is_array($v)) {
 					// ['field', 'condition', 'value'], example: ['id','>','1']
-					$_count_v = count($v);
+					$_count_v = count((array)$v);
 					if (($_count_v === 3 || $_count_v === 2) && isset($v[0]) && !preg_match(self::REGEX_INLINE_CONDS, $v[0])) {
 						$tmp = $this->_process_where_cond($v[0], $v[1], $v[2]);
 						if (!strlen($tmp)) {
@@ -1286,7 +1286,7 @@ abstract class yf_db_query_builder_driver {
 								$tmp[] = $_tmp;
 							}
 						}
-						if (count($tmp)) {
+						if (count((array)$tmp)) {
 							if ($need_imploder) {
 								$a[] = $imploder;
 							}
@@ -1490,7 +1490,7 @@ abstract class yf_db_query_builder_driver {
 	public function group_by() {
 		$sql = '';
 		$items = func_get_args();
-		if (!count($items)) {
+		if (!count((array)$items)) {
 			return $this;
 		}
 		$a = [];
@@ -1533,7 +1533,7 @@ abstract class yf_db_query_builder_driver {
 	public function having() {
 		$sql = '';
 		$where = func_get_args();
-		if (!count($where)) {
+		if (!count((array)$where)) {
 			return $this;
 		}
 		$a = [];
@@ -1553,7 +1553,7 @@ abstract class yf_db_query_builder_driver {
 				}
 			} elseif (is_array($v)) {
 				// ['field', 'condition', 'value'], example: ['id','>','1']
-				if (count($v) == 3 && isset($v[0])) {
+				if (count((array)$v) == 3 && isset($v[0])) {
 					$a[] = $this->_process_where_cond($v[0], $v[1], $v[2]);
 				// ['field1' => 'val1', 'field2' => 'val2']
 				} else {
@@ -1597,7 +1597,7 @@ abstract class yf_db_query_builder_driver {
 	public function order_by() {
 		$sql = '';
 		$items = func_get_args();
-		$count = count($items);
+		$count = count((array)$items);
 		if (!$count) {
 			unset( $this->_sql[__FUNCTION__] );
 			return $this;
@@ -1618,7 +1618,7 @@ abstract class yf_db_query_builder_driver {
 					$a[] = $this->_escape_expr($v).' ASC';
 				}
 			} elseif (is_array($v)) {
-				if (count($v) === 2 && !empty($v[0]) && in_array(trim(strtoupper($v[1])), ['ASC','DESC'])) {
+				if (count((array)$v) === 2 && !empty($v[0]) && in_array(trim(strtoupper($v[1])), ['ASC','DESC'])) {
 					$v = [$v[0] => $v[1]];
 				}
 				foreach ((array)$v as $k2 => $v2) {
@@ -1790,7 +1790,7 @@ abstract class yf_db_query_builder_driver {
 		if (empty($where) || (!is_array($where) && !is_numeric($where))) {
 			return false;
 		}
-		$count = count($where);
+		$count = count((array)$where);
 		if (!$count) {
 			return false;
 		}

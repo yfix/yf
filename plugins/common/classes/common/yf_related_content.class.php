@@ -290,7 +290,7 @@ class yf_related_content {
 		}
 		arsort($a, SORT_NUMERIC);
 	
-		$num_words = count($a);
+		$num_words = count((array)$a);
 		$num_to_ret = $num_words > $this->num_to_ret ? $num_to_ret : $num_words;
 	
 		$outwords = array_slice($a, 0, $num_to_ret);

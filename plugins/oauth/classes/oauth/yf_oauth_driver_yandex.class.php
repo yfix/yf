@@ -1,6 +1,6 @@
 <?php
 
-load('oauth_driver2', 'framework', 'classes/oauth/');
+load('oauth_driver2', '', 'classes/oauth/');
 class yf_oauth_driver_yandex extends yf_oauth_driver2 {
 
 	// Register for API client_id and client_secret here: https://oauth.yandex.ru/client/new

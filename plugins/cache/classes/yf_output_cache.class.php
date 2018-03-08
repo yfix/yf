@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-load('cache', 'framework', 'classes/');
+load('cache', '', 'classes/');
 class yf_output_cache extends yf_cache {
 
 	/** @var bool Output caching on/off */

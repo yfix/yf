@@ -1,6 +1,6 @@
 <?php
 
-load('oauth_driver1', 'framework', 'classes/oauth/');
+load('oauth_driver1', '', 'classes/oauth/');
 class yf_oauth_driver_flickr extends yf_oauth_driver1 {
 
 	protected $url_authenticate = 'http://www.flickr.com/services/oauth/authorize';

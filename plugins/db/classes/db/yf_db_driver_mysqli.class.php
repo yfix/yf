@@ -1,6 +1,6 @@
 <?php
 
-load('db_driver', 'framework', 'classes/db/');
+load('db_driver', '', 'classes/db/');
 class yf_db_driver_mysqli extends yf_db_driver {
 
 	/** @var @conf_skip */

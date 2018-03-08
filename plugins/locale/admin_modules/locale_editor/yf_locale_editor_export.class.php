@@ -82,7 +82,7 @@ class yf_locale_editor_export {
 	/**
 	*/
 	function _gen_csv(array $data = [], $delim = "\t", $enc = '"') {
-		if (count($data) === 0) {
+		if (count((array)$data) === 0) {
 			return false;
 		}
 		ob_start();
@@ -98,7 +98,7 @@ class yf_locale_editor_export {
 	/**
 	*/
 	function _gen_json(array $data = []) {
-		if (count($data) === 0) {
+		if (count((array)$data) === 0) {
 			return false;
 		}
 		return json_encode($data, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
@@ -107,7 +107,7 @@ class yf_locale_editor_export {
 	/**
 	*/
 	function _gen_yaml(array $data = []) {
-		if (count($data) === 0) {
+		if (count((array)$data) === 0) {
 			return false;
 		}
 		return trim(trim(yaml_emit($data, YAML_UTF8_ENCODING, YAML_CRLN_BREAK), '.-'.PHP_EOL));
@@ -116,7 +116,7 @@ class yf_locale_editor_export {
 	/**
 	*/
 	function _gen_php(array $data = []) {
-		if (count($data) === 0) {
+		if (count((array)$data) === 0) {
 			return false;
 		}
 		return '<?'.'php'.PHP_EOL.'return '._var_export($data, 1).';'.PHP_EOL;

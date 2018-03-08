@@ -1,6 +1,6 @@
 <?php
 
-load('oauth_driver2', 'framework', 'classes/oauth/');
+load('oauth_driver2', '', 'classes/oauth/');
 class yf_oauth_driver_heroku extends yf_oauth_driver2 {
 
 	protected $url_authorize = 'https://id.heroku.com/oauth/authorize';

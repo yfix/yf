@@ -389,7 +389,7 @@ class yf_tpl_driver_yf_compile {
 					$center_tmp[] = ($negate ? '!' : ''). $func.'('.$v.')';
 				}
 			}
-			if (!count($center_tmp)) {
+			if (!count((array)$center_tmp)) {
 				$center_cond = ($negate ? '!' : ''). $func. '($replace["___not_existing_key__"])';
 			} else {
 				$center_cond = '('.implode(') '.$multiple_cond.' (', $center_tmp).')';
@@ -457,7 +457,7 @@ class yf_tpl_driver_yf_compile {
 			$foreach_data_tag = 'is_array('.$foreach_arr_tag.') ? '.$foreach_arr_tag.' : $this->_range_foreach('.(is_numeric($foreach_arr_name) ? intval($foreach_arr_name) : $foreach_arr_tag).')';
 		}
 		return '$__foreach_data = '.$foreach_data_tag.'; '. PHP_EOL
-			.'$__f_total = count($__foreach_data); $__f_counter = 0;'. PHP_EOL
+			.'$__f_total = count((array)$__foreach_data); $__f_counter = 0;'. PHP_EOL
 			.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++; '. PHP_EOL
 			.$end. $foreach_body. $start. PHP_EOL
 			.'}'.PHP_EOL.'} else {'.PHP_EOL.$end. $no_rows_text. $start.'}';

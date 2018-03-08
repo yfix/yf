@@ -50,7 +50,7 @@ if (!function_exists('module_safe')) {
 		return main()->init_class($class_name, '', $params) ?: new yf_missing_method_handler(__FUNCTION__, $silent = true, $class_name);
 	}
 }
-// example: load('home_page', 'framework')
+// example: load('home_page') or load('home_page', 'framework', 'admin_modules')
 if (!function_exists('load')) {
 	function load($class_name, $force_storage = '', $custom_path = '') { return main()->load_class_file($class_name, $custom_path, $force_storage); }
 }
@@ -135,7 +135,7 @@ if (!function_exists('d')) {
 		global $auto_ids; $auto_id = ($auto_prefix = 'func__'.__FUNCTION__). $auto_ids[$auto_prefix]++;
 		print '<a class="btn btn-xs btn-default" data-toggle="collapse" data-target="#collapse_'.$auto_id.'">Trace</a><div id="collapse_'.$auto_id.'" class="collapse"><pre>'.print_r(trace(), true).'</pre></div>';
 		foreach (($args = func_get_args()) as $k => $v) {
-			print '<pre>'. (count($args) > 1 ? '<b>args['.(int)$k.']</b>:'.PHP_EOL : ''). var_export($v, true). '</pre>';
+			print '<pre>'. (count((array)$args) > 1 ? '<b>args['.(int)$k.']</b>:'.PHP_EOL : ''). var_export($v, true). '</pre>';
 		}
 	}
 }

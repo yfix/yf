@@ -226,7 +226,7 @@ class yf_manage_shop_product_edit {
 			->link('Set main image', './?object='.$_GET['object'].'&action=set_main_image&id='.$product_info['id'], [
 				'class_add' => 'ajax_edit',
 				'data-test' => 'set_main_image_btn',
-				'display_func' => function() use ($images_items) { return (is_array($images_items) && count($images_items) > 1); }
+				'display_func' => function() use ($images_items) { return (is_array($images_items) && count((array)$images_items) > 1); }
 			])
 			->container(module('manage_shop')->_productparams_container($id), ['desc' => 'Product params'/*, 'edit_link' => './?object='.main()->_get('object').'&action=attributes'*/])
 // TODO: replace with similar JS container as for params and images

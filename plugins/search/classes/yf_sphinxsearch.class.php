@@ -116,7 +116,7 @@ class yf_sphinxsearch {
 				while ($a = mysql_fetch_assoc($q)) {
 					$results[] = $a;
 				}
-				if (count($results) == 0) {
+				if (count((array)$results) == 0) {
 					$this->_save_empty_results_log($sql);
 				}
 			}
@@ -328,7 +328,7 @@ class yf_sphinxsearch {
 		debug('sphinxsearch[]', [
 			'query'		=> $a['query'],
 			'results'	=> $a['results'],
-			'count'		=> is_array($a['results']) ? intval(count($a['results'])) : '',
+			'count'		=> is_array($a['results']) ? intval(count((array)$a['results'])) : '',
 			'meta'		=> $a['meta'],
 			'error'		=> $a['error'],
 			'warnings'	=> $a['warnings'],

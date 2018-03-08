@@ -38,7 +38,7 @@ foreach ($globs_php as $glob) {
 		$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create($data);
 
 		$sql_a = explode(PHP_EOL, trim($sql));
-		$last_index = count($sql_a) - 1;
+		$last_index = count((array)$sql_a) - 1;
 		$last_item = $sql_a[$last_index];
 		unset($sql_a[0]);
 		unset($sql_a[$last_index]);

@@ -1,6 +1,6 @@
 <?php
 
-load('cache_driver', 'framework', 'classes/cache/');
+load('cache_driver', '', 'classes/cache/');
 class yf_cache_driver_mongodb extends yf_cache_driver {
 
 	const DATA_FIELD = 'd';

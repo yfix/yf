@@ -104,7 +104,7 @@ class yf_manage_redis {
 		$page = (int)$_GET['page'] ?: 1; // page
 		$per_page = 2000;
 		if (!$i || !isset($this->instances[$i])) {
-			if (count($this->instances) == 1) {
+			if (count((array)$this->instances) == 1) {
 				return js_redirect('/@object/?i='.key($this->instances));
 			} else {
 				return implode(PHP_EOL, array_map(function($in){ return a('/@object/?i='.$in, $in, 'fa fa-cog', $in, '', ''); }, array_keys($this->instances)));
@@ -123,7 +123,7 @@ class yf_manage_redis {
 #		$keys = $r->_connection->scan($it, '*', $per_page);
 
 		$pager = '';
-		$total_keys = count($keys);
+		$total_keys = count((array)$keys);
 		if ($total_keys >= $per_page) {
 			$keys = array_slice($keys, $per_page * ($page - 1), $per_page * $page, true);
 			list(,$pager,) = common()->divide_pages('', '', '', $per_page, $total_keys);
@@ -236,7 +236,7 @@ class yf_manage_redis {
 		');
 
 		return ($filters ? '<div class="col-md-12">'.implode(' ', $filters).'</div>' : '')
-			. '<div class="col-md-6"><h2>'.$i.' <small>('.($pager ? count($keys).' from total ' : ''). $total_keys.')</small></h2>'.$pager.$table.'</div>'
+			. '<div class="col-md-6"><h2>'.$i.' <small>('.($pager ? count((array)$keys).' from total ' : ''). $total_keys.')</small></h2>'.$pager.$table.'</div>'
 			. '<div class="col-md-3"><h2>Config</h2>'.html()->simple_table($config, ['val' => ['extra' => ['width' => '40%']]]).'</div>'
 			. '<div class="col-md-3"><h2>Info</h2>'.html()->simple_table($info, ['val' => ['extra' => ['width' => '40%']]]).'</div>'
 		;

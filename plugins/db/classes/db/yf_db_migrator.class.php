@@ -334,7 +334,7 @@ abstract class yf_db_migrator {
 		$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create(['name' => $tmp_name] + $sql_php);
 
 		$sql_a = explode(PHP_EOL, trim($sql));
-		$last_index = count($sql_a) - 1;
+		$last_index = count((array)$sql_a) - 1;
 		$last_item = $sql_a[$last_index];
 		unset($sql_a[0]);
 		unset($sql_a[$last_index]);
@@ -689,7 +689,7 @@ abstract class yf_db_migrator {
 		$TAB = "\t";
 		$fhead = PHP_EOL. $TAB.'/'.'**'.PHP_EOL.$TAB.'*'.'/';
 		return '<?'.'php'.PHP_EOL.PHP_EOL
-			. 'load(\'db_migrator\', \'framework\', \'classes/db/\');'.PHP_EOL
+			. 'load(\'db_migrator\', \'\', \'classes/db/\');'.PHP_EOL
 			. 'class db_migration_'.$name.' extends yf_db_migrator {'.PHP_EOL
 			. $fhead. PHP_EOL. $TAB. 'protected function up() {'.PHP_EOL. $this->_migration_commands_into_string($up). PHP_EOL. $TAB. '}'.PHP_EOL
 			. $fhead .PHP_EOL. $TAB. 'protected function down() {'.PHP_EOL. $this->_migration_commands_into_string($down). PHP_EOL. $TAB. '}'.PHP_EOL

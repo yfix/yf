@@ -1,6 +1,6 @@
 <?php
 
-load('session_driver', 'framework', 'classes/session/');
+load('session_driver', '', 'classes/session/');
 class yf_session_driver_db extends yf_session_driver {
 
 	/**
@@ -37,7 +37,7 @@ class yf_session_driver_db extends yf_session_driver {
 				'type'		=> MAIN_TYPE,
 				'last_time'	=> time(),
 			], 'id="'.db()->es($ses_id).'"');
-		} elseif ($data || count($_COOKIE)) {
+		} elseif ($data || count((array)$_COOKIE)) {
 			// Only save session data when when the browser sends a cookie.	This keeps
 			// crawlers out of session table. This improves speed up queries, reduces
 			// memory, and gives more useful statistics.

@@ -441,7 +441,7 @@ class yf_menus_editor {
 			}
 			$menu_items_to_display[] = $item_info;
 		}
-		$num_menu_items = count($menu_items_to_display);
+		$num_menu_items = count((array)$menu_items_to_display);
 		$_prev_level = 0;
 		$_next_level = 0;
 		$item_counter = 0;

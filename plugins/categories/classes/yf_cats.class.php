@@ -322,7 +322,7 @@ class yf_cats {
 			$replace = [
 				'item_link'	=> $item_link,
 				'item_name'	=> _prepare_html($cat_items[$cur_item_id]['name']),
-				'is_last'	=> (int)(++$i >= count($nav_items_ids)),
+				'is_last'	=> (int)(++$i >= count((array)$nav_items_ids)),
 			];
 			$body .= tpl()->parse($STPL_NAME, $replace);
 		}

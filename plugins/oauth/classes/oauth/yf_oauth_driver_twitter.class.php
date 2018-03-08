@@ -1,6 +1,6 @@
 <?php
 
-load('oauth_driver1', 'framework', 'classes/oauth/');
+load('oauth_driver1', '', 'classes/oauth/');
 class yf_oauth_driver_twitter extends yf_oauth_driver1 {
 
 	// Register for API client_id and client_secret here: https://dev.twitter.com/apps

@@ -273,7 +273,7 @@ class yf_bb_codes {
 			$data = explode(",", $cur_line);
 			if ($c++ == 0) {
 				$output .= "<table border=\"1\" cellpadding=\"2\" cellspacing=\"1\" style=\"font: 11px verdana;border-collapse:collapse;border:1px solid gray;margin:5px;\"";
-				$num_cols = count($data);
+				$num_cols = count((array)$data);
 			}
 			$output .= "<tr>";
 			for ($i = 0; $i < $num_cols; $i++) {

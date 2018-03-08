@@ -1,6 +1,6 @@
 <?php
 
-load('search_driver', 'framework', 'classes/mail/');
+load('search_driver', '', 'classes/search/');
 class yf_search_driver_solr extends yf_search_driver {
 
 	/**

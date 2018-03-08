@@ -19,7 +19,7 @@ foreach ($data as $k => $a) {
 	if (!$a['fork']) {
 		continue;
 	}
-	echo PHP_EOL.'('.($k+1).'/'.count($data).') == '.$a['full_name'].' =='.PHP_EOL.PHP_EOL;
+	echo PHP_EOL.'('.($k+1).'/'.count((array)$data).') == '.$a['full_name'].' =='.PHP_EOL.PHP_EOL;
 	$target = $d.$a['name'];
 	if (!file_exists($target.'/.git/config')) {
 		continue;

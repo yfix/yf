@@ -3,7 +3,7 @@
 /**
 * Special panel for the supplier
 */
-load('manage_shop', 'framework');
+load('manage_shop');
 class yf_shop_supplier_panel extends yf_manage_shop {
 
 	/**

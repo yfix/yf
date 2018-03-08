@@ -1,6 +1,6 @@
 <?php
 
-load('oauth_driver2', 'framework', 'classes/oauth/');
+load('oauth_driver2', '', 'classes/oauth/');
 class yf_oauth_driver_foursquare extends yf_oauth_driver2 {
 
 	protected $url_authorize = 'https://foursquare.com/oauth2/authorize';

@@ -106,7 +106,7 @@ class class_model_sakila_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$sql_php = $this->_fix_sql_php($sql_php);
-			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
+			$this->assertTrue( is_array($sql_php) && count((array)$sql_php) && $sql_php );
 			$this->assertTrue( (bool)self::utils()->create_table($name, $sql_php), 'creating table: '.$db_prefix.$name );
 			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
 
@@ -156,7 +156,7 @@ if ($i++ > 3) {
 /*
 		$all_actors = model('actor')->all();
 #		$this->assertTrue( is_array($all_actors) );
-#		$this->assertTrue( (count($all_actors) > 0) );
+#		$this->assertTrue( (count((array)$all_actors) > 0) );
 #		$this->assertEquals( $actors_data_objects, $all_actors );
 		$this->assertEquals( $actors_data, $all_actors );
 */
@@ -354,7 +354,7 @@ if ($i++ > 3) {
 			if (empty($data)) {
 				continue;
 			}
-			echo 'Saved data ('.count($data).'): '.$file. PHP_EOL;
+			echo 'Saved data ('.count((array)$data).'): '.$file. PHP_EOL;
 			file_put_contents($file, '<?'.'php'.PHP_EOL.'return '._var_export($data, 1).';');
 		}
 */

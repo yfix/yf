@@ -1,7 +1,6 @@
 <?php
 
-load('oauth_driver2', 'framework', 'classes/oauth/');
-
+load('oauth_driver2', '', 'classes/oauth/');
 class yf_oauth_driver_steamcommunity extends yf_oauth_driver2 {
     public $url_rsa_key = 'https://steamcommunity.com/login/getrsakey';
     public $url_captcha = 'https://steamcommunity.com/public/captcha.php?gid=';

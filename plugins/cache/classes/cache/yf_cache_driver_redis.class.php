@@ -1,6 +1,6 @@
 <?php
 
-load('cache_driver', 'framework', 'classes/cache/');
+load('cache_driver', '', 'classes/cache/');
 class yf_cache_driver_redis extends yf_cache_driver {
 
 	/** @var object internal @conf_skip */

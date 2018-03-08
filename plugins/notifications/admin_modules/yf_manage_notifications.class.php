@@ -147,7 +147,7 @@ class yf_manage_notifications {
 					$sql_arr[] = "({$_GET['id']}, '{$A['receiver_type']}', {$v}, 0)";
 				}
 			}
-			if (count($sql_arr)>0) {
+			if (count((array)$sql_arr)>0) {
 				db()->query("REPLACE INTO `".db('notifications_receivers')."` (`notification_id`,`receiver_type`,`receiver_id`,`is_read`) VALUES ".implode(",",$sql_arr));
 			}
 			js_redirect("./?object=".$_GET['object']."&action=view&id=".$_GET['id']);

@@ -71,7 +71,7 @@ class yf_core_menu {
 		if (empty($menu_items)) {
 			return false;
 		}
-		$num_menu_items = count($menu_items);
+		$num_menu_items = count((array)$menu_items);
 		$_prev_level = 0;
 		$_next_level = 0;
 		$item_counter = 0;

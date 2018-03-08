@@ -1,6 +1,6 @@
 <?php
 
-load('mail_driver', 'framework', 'classes/mail/');
+load('mail_driver', '', 'classes/mail/');
 class yf_mail_driver_sendgrid extends yf_mail_driver {
 
 	/** @var string The SendGrid API key. */
