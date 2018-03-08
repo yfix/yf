@@ -3,12 +3,12 @@
 require_once __DIR__.'/db_real_abstract.php';
 
 /**
- * @requires extension mysql
+ * @requires extension mysqli
  */
 class class_db_real_utils_mysql_test extends db_real_abstract {
 	public static function setUpBeforeClass() {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
-		self::$DB_DRIVER = 'mysql5';
+		self::$DB_DRIVER = 'mysqli';
 		self::_connect();
 		if (!$_ENV['TRAVIS']) {
 			self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);

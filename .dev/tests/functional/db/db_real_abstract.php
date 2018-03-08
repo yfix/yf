@@ -37,8 +37,6 @@ abstract class db_real_abstract extends yf\tests\wrapper {
 		self::$db->_init();
 		if (false !== strpos(self::$DB_DRIVER, 'mysql')) {
 			return self::_connect_mysql($params);
-		} elseif (false !== strpos(self::$DB_DRIVER, 'sqlite')) {
-			return self::_connect_sqlite($params);
 		} elseif (false !== strpos(self::$DB_DRIVER, 'pgsql')) {
 			return self::_connect_pgsql($params);
 		}
@@ -56,12 +54,6 @@ abstract class db_real_abstract extends yf\tests\wrapper {
 			'force' => true,
 		]);
 		return !empty($res) ? true : false;
-	}
-
-	/**
-	*/
-	public static function _connect_sqlite($params = []) {
-		return self::_connect_mysql($params);
 	}
 
 	/**
