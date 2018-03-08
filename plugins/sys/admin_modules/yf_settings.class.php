@@ -9,8 +9,7 @@ class yf_settings {
 	public $css_frameworks = [
 		'bs2' => 'Twitter Bootstrap v2',
 		'bs3' => 'Twitter Bootstrap v3',
-#		'pure' => 'Yahoo PureCSS',
-#		'foundation' => 'Zurb Foundation',
+		'bs4' => 'Twitter Bootstrap v4',
 	];
 	// currently for: bs2, bs3
 	public $css_subthemes = [
@@ -33,12 +32,10 @@ class yf_settings {
 		'admin'	=> 'Admin (default)',
 	];
 	public $db_drivers = [
-		'mysql'		=> 'mysql',
 		'mysqli'	=> 'mysqli',
-		'mysql_pdo'	=> 'mysql PDO',
-#		'sqlite'	=> 'sqlite',
-#		'oracle'	=> 'oracle',
-#		'postgre'	=> 'postgre',
+#		'pgsql'		=> 'pgsql',
+#		'pdo_mysql'	=> 'mysql PDO',
+#		'pdo_pgsql'	=> 'pgsql',
 	];
 	public $cache_drivers = [
 		'memcache'	=> 'memcache',

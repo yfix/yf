@@ -157,9 +157,8 @@ class yf_db {
 		$db_type = strtolower($db_type ?: $this->DB_TYPE);
 		// Get current abstract db type
 		$families = [
-			'mysql'	=> ['db_type','mysql','mysqli','pdo_mysql','mysql5','mysql4','mysql41'],
-			'pgsql'	=> ['pgsql','pdo_pgsql','postgre','postgres','postgres7','postgres8','postgres9'],
-			'sqlite'=> ['sqlite','sqlite3','pdo_sqlite'],
+			'mysql'	=> ['db_type','mysql','mysqli','pdo_mysql'],
+			'pgsql'	=> ['pgsql','pdo_pgsql','postgre','postgres'],
 		];
 		foreach ($families as $family => $aliases) {
 			if (in_array($db_type, $aliases)) {
@@ -654,7 +653,7 @@ class yf_db {
 	* Alias of replace() with data auto-escape
 	*/
 	function replace_safe($table, $data, $only_sql = false, $extra = []) {
-		$replace = (true && in_array($this->get_driver_family(), ['mysql','sqlite']));
+		$replace = (true && in_array($this->get_driver_family(), ['mysql']));
 		return $this->insert_safe($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update = false, $extra);
 	}
 
@@ -662,7 +661,7 @@ class yf_db {
 	* Replace array of values into table
 	*/
 	function replace($table, $data, $only_sql = false) {
-		$replace = (true && in_array($this->get_driver_family(), ['mysql','sqlite']));
+		$replace = (true && in_array($this->get_driver_family(), ['mysql']));
 		return $this->insert($table, $data, $only_sql, $replace);
 	}
 
