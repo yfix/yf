@@ -1,0 +1,337 @@
+<?php
+
+/**
+* Class to handle CAPTCHA images (to prevent auto-registering, flooding etc)
+* 
+* @package		YF
+* @author		YFix Team <yfix.dev@gmail.com>
+* @version		1.0
+*/
+class yf_captcha {
+
+	/** @var string Secret key (will be added to hash) */
+	public $secret_key		= '';
+	/** @var bool Use cookies or session vars */
+	public $use_cookies		= false;
+	/** @var bool Checking if once used */
+	public $already_used	= false;
+	/** @var string Cookie var name */
+	public $var_name		= 'image_hash';
+	/** @var int Cookie time-to-live (in seconds) */
+	public $cookie_ttl		= 86400; // @var 24 * 3600 == 1 day
+	/** @var string Path to the True Type Font to use (could be array) */
+	public $ttf_font_path	= '';
+	/** @var int Result image width (in pixels) */
+	public $image_width		= 110;
+	/** @var int Result image height (in pixels) */
+	public $image_height	= 30;
+	/** @var array Allowed symbols to use in randomizer */
+	public $symbols_array	= [];
+	/** @var int Number of symbols to generate */
+	public $num_symbols		= 5;
+	/** @var int Middle value (will be bounced randomly with +2 and -2) */
+	public $font_height		= 16;
+	/** @var int Number of random rectangles to add */
+	public $add_rects		= 15;
+	/** @var int Number of random lines to add */
+	public $add_lines		= 15;
+	/** @var int Number of random ellipses to add */
+	public $add_ellipses	= 10;
+	/** @var int Number of random pixels to add */
+	public $add_pixels		= 500;
+	/** @var int @conf_skip Image background color */
+	public $bg_color		= 0x00ffffff; // @var 0x AA RR GG BB (alpha, red, green, blue)
+	/** @var array @conf_skip Colors arrays */
+	public $text_colors		= [
+		0x162A7C8F,
+		0x1628508C,
+		0x16A12F9B,
+		0x1619621D,
+		0x16622A19,
+	];
+	/** @var array @conf_skip */
+	public $rect_colors		= [
+		0x702A7C8F,
+		0x7028508C,
+		0x70A12F9B,
+		0x7019621D,
+		0x70622A19,
+	];
+	/** @var array @conf_skip */
+	public $line_colors		= [
+		0x202A7C8F,
+		0x2028508C,
+	];
+	/** @var array @conf_skip */
+	public $ellipse_colors	= [
+		0x702A7C8F,
+		0x7028508C,
+		0x70A12F9B,
+		0x7019621D,
+		0x70622A19,
+	];
+	/** @var array @conf_skip */
+	public $pixel_colors	= [
+		0x202A7C8F,
+		0x2028508C,
+	];
+	/** @var CAPTCHA enabled */
+	public $ENABLED = true;
+
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
+	* Framework constructor
+	*/
+	function _init() {
+		$this->_is_enabled_hook();
+		if (!$this->ENABLED) {
+			return false;
+		}
+		$this->set_secret_key();
+		$lib_path	= PROJECT_PATH. 'fonts/';
+		$fwork_path	= dirname(__DIR__).'/fonts/';
+		$path = file_exists($lib_path) ? $lib_path : $fwork_path;
+		$this->set_font_path([
+			$path. 'pioneer.ttf',
+			$path. 'banco.ttf',
+			$path. 'glast.ttf',
+		]);
+		$this->set_symbols_array(1);
+	}
+
+	/**
+	* Set secret key
+	*/
+	function set_secret_key($input = '') {
+		if (empty($input)) {
+			$this->secret_key = substr(md5(REAL_PATH), 8, -8);
+		} else {
+			$this->secret_key = $input;
+		}
+	}
+
+	/**
+	* Set font path ($input could be array or string)
+	*/
+	function set_font_path($input = '') {
+		if (!empty($input)) {
+			$this->ttf_font_path = $input;
+		}
+	}
+
+	/**
+	* Set symbols array contetns
+	*/
+	function set_symbols_array($input = []) {
+		if (empty($input)) {
+			return false;
+		}
+		// Try to assign predefined arrays
+		if (is_numeric($input)) {
+			if ($input == 1)	 $this->symbols_array = range(0, 9);
+			elseif ($input == 2) $this->symbols_array = array_flip(range('A', 'Z'));
+			elseif ($input == 3) $this->symbols_array = array_merge(array_flip(range(0, 9)), array_flip(range('a', 'z')));
+		// Try to set custom array
+		} elseif (is_array($input)) {
+			$this->symbols_array = $input;
+		}
+	}
+
+	/**
+	* Set colors
+	*/
+	function set_colors($name = '', $input = '') {
+		if (!empty($input) && in_array('text','rect','line','ellipse','pixel')) {
+			$this->{$name.'_colors'} = $input;
+		}
+	}
+
+	/**
+	* Set image size
+	*/
+	function set_image_size($width = '', $height = '') {
+		if (!empty($width) && !empty($height)) {
+			$this->image_width	= $width;
+			$this->image_height	= $height;
+		}
+	}
+
+	/**
+	* Set new var name to use in session or in cookie
+	*/
+	function set_var_name($new_name = '') {
+		if (!empty($new_name)) {
+			$this->var_name = $new_name;
+		}
+	}
+
+	/**
+	* Show HTML code for the CAPTCHA image
+	*/
+	function show_html($location = '', $add_style = ' border="1" ') {
+		if (!$this->ENABLED) {
+			return false;
+		}
+		if (empty($location)) {
+			$location = process_url('./?object='.__CLASS__.'&action=show_image');
+		}
+		return '<img src="'.$location.'" '.$add_style.' />';
+	}
+
+	/**
+	* Show HTML block for the CAPTCHA image (complete, with input and it's validation)
+	*/
+	function show_block($location = '', $stpl_name = '', $extra = []) {
+		if (!$this->ENABLED) {
+			return false;
+		}
+		if (is_array($stpl_name)) {
+			$extra += $stpl_name;
+			$stpl_name = $extra['captcha_stpl_name'];
+		}
+		$stpl_name = $extra['captcha_stpl_name'] ?: $stpl_name;
+		if (empty($location)) {
+			$location = './?object='.$_GET['object'].'&action=show_image';
+		}
+		$uid = '__captcha_id__';
+		if (false === strpos($location, $uid)) {
+			$location .= '&id='.$uid;
+		}
+		if (empty($stpl_name)) {
+			$stpl_name = 'system/captcha_block';
+		}
+		$replace = [
+			'img_src'		=> process_url($location),
+			'num_symbols'	=> intval($this->num_symbols),
+			'input_attrs'	=> $extra['input_attrs'],
+			//'value'			=> $extra['value'],
+			'value'			=> '',
+		];
+		return tpl()->parse($stpl_name, $replace);
+	}
+
+	/**
+	* Show image with text
+	*/
+	function check($field_in_form = 'image_numbers', $input = null) {
+		if (!$this->ENABLED) {
+			return true;
+		}
+		$VALID_CODE = false;
+
+		if ($this->already_used) {
+			return true;
+		}
+		$this->already_used = true;
+
+		if (!isset($input)) {
+			$input = $_POST[$field_in_form] ?: $_GET[$field_in_form];
+		}
+		if (empty($input)) {
+			_re('Please enter code', $field_in_form);
+		} else {
+			$hash = md5($this->secret_key. $input);
+			if ($this->use_cookies) {
+				if ($hash != $_COOKIE[$this->var_name]) {
+					$code_incorrect = true;
+				}
+			} else {
+				if ($hash != $_SESSION[$this->var_name]) {
+					$code_incorrect = true;
+				}
+			}
+			if ($code_incorrect) {
+				_re('Code you entered is incorrect', $field_in_form);
+			} else {
+				$VALID_CODE = true;
+			}
+		}
+		if ($this->use_cookies) {
+			setcookie($this->var_name, '', time());
+		} else {
+			unset($_SESSION[$this->var_name]);
+		}
+		return $VALID_CODE;
+	}
+
+	/**
+	* Show image with text
+	*/
+	function show_image($no_header = false, $no_exit = false) {
+		if (function_exists('main')) {
+			main()->NO_GRAPHICS = true;
+		}
+		if (!$this->ENABLED) {
+			return false;
+		}
+		// Create image
+		$image = imagecreatetruecolor($this->image_width, $this->image_height);
+		// Calculate average width for the one font symbol
+		$font_width = $this->image_width / $this->num_symbols;
+		// Set font path
+		$ttf_font = is_array($this->ttf_font_path) ? array_rand(array_flip($this->ttf_font_path)) : $this->ttf_font_path;
+		// Set image background color
+		imagefilledrectangle($image, 0, 0, $this->image_width, $this->image_height, $this->bg_color);
+		// Draw text
+		for ($i = 0; $i < $this->num_symbols; $i++) {
+			$random_string .= array_rand($this->symbols_array);
+			imagettftext($image, round(rand($this->font_height - 2, $this->font_height + 2), 0), rand(-30, 30), $i * $font_width + 5 + rand(-2, 2), $this->image_height / 2 + 5 + rand(-4, 4), array_rand(array_flip($this->text_colors)), $ttf_font, $random_string[$i]);
+		}
+		// Draw random rectangles
+		for ($i = 0; $i < $this->add_rects; $i++) {
+			imagefilledrectangle($image, rand(-$this->image_width, $this->image_width), rand(-$this->image_height, $this->image_height), rand(-$this->image_width, $this->image_width), rand(-$this->image_height, $this->image_height), array_rand(array_flip($this->rect_colors)));
+		}
+		// Draw random lines
+		for ($i = 0; $i < $this->add_lines; $i++) {
+			imageline($image, rand(-$this->image_width, $this->image_width), rand(-$this->image_height, $this->image_height), rand(-$this->image_width, $this->image_width), rand(-$this->image_height, $this->image_height), array_rand(array_flip($this->line_colors)));
+		}
+		// Draw random ellipses
+		for ($i = 0; $i < $this->add_ellipses; $i++) {
+			imagefilledellipse($image, rand(-$this->image_height, $this->image_width), rand(-$this->image_height, $this->image_height), rand(20, $this->image_width), rand(10, $this->image_width), array_rand(array_flip($this->ellipse_colors)));
+		}
+		// Draw random pixels
+		for ($i = 0; $i < $this->add_pixels; $i++) {
+			imagesetpixel($image, rand(0, $this->image_width), rand(0, $this->image_height), array_rand(array_flip($this->pixel_colors)));
+		}
+		// Calculate hash
+		$hash = md5($this->secret_key. $random_string);
+		// Store secure data
+		if ($this->use_cookies)	{
+			setcookie($this->var_name, $hash, time() + $this->cookie_ttl);
+		} else {
+			$_SESSION[$this->var_name] = $hash;
+		}
+		ob_start();
+		imagepng($image);
+		imagedestroy($image);
+		$data = ob_get_clean();
+		// Throw image to the user
+		if (!$no_header) {
+			header_remove('Set-Cookie');
+			header('Content-Type: image/png', true);
+			header('Content-Length: '.strlen($data), true);
+			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT', true); // Date in the past
+			header('Last-Modified: '. gmdate('D, d M Y H:i:s'). ' GMT', true); // always modified
+			header('Cache-Control: private, no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0');
+			header('Pragma: no-cache', true); // HTTP/1.0
+			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet', true);
+		}
+		echo $data;
+		if (!$no_exit) {
+			exit;
+		}
+	}
+
+	/**
+	* Allows you to override $this->ENABLED option for some cases
+	*/
+	function _is_enabled_hook() {
+		//$this->ENABLED = false;
+	}
+}

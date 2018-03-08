@@ -269,8 +269,8 @@ class yf_main {
 		global $CONF; // Do not remove this, it is needed for extending fast init
 
 		$paths = [
-			'app'		=> APP_PATH.'share/fast_init.php',
-			'yf'		=> YF_PATH.'share/fast_init.php',
+			'app'	=> APP_PATH.'share/fast_init.php',
+			'yf'	=> YF_PATH.'plugins/fast_init/share/fast_init.php',
 		];
 		foreach ($paths as $path) {
 			if (file_exists($path)) {
@@ -435,7 +435,7 @@ class yf_main {
 	*/
 	function init_conf_functions() {
 		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-		$path = dirname(__DIR__).'/share/functions/yf_conf.php';
+		$path = dirname(__DIR__).'/functions/yf_conf.php';
 		if (file_exists($path)) {
 			$this->include_module($path, 1);
 		}
@@ -446,7 +446,7 @@ class yf_main {
 	*/
 	function init_main_functions() {
 		$this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-		$path = dirname(__DIR__).'/share/functions/yf_aliases.php';
+		$path = dirname(__DIR__).'/functions/yf_aliases.php';
 		if (file_exists($path)) {
 			$this->include_module($path, 1);
 		}
@@ -470,8 +470,8 @@ class yf_main {
 			$required_files[] = $path;
 		}
 		$funcs_paths = [
-			'app'		=> APP_PATH.'share/functions/common_funcs.php',
-			'yf'		=> YF_PATH.'share/functions/'.YF_PREFIX.'common_funcs.php',
+			'app'	=> APP_PATH.'share/functions/common_funcs.php',
+			'yf'	=> YF_PATH.'functions/'.YF_PREFIX.'common_funcs.php',
 		];
 		foreach ($funcs_paths as $path) {
 			if (file_exists($path)) {
