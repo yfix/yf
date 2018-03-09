@@ -41,14 +41,14 @@ class class_divide_pages_test extends yf\tests\wrapper {
 		$expect_for_sql = array_values([
 			'limit_sql'		=> ' LIMIT 0, '.$per_page,
 			'pages_html'	=> $this->_get_expected_html($href.'&page=', $num_pages),
-			'total_records'	=> count($data),
+			'total_records'	=> count((array)$data),
 			'first_record'	=> 0,
-			'total_pages'	=> (int)ceil(count($data) / $per_page),
+			'total_pages'	=> (int)ceil(count((array)$data) / $per_page),
 			'limited_pages' => 0,
 			'per_page'		=> $per_page,
 			'requested_page'=> 0,
 		]);
-		$result = common()->divide_pages($sql, $href, '', '', $num_records = count($data));
+		$result = common()->divide_pages($sql, $href, '', '', $num_records = count((array)$data));
 		$result[1] = $this->_cleanup_html($result[1]);
 		$this->assertEquals( $expect_for_sql, $result );
 /*
@@ -69,9 +69,9 @@ class class_divide_pages_test extends yf\tests\wrapper {
 		$expect_for_array = array_values([
 			'items'			=> array_slice($data, 0, $per_page, true),
 			'pages_html'	=> $this->_get_expected_html($href.'&page=', $num_pages),
-			'total_records'	=> count($data),
+			'total_records'	=> count((array)$data),
 			'first_record'	=> 0,
-			'total_pages'	=> (int)ceil(count($data) / $per_page),
+			'total_pages'	=> (int)ceil(count((array)$data) / $per_page),
 			'limited_pages' => 0,
 			'per_page'		=> $per_page,
 			'requested_page'=> 0,

@@ -158,7 +158,7 @@ Fallback when no numbers matched (any string)
 	*/
 	function show() {
 		$all_vars = $this->_get_all_vars();
-		$total_vars = count($all_vars);
+		$total_vars = count((array)$all_vars);
 		$tr_vars = [];
 		foreach ((array)$all_vars as $source => $v) {
 			if (!isset($v['translation'])) {
@@ -577,7 +577,7 @@ Fallback when no numbers matched (any string)
 				return isset($vars_db[$in]['translation']) ? (string)implode(',',array_keys($vars_db[$in]['translation'])) : '';
 			}, ['desc' => 'Db override'])
 			->func('id', function($in,$e,$a,$t) {
-				return isset($a['files']) ? (int)count($a['files']) : '';
+				return isset($a['files']) ? (int)count((array)$a['files']) : '';
 			}, ['desc' => 'Num files'])
 			->func('id', function($in,$e,$a,$t) {
 				$trs = $a['locale'];

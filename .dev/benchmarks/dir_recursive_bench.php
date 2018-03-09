@@ -15,7 +15,7 @@ class bench {
 			$start_time = microtime(true);
 			list($desc, $_files) = $this->$name();
 			$files[$name] = $_files;
-			$out[$name] = ++$i.') '.$desc.' | time: '.round(microtime(true) - $start_time, 3).' | mem: '.(memory_get_usage() - $start_mem).' | peakmem: '.memory_get_peak_usage().' | found: '.count($_files);
+			$out[$name] = ++$i.') '.$desc.' | time: '.round(microtime(true) - $start_time, 3).' | mem: '.(memory_get_usage() - $start_mem).' | peakmem: '.memory_get_peak_usage().' | found: '.count((array)$_files);
 		}
 		return print_r($files, 1). PHP_EOL. implode(PHP_EOL, $out). PHP_EOL;
 	}

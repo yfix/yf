@@ -517,7 +517,7 @@ class yf_validate {
 				$chars[$char] = $char;
 			}
 		}
-		if (!count($chars)) {
+		if (!count((array)$chars)) {
 			return false;
 		}
 		$regex = '~^['.preg_quote(implode($chars), '~').']+$~ims';

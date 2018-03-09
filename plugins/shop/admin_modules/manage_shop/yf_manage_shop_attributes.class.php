@@ -112,7 +112,7 @@ class yf_manage_shop_attributes{
 						]);
 					}
 				}
-				if (count($options_list != 0)) {
+				if (count((array)$options_list != 0)) {
 					// options not found - delete these
 					db()->query('DELETE FROM `'.db('shop_productparams_options').'` WHERE `id` IN ('.implode(',',$options_list).') AND `productparams_id`='.$_GET['id']);
 				}

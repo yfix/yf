@@ -447,7 +447,7 @@ class yf_comments {
 		}
 		$link = process_url('./?object=comments&action=view_unread');
 		$unread = [
-			'count'	=> count($ids),
+			'count'	=> count((array)$ids),
 			'ids'	=> $ids,
 			'link'	=> $link,
 		];

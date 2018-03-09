@@ -16,7 +16,7 @@ class yf_notifications {
         foreach ((array)$R as $A) {
             $notifications_ids[$A['id']] = $A['notification_id'];
         }
-        if (count($notifications_ids) != 0) {
+        if (count((array)$notifications_ids) != 0) {
             $notifications = db()->get_all("SELECT `id`,`title`,`content`,`add_date` FROM `".db('notifications')."` WHERE `id` IN (".implode(",",$notifications_ids).")");
             $add_info = db()->get_all("SELECT `id`,`text`,`url` FROM `".db('notifications_receivers_add_info')."` WHERE `id` IN (".implode(",",array_keys($notifications_ids)).")");
             foreach ($notifications_ids as $k=>$v) {

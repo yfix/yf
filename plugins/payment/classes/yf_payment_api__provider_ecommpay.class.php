@@ -576,7 +576,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		}
 
 
-		if(count($this->ALLOW_CARDS_COUNTRIES)){
+		if(count((array)$this->ALLOW_CARDS_COUNTRIES)){
 			$countries = [];
 			foreach ($this->ALLOW_CARDS_COUNTRIES as $country) {
 				$countries[] = t($country);

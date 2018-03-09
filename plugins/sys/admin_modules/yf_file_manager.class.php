@@ -119,8 +119,8 @@ class yf_file_manager {
 			'go_up_level_link'		=> './?object='.$_GET['object'].'&dir_name='.urlencode($path_info_up['dirname'])._add_get(['dir_name']),
 			'go_home_link'			=> './?object='.$_GET['object']._add_get(['dir_name']),
 			'total_files_size'		=> intval($total_files_size),
-			'total_files'			=> intval(count($dir_contents['files'])),
-			'total_dirs'			=> intval(count($dir_contents['dirs'])),
+			'total_files'			=> intval(count((array)$dir_contents['files'])),
+			'total_dirs'			=> intval(count((array)$dir_contents['dirs'])),
 			'default_zip_name'		=> 'tmp12345',
 			'default_email'			=> conf('webmaster_mail'),
 			'default_chmod'			=> 755,
@@ -362,8 +362,8 @@ class yf_file_manager {
 					$dest_folders[] = urldecode(substr($k, 2));
 				}
 			}		
-			if (count($items_to_copy)) {
-				if (count($dest_folders)) {
+			if (count((array)$items_to_copy)) {
+				if (count((array)$dest_folders)) {
 					foreach ((array)$items_to_copy as $k => $v) {
 						if (is_dir($v)) {
 							foreach ((array)$dest_folders as $k1 => $v1) {
@@ -544,7 +544,7 @@ class yf_file_manager {
 				$attach[] = $v;
 			}
 		}
-		if (count($attach)) {
+		if (count((array)$attach)) {
 			$email_from = 'yfix.dev auto-sender';
 			if (!$_POST['target_email']) {
 				$email_to = 'admin@yfix.net';

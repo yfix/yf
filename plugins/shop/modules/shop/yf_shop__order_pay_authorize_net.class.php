@@ -140,7 +140,7 @@ class yf_shop__order_pay_authorize_net{
 		$gateway_response = explode('|', $response);
 		// Even though authorize.net is told to return the data delimited with the pipe character,
 		// many times it will return data comma-delimited.
-		if (count($gateway_response) < 5) {
+		if (count((array)$gateway_response) < 5) {
 			$gateway_response = explode(',', $response);
 		}
 		// If the response code is not 1 (approved) then redirect back to the payment page 

@@ -894,7 +894,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote {
 
     public function _create_url($url, $data = []){
         $add_string = '';
-        if(count($data)>0) {
+        if(count((array)$data)>0) {
             foreach ($data as $key => $value) {
                 $add_string[] = "$key=$value";
             }

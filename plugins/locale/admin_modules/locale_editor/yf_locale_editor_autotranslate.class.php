@@ -67,7 +67,7 @@ class yf_locale_editor_autotranslate {
 			if (!strlen($tr) || _strtolower($tr) == _strtolower($source)) {
 				$to_tr[$source] = $a['var_id'];
 			}
-			if (count($to_tr) >= $max_items) {
+			if (count((array)$to_tr) >= $max_items) {
 				break;
 			}
 		}

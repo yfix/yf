@@ -503,7 +503,7 @@ ND
 		$this->assertEquals($bear_cerms->type, $bear_cerms_first->type);
 
 		$this->assertInternalType('array', $dangerous_bears);
-		$this->assertEquals('3', count($dangerous_bears));
+		$this->assertEquals('3', count((array)$dangerous_bears));
 	}
 
 	/**

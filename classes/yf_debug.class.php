@@ -162,7 +162,7 @@ class yf_debug {
 			}
 			$arh_key = str_replace($m[1], '', $key);
 			$rx_matches = explode('_', $arh_key);
-			if (count($rx_matches) > 0 && strlen($arh_key) > 2) {
+			if (count((array)$rx_matches) > 0 && strlen($arh_key) > 2) {
 				foreach($rx_matches as $ak_key => $ak_val) {
 					$rx_matches[$ak_key] = ucwords(strtolower($ak_val));
 				}
@@ -516,7 +516,7 @@ class yf_debug {
 			if (!is_array($params['caption'])) {
 				$params['caption'] = [];
 			}
-			count($items) && $params['caption']['items'] = count($items);
+			count((array)$items) && $params['caption']['items'] = count((array)$items);
 			$total_time && $params['caption']['total_time'] = round($total_time, 4);
 			foreach ((array)$params['caption'] as $k => $v) {
 				$caption .= ' <span class="label label-info">'.$k.': '.$v.'</span>'.PHP_EOL;

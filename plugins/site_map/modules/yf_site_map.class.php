@@ -233,7 +233,7 @@ class yf_site_map {
 			}
 		} 
 		$this->_file_for_google = str_replace(PROJECT_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER). $this->SITEMAP_FILE_NAME.'1'.$this->_file_extension;
-		if ($sitemaps && count($sitemaps) > 1) {
+		if ($sitemaps && count((array)$sitemaps) > 1) {
 			$this->_output($this->_tpl_sitemap_index_header());
 
 			// Create sitemap index 

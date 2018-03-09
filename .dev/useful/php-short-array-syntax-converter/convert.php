@@ -66,7 +66,7 @@ $tokens = token_get_all($code);
 
 $replacements = array();
 $offset = 0;
-for ($i = 0; $i < count($tokens); ++$i) {
+for ($i = 0; $i < count((array)$tokens); ++$i) {
     // Keep track of the current byte offset in the source code
     $offset += strlen(is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i]);
 
@@ -77,7 +77,7 @@ for ($i = 0; $i < count($tokens); ++$i) {
         // looking at an "array(...)" statement
         $isArraySyntax = false;
         $subOffset = $offset;
-        for ($j = $i + 1; $j < count($tokens); ++$j) {
+        for ($j = $i + 1; $j < count((array)$tokens); ++$j) {
             $subOffset += strlen(is_array($tokens[$j]) ? $tokens[$j][1] : $tokens[$j]);
 
             if (is_string($tokens[$j]) && $tokens[$j] == '(') {
@@ -100,7 +100,7 @@ for ($i = 0; $i < count($tokens); ++$i) {
             // Look for matching closing bracket (")")
             $subOffset = $offset;
             $openBracketsCount = 0;
-            for ($j = $i + 1; $j < count($tokens); ++$j) {
+            for ($j = $i + 1; $j < count((array)$tokens); ++$j) {
                 $subOffset += strlen(is_array($tokens[$j]) ? $tokens[$j][1] : $tokens[$j]);
 
                 if (is_string($tokens[$j]) && $tokens[$j] == '(') {
@@ -144,7 +144,7 @@ foreach ($replacements as $replacement) {
 if ($saveFile) {
     if ($replacements) {
         file_put_contents($filePath, $code);
-        print count($replacements) . ' replacements.' . "\n";
+        print count((array)$replacements) . ' replacements.' . "\n";
     } else {
         print 'No replacements.' . "\n";
     }

@@ -79,19 +79,19 @@ class class_table_test extends yf\tests\wrapper {
 			'</table>'), str_replace(PHP_EOL, '', trim($table)));
 
 		$this->assertObjectHasAttribute('_total', $table);
-		$this->assertEquals($table->_total, count($a));
+		$this->assertEquals($table->_total, count((array)$a));
 		$this->assertObjectHasAttribute('_pages', $table);
 		$this->assertInternalType('string', $table->_pages);
 		$this->assertObjectHasAttribute('_ids', $table);
-		$this->assertSame(count($table->_ids), count($a));
+		$this->assertSame(count((array)$table->_ids), count((array)$a));
 
 		$a = [];
 		$table = table($a);
 		$this->assertObjectHasAttribute('_total', $table);
-		$this->assertEquals($table->_total, count($a));
+		$this->assertEquals($table->_total, count((array)$a));
 		$this->assertObjectHasAttribute('_pages', $table);
 		$this->assertObjectHasAttribute('_ids', $table);
-		$this->assertSame(count($table->_ids), count($a));
+		$this->assertSame(count((array)$table->_ids), count((array)$a));
 
 		$table = table(null, ['no_records_callback' => function(){return 'Hello';}]);
 		$this->assertEquals('Hello', trim($table));

@@ -1812,7 +1812,7 @@ EOS;
 	/**
 	*/
 	function _array2csv(array &$array, $delim = ';') {
-		if (count($array) == 0) {
+		if (count((array)$array) == 0) {
 			return null;
 		}
 		ob_start();

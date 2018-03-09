@@ -16,7 +16,7 @@ if (file_exists($autoload_file)) {
 	require $autoload_file;
 } else {
 	ob_start();
-	require dirname(dirname(__DIR__)).'/share/services/sf_console.php';
+	require dirname(dirname(__DIR__)).'/services/sf_console.php';
 	ob_end_clean();
 }
 
