@@ -7,3 +7,4 @@
 # ignore folders
 #logs/
 #artifacts/
+.php_cs.cache
