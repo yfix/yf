@@ -13,7 +13,7 @@
 if (!defined('YF_PATH')) {
 	die();
 }
-require_once YF_PATH.'share/functions/yf_aliases.php';
+require_once YF_PATH.'functions/yf_aliases.php';
 
 if (!isset($CONF['fast_init_route']) || !is_callable($CONF['fast_init_route'])) {
 	$fast_init_route = function ($table) {
