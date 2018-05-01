@@ -10,6 +10,7 @@
 	syntaxCheck="false"
 	verbose="true"
 	stopOnFailure="false"
+	beStrictAboutTestsThatDoNotTestAnything="false"
 >
 <!--	stopOnFailure="true" -->
 	<testsuites>

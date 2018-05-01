@@ -85,7 +85,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate([1,2], 'required') );
 	}
 	public function test_required_any() {
-		$this->assertFalse( @_class('validate')->required_any() );
 		$this->assertFalse( _class('validate')->required_any(null, []) );
 		$this->assertFalse( _class('validate')->required_any('', ['param' => 'd_day,d_week']) );
 		$this->assertFalse( _class('validate')->required_any('', ['param' => 'd_day,d_week'], ['d_day' => '', 'd_week' => '']) );
@@ -97,7 +96,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( _class('validate')->required_any('', ['param' => 'd_???*'], ['d_day' => 1, 'd_week' => '']) );
 	}
 	public function test_required_if() {
-		$this->assertFalse( @_class('validate')->required_if() );
 		$this->assertFalse( _class('validate')->required_if(null, []) );
 		$this->assertTrue( _class('validate')->required_if('', ['param' => 'pswd']) );
 		$this->assertTrue( _class('validate')->required_if('some', ['param' => 'pswd']) );
@@ -115,21 +113,18 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( _class('validate')->required_if('some', ['param' => 'pswd'], ['pswd' => 'not_empty']) );
 	}
 	public function test_matches() {
-		$this->assertFalse( @_class('validate')->matches() );
 		$this->assertFalse( _class('validate')->matches('', ['param' => 'my_field']) );
 		$_POST['my_field'] = '55';
 		$this->assertFalse( _class('validate')->matches('', ['param' => 'my_field'], ['my_field' => '55']) );
 		$this->assertTrue( _class('validate')->matches('55', ['param' => 'my_field'], ['my_field' => '55']) );
 	}
 	public function test_differs() {
-		$this->assertTrue( @_class('validate')->differs() );
 		$this->assertTrue( _class('validate')->differs('', ['param' => 'my_field']) );
 		$_POST['my_field'] = '55';
 		$this->assertTrue( _class('validate')->differs('', ['param' => 'my_field'], ['my_field' => '55']) );
 		$this->assertFalse( _class('validate')->differs('55', ['param' => 'my_field'], ['my_field' => '55']) );
 	}
 	public function test_regex_match() {
-		$this->assertFalse( @_class('validate')->regex_match() );
 		$regex = '/^[a-z]+@[a-z]+\.[a-z]+$/';
 		$this->assertFalse( _class('validate')->regex_match('testme@yfixnet', ['param' => $regex]) );
 		$this->assertTrue( _class('validate')->regex_match('testme@yfix.net', ['param' => $regex]) );
@@ -138,7 +133,6 @@ class class_validate_test extends yf\tests\wrapper {
 #		$this->assertTrue( validate('testme@yfix.net', 'regex_match['.$regex.']') );
 	}
 	public function test_min_length() {
-		$this->assertFalse( @_class('validate')->min_length() );
 		$this->assertFalse( _class('validate')->min_length('12345') );
 		$this->assertFalse( _class('validate')->min_length('1234', ['param' => '5']) );
 		$this->assertTrue( _class('validate')->min_length('12345', ['param' => '5']) );
@@ -149,7 +143,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate('123456', 'min_length[5]') );
 	}
 	public function test_max_length() {
-		$this->assertFalse( @_class('validate')->max_length() );
 		$this->assertFalse( _class('validate')->max_length('12345') );
 		$this->assertTrue( _class('validate')->max_length('1234', ['param' => '5']) );
 		$this->assertTrue( _class('validate')->max_length('12345', ['param' => '5']) );
@@ -160,7 +153,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertFalse( validate('123456', 'max_length[5]') );
 	}
 	public function test_exact_length() {
-		$this->assertFalse( @_class('validate')->exact_length() );
 		$this->assertFalse( _class('validate')->exact_length('12345') );
 		$this->assertFalse( _class('validate')->exact_length('1234', ['param' => '5']) );
 		$this->assertTrue( _class('validate')->exact_length('12345', ['param' => '5']) );
@@ -171,7 +163,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertFalse( validate('123456', 'exact_length[5]') );
 	}
 	public function test_length() {
-		$this->assertFalse( @_class('validate')->length() );
 		$this->assertFalse( _class('validate')->length('12345') );
 		$this->assertFalse( _class('validate')->length('1234', ['param' => '5']) );
 		$this->assertTrue( _class('validate')->length('12345', ['param' => '5']) );
@@ -186,7 +177,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertFalse( validate('123456', 'length[8,10]') );
 	}
 	public function test_greater_than() {
-		$this->assertFalse( @_class('validate')->greater_than() );
 		$this->assertTrue( _class('validate')->greater_than('12345') );
 		$this->assertTrue( _class('validate')->greater_than('12345', ['param' => '0']) );
 		$this->assertFalse( _class('validate')->greater_than('4', ['param' => '5']) );
@@ -199,7 +189,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate('6', 'greater_than[5]') );
 	}
 	public function test_less_than() {
-		$this->assertFalse( @_class('validate')->less_than() );
 		$this->assertFalse( _class('validate')->less_than('12345') );
 		$this->assertFalse( _class('validate')->less_than('12345', ['param' => '0']) );
 		$this->assertTrue( _class('validate')->less_than('4', ['param' => '5']) );
@@ -212,7 +201,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertFalse( validate('6', 'less_than[5]') );
 	}
 	public function test_greater_than_equal_to() {
-		$this->assertFalse( @_class('validate')->greater_than_equal_to() );
 		$this->assertTrue( _class('validate')->greater_than_equal_to('12345') );
 		$this->assertTrue( _class('validate')->greater_than_equal_to('12345', ['param' => '0']) );
 		$this->assertFalse( _class('validate')->greater_than_equal_to('4', ['param' => '5']) );
@@ -225,7 +213,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate('6', 'greater_than_equal_to[5]') );
 	}
 	public function test_less_than_equal_to() {
-		$this->assertFalse( @_class('validate')->less_than_equal_to() );
 		$this->assertFalse( _class('validate')->less_than_equal_to('12345') );
 		$this->assertFalse( _class('validate')->less_than_equal_to('12345', ['param' => '0']) );
 		$this->assertTrue( _class('validate')->less_than_equal_to('4', ['param' => '5']) );
@@ -238,7 +225,6 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertFalse( validate('6', 'less_than_equal_to[5]') );
 	}
 	public function test_alpha() {
-		$this->assertFalse( @_class('validate')->alpha() );
 		$this->assertFalse( _class('validate')->alpha('') );
 		$this->assertFalse( _class('validate')->alpha(null) );
 		$this->assertFalse( _class('validate')->alpha(false) );
@@ -261,11 +247,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertFalse( validate('0','alpha') );
 	}
 	public function test_alpha_spaces() {
-		$this->assertFalse( @_class('validate')->alpha_spaces() );
 		$this->assertFalse( _class('validate')->alpha_spaces('') );
 		$this->assertFalse( _class('validate')->alpha_spaces(null) );
 		$this->assertFalse( _class('validate')->alpha_spaces(false) );
-		$this->assertFalse( @_class('validate')->alpha_spaces([]) );
 
 		$this->assertFalse( _class('validate')->alpha_spaces('~') );
 		$this->assertTrue( _class('validate')->alpha_spaces('a') );
@@ -291,11 +275,9 @@ class class_validate_test extends yf\tests\wrapper {
 
 	}
 	public function test_alpha_numeric() {
-		$this->assertFalse( @_class('validate')->alpha_numeric() );
 		$this->assertFalse( _class('validate')->alpha_numeric('') );
 		$this->assertFalse( _class('validate')->alpha_numeric(null) );
 		$this->assertFalse( _class('validate')->alpha_numeric(false) );
-		$this->assertFalse( @_class('validate')->alpha_numeric([]) );
 
 		$this->assertFalse( _class('validate')->alpha_numeric('~') );
 		$this->assertTrue( _class('validate')->alpha_numeric('a') );
@@ -311,11 +293,9 @@ class class_validate_test extends yf\tests\wrapper {
 
 	}
 	public function test_alpha_numeric_spaces() {
-		$this->assertFalse( @_class('validate')->alpha_numeric_spaces() );
 		$this->assertFalse( _class('validate')->alpha_numeric_spaces('') );
 		$this->assertFalse( _class('validate')->alpha_numeric_spaces(null) );
 		$this->assertFalse( _class('validate')->alpha_numeric_spaces(false) );
-		$this->assertFalse( @_class('validate')->alpha_numeric_spaces([]) );
 
 		$this->assertFalse( _class('validate')->alpha_numeric_spaces('~') );
 		$this->assertTrue( _class('validate')->alpha_numeric_spaces('a') );
@@ -335,11 +315,9 @@ class class_validate_test extends yf\tests\wrapper {
 
 	}
 	public function test_alpha_dash() {
-		$this->assertFalse( @_class('validate')->alpha_dash() );
 		$this->assertFalse( _class('validate')->alpha_dash('') );
 		$this->assertFalse( _class('validate')->alpha_dash(null) );
 		$this->assertFalse( _class('validate')->alpha_dash(false) );
-		$this->assertFalse( @_class('validate')->alpha_dash([]) );
 
 		$this->assertFalse( _class('validate')->alpha_dash('~') );
 		$this->assertTrue( _class('validate')->alpha_dash('a') );
@@ -354,11 +332,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate('-_-','alpha_dash') );
 	}
 	public function test_unicode_alpha() {
-		$this->assertFalse( @_class('validate')->unicode_alpha() );
 		$this->assertFalse( _class('validate')->unicode_alpha('') );
 		$this->assertFalse( _class('validate')->unicode_alpha(null) );
 		$this->assertFalse( _class('validate')->unicode_alpha(false) );
-		$this->assertFalse( @_class('validate')->unicode_alpha([]) );
 
 		$this->assertFalse( _class('validate')->unicode_alpha('~') );
 		$this->assertTrue( _class('validate')->unicode_alpha('a') );
@@ -377,11 +353,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertFalse( validate('0','unicode_alpha') );
 	}
 	public function test_unicode_alpha_spaces() {
-		$this->assertFalse( @_class('validate')->unicode_alpha_spaces() );
 		$this->assertFalse( _class('validate')->unicode_alpha_spaces('') );
 		$this->assertFalse( _class('validate')->unicode_alpha_spaces(null) );
 		$this->assertFalse( _class('validate')->unicode_alpha_spaces(false) );
-		$this->assertFalse( @_class('validate')->unicode_alpha_spaces([]) );
 
 		$this->assertFalse( _class('validate')->unicode_alpha_spaces('~') );
 		$this->assertTrue( _class('validate')->unicode_alpha_spaces('a') );
@@ -408,11 +382,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate(' ','unicode_alpha_spaces') );
 	}
 	public function test_unicode_alpha_numeric() {
-		$this->assertFalse( @_class('validate')->unicode_alpha_numeric() );
 		$this->assertFalse( _class('validate')->unicode_alpha_numeric('') );
 		$this->assertFalse( _class('validate')->unicode_alpha_numeric(null) );
 		$this->assertFalse( _class('validate')->unicode_alpha_numeric(false) );
-		$this->assertFalse( @_class('validate')->unicode_alpha_numeric([]) );
 
 		$this->assertFalse( _class('validate')->unicode_alpha_numeric('~') );
 		$this->assertTrue( _class('validate')->unicode_alpha_numeric('a') );
@@ -429,11 +401,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate('0123456789','unicode_alpha_numeric') );
 	}
 	public function test_unicode_alpha_numeric_spaces() {
-		$this->assertFalse( @_class('validate')->unicode_alpha_numeric_spaces() );
 		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces('') );
 		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces(null) );
 		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces(false) );
-		$this->assertFalse( @_class('validate')->unicode_alpha_numeric_spaces([]) );
 
 		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces('~') );
 		$this->assertTrue( _class('validate')->unicode_alpha_numeric_spaces('a') );
@@ -454,11 +424,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate(' ','unicode_alpha_numeric_spaces') );
 	}
 	public function test_unicode_alpha_dash() {
-		$this->assertFalse( @_class('validate')->unicode_alpha_dash() );
 		$this->assertFalse( _class('validate')->unicode_alpha_dash('') );
 		$this->assertFalse( _class('validate')->unicode_alpha_dash(null) );
 		$this->assertFalse( _class('validate')->unicode_alpha_dash(false) );
-		$this->assertFalse( @_class('validate')->unicode_alpha_dash([]) );
 
 		$this->assertFalse( _class('validate')->unicode_alpha_dash('~') );
 		$this->assertTrue( _class('validate')->unicode_alpha_dash('a') );
@@ -475,11 +443,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate('-_-','unicode_alpha_dash') );
 	}
 	public function test_numeric() {
-		$this->assertFalse( @_class('validate')->numeric() );
 		$this->assertFalse( _class('validate')->numeric('') );
 		$this->assertFalse( _class('validate')->numeric(null) );
 		$this->assertFalse( _class('validate')->numeric(false) );
-		$this->assertFalse( @_class('validate')->numeric([]) );
 
 		$this->assertFalse( _class('validate')->numeric('~') );
 		$this->assertFalse( _class('validate')->numeric('abcdefghijklmnopqrstuvwxyz') );
@@ -498,11 +464,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertTrue( validate('-1.1','numeric') );
 	}
 	public function test_integer() {
-		$this->assertFalse( @_class('validate')->integer() );
 		$this->assertFalse( _class('validate')->integer('') );
 		$this->assertFalse( _class('validate')->integer(null) );
 		$this->assertFalse( _class('validate')->integer(false) );
-		$this->assertFalse( @_class('validate')->integer([]) );
 
 		$this->assertFalse( _class('validate')->integer('~') );
 		$this->assertFalse( _class('validate')->integer('abcdefghijklmnopqrstuvwxyz') );
@@ -523,11 +487,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertFalse( validate(-111.11,'integer') );
 	}
 	public function test_decimal() {
-		$this->assertFalse( @_class('validate')->decimal() );
 		$this->assertFalse( _class('validate')->decimal('') );
 		$this->assertFalse( _class('validate')->decimal(null) );
 		$this->assertFalse( _class('validate')->decimal(false) );
-		$this->assertFalse( @_class('validate')->decimal([]) );
 
 		$this->assertFalse( _class('validate')->decimal('~') );
 		$this->assertFalse( _class('validate')->decimal('abcdefghijklmnopqrstuvwxyz') );
@@ -548,11 +510,9 @@ class class_validate_test extends yf\tests\wrapper {
 #		$this->assertTrue( validate(-111.11,'decimal') );
 	}
 	public function test_is_natural() {
-		$this->assertFalse( @_class('validate')->is_natural() );
 		$this->assertFalse( _class('validate')->is_natural('') );
 		$this->assertFalse( _class('validate')->is_natural(null) );
 		$this->assertFalse( _class('validate')->is_natural(false) );
-		$this->assertFalse( @_class('validate')->is_natural([]) );
 
 		$this->assertFalse( _class('validate')->is_natural('~') );
 		$this->assertFalse( _class('validate')->is_natural('abcdefghijklmnopqrstuvwxyz') );
@@ -571,11 +531,9 @@ class class_validate_test extends yf\tests\wrapper {
 		$this->assertFalse( validate(1.1,'is_natural') );
 	}
 	public function test_is_natural_no_zero() {
-		$this->assertFalse( @_class('validate')->is_natural_no_zero() );
 		$this->assertFalse( _class('validate')->is_natural_no_zero('') );
 		$this->assertFalse( _class('validate')->is_natural_no_zero(null) );
 		$this->assertFalse( _class('validate')->is_natural_no_zero(false) );
-		$this->assertFalse( @_class('validate')->is_natural_no_zero([]) );
 
 		$this->assertFalse( _class('validate')->is_natural_no_zero('~') );
 		$this->assertFalse( _class('validate')->is_natural_no_zero('abcdefghijklmnopqrstuvwxyz') );

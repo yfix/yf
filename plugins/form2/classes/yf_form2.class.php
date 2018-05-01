@@ -155,7 +155,7 @@ class yf_form2 {
 	*	{catch("field_name")}some_other_field{/catch} {form_row('text','%field_name')}
 	*	{catch("t_password")}My password inside replace['t_password']{/catch} {form_row('text','pswd','%t_password')}
 	*/
-	function tpl_row($type = 'input', $replace = [], $name, $desc = '', $extra = []) {
+	function tpl_row($type = 'input', $replace = [], $name = '', $desc = '', $extra = []) {
 		$name = trim($name);
 		if ($name && $name[0] == '%') {
 			$_name = substr($name, 1);

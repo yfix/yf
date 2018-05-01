@@ -31,14 +31,6 @@ class class_table_test extends yf\tests\wrapper {
 			['k1' => 'v12', 'k2' => 'v22']
 		];
 
-		$table = @table($a)
-			->text();
-
-		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<table class="'._class('table2')->CLASS_TABLE_MAIN.'">'.
-			'<thead></thead><tbody><tr></tr><tr></tr></tbody>'.
-			'</table>'), str_replace(PHP_EOL, '', trim($table)));
-
 		$table = table($a)
 			->text('k1');
 

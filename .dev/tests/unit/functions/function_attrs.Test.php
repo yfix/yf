@@ -3,19 +3,12 @@
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 class function_attrs_test extends yf\tests\wrapper {
-	public function test_negative() {
-		$this->assertEquals('', @_attrs());
-		$this->assertEquals('', @_attrs(null));
-		$this->assertEquals('', @_attrs(''));
-		$this->assertEquals('', @_attrs([]));
-	}
 	public function test_simple() {
 		$a = [
 			'id' => 'myid',
 			'name' => 'myname',
 			'value' => '"complex string \' with quotes"',
 		];
-		$this->assertEquals('', @_attrs($a));
 		$this->assertEquals(' id="myid"', _attrs($a, ['id']));
 		$this->assertEquals(' id="myid" name="myname"', _attrs($a, ['id','name']));
 		$this->assertEquals(' value="&quot;complex string &apos; with quotes&quot;"', _attrs($a, ['value']));
