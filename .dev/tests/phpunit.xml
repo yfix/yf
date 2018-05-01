@@ -11,6 +11,7 @@
 	verbose="true"
 	stopOnFailure="false"
 	beStrictAboutTestsThatDoNotTestAnything="false"
+	logIncompleteSkipped="false"
 >
 <!--	stopOnFailure="true" -->
 	<testsuites>
