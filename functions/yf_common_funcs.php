@@ -368,18 +368,19 @@ if (!function_exists('load_db_class')) {
 		if ($_loaded_class) {
 			return $_loaded_class;
 		}
-		$classes = [
-			'db'	=> APP_PATH.'classes/db.class.php',
-			'yf_db'	=> YF_PATH.'classes/yf_db.class.php',
+		$suffix = 'db.class.php';
+		$pattern = '{,plugins/*/}classes/';
+		$globs = [
+			'db'	=> APP_PATH. $pattern. $suffix,
+			'yf_db'	=> YF_PATH. $pattern. 'yf_'.$suffix,
 		];
-		foreach ((array)$classes as $cl => $f) {
-			if (!file_exists($f)) {
-				continue;
-			}
-			require_once $f;
-			if (class_exists($cl)) {
-				$_loaded_class = $cl;
-				return $_loaded_class;
+		foreach ($globs as $cls => $glob) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
+				require_once $path;
+				if (class_exists($cls)) {
+					$_loaded_class = $cls;
+					return $_loaded_class;
+				}
 			}
 		}
 		return false;
