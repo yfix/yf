@@ -13,7 +13,7 @@ require_once dirname(__DIR__).'/scripts_utils.php';
 $url = $url ?: 'https://en.wikipedia.org/wiki/ISO_3166-1';
 $result_file = $result_file ?: __DIR__.'/countries.php';
 $suffix = $suffix ?: '';
-$mtpl = $mtpl ?: [
+$mtpl = isset($mtpl) ? $mtpl : [
 	'id'	=> 1,
 	'code'	=> 1,
 	'code3' => 2,
@@ -21,12 +21,24 @@ $mtpl = $mtpl ?: [
 	'name'	=> 0,
 ];
 
+if (!function_exists('_var_export')) {
+function _var_export($data) {
+	$str = var_export($data, 1);
+	$str = str_replace('  ', "\t", $str);
+	$str = preg_replace('~=>[\s]+array\s\(~ims', '=> [', $str);
+	$str = str_replace('array (', '[', $str);
+	$str = str_replace(')', ']', $str);
+	$str = preg_replace('~=>[\s]+array\(~ims', '=> [', $str);
+	return $str;
+}
+}
+
 if (!function_exists('data_get_latest_countries')) {
 function data_get_latest_countries() {
 	global $url, $result_file, $suffix, $mtpl;
 
 	$f2 = __DIR__.'/'.basename($url).'.table'.$suffix.'.html';
-	if (!file_exists($f2)) {
+	if (!file_exists($f2) || filemtime($f2) <= (time() - 86400 * 10)) {
 		$html1 = file_get_contents($url);
 		$regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';
 		preg_match($regex1, $html1, $m1);
@@ -45,7 +57,7 @@ function data_get_latest_countries() {
 			'code'	=> $id,
 			'code3' => $v[$mtpl['code3']],
 			'num'	=> $v[$mtpl['num']],
-			'name'	=> $v[$mtpl['name']],
+			'name'	=> str_replace(['[',']','(',')'], '', $v[$mtpl['name']]),
 			'cont'	=> '',
 			'active'=> 0,
 		];
@@ -55,7 +67,7 @@ function data_get_latest_countries() {
 	}
 
 	$f4 = $result_file;
-	file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
+	file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '._var_export($data, 1).';');
 	print_r($data);
 }
 }
