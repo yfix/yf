@@ -166,25 +166,39 @@ class yf_oauth {
 		if (isset($this->_providers_loaded)) {
 			return $this->_providers;
 		}
-		$paths = [
-			YF_PATH. 'classes/oauth/',
-			PROJECT_PATH. 'classes/oauth/',
+		// Load event listeners from supported locations
+		$ext = '.class.php';
+		$prefix = 'oauth_driver_';
+		$pattern = '{,plugins/*/}classes/oauth/*'.$prefix.'*'. $ext;
+		$globs = [
+			'framework'	=> YF_PATH. $pattern,
+			'app'		=> APP_PATH. $pattern,
 		];
-		foreach ((array)_class('dir')->scan($paths, 1, '-f /yf_oauth_driver_[a-z0-9_-]+\.class\.php$/i') as $path) {
-			$name = trim(substr(trim(basename($path)), strlen('yf_oauth_driver_'), -strlen('.class.php')));
-			if (!$name) {
-				continue;
+		$ext_len = strlen($ext);
+		$names = [];
+		foreach ($globs as $gname => $glob) {
+			foreach (glob($glob, GLOB_BRACE) as $path) {
+				$name = substr(basename($path), 0, -$ext_len);
+				if (substr($name, 0, 3) == 'yf_') {
+					$name = substr($name, 3);
+				}
+				$name = substr($name, strlen($prefix));
+				if (!$name) {
+					continue;
+				}
+				if (!isset($config[$name])) {
+					continue;
+				}
+				$p_config = $config[$name];
+				if (!strlen($p_config['client_id']) || !strlen($p_config['client_secret'])) {
+					continue;
+				}
+				$names[$name] = $path;
+				$locations[$name][$gname] = $path;
 			}
-			if (!isset($config[$name])) {
-				continue;
-			}
-			$p_config = $config[$name];
-			if (!strlen($p_config['client_id']) || !strlen($p_config['client_secret'])) {
-				continue;
-			}
-			$this->_providers[$name] = $data;
 		}
-		ksort($this->_providers);
+		ksort($names);
+		$this->_providers = $names;
 		$this->_providers_loaded = true;
 		return $this->_providers;
 	}
