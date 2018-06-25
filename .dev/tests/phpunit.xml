@@ -1,65 +1,60 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpunit 
-	backupGlobals="false" 
-	backupStaticAttributes="false"
-	colors="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true"
-	processIsolation="false"
-	syntaxCheck="false"
-	verbose="true"
-	stopOnFailure="false"
-	beStrictAboutTestsThatDoNotTestAnything="false"
-	logIncompleteSkipped="false"
+ backupGlobals="false" 
+ backupStaticAttributes="false"
+ colors="true"
+ convertErrorsToExceptions="true"
+ convertNoticesToExceptions="true"
+ convertWarningsToExceptions="true"
+ processIsolation="false"
+ verbose="true"
+ stopOnFailure="false"
+ beStrictAboutTestsThatDoNotTestAnything="false"
 >
-<!--	stopOnFailure="true" -->
-	<testsuites>
-		<testsuite name="all">
-			<directory>./</directory>
-		</testsuite>
-		<testsuite name="unit-all">
-			<directory>./unit/</directory>
-		</testsuite>
-		<testsuite name="unit-only-db">
-			<directory>./unit/db/</directory>
-		</testsuite>
-		<testsuite name="unit-no-db">
-			<directory>./unit/</directory>
-			<exclude>./unit/db/</exclude>
-		</testsuite>
-		<testsuite name="unit-only-tpl">
-			<directory>./unit/tpl/</directory>
-		</testsuite>
-		<testsuite name="unit-only-functions">
-			<directory>./unit/functions/</directory>
-		</testsuite>
-		<testsuite name="functional-all">
-			<directory>./functional/</directory>
-		</testsuite>
-		<testsuite name="functional-no-db">
-			<directory>./functional/</directory>
-			<exclude>./functional/db/</exclude>
-		</testsuite>
-		<testsuite name="functional-only-cache">
-			<directory>./functional/cache/</directory>
-		</testsuite>
-		<testsuite name="functional-only-db">
-			<directory>./functional/db/</directory>
-		</testsuite>
-		<testsuite name="db-all">
-			<directory>./functional/db/</directory>
-			<directory>./unit/db/</directory>
-		</testsuite>
-		<testsuite name="plugins-all">
-			<directory>./acceptance/plugins/*/tests/*</directory>
-			<directory>./functional/plugins/*/tests/*</directory>
-			<directory>./unit/plugins/*/tests/*</directory>
-		</testsuite>
-	</testsuites>
-	<!--logging>
-		<log type="coverage-clover" target="artifacts/phpunit/coverage/coverage.xml" />
-		<log type="junit" target="artifacts/phpunit/phpunit.xml" logIncompleteSkipped="true" />
-		<log type="testdox-html" target="./logs/testdox.html" />
-	</logging-->
+<testsuites>
+  <testsuite name="all">
+   <directory>./</directory>
+  </testsuite>
+  <testsuite name="unit-all">
+    <directory>./unit/</directory>
+  </testsuite>
+  <testsuite name="unit-only-db">
+    <directory>./unit/db/</directory>
+  </testsuite>
+  <testsuite name="unit-no-db">
+    <directory>./unit/</directory>
+    <exclude>./unit/db/</exclude>
+  </testsuite>
+  <testsuite name="unit-only-tpl">
+    <directory>./unit/tpl/</directory>
+  </testsuite>
+  <testsuite name="unit-only-functions">
+    <directory>./unit/functions/</directory>
+  </testsuite>
+  <testsuite name="functional-all">
+    <directory>./functional/</directory>
+  </testsuite>
+  <testsuite name="functional-no-db">
+    <directory>./functional/</directory>
+    <exclude>./functional/db/</exclude>
+  </testsuite>
+  <testsuite name="functional-only-cache">
+    <directory>./functional/cache/</directory>
+  </testsuite>
+  <testsuite name="functional-only-db">
+    <directory>./functional/db/</directory>
+  </testsuite>
+  <testsuite name="db-all">
+    <directory>./functional/db/</directory>
+    <directory>./unit/db/</directory>
+  </testsuite>
+  <testsuite name="plugins-all">
+    <directory>./acceptance/plugins/*/tests/*</directory>
+    <directory>./functional/plugins/*/tests/*</directory>
+    <directory>./unit/plugins/*/tests/*</directory>
+  </testsuite>
+</testsuites>
+<logging>
+  <log type="junit" target="./report/junit.xml" logIncompleteSkipped="false"/>
+</logging>
 </phpunit>
