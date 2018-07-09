@@ -6,7 +6,7 @@ return PhpCsFixer\Config::create()
         'align_multiline_comment' => true,
         'array_syntax' => ['syntax' => 'short'],
 		'backtick_to_shell_exec' => true,
-#		'binary_operator_spaces' => ['align', 'align_single_space', 'align_single_space_minimal', 'single_space'],
+#		'binary_operator_spaces' => ['default' => 'align'],
 		'blank_line_after_namespace' => true,
 		'blank_line_after_opening_tag' => true,
 #        'blank_line_before_statement' => ['statements' => ['break', 'continue', 'declare', 'return', 'throw', 'try']],

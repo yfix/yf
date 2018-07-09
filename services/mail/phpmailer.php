@@ -2,7 +2,7 @@
 <?php
 
 $config = [
-	'git_urls' => ['https://github.com/yfix/phpmailer.git' => 'phpmailer/'],
+	'git_urls' => ['https://github.com/yfix/phpmailer.git~v5.2.26' => 'phpmailer/'],
 	'require_once' => ['phpmailer/PHPMailerAutoload.php'],
 	'example' => function() {
 		$mail = new PHPMailer(true);
