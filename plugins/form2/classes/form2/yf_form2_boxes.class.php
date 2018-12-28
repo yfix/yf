@@ -408,7 +408,7 @@ class yf_form2_boxes
                 if ($extra['for_type'] == 'admin') {
                 } else {
                 }
-        
+
                 if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
                     $extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=blocks' : './?object=blocks';
                 }

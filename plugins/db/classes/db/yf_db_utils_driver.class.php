@@ -397,18 +397,18 @@ abstract class yf_db_utils_driver
 
     /*
     For Schemas:
-    
+
     SELECT default_character_set_name FROM information_schema.SCHEMATA S
     WHERE schema_name = "schemaname";
     For Tables:
-    
+
     SELECT CCSA.character_set_name FROM information_schema.`TABLES` T,
            information_schema.`COLLATION_CHARACTER_SET_APPLICABILITY` CCSA
     WHERE CCSA.collation_name = T.table_collation
       AND T.table_schema = "schemaname"
       AND T.table_name = "tablename";
     For Columns:
-    
+
     SELECT character_set_name FROM information_schema.`COLUMNS` C
     WHERE table_schema = "schemaname"
       AND table_name = "tablename"

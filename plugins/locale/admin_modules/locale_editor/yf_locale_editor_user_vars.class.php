@@ -128,10 +128,10 @@ class yf_locale_editor_user_vars
         {/foreach}
             </tbody>
         </table>
-        
+
         <input type="submit" class="btn" name="multi-push" value="{t(PUSH SELECTED)}" onclick="return confirm('{t(Are you sure)}?');" />
         <input type="submit" class="btn" name="multi-delete" value="{t(DELETE SELECTED)}" onclick="return confirm('{t(Are you sure)}?');" />
-        
+
         </form>
         */
     }

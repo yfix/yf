@@ -937,7 +937,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         $is_test = null;
         isset($_response['test']) && $is_test = (int) $_response['test'] == 1 ? true : false;
         switch ($_GET['status']) {
-            case 'result' :
+            case 'result':
                 $state = 'wait';
                 $result = $this->__api_response__result($operation_id, $response);
                 return  $result;

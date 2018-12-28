@@ -21,3 +21,5 @@ paratests:
 
 php-cs-fixer:
 	./vendor/bin/php-cs-fixer --verbose --show-progress=estimating fix --verbose --config=.php_cs ./
+
+test: parallel-lint php-cs-fixer phpunit-tests

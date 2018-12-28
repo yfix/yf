@@ -142,7 +142,7 @@ class yf_manage_sphinx
                     array("sql_attr_float",		"sq_price"),
                     array("sql_attr_bool",		"with_photos"),
                 );
-        
+
                 $source_cars = array(
                     // prevent main table locking when indexing
                     array("sql_query_range",	"SELECT MIN(id), MAX(id) FROM %%DB_TABLE_VERTICAL%%"),
@@ -168,7 +168,7 @@ class yf_manage_sphinx
                     array("sql_attr_uint",		"mileage"),
                     array("sql_attr_bool",		"with_photos"),
                 );
-        
+
                 $source_jobs = array(
                     // prevent main table locking when indexing
                     array("sql_query_range",	"SELECT MIN(id), MAX(id) FROM %%DB_TABLE_VERTICAL%%"),
@@ -187,7 +187,7 @@ class yf_manage_sphinx
                     array("sql_attr_uint",		"region"),
                     array("sql_attr_uint",		"salary"),
                 );
-        
+
                 $index_share = array(
                     array("docinfo",			"extern"),
                     array("morphology",			"none"),
@@ -198,10 +198,10 @@ class yf_manage_sphinx
                     array("min_prefix_len",		"0"),
                     array("min_infix_len",		"0"),
                 );
-        
+
                 // Get used countries from system sites
                 $countries = $this->_get_countries();
-        
+
                 $sources = array("source source_main" => $source_main);
                 foreach ((array)$countries as $code) {
                     $tmp = $source_homes;
@@ -209,32 +209,32 @@ class yf_manage_sphinx
                         $tmp[$k][1] = str_replace("%%DB_TABLE_VERTICAL%%", DB_PREFIX."homes_".$code, $v[1]);
                     }
                     $sources["source source_homes_".$code." : source_main"]	= $tmp;
-        
+
                     $tmp = $source_cars;
                     foreach ((array)$tmp as $k => $v) {
                         $tmp[$k][1] = str_replace("%%DB_TABLE_VERTICAL%%", DB_PREFIX."cars_".$code, $v[1]);
                     }
                     $sources["source source_cars_".$code." : source_main"]	= $tmp;
-        
+
                     $tmp = $source_jobs;
                     foreach ((array)$tmp as $k => $v) {
                         $tmp[$k][1] = str_replace("%%DB_TABLE_VERTICAL%%", DB_PREFIX."jobs_".$code, $v[1]);
                     }
                     $sources["source source_jobs_".$code." : source_main"]	= $tmp;
                 }
-        
+
                 $indexes = array();
                 foreach ((array)$countries as $code) {
                     $indexes["index homes_".$code]	= array_merge(array(
                         array("source",	"source_homes_".$code),
                         array("path",	$this->DATA_PATH . "index_homes_".$code),
                     ), $index_share);
-        
+
                     $indexes["index cars_".$code]	= array_merge(array(
                         array("source",	"source_cars_".$code),
                         array("path",	$this->DATA_PATH . "index_cars_".$code),
                     ), $index_share);
-        
+
                     $indexes["index jobs_".$code]	= array_merge(array(
                         array("source",	"source_jobs_".$code),
                         array("path",	$this->DATA_PATH . "index_jobs_".$code),
@@ -454,7 +454,7 @@ class yf_manage_sphinx
                         max_doc_id INT NOT NULL
                     )";
                     $db->sql_query($sql);
-        
+
                     $sql = "TRUNCATE TABLE " . SPHINX_TABLE;
                     $db->sql_query($sql);
                 }
@@ -523,7 +523,7 @@ class yf_manage_sphinx
     {
         /*
                 global $config, $db;
-        
+
                 if ($mode == 'edit')
                 {
                     $this->sphinx->UpdateAttributes($this->indexes, array('forum_id', 'poster_id'), array((int)$post_id => array((int)$forum_id, (int)$poster_id)));
@@ -535,7 +535,7 @@ class yf_manage_sphinx
                         FROM ' . POSTS_TABLE . ' p1 LEFT JOIN ' . POSTS_TABLE . ' p2 ON (p1.topic_id = p2.topic_id)
                         WHERE p2.post_id = ' . $post_id;
                     $result = $db->sql_query($sql);
-        
+
                     $post_updates = array();
                     $post_time = time();
                     while ($row = $db->sql_fetchrow($result))
@@ -543,17 +543,17 @@ class yf_manage_sphinx
                         $post_updates[(int)$row['post_id']] = array((int) $post_time);
                     }
                     $db->sql_freeresult($result);
-        
+
                     if (sizeof($post_updates))
                     {
                         $this->sphinx->UpdateAttributes($this->indexes, array('topic_last_post_time'), $post_updates);
                     }
                 }
-        
+
                 if ($this->_index_created())
                 {
                     $rotate = ($this->_searchd_running()) ? ' --rotate' : '';
-        
+
                     $cwd = getcwd();
                     chdir($this->BIN_PATH);
                     exec("./" . $this->INDEXER_NAME . $rotate . " --config " . $this->CONF_PATH . "sphinx.conf index_phpbb_" . $this->id . "_delta >> " . $this->LOG_PATH . "indexer.log 2>&1 &");
@@ -576,7 +576,7 @@ class yf_manage_sphinx
                 {
                     $values[$post_id] = array(1);
                 }
-        
+
                 $this->sphinx->UpdateAttributes($this->indexes, array("deleted"), $values);
         */
     }

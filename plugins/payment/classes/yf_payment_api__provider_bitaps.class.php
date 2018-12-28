@@ -687,7 +687,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
         $payment_api = &$this->payment_api;
         $successful_operations = [];
         switch ($type) {
-            case 'payout' :
+            case 'payout':
                 $provider = $payment_api->get_provider(['name' => $this->PROVIDER_NAME]);
                 $provider_id = $provider[1]['provider_id'] ?: false;
                 $status = 'processing';
@@ -709,7 +709,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
                     return common()->_show_error_message('Провайдер ' . $this->PROVIDER_NAME . ' не найден');
                 }
                 break;
-            case 'payin' :
+            case 'payin':
                 break;
         }
         if (count((array) $successful_operations)) {
