@@ -1,12 +1,13 @@
 <?php
 
 require_php_lib('jquery-file-upload');
-class yf_form2_file_handler extends UploadHandler {
-
-    function process($options = null, $initialize = true, $error_messages = null) {
+class yf_form2_file_handler extends UploadHandler
+{
+    public function process($options = null, $initialize = true, $error_messages = null)
+    {
         $this->options = [
-            'upload_dir' => INCLUDE_PATH.'uploads/'.$_GET['object'].'/',
-            'upload_url' => WEB_PATH.'uploads/'.$_GET['object'].'/',
+            'upload_dir' => INCLUDE_PATH . 'uploads/' . $_GET['object'] . '/',
+            'upload_url' => WEB_PATH . 'uploads/' . $_GET['object'] . '/',
             'mkdir_mode' => 0755,
             'param_name' => 'files',
             // Set the following option to 'POST', if your server does not support
@@ -16,12 +17,12 @@ class yf_form2_file_handler extends UploadHandler {
             'access_control_allow_methods' => [
                 'HEAD',
                 'GET',
-                'POST'
+                'POST',
             ],
             'access_control_allow_headers' => [
                 'Content-Type',
                 'Content-Range',
-                'Content-Disposition'
+                'Content-Disposition',
             ],
             // Defines which files can be displayed inline when downloaded:
             'inline_file_types' => '/\.(gif|jpe?g|png)$/i',
@@ -31,11 +32,11 @@ class yf_form2_file_handler extends UploadHandler {
             // take precedence over the following max_file_size setting:
             'max_file_size' => null,
             'min_file_size' => 1,
-			
+
             // The maximum number of files for the upload directory:
             'max_number_of_files' => null,
-			
-			
+
+
             // Defines which files are handled as image files:
             'image_file_types' => '/\.(gif|jpe?g|png)$/i',
             // Image resolution restrictions:
@@ -53,15 +54,14 @@ class yf_form2_file_handler extends UploadHandler {
             'convert_bin' => 'convert',
             // Command or path for to the ImageMagick identify binary:
             'identify_bin' => 'identify',
-			
-			'versions' => [
-				
-			],
+
+            'versions' => [
+            ],
             'image_versions' => [
                 // The empty image version key defines options for the original image:
                 '' => [
                     // Automatically rotate images based on EXIF meta data:
-                    'auto_orient' => true
+                    'auto_orient' => true,
                 ],
                 // Uncomment the following to create medium sized images:
                 /*
@@ -70,7 +70,7 @@ class yf_form2_file_handler extends UploadHandler {
                     'max_height' => 600
                 ),
                 */
-				/*
+                /*
                 'thumbnail' => array(
                     //'upload_dir' => dirname($this->get_server_var('SCRIPT_FILENAME')).'/thumb/',
                     //'upload_url' => $this->get_full_url().'/thumb/',
@@ -78,8 +78,8 @@ class yf_form2_file_handler extends UploadHandler {
                     'max_width' => 80,
                     'max_height' => 80
                 )
-				*/
-            ]
+                */
+            ],
         ];
         if ($options) {
             $this->options = $options + $this->options;

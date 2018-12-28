@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(6) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL DEFAULT \'\',

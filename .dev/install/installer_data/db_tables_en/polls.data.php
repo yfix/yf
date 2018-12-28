@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'object_name' => 'blog',
     'object_id' => '3',

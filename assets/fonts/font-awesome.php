@@ -1,7 +1,7 @@
 <?php
 
 return [
-	'require' => [
-		'asset' => 'font-awesome4',
-	],
+    'require' => [
+        'asset' => 'font-awesome4',
+    ],
 ];

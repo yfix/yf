@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(10) unsigned NOT NULL,
   `country` char(2) NOT NULL,

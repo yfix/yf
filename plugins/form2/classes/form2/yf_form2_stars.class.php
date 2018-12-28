@@ -1,79 +1,91 @@
 <?php
 
-class yf_form2_stars {
+class yf_form2_stars
+{
+    /**
+     * @param mixed $name
+     * @param mixed $desc
+     * @param mixed $extra
+     * @param mixed $replace
+     * @param mixed $form
+     */
+    public function stars($name = '', $desc = '', $extra = [], $replace = [], $form)
+    {
+        if (is_array($desc)) {
+            $extra += $desc;
+            $desc = '';
+        }
+        if ( ! is_array($extra)) {
+            $extra = [];
+        }
+        $extra['name'] = $extra['name'] ?: ($name ?: 'stars');
+        $extra['desc'] = $form->_prepare_desc($extra, $desc);
+        $func = function ($extra, $r, $form) {
+            $extra['id'] = $extra['name'];
+            $color_ok = $extra['color_ok'] ?: 'yellow';
+            $color_ko = $extra['color_ko'] ?: '';
+            $class = $extra['class'] ?: 'icon-star icon-large';
+            $class_ok = $extra['class_ok'] ?: 'star-ok';
+            $class_ko = $extra['class_ko'] ?: 'star-ko';
+            $max = $extra['max'] ?: 5;
+            $stars = $extra['stars'] ?: 5;
+            $input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
+            foreach (range(1, $stars) as $num) {
+                $is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
+                $body[] = '<i class="' . $class . ' ' . ($is_ok ? $class_ok : $class_ko) . '" style="color:' . ($is_ok ? $color_ok : $color_ko) . ';" title="' . $input . '"></i>';
+            }
+            return $form->_row_html(implode(PHP_EOL, $body), $extra, $r);
+        };
+        if ($form->_chained_mode) {
+            $form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
+            return $form;
+        }
+        return $func($extra, $replace, $form);
+    }
 
-	/**
-	*/
-	function stars($name = '', $desc = '', $extra = [], $replace = [], $form) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
-		}
-		if (!is_array($extra)) {
-			$extra = [];
-		}
-		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
-		$extra['desc'] = $form->_prepare_desc($extra, $desc);
-		$func = function($extra, $r, $form) {
-			$extra['id'] = $extra['name'];
-			$color_ok = $extra['color_ok'] ?: 'yellow';
-			$color_ko = $extra['color_ko'] ?: '';
-			$class = $extra['class'] ?: 'icon-star icon-large';
-			$class_ok = $extra['class_ok'] ?: 'star-ok';
-			$class_ko = $extra['class_ko'] ?: 'star-ko';
-			$max = $extra['max'] ?: 5;
-			$stars = $extra['stars'] ?: 5;
-			$input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
-			foreach (range(1, $stars) as $num) {
-				$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
-				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';" title="'.$input.'"></i>';
-			}
-			return $form->_row_html(implode(PHP_EOL, $body), $extra, $r);
-		};
-		if ($form->_chained_mode) {
-			$form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
-			return $form;
-		}
-		return $func($extra, $replace, $form);
-	}
+    /**
+     * Star selector, got from http://fontawesome.io/examples/#custom. Require this CSS:
+     *	'<style>
+     *	.rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
+     *	.rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
+     *	.rating span.star:hover { cursor:pointer }
+     *	.rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
+     *	.rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
+     *	</style>';.
+     * @param mixed $name
+     * @param mixed $desc
+     * @param mixed $extra
+     * @param mixed $replace
+     * @param mixed $form
+     */
+    public function stars_select($name = '', $desc = '', $extra = [], $replace = [], $form)
+    {
+        if (is_array($desc)) {
+            $extra += $desc;
+            $desc = '';
+        }
+        if ( ! is_array($extra)) {
+            $extra = [];
+        }
+        $extra['name'] = $extra['name'] ?: ($name ?: 'stars');
+        $extra['desc'] = $form->_prepare_desc($extra, $desc);
+        $func = function ($extra, $r, $form) {
+            $form->_prepare_inline_error($extra);
+            $max = $extra['max'] ?: 5;
+            $stars = $extra['stars'] ?: 5;
+            $class = $extra['class'] ?: 'star';
+            $body[] = '<span class="rating">';
+            foreach (range(1, $stars) as $num) {
+                $body[] = '<span class="' . $class . ' ' . $extra['name'] . '" data-name="' . $extra['name'] . '" data-value="' . ($stars - $num + 1) . '"></span>';
+            }
+            $body[] = '</span>';
+            $body[] = '<input type="hidden" name="' . $extra['name'] . '" id=' . $extra['name'] . ' value="0">';
 
-	/**
-	* Star selector, got from http://fontawesome.io/examples/#custom. Require this CSS:
-	*	'<style>
-	*	.rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
-	*	.rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
-	*	.rating span.star:hover { cursor:pointer }
-	*	.rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
-	*	.rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
-	*	</style>';
-	*/
-	function stars_select($name = '', $desc = '', $extra = [], $replace = [], $form) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
-		}
-		if (!is_array($extra)) {
-			$extra = [];
-		}
-		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
-		$extra['desc'] = $form->_prepare_desc($extra, $desc);
-		$func = function($extra, $r, $form) {
-			$form->_prepare_inline_error($extra);
-			$max = $extra['max'] ?: 5;
-			$stars = $extra['stars'] ?: 5;
-			$class = $extra['class'] ?: 'star';
-			$body[] = '<span class="rating">';
-			foreach (range(1, $stars) as $num) {
-				$body[] = '<span class="'.$class.' '.$extra['name'].'" data-name="'.$extra['name'].'" data-value="'.($stars-$num+1).'"></span>';
-			}
-			$body[] = '</span>';
-			$body[] = '<input type="hidden" name="'.$extra['name'].'" id='.$extra['name'].' value="0">';
-
-			jquery(
-				'$(".'.$class.'.'.$extra['name'].'").on("click",function() {
+            jquery(
+                '$(".' . $class . '.' . $extra['name'] . '").on("click",function() {
 					var value = $(this).attr("data-value");
 					$("#"+$(this).attr("data-name")).val(value);
-					$(".rating.star.'.$extra['name'].'").each(function() {
+					$(".rating.star.' . $extra['name'] . '").each(function() {
 						$(this).attr("data-value");
 						if (value>=$(this).attr("data-value")) {
 							$(this).addClass("rating_selected");								
@@ -82,13 +94,13 @@ class yf_form2_stars {
 						}
 					});
 				});'
-			);
-			return $form->_row_html(implode('', $body), $extra, $r);
-		};
-		if ($form->_chained_mode) {
-			$form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
-			return $form;
-		}
-		return $func($extra, $replace, $form);
-	}
+            );
+            return $form->_row_html(implode('', $body), $extra, $r);
+        };
+        if ($form->_chained_mode) {
+            $form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
+            return $form;
+        }
+        return $func($extra, $replace, $form);
+    }
 }

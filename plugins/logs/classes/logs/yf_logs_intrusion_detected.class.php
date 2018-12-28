@@ -1,7 +1,7 @@
 <?php
 
-/**
-*/
-class yf_logs_intrusion_deetected {
-	// TODO:
+
+class yf_logs_intrusion_deetected
+{
+    // TODO:
 }

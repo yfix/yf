@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `object_name` varchar(24) NOT NULL,

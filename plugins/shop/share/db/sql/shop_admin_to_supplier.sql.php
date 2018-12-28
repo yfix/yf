@@ -1,4 +1,5 @@
 <?php
+
 return '
   `admin_id` int(11) NOT NULL,
   `supplier_id` int(11) NOT NULL,

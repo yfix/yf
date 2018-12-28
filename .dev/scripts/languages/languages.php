@@ -1,7 +1,7 @@
 <?php
+
 $data = [
-  'ab' => 
-  [
+  'ab' => [
     'code' => 'ab',
     'name' => 'Abkhaz',
     'native' => 'аҧсуа бызшәа, аҧсшәа',
@@ -9,8 +9,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'aa' => 
-  [
+  'aa' => [
     'code' => 'aa',
     'name' => 'Afar',
     'native' => 'Afaraf',
@@ -18,8 +17,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'af' => 
-  [
+  'af' => [
     'code' => 'af',
     'name' => 'Afrikaans',
     'native' => 'Afrikaans',
@@ -27,8 +25,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ak' => 
-  [
+  'ak' => [
     'code' => 'ak',
     'name' => 'Akan',
     'native' => 'Akan',
@@ -36,8 +33,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sq' => 
-  [
+  'sq' => [
     'code' => 'sq',
     'name' => 'Albanian',
     'native' => 'gjuha shqipe',
@@ -45,8 +41,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'am' => 
-  [
+  'am' => [
     'code' => 'am',
     'name' => 'Amharic',
     'native' => 'አማርኛ',
@@ -54,8 +49,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ar' => 
-  [
+  'ar' => [
     'code' => 'ar',
     'name' => 'Arabic',
     'native' => 'العربية',
@@ -63,8 +57,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'an' => 
-  [
+  'an' => [
     'code' => 'an',
     'name' => 'Aragonese',
     'native' => 'aragonés',
@@ -72,8 +65,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'hy' => 
-  [
+  'hy' => [
     'code' => 'hy',
     'name' => 'Armenian',
     'native' => 'Հայերեն',
@@ -81,8 +73,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'as' => 
-  [
+  'as' => [
     'code' => 'as',
     'name' => 'Assamese',
     'native' => 'অসমীয়া',
@@ -90,8 +81,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'av' => 
-  [
+  'av' => [
     'code' => 'av',
     'name' => 'Avaric',
     'native' => 'авар мацӀ, магӀарул мацӀ',
@@ -99,8 +89,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ae' => 
-  [
+  'ae' => [
     'code' => 'ae',
     'name' => 'Avestan',
     'native' => 'avesta',
@@ -108,8 +97,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ay' => 
-  [
+  'ay' => [
     'code' => 'ay',
     'name' => 'Aymara',
     'native' => 'aymar aru',
@@ -117,8 +105,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'az' => 
-  [
+  'az' => [
     'code' => 'az',
     'name' => 'South Azerbaijani',
     'native' => 'تورکجه',
@@ -126,8 +113,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'bm' => 
-  [
+  'bm' => [
     'code' => 'bm',
     'name' => 'Bambara',
     'native' => 'bamanankan',
@@ -135,8 +121,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ba' => 
-  [
+  'ba' => [
     'code' => 'ba',
     'name' => 'Bashkir',
     'native' => 'башҡорт теле',
@@ -144,8 +129,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'eu' => 
-  [
+  'eu' => [
     'code' => 'eu',
     'name' => 'Basque',
     'native' => 'euskara, euskera',
@@ -153,8 +137,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'be' => 
-  [
+  'be' => [
     'code' => 'be',
     'name' => 'Belarusian',
     'native' => 'беларуская мова',
@@ -162,8 +145,7 @@ $data = [
     'country' => 'by',
     'active' => 0,
   ],
-  'bn' => 
-  [
+  'bn' => [
     'code' => 'bn',
     'name' => 'Bengali',
     'native' => 'বাংলা',
@@ -171,8 +153,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'bh' => 
-  [
+  'bh' => [
     'code' => 'bh',
     'name' => 'Bihari',
     'native' => 'भोजपुरी',
@@ -180,8 +161,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'bi' => 
-  [
+  'bi' => [
     'code' => 'bi',
     'name' => 'Bislama',
     'native' => 'Bislama',
@@ -189,8 +169,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'bs' => 
-  [
+  'bs' => [
     'code' => 'bs',
     'name' => 'Bosnian',
     'native' => 'bosanski jezik',
@@ -198,8 +177,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'br' => 
-  [
+  'br' => [
     'code' => 'br',
     'name' => 'Breton',
     'native' => 'brezhoneg',
@@ -207,8 +185,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'bg' => 
-  [
+  'bg' => [
     'code' => 'bg',
     'name' => 'Bulgarian',
     'native' => 'български език',
@@ -216,8 +193,7 @@ $data = [
     'country' => 'bg',
     'active' => 0,
   ],
-  'my' => 
-  [
+  'my' => [
     'code' => 'my',
     'name' => 'Burmese',
     'native' => 'ဗမာစာ',
@@ -225,8 +201,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ca' => 
-  [
+  'ca' => [
     'code' => 'ca',
     'name' => 'Catalan',
     'native' => 'català, valencià',
@@ -234,8 +209,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ch' => 
-  [
+  'ch' => [
     'code' => 'ch',
     'name' => 'Chamorro',
     'native' => 'Chamoru',
@@ -243,8 +217,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ce' => 
-  [
+  'ce' => [
     'code' => 'ce',
     'name' => 'Chechen',
     'native' => 'нохчийн мотт',
@@ -252,8 +225,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ny' => 
-  [
+  'ny' => [
     'code' => 'ny',
     'name' => 'Chichewa',
     'native' => 'chiCheŵa, chinyanja',
@@ -261,8 +233,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'zh' => 
-  [
+  'zh' => [
     'code' => 'zh',
     'name' => 'Chinese',
     'native' => '中文',
@@ -270,8 +241,7 @@ $data = [
     'country' => 'cn',
     'active' => 0,
   ],
-  'cv' => 
-  [
+  'cv' => [
     'code' => 'cv',
     'name' => 'Chuvash',
     'native' => 'чӑваш чӗлхи',
@@ -279,8 +249,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'kw' => 
-  [
+  'kw' => [
     'code' => 'kw',
     'name' => 'Cornish',
     'native' => 'Kernewek',
@@ -288,8 +257,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'co' => 
-  [
+  'co' => [
     'code' => 'co',
     'name' => 'Corsican',
     'native' => 'corsu, lingua corsa',
@@ -297,8 +265,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'cr' => 
-  [
+  'cr' => [
     'code' => 'cr',
     'name' => 'Cree',
     'native' => 'ᓀᐦᐃᔭᐍᐏᐣ',
@@ -306,8 +273,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'hr' => 
-  [
+  'hr' => [
     'code' => 'hr',
     'name' => 'Croatian',
     'native' => 'hrvatski jezik',
@@ -315,8 +281,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'cs' => 
-  [
+  'cs' => [
     'code' => 'cs',
     'name' => 'Czech',
     'native' => 'čeština, český jazyk',
@@ -324,8 +289,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'da' => 
-  [
+  'da' => [
     'code' => 'da',
     'name' => 'Danish',
     'native' => 'dansk',
@@ -333,8 +297,7 @@ $data = [
     'country' => 'dk',
     'active' => 0,
   ],
-  'dv' => 
-  [
+  'dv' => [
     'code' => 'dv',
     'name' => 'Divehi',
     'native' => 'ދިވެހި',
@@ -342,8 +305,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'nl' => 
-  [
+  'nl' => [
     'code' => 'nl',
     'name' => 'Dutch',
     'native' => 'Nederlands, Vlaams',
@@ -351,8 +313,7 @@ $data = [
     'country' => 'nl',
     'active' => 0,
   ],
-  'dz' => 
-  [
+  'dz' => [
     'code' => 'dz',
     'name' => 'Dzongkha',
     'native' => 'རྫོང་ཁ',
@@ -360,8 +321,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'en' => 
-  [
+  'en' => [
     'code' => 'en',
     'name' => 'English',
     'native' => 'English',
@@ -369,8 +329,7 @@ $data = [
     'country' => 'us',
     'active' => 1,
   ],
-  'eo' => 
-  [
+  'eo' => [
     'code' => 'eo',
     'name' => 'Esperanto',
     'native' => 'Esperanto',
@@ -378,8 +337,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'et' => 
-  [
+  'et' => [
     'code' => 'et',
     'name' => 'Estonian',
     'native' => 'eesti, eesti keel',
@@ -387,8 +345,7 @@ $data = [
     'country' => 'ee',
     'active' => 0,
   ],
-  'ee' => 
-  [
+  'ee' => [
     'code' => 'ee',
     'name' => 'Ewe',
     'native' => 'Eʋegbe',
@@ -396,8 +353,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'fo' => 
-  [
+  'fo' => [
     'code' => 'fo',
     'name' => 'Faroese',
     'native' => 'føroyskt',
@@ -405,8 +361,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'fj' => 
-  [
+  'fj' => [
     'code' => 'fj',
     'name' => 'Fijian',
     'native' => 'vosa Vakaviti',
@@ -414,8 +369,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'fi' => 
-  [
+  'fi' => [
     'code' => 'fi',
     'name' => 'Finnish',
     'native' => 'suomi, suomen kieli',
@@ -423,8 +377,7 @@ $data = [
     'country' => 'fi',
     'active' => 0,
   ],
-  'fr' => 
-  [
+  'fr' => [
     'code' => 'fr',
     'name' => 'French',
     'native' => 'français, langue française',
@@ -432,8 +385,7 @@ $data = [
     'country' => 'fr',
     'active' => 0,
   ],
-  'ff' => 
-  [
+  'ff' => [
     'code' => 'ff',
     'name' => 'Fula',
     'native' => 'Fulfulde, Pulaar, Pular',
@@ -441,8 +393,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'gl' => 
-  [
+  'gl' => [
     'code' => 'gl',
     'name' => 'Galician',
     'native' => 'galego',
@@ -450,8 +401,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ka' => 
-  [
+  'ka' => [
     'code' => 'ka',
     'name' => 'Georgian',
     'native' => 'ქართული',
@@ -459,8 +409,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'de' => 
-  [
+  'de' => [
     'code' => 'de',
     'name' => 'German',
     'native' => 'Deutsch',
@@ -468,8 +417,7 @@ $data = [
     'country' => 'de',
     'active' => 0,
   ],
-  'el' => 
-  [
+  'el' => [
     'code' => 'el',
     'name' => 'Greek',
     'native' => 'ελληνικά',
@@ -477,8 +425,7 @@ $data = [
     'country' => 'gr',
     'active' => 0,
   ],
-  'gn' => 
-  [
+  'gn' => [
     'code' => 'gn',
     'name' => 'Guaraní',
     'native' => 'Avañe\'ẽ',
@@ -486,8 +433,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'gu' => 
-  [
+  'gu' => [
     'code' => 'gu',
     'name' => 'Gujarati',
     'native' => 'ગુજરાતી',
@@ -495,8 +441,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ht' => 
-  [
+  'ht' => [
     'code' => 'ht',
     'name' => 'Haitian',
     'native' => 'Kreyòl ayisyen',
@@ -504,8 +449,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ha' => 
-  [
+  'ha' => [
     'code' => 'ha',
     'name' => 'Hausa',
     'native' => 'Hausa, هَوُسَ',
@@ -513,8 +457,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'he' => 
-  [
+  'he' => [
     'code' => 'he',
     'name' => 'Hebrew',
     'native' => 'עברית',
@@ -522,8 +465,7 @@ $data = [
     'country' => 'il',
     'active' => 0,
   ],
-  'hz' => 
-  [
+  'hz' => [
     'code' => 'hz',
     'name' => 'Herero',
     'native' => 'Otjiherero',
@@ -531,8 +473,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'hi' => 
-  [
+  'hi' => [
     'code' => 'hi',
     'name' => 'Hindi',
     'native' => 'हिन्दी, हिंदी',
@@ -540,8 +481,7 @@ $data = [
     'country' => 'in',
     'active' => 0,
   ],
-  'ho' => 
-  [
+  'ho' => [
     'code' => 'ho',
     'name' => 'Hiri Motu',
     'native' => 'Hiri Motu',
@@ -549,8 +489,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'hu' => 
-  [
+  'hu' => [
     'code' => 'hu',
     'name' => 'Hungarian',
     'native' => 'magyar',
@@ -558,8 +497,7 @@ $data = [
     'country' => 'hu',
     'active' => 0,
   ],
-  'ia' => 
-  [
+  'ia' => [
     'code' => 'ia',
     'name' => 'Interlingua',
     'native' => 'Interlingua',
@@ -567,8 +505,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'id' => 
-  [
+  'id' => [
     'code' => 'id',
     'name' => 'Indonesian',
     'native' => 'Bahasa Indonesia',
@@ -576,8 +513,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ie' => 
-  [
+  'ie' => [
     'code' => 'ie',
     'name' => 'Interlingue',
     'native' => 'Occidental',
@@ -585,8 +521,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ga' => 
-  [
+  'ga' => [
     'code' => 'ga',
     'name' => 'Irish',
     'native' => 'Gaeilge',
@@ -594,8 +529,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ig' => 
-  [
+  'ig' => [
     'code' => 'ig',
     'name' => 'Igbo',
     'native' => 'Asụsụ Igbo',
@@ -603,8 +537,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ik' => 
-  [
+  'ik' => [
     'code' => 'ik',
     'name' => 'Inupiaq',
     'native' => 'Iñupiaq, Iñupiatun',
@@ -612,8 +545,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'io' => 
-  [
+  'io' => [
     'code' => 'io',
     'name' => 'Ido',
     'native' => 'Ido',
@@ -621,8 +553,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'is' => 
-  [
+  'is' => [
     'code' => 'is',
     'name' => 'Icelandic',
     'native' => 'Íslenska',
@@ -630,8 +561,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'it' => 
-  [
+  'it' => [
     'code' => 'it',
     'name' => 'Italian',
     'native' => 'italiano',
@@ -639,8 +569,7 @@ $data = [
     'country' => 'it',
     'active' => 0,
   ],
-  'iu' => 
-  [
+  'iu' => [
     'code' => 'iu',
     'name' => 'Inuktitut',
     'native' => 'ᐃᓄᒃᑎᑐᑦ',
@@ -648,8 +577,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ja' => 
-  [
+  'ja' => [
     'code' => 'ja',
     'name' => 'Japanese',
     'native' => '日本語',
@@ -657,8 +585,7 @@ $data = [
     'country' => 'jp',
     'active' => 0,
   ],
-  'jv' => 
-  [
+  'jv' => [
     'code' => 'jv',
     'name' => 'Javanese',
     'native' => 'basa Jawa',
@@ -666,8 +593,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'kl' => 
-  [
+  'kl' => [
     'code' => 'kl',
     'name' => 'Kalaallisut',
     'native' => 'kalaallisut, kalaallit oqaasii',
@@ -675,8 +601,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'kn' => 
-  [
+  'kn' => [
     'code' => 'kn',
     'name' => 'Kannada',
     'native' => 'ಕನ್ನಡ',
@@ -684,8 +609,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'kr' => 
-  [
+  'kr' => [
     'code' => 'kr',
     'name' => 'Kanuri',
     'native' => 'Kanuri',
@@ -693,8 +617,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ks' => 
-  [
+  'ks' => [
     'code' => 'ks',
     'name' => 'Kashmiri',
     'native' => 'कश्मीरी',
@@ -702,8 +625,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'kk' => 
-  [
+  'kk' => [
     'code' => 'kk',
     'name' => 'Kazakh',
     'native' => 'қазақ тілі',
@@ -711,8 +633,7 @@ $data = [
     'country' => 'kz',
     'active' => 0,
   ],
-  'km' => 
-  [
+  'km' => [
     'code' => 'km',
     'name' => 'Khmer',
     'native' => 'ខ្មែរ, ខេមរភាសា, ភាសាខ្មែរ',
@@ -720,8 +641,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ki' => 
-  [
+  'ki' => [
     'code' => 'ki',
     'name' => 'Kikuyu',
     'native' => 'Gĩkũyũ',
@@ -729,8 +649,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'rw' => 
-  [
+  'rw' => [
     'code' => 'rw',
     'name' => 'Kinyarwanda',
     'native' => 'Ikinyarwanda',
@@ -738,8 +657,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ky' => 
-  [
+  'ky' => [
     'code' => 'ky',
     'name' => 'Kyrgyz',
     'native' => 'Кыргызча, Кыргыз тили',
@@ -747,8 +665,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'kv' => 
-  [
+  'kv' => [
     'code' => 'kv',
     'name' => 'Komi',
     'native' => 'коми кыв',
@@ -756,8 +673,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'kg' => 
-  [
+  'kg' => [
     'code' => 'kg',
     'name' => 'Kongo',
     'native' => 'KiKongo',
@@ -765,8 +681,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ko' => 
-  [
+  'ko' => [
     'code' => 'ko',
     'name' => 'Korean',
     'native' => '한국어',
@@ -774,8 +689,7 @@ $data = [
     'country' => 'kp',
     'active' => 0,
   ],
-  'ku' => 
-  [
+  'ku' => [
     'code' => 'ku',
     'name' => 'Kurdish',
     'native' => 'Kurdî',
@@ -783,8 +697,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'kj' => 
-  [
+  'kj' => [
     'code' => 'kj',
     'name' => 'Kwanyama',
     'native' => 'Kuanyama',
@@ -792,8 +705,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'la' => 
-  [
+  'la' => [
     'code' => 'la',
     'name' => 'Latin',
     'native' => 'latine, lingua latina',
@@ -801,8 +713,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'lb' => 
-  [
+  'lb' => [
     'code' => 'lb',
     'name' => 'Luxembourgish',
     'native' => 'Lëtzebuergesch',
@@ -810,8 +721,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'lg' => 
-  [
+  'lg' => [
     'code' => 'lg',
     'name' => 'Ganda',
     'native' => 'Luganda',
@@ -819,8 +729,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'li' => 
-  [
+  'li' => [
     'code' => 'li',
     'name' => 'Limburgish',
     'native' => 'Limburgs',
@@ -828,8 +737,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ln' => 
-  [
+  'ln' => [
     'code' => 'ln',
     'name' => 'Lingala',
     'native' => 'Lingála',
@@ -837,8 +745,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'lo' => 
-  [
+  'lo' => [
     'code' => 'lo',
     'name' => 'Lao',
     'native' => 'ພາສາລາວ',
@@ -846,8 +753,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'lt' => 
-  [
+  'lt' => [
     'code' => 'lt',
     'name' => 'Lithuanian',
     'native' => 'lietuvių kalba',
@@ -855,8 +761,7 @@ $data = [
     'country' => 'lt',
     'active' => 0,
   ],
-  'lu' => 
-  [
+  'lu' => [
     'code' => 'lu',
     'name' => 'Luba-Katanga',
     'native' => 'Tshiluba',
@@ -864,8 +769,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'lv' => 
-  [
+  'lv' => [
     'code' => 'lv',
     'name' => 'Latvian',
     'native' => 'latviešu valoda',
@@ -873,8 +777,7 @@ $data = [
     'country' => 'lv',
     'active' => 0,
   ],
-  'gv' => 
-  [
+  'gv' => [
     'code' => 'gv',
     'name' => 'Manx',
     'native' => 'Gaelg, Gailck',
@@ -882,8 +785,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'mk' => 
-  [
+  'mk' => [
     'code' => 'mk',
     'name' => 'Macedonian',
     'native' => 'македонски јазик',
@@ -891,8 +793,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'mg' => 
-  [
+  'mg' => [
     'code' => 'mg',
     'name' => 'Malagasy',
     'native' => 'fiteny malagasy',
@@ -900,8 +801,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ms' => 
-  [
+  'ms' => [
     'code' => 'ms',
     'name' => 'Malay',
     'native' => 'bahasa Melayu',
@@ -909,8 +809,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ml' => 
-  [
+  'ml' => [
     'code' => 'ml',
     'name' => 'Malayalam',
     'native' => 'മലയാളം',
@@ -918,8 +817,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'mt' => 
-  [
+  'mt' => [
     'code' => 'mt',
     'name' => 'Maltese',
     'native' => 'Malti',
@@ -927,8 +825,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'mi' => 
-  [
+  'mi' => [
     'code' => 'mi',
     'name' => 'Māori',
     'native' => 'te reo Māori',
@@ -936,8 +833,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'mr' => 
-  [
+  'mr' => [
     'code' => 'mr',
     'name' => 'Marathi (Marāṭhī)',
     'native' => 'मराठी',
@@ -945,8 +841,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'mh' => 
-  [
+  'mh' => [
     'code' => 'mh',
     'name' => 'Marshallese',
     'native' => 'Kajin M̧ajeļ',
@@ -954,8 +849,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'mn' => 
-  [
+  'mn' => [
     'code' => 'mn',
     'name' => 'Mongolian',
     'native' => 'монгол',
@@ -963,8 +857,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'na' => 
-  [
+  'na' => [
     'code' => 'na',
     'name' => 'Nauru',
     'native' => 'Ekakairũ Naoero',
@@ -972,8 +865,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'nv' => 
-  [
+  'nv' => [
     'code' => 'nv',
     'name' => 'Navajo',
     'native' => 'Diné bizaad, Dinékʼehǰí',
@@ -981,8 +873,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'nb' => 
-  [
+  'nb' => [
     'code' => 'nb',
     'name' => 'Norwegian Bokmål',
     'native' => 'Norsk bokmål',
@@ -990,8 +881,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'nd' => 
-  [
+  'nd' => [
     'code' => 'nd',
     'name' => 'North Ndebele',
     'native' => 'isiNdebele',
@@ -999,8 +889,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ne' => 
-  [
+  'ne' => [
     'code' => 'ne',
     'name' => 'Nepali',
     'native' => 'नेपाली',
@@ -1008,8 +897,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ng' => 
-  [
+  'ng' => [
     'code' => 'ng',
     'name' => 'Ndonga',
     'native' => 'Owambo',
@@ -1017,8 +905,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'nn' => 
-  [
+  'nn' => [
     'code' => 'nn',
     'name' => 'Norwegian Nynorsk',
     'native' => 'Norsk nynorsk',
@@ -1026,8 +913,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'no' => 
-  [
+  'no' => [
     'code' => 'no',
     'name' => 'Norwegian',
     'native' => 'Norsk',
@@ -1035,8 +921,7 @@ $data = [
     'country' => 'no',
     'active' => 0,
   ],
-  'ii' => 
-  [
+  'ii' => [
     'code' => 'ii',
     'name' => 'Nuosu',
     'native' => 'ꆈꌠ꒿ Nuosuhxop',
@@ -1044,8 +929,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'nr' => 
-  [
+  'nr' => [
     'code' => 'nr',
     'name' => 'South Ndebele',
     'native' => 'isiNdebele',
@@ -1053,8 +937,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'oc' => 
-  [
+  'oc' => [
     'code' => 'oc',
     'name' => 'Occitan',
     'native' => 'occitan, lenga d\'òc',
@@ -1062,8 +945,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'oj' => 
-  [
+  'oj' => [
     'code' => 'oj',
     'name' => 'Ojibwe',
     'native' => 'ᐊᓂᔑᓈᐯᒧᐎᓐ',
@@ -1071,8 +953,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'cu' => 
-  [
+  'cu' => [
     'code' => 'cu',
     'name' => 'Old Church Slavonic',
     'native' => 'ѩзыкъ словѣньскъ',
@@ -1080,8 +961,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'om' => 
-  [
+  'om' => [
     'code' => 'om',
     'name' => 'Oromo',
     'native' => 'Afaan Oromoo',
@@ -1089,8 +969,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'or' => 
-  [
+  'or' => [
     'code' => 'or',
     'name' => 'Oriya',
     'native' => 'ଓଡ଼ିଆ',
@@ -1098,8 +977,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'os' => 
-  [
+  'os' => [
     'code' => 'os',
     'name' => 'Ossetian',
     'native' => 'ирон æвзаг',
@@ -1107,8 +985,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'pa' => 
-  [
+  'pa' => [
     'code' => 'pa',
     'name' => 'Panjabi',
     'native' => 'ਪੰਜਾਬੀ',
@@ -1116,8 +993,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'pi' => 
-  [
+  'pi' => [
     'code' => 'pi',
     'name' => 'Pāli',
     'native' => 'पाऴि',
@@ -1125,8 +1001,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'fa' => 
-  [
+  'fa' => [
     'code' => 'fa',
     'name' => 'Persian',
     'native' => 'فارسی',
@@ -1134,8 +1009,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'pl' => 
-  [
+  'pl' => [
     'code' => 'pl',
     'name' => 'Polish',
     'native' => 'język polski, polszczyzna',
@@ -1143,8 +1017,7 @@ $data = [
     'country' => 'pl',
     'active' => 0,
   ],
-  'ps' => 
-  [
+  'ps' => [
     'code' => 'ps',
     'name' => 'Pashto',
     'native' => 'پښتو',
@@ -1152,8 +1025,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'pt' => 
-  [
+  'pt' => [
     'code' => 'pt',
     'name' => 'Portuguese',
     'native' => 'português',
@@ -1161,8 +1033,7 @@ $data = [
     'country' => 'pt',
     'active' => 0,
   ],
-  'qu' => 
-  [
+  'qu' => [
     'code' => 'qu',
     'name' => 'Quechua',
     'native' => 'Runa Simi, Kichwa',
@@ -1170,8 +1041,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'rm' => 
-  [
+  'rm' => [
     'code' => 'rm',
     'name' => 'Romansh',
     'native' => 'rumantsch grischun',
@@ -1179,8 +1049,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'rn' => 
-  [
+  'rn' => [
     'code' => 'rn',
     'name' => 'Kirundi',
     'native' => 'Ikirundi',
@@ -1188,8 +1057,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ro' => 
-  [
+  'ro' => [
     'code' => 'ro',
     'name' => 'Romanian',
     'native' => 'limba română',
@@ -1197,8 +1065,7 @@ $data = [
     'country' => 'ro',
     'active' => 0,
   ],
-  'ru' => 
-  [
+  'ru' => [
     'code' => 'ru',
     'name' => 'Russian',
     'native' => 'русский язык',
@@ -1206,8 +1073,7 @@ $data = [
     'country' => 'ru',
     'active' => 1,
   ],
-  'sa' => 
-  [
+  'sa' => [
     'code' => 'sa',
     'name' => 'Sanskrit (Saṁskṛta)',
     'native' => 'संस्कृतम्',
@@ -1215,8 +1081,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sc' => 
-  [
+  'sc' => [
     'code' => 'sc',
     'name' => 'Sardinian',
     'native' => 'sardu',
@@ -1224,8 +1089,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sd' => 
-  [
+  'sd' => [
     'code' => 'sd',
     'name' => 'Sindhi',
     'native' => 'सिन्धी',
@@ -1233,8 +1097,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'se' => 
-  [
+  'se' => [
     'code' => 'se',
     'name' => 'Northern Sami',
     'native' => 'Davvisámegiella',
@@ -1242,8 +1105,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sm' => 
-  [
+  'sm' => [
     'code' => 'sm',
     'name' => 'Samoan',
     'native' => 'gagana fa\'a Samoa',
@@ -1251,8 +1113,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sg' => 
-  [
+  'sg' => [
     'code' => 'sg',
     'name' => 'Sango',
     'native' => 'yângâ tî sängö',
@@ -1260,8 +1121,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sr' => 
-  [
+  'sr' => [
     'code' => 'sr',
     'name' => 'Serbian',
     'native' => 'српски језик',
@@ -1269,8 +1129,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'gd' => 
-  [
+  'gd' => [
     'code' => 'gd',
     'name' => 'Scottish Gaelic',
     'native' => 'Gàidhlig',
@@ -1278,8 +1137,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sn' => 
-  [
+  'sn' => [
     'code' => 'sn',
     'name' => 'Shona',
     'native' => 'chiShona',
@@ -1287,8 +1145,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'si' => 
-  [
+  'si' => [
     'code' => 'si',
     'name' => 'Sinhala',
     'native' => 'සිංහල',
@@ -1296,8 +1153,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sk' => 
-  [
+  'sk' => [
     'code' => 'sk',
     'name' => 'Slovak',
     'native' => 'slovenčina, slovenský jazyk',
@@ -1305,8 +1161,7 @@ $data = [
     'country' => 'sk',
     'active' => 0,
   ],
-  'sl' => 
-  [
+  'sl' => [
     'code' => 'sl',
     'name' => 'Slovene',
     'native' => 'slovenski jezik, slovenščina',
@@ -1314,8 +1169,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'so' => 
-  [
+  'so' => [
     'code' => 'so',
     'name' => 'Somali',
     'native' => 'Soomaaliga, af Soomaali',
@@ -1323,8 +1177,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'st' => 
-  [
+  'st' => [
     'code' => 'st',
     'name' => 'Southern Sotho',
     'native' => 'Sesotho',
@@ -1332,8 +1185,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'es' => 
-  [
+  'es' => [
     'code' => 'es',
     'name' => 'Spanish',
     'native' => 'español, castellano',
@@ -1341,8 +1193,7 @@ $data = [
     'country' => 'es',
     'active' => 0,
   ],
-  'su' => 
-  [
+  'su' => [
     'code' => 'su',
     'name' => 'Sundanese',
     'native' => 'Basa Sunda',
@@ -1350,8 +1201,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sw' => 
-  [
+  'sw' => [
     'code' => 'sw',
     'name' => 'Swahili',
     'native' => 'Kiswahili',
@@ -1359,8 +1209,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ss' => 
-  [
+  'ss' => [
     'code' => 'ss',
     'name' => 'Swati',
     'native' => 'SiSwati',
@@ -1368,8 +1217,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'sv' => 
-  [
+  'sv' => [
     'code' => 'sv',
     'name' => 'Swedish',
     'native' => 'Svenska',
@@ -1377,8 +1225,7 @@ $data = [
     'country' => 'se',
     'active' => 0,
   ],
-  'ta' => 
-  [
+  'ta' => [
     'code' => 'ta',
     'name' => 'Tamil',
     'native' => 'தமிழ்',
@@ -1386,8 +1233,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'te' => 
-  [
+  'te' => [
     'code' => 'te',
     'name' => 'Telugu',
     'native' => 'తెలుగు',
@@ -1395,8 +1241,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'tg' => 
-  [
+  'tg' => [
     'code' => 'tg',
     'name' => 'Tajik',
     'native' => 'тоҷикӣ',
@@ -1404,8 +1249,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'th' => 
-  [
+  'th' => [
     'code' => 'th',
     'name' => 'Thai',
     'native' => 'ไทย',
@@ -1413,8 +1257,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ti' => 
-  [
+  'ti' => [
     'code' => 'ti',
     'name' => 'Tigrinya',
     'native' => 'ትግርኛ',
@@ -1422,8 +1265,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'bo' => 
-  [
+  'bo' => [
     'code' => 'bo',
     'name' => 'Tibetan Standard',
     'native' => 'བོད་ཡིག',
@@ -1431,8 +1273,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'tk' => 
-  [
+  'tk' => [
     'code' => 'tk',
     'name' => 'Turkmen',
     'native' => 'Türkmen, Түркмен',
@@ -1440,8 +1281,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'tl' => 
-  [
+  'tl' => [
     'code' => 'tl',
     'name' => 'Tagalog',
     'native' => 'Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔',
@@ -1449,8 +1289,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'tn' => 
-  [
+  'tn' => [
     'code' => 'tn',
     'name' => 'Tswana',
     'native' => 'Setswana',
@@ -1458,8 +1297,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'to' => 
-  [
+  'to' => [
     'code' => 'to',
     'name' => 'Tonga',
     'native' => 'faka Tonga',
@@ -1467,8 +1305,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'tr' => 
-  [
+  'tr' => [
     'code' => 'tr',
     'name' => 'Turkish',
     'native' => 'Türkçe',
@@ -1476,8 +1313,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ts' => 
-  [
+  'ts' => [
     'code' => 'ts',
     'name' => 'Tsonga',
     'native' => 'Xitsonga',
@@ -1485,8 +1321,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'tt' => 
-  [
+  'tt' => [
     'code' => 'tt',
     'name' => 'Tatar',
     'native' => 'татар теле',
@@ -1494,8 +1329,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'tw' => 
-  [
+  'tw' => [
     'code' => 'tw',
     'name' => 'Twi',
     'native' => 'Twi',
@@ -1503,8 +1337,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ty' => 
-  [
+  'ty' => [
     'code' => 'ty',
     'name' => 'Tahitian',
     'native' => 'Reo Tahiti',
@@ -1512,8 +1345,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'ug' => 
-  [
+  'ug' => [
     'code' => 'ug',
     'name' => 'Uyghur',
     'native' => 'Uyƣurqə',
@@ -1521,8 +1353,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'uk' => 
-  [
+  'uk' => [
     'code' => 'uk',
     'name' => 'Ukrainian',
     'native' => 'українська мова',
@@ -1530,8 +1361,7 @@ $data = [
     'country' => 'ua',
     'active' => 1,
   ],
-  'ur' => 
-  [
+  'ur' => [
     'code' => 'ur',
     'name' => 'Urdu',
     'native' => 'اردو',
@@ -1539,8 +1369,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'uz' => 
-  [
+  'uz' => [
     'code' => 'uz',
     'name' => 'Uzbek',
     'native' => 'O‘zbek',
@@ -1548,8 +1377,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  've' => 
-  [
+  've' => [
     'code' => 've',
     'name' => 'Venda',
     'native' => 'Tshivenḓa',
@@ -1557,8 +1385,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'vi' => 
-  [
+  'vi' => [
     'code' => 'vi',
     'name' => 'Vietnamese',
     'native' => 'Tiếng Việt',
@@ -1566,8 +1393,7 @@ $data = [
     'country' => 'vn',
     'active' => 0,
   ],
-  'vo' => 
-  [
+  'vo' => [
     'code' => 'vo',
     'name' => 'Volapük',
     'native' => 'Volapük',
@@ -1575,8 +1401,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'wa' => 
-  [
+  'wa' => [
     'code' => 'wa',
     'name' => 'Walloon',
     'native' => 'walon',
@@ -1584,8 +1409,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'cy' => 
-  [
+  'cy' => [
     'code' => 'cy',
     'name' => 'Welsh',
     'native' => 'Cymraeg',
@@ -1593,8 +1417,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'wo' => 
-  [
+  'wo' => [
     'code' => 'wo',
     'name' => 'Wolof',
     'native' => 'Wollof',
@@ -1602,8 +1425,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'fy' => 
-  [
+  'fy' => [
     'code' => 'fy',
     'name' => 'Western Frisian',
     'native' => 'Frysk',
@@ -1611,8 +1433,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'xh' => 
-  [
+  'xh' => [
     'code' => 'xh',
     'name' => 'Xhosa',
     'native' => 'isiXhosa',
@@ -1620,8 +1441,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'yi' => 
-  [
+  'yi' => [
     'code' => 'yi',
     'name' => 'Yiddish',
     'native' => 'ייִדיש',
@@ -1629,8 +1449,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'yo' => 
-  [
+  'yo' => [
     'code' => 'yo',
     'name' => 'Yoruba',
     'native' => 'Yorùbá',
@@ -1638,8 +1457,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'za' => 
-  [
+  'za' => [
     'code' => 'za',
     'name' => 'Zhuang',
     'native' => 'Saɯ cueŋƅ, Saw cuengh',
@@ -1647,8 +1465,7 @@ $data = [
     'country' => '',
     'active' => 0,
   ],
-  'zu' => 
-  [
+  'zu' => [
     'code' => 'zu',
     'name' => 'Zulu',
     'native' => 'isiZulu',

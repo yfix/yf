@@ -1,8 +1,8 @@
 <?php
 
 $data = [];
-$Q = db()->query('SELECT role FROM '.db('core_servers').' WHERE role != "" GROUP BY role');
+$Q = db()->query('SELECT role FROM ' . db('core_servers') . ' WHERE role != "" GROUP BY role');
 while ($A = db()->fetch_assoc($Q)) {
-	$data[$A['role']] = $A['role'];
+    $data[$A['role']] = $A['role'];
 }
 return $data;

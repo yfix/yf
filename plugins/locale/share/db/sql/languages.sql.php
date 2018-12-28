@@ -1,4 +1,5 @@
 <?php
+
 return '
   `code` char(2) NOT NULL DEFAULT \'\',
   `code3` char(3) NOT NULL DEFAULT \'\',

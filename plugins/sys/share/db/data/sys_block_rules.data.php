@@ -1,7 +1,7 @@
 <?php
+
 return [
-  99999 => 
-  [
+  99999 => [
     'block_id' => 1,
     'rule_type' => 'ALLOW',
     'user_groups' => '',
@@ -9,8 +9,7 @@ return [
     'active' => 1,
     'order' => 1,
   ],
-  100000 => 
-  [
+  100000 => [
     'block_id' => 4,
     'rule_type' => 'ALLOW',
     'user_groups' => '1',
@@ -18,8 +17,7 @@ return [
     'active' => 1,
     'order' => 1,
   ],
-  100001 => 
-  [
+  100001 => [
     'block_id' => 2,
     'rule_type' => 'ALLOW',
     'user_groups' => '',
@@ -27,8 +25,7 @@ return [
     'active' => 1,
     'order' => 0,
   ],
-  100002 => 
-  [
+  100002 => [
     'block_id' => 3,
     'rule_type' => 'ALLOW',
     'user_groups' => '',
@@ -36,8 +33,7 @@ return [
     'active' => 1,
     'order' => 1,
   ],
-  100003 => 
-  [
+  100003 => [
     'block_id' => 3,
     'rule_type' => 'DENY',
     'user_groups' => '',

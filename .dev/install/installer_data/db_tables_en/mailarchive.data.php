@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'sender' => '1',
     'receiver' => '5',
@@ -14,8 +14,7 @@ return [
     'sender_ip' => '192.168.1.8',
     'activity' => '0',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'sender' => '1',
     'receiver' => '5',
@@ -28,8 +27,7 @@ return [
     'sender_ip' => '192.168.1.8',
     'activity' => '0',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'sender' => '6',
     'receiver' => '1',

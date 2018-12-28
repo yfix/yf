@@ -1,10 +1,10 @@
 <?php
 
-class yf_faq {
+class yf_faq
+{
+    const table = 'faq';
 
-	const table = 'faq';
-
-	private $_tpl = '
+    private $_tpl = '
 		<div class="container-block">
 			<form class="form-inline" id="faq-search" style="width:50%;">
 				<div class="form-group">
@@ -22,17 +22,20 @@ class yf_faq {
 		</div>
 	';
 
-	/**
-	* Catch missing method call
-	*/
-	function __call($name, $args) {
-		return main()->extend_call($this, $name, $args);
-	}
+    /**
+     * Catch missing method call.
+     * @param mixed $name
+     * @param mixed $args
+     */
+    public function __call($name, $args)
+    {
+        return main()->extend_call($this, $name, $args);
+    }
 
-	/**
-	*/
-	public function show() {
-		css('
+
+    public function show()
+    {
+        css('
 			#faq-search { padding-top: 20px; }
 			#faq-items { padding-top: 20px; padding-bottom: 20px; }
 			#faq-items li.li-header { list-style: none; display:none; }
@@ -40,8 +43,8 @@ class yf_faq {
 			#faq-items li.li-level-1 { padding-top: 10px; font-size: 13px; }
 			span.highlight { background-color: #ff0; }
 		');
-		asset('jquery-highlight');
-		jquery('
+        asset('jquery-highlight');
+        jquery('
 			var url_hash = window.location.hash.replace("/", "");
 			if (url_hash) {
 				$("li.li-level-0" + url_hash + " .li-level-1", "#faq-items").show();
@@ -56,34 +59,36 @@ class yf_faq {
 				$(".li-level-1").hide().filter(":has(\'span.highlight\')").show();
 			})
 		');
-		$items = [];
-		foreach ((array)db()->from(self::table)->where('active', 1)->where('locale', conf('language'))->get_all() as $a) {
-			$items[$a['id']] = [
-				'parent_id'	=> $a['parent_id'],
-				'name'		=> _truncate(trim($a['title']), 60, true, '...'),
-				'link'		=> url('/@object/#/faq'.$a['id']),
-				'id'		=> 'faq'.$a['id'],
-			];
-			if ($a['text']) {
-				$items['1111'.$a['id']] = [
-					'parent_id'	=> $a['id'],
-					'body'		=> trim($a['text']),
-				];
-			}
-		}
-		return tpl()->parse_string($this->_tpl, [
-			'items'	=> html()->li_tree($items),
-		]);
-	}
+        $items = [];
+        foreach ((array) db()->from(self::table)->where('active', 1)->where('locale', conf('language'))->get_all() as $a) {
+            $items[$a['id']] = [
+                'parent_id' => $a['parent_id'],
+                'name' => _truncate(trim($a['title']), 60, true, '...'),
+                'link' => url('/@object/#/faq' . $a['id']),
+                'id' => 'faq' . $a['id'],
+            ];
+            if ($a['text']) {
+                $items['1111' . $a['id']] = [
+                    'parent_id' => $a['id'],
+                    'body' => trim($a['text']),
+                ];
+            }
+        }
+        return tpl()->parse_string($this->_tpl, [
+            'items' => html()->li_tree($items),
+        ]);
+    }
 
-	/**
-	* Hook for the site_map
-	*/
-	function _hook_sitemap($sitemap = false) {
-		if (!is_object($sitemap)) {
-			return false;
-		}
-		$sitemap->_add('/faq?lang='.conf('language'));
-		return true;
-	}
+    /**
+     * Hook for the site_map.
+     * @param mixed $sitemap
+     */
+    public function _hook_sitemap($sitemap = false)
+    {
+        if ( ! is_object($sitemap)) {
+            return false;
+        }
+        $sitemap->_add('/faq?lang=' . conf('language'));
+        return true;
+    }
 }

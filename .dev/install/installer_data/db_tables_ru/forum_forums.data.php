@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'parent' => '0',
     'category' => '1',
@@ -20,8 +20,7 @@ return [
     'options' => '',
     'user_groups' => '',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'parent' => '0',
     'category' => '1',

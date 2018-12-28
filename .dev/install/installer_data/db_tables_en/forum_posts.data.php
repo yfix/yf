@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'parent' => '0',
     'forum' => '1',
@@ -53,8 +53,7 @@ Empty set (0.00sec)[/B]',
     'language' => '0',
     'activity' => '0',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'parent' => '0',
     'forum' => '1',
@@ -82,8 +81,7 @@ file?[/I]',
     'language' => '0',
     'activity' => '0',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'parent' => '0',
     'forum' => '1',
@@ -118,8 +116,7 @@ it! (and uninstall the previous version.)[/B]',
     'language' => '0',
     'activity' => '0',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'parent' => '0',
     'forum' => '1',
@@ -145,8 +142,7 @@ What will it be when I will have to manage and/or develop ... OpenGL ... Apache 
     'language' => '0',
     'activity' => '0',
   ],
-  5 => 
-  [
+  5 => [
     'id' => '5',
     'parent' => '0',
     'forum' => '1',
@@ -172,8 +168,7 @@ If you don\'t learn something today; Then the day is wasted.[/U]',
     'language' => '0',
     'activity' => '0',
   ],
-  6 => 
-  [
+  6 => [
     'id' => '6',
     'parent' => '0',
     'forum' => '1',
@@ -204,8 +199,7 @@ _________________[/B][/I]',
     'language' => '0',
     'activity' => '0',
   ],
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'parent' => '0',
     'forum' => '1',
@@ -238,8 +232,7 @@ One last thing. When I reboot I have to redo the config.',
     'language' => '0',
     'activity' => '0',
   ],
-  8 => 
-  [
+  8 => [
     'id' => '8',
     'parent' => '0',
     'forum' => '1',
@@ -265,8 +258,7 @@ Adam Williamson | Editor, Mandriva Community Newsletter | Mandriva Club Monkey |
     'language' => '0',
     'activity' => '0',
   ],
-  9 => 
-  [
+  9 => [
     'id' => '9',
     'parent' => '0',
     'forum' => '1',
@@ -288,8 +280,7 @@ Adam Williamson | Editor, Mandriva Community Newsletter | Mandriva Club Monkey |
     'language' => '0',
     'activity' => '0',
   ],
-  10 => 
-  [
+  10 => [
     'id' => '10',
     'parent' => '0',
     'forum' => '1',
@@ -311,8 +302,7 @@ Adam Williamson | Editor, Mandriva Community Newsletter | Mandriva Club Monkey |
     'language' => '0',
     'activity' => '0',
   ],
-  11 => 
-  [
+  11 => [
     'id' => '11',
     'parent' => '0',
     'forum' => '1',
@@ -334,8 +324,7 @@ Adam Williamson | Editor, Mandriva Community Newsletter | Mandriva Club Monkey |
     'language' => '0',
     'activity' => '0',
   ],
-  12 => 
-  [
+  12 => [
     'id' => '12',
     'parent' => '0',
     'forum' => '1',
@@ -361,8 +350,7 @@ REGSVR32 SHMEDIA.DLL',
     'language' => '0',
     'activity' => '0',
   ],
-  13 => 
-  [
+  13 => [
     'id' => '13',
     'parent' => '0',
     'forum' => '2',
@@ -388,8 +376,7 @@ I\'ve never had any problems using the standalone version (8.1 or 8.2) and this 
     'language' => '0',
     'activity' => '0',
   ],
-  14 => 
-  [
+  14 => [
     'id' => '14',
     'parent' => '0',
     'forum' => '2',
@@ -416,8 +403,7 @@ Regards',
     'language' => '0',
     'activity' => '0',
   ],
-  15 => 
-  [
+  15 => [
     'id' => '15',
     'parent' => '0',
     'forum' => '2',
@@ -439,8 +425,7 @@ Regards',
     'language' => '0',
     'activity' => '0',
   ],
-  16 => 
-  [
+  16 => [
     'id' => '16',
     'parent' => '0',
     'forum' => '2',
@@ -465,8 +450,7 @@ Regards',
     'language' => '0',
     'activity' => '0',
   ],
-  17 => 
-  [
+  17 => [
     'id' => '17',
     'parent' => '0',
     'forum' => '2',
@@ -492,8 +476,7 @@ Thanks!',
     'language' => '0',
     'activity' => '0',
   ],
-  18 => 
-  [
+  18 => [
     'id' => '18',
     'parent' => '0',
     'forum' => '2',
@@ -528,8 +511,7 @@ Example from a (simplified) DITA rule:
     'language' => '0',
     'activity' => '0',
   ],
-  19 => 
-  [
+  19 => [
     'id' => '19',
     'parent' => '0',
     'forum' => '2',
@@ -556,8 +538,7 @@ Thank you',
     'language' => '0',
     'activity' => '0',
   ],
-  20 => 
-  [
+  20 => [
     'id' => '20',
     'parent' => '0',
     'forum' => '2',
@@ -595,8 +576,7 @@ So far I have found these to be useful:
     'language' => '0',
     'activity' => '0',
   ],
-  21 => 
-  [
+  21 => [
     'id' => '21',
     'parent' => '0',
     'forum' => '2',

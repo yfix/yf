@@ -1,4 +1,5 @@
 <?php
 
-class yf_charts_plugin_chartjs {
+class yf_charts_plugin_chartjs
+{
 }

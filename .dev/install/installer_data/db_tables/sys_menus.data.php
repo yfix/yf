@@ -1,7 +1,7 @@
 <?php
+
 return [
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'name' => 'user_main_menu',
     'desc' => '',
@@ -11,8 +11,7 @@ return [
     'method_name' => '',
     'custom_fields' => '',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'name' => 'user_side_menu',
     'desc' => '',
@@ -22,8 +21,7 @@ return [
     'method_name' => '',
     'custom_fields' => '',
   ],
-  5 => 
-  [
+  5 => [
     'id' => '5',
     'name' => 'admin_home_menu',
     'desc' => '',

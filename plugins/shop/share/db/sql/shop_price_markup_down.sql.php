@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `active` tinyint(4) NOT NULL DEFAULT \'0\',

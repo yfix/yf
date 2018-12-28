@@ -1,7 +1,7 @@
 <?php
+
 return [
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'sender' => '6',
     'receiver' => '1',

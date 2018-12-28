@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `theme_name` varchar(32) NOT NULL DEFAULT \'\',

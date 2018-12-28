@@ -1,50 +1,57 @@
 <?php
 
-require_once __DIR__.'/tpl__setup.php';
+require_once __DIR__ . '/tpl__setup.php';
 
-class tpl_driver_smarty_test extends tpl_abstract {
-	public static $driver_bak = [];
-#	protected function setUp() {
-#		if (defined('HHVM_VERSION')) {
-#			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
-#			return ;
-#	   	}
-#	}
-	public static function setUpBeforeClass() {
-		self::$driver_bak = tpl()->DRIVER_NAME;
-		_class('dir')->mkdir(STORAGE_PATH.'templates_c/');
-		tpl()->_set_default_driver('smarty');
-		parent::setUpBeforeClass();
-	}
-	public static function tearDownAfterClass() {
-		tpl()->_set_default_driver(self::$driver_bak);
-		_class('dir')->delete_dir(STORAGE_PATH.'templates_c/', $delete_start_dir = true);
-		parent::tearDownAfterClass();
-	}
-	public function test_ensure_driver() {
-		$this->assertEquals('smarty', tpl()->DRIVER_NAME);
-	}
-	public function test_simple() {
-		$this->assertEquals('Hello world', self::_tpl( 'Hello world' ));
-	}
-	public function test_condition() {
-		$this->assertEquals('GOOD', self::_tpl( '{if $key1 eq "val1"}GOOD{/if}', ['key1' => 'val1'] ));
-	}
-	public function test_complex() {
-		$data = [
-			'a_variable' => 'var_value',
-			'navigation' => [
-				[
-					'href'		=> 'http://yfix.net/',
-					'caption'	=> 'Yf website',
-				],
-				[
-					'href'		=> 'http://google.com/',
-					'caption'	=> 'Google',
-				],
-			],
-		];
-		$tpl_string = 
+class tpl_driver_smarty_test extends tpl_abstract
+{
+    public static $driver_bak = [];
+    //	protected function setUp() {
+    //		if (defined('HHVM_VERSION')) {
+    //			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
+    //			return ;
+    //	   	}
+    //	}
+    public static function setUpBeforeClass()
+    {
+        self::$driver_bak = tpl()->DRIVER_NAME;
+        _class('dir')->mkdir(STORAGE_PATH . 'templates_c/');
+        tpl()->_set_default_driver('smarty');
+        parent::setUpBeforeClass();
+    }
+    public static function tearDownAfterClass()
+    {
+        tpl()->_set_default_driver(self::$driver_bak);
+        _class('dir')->delete_dir(STORAGE_PATH . 'templates_c/', $delete_start_dir = true);
+        parent::tearDownAfterClass();
+    }
+    public function test_ensure_driver()
+    {
+        $this->assertEquals('smarty', tpl()->DRIVER_NAME);
+    }
+    public function test_simple()
+    {
+        $this->assertEquals('Hello world', self::_tpl('Hello world'));
+    }
+    public function test_condition()
+    {
+        $this->assertEquals('GOOD', self::_tpl('{if $key1 eq "val1"}GOOD{/if}', ['key1' => 'val1']));
+    }
+    public function test_complex()
+    {
+        $data = [
+            'a_variable' => 'var_value',
+            'navigation' => [
+                [
+                    'href' => 'http://yfix.net/',
+                    'caption' => 'Yf website',
+                ],
+                [
+                    'href' => 'http://google.com/',
+                    'caption' => 'Google',
+                ],
+            ],
+        ];
+        $tpl_string =
 '<!DOCTYPE html>
 <html>
 	<head><title>My Webpage</title></head>
@@ -59,7 +66,7 @@ class tpl_driver_smarty_test extends tpl_abstract {
 	</body>
 </html>';
 
-		$expected = 
+        $expected =
 '<!DOCTYPE html>
 <html>
 	<head><title>My Webpage</title></head>
@@ -72,6 +79,6 @@ class tpl_driver_smarty_test extends tpl_abstract {
 		var_value
 	</body>
 </html>';
-		$this->assertEquals(trim($expected), self::_tpl($tpl_string, $data));
-	}
+        $this->assertEquals(trim($expected), self::_tpl($tpl_string, $data));
+    }
 }

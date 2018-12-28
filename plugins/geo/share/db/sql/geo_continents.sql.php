@@ -1,4 +1,5 @@
 <?php
+
 return '
   `code` char(2) NOT NULL DEFAULT \'\',
   `name` varchar(20) DEFAULT NULL,

@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `add_date` int(11) NOT NULL,

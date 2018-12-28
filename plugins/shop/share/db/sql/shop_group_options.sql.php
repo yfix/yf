@@ -1,4 +1,5 @@
 <?php
+
 return '
   `product_id` int(10) unsigned NOT NULL,
   `group_id` int(10) unsigned NOT NULL,

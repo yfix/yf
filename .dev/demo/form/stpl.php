@@ -1,7 +1,7 @@
 <?php
 
-return function() {
-	$stpl = '
+return function () {
+    $stpl = '
 		{form.begin}
 
 		<div class="pull-left col-md-3">
@@ -20,13 +20,12 @@ return function() {
 
 		{form.end}
 	';
-	return form((array)$_POST + (array)$a, [
-			'stpl' => $stpl,
-		])
-		->currency_box(['selected' => 'RUB'])
-		->language_box(['selected' => 'uk'])
-		->timezone_box(['selected' => 'UTC'])
-		->country_box(['selected' => 'US'])
-		->save()
-	;
+    return form((array) $_POST + (array) $a, [
+            'stpl' => $stpl,
+        ])
+        ->currency_box(['selected' => 'RUB'])
+        ->language_box(['selected' => 'uk'])
+        ->timezone_box(['selected' => 'UTC'])
+        ->country_box(['selected' => 'US'])
+        ->save();
 };

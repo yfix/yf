@@ -1,7 +1,7 @@
 <?php
+
 return [
-  6 => 
-  [
+  6 => [
     'id' => '6',
     'id2' => '1',
     'user_name' => 'serega',
@@ -32,8 +32,7 @@ return [
     'old_id' => '0',
     'mask' => '0',
   ],
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'id2' => '1',
     'user_name' => 'serega',
@@ -59,8 +58,7 @@ return [
     'old_id' => '0',
     'mask' => '0',
   ],
-  8 => 
-  [
+  8 => [
     'id' => '8',
     'id2' => '1',
     'user_name' => 'serega',
@@ -89,8 +87,7 @@ return [
     'old_id' => '0',
     'mask' => '0',
   ],
-  9 => 
-  [
+  9 => [
     'id' => '9',
     'id2' => '1',
     'user_name' => 'kingargyle',

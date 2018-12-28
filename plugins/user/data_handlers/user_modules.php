@@ -1,11 +1,11 @@
 <?php
 
 $data = [];
-$Q = db()->query('SELECT name FROM '.db('user_modules').' WHERE active="1"');
+$Q = db()->query('SELECT name FROM ' . db('user_modules') . ' WHERE active="1"');
 while ($A = db()->fetch_assoc($Q)) {
-	$data[$A['name']] = $A['name'];
+    $data[$A['name']] = $A['name'];
 }
 if (is_array($data)) {
-	ksort($data);
+    ksort($data);
 }
 return $data;

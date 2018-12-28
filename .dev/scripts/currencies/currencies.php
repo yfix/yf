@@ -1,7 +1,7 @@
 <?php
+
 $data = [
-  'AFN' => 
-  [
+  'AFN' => [
     'id' => 'AFN',
     'name' => 'Afghani',
     'number' => 971,
@@ -11,8 +11,7 @@ $data = [
     'sign' => '؋',
     'active' => '0',
   ],
-  'EUR' => 
-  [
+  'EUR' => [
     'id' => 'EUR',
     'name' => 'Euro',
     'number' => 978,
@@ -22,8 +21,7 @@ $data = [
     'sign' => '€',
     'active' => 1,
   ],
-  'ALL' => 
-  [
+  'ALL' => [
     'id' => 'ALL',
     'name' => 'Lek',
     'number' => 8,
@@ -33,8 +31,7 @@ $data = [
     'sign' => 'L',
     'active' => '0',
   ],
-  'DZD' => 
-  [
+  'DZD' => [
     'id' => 'DZD',
     'name' => 'Algerian Dinar',
     'number' => 12,
@@ -44,8 +41,7 @@ $data = [
     'sign' => 'د.ج',
     'active' => '0',
   ],
-  'USD' => 
-  [
+  'USD' => [
     'id' => 'USD',
     'name' => 'US Dollar',
     'number' => 840,
@@ -55,8 +51,7 @@ $data = [
     'sign' => '$',
     'active' => 1,
   ],
-  'AOA' => 
-  [
+  'AOA' => [
     'id' => 'AOA',
     'name' => 'Kwanza',
     'number' => 973,
@@ -66,8 +61,7 @@ $data = [
     'sign' => 'Kz',
     'active' => '0',
   ],
-  'XCD' => 
-  [
+  'XCD' => [
     'id' => 'XCD',
     'name' => 'East Caribbean Dollar',
     'number' => 951,
@@ -77,8 +71,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'ARS' => 
-  [
+  'ARS' => [
     'id' => 'ARS',
     'name' => 'Argentine Peso',
     'number' => 32,
@@ -88,8 +81,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'AMD' => 
-  [
+  'AMD' => [
     'id' => 'AMD',
     'name' => 'Armenian Dram',
     'number' => 51,
@@ -99,8 +91,7 @@ $data = [
     'sign' => 'դր.',
     'active' => '0',
   ],
-  'AWG' => 
-  [
+  'AWG' => [
     'id' => 'AWG',
     'name' => 'Aruban Florin',
     'number' => 533,
@@ -110,8 +101,7 @@ $data = [
     'sign' => 'ƒ',
     'active' => '0',
   ],
-  'AUD' => 
-  [
+  'AUD' => [
     'id' => 'AUD',
     'name' => 'Australian Dollar',
     'number' => 36,
@@ -121,8 +111,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'AZN' => 
-  [
+  'AZN' => [
     'id' => 'AZN',
     'name' => 'Azerbaijanian Manat',
     'number' => 944,
@@ -132,8 +121,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'BSD' => 
-  [
+  'BSD' => [
     'id' => 'BSD',
     'name' => 'Bahamian Dollar',
     'number' => 44,
@@ -143,8 +131,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'BHD' => 
-  [
+  'BHD' => [
     'id' => 'BHD',
     'name' => 'Bahraini Dinar',
     'number' => 48,
@@ -154,8 +141,7 @@ $data = [
     'sign' => '.د.ب',
     'active' => '0',
   ],
-  'BDT' => 
-  [
+  'BDT' => [
     'id' => 'BDT',
     'name' => 'Taka',
     'number' => 50,
@@ -165,8 +151,7 @@ $data = [
     'sign' => '৳',
     'active' => '0',
   ],
-  'BBD' => 
-  [
+  'BBD' => [
     'id' => 'BBD',
     'name' => 'Barbados Dollar',
     'number' => 52,
@@ -176,8 +161,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'BYR' => 
-  [
+  'BYR' => [
     'id' => 'BYR',
     'name' => 'Belarussian Ruble',
     'number' => 974,
@@ -187,8 +171,7 @@ $data = [
     'sign' => 'Br',
     'active' => '0',
   ],
-  'BZD' => 
-  [
+  'BZD' => [
     'id' => 'BZD',
     'name' => 'Belize Dollar',
     'number' => 84,
@@ -198,8 +181,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'XOF' => 
-  [
+  'XOF' => [
     'id' => 'XOF',
     'name' => 'CFA Franc BCEAO',
     'number' => 952,
@@ -209,8 +191,7 @@ $data = [
     'sign' => 'Fr',
     'active' => '0',
   ],
-  'BMD' => 
-  [
+  'BMD' => [
     'id' => 'BMD',
     'name' => 'Bermudian Dollar',
     'number' => 60,
@@ -220,8 +201,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'BTN' => 
-  [
+  'BTN' => [
     'id' => 'BTN',
     'name' => 'Ngultrum',
     'number' => 64,
@@ -231,8 +211,7 @@ $data = [
     'sign' => 'Nu.',
     'active' => '0',
   ],
-  'INR' => 
-  [
+  'INR' => [
     'id' => 'INR',
     'name' => 'Indian Rupee',
     'number' => 356,
@@ -242,8 +221,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'BOB' => 
-  [
+  'BOB' => [
     'id' => 'BOB',
     'name' => 'Boliviano',
     'number' => 68,
@@ -253,8 +231,7 @@ $data = [
     'sign' => 'Bs.',
     'active' => '0',
   ],
-  'BOV' => 
-  [
+  'BOV' => [
     'id' => 'BOV',
     'name' => 'Mvdol',
     'number' => 984,
@@ -264,8 +241,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'BAM' => 
-  [
+  'BAM' => [
     'id' => 'BAM',
     'name' => 'Convertible Mark',
     'number' => 977,
@@ -275,8 +251,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'BWP' => 
-  [
+  'BWP' => [
     'id' => 'BWP',
     'name' => 'Pula',
     'number' => 72,
@@ -286,8 +261,7 @@ $data = [
     'sign' => 'P',
     'active' => '0',
   ],
-  'NOK' => 
-  [
+  'NOK' => [
     'id' => 'NOK',
     'name' => 'Norwegian Krone',
     'number' => 578,
@@ -297,8 +271,7 @@ $data = [
     'sign' => 'kr',
     'active' => '0',
   ],
-  'BRL' => 
-  [
+  'BRL' => [
     'id' => 'BRL',
     'name' => 'Brazilian Real',
     'number' => 986,
@@ -308,8 +281,7 @@ $data = [
     'sign' => 'R$',
     'active' => '0',
   ],
-  'BND' => 
-  [
+  'BND' => [
     'id' => 'BND',
     'name' => 'Brunei Dollar',
     'number' => 96,
@@ -319,8 +291,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'BGN' => 
-  [
+  'BGN' => [
     'id' => 'BGN',
     'name' => 'Bulgarian Lev',
     'number' => 975,
@@ -330,8 +301,7 @@ $data = [
     'sign' => 'лв',
     'active' => '0',
   ],
-  'BIF' => 
-  [
+  'BIF' => [
     'id' => 'BIF',
     'name' => 'Burundi Franc',
     'number' => 108,
@@ -341,8 +311,7 @@ $data = [
     'sign' => 'Fr',
     'active' => '0',
   ],
-  'KHR' => 
-  [
+  'KHR' => [
     'id' => 'KHR',
     'name' => 'Riel',
     'number' => 116,
@@ -352,8 +321,7 @@ $data = [
     'sign' => '៛',
     'active' => '0',
   ],
-  'XAF' => 
-  [
+  'XAF' => [
     'id' => 'XAF',
     'name' => 'CFA Franc BEAC',
     'number' => 950,
@@ -363,8 +331,7 @@ $data = [
     'sign' => 'Fr',
     'active' => '0',
   ],
-  'CAD' => 
-  [
+  'CAD' => [
     'id' => 'CAD',
     'name' => 'Canadian Dollar',
     'number' => 124,
@@ -374,8 +341,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'CVE' => 
-  [
+  'CVE' => [
     'id' => 'CVE',
     'name' => 'Cape Verde Escudo',
     'number' => 132,
@@ -385,8 +351,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'KYD' => 
-  [
+  'KYD' => [
     'id' => 'KYD',
     'name' => 'Cayman Islands Dollar',
     'number' => 136,
@@ -396,8 +361,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'CLF' => 
-  [
+  'CLF' => [
     'id' => 'CLF',
     'name' => 'Unidades de fomento',
     'number' => 990,
@@ -407,8 +371,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'CLP' => 
-  [
+  'CLP' => [
     'id' => 'CLP',
     'name' => 'Chilean Peso',
     'number' => 152,
@@ -418,8 +381,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'CNY' => 
-  [
+  'CNY' => [
     'id' => 'CNY',
     'name' => 'Yuan Renminbi',
     'number' => 156,
@@ -429,8 +391,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'COP' => 
-  [
+  'COP' => [
     'id' => 'COP',
     'name' => 'Colombian Peso',
     'number' => 170,
@@ -440,8 +401,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'COU' => 
-  [
+  'COU' => [
     'id' => 'COU',
     'name' => 'Unidad de Valor Real',
     'number' => 970,
@@ -451,8 +411,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'KMF' => 
-  [
+  'KMF' => [
     'id' => 'KMF',
     'name' => 'Comoro Franc',
     'number' => 174,
@@ -462,8 +421,7 @@ $data = [
     'sign' => 'Fr',
     'active' => '0',
   ],
-  'CDF' => 
-  [
+  'CDF' => [
     'id' => 'CDF',
     'name' => 'Congolese Franc',
     'number' => 976,
@@ -473,8 +431,7 @@ $data = [
     'sign' => 'Fr',
     'active' => '0',
   ],
-  'NZD' => 
-  [
+  'NZD' => [
     'id' => 'NZD',
     'name' => 'New Zealand Dollar',
     'number' => 554,
@@ -484,8 +441,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'CRC' => 
-  [
+  'CRC' => [
     'id' => 'CRC',
     'name' => 'Costa Rican Colon',
     'number' => 188,
@@ -495,8 +451,7 @@ $data = [
     'sign' => '₡',
     'active' => '0',
   ],
-  'HRK' => 
-  [
+  'HRK' => [
     'id' => 'HRK',
     'name' => 'Croatian Kuna',
     'number' => 191,
@@ -506,8 +461,7 @@ $data = [
     'sign' => 'kn',
     'active' => '0',
   ],
-  'CUC' => 
-  [
+  'CUC' => [
     'id' => 'CUC',
     'name' => 'Peso Convertible',
     'number' => 931,
@@ -517,8 +471,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'CUP' => 
-  [
+  'CUP' => [
     'id' => 'CUP',
     'name' => 'Cuban Peso',
     'number' => 192,
@@ -528,8 +481,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'ANG' => 
-  [
+  'ANG' => [
     'id' => 'ANG',
     'name' => 'Netherlands Antillean Guilder',
     'number' => 532,
@@ -539,8 +491,7 @@ $data = [
     'sign' => 'ƒ',
     'active' => '0',
   ],
-  'CZK' => 
-  [
+  'CZK' => [
     'id' => 'CZK',
     'name' => 'Czech Koruna',
     'number' => 203,
@@ -550,8 +501,7 @@ $data = [
     'sign' => 'Kč',
     'active' => '0',
   ],
-  'DKK' => 
-  [
+  'DKK' => [
     'id' => 'DKK',
     'name' => 'Danish Krone',
     'number' => 208,
@@ -561,8 +511,7 @@ $data = [
     'sign' => 'kr',
     'active' => '0',
   ],
-  'DJF' => 
-  [
+  'DJF' => [
     'id' => 'DJF',
     'name' => 'Djibouti Franc',
     'number' => 262,
@@ -572,8 +521,7 @@ $data = [
     'sign' => 'Fr',
     'active' => '0',
   ],
-  'DOP' => 
-  [
+  'DOP' => [
     'id' => 'DOP',
     'name' => 'Dominican Peso',
     'number' => 214,
@@ -583,8 +531,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'EGP' => 
-  [
+  'EGP' => [
     'id' => 'EGP',
     'name' => 'Egyptian Pound',
     'number' => 818,
@@ -594,8 +541,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'SVC' => 
-  [
+  'SVC' => [
     'id' => 'SVC',
     'name' => 'El Salvador Colon',
     'number' => 222,
@@ -605,8 +551,7 @@ $data = [
     'sign' => '₡',
     'active' => '0',
   ],
-  'ERN' => 
-  [
+  'ERN' => [
     'id' => 'ERN',
     'name' => 'Nakfa',
     'number' => 232,
@@ -616,8 +561,7 @@ $data = [
     'sign' => 'Nfk',
     'active' => '0',
   ],
-  'ETB' => 
-  [
+  'ETB' => [
     'id' => 'ETB',
     'name' => 'Ethiopian Birr',
     'number' => 230,
@@ -627,8 +571,7 @@ $data = [
     'sign' => 'Br',
     'active' => '0',
   ],
-  'FKP' => 
-  [
+  'FKP' => [
     'id' => 'FKP',
     'name' => 'Falkland Islands Pound',
     'number' => 238,
@@ -638,8 +581,7 @@ $data = [
     'sign' => '£',
     'active' => '0',
   ],
-  'FJD' => 
-  [
+  'FJD' => [
     'id' => 'FJD',
     'name' => 'Fiji Dollar',
     'number' => 242,
@@ -649,8 +591,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'XPF' => 
-  [
+  'XPF' => [
     'id' => 'XPF',
     'name' => 'CFP Franc',
     'number' => 953,
@@ -660,8 +601,7 @@ $data = [
     'sign' => 'Fr',
     'active' => '0',
   ],
-  'GMD' => 
-  [
+  'GMD' => [
     'id' => 'GMD',
     'name' => 'Dalasi',
     'number' => 270,
@@ -671,8 +611,7 @@ $data = [
     'sign' => 'D',
     'active' => '0',
   ],
-  'GEL' => 
-  [
+  'GEL' => [
     'id' => 'GEL',
     'name' => 'Lari',
     'number' => 981,
@@ -682,8 +621,7 @@ $data = [
     'sign' => 'ლ',
     'active' => '0',
   ],
-  'GHS' => 
-  [
+  'GHS' => [
     'id' => 'GHS',
     'name' => 'Ghana Cedi',
     'number' => 936,
@@ -693,8 +631,7 @@ $data = [
     'sign' => '₵',
     'active' => '0',
   ],
-  'GIP' => 
-  [
+  'GIP' => [
     'id' => 'GIP',
     'name' => 'Gibraltar Pound',
     'number' => 292,
@@ -704,8 +641,7 @@ $data = [
     'sign' => '£',
     'active' => '0',
   ],
-  'GTQ' => 
-  [
+  'GTQ' => [
     'id' => 'GTQ',
     'name' => 'Quetzal',
     'number' => 320,
@@ -715,8 +651,7 @@ $data = [
     'sign' => 'Q',
     'active' => '0',
   ],
-  'GBP' => 
-  [
+  'GBP' => [
     'id' => 'GBP',
     'name' => 'Pound Sterling',
     'number' => 826,
@@ -726,8 +661,7 @@ $data = [
     'sign' => '£',
     'active' => '0',
   ],
-  'GNF' => 
-  [
+  'GNF' => [
     'id' => 'GNF',
     'name' => 'Guinea Franc',
     'number' => 324,
@@ -737,8 +671,7 @@ $data = [
     'sign' => 'Fr',
     'active' => '0',
   ],
-  'GYD' => 
-  [
+  'GYD' => [
     'id' => 'GYD',
     'name' => 'Guyana Dollar',
     'number' => 328,
@@ -748,8 +681,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'HTG' => 
-  [
+  'HTG' => [
     'id' => 'HTG',
     'name' => 'Gourde',
     'number' => 332,
@@ -759,8 +691,7 @@ $data = [
     'sign' => 'G',
     'active' => '0',
   ],
-  'HNL' => 
-  [
+  'HNL' => [
     'id' => 'HNL',
     'name' => 'Lempira',
     'number' => 340,
@@ -770,8 +701,7 @@ $data = [
     'sign' => 'L',
     'active' => '0',
   ],
-  'HKD' => 
-  [
+  'HKD' => [
     'id' => 'HKD',
     'name' => 'Hong Kong Dollar',
     'number' => 344,
@@ -781,8 +711,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'HUF' => 
-  [
+  'HUF' => [
     'id' => 'HUF',
     'name' => 'Forint',
     'number' => 348,
@@ -792,8 +721,7 @@ $data = [
     'sign' => 'Ft',
     'active' => '0',
   ],
-  'ISK' => 
-  [
+  'ISK' => [
     'id' => 'ISK',
     'name' => 'Iceland Krona',
     'number' => 352,
@@ -803,8 +731,7 @@ $data = [
     'sign' => 'kr',
     'active' => '0',
   ],
-  'IDR' => 
-  [
+  'IDR' => [
     'id' => 'IDR',
     'name' => 'Rupiah',
     'number' => 360,
@@ -814,19 +741,17 @@ $data = [
     'sign' => 'Rp',
     'active' => '0',
   ],
-  'XDR' => 
-  [
+  'XDR' => [
     'id' => 'XDR',
     'name' => 'SDR (Special Drawing Right)',
     'number' => 960,
     'minor_units' => 0,
-    'country_name' => 'INTERNATIONAL MONETARY FUND (IMF) ',
+    'country_name' => 'INTERNATIONAL MONETARY FUND (IMF) ',
     'country_code' => '',
     'sign' => '',
     'active' => '0',
   ],
-  'IRR' => 
-  [
+  'IRR' => [
     'id' => 'IRR',
     'name' => 'Iranian Rial',
     'number' => 364,
@@ -836,8 +761,7 @@ $data = [
     'sign' => '﷼',
     'active' => '0',
   ],
-  'IQD' => 
-  [
+  'IQD' => [
     'id' => 'IQD',
     'name' => 'Iraqi Dinar',
     'number' => 368,
@@ -847,8 +771,7 @@ $data = [
     'sign' => 'ع.د',
     'active' => '0',
   ],
-  'ILS' => 
-  [
+  'ILS' => [
     'id' => 'ILS',
     'name' => 'New Israeli Sheqel',
     'number' => 376,
@@ -858,8 +781,7 @@ $data = [
     'sign' => '₪',
     'active' => '0',
   ],
-  'JMD' => 
-  [
+  'JMD' => [
     'id' => 'JMD',
     'name' => 'Jamaican Dollar',
     'number' => 388,
@@ -869,8 +791,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'JPY' => 
-  [
+  'JPY' => [
     'id' => 'JPY',
     'name' => 'Yen',
     'number' => 392,
@@ -880,8 +801,7 @@ $data = [
     'sign' => '¥',
     'active' => 1,
   ],
-  'JOD' => 
-  [
+  'JOD' => [
     'id' => 'JOD',
     'name' => 'Jordanian Dinar',
     'number' => 400,
@@ -891,8 +811,7 @@ $data = [
     'sign' => 'د.ا',
     'active' => '0',
   ],
-  'KZT' => 
-  [
+  'KZT' => [
     'id' => 'KZT',
     'name' => 'Tenge',
     'number' => 398,
@@ -902,8 +821,7 @@ $data = [
     'sign' => '₸',
     'active' => '0',
   ],
-  'KES' => 
-  [
+  'KES' => [
     'id' => 'KES',
     'name' => 'Kenyan Shilling',
     'number' => 404,
@@ -913,8 +831,7 @@ $data = [
     'sign' => 'Sh',
     'active' => '0',
   ],
-  'KPW' => 
-  [
+  'KPW' => [
     'id' => 'KPW',
     'name' => 'North Korean Won',
     'number' => 408,
@@ -924,8 +841,7 @@ $data = [
     'sign' => '₩',
     'active' => '0',
   ],
-  'KRW' => 
-  [
+  'KRW' => [
     'id' => 'KRW',
     'name' => 'Won',
     'number' => 410,
@@ -935,8 +851,7 @@ $data = [
     'sign' => '₩',
     'active' => '0',
   ],
-  'KWD' => 
-  [
+  'KWD' => [
     'id' => 'KWD',
     'name' => 'Kuwaiti Dinar',
     'number' => 414,
@@ -946,8 +861,7 @@ $data = [
     'sign' => 'د.ك',
     'active' => '0',
   ],
-  'KGS' => 
-  [
+  'KGS' => [
     'id' => 'KGS',
     'name' => 'Som',
     'number' => 417,
@@ -957,8 +871,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'LAK' => 
-  [
+  'LAK' => [
     'id' => 'LAK',
     'name' => 'Kip',
     'number' => 418,
@@ -968,8 +881,7 @@ $data = [
     'sign' => '₭',
     'active' => '0',
   ],
-  'LVL' => 
-  [
+  'LVL' => [
     'id' => 'LVL',
     'name' => 'Latvian Lats',
     'number' => 428,
@@ -979,8 +891,7 @@ $data = [
     'sign' => 'Ls',
     'active' => '0',
   ],
-  'LBP' => 
-  [
+  'LBP' => [
     'id' => 'LBP',
     'name' => 'Lebanese Pound',
     'number' => 422,
@@ -990,8 +901,7 @@ $data = [
     'sign' => 'ل.ل',
     'active' => '0',
   ],
-  'LSL' => 
-  [
+  'LSL' => [
     'id' => 'LSL',
     'name' => 'Loti',
     'number' => 426,
@@ -1001,8 +911,7 @@ $data = [
     'sign' => 'L',
     'active' => '0',
   ],
-  'ZAR' => 
-  [
+  'ZAR' => [
     'id' => 'ZAR',
     'name' => 'Rand',
     'number' => 710,
@@ -1012,8 +921,7 @@ $data = [
     'sign' => 'R',
     'active' => '0',
   ],
-  'LRD' => 
-  [
+  'LRD' => [
     'id' => 'LRD',
     'name' => 'Liberian Dollar',
     'number' => 430,
@@ -1023,8 +931,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'LYD' => 
-  [
+  'LYD' => [
     'id' => 'LYD',
     'name' => 'Libyan Dinar',
     'number' => 434,
@@ -1034,8 +941,7 @@ $data = [
     'sign' => 'ل.د',
     'active' => '0',
   ],
-  'CHF' => 
-  [
+  'CHF' => [
     'id' => 'CHF',
     'name' => 'Swiss Franc',
     'number' => 756,
@@ -1045,8 +951,7 @@ $data = [
     'sign' => 'Fr',
     'active' => 1,
   ],
-  'LTL' => 
-  [
+  'LTL' => [
     'id' => 'LTL',
     'name' => 'Lithuanian Litas',
     'number' => 440,
@@ -1056,8 +961,7 @@ $data = [
     'sign' => 'Lt',
     'active' => '0',
   ],
-  'MOP' => 
-  [
+  'MOP' => [
     'id' => 'MOP',
     'name' => 'Pataca',
     'number' => 446,
@@ -1067,8 +971,7 @@ $data = [
     'sign' => 'P',
     'active' => '0',
   ],
-  'MKD' => 
-  [
+  'MKD' => [
     'id' => 'MKD',
     'name' => 'Denar',
     'number' => 807,
@@ -1078,8 +981,7 @@ $data = [
     'sign' => 'ден',
     'active' => '0',
   ],
-  'MGA' => 
-  [
+  'MGA' => [
     'id' => 'MGA',
     'name' => 'Malagasy Ariary',
     'number' => 969,
@@ -1089,8 +991,7 @@ $data = [
     'sign' => 'Ar',
     'active' => '0',
   ],
-  'MWK' => 
-  [
+  'MWK' => [
     'id' => 'MWK',
     'name' => 'Kwacha',
     'number' => 454,
@@ -1100,8 +1001,7 @@ $data = [
     'sign' => 'MK',
     'active' => '0',
   ],
-  'MYR' => 
-  [
+  'MYR' => [
     'id' => 'MYR',
     'name' => 'Malaysian Ringgit',
     'number' => 458,
@@ -1111,8 +1011,7 @@ $data = [
     'sign' => 'RM',
     'active' => '0',
   ],
-  'MVR' => 
-  [
+  'MVR' => [
     'id' => 'MVR',
     'name' => 'Rufiyaa',
     'number' => 462,
@@ -1122,8 +1021,7 @@ $data = [
     'sign' => '.ރ',
     'active' => '0',
   ],
-  'MRO' => 
-  [
+  'MRO' => [
     'id' => 'MRO',
     'name' => 'Ouguiya',
     'number' => 478,
@@ -1133,8 +1031,7 @@ $data = [
     'sign' => 'UM',
     'active' => '0',
   ],
-  'MUR' => 
-  [
+  'MUR' => [
     'id' => 'MUR',
     'name' => 'Mauritius Rupee',
     'number' => 480,
@@ -1144,8 +1041,7 @@ $data = [
     'sign' => '₨',
     'active' => '0',
   ],
-  'XUA' => 
-  [
+  'XUA' => [
     'id' => 'XUA',
     'name' => 'ADB Unit of Account',
     'number' => 965,
@@ -1155,8 +1051,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'MXN' => 
-  [
+  'MXN' => [
     'id' => 'MXN',
     'name' => 'Mexican Peso',
     'number' => 484,
@@ -1166,8 +1061,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'MXV' => 
-  [
+  'MXV' => [
     'id' => 'MXV',
     'name' => 'Mexican Unidad de Inversion (UDI)',
     'number' => 979,
@@ -1177,8 +1071,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'MDL' => 
-  [
+  'MDL' => [
     'id' => 'MDL',
     'name' => 'Moldovan Leu',
     'number' => 498,
@@ -1188,8 +1081,7 @@ $data = [
     'sign' => 'L',
     'active' => '0',
   ],
-  'MNT' => 
-  [
+  'MNT' => [
     'id' => 'MNT',
     'name' => 'Tugrik',
     'number' => 496,
@@ -1199,8 +1091,7 @@ $data = [
     'sign' => '₮',
     'active' => '0',
   ],
-  'MAD' => 
-  [
+  'MAD' => [
     'id' => 'MAD',
     'name' => 'Moroccan Dirham',
     'number' => 504,
@@ -1210,8 +1101,7 @@ $data = [
     'sign' => 'د. م.',
     'active' => '0',
   ],
-  'MZN' => 
-  [
+  'MZN' => [
     'id' => 'MZN',
     'name' => 'Mozambique Metical',
     'number' => 943,
@@ -1221,8 +1111,7 @@ $data = [
     'sign' => 'MT',
     'active' => '0',
   ],
-  'MMK' => 
-  [
+  'MMK' => [
     'id' => 'MMK',
     'name' => 'Kyat',
     'number' => 104,
@@ -1232,8 +1121,7 @@ $data = [
     'sign' => 'Ks',
     'active' => '0',
   ],
-  'NAD' => 
-  [
+  'NAD' => [
     'id' => 'NAD',
     'name' => 'Namibia Dollar',
     'number' => 516,
@@ -1243,8 +1131,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'NPR' => 
-  [
+  'NPR' => [
     'id' => 'NPR',
     'name' => 'Nepalese Rupee',
     'number' => 524,
@@ -1254,8 +1141,7 @@ $data = [
     'sign' => '₨',
     'active' => '0',
   ],
-  'NIO' => 
-  [
+  'NIO' => [
     'id' => 'NIO',
     'name' => 'Cordoba Oro',
     'number' => 558,
@@ -1265,8 +1151,7 @@ $data = [
     'sign' => 'C$',
     'active' => '0',
   ],
-  'NGN' => 
-  [
+  'NGN' => [
     'id' => 'NGN',
     'name' => 'Naira',
     'number' => 566,
@@ -1276,8 +1161,7 @@ $data = [
     'sign' => '₦',
     'active' => '0',
   ],
-  'OMR' => 
-  [
+  'OMR' => [
     'id' => 'OMR',
     'name' => 'Rial Omani',
     'number' => 512,
@@ -1287,8 +1171,7 @@ $data = [
     'sign' => 'ر.ع.',
     'active' => '0',
   ],
-  'PKR' => 
-  [
+  'PKR' => [
     'id' => 'PKR',
     'name' => 'Pakistan Rupee',
     'number' => 586,
@@ -1298,8 +1181,7 @@ $data = [
     'sign' => '₨',
     'active' => '0',
   ],
-  'PAB' => 
-  [
+  'PAB' => [
     'id' => 'PAB',
     'name' => 'Balboa',
     'number' => 590,
@@ -1309,8 +1191,7 @@ $data = [
     'sign' => 'B/.',
     'active' => '0',
   ],
-  'PGK' => 
-  [
+  'PGK' => [
     'id' => 'PGK',
     'name' => 'Kina',
     'number' => 598,
@@ -1320,8 +1201,7 @@ $data = [
     'sign' => 'K',
     'active' => '0',
   ],
-  'PYG' => 
-  [
+  'PYG' => [
     'id' => 'PYG',
     'name' => 'Guarani',
     'number' => 600,
@@ -1331,8 +1211,7 @@ $data = [
     'sign' => '₲',
     'active' => '0',
   ],
-  'PEN' => 
-  [
+  'PEN' => [
     'id' => 'PEN',
     'name' => 'Nuevo Sol',
     'number' => 604,
@@ -1342,8 +1221,7 @@ $data = [
     'sign' => 'S/.',
     'active' => '0',
   ],
-  'PHP' => 
-  [
+  'PHP' => [
     'id' => 'PHP',
     'name' => 'Philippine Peso',
     'number' => 608,
@@ -1353,8 +1231,7 @@ $data = [
     'sign' => '₱',
     'active' => '0',
   ],
-  'PLN' => 
-  [
+  'PLN' => [
     'id' => 'PLN',
     'name' => 'Zloty',
     'number' => 985,
@@ -1364,8 +1241,7 @@ $data = [
     'sign' => 'zł',
     'active' => '0',
   ],
-  'QAR' => 
-  [
+  'QAR' => [
     'id' => 'QAR',
     'name' => 'Qatari Rial',
     'number' => 634,
@@ -1375,8 +1251,7 @@ $data = [
     'sign' => 'ر.ق',
     'active' => '0',
   ],
-  'RON' => 
-  [
+  'RON' => [
     'id' => 'RON',
     'name' => 'New Romanian Leu',
     'number' => 946,
@@ -1386,8 +1261,7 @@ $data = [
     'sign' => 'L',
     'active' => '0',
   ],
-  'RUB' => 
-  [
+  'RUB' => [
     'id' => 'RUB',
     'name' => 'Russian Ruble',
     'number' => 643,
@@ -1397,8 +1271,7 @@ $data = [
     'sign' => 'р.',
     'active' => 1,
   ],
-  'RWF' => 
-  [
+  'RWF' => [
     'id' => 'RWF',
     'name' => 'Rwanda Franc',
     'number' => 646,
@@ -1408,8 +1281,7 @@ $data = [
     'sign' => 'Fr',
     'active' => '0',
   ],
-  'SHP' => 
-  [
+  'SHP' => [
     'id' => 'SHP',
     'name' => 'Saint Helena Pound',
     'number' => 654,
@@ -1419,8 +1291,7 @@ $data = [
     'sign' => '£',
     'active' => '0',
   ],
-  'WST' => 
-  [
+  'WST' => [
     'id' => 'WST',
     'name' => 'Tala',
     'number' => 882,
@@ -1430,8 +1301,7 @@ $data = [
     'sign' => 'T',
     'active' => '0',
   ],
-  'STD' => 
-  [
+  'STD' => [
     'id' => 'STD',
     'name' => 'Dobra',
     'number' => 678,
@@ -1441,8 +1311,7 @@ $data = [
     'sign' => 'Db',
     'active' => '0',
   ],
-  'SAR' => 
-  [
+  'SAR' => [
     'id' => 'SAR',
     'name' => 'Saudi Riyal',
     'number' => 682,
@@ -1452,8 +1321,7 @@ $data = [
     'sign' => 'ر.س',
     'active' => '0',
   ],
-  'RSD' => 
-  [
+  'RSD' => [
     'id' => 'RSD',
     'name' => 'Serbian Dinar',
     'number' => 941,
@@ -1463,8 +1331,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'SCR' => 
-  [
+  'SCR' => [
     'id' => 'SCR',
     'name' => 'Seychelles Rupee',
     'number' => 690,
@@ -1474,8 +1341,7 @@ $data = [
     'sign' => '₨',
     'active' => '0',
   ],
-  'SLL' => 
-  [
+  'SLL' => [
     'id' => 'SLL',
     'name' => 'Leone',
     'number' => 694,
@@ -1485,8 +1351,7 @@ $data = [
     'sign' => 'Le',
     'active' => '0',
   ],
-  'SGD' => 
-  [
+  'SGD' => [
     'id' => 'SGD',
     'name' => 'Singapore Dollar',
     'number' => 702,
@@ -1496,8 +1361,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'XSU' => 
-  [
+  'XSU' => [
     'id' => 'XSU',
     'name' => 'Sucre',
     'number' => 994,
@@ -1507,8 +1371,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'SBD' => 
-  [
+  'SBD' => [
     'id' => 'SBD',
     'name' => 'Solomon Islands Dollar',
     'number' => 90,
@@ -1518,8 +1381,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'SOS' => 
-  [
+  'SOS' => [
     'id' => 'SOS',
     'name' => 'Somali Shilling',
     'number' => 706,
@@ -1529,8 +1391,7 @@ $data = [
     'sign' => 'Sh',
     'active' => '0',
   ],
-  'SSP' => 
-  [
+  'SSP' => [
     'id' => 'SSP',
     'name' => 'South Sudanese Pound',
     'number' => 728,
@@ -1540,8 +1401,7 @@ $data = [
     'sign' => '£',
     'active' => '0',
   ],
-  'LKR' => 
-  [
+  'LKR' => [
     'id' => 'LKR',
     'name' => 'Sri Lanka Rupee',
     'number' => 144,
@@ -1551,8 +1411,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'SDG' => 
-  [
+  'SDG' => [
     'id' => 'SDG',
     'name' => 'Sudanese Pound',
     'number' => 938,
@@ -1562,8 +1421,7 @@ $data = [
     'sign' => '£',
     'active' => '0',
   ],
-  'SRD' => 
-  [
+  'SRD' => [
     'id' => 'SRD',
     'name' => 'Surinam Dollar',
     'number' => 968,
@@ -1573,8 +1431,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'SZL' => 
-  [
+  'SZL' => [
     'id' => 'SZL',
     'name' => 'Lilangeni',
     'number' => 748,
@@ -1584,8 +1441,7 @@ $data = [
     'sign' => 'L',
     'active' => '0',
   ],
-  'SEK' => 
-  [
+  'SEK' => [
     'id' => 'SEK',
     'name' => 'Swedish Krona',
     'number' => 752,
@@ -1595,8 +1451,7 @@ $data = [
     'sign' => 'kr',
     'active' => '0',
   ],
-  'CHE' => 
-  [
+  'CHE' => [
     'id' => 'CHE',
     'name' => 'WIR Euro',
     'number' => 947,
@@ -1606,8 +1461,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'CHW' => 
-  [
+  'CHW' => [
     'id' => 'CHW',
     'name' => 'WIR Franc',
     'number' => 948,
@@ -1617,8 +1471,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'SYP' => 
-  [
+  'SYP' => [
     'id' => 'SYP',
     'name' => 'Syrian Pound',
     'number' => 760,
@@ -1628,8 +1481,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'TWD' => 
-  [
+  'TWD' => [
     'id' => 'TWD',
     'name' => 'New Taiwan Dollar',
     'number' => 901,
@@ -1639,8 +1491,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'TJS' => 
-  [
+  'TJS' => [
     'id' => 'TJS',
     'name' => 'Somoni',
     'number' => 972,
@@ -1650,8 +1501,7 @@ $data = [
     'sign' => 'ЅМ',
     'active' => '0',
   ],
-  'TZS' => 
-  [
+  'TZS' => [
     'id' => 'TZS',
     'name' => 'Tanzanian Shilling',
     'number' => 834,
@@ -1661,8 +1511,7 @@ $data = [
     'sign' => 'Sh',
     'active' => '0',
   ],
-  'THB' => 
-  [
+  'THB' => [
     'id' => 'THB',
     'name' => 'Baht',
     'number' => 764,
@@ -1672,8 +1521,7 @@ $data = [
     'sign' => '฿',
     'active' => '0',
   ],
-  'TOP' => 
-  [
+  'TOP' => [
     'id' => 'TOP',
     'name' => 'Pa’anga',
     'number' => 776,
@@ -1683,8 +1531,7 @@ $data = [
     'sign' => 'T$',
     'active' => '0',
   ],
-  'TTD' => 
-  [
+  'TTD' => [
     'id' => 'TTD',
     'name' => 'Trinidad and Tobago Dollar',
     'number' => 780,
@@ -1694,8 +1541,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'TND' => 
-  [
+  'TND' => [
     'id' => 'TND',
     'name' => 'Tunisian Dinar',
     'number' => 788,
@@ -1705,8 +1551,7 @@ $data = [
     'sign' => 'د.ت',
     'active' => '0',
   ],
-  'TRY' => 
-  [
+  'TRY' => [
     'id' => 'TRY',
     'name' => 'Turkish Lira',
     'number' => 949,
@@ -1716,8 +1561,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'TMT' => 
-  [
+  'TMT' => [
     'id' => 'TMT',
     'name' => 'Turkmenistan New Manat',
     'number' => 934,
@@ -1727,8 +1571,7 @@ $data = [
     'sign' => 'm',
     'active' => '0',
   ],
-  'UGX' => 
-  [
+  'UGX' => [
     'id' => 'UGX',
     'name' => 'Uganda Shilling',
     'number' => 800,
@@ -1738,8 +1581,7 @@ $data = [
     'sign' => 'Sh',
     'active' => '0',
   ],
-  'UAH' => 
-  [
+  'UAH' => [
     'id' => 'UAH',
     'name' => 'Hryvnia',
     'number' => 980,
@@ -1749,8 +1591,7 @@ $data = [
     'sign' => '₴',
     'active' => 1,
   ],
-  'AED' => 
-  [
+  'AED' => [
     'id' => 'AED',
     'name' => 'UAE Dirham',
     'number' => 784,
@@ -1760,8 +1601,7 @@ $data = [
     'sign' => 'د.إ',
     'active' => '0',
   ],
-  'USN' => 
-  [
+  'USN' => [
     'id' => 'USN',
     'name' => 'US Dollar (Next day)',
     'number' => 997,
@@ -1771,8 +1611,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'USS' => 
-  [
+  'USS' => [
     'id' => 'USS',
     'name' => 'US Dollar (Same day)',
     'number' => 998,
@@ -1782,8 +1621,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'UYI' => 
-  [
+  'UYI' => [
     'id' => 'UYI',
     'name' => 'Uruguay Peso en Unidades Indexadas (URUIURUI)',
     'number' => 940,
@@ -1793,8 +1631,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'UYU' => 
-  [
+  'UYU' => [
     'id' => 'UYU',
     'name' => 'Peso Uruguayo',
     'number' => 858,
@@ -1804,8 +1641,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'UZS' => 
-  [
+  'UZS' => [
     'id' => 'UZS',
     'name' => 'Uzbekistan Sum',
     'number' => 860,
@@ -1815,8 +1651,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'VUV' => 
-  [
+  'VUV' => [
     'id' => 'VUV',
     'name' => 'Vatu',
     'number' => 548,
@@ -1826,8 +1661,7 @@ $data = [
     'sign' => 'Vt',
     'active' => '0',
   ],
-  'VEF' => 
-  [
+  'VEF' => [
     'id' => 'VEF',
     'name' => 'Bolivar',
     'number' => 937,
@@ -1837,8 +1671,7 @@ $data = [
     'sign' => 'Bs F',
     'active' => '0',
   ],
-  'VND' => 
-  [
+  'VND' => [
     'id' => 'VND',
     'name' => 'Dong',
     'number' => 704,
@@ -1848,8 +1681,7 @@ $data = [
     'sign' => '₫',
     'active' => '0',
   ],
-  'YER' => 
-  [
+  'YER' => [
     'id' => 'YER',
     'name' => 'Yemeni Rial',
     'number' => 886,
@@ -1859,8 +1691,7 @@ $data = [
     'sign' => '﷼',
     'active' => '0',
   ],
-  'ZMW' => 
-  [
+  'ZMW' => [
     'id' => 'ZMW',
     'name' => 'Zambian Kwacha',
     'number' => 967,
@@ -1870,8 +1701,7 @@ $data = [
     'sign' => 'ZK',
     'active' => '0',
   ],
-  'ZWL' => 
-  [
+  'ZWL' => [
     'id' => 'ZWL',
     'name' => 'Zimbabwe Dollar',
     'number' => 932,
@@ -1881,8 +1711,7 @@ $data = [
     'sign' => '$',
     'active' => '0',
   ],
-  'XBA' => 
-  [
+  'XBA' => [
     'id' => 'XBA',
     'name' => 'Bond Markets Unit European Composite Unit (EURCO)',
     'number' => 955,
@@ -1892,8 +1721,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XBB' => 
-  [
+  'XBB' => [
     'id' => 'XBB',
     'name' => 'Bond Markets Unit European Monetary Unit (E.M.U.-6)',
     'number' => 956,
@@ -1903,8 +1731,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XBC' => 
-  [
+  'XBC' => [
     'id' => 'XBC',
     'name' => 'Bond Markets Unit European Unit of Account 9 (E.U.A.-9)',
     'number' => 957,
@@ -1914,8 +1741,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XBD' => 
-  [
+  'XBD' => [
     'id' => 'XBD',
     'name' => 'Bond Markets Unit European Unit of Account 17 (E.U.A.-17)',
     'number' => 958,
@@ -1925,8 +1751,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XFU' => 
-  [
+  'XFU' => [
     'id' => 'XFU',
     'name' => 'UIC-Franc',
     'number' => 0,
@@ -1936,8 +1761,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XTS' => 
-  [
+  'XTS' => [
     'id' => 'XTS',
     'name' => 'Codes specifically reserved for testing purposes',
     'number' => 963,
@@ -1947,8 +1771,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XXX' => 
-  [
+  'XXX' => [
     'id' => 'XXX',
     'name' => 'The codes assigned for transactions where no currency is involved',
     'number' => 999,
@@ -1958,8 +1781,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XAU' => 
-  [
+  'XAU' => [
     'id' => 'XAU',
     'name' => 'Gold',
     'number' => 959,
@@ -1969,8 +1791,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XPD' => 
-  [
+  'XPD' => [
     'id' => 'XPD',
     'name' => 'Palladium',
     'number' => 964,
@@ -1980,8 +1801,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XPT' => 
-  [
+  'XPT' => [
     'id' => 'XPT',
     'name' => 'Platinum',
     'number' => 962,
@@ -1991,8 +1811,7 @@ $data = [
     'sign' => '',
     'active' => '0',
   ],
-  'XAG' => 
-  [
+  'XAG' => [
     'id' => 'XAG',
     'name' => 'Silver',
     'number' => 961,

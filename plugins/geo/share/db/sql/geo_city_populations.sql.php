@@ -1,4 +1,5 @@
 <?php
+
 return '
   `country` char(2) NOT NULL,
   `city` varchar(32) NOT NULL,

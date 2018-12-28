@@ -1,7 +1,7 @@
 <?php
+
 return [
-  0 => 
-  [
+  0 => [
     'user_id' => '1',
     'blog_title' => 'inet safety',
     'blog_desc' => '',
@@ -15,8 +15,7 @@ return [
     'user_nick' => 'test',
     'allow_tagging' => '0',
   ],
-  1 => 
-  [
+  1 => [
     'user_id' => '5',
     'blog_title' => 'The dark side',
     'blog_desc' => '',
@@ -30,8 +29,7 @@ return [
     'user_nick' => 'odlman',
     'allow_tagging' => '0',
   ],
-  2 => 
-  [
+  2 => [
     'user_id' => '6',
     'blog_title' => 'Who answers the phone?',
     'blog_desc' => '',

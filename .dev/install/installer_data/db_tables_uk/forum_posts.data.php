@@ -1,7 +1,7 @@
 <?php
+
 return [
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'parent' => '2',
     'forum' => '0',
@@ -23,8 +23,7 @@ return [
     'language' => '1',
     'activity' => '0',
   ],
-  8 => 
-  [
+  8 => [
     'id' => '8',
     'parent' => '2',
     'forum' => '0',
@@ -46,8 +45,7 @@ return [
     'language' => '1',
     'activity' => '0',
   ],
-  9 => 
-  [
+  9 => [
     'id' => '9',
     'parent' => '2',
     'forum' => '0',
@@ -69,8 +67,7 @@ return [
     'language' => '1',
     'activity' => '0',
   ],
-  10 => 
-  [
+  10 => [
     'id' => '10',
     'parent' => '2',
     'forum' => '0',

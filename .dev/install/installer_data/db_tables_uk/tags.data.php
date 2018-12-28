@@ -1,7 +1,7 @@
 <?php
+
 return [
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'object_name' => 'blog',
     'object_id' => '8',
@@ -12,8 +12,7 @@ return [
     'active' => '1',
     'activity' => '0',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'object_name' => 'articles',
     'object_id' => '11',
@@ -24,8 +23,7 @@ return [
     'active' => '1',
     'activity' => '0',
   ],
-  5 => 
-  [
+  5 => [
     'id' => '5',
     'object_name' => 'gallery',
     'object_id' => '3',
@@ -36,8 +34,7 @@ return [
     'active' => '1',
     'activity' => '0',
   ],
-  6 => 
-  [
+  6 => [
     'id' => '6',
     'object_name' => 'blog',
     'object_id' => '9',
@@ -48,8 +45,7 @@ return [
     'active' => '1',
     'activity' => '0',
   ],
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'object_name' => 'blog',
     'object_id' => '8',
@@ -60,8 +56,7 @@ return [
     'active' => '1',
     'activity' => '0',
   ],
-  8 => 
-  [
+  8 => [
     'id' => '8',
     'object_name' => 'gallery',
     'object_id' => '5',

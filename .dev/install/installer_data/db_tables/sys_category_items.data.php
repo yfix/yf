@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -18,8 +18,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -36,8 +35,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -54,8 +52,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -72,8 +69,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  5 => 
-  [
+  5 => [
     'id' => '5',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -90,8 +86,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  6 => 
-  [
+  6 => [
     'id' => '6',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -108,8 +103,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -126,8 +120,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  8 => 
-  [
+  8 => [
     'id' => '8',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -144,8 +137,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  9 => 
-  [
+  9 => [
     'id' => '9',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -162,8 +154,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  10 => 
-  [
+  10 => [
     'id' => '10',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -180,8 +171,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  11 => 
-  [
+  11 => [
     'id' => '11',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -198,8 +188,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  12 => 
-  [
+  12 => [
     'id' => '12',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -216,8 +205,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  13 => 
-  [
+  13 => [
     'id' => '13',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -234,8 +222,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  14 => 
-  [
+  14 => [
     'id' => '14',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -252,8 +239,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  16 => 
-  [
+  16 => [
     'id' => '16',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -270,8 +256,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  17 => 
-  [
+  17 => [
     'id' => '17',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -288,8 +273,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  18 => 
-  [
+  18 => [
     'id' => '18',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -306,8 +290,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  19 => 
-  [
+  19 => [
     'id' => '19',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -324,8 +307,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  20 => 
-  [
+  20 => [
     'id' => '20',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -342,8 +324,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  21 => 
-  [
+  21 => [
     'id' => '21',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -360,8 +341,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  22 => 
-  [
+  22 => [
     'id' => '22',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -378,8 +358,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  23 => 
-  [
+  23 => [
     'id' => '23',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -396,8 +375,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  24 => 
-  [
+  24 => [
     'id' => '24',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -414,8 +392,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  25 => 
-  [
+  25 => [
     'id' => '25',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -432,8 +409,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  26 => 
-  [
+  26 => [
     'id' => '26',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -450,8 +426,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  27 => 
-  [
+  27 => [
     'id' => '27',
     'cat_id' => '2',
     'parent_id' => '0',
@@ -468,8 +443,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  28 => 
-  [
+  28 => [
     'id' => '28',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -486,8 +460,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  29 => 
-  [
+  29 => [
     'id' => '29',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -504,8 +477,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  30 => 
-  [
+  30 => [
     'id' => '30',
     'cat_id' => '1',
     'parent_id' => '38',
@@ -522,8 +494,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  31 => 
-  [
+  31 => [
     'id' => '31',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -540,8 +511,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  32 => 
-  [
+  32 => [
     'id' => '32',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -558,8 +528,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  33 => 
-  [
+  33 => [
     'id' => '33',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -576,8 +545,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  34 => 
-  [
+  34 => [
     'id' => '34',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -594,8 +562,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  35 => 
-  [
+  35 => [
     'id' => '35',
     'cat_id' => '1',
     'parent_id' => '39',
@@ -612,8 +579,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  36 => 
-  [
+  36 => [
     'id' => '36',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -630,8 +596,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  37 => 
-  [
+  37 => [
     'id' => '37',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -648,8 +613,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  38 => 
-  [
+  38 => [
     'id' => '38',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -666,8 +630,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  39 => 
-  [
+  39 => [
     'id' => '39',
     'cat_id' => '1',
     'parent_id' => '30',
@@ -684,8 +647,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  40 => 
-  [
+  40 => [
     'id' => '40',
     'cat_id' => '1',
     'parent_id' => '39',
@@ -702,8 +664,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  41 => 
-  [
+  41 => [
     'id' => '41',
     'cat_id' => '1',
     'parent_id' => '39',
@@ -720,8 +681,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  43 => 
-  [
+  43 => [
     'id' => '43',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -738,8 +698,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  44 => 
-  [
+  44 => [
     'id' => '44',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -756,8 +715,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  45 => 
-  [
+  45 => [
     'id' => '45',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -774,8 +732,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  46 => 
-  [
+  46 => [
     'id' => '46',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -792,8 +749,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  47 => 
-  [
+  47 => [
     'id' => '47',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -810,8 +766,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  48 => 
-  [
+  48 => [
     'id' => '48',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -828,8 +783,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  49 => 
-  [
+  49 => [
     'id' => '49',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -846,8 +800,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  50 => 
-  [
+  50 => [
     'id' => '50',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -864,8 +817,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  51 => 
-  [
+  51 => [
     'id' => '51',
     'cat_id' => '1',
     'parent_id' => '39',
@@ -882,8 +834,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  52 => 
-  [
+  52 => [
     'id' => '52',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -900,8 +851,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  53 => 
-  [
+  53 => [
     'id' => '53',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -918,8 +868,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  54 => 
-  [
+  54 => [
     'id' => '54',
     'cat_id' => '1',
     'parent_id' => '0',
@@ -936,8 +885,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  55 => 
-  [
+  55 => [
     'id' => '55',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -954,8 +902,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  56 => 
-  [
+  56 => [
     'id' => '56',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -972,8 +919,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  57 => 
-  [
+  57 => [
     'id' => '57',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -990,8 +936,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  58 => 
-  [
+  58 => [
     'id' => '58',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -1008,8 +953,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  59 => 
-  [
+  59 => [
     'id' => '59',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -1026,8 +970,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  60 => 
-  [
+  60 => [
     'id' => '60',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -1044,8 +987,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  61 => 
-  [
+  61 => [
     'id' => '61',
     'cat_id' => '3',
     'parent_id' => '0',
@@ -1062,8 +1004,7 @@ return [
     'icon' => '',
     'featured' => '0',
   ],
-  245 => 
-  [
+  245 => [
     'id' => '245',
     'cat_id' => '2',
     'parent_id' => '0',

@@ -1,14 +1,13 @@
 <?php
 
-return function() {
-
-return [
-	'versions' => ['master' => [
-		'css' => ['
+return function () {
+    return [
+    'versions' => ['master' => [
+        'css' => ['
 		'],
-		'js' => ['
+        'js' => ['
 		'],
-		'jquery' => [
+        'jquery' => [
 <<<END
 	// Prepare html for the tips inline editor
 	$("body").append("" 
@@ -117,13 +116,12 @@ return [
 		_old_tip_text = "";
 	});
 END
-	]]],
-	'require' => [
-		'asset' => 'jquery',
-	],
-	'config' => [
-		'no_cache' => true,
-	],
+    ], ]],
+    'require' => [
+        'asset' => 'jquery',
+    ],
+    'config' => [
+        'no_cache' => true,
+    ],
 ];
-
 };

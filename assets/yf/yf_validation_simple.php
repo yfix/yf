@@ -1,21 +1,20 @@
 <?php
 
-return function() {
-
-return [
-	'versions' => [
-		'master' => [
-			'js' => [
-	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
+return function () {
+    return [
+    'versions' => [
+        'master' => [
+            'js' => [
+    // http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
 '
-	var yf_ajax_link_validate = "'.url_user('/dynamic/ajax_validate').'";
+	var yf_ajax_link_validate = "' . url_user('/dynamic/ajax_validate') . '";
 	var yf_ajax_validate_cache = { };
 	var yf_css_class_error = "error has-error";
 	var yf_css_icon_error = "icon icon-large icon-ban-circle fa fa-2x fa-times-circle text-error text-danger";
 	var yf_css_icon_success = "icon icon-large icon-ok-circle fa fa-2x fa-check-circle text-success";
 	var yf_css_icon_refresh = "icon icon-large icon-refresh fa fa-2x fa-refresh text-info";
 	var yf_html_help_block = "<span class=\"help-block pull-left\"></span>";
-	var yf_title_error = "'.t('not good').'";
+	var yf_title_error = "' . t('not good') . '";
 	var yf_title_success = "OK";
 ',
 <<<END
@@ -151,11 +150,10 @@ $(function(){
 	})
 });
 END
-		]],
-	],
-	'require' => [
-		'asset' => 'jquery',
-	],
+        ], ],
+    ],
+    'require' => [
+        'asset' => 'jquery',
+    ],
 ];
-
 };

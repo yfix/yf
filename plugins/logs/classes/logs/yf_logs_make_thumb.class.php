@@ -1,7 +1,7 @@
 <?php
 
-/**
-*/
-class yf_logs_make_thumb {
-	// TODO:
+
+class yf_logs_make_thumb
+{
+    // TODO:
 }

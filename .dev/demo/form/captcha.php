@@ -1,5 +1,5 @@
 <?php
 
-return function() {
-	return form()->captcha();
+return function () {
+    return form()->captcha();
 };

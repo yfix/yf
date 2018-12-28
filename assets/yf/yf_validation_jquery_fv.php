@@ -1,22 +1,21 @@
 <?php
 
-return function() {
-	$lang = conf('language');
-	$lang_files = [
-		'en' => 'en_US',
-		'ru' => 'ru_RU',
-		'ua' => 'ua_UA',
-	];
-	return [
-		'versions' => ['master' => ['jquery' => 
-			'$("form[data-fv-framework]").formValidation({
+return function () {
+    $lang = conf('language');
+    $lang_files = [
+        'en' => 'en_US',
+        'ru' => 'ru_RU',
+        'ua' => 'ua_UA',
+    ];
+    return [
+        'versions' => ['master' => ['jquery' => '$("form[data-fv-framework]").formValidation({
 				framework: "bootstrap"
 				, icon: {
 					valid: "fa fa-2x fa-check-circle text-success",
 					invalid: "fa fa-2x fa-times-circle text-error text-danger",
 					validating: "fa fa-2x fa-refresh"
 				}
-				, locale: "'.$lang_files[$lang].'"
+				, locale: "' . $lang_files[$lang] . '"
 //				, err: { container: "popover" }
 			})
 /*
@@ -45,16 +44,16 @@ return function() {
         }
     })
 */
-			;']
-		],
-		'require' => [
-			'asset' => [
-				'bootstrap-theme',
-				'jquery-formvalidation',
-			],
-		],
-		'config' => [
-			'no_cache' => true,
-		],
-	];
+			;'],
+        ],
+        'require' => [
+            'asset' => [
+                'bootstrap-theme',
+                'jquery-formvalidation',
+            ],
+        ],
+        'config' => [
+            'no_cache' => true,
+        ],
+    ];
 };

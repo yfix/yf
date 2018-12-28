@@ -1,13 +1,12 @@
 <?php
 
-return function() {
-
-return ['versions' => ['master' => [
-	'css' => '
+return function () {
+    return ['versions' => ['master' => [
+    'css' => '
 		.popover.ajax-user-info { min-width: 350px; min-height: 300px; border: 5px solid black; }
 		.popover.ajax-user-info .popover-content { width: auto; overflow-x: visible; overflow-y: auto; }
 	',
-	'jquery' => '
+    'jquery' => '
 		$("body").popover({
 			animation: false,
 			delay: { "show": 0, "hide": 300 },
@@ -44,7 +43,7 @@ return ['versions' => ['master' => [
 
 		var yf_cache_ajax_user_info = { };
 		function yf_ajax_user_info(uid, _this) {
-			var url = "'.url('/members/ajax/%uid').'";
+			var url = "' . url('/members/ajax/%uid') . '";
 			if (typeof uid == "undefined" || !uid) {
 				return false;
 			}
@@ -68,19 +67,18 @@ return ['versions' => ['master' => [
 			});
 			return yf_cache_ajax_user_info[uid];
 		}
-	']],
-	'require' => [
-		'asset' => [
-			'jquery',
-			'jquery-ajax-queue',
-			'bootstrap-theme',
-			'yf_js_popover_fix',
-		],
-	],
-	'config' => [
-		'no_cache' => true,
-		'main_type' => 'admin',
-	],
+	', ]],
+    'require' => [
+        'asset' => [
+            'jquery',
+            'jquery-ajax-queue',
+            'bootstrap-theme',
+            'yf_js_popover_fix',
+        ],
+    ],
+    'config' => [
+        'no_cache' => true,
+        'main_type' => 'admin',
+    ],
 ];
-
 };

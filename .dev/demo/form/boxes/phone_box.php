@@ -1,5 +1,5 @@
 <?php
 
-return function() {
-	return form()->phone_box()->submit();
+return function () {
+    return form()->phone_box()->submit();
 };

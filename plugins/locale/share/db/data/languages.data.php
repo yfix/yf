@@ -1,7 +1,7 @@
 <?php
+
 return [
-  0 => 
-  [
+  0 => [
     'code' => 'aa',
     'code3' => 'aar',
     'name' => 'Afar',
@@ -9,8 +9,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  1 => 
-  [
+  1 => [
     'code' => 'ab',
     'code3' => 'abk',
     'name' => 'Abkhaz',
@@ -18,8 +17,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  2 => 
-  [
+  2 => [
     'code' => 'ae',
     'code3' => 'ave',
     'name' => 'Avestan',
@@ -27,8 +25,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  3 => 
-  [
+  3 => [
     'code' => 'af',
     'code3' => 'afr',
     'name' => 'Afrikaans',
@@ -36,8 +33,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  4 => 
-  [
+  4 => [
     'code' => 'ak',
     'code3' => 'aka',
     'name' => 'Akan',
@@ -45,8 +41,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  5 => 
-  [
+  5 => [
     'code' => 'am',
     'code3' => 'amh',
     'name' => 'Amharic',
@@ -54,8 +49,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  6 => 
-  [
+  6 => [
     'code' => 'an',
     'code3' => 'arg',
     'name' => 'Aragonese',
@@ -63,8 +57,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  7 => 
-  [
+  7 => [
     'code' => 'ar',
     'code3' => 'ara',
     'name' => 'Arabic',
@@ -72,8 +65,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  8 => 
-  [
+  8 => [
     'code' => 'as',
     'code3' => 'asm',
     'name' => 'Assamese',
@@ -81,8 +73,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  9 => 
-  [
+  9 => [
     'code' => 'av',
     'code3' => 'ava',
     'name' => 'Avaric',
@@ -90,8 +81,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  10 => 
-  [
+  10 => [
     'code' => 'ay',
     'code3' => 'aym',
     'name' => 'Aymara',
@@ -99,8 +89,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  11 => 
-  [
+  11 => [
     'code' => 'az',
     'code3' => 'azb',
     'name' => 'South Azerbaijani',
@@ -108,8 +97,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  12 => 
-  [
+  12 => [
     'code' => 'ba',
     'code3' => 'bak',
     'name' => 'Bashkir',
@@ -117,8 +105,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  13 => 
-  [
+  13 => [
     'code' => 'be',
     'code3' => 'bel',
     'name' => 'Belarusian',
@@ -126,8 +113,7 @@ return [
     'country' => 'by',
     'active' => '0',
   ],
-  14 => 
-  [
+  14 => [
     'code' => 'bg',
     'code3' => 'bul',
     'name' => 'Bulgarian',
@@ -135,8 +121,7 @@ return [
     'country' => 'bg',
     'active' => '0',
   ],
-  15 => 
-  [
+  15 => [
     'code' => 'bh',
     'code3' => 'bih',
     'name' => 'Bihari',
@@ -144,8 +129,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  16 => 
-  [
+  16 => [
     'code' => 'bi',
     'code3' => 'bis',
     'name' => 'Bislama',
@@ -153,8 +137,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  17 => 
-  [
+  17 => [
     'code' => 'bm',
     'code3' => 'bam',
     'name' => 'Bambara',
@@ -162,8 +145,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  18 => 
-  [
+  18 => [
     'code' => 'bn',
     'code3' => 'ben',
     'name' => 'Bengali; Bangla',
@@ -171,8 +153,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  19 => 
-  [
+  19 => [
     'code' => 'bo',
     'code3' => 'bod',
     'name' => 'Tibetan Standard, Tibetan, Central',
@@ -180,8 +161,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  20 => 
-  [
+  20 => [
     'code' => 'br',
     'code3' => 'bre',
     'name' => 'Breton',
@@ -189,8 +169,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  21 => 
-  [
+  21 => [
     'code' => 'bs',
     'code3' => 'bos',
     'name' => 'Bosnian',
@@ -198,8 +177,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  22 => 
-  [
+  22 => [
     'code' => 'ca',
     'code3' => 'cat',
     'name' => 'Catalan; Valencian',
@@ -207,8 +185,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  23 => 
-  [
+  23 => [
     'code' => 'ce',
     'code3' => 'che',
     'name' => 'Chechen',
@@ -216,8 +193,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  24 => 
-  [
+  24 => [
     'code' => 'ch',
     'code3' => 'cha',
     'name' => 'Chamorro',
@@ -225,8 +201,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  25 => 
-  [
+  25 => [
     'code' => 'co',
     'code3' => 'cos',
     'name' => 'Corsican',
@@ -234,8 +209,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  26 => 
-  [
+  26 => [
     'code' => 'cr',
     'code3' => 'cre',
     'name' => 'Cree',
@@ -243,8 +217,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  27 => 
-  [
+  27 => [
     'code' => 'cs',
     'code3' => 'ces',
     'name' => 'Czech',
@@ -252,8 +225,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  28 => 
-  [
+  28 => [
     'code' => 'cu',
     'code3' => 'chu',
     'name' => 'Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgari',
@@ -261,8 +233,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  29 => 
-  [
+  29 => [
     'code' => 'cv',
     'code3' => 'chv',
     'name' => 'Chuvash',
@@ -270,8 +241,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  30 => 
-  [
+  30 => [
     'code' => 'cy',
     'code3' => 'cym',
     'name' => 'Welsh',
@@ -279,8 +249,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  31 => 
-  [
+  31 => [
     'code' => 'da',
     'code3' => 'dan',
     'name' => 'Danish',
@@ -288,8 +257,7 @@ return [
     'country' => 'dk',
     'active' => '0',
   ],
-  32 => 
-  [
+  32 => [
     'code' => 'de',
     'code3' => 'deu',
     'name' => 'German',
@@ -297,8 +265,7 @@ return [
     'country' => 'de',
     'active' => '0',
   ],
-  33 => 
-  [
+  33 => [
     'code' => 'dv',
     'code3' => 'div',
     'name' => 'Divehi; Dhivehi; Maldivian;',
@@ -306,8 +273,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  34 => 
-  [
+  34 => [
     'code' => 'dz',
     'code3' => 'dzo',
     'name' => 'Dzongkha',
@@ -315,8 +281,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  35 => 
-  [
+  35 => [
     'code' => 'ee',
     'code3' => 'ewe',
     'name' => 'Ewe',
@@ -324,8 +289,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  36 => 
-  [
+  36 => [
     'code' => 'el',
     'code3' => 'ell',
     'name' => 'Greek, Modern',
@@ -333,8 +297,7 @@ return [
     'country' => 'gr',
     'active' => '0',
   ],
-  37 => 
-  [
+  37 => [
     'code' => 'en',
     'code3' => 'eng',
     'name' => 'English',
@@ -342,8 +305,7 @@ return [
     'country' => 'us',
     'active' => '1',
   ],
-  38 => 
-  [
+  38 => [
     'code' => 'eo',
     'code3' => 'epo',
     'name' => 'Esperanto',
@@ -351,8 +313,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  39 => 
-  [
+  39 => [
     'code' => 'es',
     'code3' => 'spa',
     'name' => 'Spanish; Castilian',
@@ -360,8 +321,7 @@ return [
     'country' => 'es',
     'active' => '0',
   ],
-  40 => 
-  [
+  40 => [
     'code' => 'et',
     'code3' => 'est',
     'name' => 'Estonian',
@@ -369,8 +329,7 @@ return [
     'country' => 'ee',
     'active' => '0',
   ],
-  41 => 
-  [
+  41 => [
     'code' => 'eu',
     'code3' => 'eus',
     'name' => 'Basque',
@@ -378,8 +337,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  42 => 
-  [
+  42 => [
     'code' => 'fa',
     'code3' => 'fas',
     'name' => 'Persian (Farsi)',
@@ -387,8 +345,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  43 => 
-  [
+  43 => [
     'code' => 'ff',
     'code3' => 'ful',
     'name' => 'Fula; Fulah; Pulaar; Pular',
@@ -396,8 +353,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  44 => 
-  [
+  44 => [
     'code' => 'fi',
     'code3' => 'fin',
     'name' => 'Finnish',
@@ -405,8 +361,7 @@ return [
     'country' => 'fi',
     'active' => '0',
   ],
-  45 => 
-  [
+  45 => [
     'code' => 'fj',
     'code3' => 'fij',
     'name' => 'Fijian',
@@ -414,8 +369,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  46 => 
-  [
+  46 => [
     'code' => 'fo',
     'code3' => 'fao',
     'name' => 'Faroese',
@@ -423,8 +377,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  47 => 
-  [
+  47 => [
     'code' => 'fr',
     'code3' => 'fra',
     'name' => 'French',
@@ -432,8 +385,7 @@ return [
     'country' => 'fr',
     'active' => '0',
   ],
-  48 => 
-  [
+  48 => [
     'code' => 'fy',
     'code3' => 'fry',
     'name' => 'Western Frisian',
@@ -441,8 +393,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  49 => 
-  [
+  49 => [
     'code' => 'ga',
     'code3' => 'gle',
     'name' => 'Irish',
@@ -450,8 +401,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  50 => 
-  [
+  50 => [
     'code' => 'gd',
     'code3' => 'gla',
     'name' => 'Scottish Gaelic; Gaelic',
@@ -459,8 +409,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  51 => 
-  [
+  51 => [
     'code' => 'gl',
     'code3' => 'glg',
     'name' => 'Galician',
@@ -468,8 +417,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  52 => 
-  [
+  52 => [
     'code' => 'gn',
     'code3' => 'grn',
     'name' => 'Guaraní',
@@ -477,8 +425,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  53 => 
-  [
+  53 => [
     'code' => 'gu',
     'code3' => 'guj',
     'name' => 'Gujarati',
@@ -486,8 +433,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  54 => 
-  [
+  54 => [
     'code' => 'gv',
     'code3' => 'glv',
     'name' => 'Manx',
@@ -495,8 +441,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  55 => 
-  [
+  55 => [
     'code' => 'ha',
     'code3' => 'hau',
     'name' => 'Hausa',
@@ -504,8 +449,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  56 => 
-  [
+  56 => [
     'code' => 'he',
     'code3' => 'heb',
     'name' => 'Hebrew (modern)',
@@ -513,8 +457,7 @@ return [
     'country' => 'il',
     'active' => '0',
   ],
-  57 => 
-  [
+  57 => [
     'code' => 'hi',
     'code3' => 'hin',
     'name' => 'Hindi',
@@ -522,8 +465,7 @@ return [
     'country' => 'in',
     'active' => '0',
   ],
-  58 => 
-  [
+  58 => [
     'code' => 'ho',
     'code3' => 'hmo',
     'name' => 'Hiri Motu',
@@ -531,8 +473,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  59 => 
-  [
+  59 => [
     'code' => 'hr',
     'code3' => 'hrv',
     'name' => 'Croatian',
@@ -540,8 +481,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  60 => 
-  [
+  60 => [
     'code' => 'ht',
     'code3' => 'hat',
     'name' => 'Haitian; Haitian Creole',
@@ -549,8 +489,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  61 => 
-  [
+  61 => [
     'code' => 'hu',
     'code3' => 'hun',
     'name' => 'Hungarian',
@@ -558,8 +497,7 @@ return [
     'country' => 'hu',
     'active' => '0',
   ],
-  62 => 
-  [
+  62 => [
     'code' => 'hy',
     'code3' => 'hye',
     'name' => 'Armenian',
@@ -567,8 +505,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  63 => 
-  [
+  63 => [
     'code' => 'hz',
     'code3' => 'her',
     'name' => 'Herero',
@@ -576,8 +513,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  64 => 
-  [
+  64 => [
     'code' => 'ia',
     'code3' => 'ina',
     'name' => 'Interlingua',
@@ -585,8 +521,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  65 => 
-  [
+  65 => [
     'code' => 'id',
     'code3' => 'ind',
     'name' => 'Indonesian',
@@ -594,8 +529,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  66 => 
-  [
+  66 => [
     'code' => 'ie',
     'code3' => 'ile',
     'name' => 'Interlingue',
@@ -603,8 +537,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  67 => 
-  [
+  67 => [
     'code' => 'ig',
     'code3' => 'ibo',
     'name' => 'Igbo',
@@ -612,8 +545,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  68 => 
-  [
+  68 => [
     'code' => 'ii',
     'code3' => 'iii',
     'name' => 'Nuosu',
@@ -621,8 +553,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  69 => 
-  [
+  69 => [
     'code' => 'ik',
     'code3' => 'ipk',
     'name' => 'Inupiaq',
@@ -630,8 +561,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  70 => 
-  [
+  70 => [
     'code' => 'io',
     'code3' => 'ido',
     'name' => 'Ido',
@@ -639,8 +569,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  71 => 
-  [
+  71 => [
     'code' => 'is',
     'code3' => 'isl',
     'name' => 'Icelandic',
@@ -648,8 +577,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  72 => 
-  [
+  72 => [
     'code' => 'it',
     'code3' => 'ita',
     'name' => 'Italian',
@@ -657,8 +585,7 @@ return [
     'country' => 'it',
     'active' => '0',
   ],
-  73 => 
-  [
+  73 => [
     'code' => 'iu',
     'code3' => 'iku',
     'name' => 'Inuktitut',
@@ -666,8 +593,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  74 => 
-  [
+  74 => [
     'code' => 'ja',
     'code3' => 'jpn',
     'name' => 'Japanese',
@@ -675,8 +601,7 @@ return [
     'country' => 'jp',
     'active' => '0',
   ],
-  75 => 
-  [
+  75 => [
     'code' => 'jv',
     'code3' => 'jav',
     'name' => 'Javanese',
@@ -684,8 +609,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  76 => 
-  [
+  76 => [
     'code' => 'ka',
     'code3' => 'kat',
     'name' => 'Georgian',
@@ -693,8 +617,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  77 => 
-  [
+  77 => [
     'code' => 'kg',
     'code3' => 'kon',
     'name' => 'Kongo',
@@ -702,8 +625,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  78 => 
-  [
+  78 => [
     'code' => 'ki',
     'code3' => 'kik',
     'name' => 'Kikuyu, Gikuyu',
@@ -711,8 +633,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  79 => 
-  [
+  79 => [
     'code' => 'kj',
     'code3' => 'kua',
     'name' => 'Kwanyama, Kuanyama',
@@ -720,8 +641,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  80 => 
-  [
+  80 => [
     'code' => 'kk',
     'code3' => 'kaz',
     'name' => 'Kazakh',
@@ -729,8 +649,7 @@ return [
     'country' => 'kz',
     'active' => '0',
   ],
-  81 => 
-  [
+  81 => [
     'code' => 'kl',
     'code3' => 'kal',
     'name' => 'Kalaallisut, Greenlandic',
@@ -738,8 +657,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  82 => 
-  [
+  82 => [
     'code' => 'km',
     'code3' => 'khm',
     'name' => 'Khmer',
@@ -747,8 +665,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  83 => 
-  [
+  83 => [
     'code' => 'kn',
     'code3' => 'kan',
     'name' => 'Kannada',
@@ -756,8 +673,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  84 => 
-  [
+  84 => [
     'code' => 'ko',
     'code3' => 'kor',
     'name' => 'Korean',
@@ -765,8 +681,7 @@ return [
     'country' => 'kp',
     'active' => '0',
   ],
-  85 => 
-  [
+  85 => [
     'code' => 'kr',
     'code3' => 'kau',
     'name' => 'Kanuri',
@@ -774,8 +689,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  86 => 
-  [
+  86 => [
     'code' => 'ks',
     'code3' => 'kas',
     'name' => 'Kashmiri',
@@ -783,8 +697,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  87 => 
-  [
+  87 => [
     'code' => 'ku',
     'code3' => 'kur',
     'name' => 'Kurdish',
@@ -792,8 +705,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  88 => 
-  [
+  88 => [
     'code' => 'kv',
     'code3' => 'kom',
     'name' => 'Komi',
@@ -801,8 +713,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  89 => 
-  [
+  89 => [
     'code' => 'kw',
     'code3' => 'cor',
     'name' => 'Cornish',
@@ -810,8 +721,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  90 => 
-  [
+  90 => [
     'code' => 'ky',
     'code3' => 'kir',
     'name' => 'Kyrgyz',
@@ -819,8 +729,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  91 => 
-  [
+  91 => [
     'code' => 'la',
     'code3' => 'lat',
     'name' => 'Latin',
@@ -828,8 +737,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  92 => 
-  [
+  92 => [
     'code' => 'lb',
     'code3' => 'ltz',
     'name' => 'Luxembourgish, Letzeburgesch',
@@ -837,8 +745,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  93 => 
-  [
+  93 => [
     'code' => 'lg',
     'code3' => 'lug',
     'name' => 'Ganda',
@@ -846,8 +753,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  94 => 
-  [
+  94 => [
     'code' => 'li',
     'code3' => 'lim',
     'name' => 'Limburgish, Limburgan, Limburger',
@@ -855,8 +761,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  95 => 
-  [
+  95 => [
     'code' => 'ln',
     'code3' => 'lin',
     'name' => 'Lingala',
@@ -864,8 +769,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  96 => 
-  [
+  96 => [
     'code' => 'lo',
     'code3' => 'lao',
     'name' => 'Lao',
@@ -873,8 +777,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  97 => 
-  [
+  97 => [
     'code' => 'lt',
     'code3' => 'lit',
     'name' => 'Lithuanian',
@@ -882,8 +785,7 @@ return [
     'country' => 'lt',
     'active' => '0',
   ],
-  98 => 
-  [
+  98 => [
     'code' => 'lu',
     'code3' => 'lub',
     'name' => 'Luba-Katanga',
@@ -891,8 +793,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  99 => 
-  [
+  99 => [
     'code' => 'lv',
     'code3' => 'lav',
     'name' => 'Latvian',
@@ -900,8 +801,7 @@ return [
     'country' => 'lv',
     'active' => '0',
   ],
-  100 => 
-  [
+  100 => [
     'code' => 'mg',
     'code3' => 'mlg',
     'name' => 'Malagasy',
@@ -909,8 +809,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  101 => 
-  [
+  101 => [
     'code' => 'mh',
     'code3' => 'mah',
     'name' => 'Marshallese',
@@ -918,8 +817,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  102 => 
-  [
+  102 => [
     'code' => 'mi',
     'code3' => 'mri',
     'name' => 'Māori',
@@ -927,8 +825,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  103 => 
-  [
+  103 => [
     'code' => 'mk',
     'code3' => 'mkd',
     'name' => 'Macedonian',
@@ -936,8 +833,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  104 => 
-  [
+  104 => [
     'code' => 'ml',
     'code3' => 'mal',
     'name' => 'Malayalam',
@@ -945,8 +841,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  105 => 
-  [
+  105 => [
     'code' => 'mn',
     'code3' => 'mon',
     'name' => 'Mongolian',
@@ -954,8 +849,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  106 => 
-  [
+  106 => [
     'code' => 'mr',
     'code3' => 'mar',
     'name' => 'Marathi (Marāṭhī)',
@@ -963,8 +857,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  107 => 
-  [
+  107 => [
     'code' => 'ms',
     'code3' => 'msa',
     'name' => 'Malay',
@@ -972,8 +865,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  108 => 
-  [
+  108 => [
     'code' => 'mt',
     'code3' => 'mlt',
     'name' => 'Maltese',
@@ -981,8 +873,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  109 => 
-  [
+  109 => [
     'code' => 'my',
     'code3' => 'mya',
     'name' => 'Burmese',
@@ -990,8 +881,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  110 => 
-  [
+  110 => [
     'code' => 'na',
     'code3' => 'nau',
     'name' => 'Nauru',
@@ -999,8 +889,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  111 => 
-  [
+  111 => [
     'code' => 'nb',
     'code3' => 'nob',
     'name' => 'Norwegian Bokmål',
@@ -1008,8 +897,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  112 => 
-  [
+  112 => [
     'code' => 'nd',
     'code3' => 'nde',
     'name' => 'North Ndebele',
@@ -1017,8 +905,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  113 => 
-  [
+  113 => [
     'code' => 'ne',
     'code3' => 'nep',
     'name' => 'Nepali',
@@ -1026,8 +913,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  114 => 
-  [
+  114 => [
     'code' => 'ng',
     'code3' => 'ndo',
     'name' => 'Ndonga',
@@ -1035,8 +921,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  115 => 
-  [
+  115 => [
     'code' => 'nl',
     'code3' => 'nld',
     'name' => 'Dutch',
@@ -1044,8 +929,7 @@ return [
     'country' => 'nl',
     'active' => '0',
   ],
-  116 => 
-  [
+  116 => [
     'code' => 'nn',
     'code3' => 'nno',
     'name' => 'Norwegian Nynorsk',
@@ -1053,8 +937,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  117 => 
-  [
+  117 => [
     'code' => 'no',
     'code3' => 'nor',
     'name' => 'Norwegian',
@@ -1062,8 +945,7 @@ return [
     'country' => 'no',
     'active' => '0',
   ],
-  118 => 
-  [
+  118 => [
     'code' => 'nr',
     'code3' => 'nbl',
     'name' => 'South Ndebele',
@@ -1071,8 +953,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  119 => 
-  [
+  119 => [
     'code' => 'nv',
     'code3' => 'nav',
     'name' => 'Navajo, Navaho',
@@ -1080,8 +961,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  120 => 
-  [
+  120 => [
     'code' => 'ny',
     'code3' => 'nya',
     'name' => 'Chichewa; Chewa; Nyanja',
@@ -1089,8 +969,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  121 => 
-  [
+  121 => [
     'code' => 'oc',
     'code3' => 'oci',
     'name' => 'Occitan',
@@ -1098,8 +977,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  122 => 
-  [
+  122 => [
     'code' => 'oj',
     'code3' => 'oji',
     'name' => 'Ojibwe, Ojibwa',
@@ -1107,8 +985,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  123 => 
-  [
+  123 => [
     'code' => 'om',
     'code3' => 'orm',
     'name' => 'Oromo',
@@ -1116,8 +993,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  124 => 
-  [
+  124 => [
     'code' => 'or',
     'code3' => 'ori',
     'name' => 'Oriya',
@@ -1125,8 +1001,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  125 => 
-  [
+  125 => [
     'code' => 'os',
     'code3' => 'oss',
     'name' => 'Ossetian, Ossetic',
@@ -1134,8 +1009,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  126 => 
-  [
+  126 => [
     'code' => 'pa',
     'code3' => 'pan',
     'name' => 'Panjabi, Punjabi',
@@ -1143,8 +1017,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  127 => 
-  [
+  127 => [
     'code' => 'pi',
     'code3' => 'pli',
     'name' => 'Pāli',
@@ -1152,8 +1025,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  128 => 
-  [
+  128 => [
     'code' => 'pl',
     'code3' => 'pol',
     'name' => 'Polish',
@@ -1161,8 +1033,7 @@ return [
     'country' => 'pl',
     'active' => '0',
   ],
-  129 => 
-  [
+  129 => [
     'code' => 'ps',
     'code3' => 'pus',
     'name' => 'Pashto, Pushto',
@@ -1170,8 +1041,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  130 => 
-  [
+  130 => [
     'code' => 'pt',
     'code3' => 'por',
     'name' => 'Portuguese',
@@ -1179,8 +1049,7 @@ return [
     'country' => 'pt',
     'active' => '0',
   ],
-  131 => 
-  [
+  131 => [
     'code' => 'qu',
     'code3' => 'que',
     'name' => 'Quechua',
@@ -1188,8 +1057,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  132 => 
-  [
+  132 => [
     'code' => 'rm',
     'code3' => 'roh',
     'name' => 'Romansh',
@@ -1197,8 +1065,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  133 => 
-  [
+  133 => [
     'code' => 'rn',
     'code3' => 'run',
     'name' => 'Kirundi',
@@ -1206,8 +1073,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  134 => 
-  [
+  134 => [
     'code' => 'ro',
     'code3' => 'ron',
     'name' => 'Romanian, [])',
@@ -1215,8 +1081,7 @@ return [
     'country' => 'ro',
     'active' => '0',
   ],
-  135 => 
-  [
+  135 => [
     'code' => 'ru',
     'code3' => 'rus',
     'name' => 'Russian',
@@ -1224,8 +1089,7 @@ return [
     'country' => 'ru',
     'active' => '1',
   ],
-  136 => 
-  [
+  136 => [
     'code' => 'rw',
     'code3' => 'kin',
     'name' => 'Kinyarwanda',
@@ -1233,8 +1097,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  137 => 
-  [
+  137 => [
     'code' => 'sa',
     'code3' => 'san',
     'name' => 'Sanskrit (Saṁskṛta)',
@@ -1242,8 +1105,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  138 => 
-  [
+  138 => [
     'code' => 'sc',
     'code3' => 'srd',
     'name' => 'Sardinian',
@@ -1251,8 +1113,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  139 => 
-  [
+  139 => [
     'code' => 'sd',
     'code3' => 'snd',
     'name' => 'Sindhi',
@@ -1260,8 +1121,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  140 => 
-  [
+  140 => [
     'code' => 'se',
     'code3' => 'sme',
     'name' => 'Northern Sami',
@@ -1269,8 +1129,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  141 => 
-  [
+  141 => [
     'code' => 'sg',
     'code3' => 'sag',
     'name' => 'Sango',
@@ -1278,8 +1137,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  142 => 
-  [
+  142 => [
     'code' => 'si',
     'code3' => 'sin',
     'name' => 'Sinhala, Sinhalese',
@@ -1287,8 +1145,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  143 => 
-  [
+  143 => [
     'code' => 'sk',
     'code3' => 'slk',
     'name' => 'Slovak',
@@ -1296,8 +1153,7 @@ return [
     'country' => 'sk',
     'active' => '0',
   ],
-  144 => 
-  [
+  144 => [
     'code' => 'sl',
     'code3' => 'slv',
     'name' => 'Slovene',
@@ -1305,8 +1161,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  145 => 
-  [
+  145 => [
     'code' => 'sm',
     'code3' => 'smo',
     'name' => 'Samoan',
@@ -1314,8 +1169,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  146 => 
-  [
+  146 => [
     'code' => 'sn',
     'code3' => 'sna',
     'name' => 'Shona',
@@ -1323,8 +1177,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  147 => 
-  [
+  147 => [
     'code' => 'so',
     'code3' => 'som',
     'name' => 'Somali',
@@ -1332,8 +1185,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  148 => 
-  [
+  148 => [
     'code' => 'sq',
     'code3' => 'sqi',
     'name' => 'Albanian',
@@ -1341,8 +1193,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  149 => 
-  [
+  149 => [
     'code' => 'sr',
     'code3' => 'srp',
     'name' => 'Serbian',
@@ -1350,8 +1201,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  150 => 
-  [
+  150 => [
     'code' => 'ss',
     'code3' => 'ssw',
     'name' => 'Swati',
@@ -1359,8 +1209,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  151 => 
-  [
+  151 => [
     'code' => 'st',
     'code3' => 'sot',
     'name' => 'Southern Sotho',
@@ -1368,8 +1217,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  152 => 
-  [
+  152 => [
     'code' => 'su',
     'code3' => 'sun',
     'name' => 'Sundanese',
@@ -1377,8 +1225,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  153 => 
-  [
+  153 => [
     'code' => 'sv',
     'code3' => 'swe',
     'name' => 'Swedish',
@@ -1386,8 +1233,7 @@ return [
     'country' => 'se',
     'active' => '0',
   ],
-  154 => 
-  [
+  154 => [
     'code' => 'sw',
     'code3' => 'swa',
     'name' => 'Swahili',
@@ -1395,8 +1241,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  155 => 
-  [
+  155 => [
     'code' => 'ta',
     'code3' => 'tam',
     'name' => 'Tamil',
@@ -1404,8 +1249,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  156 => 
-  [
+  156 => [
     'code' => 'te',
     'code3' => 'tel',
     'name' => 'Telugu',
@@ -1413,8 +1257,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  157 => 
-  [
+  157 => [
     'code' => 'tg',
     'code3' => 'tgk',
     'name' => 'Tajik',
@@ -1422,8 +1265,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  158 => 
-  [
+  158 => [
     'code' => 'th',
     'code3' => 'tha',
     'name' => 'Thai',
@@ -1431,8 +1273,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  159 => 
-  [
+  159 => [
     'code' => 'ti',
     'code3' => 'tir',
     'name' => 'Tigrinya',
@@ -1440,8 +1281,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  160 => 
-  [
+  160 => [
     'code' => 'tk',
     'code3' => 'tuk',
     'name' => 'Turkmen',
@@ -1449,8 +1289,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  161 => 
-  [
+  161 => [
     'code' => 'tl',
     'code3' => 'tgl',
     'name' => 'Tagalog',
@@ -1458,8 +1297,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  162 => 
-  [
+  162 => [
     'code' => 'tn',
     'code3' => 'tsn',
     'name' => 'Tswana',
@@ -1467,8 +1305,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  163 => 
-  [
+  163 => [
     'code' => 'to',
     'code3' => 'ton',
     'name' => 'Tonga (Tonga Islands)',
@@ -1476,8 +1313,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  164 => 
-  [
+  164 => [
     'code' => 'tr',
     'code3' => 'tur',
     'name' => 'Turkish',
@@ -1485,8 +1321,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  165 => 
-  [
+  165 => [
     'code' => 'ts',
     'code3' => 'tso',
     'name' => 'Tsonga',
@@ -1494,8 +1329,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  166 => 
-  [
+  166 => [
     'code' => 'tt',
     'code3' => 'tat',
     'name' => 'Tatar',
@@ -1503,8 +1337,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  167 => 
-  [
+  167 => [
     'code' => 'tw',
     'code3' => 'twi',
     'name' => 'Twi',
@@ -1512,8 +1345,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  168 => 
-  [
+  168 => [
     'code' => 'ty',
     'code3' => 'tah',
     'name' => 'Tahitian',
@@ -1521,8 +1353,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  169 => 
-  [
+  169 => [
     'code' => 'ug',
     'code3' => 'uig',
     'name' => 'Uyghur, Uighur',
@@ -1530,8 +1361,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  170 => 
-  [
+  170 => [
     'code' => 'uk',
     'code3' => 'ukr',
     'name' => 'Ukrainian',
@@ -1539,8 +1369,7 @@ return [
     'country' => 'ua',
     'active' => '1',
   ],
-  171 => 
-  [
+  171 => [
     'code' => 'ur',
     'code3' => 'urd',
     'name' => 'Urdu',
@@ -1548,8 +1377,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  172 => 
-  [
+  172 => [
     'code' => 'uz',
     'code3' => 'uzb',
     'name' => 'Uzbek',
@@ -1557,8 +1385,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  173 => 
-  [
+  173 => [
     'code' => 've',
     'code3' => 'ven',
     'name' => 'Venda',
@@ -1566,8 +1393,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  174 => 
-  [
+  174 => [
     'code' => 'vi',
     'code3' => 'vie',
     'name' => 'Vietnamese',
@@ -1575,8 +1401,7 @@ return [
     'country' => 'vn',
     'active' => '0',
   ],
-  175 => 
-  [
+  175 => [
     'code' => 'vo',
     'code3' => 'vol',
     'name' => 'Volapük',
@@ -1584,8 +1409,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  176 => 
-  [
+  176 => [
     'code' => 'wa',
     'code3' => 'wln',
     'name' => 'Walloon',
@@ -1593,8 +1417,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  177 => 
-  [
+  177 => [
     'code' => 'wo',
     'code3' => 'wol',
     'name' => 'Wolof',
@@ -1602,8 +1425,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  178 => 
-  [
+  178 => [
     'code' => 'xh',
     'code3' => 'xho',
     'name' => 'Xhosa',
@@ -1611,8 +1433,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  179 => 
-  [
+  179 => [
     'code' => 'yi',
     'code3' => 'yid',
     'name' => 'Yiddish',
@@ -1620,8 +1441,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  180 => 
-  [
+  180 => [
     'code' => 'yo',
     'code3' => 'yor',
     'name' => 'Yoruba',
@@ -1629,8 +1449,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  181 => 
-  [
+  181 => [
     'code' => 'za',
     'code3' => 'zha',
     'name' => 'Zhuang, Chuang',
@@ -1638,8 +1457,7 @@ return [
     'country' => '',
     'active' => '0',
   ],
-  182 => 
-  [
+  182 => [
     'code' => 'zh',
     'code3' => 'zho',
     'name' => 'Chinese',
@@ -1647,8 +1465,7 @@ return [
     'country' => 'cn',
     'active' => '0',
   ],
-  183 => 
-  [
+  183 => [
     'code' => 'zu',
     'code3' => 'zul',
     'name' => 'Zulu',

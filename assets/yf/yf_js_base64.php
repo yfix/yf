@@ -2,9 +2,8 @@
 
 // based on: http://phpjs.org/functions/base64_encode/
 return [
-	'versions' => ['master' => [
-		'js' => 
-<<<END
+    'versions' => ['master' => [
+        'js' => <<<'END'
 	function yf_base64_encode_safe(data) {
 		var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 		var o1, o2, o3, h1, h2, h3, h4, bits, i = 0,
@@ -39,5 +38,5 @@ return [
 		return out.replace("+","-").replace("/","*");
 	}
 END
-	]],
+    ]],
 ];

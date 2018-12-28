@@ -1,4 +1,5 @@
 <?php
+
 return '
   `key` varchar(64) NOT NULL DEFAULT \'\',
   `value` longtext NOT NULL DEFAULT \'\',

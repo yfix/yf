@@ -1,26 +1,29 @@
 <?php
 
-require_once __DIR__.'/tpl__setup.php';
+require_once __DIR__ . '/tpl__setup.php';
 
-class tpl_driver_yf_test extends tpl_abstract {
-	public function test_simple() {
-		$this->assertEquals('Hello world', self::_tpl( 'Hello world' ));
-	}
-	public function test_complex() {
-		$data = [
-			'a_variable' => 'var_value',
-			'navigation' => [
-				[
-					'href'		=> 'http://yfix.net/',
-					'caption'	=> 'Yf website',
-				],
-				[
-					'href'		=> 'http://google.com/',
-					'caption'	=> 'Google',
-				],
-			],
-		];
-		$tpl_string = 
+class tpl_driver_yf_test extends tpl_abstract
+{
+    public function test_simple()
+    {
+        $this->assertEquals('Hello world', self::_tpl('Hello world'));
+    }
+    public function test_complex()
+    {
+        $data = [
+            'a_variable' => 'var_value',
+            'navigation' => [
+                [
+                    'href' => 'http://yfix.net/',
+                    'caption' => 'Yf website',
+                ],
+                [
+                    'href' => 'http://google.com/',
+                    'caption' => 'Google',
+                ],
+            ],
+        ];
+        $tpl_string =
 '<!DOCTYPE html>
 <html>
 	<head><title>My Webpage</title></head>
@@ -35,7 +38,7 @@ class tpl_driver_yf_test extends tpl_abstract {
 	</body>
 </html>';
 
-		$expected = 
+        $expected =
 '<!DOCTYPE html>
 <html>
 	<head><title>My Webpage</title></head>
@@ -51,6 +54,6 @@ class tpl_driver_yf_test extends tpl_abstract {
 		var_value
 	</body>
 </html>';
-		$this->assertEquals($expected, self::_tpl($tpl_string, $data));
-	}
+        $this->assertEquals($expected, self::_tpl($tpl_string, $data));
+    }
 }

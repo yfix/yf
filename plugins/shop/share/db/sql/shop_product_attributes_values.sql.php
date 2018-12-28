@@ -1,4 +1,5 @@
 <?php
+
 return '
   `category_id` int(11) NOT NULL DEFAULT \'0\',
   `object_name` varchar(50) NOT NULL DEFAULT \'\',

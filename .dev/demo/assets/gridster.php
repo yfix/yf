@@ -1,8 +1,8 @@
 <?php
 
-return function() {
-	asset('gridster');
-	css('
+return function () {
+    asset('gridster');
+    css('
 		.gridster { width: 960px; margin: 0 auto; }
 		.gridster .gs-w { background: #FFF; cursor: pointer; -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.3); box-shadow: 0 0 5px rgba(0,0,0,0.3); }
 		.gridster .player { -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,0.3); box-shadow: 3px 3px 5px rgba(0,0,0,0.3); }
@@ -11,7 +11,7 @@ return function() {
 		.gridster [hidden] { display: none; }
 		.gridster ul, .gridster ol { list-style: none; }
 	');
-	jquery('
+    jquery('
 		$(".gridster ul").gridster({
 			widget_margins: [10, 10],
 			widget_base_dimensions: [140, 140],
@@ -21,7 +21,7 @@ return function() {
 			}
 		});
 	');
-	return '
+    return '
 		<div class="gridster">
 		    <ul>
 		        <li data-row="1" data-col="1" data-sizex="1" data-sizey="1"></li>

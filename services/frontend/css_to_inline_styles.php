@@ -2,16 +2,16 @@
 <?php
 
 $config = [
-	'require_services' => ['sf_css_selector'],
-	'git_urls' => ['https://github.com/tijsverkoyen/CssToInlineStyles.git~1.5.4' => 'css_to_inline_styles/'],
-	'require_once' => [
-		'css_to_inline_styles/src/Exception.php',
-		'css_to_inline_styles/src/Specificity.php',
-		'css_to_inline_styles/src/CssToInlineStyles.php',
-	],
-	'example' => function() {
-		$body = '<style type="text/css">body{color:red;}</style>';
-		$html = '
+    'require_services' => ['sf_css_selector'],
+    'git_urls' => ['https://github.com/tijsverkoyen/CssToInlineStyles.git~1.5.4' => 'css_to_inline_styles/'],
+    'require_once' => [
+        'css_to_inline_styles/src/Exception.php',
+        'css_to_inline_styles/src/Specificity.php',
+        'css_to_inline_styles/src/CssToInlineStyles.php',
+    ],
+    'example' => function () {
+        $body = '<style type="text/css">body{color:red;}</style>';
+        $html = '
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,25 +19,27 @@ $config = [
 	<meta charset="utf-8">
 </head>
 <body>
-'.$body.'
+' . $body . '
 </body>
 </html>
 		';
-		var_dump($html);
-		echo PHP_EOL.'------------------'.PHP_EOL;
+        var_dump($html);
+        echo PHP_EOL . '------------------' . PHP_EOL;
 
-		$cti = new \TijsVerkoyen\CssToInlineStyles\CssToInlineStyles($html);
-		$cti->setEncoding('UTF-8');
-		$cti->setUseInlineStylesBlock();
-		// $cti->setHTML($html);
-		// $cti->setCSS($css);
-		$result = $cti->convert();
+        $cti = new \TijsVerkoyen\CssToInlineStyles\CssToInlineStyles($html);
+        $cti->setEncoding('UTF-8');
+        $cti->setUseInlineStylesBlock();
+        // $cti->setHTML($html);
+        // $cti->setCSS($css);
+        $result = $cti->convert();
 
-		var_dump($result);
-#		if( $raw ) {
-#			preg_match( '|<body.*>(.*)</body>|isU', $result, $matches );
-#			$result = $matches[ 1 ] ?: $result;
-#		}
-	}
+        var_dump($result);
+    //		if( $raw ) {
+//			preg_match( '|<body.*>(.*)</body>|isU', $result, $matches );
+//			$result = $matches[ 1 ] ?: $result;
+//		}
+    },
 ];
-if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);
+if ($return_config) {
+    return $config;
+} require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);

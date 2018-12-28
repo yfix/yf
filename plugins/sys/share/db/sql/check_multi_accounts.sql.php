@@ -1,4 +1,5 @@
 <?php
+
 return '
   `user_id` int(10) unsigned NOT NULL,
   `matching_users` longtext NOT NULL,

@@ -8,3 +8,5 @@
 #logs/
 #artifacts/
 .php_cs.cache
+.idea/
+composer.lock

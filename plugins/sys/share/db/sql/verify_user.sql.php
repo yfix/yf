@@ -1,4 +1,5 @@
 <?php
+
 return '
   `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `verified_url_1` varchar(255) NOT NULL,

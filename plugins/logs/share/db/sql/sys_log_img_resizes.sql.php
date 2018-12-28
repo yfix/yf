@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `source_path` varchar(255) NOT NULL,

@@ -1,7 +1,7 @@
 <?php
 
-/**
-*/
-class yf_logs_validation {
-	// TODO:
+
+class yf_logs_validation
+{
+    // TODO:
 }

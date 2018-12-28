@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'id2' => '1',
     'user_name' => 'test',
@@ -39,8 +39,7 @@ We all have roles to play in keeping kids safe online. Parents need to be involv
     'old_id' => '0',
     'mask' => '0',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'id2' => '1',
     'user_name' => 'kingargyle',
@@ -96,8 +95,7 @@ And I guess that\'s my biggest point: the goal of every single interaction shoul
     'old_id' => '0',
     'mask' => '0',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'id2' => '1',
     'user_name' => 'kingargyle',
@@ -141,8 +139,7 @@ In the lingo of Nancy Reagan, Firefox is a gateway drug.',
     'old_id' => '0',
     'mask' => '0',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'id2' => '1',
     'user_name' => 'odlman',
@@ -180,8 +177,7 @@ In my favorite hotel\'s kitchen, there\'s a big sign on the way out to the dinin
     'old_id' => '0',
     'mask' => '0',
   ],
-  5 => 
-  [
+  5 => [
     'id' => '5',
     'id2' => '1',
     'user_name' => 'kingargyle',

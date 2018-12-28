@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/_rabbitmq.php';
+require __DIR__ . '/_rabbitmq.php';
 
 $ex = new AMQPExchange($ch);
 $ex->setName($pubsub_ex_name);
@@ -14,7 +14,7 @@ $q->declareQueue();
 
 $q->bind($ex->getName(), $pubsub_q_name);
 */
-while(true) {
-	$ex->publish('message '.++$i, $pubsub_topic_name);
-	usleep(1000);
+while (true) {
+    $ex->publish('message ' . ++$i, $pubsub_topic_name);
+    usleep(1000);
 }
