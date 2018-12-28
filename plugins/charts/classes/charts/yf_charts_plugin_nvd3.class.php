@@ -1,4 +1,5 @@
 <?php
 
-class yf_charts_plugin_nvd3 {
+class yf_charts_plugin_nvd3
+{
 }

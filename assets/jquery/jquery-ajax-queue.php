@@ -57,7 +57,7 @@ $.ajaxQueue = function( ajaxOpts ) {
 
 })(jQuery);
 	']],
-	'require' => [
-		'asset' => 'jquery',
-	],
+    'require' => [
+        'asset' => 'jquery',
+    ],
 ];

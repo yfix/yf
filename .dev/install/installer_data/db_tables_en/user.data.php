@@ -1,7 +1,7 @@
 <?php
+
 return [
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'group' => '2',
     'name' => '',
@@ -41,8 +41,7 @@ return [
     'emailssent' => '0',
     'go_after_login' => '',
   ],
-  5 => 
-  [
+  5 => [
     'id' => '5',
     'group' => '2',
     'name' => '',
@@ -82,8 +81,7 @@ return [
     'emailssent' => '0',
     'go_after_login' => '',
   ],
-  6 => 
-  [
+  6 => [
     'id' => '6',
     'group' => '2',
     'name' => '',
@@ -123,8 +121,7 @@ return [
     'emailssent' => '1',
     'go_after_login' => '',
   ],
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'group' => '2',
     'name' => '',

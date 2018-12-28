@@ -1,4 +1,5 @@
 <?php
+
 return '
   `user_id` int(11) unsigned NOT NULL,
   `key` varchar(64) NOT NULL,

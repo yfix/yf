@@ -1,4 +1,5 @@
 <?php
+
 return '
   `time` decimal(13,3) unsigned NOT NULL DEFAULT \'0.000\',
   `ip` varchar(16) NOT NULL DEFAULT \'\',

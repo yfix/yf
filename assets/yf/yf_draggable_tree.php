@@ -1,10 +1,10 @@
 <?php
 
 return [
-	'versions' => [
-		'master' => [
-			'css' => [
-	'.draggable_menu { width:70%; }
+    'versions' => [
+        'master' => [
+            'css' => [
+    '.draggable_menu { width:70%; }
 	.draggable_menu li { list-style-type: none; }
 	.draggable_menu dl { font-weight:bold; position: relative; display: block; margin:0; border-top: 1px solid #444; }
 	.draggable_menu dl.over { background-color: #ccc !important; }
@@ -15,9 +15,9 @@ return [
 	.draggable_menu ul.closed { display: none; }
 	.draggable_menu .controls_over { display: none; }
 	.icon-move, .fa-arrows { cursor: move; }',
-			],
-			'js' => [
-<<<END
+            ],
+            'js' => [
+<<<'END'
 $(function(){
 	var orig_items = { };
 	var i = 0;
@@ -147,7 +147,7 @@ $(function(){
 })
 END
 ,
-<<<END
+<<<'END'
 	var draggable_history = {
 		stack: new Array(),
 		temp: null,
@@ -175,10 +175,10 @@ END
 		}
 	}
 END
-			],
-		],
-	],
-	'require' => [
-		'asset' => 'jquery-ui',
-	],
+            ],
+        ],
+    ],
+    'require' => [
+        'asset' => 'jquery-ui',
+    ],
 ];

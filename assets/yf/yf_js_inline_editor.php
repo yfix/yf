@@ -1,34 +1,33 @@
 <?php
 
-return function() {
+return function () {
+    if ( ! _class('i18n')->WRAP_VARS_FOR_INLINE_EDIT) {
+        return false;
+    }
+    $lang = _class('i18n')->CUR_LOCALE;
+    $i18n_vars = _class('i18n')->TR_VARS[$lang];
+    if (empty($i18n_vars)) {
+        return false;
+    }
+    ksort($i18n_vars);
 
-	if (!_class('i18n')->WRAP_VARS_FOR_INLINE_EDIT) {
-		return false;
-	}
-	$lang = _class('i18n')->CUR_LOCALE;
-	$i18n_vars = _class('i18n')->TR_VARS[$lang];
-	if (empty($i18n_vars)) {
-		return false;
-	}
-	ksort($i18n_vars);
+    $i18n_for_page = [];
+    foreach ((array) $i18n_vars as $name => $value) {
+        $i18n_for_page[str_replace('_', ' ', strtolower($name))] = $value;
+    }
 
-	$i18n_for_page = [];
-	foreach ((array)$i18n_vars as $name => $value) {
-		$i18n_for_page[str_replace('_', ' ', strtolower($name))] = $value;
-	}
+    $i18n_not_translated = [];
+    $not_translated = _class('i18n')->_NOT_TRANSLATED[$lang];
+    if ( ! empty($not_translated)) {
+        ksort($not_translated);
+        foreach ((array) $not_translated as $name => $hits) {
+            $i18n_not_translated[str_replace('_', ' ', strtolower($name))] = (int) $hits;
+        }
+    }
 
-	$i18n_not_translated = [];
-	$not_translated = _class('i18n')->_NOT_TRANSLATED[$lang];
-	if (!empty($not_translated)) {
-		ksort($not_translated);
-		foreach ((array)$not_translated as $name => $hits) {
-			$i18n_not_translated[str_replace('_', ' ', strtolower($name))] = (int)$hits;
-		}
-	}
-
-return [
-	'versions' => ['master' => [
-		'css' => ['
+    return [
+    'versions' => ['master' => [
+        'css' => ['
 			span.localetr, .input-append span.localetr, .input-prepend span.localetr { background: yellow; color: black; font-weight: bold; font-size: 13px; z-index: 1000; margin: 1px; }
 			span.localenottr { background: #F19AF4; z-index: 1000; margin: 1px; }
 			span.stpl_name_inline { border:1px dashed black; font-size: 9px; color:black; font-weight: bold; background:#E8CD92; z-index: 1000; }
@@ -41,16 +40,16 @@ return [
 			#inline_edit_tip_header { width:99%; height: 20px; padding-top: 5px; padding-left: 5px; border-bottom: 2px ridge black; background:blue; color:white; font-weight: bold; }
 			#inline_edit_tip_text { overflow:scroll; width:99%; height:200px; }
 		'],
-		'js' => ['
-			window.yf_i18n_form_action = "'.url('/dynamic/save_locale_var').'"
-			window.yf_edit_stpl_url = "'.url('/dynamic/edit_locale_stpl').'"
-			window.yf_edit_tip_url = "'.url('/dynamic/edit_tip').'"
-			window.yf_tip_text_url = "'.url('/help/show_tip/0/no_debug').'"
-			window.WEB_PATH = "'.(MAIN_TYPE_USER ? WEB_PATH : ADMIN_WEB_PATH).'"
-			window.yf_i18n_for_page	= '.json_encode($i18n_for_page).'
-			window.yf_i18n_not_translated = '.json_encode($i18n_not_translated).'
+        'js' => ['
+			window.yf_i18n_form_action = "' . url('/dynamic/save_locale_var') . '"
+			window.yf_edit_stpl_url = "' . url('/dynamic/edit_locale_stpl') . '"
+			window.yf_edit_tip_url = "' . url('/dynamic/edit_tip') . '"
+			window.yf_tip_text_url = "' . url('/help/show_tip/0/no_debug') . '"
+			window.WEB_PATH = "' . (MAIN_TYPE_USER ? WEB_PATH : ADMIN_WEB_PATH) . '"
+			window.yf_i18n_for_page	= ' . json_encode($i18n_for_page) . '
+			window.yf_i18n_not_translated = ' . json_encode($i18n_not_translated) . '
 		'],
-		'jquery' => [
+        'jquery' => [
 <<<END
 			var _last_tr_item	= null
 			, _last_tr_html		= null
@@ -191,13 +190,12 @@ return [
 		return false;
 	});
 END
-	]]],
-	'require' => [
-		'asset' => 'jquery',
-	],
-	'config' => [
-		'no_cache' => true,
-	],
+    ], ]],
+    'require' => [
+        'asset' => 'jquery',
+    ],
+    'config' => [
+        'no_cache' => true,
+    ],
 ];
-
 };

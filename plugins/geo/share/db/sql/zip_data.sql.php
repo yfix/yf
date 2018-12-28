@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(5) unsigned NOT NULL,
   `lon` float NOT NULL DEFAULT \'0\',

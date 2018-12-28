@@ -1,10 +1,9 @@
 <?php
 
 return [
-	'versions' => [
-		'master' => [
-			'jquery' => 
-<<<END
+    'versions' => [
+        'master' => [
+            'jquery' => <<<'END'
 $( 'form' ).each(function() {
     var form = this;
 
@@ -64,12 +63,12 @@ $( 'form' ).each(function() {
     });
 });
 END
-		],
-	],
-	'require' => [
-		'asset' => 'kendoui'
-	],
-	'config' => [
-		'no_cache' => true,
-	],
+        ],
+    ],
+    'require' => [
+        'asset' => 'kendoui',
+    ],
+    'config' => [
+        'no_cache' => true,
+    ],
 ];

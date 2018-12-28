@@ -1,4 +1,5 @@
 <?php
+
 return '
   `source` varchar(32) NOT NULL DEFAULT \'\',
   `type` varchar(32) NOT NULL DEFAULT \'\',

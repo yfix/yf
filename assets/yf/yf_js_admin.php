@@ -1,25 +1,24 @@
 <?php
 
-return function() {
-
-return [
-	'versions' => [
-		'master' => [
-			'js' => ['
-				var _t_are_you_sure = "'.t('Are you sure').'?";
-				var _t_modal_title = "'.t('Modal edit').'";
-				var _btn_active = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> '.t('Active').'</button>\';
-				var _btn_inactive = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> '.t('Disabled').'</button>\';
-				var _btn_yes = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> '.t('Yes').'</button>\';
-				var _btn_no = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> '.t('No').'</button>\';
+return function () {
+    return [
+    'versions' => [
+        'master' => [
+            'js' => ['
+				var _t_are_you_sure = "' . t('Are you sure') . '?";
+				var _t_modal_title = "' . t('Modal edit') . '";
+				var _btn_active = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> ' . t('Active') . '</button>\';
+				var _btn_inactive = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> ' . t('Disabled') . '</button>\';
+				var _btn_yes = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> ' . t('Yes') . '</button>\';
+				var _btn_no = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> ' . t('No') . '</button>\';
 				var _btn_active_short_class = \'btn-success\';
 				var _btn_inactive_short_class = \'btn-warning\';
 				var _btn_active_short_icon = \'fa fa-check\';
 				var _btn_inactive_short_icon = \'fa fa-ban\';
-				var _btn_active_short_title = \''.t('Active').'\';
-				var _btn_inactive_short_title = \''.t('Disabled').'\';
+				var _btn_active_short_title = \'' . t('Active') . '\';
+				var _btn_inactive_short_title = \'' . t('Disabled') . '\';
 			',
-<<<END
+<<<'END'
 $(function(){
 	window.yf_show_bs_modal = function (extra) {
 		if (typeof $.fn.modal !== 'function') {
@@ -169,21 +168,20 @@ $(function(){
 	}
 });
 END
-		]],
-	],
-	'add' => [
-		'asset' => [
-			'yf_popover',
-			'yf_js_shift_selectable',
-		],
-	],
-	'require' => [
-		'asset' => 'jquery',
-	],
-	'config' => [
-		'no_cache' => true,
-		'main_type' => 'admin',
-	],
+        ], ],
+    ],
+    'add' => [
+        'asset' => [
+            'yf_popover',
+            'yf_js_shift_selectable',
+        ],
+    ],
+    'require' => [
+        'asset' => 'jquery',
+    ],
+    'config' => [
+        'no_cache' => true,
+        'main_type' => 'admin',
+    ],
 ];
-
 };

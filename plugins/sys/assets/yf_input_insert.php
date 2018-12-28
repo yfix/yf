@@ -1,9 +1,9 @@
 <?php
 
 return [
-	'versions' => [
-		'master' => [
-			'js' => [<<<END
+    'versions' => [
+        'master' => [
+            'js' => [<<<'END'
 var uagent    = navigator.userAgent.toLowerCase();
 var is_safari = ( (uagent.indexOf('safari') != -1) || (navigator.vendor == "Apple Computer, Inc.") );
 var is_ie     = ( (uagent.indexOf('msie') != -1) && (!is_opera) && (!is_safari) && (!is_webtv) );
@@ -72,7 +72,7 @@ function insert_word(ibTag, ibClsTag, isSingle, force_id) {
 	return isClose;
 }
 END
-			],
-		],
-	],
+            ],
+        ],
+    ],
 ];

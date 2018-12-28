@@ -1,8 +1,8 @@
 <?php
 
 return ['versions' => ['master' => [
-	// Ideas from here: http://stackoverflow.com/a/28731847/2521354
-	'jquery' => '
+    // Ideas from here: http://stackoverflow.com/a/28731847/2521354
+    'jquery' => '
 			var originalLeave = $.fn.popover.Constructor.prototype.leave;
 			$.fn.popover.Constructor.prototype.leave = function(obj) {
 				var self = obj instanceof this.constructor ? obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data("bs." + this.type);
@@ -16,12 +16,12 @@ return ['versions' => ['master' => [
 					})
 				}
 			};
-		'
-	]],
-	'require' => [
-		'asset' => [
-			'jquery',
-			'bootstrap-theme',
-		],
-	],
+		',
+    ]],
+    'require' => [
+        'asset' => [
+            'jquery',
+            'bootstrap-theme',
+        ],
+    ],
 ];

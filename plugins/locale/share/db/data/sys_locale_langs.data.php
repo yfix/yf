@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'locale' => 'en',
     'name' => 'English',
@@ -9,8 +9,7 @@ return [
     'active' => '1',
     'is_default' => '1',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'locale' => 'ru',
     'name' => 'Russian',
@@ -18,8 +17,7 @@ return [
     'active' => '1',
     'is_default' => '0',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'locale' => 'uk',
     'name' => 'Ukrainian',

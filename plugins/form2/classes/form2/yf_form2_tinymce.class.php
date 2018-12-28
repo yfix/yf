@@ -1,39 +1,43 @@
 <?php
 
-class yf_form2_tinymce {
+class yf_form2_tinymce
+{
+    /**
+     * Embedding tinymce editor (http://www.tinymce.com/).
+     * @param mixed $extra
+     * @param mixed $replace
+     * @param mixed $form
+     */
+    public function _tinymce_html($extra = [], $replace = [], $form)
+    {
+        if ( ! is_array($extra)) {
+            return '';
+        }
+        $params = $extra['tinymce'];
+        if ( ! is_array($params)) {
+            $params = [];
+        }
+        if ($form->_tinymce_scripts_included) {
+            return '';
+        }
+        $web_path = '';
+        if (conf('tinymce::use_submodule')) {
+            $path = $params['tinymce_path'] ? $params['tinymce_path'] : 'tinymce/tiny_mce.js';
+            $fs_path = PROJECT_PATH . $path;
+            $web_path = WEB_PATH . $path;
+            if ( ! file_exists($fs_path)) {
+                return '';
+            }
+            js($fs_path);
+        } else {
+            js('tinymce');
+        }
+        $content_id = $extra['id'] ? $extra['id'] : 'content_editable';
+        $hidden_id = $params['hidden_id'] ? $params['hidden_id'] : '';
 
-	/**
-	* Embedding tinymce editor (http://www.tinymce.com/).
-	*/
-	function _tinymce_html($extra = [], $replace = [], $form) {
-		if (!is_array($extra)) {
-			return '';
-		}
-		$params = $extra['tinymce'];
-		if (!is_array($params)) {
-			$params = [];
-		}
-		if ($form->_tinymce_scripts_included) {
-			return '';
-		}
-		$web_path = '';
-		if (conf('tinymce::use_submodule')) {
-			$path = $params['tinymce_path'] ? $params['tinymce_path'] : 'tinymce/tiny_mce.js';
-			$fs_path = PROJECT_PATH. $path;
-			$web_path = WEB_PATH. $path;
-			if (!file_exists($fs_path)) {
-				return '';
-			}
-			js($fs_path);
-		} else {
-			js('tinymce');
-		}
-		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
-		$hidden_id = $params['hidden_id'] ? $params['hidden_id'] : '';
-
-		js('
+        js('
 			tinymce.init({
-			    selector: "#'.$content_id.'", //"textarea",
+			    selector: "#' . $content_id . '", //"textarea",
 //			    plugins: [
 //			        "advlist autolink lists link image charmap print preview anchor",
 // 					"searchreplace visualblocks code fullscreen",
@@ -43,9 +47,9 @@ class yf_form2_tinymce {
 			});
 		');
 
-		// Avoid including tinymce scripts several times on same page
-		$form->_tinymce_scripts_included = true;
+        // Avoid including tinymce scripts several times on same page
+        $form->_tinymce_scripts_included = true;
 
-		return $body;
-	}
+        return $body;
+    }
 }

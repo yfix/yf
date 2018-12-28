@@ -1,4 +1,5 @@
 <?php
+
 return '
   `order_id` int(10) unsigned NOT NULL DEFAULT \'0\',
   `type` int(10) unsigned NOT NULL DEFAULT \'0\',

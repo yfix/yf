@@ -1,4 +1,5 @@
 <?php
+
 return '
   `name` varchar(64) NOT NULL DEFAULT \'\',
   `offset` varchar(16) NOT NULL DEFAULT \'\',

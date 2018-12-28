@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `title` text NOT NULL,

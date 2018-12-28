@@ -13,4 +13,4 @@ $replies = $client->getReplies();
 
 var_dump($replies);
 
-echo "Total time: ", time() - $start, "\n";
+echo 'Total time: ', time() - $start, "\n";

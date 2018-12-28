@@ -1,4 +1,5 @@
 <?php
+
 return '
   `product_id` int(11) NOT NULL,
   `category_id` int(11) NOT NULL,

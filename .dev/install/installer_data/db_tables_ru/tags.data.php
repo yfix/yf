@@ -1,7 +1,7 @@
 <?php
+
 return [
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'object_name' => 'gallery',
     'object_id' => '5',

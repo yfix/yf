@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'name' => 'articles_cats',
     'desc' => 'Categories block for the srticles module',
@@ -11,8 +11,7 @@ return [
     'method_name' => '',
     'custom_fields' => '',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'name' => 'blog_cats',
     'desc' => 'Categories block for the blogs',
@@ -22,8 +21,7 @@ return [
     'method_name' => '',
     'custom_fields' => '',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'name' => 'help_cats',
     'desc' => 'Categories for the helpdesk section',
@@ -33,8 +31,7 @@ return [
     'method_name' => '',
     'custom_fields' => '',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'name' => 'shop_cats',
     'desc' => 'Categories for the shop',

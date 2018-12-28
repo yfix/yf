@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `category_id` int(11) NOT NULL DEFAULT \'0\',

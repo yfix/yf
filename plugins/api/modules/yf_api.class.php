@@ -1,3 +1,3 @@
 <?php
 
-_class( 'api' );
+_class('api');

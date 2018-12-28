@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cat_ids` varchar(255) NOT NULL,

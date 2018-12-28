@@ -1,7 +1,7 @@
 <?php
+
 return [
-  'AED' => 
-  [
+  'AED' => [
     'id' => 'AED',
     'name' => 'UAE Dirham',
     'sign' => 'د.إ',
@@ -12,8 +12,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'AFN' => 
-  [
+  'AFN' => [
     'id' => 'AFN',
     'name' => 'Afghani',
     'sign' => '؋',
@@ -24,8 +23,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ALL' => 
-  [
+  'ALL' => [
     'id' => 'ALL',
     'name' => 'Lek',
     'sign' => 'L',
@@ -36,8 +34,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'AMD' => 
-  [
+  'AMD' => [
     'id' => 'AMD',
     'name' => 'Armenian Dram',
     'sign' => 'դր.',
@@ -48,8 +45,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ANG' => 
-  [
+  'ANG' => [
     'id' => 'ANG',
     'name' => 'Netherlands Antillean Guilder',
     'sign' => 'ƒ',
@@ -60,8 +56,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'AOA' => 
-  [
+  'AOA' => [
     'id' => 'AOA',
     'name' => 'Kwanza',
     'sign' => 'Kz',
@@ -72,8 +67,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ARS' => 
-  [
+  'ARS' => [
     'id' => 'ARS',
     'name' => 'Argentine Peso',
     'sign' => '$',
@@ -84,8 +78,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'AUD' => 
-  [
+  'AUD' => [
     'id' => 'AUD',
     'name' => 'Australian Dollar',
     'sign' => '$',
@@ -96,8 +89,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'AWG' => 
-  [
+  'AWG' => [
     'id' => 'AWG',
     'name' => 'Aruban Florin',
     'sign' => 'ƒ',
@@ -108,8 +100,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'AZN' => 
-  [
+  'AZN' => [
     'id' => 'AZN',
     'name' => 'Azerbaijanian Manat',
     'sign' => '',
@@ -120,8 +111,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BAM' => 
-  [
+  'BAM' => [
     'id' => 'BAM',
     'name' => 'Convertible Mark',
     'sign' => '',
@@ -132,8 +122,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BBD' => 
-  [
+  'BBD' => [
     'id' => 'BBD',
     'name' => 'Barbados Dollar',
     'sign' => '$',
@@ -144,8 +133,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BDT' => 
-  [
+  'BDT' => [
     'id' => 'BDT',
     'name' => 'Taka',
     'sign' => '৳',
@@ -156,8 +144,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BGN' => 
-  [
+  'BGN' => [
     'id' => 'BGN',
     'name' => 'Bulgarian Lev',
     'sign' => 'лв',
@@ -168,8 +155,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BHD' => 
-  [
+  'BHD' => [
     'id' => 'BHD',
     'name' => 'Bahraini Dinar',
     'sign' => '.د.ب',
@@ -180,8 +166,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BIF' => 
-  [
+  'BIF' => [
     'id' => 'BIF',
     'name' => 'Burundi Franc',
     'sign' => 'Fr',
@@ -192,8 +177,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BMD' => 
-  [
+  'BMD' => [
     'id' => 'BMD',
     'name' => 'Bermudian Dollar',
     'sign' => '$',
@@ -204,8 +188,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BND' => 
-  [
+  'BND' => [
     'id' => 'BND',
     'name' => 'Brunei Dollar',
     'sign' => '$',
@@ -216,8 +199,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BOB' => 
-  [
+  'BOB' => [
     'id' => 'BOB',
     'name' => 'Boliviano',
     'sign' => 'Bs.',
@@ -228,8 +210,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BOV' => 
-  [
+  'BOV' => [
     'id' => 'BOV',
     'name' => 'Mvdol',
     'sign' => '',
@@ -240,8 +221,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BRL' => 
-  [
+  'BRL' => [
     'id' => 'BRL',
     'name' => 'Brazilian Real',
     'sign' => 'R$',
@@ -252,8 +232,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BSD' => 
-  [
+  'BSD' => [
     'id' => 'BSD',
     'name' => 'Bahamian Dollar',
     'sign' => '$',
@@ -264,8 +243,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BTN' => 
-  [
+  'BTN' => [
     'id' => 'BTN',
     'name' => 'Ngultrum',
     'sign' => 'Nu.',
@@ -276,8 +254,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BWP' => 
-  [
+  'BWP' => [
     'id' => 'BWP',
     'name' => 'Pula',
     'sign' => 'P',
@@ -288,8 +265,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BYR' => 
-  [
+  'BYR' => [
     'id' => 'BYR',
     'name' => 'Belarussian Ruble',
     'sign' => 'Br',
@@ -300,8 +276,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'BZD' => 
-  [
+  'BZD' => [
     'id' => 'BZD',
     'name' => 'Belize Dollar',
     'sign' => '$',
@@ -312,8 +287,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CAD' => 
-  [
+  'CAD' => [
     'id' => 'CAD',
     'name' => 'Canadian Dollar',
     'sign' => '$',
@@ -324,8 +298,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CDF' => 
-  [
+  'CDF' => [
     'id' => 'CDF',
     'name' => 'Congolese Franc',
     'sign' => 'Fr',
@@ -336,8 +309,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CHE' => 
-  [
+  'CHE' => [
     'id' => 'CHE',
     'name' => 'WIR Euro',
     'sign' => '',
@@ -348,8 +320,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CHF' => 
-  [
+  'CHF' => [
     'id' => 'CHF',
     'name' => 'Swiss Franc',
     'sign' => 'Fr',
@@ -360,8 +331,7 @@ return [
     'continent_code' => '',
     'active' => '1',
   ],
-  'CHW' => 
-  [
+  'CHW' => [
     'id' => 'CHW',
     'name' => 'WIR Franc',
     'sign' => '',
@@ -372,8 +342,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CLF' => 
-  [
+  'CLF' => [
     'id' => 'CLF',
     'name' => 'Unidades de fomento',
     'sign' => '',
@@ -384,8 +353,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CLP' => 
-  [
+  'CLP' => [
     'id' => 'CLP',
     'name' => 'Chilean Peso',
     'sign' => '$',
@@ -396,8 +364,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CNY' => 
-  [
+  'CNY' => [
     'id' => 'CNY',
     'name' => 'Yuan Renminbi',
     'sign' => '',
@@ -408,8 +375,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'COP' => 
-  [
+  'COP' => [
     'id' => 'COP',
     'name' => 'Colombian Peso',
     'sign' => '$',
@@ -420,8 +386,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'COU' => 
-  [
+  'COU' => [
     'id' => 'COU',
     'name' => 'Unidad de Valor Real',
     'sign' => '',
@@ -432,8 +397,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CRC' => 
-  [
+  'CRC' => [
     'id' => 'CRC',
     'name' => 'Costa Rican Colon',
     'sign' => '₡',
@@ -444,8 +408,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CUC' => 
-  [
+  'CUC' => [
     'id' => 'CUC',
     'name' => 'Peso Convertible',
     'sign' => '$',
@@ -456,8 +419,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CUP' => 
-  [
+  'CUP' => [
     'id' => 'CUP',
     'name' => 'Cuban Peso',
     'sign' => '$',
@@ -468,8 +430,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CVE' => 
-  [
+  'CVE' => [
     'id' => 'CVE',
     'name' => 'Cape Verde Escudo',
     'sign' => '',
@@ -480,8 +441,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'CZK' => 
-  [
+  'CZK' => [
     'id' => 'CZK',
     'name' => 'Czech Koruna',
     'sign' => 'Kč',
@@ -492,8 +452,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'DJF' => 
-  [
+  'DJF' => [
     'id' => 'DJF',
     'name' => 'Djibouti Franc',
     'sign' => 'Fr',
@@ -504,8 +463,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'DKK' => 
-  [
+  'DKK' => [
     'id' => 'DKK',
     'name' => 'Danish Krone',
     'sign' => 'kr',
@@ -516,8 +474,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'DOP' => 
-  [
+  'DOP' => [
     'id' => 'DOP',
     'name' => 'Dominican Peso',
     'sign' => '$',
@@ -528,8 +485,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'DZD' => 
-  [
+  'DZD' => [
     'id' => 'DZD',
     'name' => 'Algerian Dinar',
     'sign' => 'د.ج',
@@ -540,8 +496,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'EGP' => 
-  [
+  'EGP' => [
     'id' => 'EGP',
     'name' => 'Egyptian Pound',
     'sign' => '',
@@ -552,8 +507,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ERN' => 
-  [
+  'ERN' => [
     'id' => 'ERN',
     'name' => 'Nakfa',
     'sign' => 'Nfk',
@@ -564,8 +518,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ETB' => 
-  [
+  'ETB' => [
     'id' => 'ETB',
     'name' => 'Ethiopian Birr',
     'sign' => 'Br',
@@ -576,8 +529,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'EUR' => 
-  [
+  'EUR' => [
     'id' => 'EUR',
     'name' => 'Euro',
     'sign' => '€',
@@ -588,8 +540,7 @@ return [
     'continent_code' => '',
     'active' => '1',
   ],
-  'FJD' => 
-  [
+  'FJD' => [
     'id' => 'FJD',
     'name' => 'Fiji Dollar',
     'sign' => '$',
@@ -600,8 +551,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'FKP' => 
-  [
+  'FKP' => [
     'id' => 'FKP',
     'name' => 'Falkland Islands Pound',
     'sign' => '£',
@@ -612,8 +562,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'GBP' => 
-  [
+  'GBP' => [
     'id' => 'GBP',
     'name' => 'Pound Sterling',
     'sign' => '£',
@@ -624,8 +573,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'GEL' => 
-  [
+  'GEL' => [
     'id' => 'GEL',
     'name' => 'Lari',
     'sign' => 'ლ',
@@ -636,8 +584,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'GHS' => 
-  [
+  'GHS' => [
     'id' => 'GHS',
     'name' => 'Ghana Cedi',
     'sign' => '₵',
@@ -648,8 +595,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'GIP' => 
-  [
+  'GIP' => [
     'id' => 'GIP',
     'name' => 'Gibraltar Pound',
     'sign' => '£',
@@ -660,8 +606,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'GMD' => 
-  [
+  'GMD' => [
     'id' => 'GMD',
     'name' => 'Dalasi',
     'sign' => 'D',
@@ -672,8 +617,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'GNF' => 
-  [
+  'GNF' => [
     'id' => 'GNF',
     'name' => 'Guinea Franc',
     'sign' => 'Fr',
@@ -684,8 +628,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'GTQ' => 
-  [
+  'GTQ' => [
     'id' => 'GTQ',
     'name' => 'Quetzal',
     'sign' => 'Q',
@@ -696,8 +639,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'GYD' => 
-  [
+  'GYD' => [
     'id' => 'GYD',
     'name' => 'Guyana Dollar',
     'sign' => '$',
@@ -708,8 +650,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'HKD' => 
-  [
+  'HKD' => [
     'id' => 'HKD',
     'name' => 'Hong Kong Dollar',
     'sign' => '$',
@@ -720,8 +661,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'HNL' => 
-  [
+  'HNL' => [
     'id' => 'HNL',
     'name' => 'Lempira',
     'sign' => 'L',
@@ -732,8 +672,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'HRK' => 
-  [
+  'HRK' => [
     'id' => 'HRK',
     'name' => 'Croatian Kuna',
     'sign' => 'kn',
@@ -744,8 +683,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'HTG' => 
-  [
+  'HTG' => [
     'id' => 'HTG',
     'name' => 'Gourde',
     'sign' => 'G',
@@ -756,8 +694,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'HUF' => 
-  [
+  'HUF' => [
     'id' => 'HUF',
     'name' => 'Forint',
     'sign' => 'Ft',
@@ -768,8 +705,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'IDR' => 
-  [
+  'IDR' => [
     'id' => 'IDR',
     'name' => 'Rupiah',
     'sign' => 'Rp',
@@ -780,8 +716,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ILS' => 
-  [
+  'ILS' => [
     'id' => 'ILS',
     'name' => 'New Israeli Sheqel',
     'sign' => '₪',
@@ -792,8 +727,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'INR' => 
-  [
+  'INR' => [
     'id' => 'INR',
     'name' => 'Indian Rupee',
     'sign' => '',
@@ -804,8 +738,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'IQD' => 
-  [
+  'IQD' => [
     'id' => 'IQD',
     'name' => 'Iraqi Dinar',
     'sign' => 'ع.د',
@@ -816,8 +749,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'IRR' => 
-  [
+  'IRR' => [
     'id' => 'IRR',
     'name' => 'Iranian Rial',
     'sign' => '﷼',
@@ -828,8 +760,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ISK' => 
-  [
+  'ISK' => [
     'id' => 'ISK',
     'name' => 'Iceland Krona',
     'sign' => 'kr',
@@ -840,8 +771,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'JMD' => 
-  [
+  'JMD' => [
     'id' => 'JMD',
     'name' => 'Jamaican Dollar',
     'sign' => '$',
@@ -852,8 +782,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'JOD' => 
-  [
+  'JOD' => [
     'id' => 'JOD',
     'name' => 'Jordanian Dinar',
     'sign' => 'د.ا',
@@ -864,8 +793,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'JPY' => 
-  [
+  'JPY' => [
     'id' => 'JPY',
     'name' => 'Yen',
     'sign' => '¥',
@@ -876,8 +804,7 @@ return [
     'continent_code' => '',
     'active' => '1',
   ],
-  'KES' => 
-  [
+  'KES' => [
     'id' => 'KES',
     'name' => 'Kenyan Shilling',
     'sign' => 'Sh',
@@ -888,8 +815,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'KGS' => 
-  [
+  'KGS' => [
     'id' => 'KGS',
     'name' => 'Som',
     'sign' => '',
@@ -900,8 +826,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'KHR' => 
-  [
+  'KHR' => [
     'id' => 'KHR',
     'name' => 'Riel',
     'sign' => '៛',
@@ -912,8 +837,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'KMF' => 
-  [
+  'KMF' => [
     'id' => 'KMF',
     'name' => 'Comoro Franc',
     'sign' => 'Fr',
@@ -924,8 +848,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'KPW' => 
-  [
+  'KPW' => [
     'id' => 'KPW',
     'name' => 'North Korean Won',
     'sign' => '₩',
@@ -936,8 +859,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'KRW' => 
-  [
+  'KRW' => [
     'id' => 'KRW',
     'name' => 'Won',
     'sign' => '₩',
@@ -948,8 +870,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'KWD' => 
-  [
+  'KWD' => [
     'id' => 'KWD',
     'name' => 'Kuwaiti Dinar',
     'sign' => 'د.ك',
@@ -960,8 +881,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'KYD' => 
-  [
+  'KYD' => [
     'id' => 'KYD',
     'name' => 'Cayman Islands Dollar',
     'sign' => '$',
@@ -972,8 +892,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'KZT' => 
-  [
+  'KZT' => [
     'id' => 'KZT',
     'name' => 'Tenge',
     'sign' => '₸',
@@ -984,8 +903,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'LAK' => 
-  [
+  'LAK' => [
     'id' => 'LAK',
     'name' => 'Kip',
     'sign' => '₭',
@@ -996,8 +914,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'LBP' => 
-  [
+  'LBP' => [
     'id' => 'LBP',
     'name' => 'Lebanese Pound',
     'sign' => 'ل.ل',
@@ -1008,8 +925,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'LKR' => 
-  [
+  'LKR' => [
     'id' => 'LKR',
     'name' => 'Sri Lanka Rupee',
     'sign' => '',
@@ -1020,8 +936,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'LRD' => 
-  [
+  'LRD' => [
     'id' => 'LRD',
     'name' => 'Liberian Dollar',
     'sign' => '$',
@@ -1032,8 +947,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'LSL' => 
-  [
+  'LSL' => [
     'id' => 'LSL',
     'name' => 'Loti',
     'sign' => 'L',
@@ -1044,8 +958,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'LTL' => 
-  [
+  'LTL' => [
     'id' => 'LTL',
     'name' => 'Lithuanian Litas',
     'sign' => 'Lt',
@@ -1056,8 +969,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'LVL' => 
-  [
+  'LVL' => [
     'id' => 'LVL',
     'name' => 'Latvian Lats',
     'sign' => 'Ls',
@@ -1068,8 +980,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'LYD' => 
-  [
+  'LYD' => [
     'id' => 'LYD',
     'name' => 'Libyan Dinar',
     'sign' => 'ل.د',
@@ -1080,8 +991,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MAD' => 
-  [
+  'MAD' => [
     'id' => 'MAD',
     'name' => 'Moroccan Dirham',
     'sign' => 'د. م.',
@@ -1092,8 +1002,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MDL' => 
-  [
+  'MDL' => [
     'id' => 'MDL',
     'name' => 'Moldovan Leu',
     'sign' => 'L',
@@ -1104,8 +1013,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MGA' => 
-  [
+  'MGA' => [
     'id' => 'MGA',
     'name' => 'Malagasy Ariary',
     'sign' => 'Ar',
@@ -1116,8 +1024,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MKD' => 
-  [
+  'MKD' => [
     'id' => 'MKD',
     'name' => 'Denar',
     'sign' => 'ден',
@@ -1128,8 +1035,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MMK' => 
-  [
+  'MMK' => [
     'id' => 'MMK',
     'name' => 'Kyat',
     'sign' => 'Ks',
@@ -1140,8 +1046,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MNT' => 
-  [
+  'MNT' => [
     'id' => 'MNT',
     'name' => 'Tugrik',
     'sign' => '₮',
@@ -1152,8 +1057,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MOP' => 
-  [
+  'MOP' => [
     'id' => 'MOP',
     'name' => 'Pataca',
     'sign' => 'P',
@@ -1164,8 +1068,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MRO' => 
-  [
+  'MRO' => [
     'id' => 'MRO',
     'name' => 'Ouguiya',
     'sign' => 'UM',
@@ -1176,8 +1079,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MUR' => 
-  [
+  'MUR' => [
     'id' => 'MUR',
     'name' => 'Mauritius Rupee',
     'sign' => '₨',
@@ -1188,8 +1090,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MVR' => 
-  [
+  'MVR' => [
     'id' => 'MVR',
     'name' => 'Rufiyaa',
     'sign' => '.ރ',
@@ -1200,8 +1101,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MWK' => 
-  [
+  'MWK' => [
     'id' => 'MWK',
     'name' => 'Kwacha',
     'sign' => 'MK',
@@ -1212,8 +1112,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MXN' => 
-  [
+  'MXN' => [
     'id' => 'MXN',
     'name' => 'Mexican Peso',
     'sign' => '$',
@@ -1224,8 +1123,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MXV' => 
-  [
+  'MXV' => [
     'id' => 'MXV',
     'name' => 'Mexican Unidad de Inversion (UDI)',
     'sign' => '',
@@ -1236,8 +1134,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MYR' => 
-  [
+  'MYR' => [
     'id' => 'MYR',
     'name' => 'Malaysian Ringgit',
     'sign' => 'RM',
@@ -1248,8 +1145,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'MZN' => 
-  [
+  'MZN' => [
     'id' => 'MZN',
     'name' => 'Mozambique Metical',
     'sign' => 'MT',
@@ -1260,8 +1156,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'NAD' => 
-  [
+  'NAD' => [
     'id' => 'NAD',
     'name' => 'Namibia Dollar',
     'sign' => '$',
@@ -1272,8 +1167,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'NGN' => 
-  [
+  'NGN' => [
     'id' => 'NGN',
     'name' => 'Naira',
     'sign' => '₦',
@@ -1284,8 +1178,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'NIO' => 
-  [
+  'NIO' => [
     'id' => 'NIO',
     'name' => 'Cordoba Oro',
     'sign' => 'C$',
@@ -1296,8 +1189,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'NOK' => 
-  [
+  'NOK' => [
     'id' => 'NOK',
     'name' => 'Norwegian Krone',
     'sign' => 'kr',
@@ -1308,8 +1200,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'NPR' => 
-  [
+  'NPR' => [
     'id' => 'NPR',
     'name' => 'Nepalese Rupee',
     'sign' => '₨',
@@ -1320,8 +1211,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'NZD' => 
-  [
+  'NZD' => [
     'id' => 'NZD',
     'name' => 'New Zealand Dollar',
     'sign' => '$',
@@ -1332,8 +1222,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'OMR' => 
-  [
+  'OMR' => [
     'id' => 'OMR',
     'name' => 'Rial Omani',
     'sign' => 'ر.ع.',
@@ -1344,8 +1233,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'PAB' => 
-  [
+  'PAB' => [
     'id' => 'PAB',
     'name' => 'Balboa',
     'sign' => 'B/.',
@@ -1356,8 +1244,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'PEN' => 
-  [
+  'PEN' => [
     'id' => 'PEN',
     'name' => 'Nuevo Sol',
     'sign' => 'S/.',
@@ -1368,8 +1255,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'PGK' => 
-  [
+  'PGK' => [
     'id' => 'PGK',
     'name' => 'Kina',
     'sign' => 'K',
@@ -1380,8 +1266,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'PHP' => 
-  [
+  'PHP' => [
     'id' => 'PHP',
     'name' => 'Philippine Peso',
     'sign' => '₱',
@@ -1392,8 +1277,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'PKR' => 
-  [
+  'PKR' => [
     'id' => 'PKR',
     'name' => 'Pakistan Rupee',
     'sign' => '₨',
@@ -1404,8 +1288,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'PLN' => 
-  [
+  'PLN' => [
     'id' => 'PLN',
     'name' => 'Zloty',
     'sign' => 'zł',
@@ -1416,8 +1299,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'PYG' => 
-  [
+  'PYG' => [
     'id' => 'PYG',
     'name' => 'Guarani',
     'sign' => '₲',
@@ -1428,8 +1310,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'QAR' => 
-  [
+  'QAR' => [
     'id' => 'QAR',
     'name' => 'Qatari Rial',
     'sign' => 'ر.ق',
@@ -1440,8 +1321,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'RON' => 
-  [
+  'RON' => [
     'id' => 'RON',
     'name' => 'New Romanian Leu',
     'sign' => 'L',
@@ -1452,8 +1332,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'RSD' => 
-  [
+  'RSD' => [
     'id' => 'RSD',
     'name' => 'Serbian Dinar',
     'sign' => '',
@@ -1464,8 +1343,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'RUB' => 
-  [
+  'RUB' => [
     'id' => 'RUB',
     'name' => 'Russian Ruble',
     'sign' => 'р.',
@@ -1476,8 +1354,7 @@ return [
     'continent_code' => '',
     'active' => '1',
   ],
-  'RWF' => 
-  [
+  'RWF' => [
     'id' => 'RWF',
     'name' => 'Rwanda Franc',
     'sign' => 'Fr',
@@ -1488,8 +1365,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SAR' => 
-  [
+  'SAR' => [
     'id' => 'SAR',
     'name' => 'Saudi Riyal',
     'sign' => 'ر.س',
@@ -1500,8 +1376,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SBD' => 
-  [
+  'SBD' => [
     'id' => 'SBD',
     'name' => 'Solomon Islands Dollar',
     'sign' => '$',
@@ -1512,8 +1387,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SCR' => 
-  [
+  'SCR' => [
     'id' => 'SCR',
     'name' => 'Seychelles Rupee',
     'sign' => '₨',
@@ -1524,8 +1398,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SDG' => 
-  [
+  'SDG' => [
     'id' => 'SDG',
     'name' => 'Sudanese Pound',
     'sign' => '£',
@@ -1536,8 +1409,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SEK' => 
-  [
+  'SEK' => [
     'id' => 'SEK',
     'name' => 'Swedish Krona',
     'sign' => 'kr',
@@ -1548,8 +1420,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SGD' => 
-  [
+  'SGD' => [
     'id' => 'SGD',
     'name' => 'Singapore Dollar',
     'sign' => '$',
@@ -1560,8 +1431,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SHP' => 
-  [
+  'SHP' => [
     'id' => 'SHP',
     'name' => 'Saint Helena Pound',
     'sign' => '£',
@@ -1572,8 +1442,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SLL' => 
-  [
+  'SLL' => [
     'id' => 'SLL',
     'name' => 'Leone',
     'sign' => 'Le',
@@ -1584,8 +1453,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SOS' => 
-  [
+  'SOS' => [
     'id' => 'SOS',
     'name' => 'Somali Shilling',
     'sign' => 'Sh',
@@ -1596,8 +1464,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SRD' => 
-  [
+  'SRD' => [
     'id' => 'SRD',
     'name' => 'Surinam Dollar',
     'sign' => '$',
@@ -1608,8 +1475,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SSP' => 
-  [
+  'SSP' => [
     'id' => 'SSP',
     'name' => 'South Sudanese Pound',
     'sign' => '£',
@@ -1620,8 +1486,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'STD' => 
-  [
+  'STD' => [
     'id' => 'STD',
     'name' => 'Dobra',
     'sign' => 'Db',
@@ -1632,8 +1497,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SVC' => 
-  [
+  'SVC' => [
     'id' => 'SVC',
     'name' => 'El Salvador Colon',
     'sign' => '₡',
@@ -1644,8 +1508,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SYP' => 
-  [
+  'SYP' => [
     'id' => 'SYP',
     'name' => 'Syrian Pound',
     'sign' => '',
@@ -1656,8 +1519,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'SZL' => 
-  [
+  'SZL' => [
     'id' => 'SZL',
     'name' => 'Lilangeni',
     'sign' => 'L',
@@ -1668,8 +1530,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'THB' => 
-  [
+  'THB' => [
     'id' => 'THB',
     'name' => 'Baht',
     'sign' => '฿',
@@ -1680,8 +1541,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'TJS' => 
-  [
+  'TJS' => [
     'id' => 'TJS',
     'name' => 'Somoni',
     'sign' => 'ЅМ',
@@ -1692,8 +1552,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'TMT' => 
-  [
+  'TMT' => [
     'id' => 'TMT',
     'name' => 'Turkmenistan New Manat',
     'sign' => 'm',
@@ -1704,8 +1563,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'TND' => 
-  [
+  'TND' => [
     'id' => 'TND',
     'name' => 'Tunisian Dinar',
     'sign' => 'د.ت',
@@ -1716,8 +1574,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'TOP' => 
-  [
+  'TOP' => [
     'id' => 'TOP',
     'name' => 'Pa’anga',
     'sign' => 'T$',
@@ -1728,8 +1585,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'TRY' => 
-  [
+  'TRY' => [
     'id' => 'TRY',
     'name' => 'Turkish Lira',
     'sign' => '',
@@ -1740,8 +1596,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'TTD' => 
-  [
+  'TTD' => [
     'id' => 'TTD',
     'name' => 'Trinidad and Tobago Dollar',
     'sign' => '$',
@@ -1752,8 +1607,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'TWD' => 
-  [
+  'TWD' => [
     'id' => 'TWD',
     'name' => 'New Taiwan Dollar',
     'sign' => '$',
@@ -1764,8 +1618,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'TZS' => 
-  [
+  'TZS' => [
     'id' => 'TZS',
     'name' => 'Tanzanian Shilling',
     'sign' => 'Sh',
@@ -1776,8 +1629,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'UAH' => 
-  [
+  'UAH' => [
     'id' => 'UAH',
     'name' => 'Hryvnia',
     'sign' => '₴',
@@ -1788,8 +1640,7 @@ return [
     'continent_code' => '',
     'active' => '1',
   ],
-  'UGX' => 
-  [
+  'UGX' => [
     'id' => 'UGX',
     'name' => 'Uganda Shilling',
     'sign' => 'Sh',
@@ -1800,8 +1651,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'USD' => 
-  [
+  'USD' => [
     'id' => 'USD',
     'name' => 'US Dollar',
     'sign' => '$',
@@ -1812,8 +1662,7 @@ return [
     'continent_code' => '',
     'active' => '1',
   ],
-  'USN' => 
-  [
+  'USN' => [
     'id' => 'USN',
     'name' => 'US Dollar (Next day)',
     'sign' => '',
@@ -1824,8 +1673,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'USS' => 
-  [
+  'USS' => [
     'id' => 'USS',
     'name' => 'US Dollar (Same day)',
     'sign' => '',
@@ -1836,8 +1684,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'UYI' => 
-  [
+  'UYI' => [
     'id' => 'UYI',
     'name' => 'Uruguay Peso en Unidades Indexadas (URUIURUI)',
     'sign' => '',
@@ -1848,8 +1695,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'UYU' => 
-  [
+  'UYU' => [
     'id' => 'UYU',
     'name' => 'Peso Uruguayo',
     'sign' => '$',
@@ -1860,8 +1706,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'UZS' => 
-  [
+  'UZS' => [
     'id' => 'UZS',
     'name' => 'Uzbekistan Sum',
     'sign' => '',
@@ -1872,8 +1717,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'VEF' => 
-  [
+  'VEF' => [
     'id' => 'VEF',
     'name' => 'Bolivar',
     'sign' => 'Bs F',
@@ -1884,8 +1728,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'VND' => 
-  [
+  'VND' => [
     'id' => 'VND',
     'name' => 'Dong',
     'sign' => '₫',
@@ -1896,8 +1739,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'VUV' => 
-  [
+  'VUV' => [
     'id' => 'VUV',
     'name' => 'Vatu',
     'sign' => 'Vt',
@@ -1908,8 +1750,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'WST' => 
-  [
+  'WST' => [
     'id' => 'WST',
     'name' => 'Tala',
     'sign' => 'T',
@@ -1920,8 +1761,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XAF' => 
-  [
+  'XAF' => [
     'id' => 'XAF',
     'name' => 'CFA Franc BEAC',
     'sign' => 'Fr',
@@ -1932,8 +1772,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XAG' => 
-  [
+  'XAG' => [
     'id' => 'XAG',
     'name' => 'Silver',
     'sign' => '',
@@ -1944,8 +1783,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XAU' => 
-  [
+  'XAU' => [
     'id' => 'XAU',
     'name' => 'Gold',
     'sign' => '',
@@ -1956,8 +1794,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XBA' => 
-  [
+  'XBA' => [
     'id' => 'XBA',
     'name' => 'Bond Markets Unit European Composite Unit (EURCO)',
     'sign' => '',
@@ -1968,8 +1805,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XBB' => 
-  [
+  'XBB' => [
     'id' => 'XBB',
     'name' => 'Bond Markets Unit European Monetary Unit (E.M.U.-6)',
     'sign' => '',
@@ -1980,8 +1816,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XBC' => 
-  [
+  'XBC' => [
     'id' => 'XBC',
     'name' => 'Bond Markets Unit European Unit of Account 9 (E.U.A.-9)',
     'sign' => '',
@@ -1992,8 +1827,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XBD' => 
-  [
+  'XBD' => [
     'id' => 'XBD',
     'name' => 'Bond Markets Unit European Unit of Account 17 (E.U.A.-17)',
     'sign' => '',
@@ -2004,8 +1838,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XCD' => 
-  [
+  'XCD' => [
     'id' => 'XCD',
     'name' => 'East Caribbean Dollar',
     'sign' => '$',
@@ -2016,20 +1849,18 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XDR' => 
-  [
+  'XDR' => [
     'id' => 'XDR',
     'name' => 'SDR (Special Drawing Right)',
     'sign' => '',
     'number' => '960',
     'minor_units' => '0',
-    'country_name' => 'INTERNATIONAL MONETARY FUND (IMF) ',
+    'country_name' => 'INTERNATIONAL MONETARY FUND (IMF) ',
     'country_code' => '',
     'continent_code' => '',
     'active' => '0',
   ],
-  'XFU' => 
-  [
+  'XFU' => [
     'id' => 'XFU',
     'name' => 'UIC-Franc',
     'sign' => '',
@@ -2040,8 +1871,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XOF' => 
-  [
+  'XOF' => [
     'id' => 'XOF',
     'name' => 'CFA Franc BCEAO',
     'sign' => 'Fr',
@@ -2052,8 +1882,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XPD' => 
-  [
+  'XPD' => [
     'id' => 'XPD',
     'name' => 'Palladium',
     'sign' => '',
@@ -2064,8 +1893,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XPF' => 
-  [
+  'XPF' => [
     'id' => 'XPF',
     'name' => 'CFP Franc',
     'sign' => 'Fr',
@@ -2076,8 +1904,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XPT' => 
-  [
+  'XPT' => [
     'id' => 'XPT',
     'name' => 'Platinum',
     'sign' => '',
@@ -2088,8 +1915,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XSU' => 
-  [
+  'XSU' => [
     'id' => 'XSU',
     'name' => 'Sucre',
     'sign' => '',
@@ -2100,8 +1926,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XTS' => 
-  [
+  'XTS' => [
     'id' => 'XTS',
     'name' => 'Codes specifically reserved for testing purposes',
     'sign' => '',
@@ -2112,8 +1937,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XUA' => 
-  [
+  'XUA' => [
     'id' => 'XUA',
     'name' => 'ADB Unit of Account',
     'sign' => '',
@@ -2124,8 +1948,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'XXX' => 
-  [
+  'XXX' => [
     'id' => 'XXX',
     'name' => 'The codes assigned for transactions where no currency is involve',
     'sign' => '',
@@ -2136,8 +1959,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'YER' => 
-  [
+  'YER' => [
     'id' => 'YER',
     'name' => 'Yemeni Rial',
     'sign' => '﷼',
@@ -2148,8 +1970,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ZAR' => 
-  [
+  'ZAR' => [
     'id' => 'ZAR',
     'name' => 'Rand',
     'sign' => 'R',
@@ -2160,8 +1981,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ZMW' => 
-  [
+  'ZMW' => [
     'id' => 'ZMW',
     'name' => 'Zambian Kwacha',
     'sign' => 'ZK',
@@ -2172,8 +1992,7 @@ return [
     'continent_code' => '',
     'active' => '0',
   ],
-  'ZWL' => 
-  [
+  'ZWL' => [
     'id' => 'ZWL',
     'name' => 'Zimbabwe Dollar',
     'sign' => '$',

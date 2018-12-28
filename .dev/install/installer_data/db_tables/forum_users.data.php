@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'status' => 'a',
     'name' => '',
@@ -12,18 +12,18 @@ return [
     'user_posts' => '0',
     'user_timezone' => '0',
     'user_dateformat' => 'd M Y H:i',
-    'user_rank' => NULL,
-    'user_avatar' => NULL,
-    'user_email' => NULL,
-    'user_icq' => NULL,
-    'user_website' => NULL,
-    'user_from' => NULL,
-    'user_sig' => NULL,
-    'user_aim' => NULL,
-    'user_yim' => NULL,
-    'user_msnm' => NULL,
-    'user_occ' => NULL,
-    'user_interests' => NULL,
+    'user_rank' => null,
+    'user_avatar' => null,
+    'user_email' => null,
+    'user_icq' => null,
+    'user_website' => null,
+    'user_from' => null,
+    'user_sig' => null,
+    'user_aim' => null,
+    'user_yim' => null,
+    'user_msnm' => null,
+    'user_occ' => null,
+    'user_interests' => null,
     'user_birth' => '0000-00-00',
     'view_sig' => '1',
     'view_images' => '1',

@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `md5` char(32) NOT NULL,

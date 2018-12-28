@@ -1,19 +1,23 @@
 <?php
 
-require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
+require_once dirname(__DIR__) . '/yf_unit_tests_setup.php';
 
-class function_common_rss_page extends yf\tests\wrapper {
-	public static function setUpBeforeClass() {
-	}
-	public static function tearDownAfterClass() {
-		_class('dir')->delete_dir(STORAGE_PATH.'uploads/', $delete_start_dir = true);
-	}
-	public function test_simple() {
-		$data = [];
-		$params = ['return_feed_text' => 1, 'use_cached' => 0, 'feed_url' => 'http://unit.dev/', 'feed_source' => 'http://unit.dev/', 'feed_desc' => 'my desc', 'feed_title' => 'my title'];
-		$actual = common()->rss_page($data, $params);
+class function_common_rss_page extends yf\tests\wrapper
+{
+    public static function setUpBeforeClass()
+    {
+    }
+    public static function tearDownAfterClass()
+    {
+        _class('dir')->delete_dir(STORAGE_PATH . 'uploads/', $delete_start_dir = true);
+    }
+    public function test_simple()
+    {
+        $data = [];
+        $params = ['return_feed_text' => 1, 'use_cached' => 0, 'feed_url' => 'http://unit.dev/', 'feed_source' => 'http://unit.dev/', 'feed_desc' => 'my desc', 'feed_title' => 'my title'];
+        $actual = common()->rss_page($data, $params);
 
-		$expected = '<?xml version="1.0" encoding="utf-8"?>
+        $expected = '<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0"
  xmlns:dc="http://purl.org/dc/elements/1.1/"
  xmlns:atom="http://www.w3.org/2005/Atom"
@@ -25,24 +29,25 @@ class function_common_rss_page extends yf\tests\wrapper {
 		<lastBuildDate></lastBuildDate>
 	</channel>
 </rss>';
-		$actual = preg_replace('~<lastBuildDate>[^<]+</lastBuildDate>~ims', '<lastBuildDate></lastBuildDate>', $actual);
-		$this->assertSame(trim($expected), trim($actual));
-	}
-	public function test_with_data() {
-		$data = [
-			[
-				'date'	=> strtotime('2014-08-12 12:03:19 UTC'),
-				'link'	=> 'http://unit.dev/?object=unit_tests&action=testme&id=1',
-			],
-			[
-				'date'	=> strtotime('2014-08-12 12:03:20 UTC'),
-				'link'	=> 'http://unit.dev/?object=unit_tests&action=testme&id=2',
-			],
-		];
-		$params = ['return_feed_text' => 1, 'use_cached' => 0, 'feed_url' => 'http://unit.dev/', 'feed_source' => 'http://unit.dev/', 'feed_desc' => 'my desc', 'feed_title' => 'my title'];
-		$actual = common()->rss_page($data, $params);
+        $actual = preg_replace('~<lastBuildDate>[^<]+</lastBuildDate>~ims', '<lastBuildDate></lastBuildDate>', $actual);
+        $this->assertSame(trim($expected), trim($actual));
+    }
+    public function test_with_data()
+    {
+        $data = [
+            [
+                'date' => strtotime('2014-08-12 12:03:19 UTC'),
+                'link' => 'http://unit.dev/?object=unit_tests&action=testme&id=1',
+            ],
+            [
+                'date' => strtotime('2014-08-12 12:03:20 UTC'),
+                'link' => 'http://unit.dev/?object=unit_tests&action=testme&id=2',
+            ],
+        ];
+        $params = ['return_feed_text' => 1, 'use_cached' => 0, 'feed_url' => 'http://unit.dev/', 'feed_source' => 'http://unit.dev/', 'feed_desc' => 'my desc', 'feed_title' => 'my title'];
+        $actual = common()->rss_page($data, $params);
 
-		$expected = '<?xml version="1.0" encoding="utf-8"?>
+        $expected = '<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0"
  xmlns:dc="http://purl.org/dc/elements/1.1/"
  xmlns:atom="http://www.w3.org/2005/Atom"
@@ -68,40 +73,41 @@ class function_common_rss_page extends yf\tests\wrapper {
 		</item>
 	</channel>
 </rss>';
-		$actual = preg_replace('~<lastBuildDate>[^<]+</lastBuildDate>~ims', '<lastBuildDate></lastBuildDate>', $actual);
-		$this->assertSame(trim($expected), trim($actual));
-	}
-	public function test_with_data_full() {
-		$data = [
-			[
-				'date'	=> strtotime('2014-08-12 12:03:19 UTC'),
-				'link'	=> 'http://unit.dev/?object=unit_tests&action=testme&id=1',
-				'author' => 'user 1',
-				'title' => 'test 1',
-				'description' => 'my description 1',
-				'enclosure' => [
-					'url' => 'http://lh3.ggpht.com/smoliarov/Rwygj8ucrbE/AAAAAAAABIA/UkNlwQ7eniw/_200708.jpg',
-					'length'=>'65036',
-					'type'=>'image/jpeg',
-				],
-			],
-			[
-				'date'	=> strtotime('2014-08-12 12:03:20 UTC'),
-				'link'	=> 'http://unit.dev/?object=unit_tests&action=testme&id=2',
-				'author' => 'user 2',
-				'title' => 'test 2',
-				'description' => 'my description 2',
-				'enclosure' => [
-					'url' => 'http://lh3.ggpht.com/smoliarov/Rwygj8ucrbE/AAAAAAAABIA/UkNlwQ7eniw/_200709.jpg',
-					'length'=>'65036',
-					'type'=>'image/jpeg',
-				],
-			],
-		];
-		$params = ['return_feed_text' => 1, 'use_cached' => 0, 'feed_url' => 'http://unit.dev/', 'feed_source' => 'http://unit.dev/', 'feed_desc' => 'my desc', 'feed_title' => 'my title'];
-		$actual = common()->rss_page($data, $params);
+        $actual = preg_replace('~<lastBuildDate>[^<]+</lastBuildDate>~ims', '<lastBuildDate></lastBuildDate>', $actual);
+        $this->assertSame(trim($expected), trim($actual));
+    }
+    public function test_with_data_full()
+    {
+        $data = [
+            [
+                'date' => strtotime('2014-08-12 12:03:19 UTC'),
+                'link' => 'http://unit.dev/?object=unit_tests&action=testme&id=1',
+                'author' => 'user 1',
+                'title' => 'test 1',
+                'description' => 'my description 1',
+                'enclosure' => [
+                    'url' => 'http://lh3.ggpht.com/smoliarov/Rwygj8ucrbE/AAAAAAAABIA/UkNlwQ7eniw/_200708.jpg',
+                    'length' => '65036',
+                    'type' => 'image/jpeg',
+                ],
+            ],
+            [
+                'date' => strtotime('2014-08-12 12:03:20 UTC'),
+                'link' => 'http://unit.dev/?object=unit_tests&action=testme&id=2',
+                'author' => 'user 2',
+                'title' => 'test 2',
+                'description' => 'my description 2',
+                'enclosure' => [
+                    'url' => 'http://lh3.ggpht.com/smoliarov/Rwygj8ucrbE/AAAAAAAABIA/UkNlwQ7eniw/_200709.jpg',
+                    'length' => '65036',
+                    'type' => 'image/jpeg',
+                ],
+            ],
+        ];
+        $params = ['return_feed_text' => 1, 'use_cached' => 0, 'feed_url' => 'http://unit.dev/', 'feed_source' => 'http://unit.dev/', 'feed_desc' => 'my desc', 'feed_title' => 'my title'];
+        $actual = common()->rss_page($data, $params);
 
-		$expected = '<?xml version="1.0" encoding="utf-8"?>
+        $expected = '<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0"
  xmlns:dc="http://purl.org/dc/elements/1.1/"
  xmlns:atom="http://www.w3.org/2005/Atom"
@@ -131,7 +137,7 @@ class function_common_rss_page extends yf\tests\wrapper {
 		</item>
 	</channel>
 </rss>';
-		$actual = preg_replace('~<lastBuildDate>[^<]+</lastBuildDate>~ims', '<lastBuildDate></lastBuildDate>', $actual);
-		$this->assertSame(trim($expected), trim($actual));
-	}
+        $actual = preg_replace('~<lastBuildDate>[^<]+</lastBuildDate>~ims', '<lastBuildDate></lastBuildDate>', $actual);
+        $this->assertSame(trim($expected), trim($actual));
+    }
 }

@@ -1,7 +1,7 @@
 <?php
+
 return [
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'cat_id' => '28',
     'user_id' => '1',
@@ -64,8 +64,7 @@ When new instruments came to the pilot\'s panel, and ground/air radio aids to na
     'short_url' => 'aviation_flight_control_instruments_developed_before_world_war_i',
     'activity' => '0',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'cat_id' => '28',
     'user_id' => '1',
@@ -228,8 +227,7 @@ Alpharetta, GA 30004" ',
     'short_url' => 'tomcats_and_boeing_777s__combat_missions_with_airborne_refuelin',
     'activity' => '0',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'cat_id' => '28',
     'user_id' => '1',
@@ -309,8 +307,7 @@ Hitler was a late convert to the U-Boat, favoring investments in air power and h
     'short_url' => 'u_s_military_draft_and_pearl_harbor',
     'activity' => '0',
   ],
-  5 => 
-  [
+  5 => [
     'id' => '5',
     'cat_id' => '54',
     'user_id' => '1',
@@ -392,8 +389,7 @@ Phone, Bluetooth interfere? If your wireless connection slows down or gets flaky
     'short_url' => 'troubleshooting_laptop_wireless_connections',
     'activity' => '0',
   ],
-  6 => 
-  [
+  6 => [
     'id' => '6',
     'cat_id' => '30',
     'user_id' => '6',

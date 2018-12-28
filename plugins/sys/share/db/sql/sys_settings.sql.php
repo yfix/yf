@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `item` varchar(255) NOT NULL DEFAULT \'\',

@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'cat_id' => '0',
     'name' => 'about',
@@ -74,8 +74,7 @@ modification follow.</p>',
     'locale' => '0',
     'active' => '1',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'cat_id' => '0',
     'name' => 'faq',
@@ -131,8 +130,7 @@ To make easily process of searching translation, please, use language code in br
     'locale' => '0',
     'active' => '1',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'cat_id' => '0',
     'name' => 'terms',
@@ -332,8 +330,7 @@ Kiddies and grown-ups too!</p>',
     'locale' => '0',
     'active' => '1',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'cat_id' => '0',
     'name' => 'privacy',

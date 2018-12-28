@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` varchar(32) NOT NULL DEFAULT \'\',
   `user_id` int(10) unsigned NOT NULL,

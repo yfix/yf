@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'object_name' => 'blog',
     'object_id' => '1',
@@ -12,8 +12,7 @@ return [
     'active' => '1',
     'activity' => '0',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'object_name' => 'gallery',
     'object_id' => '3',

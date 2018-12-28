@@ -1,4 +1,5 @@
 <?php
+
 return '
   `user_id` int(10) unsigned NOT NULL,
   `group_id` tinyint(3) unsigned NOT NULL,

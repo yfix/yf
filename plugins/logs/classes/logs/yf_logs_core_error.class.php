@@ -1,7 +1,7 @@
 <?php
 
-/**
-*/
-class yf_logs_core_error {
-	// TODO:
+
+class yf_logs_core_error
+{
+    // TODO:
 }

@@ -1,9 +1,9 @@
 <?php
 
 return [
-	'versions' => [
-		'master' => [
-			'css' => ['
+    'versions' => [
+        'master' => [
+            'css' => ['
 .left_area { margin-left:20px; margin-right:20px; width:410px; float:left; word-wrap:break-word; }
 @media (min-width:1650px) {
 	.left_area { margin-left:1%; margin-right:1%; width:20%; max-width:300px; }
@@ -31,10 +31,10 @@ return [
     line-height: 1.3;
 }
 			'],
-			'jquery' => [
-#				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
-#				'$("select").not(".portlet select").not(".no-chosen").chosen();',
-				'var filter_timeout;
+            'jquery' => [
+//				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
+//				'$("select").not(".portlet select").not(".no-chosen").chosen();',
+                'var filter_timeout;
 				$(".left_area form").on("change", function(e){
 					var form = $(this)
 					clearTimeout(filter_timeout);
@@ -44,18 +44,18 @@ return [
 						form.submit()
 					}, 1000);
 				})',
-			],
-		],
-	],
-	'require' => [
-		'asset' => [
-			'yf_bootstrap_fixes',
-			'jq-select2',
-#			'chosen',
-		],
-	],
-	'config' => [
-		'no_cache' => true,
-		'main_type' => 'admin',
-	],
+            ],
+        ],
+    ],
+    'require' => [
+        'asset' => [
+            'yf_bootstrap_fixes',
+            'jq-select2',
+//			'chosen',
+        ],
+    ],
+    'config' => [
+        'no_cache' => true,
+        'main_type' => 'admin',
+    ],
 ];

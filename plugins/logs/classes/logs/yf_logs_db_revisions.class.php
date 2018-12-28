@@ -1,30 +1,28 @@
 <?php
 
-/**
-*/
-class yf_logs_db_revisions {
 
-	/**
-	*/
-	function log_insert() {
-// TODO
-	}
+class yf_logs_db_revisions
+{
+    public function log_insert()
+    {
+        // TODO
+    }
 
-	/**
-	*/
-	function log_replace() {
-// TODO
-	}
 
-	/**
-	*/
-	function log_update() {
-// TODO
-	}
+    public function log_replace()
+    {
+        // TODO
+    }
 
-	/**
-	*/
-	function log_delete() {
-// TODO
-	}
+
+    public function log_update()
+    {
+        // TODO
+    }
+
+
+    public function log_delete()
+    {
+        // TODO
+    }
 }

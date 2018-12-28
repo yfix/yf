@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `owner_id` int(11) unsigned NOT NULL,

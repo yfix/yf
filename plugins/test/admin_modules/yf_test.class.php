@@ -1,6 +1,8 @@
 <?php
 
-class yf_test {
-	function show() {
-	}
+class yf_test
+{
+    public function show()
+    {
+    }
 }

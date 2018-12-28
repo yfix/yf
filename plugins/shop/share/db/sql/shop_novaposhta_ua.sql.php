@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `city_raw` varchar(255) DEFAULT NULL,

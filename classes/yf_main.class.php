@@ -233,7 +233,6 @@ class yf_main
      * @param callable $func
      * @param mixed $ttl
      * @param array $params
-     * @return null
      */
     public function getset($name, callable $func, $ttl = 0, array $params = [])
     {
@@ -1413,7 +1412,6 @@ class yf_main
      * @param mixed $name
      * @param mixed $force_ttl
      * @param mixed $params
-     * @return null
      */
     public function get_data($name = '', $force_ttl = 0, $params = [])
     {

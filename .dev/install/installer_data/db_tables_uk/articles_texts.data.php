@@ -1,7 +1,7 @@
 <?php
+
 return [
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'cat_id' => '28',
     'user_id' => '6',
@@ -58,8 +58,7 @@ return [
     'short_url' => '',
     'activity' => '100',
   ],
-  8 => 
-  [
+  8 => [
     'id' => '8',
     'cat_id' => '28',
     'user_id' => '6',
@@ -106,8 +105,7 @@ return [
     'short_url' => '',
     'activity' => '0',
   ],
-  9 => 
-  [
+  9 => [
     'id' => '9',
     'cat_id' => '54',
     'user_id' => '7',
@@ -172,8 +170,7 @@ return [
     'short_url' => '',
     'activity' => '100',
   ],
-  10 => 
-  [
+  10 => [
     'id' => '10',
     'cat_id' => '54',
     'user_id' => '7',
@@ -223,8 +220,7 @@ return [
     'short_url' => '',
     'activity' => '0',
   ],
-  11 => 
-  [
+  11 => [
     'id' => '11',
     'cat_id' => '28',
     'user_id' => '4',
@@ -320,8 +316,7 @@ return [
     'short_url' => '',
     'activity' => '100',
   ],
-  12 => 
-  [
+  12 => [
     'id' => '12',
     'cat_id' => '52',
     'user_id' => '4',
@@ -362,8 +357,7 @@ return [
     'short_url' => '',
     'activity' => '100',
   ],
-  13 => 
-  [
+  13 => [
     'id' => '13',
     'cat_id' => '28',
     'user_id' => '7',
@@ -412,8 +406,7 @@ return [
     'short_url' => '',
     'activity' => '100',
   ],
-  14 => 
-  [
+  14 => [
     'id' => '14',
     'cat_id' => '54',
     'user_id' => '1',

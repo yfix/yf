@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` mediumint(6) unsigned NOT NULL AUTO_INCREMENT,
   `user_name` varchar(255) NOT NULL DEFAULT \'\',

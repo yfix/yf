@@ -1,5 +1,5 @@
 <?php
 
 return [
-	2 => 'member',
+    2 => 'member',
 ];

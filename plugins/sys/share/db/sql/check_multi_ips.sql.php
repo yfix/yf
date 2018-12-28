@@ -1,4 +1,5 @@
 <?php
+
 return '
   `ip` char(15) NOT NULL,
   `matching_users` longtext NOT NULL,

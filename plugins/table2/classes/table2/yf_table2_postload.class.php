@@ -1,19 +1,22 @@
 <?php
 
 /**
-* Table2 plugin
-*/
-class yf_table2_postload {
+ * Table2 plugin.
+ */
+class yf_table2_postload
+{
+    /**
+     * @param mixed $params
+     * @param mixed $table
+     */
+    public function postload($params = [], $table)
+    {
+        $attr_postload_url = $params['attr_postload_url'] ?: 'postload-url';
+        $tr_id_key = $params['tr_id_key'] ?: 'name';
 
-	/**
-	*/
-	function postload($params = [], $table) {
-		$attr_postload_url = $params['attr_postload_url'] ?: 'postload-url';
-		$tr_id_key = $params['tr_id_key'] ?: 'name';
-
-		$jquery = '
-			var attr_postload_url = "'.$attr_postload_url.'"
-				, tr_id_key = "'.$tr_id_key.'"
+        $jquery = '
+			var attr_postload_url = "' . $attr_postload_url . '"
+				, tr_id_key = "' . $tr_id_key . '"
 			;
 			var process_ajax_data_func = function(data, table) {
 				var th_id_prefix = "th_"
@@ -62,7 +65,7 @@ class yf_table2_postload {
 				})
 			});
 		';
-		jquery($jquery);
-		return $table;
-	}
+        jquery($jquery);
+        return $table;
+    }
 }

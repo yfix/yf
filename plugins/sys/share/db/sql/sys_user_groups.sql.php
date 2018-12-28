@@ -1,4 +1,5 @@
 <?php
+
 return '
   `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT \'\',

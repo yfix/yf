@@ -1,7 +1,7 @@
 <?php
+
 return [
-  0 => 
-  [
+  0 => [
     'code' => 'AD',
     'code3' => 'AND',
     'num' => '020',
@@ -18,8 +18,7 @@ return [
     'capital_id' => '3041563',
     'active' => '0',
   ],
-  1 => 
-  [
+  1 => [
     'code' => 'AE',
     'code3' => 'ARE',
     'num' => '784',
@@ -36,8 +35,7 @@ return [
     'capital_id' => '292968',
     'active' => '0',
   ],
-  2 => 
-  [
+  2 => [
     'code' => 'AF',
     'code3' => 'AFG',
     'num' => '004',
@@ -54,8 +52,7 @@ return [
     'capital_id' => '1138958',
     'active' => '0',
   ],
-  3 => 
-  [
+  3 => [
     'code' => 'AG',
     'code3' => 'ATG',
     'num' => '028',
@@ -72,8 +69,7 @@ return [
     'capital_id' => '3576022',
     'active' => '0',
   ],
-  4 => 
-  [
+  4 => [
     'code' => 'AI',
     'code3' => 'AIA',
     'num' => '660',
@@ -90,8 +86,7 @@ return [
     'capital_id' => '3573374',
     'active' => '0',
   ],
-  5 => 
-  [
+  5 => [
     'code' => 'AL',
     'code3' => 'ALB',
     'num' => '008',
@@ -108,8 +103,7 @@ return [
     'capital_id' => '3183875',
     'active' => '0',
   ],
-  6 => 
-  [
+  6 => [
     'code' => 'AM',
     'code3' => 'ARM',
     'num' => '051',
@@ -126,8 +120,7 @@ return [
     'capital_id' => '616052',
     'active' => '0',
   ],
-  7 => 
-  [
+  7 => [
     'code' => 'AO',
     'code3' => 'AGO',
     'num' => '024',
@@ -144,8 +137,7 @@ return [
     'capital_id' => '2240449',
     'active' => '0',
   ],
-  8 => 
-  [
+  8 => [
     'code' => 'AQ',
     'code3' => 'ATA',
     'num' => '010',
@@ -162,8 +154,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  9 => 
-  [
+  9 => [
     'code' => 'AR',
     'code3' => 'ARG',
     'num' => '032',
@@ -180,8 +171,7 @@ return [
     'capital_id' => '3435910',
     'active' => '0',
   ],
-  10 => 
-  [
+  10 => [
     'code' => 'AS',
     'code3' => 'ASM',
     'num' => '016',
@@ -198,8 +188,7 @@ return [
     'capital_id' => '5881576',
     'active' => '0',
   ],
-  11 => 
-  [
+  11 => [
     'code' => 'AT',
     'code3' => 'AUT',
     'num' => '040',
@@ -216,8 +205,7 @@ return [
     'capital_id' => '2761369',
     'active' => '0',
   ],
-  12 => 
-  [
+  12 => [
     'code' => 'AU',
     'code3' => 'AUS',
     'num' => '036',
@@ -234,8 +222,7 @@ return [
     'capital_id' => '2172517',
     'active' => '0',
   ],
-  13 => 
-  [
+  13 => [
     'code' => 'AW',
     'code3' => 'ABW',
     'num' => '533',
@@ -252,8 +239,7 @@ return [
     'capital_id' => '3577154',
     'active' => '0',
   ],
-  14 => 
-  [
+  14 => [
     'code' => 'AX',
     'code3' => 'ALA',
     'num' => '248',
@@ -270,8 +256,7 @@ return [
     'capital_id' => '3041732',
     'active' => '0',
   ],
-  15 => 
-  [
+  15 => [
     'code' => 'AZ',
     'code3' => 'AZE',
     'num' => '031',
@@ -288,8 +273,7 @@ return [
     'capital_id' => '587084',
     'active' => '0',
   ],
-  16 => 
-  [
+  16 => [
     'code' => 'BA',
     'code3' => 'BIH',
     'num' => '070',
@@ -306,8 +290,7 @@ return [
     'capital_id' => '3191281',
     'active' => '0',
   ],
-  17 => 
-  [
+  17 => [
     'code' => 'BB',
     'code3' => 'BRB',
     'num' => '052',
@@ -324,8 +307,7 @@ return [
     'capital_id' => '3374036',
     'active' => '0',
   ],
-  18 => 
-  [
+  18 => [
     'code' => 'BD',
     'code3' => 'BGD',
     'num' => '050',
@@ -342,8 +324,7 @@ return [
     'capital_id' => '1185241',
     'active' => '0',
   ],
-  19 => 
-  [
+  19 => [
     'code' => 'BE',
     'code3' => 'BEL',
     'num' => '056',
@@ -360,8 +341,7 @@ return [
     'capital_id' => '2800866',
     'active' => '0',
   ],
-  20 => 
-  [
+  20 => [
     'code' => 'BF',
     'code3' => 'BFA',
     'num' => '854',
@@ -378,8 +358,7 @@ return [
     'capital_id' => '2357048',
     'active' => '0',
   ],
-  21 => 
-  [
+  21 => [
     'code' => 'BG',
     'code3' => 'BGR',
     'num' => '100',
@@ -396,8 +375,7 @@ return [
     'capital_id' => '727011',
     'active' => '0',
   ],
-  22 => 
-  [
+  22 => [
     'code' => 'BH',
     'code3' => 'BHR',
     'num' => '048',
@@ -414,8 +392,7 @@ return [
     'capital_id' => '290340',
     'active' => '0',
   ],
-  23 => 
-  [
+  23 => [
     'code' => 'BI',
     'code3' => 'BDI',
     'num' => '108',
@@ -432,8 +409,7 @@ return [
     'capital_id' => '425378',
     'active' => '0',
   ],
-  24 => 
-  [
+  24 => [
     'code' => 'BJ',
     'code3' => 'BEN',
     'num' => '204',
@@ -450,8 +426,7 @@ return [
     'capital_id' => '2392087',
     'active' => '0',
   ],
-  25 => 
-  [
+  25 => [
     'code' => 'BL',
     'code3' => 'BLM',
     'num' => '652',
@@ -468,8 +443,7 @@ return [
     'capital_id' => '3579132',
     'active' => '0',
   ],
-  26 => 
-  [
+  26 => [
     'code' => 'BM',
     'code3' => 'BMU',
     'num' => '060',
@@ -486,8 +460,7 @@ return [
     'capital_id' => '3573197',
     'active' => '0',
   ],
-  27 => 
-  [
+  27 => [
     'code' => 'BN',
     'code3' => 'BRN',
     'num' => '096',
@@ -504,8 +477,7 @@ return [
     'capital_id' => '1820906',
     'active' => '0',
   ],
-  28 => 
-  [
+  28 => [
     'code' => 'BO',
     'code3' => 'BOL',
     'num' => '068',
@@ -522,8 +494,7 @@ return [
     'capital_id' => '3903987',
     'active' => '0',
   ],
-  29 => 
-  [
+  29 => [
     'code' => 'BQ',
     'code3' => 'BES',
     'num' => '535',
@@ -540,8 +511,7 @@ return [
     'capital_id' => '3513563',
     'active' => '0',
   ],
-  30 => 
-  [
+  30 => [
     'code' => 'BR',
     'code3' => 'BRA',
     'num' => '076',
@@ -558,8 +528,7 @@ return [
     'capital_id' => '3469058',
     'active' => '0',
   ],
-  31 => 
-  [
+  31 => [
     'code' => 'BS',
     'code3' => 'BHS',
     'num' => '044',
@@ -576,8 +545,7 @@ return [
     'capital_id' => '3571824',
     'active' => '0',
   ],
-  32 => 
-  [
+  32 => [
     'code' => 'BT',
     'code3' => 'BTN',
     'num' => '064',
@@ -594,8 +562,7 @@ return [
     'capital_id' => '1252416',
     'active' => '0',
   ],
-  33 => 
-  [
+  33 => [
     'code' => 'BV',
     'code3' => 'BVT',
     'num' => '074',
@@ -612,8 +579,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  34 => 
-  [
+  34 => [
     'code' => 'BW',
     'code3' => 'BWA',
     'num' => '072',
@@ -630,8 +596,7 @@ return [
     'capital_id' => '933773',
     'active' => '0',
   ],
-  35 => 
-  [
+  35 => [
     'code' => 'BY',
     'code3' => 'BLR',
     'num' => '112',
@@ -648,8 +613,7 @@ return [
     'capital_id' => '625144',
     'active' => '0',
   ],
-  36 => 
-  [
+  36 => [
     'code' => 'BZ',
     'code3' => 'BLZ',
     'num' => '084',
@@ -666,8 +630,7 @@ return [
     'capital_id' => '3582672',
     'active' => '0',
   ],
-  37 => 
-  [
+  37 => [
     'code' => 'CA',
     'code3' => 'CAN',
     'num' => '124',
@@ -684,8 +647,7 @@ return [
     'capital_id' => '6094817',
     'active' => '0',
   ],
-  38 => 
-  [
+  38 => [
     'code' => 'CC',
     'code3' => 'CCK',
     'num' => '166',
@@ -702,8 +664,7 @@ return [
     'capital_id' => '7304591',
     'active' => '0',
   ],
-  39 => 
-  [
+  39 => [
     'code' => 'CD',
     'code3' => 'COD',
     'num' => '180',
@@ -720,8 +681,7 @@ return [
     'capital_id' => '2314302',
     'active' => '0',
   ],
-  40 => 
-  [
+  40 => [
     'code' => 'CF',
     'code3' => 'CAF',
     'num' => '140',
@@ -738,8 +698,7 @@ return [
     'capital_id' => '2389853',
     'active' => '0',
   ],
-  41 => 
-  [
+  41 => [
     'code' => 'CG',
     'code3' => 'COG',
     'num' => '178',
@@ -756,8 +715,7 @@ return [
     'capital_id' => '2260535',
     'active' => '0',
   ],
-  42 => 
-  [
+  42 => [
     'code' => 'CH',
     'code3' => 'CHE',
     'num' => '756',
@@ -774,8 +732,7 @@ return [
     'capital_id' => '2661552',
     'active' => '0',
   ],
-  43 => 
-  [
+  43 => [
     'code' => 'CI',
     'code3' => 'CIV',
     'num' => '384',
@@ -792,8 +749,7 @@ return [
     'capital_id' => '2279755',
     'active' => '0',
   ],
-  44 => 
-  [
+  44 => [
     'code' => 'CK',
     'code3' => 'COK',
     'num' => '184',
@@ -810,8 +766,7 @@ return [
     'capital_id' => '4035715',
     'active' => '0',
   ],
-  45 => 
-  [
+  45 => [
     'code' => 'CL',
     'code3' => 'CHL',
     'num' => '152',
@@ -828,8 +783,7 @@ return [
     'capital_id' => '3871336',
     'active' => '0',
   ],
-  46 => 
-  [
+  46 => [
     'code' => 'CM',
     'code3' => 'CMR',
     'num' => '120',
@@ -846,8 +800,7 @@ return [
     'capital_id' => '2220957',
     'active' => '0',
   ],
-  47 => 
-  [
+  47 => [
     'code' => 'CN',
     'code3' => 'CHN',
     'num' => '156',
@@ -864,8 +817,7 @@ return [
     'capital_id' => '1816670',
     'active' => '0',
   ],
-  48 => 
-  [
+  48 => [
     'code' => 'CO',
     'code3' => 'COL',
     'num' => '170',
@@ -882,8 +834,7 @@ return [
     'capital_id' => '3688689',
     'active' => '0',
   ],
-  49 => 
-  [
+  49 => [
     'code' => 'CR',
     'code3' => 'CRI',
     'num' => '188',
@@ -900,8 +851,7 @@ return [
     'capital_id' => '3621849',
     'active' => '0',
   ],
-  50 => 
-  [
+  50 => [
     'code' => 'CU',
     'code3' => 'CUB',
     'num' => '192',
@@ -918,8 +868,7 @@ return [
     'capital_id' => '3553478',
     'active' => '0',
   ],
-  51 => 
-  [
+  51 => [
     'code' => 'CV',
     'code3' => 'CPV',
     'num' => '132',
@@ -936,8 +885,7 @@ return [
     'capital_id' => '3374333',
     'active' => '0',
   ],
-  52 => 
-  [
+  52 => [
     'code' => 'CW',
     'code3' => 'CUW',
     'num' => '531',
@@ -954,8 +902,7 @@ return [
     'capital_id' => '3513090',
     'active' => '0',
   ],
-  53 => 
-  [
+  53 => [
     'code' => 'CX',
     'code3' => 'CXR',
     'num' => '162',
@@ -972,8 +919,7 @@ return [
     'capital_id' => '2078127',
     'active' => '0',
   ],
-  54 => 
-  [
+  54 => [
     'code' => 'CY',
     'code3' => 'CYP',
     'num' => '196',
@@ -990,8 +936,7 @@ return [
     'capital_id' => '146268',
     'active' => '0',
   ],
-  55 => 
-  [
+  55 => [
     'code' => 'CZ',
     'code3' => 'CZE',
     'num' => '203',
@@ -1008,8 +953,7 @@ return [
     'capital_id' => '3067696',
     'active' => '0',
   ],
-  56 => 
-  [
+  56 => [
     'code' => 'DE',
     'code3' => 'DEU',
     'num' => '276',
@@ -1026,8 +970,7 @@ return [
     'capital_id' => '2950159',
     'active' => '1',
   ],
-  57 => 
-  [
+  57 => [
     'code' => 'DJ',
     'code3' => 'DJI',
     'num' => '262',
@@ -1044,8 +987,7 @@ return [
     'capital_id' => '223817',
     'active' => '0',
   ],
-  58 => 
-  [
+  58 => [
     'code' => 'DK',
     'code3' => 'DNK',
     'num' => '208',
@@ -1062,8 +1004,7 @@ return [
     'capital_id' => '2618425',
     'active' => '0',
   ],
-  59 => 
-  [
+  59 => [
     'code' => 'DM',
     'code3' => 'DMA',
     'num' => '212',
@@ -1080,8 +1021,7 @@ return [
     'capital_id' => '3575635',
     'active' => '0',
   ],
-  60 => 
-  [
+  60 => [
     'code' => 'DO',
     'code3' => 'DOM',
     'num' => '214',
@@ -1098,8 +1038,7 @@ return [
     'capital_id' => '3492908',
     'active' => '0',
   ],
-  61 => 
-  [
+  61 => [
     'code' => 'DZ',
     'code3' => 'DZA',
     'num' => '012',
@@ -1116,8 +1055,7 @@ return [
     'capital_id' => '2507480',
     'active' => '0',
   ],
-  62 => 
-  [
+  62 => [
     'code' => 'EC',
     'code3' => 'ECU',
     'num' => '218',
@@ -1134,8 +1072,7 @@ return [
     'capital_id' => '3652462',
     'active' => '0',
   ],
-  63 => 
-  [
+  63 => [
     'code' => 'EE',
     'code3' => 'EST',
     'num' => '233',
@@ -1152,8 +1089,7 @@ return [
     'capital_id' => '588409',
     'active' => '0',
   ],
-  64 => 
-  [
+  64 => [
     'code' => 'EG',
     'code3' => 'EGY',
     'num' => '818',
@@ -1170,8 +1106,7 @@ return [
     'capital_id' => '360630',
     'active' => '0',
   ],
-  65 => 
-  [
+  65 => [
     'code' => 'EH',
     'code3' => 'ESH',
     'num' => '732',
@@ -1188,8 +1123,7 @@ return [
     'capital_id' => '2462881',
     'active' => '0',
   ],
-  66 => 
-  [
+  66 => [
     'code' => 'ER',
     'code3' => 'ERI',
     'num' => '232',
@@ -1206,8 +1140,7 @@ return [
     'capital_id' => '343300',
     'active' => '0',
   ],
-  67 => 
-  [
+  67 => [
     'code' => 'ES',
     'code3' => 'ESP',
     'num' => '724',
@@ -1224,8 +1157,7 @@ return [
     'capital_id' => '3117735',
     'active' => '1',
   ],
-  68 => 
-  [
+  68 => [
     'code' => 'ET',
     'code3' => 'ETH',
     'num' => '231',
@@ -1242,8 +1174,7 @@ return [
     'capital_id' => '344979',
     'active' => '0',
   ],
-  69 => 
-  [
+  69 => [
     'code' => 'EU',
     'code3' => '',
     'num' => '',
@@ -1260,8 +1191,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  70 => 
-  [
+  70 => [
     'code' => 'FI',
     'code3' => 'FIN',
     'num' => '246',
@@ -1278,8 +1208,7 @@ return [
     'capital_id' => '658225',
     'active' => '0',
   ],
-  71 => 
-  [
+  71 => [
     'code' => 'FJ',
     'code3' => 'FJI',
     'num' => '242',
@@ -1296,8 +1225,7 @@ return [
     'capital_id' => '2198148',
     'active' => '0',
   ],
-  72 => 
-  [
+  72 => [
     'code' => 'FK',
     'code3' => 'FLK',
     'num' => '238',
@@ -1314,8 +1242,7 @@ return [
     'capital_id' => '3426691',
     'active' => '0',
   ],
-  73 => 
-  [
+  73 => [
     'code' => 'FM',
     'code3' => 'FSM',
     'num' => '583',
@@ -1332,8 +1259,7 @@ return [
     'capital_id' => '2081986',
     'active' => '0',
   ],
-  74 => 
-  [
+  74 => [
     'code' => 'FO',
     'code3' => 'FRO',
     'num' => '234',
@@ -1350,8 +1276,7 @@ return [
     'capital_id' => '2611396',
     'active' => '0',
   ],
-  75 => 
-  [
+  75 => [
     'code' => 'FR',
     'code3' => 'FRA',
     'num' => '250',
@@ -1368,8 +1293,7 @@ return [
     'capital_id' => '2988507',
     'active' => '1',
   ],
-  76 => 
-  [
+  76 => [
     'code' => 'GA',
     'code3' => 'GAB',
     'num' => '266',
@@ -1386,8 +1310,7 @@ return [
     'capital_id' => '2399697',
     'active' => '0',
   ],
-  77 => 
-  [
+  77 => [
     'code' => 'GB',
     'code3' => 'GBR',
     'num' => '826',
@@ -1404,8 +1327,7 @@ return [
     'capital_id' => '2643743',
     'active' => '1',
   ],
-  78 => 
-  [
+  78 => [
     'code' => 'GD',
     'code3' => 'GRD',
     'num' => '308',
@@ -1422,8 +1344,7 @@ return [
     'capital_id' => '3579925',
     'active' => '0',
   ],
-  79 => 
-  [
+  79 => [
     'code' => 'GE',
     'code3' => 'GEO',
     'num' => '268',
@@ -1440,8 +1361,7 @@ return [
     'capital_id' => '611717',
     'active' => '0',
   ],
-  80 => 
-  [
+  80 => [
     'code' => 'GF',
     'code3' => 'GUF',
     'num' => '254',
@@ -1458,8 +1378,7 @@ return [
     'capital_id' => '3382160',
     'active' => '0',
   ],
-  81 => 
-  [
+  81 => [
     'code' => 'GG',
     'code3' => 'GGY',
     'num' => '831',
@@ -1476,8 +1395,7 @@ return [
     'capital_id' => '3042287',
     'active' => '0',
   ],
-  82 => 
-  [
+  82 => [
     'code' => 'GH',
     'code3' => 'GHA',
     'num' => '288',
@@ -1494,8 +1412,7 @@ return [
     'capital_id' => '2306104',
     'active' => '0',
   ],
-  83 => 
-  [
+  83 => [
     'code' => 'GI',
     'code3' => 'GIB',
     'num' => '292',
@@ -1512,8 +1429,7 @@ return [
     'capital_id' => '2411585',
     'active' => '0',
   ],
-  84 => 
-  [
+  84 => [
     'code' => 'GL',
     'code3' => 'GRL',
     'num' => '304',
@@ -1530,8 +1446,7 @@ return [
     'capital_id' => '3421319',
     'active' => '0',
   ],
-  85 => 
-  [
+  85 => [
     'code' => 'GM',
     'code3' => 'GMB',
     'num' => '270',
@@ -1548,8 +1463,7 @@ return [
     'capital_id' => '2413876',
     'active' => '0',
   ],
-  86 => 
-  [
+  86 => [
     'code' => 'GN',
     'code3' => 'GIN',
     'num' => '324',
@@ -1566,8 +1480,7 @@ return [
     'capital_id' => '2422465',
     'active' => '0',
   ],
-  87 => 
-  [
+  87 => [
     'code' => 'GP',
     'code3' => 'GLP',
     'num' => '312',
@@ -1584,8 +1497,7 @@ return [
     'capital_id' => '3579732',
     'active' => '0',
   ],
-  88 => 
-  [
+  88 => [
     'code' => 'GQ',
     'code3' => 'GNQ',
     'num' => '226',
@@ -1602,8 +1514,7 @@ return [
     'capital_id' => '2309527',
     'active' => '0',
   ],
-  89 => 
-  [
+  89 => [
     'code' => 'GR',
     'code3' => 'GRC',
     'num' => '300',
@@ -1620,8 +1531,7 @@ return [
     'capital_id' => '264371',
     'active' => '0',
   ],
-  90 => 
-  [
+  90 => [
     'code' => 'GS',
     'code3' => 'SGS',
     'num' => '239',
@@ -1638,8 +1548,7 @@ return [
     'capital_id' => '3426466',
     'active' => '0',
   ],
-  91 => 
-  [
+  91 => [
     'code' => 'GT',
     'code3' => 'GTM',
     'num' => '320',
@@ -1656,8 +1565,7 @@ return [
     'capital_id' => '3598132',
     'active' => '0',
   ],
-  92 => 
-  [
+  92 => [
     'code' => 'GU',
     'code3' => 'GUM',
     'num' => '316',
@@ -1674,8 +1582,7 @@ return [
     'capital_id' => '4044012',
     'active' => '0',
   ],
-  93 => 
-  [
+  93 => [
     'code' => 'GW',
     'code3' => 'GNB',
     'num' => '624',
@@ -1692,8 +1599,7 @@ return [
     'capital_id' => '2374775',
     'active' => '0',
   ],
-  94 => 
-  [
+  94 => [
     'code' => 'GY',
     'code3' => 'GUY',
     'num' => '328',
@@ -1710,8 +1616,7 @@ return [
     'capital_id' => '3378644',
     'active' => '0',
   ],
-  95 => 
-  [
+  95 => [
     'code' => 'HK',
     'code3' => 'HKG',
     'num' => '344',
@@ -1728,8 +1633,7 @@ return [
     'capital_id' => '1819729',
     'active' => '0',
   ],
-  96 => 
-  [
+  96 => [
     'code' => 'HM',
     'code3' => 'HMD',
     'num' => '334',
@@ -1746,8 +1650,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  97 => 
-  [
+  97 => [
     'code' => 'HN',
     'code3' => 'HND',
     'num' => '340',
@@ -1764,8 +1667,7 @@ return [
     'capital_id' => '3600949',
     'active' => '0',
   ],
-  98 => 
-  [
+  98 => [
     'code' => 'HR',
     'code3' => 'HRV',
     'num' => '191',
@@ -1782,8 +1684,7 @@ return [
     'capital_id' => '3186886',
     'active' => '0',
   ],
-  99 => 
-  [
+  99 => [
     'code' => 'HT',
     'code3' => 'HTI',
     'num' => '332',
@@ -1800,8 +1701,7 @@ return [
     'capital_id' => '3718426',
     'active' => '0',
   ],
-  100 => 
-  [
+  100 => [
     'code' => 'HU',
     'code3' => 'HUN',
     'num' => '348',
@@ -1818,8 +1718,7 @@ return [
     'capital_id' => '3054643',
     'active' => '0',
   ],
-  101 => 
-  [
+  101 => [
     'code' => 'ID',
     'code3' => 'IDN',
     'num' => '360',
@@ -1836,8 +1735,7 @@ return [
     'capital_id' => '1642911',
     'active' => '0',
   ],
-  102 => 
-  [
+  102 => [
     'code' => 'IE',
     'code3' => 'IRL',
     'num' => '372',
@@ -1854,8 +1752,7 @@ return [
     'capital_id' => '2964574',
     'active' => '0',
   ],
-  103 => 
-  [
+  103 => [
     'code' => 'IL',
     'code3' => 'ISR',
     'num' => '376',
@@ -1872,8 +1769,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  104 => 
-  [
+  104 => [
     'code' => 'IM',
     'code3' => 'IMN',
     'num' => '833',
@@ -1890,8 +1786,7 @@ return [
     'capital_id' => '3042237',
     'active' => '0',
   ],
-  105 => 
-  [
+  105 => [
     'code' => 'IN',
     'code3' => 'IND',
     'num' => '356',
@@ -1908,8 +1803,7 @@ return [
     'capital_id' => '1261481',
     'active' => '0',
   ],
-  106 => 
-  [
+  106 => [
     'code' => 'IO',
     'code3' => 'IOT',
     'num' => '086',
@@ -1926,8 +1820,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  107 => 
-  [
+  107 => [
     'code' => 'IQ',
     'code3' => 'IRQ',
     'num' => '368',
@@ -1944,8 +1837,7 @@ return [
     'capital_id' => '98182',
     'active' => '0',
   ],
-  108 => 
-  [
+  108 => [
     'code' => 'IR',
     'code3' => 'IRN',
     'num' => '364',
@@ -1962,8 +1854,7 @@ return [
     'capital_id' => '112931',
     'active' => '0',
   ],
-  109 => 
-  [
+  109 => [
     'code' => 'IS',
     'code3' => 'ISL',
     'num' => '352',
@@ -1980,8 +1871,7 @@ return [
     'capital_id' => '3413829',
     'active' => '0',
   ],
-  110 => 
-  [
+  110 => [
     'code' => 'IT',
     'code3' => 'ITA',
     'num' => '380',
@@ -1998,8 +1888,7 @@ return [
     'capital_id' => '3169070',
     'active' => '0',
   ],
-  111 => 
-  [
+  111 => [
     'code' => 'JE',
     'code3' => 'JEY',
     'num' => '832',
@@ -2016,8 +1905,7 @@ return [
     'capital_id' => '3042091',
     'active' => '0',
   ],
-  112 => 
-  [
+  112 => [
     'code' => 'JM',
     'code3' => 'JAM',
     'num' => '388',
@@ -2034,8 +1922,7 @@ return [
     'capital_id' => '3489854',
     'active' => '0',
   ],
-  113 => 
-  [
+  113 => [
     'code' => 'JO',
     'code3' => 'JOR',
     'num' => '400',
@@ -2052,8 +1939,7 @@ return [
     'capital_id' => '250441',
     'active' => '0',
   ],
-  114 => 
-  [
+  114 => [
     'code' => 'JP',
     'code3' => 'JPN',
     'num' => '392',
@@ -2070,8 +1956,7 @@ return [
     'capital_id' => '1850147',
     'active' => '0',
   ],
-  115 => 
-  [
+  115 => [
     'code' => 'KE',
     'code3' => 'KEN',
     'num' => '404',
@@ -2088,8 +1973,7 @@ return [
     'capital_id' => '184745',
     'active' => '0',
   ],
-  116 => 
-  [
+  116 => [
     'code' => 'KG',
     'code3' => 'KGZ',
     'num' => '417',
@@ -2106,8 +1990,7 @@ return [
     'capital_id' => '1528675',
     'active' => '0',
   ],
-  117 => 
-  [
+  117 => [
     'code' => 'KH',
     'code3' => 'KHM',
     'num' => '116',
@@ -2124,8 +2007,7 @@ return [
     'capital_id' => '1821306',
     'active' => '0',
   ],
-  118 => 
-  [
+  118 => [
     'code' => 'KI',
     'code3' => 'KIR',
     'num' => '296',
@@ -2142,8 +2024,7 @@ return [
     'capital_id' => '2110257',
     'active' => '0',
   ],
-  119 => 
-  [
+  119 => [
     'code' => 'KM',
     'code3' => 'COM',
     'num' => '174',
@@ -2160,8 +2041,7 @@ return [
     'capital_id' => '921772',
     'active' => '0',
   ],
-  120 => 
-  [
+  120 => [
     'code' => 'KN',
     'code3' => 'KNA',
     'num' => '659',
@@ -2178,8 +2058,7 @@ return [
     'capital_id' => '3575551',
     'active' => '0',
   ],
-  121 => 
-  [
+  121 => [
     'code' => 'KP',
     'code3' => 'PRK',
     'num' => '408',
@@ -2196,8 +2075,7 @@ return [
     'capital_id' => '1871859',
     'active' => '0',
   ],
-  122 => 
-  [
+  122 => [
     'code' => 'KR',
     'code3' => 'KOR',
     'num' => '410',
@@ -2214,8 +2092,7 @@ return [
     'capital_id' => '1835848',
     'active' => '0',
   ],
-  123 => 
-  [
+  123 => [
     'code' => 'KW',
     'code3' => 'KWT',
     'num' => '414',
@@ -2232,8 +2109,7 @@ return [
     'capital_id' => '285787',
     'active' => '0',
   ],
-  124 => 
-  [
+  124 => [
     'code' => 'KY',
     'code3' => 'CYM',
     'num' => '136',
@@ -2250,8 +2126,7 @@ return [
     'capital_id' => '3580661',
     'active' => '0',
   ],
-  125 => 
-  [
+  125 => [
     'code' => 'KZ',
     'code3' => 'KAZ',
     'num' => '398',
@@ -2268,8 +2143,7 @@ return [
     'capital_id' => '1526273',
     'active' => '0',
   ],
-  126 => 
-  [
+  126 => [
     'code' => 'LA',
     'code3' => 'LAO',
     'num' => '418',
@@ -2286,8 +2160,7 @@ return [
     'capital_id' => '1651944',
     'active' => '0',
   ],
-  127 => 
-  [
+  127 => [
     'code' => 'LB',
     'code3' => 'LBN',
     'num' => '422',
@@ -2304,8 +2177,7 @@ return [
     'capital_id' => '276781',
     'active' => '0',
   ],
-  128 => 
-  [
+  128 => [
     'code' => 'LC',
     'code3' => 'LCA',
     'num' => '662',
@@ -2322,8 +2194,7 @@ return [
     'capital_id' => '3576812',
     'active' => '0',
   ],
-  129 => 
-  [
+  129 => [
     'code' => 'LI',
     'code3' => 'LIE',
     'num' => '438',
@@ -2340,8 +2211,7 @@ return [
     'capital_id' => '3042030',
     'active' => '0',
   ],
-  130 => 
-  [
+  130 => [
     'code' => 'LK',
     'code3' => 'LKA',
     'num' => '144',
@@ -2358,8 +2228,7 @@ return [
     'capital_id' => '1248991',
     'active' => '0',
   ],
-  131 => 
-  [
+  131 => [
     'code' => 'LR',
     'code3' => 'LBR',
     'num' => '430',
@@ -2376,8 +2245,7 @@ return [
     'capital_id' => '2274895',
     'active' => '0',
   ],
-  132 => 
-  [
+  132 => [
     'code' => 'LS',
     'code3' => 'LSO',
     'num' => '426',
@@ -2394,8 +2262,7 @@ return [
     'capital_id' => '932505',
     'active' => '0',
   ],
-  133 => 
-  [
+  133 => [
     'code' => 'LT',
     'code3' => 'LTU',
     'num' => '440',
@@ -2412,8 +2279,7 @@ return [
     'capital_id' => '593116',
     'active' => '0',
   ],
-  134 => 
-  [
+  134 => [
     'code' => 'LU',
     'code3' => 'LUX',
     'num' => '442',
@@ -2430,8 +2296,7 @@ return [
     'capital_id' => '2960316',
     'active' => '0',
   ],
-  135 => 
-  [
+  135 => [
     'code' => 'LV',
     'code3' => 'LVA',
     'num' => '428',
@@ -2448,8 +2313,7 @@ return [
     'capital_id' => '456172',
     'active' => '0',
   ],
-  136 => 
-  [
+  136 => [
     'code' => 'LY',
     'code3' => 'LBY',
     'num' => '434',
@@ -2466,8 +2330,7 @@ return [
     'capital_id' => '2210247',
     'active' => '0',
   ],
-  137 => 
-  [
+  137 => [
     'code' => 'MA',
     'code3' => 'MAR',
     'num' => '504',
@@ -2484,8 +2347,7 @@ return [
     'capital_id' => '2538475',
     'active' => '0',
   ],
-  138 => 
-  [
+  138 => [
     'code' => 'MC',
     'code3' => 'MCO',
     'num' => '492',
@@ -2502,8 +2364,7 @@ return [
     'capital_id' => '2993458',
     'active' => '0',
   ],
-  139 => 
-  [
+  139 => [
     'code' => 'MD',
     'code3' => 'MDA',
     'num' => '498',
@@ -2520,8 +2381,7 @@ return [
     'capital_id' => '618426',
     'active' => '0',
   ],
-  140 => 
-  [
+  140 => [
     'code' => 'ME',
     'code3' => 'MNE',
     'num' => '499',
@@ -2538,8 +2398,7 @@ return [
     'capital_id' => '3193044',
     'active' => '0',
   ],
-  141 => 
-  [
+  141 => [
     'code' => 'MF',
     'code3' => 'MAF',
     'num' => '663',
@@ -2556,8 +2415,7 @@ return [
     'capital_id' => '3578851',
     'active' => '0',
   ],
-  142 => 
-  [
+  142 => [
     'code' => 'MG',
     'code3' => 'MDG',
     'num' => '450',
@@ -2574,8 +2432,7 @@ return [
     'capital_id' => '1070940',
     'active' => '0',
   ],
-  143 => 
-  [
+  143 => [
     'code' => 'MH',
     'code3' => 'MHL',
     'num' => '584',
@@ -2592,8 +2449,7 @@ return [
     'capital_id' => '2113779',
     'active' => '0',
   ],
-  144 => 
-  [
+  144 => [
     'code' => 'MK',
     'code3' => 'MKD',
     'num' => '807',
@@ -2610,8 +2466,7 @@ return [
     'capital_id' => '785842',
     'active' => '0',
   ],
-  145 => 
-  [
+  145 => [
     'code' => 'ML',
     'code3' => 'MLI',
     'num' => '466',
@@ -2628,8 +2483,7 @@ return [
     'capital_id' => '2460596',
     'active' => '0',
   ],
-  146 => 
-  [
+  146 => [
     'code' => 'MM',
     'code3' => 'MMR',
     'num' => '104',
@@ -2646,8 +2500,7 @@ return [
     'capital_id' => '6611854',
     'active' => '0',
   ],
-  147 => 
-  [
+  147 => [
     'code' => 'MN',
     'code3' => 'MNG',
     'num' => '496',
@@ -2664,8 +2517,7 @@ return [
     'capital_id' => '2028462',
     'active' => '0',
   ],
-  148 => 
-  [
+  148 => [
     'code' => 'MO',
     'code3' => 'MAC',
     'num' => '446',
@@ -2682,8 +2534,7 @@ return [
     'capital_id' => '1821274',
     'active' => '0',
   ],
-  149 => 
-  [
+  149 => [
     'code' => 'MP',
     'code3' => 'MNP',
     'num' => '580',
@@ -2700,8 +2551,7 @@ return [
     'capital_id' => '7828758',
     'active' => '0',
   ],
-  150 => 
-  [
+  150 => [
     'code' => 'MQ',
     'code3' => 'MTQ',
     'num' => '474',
@@ -2718,8 +2568,7 @@ return [
     'capital_id' => '3570675',
     'active' => '0',
   ],
-  151 => 
-  [
+  151 => [
     'code' => 'MR',
     'code3' => 'MRT',
     'num' => '478',
@@ -2736,8 +2585,7 @@ return [
     'capital_id' => '2377450',
     'active' => '0',
   ],
-  152 => 
-  [
+  152 => [
     'code' => 'MS',
     'code3' => 'MSR',
     'num' => '500',
@@ -2754,8 +2602,7 @@ return [
     'capital_id' => '3578069',
     'active' => '0',
   ],
-  153 => 
-  [
+  153 => [
     'code' => 'MT',
     'code3' => 'MLT',
     'num' => '470',
@@ -2772,8 +2619,7 @@ return [
     'capital_id' => '2562305',
     'active' => '0',
   ],
-  154 => 
-  [
+  154 => [
     'code' => 'MU',
     'code3' => 'MUS',
     'num' => '480',
@@ -2790,8 +2636,7 @@ return [
     'capital_id' => '934154',
     'active' => '0',
   ],
-  155 => 
-  [
+  155 => [
     'code' => 'MV',
     'code3' => 'MDV',
     'num' => '462',
@@ -2808,8 +2653,7 @@ return [
     'capital_id' => '1282027',
     'active' => '0',
   ],
-  156 => 
-  [
+  156 => [
     'code' => 'MW',
     'code3' => 'MWI',
     'num' => '454',
@@ -2826,8 +2670,7 @@ return [
     'capital_id' => '927967',
     'active' => '0',
   ],
-  157 => 
-  [
+  157 => [
     'code' => 'MX',
     'code3' => 'MEX',
     'num' => '484',
@@ -2844,8 +2687,7 @@ return [
     'capital_id' => '3530597',
     'active' => '0',
   ],
-  158 => 
-  [
+  158 => [
     'code' => 'MY',
     'code3' => 'MYS',
     'num' => '458',
@@ -2862,8 +2704,7 @@ return [
     'capital_id' => '1735161',
     'active' => '0',
   ],
-  159 => 
-  [
+  159 => [
     'code' => 'MZ',
     'code3' => 'MOZ',
     'num' => '508',
@@ -2880,8 +2721,7 @@ return [
     'capital_id' => '1040652',
     'active' => '0',
   ],
-  160 => 
-  [
+  160 => [
     'code' => 'NA',
     'code3' => 'NAM',
     'num' => '516',
@@ -2898,8 +2738,7 @@ return [
     'capital_id' => '3352136',
     'active' => '0',
   ],
-  161 => 
-  [
+  161 => [
     'code' => 'NC',
     'code3' => 'NCL',
     'num' => '540',
@@ -2916,8 +2755,7 @@ return [
     'capital_id' => '2139521',
     'active' => '0',
   ],
-  162 => 
-  [
+  162 => [
     'code' => 'NE',
     'code3' => 'NER',
     'num' => '562',
@@ -2934,8 +2772,7 @@ return [
     'capital_id' => '2440485',
     'active' => '0',
   ],
-  163 => 
-  [
+  163 => [
     'code' => 'NF',
     'code3' => 'NFK',
     'num' => '574',
@@ -2952,8 +2789,7 @@ return [
     'capital_id' => '2161314',
     'active' => '0',
   ],
-  164 => 
-  [
+  164 => [
     'code' => 'NG',
     'code3' => 'NGA',
     'num' => '566',
@@ -2970,8 +2806,7 @@ return [
     'capital_id' => '2352778',
     'active' => '0',
   ],
-  165 => 
-  [
+  165 => [
     'code' => 'NI',
     'code3' => 'NIC',
     'num' => '558',
@@ -2988,8 +2823,7 @@ return [
     'capital_id' => '3617763',
     'active' => '0',
   ],
-  166 => 
-  [
+  166 => [
     'code' => 'NL',
     'code3' => 'NLD',
     'num' => '528',
@@ -3006,8 +2840,7 @@ return [
     'capital_id' => '2759794',
     'active' => '0',
   ],
-  167 => 
-  [
+  167 => [
     'code' => 'NO',
     'code3' => 'NOR',
     'num' => '578',
@@ -3024,8 +2857,7 @@ return [
     'capital_id' => '3143244',
     'active' => '0',
   ],
-  168 => 
-  [
+  168 => [
     'code' => 'NP',
     'code3' => 'NPL',
     'num' => '524',
@@ -3042,8 +2874,7 @@ return [
     'capital_id' => '1283240',
     'active' => '0',
   ],
-  169 => 
-  [
+  169 => [
     'code' => 'NR',
     'code3' => 'NRU',
     'num' => '520',
@@ -3060,8 +2891,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  170 => 
-  [
+  170 => [
     'code' => 'NU',
     'code3' => 'NIU',
     'num' => '570',
@@ -3078,8 +2908,7 @@ return [
     'capital_id' => '4036284',
     'active' => '0',
   ],
-  171 => 
-  [
+  171 => [
     'code' => 'NZ',
     'code3' => 'NZL',
     'num' => '554',
@@ -3096,8 +2925,7 @@ return [
     'capital_id' => '2179537',
     'active' => '0',
   ],
-  172 => 
-  [
+  172 => [
     'code' => 'OM',
     'code3' => 'OMN',
     'num' => '512',
@@ -3114,8 +2942,7 @@ return [
     'capital_id' => '287286',
     'active' => '0',
   ],
-  173 => 
-  [
+  173 => [
     'code' => 'PA',
     'code3' => 'PAN',
     'num' => '591',
@@ -3132,8 +2959,7 @@ return [
     'capital_id' => '3703443',
     'active' => '0',
   ],
-  174 => 
-  [
+  174 => [
     'code' => 'PE',
     'code3' => 'PER',
     'num' => '604',
@@ -3150,8 +2976,7 @@ return [
     'capital_id' => '3936456',
     'active' => '0',
   ],
-  175 => 
-  [
+  175 => [
     'code' => 'PF',
     'code3' => 'PYF',
     'num' => '258',
@@ -3168,8 +2993,7 @@ return [
     'capital_id' => '4033936',
     'active' => '0',
   ],
-  176 => 
-  [
+  176 => [
     'code' => 'PG',
     'code3' => 'PNG',
     'num' => '598',
@@ -3186,8 +3010,7 @@ return [
     'capital_id' => '2088122',
     'active' => '0',
   ],
-  177 => 
-  [
+  177 => [
     'code' => 'PH',
     'code3' => 'PHL',
     'num' => '608',
@@ -3204,8 +3027,7 @@ return [
     'capital_id' => '1701668',
     'active' => '0',
   ],
-  178 => 
-  [
+  178 => [
     'code' => 'PK',
     'code3' => 'PAK',
     'num' => '586',
@@ -3222,8 +3044,7 @@ return [
     'capital_id' => '1176615',
     'active' => '0',
   ],
-  179 => 
-  [
+  179 => [
     'code' => 'PL',
     'code3' => 'POL',
     'num' => '616',
@@ -3240,8 +3061,7 @@ return [
     'capital_id' => '756135',
     'active' => '0',
   ],
-  180 => 
-  [
+  180 => [
     'code' => 'PM',
     'code3' => 'SPM',
     'num' => '666',
@@ -3258,8 +3078,7 @@ return [
     'capital_id' => '3424934',
     'active' => '0',
   ],
-  181 => 
-  [
+  181 => [
     'code' => 'PN',
     'code3' => 'PCN',
     'num' => '612',
@@ -3276,8 +3095,7 @@ return [
     'capital_id' => '4030723',
     'active' => '0',
   ],
-  182 => 
-  [
+  182 => [
     'code' => 'PR',
     'code3' => 'PRI',
     'num' => '630',
@@ -3294,8 +3112,7 @@ return [
     'capital_id' => '4568127',
     'active' => '0',
   ],
-  183 => 
-  [
+  183 => [
     'code' => 'PS',
     'code3' => 'PSE',
     'num' => '275',
@@ -3312,8 +3129,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  184 => 
-  [
+  184 => [
     'code' => 'PT',
     'code3' => 'PRT',
     'num' => '620',
@@ -3330,8 +3146,7 @@ return [
     'capital_id' => '2267057',
     'active' => '0',
   ],
-  185 => 
-  [
+  185 => [
     'code' => 'PW',
     'code3' => 'PLW',
     'num' => '585',
@@ -3348,8 +3163,7 @@ return [
     'capital_id' => '7303944',
     'active' => '0',
   ],
-  186 => 
-  [
+  186 => [
     'code' => 'PY',
     'code3' => 'PRY',
     'num' => '600',
@@ -3366,8 +3180,7 @@ return [
     'capital_id' => '3439389',
     'active' => '0',
   ],
-  187 => 
-  [
+  187 => [
     'code' => 'QA',
     'code3' => 'QAT',
     'num' => '634',
@@ -3384,8 +3197,7 @@ return [
     'capital_id' => '290030',
     'active' => '0',
   ],
-  188 => 
-  [
+  188 => [
     'code' => 'RE',
     'code3' => 'REU',
     'num' => '638',
@@ -3402,8 +3214,7 @@ return [
     'capital_id' => '935264',
     'active' => '0',
   ],
-  189 => 
-  [
+  189 => [
     'code' => 'RO',
     'code3' => 'ROU',
     'num' => '642',
@@ -3420,8 +3231,7 @@ return [
     'capital_id' => '683506',
     'active' => '0',
   ],
-  190 => 
-  [
+  190 => [
     'code' => 'RS',
     'code3' => 'SRB',
     'num' => '688',
@@ -3438,8 +3248,7 @@ return [
     'capital_id' => '792680',
     'active' => '0',
   ],
-  191 => 
-  [
+  191 => [
     'code' => 'RU',
     'code3' => 'RUS',
     'num' => '643',
@@ -3456,8 +3265,7 @@ return [
     'capital_id' => '524901',
     'active' => '1',
   ],
-  192 => 
-  [
+  192 => [
     'code' => 'RW',
     'code3' => 'RWA',
     'num' => '646',
@@ -3474,8 +3282,7 @@ return [
     'capital_id' => '202061',
     'active' => '0',
   ],
-  193 => 
-  [
+  193 => [
     'code' => 'SA',
     'code3' => 'SAU',
     'num' => '682',
@@ -3492,8 +3299,7 @@ return [
     'capital_id' => '108410',
     'active' => '0',
   ],
-  194 => 
-  [
+  194 => [
     'code' => 'SB',
     'code3' => 'SLB',
     'num' => '090',
@@ -3510,8 +3316,7 @@ return [
     'capital_id' => '2108502',
     'active' => '0',
   ],
-  195 => 
-  [
+  195 => [
     'code' => 'SC',
     'code3' => 'SYC',
     'num' => '690',
@@ -3528,8 +3333,7 @@ return [
     'capital_id' => '241131',
     'active' => '0',
   ],
-  196 => 
-  [
+  196 => [
     'code' => 'SD',
     'code3' => 'SDN',
     'num' => '729',
@@ -3546,8 +3350,7 @@ return [
     'capital_id' => '379252',
     'active' => '0',
   ],
-  197 => 
-  [
+  197 => [
     'code' => 'SE',
     'code3' => 'SWE',
     'num' => '752',
@@ -3564,8 +3367,7 @@ return [
     'capital_id' => '2673730',
     'active' => '0',
   ],
-  198 => 
-  [
+  198 => [
     'code' => 'SG',
     'code3' => 'SGP',
     'num' => '702',
@@ -3582,8 +3384,7 @@ return [
     'capital_id' => '1880252',
     'active' => '0',
   ],
-  199 => 
-  [
+  199 => [
     'code' => 'SH',
     'code3' => 'SHN',
     'num' => '654',
@@ -3600,8 +3401,7 @@ return [
     'capital_id' => '3370903',
     'active' => '0',
   ],
-  200 => 
-  [
+  200 => [
     'code' => 'SI',
     'code3' => 'SVN',
     'num' => '705',
@@ -3618,8 +3418,7 @@ return [
     'capital_id' => '3196359',
     'active' => '0',
   ],
-  201 => 
-  [
+  201 => [
     'code' => 'SJ',
     'code3' => 'SJM',
     'num' => '744',
@@ -3636,8 +3435,7 @@ return [
     'capital_id' => '2729907',
     'active' => '0',
   ],
-  202 => 
-  [
+  202 => [
     'code' => 'SK',
     'code3' => 'SVK',
     'num' => '703',
@@ -3654,8 +3452,7 @@ return [
     'capital_id' => '3060972',
     'active' => '0',
   ],
-  203 => 
-  [
+  203 => [
     'code' => 'SL',
     'code3' => 'SLE',
     'num' => '694',
@@ -3672,8 +3469,7 @@ return [
     'capital_id' => '2409306',
     'active' => '0',
   ],
-  204 => 
-  [
+  204 => [
     'code' => 'SM',
     'code3' => 'SMR',
     'num' => '674',
@@ -3690,8 +3486,7 @@ return [
     'capital_id' => '3168070',
     'active' => '0',
   ],
-  205 => 
-  [
+  205 => [
     'code' => 'SN',
     'code3' => 'SEN',
     'num' => '686',
@@ -3708,8 +3503,7 @@ return [
     'capital_id' => '2253354',
     'active' => '0',
   ],
-  206 => 
-  [
+  206 => [
     'code' => 'SO',
     'code3' => 'SOM',
     'num' => '706',
@@ -3726,8 +3520,7 @@ return [
     'capital_id' => '53654',
     'active' => '0',
   ],
-  207 => 
-  [
+  207 => [
     'code' => 'SR',
     'code3' => 'SUR',
     'num' => '740',
@@ -3744,8 +3537,7 @@ return [
     'capital_id' => '3383330',
     'active' => '0',
   ],
-  208 => 
-  [
+  208 => [
     'code' => 'SS',
     'code3' => 'SSD',
     'num' => '728',
@@ -3762,8 +3554,7 @@ return [
     'capital_id' => '373303',
     'active' => '0',
   ],
-  209 => 
-  [
+  209 => [
     'code' => 'ST',
     'code3' => 'STP',
     'num' => '678',
@@ -3780,8 +3571,7 @@ return [
     'capital_id' => '2410763',
     'active' => '0',
   ],
-  210 => 
-  [
+  210 => [
     'code' => 'SU',
     'code3' => 'SUN',
     'num' => '810',
@@ -3798,8 +3588,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  211 => 
-  [
+  211 => [
     'code' => 'SV',
     'code3' => 'SLV',
     'num' => '222',
@@ -3816,8 +3605,7 @@ return [
     'capital_id' => '3583361',
     'active' => '0',
   ],
-  212 => 
-  [
+  212 => [
     'code' => 'SX',
     'code3' => 'SXM',
     'num' => '534',
@@ -3834,8 +3622,7 @@ return [
     'capital_id' => '3513392',
     'active' => '0',
   ],
-  213 => 
-  [
+  213 => [
     'code' => 'SY',
     'code3' => 'SYR',
     'num' => '760',
@@ -3852,8 +3639,7 @@ return [
     'capital_id' => '170654',
     'active' => '0',
   ],
-  214 => 
-  [
+  214 => [
     'code' => 'SZ',
     'code3' => 'SWZ',
     'num' => '748',
@@ -3870,8 +3656,7 @@ return [
     'capital_id' => '934985',
     'active' => '0',
   ],
-  215 => 
-  [
+  215 => [
     'code' => 'TC',
     'code3' => 'TCA',
     'num' => '796',
@@ -3888,8 +3673,7 @@ return [
     'capital_id' => '3576994',
     'active' => '0',
   ],
-  216 => 
-  [
+  216 => [
     'code' => 'TD',
     'code3' => 'TCD',
     'num' => '148',
@@ -3906,8 +3690,7 @@ return [
     'capital_id' => '2427123',
     'active' => '0',
   ],
-  217 => 
-  [
+  217 => [
     'code' => 'TF',
     'code3' => 'ATF',
     'num' => '260',
@@ -3924,8 +3707,7 @@ return [
     'capital_id' => '1546102',
     'active' => '0',
   ],
-  218 => 
-  [
+  218 => [
     'code' => 'TG',
     'code3' => 'TGO',
     'num' => '768',
@@ -3942,8 +3724,7 @@ return [
     'capital_id' => '2365267',
     'active' => '0',
   ],
-  219 => 
-  [
+  219 => [
     'code' => 'TH',
     'code3' => 'THA',
     'num' => '764',
@@ -3960,8 +3741,7 @@ return [
     'capital_id' => '1609350',
     'active' => '0',
   ],
-  220 => 
-  [
+  220 => [
     'code' => 'TJ',
     'code3' => 'TJK',
     'num' => '762',
@@ -3978,8 +3758,7 @@ return [
     'capital_id' => '1221874',
     'active' => '0',
   ],
-  221 => 
-  [
+  221 => [
     'code' => 'TK',
     'code3' => 'TKL',
     'num' => '772',
@@ -3996,8 +3775,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  222 => 
-  [
+  222 => [
     'code' => 'TL',
     'code3' => 'TLS',
     'num' => '626',
@@ -4014,8 +3792,7 @@ return [
     'capital_id' => '1645457',
     'active' => '0',
   ],
-  223 => 
-  [
+  223 => [
     'code' => 'TM',
     'code3' => 'TKM',
     'num' => '795',
@@ -4032,8 +3809,7 @@ return [
     'capital_id' => '162183',
     'active' => '0',
   ],
-  224 => 
-  [
+  224 => [
     'code' => 'TN',
     'code3' => 'TUN',
     'num' => '788',
@@ -4050,8 +3826,7 @@ return [
     'capital_id' => '2464470',
     'active' => '0',
   ],
-  225 => 
-  [
+  225 => [
     'code' => 'TO',
     'code3' => 'TON',
     'num' => '776',
@@ -4068,8 +3843,7 @@ return [
     'capital_id' => '4032402',
     'active' => '0',
   ],
-  226 => 
-  [
+  226 => [
     'code' => 'TR',
     'code3' => 'TUR',
     'num' => '792',
@@ -4086,8 +3860,7 @@ return [
     'capital_id' => '323786',
     'active' => '0',
   ],
-  227 => 
-  [
+  227 => [
     'code' => 'TT',
     'code3' => 'TTO',
     'num' => '780',
@@ -4104,8 +3877,7 @@ return [
     'capital_id' => '3573890',
     'active' => '0',
   ],
-  228 => 
-  [
+  228 => [
     'code' => 'TV',
     'code3' => 'TUV',
     'num' => '798',
@@ -4122,8 +3894,7 @@ return [
     'capital_id' => '2110394',
     'active' => '0',
   ],
-  229 => 
-  [
+  229 => [
     'code' => 'TW',
     'code3' => 'TWN',
     'num' => '158',
@@ -4140,8 +3911,7 @@ return [
     'capital_id' => '1668341',
     'active' => '0',
   ],
-  230 => 
-  [
+  230 => [
     'code' => 'TZ',
     'code3' => 'TZA',
     'num' => '834',
@@ -4158,8 +3928,7 @@ return [
     'capital_id' => '160196',
     'active' => '0',
   ],
-  231 => 
-  [
+  231 => [
     'code' => 'UA',
     'code3' => 'UKR',
     'num' => '804',
@@ -4176,8 +3945,7 @@ return [
     'capital_id' => '703448',
     'active' => '1',
   ],
-  232 => 
-  [
+  232 => [
     'code' => 'UG',
     'code3' => 'UGA',
     'num' => '800',
@@ -4194,8 +3962,7 @@ return [
     'capital_id' => '232422',
     'active' => '0',
   ],
-  233 => 
-  [
+  233 => [
     'code' => 'UM',
     'code3' => 'UMI',
     'num' => '581',
@@ -4212,8 +3979,7 @@ return [
     'capital_id' => '0',
     'active' => '0',
   ],
-  234 => 
-  [
+  234 => [
     'code' => 'US',
     'code3' => 'USA',
     'num' => '840',
@@ -4230,8 +3996,7 @@ return [
     'capital_id' => '4140963',
     'active' => '1',
   ],
-  235 => 
-  [
+  235 => [
     'code' => 'UY',
     'code3' => 'URY',
     'num' => '858',
@@ -4248,8 +4013,7 @@ return [
     'capital_id' => '3441575',
     'active' => '0',
   ],
-  236 => 
-  [
+  236 => [
     'code' => 'UZ',
     'code3' => 'UZB',
     'num' => '860',
@@ -4266,8 +4030,7 @@ return [
     'capital_id' => '1512569',
     'active' => '0',
   ],
-  237 => 
-  [
+  237 => [
     'code' => 'VA',
     'code3' => 'VAT',
     'num' => '336',
@@ -4284,8 +4047,7 @@ return [
     'capital_id' => '6691831',
     'active' => '0',
   ],
-  238 => 
-  [
+  238 => [
     'code' => 'VC',
     'code3' => 'VCT',
     'num' => '670',
@@ -4302,8 +4064,7 @@ return [
     'capital_id' => '3577887',
     'active' => '0',
   ],
-  239 => 
-  [
+  239 => [
     'code' => 'VE',
     'code3' => 'VEN',
     'num' => '862',
@@ -4320,8 +4081,7 @@ return [
     'capital_id' => '3646738',
     'active' => '0',
   ],
-  240 => 
-  [
+  240 => [
     'code' => 'VG',
     'code3' => 'VGB',
     'num' => '092',
@@ -4338,8 +4098,7 @@ return [
     'capital_id' => '3577430',
     'active' => '0',
   ],
-  241 => 
-  [
+  241 => [
     'code' => 'VI',
     'code3' => 'VIR',
     'num' => '850',
@@ -4356,8 +4115,7 @@ return [
     'capital_id' => '4795467',
     'active' => '0',
   ],
-  242 => 
-  [
+  242 => [
     'code' => 'VN',
     'code3' => 'VNM',
     'num' => '704',
@@ -4374,8 +4132,7 @@ return [
     'capital_id' => '1581130',
     'active' => '0',
   ],
-  243 => 
-  [
+  243 => [
     'code' => 'VU',
     'code3' => 'VUT',
     'num' => '548',
@@ -4392,8 +4149,7 @@ return [
     'capital_id' => '2135171',
     'active' => '0',
   ],
-  244 => 
-  [
+  244 => [
     'code' => 'WF',
     'code3' => 'WLF',
     'num' => '876',
@@ -4410,8 +4166,7 @@ return [
     'capital_id' => '4034821',
     'active' => '0',
   ],
-  245 => 
-  [
+  245 => [
     'code' => 'WS',
     'code3' => 'WSM',
     'num' => '882',
@@ -4428,8 +4183,7 @@ return [
     'capital_id' => '4035413',
     'active' => '0',
   ],
-  246 => 
-  [
+  246 => [
     'code' => 'YE',
     'code3' => 'YEM',
     'num' => '887',
@@ -4446,8 +4200,7 @@ return [
     'capital_id' => '71137',
     'active' => '0',
   ],
-  247 => 
-  [
+  247 => [
     'code' => 'YT',
     'code3' => 'MYT',
     'num' => '175',
@@ -4464,8 +4217,7 @@ return [
     'capital_id' => '921815',
     'active' => '0',
   ],
-  248 => 
-  [
+  248 => [
     'code' => 'ZA',
     'code3' => 'ZAF',
     'num' => '710',
@@ -4482,8 +4234,7 @@ return [
     'capital_id' => '964137',
     'active' => '0',
   ],
-  249 => 
-  [
+  249 => [
     'code' => 'ZM',
     'code3' => 'ZMB',
     'num' => '894',
@@ -4500,8 +4251,7 @@ return [
     'capital_id' => '909137',
     'active' => '0',
   ],
-  250 => 
-  [
+  250 => [
     'code' => 'ZW',
     'code3' => 'ZWE',
     'num' => '716',

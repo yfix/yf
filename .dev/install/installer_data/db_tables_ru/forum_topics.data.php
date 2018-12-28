@@ -1,7 +1,7 @@
 <?php
+
 return [
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'forum' => '2',
     'name' => 'Seagate Barracuda 7200.7 IDE',
@@ -23,8 +23,7 @@ return [
     'approved' => '1',
     'language' => '0',
   ],
-  8 => 
-  [
+  8 => [
     'id' => '8',
     'forum' => '2',
     'name' => 'цифровой дом',

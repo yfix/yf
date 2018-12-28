@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'forum' => '1',
     'name' => 'postfix',
@@ -23,8 +23,7 @@ return [
     'approved' => '1',
     'language' => '0',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'forum' => '1',
     'name' => 'linux',
@@ -46,8 +45,7 @@ return [
     'approved' => '1',
     'language' => '0',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'forum' => '1',
     'name' => 'windows',
@@ -69,8 +67,7 @@ return [
     'approved' => '1',
     'language' => '0',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'forum' => '2',
     'name' => 'common problems',
@@ -92,8 +89,7 @@ return [
     'approved' => '1',
     'language' => '0',
   ],
-  5 => 
-  [
+  5 => [
     'id' => '5',
     'forum' => '2',
     'name' => 'Feature Request',
@@ -115,8 +111,7 @@ return [
     'approved' => '1',
     'language' => '0',
   ],
-  6 => 
-  [
+  6 => [
     'id' => '6',
     'forum' => '2',
     'name' => 'XSL debugging in Oxygen tutorial',

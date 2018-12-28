@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'name' => 'center_area',
     'desc' => '',
@@ -10,8 +10,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'name' => 'left_area',
     'desc' => '',
@@ -20,8 +19,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'name' => 'right_area',
     'desc' => '',
@@ -30,8 +28,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'name' => 'center_area',
     'desc' => '',
@@ -40,8 +37,7 @@ return [
     'type' => 'admin',
     'active' => '1',
   ],
-  6 => 
-  [
+  6 => [
     'id' => '6',
     'name' => 'left_area',
     'desc' => '',
@@ -50,8 +46,7 @@ return [
     'type' => 'admin',
     'active' => '1',
   ],
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'name' => 'basket_micro',
     'desc' => '',
@@ -60,8 +55,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  8 => 
-  [
+  8 => [
     'id' => '8',
     'name' => 'head_nav',
     'desc' => '',
@@ -70,8 +64,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  9 => 
-  [
+  9 => [
     'id' => '9',
     'name' => 'products_latest',
     'desc' => '',
@@ -80,8 +73,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  10 => 
-  [
+  10 => [
     'id' => '10',
     'name' => 'products_latest_sold',
     'desc' => '',
@@ -90,8 +82,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  12 => 
-  [
+  12 => [
     'id' => '12',
     'name' => 'products_popular',
     'desc' => '',
@@ -100,8 +91,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  13 => 
-  [
+  13 => [
     'id' => '13',
     'name' => 'products_closeout',
     'desc' => '',
@@ -110,8 +100,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  14 => 
-  [
+  14 => [
     'id' => '14',
     'name' => 'products_also_purchased',
     'desc' => '',
@@ -120,8 +109,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  15 => 
-  [
+  15 => [
     'id' => '15',
     'name' => 'product_sets_top',
     'desc' => '',
@@ -130,8 +118,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  16 => 
-  [
+  16 => [
     'id' => '16',
     'name' => 'product_sets_left',
     'desc' => '',
@@ -140,8 +127,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  20 => 
-  [
+  20 => [
     'id' => '20',
     'name' => 'product_sets_center',
     'desc' => '',
@@ -150,8 +136,7 @@ return [
     'type' => 'user',
     'active' => '1',
   ],
-  21 => 
-  [
+  21 => [
     'id' => '21',
     'name' => 'product_sets_top_clone',
     'desc' => '',
@@ -160,8 +145,7 @@ return [
     'type' => 'user',
     'active' => '0',
   ],
-  22 => 
-  [
+  22 => [
     'id' => '22',
     'name' => 'products_viewed',
     'desc' => '',

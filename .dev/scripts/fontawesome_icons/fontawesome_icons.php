@@ -1,2967 +1,2375 @@
 <?php
+
 $data = [
-  'fa-adjust' => 
-  [
+  'fa-adjust' => [
     'name' => 'fa-adjust',
     'active' => 1,
   ],
-  'fa-adn' => 
-  [
+  'fa-adn' => [
     'name' => 'fa-adn',
     'active' => 1,
   ],
-  'fa-align-center' => 
-  [
+  'fa-align-center' => [
     'name' => 'fa-align-center',
     'active' => 1,
   ],
-  'fa-align-justify' => 
-  [
+  'fa-align-justify' => [
     'name' => 'fa-align-justify',
     'active' => 1,
   ],
-  'fa-align-left' => 
-  [
+  'fa-align-left' => [
     'name' => 'fa-align-left',
     'active' => 1,
   ],
-  'fa-align-right' => 
-  [
+  'fa-align-right' => [
     'name' => 'fa-align-right',
     'active' => 1,
   ],
-  'fa-ambulance' => 
-  [
+  'fa-ambulance' => [
     'name' => 'fa-ambulance',
     'active' => 1,
   ],
-  'fa-anchor' => 
-  [
+  'fa-anchor' => [
     'name' => 'fa-anchor',
     'active' => 1,
   ],
-  'fa-android' => 
-  [
+  'fa-android' => [
     'name' => 'fa-android',
     'active' => 1,
   ],
-  'fa-angellist' => 
-  [
+  'fa-angellist' => [
     'name' => 'fa-angellist',
     'active' => 1,
   ],
-  'fa-angle-double-down' => 
-  [
+  'fa-angle-double-down' => [
     'name' => 'fa-angle-double-down',
     'active' => 1,
   ],
-  'fa-angle-double-left' => 
-  [
+  'fa-angle-double-left' => [
     'name' => 'fa-angle-double-left',
     'active' => 1,
   ],
-  'fa-angle-double-right' => 
-  [
+  'fa-angle-double-right' => [
     'name' => 'fa-angle-double-right',
     'active' => 1,
   ],
-  'fa-angle-double-up' => 
-  [
+  'fa-angle-double-up' => [
     'name' => 'fa-angle-double-up',
     'active' => 1,
   ],
-  'fa-angle-down' => 
-  [
+  'fa-angle-down' => [
     'name' => 'fa-angle-down',
     'active' => 1,
   ],
-  'fa-angle-left' => 
-  [
+  'fa-angle-left' => [
     'name' => 'fa-angle-left',
     'active' => 1,
   ],
-  'fa-angle-right' => 
-  [
+  'fa-angle-right' => [
     'name' => 'fa-angle-right',
     'active' => 1,
   ],
-  'fa-angle-up' => 
-  [
+  'fa-angle-up' => [
     'name' => 'fa-angle-up',
     'active' => 1,
   ],
-  'fa-apple' => 
-  [
+  'fa-apple' => [
     'name' => 'fa-apple',
     'active' => 1,
   ],
-  'fa-archive' => 
-  [
+  'fa-archive' => [
     'name' => 'fa-archive',
     'active' => 1,
   ],
-  'fa-area-chart' => 
-  [
+  'fa-area-chart' => [
     'name' => 'fa-area-chart',
     'active' => 1,
   ],
-  'fa-arrow-circle-down' => 
-  [
+  'fa-arrow-circle-down' => [
     'name' => 'fa-arrow-circle-down',
     'active' => 1,
   ],
-  'fa-arrow-circle-left' => 
-  [
+  'fa-arrow-circle-left' => [
     'name' => 'fa-arrow-circle-left',
     'active' => 1,
   ],
-  'fa-arrow-circle-o-down' => 
-  [
+  'fa-arrow-circle-o-down' => [
     'name' => 'fa-arrow-circle-o-down',
     'active' => 1,
   ],
-  'fa-arrow-circle-o-left' => 
-  [
+  'fa-arrow-circle-o-left' => [
     'name' => 'fa-arrow-circle-o-left',
     'active' => 1,
   ],
-  'fa-arrow-circle-o-right' => 
-  [
+  'fa-arrow-circle-o-right' => [
     'name' => 'fa-arrow-circle-o-right',
     'active' => 1,
   ],
-  'fa-arrow-circle-o-up' => 
-  [
+  'fa-arrow-circle-o-up' => [
     'name' => 'fa-arrow-circle-o-up',
     'active' => 1,
   ],
-  'fa-arrow-circle-right' => 
-  [
+  'fa-arrow-circle-right' => [
     'name' => 'fa-arrow-circle-right',
     'active' => 1,
   ],
-  'fa-arrow-circle-up' => 
-  [
+  'fa-arrow-circle-up' => [
     'name' => 'fa-arrow-circle-up',
     'active' => 1,
   ],
-  'fa-arrow-down' => 
-  [
+  'fa-arrow-down' => [
     'name' => 'fa-arrow-down',
     'active' => 1,
   ],
-  'fa-arrow-left' => 
-  [
+  'fa-arrow-left' => [
     'name' => 'fa-arrow-left',
     'active' => 1,
   ],
-  'fa-arrow-right' => 
-  [
+  'fa-arrow-right' => [
     'name' => 'fa-arrow-right',
     'active' => 1,
   ],
-  'fa-arrow-up' => 
-  [
+  'fa-arrow-up' => [
     'name' => 'fa-arrow-up',
     'active' => 1,
   ],
-  'fa-arrows' => 
-  [
+  'fa-arrows' => [
     'name' => 'fa-arrows',
     'active' => 1,
   ],
-  'fa-arrows-alt' => 
-  [
+  'fa-arrows-alt' => [
     'name' => 'fa-arrows-alt',
     'active' => 1,
   ],
-  'fa-arrows-h' => 
-  [
+  'fa-arrows-h' => [
     'name' => 'fa-arrows-h',
     'active' => 1,
   ],
-  'fa-arrows-v' => 
-  [
+  'fa-arrows-v' => [
     'name' => 'fa-arrows-v',
     'active' => 1,
   ],
-  'fa-asterisk' => 
-  [
+  'fa-asterisk' => [
     'name' => 'fa-asterisk',
     'active' => 1,
   ],
-  'fa-at' => 
-  [
+  'fa-at' => [
     'name' => 'fa-at',
     'active' => 1,
   ],
-  'fa-automobile' => 
-  [
+  'fa-automobile' => [
     'name' => 'fa-automobile',
     'active' => 1,
   ],
-  'fa-backward' => 
-  [
+  'fa-backward' => [
     'name' => 'fa-backward',
     'active' => 1,
   ],
-  'fa-ban' => 
-  [
+  'fa-ban' => [
     'name' => 'fa-ban',
     'active' => 1,
   ],
-  'fa-bank' => 
-  [
+  'fa-bank' => [
     'name' => 'fa-bank',
     'active' => 1,
   ],
-  'fa-bar-chart' => 
-  [
+  'fa-bar-chart' => [
     'name' => 'fa-bar-chart',
     'active' => 1,
   ],
-  'fa-bar-chart-o' => 
-  [
+  'fa-bar-chart-o' => [
     'name' => 'fa-bar-chart-o',
     'active' => 1,
   ],
-  'fa-barcode' => 
-  [
+  'fa-barcode' => [
     'name' => 'fa-barcode',
     'active' => 1,
   ],
-  'fa-bars' => 
-  [
+  'fa-bars' => [
     'name' => 'fa-bars',
     'active' => 1,
   ],
-  'fa-bed' => 
-  [
+  'fa-bed' => [
     'name' => 'fa-bed',
     'active' => 1,
   ],
-  'fa-beer' => 
-  [
+  'fa-beer' => [
     'name' => 'fa-beer',
     'active' => 1,
   ],
-  'fa-behance' => 
-  [
+  'fa-behance' => [
     'name' => 'fa-behance',
     'active' => 1,
   ],
-  'fa-behance-square' => 
-  [
+  'fa-behance-square' => [
     'name' => 'fa-behance-square',
     'active' => 1,
   ],
-  'fa-bell' => 
-  [
+  'fa-bell' => [
     'name' => 'fa-bell',
     'active' => 1,
   ],
-  'fa-bell-o' => 
-  [
+  'fa-bell-o' => [
     'name' => 'fa-bell-o',
     'active' => 1,
   ],
-  'fa-bell-slash' => 
-  [
+  'fa-bell-slash' => [
     'name' => 'fa-bell-slash',
     'active' => 1,
   ],
-  'fa-bell-slash-o' => 
-  [
+  'fa-bell-slash-o' => [
     'name' => 'fa-bell-slash-o',
     'active' => 1,
   ],
-  'fa-bicycle' => 
-  [
+  'fa-bicycle' => [
     'name' => 'fa-bicycle',
     'active' => 1,
   ],
-  'fa-binoculars' => 
-  [
+  'fa-binoculars' => [
     'name' => 'fa-binoculars',
     'active' => 1,
   ],
-  'fa-birthday-cake' => 
-  [
+  'fa-birthday-cake' => [
     'name' => 'fa-birthday-cake',
     'active' => 1,
   ],
-  'fa-bitbucket' => 
-  [
+  'fa-bitbucket' => [
     'name' => 'fa-bitbucket',
     'active' => 1,
   ],
-  'fa-bitbucket-square' => 
-  [
+  'fa-bitbucket-square' => [
     'name' => 'fa-bitbucket-square',
     'active' => 1,
   ],
-  'fa-bitcoin' => 
-  [
+  'fa-bitcoin' => [
     'name' => 'fa-bitcoin',
     'active' => 1,
   ],
-  'fa-bold' => 
-  [
+  'fa-bold' => [
     'name' => 'fa-bold',
     'active' => 1,
   ],
-  'fa-bolt' => 
-  [
+  'fa-bolt' => [
     'name' => 'fa-bolt',
     'active' => 1,
   ],
-  'fa-bomb' => 
-  [
+  'fa-bomb' => [
     'name' => 'fa-bomb',
     'active' => 1,
   ],
-  'fa-book' => 
-  [
+  'fa-book' => [
     'name' => 'fa-book',
     'active' => 1,
   ],
-  'fa-bookmark' => 
-  [
+  'fa-bookmark' => [
     'name' => 'fa-bookmark',
     'active' => 1,
   ],
-  'fa-bookmark-o' => 
-  [
+  'fa-bookmark-o' => [
     'name' => 'fa-bookmark-o',
     'active' => 1,
   ],
-  'fa-briefcase' => 
-  [
+  'fa-briefcase' => [
     'name' => 'fa-briefcase',
     'active' => 1,
   ],
-  'fa-btc' => 
-  [
+  'fa-btc' => [
     'name' => 'fa-btc',
     'active' => 1,
   ],
-  'fa-bug' => 
-  [
+  'fa-bug' => [
     'name' => 'fa-bug',
     'active' => 1,
   ],
-  'fa-building' => 
-  [
+  'fa-building' => [
     'name' => 'fa-building',
     'active' => 1,
   ],
-  'fa-building-o' => 
-  [
+  'fa-building-o' => [
     'name' => 'fa-building-o',
     'active' => 1,
   ],
-  'fa-bullhorn' => 
-  [
+  'fa-bullhorn' => [
     'name' => 'fa-bullhorn',
     'active' => 1,
   ],
-  'fa-bullseye' => 
-  [
+  'fa-bullseye' => [
     'name' => 'fa-bullseye',
     'active' => 1,
   ],
-  'fa-bus' => 
-  [
+  'fa-bus' => [
     'name' => 'fa-bus',
     'active' => 1,
   ],
-  'fa-buysellads' => 
-  [
+  'fa-buysellads' => [
     'name' => 'fa-buysellads',
     'active' => 1,
   ],
-  'fa-cab' => 
-  [
+  'fa-cab' => [
     'name' => 'fa-cab',
     'active' => 1,
   ],
-  'fa-calculator' => 
-  [
+  'fa-calculator' => [
     'name' => 'fa-calculator',
     'active' => 1,
   ],
-  'fa-calendar' => 
-  [
+  'fa-calendar' => [
     'name' => 'fa-calendar',
     'active' => 1,
   ],
-  'fa-calendar-o' => 
-  [
+  'fa-calendar-o' => [
     'name' => 'fa-calendar-o',
     'active' => 1,
   ],
-  'fa-camera' => 
-  [
+  'fa-camera' => [
     'name' => 'fa-camera',
     'active' => 1,
   ],
-  'fa-camera-retro' => 
-  [
+  'fa-camera-retro' => [
     'name' => 'fa-camera-retro',
     'active' => 1,
   ],
-  'fa-car' => 
-  [
+  'fa-car' => [
     'name' => 'fa-car',
     'active' => 1,
   ],
-  'fa-caret-down' => 
-  [
+  'fa-caret-down' => [
     'name' => 'fa-caret-down',
     'active' => 1,
   ],
-  'fa-caret-left' => 
-  [
+  'fa-caret-left' => [
     'name' => 'fa-caret-left',
     'active' => 1,
   ],
-  'fa-caret-right' => 
-  [
+  'fa-caret-right' => [
     'name' => 'fa-caret-right',
     'active' => 1,
   ],
-  'fa-caret-square-o-down' => 
-  [
+  'fa-caret-square-o-down' => [
     'name' => 'fa-caret-square-o-down',
     'active' => 1,
   ],
-  'fa-caret-square-o-left' => 
-  [
+  'fa-caret-square-o-left' => [
     'name' => 'fa-caret-square-o-left',
     'active' => 1,
   ],
-  'fa-caret-square-o-right' => 
-  [
+  'fa-caret-square-o-right' => [
     'name' => 'fa-caret-square-o-right',
     'active' => 1,
   ],
-  'fa-caret-square-o-up' => 
-  [
+  'fa-caret-square-o-up' => [
     'name' => 'fa-caret-square-o-up',
     'active' => 1,
   ],
-  'fa-caret-up' => 
-  [
+  'fa-caret-up' => [
     'name' => 'fa-caret-up',
     'active' => 1,
   ],
-  'fa-cart-arrow-down' => 
-  [
+  'fa-cart-arrow-down' => [
     'name' => 'fa-cart-arrow-down',
     'active' => 1,
   ],
-  'fa-cart-plus' => 
-  [
+  'fa-cart-plus' => [
     'name' => 'fa-cart-plus',
     'active' => 1,
   ],
-  'fa-cc' => 
-  [
+  'fa-cc' => [
     'name' => 'fa-cc',
     'active' => 1,
   ],
-  'fa-cc-amex' => 
-  [
+  'fa-cc-amex' => [
     'name' => 'fa-cc-amex',
     'active' => 1,
   ],
-  'fa-cc-discover' => 
-  [
+  'fa-cc-discover' => [
     'name' => 'fa-cc-discover',
     'active' => 1,
   ],
-  'fa-cc-mastercard' => 
-  [
+  'fa-cc-mastercard' => [
     'name' => 'fa-cc-mastercard',
     'active' => 1,
   ],
-  'fa-cc-paypal' => 
-  [
+  'fa-cc-paypal' => [
     'name' => 'fa-cc-paypal',
     'active' => 1,
   ],
-  'fa-cc-stripe' => 
-  [
+  'fa-cc-stripe' => [
     'name' => 'fa-cc-stripe',
     'active' => 1,
   ],
-  'fa-cc-visa' => 
-  [
+  'fa-cc-visa' => [
     'name' => 'fa-cc-visa',
     'active' => 1,
   ],
-  'fa-certificate' => 
-  [
+  'fa-certificate' => [
     'name' => 'fa-certificate',
     'active' => 1,
   ],
-  'fa-chain' => 
-  [
+  'fa-chain' => [
     'name' => 'fa-chain',
     'active' => 1,
   ],
-  'fa-chain-broken' => 
-  [
+  'fa-chain-broken' => [
     'name' => 'fa-chain-broken',
     'active' => 1,
   ],
-  'fa-check' => 
-  [
+  'fa-check' => [
     'name' => 'fa-check',
     'active' => 1,
   ],
-  'fa-check-circle' => 
-  [
+  'fa-check-circle' => [
     'name' => 'fa-check-circle',
     'active' => 1,
   ],
-  'fa-check-circle-o' => 
-  [
+  'fa-check-circle-o' => [
     'name' => 'fa-check-circle-o',
     'active' => 1,
   ],
-  'fa-check-square' => 
-  [
+  'fa-check-square' => [
     'name' => 'fa-check-square',
     'active' => 1,
   ],
-  'fa-check-square-o' => 
-  [
+  'fa-check-square-o' => [
     'name' => 'fa-check-square-o',
     'active' => 1,
   ],
-  'fa-chevron-circle-down' => 
-  [
+  'fa-chevron-circle-down' => [
     'name' => 'fa-chevron-circle-down',
     'active' => 1,
   ],
-  'fa-chevron-circle-left' => 
-  [
+  'fa-chevron-circle-left' => [
     'name' => 'fa-chevron-circle-left',
     'active' => 1,
   ],
-  'fa-chevron-circle-right' => 
-  [
+  'fa-chevron-circle-right' => [
     'name' => 'fa-chevron-circle-right',
     'active' => 1,
   ],
-  'fa-chevron-circle-up' => 
-  [
+  'fa-chevron-circle-up' => [
     'name' => 'fa-chevron-circle-up',
     'active' => 1,
   ],
-  'fa-chevron-down' => 
-  [
+  'fa-chevron-down' => [
     'name' => 'fa-chevron-down',
     'active' => 1,
   ],
-  'fa-chevron-left' => 
-  [
+  'fa-chevron-left' => [
     'name' => 'fa-chevron-left',
     'active' => 1,
   ],
-  'fa-chevron-right' => 
-  [
+  'fa-chevron-right' => [
     'name' => 'fa-chevron-right',
     'active' => 1,
   ],
-  'fa-chevron-up' => 
-  [
+  'fa-chevron-up' => [
     'name' => 'fa-chevron-up',
     'active' => 1,
   ],
-  'fa-child' => 
-  [
+  'fa-child' => [
     'name' => 'fa-child',
     'active' => 1,
   ],
-  'fa-circle' => 
-  [
+  'fa-circle' => [
     'name' => 'fa-circle',
     'active' => 1,
   ],
-  'fa-circle-o' => 
-  [
+  'fa-circle-o' => [
     'name' => 'fa-circle-o',
     'active' => 1,
   ],
-  'fa-circle-o-notch' => 
-  [
+  'fa-circle-o-notch' => [
     'name' => 'fa-circle-o-notch',
     'active' => 1,
   ],
-  'fa-circle-thin' => 
-  [
+  'fa-circle-thin' => [
     'name' => 'fa-circle-thin',
     'active' => 1,
   ],
-  'fa-clipboard' => 
-  [
+  'fa-clipboard' => [
     'name' => 'fa-clipboard',
     'active' => 1,
   ],
-  'fa-clock-o' => 
-  [
+  'fa-clock-o' => [
     'name' => 'fa-clock-o',
     'active' => 1,
   ],
-  'fa-close' => 
-  [
+  'fa-close' => [
     'name' => 'fa-close',
     'active' => 1,
   ],
-  'fa-cloud' => 
-  [
+  'fa-cloud' => [
     'name' => 'fa-cloud',
     'active' => 1,
   ],
-  'fa-cloud-download' => 
-  [
+  'fa-cloud-download' => [
     'name' => 'fa-cloud-download',
     'active' => 1,
   ],
-  'fa-cloud-upload' => 
-  [
+  'fa-cloud-upload' => [
     'name' => 'fa-cloud-upload',
     'active' => 1,
   ],
-  'fa-cny' => 
-  [
+  'fa-cny' => [
     'name' => 'fa-cny',
     'active' => 1,
   ],
-  'fa-code' => 
-  [
+  'fa-code' => [
     'name' => 'fa-code',
     'active' => 1,
   ],
-  'fa-code-fork' => 
-  [
+  'fa-code-fork' => [
     'name' => 'fa-code-fork',
     'active' => 1,
   ],
-  'fa-codepen' => 
-  [
+  'fa-codepen' => [
     'name' => 'fa-codepen',
     'active' => 1,
   ],
-  'fa-coffee' => 
-  [
+  'fa-coffee' => [
     'name' => 'fa-coffee',
     'active' => 1,
   ],
-  'fa-cog' => 
-  [
+  'fa-cog' => [
     'name' => 'fa-cog',
     'active' => 1,
   ],
-  'fa-cogs' => 
-  [
+  'fa-cogs' => [
     'name' => 'fa-cogs',
     'active' => 1,
   ],
-  'fa-columns' => 
-  [
+  'fa-columns' => [
     'name' => 'fa-columns',
     'active' => 1,
   ],
-  'fa-comment' => 
-  [
+  'fa-comment' => [
     'name' => 'fa-comment',
     'active' => 1,
   ],
-  'fa-comment-o' => 
-  [
+  'fa-comment-o' => [
     'name' => 'fa-comment-o',
     'active' => 1,
   ],
-  'fa-comments' => 
-  [
+  'fa-comments' => [
     'name' => 'fa-comments',
     'active' => 1,
   ],
-  'fa-comments-o' => 
-  [
+  'fa-comments-o' => [
     'name' => 'fa-comments-o',
     'active' => 1,
   ],
-  'fa-compass' => 
-  [
+  'fa-compass' => [
     'name' => 'fa-compass',
     'active' => 1,
   ],
-  'fa-compress' => 
-  [
+  'fa-compress' => [
     'name' => 'fa-compress',
     'active' => 1,
   ],
-  'fa-connectdevelop' => 
-  [
+  'fa-connectdevelop' => [
     'name' => 'fa-connectdevelop',
     'active' => 1,
   ],
-  'fa-copy' => 
-  [
+  'fa-copy' => [
     'name' => 'fa-copy',
     'active' => 1,
   ],
-  'fa-copyright' => 
-  [
+  'fa-copyright' => [
     'name' => 'fa-copyright',
     'active' => 1,
   ],
-  'fa-credit-card' => 
-  [
+  'fa-credit-card' => [
     'name' => 'fa-credit-card',
     'active' => 1,
   ],
-  'fa-crop' => 
-  [
+  'fa-crop' => [
     'name' => 'fa-crop',
     'active' => 1,
   ],
-  'fa-crosshairs' => 
-  [
+  'fa-crosshairs' => [
     'name' => 'fa-crosshairs',
     'active' => 1,
   ],
-  'fa-css3' => 
-  [
+  'fa-css3' => [
     'name' => 'fa-css3',
     'active' => 1,
   ],
-  'fa-cube' => 
-  [
+  'fa-cube' => [
     'name' => 'fa-cube',
     'active' => 1,
   ],
-  'fa-cubes' => 
-  [
+  'fa-cubes' => [
     'name' => 'fa-cubes',
     'active' => 1,
   ],
-  'fa-cut' => 
-  [
+  'fa-cut' => [
     'name' => 'fa-cut',
     'active' => 1,
   ],
-  'fa-cutlery' => 
-  [
+  'fa-cutlery' => [
     'name' => 'fa-cutlery',
     'active' => 1,
   ],
-  'fa-dashboard' => 
-  [
+  'fa-dashboard' => [
     'name' => 'fa-dashboard',
     'active' => 1,
   ],
-  'fa-dashcube' => 
-  [
+  'fa-dashcube' => [
     'name' => 'fa-dashcube',
     'active' => 1,
   ],
-  'fa-database' => 
-  [
+  'fa-database' => [
     'name' => 'fa-database',
     'active' => 1,
   ],
-  'fa-dedent' => 
-  [
+  'fa-dedent' => [
     'name' => 'fa-dedent',
     'active' => 1,
   ],
-  'fa-delicious' => 
-  [
+  'fa-delicious' => [
     'name' => 'fa-delicious',
     'active' => 1,
   ],
-  'fa-desktop' => 
-  [
+  'fa-desktop' => [
     'name' => 'fa-desktop',
     'active' => 1,
   ],
-  'fa-deviantart' => 
-  [
+  'fa-deviantart' => [
     'name' => 'fa-deviantart',
     'active' => 1,
   ],
-  'fa-diamond' => 
-  [
+  'fa-diamond' => [
     'name' => 'fa-diamond',
     'active' => 1,
   ],
-  'fa-digg' => 
-  [
+  'fa-digg' => [
     'name' => 'fa-digg',
     'active' => 1,
   ],
-  'fa-dollar' => 
-  [
+  'fa-dollar' => [
     'name' => 'fa-dollar',
     'active' => 1,
   ],
-  'fa-dot-circle-o' => 
-  [
+  'fa-dot-circle-o' => [
     'name' => 'fa-dot-circle-o',
     'active' => 1,
   ],
-  'fa-download' => 
-  [
+  'fa-download' => [
     'name' => 'fa-download',
     'active' => 1,
   ],
-  'fa-dribbble' => 
-  [
+  'fa-dribbble' => [
     'name' => 'fa-dribbble',
     'active' => 1,
   ],
-  'fa-dropbox' => 
-  [
+  'fa-dropbox' => [
     'name' => 'fa-dropbox',
     'active' => 1,
   ],
-  'fa-drupal' => 
-  [
+  'fa-drupal' => [
     'name' => 'fa-drupal',
     'active' => 1,
   ],
-  'fa-edit' => 
-  [
+  'fa-edit' => [
     'name' => 'fa-edit',
     'active' => 1,
   ],
-  'fa-eject' => 
-  [
+  'fa-eject' => [
     'name' => 'fa-eject',
     'active' => 1,
   ],
-  'fa-ellipsis-h' => 
-  [
+  'fa-ellipsis-h' => [
     'name' => 'fa-ellipsis-h',
     'active' => 1,
   ],
-  'fa-ellipsis-v' => 
-  [
+  'fa-ellipsis-v' => [
     'name' => 'fa-ellipsis-v',
     'active' => 1,
   ],
-  'fa-empire' => 
-  [
+  'fa-empire' => [
     'name' => 'fa-empire',
     'active' => 1,
   ],
-  'fa-envelope' => 
-  [
+  'fa-envelope' => [
     'name' => 'fa-envelope',
     'active' => 1,
   ],
-  'fa-envelope-o' => 
-  [
+  'fa-envelope-o' => [
     'name' => 'fa-envelope-o',
     'active' => 1,
   ],
-  'fa-envelope-square' => 
-  [
+  'fa-envelope-square' => [
     'name' => 'fa-envelope-square',
     'active' => 1,
   ],
-  'fa-eraser' => 
-  [
+  'fa-eraser' => [
     'name' => 'fa-eraser',
     'active' => 1,
   ],
-  'fa-eur' => 
-  [
+  'fa-eur' => [
     'name' => 'fa-eur',
     'active' => 1,
   ],
-  'fa-euro' => 
-  [
+  'fa-euro' => [
     'name' => 'fa-euro',
     'active' => 1,
   ],
-  'fa-exchange' => 
-  [
+  'fa-exchange' => [
     'name' => 'fa-exchange',
     'active' => 1,
   ],
-  'fa-exclamation' => 
-  [
+  'fa-exclamation' => [
     'name' => 'fa-exclamation',
     'active' => 1,
   ],
-  'fa-exclamation-circle' => 
-  [
+  'fa-exclamation-circle' => [
     'name' => 'fa-exclamation-circle',
     'active' => 1,
   ],
-  'fa-exclamation-triangle' => 
-  [
+  'fa-exclamation-triangle' => [
     'name' => 'fa-exclamation-triangle',
     'active' => 1,
   ],
-  'fa-expand' => 
-  [
+  'fa-expand' => [
     'name' => 'fa-expand',
     'active' => 1,
   ],
-  'fa-external-link' => 
-  [
+  'fa-external-link' => [
     'name' => 'fa-external-link',
     'active' => 1,
   ],
-  'fa-external-link-square' => 
-  [
+  'fa-external-link-square' => [
     'name' => 'fa-external-link-square',
     'active' => 1,
   ],
-  'fa-eye' => 
-  [
+  'fa-eye' => [
     'name' => 'fa-eye',
     'active' => 1,
   ],
-  'fa-eye-slash' => 
-  [
+  'fa-eye-slash' => [
     'name' => 'fa-eye-slash',
     'active' => 1,
   ],
-  'fa-eyedropper' => 
-  [
+  'fa-eyedropper' => [
     'name' => 'fa-eyedropper',
     'active' => 1,
   ],
-  'fa-facebook' => 
-  [
+  'fa-facebook' => [
     'name' => 'fa-facebook',
     'active' => 1,
   ],
-  'fa-facebook-f' => 
-  [
+  'fa-facebook-f' => [
     'name' => 'fa-facebook-f',
     'active' => 1,
   ],
-  'fa-facebook-official' => 
-  [
+  'fa-facebook-official' => [
     'name' => 'fa-facebook-official',
     'active' => 1,
   ],
-  'fa-facebook-square' => 
-  [
+  'fa-facebook-square' => [
     'name' => 'fa-facebook-square',
     'active' => 1,
   ],
-  'fa-fast-backward' => 
-  [
+  'fa-fast-backward' => [
     'name' => 'fa-fast-backward',
     'active' => 1,
   ],
-  'fa-fast-forward' => 
-  [
+  'fa-fast-forward' => [
     'name' => 'fa-fast-forward',
     'active' => 1,
   ],
-  'fa-fax' => 
-  [
+  'fa-fax' => [
     'name' => 'fa-fax',
     'active' => 1,
   ],
-  'fa-female' => 
-  [
+  'fa-female' => [
     'name' => 'fa-female',
     'active' => 1,
   ],
-  'fa-fighter-jet' => 
-  [
+  'fa-fighter-jet' => [
     'name' => 'fa-fighter-jet',
     'active' => 1,
   ],
-  'fa-file' => 
-  [
+  'fa-file' => [
     'name' => 'fa-file',
     'active' => 1,
   ],
-  'fa-file-archive-o' => 
-  [
+  'fa-file-archive-o' => [
     'name' => 'fa-file-archive-o',
     'active' => 1,
   ],
-  'fa-file-audio-o' => 
-  [
+  'fa-file-audio-o' => [
     'name' => 'fa-file-audio-o',
     'active' => 1,
   ],
-  'fa-file-code-o' => 
-  [
+  'fa-file-code-o' => [
     'name' => 'fa-file-code-o',
     'active' => 1,
   ],
-  'fa-file-excel-o' => 
-  [
+  'fa-file-excel-o' => [
     'name' => 'fa-file-excel-o',
     'active' => 1,
   ],
-  'fa-file-image-o' => 
-  [
+  'fa-file-image-o' => [
     'name' => 'fa-file-image-o',
     'active' => 1,
   ],
-  'fa-file-movie-o' => 
-  [
+  'fa-file-movie-o' => [
     'name' => 'fa-file-movie-o',
     'active' => 1,
   ],
-  'fa-file-o' => 
-  [
+  'fa-file-o' => [
     'name' => 'fa-file-o',
     'active' => 1,
   ],
-  'fa-file-pdf-o' => 
-  [
+  'fa-file-pdf-o' => [
     'name' => 'fa-file-pdf-o',
     'active' => 1,
   ],
-  'fa-file-photo-o' => 
-  [
+  'fa-file-photo-o' => [
     'name' => 'fa-file-photo-o',
     'active' => 1,
   ],
-  'fa-file-picture-o' => 
-  [
+  'fa-file-picture-o' => [
     'name' => 'fa-file-picture-o',
     'active' => 1,
   ],
-  'fa-file-powerpoint-o' => 
-  [
+  'fa-file-powerpoint-o' => [
     'name' => 'fa-file-powerpoint-o',
     'active' => 1,
   ],
-  'fa-file-sound-o' => 
-  [
+  'fa-file-sound-o' => [
     'name' => 'fa-file-sound-o',
     'active' => 1,
   ],
-  'fa-file-text' => 
-  [
+  'fa-file-text' => [
     'name' => 'fa-file-text',
     'active' => 1,
   ],
-  'fa-file-text-o' => 
-  [
+  'fa-file-text-o' => [
     'name' => 'fa-file-text-o',
     'active' => 1,
   ],
-  'fa-file-video-o' => 
-  [
+  'fa-file-video-o' => [
     'name' => 'fa-file-video-o',
     'active' => 1,
   ],
-  'fa-file-word-o' => 
-  [
+  'fa-file-word-o' => [
     'name' => 'fa-file-word-o',
     'active' => 1,
   ],
-  'fa-file-zip-o' => 
-  [
+  'fa-file-zip-o' => [
     'name' => 'fa-file-zip-o',
     'active' => 1,
   ],
-  'fa-files-o' => 
-  [
+  'fa-files-o' => [
     'name' => 'fa-files-o',
     'active' => 1,
   ],
-  'fa-film' => 
-  [
+  'fa-film' => [
     'name' => 'fa-film',
     'active' => 1,
   ],
-  'fa-filter' => 
-  [
+  'fa-filter' => [
     'name' => 'fa-filter',
     'active' => 1,
   ],
-  'fa-fire' => 
-  [
+  'fa-fire' => [
     'name' => 'fa-fire',
     'active' => 1,
   ],
-  'fa-fire-extinguisher' => 
-  [
+  'fa-fire-extinguisher' => [
     'name' => 'fa-fire-extinguisher',
     'active' => 1,
   ],
-  'fa-flag' => 
-  [
+  'fa-flag' => [
     'name' => 'fa-flag',
     'active' => 1,
   ],
-  'fa-flag-checkered' => 
-  [
+  'fa-flag-checkered' => [
     'name' => 'fa-flag-checkered',
     'active' => 1,
   ],
-  'fa-flag-o' => 
-  [
+  'fa-flag-o' => [
     'name' => 'fa-flag-o',
     'active' => 1,
   ],
-  'fa-flash' => 
-  [
+  'fa-flash' => [
     'name' => 'fa-flash',
     'active' => 1,
   ],
-  'fa-flask' => 
-  [
+  'fa-flask' => [
     'name' => 'fa-flask',
     'active' => 1,
   ],
-  'fa-flickr' => 
-  [
+  'fa-flickr' => [
     'name' => 'fa-flickr',
     'active' => 1,
   ],
-  'fa-floppy-o' => 
-  [
+  'fa-floppy-o' => [
     'name' => 'fa-floppy-o',
     'active' => 1,
   ],
-  'fa-folder' => 
-  [
+  'fa-folder' => [
     'name' => 'fa-folder',
     'active' => 1,
   ],
-  'fa-folder-o' => 
-  [
+  'fa-folder-o' => [
     'name' => 'fa-folder-o',
     'active' => 1,
   ],
-  'fa-folder-open' => 
-  [
+  'fa-folder-open' => [
     'name' => 'fa-folder-open',
     'active' => 1,
   ],
-  'fa-folder-open-o' => 
-  [
+  'fa-folder-open-o' => [
     'name' => 'fa-folder-open-o',
     'active' => 1,
   ],
-  'fa-font' => 
-  [
+  'fa-font' => [
     'name' => 'fa-font',
     'active' => 1,
   ],
-  'fa-forumbee' => 
-  [
+  'fa-forumbee' => [
     'name' => 'fa-forumbee',
     'active' => 1,
   ],
-  'fa-forward' => 
-  [
+  'fa-forward' => [
     'name' => 'fa-forward',
     'active' => 1,
   ],
-  'fa-foursquare' => 
-  [
+  'fa-foursquare' => [
     'name' => 'fa-foursquare',
     'active' => 1,
   ],
-  'fa-frown-o' => 
-  [
+  'fa-frown-o' => [
     'name' => 'fa-frown-o',
     'active' => 1,
   ],
-  'fa-futbol-o' => 
-  [
+  'fa-futbol-o' => [
     'name' => 'fa-futbol-o',
     'active' => 1,
   ],
-  'fa-gamepad' => 
-  [
+  'fa-gamepad' => [
     'name' => 'fa-gamepad',
     'active' => 1,
   ],
-  'fa-gavel' => 
-  [
+  'fa-gavel' => [
     'name' => 'fa-gavel',
     'active' => 1,
   ],
-  'fa-gbp' => 
-  [
+  'fa-gbp' => [
     'name' => 'fa-gbp',
     'active' => 1,
   ],
-  'fa-ge' => 
-  [
+  'fa-ge' => [
     'name' => 'fa-ge',
     'active' => 1,
   ],
-  'fa-gear' => 
-  [
+  'fa-gear' => [
     'name' => 'fa-gear',
     'active' => 1,
   ],
-  'fa-gears' => 
-  [
+  'fa-gears' => [
     'name' => 'fa-gears',
     'active' => 1,
   ],
-  'fa-genderless' => 
-  [
+  'fa-genderless' => [
     'name' => 'fa-genderless',
     'active' => 1,
   ],
-  'fa-gift' => 
-  [
+  'fa-gift' => [
     'name' => 'fa-gift',
     'active' => 1,
   ],
-  'fa-git' => 
-  [
+  'fa-git' => [
     'name' => 'fa-git',
     'active' => 1,
   ],
-  'fa-git-square' => 
-  [
+  'fa-git-square' => [
     'name' => 'fa-git-square',
     'active' => 1,
   ],
-  'fa-github' => 
-  [
+  'fa-github' => [
     'name' => 'fa-github',
     'active' => 1,
   ],
-  'fa-github-alt' => 
-  [
+  'fa-github-alt' => [
     'name' => 'fa-github-alt',
     'active' => 1,
   ],
-  'fa-github-square' => 
-  [
+  'fa-github-square' => [
     'name' => 'fa-github-square',
     'active' => 1,
   ],
-  'fa-gittip' => 
-  [
+  'fa-gittip' => [
     'name' => 'fa-gittip',
     'active' => 1,
   ],
-  'fa-glass' => 
-  [
+  'fa-glass' => [
     'name' => 'fa-glass',
     'active' => 1,
   ],
-  'fa-globe' => 
-  [
+  'fa-globe' => [
     'name' => 'fa-globe',
     'active' => 1,
   ],
-  'fa-google' => 
-  [
+  'fa-google' => [
     'name' => 'fa-google',
     'active' => 1,
   ],
-  'fa-google-plus' => 
-  [
+  'fa-google-plus' => [
     'name' => 'fa-google-plus',
     'active' => 1,
   ],
-  'fa-google-plus-square' => 
-  [
+  'fa-google-plus-square' => [
     'name' => 'fa-google-plus-square',
     'active' => 1,
   ],
-  'fa-google-wallet' => 
-  [
+  'fa-google-wallet' => [
     'name' => 'fa-google-wallet',
     'active' => 1,
   ],
-  'fa-graduation-cap' => 
-  [
+  'fa-graduation-cap' => [
     'name' => 'fa-graduation-cap',
     'active' => 1,
   ],
-  'fa-gratipay' => 
-  [
+  'fa-gratipay' => [
     'name' => 'fa-gratipay',
     'active' => 1,
   ],
-  'fa-group' => 
-  [
+  'fa-group' => [
     'name' => 'fa-group',
     'active' => 1,
   ],
-  'fa-h-square' => 
-  [
+  'fa-h-square' => [
     'name' => 'fa-h-square',
     'active' => 1,
   ],
-  'fa-hacker-news' => 
-  [
+  'fa-hacker-news' => [
     'name' => 'fa-hacker-news',
     'active' => 1,
   ],
-  'fa-hand-o-down' => 
-  [
+  'fa-hand-o-down' => [
     'name' => 'fa-hand-o-down',
     'active' => 1,
   ],
-  'fa-hand-o-left' => 
-  [
+  'fa-hand-o-left' => [
     'name' => 'fa-hand-o-left',
     'active' => 1,
   ],
-  'fa-hand-o-right' => 
-  [
+  'fa-hand-o-right' => [
     'name' => 'fa-hand-o-right',
     'active' => 1,
   ],
-  'fa-hand-o-up' => 
-  [
+  'fa-hand-o-up' => [
     'name' => 'fa-hand-o-up',
     'active' => 1,
   ],
-  'fa-hdd-o' => 
-  [
+  'fa-hdd-o' => [
     'name' => 'fa-hdd-o',
     'active' => 1,
   ],
-  'fa-header' => 
-  [
+  'fa-header' => [
     'name' => 'fa-header',
     'active' => 1,
   ],
-  'fa-headphones' => 
-  [
+  'fa-headphones' => [
     'name' => 'fa-headphones',
     'active' => 1,
   ],
-  'fa-heart' => 
-  [
+  'fa-heart' => [
     'name' => 'fa-heart',
     'active' => 1,
   ],
-  'fa-heart-o' => 
-  [
+  'fa-heart-o' => [
     'name' => 'fa-heart-o',
     'active' => 1,
   ],
-  'fa-heartbeat' => 
-  [
+  'fa-heartbeat' => [
     'name' => 'fa-heartbeat',
     'active' => 1,
   ],
-  'fa-history' => 
-  [
+  'fa-history' => [
     'name' => 'fa-history',
     'active' => 1,
   ],
-  'fa-home' => 
-  [
+  'fa-home' => [
     'name' => 'fa-home',
     'active' => 1,
   ],
-  'fa-hospital-o' => 
-  [
+  'fa-hospital-o' => [
     'name' => 'fa-hospital-o',
     'active' => 1,
   ],
-  'fa-hotel' => 
-  [
+  'fa-hotel' => [
     'name' => 'fa-hotel',
     'active' => 1,
   ],
-  'fa-html5' => 
-  [
+  'fa-html5' => [
     'name' => 'fa-html5',
     'active' => 1,
   ],
-  'fa-ils' => 
-  [
+  'fa-ils' => [
     'name' => 'fa-ils',
     'active' => 1,
   ],
-  'fa-image' => 
-  [
+  'fa-image' => [
     'name' => 'fa-image',
     'active' => 1,
   ],
-  'fa-inbox' => 
-  [
+  'fa-inbox' => [
     'name' => 'fa-inbox',
     'active' => 1,
   ],
-  'fa-indent' => 
-  [
+  'fa-indent' => [
     'name' => 'fa-indent',
     'active' => 1,
   ],
-  'fa-info' => 
-  [
+  'fa-info' => [
     'name' => 'fa-info',
     'active' => 1,
   ],
-  'fa-info-circle' => 
-  [
+  'fa-info-circle' => [
     'name' => 'fa-info-circle',
     'active' => 1,
   ],
-  'fa-inr' => 
-  [
+  'fa-inr' => [
     'name' => 'fa-inr',
     'active' => 1,
   ],
-  'fa-instagram' => 
-  [
+  'fa-instagram' => [
     'name' => 'fa-instagram',
     'active' => 1,
   ],
-  'fa-institution' => 
-  [
+  'fa-institution' => [
     'name' => 'fa-institution',
     'active' => 1,
   ],
-  'fa-ioxhost' => 
-  [
+  'fa-ioxhost' => [
     'name' => 'fa-ioxhost',
     'active' => 1,
   ],
-  'fa-italic' => 
-  [
+  'fa-italic' => [
     'name' => 'fa-italic',
     'active' => 1,
   ],
-  'fa-joomla' => 
-  [
+  'fa-joomla' => [
     'name' => 'fa-joomla',
     'active' => 1,
   ],
-  'fa-jpy' => 
-  [
+  'fa-jpy' => [
     'name' => 'fa-jpy',
     'active' => 1,
   ],
-  'fa-jsfiddle' => 
-  [
+  'fa-jsfiddle' => [
     'name' => 'fa-jsfiddle',
     'active' => 1,
   ],
-  'fa-key' => 
-  [
+  'fa-key' => [
     'name' => 'fa-key',
     'active' => 1,
   ],
-  'fa-keyboard-o' => 
-  [
+  'fa-keyboard-o' => [
     'name' => 'fa-keyboard-o',
     'active' => 1,
   ],
-  'fa-krw' => 
-  [
+  'fa-krw' => [
     'name' => 'fa-krw',
     'active' => 1,
   ],
-  'fa-language' => 
-  [
+  'fa-language' => [
     'name' => 'fa-language',
     'active' => 1,
   ],
-  'fa-laptop' => 
-  [
+  'fa-laptop' => [
     'name' => 'fa-laptop',
     'active' => 1,
   ],
-  'fa-lastfm' => 
-  [
+  'fa-lastfm' => [
     'name' => 'fa-lastfm',
     'active' => 1,
   ],
-  'fa-lastfm-square' => 
-  [
+  'fa-lastfm-square' => [
     'name' => 'fa-lastfm-square',
     'active' => 1,
   ],
-  'fa-leaf' => 
-  [
+  'fa-leaf' => [
     'name' => 'fa-leaf',
     'active' => 1,
   ],
-  'fa-leanpub' => 
-  [
+  'fa-leanpub' => [
     'name' => 'fa-leanpub',
     'active' => 1,
   ],
-  'fa-legal' => 
-  [
+  'fa-legal' => [
     'name' => 'fa-legal',
     'active' => 1,
   ],
-  'fa-lemon-o' => 
-  [
+  'fa-lemon-o' => [
     'name' => 'fa-lemon-o',
     'active' => 1,
   ],
-  'fa-level-down' => 
-  [
+  'fa-level-down' => [
     'name' => 'fa-level-down',
     'active' => 1,
   ],
-  'fa-level-up' => 
-  [
+  'fa-level-up' => [
     'name' => 'fa-level-up',
     'active' => 1,
   ],
-  'fa-life-bouy' => 
-  [
+  'fa-life-bouy' => [
     'name' => 'fa-life-bouy',
     'active' => 1,
   ],
-  'fa-life-buoy' => 
-  [
+  'fa-life-buoy' => [
     'name' => 'fa-life-buoy',
     'active' => 1,
   ],
-  'fa-life-ring' => 
-  [
+  'fa-life-ring' => [
     'name' => 'fa-life-ring',
     'active' => 1,
   ],
-  'fa-life-saver' => 
-  [
+  'fa-life-saver' => [
     'name' => 'fa-life-saver',
     'active' => 1,
   ],
-  'fa-lightbulb-o' => 
-  [
+  'fa-lightbulb-o' => [
     'name' => 'fa-lightbulb-o',
     'active' => 1,
   ],
-  'fa-line-chart' => 
-  [
+  'fa-line-chart' => [
     'name' => 'fa-line-chart',
     'active' => 1,
   ],
-  'fa-link' => 
-  [
+  'fa-link' => [
     'name' => 'fa-link',
     'active' => 1,
   ],
-  'fa-linkedin' => 
-  [
+  'fa-linkedin' => [
     'name' => 'fa-linkedin',
     'active' => 1,
   ],
-  'fa-linkedin-square' => 
-  [
+  'fa-linkedin-square' => [
     'name' => 'fa-linkedin-square',
     'active' => 1,
   ],
-  'fa-linux' => 
-  [
+  'fa-linux' => [
     'name' => 'fa-linux',
     'active' => 1,
   ],
-  'fa-list' => 
-  [
+  'fa-list' => [
     'name' => 'fa-list',
     'active' => 1,
   ],
-  'fa-list-alt' => 
-  [
+  'fa-list-alt' => [
     'name' => 'fa-list-alt',
     'active' => 1,
   ],
-  'fa-list-ol' => 
-  [
+  'fa-list-ol' => [
     'name' => 'fa-list-ol',
     'active' => 1,
   ],
-  'fa-list-ul' => 
-  [
+  'fa-list-ul' => [
     'name' => 'fa-list-ul',
     'active' => 1,
   ],
-  'fa-location-arrow' => 
-  [
+  'fa-location-arrow' => [
     'name' => 'fa-location-arrow',
     'active' => 1,
   ],
-  'fa-lock' => 
-  [
+  'fa-lock' => [
     'name' => 'fa-lock',
     'active' => 1,
   ],
-  'fa-long-arrow-down' => 
-  [
+  'fa-long-arrow-down' => [
     'name' => 'fa-long-arrow-down',
     'active' => 1,
   ],
-  'fa-long-arrow-left' => 
-  [
+  'fa-long-arrow-left' => [
     'name' => 'fa-long-arrow-left',
     'active' => 1,
   ],
-  'fa-long-arrow-right' => 
-  [
+  'fa-long-arrow-right' => [
     'name' => 'fa-long-arrow-right',
     'active' => 1,
   ],
-  'fa-long-arrow-up' => 
-  [
+  'fa-long-arrow-up' => [
     'name' => 'fa-long-arrow-up',
     'active' => 1,
   ],
-  'fa-magic' => 
-  [
+  'fa-magic' => [
     'name' => 'fa-magic',
     'active' => 1,
   ],
-  'fa-magnet' => 
-  [
+  'fa-magnet' => [
     'name' => 'fa-magnet',
     'active' => 1,
   ],
-  'fa-mail-forward' => 
-  [
+  'fa-mail-forward' => [
     'name' => 'fa-mail-forward',
     'active' => 1,
   ],
-  'fa-mail-reply' => 
-  [
+  'fa-mail-reply' => [
     'name' => 'fa-mail-reply',
     'active' => 1,
   ],
-  'fa-mail-reply-all' => 
-  [
+  'fa-mail-reply-all' => [
     'name' => 'fa-mail-reply-all',
     'active' => 1,
   ],
-  'fa-male' => 
-  [
+  'fa-male' => [
     'name' => 'fa-male',
     'active' => 1,
   ],
-  'fa-map-marker' => 
-  [
+  'fa-map-marker' => [
     'name' => 'fa-map-marker',
     'active' => 1,
   ],
-  'fa-mars' => 
-  [
+  'fa-mars' => [
     'name' => 'fa-mars',
     'active' => 1,
   ],
-  'fa-mars-double' => 
-  [
+  'fa-mars-double' => [
     'name' => 'fa-mars-double',
     'active' => 1,
   ],
-  'fa-mars-stroke' => 
-  [
+  'fa-mars-stroke' => [
     'name' => 'fa-mars-stroke',
     'active' => 1,
   ],
-  'fa-mars-stroke-h' => 
-  [
+  'fa-mars-stroke-h' => [
     'name' => 'fa-mars-stroke-h',
     'active' => 1,
   ],
-  'fa-mars-stroke-v' => 
-  [
+  'fa-mars-stroke-v' => [
     'name' => 'fa-mars-stroke-v',
     'active' => 1,
   ],
-  'fa-maxcdn' => 
-  [
+  'fa-maxcdn' => [
     'name' => 'fa-maxcdn',
     'active' => 1,
   ],
-  'fa-meanpath' => 
-  [
+  'fa-meanpath' => [
     'name' => 'fa-meanpath',
     'active' => 1,
   ],
-  'fa-medium' => 
-  [
+  'fa-medium' => [
     'name' => 'fa-medium',
     'active' => 1,
   ],
-  'fa-medkit' => 
-  [
+  'fa-medkit' => [
     'name' => 'fa-medkit',
     'active' => 1,
   ],
-  'fa-meh-o' => 
-  [
+  'fa-meh-o' => [
     'name' => 'fa-meh-o',
     'active' => 1,
   ],
-  'fa-mercury' => 
-  [
+  'fa-mercury' => [
     'name' => 'fa-mercury',
     'active' => 1,
   ],
-  'fa-microphone' => 
-  [
+  'fa-microphone' => [
     'name' => 'fa-microphone',
     'active' => 1,
   ],
-  'fa-microphone-slash' => 
-  [
+  'fa-microphone-slash' => [
     'name' => 'fa-microphone-slash',
     'active' => 1,
   ],
-  'fa-minus' => 
-  [
+  'fa-minus' => [
     'name' => 'fa-minus',
     'active' => 1,
   ],
-  'fa-minus-circle' => 
-  [
+  'fa-minus-circle' => [
     'name' => 'fa-minus-circle',
     'active' => 1,
   ],
-  'fa-minus-square' => 
-  [
+  'fa-minus-square' => [
     'name' => 'fa-minus-square',
     'active' => 1,
   ],
-  'fa-minus-square-o' => 
-  [
+  'fa-minus-square-o' => [
     'name' => 'fa-minus-square-o',
     'active' => 1,
   ],
-  'fa-mobile' => 
-  [
+  'fa-mobile' => [
     'name' => 'fa-mobile',
     'active' => 1,
   ],
-  'fa-mobile-phone' => 
-  [
+  'fa-mobile-phone' => [
     'name' => 'fa-mobile-phone',
     'active' => 1,
   ],
-  'fa-money' => 
-  [
+  'fa-money' => [
     'name' => 'fa-money',
     'active' => 1,
   ],
-  'fa-moon-o' => 
-  [
+  'fa-moon-o' => [
     'name' => 'fa-moon-o',
     'active' => 1,
   ],
-  'fa-mortar-board' => 
-  [
+  'fa-mortar-board' => [
     'name' => 'fa-mortar-board',
     'active' => 1,
   ],
-  'fa-motorcycle' => 
-  [
+  'fa-motorcycle' => [
     'name' => 'fa-motorcycle',
     'active' => 1,
   ],
-  'fa-music' => 
-  [
+  'fa-music' => [
     'name' => 'fa-music',
     'active' => 1,
   ],
-  'fa-navicon' => 
-  [
+  'fa-navicon' => [
     'name' => 'fa-navicon',
     'active' => 1,
   ],
-  'fa-neuter' => 
-  [
+  'fa-neuter' => [
     'name' => 'fa-neuter',
     'active' => 1,
   ],
-  'fa-newspaper-o' => 
-  [
+  'fa-newspaper-o' => [
     'name' => 'fa-newspaper-o',
     'active' => 1,
   ],
-  'fa-openid' => 
-  [
+  'fa-openid' => [
     'name' => 'fa-openid',
     'active' => 1,
   ],
-  'fa-outdent' => 
-  [
+  'fa-outdent' => [
     'name' => 'fa-outdent',
     'active' => 1,
   ],
-  'fa-pagelines' => 
-  [
+  'fa-pagelines' => [
     'name' => 'fa-pagelines',
     'active' => 1,
   ],
-  'fa-paint-brush' => 
-  [
+  'fa-paint-brush' => [
     'name' => 'fa-paint-brush',
     'active' => 1,
   ],
-  'fa-paper-plane' => 
-  [
+  'fa-paper-plane' => [
     'name' => 'fa-paper-plane',
     'active' => 1,
   ],
-  'fa-paper-plane-o' => 
-  [
+  'fa-paper-plane-o' => [
     'name' => 'fa-paper-plane-o',
     'active' => 1,
   ],
-  'fa-paperclip' => 
-  [
+  'fa-paperclip' => [
     'name' => 'fa-paperclip',
     'active' => 1,
   ],
-  'fa-paragraph' => 
-  [
+  'fa-paragraph' => [
     'name' => 'fa-paragraph',
     'active' => 1,
   ],
-  'fa-paste' => 
-  [
+  'fa-paste' => [
     'name' => 'fa-paste',
     'active' => 1,
   ],
-  'fa-pause' => 
-  [
+  'fa-pause' => [
     'name' => 'fa-pause',
     'active' => 1,
   ],
-  'fa-paw' => 
-  [
+  'fa-paw' => [
     'name' => 'fa-paw',
     'active' => 1,
   ],
-  'fa-paypal' => 
-  [
+  'fa-paypal' => [
     'name' => 'fa-paypal',
     'active' => 1,
   ],
-  'fa-pencil' => 
-  [
+  'fa-pencil' => [
     'name' => 'fa-pencil',
     'active' => 1,
   ],
-  'fa-pencil-square' => 
-  [
+  'fa-pencil-square' => [
     'name' => 'fa-pencil-square',
     'active' => 1,
   ],
-  'fa-pencil-square-o' => 
-  [
+  'fa-pencil-square-o' => [
     'name' => 'fa-pencil-square-o',
     'active' => 1,
   ],
-  'fa-phone' => 
-  [
+  'fa-phone' => [
     'name' => 'fa-phone',
     'active' => 1,
   ],
-  'fa-phone-square' => 
-  [
+  'fa-phone-square' => [
     'name' => 'fa-phone-square',
     'active' => 1,
   ],
-  'fa-photo' => 
-  [
+  'fa-photo' => [
     'name' => 'fa-photo',
     'active' => 1,
   ],
-  'fa-picture-o' => 
-  [
+  'fa-picture-o' => [
     'name' => 'fa-picture-o',
     'active' => 1,
   ],
-  'fa-pie-chart' => 
-  [
+  'fa-pie-chart' => [
     'name' => 'fa-pie-chart',
     'active' => 1,
   ],
-  'fa-pied-piper' => 
-  [
+  'fa-pied-piper' => [
     'name' => 'fa-pied-piper',
     'active' => 1,
   ],
-  'fa-pied-piper-alt' => 
-  [
+  'fa-pied-piper-alt' => [
     'name' => 'fa-pied-piper-alt',
     'active' => 1,
   ],
-  'fa-pinterest' => 
-  [
+  'fa-pinterest' => [
     'name' => 'fa-pinterest',
     'active' => 1,
   ],
-  'fa-pinterest-p' => 
-  [
+  'fa-pinterest-p' => [
     'name' => 'fa-pinterest-p',
     'active' => 1,
   ],
-  'fa-pinterest-square' => 
-  [
+  'fa-pinterest-square' => [
     'name' => 'fa-pinterest-square',
     'active' => 1,
   ],
-  'fa-plane' => 
-  [
+  'fa-plane' => [
     'name' => 'fa-plane',
     'active' => 1,
   ],
-  'fa-play' => 
-  [
+  'fa-play' => [
     'name' => 'fa-play',
     'active' => 1,
   ],
-  'fa-play-circle' => 
-  [
+  'fa-play-circle' => [
     'name' => 'fa-play-circle',
     'active' => 1,
   ],
-  'fa-play-circle-o' => 
-  [
+  'fa-play-circle-o' => [
     'name' => 'fa-play-circle-o',
     'active' => 1,
   ],
-  'fa-plug' => 
-  [
+  'fa-plug' => [
     'name' => 'fa-plug',
     'active' => 1,
   ],
-  'fa-plus' => 
-  [
+  'fa-plus' => [
     'name' => 'fa-plus',
     'active' => 1,
   ],
-  'fa-plus-circle' => 
-  [
+  'fa-plus-circle' => [
     'name' => 'fa-plus-circle',
     'active' => 1,
   ],
-  'fa-plus-square' => 
-  [
+  'fa-plus-square' => [
     'name' => 'fa-plus-square',
     'active' => 1,
   ],
-  'fa-plus-square-o' => 
-  [
+  'fa-plus-square-o' => [
     'name' => 'fa-plus-square-o',
     'active' => 1,
   ],
-  'fa-power-off' => 
-  [
+  'fa-power-off' => [
     'name' => 'fa-power-off',
     'active' => 1,
   ],
-  'fa-print' => 
-  [
+  'fa-print' => [
     'name' => 'fa-print',
     'active' => 1,
   ],
-  'fa-puzzle-piece' => 
-  [
+  'fa-puzzle-piece' => [
     'name' => 'fa-puzzle-piece',
     'active' => 1,
   ],
-  'fa-qq' => 
-  [
+  'fa-qq' => [
     'name' => 'fa-qq',
     'active' => 1,
   ],
-  'fa-qrcode' => 
-  [
+  'fa-qrcode' => [
     'name' => 'fa-qrcode',
     'active' => 1,
   ],
-  'fa-question' => 
-  [
+  'fa-question' => [
     'name' => 'fa-question',
     'active' => 1,
   ],
-  'fa-question-circle' => 
-  [
+  'fa-question-circle' => [
     'name' => 'fa-question-circle',
     'active' => 1,
   ],
-  'fa-quote-left' => 
-  [
+  'fa-quote-left' => [
     'name' => 'fa-quote-left',
     'active' => 1,
   ],
-  'fa-quote-right' => 
-  [
+  'fa-quote-right' => [
     'name' => 'fa-quote-right',
     'active' => 1,
   ],
-  'fa-ra' => 
-  [
+  'fa-ra' => [
     'name' => 'fa-ra',
     'active' => 1,
   ],
-  'fa-random' => 
-  [
+  'fa-random' => [
     'name' => 'fa-random',
     'active' => 1,
   ],
-  'fa-rebel' => 
-  [
+  'fa-rebel' => [
     'name' => 'fa-rebel',
     'active' => 1,
   ],
-  'fa-recycle' => 
-  [
+  'fa-recycle' => [
     'name' => 'fa-recycle',
     'active' => 1,
   ],
-  'fa-reddit' => 
-  [
+  'fa-reddit' => [
     'name' => 'fa-reddit',
     'active' => 1,
   ],
-  'fa-reddit-square' => 
-  [
+  'fa-reddit-square' => [
     'name' => 'fa-reddit-square',
     'active' => 1,
   ],
-  'fa-refresh' => 
-  [
+  'fa-refresh' => [
     'name' => 'fa-refresh',
     'active' => 1,
   ],
-  'fa-remove' => 
-  [
+  'fa-remove' => [
     'name' => 'fa-remove',
     'active' => 1,
   ],
-  'fa-renren' => 
-  [
+  'fa-renren' => [
     'name' => 'fa-renren',
     'active' => 1,
   ],
-  'fa-reorder' => 
-  [
+  'fa-reorder' => [
     'name' => 'fa-reorder',
     'active' => 1,
   ],
-  'fa-repeat' => 
-  [
+  'fa-repeat' => [
     'name' => 'fa-repeat',
     'active' => 1,
   ],
-  'fa-reply' => 
-  [
+  'fa-reply' => [
     'name' => 'fa-reply',
     'active' => 1,
   ],
-  'fa-reply-all' => 
-  [
+  'fa-reply-all' => [
     'name' => 'fa-reply-all',
     'active' => 1,
   ],
-  'fa-retweet' => 
-  [
+  'fa-retweet' => [
     'name' => 'fa-retweet',
     'active' => 1,
   ],
-  'fa-rmb' => 
-  [
+  'fa-rmb' => [
     'name' => 'fa-rmb',
     'active' => 1,
   ],
-  'fa-road' => 
-  [
+  'fa-road' => [
     'name' => 'fa-road',
     'active' => 1,
   ],
-  'fa-rocket' => 
-  [
+  'fa-rocket' => [
     'name' => 'fa-rocket',
     'active' => 1,
   ],
-  'fa-rotate-left' => 
-  [
+  'fa-rotate-left' => [
     'name' => 'fa-rotate-left',
     'active' => 1,
   ],
-  'fa-rotate-right' => 
-  [
+  'fa-rotate-right' => [
     'name' => 'fa-rotate-right',
     'active' => 1,
   ],
-  'fa-rouble' => 
-  [
+  'fa-rouble' => [
     'name' => 'fa-rouble',
     'active' => 1,
   ],
-  'fa-rss' => 
-  [
+  'fa-rss' => [
     'name' => 'fa-rss',
     'active' => 1,
   ],
-  'fa-rss-square' => 
-  [
+  'fa-rss-square' => [
     'name' => 'fa-rss-square',
     'active' => 1,
   ],
-  'fa-rub' => 
-  [
+  'fa-rub' => [
     'name' => 'fa-rub',
     'active' => 1,
   ],
-  'fa-ruble' => 
-  [
+  'fa-ruble' => [
     'name' => 'fa-ruble',
     'active' => 1,
   ],
-  'fa-rupee' => 
-  [
+  'fa-rupee' => [
     'name' => 'fa-rupee',
     'active' => 1,
   ],
-  'fa-save' => 
-  [
+  'fa-save' => [
     'name' => 'fa-save',
     'active' => 1,
   ],
-  'fa-scissors' => 
-  [
+  'fa-scissors' => [
     'name' => 'fa-scissors',
     'active' => 1,
   ],
-  'fa-search' => 
-  [
+  'fa-search' => [
     'name' => 'fa-search',
     'active' => 1,
   ],
-  'fa-search-minus' => 
-  [
+  'fa-search-minus' => [
     'name' => 'fa-search-minus',
     'active' => 1,
   ],
-  'fa-search-plus' => 
-  [
+  'fa-search-plus' => [
     'name' => 'fa-search-plus',
     'active' => 1,
   ],
-  'fa-sellsy' => 
-  [
+  'fa-sellsy' => [
     'name' => 'fa-sellsy',
     'active' => 1,
   ],
-  'fa-send' => 
-  [
+  'fa-send' => [
     'name' => 'fa-send',
     'active' => 1,
   ],
-  'fa-send-o' => 
-  [
+  'fa-send-o' => [
     'name' => 'fa-send-o',
     'active' => 1,
   ],
-  'fa-server' => 
-  [
+  'fa-server' => [
     'name' => 'fa-server',
     'active' => 1,
   ],
-  'fa-share' => 
-  [
+  'fa-share' => [
     'name' => 'fa-share',
     'active' => 1,
   ],
-  'fa-share-alt' => 
-  [
+  'fa-share-alt' => [
     'name' => 'fa-share-alt',
     'active' => 1,
   ],
-  'fa-share-alt-square' => 
-  [
+  'fa-share-alt-square' => [
     'name' => 'fa-share-alt-square',
     'active' => 1,
   ],
-  'fa-share-square' => 
-  [
+  'fa-share-square' => [
     'name' => 'fa-share-square',
     'active' => 1,
   ],
-  'fa-share-square-o' => 
-  [
+  'fa-share-square-o' => [
     'name' => 'fa-share-square-o',
     'active' => 1,
   ],
-  'fa-shekel' => 
-  [
+  'fa-shekel' => [
     'name' => 'fa-shekel',
     'active' => 1,
   ],
-  'fa-sheqel' => 
-  [
+  'fa-sheqel' => [
     'name' => 'fa-sheqel',
     'active' => 1,
   ],
-  'fa-shield' => 
-  [
+  'fa-shield' => [
     'name' => 'fa-shield',
     'active' => 1,
   ],
-  'fa-ship' => 
-  [
+  'fa-ship' => [
     'name' => 'fa-ship',
     'active' => 1,
   ],
-  'fa-shirtsinbulk' => 
-  [
+  'fa-shirtsinbulk' => [
     'name' => 'fa-shirtsinbulk',
     'active' => 1,
   ],
-  'fa-shopping-cart' => 
-  [
+  'fa-shopping-cart' => [
     'name' => 'fa-shopping-cart',
     'active' => 1,
   ],
-  'fa-sign-in' => 
-  [
+  'fa-sign-in' => [
     'name' => 'fa-sign-in',
     'active' => 1,
   ],
-  'fa-sign-out' => 
-  [
+  'fa-sign-out' => [
     'name' => 'fa-sign-out',
     'active' => 1,
   ],
-  'fa-signal' => 
-  [
+  'fa-signal' => [
     'name' => 'fa-signal',
     'active' => 1,
   ],
-  'fa-simplybuilt' => 
-  [
+  'fa-simplybuilt' => [
     'name' => 'fa-simplybuilt',
     'active' => 1,
   ],
-  'fa-sitemap' => 
-  [
+  'fa-sitemap' => [
     'name' => 'fa-sitemap',
     'active' => 1,
   ],
-  'fa-skyatlas' => 
-  [
+  'fa-skyatlas' => [
     'name' => 'fa-skyatlas',
     'active' => 1,
   ],
-  'fa-skype' => 
-  [
+  'fa-skype' => [
     'name' => 'fa-skype',
     'active' => 1,
   ],
-  'fa-slack' => 
-  [
+  'fa-slack' => [
     'name' => 'fa-slack',
     'active' => 1,
   ],
-  'fa-sliders' => 
-  [
+  'fa-sliders' => [
     'name' => 'fa-sliders',
     'active' => 1,
   ],
-  'fa-slideshare' => 
-  [
+  'fa-slideshare' => [
     'name' => 'fa-slideshare',
     'active' => 1,
   ],
-  'fa-smile-o' => 
-  [
+  'fa-smile-o' => [
     'name' => 'fa-smile-o',
     'active' => 1,
   ],
-  'fa-soccer-ball-o' => 
-  [
+  'fa-soccer-ball-o' => [
     'name' => 'fa-soccer-ball-o',
     'active' => 1,
   ],
-  'fa-sort' => 
-  [
+  'fa-sort' => [
     'name' => 'fa-sort',
     'active' => 1,
   ],
-  'fa-sort-alpha-asc' => 
-  [
+  'fa-sort-alpha-asc' => [
     'name' => 'fa-sort-alpha-asc',
     'active' => 1,
   ],
-  'fa-sort-alpha-desc' => 
-  [
+  'fa-sort-alpha-desc' => [
     'name' => 'fa-sort-alpha-desc',
     'active' => 1,
   ],
-  'fa-sort-amount-asc' => 
-  [
+  'fa-sort-amount-asc' => [
     'name' => 'fa-sort-amount-asc',
     'active' => 1,
   ],
-  'fa-sort-amount-desc' => 
-  [
+  'fa-sort-amount-desc' => [
     'name' => 'fa-sort-amount-desc',
     'active' => 1,
   ],
-  'fa-sort-asc' => 
-  [
+  'fa-sort-asc' => [
     'name' => 'fa-sort-asc',
     'active' => 1,
   ],
-  'fa-sort-desc' => 
-  [
+  'fa-sort-desc' => [
     'name' => 'fa-sort-desc',
     'active' => 1,
   ],
-  'fa-sort-down' => 
-  [
+  'fa-sort-down' => [
     'name' => 'fa-sort-down',
     'active' => 1,
   ],
-  'fa-sort-numeric-asc' => 
-  [
+  'fa-sort-numeric-asc' => [
     'name' => 'fa-sort-numeric-asc',
     'active' => 1,
   ],
-  'fa-sort-numeric-desc' => 
-  [
+  'fa-sort-numeric-desc' => [
     'name' => 'fa-sort-numeric-desc',
     'active' => 1,
   ],
-  'fa-sort-up' => 
-  [
+  'fa-sort-up' => [
     'name' => 'fa-sort-up',
     'active' => 1,
   ],
-  'fa-soundcloud' => 
-  [
+  'fa-soundcloud' => [
     'name' => 'fa-soundcloud',
     'active' => 1,
   ],
-  'fa-space-shuttle' => 
-  [
+  'fa-space-shuttle' => [
     'name' => 'fa-space-shuttle',
     'active' => 1,
   ],
-  'fa-spinner' => 
-  [
+  'fa-spinner' => [
     'name' => 'fa-spinner',
     'active' => 1,
   ],
-  'fa-spoon' => 
-  [
+  'fa-spoon' => [
     'name' => 'fa-spoon',
     'active' => 1,
   ],
-  'fa-spotify' => 
-  [
+  'fa-spotify' => [
     'name' => 'fa-spotify',
     'active' => 1,
   ],
-  'fa-square' => 
-  [
+  'fa-square' => [
     'name' => 'fa-square',
     'active' => 1,
   ],
-  'fa-square-o' => 
-  [
+  'fa-square-o' => [
     'name' => 'fa-square-o',
     'active' => 1,
   ],
-  'fa-stack-exchange' => 
-  [
+  'fa-stack-exchange' => [
     'name' => 'fa-stack-exchange',
     'active' => 1,
   ],
-  'fa-stack-overflow' => 
-  [
+  'fa-stack-overflow' => [
     'name' => 'fa-stack-overflow',
     'active' => 1,
   ],
-  'fa-star' => 
-  [
+  'fa-star' => [
     'name' => 'fa-star',
     'active' => 1,
   ],
-  'fa-star-half' => 
-  [
+  'fa-star-half' => [
     'name' => 'fa-star-half',
     'active' => 1,
   ],
-  'fa-star-half-empty' => 
-  [
+  'fa-star-half-empty' => [
     'name' => 'fa-star-half-empty',
     'active' => 1,
   ],
-  'fa-star-half-full' => 
-  [
+  'fa-star-half-full' => [
     'name' => 'fa-star-half-full',
     'active' => 1,
   ],
-  'fa-star-half-o' => 
-  [
+  'fa-star-half-o' => [
     'name' => 'fa-star-half-o',
     'active' => 1,
   ],
-  'fa-star-o' => 
-  [
+  'fa-star-o' => [
     'name' => 'fa-star-o',
     'active' => 1,
   ],
-  'fa-steam' => 
-  [
+  'fa-steam' => [
     'name' => 'fa-steam',
     'active' => 1,
   ],
-  'fa-steam-square' => 
-  [
+  'fa-steam-square' => [
     'name' => 'fa-steam-square',
     'active' => 1,
   ],
-  'fa-step-backward' => 
-  [
+  'fa-step-backward' => [
     'name' => 'fa-step-backward',
     'active' => 1,
   ],
-  'fa-step-forward' => 
-  [
+  'fa-step-forward' => [
     'name' => 'fa-step-forward',
     'active' => 1,
   ],
-  'fa-stethoscope' => 
-  [
+  'fa-stethoscope' => [
     'name' => 'fa-stethoscope',
     'active' => 1,
   ],
-  'fa-stop' => 
-  [
+  'fa-stop' => [
     'name' => 'fa-stop',
     'active' => 1,
   ],
-  'fa-street-view' => 
-  [
+  'fa-street-view' => [
     'name' => 'fa-street-view',
     'active' => 1,
   ],
-  'fa-strikethrough' => 
-  [
+  'fa-strikethrough' => [
     'name' => 'fa-strikethrough',
     'active' => 1,
   ],
-  'fa-stumbleupon' => 
-  [
+  'fa-stumbleupon' => [
     'name' => 'fa-stumbleupon',
     'active' => 1,
   ],
-  'fa-stumbleupon-circle' => 
-  [
+  'fa-stumbleupon-circle' => [
     'name' => 'fa-stumbleupon-circle',
     'active' => 1,
   ],
-  'fa-subscript' => 
-  [
+  'fa-subscript' => [
     'name' => 'fa-subscript',
     'active' => 1,
   ],
-  'fa-subway' => 
-  [
+  'fa-subway' => [
     'name' => 'fa-subway',
     'active' => 1,
   ],
-  'fa-suitcase' => 
-  [
+  'fa-suitcase' => [
     'name' => 'fa-suitcase',
     'active' => 1,
   ],
-  'fa-sun-o' => 
-  [
+  'fa-sun-o' => [
     'name' => 'fa-sun-o',
     'active' => 1,
   ],
-  'fa-superscript' => 
-  [
+  'fa-superscript' => [
     'name' => 'fa-superscript',
     'active' => 1,
   ],
-  'fa-support' => 
-  [
+  'fa-support' => [
     'name' => 'fa-support',
     'active' => 1,
   ],
-  'fa-table' => 
-  [
+  'fa-table' => [
     'name' => 'fa-table',
     'active' => 1,
   ],
-  'fa-tablet' => 
-  [
+  'fa-tablet' => [
     'name' => 'fa-tablet',
     'active' => 1,
   ],
-  'fa-tachometer' => 
-  [
+  'fa-tachometer' => [
     'name' => 'fa-tachometer',
     'active' => 1,
   ],
-  'fa-tag' => 
-  [
+  'fa-tag' => [
     'name' => 'fa-tag',
     'active' => 1,
   ],
-  'fa-tags' => 
-  [
+  'fa-tags' => [
     'name' => 'fa-tags',
     'active' => 1,
   ],
-  'fa-tasks' => 
-  [
+  'fa-tasks' => [
     'name' => 'fa-tasks',
     'active' => 1,
   ],
-  'fa-taxi' => 
-  [
+  'fa-taxi' => [
     'name' => 'fa-taxi',
     'active' => 1,
   ],
-  'fa-tencent-weibo' => 
-  [
+  'fa-tencent-weibo' => [
     'name' => 'fa-tencent-weibo',
     'active' => 1,
   ],
-  'fa-terminal' => 
-  [
+  'fa-terminal' => [
     'name' => 'fa-terminal',
     'active' => 1,
   ],
-  'fa-text-height' => 
-  [
+  'fa-text-height' => [
     'name' => 'fa-text-height',
     'active' => 1,
   ],
-  'fa-text-width' => 
-  [
+  'fa-text-width' => [
     'name' => 'fa-text-width',
     'active' => 1,
   ],
-  'fa-th' => 
-  [
+  'fa-th' => [
     'name' => 'fa-th',
     'active' => 1,
   ],
-  'fa-th-large' => 
-  [
+  'fa-th-large' => [
     'name' => 'fa-th-large',
     'active' => 1,
   ],
-  'fa-th-list' => 
-  [
+  'fa-th-list' => [
     'name' => 'fa-th-list',
     'active' => 1,
   ],
-  'fa-thumb-tack' => 
-  [
+  'fa-thumb-tack' => [
     'name' => 'fa-thumb-tack',
     'active' => 1,
   ],
-  'fa-thumbs-down' => 
-  [
+  'fa-thumbs-down' => [
     'name' => 'fa-thumbs-down',
     'active' => 1,
   ],
-  'fa-thumbs-o-down' => 
-  [
+  'fa-thumbs-o-down' => [
     'name' => 'fa-thumbs-o-down',
     'active' => 1,
   ],
-  'fa-thumbs-o-up' => 
-  [
+  'fa-thumbs-o-up' => [
     'name' => 'fa-thumbs-o-up',
     'active' => 1,
   ],
-  'fa-thumbs-up' => 
-  [
+  'fa-thumbs-up' => [
     'name' => 'fa-thumbs-up',
     'active' => 1,
   ],
-  'fa-ticket' => 
-  [
+  'fa-ticket' => [
     'name' => 'fa-ticket',
     'active' => 1,
   ],
-  'fa-times' => 
-  [
+  'fa-times' => [
     'name' => 'fa-times',
     'active' => 1,
   ],
-  'fa-times-circle' => 
-  [
+  'fa-times-circle' => [
     'name' => 'fa-times-circle',
     'active' => 1,
   ],
-  'fa-times-circle-o' => 
-  [
+  'fa-times-circle-o' => [
     'name' => 'fa-times-circle-o',
     'active' => 1,
   ],
-  'fa-tint' => 
-  [
+  'fa-tint' => [
     'name' => 'fa-tint',
     'active' => 1,
   ],
-  'fa-toggle-down' => 
-  [
+  'fa-toggle-down' => [
     'name' => 'fa-toggle-down',
     'active' => 1,
   ],
-  'fa-toggle-left' => 
-  [
+  'fa-toggle-left' => [
     'name' => 'fa-toggle-left',
     'active' => 1,
   ],
-  'fa-toggle-off' => 
-  [
+  'fa-toggle-off' => [
     'name' => 'fa-toggle-off',
     'active' => 1,
   ],
-  'fa-toggle-on' => 
-  [
+  'fa-toggle-on' => [
     'name' => 'fa-toggle-on',
     'active' => 1,
   ],
-  'fa-toggle-right' => 
-  [
+  'fa-toggle-right' => [
     'name' => 'fa-toggle-right',
     'active' => 1,
   ],
-  'fa-toggle-up' => 
-  [
+  'fa-toggle-up' => [
     'name' => 'fa-toggle-up',
     'active' => 1,
   ],
-  'fa-train' => 
-  [
+  'fa-train' => [
     'name' => 'fa-train',
     'active' => 1,
   ],
-  'fa-transgender' => 
-  [
+  'fa-transgender' => [
     'name' => 'fa-transgender',
     'active' => 1,
   ],
-  'fa-transgender-alt' => 
-  [
+  'fa-transgender-alt' => [
     'name' => 'fa-transgender-alt',
     'active' => 1,
   ],
-  'fa-trash' => 
-  [
+  'fa-trash' => [
     'name' => 'fa-trash',
     'active' => 1,
   ],
-  'fa-trash-o' => 
-  [
+  'fa-trash-o' => [
     'name' => 'fa-trash-o',
     'active' => 1,
   ],
-  'fa-tree' => 
-  [
+  'fa-tree' => [
     'name' => 'fa-tree',
     'active' => 1,
   ],
-  'fa-trello' => 
-  [
+  'fa-trello' => [
     'name' => 'fa-trello',
     'active' => 1,
   ],
-  'fa-trophy' => 
-  [
+  'fa-trophy' => [
     'name' => 'fa-trophy',
     'active' => 1,
   ],
-  'fa-truck' => 
-  [
+  'fa-truck' => [
     'name' => 'fa-truck',
     'active' => 1,
   ],
-  'fa-try' => 
-  [
+  'fa-try' => [
     'name' => 'fa-try',
     'active' => 1,
   ],
-  'fa-tty' => 
-  [
+  'fa-tty' => [
     'name' => 'fa-tty',
     'active' => 1,
   ],
-  'fa-tumblr' => 
-  [
+  'fa-tumblr' => [
     'name' => 'fa-tumblr',
     'active' => 1,
   ],
-  'fa-tumblr-square' => 
-  [
+  'fa-tumblr-square' => [
     'name' => 'fa-tumblr-square',
     'active' => 1,
   ],
-  'fa-turkish-lira' => 
-  [
+  'fa-turkish-lira' => [
     'name' => 'fa-turkish-lira',
     'active' => 1,
   ],
-  'fa-twitch' => 
-  [
+  'fa-twitch' => [
     'name' => 'fa-twitch',
     'active' => 1,
   ],
-  'fa-twitter' => 
-  [
+  'fa-twitter' => [
     'name' => 'fa-twitter',
     'active' => 1,
   ],
-  'fa-twitter-square' => 
-  [
+  'fa-twitter-square' => [
     'name' => 'fa-twitter-square',
     'active' => 1,
   ],
-  'fa-umbrella' => 
-  [
+  'fa-umbrella' => [
     'name' => 'fa-umbrella',
     'active' => 1,
   ],
-  'fa-underline' => 
-  [
+  'fa-underline' => [
     'name' => 'fa-underline',
     'active' => 1,
   ],
-  'fa-undo' => 
-  [
+  'fa-undo' => [
     'name' => 'fa-undo',
     'active' => 1,
   ],
-  'fa-university' => 
-  [
+  'fa-university' => [
     'name' => 'fa-university',
     'active' => 1,
   ],
-  'fa-unlink' => 
-  [
+  'fa-unlink' => [
     'name' => 'fa-unlink',
     'active' => 1,
   ],
-  'fa-unlock' => 
-  [
+  'fa-unlock' => [
     'name' => 'fa-unlock',
     'active' => 1,
   ],
-  'fa-unlock-alt' => 
-  [
+  'fa-unlock-alt' => [
     'name' => 'fa-unlock-alt',
     'active' => 1,
   ],
-  'fa-unsorted' => 
-  [
+  'fa-unsorted' => [
     'name' => 'fa-unsorted',
     'active' => 1,
   ],
-  'fa-upload' => 
-  [
+  'fa-upload' => [
     'name' => 'fa-upload',
     'active' => 1,
   ],
-  'fa-usd' => 
-  [
+  'fa-usd' => [
     'name' => 'fa-usd',
     'active' => 1,
   ],
-  'fa-user' => 
-  [
+  'fa-user' => [
     'name' => 'fa-user',
     'active' => 1,
   ],
-  'fa-user-md' => 
-  [
+  'fa-user-md' => [
     'name' => 'fa-user-md',
     'active' => 1,
   ],
-  'fa-user-plus' => 
-  [
+  'fa-user-plus' => [
     'name' => 'fa-user-plus',
     'active' => 1,
   ],
-  'fa-user-secret' => 
-  [
+  'fa-user-secret' => [
     'name' => 'fa-user-secret',
     'active' => 1,
   ],
-  'fa-user-times' => 
-  [
+  'fa-user-times' => [
     'name' => 'fa-user-times',
     'active' => 1,
   ],
-  'fa-users' => 
-  [
+  'fa-users' => [
     'name' => 'fa-users',
     'active' => 1,
   ],
-  'fa-venus' => 
-  [
+  'fa-venus' => [
     'name' => 'fa-venus',
     'active' => 1,
   ],
-  'fa-venus-double' => 
-  [
+  'fa-venus-double' => [
     'name' => 'fa-venus-double',
     'active' => 1,
   ],
-  'fa-venus-mars' => 
-  [
+  'fa-venus-mars' => [
     'name' => 'fa-venus-mars',
     'active' => 1,
   ],
-  'fa-viacoin' => 
-  [
+  'fa-viacoin' => [
     'name' => 'fa-viacoin',
     'active' => 1,
   ],
-  'fa-video-camera' => 
-  [
+  'fa-video-camera' => [
     'name' => 'fa-video-camera',
     'active' => 1,
   ],
-  'fa-vimeo-square' => 
-  [
+  'fa-vimeo-square' => [
     'name' => 'fa-vimeo-square',
     'active' => 1,
   ],
-  'fa-vine' => 
-  [
+  'fa-vine' => [
     'name' => 'fa-vine',
     'active' => 1,
   ],
-  'fa-vk' => 
-  [
+  'fa-vk' => [
     'name' => 'fa-vk',
     'active' => 1,
   ],
-  'fa-volume-down' => 
-  [
+  'fa-volume-down' => [
     'name' => 'fa-volume-down',
     'active' => 1,
   ],
-  'fa-volume-off' => 
-  [
+  'fa-volume-off' => [
     'name' => 'fa-volume-off',
     'active' => 1,
   ],
-  'fa-volume-up' => 
-  [
+  'fa-volume-up' => [
     'name' => 'fa-volume-up',
     'active' => 1,
   ],
-  'fa-warning' => 
-  [
+  'fa-warning' => [
     'name' => 'fa-warning',
     'active' => 1,
   ],
-  'fa-wechat' => 
-  [
+  'fa-wechat' => [
     'name' => 'fa-wechat',
     'active' => 1,
   ],
-  'fa-weibo' => 
-  [
+  'fa-weibo' => [
     'name' => 'fa-weibo',
     'active' => 1,
   ],
-  'fa-weixin' => 
-  [
+  'fa-weixin' => [
     'name' => 'fa-weixin',
     'active' => 1,
   ],
-  'fa-whatsapp' => 
-  [
+  'fa-whatsapp' => [
     'name' => 'fa-whatsapp',
     'active' => 1,
   ],
-  'fa-wheelchair' => 
-  [
+  'fa-wheelchair' => [
     'name' => 'fa-wheelchair',
     'active' => 1,
   ],
-  'fa-wifi' => 
-  [
+  'fa-wifi' => [
     'name' => 'fa-wifi',
     'active' => 1,
   ],
-  'fa-windows' => 
-  [
+  'fa-windows' => [
     'name' => 'fa-windows',
     'active' => 1,
   ],
-  'fa-won' => 
-  [
+  'fa-won' => [
     'name' => 'fa-won',
     'active' => 1,
   ],
-  'fa-wordpress' => 
-  [
+  'fa-wordpress' => [
     'name' => 'fa-wordpress',
     'active' => 1,
   ],
-  'fa-wrench' => 
-  [
+  'fa-wrench' => [
     'name' => 'fa-wrench',
     'active' => 1,
   ],
-  'fa-xing' => 
-  [
+  'fa-xing' => [
     'name' => 'fa-xing',
     'active' => 1,
   ],
-  'fa-xing-square' => 
-  [
+  'fa-xing-square' => [
     'name' => 'fa-xing-square',
     'active' => 1,
   ],
-  'fa-yahoo' => 
-  [
+  'fa-yahoo' => [
     'name' => 'fa-yahoo',
     'active' => 1,
   ],
-  'fa-yelp' => 
-  [
+  'fa-yelp' => [
     'name' => 'fa-yelp',
     'active' => 1,
   ],
-  'fa-yen' => 
-  [
+  'fa-yen' => [
     'name' => 'fa-yen',
     'active' => 1,
   ],
-  'fa-youtube' => 
-  [
+  'fa-youtube' => [
     'name' => 'fa-youtube',
     'active' => 1,
   ],
-  'fa-youtube-play' => 
-  [
+  'fa-youtube-play' => [
     'name' => 'fa-youtube-play',
     'active' => 1,
   ],
-  'fa-youtube-square' => 
-  [
+  'fa-youtube-square' => [
     'name' => 'fa-youtube-square',
     'active' => 1,
   ],

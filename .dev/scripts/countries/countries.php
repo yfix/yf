@@ -1,7 +1,7 @@
 <?php
+
 $data = [
-  'AF' => 
-  [
+  'AF' => [
     'code' => 'AF',
     'code3' => 'AFG',
     'num' => '004',
@@ -9,8 +9,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AX' => 
-  [
+  'AX' => [
     'code' => 'AX',
     'code3' => 'ALA',
     'num' => '248',
@@ -18,8 +17,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AL' => 
-  [
+  'AL' => [
     'code' => 'AL',
     'code3' => 'ALB',
     'num' => '008',
@@ -27,8 +25,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'DZ' => 
-  [
+  'DZ' => [
     'code' => 'DZ',
     'code3' => 'DZA',
     'num' => '012',
@@ -36,8 +33,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AS' => 
-  [
+  'AS' => [
     'code' => 'AS',
     'code3' => 'ASM',
     'num' => '016',
@@ -45,8 +41,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AD' => 
-  [
+  'AD' => [
     'code' => 'AD',
     'code3' => 'AND',
     'num' => '020',
@@ -54,8 +49,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AO' => 
-  [
+  'AO' => [
     'code' => 'AO',
     'code3' => 'AGO',
     'num' => '024',
@@ -63,8 +57,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AI' => 
-  [
+  'AI' => [
     'code' => 'AI',
     'code3' => 'AIA',
     'num' => '660',
@@ -72,8 +65,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AQ' => 
-  [
+  'AQ' => [
     'code' => 'AQ',
     'code3' => 'ATA',
     'num' => '010',
@@ -81,8 +73,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AG' => 
-  [
+  'AG' => [
     'code' => 'AG',
     'code3' => 'ATG',
     'num' => '028',
@@ -90,8 +81,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AR' => 
-  [
+  'AR' => [
     'code' => 'AR',
     'code3' => 'ARG',
     'num' => '032',
@@ -99,8 +89,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AM' => 
-  [
+  'AM' => [
     'code' => 'AM',
     'code3' => 'ARM',
     'num' => '051',
@@ -108,8 +97,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AW' => 
-  [
+  'AW' => [
     'code' => 'AW',
     'code3' => 'ABW',
     'num' => '533',
@@ -117,8 +105,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AU' => 
-  [
+  'AU' => [
     'code' => 'AU',
     'code3' => 'AUS',
     'num' => '036',
@@ -126,8 +113,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AT' => 
-  [
+  'AT' => [
     'code' => 'AT',
     'code3' => 'AUT',
     'num' => '040',
@@ -135,8 +121,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'AZ' => 
-  [
+  'AZ' => [
     'code' => 'AZ',
     'code3' => 'AZE',
     'num' => '031',
@@ -144,8 +129,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BS' => 
-  [
+  'BS' => [
     'code' => 'BS',
     'code3' => 'BHS',
     'num' => '044',
@@ -153,8 +137,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BH' => 
-  [
+  'BH' => [
     'code' => 'BH',
     'code3' => 'BHR',
     'num' => '048',
@@ -162,8 +145,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BD' => 
-  [
+  'BD' => [
     'code' => 'BD',
     'code3' => 'BGD',
     'num' => '050',
@@ -171,8 +153,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BB' => 
-  [
+  'BB' => [
     'code' => 'BB',
     'code3' => 'BRB',
     'num' => '052',
@@ -180,8 +161,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BY' => 
-  [
+  'BY' => [
     'code' => 'BY',
     'code3' => 'BLR',
     'num' => '112',
@@ -189,8 +169,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BE' => 
-  [
+  'BE' => [
     'code' => 'BE',
     'code3' => 'BEL',
     'num' => '056',
@@ -198,8 +177,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BZ' => 
-  [
+  'BZ' => [
     'code' => 'BZ',
     'code3' => 'BLZ',
     'num' => '084',
@@ -207,8 +185,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BJ' => 
-  [
+  'BJ' => [
     'code' => 'BJ',
     'code3' => 'BEN',
     'num' => '204',
@@ -216,8 +193,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BM' => 
-  [
+  'BM' => [
     'code' => 'BM',
     'code3' => 'BMU',
     'num' => '060',
@@ -225,8 +201,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BT' => 
-  [
+  'BT' => [
     'code' => 'BT',
     'code3' => 'BTN',
     'num' => '064',
@@ -234,8 +209,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BO' => 
-  [
+  'BO' => [
     'code' => 'BO',
     'code3' => 'BOL',
     'num' => '068',
@@ -243,8 +217,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BQ' => 
-  [
+  'BQ' => [
     'code' => 'BQ',
     'code3' => 'BES',
     'num' => '535',
@@ -252,8 +225,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BA' => 
-  [
+  'BA' => [
     'code' => 'BA',
     'code3' => 'BIH',
     'num' => '070',
@@ -261,8 +233,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BW' => 
-  [
+  'BW' => [
     'code' => 'BW',
     'code3' => 'BWA',
     'num' => '072',
@@ -270,8 +241,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BV' => 
-  [
+  'BV' => [
     'code' => 'BV',
     'code3' => 'BVT',
     'num' => '074',
@@ -279,8 +249,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BR' => 
-  [
+  'BR' => [
     'code' => 'BR',
     'code3' => 'BRA',
     'num' => '076',
@@ -288,8 +257,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'IO' => 
-  [
+  'IO' => [
     'code' => 'IO',
     'code3' => 'IOT',
     'num' => '086',
@@ -297,8 +265,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BN' => 
-  [
+  'BN' => [
     'code' => 'BN',
     'code3' => 'BRN',
     'num' => '096',
@@ -306,8 +273,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BG' => 
-  [
+  'BG' => [
     'code' => 'BG',
     'code3' => 'BGR',
     'num' => '100',
@@ -315,8 +281,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BF' => 
-  [
+  'BF' => [
     'code' => 'BF',
     'code3' => 'BFA',
     'num' => '854',
@@ -324,8 +289,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BI' => 
-  [
+  'BI' => [
     'code' => 'BI',
     'code3' => 'BDI',
     'num' => '108',
@@ -333,8 +297,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CV' => 
-  [
+  'CV' => [
     'code' => 'CV',
     'code3' => 'CPV',
     'num' => '132',
@@ -342,8 +305,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KH' => 
-  [
+  'KH' => [
     'code' => 'KH',
     'code3' => 'KHM',
     'num' => '116',
@@ -351,8 +313,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CM' => 
-  [
+  'CM' => [
     'code' => 'CM',
     'code3' => 'CMR',
     'num' => '120',
@@ -360,8 +321,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CA' => 
-  [
+  'CA' => [
     'code' => 'CA',
     'code3' => 'CAN',
     'num' => '124',
@@ -369,8 +329,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KY' => 
-  [
+  'KY' => [
     'code' => 'KY',
     'code3' => 'CYM',
     'num' => '136',
@@ -378,8 +337,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CF' => 
-  [
+  'CF' => [
     'code' => 'CF',
     'code3' => 'CAF',
     'num' => '140',
@@ -387,8 +345,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TD' => 
-  [
+  'TD' => [
     'code' => 'TD',
     'code3' => 'TCD',
     'num' => '148',
@@ -396,8 +353,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CL' => 
-  [
+  'CL' => [
     'code' => 'CL',
     'code3' => 'CHL',
     'num' => '152',
@@ -405,8 +361,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CN' => 
-  [
+  'CN' => [
     'code' => 'CN',
     'code3' => 'CHN',
     'num' => '156',
@@ -414,8 +369,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CX' => 
-  [
+  'CX' => [
     'code' => 'CX',
     'code3' => 'CXR',
     'num' => '162',
@@ -423,8 +377,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CC' => 
-  [
+  'CC' => [
     'code' => 'CC',
     'code3' => 'CCK',
     'num' => '166',
@@ -432,8 +385,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CO' => 
-  [
+  'CO' => [
     'code' => 'CO',
     'code3' => 'COL',
     'num' => '170',
@@ -441,8 +393,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KM' => 
-  [
+  'KM' => [
     'code' => 'KM',
     'code3' => 'COM',
     'num' => '174',
@@ -450,8 +401,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CG' => 
-  [
+  'CG' => [
     'code' => 'CG',
     'code3' => 'COG',
     'num' => '178',
@@ -459,8 +409,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CD' => 
-  [
+  'CD' => [
     'code' => 'CD',
     'code3' => 'COD',
     'num' => '180',
@@ -468,8 +417,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CK' => 
-  [
+  'CK' => [
     'code' => 'CK',
     'code3' => 'COK',
     'num' => '184',
@@ -477,8 +425,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CR' => 
-  [
+  'CR' => [
     'code' => 'CR',
     'code3' => 'CRI',
     'num' => '188',
@@ -486,8 +433,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CI' => 
-  [
+  'CI' => [
     'code' => 'CI',
     'code3' => 'CIV',
     'num' => '384',
@@ -495,8 +441,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'HR' => 
-  [
+  'HR' => [
     'code' => 'HR',
     'code3' => 'HRV',
     'num' => '191',
@@ -504,8 +449,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CU' => 
-  [
+  'CU' => [
     'code' => 'CU',
     'code3' => 'CUB',
     'num' => '192',
@@ -513,8 +457,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CW' => 
-  [
+  'CW' => [
     'code' => 'CW',
     'code3' => 'CUW',
     'num' => '531',
@@ -522,8 +465,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CY' => 
-  [
+  'CY' => [
     'code' => 'CY',
     'code3' => 'CYP',
     'num' => '196',
@@ -531,8 +473,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CZ' => 
-  [
+  'CZ' => [
     'code' => 'CZ',
     'code3' => 'CZE',
     'num' => '203',
@@ -540,8 +481,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'DK' => 
-  [
+  'DK' => [
     'code' => 'DK',
     'code3' => 'DNK',
     'num' => '208',
@@ -549,8 +489,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'DJ' => 
-  [
+  'DJ' => [
     'code' => 'DJ',
     'code3' => 'DJI',
     'num' => '262',
@@ -558,8 +497,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'DM' => 
-  [
+  'DM' => [
     'code' => 'DM',
     'code3' => 'DMA',
     'num' => '212',
@@ -567,8 +505,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'DO' => 
-  [
+  'DO' => [
     'code' => 'DO',
     'code3' => 'DOM',
     'num' => '214',
@@ -576,8 +513,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'EC' => 
-  [
+  'EC' => [
     'code' => 'EC',
     'code3' => 'ECU',
     'num' => '218',
@@ -585,8 +521,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'EG' => 
-  [
+  'EG' => [
     'code' => 'EG',
     'code3' => 'EGY',
     'num' => '818',
@@ -594,8 +529,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SV' => 
-  [
+  'SV' => [
     'code' => 'SV',
     'code3' => 'SLV',
     'num' => '222',
@@ -603,8 +537,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GQ' => 
-  [
+  'GQ' => [
     'code' => 'GQ',
     'code3' => 'GNQ',
     'num' => '226',
@@ -612,8 +545,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ER' => 
-  [
+  'ER' => [
     'code' => 'ER',
     'code3' => 'ERI',
     'num' => '232',
@@ -621,8 +553,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'EE' => 
-  [
+  'EE' => [
     'code' => 'EE',
     'code3' => 'EST',
     'num' => '233',
@@ -630,8 +561,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ET' => 
-  [
+  'ET' => [
     'code' => 'ET',
     'code3' => 'ETH',
     'num' => '231',
@@ -639,8 +569,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'FK' => 
-  [
+  'FK' => [
     'code' => 'FK',
     'code3' => 'FLK',
     'num' => '238',
@@ -648,8 +577,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'FO' => 
-  [
+  'FO' => [
     'code' => 'FO',
     'code3' => 'FRO',
     'num' => '234',
@@ -657,8 +585,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'FJ' => 
-  [
+  'FJ' => [
     'code' => 'FJ',
     'code3' => 'FJI',
     'num' => '242',
@@ -666,8 +593,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'FI' => 
-  [
+  'FI' => [
     'code' => 'FI',
     'code3' => 'FIN',
     'num' => '246',
@@ -675,8 +601,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'FR' => 
-  [
+  'FR' => [
     'code' => 'FR',
     'code3' => 'FRA',
     'num' => '250',
@@ -684,8 +609,7 @@ $data = [
     'cont' => '',
     'active' => 1,
   ],
-  'GF' => 
-  [
+  'GF' => [
     'code' => 'GF',
     'code3' => 'GUF',
     'num' => '254',
@@ -693,8 +617,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PF' => 
-  [
+  'PF' => [
     'code' => 'PF',
     'code3' => 'PYF',
     'num' => '258',
@@ -702,8 +625,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TF' => 
-  [
+  'TF' => [
     'code' => 'TF',
     'code3' => 'ATF',
     'num' => '260',
@@ -711,8 +633,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GA' => 
-  [
+  'GA' => [
     'code' => 'GA',
     'code3' => 'GAB',
     'num' => '266',
@@ -720,8 +641,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GM' => 
-  [
+  'GM' => [
     'code' => 'GM',
     'code3' => 'GMB',
     'num' => '270',
@@ -729,8 +649,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GE' => 
-  [
+  'GE' => [
     'code' => 'GE',
     'code3' => 'GEO',
     'num' => '268',
@@ -738,8 +657,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'DE' => 
-  [
+  'DE' => [
     'code' => 'DE',
     'code3' => 'DEU',
     'num' => '276',
@@ -747,8 +665,7 @@ $data = [
     'cont' => '',
     'active' => 1,
   ],
-  'GH' => 
-  [
+  'GH' => [
     'code' => 'GH',
     'code3' => 'GHA',
     'num' => '288',
@@ -756,8 +673,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GI' => 
-  [
+  'GI' => [
     'code' => 'GI',
     'code3' => 'GIB',
     'num' => '292',
@@ -765,8 +681,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GR' => 
-  [
+  'GR' => [
     'code' => 'GR',
     'code3' => 'GRC',
     'num' => '300',
@@ -774,8 +689,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GL' => 
-  [
+  'GL' => [
     'code' => 'GL',
     'code3' => 'GRL',
     'num' => '304',
@@ -783,8 +697,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GD' => 
-  [
+  'GD' => [
     'code' => 'GD',
     'code3' => 'GRD',
     'num' => '308',
@@ -792,8 +705,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GP' => 
-  [
+  'GP' => [
     'code' => 'GP',
     'code3' => 'GLP',
     'num' => '312',
@@ -801,8 +713,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GU' => 
-  [
+  'GU' => [
     'code' => 'GU',
     'code3' => 'GUM',
     'num' => '316',
@@ -810,8 +721,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GT' => 
-  [
+  'GT' => [
     'code' => 'GT',
     'code3' => 'GTM',
     'num' => '320',
@@ -819,8 +729,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GG' => 
-  [
+  'GG' => [
     'code' => 'GG',
     'code3' => 'GGY',
     'num' => '831',
@@ -828,8 +737,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GN' => 
-  [
+  'GN' => [
     'code' => 'GN',
     'code3' => 'GIN',
     'num' => '324',
@@ -837,8 +745,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GW' => 
-  [
+  'GW' => [
     'code' => 'GW',
     'code3' => 'GNB',
     'num' => '624',
@@ -846,8 +753,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GY' => 
-  [
+  'GY' => [
     'code' => 'GY',
     'code3' => 'GUY',
     'num' => '328',
@@ -855,8 +761,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'HT' => 
-  [
+  'HT' => [
     'code' => 'HT',
     'code3' => 'HTI',
     'num' => '332',
@@ -864,8 +769,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'HM' => 
-  [
+  'HM' => [
     'code' => 'HM',
     'code3' => 'HMD',
     'num' => '334',
@@ -873,8 +777,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'VA' => 
-  [
+  'VA' => [
     'code' => 'VA',
     'code3' => 'VAT',
     'num' => '336',
@@ -882,8 +785,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'HN' => 
-  [
+  'HN' => [
     'code' => 'HN',
     'code3' => 'HND',
     'num' => '340',
@@ -891,8 +793,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'HK' => 
-  [
+  'HK' => [
     'code' => 'HK',
     'code3' => 'HKG',
     'num' => '344',
@@ -900,8 +801,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'HU' => 
-  [
+  'HU' => [
     'code' => 'HU',
     'code3' => 'HUN',
     'num' => '348',
@@ -909,8 +809,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'IS' => 
-  [
+  'IS' => [
     'code' => 'IS',
     'code3' => 'ISL',
     'num' => '352',
@@ -918,8 +817,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'IN' => 
-  [
+  'IN' => [
     'code' => 'IN',
     'code3' => 'IND',
     'num' => '356',
@@ -927,8 +825,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ID' => 
-  [
+  'ID' => [
     'code' => 'ID',
     'code3' => 'IDN',
     'num' => '360',
@@ -936,8 +833,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'IR' => 
-  [
+  'IR' => [
     'code' => 'IR',
     'code3' => 'IRN',
     'num' => '364',
@@ -945,8 +841,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'IQ' => 
-  [
+  'IQ' => [
     'code' => 'IQ',
     'code3' => 'IRQ',
     'num' => '368',
@@ -954,8 +849,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'IE' => 
-  [
+  'IE' => [
     'code' => 'IE',
     'code3' => 'IRL',
     'num' => '372',
@@ -963,8 +857,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'IM' => 
-  [
+  'IM' => [
     'code' => 'IM',
     'code3' => 'IMN',
     'num' => '833',
@@ -972,8 +865,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'IL' => 
-  [
+  'IL' => [
     'code' => 'IL',
     'code3' => 'ISR',
     'num' => '376',
@@ -981,8 +873,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'IT' => 
-  [
+  'IT' => [
     'code' => 'IT',
     'code3' => 'ITA',
     'num' => '380',
@@ -990,8 +881,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'JM' => 
-  [
+  'JM' => [
     'code' => 'JM',
     'code3' => 'JAM',
     'num' => '388',
@@ -999,8 +889,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'JP' => 
-  [
+  'JP' => [
     'code' => 'JP',
     'code3' => 'JPN',
     'num' => '392',
@@ -1008,8 +897,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'JE' => 
-  [
+  'JE' => [
     'code' => 'JE',
     'code3' => 'JEY',
     'num' => '832',
@@ -1017,8 +905,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'JO' => 
-  [
+  'JO' => [
     'code' => 'JO',
     'code3' => 'JOR',
     'num' => '400',
@@ -1026,8 +913,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KZ' => 
-  [
+  'KZ' => [
     'code' => 'KZ',
     'code3' => 'KAZ',
     'num' => '398',
@@ -1035,8 +921,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KE' => 
-  [
+  'KE' => [
     'code' => 'KE',
     'code3' => 'KEN',
     'num' => '404',
@@ -1044,8 +929,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KI' => 
-  [
+  'KI' => [
     'code' => 'KI',
     'code3' => 'KIR',
     'num' => '296',
@@ -1053,8 +937,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KP' => 
-  [
+  'KP' => [
     'code' => 'KP',
     'code3' => 'PRK',
     'num' => '408',
@@ -1062,8 +945,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KR' => 
-  [
+  'KR' => [
     'code' => 'KR',
     'code3' => 'KOR',
     'num' => '410',
@@ -1071,8 +953,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KW' => 
-  [
+  'KW' => [
     'code' => 'KW',
     'code3' => 'KWT',
     'num' => '414',
@@ -1080,8 +961,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KG' => 
-  [
+  'KG' => [
     'code' => 'KG',
     'code3' => 'KGZ',
     'num' => '417',
@@ -1089,8 +969,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LA' => 
-  [
+  'LA' => [
     'code' => 'LA',
     'code3' => 'LAO',
     'num' => '418',
@@ -1098,8 +977,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LV' => 
-  [
+  'LV' => [
     'code' => 'LV',
     'code3' => 'LVA',
     'num' => '428',
@@ -1107,8 +985,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LB' => 
-  [
+  'LB' => [
     'code' => 'LB',
     'code3' => 'LBN',
     'num' => '422',
@@ -1116,8 +993,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LS' => 
-  [
+  'LS' => [
     'code' => 'LS',
     'code3' => 'LSO',
     'num' => '426',
@@ -1125,8 +1001,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LR' => 
-  [
+  'LR' => [
     'code' => 'LR',
     'code3' => 'LBR',
     'num' => '430',
@@ -1134,8 +1009,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LY' => 
-  [
+  'LY' => [
     'code' => 'LY',
     'code3' => 'LBY',
     'num' => '434',
@@ -1143,8 +1017,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LI' => 
-  [
+  'LI' => [
     'code' => 'LI',
     'code3' => 'LIE',
     'num' => '438',
@@ -1152,8 +1025,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LT' => 
-  [
+  'LT' => [
     'code' => 'LT',
     'code3' => 'LTU',
     'num' => '440',
@@ -1161,8 +1033,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LU' => 
-  [
+  'LU' => [
     'code' => 'LU',
     'code3' => 'LUX',
     'num' => '442',
@@ -1170,8 +1041,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MO' => 
-  [
+  'MO' => [
     'code' => 'MO',
     'code3' => 'MAC',
     'num' => '446',
@@ -1179,8 +1049,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MK' => 
-  [
+  'MK' => [
     'code' => 'MK',
     'code3' => 'MKD',
     'num' => '807',
@@ -1188,8 +1057,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MG' => 
-  [
+  'MG' => [
     'code' => 'MG',
     'code3' => 'MDG',
     'num' => '450',
@@ -1197,8 +1065,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MW' => 
-  [
+  'MW' => [
     'code' => 'MW',
     'code3' => 'MWI',
     'num' => '454',
@@ -1206,8 +1073,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MY' => 
-  [
+  'MY' => [
     'code' => 'MY',
     'code3' => 'MYS',
     'num' => '458',
@@ -1215,8 +1081,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MV' => 
-  [
+  'MV' => [
     'code' => 'MV',
     'code3' => 'MDV',
     'num' => '462',
@@ -1224,8 +1089,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ML' => 
-  [
+  'ML' => [
     'code' => 'ML',
     'code3' => 'MLI',
     'num' => '466',
@@ -1233,8 +1097,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MT' => 
-  [
+  'MT' => [
     'code' => 'MT',
     'code3' => 'MLT',
     'num' => '470',
@@ -1242,8 +1105,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MH' => 
-  [
+  'MH' => [
     'code' => 'MH',
     'code3' => 'MHL',
     'num' => '584',
@@ -1251,8 +1113,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MQ' => 
-  [
+  'MQ' => [
     'code' => 'MQ',
     'code3' => 'MTQ',
     'num' => '474',
@@ -1260,8 +1121,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MR' => 
-  [
+  'MR' => [
     'code' => 'MR',
     'code3' => 'MRT',
     'num' => '478',
@@ -1269,8 +1129,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MU' => 
-  [
+  'MU' => [
     'code' => 'MU',
     'code3' => 'MUS',
     'num' => '480',
@@ -1278,8 +1137,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'YT' => 
-  [
+  'YT' => [
     'code' => 'YT',
     'code3' => 'MYT',
     'num' => '175',
@@ -1287,8 +1145,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MX' => 
-  [
+  'MX' => [
     'code' => 'MX',
     'code3' => 'MEX',
     'num' => '484',
@@ -1296,8 +1153,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'FM' => 
-  [
+  'FM' => [
     'code' => 'FM',
     'code3' => 'FSM',
     'num' => '583',
@@ -1305,8 +1161,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MD' => 
-  [
+  'MD' => [
     'code' => 'MD',
     'code3' => 'MDA',
     'num' => '498',
@@ -1314,8 +1169,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MC' => 
-  [
+  'MC' => [
     'code' => 'MC',
     'code3' => 'MCO',
     'num' => '492',
@@ -1323,8 +1177,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MN' => 
-  [
+  'MN' => [
     'code' => 'MN',
     'code3' => 'MNG',
     'num' => '496',
@@ -1332,8 +1185,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ME' => 
-  [
+  'ME' => [
     'code' => 'ME',
     'code3' => 'MNE',
     'num' => '499',
@@ -1341,8 +1193,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MS' => 
-  [
+  'MS' => [
     'code' => 'MS',
     'code3' => 'MSR',
     'num' => '500',
@@ -1350,8 +1201,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MA' => 
-  [
+  'MA' => [
     'code' => 'MA',
     'code3' => 'MAR',
     'num' => '504',
@@ -1359,8 +1209,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MZ' => 
-  [
+  'MZ' => [
     'code' => 'MZ',
     'code3' => 'MOZ',
     'num' => '508',
@@ -1368,8 +1217,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MM' => 
-  [
+  'MM' => [
     'code' => 'MM',
     'code3' => 'MMR',
     'num' => '104',
@@ -1377,8 +1225,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NA' => 
-  [
+  'NA' => [
     'code' => 'NA',
     'code3' => 'NAM',
     'num' => '516',
@@ -1386,8 +1233,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NR' => 
-  [
+  'NR' => [
     'code' => 'NR',
     'code3' => 'NRU',
     'num' => '520',
@@ -1395,8 +1241,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NP' => 
-  [
+  'NP' => [
     'code' => 'NP',
     'code3' => 'NPL',
     'num' => '524',
@@ -1404,8 +1249,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NL' => 
-  [
+  'NL' => [
     'code' => 'NL',
     'code3' => 'NLD',
     'num' => '528',
@@ -1413,8 +1257,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NC' => 
-  [
+  'NC' => [
     'code' => 'NC',
     'code3' => 'NCL',
     'num' => '540',
@@ -1422,8 +1265,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NZ' => 
-  [
+  'NZ' => [
     'code' => 'NZ',
     'code3' => 'NZL',
     'num' => '554',
@@ -1431,8 +1273,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NI' => 
-  [
+  'NI' => [
     'code' => 'NI',
     'code3' => 'NIC',
     'num' => '558',
@@ -1440,8 +1281,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NE' => 
-  [
+  'NE' => [
     'code' => 'NE',
     'code3' => 'NER',
     'num' => '562',
@@ -1449,8 +1289,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NG' => 
-  [
+  'NG' => [
     'code' => 'NG',
     'code3' => 'NGA',
     'num' => '566',
@@ -1458,8 +1297,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NU' => 
-  [
+  'NU' => [
     'code' => 'NU',
     'code3' => 'NIU',
     'num' => '570',
@@ -1467,8 +1305,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NF' => 
-  [
+  'NF' => [
     'code' => 'NF',
     'code3' => 'NFK',
     'num' => '574',
@@ -1476,8 +1313,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MP' => 
-  [
+  'MP' => [
     'code' => 'MP',
     'code3' => 'MNP',
     'num' => '580',
@@ -1485,8 +1321,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'NO' => 
-  [
+  'NO' => [
     'code' => 'NO',
     'code3' => 'NOR',
     'num' => '578',
@@ -1494,8 +1329,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'OM' => 
-  [
+  'OM' => [
     'code' => 'OM',
     'code3' => 'OMN',
     'num' => '512',
@@ -1503,8 +1337,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PK' => 
-  [
+  'PK' => [
     'code' => 'PK',
     'code3' => 'PAK',
     'num' => '586',
@@ -1512,8 +1345,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PW' => 
-  [
+  'PW' => [
     'code' => 'PW',
     'code3' => 'PLW',
     'num' => '585',
@@ -1521,8 +1353,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PS' => 
-  [
+  'PS' => [
     'code' => 'PS',
     'code3' => 'PSE',
     'num' => '275',
@@ -1530,8 +1361,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PA' => 
-  [
+  'PA' => [
     'code' => 'PA',
     'code3' => 'PAN',
     'num' => '591',
@@ -1539,8 +1369,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PG' => 
-  [
+  'PG' => [
     'code' => 'PG',
     'code3' => 'PNG',
     'num' => '598',
@@ -1548,8 +1377,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PY' => 
-  [
+  'PY' => [
     'code' => 'PY',
     'code3' => 'PRY',
     'num' => '600',
@@ -1557,8 +1385,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PE' => 
-  [
+  'PE' => [
     'code' => 'PE',
     'code3' => 'PER',
     'num' => '604',
@@ -1566,8 +1393,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PH' => 
-  [
+  'PH' => [
     'code' => 'PH',
     'code3' => 'PHL',
     'num' => '608',
@@ -1575,8 +1401,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PN' => 
-  [
+  'PN' => [
     'code' => 'PN',
     'code3' => 'PCN',
     'num' => '612',
@@ -1584,8 +1409,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PL' => 
-  [
+  'PL' => [
     'code' => 'PL',
     'code3' => 'POL',
     'num' => '616',
@@ -1593,8 +1417,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PT' => 
-  [
+  'PT' => [
     'code' => 'PT',
     'code3' => 'PRT',
     'num' => '620',
@@ -1602,8 +1425,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PR' => 
-  [
+  'PR' => [
     'code' => 'PR',
     'code3' => 'PRI',
     'num' => '630',
@@ -1611,8 +1433,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'QA' => 
-  [
+  'QA' => [
     'code' => 'QA',
     'code3' => 'QAT',
     'num' => '634',
@@ -1620,8 +1441,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'RE' => 
-  [
+  'RE' => [
     'code' => 'RE',
     'code3' => 'REU',
     'num' => '638',
@@ -1629,8 +1449,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'RO' => 
-  [
+  'RO' => [
     'code' => 'RO',
     'code3' => 'ROU',
     'num' => '642',
@@ -1638,8 +1457,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'RU' => 
-  [
+  'RU' => [
     'code' => 'RU',
     'code3' => 'RUS',
     'num' => '643',
@@ -1647,8 +1465,7 @@ $data = [
     'cont' => '',
     'active' => 1,
   ],
-  'RW' => 
-  [
+  'RW' => [
     'code' => 'RW',
     'code3' => 'RWA',
     'num' => '646',
@@ -1656,8 +1473,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'BL' => 
-  [
+  'BL' => [
     'code' => 'BL',
     'code3' => 'BLM',
     'num' => '652',
@@ -1665,8 +1481,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SH' => 
-  [
+  'SH' => [
     'code' => 'SH',
     'code3' => 'SHN',
     'num' => '654',
@@ -1674,8 +1489,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'KN' => 
-  [
+  'KN' => [
     'code' => 'KN',
     'code3' => 'KNA',
     'num' => '659',
@@ -1683,8 +1497,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'LC' => 
-  [
+  'LC' => [
     'code' => 'LC',
     'code3' => 'LCA',
     'num' => '662',
@@ -1692,8 +1505,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'MF' => 
-  [
+  'MF' => [
     'code' => 'MF',
     'code3' => 'MAF',
     'num' => '663',
@@ -1701,8 +1513,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'PM' => 
-  [
+  'PM' => [
     'code' => 'PM',
     'code3' => 'SPM',
     'num' => '666',
@@ -1710,8 +1521,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'VC' => 
-  [
+  'VC' => [
     'code' => 'VC',
     'code3' => 'VCT',
     'num' => '670',
@@ -1719,8 +1529,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'WS' => 
-  [
+  'WS' => [
     'code' => 'WS',
     'code3' => 'WSM',
     'num' => '882',
@@ -1728,8 +1537,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SM' => 
-  [
+  'SM' => [
     'code' => 'SM',
     'code3' => 'SMR',
     'num' => '674',
@@ -1737,8 +1545,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ST' => 
-  [
+  'ST' => [
     'code' => 'ST',
     'code3' => 'STP',
     'num' => '678',
@@ -1746,8 +1553,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SA' => 
-  [
+  'SA' => [
     'code' => 'SA',
     'code3' => 'SAU',
     'num' => '682',
@@ -1755,8 +1561,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SN' => 
-  [
+  'SN' => [
     'code' => 'SN',
     'code3' => 'SEN',
     'num' => '686',
@@ -1764,8 +1569,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'RS' => 
-  [
+  'RS' => [
     'code' => 'RS',
     'code3' => 'SRB',
     'num' => '688',
@@ -1773,8 +1577,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SC' => 
-  [
+  'SC' => [
     'code' => 'SC',
     'code3' => 'SYC',
     'num' => '690',
@@ -1782,8 +1585,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SL' => 
-  [
+  'SL' => [
     'code' => 'SL',
     'code3' => 'SLE',
     'num' => '694',
@@ -1791,8 +1593,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SG' => 
-  [
+  'SG' => [
     'code' => 'SG',
     'code3' => 'SGP',
     'num' => '702',
@@ -1800,8 +1601,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SX' => 
-  [
+  'SX' => [
     'code' => 'SX',
     'code3' => 'SXM',
     'num' => '534',
@@ -1809,8 +1609,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SK' => 
-  [
+  'SK' => [
     'code' => 'SK',
     'code3' => 'SVK',
     'num' => '703',
@@ -1818,8 +1617,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SI' => 
-  [
+  'SI' => [
     'code' => 'SI',
     'code3' => 'SVN',
     'num' => '705',
@@ -1827,8 +1625,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SB' => 
-  [
+  'SB' => [
     'code' => 'SB',
     'code3' => 'SLB',
     'num' => '090',
@@ -1836,8 +1633,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SO' => 
-  [
+  'SO' => [
     'code' => 'SO',
     'code3' => 'SOM',
     'num' => '706',
@@ -1845,8 +1641,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ZA' => 
-  [
+  'ZA' => [
     'code' => 'ZA',
     'code3' => 'ZAF',
     'num' => '710',
@@ -1854,8 +1649,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GS' => 
-  [
+  'GS' => [
     'code' => 'GS',
     'code3' => 'SGS',
     'num' => '239',
@@ -1863,8 +1657,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SS' => 
-  [
+  'SS' => [
     'code' => 'SS',
     'code3' => 'SSD',
     'num' => '728',
@@ -1872,8 +1665,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ES' => 
-  [
+  'ES' => [
     'code' => 'ES',
     'code3' => 'ESP',
     'num' => '724',
@@ -1881,8 +1673,7 @@ $data = [
     'cont' => '',
     'active' => 1,
   ],
-  'LK' => 
-  [
+  'LK' => [
     'code' => 'LK',
     'code3' => 'LKA',
     'num' => '144',
@@ -1890,8 +1681,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SD' => 
-  [
+  'SD' => [
     'code' => 'SD',
     'code3' => 'SDN',
     'num' => '729',
@@ -1899,8 +1689,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SR' => 
-  [
+  'SR' => [
     'code' => 'SR',
     'code3' => 'SUR',
     'num' => '740',
@@ -1908,8 +1697,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SJ' => 
-  [
+  'SJ' => [
     'code' => 'SJ',
     'code3' => 'SJM',
     'num' => '744',
@@ -1917,8 +1705,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SZ' => 
-  [
+  'SZ' => [
     'code' => 'SZ',
     'code3' => 'SWZ',
     'num' => '748',
@@ -1926,8 +1713,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SE' => 
-  [
+  'SE' => [
     'code' => 'SE',
     'code3' => 'SWE',
     'num' => '752',
@@ -1935,8 +1721,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'CH' => 
-  [
+  'CH' => [
     'code' => 'CH',
     'code3' => 'CHE',
     'num' => '756',
@@ -1944,8 +1729,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'SY' => 
-  [
+  'SY' => [
     'code' => 'SY',
     'code3' => 'SYR',
     'num' => '760',
@@ -1953,8 +1737,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TW' => 
-  [
+  'TW' => [
     'code' => 'TW',
     'code3' => 'TWN',
     'num' => '158',
@@ -1962,8 +1745,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TJ' => 
-  [
+  'TJ' => [
     'code' => 'TJ',
     'code3' => 'TJK',
     'num' => '762',
@@ -1971,8 +1753,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TZ' => 
-  [
+  'TZ' => [
     'code' => 'TZ',
     'code3' => 'TZA',
     'num' => '834',
@@ -1980,8 +1761,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TH' => 
-  [
+  'TH' => [
     'code' => 'TH',
     'code3' => 'THA',
     'num' => '764',
@@ -1989,8 +1769,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TL' => 
-  [
+  'TL' => [
     'code' => 'TL',
     'code3' => 'TLS',
     'num' => '626',
@@ -1998,8 +1777,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TG' => 
-  [
+  'TG' => [
     'code' => 'TG',
     'code3' => 'TGO',
     'num' => '768',
@@ -2007,8 +1785,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TK' => 
-  [
+  'TK' => [
     'code' => 'TK',
     'code3' => 'TKL',
     'num' => '772',
@@ -2016,8 +1793,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TO' => 
-  [
+  'TO' => [
     'code' => 'TO',
     'code3' => 'TON',
     'num' => '776',
@@ -2025,8 +1801,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TT' => 
-  [
+  'TT' => [
     'code' => 'TT',
     'code3' => 'TTO',
     'num' => '780',
@@ -2034,8 +1809,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TN' => 
-  [
+  'TN' => [
     'code' => 'TN',
     'code3' => 'TUN',
     'num' => '788',
@@ -2043,8 +1817,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TR' => 
-  [
+  'TR' => [
     'code' => 'TR',
     'code3' => 'TUR',
     'num' => '792',
@@ -2052,8 +1825,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TM' => 
-  [
+  'TM' => [
     'code' => 'TM',
     'code3' => 'TKM',
     'num' => '795',
@@ -2061,8 +1833,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TC' => 
-  [
+  'TC' => [
     'code' => 'TC',
     'code3' => 'TCA',
     'num' => '796',
@@ -2070,8 +1841,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'TV' => 
-  [
+  'TV' => [
     'code' => 'TV',
     'code3' => 'TUV',
     'num' => '798',
@@ -2079,8 +1849,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'UG' => 
-  [
+  'UG' => [
     'code' => 'UG',
     'code3' => 'UGA',
     'num' => '800',
@@ -2088,8 +1857,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'UA' => 
-  [
+  'UA' => [
     'code' => 'UA',
     'code3' => 'UKR',
     'num' => '804',
@@ -2097,8 +1865,7 @@ $data = [
     'cont' => '',
     'active' => 1,
   ],
-  'AE' => 
-  [
+  'AE' => [
     'code' => 'AE',
     'code3' => 'ARE',
     'num' => '784',
@@ -2106,8 +1873,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'GB' => 
-  [
+  'GB' => [
     'code' => 'GB',
     'code3' => 'GBR',
     'num' => '826',
@@ -2115,8 +1881,7 @@ $data = [
     'cont' => '',
     'active' => 1,
   ],
-  'US' => 
-  [
+  'US' => [
     'code' => 'US',
     'code3' => 'USA',
     'num' => '840',
@@ -2124,8 +1889,7 @@ $data = [
     'cont' => '',
     'active' => 1,
   ],
-  'UM' => 
-  [
+  'UM' => [
     'code' => 'UM',
     'code3' => 'UMI',
     'num' => '581',
@@ -2133,8 +1897,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'UY' => 
-  [
+  'UY' => [
     'code' => 'UY',
     'code3' => 'URY',
     'num' => '858',
@@ -2142,8 +1905,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'UZ' => 
-  [
+  'UZ' => [
     'code' => 'UZ',
     'code3' => 'UZB',
     'num' => '860',
@@ -2151,8 +1913,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'VU' => 
-  [
+  'VU' => [
     'code' => 'VU',
     'code3' => 'VUT',
     'num' => '548',
@@ -2160,8 +1921,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'VE' => 
-  [
+  'VE' => [
     'code' => 'VE',
     'code3' => 'VEN',
     'num' => '862',
@@ -2169,8 +1929,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'VN' => 
-  [
+  'VN' => [
     'code' => 'VN',
     'code3' => 'VNM',
     'num' => '704',
@@ -2178,8 +1937,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'VG' => 
-  [
+  'VG' => [
     'code' => 'VG',
     'code3' => 'VGB',
     'num' => '092',
@@ -2187,8 +1945,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'VI' => 
-  [
+  'VI' => [
     'code' => 'VI',
     'code3' => 'VIR',
     'num' => '850',
@@ -2196,8 +1953,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'WF' => 
-  [
+  'WF' => [
     'code' => 'WF',
     'code3' => 'WLF',
     'num' => '876',
@@ -2205,8 +1961,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'EH' => 
-  [
+  'EH' => [
     'code' => 'EH',
     'code3' => 'ESH',
     'num' => '732',
@@ -2214,8 +1969,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'YE' => 
-  [
+  'YE' => [
     'code' => 'YE',
     'code3' => 'YEM',
     'num' => '887',
@@ -2223,8 +1977,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ZM' => 
-  [
+  'ZM' => [
     'code' => 'ZM',
     'code3' => 'ZMB',
     'num' => '894',
@@ -2232,8 +1985,7 @@ $data = [
     'cont' => '',
     'active' => 0,
   ],
-  'ZW' => 
-  [
+  'ZW' => [
     'code' => 'ZW',
     'code3' => 'ZWE',
     'num' => '716',

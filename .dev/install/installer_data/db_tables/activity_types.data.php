@@ -1,7 +1,7 @@
 <?php
+
 return [
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'name' => 'forum_post',
     'desc' => 'For every forum post.',
@@ -11,8 +11,7 @@ return [
     'active' => '1',
     'table_name' => 'forum_posts',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'name' => 'sent_mail',
     'desc' => 'For every email to other site member sent using email form on our site.',
@@ -22,8 +21,7 @@ return [
     'active' => '1',
     'table_name' => 'mailarchive',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'name' => 'rate_user',
     'desc' => 'For every reputation vote.',
@@ -33,8 +31,7 @@ return [
     'active' => '1',
     'table_name' => 'reput_user_votes',
   ],
-  5 => 
-  [
+  5 => [
     'id' => '5',
     'name' => 'blog_post',
     'desc' => '',
@@ -44,8 +41,7 @@ return [
     'active' => '1',
     'table_name' => 'blog_posts',
   ],
-  6 => 
-  [
+  6 => [
     'id' => '6',
     'name' => 'site_login',
     'desc' => 'For every login to our site (1 per day).',
@@ -55,8 +51,7 @@ return [
     'active' => '1',
     'table_name' => 'log_auth',
   ],
-  7 => 
-  [
+  7 => [
     'id' => '7',
     'name' => 'blog_comment',
     'desc' => 'For every meaningful comment to someone\'s blog.',
@@ -66,8 +61,7 @@ return [
     'active' => '1',
     'table_name' => 'comments',
   ],
-  10 => 
-  [
+  10 => [
     'id' => '10',
     'name' => 'bug_report',
     'desc' => 'For reporting site software bugs to us using support ticket system.',
@@ -77,8 +71,7 @@ return [
     'active' => '1',
     'table_name' => 'help_tickets',
   ],
-  11 => 
-  [
+  11 => [
     'id' => '11',
     'name' => 'article_posted',
     'desc' => 'For every article published on our site.',
@@ -88,8 +81,7 @@ return [
     'active' => '1',
     'table_name' => 'articles_texts',
   ],
-  16 => 
-  [
+  16 => [
     'id' => '16',
     'name' => 'article_reposted',
     'desc' => 'For every article published on our site.',

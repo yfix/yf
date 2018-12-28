@@ -1,4 +1,5 @@
 <?php
+
 return '
   `notification_id` int(11) NOT NULL,
   `receiver_id` int(11) NOT NULL,

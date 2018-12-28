@@ -1,14 +1,14 @@
 <?php
 
-$conf = require __DIR__.'/_conf.php';
+$conf = require __DIR__ . '/_conf.php';
 
-# DOCS https://github.com/pdezwart/php-amqp/tree/master/tests
+// DOCS https://github.com/pdezwart/php-amqp/tree/master/tests
 $cnn = new AMQPConnection([
-	'host' => $conf['host'] ?: 'localhost',
-	'vhost' => $conf['vhost'] ?: '/',
-	'port' => $conf['port'] ?: 5672,
-	'login' => $conf['login'] ?: 'user',
-	'password' => $conf['password'] ?: 'password'
+    'host' => $conf['host'] ?: 'localhost',
+    'vhost' => $conf['vhost'] ?: '/',
+    'port' => $conf['port'] ?: 5672,
+    'login' => $conf['login'] ?: 'user',
+    'password' => $conf['password'] ?: 'password',
 ]);
 $cnn->connect();
 

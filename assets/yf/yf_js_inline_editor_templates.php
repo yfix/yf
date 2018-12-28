@@ -1,14 +1,13 @@
 <?php
 
-return function() {
-
-return [
-	'versions' => ['master' => [
-		'css' => ['
+return function () {
+    return [
+    'versions' => ['master' => [
+        'css' => ['
 		'],
-		'js' => ['
+        'js' => ['
 		'],
-		'jquery' => [
+        'jquery' => [
 <<<END
 	// Prepare html for the templates inline editor
 	$("body").append("" 
@@ -108,13 +107,12 @@ return [
 		}
 	});
 END
-	]]],
-	'require' => [
-		'asset' => 'jquery',
-	],
-	'config' => [
-		'no_cache' => true,
-	],
+    ], ]],
+    'require' => [
+        'asset' => 'jquery',
+    ],
+    'config' => [
+        'no_cache' => true,
+    ],
 ];
-
 };

@@ -1,12 +1,11 @@
 <?php
 
 return [
-	'versions' => ['master' => [
-		'css' => '#debug_console { display: none; }',
-		'jquery' => [
-			'params' => ['class' => 'yf_debug_console_asset'],
-			'content' => 
-<<<END
+    'versions' => ['master' => [
+        'css' => '#debug_console { display: none; }',
+        'jquery' => [
+            'params' => ['class' => 'yf_debug_console_asset'],
+            'content' => <<<'END'
 	var debug_window_name = "yf_debug_frame"
 	var debug_console_use_iframe = false;
 	var debug_console_head = [ ];
@@ -61,8 +60,8 @@ return [
 		console.error('Debug console popup: cannot access frame document');
 	}
 END
-	]]],
-	'config' => [
-		'no_cache' => true,
-	],
+    ], ]],
+    'config' => [
+        'no_cache' => true,
+    ],
 ];

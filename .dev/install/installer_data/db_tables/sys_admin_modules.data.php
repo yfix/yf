@@ -1,7 +1,7 @@
 <?php
+
 return [
-  2 =>
-  [
+  2 => [
     'id' => '2',
     'name' => 'admin',
     'description' => '',
@@ -9,8 +9,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  3 =>
-  [
+  3 => [
     'id' => '3',
     'name' => 'admin_groups',
     'description' => '',
@@ -18,8 +17,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  4 =>
-  [
+  4 => [
     'id' => '4',
     'name' => 'admin_home',
     'description' => '',
@@ -27,8 +25,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  5 =>
-  [
+  5 => [
     'id' => '5',
     'name' => 'admin_messages',
     'description' => '',
@@ -36,8 +33,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  6 =>
-  [
+  6 => [
     'id' => '6',
     'name' => 'admin_modules',
     'description' => '',
@@ -45,8 +41,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  7 =>
-  [
+  7 => [
     'id' => '7',
     'name' => 'backup_manager',
     'description' => '',
@@ -54,8 +49,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  8 =>
-  [
+  8 => [
     'id' => '8',
     'name' => 'blocks',
     'description' => '',
@@ -63,8 +57,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  9 =>
-  [
+  9 => [
     'id' => '9',
     'name' => 'category_editor',
     'description' => '',
@@ -72,8 +65,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  10 =>
-  [
+  10 => [
     'id' => '10',
     'name' => 'check_multi_accounts',
     'description' => '',
@@ -81,8 +73,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  11 =>
-  [
+  11 => [
     'id' => '11',
     'name' => 'conf_editor',
     'description' => '',
@@ -90,8 +81,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  13 =>
-  [
+  13 => [
     'id' => '13',
     'name' => 'custom_bbcode_editor',
     'description' => '',
@@ -99,8 +89,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  14 =>
-  [
+  14 => [
     'id' => '14',
     'name' => 'custom_replace',
     'description' => '',
@@ -108,8 +97,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  15 =>
-  [
+  15 => [
     'id' => '15',
     'name' => 'db_manager',
     'description' => '',
@@ -117,8 +105,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  19 =>
-  [
+  19 => [
     'id' => '19',
     'name' => 'file_manager',
     'description' => '',
@@ -126,8 +113,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  23 =>
-  [
+  23 => [
     'id' => '23',
     'name' => 'locale_editor',
     'description' => '',
@@ -135,8 +121,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  26 =>
-  [
+  26 => [
     'id' => '26',
     'name' => 'log_core_errors_viewer',
     'description' => '',
@@ -144,8 +129,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  28 =>
-  [
+  28 => [
     'id' => '28',
     'name' => 'log_exec_analyser',
     'description' => '',
@@ -153,8 +137,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  30 =>
-  [
+  30 => [
     'id' => '30',
     'name' => 'log_user_errors_viewer',
     'description' => '',
@@ -162,8 +145,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  38 =>
-  [
+  38 => [
     'id' => '38',
     'name' => 'members',
     'description' => '',
@@ -171,8 +153,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  39 =>
-  [
+  39 => [
     'id' => '39',
     'name' => 'menus_editor',
     'description' => '',
@@ -180,8 +161,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  40 =>
-  [
+  40 => [
     'id' => '40',
     'name' => 'online_users_manager',
     'description' => '',
@@ -189,8 +169,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  44 =>
-  [
+  44 => [
     'id' => '44',
     'name' => 'revisions_manager',
     'description' => '',
@@ -198,8 +177,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  46 =>
-  [
+  46 => [
     'id' => '46',
     'name' => 'settings',
     'description' => '',
@@ -207,8 +185,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  48 =>
-  [
+  48 => [
     'id' => '48',
     'name' => 'site_nav_bar',
     'description' => '',
@@ -216,8 +193,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  49 =>
-  [
+  49 => [
     'id' => '49',
     'name' => 'static_pages',
     'description' => '',
@@ -225,8 +201,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  51 =>
-  [
+  51 => [
     'id' => '51',
     'name' => 'template_editor',
     'description' => '',
@@ -234,8 +209,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  52 =>
-  [
+  52 => [
     'id' => '52',
     'name' => 'user_dynamic_info',
     'description' => '',
@@ -243,8 +217,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  53 =>
-  [
+  53 => [
     'id' => '53',
     'name' => 'user_groups',
     'description' => '',
@@ -252,8 +225,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  55 =>
-  [
+  55 => [
     'id' => '55',
     'name' => 'user_modules',
     'description' => '',
@@ -261,8 +233,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  58 =>
-  [
+  58 => [
     'id' => '58',
     'name' => 'analyze_admin_exec_log',
     'description' => '',
@@ -270,8 +241,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  59 =>
-  [
+  59 => [
     'id' => '59',
     'name' => 'analyze_engine_log',
     'description' => '',
@@ -279,8 +249,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  60 =>
-  [
+  60 => [
     'id' => '60',
     'name' => 'analyze_error_log',
     'description' => '',
@@ -288,8 +257,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  61 =>
-  [
+  61 => [
     'id' => '61',
     'name' => 'ban_editor',
     'description' => '',
@@ -297,8 +265,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  65 =>
-  [
+  65 => [
     'id' => '65',
     'name' => 'log_admin_exec',
     'description' => '',
@@ -306,8 +273,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  67 =>
-  [
+  67 => [
     'id' => '67',
     'name' => 'log_ssh_viewer',
     'description' => '',
@@ -315,8 +281,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  68 =>
-  [
+  68 => [
     'id' => '68',
     'name' => 'log_webshell_actions_viewer',
     'description' => '',
@@ -324,8 +289,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  69 =>
-  [
+  69 => [
     'id' => '69',
     'name' => 'manage_auto_ban',
     'description' => '',
@@ -333,8 +297,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  70 =>
-  [
+  70 => [
     'id' => '70',
     'name' => 'manage_dynamic_attributes',
     'description' => '',
@@ -342,8 +305,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  72 =>
-  [
+  72 => [
     'id' => '72',
     'name' => 'manage_shop',
     'description' => '',
@@ -351,8 +313,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  73 =>
-  [
+  73 => [
     'id' => '73',
     'name' => 'manage_sphinx',
     'description' => '',
@@ -360,8 +321,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  76 =>
-  [
+  76 => [
     'id' => '76',
     'name' => 'manage_conf',
     'description' => '',
@@ -369,8 +329,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  77 =>
-  [
+  77 => [
     'id' => '77',
     'name' => 'manage_servers',
     'description' => '',
@@ -378,8 +337,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  78 =>
-  [
+  78 => [
     'id' => '78',
     'name' => 'manage_sites',
     'description' => '',
@@ -387,8 +345,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  79 =>
-  [
+  79 => [
     'id' => '79',
     'name' => 'manage_advertising',
     'description' => '',
@@ -396,8 +353,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  80 =>
-  [
+  80 => [
     'id' => '80',
     'name' => 'manage_dashboards',
     'description' => '',
@@ -405,8 +361,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  81 =>
-  [
+  81 => [
     'id' => '81',
     'name' => 'manage_tips',
     'description' => '',
@@ -414,8 +369,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  82 =>
-  [
+  82 => [
     'id' => '82',
     'name' => 'admin_wall',
     'description' => '',
@@ -423,8 +377,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  83 =>
-  [
+  83 => [
     'id' => '83',
     'name' => 'manage_widgets',
     'description' => '',
@@ -432,8 +385,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  84 =>
-  [
+  84 => [
     'id' => '84',
     'name' => 'shop_supplier_panel',
     'description' => '',
@@ -441,8 +393,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  85 =>
-  [
+  85 => [
     'id' => '85',
     'name' => 'admin_account',
     'description' => '',
@@ -450,8 +401,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  86 =>
-  [
+  86 => [
     'id' => '86',
     'name' => 'manage_users',
     'description' => '',
@@ -459,8 +409,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  87 =>
-  [
+  87 => [
     'id' => '87',
     'name' => 'manage_countries',
     'description' => '',
@@ -468,8 +417,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  88 =>
-  [
+  88 => [
     'id' => '88',
     'name' => 'manage_currencies',
     'description' => '',
@@ -477,8 +425,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  89 =>
-  [
+  89 => [
     'id' => '89',
     'name' => 'manage_icons',
     'description' => '',
@@ -486,8 +433,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  90 =>
-  [
+  90 => [
     'id' => '90',
     'name' => 'manage_languages',
     'description' => '',
@@ -495,8 +441,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  91 =>
-  [
+  91 => [
     'id' => '91',
     'name' => 'manage_regions',
     'description' => '',
@@ -504,8 +449,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  92 =>
-  [
+  92 => [
     'id' => '92',
     'name' => 'manage_timezones',
     'description' => '',
@@ -513,8 +457,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  93 =>
-  [
+  93 => [
     'id' => '93',
     'name' => 'shop_contentm_panel',
     'description' => '',
@@ -522,8 +465,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  94 =>
-  [
+  94 => [
     'id' => '94',
     'name' => 'manage_cities',
     'description' => '',
@@ -531,8 +473,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  95 =>
-  [
+  95 => [
     'id' => '95',
     'name' => 'activity_viewer',
     'description' => '',
@@ -540,8 +481,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  96 =>
-  [
+  96 => [
     'id' => '96',
     'name' => 'dev',
     'description' => '',
@@ -549,8 +489,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  97 =>
-  [
+  97 => [
     'id' => '97',
     'name' => 'help_tickets',
     'description' => '',
@@ -558,8 +497,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  98 =>
-  [
+  98 => [
     'id' => '98',
     'name' => 'manage_articles',
     'description' => '',
@@ -567,8 +505,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  99 =>
-  [
+  99 => [
     'id' => '99',
     'name' => 'manage_blogs',
     'description' => '',
@@ -576,8 +513,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  100 =>
-  [
+  100 => [
     'id' => '100',
     'name' => 'manage_comments',
     'description' => '',
@@ -585,8 +521,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  101 =>
-  [
+  101 => [
     'id' => '101',
     'name' => 'manage_faq',
     'description' => '',
@@ -594,8 +529,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  102 =>
-  [
+  102 => [
     'id' => '102',
     'name' => 'manage_forum',
     'description' => '',
@@ -603,8 +537,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  103 =>
-  [
+  103 => [
     'id' => '103',
     'name' => 'manage_news',
     'description' => '',
@@ -612,8 +545,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  104 =>
-  [
+  104 => [
     'id' => '104',
     'name' => 'manage_reput',
     'description' => '',
@@ -621,8 +553,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  105 =>
-  [
+  105 => [
     'id' => '105',
     'name' => 'polls_manager',
     'description' => '',
@@ -630,8 +561,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  106 =>
-  [
+  106 => [
     'id' => '106',
     'name' => 'se_keywords_manager',
     'description' => '',
@@ -639,8 +569,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  107 =>
-  [
+  107 => [
     'id' => '107',
     'name' => 'merge_products',
     'description' => '',
@@ -648,8 +577,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  108 =>
-  [
+  108 => [
     'id' => '108',
     'name' => 'parse_ambar_site',
     'description' => '',
@@ -657,8 +585,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  109 =>
-  [
+  109 => [
     'id' => '109',
     'name' => 'parse_eda_lg_site',
     'description' => '',
@@ -666,8 +593,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  110 =>
-  [
+  110 => [
     'id' => '110',
     'name' => 'parse_vseprodam_site',
     'description' => '',
@@ -675,8 +601,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  111 =>
-  [
+  111 => [
     'id' => '111',
     'name' => 'parse_zakaz_site',
     'description' => '',
@@ -684,8 +609,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  112 =>
-  [
+  112 => [
     'id' => '112',
     'name' => 'invoice',
     'description' => '',
@@ -693,8 +617,7 @@ return [
     'author' => '',
     'active' => '1',
   ],
-  113 =>
-  [
+  113 => [
     'id' => '113',
     'name' => 'log_admin_auth',
     'description' => '',
@@ -702,8 +625,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  114 =>
-  [
+  114 => [
     'id' => '114',
     'name' => 'log_admin_auth_fails',
     'description' => '',
@@ -711,8 +633,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  115 =>
-  [
+  115 => [
     'id' => '115',
     'name' => 'log_user_auth',
     'description' => '',
@@ -720,8 +641,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  116 =>
-  [
+  116 => [
     'id' => '116',
     'name' => 'log_user_auth_fails',
     'description' => '',
@@ -729,8 +649,7 @@ return [
     'author' => '',
     'active' => '0',
   ],
-  117 =>
-  [
+  117 => [
     'id' => '117',
     'name' => 'manage_shop_promo',
     'description' => '',

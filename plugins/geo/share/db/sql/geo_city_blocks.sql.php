@@ -1,4 +1,5 @@
 <?php
+
 return '
   `start_ip` int(8) unsigned NOT NULL,
   `end_ip` int(8) unsigned NOT NULL,

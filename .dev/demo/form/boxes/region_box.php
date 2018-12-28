@@ -1,5 +1,5 @@
 <?php
 
-return function() {
-	return form()->region_box();
+return function () {
+    return form()->region_box();
 };

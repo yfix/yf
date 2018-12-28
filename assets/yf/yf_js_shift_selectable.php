@@ -1,10 +1,10 @@
 <?php
 
 return ['versions' => ['master' => [
-	// Ideas from here: https://gist.github.com/yfix/fefe5204bf42e29884724bb8d40ffb3b
-	// Usage: $form.find("input[type="checkbox"]").shiftSelectable();
-	// replace input[type="checkbox"] with the selector to match your list of checkboxes
-	'js' => '
+    // Ideas from here: https://gist.github.com/yfix/fefe5204bf42e29884724bb8d40ffb3b
+    // Usage: $form.find("input[type="checkbox"]").shiftSelectable();
+    // replace input[type="checkbox"] with the selector to match your list of checkboxes
+    'js' => '
 		$.fn.yf_shift_selectable = function() {
 			var last_checked,
 				$boxes = this;
@@ -25,11 +25,11 @@ return ['versions' => ['master' => [
 			});
 		};
 		',
-		'jquery' => '
+        'jquery' => '
 			$("form").find("input[type=checkbox]").yf_shift_selectable();
 		',
-	]],
-	'require' => [
-		'asset' => 'jquery',
-	],
+    ]],
+    'require' => [
+        'asset' => 'jquery',
+    ],
 ];

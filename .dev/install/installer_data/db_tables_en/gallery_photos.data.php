@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'id2' => '1',
     'user_id' => '1',
@@ -29,8 +29,7 @@ return [
     'last_vote_date' => '0',
     'allow_tagging' => '1',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'id2' => '1',
     'user_id' => '1',
@@ -58,8 +57,7 @@ return [
     'last_vote_date' => '0',
     'allow_tagging' => '1',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'id2' => '1',
     'user_id' => '1',
@@ -87,8 +85,7 @@ return [
     'last_vote_date' => '0',
     'allow_tagging' => '1',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'id2' => '1',
     'user_id' => '5',

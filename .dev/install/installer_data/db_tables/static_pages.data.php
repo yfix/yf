@@ -1,7 +1,7 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'cat_id' => '0',
     'name' => 'about',
@@ -13,8 +13,7 @@ return [
     'locale' => '0',
     'active' => '1',
   ],
-  2 => 
-  [
+  2 => [
     'id' => '2',
     'cat_id' => '0',
     'name' => 'faq',
@@ -26,8 +25,7 @@ return [
     'locale' => '0',
     'active' => '1',
   ],
-  3 => 
-  [
+  3 => [
     'id' => '3',
     'cat_id' => '0',
     'name' => 'terms',
@@ -39,8 +37,7 @@ return [
     'locale' => '0',
     'active' => '1',
   ],
-  4 => 
-  [
+  4 => [
     'id' => '4',
     'cat_id' => '0',
     'name' => 'privacy',

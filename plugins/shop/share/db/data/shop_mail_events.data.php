@@ -1,11 +1,11 @@
 <?php
+
 return [
-  1 => 
-  [
+  1 => [
     'id' => '1',
     'event_id' => '1',
-    'from_email' => NULL,
-    'from_name' => NULL,
+    'from_email' => null,
+    'from_name' => null,
     'subject' => '',
     'html' => 'Hello {nick}, thank you for registering with us!
 Your account e-mail is: {email}

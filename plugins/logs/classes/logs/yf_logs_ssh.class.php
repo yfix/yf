@@ -1,7 +1,7 @@
 <?php
 
-/**
-*/
-class yf_logs_ssh {
-	// TODO:
+
+class yf_logs_ssh
+{
+    // TODO:
 }

@@ -1,7 +1,6 @@
 <?php
 
-return ['versions' => ['master' => ['jquery' => 
-<<<END
+return ['versions' => ['master' => ['jquery' => <<<END
 	$("form").each(function() {
 		var form = this;
 
