@@ -2134,10 +2134,18 @@ class yf_assets
                 }
                 $out = '<script' . _attrs($params, ['src', 'type', 'class', 'id']) . '></script>';
             } elseif ($content_type === 'file') {
-                $out = '<script' . _attrs($params, ['type', 'class', 'id']) . '>' . PHP_EOL . $str . PHP_EOL . '</script>';
+                if( @$params[ 'raw' ] ) {
+                    $out = $str;
+                } else {
+                    $out = '<script' . _attrs($params, ['type', 'class', 'id']) . '>' . PHP_EOL . $str . PHP_EOL . '</script>';
+                }
             } elseif ($content_type === 'inline') {
-                $str = $this->_strip_js_input($str);
-                $out = '<script' . _attrs($params, ['type', 'class', 'id']) . '>' . PHP_EOL . $str . PHP_EOL . '</script>';
+                if( @$params[ 'raw' ] ) {
+                    $out = $str;
+                } else {
+                    $str = $this->_strip_js_input($str);
+                    $out = '<script' . _attrs($params, ['type', 'class', 'id']) . '>' . PHP_EOL . $str . PHP_EOL . '</script>';
+                }
             }
         } elseif ($out_type === 'css') {
             $params['type'] = 'text/css';
