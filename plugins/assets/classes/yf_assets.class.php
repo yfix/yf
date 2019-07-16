@@ -1838,10 +1838,12 @@ class yf_assets
 
                 $save_path = $_this->_get_absolute_path(dirname($cache_path) . '/' . basename($path));
                 $save_path = '/' . ltrim($save_path, '/');
-                // singleton for getting urls contents
-                if ( ! file_exists($save_path)) {
-                    $str = file_get_contents($path);
-                }
+                // path cleanup from *.*#someworlds
+                $path = preg_replace('/([\/\w\d]+?\.[a-z]{1,4})#[\w\d\-]+$/is', '${1}', $path);
+				// singleton for getting urls contents
+				if (!file_exists($save_path) && file_exists($path)) {
+					$str = file_get_contents($path);
+				}
             } else {
                 $orig_url = $url;
                 if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
