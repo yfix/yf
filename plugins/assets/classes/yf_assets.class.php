@@ -1202,14 +1202,21 @@ class yf_assets
             $name = $params['name'];
             unset($params['name']);
         }
-        // Skip any related content, that was specially cached or listed, but not need to be included here
-        if (in_array($content_type, ['url', 'file']) && in_array($asset_type, ['js', 'css'])) {
-            // This line needed to strip query string from file name like this:
-            // /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
-            if (pathinfo(parse_url($content, PHP_URL_PATH), PATHINFO_EXTENSION) != $asset_type) {
-                $content = '';
-            }
-        }
+		// Skip any related content, that was specially cached or listed, but not need to be included here
+		if (in_array($content_type, ['file']) && in_array($asset_type, ['js','css'])) {
+			// This line needed to strip query string from file name like this:
+			// /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
+			if (pathinfo(parse_url($content, PHP_URL_PATH), PATHINFO_EXTENSION) != $asset_type) {
+				$content = '';
+			}
+		} elseif (in_array($content_type, ['url']) && in_array($asset_type, ['js','css'])) {
+			// This line needed to strip query string from file name like this:
+			// /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
+            $parsed_url = parse_url($content);
+			if ( ! strlen($parsed_url['host']) && strlen($parsed_url['path']) && pathinfo($parsed_url['path'], PATHINFO_EXTENSION) != $asset_type) {
+				$content = '';
+			}
+		}
         return $this->content[$asset_type][$md5] = [
             'content_type' => $content_type,
             'content' => $content,
