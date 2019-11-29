@@ -180,10 +180,12 @@ class yf_api
 
     public function _parse_request()
     {
-        $is_post = &$this->is_post;
-        $is_json = &$this->is_json;
-        $request = &$this->request;
-        if ($is_post) {
+        $is_post  = &$this->is_post;
+        $is_put   = &$this->is_put;
+        $is_patch = &$this->is_patch;
+        $is_json  = &$this->is_json;
+        $request  = &$this->request;
+        if ($is_post || $is_put || $is_patch) {
             $request = file_get_contents('php://input');
             $request = json_decode(file_get_contents('php://input'), true);
             $request && $is_json = true;
