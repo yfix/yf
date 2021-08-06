@@ -31,6 +31,7 @@ class yf_api
 {
     public $API_SSL_VERIFY = true;
     public $JSON_VULNERABILITY_PROTECTION = true;
+    public $ROBOT_NONE = true;
 
     public $class = null;
     public $method = null;
@@ -568,6 +569,10 @@ class yf_api
 
     protected function _send_http_content($response = null, $is_raw = null)
     {
+        if (@$this->ROBOT_NONE) {
+            // none = noindex, nofollow
+            header('X-Robots-Tag: none');
+        }
         // $error = ob_get_contents();
         // ob_end_clean();
         if ( ! @$is_raw && ! $this->is_jsonp && @$this->JSON_VULNERABILITY_PROTECTION) {
