@@ -570,8 +570,7 @@ class yf_api
     protected function _send_http_content($response = null, $is_raw = null)
     {
         if (@$this->ROBOT_NONE) {
-            // none = noindex, nofollow
-            header('X-Robots-Tag: none');
+            $this->_robot_none();
         }
         // $error = ob_get_contents();
         // ob_end_clean();
@@ -584,4 +583,16 @@ class yf_api
         // if( isset( $error    ) ) { echo( "\n,([{\n $error" ); }
         exit;
     }
+
+    protected function _robot_none()
+    {
+        // none = noindex, nofollow
+        header( 'X-Robots-Tag: none' );
+    }
+
+    protected function _cache( $ttl )
+    {
+        header( 'Cache-Control: public, max-age='. $ttl .', s-maxage='. ( $ttl / 2 ) );
+    }
+
 }
