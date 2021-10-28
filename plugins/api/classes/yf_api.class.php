@@ -32,6 +32,8 @@ class yf_api
     public $API_SSL_VERIFY = true;
     public $JSON_VULNERABILITY_PROTECTION = true;
     public $ROBOT_NONE = true;
+    public $CACHE_TTL   = 60;
+    public $CACHE_TTL_S = 60 / 2;
 
     public $class = null;
     public $method = null;
@@ -584,15 +586,37 @@ class yf_api
         exit;
     }
 
-    protected function _robot_none()
+    public function _robot_none()
     {
         // none = noindex, nofollow
         header( 'X-Robots-Tag: none' );
     }
 
-    protected function _cache( $ttl )
-    {
-        header( 'Cache-Control: public, max-age='. $ttl .', s-maxage='. ( $ttl / 2 ) );
+    public function _cache( $options = null ) {
+        // import options
+        is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
+        $h = [];
+        // none
+        if( @$_no_store ) {
+            header( 'Cache-Control: no-store' );
+            return;
+        }
+        // public/private
+        if( @$_private ) {
+            $h[] = 'private';
+        } else {
+            $h[] = 'public';
+        }
+        switch( true ) {
+            case @$_no_cache : $h[] =   'no-cache'; break;
+            case @$_ttl      : $h[] =   'max-age='. $_ttl;
+            case @$_ttl_s    : $h[] = 's-max-age='. $_ttl_s; break;
+            default:
+                $h[] =  'max-age='. $this->CACHE_TTL;
+                $h[] = 's-maxage='. $this->CACHE_TTL_S;
+        }
+        $h = implode( ', ', $h );
+        header( 'Cache-Control: '. $h );
     }
 
 }
