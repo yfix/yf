@@ -3,13 +3,16 @@
 
 $config = [
     'git_urls' => ['https://github.com/twigphp/Twig.git' => 'twig/'],
-    'require_once' => ['twig/lib/Twig/Autoloader.php'],
-    'manual' => function () {
-        Twig_Autoloader::register();
-    },
+    'require_once' => ['twig/src/Extension/StringLoaderExtension.php'],
+    'autoload_config' => ['twig/src/' => 'Twig'],
+    // 'manual' => function () {
+        // Twig_Autoloader::register();
+    // },
     'example' => function () {
-        $loader = new Twig_Loader_String();
-        $twig = new Twig_Environment($loader);
+        $loader = new \Twig\Loader\FilesystemLoader();
+        $twig = new \Twig\Environment($loader, [
+            'cache' => STORAGE_PATH .'twig_cache/',
+        ]);
         $str = '<!DOCTYPE html>
 <html>
 	<head><title>My Webpage</title></head>
