@@ -1,6 +1,6 @@
 <?php
 
-class htmx {
+class yf_htmx {
 
   public $is_hx   = null;
 
