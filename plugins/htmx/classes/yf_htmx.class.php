@@ -4,8 +4,21 @@ class yf_htmx {
 
   public $is_hx   = null;
 
-  public $target  = null;
-  public $boosted = null;
+  public $req = [
+    'request'      => false,
+    'boosted'      => false,
+    'target'       => '',
+    'trigger'      => '',
+    'trigger_name' => '',
+    'current_url'  => '',
+  ];
+
+  public $current_url  = null;
+
+  public $target       = null;
+  public $trigger      = null;
+  public $trigger_name = null;
+  public $boosted      = null;
 
   public $_api;
 
@@ -15,12 +28,22 @@ class yf_htmx {
     $this->_is_hx();
     $this->target  = @$_SERVER[ 'HTTP_HX_TARGET'  ];
     $this->boosted = @$_SERVER[ 'HTTP_HX_BOOSTED' ];
+    $this->_get_req();
   }
 
   function _is_hx() {
     $r = (bool) @$_SERVER[ 'HTTP_HX_REQUEST' ];
     $this->is_hx = $r;
     return( $r );
+  }
+
+  function _get_req() {
+    foreach( $this->req as $k => &$v ) {
+      $key = 'HTTP_HX_'. strtoupper( $k );
+      if( isset( $_SERVER[ $key ] ) ) {
+        $v = $_SERVER[ $key ];
+      }
+    }
   }
 
   function _firewall() {
