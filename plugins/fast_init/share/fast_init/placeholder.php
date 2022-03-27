@@ -14,7 +14,7 @@ return function () {
     $h = (int) $h ?: 100;
     $params['color_bg'] = $color_bg ? preg_replace('[^a-z0-9]', '', $color_bg) : '';
 
-    require_once YF_PATH . 'share/functions/yf_placeholder_img.php';
+    require_once YF_PATH . 'functions/yf_placeholder_img.php';
     echo yf_placeholder_img($w, $h, $params);
 
     return true; // Means success
