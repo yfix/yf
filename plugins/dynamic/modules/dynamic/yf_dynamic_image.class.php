@@ -80,7 +80,7 @@ class yf_dynamic_image
         $h = (int) $h ?: 100;
         $params['color_bg'] = $_GET['page'] ? preg_replace('[^a-z0-9]', '', $_GET['page']) : '';
 
-        require_once YF_PATH . 'share/functions/yf_placeholder_img.php';
+        require_once YF_PATH . 'functions/yf_placeholder_img.php';
         echo yf_placeholder_img($w, $h, $params);
 
         exit;
@@ -100,7 +100,7 @@ class yf_dynamic_image
         if ($extra['as_url']) {
             $extra['src'] = url('/dynamic/placeholder/' . $w . 'x' . $h);
         } else {
-            require_once YF_PATH . 'share/functions/yf_placeholder_img.php';
+            require_once YF_PATH . 'functions/yf_placeholder_img.php';
             $img_data = yf_placeholder_img($w, $h, ['no_out' => true] + (array) $extra);
             $extra['src'] = 'data:image/png;base64,' . base64_encode($img_data);
         }
