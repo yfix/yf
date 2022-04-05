@@ -26,7 +26,7 @@ class yf_tpl_driver_twig
         $paths = $this->_paths();
         $loader = new \Twig\Loader\FilesystemLoader($paths, APP_PATH);
         // env
-        if( DEBUG_MODE ) {
+        if( is_dev() || is_debug() ) {
             $debug = true;
             $cache = false;
             $auto_reload = true;
