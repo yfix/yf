@@ -10,6 +10,8 @@ class yf_tpl
 {
     /** @var string @conf_skip Path to the templates (including current theme path) */
     public $TPL_PATH = '';
+    /** @var string default template name */
+    public $TPL_NAME = 'main';
     /** @var bool Compressing output by cutting '\t','\r','\n','  ','   ' */
     public $COMPRESS_OUTPUT = false;
     /** @var bool Using SEO - friendly URLs (All links need to be absolute) */
@@ -222,7 +224,7 @@ class yf_tpl
             }
             $skip_prefetch = false;
             // Determine what template need to be loaded in the center area
-            $tpl_name = 'main';
+            $tpl_name = $this->TPL_NAME;
             if ($init_type == 'admin' && (empty($_SESSION['admin_id']) || empty($_SESSION['admin_group']))) {
                 $tpl_name = 'login';
                 if (main()->is_ajax()) {
