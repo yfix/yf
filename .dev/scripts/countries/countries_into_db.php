@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 $lang = 'ru';
@@ -14,7 +14,7 @@ function load_data($lang)
     return $data;
 }
 $data = load_data($lang);
-if ( ! $data) {
+if (!$data) {
     exit('Error: $data is missing');
 }
 foreach ($data as &$v) {
@@ -27,7 +27,7 @@ if ($lang != 'en') {
     }
 }
 $table = DB_PREFIX . 'geo_countries';
-if ( ! db()->utils()->table_exists($table) || $force) {
+if (!db()->utils()->table_exists($table) || $force) {
     db()->utils()->drop_table($table);
     db()->utils()->create_table($table);
 }

@@ -1,11 +1,11 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require_once dirname(__DIR__) . '/scripts_init.php';
 
 $lang = 'ru';
 $table = DB_PREFIX . 'geo_regions';
-if ( ! db()->utils()->table_exists($table) || $force) {
+if (!db()->utils()->table_exists($table) || $force) {
     db()->utils()->drop_table($table);
     db()->utils()->create_table($table);
 }
@@ -43,7 +43,7 @@ foreach (db_geonames()->get_all($sql) as $a) {
         'code' => $a['code'],
         'name' => $a['name'],
         'name_eng' => $a['name_eng'],
-// TODO: need additional efforts to fill all capitals, example: Kiev and Kievskaya oblast does not have detected capital_id
+        // TODO: need additional efforts to fill all capitals, example: Kiev and Kievskaya oblast does not have detected capital_id
         'capital_id' => $capital_ids[$a['country'] . $a['code']],
     ];
 }

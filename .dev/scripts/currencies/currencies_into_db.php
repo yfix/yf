@@ -1,14 +1,14 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require_once dirname(__DIR__) . '/scripts_init.php';
 
 require __DIR__ . '/currencies.php';
-if ( ! $data) {
+if (!$data) {
     exit('Error: $data is missing');
 }
 $table = DB_PREFIX . 'currencies';
-if ( ! db()->utils()->table_exists($table) || $force) {
+if (!db()->utils()->table_exists($table) || $force) {
     db()->utils()->drop_table($table);
     db()->utils()->create_table($table);
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require_once dirname(__DIR__) . '/scripts_utils.php';
@@ -7,7 +7,7 @@ function data_get_latest_languages()
 {
     $url = 'https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes';
     $f2 = __DIR__ . '/' . basename($url) . '.table.html';
-    if ( ! file_exists($f2)) {
+    if (!file_exists($f2)) {
         $html1 = file_get_contents($url);
         $regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';
         preg_match($regex1, $html1, $m1);
@@ -20,7 +20,7 @@ function data_get_latest_languages()
     $data = [];
     foreach ($tmp_tbl as $v) {
         $id = $v[4];
-        if ( ! $id) {
+        if (!$id) {
             continue;
         }
         $data[$id] = [
@@ -54,7 +54,7 @@ function data_get_latest_languages()
         'ro' => 'ro',
         'el' => 'gr',
         'he' => 'il',
-//		'cz' => 'cz',
+        //		'cz' => 'cz',
         'hi' => 'in',
         'pl' => 'pl',
         'sk' => 'sk',

@@ -1,60 +1,75 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <phpunit 
- backupGlobals="false" 
- backupStaticAttributes="false"
- colors="true"
- convertErrorsToExceptions="true"
- convertNoticesToExceptions="true"
- convertWarningsToExceptions="true"
- processIsolation="false"
- verbose="true"
- stopOnFailure="false"
- beStrictAboutTestsThatDoNotTestAnything="false"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+backupGlobals="false" 
+backupStaticAttributes="false" 
+colors="true" 
+convertErrorsToExceptions="true" 
+convertNoticesToExceptions="false" 
+convertWarningsToExceptions="true" 
+convertDeprecationsToExceptions="false" 
+processIsolation="false" 
+verbose="true" 
+stopOnFailure="false" 
+beStrictAboutTestsThatDoNotTestAnything="false" 
+beStrictAboutChangesToGlobalState="false"
+beStrictAboutOutputDuringTests="false"
+xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
 >
-<testsuites>
-  <testsuite name="all">
-   <directory>./</directory>
-  </testsuite>
-  <testsuite name="unit-all">
-    <directory>./unit/</directory>
-  </testsuite>
-  <testsuite name="unit-only-db">
-    <directory>./unit/db/</directory>
-  </testsuite>
-  <testsuite name="unit-no-db">
-    <directory>./unit/</directory>
-    <exclude>./unit/db/</exclude>
-  </testsuite>
-  <testsuite name="unit-only-tpl">
-    <directory>./unit/tpl/</directory>
-  </testsuite>
-  <testsuite name="unit-only-functions">
-    <directory>./unit/functions/</directory>
-  </testsuite>
-  <testsuite name="functional-all">
-    <directory>./functional/</directory>
-  </testsuite>
-  <testsuite name="functional-no-db">
-    <directory>./functional/</directory>
-    <exclude>./functional/db/</exclude>
-  </testsuite>
-  <testsuite name="functional-only-cache">
-    <directory>./functional/cache/</directory>
-  </testsuite>
-  <testsuite name="functional-only-db">
-    <directory>./functional/db/</directory>
-  </testsuite>
-  <testsuite name="db-all">
-    <directory>./functional/db/</directory>
-    <directory>./unit/db/</directory>
-  </testsuite>
-  <testsuite name="plugins-all">
-    <directory>./acceptance/plugins/*/tests/*</directory>
-    <directory>./functional/plugins/*/tests/*</directory>
-    <directory>./unit/plugins/*/tests/*</directory>
-  </testsuite>
-</testsuites>
-<logging>
-  <log type="junit" target="./report/junit.xml" />
-</logging>
+  <testsuites>
+    <testsuite name="all">
+      <directory>./</directory>
+      <exclude>./integration/</exclude>
+    </testsuite>
+    <testsuite name="all-with-integration">
+      <directory>./</directory>
+    </testsuite>
+    <testsuite name="unit-all">
+      <directory>./unit/</directory>
+    </testsuite>
+    <testsuite name="unit-only-db">
+      <directory>./unit/db/</directory>
+    </testsuite>
+    <testsuite name="unit-no-db">
+      <directory>./unit/</directory>
+      <exclude>./unit/db/</exclude>
+    </testsuite>
+    <testsuite name="unit-only-tpl">
+      <directory>./unit/tpl/</directory>
+    </testsuite>
+    <testsuite name="unit-only-functions">
+      <directory>./unit/functions/</directory>
+    </testsuite>
+    <testsuite name="functional-all">
+      <directory>./functional/</directory>
+    </testsuite>
+    <testsuite name="functional-no-db">
+      <directory>./functional/</directory>
+      <exclude>./functional/db/</exclude>
+    </testsuite>
+    <testsuite name="functional-only-cache">
+      <directory>./functional/cache/</directory>
+    </testsuite>
+    <testsuite name="functional-only-model">
+      <directory>./functional/model/</directory>
+    </testsuite>
+    <testsuite name="functional-only-db">
+      <directory>./functional/db/</directory>
+    </testsuite>
+    <testsuite name="db-all">
+      <directory>./functional/db/</directory>
+      <directory>./unit/db/</directory>
+    </testsuite>
+    <testsuite name="plugins-all">
+      <directory>./acceptance/plugins/*/tests/*</directory>
+      <directory>./functional/plugins/*/tests/*</directory>
+      <directory>./unit/plugins/*/tests/*</directory>
+    </testsuite>
+    <testsuite name="integration-all">
+      <directory>./integration/</directory>
+    </testsuite>
+  </testsuites>
+  <!-- <logging>
+    <junit outputFile="./report/junit.xml"/>
+  </logging> -->
 </phpunit>

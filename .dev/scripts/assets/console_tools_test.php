@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require dirname(__DIR__) . '/bash_colors.php';
@@ -6,7 +6,7 @@ require dirname(__DIR__) . '/bash_colors.php';
 $tests = [
     'yui_css' => ['echo "%s" | yuicompressor --type css', '.test { color:red; }', '.test{color:red}'],
     'yui_js' => ['echo "%s" | yuicompressor --type js', 'var a = "123";', 'var a=123;'],
-//	'cssembed' => array('echo "%s" | cssembed --root /', '@import (test.css)', '@import ""'),
+    //	'cssembed' => array('echo "%s" | cssembed --root /', '@import (test.css)', '@import ""'),
 ];
 foreach ($tests as $name => $info) {
     $cmd = $info[0];

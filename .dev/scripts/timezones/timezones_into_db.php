@@ -1,14 +1,14 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require_once dirname(__DIR__) . '/scripts_init.php';
 
 $data = require __DIR__ . '/timezones.php';
-if ( ! $data) {
+if (!$data) {
     exit('Error: $data is missing');
 }
 $table = DB_PREFIX . 'timezones';
-if ( ! db()->utils()->table_exists($table) || $force) {
+if (!db()->utils()->table_exists($table) || $force) {
     db()->utils()->drop_table($table);
     db()->utils()->create_table($table);
 }

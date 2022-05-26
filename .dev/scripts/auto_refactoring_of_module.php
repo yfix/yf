@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 /**
@@ -18,13 +18,13 @@ $paths = [
 foreach ($paths as $path) {
     $f = $path . '/' . $module . '.class.php';
     $exists = file_exists($f);
-    if ( ! $exists) {
+    if (!$exists) {
         continue;
     }
     $modules_dir = $path;
     break;
 }
-if ( ! $exists) {
+if (!$exists) {
     exit('Cannot find module');
 }
 $code = file_get_contents($f);
@@ -58,11 +58,11 @@ foreach ($m['fparam'] as $id => $fparam) {
 $fcodes = [];
 foreach (explode('function ', $code) as $part) {
     preg_match("/(?P<fn2>[a-z0-9_]+)[\s\t]*\(/ims", ltrim($part), $m2);
-    if ( ! $m2['fn2']) {
+    if (!$m2['fn2']) {
         continue;
     }
     $fn2 = $m2['fn2'];
-    if ( ! isset($fnames[$fn2])) {
+    if (!isset($fnames[$fn2])) {
         continue;
     }
     $fcodes[$fn2] = "\n\tfunction " . $part;
@@ -71,7 +71,7 @@ foreach ($fcodes as $fname => $fcode) {
     $sm_name = trim($module . '_' . $fname);
     $sm_path = $modules_dir . '/' . $module . '/' . $sm_name . '.class.php';
     $sm_dir = dirname($sm_path);
-    if ( ! file_exists($sm_dir)) {
+    if (!file_exists($sm_dir)) {
         mkdir($sm_dir, 0777, true);
     }
     echo $sm_name . ' => ' . $sm_path . "\n";

@@ -1,1 +1,3 @@
 report/
+phpunit.result.cache
+.tmp

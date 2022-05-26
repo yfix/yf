@@ -5,7 +5,7 @@ require_once dirname(__DIR__) . '/yf_unit_tests_setup.php';
 abstract class tpl_abstract extends yf\tests\wrapper
 {
     public static $_bak = [];
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // Replace default style and script templates with empty strings
         tpl()->parse_string('', [], 'style_css');
@@ -19,7 +19,7 @@ abstract class tpl_abstract extends yf\tests\wrapper
         }
         common()->USER_ERRORS = [];
     }
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         if (false !== strpos(strtolower(get_called_class()), 'compiled')) {
             tpl()->COMPILE_TEMPLATES = self::$_bak;

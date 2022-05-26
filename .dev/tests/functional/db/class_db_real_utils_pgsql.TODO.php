@@ -20,14 +20,14 @@ class class_db_real_utils_pgsql_test extends db_real_abstract
         //		return self::db_name().'.'.$name;
         return $name;
     }
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
         self::$DB_DRIVER = 'pgsql';
         self::_connect();
         self::utils()->truncate_database(self::db_name());
     }
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         self::utils()->truncate_database(self::db_name());
         self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
@@ -39,7 +39,7 @@ class class_db_real_utils_pgsql_test extends db_real_abstract
             return;
         }
         $all_dbs = self::utils()->list_databases();
-        $this->assertInternalType('array', $all_dbs);
+        $this->assertIsArray($all_dbs);
         $this->assertNotEmpty($all_dbs);
         $this->assertTrue(in_array('postgres', $all_dbs));
     }

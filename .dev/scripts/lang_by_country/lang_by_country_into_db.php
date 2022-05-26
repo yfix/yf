@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require_once dirname(__DIR__) . '/scripts_init.php';
@@ -17,7 +17,7 @@ foreach ((array) db()->select('code', 'languages')->from('countries')->get_2d() 
 }
 
 $table = DB_PREFIX . 'geo_lang_to_country';
-if ( ! db()->utils()->table_exists($table) || $force) {
+if (!db()->utils()->table_exists($table) || $force) {
     db()->utils()->drop_table($table);
     db()->utils()->create_table($table);
 }
