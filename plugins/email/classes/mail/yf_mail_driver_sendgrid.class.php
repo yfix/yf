@@ -24,6 +24,7 @@ class yf_mail_driver_sendgrid extends yf_mail_driver
 
     /**
      * https://github.com/sendgrid/sendgrid-php/blob/master/examples/helpers/mail/example.php.
+     * @param mixed $error_message
      */
     public function send(array $params = [], &$error_message = '')
     {

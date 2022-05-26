@@ -107,7 +107,7 @@ class yf_user_profile extends yf_module
         }
 
         // Skip other user accounts
-        if ( ! array_key_exists($this->_user_info['group'], $this->_account_types)) {
+        if ( ! isset($this->_account_types[$this->_user_info['group']])) {
             return _e('Wrong account type!');
         }
         // Fix dates
@@ -250,7 +250,7 @@ class yf_user_profile extends yf_module
             } elseif ($name == 'status' && strtolower($value) == 'agency') {
                 $parent_agency_info = user($this->_user_info['agency_id'], ['id', 'login', 'nick', 'email']);
                 $value = ! empty($parent_agency_info) ? '<a href="' . _profile_link($parent_agency_info['id']) . '">' . _prepare_html(_display_name($parent_agency_info)) . '</a>' : '';
-            } elseif (array_key_exists($name, $array_fields)) {
+            } elseif (isset($array_fields[$name])) {
                 $value = eval('return $this->_' . $name . 's[$value];');
             }
             $body .= $this->_show_item($desc, $value);
@@ -278,10 +278,10 @@ class yf_user_profile extends yf_module
             if (empty($value)) {
                 continue;
             }
-            if (array_key_exists($name, $text_fields)) {
+            if (isset($text_fields[$name])) {
                 continue;
             }
-            if (array_key_exists($name, $link_fields)) {
+            if (isset($link_fields[$name])) {
                 continue;
             }
             // Try to translate item name

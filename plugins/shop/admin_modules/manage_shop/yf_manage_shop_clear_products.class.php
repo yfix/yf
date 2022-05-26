@@ -12,9 +12,7 @@ class yf_manage_shop_clear_products
         $this->SEARCH_TIP = t('Case-insensetive search') . ' (' . t('Example') . ': "' . t('Search') . '" = "' . mb_strtolower(t('Search')) . '" = "' . mb_strtoupper(t('Search')) . '")';
     }
 
-    /*
-     *
-     */
+
     public function clear_patterns()
     {
         $html = table('SELECT * FROM ' . db('shop_patterns'), [
@@ -108,9 +106,7 @@ class yf_manage_shop_clear_products
             ->footer_link('Back', './?object=manage_shop&action=clear_patterns', ['icon' => 'icon-reply fa fa-reply', 'class' => 'btn-warning']);
     }
 
-    /*
-     *
-     */
+
     public function clear_pattern_add()
     {
         $validate_rules = [
@@ -131,9 +127,7 @@ class yf_manage_shop_clear_products
             ->save();
     }
 
-    /*
-     *
-     */
+
     public function clear_pattern_edit()
     {
         if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
@@ -165,9 +159,7 @@ class yf_manage_shop_clear_products
             ->save();
     }
 
-    /*
-     *
-     */
+
     public function clear_pattern_delete()
     {
         $_GET['id'] = (int) ($_GET['id']);
@@ -178,9 +170,7 @@ class yf_manage_shop_clear_products
         return js_redirect('./?object=manage_shop&action=show_clear_patterns');
     }
 
-    /*
-     *
-     */
+
     public function clear_pattern_run($action = 'clear_pattern_child_process')
     {
         if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
@@ -207,9 +197,7 @@ class yf_manage_shop_clear_products
         $this->clear_pattern_run('checkout_group_revision');
     }
 
-    /*
-     *
-     */
+
     public function clear_pattern_stop()
     {
         if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
@@ -231,9 +219,7 @@ class yf_manage_shop_clear_products
         exit;
     }
 
-    /*
-     *
-     */
+
     public function clear_pattern_status()
     {
         if (empty($_POST['ids'])) {
@@ -255,9 +241,7 @@ class yf_manage_shop_clear_products
         exit;
     }
 
-    /*
-     *
-     */
+
     public function clear_pattern_child_process()
     {
         if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {

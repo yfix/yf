@@ -45,7 +45,7 @@ class yf_docs
         });
     }
 
-    /***/
+
     public function jsonp()
     {
         $callback = (string) $_GET['callback'];
@@ -63,7 +63,7 @@ class yf_docs
         exit;
     }
 
-    /***/
+
     public function show()
     {
         $methods = [];
@@ -86,7 +86,7 @@ class yf_docs
         return implode(PHP_EOL, $a);
     }
 
-    /***/
+
     public function _show_for($obj, $id = '')
     {
         $id = $id ?: $_GET['id'];
@@ -106,6 +106,7 @@ class yf_docs
             $only_method = current($methods);
         }
         $url = url('/@object');
+        $items = [];
         foreach ((array) $methods as $name) {
             if ($only_method && $only_method !== $name) {
                 continue;
@@ -137,157 +138,157 @@ class yf_docs
         return implode(PHP_EOL, $items);
     }
 
-    /***/
+
     public function _subclass($name)
     {
         return _class('sample_' . $name, YF_PATH . '.dev/samples/classes/')->show();
     }
 
-    /***/
+
     public function assets()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function services()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function form()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function table()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function html()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function main()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function common()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function graphics()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function cache()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function dir()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function utils()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function aliases()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function functions()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function console_tool()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function db()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function db_query_builder()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function db_utils()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function db_migrator()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function model()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function core_api()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function demo()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function misc()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function validate()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function all()
     {
         return $this->_subclass(__FUNCTION__);
     }
 
-    /***/
+
     public function _github_link($path = '')
     {
         if ( ! strlen($path)) {
@@ -303,7 +304,7 @@ class yf_docs
         return '<i class="fa fa-github fa-lg"></i> <a href="' . $link . '">' . $link . '</a>';
     }
 
-    /***/
+
     public function _hook_side_column()
     {
         $custom_class_name = 'sample_' . $_GET['action'];
@@ -358,7 +359,7 @@ class yf_docs
         return html()->navlist($links);
     }
 
-    /***/
+
     public function _sample_navbar()
     {
         return implode(PHP_EOL, [

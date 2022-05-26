@@ -225,6 +225,7 @@ class yf_remote_files
      * @param	string	$url		Url to fetch
      * @param	int		$cache_ttl	Timeout for cache entry
      * @param	array	$url_options	Array of request options
+     * @param mixed $requests_info
      * @return	string
      */
     public function get_remote_page($url = '', $cache_ttl = -1, $url_options = [], &$requests_info = [])
@@ -256,7 +257,7 @@ class yf_remote_files
         $url = $this->_fix_url($url);
 
         $p = @parse_url($url);
-        if ( ! array_key_exists('scheme', $p) || ! array_key_exists('host', $p) || ! in_array($p['scheme'], ['http', 'https', 'ftp'])) {
+        if ( ! isset($p['scheme']) || ! isset($p['host']) || ! in_array($p['scheme'], ['http', 'https', 'ftp'])) {
             return false;
         }
         if ( ! isset($GLOBALS['_curl_requests_info'])) {
@@ -388,6 +389,7 @@ class yf_remote_files
      * @param	array	$urls		Contains list of urls to fetch
      * @param	array	$options	Array of request options
      * @param mixed $max_threads
+     * @param mixed $requests_info
      * @return	array				Result array of fetched urls
      */
     public function _multi_request($urls, $options = [], $max_threads = 0, &$requests_info = [])
@@ -441,7 +443,7 @@ class yf_remote_files
             $url = $this->_fix_url($url);
             // Check url parts for correctness
             $p = @parse_url($url);
-            if ( ! array_key_exists('scheme', $p) || ! array_key_exists('host', $p) || ! in_array($p['scheme'], ['http', 'https', 'ftp'])) {
+            if ( ! isset($p['scheme']) || ! isset($p['host']) || ! in_array($p['scheme'], ['http', 'https', 'ftp'])) {
                 $result[$id] = false;
                 continue;
             }
@@ -517,7 +519,8 @@ class yf_remote_files
                 unset($http_queue[$id]);
                 // Get next http url from queue to process (related to max_threads)
                 if (count((array) $http_queue)) {
-                    list($new_id, $new_details) = each($http_queue);
+                    $new_id = $http_queue[0];
+                    $new_details = $http_queue[1];
                     $this->_curl_use_http_queue_item($new_id, $new_details);
                     // Remove queue item to not process url again
                     unset($http_queue[$new_id]);
@@ -577,6 +580,7 @@ class yf_remote_files
      * @param mixed $urls
      * @param mixed $options
      * @param mixed $max_threads
+     * @param mixed $requests_info
      */
     public function multi_request($urls, $options = [], $max_threads = 0, &$requests_info = [])
     {
@@ -1122,9 +1126,7 @@ class yf_remote_files
         return $result;
     }
 
-    /*
-    * Check DNSBL - WIN also
-    */
+    // Check DNSBL - WIN also
     public function _not_blacklisted($ip)
     {
         if (empty($ip)) {

@@ -44,7 +44,7 @@ class yf_rewrite
                     $this->DEFAULT_HOST = $host;
                 }
             }
-            if ( ! $this->DEFAULT_HOST && $_SERVER['HTTP_HOST']) {
+            if ( ! $this->DEFAULT_HOST && ($_SERVER['HTTP_HOST'] ?? null)) {
                 $this->DEFAULT_HOST = $_SERVER['HTTP_HOST'];
             }
         }
@@ -55,7 +55,7 @@ class yf_rewrite
                     $this->DEFAULT_PORT = $port;
                 }
             }
-            if ( ! $this->DEFAULT_PORT && $_SERVER['SERVER_PORT'] && ! in_array($_SERVER['SERVER_PORT'], ['80', '443'])) {
+            if ( ! $this->DEFAULT_PORT && ($_SERVER['SERVER_PORT'] ?? null) && ! in_array($_SERVER['SERVER_PORT'], ['80', '443'])) {
                 $this->DEFAULT_PORT = $_SERVER['SERVER_PORT'];
             }
             if ( ! $this->DEFAULT_PORT) {
@@ -104,8 +104,8 @@ class yf_rewrite
                 }
                 $arr = [];
                 $url = parse_url($link);
-                parse_str($url['query'], $arr);
-                if (MAIN_TYPE_ADMIN && in_array($arr['task'], ['login', 'logout'])) {
+                parse_str($url['query'] ?? '', $arr);
+                if (MAIN_TYPE_ADMIN && in_array($arr['task'] ?? [], ['login', 'logout'])) {
                     continue;
                 }
                 // Support for custom url params
@@ -122,7 +122,7 @@ class yf_rewrite
                     $arr['_other'] = urldecode(http_build_query($tmp));
                 }
                 unset($tmp);
-                $replace = $this->_url($arr) . (strlen($url['fragment']) ? '#' . $url['fragment'] : '');
+                $replace = $this->_url($arr) . (strlen($url['fragment'] ?? '') ? '#' . $url['fragment'] : '');
                 $r_array[$link] = $replace;
             }
             // Fix for bug with similar shorter links, sort by length DESC
@@ -181,7 +181,7 @@ class yf_rewrite
     {
         $result = parse_url($url);
         $host = $result['host'];
-        $u = preg_replace('/\.htm.*/', '', $result['path']);
+        $u = preg_replace('/\.htm.*/', '', $result['path'] ?? '');
         $u = trim($u, '/');
         $u_arr = explode('/', $u);
         parse_str($result['query'], $s_arr);
@@ -245,7 +245,7 @@ class yf_rewrite
             $orig_url_str = $url_str;
             $params = [];
             $params['fragment'] = parse_url($url_str, PHP_URL_FRAGMENT);
-            if (strlen($params['fragment'])) {
+            if (strlen($params['fragment'] ?? '')) {
                 $url_str = str_replace('#' . $params['fragment'], '', $url_str);
             }
             if (preg_match('~[a-z0-9_\./]+~ims', $url_str)) {

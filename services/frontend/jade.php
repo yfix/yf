@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 $config = [
@@ -28,4 +28,6 @@ div
 ];
 if ($return_config) {
     return $config;
-} require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);
+}
+require_once __DIR__ . '/_yf_autoloader.php';
+new yf_autoloader($config);

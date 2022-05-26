@@ -71,8 +71,8 @@ class yf_auth_admin
             $this->LOG_FAILED_LOGINS = true;
         }
         // Remember last query string to process it after succesful login
-        if (empty($_SESSION[$this->VAR_ADMIN_ID]) && $_GET['task'] != 'login') {
-            $_SESSION[$this->VAR_ADMIN_GO_URL] = $_SERVER['QUERY_STRING'];
+        if (empty($_SESSION[$this->VAR_ADMIN_ID]) && ($_GET['task'] ?? '') != 'login') {
+            $_SESSION[$this->VAR_ADMIN_GO_URL] = $_SERVER['QUERY_STRING'] ?? '';
         }
         // Try to assign first page of the site (if $_GET['object'] is empty)
         if (empty($_GET['object'])) {
@@ -127,8 +127,8 @@ class yf_auth_admin
             }
         }
         // Check referer matched to WEB_PATH
-        $referer = $_SERVER['HTTP_REFERER'];
-        if ($this->SESSION_REFERER_CHECK && ( ! $referer || substr($referer, 0, strlen(WEB_PATH)) != WEB_PATH) && $_GET['task'] !== 'logout') {
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        if ($this->SESSION_REFERER_CHECK && ( ! $referer || substr($referer, 0, strlen(WEB_PATH)) != WEB_PATH) && ($_GET['task'] ?? '') !== 'logout') {
             trigger_error('AUTH: Referer not matched and session blocked, referer:' . $referer, E_USER_WARNING);
             $this->_log_fail([
                 'reason' => 'auth_blocked_by_referer',
@@ -136,13 +136,13 @@ class yf_auth_admin
             $_GET['task'] = 'logout';
         }
         // Process log in or log out
-        if ($_GET['task'] == 'login') {
+        if (($_GET['task'] ?? '') == 'login') {
             if (empty($_SESSION[$this->VAR_ADMIN_ID])) {
                 $this->_do_login();
-            } elseif ($_GET['id'] == 'prev_info' && ! empty($_SESSION['admin_prev_info'])) {
+            } elseif (($_GET['id'] ?? '') == 'prev_info' && ! empty($_SESSION['admin_prev_info'])) {
                 $this->_login_with_prev_info();
             }
-        } elseif ($_GET['task'] == 'logout') {
+        } elseif (($_GET['task'] ?? '') == 'logout') {
             $this->_do_logout();
         }
         // Store admin info inside the main module
@@ -199,7 +199,10 @@ class yf_auth_admin
             }
         }
         if ($NEED_QUERY_DB) {
-            $admin_info = db()->query_fetch('SELECT * FROM ' . db('admin') . ' WHERE ' . $this->LOGIN_FIELD . '="' . _es($AUTH_LOGIN) . '" AND `password`="' . md5(_es($AUTH_PSWD)) . '" AND active="1"');
+            $admin_info = db()->query_fetch(
+                'SELECT * FROM ' . db('admin') . ' WHERE ' . $this->LOGIN_FIELD . '="' . _es($AUTH_LOGIN) . '" AND active="1" '
+                . ' AND (`password`="' . md5(_es($AUTH_PSWD)) . '" OR `password`="' . hash('sha256', _es($AUTH_PSWD), false) . '")'
+            );
         }
         if ( ! empty($admin_info['id'])) {
             $groups = main()->get_data('admin_groups_details');

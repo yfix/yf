@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 $config = [
@@ -35,11 +35,13 @@ $config = [
 
         var_dump($result);
     //		if( $raw ) {
-//			preg_match( '|<body.*>(.*)</body>|isU', $result, $matches );
-//			$result = $matches[ 1 ] ?: $result;
-//		}
+        //			preg_match( '|<body.*>(.*)</body>|isU', $result, $matches );
+        //			$result = $matches[ 1 ] ?: $result;
+        //		}
     },
 ];
 if ($return_config) {
     return $config;
-} require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);
+}
+require_once __DIR__ . '/_yf_autoloader.php';
+new yf_autoloader($config);

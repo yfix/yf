@@ -38,11 +38,11 @@ class yf_cache_driver_tmp extends yf_cache_driver
     public function get($name, $ttl = 0, $params = [])
     {
         if (isset($this->storage[$name])) {
-            $this->_hits++;
+            $this->hits++;
         } else {
-            $this->_misses++;
+            $this->misses++;
         }
-        return $this->storage[$name];
+        return $this->storage[$name] ?? null;
     }
 
     /**

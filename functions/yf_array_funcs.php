@@ -201,7 +201,7 @@ if ( ! function_exists('array_get')) {
             return $array[$key];
         }
         foreach (explode('.', $key) as $segment) {
-            if ( ! is_array($array) || ! array_key_exists($segment, $array)) {
+            if ( ! is_array($array) || ! isset($array[$segment])) {
                 return value($default);
             }
             $array = $array[$segment];

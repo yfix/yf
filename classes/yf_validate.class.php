@@ -22,14 +22,14 @@ class yf_validate
         return main()->extend_call($this, $name, $args);
     }
 
-    /***/
+
     public function _init()
     {
         $this->MB_ENABLED = _class('utf8')->MULTIBYTE;
         $this->db = db();
     }
 
-    /***/
+
     public function _prepare_reserved_words()
     {
         if ($this->_reserved_words_prepared) {
@@ -88,6 +88,7 @@ class yf_validate
 
     /**
      * @param mixed $rules
+     * @param mixed $data
      */
     public function _do_check_data_is_valid($rules = [], &$data)
     {
@@ -319,6 +320,7 @@ class yf_validate
     /**
      * Returns md5() from input string, or null. Usually used to update password inside admin panel or not change it if new value not passed.
      * Example: ["password" => 'trim|min_length[6]|max_length[32]|password_update'].
+     * @param mixed $in
      */
     public function password_update(&$in)
     {
@@ -333,6 +335,7 @@ class yf_validate
     /**
      * Returns md5() from given input string, only if not empty.
      * Example usage: ["password" => 'trim|min_length[6]|max_length[32]|md5_not_empty'].
+     * @param mixed $in
      */
     public function md5_not_empty(&$in)
     {
@@ -347,6 +350,7 @@ class yf_validate
      * Most popular are: md5 sha1 sha224 sha256 sha384 sha512 ripemd128 ripemd160 ripemd256 ripemd320 gost crc32
      * Example usage: ["password" => 'trim|min_length[6]|max_length[32]|hash_not_empty[sha256]'].
      * @param mixed $params
+     * @param mixed $in
      */
     public function hash_not_empty(&$in, $params = [])
     {
@@ -827,7 +831,7 @@ class yf_validate
      */
     public function valid_base64($in)
     {
-        return strlen($in) && (base64_encode(base64_decode($in)) === $in);
+        return is_string($in) && strlen($in) && (base64_encode(base64_decode($in)) === $in);
     }
 
     /**
@@ -1209,6 +1213,7 @@ class yf_validate
      * @param mixed $in
      * @param mixed $params
      * @param mixed $fields
+     * @param mixed $error
      */
     public function phone_cleanup($in, $params = [], $fields = [], &$error = '')
     {
@@ -1239,6 +1244,7 @@ class yf_validate
      * @param mixed $in
      * @param mixed $params
      * @param mixed $fields
+     * @param mixed $error
      */
     public function valid_phone($in, $params = [], $fields = [], &$error = '')
     {

@@ -465,6 +465,41 @@ class yf_api
         return  [$status, $result];
     }
 
+    public function _robot_none()
+    {
+        // none = noindex, nofollow
+        header('X-Robots-Tag: none');
+    }
+
+    public function _cache($options = null)
+    {
+        // import options
+        is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
+        $h = [];
+        // none
+        if (@$_no_store) {
+            header('Cache-Control: no-store');
+            return;
+        }
+        // public/private
+        if (@$_private) {
+            $h[] = 'private';
+        } else {
+            $h[] = 'public';
+        }
+        switch (true) {
+            case @$_no_cache : $h[] =   'no-cache'; break;
+            case @$_ttl      : $h[] =   'max-age=' . $_ttl;
+            // no break
+            case @$_ttl_s    : $h[] = 's-max-age=' . $_ttl_s; break;
+            default:
+                $h[] =  'max-age=' . $this->CACHE_TTL;
+                $h[] = 's-maxage=' . $this->CACHE_TTL_S;
+        }
+        $h = implode(', ', $h);
+        header('Cache-Control: ' . $h);
+    }
+
     protected function _firewall($class = null, $class_path = null, $method = null, $options = [])
     {
         $is_request = &$this->is_request;
@@ -585,38 +620,4 @@ class yf_api
         // if( isset( $error    ) ) { echo( "\n,([{\n $error" ); }
         exit;
     }
-
-    public function _robot_none()
-    {
-        // none = noindex, nofollow
-        header( 'X-Robots-Tag: none' );
-    }
-
-    public function _cache( $options = null ) {
-        // import options
-        is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        $h = [];
-        // none
-        if( @$_no_store ) {
-            header( 'Cache-Control: no-store' );
-            return;
-        }
-        // public/private
-        if( @$_private ) {
-            $h[] = 'private';
-        } else {
-            $h[] = 'public';
-        }
-        switch( true ) {
-            case @$_no_cache : $h[] =   'no-cache'; break;
-            case @$_ttl      : $h[] =   'max-age='. $_ttl;
-            case @$_ttl_s    : $h[] = 's-max-age='. $_ttl_s; break;
-            default:
-                $h[] =  'max-age='. $this->CACHE_TTL;
-                $h[] = 's-maxage='. $this->CACHE_TTL_S;
-        }
-        $h = implode( ', ', $h );
-        header( 'Cache-Control: '. $h );
-    }
-
 }

@@ -97,6 +97,7 @@ class yf_mail_driver_mandrill extends yf_mail_driver
 
     /**
      * https://mandrillapp.com/api/docs/messages.php.html.
+     * @param mixed $error_message
      */
     public function send(array $params = [], &$error_message = '')
     {

@@ -235,7 +235,7 @@ class yf_table2
                 $func_on_after_render($params, $a, $body, $this);
             }
         }
-        if (array_key_exists('feedback', $params)) {
+        if (isset($params['feedback'])) {
             $params['feedback']['total'] = count((array) $data);
         }
         if (DEBUG_MODE) {
@@ -273,6 +273,9 @@ class yf_table2
 
     /**
      * Render table as JSON-encoded string.
+     * @param mixed $params
+     * @param mixed $a
+     * @param mixed $to_hide
      */
     public function _render_as_json(&$params, &$a, &$to_hide)
     {
@@ -297,6 +300,9 @@ class yf_table2
 
     /**
      * Render table as HTML string.
+     * @param mixed $params
+     * @param mixed $a
+     * @param mixed $to_hide
      */
     public function _render_as_html(&$params, &$a, &$to_hide)
     {
@@ -602,6 +608,8 @@ class yf_table2
 
     /**
      * Automatically get fields from results.
+     * @param mixed $params
+     * @param mixed $data
      */
     public function _render_auto(&$params, &$data)
     {
@@ -717,6 +725,7 @@ class yf_table2
     /**
      * @param mixed $ts
      * @param mixed $trace
+     * @param mixed $params
      */
     public function _render_debug_info(&$params, $ts = 0, $trace = '')
     {
@@ -851,7 +860,7 @@ class yf_table2
     public function _render_table_td($info, $row, $params, $row_id)
     {
         $name = $info['name'];
-        if ( ! array_key_exists($name, $row)) {
+        if ( ! isset($row[$name])) {
             return false;
         }
         $func = &$info['func'];
@@ -935,6 +944,7 @@ class yf_table2
      * Simple filtering of the given array. Need to support table() raw array data with filtering.
      * @param mixed $filter
      * @param mixed $filter_params
+     * @param mixed $data
      */
     public function _filter_array(&$data, $filter = [], $filter_params = [])
     {

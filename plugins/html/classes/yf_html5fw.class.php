@@ -3,18 +3,15 @@
 /**
  * Abstraction layer over HTML5/CSS frameworks.
  * Planned support for these plugins:
- *	Bootstrap 2		http://twbs.github.io/bootstrap/2.3.2/
- *	Bootstrap 3		http://twbs.github.io/bootstrap/3
- *	Zurb Foundation	http://foundation.zurb.com/
- *	Pure CSS		http://purecss.io/
- *	Semantic UI		http://semantic-ui.com/
- *	UI Kit			http://getuikit.com/
- *	Maxmertkit		http://www.maxmert.com/.
+ *	Bootstrap v2 https://getbootstrap.com/2.3.2/
+ *	Bootstrap v3 https://getbootstrap.com/docs/3.4/
+ *	Bootstrap v4 https://getbootstrap.com/docs/4.6/
+ *	Bootstrap v5 https://getbootstrap.com/docs/5.1/.
  */
 class yf_html5fw
 {
     /** @var */
-    public $DEFAULT_CSS_FRAMEWORK = 'bs2';
+    public $DEFAULT_CSS_FRAMEWORK = 'bs3';
 
     /**
      * Catch missing method call.

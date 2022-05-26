@@ -46,6 +46,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function database_info($db_name = '', $extra = [], &$error = false)
     {
@@ -69,6 +70,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function alter_database($db_name, $extra = [], &$error = false)
     {
@@ -97,6 +99,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_tables($db_name = '', $extra = [], &$error = false)
     {
@@ -119,6 +122,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_tables_details($db_name = '', $extra = [], &$error = false)
     {
@@ -137,6 +141,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function table_get_columns($table, $extra = [], &$error = false)
     {
@@ -150,6 +155,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function table_info($table, $extra = [], &$error = false)
     {
@@ -174,6 +180,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_indexes($table, $extra = [], &$error = false)
     {
@@ -196,6 +203,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
      * @param mixed $index_name
      * @param mixed $fields
      * @param mixed $extra
+     * @param mixed $error
      */
     public function add_index($table, $index_name = '', $fields = [], $extra = [], &$error = false)
     {
@@ -213,6 +221,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_foreign_keys($table, $extra = [], &$error = false)
     {
@@ -237,6 +246,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_views($db_name = '', $extra = [], &$error = false)
     {
@@ -255,6 +265,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
      * @param mixed $table
      * @param mixed $sql_as
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create_view($table, $sql_as, $extra = [], &$error = false)
     {
@@ -268,6 +279,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_triggers($db_name = '', $extra = [], &$error = false)
     {
@@ -288,6 +300,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
      * @param mixed $trigger_event
      * @param mixed $trigger_body
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = [], &$error = false)
     {
@@ -338,6 +351,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
 
     /**
      * @param mixed $str
+     * @param mixed $error
      */
     public function _parse_column_type($str, &$error = false)
     {
@@ -348,6 +362,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
      * Create part of SQL for "CREATE TABLE" from array of params.
      * @param mixed $data
      * @param mixed $extra
+     * @param mixed $error
      */
     public function _compile_create_table($data, $extra = [], &$error = false)
     {

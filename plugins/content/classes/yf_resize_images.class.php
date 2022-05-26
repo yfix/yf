@@ -53,6 +53,9 @@ class yf_resize_images
      */
     public function __construct($img_file = '')
     {
+        if (main()->is_unit_test()) {
+            $this->SILENT_MODE = false;
+        }
         if (strlen($img_file)) {
             $this->set_source($img_file);
         }
@@ -82,6 +85,7 @@ class yf_resize_images
         $this->_set_new_size_auto();
         $func_name = 'imagecreatefrom' . $this->source_type;
         $this->tmp_img = strlen($this->source_type) ? $func_name($this->source_file) : null;
+
         if (empty($this->tmp_img)) {
             return false;
         }
@@ -209,7 +213,7 @@ class yf_resize_images
             return false;
         }
         list($this->source_width, $this->source_height, $type, $this->source_atts) = getimagesize($this->source_file);
-        return array_key_exists($type, $this->_avail_types) ? ($this->source_type = $this->_avail_types[$type]) : false;
+        return isset($this->_avail_types[$type]) ? ($this->source_type = $this->_avail_types[$type]) : false;
     }
 
     /**

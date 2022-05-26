@@ -309,6 +309,7 @@ class yf_category_editor
 
     /**
      * This pure-php method needed to greatly speedup page rendering time for 100+ items.
+     * @param mixed $items
      */
     public function _drag_tpl_main(&$items)
     {
@@ -332,6 +333,7 @@ class yf_category_editor
 
     /**
      * This pure-php method needed to greatly speedup page rendering time for 100+ items.
+     * @param mixed $items
      */
     public function _drag_tpl_items(&$items)
     {
@@ -536,6 +538,7 @@ class yf_category_editor
     /**
      * @param mixed $start_id
      * @param mixed $level
+     * @param mixed $children
      */
     public function _count_levels($start_id = 0, &$children, $level = 0)
     {
