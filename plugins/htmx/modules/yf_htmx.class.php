@@ -1,0 +1,3 @@
+<?php
+
+_class( 'htmx' );

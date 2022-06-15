@@ -487,7 +487,8 @@ class yf_main
             $required_files[] = $path;
         }
         $funcs_paths = [
-            'app' => APP_PATH . 'share/functions/common_funcs.php',
+            'app' => APP_PATH . 'functions/common_funcs.php',
+            'app_old' => APP_PATH . 'share/functions/common_funcs.php',
             'yf' => YF_PATH . 'functions/' . YF_PREFIX . 'common_funcs.php',
         ];
         foreach ($funcs_paths as $path) {
