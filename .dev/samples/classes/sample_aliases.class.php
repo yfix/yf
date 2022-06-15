@@ -12,7 +12,7 @@ class sample_aliases
     public function _get_aliases()
     {
         $out = [];
-        preg_match_all('~function\s+([a-z0-9_]+)~ims', file_get_contents(YF_PATH . 'share/functions/yf_aliases.php'), $m);
+        preg_match_all('~function\s+([a-z0-9_]+)~ims', file_get_contents(YF_PATH . 'functions/yf_aliases.php'), $m);
         foreach ((array) $m[1] as $name) {
             if (substr($name, 0, 2) === '__') {
                 continue;
