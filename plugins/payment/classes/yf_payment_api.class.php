@@ -510,7 +510,7 @@ class yf_payment_api
         $data['user_id'] = $value;
         // account_type_id
         $value = (int) $_['account_type_id'] ?: $this->account_type_id;
-        empty($value) && (list($value) = $this->get_account_type__by_name());
+        empty($value) && (list($value) = $this->get_account_type__by_name($options));
         if (empty($value)) {
             return  null;
         }
@@ -561,7 +561,7 @@ class yf_payment_api
         $options['user_id'] = $value;
         // by account_type_id
         $value = (int) $_['account_type_id'] ?: $this->account_type_id;
-        empty($value) && (list($value) = $this->get_account_type__by_name());
+        empty($value) && (list($value) = $this->get_account_type__by_name($options));
         if (empty($value)) {
             return  null;
         }
@@ -1498,7 +1498,7 @@ class yf_payment_api
             ];
             return  $result;
         }
-        $sql_amount = $this->_number_mysql($amount);
+        $sql_amount = $this->_number_mysql($amount, $decimals);
         $data['sql_amount'] = $sql_amount;
         // check balance limit lower
         ! isset($_['is_balance_limit_lower']) && $_['is_balance_limit_lower'] = $this->IS_BALANCE_LIMIT_LOWER;
