@@ -187,6 +187,7 @@ class yf_payment_api
     public $SECURITY_CODE = '7CFL4AjeB6P7RWAk7W0n';
 
     public $MAIL_COPY_TO = null;
+    public $TX_VAR = 'tx_isolation';
     //  example:
     // array(
     // 'all' => array(
@@ -253,6 +254,10 @@ class yf_payment_api
         $this->config();
         $this->user_id_default = (int) main()->USER_ID;
         $this->user_id($this->user_id_default);
+        $mysql_version = db()->get_one('SELECT VERSION()');
+        if($mysql_version >= 8){
+            $this->TX_VAR = 'transaction_isolation';
+        }
     }
 
     public function config($options = null)
@@ -1916,8 +1921,8 @@ class yf_payment_api
             }
         }
         // get currency level
-        $r = db()->get_2d('SHOW VARIABLES LIKE "tx_isolation"');
-        @$r['tx_isolation'] && $result = str_replace('-', ' ', $r['tx_isolation']);
+        $r = db()->get_2d('SHOW VARIABLES LIKE "%'.$this->TX_VAR.'%"');
+        @$r[$this->TX_VAR] && $result = str_replace('-', ' ', $r[$this->TX_VAR]);
         return  $result;
     }
 
