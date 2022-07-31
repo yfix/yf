@@ -184,7 +184,7 @@ class yf_payment_api
 
     public $DEPOSITION_TIME = '-6 hour';
 
-    public $SECURITY_CODE = '7CFL4AjeB6P7RWAk7W0n';
+    public $SECURITY_CODE = '';
 
     public $MAIL_COPY_TO = null;
     public $TX_VAR = 'tx_isolation';
