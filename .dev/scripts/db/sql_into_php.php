@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require_once dirname(__DIR__) . '/scripts_init.php';
@@ -17,17 +17,17 @@ foreach ($globs_sql as $glob) {
         echo '++ sql_php: ' . $sql_php_file . PHP_EOL;
         if (file_exists($sql_php_file)) {
             //			echo 'exists, skipped'. PHP_EOL;
-//			continue;
+            //			continue;
         }
 
         $sql_php_dir = dirname($sql_php_file);
-        if ( ! file_exists($sql_php_dir)) {
+        if (!file_exists($sql_php_dir)) {
             mkdir($sql_php_dir, 0755, true);
         }
 
         $data = include $f; // $data should be loaded from file
 
-        if ( ! $data) {
+        if (!$data) {
             echo '-- ERROR: empty data' . PHP_EOL;
             continue;
         }
@@ -37,7 +37,7 @@ foreach ($globs_sql as $glob) {
             unset($a['name']);
         }
 
-        if ( ! $a) {
+        if (!$a) {
             echo '-- ERROR: empty sql_php' . PHP_EOL;
             continue;
         }

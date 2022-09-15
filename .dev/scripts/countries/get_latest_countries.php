@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require_once dirname(__DIR__) . '/scripts_utils.php';
@@ -21,7 +21,7 @@ $mtpl = isset($mtpl) ? $mtpl : [
     'name' => 0,
 ];
 
-if ( ! function_exists('_var_export')) {
+if (!function_exists('_var_export')) {
     function _var_export($data)
     {
         $str = var_export($data, 1);
@@ -34,13 +34,13 @@ if ( ! function_exists('_var_export')) {
     }
 }
 
-if ( ! function_exists('data_get_latest_countries')) {
+if (!function_exists('data_get_latest_countries')) {
     function data_get_latest_countries()
     {
         global $url, $result_file, $suffix, $mtpl;
 
         $f2 = __DIR__ . '/' . basename($url) . '.table' . $suffix . '.html';
-        if ( ! file_exists($f2) || filemtime($f2) <= (time() - 86400 * 10)) {
+        if (!file_exists($f2) || filemtime($f2) <= (time() - 86400 * 10)) {
             $html1 = file_get_contents($url);
             $regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';
             preg_match($regex1, $html1, $m1);
@@ -52,17 +52,17 @@ if ( ! function_exists('data_get_latest_countries')) {
         $data = [];
         foreach ($tmp_tbl as $v) {
             $id = $v[$mtpl['id']];
-            if ( ! $id) {
+            if (!$id) {
                 continue;
             }
             $data[$id] = [
-            'code' => $id,
-            'code3' => $v[$mtpl['code3']],
-            'num' => $v[$mtpl['num']],
-            'name' => str_replace(['[', ']', '(', ')'], '', $v[$mtpl['name']]),
-            'cont' => '',
-            'active' => 0,
-        ];
+                'code' => $id,
+                'code3' => $v[$mtpl['code3']],
+                'num' => $v[$mtpl['num']],
+                'name' => str_replace(['[', ']', '(', ')'], '', $v[$mtpl['name']]),
+                'cont' => '',
+                'active' => 0,
+            ];
         }
         foreach (['UA', 'RU', 'US', 'DE', 'FR', 'ES', 'GB'] as $c) {
             $data[$c]['active'] = 1;

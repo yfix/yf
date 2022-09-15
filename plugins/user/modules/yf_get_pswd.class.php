@@ -8,9 +8,7 @@ class yf_get_pswd
         $this->_my_site_title = t('Password Reminder');
     }
 
-    /*
-    * Default function
-    */
+    // Default function
     public function show()
     {
         conf('_login_form_displayed', true);

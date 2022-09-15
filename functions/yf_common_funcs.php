@@ -456,7 +456,7 @@ if ( ! function_exists('_attrs')) {
             }
         }
         // Custom html attributes forced with sub-array "attr"
-        if (is_array($extra['attr'])) {
+        if (is_array($extra['attr'] ?? null)) {
             foreach ($extra['attr'] as $name => $val) {
                 if (strlen($name)) {
                     $a[$name] = $val;

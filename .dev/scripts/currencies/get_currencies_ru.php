@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 //http://www.consultant.ru/document/cons_doc_LAW_100738/?frame=2#p90

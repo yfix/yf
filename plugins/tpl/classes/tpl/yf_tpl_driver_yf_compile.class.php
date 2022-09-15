@@ -75,7 +75,7 @@ class yf_tpl_driver_yf_compile
             // Second level vars
             '/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}/i' => function ($m) use ($start, $end) {
                 $global_arrays = tpl()->_avail_arrays;
-                $is_global = is_array($global_arrays) && array_key_exists($m[1], $global_arrays);
+                $is_global = is_array($global_arrays) && isset($global_arrays[$m[1]]);
                 return $start . 'echo ' . ($is_global ? '$' . $global_arrays[$m[1]] . '[\'' . $m[2] . '\']' : '$replace[\'' . $m[1] . '\'][\'' . $m[2] . '\']') . ';' . $end;
             },
             // Variable filtering like in Smarty/Twig. Examples: {var1|trim} {var1|urlencode|trim} {var1|_prepare_html} {var1|my_func} {sub1.var1|trim}
@@ -456,7 +456,7 @@ class yf_tpl_driver_yf_compile
         } elseif (false !== strpos($foreach_arr_name, '.')) {
             list($v1, $v2) = explode('.', $foreach_arr_name);
             $global_arrays = tpl()->_avail_arrays;
-            $is_global = is_array($global_arrays) && array_key_exists($v1, $global_arrays);
+            $is_global = is_array($global_arrays) && isset($global_arrays[$v1]);
             if ($is_global) {
                 $foreach_arr_tag = '$' . $global_arrays[$v1] . '[\'' . $v2 . '\']';
             } else {

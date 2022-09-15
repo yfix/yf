@@ -313,6 +313,7 @@ class yf_captcha
         // Set image background color
         imagefilledrectangle($image, 0, 0, $this->image_width, $this->image_height, $this->bg_color);
         // Draw text
+        $random_string = '';
         for ($i = 0; $i < $this->num_symbols; $i++) {
             $random_string .= array_rand($this->symbols_array);
             imagettftext($image, round(rand($this->font_height - 2, $this->font_height + 2), 0), rand(-30, 30), $i * $font_width + 5 + rand(-2, 2), $this->image_height / 2 + 5 + rand(-4, 4), array_rand(array_flip($this->text_colors)), $ttf_font, $random_string[$i]);

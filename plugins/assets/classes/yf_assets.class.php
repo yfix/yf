@@ -8,7 +8,7 @@ class yf_assets
 {
     /** @array */
     public $supported_asset_types = [
-        'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'bundle', 'asset', /*, 'img', 'font'*/
+        'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'bundle', 'asset', // , 'img', 'font'
     ];
     /** @array */
     public $inherit_asset_types_map = [
@@ -20,7 +20,7 @@ class yf_assets
     ];
     /** @array */
     public $supported_out_types = [
-        'js', 'css', /*, 'images', 'fonts',*/
+        'js', 'css', // , 'images', 'fonts',
     ];
     /** @string Set to blank to disable */
     public $MAIN_TPL_CSS = 'style_css';
@@ -321,7 +321,7 @@ class yf_assets
      */
     public function init_js($force = false)
     {
-        if ($this->_init_js_done && ! $force) {
+        if (($this->_init_js_done ?? null) && ! $force) {
             return false;
         }
         $this->_init_js_done = true;
@@ -345,7 +345,7 @@ class yf_assets
      */
     public function init_css($force = false)
     {
-        if ($this->_init_css_done && ! $force) {
+        if (($this->_init_css_done ?? null) && ! $force) {
             return false;
         }
         $this->_init_css_done = true;
@@ -564,11 +564,11 @@ class yf_assets
     public function get_asset_details($name)
     {
         // If overall asset is callable - call it and save result to prevent multiple calls
-        if ( ! is_string($this->assets[$name]) && is_callable($this->assets[$name])) {
+        if ( ! is_string($this->assets[$name] ?? null) && is_callable($this->assets[$name] ?? null)) {
             $func = $this->assets[$name];
             $this->assets[$name] = $func($this);
         }
-        return $this->assets[$name];
+        return $this->assets[$name] ?? null;
     }
 
     /**
@@ -593,12 +593,12 @@ class yf_assets
         }
         foreach ((array) $this->ASSETS_GET_PRIORITY as $method) {
             if (in_array($method, ['bower', 'github'])) {
-                $data = $asset_data[$method] ?: [];
-                $_files = $data[$asset_type];
+                $data = ($asset_data[$method] ?? []) ?: [];
+                $_files = $data[$asset_type] ?? null;
                 if ($_files) {
                     $_name = $data['name'] ?: $name;
                     strpos($_name, '#') !== false && list($_name, $_version) = explode('#', $_name);
-                    $_version = $version ?: $_version ?: $data['version'] ?: 'master';
+                    $_version = $version ?: ($_version ?? '') ?: ($data['version'] ?? '') ?: 'master';
                 }
             }
             if ($method == 'bower' && $this->ALLOW_GET_FROM_BOWER && $_files) {
@@ -610,7 +610,7 @@ class yf_assets
                 $_version = $version ?: $data['version'] ?: 'master';
                 return $this->get_asset_from_cdn($name, $_version, $data, $asset_type);
             } elseif ($method == 'versions') {
-                if ( ! is_array($asset_data[$method])) {
+                if ( ! is_array($asset_data[$method] ?? null)) {
                     return null;
                 }
                 $data = $asset_data[$method] ?: [];
@@ -619,7 +619,7 @@ class yf_assets
                     return null;
                 }
                 $version_info = $data[$version];
-                $content = $version_info[$asset_type];
+                $content = $version_info[$asset_type] ?? '';
                 return $content;
             }
         }
@@ -631,7 +631,7 @@ class yf_assets
      * @param mixed $asset_data
      * @param mixed $asset_type
      */
-    public function get_asset_from_bower($name, $version = 'master', $asset_data = [], $asset_type)
+    public function get_asset_from_bower($name, $version = 'master', $asset_data = [], $asset_type = '')
     {
         if ( ! $name || ! $asset_data || ! isset($asset_data[$asset_type])) {
             return false;
@@ -713,7 +713,7 @@ class yf_assets
      * @param mixed $asset_data
      * @param mixed $asset_type
      */
-    public function get_asset_from_github($name, $version = 'master', $asset_data = [], $asset_type)
+    public function get_asset_from_github($name, $version = 'master', $asset_data = [], $asset_type = '')
     {
         if ( ! $name || ! $asset_data || ! isset($asset_data[$asset_type])) {
             return false;
@@ -755,7 +755,7 @@ class yf_assets
      * @param mixed $asset_data
      * @param mixed $asset_type
      */
-    public function get_asset_from_cdn($name, $version = 'master', $asset_data = [], $asset_type)
+    public function get_asset_from_cdn($name, $version = 'master', $asset_data = [], $asset_type = '')
     {
         if ( ! $name || ! $asset_data || ! isset($asset_data[$asset_type]) || ! $asset_data['url']) {
             return false;
@@ -832,9 +832,9 @@ class yf_assets
         if ( ! is_string($content) && is_callable($content)) {
             $content = $content($params, $this);
         }
-        if ($asset_type === 'js' && ! $this->_init_js_done) {
+        if ($asset_type === 'js' && ! ($this->_init_js_done ?? null)) {
             $this->init_js();
-        } elseif ($asset_type === 'css' && ! $this->_init_css_done) {
+        } elseif ($asset_type === 'css' && ! ($this->_init_css_done ?? null)) {
             $this->init_css();
         }
         if (is_array($content_type_hint)) {
@@ -962,7 +962,7 @@ class yf_assets
             return false;
         }
         if (isset($bundle_details['config']) && is_array($bundle_details['config'])) {
-            $_params['config'] = (array) $_params['config'] + (array) $bundle_details['config'];
+            $_params['config'] = (array) ($_params['config'] ?? []) + (array) ($bundle_details['config'] ?? []);
         }
         $DIRECT_OUT = isset($_params['direct_out']) ? $_params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
         $_params += ($DIRECT_OUT ? ['direct_out' => false] : []);
@@ -981,13 +981,13 @@ class yf_assets
                 continue;
             }
             $types[$atype] = $atype;
-            $inherit_types = (array) $inherit_types_map[$atype] ?: [];
+            $inherit_types = (array) ($inherit_types_map[$atype] ?? []) ?: [];
             foreach ((array) $inherit_types as $inherit_type) {
                 $types[$inherit_type] = $inherit_type;
             }
         }
         foreach ((array) $types as $atype) {
-            $data = $bundle_details['require'][$atype];
+            $data = $bundle_details['require'][$atype] ?? null;
             if ($data) {
                 $this->_sub_add($data, $atype, $__params);
             }
@@ -999,7 +999,7 @@ class yf_assets
             }
         }
         foreach ((array) $types as $atype) {
-            $data = $bundle_details['add'][$atype];
+            $data = $bundle_details['add'][$atype] ?? null;
             if ($data) {
                 $this->_sub_add($data, $atype, $__params);
             }
@@ -1034,7 +1034,7 @@ class yf_assets
             return false;
         }
         if (isset($asset_data['config']) && is_array($asset_data['config'])) {
-            $_params['config'] = (array) $_params['config'] + (array) $asset_data['config'];
+            $_params['config'] = (array) ($_params['config'] ?? []) + (array) ($asset_data['config'] ?? []);
         }
         $DIRECT_OUT = isset($_params['direct_out']) ? $_params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
         $_params += ($DIRECT_OUT ? ['direct_out' => false] : []);
@@ -1050,12 +1050,12 @@ class yf_assets
         $inherit_types_map = $this->inherit_asset_types_map;
         $types = [];
         $types[$asset_type] = $asset_type;
-        $inherit_types = (array) $inherit_types_map[$atype] ?: [];
+        $inherit_types = (array) ($inherit_types_map[$asset_type] ?? []) ?: [];
         foreach ((array) $inherit_types as $inherit_type) {
             $types[$inherit_type] = $inherit_type;
         }
         foreach ((array) $types as $atype) {
-            $data = $asset_data['require'][$atype];
+            $data = $asset_data['require'][$atype] ?? null;
             if ($data) {
                 $this->_sub_add($data, $atype, $__params);
             }
@@ -1067,7 +1067,7 @@ class yf_assets
             }
         }
         foreach ((array) $types as $atype) {
-            $data = $asset_data['add'][$atype];
+            $data = $asset_data['add'][$atype] ?? null;
             if ($data) {
                 $this->_sub_add($data, $atype, $__params);
             }
@@ -1198,25 +1198,26 @@ class yf_assets
         if (isset($params['wrap']) && false !== strpos($params['wrap'], '%s')) {
             $content = str_replace('%s', $content, $params['wrap']);
         }
+        $name = '';
         if (isset($params['name'])) {
             $name = $params['name'];
             unset($params['name']);
         }
-		// Skip any related content, that was specially cached or listed, but not need to be included here
-		if (in_array($content_type, ['file']) && in_array($asset_type, ['js','css'])) {
-			// This line needed to strip query string from file name like this:
-			// /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
-			if (pathinfo(parse_url($content, PHP_URL_PATH), PATHINFO_EXTENSION) != $asset_type) {
-				$content = '';
-			}
-		} elseif (in_array($content_type, ['url']) && in_array($asset_type, ['js','css'])) {
-			// This line needed to strip query string from file name like this:
-			// /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
+        // Skip any related content, that was specially cached or listed, but not need to be included here
+        if (in_array($content_type, ['file']) && in_array($asset_type, ['js', 'css'])) {
+            // This line needed to strip query string from file name like this:
+            // /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
+            if (pathinfo(parse_url($content, PHP_URL_PATH), PATHINFO_EXTENSION) != $asset_type) {
+                $content = '';
+            }
+        } elseif (in_array($content_type, ['url']) && in_array($asset_type, ['js', 'css'])) {
+            // This line needed to strip query string from file name like this:
+            // /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
             $parsed_url = parse_url($content);
-			if ( ! strlen($parsed_url['host']) && strlen($parsed_url['path']) && pathinfo($parsed_url['path'], PATHINFO_EXTENSION) != $asset_type) {
-				$content = '';
-			}
-		}
+            if ( ! strlen($parsed_url['host']) && strlen($parsed_url['path']) && pathinfo($parsed_url['path'], PATHINFO_EXTENSION) != $asset_type) {
+                $content = '';
+            }
+        }
         return $this->content[$asset_type][$md5] = [
             'content_type' => $content_type,
             'content' => $content,
@@ -1391,16 +1392,16 @@ class yf_assets
             }
         }
         foreach ((array) $all_content as $md5 => $v) {
-            if ($v['params']['out_before']) {
+            if ($v['params']['out_before'] ?? null) {
                 $out_before[$md5] = $names_to_md5[$v['params']['out_before']];
-            } elseif ($v['params']['out_after']) {
+            } elseif ($v['params']['out_after'] ?? null) {
                 $out_after[$md5] = $names_to_md5[$v['params']['out_after']];
             }
             $content_type = $v['content_type'];
             if ($is_ajax && $content_type !== 'inline') {
                 continue;
             }
-            if ($v['params']['is_last']) {
+            if ($v['params']['is_last'] ?? null) {
                 $last[$md5] = $v;
             } elseif (in_array($content_type, ['inline'])) {
                 $bottom[$md5] = $v;
@@ -1518,9 +1519,9 @@ class yf_assets
                 }
             }
             $str = $v['content'];
-            $before = $_params['config']['before'];
-            $after = $_params['config']['after'];
-            if ($_params['config']['class']) {
+            $before = $_params['config']['before'] ?? null;
+            $after = $_params['config']['after'] ?? null;
+            if ($_params['config']['class'] ?? null) {
                 $_params['class'] = $_params['config']['class'];
             }
             $use_combine = $this->COMBINE && $use_cache && in_array($content_type, ['url', 'file']) && empty($before) && empty($after) && empty($_params['class']) && empty($_params['id']);
@@ -1847,10 +1848,10 @@ class yf_assets
                 $save_path = '/' . ltrim($save_path, '/');
                 // path cleanup from *.*#someworlds
                 $path = preg_replace('/([\/\w\d]+?\.[a-z]{1,4})#[\w\d\-]+$/is', '${1}', $path);
-				// singleton for getting urls contents
-				if (!file_exists($save_path) && file_exists($path)) {
-					$str = file_get_contents($path);
-				}
+                // singleton for getting urls contents
+                if ( ! file_exists($save_path) && file_exists($path)) {
+                    $str = file_get_contents($path);
+                }
             } else {
                 $orig_url = $url;
                 if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
@@ -2143,13 +2144,13 @@ class yf_assets
                 }
                 $out = '<script' . _attrs($params, ['src', 'type', 'class', 'id']) . '></script>';
             } elseif ($content_type === 'file') {
-                if( @$params[ 'raw' ] ) {
+                if (@$params['raw']) {
                     $out = $str;
                 } else {
                     $out = '<script' . _attrs($params, ['type', 'class', 'id']) . '>' . PHP_EOL . $str . PHP_EOL . '</script>';
                 }
             } elseif ($content_type === 'inline') {
-                if( @$params[ 'raw' ] ) {
+                if (@$params['raw']) {
                     $out = $str;
                 } else {
                     $str = $this->_strip_js_input($str);

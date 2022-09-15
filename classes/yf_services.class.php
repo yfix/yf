@@ -43,6 +43,8 @@ class yf_services
      */
     public function require_php_lib($name, $params = [])
     {
+
+// main()->is_unit_test() && echo "require_php_lib: " . $name . PHP_EOL;
         if (isset($this->php_libs[$name])) {
             return $this->php_libs[$name];
         }
@@ -190,6 +192,7 @@ class yf_services
      * @param mixed $lang_from
      * @param mixed $lang_to
      * @param mixed $params
+     * @param mixed $cache_used
      */
     public function google_translate($text, $lang_from, $lang_to, $params = [], &$cache_used = false)
     {

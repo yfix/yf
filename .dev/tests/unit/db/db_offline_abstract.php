@@ -12,13 +12,13 @@ abstract class db_offline_abstract extends yf\tests\wrapper
     {
         return false;
     }
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$db = _class('db');
         self::$_er = error_reporting();
         error_reporting(0);
     }
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         error_reporting(self::$_er);
     }

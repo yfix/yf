@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 define('YF_PATH', dirname(dirname(__DIR__)) . '/');

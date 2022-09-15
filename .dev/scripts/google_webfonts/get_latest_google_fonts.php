@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require_once dirname(__DIR__) . '/scripts_utils.php';
@@ -9,13 +9,13 @@ $url = $url ?: 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyAMEY_I
 $result_file = $result_file ?: __DIR__ . '/google_webfonts.php';
 $suffix = $suffix ?: '';
 
-if ( ! function_exists('data_get_latest_google_fonts')) {
+if (!function_exists('data_get_latest_google_fonts')) {
     function data_get_latest_google_fonts()
     {
         global $url, $result_file, $suffix;
 
         $f2 = __DIR__ . '/google_webfonts' . $suffix . '.json';
-        if ( ! file_exists($f2)) {
+        if (!file_exists($f2)) {
             file_put_contents($f2, file_get_contents($url));
         }
         /*

@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 $files = [
@@ -8,7 +8,7 @@ $files = [
     'uk_content_strings.xtb' => 'https://chromium.googlesource.com/chromium/src/+/master/content/app/strings/translations/content_strings_uk.xtb?format=TEXT',
 ];
 foreach ($files as $file => $url) {
-    if ( ! file_exists($file)) {
+    if (!file_exists($file)) {
         file_put_contents($file, base64_decode(file_get_contents($url)));
     }
 }

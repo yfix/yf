@@ -14,7 +14,7 @@ class yf_main
      *    - admin (for control panel)
      */
     public $type = 'user';
-    /***/
+
     public $CONSOLE_MODE = false;
     /** @var bool Use database for translation or language files */
     public $LANG_USE_DB = false;
@@ -122,6 +122,8 @@ class yf_main
     public $ERROR_REPORTING_PROD = 0;
     /** @var int Error reporting level for DEBUG_MODE enabled */
     public $ERROR_REPORTING_DEBUG = 22519; // 22519 = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
+    /** @var int Error reporting level for DEBUG_MODE enabled */
+    public $ERROR_REPORTING_DEBUG_8 = 24565; // 22519 = E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING;
     /** @var string Log errors switcher, keep empty to disable logging */
     public $ERROR_LOG_PATH = '{LOGS_PATH}yf_core_errors.log';
     /** @var mixed Development mode, enable dev overrides layer, can containg string with developer name */
@@ -159,13 +161,14 @@ class yf_main
         if ($CONF === null && ! empty($_conf)) {
             $CONF = $_conf;
         }
-        if (defined('DEBUG_MODE') && DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || $CONF['main']['ALLOW_DEBUG_PROFILING'])) {
+        ! defined('DEBUG_MODE') && define('DEBUG_MODE', false);
+        if (defined('DEBUG_MODE') && DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || (isset($CONF['main']) && ($CONF['main']['ALLOW_DEBUG_PROFILING'] ?? false)))) {
             $this->PROFILING = true;
         }
-        if ($_SERVER['argc'] && ! isset($_SERVER['REQUEST_METHOD'])) {
+        if (isset($_SERVER['argc']) && $_SERVER['argc'] && ! isset($_SERVER['REQUEST_METHOD'])) {
             $this->CONSOLE_MODE = true;
         }
-        error_reporting(0); // Remove all errors initially
+        // error_reporting(0); // Remove all errors initially
 
         define('YF_CLS_EXT', '.class.php');
         define('YF_PREFIX', 'yf_'); // Prefix to the all framework classes
@@ -195,7 +198,7 @@ class yf_main
             $this->init_common();
             $this->_class('graphics');
             $this->load_class_file('module', 'classes/');
-            $this->init_error_reporting();
+            // $this->init_error_reporting();
             $this->init_site_id();
             $this->init_server_id();
             $this->init_server_role();
@@ -211,8 +214,7 @@ class yf_main
             }
             register_shutdown_function([$this, '_framework_destruct']);
         } catch (Exception $e) {
-            $msg = 'MAIN: Caught exception: ' . print_r($e->getMessage(), 1) . PHP_EOL . $e->getTraceAsString();
-            trigger_error($msg, E_USER_WARNING);
+            trigger_error($this->_pretty_show_exception($e), E_USER_WARNING);
         }
     }
 
@@ -227,6 +229,11 @@ class yf_main
         return $this->extend_call($this, $name, $args);
     }
 
+    public function _pretty_show_exception(Exception $e)
+    {
+        return get_class($e) . ': ' . $e->message . ' in ' . $e->file . ':' . $e->line . PHP_EOL . $e->getTraceAsString();
+    }
+
     /**
      * Get named data with callback with optional caching.
      * @param mixed $name
@@ -239,18 +246,21 @@ class yf_main
         if ( ! is_string($name) || ! $name) {
             return null;
         }
-        $refresh = $params['refresh_cache'];
-        $refresh && $params['no_cache'] = true;
-
-        $enabled = $this->USE_SYSTEM_CACHE && ! $params['no_cache'];
+        $no_cache = $params['no_cache'] ?? false;
+        $refresh = $params['refresh_cache'] ?? false;
+        if ($refresh) {
+            $no_cache = true;
+        }
+        $enabled = $this->USE_SYSTEM_CACHE && ! $no_cache;
         // speed optimization with 2nd layer of caching
-        $memory_enabled = ($params['no_cache'] || $refresh || $this->is_console()) ? false : true;
+        $memory_enabled = ($no_cache || $refresh || $this->is_console()) ? false : true;
         if ($memory_enabled && isset($this->_getset_cache[$name])) {
             return $this->_getset_cache[$name]['result'];
         }
         if ($enabled || $refresh) {
             $cache = cache();
         }
+        $result = null;
         $enabled && $result = $cache->get($name, $ttl, $params);
         $need_result = true;
         if ($result) {
@@ -300,7 +310,7 @@ class yf_main
     public function _before_init_hook()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        $this->NO_GRAPHICS = $GLOBALS['no_graphics'];
+        $this->NO_GRAPHICS = $GLOBALS['no_graphics'] ?? false;
         $GLOBALS['no_graphics'] = &$this->NO_GRAPHICS;
         if (defined('DEBUG_MODE') && DEBUG_MODE) {
             ini_set('display_errors', 'on');
@@ -348,8 +358,8 @@ class yf_main
                 }
             });
         }
-        conf('filter_hidden', $_COOKIE['filter_hidden'] ? 1 : 0);
-        conf('qm_hidden', $_COOKIE['qm_hidden'] ? 1 : 0);
+        conf('filter_hidden', ($_COOKIE['filter_hidden'] ?? null) ? 1 : 0);
+        conf('qm_hidden', ($_COOKIE['qm_hidden'] ?? null) ? 1 : 0);
 
         $https_needed = $this->USE_ONLY_HTTPS;
         if ( ! $https_needed) {
@@ -452,7 +462,7 @@ class yf_main
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
         $path = dirname(__DIR__) . '/functions/yf_conf.php';
         if (file_exists($path)) {
-            $this->include_module($path, 1);
+            $this->include_module($path, true);
         }
     }
 
@@ -513,7 +523,7 @@ class yf_main
     public function init_db()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        $this->events->fire('main.before_db');
+        // $this->events->fire('main.before_db');
         // Check if current object/action not required db connection
         $get_object = $_GET['object'];
         $get_action = $_GET['action'];
@@ -532,7 +542,7 @@ class yf_main
             $this->set_module_conf('db', $this->modules['db']);
         }
         $this->db = &$this->modules['db'];
-        $this->events->fire('main.after_db');
+        // $this->events->fire('main.after_db');
     }
 
     public function init_events()
@@ -593,13 +603,13 @@ class yf_main
     public function init_cache()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        $this->events->fire('main.before_cache');
+        // $this->events->fire('main.before_cache');
         $CACHE_DRIVER = conf('CACHE_DRIVER');
         if ($CACHE_DRIVER) {
             conf('cache::DRIVER', $CACHE_DRIVER);
         }
         $this->cache = $this->_class('cache');
-        $this->events->fire('main.after_cache');
+        // $this->events->fire('main.after_cache');
     }
 
     public function init_error_reporting()
@@ -659,17 +669,17 @@ class yf_main
     public function init_session()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        $this->events->fire('main.before_session');
+        // $this->events->fire('main.before_session');
         $skip = false;
-        if (isset($this->_session_init_complete) || $this->is_console() || conf('SESSION_OFF') || $this->SESSION_OFF) {
+        if (isset($this->_session_init_complete) || $this->is_console() || conf('SESSION_OFF') || (isset($this->SESSION_OFF) && $this->SESSION_OFF)) {
             $skip = true;
-        } elseif ($this->SPIDERS_DETECTION && conf('IS_SPIDER')) {
+        } elseif ((isset($this->SPIDERS_DETECTION) && $this->SPIDERS_DETECTION) && conf('IS_SPIDER')) {
             $skip = true;
         }
         if ( ! $skip) {
             _class('session')->start();
         }
-        $this->events->fire('main.after_session');
+        // $this->events->fire('main.after_session');
     }
 
     /**
@@ -682,7 +692,7 @@ class yf_main
         if (isset($output_caching)) {
             $this->OUTPUT_CACHING = $output_caching;
         }
-        $this->events->fire('main.settings');
+        // $this->events->fire('main.settings');
     }
 
     /**
@@ -751,7 +761,7 @@ class yf_main
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
         $this->SERVER_ROLE = 'default';
-        if ( ! conf('SERVER_ROLE') && $this->SERVER_INFO['role']) {
+        if ( ! conf('SERVER_ROLE') && isset($this->SERVER_INFO['role']) && $this->SERVER_INFO['role']) {
             $this->SERVER_ROLE = $this->SERVER_INFO['role'];
             conf('SERVER_ROLE', $this->SERVER_ROLE);
         }
@@ -764,10 +774,10 @@ class yf_main
     public function init_locale()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        if ($_GET['no_lang'] || conf('no_locale')) {
+        if ((isset($_GET['no_lang']) && $_GET['no_lang']) || conf('no_locale')) {
             return false;
         }
-        _class('i18n')->init_locale();
+        // _class('i18n')->init_locale();
     }
 
     /**
@@ -933,8 +943,8 @@ class yf_main
         if (isset($this->_plugins) && ! $force) {
             return $this->_plugins;
         }
-        $white_list = (array) $this->_plugins_white_list;
-        $black_list = (array) $this->_plugins_black_list;
+        $white_list = $this->_plugins_white_list ?? [];
+        $black_list = $this->_plugins_black_list ?? [];
         // Order matters for plugins_classes !!
         $sets = [
             'framework' => YF_PATH . 'plugins/*/',
@@ -945,7 +955,7 @@ class yf_main
         $plugins_classes = [];
         $ext = YF_CLS_EXT; // default is .class.php
         foreach ((array) $sets as $set => $pattern) {
-            foreach ((array) glob($pattern, GLOB_ONLYDIR | GLOB_NOSORT | GLOB_BRACE) as $d) {
+            foreach ((array) glob($pattern, GLOB_ONLYDIR) as $d) {
                 $pname = basename($d);
                 if ($white_list && wildcard_compare($white_list, $pname)) {
                     // result is good, do not check black list if name found here, inside white list
@@ -955,14 +965,17 @@ class yf_main
                 }
                 $dlen = strlen($d);
                 $classes = [];
-                foreach (glob($d . '*{/,/*/}*' . $ext, GLOB_BRACE) as $f) {
-                    $cname = str_replace($ext, '', basename($f));
-                    $cdir = dirname(substr($f, $dlen)) . '/';
-                    if (strpos($cname, YF_PREFIX) === 0) {
-                        $cname = substr($cname, $_plen);
+                $glob_patterns = [$d . '*/*' . $ext, $d . '*/*/*' . $ext];
+                foreach ($glob_patterns as $glob_pattern) {
+                    foreach (glob($glob_pattern) as $f) {
+                        $cname = str_replace($ext, '', basename($f));
+                        $cdir = dirname(substr($f, $dlen)) . '/';
+                        if (strpos($cname, YF_PREFIX) === 0) {
+                            $cname = substr($cname, $_plen);
+                        }
+                        $classes[$cname][$cdir] = $f;
+                        $plugins_classes[$cname] = $pname;
                     }
-                    $classes[$cname][$cdir] = $f;
-                    $plugins_classes[$cname] = $pname;
                 }
                 $plugins[$pname][$set] = $classes;
             }
@@ -1044,6 +1057,7 @@ class yf_main
                 }
             }
         } elseif (MAIN_TYPE_ADMIN) {
+            $project_path2 = '';
             if (empty($custom_path)) {
                 $site_path = ADMIN_MODULES_DIR;
                 $site_path_dev = $dev_path . ADMIN_MODULES_DIR;
@@ -1144,7 +1158,7 @@ class yf_main
         //     '*_model' => array('unit_tests' => array(__DIR__.'/model/fixtures/')),
         // );
         // $film_model = _class('film_model');
-        foreach ((array) $this->_custom_class_storages as $_class_name => $_storages) {
+        foreach (($this->_custom_class_storages ?? []) as $_class_name => $_storages) {
             // Have support for wildcards: * ? [abc]
             if ( ! fnmatch($_class_name, $class_name)) {
                 continue;
@@ -1156,8 +1170,8 @@ class yf_main
         $storage = '';
         $loaded_path = '';
         foreach ((array) $storages as $_storage => $v) {
-            $_path = (string) $v[0];
-            $_prefix = (string) $v[1];
+            $_path = (string) ($v[0] ?? '');
+            $_prefix = (string) ($v[1] ?? '');
             if (empty($_path)) {
                 continue;
             }
@@ -1379,7 +1393,7 @@ class yf_main
      * @param mixed $params
      * @return bool
      */
-    public function set_module_conf($module_name = '', &$MODULE_OBJ, $params = '')
+    public function set_module_conf($module_name, &$MODULE_OBJ, $params = '')
     {
         // Stop here if project config not set or some other things missing
         if (empty($module_name) || ! is_object($MODULE_OBJ)) {
@@ -1428,10 +1442,10 @@ class yf_main
             }
         }
         if (is_object($this->db) && ! $this->db->_connected) {
-            //			$params['no_cache'] = true;
+            // $params['no_cache'] = true;
         }
         $data = $this->getset('get_data:' . $cache_name, function () use ($name, $params) {
-            ! $this->_data_handlers_loaded && $this->_load_data_handlers();
+            ! ($this->_data_handlers_loaded ?? null) && $this->_load_data_handlers();
             if ( ! isset($this->data_handlers[$name])) {
                 return [];
             }
@@ -1484,7 +1498,7 @@ class yf_main
     public function _load_data_handlers()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        if ($this->_data_handlers_loaded) {
+        if ($this->_data_handlers_loaded ?? null) {
             return false;
         }
         $this->data_handlers = [];
@@ -1659,24 +1673,24 @@ class yf_main
         if (DEBUG_MODE) {
             ini_set('display_errors', 'stdout');
         }
-        if ($_SERVER['SERVER_ADDR'] !== null) {
+        if (($_SERVER['SERVER_ADDR'] ?? null) !== null) {
             $_SERVER['SERVER_ADDR'] = preg_replace('#[^0-9\.]+#', '', trim($_SERVER['SERVER_ADDR']));
         }
-        if ($_SERVER['SERVER_PORT'] !== null) {
+        if (($_SERVER['SERVER_PORT'] ?? null) !== null) {
             $_SERVER['SERVER_PORT'] = (int) $_SERVER['SERVER_PORT'];
         }
-        if ($_SERVER['HTTP_HOST'] !== null) {
+        if (($_SERVER['HTTP_HOST'] ?? null) !== null) {
             if (false !== ($pos = strpos($_SERVER['HTTP_HOST'], ':'))) {
                 $_SERVER['HTTP_HOST'] = substr($_SERVER['HTTP_HOST'], 0, $pos);
             }
             $_SERVER['HTTP_HOST'] = strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim($_SERVER['HTTP_HOST']))));
         }
-        if ($_SERVER['REQUEST_URI'] !== null) {
+        if (($_SERVER['REQUEST_URI'] ?? null) !== null) {
             // Possible bug when apache sends full url into request_uri, like this: "http://test.dev/" instead of "/"
             $p = parse_url($_SERVER['REQUEST_URI']);
             if (isset($p['scheme']) || isset($p['host'])) {
                 $_SERVER['REQUEST_URI'] = ($p['path'] ?: '/') . ($p['query'] ? '?' . $p['query'] : '');
-                if ($_SERVER['QUERY_STRING'] != $p['query']) {
+                if (($_SERVER['QUERY_STRING'] ?? null) !== null && $_SERVER['QUERY_STRING'] != $p['query']) {
                     $_SERVER['QUERY_STRING'] = $p['query'];
                     parse_str($p['query'], $_get);
                     foreach ((array) $_get as $k => $v) {
@@ -1719,23 +1733,28 @@ class yf_main
         ! defined('UPLOADS_PATH') && define('UPLOADS_PATH', PROJECT_PATH . 'uploads/');
         // Website inside project FS base path. Recommended to use from now instead of REAL_PATH
         if ( ! defined('SITE_PATH')) {
-            list($found_site, $found_dir) = $this->_find_site();
+            $tmp = $this->_find_site();
+            $found_site = $tmp[0] ?? null;
+            $found_dir = $tmp[1] ?? null;
+            unset($tmp);
             define('SITE_PATH', $found_site ? $found_dir . $found_site . '/' : PROJECT_PATH);
         }
         // Alias of SITE_PATH. Compatibility with old code. DEPRECATED
         ! defined('REAL_PATH') && define('REAL_PATH', SITE_PATH);
         // Set WEB_PATH (if not done yet)
         if ( ! defined('WEB_PATH')) {
-            $request_uri = $_SERVER['REQUEST_URI'];
+            $request_uri = $_SERVER['REQUEST_URI'] ?? '';
             $cur_web_path = '';
-            if ($request_uri[strlen($request_uri) - 1] == '/') {
-                $cur_web_path = substr($request_uri, 0, -1);
-            } else {
-                $cur_web_path = dirname($request_uri);
+            if ($request_uri) {
+                if ($request_uri[strlen($request_uri) - 1] == '/') {
+                    $cur_web_path = substr($request_uri, 0, -1);
+                } else {
+                    $cur_web_path = dirname($request_uri);
+                }
             }
             $host = '';
             $conf_domains = conf('DOMAINS');
-            if ($_SERVER['HTTP_HOST']) {
+            if ($_SERVER['HTTP_HOST'] ?? null) {
                 $host = $_SERVER['HTTP_HOST'];
             } elseif (is_array($conf_domains)) {
                 $host = (string) current($conf_domains);
@@ -1746,7 +1765,7 @@ class yf_main
             define(
                 'WEB_PATH',
                 ($this->is_https() ? 'https://' : 'http://')
-                . $host . ($_SERVER['SERVER_PORT'] && ! in_array($_SERVER['SERVER_PORT'], ['80', '443']) ? ':' . $_SERVER['SERVER_PORT'] : '')
+                . $host . (($_SERVER['SERVER_PORT'] ?? null) && ! in_array($_SERVER['SERVER_PORT'], ['80', '443']) ? ':' . ($_SERVER['SERVER_PORT'] ?? null) : '')
                 . str_replace(['\\', '//'], '/', (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path) . '/')
             );
         }
@@ -1758,12 +1777,12 @@ class yf_main
         ! defined('ADMIN_SITE_PATH') && define('ADMIN_SITE_PATH', SITE_PATH . 'admin/');
         ! defined('ADMIN_WEB_PATH') && define('ADMIN_WEB_PATH', WEB_PATH . 'admin/');
         // Check if current page is called via AJAX call from javascript
-        conf('IS_AJAX', (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || ! empty($_GET['ajax_mode'])) ? 1 : 0);
+        conf('IS_AJAX', (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') == 'xmlhttprequest' || ! empty($_GET['ajax_mode'] ?? '')) ? 1 : 0);
 
         define('USER_MODULES_DIR', 'modules/');
         define('ADMIN_MODULES_DIR', 'admin_modules/');
         // Set console-specific options
-        if ($this->is_console()) {
+        if ($this->is_console() && ! $this->is_unit_test()) {
             ini_set('memory_limit', -1);
             set_time_limit(0);
             // Send PHP warnings and errors to stderr instead of stdout. This aids in diagnosing problems, while keeping messages out of redirected output.
@@ -1771,7 +1790,7 @@ class yf_main
                 ini_set('display_errors', 'stderr');
             }
             // Parse console options into $_GET array
-            foreach ((array) $_SERVER['argv'] as $v) {
+            foreach ((array) ($_SERVER['argv'] ?? []) as $v) {
                 if (strpos($v, '--') !== 0) {
                     continue;
                 }
@@ -1784,11 +1803,11 @@ class yf_main
             }
         }
         // Filter object and action from $_GET
-        if ($_GET['action'] == $_GET['object']) {
+        if (($_GET['action'] ?? '') == ($_GET['object'] ?? '')) {
             $_GET['action'] = '';
         }
-        $_GET['object'] = str_replace(['yf_', '-'], ['', '_'], preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['object']))));
-        $_GET['action'] = str_replace('-', '_', preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['action']))));
+        $_GET['object'] = str_replace(['yf_', '-'], ['', '_'], preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['object'] ?? ''))));
+        $_GET['action'] = str_replace('-', '_', preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['action'] ?? ''))));
         if ( ! $_GET['action']) {
             $_GET['action'] = defined('DEFAULT_ACTION') ? DEFAULT_ACTION : 'show';
         }
@@ -1801,30 +1820,28 @@ class yf_main
     public function init_php_params()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
-        ini_set('url_rewriter.tags', '');
-        date_default_timezone_set(conf('timezone') ?: 'Europe/Kiev');
-        // Prepare GPC data. get_magic_quotes_gpc always return 0 starting from PHP 5.4+
-        if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
-            $_GET = $this->_strip_quotes_recursive($_GET);
-            $_POST = $this->_strip_quotes_recursive($_POST);
-            $_COOKIE = $this->_strip_quotes_recursive($_COOKIE);
-            $_REQUEST = array_merge((array) $_GET, (array) $_POST, (array) $_COOKIE);
+        if ( ! $this->is_unit_test()) {
+            $reporting_level = 0;
+            if (DEBUG_MODE) {
+                $is_php8 = version_compare(PHP_VERSION, '8.0.0') >= 0;
+                if ($is_php8) {
+                    $reporting_level = $this->ERROR_REPORTING_DEBUG_8;
+                } else {
+                    $reporting_level = $this->ERROR_REPORTING_DEBUG;
+                }
+            } else {
+                $reporting_level = $this->ERROR_REPORTING_PROD;
+            }
+            error_reporting($reporting_level);
         }
+        ini_set('url_rewriter.tags', '');
+        date_default_timezone_set(conf('timezone') ?: ($this->TZ ?? 'Europe/Kiev'));
         /*
+        @TODO
         if ($_POST) {
             if (!verify_token()) {
                 $ini = "max_input_vars";
                 $max_vars = ini_get($ini);
-                if (extension_loaded("suhosin")) {
-                    foreach (array("suhosin.request.max_vars", "suhosin.post.max_vars") as $key) {
-                        $val = ini_get($key);
-                        if ($val && (!$max_vars || $val < $max_vars)) {
-                            $ini = $key;
-                            $max_vars = $val;
-                        }
-                    }
-                }
                 $error = (!$_POST["token"] && $max_vars
                     ? lang('Maximum number of allowed fields exceeded. Please increase %s.', "'$ini'")
                     : lang('Invalid CSRF token. Send the form again.') . ' ' . lang('If you did not send this request from Adminer then close this page.')
@@ -1869,12 +1886,12 @@ class yf_main
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), []];
         if (MAIN_TYPE_ADMIN) {
-            $obj->USER_ID = $_GET['user_id'];
-            $obj->ADMIN_ID = (int) $_SESSION['admin_id'];
-            $obj->ADMIN_GROUP = (int) $_SESSION['admin_group'];
+            $obj->USER_ID = ($_GET['user_id'] ?? null);
+            $obj->ADMIN_ID = (int) ($_SESSION['admin_id'] ?? 0);
+            $obj->ADMIN_GROUP = (int) ($_SESSION['admin_group'] ?? 0);
         } elseif (MAIN_TYPE_USER) {
-            $obj->USER_ID = (int) $_SESSION['user_id'];
-            $obj->USER_GROUP = (int) $_SESSION['user_group'];
+            $obj->USER_ID = (int) ($_SESSION['user_id'] ?? 0);
+            $obj->USER_GROUP = (int) ($_SESSION['user_group'] ?? 0);
         }
         if (isset($obj->USER_ID) && ! empty($obj->USER_ID)) {
             if ( ! isset($this->_current_user_info)) {
@@ -2049,7 +2066,7 @@ class yf_main
 
     public function is_db()
     {
-        return is_object($this->db) ? true : false;
+        return is_object($this->db ?? null) ? true : false;
     }
 
     /**
@@ -2057,7 +2074,7 @@ class yf_main
      */
     public function is_post()
     {
-        return strtoupper($_SERVER['REQUEST_METHOD']) == 'POST';
+        return strtoupper($_SERVER['REQUEST_METHOD'] ?? '') == 'POST';
     }
 
     /**
@@ -2193,7 +2210,7 @@ class yf_main
         if ( ! $this->is_console()) {
             try {
                 require_php_lib('mobile_detect');
-                $detect = new Mobile_Detect([], strtolower($_SERVER['HTTP_USER_AGENT']));
+                $detect = new Mobile_Detect([], strtolower($_SERVER['HTTP_USER_AGENT'] ?? ''));
                 $this->_is_mobile = (bool) $detect->isMobile();
             } catch (Exception $e) {
             }

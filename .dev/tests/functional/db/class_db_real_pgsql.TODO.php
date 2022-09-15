@@ -20,14 +20,14 @@ class class_db_real_pgsql_test extends db_real_abstract
     {
         return 'CREATE TABLE "' . self::table_name($table) . '" ("id" serial NOT NULL, "id2" integer NOT NULL, "id3" integer NOT NULL)';
     }
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
         self::$DB_DRIVER = 'pgsql';
         self::_connect();
         self::utils()->truncate_database(self::db_name());
     }
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         self::utils()->truncate_database(self::db_name());
         self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
@@ -45,7 +45,7 @@ class class_db_real_pgsql_test extends db_real_abstract
         $this->assertTrue(self::_connect());
         $this->assertTrue(self::$db->_connected);
         $this->assertTrue(self::$db->_tried_to_connect);
-        $this->assertInternalType('object', self::$db->db);
+        $this->assertIsObject(self::$db->db);
         $this->assertTrue( ! empty(self::$db->db->db_connect_id));
     }
     public function test_basic_queries_and_fetching()

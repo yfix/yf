@@ -787,9 +787,7 @@ class yf_manage_shop
         return $product_info;
     }
 
-    /*
-     * Patterns for massive corrections of names of products
-     */
+    // Patterns for massive corrections of names of products
     public function clear_patterns()
     {
         return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();

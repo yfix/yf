@@ -16,7 +16,7 @@ class yf_shop__basket_api
         return $this;
     }
 
-    /***/
+
     public function get($k, $k2 = false)
     {
         if ( ! empty($k2)) {
@@ -25,27 +25,27 @@ class yf_shop__basket_api
         return $_SESSION[$storage_name][$k];
     }
 
-    /***/
+
     public function get_all()
     {
         return $_SESSION[$storage_name];
     }
 
-    /***/
+
     public function set($k, $v)
     {
         $_SESSION[$storage_name][$k] = $v;
         return true;
     }
 
-    /***/
+
     public function del($k)
     {
         unset($_SESSION[$storage_name][$k]);
         return true;
     }
 
-    /***/
+
     public function clean()
     {
         $_SESSION[$storage_name] = [];

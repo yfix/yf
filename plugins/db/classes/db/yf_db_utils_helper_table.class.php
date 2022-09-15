@@ -40,6 +40,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function exists($extra = [], &$error = false)
     {
@@ -48,6 +49,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function info($extra = [], &$error = false)
     {
@@ -56,6 +58,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop($extra = [], &$error = false)
     {
@@ -64,6 +67,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create(array $data, $extra = [], &$error = false)
     {
@@ -72,6 +76,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function alter(array $data, $extra = [], &$error = false)
     {
@@ -81,6 +86,7 @@ class yf_db_utils_helper_table
     /**
      * @param mixed $new_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function rename($new_name, $extra = [], &$error = false)
     {
@@ -89,6 +95,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function truncate($extra = [], &$error = false)
     {
@@ -97,6 +104,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function check($extra = [], &$error = false)
     {
@@ -105,6 +113,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function repair($extra = [], &$error = false)
     {
@@ -113,6 +122,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function optimize($extra = [], &$error = false)
     {
@@ -121,6 +131,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function columns($extra = [], &$error = false)
     {
@@ -130,6 +141,7 @@ class yf_db_utils_helper_table
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function column($name, $extra = [], &$error = false)
     {
@@ -138,6 +150,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function indexes($extra = [], &$error = false)
     {
@@ -147,6 +160,7 @@ class yf_db_utils_helper_table
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function index($name, $extra = [], &$error = false)
     {
@@ -155,6 +169,7 @@ class yf_db_utils_helper_table
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function foreign_keys($extra = [], &$error = false)
     {
@@ -164,6 +179,7 @@ class yf_db_utils_helper_table
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function foreign_key($name, $extra = [], &$error = false)
     {

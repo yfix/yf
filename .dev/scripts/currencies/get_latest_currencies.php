@@ -1,11 +1,11 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 function data_get_latest_currencies()
 {
     $url = 'http://www.currency-iso.org/dam/downloads/table_a1.xml';
     $f = __DIR__ . '/' . basename($url);
-    if ( ! file_exists($f)) {
+    if (!file_exists($f)) {
         file_put_contents($f, file_get_contents($url));
     }
     $xml_string = file_get_contents($f);
@@ -14,7 +14,7 @@ function data_get_latest_currencies()
     foreach ($xml->CcyTbl->CcyNtry as $item) {
         $item = (array) $item;
         $id = $item['Ccy'];
-        if ( ! $id) {
+        if (!$id) {
             continue;
         }
         $data[$id] = [
@@ -31,7 +31,7 @@ function data_get_latest_currencies()
     ///////////
     $url2 = 'https://en.wikipedia.org/wiki/List_of_circulating_currencies';
     $f3 = __DIR__ . '/' . basename($url2) . '.table.html';
-    if ( ! file_exists($f3)) {
+    if (!file_exists($f3)) {
         $html2 = file_get_contents($url2);
         $regex2 = '~<h2>[^<]*<span[^>]*id="List_of_circulating_currencies_by_country_or_territory"[^>]*>.*?</h2>[^<]*<table[^>]*>(.*?)</table>~ims';
         preg_match($regex2, $html2, $m2);
@@ -57,7 +57,7 @@ function data_get_latest_currencies()
             $id = $v[3];
             $sign = $v[2];
         }
-        if ( ! $id) {
+        if (!$id) {
             continue;
         }
         if ($sign) {

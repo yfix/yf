@@ -78,7 +78,7 @@ class yf_cache
     public function _init_settings($params = [])
     {
         // backwards compatibility
-        if ($this->FILES_TTL) {
+        if (isset($this->FILES_TTL)) {
             $this->TTL = $this->FILES_TTL;
         }
         $conf_cache_ns = conf('CACHE_NS');
@@ -103,14 +103,14 @@ class yf_cache
             $this->NO_CACHE = true;
             $this->_NO_CACHE_WHY = 'main()->USE_SYSTEM_CACHE == false';
         }
-        if (($_GET['no_core_cache'] || $_GET['no_cache']) && $this->_url_action_allowed('no_cache')) {
+        if ((isset($_GET['no_core_cache']) || isset($_GET['no_cache'])) && $this->_url_action_allowed('no_cache')) {
             $this->NO_CACHE = true;
             $this->_NO_CACHE_WHY = '$_GET param no_cache';
         }
         if ($this->NO_CACHE && ! $this->_NO_CACHE_WHY) {
             $this->_NO_CACHE_WHY = 'cache()->NO_CACHE == true';
         }
-        if (($_GET['refresh_cache'] || $_GET['rebuild_core_cache']) && $this->_url_action_allowed('refresh_cache')) {
+        if ((isset($_GET['refresh_cache']) || isset($_GET['rebuild_core_cache'])) && $this->_url_action_allowed('refresh_cache')) {
             $this->FORCE_REBUILD_CACHE = true;
         }
         $this->FORCE_REBUILD_CACHE = false;
@@ -265,7 +265,7 @@ class yf_cache
             'trace' => main()->trace_string(),
             'did_real_work' => (int) $do_real_work,
         ]);
-        if ($_GET['refresh_cache'] && $this->_url_action_allowed('refresh_cache')) {
+        if (isset($_GET['refresh_cache']) && $_GET['refresh_cache'] && $this->_url_action_allowed('refresh_cache')) {
             return null;
         }
         return $result;
@@ -283,7 +283,7 @@ class yf_cache
             return null;
         }
         $do_real_work = true;
-        if ( ! $this->_driver_ok || $this->NO_CACHE || $this->_no_cache[$name]) {
+        if ( ! $this->_driver_ok || $this->NO_CACHE || ($this->_no_cache[$name] ?? null)) {
             $do_real_work = false;
         }
         if (is_array($name)) {
@@ -472,7 +472,7 @@ class yf_cache
         }
         $result = null;
         if ($do_real_work) {
-            if ($this->_driver->implemented['multi_get']) {
+            if ($this->_driver->implemented['multi_get'] ?? null) {
                 // Fix names prefix
                 $p_len = strlen($this->CACHE_NS);
                 foreach ((array) $names as $k => $name) {
@@ -530,7 +530,7 @@ class yf_cache
         }
         $result = null;
         if ($do_real_work) {
-            if ($this->_driver->implemented['multi_set']) {
+            if ($this->_driver->implemented['multi_set'] ?? null) {
                 // Fix names prefix
                 foreach ((array) $data as $name => $_data) {
                     $data[$this->CACHE_NS . $name] = $_data;
@@ -576,7 +576,7 @@ class yf_cache
         if ($do_real_work) {
             $old_names = $names;
             $failed = false;
-            $implemented = $this->_driver->implemented['multi_del'];
+            $implemented = $this->_driver->implemented['multi_del'] ?? null;
             if ($implemented) {
                 // Fix names prefix
                 foreach ((array) $names as $k => $name) {
@@ -617,7 +617,7 @@ class yf_cache
         if (DEBUG_MODE) {
             $time_start = microtime(true);
         }
-        if ( ! $this->_driver->implemented['list_keys']) {
+        if ( ! ($this->_driver->implemented['list_keys'] ?? null)) {
             $do_real_work = false;
         }
         $result = null;

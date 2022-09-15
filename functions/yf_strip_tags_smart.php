@@ -28,9 +28,11 @@
  * @version  4.0.10
  */
 function strip_tags_smart(
-    /*string*/ $s,
+    // string
+    $s,
     array $allowable_tags = null,
-    /*boolean*/ $is_format_spaces = true,
+    // boolean
+    $is_format_spaces = true,
     array $pair_tags = ['script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button'],
     array $para_tags = ['p', 'td', 'th', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'form', 'title', 'pre', 'textarea']
 ) {
@@ -58,14 +60,13 @@ function strip_tags_smart(
         if ($_callback_type === 'strip_tags') {
             $tag = strtolower($s[1]);
             if ($_allowable_tags &&
-                (array_key_exists($tag, $_allowable_tags) || array_key_exists('<' . trim(strtolower($s[0]), '< />') . '>', $_allowable_tags))
-                ) {
+                (isset($_allowable_tags[$tag]) || isset($_allowable_tags['<' . trim(strtolower($s[0]), '< />') . '>']))) {
                 return $s[0];
             }
             if ($tag == 'br') {
                 return "\r\n";
             }
-            if ($_para_tags && array_key_exists($tag, $_para_tags)) {
+            if ($_para_tags && isset($_para_tags[$tag])) {
                 return "\r\n\r\n";
             }
             return '';

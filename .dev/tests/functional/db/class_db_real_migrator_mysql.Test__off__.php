@@ -19,14 +19,14 @@ class class_db_real_migrator_mysql_test extends db_real_abstract
     {
         return self::$db->migrator();
     }
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
         self::$DB_DRIVER = 'mysqli';
         self::_connect();
         self::utils()->truncate_database(self::db_name());
     }
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         self::utils()->truncate_database(self::db_name());
         self::$DB_DRIVER = self::$_bak['DB_DRIVER'];

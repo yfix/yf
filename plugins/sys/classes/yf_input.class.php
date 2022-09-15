@@ -36,7 +36,7 @@ class yf_input
                 'trace' => main()->trace_string(),
             ]);
         }
-        return $key === null ? $_GET : $_GET[$key];
+        return $key === null ? $_GET : ($_GET[$key] ?? null);
     }
 
     /**
@@ -57,7 +57,7 @@ class yf_input
                 'trace' => main()->trace_string(),
             ]);
         }
-        return $key === null ? $_POST : $_POST[$key];
+        return $key === null ? $_POST : ($_POST[$key] ?? null);
     }
 
     /**
@@ -78,7 +78,7 @@ class yf_input
                 'trace' => main()->trace_string(),
             ]);
         }
-        return $key === null ? $_SESSION : $_SESSION[$key];
+        return $key === null ? $_SESSION : ($_SESSION[$key] ?? null);
     }
 
     /**
@@ -99,7 +99,7 @@ class yf_input
                 'trace' => main()->trace_string(),
             ]);
         }
-        return $key === null ? $_SERVER : $_SERVER[$key];
+        return $key === null ? $_SERVER : ($_SERVER[$key] ?? null);
     }
 
     /**
@@ -121,7 +121,7 @@ class yf_input
                 'trace' => main()->trace_string(),
             ]);
         }
-        return $key === null ? $_COOKIE : $_COOKIE[$key];
+        return $key === null ? $_COOKIE : ($_COOKIE[$key] ?? null);
     }
 
     /**
@@ -142,7 +142,7 @@ class yf_input
                 'trace' => main()->trace_string(),
             ]);
         }
-        return $key === null ? $_ENV : $_ENV[$key];
+        return $key === null ? $_ENV : ($_ENV[$key] ?? null);
     }
 
     /**

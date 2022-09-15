@@ -55,6 +55,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function database_exists($db_name, $extra = [], &$error = false)
     {
@@ -68,6 +69,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function database_info($db_name = '', $extra = [], &$error = false)
     {
@@ -97,6 +99,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create_database($db_name, $extra = [], &$error = false)
     {
@@ -114,6 +117,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_database($db_name, $extra = [], &$error = false)
     {
@@ -142,6 +146,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function alter_database($db_name, $extra = [], &$error = false)
     {
@@ -172,6 +177,7 @@ abstract class yf_db_utils_driver
      * @param mixed $db_name
      * @param mixed $new_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function rename_database($db_name, $new_name, $extra = [], &$error = false)
     {
@@ -206,6 +212,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function truncate_database($db_name, $extra = [], &$error = false)
     {
@@ -234,6 +241,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_tables($db_name = '', $extra = [], &$error = false)
     {
@@ -264,6 +272,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_tables_details($db_name = '', $extra = [], &$error = false)
     {
@@ -296,6 +305,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function table_exists($table, $extra = [], &$error = false)
     {
@@ -324,6 +334,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function table_get_columns($table, $extra = [], &$error = false)
     {
@@ -418,6 +429,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function table_get_charset($table, $extra = [], &$error = false)
     {
@@ -457,6 +469,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function table_info($table, $extra = [], &$error = false)
     {
@@ -504,6 +517,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function table_simple_info($table, $extra = [], &$error = false)
     {
@@ -518,6 +532,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function table_options($table, $extra = [], &$error = false)
     {
@@ -537,6 +552,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create_table($table, $extra = [], &$error = false)
     {
@@ -632,6 +648,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_table($table, $extra = [], &$error = false)
     {
@@ -651,6 +668,7 @@ abstract class yf_db_utils_driver
      * Here we support only small subset of alter table options, mostly related to basic things like engine or charset.
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function alter_table($table, $extra = [], &$error = false)
     {
@@ -680,6 +698,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $new_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function rename_table($table, $new_name, $extra = [], &$error = false)
     {
@@ -698,6 +717,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function truncate_table($table, $extra = [], &$error = false)
     {
@@ -716,6 +736,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function columns_names($table, $extra = [], &$error = false)
     {
@@ -726,6 +747,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_columns($table, $extra = [], &$error = false)
     {
@@ -740,6 +762,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $col_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function column_exists($table, $col_name, $extra = [], &$error = false)
     {
@@ -755,6 +778,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $col_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function column_info($table, $col_name, $extra = [], &$error = false)
     {
@@ -771,6 +795,7 @@ abstract class yf_db_utils_driver
      * @param mixed $col_name
      * @param mixed $item_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function column_info_item($table, $col_name, $item_name, $extra = [], &$error = false)
     {
@@ -786,6 +811,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $col_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_column($table, $col_name, $extra = [], &$error = false)
     {
@@ -805,6 +831,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $data
      * @param mixed $extra
+     * @param mixed $error
      */
     public function add_column($table, $data, $extra = [], &$error = false)
     {
@@ -826,6 +853,7 @@ abstract class yf_db_utils_driver
      * @param mixed $col_name
      * @param mixed $new_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function rename_column($table, $col_name, $new_name, $extra = [], &$error = false)
     {
@@ -849,6 +877,7 @@ abstract class yf_db_utils_driver
      * @param mixed $col_name
      * @param mixed $data
      * @param mixed $extra
+     * @param mixed $error
      */
     public function alter_column($table, $col_name, $data, $extra = [], &$error = false)
     {
@@ -883,6 +912,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_indexes($table, $extra = [], &$error = false)
     {
@@ -928,6 +958,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $index_name
+     * @param mixed $error
      */
     public function index_info($table, $index_name, &$error = false)
     {
@@ -946,6 +977,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $index_name
+     * @param mixed $error
      */
     public function index_exists($table, $index_name, &$error = false)
     {
@@ -966,6 +998,7 @@ abstract class yf_db_utils_driver
      * @param mixed $index_name
      * @param mixed $fields
      * @param mixed $extra
+     * @param mixed $error
      */
     public function add_index($table, $index_name = '', $fields = [], $extra = [], &$error = false)
     {
@@ -1017,6 +1050,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $index_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_index($table, $index_name, $extra = [], &$error = false)
     {
@@ -1047,6 +1081,7 @@ abstract class yf_db_utils_driver
      * @param mixed $index_name
      * @param mixed $fields
      * @param mixed $extra
+     * @param mixed $error
      */
     public function alter_index($table, $index_name = '', $fields = [], $extra = [], &$error = false)
     {
@@ -1058,6 +1093,7 @@ abstract class yf_db_utils_driver
      * @param mixed $index_name
      * @param mixed $fields
      * @param mixed $extra
+     * @param mixed $error
      */
     public function update_index($table, $index_name = '', $fields = [], $extra = [], &$error = false)
     {
@@ -1080,6 +1116,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_foreign_keys($table, $extra = [], &$error = false)
     {
@@ -1134,6 +1171,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $index_name
+     * @param mixed $error
      */
     public function foreign_key_info($table, $index_name, &$error = false)
     {
@@ -1152,6 +1190,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $index_name
+     * @param mixed $error
      */
     public function foreign_key_exists($table, $index_name, &$error = false)
     {
@@ -1171,6 +1210,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $index_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_foreign_key($table, $index_name, $extra = [], &$error = false)
     {
@@ -1195,6 +1235,7 @@ abstract class yf_db_utils_driver
      * @param mixed $ref_table
      * @param mixed $ref_fields
      * @param mixed $extra
+     * @param mixed $error
      */
     public function add_foreign_key($table, $index_name = '', $fields = [], $ref_table = '', $ref_fields = [], $extra = [], &$error = false)
     {
@@ -1250,6 +1291,7 @@ abstract class yf_db_utils_driver
      * @param mixed $ref_table
      * @param mixed $ref_fields
      * @param mixed $extra
+     * @param mixed $error
      */
     public function alter_foreign_key($table, $index_name = '', $fields = [], $ref_table = '', $ref_fields = [], $extra = [], &$error = false)
     {
@@ -1263,6 +1305,7 @@ abstract class yf_db_utils_driver
      * @param mixed $ref_table
      * @param mixed $ref_fields
      * @param mixed $extra
+     * @param mixed $error
      */
     public function update_foreign_key($table, $index_name = '', $fields = [], $ref_table = '', $ref_fields = [], $extra = [], &$error = false)
     {
@@ -1285,6 +1328,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_views($db_name = '', $extra = [], &$error = false)
     {
@@ -1318,6 +1362,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function view_exists($table, $extra = [], &$error = false)
     {
@@ -1346,6 +1391,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function view_info($table, $extra = [], &$error = false)
     {
@@ -1374,6 +1420,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_view($table, $extra = [], &$error = false)
     {
@@ -1394,6 +1441,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $sql_as
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create_view($table, $sql_as, $extra = [], &$error = false)
     {
@@ -1412,6 +1460,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_triggers($db_name = '', $extra = [], &$error = false)
     {
@@ -1444,6 +1493,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function trigger_exists($name, $extra = [], &$error = false)
     {
@@ -1468,6 +1518,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function trigger_info($name, $extra = [], &$error = false)
     {
@@ -1492,6 +1543,7 @@ abstract class yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_trigger($name, $extra = [], &$error = false)
     {
@@ -1511,6 +1563,7 @@ abstract class yf_db_utils_driver
      * @param mixed $trigger_event
      * @param mixed $trigger_body
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = [], &$error = false)
     {
@@ -1566,6 +1619,7 @@ abstract class yf_db_utils_driver
     /**
      * Use db installer repository to get table structure.
      * @param mixed $table
+     * @param mixed $error
      */
     public function _get_table_structure_from_db_installer($table, &$error = false)
     {
@@ -1600,6 +1654,7 @@ abstract class yf_db_utils_driver
     /**
      * See http://dev.mysql.com/doc/refman/5.6/en/create-table.html.
      * @param mixed $str
+     * @param mixed $error
      */
     public function _parse_column_type($str, &$error = false)
     {

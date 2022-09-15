@@ -2,7 +2,6 @@
 
 class yf_manage_shop_hook_side_column
 {
-    /***/
     public function _hook_side_column()
     {
         if ($_GET['action'] == 'product_edit') {
@@ -19,7 +18,7 @@ class yf_manage_shop_hook_side_column
         return '';
     }
 
-    /***/
+
     public function _product_revisions()
     {
         $product_id = (int) ($_GET['id']);
@@ -41,7 +40,7 @@ class yf_manage_shop_hook_side_column
             ->footer_link('All products revisions', './?object=manage_shop&action=product_revisions');
     }
 
-    /***/
+
     public function _product_images_revisions()
     {
         $product_id = (int) ($_GET['id']);
@@ -72,7 +71,7 @@ class yf_manage_shop_hook_side_column
             ->footer_link('All images revisions', './?object=manage_shop&action=product_images_revisions');
     }
 
-    /***/
+
     public function _product_revisions_similar()
     {
         $rev = db()->get('SELECT * FROM ' . db('shop_product_revisions') . ' WHERE id=' . (int) ($_GET['id']));
@@ -96,7 +95,7 @@ class yf_manage_shop_hook_side_column
             ->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d&page=' . $_GET['page']);
     }
 
-    /***/
+
     public function _product_images_revisions_similar()
     {
         $rev = db()->get('SELECT * FROM ' . db('shop_product_images_revisions') . ' WHERE id=' . (int) ($_GET['id']));
@@ -120,7 +119,7 @@ class yf_manage_shop_hook_side_column
             ->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d&page=' . $_GET['page']);
     }
 
-    /***/
+
     public function _order_revisions()
     {
         $order_id = (int) ($_GET['id']);
@@ -142,7 +141,7 @@ class yf_manage_shop_hook_side_column
             ->footer_link('All orders revisions', './?object=manage_shop&action=order_revisions');
     }
 
-    /***/
+
     public function _order_revisions_similar()
     {
         $rev = db()->get('SELECT * FROM ' . db('shop_order_revisions') . ' WHERE id=' . (int) ($_GET['id']));
@@ -166,7 +165,7 @@ class yf_manage_shop_hook_side_column
             ->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d&page=' . $_GET['page']);
     }
 
-    /***/
+
     public function _revisions($type)
     {
         $id = (int) ($_GET['id']);

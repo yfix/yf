@@ -37,6 +37,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function truncate_database($db_name, $extra = [], &$error = false)
     {
@@ -87,6 +88,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
      * Note: The 'SHOW PROCEDURE|FUNCTION CODE' feature is disabled; you need MySQL built with '--with-debug' to have it working (code:1289).
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_procedures($db_name = '', $extra = [], &$error = false)
     {
@@ -113,6 +115,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function procedure_exists($name, $extra = [], &$error = false)
     {
@@ -130,6 +133,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function procedure_info($name, $extra = [], &$error = false)
     {
@@ -147,6 +151,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_procedure($name, $extra = [], &$error = false)
     {
@@ -164,6 +169,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
      * @param mixed $sql_body
      * @param mixed $sql_params
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create_procedure($name, $sql_body, $sql_params = '', $extra = [], &$error = false)
     {
@@ -179,6 +185,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * Note: // The 'SHOW PROCEDURE|FUNCTION CODE' feature is disabled; you need MySQL built with '--with-debug' to have it working (code:1289).
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_functions($extra = [], &$error = false)
     {
@@ -198,6 +205,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function function_exists($name, $extra = [], &$error = false)
     {
@@ -215,6 +223,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function function_info($name, $extra = [], &$error = false)
     {
@@ -232,6 +241,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_function($name, $extra = [], &$error = false)
     {
@@ -260,6 +270,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
      * @param mixed $sql_returns_type
      * @param mixed $sql_params
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create_function($name, $sql_body, $sql_returns_type, $sql_params = '', $extra = [], &$error = false)
     {
@@ -287,6 +298,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $db_name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_events($db_name = '', $extra = [], &$error = false)
     {
@@ -321,6 +333,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function event_exists($name, $extra = [], &$error = false)
     {
@@ -345,6 +358,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function event_info($name, $extra = [], &$error = false)
     {
@@ -369,6 +383,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function drop_event($name, $extra = [], &$error = false)
     {
@@ -387,6 +402,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
      * @param mixed $event_shedule
      * @param mixed $event_body
      * @param mixed $extra
+     * @param mixed $error
      */
     public function create_event($name, $event_shedule, $event_body, $extra = [], &$error = false)
     {
@@ -426,6 +442,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
 
     /**
      * @param mixed $extra
+     * @param mixed $error
      */
     public function list_users($extra = [], &$error = false)
     {
@@ -444,6 +461,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function user_exists($name, $extra = [], &$error = false)
     {
@@ -454,6 +472,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function user_info($name, $extra = [], &$error = false)
     {
@@ -464,6 +483,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function delete_user($name, $extra = [], &$error = false)
     {
@@ -475,6 +495,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function add_user($name, array $data, $extra = [], &$error = false)
     {
@@ -492,6 +513,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $name
      * @param mixed $extra
+     * @param mixed $error
      */
     public function update_user($name, array $data, $extra = [], &$error = false)
     {
@@ -509,6 +531,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function check_table($table, $extra = [], &$error = false)
     {
@@ -523,6 +546,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function optimize_table($table, $extra = [], &$error = false)
     {
@@ -537,6 +561,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     /**
      * @param mixed $table
      * @param mixed $extra
+     * @param mixed $error
      */
     public function repair_table($table, $extra = [], &$error = false)
     {

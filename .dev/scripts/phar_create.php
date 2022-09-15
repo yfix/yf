@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 /*
@@ -29,19 +29,19 @@ $mode = Phar::GZ;
 
 // Error checks:
 
-if ( ! class_exists('Phar')) {
+if (!class_exists('Phar')) {
     die('*** Phar extension is not installed (or not enabled)');
 }
 
-if ( ! Phar::canCompress($mode)) {
+if (!Phar::canCompress($mode)) {
     die('*** Compression unsupported - please enable the zlib extension');
 }
 
-if ( ! is_dir($path)) {
+if (!is_dir($path)) {
     die('*** PF Framework not found: ' . $path);
 }
 
-if ( ! Phar::canWrite()) {
+if (!Phar::canWrite()) {
     die('*** Phar is in read-only mode (check phar.readonly in php.ini)');
 }
 

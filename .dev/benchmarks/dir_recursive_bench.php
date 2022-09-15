@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 $argv[1] = '/home/www/test2/';
@@ -47,9 +47,9 @@ class bench
         return ['_class("dir")->find()', $files];
     }
     //	function dir_grep() {
-//		$files = _class('dir')->grep('~github~', YF_PATH, '*gallery*.php');
-//		return array('_class("dir")->grep() for word github', $files);
-//	}
+    //		$files = _class('dir')->grep('~github~', YF_PATH, '*gallery*.php');
+    //		return array('_class("dir")->grep() for word github', $files);
+    //	}
 }
 
 echo new bench();

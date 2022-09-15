@@ -92,7 +92,7 @@ class yf_tpl_driver_yf
      */
     public function parse($name, $replace = [], $params = [])
     {
-        $string = $params['string'] ?: false;
+        $string = ($params['string'] ?? null) ?: false;
 
         $this->_fix_replace($replace, $name);
 
@@ -503,7 +503,7 @@ class yf_tpl_driver_yf
         // JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
         // Custom lib smart inclusion. Examples: {jquery()} $.click('.red', function(alert('hello'))) {/jquery}
         // Asset bundle inclusion. Examples: {asset()} angular-full {/asset}
-        $string = preg_replace_callback('/\{(?P<func>css|require_css|js|require_js|asset|jquery|angularjs|reactjs|sass|less|jade|coffee)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<content>.+?)\s*{\/(\1)\}/ims', function ($m) use ($_this) {
+        $string = preg_replace_callback('/\{(?P<func>css|require_css|js|require_js|asset|jquery|angularjs|reactjs|sass|less|jade|coffee)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<content>.+?)\s*{\/(\1)\}/ims', function ($m) {
             $func = $m['func'];
             return strlen($func) ? $func($m['content'], _attrs_string2array($m['args'])) : false;
         }, $string);
@@ -517,7 +517,7 @@ class yf_tpl_driver_yf
      * @param mixed $name
      * @param mixed $params
      */
-    public function _replace_std_patterns($string, $name = '', array &$replace, $params = [])
+    public function _replace_std_patterns($string, $name = '', array &$replace = [], $params = [])
     {
         $_this = $this;
         $tpl = tpl();
@@ -581,7 +581,7 @@ class yf_tpl_driver_yf
             };
         }
         // Custom patterns support (intended to be used inside modules/plugins)
-        foreach ((array) $tpl->_custom_patterns_funcs as $pattern => $func) {
+        foreach ((array) ($tpl->_custom_patterns_funcs ?? []) as $pattern => $func) {
             $patterns[$pattern] = function ($m) use ($replace, $name, $_this, $func) {
                 return $func($m, $replace, $name, $_this);
             };
@@ -607,7 +607,7 @@ class yf_tpl_driver_yf
      * @param mixed $string
      * @param mixed $stpl_name
      */
-    public function _process_catches($string = '', array &$replace, $stpl_name = '')
+    public function _process_catches($string = '', array &$replace = [], $stpl_name = '')
     {
         if (false === strpos($string, '{/catch}') || empty($string)) {
             return $string;
@@ -639,7 +639,7 @@ class yf_tpl_driver_yf
      * @param mixed $string
      * @param mixed $stpl_name
      */
-    public function _process_ifs($string = '', array &$replace, $stpl_name = '')
+    public function _process_ifs($string = '', array &$replace = [], $stpl_name = '')
     {
         if (false === strpos($string, '{/if}') || empty($string)) {
             return $string;
@@ -816,7 +816,7 @@ class yf_tpl_driver_yf
                 // Simple number or string, started with '%'
             } elseif ($tmp_first === '%' && $tmp_len > 1) {
                 $a = '\'' . addslashes(substr($val, 1)) . '\'';
-            } elseif (array_key_exists($val, $replace)) {
+            } elseif (isset($replace[$val])) {
                 if (is_object($replace[$val]) && ! method_exists($replace[$val], 'render')) {
                     $a = get_object_vars($replace[$val]);
                 }

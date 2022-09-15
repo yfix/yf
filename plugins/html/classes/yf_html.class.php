@@ -100,6 +100,7 @@ class yf_html
     /**
      * @param mixed $start_id
      * @param mixed $level
+     * @param mixed $children
      */
     public function _count_levels($start_id = 0, &$children, $level = 0)
     {
@@ -328,9 +329,12 @@ class yf_html
             $_extra_body['class'] = $_extra_body['class'] ?: $class_body;
             $items[] = '<div' . _attrs($_extra_body, ['id', 'class', 'style']) . '>' . $content . '</div>';
         }
-        $body .= $headers ? '<ul id="' . $extra['id'] . '" class="nav nav-tabs">' . implode(PHP_EOL, (array) $headers) . '</ul>' . PHP_EOL : '';
-        $body .= '<div id="' . $extra['id'] . '_content" class="tab-content">' . implode(PHP_EOL, (array) $items) . '</div>';
-        return $body;
+        $tabs_headers_class = 'nav nav-tabs' . ($extra['vertical_mode'] ? ' nav-stacked col-md-1' : '');
+        $tabs_content_class = 'tab-content' . ($extra['vertical_mode'] ? ' col-md-11' : '');
+        $body = [];
+        $body[] = $headers ? '<ul id="' . $extra['id'] . '" class="' . $tabs_headers_class . '">' . implode(PHP_EOL, (array) $headers) . '</ul>' . PHP_EOL : '';
+        $body[] = '<div id="' . $extra['id'] . '_content" class="' . $tabs_content_class . '">' . implode(PHP_EOL, (array) $items) . '</div>';
+        return implode(PHP_EOL, $body);
     }
 
     /**
@@ -497,7 +501,7 @@ class yf_html
 				' . (
                 ($is_last || ! $v['link']) ? $v['name']
                     : '<a href="' . $v['link'] . '" title="' . $v['name'] . '">' . $v['name'] . $badge . '</a>' . ($show_divider ? ' <span class="divider">' . $divider . '</span>' : '')
-                ) . '
+            ) . '
 			</li>';
         }
         $tag = $this->_is_bs3 ? 'ol' : 'ul';

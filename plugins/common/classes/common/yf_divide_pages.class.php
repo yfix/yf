@@ -51,23 +51,23 @@ class yf_divide_pages
             $url_path = './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '');
         }
         if ( ! strlen($render_type)) {
-            if ($extra['render_type']) {
+            if ($extra['render_type'] ?? null) {
                 $render_type = $extra['render_type'];
-            } elseif ($extra['type']) {
+            } elseif ($extra['type'] ?? null) {
                 $render_type = $extra['type'];
             }
         }
         if ( ! $render_type) {
             $render_type = $this->DEFAULT_RENDER_TYPE;
         }
-        $requested_page = isset($extra['requested_page']) ? $extra['requested_page'] : $_GET['page'];
-        $records_on_page = abs((int) ($extra['records_on_page'] ?: $records_on_page));
+        $requested_page = isset($extra['requested_page']) ? $extra['requested_page'] : ($_GET['page'] ?? false);
+        $records_on_page = abs((int) (($extra['records_on_page'] ?? null) ?: $records_on_page));
         $per_page = $records_on_page ?: (MAIN_TYPE_ADMIN ? conf('admin_per_page') : conf('user_per_page'));
         if ( ! $per_page) {
             $per_page = conf('per_page') ?: $this->DEFAULT_PER_PAGE;
         }
-        $num_records = abs((int) ($extra['num_records'] ?: $num_records));
-        $tpls_path = $extra['tpls_path'] ?: $tpls_path;
+        $num_records = abs((int) (($extra['num_records'] ?? null) ?: $num_records));
+        $tpls_path = ($extra['tpls_path'] ?? null) ?: $tpls_path;
         if ( ! strlen($tpls_path)) {
             $tpls_path = $this->DEFAULT_TPLS_PATH;
         }
@@ -98,7 +98,7 @@ class yf_divide_pages
             'total_pages' => $total_pages,
             'url_path' => $url_path . ($add_get_vars ? _add_get(['page']) : ''),
             'tpls_path' => $tpls_path,
-            'pages_per_block' => $extra['pages_per_block'] ?: $this->PAGES_PER_BLOCK,
+            'pages_per_block' => ($extra['pages_per_block'] ?? null) ?: $this->PAGES_PER_BLOCK,
         ]);
         $result = [
             'limit_sql' => ' LIMIT ' . (int) ($rendered['first']) . ', ' . (int) $per_page,
@@ -106,7 +106,7 @@ class yf_divide_pages
             'total_records' => (int) $total_records,
             'first_record' => (int) ($rendered['first']), // Counter start value for the current page
             'total_pages' => (int) $total_pages,
-            'limited_pages' => (int) $limited_pages,
+            'limited_pages' => (int) ($limited_pages ?? null),
             'per_page' => (int) $per_page,
             'requested_page' => (int) $requested_page,
         ];
@@ -143,7 +143,7 @@ class yf_divide_pages
      */
     public function get_total_records($sql = '', $num_records = 0, $extra = [])
     {
-        $sql_callback = $extra['sql_callback'];
+        $sql_callback = $extra['sql_callback'] ?? null;
         if (is_array($sql)) {
             $total_records = count((array) $sql);
         } elseif (empty($num_records) && ! empty($sql)) {
@@ -325,7 +325,7 @@ class yf_divide_pages
             }
             // Process current block of pages
             for ($k = $start_page; $k < $end_page; $k++) {
-                $items['pages'] .= tpl()->parse($tpls_path . ($cur_page == $k ? 'page_current' : 'page_other'), [
+                $items['pages'] = ($items['pages'] ?? '') . tpl()->parse($tpls_path . ($cur_page == $k ? 'page_current' : 'page_other'), [
                     'link' => $url_path . '&page=' . $k,
                     'page_num' => $k,
                 ]);
@@ -354,19 +354,19 @@ class yf_divide_pages
             'total_records' => (int) $total_records,
             'record_first' => (int) ($first + 1),
             'record_last' => (int) ($cur_page * $per_page),
-            'page_first' => $items['page_first'],
+            'page_first' => $items['page_first'] ?? null,
             'block_prev' => '',
-            'page_prev' => $items['page_prev'],
-            'pages' => $items['pages'],
-            'page_next' => $items['page_next'],
+            'page_prev' => $items['page_prev'] ?? null,
+            'pages' => $items['pages'] ?? null,
+            'page_next' => $items['page_next'] ?? null,
             'block_next' => '',
-            'page_last' => $items['page_last'],
+            'page_last' => $items['page_last'] ?? null,
             'current_page' => $cur_page,
         ]);
         return [
             'html' => $html,
             'total_pages' => $total_pages,
-            'limited_pages' => $limited_pages,
+            'limited_pages' => $limited_pages ?? null,
             'first' => $first,
         ];
     }

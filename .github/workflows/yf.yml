@@ -1,0 +1,42 @@
+name: Yf test and build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  yf-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: yfix/php:8.0
+      env:
+        YF_DB_HOST: mysql-tmp
+      volumes:
+      - /home/runner/work/yf3/yf3:/var/www/yf3
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: cd /var/www/yf3 && make composer-install
+    - name: Lint sources
+      run: cd /var/www/yf3 && make parallel-lint
+    # - name: Sleep
+    #   uses: jakejarvis/wait-action@master
+    #   with:
+    #     time: '30s'
+    # - name: Unit tests
+    #   run: cd /var/www/yf3/.dev/tests && make phpunit-unit
+    # services:
+    #   redis:
+    #     image: redis:6
+    #     ports:
+    #     - 6379/tcp
+    #   mysql:
+    #     image: yfix/mysql:5.7
+    #     env:
+    #       MYSQL_HOST: 127.0.0.1
+    #       MYSQL_DATABASE: tests
+    #       MYSQL_USER: tests
+    #       MYSQL_PASSWORD: 123456
+    #       MYSQL_ROOT_PASSWORD: 123456
+    #     ports:
+    #     - 3306/tcp

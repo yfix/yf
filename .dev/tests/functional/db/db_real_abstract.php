@@ -21,6 +21,7 @@ abstract class db_real_abstract extends yf\tests\wrapper {
 	/**
 	*/
 	public static function _connect($params = []) {
+		try {
 		self::$DB_NAME = $params['name'] ?: DB_NAME;
 		if ($params['driver']) {
 			self::$DB_DRIVER = $params['driver'];
@@ -39,6 +40,9 @@ abstract class db_real_abstract extends yf\tests\wrapper {
 			return self::_connect_mysql($params);
 		} elseif (false !== strpos(self::$DB_DRIVER, 'pgsql')) {
 			return self::_connect_pgsql($params);
+		}
+		} catch (Exception $e) {
+			echo self::_pretty_show_exception($e);
 		}
 	}
 
@@ -100,20 +104,28 @@ abstract class db_real_abstract extends yf\tests\wrapper {
 	*/
 	public function test_connected() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		try {
 		$this->assertNotEmpty( self::$db );
 		$this->assertTrue( is_object(self::$db) );
 		$this->assertTrue( self::$db->_connected );
 		$this->assertTrue( is_object(self::$db->db) );
 		$this->assertTrue( is_resource(self::$db->db->db_connect_id) || is_object(self::$db->db->db_connect_id));
+		} catch (Exception $e) {
+			echo self::_pretty_show_exception($e);
+		}
 	}
 
 	/**
 	*/
 	public function test_driver() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		try {
 		$this->assertEquals( self::$DB_DRIVER, self::$db->DB_TYPE );
 		$this->assertEquals( self::$DB_DRIVER, self::db()->DB_TYPE );
 		list(,$driver) = explode('_driver_', get_class(self::db()->db));
 		$this->assertEquals( self::$DB_DRIVER, $driver );
+		} catch (Exception $e) {
+			echo self::_pretty_show_exception($e);
+		}
 	}
 }

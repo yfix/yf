@@ -148,7 +148,7 @@ class yf_session
         $_SESSION['sys_main_type'] = MAIN_TYPE;
         $_SESSION['sys_requests_count']++;
         $_SESSION['sys_user_ip'] = common()->get_ip();
-        $_SESSION['sys_user_geo_country'] = $_SERVER['GEOIP_COUNTRY_CODE'];
+        $_SESSION['sys_user_geo_country'] = $_SERVER['GEOIP_COUNTRY_CODE'] ?? '';
         //		$_SESSION['sys_user_ua'] = $_SERVER['HTTP_USER_AGENT'];
         $_SESSION['sys_user_current_url'] = (is_https() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $main->_session_init_complete = true;

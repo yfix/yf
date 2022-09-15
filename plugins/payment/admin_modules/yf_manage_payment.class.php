@@ -253,15 +253,15 @@ class yf_manage_payment
             $num_chart = '<div title="' . t('Транзакции в системе по дням') . '" style="margin-bottom: 10px;">' . $num_chart . '</div>';
         }
         $sql = db()->select(
-                'u.id as id',
-                'u.id as user_id',
-                'pa.balance as balance',
-                'pa.account_id as account_id',
-                'u.name as name',
-                'u.login as login',
-                'u.nick as nick',
-                'u.email as email'
-            )
+            'u.id as id',
+            'u.id as user_id',
+            'pa.balance as balance',
+            'pa.account_id as account_id',
+            'u.name as name',
+            'u.login as login',
+            'u.nick as nick',
+            'u.email as email'
+        )
             ->table('user as u')
             ->left_join('payment_account as pa', 'pa.user_id = u.id')
             ->sql();

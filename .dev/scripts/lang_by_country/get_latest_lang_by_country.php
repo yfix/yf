@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 require_once dirname(__DIR__) . '/scripts_utils.php';
@@ -9,13 +9,13 @@ $url = $url ?: 'https://www.cia.gov/library/publications/the-world-factbook/fiel
 $result_file = $result_file ?: __DIR__ . '/countries.php';
 $suffix = $suffix ?: '';
 
-if ( ! function_exists('data_get_latest_lang_by_country')) {
+if (!function_exists('data_get_latest_lang_by_country')) {
     function data_get_latest_lang_by_country()
     {
         global $url, $result_file, $suffix;
 
         $f2 = __DIR__ . '/' . basename($url) . '.table' . $suffix . '.html';
-        if ( ! file_exists($f2)) {
+        if (!file_exists($f2)) {
             $html1 = file_get_contents($url);
             $regex1 = '~<article class="description-box">(.+?)</article>~ims';
             preg_match($regex1, $html1, $m1);
@@ -46,8 +46,8 @@ if ( ! function_exists('data_get_latest_lang_by_country')) {
         }
         print_r($data);
         //	$tmp_tbl = html_table_to_array($html2);
-//print_r($tmp_tbl);
-/*
+        //print_r($tmp_tbl);
+        /*
     $data = array();
     foreach ($tmp_tbl as $v) {
         $id = $v[1];

@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 define('DB_TYPE', 'mysql5');
@@ -12,10 +12,10 @@ define('DB_PREFIX', 'tmp_');
 exec('mysql -h ' . escapeshellarg(DB_HOST) . ' -u ' . escapeshellarg(DB_USER) . ' -p' . escapeshellarg(DB_PSWD) . ' -e "CREATE DATABASE IF NOT EXISTS ' . DB_NAME . '"');
 
 define('YF_PATH', '/home/www/yf/');
-if ( ! defined('YF_PATH')) {
+if (!defined('YF_PATH')) {
     define('YF_PATH', dirname(dirname(dirname(__DIR__))) . '/');
 }
-if ( ! function_exists('main')) {
+if (!function_exists('main')) {
     require YF_PATH . 'classes/yf_main.class.php';
     new yf_main('user', $no_db_connect = false, $auto_init_all = true);
 }
@@ -26,7 +26,7 @@ function get_table_create_sql($table)
 {
     $path = YF_PATH . 'share/db/sql/' . $table . '.db_table_sql.php';
     include $path;
-    if ( ! $data) {
+    if (!$data) {
         return false;
     }
     return 'CREATE TABLE IF NOT EXISTS ' . DB_PREFIX . $table . ' (' . $data . ') ENGINE=InnoDB DEFAULT CHARSET=utf8;';
@@ -45,14 +45,14 @@ foreach (glob(dirname(dirname(__DIR__)) . '/install/install/sql/*.sql') as $f) {
             if (preg_match('/%%prefix%%([a-z0-9_]+)/ims', $sql, $m)) {
                 $t = trim($m[1]);
                 $create_sql = get_table_create_sql($t);
-                if ( ! $create_sql) {
+                if (!$create_sql) {
                     continue;
                 }
                 db()->query($create_sql);
                 db()->query('TRUNCATE TABLE ' . DB_PREFIX . $t);
                 db()->query(str_replace('%%prefix%%', DB_PREFIX, $sql));
                 $data = db()->get_all('SELECT * FROM ' . DB_PREFIX . $t);
-                if ( ! empty($data)) {
+                if (!empty($data)) {
                     file_put_contents($dir . $t . '.data.php', '<?' . 'php' . PHP_EOL . 'return ' . _var_export($data, 1) . ';');
                 }
             }
@@ -62,7 +62,7 @@ foreach (glob(dirname(dirname(__DIR__)) . '/install/install/sql/*.sql') as $f) {
         db()->query('TRUNCATE TABLE ' . DB_PREFIX . $table);
         db()->query(str_replace('%%prefix%%', DB_PREFIX, file_get_contents($f)));
         $data = db()->get_all('SELECT * FROM ' . $tname);
-        if ( ! empty($data)) {
+        if (!empty($data)) {
             file_put_contents('./data/' . $table . '.data.php', '<?' . 'php' . PHP_EOL . 'return ' . _var_export($data, 1) . ';');
         }
     }

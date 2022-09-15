@@ -1,11 +1,11 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 function data_get_latest_icons()
 {
     $url = 'http://fontawesome.io/cheatsheet/';
     $f2 = __DIR__ . '/' . basename($url);
-    if ( ! file_exists($f2)) {
+    if (!file_exists($f2)) {
         $html1 = file_get_contents($url);
         $regex1 = '~<h2[^>]*page-header[^>]*>.*?</h2>[^>]*<div class="row">(.*?</div>)[^>]*</div>~ims';
         preg_match($regex1, $html1, $m1);
@@ -25,7 +25,7 @@ function data_get_latest_icons()
     $data = [];
     foreach ($tmp as $v) {
         $id = $v;
-        if ( ! $id) {
+        if (!$id) {
             continue;
         }
         $data[$id] = [

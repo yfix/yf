@@ -90,7 +90,7 @@ class yf_security
     {
         // Is the string an array?
         if (is_array($str)) {
-            while (list($key) = each($str)) {
+            foreach ($str as $key => $val) {
                 $str[$key] = $this->xss_clean($str[$key]);
             }
             return $str;
@@ -354,11 +354,11 @@ class yf_security
         return str_replace(
             $match[1],
             preg_replace(
-            '#href=.*?(?:alert\(|alert&\#40;|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|data\s*:)#si',
-            '',
-            $this->_filter_attributes(str_replace(['<', '>'], '', $match[1]))
-        ),
-        $match[0]
+                '#href=.*?(?:alert\(|alert&\#40;|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|data\s*:)#si',
+                '',
+                $this->_filter_attributes(str_replace(['<', '>'], '', $match[1]))
+            ),
+            $match[0]
         );
     }
 
@@ -372,11 +372,11 @@ class yf_security
         return str_replace(
             $match[1],
             preg_replace(
-            '#src=.*?(?:alert\(|alert&\#40;|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si',
-            '',
-            $this->_filter_attributes(str_replace(['<', '>'], '', $match[1]))
-        ),
-        $match[0]
+                '#src=.*?(?:alert\(|alert&\#40;|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si',
+                '',
+                $this->_filter_attributes(str_replace(['<', '>'], '', $match[1]))
+            ),
+            $match[0]
         );
     }
 

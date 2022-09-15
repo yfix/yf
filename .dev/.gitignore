@@ -3,3 +3,4 @@
 # ignore folders
 tests/_output/
 tests/_tmp/
+.phpunit.result.cache

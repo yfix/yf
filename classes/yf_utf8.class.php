@@ -289,6 +289,8 @@ class yf_utf8
      * @param mixed $prefix
      * @param mixed $codepoint
      * @param mixed $original
+     * @param mixed $table
+     * @param mixed $exclude
      */
     public function _decode_entities($prefix, $codepoint, $original, &$table, &$exclude)
     {

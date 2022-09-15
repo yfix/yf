@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 // Example usage: print_r( ssh_exec_all('webbox', 'uptime') );
@@ -27,7 +27,7 @@ SSH::run($commands, function($line) {
     echo $line.PHP_EOL;
 });
 */
-if ( ! function_exists('ssh_exec_all')) {
+if (!function_exists('ssh_exec_all')) {
     function ssh_exec_all($group_name = '', $cmd = '')
     {
         static $server_groups, $server_groups_names, $server_groups, $server_groups_names, $servers, $servers_ids_by_group;
