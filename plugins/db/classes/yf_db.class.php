@@ -1875,7 +1875,7 @@ class yf_db
         $to_insert = [
             'date' => date('Y-m-d H:i:s'),
             'data_new' => is_array($params['data']) ? 'json:' . json_encode($params['data']) : (string) $params['data'],
-            'data_old' => is_array($params['data_old']) ? 'json:' . json_encode($params['data_olf']) : (string) $params['data_old'],
+            'data_old' => is_array($params['data_old']) ? 'json:' . json_encode($params['data_old']) : (string) $params['data_old'],
             'data_diff' => is_array($params['data_diff']) ? 'json:' . json_encode($params['data_diff']) : (string) $params['data_diff'],
             'user_id' => main()->ADMIN_ID,
             'user_group' => main()->ADMIN_GROUP,
