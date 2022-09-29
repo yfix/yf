@@ -777,7 +777,7 @@ class yf_main
         if ((isset($_GET['no_lang']) && $_GET['no_lang']) || conf('no_locale')) {
             return false;
         }
-        // _class('i18n')->init_locale();
+        _class('i18n')->init_locale();
     }
 
     /**
