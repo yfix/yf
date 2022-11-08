@@ -75,6 +75,13 @@ class yf_htmx
         $this->_api->_error();
     }
 
+    public function _location($options)
+    {
+        no_graphics(true);
+        header('HX-Location: ' . json_encode($options,true));
+        exit;
+    }
+
     public function _redirect($url)
     {
         no_graphics(true);
