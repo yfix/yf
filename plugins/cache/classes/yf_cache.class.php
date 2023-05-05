@@ -216,8 +216,10 @@ class yf_cache
         if ($name === false || $name === null || ! is_string($name)) {
             return null;
         }
-        $result = $this->get($name, $ttl, $params);
-        if ($result === null) {
+        if ( ! @$params['force']) {
+            $result = $this->get($name, $ttl, $params);
+        }
+        if (@$result === null) {
             $result = $func($name, $ttl, $params, $this);
             if ($result !== null) {
                 $this->set($name, $result, $ttl);
@@ -233,7 +235,7 @@ class yf_cache
      */
     public function get($name, $force_ttl = 0, array $params = [])
     {
-        if ($name === false || $name === null) {
+        if ($name === false || $name === null || ! is_string($name)) {
             return null;
         }
         $do_real_work = true;
