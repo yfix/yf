@@ -83,7 +83,7 @@ class yf_tpl_driver_twig
         // theme, user/admin
         $theme = tpl()->_THEMES_PATH;
         $theme = trim($theme, '/');
-        $user  = tpl()->_get_def_user_theme();
+        $type = main()->type == 'admin' ? 'admin' : tpl()->_get_def_user_theme();
         // object
         $object = @$_GET['object'];
         if ($object) {
@@ -93,8 +93,8 @@ class yf_tpl_driver_twig
                 $p[] = $theme;
                 $paths[] = $p;
             }
-            if ( ! empty($user)) {
-                $p[] = $user;
+            if ( ! empty($type)) {
+                $p[] = $type;
                 $paths[] = $p;
                 $p[] = $object;
                 $paths[] = $p;
@@ -111,6 +111,24 @@ class yf_tpl_driver_twig
             ! is_array($p) && $p = [(string) $p];
             $p = implode(DIRECTORY_SEPARATOR, $p) . DIRECTORY_SEPARATOR;
             is_dir(APP_PATH . DIRECTORY_SEPARATOR . $p) && $r[] = $p;
+        }
+        $all_tpls_paths = tpl()->_get_cached_paths();
+        $paths = [];
+        foreach ($all_tpls_paths as $name => $storage) {
+            foreach ($storage as $s_type => $f_type) {
+                if($s_type != 'app') { continue; }
+                if (@$f_type[$type]) {
+                    $d = &$f_type[$type];
+                    $c = substr_count($name, DIRECTORY_SEPARATOR);
+                    for( $i = 0; $i < $c + 1; $i++ ) {
+                        $d = dirname( $d ) . DIRECTORY_SEPARATOR;
+                        $paths[$d] = true;
+                    }
+                }
+            }
+        }
+        foreach ($paths as $p => $_) {
+            $r[] = $p;
         }
         $r = array_reverse($r);
         return  $r;
