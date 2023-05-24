@@ -562,7 +562,12 @@ class yf_table2
                         $sql = str_replace('GROUP BY', ' WHERE 1 ' . $filter_sql . ' GROUP BY', $sql);
                     }
                 } else {
-                    $sql .= ' ' . $filter_sql;
+                    // update to proper order while filtering with existing filter and groupping 
+                    if (strpos($sql_upper, 'GROUP BY') === false) {
+                        $sql .= ' ' . $filter_sql;
+                    } else {
+                        $sql = str_replace('WHERE', ' WHERE 1 ' . $filter_sql . ' AND ', $sql);
+                    }
                 }
                 if ($order_sql) {
                     if (strpos($order_sql, 'ORDER BY') === false) {
