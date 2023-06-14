@@ -1557,10 +1557,18 @@ abstract class yf_db_query_builder_driver
                 if (is_numeric($k)) {
                     $tmp = trim($v);
                     if (preg_match(self::REGEX_INLINE_CONDS, $tmp, $m)) {
-                        $_on[] = $this->_escape_col_name(trim($m[1])) . ' ' . trim($m[2]) . ' ' . $this->_escape_col_name(trim($m[3]));
+                        if (is_numeric($m[3])) {
+                            $_on[] = $this->_escape_col_name(trim($m[1])) . ' ' . trim($m[2]) . ' ' . trim($m[3]);
+                        } else {
+                            $_on[] = $this->_escape_col_name(trim($m[1])) . ' ' . trim($m[2]) . ' ' . $this->_escape_col_name(trim($m[3]));
+                        }
                     }
                 } else {
-                    $_on[] = $this->_escape_col_name(trim($k)) . ' = ' . $this->_escape_col_name(trim($v));
+                    if (is_numeric($v)) {
+                        $_on[] = $this->_escape_col_name(trim($k)) . ' = ' . trim($v);
+                    } else {
+                        $_on[] = $this->_escape_col_name(trim($k)) . ' = ' . $this->_escape_col_name(trim($v));
+                    }
                 }
             }
         } elseif (is_string($on)) {
