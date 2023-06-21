@@ -45,9 +45,6 @@ class yf_pcntl_signal
             is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
             // var
             $ts = time();
-            $is_ttl = &self::$_pcntl_is_ttl;
-            $ttl_rnd = &self::$_pcntl_ttl_rnd;
-            $ttl_value = &self::$_pcntl_ttl_value;
             $ttl = &self::$_pcntl_ttl;
             $is_limit_action = &self::$_pcntl_is_limit_action;
             $limit_action = &self::$_pcntl_limit_action;
@@ -73,17 +70,7 @@ class yf_pcntl_signal
             $is_terminate = false;
             $is_terminate_by_signal = false;
             // ttl
-            if ($is_ttl) {
-                if ($ttl_rnd > 0) {
-                    $d = $ttl_value * $ttl_rnd / 100;
-                    $t1 = $ttl_value - $d;
-                    $t2 = $ttl_value + $d;
-                    $ttl = mt_rand($t1, $t2);
-                    ($ttl_value > 0 && $ttl < 1) && $ttl = 1;
-                } else {
-                    $ttl = $ttl_value;
-                }
-            }
+            self::_pcntl_ttl_calc();
             // ini
             ini_set('html_errors', 0);
             error_reporting(E_ALL & ~E_NOTICE);
@@ -92,6 +79,25 @@ class yf_pcntl_signal
                 ini_set('display_startup_errors', true);
             }
             ini_set('default_socket_timeout', -1);
+        }
+    }
+
+    public static function _pcntl_ttl_calc()
+    {
+        $is_ttl = &self::$_pcntl_is_ttl;
+        if ($is_ttl) {
+            $ttl_rnd = &self::$_pcntl_ttl_rnd;
+            $ttl_value = &self::$_pcntl_ttl_value;
+            $ttl = &self::$_pcntl_ttl;
+            if ($ttl_rnd > 0) {
+                $d = $ttl_value * $ttl_rnd / 100;
+                $t1 = $ttl_value - $d;
+                $t2 = $ttl_value + $d;
+                $ttl = mt_rand($t1, $t2);
+                ($ttl_value > 0 && $ttl < 1) && $ttl = 1;
+            } else {
+                $ttl = $ttl_value;
+            }
         }
     }
 
