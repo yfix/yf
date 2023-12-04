@@ -1212,7 +1212,7 @@ abstract class yf_db_query_builder_driver
             if (count((array) $ids) > 1) {
                 $sql = $this->_escape_col_name($pk) . ' IN(' . implode(',', $ids) . ')';
             } else {
-                $sql = $this->_process_where_cond($pk, '=', reset($ids));
+                $sql = $this->_process_where_cond($pk, '=', current($id));
             }
         } elseif (is_object($id) && $id instanceof self) {
             $sql = $this->subquery($id);
