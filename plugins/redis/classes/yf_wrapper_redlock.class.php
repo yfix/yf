@@ -21,12 +21,13 @@ class yf_wrapper_redlock
             $this->_get_conf('REDIS_PORT', 6379, $params),
             $timeout = 0.01,
         ]];
+        $this->quorum = min(count((array) $this->servers), (count((array) $this->servers) / 2 + 1));
         if ($params['instances']) {
             $this->instances = $params['instances'];
+            $this->quorum = min(count((array) $this->instances), (count((array) $this->instances) / 2 + 1));
         }
         $this->retry_delay = $params['retry_delay'] ?: 200;
         $this->retry_count = $params['retry_count'] ?: 3;
-        $this->quorum = min(count((array) $this->servers), (count((array) $this->servers) / 2 + 1));
     }
 
 
