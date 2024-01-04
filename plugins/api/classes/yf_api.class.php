@@ -322,6 +322,7 @@ class yf_api
                 CURLOPT_SSL_VERIFYPEER => false,
             ];
         }
+        @$_timeout && $options += [CURLOPT_TIMEOUT => $_timeout];
         @$_SSLCERT && $options += [CURLOPT_SSLCERT => $_SSLCERT];
         @$_SSLCERTPASSWD && $options += [CURLOPT_SSLCERTPASSWD => $_SSLCERTPASSWD];
         @$_SSLKEY && $options += [CURLOPT_SSLKEY => $_SSLKEY];
