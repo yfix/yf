@@ -8,9 +8,10 @@
  */
 class yf_template_editor
 {
+    /***/
     public $CACHE_NAME = 'themes_num_stpls';
 
-
+    /***/
     private $_preload_complete = false;
 
     /**

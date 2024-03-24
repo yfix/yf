@@ -1,7 +1,12 @@
+# git ignore
+
+# Ignore files,
 *~
 *.log
 *.swp
+# ignore folders
+#logs/
+#artifacts/
 .php_cs.cache
-.php-cs-fixer.cache
 .idea/
 composer.lock

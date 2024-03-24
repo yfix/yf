@@ -42,7 +42,7 @@ class yf_core_errors
     public $_LOG_STARTED = false;
     /** @var bool Log error messages into database */
     public $LOG_INTO_DB = false;
-    /** @var bool Log into these data:, */
+    /** @var bool Log into these data: $_GET, $_POST */
     public $DB_LOG_ENV = true;
     /** @var Use compact format */
     public $USE_COMPACT_FORMAT = true;
@@ -150,7 +150,7 @@ class yf_core_errors
     /**
      * @param mixed $exception
      */
-    public function exception_handler(Throwable $exception)
+    public function exception_handler($exception)
     {
         // these are our templates
         $traceline = '#%s %s(%s): %s(%s)';
@@ -161,7 +161,7 @@ class yf_core_errors
         foreach ($trace as $key => $stackPoint) {
             // I'm converting arguments to their type
             // (prevents passwords from ever getting logged as anything other than 'string')
-            $trace[$key]['args'] = array_map('gettype', $trace[$key]['args'] ?? []);
+            $trace[$key]['args'] = array_map('gettype', $trace[$key]['args']);
         }
 
         // build your tracelines
@@ -170,10 +170,10 @@ class yf_core_errors
             $result[] = sprintf(
                 $traceline,
                 $key,
-                $stackPoint['file'] ?? '',
-                $stackPoint['line'] ?? '',
-                $stackPoint['function'] ?? '',
-                implode(', ', $stackPoint['args'] ?? [])
+                isset($stackPoint['file']) ? $stackPoint['file'] : '',
+                isset($stackPoint['line']) ? $stackPoint['line'] : '',
+                isset($stackPoint['function']) ? $stackPoint['function'] : '',
+                implode(', ', isset($stackPoint['args']) ? $stackPoint['args'] : [])
             );
         }
         // trace always ends with {main}
@@ -206,28 +206,16 @@ class yf_core_errors
      * @param mixed $error_msg
      * @param mixed $error_file
      * @param mixed $error_line
+     * @param mixed $error_context
      */
-    public function error_handler(
-        int $error_type,
-        string $error_msg,
-        string $error_file,
-        int $error_line,
-        array $error_context = []
-    ) {
-        // https://www.php.net/manual/en/migration80.incompatible.php
-        if ( ! (error_reporting() & $error_type)) {
-            // This error code is not included in error_reporting, so let it fall
-            // through to the standard PHP error handler
-            return false;
-        }
-
+    public function error_handler($error_type, $error_msg, $error_file, $error_line, $error_context)
+    {
         // quickly turn off notices logging
         if ($this->NO_NOTICES && ($error_type == E_NOTICE || $error_type == E_USER_NOTICE)) {
             return true;
         }
         $msg = '';
         $save_log = false;
-        $save_in_db = false;
         $send_mail = false;
         // Process critical errors
         if ($error_type == E_ERROR || $error_type == E_USER_ERROR) {
@@ -272,7 +260,7 @@ class yf_core_errors
         }
         $IP = is_object(common()) ? common()->get_ip() : false;
         if ( ! $IP) {
-            $IP = $_SERVER['REMOTE_ADDR'] ?? '';
+            $IP = $_SERVER['REMOTE_ADDR'];
         }
         $trace = array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5);
         if ($save_log || $send_mail) {
@@ -282,20 +270,20 @@ class yf_core_errors
             }
             $msg = [
                 date('Y-m-d H:i:s'),
-                $this->error_types[$error_type] ?? '',
+                $this->error_types[$error_type],
                 str_replace(["\r", PHP_EOL], '', $error_msg) . ';',
                 'SOURCE=' . implode(';', $trace),
                 'SID=' . conf('SITE_ID'),
                 'IP=' . $IP,
-                'QS=' . WEB_PATH . (strlen($_SERVER['QUERY_STRING'] ?? '') ? '?' . $_SERVER['QUERY_STRING'] : ''),
-                'URL=http://' . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null),
-                'REF=' . ($_SERVER['HTTP_REFERER'] ?? null),
+                'QS=' . WEB_PATH . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''),
+                'URL=http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+                'REF=' . $_SERVER['HTTP_REFERER'],
                 $this->_log_display_array('GET'),
                 $this->_log_display_array('POST'),
                 $this->_log_display_array('FILES'),
                 $this->_log_display_array('COOKIE'),
                 $this->_log_display_array('SESSION'),
-                'UA=' . ($_SERVER['HTTP_USER_AGENT'] ?? null),
+                'UA=' . $_SERVER['HTTP_USER_AGENT'],
             ];
             $msg = implode($DIVIDER, $msg) . PHP_EOL;
         }
@@ -318,17 +306,17 @@ class yf_core_errors
             'source_line' => (int) $error_line,
             'date' => time(),
             'site_id' => (int) conf('SITE_ID'),
-            'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id'] ?? null),
-            'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group'] ?? null),
+            'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
+            'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
             'is_admin' => MAIN_TYPE_ADMIN ? 1 : 0,
             'ip' => $IP,
-            'query_string' => WEB_PATH . (strlen($_SERVER['QUERY_STRING'] ?? '') ? '?' . $_SERVER['QUERY_STRING'] : ''),
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
-            'referer' => $_SERVER['HTTP_REFERER'] ?? null,
-            'request_uri' => $_SERVER['REQUEST_URI'] ?? null,
+            'query_string' => WEB_PATH . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''),
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+            'referer' => $_SERVER['HTTP_REFERER'],
+            'request_uri' => $_SERVER['REQUEST_URI'],
             'env_data' => $this->DB_LOG_ENV ? $this->_prepare_env() : '',
-            'object' => $_GET['object'] ?? null,
-            'action' => $_GET['action'] ?? null,
+            'object' => $_GET['object'],
+            'action' => $_GET['action'],
             'trace' => implode(PHP_EOL, $trace),
         ];
         if ($save_in_db && is_object(db()) && ! empty(db()->_connected)) {
@@ -417,12 +405,12 @@ class yf_core_errors
      */
     public function set_flags($input = [])
     {
-        $this->LOG_ERRORS_TO_FILE = (bool) ($input[0] ?? null);
-        $this->LOG_WARNINGS_TO_FILE = (bool) ($input[1] ?? null);
-        $this->LOG_NOTICES_TO_FILE = (bool) ($input[2] ?? null);
-        $this->SEND_ERRORS_TO_MAIL = (bool) ($input[3] ?? null);
-        $this->SEND_WARNINGS_TO_MAIL = (bool) ($input[4] ?? null);
-        $this->SEND_NOTICES_TO_MAIL = (bool) ($input[5] ?? null);
+        $this->LOG_ERRORS_TO_FILE = (bool) $input[0];
+        $this->LOG_WARNINGS_TO_FILE = (bool) $input[1];
+        $this->LOG_NOTICES_TO_FILE = (bool) $input[2];
+        $this->SEND_ERRORS_TO_MAIL = (bool) $input[3];
+        $this->SEND_WARNINGS_TO_MAIL = (bool) $input[4];
+        $this->SEND_NOTICES_TO_MAIL = (bool) $input[5];
     }
 
     /**

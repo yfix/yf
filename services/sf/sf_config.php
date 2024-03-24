@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/php
 <?php
 
 $config = [
@@ -10,15 +10,13 @@ $config = [
         $rootNode = $treeBuilder->root('database');
         $rootNode
             ->children()
-            ->enumNode('gender')
-            ->values(['male', 'female'])
-            ->end()
+                ->enumNode('gender')
+                    ->values(['male', 'female'])
+                ->end()
             ->end();
         var_dump($treeBuilder);
     },
 ];
 if ($return_config) {
     return $config;
-}
-require_once __DIR__ . '/_yf_autoloader.php';
-new yf_autoloader($config);
+} require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);

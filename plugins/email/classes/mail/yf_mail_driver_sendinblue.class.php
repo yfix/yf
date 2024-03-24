@@ -24,7 +24,6 @@ class yf_mail_driver_sendinblue extends yf_mail_driver
 
     /**
      * https://github.com/mailin-api/mailin-api-php/tree/master/src/Sendinblue.
-     * @param mixed $error_message
      */
     public function send(array $params = [], &$error_message = '')
     {

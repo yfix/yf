@@ -41,7 +41,6 @@ class yf_db_utils_helper_index
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function exists($extra = [], &$error = false)
     {
@@ -50,7 +49,6 @@ class yf_db_utils_helper_index
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function info($extra = [], &$error = false)
     {
@@ -59,7 +57,6 @@ class yf_db_utils_helper_index
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function drop($extra = [], &$error = false)
     {
@@ -68,7 +65,6 @@ class yf_db_utils_helper_index
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function add(array $data, $extra = [], &$error = false)
     {
@@ -77,7 +73,6 @@ class yf_db_utils_helper_index
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function update(array $data, $extra = [], &$error = false)
     {

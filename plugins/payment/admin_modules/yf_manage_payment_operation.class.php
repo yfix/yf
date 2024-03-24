@@ -311,7 +311,7 @@ class yf_manage_payment_operation
             'u.login as user_login',
             'u.nick as user_nick',
             'u.email as user_email'
-        )
+            )
             ->table('payment_operation as o')
                 ->left_join('payment_provider as p', 'p.provider_id = o.provider_id')
                 ->left_join('payment_account  as a', 'a.account_id  = o.account_id')

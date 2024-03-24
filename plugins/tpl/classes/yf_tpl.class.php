@@ -378,16 +378,16 @@ class yf_tpl
         if ( ! is_array($params)) {
             $params = [];
         }
-        $string = ($params['string'] ?? null) ?: false;
-        $params['replace_images'] = ($params['replace_images'] ?? null) ?: true;
-        $params['no_cache'] = ($params['no_cache'] ?? null) ?: false;
-        $params['force_storage'] = ($params['force_storage'] ?? null) ?: '';
-        $params['no_include'] = ($params['no_include'] ?? null) ?: false;
+        $string = $params['string'] ?: false;
+        $params['replace_images'] = $params['replace_images'] ?: true;
+        $params['no_cache'] = $params['no_cache'] ?: false;
+        $params['force_storage'] = $params['force_storage'] ?: '';
+        $params['no_include'] = $params['no_include'] ?: false;
         if (DEBUG_MODE) {
             $stpl_time_start = microtime(true);
         }
         $replace = (array) $replace + (array) $this->_global_tags;
-        $replace['error'] = $this->_parse_get_user_errors($name, $replace['error'] ?? '');
+        $replace['error'] = $this->_parse_get_user_errors($name, $replace['error']);
         if (isset($replace[''])) {
             unset($replace['']);
         }
@@ -395,12 +395,12 @@ class yf_tpl
             $this->_custom_filter($name, $replace);
         }
         // Allowing to override driver
-        if (($params['driver'] ?? null) && $params['driver'] != $this->DRIVER_NAME) {
+        if ($params['driver'] && $params['driver'] != $this->DRIVER_NAME) {
             $string = _class('tpl_driver_' . $params['driver'], 'classes/tpl/')->parse($name, $replace, $params);
         } else {
             $string = $this->driver->parse($name, $replace, $params);
         }
-        if ($params['replace_images'] ?? null) {
+        if ($params['replace_images']) {
             $string = $this->_replace_images_paths($string);
         }
         if (DEBUG_MODE) {
@@ -465,7 +465,7 @@ class yf_tpl
      * @param mixed $string
      * @param mixed $stpl_time_start
      */
-    public function _parse_set_debug_info($name = '', $replace = [], $params = [], $string = '', $stpl_time_start = 0)
+    public function _parse_set_debug_info($name = '', $replace = [], $params = [], $string = '', $stpl_time_start)
     {
         if ( ! DEBUG_MODE) {
             return false;
@@ -647,7 +647,6 @@ class yf_tpl
                     continue;
                 }
                 $file_path = '';
-                $_theme = null;
                 if (in_array($_storage, ['app', 'project', 'framework'])) {
                     $_theme = $_storage == 'framework' ? MAIN_TYPE : $theme;
                     if (isset($paths[$_storage][$_theme])) {
@@ -882,9 +881,8 @@ class yf_tpl
     /**
      * Custom filter (Inherit this method and customize anything you want).
      * @param mixed $stpl_name
-     * @param mixed $replace
      */
-    public function _custom_filter($stpl_name = '', array &$replace = [])
+    public function _custom_filter($stpl_name = '', &$replace)
     {
         if ($stpl_name == 'home_page/main') {
             // example only:
@@ -981,8 +979,8 @@ class yf_tpl
      */
     public function _replace_images_paths($string = '')
     {
-        $images_path = (MAIN_TYPE_USER ? ($this->MEDIA_PATH ?? '') : ADMIN_WEB_PATH) . $this->TPL_PATH . $this->_IMAGES_PATH;
-        $uploads_path = ($this->MEDIA_PATH ?? '') . ($this->_UPLOADS_PATH ?? '');
+        $images_path = (MAIN_TYPE_USER ? $this->MEDIA_PATH : ADMIN_WEB_PATH) . $this->TPL_PATH . $this->_IMAGES_PATH;
+        $uploads_path = $this->MEDIA_PATH . $this->_UPLOADS_PATH;
         $r = [
             '"images/' => '"' . $images_path,
             '\'images/' => '\'' . $images_path,

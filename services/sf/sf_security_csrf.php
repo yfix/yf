@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/php
 <?php
 
 $config = [
@@ -6,11 +6,9 @@ $config = [
     'autoload_config' => ['sf_security_csrf/' => 'Symfony\Component\Security\Csrf'],
     'example' => function () {
         //		$history = new \Symfony\Component\BrowserKit\History();
-        //		var_dump($history);
+//		var_dump($history);
     },
 ];
 if ($return_config) {
     return $config;
-}
-require_once __DIR__ . '/_yf_autoloader.php';
-new yf_autoloader($config);
+} require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);

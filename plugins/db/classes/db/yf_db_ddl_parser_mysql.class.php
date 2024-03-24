@@ -3,9 +3,10 @@
 
 class yf_db_ddl_parser_mysql
 {
+    /***/
     public $RAW_IN_RESULTS = false;
 
-
+    /***/
     private $parser = null;
 
 

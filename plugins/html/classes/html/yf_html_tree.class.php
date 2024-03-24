@@ -43,7 +43,6 @@ class yf_html_tree
     /**
      * This pure-php method needed to greatly speedup page rendering time for 100+ items.
      * @param mixed $extra
-     * @param mixed $data
      */
     public function _tree_items(&$data, $extra = [])
     {

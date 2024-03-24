@@ -39,7 +39,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function info($extra = [], &$error = false)
     {
@@ -48,7 +47,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function exists($extra = [], &$error = false)
     {
@@ -57,7 +55,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function drop($extra = [], &$error = false)
     {
@@ -66,7 +63,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function create(array $data, $extra = [], &$error = false)
     {
@@ -75,7 +71,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function alter(array $data, $extra = [], &$error = false)
     {
@@ -85,7 +80,6 @@ class yf_db_utils_helper_database
     /**
      * @param mixed $new_name
      * @param mixed $extra
-     * @param mixed $error
      */
     public function rename($new_name, $extra = [], &$error = false)
     {
@@ -94,7 +88,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function truncate($extra = [], &$error = false)
     {
@@ -103,7 +96,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function tables($extra = [], &$error = false)
     {
@@ -113,7 +105,6 @@ class yf_db_utils_helper_database
     /**
      * @param mixed $name
      * @param mixed $extra
-     * @param mixed $error
      */
     public function table($name, $extra = [], &$error = false)
     {
@@ -122,7 +113,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function views($extra = [], &$error = false)
     {
@@ -132,7 +122,6 @@ class yf_db_utils_helper_database
     /**
      * @param mixed $name
      * @param mixed $extra
-     * @param mixed $error
      */
     public function view($name, $extra = [], &$error = false)
     {
@@ -141,7 +130,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function triggers($extra = [], &$error = false)
     {
@@ -151,7 +139,6 @@ class yf_db_utils_helper_database
     /**
      * @param mixed $name
      * @param mixed $extra
-     * @param mixed $error
      */
     public function trigger($name, $extra = [], &$error = false)
     {
@@ -160,7 +147,6 @@ class yf_db_utils_helper_database
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function events($extra = [], &$error = false)
     {
@@ -170,7 +156,6 @@ class yf_db_utils_helper_database
     /**
      * @param mixed $name
      * @param mixed $extra
-     * @param mixed $error
      */
     public function event($name, $extra = [], &$error = false)
     {

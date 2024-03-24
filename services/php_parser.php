@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/php
 <?php
 
 $config = [
@@ -12,11 +12,11 @@ $config = [
             // parse
             $stmts = $parser->parse($code);
             // change
-            $stmts[0]         // the echo statement
-                ->exprs     // sub expressions
-            [0]         // the first of them (the string node)
-                ->value     // it's value, i.e. 'Hi '
-                = 'Hello '; // change to 'Hello '
+            $stmts[0]		 // the echo statement
+                  ->exprs	 // sub expressions
+                  [0]		 // the first of them (the string node)
+                  ->value	 // it's value, i.e. 'Hi '
+                  = 'Hello '; // change to 'Hello '
             // pretty print
             $code = $prettyPrinter->prettyPrint($stmts);
             echo $code;
@@ -27,6 +27,4 @@ $config = [
 ];
 if ($return_config) {
     return $config;
-}
-require_once __DIR__ . '/_yf_autoloader.php';
-new yf_autoloader($config);
+} require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);

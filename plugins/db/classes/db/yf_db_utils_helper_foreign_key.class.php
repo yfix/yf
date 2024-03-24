@@ -41,7 +41,6 @@ class yf_db_utils_helper_foreign_key
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function exists($extra = [], &$error = false)
     {
@@ -50,7 +49,6 @@ class yf_db_utils_helper_foreign_key
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function info($extra = [], &$error = false)
     {
@@ -59,7 +57,6 @@ class yf_db_utils_helper_foreign_key
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function drop($extra = [], &$error = false)
     {
@@ -69,7 +66,6 @@ class yf_db_utils_helper_foreign_key
     /**
      * @param mixed $ref_table
      * @param mixed $extra
-     * @param mixed $error
      */
     public function add(array $fields, $ref_table, array $ref_fields, $extra = [], &$error = false)
     {
@@ -79,7 +75,6 @@ class yf_db_utils_helper_foreign_key
     /**
      * @param mixed $ref_table
      * @param mixed $extra
-     * @param mixed $error
      */
     public function update(array $fields, $ref_table, array $ref_fields, $extra = [], &$error = false)
     {

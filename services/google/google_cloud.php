@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/php
 <?php
 
 $config = [
@@ -10,8 +10,8 @@ $config = [
         'monolog',
         'psr_http_message',
         'ramsey_uuid',
-        //		'google_gax',
-        //		'google_proto_client',
+//		'google_gax',
+//		'google_proto_client',
     ],
     'git_urls' => ['https://github.com/GoogleCloudPlatform/google-cloud-php.git' => 'google_cloud/'],
     'autoload_config' => ['google_cloud/src/' => 'Google\Cloud'],
@@ -49,6 +49,4 @@ $config = [
 ];
 if ($return_config) {
     return $config;
-}
-require_once __DIR__ . '/_yf_autoloader.php';
-new yf_autoloader($config);
+} require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);

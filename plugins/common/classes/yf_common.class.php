@@ -174,12 +174,12 @@ class yf_common
         }
         $allow_override = conf('bs_theme_allow_override_for_' . $main_type);
         $avail_themes = $this->bs_get_avail_themes();
-        if (($_GET['yf_theme'] ?? null) && in_array($_GET['yf_theme'], $avail_themes) && $allow_override) {
+        if ($_GET['yf_theme'] && in_array($_GET['yf_theme'], $avail_themes) && $allow_override) {
             $theme = $_GET['yf_theme'];
             setcookie('yf_theme', $theme, 0, '/');
             unset($_GET['yf_theme']);
             js_redirect('/@object/@action/@id/@page');
-        } elseif (($_COOKIE['yf_theme'] ?? null) && in_array($_COOKIE['yf_theme'], $avail_themes)) {
+        } elseif ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
             if ( ! $force || $allow_override) {
                 $theme = $_COOKIE['yf_theme'];
             }
@@ -255,11 +255,11 @@ class yf_common
                 $sql_is_object = true;
             }
         }
-        if ($sql_is_query_builder ?? null) {
+        if ($sql_is_query_builder) {
             $sql = $sql->sql();
-        } elseif ($sql_is_object ?? null) {
+        } elseif ($sql_is_object) {
             $sql = obj2arr($sql);
-        } elseif ($sql_is_callable ?? null) {
+        } elseif ($sql_is_callable) {
             $sql = (array) $sql(func_get_args());
         }
         // Override default method for input array
@@ -820,7 +820,6 @@ class yf_common
      * @param mixed $url
      * @param mixed $get_var_name
      * @param mixed $q_var
-     * @param mixed $chars
      */
     public function make_alphabet($url, &$chars, $get_var_name = 'id', $q_var = 'id')
     {
@@ -949,7 +948,6 @@ class yf_common
      * @param mixed $page_url
      * @param mixed $cache_ttl
      * @param mixed $options
-     * @param mixed $requests_info
      */
     public function get_remote_page($page_url = '', $cache_ttl = -1, $options = [], &$requests_info = [])
     {
@@ -960,7 +958,6 @@ class yf_common
      * Get several remote files at one time.
      * @param mixed $page_urls
      * @param mixed $options
-     * @param mixed $requests_info
      */
     public function multi_request($page_urls = [], $options = [], &$requests_info = [])
     {
@@ -968,7 +965,7 @@ class yf_common
     }
 
     /**
-     * 'Safe' multi_request, which splits input array into smaller chunks to prevent server breaking.
+     * 'Safe' multi_request, which splits inpu array into smaller chunks to prevent server breaking.
      * @param mixed $page_urls
      * @param mixed $options
      * @param mixed $chunk_size
@@ -1844,7 +1841,7 @@ class yf_common
     public function _error_exists($error_key = '')
     {
         if ( ! empty($error_key)) {
-            return (bool) ($this->USER_ERRORS[$error_key] ?? null);
+            return (bool) $this->USER_ERRORS[$error_key];
         }
         return isset($this->USER_ERRORS) && count((array) $this->USER_ERRORS) ? true : false;
     }
@@ -1855,10 +1852,10 @@ class yf_common
      */
     public function _get_error_messages($key = '')
     {
-        if ( ! ($this->USER_ERRORS ?? null)) {
+        if ( ! $this->USER_ERRORS) {
             return false;
         }
-        return $key ? ($this->USER_ERRORS[$key] ?? null) : ($this->USER_ERRORS ?? null);
+        return $key ? $this->USER_ERRORS[$key] : $this->USER_ERRORS;
     }
 
     /**

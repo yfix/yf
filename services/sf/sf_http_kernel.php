@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/php
 <?php
 
 $config = [
@@ -16,10 +16,9 @@ $config = [
         error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_STRICT);
 
         $routes = new \Symfony\Component\Routing\RouteCollection();
-        $routes->add('hello', new \Symfony\Component\Routing\Route('/', [
-            '_controller' => function (\Symfony\Component\HttpFoundation\Request $request) {
-                return new \Symfony\Component\HttpFoundation\Response(sprintf('Hello %s', $request->get('name')));
-            },
+        $routes->add('hello', new \Symfony\Component\Routing\Route('/', ['_controller' => function (\Symfony\Component\HttpFoundation\Request $request) {
+            return new \Symfony\Component\HttpFoundation\Response(sprintf('Hello %s', $request->get('name')));
+        },
         ]));
         $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
 
@@ -43,6 +42,4 @@ $config = [
 ];
 if ($return_config) {
     return $config;
-}
-require_once __DIR__ . '/_yf_autoloader.php';
-new yf_autoloader($config);
+} require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);

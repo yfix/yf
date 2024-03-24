@@ -25,11 +25,11 @@ class yf_sphinxsearch
     private $sphinx_connection = null;
     /** Host:port like this: 127.0.0.1:9306 */
     private $HOST = '127.0.0.1:9306';
-
+    /***/
     private $DEF_PORT = '9306';
-
+    /***/
     private $EMPTY_RESULTS_LOG_PATH = '';
-
+    /***/
     private $CACHE_TTL = 300;
 
     /**

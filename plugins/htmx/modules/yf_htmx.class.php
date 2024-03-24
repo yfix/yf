@@ -1,3 +1,3 @@
 <?php
 
-_class('htmx');
+_class( 'htmx' );

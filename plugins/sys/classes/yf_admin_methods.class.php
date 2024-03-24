@@ -8,8 +8,9 @@
  */
 class yf_admin_methods
 {
+    /***/
     public $params = [];
-
+    /***/
     public $default_ckeditor_params = [
         'file_browser' => 'internal',
     ];
@@ -667,7 +668,6 @@ class yf_admin_methods
      * This method will search and call all found hook methods from active modules.
      * @param mixed $hook_name
      * @param mixed $section
-     * @param mixed $params
      */
     public function call_hooks($hook_name, &$params = [], $section = 'all')
     {

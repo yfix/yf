@@ -28,7 +28,6 @@ class yf_mail_driver_mailgun extends yf_mail_driver
 
     /**
      * https://documentation.mailgun.com/api-sending.html#examples.
-     * @param mixed $error_message
      */
     public function send(array $params = [], &$error_message = '')
     {

@@ -172,7 +172,9 @@ class yf_utf8_clean
         return $str;
     }
 
-    // Alternate experimental method 2 (same speed, same results)
+    /*
+    * Alternate experimental method 2 (same speed, same results)
+    */
     public function _unaccent_test2($string = '')
     {
         $transliteration = [

@@ -42,7 +42,6 @@ class yf_core_api
      * @example: call_hooks('settings', $params)
      * @param mixed $hook_name
      * @param mixed $section
-     * @param mixed $params
      */
     public function call_hooks($hook_name, &$params = [], $section = 'all')
     {
@@ -699,7 +698,6 @@ class yf_core_api
 
     /**
      * @param mixed $extra
-     * @param mixed $paths
      */
     public function get_classes_by_params($extra = [], &$paths = [])
     {
@@ -746,7 +744,7 @@ class yf_core_api
         return $globs;
     }
 
-
+    /***/
     public function get_file_slice($file, $line_start, $line_end)
     {
         $source = $this->_cache[__FUNCTION__][$file];
@@ -758,7 +756,7 @@ class yf_core_api
         return implode(array_slice($source, $line_start - 1, $offset + 1));
     }
 
-
+    /***/
     public function get_methods_sources($cls)
     {
         if ( ! $cls) {

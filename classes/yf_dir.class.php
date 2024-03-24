@@ -449,7 +449,7 @@ class yf_dir
         }
         closedir($dh);
         // Now try to delete sub folders
-        foreach ((array) ($sub_dirs_list ?? []) as $dir_name) {
+        foreach ((array) $sub_dirs_list as $dir_name) {
             rmdir($dir_name);
         }
         // Do delete start dir if needed
@@ -681,7 +681,7 @@ class yf_dir
      * @param mixed $pattern_exclude
      * @param mixed $pattern_find
      */
-    public function search($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find = '')
+    public function search($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find)
     {
         if ( ! is_array($start_dirs)) {
             $start_dirs = [$start_dirs];
@@ -725,7 +725,7 @@ class yf_dir
      * @param mixed $pattern_find
      * @param mixed $pattern_replace
      */
-    public function replace($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find = '', $pattern_replace = '')
+    public function replace($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find, $pattern_replace)
     {
         $files = [];
         if ( ! is_array($start_dirs)) {

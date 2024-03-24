@@ -2,8 +2,8 @@
 
 return [
     'versions' => [
-        'v1.2.5' => [
-            'js' => 'CKEDITOR.plugins.addExternal("pbckcode", "https://rawgit.yfix.net/prbaron/pbckcode/v1.2.5/src/plugin.js");',
+        'master' => [
+            'js' => 'CKEDITOR.plugins.addExternal("pbckcode", "https://rawgit.yfix.net/prbaron/pbckcode/master/src/plugin.js");',
         ],
     ],
     'require' => [

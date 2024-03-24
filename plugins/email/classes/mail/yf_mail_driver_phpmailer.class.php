@@ -34,8 +34,7 @@ class yf_mail_driver_phpmailer extends yf_mail_driver
                 $mail->Debugoutput = $params['phpmailer_debug_output'] ?: 'error_log';
             }
             if (is_array($params['email_to'])) {
-                $name = $params['email_to'][0];
-                $email = $params['email_to'][1];
+                list($name, $email) = each($params['email_to']);
                 array_shift($params['email_to']);
                 $mail->AddAddress($email, $name);
             } else {

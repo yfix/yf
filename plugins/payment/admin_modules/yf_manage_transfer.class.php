@@ -267,7 +267,7 @@ class yf_manage_transfer
             'p.title as provider_title',
             'o.status_id as status_id',
             'o.datetime_start'
-        )
+            )
             ->table('payment_operation as o')
                 ->left_join('payment_provider as p', 'p.provider_id = o.provider_id')
                 ->left_join('payment_account  as a', 'a.account_id  = o.account_id')

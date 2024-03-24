@@ -34,7 +34,7 @@ class yf_site_map
     public $MAX_URL_LENGTH = 2048;
     /** @var int Max number of sitemaps */
     public $MAX_SITEMAPS = 1000;
-    /** @var bool Do not change! It's a flag which is become 'true' if number of sitemap files reached. There will be no actions after this */
+    /** @var bool Do not change! It's a flag which is become 'true' if number of sitemap files reached $MAX_SITEMAPS. There will be no actions after this */
     public $LIMIT_REACHED = false;
     /** @var array Frequency avail values @conf_skip */
     public $CHANGEFREQ_VALUES = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'];

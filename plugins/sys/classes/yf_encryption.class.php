@@ -64,7 +64,7 @@ class yf_encryption
         }
         if ($this->USE_MCRYPT == true) {
             $this->_mcrypt_cipher = constant('MCRYPT_' . $this->_avail_ciphers[$this->USE_CIPHER]);
-        } else {// if ($this->_cur_cipher_id !== $this->USE_CIPHER) {
+        } else {/*if ($this->_cur_cipher_id !== $this->USE_CIPHER) {*/
             require_php_lib('phpcrypt');
             $cipher_id_to_name = [
                 0 => PHP_Crypt\PHP_Crypt::CIPHER_CAST_128,

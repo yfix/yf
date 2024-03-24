@@ -452,7 +452,6 @@ class yf_core_menu
     /**
      * @param mixed $start_id
      * @param mixed $level
-     * @param mixed $children
      */
     public function _count_levels($start_id = 0, &$children, $level = 0)
     {

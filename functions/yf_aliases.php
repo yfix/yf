@@ -1,6 +1,8 @@
 <?php
 
+///////////////////////////////////
 // Aliases for often used methods
+///////////////////////////////////
 
 // Required to catch missing methods of the shortcut functions objects
 // Only one class from functions listed below

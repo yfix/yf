@@ -9,8 +9,10 @@
 class yf_debug
 {
     public $SHOW_DB_QUERY_LOG = true;
-    public $SHOW_DB_STATS = false; // off by default just because too heavy for each page
+    public $SHOW_DB_STATS = false;
     public $SHOW_DB_EXPLAIN_QUERY = true;
+    public $SHOW_SPHINX = true;
+    public $SHOW_SSH = true;
     public $SHOW_STPLS = true;
     public $SHOW_REWRITE_INFO = true;
     public $SHOW_OUTPUT_CACHE_INFO = true;
@@ -19,6 +21,9 @@ class yf_debug
     public $SHOW_LOADED_MODULES = true;
     public $SHOW_REDIS_INFO = true;
     public $SHOW_MEMCACHED_INFO = true;
+    public $SHOW_DASHBOARD_INFO = true;
+    public $SHOW_XCACHE_INFO = true;
+    public $SHOW_APC_INFO = true;
     public $SHOW_MAIN_GET_DATA = true;
     public $SHOW_CORE_CACHE = true;
     public $SHOW_MAIN_EXECUTE = true;
@@ -38,14 +43,8 @@ class yf_debug
     public $SHOW_FORM2 = true;
     public $SHOW_TABLE2 = true;
     public $SHOW_DD_TABLE = true;
-    public $SHOW_DASHBOARD_INFO = true;
-    public $SHOW_XCACHE_INFO = true;
-    public $SHOW_APC_INFO = true;
-    public $SHOW_SPHINX = true;
-    public $SHOW_SSH = true;
     public $SORT_TEMPLATES_BY_NAME = true;
     public $ADD_ADMIN_LINKS = true;
-    public $SAVE_DEBUG_INFO = true;
     public $ADMIN_PATHS = [
         'edit_stpl' => '?object=template_editor&action=edit_stpl&location={LOCATION}&theme={THEME}&name={ID}',
         'edit_i18n' => '?object=locale_editor&action=var_edit&id={ID}',
@@ -94,7 +93,6 @@ class yf_debug
             return '';
         }
         $exec_time = round(microtime(true) - main()->_time_start, 4);
-        $this->_exec_time = $exec_time;
         $main_exec_time = common()->_show_execution_time();
         $num_db_queries = db()->NUM_QUERIES;
 
@@ -154,9 +152,9 @@ class yf_debug
             'no_auto_desc' => 1,
             'links_prefix' => $links_prefix,
         ]);
-        $this->_save_debug_info($data);
         return '<div id="debug_console">' . implode(PHP_EOL, $body) . '</div>';
     }
+
 
     public function _get_request_headers()
     {
@@ -435,17 +433,11 @@ class yf_debug
         }
         $data['stats'] = $db->get_2d('SHOW SESSION STATUS');
         $data['vars'] = $db->get_2d('SHOW VARIABLES');
-        $data['global_vars'] = $db->get_2d('SHOW GLOBAL VARIABLES');
-        $body = [];
+        //		$data['global_vars'] = $db->get_2d('SHOW GLOBAL VARIABLES');
         foreach ($data as $name => $_data) {
-            $body[] = '<div class="col-md-4"><h4>' . $name . '</h4>'
-                . $this->_show_key_val_table($_data, [
-                'very_condensed' => 1,
-                'no_total' => 1,
-                'skip_empty_values' => 1,
-            ]) . '</div>';
+            $body .= '<div class="span10 col-md-10">' . $name . '<br>' . $this->_show_key_val_table($_data, ['no_total' => 1, 'skip_empty_values' => 1]) . '</div>';
         }
-        return implode($body);
+        return $body;
     }
 
     /**
@@ -564,8 +556,6 @@ class yf_debug
             'tr' => $params['tr'],
             'td' => $params['td'],
             'no_total' => true,
-            'condensed' => $params['condensed'] ?? 0,
-            'very_condensed' => $params['very_condensed'] ?? 0,
             'caption' => $caption ? '<div class="pull-left">' . $caption . '</div>' : '',
         ])->auto();
         foreach ((array) $params['hidden_map'] as $name => $to) {
@@ -878,13 +868,12 @@ class yf_debug
         ];
         $tabs = [];
         foreach ((array) $instances as $iname => $instance) {
-            if ( ! $instance || ! $instance->log || ($iname != 'redis_default' && $instance === $instances['redis_default'])) {
+            if ( ! $instance || ! $instance->_log || ($iname != 'redis_default' && $instance === $instances['redis_default'])) {
                 continue;
             }
             $items = [];
             $totals = [];
-            $counter = 0;
-            foreach ((array) $instance->log as $k => $v) {
+            foreach ((array) $instance->_log as $k => $v) {
                 $items[$counter] = [
                     'id' => ++$counter,
                     'func' => a('https://redis.io/commands/' . $v['func'], $v['func']),
@@ -908,12 +897,8 @@ class yf_debug
                     return $id == -1 ? ['class' => 'active'] : [];
                 },
             ]);
-            $info = $instance->info();
-            $info = array_filter($info, function ($v) {
-                return ! empty($v) && $v !== -1;
-            });
             $tabs[$iname] = '<div class="col-md-8">' . $logs . '</div>'
-                . '<div class="col-md-4">' . $this->_show_key_val_table($info, ['very_condensed' => 1, 'no_total' => 1, 'skip_empty_values' => 1]) . '</div>';
+                . '<div class="col-md-4">' . $this->_show_key_val_table($instance->info(), ['no_total' => 1, 'skip_empty_values' => 1]) . '</div>';
         }
         return $tabs ? _class('html')->tabs($tabs, ['hide_empty' => 1]) : null;
     }
@@ -1598,26 +1583,5 @@ class yf_debug
             $items[$k] = $v;
         }
         return $this->_show_key_val_table($items);
-    }
-
-    private function _save_debug_info(array $data = [])
-    {
-        if ( ! $this->SAVE_DEBUG_INFO) {
-            return false;
-        }
-        $json = [
-            'meta' => [
-                'timestamp' => microtime(true),
-                'exec_time' => $this->_exec_time,
-                'main_exec_time' => common()->_show_execution_time(),
-                'db_queries' => db()->NUM_QUERIES,
-                'php_memory' => function_exists('memory_get_usage') ? memory_get_usage() : null,
-            ],
-            'data' => $data,
-        ];
-        $dir = APP_PATH . 'debug';
-        ! file_exists($dir) && mkdir($dir, 0755, true);
-        $path = $dir . '/' . date('YmdHis') . '_' . str_replace('.', '', microtime(true)) . '.json';
-        return file_put_contents($path, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_IGNORE));
     }
 }

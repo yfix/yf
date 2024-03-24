@@ -30,7 +30,7 @@ class yf_send_mail
     public $DB_LOG_ENV = false;
     /** @var bool */
     public $ALLOW_ATTACHMENTS = true;
-    /** @var bool Replaces 'From' with['smtp_from'] */
+    /** @var bool Replaces 'From' with $smtp['smtp_from'] */
     public $REPLACE_FIELD_FROM = true;
     /** @var callable Callback example:
         'ON_BEFORE_SEND' => function($mail, $params) {

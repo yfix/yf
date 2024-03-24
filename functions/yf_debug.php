@@ -8,7 +8,7 @@ $debug_salt = '_5555_';
 // TODO: need to check exact robots meta tag/header contents for SEO (maybe use: noindex, follow ?)
 $robots_options = 'noindex, nofollow, noarchive, nosnippet';
 
-$console_mode = ( ! empty($_SERVER['argc']) && ! isset($_SERVER['REQUEST_METHOD']));
+$console_mode = ( ! empty($_SERVER['argc']) && ! array_key_exists('REQUEST_METHOD', $_SERVER));
 $debug_request = (isset($_GET['debug']) ? $_GET['debug'] : (isset($_POST['debug']) ? $_POST['debug'] : false));
 $need_debug_auth = ( ! defined('DEBUG_MODE') && ! empty($debug_request));
 

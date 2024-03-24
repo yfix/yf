@@ -11,8 +11,7 @@ class yf_manage_redis
         Redis::REDIS_NOT_FOUND => '?',
     ];
     public $auto_skip_count = 10;
-    public $CONFIG_SKIP_EMPTY = true;
-    public $INFO_SKIP_EMPTY = true;
+
 
     public function _init()
     {
@@ -99,11 +98,12 @@ class yf_manage_redis
         return $default;
     }
 
+
     public function show()
     {
-        $i = $this->_cleanup($_GET['i']); // instance
-        $g = $this->_cleanup($_GET['g']); // group
-        $t = $this->_cleanup($_GET['t']); // type
+        $i = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['i'])); // instance
+        $g = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['g'])); // group
+        $t = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['t'])); // type
         $page = (int) $_GET['page'] ?: 1; // page
         $per_page = 2000;
         if ( ! $i || ! isset($this->instances[$i])) {
@@ -228,16 +228,6 @@ class yf_manage_redis
 
         $config = $r->config('get', '*');
         ksort($config);
-        if ($this->CONFIG_SKIP_EMPTY) {
-            $config = array_filter($config, function ($v) {
-                return ! empty($v) && $v !== -1;
-            });
-        }
-        if ($this->INFO_SKIP_EMPTY) {
-            $info = array_filter($info, function ($v) {
-                return ! empty($v) && $v !== -1;
-            });
-        }
 
         $i_select = array_combine(array_keys($this->instances), array_keys($this->instances));
         $filters[] = '<div class="i_select col-md-1 pull-right">' . html()->chosen_box('i_select', $i_select, $i) . '</div>';
@@ -250,8 +240,8 @@ class yf_manage_redis
 
         return ($filters ? '<div class="col-md-12">' . implode(' ', $filters) . '</div>' : '')
             . '<div class="col-md-6"><h2>' . $i . ' <small>(' . ($pager ? count((array) $keys) . ' from total ' : '') . $total_keys . ')</small></h2>' . $pager . $table . '</div>'
-            . '<div class="col-md-3"><h2>Config</h2>' . html()->simple_table($config, ['val' => ['extra' => ['width' => '40%']], 'very_condensed' => 1]) . '</div>'
-            . '<div class="col-md-3"><h2>Info</h2>' . html()->simple_table($info, ['val' => ['extra' => ['width' => '40%']], 'very_condensed' => 1]) . '</div>';
+            . '<div class="col-md-3"><h2>Config</h2>' . html()->simple_table($config, ['val' => ['extra' => ['width' => '40%']]]) . '</div>'
+            . '<div class="col-md-3"><h2>Info</h2>' . html()->simple_table($info, ['val' => ['extra' => ['width' => '40%']]]) . '</div>';
     }
 
 
@@ -261,12 +251,12 @@ class yf_manage_redis
             $_GET['action'] = 'delete';
             return $this->delete();
         }
-        $i = $this->_cleanup($_GET['i']);
+        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim($_GET['i']));
         if ( ! $i || ! isset($this->instances[$i])) {
             return js_redirect('/@object');
         }
         $r = &$this->instances[$i];
-        $prefix = $r->prefix ?: (defined('REDIS_PREFIX') ? REDIS_PREFIX : '');
+        $prefix = $r->prefix;
         $id = trim($_GET['id']);
         if (strpos($id, $prefix) === 0) {
             $id = substr($id, strlen($prefix) + 1);
@@ -282,7 +272,7 @@ class yf_manage_redis
             $data = $r->get($id);
             $like_json = in_array(substr($data, 0, 1), ['{', '[']);
             if ($like_json) {
-                // $php_exported = _var_export(json_decode($data, true), true);
+                //				$php_exported = _var_export(json_decode($data, true), true);
                 $data = json_encode(json_decode($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             }
             $cur_url = url('/@object/edit/?i=' . $i . '&id=' . $id);
@@ -331,7 +321,7 @@ class yf_manage_redis
 
     public function delete()
     {
-        $i = $this->_cleanup($_GET['i']);
+        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim($_GET['i']));
         if ( ! $i || ! isset($this->instances[$i])) {
             return js_redirect('/@object');
         }
@@ -432,10 +422,5 @@ class yf_manage_redis
     public function ttl()
     {
         // TODO
-    }
-
-    private function _cleanup($in)
-    {
-        return preg_replace('~[^a-z0-9_-]+~ims', '', trim($in));
     }
 }

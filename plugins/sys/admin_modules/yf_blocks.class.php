@@ -8,6 +8,7 @@
  */
 class yf_blocks
 {
+    /***/
     private $_preload_complete = false;
 
     /**

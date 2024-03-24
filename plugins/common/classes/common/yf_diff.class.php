@@ -12,7 +12,9 @@ class yf_diff
 
     public $module_path = '';
 
-
+    /*
+     *
+     */
     public function __construct()
     {
         require_php_lib('php_diff');

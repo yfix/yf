@@ -40,7 +40,6 @@ class yf_db_utils_helper_view
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function exists($extra = [], &$error = false)
     {
@@ -49,7 +48,6 @@ class yf_db_utils_helper_view
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function info($extra = [], &$error = false)
     {
@@ -58,7 +56,6 @@ class yf_db_utils_helper_view
 
     /**
      * @param mixed $extra
-     * @param mixed $error
      */
     public function drop($extra = [], &$error = false)
     {
@@ -68,7 +65,6 @@ class yf_db_utils_helper_view
     /**
      * @param mixed $sql_as
      * @param mixed $extra
-     * @param mixed $error
      */
     public function create($sql_as, $extra = [], &$error = false)
     {

@@ -72,8 +72,12 @@ if ( ! isset($CONF['fast_init_call']) || ! is_callable($CONF['fast_init_call']))
     $fast_init_call = $CONF['fast_init_call'];
 }
 
+// try
+if ($fname) {
+    $done = $fast_init_call($fname);
+}
 // log
-if ($fname && $fast_init_call($fname)) {
+if ($done) {
     if (module_conf('main', 'LOG_EXEC')) {
         $fast_init_call('log_exec');
     }

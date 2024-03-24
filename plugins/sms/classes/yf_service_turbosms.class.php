@@ -118,7 +118,6 @@ class yf_service_turbosms
 
     /**
      * @param mixed $phone
-     * @param mixed $error
      */
     public function _phone_cleanup($phone = '', &$error = '')
     {

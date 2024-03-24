@@ -26,13 +26,13 @@ class yf_tpl_driver_twig
         $paths = $this->_paths();
         $loader = new \Twig\Loader\FilesystemLoader($paths, APP_PATH);
         // env
-        if (is_dev() || is_debug()) {
+        if( is_dev() || is_debug() ) {
             $debug = true;
             $cache = false;
             $auto_reload = true;
         } else {
             $debug = false;
-            $cache = STORAGE_PATH . 'twig_cache/';
+            $cache = STORAGE_PATH .'twig_cache/';
             $auto_reload = false;
         }
         $env = [
@@ -42,25 +42,20 @@ class yf_tpl_driver_twig
             // 'autoescape'  => false, // name, html, js, css, url, html_attr, ...
         ];
         $this->env = new \Twig\Environment($loader, $env);
-        $this->env->addExtension(new \Twig\Extension\StringLoaderExtension());
-        $this->env->addExtension(new \Twig\Extension\DebugExtension());
+        $this->env->addExtension( new \Twig\Extension\StringLoaderExtension() );
+        $this->env->addExtension( new \Twig\Extension\DebugExtension() );
         // exec
-        $exec = new \Twig\TwigFunction(
-            'exec',
-            function (\Twig\Environment $env, $context, array $vars = []) {
-                if (empty($vars) || ! is_array($vars)) {
-                    return;
-                }
-                $class   = array_shift($vars);
-                $_method = array_shift($vars);
-                $_class = module_safe($class);
-                $_status = method_exists($_class, $_method);
+        $exec = new \Twig\TwigFunction( 'exec',
+            function( \Twig\Environment $env, $context, array $vars = [] ) {
+                if( empty( $vars ) || !is_array( $vars ) ) { return; }
+                $class   = array_shift( $vars );
+                $_method = array_shift( $vars );
+                $_class = module_safe( $class );
+                $_status = method_exists( $_class, $_method );
                 if ( ! $_status) {
-                    $_class = _class_safe($class);
-                    $_status = method_exists($_class, $_method);
-                    if ( ! $_status) {
-                        return;
-                    }
+                    $_class = _class_safe( $class );
+                    $_status = method_exists( $_class, $_method );
+                    if ( ! $_status) { return; }
                 }
                 return $_class->$_method(...$vars);
             },
@@ -71,11 +66,10 @@ class yf_tpl_driver_twig
                 'is_variadic'       => true,
             ]
         );
-        $this->env->addFunction($exec);
+        $this->env->addFunction( $exec );
     }
 
-    public function _paths()
-    {
+    public function _paths() {
         $paths = [
             '.',
             'plugins',
@@ -86,10 +80,10 @@ class yf_tpl_driver_twig
         $type = main()->type == 'admin' ? 'admin' : tpl()->_get_def_user_theme();
         // object
         $object = @$_GET['object'];
-        if ($object) {
-            $p = ['plugins', $object];
+        if( $object ) {
+            $p = [ 'plugins', $object, ];
             $paths[] = $p;
-            if ( ! empty($theme)) {
+            if( !empty( $theme ) ) {
                 $p[] = $theme;
                 $paths[] = $p;
             }
@@ -100,17 +94,17 @@ class yf_tpl_driver_twig
                 $paths[] = $p;
             }
             $action = @$_GET['action'];
-            if ($action) {
+            if( $action ) {
                 $p[] = $action;
                 $paths[] = $p;
             }
         }
         // test
         $r = [];
-        foreach ($paths as $p) {
-            ! is_array($p) && $p = [(string) $p];
+        foreach( $paths as $p ) {
+            !is_array( $p ) && $p = [ (string)$p ];
             $p = implode(DIRECTORY_SEPARATOR, $p) . DIRECTORY_SEPARATOR;
-            is_dir(APP_PATH . DIRECTORY_SEPARATOR . $p) && $r[] = $p;
+            is_dir( APP_PATH . DIRECTORY_SEPARATOR . $p ) && $r[] = $p;
         }
         $all_tpls_paths = tpl()->_get_cached_paths();
         $paths = [];
@@ -154,4 +148,5 @@ class yf_tpl_driver_twig
         $t = twig_template_from_string($this->env, $s);
         return $t->render($replace);
     }
+
 }

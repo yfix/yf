@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'versions' => ['v10.0.0' => [
+    'versions' => ['v5.0.10' => [
         'js' => [
-            '//rawgit.yfix.net/highcharts/highcharts-dist/v10.0.0/highcharts.js',
-            '//rawgit.yfix.net/highcharts/highcharts-dist/v10.0.0/themes/gray.js',
-            '//rawgit.yfix.net/highcharts/highcharts-dist/v10.0.0/modules/exporting.js',
+            '//rawgit.yfix.net/highcharts/highcharts-dist/v5.0.10/highcharts.js',
+            '//rawgit.yfix.net/highcharts/highcharts-dist/v5.0.10/js/themes/gray.js',
+            '//rawgit.yfix.net/highcharts/highcharts-dist/v5.0.10/js/modules/exporting.js',
         ],
         'css' => [
-//			'//rawgit.yfix.net/highcharts/highcharts-dist/v10.0.0/css/highcharts.css',
+//			'//rawgit.yfix.net/highcharts/highcharts-dist/v5.0.10/css/highcharts.css',
         ],
     ]],
     'github' => [
         'name' => 'highcharts/highcharts-dist',
-        'version' => 'v10.0.0',
+        'version' => 'v5.0.10',
         'js' => [
             'highcharts.js',
-            'themes/gray.js',
-            'modules/exporting.js',
+            'js/themes/gray.js',
+            'js/modules/exporting.js',
         ],
         'css' => [
 //			'css/highcharts.css',

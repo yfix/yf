@@ -116,8 +116,6 @@ class yf_db
     public $FIX_DATA_SAFE_SILENT = false;
     /** @var array Filled automatically from generated file */
     public $_need_sys_prefix = [];
-    /** @var bool */
-    public $NO_AUTO_CONNECT = null;
 
     /**
      * Constructor.
@@ -137,7 +135,7 @@ class yf_db
         }
         $this->DB_PREFIX = ! empty($db_prefix) ? $db_prefix : DB_PREFIX;
         // Check if this is primary database connection
-        $debug_index = isset($DEBUG['db_instances']) ? count((array) $DEBUG['db_instances']) : 0;
+        $debug_index = $DEBUG['db_instances'] ? count((array) $DEBUG['db_instances']) : 0;
         if ($debug_index < 1) {
             $this->IS_PRIMARY_CONNECTION = true;
         } else {
@@ -262,14 +260,14 @@ class yf_db
         if ( ! is_array($params)) {
             $params = [];
         }
-        if ((isset($params['reconnect']) && $params['reconnect']) || (isset($params['force']) && $params['force'])) {
+        if ($params['reconnect'] || $params['force']) {
             $force = true;
         }
         if ( ! empty($this->_tried_to_connect) && ! $force) {
             return $this->_connected;
         }
         $this->_connect_start_time = microtime(true);
-        if ( ! isset($params['reconnect']) || ! $params['reconnect']) {
+        if ( ! $params['reconnect']) {
             $this->_set_connect_params($db_host, $db_user, $db_pswd, $db_name, $force, $params);
         }
         $driver_class_name = main()->load_class_file('db_driver_' . $this->DB_TYPE, $this->DB_DRIVERS_DIR);
@@ -327,7 +325,7 @@ class yf_db
             $this->db->SQL_NO_CACHE = $this->SQL_NO_CACHE;
             $this->_connected = true;
         }
-        $this->_connection_time = ($this->_connection_time ?? 0) + (microtime(true) - $this->_connect_start_time);
+        $this->_connection_time += (microtime(true) - $this->_connect_start_time);
         return $this->_connected;
     }
 
@@ -365,25 +363,25 @@ class yf_db
         if ( ! is_array($params)) {
             $params = [];
         }
-        if ((isset($params['reconnect']) && $params['reconnect']) || (isset($params['force']) && $params['force'])) {
+        if ($params['reconnect'] || $params['force']) {
             $force = true;
         }
-        $this->DB_HOST = (($params['host'] ?? null) ?: $db_host) ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
-        $this->DB_USER = (($params['user'] ?? null) ?: $db_user) ?: (defined('DB_USER') ? DB_USER : 'root');
+        $this->DB_HOST = ($params['host'] ?: $db_host) ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
+        $this->DB_USER = ($params['user'] ?: $db_user) ?: (defined('DB_USER') ? DB_USER : 'root');
         // db_pswd can be empty string
         $_db_pswd = isset($params['pswd']) ? $params['pswd'] : $db_pswd;
         $this->DB_PSWD = $_db_pswd !== null ? $_db_pswd : (defined('DB_PSWD') ? DB_PSWD : '');
         // db_name can be empty string - means we working in special mode, just connecting to server
         $_db_name = isset($params['name']) ? $params['name'] : $db_name;
         $this->DB_NAME = $_db_name !== null ? $_db_name : (defined('DB_NAME') ? DB_NAME : '');
-        $this->DB_PORT = (($params['port'] ?? null) ?: $db_port ?? null) ?: (defined('DB_PORT') ? DB_PORT : '');
-        $this->DB_SOCKET = (($params['socket'] ?? null) ?: $db_socket ?? null) ?: (defined('DB_SOCKET') ? DB_SOCKET : '');
-        $this->DB_SSL = (($params['ssl'] ?? null) ?: $db_ssl ?? null) ?: (defined('DB_SSL') ? DB_SSL : false);
-        $this->DB_CHARSET = (($params['charset'] ?? null) ?: $db_charset ?? null) ?: (defined('DB_CHARSET') ? DB_CHARSET : '');
+        $this->DB_PORT = ($params['port'] ?: $db_port) ?: (defined('DB_PORT') ? DB_PORT : '');
+        $this->DB_SOCKET = ($params['socket'] ?: $db_socket) ?: (defined('DB_SOCKET') ? DB_SOCKET : '');
+        $this->DB_SSL = ($params['ssl'] ?: $db_ssl) ?: (defined('DB_SSL') ? DB_SSL : false);
+        $this->DB_CHARSET = ($params['charset'] ?: $db_charset) ?: (defined('DB_CHARSET') ? DB_CHARSET : '');
         if (isset($params['prefix'])) {
             $this->DB_PREFIX = $params['prefix'];
         }
-        $allow_auto_create_db = $params['auto_create_db'] ?? null;
+        $allow_auto_create_db = isset($params['auto_create_db']) ? $params['auto_create_db'] : $allow_auto_create_db;
         if ($allow_auto_create_db !== null) {
             $this->ALLOW_AUTO_CREATE_DB = $allow_auto_create_db;
         }
@@ -1061,7 +1059,7 @@ class yf_db
                 $storage = null;
             }
         }
-        if ($params['as_objects'] ?? null) {
+        if ($params['as_objects']) {
             foreach ((array) $data as $k => $v) {
                 $data[$k] = (object) $v;
             }
@@ -1626,10 +1624,10 @@ class yf_db
      */
     public function _execute_shutdown_queries()
     {
-        if ( ! isset($this->USE_SHUTDOWN_QUERIES) || ! $this->USE_SHUTDOWN_QUERIES || isset($this->_shutdown_executed)) {
+        if ( ! $this->USE_SHUTDOWN_QUERIES || isset($this->_shutdown_executed)) {
             return false;
         }
-        foreach ((array) ($this->_SHUTDOWN_QUERIES ?? []) as $sql) {
+        foreach ((array) $this->_SHUTDOWN_QUERIES as $sql) {
             if (is_string($sql) && strlen($sql) > 5) {
                 $this->query($sql);
             }
@@ -2140,10 +2138,6 @@ class yf_db
         } elseif (is_bool($string)) {
             return (int) $string;
         }
-        return str_replace(
-            ['\\', "\0", "\n", "\r", "'", '"', "\x1a"],
-            ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'],
-            $string
-        );
+        return str_replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'], $string);
     }
 }

@@ -404,7 +404,7 @@ class yf_manage_shop_orders
 									',
                             $width,
                             $row['unit_name']
-                        )
+                                )
                             . _class('html')->select2_box([
                                 'desc' => $desc,
                                 'name' => 'unit[' . $row['product_id'] . '_' . $row['param_id'] . ']',

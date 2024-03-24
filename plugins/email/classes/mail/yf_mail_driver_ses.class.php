@@ -28,7 +28,6 @@ class yf_mail_driver_ses extends yf_mail_driver
 
     /**
      * https://eu-west-1.console.aws.amazon.com/ses/home?region=eu-west-1#verified-senders-domain.
-     * @param mixed $error_message
      */
     public function send(array $params = [], &$error_message = '')
     {

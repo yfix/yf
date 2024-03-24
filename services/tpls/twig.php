@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/php
 <?php
 
 $config = [
@@ -6,12 +6,12 @@ $config = [
     'require_once' => ['twig/src/Extension/StringLoaderExtension.php'],
     'autoload_config' => ['twig/src/' => 'Twig'],
     // 'manual' => function () {
-    // Twig_Autoloader::register();
+        // Twig_Autoloader::register();
     // },
     'example' => function () {
         $loader = new \Twig\Loader\FilesystemLoader();
         $twig = new \Twig\Environment($loader, [
-            'cache' => STORAGE_PATH . 'twig_cache/',
+            'cache' => STORAGE_PATH .'twig_cache/',
         ]);
         $str = '<!DOCTYPE html>
 <html>
@@ -32,6 +32,4 @@ $config = [
 ];
 if ($return_config) {
     return $config;
-}
-require_once __DIR__ . '/_yf_autoloader.php';
-new yf_autoloader($config);
+} require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);

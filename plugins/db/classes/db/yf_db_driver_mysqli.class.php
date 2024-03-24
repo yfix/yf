@@ -30,6 +30,7 @@ class yf_db_driver_mysqli extends yf_db_driver
     /** @var array of callables */
     public $ON_AFTER_CONNECT = [];
 
+
     public function __construct(array $params)
     {
         if ( ! function_exists('mysqli_init')) {
@@ -50,6 +51,7 @@ class yf_db_driver_mysqli extends yf_db_driver
         return $this->db_connect_id;
     }
 
+
     public function _on_before_connect_default()
     {
         if (is_console()) {
@@ -57,6 +59,7 @@ class yf_db_driver_mysqli extends yf_db_driver
             $this->SQL_AFTER_CONNECT = $this->SQL_AFTER_CONNECT_CONSOLE;
         }
     }
+
 
     public function connect()
     {
@@ -82,8 +85,7 @@ class yf_db_driver_mysqli extends yf_db_driver
         if ($this->params['socket']) {
             $connect_host = $this->params['socket'];
         } else {
-            $default_port = $this->DEF_PORT ?? null;
-            $connect_port = $this->params['port'] && $this->params['port'] != $default_port ? $this->params['port'] : '';
+            $connect_port = $this->params['port'] && $this->params['port'] != $this->DEF_PORT ? $this->params['port'] : '';
             $connect_host = ($this->params['persist'] ? 'p:' : '') . $this->params['host'] . ($connect_port ? ':' . $connect_port : '');
         }
         if ( ! $this->params['persist']) {
@@ -126,6 +128,7 @@ class yf_db_driver_mysqli extends yf_db_driver
     {
         return $this->db_connect_id ? mysqli_select_db($this->db_connect_id, $name) : false;
     }
+
 
     public function close()
     {

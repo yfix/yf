@@ -7,7 +7,7 @@ return function () {
     }
     main()->NO_GRAPHICS = true;
     // Check if console mode
-    if ( ! ( ! empty($_SERVER['argc']) && ! isset($_SERVER['REQUEST_METHOD']))) {
+    if ( ! ( ! empty($_SERVER['argc']) && ! array_key_exists('REQUEST_METHOD', $_SERVER))) {
         exit('No direct access to method allowed');
     }
     // Get console params

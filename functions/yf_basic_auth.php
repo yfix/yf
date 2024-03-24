@@ -6,7 +6,7 @@ $debug_users = [
 $debug_salt = '_5555_';
 $robots_options = 'noindex, nofollow, noarchive, nosnippet';
 
-$console_mode = ( ! empty($_SERVER['argc']) && ! isset($_SERVER['REQUEST_METHOD']));
+$console_mode = ( ! empty($_SERVER['argc']) && ! array_key_exists('REQUEST_METHOD', $_SERVER));
 if ( ! $console_mode) {
     header('Expires: Tue, 03 Jul 2001 06:00:00 GMT'); // Date far in the past
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');

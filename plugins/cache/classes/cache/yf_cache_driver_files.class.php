@@ -16,6 +16,7 @@ class yf_cache_driver_files extends yf_cache_driver
     /** @var int Octal value of cache dir and subdirs */
     public $DIR_CHMOD = 0777;
 
+
     public function _init()
     {
         $this->CACHE_DIR = STORAGE_PATH . 'core_cache/';
@@ -23,6 +24,7 @@ class yf_cache_driver_files extends yf_cache_driver
             mkdir($this->CACHE_DIR, $this->DIR_CHMOD, true);
         }
     }
+
 
     public function is_ready()
     {
@@ -72,6 +74,7 @@ class yf_cache_driver_files extends yf_cache_driver
         return ! file_exists($path) ? true : null;
     }
 
+
     public function flush()
     {
         if ( ! $this->is_ready()) {
@@ -82,6 +85,7 @@ class yf_cache_driver_files extends yf_cache_driver
         }
         return true;
     }
+
 
     public function list_keys()
     {
@@ -97,6 +101,7 @@ class yf_cache_driver_files extends yf_cache_driver
         }
         return array_keys($keys);
     }
+
 
     public function _get_all_files()
     {

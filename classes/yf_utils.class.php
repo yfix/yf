@@ -61,7 +61,6 @@ class yf_utils
 
     /**
      * Creates hyperlink from text.
-     * @param mixed $text
      */
     public function hyperlink(&$text)
     {

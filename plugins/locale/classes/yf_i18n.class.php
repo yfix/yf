@@ -146,20 +146,20 @@ class yf_i18n
         if ($FORCE_LOCALE && isset($langs[$FORCE_LOCALE])) {
             return $FORCE_LOCALE;
         }
-        if (($this->_called[__FUNCTION__] ?? null) && ! $force) {
+        if ($this->_called[__FUNCTION__] && ! $force) {
             return $this->_called[__FUNCTION__];
         }
         $l = []; // contains all possible variants
-        $l['url'] = ($_GET['language'] ?? '') ?: ($_GET['lang'] ?? '');
-        $l['session'] = $this->ALLOW_SESSION_LANG ? ($_SESSION[MAIN_TYPE . '_lang'] ?? '') : '';
-        $l['cookie'] = $_COOKIE[MAIN_TYPE . '_lang'] ?? '';
+        $l['url'] = $_GET['language'] ?: $_GET['lang'];
+        $l['session'] = $this->ALLOW_SESSION_LANG ? $_SESSION[MAIN_TYPE . '_lang'] : '';
+        $l['cookie'] = $_COOKIE[MAIN_TYPE . '_lang'];
         $l['user'] = function () {
             $uid = main()->USER_ID;
             if ($uid && MAIN_TYPE_USER && main()->is_db()) {
                 $u = from('user')->whereid($uid)->limit(1)->get();
                 $u && $lang = $u['lang'] ?: $u['language'] ?: $u['locale'];
             }
-            return $lang ?? '';
+            return $lang;
         };
         $l['http'] = function () {
             if ( ! function_exists('locale_accept_from_http')) {
@@ -171,7 +171,7 @@ class yf_i18n
         };
         $l['country'] = function () {
             // TODO
-            return $lang ?? '';
+            return $lang;
         };
         $l['conf'] = conf('language');
         $l['admin'] = function () use ($langs) {
@@ -183,7 +183,7 @@ class yf_i18n
         };
         $l['site'] = function () {
             // TODO
-            return $lang ?? '';
+            return $lang;
         };
         $l['app'] = (defined('DEFAULT_LANG') && DEFAULT_LANG != '') ? DEFAULT_LANG : null;
 
@@ -250,7 +250,7 @@ class yf_i18n
     {
         $country = strtoupper(
             conf('country')
-            ?: ($_SERVER['GEOIP_COUNTRY_CODE'] ?? '')
+            ?: $_SERVER['GEOIP_COUNTRY_CODE']
             ?: (in_array(strtolower($this->CUR_LOCALE), ['ru', 'uk']) ? 'UA' : '')
         );
         $this->CUR_COUNTRY = $country;
@@ -476,7 +476,7 @@ class yf_i18n
         }
         $in = trim($in);
 
-        DEBUG_MODE && ($this->_calls[$in] = $this->_calls[$in] ?? 0 + 1);
+        DEBUG_MODE && $this->_calls[$in]++;
 
         if ($this->USE_TRANSLATE_CACHE && empty($args)) {
             $CACHE_NAME = $lang . '#____#' . $in;
@@ -552,7 +552,7 @@ class yf_i18n
             }
         }
         if (DEBUG_MODE) {
-            if (($this->WRAP_VARS_FOR_INLINE_EDIT ?? null) && false === strpos($out, 'class=localetr')) {
+            if ($this->WRAP_VARS_FOR_INLINE_EDIT && false === strpos($out, 'class=localetr')) {
                 $r = [
                     ' ' => '%20',
                     '=' => '&equals;',

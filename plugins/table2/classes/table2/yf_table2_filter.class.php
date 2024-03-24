@@ -317,7 +317,6 @@ class yf_table2_filter
      * @param mixed $filter
      * @param mixed $filter_params
      * @param null|mixed $table
-     * @param mixed $data
      */
     public function _filter_array(&$data, $filter = [], $filter_params = [], $table = null)
     {

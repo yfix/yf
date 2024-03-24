@@ -43,10 +43,10 @@ class yf_manage_cron
             }
         }
         return table(
-            'SELECT c.*, a.login FROM ' . db('cron_tasks') . ' as c
+                'SELECT c.*, a.login FROM ' . db('cron_tasks') . ' as c
 				LEFT JOIN ' . db('sys_admin') . ' as a ON a.id = c.admin_id
 				ORDER BY c.name ASC'
-        )
+            )
             ->text('name')
             ->text('dir', 'Directory')
             ->text('comment', ['width' => 300])
@@ -117,8 +117,8 @@ class yf_manage_cron
     public function cron_logs()
     {
         return table(
-            db()->from('cron_logs')->where('cron_id', (int) $_GET['id'])->order_by('time_start', 'desc')
-        )
+                db()->from('cron_logs')->where('cron_id', (int) $_GET['id'])->order_by('time_start', 'desc')
+            )
             ->date('time_start', ['format' => 'full'])
             ->text('log')
             ->text('time_spent');
