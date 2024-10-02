@@ -1036,6 +1036,7 @@ class yf_payment_api
     public function payment($options = null)
     {
         $_ = &$options;
+        $is_transaction = isset( $_['is_transaction'] ) ? $_['is_transaction'] : true;
         $_['type_name'] = __FUNCTION__;
         $_['operation_title'] = $_['operation_title'] ?: 'Оплата';
         $result = $this->_operation_check($options);
@@ -1050,7 +1051,7 @@ class yf_payment_api
             'title' => $title,
         ];
         // create operation
-        db()->begin();
+        $is_transaction && db()->begin();
         $status = db()->table('payment_operation')->insert($data);
         if (empty($status)) {
             $result = [
@@ -1064,13 +1065,14 @@ class yf_payment_api
         // user confirmation
         $result = $this->confirmation($options, $data, $operation_data);
         if ( ! @$result['status']) {
-            db()->rollback();
+            $is_transaction && db()->rollback();
             return  $result;
         }
-        db()->commit();
+        $is_transaction && db()->commit();
         // try provider operation
         $provider_class = 'provider_' . $operation_data['provider']['name'];
         $result = $this->_class($provider_class, __FUNCTION__, [
+            'is_transaction' => $is_transaction,
             'options' => $options,
             'provider' => $operation_data['provider'],
             'data' => $data,
@@ -1105,6 +1107,7 @@ class yf_payment_api
     public function transfer($options = null)
     {
         $_ = &$options;
+        $is_transaction = isset( $_['is_transaction'] ) ? $_['is_transaction'] : true;
         // check: from, to
         if ( ! @$_['from'] || ! @$_['to']) {
             $result = [
@@ -1157,11 +1160,11 @@ class yf_payment_api
             'title' => $title,
         ];
         // create operation
-        db()->begin();
+        $is_transaction && db()->begin();
         $status_from = db()->table('payment_operation')->insert($data_from);
         $status_to = db()->table('payment_operation')->insert($data_to);
         if ( ! @$status_from || ! @$status_to) {
-            db()->rollback();
+            $is_transaction && db()->rollback();
             $result = [
                 'status' => false,
                 'status_message' => 'Ошибка при создании операции',
@@ -1173,7 +1176,7 @@ class yf_payment_api
         $data_from['operation_id'] = $operation_id_from;
         $operation_id_to = (int) $status_to;
         $data_to['operation_id'] = $operation_id_to;
-        db()->commit();
+        $is_transaction && db()->commit();
         // try provider operation
         $object = $this->provider_class($options);
         if (empty($object)) {
@@ -1184,6 +1187,7 @@ class yf_payment_api
             return  $result;
         }
         $result = $object->{ __FUNCTION__ }([
+            'is_transaction' => $is_transaction,
             'options' => $options,
             'provider' => $operation_data_from['provider'],
             'data' => [
@@ -1520,6 +1524,7 @@ class yf_payment_api
         )) {
             $result = [
                 'status' => false,
+                'status_code' => 'BALANCE_LIMIT_LOW',
                 'status_message' => 'Недостаточно средств на счету',
             ];
             return  $result;

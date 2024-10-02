@@ -120,6 +120,7 @@ class yf_payment_api__provider
         }
         $payment_api = $this->payment_api;
         $_ = $options;
+        $is_transaction = isset( $_['is_transaction'] ) ? $_['is_transaction'] : true;
         $options = &$_['options'];
         $provider = &$_['provider'];
         $data = &$_['data'];
@@ -158,10 +159,10 @@ class yf_payment_api__provider
             'datetime_update' => db()->escape_val($sql_datetime),
             'balance' => "( balance $sql_sign $sql_amount )",
         ];
-        db()->begin();
+        $is_transaction && db()->begin();
         $_result = $payment_api->balance_update($_data, ['is_escape' => false]);
         if ( ! $_result['status']) {
-            db()->rollback();
+            $is_transaction && db()->rollback();
             $result = [
                 'status' => false,
                 'status_message' => 'Ошибка при обновлении счета',
@@ -175,7 +176,7 @@ class yf_payment_api__provider
         $object = $payment_api->get_status(['name' => 'success']);
         list($payment_status_id, $payment_status) = $object;
         if (empty($payment_status_id)) {
-            db()->rollback();
+            $is_transaction && db()->rollback();
             return  $object;
         }
         $result['status_message'] = 'Выполнено: ' . $options['operation_title'] . ', сумма: ' . $amount;
@@ -199,10 +200,10 @@ class yf_payment_api__provider
         ];
         $_result = $payment_api->operation_update($_data);
         if ( ! $_result['status']) {
-            db()->rollback();
+            $is_transaction && db()->rollback();
             return  $_result;
         }
-        db()->commit();
+        $is_transaction && db()->commit();
         events()->fire('payment.balance_refresh', [$account]);
         return  $result;
     }
