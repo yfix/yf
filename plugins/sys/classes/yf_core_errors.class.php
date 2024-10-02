@@ -206,9 +206,8 @@ class yf_core_errors
      * @param mixed $error_msg
      * @param mixed $error_file
      * @param mixed $error_line
-     * @param mixed $error_context
      */
-    public function error_handler($error_type, $error_msg, $error_file, $error_line, $error_context)
+    public function error_handler($error_type, $error_msg, $error_file, $error_line)
     {
         // quickly turn off notices logging
         if ($this->NO_NOTICES && ($error_type == E_NOTICE || $error_type == E_USER_NOTICE)) {
