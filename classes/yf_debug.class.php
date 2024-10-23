@@ -54,6 +54,12 @@ class yf_debug
         'link' => '{ID}',
     ];
 
+    public $_NOT_TRANSLATED_FILE = null;
+    public $DEBUG_CONSOLE_LIGHT = null;
+    public $DEBUG_CONSOLE_HIDDEN = null;
+    public $_used_debug_datas = [];
+    public $backup_debug_data = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -108,6 +114,7 @@ class yf_debug
                 continue;
             }
             $ts2 = microtime(true);
+            $method_params = null;
             $content = $this->$method($method_params);
             if ($method_params) {
                 $debug_params[$method] = $method_params;
@@ -307,6 +314,7 @@ class yf_debug
         if ( ! is_object($db) || ! is_array($db->_LOG) || ! $db->_tried_to_connect) {
             return false;
         }
+        $body = '';
         $items = [];
         $db_queries_list = $db->_LOG;
         if ($this->SHOW_DB_EXPLAIN_QUERY && ! empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
@@ -434,6 +442,7 @@ class yf_debug
         $data['stats'] = $db->get_2d('SHOW SESSION STATUS');
         $data['vars'] = $db->get_2d('SHOW VARIABLES');
         //		$data['global_vars'] = $db->get_2d('SHOW GLOBAL VARIABLES');
+        $body = '';
         foreach ($data as $name => $_data) {
             $body .= '<div class="span10 col-md-10">' . $name . '<br>' . $this->_show_key_val_table($_data, ['no_total' => 1, 'skip_empty_values' => 1]) . '</div>';
         }
@@ -682,6 +691,7 @@ class yf_debug
         if ( ! $this->SHOW_SETTINGS) {
             return '';
         }
+        $body = '';
         $cache_use = ((main()->USE_SYSTEM_CACHE || conf('USE_CACHE')) && ! cache()->NO_CACHE);
         $locale_debug = $this->_get_debug_data('locale');
         $data['yf'] = [
@@ -864,8 +874,9 @@ class yf_debug
         }
         $instances = [
             'redis_default' => redis(),
-            'redis_cache' => strpos(strtolower(cache()->DRIVER), 'redis') !== false ? cache()->_driver->_connection : null,
+            'redis_cache' => strpos(strtolower(cache()->DRIVER), 'redis') !== false ? (cache()->_driver->_connection ?? null) : null,
         ];
+        $counter = 0;
         $tabs = [];
         foreach ((array) $instances as $iname => $instance) {
             if ( ! $instance || ! $instance->_log || ($iname != 'redis_default' && $instance === $instances['redis_default'])) {
@@ -916,6 +927,7 @@ class yf_debug
         if ( ! is_object($mc_obj)) {
             return '';
         }
+        $body = '';
         $data = [];
         $ext = '';
         if (method_exists($mc_obj, 'getExtendedStats')) {
@@ -949,6 +961,10 @@ class yf_debug
         $stpl_vars = $this->_get_debug_data('STPL_REPLACE_VARS');
         $stpl_traces = $this->_get_debug_data('STPL_TRACES');
 
+        $total_size = 0;
+        $total_stpls_exec_time = 0;
+        $counter = 0;
+
         $items = [];
         foreach ((array) $data as $k => $v) {
             if (empty($v['calls'])) {
@@ -960,12 +976,12 @@ class yf_debug
 
             $items[$counter] = [
                 'id' => ++$counter,
-                'name' => $this->_admin_link('edit_stpl', $k, false, ['{LOCATION}' => $debug[$k]['storage']]),
+                'name' => $this->_admin_link('edit_stpl', $k, false, ['{LOCATION}' => $debug[$k]['storage'] ?? '']),
                 'calls' => (string) ($v['calls']),
                 'driver' => (string) ($v['driver']),
                 'compiled' => (int) $v['is_compiled'],
-                'storage' => (string) ($debug[$k]['storage']),
-                'storages' => '<pre>' . _prepare_html($this->_var_export($debug[$k]['storages'])) . '</pre>',
+                'storage' => (string) ($debug[$k]['storage'] ?? ''),
+                'storages' => '<pre>' . _prepare_html($this->_var_export($debug[$k]['storages'] ?? '')) . '</pre>',
                 'size' => (string) $cur_size,
                 'time' => round($v['exec_time'], 4),
                 'trace' => _prepare_html($stpl_traces[$k]),
@@ -1043,6 +1059,7 @@ class yf_debug
         if ( ! $this->SHOW_LOADED_MODULES) {
             return '';
         }
+        $counter = 0;
         $items = [];
         foreach ((array) $this->_get_debug_data('main_load_class') as $data) {
             $items[] = [
@@ -1193,6 +1210,7 @@ class yf_debug
         if ( ! $this->SHOW_I18N_VARS) {
             return '';
         }
+        $i = 0;
         $calls = _class('i18n')->_calls;
         $items = (array) $this->_get_debug_data('i18n');
         foreach ($items as $k => $v) {
@@ -1214,6 +1232,7 @@ class yf_debug
         if ( ! $items) {
             return '';
         }
+        $body = '';
         $body .= 'host: ' . _class('sphinxsearch')->_get_host();
         $body .= ', version: ' . _class('sphinxsearch')->_get_server_version();
 
@@ -1323,6 +1342,8 @@ class yf_debug
         });
         sort($data['globals']);
 
+        $body = '';
+        $i = 0;
         $grid = [5, 4, 1, 2];
         foreach ($data as $name => $_data) {
             $grid_num = $grid[++$i - 1];
@@ -1337,6 +1358,9 @@ class yf_debug
         if ( ! $this->SHOW_INCLUDED_FILES) {
             return '';
         }
+        $body = '';
+        $total_size = 0;
+        $i = 0;
         $items = (array) $this->_get_debug_data('included_files');
         foreach ($items as $k => $v) {
             if ( ! $v['exists']) {
@@ -1375,6 +1399,7 @@ class yf_debug
         if ( ! $this->SHOW_FORM2) {
             return '';
         }
+        $i = 0;
         $items = $this->_get_debug_data('form2');
         foreach ((array) $items as $k => $v) {
             $v['params'] = '<pre>' . _prepare_html($this->_var_export($v['params'])) . '</pre>';
@@ -1391,6 +1416,7 @@ class yf_debug
         if ( ! $this->SHOW_TABLE2) {
             return '';
         }
+        $i = 0;
         $items = $this->_get_debug_data('table2');
         foreach ((array) $items as $k => $v) {
             $v['params'] = '<pre>' . _prepare_html($this->_var_export($v['params'])) . '</pre>';
@@ -1414,6 +1440,7 @@ class yf_debug
         if ( ! $this->SHOW_DD_TABLE) {
             return '';
         }
+        $i = 0;
         $items = $this->_get_debug_data('dd_table');
         foreach ((array) $items as $k => $v) {
             $v['fields'] = '<pre>' . _prepare_html($this->_var_export($v['fields'])) . '</pre>';

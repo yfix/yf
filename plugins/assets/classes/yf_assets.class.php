@@ -106,6 +106,22 @@ class yf_assets
     /** @array All filters to apply stored here */
     protected $filters = [];
 
+    public $_assets_added = [];
+    public $_bundles_added = [];
+    public $_time = null;
+    public $_init_js_done = null;
+    public $_init_css_done = null;
+    public $_autoload_registered = null;
+    public $_avail_filters = null;
+    public $already_required = [];
+    public $_cache_bowerphp = [];
+    public $_cache_github = [];
+    public $_cache_cdn = [];
+    public $_cache_language = null;
+    public $_override = [];
+    public $_cache_html5fw = null;
+    public $_cache_date = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -435,7 +451,7 @@ class yf_assets
         // This double iterating code ensures we can inherit/replace assets with same name inside project
         foreach ($names as $name => $path) {
             $assets[$name] = include $path;
-            if (defined('DEBUG_INFO') && DEBUG_INFO) {
+            if (defined('DEBUG_INFO') && constant('DEBUG_INFO')) {
                 debug('assets_names[]', [
                     'name' => $name,
                     'path' => $path,
@@ -987,7 +1003,7 @@ class yf_assets
             }
         }
         foreach ((array) $types as $atype) {
-            $data = $bundle_details['require'][$atype];
+            $data = $bundle_details['require'][$atype] ?? null;
             if ($data) {
                 $this->_sub_add($data, $atype, $__params);
             }
@@ -999,7 +1015,7 @@ class yf_assets
             }
         }
         foreach ((array) $types as $atype) {
-            $data = $bundle_details['add'][$atype];
+            $data = $bundle_details['add'][$atype] ?? null;
             if ($data) {
                 $this->_sub_add($data, $atype, $__params);
             }
@@ -1050,12 +1066,12 @@ class yf_assets
         $inherit_types_map = $this->inherit_asset_types_map;
         $types = [];
         $types[$asset_type] = $asset_type;
-        $inherit_types = (array) $inherit_types_map[$atype] ?: [];
+        $inherit_types = (array) $inherit_types_map[$asset_type] ?: [];
         foreach ((array) $inherit_types as $inherit_type) {
             $types[$inherit_type] = $inherit_type;
         }
         foreach ((array) $types as $atype) {
-            $data = $asset_data['require'][$atype];
+            $data = $asset_data['require'][$atype] ?? null;
             if ($data) {
                 $this->_sub_add($data, $atype, $__params);
             }
@@ -1067,7 +1083,7 @@ class yf_assets
             }
         }
         foreach ((array) $types as $atype) {
-            $data = $asset_data['add'][$atype];
+            $data = $asset_data['add'][$atype] ?? null;
             if ($data) {
                 $this->_sub_add($data, $atype, $__params);
             }
@@ -1311,10 +1327,12 @@ class yf_assets
             return [];
         }
         require_php_lib('scss');
-        $scss = new scssc();
-        foreach ((array) $content as $md5 => $v) {
-            $v['content'] = $scss->compile($v['content']);
-            $out[$md5] = $v;
+        if (class_exists('scssc')) {
+            $scss = new scssc();
+            foreach ((array) $content as $md5 => $v) {
+                $v['content'] = $scss->compile($v['content']);
+                $out[$md5] = $v;
+            }
         }
         return $out;
     }
@@ -1334,10 +1352,12 @@ class yf_assets
             return [];
         }
         require_php_lib('less');
-        $less = new lessc();
-        foreach ((array) $content as $md5 => $v) {
-            $v['content'] = $less->compile($v['content']);
-            $out[$md5] = $v;
+        if (class_exists('lessc')) {
+            $less = new lessc();
+            foreach ((array) $content as $md5 => $v) {
+                $v['content'] = $less->compile($v['content']);
+                $out[$md5] = $v;
+            }
         }
         return $out;
     }
@@ -1495,7 +1515,7 @@ class yf_assets
             if ( ! is_array($v)) {
                 continue;
             }
-            $_params = (array) $v['params'] + (array) $params;
+            $_params = ((array) $v['params'] + (array) $params) ?? [];
             $content_type = $v['content_type'];
             $cached_path = '';
             $use_cache = $this->USE_CACHE && ! $_params['no_cache'] && ! $_params['config']['no_cache'];
@@ -1518,9 +1538,9 @@ class yf_assets
                 }
             }
             $str = $v['content'];
-            $before = $_params['config']['before'];
-            $after = $_params['config']['after'];
-            if ($_params['config']['class']) {
+            $before = $_params['config']['before'] ?? '';
+            $after = $_params['config']['after'] ?? '';
+            if ($_params['config']['class'] ?? '') {
                 $_params['class'] = $_params['config']['class'];
             }
             $use_combine = $this->COMBINE && $use_cache && in_array($content_type, ['url', 'file']) && empty($before) && empty($after) && empty($_params['class']) && empty($_params['id']);

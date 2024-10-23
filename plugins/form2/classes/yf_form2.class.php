@@ -34,6 +34,30 @@ class yf_form2
     public $CONF_FORM_ID_FIELD = '__form_id__';
     public $CONF_FORM_AUTOID_PREFIX = 'form_autoid_';
 
+    public $_chained_mode = null;
+    public $_extend = [];
+    public $_replace = [];
+    public $_params = [];
+    public $_sql = null;
+    public $_form_id = null;
+    public $_isset_hidden_form_id = null;
+    public $_isset_hidden_token = null;
+    public $_rendered = null;
+    public $_extra = null;
+    public $_body = [];
+    public $_validate_rules = [];
+    public $_validate = null;
+    public $_db_change_if_ok = null;
+    public $_on = [];
+    public $_stacked_mode_on = null;
+    public $_tabbed_mode_on = null;
+    public $_tabs_counter = 0;
+    public $_tabs_name = null;
+    public $_tabs_extra = null;
+    public $_pair_allow_deny = null;
+    public $_pair_yes_no = null;
+    public $_validate_rules_names = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -331,7 +355,7 @@ class yf_form2
         }
         _class('core_events')->fire('form.before_render', [$extra, $replace, $this]);
         $this->_extra = $extra;
-        $on_before_render = isset($extra['on_before_render']) ? $extra['on_before_render'] : $this->_on['on_before_render'];
+        $on_before_render = $extra['on_before_render'] ?? $this->_on['on_before_render'] ?? null;
         if (is_callable($on_before_render)) {
             $on_before_render($extra, $replace, $this);
         }
@@ -404,10 +428,10 @@ class yf_form2
         if ( ! $headless_form) {
             // Call these methods, if not done yet, save 2 api calls
             if ( ! isset($this->_body['form_begin'])) {
-                $this->form_begin('', '', $extra + (array) $extra_override['form_begin'], $r);
+                $this->form_begin('', '', $extra + ($extra_override['form_begin'] ?? []), $r);
             }
             if ( ! isset($this->_body['form_end'])) {
-                $this->form_end($extra + (array) $extra_override['form_end'], $r);
+                $this->form_end($extra + ($extra_override['form_end'] ?? []), $r);
             }
             // Force form_begin as first array element
             $form_begin = $this->_body['form_begin'];
@@ -448,8 +472,8 @@ class yf_form2
             if ( ! is_array($v)) {
                 continue;
             }
-            $_extra = (array) $v['extra'] + (array) $extra_override[$v['extra']['name']];
-            $_replace = (array) $r + (array) $v['replace'];
+            $_extra = ($v['extra'] ?? []) + ($extra_override[$v['extra']['name']] ?? []);
+            $_replace = ($r ?? []) + ($v['replace'] ?? []);
             $func = $v['func'];
             if ($v['name'] == 'row_start') {
                 // Mark row as containing errors, if children elements has at least one error
@@ -597,7 +621,7 @@ class yf_form2
         $extra['css_framework'] = $css_framework;
         $this->_rendered = _class('html5fw')->form_render_out($this->_rendered, $extra, $r, $this);
 
-        $on_after_render = isset($extra['on_after_render']) ? $extra['on_after_render'] : $this->_on['on_after_render'];
+        $on_after_render = $extra['on_after_render'] ?? $this->_on['on_after_render'] ?? null;
         if (is_callable($on_after_render)) {
             $on_after_render($extra, $replace, $this);
         }
@@ -694,7 +718,7 @@ class yf_form2
         }
         $func = function ($extra, $r, $form) {
             $form->_fieldset_mode_on = false;
-            $body .= '</fieldset>' . PHP_EOL;
+            $body = '</fieldset>' . PHP_EOL;
             $body .= '</form>' . PHP_EOL;
             return $body;
         };
@@ -729,6 +753,7 @@ class yf_form2
             }
             return $body;
         };
+        $replace = [];
         if ($this->_chained_mode || $extra['chained_mode']) {
             $this->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
             return $this;
@@ -748,6 +773,7 @@ class yf_form2
                 return '</fieldset>' . PHP_EOL;
             }
         };
+        $replace = [];
         if ($this->_chained_mode || $extra['chained_mode']) {
             $this->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
             return $this;
@@ -767,6 +793,7 @@ class yf_form2
             $name = '';
         }
         $extra['name'] = $extra['name'] ?: $name;
+        $replace = [];
         $func = function ($extra, $r, $form) {
             // auto-close row_end(), if not called implicitely
             if ($form->_stacked_mode_on) {
@@ -792,6 +819,7 @@ class yf_form2
      */
     public function row_end($extra = [])
     {
+        $replace = [];
         $func = function ($extra, $r, $form) {
             $form->_stacked_mode_on = false;
             return $form->_row_html('', ['only_row_end' => 1] + (array) $extra);
@@ -814,6 +842,7 @@ class yf_form2
             $extra = (array) $extra + $name;
             $name = '';
         }
+        $replace = [];
         $extra['name'] = $extra['name'] ?: $name;
         $func = function ($extra, $r, $form) {
             // auto-close tab_end(), if not called implicitely
@@ -837,6 +866,7 @@ class yf_form2
      */
     public function tab_end($extra = [])
     {
+        $replace = [];
         $func = function ($extra, $r, $form) {
             $form->_tabbed_mode_on = false;
         };
@@ -996,17 +1026,17 @@ class yf_form2
             $replace_dots = array_dot($replace);
         }
         $value = '';
-        if ($extra['value']) {
+        if ($extra['value'] ?? false) {
             $value = $extra['value'];
-        } elseif ($replace[$name]) {
+        } elseif ($replace[$name] ?? false) {
             $value = $replace[$name];
-        } elseif ($is_html_array && $replace_dots[$name_dots]) {
+        } elseif ($is_html_array && ($replace_dots[$name_dots] ?? false)) {
             $value = $replace_dots[$name_dots];
-        } elseif ($extra['selected']) {
+        } elseif ($extra['selected'] ?? false) {
             $value = $extra['selected'];
-        } elseif ($params['selected'][$name]) {
+        } elseif ($params['selected'][$name] ?? false) {
             $value = $params['selected'][$name];
-        } elseif ($is_html_array && $params['selected'][$name_dots]) {
+        } elseif ($is_html_array && ($params['selected'][$name_dots] ?? false)) {
             $value = $params['selected'][$name_dots];
         }
         return $value;
@@ -2097,6 +2127,7 @@ class yf_form2
             $extra = [];
         }
         $name = $extra['name'] ?: $name;
+        $desc = '';
         $extra['desc'] = $extra['desc'] ?: 'Preview';
         $extra['class_add'] = $extra['class_add'] ?: 'preview';
         if ( ! $name) {
@@ -2293,6 +2324,7 @@ class yf_form2
         if ( ! $extra['desc']) {
             $extra['no_label'] = 1;
         }
+        $desc = '';
         return $this->info($name, $desc, $extra, $replace);
     }
 
@@ -2313,6 +2345,7 @@ class yf_form2
         } else {
             $extra['name'] = $name;
         }
+        $desc = '';
         $extra['desc'] = $this->_prepare_desc($extra, $desc);
         $extra['values'] = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
         $extra['func_html_control'] = $extra['func_html_control'] ?: $func_html_control;
@@ -2362,7 +2395,7 @@ class yf_form2
         $func = function ($extra, $r, $form) {
             $form->_prepare_inline_error($extra);
             $extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-            $extra['values'] = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
+            $extra['values'] = isset($extra['values']) ? $extra['values'] : ($values ?? []); // Required
             $extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
             $extra['id'] = $form->_prepare_id($extra);
             $extra = $form->_input_assign_params_from_validate($extra);

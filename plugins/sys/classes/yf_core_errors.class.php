@@ -76,7 +76,7 @@ class yf_core_errors
     public function __construct()
     {
         if (defined('ERROR_REPORTING')) {
-            conf('ERROR_REPORTING', (int) ERROR_REPORTING);
+            conf('ERROR_REPORTING', (int) constant('ERROR_REPORTING'));
         }
         if (conf('ERROR_REPORTING')) {
             error_reporting((int) conf('ERROR_REPORTING'));
@@ -85,7 +85,7 @@ class yf_core_errors
         $file_path = $this->_get_file_path();
         $this->set_log_file_name($file_path);
 
-        $this->set_flags(defined('error_handler_FLAGS') ? error_handler_FLAGS : '110000');
+        $this->set_flags(defined('error_handler_FLAGS') ? constant('error_handler_FLAGS') : '110000');
         $this->set_reporting_level();
         $this->set_mail_receiver('yf_framework_site_admin', defined('SITE_ADMIN_EMAIL') ? SITE_ADMIN_EMAIL : 'php_test@127.0.0.1');
         ini_set('ignore_repeated_errors', 1);
@@ -124,7 +124,7 @@ class yf_core_errors
                 $suffix .= '_' . $name;
             }
         }
-        $file_path = defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : APP_PATH . 'logs/' . $this->error_log_filename;
+        $file_path = defined('ERROR_LOGS_FILE') ? constant('ERROR_LOGS_FILE') : APP_PATH . 'logs/' . $this->error_log_filename;
         $file_path = str_replace('{suffix}', $suffix, $file_path);
         $this->error_log_filename = $file_path;
         return $this->error_log_filename;
@@ -206,9 +206,14 @@ class yf_core_errors
      * @param mixed $error_msg
      * @param mixed $error_file
      * @param mixed $error_line
+     * @param mixed $error_context
      */
     public function error_handler($error_type, $error_msg, $error_file, $error_line)
     {
+        return !!preg_match('~^(Undefined array key|Undefined property|Undefined variable)~', $error_msg);
+        // return !!preg_match('~^(Undefined array key|Undefined variable|Trying to access array offset on value of type null)~', $error_msg);
+        // return !!preg_match('~^(Undefined array key|Undefined property|Undefined variable|Trying to access array offset on value of type null)~', $error_msg);
+
         // quickly turn off notices logging
         if ($this->NO_NOTICES && ($error_type == E_NOTICE || $error_type == E_USER_NOTICE)) {
             return true;
@@ -217,6 +222,7 @@ class yf_core_errors
         $save_log = false;
         $send_mail = false;
         // Process critical errors
+        $save_in_db = false;
         if ($error_type == E_ERROR || $error_type == E_USER_ERROR) {
             if ($this->LOG_ERRORS_TO_FILE) {
                 $save_log = true;
@@ -276,7 +282,7 @@ class yf_core_errors
                 'IP=' . $IP,
                 'QS=' . WEB_PATH . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''),
                 'URL=http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-                'REF=' . $_SERVER['HTTP_REFERER'],
+                'REF=' . @$_SERVER['HTTP_REFERER'],
                 $this->_log_display_array('GET'),
                 $this->_log_display_array('POST'),
                 $this->_log_display_array('FILES'),
@@ -305,13 +311,13 @@ class yf_core_errors
             'source_line' => (int) $error_line,
             'date' => time(),
             'site_id' => (int) conf('SITE_ID'),
-            'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
-            'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
+            'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id'] ?? 0),
+            'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group'] ?? 0),
             'is_admin' => MAIN_TYPE_ADMIN ? 1 : 0,
             'ip' => $IP,
             'query_string' => WEB_PATH . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''),
             'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-            'referer' => $_SERVER['HTTP_REFERER'],
+            'referer' => @$_SERVER['HTTP_REFERER'],
             'request_uri' => $_SERVER['REQUEST_URI'],
             'env_data' => $this->DB_LOG_ENV ? $this->_prepare_env() : '',
             'object' => $_GET['object'],
@@ -366,7 +372,7 @@ class yf_core_errors
             error_log($msg, 0);
         } else {
             $log_dir = dirname($this->error_log_filename);
-            if ( ! file_exists($log_dir)) {
+            if (! file_exists($log_dir)) {
                 mkdir($log_dir, 0755, true);
             }
             error_log($msg, 3, $this->error_log_filename);
@@ -392,7 +398,7 @@ class yf_core_errors
     public function set_log_file_name($filename)
     {
         $dir = dirname($filename);
-        if ( ! file_exists($dir)) {
+        if (! file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         $this->error_log_filename = $filename;

@@ -141,6 +141,46 @@ class yf_main
     /** @var bool @conf_skip */
     public $PROFILING = false;
 
+    public $_current_user_info = null;
+    public $_custom_class_storages = [];
+    public $_CWD = null;
+    public $_data_handlers_loaded = null;
+    public $_extend = [];
+    public $_getset_cache = [];
+    public $_is_mobile = null;
+    public $_ORIGINAL_VARS_GET = [];
+    public $_ORIGINAL_VARS_SERVER = [];
+    public $_paths_replace_pairs = [];
+    public $_plugins = null;
+    public $_plugins_classes = null;
+    public $_server_self_ips = null;
+    public $_SHUTDOWN_CODE_ARRAY = [];
+    public $_time_start = null;
+    public $_timing = [];
+    public $_user_info = null;
+    public $auth = null;
+    public $BLOCKS_TASK_403 = null;
+    public $BLOCKS_TASK_404 = null;
+    public $cache = null;
+    public $common = null;
+    public $data_handlers = null;
+    public $db = null;
+    public $error_handler = null;
+    public $events = null;
+    public $graphics = null;
+    public $installed_admin_modules = null;
+    public $installed_user_modules = null;
+    public $IS_403 = null;
+    public $IS_404 = null;
+    public $IS_503 = null;
+    public $IS_BANNED = null;
+    public $is_console = null;
+    public $modules = [];
+    public $SERVER_INFO = [];
+    public $SESSION_OFF = null;
+    public $tpl = null;
+    public $web_path_was_not_defined = null;
+
     /**
      * Engine constructor
      * Depends on type that is given to it initialize user section or administrative backend.
@@ -239,12 +279,15 @@ class yf_main
         if ( ! is_string($name) || ! $name) {
             return null;
         }
-        $refresh = $params['refresh_cache'];
+        if ( ! is_array($params)) {
+            $params = [];
+        }
+        $refresh = $params['refresh_cache'] ?? false;
         $refresh && $params['no_cache'] = true;
 
-        $enabled = $this->USE_SYSTEM_CACHE && ! $params['no_cache'];
+        $enabled = $this->USE_SYSTEM_CACHE && ! ($params['no_cache'] ?? false);
         // speed optimization with 2nd layer of caching
-        $memory_enabled = ($params['no_cache'] || $refresh || $this->is_console()) ? false : true;
+        $memory_enabled = (($params['no_cache'] ?? false) || $refresh || $this->is_console()) ? false : true;
         if ($memory_enabled && isset($this->_getset_cache[$name])) {
             return $this->_getset_cache[$name]['result'];
         }
@@ -348,8 +391,8 @@ class yf_main
                 }
             });
         }
-        conf('filter_hidden', $_COOKIE['filter_hidden'] ? 1 : 0);
-        conf('qm_hidden', $_COOKIE['qm_hidden'] ? 1 : 0);
+        conf('filter_hidden', ($_COOKIE['filter_hidden'] ?? false) ? 1 : 0);
+        conf('qm_hidden', ($_COOKIE['qm_hidden'] ?? false) ? 1 : 0);
 
         $https_needed = $this->USE_ONLY_HTTPS;
         if ( ! $https_needed) {
@@ -428,8 +471,10 @@ class yf_main
             $_GET['action'] = 'show';
         }
         if ( ! $this->is_console() && ! isset($_SESSION['utm_source'])) {
-            $utm_source = $_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_COOKIE['utm_source']);
-            if ( ! $utm_source && $_SERVER['HTTP_REFERER']) {
+            $utm_source = $_GET['utm_source'] ?? null;
+            $utm_source = $utm_source ?? $_POST['utm_source'] ?? null;
+            $utm_source = $utm_source ?? $_COOKIE['utm_source'] ?? null;
+            if ( ! $utm_source && ($_SERVER['HTTP_REFERER'] ?? false)) {
                 $cur_domain = trim($_SERVER['HTTP_HOST']);
                 $ref_domain = trim(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST));
                 if ($ref_domain && $ref_domain != $cur_domain) {
@@ -645,7 +690,7 @@ class yf_main
         }
         $SPIDER_NAME = $this->modules['common']->_is_spider($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
         if (empty($SPIDER_NAME)) {
-            if (preg_match('/(bot|spider|crawler|curl|wget)/ims', $USER_AGENT)) {
+            if (preg_match('/(bot|spider|crawler|curl|wget)/ims', $SPIDER_NAME)) {
                 $SPIDER_NAME = 'Unknown spider';
             }
         }
@@ -751,7 +796,7 @@ class yf_main
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
         $this->SERVER_ROLE = 'default';
-        if ( ! conf('SERVER_ROLE') && $this->SERVER_INFO['role']) {
+        if ( ! conf('SERVER_ROLE') && ($this->SERVER_INFO['role'] ?? false)) {
             $this->SERVER_ROLE = $this->SERVER_INFO['role'];
             conf('SERVER_ROLE', $this->SERVER_ROLE);
         }
@@ -764,7 +809,7 @@ class yf_main
     public function init_locale()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        if ($_GET['no_lang'] || conf('no_locale')) {
+        if (($_GET['no_lang'] ?? false) || conf('no_locale')) {
             return false;
         }
         _class('i18n')->init_locale();
@@ -933,8 +978,8 @@ class yf_main
         if (isset($this->_plugins) && ! $force) {
             return $this->_plugins;
         }
-        $white_list = (array) $this->_plugins_white_list;
-        $black_list = (array) $this->_plugins_black_list;
+        $white_list = $this->_plugins_white_list ?? [];
+        $black_list = $this->_plugins_black_list ?? [];
         // Order matters for plugins_classes !!
         $sets = [
             'framework' => YF_PATH . 'plugins/*/',
@@ -1157,7 +1202,7 @@ class yf_main
         $loaded_path = '';
         foreach ((array) $storages as $_storage => $v) {
             $_path = (string) $v[0];
-            $_prefix = (string) $v[1];
+            $_prefix = strval($v[1] ?? '');
             if (empty($_path)) {
                 continue;
             }
@@ -1224,7 +1269,7 @@ class yf_main
             '[CLASS]' => $class_name,
             '[METHOD]' => $method_name,
             '[LANG]' => defined('DEFAULT_LANG') ? DEFAULT_LANG : conf('language'),
-            '[DOMAIN]' => defined('CUR_DOMAIN_LONG') ? CUR_DOMAIN_LONG : $_SERVER['HTTP_HOST'],
+            '[DOMAIN]' => defined('CUR_DOMAIN_LONG') ? constant('CUR_DOMAIN_LONG') : $_SERVER['HTTP_HOST'],
             '[CATEGORY]' => conf('current_category'),
             '[DEBUG]' => (int) DEBUG_MODE,
         ];
@@ -1315,7 +1360,7 @@ class yf_main
         if (DEBUG_MODE) {
             $_time_start = microtime(true);
         }
-        $body = $this->call_class_method($class_name, $path, $method_name, $method_params, $tpl_name, $silent, $use_cache, $cache_ttl, $cache_key_override);
+        $body = $this->call_class_method($class_name, '', $method_name, $method_params, $tpl_name, $silent, $use_cache, $cache_ttl, $cache_key_override);
         if ( ! $body) {
             $body = '';
         }
@@ -1685,7 +1730,7 @@ class yf_main
                 }
             }
         }
-        defined('DEV_MODE') && conf('DEV_MODE', DEV_MODE);
+        defined('DEV_MODE') && conf('DEV_MODE', constant('DEV_MODE'));
         $this->DEV_MODE = conf('DEV_MODE');
 
         define('OS_WINDOWS', strpos(PHP_OS, 'WIN') === 0);
@@ -1790,7 +1835,7 @@ class yf_main
         $_GET['object'] = str_replace(['yf_', '-'], ['', '_'], preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['object']))));
         $_GET['action'] = str_replace('-', '_', preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['action']))));
         if ( ! $_GET['action']) {
-            $_GET['action'] = defined('DEFAULT_ACTION') ? DEFAULT_ACTION : 'show';
+            $_GET['action'] = defined('DEFAULT_ACTION') ? constant('DEFAULT_ACTION') : 'show';
         }
         ! conf('css_framework') && conf('css_framework', 'bs3');
     }
@@ -1804,40 +1849,6 @@ class yf_main
         error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
         ini_set('url_rewriter.tags', '');
         date_default_timezone_set(conf('timezone') ?: 'Europe/Kiev');
-        // Prepare GPC data. get_magic_quotes_gpc always return 0 starting from PHP 5.4+
-        if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
-            $_GET = $this->_strip_quotes_recursive($_GET);
-            $_POST = $this->_strip_quotes_recursive($_POST);
-            $_COOKIE = $this->_strip_quotes_recursive($_COOKIE);
-            $_REQUEST = array_merge((array) $_GET, (array) $_POST, (array) $_COOKIE);
-        }
-        /*
-        if ($_POST) {
-            if (!verify_token()) {
-                $ini = "max_input_vars";
-                $max_vars = ini_get($ini);
-                if (extension_loaded("suhosin")) {
-                    foreach (array("suhosin.request.max_vars", "suhosin.post.max_vars") as $key) {
-                        $val = ini_get($key);
-                        if ($val && (!$max_vars || $val < $max_vars)) {
-                            $ini = $key;
-                            $max_vars = $val;
-                        }
-                    }
-                }
-                $error = (!$_POST["token"] && $max_vars
-                    ? lang('Maximum number of allowed fields exceeded. Please increase %s.', "'$ini'")
-                    : lang('Invalid CSRF token. Send the form again.') . ' ' . lang('If you did not send this request from Adminer then close this page.')
-                );
-            }
-        } elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // posted form with no data means that post_max_size exceeded because Adminer always sends token at least
-            $error = lang('Too big POST data. Reduce the data or increase the %s configuration directive.', "'post_max_size'");
-            if (isset($_GET["sql"])) {
-                $error .= ' ' . lang('You can upload a big SQL file via FTP and import it from server.');
-            }
-        }
-        */
     }
 
     /**
@@ -1869,12 +1880,12 @@ class yf_main
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), []];
         if (MAIN_TYPE_ADMIN) {
-            $obj->USER_ID = $_GET['user_id'];
-            $obj->ADMIN_ID = (int) $_SESSION['admin_id'];
-            $obj->ADMIN_GROUP = (int) $_SESSION['admin_group'];
+            $obj->USER_ID = intval($_GET['user_id'] ?? 0);
+            $obj->ADMIN_ID = intval($_SESSION['admin_id'] ?? 0);
+            $obj->ADMIN_GROUP = intval($_SESSION['admin_group'] ?? 0);
         } elseif (MAIN_TYPE_USER) {
-            $obj->USER_ID = (int) $_SESSION['user_id'];
-            $obj->USER_GROUP = (int) $_SESSION['user_group'];
+            $obj->USER_ID = intval($_SESSION['user_id'] ?? 0);
+            $obj->USER_GROUP = intval($_SESSION['user_group'] ?? 0);
         }
         if (isset($obj->USER_ID) && ! empty($obj->USER_ID)) {
             if ( ! isset($this->_current_user_info)) {

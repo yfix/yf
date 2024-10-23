@@ -22,8 +22,8 @@ return function ($assets) {
                 'font-awesome4',
                 $fixes_name,
             ],
-            'css' => $CONF['css_' . $main_type . '_override'],
-            'jss' => $CONF['js_' . $main_type . '_override'],
+            'css' => $CONF['css_' . $main_type . '_override'] ?? null,
+            'jss' => $CONF['js_' . $main_type . '_override'] ?? null,
         ],
     ];
     } elseif ($bs_theme === 'bootstrap_theme') {
@@ -36,8 +36,8 @@ return function ($assets) {
                 'font-awesome4',
                 $fixes_name,
             ],
-            'css' => $CONF['css_' . $main_type . '_override'],
-            'jss' => $CONF['js_' . $main_type . '_override'],
+            'css' => $CONF['css_' . $main_type . '_override'] ?? null,
+            'jss' => $CONF['js_' . $main_type . '_override'] ?? null,
         ],
     ];
     } elseif ($bs_theme === 'material_design') {
@@ -57,10 +57,10 @@ return function ($assets) {
                 'font-awesome4',
                 $fixes_name,
             ],
-            'css' => $CONF['css_' . $main_type . '_override'],
+            'css' => $CONF['css_' . $main_type . '_override'] ?? null,
             'jss' => [
                 '$(function(){ $.material.init(); })',
-                $CONF['js_' . $main_type . '_override'],
+                $CONF['js_' . $main_type . '_override'] ?? null,
             ],
         ],
     ];
@@ -86,8 +86,8 @@ return function ($assets) {
                 'font-awesome4',
                 $fixes_name,
             ],
-            'css' => $CONF['css_' . $main_type . '_override'],
-            'jss' => $CONF['js_' . $main_type . '_override'],
+            'css' => $CONF['css_' . $main_type . '_override'] ?? null,
+            'jss' => $CONF['js_' . $main_type . '_override'] ?? null,
         ],
     ];
     } elseif ($bs_major_version == 3) {
@@ -114,8 +114,8 @@ return function ($assets) {
                 'font-awesome4',
                 $fixes_name,
             ],
-            'css' => $CONF['css_' . $main_type . '_override'],
-            'jss' => $CONF['js_' . $main_type . '_override'],
+            'css' => $CONF['css_' . $main_type . '_override'] ?? null,
+            'jss' => $CONF['js_' . $main_type . '_override'] ?? null,
         ],
     ];
     }

@@ -17,6 +17,13 @@ abstract class yf_db_query_builder_driver
     const REGEX_ASC_DESC = '~^([a-z0-9\(\)*_\.]+)[\s]+(asc|desc)$~ims';
     const REGEX_TABLE_NAME_CLEANUP = '~[^a-z0-9_\.\s]~ims';
 
+    public $_sql = [];
+    public $_model = [];
+    public $db = null;
+    public $_result_wrapper = null;
+    public $_qb_set = null;
+
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -199,13 +206,13 @@ abstract class yf_db_query_builder_driver
             $a[$name] = $this->_sql_part_to_array($name, $sql_data[$name], $config, $return_raw);
         }
         $unions = [];
-        foreach ((array) $sql_data['union'] as $query) {
+        foreach (($sql_data['union'] ?? []) as $query) {
             $subquery = $this->subquery($query);
             if ($subquery) {
                 $unions[] = 'UNION ' . $subquery;
             }
         }
-        foreach ((array) $sql_data['union_all'] as $query) {
+        foreach (($sql_data['union_all'] ?? []) as $query) {
             $subquery = $this->subquery($query);
             if ($subquery) {
                 $unions[] = 'UNION ALL ' . $subquery;
@@ -214,7 +221,7 @@ abstract class yf_db_query_builder_driver
         if ($unions) {
             $a['union'] = implode(PHP_EOL, $unions);
         }
-        $lock = $sql_data['lock'];
+        $lock = $sql_data['lock'] ?? '';
         if (in_array($lock, ['lock_for_update', 'shared_lock'])) {
             $a['lock'] = ($lock === 'lock_for_update' ? 'FOR UPDATE' : 'LOCK IN SHARE MODE');
         }
@@ -1360,7 +1367,7 @@ abstract class yf_db_query_builder_driver
         $count = count((array) $where);
         if (($count === 3 || $count === 2) && is_string($where[0]) && (is_string($where[1]) || is_numeric($where[1]) || is_array($where[1]))) {
             if ( ! preg_match(self::REGEX_INLINE_CONDS, $where[0]) && ! preg_match(self::REGEX_INLINE_CONDS, $where[1])) {
-                $sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
+                $sql = $this->_process_where_cond($where[0], $where[1], $where[2] ?? '');
             }
         }
         $avail_imploders = ['AND', 'OR', 'XOR'];

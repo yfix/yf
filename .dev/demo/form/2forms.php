@@ -2,6 +2,9 @@
 
 return function () {
     $request_types = [];
+    $request_id = 123;
+    $info = [];
+    $body = [];
 
     $body[] = form(false, [
             'legend' => t('Please specify fines:'),
@@ -24,6 +27,7 @@ return function () {
         ->row_end()
         ->submit('send', false, ['value' => 'Apply', 'class_add' => 'btn-success']);
 
+    $request_owner = false;
     $body[] = form(false, [
             'legend' => 'cancel',
             'name' => 'cancel_request',

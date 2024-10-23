@@ -12,6 +12,7 @@ class yf_core_api
     ];
     /** @security Project code needed to be defended from easy traversing */
     public $SOURCE_ONLY_FRAMEWORK = false;
+    public $_cache = [];
 
     /**
      * Catch missing method call.
@@ -329,7 +330,7 @@ class yf_core_api
         } else {
             $cls = get_class($module);
         }
-        $methods = $this->_cache[__FUNCTION__][$cls];
+        $methods = $this->_cache[__FUNCTION__][$cls] ?? null;
         if ($methods === null) {
             $methods = $this->get_methods_sources($cls);
             $this->_cache[__FUNCTION__][$cls] = $methods;
@@ -450,6 +451,7 @@ class yf_core_api
      */
     public function get_module_docs($name)
     {
+        $replace = [];
         $docs_dir = YF_PATH . '.dev/docs/en/';
         $f = $docs_dir . $name . '.stpl';
         if (file_exists($f)) {
@@ -464,6 +466,7 @@ class yf_core_api
      */
     public function get_method_docs($name, $method = '')
     {
+        $replace = [];
         $docs_dir = YF_PATH . '.dev/docs/en/';
         if (false !== strpos($name, '.')) {
             list($name, $method) = explode('.', $name);
@@ -480,6 +483,7 @@ class yf_core_api
      */
     public function get_function_docs($name)
     {
+        $replace = [];
         $docs_dir = YF_PATH . '.dev/docs/en/';
         $f = $docs_dir . $name . '.stpl';
         if (file_exists($f)) {
@@ -510,7 +514,7 @@ class yf_core_api
 
     public function get_server_info()
     {
-        $sites = $this->get_servers();
+        $servers = $this->get_servers();
         return $servers[main()->SERVER_ID];
     }
 
@@ -747,7 +751,7 @@ class yf_core_api
     /***/
     public function get_file_slice($file, $line_start, $line_end)
     {
-        $source = $this->_cache[__FUNCTION__][$file];
+        $source = $this->_cache[__FUNCTION__][$file] ?? null;
         if ($source === null) {
             $source = file($file);
             $this->_cache[__FUNCTION__][$file] = $source;

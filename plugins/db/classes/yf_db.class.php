@@ -117,6 +117,24 @@ class yf_db
     /** @var array Filled automatically from generated file */
     public $_need_sys_prefix = [];
 
+    public $IS_PRIMARY_CONNECTION = null;
+    public $NO_AUTO_CONNECT = null;
+    public $_connect_start_time = null;
+    public $_connection_time = null;
+    public $_last_query_error = null;
+    public $_last_insert_id = null;
+    public $_last_affected_rows = null;
+    public $_db_results_cache = [];
+    public $utils = null;
+    public $migrator = null;
+    public $installer = null;
+    public $_SHUTDOWN_QUERIES = [];
+    public $_shutdown_executed = null;
+    public $_found_tables = [];
+    public $_queries_logged = null;
+    public $QUERY_REVISIONS_TABLES = [];
+    public $QUERY_REVISIONS_METHODS = [];
+
     /**
      * Constructor.
      * @param mixed $db_type
@@ -135,7 +153,7 @@ class yf_db
         }
         $this->DB_PREFIX = ! empty($db_prefix) ? $db_prefix : DB_PREFIX;
         // Check if this is primary database connection
-        $debug_index = $DEBUG['db_instances'] ? count((array) $DEBUG['db_instances']) : 0;
+        $debug_index = count($DEBUG['db_instances'] ?? []);
         if ($debug_index < 1) {
             $this->IS_PRIMARY_CONNECTION = true;
         } else {
@@ -260,14 +278,14 @@ class yf_db
         if ( ! is_array($params)) {
             $params = [];
         }
-        if ($params['reconnect'] || $params['force']) {
+        if (($params['reconnect'] ?? false) || ($params['force'] ?? false)) {
             $force = true;
         }
         if ( ! empty($this->_tried_to_connect) && ! $force) {
             return $this->_connected;
         }
         $this->_connect_start_time = microtime(true);
-        if ( ! $params['reconnect']) {
+        if ( ! ($params['reconnect'] ?? false)) {
             $this->_set_connect_params($db_host, $db_user, $db_pswd, $db_name, $force, $params);
         }
         $driver_class_name = main()->load_class_file('db_driver_' . $this->DB_TYPE, $this->DB_DRIVERS_DIR);
@@ -363,25 +381,25 @@ class yf_db
         if ( ! is_array($params)) {
             $params = [];
         }
-        if ($params['reconnect'] || $params['force']) {
+        if (($params['reconnect'] ?? false) || ($params['force'] ?? false)) {
             $force = true;
         }
-        $this->DB_HOST = ($params['host'] ?: $db_host) ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
-        $this->DB_USER = ($params['user'] ?: $db_user) ?: (defined('DB_USER') ? DB_USER : 'root');
+        $this->DB_HOST = ($params['host'] ?? $db_host) ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
+        $this->DB_USER = ($params['user'] ?? $db_user) ?: (defined('DB_USER') ? DB_USER : 'root');
         // db_pswd can be empty string
-        $_db_pswd = isset($params['pswd']) ? $params['pswd'] : $db_pswd;
-        $this->DB_PSWD = $_db_pswd !== null ? $_db_pswd : (defined('DB_PSWD') ? DB_PSWD : '');
+        $_db_pswd = $params['pswd'] ?? $db_pswd;
+        $this->DB_PSWD = $_db_pswd ?? (defined('DB_PSWD') ? DB_PSWD : '');
         // db_name can be empty string - means we working in special mode, just connecting to server
-        $_db_name = isset($params['name']) ? $params['name'] : $db_name;
-        $this->DB_NAME = $_db_name !== null ? $_db_name : (defined('DB_NAME') ? DB_NAME : '');
-        $this->DB_PORT = ($params['port'] ?: $db_port) ?: (defined('DB_PORT') ? DB_PORT : '');
-        $this->DB_SOCKET = ($params['socket'] ?: $db_socket) ?: (defined('DB_SOCKET') ? DB_SOCKET : '');
-        $this->DB_SSL = ($params['ssl'] ?: $db_ssl) ?: (defined('DB_SSL') ? DB_SSL : false);
-        $this->DB_CHARSET = ($params['charset'] ?: $db_charset) ?: (defined('DB_CHARSET') ? DB_CHARSET : '');
+        $_db_name = $params['name'] ?? $db_name;
+        $this->DB_NAME = $_db_name ?? (defined('DB_NAME') ? DB_NAME : '');
+        $this->DB_PORT = $params['port'] ?? (defined('DB_PORT') ? constant('DB_PORT') : '');
+        $this->DB_SOCKET = $params['socket'] ?? (defined('DB_SOCKET') ? constant('DB_SOCKET') : '');
+        $this->DB_SSL = $params['ssl'] ?? (defined('DB_SSL') ? constant('DB_SSL') : false);
+        $this->DB_CHARSET = $params['charset'] ?? (defined('DB_CHARSET') ? constant('DB_CHARSET') : '');
         if (isset($params['prefix'])) {
             $this->DB_PREFIX = $params['prefix'];
         }
-        $allow_auto_create_db = isset($params['auto_create_db']) ? $params['auto_create_db'] : $allow_auto_create_db;
+        $allow_auto_create_db = $params['auto_create_db'] ?? false;
         if ($allow_auto_create_db !== null) {
             $this->ALLOW_AUTO_CREATE_DB = $allow_auto_create_db;
         }
@@ -577,7 +595,7 @@ class yf_db
         }
         $log = &$this->_LOG[$log_id];
         $time = (float) microtime(true) - (float) $query_time_start;
-        $sql = $log['sql[5~'];
+        $sql = $log['sql'];
         if ($this->GATHER_AFFECTED_ROWS && $result) {
             $_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
             if (substr($_sql_type, 0, 4) === 'SHOW') {
@@ -1028,7 +1046,7 @@ class yf_db
         }
         $storage = &$this->_db_results_cache;
         if ($use_cache && $this->ALLOW_CACHE_QUERIES && ! $this->NO_CACHE && isset($storage[$sql])) {
-            if ($params['as_objects']) {
+            if ($params['as_objects'] ?? false) {
                 foreach ((array) $storage[$sql] as $k => $v) {
                     $storage[$sql][$k] = (object) $v;
                 }
@@ -1059,7 +1077,7 @@ class yf_db
                 $storage = null;
             }
         }
-        if ($params['as_objects']) {
+        if ($params['as_objects'] ?? false) {
             foreach ((array) $data as $k => $v) {
                 $data[$k] = (object) $v;
             }

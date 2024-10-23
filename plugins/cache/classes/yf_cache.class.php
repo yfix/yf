@@ -23,6 +23,15 @@ class yf_cache
     /** @var bool Force cache class to generate unique namespace, based on project_path. Usually needed to separate projects within same cache storage (memcached as example) */
     public $AUTO_CACHE_NS = false;
 
+    public $FILES_TTL = null;
+    public $_extend = null;
+    public $_driver = null;
+    public $_driver_ok = null;
+    public $_init_complete = false;
+    public $_no_cache = [];
+    public $_tried_to_connect = false;
+    public $_NO_CACHE_WHY = false;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -267,7 +276,7 @@ class yf_cache
             'trace' => main()->trace_string(),
             'did_real_work' => (int) $do_real_work,
         ]);
-        if ($_GET['refresh_cache'] && $this->_url_action_allowed('refresh_cache')) {
+        if (($_GET['refresh_cache'] ?? false) && $this->_url_action_allowed('refresh_cache')) {
             return null;
         }
         return $result;

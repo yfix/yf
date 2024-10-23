@@ -1,6 +1,7 @@
 <?php
 
-class yf_autoloader {
+class yf_autoloader
+{
 
 	public $libs_root = '';
 	public $is_console = false;
@@ -25,9 +26,10 @@ class yf_autoloader {
 	public $example = [];
 
 	/***/
-	public function __construct($config = []) {
-		!defined('YF_PATH') && define('YF_PATH', dirname(dirname(__DIR__)).'/');
-		$this->libs_root = YF_PATH.'vendor/';
+	public function __construct($config = [])
+	{
+		!defined('YF_PATH') && define('YF_PATH', dirname(dirname(__DIR__)) . '/');
+		$this->libs_root = YF_PATH . 'vendor/';
 		$this->is_console = $_SERVER['argc'] && !isset($_SERVER['REQUEST_METHOD']);
 
 		foreach ($this->config_names as $name) {
@@ -45,7 +47,8 @@ class yf_autoloader {
 	}
 
 	/***/
-	public function process_example() {
+	public function process_example()
+	{
 		$libs_root = $this->libs_root;
 		$example = $this->example;
 		if (!is_callable($example)) {
@@ -64,47 +67,49 @@ class yf_autoloader {
 	}
 
 	/***/
-	public function process_composer() {
+	public function process_composer()
+	{
 		$libs_root = $this->libs_root;
 		$composer_names = $this->composer_names;
 		if (!$composer_names) {
 			return false;
 		}
-		$dir = $libs_root.'vendor/';
+		$dir = $libs_root . 'vendor/';
 		foreach ((array)$composer_names as $composer_package) {
-			$check_file = $dir. dirname($composer_package).'/'.basename($composer_package).'/';
+			$check_file = $dir . dirname($composer_package) . '/' . basename($composer_package) . '/';
 			if (!file_exists($check_file)) {
 				$this->composer_require($composer_package);
 				$this->check_error($composer_package, $dir, $check_file, 'something wrong with composer');
 			}
 		}
-		require_once $dir. 'autoload.php';
+		require_once $dir . 'autoload.php';
 		// Exclude raw git clone steps
 		$this->git_urls = [];
 		$this->autoload_config = [];
 	}
 
 	/***/
-	public function process_git() {
+	public function process_git()
+	{
 		$libs_root = $this->libs_root;
 		$git_urls = $this->git_urls;
 		foreach ((array)$git_urls as $git_url => $lib_dir) {
-			$dir = $libs_root. $lib_dir;
-			$check_file = $dir.'.git';
+			$dir = $libs_root . $lib_dir;
+			$check_file = $dir . '.git';
 			if (!file_exists($check_file)) {
+				$git_opts = '';
 				if (false !== strpos($git_url, '~')) {
 					list($git_url, $git_tag) = explode('~', $git_url);
-					$cmd = '(git clone --depth 1 --branch "'.$git_tag.'" --single-branch '.$git_url.' '.$dir.' && cd '.$dir.' && git checkout "'.$git_tag.'")';
-				} else {
-					$cmd = 'git clone --depth 1 '.$git_url.' '.$dir;
+					$git_opts = '--branch "' . $git_tag . '" --single-branch ';
 				}
+				$cmd = 'git clone --depth 1 ' . $git_opts . ' ' . $git_url . ' ' . $dir . ' && rm -rf ' . $dir . '/.git';
 				passthru($cmd);
 				$this->check_error(basename($lib_dir), $dir, $check_file);
 			} elseif (getenv('YF_FORCE_UPDATE_SERVICES')) {
 				if (false !== strpos($git_url, '~')) {
 					// Tag was forced, so do nothing
 				} else {
-					$cmd = 'cd '.$dir.' && git pull';
+					$cmd = 'cd ' . $dir . ' && git pull';
 				}
 				passthru($cmd);
 			}
@@ -112,18 +117,19 @@ class yf_autoloader {
 	}
 
 	/***/
-	public function process_pear() {
+	public function process_pear()
+	{
 		if (!$this->pear) {
 			return false;
 		}
-		spl_autoload_register(function($class){
+		spl_autoload_register(function ($class) {
 			$libs_root = $this->libs_root;
 			$pear_config = $this->pear;
 			foreach ((array)$pear_config as $lib_dir => $prefix) {
 				if (strlen($prefix) && strpos($class, $prefix) !== 0) {
 					continue;
 				}
-				$path = $libs_root. $lib_dir. str_replace('_', '/', $class).'.php';
+				$path = $libs_root . $lib_dir . str_replace('_', '/', $class) . '.php';
 				if (file_exists($path)) {
 					require $path;
 				}
@@ -133,13 +139,14 @@ class yf_autoloader {
 	}
 
 	/***/
-	public function process_yf_autoload() {
+	public function process_yf_autoload()
+	{
 		$libs_root = $this->libs_root;
 		$autoload_config = $this->autoload_config;
 		if (!$autoload_config) {
 			return false;
 		}
-		spl_autoload_register(function($class) {
+		spl_autoload_register(function ($class) {
 			$libs_root = $this->libs_root;
 			$autoload_config = $this->autoload_config;
 			foreach ((array)$autoload_config as $lib_dir => $prefix) {
@@ -154,9 +161,9 @@ class yf_autoloader {
 					continue;
 				}
 				if ($no_cut_prefix) {
-					$path = $libs_root. $lib_dir. str_replace("\\", '/', $class).'.php';
+					$path = $libs_root . $lib_dir . str_replace("\\", '/', $class) . '.php';
 				} else {
-					$path = $libs_root. $lib_dir. str_replace("\\", '/', substr($class, strlen($prefix) + 1)).'.php';
+					$path = $libs_root . $lib_dir . str_replace("\\", '/', substr($class, strlen($prefix) + 1)) . '.php';
 				}
 				if (!file_exists($path)) {
 					continue;
@@ -168,34 +175,36 @@ class yf_autoloader {
 	}
 
 	/***/
-	public function process_require_once() {
+	public function process_require_once()
+	{
 		$libs_root = $this->libs_root;
 		$require_once = $this->require_once;
 		if (!$require_once) {
 			return false;
 		}
 		foreach ((array)$require_once as $path) {
-			require_once $libs_root. $path;
+			require_once $libs_root . $path;
 		}
 	}
 
 	/**
-	*/
-	function _get_lib_path($name, $params = []) {
+	 */
+	function _get_lib_path($name, $params = [])
+	{
 		if (isset($this->php_libs[$name])) {
 			return $this->php_libs[$name];
 		}
 		if (!isset($this->_paths_cache)) {
 			$suffix = '.php';
-			$pattern = '{,plugins/*/}{services/,share/services/}{*,*/*}'. $suffix;
+			$pattern = '{,plugins/*/}{services/,share/services/}{*,*/*}' . $suffix;
 			$globs = [
-				'framework'	=> YF_PATH. $pattern,
+				'framework'	=> YF_PATH . $pattern,
 			];
-			defined('APP_PATH') && $globs['app'] = APP_PATH. $pattern;
+			defined('APP_PATH') && $globs['app'] = APP_PATH . $pattern;
 			$slen = strlen($suffix);
 			$paths = [];
-			foreach((array)$globs as $gname => $glob) {
-				foreach(glob($glob, GLOB_BRACE) as $_path) {
+			foreach ((array)$globs as $gname => $glob) {
+				foreach (glob($glob, GLOB_BRACE) as $_path) {
 					$_name = substr(basename($_path), 0, -$slen);
 					if (!$_name == '_yf_autoloader') {
 						continue;
@@ -204,7 +213,7 @@ class yf_autoloader {
 				}
 			}
 			// This double iterating code ensures we can inherit/replace services with same name inside project
-			foreach((array)$paths as $_name => $_path) {
+			foreach ((array)$paths as $_name => $_path) {
 				$this->_paths_cache[$_name] = $_path;
 			}
 		}
@@ -213,7 +222,8 @@ class yf_autoloader {
 	}
 
 	/***/
-	public function process_require_services() {
+	public function process_require_services()
+	{
 		$libs_root = $this->libs_root;
 		$require_services = $this->require_services;
 		if (!$require_services) {
@@ -227,7 +237,8 @@ class yf_autoloader {
 	}
 
 	/***/
-	public function process_manual() {
+	public function process_manual()
+	{
 		$libs_root = $this->libs_root;
 		$manual = $this->manual;
 		if (is_callable($manual)) {
@@ -238,7 +249,8 @@ class yf_autoloader {
 	// globally: curl -s http://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
 	// locally: curl -s http://getcomposer.org/installer | php
 	// ls -s /usr/local/bin/composer.phar /usr/local/bin/composer
-	public function composer_require($package) {
+	public function composer_require($package)
+	{
 		$libs_root = $this->libs_root;
 
 		set_error_handler(function ($code, $msg) {
@@ -246,7 +258,7 @@ class yf_autoloader {
 		}, E_NOTICE | E_USER_NOTICE | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED);
 
 		ob_start();
-		include_once __DIR__.'/composer.php';
+		include_once __DIR__ . '/composer.php';
 		ob_end_clean();
 
 		$cwd = getcwd();
@@ -263,23 +275,24 @@ class yf_autoloader {
 	}
 
 	/***/
-	public function check_error($name, $dir, $check_file, $error_reason = 'git url or command is wrong') {
+	public function check_error($name, $dir, $check_file, $error_reason = 'git url or command is wrong')
+	{
 		$libs_root = $this->libs_root;
 		$error_reasons = [];
 		if (!file_exists($check_file)) {
 			if (!is_writable($dir)) {
-				$error_reasons[] = $dir.' is not writable';
+				$error_reasons[] = $dir . ' is not writable';
 				if (!is_readable($dir)) {
-					$error_reasons[] = $dir.' is not readable';
+					$error_reasons[] = $dir . ' is not readable';
 				} else {
 					$stat = stat($dir);
 					$posix = posix_getpwuid($stat['uid']);
-					$error_reasons[] = ', details: file owner: '.$posix['name'].', php owner: '.$_SERVER['USER'].', file perms: '.fileperms($dir);
+					$error_reasons[] = ', details: file owner: ' . $posix['name'] . ', php owner: ' . $_SERVER['USER'] . ', file perms: ' . fileperms($dir);
 				}
 			}
 		}
 		if ($error_reasons) {
-			throw new Exception('lib "'.$name.'" install failed. Reasons: '.implode(', ', $error_reasons));
+			throw new Exception('lib "' . $name . '" install failed. Reasons: ' . implode(', ', $error_reasons));
 		}
 	}
 }

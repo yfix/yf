@@ -2,7 +2,7 @@
 <?php
 
 $config = [
-    'git_urls' => ['https://github.com/twigphp/Twig.git' => 'twig/'],
+    'git_urls' => ['https://github.com/twigphp/Twig.git~2.x' => 'twig/'],
     'require_once' => ['twig/src/Extension/StringLoaderExtension.php'],
     'autoload_config' => ['twig/src/' => 'Twig'],
     // 'manual' => function () {

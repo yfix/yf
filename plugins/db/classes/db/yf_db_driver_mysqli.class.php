@@ -30,6 +30,10 @@ class yf_db_driver_mysqli extends yf_db_driver
     /** @var array of callables */
     public $ON_AFTER_CONNECT = [];
 
+    public $params = [];
+    public $_connect_error = null;
+    public $DEF_PORT = null;
+
 
     public function __construct(array $params)
     {
@@ -278,6 +282,7 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function limit($count, $offset)
     {
+        $sql = '';
         if ($count > 0) {
             $offset = ($offset > 0) ? $offset : 0;
             $sql .= 'LIMIT ' . ($offset ? $offset . ', ' : '') . $count;
@@ -330,9 +335,9 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function bind_params($stmt, $data = [])
     {
+        $types_string = '';
         foreach ((array) $data as $k => $v) {
             $var_type = substr($k, 0, 1);
-            $var_name = substr($k, 2);
             $types_string .= $var_type;
             $params[] = '$data[\'' . $k . '\']';
         }

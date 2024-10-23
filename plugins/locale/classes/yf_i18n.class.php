@@ -54,6 +54,16 @@ class yf_i18n
     /** @var bool In-Memory cachig */
     public $USE_TRANSLATE_CACHE = true;
 
+    public $TR_VARS = [];
+    public $TR_ALL_VARS = [];
+    public $_LOCALE_CACHE = [];
+    public $_NOT_TRANSLATED = [];
+    public $_called = [];
+    public $_loaded = [];
+    public $_calls = [];
+    public $CUR_COUNTRY = null;
+    public $WRAP_VARS_FOR_INLINE_EDIT = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -146,15 +156,16 @@ class yf_i18n
         if ($FORCE_LOCALE && isset($langs[$FORCE_LOCALE])) {
             return $FORCE_LOCALE;
         }
-        if ($this->_called[__FUNCTION__] && ! $force) {
+        if (($this->_called[__FUNCTION__] ?? false) && ! $force) {
             return $this->_called[__FUNCTION__];
         }
         $l = []; // contains all possible variants
-        $l['url'] = $_GET['language'] ?: $_GET['lang'];
-        $l['session'] = $this->ALLOW_SESSION_LANG ? $_SESSION[MAIN_TYPE . '_lang'] : '';
-        $l['cookie'] = $_COOKIE[MAIN_TYPE . '_lang'];
+        $l['url'] = $_GET['language'] ?? $_GET['lang'] ?? null;
+        $l['session'] = $this->ALLOW_SESSION_LANG ? ($_SESSION[MAIN_TYPE . '_lang'] ?? null) : '';
+        $l['cookie'] = $_COOKIE[MAIN_TYPE . '_lang'] ?? null;
         $l['user'] = function () {
             $uid = main()->USER_ID;
+            $lang = '';
             if ($uid && MAIN_TYPE_USER && main()->is_db()) {
                 $u = from('user')->whereid($uid)->limit(1)->get();
                 $u && $lang = $u['lang'] ?: $u['language'] ?: $u['locale'];
@@ -165,13 +176,13 @@ class yf_i18n
             if ( ! function_exists('locale_accept_from_http')) {
                 return false;
             }
-            $locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            $locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '');
             $lang = substr($locale, 0, 2);
             return $lang;
         };
         $l['country'] = function () {
             // TODO
-            return $lang;
+            return null;
         };
         $l['conf'] = conf('language');
         $l['admin'] = function () use ($langs) {
@@ -183,7 +194,7 @@ class yf_i18n
         };
         $l['site'] = function () {
             // TODO
-            return $lang;
+            return null;
         };
         $l['app'] = (defined('DEFAULT_LANG') && DEFAULT_LANG != '') ? DEFAULT_LANG : null;
 
@@ -250,7 +261,7 @@ class yf_i18n
     {
         $country = strtoupper(
             conf('country')
-            ?: $_SERVER['GEOIP_COUNTRY_CODE']
+            ?: ($_SERVER['GEOIP_COUNTRY_CODE'] ?? false)
             ?: (in_array(strtolower($this->CUR_LOCALE), ['ru', 'uk']) ? 'UA' : '')
         );
         $this->CUR_COUNTRY = $country;
@@ -262,7 +273,7 @@ class yf_i18n
     public function _get_current_charset()
     {
         $langs = $this->LANGUAGES ?: $this->_get_langs();
-        $charset = $langs[$this->CUR_LOCALE]['charset'];
+        $charset = $langs[$this->CUR_LOCALE]['charset'] ?? '';
         if (MAIN_TYPE_ADMIN && $this->CUR_LOCALE == 'en') {
             $charset = 'utf-8';
         }

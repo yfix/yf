@@ -23,6 +23,13 @@ class yf_html
     public $CLASS_SELECT_OPTION_DEFAULT = 'opt-default';
     public $CLASS_INPUT = 'form-control';
 
+    public $_is_bs3 = null;
+    public $_chained_mode = null;
+    public $_params = [];
+    public $_ids = [];
+    public $_ip_to_country = [];
+    public $_country_names = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -293,6 +300,7 @@ class yf_html
             $name = $v['name'] ?: $k;
             $desc = $v['desc'] ?: ( ! $_extra['no_auto_desc'] ? ucfirst(str_replace('_', ' ', $name)) : $name);
             $id = preg_replace('~[^a-z0-9_-]+~i', '', $v['id'] ?: $links_prefix . $k);
+            $i = 0;
             if (isset($_extra['selected'])) {
                 $is_active = ($_extra['selected'] == $k);
             } else {
@@ -328,7 +336,7 @@ class yf_html
             $_extra_body['class'] = $_extra_body['class'] ?: $class_body;
             $items[] = '<div' . _attrs($_extra_body, ['id', 'class', 'style']) . '>' . $content . '</div>';
         }
-        $body .= $headers ? '<ul id="' . $extra['id'] . '" class="nav nav-tabs">' . implode(PHP_EOL, (array) $headers) . '</ul>' . PHP_EOL : '';
+        $body = $headers ? '<ul id="' . $extra['id'] . '" class="nav nav-tabs">' . implode(PHP_EOL, (array) $headers) . '</ul>' . PHP_EOL : '';
         $body .= '<div id="' . $extra['id'] . '_content" class="tab-content">' . implode(PHP_EOL, (array) $items) . '</div>';
         return $body;
     }
@@ -341,6 +349,7 @@ class yf_html
     {
         $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
+        $i = 0;
         foreach ((array) $data as $k => $v) {
             if ( ! is_array($v)) {
                 $content = $v;
@@ -385,6 +394,7 @@ class yf_html
         $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
         $headers = [];
+        $i = 0;
         foreach ((array) $data as $k => $v) {
             if ( ! is_array($v)) {
                 $img_src = $v;
@@ -458,6 +468,7 @@ class yf_html
             $brand = '<a class="brand navbar-brand' . ($b['class'] ? ' ' . $b['class'] : '') . '" href="' . $b['link'] . '" title="' . $b['name'] . '">' . $b['name'] . '</a>';
         }
         $data = _prepare_html($data);
+        $i = 0;
         foreach ((array) $data as $k => $v) {
             if (isset($extra['selected'])) {
                 $is_selected = ($extra['selected'] == $k);
@@ -489,6 +500,7 @@ class yf_html
         $show_divider = ! $this->_is_bs3 && strlen($divider);
         $len = count((array) $data);
         $data = _prepare_html($data);
+        $i = 0;
         foreach ((array) $data as $k => $v) {
             $is_last = (++$i == $len);
             $class_item = $v['class_item'] ?: $extra['class_item'];
@@ -867,7 +879,7 @@ class yf_html
     {
         // Passing params as array
         if (is_array($name)) {
-            $extra = (array) $extra + $name;
+            $extra = $name;
             $name = $extra['name'];
         }
         $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
@@ -948,7 +960,7 @@ class yf_html
     {
         // Passing params as array
         if (is_array($name)) {
-            $extra = (array) $extra + $name;
+            $extra = $name;
             $name = $extra['name'];
         }
         $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
@@ -1103,7 +1115,7 @@ class yf_html
     public function button_check_box($name, $values = [], $selected = '')
     {
         if (is_array($name)) {
-            $extra = (array) $extra + $name;
+            $extra = $name;
             $name = $extra['name'];
         }
         ! is_array($extra) && $extra = [];
@@ -1133,7 +1145,7 @@ class yf_html
     public function radio_box($name, $values = [], $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0)
     {
         if (is_array($name)) {
-            $extra = (array) $extra + $name;
+            $extra = $name;
             $name = $extra['name'];
         }
         $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
@@ -1186,7 +1198,9 @@ class yf_html
                 ]);
             } else {
                 $label_extra = $extra['label_extra'];
-                $label_extra['class'] = ($label_extra_class ?: $label_extra['class'] ?: $this->CLASS_LABEL_RADIO) . ($horizontal ? ' ' . $this->CLASS_LABEL_RADIO_INLINE : '');
+                if (isset($label_extra['class'])) {
+                    $label_extra['class'] = ($label_extra_class ?: $label_extra['class'] ?: $this->CLASS_LABEL_RADIO) . ($horizontal ? ' ' . $this->CLASS_LABEL_RADIO_INLINE : '');
+                }
                 if ($extra['class_add_label_radio']) {
                     $label_extra['class'] .= ' ' . $extra['class_add_label_radio'];
                 }
@@ -1234,7 +1248,7 @@ class yf_html
         }
         $extra['class'] = trim($extra['class'] . ' ' . $extra['class_add']);
         $add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
-        $translate = $extra['translate'] ? $extra['translate'] : $translate;
+        $translate = $extra['translate'] ?? false;
 
         $label_extra = $extra['label_extra'];
         $def_label_class = $this->CLASS_LABEL_CHECKBOX . ' ' . $this->CLASS_LABEL_CHECKBOX_INLINE;
@@ -1268,7 +1282,7 @@ class yf_html
      * @param mixed $translate
      * @param mixed $name_as_array
      */
-    public function multi_check_box($name, $values = [], $selected = [], $horizontal = true, $type = 2, $add_str = '', $translate = 0, $name_as_array = false)
+    public function multi_check_box($name, $values = [], $selected = [], $horizontal = true, $type = 2, $add_str = '', $translate = 0, $name_as_array = false, $extra = [])
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -1444,7 +1458,7 @@ class yf_html
         $items = [];
         $selected_val = '';
         foreach ((array) $values as $key => $cur_value) {
-            $_what_compare = (string) ($type == 1 ? $cur_value : $key);
+            $_what_compare = $key;
             $is_selected = $_what_compare == $selected;
             $val = ($translate ? t($cur_value) : $cur_value);
             $items[] = '<li class="dropdown' . ($is_selected ? ' active' : '') . '"><a data-value="' . $key . '"' . ($is_selected ? ' data-selected="selected"' : '') . '>' . $val . '</a></li>';
@@ -1492,7 +1506,7 @@ class yf_html
         $items = [];
         $selected_val = '';
         foreach ((array) $values as $key => $cur_value) {
-            $_what_compare = (string) ($type == 1 ? $cur_value : $key);
+            $_what_compare = $key;
             $is_selected = $_what_compare == $selected;
             $val = $translate ? t($cur_value) : $cur_value;
             $items[] = '<li class="dropdown' . ($is_selected ? ' active' : '') . '"><a data-value="' . $key . '"' . ($is_selected ? ' data-selected="selected"' : '') . '>' . $val . '</a></li>';
@@ -1563,7 +1577,7 @@ class yf_html
         $extra['data-value'] = (string) $selected;
         $extra['data-filter'] = isset($extra['data-filter']) ? $extra['data-filter'] : (count((array) $values) > 10 ? 'true' : '');
 
-        $body .= '<div' . _attrs($extra, ['id', 'class', 'style']) . '>';
+        $body = '<div' . _attrs($extra, ['id', 'class', 'style']) . '>';
         foreach ((array) $values as $key => $cur_value) {
             $body .= '<div data-value="' . $key . '">' . ($translate ? t($cur_value) : $cur_value) . '</div>' . PHP_EOL;
         }
@@ -1817,7 +1831,7 @@ class yf_html
      * @param mixed $name
      * @param mixed $cur_date
      */
-    public function date_picker($name, $cur_date = '')
+    public function date_picker($name, $cur_date = '', $extra = [])
     {
         js('jquery-ui');
         css('jquery-ui');

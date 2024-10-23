@@ -76,16 +76,16 @@ class sample_assets
             $sub[] = $docs->_github_link($a['path']);
             $content = $a['content'];
             $info = is_array($content) ? $content['info'] : [];
-            if ($info['name']) {
+            if ($info['name'] ?? '') {
                 $sub[] = '<b>' . t('name') . '</b>: ' . $info['name'];
             }
-            if ($info['desc']) {
+            if ($info['desc'] ?? '') {
                 $sub[] = '<b>' . t('desc') . '</b>: ' . $info['desc'];
             }
-            if ($info['url']) {
+            if ($info['url'] ?? '') {
                 $sub[] = '<b>' . t('url') . '</b>: <a href="' . _prepare_html($info['url']) . '">' . _prepare_html($info['url']) . '</a>';
             }
-            if ($info['git']) {
+            if ($info['git'] ?? '') {
                 $sub[] = '<b>' . t('git') . '</b>: <a href="' . $info['git'] . '">' . $info['git'] . '</a>';
             }
             $data[$name] = [

@@ -5,6 +5,8 @@ class yf_docs
     private $whats_new = [
         'demo',
     ];
+    public $docs_dir = null;
+    public $demo_dir = null;
 
     /**
      * Catch missing method call.
@@ -106,6 +108,7 @@ class yf_docs
             $only_method = current($methods);
         }
         $url = url('/@object');
+        $items = [];
         foreach ((array) $methods as $name) {
             if ($only_method && $only_method !== $name) {
                 continue;
