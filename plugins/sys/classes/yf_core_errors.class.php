@@ -210,8 +210,8 @@ class yf_core_errors
      */
     public function error_handler($error_type, $error_msg, $error_file, $error_line)
     {
-        return !!preg_match('~^(Undefined array key|Undefined property|Undefined variable)~', $error_msg);
-        // return !!preg_match('~^(Undefined array key|Undefined variable|Trying to access array offset on value of type null)~', $error_msg);
+        // return !!preg_match('~^(Undefined array key|Undefined property|Undefined variable)~', $error_msg);
+        return !!preg_match('~^(Undefined array key|Undefined variable|Trying to access array offset on value of type null)~', $error_msg);
         // return !!preg_match('~^(Undefined array key|Undefined property|Undefined variable|Trying to access array offset on value of type null)~', $error_msg);
 
         // quickly turn off notices logging

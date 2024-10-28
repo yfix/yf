@@ -38,6 +38,8 @@ class yf_db_installer_mysql extends yf_db_installer
     /** @var array */
     public $NO_REPAIR_TABLES = [];
 
+    public $_DEF_TABLE_OPTIONS = [];
+
     /**
      * Framework construct.
      */

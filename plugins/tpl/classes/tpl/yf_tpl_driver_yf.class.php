@@ -26,6 +26,12 @@ class yf_tpl_driver_yf
     /** @var @conf_skip */
     public $CACHE = [];
 
+    public $tpl = null;
+    public $AUTO_LOAD_PACKED_STPLS = null;
+    public $_compiled_cache = [];
+    public $_stpl_mtimes = [];
+    public $_STPL_EXT = '.stpl';
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -50,7 +56,7 @@ class yf_tpl_driver_yf
             'stpl' => [],
         ];
         if (defined('FRAMEWORK_IS_COMPILED')) {
-            conf('FRAMEWORK_IS_COMPILED', (bool) FRAMEWORK_IS_COMPILED);
+            conf('FRAMEWORK_IS_COMPILED', (bool) constant('FRAMEWORK_IS_COMPILED'));
         }
         if (conf('FRAMEWORK_IS_COMPILED') && $this->AUTO_LOAD_PACKED_STPLS) {
             foreach ((array) conf('_compiled_stpls') as $_cur_name => $_cur_text) {
@@ -503,7 +509,7 @@ class yf_tpl_driver_yf
         // JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
         // Custom lib smart inclusion. Examples: {jquery()} $.click('.red', function(alert('hello'))) {/jquery}
         // Asset bundle inclusion. Examples: {asset()} angular-full {/asset}
-        $string = preg_replace_callback('/\{(?P<func>css|require_css|js|require_js|asset|jquery|angularjs|reactjs|sass|less|jade|coffee)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<content>.+?)\s*{\/(\1)\}/ims', function ($m) use ($_this) {
+        $string = preg_replace_callback('/\{(?P<func>css|require_css|js|require_js|asset|jquery|angularjs|reactjs|sass|less|jade|coffee)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<content>.+?)\s*{\/(\1)\}/ims', function ($m) {
             $func = $m['func'];
             return strlen($func) ? $func($m['content'], _attrs_string2array($m['args'])) : false;
         }, $string);
@@ -571,7 +577,7 @@ class yf_tpl_driver_yf
             // Second level variables with filters. Examples: {sub1.var1|trim}
             '/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function ($m) use ($replace, $name, $tpl) {
                 $val = $replace[$m[1]][$m[2]];
-                return $tpl->_process_var_filters($val ?: $class_prop, $m[3]);
+                return $tpl->_process_var_filters($val, $m[3]);
             },
         ];
         // Evaluate custom PHP code pattern. Examples: {eval_code(print_r(_class('forum')))}
@@ -1059,6 +1065,7 @@ class yf_tpl_driver_yf
             }
         }
         ksort($not_replaced);
+        $body = '';
         if ( ! empty($not_replaced)) {
             $body .= '<pre>array(' . PHP_EOL;
             foreach ((array) $not_replaced as $v) {

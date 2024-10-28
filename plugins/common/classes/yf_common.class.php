@@ -19,6 +19,10 @@ class yf_common
     /** @var bool Used by propose url from name */
     public $URL_FORCE_DASHES = false;
 
+    public $_current_theme = null;
+    public $_get_vars_cache = null;
+    public $USER_ERRORS = [];
+
     /**
      * Constructor.
      */
@@ -216,8 +220,18 @@ class yf_common
         if ( ! is_object($db2)) {
             $db_class_name = main()->load_class_file('db', 'classes/');
             if ($db_class_name && class_exists($db_class_name)) {
-                $db2 = new $db_class_name('mysql', 1, DB_PREFIX2);
-                $db2->connect(DB_HOST2, DB_USER2, DB_PSWD2, DB_NAME2, true, defined('DB_SSL2') ? DB_SSL2 : false, defined('DB_PORT2') ? DB_PORT2 : '', defined('DB_SOCKET2') ? DB_SOCKET2 : '', defined('DB_CHARSET2') ? DB_CHARSET2 : '');
+                $db2 = new $db_class_name('mysql', 1, constant('DB_PREFIX2'));
+                $db2->connect(
+                    constant('DB_HOST2'),
+                    constant('DB_USER2'),
+                    constant('DB_PSWD2'),
+                    constant('DB_NAME2'),
+                    true,
+                    defined('DB_SSL2') ? constant('DB_SSL2') : false,
+                    defined('DB_PORT2') ? constant('DB_PORT2') : '',
+                    defined('DB_SOCKET2') ? constant('DB_SOCKET2') : '',
+                    defined('DB_CHARSET2') ? constant('DB_CHARSET2') : ''
+                );
             }
         }
         return $db2;
@@ -325,7 +339,7 @@ class yf_common
      */
     public function send_notify_mail_to_admin($subject, $html)
     {
-        return $this->send_mail(SITE_ADMIN_EMAIL, SITE_NAME . ' system notification', SITE_ADMIN_EMAIL, '', $subject, strip_tags($html), $html);
+        return $this->send_mail(SITE_ADMIN_EMAIL, constant('SITE_NAME') . ' system notification', SITE_ADMIN_EMAIL, '', $subject, strip_tags($html), $html);
     }
 
     /**
@@ -511,13 +525,14 @@ class yf_common
         if ($timestamp == 0) {
             return 0;
         }
+        $out = '';
         $periods = ['year', 'month', 'day', 'hour', 'minute', 'second'];
         list($length_accur) = array_keys($periods, $accuracy);
         $lengths = [31536000, 2592000, 86400, 3600, 60, 1];
         for ($i = 0; $timestamp > $lengths[$length_accur]; $i++) {
             $value = (int) ($timestamp / $lengths[$i]);
             if ($value != 0) {
-                $result_string .= $value . ' ' . $periods[$i] . ($value > 1 ? 's ' : ' ');
+                $out .= $value . ' ' . $periods[$i] . ($value > 1 ? 's ' : ' ');
             }
             $r = fmod($timestamp, $lengths[$i]);
             if ($r == 0) {
@@ -525,7 +540,7 @@ class yf_common
             }
             $timestamp = $r;
         }
-        return $result_string;
+        return $out;
     }
 
     /**
@@ -1031,7 +1046,7 @@ class yf_common
             '>' => '&gt;',
         ];
         $trans_tbl = array_flip($trans_tbl);
-        return strtr($string, $trans_tbl);
+        return strtr($text, $trans_tbl);
     }
 
     /**
@@ -1659,14 +1674,16 @@ class yf_common
      */
     public function rar_extract($archive_name, $EXTRACT_PATH)
     {
-        $rar = rar_open($archive_name);
-        $list = rar_list($rar);
-        foreach ($list as $file) {
-            $file = explode('"', $file);
-            $entry = rar_entry_get($rar, $file[1]);
-            $entry->extract($EXTRACT_PATH);
+        if (function_exists('rar_open')) {
+            $rar = rar_open($archive_name);
+            $list = rar_list($rar);
+            foreach ($list as $file) {
+                $file = explode('"', $file);
+                $entry = rar_entry_get($rar, $file[1]);
+                $entry->extract($EXTRACT_PATH);
+            }
+            rar_close($rar);
         }
-        rar_close($rar);
     }
 
     /**
@@ -1727,7 +1744,7 @@ class yf_common
      */
     public function message_success($text = '', $options = null)
     {
-        return $this->add_message($text, 'success', $key);
+        return $this->add_message($text, 'success', '');
     }
 
     /**
@@ -1736,7 +1753,7 @@ class yf_common
      */
     public function message_info($text = '', $options = null)
     {
-        return $this->add_message($text, 'info', $key, $options);
+        return $this->add_message($text, 'info', '', $options);
     }
 
     /**
@@ -1745,7 +1762,7 @@ class yf_common
      */
     public function message_warning($text = '', $options = null)
     {
-        return $this->add_message($text, 'warning', $key, $options);
+        return $this->add_message($text, 'warning', '', $options);
     }
 
     /**
@@ -1754,7 +1771,7 @@ class yf_common
      */
     public function message_error($text = '', $options = null)
     {
-        return $this->add_message($text, 'error', $key, $options);
+        return $this->add_message($text, 'error', '', $options);
     }
 
     /**
@@ -1954,7 +1971,7 @@ class yf_common
         }
         if (DEBUG_MODE) {
             no_graphics(true);
-            $body .= '<b>404 Not found</b><br />' . PHP_EOL . '<i>' . $msg . '</i>';
+            $body = '<b>404 Not found</b><br />' . PHP_EOL . '<i>' . $msg . '</i>';
             $body .= '<pre><small>' . htmlspecialchars(main()->trace_string()) . '</small></pre>';
             return print common()->show_empty_page($body, ['full_width' => 1]);
         }
@@ -1977,7 +1994,7 @@ class yf_common
         }
         if (DEBUG_MODE) {
             no_graphics(true);
-            $body .= '<b>404 Not found</b><br />' . PHP_EOL . '<i>' . $msg . '</i>';
+            $body = '<b>404 Not found</b><br />' . PHP_EOL . '<i>' . $msg . '</i>';
             $body .= '<pre><small>' . htmlspecialchars(main()->trace_string()) . '</small></pre>';
             return print common()->show_empty_page($body, ['full_width' => 1]);
         }

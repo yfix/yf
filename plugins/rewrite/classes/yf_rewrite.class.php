@@ -18,6 +18,7 @@ class yf_rewrite
     public $REWRITE_PATTERNS = [];
     public $FORCE_NO_DEBUG = null;
     public $_time_start = null;
+    public $USE_WEB_PATH = null;
 
     /**
      * Catch missing method call.

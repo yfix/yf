@@ -34,6 +34,15 @@ abstract class yf_db_installer
     /** @var bool */
     public $SHARDING_BY_LANG = false;
 
+    public $SYS_TABLES_STRUCTS = [];
+    public $OTHER_TABLES_STRUCTS = [];
+    public $SYS_TABLES_DATAS = [];
+    public $OTHER_TABLES_DATAS = [];
+    public $create_table_pre_callbacks = [];
+    public $create_table_post_callbacks = [];
+    public $alter_table_pre_callbacks = [];
+    public $alter_table_post_callbacks = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -425,7 +434,7 @@ abstract class yf_db_installer
             'sql_php' => $sql_php,
             'db' => $db,
         ]);
-        foreach ((array) $this->alter_table_pre_callbacks as $table_regex => $func) {
+        foreach ((array) $this->alter_table_pre_callbacks as $regex => $func) {
             if ( ! preg_match('/' . $regex . '/ims', $table_name, $m)) {
                 continue;
             }
@@ -434,7 +443,7 @@ abstract class yf_db_installer
         return $sql_php;
     }
 
-    /**
+/**
      * This method can be inherited in project with custom rules inside.
      * @param mixed $table_name
      * @param mixed $column_name
@@ -449,7 +458,7 @@ abstract class yf_db_installer
             'sql_php' => $sql_php,
             'db' => $db,
         ]);
-        foreach ((array) $this->alter_table_post_callbacks as $table_regex => $func) {
+        foreach ((array) $this->alter_table_post_callbacks as $regex => $func) {
             if ( ! preg_match('/' . $regex . '/ims', $table_name, $m)) {
                 continue;
             }

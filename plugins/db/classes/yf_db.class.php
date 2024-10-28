@@ -134,6 +134,7 @@ class yf_db
     public $_queries_logged = null;
     public $QUERY_REVISIONS_TABLES = [];
     public $QUERY_REVISIONS_METHODS = [];
+    public $_repairs_by_sql = [];
 
     /**
      * Constructor.
