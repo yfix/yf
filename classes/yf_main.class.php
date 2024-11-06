@@ -184,6 +184,8 @@ class yf_main
     public $_IS_REDIRECTING = null;
     public $USER_ROLE = null;
     public $NO_SIDE_AREA_TOGGLER = null;
+    public $AUTO_BAN_CHECKING = null;
+    public $ADMIN_ID = null;
 
     /**
      * Engine constructor
@@ -590,18 +592,27 @@ class yf_main
         $this->events = $this->_class('core_events');
         // Load event listeners from supported locations
         $ext = '.listener.php';
-        $pattern = '{,plugins/*/}{,share/}events/*' . $ext;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => [
+                YF_PATH . 'events/*' . $ext,
+                YF_PATH . 'plugins/*/events/*' . $ext,
+                YF_PATH . 'share/events/*' . $ext
+            ],
+            'app' => [
+                APP_PATH . 'events/*' . $ext,
+                APP_PATH . 'plugins/*/events/*' . $ext,
+                APP_PATH . 'share/events/*' . $ext
+            ],
         ];
         $ext_len = strlen($ext);
         $names = [];
-        foreach ($globs as $gname => $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
-                $name = substr(basename($path), 0, -$ext_len);
-                $names[$name] = $path;
-                $locations[$name][$gname] = $path;
+        foreach ($patterns as $gname => $paths) {
+            foreach ($paths as $path) {
+                foreach (glob($path) as $matchedPath) {
+                    $name = substr(basename($matchedPath), 0, -$ext_len);
+                    $names[$name] = $matchedPath;
+                    $locations[$name][$gname] = $matchedPath;
+                }
             }
         }
         // This double iterating code allows to inherit/replace listeners with same name in project
@@ -994,7 +1005,7 @@ class yf_main
         $plugins_classes = [];
         $ext = YF_CLS_EXT; // default is .class.php
         foreach ((array) $sets as $set => $pattern) {
-            foreach ((array) glob($pattern, GLOB_ONLYDIR | GLOB_NOSORT | GLOB_BRACE) as $d) {
+            foreach ((array) glob($pattern, GLOB_ONLYDIR | GLOB_NOSORT) as $d) {
                 $pname = basename($d);
                 if ($white_list && wildcard_compare($white_list, $pname)) {
                     // result is good, do not check black list if name found here, inside white list
@@ -1004,14 +1015,22 @@ class yf_main
                 }
                 $dlen = strlen($d);
                 $classes = [];
-                foreach (glob($d . '*{/,/*/}*' . $ext, GLOB_BRACE) as $f) {
-                    $cname = str_replace($ext, '', basename($f));
-                    $cdir = dirname(substr($f, $dlen)) . '/';
-                    if (strpos($cname, YF_PREFIX) === 0) {
-                        $cname = substr($cname, $_plen);
+                $patterns = [
+                    $d . '*' . $ext,
+                    $d . '*/' . '*' . $ext,
+                    $d . '*/*/' . '*' . $ext
+                ];
+                $classes = [];
+                foreach ($patterns as $pattern) {
+                    foreach (glob($pattern) as $f) {
+                        $cname = str_replace($ext, '', basename($f));
+                        $cdir = dirname(substr($f, $dlen)) . '/';
+                        if (strpos($cname, YF_PREFIX) === 0) {
+                            $cname = substr($cname, $_plen);
+                        }
+                        $classes[$cname][$cdir] = $f;
+                        $plugins_classes[$cname] = $pname;
                     }
-                    $classes[$cname][$cdir] = $f;
-                    $plugins_classes[$cname] = $pname;
                 }
                 $plugins[$pname][$set] = $classes;
             }

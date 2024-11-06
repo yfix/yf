@@ -56,6 +56,6 @@ return function () {
                 'link' => url('/@object/@action/1'),
             ],
         ], [
-            'legend' => $r['title'],
+            'legend' => $r['title'] ?? '',
         ]);
 };

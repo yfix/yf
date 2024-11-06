@@ -132,6 +132,9 @@ class yf_form2
             $db = is_object($params['db']) ? $params['db'] : db();
             $replace = $db->get_2d($sql);
         }
+        if ( ! is_array($replace)) {
+            $replace = [];
+        }
         if (isset($params['filter']) && ! is_array($params['filter']) && is_numeric($params['filter']) || is_bool($params['filter']) && ! empty($params['filter'])) {
             $filter_name = $params['filter_name'] ?: $_GET['object'] . '__' . $_GET['action'];
             $params['selected'] = $_SESSION[$filter_name];

@@ -9,6 +9,9 @@
 if ( ! class_exists('yf_missing_method_handler')) {
     class yf_missing_method_handler
     {
+        protected $_o_name = null;
+        protected $_c_name = null;
+        protected $_silent = null;
         public function __construct($o_name, $silent = false, $c_name = '')
         {
             $this->_o_name = $o_name;

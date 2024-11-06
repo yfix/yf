@@ -513,7 +513,7 @@ class yf_table2
             'stpl_path' => $params['pager_stpl_path'] ?: '',
             'add_get_vars' => $params['pager_add_get_vars'] ?: 1,
             'sql_callback' => $params['pager_sql_callback'] ?: null,
-            'extra' => $params['extra'] ?: [],
+            'extra' => $params['extra'] ?? [],
         ];
         if ( ! $pager['extra']['sql_callback'] && $pager['sql_callback']) {
             $pager['extra']['sql_callback'] = &$pager['sql_callback'];

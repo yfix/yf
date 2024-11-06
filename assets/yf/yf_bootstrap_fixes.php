@@ -1,7 +1,7 @@
 <?php
 
 return ['versions' => ['master' => ['css' => [
-'
+	'
 .cke_source { min-width: 100%; }
 
 fieldset.well { padding-bottom:0; }
@@ -71,6 +71,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 	.cssfw-bs3 .navbar .breadcrumb { float:left; margin:7px 10px; }
 }
 
+.cssfw-bs3 .container-fixed { min-height: 60vh; }
 .cssfw-bs3 .container-fixed input,
 .cssfw-bs3 .container-fixed textarea,
 .cssfw-bs3 .container-fixed select { max-width:300px; }
@@ -103,7 +104,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 
 .cssfw-bs3 .modal .form-horizontal .form-group { margin-right:inherit; margin-left:inherit; }
 
-/* override styles per bs theme here */ 
+/* override styles per bs theme here */
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color:#52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color:#c8c8c8; }
 ',
