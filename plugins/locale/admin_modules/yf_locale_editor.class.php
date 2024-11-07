@@ -451,15 +451,20 @@ Fallback when no numbers matched (any string)
         // share/langs/ru/other.php
         // share/langs/ru/ru_shop.php
         // plugins/shop/share/langs/ru/ru_user_register.php
-        $pattern = '{,plugins/*/}{,share/}langs/' . $lang . '/*.php';
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $ext = '.php';
+        $patterns = [
+            'framework' => YF_PATH . 'langs/' . $lang . '/*'. $ext,
+            'framework_plugins' => YF_PATH . 'plugins/*/langs/' . $lang . '/*' . $ext,
+            'framework_share' => YF_PATH . 'share/langs/' . $lang . '/*'. $ext,
+            'project' => PROJECT_PATH . 'langs/' . $lang . '/*'. $ext,
+            'project_plugins' => PROJECT_PATH . 'plugins/*/langs/' . $lang . '/*' . $ext,
+            'project_share' => PROJECT_PATH . 'share/langs/' . $lang . '/*'. $ext,
+            'app' => APP_PATH . 'langs/' . $lang . '/*'. $ext,
+            'app_plugins' => APP_PATH . 'plugins/*/langs/' . $lang . '/*' . $ext,
+            'app_share' => APP_PATH . 'share/langs/' . $lang . '/*'. $ext,
         ];
-        // Order matters! Project vars will have ability to override vars from franework
-        foreach ($globs as $glob) {
-            foreach ((array) glob($glob, GLOB_BRACE) as $f) {
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $f) {
                 $files[basename($f)] = $f;
             }
         }
@@ -470,15 +475,18 @@ Fallback when no numbers matched (any string)
         // modules/shop/__locale__ru_products.php
         // plugins/shop/modules/shop/__locale__ru_products.php
         $modules = 'modules';
-        $pattern = '{,plugins/*/}' . $modules . '/*/__locale__' . $lang . '*.php';
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $ext = '.php';
+        $patterns = [
+            'framework' => YF_PATH . $modules . '/*/__locale__' . $lang . '*' . $ext,
+            'framework_plugins' => YF_PATH . 'plugins/*/'. $modules . '/*/__locale__' . $lang . '*' . $ext,
+            'project' => PROJECT_PATH . $modules . '/*/__locale__' . $lang . '*' . $ext,
+            'project_plugins' => PROJECT_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*' . $ext,
+            'app' => APP_PATH . $modules . '/*/__locale__' . $lang . '*' . $ext,
+            'app_plugins' => APP_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*' . $ext,
         ];
         // Order matters! Project vars will have ability to override vars from franework
-        foreach ($globs as $globs) {
-            foreach ((array) glob($glob, GLOB_BRACE) as $f) {
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $f) {
                 $files[basename($f)] = $f;
             }
         }

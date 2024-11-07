@@ -67,15 +67,21 @@ abstract class yf_db_installer
     {
         // Preload db installer SQL CREATE TABLE DDL statements
         $ext = '.sql.php';
-        $pattern = '{,plugins/*/}{,share/}db/sql/*' . $ext;
-        $globs_sql = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => YF_PATH . 'db/sql/*' . $ext,
+            'project' => PROJECT_PATH . 'db/sql/*' . $ext,
+            'app' => APP_PATH . 'db/sql/*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/db/sql/*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/db/sql/*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/db/sql/*' . $ext,
+            'share_framework' => YF_PATH . 'share/db/sql/*' . $ext,
+            'share_project' => PROJECT_PATH . 'share/db/sql/*' . $ext,
+            'share_app' => APP_PATH . 'share/db/sql/*' . $ext,
         ];
+
         $t_names = [];
-        foreach ($globs_sql as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
                 $t_names[$t_name] = $path;
             }
@@ -87,15 +93,21 @@ abstract class yf_db_installer
 
         // Preload db installer PHP array of CREATE TABLE DDL statements
         $ext = '.sql_php.php';
-        $pattern = '{,plugins/*/}{,share/}db/sql_php/*' . $ext;
-        $globs_sql_php = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => YF_PATH . 'db/sql_php/*' . $ext,
+            'project' => PROJECT_PATH . 'db/sql_php/*' . $ext,
+            'app' => APP_PATH . 'db/sql_php/*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/db/sql_php/*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/db/sql_php/*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/db/sql_php/*' . $ext,
+            'share_framework' => YF_PATH . 'share/db/sql_php/*' . $ext,
+            'share_project' => PROJECT_PATH . 'share/db/sql_php/*' . $ext,
+            'share_app' => APP_PATH . 'share/db/sql_php/*' . $ext,
         ];
+
         $t_names = [];
-        foreach ($globs_sql_php as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
                 $t_names[$t_name] = $path;
             }
@@ -107,15 +119,21 @@ abstract class yf_db_installer
 
         // Preload db installer data PHP arrays needed to be inserted after CREATE TABLE == initial data
         $ext = '.data.php';
-        $pattern = '{,plugins/*/}{,share/}db/data/*' . $ext;
-        $globs_data = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => YF_PATH . 'db/data/*' . $ext,
+            'project' => PROJECT_PATH . 'db/data/*' . $ext,
+            'app' => APP_PATH . 'db/data/*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/db/data/*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/db/data/*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/db/data/*' . $ext,
+            'share_framework' => YF_PATH . 'share/db/data/*' . $ext,
+            'share_project' => PROJECT_PATH . 'share/db/data/*' . $ext,
+            'share_app' => APP_PATH . 'share/db/data/*' . $ext,
         ];
+
         $t_names = [];
-        foreach ($globs_data as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
                 $t_names[$t_name] = $path;
             }

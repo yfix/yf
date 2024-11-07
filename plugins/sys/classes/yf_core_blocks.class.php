@@ -342,18 +342,20 @@ class yf_core_blocks
         }
         $names = [];
         $ext = '.class.php';
-        $pattern = '{,plugins/*/}classes/*' . $ext;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
-        ];
         $ext_len = strlen($ext);
-        $names = [];
         $prefix = YF_PREFIX;
         $plen = strlen($prefix);
-        foreach ($globs as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+        $patterns = [
+            YF_PATH . 'classes/*' . $ext,
+            YF_PATH . 'plugins/*/classes/*' . $ext,
+            PROJECT_PATH . 'classes/*' . $ext,
+            PROJECT_PATH . 'plugins/*/classes/*' . $ext,
+            APP_PATH . 'classes/*' . $ext,
+            APP_PATH . 'plugins/*/classes/*' . $ext,
+        ];
+        $names = [];
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $name = substr(basename($path), 0, -$ext_len);
                 if (substr($name, 0, $plen) === $prefix) {
                     $name = substr($name, $plen);

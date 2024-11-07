@@ -197,18 +197,26 @@ class yf_cache
         $suffix = '.class.php';
         $plen = strlen($prefix);
         $slen = strlen($suffix);
-        $pattern = '{,plugins/*/}classes/cache/*' . $prefix . '*' . $suffix;
-        $globs = [
-            'app' => APP_PATH . $pattern,
-            'framework' => YF_PATH . $pattern,
+        $patterns = [
+            'app' => [
+                APP_PATH . 'classes/cache/*' . $prefix . '*' . $suffix,
+                APP_PATH . 'plugins/*/classes/cache/*' . $prefix . '*' . $suffix,
+            ],
+            'framework' => [
+                YF_PATH . 'classes/cache/*' . $prefix . '*' . $suffix,
+                YF_PATH . 'plugins/*/classes/cache/*' . $prefix . '*' . $suffix,
+            ],
         ];
+
         $drivers = [];
-        foreach ($globs as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $f) {
-                $f = basename($f);
-                $name = substr($f, strpos($f, $prefix) + $plen, -$slen);
-                if ($name) {
-                    $drivers[$name] = $name;
+        foreach ($patterns as $paths) {
+            foreach ($paths as $path) {
+                foreach (glob($path) as $f) {
+                    $f = basename($f);
+                    $name = substr($f, strpos($f, $prefix) + $plen, -$slen);
+                    if ($name) {
+                        $drivers[$name] = $name;
+                    }
                 }
             }
         }

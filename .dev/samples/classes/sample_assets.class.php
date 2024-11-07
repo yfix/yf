@@ -105,17 +105,21 @@ class sample_assets
         $assets = [];
         $suffix = '.php';
         $slen = strlen($suffix);
-        $pattern = '{,plugins/*/}{assets/*,share/assets/*}' . $suffix;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-//			'project'	=> PROJECT_PATH. $pattern,
-//			'app'		=> APP_PATH. $pattern,
+        $patterns = [
+            'framework' => [
+                YF_PATH . 'assets/*' . $suffix,
+                YF_PATH . 'share/assets/*' . $suffix,
+                YF_PATH . 'plugins/*/assets/*' . $suffix,
+                YF_PATH . 'plugins/*/share/assets/*' . $suffix,
+            ],
         ];
         $names = [];
-        foreach ($globs as $gname => $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
-                $name = substr(basename($path), 0, -$slen);
-                $names[$name] = $path;
+        foreach ($patterns as $gname => $paths) {
+            foreach ($paths as $path) {
+                foreach (glob($path) as $matchedPath) {
+                    $name = substr(basename($matchedPath), 0, -$slen);
+                    $names[$name] = $matchedPath;
+                }
             }
         }
         foreach ($names as $name => $path) {

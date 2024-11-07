@@ -265,20 +265,37 @@ class yf_form2
         // Search for override params inside shared files
         $suffix = $form_id . '.form.php';
         $slen = strlen($suffix);
-        $pattern = '{,plugins/*/}{,share/}form/' . $form_id . '*' . $suffix;
-        $paths = [
-            'frawework' => YF_PATH . $pattern,
-            'config' => CONFIG_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
+        $patterns = [
+            'framework' => [
+                YF_PATH . 'form/' . $form_id . '*' . $suffix,
+                YF_PATH . 'plugins/*/form/' . $form_id . '*' . $suffix,
+                YF_PATH . 'share/form/' . $form_id . '*' . $suffix,
+            ],
+            'config' => [
+                CONFIG_PATH . 'form/' . $form_id . '*' . $suffix,
+                CONFIG_PATH . 'plugins/*/form/' . $form_id . '*' . $suffix,
+                CONFIG_PATH . 'share/form/' . $form_id . '*' . $suffix,
+            ],
+            'project' => [
+                PROJECT_PATH . 'form/' . $form_id . '*' . $suffix,
+                PROJECT_PATH . 'plugins/*/form/' . $form_id . '*' . $suffix,
+                PROJECT_PATH . 'share/form/' . $form_id . '*' . $suffix,
+            ],
         ];
         if (SITE_PATH != PROJECT_PATH) {
-            $paths['site'] = SITE_PATH . $pattern;
+            $patterns['site'] = [
+                SITE_PATH . 'form/' . $form_id . '*' . $suffix,
+                SITE_PATH . 'plugins/*/form/' . $form_id . '*' . $suffix,
+                SITE_PATH . 'share/form/' . $form_id . '*' . $suffix,
+            ];
         }
         $names = [];
-        foreach ((array) $paths as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
-                $name = substr(basename($path), 0, -$slen);
-                $names[$name] = $path;
+        foreach ($patterns as $paths) {
+            foreach ($paths as $path) {
+                foreach (glob($path) as $matchedPath) {
+                    $name = substr(basename($matchedPath), 0, -$slen);
+                    $names[$name] = $matchedPath;
+                }
             }
         }
         // Allow override framework defaults inside project

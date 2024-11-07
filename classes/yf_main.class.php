@@ -1561,16 +1561,28 @@ class yf_main
         $this->events && $this->events->fire('main.load_data_handlers');
 
         $suffix = '.php';
-        $pattern = '{,plugins/*/}{,share/}data_handlers/*' . $suffix;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => [
+                YF_PATH . 'data_handlers/*' . $suffix,
+                YF_PATH . 'plugins/*/data_handlers/*' . $suffix,
+                YF_PATH . 'share/data_handlers/*' . $suffix,
+                YF_PATH . 'plugins/*/share/data_handlers/*' . $suffix,
+            ],
+            'app' => [
+                APP_PATH . 'data_handlers/*' . $suffix,
+                APP_PATH . 'plugins/*/data_handlers/*' . $suffix,
+                APP_PATH . 'share/data_handlers/*' . $suffix,
+                APP_PATH . 'plugins/*/share/data_handlers/*' . $suffix,
+            ],
         ];
         $strlen_suffix = strlen($suffix);
-        foreach ($globs as $gname => $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
-                $name = substr(basename($path), 0, -$strlen_suffix);
-                $handlers[$name] = $path;
+        $handlers = [];
+        foreach ($patterns as $gname => $paths) {
+            foreach ($paths as $path) {
+                foreach (glob($path) as $matchedPath) {
+                    $name = substr(basename($matchedPath), 0, -$strlen_suffix);
+                    $handlers[$name] = $matchedPath;
+                }
             }
         }
         $aliases = [
@@ -1640,12 +1652,12 @@ class yf_main
         if (is_array($sites_dir)) {
             $dirs = $sites_dir;
         } else {
-            if (! file_exists($sites_dir)) {
+            if (!file_exists($sites_dir)) {
                 return [];
             }
             $dirs = array_merge(
-                glob($sites_dir . '*', GLOB_ONLYDIR | GLOB_BRACE),
-                glob($sites_dir . '.*', GLOB_ONLYDIR | GLOB_BRACE)
+                glob($sites_dir . '*', GLOB_ONLYDIR),
+                glob($sites_dir . '.*', GLOB_ONLYDIR)
             );
         }
         $sites = $sites1 = $sites2 = [];

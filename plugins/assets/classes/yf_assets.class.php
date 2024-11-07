@@ -430,22 +430,61 @@ class yf_assets
         }
         $assets = [];
         $suffix = '.php';
-        $pattern = '{,plugins/*/}{assets/,share/assets/}{*,*/*}' . $suffix;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => [
+                YF_PATH . 'assets/*' . $suffix,
+                YF_PATH . 'assets/*/*' . $suffix,
+                YF_PATH . 'share/assets/*' . $suffix,
+                YF_PATH . 'share/assets/*/*' . $suffix,
+                YF_PATH . 'plugins/*/assets/*' . $suffix,
+                YF_PATH . 'plugins/*/assets/*/*' . $suffix,
+                YF_PATH . 'plugins/*/share/assets/*' . $suffix,
+                YF_PATH . 'plugins/*/share/assets/*/*' . $suffix,
+            ],
+            'project' => [
+                PROJECT_PATH . 'assets/*' . $suffix,
+                PROJECT_PATH . 'assets/*/*' . $suffix,
+                PROJECT_PATH . 'share/assets/*' . $suffix,
+                PROJECT_PATH . 'share/assets/*/*' . $suffix,
+                PROJECT_PATH . 'plugins/*/assets/*' . $suffix,
+                PROJECT_PATH . 'plugins/*/assets/*/*' . $suffix,
+                PROJECT_PATH . 'plugins/*/share/assets/*' . $suffix,
+                PROJECT_PATH . 'plugins/*/share/assets/*/*' . $suffix,
+            ],
+            'app' => [
+                APP_PATH . 'assets/*' . $suffix,
+                APP_PATH . 'assets/*/*' . $suffix,
+                APP_PATH . 'share/assets/*' . $suffix,
+                APP_PATH . 'share/assets/*/*' . $suffix,
+                APP_PATH . 'plugins/*/assets/*' . $suffix,
+                APP_PATH . 'plugins/*/assets/*/*' . $suffix,
+                APP_PATH . 'plugins/*/share/assets/*' . $suffix,
+                APP_PATH . 'plugins/*/share/assets/*/*' . $suffix,
+            ],
         ];
+
         if (is_site_path()) {
-            $globs['site'] = SITE_PATH . $pattern;
+            $patterns['site'] = [
+                SITE_PATH . 'assets/*' . $suffix,
+                SITE_PATH . 'assets/*/*' . $suffix,
+                SITE_PATH . 'share/assets/*' . $suffix,
+                SITE_PATH . 'share/assets/*/*' . $suffix,
+                SITE_PATH . 'plugins/*/assets/*' . $suffix,
+                SITE_PATH . 'plugins/*/assets/*/*' . $suffix,
+                SITE_PATH . 'plugins/*/share/assets/*' . $suffix,
+                SITE_PATH . 'plugins/*/share/assets/*/*' . $suffix,
+            ];
         }
+
         $slen = strlen($suffix);
         $names = [];
-        foreach ($globs as $gname => $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
-                $name = substr(basename($path), 0, -$slen);
-                $names[$name] = $path;
-                $names_paths[$name][$gname] = $path;
+        foreach ($patterns as $gname => $glob_patterns) {
+            foreach ($glob_patterns as $glob) {
+                foreach (glob($glob) as $path) {
+                    $name = substr(basename($path), 0, -$slen);
+                    $names[$name] = $path;
+                    $names_paths[$name][$gname] = $path;
+                }
             }
         }
         // This double iterating code ensures we can inherit/replace assets with same name inside project
@@ -471,25 +510,38 @@ class yf_assets
         if (isset($this->_avail_filters)) {
             return $this->_avail_filters;
         }
-        $names = [];
         $suffix = '.class.php';
         $prefix = 'assets_filter_';
         $prefix2 = YF_PREFIX;
-        $pattern = '{,plugins/*/}classes/{assets,assets_filters}/*' . $prefix . '*' . $suffix;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
-        ];
-        if (is_site_path()) {
-            $globs['site'] = SITE_PATH . $pattern;
-        }
         $slen = strlen($suffix);
         $plen = strlen($prefix);
         $plen2 = strlen($prefix2);
         $names = [];
-        foreach ($globs as $gname => $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+
+        $patterns = [
+            YF_PATH . 'classes/assets/*' . $prefix . '*' . $suffix,
+            YF_PATH . 'plugins/*/classes/assets/*' . $prefix . '*' . $suffix,
+            YF_PATH . 'classes/assets_filters/*' . $prefix . '*' . $suffix,
+            YF_PATH . 'plugins/*/classes/assets_filters/*' . $prefix . '*' . $suffix,
+            PROJECT_PATH . 'classes/assets/*' . $prefix . '*' . $suffix,
+            PROJECT_PATH . 'plugins/*/classes/assets/*' . $prefix . '*' . $suffix,
+            PROJECT_PATH . 'classes/assets_filters/*' . $prefix . '*' . $suffix,
+            PROJECT_PATH . 'plugins/*/classes/assets_filters/*' . $prefix . '*' . $suffix,
+            APP_PATH . 'classes/assets/*' . $prefix . '*' . $suffix,
+            APP_PATH . 'plugins/*/classes/assets/*' . $prefix . '*' . $suffix,
+            APP_PATH . 'classes/assets_filters/*' . $prefix . '*' . $suffix,
+            APP_PATH . 'plugins/*/classes/assets_filters/*' . $prefix . '*' . $suffix,
+        ];
+
+        if (is_site_path()) {
+            $patterns[] = SITE_PATH . 'classes/assets/*' . $prefix . '*' . $suffix;
+            $patterns[] = SITE_PATH . 'plugins/*/classes/assets/*' . $prefix . '*' . $suffix;
+            $patterns[] = SITE_PATH . 'classes/assets_filters/*' . $prefix . '*' . $suffix;
+            $patterns[] = SITE_PATH . 'plugins/*/classes/assets_filters/*' . $prefix . '*' . $suffix;
+        }
+
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $name = substr(basename($path), 0, -$slen);
                 if (substr($name, 0, $plen2) === $prefix2) {
                     $name = substr($name, $plen2);

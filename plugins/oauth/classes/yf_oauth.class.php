@@ -173,32 +173,37 @@ class yf_oauth
         // Load event listeners from supported locations
         $ext = '.class.php';
         $prefix = 'oauth_driver_';
-        $pattern = '{,plugins/*/}classes/oauth/*' . $prefix . '*' . $ext;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => [
+                YF_PATH . 'classes/oauth/*' . $prefix . '*' . $ext,
+                YF_PATH . 'plugins/*/classes/oauth/*' . $prefix . '*' . $ext,
+            ],
+            'app' => [
+                APP_PATH . 'classes/oauth/*' . $prefix . '*' . $ext,
+                APP_PATH . 'plugins/*/classes/oauth/*' . $prefix . '*' . $ext,
+            ],
         ];
+
         $ext_len = strlen($ext);
         $names = [];
-        foreach ($globs as $gname => $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
-                $name = substr(basename($path), 0, -$ext_len);
-                if (substr($name, 0, 3) == 'yf_') {
-                    $name = substr($name, 3);
+        foreach ($patterns as $gname => $paths) {
+            foreach ($paths as $glob) {
+                foreach (glob($glob) as $path) {
+                    $name = substr(basename($path), 0, -$ext_len);
+                    if (substr($name, 0, 3) == 'yf_') {
+                        $name = substr($name, 3);
+                    }
+                    $name = substr($name, strlen($prefix));
+                    if (!$name || !isset($config[$name])) {
+                        continue;
+                    }
+                    $p_config = $config[$name];
+                    if (!strlen($p_config['client_id']) || !strlen($p_config['client_secret'])) {
+                        continue;
+                    }
+                    $names[$name] = $path;
+                    $locations[$name][$gname] = $path;
                 }
-                $name = substr($name, strlen($prefix));
-                if ( ! $name) {
-                    continue;
-                }
-                if ( ! isset($config[$name])) {
-                    continue;
-                }
-                $p_config = $config[$name];
-                if ( ! strlen($p_config['client_id']) || ! strlen($p_config['client_secret'])) {
-                    continue;
-                }
-                $names[$name] = $path;
-                $locations[$name][$gname] = $path;
             }
         }
         ksort($names);

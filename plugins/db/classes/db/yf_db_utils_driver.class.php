@@ -5,6 +5,8 @@
  */
 abstract class yf_db_utils_driver
 {
+    public $db = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -884,7 +886,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $extra
      */
-    public function list_indexes($table, $extra = [], &$error = false)
+    public function list_indexes($table, $extra = [], &$error = false, $db_name = '')
     {
         if (is_array($table)) {
             $extra = (array) $extra + $table;
@@ -929,7 +931,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $index_name
      */
-    public function index_info($table, $index_name, &$error = false)
+    public function index_info($table, $index_name, &$error = false, $extra = [])
     {
         if (is_array($table)) {
             $extra = (array) $extra + $table;
@@ -947,7 +949,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $index_name
      */
-    public function index_exists($table, $index_name, &$error = false)
+    public function index_exists($table, $index_name, &$error = false, $extra = [])
     {
         if (is_array($table)) {
             $extra = (array) $extra + $table;
@@ -1104,10 +1106,10 @@ abstract class yf_db_utils_driver
         }
         $keys = [];
         $sql =
-            'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
+            'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
 			FROM information_schema.KEY_COLUMN_USAGE
-			WHERE TABLE_SCHEMA = ' . $this->_escape_val($db_name) . ' 
-				AND REFERENCED_TABLE_NAME IS NOT NULL 
+			WHERE TABLE_SCHEMA = ' . $this->_escape_val($db_name) . '
+				AND REFERENCED_TABLE_NAME IS NOT NULL
 				AND TABLE_NAME = ' . $this->_escape_val($this->db->_fix_table_name($table));
         foreach ((array) $this->db->get_all($sql) as $a) {
             $name = $a['CONSTRAINT_NAME'];
@@ -1153,7 +1155,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $index_name
      */
-    public function foreign_key_exists($table, $index_name, &$error = false)
+    public function foreign_key_exists($table, $index_name, &$error = false, $extra = [])
     {
         if (is_array($table)) {
             $extra = (array) $extra + $table;
@@ -1576,15 +1578,24 @@ abstract class yf_db_utils_driver
             $search_table = $table;
         }
         $ext = '.sql_php.php';
-        $pattern = '{,plugins/*/}{,share/}db/sql_php/' . $search_table . $ext;
-        $globs = [
-            PROJECT_PATH . $pattern,
-            CONFIG_PATH . $pattern,
-            YF_PATH . $pattern,
+        $patterns = [
+            PROJECT_PATH . 'db/sql_php/' . $search_table . $ext,
+            PROJECT_PATH . 'plugins/*/db/sql_php/' . $search_table . $ext,
+            PROJECT_PATH . 'share/db/sql_php/' . $search_table . $ext,
+            PROJECT_PATH . 'plugins/*/share/db/sql_php/' . $search_table . $ext,
+            CONFIG_PATH . 'db/sql_php/' . $search_table . $ext,
+            CONFIG_PATH . 'plugins/*/db/sql_php/' . $search_table . $ext,
+            CONFIG_PATH . 'share/db/sql_php/' . $search_table . $ext,
+            CONFIG_PATH . 'plugins/*/share/db/sql_php/' . $search_table . $ext,
+            YF_PATH . 'db/sql_php/' . $search_table . $ext,
+            YF_PATH . 'plugins/*/db/sql_php/' . $search_table . $ext,
+            YF_PATH . 'share/db/sql_php/' . $search_table . $ext,
+            YF_PATH . 'plugins/*/share/db/sql_php/' . $search_table . $ext,
         ];
+
         $path = '';
-        foreach ($globs as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $f) {
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $f) {
                 $path = $f;
                 break 2;
             }

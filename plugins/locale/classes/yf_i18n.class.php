@@ -98,7 +98,7 @@ class yf_i18n
             $country ? $lang . '_' . $country . '.' . str_replace('-', '', $charset) : '',
             $country ? $lang . '_' . $country : '',
             $lang,
-            $langs[$lang]['name'],
+            $langs[$lang]['name'] ?? '',
             'en_US.utf-8',
             'en_US.utf8',
             'en_US',
@@ -380,19 +380,40 @@ class yf_i18n
         // share/langs/ru/ru_shop.php
         // plugins/shop/share/langs/ru/ru_user_register.php
         if ($this->ALLOW_SHARED_LANG_FILES) {
-            $pattern = '{,plugins/*/}{,share/}langs/' . $lang . '/*.php';
-            $globs = [
-                'framework' => YF_PATH . $pattern,
-                'project' => PROJECT_PATH . $pattern,
-                'app' => APP_PATH . $pattern,
+            $patterns = [
+                'framework' => [
+                    YF_PATH . 'langs/' . $lang . '/*.php',
+                    YF_PATH . 'plugins/*/langs/' . $lang . '/*.php',
+                    YF_PATH . 'share/langs/' . $lang . '/*.php',
+                    YF_PATH . 'plugins/*/share/langs/' . $lang . '/*.php',
+                ],
+                'project' => [
+                    PROJECT_PATH . 'langs/' . $lang . '/*.php',
+                    PROJECT_PATH . 'plugins/*/langs/' . $lang . '/*.php',
+                    PROJECT_PATH . 'share/langs/' . $lang . '/*.php',
+                    PROJECT_PATH . 'plugins/*/share/langs/' . $lang . '/*.php',
+                ],
+                'app' => [
+                    APP_PATH . 'langs/' . $lang . '/*.php',
+                    APP_PATH . 'plugins/*/langs/' . $lang . '/*.php',
+                    APP_PATH . 'share/langs/' . $lang . '/*.php',
+                    APP_PATH . 'plugins/*/share/langs/' . $lang . '/*.php',
+                ],
             ];
             if (SITE_PATH != PROJECT_PATH) {
-                $globs['site'] = SITE_PATH . $pattern;
+                $patterns['site'] = [
+                    SITE_PATH . 'langs/' . $lang . '/*.php',
+                    SITE_PATH . 'plugins/*/langs/' . $lang . '/*.php',
+                    SITE_PATH . 'share/langs/' . $lang . '/*.php',
+                    SITE_PATH . 'plugins/*/share/langs/' . $lang . '/*.php',
+                ];
             }
-            // Order matters! Project vars will have ability to override vars from franework
-            foreach ($globs as $glob) {
-                foreach ((array) glob($glob, GLOB_BRACE) as $f) {
-                    $files[basename($f)] = $f;
+            $files = [];
+            foreach ($patterns as $paths) {
+                foreach ($paths as $path) {
+                    foreach ((array) glob($path) as $f) {
+                        $files[basename($f)] = $f;
+                    }
                 }
             }
         }
@@ -404,19 +425,33 @@ class yf_i18n
         // plugins/shop/modules/shop/__locale__ru_products.php
         if ($this->ALLOW_MODULE_FILES) {
             $modules = (MAIN_TYPE_USER ? 'modules' : 'admin_modules');
-            $pattern = '{,plugins/*/}' . $modules . '/*/__locale__' . $lang . '*.php';
-            $globs = [
-                'framework' => YF_PATH . $pattern,
-                'project' => PROJECT_PATH . $pattern,
-                'app' => APP_PATH . $pattern,
+            $patterns = [
+                'framework' => [
+                    YF_PATH . $modules . '/*/__locale__' . $lang . '*.php',
+                    YF_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*.php',
+                ],
+                'project' => [
+                    PROJECT_PATH . $modules . '/*/__locale__' . $lang . '*.php',
+                    PROJECT_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*.php',
+                ],
+                'app' => [
+                    APP_PATH . $modules . '/*/__locale__' . $lang . '*.php',
+                    APP_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*.php',
+                ],
             ];
             if (MAIN_TYPE_USER && SITE_PATH != PROJECT_PATH) {
-                $globs['site'] = SITE_PATH . $pattern;
+                $patterns['site'] = [
+                    SITE_PATH . $modules . '/*/__locale__' . $lang . '*.php',
+                    SITE_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*.php',
+                ];
             }
-            // Order matters! Project vars will have ability to override vars from franework
-            foreach ($globs as $globs) {
-                foreach ((array) glob($glob, GLOB_BRACE) as $f) {
-                    $files[basename($f)] = $f;
+
+            $files = [];
+            foreach ($patterns as $paths) {
+                foreach ($paths as $path) {
+                    foreach ((array) glob($path) as $f) {
+                        $files[basename($f)] = $f;
+                    }
                 }
             }
         }

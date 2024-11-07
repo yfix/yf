@@ -148,16 +148,55 @@ class yf_locale_editor_collect
             'framework' => $params['YF_PATH'] ?: YF_PATH,
             'app' => $params['APP_PATH'] ?: APP_PATH,
         ];
-        $globs = [
-            'php' => '{,plugins/*/}{classes,modules}/{*,*/*,*/*/*}.php',
-            'stpl' => '{,plugins/*/,www/}{templates}/*/{*,*/*,*/*/*}.stpl',
-            'ng' => '{,plugins/*/,www/}{templates}/*/{*,*/*,*/*/*}.{stpl,html}',
+        $patterns = [
+            'php' => [
+                'classes/*/*/*.php',
+                'classes/*/*.php',
+                'modules/*/*/*.php',
+                'modules/*/*.php',
+                'plugins/*/classes/*/*/*.php',
+                'plugins/*/classes/*/*.php',
+                'plugins/*/modules/*/*/*.php',
+                'plugins/*/modules/*/*.php',
+            ],
+            'stpl' => [
+                'templates/*/*/*/*.stpl',
+                'templates/*/*/*.stpl',
+                'templates/*/*.stpl',
+                'plugins/*/templates/*/*/*/*.stpl',
+                'plugins/*/templates/*/*/*.stpl',
+                'plugins/*/templates/*/*.stpl',
+                'www/templates/*/*/*/*.stpl',
+                'www/templates/*/*/*.stpl',
+                'www/templates/*/*.stpl',
+            ],
+            'ng' => [
+                'templates/*/*/*/*.stpl',
+                'templates/*/*/*.stpl',
+                'templates/*/*.stpl',
+                'templates/*/*/*/*.html',
+                'templates/*/*/*.html',
+                'templates/*/*.html',
+                'plugins/*/templates/*/*/*/*.stpl',
+                'plugins/*/templates/*/*/*.stpl',
+                'plugins/*/templates/*/*.stpl',
+                'plugins/*/templates/*/*/*/*.html',
+                'plugins/*/templates/*/*/*.html',
+                'plugins/*/templates/*/*.html',
+                'www/templates/*/*/*/*.stpl',
+                'www/templates/*/*/*.stpl',
+                'www/templates/*/*.stpl',
+                'www/templates/*/*/*/*.html',
+                'www/templates/*/*/*.html',
+                'www/templates/*/*.html',
+            ],
         ];
-        $files = glob($dirs_map[$top] . '' . $globs[$type], GLOB_BRACE);
+
+        $files = glob($dirs_map[$top] . $patterns[$type]);
         foreach ((array) $files as $k => $file) {
             if (false !== strpos($file, '/test/')) {
                 unset($files[$k]);
-            } elseif ( ! $params['include_admin'] && false !== strpos($file, '/templates/admin/')) {
+            } elseif (!$params['include_admin'] && false !== strpos($file, '/templates/admin/')) {
                 unset($files[$k]);
             }
         }

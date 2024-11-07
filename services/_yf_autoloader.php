@@ -24,6 +24,8 @@ class yf_autoloader
 	public $manual = [];
 	public $require_once = [];
 	public $example = [];
+	public $php_libs = [];
+	public $_paths_cache = [];
 
 	/***/
 	public function __construct($config = [])
@@ -196,20 +198,42 @@ class yf_autoloader
 		}
 		if (!isset($this->_paths_cache)) {
 			$suffix = '.php';
-			$pattern = '{,plugins/*/}{services/,share/services/}{*,*/*}' . $suffix;
-			$globs = [
-				'framework'	=> YF_PATH . $pattern,
+			$patterns = [
+				'framework' => [
+					YF_PATH . 'services/*' . $suffix,
+					YF_PATH . 'services/*/*' . $suffix,
+					YF_PATH . 'share/services/*' . $suffix,
+					YF_PATH . 'share/services/*/*' . $suffix,
+					YF_PATH . 'plugins/*/services/*' . $suffix,
+					YF_PATH . 'plugins/*/services/*/*' . $suffix,
+					YF_PATH . 'plugins/*/share/services/*' . $suffix,
+					YF_PATH . 'plugins/*/share/services/*/*' . $suffix,
+				],
 			];
-			defined('APP_PATH') && $globs['app'] = APP_PATH . $pattern;
+			if (defined('APP_PATH')) {
+				$patterns['app'] = [
+					APP_PATH . 'services/*' . $suffix,
+					APP_PATH . 'services/*/*' . $suffix,
+					APP_PATH . 'share/services/*' . $suffix,
+					APP_PATH . 'share/services/*/*' . $suffix,
+					APP_PATH . 'plugins/*/services/*' . $suffix,
+					APP_PATH . 'plugins/*/services/*/*' . $suffix,
+					APP_PATH . 'plugins/*/share/services/*' . $suffix,
+					APP_PATH . 'plugins/*/share/services/*/*' . $suffix,
+				];
+			}
+
 			$slen = strlen($suffix);
 			$paths = [];
-			foreach ((array)$globs as $gname => $glob) {
-				foreach (glob($glob, GLOB_BRACE) as $_path) {
-					$_name = substr(basename($_path), 0, -$slen);
-					if (!$_name == '_yf_autoloader') {
-						continue;
+			foreach ($patterns as $pathsList) {
+				foreach ($pathsList as $glob) {
+					foreach (glob($glob) as $_path) {
+						$_name = substr(basename($_path), 0, -$slen);
+						if ($_name == '_yf_autoloader') {
+							continue;
+						}
+						$paths[$_name] = $_path;
 					}
-					$paths[$_name] = $_path;
 				}
 			}
 			// This double iterating code ensures we can inherit/replace services with same name inside project
@@ -217,7 +241,7 @@ class yf_autoloader
 				$this->_paths_cache[$_name] = $_path;
 			}
 		}
-		$this->php_libs[$name] = $path;
+		$this->php_libs[$name] = $this->_paths_cache[$name];
 		return $this->_paths_cache[$name];
 	}
 

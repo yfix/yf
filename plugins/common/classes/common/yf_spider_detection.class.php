@@ -124,15 +124,17 @@ class yf_spider_detection
     {
         $ext = '.txt';
         $ext_len = strlen($ext);
-        $pattern = '{,plugins/*/}share/spiders/*' . $ext;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => YF_PATH . 'share/spiders/*' . $ext,
+            'project' => PROJECT_PATH . 'share/spiders/*' . $ext,
+            'app' => APP_PATH . 'share/spiders/*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/share/spiders/*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/share/spiders/*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/share/spiders/*' . $ext,
         ];
         $paths = [];
-        foreach ((array) $globs as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $paths[] = $path;
             }
         }
@@ -168,15 +170,18 @@ class yf_spider_detection
     {
         $ext = '.txt';
         $ext_len = strlen($ext);
-        $pattern = '{,plugins/*/}share/spiders/*' . $ext;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $ext_len = strlen($ext);
+        $patterns = [
+            'framework' => YF_PATH . 'share/spiders/*' . $ext,
+            'project' => PROJECT_PATH . 'share/spiders/*' . $ext,
+            'app' => APP_PATH . 'share/spiders/*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/share/spiders/*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/share/spiders/*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/share/spiders/*' . $ext,
         ];
         $paths = [];
-        foreach ((array) $globs as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $paths[] = $path;
             }
         }

@@ -549,40 +549,71 @@ class yf_tpl
         $this->$cache_name = getset('tpl_get_cached_paths', function () {
             $allowed_exts = (array) $this->ALLOWED_EXTS;
             $templates_dir = trim($this->_THEMES_PATH, '/');
-            $pattern = '{,plugins/*/}' . $templates_dir . '/*/{*,*/*,*/*/*}.*';
-            $globs = [
-                'framework' => YF_PATH . $pattern,
-                'project' => PROJECT_PATH . $pattern,
-                'app' => APP_PATH . $pattern,
+            $patterns = [
+                'framework' => [
+                    YF_PATH . $templates_dir . '/*/*.*',
+                    YF_PATH . $templates_dir . '/*/*/*.*',
+                    YF_PATH . $templates_dir . '/*/*/*/*.*',
+                    YF_PATH . 'plugins/*/'. $templates_dir . '/*/*.*',
+                    YF_PATH . 'plugins/*/'. $templates_dir . '/*/*/*.*',
+                    YF_PATH . 'plugins/*/'. $templates_dir . '/*/*/*/*.*',
+                ],
+                'project' => [
+                    PROJECT_PATH . $templates_dir . '/*/*.*',
+                    PROJECT_PATH . $templates_dir . '/*/*/*.*',
+                    PROJECT_PATH . $templates_dir . '/*/*/*/*.*',
+                    PROJECT_PATH . 'plugins/*/'. $templates_dir . '/*/*.*',
+                    PROJECT_PATH . 'plugins/*/'. $templates_dir . '/*/*/*.*',
+                    PROJECT_PATH . 'plugins/*/'. $templates_dir . '/*/*/*/*.*',
+                ],
+                'app' => [
+                    APP_PATH . $templates_dir . '/*/*.*',
+                    APP_PATH . $templates_dir . '/*/*/*.*',
+                    APP_PATH . $templates_dir . '/*/*/*/*.*',
+                    APP_PATH . 'plugins/*/'. $templates_dir . '/*/*.*',
+                    APP_PATH . 'plugins/*/'. $templates_dir . '/*/*/*.*',
+                    APP_PATH . 'plugins/*/'. $templates_dir . '/*/*/*/*.*',
+                ],
             ];
+            $site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
+            if (is_site_path()) {
+                $patterns['site'] = [
+                    $site_path . $templates_dir . '/*/*.*',
+                    $site_path . $templates_dir . '/*/*/*.*',
+                    $site_path . $templates_dir . '/*/*/*/*.*',
+                    $site_path . 'plugins/*/'. $templates_dir . '/*/*.*',
+                    $site_path . 'plugins/*/'. $templates_dir . '/*/*/*.*',
+                    $site_path . 'plugins/*/'. $templates_dir . '/*/*/*/*.*',
+                ];
+            }
             $plens = [
                 'framework' => strlen(YF_PATH),
                 'project' => strlen(PROJECT_PATH),
                 'app' => strlen(APP_PATH),
+                'site' => isset($patterns['site']) ? strlen($site_path) : null,
             ];
-            $site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
-            if (is_site_path()) {
-                $globs['site'] = $site_path . $pattern;
-                $plens['site'] = strlen($site_path);
-            }
             $names = [];
-            foreach ($globs as $gname => $glob) {
-                foreach (glob($glob, GLOB_BRACE | GLOB_NOSORT) as $path) {
-                    $name = substr($path, $plens[$gname]);
-                    $ext = pathinfo($name, PATHINFO_EXTENSION);
-                    if ( ! $ext || ! in_array($ext, $allowed_exts)) {
-                        continue;
+            foreach ($patterns as $gname => $glob_patterns) {
+                foreach ($glob_patterns as $glob) {
+                    foreach (glob($glob, GLOB_NOSORT) as $path) {
+                        $name = substr($path, $plens[$gname]);
+                        $ext = pathinfo($name, PATHINFO_EXTENSION);
+                        if (!$ext || !in_array($ext, $allowed_exts)) {
+                            continue;
+                        }
+                        $p = explode('/', $name);
+                        if ($p[0] == 'plugins') {
+                            $p = array_slice($p, 2);
+                        }
+                        $theme = '';
+                        if ($p[0] == $templates_dir) {
+                            $theme = $p[1];
+                            $p = array_slice($p, 2);
+                        }
+                        $name = implode('/', $p);
+                        $name = substr($name, 0, -strlen('.' . $ext));
+                        $names[$name][$gname][$theme] = $path;
                     }
-                    $p = explode('/', $name);
-                    $p[0] == 'plugins' && $p = array_slice($p, 2);
-                    $theme = '';
-                    if ($p[0] == $templates_dir) {
-                        $theme = $p[1];
-                        $p = array_slice($p, 2);
-                    }
-                    $name = implode('/', $p);
-                    $name = substr($name, 0, -strlen('.' . $ext));
-                    $names[$name][$gname][$theme] = $path;
                 }
             }
             return $names;
