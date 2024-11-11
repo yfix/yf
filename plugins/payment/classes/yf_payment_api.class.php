@@ -975,6 +975,7 @@ class yf_payment_api
     public function deposition($options = null)
     {
         $_ = &$options;
+        $is_transaction = isset( $_['is_transaction'] ) ? $_['is_transaction'] : true;
         $_['type_name'] = __FUNCTION__;
         $_['operation_title'] = $_['operation_title'] ?: 'Пополнение счета';
         $result = $this->_operation_check($options);
@@ -1002,6 +1003,7 @@ class yf_payment_api
         // try provider operation
         $provider_class = 'provider_' . $operation_data['provider']['name'];
         $result = $this->_class($provider_class, __FUNCTION__, [
+            'is_transaction' => $is_transaction,
             'options' => $options,
             'provider' => $operation_data['provider'],
             'data' => $data,
