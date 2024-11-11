@@ -17,9 +17,10 @@ phpunit-tests:
 	(cd ./.dev/tests/ && ../../vendor/bin/phpunit ./)
 paratests:
 	(cd ./.dev/tests/ && ../../vendor/bin/paratest -p4 --colors --stop-on-failure --configuration ./phpunit.xml --log-junit ./reports/logfile.xml ./)
-php-cs-fixer:
+php-cs-fixer-check:
 	./vendor/bin/php-cs-fixer --verbose --show-progress=dots check
-test: parallel-lint php-cs-fixer phpunit-tests
+php-cs-fixer-fix:
+	./vendor/bin/php-cs-fixer --verbose --show-progress=dots fix
 
 php-bash: docker-bash
 docker-bash:
@@ -32,7 +33,7 @@ docker-phpunit-functional:
 	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional'
 docker-parallel-lint:
 	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF) && make parallel-lint'
-docker-php-cs-fixer:
-	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF) && make php-cs-fixer'
-docker-test:
-	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF) && make test'
+docker-php-cs-fixer-check:
+	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF) && make php-cs-fixer-check'
+docker-php-cs-fixer-fix:
+	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF) && make php-cs-fixer-fix'

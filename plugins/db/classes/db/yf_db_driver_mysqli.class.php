@@ -47,8 +47,8 @@ class yf_db_driver_mysqli extends yf_db_driver
         }
         $params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : 'utf8');
         $this->params = $params;
-        $this->connect();
-        if ($params['charset']) {
+        $connected = $this->connect();
+        if ($params['charset'] && $connected && $this->db_connect_id) {
             // See http://php.net/manual/en/mysqlinfo.concepts.charset.php
             mysqli_set_charset($this->db_connect_id, 'utf8');
         }

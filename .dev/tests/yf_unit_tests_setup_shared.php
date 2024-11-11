@@ -15,6 +15,7 @@ abstract class wrapper extends \PHPUnit\Framework\TestCase
     }
 }
 
+define('DEBUG_MODE', false);
 define('APP_PATH', __DIR__ . '/.tmp/');
 define('STORAGE_PATH', __DIR__ . '/.tmp/');
 define('CONFIG_PATH', __DIR__ . '/');
