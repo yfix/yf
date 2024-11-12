@@ -2,6 +2,7 @@ SHELL  := /bin/bash
 PHP_CONTAINER := yfixnet-php80-1
 DIR_YF := /var/www/vendor/yf31
 DIR_YF_TESTS := $(DIR_YF)/.dev/tests/
+DE := docker exec -it -e "TERM=xterm-256color" $(PHP_CONTAINER)
 
 composer-install:
 	composer install -vvv
@@ -24,16 +25,20 @@ php-cs-fixer-fix:
 
 php-bash: docker-bash
 docker-bash:
-	docker exec -it $(PHP_CONTAINER) bash
+	$(DE) bash
+docker-composer-install:
+	$(DE) bash -c 'cd $(DIR_WWW) && make composer-install'
 docker-phpunit:
-	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-all'
+	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-all'
 docker-phpunit-unit:
-	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-unit'
+	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-unit'
 docker-phpunit-functional:
-	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional'
+	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional'
+docker-phpunit-help:
+	$(DE) bash -c 'phpunit -h'
 docker-parallel-lint:
-	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF) && make parallel-lint'
+	$(DE) bash -c 'cd $(DIR_YF) && make parallel-lint'
 docker-php-cs-fixer-check:
-	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF) && make php-cs-fixer-check'
+	$(DE) bash -c 'cd $(DIR_YF) && make php-cs-fixer-check'
 docker-php-cs-fixer-fix:
-	docker exec $(PHP_CONTAINER) bash -c 'cd $(DIR_YF) && make php-cs-fixer-fix'
+	$(DE) bash -c 'cd $(DIR_YF) && make php-cs-fixer-fix'
