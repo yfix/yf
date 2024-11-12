@@ -97,7 +97,7 @@ class yf_autoloader
 		$git_urls = $this->git_urls;
 		foreach ((array)$git_urls as $git_url => $lib_dir) {
 			$dir = $libs_root . $lib_dir;
-			$check_file = $dir . '.git';
+			$check_file = $dir . '.gitignore';
 			if (!file_exists($check_file)) {
 				$git_opts = '';
 				if (false !== strpos($git_url, '~')) {
@@ -107,13 +107,13 @@ class yf_autoloader
 				$cmd = 'git clone --depth 1 ' . $git_opts . ' ' . $git_url . ' ' . $dir . ' && rm -rf ' . $dir . '/.git';
 				passthru($cmd);
 				$this->check_error(basename($lib_dir), $dir, $check_file);
-			} elseif (getenv('YF_FORCE_UPDATE_SERVICES')) {
-				if (false !== strpos($git_url, '~')) {
-					// Tag was forced, so do nothing
-				} else {
-					$cmd = 'cd ' . $dir . ' && git pull';
-				}
-				passthru($cmd);
+			// } elseif (getenv('YF_FORCE_UPDATE_SERVICES')) {
+			// 	if (false !== strpos($git_url, '~')) {
+			// 		// Tag was forced, so do nothing
+			// 	} else {
+			// 		$cmd = 'cd ' . $dir . ' && git pull';
+			// 	}
+			// 	passthru($cmd);
 			}
 		}
 	}
