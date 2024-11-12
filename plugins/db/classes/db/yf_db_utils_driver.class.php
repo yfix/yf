@@ -254,6 +254,9 @@ abstract class yf_db_utils_driver
         $tables = [];
         $sql = 'SHOW FULL TABLES' . (strlen($db_name) ? ' FROM ' . $this->_escape_database_name($db_name) : '');
         foreach ((array) $this->db->get_all($sql) as $a) {
+            if (!is_array($a)) {
+                continue;
+            }
             list($table, $type) = array_values($a);
             if ($no_views && $type === 'VIEW') {
                 continue;

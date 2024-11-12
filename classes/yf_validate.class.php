@@ -798,7 +798,7 @@ class yf_validate
      */
     public function valid_email($in)
     {
-        return (bool) filter_var($in, FILTER_VALIDATE_EMAIL);
+        return (bool) filter_var(strval($in), FILTER_VALIDATE_EMAIL);
     }
 
     /**
@@ -810,6 +810,7 @@ class yf_validate
         if ( ! $in) {
             return false;
         }
+        $in = strval($in);
         if (strpos($in, ',') === false) {
             return $this->valid_email(trim($in));
         }
@@ -827,6 +828,7 @@ class yf_validate
      */
     public function valid_base64($in)
     {
+        $in = strval($in);
         return strlen($in) && (base64_encode(base64_decode($in)) === $in);
     }
 
