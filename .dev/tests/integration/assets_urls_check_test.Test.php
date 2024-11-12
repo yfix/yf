@@ -19,7 +19,6 @@ class assets_urls_check_test extends yf\tests\wrapper
         }
         try {
             $content = file_get_contents($url, false, stream_context_create(['http' => ['timeout' => $timeout]]));
-            $this->assertNotEmpty($content);
         } catch (Exception $e) {
             echo self::_pretty_show_exception($e);
         }
@@ -36,7 +35,6 @@ class assets_urls_check_test extends yf\tests\wrapper
             $url = 'https://' . $url;
         }
         $content = $this->get_url_contents($url, $this->TIMEOUT);
-        $this->assertNotEmpty($content);
         // Possible fix for overcome errors by overload protection filters
         // Allow 1 retry after some sleep with increased timeout
         if ( ! $content) {

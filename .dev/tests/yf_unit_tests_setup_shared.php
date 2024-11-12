@@ -11,7 +11,17 @@ abstract class wrapper extends \PHPUnit\Framework\TestCase
     protected $inIsolation = false;
     final static function _pretty_show_exception(\Exception $e)
     {
-        return get_class($e) . ': ' . $e->message . ' in ' . $e->file . ':' . $e->line . PHP_EOL . $e->getTraceAsString();
+        // $trace = $e->getTrace();
+        // $res = [];
+        // foreach ($trace as $key => $s) {
+        //     $res[] = sprintf('#%s %s(%s): %s(%s)', $key, $s['file'] ?? '', $s['line'] ?? '', $s['function'] ?? '', implode(', ', $s['args'] ?? []));
+        // }
+        // $res[] = '#' . ++$key . ' {main}';
+        // $pretty_trace = implode(PHP_EOL, $res);
+
+        $pretty_trace = $e->getTraceAsString();
+
+        return get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine() . PHP_EOL . $pretty_trace;
     }
 }
 
@@ -20,7 +30,7 @@ define('APP_PATH', __DIR__ . '/.tmp/');
 define('STORAGE_PATH', __DIR__ . '/.tmp/');
 define('CONFIG_PATH', __DIR__ . '/');
 $_SERVER['HTTP_HOST'] = 'test.dev';
-if ( ! function_exists('main')) {
+if (! function_exists('main')) {
     define('YF_PATH', dirname(dirname(__DIR__)) . '/');
     define('YF_IN_UNIT_TESTS', true);
     $CONF['cache']['DRIVER'] = 'tmp';
