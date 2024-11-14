@@ -11,16 +11,7 @@ abstract class wrapper extends \PHPUnit\Framework\TestCase
     protected $inIsolation = false;
     final static function _pretty_show_exception(\Exception $e)
     {
-        // $trace = $e->getTrace();
-        // $res = [];
-        // foreach ($trace as $key => $s) {
-        //     $res[] = sprintf('#%s %s(%s): %s(%s)', $key, $s['file'] ?? '', $s['line'] ?? '', $s['function'] ?? '', implode(', ', $s['args'] ?? []));
-        // }
-        // $res[] = '#' . ++$key . ' {main}';
-        // $pretty_trace = implode(PHP_EOL, $res);
-
         $pretty_trace = $e->getTraceAsString();
-
         return get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine() . PHP_EOL . $pretty_trace;
     }
 }

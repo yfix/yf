@@ -14,13 +14,16 @@ phpunit-each:
 	for f in $$(find . -type f -name "*_test.Test.php"); do echo $$f; $(PHPUNIT) $$f; done
 phpunit-unit:
 	$(PHPUNIT) --testsuite unit-all $(PHPUNIT_OPTS)
-#	$(PHPUNIT) ./unit/db/ $(PHPUNIT_OPTS)
+phpunit-unit-db:
+	$(PHPUNIT) ./unit/db/ $(PHPUNIT_OPTS)
 phpunit-functional:
 	$(PHPUNIT) ./functional/ $(PHPUNIT_OPTS)
-#	$(PHPUNIT) ./functional/cache/ $(PHPUNIT_OPTS)
-#	$(PHPUNIT) ./functional/db/ $(PHPUNIT_OPTS)
-#	$(PHPUNIT) ./functional/model/ $(PHPUNIT_OPTS)
-#	$(PHPUNIT) --testsuite functional-all $(PHPUNIT_OPTS)
+phpunit-functional-cache:
+	$(PHPUNIT) ./functional/cache/ $(PHPUNIT_OPTS)
+phpunit-functional-db:
+	$(PHPUNIT) ./functional/db/ $(PHPUNIT_OPTS)
+phpunit-functional-model:
+	$(PHPUNIT) ./functional/model/ $(PHPUNIT_OPTS)
 phpunit-integration:
 	$(PHPUNIT) ./integration/ $(PHPUNIT_OPTS)
 phpunit-cache:
@@ -51,8 +54,16 @@ docker-phpunit-all:
 	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-all'
 docker-phpunit-unit:
 	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-unit'
+docker-phpunit-unit-db:
+	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-unit-db'
 docker-phpunit-functional:
 	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional'
+docker-phpunit-functional-cache:
+	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional-cache'
+docker-phpunit-functional-db:
+	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional-db'
+docker-phpunit-functional-model:
+	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional-model'
 docker-phpunit-integration:
 	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-integration'
 docker-phpunit-cache:
@@ -63,5 +74,5 @@ docker-phpunit-tpl:
 	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-tpl'
 docker-php-lint-all:
 	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make php-lint-all'
-docker-php-lint-all:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make php-lint-all'
+docker-php-parallel-lint-all:
+	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make php-parallel-lint-all'
