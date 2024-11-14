@@ -1307,7 +1307,8 @@ abstract class yf_db_utils_driver
         $sql = 'SELECT table_name FROM information_schema.tables WHERE table_schema = ' . $this->_escape_val($db_name) . ' AND table_type = "VIEW"';
         $views = [];
         foreach ((array) $this->db->get_all($sql) as $a) {
-            $name = $a['table_name'];
+            # allow to ignore key and directly get value
+            $name = array_pop($a);
             $create_view = '';
             if ( ! $extra['no_details']) {
                 $create_view = $this->db->get('SHOW CREATE VIEW ' . $this->_escape_table_name($db_name . '.' . $name));
