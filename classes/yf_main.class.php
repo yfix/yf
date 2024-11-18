@@ -186,6 +186,7 @@ class yf_main
     public $NO_SIDE_AREA_TOGGLER = null;
     public $AUTO_BAN_CHECKING = null;
     public $ADMIN_ID = null;
+    public $_IN_OUTPUT_CACHE = null;
 
     /**
      * Engine constructor

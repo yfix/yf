@@ -55,7 +55,7 @@ class yf_logs_exec_admin
         if (main()->NO_GRAPHICS && ! $this->LOG_NO_GRAPHICS_PAGES) {
             return false;
         }
-        if ($GLOBALS['task_not_found'] && ! $this->LOG_NOT_FOUND_PAGES) {
+        if (($GLOBALS['task_not_found'] ?? false) && ! $this->LOG_NOT_FOUND_PAGES) {
             return false;
         }
         if ($this->USE_STOP_LIST) {
@@ -92,7 +92,8 @@ class yf_logs_exec_admin
                 return false;
             }
         }
-        $exec_time = str_replace(',', '.', common()->_format_time_value($GLOBALS['time_end'] ?: microtime(true) - main()->_time_start));
+        $time_end = $GLOBALS['time_end'] ?? microtime(true);
+        $exec_time = str_replace(',', '.', common()->_format_time_value($time_end - main()->_time_start));
         $query_string = $_SERVER['QUERY_STRING'];
         // TODO: use parse_url here
         /*

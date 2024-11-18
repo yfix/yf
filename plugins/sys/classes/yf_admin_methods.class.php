@@ -15,6 +15,8 @@ class yf_admin_methods
         'file_browser' => 'internal',
     ];
 
+    public $_preload_complete = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name
