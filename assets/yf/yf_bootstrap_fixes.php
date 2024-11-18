@@ -107,5 +107,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 /* override styles per bs theme here */
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color:#52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color:#c8c8c8; }
+
+'. (DEBUG_MODE ? '.cssfw-bs3 pre { overflow: visible !important; }' : '').'
 ',
 ]]]];
