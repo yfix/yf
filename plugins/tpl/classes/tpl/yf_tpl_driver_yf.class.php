@@ -1001,11 +1001,25 @@ class yf_tpl_driver_yf
                 $_is_last = (int) ($_i == $_total);
                 $_is_odd = (int) ($_i % 2);
                 $_is_even = (int) ( ! $_is_odd);
+                $_val = '';
+                if (is_scalar($sub_v) || is_object($sub_v)) {
+                    $_val = strval($sub_v);
+                } elseif (is_array($sub_v)) {
+                    # bugfix for situation for even deeper arrays and warning "Array to string conversion"
+                    // array_walk($sub_v, function (&$_sub_v_item, $__) {
+                    //     if (is_array($_sub_v_item)) {
+                    //         $_sub_v_item = '';
+                    //     }
+                    // });
+                    // $_val = implode(',', $sub_v);
+                    $_val = '[ARRAY]';
+                }
+
                 $sub_replace = [
                     '_num' => $_i,
                     '_total' => $_total,
                     '_key' => $sub_k,
-                    '_val' => is_array($sub_v) ? implode(',', $sub_v) : $sub_v,
+                    '_val' => $_val,
                     '_first' => $_is_first,
                     '_last' => $_is_last,
                     '_even' => $_is_odd,
@@ -1018,7 +1032,7 @@ class yf_tpl_driver_yf
                 }
                 $sub_tpl_replace = [];
                 foreach ($sub_replace as $k => $v) {
-                    $sub_tpl_replace['{' . $k . '}'] = $v;
+                    $sub_tpl_replace['{' . $k . '}'] = is_array($v) ? implode(',', $v) : $v;
                 }
                 $cur_output = str_replace(array_keys($sub_tpl_replace), $sub_tpl_replace, $cur_output);
                 unset($sub_tpl_replace);
