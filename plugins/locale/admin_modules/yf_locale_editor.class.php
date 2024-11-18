@@ -176,7 +176,7 @@ Fallback when no numbers matched (any string)
                 if ( ! $tr || $tr == $source) {
                     continue;
                 }
-                $tr_vars[$lang]++;
+                @$tr_vars[$lang]++;
             }
         }
         $data = [];
@@ -384,7 +384,7 @@ Fallback when no numbers matched (any string)
                 list($file, $lines) = explode(':', $raw);
                 $file = trim($file);
                 $lines = trim($lines);
-                $file && $files[$file][$source]++;
+                $file && @$files[$file][$source]++;
             }
         }
         ksort($files);
@@ -407,8 +407,9 @@ Fallback when no numbers matched (any string)
 
         $vars_by_path = [];
         foreach ((array) $var_files as $source => $path) {
-            $vars_by_path[$path]++;
+            @$vars_by_path[$path]++;
         }
+        $i = 0;
         foreach ((array) $lang_files as $path) {
             $i++;
             $name = $path;

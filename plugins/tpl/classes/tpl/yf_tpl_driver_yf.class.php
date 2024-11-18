@@ -258,7 +258,7 @@ class yf_tpl_driver_yf
     {
         $this->CACHE[$name]['driver'] = 'yf';
         $this->CACHE[$name]['is_compiled'] = (int) $is_compiled;
-        $this->CACHE[$name]['calls']++;
+        @$this->CACHE[$name]['calls']++;
         if ( ! isset($this->CACHE[$name]['string'])) {
             $this->CACHE[$name]['string'] = $string;
         }
@@ -280,7 +280,7 @@ class yf_tpl_driver_yf
         $force_storage = $params['force_storage'];
         if (isset($this->CACHE[$name]) && ! $params['no_cache'] && ! $force_storage) {
             $string = $this->CACHE[$name]['string'];
-            $this->CACHE[$name]['calls']++;
+            @$this->CACHE[$name]['calls']++;
             if (DEBUG_MODE) {
                 $this->CACHE[$name]['s_length'] = strlen($string);
             }

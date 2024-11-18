@@ -28,7 +28,6 @@ class yf_wrapper_redis
     public $call_delay = 1000000; // msec
 
     public $log = [];
-    public $_log = [];
     public $LOG_LIMIT = 1000;
 
     public $read_timeout = null;

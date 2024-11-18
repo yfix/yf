@@ -522,7 +522,7 @@ class yf_i18n
         }
         $in = trim($in);
 
-        DEBUG_MODE && $this->_calls[$in]++;
+        DEBUG_MODE && @$this->_calls[$in]++;
 
         if ($this->USE_TRANSLATE_CACHE && empty($args)) {
             $CACHE_NAME = $lang . '#____#' . $in;
@@ -565,7 +565,7 @@ class yf_i18n
                 $out = $first;
                 if (DEBUG_MODE) {
                     ! isset($this->_NOT_TRANSLATED[$lang][$in]) && $this->_NOT_TRANSLATED[$lang][$in] = 0;
-                    $this->_NOT_TRANSLATED[$lang][$in]++;
+                    @$this->_NOT_TRANSLATED[$lang][$in]++;
                     if ($this->AUTO_FIND_VARS && ! isset($this->TR_ALL_VARS[$in])) {
                         $this->insert_var($in);
                     }

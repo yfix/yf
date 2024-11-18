@@ -231,7 +231,7 @@ if ( ! function_exists('d')) {
     function d()
     {
         global $auto_ids;
-        $auto_id = ($auto_prefix = 'func__' . __FUNCTION__) . $auto_ids[$auto_prefix]++;
+        $auto_id = ($auto_prefix = 'func__' . __FUNCTION__) . @$auto_ids[$auto_prefix]++;
         echo '<a class="btn btn-xs btn-default" data-toggle="collapse" data-target="#collapse_' . $auto_id . '">Trace</a><div id="collapse_' . $auto_id . '" class="collapse"><pre>' . print_r(trace(), true) . '</pre></div>';
         foreach (($args = func_get_args()) as $k => $v) {
             echo '<pre>' . (count((array) $args) > 1 ? '<b>args[' . (int) $k . ']</b>:' . PHP_EOL : '') . var_export($v, true) . '</pre>';

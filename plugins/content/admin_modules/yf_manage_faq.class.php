@@ -311,7 +311,7 @@ class yf_manage_faq
             if ( ! $parent_id) {
                 continue;
             }
-            $items[$parent_id]['have_children']++;
+            @$items[$parent_id]['have_children']++;
         }
         return $items;
     }

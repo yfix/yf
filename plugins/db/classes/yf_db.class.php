@@ -479,11 +479,15 @@ class yf_db
         if ($this->DB_REPLICATION_SLAVE && preg_match('/^[\s\t]*(UPDATE|INSERT|DELETE|ALTER|CREATE|RENAME|TRUNCATE)[\s\t]+/ims', $sql)) {
             $query_allowed = false;
         }
-        if ($query_allowed) {
-            $result = $this->db->query($sql);
-        }
         $db_error = false;
-        if ( ! $result && $query_allowed) {
+        if ($query_allowed) {
+            try {
+                $result = $this->db->query($sql);
+            } catch (Exception $e) {
+                $err = $e->getMessage();
+            }
+        }
+        if ( ! $result && $query_allowed && ! $db_error) {
             $db_error = $this->db->error();
         }
         if ( ! $result && $query_allowed && $db_error) {
@@ -502,9 +506,6 @@ class yf_db
         }
         if ( ! $result && $query_allowed && $db_error && $this->ERROR_AUTO_REPAIR) {
             $result = $this->_repair_table($sql, $db_error);
-            if ($result) {
-                $repair_done_ok = true;
-            }
         }
         if ( ! $result && $db_error) {
             $this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : '');

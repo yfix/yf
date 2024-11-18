@@ -189,7 +189,7 @@ class yf_db_installer_mysql extends yf_db_installer
         if (isset($db->_repairs_by_sql[$sql]) && $db->_repairs_by_sql[$sql] >= $this->NUM_RETRIES) {
             return false;
         }
-        $db->_repairs_by_sql[$sql]++;
+        @$db->_repairs_by_sql[$sql]++;
         $result = $db->query($sql);
         if ( ! $result) {
             if ($this->RETRY_DELAY) {
