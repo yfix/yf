@@ -8,6 +8,8 @@ class yf_site_nav_bar
     /** @var bool */
     public $AUTO_TRANSLATE = true;
 
+    public $_cats = [];
+
     // Display navigation bar
     public function _show()
     {
