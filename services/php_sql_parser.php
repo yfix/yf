@@ -2,7 +2,8 @@
 <?php
 
 $config = [
-    'git_urls' => ['https://github.com/yfix/php-sql-parser.git' => 'php_sql_parser/'],
+    // 'git_urls' => ['https://github.com/yfix/php-sql-parser.git' => 'php_sql_parser/'],
+    'git_urls' => ['https://github.com/greenlion/PHP-SQL-Parser.git' => 'php_sql_parser/'],
     'autoload_config' => ['php_sql_parser/src/PHPSQLParser/' => 'PHPSQLParser'],
     'example' => function () {
         $parser = new \PHPSQLParser\PHPSQLParser();
@@ -17,6 +18,6 @@ $config = [
         var_export($parsed);
     },
 ];
-if ($return_config) {
+if (@$return_config) {
     return $config;
 } require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);

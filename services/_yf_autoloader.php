@@ -35,7 +35,9 @@ class yf_autoloader
 		$this->is_console = $_SERVER['argc'] && !isset($_SERVER['REQUEST_METHOD']);
 
 		foreach ($this->config_names as $name) {
-			$this->$name = $config[$name];
+			if (isset($config[$name])) {
+				$this->$name = $config[$name];
+			}
 		}
 
 		$this->process_composer();

@@ -408,7 +408,6 @@ class yf_i18n
                     SITE_PATH . 'plugins/*/share/langs/' . $lang . '/*.php',
                 ];
             }
-            $files = [];
             foreach ($patterns as $paths) {
                 foreach ($paths as $path) {
                     foreach ((array) glob($path) as $f) {
@@ -445,8 +444,6 @@ class yf_i18n
                     SITE_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*.php',
                 ];
             }
-
-            $files = [];
             foreach ($patterns as $paths) {
                 foreach ($paths as $path) {
                     foreach ((array) glob($path) as $f) {

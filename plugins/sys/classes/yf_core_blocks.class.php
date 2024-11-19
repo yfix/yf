@@ -353,7 +353,6 @@ class yf_core_blocks
             APP_PATH . 'classes/*' . $ext,
             APP_PATH . 'plugins/*/classes/*' . $ext,
         ];
-        $names = [];
         foreach ($patterns as $glob) {
             foreach (glob($glob) as $path) {
                 $name = substr(basename($path), 0, -$ext_len);

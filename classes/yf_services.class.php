@@ -5,6 +5,9 @@
  */
 class yf_services
 {
+    public $php_libs = [];
+    public $_paths_cache = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name

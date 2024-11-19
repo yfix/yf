@@ -65,6 +65,7 @@ abstract class yf_db_installer
 
     public function load_data()
     {
+        $t_names = [];
         // Preload db installer SQL CREATE TABLE DDL statements
         $ext = '.sql.php';
         $patterns = [
@@ -79,7 +80,6 @@ abstract class yf_db_installer
             'share_app' => APP_PATH . 'share/db/sql/*' . $ext,
         ];
 
-        $t_names = [];
         foreach ($patterns as $glob) {
             foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
@@ -105,7 +105,6 @@ abstract class yf_db_installer
             'share_app' => APP_PATH . 'share/db/sql_php/*' . $ext,
         ];
 
-        $t_names = [];
         foreach ($patterns as $glob) {
             foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
@@ -131,7 +130,6 @@ abstract class yf_db_installer
             'share_app' => APP_PATH . 'share/db/data/*' . $ext,
         ];
 
-        $t_names = [];
         foreach ($patterns as $glob) {
             foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
