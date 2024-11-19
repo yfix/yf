@@ -1001,18 +1001,18 @@ class yf_tpl_driver_yf
                 $_is_last = (int) ($_i == $_total);
                 $_is_odd = (int) ($_i % 2);
                 $_is_even = (int) ( ! $_is_odd);
+
                 $_val = '';
-                if (is_scalar($sub_v) || is_object($sub_v)) {
+                // Bugfix for mixed arrays
+                if (is_array($sub_v)) {
+                    foreach ($sub_v as $k => $v) {
+                        if (is_array($v)) {
+                            $sub_v[$k] = implode(",", $v);
+                        }
+                    }
+                    $_val = implode(',', $sub_v);
+                } elseif (is_scalar($sub_v) || is_object($sub_v)) {
                     $_val = strval($sub_v);
-                } elseif (is_array($sub_v)) {
-                    # bugfix for situation for even deeper arrays and warning "Array to string conversion"
-                    // array_walk($sub_v, function (&$_sub_v_item, $__) {
-                    //     if (is_array($_sub_v_item)) {
-                    //         $_sub_v_item = '';
-                    //     }
-                    // });
-                    // $_val = implode(',', $sub_v);
-                    $_val = '[ARRAY]';
                 }
 
                 $sub_replace = [

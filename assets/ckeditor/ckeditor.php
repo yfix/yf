@@ -7,6 +7,7 @@ return [
                 '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.21.0/ckeditor.js',
                 '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.21.0/adapters/jquery.js',
             ],
+        ],
     ],
     'require' => [
         'asset' => 'jquery',

@@ -13,7 +13,7 @@ require_once __DIR__ . '/yf_unit_tests_setup.php';
 
 class class_table_test extends yf\tests\wrapper
 {
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         $_GET['object'] = 'dynamic';
         $_GET['action'] = 'unit_test_table';
@@ -43,9 +43,9 @@ class class_table_test extends yf\tests\wrapper
             PHP_EOL,
             '',
             '<table class="' . _class('table2')->CLASS_TABLE_MAIN . '">' .
-            '<thead><th>K1</th></thead>' .
-            '<tbody><tr><td>v11</td></tr><tr><td>v12</td></tr></tbody>' .
-            '</table>'
+                '<thead><th>K1</th></thead>' .
+                '<tbody><tr><td>v11</td></tr><tr><td>v12</td></tr></tbody>' .
+                '</table>'
         ), str_replace(PHP_EOL, '', trim($table)));
 
         $table = table($a)
@@ -55,9 +55,9 @@ class class_table_test extends yf\tests\wrapper
             PHP_EOL,
             '',
             '<table class="' . _class('table2')->CLASS_TABLE_MAIN . '">' .
-            '<thead><th>K1</th></thead>' .
-            '<tbody><tr><td>v11</td></tr><tr><td>v12</td></tr></tbody>' .
-            '</table>'
+                '<thead><th>K1</th></thead>' .
+                '<tbody><tr><td>v11</td></tr><tr><td>v12</td></tr></tbody>' .
+                '</table>'
         ), str_replace(PHP_EOL, '', trim($table)));
 
         $table = table($a)
@@ -68,9 +68,9 @@ class class_table_test extends yf\tests\wrapper
             PHP_EOL,
             '',
             '<table class="' . _class('table2')->CLASS_TABLE_MAIN . '">' .
-            '<thead><th>K1</th><th>K2</th></thead>' .
-            '<tbody><tr><td>v11</td><td>v21</td></tr><tr><td>v12</td><td>v22</td></tr></tbody>' .
-            '</table>'
+                '<thead><th>K1</th><th>K2</th></thead>' .
+                '<tbody><tr><td>v11</td><td>v21</td></tr><tr><td>v12</td><td>v22</td></tr></tbody>' .
+                '</table>'
         ), str_replace(PHP_EOL, '', trim($table)));
 
         $table = table($a)
@@ -82,24 +82,24 @@ class class_table_test extends yf\tests\wrapper
             PHP_EOL,
             '',
             '<table class="' . _class('table2')->CLASS_TABLE_MAIN . '">' .
-            '<thead><th>K1</th><th>K2</th></thead>' .
-            '<tbody><tr><td>v11</td><td>v21</td></tr><tr><td>v12</td><td>v22</td></tr></tbody>' .
-            '</table>'
+                '<thead><th>K1</th><th>K2</th></thead>' .
+                '<tbody><tr><td>v11</td><td>v21</td></tr><tr><td>v12</td><td>v22</td></tr></tbody>' .
+                '</table>'
         ), str_replace(PHP_EOL, '', trim($table)));
-/*
-        $this->assertObjectHasAttribute('_total', $table);
+        /*
+        $this->assertObjectHasProperty('_total', $table);
         $this->assertEquals($table->_total, count((array) $a));
-        $this->assertObjectHasAttribute('_pages', $table);
+        $this->assertObjectHasProperty('_pages', $table);
         $this->assertIsString($table->_pages);
-        $this->assertObjectHasAttribute('_ids', $table);
+        $this->assertObjectHasProperty('_ids', $table);
         $this->assertSame(count((array) $table->_ids), count((array) $a));
 
         $a = [];
         $table = table($a);
-        $this->assertObjectHasAttribute('_total', $table);
+        $this->assertObjectHasProperty('_total', $table);
         $this->assertEquals($table->_total, count((array) $a));
-        $this->assertObjectHasAttribute('_pages', $table);
-        $this->assertObjectHasAttribute('_ids', $table);
+        $this->assertObjectHasProperty('_pages', $table);
+        $this->assertObjectHasProperty('_ids', $table);
         $this->assertSame(count((array) $table->_ids), count((array) $a));
 
         $table = table(null, ['no_records_callback' => function () {
@@ -121,10 +121,10 @@ class class_table_test extends yf\tests\wrapper
             PHP_EOL,
             '',
             '<table class="' . _class('table2')->CLASS_TABLE_MAIN . '">' .
-            '<thead><th>Id</th><th>Actions</th></thead><tbody>' .
-            '<tr><td>1</td><td nowrap><a href="./?object=test&uid=1" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom</a> </td></tr>' .
-            '<tr><td>2</td><td nowrap><a href="./?object=test&uid=2" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom</a> </td></tr>' .
-            '</tbody></table>'
+                '<thead><th>Id</th><th>Actions</th></thead><tbody>' .
+                '<tr><td>1</td><td nowrap><a href="./?object=test&uid=1" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom</a> </td></tr>' .
+                '<tr><td>2</td><td nowrap><a href="./?object=test&uid=2" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom</a> </td></tr>' .
+                '</tbody></table>'
         ), str_replace(PHP_EOL, '', trim($table)));
 
         $table = table($a)
@@ -134,10 +134,10 @@ class class_table_test extends yf\tests\wrapper
             PHP_EOL,
             '',
             '<table class="' . _class('table2')->CLASS_TABLE_MAIN . '">' .
-            '<thead><th>Id</th><th>Actions</th></thead><tbody>' .
-            '<tr><td>1</td><td nowrap><a href="./?object=test&uid=122&pid=133" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom</a> </td></tr>' .
-            '<tr><td>2</td><td nowrap><a href="./?object=test&uid=222&pid=233" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom</a> </td></tr>' .
-            '</tbody></table>'
+                '<thead><th>Id</th><th>Actions</th></thead><tbody>' .
+                '<tr><td>1</td><td nowrap><a href="./?object=test&uid=122&pid=133" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom</a> </td></tr>' .
+                '<tr><td>2</td><td nowrap><a href="./?object=test&uid=222&pid=233" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom</a> </td></tr>' .
+                '</tbody></table>'
         ), str_replace(PHP_EOL, '', trim($table)));
 
         $table = table($a)
@@ -148,12 +148,12 @@ class class_table_test extends yf\tests\wrapper
             PHP_EOL,
             '',
             '<table class="' . _class('table2')->CLASS_TABLE_MAIN . '">' .
-            '<thead><th>Id</th><th>Actions</th></thead><tbody>' .
-            '<tr><td>1</td><td nowrap><a href="./?object=test&uid=122&pid=133" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom1"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom1</a> '
+                '<thead><th>Id</th><th>Actions</th></thead><tbody>' .
+                '<tr><td>1</td><td nowrap><a href="./?object=test&uid=122&pid=133" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom1"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom1</a> '
                 . '<a href="./?object=test&uid=122&pid=555" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom2"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom2</a> </td></tr>' .
-            '<tr><td>2</td><td nowrap><a href="./?object=test&uid=222&pid=233" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom1"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom1</a> '
+                '<tr><td>2</td><td nowrap><a href="./?object=test&uid=222&pid=233" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom1"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom1</a> '
                 . '<a href="./?object=test&uid=222&pid=555" class="' . _class('table2')->CLASS_BTN_MINI . '" title="custom2"><i class="' . _class('table2')->CLASS_ICON_BTN . '"></i> custom2</a> </td></tr>' .
-            '</tbody></table>'
+                '</tbody></table>'
         ), str_replace(PHP_EOL, '', trim($table)));
     }
     public function test_auto()
@@ -169,13 +169,13 @@ class class_table_test extends yf\tests\wrapper
             PHP_EOL,
             '',
             '<table class="' . _class('table2')->CLASS_TABLE_MAIN . '">' .
-            '<thead><th>Id</th><th>User id</th><th>Product id</th><th>Actions</th></thead><tbody>' .
-            '<tr><td>1</td><td>122</td><td>133</td><td nowrap><a href="' . $web_path . '?object=dynamic&action=edit&id=1" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_edit" title="Edit" data-test="edit"><i class="' . _class('table2')->CLASS_ICON_EDIT . '"></i> Edit</a> ' .
-            '<a href="' . $web_path . '?object=dynamic&action=delete&id=1" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_delete btn-danger" title="Delete" data-test="delete"><i class="' . _class('table2')->CLASS_ICON_DELETE . '"></i> Delete</a> </td></tr>' .
-            '<tr><td>2</td><td>222</td><td>233</td><td nowrap><a href="' . $web_path . '?object=dynamic&action=edit&id=2" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_edit" title="Edit" data-test="edit"><i class="' . _class('table2')->CLASS_ICON_EDIT . '"></i> Edit</a> ' .
-            '<a href="' . $web_path . '?object=dynamic&action=delete&id=2" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_delete btn-danger" title="Delete" data-test="delete"><i class="' . _class('table2')->CLASS_ICON_DELETE . '"></i> Delete</a> </td></tr>' .
-            '</tbody></table>' .
-            '<div class="controls"><a href="' . $web_path . '?object=dynamic&action=add" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_add"><i class=" icon-plus fa fa-plus"></i> add</a> </div>'
+                '<thead><th>Id</th><th>User id</th><th>Product id</th><th>Actions</th></thead><tbody>' .
+                '<tr><td>1</td><td>122</td><td>133</td><td nowrap><a href="' . $web_path . '?object=dynamic&action=edit&id=1" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_edit" title="Edit" data-test="edit"><i class="' . _class('table2')->CLASS_ICON_EDIT . '"></i> Edit</a> ' .
+                '<a href="' . $web_path . '?object=dynamic&action=delete&id=1" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_delete btn-danger" title="Delete" data-test="delete"><i class="' . _class('table2')->CLASS_ICON_DELETE . '"></i> Delete</a> </td></tr>' .
+                '<tr><td>2</td><td>222</td><td>233</td><td nowrap><a href="' . $web_path . '?object=dynamic&action=edit&id=2" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_edit" title="Edit" data-test="edit"><i class="' . _class('table2')->CLASS_ICON_EDIT . '"></i> Edit</a> ' .
+                '<a href="' . $web_path . '?object=dynamic&action=delete&id=2" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_delete btn-danger" title="Delete" data-test="delete"><i class="' . _class('table2')->CLASS_ICON_DELETE . '"></i> Delete</a> </td></tr>' .
+                '</tbody></table>' .
+                '<div class="controls"><a href="' . $web_path . '?object=dynamic&action=add" class="' . _class('table2')->CLASS_BTN_MINI . ' ajax_add"><i class=" icon-plus fa fa-plus"></i> add</a> </div>'
         ), str_replace(PHP_EOL, '', trim($table)));
     }
     public function test_rotate()
@@ -215,8 +215,8 @@ class class_table_test extends yf\tests\wrapper
             PHP_EOL,
             '',
             '<table class="' . _class('table2')->CLASS_TABLE_MAIN . '">'
-            . '<thead><th>Id</th><th>User id</th></thead><tbody><tr><td>1</td><td rowspan="2">111</td></tr><tr><td>2</td></tr>'
-            . '</tbody></table>'
+                . '<thead><th>Id</th><th>User id</th></thead><tbody><tr><td>1</td><td rowspan="2">111</td></tr><tr><td>2</td></tr>'
+                . '</tbody></table>'
         ), str_replace(PHP_EOL, '', trim($table)));
     }
     public function test_table_force_class()
