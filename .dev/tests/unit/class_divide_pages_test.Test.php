@@ -10,13 +10,13 @@ class class_divide_pages_test extends yf\tests\wrapper
             return false;
         }
         $html =
-            '<div class="pagination"> <ul> </ul> <ul>' .
+            '<div> <ul class="pagination"> </ul> <ul class="pagination">' .
             ($num_pages > 1 ? ' <li class="disabled"><a>1</a></li>' : '');
         foreach (range($next, $num_pages) as $page) {
             $html .= '<li><a href="' . $href . $page . '" title="Page ' . $page . '">' . $page . '</a></li>';
         }
         $html .= ' <li class="next"><a href="' . $href . $next . '" title="Next page">&raquo;</a></li>
-				</ul> <ul> </ul>
+				</ul> <ul class="pagination"> </ul>
 			</div>';
         return $this->_cleanup_html($html);
     }
@@ -54,7 +54,7 @@ class class_divide_pages_test extends yf\tests\wrapper
         ]);
         $result = common()->divide_pages($sql, $href, '', '', $num_records = count((array) $data));
         $result[1] = $this->_cleanup_html($result[1]);
-        $this->assertEquals($expect_for_sql, $result);
+        $this->assertEquals($result, $expect_for_sql);
         /*
                 $expect_for_sql = array_values(array(
                     'limit_sql'		=> ' LIMIT 0, 1',

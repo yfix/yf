@@ -26,6 +26,8 @@ if (! function_exists('main')) {
     define('YF_IN_UNIT_TESTS', true);
     $CONF['cache']['DRIVER'] = 'tmp';
     $CONF['cache']['NO_CACHE'] = true;
+    $CONF['css_framework'] = 'bs3';
+    $CONF['FORCE_LOCALE'] = 'en';
     $CONF['REDIS_HOST'] = getenv('REDIS_HOST') ?: 'redis';
     $CONF['REDIS_PORT'] = getenv('REDIS_PORT') ?: 6379;
     $CONF['MEMCACHED_HOST'] = getenv('YF_MEMCACHED_HOST') ?: 'memcached';
