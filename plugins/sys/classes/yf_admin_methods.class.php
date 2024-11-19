@@ -8,9 +8,8 @@
  */
 class yf_admin_methods
 {
-    /***/
     public $params = [];
-    /***/
+    public $_params = [];
     public $default_ckeditor_params = [
         'file_browser' => 'internal',
     ];

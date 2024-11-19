@@ -194,15 +194,15 @@ class yf_assets
             $used[] = 'assets_out_mtime';
         }
         if (DEBUG_MODE) {
-            if ($_GET['assets_do_cache']) {
+            if ($_GET['assets_do_cache'] ?? false) {
                 $this->_do_cache();
                 $used[] = 'assets_do_cache';
             }
-            if ($_GET['assets_do_combine']) {
+            if ($_GET['assets_do_combine'] ?? false) {
                 $this->_do_combine();
                 $used[] = 'assets_do_combine';
             }
-            if ($_GET['assets_do_purge']) {
+            if ($_GET['assets_do_purge'] ?? false) {
                 $this->_do_purge();
                 $used[] = 'assets_do_purge';
             }

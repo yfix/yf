@@ -26,7 +26,7 @@ class yf_form2_daterange
         if ($extra['min_date'] && strlen($extra['min_date']) == 10) {
             $time = time();
             $extra += [
-                'min_date' => date('Y-m-d', $extra['min_date'] ?: ($time - 86400 * 30)),
+                'min_date' => date('Y-m-d', intval($extra['min_date'] ?: ($time - 86400 * 30))),
                 'max_date' => date('Y-m-d', $time + 86400),
                 'autocomplete' => 'off',
             ];

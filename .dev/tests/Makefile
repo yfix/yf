@@ -4,7 +4,7 @@ PARALINT := ../../vendor/bin/parallel-lint
 SHELL  := /bin/bash
 PHP_CONTAINER := yfixnet-php80-1
 DIR_YF := /var/www/vendor/yf31
-DIR_YF_TESTS := $(DIR_YF)/.dev/tests/
+DOCKER_TESTS := $(DIR_YF)/.dev/tests/
 DE := docker exec -it -e "TERM=xterm-256color" $(PHP_CONTAINER)
 
 tests: phpunit-all
@@ -51,28 +51,28 @@ docker-bash:
 docker-phpunit-help:
 	$(DE) bash -c 'phpunit -h'
 docker-phpunit-all:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-all'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-all'
 docker-phpunit-unit:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-unit'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-unit'
 docker-phpunit-unit-db:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-unit-db'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-unit-db'
 docker-phpunit-functional:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-functional'
 docker-phpunit-functional-cache:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional-cache'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-functional-cache'
 docker-phpunit-functional-db:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional-db'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-functional-db'
 docker-phpunit-functional-model:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-functional-model'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-functional-model'
 docker-phpunit-integration:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-integration'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-integration'
 docker-phpunit-cache:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-cache'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-cache'
 docker-phpunit-db:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-db'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-db'
 docker-phpunit-tpl:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make phpunit-tpl'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-tpl'
 docker-php-lint-all:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make php-lint-all'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make php-lint-all'
 docker-php-parallel-lint-all:
-	$(DE) bash -c 'cd $(DIR_YF_TESTS) && make php-parallel-lint-all'
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make php-parallel-lint-all'

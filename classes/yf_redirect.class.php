@@ -147,7 +147,7 @@ class yf_redirect
             $rewrite = false;
         }
         $form_method = in_array(strtoupper($params['form_method']), ['GET', 'POST']) ? strtoupper($params['form_method']) : 'GET';
-        if ($GLOBALS['no_redirect']) {
+        if ($GLOBALS['no_redirect'] ?? false) {
             return $text;
         }
         if (main()->_IS_REDIRECTING) {

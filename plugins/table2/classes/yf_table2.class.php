@@ -421,7 +421,9 @@ class yf_table2
         $data1row = current($data);
         // Needed to correctly process null values, when some other rows contain real data there
         foreach ((array) $data1row as $k => $v) {
-            $data1row[$k] = (string) $v;
+            if (isset($v)) {
+                $data1row[$k] = (is_scalar($v) || is_object($v)) ? strval($v) : reset($v);
+            }
         }
         $counter2 = 0;
         foreach ((array) $this->_fields as $info) {

@@ -5,6 +5,8 @@
  */
 class yf_table2_filter
 {
+    public $supported_conds = [];
+
     public function _init()
     {
         $this->supported_conds = [
@@ -187,6 +189,9 @@ class yf_table2_filter
     public function _filter_sql_prepare($filter_data = [], $filter_params = [], $__sql = '', $table = null)
     {
         if ( ! $filter_data) {
+            return '';
+        }
+        if (is_null($table)) {
             return '';
         }
         $db = is_object($table->_params['db']) ? $table->_params['db'] : db();

@@ -2,18 +2,11 @@
 
 return [
     'versions' => [
-        '4.4.5' => [
+        '4.21.0' => [
             'js' => [
-                '//cdn.ckeditor.com/4.4.5/full/ckeditor.js',
-                '//cdn.ckeditor.com/4.4.5/full/adapters/jquery.js',
+                '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.21.0/ckeditor.js',
+                '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.21.0/adapters/jquery.js',
             ],
-        ],
-        '4.4.7' => [
-            'js' => [
-                '//cdn.ckeditor.com/4.4.7/full/ckeditor.js',
-                '//cdn.ckeditor.com/4.4.7/full/adapters/jquery.js',
-            ],
-        ],
     ],
     'require' => [
         'asset' => 'jquery',
