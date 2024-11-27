@@ -5,7 +5,7 @@
  * php_beautifier --indent_tabs auto_refactoring_of_module2.php -o auto_refactoring_of_module3.php.
  */
 $module = 'programs';
-if ($argv[1]) {
+if ($argv[1] ?? false) {
     $module = $argv[1];
 }
 $exists = false;

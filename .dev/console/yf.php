@@ -1,15 +1,15 @@
 #!/usr/bin/env php
 <?php
 /**
-* YF console tool.
-*
-* It require symfony/console composer package. You can install it with following console commands:
-* # export COMPOSER_HOME=/usr/local/share/composer/
-* # curl -sS https://getcomposer.org/installer | php
-* # composer self-update
-* # composer global require symfony/console:~2.4
-* # ln -s /home/www/yf/.dev/console/yf /usr/local/bin/yf
-*/
+ * YF console tool.
+ *
+ * It require symfony/console composer package. You can install it with following console commands:
+ * # export COMPOSER_HOME=/usr/local/share/composer/
+ * # curl -sS https://getcomposer.org/installer | php
+ * # composer self-update
+ * # composer global require symfony/console:~2.4
+ * # ln -s /var/www/yf/.dev/console/yf /usr/local/bin/yf
+ */
 $autoload_file = '/usr/local/share/composer/vendor/autoload.php';
 if (file_exists($autoload_file)) {
     require $autoload_file;
@@ -48,7 +48,7 @@ function get_paths()
     }
     foreach ($globs as $g) {
         $files = glob($paths['called_path'] . $g . 'db_setup.php');
-        if ( ! $files || ! isset($files[0])) {
+        if (! $files || ! isset($files[0])) {
             continue;
         }
         $fp = $files[0];
@@ -140,19 +140,19 @@ function get_yf_console_commands()
 }
 
 $yf_paths = get_paths();
-if ( ! defined('YF_PATH')) {
+if (! defined('YF_PATH')) {
     define('YF_PATH', $yf_paths['yf_path']);
 }
-if ( ! defined('APP_PATH')) {
+if (! defined('APP_PATH')) {
     define('APP_PATH', $yf_paths['app_path']);
 }
-if ( ! defined('CONFIG_PATH')) {
+if (! defined('CONFIG_PATH')) {
     define('CONFIG_PATH', $yf_paths['config_path']);
 }
-if ( ! defined('PROJECT_PATH')) {
+if (! defined('PROJECT_PATH')) {
     define('PROJECT_PATH', $yf_paths['project_path']);
 }
-if ( ! defined('SITE_PATH')) {
+if (! defined('SITE_PATH')) {
     define('SITE_PATH', $yf_paths['project_path']);
 }
 

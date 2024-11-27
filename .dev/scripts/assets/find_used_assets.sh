@@ -1,1 +1,1 @@
-egrep "\s(js|css|jquery|asset)\(['\"][^\)\$;]+\)" -ir --include="*.php" --exclude-dir=".dev" -oh /home/www/yf/ | sed 's/\s//;s/(asset|js|css|jquery)\(([^\)]+)\)/$2/'
+egrep "\s(js|css|jquery|asset)\(['\"][^\)\$;]+\)" -ir --include="*.php" --exclude-dir=".dev" -oh /var/www/yf/ | sed 's/\s//;s/(asset|js|css|jquery)\(([^\)]+)\)/$2/'

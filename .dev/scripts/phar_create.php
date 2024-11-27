@@ -21,7 +21,7 @@ $dir = __DIR__;
 ini_set('phar.readonly', 0); // Could be done in php.ini
 
 //$path = $dir.'/yf';
-$path = '/home/www/yf/';
+$path = '/var/www/yf/';
 
 $name = 'yf.phar';
 echo $name;

@@ -3,6 +3,8 @@
 
 require_once dirname(__DIR__) . '/scripts_init.php';
 
+echo "------ sql into php ------\n";
+
 $ext = '.sql.php';
 $globs_sql = [
     'yf_main' => YF_PATH . 'share/db/sql/*' . $ext,

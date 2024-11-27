@@ -3,10 +3,10 @@
 $PROJECT_PATH = dirname(dirname(dirname(__DIR__))) . '/scripts/scripts_init.php';
 require_once $PROJECT_PATH;
 
-if ( ! empty($argv[1])) {
+if ( ! empty($argv[1] ?? false)) {
     $time_start = microtime(true);
     db()->insert('cron_logs', [
-        'cron_id' => (int) ($argv[3]),
+        'cron_id' => (int) ($argv[3] ?? 0),
         'time_start' => $time_start,
     ]);
     $id = db()->insert_id();

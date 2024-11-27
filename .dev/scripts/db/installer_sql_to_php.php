@@ -1,23 +1,40 @@
 #!/usr/bin/env php
 <?php
 
-define('DB_TYPE', 'mysql5');
-define('DB_HOST', 'localhost');
-//define('DB_NAME', 'tmp_'.substr(md5(microtime().'bt6reedc5zw3'), 8));
-define('DB_NAME', 'tmp_sql_to_php');
-define('DB_USER', 'root');
-define('DB_PSWD', '123456');
-define('DB_PREFIX', 'tmp_');
+define('DB_TYPE', 'mysqli');
+define('DB_HOST', getenv('YF_DB_HOST') ?: 'mysql-tmp');
+define('DB_NAME', getenv('YF_DB_NAME') ?: 'tests');
+define('DB_USER', getenv('YF_DB_USER') ?: 'root');
+define('DB_PSWD', is_string(getenv('YF_DB_PSWD')) ? getenv('YF_DB_PSWD') : '123456');
+define('DB_PREFIX', is_string(getenv('YF_DB_PREFIX')) ? getenv('YF_DB_PREFIX') : 'tmp_');
 
-exec('mysql -h ' . escapeshellarg(DB_HOST) . ' -u ' . escapeshellarg(DB_USER) . ' -p' . escapeshellarg(DB_PSWD) . ' -e "CREATE DATABASE IF NOT EXISTS ' . DB_NAME . '"');
+# assume thst db already exists
+// exec('mysql -h ' . escapeshellarg(DB_HOST) . ' -u ' . escapeshellarg(DB_USER) . ' -p' . escapeshellarg(DB_PSWD) . ' -e "CREATE DATABASE IF NOT EXISTS ' . DB_NAME . '"');
 
-define('YF_PATH', '/home/www/yf/');
+define('YF_PATH', '/var/www/vendor/yf31/');
 if (!defined('YF_PATH')) {
     define('YF_PATH', dirname(dirname(dirname(__DIR__))) . '/');
 }
-if (!function_exists('main')) {
+define('DEBUG_MODE', false);
+define('APP_PATH', __DIR__ . '/.tmp/');
+define('STORAGE_PATH', __DIR__ . '/.tmp/');
+define('CONFIG_PATH', __DIR__ . '/');
+$_SERVER['HTTP_HOST'] = 'test.dev';
+if (! function_exists('main')) {
+    define('YF_IN_UNIT_TESTS', true);
+    $CONF['cache']['DRIVER'] = 'tmp';
+    $CONF['cache']['NO_CACHE'] = true;
+    $CONF['css_framework'] = 'bs3';
+    $CONF['FORCE_LOCALE'] = 'en';
+    $CONF['REDIS_HOST'] = getenv('REDIS_HOST') ?: 'redis';
+    $CONF['REDIS_PORT'] = getenv('REDIS_PORT') ?: 6379;
+    $CONF['MEMCACHED_HOST'] = getenv('YF_MEMCACHED_HOST') ?: 'memcached';
+    $CONF['MEMCACHED_PORT'] = getenv('YF_MEMCACHED_PORT') ?: '11211';
+    if (version_compare(PHP_VERSION, '8.0.0') >= 0) {
+        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED & ~E_WARNING);
+    }
     require YF_PATH . 'classes/yf_main.class.php';
-    new yf_main('user', $no_db_connect = false, $auto_init_all = true);
+    new \yf_main($MAIN_TYPE ?? 'user', $no_db_connect = false, $auto_init_all = false, $CONF);
 }
 
 //db()->query('CREATE DATABASE IF NOT EXISTS '.DB_NAME);

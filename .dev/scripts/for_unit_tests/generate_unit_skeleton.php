@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-// Example: ./generate_unit_skeleton.php /home/www/test2/ /home/www/yf/classes/yf_table2.class.php
+// Example: ./generate_unit_skeleton.php /var/www/test2/ /var/www/yf/classes/yf_table2.class.php
 $path = $argv[2];
 $custom_path = $argv[3];
 

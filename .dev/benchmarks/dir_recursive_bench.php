@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-$argv[1] = '/home/www/test2/';
+$argv[1] = '/var/www/test2/';
 require dirname(__DIR__) . '/scripts/scripts_init.php';
 
 class bench
@@ -9,6 +9,7 @@ class bench
     public function __toString()
     {
         $out = [];
+        $i = 0;
         foreach (get_class_methods($this) as $name) {
             if ($name[0] == '_') {
                 continue;
