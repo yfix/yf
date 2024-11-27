@@ -89,7 +89,6 @@ class yf_db_installer_mysql extends yf_db_installer
             return $this->db_query_safe($sql, $db);
         // #1146 means "Table %s doesn't exist"
         } elseif ($db_error['code'] == 1146) {
-
             // Try to get table name from error message
             preg_match('#Table [\'][a-z_0-9]+\.([a-z_0-9]+)[\'] doesn\'t exist#ims', $db_error['message'], $m);
             $item_to_repair = trim($m[1]);

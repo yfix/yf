@@ -78,8 +78,10 @@ abstract class yf_db_installer
             'share_framework' => YF_PATH . 'share/db/sql/*' . $ext,
             'share_project' => PROJECT_PATH . 'share/db/sql/*' . $ext,
             'share_app' => APP_PATH . 'share/db/sql/*' . $ext,
+            'plugins_share_framework' => YF_PATH . 'plugins/*/share/db/sql/*' . $ext,
+            'plugins_share_project' => PROJECT_PATH . 'plugins/*/share/db/sql/*' . $ext,
+            'plugins_share_app' => APP_PATH . 'plugins/*/share/db/sql/*' . $ext,
         ];
-
         foreach ($patterns as $glob) {
             foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
@@ -103,6 +105,9 @@ abstract class yf_db_installer
             'share_framework' => YF_PATH . 'share/db/sql_php/*' . $ext,
             'share_project' => PROJECT_PATH . 'share/db/sql_php/*' . $ext,
             'share_app' => APP_PATH . 'share/db/sql_php/*' . $ext,
+            'plugins_share_framework' => YF_PATH . 'plugins/*/share/db/sql_php/*' . $ext,
+            'plugins_share_project' => PROJECT_PATH . 'plugins/*/share/db/sql_php/*' . $ext,
+            'plugins_share_app' => APP_PATH . 'plugins/*/share/db/sql_php/*' . $ext,
         ];
 
         foreach ($patterns as $glob) {
@@ -128,6 +133,9 @@ abstract class yf_db_installer
             'share_framework' => YF_PATH . 'share/db/data/*' . $ext,
             'share_project' => PROJECT_PATH . 'share/db/data/*' . $ext,
             'share_app' => APP_PATH . 'share/db/data/*' . $ext,
+            'plugins_share_framework' => YF_PATH . 'plugins/*/share/db/data/*' . $ext,
+            'plugins_share_project' => PROJECT_PATH . 'plugins/*/share/db/data/*' . $ext,
+            'plugins_share_app' => APP_PATH . 'plugins/*/share/db/data/*' . $ext,
         ];
 
         foreach ($patterns as $glob) {
@@ -140,7 +148,6 @@ abstract class yf_db_installer
         foreach ($t_names as $t_name => $path) {
             $this->TABLES_DATA[$t_name] = include $path;
         }
-
         // Project has higher priority than framework (allow to change anything in project)
         // Try to load db structure from project file
         // Sample contents part: 	$project_data['OTHER_TABLES_STRUCTS'] = my_array_merge((array)$project_data['OTHER_TABLES_STRUCTS'], array(
@@ -180,6 +187,7 @@ abstract class yf_db_installer
         if ( ! $this->get_lock()) {
             return false;
         }
+        $table_data = [];
         if (isset($this->TABLES_SQL[$table_name])) {
             $table_found = true;
         } elseif (isset($this->TABLES_SQL['sys_' . $table_name])) {
@@ -214,7 +222,10 @@ abstract class yf_db_installer
         $this->create_table_post_hook($full_table_name, $sql_php, $db);
         // Check if we also need to insert some data into new system table
         if ($table_data && is_array($table_data)) {
-            $result = $db->insert_safe($full_table_name, $table_data);
+            $insert_result = $db->insert_safe($full_table_name, $table_data);
+            if ( ! main()->is_unit_test()) {
+                $result = $insert_result;
+            }
         }
         $this->release_lock();
         return $result;

@@ -3,7 +3,6 @@
 require_once dirname(__DIR__) . '/yf_unit_tests_setup.php';
 
 /**
- * @requires extension json
  */
 class function_json_test extends yf\tests\wrapper
 {

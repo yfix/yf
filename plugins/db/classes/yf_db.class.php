@@ -1724,7 +1724,10 @@ class yf_db
      */
     public function _fix_data_safe($table, $data = [], $extra = [])
     {
-        if ( ! $this->FIX_DATA_SAFE || main()->is_unit_test()) {
+        if ( ! $this->FIX_DATA_SAFE) {
+            return $data;
+        }
+        if (main()->is_unit_test()) {
             return $data;
         }
         $cols = $this->get_table_columns_cached($table, $extra['no_cache']);
