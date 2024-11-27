@@ -1449,7 +1449,7 @@ class yf_main
      * @param mixed $params
      * @return bool
      */
-    public function set_module_conf($module_name = '', &$MODULE_OBJ, $params = '')
+    public function set_module_conf($module_name = '', &$MODULE_OBJ = null, $params = '')
     {
         // Stop here if project config not set or some other things missing
         if (empty($module_name) || ! is_object($MODULE_OBJ)) {
