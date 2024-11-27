@@ -3,8 +3,6 @@
 require_once __DIR__ . '/yf_unit_tests_setup.php';
 
 /**
- * @requires extension gd
- * @requires function imagettftext
  */
 class class_captcha_test extends yf\tests\wrapper
 {

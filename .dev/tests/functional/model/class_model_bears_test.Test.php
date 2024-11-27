@@ -1,9 +1,10 @@
 <?php
 
+use PHPUnit\Framework\Attributes\Depends;
+
 require_once dirname(__DIR__) . '/db_real_abstract.php';
 
 /**
- * @requires extension mysqli
  */
 class class_model_bears_test extends db_real_abstract
 {
@@ -440,8 +441,8 @@ ND);
     }
 
     /**
-     * @depends test_main
      */
+    #[Depends('test_main')]
     public function test_query_models()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
@@ -540,8 +541,8 @@ ND);
     }
 
     /**
-     * @depends test_main
      */
+    #[Depends('test_main')]
     public function test_change_models()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
@@ -564,9 +565,9 @@ ND);
     }
 
     /**
-     * @depends test_main
      * query one-to-one relationships
      */
+    #[Depends('test_main')]
     public function test_one_to_one()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
@@ -621,9 +622,9 @@ ND);
     }
 
     /**
-     * @depends test_main
      * query one-to-many relationships
      */
+    #[Depends('test_main')]
     public function test_one_to_many()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
@@ -648,9 +649,9 @@ ND);
     }
 
     /**
-     * @depends test_main
      * query many-to-many relationships
      */
+    #[Depends('test_main')]
     public function test_many_to_many()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
@@ -712,9 +713,7 @@ ND);
         }
     }
 
-    /**
-     * @depends test_main
-     */
+    #[Depends('test_main')]
     public function test_delete_models()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {

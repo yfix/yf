@@ -1,9 +1,9 @@
 <?php
 
+use PHPUnit\Framework\Attributes\Depends;
 require_once dirname(__DIR__) . '/db_real_abstract.php';
 
 /**
- * @requires extension mysqli
  */
 class class_model_sakila_test extends db_real_abstract
 {
@@ -151,8 +151,8 @@ class class_model_sakila_test extends db_real_abstract
     }
 
     /**
-     * @depends test_load_fixtures
      */
+    #[Depends('test_load_fixtures')]
     public function test_sakila_basic()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
@@ -255,8 +255,8 @@ class class_model_sakila_test extends db_real_abstract
     }
 
     /**
-     * @depends test_load_fixtures
      */
+    #[Depends('test_load_fixtures')]
     public function test_sakila_save()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
@@ -285,8 +285,8 @@ class class_model_sakila_test extends db_real_abstract
     }
 
     /**
-     * @depends test_load_fixtures
      */
+    #[Depends('test_load_fixtures')]
     public function test_sakila_relations()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
@@ -316,8 +316,8 @@ class class_model_sakila_test extends db_real_abstract
     }
 
     /**
-     * @depends test_load_fixtures
      */
+    #[Depends('test_load_fixtures')]
     public function test_sakila_all_models()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
@@ -328,13 +328,13 @@ class class_model_sakila_test extends db_real_abstract
                 $this->assertTrue( is_object($model_base) );
                 $this->assertTrue( is_a($model_base, 'yf_model') );
                 $this->assertSame( $model_base, _class('yf_model') );
-        
+
                 $base_methods = get_class_methods($model_base);
         #		$base_vars = get_object_vars($model_base);
-        
+
                 $db_prefix = self::db()->DB_PREFIX;
                 $plen = strlen($db_prefix);
-        
+
                 foreach ((array)self::utils()->list_tables(self::db_name()) as $table) {
                     $table = substr($table, $plen);
                     $model = self::$db->model($table);

@@ -3,7 +3,6 @@
 require_once __DIR__ . '/db_real_abstract.php';
 
 /**
- * @requires extension mysqli
  */
 class class_main_real_test extends db_real_abstract
 {

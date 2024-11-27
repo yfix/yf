@@ -3,7 +3,6 @@
 require_once __DIR__ . '/class_db_real_query_builder_mysql_test.Test.php';
 
 /**
- * @requires extension pgsql
  */
 class class_db_real_query_builder_pgsql_test extends class_db_real_query_builder_mysql_test
 {

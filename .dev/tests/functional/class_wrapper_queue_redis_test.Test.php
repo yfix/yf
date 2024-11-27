@@ -3,7 +3,6 @@
 require_once __DIR__ . '/db_real_abstract.php';
 
 /**
- * @requires extension redis
  */
 class class_wrapper_queue_redis_test extends yf\tests\wrapper
 {

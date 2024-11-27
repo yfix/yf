@@ -3,7 +3,6 @@
 require_once __DIR__ . '/db_real_abstract.php';
 
 /**
- * @requires extension amqp
  */
 class class_wrapper_rabbitmq_test extends yf\tests\wrapper
 {

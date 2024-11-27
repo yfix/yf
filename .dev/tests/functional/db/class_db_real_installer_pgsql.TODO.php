@@ -3,7 +3,6 @@
 require_once __DIR__ . '/db_real_abstract.php';
 
 /**
- * @requires extension pgsql
  */
 class class_db_real_installer_pgsql_test extends db_real_abstract
 {

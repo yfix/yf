@@ -13,7 +13,9 @@ phpunit-all:
 	$(PHPUNIT) $(PHPUNIT_OPTS) ./
 phpunit-one-by-one:
 	for f in $$(find . -type f -name "*_test.Test.php"); do echo $$f; $(PHPUNIT) $$f; done
-phpunit-unit:
+phpunit-all-no-integration:
+	$(PHPUNIT) --testsuite all $(PHPUNIT_OPTS)
+phpunit-unit-all:
 	$(PHPUNIT) --testsuite unit-all $(PHPUNIT_OPTS)
 phpunit-unit-db:
 	$(PHPUNIT) ./unit/db/ $(PHPUNIT_OPTS)
@@ -61,8 +63,10 @@ docker-phpunit-help:
 	$(DE) bash -c 'phpunit -h'
 docker-phpunit-all:
 	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-all'
-docker-phpunit-unit:
-	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-unit'
+docker-phpunit-all-no-integration:
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-all-no-integration'
+docker-phpunit-unit-all:
+	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-unit-all'
 docker-phpunit-unit-db:
 	$(DE) bash -c 'cd $(DOCKER_TESTS) && make phpunit-unit-db'
 docker-phpunit-functional:

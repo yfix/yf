@@ -3,7 +3,6 @@
 require_once dirname(__DIR__) . '/db_real_abstract.php';
 
 /**
- * @requires extension mysqli
  */
 class class_model_basic_test extends db_real_abstract
 {
@@ -150,7 +149,7 @@ ND
     public function test_accessors_and_mutators()
     {
         return ;
-        
+
         $model_base = _class('model');
         eval(
 <<<'ND'

@@ -3,7 +3,6 @@
 require_once __DIR__ . '/yf_unit_tests_setup.php';
 
 /**
- * @requires extension mbstring
  */
 class class_utf8_test extends yf\tests\wrapper
 {
