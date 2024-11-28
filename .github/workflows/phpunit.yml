@@ -37,7 +37,7 @@ jobs:
     #       --health-retries=3
 
     container:
-      image: yfix/php:8.3-alpine
+      image: yfix/php:8.3
       volumes:
         - ${{ github.workspace }}:/var/www/vendor/yf31
       options: --workdir /var/www/vendor/yf31
