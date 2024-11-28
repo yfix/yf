@@ -71,4 +71,4 @@ jobs:
       #   MYSQL_DATABASE: tests
       #   REDIS_HOST: redis
       #   REDIS_PORT: 6379
-      run: make docker-phpunit-unit
+      run: make phpunit-unit-all
