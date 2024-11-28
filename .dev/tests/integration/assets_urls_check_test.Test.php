@@ -2,46 +2,101 @@
 
 require_once dirname(__DIR__) . '/yf_unit_tests_setup.php';
 
-/**
- */
 class assets_urls_check_test extends yf\tests\wrapper
 {
     public $TIMEOUT = 5;
 
-    public function get_url_contents(string $url, int $timeout = 5)
+    private function normalizeUrl(string $url): string
     {
         $url = trim($url);
-        if (substr($url, 0, 2) === '//') {
+        if (str_starts_with($url, '//')) {
             $url = 'https:' . $url;
         }
-        if (substr($url, 0, 4) !== 'http') {
+        if (!str_starts_with($url, 'http')) {
             $url = 'https://' . $url;
         }
-        try {
-            $content = file_get_contents($url, false, stream_context_create(['http' => ['timeout' => $timeout]]));
-        } catch (Exception $e) {
-            echo self::_pretty_show_exception($e);
-        }
-        return $content;
+        return $url;
     }
 
-    public function get_url_size(string $url) : int
+    /**
+     * Fetch URL sizes using multi-curl for parallel processing
+     */
+    private function fetchUrlSizes(array $urls): array
     {
-        $url = trim($url);
-        if (substr($url, 0, 2) === '//') {
-            $url = 'https:' . $url;
+        // Initialize multi-curl handle
+        $multiHandle = curl_multi_init();
+        $handles = [];
+        $results = [];
+
+        // Create curl handles for each URL
+        foreach ($urls as $originalUrl) {
+            $url = $this->normalizeUrl($originalUrl);
+
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => $this->TIMEOUT,
+                CURLOPT_CONNECTTIMEOUT => $this->TIMEOUT,
+                CURLOPT_MAXREDIRS => 5,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
+            ]);
+
+            curl_multi_add_handle($multiHandle, $ch);
+            $handles[$originalUrl] = $ch;
         }
-        if (substr($url, 0, 4) !== 'http') {
-            $url = 'https://' . $url;
+
+        // Execute all requests
+        do {
+            $status = curl_multi_exec($multiHandle, $active);
+        } while ($status === CURLM_CALL_MULTI_PERFORM);
+
+        while ($active && $status === CURLM_OK) {
+            if (curl_multi_select($multiHandle) === -1) {
+                usleep(100);
+            }
+
+            do {
+                $status = curl_multi_exec($multiHandle, $active);
+            } while ($status === CURLM_CALL_MULTI_PERFORM);
         }
-        $content = $this->get_url_contents($url, $this->TIMEOUT);
-        // Possible fix for overcome errors by overload protection filters
-        // Allow 1 retry after some sleep with increased timeout
-        if ( ! $content) {
-            sleep(1);
-            $content = $this->get_url_contents($url, $this->TIMEOUT * 2);
+
+        // Collect results
+        foreach ($handles as $originalUrl => $ch) {
+            $content = curl_multi_getcontent($ch);
+            $size = $content ? strlen($content) : 0;
+
+            // If first attempt fails, retry with longer timeout
+            if ($size === 0) {
+                $retryUrl = $this->normalizeUrl($originalUrl);
+                $retryCh = curl_init($retryUrl);
+                curl_setopt_array($retryCh, [
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT => $this->TIMEOUT * 2,
+                    CURLOPT_CONNECTTIMEOUT => $this->TIMEOUT * 2,
+                    CURLOPT_MAXREDIRS => 5,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_SSL_VERIFYHOST => 0,
+                ]);
+                $retryContent = curl_exec($retryCh);
+                $size = $retryContent ? strlen($retryContent) : 0;
+                curl_close($retryCh);
+            }
+
+            $results[] = [
+                'url' => $originalUrl,
+                'size' => $size,
+            ];
+
+            curl_multi_remove_handle($multiHandle, $ch);
+            curl_close($ch);
         }
-        return strlen($content);
+
+        curl_multi_close($multiHandle);
+
+        return $results;
     }
 
     public function test_do()
@@ -56,23 +111,25 @@ class assets_urls_check_test extends yf\tests\wrapper
         $this->assertIsArray($data['paths']);
         $this->assertNotEmpty($data['paths']);
 
-        $total = count($data['urls']);
-        $i = 0;
-        foreach ($data['urls'] as $_url) {
-            $url = trim($_url);
-            if (substr($url, 0, 2) === '//') {
-                $url = 'https:' . $url;
+        $urls = $data['urls'];
+        $total = count($urls);
+        $processed = 0;
+
+        // Run URL size checks concurrently
+        $results = $this->fetchUrlSizes($urls);
+
+        foreach ($results as $result) {
+            $processed++;
+            $url = $result['url'];
+            $size = $result['size'];
+
+            // Progress tracking
+            // fwrite(STDERR, sprintf("%d/%d | Processing %s\n", $processed, $total, $url));
+
+            // Verify size for each path associated with the URL
+            foreach ($data['paths'][$url] as $path) {
+                $this->assertTrue(($size > 50), "$url | $path | $size");
             }
-            if (substr($url, 0, 4) !== 'http') {
-                $url = 'https://' . $url;
-            }
-            $this->assertNotEmpty($url);
-            $size = $this->get_url_size($url);
-            foreach ($data['paths'][$_url] as $path) {
-                $this->assertTrue(($size > 50), $_url . ' | ' . $path . ' | ' . $size);
-            }
-            fwrite(STDERR, ++$i . '/' . $total . ' | ' . $_url  . ' | ' . $size . PHP_EOL);
-            ob_flush();
         }
     }
 }
