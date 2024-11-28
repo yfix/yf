@@ -1,0 +1,74 @@
+name: PHP Unit Tests
+
+on:
+  push:
+    branches:
+      - 31
+  pull_request:
+    branches:
+      - 31
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: tests
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    container:
+      image: yfix/php:8.3
+      volumes:
+        - ${{ github.workspace }}:/var/www/vendor/yf31
+      options: --workdir /var/www/vendor/yf31
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system dependencies
+      run: |
+        apt-get update && apt-get install -y \
+        git \
+        make \
+        mysql-client
+
+    - name: Wait for MySQL to be ready
+      run: |
+        while ! mysqladmin ping -h mysql -u root -proot --silent; do
+          sleep 1
+        done
+
+    - name: Wait for Redis to be ready
+      run: |
+        redis-cli -h redis ping || exit 1
+
+    - name: Run PHPUnit tests
+      env:
+        MYSQL_HOST: mysql
+        MYSQL_PORT: 3306
+        MYSQL_USER: root
+        MYSQL_PASSWORD: root
+        MYSQL_DATABASE: tests
+        REDIS_HOST: redis
+        REDIS_PORT: 6379
+      run: make docker-phpunit-tpl
