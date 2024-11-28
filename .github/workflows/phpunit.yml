@@ -71,4 +71,5 @@ jobs:
       #   MYSQL_DATABASE: tests
       #   REDIS_HOST: redis
       #   REDIS_PORT: 6379
+      working-directory: ./.dev/tests/
       run: make phpunit-unit-all
