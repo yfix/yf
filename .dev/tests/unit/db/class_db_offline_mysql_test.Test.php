@@ -2,8 +2,9 @@
 
 require_once __DIR__ . '/db_offline_abstract.php';
 
-/**
- */
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+
+#[RunTestsInSeparateProcesses]
 class class_db_offline_mysql_test extends db_offline_abstract
 {
     public $data_safe = [

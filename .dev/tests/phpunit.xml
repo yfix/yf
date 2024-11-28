@@ -17,7 +17,6 @@
   displayDetailsOnTestsThatTriggerWarnings="true"
   stopOnFailure="false"
 >
-<!-- processIsolation="true" -->
   <testsuites>
     <testsuite name="all">
       <directory>./</directory>
