@@ -37,7 +37,7 @@ jobs:
     #       --health-retries=3
 
     container:
-      image: yfix/php:8.3
+      image: yfix/php:8.3-alpine
       volumes:
         - ${{ github.workspace }}:/var/www/vendor/yf31
       options: --workdir /var/www/vendor/yf31
@@ -71,4 +71,4 @@ jobs:
       #   MYSQL_DATABASE: tests
       #   REDIS_HOST: redis
       #   REDIS_PORT: 6379
-      run: make docker-phpunit-tpl
+      run: make docker-phpunit-unit
