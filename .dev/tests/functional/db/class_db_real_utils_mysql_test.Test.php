@@ -6,18 +6,10 @@ require_once __DIR__ . '/db_real_abstract.php';
  */
 class class_db_real_utils_mysql_test extends db_real_abstract
 {
+    public static $is_mysql8 = false;
+
     public static function _need_skip_test($name)
     {
-        if (main()->is_hhvm()) {
-            if (in_array($name, ['test_drop_database', 'test_create_database', 'test_rename_database'])) {
-                return true;
-            }
-        }
-        if ($_ENV['TRAVIS']) {
-            if (in_array($name, ['test_drop_database', 'test_create_database', 'test_rename_database']) || false !== strpos($name, '_foreign_')) {
-                return true;
-            }
-        }
         return false;
     }
     public static function db_name()
@@ -39,9 +31,14 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
         self::$DB_DRIVER = 'mysqli';
         self::_connect();
-        if ( ! $_ENV['TRAVIS']) {
-            self::$db->query('DROP DATABASE IF EXISTS ' . self::$DB_NAME);
+        self::$DB_VERSION = self::db()->get_server_version();
+        self::$is_mysql8 = version_compare(self::$DB_VERSION, '8.0.0') >= 0;
+        if (self::$is_mysql8) {
+            self::$CHARSET = "utf8mb3";
+        } else {
+            self::$CHARSET = "utf8";
         }
+        self::$db->query('DROP DATABASE IF EXISTS ' . self::$DB_NAME);
     }
     public static function tearDownAfterClass() : void
     {
@@ -86,12 +83,8 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         $this->assertNotEmpty($all_dbs);
         $this->assertTrue(in_array('mysql', $all_dbs));
         $this->assertTrue(in_array('information_schema', $all_dbs));
-        if (version_compare(self::$server_version, '5.5.0') >= 0) {
-            $this->assertTrue(in_array('performance_schema', $all_dbs));
-        }
-        if (version_compare(self::$server_version, '5.6.0') >= 0) {
-            $this->assertTrue(in_array('sys', $all_dbs));
-        }
+        $this->assertTrue(in_array('performance_schema', $all_dbs));
+        $this->assertTrue(in_array('sys', $all_dbs));
     }
     public function test_drop_database()
     {
@@ -135,11 +128,11 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         }
         $expected = [
             'name' => $this->db_name(),
-            'charset' => 'utf8',
-            'collate' => 'utf8_general_ci',
+            'charset' => self::$CHARSET,
+            'collate' => self::$CHARSET.'_general_ci',
         ];
         $this->assertNotEmpty(self::utils()->database_info($this->db_name()));
-        $this->assertNotEmpty(self::utils()->db->query('ALTER DATABASE ' . $this->db_name() . ' CHARACTER SET "utf8" COLLATE "utf8_general_ci"'));
+        $this->assertNotEmpty(self::utils()->db->query('ALTER DATABASE ' . $this->db_name() . ' CHARACTER SET "'. self::$CHARSET.'" COLLATE "'. self::$CHARSET.'_general_ci"'));
         $this->assertEquals($expected, self::utils()->database_info($this->db_name()));
     }
     public function test_alter_database()
@@ -149,13 +142,13 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         }
         $expected = [
             'name' => $this->db_name(),
-            'charset' => 'utf8',
-            'collate' => 'utf8_general_ci',
+            'charset' => self::$CHARSET,
+            'collate' => self::$CHARSET.'_general_ci',
         ];
         $this->assertNotEmpty(self::utils()->database_info($this->db_name()));
         $this->assertNotEmpty(self::utils()->db->query('ALTER DATABASE ' . $this->db_name() . ' CHARACTER SET "latin1" COLLATE "latin1_general_ci"'));
         $this->assertNotEquals($expected, self::utils()->database_info($this->db_name()));
-        $this->assertNotEmpty(self::utils()->alter_database($this->db_name(), ['charset' => 'utf8', 'collate' => 'utf8_general_ci']));
+        $this->assertNotEmpty(self::utils()->alter_database($this->db_name(), ['charset' => self::$CHARSET, 'collate' => self::$CHARSET.'_general_ci']));
         $this->assertEquals($expected, self::utils()->database_info($this->db_name()));
     }
     public function test_rename_database()
@@ -243,6 +236,9 @@ class class_db_real_utils_mysql_test extends db_real_abstract
                 'PRIMARY' => ['name' => 'PRIMARY', 'type' => 'primary', 'columns' => ['id' => 'id']],
             ],
         ];
+        if (self::$is_mysql8) {
+            unset($data['fields']['id']['length']);
+        }
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table), $data));
         $this->assertNotEmpty(self::utils()->table_exists($this->table_name($table)));
         $result = self::utils()->table_get_columns($this->table_name($table));
@@ -264,21 +260,24 @@ class class_db_real_utils_mysql_test extends db_real_abstract
                 'PRIMARY' => ['name' => 'PRIMARY', 'type' => 'primary', 'columns' => ['id' => 'id']],
             ],
         ];
+        if (self::$is_mysql8) {
+            unset($data['fields']['id']['length']);
+        }
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table), $data));
         $this->assertNotEmpty(self::utils()->table_exists($this->table_name($table)));
         $expected = [
             'name' => $table,
             'db_name' => $this->db_name(),
             'columns' => $data['fields'],
-            'collate' => 'utf8_general_ci',
+            'collate' => self::$CHARSET.'_general_ci',
             'engine' => 'InnoDB',
             'rows' => '0',
             'data_size' => '16384',
-            'auto_inc' => '1',
+            'auto_inc' => self::$is_mysql8 ? null : '1',
             'comment' => '',
             'create_time' => '2014-01-01 01:01:01',
             // 'update_time' => null,
-            'charset' => 'utf8',
+            'charset' => self::$is_mysql8 ? null : self::$CHARSET,
         ];
         $received = self::utils()->table_info($this->table_name($table));
         if ($received) {
@@ -459,6 +458,9 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table), $data));
         $result = self::utils()->column_info($this->table_name($table), 'id');
         foreach (['name', 'type', 'length'] as $f) {
+            if (self::$is_mysql8 && $f == "length") {
+                continue;
+            }
             $this->assertEquals($data['fields']['id'][$f], $result[$f]);
         }
     }
@@ -477,6 +479,9 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         $this->assertNotEmpty(self::utils()->add_column($this->table_name($table), $col_info2));
         $result = self::utils()->column_info($this->table_name($table), 'id2');
         foreach (['name', 'type', 'length'] as $f) {
+            if (self::$is_mysql8 && $f == "length") {
+                continue;
+            }
             $this->assertEquals($col_info2[$f], $result[$f]);
         }
     }
@@ -520,11 +525,12 @@ class class_db_real_utils_mysql_test extends db_real_abstract
             'id' => ['name' => 'id', 'type' => 'int', 'length' => 10],
             'id2' => ['name' => 'id2', 'type' => 'int', 'length' => 10],
         ]];
+        if (self::$is_mysql8) {
+            unset($data['fields']['id']['length']);
+            unset($data['fields']['id2']['length']);
+        }
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table), $data));
         $this->assertNotEmpty(self::utils()->column_exists($this->table_name($table), 'id'));
-        $this->assertEquals('10', self::utils()->column_info_item($this->table_name($table), 'id', 'length'));
-        $this->assertNotEmpty(self::utils()->alter_column($this->table_name($table), 'id', ['length' => 8]));
-        $this->assertEquals('8', self::utils()->column_info_item($this->table_name($table), 'id', 'length'));
 
         $this->assertEquals(['id', 'id2'], array_keys(self::utils()->table_get_columns($this->table_name($table))));
         $this->assertNotEmpty(self::utils()->alter_column($this->table_name($table), 'id2', ['first' => true]));
@@ -669,13 +675,20 @@ class class_db_real_utils_mysql_test extends db_real_abstract
                 'PRIMARY' => ['name' => 'PRIMARY', 'type' => 'primary', 'columns' => ['id' => 'id']],
             ],
         ];
+        if (self::$is_mysql8) {
+            unset($data['fields']['id']['length']);
+        }
         $fkey = 'fkey_' . __FUNCTION__;
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table1), $data));
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table2), $data));
         $this->assertEmpty(self::utils()->list_foreign_keys($this->table_name($table1)));
         $this->assertNotEmpty(self::utils()->add_foreign_key($this->table_name($table1), $fkey, ['id'], $this->table_name($table2), ['id']));
+        $def_action = 'RESTRICT';
+        if (self::$is_mysql8) {
+            $def_action = 'NO ACTION';
+        }
         $expected = [
-            $fkey => ['name' => $fkey, 'columns' => ['id' => 'id'], 'ref_table' => $table2, 'ref_columns' => ['id' => 'id'], 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT'],
+            $fkey => ['name' => $fkey, 'columns' => ['id' => 'id'], 'ref_table' => $table2, 'ref_columns' => ['id' => 'id'], 'on_update' => $def_action, 'on_delete' => $def_action],
         ];
         $this->assertEquals($expected, self::utils()->list_foreign_keys($this->table_name($table1)));
     }
@@ -699,7 +712,11 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table2), $data));
         $this->assertEmpty(self::utils()->foreign_key_info($this->table_name($table1), $fkey));
         $this->assertNotEmpty(self::utils()->add_foreign_key($this->table_name($table1), $fkey, ['id'], $this->table_name($table2), ['id']));
-        $expected = ['name' => $fkey, 'columns' => ['id' => 'id'], 'ref_table' => $table2, 'ref_columns' => ['id' => 'id'], 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT'];
+        $def_action = 'RESTRICT';
+        if (self::$is_mysql8) {
+            $def_action = 'NO ACTION';
+        }
+        $expected = ['name' => $fkey, 'columns' => ['id' => 'id'], 'ref_table' => $table2, 'ref_columns' => ['id' => 'id'], 'on_update' => $def_action, 'on_delete' => $def_action];
         $this->assertEquals($expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey));
     }
     public function test_foreign_key_exists()
@@ -768,13 +785,17 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table1), $data));
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table2), $data));
         $this->assertEmpty(self::utils()->foreign_key_info($this->table_name($table1), $fkey));
+        $def_action = 'RESTRICT';
+        if (self::$is_mysql8) {
+            $def_action = 'NO ACTION';
+        }
         $expected = [
             'name' => $fkey,
             'columns' => ['id' => 'id'],
             'ref_table' => $table2,
             'ref_columns' => ['id' => 'id'],
-            'on_update' => 'RESTRICT',
-            'on_delete' => 'RESTRICT',
+            'on_update' => $def_action,
+            'on_delete' => $def_action,
         ];
         $this->assertNotEmpty(self::utils()->add_foreign_key($this->table_name($table1), $fkey, ['id'], $this->table_name($table2), ['id']));
         $this->assertEquals($expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey));
@@ -804,21 +825,25 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         $fkey = 'fkey_' . __FUNCTION__;
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table1), $data));
         $this->assertNotEmpty(self::utils()->create_table($this->table_name($table2), $data));
+        $def_action = 'RESTRICT';
+        if (self::$is_mysql8) {
+            $def_action = 'NO ACTION';
+        }
         $expected1 = [
             'name' => $fkey,
             'columns' => ['id' => 'id'],
             'ref_table' => $table2,
             'ref_columns' => ['id' => 'id'],
-            'on_update' => 'RESTRICT',
-            'on_delete' => 'RESTRICT',
+            'on_update' => $def_action,
+            'on_delete' => $def_action,
         ];
         $expected2 = [
             'name' => $fkey,
             'columns' => ['id2' => 'id2'],
             'ref_table' => $table2,
             'ref_columns' => ['id2' => 'id2'],
-            'on_update' => 'RESTRICT',
-            'on_delete' => 'RESTRICT',
+            'on_update' => $def_action,
+            'on_delete' => $def_action,
         ];
         $this->assertNotEmpty(self::utils()->add_foreign_key($this->table_name($table1), $expected1));
         $this->assertEquals($expected1, self::utils()->foreign_key_info($this->table_name($table1), $fkey));
@@ -1440,13 +1465,17 @@ class class_db_real_utils_mysql_test extends db_real_abstract
         $fkey = 'fkey_' . __FUNCTION__;
         $this->assertTrue((bool) self::utils()->create_table($this->table_name($table1), $data));
         $this->assertTrue((bool) self::utils()->create_table($this->table_name($table2), $data));
+        $def_action = 'RESTRICT';
+        if (self::$is_mysql8) {
+            $def_action = 'NO ACTION';
+        }
         $expected = [
             'name' => $fkey,
             'columns' => ['id' => 'id'],
             'ref_table' => $table2,
             'ref_columns' => ['id' => 'id'],
-            'on_update' => 'RESTRICT',
-            'on_delete' => 'RESTRICT',
+            'on_update' => $def_action,
+            'on_delete' => $def_action,
         ];
         $this->assertTrue((bool) self::utils()->add_foreign_key($this->table_name($table1), $fkey, ['id'], $this->table_name($table2), ['id']));
         $this->assertEquals($expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey));

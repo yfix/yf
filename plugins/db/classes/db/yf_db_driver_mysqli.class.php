@@ -45,12 +45,17 @@ class yf_db_driver_mysqli extends yf_db_driver
         if ($params['socket'] && ! file_exists($params['socket'])) {
             $params['socket'] = '';
         }
-        $params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : 'utf8');
+        $charset = 'utf8';
+        $params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $charset);
         $this->params = $params;
         $connected = $this->connect();
         if ($params['charset'] && $connected && $this->db_connect_id) {
             // See http://php.net/manual/en/mysqlinfo.concepts.charset.php
-            mysqli_set_charset($this->db_connect_id, 'utf8');
+            if (version_compare($this->get_server_version(), '8.0.0') >= 0) {
+                $charset = 'utf8mb4';
+            }
+            mysqli_set_charset($this->db_connect_id, $charset);
+            mysqli_query($this->db_connect_id, 'SET NAMES ' . $charset . ' COLLATE ' . $charset . '_unicode_ci');
         }
         return $this->db_connect_id;
     }

@@ -777,7 +777,7 @@ class yf_table2
         foreach ((array) $this->_buttons as $k => $v) {
             $_buttons[$k] = ['func' => '%lambda%', 'data' => '%data%'] + $v;
         }
-        ! is_hhvm() && debug('table2[]', [
+        debug('table2[]', [
             'params' => $params,
             'fields' => $_fields,
             'buttons' => $_buttons,

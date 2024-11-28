@@ -774,7 +774,7 @@ class yf_main
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
         $servers = $this->get_data('servers');
         $this->SERVER_ID = 0;
-        if (! conf('SERVER_ID') && ($servers || DEBUG_MODE) && ! $this->is_hhvm()) {
+        if (! conf('SERVER_ID') && ($servers || DEBUG_MODE)) {
             $self_ips = explode(' ', exec('hostname --all-ip-addresses'));
             if ($self_ips) {
                 $self_ips = array_combine($self_ips, $self_ips);
@@ -2170,11 +2170,6 @@ class yf_main
             || (isset($_SERVER['HTTP_X_URL_SCHEME']) && strtolower($_SERVER['HTTP_X_URL_SCHEME']) == 'https')
             // http://serverfault.com/questions/302282/how-can-i-use-haproxy-with-ssl-and-get-x-forwarded-for-headers-and-tell-php-that
             || (isset($_SERVER['HTTP_SCHEME']) && strtolower($_SERVER['HTTP_SCHEME']) == 'https');
-    }
-
-    public function is_hhvm()
-    {
-        return defined('HHVM_VERSION');
     }
 
     public function is_dev()

@@ -16,7 +16,12 @@ class class_db_real_mysql_test extends db_real_abstract
     }
     public static function create_table_sql($table)
     {
-        return 'CREATE TABLE ' . self::table_name($table) . '(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8';
+        return 'CREATE TABLE ' . self::table_name($table) . '('
+            .'id INT(10) AUTO_INCREMENT, '
+            .'id2 INT(10), '
+            .'id3 INT(10), '
+            .'PRIMARY KEY(id)'
+        .') ENGINE=InnoDB DEFAULT CHARSET='. self::$CHARSET;
     }
     public static function setUpBeforeClass(): void
     {
@@ -24,6 +29,12 @@ class class_db_real_mysql_test extends db_real_abstract
         self::$DB_DRIVER = 'mysqli';
         self::_connect();
         self::utils()->truncate_database(self::db_name());
+        self::$DB_VERSION = self::db()->get_server_version();
+        if (version_compare(self::$DB_VERSION, '8.0.0') >= 0) {
+            self::$CHARSET = "utf8mb3";
+        } else {
+            self::$CHARSET = "utf8";
+        }
     }
     public static function tearDownAfterClass(): void
     {
@@ -53,14 +64,25 @@ class class_db_real_mysql_test extends db_real_abstract
         }
         $table = self::db()->DB_PREFIX . __FUNCTION__;
         $this->assertNotEmpty(self::db()->query($this->create_table_sql($table)));
-        $expected = [
-            'Table' => $table,
-            'Create Table' => 'CREATE TABLE `' . $table . '` (' . PHP_EOL
+
+        if (version_compare(self::$DB_VERSION, '8.0.0') >= 0) {
+            $CREATE_TABLE_SQL = 'CREATE TABLE `' . $table . '` (' . PHP_EOL
+                . '  `id` int NOT NULL AUTO_INCREMENT,' . PHP_EOL
+                . '  `id2` int DEFAULT NULL,' . PHP_EOL
+                . '  `id3` int DEFAULT NULL,' . PHP_EOL
+                . '  PRIMARY KEY (`id`)' . PHP_EOL
+                . ') ENGINE=InnoDB DEFAULT CHARSET=' . self::$CHARSET;
+        } else {
+            $CREATE_TABLE_SQL = 'CREATE TABLE `' . $table . '` (' . PHP_EOL
                 . '  `id` int(10) NOT NULL AUTO_INCREMENT,' . PHP_EOL
                 . '  `id2` int(10) DEFAULT NULL,' . PHP_EOL
                 . '  `id3` int(10) DEFAULT NULL,' . PHP_EOL
                 . '  PRIMARY KEY (`id`)' . PHP_EOL
-                . ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
+                . ') ENGINE=InnoDB DEFAULT CHARSET=' . self::$CHARSET;
+        }
+        $expected = [
+            'Table' => $table,
+            'Create Table' => $CREATE_TABLE_SQL,
         ];
         $sql = 'SHOW CREATE TABLE ' . $this->table_name($table);
         $this->assertEqualsCanonicalizing($expected, self::db()->fetch_assoc(self::db()->query($sql)));

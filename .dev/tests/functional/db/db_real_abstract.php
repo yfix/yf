@@ -11,6 +11,8 @@ abstract class db_real_abstract extends yf\tests\wrapper {
 	public static $DB_DRIVER = '';
 	public static $CI_SERVER = '';
 	public static $_bak = [];
+	public static $DB_VERSION = '';
+	public static $CHARSET = '';
 
 	/**
 	*/

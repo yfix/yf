@@ -112,7 +112,7 @@ class yf_i18n
             debug('locale::lc_variants', ['LC_ALL' => $lc_all]);
         }
         $success = setlocale(LC_ALL, $lc_all);
-        if (DEBUG_MODE && ! is_hhvm()) {
+        if (DEBUG_MODE) {
             debug('locale::current', $this->_get_locale_details());
             $sys_locale = '';
             exec('locale -a', $sys_locale);
