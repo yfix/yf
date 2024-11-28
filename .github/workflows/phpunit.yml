@@ -73,4 +73,4 @@ jobs:
         REDIS_HOST: redis
         REDIS_PORT: 6379
       working-directory: ./.dev/tests/
-      run: make phpunit-unit-all
+      run: make phpunit-all
