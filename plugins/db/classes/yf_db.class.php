@@ -1727,9 +1727,9 @@ class yf_db
         if ( ! $this->FIX_DATA_SAFE) {
             return $data;
         }
-        if (main()->is_unit_test()) {
-            return $data;
-        }
+        // if (main()->is_unit_test()) {
+        //     return $data;
+        // }
         $cols = $this->get_table_columns_cached($table, $extra['no_cache']);
         if ( ! $cols) {
             $msg = __CLASS__ . '->' . __FUNCTION__ . ': columns for table ' . $table . ' is empty, truncating data array';

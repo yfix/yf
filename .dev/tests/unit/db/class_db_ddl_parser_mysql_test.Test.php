@@ -31,7 +31,7 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract
                 $str = str_replace('array (', 'array(', $str);
                 $str = preg_replace('~=>[\s]+array\(~ims', '=> array(', $str);
 
-                //				file_put_contents($php_path, '<?php'.PHP_EOL.'return '.$str.';');
+                // file_put_contents($php_path, '<?php'.PHP_EOL.'return '.$str.';');
             }
 
             $this->assertSame($expected, $response, 'fname: ' . basename($path));

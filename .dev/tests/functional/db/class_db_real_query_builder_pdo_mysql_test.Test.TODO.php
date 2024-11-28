@@ -1,5 +1,7 @@
 <?php
 
+use PHPUnit\Framework\Attributes\Depends;
+
 require_once __DIR__ . '/class_db_real_query_builder_mysql_test.Test.php';
 
 /**

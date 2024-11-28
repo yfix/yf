@@ -8,10 +8,6 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract
 {
     public static function _need_skip_test($name)
     {
-        if (defined('HHVM_VERSION') && getenv('TRAVIS') && getenv('CONTINUOUS_INTEGRATION')) {
-            //			self::markTestSkipped('Right now we skip this test, when running inside travis-ci HHVM.');
-//			return true;
-        }
         return false;
     }
     public static function db_name()
