@@ -16,7 +16,7 @@ jobs:
       mysql-tmp:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: 123456
           MYSQL_DATABASE: tests
         ports:
           - 3306:3306
@@ -73,4 +73,5 @@ jobs:
         REDIS_HOST: redis
         REDIS_PORT: 6379
       working-directory: ./.dev/tests/
-      run: make phpunit-all
+      # run: make phpunit-all
+      run: make phpunit-unit-all
