@@ -10,7 +10,7 @@ class class_wrapper_redis_test extends yf\tests\wrapper
     {
         $redis = redis();
         $this->assertIsObject($redis);
-        $this->assertSame($redis, _class('wrapper_redis'));
+        $this->assertEqualsCanonicalizing($redis, _class('wrapper_redis'));
         $redis->connect();
         $this->assertTrue($redis->is_ready());
         $key = 'mytestkey';

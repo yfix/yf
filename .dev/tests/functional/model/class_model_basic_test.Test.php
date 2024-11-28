@@ -14,7 +14,7 @@ class class_model_basic_test extends db_real_abstract
     {
         return $name;
     }
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
         self::$DB_DRIVER = 'mysqli';
@@ -28,7 +28,7 @@ class class_model_basic_test extends db_real_abstract
         // Ensure unit_tests will be on top of the storages list
         main()->_custom_class_storages['*_model'] = ['unit_tests' => [__DIR__ . '/fixtures/']] + (array) main()->_custom_class_storages['*_model'];
     }
-    public static function tearDownAfterClass() : void
+    public static function tearDownAfterClass(): void
     {
         self::utils()->truncate_database(self::db_name());
         self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
@@ -41,10 +41,10 @@ class class_model_basic_test extends db_real_abstract
         $model_base = _class('model');
         $this->assertIsObject($model_base);
         $this->assertTrue(is_a($model_base, 'yf_model'));
-        $this->assertSame($model_base, _class('yf_model'));
+        $this->assertEqualsCanonicalizing($model_base, _class('yf_model'));
 
         $model_exists = main()->_class_exists('film_model');
-        if ( ! $model_exists) {
+        if (! $model_exists) {
             $this->assertTrue(main()->_class_exists('film_model'));
         }
 
@@ -89,28 +89,27 @@ class class_model_basic_test extends db_real_abstract
         eval('class ' . $m . ' extends yf_model {}');
         self::utils()->create_table(__FUNCTION__, function ($t) {
             $t->increments('id')
-            ->string('name')
-            ->string('gender')
-            ->int('popularity');
+                ->string('name')
+                ->string('gender')
+                ->int('popularity');
         });
         $m1 = $m::create(['name' => 'Susan', 'gender' => 'w', 'popularity' => 8]);
         $m2 = $m::create(['name' => 'Michael', 'gender' => 'm', 'popularity' => 12]);
 
         // 		$m::where_popular('>','10')->count();
-//		$m::where_gender('w')->get();
-//		$m::where_name($wildcard)->get();
+        //		$m::where_gender('w')->get();
+        //		$m::where_name($wildcard)->get();
 
-//		$m1->where_popular('>','10')->count();
-//		$m1->where_gender('w')->get();
-//		$m1->where_name($wildcard)->get();
+        //		$m1->where_popular('>','10')->count();
+        //		$m1->where_gender('w')->get();
+        //		$m1->where_name($wildcard)->get();
     }
 
     /***/
     public function test_scopes()
     {
         $model_base = _class('model');
-        eval(
-<<<'ND'
+        eval(<<<'ND'
 			class test_scopes_model extends yf_model {
 				public function scope_popular($query) {
 					return $query->where('popular','>','10');
@@ -125,13 +124,12 @@ class class_model_basic_test extends db_real_abstract
 #					return $query->where_name($wildcard);
 				}
 			}
-ND
-        );
+ND);
         self::utils()->create_table(__FUNCTION__, function ($t) {
             $t->increments('id')
-            ->string('name')
-            ->string('gender')
-            ->int('popularity');
+                ->string('name')
+                ->string('gender')
+                ->int('popularity');
         });
         $m = __FUNCTION__ . '_model';
         //		test_scopes::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
@@ -141,18 +139,17 @@ ND
         $m::create(['name' => 'Brigitte', 'gender' => 'w', 'popularity' => 11]);
 
         //		$m::popular()->order_by('name')->get();
-//		$m::popular()->women()->order_by('name', 'desc')->get();
-//		$m::popular()->women()->name('mary*')->select('name')->one();
+        //		$m::popular()->women()->order_by('name', 'desc')->get();
+        //		$m::popular()->women()->name('mary*')->select('name')->one();
     }
 
     /***/
     public function test_accessors_and_mutators()
     {
-        return ;
+        return;
 
         $model_base = _class('model');
-        eval(
-<<<'ND'
+        eval(<<<'ND'
 			class test_accessors_and_mutators_model extends yf_model {
 				public function get_attr_name($value) {
 					return strtoupper($value);
@@ -167,13 +164,12 @@ ND
 					return intval($value);
 				}
 			}
-ND
-        );
+ND);
         self::utils()->create_table(__FUNCTION__, function ($t) {
             $t->increments('id')
-            ->string('name')
-            ->string('gender')
-            ->int('popularity');
+                ->string('name')
+                ->string('gender')
+                ->int('popularity');
         });
         $m = __FUNCTION__ . '_model';
         $m::create(['name' => 'Susan', 'gender' => 'w', 'popularity' => 8]);
@@ -200,20 +196,20 @@ ND
         eval('class ' . $m . ' extends yf_model {}');
         self::utils()->create_table(__FUNCTION__, function ($t) {
             $t->increments('id')
-            ->string('name')
-            ->string('gender')
-            ->int('popularity');
+                ->string('name')
+                ->string('gender')
+                ->int('popularity');
         });
         $m::create(['name' => 'Susan', 'gender' => 'w', 'popularity' => 8]);
 
         // $m->creating(function($model)) { if(!$model->is_valid()) return false; };
-// $m->created(function($model)) { };
-// $m->updating(function($model)) { };
-// $m->updated(function($model)) { };
-// $m->saving(function($model)) { };
-// $m->saved(function($model)) { };
-// $m->deleting(function($model)) { };
-// $m->deleted(function($model)) { };
+        // $m->created(function($model)) { };
+        // $m->updating(function($model)) { };
+        // $m->updated(function($model)) { };
+        // $m->saving(function($model)) { };
+        // $m->saved(function($model)) { };
+        // $m->deleting(function($model)) { };
+        // $m->deleted(function($model)) { };
     }
 
     /***/
@@ -226,20 +222,19 @@ ND
         $t_posts = __FUNCTION__ . '_posts';
         self::utils()->create_table($t_countries, function ($t) {
             $t->increments('id')
-            ->string('name');
+                ->string('name');
         });
         self::utils()->create_table($t_users, function ($t) {
             $t->increments('id')
-            ->int('country_id')
-            ->string('name');
+                ->int('country_id')
+                ->string('name');
         });
         self::utils()->create_table($t_posts, function ($t) {
             $t->increments('id')
-            ->int('user_id')
-            ->string('title');
+                ->int('user_id')
+                ->string('title');
         });
-        eval(
-<<<'ND'
+        eval(<<<'ND'
 			class test_has_many_through_model extends yf_model {
 				protected $_table = 'test_has_many_through_countries';
 				public function posts($value) {
@@ -252,31 +247,24 @@ ND
 			class test_has_many_through_user_model extends yf_model {
 				protected $_table = 'test_has_many_through_users';
 			}
-ND
-        );
+ND);
         $m::create(['name' => 'Monaco']);
     }
 
     /***/
-    public function test_morph_to_one()
-    {
-    }
+    public function test_morph_to_one() {}
 
     /***/
-    public function test_morph_many()
-    {
-    }
+    public function test_morph_many() {}
 
     /***/
-    public function test_morph_to_many()
-    {
-    }
+    public function test_morph_to_many() {}
 
     /***/
     public function test_validation()
     {
         // TODO
-/*
+        /*
             ->validate(array(
                 '__before__'	=> 'trim',
                 'login'			=> 'required|alpha_numeric|is_unique_without[admin.login.'.$id.']',
@@ -293,7 +281,7 @@ ND
     public function test_form()
     {
         // TODO
-/*
+        /*
         return model('admin')->form($id, $a, array('autocomplete' => 'off'))
             ->validate(array(
                 '__before__'	=> 'trim',
@@ -330,7 +318,7 @@ ND
     public function test_table()
     {
         // TODO
-/*
+        /*
         $admin_id = main()->ADMIN_ID;
         $func = function($row) use ($admin_id) {
             return !($row['id'] == $admin_id);

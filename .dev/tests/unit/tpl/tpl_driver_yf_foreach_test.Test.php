@@ -59,16 +59,16 @@ class tpl_driver_yf_foreach_test extends tpl_abstract
         ];
         $this->assertEquals(
             '1). <small>(key: One)</small><b style="color:red;">First!!!</b><br /><span style="color: blue;">name: First<br />, num_items: 4<br /></span>, <br />' .
-            '2). <small>(key: Two)</small><span style="color: green;">name: Second<br />, num_items: 4<br /></span>, <br />' .
-            '3). <small>(key: Three)</small><span style="color: blue;">name: Third<br />, num_items: 4<br /></span>, <br />' .
-            '4). <small>(key: Four)</small><span style="color: green;">name: Fourth<br />, num_items: 4<br /></span>',
+                '2). <small>(key: Two)</small><span style="color: green;">name: Second<br />, num_items: 4<br /></span>, <br />' .
+                '3). <small>(key: Three)</small><span style="color: blue;">name: Third<br />, num_items: 4<br /></span>, <br />' .
+                '4). <small>(key: Four)</small><span style="color: green;">name: Fourth<br />, num_items: 4<br /></span>',
             self::_tpl(
-            '{foreach(test_array_2)}' . PHP_EOL .
-            '{_num}). <small>(key: {_key})</small>{if(_first eq 1)}<b style="color:red;">First!!!</b><br />{/if}' . PHP_EOL .
-            '<span style="{if(_even eq 1)}color: blue;{/if}{if(_odd eq 1)}color: green;{/if}">name: {#.name}<br />, num_items: {_total}<br /></span>{if(_last ne 1)}, <br />{/if}' . PHP_EOL .
-            '{/foreach}',
-            $data
-        )
+                '{foreach(test_array_2)}' . PHP_EOL .
+                    '{_num}). <small>(key: {_key})</small>{if(_first eq 1)}<b style="color:red;">First!!!</b><br />{/if}' . PHP_EOL .
+                    '<span style="{if(_even eq 1)}color: blue;{/if}{if(_odd eq 1)}color: green;{/if}">name: {#.name}<br />, num_items: {_total}<br /></span>{if(_last ne 1)}, <br />{/if}' . PHP_EOL .
+                    '{/foreach}',
+                $data
+            )
         );
     }
     public function test_complex_foreach2()
@@ -104,7 +104,9 @@ class tpl_driver_yf_foreach_test extends tpl_abstract
         $this->assertEquals('good', self::_tpl('{if(get.mytestvar ne something_else)}good{else}bad{/if}'));
 
         $data = [
-            'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3',
+            'k1' => 'v1',
+            'k2' => 'v2',
+            'k3' => 'v3',
         ];
         $_GET['myarray'] = $data;
 
@@ -139,7 +141,7 @@ class tpl_driver_yf_foreach_test extends tpl_abstract
     }
     public function _callme2($a)
     {
-        if ( ! is_array($this->_callme2_results)) {
+        if (! is_array($this->_callme2_results)) {
             $this->_callme2_results = [];
         }
         if (is_array($a)) {
@@ -157,23 +159,23 @@ class tpl_driver_yf_foreach_test extends tpl_abstract
         main()->modules['unittest2'] = $this;
         $data = ['k1' => 'v1', 'k2' => 'v2'];
         $result = _class('unittest2')->_callme2($data);
-        $this->assertSame($result, $data);
-        $this->assertSame($result, $this->_callme2_results);
+        $this->assertEqualsCanonicalizing($result, $data);
+        $this->assertEqualsCanonicalizing($result, $this->_callme2_results);
 
-        $this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
+        $this->assertEqualsCanonicalizing(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
         $_GET['object'] = 'unittest2';
-        $this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
+        $this->assertEqualsCanonicalizing(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
         $_GET['action'] = '_callme2';
-        $this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
-        $this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
-        $this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object;@action)} _{_key}={_val}_ {/foreach_exec}'));
-        $this->assertSame(' _arg1=val1_  _arg2=val2_ ', self::_tpl('{foreach_exec(@object;@action;arg1=val1;arg2=val2)} _{_key}={_val}_ {/foreach_exec}'));
-        $this->assertSame(' _arg1=val1_  _arg2=val2_ ', self::_tpl('{foreach_exec(@object; @action; arg1=val1; arg2=val2)} _{_key}={_val}_ {/foreach_exec}'));
-        $this->assertSame(' _arg1=val1_  _arg2=val2_ ', self::_tpl('{foreach_exec(unittest2; _callme2; arg1=val1; arg2=val2)} _{_key}={_val}_ {/foreach_exec}'));
+        $this->assertEqualsCanonicalizing(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
+        $this->assertEqualsCanonicalizing(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
+        $this->assertEqualsCanonicalizing(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object;@action)} _{_key}={_val}_ {/foreach_exec}'));
+        $this->assertEqualsCanonicalizing(' _arg1=val1_  _arg2=val2_ ', self::_tpl('{foreach_exec(@object;@action;arg1=val1;arg2=val2)} _{_key}={_val}_ {/foreach_exec}'));
+        $this->assertEqualsCanonicalizing(' _arg1=val1_  _arg2=val2_ ', self::_tpl('{foreach_exec(@object; @action; arg1=val1; arg2=val2)} _{_key}={_val}_ {/foreach_exec}'));
+        $this->assertEqualsCanonicalizing(' _arg1=val1_  _arg2=val2_ ', self::_tpl('{foreach_exec(unittest2; _callme2; arg1=val1; arg2=val2)} _{_key}={_val}_ {/foreach_exec}'));
 
         $result = _class('unittest2')->_callme2([]);
-        $this->assertSame($result, []);
-        $this->assertSame(' no rows ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {elseforeach} no rows {/foreach_exec}'));
+        $this->assertEqualsCanonicalizing($result, []);
+        $this->assertEqualsCanonicalizing(' no rows ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {elseforeach} no rows {/foreach_exec}'));
 
         unset(main()->modules['unittest2']);
     }

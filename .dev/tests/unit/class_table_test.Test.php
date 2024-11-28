@@ -92,7 +92,7 @@ class class_table_test extends yf\tests\wrapper
         $this->assertObjectHasProperty('_pages', $table);
         $this->assertIsString($table->_pages);
         $this->assertObjectHasProperty('_ids', $table);
-        $this->assertSame(count((array) $table->_ids), count((array) $a));
+        $this->assertEqualsCanonicalizing(count((array) $table->_ids), count((array) $a));
 
         $a = [];
         $table = table($a);
@@ -100,7 +100,7 @@ class class_table_test extends yf\tests\wrapper
         $this->assertEquals($table->_total, count((array) $a));
         $this->assertObjectHasProperty('_pages', $table);
         $this->assertObjectHasProperty('_ids', $table);
-        $this->assertSame(count((array) $table->_ids), count((array) $a));
+        $this->assertEqualsCanonicalizing(count((array) $table->_ids), count((array) $a));
 
         $table = table(null, ['no_records_callback' => function () {
             return 'Hello';

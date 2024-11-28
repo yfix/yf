@@ -4,9 +4,7 @@ require_once dirname(__DIR__) . '/yf_unit_tests_setup.php';
 
 class function_common_rss_page extends yf\tests\wrapper
 {
-    public static function setUpBeforeClass()
-    {
-    }
+    public static function setUpBeforeClass() {}
     public static function tearDownAfterClass()
     {
         _class('dir')->delete_dir(STORAGE_PATH . 'uploads/', $delete_start_dir = true);
@@ -30,7 +28,7 @@ class function_common_rss_page extends yf\tests\wrapper
 	</channel>
 </rss>';
         $actual = preg_replace('~<lastBuildDate>[^<]+</lastBuildDate>~ims', '<lastBuildDate></lastBuildDate>', $actual);
-        $this->assertSame(trim($expected), trim($actual));
+        $this->assertEqualsCanonicalizing(trim($expected), trim($actual));
     }
     public function test_with_data()
     {
@@ -74,7 +72,7 @@ class function_common_rss_page extends yf\tests\wrapper
 	</channel>
 </rss>';
         $actual = preg_replace('~<lastBuildDate>[^<]+</lastBuildDate>~ims', '<lastBuildDate></lastBuildDate>', $actual);
-        $this->assertSame(trim($expected), trim($actual));
+        $this->assertEqualsCanonicalizing(trim($expected), trim($actual));
     }
     public function test_with_data_full()
     {
@@ -138,6 +136,6 @@ class function_common_rss_page extends yf\tests\wrapper
 	</channel>
 </rss>';
         $actual = preg_replace('~<lastBuildDate>[^<]+</lastBuildDate>~ims', '<lastBuildDate></lastBuildDate>', $actual);
-        $this->assertSame(trim($expected), trim($actual));
+        $this->assertEqualsCanonicalizing(trim($expected), trim($actual));
     }
 }

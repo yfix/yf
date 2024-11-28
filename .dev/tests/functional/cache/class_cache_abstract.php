@@ -28,7 +28,14 @@ abstract class class_cache_abstract extends yf\tests\wrapper
     {
         $called = strtolower(get_called_class());
         $allowed = [
-            'memcache', 'xcache', 'apc', 'files', 'tmp', 'couchbase', 'mongodb', 'redis',
+            'memcache',
+            'xcache',
+            'apc',
+            'files',
+            'tmp',
+            'couchbase',
+            'mongodb',
+            'redis',
         ];
         foreach ($allowed as $name) {
             if (false !== strpos($called, '_' . $name)) {
@@ -43,14 +50,14 @@ abstract class class_cache_abstract extends yf\tests\wrapper
         return self::$_cache;
     }
 
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
-        if ( ! defined('HHVM_VERSION') || self::_get_driver_name() != 'memcache') {
+        if (! defined('HHVM_VERSION') || self::_get_driver_name() != 'memcache') {
             self::_cache_init();
         }
     }
 
-    public static function tearDownAfterClass() : void
+    public static function tearDownAfterClass(): void
     {
         $driver = self::_get_driver_name();
         if ($driver == 'files') {
@@ -61,7 +68,7 @@ abstract class class_cache_abstract extends yf\tests\wrapper
         }
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         if (defined('HHVM_VERSION') && self::_get_driver_name() == 'memcache') {
             self::_cache_init();
@@ -70,7 +77,7 @@ abstract class class_cache_abstract extends yf\tests\wrapper
 
     public function test_driver()
     {
-        $this->assertSame(self::_get_driver_name(), self::_cache()->DRIVER);
+        $this->assertEqualsCanonicalizing(self::_get_driver_name(), self::_cache()->DRIVER);
     }
 
     public function test_is_ready()
@@ -87,10 +94,10 @@ abstract class class_cache_abstract extends yf\tests\wrapper
         $this->assertNull(self::_cache()->get('k1'));
 
         $this->assertTrue(self::_cache()->set('k1', 'val1'));
-        $this->assertSame('val1', self::_cache()->get('k1'));
+        $this->assertEqualsCanonicalizing('val1', self::_cache()->get('k1'));
 
         $this->assertTrue(self::_cache()->set('k11', 0));
-        //		$this->assertSame(0, self::_cache()->get('k11'));
+        //		$this->assertEqualsCanonicalizing(0, self::_cache()->get('k11'));
         $this->assertEquals(0, self::_cache()->get('k11'));
 
         $this->assertTrue(self::_cache()->set('k11_', false));
@@ -101,9 +108,9 @@ abstract class class_cache_abstract extends yf\tests\wrapper
     {
         $this->assertTrue(self::_cache()->flush());
         $this->assertTrue(self::_cache()->set('k2', 'some_data'));
-        $this->assertSame('some_data', self::_cache()->get('k2'));
+        $this->assertEqualsCanonicalizing('some_data', self::_cache()->get('k2'));
         $this->assertTrue(self::_cache()->set('k2_', []));
-        $this->assertSame([], self::_cache()->get('k2_'));
+        $this->assertEqualsCanonicalizing([], self::_cache()->get('k2_'));
         $this->assertTrue(self::_cache()->set('k3_', false));
         $this->assertFalse(self::_cache()->get('k3_'));
     }
@@ -112,7 +119,7 @@ abstract class class_cache_abstract extends yf\tests\wrapper
     {
         $this->assertTrue(self::_cache()->flush());
         $this->assertTrue(self::_cache()->set('k3', 'val3'));
-        $this->assertSame('val3', self::_cache()->get('k3'));
+        $this->assertEqualsCanonicalizing('val3', self::_cache()->get('k3'));
         $this->assertTrue(self::_cache()->del('k3'));
         $this->assertNull(self::_cache()->get('k3'));
     }
@@ -128,7 +135,7 @@ abstract class class_cache_abstract extends yf\tests\wrapper
 
     public function test_list_keys()
     {
-        if ( ! (self::_cache()->_driver->implemented['list_keys'] ?? null)) {
+        if (! (self::_cache()->_driver->implemented['list_keys'] ?? null)) {
             return;
         }
         $this->assertTrue(self::_cache()->flush());
@@ -136,9 +143,9 @@ abstract class class_cache_abstract extends yf\tests\wrapper
         $this->assertTrue(self::_cache()->set('k2', 'v2'));
         $list_keys_result = self::_cache()->list_keys();
         if ($list_keys_result !== false && $list_keys_result !== null) {
-            $this->assertSame(['k1', 'k2'], self::_cache()->list_keys());
+            $this->assertEqualsCanonicalizing(['k1', 'k2'], self::_cache()->list_keys());
             $this->assertTrue(self::_cache()->set('k3', 'v3'));
-            $this->assertSame(['k1', 'k2', 'k3'], self::_cache()->list_keys());
+            $this->assertEqualsCanonicalizing(['k1', 'k2', 'k3'], self::_cache()->list_keys());
         }
     }
 
@@ -147,15 +154,15 @@ abstract class class_cache_abstract extends yf\tests\wrapper
         $this->assertTrue(self::_cache()->flush());
         $this->assertTrue(self::_cache()->set('k17', 'v1'));
         $this->assertTrue(self::_cache()->set('k27', 'v2'));
-        $this->assertSame(['k17' => 'v1', 'k27' => 'v2'], self::_cache()->multi_get(['k17', 'k27']));
-        $this->assertSame('v1', self::_cache()->get('k17'));
-        $this->assertSame('v2', self::_cache()->get('k27'));
+        $this->assertEqualsCanonicalizing(['k17' => 'v1', 'k27' => 'v2'], self::_cache()->multi_get(['k17', 'k27']));
+        $this->assertEqualsCanonicalizing('v1', self::_cache()->get('k17'));
+        $this->assertEqualsCanonicalizing('v2', self::_cache()->get('k27'));
 
         $this->assertTrue(self::_cache()->flush());
         $this->assertTrue(self::_cache()->set('k18', 'v1'));
         $this->assertTrue(self::_cache()->set('k28', false));
-        $this->assertSame(['k18' => 'v1', 'k28' => false], self::_cache()->multi_get(['k18', 'k28']));
-        $this->assertSame('v1', self::_cache()->get('k18'));
+        $this->assertEqualsCanonicalizing(['k18' => 'v1', 'k28' => false], self::_cache()->multi_get(['k18', 'k28']));
+        $this->assertEqualsCanonicalizing('v1', self::_cache()->get('k18'));
         $this->assertFalse(self::_cache()->get('k28'));
     }
 
@@ -164,12 +171,12 @@ abstract class class_cache_abstract extends yf\tests\wrapper
         $this->assertTrue(self::_cache()->flush());
         $this->assertNull(self::_cache()->multi_get(['k111', 'k222']));
         $this->assertTrue(self::_cache()->multi_set(['k111' => 'v1', 'k222' => 'v2']));
-        $this->assertSame(['k111' => 'v1', 'k222' => 'v2'], self::_cache()->multi_get(['k111', 'k222']));
+        $this->assertEqualsCanonicalizing(['k111' => 'v1', 'k222' => 'v2'], self::_cache()->multi_get(['k111', 'k222']));
 
         $this->assertTrue(self::_cache()->flush());
         $this->assertNull(self::_cache()->multi_get(['k113', 'k223']));
         $this->assertTrue(self::_cache()->multi_set(['k113' => 'v1', 'k223' => false]));
-        $this->assertSame(['k113' => 'v1', 'k223' => false], self::_cache()->multi_get(['k113', 'k223']));
+        $this->assertEqualsCanonicalizing(['k113' => 'v1', 'k223' => false], self::_cache()->multi_get(['k113', 'k223']));
     }
 
     public function test_multi_del()
@@ -178,30 +185,30 @@ abstract class class_cache_abstract extends yf\tests\wrapper
         $this->assertNull(self::_cache()->multi_get(['k133', 'k233']));
 
         $this->assertTrue(self::_cache()->multi_set(['k133' => 'v1', 'k233' => 'v2']));
-        $this->assertSame(['k133' => 'v1', 'k233' => 'v2'], self::_cache()->multi_get(['k133', 'k233']));
+        $this->assertEqualsCanonicalizing(['k133' => 'v1', 'k233' => 'v2'], self::_cache()->multi_get(['k133', 'k233']));
 
         $this->assertTrue(self::_cache()->set('k333', 'v3'));
         $this->assertTrue(self::_cache()->set('k444', false));
-        $this->assertSame(['k333' => 'v3', 'k444' => false], self::_cache()->multi_get(['k333', 'k444']));
+        $this->assertEqualsCanonicalizing(['k333' => 'v3', 'k444' => false], self::_cache()->multi_get(['k333', 'k444']));
 
         $this->assertTrue(self::_cache()->multi_del(['k133', 'k233']));
         $this->assertNull(self::_cache()->multi_get(['k133', 'k233']));
-        $this->assertSame('v3', self::_cache()->get('k333'));
+        $this->assertEqualsCanonicalizing('v3', self::_cache()->get('k333'));
         $this->assertFalse(self::_cache()->get('k444'));
     }
-    
+
     public function test_del_by_prefix()
     {
-        if ( ! (self::_cache()->_driver->implemented['list_keys'] ?? null)) {
+        if (! (self::_cache()->_driver->implemented['list_keys'] ?? null)) {
             return;
         }
         $this->assertTrue(self::_cache()->flush());
         $this->assertTrue(self::_cache()->multi_set(['k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13']));
-        $this->assertSame(['k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13'], self::_cache()->multi_get(['k118', 'k218', 'k138']));
+        $this->assertEqualsCanonicalizing(['k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13'], self::_cache()->multi_get(['k118', 'k218', 'k138']));
         $this->assertTrue(self::_cache()->del_by_prefix('k1'));
         $list_keys_result = self::_cache()->list_keys();
         if ($list_keys_result !== false && $list_keys_result !== null) {
-            $this->assertSame('v21', self::_cache()->get('k218'));
+            $this->assertEqualsCanonicalizing('v21', self::_cache()->get('k218'));
             $this->assertNull(self::_cache()->get('k138'));
         }
     }

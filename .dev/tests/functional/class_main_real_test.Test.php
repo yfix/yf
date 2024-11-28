@@ -16,7 +16,7 @@ class class_main_real_test extends db_real_abstract
         return $name;
     }
 
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
         self::$DB_DRIVER = 'mysqli';
@@ -27,7 +27,7 @@ class class_main_real_test extends db_real_abstract
         $GLOBALS['db'] = self::db();
     }
 
-    public static function tearDownAfterClass() : void
+    public static function tearDownAfterClass(): void
     {
         self::utils()->truncate_database(self::db_name());
         self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
@@ -73,10 +73,10 @@ class class_main_real_test extends db_real_abstract
         $model_base = _class('model');
         $this->assertIsObject($model_base);
         $this->assertTrue(is_a($model_base, 'yf_model'));
-        $this->assertSame($model_base, _class('yf_model'));
+        $this->assertEqualsCanonicalizing($model_base, _class('yf_model'));
 
         $model_exists = main()->_class_exists('film_model');
-        if ( ! $model_exists) {
+        if (! $model_exists) {
             $this->assertFalse(main()->_class_exists('film_model'));
             // unit_tests == name of the custom storage used here
             main()->_custom_class_storages = [

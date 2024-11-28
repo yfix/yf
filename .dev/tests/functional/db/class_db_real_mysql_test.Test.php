@@ -18,14 +18,14 @@ class class_db_real_mysql_test extends db_real_abstract
     {
         return 'CREATE TABLE ' . self::table_name($table) . '(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8';
     }
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
         self::$DB_DRIVER = 'mysqli';
         self::_connect();
         self::utils()->truncate_database(self::db_name());
     }
-    public static function tearDownAfterClass() : void
+    public static function tearDownAfterClass(): void
     {
         self::utils()->truncate_database(self::db_name());
         self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
@@ -44,7 +44,7 @@ class class_db_real_mysql_test extends db_real_abstract
         $this->assertTrue(self::$db->_connected);
         $this->assertTrue(self::$db->_tried_to_connect);
         $this->assertIsObject(self::$db->db);
-        $this->assertTrue( ! empty(self::$db->db->db_connect_id));
+        $this->assertTrue(! empty(self::$db->db->db_connect_id));
     }
     public function test_basic_queries_and_fetching()
     {
@@ -63,10 +63,10 @@ class class_db_real_mysql_test extends db_real_abstract
                 . ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
         ];
         $sql = 'SHOW CREATE TABLE ' . $this->table_name($table);
-        $this->assertSame($expected, self::db()->fetch_assoc(self::db()->query($sql)));
-        $this->assertSame($expected, self::db()->fetch_assoc(self::db()->unbuffered_query($sql)));
-        $this->assertSame($expected, self::db()->query_fetch($sql));
-        $this->assertSame($expected, self::db()->get($sql));
+        $this->assertEqualsCanonicalizing($expected, self::db()->fetch_assoc(self::db()->query($sql)));
+        $this->assertEqualsCanonicalizing($expected, self::db()->fetch_assoc(self::db()->unbuffered_query($sql)));
+        $this->assertEqualsCanonicalizing($expected, self::db()->query_fetch($sql));
+        $this->assertEqualsCanonicalizing($expected, self::db()->get($sql));
 
         $this->assertNotEmpty(self::db()->query('INSERT INTO ' . $this->table_name($table) . ' VALUES (1,1,1),(2,2,2),(3,3,3)'));
         $this->assertEquals(3, self::db()->affected_rows());
@@ -97,26 +97,26 @@ class class_db_real_mysql_test extends db_real_abstract
         if ($this->_need_skip_test(__FUNCTION__)) {
             return;
         }
-        $this->assertSame('`mykey`', self::db()->escape_key('mykey'));
-        $this->assertSame(['`mykey`'], self::db()->escape_key(['mykey']));
-        $this->assertSame([['`mykey`']], self::db()->escape_key([['mykey']]));
-        $this->assertSame(['`key1`', '`key2`', '`key3`'], self::db()->escape_key(['key1', 'key2', 'key3']));
+        $this->assertEqualsCanonicalizing('`mykey`', self::db()->escape_key('mykey'));
+        $this->assertEqualsCanonicalizing(['`mykey`'], self::db()->escape_key(['mykey']));
+        $this->assertEqualsCanonicalizing([['`mykey`']], self::db()->escape_key([['mykey']]));
+        $this->assertEqualsCanonicalizing(['`key1`', '`key2`', '`key3`'], self::db()->escape_key(['key1', 'key2', 'key3']));
     }
     public function test_escape_val()
     {
         if ($this->_need_skip_test(__FUNCTION__)) {
             return;
         }
-        $this->assertSame('\'myval\'', self::db()->escape_val('myval'));
-        $this->assertSame('NULL', self::db()->escape_val(null));
-        $this->assertSame('NULL', self::db()->escape_val('NULL'));
-        $this->assertSame(['\'myval\''], self::db()->escape_val(['myval']));
-        $this->assertSame([['\'myval\'']], self::db()->escape_val([['myval']]));
-        $this->assertSame([['NULL']], self::db()->escape_val([[null]]));
-        $this->assertSame([['NULL']], self::db()->escape_val([['NULL']]));
-        $this->assertSame(['\'val1\'', '\'val2\'', '\'val3\''], self::db()->escape_val(['val1', 'val2', 'val3']));
-        $this->assertSame(['\'val1\'', 'NULL', '\'val3\''], self::db()->escape_val(['val1', null, 'val3']));
-        $this->assertSame(['\'val1\'', 'NULL', '\'val3\''], self::db()->escape_val(['val1', 'NULL', 'val3']));
+        $this->assertEqualsCanonicalizing('\'myval\'', self::db()->escape_val('myval'));
+        $this->assertEqualsCanonicalizing('NULL', self::db()->escape_val(null));
+        $this->assertEqualsCanonicalizing('NULL', self::db()->escape_val('NULL'));
+        $this->assertEqualsCanonicalizing(['\'myval\''], self::db()->escape_val(['myval']));
+        $this->assertEqualsCanonicalizing([['\'myval\'']], self::db()->escape_val([['myval']]));
+        $this->assertEqualsCanonicalizing([['NULL']], self::db()->escape_val([[null]]));
+        $this->assertEqualsCanonicalizing([['NULL']], self::db()->escape_val([['NULL']]));
+        $this->assertEqualsCanonicalizing(['\'val1\'', '\'val2\'', '\'val3\''], self::db()->escape_val(['val1', 'val2', 'val3']));
+        $this->assertEqualsCanonicalizing(['\'val1\'', 'NULL', '\'val3\''], self::db()->escape_val(['val1', null, 'val3']));
+        $this->assertEqualsCanonicalizing(['\'val1\'', 'NULL', '\'val3\''], self::db()->escape_val(['val1', 'NULL', 'val3']));
     }
     public function test_real_name()
     {
@@ -126,13 +126,13 @@ class class_db_real_mysql_test extends db_real_abstract
         $table = self::db()->DB_PREFIX . __FUNCTION__;
         $table_wo_prefix = 'tbl_' . __FUNCTION__;
         $prefixed_table = 'prfx_' . $table;
-        $this->assertSame($table, self::db()->_real_name($table));
+        $this->assertEqualsCanonicalizing($table, self::db()->_real_name($table));
         self::db()->_found_tables = [$table => $prefixed_table];
-        $this->assertSame([$table => $prefixed_table], self::db()->_found_tables);
-        $this->assertSame($prefixed_table, self::db()->_real_name($table));
+        $this->assertEqualsCanonicalizing([$table => $prefixed_table], self::db()->_found_tables);
+        $this->assertEqualsCanonicalizing($prefixed_table, self::db()->_real_name($table));
         $table_wo_prefix = 'tbl_' . __FUNCTION__;
-        $this->assertSame(self::db()->DB_PREFIX . $table_wo_prefix, self::db()->_real_name($table_wo_prefix));
-        $this->assertSame(self::db()->DB_PREFIX . $table_wo_prefix, self::db()->_real_name(self::db()->DB_PREFIX . $table_wo_prefix));
+        $this->assertEqualsCanonicalizing(self::db()->DB_PREFIX . $table_wo_prefix, self::db()->_real_name($table_wo_prefix));
+        $this->assertEqualsCanonicalizing(self::db()->DB_PREFIX . $table_wo_prefix, self::db()->_real_name(self::db()->DB_PREFIX . $table_wo_prefix));
     }
     public function test_fix_table_name()
     {
@@ -142,18 +142,18 @@ class class_db_real_mysql_test extends db_real_abstract
         $table_wo_prefix = 'tbl_' . __FUNCTION__;
         $table_sys = self::db()->DB_PREFIX . 'sys_' . $table_wo_prefix;
         $table = self::db()->DB_PREFIX . $table_wo_prefix;
-        $this->assertSame($table, self::db()->_fix_table_name($table));
-        $this->assertSame($table, self::db()->_fix_table_name('dbt_' . $table));
-        $this->assertSame($table, self::db()->_fix_table_name($table_wo_prefix));
-        $this->assertSame($table, self::db()->_fix_table_name('dbt_' . $table_wo_prefix));
+        $this->assertEqualsCanonicalizing($table, self::db()->_fix_table_name($table));
+        $this->assertEqualsCanonicalizing($table, self::db()->_fix_table_name('dbt_' . $table));
+        $this->assertEqualsCanonicalizing($table, self::db()->_fix_table_name($table_wo_prefix));
+        $this->assertEqualsCanonicalizing($table, self::db()->_fix_table_name('dbt_' . $table_wo_prefix));
         self::db()->_need_sys_prefix = [$table_wo_prefix];
-        $this->assertSame([$table_wo_prefix], self::db()->_need_sys_prefix);
-        $this->assertSame($table_sys, self::db()->_fix_table_name($table_wo_prefix));
-        $this->assertSame($table_sys, self::db()->_fix_table_name('dbt_' . $table_wo_prefix));
-        $this->assertSame($table_sys, self::db()->_fix_table_name($table_sys));
-        $this->assertSame($table_sys, self::db()->_fix_table_name('dbt_' . $table_sys));
-        $this->assertSame($table_sys, self::db()->_fix_table_name($table));
-        $this->assertSame($table_sys, self::db()->_fix_table_name('dbt_' . $table));
+        $this->assertEqualsCanonicalizing([$table_wo_prefix], self::db()->_need_sys_prefix);
+        $this->assertEqualsCanonicalizing($table_sys, self::db()->_fix_table_name($table_wo_prefix));
+        $this->assertEqualsCanonicalizing($table_sys, self::db()->_fix_table_name('dbt_' . $table_wo_prefix));
+        $this->assertEqualsCanonicalizing($table_sys, self::db()->_fix_table_name($table_sys));
+        $this->assertEqualsCanonicalizing($table_sys, self::db()->_fix_table_name('dbt_' . $table_sys));
+        $this->assertEqualsCanonicalizing($table_sys, self::db()->_fix_table_name($table));
+        $this->assertEqualsCanonicalizing($table_sys, self::db()->_fix_table_name('dbt_' . $table));
     }
     public function test_real_escape_string()
     {
@@ -162,51 +162,51 @@ class class_db_real_mysql_test extends db_real_abstract
         }
         $input = 'He`llo\'_" wor`ld(){}*&^%#';
         $expected = 'He`llo\\\'_\" wor`ld(){}*&^%#';
-        $this->assertSame($expected, self::db()->real_escape_string($input));
-        $this->assertSame($expected, self::db()->escape_string($input));
-        $this->assertSame($expected, self::db()->escape($input));
-        $this->assertSame($expected, self::db()->es($input));
-        $this->assertSame($expected, self::db()->_mysql_escape_mimic($input));
+        $this->assertEqualsCanonicalizing($expected, self::db()->real_escape_string($input));
+        $this->assertEqualsCanonicalizing($expected, self::db()->escape_string($input));
+        $this->assertEqualsCanonicalizing($expected, self::db()->escape($input));
+        $this->assertEqualsCanonicalizing($expected, self::db()->es($input));
+        $this->assertEqualsCanonicalizing($expected, self::db()->_mysql_escape_mimic($input));
 
-        $this->assertSame('NULL', self::db()->escape(null));
-        $this->assertSame('NULL', self::db()->escape('NULL'));
-        $this->assertSame(['myval'], self::db()->escape(['myval']));
-        $this->assertSame(['NULL'], self::db()->escape([null]));
-        $this->assertSame(['NULL'], self::db()->escape(['NULL']));
-        $this->assertSame([['myval']], self::db()->escape([['myval']]));
-        $this->assertSame([['NULL']], self::db()->escape([[null]]));
-        $this->assertSame([['NULL']], self::db()->escape([['NULL']]));
-        $this->assertSame(['val1', 'val2', 'val3'], self::db()->escape(['val1', 'val2', 'val3']));
-        $this->assertSame(['val1', 'NULL', 'val3'], self::db()->escape(['val1', null, 'val3']));
-        $this->assertSame(['val1', 'NULL', 'val3'], self::db()->escape(['val1', 'NULL', 'val3']));
-        $this->assertSame([$expected], self::db()->escape([$input]));
-        $this->assertSame([[$expected]], self::db()->escape([[$input]]));
-        $this->assertSame([['NULL', $expected]], self::db()->escape([[null, $input]]));
-        $this->assertSame([['NULL', $expected]], self::db()->escape([['NULL', $input]]));
-        $this->assertSame(3, self::db()->escape(3));
-        $this->assertSame('3.5', self::db()->escape(3.5));
-        $this->assertSame(1, self::db()->escape(true));
-        $this->assertSame(0, self::db()->escape(false));
+        $this->assertEqualsCanonicalizing('NULL', self::db()->escape(null));
+        $this->assertEqualsCanonicalizing('NULL', self::db()->escape('NULL'));
+        $this->assertEqualsCanonicalizing(['myval'], self::db()->escape(['myval']));
+        $this->assertEqualsCanonicalizing(['NULL'], self::db()->escape([null]));
+        $this->assertEqualsCanonicalizing(['NULL'], self::db()->escape(['NULL']));
+        $this->assertEqualsCanonicalizing([['myval']], self::db()->escape([['myval']]));
+        $this->assertEqualsCanonicalizing([['NULL']], self::db()->escape([[null]]));
+        $this->assertEqualsCanonicalizing([['NULL']], self::db()->escape([['NULL']]));
+        $this->assertEqualsCanonicalizing(['val1', 'val2', 'val3'], self::db()->escape(['val1', 'val2', 'val3']));
+        $this->assertEqualsCanonicalizing(['val1', 'NULL', 'val3'], self::db()->escape(['val1', null, 'val3']));
+        $this->assertEqualsCanonicalizing(['val1', 'NULL', 'val3'], self::db()->escape(['val1', 'NULL', 'val3']));
+        $this->assertEqualsCanonicalizing([$expected], self::db()->escape([$input]));
+        $this->assertEqualsCanonicalizing([[$expected]], self::db()->escape([[$input]]));
+        $this->assertEqualsCanonicalizing([['NULL', $expected]], self::db()->escape([[null, $input]]));
+        $this->assertEqualsCanonicalizing([['NULL', $expected]], self::db()->escape([['NULL', $input]]));
+        $this->assertEqualsCanonicalizing(3, self::db()->escape(3));
+        $this->assertEqualsCanonicalizing('3.5', self::db()->escape(3.5));
+        $this->assertEqualsCanonicalizing(1, self::db()->escape(true));
+        $this->assertEqualsCanonicalizing(0, self::db()->escape(false));
 
-        $this->assertSame('NULL', self::db()->_mysql_escape_mimic(null));
-        $this->assertSame('NULL', self::db()->_mysql_escape_mimic('NULL'));
-        $this->assertSame(['myval'], self::db()->_mysql_escape_mimic(['myval']));
-        $this->assertSame(['NULL'], self::db()->_mysql_escape_mimic([null]));
-        $this->assertSame(['NULL'], self::db()->_mysql_escape_mimic(['NULL']));
-        $this->assertSame([['myval']], self::db()->_mysql_escape_mimic([['myval']]));
-        $this->assertSame([['NULL']], self::db()->_mysql_escape_mimic([[null]]));
-        $this->assertSame([['NULL']], self::db()->_mysql_escape_mimic([['NULL']]));
-        $this->assertSame(['val1', 'val2', 'val3'], self::db()->_mysql_escape_mimic(['val1', 'val2', 'val3']));
-        $this->assertSame(['val1', 'NULL', 'val3'], self::db()->_mysql_escape_mimic(['val1', null, 'val3']));
-        $this->assertSame(['val1', 'NULL', 'val3'], self::db()->_mysql_escape_mimic(['val1', 'NULL', 'val3']));
-        $this->assertSame([$expected], self::db()->_mysql_escape_mimic([$input]));
-        $this->assertSame([[$expected]], self::db()->_mysql_escape_mimic([[$input]]));
-        $this->assertSame([['NULL', $expected]], self::db()->_mysql_escape_mimic([[null, $input]]));
-        $this->assertSame([['NULL', $expected]], self::db()->_mysql_escape_mimic([['NULL', $input]]));
-        $this->assertSame(3, self::db()->_mysql_escape_mimic(3));
-        $this->assertSame('3.5', self::db()->_mysql_escape_mimic(3.5));
-        $this->assertSame(1, self::db()->_mysql_escape_mimic(true));
-        $this->assertSame(0, self::db()->_mysql_escape_mimic(false));
+        $this->assertEqualsCanonicalizing('NULL', self::db()->_mysql_escape_mimic(null));
+        $this->assertEqualsCanonicalizing('NULL', self::db()->_mysql_escape_mimic('NULL'));
+        $this->assertEqualsCanonicalizing(['myval'], self::db()->_mysql_escape_mimic(['myval']));
+        $this->assertEqualsCanonicalizing(['NULL'], self::db()->_mysql_escape_mimic([null]));
+        $this->assertEqualsCanonicalizing(['NULL'], self::db()->_mysql_escape_mimic(['NULL']));
+        $this->assertEqualsCanonicalizing([['myval']], self::db()->_mysql_escape_mimic([['myval']]));
+        $this->assertEqualsCanonicalizing([['NULL']], self::db()->_mysql_escape_mimic([[null]]));
+        $this->assertEqualsCanonicalizing([['NULL']], self::db()->_mysql_escape_mimic([['NULL']]));
+        $this->assertEqualsCanonicalizing(['val1', 'val2', 'val3'], self::db()->_mysql_escape_mimic(['val1', 'val2', 'val3']));
+        $this->assertEqualsCanonicalizing(['val1', 'NULL', 'val3'], self::db()->_mysql_escape_mimic(['val1', null, 'val3']));
+        $this->assertEqualsCanonicalizing(['val1', 'NULL', 'val3'], self::db()->_mysql_escape_mimic(['val1', 'NULL', 'val3']));
+        $this->assertEqualsCanonicalizing([$expected], self::db()->_mysql_escape_mimic([$input]));
+        $this->assertEqualsCanonicalizing([[$expected]], self::db()->_mysql_escape_mimic([[$input]]));
+        $this->assertEqualsCanonicalizing([['NULL', $expected]], self::db()->_mysql_escape_mimic([[null, $input]]));
+        $this->assertEqualsCanonicalizing([['NULL', $expected]], self::db()->_mysql_escape_mimic([['NULL', $input]]));
+        $this->assertEqualsCanonicalizing(3, self::db()->_mysql_escape_mimic(3));
+        $this->assertEqualsCanonicalizing('3.5', self::db()->_mysql_escape_mimic(3.5));
+        $this->assertEqualsCanonicalizing(1, self::db()->_mysql_escape_mimic(true));
+        $this->assertEqualsCanonicalizing(0, self::db()->_mysql_escape_mimic(false));
     }
     public function test_get_one()
     {
@@ -371,23 +371,23 @@ class class_db_real_mysql_test extends db_real_abstract
         $data_wrong = $data;
         $data_wrong[1]['not_existing_col'] = 1;
         $data_wrong[2]['not_existing_col'] = 2;
-        $this->assertSame($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
-        $this->assertSame($data, self::db()->_fix_data_safe($this->table_name($table), $data_wrong, ['no_cache' => 1]));
+        $this->assertEqualsCanonicalizing($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
+        $this->assertEqualsCanonicalizing($data, self::db()->_fix_data_safe($this->table_name($table), $data_wrong, ['no_cache' => 1]));
 
         $data = ['id' => 1, 'id2' => 11, 'id3' => null];
-        $this->assertSame($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
+        $this->assertEqualsCanonicalizing($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
         $data = ['id' => 1, 'id2' => 11, 'id3' => 'NULL'];
-        $this->assertSame($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
+        $this->assertEqualsCanonicalizing($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
         $data = [
             1 => ['id' => 1, 'id2' => 11, 'id3' => null],
             2 => ['id' => 2, 'id2' => 22, 'id3' => 222],
         ];
-        $this->assertSame($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
+        $this->assertEqualsCanonicalizing($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
         $data = [
             1 => ['id' => 1, 'id2' => 11, 'id3' => 'NULL'],
             2 => ['id' => 2, 'id2' => 22, 'id3' => 222],
         ];
-        $this->assertSame($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
+        $this->assertEqualsCanonicalizing($data, self::db()->_fix_data_safe($this->table_name($table), $data, ['no_cache' => 1]));
     }
     public function test_insert_safe()
     {
@@ -744,7 +744,7 @@ class class_db_real_mysql_test extends db_real_abstract
             return;
         }
         // TODO: add, check
-//		$this->assertEquals( $expected, self::db()-> );
+        //		$this->assertEquals( $expected, self::db()-> );
     }
     public function test_repair_table()
     {
@@ -759,7 +759,7 @@ class class_db_real_mysql_test extends db_real_abstract
             return;
         }
         // TODO: maybe use utils() methods?
-//		$this->assertEquals( $expected, self::db()-> );
+        //		$this->assertEquals( $expected, self::db()-> );
     }
     public function test_meta_tables()
     {
@@ -767,7 +767,7 @@ class class_db_real_mysql_test extends db_real_abstract
             return;
         }
         // TODO: maybe use utils() methods?
-//		$this->assertEquals( $expected, self::db()-> );
+        //		$this->assertEquals( $expected, self::db()-> );
     }
     public function test_transactions()
     {
@@ -775,8 +775,8 @@ class class_db_real_mysql_test extends db_real_abstract
             return;
         }
         // TODO: begin
-// TODO: commit
-// TODO: rollback
-//		$this->assertEquals( $expected, self::db()-> );
+        // TODO: commit
+        // TODO: rollback
+        //		$this->assertEquals( $expected, self::db()-> );
     }
 }

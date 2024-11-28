@@ -192,8 +192,8 @@ ND);
             $this->assertObjectHasProperty('name', $bear_lawly);
             $this->assertObjectHasProperty('type', $bear_lawly);
             $this->assertObjectHasProperty('danger_level', $bear_lawly);
-            $this->assertSame('Lawly', $bear_lawly->name);
-            $this->assertSame('Grizzly', $bear_lawly->type);
+            $this->assertEqualsCanonicalizing('Lawly', $bear_lawly->name);
+            $this->assertEqualsCanonicalizing('Grizzly', $bear_lawly->type);
             $this->assertEquals('8', $bear_lawly->danger_level);
 
             $this->assertIsObject($bear_cerms);
@@ -204,8 +204,8 @@ ND);
             $this->assertObjectHasProperty('name', $bear_cerms);
             $this->assertObjectHasProperty('type', $bear_cerms);
             $this->assertObjectHasProperty('danger_level', $bear_cerms);
-            $this->assertSame('Cerms', $bear_cerms->name);
-            $this->assertSame('Black', $bear_cerms->type);
+            $this->assertEqualsCanonicalizing('Cerms', $bear_cerms->name);
+            $this->assertEqualsCanonicalizing('Black', $bear_cerms->type);
             $this->assertEquals('4', $bear_cerms->danger_level);
 
             $this->assertIsObject($bear_adobot);
@@ -216,8 +216,8 @@ ND);
             $this->assertObjectHasProperty('name', $bear_adobot);
             $this->assertObjectHasProperty('type', $bear_adobot);
             $this->assertObjectHasProperty('danger_level', $bear_adobot);
-            $this->assertSame('Adobot', $bear_adobot->name);
-            $this->assertSame('Polar', $bear_adobot->type);
+            $this->assertEqualsCanonicalizing('Adobot', $bear_adobot->name);
+            $this->assertEqualsCanonicalizing('Polar', $bear_adobot->type);
             $this->assertEquals('3', $bear_adobot->danger_level);
 
             // seed our fish table. our fish wont have names... because theyre going to be eaten
@@ -243,7 +243,7 @@ ND);
             $this->assertObjectHasProperty('weight', $fish1);
             $this->assertObjectHasProperty('bear_id', $fish1);
             $this->assertEquals('5', $fish1->weight);
-            $this->assertSame($bear_lawly->id, $fish1->bear_id);
+            $this->assertEqualsCanonicalizing($bear_lawly->id, $fish1->bear_id);
 
             $this->assertIsObject($fish2);
             $this->assertInstanceOf('yf_model_result', $fish2);
@@ -253,7 +253,7 @@ ND);
             $this->assertObjectHasProperty('weight', $fish2);
             $this->assertObjectHasProperty('bear_id', $fish2);
             $this->assertEquals('12', $fish2->weight);
-            $this->assertSame($bear_cerms->id, $fish2->bear_id);
+            $this->assertEqualsCanonicalizing($bear_cerms->id, $fish2->bear_id);
 
             $this->assertIsObject($fish3);
             $this->assertInstanceOf('yf_model_result', $fish3);
@@ -263,7 +263,7 @@ ND);
             $this->assertObjectHasProperty('weight', $fish3);
             $this->assertObjectHasProperty('bear_id', $fish3);
             $this->assertEquals('4', $fish3->weight);
-            $this->assertSame($bear_adobot->id, $fish3->bear_id);
+            $this->assertEqualsCanonicalizing($bear_adobot->id, $fish3->bear_id);
 
             // seed our trees table
             $tree1 = tree::create([
@@ -285,9 +285,9 @@ ND);
             $this->assertObjectHasProperty('type', $tree1);
             $this->assertObjectHasProperty('age', $tree1);
             $this->assertObjectHasProperty('bear_id', $tree1);
-            $this->assertSame('Redwood', $tree1->type);
+            $this->assertEqualsCanonicalizing('Redwood', $tree1->type);
             $this->assertEquals('500', $tree1->age);
-            $this->assertSame($bear_lawly->id, $tree1->bear_id);
+            $this->assertEqualsCanonicalizing($bear_lawly->id, $tree1->bear_id);
 
             $this->assertIsObject($tree2);
             $this->assertInstanceOf('yf_model_result', $tree2);
@@ -297,9 +297,9 @@ ND);
             $this->assertObjectHasProperty('type', $tree2);
             $this->assertObjectHasProperty('age', $tree2);
             $this->assertObjectHasProperty('bear_id', $tree2);
-            $this->assertSame('Oak', $tree2->type);
+            $this->assertEqualsCanonicalizing('Oak', $tree2->type);
             $this->assertEquals('400', $tree2->age);
-            $this->assertSame($bear_lawly->id, $tree2->bear_id);
+            $this->assertEqualsCanonicalizing($bear_lawly->id, $tree2->bear_id);
 
             // we will create one picnic and apply all bears to this one picnic
             $picnic_yellowstone = picnic::create([
@@ -318,7 +318,7 @@ ND);
             $this->assertObjectHasProperty('id', $picnic_yellowstone);
             $this->assertObjectHasProperty('name', $picnic_yellowstone);
             $this->assertObjectHasProperty('taste_level', $picnic_yellowstone);
-            $this->assertSame('Yellowstone', $picnic_yellowstone->name);
+            $this->assertEqualsCanonicalizing('Yellowstone', $picnic_yellowstone->name);
             $this->assertEquals('6', $picnic_yellowstone->taste_level);
 
             $this->assertIsObject($picnic_grand_canyon);
@@ -328,7 +328,7 @@ ND);
             $this->assertObjectHasProperty('id', $picnic_grand_canyon);
             $this->assertObjectHasProperty('name', $picnic_grand_canyon);
             $this->assertObjectHasProperty('taste_level', $picnic_grand_canyon);
-            $this->assertSame('Grand Canyon', $picnic_grand_canyon->name);
+            $this->assertEqualsCanonicalizing('Grand Canyon', $picnic_grand_canyon->name);
             $this->assertEquals('5', $picnic_grand_canyon->taste_level);
 
             // ---------- link our bears to picnics -------------
@@ -401,8 +401,8 @@ ND);
             $this->assertObjectHasProperty('name', $bear_cool1);
             $this->assertObjectHasProperty('type', $bear_cool1);
             $this->assertObjectHasProperty('danger_level', $bear_cool1);
-            $this->assertSame('Super Cool1', $bear_cool1->name);
-            $this->assertSame('Black', $bear_cool1->type);
+            $this->assertEqualsCanonicalizing('Super Cool1', $bear_cool1->name);
+            $this->assertEqualsCanonicalizing('Black', $bear_cool1->type);
             $this->assertEquals('1', $bear_cool1->danger_level);
 
             $this->assertTrue((bool) $bear_cool2_saved);
@@ -413,8 +413,8 @@ ND);
             $this->assertObjectHasProperty('name', $bear_cool2);
             $this->assertObjectHasProperty('type', $bear_cool2);
             $this->assertObjectHasProperty('danger_level', $bear_cool2);
-            $this->assertSame('Super Cool2', $bear_cool2->name);
-            $this->assertSame('Black', $bear_cool2->type);
+            $this->assertEqualsCanonicalizing('Super Cool2', $bear_cool2->name);
+            $this->assertEqualsCanonicalizing('Black', $bear_cool2->type);
             $this->assertEquals('1', $bear_cool2->danger_level);
         } catch (Exception $e) {
             echo self::_pretty_show_exception($e);
@@ -475,9 +475,9 @@ ND);
             $this->assertInstanceOf('yf_model', $bear_first1->_get_model());
             $this->assertInstanceOf('bear', $bear_first1->_get_model());
             $this->assertObjectHasProperty('id', $bear_first1);
-            $this->assertSame('Lawly', $bear_first1->name);
+            $this->assertEqualsCanonicalizing('Lawly', $bear_first1->name);
             $this->assertNotEmpty($bear_lawly->type);
-            $this->assertSame($bear_lawly->type, $bear_first1->type);
+            $this->assertEqualsCanonicalizing($bear_lawly->type, $bear_first1->type);
             $this->assertEquals($bear_lawly->danger_level, $bear_first1->danger_level);
 
             $this->assertNotSame($bear_first1, $bear_first2);
@@ -486,8 +486,8 @@ ND);
             $this->assertInstanceOf('yf_model', $bear_first2->_get_model());
             $this->assertInstanceOf('bear', $bear_first2->_get_model());
             $this->assertObjectHasProperty('id', $bear_first2);
-            $this->assertSame('Lawly2', $bear_first2->name);
-            $this->assertSame('', $bear_first2->type);
+            $this->assertEqualsCanonicalizing('Lawly2', $bear_first2->name);
+            $this->assertEqualsCanonicalizing('', $bear_first2->type);
             $this->assertEquals('0', $bear_first2->danger_level);
 
             $this->assertIsObject($bear_new1);

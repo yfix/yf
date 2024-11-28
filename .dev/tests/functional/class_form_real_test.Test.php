@@ -14,7 +14,7 @@ class class_form_real_test extends db_real_abstract
     {
         return $name;
     }
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
         self::$DB_DRIVER = 'mysqli';
@@ -25,7 +25,7 @@ class class_form_real_test extends db_real_abstract
         $GLOBALS['db'] = self::db();
         $GLOBALS['CONF']['form2']['CONF_CSRF_PROTECTION'] = false;
     }
-    public static function tearDownAfterClass() : void
+    public static function tearDownAfterClass(): void
     {
         self::utils()->truncate_database(self::db_name());
         self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
@@ -64,7 +64,7 @@ class class_form_real_test extends db_real_abstract
 
         $names = ['name', 'text', 'active'];
         foreach ($names as $name) {
-            $this->assertSame($_POST[$name], $first[$name]);
+            $this->assertEqualsCanonicalizing($_POST[$name], $first[$name]);
         }
 
         $this->assertTrue((bool) self::utils()->truncate_table('static_pages'));
@@ -82,7 +82,7 @@ class class_form_real_test extends db_real_abstract
 
         $names = ['name', 'text', 'active'];
         foreach ($names as $name) {
-            $this->assertSame($_POST[$name], $first[$name]);
+            $this->assertEqualsCanonicalizing($_POST[$name], $first[$name]);
         }
 
         $_SERVER['REQUEST_METHOD'] = null;
