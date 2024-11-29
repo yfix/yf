@@ -3,6 +3,8 @@ PHP_CONTAINER := yfixnet-php80-1
 DIR_TESTS := .dev/tests/
 DIR_YF := /var/www/vendor/yf31
 DOCKER_TESTS := $(DIR_YF)/$(DIR_TESTS)
+# PHPUNIT := $(DIR_YF)/vendor/bin/phpunit
+PHPUNIT := phpunit
 DE := docker exec -it -e "TERM=xterm-256color" -w "$(DOCKER_TESTS)" $(PHP_CONTAINER)
 
 composer-install:
@@ -16,9 +18,7 @@ composer-update-prod:
 parallel-lint:
 	./vendor/bin/parallel-lint -e php --exclude vendor --exclude .dev .
 phpunit-tests:
-	(cd ./.dev/tests/ && ../../vendor/bin/phpunit ./)
-paratests:
-	(cd ./.dev/tests/ && ../../vendor/bin/paratest -p4 --colors --stop-on-failure --configuration ./phpunit.xml --log-junit ./reports/logfile.xml ./)
+	(cd ./.dev/tests/ && $(PHPUNIT) ./)
 php-cs-fixer-check:
 	./vendor/bin/php-cs-fixer --verbose --show-progress=dots check
 php-cs-fixer-fix:
