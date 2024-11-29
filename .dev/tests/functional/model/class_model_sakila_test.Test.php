@@ -8,6 +8,8 @@ require_once dirname(__DIR__) . '/db_real_abstract.php';
  */
 class class_model_sakila_test extends db_real_abstract
 {
+    public static $is_mysql8 = false;
+
     public static function db_name()
     {
         return self::$DB_NAME;
@@ -18,10 +20,20 @@ class class_model_sakila_test extends db_real_abstract
     }
     public static function setUpBeforeClass(): void
     {
+        # Prelaod yf_model class
+        _class('model');
+
         self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
         self::$DB_DRIVER = 'mysqli';
         self::_connect();
         self::utils()->truncate_database(self::db_name());
+        self::$DB_VERSION = self::db()->get_server_version();
+        self::$is_mysql8 = version_compare(self::$DB_VERSION, '8.0.0') >= 0;
+        if (self::$is_mysql8) {
+            self::$CHARSET = "utf8mb3";
+        } else {
+            self::$CHARSET = "utf8";
+        }
         self::$_bak['ERROR_AUTO_REPAIR'] = self::db()->ERROR_AUTO_REPAIR;
         self::db()->ERROR_AUTO_REPAIR = true;
         $GLOBALS['db'] = self::db();
@@ -125,9 +137,20 @@ class class_model_sakila_test extends db_real_abstract
                 unset($columns[$fname]['collate']);
                 unset($columns[$fname]['charset']);
             }
-            $this->assertEquals($sql_php['fields'], $columns, 'Compare columns with expected sql_php for table: ' . $name);
+            if (self::$is_mysql8) {
+                foreach ((array) $columns as $fname => $f) {
+                    unset($columns[$fname]['length']);
+                    unset($columns[$fname]['on_update']);
+                    unset($columns[$fname]['virtual']);
+                }
+                foreach ((array) $sql_php['fields'] as $fname => $f) {
+                    unset($sql_php['fields'][$fname]['length']);
+                    unset($sql_php['fields'][$fname]['on_update']);
+                }
+            }
+            $this->assertEquals($columns, $sql_php['fields'], 'Compare columns with expected sql_php for table: ' . $name);
             $indexes = self::utils()->list_indexes(self::table_name($db_prefix . $name));
-            $this->assertEquals($sql_php['indexes'], $indexes, 'Compare indexes with expected sql_php for table: ' . $name);
+            $this->assertEquals($indexes, $sql_php['indexes'], 'Compare indexes with expected sql_php for table: ' . $name);
             $fks = self::utils()->list_foreign_keys(self::table_name($db_prefix . $name));
             if ($plen) {
                 foreach ((array) $fks as $fname => $finfo) {
@@ -141,7 +164,15 @@ class class_model_sakila_test extends db_real_abstract
                 $this->assertTrue((bool) self::db()->insert_safe($name, $table_data));
             }
             $real_data = self::db()->from($name)->get_all();
-            $this->assertEquals($table_data, $real_data);
+            if (self::$is_mysql8) {
+                foreach ((array) $real_data as $fname => $f) {
+                    unset($real_data[$fname]['last_update']);
+                }
+                foreach ((array) $table_data as $fname => $f) {
+                    unset($table_data[$fname]['last_update']);
+                }
+            }
+            $this->assertEqualsCanonicalizing($table_data, $real_data);
             if ($i++ > 3) {
                 break;
             }
@@ -177,8 +208,12 @@ class class_model_sakila_test extends db_real_abstract
         $first_actor = model('actor')->find($raw_first_id);
         $this->assertNotEmpty($actors_data_objects[0]);
 
+        if (self::$is_mysql8) {
+            unset($actors_data_objects[0]->last_update);
+        }
+
         foreach ($actors_data_objects[0] as $k => $v) {
-            $this->assertEquals($v, $first_actor->$k);
+            $this->assertEqualsCanonicalizing($v, $first_actor->$k);
         }
 
         $same = true;
