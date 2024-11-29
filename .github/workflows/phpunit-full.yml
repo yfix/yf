@@ -1,5 +1,12 @@
 name: PHP Unit Tests on full supported versions matrix
 
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        required: false
+        default: 'Manual trigger'
+
 jobs:
   unit-tests:
     runs-on: ubuntu-latest

@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - 31
+    paths-ignore:
+      - '.github/workflows/**'
   pull_request:
     branches:
       - 31
+    paths-ignore:
+      - '.github/workflows/**'
 
 jobs:
   unit-tests:
