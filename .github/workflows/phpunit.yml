@@ -46,8 +46,8 @@ jobs:
     container:
       image: yfix/php:${{ matrix.php-image }}
       volumes:
-        - ${{ github.workspace }}:${{ env.WORKDIR }}
-      options: --workdir ${{ env.WORKDIR }}
+        - ${{ github.workspace }}:/var/www/vendor/yf31
+      options: --workdir /var/www/vendor/yf31
 
     steps:
     - uses: actions/checkout@v4
