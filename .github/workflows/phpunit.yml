@@ -11,14 +11,33 @@ on:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
+    env:
+      WORKDIR: /var/www/vendor/yf31
+      TESTS_DIR: ./.dev/tests/
+      MYSQL_HOST: mysql-tmp
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: tests
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    strategy:
+      matrix:
+        php-image: ['7.4', '8.0', '8.1', '8.2', '8.3']
+
+    container:
+      image: yfix/php:${{ matrix.php-image }}
+      volumes:
+        - ${{ github.workspace }}:${{ env.WORKDIR }}
+      options: --workdir ${{ env.WORKDIR }}
 
     services:
       mysql-tmp:
-        # image: mysql:8.0
         image: yfix/mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: 123456
-          MYSQL_DATABASE: tests
+          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
         ports:
           - 3306:3306
         options: >-
@@ -37,41 +56,20 @@ jobs:
           --health-timeout=5s
           --health-retries=3
 
-    container:
-      image: yfix/php:8.3
-      volumes:
-        - ${{ github.workspace }}:/var/www/vendor/yf31
-      options: --workdir /var/www/vendor/yf31
-
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install system dependencies
-      run: |
-        apt-get update && apt-get install -y \
-        git \
-        make \
-        redis-tools \
-        default-mysql-client
-
     - name: Wait for MySQL to be ready
       run: |
-        while ! mysqladmin ping -h mysql-tmp -u root -proot --silent; do
+        while ! mysqladmin ping -h ${{ env.MYSQL_HOST }} -u ${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} --silent; do
           sleep 1
         done
 
     - name: Wait for Redis to be ready
       run: |
-        redis-cli -h redis ping || exit 1
+        redis-cli -h ${{ env.REDIS_HOST }} ping || exit 1
 
     - name: Run PHPUnit tests
-      env:
-        MYSQL_HOST: mysql-tmp
-        MYSQL_PORT: 3306
-        MYSQL_USER: root
-        MYSQL_PASSWORD: root
-        MYSQL_DATABASE: tests
-        REDIS_HOST: redis
-        REDIS_PORT: 6379
-      working-directory: ./.dev/tests/
+      env: ${{ env }}
+      working-directory: ${{ env.TESTS_DIR }}
       run: make phpunit-all
