@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
 
     container:
-      image: yfix/php:${{ matrix.php-image }}
+      image: yfix/php:${{ matrix.php-image }}-alpine
       volumes:
         - ${{ github.workspace }}:/var/www/vendor/yf31
       options: --workdir /var/www/vendor/yf31
