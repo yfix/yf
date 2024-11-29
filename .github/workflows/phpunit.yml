@@ -12,10 +12,21 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        php-image: ['7.4', '8.2', '8.3']
+        mysql-image: ['5.7', '8.0']
+      fail-fast: false
+
+    container:
+      image: yfix/php:${{ matrix.php-image }}
+      volumes:
+        - ${{ github.workspace }}:/var/www/vendor/yf31
+      options: --workdir /var/www/vendor/yf31
+
     services:
       mysql-tmp:
-        # image: mysql:8.0
-        image: yfix/mysql:5.7
+        image: yfix/mysql:${{ matrix.mysql-image }}
         env:
           MYSQL_ROOT_PASSWORD: 123456
           MYSQL_DATABASE: tests
@@ -36,18 +47,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
-
-    strategy:
-      matrix:
-        php-image: ['7.4', '8.0', '8.1', '8.2', '8.3']
-        # mysql-image: ['5.7', '8.0', '8.4']
-      fail-fast: false
-
-    container:
-      image: yfix/php:${{ matrix.php-image }}
-      volumes:
-        - ${{ github.workspace }}:/var/www/vendor/yf31
-      options: --workdir /var/www/vendor/yf31
 
     steps:
     - uses: actions/checkout@v4
