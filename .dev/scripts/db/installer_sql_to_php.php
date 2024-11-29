@@ -31,7 +31,7 @@ if (! function_exists('main')) {
     $CONF['MEMCACHED_HOST'] = getenv('YF_MEMCACHED_HOST') ?: 'memcached';
     $CONF['MEMCACHED_PORT'] = getenv('YF_MEMCACHED_PORT') ?: '11211';
     if (version_compare(PHP_VERSION, '8.0.0') >= 0) {
-        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED & ~E_WARNING);
+        error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
     }
     require YF_PATH . 'classes/yf_main.class.php';
     new \yf_main($MAIN_TYPE ?? 'user', $no_db_connect = false, $auto_init_all = false, $CONF);

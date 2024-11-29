@@ -4,7 +4,7 @@ RewriteEngine On
 
 #php_value display_errors	0
 
-# E_ALL & ~E_NOTICE & ~E_STRICT
+# E_ALL & ~E_NOTICE
 php_value error_reporting	30711
 
 RewriteCond %{REQUEST_FILENAME} !-d

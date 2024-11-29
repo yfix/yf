@@ -281,7 +281,7 @@ class yf_autoloader
 
 		set_error_handler(function ($code, $msg) {
 			// do nothing for these types of errors
-		}, E_NOTICE | E_USER_NOTICE | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED);
+		}, E_NOTICE | E_USER_NOTICE | E_DEPRECATED | E_USER_DEPRECATED);
 
 		ob_start();
 		include_once __DIR__ . '/composer.php';

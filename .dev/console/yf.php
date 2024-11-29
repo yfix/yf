@@ -99,7 +99,7 @@ function init_yf()
 
     date_default_timezone_set('Europe/Kiev');
     ini_set('display_errors', 'on');
-    error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
+    error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED);
 }
 function get_yf_console_commands()
 {
