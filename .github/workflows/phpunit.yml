@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - 31
+      - php8
     paths-ignore:
       - '.github/workflows/**'
   pull_request:
     branches:
       - 31
+      - php8
     paths-ignore:
       - '.github/workflows/**'
 
