@@ -11,11 +11,11 @@ return function () {
     'versions' => [
         'master' => [
             'js' => [
-                '//rawgit.yfix.net/formvalidation/formvalidation/master/dist/js/formValidation.min.js',
-                '//rawgit.yfix.net/formvalidation/formvalidation/master/dist/js/framework/bootstrap.min.js',
-                $lang_files[$lang] ? '//rawgit.yfix.net/formvalidation/formvalidation/master/dist/js/language/' . $lang_files[$lang] . '.js' : '',
+                'https://cdnjs.cloudflare.com/ajax/libs/formvalidation/0.6.2-dev/js/formValidation.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/formvalidation/0.6.2-dev/js/framework/bootstrap.min.js',
+                $lang_files[$lang] ? 'https://cdnjs.cloudflare.com/ajax/libs/formvalidation/0.6.2-dev/js/language/' . $lang_files[$lang] . '.js' : '',
             ],
-            'css' => '//rawgit.yfix.net/formvalidation/formvalidation/master/dist/css/formValidation.min.css',
+            'css' => 'https://cdnjs.cloudflare.com/ajax/libs/formvalidation/0.6.2-dev/css/formValidation.min.css',
         ],
     ],
     'require' => [

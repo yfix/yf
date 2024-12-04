@@ -38,6 +38,8 @@ class yf_db_installer_mysql extends yf_db_installer
     /** @var array */
     public $NO_REPAIR_TABLES = [];
 
+    public $_DEF_TABLE_OPTIONS = [];
+
     /**
      * Framework construct.
      */
@@ -87,7 +89,6 @@ class yf_db_installer_mysql extends yf_db_installer
             return $this->db_query_safe($sql, $db);
         // #1146 means "Table %s doesn't exist"
         } elseif ($db_error['code'] == 1146) {
-
             // Try to get table name from error message
             preg_match('#Table [\'][a-z_0-9]+\.([a-z_0-9]+)[\'] doesn\'t exist#ims', $db_error['message'], $m);
             $item_to_repair = trim($m[1]);
@@ -187,7 +188,7 @@ class yf_db_installer_mysql extends yf_db_installer
         if (isset($db->_repairs_by_sql[$sql]) && $db->_repairs_by_sql[$sql] >= $this->NUM_RETRIES) {
             return false;
         }
-        $db->_repairs_by_sql[$sql]++;
+        @$db->_repairs_by_sql[$sql]++;
         $result = $db->query($sql);
         if ( ! $result) {
             if ($this->RETRY_DELAY) {

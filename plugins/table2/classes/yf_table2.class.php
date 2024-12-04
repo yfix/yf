@@ -57,6 +57,30 @@ class yf_table2
     public $_total = 0;
     public $_pages = '';
     public $_ids = [];
+    public $_rowspan = [];
+    public $_on = [];
+    public $_params = [];
+    public $_chained_mode = false;
+    public $_sql = null;
+    public $_extend = [];
+    public $_header_links = [];
+    public $_footer_links = [];
+    public $_form_params = [];
+    public $_fields = [];
+    public $_buttons = [];
+    public $_filter_data = [];
+    public $_filter_params = [];
+    public $_sql_with_filter = null;
+    public $_pager = null;
+    public $_data_sql_names = [];
+    public $_form = null;
+    public $_callbacks = [];
+    public $_auto_names = [];
+    public $_rownum_counter = 0;
+    public $_pair_allow_deny = null;
+    public $_pair_yes_no = null;
+    public $lang_def_country = null;
+
 
     /**
      * Catch missing method call.
@@ -209,7 +233,8 @@ class yf_table2
                 $this->_rowspan[$group_by] = $this->_data_group_by($data, $group_by);
             }
         }
-        $on_before_render = isset($params['on_before_render']) ? $params['on_before_render'] : $this->_on['on_before_render'];
+
+        $on_before_render = $params['on_before_render'] ?? $this->_on['on_before_render'] ?? null;
         if ( ! is_array($on_before_render)) {
             $on_before_render = [$on_before_render];
         }
@@ -226,7 +251,7 @@ class yf_table2
             $body = $this->_render_as_html($params, $a, $to_hide);
         }
 
-        $on_after_render = isset($params['on_after_render']) ? $params['on_after_render'] : $this->_on['on_after_render'];
+        $on_after_render = $params['on_after_render'] ?? $this->_on['on_after_render'] ?? null;
         if ( ! is_array($on_after_render)) {
             $on_after_render = [$on_after_render];
         }
@@ -392,12 +417,15 @@ class yf_table2
         if (isset($params['thead'])) {
             $thead_attrs = is_array($params['thead']) ? _attrs($params['thead'], ['class', 'id']) : ' ' . $params['thead'];
         }
-        $body .= '<thead' . $thead_attrs . '>' . PHP_EOL;
+        $body = '<thead' . $thead_attrs . '>' . PHP_EOL;
         $data1row = current($data);
         // Needed to correctly process null values, when some other rows contain real data there
         foreach ((array) $data1row as $k => $v) {
-            $data1row[$k] = (string) $v;
+            if (isset($v)) {
+                $data1row[$k] = (is_scalar($v) || is_object($v)) ? strval($v) : reset($v);
+            }
         }
+        $counter2 = 0;
         foreach ((array) $this->_fields as $info) {
             $name = $info['name'];
             if ( ! isset($data1row[$name])) {
@@ -447,7 +475,11 @@ class yf_table2
         if (isset($params['tfoot'])) {
             $tfoot_attrs = is_array($params['tfoot']) ? _attrs($params['tfoot'], ['class', 'id']) : ' ' . $params['tfoot'];
         }
-        $body .= '<tfoot' . $tfoot_attrs . '>' . PHP_EOL;
+        $th_attrs = '';
+        $th_icon_prepend = '';
+        $tip = '';
+
+        $body = '<tfoot' . $tfoot_attrs . '>' . PHP_EOL;
         foreach ((array) $this->_fields as $info) {
             $name = $info['name'];
             if ( ! isset($total_fields[$name])) {
@@ -483,7 +515,7 @@ class yf_table2
             'stpl_path' => $params['pager_stpl_path'] ?: '',
             'add_get_vars' => $params['pager_add_get_vars'] ?: 1,
             'sql_callback' => $params['pager_sql_callback'] ?: null,
-            'extra' => $params['extra'] ?: [],
+            'extra' => $params['extra'] ?? [],
         ];
         if ( ! $pager['extra']['sql_callback'] && $pager['sql_callback']) {
             $pager['extra']['sql_callback'] = &$pager['sql_callback'];
@@ -556,7 +588,7 @@ class yf_table2
                         $sql = str_replace('GROUP BY', ' WHERE 1 ' . $filter_sql . ' GROUP BY', $sql);
                     }
                 } else {
-                    // update to proper order while filtering with existing filter and groupping 
+                    // update to proper order while filtering with existing filter and groupping
                     if (strpos($sql_upper, 'GROUP BY') === false) {
                         $sql .= ' ' . $filter_sql;
                     } else {
@@ -616,6 +648,7 @@ class yf_table2
             foreach ((array) $this->_params['hidden_map'] as $field => $container) {
                 $skip_fields[$field] = $field;
             }
+            $counter = 0;
             foreach ((array) $field_names as $f) {
                 if (isset($skip_fields[$f])) {
                     continue;
@@ -744,7 +777,7 @@ class yf_table2
         foreach ((array) $this->_buttons as $k => $v) {
             $_buttons[$k] = ['func' => '%lambda%', 'data' => '%data%'] + $v;
         }
-        ! is_hhvm() && debug('table2[]', [
+        debug('table2[]', [
             'params' => $params,
             'fields' => $_fields,
             'buttons' => $_buttons,
@@ -766,7 +799,7 @@ class yf_table2
         if (isset($params['tbody'])) {
             $tbody_attrs = is_array($params['tbody']) ? _attrs($params['tbody'], ['class', 'id']) : ' ' . $params['tbody'];
         }
-        $body .= '<tbody' . $tbody_attrs . '>' . PHP_EOL;
+        $body = '<tbody' . $tbody_attrs . '>' . PHP_EOL;
         foreach ((array) $data as $_id => $row) {
             $body .= '<tr' . $this->_get_attrs_string_from_params($params['tr'], $_id, $row) . '>' . PHP_EOL;
             foreach ((array) $this->_fields as $info) {
@@ -810,7 +843,8 @@ class yf_table2
         if (isset($params['tbody'])) {
             $tbody_attrs = is_array($params['tbody']) ? _attrs($params['tbody'], ['class', 'id']) : ' ' . $params['tbody'];
         }
-        $body .= '<tbody' . $tbody_attrs . '>' . PHP_EOL;
+        $body = '<tbody' . $tbody_attrs . '>' . PHP_EOL;
+        $row = '';
         foreach ((array) $this->_fields as $info) {
             $name = $info['name'];
             if (isset($to_hide[$name])) {
@@ -1708,9 +1742,7 @@ class yf_table2
      */
     public function btn_func($name, $func, $extra = [])
     {
-        if ( ! $desc && isset($extra['desc'])) {
-            $desc = $extra['desc'];
-        }
+        $desc = $extra['desc'] ?? '';
         if ( ! $desc) {
             $desc = ucfirst(str_replace('_', ' ', $name));
         }
@@ -1953,6 +1985,7 @@ class yf_table2
                 $extra = $params['extra'];
                 $id = isset($extra['id']) ? $extra['id'] : 'id';
                 $link = $params['link'] . $instance_params['links_add'];
+                $row = '';
                 if (strlen($link)) {
                     $link = $table->_process_link_params($link, $row, $extra + ['id' => $id]);
                     if ( ! $table->_is_link_allowed($link)) {
@@ -2061,6 +2094,7 @@ class yf_table2
             $extra = $name;
             $name = $extra['name'];
         }
+        $link = '';
         $item = [
             'type' => __FUNCTION__,
             'name' => $name,

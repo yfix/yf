@@ -14,12 +14,6 @@ class yf_core_errors
     public $LOG_WARNINGS_TO_FILE = false;
     /** @var bool Log notices to the error file? */
     public $LOG_NOTICES_TO_FILE = false;
-    /** @var bool Send errors via email? */
-    public $SEND_ERRORS_TO_MAIL = false;
-    /** @var bool Send warnings via email? */
-    public $SEND_WARNINGS_TO_MAIL = false;
-    /** @var bool Send notices via email? */
-    public $SEND_NOTICES_TO_MAIL = false;
     /** @var int Error reporting level */
     public $ERROR_REPORTING = 0;
     /** @var string
@@ -28,14 +22,6 @@ class yf_core_errors
      * if log_errors is On, and error_log is set, the filename in error_log will be used.
      */
     public $error_log_filename = 'yf_core_errors{suffix}.log';
-    /** @var string The recipient email to mail errors to */
-    public $email_to = '';
-    /** @var string Recipient address */
-    public $_email_addr_to = '';
-    /** @var string Recipient name */
-    public $_email_name_to = '';
-    /** @var string @conf_skip Holds the total error report to be used by mail_error() */
-    public $mail_buffer = '';
     /** @var bool Show start and end log headers or not */
     public $_SHOW_BORDERS = false;
     /** @var bool @conf_skip Started log output or not */
@@ -76,7 +62,7 @@ class yf_core_errors
     public function __construct()
     {
         if (defined('ERROR_REPORTING')) {
-            conf('ERROR_REPORTING', (int) ERROR_REPORTING);
+            conf('ERROR_REPORTING', (int) constant('ERROR_REPORTING'));
         }
         if (conf('ERROR_REPORTING')) {
             error_reporting((int) conf('ERROR_REPORTING'));
@@ -85,14 +71,12 @@ class yf_core_errors
         $file_path = $this->_get_file_path();
         $this->set_log_file_name($file_path);
 
-        $this->set_flags(defined('error_handler_FLAGS') ? error_handler_FLAGS : '110000');
+        $this->set_flags(defined('error_handler_FLAGS') ? constant('error_handler_FLAGS') : '110000');
         $this->set_reporting_level();
-        $this->set_mail_receiver('yf_framework_site_admin', defined('SITE_ADMIN_EMAIL') ? SITE_ADMIN_EMAIL : 'php_test@127.0.0.1');
         ini_set('ignore_repeated_errors', 1);
         ini_set('ignore_repeated_source', 1);
-        set_error_handler([$this, 'error_handler'], $this->NO_NOTICES ? E_ALL ^ E_NOTICE : E_ALL);
+        set_error_handler([$this, 'error_handler'], E_ALL);
         register_shutdown_function([$this, 'error_handler_destructor']);
-
         set_exception_handler([$this,  'exception_handler']);
     }
 
@@ -124,7 +108,7 @@ class yf_core_errors
                 $suffix .= '_' . $name;
             }
         }
-        $file_path = defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : APP_PATH . 'logs/' . $this->error_log_filename;
+        $file_path = defined('ERROR_LOGS_FILE') ? constant('ERROR_LOGS_FILE') : APP_PATH . 'logs/' . $this->error_log_filename;
         $file_path = str_replace('{suffix}', $suffix, $file_path);
         $this->error_log_filename = $file_path;
         return $this->error_log_filename;
@@ -137,10 +121,6 @@ class yf_core_errors
     {
         // Restore startup working directory
         chdir(main()->_CWD);
-        // Send the email if needed
-        if (strlen($this->mail_buffer)) {
-            common()->send_mail('', 'error_handler', $this->_email_addr_to, $this->_email_name_to, 'Error Report', '', '<pre>' . $this->mail_buffer . '</pre>');
-        }
         // Send the endian log text if errors exists
         if ($this->_LOG_STARTED && $this->_SHOW_BORDERS) {
             $this->_do_save_log_info('END EXECUTION' . PHP_EOL, 1);
@@ -202,38 +182,46 @@ class yf_core_errors
 
     /**
      * The error handling routine set by set_error_handler().
+     * return true = Don't execute PHP internal error handler
      * @param mixed $error_type
      * @param mixed $error_msg
      * @param mixed $error_file
      * @param mixed $error_line
+     * @param mixed $error_context
      */
     public function error_handler($error_type, $error_msg, $error_file, $error_line)
     {
+        // $pattern_ignore_warnings = '~^(Undefined array key|Undefined variable)~';
+        // $pattern_ignore_warnings = '~^(Undefined array key|Undefined property|Undefined variable)~';
+        $pattern_ignore_warnings = '~^(Undefined array key|Undefined variable|Trying to access array offset on value of type)~';
+        // $pattern_ignore_warnings = '~^(Undefined array key|Undefined property|Undefined variable|Trying to access array offset on value of type)~';
+
+        if (preg_match($pattern_ignore_warnings, $error_msg)) {
+            return true;
+        }
+
         // quickly turn off notices logging
         if ($this->NO_NOTICES && ($error_type == E_NOTICE || $error_type == E_USER_NOTICE)) {
             return true;
         }
         $msg = '';
         $save_log = false;
-        $send_mail = false;
         // Process critical errors
+        $save_in_db = false;
         if ($error_type == E_ERROR || $error_type == E_USER_ERROR) {
             if ($this->LOG_ERRORS_TO_FILE) {
                 $save_log = true;
-            }
-            if ($this->SEND_ERRORS_TO_MAIL) {
-                $send_mail = true;
             }
             if ($this->LOG_INTO_DB) {
                 $save_in_db = true;
             }
             // Process warnings errors
         } elseif ($error_type == E_WARNING || $error_type == E_USER_WARNING) {
+            if (preg_match($pattern_ignore_warnings, $error_msg)) {
+                return true;
+            }
             if ($this->LOG_WARNINGS_TO_FILE) {
                 $save_log = true;
-            }
-            if ($this->SEND_WARNINGS_TO_MAIL) {
-                $send_mail = true;
             }
             if ($this->LOG_INTO_DB) {
                 $save_in_db = true;
@@ -242,9 +230,6 @@ class yf_core_errors
         } elseif ($error_type == E_NOTICE || $error_type == E_USER_NOTICE) {
             if ($this->LOG_NOTICES_TO_FILE) {
                 $save_log = true;
-            }
-            if ($this->SEND_NOTICES_TO_MAIL) {
-                $send_mail = true;
             }
             if ($this->LOG_INTO_DB) {
                 $save_in_db = false;
@@ -262,31 +247,25 @@ class yf_core_errors
             $IP = $_SERVER['REMOTE_ADDR'];
         }
         $trace = array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5);
-        if ($save_log || $send_mail) {
-            $DIVIDER = PHP_EOL;
-            if ($this->USE_COMPACT_FORMAT) {
-                $DIVIDER = '#@#';
-            }
-            $msg = [
-                date('Y-m-d H:i:s'),
-                $this->error_types[$error_type],
-                str_replace(["\r", PHP_EOL], '', $error_msg) . ';',
-                'SOURCE=' . implode(';', $trace),
-                'SID=' . conf('SITE_ID'),
-                'IP=' . $IP,
-                'QS=' . WEB_PATH . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''),
-                'URL=http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-                'REF=' . $_SERVER['HTTP_REFERER'],
-                $this->_log_display_array('GET'),
-                $this->_log_display_array('POST'),
-                $this->_log_display_array('FILES'),
-                $this->_log_display_array('COOKIE'),
-                $this->_log_display_array('SESSION'),
-                'UA=' . $_SERVER['HTTP_USER_AGENT'],
-            ];
-            $msg = implode($DIVIDER, $msg) . PHP_EOL;
-        }
         if ($save_log) {
+            $msg = json_encode([
+                'time' => date('Y-m-d H:i:s'),
+                'type' => $this->error_types[$error_type],
+                'msg' => str_replace(["\r", PHP_EOL], '', $error_msg) . ';',
+                'src' => implode(';', $trace),
+                'site' => conf('SITE_ID'),
+                'ip' => $IP,
+                'qs' => WEB_PATH . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''),
+                'url' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+                'ref' => @$_SERVER['HTTP_REFERER'],
+                'get' => $this->_log_display_array('GET'),
+                'post' => $this->_log_display_array('POST'),
+                'files' => $this->_log_display_array('FILES'),
+                'cookie' => $this->_log_display_array('COOKIE'),
+                'session' => $this->_log_display_array('SESSION'),
+                'us' => $_SERVER['HTTP_USER_AGENT'],
+            ]) . PHP_EOL;
+
             if ( ! $this->_LOG_STARTED) {
                 if ($this->_SHOW_BORDERS) {
                     $this->_do_save_log_info('START EXECUTION' . PHP_EOL, 1);
@@ -295,9 +274,6 @@ class yf_core_errors
             }
             $this->_do_save_log_info($msg);
         }
-        if ($send_mail) {
-            $this->mail_buffer .= $msg;
-        }
         $data = [
             'error_level' => (int) $error_type,
             'error_text' => $error_msg,
@@ -305,13 +281,13 @@ class yf_core_errors
             'source_line' => (int) $error_line,
             'date' => time(),
             'site_id' => (int) conf('SITE_ID'),
-            'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
-            'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
+            'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id'] ?? 0),
+            'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group'] ?? 0),
             'is_admin' => MAIN_TYPE_ADMIN ? 1 : 0,
             'ip' => $IP,
             'query_string' => WEB_PATH . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''),
             'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-            'referer' => $_SERVER['HTTP_REFERER'],
+            'referer' => @$_SERVER['HTTP_REFERER'],
             'request_uri' => $_SERVER['REQUEST_URI'],
             'env_data' => $this->DB_LOG_ENV ? $this->_prepare_env() : '',
             'object' => $_GET['object'],
@@ -366,23 +342,11 @@ class yf_core_errors
             error_log($msg, 0);
         } else {
             $log_dir = dirname($this->error_log_filename);
-            if ( ! file_exists($log_dir)) {
+            if (! file_exists($log_dir)) {
                 mkdir($log_dir, 0755, true);
             }
             error_log($msg, 3, $this->error_log_filename);
         }
-    }
-
-    /**
-     * This method will set which email address error reports are sent to.
-     * @param mixed $recipient_name
-     * @param mixed $recipient_address
-     */
-    public function set_mail_receiver($recipient_name, $recipient_address)
-    {
-        $this->email_to = $recipient_name . ' <' . $recipient_address . '>';
-        $this->_email_addr_to = $recipient_address;
-        $this->_email_name_to = $recipient_name;
     }
 
     /**
@@ -392,7 +356,7 @@ class yf_core_errors
     public function set_log_file_name($filename)
     {
         $dir = dirname($filename);
-        if ( ! file_exists($dir)) {
+        if (! file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         $this->error_log_filename = $filename;
@@ -407,9 +371,6 @@ class yf_core_errors
         $this->LOG_ERRORS_TO_FILE = (bool) $input[0];
         $this->LOG_WARNINGS_TO_FILE = (bool) $input[1];
         $this->LOG_NOTICES_TO_FILE = (bool) $input[2];
-        $this->SEND_ERRORS_TO_MAIL = (bool) $input[3];
-        $this->SEND_WARNINGS_TO_MAIL = (bool) $input[4];
-        $this->SEND_NOTICES_TO_MAIL = (bool) $input[5];
     }
 
     /**

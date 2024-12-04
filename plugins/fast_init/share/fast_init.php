@@ -73,6 +73,7 @@ if ( ! isset($CONF['fast_init_call']) || ! is_callable($CONF['fast_init_call']))
 }
 
 // try
+$done = null;
 if ($fname) {
     $done = $fast_init_call($fname);
 }

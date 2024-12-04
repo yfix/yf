@@ -94,8 +94,6 @@ if (function_exists('http_match_etag') && function_exists('http_match_modified')
         exit;
     }
 } else {
-    //print_R($_SERVER);
-    //print_R(apache_request_headers());
     // Check http headers:
     $modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $date : null;
     if ( ! empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) && ($timestamp = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])) > 0) {

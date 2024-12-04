@@ -3,7 +3,7 @@
 return [
     'versions' => [
         'master' => [
-            'js' => '//rawgit.yfix.net/yfix/socket.io-client/master/socket.io.js',
+            'js' => 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js',
         ],
     ],
 ];

@@ -3,6 +3,8 @@
 
 class yf_html_datetime
 {
+    public $_ids = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -23,13 +25,13 @@ class yf_html_datetime
      * @param mixed $show_text
      * @param mixed $translate
      */
-    public function date_box($selected = '', $years = '', $name_postfix = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1)
+    public function date_box($selected = '', $years = '', $name_postfix = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1, $extra = [])
     {
         if (is_array($selected)) {
-            $extra = (array) $extra + $name;
+            $extra = (array) $extra;
             $selected = $extra['selected'];
 
-            $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
+            $values = $extra['values'] ?? []; // Required
             $selected = $extra['selected'];
 
             $years = isset($extra['years']) ? $extra['years'] : '';
@@ -96,16 +98,16 @@ class yf_html_datetime
      * @param mixed $show_text
      * @param mixed $translate
      */
-    public function time_box($selected = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1)
+    public function time_box($selected = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1, $extra = [])
     {
         if (is_array($selected)) {
-            $extra = (array) $extra + $name;
+            $extra = (array) $extra;
             $selected = $extra['selected'];
-            $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
-            $selected = $extra['selected'];
-            $show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
-            $translate = isset($extra['translate']) ? $extra['translate'] : 1;
-            $add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+            $values = $extra['values'] ?? []; // Required
+            $selected = $extra['selected'] ?? null;
+            $show_text = $extra['show_text'] ?? 1;
+            $translate = $extra['translate'] ?? 1;
+            $add_str = $extra['add_str'] ?? '';
             if ($extra['class']) {
                 $add_str .= ' class="' . $extra['class'] . '" ';
             }
@@ -121,7 +123,7 @@ class yf_html_datetime
             }
             list($hour, $minute, $second) = explode(':', $selected);
         }
-        $body .= '<select name="hour' . $name_postfix . '"' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . $name_postfix . '_hour"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
+        $body = '<select name="hour' . $name_postfix . '"' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . $name_postfix . '_hour"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
         $body .= $show_text ? '<option ' . ($hour == '' ? 'selected="selected"' : '') . ' value="">-' . ($translate ? t('hour') : 'hour') . '-</option>' . PHP_EOL : '';
         for ($a = 0; $a <= 23; $a++) {
             $body .= '<option ' . (($hour == $a && $hour != '') ? 'selected="selected"' : '') . ' value="' . $a . '">' . $a . '</option>' . PHP_EOL;
@@ -151,26 +153,31 @@ class yf_html_datetime
      * @param mixed $show_text
      * @param mixed $translate
      */
-    public function date_box2($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1)
+    public function date_box2($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1, $extra = [])
     {
-        if (is_array($selected)) {
-            $extra = (array) $extra + $name;
-            $name = $extra['name'];
-            $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
+        if (is_array($name)) {
+            $extra = $extra + $name;
+            $name = strval($extra['name']);
             $selected = $extra['selected'];
-            $years = isset($extra['years']) ? $extra['years'] : '';
-            $show_what = isset($extra['show_what']) ? $extra['show_what'] : 'ymd';
-            $show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
-            $translate = isset($extra['translate']) ? $extra['translate'] : 1;
-            $add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-            if ($extra['class']) {
+        }
+        if (is_array($selected)) {
+            $extra = (array) $extra;
+            $name = $extra['name'];
+            $values = $extra['values'] ?? []; // Required
+            $selected = $extra['selected'];
+            $years = $extra['years'] ?? '';
+            $show_what = $extra['show_what'] ?? 'ymd';
+            $show_text = $extra['show_text'] ?? 1;
+            $translate = $extra['translate'] ?? 1;
+            $add_str = $extra['add_str'] ?? '';
+            if ($extra['class'] ?? '') {
                 $add_str .= ' class="' . $extra['class'] . '" ';
             }
-            if ($extra['style']) {
+            if ($extra['style'] ?? '') {
                 $add_str .= ' style="' . $extra['style'] . '" ';
             }
         }
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = strval($extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__]);
         if (strlen($selected)) {
             // Process timestamp (convert it to the 'Y-m-d' pattern)
             if (is_numeric($selected)) {
@@ -184,19 +191,21 @@ class yf_html_datetime
             $start_year = 1900;
             $end_year = gmdate('Y');
         }
-        $y .= PHP_EOL . '<select name="' . $name . '[year]"' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . '_year"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
+        $y = PHP_EOL . '<select name="' . $name . '[year]"' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . '_year"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
         $y .= $show_text ? '<option ' . ( ! $year ? 'selected="selected"' : '') . ' value="">-' . ($translate ? t('year') : 'year') . '-</option>' . PHP_EOL : '';
         for ($a = $start_year; $a <= $end_year; $a++) {
             $y .= '<option ' . (($year == $a) ? 'selected="selected"' : '') . ' value="' . $a . '">' . $a . '</option>' . PHP_EOL;
         }
         $y .= '</select>' . PHP_EOL;
-        $m .= '<select name="' . $name . '[month]"' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . '_month"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
+
+        $m = '<select name="' . $name . '[month]"' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . '_month"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
         $m .= $show_text ? '<option ' . ( ! $month ? 'selected="selected"' : '') . ' value="">-' . ($translate ? t('month') : 'month') . '-</option>' . PHP_EOL : '';
         for ($a = 1; $a <= 12; $a++) {
             $m .= '<option ' . (($month == $a) ? 'selected="selected"' : '') . ' value="' . $a . '">' . ($translate ? t($this->_months($a)) : $this->_months($a)) . '</option>' . PHP_EOL;
         }
         $m .= '</select>' . PHP_EOL;
-        $d .= '<select name="' . $name . '[day]"' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . '_day"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
+
+        $d = '<select name="' . $name . '[day]"' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . '_day"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
         $d .= $show_text ? '<option ' . ( ! $day ? 'selected="selected"' : '') . ' value="">-' . ($translate ? t('day') : 'day') . '-</option>' . PHP_EOL : '';
         for ($a = 1; $a <= 31; $a++) {
             $d .= '<option ' . (($day == $a) ? 'selected="selected"' : '') . ' value="' . $a . '">' . $a . '</option>' . PHP_EOL;
@@ -221,16 +230,21 @@ class yf_html_datetime
      * @param mixed $show_text
      * @param mixed $translate
      */
-    public function time_box2($name, $selected = '', $add_str = '', $show_text = 1, $translate = 1)
+    public function time_box2($name, $selected = '', $add_str = '', $show_text = 1, $translate = 1, $extra = [])
     {
-        if (is_array($selected)) {
-            $extra = (array) $extra + $name;
-            $name = $extra['name'];
-            $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
+        if (is_array($name)) {
+            $extra = $extra + $name;
+            $name = strval($extra['name']);
             $selected = $extra['selected'];
-            $show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
-            $translate = isset($extra['translate']) ? $extra['translate'] : 1;
-            $add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+        }
+        if (is_array($selected)) {
+            $extra = (array) $extra;
+            $name = strval($extra['name']) ?? '';
+            $values = $extra['values'] ?? []; // Required
+            $selected = $extra['selected'] ?? null;
+            $show_text = $extra['show_text'] ?? 1;
+            $translate = $extra['translate'] ?? 1;
+            $add_str = $extra['add_str'] ?? '';
             if ($extra['class']) {
                 $add_str .= ' class="' . $extra['class'] . '" ';
             }
@@ -246,8 +260,12 @@ class yf_html_datetime
             }
             list($hour, $minute, $second) = explode(':', $selected);
         }
-        $body .= PHP_EOL . '<select name="' . $name . '"[hour]' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . '_hour"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
-        $body .= $show_text ? '<option ' . ($hour == '' ? 'selected="selected"' : '') . ' value="">-' . ($translate ? t('hour') : 'hour') . '-</option>' . PHP_EOL : '';
+        $body = PHP_EOL . '<select name="' . $name . '"[hour]'
+            . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . '_hour"' : '')
+            . ' class="span1 col-md-1">' . PHP_EOL;
+        $body .= $show_text
+            ? '<option ' . ($hour == '' ? 'selected="selected"' : '') . ' value="">-' . ($translate ? t('hour') : 'hour') . '-</option>' . PHP_EOL
+            : '';
         for ($a = 0; $a <= 23; $a++) {
             $body .= '<option ' . (($hour == $a && $hour != '') ? 'selected="selected"' : '') . ' value="' . $a . '">' . $a . '</option>' . PHP_EOL;
         }

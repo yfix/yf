@@ -157,8 +157,11 @@ class yf_cats
     public function _get_items_names($cat_name = '', $recursive_sort = true, $all = false)
     {
         $items = [];
-        foreach ((array) $this->_get_items_array($cat_name, $recursive_sort, $all) as $item_id => $item_info) {
-            $items[$item_info['id']] = $item_info['name'];
+        foreach ((array) $this->_get_items_array($cat_name, $recursive_sort, $all) as $item_id => $item) {
+            $id = $item['id'] ?? null;
+            if ($id !== null) {
+                $items[$id] = $item['name'];
+            }
         }
         return $items;
     }
@@ -364,6 +367,8 @@ class yf_cats
             $nav_items_ids = array_reverse($parents_ids, 1);
         }
         $nav_items_ids[$item_id] = $item_id;
+        $body = '';
+        $i = 0;
         foreach ((array) $nav_items_ids as $cur_item_id) {
             if ($USE_CALLBACK) {
                 $item_link = call_user_func($prepare_link_callback, $cur_item_id);

@@ -11,6 +11,11 @@ class yf_core_menu
     /** @conf_skip */
     public $USE_DYNAMIC_ATTS = true;
 
+    public $_menus_infos = null;
+    public $_menu_items = null;
+    public $_active_modules = null;
+    public $_error_no_menus_raised = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name

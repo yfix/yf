@@ -73,20 +73,20 @@ class yf_dir
         if (false === strpos($pattern, '[')) {
             $pattern = $this->_sql_regcase($pattern);
         }
-        $files = (array) glob($folder . '/' . $pattern, GLOB_BRACE | GLOB_NOSORT);
-        $dirs = (array) glob($folder . '/*', GLOB_BRACE | GLOB_ONLYDIR | GLOB_NOSORT);
-        // Dotted dirs
-        foreach (glob($folder . '/.**', GLOB_BRACE | GLOB_ONLYDIR | GLOB_NOSORT) as $path) {
-            $d = basename($path);
-            if ($d === '.' || $d === '..' || $d === '.git' || $d === '.svn') {
-                continue;
-            }
-            $dirs[] = $path;
+
+        $files = (array) glob($folder . '/' . $pattern, GLOB_NOSORT);
+        $dirs = array_merge(
+            (array) glob($folder . '/*', GLOB_ONLYDIR | GLOB_NOSORT),
+            array_filter((array) glob($folder . '/.*', GLOB_ONLYDIR | GLOB_NOSORT), function ($path) {
+                $d = basename($path);
+                return $d !== '.' && $d !== '..' && $d !== '.git' && $d !== '.svn';
+            })
+        );
+
+        foreach ($dirs as $dir) {
+            $files = array_merge($files, $this->rglob($dir, $pattern));
         }
-        $func = __FUNCTION__;
-        foreach ((array) $dirs as $dir) {
-            $files = array_merge($files, $this->$func($dir, $pattern));
-        }
+
         return $files;
     }
 

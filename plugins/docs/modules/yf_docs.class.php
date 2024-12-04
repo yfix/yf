@@ -5,6 +5,8 @@ class yf_docs
     private $whats_new = [
         'demo',
     ];
+    public $docs_dir = null;
+    public $demo_dir = null;
 
     /**
      * Catch missing method call.
@@ -106,6 +108,7 @@ class yf_docs
             $only_method = current($methods);
         }
         $url = url('/@object');
+        $items = [];
         foreach ((array) $methods as $name) {
             if ($only_method && $only_method !== $name) {
                 continue;
@@ -331,7 +334,7 @@ class yf_docs
         ];
         $names = [];
         foreach ($globs as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $cls) {
+            foreach (glob($glob) as $cls) {
                 $cls = basename($cls);
                 if ($cls == __CLASS__) {
                     continue;
@@ -363,7 +366,7 @@ class yf_docs
     {
         return implode(PHP_EOL, [
             form_item()->country_box(['selected' => 'US', 'renderer' => 'div_box']),
-            form_item()->language_box(['selected' => 'ru', 'renderer' => 'div_box']),
+            form_item()->language_box(['selected' => 'uk', 'renderer' => 'div_box']),
             form_item()->currency_box(['selected' => 'UAH', 'renderer' => 'div_box']),
             form_item()->timezone_box(['selected' => 'UTC', 'renderer' => 'div_box']),
         ]);
