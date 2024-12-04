@@ -76,11 +76,9 @@ class sample_services
     {
         $services = [];
         $suffix = '.php';
-        $dir = 'share/services/';
-        $pattern = $dir . '*' . $suffix;
         $globs = [
-            'yf_main' => YF_PATH . $pattern,
-            'yf_plugins' => YF_PATH . 'plugins/*/' . $pattern,
+            'yf_main' => YF_PATH . 'share/services/*' . $suffix,
+            'yf_plugins' => YF_PATH . 'plugins/*/' . 'share/services/*' . $suffix,
         ];
         $slen = strlen($suffix);
         $names = [];

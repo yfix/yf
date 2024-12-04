@@ -597,12 +597,14 @@ class yf_main
             'framework' => [
                 YF_PATH . 'events/*' . $ext,
                 YF_PATH . 'plugins/*/events/*' . $ext,
-                YF_PATH . 'share/events/*' . $ext
+                YF_PATH . 'share/events/*' . $ext,
+                YF_PATH . 'plugins/*/share/events/*' . $ext,
             ],
             'app' => [
                 APP_PATH . 'events/*' . $ext,
                 APP_PATH . 'plugins/*/events/*' . $ext,
-                APP_PATH . 'share/events/*' . $ext
+                APP_PATH . 'share/events/*' . $ext,
+                APP_PATH . 'plugins/*/share/events/*' . $ext,
             ],
         ];
         $ext_len = strlen($ext);
