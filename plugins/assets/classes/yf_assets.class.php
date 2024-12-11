@@ -1570,9 +1570,9 @@ class yf_assets
             $_params = ((array) $v['params'] + (array) $params) ?? [];
             $content_type = $v['content_type'];
             $cached_path = '';
-            $use_cache = $this->USE_CACHE && ! $_params['no_cache'] && ! $_params['config']['no_cache'];
+            $use_cache = $this->USE_CACHE && ! ( $_params['no_cache'] ?? false ) && ! ( $_params['config']['no_cache'] ?? false );
             if ($use_cache && $content_type === 'inline') {
-                if ( ! $this->CACHE_INLINE_ALLOW || ! $_params['config']['inline_cache'] || strlen($v['content']) < $this->CACHE_INLINE_MIN_SIZE) {
+                if ( ! $this->CACHE_INLINE_ALLOW || ! ( $_params['config']['inline_cache'] ?? false ) || strlen($v['content']) < $this->CACHE_INLINE_MIN_SIZE) {
                     $use_cache = false;
                 }
             }
