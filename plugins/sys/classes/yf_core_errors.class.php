@@ -246,7 +246,7 @@ class yf_core_errors
         if ( ! $IP) {
             $IP = $_SERVER['REMOTE_ADDR'];
         }
-        $trace = array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5);
+        $trace = array_slice(explode(PHP_EOL, main()->trace_string()), 0, 5);
         if ($save_log) {
             $msg = json_encode([
                 'time' => date('Y-m-d H:i:s'),
