@@ -1006,9 +1006,20 @@ class yf_tpl_driver_yf
                 // Bugfix for mixed arrays
                 if (is_array($sub_v)) {
                     foreach ($sub_v as $k => $v) {
-                        if (is_array($v)) {
-                            $sub_v[$k] = implode(",", $v);
+                        $_v = [];
+                        if (is_scalar($v) || is_object($v)) {
+                            $_v = [ strval($v) ];
+                        } elseif (is_array($v)) {
+                            foreach( $v as $v1 ) {
+                                if (is_scalar($v1) || is_object($v1)) {
+                                     $_v[] = strval($v1);
+                                } else {
+                                    $_v = [ 'Array' ]; break;
+                                }
+                            }
                         }
+                        $_v = implode(',', $_v);
+                        $sub_v[$k] = $_v;
                     }
                     $_val = implode(',', $sub_v);
                 } elseif (is_scalar($sub_v) || is_object($sub_v)) {
