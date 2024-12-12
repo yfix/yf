@@ -172,6 +172,8 @@ class yf_payment_api
     public $status = null;
     public $status_index = null;
 
+    public $ROUND_MODE = PHP_ROUND_HALF_EVEN;
+
     public $DECIMALS = 2;
     public $DECIMAL_POINT = ',';
     public $THOUSANDS_SEPARATOR = '&nbsp;';
@@ -322,7 +324,7 @@ class yf_payment_api
     public function get_account_type__by_name($options = null)
     {
         $_ = &$options;
-        $name = $_['name'] ?: $this->account_type_id_default;
+        $name = ( $_['name'] ?? null ) ?: $this->account_type_id_default;
         $result = db()->table('payment_account_type')
             ->where('name', '=', _es($name))
             ->get_deep_array(1);
@@ -411,11 +413,11 @@ class yf_payment_api
     {
         $_ = &$options;
         // default
-        $currency_id = $_['currency_id']
+        $currency_id = ( $_['currency_id'] ?? null )
             ?: $this->currency_id
             ?: $this->currency_id_default;
         $_['currency_id'] = &$currency_id;
-        $type = @$_['type'] == 'sell' ? 'sell' : 'buy';
+        $type = ( $_['type'] ?? null ) == 'sell' ? 'sell' : 'buy';
         $_['type'] = &$type;
         // start
         $currency__api = _class('payment_api__currency');
@@ -464,9 +466,9 @@ class yf_payment_api
     public function currency_conversion($options = null)
     {
         $_ = &$options;
-        $conversion_type = @$_['type'] == 'sell' ? 'sell' : 'buy';
-        $currency_id = @$_['currency_id'];
-        $amount = @$_['amount'];
+        $conversion_type = ( $_['type'] ?? null ) == 'sell' ? 'sell' : 'buy';
+        $currency_id = ( $_['currency_id'] ?? null );
+        $amount = ( $_['amount'] ?? null );
         if (empty($currency_id) || empty($amount)) {
             return  null;
         }
@@ -510,7 +512,7 @@ class yf_payment_api
         $data = [];
         // user_id
         $value = $this->_default([
-            $_['user_id'],
+            ( $_['user_id'] ?? null ),
             $this->user_id,
         ]);
         $value = $this->check_user_id($value);
@@ -519,14 +521,14 @@ class yf_payment_api
         }
         $data['user_id'] = $value;
         // account_type_id
-        $value = (int) $_['account_type_id'] ?: $this->account_type_id;
+        $value = (int) ( $_['account_type_id'] ?? null ) ?: $this->account_type_id;
         empty($value) && (list($value) = $this->get_account_type__by_name($options));
         if (empty($value)) {
             return  null;
         }
         $data['account_type_id'] = $value;
         // currency_id
-        $value = (int) $_['currency_id'] ?: $this->currency_id;
+        $value = (int) ( $_['currency_id'] ?? null ) ?: $this->currency_id;
         empty($value) && list($value) = $this->get_currency__by_id();
         if (empty($value)) {
             return  null;
@@ -570,7 +572,7 @@ class yf_payment_api
         $db->where('user_id', '=', _es($value));
         $options['user_id'] = $value;
         // by account_type_id
-        $value = (int) $_['account_type_id'] ?: $this->account_type_id;
+        $value = (int) ( $_['account_type_id'] ?? null ) ?: $this->account_type_id;
         empty($value) && (list($value) = $this->get_account_type__by_name($options));
         if (empty($value)) {
             return  null;
@@ -578,7 +580,7 @@ class yf_payment_api
         $db->where('account_type_id', '=', _es($value));
         $options['account_type_id'] = $value;
         // by currency_id
-        $value = $_['currency_id'] ?: $this->currency_id;
+        $value = ( $_['currency_id'] ?? null ) ?: $this->currency_id;
         empty($value) && list($value) = $this->get_currency__by_id();
         if (empty($value)) {
             return  null;
@@ -646,9 +648,9 @@ class yf_payment_api
         }
         // options
         $_ = &$options;
-        $exists = $_['exists'];
-        $type_id = $_['type_id'];
-        $name = $_['name'];
+        $exists = ( $_['exists'] ?? null );
+        $type_id = ( $_['type_id'] ?? null );
+        $name = ( $_['name'] ?? null );
         // test: exists by type_id
         if ( ! empty($exists)) {
             $result = ! empty($type[$exists]);
@@ -760,10 +762,10 @@ class yf_payment_api
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $result = null;
         if ( ! empty($_provider_name)) {
-            $class_name = 'provider_' . $_provider_name;
-            $class = $this->_class($class_name);
-            if ( ! ($class && $provider_class->ENABLE)) {
-                $result = $class;
+            $class = 'provider_' . $_provider_name;
+            $provider_class = $this->_class($class);
+            if ($provider_class && $provider_class->ENABLE) {
+                $result = $provider_class;
             }
         }
         return  $result;
@@ -778,7 +780,7 @@ class yf_payment_api
         $provider_index = $this->provider_index;
         if (empty($provider)) {
             $is_admin = main()->ADMIN_ID > 0;
-            $active = $is_admin || $_is_service ? 1 : 2;
+            $active = $is_admin || @$_is_service ? 1 : 2;
             $provider = db()->table('payment_provider')
                 ->where('active', '>=', $active)
                 ->order_by('order')
@@ -917,7 +919,7 @@ class yf_payment_api
     public function transaction($options = null)
     {
         $_ = &$options;
-        $operation = $_['operation'];
+        $operation = ( $_['operation'] ?? null );
         if ( ! in_array($operation, ['payment', 'deposition'])) {
             $result = [
                 'status' => false,
@@ -943,7 +945,7 @@ class yf_payment_api
     public function transaction_system($options = null)
     {
         $_ = &$options;
-        $operation = $_['operation'] . '_system';
+        $operation = ( $_['operation'] ?? '' ) . '_system';
         if ( ! in_array($operation, ['payment_system', 'deposition_system'])) {
             $result = [
                 'status' => false,
@@ -1359,11 +1361,11 @@ class yf_payment_api
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // operation
-        $operation = $this->operation(['operation_id' => $_operation_id]);
+        $operation = $this->operation(['operation_id' => @$_operation_id]);
         if (empty($operation)) {
             $result = [
                 'status' => false,
-                'status_message' => 'Операция отсутствует: ' . $_operation_id,
+                'status_message' => 'Операция отсутствует: ' . @$_operation_id,
             ];
             return  $result;
         }
@@ -1391,7 +1393,7 @@ class yf_payment_api
         if (empty($operation)) {
             $result = [
                 'status' => false,
-                'status_message' => 'Операция отсутствует: ' . $_operation_id,
+                'status_message' => 'Операция отсутствует: ' . @$_operation_id,
             ];
             return  $result;
         }
@@ -1439,7 +1441,7 @@ class yf_payment_api
         $_ = &$options;
         // check user_id
         $value = $this->_default([
-            $_['user_id'],
+            ( $_['user_id'] ?? null ),
             $this->user_id,
         ]);
         $value = $this->check_user_id($value);
@@ -1794,7 +1796,7 @@ class yf_payment_api
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // operation
         $operation = $this->operation([
-            'operation_id' => $_operation_id,
+            'operation_id' => @$_operation_id,
         ]);
         if ( ! $operation) {
             $result = [
@@ -2344,10 +2346,10 @@ class yf_payment_api
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // currency
-        list($currency_id, $currency) = $this->get_currency__by_id(['currency_id' => $_currency_id]);
+        list($currency_id, $currency) = $this->get_currency__by_id(['currency_id' => @$_currency_id]);
         $decimals = $currency['minor_units'];
         $sign = $currency['sign'];
-        switch ($_format) {
+        switch (@$_format) {
             case 'html':
                 $thousands_separator = '&nbsp;';
                 // no break
@@ -2363,7 +2365,7 @@ class yf_payment_api
         $value = $this->_number_format($value, $decimals, $decimal_point, $thousands_separator);
         // decoration
         $nbsp = '';
-        switch ($_format) {
+        switch (@$_format) {
             case 'html':
                 $sign = '<span class="currency">' . $sign . '</span>';
                 $value = '<span class="money">' . $value . '</span>';
