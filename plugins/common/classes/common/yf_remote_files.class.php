@@ -517,7 +517,7 @@ class yf_remote_files
                 unset($http_queue[$id]);
                 // Get next http url from queue to process (related to max_threads)
                 if (count((array) $http_queue)) {
-                    list($new_id, $new_details) = each($http_queue);
+                    list($new_id, $new_details) = [ key($http_queue), current($http_queue) ];
                     $this->_curl_use_http_queue_item($new_id, $new_details);
                     // Remove queue item to not process url again
                     unset($http_queue[$new_id]);
