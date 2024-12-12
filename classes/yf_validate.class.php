@@ -5,6 +5,9 @@
  */
 class yf_validate
 {
+    public $_params;
+    public $_replace;
+
     /** @var int Minimal nick length */
     public $MIN_NICK_LENGTH = 2;
     /** @var array Allowed nick symbols (display for user) */
@@ -55,7 +58,7 @@ class yf_validate
             $input = ['input' => $input];
         }
         $rules = [];
-        $global_rules = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
+        $global_rules = $this->_params['validate'] ?? $this->_replace['validate'] ?? [];
         foreach ((array) $global_rules as $name => $_rules) {
             $rules[$name] = $_rules;
         }
