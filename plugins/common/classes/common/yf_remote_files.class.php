@@ -46,7 +46,7 @@ class yf_remote_files
      */
     public function _init()
     {
-        if ($GLOBALS['USE_CURL_DEBUG'] || conf('USE_CURL_DEBUG')) {
+        if (( $GLOBALS['USE_CURL_DEBUG'] ?? false ) || conf('USE_CURL_DEBUG')) {
             $this->DEBUG = true;
         }
     }
