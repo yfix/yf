@@ -424,7 +424,7 @@ class yf_form2
                 $this->_set_hidden_token($csrf_guard);
             }
 
-            $on_post = isset($extra['on_post']) ? $extra['on_post'] : $this->_on['on_post'];
+            $on_post = isset($extra['on_post']) ? $extra['on_post'] : ( $this->_on['on_post'] ?? null );
             if (is_callable($on_post)) {
                 $on_post($extra, $replace, $this);
             }
