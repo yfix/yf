@@ -1101,7 +1101,7 @@ class yf_html
             'selected' => isset($selected) ? $selected : $extra['selected'],
             'use_stpl' => false,
             'label_extra' => [
-                'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_RADIO) . ($extra['horizontal'] ? ' ' . $this->CLASS_LABEL_RADIO_INLINE : ''),
+                'class' => (( $label_extra['class'] ?? null ) ?: $this->CLASS_LABEL_BTN_RADIO) . ($extra['horizontal'] ? ' ' . $this->CLASS_LABEL_RADIO_INLINE : ''),
             ],
         ] + $extra;
         $label_right = $extra['label_right'] ? '<label class="text">&nbsp;<small>' . $extra['desc'] . '</small></label>' : '';
