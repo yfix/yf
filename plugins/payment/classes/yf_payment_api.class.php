@@ -169,6 +169,9 @@ class yf_payment_api
     public $type = null;
     public $type_index = null;
 
+    public $status = null;
+    public $status_index = null;
+
     public $DECIMALS = 2;
     public $DECIMAL_POINT = ',';
     public $THOUSANDS_SEPARATOR = '&nbsp;';
@@ -245,6 +248,8 @@ class yf_payment_api
     // );
 
     public $transaction = null;
+
+    public $_class_path = '';
 
     public $DUMP_PATH = '/tmp';
     public $dump = null;
@@ -334,8 +339,8 @@ class yf_payment_api
     public function get_currency__by_id($options = null)
     {
         $_ = &$options;
-        $to_set = $_['to_set'];
-        $currency_id = $_['currency_id']
+        $to_set = $_['to_set'] ?? null;
+        $currency_id = ( $_['currency_id'] ?? null )
             ?: $this->currency_id
             ?: $this->currency_id_default;
         $result = $this->currencies[$currency_id];
@@ -362,7 +367,7 @@ class yf_payment_api
         }
         // get from db
         $_ = &$options;
-        $account_id = (int) $_['account_id'];
+        $account_id = (int) ( $_['account_id'] ?? 0 );
         if (empty($account_id)) {
             return  null;
         }
@@ -554,7 +559,7 @@ class yf_payment_api
         $db = db()->table('payment_account')->order_by('account_id');
         // user_id
         $value = $this->_default([
-            $_['user_id'],
+            ( $_['user_id'] ?? null ),
             $this->user_id,
         ]);
         $value = $this->check_user_id($value);
@@ -705,9 +710,9 @@ class yf_payment_api
         }
         // options
         $_ = &$options;
-        $exists = $_['exists'];
-        $status_id = $_['status_id'];
-        $name = $_['name'];
+        $exists = ( $_['exists'] ?? null );
+        $status_id = ( $_['status_id'] ?? null );
+        $name = ( $_['name'] ?? null );
         // test: exists by status_id
         if ( ! empty($exists)) {
             $result = ! empty($status[$exists]);
