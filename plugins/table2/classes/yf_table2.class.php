@@ -194,7 +194,7 @@ class yf_table2
         $data = &$a['data'];
         $ids = &$a['ids'];
         if (main()->is_post()) {
-            $on_post = isset($params['on_post']) ? $params['on_post'] : $this->_on['on_post'];
+            $on_post = isset($params['on_post']) ? $params['on_post'] : ( $this->_on['on_post'] ?? null );
             if ( ! is_array($on_post)) {
                 $on_post = [$on_post];
             }
