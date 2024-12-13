@@ -1947,7 +1947,7 @@ class yf_payment_api
         $tx = &$this->transaction;
         $result = null;
         // save last transaction isolation level
-        if ( ! @$tx['level']) {
+        if ( ! ( $tx['level'] ?? false )) {
             $tx['level'] = $this->transaction_isolation();
             // set highest level of isolation
             $result = $this->transaction_isolation(['level' => 'SERIALIZABLE']);
