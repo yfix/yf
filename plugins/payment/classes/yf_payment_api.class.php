@@ -628,7 +628,7 @@ class yf_payment_api
         }
         $value = $account['balance'];
         // prepare balance
-        $decimals = $this->currency['minor_units'];
+        $decimals = $this->currency['minor_units'] ?? null;
         $balance = $this->_number_float($value, $decimals);
         return  [$balance, $result];
     }
@@ -1522,7 +1522,7 @@ class yf_payment_api
         ! isset($_['is_balance_limit_lower']) && $_['is_balance_limit_lower'] = $this->IS_BALANCE_LIMIT_LOWER;
         $balance_limit_lower = $this->_default([
             $_['balance_limit_lower'],
-            $account['options']['balance_limit_lower'],
+            $account['options']['balance_limit_lower'] ?? null,
             $this->BALANCE_LIMIT_LOWER,
             0,
         ]);
@@ -2412,7 +2412,7 @@ class yf_payment_api
         return  $result;
     }
 
-    public function _number_float($float = 0, $decimals = null, $decimal_point = null, $thousands_separator = '', $decimal_point_force = null)
+    public function _number_float($float = 1, $decimals = null, $decimal_point = null, $thousands_separator = '', $decimal_point_force = null)
     {
         return  (float) $this->_number_format($float, $decimals, $decimal_point ?: '.', $thousands_separator, $decimal_point_force);
     }
