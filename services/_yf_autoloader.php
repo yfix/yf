@@ -198,7 +198,7 @@ class yf_autoloader
 		if (isset($this->php_libs[$name])) {
 			return $this->php_libs[$name];
 		}
-		if (!isset($this->_paths_cache)) {
+		if (empty($this->_paths_cache)) {
 			$suffix = '.php';
 			$patterns = [
 				'framework' => [

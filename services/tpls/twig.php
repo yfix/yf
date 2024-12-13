@@ -2,18 +2,18 @@
 <?php
 
 $config = [
-    'git_urls' => ['https://github.com/twigphp/Twig.git~3.x' => 'twig/'],
-    'require_once' => ['twig/src/Extension/StringLoaderExtension.php'],
-    'autoload_config' => ['twig/src/' => 'Twig'],
-    // 'manual' => function () {
-        // Twig_Autoloader::register();
-    // },
+    'require_services' => [ 'sf_dc' ],
+    'git_urls' => [ 'https://github.com/twigphp/Twig.git' => 'twig/' ],
+    'autoload_config' => [
+        'twig/src/' => 'Twig',
+    ],
     'example' => function () {
         $loader = new \Twig\Loader\FilesystemLoader();
-        $twig = new \Twig\Environment($loader, [
+        $twig   = new \Twig\Environment($loader, [
             'cache' => STORAGE_PATH .'twig_cache/',
         ]);
-        $twig->addExtension(new StringLoaderExtension());
+        $this->env->addExtension( new \Twig\Extension\StringLoaderExtension() );
+        $this->env->addExtension( new \Twig\Extension\DebugExtension() );
         $str = '<!DOCTYPE html>
 <html>
 	<head><title>My Webpage</title></head>
