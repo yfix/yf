@@ -2,7 +2,7 @@
 <?php
 
 $config = [
-    'git_urls' => ['https://github.com/twigphp/Twig.git~2.x' => 'twig/'],
+    'git_urls' => ['https://github.com/twigphp/Twig.git~3.x' => 'twig/'],
     'require_once' => ['twig/src/Extension/StringLoaderExtension.php'],
     'autoload_config' => ['twig/src/' => 'Twig'],
     // 'manual' => function () {
@@ -13,6 +13,7 @@ $config = [
         $twig = new \Twig\Environment($loader, [
             'cache' => STORAGE_PATH .'twig_cache/',
         ]);
+        $twig->addExtension(new StringLoaderExtension());
         $str = '<!DOCTYPE html>
 <html>
 	<head><title>My Webpage</title></head>

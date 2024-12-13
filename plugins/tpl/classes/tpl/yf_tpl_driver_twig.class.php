@@ -145,7 +145,8 @@ class yf_tpl_driver_twig
             $s = tpl()->get($name);
         }
         // $t = $this->env->load($name .'.tpl');
-        $t = twig_template_from_string($this->env, $s);
+        // $t = twig_template_from_string($this->env, $s);
+        $t = $this->env->createTemplate( $s, $name );
         return $t->render($replace);
     }
 
