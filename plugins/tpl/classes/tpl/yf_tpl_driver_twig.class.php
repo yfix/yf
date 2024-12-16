@@ -43,7 +43,9 @@ class yf_tpl_driver_twig
         ];
         $this->env = new \Twig\Environment($loader, $env);
         $this->env->addExtension( new \Twig\Extension\StringLoaderExtension() );
-        $this->env->addExtension( new \Twig\Extension\DebugExtension() );
+        if( is_dev() || is_debug() ) {
+            $this->env->addExtension( new \Twig\Extension\DebugExtension() );
+        }
         // exec
         $exec = new \Twig\TwigFunction( 'exec',
             function( \Twig\Environment $env, $context, array $vars = [] ) {
@@ -145,7 +147,8 @@ class yf_tpl_driver_twig
             $s = tpl()->get($name);
         }
         // $t = $this->env->load($name .'.tpl');
-        $t = twig_template_from_string($this->env, $s);
+        // $t = twig_template_from_string($this->env, $s);
+        $t = $this->env->createTemplate( $s, $name );
         return $t->render($replace);
     }
 
