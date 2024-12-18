@@ -26,6 +26,12 @@ class yf_tpl_driver_yf
     /** @var @conf_skip */
     public $CACHE = [];
 
+    public $tpl = null;
+    public $AUTO_LOAD_PACKED_STPLS = null;
+    public $_compiled_cache = [];
+    public $_stpl_mtimes = [];
+    public $_STPL_EXT = '.stpl';
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -50,7 +56,7 @@ class yf_tpl_driver_yf
             'stpl' => [],
         ];
         if (defined('FRAMEWORK_IS_COMPILED')) {
-            conf('FRAMEWORK_IS_COMPILED', (bool) FRAMEWORK_IS_COMPILED);
+            conf('FRAMEWORK_IS_COMPILED', (bool) constant('FRAMEWORK_IS_COMPILED'));
         }
         if (conf('FRAMEWORK_IS_COMPILED') && $this->AUTO_LOAD_PACKED_STPLS) {
             foreach ((array) conf('_compiled_stpls') as $_cur_name => $_cur_text) {
@@ -252,7 +258,7 @@ class yf_tpl_driver_yf
     {
         $this->CACHE[$name]['driver'] = 'yf';
         $this->CACHE[$name]['is_compiled'] = (int) $is_compiled;
-        $this->CACHE[$name]['calls']++;
+        @$this->CACHE[$name]['calls']++;
         if ( ! isset($this->CACHE[$name]['string'])) {
             $this->CACHE[$name]['string'] = $string;
         }
@@ -274,7 +280,7 @@ class yf_tpl_driver_yf
         $force_storage = $params['force_storage'];
         if (isset($this->CACHE[$name]) && ! $params['no_cache'] && ! $force_storage) {
             $string = $this->CACHE[$name]['string'];
-            $this->CACHE[$name]['calls']++;
+            @$this->CACHE[$name]['calls']++;
             if (DEBUG_MODE) {
                 $this->CACHE[$name]['s_length'] = strlen($string);
             }
@@ -503,7 +509,7 @@ class yf_tpl_driver_yf
         // JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
         // Custom lib smart inclusion. Examples: {jquery()} $.click('.red', function(alert('hello'))) {/jquery}
         // Asset bundle inclusion. Examples: {asset()} angular-full {/asset}
-        $string = preg_replace_callback('/\{(?P<func>css|require_css|js|require_js|asset|jquery|angularjs|reactjs|sass|less|jade|coffee)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<content>.+?)\s*{\/(\1)\}/ims', function ($m) use ($_this) {
+        $string = preg_replace_callback('/\{(?P<func>css|require_css|js|require_js|asset|jquery|angularjs|reactjs|sass|less|jade|coffee)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<content>.+?)\s*{\/(\1)\}/ims', function ($m) {
             $func = $m['func'];
             return strlen($func) ? $func($m['content'], _attrs_string2array($m['args'])) : false;
         }, $string);
@@ -571,7 +577,7 @@ class yf_tpl_driver_yf
             // Second level variables with filters. Examples: {sub1.var1|trim}
             '/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function ($m) use ($replace, $name, $tpl) {
                 $val = $replace[$m[1]][$m[2]];
-                return $tpl->_process_var_filters($val ?: $class_prop, $m[3]);
+                return $tpl->_process_var_filters($val, $m[3]);
             },
         ];
         // Evaluate custom PHP code pattern. Examples: {eval_code(print_r(_class('forum')))}
@@ -995,11 +1001,36 @@ class yf_tpl_driver_yf
                 $_is_last = (int) ($_i == $_total);
                 $_is_odd = (int) ($_i % 2);
                 $_is_even = (int) ( ! $_is_odd);
+
+                $_val = '';
+                // Bugfix for mixed arrays
+                if (is_array($sub_v)) {
+                    foreach ($sub_v as $k => $v) {
+                        $_v = [];
+                        if (is_scalar($v) || is_object($v)) {
+                            $_v = [ strval($v) ];
+                        } elseif (is_array($v)) {
+                            foreach( $v as $v1 ) {
+                                if (is_scalar($v1) || is_object($v1)) {
+                                     $_v[] = strval($v1);
+                                } else {
+                                    $_v = [ 'Array' ]; break;
+                                }
+                            }
+                        }
+                        $_v = implode(',', $_v);
+                        $sub_v[$k] = $_v;
+                    }
+                    $_val = implode(',', $sub_v);
+                } elseif (is_scalar($sub_v) || is_object($sub_v)) {
+                    $_val = strval($sub_v);
+                }
+
                 $sub_replace = [
                     '_num' => $_i,
                     '_total' => $_total,
                     '_key' => $sub_k,
-                    '_val' => is_array($sub_v) ? implode(',', $sub_v) : $sub_v,
+                    '_val' => $_val,
                     '_first' => $_is_first,
                     '_last' => $_is_last,
                     '_even' => $_is_odd,
@@ -1012,7 +1043,7 @@ class yf_tpl_driver_yf
                 }
                 $sub_tpl_replace = [];
                 foreach ($sub_replace as $k => $v) {
-                    $sub_tpl_replace['{' . $k . '}'] = $v;
+                    $sub_tpl_replace['{' . $k . '}'] = is_array($v) ? implode(',', $v) : $v;
                 }
                 $cur_output = str_replace(array_keys($sub_tpl_replace), $sub_tpl_replace, $cur_output);
                 unset($sub_tpl_replace);
@@ -1059,6 +1090,7 @@ class yf_tpl_driver_yf
             }
         }
         ksort($not_replaced);
+        $body = '';
         if ( ! empty($not_replaced)) {
             $body .= '<pre>array(' . PHP_EOL;
             foreach ((array) $not_replaced as $v) {

@@ -51,7 +51,7 @@ class yf_tpl
     /** @var bool */
     public $DEBUG_STPL_VARS = false;
     /** @var bool Will add cur date, generation time, memory and db queries into any common page before body */
-    public $ADD_QUICK_PAGE_INFO = true;
+    public $ADD_QUICK_PAGE_INFO = false;
     /** @var bool Compile templates folder */
     public $COMPILED_DIR = 'stpls_compiled/';
     /** @var string @conf_skip */
@@ -76,6 +76,25 @@ class yf_tpl
         'env' => '_ENV',
     ];
 
+    public $driver = null;
+    public $IS_FRONT = false;
+    public $_lang_theme_path = null;
+    public $_INHERITED_SKIN = null;
+    public $_INHERITED_SKIN2 = null;
+    public $INHERIT_SKIN = null;
+    public $INHERIT_SKIN2 = null;
+    public $_TMP_FROM_DB = null;
+    public $_CENTER_RESULT = null;
+    public $_output_body_length = null;
+    public $_user_error_msg = null;
+    public $_def_user_theme = null;
+    public $LOG_EXEC_INFO = [];
+    public $_OUTPUT_FILTERS = [];
+    public $_TIDY_CONFIG = '';
+    public $MEDIA_PATH = '';
+    public $_custom_patterns_funcs = [];
+    public $_custom_patterns_index = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -91,18 +110,21 @@ class yf_tpl
      */
     public function _init()
     {
+        if (DEBUG_MODE) {
+            $this->ADD_QUICK_PAGE_INFO = true;
+        }
         // Needed to ensure backtracking still works on big templates (extended from 1 000 000 on 26kb stpl js() parsing)
         ini_set('pcre.backtrack_limit', '10000000');
 
         if (defined('IS_FRONT')) {
-            conf('IS_FRONT', (bool) IS_FRONT);
+            conf('IS_FRONT', (bool) constant('IS_FRONT'));
         }
         $this->IS_FRONT = (bool) conf('IS_FRONT');
         // Set custom skin
         if ( ! empty($_SESSION['user_skin']) && MAIN_TYPE_USER) {
             conf('theme', $_SESSION['user_skin']);
         } elseif (defined('DEFAULT_SKIN')) {
-            conf('theme', DEFAULT_SKIN);
+            conf('theme', constant('DEFAULT_SKIN'));
         }
         if ( ! conf('theme')) {
             conf('theme', MAIN_TYPE);
@@ -126,13 +148,13 @@ class yf_tpl
         }
         if ($this->ALLOW_SKIN_INHERITANCE) {
             if (defined('INHERIT_SKIN')) {
-                conf('INHERIT_SKIN', INHERIT_SKIN);
+                conf('INHERIT_SKIN', constant('INHERIT_SKIN'));
             }
             if (conf('INHERIT_SKIN') != conf('theme')) {
                 $this->_INHERITED_SKIN = conf('INHERIT_SKIN');
             }
             if (defined('INHERIT_SKIN2')) {
-                conf('INHERIT_SKIN2', INHERIT_SKIN2);
+                conf('INHERIT_SKIN2', constant('INHERIT_SKIN2'));
             }
             if (conf('INHERIT_SKIN2') != conf('theme')) {
                 $this->_INHERITED_SKIN2 = conf('INHERIT_SKIN2');
@@ -239,7 +261,7 @@ class yf_tpl
             }
             if ($this->GET_STPLS_FROM_DB && $this->FROM_DB_GET_ALL) {
                 $tmp = from('templates')->where('theme_name', conf('theme'))->where('active', '1')->get_2d('name,text');
-                foreach ((array) $data as $k => $v) {
+                foreach ((array) $tmp as $k => $v) {
                     $tmp[$k] = stripslashes($v);
                 }
                 $this->_TMP_FROM_DB = $tmp;
@@ -528,42 +550,73 @@ class yf_tpl
             return $this->$cache_name;
         }
         $this->$cache_name = getset('tpl_get_cached_paths', function () {
-            $allowed_exts = $this->ALLOWED_EXTS;
+            $allowed_exts = (array) $this->ALLOWED_EXTS;
             $templates_dir = trim($this->_THEMES_PATH, '/');
-            $pattern = '{,plugins/*/}' . $templates_dir . '/*/{*,*/*,*/*/*}.*';
-            $globs = [
-                'framework' => YF_PATH . $pattern,
-                'project' => PROJECT_PATH . $pattern,
-                'app' => APP_PATH . $pattern,
+            $patterns = [
+                'framework' => [
+                    YF_PATH . $templates_dir . '/*/*.*',
+                    YF_PATH . $templates_dir . '/*/*/*.*',
+                    YF_PATH . $templates_dir . '/*/*/*/*.*',
+                    YF_PATH . 'plugins/*/'. $templates_dir . '/*/*.*',
+                    YF_PATH . 'plugins/*/'. $templates_dir . '/*/*/*.*',
+                    YF_PATH . 'plugins/*/'. $templates_dir . '/*/*/*/*.*',
+                ],
+                'project' => [
+                    PROJECT_PATH . $templates_dir . '/*/*.*',
+                    PROJECT_PATH . $templates_dir . '/*/*/*.*',
+                    PROJECT_PATH . $templates_dir . '/*/*/*/*.*',
+                    PROJECT_PATH . 'plugins/*/'. $templates_dir . '/*/*.*',
+                    PROJECT_PATH . 'plugins/*/'. $templates_dir . '/*/*/*.*',
+                    PROJECT_PATH . 'plugins/*/'. $templates_dir . '/*/*/*/*.*',
+                ],
+                'app' => [
+                    APP_PATH . $templates_dir . '/*/*.*',
+                    APP_PATH . $templates_dir . '/*/*/*.*',
+                    APP_PATH . $templates_dir . '/*/*/*/*.*',
+                    APP_PATH . 'plugins/*/'. $templates_dir . '/*/*.*',
+                    APP_PATH . 'plugins/*/'. $templates_dir . '/*/*/*.*',
+                    APP_PATH . 'plugins/*/'. $templates_dir . '/*/*/*/*.*',
+                ],
             ];
+            $site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
+            if (is_site_path()) {
+                $patterns['site'] = [
+                    $site_path . $templates_dir . '/*/*.*',
+                    $site_path . $templates_dir . '/*/*/*.*',
+                    $site_path . $templates_dir . '/*/*/*/*.*',
+                    $site_path . 'plugins/*/'. $templates_dir . '/*/*.*',
+                    $site_path . 'plugins/*/'. $templates_dir . '/*/*/*.*',
+                    $site_path . 'plugins/*/'. $templates_dir . '/*/*/*/*.*',
+                ];
+            }
             $plens = [
                 'framework' => strlen(YF_PATH),
                 'project' => strlen(PROJECT_PATH),
                 'app' => strlen(APP_PATH),
+                'site' => isset($patterns['site']) ? strlen($site_path) : null,
             ];
-            $site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
-            if (is_site_path()) {
-                $globs['site'] = $site_path . $pattern;
-                $plens['site'] = strlen($site_path);
-            }
             $names = [];
-            foreach ($globs as $gname => $glob) {
-                foreach (glob($glob, GLOB_BRACE | GLOB_NOSORT) as $path) {
-                    $name = substr($path, $plens[$gname]);
-                    $ext = pathinfo($name, PATHINFO_EXTENSION);
-                    if ( ! $ext || ! in_array($ext, $allowed_exts)) {
-                        continue;
+            foreach ($patterns as $gname => $glob_patterns) {
+                foreach ($glob_patterns as $glob) {
+                    foreach (glob($glob, GLOB_NOSORT) as $path) {
+                        $name = substr($path, $plens[$gname]);
+                        $ext = pathinfo($name, PATHINFO_EXTENSION);
+                        if (!$ext || !in_array($ext, $allowed_exts)) {
+                            continue;
+                        }
+                        $p = explode('/', $name);
+                        if ($p[0] == 'plugins') {
+                            $p = array_slice($p, 2);
+                        }
+                        $theme = '';
+                        if ($p[0] == $templates_dir) {
+                            $theme = $p[1];
+                            $p = array_slice($p, 2);
+                        }
+                        $name = implode('/', $p);
+                        $name = substr($name, 0, -strlen('.' . $ext));
+                        $names[$name][$gname][$theme] = $path;
                     }
-                    $p = explode('/', $name);
-                    $p[0] == 'plugins' && $p = array_slice($p, 2);
-                    $theme = '';
-                    if ($p[0] == $templates_dir) {
-                        $theme = $p[1];
-                        $p = array_slice($p, 2);
-                    }
-                    $name = implode('/', $p);
-                    $name = substr($name, 0, -strlen('.' . $ext));
-                    $names[$name][$gname][$theme] = $path;
                 }
             }
             return $names;
@@ -592,7 +645,7 @@ class yf_tpl
         $path_ext = pathinfo($file_name, PATHINFO_EXTENSION);
         $path_ext && $path_ext = '.' . $path_ext;
         // Allowed extension overrides
-        if ( ! $path_ext || ! in_array($path_ext, $this->ALLOWED_EXTS)) {
+        if ( ! $path_ext || ! in_array($path_ext, (array) $this->ALLOWED_EXTS)) {
             $file_name .= $stpl_ext;
         }
         // Fix double extesion
@@ -647,6 +700,7 @@ class yf_tpl
                     continue;
                 }
                 $file_path = '';
+                $_theme = '';
                 if (in_array($_storage, ['app', 'project', 'framework'])) {
                     $_theme = $_storage == 'framework' ? MAIN_TYPE : $theme;
                     if (isset($paths[$_storage][$_theme])) {
@@ -681,7 +735,7 @@ class yf_tpl
                         $file_path = $paths[$s][$_theme];
                     }
                 } elseif (in_array($_storage, ['dev'])) {
-                    //					// Developer overrides
+//					// Developer overrides
 //					$dev_path = '.dev/'.main()->HOSTNAME.'/';
 //					if (conf('DEV_MODE')) {
 //						if ($site_path && $site_path != PROJECT_PATH) {

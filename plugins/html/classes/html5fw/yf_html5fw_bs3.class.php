@@ -104,7 +104,9 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
             . '</div>';
 
         $input_group_extra = $extra['input_group'];
-        $input_group_extra['class'] = $input_group_extra['class'] ?: ($this->CLASS_INPUT_GROUP . ' ' . ($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : '') . ($extra['append'] ? ' ' . $this->CLASS_INPUT_APPEND : ''));
+        if (!isset($input_group_extra['class'])) {
+            $input_group_extra['class'] =  $this->CLASS_INPUT_GROUP . ' ' . ($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : '') . ($extra['append'] ? ' ' . $this->CLASS_INPUT_APPEND : '');
+        }
         $input_group_extra['class'] .= ' ' . $input_group_extra['class_add'];
 
         $show_input_group = ($extra['append'] || $extra['prepend']);

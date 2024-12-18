@@ -12,6 +12,8 @@ class yf_site_nav_bar
     /** @var bool */
     public $SHOW_NAV_BAR = true;
 
+    public $_nav_item_as_array = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name

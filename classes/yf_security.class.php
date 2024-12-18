@@ -90,8 +90,9 @@ class yf_security
     {
         // Is the string an array?
         if (is_array($str)) {
-            while (list($key) = each($str)) {
+            while ($key = key($str)) {
                 $str[$key] = $this->xss_clean($str[$key]);
+                next($str);
             }
             return $str;
         }

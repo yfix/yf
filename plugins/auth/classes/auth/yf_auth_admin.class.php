@@ -61,6 +61,9 @@ class yf_auth_admin
     /** @var bool Allow to login only by HTTPS protocol, else raise error @security */
     public $AUTH_ONLY_HTTPS = false;
 
+    public $ADMIN_INFO_IN_SESSION = null;
+    public $VAR_ADMIN_INFO = 'admin_info';
+
     /**
      * Initialize auth.
      */

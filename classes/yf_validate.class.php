@@ -5,6 +5,9 @@
  */
 class yf_validate
 {
+    public $_params;
+    public $_replace;
+
     /** @var int Minimal nick length */
     public $MIN_NICK_LENGTH = 2;
     /** @var array Allowed nick symbols (display for user) */
@@ -55,7 +58,7 @@ class yf_validate
             $input = ['input' => $input];
         }
         $rules = [];
-        $global_rules = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
+        $global_rules = $this->_params['validate'] ?? $this->_replace['validate'] ?? [];
         foreach ((array) $global_rules as $name => $_rules) {
             $rules[$name] = $_rules;
         }
@@ -798,7 +801,7 @@ class yf_validate
      */
     public function valid_email($in)
     {
-        return (bool) filter_var($in, FILTER_VALIDATE_EMAIL);
+        return (bool) filter_var(strval($in), FILTER_VALIDATE_EMAIL);
     }
 
     /**
@@ -810,6 +813,7 @@ class yf_validate
         if ( ! $in) {
             return false;
         }
+        $in = strval($in);
         if (strpos($in, ',') === false) {
             return $this->valid_email(trim($in));
         }
@@ -827,6 +831,7 @@ class yf_validate
      */
     public function valid_base64($in)
     {
+        $in = strval($in);
         return strlen($in) && (base64_encode(base64_decode($in)) === $in);
     }
 

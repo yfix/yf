@@ -405,7 +405,7 @@ class yf_category_editor
             $cat_items[$id]['have_children'] = 0;
         }
         foreach ((array) $cat_items as $id => $info) {
-            $cat_items[$info['parent_id']]['have_children']++;
+            @$cat_items[$info['parent_id']]['have_children']++;
         }
 
         $cat_items_to_display = array_values($cat_items);

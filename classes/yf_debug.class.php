@@ -54,6 +54,12 @@ class yf_debug
         'link' => '{ID}',
     ];
 
+    public $_NOT_TRANSLATED_FILE = null;
+    public $DEBUG_CONSOLE_LIGHT = null;
+    public $DEBUG_CONSOLE_HIDDEN = null;
+    public $_used_debug_datas = [];
+    public $backup_debug_data = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -108,6 +114,7 @@ class yf_debug
                 continue;
             }
             $ts2 = microtime(true);
+            $method_params = null;
             $content = $this->$method($method_params);
             if ($method_params) {
                 $debug_params[$method] = $method_params;
@@ -144,7 +151,7 @@ class yf_debug
         $links_prefix = 'debug_item_';
         $cookie_active_tab = substr($_COOKIE['debug_tabs_active'], strlen($links_prefix));
         // Show default tab if saved tab not existing now for any reason
-        if ( ! isset($data[$cookie_active_tab])) {
+        if (! isset($data[$cookie_active_tab])) {
             $cookie_active_tab = '';
         }
         $body[] = _class('html')->tabs($data, [
@@ -161,7 +168,7 @@ class yf_debug
         $arh = [];
         $rx_http = '/(\AHTTP_)/';
         foreach ((array) $_SERVER as $key => $val) {
-            if ( ! preg_match($rx_http, $key, $m)) {
+            if (! preg_match($rx_http, $key, $m)) {
                 continue;
             }
             $arh_key = str_replace($m[1], '', $key);
@@ -184,14 +191,14 @@ class yf_debug
     public function _get_git_details($FS_PATH, $as_submodule = false)
     {
         $git_base_path = $FS_PATH . '.git';
-        if ( ! file_exists($git_base_path)) {
+        if (! file_exists($git_base_path)) {
             return [];
         }
         $git_head_path = $git_base_path . '/HEAD';
         $git_branch = '';
         $git_hash = '';
         $git_date = 0;
-        if ( ! file_exists($git_head_path) && file_exists($git_base_path) && is_file($git_base_path)) {
+        if (! file_exists($git_head_path) && file_exists($git_base_path) && is_file($git_base_path)) {
             // gitdir: ../.git/modules/yf
             list(, $git_base_path) = explode('gitdir:', file_get_contents($git_base_path));
             $git_base_path = realpath($FS_PATH . trim($git_base_path));
@@ -204,7 +211,7 @@ class yf_debug
             $git_branch = basename($git_subhead_path);
             $git_hash_file = $git_subhead_path ? $git_base_path . '/' . trim($git_subhead_path) : '';
             $git_hash = $git_hash_file && file_exists($git_hash_file) ? trim(file_get_contents($git_hash_file)) : '';
-            if ( ! $git_hash) {
+            if (! $git_hash) {
                 $git_hash_file = $git_subhead_path ? $git_base_path . '/refs/remotes/origin/' . $git_branch : '';
                 $git_hash = $git_hash_file && file_exists($git_hash_file) ? trim(file_get_contents($git_hash_file)) : '';
             }
@@ -301,12 +308,13 @@ class yf_debug
      */
     public function _do_debug_db_connection_queries($db, $connect_trace = [])
     {
-        if ( ! $this->SHOW_DB_QUERY_LOG) {
+        if (! $this->SHOW_DB_QUERY_LOG) {
             return '';
         }
-        if ( ! is_object($db) || ! is_array($db->_LOG) || ! $db->_tried_to_connect) {
+        if (! is_object($db) || ! is_array($db->_LOG) || ! $db->_tried_to_connect) {
             return false;
         }
+        $body = '';
         $items = [];
         $db_queries_list = $db->_LOG;
         if ($this->SHOW_DB_EXPLAIN_QUERY && ! empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
@@ -339,7 +347,7 @@ class yf_debug
             . ')</b>';
 
         $trace_html = ' <a href="javascript:void(0)" class="btn btn-default btn-mini btn-xs btn-toggle" data-hidden-toggle="debug-db-connect-trace">' . t('Trace') . '</a>'
-                . '<pre style="display:none;" id="debug-db-connect-trace"><small>' . _prepare_html($connect_trace) . '</small></pre>';
+            . '<pre style="display:none;" id="debug-db-connect-trace"><small>' . _prepare_html($connect_trace) . '</small></pre>';
 
         $body .= $connect_trace ? $trace_html : '';
 
@@ -350,7 +358,7 @@ class yf_debug
             if (substr($sql, 0, 2) == '--') {
                 $sql = substr($sql, strpos($sql, "\n"));
                 $sql = trim($sql);
-                if ( ! strlen($sql)) {
+                if (! strlen($sql)) {
                     continue;
                 }
             }
@@ -417,7 +425,7 @@ class yf_debug
      */
     public function _show_db_shutdown_queries($db)
     {
-        if ( ! $this->SHOW_DB_QUERY_LOG) {
+        if (! $this->SHOW_DB_QUERY_LOG) {
             return '';
         }
         return $this->_show_key_val_table($db->_SHUTDOWN_QUERIES);
@@ -428,12 +436,13 @@ class yf_debug
      */
     public function _show_db_stats($db)
     {
-        if ( ! $this->SHOW_DB_STATS) {
+        if (! $this->SHOW_DB_STATS) {
             return '';
         }
         $data['stats'] = $db->get_2d('SHOW SESSION STATUS');
         $data['vars'] = $db->get_2d('SHOW VARIABLES');
         //		$data['global_vars'] = $db->get_2d('SHOW GLOBAL VARIABLES');
+        $body = '';
         foreach ($data as $name => $_data) {
             $body .= '<div class="span10 col-md-10">' . $name . '<br>' . $this->_show_key_val_table($_data, ['no_total' => 1, 'skip_empty_values' => 1]) . '</div>';
         }
@@ -472,17 +481,17 @@ class yf_debug
      */
     public function _show_key_val_table($a, $params = [], $name = '')
     {
-        if ( ! $a) {
+        if (! $a) {
             return false;
         }
-        if ( ! isset($params['first_col_width'])) {
+        if (! isset($params['first_col_width'])) {
             $params['first_col_width'] = '1%';
         }
         if (is_array($a) && ! $params['no_sort']) {
             ksort($a);
         }
         // Escape by default
-        if ( ! $params['no_escape']) {
+        if (! $params['no_escape']) {
             $params['escape'] = 1;
         }
         $items = [];
@@ -496,7 +505,7 @@ class yf_debug
                 'value' => $params['escape'] && strlen($v) ? '<pre>' . _prepare_html($v) . '</pre>' : $v,
             ];
         }
-        if ( ! $items) {
+        if (! $items) {
             return false;
         }
         if ($params['escape']) {
@@ -512,7 +521,7 @@ class yf_debug
      */
     public function _show_auto_table($items = [], $params = [], $name = '')
     {
-        if ( ! is_array($items)) {
+        if (! is_array($items)) {
             $items = [];
         }
         $items = $this->_format_trace_in_items($items);
@@ -521,7 +530,7 @@ class yf_debug
             foreach ($item as $k => $v) {
                 if (is_array($v)) {
                     $v = ! empty($v) ? $this->_var_export($v) : '';
-                    if ( ! $params['no_escape']) {
+                    if (! $params['no_escape']) {
                         $v = ! empty($v) ? _prepare_html($v) : '';
                     }
                     if (is_array($v)) {
@@ -534,12 +543,12 @@ class yf_debug
                 }
             }
         }
-        if ( ! $items) {
+        if (! $items) {
             return false;
         }
         $caption = $params['header'] ? '<b class="btn btn-default disabled">' . $params['header'] . '</b>' : '';
-        if ( ! $params['no_total']) {
-            if ( ! is_array($params['caption'])) {
+        if (! $params['no_total']) {
+            if (! is_array($params['caption'])) {
                 $params['caption'] = [];
             }
             count((array) $items) && $params['caption']['items'] = count((array) $items);
@@ -575,7 +584,7 @@ class yf_debug
      */
     public function _admin_link($type, $text = '', $just_link = false, $replace = [])
     {
-        if ( ! $this->ADD_ADMIN_LINKS || ! isset($this->ADMIN_PATHS[$type])) {
+        if (! $this->ADD_ADMIN_LINKS || ! isset($this->ADMIN_PATHS[$type])) {
             return $text;
         }
         if ($type == 'link') {
@@ -626,7 +635,7 @@ class yf_debug
      */
     public function _get_debug_data($name)
     {
-        $this->_used_debug_datas[$name]++;
+        @$this->_used_debug_datas[$name]++;
         $data = debug($name);
         $this->backup_debug_data[$name] = $data;
         debug($name, false);
@@ -648,7 +657,7 @@ class yf_debug
                 $time_max = $time;
             }
         }
-        if ( ! $time_all) {
+        if (! $time_all) {
             return $items;
         }
         $warn_limit = $time_max / $time_all * 100 / 2;
@@ -679,9 +688,10 @@ class yf_debug
 
     public function _debug_DEBUG_YF(&$params = [])
     {
-        if ( ! $this->SHOW_SETTINGS) {
+        if (! $this->SHOW_SETTINGS) {
             return '';
         }
+        $body = '';
         $cache_use = ((main()->USE_SYSTEM_CACHE || conf('USE_CACHE')) && ! cache()->NO_CACHE);
         $locale_debug = $this->_get_debug_data('locale');
         $data['yf'] = [
@@ -817,10 +827,10 @@ class yf_debug
         $a = $_POST + $_SESSION;
         $body .= form($a, ['action' => url('/test/change_debug'), 'class' => 'form-inline', 'style' => 'padding-left:20px;'])
             ->row_start()
-                ->container('Locale edit')
-                ->active_box('locale_edit', ['selected' => $_SESSION['locale_vars_edit']])
-                ->container('<span style="padding-left:20px;">Debug console light</span>')
-                ->active_box('debug_console_light', ['selected' => $_SESSION['debug_console_light']])
+            ->container('Locale edit')
+            ->active_box('locale_edit', ['selected' => $_SESSION['locale_vars_edit']])
+            ->container('<span style="padding-left:20px;">Debug console light</span>')
+            ->active_box('debug_console_light', ['selected' => $_SESSION['debug_console_light']])
             ->row_end()
             ->save(['class' => 'btn btn-default btn-mini btn-xs']);
         foreach ($data as $name => $_data) {
@@ -838,7 +848,7 @@ class yf_debug
 
     public function _debug_db(&$params = [])
     {
-        if ( ! $this->SHOW_DB_QUERY_LOG) {
+        if (! $this->SHOW_DB_QUERY_LOG) {
             return false;
         }
         $items = [];
@@ -859,21 +869,22 @@ class yf_debug
 
     public function _debug_redis(&$params = [])
     {
-        if ( ! $this->SHOW_REDIS_INFO) {
+        if (! $this->SHOW_REDIS_INFO) {
             return '';
         }
         $instances = [
             'redis_default' => redis(),
-            'redis_cache' => strpos(strtolower(cache()->DRIVER), 'redis') !== false ? cache()->_driver->_connection : null,
+            'redis_cache' => strpos(strtolower(cache()->DRIVER), 'redis') !== false ? (cache()->_driver->_connection ?? null) : null,
         ];
+        $counter = 0;
         $tabs = [];
         foreach ((array) $instances as $iname => $instance) {
-            if ( ! $instance || ! $instance->_log || ($iname != 'redis_default' && $instance === $instances['redis_default'])) {
+            if (! $instance || ! $instance->log || ($iname != 'redis_default' && $instance === $instances['redis_default'])) {
                 continue;
             }
             $items = [];
             $totals = [];
-            foreach ((array) $instance->_log as $k => $v) {
+            foreach ((array) $instance->log as $k => $v) {
                 $items[$counter] = [
                     'id' => ++$counter,
                     'func' => a('https://redis.io/commands/' . $v['func'], $v['func']),
@@ -885,8 +896,7 @@ class yf_debug
                 $totals['time'] += $v['exec_time'];
             }
             $items = $this->_time_count_changes($items);
-            $items[-1] = ['id' => 'TOTAL', 'time' => round($totals['time'], 5)] + array_map(function () {
-            }, last($items));
+            $items[-1] = ['id' => 'TOTAL', 'time' => round($totals['time'], 5)] + array_map(function () {}, last($items));
 
             $logs = $this->_show_auto_table($items, [
                 'hidden_map' => ['trace' => 'args', 'result' => 'time'],
@@ -906,16 +916,17 @@ class yf_debug
 
     public function _debug_memcached(&$params = [])
     {
-        if ( ! $this->SHOW_MEMCACHED_INFO) {
+        if (! $this->SHOW_MEMCACHED_INFO) {
             return '';
         }
         if (strpos(strtolower(cache()->DRIVER), 'memcache') === false) {
             return '';
         }
         $mc_obj = cache_memcached_connect();
-        if ( ! is_object($mc_obj)) {
+        if (! is_object($mc_obj)) {
             return '';
         }
+        $body = '';
         $data = [];
         $ext = '';
         if (method_exists($mc_obj, 'getExtendedStats')) {
@@ -925,7 +936,7 @@ class yf_debug
             $ext = 'memcached (new)';
             $data = $mc_obj->getStats();
         }
-        if ( ! $data) {
+        if (! $data) {
             return 'n/a';
         }
         $body .= 'PHP Extension used: ' . $ext . '<br>' . PHP_EOL;
@@ -938,7 +949,7 @@ class yf_debug
 
     public function _debug_stpls(&$params = [])
     {
-        if ( ! $this->SHOW_STPLS) {
+        if (! $this->SHOW_STPLS) {
             return '';
         }
         $data = _class('tpl')->driver->CACHE;
@@ -948,6 +959,10 @@ class yf_debug
         }
         $stpl_vars = $this->_get_debug_data('STPL_REPLACE_VARS');
         $stpl_traces = $this->_get_debug_data('STPL_TRACES');
+
+        $total_size = 0;
+        $total_stpls_exec_time = 0;
+        $counter = 0;
 
         $items = [];
         foreach ((array) $data as $k => $v) {
@@ -960,12 +975,12 @@ class yf_debug
 
             $items[$counter] = [
                 'id' => ++$counter,
-                'name' => $this->_admin_link('edit_stpl', $k, false, ['{LOCATION}' => $debug[$k]['storage']]),
+                'name' => $this->_admin_link('edit_stpl', $k, false, ['{LOCATION}' => $debug[$k]['storage'] ?? '']),
                 'calls' => (string) ($v['calls']),
                 'driver' => (string) ($v['driver']),
                 'compiled' => (int) $v['is_compiled'],
-                'storage' => (string) ($debug[$k]['storage']),
-                'storages' => '<pre>' . _prepare_html($this->_var_export($debug[$k]['storages'])) . '</pre>',
+                'storage' => (string) ($debug[$k]['storage'] ?? ''),
+                'storages' => '<pre>' . _prepare_html($this->_var_export($debug[$k]['storages'] ?? '')) . '</pre>',
                 'size' => (string) $cur_size,
                 'time' => round($v['exec_time'], 4),
                 'trace' => _prepare_html($stpl_traces[$k]),
@@ -993,7 +1008,7 @@ class yf_debug
 
     public function _debug_rewrite(&$params = [])
     {
-        if ( ! $this->SHOW_REWRITE_INFO) {
+        if (! $this->SHOW_REWRITE_INFO) {
             return '';
         }
         $data = $this->_get_debug_data('rewrite');
@@ -1025,7 +1040,7 @@ class yf_debug
 
     public function _debug_url(&$params = [])
     {
-        if ( ! $this->SHOW_REWRITE_INFO) {
+        if (! $this->SHOW_REWRITE_INFO) {
             return '';
         }
         $items = $this->_get_debug_data('_url');
@@ -1040,9 +1055,10 @@ class yf_debug
 
     public function _debug_modules(&$params = [])
     {
-        if ( ! $this->SHOW_LOADED_MODULES) {
+        if (! $this->SHOW_LOADED_MODULES) {
             return '';
         }
+        $counter = 0;
         $items = [];
         foreach ((array) $this->_get_debug_data('main_load_class') as $data) {
             $items[] = [
@@ -1064,7 +1080,7 @@ class yf_debug
 
     public function _debug_execute(&$params = [])
     {
-        if ( ! $this->SHOW_MAIN_EXECUTE) {
+        if (! $this->SHOW_MAIN_EXECUTE) {
             return '';
         }
         $items = $this->_get_debug_data('main_execute_block_time');
@@ -1075,7 +1091,7 @@ class yf_debug
 
     public function _debug_get_data(&$params = [])
     {
-        if ( ! $this->SHOW_MAIN_GET_DATA) {
+        if (! $this->SHOW_MAIN_GET_DATA) {
             return '';
         }
         $items = (array) $this->_get_debug_data('main_get_data');
@@ -1092,7 +1108,7 @@ class yf_debug
 
     public function _debug_cache_get(&$params = [])
     {
-        if ( ! $this->SHOW_CORE_CACHE) {
+        if (! $this->SHOW_CORE_CACHE) {
             return '';
         }
         // TODO + add admin link to purge cache
@@ -1111,7 +1127,7 @@ class yf_debug
 
     public function _debug_cache_set(&$params = [])
     {
-        if ( ! $this->SHOW_CORE_CACHE) {
+        if (! $this->SHOW_CORE_CACHE) {
             return '';
         }
         $items = (array) $this->_get_debug_data('cache_set');
@@ -1128,7 +1144,7 @@ class yf_debug
 
     public function _debug_cache_del(&$params = [])
     {
-        if ( ! $this->SHOW_CORE_CACHE) {
+        if (! $this->SHOW_CORE_CACHE) {
             return '';
         }
         $items = $this->_get_debug_data('cache_del');
@@ -1139,7 +1155,7 @@ class yf_debug
 
     public function _debug_input(&$params = [])
     {
-        if ( ! $this->SHOW_INPUT_DATA) {
+        if (! $this->SHOW_INPUT_DATA) {
             return '';
         }
         $body = [];
@@ -1160,7 +1176,7 @@ class yf_debug
 
     public function _debug__session(&$params = [])
     {
-        if ( ! $this->SHOW_SESSION_DATA) {
+        if (! $this->SHOW_SESSION_DATA) {
             return '';
         }
         $items = $_SESSION;
@@ -1190,9 +1206,10 @@ class yf_debug
 
     public function _debug_i18n(&$params = [])
     {
-        if ( ! $this->SHOW_I18N_VARS) {
+        if (! $this->SHOW_I18N_VARS) {
             return '';
         }
+        $i = 0;
         $calls = _class('i18n')->_calls;
         $items = (array) $this->_get_debug_data('i18n');
         foreach ($items as $k => $v) {
@@ -1207,13 +1224,14 @@ class yf_debug
 
     public function _debug_sphinxsearch(&$params = [])
     {
-        if ( ! $this->SHOW_SPHINX) {
+        if (! $this->SHOW_SPHINX) {
             return '';
         }
         $items = $this->_get_debug_data('sphinxsearch');
-        if ( ! $items) {
+        if (! $items) {
             return '';
         }
+        $body = '';
         $body .= 'host: ' . _class('sphinxsearch')->_get_host();
         $body .= ', version: ' . _class('sphinxsearch')->_get_server_version();
 
@@ -1241,11 +1259,11 @@ class yf_debug
 
     public function _debug_ssh(&$params = [])
     {
-        if ( ! $this->SHOW_SSH) {
+        if (! $this->SHOW_SSH) {
             return '';
         }
         // Need to enable only when ssh was used
-        if ( ! isset(main()->modules['ssh'])) {
+        if (! isset(main()->modules['ssh'])) {
             return '';
         }
         return $this->_show_key_val_table(_class('ssh')->_debug);
@@ -1254,7 +1272,7 @@ class yf_debug
 
     public function _debug_apc(&$params = [])
     {
-        if ( ! $this->SHOW_APC_INFO || ! function_exists('apc_cache_info')) {
+        if (! $this->SHOW_APC_INFO || ! function_exists('apc_cache_info')) {
             return '';
         }
         $data = apc_cache_info();
@@ -1267,7 +1285,7 @@ class yf_debug
 
     public function _debug_xcache(&$params = [])
     {
-        if ( ! $this->SHOW_XCACHE_INFO || ! function_exists('xcache_get')) {
+        if (! $this->SHOW_XCACHE_INFO || ! function_exists('xcache_get')) {
             return '';
         }
         $ini_names = 'cacher optimizer coverager admin.enable_auth size count slots ttl gc_interval stat var_size var_count var_slots var_ttl var_maxttl var_gc_interval coverager_autostart';
@@ -1281,7 +1299,7 @@ class yf_debug
 
     public function _debug_resize_images(&$params = [])
     {
-        if ( ! $this->SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
+        if (! $this->SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
             return '';
         }
         return $this->_show_auto_table($GLOBALS['_RESIZED_IMAGES_LOG']);
@@ -1290,7 +1308,7 @@ class yf_debug
 
     public function _debug_globals(&$params = [])
     {
-        if ( ! $this->SHOW_GLOBALS) {
+        if (! $this->SHOW_GLOBALS) {
             return '';
         }
         $classes_builtin = [];
@@ -1298,7 +1316,7 @@ class yf_debug
         foreach (get_declared_classes() as $k => $name) {
             $r = new ReflectionClass($name);
             $file_name = $r->getFileName();
-            if ( ! $file_name) {
+            if (! $file_name) {
                 $classes_builtin[$name] = '<built-in class>';
             } else {
                 $classes_custom[$name] = $file_name . ':' . $r->getStartLine();
@@ -1323,6 +1341,8 @@ class yf_debug
         });
         sort($data['globals']);
 
+        $body = '';
+        $i = 0;
         $grid = [5, 4, 1, 2];
         foreach ($data as $name => $_data) {
             $grid_num = $grid[++$i - 1];
@@ -1334,12 +1354,15 @@ class yf_debug
 
     public function _debug_included(&$params = [])
     {
-        if ( ! $this->SHOW_INCLUDED_FILES) {
+        if (! $this->SHOW_INCLUDED_FILES) {
             return '';
         }
+        $body = '';
+        $total_size = 0;
+        $i = 0;
         $items = (array) $this->_get_debug_data('included_files');
         foreach ($items as $k => $v) {
-            if ( ! $v['exists']) {
+            if (! $v['exists']) {
                 unset($items[$k]);
                 continue;
             }
@@ -1354,7 +1377,7 @@ class yf_debug
 
     public function _debug_curl_requests(&$params = [])
     {
-        if ( ! $this->SHOW_CURL_REQUESTS) {
+        if (! $this->SHOW_CURL_REQUESTS) {
             return '';
         }
         $items = $this->_get_debug_data('curl_get_remote_page');
@@ -1372,9 +1395,10 @@ class yf_debug
 
     public function _debug_form2(&$params = [])
     {
-        if ( ! $this->SHOW_FORM2) {
+        if (! $this->SHOW_FORM2) {
             return '';
         }
+        $i = 0;
         $items = $this->_get_debug_data('form2');
         foreach ((array) $items as $k => $v) {
             $v['params'] = '<pre>' . _prepare_html($this->_var_export($v['params'])) . '</pre>';
@@ -1388,9 +1412,10 @@ class yf_debug
 
     public function _debug_table2(&$params = [])
     {
-        if ( ! $this->SHOW_TABLE2) {
+        if (! $this->SHOW_TABLE2) {
             return '';
         }
+        $i = 0;
         $items = $this->_get_debug_data('table2');
         foreach ((array) $items as $k => $v) {
             $v['params'] = '<pre>' . _prepare_html($this->_var_export($v['params'])) . '</pre>';
@@ -1411,9 +1436,10 @@ class yf_debug
 
     public function _debug_dd_table(&$params = [])
     {
-        if ( ! $this->SHOW_DD_TABLE) {
+        if (! $this->SHOW_DD_TABLE) {
             return '';
         }
+        $i = 0;
         $items = $this->_get_debug_data('dd_table');
         foreach ((array) $items as $k => $v) {
             $v['fields'] = '<pre>' . _prepare_html($this->_var_export($v['fields'])) . '</pre>';
@@ -1431,7 +1457,7 @@ class yf_debug
     public function _debug_profiling(&$params = [])
     {
         $all_timings = main()->_timing;
-        if ( ! $all_timings) {
+        if (! $all_timings) {
             return false;
         }
         $ts = main()->_time_start;
@@ -1473,7 +1499,7 @@ class yf_debug
         $items = [];
         foreach (['listen', 'fire', 'queue'] as $name) {
             $data = $this->_get_debug_data('events_' . $name);
-            if ( ! $data) {
+            if (! $data) {
                 continue;
             }
             foreach ((array) $data as $k => $v) {
@@ -1490,7 +1516,7 @@ class yf_debug
         $items = [];
         $hook_name = '_hook_debug';
         foreach (main()->modules as $module_name => $module_obj) {
-            if ( ! method_exists($module_obj, $hook_name)) {
+            if (! method_exists($module_obj, $hook_name)) {
                 continue;
             }
             $items[$module_name] = $module_obj->$hook_name($this);
@@ -1501,11 +1527,11 @@ class yf_debug
 
     public function _debug_dashboard()
     {
-        if ( ! $this->SHOW_DB_STATS) {
+        if (! $this->SHOW_DB_STATS) {
             return '';
         }
         $items = $this->_get_debug_data('dashboard');
-        if ( ! isset($items) || ! isset($items['widgets'])) {
+        if (! isset($items) || ! isset($items['widgets'])) {
             return false;
         }
         $loaded_modules = $this->backup_debug_data['main_load_class'];

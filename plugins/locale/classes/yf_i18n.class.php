@@ -54,6 +54,16 @@ class yf_i18n
     /** @var bool In-Memory cachig */
     public $USE_TRANSLATE_CACHE = true;
 
+    public $TR_VARS = [];
+    public $TR_ALL_VARS = [];
+    public $_LOCALE_CACHE = [];
+    public $_NOT_TRANSLATED = [];
+    public $_called = [];
+    public $_loaded = [];
+    public $_calls = [];
+    public $CUR_COUNTRY = null;
+    public $WRAP_VARS_FOR_INLINE_EDIT = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -88,7 +98,7 @@ class yf_i18n
             $country ? $lang . '_' . $country . '.' . str_replace('-', '', $charset) : '',
             $country ? $lang . '_' . $country : '',
             $lang,
-            $langs[$lang]['name'],
+            $langs[$lang]['name'] ?? '',
             'en_US.utf-8',
             'en_US.utf8',
             'en_US',
@@ -102,7 +112,7 @@ class yf_i18n
             debug('locale::lc_variants', ['LC_ALL' => $lc_all]);
         }
         $success = setlocale(LC_ALL, $lc_all);
-        if (DEBUG_MODE && ! is_hhvm()) {
+        if (DEBUG_MODE) {
             debug('locale::current', $this->_get_locale_details());
             $sys_locale = '';
             exec('locale -a', $sys_locale);
@@ -146,15 +156,16 @@ class yf_i18n
         if ($FORCE_LOCALE && isset($langs[$FORCE_LOCALE])) {
             return $FORCE_LOCALE;
         }
-        if ($this->_called[__FUNCTION__] && ! $force) {
+        if (($this->_called[__FUNCTION__] ?? false) && ! $force) {
             return $this->_called[__FUNCTION__];
         }
         $l = []; // contains all possible variants
-        $l['url'] = $_GET['language'] ?: $_GET['lang'];
-        $l['session'] = $this->ALLOW_SESSION_LANG ? $_SESSION[MAIN_TYPE . '_lang'] : '';
-        $l['cookie'] = $_COOKIE[MAIN_TYPE . '_lang'];
+        $l['url'] = $_GET['language'] ?? $_GET['lang'] ?? null;
+        $l['session'] = $this->ALLOW_SESSION_LANG ? ($_SESSION[MAIN_TYPE . '_lang'] ?? null) : '';
+        $l['cookie'] = $_COOKIE[MAIN_TYPE . '_lang'] ?? null;
         $l['user'] = function () {
             $uid = main()->USER_ID;
+            $lang = '';
             if ($uid && MAIN_TYPE_USER && main()->is_db()) {
                 $u = from('user')->whereid($uid)->limit(1)->get();
                 $u && $lang = $u['lang'] ?: $u['language'] ?: $u['locale'];
@@ -165,13 +176,13 @@ class yf_i18n
             if ( ! function_exists('locale_accept_from_http')) {
                 return false;
             }
-            $locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            $locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '');
             $lang = substr($locale, 0, 2);
             return $lang;
         };
         $l['country'] = function () {
             // TODO
-            return $lang;
+            return null;
         };
         $l['conf'] = conf('language');
         $l['admin'] = function () use ($langs) {
@@ -183,7 +194,7 @@ class yf_i18n
         };
         $l['site'] = function () {
             // TODO
-            return $lang;
+            return null;
         };
         $l['app'] = (defined('DEFAULT_LANG') && DEFAULT_LANG != '') ? DEFAULT_LANG : null;
 
@@ -250,7 +261,7 @@ class yf_i18n
     {
         $country = strtoupper(
             conf('country')
-            ?: $_SERVER['GEOIP_COUNTRY_CODE']
+            ?: ($_SERVER['GEOIP_COUNTRY_CODE'] ?? false)
             ?: (in_array(strtolower($this->CUR_LOCALE), ['ru', 'uk']) ? 'UA' : '')
         );
         $this->CUR_COUNTRY = $country;
@@ -262,7 +273,7 @@ class yf_i18n
     public function _get_current_charset()
     {
         $langs = $this->LANGUAGES ?: $this->_get_langs();
-        $charset = $langs[$this->CUR_LOCALE]['charset'];
+        $charset = $langs[$this->CUR_LOCALE]['charset'] ?? '';
         if (MAIN_TYPE_ADMIN && $this->CUR_LOCALE == 'en') {
             $charset = 'utf-8';
         }
@@ -369,19 +380,39 @@ class yf_i18n
         // share/langs/ru/ru_shop.php
         // plugins/shop/share/langs/ru/ru_user_register.php
         if ($this->ALLOW_SHARED_LANG_FILES) {
-            $pattern = '{,plugins/*/}{,share/}langs/' . $lang . '/*.php';
-            $globs = [
-                'framework' => YF_PATH . $pattern,
-                'project' => PROJECT_PATH . $pattern,
-                'app' => APP_PATH . $pattern,
+            $patterns = [
+                'framework' => [
+                    YF_PATH . 'langs/' . $lang . '/*.php',
+                    YF_PATH . 'plugins/*/langs/' . $lang . '/*.php',
+                    YF_PATH . 'share/langs/' . $lang . '/*.php',
+                    YF_PATH . 'plugins/*/share/langs/' . $lang . '/*.php',
+                ],
+                'project' => [
+                    PROJECT_PATH . 'langs/' . $lang . '/*.php',
+                    PROJECT_PATH . 'plugins/*/langs/' . $lang . '/*.php',
+                    PROJECT_PATH . 'share/langs/' . $lang . '/*.php',
+                    PROJECT_PATH . 'plugins/*/share/langs/' . $lang . '/*.php',
+                ],
+                'app' => [
+                    APP_PATH . 'langs/' . $lang . '/*.php',
+                    APP_PATH . 'plugins/*/langs/' . $lang . '/*.php',
+                    APP_PATH . 'share/langs/' . $lang . '/*.php',
+                    APP_PATH . 'plugins/*/share/langs/' . $lang . '/*.php',
+                ],
             ];
             if (SITE_PATH != PROJECT_PATH) {
-                $globs['site'] = SITE_PATH . $pattern;
+                $patterns['site'] = [
+                    SITE_PATH . 'langs/' . $lang . '/*.php',
+                    SITE_PATH . 'plugins/*/langs/' . $lang . '/*.php',
+                    SITE_PATH . 'share/langs/' . $lang . '/*.php',
+                    SITE_PATH . 'plugins/*/share/langs/' . $lang . '/*.php',
+                ];
             }
-            // Order matters! Project vars will have ability to override vars from franework
-            foreach ($globs as $glob) {
-                foreach ((array) glob($glob, GLOB_BRACE) as $f) {
-                    $files[basename($f)] = $f;
+            foreach ($patterns as $paths) {
+                foreach ($paths as $path) {
+                    foreach ((array) glob($path) as $f) {
+                        $files[basename($f)] = $f;
+                    }
                 }
             }
         }
@@ -393,19 +424,31 @@ class yf_i18n
         // plugins/shop/modules/shop/__locale__ru_products.php
         if ($this->ALLOW_MODULE_FILES) {
             $modules = (MAIN_TYPE_USER ? 'modules' : 'admin_modules');
-            $pattern = '{,plugins/*/}' . $modules . '/*/__locale__' . $lang . '*.php';
-            $globs = [
-                'framework' => YF_PATH . $pattern,
-                'project' => PROJECT_PATH . $pattern,
-                'app' => APP_PATH . $pattern,
+            $patterns = [
+                'framework' => [
+                    YF_PATH . $modules . '/*/__locale__' . $lang . '*.php',
+                    YF_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*.php',
+                ],
+                'project' => [
+                    PROJECT_PATH . $modules . '/*/__locale__' . $lang . '*.php',
+                    PROJECT_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*.php',
+                ],
+                'app' => [
+                    APP_PATH . $modules . '/*/__locale__' . $lang . '*.php',
+                    APP_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*.php',
+                ],
             ];
             if (MAIN_TYPE_USER && SITE_PATH != PROJECT_PATH) {
-                $globs['site'] = SITE_PATH . $pattern;
+                $patterns['site'] = [
+                    SITE_PATH . $modules . '/*/__locale__' . $lang . '*.php',
+                    SITE_PATH . 'plugins/*/' . $modules . '/*/__locale__' . $lang . '*.php',
+                ];
             }
-            // Order matters! Project vars will have ability to override vars from franework
-            foreach ($globs as $globs) {
-                foreach ((array) glob($glob, GLOB_BRACE) as $f) {
-                    $files[basename($f)] = $f;
+            foreach ($patterns as $paths) {
+                foreach ($paths as $path) {
+                    foreach ((array) glob($path) as $f) {
+                        $files[basename($f)] = $f;
+                    }
                 }
             }
         }
@@ -476,7 +519,7 @@ class yf_i18n
         }
         $in = trim($in);
 
-        DEBUG_MODE && $this->_calls[$in]++;
+        DEBUG_MODE && @$this->_calls[$in]++;
 
         if ($this->USE_TRANSLATE_CACHE && empty($args)) {
             $CACHE_NAME = $lang . '#____#' . $in;
@@ -519,7 +562,7 @@ class yf_i18n
                 $out = $first;
                 if (DEBUG_MODE) {
                     ! isset($this->_NOT_TRANSLATED[$lang][$in]) && $this->_NOT_TRANSLATED[$lang][$in] = 0;
-                    $this->_NOT_TRANSLATED[$lang][$in]++;
+                    @$this->_NOT_TRANSLATED[$lang][$in]++;
                     if ($this->AUTO_FIND_VARS && ! isset($this->TR_ALL_VARS[$in])) {
                         $this->insert_var($in);
                     }

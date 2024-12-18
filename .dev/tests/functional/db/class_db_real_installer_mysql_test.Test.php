@@ -3,7 +3,6 @@
 require_once __DIR__ . '/db_real_abstract.php';
 
 /**
- * @requires extension mysqli
  */
 class class_db_real_installer_mysql_test extends db_real_abstract
 {
@@ -414,11 +413,11 @@ class class_db_real_installer_mysql_test extends db_real_abstract
             $table = $db_prefix . $name;
             /*
                         $this->assertFalse( (bool)self::utils()->table_exists(self::table_name($table)) );
-            
+
             var_dump('affected rows: '.self::db()->affected_rows());
             var_dump('num rows: '.self::db()->num_rows());
             var_dump('insert_id: '.self::db()->insert_id());
-            
+
             #var_dump('insert', self::db()->insert($table, array('id' => 1)));
             #var_dump('insert', self::db()->insert_safe($table, array('id' => 1)));
             #var_dump('insert', self::db()->insert($table, array('id2' => 1)));
@@ -426,11 +425,11 @@ class class_db_real_installer_mysql_test extends db_real_abstract
             #var_dump('select', self::db()->query('select * from '.$table));
             #var_dump('delete', self::db()->query('delete from '.$table));
             #var_dump('update', self::db()->update($table, array('id' => 1), 1));
-            
+
             var_dump('affected rows: '.self::db()->affected_rows());
             var_dump('num rows: '.self::db()->num_rows());
             var_dump('insert_id: '.self::db()->insert_id());
-            
+
                         $this->assertTrue( (bool)self::utils()->table_exists(self::table_name($table)) );
             */
 /*

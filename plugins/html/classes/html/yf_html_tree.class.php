@@ -3,6 +3,9 @@
 
 class yf_html_tree
 {
+    public $_ids = [];
+    public $_parent = null;
+
     public function _init()
     {
         $this->_parent = _class('html');

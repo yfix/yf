@@ -17,6 +17,13 @@ abstract class yf_db_query_builder_driver
     const REGEX_ASC_DESC = '~^([a-z0-9\(\)*_\.]+)[\s]+(asc|desc)$~ims';
     const REGEX_TABLE_NAME_CLEANUP = '~[^a-z0-9_\.\s]~ims';
 
+    public $_sql = [];
+    public $_model = [];
+    public $db = null;
+    public $_result_wrapper = null;
+    public $_qb_set = null;
+
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -199,13 +206,13 @@ abstract class yf_db_query_builder_driver
             $a[$name] = $this->_sql_part_to_array($name, $sql_data[$name], $config, $return_raw);
         }
         $unions = [];
-        foreach ((array) $sql_data['union'] as $query) {
+        foreach (($sql_data['union'] ?? []) as $query) {
             $subquery = $this->subquery($query);
             if ($subquery) {
                 $unions[] = 'UNION ' . $subquery;
             }
         }
-        foreach ((array) $sql_data['union_all'] as $query) {
+        foreach (($sql_data['union_all'] ?? []) as $query) {
             $subquery = $this->subquery($query);
             if ($subquery) {
                 $unions[] = 'UNION ALL ' . $subquery;
@@ -214,7 +221,7 @@ abstract class yf_db_query_builder_driver
         if ($unions) {
             $a['union'] = implode(PHP_EOL, $unions);
         }
-        $lock = $sql_data['lock'];
+        $lock = $sql_data['lock'] ?? '';
         if (in_array($lock, ['lock_for_update', 'shared_lock'])) {
             $a['lock'] = ($lock === 'lock_for_update' ? 'FOR UPDATE' : 'LOCK IN SHARE MODE');
         }
@@ -1359,8 +1366,8 @@ abstract class yf_db_query_builder_driver
         $where = $this->_split_by_comma($where);
         $count = count((array) $where);
         if (($count === 3 || $count === 2) && is_string($where[0]) && (is_string($where[1]) || is_numeric($where[1]) || is_array($where[1]))) {
-            if ( ! preg_match(self::REGEX_INLINE_CONDS, $where[0]) && ! preg_match(self::REGEX_INLINE_CONDS, $where[1])) {
-                $sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
+            if ( ! preg_match(self::REGEX_INLINE_CONDS, $where[0]) && ! preg_match(self::REGEX_INLINE_CONDS, (string) $where[1])) {
+                $sql = $this->_process_where_cond($where[0], $where[1], $where[2] ?? '');
             }
         }
         $avail_imploders = ['AND', 'OR', 'XOR'];
@@ -1468,12 +1475,12 @@ abstract class yf_db_query_builder_driver
         // Think that we dealing with 2 arguments passing like this: where('id', 1)
         // Also this will match: where('id', [1,2,3])
         if (strlen($left) && ! empty($op) && ! is_array($right) && ! strlen($right)) {
-            if (strlen($op) && ! in_array($op, ['=', '!=', '<', '>', '<=', '>=', 'like', 'not like', 'is null', 'is not null', 'in', 'not in'])) {
-                $right = $op;
-                $op = '=';
-            } elseif (is_array($op) && $this->_is_where_all_numeric($op)) {
+            if (is_array($op) && $this->_is_where_all_numeric($op)) {
                 $right = $op;
                 $op = 'in';
+            } elseif (strlen($op) && ! in_array($op, ['=', '!=', '<', '>', '<=', '>=', 'like', 'not like', 'is null', 'is not null', 'in', 'not in'])) {
+                $right = $op;
+                $op = '=';
             }
         }
         if (is_string($right) && (false !== strpos($right, '%') || false !== strpos($right, '*'))) {
@@ -1489,13 +1496,13 @@ abstract class yf_db_query_builder_driver
             $right = '';
             $right_generated = '__dummy_for_null__';
         } elseif ($op === 'in' || $op === 'not in') {
-            $right_generated = $this->_ids_sql_from_array((array) $right);
-            if ($right_generated) {
-                $right_generated = '(' . implode(',', $right_generated) . ')';
-            }
+            $right_items = $this->_ids_sql_from_array((array) $right);
+            $right_generated = $right_items ? '(' . implode(',',  $right_items). ')' : '';
         }
-        if ((empty($right) || ! strlen(is_array($right) ? '' : $right)) && ! strlen($right_generated)) {
-            return '';
+        if (! strlen($right_generated)) {
+            if (empty($right) || is_array($right)) {
+                return '';
+            }
         }
         if ($right_generated === '__dummy_for_null__') {
             return $this->_escape_expr($left) . ' ' . strtoupper($op);
@@ -1781,8 +1788,11 @@ abstract class yf_db_query_builder_driver
             unset($this->_sql[__FUNCTION__]);
             return $this;
         }
-        if ($count === 2 && ! empty($items[0]) && in_array(trim(strtoupper($items[1])), ['ASC', 'DESC'])) {
-            $items = [[$items[0] => $items[1]]];
+        if ($count === 2 && ! empty($items[0])) {
+            $ascdesc = (string) $items[1];
+            if (in_array(trim(strtoupper($ascdesc)), ['ASC', 'DESC'])) {
+                $items = [[$items[0] => $ascdesc]];
+            }
         }
         $a = [];
         $items = $this->_split_by_comma($items);

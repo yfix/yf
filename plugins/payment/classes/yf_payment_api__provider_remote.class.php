@@ -6,7 +6,7 @@ if ( ! function_exists('array_replace_recursive')) {
 
 class yf_payment_api__provider_remote
 {
-    public $ENABLE = null;
+    public $ENABLE = false;
     public $TEST_MODE = null;
 
     public $URL = null;

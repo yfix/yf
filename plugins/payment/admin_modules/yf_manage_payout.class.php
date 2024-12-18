@@ -2232,7 +2232,7 @@ class yf_manage_payout
             }
             $by_method[$payout_method]['method'] = $payout_method;
             $by_method[$payout_method]['sum'] += $data[$k]['amount'];
-            $by_method[$payout_method]['count']++;
+            @$by_method[$payout_method]['count']++;
         }
         ksort($by_method);
         foreach ($by_method as $k => $v) {

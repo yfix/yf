@@ -30,6 +30,8 @@ class yf_wrapper_redis
     public $log = [];
     public $LOG_LIMIT = 1000;
 
+    public $read_timeout = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name

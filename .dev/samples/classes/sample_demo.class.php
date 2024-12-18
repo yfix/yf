@@ -91,7 +91,7 @@ class sample_demo
 						</h1>
 					</div>
 					<div id="func_self_source_' . $name_html . '" class="panel-body collapse out"><pre class="prettyprint lang-php"><code>' . _prepare_html($self_source['source']) . '</code></pre></div> '
-                    . ($target_source['source'] ? '<div id="func_target_source_' . $name_html . '" class="panel-body collapse out"><pre class="prettyprint lang-php"><code>' . (_prepare_html($target_source['source'])) . '</code></pre></div> ' : '')
+                    . (($target_source['source'] ?? false) ? '<div id="func_target_source_' . $name_html . '" class="panel-body collapse out"><pre class="prettyprint lang-php"><code>' . (_prepare_html($target_source['source'] ?? '')) . '</code></pre></div> ' : '')
                 . '</div>';
             return implode(PHP_EOL, [$header, '<section class="page-contents">' . tpl()->parse_string($body, $replace, 'demo_' . $name) . '</section>']);
         }

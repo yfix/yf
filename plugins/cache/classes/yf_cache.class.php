@@ -23,6 +23,15 @@ class yf_cache
     /** @var bool Force cache class to generate unique namespace, based on project_path. Usually needed to separate projects within same cache storage (memcached as example) */
     public $AUTO_CACHE_NS = false;
 
+    public $FILES_TTL = null;
+    public $_extend = [];
+    public $_driver = null;
+    public $_driver_ok = false;
+    public $_init_complete = false;
+    public $_no_cache = [];
+    public $_tried_to_connect = null;
+    public $_NO_CACHE_WHY = false;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -83,7 +92,7 @@ class yf_cache
         }
         $conf_cache_ns = conf('CACHE_NS');
         // Cache namespace need to be unique, especially when using memcached shared between several projects
-        if ( ! $conf_cache_ns && ! $this->CACHE_NS && $this->AUTO_CACHE_NS) {
+        if (! $conf_cache_ns && ! $this->CACHE_NS && $this->AUTO_CACHE_NS) {
             $this->CACHE_NS = substr(md5(PROJECT_PATH), 0, 8) . '_';
         }
         if ($conf_cache_ns) {
@@ -92,25 +101,25 @@ class yf_cache
         $conf_no_cache = conf('NO_CACHE');
         // backwards compatibility
         if (defined('USE_CACHE')) {
-            if ( ! USE_CACHE) {
+            if (! USE_CACHE) {
                 $this->NO_CACHE = true;
                 $this->_NO_CACHE_WHY = 'const NO_CACHE defined and false';
             }
         } elseif ($conf_no_cache !== null && $conf_no_cache) {
             $this->NO_CACHE = true;
             $this->_NO_CACHE_WHY = 'conf(NO_CACHE) is true';
-        } elseif ( ! main()->USE_SYSTEM_CACHE) {
+        } elseif (! main()->USE_SYSTEM_CACHE) {
             $this->NO_CACHE = true;
             $this->_NO_CACHE_WHY = 'main()->USE_SYSTEM_CACHE == false';
         }
-        if (($_GET['no_core_cache'] || $_GET['no_cache']) && $this->_url_action_allowed('no_cache')) {
+        if ((($_GET['no_core_cache'] ?? false) || ($_GET['no_cache'] ?? false)) && $this->_url_action_allowed('no_cache')) {
             $this->NO_CACHE = true;
             $this->_NO_CACHE_WHY = '$_GET param no_cache';
         }
         if ($this->NO_CACHE && ! $this->_NO_CACHE_WHY) {
             $this->_NO_CACHE_WHY = 'cache()->NO_CACHE == true';
         }
-        if (($_GET['refresh_cache'] || $_GET['rebuild_core_cache']) && $this->_url_action_allowed('refresh_cache')) {
+        if ((($_GET['refresh_cache'] ?? false) || ($_GET['rebuild_core_cache'] ?? false)) && $this->_url_action_allowed('refresh_cache')) {
             $this->FORCE_REBUILD_CACHE = true;
         }
         $this->FORCE_REBUILD_CACHE = false;
@@ -136,7 +145,7 @@ class yf_cache
      */
     public function _connect($params = [])
     {
-        if ( ! $this->DRIVER) {
+        if (! $this->DRIVER) {
             return null;
         }
         if (isset($this->_tried_to_connect)) {
@@ -171,7 +180,7 @@ class yf_cache
         $avail_drivers = $this->_get_avail_drivers_list();
         $driver = '';
         $want = isset($params['driver']) ? $params['driver'] : $this->DRIVER;
-        if ( ! $want || $want == 'auto') {
+        if (! $want || $want == 'auto') {
             $want = 'memcache';
         }
         if (isset($avail_drivers[$want])) {
@@ -188,18 +197,26 @@ class yf_cache
         $suffix = '.class.php';
         $plen = strlen($prefix);
         $slen = strlen($suffix);
-        $pattern = '{,plugins/*/}classes/cache/*' . $prefix . '*' . $suffix;
-        $globs = [
-            'app' => APP_PATH . $pattern,
-            'framework' => YF_PATH . $pattern,
+        $patterns = [
+            'app' => [
+                APP_PATH . 'classes/cache/*' . $prefix . '*' . $suffix,
+                APP_PATH . 'plugins/*/classes/cache/*' . $prefix . '*' . $suffix,
+            ],
+            'framework' => [
+                YF_PATH . 'classes/cache/*' . $prefix . '*' . $suffix,
+                YF_PATH . 'plugins/*/classes/cache/*' . $prefix . '*' . $suffix,
+            ],
         ];
+
         $drivers = [];
-        foreach ($globs as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $f) {
-                $f = basename($f);
-                $name = substr($f, strpos($f, $prefix) + $plen, -$slen);
-                if ($name) {
-                    $drivers[$name] = $name;
+        foreach ($patterns as $paths) {
+            foreach ($paths as $path) {
+                foreach (glob($path) as $f) {
+                    $f = basename($f);
+                    $name = substr($f, strpos($f, $prefix) + $plen, -$slen);
+                    if ($name) {
+                        $drivers[$name] = $name;
+                    }
                 }
             }
         }
@@ -216,7 +233,7 @@ class yf_cache
         if ($name === false || $name === null || ! is_string($name)) {
             return null;
         }
-        if ( ! @$params['force']) {
+        if (! @$params['force']) {
             $result = $this->get($name, $ttl, $params);
         }
         if (@$result === null) {
@@ -239,7 +256,7 @@ class yf_cache
             return null;
         }
         $do_real_work = true;
-        if ( ! $this->_driver_ok || empty($name) || $this->NO_CACHE) {
+        if (! $this->_driver_ok || empty($name) || $this->NO_CACHE) {
             $do_real_work = false;
         }
         if ($this->FORCE_REBUILD_CACHE) {
@@ -267,7 +284,7 @@ class yf_cache
             'trace' => main()->trace_string(),
             'did_real_work' => (int) $do_real_work,
         ]);
-        if ($_GET['refresh_cache'] && $this->_url_action_allowed('refresh_cache')) {
+        if (($_GET['refresh_cache'] ?? false) && $this->_url_action_allowed('refresh_cache')) {
             return null;
         }
         return $result;
@@ -285,7 +302,7 @@ class yf_cache
             return null;
         }
         $do_real_work = true;
-        if ( ! $this->_driver_ok || $this->NO_CACHE || $this->_no_cache[$name]) {
+        if (! $this->_driver_ok || $this->NO_CACHE || $this->_no_cache[$name]) {
             $do_real_work = false;
         }
         if (is_array($name)) {
@@ -328,7 +345,7 @@ class yf_cache
             return null;
         }
         $do_real_work = true;
-        if ( ! $this->_driver_ok) {
+        if (! $this->_driver_ok) {
             $do_real_work = false;
         }
         if (is_array($name)) {
@@ -398,7 +415,7 @@ class yf_cache
     public function flush()
     {
         $do_real_work = true;
-        if ( ! $this->_driver_ok) {
+        if (! $this->_driver_ok) {
             $do_real_work = false;
         }
         if (DEBUG_MODE) {
@@ -459,13 +476,13 @@ class yf_cache
     public function multi_get($names = [], $force_ttl = 0, $params = [])
     {
         $do_real_work = true;
-        if ( ! $this->_driver_ok || $this->NO_CACHE) {
+        if (! $this->_driver_ok || $this->NO_CACHE) {
             $do_real_work = false;
         }
         if (DEBUG_MODE) {
             $time_start = microtime(true);
         }
-        if ( ! empty($this->_no_cache)) {
+        if (! empty($this->_no_cache)) {
             foreach ((array) $names as $k => $name) {
                 if (isset($this->_no_cache[$name])) {
                     unset($names[$k]);
@@ -495,7 +512,7 @@ class yf_cache
                     }
                 }
             }
-            if ( ! is_array($result) || ! count((array) $result)) {
+            if (! is_array($result) || ! count((array) $result)) {
                 $result = null;
             }
         }
@@ -517,13 +534,13 @@ class yf_cache
     public function multi_set($data = [], $ttl = 0)
     {
         $do_real_work = true;
-        if ( ! $this->_driver_ok || $this->NO_CACHE) {
+        if (! $this->_driver_ok || $this->NO_CACHE) {
             $do_real_work = false;
         }
         if (DEBUG_MODE) {
             $time_start = microtime(true);
         }
-        if ( ! empty($this->_no_cache)) {
+        if (! empty($this->_no_cache)) {
             foreach ((array) $this->_no_cache as $name => $tmp) {
                 if (isset($data[$name])) {
                     unset($data[$name]);
@@ -542,13 +559,13 @@ class yf_cache
             } else {
                 $failed = false;
                 foreach ((array) $data as $name => $_data) {
-                    if ( ! $this->set($name, $_data, $ttl)) {
+                    if (! $this->set($name, $_data, $ttl)) {
                         $failed = true;
                     }
                 }
                 $result = ! $failed;
             }
-            if ( ! $result) {
+            if (! $result) {
                 $result = null;
             }
         }
@@ -568,7 +585,7 @@ class yf_cache
     public function multi_del($names = [])
     {
         $do_real_work = true;
-        if ( ! $this->_driver_ok) {
+        if (! $this->_driver_ok) {
             $do_real_work = false;
         }
         if (DEBUG_MODE) {
@@ -585,14 +602,14 @@ class yf_cache
                     $names[$k] = $this->CACHE_NS . $name;
                 }
                 $result = $this->_driver->multi_del($names);
-                if ( ! $result) {
+                if (! $result) {
                     $failed = true;
                 }
             }
-            if ( ! $implemented || $result === null) {
+            if (! $implemented || $result === null) {
                 $names = $old_names;
                 foreach ((array) $names as $name) {
-                    if ( ! $this->del($name)) {
+                    if (! $this->del($name)) {
                         $failed = true;
                     }
                 }
@@ -613,13 +630,13 @@ class yf_cache
     public function list_keys()
     {
         $do_real_work = true;
-        if ( ! $this->_driver_ok) {
+        if (! $this->_driver_ok) {
             $do_real_work = false;
         }
         if (DEBUG_MODE) {
             $time_start = microtime(true);
         }
-        if ( ! $this->_driver->implemented['list_keys']) {
+        if (! $this->_driver->implemented['list_keys']) {
             $do_real_work = false;
         }
         $result = null;
@@ -657,7 +674,7 @@ class yf_cache
     public function del_by_prefix($prefix = '')
     {
         $do_real_work = true;
-        if ( ! $this->_driver_ok) {
+        if (! $this->_driver_ok) {
             $do_real_work = false;
         }
         if (DEBUG_MODE) {
@@ -665,7 +682,7 @@ class yf_cache
         }
         $result = null;
         if ($do_real_work) {
-            if ( ! strlen($prefix) || ! is_string($prefix)) {
+            if (! strlen($prefix) || ! is_string($prefix)) {
                 $result = $this->flush();
             } else {
                 $result = false;
