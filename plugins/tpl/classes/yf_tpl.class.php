@@ -51,7 +51,7 @@ class yf_tpl
     /** @var bool */
     public $DEBUG_STPL_VARS = false;
     /** @var bool Will add cur date, generation time, memory and db queries into any common page before body */
-    public $ADD_QUICK_PAGE_INFO = true;
+    public $ADD_QUICK_PAGE_INFO = false;
     /** @var bool Compile templates folder */
     public $COMPILED_DIR = 'stpls_compiled/';
     /** @var string @conf_skip */
@@ -110,6 +110,9 @@ class yf_tpl
      */
     public function _init()
     {
+        if (DEBUG_MODE) {
+            $this->ADD_QUICK_PAGE_INFO = true;
+        }
         // Needed to ensure backtracking still works on big templates (extended from 1 000 000 on 26kb stpl js() parsing)
         ini_set('pcre.backtrack_limit', '10000000');
 

@@ -64,6 +64,11 @@ class yf_core_errors
      */
     public function __construct()
     {
+        if ($this->ERROR_LOG_PATH) {
+            ini_set('error_log', main()->_replace_core_paths($this->ERROR_LOG_PATH));
+        }
+        $this->set_log_file_name($this->_get_file_path());
+
         $this->init_reporting();
     }
 
@@ -99,17 +104,10 @@ class yf_core_errors
         if ($conf_error_level) {
             $this->ERROR_LEVEL = $conf_error_level;
         }
-        if ($force_level) {
-            $this->ERROR_LEVEL = $force_level;
-        }
 
         error_reporting($this->ERROR_LEVEL);
         ini_set('ignore_repeated_errors', 1);
         ini_set('ignore_repeated_source', 1);
-        if ($this->ERROR_LOG_PATH) {
-            ini_set('error_log', main()->_replace_core_paths($this->ERROR_LOG_PATH));
-        }
-        $this->set_log_file_name($this->_get_file_path());
 
         set_error_handler([$this, 'error_handler'], E_ALL);
         set_exception_handler([$this,  'exception_handler']);

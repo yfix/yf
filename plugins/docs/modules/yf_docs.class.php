@@ -45,13 +45,6 @@ class yf_docs
         tpl()->add_function_callback('self_source', function ($m, $r, $name, $_this) {
             // return _class('core_api')->get_method_source($m[1], $m[2]);
         });
-
-        // _class('core_errors')->init_reporting(true);
-        // if ($this->non_existing_var) {
-        // }
-        // _class('core_errors')->init_reporting(false);
-        // if ($this->non_existing_var2) {
-        // }
     }
 
     /***/
