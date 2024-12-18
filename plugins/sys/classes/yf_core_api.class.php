@@ -335,7 +335,7 @@ class yf_core_api
             $methods = $this->get_methods_sources($cls);
             $this->_cache[__FUNCTION__][$cls] = $methods;
         }
-        return $methods[$method];
+        return $methods[$method] ?? '';
     }
 
     /**

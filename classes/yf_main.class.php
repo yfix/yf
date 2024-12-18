@@ -18,8 +18,6 @@ class yf_main
     public $CONSOLE_MODE = false;
     /** @var bool Use database for translation or language files */
     public $LANG_USE_DB = false;
-    /** @var bool Use custom error handler */
-    public $USE_CUSTOM_ERRORS = false;
     /** @var bool Sytem tables caching */
     public $USE_SYSTEM_CACHE = false;
     /** @var bool Task manager on/off */
@@ -118,12 +116,6 @@ class yf_main
     public $USER_INFO = null;
     /** @var array List of objects/actions for which no db connection is required. @example: 'object' => array('action1', 'action2') */
     public $NO_DB_FOR = ['internal' => [], 'dynamic' => ['php_func']];
-    /** @var int Error reporting level for production/non-debug mode (int from built-in constants) */
-    public $ERROR_REPORTING_PROD = 0;
-    /** @var int Error reporting level for DEBUG_MODE enabled */
-    public $ERROR_REPORTING_DEBUG = 22519; // 22519 = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
-    /** @var string Log errors switcher, keep empty to disable logging */
-    public $ERROR_LOG_PATH = '{LOGS_PATH}yf_core_errors.log';
     /** @var mixed Development mode, enable dev overrides layer, can containg string with developer name */
     public $DEV_MODE = false;
     /** @var string Server host name */
@@ -229,10 +221,11 @@ class yf_main
             $this->init_conf_functions();
             $this->_before_init_hook();
             $this->init_constants();
-            $this->init_php_params();
             $this->set_module_conf('main', $this); // // Load project config for self
+            $conf_tz = conf('timezone'); # 'Europe/Kiev'
+            $conf_tz && date_default_timezone_set($conf_tz);
             $this->init_main_functions();
-            $this->init_error_reporting();
+            $this->error_handler = $this->_class('core_errors');
             $this->init_server_health();
             $this->try_fast_init();
             $this->init_modules_base();
@@ -663,17 +656,6 @@ class yf_main
         }
         $this->cache = $this->_class('cache');
         $this->events->fire('main.after_cache');
-    }
-
-    public function init_error_reporting()
-    {
-        $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        if ($this->USE_CUSTOM_ERRORS) {
-            $this->error_handler = $this->_class('core_errors');
-        }
-        if ($this->ERROR_LOG_PATH) {
-            ini_set('error_log', $this->_replace_core_paths($this->ERROR_LOG_PATH));
-        }
     }
 
     public function init_server_health()
@@ -1879,17 +1861,6 @@ class yf_main
             $_GET['action'] = defined('DEFAULT_ACTION') ? constant('DEFAULT_ACTION') : 'show';
         }
         ! conf('css_framework') && conf('css_framework', 'bs3');
-    }
-
-    /**
-     * Try to set required PHP runtime params.
-     */
-    public function init_php_params()
-    {
-        $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
-        ini_set('url_rewriter.tags', '');
-        date_default_timezone_set(conf('timezone') ?: 'Europe/Kiev');
     }
 
     /**
