@@ -26,10 +26,6 @@ class yf_core_errors
     public $_SHOW_BORDERS = false;
     /** @var bool @conf_skip Started log output or not */
     public $_LOG_STARTED = false;
-    /** @var bool Log error messages into database */
-    public $LOG_INTO_DB = false;
-    /** @var bool Log into these data: $_GET, $_POST */
-    public $DB_LOG_ENV = true;
     /** @var Use compact format */
     public $USE_COMPACT_FORMAT = true;
     /** @var string Could be any sequence from GPFCS */
@@ -207,13 +203,9 @@ class yf_core_errors
         $msg = '';
         $save_log = false;
         // Process critical errors
-        $save_in_db = false;
         if ($error_type == E_ERROR || $error_type == E_USER_ERROR) {
             if ($this->LOG_ERRORS_TO_FILE) {
                 $save_log = true;
-            }
-            if ($this->LOG_INTO_DB) {
-                $save_in_db = true;
             }
             // Process warnings errors
         } elseif ($error_type == E_WARNING || $error_type == E_USER_WARNING) {
@@ -223,16 +215,10 @@ class yf_core_errors
             if ($this->LOG_WARNINGS_TO_FILE) {
                 $save_log = true;
             }
-            if ($this->LOG_INTO_DB) {
-                $save_in_db = true;
-            }
             // Process notices
         } elseif ($error_type == E_NOTICE || $error_type == E_USER_NOTICE) {
             if ($this->LOG_NOTICES_TO_FILE) {
                 $save_log = true;
-            }
-            if ($this->LOG_INTO_DB) {
-                $save_in_db = false;
             }
         } elseif ($error_type == E_DEPRECATED) {
             return true;
@@ -266,6 +252,26 @@ class yf_core_errors
                 'us' => $_SERVER['HTTP_USER_AGENT'],
             ]) . PHP_EOL;
 
+            // $data = [
+            //     'error_level' => (int) $error_type,
+            //     'error_text' => $error_msg,
+            //     'source_file' => $error_file,
+            //     'source_line' => (int) $error_line,
+            //     'date' => time(),
+            //     'site_id' => (int) conf('SITE_ID'),
+            //     'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id'] ?? 0),
+            //     'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group'] ?? 0),
+            //     'is_admin' => MAIN_TYPE_ADMIN ? 1 : 0,
+            //     'ip' => $IP,
+            //     'query_string' => WEB_PATH . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''),
+            //     'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+            //     'referer' => @$_SERVER['HTTP_REFERER'],
+            //     'request_uri' => $_SERVER['REQUEST_URI'],
+            //     'object' => $_GET['object'],
+            //     'action' => $_GET['action'],
+            //     'trace' => implode(PHP_EOL, $trace),
+            // ];
+
             if ( ! $this->_LOG_STARTED) {
                 if ($this->_SHOW_BORDERS) {
                     $this->_do_save_log_info('START EXECUTION' . PHP_EOL, 1);
@@ -273,30 +279,6 @@ class yf_core_errors
                 $this->_LOG_STARTED = true;
             }
             $this->_do_save_log_info($msg);
-        }
-        $data = [
-            'error_level' => (int) $error_type,
-            'error_text' => $error_msg,
-            'source_file' => $error_file,
-            'source_line' => (int) $error_line,
-            'date' => time(),
-            'site_id' => (int) conf('SITE_ID'),
-            'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id'] ?? 0),
-            'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group'] ?? 0),
-            'is_admin' => MAIN_TYPE_ADMIN ? 1 : 0,
-            'ip' => $IP,
-            'query_string' => WEB_PATH . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''),
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-            'referer' => @$_SERVER['HTTP_REFERER'],
-            'request_uri' => $_SERVER['REQUEST_URI'],
-            'env_data' => $this->DB_LOG_ENV ? $this->_prepare_env() : '',
-            'object' => $_GET['object'],
-            'action' => $_GET['action'],
-            'trace' => implode(PHP_EOL, $trace),
-        ];
-        if ($save_in_db && is_object(db()) && ! empty(db()->_connected)) {
-            $sql = db()->insert_safe('log_core_errors', $data, true);
-            db()->_add_shutdown_query($sql);
         }
         if (DEBUG_MODE && ($this->ERROR_REPORTING & $error_type) && strlen($msg)) {
             echo '<b>' . $this->error_types[$error_type] . '</b>: <pre>' . _prepare_html($error_msg) . '</pre> (<i>' . $error_file . ' on line ' . $error_line . '</i>)<pre>' . _prepare_html(main()->trace_string()) . '</pre><br />' . PHP_EOL;

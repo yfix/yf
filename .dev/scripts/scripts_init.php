@@ -35,7 +35,7 @@ define('DB_USER', getenv('YF_DB_USER') ?: 'root');
 define('DB_PSWD', is_string(getenv('YF_DB_PSWD')) ? getenv('YF_DB_PSWD') : '123456');
 define('DB_PREFIX', is_string(getenv('YF_DB_PREFIX')) ? getenv('YF_DB_PREFIX') : 'tmp_');
 
-define('YF_PATH', '/var/www/vendor/yf31/');
+define('YF_PATH', '/var/www/yf38/');
 if (!defined('YF_PATH')) {
     define('YF_PATH', dirname(dirname(dirname(__DIR__))) . '/');
 }

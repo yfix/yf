@@ -27,8 +27,8 @@ jobs:
     container:
       image: yfix/php:${{ matrix.php-image }}
       volumes:
-        - ${{ github.workspace }}:/var/www/vendor/yf31
-      options: --workdir /var/www/vendor/yf31
+        - ${{ github.workspace }}:/var/www/yf38
+      options: --workdir /var/www/yf38
 
     services:
       mysql-tmp:

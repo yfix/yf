@@ -212,7 +212,7 @@ class yf_main
         if ($_SERVER['argc'] && ! isset($_SERVER['REQUEST_METHOD'])) {
             $this->CONSOLE_MODE = true;
         }
-        error_reporting(0); // Remove all errors initially
+        // error_reporting(0); // Remove all errors initially
 
         define('YF_CLS_EXT', '.class.php');
         define('YF_PREFIX', 'yf_'); // Prefix to the all framework classes
@@ -231,10 +231,11 @@ class yf_main
             $this->init_constants();
             $this->init_php_params();
             $this->set_module_conf('main', $this); // // Load project config for self
+            $this->init_main_functions();
+            $this->init_error_reporting();
             $this->init_server_health();
             $this->try_fast_init();
             $this->init_modules_base();
-            $this->init_main_functions();
             $this->init_events();
             $this->init_cache();
             $this->init_files();
@@ -242,7 +243,6 @@ class yf_main
             $this->init_common();
             $this->_class('graphics');
             $this->load_class_file('module', 'classes/');
-            $this->init_error_reporting();
             $this->init_site_id();
             $this->init_server_id();
             $this->init_server_role();
@@ -1803,7 +1803,9 @@ class yf_main
         ! defined('UPLOADS_PATH') && define('UPLOADS_PATH', PROJECT_PATH . 'uploads/');
         // Website inside project FS base path. Recommended to use from now instead of REAL_PATH
         if (! defined('SITE_PATH')) {
-            list($found_site, $found_dir) = $this->_find_site();
+            $_site_tmp = $this->_find_site();
+            $found_site = $_site_tmp[0] ?? '';
+            $found_dir = $_site_tmp[1] ?? '';
             define('SITE_PATH', $found_site ? $found_dir . $found_site . '/' : PROJECT_PATH);
         }
         // Alias of SITE_PATH. Compatibility with old code. DEPRECATED
@@ -1842,7 +1844,7 @@ class yf_main
         ! defined('ADMIN_SITE_PATH') && define('ADMIN_SITE_PATH', SITE_PATH . 'admin/');
         ! defined('ADMIN_WEB_PATH') && define('ADMIN_WEB_PATH', WEB_PATH . 'admin/');
         // Check if current page is called via AJAX call from javascript
-        conf('IS_AJAX', (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || ! empty($_GET['ajax_mode'])) ? 1 : 0);
+        conf('IS_AJAX', (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') == 'xmlhttprequest' || ! empty($_GET['ajax_mode'] ?? '')) ? 1 : 0);
 
         define('USER_MODULES_DIR', 'modules/');
         define('ADMIN_MODULES_DIR', 'admin_modules/');
@@ -1868,11 +1870,11 @@ class yf_main
             }
         }
         // Filter object and action from $_GET
-        if ($_GET['action'] == $_GET['object']) {
+        if (($_GET['action'] ?? '') == ($_GET['object'] ?? '')) {
             $_GET['action'] = '';
         }
-        $_GET['object'] = str_replace(['yf_', '-'], ['', '_'], preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['object']))));
-        $_GET['action'] = str_replace('-', '_', preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['action']))));
+        $_GET['object'] = str_replace(['yf_', '-'], ['', '_'], preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['object'] ?? ''))));
+        $_GET['action'] = str_replace('-', '_', preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['action'] ?? ''))));
         if (! $_GET['action']) {
             $_GET['action'] = defined('DEFAULT_ACTION') ? constant('DEFAULT_ACTION') : 'show';
         }

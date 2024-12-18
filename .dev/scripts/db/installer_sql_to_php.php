@@ -11,7 +11,7 @@ define('DB_PREFIX', is_string(getenv('YF_DB_PREFIX')) ? getenv('YF_DB_PREFIX') :
 # assume thst db already exists
 // exec('mysql -h ' . escapeshellarg(DB_HOST) . ' -u ' . escapeshellarg(DB_USER) . ' -p' . escapeshellarg(DB_PSWD) . ' -e "CREATE DATABASE IF NOT EXISTS ' . DB_NAME . '"');
 
-define('YF_PATH', '/var/www/vendor/yf31/');
+define('YF_PATH', '/var/www/yf38/');
 if (!defined('YF_PATH')) {
     define('YF_PATH', dirname(dirname(dirname(__DIR__))) . '/');
 }
