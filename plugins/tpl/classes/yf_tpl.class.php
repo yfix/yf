@@ -487,7 +487,7 @@ class yf_tpl
      * @param mixed $string
      * @param mixed $stpl_time_start
      */
-    public function _parse_set_debug_info($name = '', $replace = [], $params = [], $string = '', $stpl_time_start)
+    public function _parse_set_debug_info($name = '', $replace = [], $params = [], $string = '', $stpl_time_start = 0)
     {
         if ( ! DEBUG_MODE) {
             return false;

@@ -313,6 +313,7 @@ class yf_graphics
      */
     public function show_welcome()
     {
+        $body = '';
         // For authorized admins only
         if (MAIN_TYPE_ADMIN) {
             $login_time = $_SESSION['admin_login_time'];

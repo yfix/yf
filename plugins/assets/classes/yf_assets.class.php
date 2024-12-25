@@ -666,7 +666,9 @@ class yf_assets
                 if ($_files) {
                     $_name = $data['name'] ?: $name;
                     strpos($_name, '#') !== false && list($_name, $_version) = explode('#', $_name);
-                    $_version = $version ?: $_version ?: $data['version'] ?: 'master';
+                    $_version ??= $version;
+                    $_version ??= $data['version'];
+                    $_version ??= 'master';
                 }
             }
             if ($method == 'bower' && $this->ALLOW_GET_FROM_BOWER && $_files) {

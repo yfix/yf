@@ -14,7 +14,7 @@ class yf_core_errors
     /** @var int Error reporting level for production/non-debug mode (int from built-in constants) */
     public $ERROR_LEVEL_PROD = 0;
     /** @var int Error reporting level for DEBUG_MODE enabled */
-    public $ERROR_LEVEL_DEBUG = E_ALL & ~E_NOTICE;
+    public $ERROR_LEVEL_DEBUG = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
     /** @var bool Log errors to the error file? */
     public $LOG_ERRORS_TO_FILE = true;
     /** @var bool Log warnings to the error file? */

@@ -510,7 +510,7 @@ abstract class yf_db_query_builder_driver
      * @param mixed $num
      * @param mixed $callback
      */
-    public function chunk($num = 100, $callback)
+    public function chunk($num = 100, $callback = null)
     {
         $sql = $this->sql();
         if ( ! $sql) {
@@ -1307,7 +1307,7 @@ abstract class yf_db_query_builder_driver
      * @param mixed $op
      * @param mixed $query
      */
-    public function where_any($key, $op = '=', $query)
+    public function where_any($key, $op = '=', $query = null)
     {
         return $this->where_raw(
             $this->_escape_col_name($key) . ' ' . (in_array($op, ['=', '>', '<', '>=', '<=', '!=', '<>']) ? $op : '=') . ' ANY ' . $this->subquery($query)
@@ -1320,7 +1320,7 @@ abstract class yf_db_query_builder_driver
      * @param mixed $op
      * @param mixed $query
      */
-    public function where_all($key, $op = '=', $query)
+    public function where_all($key, $op = '=', $query = null)
     {
         return $this->where_raw(
             $this->_escape_col_name($key) . ' ' . (in_array($op, ['=', '>', '<', '>=', '<=', '!=', '<>']) ? $op : '=') . ' ALL ' . $this->subquery($query)
