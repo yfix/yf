@@ -660,7 +660,7 @@ if ( ! function_exists('validate')) {
 if ( ! function_exists('sms_send')) {
     function sms_send($phone, $text, $params = [])
     {
-        return _class('service_turbosms')->send($phone, $text, $params) ?: new yf_missing_method_handler(__FUNCTION__, $silent);
+        return _class('service_turbosms')->send($phone, $text, $params) ?: new yf_missing_method_handler(__FUNCTION__);
     }
 }
 if ( ! function_exists('_check_user_ban')) {

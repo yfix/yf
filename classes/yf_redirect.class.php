@@ -69,6 +69,7 @@ class yf_redirect
             'url' => $cur_url,
         ];
         $detected = false;
+        $loop_count = $this->LOOP_COUNT;
         $detect_slice = array_reverse(array_slice((array) $loop_var, -$loop_count, $loop_count, true));
         if (count((array) $detect_slice) < $this->LOOP_COUNT) {
             return false;
@@ -99,7 +100,7 @@ class yf_redirect
             if ($v['url'] != $cur_url) {
                 break;
             }
-            if ($exclude_patterns) {
+            if ($exclude_target) {
                 $u = parse_url($v['url']);
                 $url_path_and_query = $u['path'] . (strlen($u['query']) ? '?' . $u['query'] : '');
                 foreach ((array) $exclude_target as $pattern) {
@@ -180,6 +181,7 @@ class yf_redirect
                 return false;
             }
         }
+        $body = '';
         main()->NO_GRAPHICS = true;
         if (DEBUG_MODE) {
             $hidden_fields = '';

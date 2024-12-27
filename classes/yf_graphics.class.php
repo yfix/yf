@@ -39,6 +39,7 @@ class yf_graphics
     public $META_DEFAULT = null;
     public $META_ADD = null;
     public $TIPS_STRIP_TAGS = null;
+    public $_tips = null;
 
     /**
      * Catch missing method call.

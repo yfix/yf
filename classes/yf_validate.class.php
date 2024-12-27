@@ -15,6 +15,10 @@ class yf_validate
     /** @var array Reserved words for the profile url (default) */
     public $reserved_words = ['login', 'logout', 'admin', 'admin_modules', 'classes', 'modules', 'functions', 'uploads', 'fonts', 'pages_cache', 'core_cache', 'templates'];
 
+    public $MB_ENABLED = null;
+    public $db = null;
+    public $_reserved_words_prepared = false;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -69,7 +73,7 @@ class yf_validate
             $rules[$name] = $_rules;
         }
         $rules = $this->_validate_rules_cleanup($rules);
-        $ok = $this->_do_check_data_is_valid($rules, $input);
+        $ok = $this->_do_check_data_is_valid($input, $rules);
         return (bool) $ok;
     }
 
@@ -92,7 +96,7 @@ class yf_validate
     /**
      * @param mixed $rules
      */
-    public function _do_check_data_is_valid($rules = [], &$data)
+    public function _do_check_data_is_valid(&$data, $rules = [])
     {
         $validate_ok = true;
         $_all = '__all__';

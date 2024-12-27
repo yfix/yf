@@ -1460,6 +1460,7 @@ class yf_main
         if (method_exists($MODULE_OBJ, $this->MODULE_CONSTRUCT)) {
             $MODULE_OBJ->{$this->MODULE_CONSTRUCT}($params);
         }
+        return true;
     }
 
     /**

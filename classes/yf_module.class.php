@@ -21,6 +21,10 @@ class yf_module
     /** @var array @conf_skip */
     public $_tags_params = [];
 
+    public $USER_ID = null;
+    public $USER_GROUP = null;
+    public $CAPTCHA = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name

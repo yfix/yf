@@ -1,7 +1,7 @@
 SHELL  := /bin/bash
 PHP_CONTAINER := yfixnet-php80-1
 DIR_TESTS := .dev/tests/
-DIR_YF := /var/www/yf38
+DIR_YF := /var/www/yf
 DOCKER_TESTS := $(DIR_YF)/$(DIR_TESTS)
 # PHPUNIT := $(DIR_YF)/vendor/bin/phpunit
 PHPUNIT := phpunit

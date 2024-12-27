@@ -6,13 +6,13 @@ on:
       - 31
       - php8
     paths-ignore:
-      - '.github/workflows/**'
+      - ".github/workflows/**"
   pull_request:
     branches:
       - 31
       - php8
     paths-ignore:
-      - '.github/workflows/**'
+      - ".github/workflows/**"
 
 jobs:
   unit-tests:
@@ -20,15 +20,15 @@ jobs:
 
     strategy:
       matrix:
-        php-image: ['7.4', '8.2', '8.3', '8.4']
-        mysql-image: ['5.7', '8.0']
+        php-image: ["7.4", "8.2", "8.3", "8.4"]
+        mysql-image: ["5.7", "8.0"]
       fail-fast: false
 
     container:
       image: yfix/php:${{ matrix.php-image }}
       volumes:
-        - ${{ github.workspace }}:/var/www/yf38
-      options: --workdir /var/www/yf38
+        - ${{ github.workspace }}:/var/www/yf
+      options: --workdir /var/www/yf
 
     services:
       mysql-tmp:
@@ -55,34 +55,34 @@ jobs:
           --health-retries=3
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install system dependencies
-      run: |
-        apt-get update && apt-get install -y \
-        git \
-        make \
-        redis-tools \
-        default-mysql-client
+      - name: Install system dependencies
+        run: |
+          apt-get update && apt-get install -y \
+          git \
+          make \
+          redis-tools \
+          default-mysql-client
 
-    - name: Wait for MySQL to be ready
-      run: |
-        while ! mysqladmin ping -h mysql-tmp -u root -proot --silent; do
-          sleep 1
-        done
+      - name: Wait for MySQL to be ready
+        run: |
+          while ! mysqladmin ping -h mysql-tmp -u root -proot --silent; do
+            sleep 1
+          done
 
-    - name: Wait for Redis to be ready
-      run: |
-        redis-cli -h redis ping || exit 1
+      - name: Wait for Redis to be ready
+        run: |
+          redis-cli -h redis ping || exit 1
 
-    - name: Run PHPUnit tests
-      env:
-        MYSQL_HOST: mysql-tmp
-        MYSQL_PORT: 3306
-        MYSQL_USER: root
-        MYSQL_PASSWORD: root
-        MYSQL_DATABASE: tests
-        REDIS_HOST: redis
-        REDIS_PORT: 6379
-      working-directory: ./.dev/tests/
-      run: make phpunit-all
+      - name: Run PHPUnit tests
+        env:
+          MYSQL_HOST: mysql-tmp
+          MYSQL_PORT: 3306
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+          MYSQL_DATABASE: tests
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
+        working-directory: ./.dev/tests/
+        run: make phpunit-all

@@ -4,7 +4,7 @@ PARALINT := ../../vendor/bin/parallel-lint
 # PHPUNIT_OPTS := -d memory_limit=1024M
 SHELL  := /bin/bash
 PHP_CONTAINER := yfixnet-php80-1
-DIR_YF := /var/www/yf38
+DIR_YF := /var/www/yf
 DOCKER_TESTS := $(DIR_YF)/.dev/tests/
 DE := docker exec -it -e "TERM=xterm-256color" -w "$(DOCKER_TESTS)" $(PHP_CONTAINER)
 
