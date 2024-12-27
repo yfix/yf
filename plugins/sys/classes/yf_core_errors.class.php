@@ -13,9 +13,17 @@ class yf_core_errors
     public $ERROR_LEVEL = 0;
     /** @var int Error reporting level for production/non-debug mode (int from built-in constants) */
     public $ERROR_LEVEL_PROD = 0;
+
     /** @var int Error reporting level for DEBUG_MODE enabled */
     // public $ERROR_LEVEL_DEBUG = E_ALL & ~E_NOTICE;
     public $ERROR_LEVEL_DEBUG = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
+
+    // public $pattern_ignore = '~^(Undefined array key)~';
+    public $pattern_ignore = '~^(Undefined array key|Undefined variable)~';
+    // public $pattern_ignore = '~^(Undefined array key|Undefined property|Undefined variable)~';
+    // public $pattern_ignore = '~^(Undefined array key|Undefined variable|Trying to access array offset on value of type)~';
+    // public $pattern_ignore = '~^(Undefined array key|Undefined property|Undefined variable|Trying to access array offset on value of type)~';
+
     /** @var bool Log errors to the error file? */
     public $LOG_ERRORS_TO_FILE = true;
     /** @var bool Log warnings to the error file? */
@@ -137,13 +145,7 @@ class yf_core_errors
      */
     public function error_handler($error_type, $error_msg, $error_file, $error_line)
     {
-        $pattern_ignore_warnings = '~^(Undefined array key)~';
-        // $pattern_ignore_warnings = '~^(Undefined array key|Undefined variable)~';
-        // $pattern_ignore_warnings = '~^(Undefined array key|Undefined property|Undefined variable)~';
-        // $pattern_ignore_warnings = '~^(Undefined array key|Undefined variable|Trying to access array offset on value of type)~';
-        // $pattern_ignore_warnings = '~^(Undefined array key|Undefined property|Undefined variable|Trying to access array offset on value of type)~';
-
-        if (preg_match($pattern_ignore_warnings, $error_msg)) {
+        if ($this->pattern_ignore && preg_match($this->pattern_ignore, $error_msg)) {
             return true;
         }
 
@@ -158,15 +160,12 @@ class yf_core_errors
             if ($this->LOG_ERRORS_TO_FILE) {
                 $save_log = true;
             }
-            // Process warnings errors
+        // Process warnings errors
         } elseif ($error_type == E_WARNING || $error_type == E_USER_WARNING) {
-            if (preg_match($pattern_ignore_warnings, $error_msg)) {
-                return true;
-            }
             if ($this->LOG_WARNINGS_TO_FILE) {
                 $save_log = true;
             }
-            // Process notices
+        // Process notices
         } elseif ($error_type == E_NOTICE || $error_type == E_USER_NOTICE) {
             if ($this->LOG_NOTICES_TO_FILE) {
                 $save_log = true;
