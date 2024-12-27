@@ -42,6 +42,7 @@ class sample_misc
         $dir_len = strlen($dir);
         $ext = '.stpl';
         $ext_len = strlen($ext);
+        $replace = [];
 
         $name = preg_replace('~[^a-z0-9/_-]+~ims', '', $_GET['id']);
         if (strlen($name)) {

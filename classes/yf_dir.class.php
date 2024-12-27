@@ -41,15 +41,11 @@ class yf_dir
     }
 
     /**
-     * Compatible function, supporting PHP7+, because:
-     * http://php.net/sql_regcase   !Warning! This function has been DEPRECATED as of PHP 5.3.0. Relying on this feature is highly discouraged.
+     * Check if file or folder should be skipped by include/exclude patterns.
      * @param mixed $str
      */
-    public function _sql_regcase($str)
+    public function _pattern_regcase($str)
     {
-        if (function_exists('sql_regcase')) {
-            return sql_regcase($str);
-        }
         $res = '';
         $chars = str_split($str);
         foreach ($chars as $char) {
@@ -71,7 +67,7 @@ class yf_dir
     {
         $folder = rtrim($folder, '/');
         if (false === strpos($pattern, '[')) {
-            $pattern = $this->_sql_regcase($pattern);
+            $pattern = $this->_pattern_regcase($pattern);
         }
 
         $files = (array) glob($folder . '/' . $pattern, GLOB_NOSORT);
@@ -871,6 +867,7 @@ class yf_dir
         if (is_array($pattern_exclude)) {
             $pattern_exclude = $pattern_exclude[$_index];
         }
+        $modifier = '';
         $MATCHED = false;
         if ( ! empty($pattern_include) && is_string($pattern_include)) {
             // Examples: "-f /\.(jpg|png)$/", -d /some_dir/

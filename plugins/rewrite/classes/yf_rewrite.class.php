@@ -15,6 +15,13 @@ class yf_rewrite
         'utm_campaign',
         'utm_term',
     ];
+    public $builtins = [
+        'debug',
+        'error',
+        'no_cache',
+        'no_core_cache',
+        'host',
+    ];
     public $REWRITE_PATTERNS = [];
     public $FORCE_NO_DEBUG = null;
     public $_time_start = null;
@@ -344,11 +351,21 @@ class yf_rewrite
         $params = $p;
         unset($p);
         // Add built-in url params, if needed
-        if ($this->URL_ADD_BUILTIN_PARAMS && (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache']) || isset($_GET['host']))) {
-            $params['debug'] = $_GET['debug'];
-            $params['get_host'] = $_GET['host'];
-            $params['no_cache'] = isset($_GET['no_cache']) ? 'y' : '';
-            $params['no_core_cache'] = isset($_GET['no_core_cache']) ? 'y' : '';
+        if ($this->URL_ADD_BUILTIN_PARAMS) {
+            $has_builin = false;
+            foreach($this->builtins as $b) {
+                if (isset($_GET[$b])) {
+                    $has_builin = true;
+                    break;
+                }
+            }
+            if ($has_builin) {
+                $params['debug'] = $_GET['debug'] ?? null;
+                $params['error'] = $_GET['error'] ?? null;
+                $params['get_host'] = $_GET['host'] ?? null;
+                $params['no_cache'] = isset($_GET['no_cache']) ? 'y' : '';
+                $params['no_core_cache'] = isset($_GET['no_core_cache']) ? 'y' : '';
+            }
         }
         if (empty($url_str)) {
             if (isset($params['action']) && empty($params['action'])) {

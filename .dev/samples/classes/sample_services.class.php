@@ -41,6 +41,7 @@ class sample_services
             return _class('docs')->_show_for($this);
         }
         $docs = _class('docs');
+        $data = [];
         asset('font-awesome4');
         foreach ($this->_get_services() as $a) {
             $name = $a['name'];

@@ -56,6 +56,7 @@ class yf_docs
         }
         $base_dir = YF_PATH . '.dev/demo/data/';
         $filename = basename($_GET['filename']);
+        $json = '{}';
         if (preg_match('/^[a-zA-Z\-\.]+\.json$/', $filename)) {
             $json = file_get_contents($base_dir . $filename);
         }
@@ -93,6 +94,7 @@ class yf_docs
     {
         $id = $id ?: $_GET['id'];
         $action = $_GET['action'];
+        $only_method = false;
         if (preg_match('~^[a-z0-9_]+$~ims', $id)) {
             $only_method = strtolower($id);
         }

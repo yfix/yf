@@ -1268,6 +1268,7 @@ class yf_assets
         if (isset($params['wrap']) && false !== strpos($params['wrap'], '%s')) {
             $content = str_replace('%s', $content, $params['wrap']);
         }
+        $name = '';
         if (isset($params['name'])) {
             $name = $params['name'];
             unset($params['name']);

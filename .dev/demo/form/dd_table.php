@@ -34,7 +34,7 @@ return function () {
             'end_date' => ! empty($a['end_date']) ? date('d.m.Y', $a['end_date']) : t('Not stated'),
             'status' => t(isset($offer_status[$a['status']]) ? $offer_status[$a['status']] : $offer_status[0]),
             'custom_html' => ! empty($custom_html) ? $custom_html : false,
-            'url_owner_profile' => $url_owner_profile,
+            'url_owner_profile' => $url_owner_profile ?? '',
             'url_offers' => 'Offers',
             'stars' => 4.5,
             'stars2' => 4.5,

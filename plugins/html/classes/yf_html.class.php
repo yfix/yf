@@ -875,7 +875,7 @@ class yf_html
      * @param mixed $translate
      * @param mixed $level
      */
-    public function select_box($name, $values = [], $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0)
+    public function select_box($name, $values = [], $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $extra = [])
     {
         // Passing params as array
         if (is_array($name)) {
@@ -902,6 +902,7 @@ class yf_html
         if ($extra['disabled']) {
             $extra['disabled'] = 'disabled';
         }
+        $id = null;
         $body = [];
         if ($level == 0) {
             $extra['force_id'] && $id = $extra['force_id'];
@@ -987,6 +988,7 @@ class yf_html
             $selected = (string) $selected;
         }
         $body = [];
+        $id = '';
         if ($level == 0) {
             $extra['force_id'] && $id = $extra['force_id'];
             $id = $id ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];

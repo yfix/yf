@@ -190,6 +190,8 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
         $link_name_html = ($extra['link_url'] && $extra['link_name']) ? ' <a href="' . $extra['link_url'] . '" class="' . $this->CLASS_LINK_URL . '">' . t($extra['link_name']) . '</a>' . PHP_EOL : '';
 
         $inline_tip_html = ($extra['tip'] ? ' ' . tip($extra['tip'], $replace) : '');
+        $inline_help_before = '';
+        $inline_help_after = '';
 
         if ($extra['only_row_start']) {
             return $row_start . $before_content_html;

@@ -319,6 +319,7 @@ class yf_core_api
      */
     public function get_method_source($module, $method, $section = 'all')
     {
+        $force_path = '';
         if ( ! is_object($module)) {
             if (false !== strpos($module, '/')) {
                 list($subfolder, $module) = explode('/', $module);

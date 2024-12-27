@@ -762,6 +762,7 @@ class yf_form2
         }
         $extra['name'] = $extra['name'] ?: $name;
         $func = function ($extra, $r, $form) {
+            $body = '';
             if ($form->_fieldset_mode_on) {
                 $body = '</fieldset>' . PHP_EOL;
             } else {

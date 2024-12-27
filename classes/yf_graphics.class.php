@@ -644,6 +644,7 @@ class yf_graphics
         if ( ! is_array($extra)) {
             $extra = [];
         }
+        $return_text = false;
         if (is_array($in) && isset($in['text'])) {
             $extra = (array) $extra + $in;
         } elseif (is_array($in) && isset($in['raw'])) {

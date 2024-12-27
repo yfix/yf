@@ -919,6 +919,7 @@ class yf_db
         }
         $result = $this->query_fetch_all($sql, $use_cache, true);
         // Get 1st and 2nd keys from first sub-array
+        $keys = [];
         if (is_array($result) && $result) {
             $keys = array_keys(current($result));
         }

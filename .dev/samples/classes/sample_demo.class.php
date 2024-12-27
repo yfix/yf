@@ -46,6 +46,8 @@ class sample_demo
         $names = $this->_get_demos($dir);
         ksort($names);
 
+        $replace = [];
+
         $name = preg_replace('~[^a-z0-9/_-]+~ims', '', $_GET['id']);
         if (strlen($name)) {
             $f = $dir . $name . '.php';
