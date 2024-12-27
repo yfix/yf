@@ -14,6 +14,11 @@ class yf_core_api_user_modules
     /** @var bool Parse core 'module' class in get_methods */
     public $PARSE_YF_MODULE = 0;
 
+    public $_user_modules_array = [];
+    public $_MODULES_TO_SKIP = [];
+    public $_yf_plugins = [];
+    public $_yf_plugins_classes = [];
+
     /**
      * Get available user modules.
      * @param mixed $params

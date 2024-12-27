@@ -13,6 +13,13 @@ class yf_core_blocks
     public $FORCE_ALLOWED_CLASSES = [
         'api',
     ];
+    public $_blocks_infos = null;
+    public $_error_no_blocks_raised = null;
+    public $CENTER_BLOCK_RULES = null;
+    public $CENTER_BLOCK_ID = null;
+    public $_blocks_rules = null;
+    public $REDIRECT_CALLBACK_404 = null;
+    public $REDIRECT_CALLBACK_403 = null;
 
     /**
      * Catch missing method call.
@@ -431,7 +438,7 @@ class yf_core_blocks
                 }
             }
         }
-        $redirect_func = function ($url) {
+        $redirect_func = function ($url) use ($OBJECT, $ACTION) {
             $redir_params = [
                 '%%object%%' => $OBJECT,
                 '%%action%%' => $ACTION,

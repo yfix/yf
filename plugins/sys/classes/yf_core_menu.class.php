@@ -196,7 +196,7 @@ class yf_core_menu
         ];
         $menu_items = [];
         if ( ! empty($special_class_name) && ! empty($special_method_name)) {
-            $menu_items = _class($special_class_name, $special_path)->$special_method_name($special_params);
+            $menu_items = _class($special_class_name)->$special_method_name($special_params);
         } else {
             $menu_items = $this->_recursive_get_menu_items($menu_id);
         }
@@ -360,8 +360,8 @@ class yf_core_menu
     {
         // Example what passes by params
         $params = [
-            'menu_name' => $menu_name,
-            'menu_id' => $menu_id,
+            'menu_name' => $menu_name ?? '',
+            'menu_id' => $menu_id ?? '',
         ];
         return false;
     }
@@ -446,7 +446,7 @@ class yf_core_menu
             }
             $children[$parent_id][$id] = $id;
         }
-        $ids = $this->_count_levels(0, $children);
+        $ids = $this->_count_levels($children, 0);
         $new_items = [];
         foreach ((array) $ids as $id => $level) {
             $new_items[$id] = $items[$id] + ['level' => $level];
@@ -458,13 +458,13 @@ class yf_core_menu
      * @param mixed $start_id
      * @param mixed $level
      */
-    public function _count_levels($start_id = 0, &$children, $level = 0)
+    public function _count_levels(&$children, $start_id = 0, $level = 0)
     {
         $ids = [];
         foreach ((array) $children[$start_id] as $id => $_tmp) {
             $ids[$id] = $level;
             if (isset($children[$id])) {
-                foreach ((array) $this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
+                foreach ((array) $this->_count_levels($children, $id, $level + 1) as $_id => $_level) {
                     $ids[$_id] = $_level;
                 }
             }

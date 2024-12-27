@@ -169,7 +169,7 @@ class yf_admin_methods
             $replace[$f] = $DATA[$f];
         }
         if ($params['return_form']) {
-            return form($replace)->auto($table, $id, [
+            return form($replace)->auto($table, $id ?? '', [
                 'links_add' => $params['links_add'],
                 'db' => $db,
             ]);

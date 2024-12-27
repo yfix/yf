@@ -209,6 +209,7 @@ class yf_model
         $where_prefix = 'where_';
         $scope_prefix = 'scope_';
         $obj = new static();
+        $name = $args[0] ?? '';
         if (strpos($name, $where_prefix) !== false) {
             $name = substr($name, strlen($where_prefix));
             array_unshift($args, 't0.' . $name);

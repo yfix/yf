@@ -176,7 +176,9 @@ class yf_model_relation
     public function _create_pivot_table($pivot, $relation)
     {
         $r = $relation;
-        $utils->create_table($pivot, function ($t) use ($r) {
+        $model = $this->_model;
+        $db = $model->_db;
+        $db->utils->create_table($pivot, function ($t) use ($r) {
             $t->int($r['local_key'], ['unsigned' => true, 'nullable' => false]);
             $t->int($r['foreign_key'], ['unsigned' => true, 'nullable' => false]);
             $t->primary([$r['local_key'] => $r['local_key'], $r['foreign_key'] => $r['foreign_key']]);
