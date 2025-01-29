@@ -334,8 +334,8 @@ class yf_payment_api
     public function get_currency__by_id($options = null)
     {
         $_ = &$options;
-        $to_set = $_['to_set'];
-        $currency_id = $_['currency_id']
+        $to_set = ($_['to_set'] ?? false) ? $_['to_set'] : false;
+        $currency_id = ($_['currency_id'] ?? null)
             ?: $this->currency_id
             ?: $this->currency_id_default;
         $result = $this->currencies[$currency_id];
