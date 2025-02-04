@@ -165,7 +165,7 @@ class yf_html_tree
                 $ul_opened = true;
                 $items[] = PHP_EOL . '<ul class="' . ($item['level'] >= $opened_levels ? 'closed' : '') . '">' . PHP_EOL;
             } elseif ($close_li) {
-                if ($ul_opened && ! $has_children && $item['level'] != $next_item['level']) {
+                if ($ul_opened && ! $has_children && (isset($item['level']) && isset($next_item['level']) && $item['level'] != $next_item['level'])) {
                     $ul_opened = false;
                     $close_ul = 1;
                 }
