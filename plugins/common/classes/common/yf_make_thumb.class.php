@@ -39,8 +39,6 @@ class yf_make_thumb
     /** @var bool Depends on ENABLE_DEBUG_LOG */
     public $LOG_TO_FILE = true;
     /** @var bool Depends on ENABLE_DEBUG_LOG */
-    public $LOG_TO_DB = false;
-    /** @var bool Depends on ENABLE_DEBUG_LOG */
     public $DB_LOG_ENV = true;
     /** @var string Folder for temporary images */
     public $BAD_IMAGES_DIR = 'logs/bad_images/';
@@ -106,7 +104,6 @@ class yf_make_thumb
      */
     public function go($source_file_path = '', $dest_file_path = '', $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $ext = '')
     {
-        $_prev_num_errors = count((array) main()->_all_core_error_msgs);
         $LIMIT_X = (int) ($LIMIT_X != -1 ? $LIMIT_X : THUMB_WIDTH);
         $LIMIT_Y = (int) ($LIMIT_Y != -1 ? $LIMIT_Y : THUMB_HEIGHT);
         if (empty($source_file_path) || empty($dest_file_path)) {
@@ -153,56 +150,6 @@ class yf_make_thumb
         }
         if ($watermark_path && $dest_file_path) {
             $this->add_watermark($dest_file_path, $watermark_path);
-        }
-        if ($this->ENABLE_DEBUG_LOG && ($this->LOG_TO_FILE || $this->LOG_TO_DB)) {
-            $error_message .= implode(PHP_EOL, $_prev_num_errors ? array_slice((array) main()->_all_core_error_msgs, $_prev_num_errors) : (array) main()->_all_core_error_msgs);
-            $log_file_path = APP_PATH . $this->DEBUG_LOG_FILE;
-            _class('dir')->mkdir_m(dirname($log_file_path));
-            $_exec_time = (float) microtime(true) - (float) $_start_time;
-            if (file_exists($source_file_path)) {
-                list($_source_width, $_source_height) = @getimagesize($source_file_path);
-            }
-            if ($resize_success && file_exists($dest_file_path)) {
-                list($_result_width, $_result_height) = @getimagesize($dest_file_path);
-            }
-            $result_file_size = file_exists($dest_file_path) ? filesize($dest_file_path) : 0;
-            $backtrace = debug_backtrace();
-            $cur_trace = $backtrace[1];
-            if ($this->LOG_TO_DB) {
-                db()->insert_safe('log_img_resizes', [
-                    'source_path' => $source_file_path,
-                    'source_file_size' => (int) $source_size,
-                    'source_x' => (int) $_source_width,
-                    'source_y' => (int) $_source_height,
-                    'result_path' => $dest_file_path,
-                    'result_file_size' => (int) $result_file_size,
-                    'result_x' => (int) $_result_width,
-                    'result_y' => (int) $_result_height,
-                    'limit_x' => (int) $LIMIT_X,
-                    'limit_y' => (int) $LIMIT_Y,
-                    'source_file' => $cur_trace['file'],
-                    'source_line' => (int) ($cur_trace['line']),
-                    'date' => time(),
-                    'site_id' => (int) conf('SITE_ID'),
-                    'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
-                    'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
-                    'is_admin' => MAIN_TYPE_ADMIN ? 1 : 0,
-                    'ip' => common()->get_ip(),
-                    'query_string' => WEB_PATH . '?' . $_SERVER['QUERY_STRING'],
-                    'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-                    'referer' => $_SERVER['HTTP_REFERER'],
-                    'request_uri' => $_SERVER['REQUEST_URI'],
-                    'env_data' => $this->DB_LOG_ENV ? serialize(['_GET' => $_GET, '_POST' => $_POST]) : '',
-                    'object' => $_GET['object'],
-                    'action' => $_GET['action'],
-                    'success' => (int) ((bool) $resize_success),
-                    'error_text' => $error_message,
-                    'process_time' => (float) (common()->_format_time_value($_exec_time)),
-                    'used_lib' => $USED_LIB,
-                    'tried_libs' => implode(',', $tried_libs),
-                    'other_options' => $other_options,
-                ]);
-            }
         }
         return $resize_success;
     }

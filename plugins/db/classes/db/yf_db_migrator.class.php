@@ -5,6 +5,8 @@
  */
 abstract class yf_db_migrator
 {
+    public $db = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -387,15 +389,20 @@ abstract class yf_db_migrator
         $existing_sql_php = [];
         // Preload db installer PHP array of CREATE TABLE DDL statements
         $ext = '.sql_php.php';
-        $pattern = '{,plugins/*/}{,share/}db/sql_php/*' . $ext;
-        $globs_sql_php = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $basePaths = [
+            'framework' => YF_PATH . 'db/sql_php/*' . $ext,
+            'project' => PROJECT_PATH . 'db/sql_php/*' . $ext,
+            'app' => APP_PATH . 'db/sql_php/*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/db/sql_php/*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/db/sql_php/*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/db/sql_php/*' . $ext,
+            'share_framework' => YF_PATH . 'share/db/sql_php/*' . $ext,
+            'share_project' => PROJECT_PATH . 'share/db/sql_php/*' . $ext,
+            'share_app' => APP_PATH . 'share/db/sql_php/*' . $ext,
         ];
         $t_names = [];
-        foreach ($globs_sql_php as $gname => $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+        foreach ($basePaths as $gname => $glob) {
+            foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
                 $t_names[$t_name] = $path;
                 $existing_files_sql_php[$t_name][$gname] = $path;
@@ -876,18 +883,24 @@ abstract class yf_db_migrator
     {
         $prefix = 'db_migration_';
         $ext = '.class.php';
-        $pattern = '{,plugins/*/}{,share/}db/migrations/' . $prefix . '*' . $ext;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => YF_PATH . 'db/migrations/' . $prefix . '*' . $ext,
+            'project' => PROJECT_PATH . 'db/migrations/' . $prefix . '*' . $ext,
+            'app' => APP_PATH . 'db/migrations/' . $prefix . '*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/db/migrations/' . $prefix . '*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/db/migrations/' . $prefix . '*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/db/migrations/' . $prefix . '*' . $ext,
+            'share_framework' => YF_PATH . 'share/db/migrations/' . $prefix . '*' . $ext,
+            'share_project' => PROJECT_PATH . 'share/db/migrations/' . $prefix . '*' . $ext,
+            'share_app' => APP_PATH . 'share/db/migrations/' . $prefix . '*' . $ext,
         ];
-        $migratons = [];
-        foreach ($globs as $gname => $glob) {
-            if ($params['only_from_project'] && substr($gname, 0, strlen('project')) !== 'project') {
+
+        $migrations = [];
+        foreach ($patterns as $gname => $glob) {
+            if ($params['only_from_project'] && strpos($gname, 'project') !== 0) {
                 continue;
             }
-            foreach (glob($glob, GLOB_BRACE) as $f) {
+            foreach (glob($glob) as $f) {
                 $name = substr(basename($f), strlen($prefix), -strlen($ext));
                 $migrations[$name] = $f;
             }

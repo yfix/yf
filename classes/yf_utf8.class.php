@@ -126,8 +126,6 @@ class yf_utf8
             $out = iconv($encoding, 'utf-8', $data);
         } elseif (function_exists('mb_convert_encoding')) {
             $out = mb_convert_encoding($data, 'utf-8', $encoding);
-        } elseif (function_exists('recode_string')) {
-            $out = recode_string($encoding . '..utf-8', $data);
         } else {
             _debug_log(t('Unsupported encoding %s. Please install iconv, GNU recode or mbstring for PHP.', ['%s' => $encoding]));
             return false;
@@ -264,24 +262,32 @@ class yf_utf8
     public function decode_entities($text, $exclude = [])
     {
         static $table;
-        // We store named entities in a table for quick processing.
-        if ( ! isset($table)) {
-            // Get all named HTML entities.
-            $table = array_flip([
-                '"' => '&quot;',
-                '&' => '&amp;',
-                '\'' => '&#039;',
-                '<' => '&lt;',
-                '>' => '&gt;',
-            ]);
-            // PHP gives us ISO-8859-1 data, we need UTF-8.
-            $table = array_map('utf8_encode', $table);
-            // Add apostrophe (XML)
-            $table['&apos;'] = "'";
+
+        if (!isset($table)) {
+            $table = [
+                '&quot;' => '"',
+                '&amp;' => '&',
+                '&apos;' => "'",
+                '&lt;' => '<',
+                '&gt;' => '>',
+            ];
         }
-        $newtable = array_diff($table, $exclude);
-        // Use a regexp to select all entities in one pass, to avoid decoding double-escaped entities twice.
-        return preg_replace('/&(#x?)?([A-Za-z0-9]+);/e', '$this->_decode_entities("$1", "$2", "$0", $newtable, $exclude)', $text);
+        $newtable = array_diff_key($table, array_flip($exclude));
+
+        return preg_replace_callback('/&(#x?)?([A-Za-z0-9]+);/',
+            function ($matches) use ($newtable) {
+                if ($matches[1] === '#') {
+                    $code = (int) $matches[2];
+                    return mb_convert_encoding("&#{$code};", 'UTF-8', 'HTML-ENTITIES');
+                } elseif ($matches[1] === '#x') {
+                    $code = hexdec($matches[2]);
+                    return mb_convert_encoding("&#{$code};", 'UTF-8', 'HTML-ENTITIES');
+                } else {
+                    return $newtable[$matches[0]] ?? $matches[0];
+                }
+            },
+            $text
+        );
     }
 
     /**

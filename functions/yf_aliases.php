@@ -9,6 +9,9 @@
 if ( ! class_exists('yf_missing_method_handler')) {
     class yf_missing_method_handler
     {
+        protected $_o_name = null;
+        protected $_c_name = null;
+        protected $_silent = null;
         public function __construct($o_name, $silent = false, $c_name = '')
         {
             $this->_o_name = $o_name;
@@ -228,7 +231,7 @@ if ( ! function_exists('d')) {
     function d()
     {
         global $auto_ids;
-        $auto_id = ($auto_prefix = 'func__' . __FUNCTION__) . $auto_ids[$auto_prefix]++;
+        $auto_id = ($auto_prefix = 'func__' . __FUNCTION__) . @$auto_ids[$auto_prefix]++;
         echo '<a class="btn btn-xs btn-default" data-toggle="collapse" data-target="#collapse_' . $auto_id . '">Trace</a><div id="collapse_' . $auto_id . '" class="collapse"><pre>' . print_r(trace(), true) . '</pre></div>';
         foreach (($args = func_get_args()) as $k => $v) {
             echo '<pre>' . (count((array) $args) > 1 ? '<b>args[' . (int) $k . ']</b>:' . PHP_EOL : '') . var_export($v, true) . '</pre>';
@@ -657,7 +660,7 @@ if ( ! function_exists('validate')) {
 if ( ! function_exists('sms_send')) {
     function sms_send($phone, $text, $params = [])
     {
-        return _class('service_turbosms')->send($phone, $text, $params) ?: new yf_missing_method_handler(__FUNCTION__, $silent);
+        return _class('service_turbosms')->send($phone, $text, $params) ?: new yf_missing_method_handler(__FUNCTION__);
     }
 }
 if ( ! function_exists('_check_user_ban')) {

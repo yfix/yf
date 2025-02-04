@@ -5,7 +5,7 @@ require_once dirname(__DIR__) . '/yf_unit_tests_setup.php';
 class class_assets_test extends PHPUnit\Framework\TestCase
 // class class_assets_test extends yf\tests\wrapper
 {
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         // Replace default style and script templates with empty strings
         tpl()->parse_string('', [], 'style_css');
@@ -14,7 +14,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
         _class('assets')->OUT_ADD_ASSET_NAME = false;
     }
 
-    public function setUp() : void
+    public function setUp(): void
     {
         _class('assets')->clean_all();
     }
@@ -132,7 +132,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
 
         // Second call should avoid adding jquery again
         $jquery_result = jquery($jquery_js);
-        $this->assertSame(_class('assets'), $jquery_result);
+        $this->assertEqualsCanonicalizing(_class('assets'), $jquery_result);
         $this->assertEquals($expected_jquery_lib . PHP_EOL . $expected_js, _class('assets')->show_js());
         $this->assertEmpty(_class('assets')->show_js(), 'Calling output method again should return nothing');
 
@@ -140,25 +140,25 @@ class class_assets_test extends PHPUnit\Framework\TestCase
         _class('assets')->ADD_IS_DIRECT_OUT = true;
 
         $jquery_result = js('jquery');
-        $this->assertSame($expected_jquery_lib, $jquery_result);
+        $this->assertEqualsCanonicalizing($expected_jquery_lib, $jquery_result);
         $this->assertEmpty(_class('assets')->show_js(), 'Calling output method again should return nothing');
 
         _class('assets')->clean_all();
         $jquery_result = jquery($jquery_js);
-        $this->assertSame($expected_jquery_lib . PHP_EOL . $expected_js, $jquery_result);
+        $this->assertEqualsCanonicalizing($expected_jquery_lib . PHP_EOL . $expected_js, $jquery_result);
         $this->assertEmpty(_class('assets')->show_js(), 'Calling output method again should return nothing');
 
         _class('assets')->ADD_IS_DIRECT_OUT = false;
 
         //		_class('assets')->clean_all();
-//		$jquery_result = js('jquery', 'auto', array('direct_out' => true));
-//		$this->assertSame( $expected_jquery_lib, $jquery_result );
-//		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
+        //		$jquery_result = js('jquery', 'auto', array('direct_out' => true));
+        //		$this->assertEqualsCanonicalizing( $expected_jquery_lib, $jquery_result );
+        //		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
 
-//		_class('assets')->clean_all();
-//		$jquery_result = jquery($jquery_js, array('direct_out' => true));
-//		$this->assertSame( $expected_jquery_lib. PHP_EOL. $expected_js, $jquery_result );
-//		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
+        //		_class('assets')->clean_all();
+        //		$jquery_result = jquery($jquery_js, array('direct_out' => true));
+        //		$this->assertEqualsCanonicalizing( $expected_jquery_lib. PHP_EOL. $expected_js, $jquery_result );
+        //		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
     }
 
     /***/
@@ -177,7 +177,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
     }
 
     /***/
-/*
+    /*
     public function test_bundle()
     {
         $asset_out = asset('blueimp-uploader');
@@ -213,7 +213,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
 */
 
     /***/
-/*
+    /*
     public function test_show()
     {
         asset('blueimp-uploader');
@@ -230,7 +230,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
 */
 
     /***/
-/*
+    /*
     public function test_show_cached()
     {
         _class('assets')->USE_CACHE = true;
@@ -257,7 +257,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
 */
 
     /***/
-/*    public function test_show_combined()
+    /*    public function test_show_combined()
     {
         if (version_compare(PHP_VERSION, '5.4.0', '<')) {
             $this->markTestSkipped('PHPUnit will skip this test method for PHP version <5.4');
@@ -339,7 +339,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
         $this->assertEmpty(_class('assets')->get_asset('fake_lib1', 'js'));
         $this->assertEmpty(_class('assets')->show_js());
         _class('assets')->bundle_register('fake_lib1', $fake_lib1);
-        $this->assertSame($fake_lib1['versions']['1.1']['js'], _class('assets')->get_asset('fake_lib1', 'js'));
+        $this->assertEqualsCanonicalizing($fake_lib1['versions']['1.1']['js'], _class('assets')->get_asset('fake_lib1', 'js'));
         $expected1 = '<script src="' . $fake_lib1_url . '" type="text/javascript"></script>';
         _class('assets')->add('fake_lib1');
         $this->assertEquals($expected1, _class('assets')->show_js());
@@ -355,7 +355,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
             ],
         ];
         _class('assets')->bundle_register('fake_lib2', $fake_lib2);
-        $this->assertSame($fake_lib2['versions']['1.0']['js'], _class('assets')->get_asset('fake_lib2', 'js'));
+        $this->assertEqualsCanonicalizing($fake_lib2['versions']['1.0']['js'], _class('assets')->get_asset('fake_lib2', 'js'));
         _class('assets')->add('fake_lib2');
         $expected2 = $expected1 . PHP_EOL . '<script type="text/javascript">' . PHP_EOL . $fake_lib2['versions']['1.0']['js'] . PHP_EOL . '</script>';
         $this->assertEquals($expected2, _class('assets')->show_js());
@@ -394,7 +394,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
         ];
         _class('assets')->bundle_register('fake_lib5', $fake_lib5);
         _class('assets')->add('fake_lib5');
-        $this->assertSame($fake_lib5['versions']['master']['js'], _class('assets')->get_asset('fake_lib5', 'js'));
+        $this->assertEqualsCanonicalizing($fake_lib5['versions']['master']['js'], _class('assets')->get_asset('fake_lib5', 'js'));
         $expected5 = '<script type="text/javascript">' . PHP_EOL . $fake_lib5['versions']['master']['js'] . PHP_EOL . '</script>';
         $this->assertEquals($expected5, _class('assets')->show_js());
 
@@ -515,8 +515,8 @@ class class_assets_test extends PHPUnit\Framework\TestCase
         $this->assertEmpty(_class('assets')->show_js());
         _class('assets')->bundle_register($lib_name1, $fake_lib1);
         _class('assets')->bundle_register($lib_name2, $fake_lib2);
-        $this->assertSame($fake_lib1['versions']['master']['js'], _class('assets')->get_asset($lib_name1, 'js'));
-        $this->assertSame($fake_lib2['versions']['master']['js'], _class('assets')->get_asset($lib_name2, 'js'));
+        $this->assertEqualsCanonicalizing($fake_lib1['versions']['master']['js'], _class('assets')->get_asset($lib_name1, 'js'));
+        $this->assertEqualsCanonicalizing($fake_lib2['versions']['master']['js'], _class('assets')->get_asset($lib_name2, 'js'));
         _class('assets')->add($lib_name1);
         _class('assets')->add($lib_name2);
         $expected1 = '<script src="' . $fake_lib1_url . '" type="text/javascript"></script>';
@@ -544,8 +544,8 @@ class class_assets_test extends PHPUnit\Framework\TestCase
         $this->assertEmpty(_class('assets')->show_js());
         _class('assets')->bundle_register($lib_name3, $fake_lib3);
         _class('assets')->bundle_register($lib_name4, $fake_lib4);
-        $this->assertSame($fake_lib3['versions']['master']['js'], _class('assets')->get_asset($lib_name3, 'js'));
-        $this->assertSame($fake_lib4['versions']['master']['js'], _class('assets')->get_asset($lib_name4, 'js'));
+        $this->assertEqualsCanonicalizing($fake_lib3['versions']['master']['js'], _class('assets')->get_asset($lib_name3, 'js'));
+        $this->assertEqualsCanonicalizing($fake_lib4['versions']['master']['js'], _class('assets')->get_asset($lib_name4, 'js'));
         _class('assets')->add($lib_name3);
         _class('assets')->add($lib_name4);
         $expected1 = '<script src="' . $fake_lib1_url . '" type="text/javascript"></script>';
@@ -628,10 +628,10 @@ class class_assets_test extends PHPUnit\Framework\TestCase
         foreach ($libs as $name => $config) {
             foreach ($types as $type) {
                 $type_conf = $config['versions']['master'][$type] ?? null;
-                if ( ! $type_conf) {
+                if (! $type_conf) {
                     continue;
                 }
-                $this->assertSame($type_conf, _class('assets')->get_asset($name, $type));
+                $this->assertEqualsCanonicalizing($type_conf, _class('assets')->get_asset($name, $type));
             }
         }
         foreach ($libs as $name => $config) {
@@ -640,7 +640,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
         foreach ($libs as $name => $config) {
             foreach ($types as $type) {
                 $type_conf = $config['versions']['master'][$type] ?? null;
-                if ( ! $type_conf) {
+                if (! $type_conf) {
                     continue;
                 }
                 $this->assertNotEmpty(_class('assets')->get_asset($name, $type));
@@ -1007,22 +1007,22 @@ class class_assets_test extends PHPUnit\Framework\TestCase
         _class('assets')->bundle_register($name, $data);
 
         $expected = $data['versions']['1.11.2']['js'];
-        $this->assertSame($expected, _class('assets')->get_asset($name, 'js'));
-        //		$this->assertSame( $expected, _class('assets')->get_asset($name.':1.11.2', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11.1', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':>=1.11.2', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':<2', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':<1.11.3', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':<1.11.3,>1.11.1', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':1.11.*', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11.0,<1.11.3', 'js') );
-//		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11.0 | <2', 'js') );
+        $this->assertEqualsCanonicalizing($expected, _class('assets')->get_asset($name, 'js'));
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':1.11.2', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':>1.11.1', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':>1.11', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':>1', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':>=1.11.2', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':<2', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':<1.11.3', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':<1.11.3,>1.11.1', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':1.11.*', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':>1.11.0,<1.11.3', 'js') );
+        //		$this->assertEqualsCanonicalizing( $expected, _class('assets')->get_asset($name.':>1.11.0 | <2', 'js') );
     }
 
     /***/
-/*    public function test_filter_cssmin()
+    /*    public function test_filter_cssmin()
     {
         $in = 'body {' . PHP_EOL . '    color : white; ' . PHP_EOL . '}';
         $expected = 'body{color:white}';
@@ -1037,7 +1037,7 @@ class class_assets_test extends PHPUnit\Framework\TestCase
 */
 
     /***/
-/*    public function test_filter_jsmin()
+    /*    public function test_filter_jsmin()
     {
         $in = 'var a = "abc";' . PHP_EOL . PHP_EOL . '// fsfafwe.' . PHP_EOL . PHP_EOL . ';;' . PHP_EOL . PHP_EOL . 'var bbb = "u";' . PHP_EOL;
         $expected = 'var a="abc";;;var bbb="u";';

@@ -20,6 +20,8 @@ class yf_core_api_sites_info
     /** @var string @conf_skip Patterns to get constant value */
     public $_get_const_pattern = "/define\s*\(\s*[\"\']*##CONST_NAME##[\"\']*[\s\t]*,[\s\t]*[\"\']*([^\'\"]+)[\"\']*\s*\)/Uims";
 
+    public $info = [];
+
     /**
      * Get first sites info from db.
      */

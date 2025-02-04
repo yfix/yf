@@ -3,7 +3,6 @@
 require_once __DIR__ . '/yf_unit_tests_setup.php';
 
 /**
- * @requires extension mcrypt
  */
 class class_encryption_test extends yf\tests\wrapper
 {

@@ -402,18 +402,6 @@ class yf_form2_boxes
             $name = 'location';
         }
         // TODO
-        return $form->text($name, $data, $extra, $replace);
-        /*
-                $data = array();
-                if ($extra['for_type'] == 'admin') {
-                } else {
-                }
-
-                if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
-                    $extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=blocks' : './?object=blocks';
-                }
-                $renderer = $extra['renderer'] ?: 'list_box';
-                return $form->$renderer($name, $data, $extra, $replace);
-        */
+        return $form->text($name, $data ?? [], $extra, $replace);
     }
 }

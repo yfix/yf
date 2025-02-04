@@ -122,7 +122,7 @@ class yf_cats
             }
             $children[$parent_id][$id] = $id;
         }
-        $ids = $this->_count_levels(0, $children);
+        $ids = $this->_count_levels($children, 0);
         $new_items = [];
         foreach ((array) $ids as $id => $level) {
             $new_items[$id] = $items[$id] + ['level' => $level];
@@ -134,13 +134,13 @@ class yf_cats
      * @param mixed $start_id
      * @param mixed $level
      */
-    public function _count_levels($start_id = 0, &$children, $level = 0)
+    public function _count_levels(&$children, $start_id = 0, $level = 0)
     {
         $ids = [];
         foreach ((array) $children[$start_id] as $id => $_tmp) {
             $ids[$id] = $level;
             if (isset($children[$id])) {
-                foreach ((array) $this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
+                foreach ((array) $this->_count_levels($children, $id, $level + 1) as $_id => $_level) {
                     $ids[$_id] = $_level;
                 }
             }
@@ -157,8 +157,11 @@ class yf_cats
     public function _get_items_names($cat_name = '', $recursive_sort = true, $all = false)
     {
         $items = [];
-        foreach ((array) $this->_get_items_array($cat_name, $recursive_sort, $all) as $item_id => $item_info) {
-            $items[$item_info['id']] = $item_info['name'];
+        foreach ((array) $this->_get_items_array($cat_name, $recursive_sort, $all) as $item_id => $item) {
+            $id = $item['id'] ?? null;
+            if ($id !== null) {
+                $items[$id] = $item['name'];
+            }
         }
         return $items;
     }
@@ -364,6 +367,8 @@ class yf_cats
             $nav_items_ids = array_reverse($parents_ids, 1);
         }
         $nav_items_ids[$item_id] = $item_id;
+        $body = '';
+        $i = 0;
         foreach ((array) $nav_items_ids as $cur_item_id) {
             if ($USE_CALLBACK) {
                 $item_link = call_user_func($prepare_link_callback, $cur_item_id);

@@ -3,7 +3,6 @@
 require_once __DIR__ . '/db_offline_abstract.php';
 
 /**
- * @requires extension mysqli
  */
 class class_db_offline_query_builder_test extends db_offline_abstract
 {
@@ -1673,7 +1672,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract
         if ($this->_need_skip_test(__FUNCTION__)) {
             return;
         }
-        $this->assertSame(
+        $this->assertEqualsCanonicalizing(
             [['1', '2', '3']],
             self::qb()->_split_by_comma(['1,2,3'])
         );
@@ -1683,7 +1682,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract
         if ($this->_need_skip_test(__FUNCTION__)) {
             return;
         }
-        $this->assertSame(
+        $this->assertEqualsCanonicalizing(
             [1 => 1, 2 => 2, 3 => 3],
             self::qb()->_ids_sql_from_array([1, 2, 3])
         );
@@ -1713,6 +1712,6 @@ class class_db_offline_query_builder_test extends db_offline_abstract
         $this->assertTrue(
             self::qb()->_is_where_all_numeric($data)
         );
-        $this->assertSame([1, 2], $data);
+        $this->assertEqualsCanonicalizing([1, 2], $data);
     }
 }

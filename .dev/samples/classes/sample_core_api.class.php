@@ -54,6 +54,7 @@ class sample_core_api
     public function get_all_classes($section = 'all')
     {
         $data = [];
+        $i = 0;
         foreach (_class('core_api')->get_classes($section) as $_section => $modules) {
             $i++;
             $section_id = $i;

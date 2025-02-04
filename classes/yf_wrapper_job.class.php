@@ -87,7 +87,7 @@ class yf_wrapper_job
      * @param mixed $queue
      * @param mixed $job
      */
-    public function status($queue = false, $job)
+    public function status($queue = false, $job = null)
     {
         ! $this->_connection && $this->connect();
         return $this->_connection->del($queue);

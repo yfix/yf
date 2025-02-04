@@ -5,6 +5,8 @@ class yf_docs
     private $whats_new = [
         'demo',
     ];
+    public $docs_dir = null;
+    public $demo_dir = null;
 
     /**
      * Catch missing method call.
@@ -41,7 +43,7 @@ class yf_docs
             return _class('core_api')->get_github_link($m[2]);
         });
         tpl()->add_function_callback('self_source', function ($m, $r, $name, $_this) {
-            //			return _class('core_api')->get_method_source($m[1], $m[2]);
+            // return _class('core_api')->get_method_source($m[1], $m[2]);
         });
     }
 
@@ -54,6 +56,7 @@ class yf_docs
         }
         $base_dir = YF_PATH . '.dev/demo/data/';
         $filename = basename($_GET['filename']);
+        $json = '{}';
         if (preg_match('/^[a-zA-Z\-\.]+\.json$/', $filename)) {
             $json = file_get_contents($base_dir . $filename);
         }
@@ -91,6 +94,7 @@ class yf_docs
     {
         $id = $id ?: $_GET['id'];
         $action = $_GET['action'];
+        $only_method = false;
         if (preg_match('~^[a-z0-9_]+$~ims', $id)) {
             $only_method = strtolower($id);
         }
@@ -106,6 +110,7 @@ class yf_docs
             $only_method = current($methods);
         }
         $url = url('/@object');
+        $items = [];
         foreach ((array) $methods as $name) {
             if ($only_method && $only_method !== $name) {
                 continue;
@@ -331,7 +336,7 @@ class yf_docs
         ];
         $names = [];
         foreach ($globs as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $cls) {
+            foreach (glob($glob) as $cls) {
                 $cls = basename($cls);
                 if ($cls == __CLASS__) {
                     continue;
@@ -363,7 +368,7 @@ class yf_docs
     {
         return implode(PHP_EOL, [
             form_item()->country_box(['selected' => 'US', 'renderer' => 'div_box']),
-            form_item()->language_box(['selected' => 'ru', 'renderer' => 'div_box']),
+            form_item()->language_box(['selected' => 'uk', 'renderer' => 'div_box']),
             form_item()->currency_box(['selected' => 'UAH', 'renderer' => 'div_box']),
             form_item()->timezone_box(['selected' => 'UTC', 'renderer' => 'div_box']),
         ]);

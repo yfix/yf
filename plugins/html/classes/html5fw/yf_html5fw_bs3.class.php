@@ -104,7 +104,9 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
             . '</div>';
 
         $input_group_extra = $extra['input_group'];
-        $input_group_extra['class'] = $input_group_extra['class'] ?: ($this->CLASS_INPUT_GROUP . ' ' . ($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : '') . ($extra['append'] ? ' ' . $this->CLASS_INPUT_APPEND : ''));
+        if (!isset($input_group_extra['class'])) {
+            $input_group_extra['class'] =  $this->CLASS_INPUT_GROUP . ' ' . ($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : '') . ($extra['append'] ? ' ' . $this->CLASS_INPUT_APPEND : '');
+        }
         $input_group_extra['class'] .= ' ' . $input_group_extra['class_add'];
 
         $show_input_group = ($extra['append'] || $extra['prepend']);
@@ -188,6 +190,8 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
         $link_name_html = ($extra['link_url'] && $extra['link_name']) ? ' <a href="' . $extra['link_url'] . '" class="' . $this->CLASS_LINK_URL . '">' . t($extra['link_name']) . '</a>' . PHP_EOL : '';
 
         $inline_tip_html = ($extra['tip'] ? ' ' . tip($extra['tip'], $replace) : '');
+        $inline_help_before = '';
+        $inline_help_after = '';
 
         if ($extra['only_row_start']) {
             return $row_start . $before_content_html;

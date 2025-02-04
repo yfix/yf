@@ -235,7 +235,6 @@ class yf_core_events
      * Sort the listeners for a given event by priority.
      *
      * @param  string  $eventName
-     * @return array
      */
     protected function _sort_listeners($eventName)
     {

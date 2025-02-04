@@ -5,6 +5,8 @@ class yf_charts
 {
     public $TICK_COUNT = 10;
 
+    public $_ids = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name

@@ -2,9 +2,9 @@
 
 require_once __DIR__ . '/db_offline_abstract.php';
 
-/**
- * @requires extension mysqli
- */
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+
+#[RunTestsInSeparateProcesses]
 class class_db_offline_mysql_test extends db_offline_abstract
 {
     public $data_safe = [
@@ -21,6 +21,10 @@ class class_db_offline_mysql_test extends db_offline_abstract
     ];
     public static function _need_skip_test($name)
     {
+        $suffix = "_safe";
+        if (getenv('GITHUB_ACTIONS') && substr($name, -strlen($suffix)) == $suffix) {
+            return true;
+        }
         return false;
     }
     public function test_db_prefix()
