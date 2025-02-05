@@ -395,6 +395,11 @@ class yf_tpl_driver_yf
             }
         }
         if ($pairs) {
+            $pairs = array_filter($pairs, function ($v, $k) {
+                return !is_array($v);
+            }, ARRAY_FILTER_USE_BOTH);
+        }
+        if ($pairs) {
             $string = str_replace(array_keys($pairs), $pairs, $string);
         }
         // Modules properties direct access, example: {main.USER_ID}
