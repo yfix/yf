@@ -98,8 +98,10 @@ class yf_tpl_driver_yf
      */
     public function parse($name, $replace = [], $params = [])
     {
-        $string = $params['string'] ?: false;
-
+        $string = '';
+        if (is_array($params)) {
+            $string = $params['string'] ?? '';
+        }
         $this->_fix_replace($replace, $name);
 
         $php_tpl = $this->_parse_get_php_tpl($name, $replace, $params);
