@@ -68,6 +68,9 @@ class yf_htmx {
 
   public function _location( $url ) {
     no_graphics(true);
+    if( is_array( $url ) ) {
+      $url = json_encode( $url,true );
+    }
     header( 'HX-Location: '. $url );
     exit;
   }
