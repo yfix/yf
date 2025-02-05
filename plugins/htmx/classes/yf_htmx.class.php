@@ -61,18 +61,16 @@ class yf_htmx {
     $this->_api->_forbidden();
   }
 
-    public function _error()
-    {
-        no_graphics(true);
-        $this->_api->_error();
-    }
+  public function _error() {
+    no_graphics(true);
+    $this->_api->_error();
+  }
 
-    public function _location($options)
-    {
-        no_graphics(true);
-        header('HX-Location: ' . json_encode($options,true));
-        exit;
-    }
+  public function _location( $url ) {
+    no_graphics(true);
+    header( 'HX-Location: '. $url );
+    exit;
+  }
 
   function _redirect( $url ) {
     no_graphics( true );
