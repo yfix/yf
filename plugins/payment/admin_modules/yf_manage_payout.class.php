@@ -160,7 +160,7 @@ class yf_manage_payout
         $order_fields = [
             'o.operation_id' => 'номер операций',
             'o.amount' => 'сумма',
-            'a.balance' => 'баланс',
+            'o.balance' => 'баланс',
             'o.datetime_start' => 'дата создания',
             'o.datetime_update' => 'дата обновления',
         ];
@@ -432,7 +432,7 @@ class yf_manage_payout
                         return  $result;
                     },
                     'provider_id' => ['cond' => 'eq',      'field' => 'o.provider_id'],
-                    'balance' => ['cond' => 'between', 'field' => 'a.balance'],
+                    'balance' => ['cond' => 'between', 'field' => 'o.balance'],
                     'amount' => ['cond' => 'between', 'field' => 'o.amount'],
                     'name' => function ($a) {
                         $v = $a['value'];
