@@ -745,7 +745,7 @@ class yf_table2
                 } else {
                     $_custom_id = $_id;
                 }
-                $data[$_id][$custom_name] = is_array($custom_data[$_custom_id]) ? $custom_data[$_custom_id] : (string) $custom_data[$_custom_id];
+                $data[$_id][$custom_name] = isset($custom_data[$_custom_id]) ? (is_array($custom_data[$_custom_id]) ? $custom_data[$_custom_id] : (string) $custom_data[$_custom_id]) : '';
             }
         }
         // Needed to correctly pass inside $instance_params to each function
