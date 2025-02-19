@@ -10,11 +10,14 @@ class yf_admin_wall
 {
     public function show()
     {
-        $sql = 'SELECT * FROM ' . db('admin_walls') . ' WHERE user_id=' . (int) (main()->ADMIN_ID) . ' ORDER BY add_date DESC';
+        //$sql = 'SELECT * FROM ' . db('admin_walls') . ' WHERE user_id=' . (int) (main()->ADMIN_ID) . ' ORDER BY add_date DESC';
+        $sql = 'SELECT * FROM ' . db('admin_walls');
+		$filter = _class('admin_methods')->_get_filter();
         return table($sql, [
-                'filter' => true,
+                'filter' => $filter,
                 'filter_params' => [
                     'message' => 'like',
+					'__default_order' => 'ORDER BY add_date DESC',
                 ],
             ])
             ->date('add_date')
@@ -22,6 +25,7 @@ class yf_admin_wall
             ->text('object')
             ->text('action')
             ->text('object_id')
+            ->admin('user_id')
             ->btn_view();
     }
 
@@ -32,7 +36,8 @@ class yf_admin_wall
     {
         $id = (int) ($_GET['id']);
         if ($id) {
-            $msg = db()->from('admin_walls')->where('user_id', (int) main()->ADMIN_ID)->where($id)->get();
+            //$msg = db()->from('admin_walls')->where('user_id', (int) main()->ADMIN_ID)->where($id)->get();
+            $msg = db()->from('admin_walls')->where($id)->get();
         }
         if ( ! $msg['id']) {
             return _e('Wrong message id');
@@ -55,6 +60,8 @@ class yf_admin_wall
 
     public function filter_save()
     {
+        return _class('admin_methods')->filter_save();
+        /*
         $filter_name = $_GET['object'] . '__view';
         if ($_GET['page'] == 'clear') {
             $_SESSION[$filter_name] = [];
@@ -67,6 +74,7 @@ class yf_admin_wall
             }
         }
         return js_redirect('./?object=' . $_GET['object'] . '&action=' . str_replace($_GET['object'] . '__', '', $filter_name));
+         */
     }
 
 
@@ -82,6 +90,7 @@ class yf_admin_wall
         return form($r, [
                 'filter' => true,
             ])
+            ->number('user_id')
             ->text('message')
             ->text('object')
             ->text('action')
@@ -121,5 +130,12 @@ class yf_admin_wall
         //		return array(
 //			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
 //		);
+    }
+
+    public function show_for_admin()
+    {
+        $_GET['page'] = 'clear';
+        $_GET['filter'] = 'user_id:' . (int) ($_GET['id']);
+        return $this->filter_save();
     }
 }

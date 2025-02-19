@@ -311,4 +311,11 @@ class yf_manage_revisions
             ->order_box()
             ->save_and_clear();
     }
+
+    public function show_for_admin()
+    {
+        $_GET['page'] = 'clear';
+        $_GET['filter'] = 'user_id:' . (int) ($_GET['id']);
+        return $this->filter_save();
+    }
 }
