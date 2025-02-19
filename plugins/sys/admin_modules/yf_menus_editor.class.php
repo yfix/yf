@@ -605,10 +605,12 @@ class yf_menus_editor
             foreach ($multi_selects as $k) {
                 $_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
             }
+            /*
         } else {
             foreach ($multi_selects as $k) {
                 $a[$k] = $this->_multi_db_to_html($a[$k]);
             }
+             */
         }
         $a = $_POST;
         $a['redirect_link'] = './?object=' . $_GET['object'] . '&action=show_items&id=' . $menu_info['id'];
@@ -661,7 +663,7 @@ class yf_menus_editor
             }
         } else {
             foreach ($multi_selects as $k) {
-                $a[$k] = $this->_multi_db_to_html($a[$k]);
+                $item_info[$k] = $this->_multi_db_to_html($item_info[$k]);
             }
         }
         $a = $item_info;

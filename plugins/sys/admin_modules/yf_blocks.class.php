@@ -282,7 +282,7 @@ class yf_blocks
             ->db_insert_if_ok('block_rules', ['rule_type', 'methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids', 'order', 'active'], ['block_id' => $block_info['id']], [
                 'redirect_link' => './?object=blocks&action=show_rules&id=' . $block_info['id'],
             ])
-            ->on_after_update(function () {
+            ->on_after_update(function () use($block_info) {
                 common()->admin_wall_add(['block rule added for ' . $block_info['name'], $_GET['id']]);
                 module('blocks')->_cache_purge();
             })
@@ -334,7 +334,7 @@ class yf_blocks
             ->db_update_if_ok('block_rules', ['rule_type', 'methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids', 'order', 'active'], 'id=' . $rule_info['id'], [
                 'redirect_link' => './?object=blocks&action=show_rules&id=' . $a['block_id'],
             ])
-            ->on_after_update(function () {
+            ->on_after_update(function () use($block_info) {
                 common()->admin_wall_add(['block rule updated for: ' . $block_info['name'], $_GET['id']]);
                 module('blocks')->_cache_purge();
             })
