@@ -92,7 +92,7 @@ class yf_user_modules
                 ],
             ])
             ->form()
-            ->check_box('name', ['field_desc' => '#', 'width' => '1%'])
+            ->check_box('name', ['desc' => '#', 'no_desc' => 1, 'width' => '1%'])
             ->text('name')
             ->func('locations', function ($field, $params, $row) {
                 foreach ((array) $field as $loc => $link) {
@@ -100,7 +100,7 @@ class yf_user_modules
                 }
                 return implode(PHP_EOL, (array) $out);
             })
-            ->btn('conf', url('/conf_editor/user_modules/%d'), ['id' => 'name'])
+            //->btn('conf', url('/conf_editor/user_modules/%d'), ['id' => 'name'])
             ->btn_active(['id' => 'name'])
             ->footer_submit(['value' => 'activate selected'])
             ->footer_submit(['value' => 'disable selected'])
@@ -465,12 +465,14 @@ class yf_user_modules
         if ( ! in_array($_GET['action'], ['show'])) {
             return false;
         }
+        /*
         $order_fields = [];
         foreach (explode('|', 'name|active') as $f) {
             $order_fields[$f] = $f;
         }
+         */
         $locations = [];
-        foreach (explode('|', 'framework|framework_p2|framework_plugin|project|project_p2|project_plugin|site') as $f) {
+        foreach (explode('|', 'framework|framework_p2|framework_plugin|app_plugin|project|project_p2|project_plugin|site') as $f) {
             $locations[$f] = $f;
         }
         return form($r, [
@@ -479,8 +481,8 @@ class yf_user_modules
             ->text('name')
             ->select_box('locations', $locations, ['show_text' => 1])
             ->active_box()
-            ->select_box('order_by', $order_fields, ['show_text' => 1])
-            ->order_box()
+            //->select_box('order_by', $order_fields, ['show_text' => 1])
+            //->order_box()
             ->save_and_clear();
     }
 
