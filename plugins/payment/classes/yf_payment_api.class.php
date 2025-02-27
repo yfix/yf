@@ -2381,16 +2381,19 @@ class yf_payment_api
     public function _class($class, $method = null, $options = null)
     {
         $_path = $this->_class_path;
-        $_class_name = __CLASS__ . '__' . $class;
+        // plugins
+        $_class_name = 'payment_api' . '__' . $class;
         $_class = _class_safe($_class_name, $_path);
         $status = $_class instanceof $_class_name;
         if ( ! $status) {
-            return  null;
+            // yf
+            $_class_name = 'yf_payment_api' . '__' . $class;
+            $_class = _class_safe($_class_name, $_path);
+            $status = $_class instanceof $_class_name;
+            if ( ! $status) { return  $_class; }
         }
         $status = method_exists($_class, $method);
-        if ( ! $status) {
-            return  $_class;
-        }
+        if ( ! $status) { return  $_class; }
         $result = $_class->{ $method }($options);
         return  $result;
     }
