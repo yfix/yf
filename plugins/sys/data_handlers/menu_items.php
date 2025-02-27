@@ -10,7 +10,7 @@ foreach ((array) $data as $menu_id => $items) {
         if ( ! $parent_id) {
             continue;
         }
-        $data[$menu_id][$parent_id]['have_children']++;
+        @$data[$menu_id][$parent_id]['have_children']++;
     }
 }
 return $data;

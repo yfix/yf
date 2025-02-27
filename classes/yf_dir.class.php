@@ -41,15 +41,11 @@ class yf_dir
     }
 
     /**
-     * Compatible function, supporting PHP7+, because:
-     * http://php.net/sql_regcase   !Warning! This function has been DEPRECATED as of PHP 5.3.0. Relying on this feature is highly discouraged.
+     * Check if file or folder should be skipped by include/exclude patterns.
      * @param mixed $str
      */
-    public function _sql_regcase($str)
+    public function _pattern_regcase($str)
     {
-        if (function_exists('sql_regcase')) {
-            return sql_regcase($str);
-        }
         $res = '';
         $chars = str_split($str);
         foreach ($chars as $char) {
@@ -71,22 +67,22 @@ class yf_dir
     {
         $folder = rtrim($folder, '/');
         if (false === strpos($pattern, '[')) {
-            $pattern = $this->_sql_regcase($pattern);
+            $pattern = $this->_pattern_regcase($pattern);
         }
-        $files = (array) glob($folder . '/' . $pattern, GLOB_BRACE | GLOB_NOSORT);
-        $dirs = (array) glob($folder . '/*', GLOB_BRACE | GLOB_ONLYDIR | GLOB_NOSORT);
-        // Dotted dirs
-        foreach (glob($folder . '/.**', GLOB_BRACE | GLOB_ONLYDIR | GLOB_NOSORT) as $path) {
-            $d = basename($path);
-            if ($d === '.' || $d === '..' || $d === '.git' || $d === '.svn') {
-                continue;
-            }
-            $dirs[] = $path;
+
+        $files = (array) glob($folder . '/' . $pattern, GLOB_NOSORT);
+        $dirs = array_merge(
+            (array) glob($folder . '/*', GLOB_ONLYDIR | GLOB_NOSORT),
+            array_filter((array) glob($folder . '/.*', GLOB_ONLYDIR | GLOB_NOSORT), function ($path) {
+                $d = basename($path);
+                return $d !== '.' && $d !== '..' && $d !== '.git' && $d !== '.svn';
+            })
+        );
+
+        foreach ($dirs as $dir) {
+            $files = array_merge($files, $this->rglob($dir, $pattern));
         }
-        $func = __FUNCTION__;
-        foreach ((array) $dirs as $dir) {
-            $files = array_merge($files, $this->$func($dir, $pattern));
-        }
+
         return $files;
     }
 
@@ -681,7 +677,7 @@ class yf_dir
      * @param mixed $pattern_exclude
      * @param mixed $pattern_find
      */
-    public function search($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find)
+    public function search($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find = '')
     {
         if ( ! is_array($start_dirs)) {
             $start_dirs = [$start_dirs];
@@ -725,7 +721,7 @@ class yf_dir
      * @param mixed $pattern_find
      * @param mixed $pattern_replace
      */
-    public function replace($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find, $pattern_replace)
+    public function replace($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find = '', $pattern_replace = '')
     {
         $files = [];
         if ( ! is_array($start_dirs)) {
@@ -871,6 +867,7 @@ class yf_dir
         if (is_array($pattern_exclude)) {
             $pattern_exclude = $pattern_exclude[$_index];
         }
+        $modifier = '';
         $MATCHED = false;
         if ( ! empty($pattern_include) && is_string($pattern_include)) {
             // Examples: "-f /\.(jpg|png)$/", -d /some_dir/

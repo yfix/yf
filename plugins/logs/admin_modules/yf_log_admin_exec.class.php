@@ -4,19 +4,16 @@ class yf_log_admin_exec
 {
     public function show()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'];
-        $default_filter = [
-            'order_by' => 'date',
-            'order_direction' => 'desc',
-        ];
         $sql = 'SELECT * FROM ' . db('log_admin_exec');
+		$filter = _class('admin_methods')->_get_filter();
         return table($sql, [
-                'filter' => (array) $_SESSION[$filter_name] + $default_filter,
+                'filter' => $filter,
                 'filter_params' => [
-                    'ip' => 'like',
-                    'user_agent' => 'like',
-                    'referer' => 'like',
+                    'ip'          => 'like',
+                    'user_agent'  => 'like',
+                    'referer'     => 'like',
                     'request_uri' => 'like',
+					'__default_order' => 'ORDER BY `date` DESC',
                 ],
             ])
             ->admin('admin_id')
@@ -59,13 +56,10 @@ class yf_log_admin_exec
             return false;
         }
         $order_fields = [];
-        foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
+        foreach (explode('|', 'admin_id|admin_group|date|ip|user_agent|referer') as $f) {
             $order_fields[$f] = $f;
         }
-        return form($r, [
-                'selected' => $_SESSION[$filter_name],
-                'class' => 'form-vertical',
-            ])
+		return form($r, ['filter' => true])
             ->number('admin_id')
             ->text('ip')
             ->text('user_agent')

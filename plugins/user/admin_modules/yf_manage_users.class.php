@@ -204,7 +204,7 @@ class yf_manage_users
             return false;
         }
         $order_fields = [];
-        foreach (explode('|', 'name,login,email|add_date|last_login|num_logins|active') as $f) {
+        foreach (explode('|', 'name|login|email|add_date|last_login|num_logins|active') as $f) {
             $order_fields[$f] = $f;
         }
         return form($r, [

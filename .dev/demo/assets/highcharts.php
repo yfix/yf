@@ -1,9 +1,9 @@
 <?php
 
 js([
-    '//rawgit.yfix.net/highcharts/highcharts-dist/v10.0.0/highcharts.js',
-//	'//rawgit.yfix.net/highcharts/highcharts-dist/v10.0.0/modules/exporting.js',
-    '//rawgit.yfix.net/highcharts/highcharts-dist/v10.0.0/themes/gray.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.0.0/highcharts.js',
+    //	'https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.0.0/modules/exporting.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.0.0/themes/gray.min.js',
 ]);
 
 jquery('

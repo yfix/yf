@@ -72,10 +72,11 @@ class yf_admin
                 return $a['auths'] ? a('/log_admin_auth/show_for_admin/' . $a['id'], (int) $a['auths'], 'fa fa-filter') : '';
             }, ['desc' => 'Auths'])
             ->func('id', function ($v, $e, $a) {
-                return $a['revisions'] ? a('/log_admin_revisions/show_for_admin/' . $a['id'], (int) $a['revisions'], 'fa fa-filter') : '';
+                return $a['revisions'] ? a('/manage_revisions/show_for_admin/' . $a['id'], (int) $a['revisions'], 'fa fa-filter') : '';
+                //return $a['revisions'] ? a('/log_admin_revisions/show_for_admin/' . $a['id'], (int) $a['revisions'], 'fa fa-filter') : '';
             }, ['desc' => 'Revisions'])
             ->func('id', function ($v, $e, $a) {
-                return $a['wall'] ? a('/log_admin_wall/show_for_admin/' . $a['id'], (int) $a['wall'], 'fa fa-filter') : '';
+                return $a['wall'] ? a('/admin_wall/show_for_admin/' . $a['id'], (int) $a['wall'], 'fa fa-filter') : '';
             }, ['desc' => 'Wall'])
             ->text('go_after_login')
             ->func('add_date', function ($v, $e, $a) {

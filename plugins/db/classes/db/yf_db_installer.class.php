@@ -34,6 +34,15 @@ abstract class yf_db_installer
     /** @var bool */
     public $SHARDING_BY_LANG = false;
 
+    public $SYS_TABLES_STRUCTS = [];
+    public $OTHER_TABLES_STRUCTS = [];
+    public $SYS_TABLES_DATAS = [];
+    public $OTHER_TABLES_DATAS = [];
+    public $create_table_pre_callbacks = [];
+    public $create_table_post_callbacks = [];
+    public $alter_table_pre_callbacks = [];
+    public $alter_table_post_callbacks = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -56,17 +65,25 @@ abstract class yf_db_installer
 
     public function load_data()
     {
+        $t_names = [];
         // Preload db installer SQL CREATE TABLE DDL statements
         $ext = '.sql.php';
-        $pattern = '{,plugins/*/}{,share/}db/sql/*' . $ext;
-        $globs_sql = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => YF_PATH . 'db/sql/*' . $ext,
+            'project' => PROJECT_PATH . 'db/sql/*' . $ext,
+            'app' => APP_PATH . 'db/sql/*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/db/sql/*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/db/sql/*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/db/sql/*' . $ext,
+            'share_framework' => YF_PATH . 'share/db/sql/*' . $ext,
+            'share_project' => PROJECT_PATH . 'share/db/sql/*' . $ext,
+            'share_app' => APP_PATH . 'share/db/sql/*' . $ext,
+            'plugins_share_framework' => YF_PATH . 'plugins/*/share/db/sql/*' . $ext,
+            'plugins_share_project' => PROJECT_PATH . 'plugins/*/share/db/sql/*' . $ext,
+            'plugins_share_app' => APP_PATH . 'plugins/*/share/db/sql/*' . $ext,
         ];
-        $t_names = [];
-        foreach ($globs_sql as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
                 $t_names[$t_name] = $path;
             }
@@ -78,15 +95,23 @@ abstract class yf_db_installer
 
         // Preload db installer PHP array of CREATE TABLE DDL statements
         $ext = '.sql_php.php';
-        $pattern = '{,plugins/*/}{,share/}db/sql_php/*' . $ext;
-        $globs_sql_php = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => YF_PATH . 'db/sql_php/*' . $ext,
+            'project' => PROJECT_PATH . 'db/sql_php/*' . $ext,
+            'app' => APP_PATH . 'db/sql_php/*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/db/sql_php/*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/db/sql_php/*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/db/sql_php/*' . $ext,
+            'share_framework' => YF_PATH . 'share/db/sql_php/*' . $ext,
+            'share_project' => PROJECT_PATH . 'share/db/sql_php/*' . $ext,
+            'share_app' => APP_PATH . 'share/db/sql_php/*' . $ext,
+            'plugins_share_framework' => YF_PATH . 'plugins/*/share/db/sql_php/*' . $ext,
+            'plugins_share_project' => PROJECT_PATH . 'plugins/*/share/db/sql_php/*' . $ext,
+            'plugins_share_app' => APP_PATH . 'plugins/*/share/db/sql_php/*' . $ext,
         ];
-        $t_names = [];
-        foreach ($globs_sql_php as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
                 $t_names[$t_name] = $path;
             }
@@ -98,15 +123,23 @@ abstract class yf_db_installer
 
         // Preload db installer data PHP arrays needed to be inserted after CREATE TABLE == initial data
         $ext = '.data.php';
-        $pattern = '{,plugins/*/}{,share/}db/data/*' . $ext;
-        $globs_data = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
+        $patterns = [
+            'framework' => YF_PATH . 'db/data/*' . $ext,
+            'project' => PROJECT_PATH . 'db/data/*' . $ext,
+            'app' => APP_PATH . 'db/data/*' . $ext,
+            'plugins_framework' => YF_PATH . 'plugins/*/db/data/*' . $ext,
+            'plugins_project' => PROJECT_PATH . 'plugins/*/db/data/*' . $ext,
+            'plugins_app' => APP_PATH . 'plugins/*/db/data/*' . $ext,
+            'share_framework' => YF_PATH . 'share/db/data/*' . $ext,
+            'share_project' => PROJECT_PATH . 'share/db/data/*' . $ext,
+            'share_app' => APP_PATH . 'share/db/data/*' . $ext,
+            'plugins_share_framework' => YF_PATH . 'plugins/*/share/db/data/*' . $ext,
+            'plugins_share_project' => PROJECT_PATH . 'plugins/*/share/db/data/*' . $ext,
+            'plugins_share_app' => APP_PATH . 'plugins/*/share/db/data/*' . $ext,
         ];
-        $t_names = [];
-        foreach ($globs_data as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $t_name = substr(basename($path), 0, -strlen($ext));
                 $t_names[$t_name] = $path;
             }
@@ -115,7 +148,6 @@ abstract class yf_db_installer
         foreach ($t_names as $t_name => $path) {
             $this->TABLES_DATA[$t_name] = include $path;
         }
-
         // Project has higher priority than framework (allow to change anything in project)
         // Try to load db structure from project file
         // Sample contents part: 	$project_data['OTHER_TABLES_STRUCTS'] = my_array_merge((array)$project_data['OTHER_TABLES_STRUCTS'], array(
@@ -155,6 +187,7 @@ abstract class yf_db_installer
         if ( ! $this->get_lock()) {
             return false;
         }
+        $table_data = [];
         if (isset($this->TABLES_SQL[$table_name])) {
             $table_found = true;
         } elseif (isset($this->TABLES_SQL['sys_' . $table_name])) {
@@ -189,7 +222,10 @@ abstract class yf_db_installer
         $this->create_table_post_hook($full_table_name, $sql_php, $db);
         // Check if we also need to insert some data into new system table
         if ($table_data && is_array($table_data)) {
-            $result = $db->insert_safe($full_table_name, $table_data);
+            $insert_result = $db->insert_safe($full_table_name, $table_data);
+            if ( ! main()->is_unit_test()) {
+                $result = $insert_result;
+            }
         }
         $this->release_lock();
         return $result;
@@ -425,7 +461,7 @@ abstract class yf_db_installer
             'sql_php' => $sql_php,
             'db' => $db,
         ]);
-        foreach ((array) $this->alter_table_pre_callbacks as $table_regex => $func) {
+        foreach ((array) $this->alter_table_pre_callbacks as $regex => $func) {
             if ( ! preg_match('/' . $regex . '/ims', $table_name, $m)) {
                 continue;
             }
@@ -434,7 +470,7 @@ abstract class yf_db_installer
         return $sql_php;
     }
 
-    /**
+/**
      * This method can be inherited in project with custom rules inside.
      * @param mixed $table_name
      * @param mixed $column_name
@@ -449,7 +485,7 @@ abstract class yf_db_installer
             'sql_php' => $sql_php,
             'db' => $db,
         ]);
-        foreach ((array) $this->alter_table_post_callbacks as $table_regex => $func) {
+        foreach ((array) $this->alter_table_post_callbacks as $regex => $func) {
             if ( ! preg_match('/' . $regex . '/ims', $table_name, $m)) {
                 continue;
             }

@@ -558,7 +558,7 @@ class yf_menus_editor
             }
             $children[$parent_id][$id] = $id;
         }
-        $ids = $this->_count_levels(0, $children);
+        $ids = $this->_count_levels($children, 0);
         $new_items = [];
         foreach ((array) $ids as $id => $level) {
             $new_items[$id] = $items[$id] + ['level' => $level];
@@ -570,13 +570,13 @@ class yf_menus_editor
      * @param mixed $start_id
      * @param mixed $level
      */
-    public function _count_levels($start_id = 0, &$children, $level = 0)
+    public function _count_levels(&$children, $start_id = 0, $level = 0)
     {
         $ids = [];
         foreach ((array) $children[$start_id] as $id => $_tmp) {
             $ids[$id] = $level;
             if (isset($children[$id])) {
-                foreach ((array) $this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
+                foreach ((array) $this->_count_levels($children, $id, $level + 1) as $_id => $_level) {
                     $ids[$_id] = $_level;
                 }
             }
@@ -605,10 +605,12 @@ class yf_menus_editor
             foreach ($multi_selects as $k) {
                 $_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
             }
+            /*
         } else {
             foreach ($multi_selects as $k) {
                 $a[$k] = $this->_multi_db_to_html($a[$k]);
             }
+             */
         }
         $a = $_POST;
         $a['redirect_link'] = './?object=' . $_GET['object'] . '&action=show_items&id=' . $menu_info['id'];
@@ -661,7 +663,7 @@ class yf_menus_editor
             }
         } else {
             foreach ($multi_selects as $k) {
-                $a[$k] = $this->_multi_db_to_html($a[$k]);
+                $item_info[$k] = $this->_multi_db_to_html($item_info[$k]);
             }
         }
         $a = $item_info;

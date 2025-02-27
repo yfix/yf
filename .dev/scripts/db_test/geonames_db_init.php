@@ -44,6 +44,6 @@ if ( ! function_exists('main')) {
     new yf_main('admin', $no_db_connect = false, $auto_init_all = false);
     date_default_timezone_set('Europe/Kiev');
     ini_set('display_errors', 'on');
-    error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
+    error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED);
 }
 //####

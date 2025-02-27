@@ -50,6 +50,7 @@ class sample_all
             ksort($all);
             $name = current($all);
         }
+        $replace = [];
         if (strlen($name)) {
             $f = $dir . $name . '.stpl';
             if ( ! file_exists($f)) {

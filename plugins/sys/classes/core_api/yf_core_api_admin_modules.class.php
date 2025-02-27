@@ -14,6 +14,11 @@ class yf_core_api_admin_modules
     /** @var bool Parse core 'module' class in get_methods */
     public $PARSE_YF_MODULE = false;
 
+    public $_admin_modules_array = [];
+    public $_MODULES_TO_SKIP = [];
+    public $_yf_plugins = [];
+    public $_yf_plugins_classes = [];
+
     /**
      * Get available modules.
      * @param mixed $params
@@ -280,8 +285,6 @@ class yf_core_api_admin_modules
             }
             if ( ! empty($extends_file_path) && file_exists($extends_file_path)) {
                 $extends_file_text = file_get_contents($extends_file_path);
-            } elseif ( ! empty($extends_file_path2) && file_exists($extends_file_path2)) {
-                $extends_file_text = file_get_contents($extends_file_path2);
             }
             foreach ((array) $this->_get_methods_names_from_text($extends_file_text, $ONLY_PRIVATE_METHODS) as $method_name) {
                 if ($method_name == $user_module_name) {

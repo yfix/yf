@@ -15,6 +15,12 @@ class yf_csrf_guard
     public $TOKEN_NAME = '_token';
     public $LOG_ERRORS = true;
 
+    public $_chained_mode = false;
+    public $_extend = [];
+    public $LOG_DRIVER = null;
+    public $LOG_DIR_NAME = 'logs/';
+    public $is = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name

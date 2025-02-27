@@ -140,7 +140,7 @@ class yf_manage_redis
             }
             if (false !== strpos($key, ':')) {
                 $gname = strstr($key, ':', true);
-                $groups[$gname]++;
+                @$groups[$gname]++;
             }
         }
         arsort($groups);
@@ -189,7 +189,7 @@ class yf_manage_redis
         }
         $avail_types = [];
         foreach ((array) $display_keys as $key => $type) {
-            $avail_types[$type]++;
+            @$avail_types[$type]++;
             $data[$key]['id'] = $key;
             $data[$key]['type'] = $type;
             $len = '?';

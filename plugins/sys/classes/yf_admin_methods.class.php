@@ -8,12 +8,13 @@
  */
 class yf_admin_methods
 {
-    /***/
     public $params = [];
-    /***/
+    public $_params = [];
     public $default_ckeditor_params = [
         'file_browser' => 'internal',
     ];
+
+    public $_preload_complete = null;
 
     /**
      * Catch missing method call.
@@ -168,7 +169,7 @@ class yf_admin_methods
             $replace[$f] = $DATA[$f];
         }
         if ($params['return_form']) {
-            return form($replace)->auto($table, $id, [
+            return form($replace)->auto($table, $id ?? '', [
                 'links_add' => $params['links_add'],
                 'db' => $db,
             ]);

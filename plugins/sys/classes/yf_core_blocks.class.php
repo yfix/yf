@@ -13,6 +13,13 @@ class yf_core_blocks
     public $FORCE_ALLOWED_CLASSES = [
         'api',
     ];
+    public $_blocks_infos = null;
+    public $_error_no_blocks_raised = null;
+    public $CENTER_BLOCK_RULES = null;
+    public $CENTER_BLOCK_ID = null;
+    public $_blocks_rules = null;
+    public $REDIRECT_CALLBACK_404 = null;
+    public $REDIRECT_CALLBACK_403 = null;
 
     /**
      * Catch missing method call.
@@ -342,18 +349,19 @@ class yf_core_blocks
         }
         $names = [];
         $ext = '.class.php';
-        $pattern = '{,plugins/*/}classes/*' . $ext;
-        $globs = [
-            'framework' => YF_PATH . $pattern,
-            'project' => PROJECT_PATH . $pattern,
-            'app' => APP_PATH . $pattern,
-        ];
         $ext_len = strlen($ext);
-        $names = [];
         $prefix = YF_PREFIX;
         $plen = strlen($prefix);
-        foreach ($globs as $glob) {
-            foreach (glob($glob, GLOB_BRACE) as $path) {
+        $patterns = [
+            YF_PATH . 'classes/*' . $ext,
+            YF_PATH . 'plugins/*/classes/*' . $ext,
+            PROJECT_PATH . 'classes/*' . $ext,
+            PROJECT_PATH . 'plugins/*/classes/*' . $ext,
+            APP_PATH . 'classes/*' . $ext,
+            APP_PATH . 'plugins/*/classes/*' . $ext,
+        ];
+        foreach ($patterns as $glob) {
+            foreach (glob($glob) as $path) {
                 $name = substr(basename($path), 0, -$ext_len);
                 if (substr($name, 0, $plen) === $prefix) {
                     $name = substr($name, $plen);
@@ -430,7 +438,7 @@ class yf_core_blocks
                 }
             }
         }
-        $redirect_func = function ($url) {
+        $redirect_func = function ($url) use ($OBJECT, $ACTION) {
             $redir_params = [
                 '%%object%%' => $OBJECT,
                 '%%action%%' => $ACTION,

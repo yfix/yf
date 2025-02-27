@@ -1,7 +1,7 @@
 <?php
 
 #define('USE_CACHE', false);
-#define('INCLUDE_PATH',	'/home/www/test.dev/');
+#define('INCLUDE_PATH',	'/var/www/test.dev/');
 #define('CACHE_TTL', 600);
 #define('DEVELOP', true);
 #define('DEBUG_MODE', true);

@@ -72,12 +72,6 @@ if ( ! function_exists('is_https')) {
         return main()->is_https();
     }
 }
-if ( ! function_exists('is_hhvm')) {
-    function is_hhvm()
-    {
-        return main()->is_hhvm();
-    }
-}
 if ( ! function_exists('is_dev')) {
     function is_dev()
     {

@@ -265,9 +265,10 @@ class yf_manage_deposit
         $time = time();
         $days = $days ?: 60;
         $min_time = $time - $days * 86400;
+        $min_time_sql = date( 'Y-m-d H:i:s', $min_time );
         $data = [];
         $sql = select('FROM_UNIXTIME(UNIX_TIMESTAMP(datetime_start), "%Y-%m-%d") AS day', 'COUNT(*) AS count')
-            ->from('payment_operation')->where('datetime_start', '>', $min_time)
+            ->from('payment_operation')->where('datetime_start', '>', $min_time_sql)
             ->group_by('FROM_UNIXTIME(UNIX_TIMESTAMP(datetime_start), "%Y-%m-%d")')
             ->where('direction', '=', 'in');
         foreach ((array) $sql->all() as $a) {

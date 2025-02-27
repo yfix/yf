@@ -35,6 +35,12 @@ class yf_graphics
     /** @var string Required for the compatibility with old main class */
     public $MEDIA_PATH = '';
 
+    public $IFRAME_CENTER = null;
+    public $META_DEFAULT = null;
+    public $META_ADD = null;
+    public $TIPS_STRIP_TAGS = null;
+    public $_tips = null;
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -308,6 +314,7 @@ class yf_graphics
      */
     public function show_welcome()
     {
+        $body = '';
         // For authorized admins only
         if (MAIN_TYPE_ADMIN) {
             $login_time = $_SESSION['admin_login_time'];
@@ -638,6 +645,7 @@ class yf_graphics
         if ( ! is_array($extra)) {
             $extra = [];
         }
+        $return_text = false;
         if (is_array($in) && isset($in['text'])) {
             $extra = (array) $extra + $in;
         } elseif (is_array($in) && isset($in['raw'])) {
@@ -665,7 +673,7 @@ class yf_graphics
         if ( ! strlen($extra['text'])) {
             return false;
         }
-        $strip_tags = isset($extra['strip_tags']) ? $extra['strip_tags'] : $this->TIPS_STRIP_TAGS;
+        $strip_tags = $extra['strip_tags'] ?? $this->TIPS_STRIP_TAGS;
         if ( ! isset($this->_tips)) {
             $this->_tips = (array) main()->get_data('tips');
         }

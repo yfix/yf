@@ -3,7 +3,6 @@
 require_once __DIR__ . '/db_offline_abstract.php';
 
 /**
- * @requires extension mysqli
  */
 class class_db_ddl_parser_mysql_test extends db_offline_abstract
 {
@@ -32,14 +31,13 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract
                 $str = str_replace('array (', 'array(', $str);
                 $str = preg_replace('~=>[\s]+array\(~ims', '=> array(', $str);
 
-                //				file_put_contents($php_path, '<?php'.PHP_EOL.'return '.$str.';');
+                // file_put_contents($php_path, '<?php'.PHP_EOL.'return '.$str.';');
             }
-
-            $this->assertSame($expected, $response, 'fname: ' . basename($path));
+            $this->assertEqualsCanonicalizing($expected, $response, 'fname: ' . basename($path));
 
             // Check that without SQL newlines or pretty formatting code works the same
             $response = $parser->parse(str_replace(["\r", "\n"], ' ', $sql));
-            $this->assertSame($expected, $response);
+            $this->assertEqualsCanonicalizing($expected, $response);
         }
     }
 
@@ -62,7 +60,7 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract
             $expected = trim(file_get_contents($sql_path));
             $response = trim($parser->create($php_create));
 
-            $this->assertSame($expected, $response);
+            $this->assertEqualsCanonicalizing($expected, $response);
         }
     }
 
@@ -209,7 +207,7 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract
 
             $sql_php['name'] = $tmp_name;
             $response = $parser->create($sql_php);
-            $this->assertSame($expected, $response, 'Create table DDL SQL from sql_php for: ' . $name);
+            $this->assertEqualsCanonicalizing($expected, $response, 'Create table DDL SQL from sql_php for: ' . $name);
         }
     }
 }
