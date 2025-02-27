@@ -1108,7 +1108,7 @@ class yf_form2
         if (isset($extra['errors'][$name])) {
             $remove_errors = true;
             $var_name = 'do_not_remove_errors';
-            if ($extra[$var_name] || $this->_params[$var_name] || $this->_extra[$var_name] || $this->_params['extra'][$var_name]) {
+            if (!empty($extra[$var_name]) || !empty($this->_params[$var_name]) || !empty($this->_extra[$var_name]) || !empty($this->_params['extra'][$var_name])) {
                 $remove_errors = false;
             }
             if ($remove_errors) {
