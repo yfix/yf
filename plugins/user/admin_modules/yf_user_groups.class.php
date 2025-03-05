@@ -18,7 +18,7 @@ class yf_user_groups
             }
         }
         $menu_id = db()->get_one('SELECT id FROM ' . db('menus') . ' WHERE type="user" AND active=1 LIMIT 1');
-        return table('SELECT * FROM ' . db('user_groups') . ' ORDER BY id ASC', [
+        $tbl = table('SELECT * FROM ' . db('user_groups') . ' ORDER BY id ASC', [
                 'custom_fields' => ['members_count' => 'SELECT `group`, COUNT(*) AS num FROM ' . db('user') . ' GROUP BY `group`'],
                 'hide_empty' => 1,
             ])
@@ -29,9 +29,12 @@ class yf_user_groups
             ->btn_delete(['btn_no_text' => 1])
             ->btn_active()
             ->footer_add()
-            ->footer_link('Blocks', './?object=blocks&action=show_rules&id=' . $block_center_id)
-            ->footer_link('Menu', './?object=menus_editor&action=show_items&id=' . $menu_id)
-            ->footer_link('Auth fails', './?object=log_user_auth_fails');
+            ->footer_link('Blocks', './?object=blocks&action=show_rules&id=' . $block_center_id);
+        if($menu_id){
+           $tbl = $tbl->footer_link('Menu', './?object=menus_editor&action=show_items&id=' . $menu_id);
+        }
+        $tbl = $tbl->footer_link('Auth fails', './?object=log_user_auth_fails');
+        return $tbl;
     }
 
 

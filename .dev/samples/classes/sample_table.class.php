@@ -51,6 +51,7 @@ class sample_table
 //			'app'		=> APP_PATH.'modules/*'.$ext,
 //			'project'	=> PROJECT_PATH.'modules/*'.$ext,
         ];
+        $data = [];
         $names = [];
         foreach ($globs as $glob) {
             foreach (glob($glob) as $cls) {

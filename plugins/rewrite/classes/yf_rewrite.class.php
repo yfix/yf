@@ -15,6 +15,17 @@ class yf_rewrite
         'utm_campaign',
         'utm_term',
     ];
+    public $builtins = [
+        'debug',
+        'error',
+        'no_cache',
+        'no_core_cache',
+        'host',
+    ];
+    public $REWRITE_PATTERNS = [];
+    public $FORCE_NO_DEBUG = null;
+    public $_time_start = null;
+    public $USE_WEB_PATH = null;
 
     /**
      * Catch missing method call.
@@ -139,12 +150,13 @@ class yf_rewrite
                 $body = $this->_replace_special_links($body, $links);
             }
             if (DEBUG_MODE && ! $this->FORCE_NO_DEBUG) {
+                $exec_time = (microtime(true) - $this->_time_start);
                 foreach ((array) $r_array as $s => $r) {
                     debug('rewrite[]', [
                         'source' => $s,
                         'rewrited' => $r,
                         'trace' => $trace,
-                        'exec_time' => (microtime(true) - $this->_time_start),
+                        'exec_time' => $exec_time,
                     ]);
                 }
             }
@@ -254,11 +266,11 @@ class yf_rewrite
                     list($url_str, $_other) = explode('?', $url_str);
                 }
                 // Example: ./test/oauth/github, ../test/oauth/github
-                if ($url_str[0] == '.') {
+                if (($url_str[0] ?? '') == '.') {
                     $url_str = ltrim($url_str, '.');
                 }
-                if ($url_str[0] == '/') {
-                    if ($url_str[1] == '/') {
+                if (($url_str[0] ?? '') == '/') {
+                    if (($url_str[1] ?? '') == '/') {
                         // Example: //test/test_action/&k1=v1&k2=v2 => object=test, action=test_action, k1=v1, k2=v2
                         list(, , $params['object'], $params['action'], $params['_other']) = explode('/', $url_str);
                     } else {
@@ -339,11 +351,21 @@ class yf_rewrite
         $params = $p;
         unset($p);
         // Add built-in url params, if needed
-        if ($this->URL_ADD_BUILTIN_PARAMS && (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache']) || isset($_GET['host']))) {
-            $params['debug'] = $_GET['debug'];
-            $params['get_host'] = $_GET['host'];
-            $params['no_cache'] = isset($_GET['no_cache']) ? 'y' : '';
-            $params['no_core_cache'] = isset($_GET['no_core_cache']) ? 'y' : '';
+        if ($this->URL_ADD_BUILTIN_PARAMS) {
+            $has_builin = false;
+            foreach($this->builtins as $b) {
+                if (isset($_GET[$b])) {
+                    $has_builin = true;
+                    break;
+                }
+            }
+            if ($has_builin) {
+                $params['debug'] = $_GET['debug'] ?? null;
+                $params['error'] = $_GET['error'] ?? null;
+                $params['get_host'] = $_GET['host'] ?? null;
+                $params['no_cache'] = isset($_GET['no_cache']) ? 'y' : '';
+                $params['no_core_cache'] = isset($_GET['no_core_cache']) ? 'y' : '';
+            }
         }
         if (empty($url_str)) {
             if (isset($params['action']) && empty($params['action'])) {
@@ -373,7 +395,7 @@ class yf_rewrite
             $params['host'] = ! empty($host) ? $host : $this->DEFAULT_HOST;
         }
         if (empty($params['port'])) {
-            $port = $port ?: $this->DEFAULT_PORT;
+            $port = $this->DEFAULT_PORT;
             if ($port && ! in_array($port, ['80', '443'])) {
                 $params['port'] = $port;
             }
@@ -389,6 +411,7 @@ class yf_rewrite
                 }
                 $arr_out[$k] = $v;
             }
+            $u = '';
             if ( ! empty($arr_out)) {
                 $u .= (strpos($u, '?') === false ? '?' : '&') . urldecode(http_build_query($arr_out));
             }

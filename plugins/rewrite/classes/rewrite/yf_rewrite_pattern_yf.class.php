@@ -12,6 +12,7 @@ class yf_rewrite_pattern_yf
         'utm_campaign',
         'utm_term',
     ];
+    public $_static_pages = null;
 
     /**
      * Build url.

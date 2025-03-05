@@ -179,7 +179,7 @@ class yf_encryption
      * @param null|mixed $cipher
      * @param mixed $iv
      */
-    public function decrypt($data, $secret = null, $cipher = null, $iv)
+    public function decrypt($data, $secret = null, $cipher = null, $iv = null)
     {
         if ( ! $iv) {
             return false;
@@ -229,7 +229,7 @@ class yf_encryption
      * @param null|mixed $cipher
      * @param mixed $iv
      */
-    public function decrypt_file($source_path, $decrypted_path, $secret = null, $cipher = null, $iv)
+    public function decrypt_file($source_path, $decrypted_path, $secret = null, $cipher = null, $iv = null)
     {
         file_put_contents($decrypted_path, $this->decrypt(file_get_contents($source_path)), $secret, $cipher, $iv);
         return $this;

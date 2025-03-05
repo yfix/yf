@@ -449,18 +449,18 @@ class yf_auth_user
             return false;
         }
         return db()->insert_safe('log_auth_fails', [
-            'time' => str_replace(',', '.', microtime(true)),
-            'ip' => common()->get_ip(),
-            'user_id' => $data['user_id'] ?: $_SESSION[$this->VAR_USER_ID],
-            'login' => $data['login'],
-            'pswd' => $data['pswd'],
-            'reason' => $data['reason'],
-            'host' => $_SERVER['HTTP_HOST'],
-            'ua' => $_SERVER['HTTP_USER_AGENT'],
-            'referer' => $_SERVER['HTTP_REFERER'],
+            'time'         => str_replace(',', '.', microtime(true)),
+            'ip'           => common()->get_ip(),
+            'user_id'      => $data['user_id'] ?: $_SESSION[$this->VAR_USER_ID],
+            'login'        => $data['login'],
+            'pswd'         => $data['pswd'],
+            'reason'       => $data['reason'],
+            'host'         => $_SERVER['HTTP_HOST'],
+            'user_agent'   => $_SERVER['HTTP_USER_AGENT'],
+            'referer'      => $_SERVER['HTTP_REFERER'],
             'query_string' => $_SERVER['QUERY_STRING'],
-            'site_id' => (int) conf('SITE_ID'),
-            'server_id' => (int) conf('SERVER_ID'),
+            'site_id'      => (int) conf('SITE_ID'),
+            'server_id'    => (int) conf('SERVER_ID'),
         ]);
     }
 

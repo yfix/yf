@@ -107,7 +107,6 @@ class yf_send_mail
         if ( ! isset($params['on_after_send']) && is_callable($this->ON_AFTER_SEND)) {
             $params['on_after_send'] = $this->ON_AFTER_SEND;
         }
-        $_prev_num_errors = count((array) main()->_all_core_error_msgs);
         if ($this->MAIL_DEBUG_ERROR && empty($params['email_to'])) {
             trigger_error('SEND_MAIL: Missing \'To\' email address', E_USER_WARNING);
             return false;
@@ -163,31 +162,6 @@ class yf_send_mail
         $error_message = '';
         $result = _class('mail_driver_' . $driver, 'classes/mail/')->send($params, $error_message);
 
-        if ($this->LOG_EMAILS || DEBUG_MODE) {
-            $log = $params + [
-                'email_to' => is_array($params['email_to']) ? implode(', ', $params['email_to']) : $params['email_to'],
-                'mail_debug' => $this->MAIL_DEBUG,
-                'used_mailer' => $driver,
-                'smtp_options' => $driver_supports_smtp ? $smtp : '',
-                'time_start' => $time_start,
-                'send_success' => $result ? 1 : 0,
-                'error_message' => $error_message,
-            ];
-            if ($this->LOG_EMAILS) {
-                $log['error_message'] .= implode(
-                    "\n",
-                    $_prev_num_errors
-                    ? array_slice((array) main()->_all_core_error_msgs, $_prev_num_errors)
-                    : (array) main()->_all_core_error_msgs
-                );
-                _class('mail_log', 'classes/mail/')->save($log);
-            }
-            if (DEBUG_MODE) {
-                $time_end = microtime(true);
-                $log_data['time'] = $time_end - $time_start;
-                $GLOBALS['_send_mail_debug'][] = $log;
-            }
-        }
         return $result;
     }
 }

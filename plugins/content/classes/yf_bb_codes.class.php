@@ -205,7 +205,7 @@ class yf_bb_codes
         $this->_preload_data();
         $STPL_NAME = isset($input['stpl_name']) ? $input['stpl_name'] : __CLASS__ . '/buttons';
         $js_vars_code = '';
-        if ( ! $GLOBALS['_bb_codes_calls']++) {
+        if ( ! @$GLOBALS['_bb_codes_calls']++) {
             $js_vars_code = tpl()->parse(__CLASS__ . '/js_vars', [
                 'max_length' => isset($input['max_length']) ? (int) ($input['max_length']) : 0,
                 'bb_codes_js_src' => ! $GLOBALS['_bb_codes_calls'] ? WEB_PATH . 'js/yf_bb_codes.js' : '',
@@ -239,12 +239,12 @@ class yf_bb_codes
         // Try to find unclosed codes
         if ($num_opening_bb_codes = preg_match_all('/\[' . $this->_avail_codes . '[^\]]*?\]/i', $text, $m_opening)) {
             foreach ((array) $m_opening[1] as $cur_code) {
-                $opened_codes[strtolower($cur_code)]++;
+                @$opened_codes[strtolower($cur_code)]++;
             }
         }
         if ($num_closing_bb_codes = preg_match_all('/\[\/' . $this->_avail_codes . '\]/i', $text, $m_closing)) {
             foreach ((array) $m_closing[1] as $cur_code) {
-                $closed_codes[strtolower($cur_code)]++;
+                @$closed_codes[strtolower($cur_code)]++;
             }
         }
         // Process opening codes

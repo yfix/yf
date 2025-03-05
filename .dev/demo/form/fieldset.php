@@ -1,7 +1,7 @@
 <?php
 
 return function () {
-    return form($replace, [
+    return form($replace ?? [], [
         'tabs' => [
             'class' => 'span6 col-md-6',
             'show_all' => 1,

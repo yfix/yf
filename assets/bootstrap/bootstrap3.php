@@ -3,17 +3,17 @@
 return function () {
     return [
     'versions' => [
-        '3.3.7' => [
+        '3.4.1' => [
             'css' => [
-                '//rawgit.yfix.net/twbs/bootstrap/v3.3.7/dist/css/bootstrap.min.css',
-                ! conf('bs3_no_default_theme') ? '//rawgit.yfix.net/twbs/bootstrap/v3.3.7/dist/css/bootstrap-theme.min.css' : '',
+                '//rawgit.yfix.net/twbs/bootstrap/v3.4.1/dist/css/bootstrap.min.css',
+                ! conf('bs3_no_default_theme') ? '//rawgit.yfix.net/twbs/bootstrap/v3.4.1/dist/css/bootstrap-theme.min.css' : '',
             ],
-            'js' => '//rawgit.yfix.net/twbs/bootstrap/v3.3.7/dist/js/bootstrap.min.js',
+            'js' => '//rawgit.yfix.net/twbs/bootstrap/v3.4.1/dist/js/bootstrap.min.js',
         ],
     ],
     'github' => [
         'name' => 'twbs/bootstrap',
-        'version' => 'v3.3.7',
+        'version' => 'v3.4.1',
         'js' => [
             'dist/js/bootstrap.min.js',
         ],

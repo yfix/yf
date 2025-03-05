@@ -3,8 +3,8 @@
 return [
     'versions' => [
         'master' => [
-            'css' => '//rawgit.yfix.net/yfix/Semantic-UI/master/dist/semantic.min.css',
-            'js' => '//rawgit.yfix.net/yfix/Semantic-UI/master/dist/semantic.min.js',
+            'css' => 'https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css',
+            'js' => 'https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js',
         ],
     ],
     'require' => [
