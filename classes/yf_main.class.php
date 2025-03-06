@@ -201,7 +201,7 @@ class yf_main
         if (defined('DEBUG_MODE') && DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || $CONF['main']['ALLOW_DEBUG_PROFILING'])) {
             $this->PROFILING = true;
         }
-        if ($_SERVER['argc'] && ! isset($_SERVER['REQUEST_METHOD'])) {
+        if (@$_SERVER['argc'] && ! isset($_SERVER['REQUEST_METHOD'])) {
             $this->CONSOLE_MODE = true;
         }
         // error_reporting(0); // Remove all errors initially
@@ -343,7 +343,7 @@ class yf_main
     public function _before_init_hook()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        $this->NO_GRAPHICS = $GLOBALS['no_graphics'];
+        $this->NO_GRAPHICS = @$GLOBALS['no_graphics'];
         $GLOBALS['no_graphics'] = &$this->NO_GRAPHICS;
         if (defined('DEBUG_MODE') && DEBUG_MODE) {
             ini_set('display_errors', 'on');
@@ -1447,18 +1447,18 @@ class yf_main
         }
         if (isset($PROJECT_CONF[$module_conf_name])) {
             foreach ((array) $PROJECT_CONF[$module_conf_name] as $k => $v) {
-                $MODULE_OBJ->$k = $v;
+                @$MODULE_OBJ->$k = $v;
             }
         }
         // Override PROJECT_CONF with specially set CONF (from web admin panel, as example)
         if (isset($CONF[$module_conf_name]) && is_array($CONF[$module_conf_name])) {
             foreach ((array) $CONF[$module_conf_name] as $k => $v) {
-                $MODULE_OBJ->$k = $v;
+                @$MODULE_OBJ->$k = $v;
             }
         }
         // Implementation of hook 'init'
         if (method_exists($MODULE_OBJ, $this->MODULE_CONSTRUCT)) {
-            $MODULE_OBJ->{$this->MODULE_CONSTRUCT}($params);
+            @$MODULE_OBJ->{$this->MODULE_CONSTRUCT}($params);
         }
         return true;
     }

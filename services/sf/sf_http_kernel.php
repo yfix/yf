@@ -13,7 +13,7 @@ $config = [
     'autoload_config' => ['sf_http_kernel/' => 'Symfony\Component\HttpKernel'],
     'example' => function () {
         $old_level = error_reporting();
-        error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_STRICT);
+        error_reporting(E_ALL & ~E_NOTICE);
 
         $routes = new \Symfony\Component\Routing\RouteCollection();
         $routes->add('hello', new \Symfony\Component\Routing\Route('/', ['_controller' => function (\Symfony\Component\HttpFoundation\Request $request) {
