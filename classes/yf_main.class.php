@@ -1726,19 +1726,19 @@ class yf_main
         if (DEBUG_MODE) {
             ini_set('display_errors', 'stdout');
         }
-        if ($_SERVER['SERVER_ADDR'] !== null) {
+        if (@$_SERVER['SERVER_ADDR'] !== null) {
             $_SERVER['SERVER_ADDR'] = preg_replace('#[^0-9\.]+#', '', trim($_SERVER['SERVER_ADDR']));
         }
-        if ($_SERVER['SERVER_PORT'] !== null) {
+        if (@$_SERVER['SERVER_PORT'] !== null) {
             $_SERVER['SERVER_PORT'] = (int) $_SERVER['SERVER_PORT'];
         }
-        if ($_SERVER['HTTP_HOST'] !== null) {
+        if (@$_SERVER['HTTP_HOST'] !== null) {
             if (false !== ($pos = strpos($_SERVER['HTTP_HOST'], ':'))) {
                 $_SERVER['HTTP_HOST'] = substr($_SERVER['HTTP_HOST'], 0, $pos);
             }
             $_SERVER['HTTP_HOST'] = strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim($_SERVER['HTTP_HOST']))));
         }
-        if ($_SERVER['REQUEST_URI'] !== null) {
+        if (@$_SERVER['REQUEST_URI'] !== null) {
             // Possible bug when apache sends full url into request_uri, like this: "http://test.dev/" instead of "/"
             $p = parse_url($_SERVER['REQUEST_URI']);
             if (isset($p['scheme']) || isset($p['host'])) {

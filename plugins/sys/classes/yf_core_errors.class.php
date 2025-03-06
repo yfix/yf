@@ -8,6 +8,7 @@
  */
 class yf_core_errors
 {
+    public $HTML_ERRORS = true;
     public $ERROR_MODE = false;
     /** @var int Error reporting level */
     public $ERROR_LEVEL = 0;
@@ -117,6 +118,11 @@ class yf_core_errors
         ini_set('ignore_repeated_errors', 1);
         ini_set('ignore_repeated_source', 1);
 
+        if( php_sapi_name() == 'cli' ) {
+            $this->HTML_ERRORS = false;
+            ini_set('html_errors', false);
+        }
+
         set_error_handler([$this, 'error_handler'], E_ALL);
         set_exception_handler([$this,  'exception_handler']);
 
@@ -206,7 +212,18 @@ class yf_core_errors
         }
         // if ($this->ERROR_MODE && ($this->ERROR_LEVEL & $error_type) && strlen($msg)) {
         if (($this->ERROR_LEVEL & $error_type) && strlen($msg)) {
-            echo '<b>' . $this->error_types[$error_type] . '</b>: <pre>' . _prepare_html($error_msg) . '</pre> (<i>' . $error_file . ' on line ' . $error_line . '</i>)<pre>' . _prepare_html(main()->trace_string()) . '</pre><br />' . PHP_EOL;
+            if( $this->HTML_ERRORS ) {
+                $tpl   = '<b>%s</b>: <pre>%s</pre> (<i>%s on line %d</i>)<pre>%s</pre><br>' . PHP_EOL;
+                $msg   = _prepare_html($error_msg);
+                $trace = _prepare_html(main()->trace_string());
+            } else {
+                $tpl = '%s: %s (%s on line %d)'. PHP_EOL .'%s'. PHP_EOL;
+                $msg   = $error_msg;
+                $trace = main()->trace_string();
+            }
+            printf( $tpl, $this->error_types[$error_type], $msg,
+                $error_file, $error_line, $trace
+            );
         }
         return true;
     }
@@ -251,7 +268,11 @@ class yf_core_errors
         error_log($msg);
 
         if ($this->ERROR_MODE) {
-            echo '<pre>' . _prepare_html($msg) . '</pre>';
+            if( $this->HTML_ERRORS ) {
+                echo '<pre>' . _prepare_html($msg) . '</pre>';
+            } else {
+                echo $msg;
+            }
         }
     }
 
