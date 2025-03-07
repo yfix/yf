@@ -73,7 +73,7 @@ class yf_cache
      */
     public function _init($params = [])
     {
-        if (isset($this->_init_complete)) {
+        if ($this->_init_complete) {
             return true;
         }
         $this->_init_settings();
