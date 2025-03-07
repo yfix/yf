@@ -413,7 +413,7 @@ class yf_auth_user
             } else {
                 $country_allow = false;
             }
-        } elseif ($user_settings['country_blacklist'] && $cur_country && isset($user_settings['country_blacklist'][$cur_country])) {
+        } elseif (!empty($user_settings['country_blacklist']) && $cur_country && isset($user_settings['country_blacklist'][$cur_country])) {
             $country_allow = false;
         }
         $ip_allow = null;
