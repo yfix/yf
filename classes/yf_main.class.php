@@ -1922,7 +1922,7 @@ class yf_main
         if (strpos($str, '_PATH') === false) {
             return $str;
         }
-        if (! isset($this->_paths_replace_pairs)) {
+        if (empty($this->_paths_replace_pairs)) {
             $pairs = [];
             // Note: order matters
             $path_names = [
