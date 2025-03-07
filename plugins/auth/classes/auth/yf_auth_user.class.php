@@ -394,7 +394,7 @@ class yf_auth_user
         $fields_ip = ['ip_whitelist', 'ip_blacklist'];
         $fields_country = ['country_whitelist', 'country_blacklist'];
         foreach (array_merge($fields_ip, $fields_country) as $k) {
-            if ( ! strlen(trim($user_settings[$k]))) {
+            if ( ! strlen(trim($user_settings[$k] ?? ''))) {
                 continue;
             }
             $tmp = [];
@@ -407,7 +407,7 @@ class yf_auth_user
 
         // Whitelists have more priority over blacklists, IP checks have more priority over country checks
         $country_allow = null;
-        if ($user_settings['country_whitelist']) {
+        if (!empty($user_settings['country_whitelist'])) {
             if (isset($user_settings['country_whitelist'][$cur_country])) {
                 $country_allow = true;
             } else {
@@ -417,13 +417,13 @@ class yf_auth_user
             $country_allow = false;
         }
         $ip_allow = null;
-        if ($user_settings['ip_whitelist']) {
+        if (!empty($user_settings['ip_whitelist'])) {
             if (isset($user_settings['ip_whitelist'][$cur_ip])) {
                 $ip_allow = true;
             } else {
                 $ip_allow = false;
             }
-        } elseif ($user_settings['ip_blacklist'] && $cur_ip && isset($user_settings['ip_blacklist'][$cur_ip])) {
+        } elseif (!empty($user_settings['ip_blacklist']) && $cur_ip && isset($user_settings['ip_blacklist'][$cur_ip])) {
             $ip_allow = false;
         }
         if ($ip_allow === false) {
