@@ -490,7 +490,7 @@ class yf_api
     {
         main()->NO_GRAPHICS = true;
         $result = $this->_firewall($class, $class_path, $method, $options);
-        if (@$result['is_raw']) {
+        if (@$result && @$result['is_raw']) {
             @list($response, $code, $type) = $result;
             $is_raw = true;
         } else {
