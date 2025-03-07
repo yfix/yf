@@ -109,7 +109,7 @@ class yf_category_editor
                 'name' => 'trim|required',
             ])
             ->db_update_if_ok('categories', ['name', 'desc', 'stpl_name', 'method_name', 'custom_fields', 'active'], 'id=' . $id)
-            ->on_after_update(function () {
+            ->on_after_update(function () use($a) {
                 common()->admin_wall_add(['category updated: ' . $a['name'], $id]);
                 module('category_editor')->_purge_category_caches();
             })
