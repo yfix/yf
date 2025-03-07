@@ -198,7 +198,7 @@ class yf_main
         if ($CONF === null && ! empty($_conf)) {
             $CONF = $_conf;
         }
-        if (defined('DEBUG_MODE') && DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || $CONF['main']['ALLOW_DEBUG_PROFILING'])) {
+        if (defined('DEBUG_MODE') && DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || ( $CONF['main']['ALLOW_DEBUG_PROFILING'] ?? false))) {
             $this->PROFILING = true;
         }
         if (@$_SERVER['argc'] && ! isset($_SERVER['REQUEST_METHOD'])) {
