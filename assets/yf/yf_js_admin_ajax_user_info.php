@@ -8,7 +8,7 @@ return function () { return ['versions' => ['master' => [
   'jquery' => '
     $("body").popover({
       animation: false,
-      delay: { "show": 0, "hide": 300 },
+      delay: { "show": 700, "hide": 300 },
       container: "body",
       html: true,
       sanitize: false,
