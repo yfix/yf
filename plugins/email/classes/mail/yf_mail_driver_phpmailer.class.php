@@ -24,10 +24,6 @@ class yf_mail_driver_phpmailer extends yf_mail_driver
 
     public function send(array $params = [], &$error_message = '')
     {
-        /*
-        var_dump(PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS);
-        exit;
-         */
         $mail = new PHPMailer\PHPMailer\PHPMailer(true); // defaults to using php 'mail()'
         try {
             $mail->CharSet = $params['charset'] ?: conf('charset') ?: $this->PARENT->DEFAULT_CHARSET ?: 'utf-8';
