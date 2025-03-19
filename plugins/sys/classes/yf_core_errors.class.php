@@ -17,13 +17,11 @@ class yf_core_errors
 
     /** @var int Error reporting level for DEBUG_MODE enabled */
     // public $ERROR_LEVEL_DEBUG = E_ALL & ~E_NOTICE;
-    public $ERROR_LEVEL_DEBUG = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
+    public $ERROR_LEVEL_DEBUG = E_ALL & ~E_NOTICE;
 
     // public $pattern_ignore = '~^(Undefined array key)~';
     public $pattern_ignore = '~^(Undefined array key|Undefined variable)~';
     // public $pattern_ignore = '~^(Undefined array key|Undefined property|Undefined variable)~';
-    // public $pattern_ignore = '~^(Undefined array key|Undefined variable|Trying to access array offset on value of type)~';
-    // public $pattern_ignore = '~^(Undefined array key|Undefined property|Undefined variable|Trying to access array offset on value of type)~';
 
     /** @var bool Log errors to the error file? */
     public $LOG_ERRORS_TO_FILE = true;
@@ -31,6 +29,8 @@ class yf_core_errors
     public $LOG_WARNINGS_TO_FILE = true;
     /** @var bool Log notices to the error file? */
     public $LOG_NOTICES_TO_FILE = false;
+    /** @var bool Log deprecated to the error file? */
+    public $LOG_DEPRECATED_TO_FILE = true;
     /** @var string Log errors switcher, keep empty to disable logging */
     public $ERROR_LOG_PATH = '{LOGS_PATH}yf_core_errors.log';
     /** @var string
@@ -176,7 +176,9 @@ class yf_core_errors
                 $save_log = true;
             }
         } elseif ($error_type == E_DEPRECATED) {
-            return true;
+            if ($this->LOG_DEPRECATED_TO_FILE) {
+                $save_log = true;
+            }
         }
         $IP = is_object(common()) ? common()->get_ip() : false;
         if ( ! $IP) {
