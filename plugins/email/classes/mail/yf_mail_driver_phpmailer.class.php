@@ -66,7 +66,7 @@ class yf_mail_driver_phpmailer extends yf_mail_driver
                 $mail->SMTPAuth = $smtp['smtp_auth'];
                 $mail->Username = $smtp['smtp_user_name'];
                 $mail->Password = $smtp['smtp_password'];
-                $mail->SMTPSecure = $smtp['smtp_secure'] ? PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS : false;
+                $mail->SMTPSecure = $smtp['smtp_secure'] ? $smtp['smtp_secure'] : false;
                 //$mail->SMTPSecure = $smtp['smtp_secure'] ?: false;
             }
             if (is_callable($params['on_before_send'])) {
