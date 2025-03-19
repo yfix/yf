@@ -1,6 +1,7 @@
 <?php
 
 load('mail_driver', '', 'classes/mail/');
+
 class yf_mail_driver_phpmailer extends yf_mail_driver
 {
     /**
@@ -16,15 +17,18 @@ class yf_mail_driver_phpmailer extends yf_mail_driver
 
     public function _init()
     {
+        require_php_lib('phpmailer');
         $this->PARENT = _class('send_mail');
     }
 
 
     public function send(array $params = [], &$error_message = '')
     {
-        require_php_lib('phpmailer');
-
-        $mail = new PHPMailer(true); // defaults to using php 'mail()'
+        /*
+        var_dump(PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS);
+        exit;
+         */
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true); // defaults to using php 'mail()'
         try {
             $mail->CharSet = $params['charset'] ?: conf('charset') ?: $this->PARENT->DEFAULT_CHARSET ?: 'utf-8';
             $mail->From = $params['email_from'];
@@ -62,7 +66,8 @@ class yf_mail_driver_phpmailer extends yf_mail_driver
                 $mail->SMTPAuth = $smtp['smtp_auth'];
                 $mail->Username = $smtp['smtp_user_name'];
                 $mail->Password = $smtp['smtp_password'];
-                $mail->SMTPSecure = $smtp['smtp_secure'] ?: false;
+                $mail->SMTPSecure = $smtp['smtp_secure'] ? PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS : false;
+                //$mail->SMTPSecure = $smtp['smtp_secure'] ?: false;
             }
             if (is_callable($params['on_before_send'])) {
                 $callback = $params['on_before_send'];
@@ -77,7 +82,7 @@ class yf_mail_driver_phpmailer extends yf_mail_driver
                     $result = $result && $r;
                 }
             }
-        } catch (phpmailerException $e) {
+        } catch (PHPMailer\PHPMailer\Exception $e) {
             $error_message .= $e->errorMessage(); // Pretty error messages from PHPMailer
         } catch (Exception $e) {
             $error_message .= $e->getMessage(); // Boring error messages from anything else!
