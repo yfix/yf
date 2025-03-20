@@ -204,14 +204,14 @@ class yf_form2
      */
     public function tpl_row($type = 'input', $replace = [], $name = '', $desc = '', $extra = [])
     {
-        $name = trim($name);
+        $name = trim($name ? '');
         if ($name && $name[0] == '%') {
             $_name = substr($name, 1);
             if (isset($replace[$_name])) {
                 $name = $replace[$_name];
             }
         }
-        $desc = trim($desc);
+        $desc = trim($desc ? '');
         if ($desc && $desc[0] == '%') {
             $_desc = substr($desc, 1);
             if (isset($replace[$_desc])) {
