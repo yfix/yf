@@ -53,12 +53,6 @@ if ( ! function_exists('_check_words_length')) {
         return _class('utils')->_check_words_length($text, $length, $do_encode_email);
     }
 }
-if ( ! function_exists('_prepare_html')) {
-    function _prepare_html($text = '', $need_strip_slashes = 1, $use_smart_function = 1)
-    {
-        return _class('utils')->_prepare_html($text, $need_strip_slashes, $use_smart_function);
-    }
-}
 if ( ! function_exists('_filter_text')) {
     function _filter_text($body, $length = 0)
     {

@@ -244,6 +244,12 @@ if ( ! function_exists('printr')) {
         return _class('utils')->printr($var, $do_not_echo);
     }
 }
+if ( ! function_exists('_prepare_html')) {
+    function _prepare_html($text = '', $need_strip_slashes = 1, $use_smart_function = 1)
+    {
+        return _class('utils')->_prepare_html($text, $need_strip_slashes, $use_smart_function);
+    }
+}
 if ( ! function_exists('_debug_log')) {
     function _debug_log($text, $log_level = false)
     {
