@@ -1,6 +1,7 @@
 <?php
 
 load('db_driver', '', 'classes/db/');
+#[AllowDynamicProperties]
 class yf_db_driver_mysqli extends yf_db_driver
 {
     /** @var @conf_skip */

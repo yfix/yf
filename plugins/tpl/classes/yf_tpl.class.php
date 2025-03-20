@@ -6,6 +6,7 @@
  * @author	  YFix Team <yfix.dev@gmail.com>
  * @version	  1.0
  */
+#[AllowDynamicProperties]
 class yf_tpl
 {
     /** @var string @conf_skip Path to the templates (including current theme path) */
@@ -936,9 +937,9 @@ class yf_tpl
      * Custom filter (Inherit this method and customize anything you want).
      * @param mixed $stpl_name
      */
-    public function _custom_filter($stpl_name = '', &$replace)
+    public function _custom_filter($stpl_name, &$replace)
     {
-        if ($stpl_name == 'home_page/main') {
+        if (($stpl_name ?? false) && $stpl_name == 'home_page/main') {
             // example only:
             // print_r($replace);
             // $replace['recent_ads'] = '';

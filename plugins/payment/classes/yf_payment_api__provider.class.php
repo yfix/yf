@@ -1,5 +1,6 @@
 <?php
 
+#[AllowDynamicProperties]
 class yf_payment_api__provider
 {
     public $ENABLE = null;

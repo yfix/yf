@@ -381,11 +381,11 @@ if ( ! function_exists('_attrs_string2array')) {
                 $tmp_string = trim(trim($tmp_string, '"\''));
             }
             list($try_key, $try_value) = explode('=', $tmp_string);
-            $try_key = trim($try_key);
-            $try_value = trim($try_value);
+            $try_key && $try_key = trim($try_key);
+            $try_value && $try_value = trim($try_value);
             if ($strip_quotes) {
-                $try_key = trim(trim($try_key, '"\''));
-                $try_value = trim(trim($try_value, '"\''));
+                $try_key && $try_key = trim(trim($try_key, '"\''));
+                $try_value && $try_value = trim(trim($try_value, '"\''));
             }
             if (strlen($try_key)) {
                 $output_array[$try_key] = (string) $try_value;

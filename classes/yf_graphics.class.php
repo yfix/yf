@@ -94,7 +94,7 @@ class yf_graphics
         }
         // For compatibility with old versions
         $website_name = conf('website_name');
-        if (strlen($website_name)) {
+        if (($website_name ?? false) && strlen($website_name)) {
             $title = $website_name;
         }
         // Add pages names to the title

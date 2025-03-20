@@ -1,5 +1,6 @@
 <?php
 
+#[AllowDynamicProperties]
 class yf_payment
 {
     public $URL_REDIRECT = '/payment';

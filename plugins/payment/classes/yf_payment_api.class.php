@@ -2399,6 +2399,7 @@ class yf_payment_api
             $status = $_class instanceof $_class_name;
             if ( ! $status) { return  $_class; }
         }
+        if (empty($method)) { return  $_class; }
         $status = method_exists($_class, $method);
         if ( ! $status) { return  $_class; }
         $result = $_class->{ $method }($options);

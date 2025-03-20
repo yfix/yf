@@ -81,7 +81,7 @@ class yf_rewrite_pattern_yf
         if ($fragment) {
             $u .= '#' . $fragment;
         }
-        if (strlen($lang) === 2) {
+        if (($lang ?? false) && strlen($lang) === 2) {
             $u = $lang . '/' . $u;
         }
         if ($class_rewrite->USE_WEB_PATH) {

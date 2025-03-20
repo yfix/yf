@@ -6,6 +6,7 @@
  * @author        YFix Team <yfix.dev@gmail.com>
  * @version        1.0
  */
+#[AllowDynamicProperties]
 class yf_main
 {
     /**
@@ -1447,18 +1448,18 @@ class yf_main
         }
         if (isset($PROJECT_CONF[$module_conf_name])) {
             foreach ((array) $PROJECT_CONF[$module_conf_name] as $k => $v) {
-                @$MODULE_OBJ->$k = $v;
+                $MODULE_OBJ->$k = $v;
             }
         }
         // Override PROJECT_CONF with specially set CONF (from web admin panel, as example)
         if (isset($CONF[$module_conf_name]) && is_array($CONF[$module_conf_name])) {
             foreach ((array) $CONF[$module_conf_name] as $k => $v) {
-                @$MODULE_OBJ->$k = $v;
+                $MODULE_OBJ->$k = $v;
             }
         }
         // Implementation of hook 'init'
         if (method_exists($MODULE_OBJ, $this->MODULE_CONSTRUCT)) {
-            @$MODULE_OBJ->{$this->MODULE_CONSTRUCT}($params);
+            $MODULE_OBJ->{$this->MODULE_CONSTRUCT}($params);
         }
         return true;
     }

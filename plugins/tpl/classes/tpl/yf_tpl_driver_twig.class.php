@@ -4,6 +4,7 @@
  * Note: currently disabled, use this console command to add it back again:
  * git submodule add https://github.com/yfix/twig.git libs/Twig/.
  */
+#[AllowDynamicProperties]
 class yf_tpl_driver_twig
 {
     /**

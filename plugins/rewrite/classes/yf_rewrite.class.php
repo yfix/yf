@@ -1,5 +1,6 @@
 <?php
 
+#[AllowDynamicProperties]
 class yf_rewrite
 {
     public $DEFAULT_HOST = '';
@@ -257,7 +258,7 @@ class yf_rewrite
             $orig_url_str = $url_str;
             $params = [];
             $params['fragment'] = parse_url($url_str, PHP_URL_FRAGMENT);
-            if (strlen($params['fragment'])) {
+            if (($params['fragment'] ?? false) && strlen($params['fragment'])) {
                 $url_str = str_replace('#' . $params['fragment'], '', $url_str);
             }
             if (preg_match('~[a-z0-9_\./]+~ims', $url_str)) {

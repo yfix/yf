@@ -1,6 +1,8 @@
 <?php
 
 load('cache_driver', '', 'classes/cache/');
+
+#[AllowDynamicProperties]
 class yf_cache_driver_redis extends yf_cache_driver
 {
     /** @var object internal @conf_skip */
