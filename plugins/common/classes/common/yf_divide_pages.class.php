@@ -50,7 +50,7 @@ class yf_divide_pages
         if ( ! $url_path) {
             $url_path = './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '');
         }
-        if ( ! strlen($render_type)) {
+        if (!($render_type ?? false ) || !strlen($render_type)) {
             if ($extra['render_type']) {
                 $render_type = $extra['render_type'];
             } elseif ($extra['type']) {

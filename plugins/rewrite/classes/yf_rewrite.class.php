@@ -134,7 +134,7 @@ class yf_rewrite
                     $arr['_other'] = urldecode(http_build_query($tmp));
                 }
                 unset($tmp);
-                $replace = $this->_url($arr) . (strlen($url['fragment']) ? '#' . $url['fragment'] : '');
+                $replace = $this->_url($arr) . (strlen($url['fragment'] ?? '') ? '#' . $url['fragment'] : '');
                 $r_array[$link] = $replace;
             }
             // Fix for bug with similar shorter links, sort by length DESC
