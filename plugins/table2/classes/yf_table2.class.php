@@ -149,7 +149,7 @@ class yf_table2
      * @param mixed $desc
      * @param mixed $extra
      */
-    public function tpl_row($type = 'input', $name, $desc = '', $extra = [])
+    public function tpl_row($type = 'input', $name = '', $desc = '', $extra = [])
     {
         return $this->$type($name, $desc, $extra);
     }
@@ -838,7 +838,7 @@ class yf_table2
      * @param mixed $params
      * @param mixed $to_hide
      */
-    public function _render_table_contents_rotated($data = [], $params, $to_hide = [])
+    public function _render_table_contents_rotated($data = [], $params = [], $to_hide = [])
     {
         $tbody_attrs = '';
         if (isset($params['tbody'])) {
