@@ -4,6 +4,9 @@ class yf_manage_emails
 {
     const table = 'emails_templates';
 
+    public $lang_def_country = '';
+
+    private $pages_langs = [];
 
     public function show()
     {
