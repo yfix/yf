@@ -6,6 +6,7 @@
  * @author		YFix Team <yfix.dev@gmail.com>
  * @version		1.0
  */
+#[AllowDynamicProperties]
 class yf_table2
 {
     /* Example:
@@ -1275,7 +1276,7 @@ class yf_table2
                     if ($link_text === 'link') {
                         $link_text = '';
                     }
-                    $extra['title'] = trim($extra['link_title']) ?: trim($text);
+                    $extra['title'] = trim($extra['link_title'] ?? '') ?: trim($text);
                     if ($extra['hidden_toggle']) {
                         $extra['data-hidden-toggle'] = $extra['hidden_toggle'];
                     }

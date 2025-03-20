@@ -21,6 +21,8 @@ class yf_admin_modules
     /** @var bool Parse core 'module' class in get_methods */
     public $PARSE_YF_MODULE = false;
 
+    private $_admin_modules_array = [];
+
     /**
      * Default method.
      */
