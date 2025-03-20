@@ -2050,7 +2050,7 @@ class yf_html
         if (! isset($a['style'])) {
             $a['style'] = 'padding-right:5px';
         }
-        return '<span style="' . $a['style'] . '" title="' . _prepare_html($a['title']) . '"><i class="' . $a['icon'] . '"></i>' . (strlen($a['text']) ? '&nbsp;' . _prepare_html($a['text']) : '') . '</span>';
+        return '<span style="' . $a['style'] . '" title="' . _prepare_html($a['title']) . '"><i class="' . $a['icon'] . '"></i>' . (strlen($a['text'] ?? '') ? '&nbsp;' . _prepare_html($a['text']) : '') . '</span>';
     }
 
     /**
