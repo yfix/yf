@@ -321,19 +321,19 @@ class yf_utils
         $date_long_format = conf('date_long_format');
         // Different date formats
         if (empty($type) || $type == 'short') {
-            $date_format = ! empty($date_short_format) ? $date_short_format : '%m/%d/%y';
+            $date_format = ! empty($date_short_format) ? $date_short_format : 'm/d/y';
         } elseif ($type == 'long') {
-            $date_format = ! empty($date_long_format) ? $date_long_format : '%m/%d/%y %H:%M';
+            $date_format = ! empty($date_long_format) ? $date_long_format : 'm/d/y H:m';
         } elseif ($type == 'time_only') {
-            $date_format = '%I:%M %p';
+            $date_format = 'h:i A';
         } elseif ($type == 'for_profile') {
-            $date_format = '%B %d, %Y';
+            $date_format = 'F d, Y';
         // Custom format. Example: %Y_%m_%d
         } elseif ( ! empty($type) && false !== strpos($type, '%')) {
             $date_format = $type;
         // Unknown named format fallback
         } else {
-            $date_format = '%Y-%m-%d %H:%M:%S';
+            $date_format = 'Y-m-d H:i:s';
         }
         if (empty($input_date)) {
             return '';
@@ -343,7 +343,7 @@ class yf_utils
         if (empty($date_to_show)) {
             return '';
         }
-        $output = strftime($date_format, $date_to_show);
+        $output = date($date_format, $date_to_show);
         // Try to catch and replace some basic dates before 1970 year
         if (empty($output) && preg_match('/([0-9]{4})-([0-9]{2})-([0-9]{2})/', $input_date, $m)) {
             if (empty($type) || in_array($type, ['short'])) {

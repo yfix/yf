@@ -6,6 +6,7 @@
  * @author		YFix Team <yfix.dev@gmail.com>
  * @version		1.0
  */
+#[AllowDynamicProperties]
 class yf_form2
 {
     public $CLASS_FORM_MAIN = 'form-horizontal';// col-md-6'
@@ -971,7 +972,7 @@ class yf_form2
      * @param mixed $default_class
      * @param mixed $value
      */
-    public function _prepare_css_class($default_class = '', $value = '', &$extra)
+    public function _prepare_css_class($default_class, $value, &$extra)
     {
         $css_class = $default_class;
         if ($extra['badge']) {
@@ -1010,7 +1011,7 @@ class yf_form2
     {
         $out = $extra['id'];
         if ( ! $out) {
-            $out = $extra['name'];
+            $out = $extra['name'] ?? '';
             $is_html_array = (false !== strpos($out, '['));
             if ($is_html_array) {
                 $out = str_replace(['[', ']'], ['_', ''], trim($out, ']['));
@@ -1028,7 +1029,7 @@ class yf_form2
         $out = $extra['desc'];
         ! $out && $out = $input;
         if ( ! $out) {
-            $out = ucfirst(str_replace('_', ' ', $extra['name']));
+            $out = ucfirst(str_replace('_', ' ', $extra['name'] ?? ''));
             $is_html_array = (false !== strpos($out, '['));
             if ($is_html_array) {
                 $out = str_replace(['[', ']'], ['.', ''], trim($out, ']['));
@@ -3452,7 +3453,7 @@ class yf_form2
     /**
      * @param mixed $validate_rules
      */
-    public function _validate_rules_process($validate_rules = [], &$data)
+    public function _validate_rules_process($validate_rules, &$data)
     {
         $validate_ok = true;
         foreach ((array) $validate_rules as $name => $rules) {

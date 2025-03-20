@@ -292,7 +292,7 @@ class yf_html
                 $desc_raw = $v['desc_raw'];
                 $disabled = $v['disabled'];
             }
-            $content = trim($content);
+            $content = trim($content ?? '');
             $_extra = (array) $extra_by_id[$k] + (array) $extra;
             if ($_extra['hide_empty'] && ! strlen($content)) {
                 continue;

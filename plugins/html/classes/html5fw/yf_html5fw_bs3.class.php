@@ -34,9 +34,9 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
      * @param mixed $replace
      * @param mixed $form
      */
-    public function form_row($content, $extra = [], $replace = [], $form)
+    public function form_row($content, $extra = [], $replace = [], $form = [])
     {
-        $name = $extra['name'];
+        $name = $extra['name'] ?? '';
         $is_html_array = (false !== strpos($name, '['));
         if ($is_html_array) {
             $name_dotted = str_replace(['[', ']'], ['.', ''], trim($name, ']['));
@@ -164,7 +164,7 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
      * @param mixed $replace
      * @param mixed $form
      */
-    public function form_dd_row($content, $extra = [], $replace = [], $form)
+    public function form_dd_row($content, $extra = [], $replace = [], $form = [])
     {
         $dd_class = $form->_params['dd_class'] ?: 'span6';
 

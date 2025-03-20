@@ -111,6 +111,7 @@ if ( ! function_exists('conf')) {
                 $value = $base[$last_key];
             }
             if (isset($new_value)) {
+                !is_array( $base ) && $base = [];
                 if ($add_auto_index) {
                     $base[] = $new_value;
                 } else {
@@ -124,6 +125,7 @@ if ( ! function_exists('conf')) {
             }
             if (isset($new_value)) {
                 if ($add_auto_index) {
+                    !is_array( $v ) && $v = [];
                     $v[] = $new_value;
                 } else {
                     $v = $new_value;

@@ -1,5 +1,6 @@
 <?php
 
+#[AllowDynamicProperties]
 class yf_log_admin_exec
 {
     public function show()

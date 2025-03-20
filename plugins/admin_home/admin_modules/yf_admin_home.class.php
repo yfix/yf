@@ -20,7 +20,6 @@ class yf_admin_home
     {
     }
 
-
     public function show()
     {
         if (main()->ADMIN_GROUP != 1) {
@@ -37,8 +36,9 @@ class yf_admin_home
                 return js_redirect($url);
             }
         }
-        return module('manage_dashboards')->display('admin_home');
-        //		return module("admin_wall")->show();
+        return('');
+        // return module('manage_dashboards')->display('admin_home');
+        // return module("admin_wall")->show();
     }
 
 

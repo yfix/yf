@@ -3,6 +3,7 @@
 /**
  * Template driver YF built-in.
  */
+#[AllowDynamicProperties]
 class yf_tpl_driver_yf
 {
     /** @var array @conf_skip For "_process_ifs" */
@@ -530,7 +531,7 @@ class yf_tpl_driver_yf
      * @param mixed $name
      * @param mixed $params
      */
-    public function _replace_std_patterns($string, $name = '', array &$replace, $params = [])
+    public function _replace_std_patterns($string, $name, array &$replace, $params = [])
     {
         $_this = $this;
         $tpl = tpl();
@@ -620,7 +621,7 @@ class yf_tpl_driver_yf
      * @param mixed $string
      * @param mixed $stpl_name
      */
-    public function _process_catches($string = '', array &$replace, $stpl_name = '')
+    public function _process_catches($string, array &$replace, $stpl_name = '')
     {
         if (false === strpos($string, '{/catch}') || empty($string)) {
             return $string;
@@ -652,7 +653,7 @@ class yf_tpl_driver_yf
      * @param mixed $string
      * @param mixed $stpl_name
      */
-    public function _process_ifs($string = '', array &$replace, $stpl_name = '')
+    public function _process_ifs($string, array &$replace, $stpl_name = '')
     {
         if (false === strpos($string, '{/if}') || empty($string)) {
             return $string;

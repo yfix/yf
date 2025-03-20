@@ -149,7 +149,7 @@ class yf_debug
             $data[$name] = $content;
         }
         $links_prefix = 'debug_item_';
-        $cookie_active_tab = substr($_COOKIE['debug_tabs_active'], strlen($links_prefix));
+        $cookie_active_tab = substr($_COOKIE['debug_tabs_active'] ?? '', strlen($links_prefix));
         // Show default tab if saved tab not existing now for any reason
         if (! isset($data[$cookie_active_tab])) {
             $cookie_active_tab = '';
@@ -466,7 +466,7 @@ class yf_debug
         foreach ((array) $explain_result as $_num => $_data) {
             $body .= '<tr>';
             foreach ((array) $_data as $k => $v) {
-                $body .= '<td>' . (strlen($v) ? $v : '') . '</td>';
+                $body .= '<td>' . (strlen($v ?? '') ? $v : '') . '</td>';
             }
             $body .= '</tr>';
         }
@@ -569,7 +569,7 @@ class yf_debug
         ])->auto();
         foreach ((array) $params['hidden_map'] as $name => $to) {
             $table->btn($name, 'javascript:void();', ['hidden_toggle' => $name, 'display_func' => function ($row, $info, $params) use ($name) {
-                return (bool) strlen($row[$name]);
+                return (bool) strlen($row[$name] ?? '');
             }]);
         }
         return (string) $table;
