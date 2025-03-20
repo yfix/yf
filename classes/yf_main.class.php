@@ -438,7 +438,7 @@ class yf_main
             $w_host = $w['host'];
             $w_port = $w['port'];
             $w_path = $w['path'];
-            $host = $w_host . (strlen($w_port) > 1 ? ':' . $w_port : '') . (strlen($w_path) > 1 ? $w_path : '');
+            $host = $w_host . (strlen($w_port ?? '') > 1 ? ':' . $w_port : '') . (strlen($w_path ?? '') > 1 ? $w_path : '');
             if ($w_path != '/' && strpos($request_uri, $w_path) === 0) {
                 $request_uri = substr($request_uri, strlen($w_path));
                 $request_uri = '/' . ltrim($request_uri, '/');
