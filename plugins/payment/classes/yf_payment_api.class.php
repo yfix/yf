@@ -1698,7 +1698,7 @@ class yf_payment_api
                 $_item_options = &$item['options'];
                 $_item_options && $_item_options = (array) json_decode($_item_options, true);
                 foreach ($datetime_key as $key) {
-                    $item['_ts_' . $key] = strtotime($item['datetime_' . $key]);
+                    $item['_ts_' . $key] = strtotime($item['datetime_' . $key] ?? 'now');
                 }
             }
         }

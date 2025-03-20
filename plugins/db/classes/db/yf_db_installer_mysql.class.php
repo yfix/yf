@@ -114,7 +114,7 @@ class yf_db_installer_mysql extends yf_db_installer
             preg_match('#Unknown column [\']([a-z_0-9]+)[\'] in#ims', $db_error['message'], $m);
             $item_to_repair = $m[1];
             foreach (range(1, 3) as $n) {
-                $dot_pos = strpos($item_to_repair, '.');
+                $dot_pos = strpos($item_to_repair ?? '', '.');
                 if (false !== $dot_pos) {
                     $item_to_repair = substr($item_to_repair, $dot_pos);
                 }
