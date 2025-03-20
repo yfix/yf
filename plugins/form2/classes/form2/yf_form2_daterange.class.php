@@ -32,7 +32,7 @@ class yf_form2_daterange
             ];
         }
         // Compatibility with filter
-        if ( ! strlen($extra['value'])) {
+        if ( ! strlen($extra['value'] ?? '')) {
             if (isset($extra['selected'])) {
                 $value = $extra['selected'];
             } elseif (isset($form->_params['selected'])) {

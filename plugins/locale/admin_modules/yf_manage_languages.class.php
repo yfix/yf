@@ -6,6 +6,7 @@
  * @author		YFix Team <yfix.dev@gmail.com>
  * @version		1.0
  */
+#[AllowDynamicProperties]
 class yf_manage_languages
 {
     const table = 'languages';

@@ -220,7 +220,7 @@ class yf_table2
             }
             foreach ((array) $data as $_id => $row) {
                 foreach ((array) $row as $k => $v) {
-                    if (strlen($v)) {
+                    if (strlen($v ?? '')) {
                         unset($to_hide[$k]);
                     }
                 }

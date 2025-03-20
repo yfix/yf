@@ -1238,7 +1238,7 @@ class yf_html
             $extra = [];
         }
         $extra['name'] = strlen($name) ? $name : (strlen($extra['name']) ? $extra['name'] : 'checkbox');
-        $extra['value'] = strlen($value) ? $value : (strlen($extra['value']) ? $extra['value'] : '1');
+        $extra['value'] = strlen($value ?? '') ? $value : (strlen($extra['value'] ?? '') ? $extra['value'] : '1');
         $selected = isset($extra['selected']) ? $extra['selected'] : $selected;
         if (isset($extra['checked'])) {
             $selected = $extra['checked'];
@@ -2075,7 +2075,7 @@ class yf_html
                 $a[$k] = $v;
             }
         }
-        $code = strtoupper($a['code']);
+        $code = strtoupper($a['code'] ?? '');
         if (! $code) {
             return false;
         }

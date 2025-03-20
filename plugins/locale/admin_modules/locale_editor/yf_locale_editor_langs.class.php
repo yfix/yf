@@ -1,6 +1,6 @@
 <?php
 
-
+#[AllowDynamicProperties]
 class yf_locale_editor_langs
 {
     public function _init()
