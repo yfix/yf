@@ -1,5 +1,6 @@
 <?php
 
+#[AllowDynamicProperties]
 class yf_oauth
 {
     private $auto_email_prefix = 'oauth.';
