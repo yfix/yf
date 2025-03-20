@@ -558,7 +558,7 @@ class yf_table2
             }
             $total = count((array) $data);
             $ids = array_keys($data);
-        } elseif (strlen($sql)) {
+        } elseif (strlen($sql ?? '')) {
             if (is_object($params['db'])) {
                 $db = $params['db'];
                 $pager['extra']['db'] = $db;
