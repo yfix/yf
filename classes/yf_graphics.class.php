@@ -660,8 +660,8 @@ class yf_graphics
             if ($raw[1] === 'return_text=1' || $raw[1] === 'text=1') {
                 $return_text = true;
             }
-            $extra['icon'] = trim($raw[1]);
-            $extra['class'] = trim($raw[1]);
+            $extra['icon'] = trim($raw[1] ?? '');
+            $extra['class'] = trim($raw[1] ?? '');
             if (isset($in['replace']) && $extra['text'] && substr($extra['text'], 0, 1) === '@') {
                 $replace_var = substr($extra['text'], 1);
                 if (isset($in['replace'][$replace_var])) {
