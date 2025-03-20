@@ -231,7 +231,7 @@ Fallback when no numbers matched (any string)
                 return isset($langs[$in]);
             }]])
             ->insert_if_ok('sys_locale_langs', ['locale'], [
-                'name' => $raw[$_POST['locale']][0],
+                'name' => $raw[$_POST['locale']][0] ?? '',
                 'charset' => 'utf-8',
                 'active' => 0,
                 'is_default' => 0,
