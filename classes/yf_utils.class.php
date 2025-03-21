@@ -314,7 +314,7 @@ class yf_utils
     // Display formatted date
     public function _format_date($input_date = '', $type = 'short')
     {
-        if ( ! strlen($input_date)) {
+        if ( ! strlen($input_date ?? '')) {
             return '';
         }
         $date_short_format = conf('date_short_format');
