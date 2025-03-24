@@ -122,6 +122,8 @@ class yf_auth_user
     /** @var string */
     public $FORCE_LOGOUT_INACTIVE = true;
 
+    public $INSIDE_LOGIN_FROM_ADMIN = false;
+
 
     public function __construct()
     {

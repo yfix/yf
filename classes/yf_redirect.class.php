@@ -147,7 +147,7 @@ class yf_redirect
         if (strpos($location, 'http://') === 0 || strpos($location, 'https://') === 0) {
             $rewrite = false;
         }
-        $form_method = in_array(strtoupper($params['form_method']), ['GET', 'POST']) ? strtoupper($params['form_method']) : 'GET';
+        $form_method = in_array(strtoupper($params['form_method'] ?? ''), ['GET', 'POST']) ? strtoupper($params['form_method']) : 'GET';
         if ($GLOBALS['no_redirect'] ?? false) {
             return $text;
         }
