@@ -783,7 +783,7 @@ class yf_assets
      * @param mixed $asset_data
      * @param mixed $asset_type
      */
-    public function get_asset_from_github($name, $version = 'master', $asset_data = [], $asset_type)
+    public function get_asset_from_github($name, $version = 'master', $asset_data = [], $asset_type = '')
     {
         if ( ! $name || ! $asset_data || ! isset($asset_data[$asset_type])) {
             return false;
