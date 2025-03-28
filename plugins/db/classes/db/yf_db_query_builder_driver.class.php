@@ -399,7 +399,7 @@ abstract class yf_db_query_builder_driver
             $this->_render_limit(),
         ];
         // Implode only non-empty array items
-        $where = implode(' ', array_filter($where, 'strlen'));
+        $where = implode(' ', array_filter($where));
         $key_escaped = $this->_escape_col_name($field);
         $sql = 'UPDATE ' . $this->_escape_table_name($table) . ' SET ' . $key_escaped . ' = ' . $key_escaped . ' ' . ($step < 0 ? '-' : '+') . ' ' . abs((int) $step) . ( ! empty($where) ? ' ' . $where : '');
         if (MAIN_TYPE_ADMIN && $this->db->QUERY_REVISIONS) {
@@ -636,7 +636,7 @@ abstract class yf_db_query_builder_driver
             $this->_render_limit(),
         ];
         // Implode only non-empty array items
-        $sql = implode(' ', array_filter($sql, 'strlen'));
+        $sql = implode(' ', array_filter($sql));
         if ($as_sql) {
             return $sql;
         }
