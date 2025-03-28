@@ -2,7 +2,7 @@
 
 class yf_form2_google_maps
 {
-    public function google_maps($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function google_maps($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($desc)) {
             $extra += $desc;

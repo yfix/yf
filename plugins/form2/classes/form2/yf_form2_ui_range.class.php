@@ -9,7 +9,7 @@ class yf_form2_ui_range
      * @param mixed $replace
      * @param mixed $form
      */
-    public function ui_range($name, $desc = '', $extra = [], $replace = [], $form)
+    public function ui_range($name, $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($desc)) {
             $extra += $desc;
@@ -60,7 +60,7 @@ class yf_form2_ui_range
 			//	$("input#' . $extra['name'] . '").on("keyup change", function() {
 					var value1 = $("input#' . $extra['name'] . '").val();
 					var value2 = $("input#' . $extra['name'] . '_and").val();
-				
+
 					if (value1 < ' . $extra['min'] . ') {
 						value1 = ' . $extra['min'] . ';
 						$("input#' . $extra['name'] . '").val(value1)
@@ -69,17 +69,17 @@ class yf_form2_ui_range
 						value1 = value2;
 						$("input#' . $extra['name'] . '").val(value1);
 					}
-					$("#slider-' . $extra['name'] . '").slider("values",0,value1);	
+					$("#slider-' . $extra['name'] . '").slider("values",0,value1);
 				});
-	
-		
+
+
 			//	$("input#' . $extra['name'] . '_and").on("keyup change", function() {
 				$("input#' . $extra['name'] . '_and").on("change", function() {
 					var value1 = $("input#' . $extra['name'] . '").val();
 					var value2 = $("input#' . $extra['name'] . '_and").val();
-				
+
 					if (value2 > ' . $extra['max'] . ') {
-						value2 = ' . $extra['max'] . '; 
+						value2 = ' . $extra['max'] . ';
 						$("input#' . $extra['name'] . '_and").val(value2)
 					}
 					if(parseInt(value1) > parseInt(value2)){
@@ -120,7 +120,7 @@ class yf_form2_ui_range
             asset('jquery-ui');
             jquery('
 				$( "#slider-' . $extra['name'] . '" ).slider({
-					range: ' . $extra['range'] . ', 
+					range: ' . $extra['range'] . ',
 					min: ' . $extra['min'] . ',
 					max: ' . $extra['max'] . ',
 					disabled: ' . $extra['disabled'] . ',

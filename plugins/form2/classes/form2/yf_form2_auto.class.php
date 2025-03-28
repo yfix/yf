@@ -45,7 +45,7 @@ class yf_form2_auto
      * @param mixed $params
      * @param mixed $form
      */
-    public function auto($table = '', $id = '', $params = [], $form)
+    public function auto($table = '', $id = '', $params = [], $form = null)
     {
         if ($params['links_add']) {
             $form->_params['links_add'] = $params['links_add'];

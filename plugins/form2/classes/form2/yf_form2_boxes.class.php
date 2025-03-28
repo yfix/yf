@@ -10,7 +10,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function country_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function country_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -48,7 +48,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function region_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function region_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -85,7 +85,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function city_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function city_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -129,7 +129,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function currency_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function currency_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -166,7 +166,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function locale_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function locale_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -213,7 +213,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function language_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function language_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -250,7 +250,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function timezone_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function timezone_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -286,7 +286,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function icon_select_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function icon_select_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -322,7 +322,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function method_select_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function method_select_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -355,7 +355,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function template_select_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function template_select_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -388,7 +388,7 @@ class yf_form2_boxes
      * @param mixed $replace
      * @param mixed $form
      */
-    public function location_select_box($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function location_select_box($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;

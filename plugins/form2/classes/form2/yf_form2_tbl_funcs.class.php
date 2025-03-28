@@ -10,7 +10,7 @@ class yf_form2_tbl_funcs
      * @param mixed $replace
      * @param mixed $form
      */
-    public function tbl_link($name, $link, $extra = [], $replace = [], $form)
+    public function tbl_link($name, $link, $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -57,7 +57,7 @@ class yf_form2_tbl_funcs
      * @param mixed $replace
      * @param mixed $form
      */
-    public function tbl_link_add($name = '', $link = '', $extra = [], $replace = [], $form)
+    public function tbl_link_add($name = '', $link = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -81,7 +81,7 @@ class yf_form2_tbl_funcs
      * @param mixed $replace
      * @param mixed $form
      */
-    public function tbl_link_edit($name = '', $link = '', $extra = [], $replace = [], $form)
+    public function tbl_link_edit($name = '', $link = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -108,7 +108,7 @@ class yf_form2_tbl_funcs
      * @param mixed $replace
      * @param mixed $form
      */
-    public function tbl_link_delete($name = '', $link = '', $extra = [], $replace = [], $form)
+    public function tbl_link_delete($name = '', $link = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -135,7 +135,7 @@ class yf_form2_tbl_funcs
      * @param mixed $replace
      * @param mixed $form
      */
-    public function tbl_link_clone($name = '', $link = '', $extra = [], $replace = [], $form)
+    public function tbl_link_clone($name = '', $link = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -162,7 +162,7 @@ class yf_form2_tbl_funcs
      * @param mixed $replace
      * @param mixed $form
      */
-    public function tbl_link_view($name = '', $link = '', $extra = [], $replace = [], $form)
+    public function tbl_link_view($name = '', $link = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
@@ -189,7 +189,7 @@ class yf_form2_tbl_funcs
      * @param mixed $replace
      * @param mixed $form
      */
-    public function tbl_link_active($name = '', $link = '', $extra = [], $replace = [], $form)
+    public function tbl_link_active($name = '', $link = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;

@@ -2,7 +2,7 @@
 
 class yf_form2_upload
 {
-    public function upload($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function upload($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($desc)) {
             $extra = (array) $extra + $desc;

@@ -10,7 +10,7 @@ class yf_form2_info
      * @param mixed $replace
      * @param mixed $form
      */
-    public function user_info($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function user_info($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         $name = 'user_name';
         $user_id = $form->_replace['user_id'];
@@ -48,7 +48,7 @@ class yf_form2_info
      * @param mixed $replace
      * @param mixed $form
      */
-    public function admin_info($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function admin_info($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         $name = 'admin_name';
         $user_id = $form->_replace['user_id'];

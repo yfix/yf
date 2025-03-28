@@ -15,7 +15,7 @@ class yf_form2_ckeditor
      * @param mixed $replace
      * @param mixed $form
      */
-    public function _ckeditor_html($extra = [], $replace = [], $form)
+    public function _ckeditor_html($extra = [], $replace = [], $form = null)
     {
         if ( ! is_array($extra)) {
             return '';

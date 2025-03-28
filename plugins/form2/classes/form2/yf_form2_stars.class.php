@@ -9,7 +9,7 @@ class yf_form2_stars
      * @param mixed $replace
      * @param mixed $form
      */
-    public function stars($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function stars($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($desc)) {
             $extra += $desc;
@@ -58,7 +58,7 @@ class yf_form2_stars
      * @param mixed $replace
      * @param mixed $form
      */
-    public function stars_select($name = '', $desc = '', $extra = [], $replace = [], $form)
+    public function stars_select($name = '', $desc = '', $extra = [], $replace = [], $form = null)
     {
         if (is_array($desc)) {
             $extra += $desc;
@@ -88,9 +88,9 @@ class yf_form2_stars
 					$(".rating.star.' . $extra['name'] . '").each(function() {
 						$(this).attr("data-value");
 						if (value>=$(this).attr("data-value")) {
-							$(this).addClass("rating_selected");								
+							$(this).addClass("rating_selected");
 						} else {
-							$(this).removeClass("rating_selected");				
+							$(this).removeClass("rating_selected");
 						}
 					});
 				});'

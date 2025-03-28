@@ -6,7 +6,7 @@ class yf_form2_validate
      * @param mixed $extra
      * @param mixed $form
      */
-    public function _input_assign_params_from_validate($extra = [], $form)
+    public function _input_assign_params_from_validate($extra = [], $form = null)
     {
         $name = $extra['name'];
         $is_html_array = (false !== strpos($name, '['));

@@ -8,7 +8,7 @@ class yf_form2_tinymce
      * @param mixed $replace
      * @param mixed $form
      */
-    public function _tinymce_html($extra = [], $replace = [], $form)
+    public function _tinymce_html($extra = [], $replace = [], $form = null)
     {
         if ( ! is_array($extra)) {
             return '';
