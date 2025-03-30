@@ -1,9 +1,7 @@
 {
   "devDependencies": {
-    "coffee-script": "*",
     "typescript": "*",
     "less": "*",
-    "handlebars": "*",
     "autoprefixer": "*"
   }
 }

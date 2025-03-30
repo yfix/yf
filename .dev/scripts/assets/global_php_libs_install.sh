@@ -12,7 +12,5 @@ composer global require --dev \
 	leafo/scssphp \
 	ptachoire/cssembed \
 	mrclay/minify \
-	meenie/javascript-packer \
-	"patchwork/jsqueeze:1.*" \
 	"natxet/CssMin:3.0.*" \
 	"yfix/packager:dev-master"
