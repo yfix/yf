@@ -17,6 +17,9 @@
     "brianium/paratest": "6.*",
     "php-parallel-lint/php-parallel-lint": "1.*",
     "friendsofphp/php-cs-fixer": "^3.64",
-    "phpstan/phpstan": "^2.0"
+    "rector/rector": "^2.0",
+    "phpstan/phpstan": "^2.1",
+    "symfony/var-dumper": "^7.2",
+    "laravel/pint": "^1.19"
   }
 }
