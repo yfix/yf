@@ -94,13 +94,13 @@ return function ($assets) {
         conf('bs3_no_default_theme', true);
         return [
         'versions' => [
-            '3.3.7' => [
-                'css' => '//rawgit.yfix.net/thomaspark/bootswatch/v3.3.7/' . $bs_theme . '/bootstrap.min.css',
+            '3.4.1' => [
+                'css' => '//rawgit.yfix.net/thomaspark/bootswatch/v3.4.1/' . $bs_theme . '/bootstrap.min.css',
             ],
         ],
         'github' => [
             'name' => 'thomaspark/bootswatch',
-            'version' => 'v3.3.7',
+            'version' => 'v3.4.1',
             'css' => [
                 $bs_theme . '/bootstrap.css',
                 $bs_theme . '/bootstrap.min.css',
