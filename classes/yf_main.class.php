@@ -180,6 +180,7 @@ class yf_main
     public $AUTO_BAN_CHECKING = null;
     public $ADMIN_ID = null;
     public $_IN_OUTPUT_CACHE = null;
+    public $_ARGS_DIRTY = [];
 
     /**
      * Engine constructor
