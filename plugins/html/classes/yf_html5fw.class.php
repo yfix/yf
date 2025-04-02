@@ -54,7 +54,7 @@ class yf_html5fw
      * @param mixed $replace
      * @param mixed $obj
      */
-    public function form_row($content, $extra = [], $replace = [], $obj)
+    public function form_row($content, $extra = [], $replace = [], $obj = null)
     {
         $css_framework = $extra['css_framework'] ?: conf('css_framework');
         if ( ! $css_framework) {
@@ -69,7 +69,7 @@ class yf_html5fw
      * @param mixed $replace
      * @param mixed $obj
      */
-    public function form_dd_row($content, $extra = [], $replace = [], $obj)
+    public function form_dd_row($content, $extra = [], $replace = [], $obj = null)
     {
         $css_framework = $extra['css_framework'] ?: conf('css_framework');
         if ( ! $css_framework) {
@@ -84,7 +84,7 @@ class yf_html5fw
      * @param mixed $replace
      * @param mixed $obj
      */
-    public function form_render_out($content, $extra = [], $replace = [], $obj)
+    public function form_render_out($content, $extra = [], $replace = [], $obj = null)
     {
         $css_framework = $extra['css_framework'] ?: conf('css_framework');
         if ( ! $css_framework) {

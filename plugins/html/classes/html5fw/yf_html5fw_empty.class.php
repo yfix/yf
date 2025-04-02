@@ -8,7 +8,7 @@ class yf_html5fw_empty
      * @param mixed $replace
      * @param mixed $form
      */
-    public function form_render_out($content, $extra = [], $replace = [], $form)
+    public function form_render_out($content, $extra = [], $replace = [], $form = null)
     {
         return $content;
     }
@@ -19,7 +19,7 @@ class yf_html5fw_empty
      * @param mixed $replace
      * @param mixed $form
      */
-    public function form_row($content, $extra = [], $replace = [], $form)
+    public function form_row($content, $extra = [], $replace = [], $form = null)
     {
         $row_start =
             '<div>' . PHP_EOL
@@ -61,10 +61,10 @@ class yf_html5fw_empty
      * @param mixed $replace
      * @param mixed $form
      */
-    public function form_dd_row($content, $extra = [], $replace = [], $form)
+    public function form_dd_row($content, $extra = [], $replace = [], $form = null)
     {
         // TODO
-        return $this->form_row($content, $extra, $replace, $form);
+        return $this->form_row($content, $extra, $replace, $form = null);
     }
 
     /**
@@ -72,7 +72,7 @@ class yf_html5fw_empty
      * @param mixed $replace
      * @param mixed $form
      */
-    public function _add_rich_editor($extra = [], $replace = [], $form)
+    public function _add_rich_editor($extra = [], $replace = [], $form = null)
     {
         $out = [];
         if (isset($extra['ace_editor']) && $extra['ace_editor']) {

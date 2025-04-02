@@ -3538,12 +3538,12 @@ class yf_form2
      */
     public function _find_field_desc($name)
     {
-        if ( ! strlen($name)) {
+        if ( ! strlen($name ?? '')) {
             return '';
         }
         $desc = $name;
         foreach ((array) $this->_body as $a) {
-            if ( ! isset($a['extra']) || ! strlen($a['extra']['desc'])) {
+            if ( ! isset($a['extra']) || ! strlen($a['extra']['desc'] ?? '')) {
                 continue;
             }
             // Now we also support array elements descriptions searching
@@ -3562,7 +3562,7 @@ class yf_form2
      */
     public function _find_custom_validate_error($name, $func)
     {
-        if ( ! strlen($name)) {
+        if ( ! strlen($name ?? '')) {
             return '';
         }
         $custom_error = '';
