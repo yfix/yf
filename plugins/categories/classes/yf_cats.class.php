@@ -240,8 +240,9 @@ class yf_cats
             if ($only_children_ids && ! isset($only_children_ids[$cur_item_id])) {
                 continue;
             }
-            $items_for_box[$cur_item_id] = str_repeat($this->BOX_LEVEL_SPACER, $cur_item_info['level'])
-                . ($cur_item_info['level'] > 0 ? $this->BOX_LEVEL_MARKER : '')
+            $level = $cur_item_info['level'] ?? 0;
+            $items_for_box[$cur_item_id] = str_repeat($this->BOX_LEVEL_SPACER, $level)
+                . ($level > 0 ? $this->BOX_LEVEL_MARKER : '')
                 . t($cur_item_info['name']);
         }
         return $items_for_box;
