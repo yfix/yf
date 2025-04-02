@@ -1234,12 +1234,63 @@ abstract class yf_db_query_builder_driver
         return $this;
     }
 
+    public function wherenotid()
+    {
+        $id = func_get_args();
+        $pk = '';
+        if (count((array) $id) > 1) {
+            $last = array_pop($id);
+            if ( ! empty($last) && ! is_numeric($last)) {
+                $pk = $last;
+            } else {
+                $id[] = $last;
+            }
+        }
+        if (is_array($id) && count((array) $id) === 1) {
+            $id = reset($id);
+        }
+        if (is_array($id) && count((array) $id) === 1) {
+            $key = key($id);
+            if ( ! is_numeric($key)) {
+                $pk = $key;
+            }
+            $id = reset($id);
+        }
+        if ( ! $pk) {
+            $pk = $this->get_key_name();
+        }
+        $sql = '';
+        if (is_array($id) && count((array) $id) > 1) {
+            $ids = $this->_ids_sql_from_array($id);
+            if (count((array) $ids) > 1) {
+                $sql = $this->_escape_col_name($pk) . ' NOT IN(' . implode(',', $ids) . ')';
+            } else {
+                $sql = $this->_process_where_cond($pk, '!=', current($id));
+            }
+        } elseif (is_object($id) && $id instanceof self) {
+            $sql = $this->subquery($id);
+        } elseif (is_callable($id)) {
+            $sql = $id();
+        } else {
+            $sql = $this->_process_where_cond($pk, '!=', (int) $id);
+        }
+        if ($sql) {
+            $this->_sql['where'][] = $sql;
+        }
+        return $this;
+    }
+
     /**
-     * Alias for whereid().
+     * Alias for whereid(), wherenotid().
      */
     public function where_in()
     {
         return call_user_func_array([$this, 'whereid'], func_get_args());
+    }
+
+    public function where_not_in()
+    {
+        return call_user_func_array([$this, 'wherenotid'], func_get_args());
     }
 
     /**
@@ -1474,7 +1525,7 @@ abstract class yf_db_query_builder_driver
         $right_generated = '';
         // Think that we dealing with 2 arguments passing like this: where('id', 1)
         // Also this will match: where('id', [1,2,3])
-        if (strlen($left) && ! empty($op) && ! is_array($right) && ! strlen($right)) {
+        if (strlen($left ?? '') && ! empty($op) && ! is_array($right) && ! strlen($right ?? '')) {
             if (is_array($op) && $this->_is_where_all_numeric($op)) {
                 $right = $op;
                 $op = 'in';
