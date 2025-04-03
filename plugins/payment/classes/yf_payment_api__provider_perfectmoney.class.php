@@ -507,7 +507,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
         return  $_;
     }
 
-    public function api_account($options = null, &$request)
+    public function api_account($options, &$request)
     {
         // import options
         is_array($request) && extract($request, EXTR_PREFIX_ALL | EXTR_REFS, '');
