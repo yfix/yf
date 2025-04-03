@@ -29,7 +29,7 @@ class yf_assets
     /** @bool Needed to ensure smooth transition of existing codebase. If enabled - then each add() call will immediately return generated content */
     public $ADD_IS_DIRECT_OUT = false;
     /** @int */
-    public $URL_TIMEOUT = 15;
+    public $URL_TIMEOUT = 30;
     /** @int */
     public $URL_FILE_CACHE_TTL = 3600;
     /** @bool */
@@ -318,9 +318,7 @@ class yf_assets
         if ($cache_path && file_exists($cache_path) && filemtime($cache_path) > ($this->_time - $this->URL_FILE_CACHE_TTL)) {
             return file_get_contents($cache_path);
         }
-        $data = file_get_contents($url, false, stream_context_create([
-            'http' => ['timeout' => $this->URL_TIMEOUT],
-        ]));
+        $data = $this->http_get_contents($url);
         if ($cache_path) {
             $cache_dir = dirname($cache_path);
             if ( ! file_exists($cache_dir)) {
@@ -2549,5 +2547,20 @@ requirejs( [ "module1", "module2" ], function( angular ) {
 				'/*. PHP_EOL. implode(PHP_EOL, $out)*/;
         var_dump($out);
         return $out;
+    }
+
+    public function http_get_contents($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->URL_TIMEOUT);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
     }
 }
