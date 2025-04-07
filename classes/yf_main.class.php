@@ -2233,6 +2233,7 @@ class yf_main
         if (is_object($name)) {
             $name = get_class($name);
         }
+        if( !$name ) { return( $name ); }
         if (strpos($name, YF_PREFIX) === 0) {
             $name = substr($name, strlen(YF_PREFIX));
         } elseif (strpos($name, YF_ADMIN_CLS_PREFIX) === 0) {

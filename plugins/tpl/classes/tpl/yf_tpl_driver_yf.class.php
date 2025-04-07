@@ -320,8 +320,8 @@ class yf_tpl_driver_yf
             $_replace = $m[3];
             $force_storage = '';
             // Useful replacements
-            $stpl_name = str_replace('@object', $_GET['object'], $stpl_name);
-            $stpl_name = str_replace('@action', $_GET['action'], $stpl_name);
+            $stpl_name = str_replace('@object', $_GET['object'] ?? '', $stpl_name);
+            $stpl_name = str_replace('@action', $_GET['action'] ?? '', $stpl_name);
             // Force to include template from special storage, example: @framework:script_js
             if ($stpl_name[0] === '@') {
                 list($force_storage, $stpl_name) = explode(':', substr($stpl_name, 1));
