@@ -2083,7 +2083,7 @@ class yf_main
      */
     public function is_post()
     {
-        return strtoupper($_SERVER['REQUEST_METHOD']) == 'POST';
+        return strtoupper($_SERVER['REQUEST_METHOD'] ?? '') == 'POST';
     }
 
     /**

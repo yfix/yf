@@ -81,7 +81,7 @@ class yf_logs_exec_admin
         if ($this->EXCLUDE_USER_AGENTS) {
             $ua = $_SERVER['HTTP_USER_AGENT'];
             foreach ((array) $this->EXCLUDE_USER_AGENTS as $pattern) {
-                if (preg_match('~' . $pattern . '~i', $ua)) {
+                if ( $ua && preg_match('~' . $pattern . '~i', $ua)) {
                     $checks['exclude_ua'] = true;
                 }
             }

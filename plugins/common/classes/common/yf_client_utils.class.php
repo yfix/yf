@@ -38,7 +38,7 @@ class yf_client_utils
         }
         $ip = '';
         if ($check_type == 'force') {
-            $ip = $_SERVER['REMOTE_ADDR'] ?: '127.0.0.1';
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
         }
         $this->CACHE[$cache_name] = $ip;
         return $ip;

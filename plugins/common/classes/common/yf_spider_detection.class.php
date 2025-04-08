@@ -60,7 +60,7 @@ class yf_spider_detection
         if ($ip && preg_match('/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/', $ip)) {
             $CHECK_IP = true;
         }
-        if (strlen($ua)) {
+        if (strlen($ua ?? '')) {
             $ua = strtolower($ua);
             $CHECK_UA = true;
         }
