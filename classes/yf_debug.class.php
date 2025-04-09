@@ -201,13 +201,13 @@ class yf_debug
         if (! file_exists($git_head_path) && file_exists($git_base_path) && is_file($git_base_path)) {
             // gitdir: ../.git/modules/yf
             list(, $git_base_path) = explode('gitdir:', file_get_contents($git_base_path));
-            $git_base_path = realpath($FS_PATH . trim($git_base_path));
+            $git_base_path = realpath($FS_PATH . trim($git_base_path ?? ''));
             $git_head_path = $git_base_path && file_exists($git_base_path) ? $git_base_path . '/HEAD' : '';
         }
         if ($git_head_path && file_exists($git_head_path)) {
             // ref: refs/heads/master
             list(, $git_subhead_path) = explode('ref:', file_get_contents($git_head_path));
-            $git_subhead_path = trim($git_subhead_path);
+            $git_subhead_path = trim($git_subhead_path ?? '');
             $git_branch = basename($git_subhead_path);
             $git_hash_file = $git_subhead_path ? $git_base_path . '/' . trim($git_subhead_path) : '';
             $git_hash = $git_hash_file && file_exists($git_hash_file) ? trim(file_get_contents($git_hash_file)) : '';
@@ -888,7 +888,7 @@ class yf_debug
                 $items[$counter] = [
                     'id' => ++$counter,
                     'func' => a('https://redis.io/commands/' . $v['func'], $v['func']),
-                    'args' => $v['args'] ? '<pre><small>' . _prepare_html(substr(implode(PHP_EOL, $v['args']), 0, 1000)) . '</small></pre>' : '',
+                    'args' => $v['args'] ? '<pre><small>' . _prepare_html(substr(implode(PHP_EOL, $v['args'] ?? []), 0, 1000)) . '</small></pre>' : '',
                     'result' => $v['result'] ? '<pre><small>' . _prepare_html($this->_var_export($v['result'])) . '</small></pre>' : null,
                     'time' => round($v['exec_time'], 5),
                     'trace' => _prepare_html($v['trace']),
