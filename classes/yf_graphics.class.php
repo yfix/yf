@@ -174,7 +174,7 @@ class yf_graphics
         if (isset($meta['og:title']) && ! isset($meta['og:type'])) {
             $meta['og:type'] = 'website';
         }
-        $robots_no_index_use = conf('ROBOTS_NO_INDEX_USE', true);
+        $robots_no_index_use = conf('ROBOTS_NO_INDEX_USE') ?? true;
         $robots_no_index = $robots_no_index_use && (main()->is_ajax() || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX') || DEBUG_MODE || (defined('DEVELOP') && DEVELOP) || (defined('TEST_MODE') && TEST_MODE));
         if ($robots_no_index) {
             $meta['robots'] = 'noindex,nofollow,noarchive,nosnippet';
