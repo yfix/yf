@@ -441,7 +441,7 @@ class yf_tpl
      */
     public function parse_string($string = '', $replace = [], $name = '', $params = [])
     {
-        if ( ! strlen($string)) {
+        if ( ! strlen($string ?? '')) {
             $string = ' ';
         }
         if ( ! $name) {
