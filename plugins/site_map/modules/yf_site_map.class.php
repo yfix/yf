@@ -6,6 +6,7 @@
  * @author		YFix Team <yfix.dev@gmail.com>
  * @version		1.0
  */
+#[AllowDynamicProperties]
 class yf_site_map
 {
     /** @var bool Enable\disable site map generation */
@@ -14,6 +15,7 @@ class yf_site_map
     public $MODULES_TO_INCLUDE = [];
     /** @var string Sitemap store folder */
     public $SITEMAP_STORE_FOLDER = 'site_map/';
+    public $SITEMAP_WEB_PATH = '';
     /** @var string Sitemap file name */
     public $SITEMAP_FILE_NAME = 'site_map';
     /** @var @conf_skip */
@@ -63,6 +65,7 @@ class yf_site_map
     /** @var bool */
     public $SECURITY_URL_PARAM = '';
 
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -86,7 +89,8 @@ class yf_site_map
         $this->SITEMAP_STORE_FOLDER = PROJECT_PATH . 'uploads/' . $this->SITEMAP_STORE_FOLDER;
 
         // Calculate size of a string (web path) adding to url when file processed
-        $this->_path_size_bytes = strlen(htmlspecialchars(utf8_encode(WEB_PATH)));
+        $path = mb_convert_encoding(WEB_PATH, 'UTF-8', 'ISO-8859-1');
+        $this->_path_size_bytes = strlen(htmlspecialchars($path));
         // Leave some space in file size
         $this->MAX_SIZE = $this->MAX_SIZE * 0.9;
 
@@ -189,7 +193,7 @@ class yf_site_map
         $this->_entries_counter = 0;
 
         $this->_output($this->_tpl_sitemap_header());
-        $this->_total_length = strlen($header_text);
+        $this->_total_length = strlen($header_text ?? '');
 
         foreach ((array) $this->MODULES_TO_INCLUDE as $module_name) {
             $module_obj = module_safe($module_name);
