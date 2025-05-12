@@ -1226,7 +1226,7 @@ abstract class yf_db_query_builder_driver
         } elseif (is_callable($id)) {
             $sql = $id();
         } else {
-            $sql = $this->_process_where_cond($pk, '=', (int) $id);
+            $sql = $this->_process_where_cond($pk, '=', $id);
         }
         if ($sql) {
             $this->_sql['where'][] = $sql;
@@ -1272,7 +1272,7 @@ abstract class yf_db_query_builder_driver
         } elseif (is_callable($id)) {
             $sql = $id();
         } else {
-            $sql = $this->_process_where_cond($pk, '!=', (int) $id);
+            $sql = $this->_process_where_cond($pk, '!=', $id);
         }
         if ($sql) {
             $this->_sql['where'][] = $sql;
