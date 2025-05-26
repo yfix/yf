@@ -713,6 +713,7 @@ class yf_tpl
                         $file_path = $paths[$s]['user'];
                     }
                 } elseif ($_storage == 'site') {
+                    $_theme = $_storage == 'framework' ? MAIN_TYPE : $theme;
                     if (isset($paths[$_storage][$_theme])) {
                         $file_path = $paths[$_storage][$_theme];
                     }
