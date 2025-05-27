@@ -124,6 +124,8 @@ class yf_session
         if ($this->CUSTOM_HANDLER && $this->_driver_setup($this->CUSTOM_HANDLER)) {
             $main->session = $this->_driver;
         }
+        // cross-site
+        session_set_cookie_params([ 'SameSite' => 'None', 'Secure' => true ]);
         session_start();
         // Instruct bots to totally ignore current page
         if (DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX')) {
