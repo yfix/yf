@@ -125,7 +125,9 @@ class yf_session
             $main->session = $this->_driver;
         }
         // cross-site
-        session_set_cookie_params([ 'SameSite' => 'None', 'Secure' => true ]);
+        if( is_https() ) {
+            session_set_cookie_params([ 'SameSite' => 'None', 'Secure' => true ]);
+        }
         session_start();
         // Instruct bots to totally ignore current page
         if (DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX')) {
