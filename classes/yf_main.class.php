@@ -1795,7 +1795,7 @@ class yf_main
             $_site_tmp = $this->_find_site();
             $found_site = $_site_tmp[0] ?? '';
             $found_dir = $_site_tmp[1] ?? '';
-            define('SITE_PATH', $found_site ? $found_dir . $found_site . '/' : PROJECT_PATH);
+            define('SITE_PATH', $found_site ? $found_dir . $found_site . '/' : APP_PATH);
         }
         // Alias of SITE_PATH. Compatibility with old code. DEPRECATED
         ! defined('REAL_PATH') && define('REAL_PATH', SITE_PATH);

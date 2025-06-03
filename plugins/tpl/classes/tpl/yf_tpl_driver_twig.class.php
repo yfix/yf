@@ -107,13 +107,16 @@ class yf_tpl_driver_twig
         foreach( $paths as $p ) {
             !is_array( $p ) && $p = [ (string)$p ];
             $p = implode(DIRECTORY_SEPARATOR, $p) . DIRECTORY_SEPARATOR;
-            is_dir( APP_PATH . DIRECTORY_SEPARATOR . $p ) && $r[] = $p;
+            is_dir( APP_PATH . $p ) && $r[] = $p;
+            if( SITE_PATH != APP_PATH ) {
+                is_dir( SITE_PATH . $p ) && $r[] = SITE_PATH . $p;
+            }
         }
         $all_tpls_paths = tpl()->_get_cached_paths();
         $paths = [];
         foreach ($all_tpls_paths as $name => $storage) {
             foreach ($storage as $s_type => $f_type) {
-                if($s_type != 'app') { continue; }
+                if(!in_array($s_type, ['app', 'site'])) { continue; }
                 if (@$f_type[$type]) {
                     $d = &$f_type[$type];
                     $c = substr_count($name, DIRECTORY_SEPARATOR);
