@@ -116,7 +116,7 @@ class yf_rewrite
                 }
                 $arr = [];
                 $url = parse_url($link);
-                parse_str($url['query'], $arr);
+                parse_str($url['query'] ?? '', $arr);
                 if (MAIN_TYPE_ADMIN && in_array($arr['task'], ['login', 'logout'])) {
                     continue;
                 }
