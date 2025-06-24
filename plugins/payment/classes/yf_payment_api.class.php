@@ -840,7 +840,7 @@ class yf_payment_api
         if (is_array($result)) {
             foreach ($result as $index => $item) {
                 $_options = &$result[$index]['options'];
-                $_options && $_options = (array) json_decode($_options, true);
+                $_options && $_options = (array) json_decode($_options ?? '{}', true);
             }
         }
         return  $result;
@@ -1696,7 +1696,7 @@ class yf_payment_api
             $datetime_key = ['start', 'finish', 'update'];
             foreach ($_data as $index => &$item) {
                 $_item_options = &$item['options'];
-                $_item_options && $_item_options = (array) json_decode($_item_options, true);
+                $_item_options && $_item_options = (array) json_decode($_item_options ?? '{}', true);
                 foreach ($datetime_key as $key) {
                     $item['_ts_' . $key] = strtotime($item['datetime_' . $key] ?? 'now');
                 }
@@ -2564,7 +2564,7 @@ class yf_payment_api
             $operation = db()->table($table)
                 ->where($id_name, $id)
                 ->get();
-            $operation_options = (array) json_decode($operation['options'], true);
+            $operation_options = (array) json_decode($operation['options'] ?? '{}', true);
             $array_method = @$__is_replace ? 'replace' : 'merge';
             $array_method = sprintf('array_%s_recursive', $array_method);
             $json_options = json_encode($array_method(
