@@ -1686,9 +1686,9 @@ class yf_main
      */
     public function _find_site_path_best_match($sites, $server_ip, $server_port, $server_host)
     {
-        $sip = explode('.', $server_ip);
-        $sh = array_reverse(explode('.', $server_host));
-        $sh2 = explode('.', $server_host);
+        $sip = $server_ip ? explode('.', $server_ip) : [ '', '', '' ];
+        $sh = $server_host ? array_reverse(explode('.', $server_host)) : [ '', '' ];
+        $sh2 = $server_host ? explode('.', $server_host) : [ '', '' ];
         $variants = [
             $server_ip . ':' . $server_port,
             $server_ip,
