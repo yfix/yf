@@ -240,7 +240,7 @@ class yf_core_errors
 
         $trace = $exception->getTrace();
         foreach ($trace as $key => $stackPoint) {
-            $trace[$key]['args'] = array_map('gettype', $trace[$key]['args']);
+            $trace[$key]['args'] = array_map('gettype', $trace[$key]['args'] ?? []);
         }
 
         $result = [];

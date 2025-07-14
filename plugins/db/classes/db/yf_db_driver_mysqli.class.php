@@ -352,6 +352,51 @@ class yf_db_driver_mysqli extends yf_db_driver
 
     /**
      * @param mixed $stmt
+     * @param mixed $fields
+     * @param mixed $data
+     */
+    public function bind_params_all($stmt, $fields, $defaults, $data)
+    {
+        if( !$fields || !is_array( $fields ) ) { return( false ); }
+        if( !$data   || !is_array( $data   ) ) { return( false ); }
+        $types = implode( '',  array_values( $fields ) );
+        $n = count( $fields );
+        if( $n < 1 ) { return( false ); }
+        $r = true;
+        $a = array_fill( 0, $n, null ); $d = $a;
+        $p = [];
+        foreach( $a as $k => $i ) {
+            $p[] = "\$d[$k]";
+        }
+        $params = implode( ',', $p );
+        $e = 'return mysqli_stmt_bind_param($stmt, $types, ' . $params . ');';
+        $r = eval( $e );
+        if ( !$r ) { return( $r ); }
+        $f = array_keys( $fields );
+        foreach ($data as $i) {
+            foreach( $f as $j => $k ) {
+                $d[ $j ] = isset( $i[ $k ] ) ? $i[ $k ] :
+                    ( isset( $defaults[ $k ] ) ? $defaults[ $k ] : null );
+            }
+            $r = mysqli_stmt_execute($stmt);
+            if ( !$r ) { break; }
+        }
+        return( $r );
+    }
+
+    /**
+     * @param mixed $stmt
+     * @param mixed $types
+     * @param mixed $data
+     */
+    public function fetch_all($res, $r)
+    {
+        while ($a = $res->fetch_assoc()) { $r[] = $a; }
+        return( $r );
+    }
+
+    /**
+     * @param mixed $stmt
      */
     public function execute($stmt)
     {
@@ -372,6 +417,31 @@ class yf_db_driver_mysqli extends yf_db_driver
         mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
         return $result;
+    }
+
+    /**
+     * Query with preparing, types.
+     * @param mixed $query
+     * @param mixed $types
+     * @param mixed $data
+     * @param mixed $result
+     */
+    public function query_fetch_prepared_all($query, $fields, $defaults, &$data, &$result)
+    {
+        $this->begin();
+        $stmt = mysqli_prepare($this->db_connect_id, $query);
+        $r = $this->bind_params_all($stmt, $fields, $defaults, $data, $result);
+            if( !$r ) { $this->rollback(); return([ $r, $stmt ]); }
+        $r = $stmt->get_result();
+        if( !$r ) {
+            $this->commit();
+            mysqli_stmt_close($stmt);
+            return([ true, $stmt ]);
+        }
+        $r = $this->fetch_all($r, $result);
+        $this->commit();
+        mysqli_stmt_close($stmt);
+        return([ true, $stmt ]);
     }
 
 
