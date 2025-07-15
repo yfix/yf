@@ -430,9 +430,9 @@ class yf_db_driver_mysqli extends yf_db_driver
                     ( isset( $allow[ $k ][ 'value' ] ) ?  $allow[ $k ][ 'value' ] : null )
                 ;
             }
-            $r  = mysqli_stmt_execute($stmt);
-            $a += mysqli_stmt_affected_rows( $stmt );
+            $r = mysqli_stmt_execute($stmt);
             if ( !$r ) { break; }
+            $a += mysqli_stmt_affected_rows($stmt);
         }
         return([ $r, $a ]);
     }
