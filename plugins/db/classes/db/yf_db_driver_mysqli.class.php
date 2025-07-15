@@ -351,59 +351,6 @@ class yf_db_driver_mysqli extends yf_db_driver
     }
 
     /**
-     * @param mixed $stmt
-     * @param mixed $fields
-     * @param mixed $data
-     */
-    public function bind_params_all($stmt, $fields, $defaults, $data)
-    {
-        if( !$fields || !is_array( $fields ) ) { return( false ); }
-        if( !$data   || !is_array( $data   ) ) { return( false ); }
-        $types = implode( '',  array_values( $fields ) );
-        $n = count( $fields );
-        if( $n < 1 ) { return( false ); }
-        $r = true;
-        $a = array_fill( 0, $n, null ); $d = $a;
-        $p = [];
-        foreach( $a as $k => $i ) {
-            $p[] = "\$d[$k]";
-        }
-        $params = implode( ',', $p );
-        $e = 'return mysqli_stmt_bind_param($stmt, $types, ' . $params . ');';
-        $r = eval( $e );
-        if ( !$r ) { return( $r ); }
-        $f = array_keys( $fields );
-        foreach ($data as $i) {
-            foreach( $f as $j => $k ) {
-                $d[ $j ] = isset( $i[ $k ] ) ? $i[ $k ] :
-                    ( isset( $defaults[ $k ] ) ? $defaults[ $k ] : null );
-            }
-            $r = mysqli_stmt_execute($stmt);
-            if ( !$r ) { break; }
-        }
-        return( $r );
-    }
-
-    /**
-     * @param mixed $stmt
-     * @param mixed $types
-     * @param mixed $data
-     */
-    public function fetch_all($res, $r)
-    {
-        while ($a = $res->fetch_assoc()) { $r[] = $a; }
-        return( $r );
-    }
-
-    /**
-     * @param mixed $stmt
-     */
-    public function execute($stmt)
-    {
-        return mysqli_stmt_execute($stmt);
-    }
-
-    /**
      * Query with preparing.
      * @param mixed $query
      * @param mixed $data
@@ -420,28 +367,74 @@ class yf_db_driver_mysqli extends yf_db_driver
     }
 
     /**
-     * Query with preparing, types.
-     * @param mixed $query
-     * @param mixed $types
+     * Insert data with preparing, types.
+     * @param mixed $table
+     * @param mixed $fields
      * @param mixed $data
-     * @param mixed $result
      */
-    public function query_fetch_prepared_all($query, $fields, $defaults, &$data, &$result)
+    public function insert_all($table, $fields, &$data)
     {
+        if( !$table ) { return([ false, 0, null ]); }
+        if( !$fields || !is_array( $fields ) ) { return([ false, 0, null ]); }
+        if( !$data || !is_array( $data ) || count( $data ) < 1 ) { return([ false, 0, null ]); }
+        list( $allow, $type, $q ) = $this->insert_all_prepare($table, $fields, $data);
+        $stmt = mysqli_prepare( $this->db_connect_id, $q );
+        if( !$stmt ) { return([ false, 0, $stmt ]); }
         $this->begin();
-        $stmt = mysqli_prepare($this->db_connect_id, $query);
-        $r = $this->bind_params_all($stmt, $fields, $defaults, $data, $result);
-            if( !$r ) { $this->rollback(); return([ $r, $stmt ]); }
-        $r = $stmt->get_result();
-        if( !$r ) {
-            $this->commit();
-            mysqli_stmt_close($stmt);
-            return([ true, $stmt ]);
-        }
-        $r = $this->fetch_all($r, $result);
+        list( $r, $a ) = $this->insert_all_exec( $stmt, $allow, $type, $data );
+            if( !$r ) { $this->rollback(); return([ $r, $a, $stmt ]); }
         $this->commit();
+        return([ true, $a, $stmt ]);
+    }
+
+    public function insert_all_close($stmt)
+    {
         mysqli_stmt_close($stmt);
-        return([ true, $stmt ]);
+    }
+
+    public function insert_all_prepare($table, $fields, &$data)
+    {
+        $table = db( $table );
+        $item0 = $data[0];
+        $f = []; $t = []; $p = []; $allow = [];
+        foreach( $item0 as $k => $i ) {
+            $field = $fields[ $k ] ?? null;
+            if( !$field ) { continue; }
+            $allow[ $k ] = $field;
+            $f[] = db()->escape_key( $k ) ;
+            $t[] = $field[ 'type' ];
+            $p[] = '?';
+        }
+        $f = implode( ',', $f );
+        $p = implode( ',', $p );
+        $t = implode( '',  $t );
+        $q = sprintf( 'INSERT INTO %s (%s) VALUES (%s)', $table, $f, $p );
+        return([ $allow, $t, $q ]);
+    }
+
+    public function insert_all_exec($stmt, $allow, $type, &$data)
+    {
+        if( !$allow || !is_array( $allow ) ) { return( false ); }
+        if( !$type ) { return([ false, 0 ]); }
+        $n = count( $allow );
+        if( $n < 1 ) { return([ false, 0 ]); }
+        $r = true;
+        $a = 0;
+        $d = array_fill( 0, $n, null );
+        $r = mysqli_stmt_bind_param( $stmt, $type, ... $d );
+        if ( !$r ) { return([ false, 0 ]); }
+        $fields = array_keys( $allow );
+        foreach ($data as $i) {
+            foreach( $fields as $j => $k ) {
+                $d[ $j ] = isset( $i[ $k ] ) ? $i[ $k ] :
+                    ( isset( $allow[ $k ][ 'value' ] ) ?  $allow[ $k ][ 'value' ] : null )
+                ;
+            }
+            $r  = mysqli_stmt_execute($stmt);
+            $a += mysqli_stmt_affected_rows( $stmt );
+            if ( !$r ) { break; }
+        }
+        return([ $r, $a ]);
     }
 
 
