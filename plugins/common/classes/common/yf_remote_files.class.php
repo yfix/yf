@@ -6,6 +6,7 @@
  * @author		YFix Team <yfix.dev@gmail.com>
  * @version		1.0
  */
+#[AllowDynamicProperties]
 class yf_remote_files
 {
     /** @var string SMTP host to verify emails from. Be sure to set this correctly! */

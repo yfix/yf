@@ -236,8 +236,8 @@ class yf_auth_user
             }
             if (empty($_SESSION[$this->VAR_USER_ID])) {
                 $this->_do_login([
-                    'login' => $_POST[$this->LOGIN_FIELD],
-                    'pswd' => $_POST[$this->PSWD_FIELD],
+                    'login' => $_POST[$this->LOGIN_FIELD] ?? '',
+                    'pswd' => $_POST[$this->PSWD_FIELD] ?? '',
                 ]);
             }
         }
