@@ -374,17 +374,17 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function insert_all($table, $fields, &$data)
     {
-        if( !$table ) { return([ false, 0, null ]); }
-        if( !$fields || !is_array( $fields ) ) { return([ false, 0, null ]); }
-        if( !$data || !is_array( $data ) || count( $data ) < 1 ) { return([ false, 0, null ]); }
+        if( !$table ) { return([ [], 0, null ]); }
+        if( !$fields || !is_array( $fields ) ) { return([ [], 0, null ]); }
+        if( !$data || !is_array( $data ) || count( $data ) < 1 ) { return([ [], 0, null ]); }
         list( $allow, $type, $q ) = $this->insert_all_prepare($table, $fields, $data);
         $stmt = mysqli_prepare( $this->db_connect_id, $q );
-        if( !$stmt ) { return([ false, 0, $stmt ]); }
+        if( !$stmt ) { return([ [], 0, $stmt ]); }
         $this->begin();
-        list( $r, $a ) = $this->insert_all_exec( $stmt, $allow, $type, $data );
-            if( !$r ) { $this->rollback(); return([ $r, $a, $stmt ]); }
+        list( $err, $a ) = $this->insert_all_exec( $stmt, $allow, $type, $data );
+            if( $err ) { $this->rollback(); return([ $err, $a, $stmt ]); }
         $this->commit();
-        return([ true, $a, $stmt ]);
+        return([ [], $a, $stmt ]);
     }
 
     public function insert_all_close($stmt)
@@ -418,7 +418,7 @@ class yf_db_driver_mysqli extends yf_db_driver
         if( !$type ) { return([ false, 0 ]); }
         $n = count( $allow );
         if( $n < 1 ) { return([ false, 0 ]); }
-        $r = true;
+        $r = true; $err = [];
         $a = 0;
         $d = array_fill( 0, $n, null );
         $r = mysqli_stmt_bind_param( $stmt, $type, ... $d );
@@ -430,11 +430,20 @@ class yf_db_driver_mysqli extends yf_db_driver
                     ( isset( $allow[ $k ][ 'value' ] ) ?  $allow[ $k ][ 'value' ] : null )
                 ;
             }
-            $r = mysqli_stmt_execute($stmt);
+            try {
+                $r = mysqli_stmt_execute($stmt);
+            }
+            catch( Exception $e ) {
+                $r = false;
+                $err = [
+                    'message' => $e->getMessage(),
+                    'code'    => $e->getCode(),
+                ];
+            }
             if ( !$r ) { break; }
             $a += mysqli_stmt_affected_rows($stmt);
         }
-        return([ $r, $a ]);
+        return([ $err, $a ]);
     }
 
 
