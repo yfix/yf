@@ -381,15 +381,11 @@ class yf_db_driver_mysqli extends yf_db_driver
         $stmt = mysqli_prepare( $this->db_connect_id, $q );
         if( !$stmt ) { return([ [], 0, $stmt ]); }
         $this->begin();
-        list( $err, $a ) = $this->insert_all_exec( $stmt, $allow, $type, $data );
+        list( $err, $a ) = $this->stmt_all_exec( $stmt, $allow, $type, $data );
             if( $err ) { $this->rollback(); return([ $err, $a, $stmt ]); }
         $this->commit();
-        return([ [], $a, $stmt ]);
-    }
-
-    public function insert_all_close($stmt)
-    {
         mysqli_stmt_close($stmt);
+        return([ [], $a ]);
     }
 
     public function insert_all_prepare($table, $fields, &$data)
@@ -412,7 +408,7 @@ class yf_db_driver_mysqli extends yf_db_driver
         return([ $allow, $t, $q ]);
     }
 
-    public function insert_all_exec($stmt, $allow, $type, &$data)
+    public function stmt_all_exec($stmt, $allow, $type, &$data)
     {
         if( !$allow || !is_array( $allow ) ) { return( false ); }
         if( !$type ) { return([ false, 0 ]); }
@@ -444,6 +440,55 @@ class yf_db_driver_mysqli extends yf_db_driver
             $a += mysqli_stmt_affected_rows($stmt);
         }
         return([ $err, $a ]);
+    }
+
+    /**
+     * Update data with preparing, types.
+     * @param mixed $table
+     * @param mixed $fields
+     * @param mixed $data
+     */
+    public function update_all($table, $fields, &$data)
+    {
+        if( !$table ) { return([ [], 0, null ]); }
+        if( !$fields || !is_array( $fields ) ) { return([ [], 0, null ]); }
+        if( !$data || !is_array( $data ) || count( $data ) < 1 ) { return([ [], 0, null ]); }
+        list( $allow, $type, $q ) = $this->update_all_prepare($table, $fields, $data);
+        $stmt = mysqli_prepare( $this->db_connect_id, $q );
+        if( !$stmt ) { return([ [], 0, $stmt ]); }
+        $this->begin();
+        list( $err, $a ) = $this->stmt_all_exec( $stmt, $allow, $type, $data );
+            if( $err ) { $this->rollback(); return([ $err, $a, $stmt ]); }
+        $this->commit();
+        mysqli_stmt_close($stmt);
+        return([ [], $a ]);
+    }
+
+    public function update_all_prepare($table, $fields, &$data)
+    {
+        $table = db( $table );
+        $item0 = $data[0];
+        $f = []; $tf = []; $tk = []; $w = []; $allow = []; $key = [];
+        foreach( $item0 as $k => $i ) {
+            $field = $fields[ $k ] ?? null;
+            if( !$field ) { continue; }
+            $p = db()->escape_key( $k ) .'=?';
+            if( $field[ 'is_key' ] ?? false ) {
+                $w[] = $p;
+                $key[ $k ] = $field;
+                $tk[] = $field[ 'type' ];
+            } else {
+                $f[] = $p;
+                $allow[ $k ] = $field;
+                $tf[] = $field[ 'type' ];
+            }
+        }
+        $f = implode( ',', $f );
+        $t = implode( '',  $tf ) . implode( '',  $tk );;
+        $w = implode( ' AND ',  $w );
+        $allow = array_merge( $allow, $key );
+        $q = sprintf( 'UPDATE %s SET %s WHERE %s', $table, $f, $w );
+        return([ $allow, $t, $q ]);
     }
 
 
