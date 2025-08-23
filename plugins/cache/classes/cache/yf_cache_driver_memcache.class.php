@@ -1,6 +1,7 @@
 <?php
 
 load('cache_driver', '', 'classes/cache/');
+#[AllowDynamicProperties]
 class yf_cache_driver_memcache extends yf_cache_driver
 {
     /** @var object internal @conf_skip */
