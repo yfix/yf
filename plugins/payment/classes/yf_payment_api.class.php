@@ -256,9 +256,14 @@ class yf_payment_api
     public $DUMP_PATH = '/tmp';
     public $dump = null;
 
+    public $TZ = '';
+
     public function _init()
     {
         $this->config();
+        if( $this->TZ ) {
+            date_default_timezone_set( $this->TZ );
+        }
         $this->user_id_default = (int) main()->USER_ID;
         $this->user_id($this->user_id_default);
         $mysql_version = db()->get_one('SELECT VERSION()');
