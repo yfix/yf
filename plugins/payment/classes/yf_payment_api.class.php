@@ -261,9 +261,6 @@ class yf_payment_api
     public function _init()
     {
         $this->config();
-        if( $this->TZ ) {
-            date_default_timezone_set( $this->TZ );
-        }
         $this->user_id_default = (int) main()->USER_ID;
         $this->user_id($this->user_id_default);
         $mysql_version = db()->get_one('SELECT VERSION()');
@@ -501,11 +498,19 @@ class yf_payment_api
 
     public function sql_datetime($timestamp = null)
     {
+        $tz = '';
+        if( $this->TZ ) {
+            $tz = date_default_timezone_get();
+            date_default_timezone_set( $this->TZ );
+        }
         $tpl = 'Y-m-d H:i:s';
         if (is_int($timestamp)) {
             $result = date($tpl, $timestamp);
         } else {
             $result = date($tpl);
+        }
+        if( $tz ) {
+            date_default_timezone_set( $tz );
         }
         return  $result;
     }
