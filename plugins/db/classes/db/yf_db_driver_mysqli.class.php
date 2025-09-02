@@ -467,7 +467,7 @@ class yf_db_driver_mysqli extends yf_db_driver
     public function update_all_prepare($table, $fields, &$data)
     {
         $table = db( $table );
-        $item0 = $data[0];
+        $item0 = reset( $data );
         $f = []; $tf = []; $tk = []; $w = []; $allow = []; $key = [];
         foreach( $item0 as $k => $i ) {
             $field = $fields[ $k ] ?? null;
