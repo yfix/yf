@@ -189,6 +189,17 @@ class yf_api
         return  ($ip_decimal & $netmask_decimal) == ($range_decimal & $netmask_decimal);
     }
 
+    function _is_ip_internal( $ip ) {
+        // if( strpos( $ip, '127.' ) !== false ) { return( true ); } // php 5.3.6
+        $r = ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE );
+        return( $r );
+    }
+
+    function _is_ip_external( $ip ) {
+        $r = ! $this->_is_ip_internal( $ip );
+        return( $r );
+    }
+
     function _is_ip4( $ip ) {
         return( strpos( $ip ?: '', '.' ) !== false );
     }
