@@ -35,6 +35,13 @@ class yf_api
     public $CACHE_TTL   = 60;
     public $CACHE_TTL_S = 60 / 2;
 
+    public $is_cli = false;
+
+    public $ip  = '';
+    public $ip4 = '';
+    public $ip6 = '';
+    public $country_code = '';
+
     public $class = null;
     public $method = null;
     public $is_head = null;
@@ -55,6 +62,7 @@ class yf_api
 
     public function _init()
     {
+        $this->is_cli = ( php_sapi_name() == 'cli' );
         ini_set('html_errors', 0);
         // ob_start();
         $class = &$this->class;
@@ -179,6 +187,60 @@ class yf_api
         $wildcard_decimal = pow(2, (32 - $netmask)) - 1;
         $netmask_decimal = ~$wildcard_decimal;
         return  ($ip_decimal & $netmask_decimal) == ($range_decimal & $netmask_decimal);
+    }
+
+    function _is_ip4( $ip ) {
+        return( strpos( $ip ?: '', '.' ) !== false );
+    }
+
+    function _is_ip6( $ip ) {
+        return( strpos( $ip ?: '', ':' ) !== false );
+    }
+
+    function _ip6_to_v4($ip) {
+        $packed = inet_pton($ip);
+        if ($packed === false) { return(''); }
+        if (strlen($packed) === 16 && substr($packed, 0, 10) === str_repeat("\0", 10) . str_repeat("\xff", 2)) {
+            // Extract the last 4 bytes and convert to IPv4
+            return inet_ntop(substr($packed, 12));
+        }
+        return('');
+    }
+
+    function _detect_ip( $force = false ) {
+        if( $this->is_cli ) { return(''); }
+        if( !$force && $this->ip4 ) { return( $this->ip4 ); }
+        $ip = $this->ip ?: $this->_ip();
+        if( empty( $ip ) ) { return(''); }
+        $this->ip = $ip;
+        if( $this->_is_ip6( $ip ) ) {
+            $this->ip6 = $ip;
+            $ip4 = $this->_ip6_to_v4( $ip );
+            if( $ip4 ) {
+                $this->ip4 = $ip4;
+            }
+        }
+        return( $ip );
+    }
+
+    function _detect_country_code( $force = false ) {
+        if( $this->is_cli ) { return(''); }
+        if( !$force && $this->country_code ) { return( $this->country_code ); }
+        $ip = $this->_detect_ip( $force );
+        $r = $this->_geoip_country_code_by_name( $ip );
+        if( empty( $r ) ) { return(''); }
+        $this->country_code = $r;
+        return( $r );
+    }
+
+    function _geoip_country_code_by_name( $v ) {
+        $r = '';
+        if( $this->_is_ip6( $v ) ) {
+            $r = geoip_country_code_by_name_v6( $v );
+        } else {
+            $r = geoip_country_code_by_name( $v );
+        }
+        return( $r );
     }
 
     public function _parse_request()
