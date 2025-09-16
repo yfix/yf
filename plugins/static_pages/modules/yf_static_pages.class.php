@@ -13,8 +13,12 @@ class yf_static_pages
     public $PAGE_NAME = null;
     /** @var string @conf_skip */
     public $PAGE_TITLE = null;
+    public $PAGE_HEADING = null;
     /** @var bool Allow HTML in text */
     public $ALLOW_HTML_IN_TEXT = true;
+
+    public $_cache = [];
+    public $_current = null;
 
     /**
      * Catch missing method call.
