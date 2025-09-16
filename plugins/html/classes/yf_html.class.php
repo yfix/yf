@@ -2118,8 +2118,8 @@ class yf_html
     public function _get_ip_country($ip)
     {
         if (! isset($this->_ip_to_country[$ip])) {
-            $func = 'geoip_country_code_by_name';
-            $this->_ip_to_country[$ip] = is_callable($func) ? $func($ip) : '';
+            $code = _class( 'api' )->_geoip_country_code_by_name( $ip );
+            $this->_ip_to_country[$ip] = $code;
         }
         return $this->_ip_to_country[$ip];
     }

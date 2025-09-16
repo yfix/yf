@@ -251,7 +251,7 @@ class yf_api
         } else {
             $r = geoip_country_code_by_name( $v );
         }
-        return( $r );
+        return( $r ?: '' );
     }
 
     public function _parse_request()
