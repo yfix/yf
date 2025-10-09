@@ -1,5 +1,6 @@
 <?php
 
+#[AllowDynamicProperties]
 class yf_manage_faq
 {
     const table = 'faq';

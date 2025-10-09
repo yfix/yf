@@ -189,7 +189,7 @@ class yf_table2_filter
     public function _filter_sql_prepare($filter_data = [], $filter_params = [], $__sql = '', $table = null)
     {
         if ( ! $filter_data) { return ''; }
-        if (is_null($table) || ( $table->_params['db'] ?? false ) || !is_object( $table->_params['db'] ) ) {
+        if (is_null($table) || ( $table?->_params['db'] ?? false ) || !is_object( $table->_params['db'] ) ) {
             $db = db();
         } else {
             $db = $table->_params['db'];
