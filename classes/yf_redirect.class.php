@@ -188,7 +188,7 @@ class yf_redirect
             if ($form_method == 'GET') {
                 $query = parse_url($location, PHP_URL_QUERY);
                 $fields = [];
-                if (strlen($query)) {
+                if ($query && strlen($query)) {
                     parse_str($query, $fields);
                 }
                 if ($fields) {
