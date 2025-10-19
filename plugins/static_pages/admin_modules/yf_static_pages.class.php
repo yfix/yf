@@ -10,6 +10,9 @@ class yf_static_pages
 {
     const table = 'static_pages';
 
+    public $lang_def_country = [];
+    public $pages_langs = [];
+
 
     public function show()
     {

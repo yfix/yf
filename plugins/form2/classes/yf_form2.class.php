@@ -3361,7 +3361,7 @@ class yf_form2
             if ($form_id && $data[$this->CONF_FORM_ID_FIELD] != $form_id) {
                 return $form;
             }
-            $on_before_validate = isset($extra['on_before_validate']) ? $extra['on_before_validate'] : $form->_on['on_before_validate'];
+            $on_before_validate = isset($extra['on_before_validate']) ? $extra['on_before_validate'] : ($form->_on['on_before_validate'] ?? '');
             if (is_callable($on_before_validate)) {
                 $on_before_validate($form->_validate_rules, $data, $this);
             }
@@ -3378,13 +3378,13 @@ class yf_form2
                 $events->fire('form.validate_ok', [$form->_validate_rules, $data, $extra]);
             } else {
                 $form->_validate_ok = false;
-                $on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $form->_on['on_validate_error'];
+                $on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : ($form->_on['on_validate_error'] ?? '');
                 if (is_callable($on_validate_error)) {
                     $on_validate_error($data, $extra, $form->_validate_rules, $this);
                 }
                 $events->fire('form.validate_error', [$form->_validate_rules, $data, $extra]);
             }
-            $on_after_validate = isset($extra['on_after_validate']) ? $extra['on_after_validate'] : $form->_on['on_after_validate'];
+            $on_after_validate = isset($extra['on_after_validate']) ? $extra['on_after_validate'] : ($form->_on['on_after_validate'] ?? '');
             if (is_callable($on_after_validate)) {
                 $on_after_validate($form->_validate_ok, $form->_validate_rules, $data, $extra, $this);
             }
@@ -3530,7 +3530,7 @@ class yf_form2
             }
             return $data;
         }
-        return $func($data);
+        return @$func($data);
     }
 
     /**
