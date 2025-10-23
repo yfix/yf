@@ -172,8 +172,8 @@ class yf_rewrite_pattern_yf
         }
         // Filter bad symbols
         $cleanup_regex = '~[^a-z0-9_-]+~ims';
-        $arr['object'] = trim(preg_replace($cleanup_regex, '', trim($arr['object'])), '-');
-        $arr['action'] = trim(preg_replace($cleanup_regex, '', trim($arr['action'])), '-_');
+        $arr['object'] = trim(preg_replace($cleanup_regex, '', trim($arr['object'] ?? '')), '-');
+        $arr['action'] = trim(preg_replace($cleanup_regex, '', trim($arr['action'] ?? '')), '-_');
         return $arr;
     }
 
