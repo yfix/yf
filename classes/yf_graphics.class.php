@@ -99,7 +99,7 @@ class yf_graphics
         }
         // Add pages names to the title
         if ($this->ADD_TITLE_PAGES) {
-            if (strlen($_GET['object']) && $_GET['object'] != 'static_pages') {
+            if (strlen($_GET['object'] ?? '') && $_GET['object'] != 'static_pages') {
                 $title .= ' :: ' . _ucfirst(t($_GET['object']));
                 $title = _ucfirst(t($_GET['object'])) . ' : ' . $title;
             }
