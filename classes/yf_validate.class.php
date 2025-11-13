@@ -90,7 +90,7 @@ class yf_validate
             }
             return $data;
         }
-        return $func($data);
+        return $func($data ?? '');
     }
 
     /**
