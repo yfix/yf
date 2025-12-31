@@ -33,6 +33,8 @@ class yf_tpl_driver_yf
     public $_stpl_mtimes = [];
     public $_STPL_EXT = '.stpl';
 
+    private $_raw_content = [];
+
     /**
      * Catch missing method call.
      * @param mixed $name
@@ -50,7 +52,7 @@ class yf_tpl_driver_yf
     public function _init()
     {
         $this->tpl = &_class('tpl');
-        if ( ! function_exists('preg_match_all')) {
+        if (! function_exists('preg_match_all')) {
             trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_ERROR);
         }
         $this->CACHE = [
@@ -119,13 +121,14 @@ class yf_tpl_driver_yf
         if ($string === false) {
             return false;
         }
+        $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_process_comments($string, $name);
         $string = $this->_process_executes($string, $replace, $name);
         $string = $this->_process_catches($string, $replace, $name);
         $string = $this->_replace_std_patterns($string, $name, $replace, $params);
         $string = $this->_process_foreaches($string, $replace, $name);
         $string = $this->_process_ifs($string, $replace, $name);
-        if ( ! $params['no_include']) {
+        if (! $params['no_include']) {
             $string = $this->_process_includes($string, $replace, $name);
             $string = $this->_process_executes($string, $replace, $name);
         }
@@ -133,6 +136,42 @@ class yf_tpl_driver_yf
         $string = $this->_replace_std_patterns($string, $name, $replace, $params);
         $string = $this->_process_js_css($string, $replace, $name);
         $string = $this->_process_executes_last($string, $replace, $name);
+        $string = $this->_process_raw_return($string, $replace, $name);
+        return $string;
+    }
+
+    /**
+     * RAW block (non-parseable): %%% {smth not parseable} %%%
+     */
+    public function _process_raw_collect($string, array &$replace, $name = '', $params = [])
+    {
+        if (empty($string) && strpos($string, '%%%') === false) {
+            return $string;
+        }
+        $_this = $this;
+        $string = preg_replace_callback(
+            '/%%%(.+?)%%%/ims',
+            function ($m) use ($_this) {
+                $idx = count($_this->_raw_content) + 1;
+                $_this->_raw_content[$idx] = $m[1];
+                return '^^^' . $idx . '^^^';
+            },
+            $string
+        );
+        return $string;
+    }
+
+    /**
+     * Replace back RAW content ^^^#number^^^ -> to its original, example: ^^^1^^^
+     */
+    public function _process_raw_return($string, array &$replace, $name = '', $params = [])
+    {
+        if (empty($string) && strpos($string, '^^^') === false) {
+            return $string;
+        }
+        foreach ($this->_raw_content as $idx => $str) {
+            $string = str_replace('^^^' . $idx . '^^^', $str, $string);
+        }
         return $string;
     }
 
@@ -165,11 +204,11 @@ class yf_tpl_driver_yf
      */
     public function _parse_get_php_tpl($name, $replace = [], $params = [])
     {
-        if ( ! $this->tpl->ALLOW_PHP_TEMPLATES) {
+        if (! $this->tpl->ALLOW_PHP_TEMPLATES) {
             return null;
         }
         $path = PROJECT_PATH . $this->tpl->TPL_PATH . $name . '.tpl.php';
-        if ( ! file_exists($path)) {
+        if (! file_exists($path)) {
             return null;
         }
         $stpl_time_start = microtime(true);
@@ -220,7 +259,7 @@ class yf_tpl_driver_yf
                 $compiled_string = null;
             }
         }
-        if ( ! isset($compiled_string)) {
+        if (! isset($compiled_string)) {
             $string = isset($params['string']) ? $params['string'] : $this->tpl->_get_template_file($name, $params['force_storage']);
             if (strlen($string)) {
                 $compiled_string = $this->_compile($name, $replace, $string, $params);
@@ -236,12 +275,12 @@ class yf_tpl_driver_yf
      */
     public function _parse_get_compiled($name, $replace = [], $params = [])
     {
-        if ( ! $this->tpl->COMPILE_TEMPLATES) {
+        if (! $this->tpl->COMPILE_TEMPLATES) {
             return null;
         }
         $stpl_time_start = microtime(true);
         $compiled_string = $this->_get_compiled_string($name, $replace, $params);
-        if ( ! isset($compiled_string)) {
+        if (! isset($compiled_string)) {
             return null;
         }
         ob_start();
@@ -262,10 +301,10 @@ class yf_tpl_driver_yf
         $this->CACHE[$name]['driver'] = 'yf';
         $this->CACHE[$name]['is_compiled'] = (int) $is_compiled;
         @$this->CACHE[$name]['calls']++;
-        if ( ! isset($this->CACHE[$name]['string'])) {
+        if (! isset($this->CACHE[$name]['string'])) {
             $this->CACHE[$name]['string'] = $string;
         }
-        if ( ! isset($this->CACHE[$name]['s_length'])) {
+        if (! isset($this->CACHE[$name]['s_length'])) {
             $this->CACHE[$name]['s_length'] = strlen($string);
         }
         if (DEBUG_MODE && MAIN_TYPE_USER) {
@@ -350,7 +389,7 @@ class yf_tpl_driver_yf
      */
     public function _process_replaces($string, array &$replace, $name = '')
     {
-        if ( ! strlen($string) || false === strpos($string, '{')) {
+        if (! strlen($string) || false === strpos($string, '{')) {
             return $string;
         }
         // Need to optimize complex replace arrays and templates not containing sub replaces
@@ -366,7 +405,7 @@ class yf_tpl_driver_yf
             }
             // Allow to replace simple 1-dimensional array items (some speed loss, but might be useful)
             if (is_array($value)) {
-                if ( ! $has_sub_pairs) {
+                if (! $has_sub_pairs) {
                     continue;
                 }
                 // 2+ levels deep detected, but not supported
@@ -377,7 +416,7 @@ class yf_tpl_driver_yf
                     $pairs['{' . $item . '.' . $_sub_key . '}'] = $_sub_val;
                 }
                 $cleanup_keys[$item] = '';
-            // Simple key=val replace
+                // Simple key=val replace
             } else {
                 $pairs['{' . $item . '}'] = $value;
             }
@@ -576,8 +615,8 @@ class yf_tpl_driver_yf
             // Form item/row. Examples: {form_row("text","password","New Password")}
             '/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,'
                 . '[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims' => function ($m) use ($replace, $name) {
-                    return _class('form2')->tpl_row($m[1], $replace, $m[3], $m[5], $m[7]);
-                },
+                return _class('form2')->tpl_row($m[1], $replace, $m[3], $m[5], $m[7]);
+            },
             // Variable filtering like in Smarty/Twig. Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
             '/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function ($m) use ($replace, $name, $tpl) {
                 return $tpl->_process_var_filters($replace[$m[1]], $m[2]);
@@ -632,7 +671,7 @@ class yf_tpl_driver_yf
         return preg_replace_callback($pattern, function ($m) use ($_this, &$replace, $stpl_name) {
             $catched_name = $m[1];
             $catched_string = $m[2];
-            if ( ! empty($catched_name)) {
+            if (! empty($catched_name)) {
                 if (strlen($catched_string) && strpos($catched_string, '{') !== false) {
                     $catched_string = $_this->_replace_std_patterns($catched_string, $stpl_name, $replace);
                     $catched_string = $_this->_process_foreaches($catched_string, $replace, $stpl_name);
@@ -756,7 +795,7 @@ class yf_tpl_driver_yf
                     $part_left = $_this->_cond_sub_array($m['left'], $replace);
                 }
                 // Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if}
-            } elseif ( ! function_exists($func) && ! in_array($func, ['empty', 'isset'])) {
+            } elseif (! function_exists($func) && ! in_array($func, ['empty', 'isset'])) {
                 return '';
             }
             if ($is_multiple) {
@@ -767,7 +806,7 @@ class yf_tpl_driver_yf
                         $center_tmp[] = ($negate ? '!' : '') . $func . '(' . $v . ')';
                     }
                 }
-                if ( ! count((array) $center_tmp)) {
+                if (! count((array) $center_tmp)) {
                     $center_cond = ($negate ? '!' : '') . $func . '($replace["___not_existing_key__"])';
                 } else {
                     $center_cond = '(' . implode(') ' . $multiple_cond . ' (', $center_tmp) . ')';
@@ -785,7 +824,7 @@ class yf_tpl_driver_yf
         $result = eval('?>' . $string . '<' . '?p' . 'hp return 1;');
         $new_string = ob_get_clean();
 
-        if ( ! $result) {
+        if (! $result) {
             $error_msg = 'STPL: ERROR: wrong condition in template "' . $stpl_name . '"';
             if (DEBUG_MODE) {
                 $error_msg .= PHP_EOL . '<pre>' . PHP_EOL . _prepare_html(var_export($string, 1)) . PHP_EOL . '</pre>' . PHP_EOL;
@@ -808,7 +847,7 @@ class yf_tpl_driver_yf
         foreach (explode(' ', $cond) as $val) {
             $a = '';
             $tmp_len = strlen($val);
-            if ( ! $tmp_len) {
+            if (! $tmp_len) {
                 continue;
             }
             $tmp_first = substr($val, 0, 1);
@@ -816,7 +855,7 @@ class yf_tpl_driver_yf
             if (($tmp_first === '@' || $tmp_first === '#') && substr($val, 0, 2) !== '#.' && $tmp_len > 1) {
                 $val = substr($val, 1);
                 $tmp_len--;
-                if ( ! $tmp_len) {
+                if (! $tmp_len) {
                     continue;
                 }
             }
@@ -842,19 +881,19 @@ class yf_tpl_driver_yf
                 // Arithmetic operators (currently we allow only '+' and '-')
             } elseif (isset($this->_math_operators[$val])) {
                 $a = $this->_math_operators[$val];
-            // Module config item
+                // Module config item
             } elseif (strpos($val, 'module_conf.') === 0) {
                 list($mod_name, $mod_conf) = explode('.', substr($val, strlen('module_conf.')));
                 $a = 'module_conf(\'' . $mod_name . '\',\'' . $mod_conf . '\')';
-            // Configuration item
+                // Configuration item
             } elseif (strpos($val, 'conf.') === 0) {
                 $a = 'conf(\'' . substr($val, strlen('conf.')) . '\')';
-            // Constant
+                // Constant
             } elseif (false !== strpos($val, 'const.')) {
                 $c = addslashes(substr($val, strlen('const.')));
                 $a = '(defined(\'' . $c . '\') ? constant(\'' . $c . '\') : null)';
-            // Global array element or sub array
-            } elseif ( ! $for_right && false !== strpos($val, '.')) {
+                // Global array element or sub array
+            } elseif (! $for_right && false !== strpos($val, '.')) {
                 $a = $this->_cond_sub_array($val, $replace, $for_right);
             } elseif ($for_right && is_string($val)) {
                 $a = '\'' . addslashes($val) . '\'';
@@ -888,7 +927,7 @@ class yf_tpl_driver_yf
         $avail_arrays = (array) $this->tpl->_avail_arrays;
         if (isset($avail_arrays[$try_elm])) {
             $out = '$' . $avail_arrays[$try_elm] . $try_elm2;
-        // Sub array
+            // Sub array
         } elseif (isset($replace[$try_elm]) && is_array($replace[$try_elm])) {
             $out = '$replace[\'' . $try_elm . '\']' . $try_elm2;
         }
@@ -957,14 +996,14 @@ class yf_tpl_driver_yf
                 // Sub array like this: {foreach(post.somekey)} or {foreach(data.sub)}
             } elseif (false !== strpos($key_to_cycle, '.')) {
                 list($sub_key1, $sub_key2) = explode('.', $key_to_cycle);
-                if ( ! $sub_key1 || ! $sub_key2) {
+                if (! $sub_key1 || ! $sub_key2) {
                     return '';
                 }
                 $data = $replace[$sub_key1][$sub_key2];
                 if (isset($data)) {
                     if (is_array($data)) {
                         $sub_array = $data;
-                    // Iteration by numberic var value, example: {foreach(data.number)}, number == 3
+                        // Iteration by numberic var value, example: {foreach(data.number)}, number == 3
                     } elseif (is_numeric($data)) {
                         $sub_array = $_this->_range_foreach($data);
                     }
@@ -986,7 +1025,7 @@ class yf_tpl_driver_yf
                 $data = $replace[$key_to_cycle];
                 if (is_array($data)) {
                     $sub_array = $data;
-                // Iteration by numberic var value, example: {foreach(number)}, number == 3
+                    // Iteration by numberic var value, example: {foreach(number)}, number == 3
                 } elseif (is_numeric($data)) {
                     $sub_array = $_this->_range_foreach($data);
                 }
@@ -1008,7 +1047,7 @@ class yf_tpl_driver_yf
                 $_is_first = (int) ($_i == 1);
                 $_is_last = (int) ($_i == $_total);
                 $_is_odd = (int) ($_i % 2);
-                $_is_even = (int) ( ! $_is_odd);
+                $_is_even = (int) (! $_is_odd);
 
                 $_val = '';
                 // Bugfix for mixed arrays
@@ -1016,13 +1055,14 @@ class yf_tpl_driver_yf
                     foreach ($sub_v as $k => $v) {
                         $_v = [];
                         if (is_scalar($v) || is_object($v)) {
-                            $_v = [ strval($v) ];
+                            $_v = [strval($v)];
                         } elseif (is_array($v)) {
-                            foreach( $v as $v1 ) {
+                            foreach ($v as $v1) {
                                 if (is_scalar($v1) || is_object($v1)) {
-                                     $_v[] = strval($v1);
+                                    $_v[] = strval($v1);
                                 } else {
-                                    $_v = [ 'Array' ]; break;
+                                    $_v = ['Array'];
+                                    break;
                                 }
                             }
                         }
@@ -1084,7 +1124,7 @@ class yf_tpl_driver_yf
         ];
         // Parse simple vars
         foreach ((array) $patterns as $pattern) {
-            if ( ! preg_match_all($pattern, $string, $m)) {
+            if (! preg_match_all($pattern, $string, $m)) {
                 continue;
             }
             $cur_matches = $m[1];
@@ -1099,7 +1139,7 @@ class yf_tpl_driver_yf
         }
         ksort($not_replaced);
         $body = '';
-        if ( ! empty($not_replaced)) {
+        if (! empty($not_replaced)) {
             $body .= '<pre>array(' . PHP_EOL;
             foreach ((array) $not_replaced as $v) {
                 $body .= "\t" . '"' . _prepare_html($v, 0) . '" => "",' . PHP_EOL;
@@ -1118,7 +1158,7 @@ class yf_tpl_driver_yf
      */
     public function _include_stpl($stpl_name = '', $params = '', $replace = [], $if_exists = false)
     {
-        if ( ! is_array($replace)) {
+        if (! is_array($replace)) {
             $replace = [];
         }
         $force_storage = '';
@@ -1148,7 +1188,7 @@ class yf_tpl_driver_yf
         if (strlen($pattern)) {
             $func = $tpl->_custom_patterns_funcs[$pattern];
         }
-        if ( ! $func || ! is_callable($func)) {
+        if (! $func || ! is_callable($func)) {
             return $body;
         }
         return $func(['args' => $args, 'body' => $body], $replace, $stpl_name, $this);
