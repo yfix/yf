@@ -34,6 +34,8 @@ class yf_tpl_driver_yf
     public $_STPL_EXT = '.stpl';
 
     private $_raw_content = [];
+    private $_raw_s = '%%%';
+    private $_raw_p = '^^^';
 
     /**
      * Catch missing method call.
@@ -124,18 +126,29 @@ class yf_tpl_driver_yf
         $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_process_comments($string, $name);
         $string = $this->_process_executes($string, $replace, $name);
+        $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_process_catches($string, $replace, $name);
+        $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_replace_std_patterns($string, $name, $replace, $params);
+        $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_process_foreaches($string, $replace, $name);
+        $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_process_ifs($string, $replace, $name);
+        $string = $this->_process_raw_collect($string, $replace, $name);
         if (! $params['no_include']) {
             $string = $this->_process_includes($string, $replace, $name);
+            $string = $this->_process_raw_collect($string, $replace, $name);
             $string = $this->_process_executes($string, $replace, $name);
+            $string = $this->_process_raw_collect($string, $replace, $name);
         }
         $string = $this->_process_replaces($string, $replace, $name);
+        $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_replace_std_patterns($string, $name, $replace, $params);
+        $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_process_js_css($string, $replace, $name);
+        $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_process_executes_last($string, $replace, $name);
+        $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_process_raw_return($string, $replace, $name);
         return $string;
     }
@@ -145,16 +158,21 @@ class yf_tpl_driver_yf
      */
     public function _process_raw_collect($string, array &$replace, $name = '', $params = [])
     {
-        if (empty($string) && strpos($string, '%%%') === false) {
-            return $string;
-        }
-        $_this = $this;
+        $raw = $this->_raw_s;
+        $len = strlen( $raw );
+        if (empty($string)) { return $string; }
+        $p = strpos($string, $raw);
+        if ($p === false) { return $string; }
+        $p = strpos($string, $raw, $p+$len);
+        if ($p === false) { return $string; }
+        $pad = $this->_raw_p;
+        $_raw_content = &$this->_raw_content;
         $string = preg_replace_callback(
-            '/%%%(.+?)%%%/ims',
-            function ($m) use ($_this) {
-                $idx = count($_this->_raw_content) + 1;
-                $_this->_raw_content[$idx] = $m[1];
-                return '^^^' . $idx . '^^^';
+            '/^'. $raw .'(.+?)'. $raw .'/ims',
+            function ($m) use (&$_raw_content, $pad) {
+                $i = count($_raw_content) + 1;
+                $_raw_content[$i] = $m[1];
+                return $pad . $i . $pad;
             },
             $string
         );
@@ -166,11 +184,15 @@ class yf_tpl_driver_yf
      */
     public function _process_raw_return($string, array &$replace, $name = '', $params = [])
     {
-        if (empty($string) && strpos($string, '^^^') === false) {
-            return $string;
-        }
-        foreach ($this->_raw_content as $idx => $str) {
-            $string = str_replace('^^^' . $idx . '^^^', $str, $string);
+        $pad = $this->_raw_p;
+        $len = strlen( $pad );
+        if (empty($string)) { return $string; }
+        $p = strpos($string, $pad);
+        if ($p === false) { return $string; }
+        $p = strpos($string, $pad, $p+$len);
+        if ($p === false) { return $string; }
+        foreach ($this->_raw_content as $i => $s) {
+            $string = str_replace($pad . $i . $pad, $s, $string);
         }
         return $string;
     }
