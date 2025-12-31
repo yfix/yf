@@ -33,9 +33,10 @@ class yf_tpl_driver_yf
     public $_stpl_mtimes = [];
     public $_STPL_EXT = '.stpl';
 
-    private $_raw_content = [];
-    private $_raw_s = '%%%';
-    private $_raw_p = '^^^';
+    public $is_raw = true;
+    public $_raw_s = '%%%';
+    public $_raw_p = '^^^';
+    public $_raw_content = [];
 
     /**
      * Catch missing method call.

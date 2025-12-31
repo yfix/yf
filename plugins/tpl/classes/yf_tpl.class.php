@@ -419,13 +419,18 @@ class yf_tpl
         }
         // Allowing to override driver
         if ($params['driver'] && $params['driver'] != $this->DRIVER_NAME) {
-            $string = _class('tpl_driver_' . $params['driver'], 'classes/tpl/')->parse($name, $replace, $params);
+            $driver = _class('tpl_driver_' . $params['driver'], 'classes/tpl/');
         } else {
-            $string = $this->driver->parse($name, $replace, $params);
+            $driver = $this->driver;
         }
+        $string = $driver->parse($name, $replace, $params);
         if ($params['replace_images']) {
             $string = $this->_replace_images_paths($string);
         }
+        // wrapper raw
+        $is_raw = ($params[ 'raw' ] ?? false) && ($this->driver->is_raw ?? false);
+        $raw = $is_raw ? $this->driver->_raw_s : '';
+        $string = $raw . $string . $raw;
         if (DEBUG_MODE) {
             $this->_parse_set_debug_info($name, $replace, $params, $string, $stpl_time_start);
         }
@@ -448,6 +453,21 @@ class yf_tpl
             $name = 'auto__' . abs(crc32($string));
         }
         $params['string'] = $string;
+        return $this->parse($name, $replace, $params);
+    }
+
+    /**
+     * Wrapper to  raw.
+     */
+    public function parse_string_raw($string = '', $replace = [], $name = '', $params = [])
+    {
+        $params[ 'raw' ] = true;
+        return $this->parse_string($string, $replace, $name, $params);
+    }
+
+    public function parse_raw($name, $replace = [], $params = [])
+    {
+        $params[ 'raw' ] = true;
         return $this->parse($name, $replace, $params);
     }
 
