@@ -344,10 +344,13 @@ class yf_api
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // options
         $options = [
-            CURLOPT_USERAGENT => 'YF.API',
             CURLOPT_RETURNTRANSFER => true,
             // CURLOPT_URL            =>  $url,
         ];
+        $user_agent = $_user_agent ?? 'YF.API';
+        if ( $user_agent !== 'none' ) {
+            $options[ CURLOPT_USERAGENT ] = $user_agent;
+        }
         $header = [];
         if ( ! empty($post)) {
             if (@$_is_json) {
@@ -474,7 +477,9 @@ class yf_api
         // DEBUG
         @$_is_debug && var_dump($content_type);
         // finish
-        curl_close($ch);
+        // curl_close: This function has been DEPRECATED as of PHP 8.5.0
+        // curl_close($ch);
+        unset( $ch );
         // detect content type of response
         if (@$_is_response_raw) {
             $result = $body;
