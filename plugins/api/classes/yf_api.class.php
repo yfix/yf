@@ -398,6 +398,28 @@ class yf_api
                 CURLOPT_SSL_VERIFYPEER => false,
             ];
         }
+        if ( @$_proxy ) {
+            // proxy: 128.0.0.1:8080
+            $options += [CURLOPT_PROXY => $_proxy];
+            // auth: USERNAME:PASSWORD
+            @$_proxy_user_pwd && $options += [CURLOPT_PROXYUSERPWD => $_proxy_user_pwd];
+            // type: http, https, socks5 ...
+            $i = CURLPROXY_HTTPS;
+            switch (@$_proxy_type) {
+                case 'http':    $i = CURLPROXY_HTTP;    break;
+                case 'https':   $i = CURLPROXY_HTTPS;   break;
+                case 'socks4':  $i = CURLPROXY_SOCKS4;  break;
+                case 'socks4a': $i = CURLPROXY_SOCKS4A; break;
+                case 'socks5':  $i = CURLPROXY_SOCKS5;  break;
+                case 'socks5_hostname': $i = CURLPROXY_SOCKS5_HOSTNAME; break;
+            }
+            $options += [CURLOPT_PROXYTYPE => $i];
+        }
+        // resolve = [
+        //     "example.com:80:192.0.2.1",
+        // ];
+        @$_resolve && $options += [CURLOPT_RESOLVE => $_resolve];
+        // other
         @$_timeout && $options += [CURLOPT_TIMEOUT => $_timeout];
         @$_SSLCERT && $options += [CURLOPT_SSLCERT => $_SSLCERT];
         @$_SSLCERTPASSWD && $options += [CURLOPT_SSLCERTPASSWD => $_SSLCERTPASSWD];
