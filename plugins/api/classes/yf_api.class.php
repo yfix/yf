@@ -355,21 +355,32 @@ class yf_api
         if ( ! empty($post)) {
             if (@$_is_json) {
                 $http_post = json_encode($post);
+                $options += [
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                ];
             } else {
                 if (@$_is_request_raw || @$_is_post_raw) {
                     $http_post = $post;
                 } else {
                     $http_post = http_build_query($post);
                 }
+                $options += [
+                    CURLOPT_POST => true,
+                ];
             }
             $options += [
-                CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => $http_post,
             ];
         }
         if (@$_is_post) {
             $options += [
                 CURLOPT_POST => true,
+            ];
+        }
+        if (@$_method) {
+            $options += [
+                CURLOPT_CUSTOMREQUEST => $_method,
             ];
         }
         if (@$_user) {
@@ -434,8 +445,27 @@ class yf_api
         }
         // add header
         if ( ! empty($_header)) {
-            $header = array_replace_recursive($header, $_header);
+            @$_is_debug && var_dump($_header);
+            if ( empty($header)) {
+                $header = $_header;
+            } else {
+                foreach( $_header as $_i ) {
+                    list( $_k, $_v ) = explode( ':', $_i );
+                    $_k = trim( $_k );
+                    $is_key = false;
+                    foreach( $header as &$i ) {
+                        list( $k, $v ) = explode( ':', $i );
+                        $k = trim( $k );
+                        if( $k === $_k ) {
+                            $i = $_i;
+                            $is_key = true;
+                        }
+                    }
+                    if ( !$is_key ) { $header[] = $_i; }
+                }
+            }
         }
+        @$_is_debug && var_dump($header);
         ! empty($header) && $options += [CURLOPT_HTTPHEADER => $header];
         // debug request header
         $options += [
@@ -446,6 +476,14 @@ class yf_api
             CURLOPT_VERBOSE => true,
             CURLOPT_HEADER => true,
         ];
+        if (@$_query) {
+            if (is_array($_query)) {
+                $q = http_build_query($_query);
+            } else {
+                $q = $_query;
+            }
+            $url .= '?'. $q;
+        }
         // exec
         $ch = curl_init($url);
         curl_setopt_array($ch, $options);
@@ -480,6 +518,7 @@ class yf_api
         $message = '';
         switch ($http_code) {
             case 200: $status = true;                 break;
+            case 201: $status = true;                 break;
             case 301: $message = 'Moved Permanently'; break;
             case 302: $message = 'Moved Temporarily'; break;
             case 400: $message = 'неверный запрос';   break;
@@ -492,7 +531,7 @@ class yf_api
                 }
                 break;
         }
-        if ($http_code != 200) {
+        if ($http_code != 200 && $http_code != 201) {
             $result = sprintf('Ошибка транспорта: [%d] %s', $http_code, $message);
         }
         $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
@@ -509,6 +548,7 @@ class yf_api
             switch (true) {
                 case  @$_is_response_json || strpos($content_type, 'application/json') === 0:
                     $result = @json_decode($body, true);
+                    if ($result ?? false) { $status = true; }
                     // DEBUG
                     @$_is_debug && var_dump('is_json', $result);
                     break;
