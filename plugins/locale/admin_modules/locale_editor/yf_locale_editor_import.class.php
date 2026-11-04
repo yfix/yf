@@ -45,7 +45,7 @@ class yf_locale_editor_import
      * @param mixed $params
      * @param mixed $form
      */
-    public function _on_validate_ok($params = [], $form)
+    public function _on_validate_ok($params = [], $form = null)
     {
         $p = $params ?: $_POST;
         $f = $_FILES['file'];

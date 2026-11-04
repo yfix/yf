@@ -9,7 +9,7 @@ class yf_table2_postload
      * @param mixed $params
      * @param mixed $table
      */
-    public function postload($params = [], $table)
+    public function postload($params = [], $table = null)
     {
         $attr_postload_url = $params['attr_postload_url'] ?: 'postload-url';
         $tr_id_key = $params['tr_id_key'] ?: 'name';

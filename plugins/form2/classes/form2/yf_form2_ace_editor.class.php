@@ -7,7 +7,7 @@ class yf_form2_ace_editor
      * @param mixed $replace
      * @param mixed $form
      */
-    public function _ace_editor_html($extra = [], $replace = [], $form)
+    public function _ace_editor_html($extra = [], $replace = [], $form = null)
     {
         $extra['id'] = $extra['id'] ?: 'editor_html';
         asset('ace-editor');

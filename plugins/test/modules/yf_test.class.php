@@ -170,7 +170,7 @@ class yf_test
      * @param mixed $callback
      * @param mixed $params
      */
-    public function _html5fw_test($fw = 'bs2', $callback, $params = [])
+    public function _html5fw_test($fw = 'bs2', $callback = null, $params = [])
     {
         main()->no_graphics(true);
         _class('assets')->clean_all();

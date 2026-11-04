@@ -59,7 +59,7 @@ class Interkassa
     private $_hash_method = null;
     private $_test_mode = null;
 
-    public function __construct($key_public, $key_private, $key_private_test, $hash_method = 'md5', $test_mode)
+    public function __construct($key_public, $key_private, $key_private_test, $hash_method = 'md5', $test_mode = false)
     {
         if (empty($key_public)) {
             throw new InvalidArgumentException('key_public (ik_co_id) is empty');

@@ -1,7 +1,7 @@
 <?php
 
 return function () {
-    main()->extend('form2', 'new_control', function ($name, $desc = '', $extra = [], $replace = [], $_this) {
+    main()->extend('form2', 'new_control', function ($name, $desc = '', $extra = [], $replace = [], $_this = null) {
         return $_this->input($name, $desc, $extra, $replace);
     });
     return form($r ?? [])

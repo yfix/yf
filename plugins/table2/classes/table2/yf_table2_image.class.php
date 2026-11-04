@@ -12,7 +12,7 @@ class yf_table2_image
      * @param mixed $extra
      * @param mixed $table
      */
-    public function image($name, $path, $link = '', $extra = [], $table)
+    public function image($name, $path, $link = '', $extra = [], $table = null)
     {
         if (is_array($path)) {
             $extra = (array) $extra + $path;

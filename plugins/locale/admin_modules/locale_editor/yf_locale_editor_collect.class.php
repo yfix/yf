@@ -51,7 +51,7 @@ class yf_locale_editor_collect
      * @param mixed $params
      * @param mixed $form
      */
-    public function _on_validate_ok($params = [], $form)
+    public function _on_validate_ok($params = [], $form = null)
     {
         $vars_db = $this->_parent->_get_all_vars_from_db();
         $found_vars = $this->_parse_sources($params);

@@ -39,7 +39,7 @@ class yf_locale_editor_export
      * @param mixed $params
      * @param mixed $form
      */
-    public function _on_validate_ok($params = [], $form)
+    public function _on_validate_ok($params = [], $form = null)
     {
         $p = $params ?: $_POST;
         $lang = $p['lang'];
