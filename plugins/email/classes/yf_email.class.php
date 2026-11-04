@@ -57,7 +57,7 @@ class yf_email
 
     public function _init()
     {
-        $this->ADMIN_EMAIL = defined('SITE_ADMIN_EMAIL') && strlen(SITE_ADMIN_EMAIL) ? SITE_ADMIN_EMAIL : 'support@' . $_SERVER['HTTP_HOST'];
+        $this->ADMIN_EMAIL = defined('SITE_ADMIN_EMAIL') && strlen(SITE_ADMIN_EMAIL) ? SITE_ADMIN_EMAIL : 'support@' . ($_SERVER['HTTP_HOST'] ?? null);
         $this->ADMIN_NAME = defined('SITE_ADMIN_NAME') && strlen(SITE_ADMIN_NAME) ? SITE_ADMIN_NAME : SITE_ADVERT_TITLE . ' support';
         $this->EMAIL_FROM = SITE_ADMIN_EMAIL;
         $this->NAME_FROM = SITE_ADVERT_NAME;
@@ -211,7 +211,7 @@ class yf_email
             'name_to' => $name_to,
             'subject' => $subject,
             'text' => $html,
-            'date' => $_SERVER['REQUEST_TIME'],
+            'date' => ($_SERVER['REQUEST_TIME'] ?? null),
         ]);
         if ( ! $html) {
             if ($this->MAIL_DEBUG_ERROR) {

@@ -83,8 +83,8 @@ class yf_module
      */
     public function add_comment($params = [])
     {
-        if ($_POST['submit'] == 'Preview') {
-            return module('preview')->_display_preview(['text' => $_POST['text']]);
+        if (($_POST['submit'] ?? null) == 'Preview') {
+            return module('preview')->_display_preview(['text' => ($_POST['text'] ?? null)]);
         }
         return module('comments')->_add((array) $this->_comments_params + (array) $params);
     }
@@ -134,7 +134,7 @@ class yf_module
     {
         $this->_captcha_load_code();
         if (is_object($this->CAPTCHA)) {
-            return $this->CAPTCHA->show_block('./?object=' . $_GET['object'] . '&action=captcha_image');
+            return $this->CAPTCHA->show_block('./?object=' . ($_GET['object'] ?? null) . '&action=captcha_image');
         }
     }
 
@@ -243,7 +243,7 @@ class yf_module
 
     public function edit_tag()
     {
-        return module_safe('tags')->_edit_tags($_GET['id']);
+        return module_safe('tags')->_edit_tags(($_GET['id'] ?? null));
     }
 
     /**

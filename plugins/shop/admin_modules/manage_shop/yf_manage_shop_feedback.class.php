@@ -13,7 +13,7 @@ class yf_manage_shop_feedback
         $sql = 'SELECT f.*,p.name as product_name FROM ' . db('shop_product_feedback') . ' AS f
 					INNER JOIN ' . db('shop_products') . ' AS p ON f.product_id = p.id';
         return table($sql, [
-                'filter' => $_SESSION[$_GET['object'] . '__feedback'],
+                'filter' => ($_SESSION[$_GET['object'] . '__feedback'] ?? null),
                 'filter_params' => [
                     'id' => ['like', 'f.id'],
                     'product_id' => ['like', 'f.product_id'],
@@ -45,28 +45,28 @@ class yf_manage_shop_feedback
 
     public function feedback_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $field_info = db()->query_fetch('SELECT * FROM ' . db('shop_product_feedback') . ' WHERE id = ' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $field_info = db()->query_fetch('SELECT * FROM ' . db('shop_product_feedback') . ' WHERE id = ' . (int) (($_GET['id'] ?? null)));
         if (empty($field_info)) {
             return _e('no field');
         }
-        if ($_GET['id']) {
-            db()->query('DELETE FROM ' . db('shop_product_feedback') . ' WHERE id=' . $_GET['id']);
-            common()->admin_wall_add(['feedback deleted: ' . $_GET['id'], $_GET['id']]);
+        if (($_GET['id'] ?? null)) {
+            db()->query('DELETE FROM ' . db('shop_product_feedback') . ' WHERE id=' . ($_GET['id'] ?? null));
+            common()->admin_wall_add(['feedback deleted: ' . ($_GET['id'] ?? null), ($_GET['id'] ?? null)]);
             $this->_recalc_rating($field_info['product_id']);
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
-            return js_redirect($_SERVER['HTTP_REFERER'], 0);
+            return js_redirect(($_SERVER['HTTP_REFERER'] ?? null), 0);
         }
     }
 
     public function feedback_activate()
     {
-        if ($_GET['id']) {
-            $a = db()->query_fetch('SELECT * FROM ' . db('shop_product_feedback') . ' WHERE id = ' . (int) ($_GET['id']));
+        if (($_GET['id'] ?? null)) {
+            $a = db()->query_fetch('SELECT * FROM ' . db('shop_product_feedback') . ' WHERE id = ' . (int) (($_GET['id'] ?? null)));
         }
         if ($a['id']) {
             if ($a['active'] == 1) {
@@ -74,9 +74,9 @@ class yf_manage_shop_feedback
             } elseif ($a['active'] == 0) {
                 $active = 1;
             }
-            db()->update_safe(db('shop_product_feedback'), ['active' => $active], 'id=' . (int) ($_GET['id']));
+            db()->update_safe(db('shop_product_feedback'), ['active' => $active], 'id=' . (int) (($_GET['id'] ?? null)));
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
             echo $active ? 1 : 0;
         } else {

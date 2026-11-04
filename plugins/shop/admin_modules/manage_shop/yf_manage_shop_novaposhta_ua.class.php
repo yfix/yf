@@ -24,7 +24,7 @@ class yf_manage_shop_novaposhta_ua
     {
         $result = '';
         if ($this->is_post) {
-            $is_import = $_POST['import'] && $_POST['confirm'];
+            $is_import = ($_POST['import'] ?? null) && ($_POST['confirm'] ?? null);
             if ($is_import) {
                 $result .= $this->novaposhta_ua__import();
             }

@@ -12,9 +12,9 @@ return function () {
     }
     // Get console params
     $params = [];
-    foreach ((array) $_SERVER['argv'] as $key => $argv) {
+    foreach ((array) ($_SERVER['argv'] ?? null) as $key => $argv) {
         if ($argv == '--params' && isset($_SERVER['argv'][$key + 1])) {
-            $params = unserialize($_SERVER['argv'][$key + 1]);
+            $params = unserialize(($_SERVER['argv'][$key + 1] ?? null));
             break;
         }
     }

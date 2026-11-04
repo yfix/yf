@@ -35,10 +35,10 @@ class yf_dynamic_image
     public function image()
     {
         no_graphics(true);
-        if (empty($_SERVER['HTTP_REFERER']) || ! defined('WEB_PATH') || substr($_SERVER['HTTP_REFERER'], 0, strlen(WEB_PATH)) !== WEB_PATH) {
+        if (empty($_SERVER['HTTP_REFERER']) || ! defined('WEB_PATH') || substr(($_SERVER['HTTP_REFERER'] ?? null), 0, strlen(WEB_PATH)) !== WEB_PATH) {
             return $this->_show_error_image();
         }
-        $img = trim($_GET['id'], '/');
+        $img = trim(($_GET['id'] ?? null), '/');
         $path = PROJECT_PATH . $img;
         if ( ! strlen($img) || false !== strpos($img, '..')) {
             return $this->_show_error_image();
@@ -74,11 +74,11 @@ class yf_dynamic_image
     {
         no_graphics(true);
 
-        list($id, $ext) = explode('.', $_GET['id']);
+        list($id, $ext) = explode('.', ($_GET['id'] ?? null));
         list($w, $h) = explode('x', $id);
         $w = (int) $w ?: 100;
         $h = (int) $h ?: 100;
-        $params['color_bg'] = $_GET['page'] ? preg_replace('[^a-z0-9]', '', $_GET['page']) : '';
+        $params['color_bg'] = ($_GET['page'] ?? null) ? preg_replace('[^a-z0-9]', '', $_GET['page']) : '';
 
         require_once YF_PATH . 'functions/yf_placeholder_img.php';
         echo yf_placeholder_img($w, $h, $params);

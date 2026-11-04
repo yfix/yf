@@ -74,8 +74,8 @@ class yf_auth_admin
             $this->LOG_FAILED_LOGINS = true;
         }
         // Remember last query string to process it after succesful login
-        if (empty($_SESSION[$this->VAR_ADMIN_ID]) && $_GET['task'] != 'login') {
-            $_SESSION[$this->VAR_ADMIN_GO_URL] = $_SERVER['QUERY_STRING'];
+        if (empty($_SESSION[$this->VAR_ADMIN_ID]) && ($_GET['task'] ?? null) != 'login') {
+            $_SESSION[$this->VAR_ADMIN_GO_URL] = ($_SERVER['QUERY_STRING'] ?? null);
         }
         // Try to assign first page of the site (if $_GET['object'] is empty)
         if (empty($_GET['object'])) {
@@ -94,11 +94,11 @@ class yf_auth_admin
             $_GET['object'] = $this->DEF_ADMIN_MODULE;
         }
         // Check for session IP
-        if ($this->SESSION_LOCK_TO_IP && ! empty($_SESSION[$this->VAR_ADMIN_ID]) && $_GET['task'] !== 'logout') {
+        if ($this->SESSION_LOCK_TO_IP && ! empty($_SESSION[$this->VAR_ADMIN_ID]) && ($_GET['task'] ?? null) !== 'logout') {
             // User has changed IP, logout immediately
             $ip = common()->get_ip();
-            if ( ! isset($_SESSION[$this->VAR_LOCK_IP]) || $_SESSION[$this->VAR_LOCK_IP] !== $ip) {
-                trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:' . $_SESSION[$this->VAR_LOCK_IP] . ', new_ip:' . $ip . ', admin_id: ' . (int) ($_SESSION[$this->VAR_ADMIN_ID]), E_USER_WARNING);
+            if ( ! isset($_SESSION[$this->VAR_LOCK_IP]) || ($_SESSION[$this->VAR_LOCK_IP] ?? null) !== $ip) {
+                trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:' . ($_SESSION[$this->VAR_LOCK_IP] ?? null) . ', new_ip:' . $ip . ', admin_id: ' . (int) (($_SESSION[$this->VAR_ADMIN_ID] ?? null)), E_USER_WARNING);
                 $this->_log_fail([
                     'reason' => 'auth_blocked_by_ip',
                 ]);
@@ -106,11 +106,11 @@ class yf_auth_admin
             }
         }
         // Check for session User Agent
-        if ($this->SESSION_LOCK_TO_UA && ! empty($_SESSION[$this->VAR_ADMIN_ID]) && $_GET['task'] !== 'logout') {
+        if ($this->SESSION_LOCK_TO_UA && ! empty($_SESSION[$this->VAR_ADMIN_ID]) && ($_GET['task'] ?? null) !== 'logout') {
             // User has changed User Agent, logout immediately
-            $ua = $_SERVER['HTTP_USER_AGENT'];
-            if ( ! isset($_SESSION[$this->VAR_LOCK_UA]) || $_SESSION[$this->VAR_LOCK_UA] !== $ua) {
-                trigger_error('AUTH: Attempt to use session with changed User Agent blocked, auth_ua:"' . $_SESSION[$this->VAR_LOCK_UA] . '", new_ua:"' . $ua . '", admin_id: ' . (int) ($_SESSION[$this->VAR_ADMIN_ID]), E_USER_WARNING);
+            $ua = ($_SERVER['HTTP_USER_AGENT'] ?? null);
+            if ( ! isset($_SESSION[$this->VAR_LOCK_UA]) || ($_SESSION[$this->VAR_LOCK_UA] ?? null) !== $ua) {
+                trigger_error('AUTH: Attempt to use session with changed User Agent blocked, auth_ua:"' . ($_SESSION[$this->VAR_LOCK_UA] ?? null) . '", new_ua:"' . $ua . '", admin_id: ' . (int) (($_SESSION[$this->VAR_ADMIN_ID] ?? null)), E_USER_WARNING);
                 $this->_log_fail([
                     'reason' => 'auth_blocked_by_ua',
                 ]);
@@ -118,11 +118,11 @@ class yf_auth_admin
             }
         }
         // Check for session hostname
-        if ($this->SESSION_LOCK_TO_HOST && ! empty($_SESSION[$this->VAR_ADMIN_ID]) && $_GET['task'] !== 'logout') {
+        if ($this->SESSION_LOCK_TO_HOST && ! empty($_SESSION[$this->VAR_ADMIN_ID]) && ($_GET['task'] ?? null) !== 'logout') {
             // User has changed Host, logout immediately
-            $host = $_SERVER['HTTP_HOST'];
-            if ( ! isset($_SESSION[$this->VAR_LOCK_HOST]) || $_SESSION[$this->VAR_LOCK_HOST] !== $host) {
-                trigger_error('AUTH: Attempt to use session with changed Host blocked, auth_host:"' . $_SESSION[$this->VAR_LOCK_HOST] . '", new_host:"' . $ua . '", admin_id: ' . (int) ($_SESSION[$this->VAR_ADMIN_ID]), E_USER_WARNING);
+            $host = ($_SERVER['HTTP_HOST'] ?? null);
+            if ( ! isset($_SESSION[$this->VAR_LOCK_HOST]) || ($_SESSION[$this->VAR_LOCK_HOST] ?? null) !== $host) {
+                trigger_error('AUTH: Attempt to use session with changed Host blocked, auth_host:"' . ($_SESSION[$this->VAR_LOCK_HOST] ?? null) . '", new_host:"' . $ua . '", admin_id: ' . (int) (($_SESSION[$this->VAR_ADMIN_ID] ?? null)), E_USER_WARNING);
                 $this->_log_fail([
                     'reason' => 'auth_blocked_by_host',
                 ]);
@@ -130,8 +130,8 @@ class yf_auth_admin
             }
         }
         // Check referer matched to WEB_PATH
-        $referer = $_SERVER['HTTP_REFERER'];
-        if ($this->SESSION_REFERER_CHECK && ( ! $referer || substr($referer, 0, strlen(WEB_PATH)) != WEB_PATH) && $_GET['task'] !== 'logout') {
+        $referer = ($_SERVER['HTTP_REFERER'] ?? null);
+        if ($this->SESSION_REFERER_CHECK && ( ! $referer || substr($referer, 0, strlen(WEB_PATH)) != WEB_PATH) && ($_GET['task'] ?? null) !== 'logout') {
             trigger_error('AUTH: Referer not matched and session blocked, referer:' . $referer, E_USER_WARNING);
             $this->_log_fail([
                 'reason' => 'auth_blocked_by_referer',
@@ -139,20 +139,20 @@ class yf_auth_admin
             $_GET['task'] = 'logout';
         }
         // Process log in or log out
-        if ($_GET['task'] == 'login') {
+        if (($_GET['task'] ?? null) == 'login') {
             if (empty($_SESSION[$this->VAR_ADMIN_ID])) {
                 $this->_do_login();
-            } elseif ($_GET['id'] == 'prev_info' && ! empty($_SESSION['admin_prev_info'])) {
+            } elseif (($_GET['id'] ?? null) == 'prev_info' && ! empty($_SESSION['admin_prev_info'])) {
                 $this->_login_with_prev_info();
             }
-        } elseif ($_GET['task'] == 'logout') {
+        } elseif (($_GET['task'] ?? null) == 'logout') {
             $this->_do_logout();
         }
         // Store admin info inside the main module
         if ( ! empty($_SESSION[$this->VAR_ADMIN_ID]) && ! empty($_SESSION[$this->VAR_ADMIN_GROUP_ID])) {
             $main = main();
-            $main->ADMIN_ID = $_SESSION[$this->VAR_ADMIN_ID];
-            $main->ADMIN_GROUP = $_SESSION[$this->VAR_ADMIN_GROUP_ID];
+            $main->ADMIN_ID = ($_SESSION[$this->VAR_ADMIN_ID] ?? null);
+            $main->ADMIN_GROUP = ($_SESSION[$this->VAR_ADMIN_GROUP_ID] ?? null);
             if ($this->ADMIN_INFO_IN_SESSION && ! empty($_SESSION[$this->VAR_ADMIN_INFO])) {
                 main()->ADMIN_INFO = &$_SESSION[$this->VAR_ADMIN_INFO];
             }
@@ -165,15 +165,15 @@ class yf_auth_admin
      */
     public function _do_login()
     {
-        $AUTH_LOGIN = trim($_POST[$this->LOGIN_FIELD]);
-        $AUTH_PSWD = trim($_POST[$this->PSWD_FIELD]);
+        $AUTH_LOGIN = trim(($_POST[$this->LOGIN_FIELD] ?? null));
+        $AUTH_PSWD = trim(($_POST[$this->PSWD_FIELD] ?? null));
 
         if (empty($AUTH_LOGIN) || empty($AUTH_PSWD)) {
             return false;
         }
-        if ($this->AUTH_ONLY_HTTPS && ! ($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL'])) {
+        if ($this->AUTH_ONLY_HTTPS && ! (($_SERVER['HTTPS'] ?? null) || ($_SERVER['SSL_PROTOCOL'] ?? null))) {
             $redirect_url = '';
-            if ($_SERVER['HTTP_REFERER']) {
+            if (($_SERVER['HTTP_REFERER'] ?? null)) {
                 $redirect_url = str_replace('http://', 'https://', $_SERVER['HTTP_REFERER']);
             }
             if ( ! $redirect_url) {
@@ -219,14 +219,14 @@ class yf_auth_admin
             $_SESSION[$this->VAR_ADMIN_GROUP_ID] = $admin_info['group'];
             $_SESSION[$this->VAR_ADMIN_LOGIN_TIME] = time();
             $_SESSION[$this->VAR_LOCK_IP] = common()->get_ip();
-            $_SESSION[$this->VAR_LOCK_UA] = $_SERVER['HTTP_USER_AGENT'];
-            $_SESSION[$this->VAR_LOCK_HOST] = $_SERVER['HTTP_HOST'];
+            $_SESSION[$this->VAR_LOCK_UA] = ($_SERVER['HTTP_USER_AGENT'] ?? null);
+            $_SESSION[$this->VAR_LOCK_HOST] = ($_SERVER['HTTP_HOST'] ?? null);
             $main = main();
             $main->_init_cur_user_info($main);
 
             // Auto-redirect to the page before login form if needed
             if ( ! empty($_SESSION[$this->VAR_ADMIN_GO_URL])) {
-                $REDIRECT_URL = (substr($_SESSION[$this->VAR_ADMIN_GO_URL], 0, 2) != './' ? './?' : '') . $_SESSION[$this->VAR_ADMIN_GO_URL];
+                $REDIRECT_URL = (substr(($_SESSION[$this->VAR_ADMIN_GO_URL] ?? null), 0, 2) != './' ? './?' : '') . ($_SESSION[$this->VAR_ADMIN_GO_URL] ?? null);
                 // Cleanup redirect url
                 $_SESSION[$this->VAR_ADMIN_GO_URL] = '';
             // Redirect user to the user default
@@ -272,14 +272,14 @@ class yf_auth_admin
         return db()->insert_safe('log_admin_auth_fails', [
             'time'         => str_replace(',', '.', microtime(true)),
             'ip'           => common()->get_ip(),
-            'user_id'      => $data['user_id'] ?: $_SESSION[$this->VAR_ADMIN_ID],
+            'user_id'      => $data['user_id'] ?: ($_SESSION[$this->VAR_ADMIN_ID] ?? null),
             'login'        => $data['login'],
             'pswd'         => $data['pswd'],
             'reason'       => $data['reason'],
-            'host'         => $_SERVER['HTTP_HOST'],
-            'user_agent'   => $_SERVER['HTTP_USER_AGENT'],
-            'referer'      => $_SERVER['HTTP_REFERER'],
-            'query_string' => $_SERVER['QUERY_STRING'],
+            'host'         => ($_SERVER['HTTP_HOST'] ?? null),
+            'user_agent'   => ($_SERVER['HTTP_USER_AGENT'] ?? null),
+            'referer'      => ($_SERVER['HTTP_REFERER'] ?? null),
+            'query_string' => ($_SERVER['QUERY_STRING'] ?? null),
             'site_id'      => (int) conf('SITE_ID'),
             'server_id'    => (int) conf('SERVER_ID'),
         ]);
@@ -310,8 +310,8 @@ class yf_auth_admin
         $_SESSION[$this->VAR_ADMIN_GROUP_ID] = $a['group'];
         $_SESSION[$this->VAR_ADMIN_LOGIN_TIME] = time();
         $_SESSION[$this->VAR_LOCK_IP] = common()->get_ip();
-        $_SESSION[$this->VAR_LOCK_UA] = $_SERVER['HTTP_USER_AGENT'];
-        $_SESSION[$this->VAR_LOCK_HOST] = $_SERVER['HTTP_HOST'];
+        $_SESSION[$this->VAR_LOCK_UA] = ($_SERVER['HTTP_USER_AGENT'] ?? null);
+        $_SESSION[$this->VAR_LOCK_HOST] = ($_SERVER['HTTP_HOST'] ?? null);
 
         $after_login = $t_group['go_after_login'] ?: $t_group['go_after_login'];
         return js_redirect($after_login ?: './');
@@ -323,7 +323,7 @@ class yf_auth_admin
      */
     public function _login_with_prev_info()
     {
-        $prev_info = $_SESSION['admin_prev_info'];
+        $prev_info = ($_SESSION['admin_prev_info'] ?? null);
         if ( ! $prev_info || ! $prev_info[$this->VAR_ADMIN_ID] || ! $prev_info[$this->VAR_ADMIN_GROUP_ID]) {
             if ( ! empty($this->URL_WRONG_LOGIN)) {
                 return js_redirect($this->URL_WRONG_LOGIN);
@@ -339,7 +339,7 @@ class yf_auth_admin
         }
         $t_group = db()->from('admin_groups')->whereid((int) $a['group'])->get();
         // Save previous session
-        $_SESSION = $_SESSION['admin_prev_info'];
+        $_SESSION = ($_SESSION['admin_prev_info'] ?? null);
         unset($_SESSION['admin_prev_info']); // Prevent recursion
         // Login as different admin user
         session_regenerate_id($destroy = true);
@@ -347,8 +347,8 @@ class yf_auth_admin
         $_SESSION[$this->VAR_ADMIN_GROUP_ID] = $a['group'];
         $_SESSION[$this->VAR_ADMIN_LOGIN_TIME] = time();
         $_SESSION[$this->VAR_LOCK_IP] = common()->get_ip();
-        $_SESSION[$this->VAR_LOCK_UA] = $_SERVER['HTTP_USER_AGENT'];
-        $_SESSION[$this->VAR_LOCK_HOST] = $_SERVER['HTTP_HOST'];
+        $_SESSION[$this->VAR_LOCK_UA] = ($_SERVER['HTTP_USER_AGENT'] ?? null);
+        $_SESSION[$this->VAR_LOCK_HOST] = ($_SERVER['HTTP_HOST'] ?? null);
 
         $after_login = $t_group[$this->VAR_ADMIN_GO_URL] ?: $t_group[$this->VAR_ADMIN_GO_URL];
         return js_redirect($after_login ?: './');

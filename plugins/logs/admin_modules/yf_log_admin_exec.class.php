@@ -18,7 +18,7 @@ class yf_log_admin_exec
                 ],
             ])
             ->admin('admin_id')
-            ->link('ip', './?object=' . $_GET['object'] . '&action=show_for_ip&id=%d')
+            ->link('ip', './?object=' . ($_GET['object'] ?? null) . '&action=show_for_ip&id=%d')
             ->date('date', ['format' => 'full', 'nowrap' => 1])
             ->text('user_agent')
             ->text('referer')
@@ -32,7 +32,7 @@ class yf_log_admin_exec
     public function show_for_admin()
     {
         $_GET['page'] = 'clear';
-        $_GET['filter'] = 'admin_id:' . (int) ($_GET['id']);
+        $_GET['filter'] = 'admin_id:' . (int) (($_GET['id'] ?? null));
         return $this->filter_save();
     }
 
@@ -53,7 +53,7 @@ class yf_log_admin_exec
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [];

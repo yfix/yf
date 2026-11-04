@@ -34,19 +34,19 @@ class yf_site_nav_bar
         }
         $items = [];
         // Switch between specific actions
-        if (in_array($_GET['object'], ['', 'home_page'])) {
+        if (in_array(($_GET['object'] ?? null), ['', 'home_page'])) {
             // Empty
         } else {
-            if ( ! in_array($_GET['action'], ['', 'show'])) {
-                $items[] = $this->_nav_item($this->_decode_from_url($_GET['object']), './?object=' . $_GET['object']);
-                $items[] = $this->_nav_item($this->_decode_from_url($_GET['action']));
+            if ( ! in_array(($_GET['action'] ?? null), ['', 'show'])) {
+                $items[] = $this->_nav_item($this->_decode_from_url(($_GET['object'] ?? null)), './?object=' . ($_GET['object'] ?? null));
+                $items[] = $this->_nav_item($this->_decode_from_url(($_GET['action'] ?? null)));
             } else {
-                $items[] = $this->_nav_item($this->_decode_from_url($_GET['object']));
+                $items[] = $this->_nav_item($this->_decode_from_url(($_GET['object'] ?? null)));
             }
         }
         // Try to get items from hook '_nav_bar_items'
         if ( ! empty($this->HOOK_NAME)) {
-            $CUR_OBJ = module($_GET['object']);
+            $CUR_OBJ = module(($_GET['object'] ?? null));
             if (is_object($CUR_OBJ) && method_exists($CUR_OBJ, $this->HOOK_NAME)) {
                 $hook_params = [
                     'nav_bar_obj' => $this,
@@ -77,7 +77,7 @@ class yf_site_nav_bar
         }
         $replace = [
             'items' => implode(tpl()->parse(__CLASS__ . '/div'), $items),
-            'is_logged_in' => (int) ((bool) (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0)),
+            'is_logged_in' => (int) ((bool) (isset($_SESSION['user_id']) ? ($_SESSION['user_id'] ?? null) : 0)),
             'bookmark_page' => isset($bookmark_page_code) ? $bookmark_page_code : '',
         ];
         return tpl()->parse(__CLASS__ . '/main', $replace);
@@ -94,7 +94,7 @@ class yf_site_nav_bar
             'link' => $nav_link,
             'icon' => $nav_icon,
             'as_link' => ! empty($nav_link) ? 1 : 0,
-            'is_logged_in' => (int) ((bool) (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0)),
+            'is_logged_in' => (int) ((bool) (isset($_SESSION['user_id']) ? ($_SESSION['user_id'] ?? null) : 0)),
         ];
         if ($this->_nav_item_as_array) {
             return $replace;

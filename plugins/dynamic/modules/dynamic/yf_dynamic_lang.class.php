@@ -27,7 +27,7 @@ class yf_dynamic_lang
         if ( ! $this->_parent->ALLOW_LANG_CHANGE) {
             return _e('Changing language not allowed!');
         }
-        $new_lang = _prepare_html($_REQUEST['lang_id']);
+        $new_lang = _prepare_html(($_REQUEST['lang_id'] ?? null));
         if ( ! empty($new_lang) && conf('languages::' . $new_lang . '::active')) {
             $_SESSION['user_lang'] = $new_lang;
             $old_location = './?object=account';
@@ -36,7 +36,7 @@ class yf_dynamic_lang
             }
             return js_redirect($old_location/*. '&lang='.(!isset($_GET['language']) ? $_SESSION['user_lang'] : $_GET['language'])*/);
         }
-        return js_redirect($_SERVER['HTTP_REFERER']);
+        return js_redirect(($_SERVER['HTTP_REFERER'] ?? null));
     }
 
     /**
@@ -68,7 +68,7 @@ class yf_dynamic_lang
         $replace = [
             'form_action' => './?object=' . str_replace(YF_PREFIX, '', __CLASS__) . '&action=change_lang',
             'lang_box' => common()->select_box('lang_id', [t('Language') => $lang_names], conf('language'), false, 2, $atts, false),
-            'back_url' => WEB_PATH . '?object=' . $_GET['object'] . ($_GET['action'] != 'show' ? '&action=' . $_GET['action'] : '') . ( ! empty($_GET['id']) ? '&id=' . $_GET['id'] : '') . ( ! empty($_GET['page']) ? '&page=' . $_GET['page'] : ''),
+            'back_url' => WEB_PATH . '?object=' . ($_GET['object'] ?? null) . (($_GET['action'] ?? null) != 'show' ? '&action=' . ($_GET['action'] ?? null) : '') . ( ! empty($_GET['id']) ? '&id=' . ($_GET['id'] ?? null) : '') . ( ! empty($_GET['page']) ? '&page=' . ($_GET['page'] ?? null) : ''),
         ];
         return tpl()->parse('system/change_lang_form', $replace);
     }

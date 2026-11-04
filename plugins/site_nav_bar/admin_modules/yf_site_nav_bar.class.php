@@ -16,13 +16,13 @@ class yf_site_nav_bar
         $bookmark_page_code = null;
         $items = [];
 
-        if (in_array($_GET['object'], [])) {
+        if (in_array(($_GET['object'] ?? null), [])) {
         } else {
-            if ( ! in_array($_GET['action'], ['', 'show'])) {
-                $items[] = $this->_nav_item($this->_decode_from_url($_GET['object']), url_admin('/@object'));
-                $items[] = $this->_nav_item($this->_decode_from_url($_GET['action']));
+            if ( ! in_array(($_GET['action'] ?? null), ['', 'show'])) {
+                $items[] = $this->_nav_item($this->_decode_from_url(($_GET['object'] ?? null)), url_admin('/@object'));
+                $items[] = $this->_nav_item($this->_decode_from_url(($_GET['action'] ?? null)));
             } else {
-                $items[] = $this->_nav_item($this->_decode_from_url($_GET['object']));
+                $items[] = $this->_nav_item($this->_decode_from_url(($_GET['object'] ?? null)));
             }
         }
         if (empty($items)) {
@@ -30,7 +30,7 @@ class yf_site_nav_bar
         }
         array_unshift($items, $this->_nav_item('Home', './?object=admin_home', 'icon-home fa fa-home'));
         if ( ! empty($this->HOOK_NAME)) {
-            $CUR_OBJ = module($_GET['object']);
+            $CUR_OBJ = module(($_GET['object'] ?? null));
         }
         if (is_object($CUR_OBJ) && method_exists($CUR_OBJ, $this->HOOK_NAME)) {
             $hook_params = [
@@ -46,7 +46,7 @@ class yf_site_nav_bar
         }
         $replace = [
             'items' => is_array($items) ? implode(tpl()->parse('site_nav_bar/div'), $items) : '',
-            'is_logged_in' => (int) ((bool) $_SESSION['user_id']),
+            'is_logged_in' => (int) ((bool) ($_SESSION['user_id'] ?? null)),
             'bookmark_page' => $bookmark_page_code,
         ];
         return tpl()->parse('site_nav_bar/main', $replace);
@@ -63,7 +63,7 @@ class yf_site_nav_bar
             'link' => $nav_link,
             'icon' => $nav_icon,
             'as_link' => ! empty($nav_link) ? 1 : 0,
-            'is_logged_in' => (int) ((bool) $_SESSION['user_id']),
+            'is_logged_in' => (int) ((bool) ($_SESSION['user_id'] ?? null)),
         ];
         return tpl()->parse('site_nav_bar/item', $replace);
     }
@@ -84,7 +84,7 @@ class yf_site_nav_bar
     {
         $cat_id = 0;
         if (empty($cat_name)) {
-            $cat_name = $_GET['cat_name'];
+            $cat_name = ($_GET['cat_name'] ?? null);
         }
         $cat_name = strtolower(str_replace(' ', '_', $cat_name));
         foreach ((array) $this->_cats as $A) {
@@ -108,10 +108,10 @@ class yf_site_nav_bar
     {
         $city_id = 0;
         if (empty($city_name)) {
-            $city_name = $_GET['city'];
+            $city_name = ($_GET['city'] ?? null);
         }
         $city_name = strtolower(str_replace('_', ' ', $city_name));
-        foreach ((array) $GLOBALS['cities'] as $A) {
+        foreach ((array) ($GLOBALS['cities'] ?? null) as $A) {
             if (strtolower($A['phrase']) == $city_name) {
                 $city_id = $A['id'];
                 break;

@@ -57,9 +57,9 @@ class yf_manage_shop_express
             ->text('name')
             ->text('quantity')
             ->text('product_id')
-            ->footer_link('PDF ' . $date . ' 10-12', './?object=' . $_GET['object'] . '&action=express_pdf&hours=10-12')
-            ->footer_link('PDF ' . $date . ' 13-15', './?object=' . $_GET['object'] . '&action=express_pdf&hours=13-15')
-            ->footer_link('PDF ' . $date . ' 17-20', './?object=' . $_GET['object'] . '&action=express_pdf&hours=17-20')
+            ->footer_link('PDF ' . $date . ' 10-12', './?object=' . ($_GET['object'] ?? null) . '&action=express_pdf&hours=10-12')
+            ->footer_link('PDF ' . $date . ' 13-15', './?object=' . ($_GET['object'] ?? null) . '&action=express_pdf&hours=13-15')
+            ->footer_link('PDF ' . $date . ' 17-20', './?object=' . ($_GET['object'] ?? null) . '&action=express_pdf&hours=17-20')
             ->render([
                 'table_attr' => 'id="express_catalog"',
                 'tr' => $table_tr,
@@ -76,7 +76,7 @@ class yf_manage_shop_express
     public function express_pdf($send_mail = false)
     {
         $date = date('Y-m-d');
-        $hours = (int) ($_GET['hours']);
+        $hours = (int) (($_GET['hours'] ?? null));
         $orders = db()->get_2d('SELECT id FROM ' . db('shop_orders') . " WHERE delivery_time LIKE '" . $date . ' ' . $hours . "%' AND status = 1");
         if (empty($orders)) {
             common()->message_warning('No orders for this time');
@@ -164,7 +164,7 @@ class yf_manage_shop_express
 
     public function mail_pdf()
     {
-        $time = (int) ($_GET['hours']);
+        $time = (int) (($_GET['hours'] ?? null));
         if (empty($time)) {
             return _e('No delivery time');
         }

@@ -255,7 +255,7 @@ class yf_related_content
                     'user_name' => _prepare_html(_display_name($users_infos[$v[$FIELD_USER]])),
                     'profile_link' => _profile_link($v[$FIELD_USER]),
                     'score' => _prepare_html($v[$FIELD_SCORE]),
-                    'href' => process_url('./?object=' . $_GET['object'] . '&action=' . $_GET['action'] . '&id=' . (int) ($v[$FIELD_ID])),
+                    'href' => process_url('./?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . '&id=' . (int) ($v[$FIELD_ID])),
                 ];
             }
             $replace = [

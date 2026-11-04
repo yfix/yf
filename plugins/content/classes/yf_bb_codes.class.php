@@ -160,7 +160,7 @@ class yf_bb_codes
                     return $_this->_parse_csv_bb_code($m[1]);
                 }, $body);
             }
-            if ($this->ENABLE_SMILIES && is_array($GLOBALS['_smiles_array']) && empty($no_smilies)) {
+            if ($this->ENABLE_SMILIES && is_array(($GLOBALS['_smiles_array'] ?? null)) && empty($no_smilies)) {
                 if ( ! empty($GLOBALS['_SMILIES_CACHE'])) {
                     $this->_smilies_replace = &$GLOBALS['_SMILIES_CACHE'];
                 } else {
@@ -168,7 +168,7 @@ class yf_bb_codes
                     if ($this->SMILIES_AS_IMAGES) {
                         $smilies_as_image = true;
                     }
-                    foreach ((array) $GLOBALS['_smiles_array'] as $smile_info) {
+                    foreach ((array) ($GLOBALS['_smiles_array'] ?? null) as $smile_info) {
                         $replace = [
                             'img_src' => WEB_PATH . /*tpl()->TPL_PATH. */$this->SMILIES_DIR . $smile_info['url'],
                             'img_alt' => _prepare_html($smile_info['emoticon']),
@@ -208,8 +208,8 @@ class yf_bb_codes
         if ( ! @$GLOBALS['_bb_codes_calls']++) {
             $js_vars_code = tpl()->parse(__CLASS__ . '/js_vars', [
                 'max_length' => isset($input['max_length']) ? (int) ($input['max_length']) : 0,
-                'bb_codes_js_src' => ! $GLOBALS['_bb_codes_calls'] ? WEB_PATH . 'js/yf_bb_codes.js' : '',
-                'display_i18n_js_vars' => ! $GLOBALS['_bb_codes_calls'] ? 1 : 0,
+                'bb_codes_js_src' => ! ($GLOBALS['_bb_codes_calls'] ?? null) ? WEB_PATH . 'js/yf_bb_codes.js' : '',
+                'display_i18n_js_vars' => ! ($GLOBALS['_bb_codes_calls'] ?? null) ? 1 : 0,
                 'emo_pop_link' => './?object=help&action=display_emo_pop',
                 'bb_pop_link' => './?object=help&action=display_bb_pop',
             ]);

@@ -30,16 +30,16 @@ class yf_dynamic_validate
 
         $rules = [];
         $errors = [];
-        if (isset($_POST['rules']) && is_array($_POST['rules'])) {
-            $rules = $_POST['rules'];
-        } elseif (isset($_GET['rules']) && is_array($_GET['rules'])) {
-            $rules = $_GET['rules'];
+        if (isset($_POST['rules']) && is_array(($_POST['rules'] ?? null))) {
+            $rules = ($_POST['rules'] ?? null);
+        } elseif (isset($_GET['rules']) && is_array(($_GET['rules'] ?? null))) {
+            $rules = ($_GET['rules'] ?? null);
         } else {
             $rules[] = [
-                'func' => preg_replace('~[^a-z0-9_]+~ims', '', (isset($_POST['func']) ? $_POST['func'] : (isset($_GET['func']) ? $_GET['func'] : $_GET['id']))),
-                'data' => isset($_POST['data']) ? $_POST['data'] : $_GET['data'],
-                'param' => isset($_POST['param']) ? $_POST['param'] : $_GET['param'],
-                'field' => isset($_POST['field']) ? $_POST['field'] : $_GET['field'],
+                'func' => preg_replace('~[^a-z0-9_]+~ims', '', (isset($_POST['func']) ? ($_POST['func'] ?? null) : (isset($_GET['func']) ? ($_GET['func'] ?? null) : ($_GET['id'] ?? null)))),
+                'data' => isset($_POST['data']) ? ($_POST['data'] ?? null) : ($_GET['data'] ?? null),
+                'param' => isset($_POST['param']) ? ($_POST['param'] ?? null) : ($_GET['param'] ?? null),
+                'field' => isset($_POST['field']) ? ($_POST['field'] ?? null) : ($_GET['field'] ?? null),
             ];
         }
         $class_validate = _class('validate');

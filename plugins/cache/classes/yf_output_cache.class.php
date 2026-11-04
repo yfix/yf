@@ -63,17 +63,17 @@ class yf_output_cache extends yf_cache
         }
         $this->OUTPUT_CACHING = main()->OUTPUT_CACHING;
 
-        if ($_SESSION['user_group'] > 1 || $_COOKIE['member_id']) {
+        if (($_SESSION['user_group'] ?? null) > 1 || ($_COOKIE['member_id'] ?? null)) {
             main()->OUTPUT_CACHING = false;
             $this->OUTPUT_CACHING = false;
         }
         // Ability to handle output cache through http query
         if ($this->OUTPUT_CACHING && $this->CACHE_CONTROL_FROM_URL) {
             // Display current page without as it is without cache
-            if (isset($_GET['no_cache']) || false !== strpos($_SERVER['REQUEST_URI'], '?no_cache')) {
+            if (isset($_GET['no_cache']) || false !== strpos(($_SERVER['REQUEST_URI'] ?? null), '?no_cache')) {
                 conf('no_output_cache', true);
             }
-            if (isset($_GET['refresh_cache']) || false !== strpos($_SERVER['REQUEST_URI'], '?refresh_cache')) {
+            if (isset($_GET['refresh_cache']) || false !== strpos(($_SERVER['REQUEST_URI'] ?? null), '?refresh_cache')) {
                 conf('refresh_output_cache', true);
             }
         }
@@ -89,7 +89,7 @@ class yf_output_cache extends yf_cache
     public function _process_output_cache()
     {
         $this->_check_if_need_to_cache();
-        if ( ! $this->OUTPUT_CACHING || $_SERVER['REQUEST_METHOD'] != 'GET' || MAIN_TYPE_ADMIN || $this->NO_NEED_TO_CACHE) {
+        if ( ! $this->OUTPUT_CACHING || ($_SERVER['REQUEST_METHOD'] ?? null) != 'GET' || MAIN_TYPE_ADMIN || $this->NO_NEED_TO_CACHE) {
             return false;
         }
         if (DEBUG_MODE) {
@@ -195,13 +195,13 @@ class yf_output_cache extends yf_cache
         $date = gmdate('D, d M Y H:i:s', $cache_last_modified_time) . ' GMT';
         $etag = '' . md5($date) . '';
         // Check http headers:
-        $modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $date : null;
-        if ( ! empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) && ($timestamp = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])) > 0) {
+        $modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? ($_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? null) == $date : null;
+        if ( ! empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) && ($timestamp = strtotime(($_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? null))) > 0) {
             $modified_since = $cache_last_modified_time <= $timestamp;
         } else {
             $modified_since = null;
         }
-        $none_match = ! empty($_SERVER['HTTP_IF_NONE_MATCH']) ? $_SERVER['HTTP_IF_NONE_MATCH'] == $etag : null;
+        $none_match = ! empty($_SERVER['HTTP_IF_NONE_MATCH']) ? ($_SERVER['HTTP_IF_NONE_MATCH'] ?? null) == $etag : null;
         // The type checking here is very important, be careful when changing entries.
         if (($modified_since !== null || $none_match !== null) && $modified_since !== false && $none_match !== false) {
             header('HTTP/1.0 304 Not Modified');
@@ -276,12 +276,12 @@ class yf_output_cache extends yf_cache
     {
         if ( ! isset($this->_cur_cache_name)) {
             $this->_cur_cache_name = md5(
-                $_SERVER['HTTP_HOST']
-                . '/' . $_SERVER['SCRIPT_NAME']
-                . '?' . $_SERVER['QUERY_STRING']
+                ($_SERVER['HTTP_HOST'] ?? null)
+                . '/' . ($_SERVER['SCRIPT_NAME'] ?? null)
+                . '?' . ($_SERVER['QUERY_STRING'] ?? null)
                 . '---' . conf('language')
                 . '---' . (int) conf('SITE_ID')
-                . '---' . ($_SESSION['user_group'] <= 1 ? 'guest' : 'member')
+                . '---' . (($_SESSION['user_group'] ?? null) <= 1 ? 'guest' : 'member')
             );
         }
         return $this->_cur_cache_name;
@@ -301,12 +301,12 @@ class yf_output_cache extends yf_cache
             $this->NO_NEED_TO_CACHE = true;
             return false;
         }
-        if ($_SESSION['user_group'] > 1 || $_COOKIE['member_id']) {
+        if (($_SESSION['user_group'] ?? null) > 1 || ($_COOKIE['member_id'] ?? null)) {
             $this->NO_NEED_TO_CACHE = true;
             return false;
         }
         // Special for the 'share on facebook' feature
-        if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit')) {
+        if (false !== strpos(($_SERVER['HTTP_USER_AGENT'] ?? null), 'facebookexternalhit')) {
             $this->NO_NEED_TO_CACHE = true;
             return false;
         }
@@ -318,7 +318,7 @@ class yf_output_cache extends yf_cache
                 if ( ! isset($w[$_GET['object']])) {
                     $this->NO_NEED_TO_CACHE = true;
                     return $this->NO_NEED_TO_CACHE;
-                } elseif ( ! empty($w[$_GET['object']]) && ! in_array($_GET['action'], (array) $w[$_GET['object']])) {
+                } elseif ( ! empty($w[$_GET['object']]) && ! in_array(($_GET['action'] ?? null), (array) $w[$_GET['object']])) {
                     $this->NO_NEED_TO_CACHE = true;
                     return $this->NO_NEED_TO_CACHE;
                 }

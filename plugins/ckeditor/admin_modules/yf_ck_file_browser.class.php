@@ -41,7 +41,7 @@ class yf_ck_file_browser
         asset('jquery-jstree');
         $slick_view = isset($_GET['CKEditorFuncNum']);
         $body = tpl()->parse(__CLASS__ . '/main', [
-            'ck_funcnum' => (int) $_GET['CKEditorFuncNum'],
+            'ck_funcnum' => (int) ($_GET['CKEditorFuncNum'] ?? null),
         ]);
         return $slick_view ? print common()->show_empty_page($body) : $body;
     }
@@ -49,15 +49,15 @@ class yf_ck_file_browser
 
     public function get_node()
     {
-        $node = isset($_GET['id']) && $_GET['id'] !== '#' ? $_GET['id'] : '/';
-        $rslt = $this->_lst($node, (isset($_GET['id']) && $_GET['id'] === '#'));
+        $node = isset($_GET['id']) && ($_GET['id'] ?? null) !== '#' ? ($_GET['id'] ?? null) : '/';
+        $rslt = $this->_lst($node, (isset($_GET['id']) && ($_GET['id'] ?? null) === '#'));
         return $this->_ajax_out($rslt);
     }
 
 
     public function get_content()
     {
-        $node = isset($_GET['id']) && $_GET['id'] !== '#' ? $_GET['id'] : '/';
+        $node = isset($_GET['id']) && ($_GET['id'] ?? null) !== '#' ? ($_GET['id'] ?? null) : '/';
         $rslt = $this->_data($node);
         return $this->_ajax_out($rslt);
     }
@@ -65,23 +65,23 @@ class yf_ck_file_browser
 
     public function create_node()
     {
-        $node = isset($_GET['id']) && $_GET['id'] !== '#' ? $_GET['id'] : '/';
-        $rslt = $this->_create($node, isset($_GET['text']) ? $_GET['text'] : '', ( ! isset($_GET['type']) || $_GET['type'] !== 'file'));
+        $node = isset($_GET['id']) && ($_GET['id'] ?? null) !== '#' ? ($_GET['id'] ?? null) : '/';
+        $rslt = $this->_create($node, isset($_GET['text']) ? ($_GET['text'] ?? null) : '', ( ! isset($_GET['type']) || ($_GET['type'] ?? null) !== 'file'));
         return $this->_ajax_out($rslt);
     }
 
 
     public function rename_node()
     {
-        $node = isset($_GET['id']) && $_GET['id'] !== '#' ? $_GET['id'] : '/';
-        $rslt = $this->_rename($node, isset($_GET['text']) ? $_GET['text'] : '');
+        $node = isset($_GET['id']) && ($_GET['id'] ?? null) !== '#' ? ($_GET['id'] ?? null) : '/';
+        $rslt = $this->_rename($node, isset($_GET['text']) ? ($_GET['text'] ?? null) : '');
         return $this->_ajax_out($rslt);
     }
 
 
     public function delete_node()
     {
-        $node = isset($_GET['id']) && $_GET['id'] !== '#' ? $_GET['id'] : '/';
+        $node = isset($_GET['id']) && ($_GET['id'] ?? null) !== '#' ? ($_GET['id'] ?? null) : '/';
         $rslt = $this->_remove($node);
         return $this->_ajax_out($rslt);
     }
@@ -89,8 +89,8 @@ class yf_ck_file_browser
 
     public function move_node()
     {
-        $node = isset($_GET['id']) && $_GET['id'] !== '#' ? $_GET['id'] : '/';
-        $parn = isset($_GET['parent']) && $_GET['parent'] !== '#' ? $_GET['parent'] : '/';
+        $node = isset($_GET['id']) && ($_GET['id'] ?? null) !== '#' ? ($_GET['id'] ?? null) : '/';
+        $parn = isset($_GET['parent']) && ($_GET['parent'] ?? null) !== '#' ? ($_GET['parent'] ?? null) : '/';
         $rslt = $this->_move($node, $parn);
         return $this->_ajax_out($rslt);
     }
@@ -98,8 +98,8 @@ class yf_ck_file_browser
 
     public function copy_node()
     {
-        $node = isset($_GET['id']) && $_GET['id'] !== '#' ? $_GET['id'] : '/';
-        $parn = isset($_GET['parent']) && $_GET['parent'] !== '#' ? $_GET['parent'] : '/';
+        $node = isset($_GET['id']) && ($_GET['id'] ?? null) !== '#' ? ($_GET['id'] ?? null) : '/';
+        $parn = isset($_GET['parent']) && ($_GET['parent'] ?? null) !== '#' ? ($_GET['parent'] ?? null) : '/';
         $rslt = $this->_copy($node, $parn);
         return $this->_ajax_out($rslt);
     }
@@ -119,12 +119,12 @@ class yf_ck_file_browser
         }
         // TODO: tons of additional security checks
         $error = '';
-        $add_path = $_GET['path'] ? urldecode($_GET['path']) . '/' : '';
-        $upload_dir = $this->base . '/' . $add_path . $_GET['id'];
+        $add_path = ($_GET['path'] ?? null) ? urldecode(($_GET['path'] ?? null)) . '/' : '';
+        $upload_dir = $this->base . '/' . $add_path . ($_GET['id'] ?? null);
         if ( ! file_exists($upload_dir)) {
             mkdir($upload_dir, 0755, true);
         }
-        $file = $_FILES['file'] ?: $_FILES['upload'] ?: current($_FILES);
+        $file = ($_FILES['file'] ?? null) ?: ($_FILES['upload'] ?? null) ?: current($_FILES);
         if (empty($file['tmp_name'])) {
             $error = 'File upload error';
         } else {
@@ -141,7 +141,7 @@ class yf_ck_file_browser
         if ($error) {
             echo '<script>alert("' . _prepare_html(t($error)) . '");</script>';
         } else {
-            if ($_GET['CKEditorFuncNum']) {
+            if (($_GET['CKEditorFuncNum'] ?? null)) {
                 return $this->_ck_show_message('Uploaded OK', str_replace(PROJECT_PATH, WEB_PATH, $file_path));
             }
             echo '<script>try { parent.refreshjstree(); } catch(e) { console.log(e) }</script>';
@@ -155,7 +155,7 @@ class yf_ck_file_browser
      */
     public function _ck_show_message($message, $url = '')
     {
-        $funcNum = $_GET['CKEditorFuncNum'];
+        $funcNum = ($_GET['CKEditorFuncNum'] ?? null);
         echo '<script type="text/javascript">
 			try {
 				window.opener.CKEDITOR.tools.callFunction(' . $funcNum . ', "' . $url . '", "' . $message . '");
@@ -174,9 +174,9 @@ class yf_ck_file_browser
         if ( ! $this->ENABLED_IMG_EDIT) {
             return false;
         }
-        $img_url = urldecode($_REQUEST['image']);
-        $title = ltrim(str_replace('|', '/', urldecode($_REQUEST['title'])), '/');
-        $type = strtolower($_REQUEST['type']);
+        $img_url = urldecode(($_REQUEST['image'] ?? null));
+        $title = ltrim(str_replace('|', '/', urldecode(($_REQUEST['title'] ?? null))), '/');
+        $type = strtolower(($_REQUEST['type'] ?? null));
         if ( ! strlen($img_url)
             || parse_url($img_url, PHP_URL_HOST) !== 'apps.pixlr.com'
             || ! strlen($title)
@@ -230,7 +230,7 @@ class yf_ck_file_browser
     {
         $res = [];
         if ($this->ENABLED_IMG_DELETE && is_ajax() && is_post() && ! empty($_POST['path'])) {
-            $fs_path = parse_url($_POST['path'], PHP_URL_PATH);
+            $fs_path = parse_url(($_POST['path'] ?? null), PHP_URL_PATH);
             if (substr($fs_path, 0, strlen($this->TOP_DIR)) === $this->TOP_DIR) {
                 $fs_path = substr($fs_path, strlen($this->TOP_DIR));
             }

@@ -22,25 +22,25 @@ class yf_manage_comments
 
     public function show()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'];
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $default_filter = [
             'order_by' => 'add_date',
             'order_direction' => 'desc',
         ];
         $sql = 'SELECT * FROM ' . db('comments');
         return table($sql, [
-                'filter' => (array) $_SESSION[$filter_name] + $default_filter,
+                'filter' => (array) ($_SESSION[$filter_name] ?? null) + $default_filter,
                 'filter_params' => [
                     'text' => 'like',
                 ],
             ])
 //			->check_box('id')
             ->date('add_date', ['format' => 'full', 'nowrap' => 1])
-            ->text('object_name', ['link' => './?object=' . $_GET['object'] . '&action=redirect_view&id=%d', 'link_field_name' => 'id'])
+            ->text('object_name', ['link' => './?object=' . ($_GET['object'] ?? null) . '&action=redirect_view&id=%d', 'link_field_name' => 'id'])
             ->text('object_id', 'oid')
             ->text('text', ['max_length' => $this->TEXT_PREVIEW_LENGTH])
             ->user('user_id')
-            ->text('ip', ['link' => './?object=' . $_GET['object'] . '&action=filter_save&page=clear&filter=ip:%d'])
+            ->text('ip', ['link' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&page=clear&filter=ip:%d'])
             ->btn_active()
             ->btn_edit()
             ->btn_delete();
@@ -49,10 +49,10 @@ class yf_manage_comments
 
     public function redirect_view()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $a = db()->get('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $a = db()->get('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($a) || ! $a['object_name'] || ! $a['object_id']) {
-            return js_redirect('./?object=' . $_GET['object']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
         return js_redirect('./?object=' . $a['object_name'] . '&action=' . ($this->_comments_actions[$a['object_name']] ?: 'edit') . '&id=' . $a['object_id']);
     }
@@ -60,8 +60,8 @@ class yf_manage_comments
 
     public function edit()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $a = db()->query_fetch('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $a = db()->query_fetch('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($a)) {
             return _e('No such record');
         }
@@ -70,12 +70,12 @@ class yf_manage_comments
                 _re('Comment text required');
             }
             if ( ! common()->_error_exists()) {
-                db()->update_safe('comments', ['text' => $_POST['text']], 'id=' . (int) ($a['id']));
+                db()->update_safe('comments', ['text' => ($_POST['text'] ?? null)], 'id=' . (int) ($a['id']));
                 return js_redirect('');
             }
         }
         return form($a + [
-                'back_link' => './?object=' . $_GET['object'],
+                'back_link' => './?object=' . ($_GET['object'] ?? null),
             ])
             ->info_date('add_date', 'full')
             ->info('object_name')
@@ -88,33 +88,33 @@ class yf_manage_comments
 
     public function delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            db()->query('DELETE FROM ' . db('comments') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
+            db()->query('DELETE FROM ' . db('comments') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
         }
         if (is_ajax()) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
-            return js_redirect('./?object=' . $_GET['object']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
     }
 
 
     public function active()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $a = db()->query_fetch('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) ($_GET['id']));
+            $a = db()->query_fetch('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($a)) {
-            db()->update('comments', ['active' => (int) ! $a['active']], 'id=' . (int) ($_GET['id']));
+            db()->update('comments', ['active' => (int) ! $a['active']], 'id=' . (int) (($_GET['id'] ?? null)));
         }
         if (is_ajax()) {
             main()->NO_GRAPHICS = true;
             echo $a['active'] ? 0 : 1;
         } else {
-            return js_redirect('./?object=' . $_GET['object']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
     }
 
@@ -127,13 +127,13 @@ class yf_manage_comments
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
-        $filter_name = $_GET['object'] . '__' . $_GET['action'];
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $r = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name,
-            'clear_url' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name . '&page=clear',
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name,
+            'clear_url' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name . '&page=clear',
         ];
         $order_fields = [];
         foreach (explode('|', 'user_id|add_date|ip|object_name|object_id|user_name|user_email|active') as $f) {
@@ -143,7 +143,7 @@ class yf_manage_comments
             $object_names[$k] = $k;
         }
         return form($r, [
-                'selected' => $_SESSION[$filter_name],
+                'selected' => ($_SESSION[$filter_name] ?? null),
             ])
             ->number('user_id')
             ->text('ip')

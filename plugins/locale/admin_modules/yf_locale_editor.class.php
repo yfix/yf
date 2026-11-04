@@ -120,10 +120,10 @@ Fallback when no numbers matched (any string)
 
     public function _show_quick_filter()
     {
-        if ( ! in_array($_GET['action'], ['vars'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['vars'])) {
             return false;
         }
-        $filter = _class('admin_methods')->_get_filter(['filter_name' => $_GET['object'] . '__show']);
+        $filter = _class('admin_methods')->_get_filter(['filter_name' => ($_GET['object'] ?? null) . '__show']);
         $is_current = function ($item) use ($filter) {
             $name = null;
             return $filter[$name] ? ' disabled' : '';
@@ -143,7 +143,7 @@ Fallback when no numbers matched (any string)
     public function _header_links()
     {
         $is_current = function ($action) {
-            return $_GET['action'] == $action ? ' disabled' : '';
+            return ($_GET['action'] ?? null) == $action ? ' disabled' : '';
         };
         $header_links = table([], ['no_records_html' => ''])
             ->header_link('Langs', url('/@object/show'), ['icon' => 'fa fa-globe', 'class_add' => 'btn-default ' . $is_current('show')])
@@ -247,7 +247,7 @@ Fallback when no numbers matched (any string)
 
     public function lang_edit()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         $id && $a = from('locale_langs')->whereid($id)->get();
         if ( ! $a) {
             return _e('No id');
@@ -262,7 +262,7 @@ Fallback when no numbers matched (any string)
             ->db_update_if_ok('locale_langs', ['name', 'charset'], 'id=' . $id)
             ->on_after_update(function () use ($id) {
                 cache_del('locale_langs');
-                common()->admin_wall_add(['locale lang updated: ' . $_POST['name'] . '', $id]);
+                common()->admin_wall_add(['locale lang updated: ' . ($_POST['name'] ?? null) . '', $id]);
             })
             ->info('locale')
             ->text('name')
@@ -273,7 +273,7 @@ Fallback when no numbers matched (any string)
 
     public function lang_active()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         $id && $a = from('locale_langs')->whereid($id)->get();
         if ( ! empty($a) && ! $a['is_default']) {
             db()->update_safe('locale_langs', ['active' => (int) ( ! $a['active'])], 'id=' . (int) $id);
@@ -291,7 +291,7 @@ Fallback when no numbers matched (any string)
 
     public function lang_default()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         $id && $a = from('locale_langs')->whereid($id)->get();
         if ( ! empty($a) && ! $a['is_default']) {
             db()->update_safe('locale_langs', ['is_default' => 0], '1 = 1');
@@ -310,7 +310,7 @@ Fallback when no numbers matched (any string)
 
     public function lang_delete()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         $id && $a = from('locale_langs')->whereid($id)->get();
         if ($a) {
             $lang = $this->_cur_langs_array[$id]['locale'];
@@ -343,7 +343,7 @@ Fallback when no numbers matched (any string)
 
     public function files()
     {
-        $self_page_css = 'body.get-object-' . $_GET['object'];
+        $self_page_css = 'body.get-object-' . ($_GET['object'] ?? null);
         css('
 			' . $self_page_css . ' li.li-header { list-style: none; display:none; }
 			' . $self_page_css . ' li.li-level-0 { display: block; font-size: 15px; }
@@ -576,7 +576,7 @@ Fallback when no numbers matched (any string)
                 $vars[$source][$k] = $v;
             }
         }
-        $filter = _class('admin_methods')->_get_filter(['filter_name' => $_GET['object'] . '__show']);
+        $filter = _class('admin_methods')->_get_filter(['filter_name' => ($_GET['object'] ?? null) . '__show']);
         if ($filter) {
             foreach ((array) $vars as $source => $a) {
                 if ($filter['in_db'] && ! $a['var_id']) {
@@ -630,7 +630,7 @@ Fallback when no numbers matched (any string)
 
     public function var_edit()
     {
-        $a = $this->_get_var_info($_GET['id']);
+        $a = $this->_get_var_info(($_GET['id'] ?? null));
         if ( ! $a) {
             return _e('Wrong var id');
         }
@@ -720,7 +720,7 @@ Fallback when no numbers matched (any string)
         $a['back_link'] = url('/@object/vars');
         $a['redirect_link'] = $a['back_link'];
         if (is_post()) {
-            $val = trim($_POST['value']);
+            $val = trim(($_POST['value'] ?? null));
             strlen($val) && $a['redirect_link'] = url('/@object/var_edit/' . urlencode($val));
         }
         return form($a + (array) $_POST)
@@ -733,7 +733,7 @@ Fallback when no numbers matched (any string)
 
     public function var_delete()
     {
-        $a = $this->_get_var_info($_GET['id']);
+        $a = $this->_get_var_info(($_GET['id'] ?? null));
         if ($a['id']) {
             $id = (int) $a['id'];
             db()->delete('locale_vars', $id);
@@ -741,7 +741,7 @@ Fallback when no numbers matched (any string)
         }
         if (is_ajax()) {
             no_graphics(true);
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect('/@object/vars');
         }
@@ -898,7 +898,7 @@ Fallback when no numbers matched (any string)
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['vars'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['vars'])) {
             return false;
         }
         $order_fields = [];

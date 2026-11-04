@@ -7,20 +7,20 @@ class yf_shop_order_delete
      */
     public function _order_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         // Get current info
         if ( ! empty($_GET['id'])) {
-            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['id']));
+            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         // Do delete order
         if ( ! empty($order_info['id'])) {
-            db()->query('DELETE FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            db()->query('DELETE FROM ' . db('shop_order_items') . ' WHERE `order_id`=' . (int) ($_GET['id']));
+            db()->query('DELETE FROM ' . db('shop_orders') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            db()->query('DELETE FROM ' . db('shop_order_items') . ' WHERE `order_id`=' . (int) (($_GET['id'] ?? null)));
         }
         // Return user back
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect('./?object=shop&action=orders');
         }

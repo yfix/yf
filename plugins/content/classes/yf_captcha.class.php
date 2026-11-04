@@ -225,7 +225,7 @@ class yf_captcha
         }
         $stpl_name = $extra['captcha_stpl_name'] ?: $stpl_name;
         if (empty($location)) {
-            $location = './?object=' . $_GET['object'] . '&action=show_image';
+            $location = './?object=' . ($_GET['object'] ?? null) . '&action=show_image';
         }
         $uid = '__captcha_id__';
         if (false === strpos($location, $uid)) {
@@ -262,18 +262,18 @@ class yf_captcha
         $this->already_used = true;
 
         if ( ! isset($input)) {
-            $input = $_POST[$field_in_form] ?: $_GET[$field_in_form];
+            $input = ($_POST[$field_in_form] ?? null) ?: ($_GET[$field_in_form] ?? null);
         }
         if (empty($input)) {
             _re('Please enter code', $field_in_form);
         } else {
             $hash = md5($this->secret_key . $input);
             if ($this->use_cookies) {
-                if ($hash != $_COOKIE[$this->var_name]) {
+                if ($hash != ($_COOKIE[$this->var_name] ?? null)) {
                     $code_incorrect = true;
                 }
             } else {
-                if ($hash != $_SESSION[$this->var_name]) {
+                if ($hash != ($_SESSION[$this->var_name] ?? null)) {
                     $code_incorrect = true;
                 }
             }

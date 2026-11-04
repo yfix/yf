@@ -38,7 +38,7 @@ class yf_manage_shop_revisions
         if ( ! is_array($ids) && (int) $ids) {
             $ids = [(int) $ids];
         }
-        $user_id = (int) (main()->ADMIN_ID) ?: (int) ($_GET['admin_id']);
+        $user_id = (int) (main()->ADMIN_ID) ?: (int) (($_GET['admin_id'] ?? null));
         $add_rev_date = time();
         foreach ((array) $ids as $id) {
             $data_stump = db()->query_fetch('SELECT * FROM ' . db($db_table) . ' WHERE id=' . $id);
@@ -83,7 +83,7 @@ class yf_manage_shop_revisions
 
     public function details()
     {
-        $sql = 'SELECT * FROM ' . db('shop_revisions') . ' WHERE id=' . (int) ($_GET['id']);
+        $sql = 'SELECT * FROM ' . db('shop_revisions') . ' WHERE id=' . (int) (($_GET['id'] ?? null));
         $a = db()->get($sql);
         if (empty($a)) {
             return _e('Revision not found');
@@ -117,11 +117,11 @@ class yf_manage_shop_revisions
     public function filter_save()
     {
         $_GET['id'] = preg_replace('~[^0-9a-z_]+~ims', '', $_GET['id']);
-        if ($_GET['id'] && false !== strpos($_GET['id'], $_GET['object'] . '__')) {
-            $filter_name = $_GET['id'];
+        if (($_GET['id'] ?? null) && false !== strpos(($_GET['id'] ?? null), ($_GET['object'] ?? null) . '__')) {
+            $filter_name = ($_GET['id'] ?? null);
             list(, $action) = explode('__', $filter_name);
         }
-        if ($_GET['page'] == 'clear') {
+        if (($_GET['page'] ?? null) == 'clear') {
             $_SESSION[$filter_name] = [];
         } else {
             $_SESSION[$filter_name] = $_POST;
@@ -131,7 +131,7 @@ class yf_manage_shop_revisions
                 }
             }
         }
-        return js_redirect('./?object=' . $_GET['object'] . '&action=' . $action);
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=' . $action);
     }
 
 
@@ -157,7 +157,7 @@ class yf_manage_shop_revisions
                     ->select_box('order_by', $order_fields, ['no_translate' => 1, 'show_text' => 1]);
             },
         ];
-        $action = $_GET['action'];
+        $action = ($_GET['action'] ?? null);
         if (isset($filters[$action])) {
             return $filters[$action]($filter_name, $replace)
                 ->order_box()
@@ -169,7 +169,7 @@ class yf_manage_shop_revisions
 
     public function _hook_side_column()
     {
-        $rev = db()->get('SELECT * FROM ' . db('shop_revisions') . ' WHERE id=' . (int) ($_GET['id']));
+        $rev = db()->get('SELECT * FROM ' . db('shop_revisions') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $rev) {
             return false;
         }
@@ -187,14 +187,14 @@ class yf_manage_shop_revisions
             ->date('add_date', ['format' => '%d/%m/%Y', 'nowrap' => 1])
             ->admin('user_id', ['desc' => 'admin'])
             ->text('action')
-            ->btn_view('', './?object=manage_shop_revisions&action=details&id=%d&page=' . $_GET['page']);
+            ->btn_view('', './?object=manage_shop_revisions&action=details&id=%d&page=' . ($_GET['page'] ?? null));
     }
 
 
     public function rollback_revision()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $revision_data = db()->get('SELECT * FROM ' . db('shop_revisions') . ' WHERE id=' . $_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $revision_data = db()->get('SELECT * FROM ' . db('shop_revisions') . ' WHERE id=' . ($_GET['id'] ?? null));
         if (empty($revision_data)) {
             return _e('Revision not found');
         }
@@ -216,7 +216,7 @@ class yf_manage_shop_revisions
         $this->new_revision($revision_data['action'], $revision_data['item_id'], $revision_data['table']);
         db()->commit();
         common()->message_success('Revision retrieved');
-        common()->admin_wall_add(['Rollback common revision: ' . $_GET['id'], $_GET['id']]);
-        return js_redirect('./?object=manage_shop_revisions&action=details&id=' . $_GET['id']);
+        common()->admin_wall_add(['Rollback common revision: ' . ($_GET['id'] ?? null), ($_GET['id'] ?? null)]);
+        return js_redirect('./?object=manage_shop_revisions&action=details&id=' . ($_GET['id'] ?? null));
     }
 }

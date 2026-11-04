@@ -24,7 +24,7 @@ class yf_manage_users
             ->btn_delete()
             ->btn_active()
             ->btn('log_auth', './?object=log_user_auth&action=show_for_user&id=%d')
-            ->btn('login', './?object=' . $_GET['object'] . '&action=login_as&id=%d')
+            ->btn('login', './?object=' . ($_GET['object'] ?? null) . '&action=login_as&id=%d')
             ->footer_add()
             ->footer_link('Failed auth log', './?object=log_user_auth_fails');
         // TODO: editing
@@ -42,7 +42,7 @@ class yf_manage_users
             ])
             ->db_insert_if_ok(self::table, ['login', 'email', 'name', 'active'], ['add_date' => time()])
             ->on_after_update(function () {
-                common()->admin_wall_add(['user added: ' . $_POST['login'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['user added: ' . ($_POST['login'] ?? null) . '', db()->insert_id()]);
             })
             ->login()
             ->email()
@@ -55,11 +55,11 @@ class yf_manage_users
     public function edit()
     {
         $func = null;
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         if ( ! $id) {
             return _e('No id');
         }
-        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) ($_GET['id']));
+        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         $a['back_link'] = url('/@object');
         $a['redirect_link'] = url('/@object');
         return form($a, ['autocomplete' => 'off'])
@@ -69,7 +69,7 @@ class yf_manage_users
             ])
             ->db_update_if_ok(self::table, ['login', 'email', 'name', 'active', 'birthday'], 'id=' . $id)
             ->on_after_update(function () use ($id) {
-                common()->admin_wall_add(['user updated: ' . $_POST['login'] . '', $id]);
+                common()->admin_wall_add(['user updated: ' . ($_POST['login'] ?? null) . '', $id]);
             })
             ->login()
             ->email()
@@ -78,7 +78,7 @@ class yf_manage_users
             ->row_start()
                 ->save_and_back()
                 ->link('log auth', './?object=log_user_auth&action=show_for_admin&id=' . $a['id'])
-                ->link('login as', './?object=' . $_GET['object'] . '&action=login_as&id=' . $a['id'], ['display_func' => $func])
+                ->link('login as', './?object=' . ($_GET['object'] ?? null) . '&action=login_as&id=' . $a['id'], ['display_func' => $func])
             ->row_end();
     }
 
@@ -86,7 +86,7 @@ class yf_manage_users
     public function active()
     {
         if ( ! empty($_GET['id'])) {
-            $user_info = user($_GET['id']);
+            $user_info = user(($_GET['id'] ?? null));
         }
         if ( ! empty($user_info)) {
             db()->update(self::table, ['active' => (int) ! $user_info['active']], $user_info['id']);
@@ -105,7 +105,7 @@ class yf_manage_users
      */
     public function delete()
     {
-        $user_id = (int) ($_GET['id']);
+        $user_id = (int) (($_GET['id'] ?? null));
         if ( ! $user_id) {
             return false;
         }
@@ -139,13 +139,13 @@ class yf_manage_users
             _class('dir')->delete_dir($user_folder_path, true);
         }
         db()->query('DELETE FROM ' . db(self::table) . ' WHERE id=' . $user_id);
-        return js_redirect($_SERVER['HTTP_REFERER']);
+        return js_redirect(($_SERVER['HTTP_REFERER'] ?? null));
     }
 
 
     public function login_as()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         if ( ! $id) {
             return _e('Wrong id');
         }
@@ -201,7 +201,7 @@ class yf_manage_users
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [];

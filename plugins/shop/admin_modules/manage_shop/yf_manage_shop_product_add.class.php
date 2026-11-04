@@ -17,7 +17,7 @@ class yf_manage_shop_product_add
                 db()->query('DELETE FROM `' . db('shop_product_to_category') . "` WHERE `product_id`='{$id}'");
 
                 $extra['redirect_link'] = './?object=' . main()->_get('object') . '&action=product_edit&id=' . $id;
-                common()->admin_wall_add([t('shop product added: %name', ['%name' => $_POST['name']]), $id]);
+                common()->admin_wall_add([t('shop product added: %name', ['%name' => ($_POST['name'] ?? null)]), $id]);
                 module('manage_shop')->_product_cache_purge($id);
             }])
             ->text('name')

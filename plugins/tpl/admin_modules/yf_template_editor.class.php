@@ -112,7 +112,7 @@ class yf_template_editor
             $replace3 = [
                 'location' => $theme_class,
                 'themes_lib_dir' => realpath($this->_dir_array[$theme_class]),
-                'add_url' => './?object=' . $_GET['object'] . '&action=add_theme_form&location=' . $theme_class,
+                'add_url' => './?object=' . ($_GET['object'] ?? null) . '&action=add_theme_form&location=' . $theme_class,
             ];
             $items .= tpl()->parse('@object/themes_location_item', $replace3);
 
@@ -122,8 +122,8 @@ class yf_template_editor
                     'bg_class' => 'bg2',
                     'name' => $theme_name,
                     'num_stpls' => $num_stpls_array[$theme_name][$this->_dir_array[$theme_class]],
-                    'theme_url' => './?object=' . $_GET['object'] . '&action=show_stpls_in_theme&theme=' . $theme_name . '&location=' . $theme_class,
-                    'edit_url' => './?object=' . $_GET['object'] . '&action=edit_theme&theme=' . $theme_name . '&location=' . $theme_class,
+                    'theme_url' => './?object=' . ($_GET['object'] ?? null) . '&action=show_stpls_in_theme&theme=' . $theme_name . '&location=' . $theme_class,
+                    'edit_url' => './?object=' . ($_GET['object'] ?? null) . '&action=edit_theme&theme=' . $theme_name . '&location=' . $theme_class,
                     'location' => $theme_class,
                 ];
                 $items .= tpl()->parse('@object/themes_item', $replace2);
@@ -131,8 +131,8 @@ class yf_template_editor
         }
         $replace = [
             'items' => $items,
-            'add_url' => './?object=' . $_GET['object'] . '&action=add_theme_form',
-            'import_url' => './?object=' . $_GET['object'] . '&action=import',
+            'add_url' => './?object=' . ($_GET['object'] ?? null) . '&action=add_theme_form',
+            'import_url' => './?object=' . ($_GET['object'] ?? null) . '&action=import',
         ];
         return tpl()->parse('@object/themes_main', $replace);
     }
@@ -140,24 +140,24 @@ class yf_template_editor
 
     public function edit_theme()
     {
-        if (false !== strpos($_GET['location'], 'framework')) {
+        if (false !== strpos(($_GET['location'] ?? null), 'framework')) {
             return $this->_framework_warning();
         }
-        $new_theme_name = $_POST['theme_name'];
+        $new_theme_name = ($_POST['theme_name'] ?? null);
         if (empty($_GET['theme']) && empty($new_theme_name)) {
             return _e('Theme name required!');
         }
         if (main()->is_post()) {
-            if ($_GET['theme'] != $new_theme_name) {
-                rename($this->_dir_array[$_GET['location']] . $_GET['theme'], $this->_dir_array[$_GET['location']] . $new_theme_name);
+            if (($_GET['theme'] ?? null) != $new_theme_name) {
+                rename($this->_dir_array[$_GET['location']] . ($_GET['theme'] ?? null), $this->_dir_array[$_GET['location']] . $new_theme_name);
             }
             return js_redirect(url('/@object'));
         }
         $replace = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . '&theme=' . $_GET['theme'] . '&location=' . $_GET['location'],
-            'back_url' => './?object=' . $_GET['object'] . '&action=show',
-            'theme_name' => _prepare_html($_GET['theme']),
-            'location' => $_GET['location'],
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . '&theme=' . ($_GET['theme'] ?? null) . '&location=' . ($_GET['location'] ?? null),
+            'back_url' => './?object=' . ($_GET['object'] ?? null) . '&action=show',
+            'theme_name' => _prepare_html(($_GET['theme'] ?? null)),
+            'location' => ($_GET['location'] ?? null),
         ];
         return tpl()->parse('@object/edit_theme', $replace);
     }
@@ -166,7 +166,7 @@ class yf_template_editor
     public function show_stpls_in_theme()
     {
         $PER_PAGE = null;
-        $this->theme_name = $_GET['theme'];
+        $this->theme_name = ($_GET['theme'] ?? null);
         $this->_cur_theme_path = $this->_dir_array[$_GET['location']] . $this->theme_name;
         $files_array = _class('dir')->scan_dir($this->_cur_theme_path, false);
         $items_array = $this->_show_stpls_list($files_array);
@@ -180,8 +180,8 @@ class yf_template_editor
             'total' => (int) $total,
             'theme_name' => $this->theme_name,
             'back_url' => url('/@object'),
-            'form_action' => './?object=' . $_GET['object'] . '&action=save_stpl&theme=' . $this->theme_name . '&location=' . $_GET['location'],
-            'location' => $_GET['location'],
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=save_stpl&theme=' . $this->theme_name . '&location=' . ($_GET['location'] ?? null),
+            'location' => ($_GET['location'] ?? null),
         ];
         return tpl()->parse('@object/stpls_list_main', $replace);
     }
@@ -296,8 +296,8 @@ class yf_template_editor
             'num' => ! $is_folder ? ++$j : '',
             'pad' => $level * 50/* + ($is_folder ? 20 : 0)*/, // In pixels
             'stpl_size' => ! $is_folder ? filesize($file_path) : '',
-            'edit_stpl_url' => './?object=' . $_GET['object'] . '&action=' . ($is_folder ? 'edit_dir' : 'edit_stpl') . '&name=' . $name . '&theme=' . $this->theme_name . '&location=' . $_GET['location'],
-            'location' => $_GET['location'],
+            'edit_stpl_url' => './?object=' . ($_GET['object'] ?? null) . '&action=' . ($is_folder ? 'edit_dir' : 'edit_stpl') . '&name=' . $name . '&theme=' . $this->theme_name . '&location=' . ($_GET['location'] ?? null),
+            'location' => ($_GET['location'] ?? null),
         ];
         return tpl()->parse('@object/stpls_list_item', $replace);
     }
@@ -305,13 +305,13 @@ class yf_template_editor
 
     public function edit_stpl()
     {
-        $theme_name = $_GET['theme'];
-        $stpl_name = $_GET['name'];
+        $theme_name = ($_GET['theme'] ?? null);
+        $stpl_name = ($_GET['name'] ?? null);
         if ( ! validate([$theme_name, $stpl_name], 'trim|required')) {
             return _e('Template name and theme required!');
         }
         if (main()->is_post()) {
-            if (false !== strpos($_GET['location'], 'framework')) {
+            if (false !== strpos(($_GET['location'] ?? null), 'framework')) {
                 // TODO: use readonly mode with message and ability to save changed file inside project
                 return $this->_framework_warning();
             }
@@ -320,14 +320,14 @@ class yf_template_editor
                 $lib_stpl_path = $path;
                 break;
             }
-            $text = $_POST['stpl_text'] ?: $_POST['stpl_text_hidden'];
+            $text = ($_POST['stpl_text'] ?? null) ?: ($_POST['stpl_text_hidden'] ?? null);
             if ( ! file_exists($lib_stpl_path)) {
                 _mkdir_m(dirname($lib_stpl_path));
             }
             file_put_contents($lib_stpl_path, $text);
-            return js_redirect('./?object=' . $_GET['object'] . '&action=show_stpls_in_theme&theme=' . $theme_name . '&location=' . $_GET['location']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=show_stpls_in_theme&theme=' . $theme_name . '&location=' . ($_GET['location'] ?? null));
         }
-        if (substr($_GET['location'], -strlen('_user')) == '_user' && $theme_name == 'admin') {
+        if (substr(($_GET['location'] ?? null), -strlen('_user')) == '_user' && $theme_name == 'admin') {
             $theme_name = 'user';
         }
         $stpl_path = $this->_dir_array[$_GET['location']] . $theme_name . '/' . $stpl_name . tpl()->_STPL_EXT;
@@ -341,12 +341,12 @@ class yf_template_editor
         $stpl_text = file_get_contents($stpl_path);
         $stpl_text = _prepare_html($stpl_text, 0);
         $replace = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . '&name=' . $stpl_name . '&theme=' . $theme_name . '&location=' . $_GET['location'],
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . '&name=' . $stpl_name . '&theme=' . $theme_name . '&location=' . ($_GET['location'] ?? null),
             'theme_name' => $theme_name,
             'stpl_name' => $stpl_name,
             'stpl_text' => $stpl_text,
-            'back_url' => './?object=' . $_GET['object'] . '&action=show_stpls_in_theme&theme=' . $theme_name . '&location=' . $_GET['location'],
-            'location' => $_GET['location'],
+            'back_url' => './?object=' . ($_GET['object'] ?? null) . '&action=show_stpls_in_theme&theme=' . $theme_name . '&location=' . ($_GET['location'] ?? null),
+            'location' => ($_GET['location'] ?? null),
         ];
         $div_id = 'editor_html';
         $hidden_id = 'stpl_text_hidden';
@@ -368,7 +368,7 @@ class yf_template_editor
      */
     public function show_file_src()
     {
-        $path = base64_decode($_GET['path']);
+        $path = base64_decode(($_GET['path'] ?? null));
         $stpl_text = file_get_contents($path);
 
         $replace = [

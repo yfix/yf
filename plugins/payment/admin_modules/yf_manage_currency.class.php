@@ -24,11 +24,11 @@ class yf_manage_currency
         $filter = &$this->filter;
         $url = &$this->url;
         // setup property
-        $object = $_GET['object'];
-        $action = $_GET['action'];
-        $id = $_GET['id'];
+        $object = ($_GET['object'] ?? null);
+        $action = ($_GET['action'] ?? null);
+        $id = ($_GET['id'] ?? null);
         $filter_name = $object . '__' . $action;
-        $filter = $_SESSION[$filter_name];
+        $filter = ($_SESSION[$filter_name] ?? null);
         // url
         $url = [
             'list' => url_admin([
@@ -227,7 +227,7 @@ EOS;
         $filter = &$this->filter;
         $url = &$this->url;
         // var
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if (empty($_POST) && $id < 1) {
             return js_redirect($url['list'], false, 'currency rate list');
         }

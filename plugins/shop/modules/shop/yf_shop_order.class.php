@@ -11,7 +11,7 @@ class yf_shop_order
             'do_payment',
             'finish',
         ];
-        $step = $_GET['id'];
+        $step = ($_GET['id'] ?? null);
         if ( ! $step || ! in_array($step, $_avail_steps)) {
             $step = 'start';
         }

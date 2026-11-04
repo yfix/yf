@@ -138,8 +138,8 @@ class yf_manage_tips
     public function _get_info($id = null, $lang = null)
     {
         $locale = null;
-        $id = isset($id) ? $id : $_GET['id'];
-        $lang = isset($lang) ? $lang : $_GET['page'];
+        $id = isset($id) ? $id : ($_GET['id'] ?? null);
+        $lang = isset($lang) ? $lang : ($_GET['page'] ?? null);
         $a = db()->from(self::table)
             ->where('locale', $lang ? strtolower($lang) : '')
             ->where('name', _strtolower(urldecode($id)))

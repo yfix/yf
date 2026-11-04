@@ -35,14 +35,14 @@ class yf_shop__order_create
             $order_sql = [
                 'date' => time(),
                 'user_id' => (int) (main()->USER_ID),
-                'ship_type' => (int) ($_POST['ship_type']),
-                'pay_type' => (int) ($_POST['pay_type']),
-                'card_num' => $_POST['card_num'],
-                'exp_date' => $_POST['exp_date'],
+                'ship_type' => (int) (($_POST['ship_type'] ?? null)),
+                'pay_type' => (int) (($_POST['pay_type'] ?? null)),
+                'card_num' => ($_POST['card_num'] ?? null),
+                'exp_date' => ($_POST['exp_date'] ?? null),
                 'status' => '', // To ensure consistency later
             ];
             foreach ((array) module('shop')->_b_fields as $_field) {
-                $order_sql[$_field] = $_POST[$_field];
+                $order_sql[$_field] = ($_POST[$_field] ?? null);
             }
             /* foreach ((array)module('shop')->_s_fields as $_field) {
                 $order_sql[$_field] = $_POST[$_field];
@@ -76,7 +76,7 @@ class yf_shop__order_create
                     'attributes' => _es(serialize($_atts_to_save)),
                 ]);
             }
-            $total_price += (float) module('shop')->_ship_types[$_POST['ship_type']]['price'];
+            $total_price += (float) module('shop')->_ship_types[($_POST['ship_type'] ?? null)]['price'];
             // Update order
             db()->UPDATE(db('shop_orders'), [
                 'status' => 'pending',

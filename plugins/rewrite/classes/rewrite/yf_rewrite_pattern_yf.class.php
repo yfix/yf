@@ -151,7 +151,7 @@ class yf_rewrite_pattern_yf
         }
         foreach ((array) $class_rewrite->allowed_url_params as $name) {
             if (isset($_GET[$name]) && preg_match('~^[a-z0-9_-]+$~i', $_GET[$name])) {
-                $query[$name] = $_GET[$name];
+                $query[$name] = ($_GET[$name] ?? null);
             }
         }
         if (isset($url[2]) && strlen($url[2])) {

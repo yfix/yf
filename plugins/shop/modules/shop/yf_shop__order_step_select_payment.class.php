@@ -39,17 +39,17 @@ class yf_shop__order_step_select_payment
             $DATA['pay_type'] = key(module('shop')->_pay_types);
         }
         $hidden_fields = '';
-        $hidden_fields .= module('shop')->_hidden_field('ship_type', $_POST['ship_type']);
+        $hidden_fields .= module('shop')->_hidden_field('ship_type', ($_POST['ship_type'] ?? null));
         foreach ((array) module('shop')->_b_fields as $_field) {
-            $hidden_fields .= module('shop')->_hidden_field($_field, $_POST[$_field]);
+            $hidden_fields .= module('shop')->_hidden_field($_field, ($_POST[$_field] ?? null));
         }
         /* foreach ((array)module('shop')->_s_fields as $_field) {
             $hidden_fields .= module('shop')->_hidden_field($_field, $_POST[$_field]);
         } */
-        $hidden_fields .= module('shop')->_hidden_field('card_num', $_POST['card_num']);
-        $hidden_fields .= module('shop')->_hidden_field('exp_date', $_POST['exp_date']);
+        $hidden_fields .= module('shop')->_hidden_field('card_num', ($_POST['card_num'] ?? null));
+        $hidden_fields .= module('shop')->_hidden_field('exp_date', ($_POST['exp_date'] ?? null));
         $replace = [
-            'form_action' => './?object=shop&action=' . $_GET['action'] . '&id=' . $SELF_METHOD_ID,
+            'form_action' => './?object=shop&action=' . ($_GET['action'] ?? null) . '&id=' . $SELF_METHOD_ID,
             'error_message' => _e(),
             'pay_type_box' => module('shop')->_box('pay_type', $DATA['pay_type']),
             'hidden_fields' => $hidden_fields,

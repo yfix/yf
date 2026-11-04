@@ -8,21 +8,21 @@ class yf_shop_order_view
     public function _order_view()
     {
         $price = $total_price = $quantity = null;
-        if ($_POST['order_id']) {
-            $_GET['id'] = (int) ($_POST['order_id']);
+        if (($_POST['order_id'] ?? null)) {
+            $_GET['id'] = (int) (($_POST['order_id'] ?? null));
         } else {
-            $_GET['id'] = (int) ($_GET['id']);
+            $_GET['id'] = (int) (($_GET['id'] ?? null));
         }
-        if ($_GET['id']) {
-            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['id']));
+        if (($_GET['id'] ?? null)) {
+            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if (empty($order_info)) {
             return _e('No such order');
         }
         if ( ! empty($_POST['status'])) {
             db()->UPDATE(db('shop_orders'), [
-                'status' => _es($_POST['status']),
-            ], 'id=' . (int) ($_GET['id']));
+                'status' => _es(($_POST['status'] ?? null)),
+            ], 'id=' . (int) (($_GET['id'] ?? null)));
             return js_redirect('./?object=shop&action=orders');
         }
         $products_ids = [];
@@ -62,7 +62,7 @@ class yf_shop_order_view
 
         $replace = my_array_merge($replace, _prepare_html($order_info));
         $replace = my_array_merge($replace, [
-            'form_action' => './?object=shop&action=' . $_GET['action'] . '&id=' . $_GET['id'],
+            'form_action' => './?object=shop&action=' . ($_GET['action'] ?? null) . '&id=' . ($_GET['id'] ?? null),
             'order_id' => $order_info['id'],
             'total_sum' => module('shop')->_format_price($order_info['total_sum']),
             'user_link' => _profile_link($order_info['user_id']),

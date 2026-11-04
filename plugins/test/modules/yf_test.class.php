@@ -22,7 +22,7 @@ class yf_test
             if ($_method_name[0] == '_' || $_method_name == $class_name || $_method_name == __FUNCTION__) {
                 continue;
             }
-            $methods[$_method_name] = './?object=' . $_GET['object'] . '&action=' . $_method_name;
+            $methods[$_method_name] = './?object=' . ($_GET['object'] ?? null) . '&action=' . $_method_name;
         }
         $body[] = '<ul class="nav nav-list span3">';
         foreach ((array) $methods as $name => $link) {
@@ -39,15 +39,15 @@ class yf_test
             return;
         }
         if (is_post()) {
-            $_SESSION['debug_console_light'] = (int) ((bool) $_POST['debug_console_light']);
-            $_SESSION['locale_vars_edit'] = (int) ((bool) $_POST['locale_edit']);
+            $_SESSION['debug_console_light'] = (int) ((bool) ($_POST['debug_console_light'] ?? null));
+            $_SESSION['locale_vars_edit'] = (int) ((bool) ($_POST['locale_edit'] ?? null));
             //			$_SESSION['stpls_inline_edit']		= intval((bool)$_POST['stpl_edit']);
-            return js_redirect($_SERVER['HTTP_REFERER'], 0);
+            return js_redirect(($_SERVER['HTTP_REFERER'] ?? null), 0);
         }
         $a = $_POST + $_SESSION;
         return form($a)
-            ->active_box('debug_console_light', ['selected' => $_SESSION['debug_console_light']])
-            ->active_box('locale_edit', ['selected' => $_SESSION['locale_vars_edit']])
+            ->active_box('debug_console_light', ['selected' => ($_SESSION['debug_console_light'] ?? null)])
+            ->active_box('locale_edit', ['selected' => ($_SESSION['locale_vars_edit'] ?? null)])
 //			->active_box('stpl_edit', array('selected' => $_SESSION['stpls_inline_edit']))
             ->save();
     }
@@ -68,7 +68,7 @@ class yf_test
     {
         main()->no_graphics(true);
         _class('assets')->clean_all();
-        if ( ! $params['use_yf_fixes'] && ! $_GET['use_yf_fixes']) {
+        if ( ! $params['use_yf_fixes'] && ! ($_GET['use_yf_fixes'] ?? null)) {
             _class('assets')->MAIN_TPL_JS = '';
             _class('assets')->MAIN_TPL_CSS = '';
         }
@@ -174,7 +174,7 @@ class yf_test
     {
         main()->no_graphics(true);
         _class('assets')->clean_all();
-        if ( ! $params['use_yf_fixes'] && ! $_GET['use_yf_fixes']) {
+        if ( ! $params['use_yf_fixes'] && ! ($_GET['use_yf_fixes'] ?? null)) {
             _class('assets')->MAIN_TPL_JS = '';
             _class('assets')->MAIN_TPL_CSS = '';
         }
@@ -182,7 +182,7 @@ class yf_test
 
         $callback($fw, $params);
 
-        $method = $_GET['id'];
+        $method = ($_GET['id'] ?? null);
         $obj = _class('test_html5fw_' . $fw, 'modules/test/');
         if ( ! $method) {
             $links = [];

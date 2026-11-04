@@ -48,7 +48,7 @@ class yf_locale_editor_import
     public function _on_validate_ok($params = [], $form = null)
     {
         $p = $params ?: $_POST;
-        $f = $_FILES['file'];
+        $f = ($_FILES['file'] ?? null);
 
         $lang = $p['lang'];
         $format = $p['format'];

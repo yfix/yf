@@ -4,14 +4,14 @@ class yf_shop_product_details
 {
     public function product_details()
     {
-        if ( ! $_GET['id']) {
+        if ( ! ($_GET['id'] ?? null)) {
             return is_redirect('./?object=shop');
         }
         // Get products from database
-        if (is_numeric($_GET['id'])) {
-            $add_sql = "id= '" . (int) ($_GET['id']);
+        if (is_numeric(($_GET['id'] ?? null))) {
+            $add_sql = "id= '" . (int) (($_GET['id'] ?? null));
         } else {
-            $add_sql = "url='" . _es($_GET['id']);
+            $add_sql = "url='" . _es(($_GET['id'] ?? null));
         }
         $sql = 'SELECT * FROM ' . db('shop_products') . " WHERE active='1' AND " . $add_sql . "'";
         $product_info = db()->query_fetch($sql);

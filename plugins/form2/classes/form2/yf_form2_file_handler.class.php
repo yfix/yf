@@ -6,8 +6,8 @@ class yf_form2_file_handler extends UploadHandler
     public function process($options = null, $initialize = true, $error_messages = null)
     {
         $this->options = [
-            'upload_dir' => INCLUDE_PATH . 'uploads/' . $_GET['object'] . '/',
-            'upload_url' => WEB_PATH . 'uploads/' . $_GET['object'] . '/',
+            'upload_dir' => INCLUDE_PATH . 'uploads/' . ($_GET['object'] ?? null) . '/',
+            'upload_url' => WEB_PATH . 'uploads/' . ($_GET['object'] ?? null) . '/',
             'mkdir_mode' => 0755,
             'param_name' => 'files',
             // Set the following option to 'POST', if your server does not support

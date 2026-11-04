@@ -37,7 +37,7 @@ class yf_cats
     public function _init()
     {
         $this->_category_sets = main()->get_data('category_sets');
-        $this->_default_cats_block = $_GET['object'] . '_cats';
+        $this->_default_cats_block = ($_GET['object'] ?? null) . '_cats';
     }
 
     /**
@@ -103,7 +103,7 @@ class yf_cats
     public function _recursive_sort_items($items = [], $skip_item_id = 0, $parent_id = 0)
     {
         $children = [];
-        $cur_group = MAIN_TYPE_USER ? $_SESSION['user_group'] : $_SESSION['admin_group'];
+        $cur_group = MAIN_TYPE_USER ? ($_SESSION['user_group'] ?? null) : ($_SESSION['admin_group'] ?? null);
         foreach ((array) $items as $id => $info) {
             $parent_id = $info['parent_id'];
             if ($skip_item_id == $id) {
@@ -353,7 +353,7 @@ class yf_cats
         if ( ! isset($this->_default_callback)) {
             $this->_default_callback = false;
             if ( ! empty($_GET['object'])) {
-                $try_callback = [module($_GET['object']), '_callback_cat_link'];
+                $try_callback = [module(($_GET['object'] ?? null)), '_callback_cat_link'];
             }
             if (is_callable($try_callback)) {
                 $this->_default_callback = $try_callback;
@@ -374,7 +374,7 @@ class yf_cats
             if ($USE_CALLBACK) {
                 $item_link = call_user_func($prepare_link_callback, $cur_item_id);
             } else {
-                $item_link = './?object=' . $_GET['object'] . '&action=view_cat&id=' . $cur_item_id;
+                $item_link = './?object=' . ($_GET['object'] ?? null) . '&action=view_cat&id=' . $cur_item_id;
             }
             $replace = [
                 'item_link' => $item_link,

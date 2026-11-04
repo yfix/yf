@@ -75,7 +75,7 @@ class yf_static_pages
                 if ( ! $item_info['active'] || $item_info['parent_id']) {
                     continue;
                 }
-                if ($item_info['location'] == 'object=' . $_GET['object'] . '&action=' . $_GET['action'] . '&id=' . $_GET['id']) {
+                if ($item_info['location'] == 'object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . '&id=' . ($_GET['id'] ?? null)) {
                     $cur_menu_item_id = $item_info['parent_id'] ? $item_info['parent_id'] : $item_info['id'];
                     break;
                 }
@@ -101,12 +101,12 @@ class yf_static_pages
             'content' => $content,
             'page_heading' => _prepare_html(_ucfirst($a['page_heading'])),
             'page_page_title' => _prepare_html(_ucfirst($a['page_title'])),
-            'print_link' => './?object=' . $_GET['object'] . '&action=print_view&id=' . $a['id'],
-            'pdf_link' => './?object=' . $_GET['object'] . '&action=pdf_view&id=' . $a['id'],
-            'email_link' => './?object=' . $_GET['object'] . '&action=email_page&id=' . $a['id'],
+            'print_link' => './?object=' . ($_GET['object'] ?? null) . '&action=print_view&id=' . $a['id'],
+            'pdf_link' => './?object=' . ($_GET['object'] ?? null) . '&action=pdf_view&id=' . $a['id'],
+            'email_link' => './?object=' . ($_GET['object'] ?? null) . '&action=email_page&id=' . $a['id'],
             'sub_pages' => $sub_pages,
         ];
-        return tpl()->parse($_GET['object'] . '/main', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/main', $replace);
     }
 
     /**
@@ -115,7 +115,7 @@ class yf_static_pages
     public function _get_page_from_db($id = null)
     {
         $lang = null;
-        $id = $id ?: $_GET['id'];
+        $id = $id ?: ($_GET['id'] ?? null);
         if (empty($id)) {
             return [];
         }

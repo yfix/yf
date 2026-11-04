@@ -785,10 +785,10 @@ class yf_ssh
             'init_type' => _es(MAIN_TYPE),
             'action' => _es($action),
             'comment' => _es($comment),
-            'get_object' => _es($_GET['object']),
-            'get_action' => _es($_GET['action']),
-            'user_id' => (int) ($_SESSION['user_id']),
-            'user_group' => (int) ($_SESSION['user_group']),
+            'get_object' => _es(($_GET['object'] ?? null)),
+            'get_action' => _es(($_GET['action'] ?? null)),
+            'user_id' => (int) (($_SESSION['user_id'] ?? null)),
+            'user_group' => (int) (($_SESSION['user_group'] ?? null)),
             'ip' => _es(common()->get_ip()),
         ];
         return db()->INSERT('log_ssh_action', $sql_array);

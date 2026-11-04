@@ -396,7 +396,7 @@ class yf_utils
         }
         $RECORD_ID = conf('_log_auth_insert_id');
         // Do add activity points
-        return common()->_add_activity_points($_SESSION['user_id'], 'site_login', '', $RECORD_ID);
+        return common()->_add_activity_points(($_SESSION['user_id'] ?? null), 'site_login', '', $RECORD_ID);
     }
 
     // Prepare phone number for the internal view
@@ -574,7 +574,7 @@ class yf_utils
             return '';
         }
         if (empty($go_after_login)) {
-            $go_after_login = './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . ( ! empty($_GET['id']) ? '&id=' . $_GET['id'] : '') . common()->add_get_vars();
+            $go_after_login = './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . ( ! empty($_GET['id']) ? '&id=' . ($_GET['id'] ?? null) : '') . common()->add_get_vars();
         }
         conf('_force_login_go_url', $go_after_login);
         if (empty(main()->USER_ID)) {

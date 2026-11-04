@@ -33,9 +33,9 @@ class yf_manage_shop_price_update
         $_session_parent_key = $_object . '__' . $_action_parent;
         $_session_key = $_object . '__' . $_action;
         if ($this->is_init) {
-            $_SESSION[$_session_key] = $_SESSION[$_session_parent_key];
+            $_SESSION[$_session_key] = ($_SESSION[$_session_parent_key] ?? null);
         }
-        $this->_filter = $_SESSION[$_session_key];
+        $this->_filter = ($_SESSION[$_session_key] ?? null);
         $this->_filter_params = $this->_class_admin_products->_filter_params;
     }
 
@@ -52,8 +52,8 @@ class yf_manage_shop_price_update
         list($total, $preview) = $data;
         $replace = [
             '_all' => $total,
-            'percent' => $_class_price->_number_format($_POST['percent']),
-            'add' => $_class_price->_number_format($_POST['add']),
+            'percent' => $_class_price->_number_format(($_POST['percent'] ?? null)),
+            'add' => $_class_price->_number_format(($_POST['add'] ?? null)),
         ];
         $to_field = $this->_fields_update;
         // create form
@@ -66,7 +66,7 @@ class yf_manage_shop_price_update
             ->number('percent', 'Цена +/-, %')
             ->number('add', 'Цена +/-, ' . $_class_price->CURRENCY)
             ->select_box('to_field', $to_field, [
-                'selected' => $_POST['to_field'],
+                'selected' => ($_POST['to_field'] ?? null),
                 'translate' => true,
                 'desc' => 'Приминть к полю',
                 'tip' => 'цена берется из поля "' . t('price_raw') . '" и применяется к данному полю',
@@ -101,21 +101,21 @@ class yf_manage_shop_price_update
         $count = db()->get_one($sql_count);
         // build temp data
         // prepare percent
-        $_percent = $_class_price->_number_float($_POST['percent']);
+        $_percent = $_class_price->_number_float(($_POST['percent'] ?? null));
         $percent = 1 + $_percent / 100;
         $percent = $_class_price->_number_mysql($percent, 4);
         // prepare add
-        $_add = $_class_price->_number_float($_POST['add']);
+        $_add = $_class_price->_number_float(($_POST['add'] ?? null));
         $add = $_class_price->_number_mysql($_add);
         // prepare to field
         $_fields = $this->_fields_update;
-        $to_field = $_POST['to_field'];
+        $to_field = ($_POST['to_field'] ?? null);
         // to field error
         if ( ! empty($to_field) && ! isset($_fields[$to_field])) {
             return  js_redirect('./', true, 'error to field');
         }
-        $apply = $_POST['apply'];
-        $confirm = $_POST['confirm'];
+        $apply = ($_POST['apply'] ?? null);
+        $confirm = ($_POST['confirm'] ?? null);
         $is_update = isset($_fields[$to_field]) && isset($apply) && isset($confirm) ? true : false;
         $to_field = $to_field ?: $_fields['price_raw'];
         $sql_price_update = "$to_field = ( IF( price_raw > 0, price_raw, price ) * $percent + $add )";

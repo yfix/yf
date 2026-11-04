@@ -17,7 +17,7 @@ class yf_manage_notifications
     public function show()
     {
         return table('SELECT * FROM ' . db('notifications'), [
-                'filter' => $_SESSION[$_GET['object']],
+                'filter' => ($_SESSION[$_GET['object']] ?? null),
                 'filter_params' => [
                     'id' => 'like',
                     'title' => 'like',
@@ -35,23 +35,23 @@ class yf_manage_notifications
             ->text('template_alias')
             ->link('receiver_type', '', $this->RECEIVER_TYPES)
             ->date('add_date', ['format' => 'full', 'nowrap' => 1])
-            ->btn('manage receivers', './?object=' . $_GET['object'] . '&action=view&id=%d')
+            ->btn('manage receivers', './?object=' . ($_GET['object'] ?? null) . '&action=view&id=%d')
             ->btn_delete()
-            ->footer_add('add', './?object=' . $_GET['object'] . '&action=add', ['no_ajax' => 1]);
+            ->footer_add('add', './?object=' . ($_GET['object'] ?? null) . '&action=add', ['no_ajax' => 1]);
     }
 
 
     public function add()
     {
         $a = $_POST;
-        if ((int) ($_GET['receiver_id']) != 0) {
-            $a['receiver_id'] = $_GET['receiver_id'];
+        if ((int) (($_GET['receiver_id'] ?? null)) != 0) {
+            $a['receiver_id'] = ($_GET['receiver_id'] ?? null);
         }
         $receiver_type_options = [];
-        if (in_array($_GET['receiver_type'], array_keys($this->RECEIVER_TYPES))) {
-            $a['receiver_type'] = $_GET['receiver_type'];
+        if (in_array(($_GET['receiver_type'] ?? null), array_keys($this->RECEIVER_TYPES))) {
+            $a['receiver_type'] = ($_GET['receiver_type'] ?? null);
         }
-        $a['back_link'] = './?object=' . $_GET['object'];
+        $a['back_link'] = './?object=' . ($_GET['object'] ?? null);
         $form = form($a, ['autocomplete' => 'off'])
             ->validate([
                 'title' => 'trim|required',
@@ -59,11 +59,11 @@ class yf_manage_notifications
             ])
             ->db_insert_if_ok('notifications', ['title', 'content', 'receiver_type', 'is_common_template', 'template_alias'], ['add_date' => time()])
             ->on_after_update(function () {
-                if ((int) ($_POST['receiver_id']) != 0) {
+                if ((int) (($_POST['receiver_id'] ?? null)) != 0) {
                     db()->insert(db('notifications_receivers'), [
                         'notification_id' => db()->insert_id(),
-                        'receiver_id' => (int) ($_POST['receiver_id']),
-                        'receiver_type' => _es($_POST['receiver_type']),
+                        'receiver_id' => (int) (($_POST['receiver_id'] ?? null)),
+                        'receiver_type' => _es(($_POST['receiver_type'] ?? null)),
                         'is_read' => 0,
                     ]);
                 }
@@ -73,7 +73,7 @@ class yf_manage_notifications
             ->select_box('is_common_template', $this->_online_statuses)
             ->text('template_alias');
 
-        if (in_array($_GET['receiver_type'], array_keys($this->RECEIVER_TYPES))) {
+        if (in_array(($_GET['receiver_type'] ?? null), array_keys($this->RECEIVER_TYPES))) {
             $form = $form->hidden('receiver_type');
         } else {
             $form = $form->select_box('receiver_type', $this->RECEIVER_TYPES);
@@ -86,7 +86,7 @@ class yf_manage_notifications
 
     public function view()
     {
-        $A = $this->_get_notification($_GET['id']);
+        $A = $this->_get_notification(($_GET['id'] ?? null));
         $info = form($A)
             ->info('title')
             ->info('content')
@@ -97,23 +97,23 @@ class yf_manage_notifications
 
 
         if ($A['receiver_type'] == 'admin_id') {
-            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) ($_GET['id']))
+            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) (($_GET['id'] ?? null)))
                 ->text('receiver_id')
                 ->text('is_read')
-                ->footer_add('add_receivers', './?object=' . $_GET['object'] . '&action=add_receivers&id=' . (int) ($_GET['id']), ['no_ajax' => 1]);
+                ->footer_add('add_receivers', './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . (int) (($_GET['id'] ?? null)), ['no_ajax' => 1]);
         } elseif ($A['receiver_type'] == 'user_id') {
-            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) ($_GET['id']))
+            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) (($_GET['id'] ?? null)))
                 ->text('receiver_id')
                 ->text('is_read')
 
                 ->date('add_date', ['format' => 'full', 'nowrap' => 1])
-                ->footer_add('add_receivers', './?object=' . $_GET['object'] . '&action=add_receivers&id=' . (int) ($_GET['id']), ['no_ajax' => 1]);
+                ->footer_add('add_receivers', './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . (int) (($_GET['id'] ?? null)), ['no_ajax' => 1]);
         } else {
-            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) ($_GET['id']))
+            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) (($_GET['id'] ?? null)))
                 ->text('receiver_id')
                 ->text('is_read')
                 ->date('add_date', ['format' => 'full', 'nowrap' => 1])
-                ->footer_add('add_receivers', './?object=' . $_GET['object'] . '&action=add_receivers&id=' . (int) ($_GET['id']), ['no_ajax' => 1]);
+                ->footer_add('add_receivers', './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . (int) (($_GET['id'] ?? null)), ['no_ajax' => 1]);
         }
         $r = [
             'info' => $info,
@@ -124,53 +124,53 @@ class yf_manage_notifications
 
     public function delete()
     {
-        $A = $this->_get_notification($_GET['id']);
+        $A = $this->_get_notification(($_GET['id'] ?? null));
         if ($A['id']) {
-            db()->query('DELETE FROM ' . db('notifications') . ' WHERE id=' . $_GET['id']);
-            db()->query('DELETE FROM ' . db('notifications_receivers') . ' WHERE notification_id=' . $_GET['id']);
+            db()->query('DELETE FROM ' . db('notifications') . ' WHERE id=' . ($_GET['id'] ?? null));
+            db()->query('DELETE FROM ' . db('notifications_receivers') . ' WHERE notification_id=' . ($_GET['id'] ?? null));
         }
         return js_redirect('./?object=' . main()->_get('object') . 'action=products');
     }
 
     public function add_receivers()
     {
-        $A = $this->_get_notification($_GET['id']);
+        $A = $this->_get_notification(($_GET['id'] ?? null));
         $method_name = '_add_receivers_' . $A['receiver_type'];
         if ( ! method_exists($this, $method_name) || ! method_exists($this, $method_name . '_process')) {
-            js_redirect('./?object=' . $_GET['object']);
+            js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
         if (main()->is_post()) {
             $method_name_process = $method_name . '_process';
-            $sql = $this->$method_name_process($_GET['id']);
+            $sql = $this->$method_name_process(($_GET['id'] ?? null));
             $receivers = db()->get_2d($sql);
             $sql_arr = [];
             foreach ((array) $receivers as $v) {
-                if ($_POST['is_all'] == 1 || $_POST['id'][$v] == 1) {
+                if (($_POST['is_all'] ?? null) == 1 || ($_POST['id'][$v] ?? null) == 1) {
                     $sql_arr[] = "({$_GET['id']}, '{$A['receiver_type']}', {$v}, 0)";
                 }
             }
             if (count((array) $sql_arr) > 0) {
                 db()->query('REPLACE INTO `' . db('notifications_receivers') . '` (`notification_id`,`receiver_type`,`receiver_id`,`is_read`) VALUES ' . implode(',', $sql_arr));
             }
-            js_redirect('./?object=' . $_GET['object'] . '&action=view&id=' . $_GET['id']);
+            js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=view&id=' . ($_GET['id'] ?? null));
         }
 
         $replace = [
-            'table' => $this->$method_name($_GET['id']),
+            'table' => $this->$method_name(($_GET['id'] ?? null)),
             'show_add_selected' => $A['receiver_type'] != 'user_id_tmp' ? 1 : 0,
         ];
-        return tpl()->parse($_GET['object'] . '/' . __FUNCTION__, $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/' . __FUNCTION__, $replace);
     }
 
     public function _add_receivers_user_id_process()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'] . '__user_id';
-        if ($_SESSION[$filter_name]['online'] != '') {
-            $sql = 'SELECT `id` FROM ' . db('user') . ' WHERE `id` ' . ($_SESSION[$filter_name]['online'] != 1 ? 'NOT' : '') . ' IN (SELECT `user_id` FROM ' . db('users_online') . " WHERE `user_type`='user_id') /*FILTER*/";
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null) . '__user_id';
+        if (($_SESSION[$filter_name]['online'] ?? null) != '') {
+            $sql = 'SELECT `id` FROM ' . db('user') . ' WHERE `id` ' . (($_SESSION[$filter_name]['online'] ?? null) != 1 ? 'NOT' : '') . ' IN (SELECT `user_id` FROM ' . db('users_online') . " WHERE `user_type`='user_id') /*FILTER*/";
         } else {
             $sql = 'SELECT `id` FROM ' . db('user') . ' WHERE 1 /*FILTER*/';
         }
-        $filter = $_SESSION[$filter_name];
+        $filter = ($_SESSION[$filter_name] ?? null);
         unset($filter['online']);
         list($filter_sql) = _class('table2')->_filter_sql_prepare($filter, [
             'login' => 'like',
@@ -183,13 +183,13 @@ class yf_manage_notifications
 
     public function _add_receivers_admin_id_process()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'] . '__admin_id';
-        if ($_SESSION[$filter_name]['online'] != '') {
-            $sql = 'SELECT `id` FROM ' . db('admin') . ' WHERE `id` ' . ($_SESSION[$filter_name]['online'] != 1 ? 'NOT' : '') . ' IN (SELECT `user_id` FROM ' . db('users_online') . " WHERE `user_type`='admin_id') /*FILTER*/ /*ORDER*/";
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null) . '__admin_id';
+        if (($_SESSION[$filter_name]['online'] ?? null) != '') {
+            $sql = 'SELECT `id` FROM ' . db('admin') . ' WHERE `id` ' . (($_SESSION[$filter_name]['online'] ?? null) != 1 ? 'NOT' : '') . ' IN (SELECT `user_id` FROM ' . db('users_online') . " WHERE `user_type`='admin_id') /*FILTER*/ /*ORDER*/";
         } else {
             $sql = 'SELECT `id` FROM ' . db('admin') . ' WHERE 1 /*FILTER*/ /*ORDER*/';
         }
-        $filter = $_SESSION[$filter_name];
+        $filter = ($_SESSION[$filter_name] ?? null);
         unset($filter['online']);
         list($filter_sql) = _class('table2')->_filter_sql_prepare($filter, [
             'login' => 'like',
@@ -207,13 +207,13 @@ class yf_manage_notifications
 
     public function _add_receivers_user_id()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'] . '__user_id';
-        if ($_SESSION[$filter_name]['online'] != '') {
-            $sql = 'SELECT * FROM ' . db('user') . ' WHERE `id` ' . ($_SESSION[$filter_name]['online'] != 1 ? 'NOT' : '') . ' IN (SELECT `user_id` FROM ' . db('users_online') . " WHERE `user_type`='user_id') /*FILTER*/ /*ORDER*/";
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null) . '__user_id';
+        if (($_SESSION[$filter_name]['online'] ?? null) != '') {
+            $sql = 'SELECT * FROM ' . db('user') . ' WHERE `id` ' . (($_SESSION[$filter_name]['online'] ?? null) != 1 ? 'NOT' : '') . ' IN (SELECT `user_id` FROM ' . db('users_online') . " WHERE `user_type`='user_id') /*FILTER*/ /*ORDER*/";
         } else {
             $sql = 'SELECT * FROM ' . db('user') . ' WHERE 1 /*FILTER*/ /*ORDER*/';
         }
-        $filter = $_SESSION[$filter_name];
+        $filter = ($_SESSION[$filter_name] ?? null);
         unset($filter['online']);
         return table($sql, [
                 'filter' => $filter,
@@ -232,13 +232,13 @@ class yf_manage_notifications
 
     public function _add_receivers_admin_id()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'] . '__admin_id';
-        if ($_SESSION[$filter_name]['online'] != '') {
-            $sql = 'SELECT * FROM ' . db('admin') . ' WHERE `id` ' . ($_SESSION[$filter_name]['online'] != 1 ? 'NOT' : '') . ' IN (SELECT `user_id` FROM ' . db('users_online') . " WHERE `user_type`='admin_id') /*FILTER*/ /*ORDER*/";
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null) . '__admin_id';
+        if (($_SESSION[$filter_name]['online'] ?? null) != '') {
+            $sql = 'SELECT * FROM ' . db('admin') . ' WHERE `id` ' . (($_SESSION[$filter_name]['online'] ?? null) != 1 ? 'NOT' : '') . ' IN (SELECT `user_id` FROM ' . db('users_online') . " WHERE `user_type`='admin_id') /*FILTER*/ /*ORDER*/";
         } else {
             $sql = 'SELECT * FROM ' . db('admin') . ' WHERE 1 /*FILTER*/ /*ORDER*/';
         }
-        $filter = $_SESSION[$filter_name];
+        $filter = ($_SESSION[$filter_name] ?? null);
         unset($filter['online']);
         return table($sql, [
                 'filter' => $filter,
@@ -266,18 +266,18 @@ class yf_manage_notifications
 
     public function _show_filter()
     {
-        if (in_array($_GET['action'], ['show', ''])) {
-            $filter_name = $_GET['object'];
+        if (in_array(($_GET['action'] ?? null), ['show', ''])) {
+            $filter_name = ($_GET['object'] ?? null);
             $r = [
-                'form_action' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name,
-                'clear_url' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name . '&page=clear',
+                'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name,
+                'clear_url' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name . '&page=clear',
             ];
             $order_fields = [];
             foreach (explode('|', 'id|add_date|receiver_type|title|content') as $f) {
                 $order_fields[$f] = $f;
             }
             return form($r, [
-                    'selected' => $_SESSION[$filter_name],
+                    'selected' => ($_SESSION[$filter_name] ?? null),
                 ])
                 ->number('id', ['class' => 'span1', 'min' => 0])
                 ->text('title', ['class' => 'input-medium'])
@@ -291,33 +291,33 @@ class yf_manage_notifications
                 ->radio_box('order_direction', ['asc' => 'Ascending', 'desc' => 'Descending'])
                 ->save_and_clear();
         }
-        if ( ! in_array($_GET['action'], ['add_receivers'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['add_receivers'])) {
             return false;
         }
-        $A = $this->_get_notification($_GET['id']);
+        $A = $this->_get_notification(($_GET['id'] ?? null));
         $receiver_type = $A['receiver_type'];
 
         $method_name = '_show_filter_' . $A['receiver_type'];
         if ( ! method_exists($this, $method_name)) {
-            js_redirect('./?object=' . $_GET['object']);
+            js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
         return $this->$method_name();
     }
 
     public function _show_filter_admin_id()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'] . '__admin_id';
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null) . '__admin_id';
         $r = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name,
-            'clear_url' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name . '&page=clear',
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name,
+            'clear_url' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name . '&page=clear',
         ];
         $order_fields = [];
         foreach (explode('|', 'login|email|group|first_name|last_name|add_date|last_login|num_logins|active') as $f) {
             $order_fields[$f] = $f;
         }
-        $r['notification_id'] = $_GET['id'];
+        $r['notification_id'] = ($_GET['id'] ?? null);
         return form($r, [
-                'selected' => $_SESSION[$filter_name],
+                'selected' => ($_SESSION[$filter_name] ?? null),
             ])
             ->hidden('notification_id')
             ->login('login', ['class' => 'input-medium'])
@@ -331,18 +331,18 @@ class yf_manage_notifications
 
     public function _show_filter_user_id()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'] . '__admin_id';
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null) . '__admin_id';
         $r = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name,
-            'clear_url' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name . '&page=clear',
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name,
+            'clear_url' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name . '&page=clear',
         ];
         $order_fields = [];
         foreach (explode('|', 'name,login,email|add_date|last_login|num_logins|active') as $f) {
             $order_fields[$f] = $f;
         }
-        $r['notification_id'] = $_GET['id'];
+        $r['notification_id'] = ($_GET['id'] ?? null);
         return form($r, [
-                'selected' => $_SESSION[$filter_name],
+                'selected' => ($_SESSION[$filter_name] ?? null),
             ])
             ->hidden('notification_id')
             ->number('id')
@@ -363,10 +363,10 @@ class yf_manage_notifications
 
     public function filter_save()
     {
-        $A = $this->_get_notification($_POST['notification_id']);
+        $A = $this->_get_notification(($_POST['notification_id'] ?? null));
 
-        $filter_name = $_GET['id'] == 'manage_notifications' ? 'manage_notifications' : ($_GET['object'] . '__add_receivers__' . $A['receiver_type']);
-        if ($_GET['page'] == 'clear') {
+        $filter_name = ($_GET['id'] ?? null) == 'manage_notifications' ? 'manage_notifications' : (($_GET['object'] ?? null) . '__add_receivers__' . $A['receiver_type']);
+        if (($_GET['page'] ?? null) == 'clear') {
             $_SESSION[$filter_name] = [];
         } else {
             $_SESSION[$filter_name] = $_POST;
@@ -376,10 +376,10 @@ class yf_manage_notifications
                 }
             }
         }
-        if ($_GET['id'] == 'manage_notifications') {
-            $redirect_url = './?object=' . $_GET['object'];
+        if (($_GET['id'] ?? null) == 'manage_notifications') {
+            $redirect_url = './?object=' . ($_GET['object'] ?? null);
         } else {
-            $redirect_url = './?object=' . $_GET['object'] . '&action=add_receivers&id=' . $_POST['notification_id'];
+            $redirect_url = './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . ($_POST['notification_id'] ?? null);
         }
         return js_redirect($redirect_url);
     }
@@ -392,7 +392,7 @@ class yf_manage_notifications
         }
         $A = db()->query_fetch('SELECT * FROM `' . db('notifications') . '` WHERE `id`=' . (int) $id);
         if (empty($A)) {
-            js_redirect('./?object=' . $_GET['object']);
+            js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
         $this->notifications[$id] = $A;
         return $A;

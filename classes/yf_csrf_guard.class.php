@@ -61,7 +61,7 @@ class yf_csrf_guard
     public function generate()
     {
         if (function_exists('hash_algos') && in_array($this->HASH_ALGO, hash_algos())) {
-            $token = hash($this->HASH_ALGO, mt_rand(0, mt_getrandmax()) . '|' . $_SERVER['REMOTE_ADDR'] . '|' . microtime());
+            $token = hash($this->HASH_ALGO, mt_rand(0, mt_getrandmax()) . '|' . ($_SERVER['REMOTE_ADDR'] ?? null) . '|' . microtime());
         } else {
             $token = '';
             for ($i = 0; $i < 64; ++$i) {
@@ -103,7 +103,7 @@ class yf_csrf_guard
     {
         $key = $this->FORM_ID;
         if (isset($_SESSION[$this->TOKEN_NAME][$key])) {
-            return $_SESSION[$this->TOKEN_NAME][$key];
+            return ($_SESSION[$this->TOKEN_NAME][$key] ?? null);
         }
         return false;
     }
@@ -138,17 +138,17 @@ class yf_csrf_guard
         $main = main();
         // slice 2 first elements (__FUNCTION__ and $this->_go) and leave only 5 more trace elements to save space
         $trace = implode(PHP_EOL, array_slice(explode(PHP_EOL, $main->trace_string()), 2, 7));
-        $is_https = ($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL']);
+        $is_https = (($_SERVER['HTTPS'] ?? null) || ($_SERVER['SSL_PROTOCOL'] ?? null));
         return db()->insert_safe('log_csrf_errors', [
             'form_id' => $params['form_id'],
 
             'date' => date('Y-m-d H:i:s'),
             'ip' => common()->get_ip(),
-            'url' => ($is_https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . ($_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : ''),
-            'ua' => $_SERVER['HTTP_USER_AGENT'],
-            'referer' => $_SERVER['HTTP_REFERER'],
-            'object' => $_GET['object'],
-            'action' => $_GET['action'],
+            'url' => ($is_https ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null) . (($_SERVER['QUERY_STRING'] ?? null) ? '?' . ($_SERVER['QUERY_STRING'] ?? null) : ''),
+            'ua' => ($_SERVER['HTTP_USER_AGENT'] ?? null),
+            'referer' => ($_SERVER['HTTP_REFERER'] ?? null),
+            'object' => ($_GET['object'] ?? null),
+            'action' => ($_GET['action'] ?? null),
             'user_id' => MAIN_TYPE_ADMIN ? $main->ADMIN_ID : $main->USER_ID,
             'user_group' => MAIN_TYPE_ADMIN ? $main->ADMIN_GROUP : $main->USER_GROUP,
             'site_id' => (int) $main->SITE_ID,
@@ -174,8 +174,8 @@ class yf_csrf_guard
             'is_mobile' => $main->is_mobile(),
 
             'lang' => (string) conf('language'),
-            'country' => (string) (conf('country') ?: $_SERVER['GEOIP_COUNTRY_CODE']),
-            'utm_source' => (string) ($_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_SESSION['utm_source'])),
+            'country' => (string) (conf('country') ?: ($_SERVER['GEOIP_COUNTRY_CODE'] ?? null)),
+            'utm_source' => (string) (($_GET['utm_source'] ?? null) ?: (($_POST['utm_source'] ?? null) ?: ($_SESSION['utm_source'] ?? null))),
             'post_data' => json_encode($_POST),
             'trace' => $trace,
             'memory' => (int) memory_get_peak_usage(),
@@ -195,22 +195,22 @@ class yf_csrf_guard
         }
         $is = $this->is;
         $data = [
-            'user_id' => (int) $_SESSION['user_id'],
-            'user_group' => (int) $_SESSION['user_group'],
+            'user_id' => (int) ($_SESSION['user_id'] ?? null),
+            'user_group' => (int) ($_SESSION['user_group'] ?? null),
             'date' => time(),
-            'user_agent' => (string) $_SERVER['HTTP_USER_AGENT'],
-            'referer' => (string) $_SERVER['HTTP_REFERER'],
-            'query_string' => (string) $_SERVER['QUERY_STRING'],
-            'request_uri' => (string) $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-            'exec_time' => str_replace(',', '.', common()->_format_time_value($GLOBALS['time_end'] ?: microtime(true) - main()->_time_start)),
+            'user_agent' => (string) ($_SERVER['HTTP_USER_AGENT'] ?? null),
+            'referer' => (string) ($_SERVER['HTTP_REFERER'] ?? null),
+            'query_string' => (string) ($_SERVER['QUERY_STRING'] ?? null),
+            'request_uri' => (string) ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null),
+            'exec_time' => str_replace(',', '.', common()->_format_time_value(($GLOBALS['time_end'] ?? null) ?: microtime(true) - main()->_time_start)),
             'num_dbq' => (int) db()->NUM_QUERIES,
             'page_size' => (int) tpl()->_output_body_length,
             'memory' => (int) memory_get_peak_usage(),
             'site_id' => (int) conf('SITE_ID'),
             'ip' => (string) common()->get_ip(),
-            'country' => (string) (conf('country') ?: $_SERVER['GEOIP_COUNTRY_CODE']),
+            'country' => (string) (conf('country') ?: ($_SERVER['GEOIP_COUNTRY_CODE'] ?? null)),
             'lang' => (string) conf('language'),
-            'utm_source' => (string) ($_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_SESSION['utm_source'])),
+            'utm_source' => (string) (($_GET['utm_source'] ?? null) ?: (($_POST['utm_source'] ?? null) ?: ($_SESSION['utm_source'] ?? null))),
             'is_common_page' => (int) $is['is_common_page'],
             'is_https' => (int) $is['is_https'],
             'is_post' => (int) $is['is_post'],

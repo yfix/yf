@@ -56,6 +56,6 @@ class yf_home_page extends yf_module
             cache_set($cache_name, $data);
         }
         $replace = &$data;
-        return tpl()->parse($_GET['object'] . '/main', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/main', $replace);
     }
 }

@@ -16,7 +16,7 @@ class yf_manage_news
      */
     public function _get_info($id = null)
     {
-        $id = isset($id) ? $id : $_GET['id'];
+        $id = isset($id) ? $id : ($_GET['id'] ?? null);
         return db()->from(self::table)
             ->where('title', _strtolower(urldecode($id)))
             ->or_where('id', (int) $id)->get();
@@ -72,7 +72,7 @@ class yf_manage_news
         $a = (array) $_POST + (array) $a;
         if (is_post()) {
             foreach ((array) $keys_to_fix as $k) {
-                if (false !== strpos($_POST[$k], '{') && false !== strpos($_POST[$k], '}')) {
+                if (false !== strpos(($_POST[$k] ?? null), '{') && false !== strpos(($_POST[$k] ?? null), '}')) {
                     $_POST[$k] = str_replace(array_values($exec_fix), array_keys($exec_fix), $_POST[$k]);
                 }
             }
@@ -88,13 +88,13 @@ class yf_manage_news
                 'locale' => 'required',
             ])
             ->on_post(function () {
-                if (strlen($_POST['url'])) {
-                    $_POST['url'] = preg_replace('~[\s/]+~', '-', trim($_POST['url']));
+                if (strlen(($_POST['url'] ?? null))) {
+                    $_POST['url'] = preg_replace('~[\s/]+~', '-', trim(($_POST['url'] ?? null)));
                 }
-                if (strlen($_POST['title']) && ! strlen($_POST['url'])) {
-                    $_POST['url'] = common()->_propose_url_from_name($_POST['title']);
-                } elseif ( ! strlen($_POST['head_text']) && strlen($_POST['full_text'])) {
-                    $_POST['head_text'] = _truncate($_POST['full_text'], 200, false, false);
+                if (strlen(($_POST['title'] ?? null)) && ! strlen(($_POST['url'] ?? null))) {
+                    $_POST['url'] = common()->_propose_url_from_name(($_POST['title'] ?? null));
+                } elseif ( ! strlen(($_POST['head_text'] ?? null)) && strlen(($_POST['full_text'] ?? null))) {
+                    $_POST['head_text'] = _truncate(($_POST['full_text'] ?? null), 200, false, false);
                 }
             })
             ->update_if_ok(self::table, ['title', 'head_text', 'full_text', 'meta_keywords', 'meta_desc', 'url', 'active', 'locale'])
@@ -124,7 +124,7 @@ class yf_manage_news
 
     public function delete()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if ($id) {
             $a = $this->_get_info();
             module_safe('manage_revisions')->add([
@@ -146,7 +146,7 @@ class yf_manage_news
 
     public function active()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if ($a = $this->_get_info()) {
             $n = $a;
             $n['active'] = (int) ! $a['active'];

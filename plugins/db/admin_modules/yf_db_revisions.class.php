@@ -33,7 +33,7 @@ class yf_db_revisions
         if (empty($_GET['id'])) {
             return _e('Empty revision id');
         }
-        $sql = 'SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) ($_GET['id']);
+        $sql = 'SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) (($_GET['id'] ?? null));
         $a = db()->get($sql);
         if (empty($a['id'])) {
             return _e('Revision not found');
@@ -90,7 +90,7 @@ class yf_db_revisions
                     ->select_box('order_by', $order_fields, ['show_text' => 1]);
             },
         ];
-        $action = $_GET['action'];
+        $action = ($_GET['action'] ?? null);
         if (isset($filters[$action])) {
             return $filters[$action]($filter_name, $replace)
                 ->order_box()

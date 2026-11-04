@@ -123,7 +123,7 @@ class yf_tpl
         $this->IS_FRONT = (bool) conf('IS_FRONT');
         // Set custom skin
         if ( ! empty($_SESSION['user_skin']) && MAIN_TYPE_USER) {
-            conf('theme', $_SESSION['user_skin']);
+            conf('theme', ($_SESSION['user_skin'] ?? null));
         } elseif (defined('DEFAULT_SKIN')) {
             conf('theme', constant('DEFAULT_SKIN'));
         }
@@ -223,7 +223,7 @@ class yf_tpl
         if ($init_type == 'user' && empty($_SESSION['user_group'])) {
             $_SESSION['user_group'] = 1;
         }
-        if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
+        if (main()->OUTPUT_CACHING && $init_type == 'user' && ($_SERVER['REQUEST_METHOD'] ?? null) == 'GET') {
             _class('output_cache')->_process_output_cache();
         }
         if ( ! main()->no_graphics()) {
@@ -253,7 +253,7 @@ class yf_tpl
                 if (main()->is_ajax()) {
                     no_graphics(true);
                     main()->IS_403 = true;
-                    header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 403 Forbidden');
+                    header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 403 Forbidden');
                     $skip_prefetch = true;
                 }
                 if ( ! main()->is_console()) {
@@ -283,7 +283,7 @@ class yf_tpl
             if ($this->CUSTOM_META_INFO && $init_type == 'user') {
                 $this->register_output_filter([$this, '_custom_replace_callback'], 'custom_replace');
             }
-            if ($init_type == 'user' && _class('graphics')->IFRAME_CENTER && (false === strpos($_SERVER['QUERY_STRING'], 'center_area=1'))) {
+            if ($init_type == 'user' && _class('graphics')->IFRAME_CENTER && (false === strpos(($_SERVER['QUERY_STRING'] ?? null), 'center_area=1'))) {
                 $this->register_output_filter([$this, '_replace_for_iframe_callback'], 'replace_for_iframe');
             }
         }
@@ -296,7 +296,7 @@ class yf_tpl
                 $this->register_output_filter([$this, '_tidy_cleanup_callback'], 'tidy_cleanup');
             }
             $body['content'] = $this->_apply_output_filters($body['content']);
-            if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
+            if (main()->OUTPUT_CACHING && $init_type == 'user' && ($_SERVER['REQUEST_METHOD'] ?? null) == 'GET') {
                 _class('output_cache')->_put_page_to_output_cache($body);
             }
             if ( ! main()->is_console() && ! main()->is_ajax()) {
@@ -322,7 +322,7 @@ class yf_tpl
             echo common()->show_debug_info();
         }
         // Output cache for 'no graphics' content
-        if (main()->no_graphics() && main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
+        if (main()->no_graphics() && main()->OUTPUT_CACHING && $init_type == 'user' && ($_SERVER['REQUEST_METHOD'] ?? null) == 'GET') {
             _class('output_cache')->_put_page_to_output_cache(ob_get_clean());
         }
         if (main()->LOG_EXEC || $this->LOG_EXEC_INFO) {
@@ -392,9 +392,9 @@ class yf_tpl
         }
         if (false !== strpos($name, '@')) {
             $r = [
-                '@object' => $_GET['object'],
-                '@action' => $_GET['action'],
-                '@id' => $_GET['id'],
+                '@object' => ($_GET['object'] ?? null),
+                '@action' => ($_GET['action'] ?? null),
+                '@id' => ($_GET['id'] ?? null),
             ];
             $name = str_replace(array_keys($r), array_values($r), $name);
         }

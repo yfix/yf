@@ -20,9 +20,9 @@ class yf_manage_shop_region_update
         $_session_parent_key = $_object . '__' . $_action_parent;
         $_session_key = $_object . '__' . $_action;
         if ($this->is_init) {
-            $_SESSION[$_session_key] = $_SESSION[$_session_parent_key];
+            $_SESSION[$_session_key] = ($_SESSION[$_session_parent_key] ?? null);
         }
-        $this->_filter = $_SESSION[$_session_key];
+        $this->_filter = ($_SESSION[$_session_key] ?? null);
         $this->_filter_params = $this->_class_admin_products->_filter_params;
     }
 
@@ -41,7 +41,7 @@ class yf_manage_shop_region_update
             'delete' => 'удалить',
             'clean' => 'очистить',
         ];
-        $sub_action = $_POST['sub_action'];
+        $sub_action = ($_POST['sub_action'] ?? null);
         $is_sub_action = $sub_action !== '0' && isset($_sub_action[$sub_action]);
         // -----
         $_region = _class('_shop_region', 'modules/shop/')->_get_list();
@@ -49,7 +49,7 @@ class yf_manage_shop_region_update
         if ($sub_action == 'clean') {
             $is_region = true;
         } else {
-            $region = array_values((array) $_POST['region']);
+            $region = array_values((array) ($_POST['region'] ?? null));
             $is_region = false;
             if ( ! empty($region)) {
                 $region = array_combine($region, $region);
@@ -78,8 +78,8 @@ class yf_manage_shop_region_update
         ]);
         $total = (int) db()->get_one($sql_count);
         // update
-        $apply = $_POST['apply'];
-        $confirm = $_POST['confirm'];
+        $apply = ($_POST['apply'] ?? null);
+        $confirm = ($_POST['confirm'] ?? null);
         $is_action = $this->is_post && $is_sub_action && $is_region && isset($apply) ? true : false;
         $is_update = $is_action && isset($confirm) ? true : false;
         $no_confirm = $is_action && ! isset($confirm) ? true : false;

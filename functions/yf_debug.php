@@ -9,7 +9,7 @@ $debug_salt = '_5555_';
 $robots_options = 'noindex, nofollow, noarchive, nosnippet';
 
 $console_mode = ( ! empty($_SERVER['argc']) && ! array_key_exists('REQUEST_METHOD', $_SERVER));
-$debug_request = (isset($_GET['debug']) ? $_GET['debug'] : (isset($_POST['debug']) ? $_POST['debug'] : false));
+$debug_request = (isset($_GET['debug']) ? ($_GET['debug'] ?? null) : (isset($_POST['debug']) ? ($_POST['debug'] ?? null) : false));
 $need_debug_auth = ( ! defined('DEBUG_MODE') && ! empty($debug_request));
 
 if ($console_mode && $need_debug_auth) {
@@ -17,7 +17,7 @@ if ($console_mode && $need_debug_auth) {
 } elseif ( ! $console_mode && $need_debug_auth) {
     $is_bot = preg_match('/(wget|curl|bot|spider|crawler|yandexbot|googlebot|slurp|baidu|cyscon|mcafee|scanalert|httpclient|mediapartners|ia\-archiver|ips\-agent)/ims', $_SERVER['HTTP_USER_AGENT']);
     if ($is_bot || $debug_request != $debug_code) {
-        header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 301 Moved Permanently');
+        header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 301 Moved Permanently');
         header('Location: ' . _debug_remove_from_url());
         exit();
     }
@@ -31,7 +31,7 @@ if ($console_mode && $need_debug_auth) {
     $hash = substr(md5($debug_salt . gmdate('Y-m-d')), 6, 16);
     $cookie_name = '_debug_authorized_' . $hash;
     if (_debug_auth_check($debug_users) || ! empty($_COOKIE[$cookie_name])) {
-        $h = array_reverse(explode('.', $_SERVER['HTTP_HOST']));
+        $h = array_reverse(explode('.', ($_SERVER['HTTP_HOST'] ?? null)));
         setcookie($cookie_name, '1', 0, '/', $h[1] . '.' . $h[0]); // Live for session, set for TLD
         define('DEBUG_MODE', 1);
     } else {
@@ -45,13 +45,13 @@ if ($console_mode && $need_debug_auth) {
 function _debug_remove_from_url($uri = '', $qs = '')
 {
     if (empty($uri)) {
-        $uri = $_SERVER['REQUEST_URI'];
+        $uri = ($_SERVER['REQUEST_URI'] ?? null);
     }
     if (empty($uri)) {
         $uri = '/';
     }
     if (empty($qs)) {
-        $qs = $_SERVER['QUERY_STRING'];
+        $qs = ($_SERVER['QUERY_STRING'] ?? null);
     }
     if (empty($qs)) {
         $qs = '';
@@ -71,8 +71,8 @@ function _debug_remove_from_url($uri = '', $qs = '')
 }
 function _debug_auth_check($users = [])
 {
-    $auth_user = trim($_SERVER['PHP_AUTH_USER']);
-    $auth_pswd = trim($_SERVER['PHP_AUTH_PW']);
+    $auth_user = trim(($_SERVER['PHP_AUTH_USER'] ?? null));
+    $auth_pswd = trim(($_SERVER['PHP_AUTH_PW'] ?? null));
     if ( ! strlen($auth_user) || ! strlen($auth_pswd)) {
         return false;
     }

@@ -28,7 +28,7 @@ class yf_manage_servers
 
     public function edit()
     {
-        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) ($_GET['id']));
+        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $a['id']) {
             return _e('No id!');
         }
@@ -38,7 +38,7 @@ class yf_manage_servers
             ->db_update_if_ok(self::table, ['ip', 'role', 'name', 'hostname', 'comment'], 'id=' . $a['id'])
             ->on_after_update(function () use ($a) {
                 cache_del(['servers', 'server_roles']);
-                common()->admin_wall_add(['server updated: ' . $_POST['ip'] . '', $a['id']]);
+                common()->admin_wall_add(['server updated: ' . ($_POST['ip'] ?? null) . '', $a['id']]);
             })
             ->text('ip')
             ->text('role')
@@ -58,7 +58,7 @@ class yf_manage_servers
             ->db_insert_if_ok(self::table, ['ip', 'role', 'name', 'hostname', 'comment'], [])
             ->on_after_update(function () {
                 cache_del(['servers', 'server_roles']);
-                common()->admin_wall_add(['server added: ' . $_POST['ip'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['server added: ' . ($_POST['ip'] ?? null) . '', db()->insert_id()]);
             })
             ->text('ip')
             ->text('role')

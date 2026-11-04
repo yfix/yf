@@ -91,7 +91,7 @@ class yf_core_blocks
         if ( ! $this->_blocks_infos[$block_id]['active']) {
             return false;
         }
-        if ( ! $this->_check_block_rights($block_id, $_GET['object'], $_GET['action'])) {
+        if ( ! $this->_check_block_rights($block_id, ($_GET['object'] ?? null), ($_GET['action'] ?? null))) {
             return $this->_action_on_block_denied($block_name);
         }
         $cur_block_info = $this->_blocks_infos[$block_id];
@@ -139,18 +139,18 @@ class yf_core_blocks
     {
         if ($block_name == 'center_area') {
             if ($this->TASK_DENIED_403_HEADER) {
-                header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 403 Forbidden');
+                header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 403 Forbidden');
                 main()->IS_403 = true;
             }
             if (MAIN_TYPE_USER && ! main()->USER_ID) {
                 $redir_params = [
-                    '%%object%%' => $_GET['object'],
-                    '%%action%%' => $_GET['action'],
+                    '%%object%%' => ($_GET['object'] ?? null),
+                    '%%action%%' => ($_GET['action'] ?? null),
                     '%%add_get_vars%%' => str_replace('&', ';', _add_get(['object', 'action'])),
                 ];
                 $redir_url = str_replace(array_keys($redir_params), array_values($redir_params), main()->REDIR_URL_DENIED);
                 if ( ! empty($redir_url)) {
-                    if ($_GET['object'] == 'login_form') {
+                    if (($_GET['object'] ?? null) == 'login_form') {
                         return 'Access to login form denied on center block (' . __CLASS__ . '.' . __FUNCTION__ . ')';
                     }
                     return js_redirect($redir_url);
@@ -241,7 +241,7 @@ class yf_core_blocks
         if (empty($ACTION)) {
             $ACTION = 'show';
         }
-        $CUR_USER_GROUP = (int) (MAIN_TYPE_ADMIN ? $_SESSION['admin_group'] : $_SESSION['user_group']);
+        $CUR_USER_GROUP = (int) (MAIN_TYPE_ADMIN ? ($_SESSION['admin_group'] ?? null) : ($_SESSION['user_group'] ?? null));
         $CUR_USER_THEME = conf('theme');
         $CUR_LOCALE = conf('language');
         $CUR_SITE = (int) conf('SITE_ID');
@@ -327,7 +327,7 @@ class yf_core_blocks
         if ( ! $this->_blocks_infos[$block_id]['active']) {
             return false;
         }
-        if ( ! $this->_check_block_rights($block_id, $_GET['object'], $_GET['action'])) {
+        if ( ! $this->_check_block_rights($block_id, ($_GET['object'] ?? null), ($_GET['action'] ?? null))) {
             return _class('graphics')->_action_on_block_denied($block_name);
         }
         return $this->tasks($allowed_check = true);
@@ -453,7 +453,7 @@ class yf_core_blocks
         if ($not_found) {
             $main->BLOCKS_TASK_404 = true;
             if ($this->TASK_NOT_FOUND_404_HEADER) {
-                header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 404 Not Found');
+                header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 404 Not Found');
                 $main->IS_404 = true;
             }
             if (_class('graphics')->NOT_FOUND_RAISE_WARNING) {
@@ -481,7 +481,7 @@ class yf_core_blocks
         } elseif ($allowed_check && $access_denied) {
             $main->BLOCKS_TASK_403 = true;
             if ($this->TASK_DENIED_403_HEADER) {
-                header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 403 Forbidden');
+                header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 403 Forbidden');
                 $main->IS_403 = true;
             }
             trigger_error(__CLASS__ . ': Access denied: ' . $OBJECT . '.' . $ACTION, E_USER_WARNING);

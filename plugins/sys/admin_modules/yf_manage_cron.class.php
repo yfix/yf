@@ -68,7 +68,7 @@ class yf_manage_cron
 
     public function edit()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         if ( ! $id) {
             return js_redirect(url('/@object'), false, 'Empty ID');
         }
@@ -85,14 +85,14 @@ class yf_manage_cron
             ->on_post(function () {
                 $a = null;
                 db()->update_safe('cron_tasks', [
-                    'comment' => $_POST['comment'],
-                    'frequency' => $_POST['digits'] . ' ' . $_POST['units'],
+                    'comment' => ($_POST['comment'] ?? null),
+                    'frequency' => ($_POST['digits'] ?? null) . ' ' . ($_POST['units'] ?? null),
                     'update_date' => time(),
                     'admin_id' => main()->ADMIN_ID,
-                    'active' => $_POST['active'],
-                    'exec_type' => $_POST['exec_type'],
-                    'exec_time' => $_POST['exec_time'] ?: '600',
-                ], 'id=' . (int) ($_GET['id']));
+                    'active' => ($_POST['active'] ?? null),
+                    'exec_type' => ($_POST['exec_type'] ?? null),
+                    'exec_time' => ($_POST['exec_time'] ?? null) ?: '600',
+                ], 'id=' . (int) (($_GET['id'] ?? null)));
                 common()->admin_wall_add(['cron tasks updated: ' . $a['name'], $a['id']]);
                 return js_redirect(url('/@object'));
             })
@@ -118,7 +118,7 @@ class yf_manage_cron
     public function cron_logs()
     {
         return table(
-                db()->from('cron_logs')->where('cron_id', (int) $_GET['id'])->order_by('time_start', 'desc')
+                db()->from('cron_logs')->where('cron_id', (int) ($_GET['id'] ?? null))->order_by('time_start', 'desc')
             )
             ->date('time_start', ['format' => 'full'])
             ->text('log')

@@ -89,7 +89,7 @@ class yf_manage_shop_products
         $sql = $this->_sql();
 
         return table($sql, [
-                'filter' => $_SESSION[$_GET['object'] . '__products'],
+                'filter' => ($_SESSION[$_GET['object'] . '__products'] ?? null),
                 'filter_params' => $this->_filter_params,
                 'hide_empty' => 1,
                 'pager_sql_callback' => function ($sql) {
@@ -126,7 +126,7 @@ class yf_manage_shop_products
         $old_supplier_id = '';
         ini_set('memory_limit', '1024M');
         $sql = $this->_sql();
-        $filter_arr = main()->is_post() ? ['supplier_id' => (int) ($_POST['supplier_id'])] : $_SESSION[$_GET['object'] . '__products'];
+        $filter_arr = main()->is_post() ? ['supplier_id' => (int) (($_POST['supplier_id'] ?? null))] : ($_SESSION[$_GET['object'] . '__products'] ?? null);
         list($_where, $_order) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_arr, $this->_filter_params, $sql);
         $sql = $this->_sql([
             'where' => 1 . $_where,
@@ -183,8 +183,8 @@ class yf_manage_shop_products
 
     public function product_activate()
     {
-        if ($_GET['id']) {
-            $a = $this->_get_product($_GET['id']);
+        if (($_GET['id'] ?? null)) {
+            $a = $this->_get_product(($_GET['id'] ?? null));
         }
         if ($a['id']) {
             if ($a['active'] == 1) {
@@ -192,9 +192,9 @@ class yf_manage_shop_products
             } elseif ($a['active'] == 0) {
                 $active = 1;
             }
-            db()->update_safe(db('shop_products'), ['active' => $active], 'id=' . (int) ($_GET['id']));
+            db()->update_safe(db('shop_products'), ['active' => $active], 'id=' . (int) (($_GET['id'] ?? null)));
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
             echo $active ? 1 : 0;
         } else {
@@ -205,19 +205,19 @@ class yf_manage_shop_products
 
     public function product_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        if ($_GET['id']) {
-            $a = $this->_get_product($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        if (($_GET['id'] ?? null)) {
+            $a = $this->_get_product(($_GET['id'] ?? null));
         }
         if ($a['id']) {
-            module('manage_shop')->_product_check_first_revision('product', $_GET['id']);
-            module('manage_shop')->_product_image_delete($_GET['id']);
-            db()->query('DELETE FROM ' . db('shop_product_to_category') . ' WHERE product_id=' . $_GET['id']);
-            db()->query('DELETE FROM ' . db('shop_product_to_region') . ' WHERE product_id=' . $_GET['id']);
-            db()->query('DELETE FROM ' . db('shop_product_productparams') . ' WHERE product_id=' . $_GET['id']);
-            db()->query('DELETE FROM ' . db('shop_products') . ' WHERE id=' . $_GET['id']);
-            module('manage_shop')->_product_add_revision('delete', $_GET['id']);
-            common()->admin_wall_add(['shop product deleted: ' . $_GET['id'], $_GET['id']]);
+            module('manage_shop')->_product_check_first_revision('product', ($_GET['id'] ?? null));
+            module('manage_shop')->_product_image_delete(($_GET['id'] ?? null));
+            db()->query('DELETE FROM ' . db('shop_product_to_category') . ' WHERE product_id=' . ($_GET['id'] ?? null));
+            db()->query('DELETE FROM ' . db('shop_product_to_region') . ' WHERE product_id=' . ($_GET['id'] ?? null));
+            db()->query('DELETE FROM ' . db('shop_product_productparams') . ' WHERE product_id=' . ($_GET['id'] ?? null));
+            db()->query('DELETE FROM ' . db('shop_products') . ' WHERE id=' . ($_GET['id'] ?? null));
+            module('manage_shop')->_product_add_revision('delete', ($_GET['id'] ?? null));
+            common()->admin_wall_add(['shop product deleted: ' . ($_GET['id'] ?? null), ($_GET['id'] ?? null)]);
         }
         return js_redirect('./?object=' . main()->_get('object') . 'action=products');
     }
@@ -225,9 +225,9 @@ class yf_manage_shop_products
 
     public function product_clone()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        if ($_GET['id']) {
-            $a = $this->_get_product($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        if (($_GET['id'] ?? null)) {
+            $a = $this->_get_product(($_GET['id'] ?? null));
         }
         if ( ! $a['id']) {
             return _e('No such product!');
@@ -330,7 +330,7 @@ class yf_manage_shop_products
     {
         $product_info = null;
         main()->NO_GRAPHICS = true;
-        $cat_id = $_GET['cat_id'];
+        $cat_id = ($_GET['cat_id'] ?? null);
         $sql1 = 'SELECT product_id FROM ' . db('shop_product_to_category') . ' WHERE category_id =' . $cat_id;
         $products = db()->query($sql1);
         while ($A = db()->fetch_assoc($products)) {
@@ -365,7 +365,7 @@ class yf_manage_shop_products
         if (empty($_GET['search_word'])) {
             exit();
         }
-        $words = mb_split('\s', mb_strtolower(_es($_GET['search_word'])));
+        $words = mb_split('\s', mb_strtolower(_es(($_GET['search_word'] ?? null))));
         $sql_words = str_replace(['%', '_', '*', '?'], ['\%', '\_', '%', '_'], $words);
         $sql_words = '%' . implode('%', $sql_words) . '%';
         // prepare search ids
@@ -385,7 +385,7 @@ class yf_manage_shop_products
         $sql_where = [];
         // prepare exclude ids
         if ( ! empty($_GET['exclude'])) {
-            $exclude = $_GET['exclude'];
+            $exclude = ($_GET['exclude'] ?? null);
             $ids = [];
             foreach ($exclude as $id) {
                 $id = (int) $id;

@@ -4,7 +4,7 @@ class yf_manage_shop_product_edit
 {
     public function product_edit()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         $_GET['id'] = $id;
         if (empty($id)) {
             return _e('Empty id');
@@ -20,24 +20,24 @@ class yf_manage_shop_product_edit
         // -----
         if (main()->is_post()) {
             // TODO: use validation from form2()
-            if ( ! $_POST['name']) {
+            if ( ! ($_POST['name'] ?? null)) {
                 _re('Product name must be filled', 'name');
             }
             if ( ! common()->_error_exists()) {
                 module('manage_shop')->_product_check_first_revision('product', $id);
                 $sql = [
-                    'url' => $_POST['url'] ?: common()->_propose_url_from_name($_POST['name']),
-                    'active' => (int) ((bool) $_POST['active']),
+                    'url' => ($_POST['url'] ?? null) ?: common()->_propose_url_from_name(($_POST['name'] ?? null)),
+                    'active' => (int) ((bool) ($_POST['active'] ?? null)),
                     'update_date' => time(),
                 ];
                 foreach (['name', 'description', 'model', 'articul', 'cat_id', 'meta_keywords', 'meta_desc', 'featured', 'external_url', 'sku', 'stock_status_id', 'manufacturer_id', 'supplier_id', 'quantity'] as $k) {
                     if (isset($_POST[$k])) {
-                        $sql[$k] = $_POST[$k];
+                        $sql[$k] = ($_POST[$k] ?? null);
                     }
                 }
                 foreach (['price', 'price_promo', 'price_partner', 'price_raw', 'old_price'] as $k) {
                     if (isset($_POST[$k])) {
-                        $sql[$k] = number_format($_POST[$k], 2, '.', '');
+                        $sql[$k] = number_format(($_POST[$k] ?? null), 2, '.', '');
                     }
                 }
                 db()->update_safe(db('shop_products'), $sql, 'id=' . $id);
@@ -47,13 +47,13 @@ class yf_manage_shop_product_edit
                 }
 
                 $params_to_insert = [];
-                foreach ((array) $_POST['productparams'] as $param_id) {
+                foreach ((array) ($_POST['productparams'] ?? null) as $param_id) {
                     db()->query('DELETE FROM ' . db('shop_products_productparams') . ' WHERE product_id=' . $id);
                     $param_id = (int) $param_id;
                     if ( ! $param_id) {
                         continue;
                     }
-                    foreach ((array) $_POST['productparams_options_' . $param_id] as $v) {
+                    foreach ((array) ($_POST['productparams_options_' . $param_id] ?? null) as $v) {
                         $params_to_insert[] = [
                             'product_id' => $id,
                             'productparam_id' => $param_id,
@@ -66,7 +66,7 @@ class yf_manage_shop_product_edit
                 }
 
                 $product_to_category_insert = [];
-                foreach ((array) $_POST['category'] as $_cat_id) {
+                foreach ((array) ($_POST['category'] ?? null) as $_cat_id) {
                     $_cat_id = (int) $_cat_id;
                     if ( ! $_cat_id) {
                         continue;
@@ -82,7 +82,7 @@ class yf_manage_shop_product_edit
                 }
 
                 $product_related_insert = [];
-                foreach ((array) $_POST['product_related'] as $related_id) {
+                foreach ((array) ($_POST['product_related'] ?? null) as $related_id) {
                     $related_id = (int) $related_id;
                     if ( ! $related_id) {
                         continue;
@@ -99,7 +99,7 @@ class yf_manage_shop_product_edit
 
                 // update region
                 $_table = 'shop_product_to_region';
-                $_post = _class('_shop_region', 'modules/shop/')->_check_by_product_id($_POST['region']);
+                $_post = _class('_shop_region', 'modules/shop/')->_check_by_product_id(($_POST['region'] ?? null));
                 $_insert = array_diff($_post, $region);
                 $_delete = array_diff($region, $_post);
                 // insert
@@ -127,7 +127,7 @@ class yf_manage_shop_product_edit
                 $region = $region[$id];
                 // -----
                 $product_to_unit_insert = [];
-                foreach ((array) $_POST['units'] as $_unit_id) {
+                foreach ((array) ($_POST['units'] ?? null) as $_unit_id) {
                     $_unit_id = (int) $_unit_id;
                     if (empty($_unit_id)) {
                         continue;
@@ -145,7 +145,7 @@ class yf_manage_shop_product_edit
                 module('manage_shop')->_attributes_save($id);
                 module('manage_shop')->_product_add_revision('edit', $id);
                 module('manage_shop')->_product_cache_purge($id);
-                common()->admin_wall_add(['shop product updated: ' . $_POST['name'], $id]);
+                common()->admin_wall_add(['shop product updated: ' . ($_POST['name'] ?? null), $id]);
                 // sphinx reindex by flag file
                 exec('touch /tmp/sphinx/indexer-kupi');
                 exec('touch /tmp/sphinx/indexer-kupi_dev');
@@ -226,7 +226,7 @@ class yf_manage_shop_product_edit
                 '<a class="btn btn-default btn-mini btn-xs" data-test="add_image" onclick="addImage();"><span>' . t('Add Image') . '</span></a> <div id="images"></div>',
                 ['desc' => 'Images']
             )
-            ->link('Set main image', './?object=' . $_GET['object'] . '&action=set_main_image&id=' . $product_info['id'], [
+            ->link('Set main image', './?object=' . ($_GET['object'] ?? null) . '&action=set_main_image&id=' . $product_info['id'], [
                 'class_add' => 'ajax_edit',
                 'data-test' => 'set_main_image_btn',
                 'display_func' => function () use ($images_items) {

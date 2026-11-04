@@ -21,15 +21,15 @@ class yf_shop__order_step_delivery
         }
         // Fill fields
         foreach ((array) module('shop')->_b_fields as $_field) {
-            $replace[$_field] = _prepare_html(isset($_POST[$_field]) ? $_POST[$_field] : module('shop')->_user_info[substr($_field, 2)]);
+            $replace[$_field] = _prepare_html(isset($_POST[$_field]) ? ($_POST[$_field] ?? null) : module('shop')->_user_info[substr($_field, 2)]);
         }
         // Fill shipping from billing
         foreach ((array) module('shop')->_s_fields as $_field) {
             if (module('shop')->_user_info['shipping_same'] && ! isset($_POST[$_field])) {
                 $s_field = 'b_' . substr($_field, 2);
-                $replace[$_field] = _prepare_html(isset($_POST[$s_field]) ? $_POST[$s_field] : module('shop')->_user_info[$s_field]);
+                $replace[$_field] = _prepare_html(isset($_POST[$s_field]) ? ($_POST[$s_field] ?? null) : module('shop')->_user_info[$s_field]);
             } else {
-                $replace[$_field] = _prepare_html(isset($_POST[$_field]) ? $_POST[$_field] : module('shop')->_user_info[$_field]);
+                $replace[$_field] = _prepare_html(isset($_POST[$_field]) ? ($_POST[$_field] ?? null) : module('shop')->_user_info[$_field]);
             }
         }
         $force_ship_type = module('shop')->FORCE_GROUP_SHIP[module('shop')->USER_GROUP];
@@ -37,9 +37,9 @@ class yf_shop__order_step_delivery
         $SELF_METHOD_ID = substr(__FUNCTION__, strlen('_order_step_'));
 
         $replace = my_array_merge((array) $replace, [
-            'form_action' => './?object=shop&action=' . $_GET['action'] . '&id=' . $SELF_METHOD_ID,
+            'form_action' => './?object=shop&action=' . ($_GET['action'] ?? null) . '&id=' . $SELF_METHOD_ID,
             'error_message' => _e(),
-            'ship_type_box' => module('shop')->_box('ship_type', $force_ship_type ? $force_ship_type : $_POST['ship_type']),
+            'ship_type_box' => module('shop')->_box('ship_type', $force_ship_type ? $force_ship_type : ($_POST['ship_type'] ?? null)),
             'back_link' => './?object=shop&action=order',
             'cats_block' => module('shop')->_categories_show(),
         ]);

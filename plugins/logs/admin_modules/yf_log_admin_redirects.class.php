@@ -4,14 +4,14 @@ class yf_log_admin_redirects
 {
     public function show()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'];
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $default_filter = [
             'order_by' => 'date',
             'order_direction' => 'desc',
         ];
         $sql = 'SELECT * FROM ' . db('log_redirects') . ' WHERE is_admin="' . (string) ( ! $this->FOR_USER ? 1 : 0) . '"';
         return table($sql, [
-                'filter' => (array) $_SESSION[$filter_name] + $default_filter,
+                'filter' => (array) ($_SESSION[$filter_name] ?? null) + $default_filter,
                 'filter_params' => [
                     'url_from' => 'like',
                     'url_to' => 'like',
@@ -21,7 +21,7 @@ class yf_log_admin_redirects
                 ],
             ])
             ->admin('user_id')
-            ->link('ip', './?object=' . $_GET['object'] . '&action=show_for_ip&id=%d')
+            ->link('ip', './?object=' . ($_GET['object'] ?? null) . '&action=show_for_ip&id=%d')
             ->date('date', ['format' => 'full', 'nowrap' => 1])
             ->text('user_agent')
             ->text('referer')
@@ -34,7 +34,7 @@ class yf_log_admin_redirects
     public function show_for_admin()
     {
         $_GET['page'] = 'clear';
-        $_GET['filter'] = 'admin_id:' . (int) ($_GET['id']);
+        $_GET['filter'] = 'admin_id:' . (int) (($_GET['id'] ?? null));
         return $this->filter_save();
     }
 
@@ -55,7 +55,7 @@ class yf_log_admin_redirects
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [];

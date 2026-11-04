@@ -38,7 +38,7 @@ class yf_manage_languages
     public function edit()
     {
         $_GET['id'] = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
-        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE code="' . _es($_GET['id']) . '"');
+        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE code="' . _es(($_GET['id'] ?? null)) . '"');
         if ( ! $a) {
             return _e('Wrong record!');
         }
@@ -49,7 +49,7 @@ class yf_manage_languages
             ->db_update_if_ok(self::table, ['name', 'native', 'active'], 'code="' . _es($a['code']) . '"')
             ->on_after_update(function () use ($a) {
                 cache_del([self::table]);
-                common()->admin_wall_add(['language updated: ' . $_POST['name'] . '', $a['code']]);
+                common()->admin_wall_add(['language updated: ' . ($_POST['name'] ?? null) . '', $a['code']]);
             })
             ->text('name')
             ->text('native')
@@ -66,7 +66,7 @@ class yf_manage_languages
             ->db_insert_if_ok(self::table, ['name', 'code', 'native', 'active'], [])
             ->on_after_update(function () {
                 cache_del([self::table]);
-                common()->admin_wall_add(['language added: ' . $_POST['name'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['language added: ' . ($_POST['name'] ?? null) . '', db()->insert_id()]);
             })
             ->text('code')
             ->text('name')
@@ -96,7 +96,7 @@ class yf_manage_languages
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [

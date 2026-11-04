@@ -49,7 +49,7 @@ class yf_divide_pages
             }
         }
         if ( ! $url_path) {
-            $url_path = './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '');
+            $url_path = './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . (isset($_GET['id']) ? '&id=' . ($_GET['id'] ?? null) : '');
         }
         if (!($render_type ?? false ) || !strlen($render_type)) {
             if ($extra['render_type']) {
@@ -61,7 +61,7 @@ class yf_divide_pages
         if ( ! $render_type) {
             $render_type = $this->DEFAULT_RENDER_TYPE;
         }
-        $requested_page = isset($extra['requested_page']) ? $extra['requested_page'] : $_GET['page'];
+        $requested_page = isset($extra['requested_page']) ? $extra['requested_page'] : ($_GET['page'] ?? null);
         $records_on_page = abs((int) ($extra['records_on_page'] ?: $records_on_page));
         $per_page = $records_on_page ?: (MAIN_TYPE_ADMIN ? conf('admin_per_page') : conf('user_per_page'));
         if ( ! $per_page) {

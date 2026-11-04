@@ -34,8 +34,8 @@ class yf_preview
     public function _display_preview($params = [], $template = '')
     {
         $replace = $params['replace'];
-        $PARENT_OBJECT = $_REQUEST['parent_object'];
-        $PARENT_ACTION = $_REQUEST['parent_action'];
+        $PARENT_OBJECT = ($_REQUEST['parent_object'] ?? null);
+        $PARENT_ACTION = ($_REQUEST['parent_action'] ?? null);
         // If no custom replace given, try to make own
         if (empty($replace)) {
             foreach ((array) $_POST as $k => $v) {
@@ -52,7 +52,7 @@ class yf_preview
             }
         }
         // Try to get template
-        if (false !== strpos($_POST['preview_form_action'], 'add_comment')) {
+        if (false !== strpos(($_POST['preview_form_action'] ?? null), 'add_comment')) {
             $body = tpl()->parse('comments/preview', $replace);
         } else {
             $stpl_name = $PARENT_OBJECT . '/' . $PARENT_ACTION . '_preview';
@@ -76,12 +76,12 @@ class yf_preview
     public function _display_buttons($params = []/*, $template = ""*/)
     {
         $replace = [
-            'preview_link' => './?object=' . $_GET['object'] . '&action=display_preview',
+            'preview_link' => './?object=' . ($_GET['object'] ?? null) . '&action=display_preview',
             'width' => ! empty($params['width']) ? (int) ($params['width']) : 400,
             'height' => ! empty($params['height']) ? ($params['height']) : 300,
             'default_action' => '',
-            'parent_object' => $_GET['object'],
-            'parent_action' => $_GET['action'],
+            'parent_object' => ($_GET['object'] ?? null),
+            'parent_action' => ($_GET['action'] ?? null),
         ];
         return tpl()->parse(__CLASS__ . '/buttons', $replace);
     }

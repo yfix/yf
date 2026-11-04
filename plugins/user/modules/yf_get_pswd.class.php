@@ -20,7 +20,7 @@ class yf_get_pswd
             }
             // Check if user with such login exists
             if ( ! empty($_POST['login'])) {
-                $A = db()->query_fetch('SELECT id,name,login,password,email,nick FROM ' . db('user') . ' WHERE login="' . _es($_POST['login']) . '"');
+                $A = db()->query_fetch('SELECT id,name,login,password,email,nick FROM ' . db('user') . ' WHERE login="' . _es(($_POST['login'] ?? null)) . '"');
                 if (empty($A['id'])) {
                     _re('Login was not found', 'login');
                 }
@@ -32,7 +32,7 @@ class yf_get_pswd
                 }
                 // Check if user with such email exists
             } elseif ( ! empty($_POST['email'])) {
-                $Q = db()->query('SELECT id,name,login,password,email,nick FROM ' . db('user') . ' WHERE email="' . _es($_POST['email']) . '"');
+                $Q = db()->query('SELECT id,name,login,password,email,nick FROM ' . db('user') . ' WHERE email="' . _es(($_POST['email'] ?? null)) . '"');
                 if ( ! db()->num_rows($Q)) {
                     _re('Email was not found', 'email');
                 }
@@ -51,7 +51,7 @@ class yf_get_pswd
             }
         }
         $replace = [
-            'form_action' => './?object=' . $_GET['object'],
+            'form_action' => './?object=' . ($_GET['object'] ?? null),
         ];
         $login_form = form($replace, ['legend' => 'Enter your login', 'class' => 'form-vertical'])
             ->validate(['login' => 'trim|required'])

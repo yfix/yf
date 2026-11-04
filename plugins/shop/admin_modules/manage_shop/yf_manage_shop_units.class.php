@@ -12,7 +12,7 @@ class yf_manage_shop_units
     public function units()
     {
         return table('SELECT * FROM ' . db('shop_product_units'), [
-                'filter' => $_SESSION[$_GET['object'] . '__units'],
+                'filter' => ($_SESSION[$_GET['object'] . '__units'] ?? null),
                 'hide_empty' => 1,
             ])
             ->text('title')
@@ -28,18 +28,18 @@ class yf_manage_shop_units
     public function unit_add()
     {
         if (main()->is_post()) {
-            if ( ! $_POST['title']) {
+            if ( ! ($_POST['title'] ?? null)) {
                 _re('Unit title must be filled');
             }
             if ( ! common()->_error_exists()) {
                 $sql_array = [
-                    'title' => $_POST['title'],
-                    'description' => $_POST['description'],
-                    'step' => (int) ($_POST['step']),
-                    'k' => (float) ($_POST['k']),
+                    'title' => ($_POST['title'] ?? null),
+                    'description' => ($_POST['description'] ?? null),
+                    'step' => (int) (($_POST['step'] ?? null)),
+                    'k' => (float) (($_POST['k'] ?? null)),
                 ];
                 db()->insert(db('shop_product_units'), db()->es($sql_array));
-                common()->admin_wall_add(['shop product unit added: ' . $_POST['title'], db()->insert_id()]);
+                common()->admin_wall_add(['shop product unit added: ' . ($_POST['title'] ?? null), db()->insert_id()]);
             }
             return js_redirect('./?object=' . main()->_get('object') . '&action=units');
         }
@@ -63,24 +63,24 @@ class yf_manage_shop_units
 
     public function unit_edit()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if (empty($_GET['id'])) {
             return _e('Empty ID!');
         }
-        $unit_info = db()->query_fetch('SELECT * FROM ' . db('shop_product_units') . ' WHERE id=' . $_GET['id']);
+        $unit_info = db()->query_fetch('SELECT * FROM ' . db('shop_product_units') . ' WHERE id=' . ($_GET['id'] ?? null));
         if (main()->is_post()) {
-            if ( ! $_POST['title']) {
+            if ( ! ($_POST['title'] ?? null)) {
                 _re('Unit title must be filled');
             }
             if ( ! common()->_error_exists()) {
                 $sql_array = [
-                    'title' => $_POST['title'],
-                    'description' => $_POST['description'],
-                    'step' => (int) ($_POST['step']),
-                    'k' => tofloat($_POST['k']),
+                    'title' => ($_POST['title'] ?? null),
+                    'description' => ($_POST['description'] ?? null),
+                    'step' => (int) (($_POST['step'] ?? null)),
+                    'k' => tofloat(($_POST['k'] ?? null)),
                 ];
-                db()->update('shop_product_units', _es($sql_array), 'id=' . $_GET['id']);
-                common()->admin_wall_add(['shop product unit updated: ' . $_POST['title'], $_GET['id']]);
+                db()->update('shop_product_units', _es($sql_array), 'id=' . ($_GET['id'] ?? null));
+                common()->admin_wall_add(['shop product unit updated: ' . ($_POST['title'] ?? null), ($_GET['id'] ?? null)]);
             }
             return js_redirect('./?object=' . main()->_get('object') . '&action=units');
         }
@@ -103,17 +103,17 @@ class yf_manage_shop_units
 
     public function unit_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $info = db()->query_fetch('SELECT * FROM ' . db('shop_product_units') . ' WHERE id=' . (int) ($_GET['id']));
+            $info = db()->query_fetch('SELECT * FROM ' . db('shop_product_units') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($info['id'])) {
-            db()->query('DELETE FROM ' . db('shop_product_units') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            common()->admin_wall_add(['shop product unit deleted: ' . $info['name'], $_GET['id']]);
+            db()->query('DELETE FROM ' . db('shop_product_units') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            common()->admin_wall_add(['shop product unit deleted: ' . $info['name'], ($_GET['id'] ?? null)]);
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect('./?object=' . main()->_get('object') . '&action=units');
         }

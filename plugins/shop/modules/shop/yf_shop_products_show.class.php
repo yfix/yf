@@ -6,27 +6,27 @@ class yf_shop_products_show
     {
         $product_info = null;
         foreach ((array) module('shop')->_shop_cats as $_cat_id => $_cat_name) {
-            if ($_GET['id'] == module('shop')->_shop_cats_all[$_cat_id]['url'] && $_GET['id'] != '') {
+            if (($_GET['id'] ?? null) == module('shop')->_shop_cats_all[$_cat_id]['url'] && ($_GET['id'] ?? null) != '') {
                 $_GET['id'] = $_cat_id;
                 $_show_by_cat = 1;
                 $cat_name = $_cat_name;
             }
         }
         foreach ((array) module('shop')->_manufacturer as $_man_id => $_man_name) {
-            if ($_GET['id'] == 'none') {
+            if (($_GET['id'] ?? null) == 'none') {
                 $_GET['id'] = '';
                 $_SESSION['man_id'] = 'none';
-            } elseif ($_GET['id'] == $_man_name['url']) {
+            } elseif (($_GET['id'] ?? null) == $_man_name['url']) {
                 $_GET['id'] = $_man_id;
                 $_show_by_man = 1;
                 $cat_name = $_man_name['name'];
                 $_SESSION['man_id'] = $_man_name['url'];
             }
         }
-        $_GET['id'] = (int) ($_GET['id']);
-        if ($_GET['id']) {
-            $cat_child = $_GET['id'] . ',';
-            $cat_child .= module('shop')->_get_children_cat($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        if (($_GET['id'] ?? null)) {
+            $cat_child = ($_GET['id'] ?? null) . ',';
+            $cat_child .= module('shop')->_get_children_cat(($_GET['id'] ?? null));
             $cat_child = rtrim($cat_child, ',');
             $sql1 = 'SELECT product_id FROM ' . db('shop_product_to_category') . ' WHERE category_id IN ( ' . $cat_child . ')';
             $products = db()->query($sql1);
@@ -40,9 +40,9 @@ class yf_shop_products_show
         }
         if ($search == '' && $str_search == '') {
             if ($_show_by_cat == 1) {
-                $sql = 'SELECT * FROM ' . db('shop_products') . " WHERE active='1' " . ($_GET['id'] ? ' AND id IN (' . $product_info . ')' : " AND featured='1'") . ' ORDER BY add_date';
+                $sql = 'SELECT * FROM ' . db('shop_products') . " WHERE active='1' " . (($_GET['id'] ?? null) ? ' AND id IN (' . $product_info . ')' : " AND featured='1'") . ' ORDER BY add_date';
             } elseif ($_show_by_man == 1) {
-                $sql = 'SELECT * FROM ' . db('shop_products') . " WHERE active='1' " . ($_GET['id'] ? ' AND manufacturer_id = ' . $_GET['id'] : " AND featured='1'") . ' ORDER BY add_date';
+                $sql = 'SELECT * FROM ' . db('shop_products') . " WHERE active='1' " . (($_GET['id'] ?? null) ? ' AND manufacturer_id = ' . ($_GET['id'] ?? null) : " AND featured='1'") . ' ORDER BY add_date';
             }
         } elseif ($search == '' && $str_search != '') {
         } else {
@@ -95,7 +95,7 @@ class yf_shop_products_show
             'total' => $total,
             'currency' => _prepare_html(module('shop')->CURRENCY),
             'show_basket_url' => process_url('./?object=shop&action=basket'),
-            'cur_cat_id' => (int) ($_GET['id']),
+            'cur_cat_id' => (int) (($_GET['id'] ?? null)),
             'cur_cat_name' => _prepare_html($cat_name),
             'cats_block' => module('shop')->_categories_show(),
         ];

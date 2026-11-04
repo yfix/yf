@@ -6,7 +6,7 @@ class yf_manage_shop_suppliers
     {
         return table('SELECT * FROM ' . db('shop_suppliers'), [
                 'custom_fields' => ['num_products' => 'SELECT supplier_id, COUNT(*) AS num FROM ' . db('shop_products') . ' GROUP BY supplier_id'],
-                'filter' => $_SESSION[$_GET['object'] . '__suppliers'],
+                'filter' => ($_SESSION[$_GET['object'] . '__suppliers'] ?? null),
                 'hide_empty' => 1,
             ])
             ->image('id', 'uploads/shop/suppliers/%d.jpg', ['width' => '50px'])
@@ -25,21 +25,21 @@ class yf_manage_shop_suppliers
     {
         $url = $supplier_info = null;
         if (main()->is_post()) {
-            if ( ! $_POST['name']) {
+            if ( ! ($_POST['name'] ?? null)) {
                 _re('Product name must be filled');
             }
             if ( ! common()->_error_exists()) {
                 $sql_array = [
-                    'name' => $_POST['name'],
-                    'url' => $_POST['url'] ?: common()->_propose_url_from_name($_POST['name']),
-                    'desc' => $_POST['desc'],
-                    'sort_order' => (int) ($_POST['sort_order']),
+                    'name' => ($_POST['name'] ?? null),
+                    'url' => ($_POST['url'] ?? null) ?: common()->_propose_url_from_name(($_POST['name'] ?? null)),
+                    'desc' => ($_POST['desc'] ?? null),
+                    'sort_order' => (int) (($_POST['sort_order'] ?? null)),
                 ];
                 db()->insert(db('shop_suppliers'), db()->es($sql_array));
                 module('manage_shop_revisions')->new_revision(__FUNCTION__, db()->insert_id(), 'shop_suppliers');
-                common()->admin_wall_add(['shop supplier added: ' . $_POST['name'], db()->insert_id()]);
+                common()->admin_wall_add(['shop supplier added: ' . ($_POST['name'] ?? null), db()->insert_id()]);
                 if ( ! empty($_FILES)) {
-                    $man_id = $_GET['id'];
+                    $man_id = ($_GET['id'] ?? null);
                     module('manage_shop')->_upload_image($man_id, $url);
                 }
             }
@@ -75,30 +75,30 @@ class yf_manage_shop_suppliers
     public function supplier_edit()
     {
         $url = null;
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if (empty($_GET['id'])) {
             return _e('Empty ID!');
         }
-        $supplier_info = db()->query_fetch('SELECT * FROM ' . db('shop_suppliers') . ' WHERE id=' . $_GET['id']);
+        $supplier_info = db()->query_fetch('SELECT * FROM ' . db('shop_suppliers') . ' WHERE id=' . ($_GET['id'] ?? null));
         if (main()->is_post()) {
-            if ( ! $_POST['name']) {
+            if ( ! ($_POST['name'] ?? null)) {
                 _re('Product name must be filled');
             }
             if ( ! common()->_error_exists()) {
                 $sql_array = [
-                    'name' => $_POST['name'],
-                    'url' => $_POST['url'] ?: common()->_propose_url_from_name($_POST['name']),
-                    'desc' => $_POST['desc'],
-                    'meta_keywords' => $_POST['meta_keywords'],
-                    'meta_desc' => $_POST['meta_desc'],
-                    'sort_order' => (int) ($_POST['sort_order']),
+                    'name' => ($_POST['name'] ?? null),
+                    'url' => ($_POST['url'] ?? null) ?: common()->_propose_url_from_name(($_POST['name'] ?? null)),
+                    'desc' => ($_POST['desc'] ?? null),
+                    'meta_keywords' => ($_POST['meta_keywords'] ?? null),
+                    'meta_desc' => ($_POST['meta_desc'] ?? null),
+                    'sort_order' => (int) (($_POST['sort_order'] ?? null)),
                 ];
-                module('manage_shop_revisions')->check_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
-                db()->update('shop_suppliers', db()->es($sql_array), 'id=' . $_GET['id']);
-                module('manage_shop_revisions')->new_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
-                common()->admin_wall_add(['shop supplier updated: ' . $_POST['name'], $_GET['id']]);
+                module('manage_shop_revisions')->check_revision(__FUNCTION__, ($_GET['id'] ?? null), 'shop_suppliers');
+                db()->update('shop_suppliers', db()->es($sql_array), 'id=' . ($_GET['id'] ?? null));
+                module('manage_shop_revisions')->new_revision(__FUNCTION__, ($_GET['id'] ?? null), 'shop_suppliers');
+                common()->admin_wall_add(['shop supplier updated: ' . ($_POST['name'] ?? null), ($_GET['id'] ?? null)]);
                 if ( ! empty($_FILES)) {
-                    $man_id = $_GET['id'];
+                    $man_id = ($_GET['id'] ?? null);
                     $this->_upload_image($man_id, $url);
                 }
             }
@@ -132,19 +132,19 @@ class yf_manage_shop_suppliers
 
     public function supplier_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $info = db()->query_fetch('SELECT * FROM ' . db('shop_suppliers') . ' WHERE id=' . (int) ($_GET['id']));
+            $info = db()->query_fetch('SELECT * FROM ' . db('shop_suppliers') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($info['id'])) {
-            module('manage_shop_revisions')->check_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
-            db()->query('DELETE FROM ' . db('shop_suppliers') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            module('manage_shop_revisions')->new_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
-            common()->admin_wall_add(['shop supplier deleted: ' . $info['name'], $_GET['id']]);
+            module('manage_shop_revisions')->check_revision(__FUNCTION__, ($_GET['id'] ?? null), 'shop_suppliers');
+            db()->query('DELETE FROM ' . db('shop_suppliers') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            module('manage_shop_revisions')->new_revision(__FUNCTION__, ($_GET['id'] ?? null), 'shop_suppliers');
+            common()->admin_wall_add(['shop supplier deleted: ' . $info['name'], ($_GET['id'] ?? null)]);
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect('./?object=' . main()->_get('object') . '&action=suppliers');
         }

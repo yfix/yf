@@ -21,16 +21,16 @@ class yf_shop__basket_api
     {
         $storage_name = null;
         if ( ! empty($k2)) {
-            return $_SESSION[$storage_name][$k][$k2];
+            return ($_SESSION[$storage_name][$k][$k2] ?? null);
         }
-        return $_SESSION[$storage_name][$k];
+        return ($_SESSION[$storage_name][$k] ?? null);
     }
 
     /***/
     public function get_all()
     {
         $storage_name = null;
-        return $_SESSION[$storage_name];
+        return ($_SESSION[$storage_name] ?? null);
     }
 
     /***/

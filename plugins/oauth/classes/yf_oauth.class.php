@@ -95,7 +95,7 @@ class yf_oauth
                     // TODO: auto-login user if email exists or show dialog to enter email
                     $self_host = parse_url(WEB_PATH, PHP_URL_HOST);
                     if ( ! $self_host) {
-                        $self_host = $_SERVER['HTTP_HOST'];
+                        $self_host = ($_SERVER['HTTP_HOST'] ?? null);
                     }
                     if (isset($params['set_user_info']) && is_callable($params['set_user_info'])) {
                         $set_user_info = $params['set_user_info'];
@@ -155,7 +155,7 @@ class yf_oauth
             } else {
                 $body .= '<h1 class="text-error">Error</h1>';
             }
-            $body .= '<pre><small>' . print_r($_SESSION['oauth'][$provider], 1) . '</small></pre>';
+            $body .= '<pre><small>' . print_r(($_SESSION['oauth'][$provider] ?? null), 1) . '</small></pre>';
         }
         return $body;
     }

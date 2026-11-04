@@ -79,7 +79,7 @@ class yf_redirect
             $exclude_source = [$exclude_source];
         }
         // Check current/source page for exclude patterns
-        $url_path_and_query = $_SERVER['REQUEST_URI'] . (strlen($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
+        $url_path_and_query = ($_SERVER['REQUEST_URI'] ?? null) . (strlen(($_SERVER['QUERY_STRING'] ?? null)) ? '?' . ($_SERVER['QUERY_STRING'] ?? null) : '');
         foreach ((array) $exclude_source as $pattern) {
             if (preg_match($pattern, $url_path_and_query)) {
                 return false;
@@ -156,10 +156,10 @@ class yf_redirect
         }
         main()->_IS_REDIRECTING = true;
         if (empty($location)) {
-            $location = './?object=' . $_GET['object']
-                . ($_GET['action'] != 'show' ? '&action=' . $_GET['action'] : '')
-                . ($_GET['id'] ? '&id=' . $_GET['id'] : '')
-                . ($_GET['page'] ? '&page=' . $_GET['page'] : '');
+            $location = './?object=' . ($_GET['object'] ?? null)
+                . (($_GET['action'] ?? null) != 'show' ? '&action=' . ($_GET['action'] ?? null) : '')
+                . (($_GET['id'] ?? null) ? '&id=' . ($_GET['id'] ?? null) : '')
+                . (($_GET['page'] ?? null) ? '&page=' . ($_GET['page'] ?? null) : '');
         }
         if ($rewrite && tpl()->REWRITE_MODE && MAIN_TYPE_USER) {
             $location = _class('rewrite')->_rewrite_replace_links($location, true);
@@ -170,7 +170,7 @@ class yf_redirect
         }
         // Exec hook before redirecting
         $hook_name = '_on_before_redirect';
-        $obj = module($_GET['object']);
+        $obj = module(($_GET['object'] ?? null));
         if (method_exists($obj, $hook_name)) {
             $obj->$hook_name($text);
         }
@@ -341,7 +341,7 @@ class yf_redirect
      */
     public function _redirect_http_302($location, $text = '', $ttl = 0, $params = [])
     {
-        header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 302 Found');
+        header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 302 Found');
         header('Location: ' . $location);
         return '';
     }
@@ -354,7 +354,7 @@ class yf_redirect
      */
     public function _redirect_http_301($location, $text = '', $ttl = 0, $params = [])
     {
-        header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 301 Moved Permanently');
+        header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 301 Moved Permanently');
         header('Location: ' . $location);
         return '';
     }
@@ -367,7 +367,7 @@ class yf_redirect
      */
     public function _redirect_http_refresh($location, $text = '', $ttl = 0, $params = [])
     {
-        header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 302 Found');
+        header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 302 Found');
         header('Refresh: ' . $ttl . '; url=' . $location);
         return '';
     }
@@ -383,21 +383,21 @@ class yf_redirect
         // slice 2 first elements (__FUNCTION__ and $this->_go) and leave only 5 more trace elements to save space
         $trace = implode(PHP_EOL, array_slice(explode(PHP_EOL, main()->trace_string()), 2, 7));
 
-        $is_https = ($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL']);
+        $is_https = (($_SERVER['HTTPS'] ?? null) || ($_SERVER['SSL_PROTOCOL'] ?? null));
 
         return db()->insert_safe('log_redirects', [
-            'url_from' => ($is_https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            'url_from' => ($is_https ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null),
             'url_to' => $params['url_to'],
             'reason' => $params['reason'],
             'use_rewrite' => (int) $params['rewrite'],
             'redirect_type' => $params['type'],
             'date' => gmdate('Y-m-d H:i:s'),
             'ip' => common()->get_ip(),
-            'query_string' => $_SERVER['QUERY_STRING'],
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-            'referer' => $_SERVER['HTTP_REFERER'],
-            'object' => $_GET['object'],
-            'action' => $_GET['action'],
+            'query_string' => ($_SERVER['QUERY_STRING'] ?? null),
+            'user_agent' => ($_SERVER['HTTP_USER_AGENT'] ?? null),
+            'referer' => ($_SERVER['HTTP_REFERER'] ?? null),
+            'object' => ($_GET['object'] ?? null),
+            'action' => ($_GET['action'] ?? null),
             'user_id' => MAIN_TYPE_ADMIN ? main()->ADMIN_ID : main()->USER_ID,
             'user_group' => MAIN_TYPE_ADMIN ? main()->ADMIN_GROUP : main()->USER_GROUP,
             'site_id' => (int) main()->SITE_ID,

@@ -26,11 +26,11 @@ class yf_manage_payment_operation
         $filter = &$this->filter;
         $url = &$this->url;
         // setup property
-        $object = $_GET['object'];
-        $action = $_GET['action'];
-        $id = $_GET['id'];
+        $object = ($_GET['object'] ?? null);
+        $action = ($_GET['action'] ?? null);
+        $id = ($_GET['id'] ?? null);
         $filter_name = $object . '__' . $action;
-        $filter = $_SESSION[$filter_name];
+        $filter = ($_SESSION[$filter_name] ?? null);
         // url
         $url = [
             'list' => url_admin([

@@ -5,7 +5,7 @@ class yf_crossdomainxml
     public function show()
     {
         header('Content-Type: text/xml', $replace = true);
-        $host = (DEBUG_MODE ? $_GET['host'] : '') ?: $_SERVER['HTTP_HOST']; // $_GET['host'] just for debug purposes
+        $host = (DEBUG_MODE ? ($_GET['host'] ?? null) : '') ?: ($_SERVER['HTTP_HOST'] ?? null); // $_GET['host'] just for debug purposes
         $prod_hosts = main()->PRODUCTION_DOMAIN ?: parse_url(WEB_PATH, PHP_URL_HOST);
         if (is_string($prod_hosts)) {
             $prod_hosts = [$prod_hosts];

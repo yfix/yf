@@ -175,22 +175,22 @@ class yf_assets
         }
         $used = [];
         if (isset($_GET['assets_cache'])) {
-            $this->USE_CACHE = (bool) $_GET['assets_cache'];
+            $this->USE_CACHE = (bool) ($_GET['assets_cache'] ?? null);
             $used[] = 'assets_cache';
         }
         if (isset($_GET['assets_combine'])) {
-            $this->COMBINE = (bool) $_GET['assets_combine'];
+            $this->COMBINE = (bool) ($_GET['assets_combine'] ?? null);
             if ($this->COMBINE) {
                 $this->USE_CACHE = true;
             }
             $used[] = 'assets_combine';
         }
         if (isset($_GET['assets_requirejs'])) {
-            $this->USE_REQUIRE_JS = (bool) $_GET['assets_require_js'];
+            $this->USE_REQUIRE_JS = (bool) ($_GET['assets_require_js'] ?? null);
             $used[] = 'assets_requirejs';
         }
         if (isset($_GET['assets_out_mtime'])) {
-            $this->CACHE_OUT_ADD_MTIME = (bool) $_GET['assets_out_mtime'];
+            $this->CACHE_OUT_ADD_MTIME = (bool) ($_GET['assets_out_mtime'] ?? null);
             $used[] = 'assets_out_mtime';
         }
         if (DEBUG_MODE) {
@@ -572,7 +572,7 @@ class yf_assets
     public function find_asset_type_for_module($asset_type, $module = '')
     {
         if ( ! $module) {
-            $module = $_GET['object'];
+            $module = ($_GET['object'] ?? null);
         }
         $ext = '.' . $asset_type;
         $path = $module . '/' . $module . $ext;
@@ -876,7 +876,7 @@ class yf_assets
             '{version}' => $version,
             '{branch}' => $version,
             '{main_type}' => $this->_override['main_type'] ?: MAIN_TYPE,
-            '{host}' => $this->_override['host'] ?: $_SERVER['HTTP_HOST'],
+            '{host}' => $this->_override['host'] ?: ($_SERVER['HTTP_HOST'] ?? null),
             '{lang}' => $this->_cache_language,
         ];
     }
@@ -1542,7 +1542,7 @@ class yf_assets
             $params = ! empty($params) ? [$params] : [];
         }
         // Assets from current module
-        $module_assets_path = $this->find_asset_type_for_module($out_type, $_GET['object']);
+        $module_assets_path = $this->find_asset_type_for_module($out_type, ($_GET['object'] ?? null));
         if ($module_assets_path) {
             $this->add_file($module_assets_path, $out_type);
         }
@@ -2047,7 +2047,7 @@ class yf_assets
             $cache_dir = $func($out_type, $asset_name, $version, $this);
         } else {
             $main_type = $this->_override['main_type'] ?: MAIN_TYPE;
-            $host = $this->_override['host'] ?: $_SERVER['HTTP_HOST'];
+            $host = $this->_override['host'] ?: ($_SERVER['HTTP_HOST'] ?? null);
 
             ! isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
             $lang = $this->_override['language'] ?: $this->_cache_language;
@@ -2092,7 +2092,7 @@ class yf_assets
             $version = $func($out_type, $this);
         } else {
             $main_type = $this->_override['main_type'] ?: MAIN_TYPE;
-            $host = $this->_override['host'] ?: $_SERVER['HTTP_HOST'];
+            $host = $this->_override['host'] ?: ($_SERVER['HTTP_HOST'] ?? null);
 
             ! isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
             $lang = $this->_override['language'] ?: $this->_cache_language;

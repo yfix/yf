@@ -182,7 +182,7 @@ class yf_core_errors
         }
         $IP = is_object(common()) ? common()->get_ip() : false;
         if ( ! $IP) {
-            $IP = $_SERVER['REMOTE_ADDR'];
+            $IP = ($_SERVER['REMOTE_ADDR'] ?? null);
         }
         $trace = array_slice(explode(PHP_EOL, main()->trace_string()), 0, 5);
         if ($save_log) {
@@ -193,7 +193,7 @@ class yf_core_errors
                 'src' => implode(';', $trace),
                 'site' => conf('SITE_ID'),
                 'ip' => $IP,
-                'qs' => WEB_PATH . (strlen($_SERVER['QUERY_STRING'] ?? '') ? '?' . $_SERVER['QUERY_STRING'] : ''),
+                'qs' => WEB_PATH . (strlen($_SERVER['QUERY_STRING'] ?? '') ? '?' . ($_SERVER['QUERY_STRING'] ?? null) : ''),
                 'url' => 'http://' . ( $_SERVER['HTTP_HOST'] ?? '' ) . ( $_SERVER['REQUEST_URI'] ?? '' ),
                 'ref' => @$_SERVER['HTTP_REFERER'],
                 'get' => $this->_log_display_array('GET'),

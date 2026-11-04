@@ -49,7 +49,7 @@ class yf_manage_geo_countries
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [

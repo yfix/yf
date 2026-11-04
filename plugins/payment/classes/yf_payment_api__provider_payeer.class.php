@@ -672,7 +672,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
         $_data = $_provider = $_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        $this->payment_api->dump(['name' => 'Payeer', 'operation_id' => @(int) $_POST['m_orderid'], 'ip' => common()->get_ip()]);
+        $this->payment_api->dump(['name' => 'Payeer', 'operation_id' => @(int) ($_POST['m_orderid'] ?? null), 'ip' => common()->get_ip()]);
 
         if ( ! empty($_POST['m_orderid'])) {
             $this->_external_response();
@@ -707,10 +707,10 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
 
     public function _external_show_message($status)
     {
-        $operation_id = ! empty($_POST['m_orderid']) ? (int) ($_POST['m_orderid']) : false;
+        $operation_id = ! empty($_POST['m_orderid']) ? (int) (($_POST['m_orderid'] ?? null)) : false;
         $message = $operation_id . '|' . $status;
         $this->payment_api->dump(['name' => 'Payeer',
-            'operation_id' => @(int) $_POST['m_orderid'],
+            'operation_id' => @(int) ($_POST['m_orderid'] ?? null),
             'message' => $message, ]);
         $this->_dump_error_message($this->external_response_errors);
         echo $message;
@@ -720,7 +720,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
     public function _dump_error_message($errors)
     {
         $this->payment_api->dump(['name' => 'Payeer',
-            'operation_id' => @(int) $_POST['m_orderid'],
+            'operation_id' => @(int) ($_POST['m_orderid'] ?? null),
             'errors' => $errors,
         ]);
     }
@@ -736,27 +736,27 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
         $response_status = 'fail';
         if (isset($_POST['m_operation_id']) && isset($_POST['m_sign'])) {
             $arHash = [
-                $_POST['m_operation_id'],
-                $_POST['m_operation_ps'],
-                $_POST['m_operation_date'],
-                $_POST['m_operation_pay_date'],
-                $_POST['m_shop'],
-                $_POST['m_orderid'],
-                $_POST['m_amount'],
-                $_POST['m_curr'],
-                $_POST['m_desc'],
-                $_POST['m_status'],
+                ($_POST['m_operation_id'] ?? null),
+                ($_POST['m_operation_ps'] ?? null),
+                ($_POST['m_operation_date'] ?? null),
+                ($_POST['m_operation_pay_date'] ?? null),
+                ($_POST['m_shop'] ?? null),
+                ($_POST['m_orderid'] ?? null),
+                ($_POST['m_amount'] ?? null),
+                ($_POST['m_curr'] ?? null),
+                ($_POST['m_desc'] ?? null),
+                ($_POST['m_status'] ?? null),
                 $this->API_PASS_MERCHANT,
             ];
             $sign_hash = strtoupper(hash('sha256', implode(':', $arHash)));
-            if ($_POST['m_sign'] == $sign_hash && $_POST['m_status'] == 'success') {
+            if (($_POST['m_sign'] ?? null) == $sign_hash && ($_POST['m_status'] ?? null) == 'success') {
                 $response_status = 'success';
             } else {
                 $this->external_response_errors[] = 'Invalid signature';
             }
         }
         if ($response_status == 'success') {
-            $operation_id = (int) ($_POST['m_orderid']);
+            $operation_id = (int) (($_POST['m_orderid'] ?? null));
             $payment_api = $this->payment_api;
             $operation = $payment_api->operation([
                 'operation_id' => $operation_id,
@@ -812,7 +812,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
                     $this->external_response_errors[] = 'Invalid operation status, now it\'s ' . $status['name'] . ', needed in_progress';
                 }
             } else {
-                $this->external_response_errors[] = 'Unknown operation_id ' . $_POST['m_orderid'];
+                $this->external_response_errors[] = 'Unknown operation_id ' . ($_POST['m_orderid'] ?? null);
             }
         }
         return $this->_external_show_message($this->MESSAGE_FAIL);

@@ -370,7 +370,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
         $is_server_origin = $host === $this->API_SERVER_HOST;
         // check operation
         // $_operation_id = (int)$_GET[ 'operation_id' ];
-        $operation_id = (int) $_POST['PAYMENT_ID'];
+        $operation_id = (int) ($_POST['PAYMENT_ID'] ?? null);
         // START DUMP
         $payment_api->dump(['name' => 'PerfectMoney', 'operation_id' => (int) $operation_id]);
         // check origin server

@@ -13,21 +13,21 @@ class yf_log_admin_auth_fails
 
     public function show()
     {
-        $filter_name = $_GET['object'] . '__' . $_GET['action'];
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $default_filter = [
             'order_by' => 'time',
             'order_direction' => 'desc',
         ];
         $sql = 'SELECT * FROM ' . db('log_admin_auth_fails');
         return table($sql, [
-                'filter' => (array) $_SESSION[$filter_name] + $default_filter,
+                'filter' => (array) ($_SESSION[$filter_name] ?? null) + $default_filter,
                 'filter_params' => [
                     'name' => 'like',
                 ],
             ])
             ->text('reason', ['data' => $this->_reasons])
             ->date('time', ['format' => 'full', 'nowrap' => 1])
-            ->link('ip', './?object=' . $_GET['object'] . '&action=show_for_ip&id=%d')
+            ->link('ip', './?object=' . ($_GET['object'] ?? null) . '&action=show_for_ip&id=%d')
             ->text('login')
             ->text('pswd')
             ->text('user_agent')
@@ -52,7 +52,7 @@ class yf_log_admin_auth_fails
     public function _show_filter()
     {
         $filter_name = null;
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [];
@@ -60,7 +60,7 @@ class yf_log_admin_auth_fails
             $order_fields[$f] = $f;
         }
         return form($r, [
-                'selected' => $_SESSION[$filter_name],
+                'selected' => ($_SESSION[$filter_name] ?? null),
                 'class' => 'form-vertical',
             ])
             ->text('login')

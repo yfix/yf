@@ -5,15 +5,15 @@ class yf_manage_shop_hook_side_column
     /***/
     public function _hook_side_column()
     {
-        if ($_GET['action'] == 'product_edit') {
+        if (($_GET['action'] ?? null) == 'product_edit') {
             return $this->_product_revisions() . $this->_product_images_revisions();
-        } elseif ($_GET['action'] == 'view_order') {
+        } elseif (($_GET['action'] ?? null) == 'view_order') {
             return $this->_order_revisions();
-        } elseif ($_GET['action'] == 'product_revisions_view') {
+        } elseif (($_GET['action'] ?? null) == 'product_revisions_view') {
             return $this->_product_revisions_similar();
-        } elseif ($_GET['action'] == 'product_images_revisions_view') {
+        } elseif (($_GET['action'] ?? null) == 'product_images_revisions_view') {
             return $this->_product_images_revisions_similar();
-        } elseif ($_GET['action'] == 'order_revisions_view') {
+        } elseif (($_GET['action'] ?? null) == 'order_revisions_view') {
             return $this->_order_revisions_similar();
         }
         return '';
@@ -22,7 +22,7 @@ class yf_manage_shop_hook_side_column
     /***/
     public function _product_revisions()
     {
-        $product_id = (int) ($_GET['id']);
+        $product_id = (int) (($_GET['id'] ?? null));
         $product_info = module('manage_shop')->_product_get_info($product_id);
         if ( ! $product_info) {
             return false;
@@ -44,7 +44,7 @@ class yf_manage_shop_hook_side_column
     /***/
     public function _product_images_revisions()
     {
-        $product_id = (int) ($_GET['id']);
+        $product_id = (int) (($_GET['id'] ?? null));
         $product_info = module('manage_shop')->_product_get_info($product_id);
         if ( ! $product_info) {
             return false;
@@ -75,7 +75,7 @@ class yf_manage_shop_hook_side_column
     /***/
     public function _product_revisions_similar()
     {
-        $rev = db()->get('SELECT * FROM ' . db('shop_product_revisions') . ' WHERE id=' . (int) ($_GET['id']));
+        $rev = db()->get('SELECT * FROM ' . db('shop_product_revisions') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         $product_id = (int) ($rev['item_id']);
         $product_info = module('manage_shop')->_product_get_info($product_id);
         if ( ! $product_info) {
@@ -93,13 +93,13 @@ class yf_manage_shop_hook_side_column
             ->date('add_date', ['format' => '%d/%m/%Y', 'nowrap' => 1])
             ->admin('user_id', ['desc' => 'admin'])
             ->text('action')
-            ->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d&page=' . $_GET['page']);
+            ->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d&page=' . ($_GET['page'] ?? null));
     }
 
     /***/
     public function _product_images_revisions_similar()
     {
-        $rev = db()->get('SELECT * FROM ' . db('shop_product_images_revisions') . ' WHERE id=' . (int) ($_GET['id']));
+        $rev = db()->get('SELECT * FROM ' . db('shop_product_images_revisions') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         $product_id = (int) ($rev['product_id']);
         $product_info = module('manage_shop')->_product_get_info($product_id);
         if ( ! $product_info) {
@@ -117,13 +117,13 @@ class yf_manage_shop_hook_side_column
             ->date('add_date', ['format' => '%d/%m/%Y', 'nowrap' => 1])
             ->admin('user_id', ['desc' => 'admin'])
             ->text('action')
-            ->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d&page=' . $_GET['page']);
+            ->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d&page=' . ($_GET['page'] ?? null));
     }
 
     /***/
     public function _order_revisions()
     {
-        $order_id = (int) ($_GET['id']);
+        $order_id = (int) (($_GET['id'] ?? null));
         $order_info = db()->get('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . $order_id);
         if (empty($order_info)) {
             return _e('No such order');
@@ -145,7 +145,7 @@ class yf_manage_shop_hook_side_column
     /***/
     public function _order_revisions_similar()
     {
-        $rev = db()->get('SELECT * FROM ' . db('shop_order_revisions') . ' WHERE id=' . (int) ($_GET['id']));
+        $rev = db()->get('SELECT * FROM ' . db('shop_order_revisions') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         $order_id = (int) ($rev['item_id']);
         $order_info = db()->get('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . $order_id);
         if (empty($order_info)) {
@@ -163,14 +163,14 @@ class yf_manage_shop_hook_side_column
             ->date('add_date', ['format' => 'full', 'nowrap' => 1])
             ->admin('user_id', ['desc' => 'admin'])
             ->text('action')
-            ->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d&page=' . $_GET['page']);
+            ->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d&page=' . ($_GET['page'] ?? null));
     }
 
     /***/
     public function _revisions($type)
     {
         $_class_revision = $order_id = null;
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         $db = $_class_revision->get_db($type);
         $info = db()->get('SELECT * FROM ' . $db . ' WHERE id=' . $id);
         if (empty($info)) {

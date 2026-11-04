@@ -4,10 +4,10 @@ class yf_shop_search
 {
     public function search()
     {
-        if ($_GET['id'] == 'fast') {
+        if (($_GET['id'] ?? null) == 'fast') {
             // TODO: fill with real code
         }
-        $str_search = $_POST['search'];
+        $str_search = ($_POST['search'] ?? null);
         $rezult = $this->prepare_str($str_search);
         return $rezult;
     }

@@ -66,7 +66,7 @@ class yf_manage_shop__product_revisions
     public function _add_group_revision($action = false, $ids = false, $group_id = false)
     {
         $revision_db = $this->get_revision_db($action);
-        $admin_id = main()->ADMIN_ID ?: (int) ($_GET['admin_id']);
+        $admin_id = main()->ADMIN_ID ?: (int) (($_GET['admin_id'] ?? null));
         if ( ! empty($ids)) {
             $data = json_encode($ids);
         }
@@ -137,7 +137,7 @@ class yf_manage_shop__product_revisions
         foreach ($ids as $id) {
             if ($action == 'delete') {
                 $insert_array[] = [
-                    'user_id' => (int) (main()->ADMIN_ID) ?: (int) ($_GET['admin_id']),
+                    'user_id' => (int) (main()->ADMIN_ID) ?: (int) (($_GET['admin_id'] ?? null)),
                     'add_date' => $add_rev_date,
                     'action' => $action,
                     'item_id' => $id,
@@ -163,7 +163,7 @@ class yf_manage_shop__product_revisions
             }
 
             $insert_array[] = [
-                'user_id' => (int) (main()->ADMIN_ID) ?: (int) ($_GET['admin_id']),
+                'user_id' => (int) (main()->ADMIN_ID) ?: (int) (($_GET['admin_id'] ?? null)),
                 'add_date' => $add_rev_date,
                 'action' => $action,
                 'item_id' => $id,
@@ -187,7 +187,7 @@ class yf_manage_shop__product_revisions
         $action = 'edit_item';
         $db_revision = $this->get_revision_db($type);
         return table('SELECT * FROM ' . $db_revision, [
-                'filter' => $_SESSION[$_GET['object'] . '__' . $_GET['action']],
+                'filter' => ($_SESSION[$_GET['object'] . '__' . $_GET['action']] ?? null),
                 'filter_params' => [
                     'action' => ['eq', 'action'],
                     'user_id' => ['eq', 'user_id'],
@@ -207,7 +207,7 @@ class yf_manage_shop__product_revisions
     {
         $type = 'category';
         $db_revision = $this->get_revision_db($type);
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         $sql = 'SELECT * FROM ' . $db_revision . ' WHERE id=' . $id;
         $a = db()->get($sql);
         $info = [];
@@ -252,7 +252,7 @@ class yf_manage_shop__product_revisions
         $object = 'category_editor';
         $action = 'edit_item';
         $db_revision = $this->get_revision_db($type);
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         $revision_data = db()->get('SELECT * FROM ' . $db_revision . ' WHERE id=' . $id);
         if (empty($revision_data)) {
             return _e('Revision not found');
@@ -303,7 +303,7 @@ class yf_manage_shop__product_revisions
         $images_ids = db()->get_2d('SELECT id, is_default FROM ' . db('shop_product_images') . ' WHERE product_id = ' . $product_id . ' AND active=1');
         db()->insert_safe(db('shop_product_images_revisions'), [
             'user_id' => (int) (main()->ADMIN_ID),
-            'add_date' => $_SERVER['REQUEST_TIME'],
+            'add_date' => ($_SERVER['REQUEST_TIME'] ?? null),
             'action' => $action,
             'product_id' => $product_id,
             'image_id' => $image_id,
@@ -335,13 +335,13 @@ class yf_manage_shop__product_revisions
 						FROM ' . db('shop_product_revisions') . ' as r
 						INNER JOIN ' . db('shop_products') . ' as p ON p.id=r.item_id',
             [
-                'filter' => $_SESSION[$_GET['object'] . '__product_revisions'],
+                'filter' => ($_SESSION[$_GET['object'] . '__product_revisions'] ?? null),
                 'filter_params' => $filter_params,
                 'hide_empty' => 1,
             ]
         )
             ->date('add_date', ['format' => 'full', 'nowrap' => 1])
-            ->link('item_id', './?object=' . $_GET['object'] . '&action=product_edit&id=%d')
+            ->link('item_id', './?object=' . ($_GET['object'] ?? null) . '&action=product_edit&id=%d')
             ->text('name')
             ->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
             ->admin('user_id', ['desc' => 'admin'])
@@ -352,7 +352,7 @@ class yf_manage_shop__product_revisions
 
     public function product_revisions_view()
     {
-        $sql = 'SELECT * FROM ' . db('shop_product_revisions') . ' WHERE id=' . (int) ($_GET['id']);
+        $sql = 'SELECT * FROM ' . db('shop_product_revisions') . ' WHERE id=' . (int) (($_GET['id'] ?? null));
         $a = db()->get($sql);
         $product_info = module('manage_shop')->_product_get_info($a['item_id']);
         if (empty($product_info['id'])) {
@@ -361,7 +361,7 @@ class yf_manage_shop__product_revisions
         return form($a, [
             'dd_mode' => 1,
         ])
-        ->link('item_id', './?object=' . $_GET['object'] . '&action=product_edit&id=' . $product_info['id'], [
+        ->link('item_id', './?object=' . ($_GET['object'] ?? null) . '&action=product_edit&id=' . $product_info['id'], [
             'desc' => 'Product',
             'data' => [$a['item_id'] => $product_info['name'] . ' [id=' . $a['item_id'] . ']'],
         ])
@@ -403,7 +403,7 @@ class yf_manage_shop__product_revisions
     public function product_images_revisions()
     {
         return table('SELECT * FROM ' . db('shop_product_images_revisions'), [
-                'filter' => $_SESSION[$_GET['object'] . '__product_images_revisions'],
+                'filter' => ($_SESSION[$_GET['object'] . '__product_images_revisions'] ?? null),
                 'filter_params' => [
                     'action' => ['eq', 'action'],
                     'user_id' => ['eq', 'user_id'],
@@ -413,7 +413,7 @@ class yf_manage_shop__product_revisions
                 'hide_empty' => 1,
             ])
             ->date('add_date', ['format' => 'full', 'nowrap' => 1])
-            ->link('product_id', './?object=' . $_GET['object'] . '&action=product_edit&id=%d')
+            ->link('product_id', './?object=' . ($_GET['object'] ?? null) . '&action=product_edit&id=%d')
             ->admin('user_id', ['desc' => 'admin'])
             ->image('image_id', 'Image', ['width' => '70px', 'img_path_callback' => function ($_p1, $_p2, $row) {
                 $dirs = sprintf('%06s', $row['product_id']);
@@ -435,7 +435,7 @@ class yf_manage_shop__product_revisions
 				FROM ' . db('shop_product_images_revisions') . ' as r
 				RIGHT JOIN ' . db('shop_products') . ' as p
 				ON r.product_id = p.id
-				WHERE r.id=' . (int) ($_GET['id']);
+				WHERE r.id=' . (int) (($_GET['id'] ?? null));
         $a = db()->get($sql);
         if (empty($a)) {
             return _e('Revision not found');
@@ -443,7 +443,7 @@ class yf_manage_shop__product_revisions
         $data_stamp = json_decode($a['data'], true);
         foreach ($data_stamp as $image_id => $v) {
             $image_url = common()->shop_generate_image_name($a['product_id'], $image_id, true);
-            $image_html = tpl()->parse($_GET['object'] . '/image_revision_item', $image_url);
+            $image_html = tpl()->parse(($_GET['object'] ?? null) . '/image_revision_item', $image_url);
             if ($v) {
                 $main_image = $image_html;
             }
@@ -451,12 +451,12 @@ class yf_manage_shop__product_revisions
         }
         if ($a['image_id']) {
             $changed_image = common()->shop_generate_image_name($a['product_id'], $a['image_id'], true);
-            $changed_image = tpl()->parse($_GET['object'] . '/image_revision_item', $changed_image);
+            $changed_image = tpl()->parse(($_GET['object'] ?? null) . '/image_revision_item', $changed_image);
         }
         return form($a, [
             'dd_mode' => 1,
         ])
-        ->link('product_id', './?object=' . $_GET['object'] . '&action=product_edit&id=' . $a['product_id'], [
+        ->link('product_id', './?object=' . ($_GET['object'] ?? null) . '&action=product_edit&id=' . $a['product_id'], [
             'desc' => t('Product'),
             'data' => [$a['product_id'] => $a['name'] . ' [id=' . $a['product_id'] . ']'],
         ])
@@ -472,8 +472,8 @@ class yf_manage_shop__product_revisions
 
     public function checkout_images_revision()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $revision_data = db()->get('SELECT * FROM ' . db('shop_product_images_revisions') . ' WHERE id=' . $_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $revision_data = db()->get('SELECT * FROM ' . db('shop_product_images_revisions') . ' WHERE id=' . ($_GET['id'] ?? null));
         if (empty($revision_data)) {
             return _e('Revision not found');
         }
@@ -506,15 +506,15 @@ class yf_manage_shop__product_revisions
         db()->commit();
         module('manage_shop')->_product_cache_purge($product_id);
         common()->message_success('Revision retrieved');
-        common()->admin_wall_add(['shop product_image checkout revision: ' . $_GET['id'], $product_id]);
+        common()->admin_wall_add(['shop product_image checkout revision: ' . ($_GET['id'] ?? null), $product_id]);
         return js_redirect('./?object=manage_shop&action=product_edit&id=' . $product_id);
     }
 
 
     public function checkout_product_revision()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $revision_data = db()->get('SELECT * FROM ' . db('shop_product_revisions') . ' WHERE id=' . $_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $revision_data = db()->get('SELECT * FROM ' . db('shop_product_revisions') . ' WHERE id=' . ($_GET['id'] ?? null));
         if (empty($revision_data)) {
             return _e('Revision not found');
         }
@@ -540,7 +540,7 @@ class yf_manage_shop__product_revisions
 
         module('manage_shop')->_product_cache_purge($product_id);
         common()->message_success('Revision retrieved');
-        common()->admin_wall_add(['shop product checkout revision: ' . $_GET['id'], $product_id]);
+        common()->admin_wall_add(['shop product checkout revision: ' . ($_GET['id'] ?? null), $product_id]);
         return js_redirect('./?object=manage_shop&action=product_edit&id=' . $product_id);
     }
 
@@ -548,7 +548,7 @@ class yf_manage_shop__product_revisions
     public function order_revisions()
     {
         return table('SELECT * FROM ' . db('shop_order_revisions'), [
-                'filter' => $_SESSION[$_GET['object'] . '__order_revisions'],
+                'filter' => ($_SESSION[$_GET['object'] . '__order_revisions'] ?? null),
                 'filter_params' => [
                     'action' => ['eq', 'action'],
                     'user_id' => ['eq', 'user_id'],
@@ -558,7 +558,7 @@ class yf_manage_shop__product_revisions
                 'hide_empty' => 1,
             ])
             ->date('add_date', ['format' => 'full', 'nowrap' => 1])
-            ->link('item_id', './?object=' . $_GET['object'] . '&action=view_order&id=%d')
+            ->link('item_id', './?object=' . ($_GET['object'] ?? null) . '&action=view_order&id=%d')
             ->admin('user_id', ['desc' => 'admin'])
             ->text('action')
             ->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d');
@@ -567,7 +567,7 @@ class yf_manage_shop__product_revisions
 
     public function order_revisions_view()
     {
-        $sql = 'SELECT * FROM ' . db('shop_order_revisions') . ' WHERE id=' . (int) ($_GET['id']);
+        $sql = 'SELECT * FROM ' . db('shop_order_revisions') . ' WHERE id=' . (int) (($_GET['id'] ?? null));
         $a = db()->get($sql);
         $order_info = db()->get('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . $a['item_id']);
         if (empty($order_info)) {
@@ -576,7 +576,7 @@ class yf_manage_shop__product_revisions
         return form($a, [
             'dd_mode' => 1,
         ])
-        ->link('item_id', './?object=' . $_GET['object'] . '&action=view_order&id=' . $order_info['id'], [
+        ->link('item_id', './?object=' . ($_GET['object'] ?? null) . '&action=view_order&id=' . $order_info['id'], [
             'desc' => 'Order',
             'data' => [$a['item_id'] => $order_info['name'] . ' [id=' . $a['item_id'] . ']'],
         ])
@@ -604,8 +604,8 @@ class yf_manage_shop__product_revisions
 
     public function checkout_order_revision()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $revision_data = db()->get('SELECT * FROM ' . db('shop_order_revisions') . ' WHERE id=' . $_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $revision_data = db()->get('SELECT * FROM ' . db('shop_order_revisions') . ' WHERE id=' . ($_GET['id'] ?? null));
         if (empty($revision_data)) {
             return _e('Revision not found');
         }
@@ -630,15 +630,15 @@ class yf_manage_shop__product_revisions
         db()->commit();
 
         common()->message_success('Revision retrieved');
-        common()->admin_wall_add(['shop order checkout revision: ' . $_GET['id'], $order_id]);
+        common()->admin_wall_add(['shop order checkout revision: ' . ($_GET['id'] ?? null), $order_id]);
         return js_redirect('./?object=manage_shop&action=view_order&id=' . $order_id);
     }
 
     public function checkout_group_revision()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         $db = db('shop_product_revisions');
-        $ids = db()->get_one('SELECT data FROM ' . $db . ' WHERE item_id=' . $_GET['id'] . ' AND data IS NOT NULL ORDER BY id DESC');
+        $ids = db()->get_one('SELECT data FROM ' . $db . ' WHERE item_id=' . ($_GET['id'] ?? null) . ' AND data IS NOT NULL ORDER BY id DESC');
         if (empty($ids)) {
             return _e('Revision not found');
         }
@@ -661,12 +661,12 @@ class yf_manage_shop__product_revisions
         }
         $group_ids = module('manage_shop')->_product_add_revision('rollback', $products);
         if ($group_ids) {
-            module('manage_shop')->_add_group_revision('product', $group_ids, $_GET['id']);
+            module('manage_shop')->_add_group_revision('product', $group_ids, ($_GET['id'] ?? null));
         }
         db()->commit();
 
         common()->message_success('Group revision retrieved');
-        common()->admin_wall_add(['checkout group revision: ' . $_GET['id'], $_GET['id']]);
+        common()->admin_wall_add(['checkout group revision: ' . ($_GET['id'] ?? null), ($_GET['id'] ?? null)]);
         return js_redirect('./?object=manage_shop&action=clear_patterns');
     }
 }

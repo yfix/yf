@@ -60,7 +60,7 @@ class yf_cookie
      */
     public function get($name)
     {
-        return $_COOKIE[$name];
+        return ($_COOKIE[$name] ?? null);
     }
 
     /**

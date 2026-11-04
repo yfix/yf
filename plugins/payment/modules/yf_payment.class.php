@@ -255,7 +255,7 @@ class yf_payment
     {
         $api = _class('api');
         $payment_api = _class('payment_api');
-        $provider_name = $_GET['name'];
+        $provider_name = ($_GET['name'] ?? null);
         if (empty($provider_name)) {
             return  $api->_reject();
         }
@@ -270,12 +270,12 @@ class yf_payment
         $is_server = ! empty($_GET['server']);
         // provider handler
         $provider_class = 'provider_' . $provider_name;
-        switch ($_GET['operation']) {
+        switch (($_GET['operation'] ?? null)) {
             case 'authorize':
             case 'response':
             case 'server':
             case 'check':
-                $method = $_GET['operation'];
+                $method = ($_GET['operation'] ?? null);
                 break;
             default:
                 $api->_reject();
@@ -311,7 +311,7 @@ class yf_payment
         }
         // route
         $api = _class('api');
-        switch ($_GET['operation']) {
+        switch (($_GET['operation'] ?? null)) {
             case 'refresh':
                 $response = $this->_balance_refresh($_request, $options);
                 break;
@@ -407,7 +407,7 @@ class yf_payment
         ];
         $form = [
             'code' => @$__code ?: @$_code,
-            'action' => url_user($_SERVER['REQUEST_URI']),
+            'action' => url_user(($_SERVER['REQUEST_URI'] ?? null)),
         ];
         $result = [
             'data' => $data,

@@ -32,12 +32,12 @@ class yf_admin_modules
         $this->refresh_modules_list($silent = true);
 
         if (main()->is_post()) {
-            if (is_array($_POST['name']) && ! empty($_POST['name'])) {
-                $where = 'name IN("' . implode('","', _es(array_keys($_POST['name']))) . '")';
+            if (is_array(($_POST['name'] ?? null)) && ! empty($_POST['name'])) {
+                $where = 'name IN("' . implode('","', _es(array_keys(($_POST['name'] ?? null)))) . '")';
             }
-            if ($_POST['activate_selected']) {
+            if (($_POST['activate_selected'] ?? null)) {
                 $active = 1;
-            } elseif ($_POST['disable_selected']) {
+            } elseif (($_POST['disable_selected'] ?? null)) {
                 $active = 0;
             }
             if (isset($active) && $where) {
@@ -113,7 +113,7 @@ class yf_admin_modules
     public function active()
     {
         if ( ! empty($_GET['id'])) {
-            $module_info = db()->query_fetch('SELECT * FROM ' . db('admin_modules') . ' WHERE name="' . _es($_GET['id']) . '" LIMIT 1');
+            $module_info = db()->query_fetch('SELECT * FROM ' . db('admin_modules') . ' WHERE name="' . _es(($_GET['id'] ?? null)) . '" LIMIT 1');
         }
         if ( ! empty($module_info)) {
             db()->UPDATE('admin_modules', ['active' => (int) ! $module_info['active']], 'id=' . (int) ($module_info['id']));
@@ -478,7 +478,7 @@ class yf_admin_modules
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         /*

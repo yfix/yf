@@ -33,7 +33,7 @@ class yf_manage_shop_category_mapping
     public function category_mapping_edit()
     {
         $SUPPLIER_ID = module('manage_shop')->SUPPLIER_ID;
-        $a = db()->get('SELECT * FROM ' . db('shop_suppliers_cat_aliases') . ' WHERE supplier_id=' . (int) $SUPPLIER_ID . ' AND cat_id=' . (int) $_GET['id']);
+        $a = db()->get('SELECT * FROM ' . db('shop_suppliers_cat_aliases') . ' WHERE supplier_id=' . (int) $SUPPLIER_ID . ' AND cat_id=' . (int) ($_GET['id'] ?? null));
         if ( ! $a) {
             return _e('No such record');
         }
@@ -50,11 +50,11 @@ class yf_manage_shop_category_mapping
     public function category_mapping_delete()
     {
         $SUPPLIER_ID = module('manage_shop')->SUPPLIER_ID;
-        $a = db()->get('SELECT * FROM ' . db('shop_suppliers_cat_aliases') . ' WHERE supplier_id=' . (int) $SUPPLIER_ID . ' AND cat_id=' . (int) $_GET['id']);
+        $a = db()->get('SELECT * FROM ' . db('shop_suppliers_cat_aliases') . ' WHERE supplier_id=' . (int) $SUPPLIER_ID . ' AND cat_id=' . (int) ($_GET['id'] ?? null));
         if ( ! $a) {
             return _e('No such record');
         }
-        db()->query('DELETE FROM ' . db('shop_suppliers_cat_aliases') . ' WHERE supplier_id=' . (int) $SUPPLIER_ID . ' AND cat_id=' . (int) $_GET['id'] . ' LIMIT 1');
+        db()->query('DELETE FROM ' . db('shop_suppliers_cat_aliases') . ' WHERE supplier_id=' . (int) $SUPPLIER_ID . ' AND cat_id=' . (int) ($_GET['id'] ?? null) . ' LIMIT 1');
         return js_redirect('./?object=' . main()->_get('object') . '&action=category_mapping');
     }
 }

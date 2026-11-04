@@ -202,7 +202,7 @@ class yf_charts
     public function _include_js()
     {
         $replace = null;
-        if ( ! $GLOBALS['chart']['include_js']) {
+        if ( ! ($GLOBALS['chart']['include_js'] ?? null)) {
             $GLOBALS['chart']['include_js'] = true;
             $content = tpl()->parse('charts/chart_include_js', $replace);
         }

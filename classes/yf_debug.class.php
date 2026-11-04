@@ -77,9 +77,9 @@ class yf_debug
     {
         $this->_NOT_TRANSLATED_FILE = PROJECT_PATH . 'logs/not_translated_' . conf('language') . '.php';
         $name = 'debug_console_light';
-        $this->DEBUG_CONSOLE_LIGHT = (int) ((bool) (isset($_SESSION[$name]) ? $_SESSION[$name] : $_GET[$name]));
+        $this->DEBUG_CONSOLE_LIGHT = (int) ((bool) (isset($_SESSION[$name]) ? ($_SESSION[$name] ?? null) : ($_GET[$name] ?? null)));
         $name = 'debug_console_hidden';
-        $this->DEBUG_CONSOLE_HIDDEN = (int) ((bool) (isset($_SESSION[$name]) ? $_SESSION[$name] : $_GET[$name]));
+        $this->DEBUG_CONSOLE_HIDDEN = (int) ((bool) (isset($_SESSION[$name]) ? ($_SESSION[$name] ?? null) : ($_GET[$name] ?? null)));
         if ($this->DEBUG_CONSOLE_HIDDEN) {
             $this->DEBUG_CONSOLE_LIGHT = true;
         }
@@ -95,7 +95,7 @@ class yf_debug
         }
         $ts = microtime(true);
         // Do hide console if needed
-        if ($_SESSION['hide_debug_console'] || $_GET['hide_debug_console']) {
+        if (($_SESSION['hide_debug_console'] ?? null) || ($_GET['hide_debug_console'] ?? null)) {
             return '';
         }
         $exec_time = round(microtime(true) - main()->_time_start, 4);
@@ -698,7 +698,7 @@ class yf_debug
             'MAIN_TYPE' => MAIN_TYPE,
             'LANG' => conf('language'),
             'IP' => common()->get_ip(),
-            'COUNTRY' => conf('country') ?: $_SERVER['GEOIP_COUNTRY_CODE'],
+            'COUNTRY' => conf('country') ?: ($_SERVER['GEOIP_COUNTRY_CODE'] ?? null),
             'TIMEZONE' => date_default_timezone_get() . (conf('timezone') ? ', conf: ' . conf('timezone') : ''),
             'DEBUG_MODE' => (int) DEBUG_MODE,
             'DEV_MODE' => (int) conf('DEV_MODE'),
@@ -725,7 +725,7 @@ class yf_debug
             'MEDIA_PATH' => MEDIA_PATH,
             'ADMIN_WEB_PATH' => ADMIN_WEB_PATH,
             'CSS_FRAMEWORK' => conf('css_framework') ?: 'bs3',
-            'BOOTSTRAP_THEME' => common()->bs_current_theme() ?: $_COOKIE['yf_theme'] ?: (conf('DEF_BOOTSTRAP_THEME_' . strtoupper(MAIN_TYPE)) ?: conf('DEF_BOOTSTRAP_THEME')),
+            'BOOTSTRAP_THEME' => common()->bs_current_theme() ?: ($_COOKIE['yf_theme'] ?? null) ?: (conf('DEF_BOOTSTRAP_THEME_' . strtoupper(MAIN_TYPE)) ?: conf('DEF_BOOTSTRAP_THEME')),
             'TPL_DRIVER' => tpl()->DRIVER_NAME,
             'TPL_COMPILE' => (int) tpl()->COMPILE_TEMPLATES,
             'TPL_THEMES_PATH' => tpl()->_THEMES_PATH,
@@ -737,7 +737,7 @@ class yf_debug
             'SITE_ID' => (int) conf('SITE_ID'),
             'SERVER_ID' => (int) conf('SERVER_ID'),
             'SERVER_ROLE' => _prepare_html(conf('SERVER_ROLE')),
-            'SERVER_ADDR' => $_SERVER['SERVER_ADDR'],
+            'SERVER_ADDR' => ($_SERVER['SERVER_ADDR'] ?? null),
             'SERVER_SELF_IPS' => implode(', ', (array) main()->_server_self_ips),
             'USER_ID' => (int) main()->USER_ID,
             'USER_GROUP' => (int) main()->USER_GROUP,
@@ -751,13 +751,13 @@ class yf_debug
             'IS_UNIT_TEST' => (int) main()->is_unit_test(),
             'IS_SPIDER' => (int) conf('IS_SPIDER'),
             'NO_GRAPHICS' => (int) main()->NO_GRAPHICS,
-            'HTTP_HOST' => $_SERVER['HTTP_HOST'],
-            'SERVER_PORT' => $_SERVER['SERVER_PORT'],
+            'HTTP_HOST' => ($_SERVER['HTTP_HOST'] ?? null),
+            'SERVER_PORT' => ($_SERVER['SERVER_PORT'] ?? null),
             'REWRITE_DEF_HOST' => _class('rewrite')->DEFAULT_HOST,
             'REWRITE_DEF_PORT' => _class('rewrite')->DEFAULT_PORT,
             'WEB_DOMAIN' => WEB_DOMAIN,
-            'REQUEST_URI' => $_SERVER['REQUEST_URI'],
-            'REQUEST_METHOD' => $_SERVER['REQUEST_METHOD'],
+            'REQUEST_URI' => ($_SERVER['REQUEST_URI'] ?? null),
+            'REQUEST_METHOD' => ($_SERVER['REQUEST_METHOD'] ?? null),
             'OUTPUT_CACHING' => (int) main()->OUTPUT_CACHING,
             'NO_CACHE_HEADERS' => (int) main()->NO_CACHE_HEADERS,
             'LANG_SELECTED_FROM' => $locale_debug['lang_selected'] . ' (' . $locale_debug['lang_variants'][$locale_debug['lang_selected']] . ')',
@@ -828,9 +828,9 @@ class yf_debug
         $body .= form($a, ['action' => url('/test/change_debug'), 'class' => 'form-inline', 'style' => 'padding-left:20px;'])
             ->row_start()
             ->container('Locale edit')
-            ->active_box('locale_edit', ['selected' => $_SESSION['locale_vars_edit']])
+            ->active_box('locale_edit', ['selected' => ($_SESSION['locale_vars_edit'] ?? null)])
             ->container('<span style="padding-left:20px;">Debug console light</span>')
-            ->active_box('debug_console_light', ['selected' => $_SESSION['debug_console_light']])
+            ->active_box('debug_console_light', ['selected' => ($_SESSION['debug_console_light'] ?? null)])
             ->row_end()
             ->save(['class' => 'btn btn-default btn-mini btn-xs']);
         foreach ($data as $name => $_data) {
@@ -1164,7 +1164,7 @@ class yf_debug
             $enabled = $this->$enabled_var;
             if ($enabled) {
                 $val = '_' . $name;
-                $out = $this->_show_key_val_table($GLOBALS[$val]);
+                $out = $this->_show_key_val_table(($GLOBALS[$val] ?? null));
                 $items = $this->_get_debug_data('input_' . strtolower($name));
                 $items && $out .= $this->_show_auto_table($items, ['hidden_map' => ['trace' => 'name']]);
                 $body[] = '<div class="col-md-12"><h3>_' . $name . '</h3>' . $out . '</div>';
@@ -1302,7 +1302,7 @@ class yf_debug
         if (! $this->SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
             return '';
         }
-        return $this->_show_auto_table($GLOBALS['_RESIZED_IMAGES_LOG']);
+        return $this->_show_auto_table(($GLOBALS['_RESIZED_IMAGES_LOG'] ?? null));
     }
 
 

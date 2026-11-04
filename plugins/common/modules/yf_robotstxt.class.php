@@ -5,7 +5,7 @@ class yf_robotstxt
     public function show()
     {
         header('Content-Type: text/plain', $replace = true);
-        $host = $_GET['host'] ?: $_SERVER['HTTP_HOST']; // $_GET['host'] just for debug purposes
+        $host = ($_GET['host'] ?? null) ?: ($_SERVER['HTTP_HOST'] ?? null); // $_GET['host'] just for debug purposes
         $prod_hosts = main()->PRODUCTION_DOMAIN ?: [];
         if (is_string($prod_hosts)) {
             $prod_hosts = [$prod_hosts];

@@ -23,13 +23,13 @@ class yf_watch_online_users
                 window.location.reload(1);
             }, 60000);
 		');
-        $filter_name = $_GET['object'];
-        if ( ! $_SESSION[$filter_name]['user_type']) {
+        $filter_name = ($_GET['object'] ?? null);
+        if ( ! ($_SESSION[$filter_name]['user_type'] ?? null)) {
             $_SESSION[$filter_name]['user_type'] = 'user_id';
         }
         if (main()->TRACK_ONLINE_DETAILS) {
             return table('SELECT *,`user_id` AS `id` FROM ' . db('users_online_details'), [
-                    'filter' => $_SESSION[$filter_name],
+                    'filter' => ($_SESSION[$filter_name] ?? null),
                 ])
                 ->text('user_id')
                 ->text('url')
@@ -37,14 +37,14 @@ class yf_watch_online_users
                 ->text('session_id')
                 ->text('user_agent')
                 ->date('time', ['format' => 'full', 'nowrap' => 1])
-                ->btn('send notification', './?object=manage_notifications&action=add&receiver_id=%d&receiver_type=' . $_SESSION[$filter_name]['user_type']);
+                ->btn('send notification', './?object=manage_notifications&action=add&receiver_id=%d&receiver_type=' . ($_SESSION[$filter_name]['user_type'] ?? null));
         }
         return table('SELECT *,`user_id` AS `id`  FROM ' . db('users_online'), [
-                    'filter' => $_SESSION[$filter_name],
+                    'filter' => ($_SESSION[$filter_name] ?? null),
                 ])
                 ->text('user_id')
                 ->date('time', ['format' => 'full', 'nowrap' => 1])
-                ->btn('send notification', './?object=manage_notifications&action=add&receiver_id=%d&receiver_type=' . $_SESSION[$filter_name]['user_type']);
+                ->btn('send notification', './?object=manage_notifications&action=add&receiver_id=%d&receiver_type=' . ($_SESSION[$filter_name]['user_type'] ?? null));
     }
 
 
@@ -53,13 +53,13 @@ class yf_watch_online_users
         if ( ! main()->TRACK_ONLINE_STATUS) {
             return false;
         }
-        $filter_name = $_GET['object'];
+        $filter_name = ($_GET['object'] ?? null);
         $r = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name,
-            'clear_url' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name . '&page=clear',
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name,
+            'clear_url' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name . '&page=clear',
         ];
         return form($r, [
-                'selected' => $_SESSION[$filter_name],
+                'selected' => ($_SESSION[$filter_name] ?? null),
                 'class' => 'form-vertical',
             ])
             ->select_box('user_type', $this->USER_TYPES)
@@ -68,8 +68,8 @@ class yf_watch_online_users
 
     public function filter_save()
     {
-        $filter_name = $_GET['object'];
-        if ($_GET['page'] == 'clear') {
+        $filter_name = ($_GET['object'] ?? null);
+        if (($_GET['page'] ?? null) == 'clear') {
             $_SESSION[$filter_name] = [];
         } else {
             $_SESSION[$filter_name] = $_POST;
@@ -79,7 +79,7 @@ class yf_watch_online_users
                 }
             }
         }
-        $redirect_url = './?object=' . $_GET['object'];
+        $redirect_url = './?object=' . ($_GET['object'] ?? null);
         return js_redirect($redirect_url);
     }
 }

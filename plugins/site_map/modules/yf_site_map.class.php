@@ -124,7 +124,7 @@ class yf_site_map
      */
     public function show()
     {
-        if ($this->SECURITY_URL_PARAM && $_GET['id'] != $this->SECURITY_URL_PARAM) {
+        if ($this->SECURITY_URL_PARAM && ($_GET['id'] ?? null) != $this->SECURITY_URL_PARAM) {
             main()->NO_GRAPHICS = true;
             return print _e('Wrong url');
         }
@@ -405,7 +405,7 @@ class yf_site_map
             readfile(str_replace($this->SITEMAP_WEB_PATH, $this->SITEMAP_STORE_FOLDER, $location));
             exit();
         }
-        header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 301 Moved Permanently');
+        header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 301 Moved Permanently');
         header('Location: ' . $location);
     }
 

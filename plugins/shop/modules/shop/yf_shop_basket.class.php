@@ -14,7 +14,7 @@ class yf_shop_basket
         // Save basket contents
         if ( ! empty($_POST['quantity']) && ! module('shop')->_basket_is_processed) {
             module('shop')->_basket_save();
-            return js_redirect('./?object=shop&action=' . $_GET['action']);
+            return js_redirect('./?object=shop&action=' . ($_GET['action'] ?? null));
         }
         // Get products from db
         $products_ids = [];
@@ -58,13 +58,13 @@ class yf_shop_basket
             $total_price += $price * $quantity;
         }
         return tpl()->parse($STPL_NAME, [
-            'form_action' => './?object=shop&action=' . $_GET['action'],
+            'form_action' => './?object=shop&action=' . ($_GET['action'] ?? null),
             'products' => $products,
             'total_price' => module('shop')->_format_price($total_price),
             'currency' => _prepare_html(module('shop')->CURRENCY),
             'clean_all_link' => './?object=shop&action=basket_clean',
             'order_link' => './?object=shop&action=order',
-            'back_link' => js_redirect($_SERVER['HTTP_REFERER'], false),
+            'back_link' => js_redirect(($_SERVER['HTTP_REFERER'] ?? null), false),
             'cats_block' => module('shop')->_categories_show(),
         ]);
     }

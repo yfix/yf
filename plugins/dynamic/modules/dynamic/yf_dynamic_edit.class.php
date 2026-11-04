@@ -25,11 +25,11 @@ class yf_dynamic_edit
     public function save_locale_var()
     {
         no_graphics(true);
-        if ( ! DEBUG_MODE && ! $_SESSION['locale_vars_edit']) {
+        if ( ! DEBUG_MODE && ! ($_SESSION['locale_vars_edit'] ?? null)) {
             return print 'Access denied';
         }
-        $SOURCE_VAR_NAME = str_replace('%20', ' ', trim($_POST['source_var']));
-        $EDITED_VALUE = str_replace('%20', ' ', trim($_POST['edited_value']));
+        $SOURCE_VAR_NAME = str_replace('%20', ' ', trim(($_POST['source_var'] ?? null)));
+        $EDITED_VALUE = str_replace('%20', ' ', trim(($_POST['edited_value'] ?? null)));
         $CUR_LOCALE = conf('language');
         // First we need to check if such var exists
         if ( ! strlen($SOURCE_VAR_NAME)) {
@@ -91,7 +91,7 @@ class yf_dynamic_edit
             return print 'Access denied';
         }
         // Prepare template name to get
-        $STPL_NAME = trim($_GET['id']);
+        $STPL_NAME = trim(($_GET['id'] ?? null));
         // Some security checks
         $STPL_NAME = preg_replace('/[^a-z0-9_\-\/]/i', '', $STPL_NAME);
         $STPL_NAME = trim($STPL_NAME, '/');
@@ -110,21 +110,21 @@ class yf_dynamic_edit
         if (isset($_POST['text'])) {
             // Compare source and result
             $result = 'Nothing changed';
-            if ($_POST['text'] != $text) {
+            if (($_POST['text'] ?? null) != $text) {
                 $locale_stpl_path = $_lang_theme_path . $STPL_NAME . tpl()->_STPL_EXT;
                 // First try to create subdir
                 if ( ! file_exists(dirname($locale_stpl_path))) {
                     _mkdir_m(dirname($locale_stpl_path));
                 }
                 // Save file
-                file_put_contents($locale_stpl_path, $_POST['text']);
+                file_put_contents($locale_stpl_path, ($_POST['text'] ?? null));
                 // Save revision
                 db()->INSERT('revisions', [
                     'user_id' => (int) (MAIN_TYPE_USER ? main()->USER_ID : main()->ADMIN_ID),
                     'object_name' => _es('locale_stpl'),
                     'object_id' => _es($STPL_NAME),
                     'old_text' => _es($text),
-                    'new_text' => _es($_POST['text']),
+                    'new_text' => _es(($_POST['text'] ?? null)),
                     'date' => time(),
                     'ip' => common()->get_ip(),
                     'comment' => _es('saved into file: ' . $locale_stpl_path),
@@ -150,19 +150,19 @@ class yf_dynamic_edit
         $CUR_LOCALE = conf('language');
 
         if (isset($_POST['text']) && isset($_POST['name'])) {
-            $A = db()->query_fetch('SELECT * FROM ' . db('tips') . " WHERE name='" . $_POST['name'] . "' AND locale='" . $CUR_LOCALE . "'");
+            $A = db()->query_fetch('SELECT * FROM ' . db('tips') . " WHERE name='" . ($_POST['name'] ?? null) . "' AND locale='" . $CUR_LOCALE . "'");
             if ( ! $A) {
                 db()->INSERT('tips', [
-                    'name' => _es($_POST['name']),
+                    'name' => _es(($_POST['name'] ?? null)),
                     'locale' => _es($CUR_LOCALE),
-                    'text' => _es($_POST['text']),
+                    'text' => _es(($_POST['text'] ?? null)),
                     'type' => 1,
                     'active' => 1,
                 ]);
             } else {
                 db()->UPDATE('tips', [
-                    'text' => _es($_POST['text']),
-                ], "name='" . $_POST['name'] . "' AND locale='" . $CUR_LOCALE . "'");
+                    'text' => _es(($_POST['text'] ?? null)),
+                ], "name='" . ($_POST['name'] ?? null) . "' AND locale='" . $CUR_LOCALE . "'");
             }
         }
         cache_del('tips');

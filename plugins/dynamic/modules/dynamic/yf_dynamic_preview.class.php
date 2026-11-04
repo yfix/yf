@@ -35,14 +35,14 @@ class yf_dynamic_preview
         if ( ! strlen($object)) {
             return print _403('Object is required');
         }
-        $ref = $_SERVER['HTTP_REFERER'];
+        $ref = ($_SERVER['HTTP_REFERER'] ?? null);
         $body = '';
         if (is_post() && isset($_POST['text'])) {
             $u_ref = parse_url($ref);
             $u_self = parse_url(WEB_PATH);
             $u_adm = parse_url(ADMIN_WEB_PATH);
             if ($u_ref['host'] && $u_ref['host'] == $u_self['host'] && $u_ref['host'] == $u_adm['host'] && $u_ref['path'] == $u_adm['path']) {
-                $body = $_POST['text'];
+                $body = ($_POST['text'] ?? null);
             } else {
                 return print _403('Preview security check not passed');
             }

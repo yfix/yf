@@ -104,11 +104,11 @@ class yf_common
         $extra['is_banned'] = $main->is_banned() ? 'is-banned' : '';
         $extra['group_id'] = ($group = MAIN_TYPE_ADMIN ? $main->ADMIN_GROUP : $main->USER_GROUP) ? 'groupid-' . strtolower($group) : '';
         $extra['site_id'] = ($site_id = $main->SITE_ID) ? 'siteid-' . strtolower($site_id) : '';
-        $extra['get_object'] = 'get-object-' . strtolower($_GET['object']);
-        $extra['get_action'] = 'get-action-' . strtolower($_GET['action']);
-        $extra['get_id'] = $_GET['id'] ? 'get-id-' . strtolower($_GET['id']) : '';
+        $extra['get_object'] = 'get-object-' . strtolower(($_GET['object'] ?? null));
+        $extra['get_action'] = 'get-action-' . strtolower(($_GET['action'] ?? null));
+        $extra['get_id'] = ($_GET['id'] ?? null) ? 'get-id-' . strtolower(($_GET['id'] ?? null)) : '';
         $extra['language'] = 'lang-' . strtolower(conf('language') ?: 'en');
-        $extra['country'] = $_SERVER['GEOIP_COUNTRY_CODE'] ? 'country-' . strtolower($_SERVER['GEOIP_COUNTRY_CODE']) : '';
+        $extra['country'] = ($_SERVER['GEOIP_COUNTRY_CODE'] ?? null) ? 'country-' . strtolower(($_SERVER['GEOIP_COUNTRY_CODE'] ?? null)) : '';
         $extra['currency'] = ($currency = conf('currency')) ? 'currency-' . strtolower($currency) : '';
         return implode(' ', array_filter($extra));
     }
@@ -178,14 +178,14 @@ class yf_common
         }
         $allow_override = conf('bs_theme_allow_override_for_' . $main_type);
         $avail_themes = $this->bs_get_avail_themes();
-        if ($_GET['yf_theme'] && in_array($_GET['yf_theme'], $avail_themes) && $allow_override) {
-            $theme = $_GET['yf_theme'];
+        if (($_GET['yf_theme'] ?? null) && in_array(($_GET['yf_theme'] ?? null), $avail_themes) && $allow_override) {
+            $theme = ($_GET['yf_theme'] ?? null);
             setcookie('yf_theme', $theme, 0, '/');
             unset($_GET['yf_theme']);
             js_redirect('/@object/@action/@id/@page');
-        } elseif ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
+        } elseif (($_COOKIE['yf_theme'] ?? null) && in_array(($_COOKIE['yf_theme'] ?? null), $avail_themes)) {
             if ( ! $force || $allow_override) {
-                $theme = $_COOKIE['yf_theme'];
+                $theme = ($_COOKIE['yf_theme'] ?? null);
             }
         }
         $this->_current_theme = $theme;
@@ -1555,9 +1555,9 @@ class yf_common
      */
     public function get_console_params()
     {
-        foreach ((array) $_SERVER['argv'] as $key => $argv) {
+        foreach ((array) ($_SERVER['argv'] ?? null) as $key => $argv) {
             if ($argv == '--params' && isset($_SERVER['argv'][$key + 1])) {
-                return unserialize($_SERVER['argv'][$key + 1]);
+                return unserialize(($_SERVER['argv'][$key + 1] ?? null));
             }
         }
         return false;
@@ -1594,7 +1594,7 @@ class yf_common
 
     public function show_left_filter()
     {
-        $obj = module_safe($_GET['object']);
+        $obj = module_safe(($_GET['object'] ?? null));
         $method = '_show_filter';
         if (method_exists($obj, $method) && ! (isset($obj->USE_FILTER) && ! $obj->USE_FILTER)) {
             return $obj->$method();
@@ -1604,7 +1604,7 @@ class yf_common
 
     public function show_side_column_hooked()
     {
-        $obj = module_safe($_GET['object']);
+        $obj = module_safe(($_GET['object'] ?? null));
         $method = '_hook_side_column';
         if (method_exists($obj, $method)) {
             return $obj->$method();
@@ -1627,9 +1627,9 @@ class yf_common
         return db()->insert('user_walls', db()->es([
             'message' => isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
             'user_id' => isset($data['user_id']) ? $data['user_id'] : (isset($data[1]) ? $data[1] : ''),
-            'object_id' => isset($data['object_id']) ? $data['object_id'] : (isset($data[2]) ? $data[2] : (isset($_GET['id']) ? $_GET['id'] : '')),
-            'object' => isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : $_GET['object']),
-            'action' => isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : $_GET['action']),
+            'object_id' => isset($data['object_id']) ? $data['object_id'] : (isset($data[2]) ? $data[2] : (isset($_GET['id']) ? ($_GET['id'] ?? null) : '')),
+            'object' => isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : ($_GET['object'] ?? null)),
+            'action' => isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : ($_GET['action'] ?? null)),
             'important' => isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0),
             'old_data' => json_encode(isset($data['old_data']) ? $data['old_data'] : (isset($data[6]) ? $data[6] : '')),
             'new_data' => json_encode(isset($data['new_data']) ? $data['new_data'] : (isset($data[7]) ? $data[7] : '')),
@@ -1800,7 +1800,7 @@ class yf_common
 
     public function is_messages()
     {
-        $result = isset($_SESSION['permanent']) && count((array) $_SESSION['permanent']) > 0;
+        $result = isset($_SESSION['permanent']) && count((array) ($_SESSION['permanent'] ?? null)) > 0;
         return $result;
     }
 
@@ -1818,7 +1818,7 @@ class yf_common
             'error' => 'alert alert-error alert-danger',
         ];
         foreach ((array) $level_to_style as $level => $css_style) {
-            $messages = $_SESSION['permanent'][$level];
+            $messages = ($_SESSION['permanent'][$level] ?? null);
             if ( ! is_array($messages) || ! count((array) $messages)) {
                 continue;
             }
@@ -1966,7 +1966,7 @@ class yf_common
             ! $msg && $msg = t('404 Not Found');
         } else {
             // All other cases
-            header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 404 Not Found');
+            header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 404 Not Found');
             main()->IS_404 = true;
         }
         if (DEBUG_MODE) {
@@ -1989,7 +1989,7 @@ class yf_common
             ! $msg && $msg = t('403 Forbidden');
         } else {
             // All other cases
-            header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 403 Forbidden');
+            header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 403 Forbidden');
             main()->IS_403 = true;
         }
         if (DEBUG_MODE) {
@@ -2012,7 +2012,7 @@ class yf_common
             $this->set_notice($force_text);
         }
         $name_in_session = '_user_notices';
-        $items = $_SESSION[$name_in_session];
+        $items = ($_SESSION[$name_in_session] ?? null);
         if ( ! $keep) {
             $_SESSION[$name_in_session] = [];
             unset($_SESSION[$name_in_session]);

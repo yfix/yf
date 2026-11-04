@@ -32,7 +32,7 @@ class yf_upload_archive
         if (empty($name_in_form)) {
             $name_in_form = 'archive';
         }
-        $ARCHIVE = is_array($name_in_form) ? $name_in_form : $_FILES[$name_in_form];
+        $ARCHIVE = is_array($name_in_form) ? $name_in_form : ($_FILES[$name_in_form] ?? null);
         if ($ARCHIVE['type'] && ! isset($this->ALLOWED_MIME_TYPES[$ARCHIVE['type']])) {
             _re('Invalid file mime type');
         }

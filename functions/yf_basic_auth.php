@@ -18,7 +18,7 @@ if ( ! $console_mode) {
     $hash = substr(md5($debug_salt . gmdate('Y-m-d')), 6, 16);
     $cookie_name = '_dev_auth_' . $hash;
     if (_basic_auth_check($debug_users) || ! empty($_COOKIE[$cookie_name])) {
-        $h = array_reverse(explode('.', $_SERVER['HTTP_HOST']));
+        $h = array_reverse(explode('.', ($_SERVER['HTTP_HOST'] ?? null)));
         setcookie($cookie_name, '1', 0, '/', $h[1] . '.' . $h[0]); // Live for session, set for TLD
         define('DEBUG_MODE', 1);
     } else {
@@ -31,8 +31,8 @@ if ( ! $console_mode) {
 }
 function _basic_auth_check($users = [])
 {
-    $auth_user = trim($_SERVER['PHP_AUTH_USER']);
-    $auth_pswd = trim($_SERVER['PHP_AUTH_PW']);
+    $auth_user = trim(($_SERVER['PHP_AUTH_USER'] ?? null));
+    $auth_pswd = trim(($_SERVER['PHP_AUTH_PW'] ?? null));
     if ( ! strlen($auth_user) || ! strlen($auth_pswd)) {
         return false;
     }

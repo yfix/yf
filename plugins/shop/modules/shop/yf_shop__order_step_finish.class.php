@@ -12,12 +12,12 @@ class yf_shop__order_step_finish
         module('shop')->_basket_api()->clean();
 
         if (isset($_GET['page'])) {
-            $_GET['id'] = (int) ($_GET['page']);
+            $_GET['id'] = (int) (($_GET['page'] ?? null));
             unset($_GET['page']);
         }
-        $_GET['id'] = (int) ($_GET['id']);
-        if ($_GET['id']) {
-            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['id']) . ' AND user_id=' . (int) (main()->USER_ID));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        if (($_GET['id'] ?? null)) {
+            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' AND user_id=' . (int) (main()->USER_ID));
         }
         if (empty($order_info)) {
             return _e('No such order');
@@ -72,7 +72,7 @@ class yf_shop__order_step_finish
         }
         $order_info = my_array_merge(module('shop')->COMPANY_INFO, $order_info);
         $replace2 = my_array_merge($order_info, [
-            'id' => $_GET['id'],
+            'id' => ($_GET['id'] ?? null),
             'products' => $products,
             'ship_cost' => module('shop')->_format_price(0),
             'total_cost' => module('shop')->_format_price($total_price),
@@ -81,7 +81,7 @@ class yf_shop__order_step_finish
         // Prepare email template
         $message = tpl()->parse('shop/invoice_email', $replace2);
 
-        common()->quick_send_mail($order_info['email'], 'invoice #' . $_GET['id'], $message);
+        common()->quick_send_mail($order_info['email'], 'invoice #' . ($_GET['id'] ?? null), $message);
 
         $replace = my_array_merge($replace2, [
             'error_message' => _e(),

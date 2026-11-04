@@ -11,7 +11,7 @@ MAIN_TYPE_ADMIN && events()->listen('block.prepend[center_area]', function () {
     ];
     $id = 'yf_side_panel_toggler';
     $cookie_name = 'yf_side_panel_hidden';
-    $is_hidden = (bool) $_COOKIE[$cookie_name];
+    $is_hidden = (bool) ($_COOKIE[$cookie_name] ?? null);
 
     $jquery = '
 		var icons = ' . json_encode($icons) . '

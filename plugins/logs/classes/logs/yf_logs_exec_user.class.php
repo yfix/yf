@@ -131,7 +131,7 @@ class yf_logs_exec_user
             }
         }
         if ($this->EXCLUDE_USER_AGENTS) {
-            $ua = $_SERVER['HTTP_USER_AGENT'];
+            $ua = ($_SERVER['HTTP_USER_AGENT'] ?? null);
             foreach ((array) $this->EXCLUDE_USER_AGENTS as $pattern) {
                 if (preg_match('~' . $pattern . '~i', $ua)) {
                     $checks['exclude_ua'] = true;
@@ -159,23 +159,23 @@ class yf_logs_exec_user
         $is = $this->is;
         $time_end = $GLOBALS['time_end'] ?? microtime(true);
         $data = [
-            'user_id' => (int) $_SESSION['user_id'],
-            'user_group' => (int) $_SESSION['user_group'],
+            'user_id' => (int) ($_SESSION['user_id'] ?? null),
+            'user_group' => (int) ($_SESSION['user_group'] ?? null),
             'date' => time(),
-            'user_agent' => (string) $_SERVER['HTTP_USER_AGENT'],
-            'referer' => (string) $_SERVER['HTTP_REFERER'],
-            'query_string' => (string) $_SERVER['QUERY_STRING'],
-            'request_uri' => (string) $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            'user_agent' => (string) ($_SERVER['HTTP_USER_AGENT'] ?? null),
+            'referer' => (string) ($_SERVER['HTTP_REFERER'] ?? null),
+            'query_string' => (string) ($_SERVER['QUERY_STRING'] ?? null),
+            'request_uri' => (string) ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null),
             'exec_time' => str_replace(',', '.', common()->_format_time_value($time_end - main()->_time_start)),
             'num_dbq' => (int) db()->NUM_QUERIES,
             'page_size' => (int) tpl()->_output_body_length,
             'memory' => (int) memory_get_peak_usage(),
             'site_id' => (int) conf('SITE_ID'),
             'ip' => (string) common()->get_ip(),
-            'country' => (string) (conf('country') ?: $_SERVER['GEOIP_COUNTRY_CODE']),
+            'country' => (string) (conf('country') ?: ($_SERVER['GEOIP_COUNTRY_CODE'] ?? null)),
             'lang' => (string) conf('language'),
-            'utm_source' => (string) ($_GET['utm_source'] ?? ($_POST['utm_source'] ?? $_SESSION['utm_source'])),
-            'cpa_uid' => (string) ($_COOKIE['cpa_uid'] ?? $_SESSION['cpa_uid']),
+            'utm_source' => (string) ($_GET['utm_source'] ?? ($_POST['utm_source'] ?? ($_SESSION['utm_source'] ?? null))),
+            'cpa_uid' => (string) ($_COOKIE['cpa_uid'] ?? ($_SESSION['cpa_uid'] ?? null)),
             'is_common_page' => (int) $is['is_common_page'],
             'is_https' => (int) $is['is_https'],
             'is_post' => (int) $is['is_post'],

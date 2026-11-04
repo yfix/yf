@@ -82,8 +82,8 @@ class yf_comments
         if ($this->USE_TREE_MODE) {
             return $this->_show_for_object_tree($params);
         }
-        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
-        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) ($_GET['id']);
+        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : ($_GET['object'] ?? null);
+        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) (($_GET['id'] ?? null));
         $STPL_NAME_MAIN = ! empty($params['stpl_main']) ? $params['stpl_main'] : 'comments/main';
         $STPL_NAME_ITEM = ! empty($params['stpl_item']) ? $params['stpl_item'] : 'comments/item';
         $PAGER_PATH = ! empty($params['pager_path']) ? $params['pager_path'] : '';
@@ -114,7 +114,7 @@ class yf_comments
         }
         module('reputation')->_get_reput_info_for_user_ids($users_ids);
         // Try to find more complex checking methods
-        $obj = module($_GET['object']);
+        $obj = module(($_GET['object'] ?? null));
         $edit_allowed_check_method = is_object($obj) && method_exists($obj, $this->_edit_allowed_method);
         $delete_allowed_check_method = is_object($obj) && method_exists($obj, $this->_delete_allowed_method);
         if ($this->CHECK_ALLOW_TO_VIEW_USER_EMAIL) {
@@ -122,13 +122,13 @@ class yf_comments
         }
         if ($view_email_allowed_check_method) {
             $m = $this->_view_email_allowed_method;
-            $view_email = (bool) module($_GET['object'])->$m(['object_id' => $OBJECT_ID]);
+            $view_email = (bool) module(($_GET['object'] ?? null))->$m(['object_id' => $OBJECT_ID]);
         }
 
         foreach ((array) $comments_array as $comment_info) {
             if ($edit_allowed_check_method) {
                 $m = $this->_edit_allowed_method;
-                $edit_allowed = (bool) module($_GET['object'])->$m([
+                $edit_allowed = (bool) module(($_GET['object'] ?? null))->$m([
                     'user_id' => $comment_info['user_id'],
                     'object_id' => $comment_info['object_id'],
                 ]);
@@ -137,7 +137,7 @@ class yf_comments
             }
             if ($delete_allowed_check_method) {
                 $m = $this->_delete_allowed_method;
-                $delete_allowed = (bool) module($_GET['object'])->$m([
+                $delete_allowed = (bool) module(($_GET['object'] ?? null))->$m([
                     'user_id' => $comment_info['user_id'],
                     'object_id' => $comment_info['object_id'],
                 ]);
@@ -163,8 +163,8 @@ class yf_comments
                 'user_email_link' => $comment_info['user_id'] ? _email_link($comment_info['user_id']) : '',
                 'add_date' => _format_date($comment_info['add_date'], 'long'),
                 'comment_text' => $this->_format_text($comment_info['text']),
-                'edit_comment_link' => $edit_allowed ? './?object=' . $_GET['object'] . '&action=edit_comment&id=' . $comment_info['id'] . _add_get(['page']) : '',
-                'delete_comment_link' => $delete_allowed ? './?object=' . $_GET['object'] . '&action=delete_comment&id=' . $comment_info['id'] . _add_get(['page']) : '',
+                'edit_comment_link' => $edit_allowed ? './?object=' . ($_GET['object'] ?? null) . '&action=edit_comment&id=' . $comment_info['id'] . _add_get(['page']) : '',
+                'delete_comment_link' => $delete_allowed ? './?object=' . ($_GET['object'] ?? null) . '&action=delete_comment&id=' . $comment_info['id'] . _add_get(['page']) : '',
                 'reput_text' => is_object($REPUT_OBJ) && isset($users_names[$comment_info['user_id']]) ? $REPUT_OBJ->_show_for_user($comment_info['user_id'], $users_reput_info[$comment_info['user_id']], false, ['comments', $comment_info['id']]) : '',
                 'user_id' => $comment_info['user_id'],
             ];
@@ -183,7 +183,7 @@ class yf_comments
             'comments_pages' => $pages,
             'num_comments' => (int) $total,
             'add_comment_form' => $add_comment_form,
-            'login_link' => empty(main()->USER_ID) && MAIN_TYPE_USER ? './?object=login_form&go_url=' . $OBJECT_NAME . ';' . $_GET['action'] . ';id=' . $OBJECT_ID : '',
+            'login_link' => empty(main()->USER_ID) && MAIN_TYPE_USER ? './?object=login_form&go_url=' . $OBJECT_NAME . ';' . ($_GET['action'] ?? null) . ';id=' . $OBJECT_ID : '',
         ];
         return tpl()->parse($STPL_NAME_MAIN, $replace);
     }
@@ -195,13 +195,13 @@ class yf_comments
     public function _show_for_object_tree($params = [])
     {
         $REPUT_OBJ = $items = $pages = $total = null;
-        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
-        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) ($_GET['id']);
+        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : ($_GET['object'] ?? null);
+        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) (($_GET['id'] ?? null));
         $STPL_NAME_MAIN = ! empty($params['stpl_main']) ? $params['stpl_main'] : 'comments/main_tree';
         $STPL_NAME_ITEM = ! empty($params['stpl_item']) ? $params['stpl_item'] : 'comments/item_tree';
         $PAGER_PATH = ! empty($params['pager_path']) ? $params['pager_path'] : '';
 
-        $FORM_ACTION = ! empty($params['add_form_action']) ? $params['add_form_action'] : './?object=' . $_GET['object'] . '&action=add_comment&id=' . $OBJECT_ID;
+        $FORM_ACTION = ! empty($params['add_form_action']) ? $params['add_form_action'] : './?object=' . ($_GET['object'] ?? null) . '&action=add_comment&id=' . $OBJECT_ID;
         $USE_TREE_MODE = ! empty($params['use_tree_mode']) ? $params['use_tree_mode'] : $this->USE_TREE_MODE;
 
         if (empty($OBJECT_NAME) || empty($OBJECT_ID)) {
@@ -229,7 +229,7 @@ class yf_comments
         }
         $users_reput_info = module('reputation')->_get_reput_info_for_user_ids($users_ids);
         // Try to find more complex checking methods
-        $obj = module($_GET['object']);
+        $obj = module(($_GET['object'] ?? null));
         $edit_allowed_check_method = is_object($obj) && method_exists($obj, $this->_edit_allowed_method);
         $delete_allowed_check_method = is_object($obj) && method_exists($obj, $this->_delete_allowed_method);
         if ($this->CHECK_ALLOW_TO_VIEW_USER_EMAIL) {
@@ -238,7 +238,7 @@ class yf_comments
 
         if ($view_email_allowed_check_method) {
             $m = $this->_view_email_allowed_method;
-            $view_email = (bool) module($_GET['object'])->$m([
+            $view_email = (bool) module(($_GET['object'] ?? null))->$m([
                 'object_id' => $OBJECT_ID,
             ]);
         }
@@ -260,7 +260,7 @@ class yf_comments
 
             if ($edit_allowed_check_method) {
                 $m = $this->_edit_allowed_method;
-                $edit_allowed = (bool) module($_GET['object'])->$m([
+                $edit_allowed = (bool) module(($_GET['object'] ?? null))->$m([
                     'user_id' => $comment_info['user_id'],
                     'object_id' => $comment_info['object_id'],
                 ]);
@@ -269,7 +269,7 @@ class yf_comments
             }
             if ($delete_allowed_check_method) {
                 $m = $this->_delete_allowed_method;
-                $delete_allowed = (bool) module($_GET['object'])->$m([
+                $delete_allowed = (bool) module(($_GET['object'] ?? null))->$m([
                     'user_id' => $comment_info['user_id'],
                     'object_id' => $comment_info['object_id'],
                 ]);
@@ -293,9 +293,9 @@ class yf_comments
                 'user_email_link' => $comment_info['user_id'] ? _email_link($comment_info['user_id']) : '',
                 'add_date' => _format_date($comment_info['add_date'], 'long'),
                 'comment_text' => $this->_format_text($comment_info['text']),
-                'edit_comment_link' => $edit_allowed ? './?object=' . $_GET['object'] . '&action=edit_comment&id=' . $comment_info['id'] . _add_get(['page']) : '',
-                'delete_comment_link' => $delete_allowed ? './?object=' . $_GET['object'] . '&action=delete_comment&id=' . $comment_info['id'] . _add_get(['page']) : '',
-                'current_link' => './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . '&id=' . $_GET['id'] . '#cid_' . $comment_info['id'],
+                'edit_comment_link' => $edit_allowed ? './?object=' . ($_GET['object'] ?? null) . '&action=edit_comment&id=' . $comment_info['id'] . _add_get(['page']) : '',
+                'delete_comment_link' => $delete_allowed ? './?object=' . ($_GET['object'] ?? null) . '&action=delete_comment&id=' . $comment_info['id'] . _add_get(['page']) : '',
+                'current_link' => './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . '&id=' . ($_GET['id'] ?? null) . '#cid_' . $comment_info['id'],
                 'reput_text' => is_object($REPUT_OBJ) && isset($users_names[$comment_info['user_id']]) ? $REPUT_OBJ->_show_for_user($comment_info['user_id'], $users_reput_info[$comment_info['user_id']], false, ['comments', $comment_info['id']]) : '',
                 'id' => $comment_info['id'],
                 'comment_margin_left' => $level * 30,
@@ -315,7 +315,7 @@ class yf_comments
             'comments_pages' => $pages,
             'num_comments' => (int) $total,
             'add_comment_form' => $add_comment_form,
-            'login_link' => empty(main()->USER_ID) && MAIN_TYPE_USER ? './?object=login_form&go_url=' . $OBJECT_NAME . ';' . $_GET['action'] . ';id=' . $OBJECT_ID : '',
+            'login_link' => empty(main()->USER_ID) && MAIN_TYPE_USER ? './?object=login_form&go_url=' . $OBJECT_NAME . ';' . ($_GET['action'] ?? null) . ';id=' . $OBJECT_ID : '',
             'add_comment_action' => $FORM_ACTION,
         ];
         return tpl()->parse($STPL_NAME_MAIN, $replace);
@@ -354,7 +354,7 @@ class yf_comments
      */
     public function _get_num_comments($params = [])
     {
-        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
+        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : ($_GET['object'] ?? null);
         $OBJECTS_IDS = ! empty($params['objects_ids']) ? $params['objects_ids'] : '';
         if (empty($OBJECTS_IDS)) {
             return false;
@@ -515,6 +515,6 @@ class yf_comments
             'items' => $comments_info,
             'pages' => $pages,
         ];
-        return tpl()->parse($_GET['object'] . '/unread', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/unread', $replace);
     }
 }

@@ -14,24 +14,24 @@ class yf_comments_manage
         if (empty(main()->USER_ID) && MAIN_TYPE_USER && ! $params['allow_guests_posts']) {
             return '';
         }
-        $_GET['id'] = (int) ($_GET['id']);
-        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
-        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) ($_GET['id']);
-        $FORM_ACTION = ! empty($params['add_form_action']) ? $params['add_form_action'] : './?object=' . $_GET['object'] . '&action=add_comment&id=' . $OBJECT_ID;
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : ($_GET['object'] ?? null);
+        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) (($_GET['id'] ?? null));
+        $FORM_ACTION = ! empty($params['add_form_action']) ? $params['add_form_action'] : './?object=' . ($_GET['object'] ?? null) . '&action=add_comment&id=' . $OBJECT_ID;
         $STPL_NAME_ADD = ! empty($params['stpl_add']) ? $params['stpl_add'] : 'comments/add_form';
-        $RETURN_PATH = $_SERVER['HTTP_REFERER'];
+        $RETURN_PATH = ($_SERVER['HTTP_REFERER'] ?? null);
         if ( ! empty($params['return_path'])) {
             $RETURN_PATH = process_url($params['return_path']);
         } elseif ( ! empty($params['return_action'])) {
-            $RETURN_PATH = process_url('./?object=' . $_GET['object'] . '&action=' . $params['return_action'] . '&id=' . $OBJECT_ID);
+            $RETURN_PATH = process_url('./?object=' . ($_GET['object'] ?? null) . '&action=' . $params['return_action'] . '&id=' . $OBJECT_ID);
         }
         if (empty($OBJECT_NAME) || empty($OBJECT_ID)) {
             return '';
         }
         $COMMENT_IS_ALLOWED = true;
-        if (is_object(module($_GET['object']))) {
+        if (is_object(module(($_GET['object'] ?? null)))) {
             $m = module('comments')->_add_allowed_method;
-            $COMMENT_IS_ALLOWED = module($_GET['object'])->$m($params);
+            $COMMENT_IS_ALLOWED = module(($_GET['object'] ?? null))->$m($params);
         }
         if ( ! $COMMENT_IS_ALLOWED && common()->_error_exists()) {
             return _e();
@@ -41,27 +41,27 @@ class yf_comments_manage
         }
         if (count((array) $_POST) > 0 && ! isset($_POST['_not_for_comments'])) {
             if (isset($_POST['text2']) && ! isset($_POST['text'])) {
-                $_POST['text'] = $_POST['text2'];
+                $_POST['text'] = ($_POST['text2'] ?? null);
                 unset($_POST['text2']);
             }
             if ( ! common()->_error_exists()) {
-                $_POST['text'] = substr($_POST['text'], 0, module('comments')->MAX_POST_TEXT_LENGTH);
+                $_POST['text'] = substr(($_POST['text'] ?? null), 0, module('comments')->MAX_POST_TEXT_LENGTH);
                 if (empty($_POST['text'])) {
                     _re('Comment text required');
                 }
             }
-            if (module($_GET['object'])->USE_CAPTCHA) {
+            if (module(($_GET['object'] ?? null))->USE_CAPTCHA) {
                 if (module('comments')->USE_TREE_MODE && isset($_POST['parent_id'])) {
                     if (empty(main()->USER_ID)) {
-                        module($_GET['object'])->_captcha_check();
+                        module(($_GET['object'] ?? null))->_captcha_check();
                     }
                 } else {
-                    module($_GET['object'])->_captcha_check();
+                    module(($_GET['object'] ?? null))->_captcha_check();
                 }
             }
             if ( ! common()->_error_exists() && MAIN_TYPE_USER) {
                 $info_for_check = [
-                    'comment_text' => $_POST['text'],
+                    'comment_text' => ($_POST['text'] ?? null),
                     'user_id' => main()->USER_ID,
                 ];
                 $USER_BANNED = _check_user_ban($info_for_check, module('comments')->_user_info);
@@ -89,7 +89,7 @@ class yf_comments_manage
 
             if ( ! common()->_error_exists()) {
                 if (module('comments')->ANTI_SPAM_DETECT) {
-                    $this->_spam_check($_POST['text']);
+                    $this->_spam_check(($_POST['text'] ?? null));
                 }
             }
 
@@ -101,34 +101,34 @@ class yf_comments_manage
 
             if ( ! common()->_error_exists()) {
                 if (module('comments')->AUTO_FILTER_INPUT_TEXT) {
-                    $_POST['text'] = _filter_text($_POST['text']);
+                    $_POST['text'] = _filter_text(($_POST['text'] ?? null));
                 }
                 // Do close BB Codes (if needed)
                 if (module('comments')->USE_BB_CODES) {
                     $BB_CODES_OBJ = _class('bb_codes');
                     if (is_object($BB_CODES_OBJ)) {
-                        $_POST['text'] = $BB_CODES_OBJ->_force_close_bb_codes($_POST['text']);
+                        $_POST['text'] = $BB_CODES_OBJ->_force_close_bb_codes(($_POST['text'] ?? null));
                     }
                 }
                 db()->INSERT('comments', [
                     'object_name' => _es($OBJECT_NAME),
                     'object_id' => (int) $OBJECT_ID,
-                    'parent_id' => (int) (isset($_POST['parent_id']) ? $_POST['parent_id'] : 0),
+                    'parent_id' => (int) (isset($_POST['parent_id']) ? ($_POST['parent_id'] ?? null) : 0),
                     'user_id' => (int) (main()->USER_ID),
-                    'user_name' => ! main()->USER_ID ? _es($_POST['user_name']) : '',
-                    'user_email' => ! main()->USER_ID ? _es($_POST['user_email']) : '',
-                    'text' => _es($_POST['text']),
+                    'user_name' => ! main()->USER_ID ? _es(($_POST['user_name'] ?? null)) : '',
+                    'user_email' => ! main()->USER_ID ? _es(($_POST['user_email'] ?? null)) : '',
+                    'text' => _es(($_POST['text'] ?? null)),
                     'add_date' => time(),
                     'active' => 1,
                     'ip' => _es(common()->get_ip()),
                 ]);
                 $RECORD_ID = db()->INSERT_ID();
 
-                $try_trigger_callback = [module($_GET['object']), module('comments')->_on_update_trigger];
+                $try_trigger_callback = [module(($_GET['object'] ?? null)), module('comments')->_on_update_trigger];
                 if (is_callable($try_trigger_callback)) {
                     call_user_func($try_trigger_callback, $params);
                 }
-                common()->_add_activity_points(main()->USER_ID, $OBJECT_NAME . '_comment', strlen($_POST['text']), $RECORD_ID);
+                common()->_add_activity_points(main()->USER_ID, $OBJECT_NAME . '_comment', strlen(($_POST['text'] ?? null)), $RECORD_ID);
                 return js_redirect($RETURN_PATH, false);
             }
         }
@@ -142,18 +142,18 @@ class yf_comments_manage
             $replace = [
                 'form_action' => $FORM_ACTION,
                 'error_message' => $error_message,
-                'user_name' => $_POST['user_name'],
+                'user_name' => ($_POST['user_name'] ?? null),
                 'view_user_email' => $view_user_email,
-                'user_email' => $_POST['user_email'],
-                'text' => _prepare_html($_POST['text']),
+                'user_email' => ($_POST['user_email'] ?? null),
+                'text' => _prepare_html(($_POST['text'] ?? null)),
                 'object_name' => _prepare_html($OBJECT_NAME),
                 'object_id' => (int) $OBJECT_ID,
-                'use_captcha' => (int) ((bool) module($_GET['object'])->USE_CAPTCHA),
-                'captcha_block' => module($_GET['object'])->_captcha_block(),
+                'use_captcha' => (int) ((bool) module(($_GET['object'] ?? null))->USE_CAPTCHA),
+                'captcha_block' => module(($_GET['object'] ?? null))->_captcha_block(),
                 'bb_codes_block' => module('comments')->USE_BB_CODES ? _class('bb_codes')->_display_buttons(['unique_id' => 'text']) : '',
                 'submit_buttons' => _class_safe('preview')->_display_buttons(),
                 'js_check' => (int) ((bool) module('comments')->JS_TEXT_CHECKING),
-                'parent_id' => (int) ($_POST['parent_id']),
+                'parent_id' => (int) (($_POST['parent_id'] ?? null)),
             ];
             $body = tpl()->parse($STPL_NAME_ADD, $replace);
         }
@@ -169,29 +169,29 @@ class yf_comments_manage
         if (empty(main()->USER_ID) && MAIN_TYPE_USER) {
             return _error_need_login();
         }
-        $_GET['id'] = (int) ($_GET['id']);
-        $comment_info = db()->query_fetch('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $comment_info = db()->query_fetch('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($comment_info['id'])) {
             return _e('No such comment!');
         }
-        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
-        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) ($_GET['id']);
-        $FORM_ACTION = ! empty($params['add_form_action']) ? $params['add_form_action'] : './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . '&id=' . $OBJECT_ID;
+        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : ($_GET['object'] ?? null);
+        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) (($_GET['id'] ?? null));
+        $FORM_ACTION = ! empty($params['add_form_action']) ? $params['add_form_action'] : './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . '&id=' . $OBJECT_ID;
         $STPL_NAME_EDIT = ! empty($params['stpl_edit']) ? $params['stpl_edit'] : 'comments/edit_form';
-        $RETURN_PATH = $_SERVER['HTTP_REFERER'];
+        $RETURN_PATH = ($_SERVER['HTTP_REFERER'] ?? null);
         if ( ! empty($params['return_path'])) {
             $RETURN_PATH = process_url($params['return_path']);
         } elseif ( ! empty($params['return_action'])) {
-            $RETURN_PATH = process_url('./?object=' . $_GET['object'] . '&action=' . $params['return_action'] . '&id=' . $comment_info['object_id']);
+            $RETURN_PATH = process_url('./?object=' . ($_GET['object'] ?? null) . '&action=' . $params['return_action'] . '&id=' . $comment_info['object_id']);
         }
         if (empty($OBJECT_NAME) || empty($OBJECT_ID)) {
             return '';
         }
         $edit_allowed = false;
-        $edit_allowed_check_method = is_object(module($_GET['object'])) && method_exists(module($_GET['object']), module('comments')->_edit_allowed_method);
+        $edit_allowed_check_method = is_object(module(($_GET['object'] ?? null))) && method_exists(module(($_GET['object'] ?? null)), module('comments')->_edit_allowed_method);
         if ($edit_allowed_check_method) {
             $m = module('comments')->_edit_allowed_method;
-            $edit_allowed = (bool) module($_GET['object'])->$m([
+            $edit_allowed = (bool) module(($_GET['object'] ?? null))->$m([
                 'user_id' => $comment_info['user_id'],
                 'object_id' => $comment_info['object_id'],
             ]);
@@ -213,16 +213,16 @@ class yf_comments_manage
         }
         $user_info = user($comment_info['user_id'], ['id', 'name', module('comments')->_user_nick_field, 'photo_verified'], ['WHERE' => ['active' => 1]]);
         if (count((array) $_POST) > 0 && ! isset($_POST['_not_for_comments'])) {
-            $_POST['text'] = substr($_POST['text'], 0, module('comments')->MAX_POST_TEXT_LENGTH);
+            $_POST['text'] = substr(($_POST['text'] ?? null), 0, module('comments')->MAX_POST_TEXT_LENGTH);
             if (empty($_POST['text'])) {
                 _re('Comment text required');
             }
-            if (module($_GET['object'])->USE_CAPTCHA) {
-                module($_GET['object'])->_captcha_check();
+            if (module(($_GET['object'] ?? null))->USE_CAPTCHA) {
+                module(($_GET['object'] ?? null))->_captcha_check();
             }
             if ( ! common()->_error_exists() && MAIN_TYPE_USER) {
                 $info_for_check = [
-                    'comment_text' => $_POST['text'],
+                    'comment_text' => ($_POST['text'] ?? null),
                     'user_id' => main()->USER_ID,
                 ];
                 $USER_BANNED = _check_user_ban($info_for_check, module('comments')->_user_info);
@@ -253,29 +253,29 @@ class yf_comments_manage
             // Anti-spam check
             if ( ! common()->_error_exists()) {
                 if (module('comments')->ANTI_SPAM_DETECT) {
-                    $this->_spam_check($_POST['text']);
+                    $this->_spam_check(($_POST['text'] ?? null));
                 }
             }
 
             if ( ! common()->_error_exists()) {
                 if (module('comments')->AUTO_FILTER_INPUT_TEXT) {
-                    $_POST['text'] = _filter_text($_POST['text']);
+                    $_POST['text'] = _filter_text(($_POST['text'] ?? null));
                 }
                 if (module('comments')->USE_BB_CODES) {
                     $BB_CODES_OBJ = _class('bb_codes');
                     if (is_object($BB_CODES_OBJ)) {
-                        $_POST['text'] = $BB_CODES_OBJ->_force_close_bb_codes($_POST['text']);
+                        $_POST['text'] = $BB_CODES_OBJ->_force_close_bb_codes(($_POST['text'] ?? null));
                     }
                 }
                 db()->UPDATE('comments', [
-                    'text' => _es($_POST['text']),
+                    'text' => _es(($_POST['text'] ?? null)),
                 ], 'id=' . (int) ($comment_info['id']));
 
-                $try_trigger_callback = [module($_GET['object']), module('comments')->_on_update_trigger];
+                $try_trigger_callback = [module(($_GET['object'] ?? null)), module('comments')->_on_update_trigger];
                 if (is_callable($try_trigger_callback)) {
                     call_user_func($try_trigger_callback, $params);
                 }
-                $RETURN_PATH = ! empty($params['return_path']) ? process_url($params['return_path']) : ( ! empty($params['return_action']) ? process_url('./?object=' . $_GET['object'] . '&action=' . $params['return_action'] . '&id=' . $comment_info['object_id']) : $_SERVER['HTTP_REFERER']);
+                $RETURN_PATH = ! empty($params['return_path']) ? process_url($params['return_path']) : ( ! empty($params['return_action']) ? process_url('./?object=' . ($_GET['object'] ?? null) . '&action=' . $params['return_action'] . '&id=' . $comment_info['object_id']) : ($_SERVER['HTTP_REFERER'] ?? null));
                 return js_redirect($RETURN_PATH, false);
             }
         } else {
@@ -291,12 +291,12 @@ class yf_comments_manage
                 'user_avatar' => _show_avatar($comment_info['user_id'], $user_info, 1, 1),
                 'user_profile_link' => _profile_link($comment_info['user_id']),
                 'user_email_link' => _email_link($comment_info['user_id']),
-                'text' => _prepare_html($_POST['text']),
-                'back_url' => $_SERVER['HTTP_REFERER'],
+                'text' => _prepare_html(($_POST['text'] ?? null)),
+                'back_url' => ($_SERVER['HTTP_REFERER'] ?? null),
                 'object_name' => _prepare_html($OBJECT_NAME),
                 'object_id' => (int) $OBJECT_ID,
-                'use_captcha' => (int) ((bool) module($_GET['object'])->USE_CAPTCHA),
-                'captcha_block' => module($_GET['object'])->_captcha_block(),
+                'use_captcha' => (int) ((bool) module(($_GET['object'] ?? null))->USE_CAPTCHA),
+                'captcha_block' => module(($_GET['object'] ?? null))->_captcha_block(),
                 'bb_codes_block' => module('comments')->USE_BB_CODES ? _class('bb_codes')->_display_buttons(['unique_id' => 'text']) : '',
                 'js_check' => (int) ((bool) module('comments')->JS_TEXT_CHECKING),
             ];
@@ -314,19 +314,19 @@ class yf_comments_manage
         if (empty(main()->USER_ID) && MAIN_TYPE_USER) {
             return _error_need_login();
         }
-        $_GET['id'] = (int) ($_GET['id']);
-        $comment_info = db()->query_fetch('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $comment_info = db()->query_fetch('SELECT * FROM ' . db('comments') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($comment_info['id'])) {
             return _e('No such comment!');
         }
-        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
-        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) ($_GET['id']);
+        $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : ($_GET['object'] ?? null);
+        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) (($_GET['id'] ?? null));
         $SILENT_MODE = ! empty($params['silent_mode']) ? 1 : 0;
-        $RETURN_PATH = $_SERVER['HTTP_REFERER'];
+        $RETURN_PATH = ($_SERVER['HTTP_REFERER'] ?? null);
         if ( ! empty($params['return_path'])) {
             $RETURN_PATH = process_url($params['return_path']);
         } elseif ( ! empty($params['return_action'])) {
-            $RETURN_PATH = process_url('./?object=' . $_GET['object'] . '&action=' . $params['return_action'] . '&id=' . $comment_info['object_id']);
+            $RETURN_PATH = process_url('./?object=' . ($_GET['object'] ?? null) . '&action=' . $params['return_action'] . '&id=' . $comment_info['object_id']);
         }
         if (empty($OBJECT_NAME) || empty($OBJECT_ID)) {
             return '';
@@ -337,13 +337,13 @@ class yf_comments_manage
                 . 'For more details <a href=\'./?object=faq&action=view&id=16\'>click here</a>'
             );
         }
-        $module_obj = module($_GET['object']);
+        $module_obj = module(($_GET['object'] ?? null));
         // Check if user is allowed to perform this action
         $delete_allowed = false;
         $delete_allowed_check_method = is_object($module_obj) && method_exists($module_obj, module('comments')->_delete_allowed_method);
         if ($delete_allowed_check_method) {
             $m = module('comments')->_delete_allowed_method;
-            $delete_allowed = (bool) module($_GET['object'])->$m([
+            $delete_allowed = (bool) module(($_GET['object'] ?? null))->$m([
                 'user_id' => $comment_info['user_id'],
                 'object_id' => $comment_info['object_id'],
             ]);
@@ -365,7 +365,7 @@ class yf_comments_manage
         if ( ! $delete_allowed) {
             return _e('You are not allowed to perform this action');
         }
-        module('unread')->_set_read('comments', $_GET['id']);
+        module('unread')->_set_read('comments', ($_GET['id'] ?? null));
 
         if (module('comments')->USE_TREE_MODE) {
             $have_children = db()->query_fetch(
@@ -378,15 +378,15 @@ class yf_comments_manage
                 db()->UPDATE('comments', [
                     'text' => '__comment was deleted__',
                     'user_id' => 0,
-                ], 'id=' . (int) ($_GET['id']));
+                ], 'id=' . (int) (($_GET['id'] ?? null)));
             } else {
-                db()->query('DELETE FROM ' . db('comments') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
+                db()->query('DELETE FROM ' . db('comments') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
             }
         } else {
-            db()->query('DELETE FROM ' . db('comments') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
+            db()->query('DELETE FROM ' . db('comments') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
         }
         // Execute custom on_update trigger (if exists one)
-        $try_trigger_callback = [module($_GET['object']), module('comments')->_on_update_trigger];
+        $try_trigger_callback = [module(($_GET['object'] ?? null)), module('comments')->_on_update_trigger];
         if (is_callable($try_trigger_callback)) {
             call_user_func($try_trigger_callback, $params);
         }

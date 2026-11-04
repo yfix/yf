@@ -29,20 +29,20 @@ class yf_online_users
 
     public function _set_user_id()
     {
-        if ((int) ($_SESSION['admin_id']) != 0) {
-            return [$_SESSION['admin_id'], 'admin_id'];
+        if ((int) (($_SESSION['admin_id'] ?? null)) != 0) {
+            return [($_SESSION['admin_id'] ?? null), 'admin_id'];
         }
         if ((int) (main()->USER_ID) != 0) {
             return [main()->USER_ID, 'user_id'];
         }
-        if ((int) ($_COOKIE['user_id_tmp']) != 0) {
-            return [$_COOKIE['user_id_tmp'], 'user_id_tmp'];
+        if ((int) (($_COOKIE['user_id_tmp'] ?? null)) != 0) {
+            return [($_COOKIE['user_id_tmp'] ?? null), 'user_id_tmp'];
         }
 
         // todo: more 'smart' algorythm for user id generation
-        setcookie('user_id_tmp', rand(), $_SERVER['REQUEST_TIME'] + $this->_COOKIE_TTL);
+        setcookie('user_id_tmp', rand(), ($_SERVER['REQUEST_TIME'] ?? null) + $this->_COOKIE_TTL);
 
-        return [$_COOKIE['user_id_tmp'], 'user_id_tmp'];
+        return [($_COOKIE['user_id_tmp'] ?? null), 'user_id_tmp'];
     }
 
     public function _is_online($user_ids, $user_type = null)
@@ -80,13 +80,13 @@ class yf_online_users
     public function _ip($options = null)
     {
         if ( ! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ips = explode(',', ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? null));
             $ip = reset($ips);
         } else {
             $ip =
-                   $_SERVER['HTTP_CLIENT_IP']
-                ?: $_SERVER['HTTP_X_REAL_IP']
-                ?: $_SERVER['REMOTE_ADDR'];
+                   ($_SERVER['HTTP_CLIENT_IP'] ?? null)
+                ?: ($_SERVER['HTTP_X_REAL_IP'] ?? null)
+                ?: ($_SERVER['REMOTE_ADDR'] ?? null);
         }
         $result = trim($ip);
         return  $result;
@@ -99,20 +99,20 @@ class yf_online_users
             db()->replace_safe('users_online', [
                 'user_id' => $this->online_user_id,
                 'user_type' => $this->online_user_type,
-                'time' => $_SERVER['REQUEST_TIME'],
+                'time' => ($_SERVER['REQUEST_TIME'] ?? null),
             ]);
             cache()->set($cache_name, 'OK', $this->_CACHE_UPDATE_TTL);
         }
         // details not cached for current url to be shown
-        if (main()->TRACK_ONLINE_DETAILS && ! (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || ! empty($_GET['ajax_mode'])) && (int) ($this->online_user_id) != 0) {
+        if (main()->TRACK_ONLINE_DETAILS && ! (strtolower(($_SERVER['HTTP_X_REQUESTED_WITH'] ?? null)) == 'xmlhttprequest' || ! empty($_GET['ajax_mode'])) && (int) ($this->online_user_id) != 0) {
             $ip = $this->_ip();
             db()->replace_safe('users_online_details', [
                 'user_id' => $this->online_user_id,
                 'user_type' => $this->online_user_type,
-                'time' => $_SERVER['REQUEST_TIME'],
+                'time' => ($_SERVER['REQUEST_TIME'] ?? null),
                 'session_id' => session_id(),
-                'url' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+                'url' => 'http://' . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null),
+                'user_agent' => ($_SERVER['HTTP_USER_AGENT'] ?? null),
                 'ip' => $ip,
             ]);
         }
@@ -123,7 +123,7 @@ class yf_online_users
         // todo: queued
         $cache_name = __CLASS__ . '|' . __FUNCTION__;
         if (cache()->get($cache_name) != 'OK') {
-            $time = $_SERVER['REQUEST_TIME'] - $this->_ONLINE_TTL;
+            $time = ($_SERVER['REQUEST_TIME'] ?? null) - $this->_ONLINE_TTL;
             db()->query('DELETE FROM ' . db('users_online') . ' WHERE `time`<' . $time);
             if (main()->TRACK_ONLINE_DETAILS) {
                 db()->query('DELETE FROM ' . db('users_online_details') . ' WHERE `time`<' . $time);

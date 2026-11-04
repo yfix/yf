@@ -42,15 +42,15 @@ class yf_notifications
         $online_class->process();
 
         main()->NO_GRAPHICS = true;
-        db()->query('UPDATE `' . db('notifications_receivers') . "` SET `is_read`=1 WHERE `receiver_id`='" . $online_class->online_user_id . "' AND `receiver_type`='" . $online_class->online_user_type . "' AND `id`=" . (int) ($_POST['id']));
+        db()->query('UPDATE `' . db('notifications_receivers') . "` SET `is_read`=1 WHERE `receiver_id`='" . $online_class->online_user_id . "' AND `receiver_type`='" . $online_class->online_user_type . "' AND `id`=" . (int) (($_POST['id'] ?? null)));
         echo 'OK';
         exit;
     }
 
     public function _prepare()
     {
-        if ((int) ($_GET['notification_id']) != 0) {
-            db()->query('UPDATE `' . db('notifications_receivers') . "` SET `is_read`=1 WHERE `receiver_id`='" . (int) (main()->USER_ID) . "' AND `receiver_type`='user_id' AND `id`=" . (int) ($_GET['notification_id']));
+        if ((int) (($_GET['notification_id'] ?? null)) != 0) {
+            db()->query('UPDATE `' . db('notifications_receivers') . "` SET `is_read`=1 WHERE `receiver_id`='" . (int) (main()->USER_ID) . "' AND `receiver_type`='user_id' AND `id`=" . (int) (($_GET['notification_id'] ?? null)));
         }
         if (conf('IS_AJAX')) {
             return false;

@@ -83,7 +83,7 @@ class yf_dashboards
         if ( ! is_array($params)) {
             $params = [];
         }
-        $ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
+        $ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : ($_GET['id'] ?? null));
         $ds = $this->_get_dashboard_data($ds_name);
         if ( ! $ds['id']) {
             return _e('No such record');
@@ -137,8 +137,8 @@ class yf_dashboards
     {
         $list_of_hooks = $this->_get_available_widgets_hooks();
 
-        $_orig_object = $_GET['object'];
-        $_orig_action = $_GET['action'];
+        $_orig_object = ($_GET['object'] ?? null);
+        $_orig_action = ($_GET['action'] ?? null);
 
         foreach ((array) $name_ids as $name_id) {
             $saved_config = $items_configs[$name_id . '_' . $name_id];
@@ -219,7 +219,7 @@ class yf_dashboards
     {
         $params = null;
         if ( ! $id) {
-            $id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
+            $id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : ($_GET['id'] ?? null));
         }
         if ( ! $id) {
             return false;

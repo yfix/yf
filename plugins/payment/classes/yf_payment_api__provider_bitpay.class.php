@@ -150,14 +150,14 @@ class yf_payment_api__provider_bitpay extends yf_payment_api__provider_remote
         ];
         */
 
-        $options['id'] = $_POST['id'] ?: '';
-        $options['posData'] = $_POST['posData'] ?: '';
-        $options['status'] = $_POST['status'] ?: '';
-        $options['btcPrice'] = $_POST['btcPrice'] ?: '';
-        $options['currency'] = $_POST['currency'] ?: '';
-        $options['btcPaid'] = $_POST['btcPaid'] ?: '';
-        $options['rate'] = $_POST['rate'] ?: '';
-        $options['exceptionStatus'] = ! empty($_POST['exceptionStatus']) && $_POST['exceptionStatus'] != 'false' ? $_POST['exceptionStatus'] : false;
+        $options['id'] = ($_POST['id'] ?? null) ?: '';
+        $options['posData'] = ($_POST['posData'] ?? null) ?: '';
+        $options['status'] = ($_POST['status'] ?? null) ?: '';
+        $options['btcPrice'] = ($_POST['btcPrice'] ?? null) ?: '';
+        $options['currency'] = ($_POST['currency'] ?? null) ?: '';
+        $options['btcPaid'] = ($_POST['btcPaid'] ?? null) ?: '';
+        $options['rate'] = ($_POST['rate'] ?? null) ?: '';
+        $options['exceptionStatus'] = ! empty($_POST['exceptionStatus']) && ($_POST['exceptionStatus'] ?? null) != 'false' ? ($_POST['exceptionStatus'] ?? null) : false;
 
         $is_response_error = false;
         if ( ! empty($options['id'])) {

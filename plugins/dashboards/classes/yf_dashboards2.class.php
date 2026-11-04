@@ -70,7 +70,7 @@ class yf_dashboards2
         if ( ! is_array($params)) {
             $params = [];
         }
-        $ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
+        $ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : ($_GET['id'] ?? null));
         $this->_debug_info['name'] = $ds_name;
         $ds = $this->_get_dashboard_data($ds_name);
 
@@ -139,8 +139,8 @@ class yf_dashboards2
     public function _view_widget_items($widgets = [])
     {
         $info = $saved_config = null;
-        $_orig_object = $_GET['object'];
-        $_orig_action = $_GET['action'];
+        $_orig_object = ($_GET['object'] ?? null);
+        $_orig_action = ($_GET['action'] ?? null);
         $is_cloneable_item = true;
 
 
@@ -220,7 +220,7 @@ class yf_dashboards2
     {
         $params = null;
         if ( ! $id) {
-            $id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
+            $id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : ($_GET['id'] ?? null));
         }
         if ( ! $id) {
             return false;

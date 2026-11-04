@@ -34,7 +34,7 @@ class yf_admin_wall
      */
     public function view()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         if ($id) {
             //$msg = db()->from('admin_walls')->where('user_id', (int) main()->ADMIN_ID)->where($id)->get();
             $msg = db()->from('admin_walls')->where($id)->get();
@@ -80,7 +80,7 @@ class yf_admin_wall
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [];
@@ -117,7 +117,7 @@ class yf_admin_wall
         }
         $config = $params;
         $sql = 'SELECT * FROM ' . db('admin_walls') . ' WHERE user_id=' . (int) (main()->ADMIN_ID) . ' ORDER BY add_date DESC';
-        return table($sql, ['no_header' => 1, 'btn_no_text' => 1, 'pages_on_top' => 1, 'pager_path' => './?object=' . $_GET['object'] . '&action=show'])
+        return table($sql, ['no_header' => 1, 'btn_no_text' => 1, 'pages_on_top' => 1, 'pager_path' => './?object=' . ($_GET['object'] ?? null) . '&action=show'])
             ->date('add_date')
             ->admin('user_id')
             ->text('message')
@@ -135,7 +135,7 @@ class yf_admin_wall
     public function show_for_admin()
     {
         $_GET['page'] = 'clear';
-        $_GET['filter'] = 'user_id:' . (int) ($_GET['id']);
+        $_GET['filter'] = 'user_id:' . (int) (($_GET['id'] ?? null));
         return $this->filter_save();
     }
 }

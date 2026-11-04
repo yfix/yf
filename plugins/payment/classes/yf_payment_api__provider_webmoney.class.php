@@ -614,7 +614,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
             $this->SHOP_ID = 21;
         }
         if ($is_test && @$_GET['result_test']) {
-            $result_test = $_GET['result_test'] == '1' || $_GET['result_test'] == 'true' ? 1 : 0;
+            $result_test = ($_GET['result_test'] ?? null) == '1' || ($_GET['result_test'] ?? null) == 'true' ? 1 : 0;
             // test: 0 - success; 1 - fail.
             // $_[ 'LMI_SIM_MODE' ] = 0;
             // $_[ 'LMI_SIM_MODE' ] = 1;
@@ -689,7 +689,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // currency
         if (is_post() && ! empty($_POST['LMI_PAYEE_PURSE'])) {
-            $first_letter = _substr($_POST['LMI_PAYEE_PURSE'], 0, 1);
+            $first_letter = _substr(($_POST['LMI_PAYEE_PURSE'] ?? null), 0, 1);
             $response_currency = ($first_letter == 'Z') ? 'USD' : (($first_letter == 'R') ? 'RUB' : false);
         }
         $currency_id = @$_currency_id ?: @$_currency ?: @$response_currency ?: @$this->currency_default;
@@ -813,7 +813,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         // DEBUG
         $is_test = $this->is_test();
         if ($is_test && @$_SESSION['payin']['result_test']) {
-            $result_test = $_SESSION['payin']['result_test'];
+            $result_test = ($_SESSION['payin']['result_test'] ?? null);
             // test: 0 - success; 1 - fail.
             // $_[ 'LMI_SIM_MODE' ] = 0;
             // $_[ 'LMI_SIM_MODE' ] = 1;
@@ -894,7 +894,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         $is_server = ! empty($_GET['server']);
         $result = null;
         // check operation
-        $operation_id = (int) $_GET['operation_id'];
+        $operation_id = (int) ($_GET['operation_id'] ?? null);
         // START DUMP
         $payment_api->dump(['name' => 'WebMoney', 'operation_id' => (int) $operation_id]);
         // check ip
@@ -938,7 +938,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         // check status
         $is_test = null;
         isset($_response['test']) && $is_test = (int) $_response['test'] == 1 ? true : false;
-        switch ($_GET['status']) {
+        switch (($_GET['status'] ?? null)) {
             case 'result':
                 $state = 'wait';
                 $result = $this->__api_response__result($operation_id, $response);

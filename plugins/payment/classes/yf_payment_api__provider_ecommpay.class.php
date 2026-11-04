@@ -784,7 +784,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote
         $is_server = ! empty($_GET['server']);
         $result = null;
         // check operation
-        $operation_id = @(int) $_GET['operation_id'];
+        $operation_id = @(int) ($_GET['operation_id'] ?? null);
         // START DUMP
         $payment_api->dump(['name' => 'EcommPay', 'operation_id' => $operation_id]);
         // TEST DATA
@@ -864,7 +864,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote
             // check status
             $state = isset($response['type']) && $response['type'] == '1' ? true : false;
             $status = isset($_GET['status'])
-                && $_GET['status'] == 'success'
+                && ($_GET['status'] ?? null) == 'success'
                 && $state
                 ? true : false;
             $status_message = $status ? 'Операция выполнена успешно' : 'Операция не выполнена';

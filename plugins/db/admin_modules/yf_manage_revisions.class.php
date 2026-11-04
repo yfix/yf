@@ -34,7 +34,7 @@ class yf_manage_revisions
             $extra = (array) $extra + $object_name;
             $object_name = '';
         }
-        $object_name = $extra['object_name'] ?: ($object_name ?: $_GET['object']);
+        $object_name = $extra['object_name'] ?: ($object_name ?: ($_GET['object'] ?? null));
         if (($allowed_objects = $this->ALLOWED_OBJECTS)) {
             if ( ! in_array($object_name, $allowed_objects)) {
                 return false;
@@ -83,8 +83,8 @@ class yf_manage_revisions
             'site_id' => conf('SITE_ID'),
             'server_id' => conf('SERVER_ID'),
             'ip' => common()->get_ip(),
-            'url' => (main()->is_https() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+            'url' => (main()->is_https() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null),
+            'user_agent' => ($_SERVER['HTTP_USER_AGENT'] ?? null),
         ];
         foreach ((array) $items as $object_id => $data) {
             if ( ! $object_id) {
@@ -143,7 +143,7 @@ class yf_manage_revisions
 
     public function view()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if ($id) {
             $a = db()->from(self::table)->whereid($id)->get();
         }
@@ -283,7 +283,7 @@ class yf_manage_revisions
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $min_date = db()->from(self::table)->min('date');
@@ -315,7 +315,7 @@ class yf_manage_revisions
     public function show_for_admin()
     {
         $_GET['page'] = 'clear';
-        $_GET['filter'] = 'user_id:' . (int) ($_GET['id']);
+        $_GET['filter'] = 'user_id:' . (int) (($_GET['id'] ?? null));
         return $this->filter_save();
     }
 }

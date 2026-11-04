@@ -169,8 +169,8 @@ RESPONSE:
     //process response from blockchain.info, where we get info about transaction
     public function _external_response()
     {
-        $operation_id = $_GET['operation_id'];
-        $secret = $_GET['secret'];
+        $operation_id = ($_GET['operation_id'] ?? null);
+        $secret = ($_GET['secret'] ?? null);
         $payment_api = $this->payment_api;
         $operation = $payment_api->operation([
             'operation_id' => $operation_id,
@@ -194,8 +194,8 @@ RESPONSE:
                     if ( ! empty($response['response']['secret'])) {
                         $real_secret = $response['response']['secret'];
                         if ($real_secret == $secret) {
-                            $transaction_hash = $_GET['transaction_hash'];
-                            $value_in_satoshi = $_GET['value'];
+                            $transaction_hash = ($_GET['transaction_hash'] ?? null);
+                            $value_in_satoshi = ($_GET['value'] ?? null);
                             $value_in_btc = $value_in_satoshi / 100000000;
 
                             $amount = $value_in_btc * $operation['amount'] / $response['response']['amount_currency'];

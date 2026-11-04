@@ -67,7 +67,7 @@ class yf_logs_exec_admin
             }
         }
         if ($this->FILTER_BOTS && ! main()->USER_ID) {
-            $SPIDER_NAME = common()->_is_spider($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
+            $SPIDER_NAME = common()->_is_spider(($_SERVER['REMOTE_ADDR'] ?? null), ($_SERVER['HTTP_USER_AGENT'] ?? null));
             if ($SPIDER_NAME) {
                 return false;
             }
@@ -79,7 +79,7 @@ class yf_logs_exec_admin
             }
         }
         if ($this->EXCLUDE_USER_AGENTS) {
-            $ua = $_SERVER['HTTP_USER_AGENT'];
+            $ua = ($_SERVER['HTTP_USER_AGENT'] ?? null);
             foreach ((array) $this->EXCLUDE_USER_AGENTS as $pattern) {
                 if ( $ua && preg_match('~' . $pattern . '~i', $ua)) {
                     $checks['exclude_ua'] = true;
@@ -95,7 +95,7 @@ class yf_logs_exec_admin
         }
         $time_end = $GLOBALS['time_end'] ?? microtime(true);
         $exec_time = str_replace(',', '.', common()->_format_time_value($time_end - main()->_time_start));
-        $query_string = $_SERVER['QUERY_STRING'];
+        $query_string = ($_SERVER['QUERY_STRING'] ?? null);
         // TODO: use parse_url here
         /*
                 list($object, $action) = explode('&action=', $query_string);
@@ -111,10 +111,10 @@ class yf_logs_exec_admin
             'admin_group' => (int) main()->ADMIN_GROUP,
             'date' => time(),
             'ip' => common()->get_ip(),
-            'user_agent' => (string) $_SERVER['HTTP_USER_AGENT'],
-            'referer' => (string) $_SERVER['HTTP_REFERER'],
+            'user_agent' => (string) ($_SERVER['HTTP_USER_AGENT'] ?? null),
+            'referer' => (string) ($_SERVER['HTTP_REFERER'] ?? null),
             'query_string' => (string) $query_string,
-            'request_uri' => $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            'request_uri' => ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null),
             'exec_time' => $exec_time,
             'num_dbq' => (int) db()->NUM_QUERIES,
             'page_size' => (int) tpl()->_output_body_length,

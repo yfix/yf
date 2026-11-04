@@ -327,9 +327,9 @@ class yf_core_menu
      */
     public function _is_current_page($item)
     {
-        $object = $_GET['object'];
-        $action = $_GET['action'];
-        $id = $_GET['id'];
+        $object = ($_GET['object'] ?? null);
+        $action = ($_GET['action'] ?? null);
+        $id = ($_GET['id'] ?? null);
         $is_cur_page = false;
         parse_str($item['location'], $u);
         // Check if we are on the current page

@@ -43,7 +43,7 @@ class yf_logs_redirect
             }
         }
         if ($this->EXCLUDE_USER_AGENTS) {
-            $ua = $_SERVER['HTTP_USER_AGENT'];
+            $ua = ($_SERVER['HTTP_USER_AGENT'] ?? null);
             foreach ((array) $this->EXCLUDE_USER_AGENTS as $pattern) {
                 if (preg_match('~' . $pattern . '~i', $ua)) {
                     $checks['exclude_ua'] = true;
@@ -60,21 +60,21 @@ class yf_logs_redirect
         // slice 2 first elements (__FUNCTION__ and $this->_go) and leave only 5 more trace elements to save space
         $trace = implode(PHP_EOL, array_slice(explode(PHP_EOL, main()->trace_string()), 2, 7));
 
-        $is_https = ($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL']);
+        $is_https = (($_SERVER['HTTPS'] ?? null) || ($_SERVER['SSL_PROTOCOL'] ?? null));
 
         return db()->insert_safe('log_redirects', [
-            'url_from' => ($is_https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            'url_from' => ($is_https ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null),
             'url_to' => $params['url_to'],
             'reason' => $params['reason'],
             'use_rewrite' => (int) $params['rewrite'],
             'redirect_type' => $params['type'],
             'date' => gmdate('Y-m-d H:i:s'),
             'ip' => $ip,
-            'query_string' => $_SERVER['QUERY_STRING'],
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-            'referer' => $_SERVER['HTTP_REFERER'],
-            'object' => $_GET['object'],
-            'action' => $_GET['action'],
+            'query_string' => ($_SERVER['QUERY_STRING'] ?? null),
+            'user_agent' => ($_SERVER['HTTP_USER_AGENT'] ?? null),
+            'referer' => ($_SERVER['HTTP_REFERER'] ?? null),
+            'object' => ($_GET['object'] ?? null),
+            'action' => ($_GET['action'] ?? null),
             'user_id' => MAIN_TYPE_ADMIN ? main()->ADMIN_ID : main()->USER_ID,
             'user_group' => MAIN_TYPE_ADMIN ? main()->ADMIN_GROUP : main()->USER_GROUP,
             'site_id' => (int) main()->SITE_ID,

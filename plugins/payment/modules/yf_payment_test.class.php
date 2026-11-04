@@ -520,7 +520,7 @@ class yf_payment_test
     public function _api_js_cors()
     {
         // check origin
-        header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+        header('Access-Control-Allow-Origin: ' . ($_SERVER['HTTP_ORIGIN'] ?? null));
         header('Access-Control-Allow-Credentials: true');
         // all origin
         // header('Access-Control-Allow-Origin: *');
@@ -624,7 +624,7 @@ class yf_payment_test
         $is_action = null;
         if ( ! @empty($methods[$_GET['method']])) {
             $is_action = true;
-            $method_id = $_GET['method'];
+            $method_id = ($_GET['method'] ?? null);
             $is_debug = @$_GET['is_debug'];
             $options = [
                 'method_id' => $method_id,
@@ -636,7 +636,7 @@ class yf_payment_test
             switch (true) {
                 case $method_id == 'withdraw-id' || $method_id == 'co-invoice-id':
                     if (@$_GET['id'] > 0) {
-                        $options['id'] = $_GET['id'];
+                        $options['id'] = ($_GET['id'] ?? null);
                     }
                     break;
                 case $method_id == 'withdraw-calc':
@@ -704,7 +704,7 @@ EOS;
         $is_action = null;
         if ( ! @empty($methods[$_GET['method']])) {
             $is_action = true;
-            $method_id = $_GET['method'];
+            $method_id = ($_GET['method'] ?? null);
             $is_debug = @$_GET['is_debug'];
             $options = [
                 'method_id' => $method_id,
@@ -764,7 +764,7 @@ EOS;
         $is_action = null;
         if ( ! @empty($methods[$_GET['method']])) {
             $is_action = true;
-            $method_id = $_GET['method'];
+            $method_id = ($_GET['method'] ?? null);
             $is_debug = @$_GET['is_debug'];
             $options = [
                 'method_id' => $method_id,
@@ -832,7 +832,7 @@ EOS;
         $is_action = null;
         if ( ! @empty($methods[$_GET['method']])) {
             $is_action = true;
-            $method_id = $_GET['method'];
+            $method_id = ($_GET['method'] ?? null);
             $is_debug = @$_GET['is_debug'];
             $options = [
                 'method_id' => $method_id,
@@ -943,8 +943,8 @@ EOS;
             'qiwi' => true,
         ];
         // process
-        if (@$methods[$_GET['method']]) {
-            $method_id = $_GET['method'];
+        if (@$methods[($_GET['method'] ?? null)]) {
+            $method_id = ($_GET['method'] ?? null);
             $is_debug = @$_GET['is_debug'];
             $options = [
                 'method_id' => $method_id,
@@ -1027,9 +1027,9 @@ EOS;
         ];
         $is_action = null;
         // process
-        if (@$methods[$_GET['method']]) {
+        if (@$methods[($_GET['method'] ?? null)]) {
             $is_action = true;
-            $method_id = $_GET['method'];
+            $method_id = ($_GET['method'] ?? null);
             $is_debug = @$_GET['is_debug'];
             $options = [
                 'method_id' => $method_id,
@@ -1089,9 +1089,9 @@ EOS;
         ];
         $is_action = null;
         // process
-        if (@$methods[$_GET['method']]) {
+        if (@$methods[($_GET['method'] ?? null)]) {
             $is_action = true;
-            $method_id = $_GET['method'];
+            $method_id = ($_GET['method'] ?? null);
             $is_debug = @$_GET['is_debug'];
             $options = [
                 'method_id' => $method_id,
@@ -1151,9 +1151,9 @@ EOS;
         ];
         $is_action = null;
         // process
-        if (@$methods[$_GET['method']]) {
+        if (@$methods[($_GET['method'] ?? null)]) {
             $is_action = true;
-            $method_id = $_GET['method'];
+            $method_id = ($_GET['method'] ?? null);
             $is_debug = @$_GET['is_debug'];
             $options = [
                 'method_id' => $method_id,
@@ -1213,9 +1213,9 @@ EOS;
         ];
         $is_action = null;
         // process
-        if (@$methods[$_GET['method']]) {
+        if (@$methods[($_GET['method'] ?? null)]) {
             $is_action = true;
-            $method_id = $_GET['method'];
+            $method_id = ($_GET['method'] ?? null);
             $is_debug = @$_GET['is_debug'];
             $options = [
                 'method_id' => $method_id,
@@ -1274,7 +1274,7 @@ EOS;
         $php = 'Выберите метод';
         $method = null;
         $is_action = null;
-        if (@$_provider == @$_GET['provider'] && @$_method[$_GET['method']]) {
+        if (@$_provider == @$_GET['provider'] && @$_method[($_GET['method'] ?? null)]) {
             $is_action = true;
             $provider = @$_GET['provider'];
             $method = @$_GET['method'];
@@ -1384,7 +1384,7 @@ EOS;
         $php = 'Выберите метод';
         $method = null;
         $is_action = null;
-        if (@$_provider == @$_GET['provider'] && @$_method[$_GET['method']]) {
+        if (@$_provider == @$_GET['provider'] && @$_method[($_GET['method'] ?? null)]) {
             $is_action = true;
             $provider = @$_GET['provider'];
             $method = @$_GET['method'];
@@ -1603,7 +1603,7 @@ EOS;
     {
         $options = $this->_options($title);
         $api = _class('payment_api__provider_interkassa');
-        $is_key_private = (bool) $_GET['is_key_private'];
+        $is_key_private = (bool) ($_GET['is_key_private'] ?? null);
         if ($is_key_private) {
             $key = $api->key('private');
             $key_test = $api->key('private_test');
@@ -1980,7 +1980,7 @@ EOS;
 
     protected function _fast_init_route()
     {
-        $url = parse_url($_SERVER['REQUEST_URI']);
+        $url = parse_url(($_SERVER['REQUEST_URI'] ?? null));
         $path = explode('/', $url['path']);
         $object = $path[1];
         $method = $path[2];

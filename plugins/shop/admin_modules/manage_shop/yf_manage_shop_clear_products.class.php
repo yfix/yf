@@ -19,7 +19,7 @@ class yf_manage_shop_clear_products
     {
         $html = table('SELECT * FROM ' . db('shop_patterns'), [
             'table_attr' => 'id="patterns_list"',
-            'filter' => $_SESSION[$_GET['object'] . '__patterns'],
+            'filter' => ($_SESSION[$_GET['object'] . '__patterns'] ?? null),
             'filter_params' => [
                 'search' => 'like',
                 'repalce' => 'like',
@@ -74,13 +74,13 @@ class yf_manage_shop_clear_products
     public function clear_pattern_list()
     {
         $row_info = null;
-        if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
+        if ( ! isset($_GET['id']) && (int) (($_GET['id'] ?? null))) {
             return t('Empty clear pattern ID');
         }
 
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
 
-        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . $_GET['id']);
+        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . ($_GET['id'] ?? null));
         if (empty($pattern_info)) {
             return t('Wrong clean pattern');
         }
@@ -137,13 +137,13 @@ class yf_manage_shop_clear_products
      */
     public function clear_pattern_edit()
     {
-        if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
+        if ( ! isset($_GET['id']) && (int) (($_GET['id'] ?? null))) {
             return t('Empty clear pattern ID');
         }
 
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
 
-        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . $_GET['id']);
+        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . ($_GET['id'] ?? null));
         if (empty($pattern_info)) {
             return t('Wrong clean pattern');
         }
@@ -158,7 +158,7 @@ class yf_manage_shop_clear_products
 
         return form($a, ['legend' => t('Edit pattern')])
             ->validate($validate_rules)
-            ->db_update_if_ok('shop_patterns', ['search', 'replace', 'cat_id'], 'id = ' . $_GET['id'])
+            ->db_update_if_ok('shop_patterns', ['search', 'replace', 'cat_id'], 'id = ' . ($_GET['id'] ?? null))
             ->text('search', ['tip' => $this->SEARCH_TIP])
             ->text('replace')
             ->select_box('cat_id', module('manage_shop')->_cats_for_select, ['desc' => 'Category', 'show_text' => 1])
@@ -171,11 +171,11 @@ class yf_manage_shop_clear_products
      */
     public function clear_pattern_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if (empty($_GET['id'])) {
             return 'Empty ID!';
         }
-        db()->query('DELETE FROM ' . db('shop_patterns') . ' WHERE id=' . $_GET['id']);
+        db()->query('DELETE FROM ' . db('shop_patterns') . ' WHERE id=' . ($_GET['id'] ?? null));
         return js_redirect('./?object=manage_shop&action=show_clear_patterns');
     }
 
@@ -184,20 +184,20 @@ class yf_manage_shop_clear_products
      */
     public function clear_pattern_run($action = 'clear_pattern_child_process')
     {
-        if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
+        if ( ! isset($_GET['id']) && (int) (($_GET['id'] ?? null))) {
             exit;
         }
 
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
 
-        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . $_GET['id'] . ' AND process = 0');
+        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . ($_GET['id'] ?? null) . ' AND process = 0');
         if (empty($pattern_info)) {
             echo json_encode(['status' => 'already']);
             exit;
         }
 
         $admin_fs_path = ADMIN_SITE_PATH; // INCLUDE_PATH.'admin/
-        shell_exec('cd ' . $admin_fs_path . ' && php index.php --object=manage_shop --action=' . $action . ' --id=' . $_GET['id'] . ' --admin_id=' . main()->ADMIN_ID . ' > /dev/null &');
+        shell_exec('cd ' . $admin_fs_path . ' && php index.php --object=manage_shop --action=' . $action . ' --id=' . ($_GET['id'] ?? null) . ' --admin_id=' . main()->ADMIN_ID . ' > /dev/null &');
 
         echo json_encode(['status' => 'done']);
         exit;
@@ -213,20 +213,20 @@ class yf_manage_shop_clear_products
      */
     public function clear_pattern_stop()
     {
-        if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
+        if ( ! isset($_GET['id']) && (int) (($_GET['id'] ?? null))) {
             exit;
         }
 
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
 
-        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . $_GET['id'] . ' AND process != 0');
+        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . ($_GET['id'] ?? null) . ' AND process != 0');
         if (empty($pattern_info)) {
             echo json_encode(['status' => 'non']);
             exit;
         }
 
         shell_exec('kill ' . $pattern_info['process'] . ' > /dev/null &');
-        db()->query('UPDATE ' . db('shop_patterns') . ' SET process = 0 WHERE id = ' . $_GET['id'] . ';');
+        db()->query('UPDATE ' . db('shop_patterns') . ' SET process = 0 WHERE id = ' . ($_GET['id'] ?? null) . ';');
 
         echo json_encode(['status' => 'done']);
         exit;
@@ -241,7 +241,7 @@ class yf_manage_shop_clear_products
         if (empty($_POST['ids'])) {
             exit;
         }
-        $sql = 'SELECT * FROM ' . db('shop_patterns') . ' WHERE id IN (' . implode(',', $_POST['ids']) . ')';
+        $sql = 'SELECT * FROM ' . db('shop_patterns') . ' WHERE id IN (' . implode(',', ($_POST['ids'] ?? null)) . ')';
         $patterns = db()->get_all($sql);
         foreach ($patterns as $key => $item) {
             $where = '';
@@ -263,16 +263,16 @@ class yf_manage_shop_clear_products
     public function clear_pattern_child_process()
     {
         $row_info = null;
-        if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
+        if ( ! isset($_GET['id']) && (int) (($_GET['id'] ?? null))) {
             return t('Empty clear pattern ID');
         }
 
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         $process_id = getmypid();
 
-        db()->query('UPDATE ' . db('shop_patterns') . ' SET process = ' . $process_id . ' WHERE process = 0 AND id = ' . $_GET['id'] . ';');
+        db()->query('UPDATE ' . db('shop_patterns') . ' SET process = ' . $process_id . ' WHERE process = 0 AND id = ' . ($_GET['id'] ?? null) . ';');
 
-        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . $_GET['id'] . ' AND process = ' . $process_id);
+        $pattern_info = db()->query_fetch('SELECT * FROM ' . db('shop_patterns') . ' WHERE id = ' . ($_GET['id'] ?? null) . ' AND process = ' . $process_id);
         if (empty($pattern_info)) {
             return t('Wrong clean pattern');
         }
@@ -303,11 +303,11 @@ class yf_manage_shop_clear_products
                 db()->update_batch_safe('shop_products', $update_items, 'id');
             }
             $revision_ids = module('manage_shop')->_product_add_revision('correct_name', $update_ids);
-            module('manage_shop')->_add_group_revision('product', $revision_ids, $_GET['id']);
+            module('manage_shop')->_add_group_revision('product', $revision_ids, ($_GET['id'] ?? null));
         }
 
         db()->commit();
 
-        db()->query('UPDATE ' . db('shop_patterns') . ' SET process = 0 WHERE process = ' . $process_id . ' AND id = ' . $_GET['id'] . ';');
+        db()->query('UPDATE ' . db('shop_patterns') . ' SET process = 0 WHERE process = ' . $process_id . ' AND id = ' . ($_GET['id'] ?? null) . ';');
     }
 }

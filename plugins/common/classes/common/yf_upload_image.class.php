@@ -39,7 +39,7 @@ class yf_upload_image
         // Prepare params
         // If $name_in_form is an array - then we think that it is $_FILES array with cur image info
         // (useful when uploading several images at once)
-        $PHOTO = is_array($name_in_form) ? $name_in_form : $_FILES[$name_in_form];
+        $PHOTO = is_array($name_in_form) ? $name_in_form : ($_FILES[$name_in_form] ?? null);
         $MAX_IMAGE_SIZE = $max_image_size;
         // Check image size (first attempt)
         if (empty($PHOTO['size']) || ( ! empty($MAX_IMAGE_SIZE) && $PHOTO['size'] > $MAX_IMAGE_SIZE)) {

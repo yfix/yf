@@ -170,9 +170,9 @@ class yf_manage_shop_import_products2
         $_session_parent_key = $_object . '__' . $_action_parent;
         $_session_key = $_object . '__' . $_action;
         if ($this->is_init) {
-            $_SESSION[$_session_key] = $_SESSION[$_session_parent_key];
+            $_SESSION[$_session_key] = ($_SESSION[$_session_parent_key] ?? null);
         }
-        $this->_filter = $_SESSION[$_session_key];
+        $this->_filter = ($_SESSION[$_session_key] ?? null);
         $this->_filter_params = $this->_class_admin_products->_filter_params;
     }
 
@@ -385,11 +385,11 @@ class yf_manage_shop_import_products2
             'import' => 'импортировать',
             'delete' => 'удалить',
         ];
-        $sub_action = $_POST['sub_action'];
+        $sub_action = ($_POST['sub_action'] ?? null);
         $is_sub_action = $sub_action !== '0' && isset($_sub_action[$sub_action]);
         // -----
         $_supplier = _class('manage_shop')->_suppliers_for_select;
-        $supplier = (int) $_POST['supplier'];
+        $supplier = (int) ($_POST['supplier'] ?? null);
         $is_supplier = $supplier != 0 && isset($_supplier[$supplier]);
         // prepare ng-app
         $_ng_controller = 'ctrl.import2';
@@ -400,8 +400,8 @@ class yf_manage_shop_import_products2
         $_ng_data = $this->_data_ng(true);
         // -----
         // update
-        $apply = $_POST['apply'];
-        $confirm = $_POST['confirm'];
+        $apply = ($_POST['apply'] ?? null);
+        $confirm = ($_POST['confirm'] ?? null);
         $is_action = $this->is_post && $is_sub_action && $is_supplier && isset($apply) ? true : false;
         $is_update = $is_action && isset($confirm) ? true : false;
         $no_confirm = $is_action && ! isset($confirm) ? true : false;
@@ -579,7 +579,7 @@ class yf_manage_shop_import_products2
 
     protected function _api_upload()
     {
-        $file = $_FILES['file'];
+        $file = ($_FILES['file'] ?? null);
         if (empty($file) || $file['error'] != UPLOAD_ERR_OK) {
             $this->_reject('PHP: Entity Too Large', '500 Internal Server Error', 500);
         } else {
@@ -619,7 +619,7 @@ class yf_manage_shop_import_products2
 
     protected function _api_upload_list()
     {
-        $sub_action = $_GET['sub_action'];
+        $sub_action = ($_GET['sub_action'] ?? null);
         switch ($sub_action) {
             case 'remove_all':
                 $result = $this->_upload_list__remove_all();
@@ -636,13 +636,13 @@ class yf_manage_shop_import_products2
 
     protected function _api_upload_item()
     {
-        $sub_action = $_GET['sub_action'];
+        $sub_action = ($_GET['sub_action'] ?? null);
         if ($this->is_post) {
             $post = json_decode(file_get_contents('php://input'), true);
         }
         switch ($sub_action) {
             case 'get':
-                $id = $_REQUEST['id'];
+                $id = ($_REQUEST['id'] ?? null);
                 $result = $this->_upload_item__get($id);
                 if ($result['status']) {
                     $test = $this->_upload_item__import($result['data']['options']);
@@ -1641,7 +1641,7 @@ class yf_manage_shop_import_products2
         } else {
             $_class = $this;
         }
-        empty($method) && $method = $_GET['api'];
+        empty($method) && $method = ($_GET['api'] ?? null);
         $_method = '_api_' . $method;
         $_status = method_exists($_class, $_method);
         if ( ! $_status) {
@@ -1660,7 +1660,7 @@ class yf_manage_shop_import_products2
         // check jsonp
         $type = 'json';
         if (isset($_GET['callback'])) {
-            $jsonp_callback = $_GET['callback'];
+            $jsonp_callback = ($_GET['callback'] ?? null);
             $response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
             $type = 'javascript';
         }

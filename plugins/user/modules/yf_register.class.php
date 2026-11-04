@@ -65,7 +65,7 @@ class yf_register
      */
     public function _send_email_with_code($code = '', $extra = false)
     {
-        $identify = ! empty($extra['identify']) ? $extra['identify'] : $_POST['email'];
+        $identify = ! empty($extra['identify']) ? $extra['identify'] : ($_POST['email'] ?? null);
         $replace = [
             'nick' => $identify,
             'confirm_code' => $code,
@@ -77,11 +77,11 @@ class yf_register
         if (isset($extra['add_replace']) && is_array($extra['add_replace'])) {
             $replace = array_merge($replace, $extra['add_replace']);
         }
-        $text = tpl()->parse('@object/email_confirm' . ( ! empty($_POST['account_type']) ? '_' . $_POST['account_type'] : ''), $replace);
+        $text = tpl()->parse('@object/email_confirm' . ( ! empty($_POST['account_type']) ? '_' . ($_POST['account_type'] ?? null) : ''), $replace);
         // prepare email data
         $email_from = SITE_ADMIN_EMAIL;
         $name_from = SITE_ADVERT_NAME;
-        $email_to = ! empty($extra['email']) ? $extra['email'] : $_POST['email'];
+        $email_to = ! empty($extra['email']) ? $extra['email'] : ($_POST['email'] ?? null);
         $name_to = $identify;
         $subject = ! empty($extra['subject']) ? $extra['subject'] : t('Membership confirmation required!');
         return common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
@@ -94,19 +94,19 @@ class yf_register
     public function _send_success_email($extra = false)
     {
         $code = null;
-        $identify = ! empty($extra['identify']) ? $extra['identify'] : $_POST['email'];
+        $identify = ! empty($extra['identify']) ? $extra['identify'] : ($_POST['email'] ?? null);
         $replace = [
             'code' => $code,
             'nick' => $identify,
-            'password' => $_POST['password'],
+            'password' => ($_POST['password'] ?? null),
             'advert_name' => SITE_ADVERT_NAME,
             'advert_url' => SITE_ADVERT_URL,
         ];
-        $text = tpl()->parse('@object/email_success' . ( ! empty($_POST['account_type']) ? '_' . $_POST['account_type'] : ''), $replace);
+        $text = tpl()->parse('@object/email_success' . ( ! empty($_POST['account_type']) ? '_' . ($_POST['account_type'] ?? null) : ''), $replace);
         // prepare email data
         $email_from = SITE_ADMIN_EMAIL;
         $name_from = SITE_ADVERT_NAME;
-        $email_to = ! empty($extra['email']) ? $extra['email'] : $_POST['email'];
+        $email_to = ! empty($extra['email']) ? $extra['email'] : ($_POST['email'] ?? null);
         $name_to = $identify;
         $subject = ! empty($extra['subject']) ? $extra['subject'] : t('Membership confirmation required!');
         return common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
@@ -124,11 +124,11 @@ class yf_register
             return tpl()->parse('@object/confirm_messages', ['msg' => 'confirm_not_needed']);
         }
         // Check confirmation code
-        if ( ! strlen($_GET['id'])) {
+        if ( ! strlen(($_GET['id'] ?? null))) {
             return _e('Confirmation ID is required!');
         }
         // Decode confirmation number
-        list($user_id, $member_date) = explode('wvcn', trim(base64_decode($_GET['id'])));
+        list($user_id, $member_date) = explode('wvcn', trim(base64_decode(($_GET['id'] ?? null))));
         $user_id = (int) $user_id;
         $member_date = (int) $member_date;
         // Get target user info
@@ -150,7 +150,7 @@ class yf_register
             }
         }
         if ( ! common()->_error_exists()) {
-            if ($_GET['id'] != $target_user_info['verify_code']) {
+            if (($_GET['id'] ?? null) != $target_user_info['verify_code']) {
                 _re('Wrong confirmation code');
             }
         }
@@ -172,7 +172,7 @@ class yf_register
     {
         // Do activate
         if (isset($_POST['confirm_code'])) {
-            $_GET['id'] = $_POST['confirm_code'];
+            $_GET['id'] = ($_POST['confirm_code'] ?? null);
             return $this->confirm();
         }
         // Display form
@@ -188,7 +188,7 @@ class yf_register
     public function resend_code()
     {
         if ( ! empty($_POST['email'])) {
-            $user_info = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE email="' . _es($_POST['email']) . '"');
+            $user_info = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE email="' . _es(($_POST['email'] ?? null)) . '"');
             if (empty($user_info)) {
                 return _e('No such user');
             }

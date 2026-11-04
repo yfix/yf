@@ -99,14 +99,14 @@ class yf_graphics
         }
         // Add pages names to the title
         if ($this->ADD_TITLE_PAGES) {
-            if (strlen($_GET['object'] ?? '') && $_GET['object'] != 'static_pages') {
+            if (strlen($_GET['object'] ?? '') && ($_GET['object'] ?? null) != 'static_pages') {
                 $title .= ' :: ' . _ucfirst(t($_GET['object']));
                 $title = _ucfirst(t($_GET['object'])) . ' : ' . $title;
             }
         }
         // Override by hook method
         // TODO: maybe need to check permissions at first
-        $obj = module_safe($_GET['object']);
+        $obj = module_safe(($_GET['object'] ?? null));
         if (is_object($obj)) {
             $hook_names = ['_hook_title', '_site_title'];
             foreach ($hook_names as $method_name) {
@@ -142,7 +142,7 @@ class yf_graphics
         $meta['description'] = $meta['description'] ?: (conf('meta_description') ?: $this->META_DESCRIPTION);
         // Override by hook method
         // TODO: maybe need to check permissions at first
-        $obj = module_safe($_GET['object']);
+        $obj = module_safe(($_GET['object'] ?? null));
         if (is_object($obj)) {
             $hook_names = ['_hook_meta_tags', '_hook_meta'];
             foreach ($hook_names as $method_name) {
@@ -318,7 +318,7 @@ class yf_graphics
         $body = '';
         // For authorized admins only
         if (MAIN_TYPE_ADMIN) {
-            $login_time = $_SESSION['admin_login_time'];
+            $login_time = ($_SESSION['admin_login_time'] ?? null);
             $admin_id = (int) main()->ADMIN_ID;
             $admin_group = (int) main()->ADMIN_GROUP;
             if ($admin_id && $admin_group) {
@@ -332,13 +332,13 @@ class yf_graphics
                     'time' => _format_date($login_time),
                     'edit_link' => './?object=admin_account',
                 ]);
-                if ($_SESSION['admin_prev_info']) {
+                if (($_SESSION['admin_prev_info'] ?? null)) {
                     $body .= '<li><a href="./?task=login&id=prev_info"><i class="icon icon-arrow-up fa fa-arrow-up"></i> ' . t('Login back') . '</a></li>';
                 }
             }
             // For authorized users only
         } elseif (MAIN_TYPE_USER) {
-            $login_time = $_SESSION['user_login_time'];
+            $login_time = ($_SESSION['user_login_time'] ?? null);
             $user_id = (int) main()->USER_ID;
             $user_group = (int) main()->USER_GROUP;
             if ($user_id && $user_group) {
@@ -363,7 +363,7 @@ class yf_graphics
     public function show_welcome2()
     {
         if (MAIN_TYPE_ADMIN) {
-            $body = t('You logged in as %user at %date', ['%date' => date('H:i:s', $_SESSION['admin_login_time']), '%user' => t('admin')]);
+            $body = t('You logged in as %user at %date', ['%date' => date('H:i:s', ($_SESSION['admin_login_time'] ?? null)), '%user' => t('admin')]);
         }
         return $body;
     }
@@ -420,8 +420,8 @@ class yf_graphics
      */
     public function show_help()
     {
-        $module_name = $_GET['object'];
-        $action_name = $_GET['action'];
+        $module_name = ($_GET['object'] ?? null);
+        $action_name = ($_GET['action'] ?? null);
         $replace = [
             'action' => $action_name,
         ];
@@ -574,7 +574,7 @@ class yf_graphics
             $page_header = _ucwords(str_replace('_', ' ', $_GET['object']));
         }
         if ( ! isset($page_subheader)) {
-            if ($_GET['action'] != 'show') {
+            if (($_GET['action'] ?? null) != 'show') {
                 $page_subheader = _ucwords(str_replace('_', ' ', $_GET['action']));
             }
         }
@@ -592,15 +592,15 @@ class yf_graphics
     {
         $obj = $items = null;
         if ( ! $this->QUICK_MENU_ENABLED
-            || (MAIN_TYPE_USER && ( ! isset($_SESSION['user_id']) || ! $_SESSION['user_id']))
-            || (MAIN_TYPE_ADMIN && ( ! isset($_SESSION['admin_id']) || ! $_SESSION['admin_id']))
+            || (MAIN_TYPE_USER && ( ! isset($_SESSION['user_id']) || ! ($_SESSION['user_id'] ?? null)))
+            || (MAIN_TYPE_ADMIN && ( ! isset($_SESSION['admin_id']) || ! ($_SESSION['admin_id'] ?? null)))
         ) {
             return false;
         }
         if (MAIN_TYPE_ADMIN) {
             $data[-1] = [
                 'name' => 'module settings',
-                'url' => './?object=conf_editor&action=admin_modules&id=' . strtolower($_GET['object']),
+                'url' => './?object=conf_editor&action=admin_modules&id=' . strtolower(($_GET['object'] ?? null)),
             ];
         }
         $method_name = '_quick_menu';

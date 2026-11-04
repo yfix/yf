@@ -339,7 +339,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
                     $title = SITE_ADVERT_TITLE;
                     break;
                 case @$_SERVER['SERVER_NAME']:
-                    $title = $_SERVER['SERVER_NAME'];
+                    $title = ($_SERVER['SERVER_NAME'] ?? null);
                     break;
             }
             if ( ! empty($title)) {
@@ -434,7 +434,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         $result = null;
         //* // TEST
         if ($this->is_test()) {
-            $operation_id = (int) $_GET['operation_id'];
+            $operation_id = (int) ($_GET['operation_id'] ?? null);
             $this->key('private', '01234567890ABCDEF01234567890');
             $_POST = [
                 'notification_type' => 'p2p-incoming',
@@ -451,7 +451,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
             ];
         } // */
         // check shop_id, operation
-        @list($shop_id, $operation_id) = explode(':', $_POST['label']);
+        @list($shop_id, $operation_id) = explode(':', ($_POST['label'] ?? null));
         $operation_id = (int) $operation_id;
         // START DUMP
         $payment_api->dump(['name' => 'YandexMoney', 'operation_id' => $operation_id]);

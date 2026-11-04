@@ -84,7 +84,7 @@ class yf_category_editor
             ])
             ->db_insert_if_ok('categories', ['type', 'name', 'desc', 'stpl_name', 'method_name', 'custom_fields', 'active'], [])
             ->on_after_update(function () {
-                common()->admin_wall_add(['category added: ' . $_POST['name'], db()->insert_id()]);
+                common()->admin_wall_add(['category added: ' . ($_POST['name'] ?? null), db()->insert_id()]);
                 module('category_editor')->_purge_category_caches();
             })
             ->radio_box('type', ['user' => 'User', 'admin' => 'Admin'])
@@ -100,11 +100,11 @@ class yf_category_editor
 
     public function edit()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         if ( ! $id) {
             return _e('No id');
         }
-        $a = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) ($_GET['id']));
+        $a = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         $a['redirect_link'] = url('/@object');
         return form($a, ['autocomplete' => 'off'])
             ->validate([
@@ -129,19 +129,19 @@ class yf_category_editor
 
     public function delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) ($_GET['id']));
+            $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($cat_info['id'])) {
-            db()->query('DELETE FROM ' . db('categories') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            db()->query('DELETE FROM ' . db('category_items') . ' WHERE cat_id=' . (int) ($_GET['id']));
-            common()->admin_wall_add(['category deleted: ' . $cat_info['name'], $_GET['id']]);
+            db()->query('DELETE FROM ' . db('categories') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            db()->query('DELETE FROM ' . db('category_items') . ' WHERE cat_id=' . (int) (($_GET['id'] ?? null)));
+            common()->admin_wall_add(['category deleted: ' . $cat_info['name'], ($_GET['id'] ?? null)]);
         }
         module('category_editor')->_purge_category_caches();
         if (is_ajax()) {
             no_graphics(true);
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect(url('/@object'));
         }
@@ -150,9 +150,9 @@ class yf_category_editor
 
     public function clone_cat()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) ($_GET['id']));
+            $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if (empty($cat_info['id'])) {
             return _e('No such category!');
@@ -185,7 +185,7 @@ class yf_category_editor
             $_new_parent_id = (int) ($_old_to_new[$_old_parent_id]);
             db()->UPDATE('category_items', ['parent_id' => $_new_parent_id], 'id=' . (int) $_new_id);
         }
-        common()->admin_wall_add(['category cloned: from ' . $cat_info['name'] . ' into ' . $sql['name'], $_GET['id']]);
+        common()->admin_wall_add(['category cloned: from ' . $cat_info['name'] . ' into ' . $sql['name'], ($_GET['id'] ?? null)]);
         module('category_editor')->_purge_category_caches();
         return js_redirect(url('/@object'));
     }
@@ -194,11 +194,11 @@ class yf_category_editor
     public function active()
     {
         if ( ! empty($_GET['id'])) {
-            $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) ($_GET['id']));
+            $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($cat_info)) {
             db()->UPDATE('categories', ['active' => (int) ! $cat_info['active']], 'id=' . (int) ($cat_info['id']));
-            common()->admin_wall_add(['category ' . $cat_info['name'] . ' ' . ($cat_info['active'] ? 'inactivated' : 'activated'), $_GET['id']]);
+            common()->admin_wall_add(['category ' . $cat_info['name'] . ' ' . ($cat_info['active'] ? 'inactivated' : 'activated'), ($_GET['id'] ?? null)]);
         }
         module('category_editor')->_purge_category_caches();
         if (is_ajax()) {
@@ -212,12 +212,12 @@ class yf_category_editor
 
     public function show_items()
     {
-        $cat_info = db()->get('SELECT * FROM ' . db('categories') . ' WHERE name="' . db()->es($_GET['id']) . '" OR id=' . (int) ($_GET['id']));
+        $cat_info = db()->get('SELECT * FROM ' . db('categories') . ' WHERE name="' . db()->es(($_GET['id'] ?? null)) . '" OR id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $cat_info) {
             return _e('No such category');
         }
         $_GET['id'] = $cat_info['id'];
-        $cat_items = $this->_recursive_get_cat_items($_GET['id']);
+        $cat_items = $this->_recursive_get_cat_items(($_GET['id'] ?? null));
         if (main()->is_post()) {
             $batch = [];
             foreach ((array) $cat_items as $a) {
@@ -226,8 +226,8 @@ class yf_category_editor
                 }
                 $batch[$a['id']] = [
                     'id' => $a['id'],
-                    'name' => $_POST['name'][$a['id']],
-                    'url' => $_POST['url'][$a['id']],
+                    'name' => ($_POST['name'][$a['id']] ?? null),
+                    'url' => ($_POST['url'][$a['id']] ?? null),
                 ];
             }
             if ($batch) {
@@ -235,7 +235,7 @@ class yf_category_editor
                 common()->admin_wall_add(['category items updated: ' . $cat_info['name'], $cat_info['id']]);
                 module('category_editor')->_purge_category_caches($cat_info);
             }
-            return js_redirect(url('/@object/show_items/' . $_GET['id']));
+            return js_redirect(url('/@object/show_items/' . ($_GET['id'] ?? null)));
         }
         return table($cat_items, [
                 'pager_records_on_page' => $this->ITEMS_PER_PAGE,
@@ -250,15 +250,15 @@ class yf_category_editor
             ->btn_delete('', url('/@object/delete_item/%d'), ['btn_no_text' => 1])
             ->btn_clone('', url('/@object/clone_item/%d'), ['btn_no_text' => 1])
             ->btn_active('', url('/@object/activate_item/%d'))
-            ->footer_add('Add item', url('/@object/add_item/' . $_GET['id']), ['copy_to_header' => 1])
-            ->footer_link('Drag items', url('/@object/drag_items&id=' . $_GET['id']), ['icon' => 'icon-move fa fa-arrows', 'copy_to_header' => 1])
+            ->footer_add('Add item', url('/@object/add_item/' . ($_GET['id'] ?? null)), ['copy_to_header' => 1])
+            ->footer_link('Drag items', url('/@object/drag_items&id=' . ($_GET['id'] ?? null)), ['icon' => 'icon-move fa fa-arrows', 'copy_to_header' => 1])
             ->footer_submit();
     }
 
 
     public function drag_items()
     {
-        $cat_info = db()->get('SELECT * FROM ' . db('categories') . ' WHERE name="' . db()->es($_GET['id']) . '" OR id=' . (int) ($_GET['id']));
+        $cat_info = db()->get('SELECT * FROM ' . db('categories') . ' WHERE name="' . db()->es(($_GET['id'] ?? null)) . '" OR id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $cat_info) {
             return _e('No such category');
         }
@@ -269,7 +269,7 @@ class yf_category_editor
         if (main()->is_post()) {
             $cur_items = $this->_auto_update_items_orders($cat_info['id']);
             $batch = [];
-            foreach ((array) json_decode((string) $_POST['items'], $assoc = true) as $order_id => $info) {
+            foreach ((array) json_decode((string) ($_POST['items'] ?? null), $assoc = true) as $order_id => $info) {
                 $item_id = (int) $info['item_id'];
                 if ( ! $item_id || ! isset($items[$item_id])) {
                     continue;
@@ -391,8 +391,8 @@ class yf_category_editor
         $ICONS_PATH = 'uploads/icons/';
         $MEDIA_PATH = WEB_PATH;
         $force_stpl_name = isset($params['force_stpl_name']) ? $params['force_stpl_name'] : false;
-        $STPL_MAIN = ! empty($force_stpl_name) ? $force_stpl_name : $_GET['object'] . '/drag_main';
-        $STPL_ITEM = ! empty($force_stpl_name) ? $force_stpl_name . '_item' : $_GET['object'] . '/drag_item';
+        $STPL_MAIN = ! empty($force_stpl_name) ? $force_stpl_name : ($_GET['object'] ?? null) . '/drag_main';
+        $STPL_ITEM = ! empty($force_stpl_name) ? $force_stpl_name . '_item' : ($_GET['object'] ?? null) . '/drag_item';
 
         $cat_info = $params['cat_info'];
         $cat_id = $cat_info['id'];
@@ -557,7 +557,7 @@ class yf_category_editor
 
     public function add_item()
     {
-        $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) ($_GET['id']));
+        $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($cat_info['id'])) {
             return _e('No such category!');
         }
@@ -566,14 +566,14 @@ class yf_category_editor
         if (main()->is_post()) {
             $tmp = [];
             foreach (explode(',', $cat_info['custom_fields']) as $field_name) {
-                if ($field_name && $_POST['custom'][$field_name]) {
-                    $tmp[$field_name] = $field_name . '=' . $_POST['custom'][$field_name];
+                if ($field_name && ($_POST['custom'][$field_name] ?? null)) {
+                    $tmp[$field_name] = $field_name . '=' . ($_POST['custom'][$field_name] ?? null);
                 }
             }
             $_POST['other_info'] = implode(';' . PHP_EOL, $tmp);
 
             if (empty($_POST['url']) && $this->PROPOSE_SHORT_URL) {
-                $_POST['url'] = common()->_propose_url_from_name($_POST['name']);
+                $_POST['url'] = common()->_propose_url_from_name(($_POST['name'] ?? null));
             }
         }
 
@@ -603,7 +603,7 @@ class yf_category_editor
     public function edit_item()
     {
         $field_zzname = null;
-        $item_info = db()->query_fetch('SELECT * FROM ' . db('category_items') . ' WHERE id=' . (int) ($_GET['id']));
+        $item_info = db()->query_fetch('SELECT * FROM ' . db('category_items') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $item_info['id']) {
             return _e('No such item!');
         }
@@ -616,8 +616,8 @@ class yf_category_editor
         if (main()->is_post()) {
             $tmp = [];
             foreach (explode(',', $cat_info['custom_fields']) as $field_name) {
-                if ($field_zzname && $_POST['custom'][$field_name]) {
-                    $tmp[$field_name] = $field_name . '=' . $_POST['custom'][$field_name];
+                if ($field_zzname && ($_POST['custom'][$field_name] ?? null)) {
+                    $tmp[$field_name] = $field_name . '=' . ($_POST['custom'][$field_name] ?? null);
                 }
             }
             $_POST['other_info'] = implode(';' . PHP_EOL, $tmp);
@@ -672,12 +672,12 @@ class yf_category_editor
     public function activate_item()
     {
         if ( ! empty($_GET['id'])) {
-            $item_info = db()->query_fetch('SELECT * FROM ' . db('category_items') . ' WHERE id=' . (int) ($_GET['id']));
+            $item_info = db()->query_fetch('SELECT * FROM ' . db('category_items') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($item_info)) {
             $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) ($item_info['cat_id']));
             db()->UPDATE('category_items', ['active' => (int) ! $item_info['active']], 'id=' . (int) ($item_info['id']));
-            common()->admin_wall_add(['category item ' . $item_info['id'] . ' ' . ($item_info['active'] ? 'inactivated' : 'activated'), $_GET['id']]);
+            common()->admin_wall_add(['category item ' . $item_info['id'] . ' ' . ($item_info['active'] ? 'inactivated' : 'activated'), ($_GET['id'] ?? null)]);
             module('category_editor')->_purge_category_caches($cat_info);
         }
         if (is_ajax()) {
@@ -691,10 +691,10 @@ class yf_category_editor
 
     public function delete_item()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         $_GET['id'] = $id;
-        $object = $_GET['object'];
-        $action = $_GET['action'];
+        $object = ($_GET['object'] ?? null);
+        $action = ($_GET['action'] ?? null);
         if ($id < 1) {
             return js_redirect(url('/' . $object), 'item id < 1');
         }
@@ -707,15 +707,15 @@ class yf_category_editor
 
             _class('core_events')->fire('category_editor.delete_item.before', [$id, $cats_id]);
 
-            db()->query('DELETE FROM ' . db('category_items') . ' WHERE id=' . (int) ($_GET['id']));
-            common()->admin_wall_add(['category item deleted: ' . $item_info['id'], $_GET['id']]);
+            db()->query('DELETE FROM ' . db('category_items') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+            common()->admin_wall_add(['category item deleted: ' . $item_info['id'], ($_GET['id'] ?? null)]);
             $this->_purge_category_caches($cat_info);
 
             _class('core_events')->fire('category_editor.delete_item.after', [$id, $cats_id]);
         }
         if (is_ajax()) {
             no_graphics(true);
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect(url('/@object/show_items/' . $item_info['cat_id']));
         }
@@ -724,16 +724,16 @@ class yf_category_editor
 
     public function clone_item()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $item_info = db()->query_fetch('SELECT * FROM ' . db('category_items') . ' WHERE id=' . (int) ($_GET['id']));
+            $item_info = db()->query_fetch('SELECT * FROM ' . db('category_items') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ($item_info) {
             $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) ($item_info['cat_id']));
             $sql = $item_info;
             unset($sql['id']);
             db()->INSERT('category_items', $sql);
-            common()->admin_wall_add(['category item cloned from ' . $item_info['id'] . ' into ' . $item_info['id'], $_GET['id']]);
+            common()->admin_wall_add(['category item cloned from ' . $item_info['id'] . ' into ' . $item_info['id'], ($_GET['id'] ?? null)]);
             module('category_editor')->_purge_category_caches($cat_info);
         }
         return js_redirect(url('/@object/show_items/' . $item_info['cat_id']));
@@ -743,9 +743,9 @@ class yf_category_editor
     public function export()
     {
         // If no ID set - mean that simply export all categories with items
-        $_GET['id'] = (int) ($_GET['id']);
-        if ($_GET['id']) {
-            $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        if (($_GET['id'] ?? null)) {
+            $cat_info = db()->query_fetch('SELECT * FROM ' . db('categories') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         $params = [
             'single_table' => '',

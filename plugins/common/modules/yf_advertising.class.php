@@ -6,22 +6,22 @@ class yf_advertising
     {
 
         // Set cookie
-        if (empty($_COOKIE['advertise']) && $_GET['ads_places'] == 1) {
-            $_COOKIE['advertise'] = setcookie('advertise', $_SERVER['HTTP_HOST'], time() + 3600, '/');
+        if (empty($_COOKIE['advertise']) && ($_GET['ads_places'] ?? null) == 1) {
+            $_COOKIE['advertise'] = setcookie('advertise', ($_SERVER['HTTP_HOST'] ?? null), time() + 3600, '/');
         // Unset cookie
-        } elseif ($_GET['ads_places'] == 2 && ! empty($_COOKIE['advertise'])) {
+        } elseif (($_GET['ads_places'] ?? null) == 2 && ! empty($_COOKIE['advertise'])) {
             setcookie('advertise', '', time() - 3600, '/');
             unset($_COOKIE['advertise']);
         }
         //  if isset cookie - return advertising buttons
         if ( ! empty($_COOKIE['advertise'])) {
-            $admin_link = 'http://' . $_SERVER['HTTP_HOST'] . '/admin/?object=manage_advertising&action=listing&ad=' . $params['ad'];
+            $admin_link = 'http://' . ($_SERVER['HTTP_HOST'] ?? null) . '/admin/?object=manage_advertising&action=listing&ad=' . $params['ad'];
             return '<a href="' . $admin_link . '" class="btn advertising">ADVERTISING SPACE</a>';
         }
         $CACHE_NAME = 'advertise_cache';
         $ads = cache_get($CACHE_NAME);
         if (empty($ads) && ! empty($GLOBALS['_CACHE_' . $CACHE_NAME])) {
-            $ads = $GLOBALS['_CACHE_' . $CACHE_NAME];
+            $ads = ($GLOBALS['_CACHE_' . $CACHE_NAME] ?? null);
         }
         if (empty($ads)) {
             $Q = db()->query('SELECT * FROM ' . db('advertising') . ' WHERE active=1 ');
@@ -58,7 +58,7 @@ class yf_advertising
                 if ($ad['date_start'] == 0) {
                     $matched_ids[$ad['id']] = (int) ($matched_ids[$ad['id']]);
                 } else {
-                    if ($_SERVER['REQUEST_TIME'] >= $ad['date_start']) {
+                    if (($_SERVER['REQUEST_TIME'] ?? null) >= $ad['date_start']) {
                         $matched_ids[$ad['id']] = (int) ($matched_ids[$ad['id']]) + 10;
                     } else {
                         $skipped_ids[$ad['id']] = $ad['id'];
@@ -70,7 +70,7 @@ class yf_advertising
                 if ($ad['date_end'] == 0) {
                     $matched_ids[$ad['id']] = (int) ($matched_ids[$ad['id']]);
                 } else {
-                    if ($_SERVER['REQUEST_TIME'] <= $ad['date_end']) {
+                    if (($_SERVER['REQUEST_TIME'] ?? null) <= $ad['date_end']) {
                         $matched_ids[$ad['id']] = (int) ($matched_ids[$ad['id']]) + 10;
                     } else {
                         $skipped_ids[$ad['id']] = $ad['id'];
@@ -82,7 +82,7 @@ class yf_advertising
                 if ($ad['cat_ids'] == 0) {
                     $matched_ids[$ad['id']] = (int) ($matched_ids[$ad['id']]);
                 } else {
-                    if (($_GET['object'] == 'programs') && ($_GET['action'] == 'show') && ($ad['cat_ids'] == $_GET['id'])) {
+                    if ((($_GET['object'] ?? null) == 'programs') && (($_GET['action'] ?? null) == 'show') && ($ad['cat_ids'] == ($_GET['id'] ?? null))) {
                         $matched_ids[$ad['id']] = (int) ($matched_ids[$ad['id']]) + 10;
                     } else {
                         $skipped_ids[$ad['id']] = $ad['id'];

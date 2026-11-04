@@ -27,7 +27,7 @@ class yf_manage_icons
 
     public function edit()
     {
-        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) ($_GET['id']));
+        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $a['id']) {
             return _e('No id!');
         }
@@ -37,7 +37,7 @@ class yf_manage_icons
             ->db_update_if_ok(self::table, ['name', 'active'], 'id=' . $a['id'])
             ->on_after_update(function () use ($a) {
                 cache_del([self::table]);
-                common()->admin_wall_add(['icon updated: ' . $_POST['name'] . '', $a['id']]);
+                common()->admin_wall_add(['icon updated: ' . ($_POST['name'] ?? null) . '', $a['id']]);
             })
             ->text('name')
             ->active_box()
@@ -53,7 +53,7 @@ class yf_manage_icons
             ->db_insert_if_ok(self::table, ['name', 'active'], [])
             ->on_after_update(function () {
                 cache_del([self::table]);
-                common()->admin_wall_add(['icon added: ' . $_POST['name'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['icon added: ' . ($_POST['name'] ?? null) . '', db()->insert_id()]);
             })
             ->text('name')
             ->active_box()
@@ -81,7 +81,7 @@ class yf_manage_icons
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [

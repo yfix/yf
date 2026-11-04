@@ -49,10 +49,10 @@ class yf_manage_dashboards2
     public function save()
     {
         main()->NO_GRAPHICS = true;
-        print_r(json_encode($_POST['structure']));
+        print_r(json_encode(($_POST['structure'] ?? null)));
         db()->update('dashboards2', db()->es([
-                    'data' => json_encode($_POST['structure']),
-                ]), 'id=' . (int) ($_GET['id']));
+                    'data' => json_encode(($_POST['structure'] ?? null)),
+                ]), 'id=' . (int) (($_GET['id'] ?? null)));
         exit;
     }
 
@@ -60,7 +60,7 @@ class yf_manage_dashboards2
     public function parse_structure()
     {
         main()->NO_GRAPHICS = true;
-        $data = $_POST['structure'];
+        $data = ($_POST['structure'] ?? null);
         foreach ($data['cols']  as $key => $_cols) {
             $cols[] = [
                 'class' => str_replace(' column ui-sortable', '', $_cols['class']),
@@ -81,28 +81,28 @@ class yf_manage_dashboards2
 
     public function delete()
     {
-        $id = $_GET['id'];
+        $id = ($_GET['id'] ?? null);
         $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE name="' . db()->es($id) . '" OR id=' . (int) $id);
         if ( ! $ds_info['id']) {
             return _e('No such record');
         }
         $_GET['id'] = $ds_info['id'];
         if ( ! empty($ds_info['id'])) {
-            db()->query('DELETE FROM ' . db('dashboards2') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            common()->admin_wall_add(['dashboard deleted: ' . $ds_info['name'] . '', $_GET['id']]);
+            db()->query('DELETE FROM ' . db('dashboards2') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            common()->admin_wall_add(['dashboard deleted: ' . $ds_info['name'] . '', ($_GET['id'] ?? null)]);
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
-            return js_redirect('./?object=' . $_GET['object']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
     }
 
 
     public function clone_item()
     {
-        $id = $_GET['id'];
+        $id = ($_GET['id'] ?? null);
         $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE name="' . db()->es($id) . '" OR id=' . (int) $id);
         if ( ! $ds_info['id']) {
             return _e('No such record');
@@ -113,44 +113,44 @@ class yf_manage_dashboards2
         $sql['name'] = $sql['name'] . '_clone';
         db()->insert('dashboards2', $sql);
         common()->admin_wall_add(['dashboard cloned: ' . $ds_info['name'], db()->insert_id()]);
-        return js_redirect('./?object=' . $_GET['object']);
+        return js_redirect('./?object=' . ($_GET['object'] ?? null));
     }
 
 
     public function active()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) ($_GET['id']));
+            $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($ds_info['id'])) {
-            db()->update('dashboards2', ['active' => (int) ! $ds_info['active']], 'id=' . (int) ($_GET['id']));
-            common()->admin_wall_add(['dashboard ' . $ds_info['name'] . ' ' . ($ds_info['active'] ? 'inactivated' : 'activated'), $_GET['id']]);
+            db()->update('dashboards2', ['active' => (int) ! $ds_info['active']], 'id=' . (int) (($_GET['id'] ?? null)));
+            common()->admin_wall_add(['dashboard ' . $ds_info['name'] . ' ' . ($ds_info['active'] ? 'inactivated' : 'activated'), ($_GET['id'] ?? null)]);
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
             echo $ds_info['active'] ? 0 : 1;
         } else {
-            return js_redirect('./?object=' . $_GET['object']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
     }
 
 
     public function lock()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) ($_GET['id']));
+            $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($ds_info['id'])) {
-            db()->update('dashboards2', ['lock' => (int) ! $ds_info['lock']], 'id=' . (int) ($_GET['id']));
-            common()->admin_wall_add(['dashboard ' . $ds_info['name'] . ' ' . ($ds_info['lock'] ? 'unlocked' : 'locked'), $_GET['id']]);
+            db()->update('dashboards2', ['lock' => (int) ! $ds_info['lock']], 'id=' . (int) (($_GET['id'] ?? null)));
+            common()->admin_wall_add(['dashboard ' . $ds_info['name'] . ' ' . ($ds_info['lock'] ? 'unlocked' : 'locked'), ($_GET['id'] ?? null)]);
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
             echo $ds_info['lock'] ? 0 : 1;
         } else {
-            return js_redirect('./?object=' . $_GET['object']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
     }
 
@@ -160,18 +160,18 @@ class yf_manage_dashboards2
         if (main()->is_post()) {
             if ( ! _ee()) {
                 db()->insert('dashboards2', db()->es([
-                    'name' => $_POST['name'],
-                    'type' => $_POST['type'],
-                    'active' => $_POST['active'],
+                    'name' => ($_POST['name'] ?? null),
+                    'type' => ($_POST['type'] ?? null),
+                    'active' => ($_POST['active'] ?? null),
                 ]));
                 $new_id = db()->insert_id();
-                common()->admin_wall_add(['dashboard added: ' . $_POST['name'], $new_id]);
-                return js_redirect('./?object=' . $_GET['object'] . '&action=edit&id=' . $new_id);
+                common()->admin_wall_add(['dashboard added: ' . ($_POST['name'] ?? null), $new_id]);
+                return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=edit&id=' . $new_id);
             }
         }
         $replace = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=' . $_GET['action'],
-            'back_link' => './?object=' . $_GET['object'],
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null),
+            'back_link' => './?object=' . ($_GET['object'] ?? null),
         ];
         return form2($replace)
             ->text('name')
@@ -184,12 +184,12 @@ class yf_manage_dashboards2
 
     public function edit()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         if ( ! $id) {
             return _e('No id');
         }
-        $a = db()->query_fetch('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) ($_GET['id']));
-        $a['redirect_link'] = './?object=' . $_GET['object'];
+        $a = db()->query_fetch('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+        $a['redirect_link'] = './?object=' . ($_GET['object'] ?? null);
         return form($a, ['autocomplete' => 'off'])
             ->validate([
                 'name' => 'trim|required',
@@ -208,7 +208,7 @@ class yf_manage_dashboards2
 
     public function view()
     {
-        $ds = $this->_get_dashboard_data($_GET['id']);
+        $ds = $this->_get_dashboard_data(($_GET['id'] ?? null));
 
         if ( ! $ds['id']) {
             return _e('No such record');
@@ -216,10 +216,10 @@ class yf_manage_dashboards2
         if (main()->is_post()) {
             if ( ! _ee()) {
                 db()->update('dashboards2', db()->es([
-                    'data' => json_encode($_POST['ds_data']),
+                    'data' => json_encode(($_POST['ds_data'] ?? null)),
                 ]), 'id=' . (int) ($ds['id']));
-                common()->admin_wall_add(['dashboard updated: ' . $ds['name'], $_GET['id']]);
-                return js_redirect('./?object=' . $_GET['object'] . '&action=' . $_GET['object']);
+                common()->admin_wall_add(['dashboard updated: ' . $ds['name'], ($_GET['id'] ?? null)]);
+                return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['object'] ?? null));
             }
         }
 
@@ -228,9 +228,9 @@ class yf_manage_dashboards2
             $rows = $this->_get_grid($ds['data']['rows'], false);
         }
         $replace = [
-            'save_link' => './?object=' . $_GET['object'] . '&action=save&id=' . $ds['id'],
-            'parse_structure' => './?object=' . $_GET['object'] . '&action=parse_structure&id=' . $ds['id'],
-            'lock_link' => './?object=' . $_GET['object'] . '&action=lock&id=' . $ds['id'],
+            'save_link' => './?object=' . ($_GET['object'] ?? null) . '&action=save&id=' . $ds['id'],
+            'parse_structure' => './?object=' . ($_GET['object'] ?? null) . '&action=parse_structure&id=' . $ds['id'],
+            'lock_link' => './?object=' . ($_GET['object'] ?? null) . '&action=lock&id=' . $ds['id'],
             'dashboard_name' => $ds['name'],
             'rows' => $rows,
             'lock' => $ds['lock'],
@@ -364,7 +364,7 @@ class yf_manage_dashboards2
     {
         $params = null;
         if ( ! $id) {
-            $id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
+            $id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : ($_GET['id'] ?? null));
         }
         if ( ! $id) {
             return false;

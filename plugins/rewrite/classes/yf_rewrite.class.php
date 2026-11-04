@@ -56,8 +56,8 @@ class yf_rewrite
                     $this->DEFAULT_HOST = $host;
                 }
             }
-            if ( ! $this->DEFAULT_HOST && $_SERVER['HTTP_HOST']) {
-                $this->DEFAULT_HOST = $_SERVER['HTTP_HOST'];
+            if ( ! $this->DEFAULT_HOST && ($_SERVER['HTTP_HOST'] ?? null)) {
+                $this->DEFAULT_HOST = ($_SERVER['HTTP_HOST'] ?? null);
             }
         }
         if ( ! $this->DEFAULT_PORT) {
@@ -67,8 +67,8 @@ class yf_rewrite
                     $this->DEFAULT_PORT = $port;
                 }
             }
-            if ( ! $this->DEFAULT_PORT && $_SERVER['SERVER_PORT'] && ! in_array($_SERVER['SERVER_PORT'], ['80', '443'])) {
-                $this->DEFAULT_PORT = $_SERVER['SERVER_PORT'];
+            if ( ! $this->DEFAULT_PORT && ($_SERVER['SERVER_PORT'] ?? null) && ! in_array(($_SERVER['SERVER_PORT'] ?? null), ['80', '443'])) {
+                $this->DEFAULT_PORT = ($_SERVER['SERVER_PORT'] ?? null);
             }
             if ( ! $this->DEFAULT_PORT) {
                 $this->DEFAULT_PORT = '80';
@@ -374,16 +374,16 @@ class yf_rewrite
             }
         }
         if ($params['object'] == '@object') {
-            $params['object'] = $_GET['object'];
+            $params['object'] = ($_GET['object'] ?? null);
         }
         if ($params['action'] == '@action') {
-            $params['action'] = $_GET['action'];
+            $params['action'] = ($_GET['action'] ?? null);
         }
         if ($params['id'] == '@id') {
-            $params['id'] = $_GET['id'];
+            $params['id'] = ($_GET['id'] ?? null);
         }
         if ($params['page'] == '@page') {
-            $params['page'] = $_GET['page'];
+            $params['page'] = ($_GET['page'] ?? null);
         }
         foreach ((array) $params as $k => $v) {
             if (empty($v) && ($v !== '0')) {
@@ -401,7 +401,7 @@ class yf_rewrite
                 $params['port'] = $port;
             }
         }
-        $REWRITE_ENABLED = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
+        $REWRITE_ENABLED = ($GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] ?? null);
         if ($REWRITE_ENABLED && $for_section != 'admin') {
             $link = $this->REWRITE_PATTERNS['yf']->_build($params, $this);
         } else {

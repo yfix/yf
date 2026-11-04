@@ -431,8 +431,8 @@ class yf_main
             return false;
         }
         $this->events->fire('main.before_rewrite');
-        $host = $_SERVER['HTTP_HOST'];
-        $request_uri = $_SERVER['REQUEST_URI'];
+        $host = ($_SERVER['HTTP_HOST'] ?? null);
+        $request_uri = ($_SERVER['REQUEST_URI'] ?? null);
         // Override by WEB_PATH
         if (defined('WEB_PATH') && ! $this->web_path_was_not_defined) {
             $w = parse_url(WEB_PATH);
@@ -446,13 +446,13 @@ class yf_main
             }
         }
         if (isset($_GET['host']) && ! empty($_GET['host'])) {
-            $host = $_GET['host'];
+            $host = ($_GET['host'] ?? null);
         }
         list($u) = explode('?', trim($request_uri, '/'));
         $u_arr = explode('/', preg_replace('/\.htm.*/', '', $u));
 
-        $orig_object = $_GET['object'];
-        $orig_action = $_GET['action'];
+        $orig_object = ($_GET['object'] ?? null);
+        $orig_action = ($_GET['action'] ?? null);
 
         unset($_GET['object'], $_GET['action']);
 
@@ -477,8 +477,8 @@ class yf_main
             $utm_source = $utm_source ?? $_POST['utm_source'] ?? null;
             $utm_source = $utm_source ?? $_COOKIE['utm_source'] ?? null;
             if (! $utm_source && ($_SERVER['HTTP_REFERER'] ?? false)) {
-                $cur_domain = trim($_SERVER['HTTP_HOST']);
-                $ref_domain = trim(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST));
+                $cur_domain = trim(($_SERVER['HTTP_HOST'] ?? null));
+                $ref_domain = trim(parse_url(($_SERVER['HTTP_REFERER'] ?? null), PHP_URL_HOST));
                 if ($ref_domain && $ref_domain != $cur_domain) {
                     $utm_source = $ref_domain;
                 }
@@ -562,8 +562,8 @@ class yf_main
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
         $this->events->fire('main.before_db');
         // Check if current object/action not required db connection
-        $get_object = $_GET['object'];
-        $get_action = $_GET['action'];
+        $get_object = ($_GET['object'] ?? null);
+        $get_action = ($_GET['action'] ?? null);
         if ($this->NO_DB_FOR && $get_object && isset($this->NO_DB_FOR[$get_object])) {
             if (empty($this->NO_DB_FOR[$get_object]) || ($get_action && in_array($get_action, $this->NO_DB_FOR[$get_object]))) {
                 $this->NO_DB_CONNECT = true;
@@ -690,7 +690,7 @@ class yf_main
         if (isset($_spider_name)) {
             return $_spider_name;
         }
-        $SPIDER_NAME = $this->modules['common']->_is_spider($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
+        $SPIDER_NAME = $this->modules['common']->_is_spider(($_SERVER['REMOTE_ADDR'] ?? null), ($_SERVER['HTTP_USER_AGENT'] ?? null));
         if (empty($SPIDER_NAME)) {
             if (preg_match('/(bot|spider|crawler|curl|wget)/ims', $SPIDER_NAME)) {
                 $SPIDER_NAME = 'Unknown spider';
@@ -741,7 +741,7 @@ class yf_main
         if (! conf('SITE_ID')) {
             $site_id = 1;
             foreach ((array) $this->get_data('sites') as $site) {
-                if ($site['name'] == $_SERVER['HTTP_HOST']) {
+                if ($site['name'] == ($_SERVER['HTTP_HOST'] ?? null)) {
                     $site_id = $site['id'];
                     break;
                 }
@@ -1280,7 +1280,7 @@ class yf_main
             '[CLASS]' => $class_name,
             '[METHOD]' => $method_name,
             '[LANG]' => defined('DEFAULT_LANG') ? DEFAULT_LANG : conf('language'),
-            '[DOMAIN]' => defined('CUR_DOMAIN_LONG') ? constant('CUR_DOMAIN_LONG') : $_SERVER['HTTP_HOST'],
+            '[DOMAIN]' => defined('CUR_DOMAIN_LONG') ? constant('CUR_DOMAIN_LONG') : ($_SERVER['HTTP_HOST'] ?? null),
             '[CATEGORY]' => conf('current_category'),
             '[DEBUG]' => (int) DEBUG_MODE,
         ];
@@ -1305,8 +1305,8 @@ class yf_main
         if (! strlen($class_name) || ! strlen($method_name)) {
             return false;
         }
-        $class_name === '@object' && $class_name = $_GET['object'];
-        $method_name === '@action' && $method_name = $_GET['action'];
+        $class_name === '@object' && $class_name = ($_GET['object'] ?? null);
+        $method_name === '@action' && $method_name = ($_GET['action'] ?? null);
         if (! $this->USE_SYSTEM_CACHE) {
             $use_cache = false;
         }
@@ -1733,23 +1733,23 @@ class yf_main
             ini_set('display_errors', 'stdout');
         }
         if (@$_SERVER['SERVER_ADDR'] !== null) {
-            $_SERVER['SERVER_ADDR'] = preg_replace('#[^0-9\.]+#', '', trim($_SERVER['SERVER_ADDR']));
+            $_SERVER['SERVER_ADDR'] = preg_replace('#[^0-9\.]+#', '', trim(($_SERVER['SERVER_ADDR'] ?? null)));
         }
         if (@$_SERVER['SERVER_PORT'] !== null) {
-            $_SERVER['SERVER_PORT'] = (int) $_SERVER['SERVER_PORT'];
+            $_SERVER['SERVER_PORT'] = (int) ($_SERVER['SERVER_PORT'] ?? null);
         }
         if (@$_SERVER['HTTP_HOST'] !== null) {
-            if (false !== ($pos = strpos($_SERVER['HTTP_HOST'], ':'))) {
-                $_SERVER['HTTP_HOST'] = substr($_SERVER['HTTP_HOST'], 0, $pos);
+            if (false !== ($pos = strpos(($_SERVER['HTTP_HOST'] ?? null), ':'))) {
+                $_SERVER['HTTP_HOST'] = substr(($_SERVER['HTTP_HOST'] ?? null), 0, $pos);
             }
-            $_SERVER['HTTP_HOST'] = strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim($_SERVER['HTTP_HOST']))));
+            $_SERVER['HTTP_HOST'] = strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim(($_SERVER['HTTP_HOST'] ?? null)))));
         }
         if (@$_SERVER['REQUEST_URI'] !== null) {
             // Possible bug when apache sends full url into request_uri, like this: "http://test.dev/" instead of "/"
-            $p = parse_url($_SERVER['REQUEST_URI']);
+            $p = parse_url(($_SERVER['REQUEST_URI'] ?? null));
             if (isset($p['scheme']) || isset($p['host'])) {
                 $_SERVER['REQUEST_URI'] = ($p['path'] ?: '/') . ($p['query'] ? '?' . $p['query'] : '');
-                if ($_SERVER['QUERY_STRING'] != $p['query']) {
+                if (($_SERVER['QUERY_STRING'] ?? null) != $p['query']) {
                     $_SERVER['QUERY_STRING'] = $p['query'];
                     parse_str($p['query'], $_get);
                     foreach ((array) $_get as $k => $v) {
@@ -1801,7 +1801,7 @@ class yf_main
         ! defined('REAL_PATH') && define('REAL_PATH', SITE_PATH);
         // Set WEB_PATH (if not done yet)
         if (! defined('WEB_PATH')) {
-            $request_uri = $_SERVER['REQUEST_URI'];
+            $request_uri = ($_SERVER['REQUEST_URI'] ?? null);
             $cur_web_path = '';
             if (substr((string) $request_uri, -1) === '/') {
                 $cur_web_path = substr($request_uri, 0, -1);
@@ -1810,8 +1810,8 @@ class yf_main
             }
             $host = '';
             $conf_domains = conf('DOMAINS');
-            if ($_SERVER['HTTP_HOST']) {
-                $host = $_SERVER['HTTP_HOST'];
+            if (($_SERVER['HTTP_HOST'] ?? null)) {
+                $host = ($_SERVER['HTTP_HOST'] ?? null);
             } elseif (is_array($conf_domains)) {
                 $host = (string) current($conf_domains);
             } else {
@@ -1821,7 +1821,7 @@ class yf_main
             define(
                 'WEB_PATH',
                 ($this->is_https() ? 'https://' : 'http://')
-                    . $host . ($_SERVER['SERVER_PORT'] && ! in_array($_SERVER['SERVER_PORT'], ['80', '443']) ? ':' . $_SERVER['SERVER_PORT'] : '')
+                    . $host . (($_SERVER['SERVER_PORT'] ?? null) && ! in_array(($_SERVER['SERVER_PORT'] ?? null), ['80', '443']) ? ':' . ($_SERVER['SERVER_PORT'] ?? null) : '')
                     . str_replace(['\\', '//'], '/', (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path) . '/')
             );
         }
@@ -1846,7 +1846,7 @@ class yf_main
                 ini_set('display_errors', 'stderr');
             }
             // Parse console options into $_GET array
-            foreach ((array) $_SERVER['argv'] as $v) {
+            foreach ((array) ($_SERVER['argv'] ?? null) as $v) {
                 if (strpos($v, '--') !== 0) {
                     continue;
                 }
@@ -1864,7 +1864,7 @@ class yf_main
         }
         $_GET['object'] = str_replace(['yf_', '-'], ['', '_'], preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['object'] ?? ''))));
         $_GET['action'] = str_replace('-', '_', preg_replace('/[^a-z_\-0-9]*/', '', strtolower(trim($_GET['action'] ?? ''))));
-        if (! $_GET['action']) {
+        if (! ($_GET['action'] ?? null)) {
             $_GET['action'] = defined('DEFAULT_ACTION') ? constant('DEFAULT_ACTION') : 'show';
         }
         ! conf('css_framework') && conf('css_framework', 'bs3');
@@ -2142,16 +2142,16 @@ class yf_main
 
     public function is_https()
     {
-        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && strtolower($_SERVER['HTTPS']) != 'off')
-            || (isset($_SERVER['SSL_PROTOCOL']) && $_SERVER['SSL_PROTOCOL'])
+        return (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] ?? null) && strtolower(($_SERVER['HTTPS'] ?? null)) != 'off')
+            || (isset($_SERVER['SSL_PROTOCOL']) && ($_SERVER['SSL_PROTOCOL'] ?? null))
             // Non-standard header used by Microsoft applications and load-balancers:
-            || (isset($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) == 'on')
+            || (isset($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower(($_SERVER['HTTP_FRONT_END_HTTPS'] ?? null)) == 'on')
             // http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/x-forwarded-headers.html
-            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https')
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower(($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null)) == 'https')
             // http://stackoverflow.com/questions/16042647/whats-the-de-facto-standard-for-a-reverse-proxy-to-tell-the-backend-ssl-is-used
-            || (isset($_SERVER['HTTP_X_URL_SCHEME']) && strtolower($_SERVER['HTTP_X_URL_SCHEME']) == 'https')
+            || (isset($_SERVER['HTTP_X_URL_SCHEME']) && strtolower(($_SERVER['HTTP_X_URL_SCHEME'] ?? null)) == 'https')
             // http://serverfault.com/questions/302282/how-can-i-use-haproxy-with-ssl-and-get-x-forwarded-for-headers-and-tell-php-that
-            || (isset($_SERVER['HTTP_SCHEME']) && strtolower($_SERVER['HTTP_SCHEME']) == 'https');
+            || (isset($_SERVER['HTTP_SCHEME']) && strtolower(($_SERVER['HTTP_SCHEME'] ?? null)) == 'https');
     }
 
     public function is_dev()
@@ -2218,7 +2218,7 @@ class yf_main
         if (! $this->is_console()) {
             try {
                 require_php_lib('mobile_detect');
-                $detect = new Mobile_Detect([], strtolower($_SERVER['HTTP_USER_AGENT']));
+                $detect = new Mobile_Detect([], strtolower(($_SERVER['HTTP_USER_AGENT'] ?? null)));
                 $this->_is_mobile = (bool) $detect->isMobile();
             } catch (Exception $e) {
             }

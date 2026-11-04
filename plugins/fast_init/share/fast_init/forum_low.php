@@ -26,15 +26,15 @@ return function () {
 
     // Get type of display
     $TYPE = 'main';
-    $_type = $_GET['id'][0];
-    if (strlen($_GET['id']) && in_array($_type, ['f', 't'])) {
+    $_type = ($_GET['id'][0] ?? null);
+    if (strlen(($_GET['id'] ?? null)) && in_array($_type, ['f', 't'])) {
         if ($_type == 'f') {
             $TYPE = 'forum';
         } elseif ($_type == 't') {
             $TYPE = 'topic';
         }
     }
-    $ID = (int) (substr($_GET['id'], 1));
+    $ID = (int) (substr(($_GET['id'] ?? null), 1));
     // Default low page
     $body = '';
     if ($TYPE == 'main' || empty($ID)) {

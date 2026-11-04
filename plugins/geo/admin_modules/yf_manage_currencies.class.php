@@ -10,9 +10,9 @@ class yf_manage_currencies
 {
     public function show()
     {
-        $filter_name = $_GET['object'] . '__show';
+        $filter_name = ($_GET['object'] ?? null) . '__show';
         return table('SELECT * FROM ' . db('currencies'), [
-                'filter' => $_SESSION[$filter_name],
+                'filter' => ($_SESSION[$filter_name] ?? null),
                 'filter_params' => ['name' => 'like'],
             ])
             ->text('id')
@@ -28,7 +28,7 @@ class yf_manage_currencies
     public function edit()
     {
         $_GET['id'] = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
-        $a = db()->query_fetch('SELECT * FROM ' . db('currencies') . ' WHERE id="' . _es($_GET['id']) . '"');
+        $a = db()->query_fetch('SELECT * FROM ' . db('currencies') . ' WHERE id="' . _es(($_GET['id'] ?? null)) . '"');
         if ( ! $a['id']) {
             return _e('No id!');
         }
@@ -38,7 +38,7 @@ class yf_manage_currencies
             ->db_update_if_ok('currencies', ['name', 'sign', 'active'], 'id="' . _es($a['id']) . '"')
             ->on_after_update(function () use ($a) {
                 cache_del(['currencies']);
-                common()->admin_wall_add(['icon updated: ' . $_POST['name'] . '', $a['id']]);
+                common()->admin_wall_add(['icon updated: ' . ($_POST['name'] ?? null) . '', $a['id']]);
             })
             ->text('name')
             ->text('sign')
@@ -55,7 +55,7 @@ class yf_manage_currencies
             ->db_insert_if_ok('currencies', ['name', 'id', 'sign', 'active'], [])
             ->on_after_update(function () {
                 cache_del(['currencies']);
-                common()->admin_wall_add(['icon added: ' . $_POST['name'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['icon added: ' . ($_POST['name'] ?? null) . '', db()->insert_id()]);
             })
             ->text('id')
             ->text('name')
@@ -85,20 +85,20 @@ class yf_manage_currencies
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
-        $filter_name = $_GET['object'] . '__show';
+        $filter_name = ($_GET['object'] ?? null) . '__show';
         $r = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name,
-            'clear_url' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name . '&page=clear',
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name,
+            'clear_url' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name . '&page=clear',
         ];
         $order_fields = [
             'name' => 'name',
         ];
         $per_page = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000];
         return form($r, [
-                'selected' => $_SESSION[$filter_name],
+                'selected' => ($_SESSION[$filter_name] ?? null),
                 'class' => 'form-vertical',
             ])
             ->text('name', ['class' => 'input-medium'])

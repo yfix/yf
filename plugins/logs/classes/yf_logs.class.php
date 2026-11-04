@@ -80,7 +80,7 @@ class yf_logs
         // Prepare db record
         $IP = is_object(common()) ? common()->get_ip() : false;
         if ( ! $IP) {
-            $IP = $_SERVER['REMOTE_ADDR'];
+            $IP = ($_SERVER['REMOTE_ADDR'] ?? null);
         }
         if ($this->STORE_USER_AUTH) {
             db()->INSERT('log_auth', [
@@ -136,7 +136,7 @@ class yf_logs
         // Prepare db record
         $IP = is_object(common()) ? common()->get_ip() : false;
         if ( ! $IP) {
-            $IP = $_SERVER['REMOTE_ADDR'];
+            $IP = ($_SERVER['REMOTE_ADDR'] ?? null);
         }
         if ($this->STORE_ADMIN_AUTH) {
             db()->INSERT('log_admin_auth', [

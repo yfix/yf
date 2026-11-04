@@ -50,12 +50,12 @@ class yf_docs
     /***/
     public function jsonp()
     {
-        $callback = (string) $_GET['callback'];
+        $callback = (string) ($_GET['callback'] ?? null);
         if ( ! $callback) {
             $callback = 'callback';
         }
         $base_dir = YF_PATH . '.dev/demo/data/';
-        $filename = basename($_GET['filename']);
+        $filename = basename(($_GET['filename'] ?? null));
         $json = '{}';
         if (preg_match('/^[a-zA-Z\-\.]+\.json$/', $filename)) {
             $json = file_get_contents($base_dir . $filename);
@@ -76,7 +76,7 @@ class yf_docs
             }
             $methods[$m] = $m;
         }
-        $id = $_GET['id'];
+        $id = ($_GET['id'] ?? null);
         if ($id) {
             $func = in_array($id, $methods) ? $id : 'misc';
             return $this->$func();
@@ -92,8 +92,8 @@ class yf_docs
     /***/
     public function _show_for($obj, $id = '')
     {
-        $id = $id ?: $_GET['id'];
-        $action = $_GET['action'];
+        $id = $id ?: ($_GET['id'] ?? null);
+        $action = ($_GET['action'] ?? null);
         $only_method = false;
         if (preg_match('~^[a-z0-9_]+$~ims', $id)) {
             $only_method = strtolower($id);
@@ -311,11 +311,11 @@ class yf_docs
     /***/
     public function _hook_side_column()
     {
-        $custom_class_name = 'sample_' . $_GET['action'];
+        $custom_class_name = 'sample_' . ($_GET['action'] ?? null);
         $custom_obj = _class_safe($custom_class_name);
         $hook_name = __FUNCTION__;
         // Try to load side column hook from subclass
-        if ($_GET['action'] && is_object($custom_obj) && method_exists($custom_obj, $hook_name)) {
+        if (($_GET['action'] ?? null) && is_object($custom_obj) && method_exists($custom_obj, $hook_name)) {
             // class should be instantinated with full path before this
             $custom = $custom_obj->$hook_name();
             if ($custom) {

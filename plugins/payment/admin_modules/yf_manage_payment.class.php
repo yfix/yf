@@ -26,11 +26,11 @@ class yf_manage_payment
         $filter = &$this->filter;
         $url = &$this->url;
         // setup property
-        $object = $_GET['object'];
-        $action = $_GET['action'];
-        $id = $_GET['id'];
+        $object = ($_GET['object'] ?? null);
+        $action = ($_GET['action'] ?? null);
+        $id = ($_GET['id'] ?? null);
         $filter_name = $object . '__' . $action;
-        $filter = $_SESSION[$filter_name];
+        $filter = ($_SESSION[$filter_name] ?? null);
         // url
         $url = [
             'balance' => url_admin([
@@ -189,8 +189,8 @@ class yf_manage_payment
                 $result = $this->_filter_form_show($filter, $replace);
             break;
             case 'balance':
-                $user_id = (int) $_GET['user_id'];
-                $account_id = (int) $_GET['account_id'];
+                $user_id = (int) ($_GET['user_id'] ?? null);
+                $account_id = (int) ($_GET['account_id'] ?? null);
                 $url_filter = url_admin($url_base + [
                     'user_id' => $user_id,
                     'account_id' => $account_id,
@@ -222,8 +222,8 @@ class yf_manage_payment
                 ]);
             break;
             case 'manage_payment__balance':
-                $user_id = (int) $_GET['user_id'];
-                $account_id = (int) $_GET['account_id'];
+                $user_id = (int) ($_GET['user_id'] ?? null);
+                $account_id = (int) ($_GET['account_id'] ?? null);
                 $url_redirect_url = url_admin([
                     'object' => $object,
                     'action' => 'balance',
@@ -394,8 +394,8 @@ class yf_manage_payment
         $filter_name = &$this->filter_name;
         $filter = &$this->filter;
         $url = &$this->url;
-        $user_id = (int) $_GET['user_id'];
-        $account_id = (int) $_GET['account_id'];
+        $user_id = (int) ($_GET['user_id'] ?? null);
+        $account_id = (int) ($_GET['account_id'] ?? null);
         $url_back = url_admin('/@object');
         $payment_api = _class('payment_api');
         $payment_status = $payment_api->get_status();
@@ -460,17 +460,17 @@ class yf_manage_payment
             ->on_validate_ok(function ($data, $extra, $rules) use (&$user_id, &$account_id, &$account) {
                 $is_account = null;
                 $payment_api = _class('payment_api');
-                $provider_name = $_POST['provider_name'];
+                $provider_name = ($_POST['provider_name'] ?? null);
                 $provider_name = empty($provider_name) ? 'administration' : $provider_name;
-                $operation = $_POST['operation'];
+                $operation = ($_POST['operation'] ?? null);
                 if ($operation == 'payment') {
                     $provider_name = 'administration';
                 }
                 $options = [
                     'user_id' => $user_id,
                     'account_id' => $account_id,
-                    'amount' => $_POST['amount'],
-                    'operation_title' => $_POST['title'],
+                    'amount' => ($_POST['amount'] ?? null),
+                    'operation_title' => ($_POST['title'] ?? null),
                     'operation' => $operation,
                     'provider_name' => $provider_name,
                     'is_balance_limit_lower' => false,
@@ -494,8 +494,8 @@ class yf_manage_payment
                 common()->$message($result['status_message'], ['translate' => false]);
                 if ( ! $is_account) {
                     $url = url_admin([
-                        'object' => $_GET['object'],
-                        'action' => $_GET['action'],
+                        'object' => ($_GET['object'] ?? null),
+                        'action' => ($_GET['action'] ?? null),
                         'user_id' => $user_id,
                         'account_id' => $account_id,
                     ]);
@@ -535,7 +535,7 @@ class yf_manage_payment
                 'providers' => $providers,
             ]);
         } else {
-            if ( ! $_POST['amount']) {
+            if ( ! ($_POST['amount'] ?? null)) {
                 common()->message_warning('Счет не определен', ['translate' => false]);
             }
         }

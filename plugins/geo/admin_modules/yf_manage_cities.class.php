@@ -29,7 +29,7 @@ class yf_manage_cities
 
     public function edit()
     {
-        $a = db()->query_fetch('SELECT * FROM ' . db('cities') . ' WHERE id=' . (int) ($_GET['id']));
+        $a = db()->query_fetch('SELECT * FROM ' . db('cities') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $a['id']) {
             return _e('No id!');
         }
@@ -39,7 +39,7 @@ class yf_manage_cities
             ->db_update_if_ok('cities', ['name', 'active'], 'id=' . $a['id'])
             ->on_after_update(function () use ($a) {
                 cache_del(['cities']);
-                common()->admin_wall_add(['city updated: ' . $_POST['name'] . '', $a['id']]);
+                common()->admin_wall_add(['city updated: ' . ($_POST['name'] ?? null) . '', $a['id']]);
             })
             ->text('name')
             ->text('country')
@@ -60,7 +60,7 @@ class yf_manage_cities
             ->db_insert_if_ok('cities', ['name', 'active'], [])
             ->on_after_update(function () {
                 cache_del(['cities']);
-                common()->admin_wall_add(['city added: ' . $_POST['name'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['city added: ' . ($_POST['name'] ?? null) . '', db()->insert_id()]);
             })
             ->text('name')
             ->text('country')
@@ -93,13 +93,13 @@ class yf_manage_cities
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
-        $filter_name = $_GET['object'] . '__show';
+        $filter_name = ($_GET['object'] ?? null) . '__show';
         $r = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name,
-            'clear_url' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name . '&page=clear',
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name,
+            'clear_url' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name . '&page=clear',
         ];
         $order_fields = [
             'code' => 'code',
@@ -108,7 +108,7 @@ class yf_manage_cities
         ];
         $per_page = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000];
         return form($r, [
-                'selected' => $_SESSION[$filter_name],
+                'selected' => ($_SESSION[$filter_name] ?? null),
                 'class' => 'form-vertical',
             ])
             ->text('name')

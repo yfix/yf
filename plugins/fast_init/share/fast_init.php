@@ -17,7 +17,7 @@ require_once YF_PATH . 'functions/yf_aliases.php';
 
 if ( ! isset($CONF['fast_init_route']) || ! is_callable($CONF['fast_init_route'])) {
     $fast_init_route = function ($table) {
-        $request = ($_GET['object'] && $_GET['action']) ? '/' . $_GET['object'] . '/' . $_GET['action'] : $_SERVER['REQUEST_URI'];
+        $request = (($_GET['object'] ?? null) && ($_GET['action'] ?? null)) ? '/' . ($_GET['object'] ?? null) . '/' . ($_GET['action'] ?? null) : ($_SERVER['REQUEST_URI'] ?? null);
         foreach ($table as $uri => $action) {
             if (strpos($request, $uri) === 0) {
                 return $action;

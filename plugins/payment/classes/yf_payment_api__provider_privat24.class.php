@@ -451,10 +451,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote
         $is_server = ! empty($_GET['server']);
         $result = null;
         // check operation
-        $operation_id = (int) $_GET['operation_id'];
+        $operation_id = (int) ($_GET['operation_id'] ?? null);
         // response POST:
-        $payment = $_POST['payment'];
-        $signature = $_POST['signature'];
+        $payment = ($_POST['payment'] ?? null);
+        $signature = ($_POST['signature'] ?? null);
         // test data
         // $payment = 'amt=16.00&ccy=UAH&details=Поплнение счета (Приват 24)&ext_details=3#71#9#3#16&pay_way=privat24&order=71&merchant=104702&state=test&date=171214180311&ref=test payment&payCountry=UA';
         // $signature = '585b0c173ec36300a5ff77f6cbd9f195492f0c0d';

@@ -40,18 +40,18 @@ class yf_manage_shop_upload_images
             }
             return $form;
         }
-        if ($_POST['supplier']) {
-            $SUPPLIER_ID = $_POST['supplier'];
+        if (($_POST['supplier'] ?? null)) {
+            $SUPPLIER_ID = ($_POST['supplier'] ?? null);
         }
-        if ($_POST['server_path']) {
-            $server_path = strip_tags(ltrim($_POST['server_path'], ' .-_+=|,!@#%~&*();:\'"'));
+        if (($_POST['server_path'] ?? null)) {
+            $server_path = strip_tags(ltrim(($_POST['server_path'] ?? null), ' .-_+=|,!@#%~&*();:\'"'));
             if (file_exists($server_path) && is_readable($server_path)) {
                 $archive_name = $server_path;
                 $file_type = mime_content_type($archive_name);
                 $uploaded = true;
             }
         } else {
-            $file = $_FILES['archive'];
+            $file = ($_FILES['archive'] ?? null);
             file_put_contents($this->ARCHIVE_FOLDER . date('d-m-Y') . '.log', "\n[" . $file['name'] . "]\n", FILE_APPEND);
             $new_name = md5(rand() . microtime()) . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
             rename($file['name'], $new_name);
@@ -60,7 +60,7 @@ class yf_manage_shop_upload_images
             $uploaded = common()->upload_archive($archive_name);
         }
         if ( ! $uploaded) {
-            return js_redirect('./?object=' . $_GET['object'] . '&action=' . $_GET['action']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null));
         }
         $EXTRACT_PATH = $this->ARCHIVE_FOLDER . $SUPPLIER_ID . '_id_' . date('H_i_s');
         if ( ! file_exists($EXTRACT_PATH)) {
@@ -176,7 +176,7 @@ class yf_manage_shop_upload_images
         db()->insert(db('shop_product_images'), [
                         'product_id' => $id,
                         'md5' => $md5,
-                        'date_uploaded' => $_SERVER['REQUEST_TIME'],
+                        'date_uploaded' => ($_SERVER['REQUEST_TIME'] ?? null),
                 ]);
         $i = db()->insert_id();
 

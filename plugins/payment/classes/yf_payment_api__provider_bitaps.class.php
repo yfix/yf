@@ -125,20 +125,20 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
     public function _api_response($options)
     {
         $_data = $_provider = $_options = null;
-        $operation_id = isset($_GET['operation_id']) ? (int) ($_GET['operation_id']) : '';
+        $operation_id = isset($_GET['operation_id']) ? (int) (($_GET['operation_id'] ?? null)) : '';
         $this->payment_api->dump(['name' => ucfirst($this->PROVIDER_NAME), 'operation_id' => $operation_id]);
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
 
         $is_response_error = false;
         $options['operation_id'] = $operation_id;
-        $options['address'] = $_POST['address'] ?: '';
-        $options['invoice'] = $_POST['invoice'] ?: '';
-        $options['code'] = $_POST['code'] ?: '';
-        $options['amount'] = $_POST['amount'] ?: '';
-        $options['confirmations'] = $_POST['confirmations'] ?: '';
-        $options['payout_service_fee'] = $_POST['payout_service_fee'] ?: '';
-        $options['payout_miner_fee'] = $_POST['payout_miner_fee'] ?: '';
+        $options['address'] = ($_POST['address'] ?? null) ?: '';
+        $options['invoice'] = ($_POST['invoice'] ?? null) ?: '';
+        $options['code'] = ($_POST['code'] ?? null) ?: '';
+        $options['amount'] = ($_POST['amount'] ?? null) ?: '';
+        $options['confirmations'] = ($_POST['confirmations'] ?? null) ?: '';
+        $options['payout_service_fee'] = ($_POST['payout_service_fee'] ?? null) ?: '';
+        $options['payout_miner_fee'] = ($_POST['payout_miner_fee'] ?? null) ?: '';
         if ( ! empty($operation_id)) {
             $this->_external_response($options);
         } else {

@@ -71,7 +71,7 @@ class yf_manage_faq
     public function save()
     {
         $cur_items = null;
-        $lang = $_GET['page'];
+        $lang = ($_GET['page'] ?? null);
         if ( ! is_post() || ! $lang || ! isset($this->all_langs[$lang])) {
             return js_redirect(url('/@object'));
         }
@@ -79,7 +79,7 @@ class yf_manage_faq
         $old_info = $this->_auto_update_items_orders($lang);
         $batch = [];
         $old = [];
-        foreach ((array) json_decode((string) $_POST['items'], $assoc = true) as $order_id => $info) {
+        foreach ((array) json_decode((string) ($_POST['items'] ?? null), $assoc = true) as $order_id => $info) {
             $item_id = (int) $info['item_id'];
             if ( ! $item_id || ! isset($items[$item_id])) {
                 continue;
@@ -119,8 +119,8 @@ class yf_manage_faq
 
     public function add()
     {
-        $a['locale'] = substr($_GET['page'], 0, 2) ?: 'ru';
-        $a['parent_id'] = (int) $_GET['id'];
+        $a['locale'] = substr(($_GET['page'] ?? null), 0, 2) ?: 'ru';
+        $a['parent_id'] = (int) ($_GET['id'] ?? null);
         $parent = $a['parent_id'] ? (array) from(self::table)->whereid($a['parent_id'])->get() : [];
         if ( ! $a['locale'] && $parent['locale']) {
             $a['locale'] = $parent['locale'];
@@ -150,7 +150,7 @@ class yf_manage_faq
 
     public function edit()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if ($id) {
             $a = from(self::table)->whereid($id)->get();
         }
@@ -168,7 +168,7 @@ class yf_manage_faq
         $a = (array) $_POST + (array) $a;
         if (is_post()) {
             foreach ((array) $keys_to_fix as $k) {
-                if (false !== strpos($_POST[$k], '{') && false !== strpos($_POST[$k], '}')) {
+                if (false !== strpos(($_POST[$k] ?? null), '{') && false !== strpos(($_POST[$k] ?? null), '}')) {
                     $_POST[$k] = str_replace(array_values($exec_fix), array_keys($exec_fix), $_POST[$k]);
                 }
             }
@@ -204,7 +204,7 @@ class yf_manage_faq
 
     public function delete()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if ($id) {
             $a = from(self::table)->whereid($id)->get();
             module_safe('manage_revisions')->add([
@@ -226,7 +226,7 @@ class yf_manage_faq
 
     public function active()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if ($id) {
             $a = from(self::table)->whereid($id)->get();
         }

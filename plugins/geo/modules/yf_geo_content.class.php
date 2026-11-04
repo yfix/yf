@@ -45,7 +45,7 @@ class yf_geo_content
             $Q = db()->query(
                 'SELECT * 
 				FROM ' . db('geo_regions') . " 
-				WHERE country = '" . _es($_POST['country']) . "' 
+				WHERE country = '" . _es(($_POST['country'] ?? null)) . "' 
 				ORDER BY name ASC"
             );
             while ($A = db()->fetch_assoc($Q)) {
@@ -56,13 +56,13 @@ class yf_geo_content
                 $have_no_regions = true;
             }
             // Get cities list
-            if (strlen($_POST['region'])) {
+            if (strlen(($_POST['region'] ?? null))) {
                 $_cities[''] = '  --   Please select city   --  ';
                 $Q = db()->query(
                     'SELECT * 
 					FROM ' . db('geo_city_location') . " 
-					WHERE region = '" . _es($_POST['region']) . "' 
-						AND country = '" . _es($_POST['country']) . "' 
+					WHERE region = '" . _es(($_POST['region'] ?? null)) . "' 
+						AND country = '" . _es(($_POST['country'] ?? null)) . "' 
 						AND city != ''
 					GROUP BY city
 					ORDER BY city ASC"
@@ -74,12 +74,12 @@ class yf_geo_content
         }
         // Prepare template
         $replace = [
-            'country_box' => common()->select_box('country', $_countries, $_POST['country'], false, 2, '', false),
-            'region_box' => common()->select_box('region', $_regions, $_POST['region'], false, 2, '', false),
-            'city_box' => common()->select_box('city', $_cities, $_POST['city'], false, 2, '', false),
-            'sel_country' => $_POST['country'],
-            'sel_region' => $_POST['region'],
-            'sel_city' => $_POST['city'],
+            'country_box' => common()->select_box('country', $_countries, ($_POST['country'] ?? null), false, 2, '', false),
+            'region_box' => common()->select_box('region', $_regions, ($_POST['region'] ?? null), false, 2, '', false),
+            'city_box' => common()->select_box('city', $_cities, ($_POST['city'] ?? null), false, 2, '', false),
+            'sel_country' => ($_POST['country'] ?? null),
+            'sel_region' => ($_POST['region'] ?? null),
+            'sel_city' => ($_POST['city'] ?? null),
             'ajax_link' => process_url('./?object=' . 'geo_content' . '&action=ajax_city'),
             'sel_no_regions' => (int) $have_no_regions,
         ];
@@ -94,8 +94,8 @@ class yf_geo_content
         // Check input
         if (isset($_REQUEST['country'])) {
             // Process featured countries
-            if (FEATURED_COUNTRY_SELECT && substr($_REQUEST['country'], 0, 2) == 'f_') {
-                $_REQUEST['country'] = substr($_REQUEST['country'], 2);
+            if (FEATURED_COUNTRY_SELECT && substr(($_REQUEST['country'] ?? null), 0, 2) == 'f_') {
+                $_REQUEST['country'] = substr(($_REQUEST['country'] ?? null), 2);
             }
             if ( ! preg_match('/^[a-z]{2}$/i', $_REQUEST['country'])) {
                 unset($_REQUEST['country']);
@@ -107,13 +107,13 @@ class yf_geo_content
             }
         }
         // Get Zip code
-        if ( ! empty($_REQUEST['city']) && strlen($_REQUEST['region']) && strtoupper($_REQUEST['country']) == 'US') {
+        if ( ! empty($_REQUEST['city']) && strlen(($_REQUEST['region'] ?? null)) && strtoupper(($_REQUEST['country'] ?? null)) == 'US') {
             $Q = db()->query(
                 'SELECT postal_code 
 				FROM ' . db('geo_city_location') . " 
-				WHERE region = '" . _es($_REQUEST['region']) . "' 
-					AND country = '" . _es($_REQUEST['country']) . "' 
-					AND city = '" . _es($_REQUEST['city']) . "' 
+				WHERE region = '" . _es(($_REQUEST['region'] ?? null)) . "' 
+					AND country = '" . _es(($_REQUEST['country'] ?? null)) . "' 
+					AND city = '" . _es(($_REQUEST['city'] ?? null)) . "' 
 					AND postal_code != '' 
 				GROUP BY postal_code 
 				ORDER BY postal_code ASC"
@@ -125,9 +125,9 @@ class yf_geo_content
                 $body = "<option name=\"\">  --   Please select zip code   --  </option>\n" . $body;
             }
             // Get city
-        } elseif (strlen($_REQUEST['region']) && ! empty($_REQUEST['country'])) {
+        } elseif (strlen(($_REQUEST['region'] ?? null)) && ! empty($_REQUEST['country'])) {
             if ($this->AJAX_USE_CACHE && main()->USE_SYSTEM_CACHE) {
-                $CACHE_NAME = 'cities_' . $_REQUEST['country'] . '_' . $_REQUEST['region'];
+                $CACHE_NAME = 'cities_' . ($_REQUEST['country'] ?? null) . '_' . ($_REQUEST['region'] ?? null);
                 // TODO: need to add "_mkdir_m" in "sys_cahe->put" (to allow sub-folders "/" in cache names)
                 $cities = main()->get_data($CACHE_NAME);
             }
@@ -135,8 +135,8 @@ class yf_geo_content
                 $Q = db()->query(
                     'SELECT * 
 					FROM ' . db('geo_city_location') . " 
-					WHERE region = '" . _es($_REQUEST['region']) . "' 
-						AND country = '" . _es($_REQUEST['country']) . "'
+					WHERE region = '" . _es(($_REQUEST['region'] ?? null)) . "' 
+						AND country = '" . _es(($_REQUEST['country'] ?? null)) . "'
 						AND city != ''
 					GROUP BY city
 					ORDER BY city ASC"
@@ -164,7 +164,7 @@ class yf_geo_content
             $Q = db()->query(
                 'SELECT * 
 				FROM ' . db('geo_regions') . " 
-				WHERE country = '" . _es($_REQUEST['country']) . "'
+				WHERE country = '" . _es(($_REQUEST['country'] ?? null)) . "'
 				ORDER BY name ASC"
             );
             while ($A = db()->fetch_assoc($Q)) {
@@ -286,7 +286,7 @@ class yf_geo_content
             // Update current geo location
             $something_changed = false;
             // Switch between selected
-            if ($_POST['geo_type'] == 'by_ip') {
+            if (($_POST['geo_type'] ?? null) == 'by_ip') {
                 $data_to_save = [
                     'country_code' => $ip_data['country_code'],
                     'country_name' => $ip_data['country_name'],
@@ -296,7 +296,7 @@ class yf_geo_content
                     'latitude' => $ip_data['latitude'],
                     'zip_code' => strtoupper($ip_data['country_code']) == 'US' ? $ip_data['zip_code'] : '',
                 ];
-            } elseif ($_POST['geo_type'] == 'by_profile') {
+            } elseif (($_POST['geo_type'] ?? null) == 'by_profile') {
                 $data_to_save = [
                     'country_code' => $this->_user_info['country'],
                     'country_name' => _country_name($this->_user_info['country']),
@@ -306,24 +306,24 @@ class yf_geo_content
                     'latitude' => $this->_user_info['lat'],
                     'zip_code' => strtoupper($this->_user_info['country']) == 'US' ? $this->_user_info['zip_code'] : '',
                 ];
-            } elseif ($_POST['geo_type'] == 'by_other') {
-                if (FEATURED_COUNTRY_SELECT == 1 && substr($_POST['country'], 0, 2) == 'f_') {
-                    $_POST['country'] = substr($_REQUEST['country'], 2);
+            } elseif (($_POST['geo_type'] ?? null) == 'by_other') {
+                if (FEATURED_COUNTRY_SELECT == 1 && substr(($_POST['country'] ?? null), 0, 2) == 'f_') {
+                    $_POST['country'] = substr(($_REQUEST['country'] ?? null), 2);
                 }
-                if (strtoupper($_POST['country']) != 'US') {
+                if (strtoupper(($_POST['country'] ?? null)) != 'US') {
                     $_POST['zip_code'] = '';
                 }
-                if (false !== strpos(strtolower($_POST['city']), 'please select city')) {
+                if (false !== strpos(strtolower(($_POST['city'] ?? null)), 'please select city')) {
                     $_POST['city'] = '';
                 }
                 // Check if city is in our db
-                if ( ! empty($_POST['country']) && strlen($_POST['region']) && ! empty($_POST['city'])) {
+                if ( ! empty($_POST['country']) && strlen(($_POST['region'] ?? null)) && ! empty($_POST['city'])) {
                     $CITY_EXISTS = db()->query_fetch(
                         'SELECT * 
 						FROM ' . db('geo_city_location') . " 
-						WHERE country = '" . _es($_POST['country']) . "' 
-							AND region = '" . _es($_POST['region']) . "'
-							AND city = '" . _es($_POST['city']) . "'
+						WHERE country = '" . _es(($_POST['country'] ?? null)) . "' 
+							AND region = '" . _es(($_POST['region'] ?? null)) . "'
+							AND city = '" . _es(($_POST['city'] ?? null)) . "'
 						LIMIT 1 "
                     );
                     if (empty($CITY_EXISTS)) {
@@ -337,16 +337,16 @@ class yf_geo_content
                     list($have_regions) = db()->query_fetch(
                         'SELECT COUNT(*) AS `0` 
 						FROM ' . db('geo_regions') . " 
-						WHERE country='" . _es($_POST['country']) . "'"
+						WHERE country='" . _es(($_POST['country'] ?? null)) . "'"
                     );
-                    if ($have_regions && strlen($_POST['region'])) {
+                    if ($have_regions && strlen(($_POST['region'] ?? null))) {
                         $city_lon_lat = db()->query_fetch(
                             'SELECT * 
 							FROM ' . db('geo_city_location') . " 
-							WHERE country = '" . _es($_POST['country']) . "' 
-								AND region = '" . _es($_POST['region']) . "'
-								" . ( ! empty($_POST['city']) ? " AND city = '" . _es($_POST['city']) . "' " : '') . '
-								' . ($_POST['zip_code'] ? " AND (postal_code='" . _es($_POST['zip_code']) . "' OR postal_code = '') " : '') . '
+							WHERE country = '" . _es(($_POST['country'] ?? null)) . "' 
+								AND region = '" . _es(($_POST['region'] ?? null)) . "'
+								" . ( ! empty($_POST['city']) ? " AND city = '" . _es(($_POST['city'] ?? null)) . "' " : '') . '
+								' . (($_POST['zip_code'] ?? null) ? " AND (postal_code='" . _es(($_POST['zip_code'] ?? null)) . "' OR postal_code = '') " : '') . '
 							LIMIT 1 '
                         );
                     }
@@ -355,8 +355,8 @@ class yf_geo_content
                         $city_lon_lat = db()->query_fetch(
                             'SELECT * 
 							FROM ' . db('geo_city_location') . " 
-							WHERE country = '" . _es($_POST['country']) . "' 
-								" . (strlen($_POST['region']) ? " AND region = '" . _es($_POST['region']) . "' " : '') . '
+							WHERE country = '" . _es(($_POST['country'] ?? null)) . "' 
+								" . (strlen(($_POST['region'] ?? null)) ? " AND region = '" . _es(($_POST['region'] ?? null)) . "' " : '') . '
 							LIMIT 1 '
                         );
                     }
@@ -368,13 +368,13 @@ class yf_geo_content
                 }
                 if ($VERIFY_OK) {
                     $data_to_save = [
-                        'country_code' => $_POST['country'],
-                        'country_name' => _country_name($_POST['country']),
-                        'region_code' => $_POST['region'],
-                        'city_name' => $_POST['city'],
+                        'country_code' => ($_POST['country'] ?? null),
+                        'country_name' => _country_name(($_POST['country'] ?? null)),
+                        'region_code' => ($_POST['region'] ?? null),
+                        'city_name' => ($_POST['city'] ?? null),
                         'longitude' => $lon,
                         'latitude' => $lat,
-                        'zip_code' => strtoupper($_POST['country']) == 'US' ? $_POST['zip_code'] : '',
+                        'zip_code' => strtoupper(($_POST['country'] ?? null)) == 'US' ? ($_POST['zip_code'] ?? null) : '',
                     ];
                 }
             }

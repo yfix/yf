@@ -32,8 +32,8 @@ class yf_news
         // For links like this:
         // /news/uvazhaemie-polzovateli-i-posetiteli
         // /news/уникальая-новость
-        $id = trim($dirty_args['action'] ?: $_GET['action']);
-        if ( ! $_GET['id'] && strlen($id) && $id != 'show') {
+        $id = trim($dirty_args['action'] ?: ($_GET['action'] ?? null));
+        if ( ! ($_GET['id'] ?? null) && strlen($id) && $id != 'show') {
             $_GET['id'] = $id;
         }
         if ( ! $method || substr($method, 0, 1) === '_' || ! method_exists($this, $method)) {
@@ -76,7 +76,7 @@ class yf_news
 
     public function show()
     {
-        if ($_GET['id']) {
+        if (($_GET['id'] ?? null)) {
             return $this->_view();
         }
         $num_comments = db()->select('object_id', 'COUNT(*)')->from('comments')->where('object_name', 'news')->group_by('object_id')->get_2d();
@@ -105,7 +105,7 @@ class yf_news
      */
     public function _get_info($id = null)
     {
-        $id = $id ?: $_GET['id'];
+        $id = $id ?: ($_GET['id'] ?? null);
         $sql = db()->from(self::table)->where('locale', conf('language'));
         if (is_numeric($id)) {
             $sql->whereid($id);
@@ -157,7 +157,7 @@ class yf_news
         main()->NO_GRAPHICS = 1;
         //		$_GET['ajax_mode'] = 1;
 
-        $id = $_GET['id'];
+        $id = ($_GET['id'] ?? null);
         $a = $this->_get_info();
         if ( ! $a || ! $a['active']) {
             return _404('Not found');
@@ -185,7 +185,7 @@ class yf_news
      */
     public function _comment_is_allowed($params = [])
     {
-        $is_allowed = $_GET['action'] == 'view' ? true : false;
+        $is_allowed = ($_GET['action'] ?? null) == 'view' ? true : false;
         return $is_allowed;
     }
 
@@ -195,7 +195,7 @@ class yf_news
      */
     public function _hook_nav($params = [])
     {
-        if (in_array($_GET['action'], ['show', 'view']) && ! $_GET['id'] || ! $this->_current) {
+        if (in_array(($_GET['action'] ?? null), ['show', 'view']) && ! ($_GET['id'] ?? null) || ! $this->_current) {
             // Default nav bar will be shown
             return false;
         }

@@ -52,7 +52,7 @@ class yf_static_pages
                     $in = $_this->_fix_page_name($in);
                     return (bool) strlen($in);
                 }, function ($name, $tmp, $d, &$error) use ($_this) {
-                    $ok = ! db()->from($_this::table)->where('locale', $_POST['locale'])->where('name', $name)->get_one('id');
+                    $ok = ! db()->from($_this::table)->where('locale', ($_POST['locale'] ?? null))->where('name', $name)->get_one('id');
                     if ( ! $ok) {
                         $error = t('Page with this name and locale already exists');
                     }
@@ -67,7 +67,7 @@ class yf_static_pages
                 module_safe('manage_revisions')->add($_this::table, $id, 'add');
                 common()->admin_wall_add(['static page added: ' . $name, $id]);
                 cache_del('static_pages_names');
-                js_redirect('/@object/edit/' . $id . '/' . $_POST['locale']);
+                js_redirect('/@object/edit/' . $id . '/' . ($_POST['locale'] ?? null));
             })
             ->text('name')
             ->locale_box('locale')
@@ -106,7 +106,7 @@ class yf_static_pages
         $a = (array) $_POST + (array) $a;
         if (is_post()) {
             foreach ((array) $keys_to_fix as $k) {
-                if (false !== strpos($_POST[$k], '{') && false !== strpos($_POST[$k], '}')) {
+                if (false !== strpos(($_POST[$k] ?? null), '{') && false !== strpos(($_POST[$k] ?? null), '}')) {
                     $_POST[$k] = str_replace(array_values($exec_fix), array_keys($exec_fix), $_POST[$k]);
                 }
             }
@@ -241,8 +241,8 @@ class yf_static_pages
     public function _get_info($id = null, $lang = null)
     {
         $locale = null;
-        $id = isset($id) ? $id : $_GET['id'];
-        $lang = isset($lang) ? $lang : $_GET['page'];
+        $id = isset($id) ? $id : ($_GET['id'] ?? null);
+        $lang = isset($lang) ? $lang : ($_GET['page'] ?? null);
         $a = db()->from(self::table)
             ->where('locale', $lang ? strtolower($lang) : '')
             ->where('name', _strtolower(urldecode($id)))
@@ -349,7 +349,7 @@ class yf_static_pages
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [

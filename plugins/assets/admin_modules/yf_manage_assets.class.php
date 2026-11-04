@@ -195,7 +195,7 @@ class yf_manage_assets
         $assets->USE_CACHE = true;
         $assets->COMBINE = false;
         $assets->FORCE_LOCAL_STORAGE = false;
-        ($cache_dir_tpl = $GLOBALS['PROJECT_CONF']['assets']['CACHE_DIR_TPL']) && $assets->CACHE_DIR_TPL = $cache_dir_tpl;
+        ($cache_dir_tpl = ($GLOBALS['PROJECT_CONF']['assets']['CACHE_DIR_TPL'] ?? null)) && $assets->CACHE_DIR_TPL = $cache_dir_tpl;
         $combined_names = $assets->load_combined_config($force = true);
 
         $cur_lang = conf('language');
@@ -233,7 +233,7 @@ class yf_manage_assets
         $assets->COMBINE = true;
         $combined_names = $assets->load_combined_config($force = true);
         $assets->FORCE_LOCAL_STORAGE = false;
-        ($cache_dir_tpl = $GLOBALS['PROJECT_CONF']['assets']['CACHE_DIR_TPL']) && $assets->CACHE_DIR_TPL = $cache_dir_tpl;
+        ($cache_dir_tpl = ($GLOBALS['PROJECT_CONF']['assets']['CACHE_DIR_TPL'] ?? null)) && $assets->CACHE_DIR_TPL = $cache_dir_tpl;
 
         $cur_lang = conf('language');
 

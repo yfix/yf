@@ -24,7 +24,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2
 
     public function get_user_info()
     {
-        if (DEBUG_MODE && $_GET['oauth_clean']) {
+        if (DEBUG_MODE && ($_GET['oauth_clean'] ?? null)) {
             $this->_storage_clean();
         }
         $access_token = $this->_storage_get('access_token');
@@ -102,8 +102,8 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2
         if ($access_token) {
             return $access_token;
         }
-        $oauth_verifier = $_GET['oauth_verifier'];
-        $oauth_token = $_GET['oauth_token'];
+        $oauth_verifier = ($_GET['oauth_verifier'] ?? null);
+        $oauth_token = ($_GET['oauth_token'] ?? null);
         if (( ! $oauth_verifier || ! $oauth_token) && ! $this->_storage_get('oauth_verifier')) {
             return $this->authenticate();
         }
@@ -161,7 +161,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2
     public function authenticate()
     {
         $request_token_info = $this->_storage_get('request_token');
-        if ($_GET['denied'] == $request_token_info['oauth_token'] || ! $request_token_info || ! isset($request_token_info['oauth_token'])) {
+        if (($_GET['denied'] ?? null) == $request_token_info['oauth_token'] || ! $request_token_info || ! isset($request_token_info['oauth_token'])) {
             return $this->authorize();
         }
         $url = $this->url_authenticate . '?' . http_build_query((array) $this->url_params + (array) $this->url_params_authenticate + [
@@ -175,7 +175,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2
     public function authorize()
     {
         $request_token_info = $this->_storage_get('request_token');
-        if ($request_token_info && $_GET['denied'] != $request_token_info['oauth_token']) {
+        if ($request_token_info && ($_GET['denied'] ?? null) != $request_token_info['oauth_token']) {
             return $request_token_info;
         }
         $url = $this->url_request_token;
@@ -200,7 +200,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2
         $this->_storage_set('authorize_request', ['result' => $result, 'response' => $response]);
         if ($result && $result['oauth_token'] && $result['oauth_token_secret']) {
             $this->_storage_set('request_token', $result);
-            if ($_GET['denied']) {
+            if (($_GET['denied'] ?? null)) {
                 return js_redirect('/');
             }
             return $result;

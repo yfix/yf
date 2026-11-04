@@ -48,20 +48,20 @@ class yf_manage_security
         if (is_post()) {
             foreach ($fields_ip as $k) {
                 $tmp = [];
-                foreach (explode(PHP_EOL, str_replace([' ', ',', ';'], PHP_EOL, trim($_POST[$k]))) as $v) {
+                foreach (explode(PHP_EOL, str_replace([' ', ',', ';'], PHP_EOL, trim(($_POST[$k] ?? null)))) as $v) {
                     $v = trim($v);
                     if (preg_match('~^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$~', $v)) {
                         $tmp[$v] = $v;
                     }
                 }
                 $_POST[$k] = implode(';', $tmp);
-                if ($_POST[$k] && $a[$k] != $_POST[$k]) {
-                    $to_update[$k] = $_POST[$k];
+                if (($_POST[$k] ?? null) && $a[$k] != ($_POST[$k] ?? null)) {
+                    $to_update[$k] = ($_POST[$k] ?? null);
                 }
             }
             foreach ($fields_country as $k) {
                 $tmp = [];
-                foreach ((array) $_POST[$k] as $v) {
+                foreach ((array) ($_POST[$k] ?? null) as $v) {
                     $v = strtoupper(trim($v));
                     if (isset($country_names[$v])) {
                         $tmp[$v] = $v;
@@ -72,7 +72,7 @@ class yf_manage_security
             $sql = [];
             $date = date('Y-m-d H:i:s');
             foreach (array_merge($fields_ip, $fields_country) as $k) {
-                $v = $_POST[$k];
+                $v = ($_POST[$k] ?? null);
                 if ( ! $v || $v === $a[$k]) {
                     continue;
                 }
@@ -89,7 +89,7 @@ class yf_manage_security
                     'val_old' => $a[$k],
                     'val_new' => $v,
                     'ip' => $cur_ip,
-                    'ua' => $_SERVER['HTTP_USER_AGENT'],
+                    'ua' => ($_SERVER['HTTP_USER_AGENT'] ?? null),
                 ]);
             }
             if ($sql) {

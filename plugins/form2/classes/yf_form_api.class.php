@@ -31,7 +31,7 @@ class yf_form_api
         $db = db()->table('user');
         // limit
         $page_per = 10;
-        $page = (int) $_GET['page'];
+        $page = (int) ($_GET['page'] ?? null);
         $page = $page < 1 ? 1 : $page;
         $offset = ($page - 1) * $page_per;
         $db->limit($page_per, $offset);

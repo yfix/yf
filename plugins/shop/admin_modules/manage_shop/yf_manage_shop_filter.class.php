@@ -8,14 +8,14 @@ class yf_manage_shop_filter
     public function filter_save()
     {
         $_GET['id'] = preg_replace('~[^0-9a-z_]+~ims', '', $_GET['id']);
-        if ($_GET['id'] && false !== strpos($_GET['id'], $_GET['object'] . '__')) {
-            $filter_name = $_GET['id'];
+        if (($_GET['id'] ?? null) && false !== strpos(($_GET['id'] ?? null), ($_GET['object'] ?? null) . '__')) {
+            $filter_name = ($_GET['id'] ?? null);
             list(, $action) = explode('__', $filter_name);
         }
         if ( ! in_array($action, $this->_avail_filters)) {
-            return js_redirect('./?object=' . $_GET['object']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
-        if ($_GET['page'] == 'clear') {
+        if (($_GET['page'] ?? null) == 'clear') {
             $_SESSION[$filter_name] = [];
         } else {
             $_SESSION[$filter_name] = $_POST;
@@ -25,19 +25,19 @@ class yf_manage_shop_filter
                 }
             }
         }
-        return js_redirect('./?object=' . $_GET['object'] . '&action=' . $action);
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=' . $action);
     }
 
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], $this->_avail_filters)) {
+        if ( ! in_array(($_GET['action'] ?? null), $this->_avail_filters)) {
             return false;
         }
-        $filter_name = $_GET['object'] . '__' . $_GET['action'];
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $replace = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name,
-            'clear_url' => './?object=' . $_GET['object'] . '&action=filter_save&id=' . $filter_name . '&page=clear',
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name,
+            'clear_url' => './?object=' . ($_GET['object'] ?? null) . '&action=filter_save&id=' . $filter_name . '&page=clear',
         ];
         $filters = [
             'products' => function ($filter_name, $replace) {
@@ -46,8 +46,8 @@ class yf_manage_shop_filter
                     $order_fields[$v] = $v;
                 }
                 $_region = _class('_shop_region', 'modules/shop/')->_get_list();
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
-                    ->container(_class('manage_shop_filter')->_product_search_widget('id', $_SESSION[$filter_name]['id'], true), 'Id')
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
+                    ->container(_class('manage_shop_filter')->_product_search_widget('id', ($_SESSION[$filter_name]['id'] ?? null), true), 'Id')
                     ->text('name')
                     ->text('articul')
                     ->row_start(['desc' => 'price'])
@@ -77,7 +77,7 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->number('id', ['class' => 'span1', 'min' => 0])
                     ->datetime_select('add_date', null, ['with_time' => 1])
                     ->datetime_select('add_date__and', null, ['with_time' => 1])
@@ -92,7 +92,7 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->row_start(['desc' => 'id'])
                         ->number('id', ['min' => 0])
                         ->number('id__and', ['min' => 0])
@@ -115,7 +115,7 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->text('name')
                     ->select_box('order_by', $order_fields, ['show_text' => 1, 'translate' => 1]);
             },
@@ -124,7 +124,7 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->text('name')
                     ->select_box('order_by', $order_fields, ['show_text' => 1, 'translate' => 1]);
             },
@@ -133,7 +133,7 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->text('name')
                     ->chosen_box('cat_id', module('manage_shop')->_cats_for_select, ['desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1])
                     ->select_box('order_by', $order_fields, ['show_text' => 1, 'translate' => 1]);
@@ -143,7 +143,7 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->text('title')
                     ->select_box('order_by', $order_fields, ['show_text' => 1, 'translate' => 1]);
             },
@@ -152,9 +152,9 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->number('id', ['class' => 'span1', 'min' => 0])
-                    ->container(_class('manage_shop_filter')->_product_search_widget('product_id', $_SESSION[$filter_name]['product_id']), 'product_id')
+                    ->container(_class('manage_shop_filter')->_product_search_widget('product_id', ($_SESSION[$filter_name]['product_id'] ?? null)), 'product_id')
                     ->datetime_select('add_date', null, ['with_time' => 1])
                     ->datetime_select('add_date__and', null, ['with_time' => 1])
                     ->text('name')
@@ -170,8 +170,8 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
-                    ->container(_class('manage_shop_filter')->_product_search_widget('item_id', $_SESSION[$filter_name]['item_id']), 'Item id')
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
+                    ->container(_class('manage_shop_filter')->_product_search_widget('item_id', ($_SESSION[$filter_name]['item_id'] ?? null)), 'Item id')
                     ->text('name')
                     ->text('user_id', 'Admin')
                     ->datetime_select('add_date', null, ['with_time' => 1])
@@ -185,7 +185,7 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->text('item_id', 'Order id')
                     ->text('user_id', 'Admin')
                     ->datetime_select('add_date', null, ['with_time' => 1])
@@ -198,8 +198,8 @@ class yf_manage_shop_filter
                 foreach ((array) $fields as $v) {
                     $order_fields[$v] = $v;
                 }
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
-                    ->container(_class('manage_shop_filter')->_product_search_widget('product_id', $_SESSION[$filter_name]['product_id']), 'Product id')
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
+                    ->container(_class('manage_shop_filter')->_product_search_widget('product_id', ($_SESSION[$filter_name]['product_id'] ?? null)), 'Product id')
                     ->text('user_id', 'Admin')
                     ->datetime_select('add_date', null, ['with_time' => 1])
                     ->datetime_select('add_date__and', null, ['with_time' => 1])
@@ -211,7 +211,7 @@ class yf_manage_shop_filter
                 $fields = array_combine(array_values($fields), array_values($fields));
                 $action = ['first', 'edit', 'delete'];
                 $action = array_combine(array_values($action), array_values($action));
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->text('item_id', 'item id')
                     ->text('user_id', 'Admin')
                     ->datetime_select('add_date', null, ['with_time' => 1])
@@ -220,13 +220,13 @@ class yf_manage_shop_filter
                     ->select_box('order_by', $fields, ['show_text' => 1, 'translate' => 1]);
             },
             'region' => function ($filter_name, $replace) {
-                return form($replace, ['selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'])
+                return form($replace, ['selected' => ($_SESSION[$filter_name] ?? null), 'class' => 'form-horizontal form-condensed'])
                     ->text('id', 'Номер')
                     ->text('value', 'Название')
                     ->active_box('active', ['horizontal' => 1]);
             },
         ];
-        $action = $_GET['action'];
+        $action = ($_GET['action'] ?? null);
         if (isset($filters[$action])) {
             return $filters[$action]($filter_name, $replace)
                 ->radio_box('order_direction', ['asc' => 'Ascending', 'desc' => 'Descending'], ['horizontal' => 1])

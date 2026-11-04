@@ -105,13 +105,13 @@ class yf_session
         if ($this->REFERER_CHECK) { // WEB_PATH
             ini_set('session.referer_check', $this->REFERER_CHECK);
         }
-        conf('COOKIES_ENABLED', $_COOKIE[$this->NAME] !== null ? 1 : 0);
+        conf('COOKIES_ENABLED', ($_COOKIE[$this->NAME] ?? null) !== null ? 1 : 0);
         // Check if we have valid session name
-        if ($_COOKIE[$this->NAME] !== null) {
+        if (($_COOKIE[$this->NAME] ?? null) !== null) {
             $_test_result = preg_replace('/[^a-z0-9]/i', '', $_COOKIE[$this->NAME]);
-            if ($_test_result !== $_COOKIE[$this->NAME]) {
+            if ($_test_result !== ($_COOKIE[$this->NAME] ?? null)) {
                 $_COOKIE[$this->NAME] = abs(crc32(microtime(true)));
-                session_id($_COOKIE[$this->NAME]);
+                session_id(($_COOKIE[$this->NAME] ?? null));
             }
         }
         if ( ! empty($this->SAVE_DIR)) {
@@ -134,7 +134,7 @@ class yf_session
             header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
         }
         $now = time();
-        $last_update = $_SESSION['last_update'];
+        $last_update = ($_SESSION['last_update'] ?? null);
         if ($last_update) {
             $diff = $now - $last_update;
             $percent = $diff / $this->LIFE_TIME * 100;
@@ -154,7 +154,7 @@ class yf_session
         $_SESSION['sys_user_ip'] = common()->get_ip();
         $_SESSION['sys_user_geo_country'] = $_SERVER['GEOIP_COUNTRY_CODE'] ?? '';
         //		$_SESSION['sys_user_ua'] = $_SERVER['HTTP_USER_AGENT'];
-        $_SESSION['sys_user_current_url'] = (is_https() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $_SESSION['sys_user_current_url'] = (is_https() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null);
         $main->_session_init_complete = true;
         $this->_started = true;
         return $this->_started;

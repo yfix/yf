@@ -101,10 +101,10 @@ class yf_manage_redis
 
     public function show()
     {
-        $i = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['i'])); // instance
-        $g = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['g'])); // group
-        $t = preg_replace('~[^a-z0-9_-]+~ims', '', trim($_GET['t'])); // type
-        $page = (int) $_GET['page'] ?: 1; // page
+        $i = preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['i'] ?? null))); // instance
+        $g = preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['g'] ?? null))); // group
+        $t = preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['t'] ?? null))); // type
+        $page = (int) ($_GET['page'] ?? null) ?: 1; // page
         $per_page = 2000;
         if ( ! $i || ! isset($this->instances[$i])) {
             if (count((array) $this->instances) == 1) {
@@ -248,17 +248,17 @@ class yf_manage_redis
     public function edit()
     {
         $php_exported = null;
-        if (is_post() && isset($_POST['mass_delete']) && $_POST['id']) {
+        if (is_post() && isset($_POST['mass_delete']) && ($_POST['id'] ?? null)) {
             $_GET['action'] = 'delete';
             return $this->delete();
         }
-        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim($_GET['i']));
+        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim(($_GET['i'] ?? null)));
         if ( ! $i || ! isset($this->instances[$i])) {
             return js_redirect('/@object');
         }
         $r = &$this->instances[$i];
         $prefix = $r->prefix;
-        $id = trim($_GET['id']);
+        $id = trim(($_GET['id'] ?? null));
         if (strpos($id, $prefix) === 0) {
             $id = substr($id, strlen($prefix) + 1);
         }
@@ -305,9 +305,9 @@ class yf_manage_redis
             $data = table($data, ['condensed' => true, 'hide_empty' => true, 'pager_records_on_page' => 10000])
                 ->form(url('/@object/edit/?i=' . $i . '&id=' . $id))
                 ->check_box('id')
-                ->text('id', ['desc' => 'key', 'link' => url('/@object/edit/?&i=' . $i . '&id=' . $_GET['id'] . '&num=%id')])
+                ->text('id', ['desc' => 'key', 'link' => url('/@object/edit/?&i=' . $i . '&id=' . ($_GET['id'] ?? null) . '&num=%id')])
                 ->text('val')
-                ->btn_delete(['btn_no_text' => 1, 'no_ajax' => 1, 'class_add' => 'btn-danger', 'link' => url('/@object/delete/?&i=' . $i . '&id=' . $_GET['id'] . '&num=%id')])
+                ->btn_delete(['btn_no_text' => 1, 'no_ajax' => 1, 'class_add' => 'btn-danger', 'link' => url('/@object/delete/?&i=' . $i . '&id=' . ($_GET['id'] ?? null) . '&num=%id')])
                 ->footer_submit('mass_delete', ['class' => 'btn btn-xs btn-danger', 'icon' => 'fa fa-trash']);
         }
         $ttl = $r->ttl($id);
@@ -322,14 +322,14 @@ class yf_manage_redis
 
     public function delete()
     {
-        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim($_GET['i']));
+        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim(($_GET['i'] ?? null)));
         if ( ! $i || ! isset($this->instances[$i])) {
             return js_redirect('/@object');
         }
         $r = &$this->instances[$i];
         $prefix = $r->prefix;
         $plen = strlen($prefix);
-        $id = trim($_GET['id']);
+        $id = trim(($_GET['id'] ?? null));
         if (strpos($id, $prefix) === 0) {
             $id = substr($id, $plen);
         }
@@ -337,7 +337,7 @@ class yf_manage_redis
         if ($id) {
             // Submit mass_delete from edit
             if (is_post()) {
-                foreach ((array) $_POST['id'] as $k => $tmp) {
+                foreach ((array) ($_POST['id'] ?? null) as $k => $tmp) {
                     $k = trim($k);
                     if (strpos($k, $prefix) === 0) {
                         $k = substr($k, $plen);
@@ -348,7 +348,7 @@ class yf_manage_redis
                 }
                 // Click on delete link from edit
             } elseif (isset($_GET['num'])) {
-                $k = trim($_GET['num']);
+                $k = trim(($_GET['num'] ?? null));
                 if (strpos($k, $prefix) === 0) {
                     $k = substr($k, $plen);
                 }
@@ -361,7 +361,7 @@ class yf_manage_redis
         }
         // Submit mass_delete from keys listing
         if (is_post()) {
-            foreach ((array) $_POST['id'] as $k => $tmp) {
+            foreach ((array) ($_POST['id'] ?? null) as $k => $tmp) {
                 $k = trim($k);
                 if (strpos($k, $prefix) === 0) {
                     $k = substr($k, $plen);
@@ -373,7 +373,7 @@ class yf_manage_redis
             $this->_do_delete($r, $id, $keys_to_del);
         // Click on delete link from keys listing
         } elseif (isset($_GET['num'])) {
-            $k = trim($_GET['num']);
+            $k = trim(($_GET['num'] ?? null));
             if (strpos($k, $prefix) === 0) {
                 $k = substr($k, $plen);
             }

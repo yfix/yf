@@ -4,21 +4,21 @@ class yf_shop_basket_add
 {
     public function basket_add()
     {
-        $product = db()->query_fetch('SELECT id FROM ' . db('shop_products') . " WHERE active = '1' AND " . (is_numeric($_GET['id']) ? 'id=' . (int) ($_GET['id']) : "url='" . _es($_GET['id']) . "'"));
+        $product = db()->query_fetch('SELECT id FROM ' . db('shop_products') . " WHERE active = '1' AND " . (is_numeric(($_GET['id'] ?? null)) ? 'id=' . (int) (($_GET['id'] ?? null)) : "url='" . _es(($_GET['id'] ?? null)) . "'"));
         if ( ! empty($product)) {
             $_GET['id'] = $product['id'];
         }
         $atts = module('shop')->_products_get_attributes($product['id']);
-        if ($_GET['id']) {
-            $_GET['id'] = (int) ($_GET['id']);
+        if (($_GET['id'] ?? null)) {
+            $_GET['id'] = (int) (($_GET['id'] ?? null));
             $_POST['quantity'][$_GET['id']] = 1;
         }
         if ( ! empty($atts) && empty($_POST['atts'])) {
             module('shop')->_basket_is_processed = true;
-            return js_redirect('./?object=shop&action=product_details&id=' . $_GET['id']);
+            return js_redirect('./?object=shop&action=product_details&id=' . ($_GET['id'] ?? null));
         }
         if ( ! empty($_POST['quantity']) && ! module('shop')->_basket_is_processed) {
-            foreach ((array) $_POST['quantity'] as $_product_id => $_quantity) {
+            foreach ((array) ($_POST['quantity'] ?? null) as $_product_id => $_quantity) {
                 $_product_id = (int) $_product_id;
                 $_old_quantity = (int) module('shop')->_basket_api()->get($_product_id, 'quantity');
                 $_quantity = (int) $_quantity + (int) $_old_quantity;
@@ -26,7 +26,7 @@ class yf_shop_basket_add
                     module('shop')->_basket_api()->set($_product_id, [
                         'product_id' => $_product_id,
                         'quantity' => $_quantity,
-                        'atts' => $_POST['atts'][$_product_id],
+                        'atts' => ($_POST['atts'][$_product_id] ?? null),
                     ]);
                 }
             }

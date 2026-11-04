@@ -158,12 +158,12 @@ class yf_utf8_clean
         if ( ! common()->is_utf8($str)) {
             $str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
         }
-        if ($this->fss_exists && ! $GLOBALS['force_strtr']) {
+        if ($this->fss_exists && ! ($GLOBALS['force_strtr'] ?? null)) {
             if ( ! isset($GLOBALS['fss']['unaccent'])) {
                 $s = array_merge($this->UTF8_UPPER_ACCENTS, $this->UTF8_LOWER_ACCENTS);
                 $GLOBALS['fss']['unaccent'] = fss_prep_replace($s);
             }
-            $str = fss_exec_replace($GLOBALS['fss']['unaccent'], $str);
+            $str = fss_exec_replace(($GLOBALS['fss']['unaccent'] ?? null), $str);
 
             return $str;
         }

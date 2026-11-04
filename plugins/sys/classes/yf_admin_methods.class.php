@@ -80,12 +80,12 @@ class yf_admin_methods
         }
         $params += (array) $this->params;
 
-        $filter_name = $params['filter_name'] ?: $_GET['object'] . '__' . $_GET['action'];
+        $filter_name = $params['filter_name'] ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $db = is_object($params['db']) ? $params['db'] : db();
         $table = $db->_fix_table_name($params['table']);
         return table(from($table), [
             'id' => $params['id'] ?: 'id',
-            'filter' => $_SESSION[$filter_name],
+            'filter' => ($_SESSION[$filter_name] ?? null),
             'filter_params' => $params['filter_params'],
         ])->auto();
     }
@@ -131,7 +131,7 @@ class yf_admin_methods
                 $sql = [];
                 foreach ((array) $fields as $f) {
                     if (isset($_POST[$f])) {
-                        $sql[$f] = $_POST[$f];
+                        $sql[$f] = ($_POST[$f] ?? null);
                     }
                 }
                 if (is_callable($params['on_before_update'])) {
@@ -143,7 +143,7 @@ class yf_admin_methods
                 if ($params['revisions']) {
                     module_safe('manage_revisions')->add($params['table'], $new_id, 'add');
                 }
-                common()->admin_wall_add([$_GET['object'] . ': added record into table ' . $table, $new_id]);
+                common()->admin_wall_add([($_GET['object'] ?? null) . ': added record into table ' . $table, $new_id]);
 
                 if (is_callable($params['on_after_update'])) {
                     $params['on_after_update']($sql, $new_id);
@@ -192,7 +192,7 @@ class yf_admin_methods
         $params += (array) $this->params;
 
         $replace = [
-            'form_action' => $params['form_action'] ?: url('/@object/@action/' . urlencode($_GET['id']) . '/' . $params['links_add']),
+            'form_action' => $params['form_action'] ?: url('/@object/@action/' . urlencode(($_GET['id'] ?? null)) . '/' . $params['links_add']),
             'back_link' => $params['back_link'] ?: url('/@object/' . $params['links_add']),
         ];
         $db = is_object($params['db']) ? $params['db'] : db();
@@ -208,7 +208,7 @@ class yf_admin_methods
         $fields = $params['fields'];
         $primary_field = $params['id'] ?: $params['primary'] ?: 'id';
         $secondary_field = $params['secondary'] ?: 'name';
-        $id = isset($params['input_' . $primary_field]) ? $params['input_' . $primary_field] : $_GET['id'];
+        $id = isset($params['input_' . $primary_field]) ? $params['input_' . $primary_field] : ($_GET['id'] ?? null);
         if ( ! $fields) {
             $columns = $db->meta_columns($table);
             if (isset($columns[$primary_field])) {
@@ -233,7 +233,7 @@ class yf_admin_methods
                 $sql = [];
                 foreach ((array) $fields as $f) {
                     if (isset($_POST[$f])) {
-                        $sql[$f] = $_POST[$f];
+                        $sql[$f] = ($_POST[$f] ?? null);
                     }
                 }
                 if (is_callable($params['on_before_update'])) {
@@ -251,7 +251,7 @@ class yf_admin_methods
                 }
 
                 $db->update_safe($table, $sql, '`' . $db->es($primary_field) . '`="' . $db->es($id) . '"');
-                common()->admin_wall_add([$_GET['object'] . ': updated record in table ' . $table, $id]);
+                common()->admin_wall_add([($_GET['object'] ?? null) . ': updated record in table ' . $table, $id]);
 
                 if (is_callable($params['on_after_update'])) {
                     $params['on_after_update']($sql);
@@ -303,7 +303,7 @@ class yf_admin_methods
         }
         $fields = $params['fields'];
         $primary_field = $params['id'] ? $params['id'] : 'id';
-        $id = isset($params['input_' . $primary_field]) ? $params['input_' . $primary_field] : $_GET['id'];
+        $id = isset($params['input_' . $primary_field]) ? $params['input_' . $primary_field] : ($_GET['id'] ?? null);
 
         if ( ! empty($id)) {
             if (is_callable($params['on_before_update'])) {
@@ -321,14 +321,14 @@ class yf_admin_methods
             }
 
             $db->query('DELETE FROM ' . $db->es($table) . ' WHERE `' . $db->es($primary_field) . '`="' . $db->es($id) . '" LIMIT 1');
-            common()->admin_wall_add([$_GET['object'] . ': deleted record from table ' . $table, $id]);
+            common()->admin_wall_add([($_GET['object'] ?? null) . ': deleted record from table ' . $table, $id]);
 
             if (is_callable($params['on_after_update'])) {
                 $params['on_after_update']($fields);
             }
         }
         if (conf('IS_AJAX')) {
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect(url('/@object/' . _add_get() . $params['links_add']));
         }
@@ -357,7 +357,7 @@ class yf_admin_methods
         }
         $fields = $params['fields'];
         $primary_field = $params['id'] ? $params['id'] : 'id';
-        $id = isset($params['input_' . $primary_field]) ? $params['input_' . $primary_field] : $_GET['id'];
+        $id = isset($params['input_' . $primary_field]) ? $params['input_' . $primary_field] : ($_GET['id'] ?? null);
 
         if ( ! empty($id)) {
             $info = $db->query_fetch('SELECT * FROM ' . $db->es($table) . ' WHERE `' . $db->es($primary_field) . '`="' . $db->es($id) . '" LIMIT 1');
@@ -380,7 +380,7 @@ class yf_admin_methods
             }
 
             $db->update_safe($table, ['active' => (int) ! $info['active']], $db->es($primary_field) . '="' . $db->es($id) . '"');
-            common()->admin_wall_add([$_GET['object'] . ': item in table ' . $table . ' ' . ($info['active'] ? 'inactivated' : 'activated'), $id]);
+            common()->admin_wall_add([($_GET['object'] ?? null) . ': item in table ' . $table . ' ' . ($info['active'] ? 'inactivated' : 'activated'), $id]);
 
             if (is_callable($params['on_after_update'])) {
                 $params['on_after_update']($info);
@@ -415,7 +415,7 @@ class yf_admin_methods
         }
         $fields = $params['fields'];
         $primary_field = $params['id'] ? $params['id'] : 'id';
-        $id = isset($params['input_' . $primary_field]) ? $params['input_' . $primary_field] : $_GET['id'];
+        $id = isset($params['input_' . $primary_field]) ? $params['input_' . $primary_field] : ($_GET['id'] ?? null);
 
         if ( ! empty($id)) {
             $info = $db->query_fetch('SELECT * FROM ' . $db->es($table) . ' WHERE `' . $db->es($primary_field) . '`="' . $db->es($id) . '" LIMIT 1');
@@ -435,7 +435,7 @@ class yf_admin_methods
                 module_safe('manage_revisions')->add($params['table'], $new_id, 'add');
             }
 
-            common()->admin_wall_add([$_GET['object'] . ': item cloned in table ' . $table, $new_id]);
+            common()->admin_wall_add([($_GET['object'] ?? null) . ': item cloned in table ' . $table, $new_id]);
 
             if (is_callable($params['on_after_update'])) {
                 $params['on_after_update']($sql, $new_id);
@@ -458,11 +458,11 @@ class yf_admin_methods
         }
         $filter_save_silent = $params['filter_save_silent'] ?: $this->_params['filter_save_silent'];
         $redirect_url = $params['redirect_url'] ?: $this->_params['redirect_url'];
-        $filter_data = $params['filter_data'] ?: $_GET['filter'];
-        $filter_name = $params['filter_name'] ?: $this->_params['filter_name'] ?: $_GET['object'] . '__show';
-        $need_clear = $params['filter_clear'] ?: ($_GET['id'] == 'clear' || $_GET['page'] == 'clear');
+        $filter_data = $params['filter_data'] ?: ($_GET['filter'] ?? null);
+        $filter_name = $params['filter_name'] ?: $this->_params['filter_name'] ?: ($_GET['object'] ?? null) . '__show';
+        $need_clear = $params['filter_clear'] ?: (($_GET['id'] ?? null) == 'clear' || ($_GET['page'] ?? null) == 'clear');
 
-        $data = $_SESSION[$filter_name];
+        $data = ($_SESSION[$filter_name] ?? null);
         if ($need_clear) {
             $data = [];
         }
@@ -489,7 +489,7 @@ class yf_admin_methods
         if ($filter_save_silent) {
             return $data;
         }
-        return js_redirect($redirect_url ?: url('/@object/' . str_replace($_GET['object'] . '__', '', $filter_name)));
+        return js_redirect($redirect_url ?: url('/@object/' . str_replace(($_GET['object'] ?? null) . '__', '', $filter_name)));
     }
 
     /**
@@ -499,10 +499,10 @@ class yf_admin_methods
     {
         $params += (array) $this->params;
 
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
-        $filter_name = $_GET['object'] . '__' . $_GET['action'];
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $r = [
             'form_action' => url('/@object/filter_save/' . $filter_name),
             'clear_url' => url('/@object/filter_save/' . $filter_name . '/clear'),
@@ -512,7 +512,7 @@ class yf_admin_methods
             $order_fields[$f] = $f;
         }
         return form($r, [
-                'selected' => $_SESSION[$filter_name],
+                'selected' => ($_SESSION[$filter_name] ?? null),
                 'db' => $params['db'],
             ])
             ->number('admin_id')
@@ -529,9 +529,9 @@ class yf_admin_methods
     {
         $filter_name = $params['filter_name'] ?: $this->_params['filter_name'];
         if ( ! $filter_name) {
-            $filter_name = $_GET['object'] . '__' . $_GET['action'];
+            $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         }
-        return (array) $_SESSION[$filter_name];
+        return (array) ($_SESSION[$filter_name] ?? null);
     }
 
     /**
@@ -565,7 +565,7 @@ class yf_admin_methods
                 'filebrowserBrowseUrl' => url('/ck_file_browser'),
                 'filebrowserUploadUrl' => url('/ck_file_browser'),
                 'filebrowserImageBrowseUrl' => url('/ck_file_browser'),
-                'filebrowserImageUploadUrl' => url('/ck_file_browser/upload_image/' . (int) ($_GET['id']) . '/?type=image'),
+                'filebrowserImageUploadUrl' => url('/ck_file_browser/upload_image/' . (int) (($_GET['id'] ?? null)) . '/?type=image'),
 //				'filebrowserFlashBrowseUrl' => url('/ck_file_browser'),
 //				'filebrowserFlashUploadUrl' => url('/ck_file_browser/upload_image/'.intval($_GET['id']).'/?type=flash'),
             ];
@@ -655,8 +655,8 @@ class yf_admin_methods
             'message' => isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
             'object_id' => isset($data['object_id']) ? $data['object_id'] : (isset($data[1]) ? $data[1] : ''),
             'user_id' => isset($data['user_id']) ? $data['user_id'] : (isset($data[2]) ? $data[2] : main()->ADMIN_ID),
-            'object' => isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : $_GET['object']),
-            'action' => isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : $_GET['action']),
+            'object' => isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : ($_GET['object'] ?? null)),
+            'action' => isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : ($_GET['action'] ?? null)),
             'important' => isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0),
             'old_data' => json_encode(isset($data['old_data']) ? $data['old_data'] : (isset($data[6]) ? $data[6] : '')),
             'new_data' => json_encode(isset($data['new_data']) ? $data['new_data'] : (isset($data[7]) ? $data[7] : '')),

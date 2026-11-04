@@ -80,7 +80,7 @@ class yf_menus_editor
             ])
             ->db_insert_if_ok('menus', ['type', 'name', 'desc', 'stpl_name', 'method_name', 'custom_fields', 'active'], [])
             ->on_after_update(function () {
-                common()->admin_wall_add(['menu added: ' . $_POST['name'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['menu added: ' . ($_POST['name'] ?? null) . '', db()->insert_id()]);
                 module('menus_editor')->_purge_caches();
             })
             ->radio_box('type', ['user' => 'User', 'admin' => 'Admin'])
@@ -96,7 +96,7 @@ class yf_menus_editor
 
     public function edit()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         if ( ! $id) {
             return _e('No id');
         }
@@ -109,7 +109,7 @@ class yf_menus_editor
             ->db_update_if_ok('menus', ['name', 'desc', 'stpl_name', 'method_name', 'custom_fields', 'active'], 'id=' . $id)
             ->on_after_update(function () {
                 $menu_info = null;
-                common()->admin_wall_add(['menu updated: ' . $_POST['name'] . '', $menu_info['id']]);
+                common()->admin_wall_add(['menu updated: ' . ($_POST['name'] ?? null) . '', $menu_info['id']]);
                 module('menus_editor')->_purge_caches();
             })
             ->info('type')
@@ -136,11 +136,11 @@ class yf_menus_editor
      */
     public function clone_menu()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if (empty($_GET['id'])) {
             return _e('No id!');
         }
-        $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) ($_GET['id']));
+        $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($menu_info['id'])) {
             return _e('No such menu!');
         }
@@ -174,7 +174,7 @@ class yf_menus_editor
         }
         common()->admin_wall_add(['menu cloned: ' . $menu_info['name'] . '', $NEW_ITEM_ID]);
         module('menus_editor')->_purge_caches();
-        return js_redirect('./?object=' . $_GET['object'] . '&action=edit&id=' . (int) $NEW_MENU_ID);
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=edit&id=' . (int) $NEW_MENU_ID);
     }
 
     /**
@@ -182,19 +182,19 @@ class yf_menus_editor
      */
     public function delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) ($_GET['id']));
+            $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($menu_info['id'])) {
-            db()->query('DELETE FROM ' . db('menus') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            db()->query('DELETE FROM ' . db('menu_items') . ' WHERE menu_id=' . (int) ($_GET['id']));
+            db()->query('DELETE FROM ' . db('menus') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            db()->query('DELETE FROM ' . db('menu_items') . ' WHERE menu_id=' . (int) (($_GET['id'] ?? null)));
             common()->admin_wall_add(['menu deleted: ' . $menu_info['name'] . '', $menu_info['id']]);
             module('menus_editor')->_purge_caches();
         }
         if (is_ajax()) {
             no_graphics(true);
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect(url('/@object'));
         }
@@ -206,7 +206,7 @@ class yf_menus_editor
     public function active()
     {
         if ( ! empty($_GET['id'])) {
-            $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) ($_GET['id']));
+            $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($menu_info)) {
             db()->UPDATE('menus', ['active' => (int) ! $menu_info['active']], 'id=' . (int) ($menu_info['id']));
@@ -226,7 +226,7 @@ class yf_menus_editor
      */
     public function show_items()
     {
-        $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) ($_GET['id']) . ' OR name="' . db()->es($_GET['id']) . '"');
+        $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' OR name="' . db()->es(($_GET['id'] ?? null)) . '"');
         if (empty($menu_info)) {
             return _e('No such menu!');
         }
@@ -241,8 +241,8 @@ class yf_menus_editor
                 }
                 $batch[$a['id']] = [
                     'id' => $a['id'],
-                    'name' => $_POST['name'][$a['id']],
-                    'location' => $_POST['location'][$a['id']],
+                    'name' => ($_POST['name'][$a['id']] ?? null),
+                    'location' => ($_POST['location'][$a['id']] ?? null),
                 ];
             }
             if ($batch) {
@@ -250,7 +250,7 @@ class yf_menus_editor
                 common()->admin_wall_add(['menu items updated: ' . $menu_info['name'] . '', $menu_info['id']]);
                 module('menus_editor')->_purge_caches();
             }
-            return js_redirect('./?object=' . $_GET['object'] . '&action=show_items&id=' . $_GET['id']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=show_items&id=' . ($_GET['id'] ?? null));
         }
         $groups = $this->_groups[$menu_info['type']];
         return table($menu_items, ['pager_records_on_page' => 10000, 'condensed' => 1, 'hide_empty' => 1])
@@ -279,19 +279,19 @@ class yf_menus_editor
         if (empty($_GET['id'])) {
             return _e('No id!');
         }
-        $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) ($_GET['id']) . ' OR name="' . db()->es($_GET['id']) . '"');
+        $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' OR name="' . db()->es(($_GET['id'] ?? null)) . '"');
         if (empty($menu_info)) {
             return _e('No such menu!');
         }
         $items = $this->_show_menu([
-            'force_stpl_name' => $_GET['object'] . '/drag',
+            'force_stpl_name' => ($_GET['object'] ?? null) . '/drag',
             'name' => $menu_info['name'],
             'return_array' => 1,
         ]);
         if (main()->is_post()) {
             $old_info = $this->_auto_update_items_orders($menu_info['id']);
             $batch = [];
-            foreach ((array) json_decode((string) $_POST['items'], $assoc = true) as $order_id => $info) {
+            foreach ((array) json_decode((string) ($_POST['items'] ?? null), $assoc = true) as $order_id => $info) {
                 $item_id = (int) $info['item_id'];
                 if ( ! $item_id || ! isset($items[$item_id])) {
                     continue;
@@ -332,17 +332,17 @@ class yf_menus_editor
             if ( ! $id) {
                 continue;
             }
-            $item['edit_link'] = './?object=' . $_GET['object'] . '&action=edit_item&id=' . $id;
-            $item['delete_link'] = './?object=' . $_GET['object'] . '&action=delete_item&id=' . $id;
-            $item['active_link'] = './?object=' . $_GET['object'] . '&action=activate_item&id=' . $id;
-            $item['clone_link'] = './?object=' . $_GET['object'] . '&action=clone_item&id=' . $id;
+            $item['edit_link'] = './?object=' . ($_GET['object'] ?? null) . '&action=edit_item&id=' . $id;
+            $item['delete_link'] = './?object=' . ($_GET['object'] ?? null) . '&action=delete_item&id=' . $id;
+            $item['active_link'] = './?object=' . ($_GET['object'] ?? null) . '&action=activate_item&id=' . $id;
+            $item['clone_link'] = './?object=' . ($_GET['object'] ?? null) . '&action=clone_item&id=' . $id;
             $tpl_items[$id] = tpl()->parse('@object/drag_item', $item);
         }
         $replace = [
             'items' => implode(PHP_EOL, (array) $tpl_items),
-            'form_action' => './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . '&id=' . $_GET['id'],
-            'add_link' => './?object=' . $_GET['object'] . '&action=add_item&id=' . $_GET['id'],
-            'back_link' => './?object=' . $_GET['object'] . '&action=show_items&id=' . $_GET['id'],
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . '&id=' . ($_GET['id'] ?? null),
+            'add_link' => './?object=' . ($_GET['object'] ?? null) . '&action=add_item&id=' . ($_GET['id'] ?? null),
+            'back_link' => './?object=' . ($_GET['object'] ?? null) . '&action=show_items&id=' . ($_GET['id'] ?? null),
         ];
         return tpl()->parse('@object/drag_main', $replace);
     }
@@ -590,7 +590,7 @@ class yf_menus_editor
 
     public function add_item()
     {
-        $menu_info = db()->get('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) ($_GET['id']));
+        $menu_info = db()->get('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($menu_info['id'])) {
             return _e('No such menu!');
         }
@@ -600,13 +600,13 @@ class yf_menus_editor
         if (main()->is_post()) {
             $tmp = [];
             foreach (explode(',', $menu_info['custom_fields']) as $field_name) {
-                if ($field_name && $_POST['custom'][$field_name]) {
-                    $tmp[$field_name] = $field_name . '=' . $_POST['custom'][$field_name];
+                if ($field_name && ($_POST['custom'][$field_name] ?? null)) {
+                    $tmp[$field_name] = $field_name . '=' . ($_POST['custom'][$field_name] ?? null);
                 }
             }
             $_POST['other_info'] = implode(';' . PHP_EOL, $tmp);
             foreach ($multi_selects as $k) {
-                $_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
+                $_POST[$k] = $this->_multi_html_to_db(($_POST[$k] ?? null));
             }
             /*
         } else {
@@ -616,14 +616,14 @@ class yf_menus_editor
              */
         }
         $a = $_POST;
-        $a['redirect_link'] = './?object=' . $_GET['object'] . '&action=show_items&id=' . $menu_info['id'];
+        $a['redirect_link'] = './?object=' . ($_GET['object'] ?? null) . '&action=show_items&id=' . $menu_info['id'];
         return form($a)
             ->validate([
                 'name' => 'trim|required',
             ])
             ->db_insert_if_ok('menu_items', ['type_id', 'parent_id', 'name', 'location', 'icon', 'user_groups', 'site_ids', 'server_ids', 'active', 'other_info'], ['menu_id' => $menu_info['id']])
             ->on_after_update(function () {
-                common()->admin_wall_add(['menu item added: ' . $_POST['name'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['menu item added: ' . ($_POST['name'] ?? null) . '', db()->insert_id()]);
                 module('menus_editor')->_purge_caches();
             })
             ->select_box('type_id', $this->_item_types)
@@ -642,7 +642,7 @@ class yf_menus_editor
 
     public function edit_item()
     {
-        $item_info = db()->query_fetch('SELECT * FROM ' . db('menu_items') . ' WHERE id=' . (int) ($_GET['id']));
+        $item_info = db()->query_fetch('SELECT * FROM ' . db('menu_items') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($item_info['id'])) {
             return _e('No such menu item!');
         }
@@ -656,13 +656,13 @@ class yf_menus_editor
         if (main()->is_post()) {
             $tmp = [];
             foreach (explode(',', $menu_info['custom_fields']) as $field_name) {
-                if ($field_name && $_POST['custom'][$field_name]) {
-                    $tmp[$field_name] = $field_name . '=' . $_POST['custom'][$field_name];
+                if ($field_name && ($_POST['custom'][$field_name] ?? null)) {
+                    $tmp[$field_name] = $field_name . '=' . ($_POST['custom'][$field_name] ?? null);
                 }
             }
             $_POST['other_info'] = implode(';' . PHP_EOL, $tmp);
             foreach ($multi_selects as $k) {
-                $_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
+                $_POST[$k] = $this->_multi_html_to_db(($_POST[$k] ?? null));
             }
         } else {
             foreach ($multi_selects as $k) {
@@ -670,7 +670,7 @@ class yf_menus_editor
             }
         }
         $a = $item_info;
-        $a['redirect_link'] = './?object=' . $_GET['object'] . '&action=show_items&id=' . $menu_info['id'];
+        $a['redirect_link'] = './?object=' . ($_GET['object'] ?? null) . '&action=show_items&id=' . $menu_info['id'];
         return form($a)
             ->validate([
                 'name' => 'trim|required',
@@ -679,7 +679,7 @@ class yf_menus_editor
                 'type_id', 'parent_id', 'name', 'location', 'icon', 'user_groups', 'site_ids', 'server_ids', 'active', 'other_info',
             ], 'id=' . $item_info['id'])
             ->on_after_update(function () use ($item_info) {
-                common()->admin_wall_add(['menu item updated: ' . $_POST['name'] . '', $item_info['id']]);
+                common()->admin_wall_add(['menu item updated: ' . ($_POST['name'] ?? null) . '', $item_info['id']]);
                 module('menus_editor')->_purge_caches();
             })
             ->select_box('type_id', $this->_item_types)
@@ -719,11 +719,11 @@ class yf_menus_editor
      */
     public function clone_item()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if (empty($_GET['id'])) {
             return _e('No id!');
         }
-        $item_info = db()->query_fetch('SELECT * FROM ' . db('menu_items') . ' WHERE id=' . (int) ($_GET['id']));
+        $item_info = db()->query_fetch('SELECT * FROM ' . db('menu_items') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($item_info['id'])) {
             return _e('No such menu item!');
         }
@@ -736,14 +736,14 @@ class yf_menus_editor
         db()->insert_safe('menu_items', $sql);
         common()->admin_wall_add(['menu item cloned: ' . $item_info['name'] . '', $item_info['id']]);
         module('menus_editor')->_purge_caches();
-        return js_redirect('./?object=' . $_GET['object'] . '&action=show_items&id=' . $menu_info['id']);
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=show_items&id=' . $menu_info['id']);
     }
 
 
     public function activate_item()
     {
         if ( ! empty($_GET['id'])) {
-            $item_info = db()->query_fetch('SELECT * FROM ' . db('menu_items') . ' WHERE id=' . (int) ($_GET['id']));
+            $item_info = db()->query_fetch('SELECT * FROM ' . db('menu_items') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($item_info)) {
             db()->update('menu_items', ['active' => (int) ! $item_info['active']], 'id=' . (int) ($item_info['id']));
@@ -754,28 +754,28 @@ class yf_menus_editor
             no_graphics(true);
             echo $item_info['active'] ? 0 : 1;
         } else {
-            return js_redirect('./?object=' . $_GET['object'] . '&action=show_items&id=' . $item_info['menu_id']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=show_items&id=' . $item_info['menu_id']);
         }
     }
 
 
     public function delete_item()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $item_info = db()->query_fetch('SELECT * FROM ' . db('menu_items') . ' WHERE id=' . (int) ($_GET['id']));
+            $item_info = db()->query_fetch('SELECT * FROM ' . db('menu_items') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($item_info)) {
-            db()->query('DELETE FROM ' . db('menu_items') . ' WHERE id=' . (int) ($_GET['id']));
-            db()->update('menu_items', ['parent_id' => 0], 'parent_id=' . (int) ($_GET['id']));
+            db()->query('DELETE FROM ' . db('menu_items') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+            db()->update('menu_items', ['parent_id' => 0], 'parent_id=' . (int) (($_GET['id'] ?? null)));
             common()->admin_wall_add(['menu item deleted: ' . $item_info['name'] . '', $item_info['id']]);
         }
         module('menus_editor')->_purge_caches();
         if (is_ajax()) {
             no_graphics(true);
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
-            return js_redirect('./?object=' . $_GET['object'] . '&action=show_items&id=' . $item_info['menu_id']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=show_items&id=' . $item_info['menu_id']);
         }
     }
 
@@ -784,8 +784,8 @@ class yf_menus_editor
      */
     public function export()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $menu_info = db()->query_fetch('SELECT * FROM ' . db('menus') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         $params = [
             'single_table' => '',
             'tables' => [db('menus'), db('menu_items')],

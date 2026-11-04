@@ -34,7 +34,7 @@ class yf_manage_shop_invoice
 
     public function invoice()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         $_GET['id'] = $id;
         list($css, $html) = $this->_prepare_invoice_body($id);
         $tpl = db()->get_one('SELECT text FROM ' . db('static_pages') . ' WHERE `name`= "invoice"');
@@ -53,7 +53,7 @@ __INVOICE__
 </html>
 ';
         }
-        if ($_GET['pdf']) {
+        if (($_GET['pdf'] ?? null)) {
             $html_page = str_replace('__INVOICE__', $html, $tpl);
             common()->pdf_page([
                 'css' => $css,

@@ -41,7 +41,7 @@ class yf_htmx {
     foreach( $this->req as $k => &$v ) {
       $key = 'HTTP_HX_'. strtoupper( $k );
       if( isset( $_SERVER[ $key ] ) ) {
-        $v = $_SERVER[ $key ];
+        $v = ($_SERVER[ $key ] ?? null);
       }
     }
   }

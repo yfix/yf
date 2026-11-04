@@ -6,9 +6,9 @@ class yf_shop__site_title
     {
         $title = module('shop')->COMPANY_INFO['company_title'] ? module('shop')->COMPANY_INFO['company_title'] : module('shop')->COMPANY_INFO['company_name'];
         $subtitle = '';
-        if (in_array($_GET['action'], ['show', 'products_show']) && $_GET['id']) {
-            $subtitle .= module('shop')->_shop_cats[$_GET['id']];
-        } elseif (in_array($_GET['action'], ['product_details']) /* && $_GET["id"] */) {
+        if (in_array(($_GET['action'] ?? null), ['show', 'products_show']) && ($_GET['id'] ?? null)) {
+            $subtitle .= module('shop')->_shop_cats[($_GET['id'] ?? null)];
+        } elseif (in_array(($_GET['action'] ?? null), ['product_details']) /* && $_GET["id"] */) {
             $man = module('shop')->_manufacturer[module('shop')->_product_info['manufacturer_id']]['name'];
             $subtitle .= module('shop')->_product_info['name'] . ' - ' . $man;
         }

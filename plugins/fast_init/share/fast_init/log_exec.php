@@ -11,11 +11,11 @@ return function () {
     $t .= '#@#0'; // user_id
     $t .= '#@#0'; // user_group
     $t .= '#@#' . time();
-    $t .= '#@#' . $_SERVER['REMOTE_ADDR'];
-    $t .= '#@#' . $_SERVER['HTTP_USER_AGENT'];
-    $t .= '#@#' . $_SERVER['HTTP_REFERER'];
-    $t .= '#@#' . $_SERVER['QUERY_STRING'];
-    $t .= '#@#' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $t .= '#@#' . ($_SERVER['REMOTE_ADDR'] ?? null);
+    $t .= '#@#' . ($_SERVER['HTTP_USER_AGENT'] ?? null);
+    $t .= '#@#' . ($_SERVER['HTTP_REFERER'] ?? null);
+    $t .= '#@#' . ($_SERVER['QUERY_STRING'] ?? null);
+    $t .= '#@#' . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null);
     $t .= '#@#' . round(microtime(true) - main()->_time_start, 5);
     $t .= '#@#0'; // db queries
     $t .= '#@#0'; // html size

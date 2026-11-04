@@ -761,7 +761,7 @@ class yf_manage_shop
     public function _product_cache_purge($product_id = 0)
     {
         if ( ! $product_id) {
-            $product_id = $_GET['id'];
+            $product_id = ($_GET['id'] ?? null);
         }
         cache_del('_shop_products|_product_image|' . $product_id);
         cache_del('_shop_product_params|_product_image|' . $product_id);

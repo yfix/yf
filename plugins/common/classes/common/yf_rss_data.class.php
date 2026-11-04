@@ -71,9 +71,9 @@ class yf_rss_data
         // optional feed params
         $rss->descriptionTruncSize = ! empty($params['feed_trunc_size']) ? (int) ($params['item_trunc_size']) : 500;
         $rss->descriptionHtmlSyndicated = isset($params['feed_insert_html']) ? (bool) $params['feed_insert_html'] : true;
-        $rss->link = _prepare_html(process_url($params['feed_url'] ?: './?object=' . $_GET['object']));
+        $rss->link = _prepare_html(process_url($params['feed_url'] ?: './?object=' . ($_GET['object'] ?? null)));
         $this->self_link = $rss->link;
-        $rss->syndicationURL = _prepare_html(process_url($params['feed_source'] ?: './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . ( ! empty($_GET['id']) ? '&id=' . $_GET['id'] : '')));
+        $rss->syndicationURL = _prepare_html(process_url($params['feed_source'] ?: './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . ( ! empty($_GET['id']) ? '&id=' . ($_GET['id'] ?? null) : '')));
         if ( ! empty($this->SHOW_RSS_ENCODING)) {
             $rss->encoding = $this->SHOW_RSS_ENCODING;
         }
@@ -112,7 +112,7 @@ class yf_rss_data
         $feed_format = isset($params['feed_format']) && in_array($params['feed_format'], $this->avail_formats) ? $params['feed_format'] : 'RSS2.0';
         $feed_file_name = $params['feed_file_name'];
         if ( ! strlen($feed_file_name)) {
-            $feed_file_name = md5($_SERVER['HTTP_HOST'] . '_' . $rss->title . $rss->description . $this->self_link);
+            $feed_file_name = md5(($_SERVER['HTTP_HOST'] ?? null) . '_' . $rss->title . $rss->description . $this->self_link);
         }
         $feed_file_name = common()->_propose_url_from_name($feed_file_name);
         $feed_cache_path = $this->FEEDS_CACHE_PATH . $feed_file_name . '.xml';

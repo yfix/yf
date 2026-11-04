@@ -3,11 +3,11 @@
 return function () {
     $data = $counter = null;
     if (empty($WHAT)) {
-        $WHAT = trim($_GET['id']);
+        $WHAT = trim(($_GET['id'] ?? null));
     }
     if (empty($WHAT)) {
-        if (false !== ($_pos = strpos($_SERVER['REQUEST_URI'], '?q='))) {
-            parse_str(substr($_SERVER['REQUEST_URI'], $_pos + 1), $_tmp);
+        if (false !== ($_pos = strpos(($_SERVER['REQUEST_URI'] ?? null), '?q='))) {
+            parse_str(substr(($_SERVER['REQUEST_URI'] ?? null), $_pos + 1), $_tmp);
             $WHAT = $_tmp['q'];
         }
     }

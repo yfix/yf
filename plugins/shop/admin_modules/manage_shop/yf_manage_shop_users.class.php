@@ -11,7 +11,7 @@ class yf_manage_shop_users
             ];
         }
         return table('SELECT * FROM ' . db('user'), [
-                'filter' => $_SESSION[$_GET['object'] . '__users'],
+                'filter' => ($_SESSION[$_GET['object'] . '__users'] ?? null),
                 'filter_params' => [
                     'id' => 'like',
                     'name' => 'like',
@@ -36,36 +36,36 @@ class yf_manage_shop_users
 
     public function user_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $field_info = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE id = ' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $field_info = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE id = ' . (int) (($_GET['id'] ?? null)));
         if (empty($field_info)) {
             return _e('no field');
         }
-        if ($_GET['id']) {
-            db()->query('DELETE FROM ' . db('user') . ' WHERE id=' . $_GET['id']);
-            common()->admin_wall_add(['user deleted: ' . $_GET['id'], $_GET['id']]);
+        if (($_GET['id'] ?? null)) {
+            db()->query('DELETE FROM ' . db('user') . ' WHERE id=' . ($_GET['id'] ?? null));
+            common()->admin_wall_add(['user deleted: ' . ($_GET['id'] ?? null), ($_GET['id'] ?? null)]);
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
-            return js_redirect($_SERVER['HTTP_REFERER'], 0);
+            return js_redirect(($_SERVER['HTTP_REFERER'] ?? null), 0);
         }
     }
 
 
     public function user_activate()
     {
-        if ($_GET['id']) {
-            $A = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE id=' . (int) ($_GET['id']));
+        if (($_GET['id'] ?? null)) {
+            $A = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
             if ($A['active'] == 1) {
                 $active = 0;
             } elseif ($A['active'] == 0) {
                 $active = 1;
             }
-            db()->UPDATE(db('user'), ['active' => $active], 'id=' . (int) ($_GET['id']));
+            db()->UPDATE(db('user'), ['active' => $active], 'id=' . (int) (($_GET['id'] ?? null)));
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
             echo $active ? 1 : 0;
         } else {
@@ -76,8 +76,8 @@ class yf_manage_shop_users
 
     public function user_edit()
     {
-        if ($_GET['id']) {
-            $A = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE id=' . (int) ($_GET['id']));
+        if (($_GET['id'] ?? null)) {
+            $A = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
             if (empty($A)) {
                 return js_redirect('./?object=' . main()->_get('object') . '&action=users');
             }
@@ -88,7 +88,7 @@ class yf_manage_shop_users
             'phone' => ['trim|required'],
             'address' => ['trim|required'],
         ];
-        $A['redirect_link'] = './?object=' . $_GET['object'] . '&action=users';
+        $A['redirect_link'] = './?object=' . ($_GET['object'] ?? null) . '&action=users';
         if ($A['birthday'] !== '0000-00-00') {
             $A['birthday'] = date('d-m-Y', strtotime($A['birthday']));
         } else {
@@ -96,7 +96,7 @@ class yf_manage_shop_users
         }
         return form($A)
             ->validate($validate_rules)
-            ->db_update_if_ok('user', ['name', 'phone', 'address', 'birthday'], $_GET['id'])
+            ->db_update_if_ok('user', ['name', 'phone', 'address', 'birthday'], ($_GET['id'] ?? null))
             ->on_before_update(function (&$data, $table, $fields) {
                 $data['birthday'] = date('Y-m-d', strtotime($data['birthday']));
             })

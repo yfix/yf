@@ -45,7 +45,7 @@ class yf_manage_emails
             'to_email' => $cur_admin_email ?: SITE_ADMIN_EMAIL,
             'to_name' => 'test email receiver',
             'to_subject' => '[email tpl #' . $a['name'] . '] ' . $a['subject'],
-            'no_async' => (int) ((bool) $_GET['no_async']),
+            'no_async' => (int) ((bool) ($_GET['no_async'] ?? null)),
         ] + $a;
         if ($a['no_async']) {
             _class('email')->ASYNC_SEND = false;
@@ -187,7 +187,7 @@ class yf_manage_emails
 
     public function delete()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if ($id) {
             $a = $this->_get_info();
             module_safe('manage_revisions')->add([
@@ -210,7 +210,7 @@ class yf_manage_emails
 
     public function active()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if ($a = $this->_get_info()) {
             $n = $a;
             $n['active'] = (int) ! $a['active'];
@@ -247,8 +247,8 @@ class yf_manage_emails
     public function _get_info($id = null, $lang = null)
     {
         $locale = null;
-        $id = isset($id) ? $id : $_GET['id'];
-        $lang = isset($lang) ? $lang : $_GET['page'];
+        $id = isset($id) ? $id : ($_GET['id'] ?? null);
+        $lang = isset($lang) ? $lang : ($_GET['page'] ?? null);
         $a = db()->from(self::table)
             ->where('locale', $lang ? strtolower($lang) : '')
             ->where('name', _strtolower(urldecode($id)))

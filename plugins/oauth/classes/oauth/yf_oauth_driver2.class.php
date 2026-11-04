@@ -56,7 +56,7 @@ abstract class yf_oauth_driver2
 
     public function get_user_info()
     {
-        if (DEBUG_MODE && $_GET['oauth_clean']) {
+        if (DEBUG_MODE && ($_GET['oauth_clean'] ?? null)) {
             $this->_storage_clean();
         }
         $access_token = $this->_storage_get('access_token');
@@ -99,7 +99,7 @@ abstract class yf_oauth_driver2
         if ($access_token) {
             return $access_token;
         }
-        $code = $_GET['code'];
+        $code = ($_GET['code'] ?? null);
         if ( ! $code) {
             return $this->authorize();
         }
@@ -169,7 +169,7 @@ abstract class yf_oauth_driver2
      */
     public function _storage_get($key)
     {
-        return isset($_SESSION['oauth'][$this->provider][$key]) ? $_SESSION['oauth'][$this->provider][$key] : false;
+        return isset($_SESSION['oauth'][$this->provider][$key]) ? ($_SESSION['oauth'][$this->provider][$key] ?? null) : false;
     }
 
     /**

@@ -41,8 +41,8 @@ class yf_router
         }
         $static_pages_names = main()->get_data('static_pages_names');
         $replaced_obj = str_replace('_', '-', $_GET['object']);
-        if (in_array($_GET['object'], (array) $static_pages_names)) {
-            $_GET['id'] = $_GET['object'];
+        if (in_array(($_GET['object'] ?? null), (array) $static_pages_names)) {
+            $_GET['id'] = ($_GET['object'] ?? null);
             $_GET['object'] = 'static_pages';
             $_GET['action'] = 'show';
         } elseif (in_array($replaced_obj, (array) $static_pages_names)) {

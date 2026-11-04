@@ -26,7 +26,7 @@ class yf_manage_sites
 
     public function edit()
     {
-        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) ($_GET['id']));
+        $a = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $a['id']) {
             return _e('No id!');
         }
@@ -38,7 +38,7 @@ class yf_manage_sites
             ->db_update_if_ok(self::table, ['name', 'web_path', 'real_path'], 'id=' . $a['id'])
             ->on_after_update(function () use ($a) {
                 cache_del([self::table]);
-                common()->admin_wall_add(['site updated: ' . $_POST['name'] . '', $a['id']]);
+                common()->admin_wall_add(['site updated: ' . ($_POST['name'] ?? null) . '', $a['id']]);
             })
             ->text('name')
             ->text('web_path')
@@ -57,7 +57,7 @@ class yf_manage_sites
             ->db_insert_if_ok(self::table, ['name', 'web_path', 'real_path'], [])
             ->on_after_update(function () {
                 cache_del([self::table]);
-                common()->admin_wall_add(['site added: ' . $_POST['name'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['site added: ' . ($_POST['name'] ?? null) . '', db()->insert_id()]);
             })
             ->text('name')
             ->text('web_path')

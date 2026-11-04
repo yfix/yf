@@ -4,16 +4,16 @@ class yf_manage_shop_pics_browser
 {
     public function pics_browser()
     {
-        if (isset($_GET['active']) && $_GET['active'] == 1) {
+        if (isset($_GET['active']) && ($_GET['active'] ?? null) == 1) {
             $active = ' AND p.active = \'1\' ';
-        } elseif (isset($_GET['active']) && $_GET['active'] == 0) {
+        } elseif (isset($_GET['active']) && ($_GET['active'] ?? null) == 0) {
             $active = ' AND p.active = \'\' ';
         } else {
             $active = '';
         }
 
         if (main()->is_post()) {
-            foreach ($_POST['delete'] as $k => $v) {
+            foreach (($_POST['delete'] ?? []) as $k => $v) {
                 list($id, $product_id) = explode('_', $k);
                 module('manage_shop')->_product_image_delete($id, $product_id);
             }

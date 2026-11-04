@@ -34,17 +34,17 @@ class yf_manage_shop_coupons
 
     public function coupon_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $info = db()->query_fetch('SELECT * FROM ' . db('shop_coupons') . ' WHERE id=' . (int) ($_GET['id']));
+            $info = db()->query_fetch('SELECT * FROM ' . db('shop_coupons') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($info['id'])) {
-            db()->query('DELETE FROM ' . db('shop_coupons') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            common()->admin_wall_add(['coupon deleted: ' . $_GET['id'], $_GET['id']]);
+            db()->query('DELETE FROM ' . db('shop_coupons') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            common()->admin_wall_add(['coupon deleted: ' . ($_GET['id'] ?? null), ($_GET['id'] ?? null)]);
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect('./?object=' . main()->_get('object') . '&action=coupons');
         }
@@ -54,28 +54,28 @@ class yf_manage_shop_coupons
     public function coupon_add()
     {
         if (main()->is_post()) {
-            if ( ! $_POST['code']) {
+            if ( ! ($_POST['code'] ?? null)) {
                 _re('Code must be entered');
             } else {
-                $_POST['code'] = $this->_cleanup_code($_POST['code']);
-                $cnt = db()->get_one('SELECT COUNT(`id`) AS `cnt` FROM `' . db('shop_coupons') . "` WHERE `code`='" . $_POST['code'] . "'");
+                $_POST['code'] = $this->_cleanup_code(($_POST['code'] ?? null));
+                $cnt = db()->get_one('SELECT COUNT(`id`) AS `cnt` FROM `' . db('shop_coupons') . "` WHERE `code`='" . ($_POST['code'] ?? null) . "'");
                 if ($cnt != 0) {
                     _re('Code already exists');
                 }
             }
             if ( ! common()->_error_exists()) {
                 $sql_array = [
-                    'code' => $this->_cleanup_code($_POST['code']),
-                    'user_id' => (int) ($_POST['user_id']),
-                    'sum' => (int) ($_POST['sum']),
-                    'status' => (int) ($_POST['status']),
-                    'cat_id' => (int) ($_POST['cat_id']),
-                    'order_id' => (int) ($_POST['order_id']),
-                    'time_start' => strtotime($_POST['time_start']),
-                    'time_end' => strtotime($_POST['time_end']),
+                    'code' => $this->_cleanup_code(($_POST['code'] ?? null)),
+                    'user_id' => (int) (($_POST['user_id'] ?? null)),
+                    'sum' => (int) (($_POST['sum'] ?? null)),
+                    'status' => (int) (($_POST['status'] ?? null)),
+                    'cat_id' => (int) (($_POST['cat_id'] ?? null)),
+                    'order_id' => (int) (($_POST['order_id'] ?? null)),
+                    'time_start' => strtotime(($_POST['time_start'] ?? null)),
+                    'time_end' => strtotime(($_POST['time_end'] ?? null)),
                 ];
                 db()->insert(db('shop_coupons'), db()->es($sql_array));
-                common()->admin_wall_add(['shop coupon added: ' . $this->_cleanup_code($_POST['code']), db()->insert_id()]);
+                common()->admin_wall_add(['shop coupon added: ' . $this->_cleanup_code(($_POST['code'] ?? null)), db()->insert_id()]);
                 return js_redirect('./?object=' . main()->_get('object') . '&action=coupons');
             }
         }
@@ -99,34 +99,34 @@ class yf_manage_shop_coupons
 
     public function coupon_edit()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if (empty($_GET['id'])) {
             return _e('Empty ID!');
         }
-        $coupon_info = db()->query_fetch('SELECT * FROM ' . db('shop_coupons') . ' WHERE id=' . $_GET['id']);
+        $coupon_info = db()->query_fetch('SELECT * FROM ' . db('shop_coupons') . ' WHERE id=' . ($_GET['id'] ?? null));
         if (main()->is_post()) {
-            if ( ! $_POST['code']) {
+            if ( ! ($_POST['code'] ?? null)) {
                 _re('Code must be entered');
             } else {
-                $_POST['code'] = $this->_cleanup_code($_POST['code']);
-                $cnt = db()->get_one('SELECT COUNT(`id`) AS `cnt` FROM `' . db('shop_coupons') . "` WHERE `code`='" . $_POST['code'] . "' AND `id`!=" . $_GET['id']);
+                $_POST['code'] = $this->_cleanup_code(($_POST['code'] ?? null));
+                $cnt = db()->get_one('SELECT COUNT(`id`) AS `cnt` FROM `' . db('shop_coupons') . "` WHERE `code`='" . ($_POST['code'] ?? null) . "' AND `id`!=" . ($_GET['id'] ?? null));
                 if ($cnt != 0) {
                     _re('Code already exists');
                 }
             }
             if ( ! common()->_error_exists()) {
                 $sql_array = [
-                    'code' => $this->_cleanup_code($_POST['code']),
-                    'user_id' => (int) ($_POST['user_id']),
-                    'sum' => (int) ($_POST['sum']),
-                    'status' => (int) ($_POST['status']),
-                    'cat_id' => (int) ($_POST['cat_id']),
-                    'order_id' => (int) ($_POST['order_id']),
-                    'time_start' => strtotime($_POST['time_start']),
-                    'time_end' => strtotime($_POST['time_end']),
+                    'code' => $this->_cleanup_code(($_POST['code'] ?? null)),
+                    'user_id' => (int) (($_POST['user_id'] ?? null)),
+                    'sum' => (int) (($_POST['sum'] ?? null)),
+                    'status' => (int) (($_POST['status'] ?? null)),
+                    'cat_id' => (int) (($_POST['cat_id'] ?? null)),
+                    'order_id' => (int) (($_POST['order_id'] ?? null)),
+                    'time_start' => strtotime(($_POST['time_start'] ?? null)),
+                    'time_end' => strtotime(($_POST['time_end'] ?? null)),
                 ];
-                db()->update('shop_coupons', db()->es($sql_array), 'id=' . $_GET['id']);
-                common()->admin_wall_add(['shop coupon updated: ' . $this->_cleanup_code($_POST['code']), $_GET['id']]);
+                db()->update('shop_coupons', db()->es($sql_array), 'id=' . ($_GET['id'] ?? null));
+                common()->admin_wall_add(['shop coupon updated: ' . $this->_cleanup_code(($_POST['code'] ?? null)), ($_GET['id'] ?? null)]);
                 return js_redirect('./?object=' . main()->_get('object') . '&action=coupons');
             }
         }
@@ -158,9 +158,9 @@ class yf_manage_shop_coupons
 
     public function coupon_view()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $info = db()->query_fetch('SELECT * FROM ' . db('shop_coupons') . ' WHERE id=' . (int) ($_GET['id']));
+            $info = db()->query_fetch('SELECT * FROM ' . db('shop_coupons') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if (empty($info['id'])) {
             return js_redirect('./?object=' . main()->_get('object') . '&action=coupons');

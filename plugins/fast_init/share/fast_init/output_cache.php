@@ -14,7 +14,7 @@ return function () {
         return false;
     }
     // Special for the 'share on facebook' feature
-    if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit')) {
+    if (false !== strpos(($_SERVER['HTTP_USER_AGENT'] ?? null), 'facebookexternalhit')) {
         return false;
     }
     $w = $MODULE_CONF['WHITE_LIST_PATTERN'];
@@ -23,8 +23,8 @@ return function () {
             if (defined('SITE_DEFAULT_PAGE')) {
                 @parse_str(substr(SITE_DEFAULT_PAGE, 3), $_tmp);
             }
-            $_object = $_GET['object'] ? $_GET['object'] : $_tmp['object'];
-            $_action = $_GET['action'] ? $_GET['action'] : 'show';
+            $_object = ($_GET['object'] ?? null) ? ($_GET['object'] ?? null) : $_tmp['object'];
+            $_action = ($_GET['action'] ?? null) ? ($_GET['action'] ?? null) : 'show';
             if ( ! isset($w[$_object])) {
                 $NO_NEED_TO_CACHE = true;
             } elseif ( ! empty($w[$_object]) && ! in_array($_action, (array) $w[$_object])) {
@@ -40,18 +40,18 @@ return function () {
             }
         }
     }
-    if ($_SERVER['REQUEST_METHOD'] != 'GET' || MAIN_TYPE_ADMIN || $NO_NEED_TO_CACHE) {
+    if (($_SERVER['REQUEST_METHOD'] ?? null) != 'GET' || MAIN_TYPE_ADMIN || $NO_NEED_TO_CACHE) {
         return false;
     }
     // Prepare path to the current page cache
     $locale_id = defined('DEFAULT_LANG') ? DEFAULT_LANG : conf('language');
     $cur_cache_name = md5(
-        $_SERVER['HTTP_HOST'] .
-        '/' . $_SERVER['SCRIPT_NAME'] .
-        '?' . $_SERVER['QUERY_STRING'] .
+        ($_SERVER['HTTP_HOST'] ?? null) .
+        '/' . ($_SERVER['SCRIPT_NAME'] ?? null) .
+        '?' . ($_SERVER['QUERY_STRING'] ?? null) .
         '---' . $locale_id .
         '---' . (int) conf('SITE_ID') .
-        '---' . ($_SESSION['user_group'] <= 1 ? 'guest' : 'member')
+        '---' . (($_SESSION['user_group'] ?? null) <= 1 ? 'guest' : 'member')
     );
     $CACHE_CONTENTS = '';
 
@@ -91,11 +91,11 @@ return function () {
     main()->_IN_OUTPUT_CACHE = true;
     echo preg_replace('/<\?php.+?\?>/ms', '', $CACHE_CONTENTS);
 
-    $t = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    $t .= '#' . $_SERVER['REQUEST_TIME'];
-    $t .= '#' . $_SERVER['HTTP_REFERER'];
+    $t = ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null);
+    $t .= '#' . ($_SERVER['REQUEST_TIME'] ?? null);
+    $t .= '#' . ($_SERVER['HTTP_REFERER'] ?? null);
     $t .= '#' . conf('SITE_ID');
-    $t .= '#' . $_SERVER['REMOTE_ADDR'];
+    $t .= '#' . ($_SERVER['REMOTE_ADDR'] ?? null);
     $t .= '#1'; // means page from output cache
     $t .= '#0'; // guest
     $t .= PHP_EOL;

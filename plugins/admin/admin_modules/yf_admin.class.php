@@ -98,7 +98,7 @@ class yf_admin
 
     public function edit()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         if ( ! $id) {
             return _e('Wrong id');
         }
@@ -128,7 +128,7 @@ class yf_admin
             ])
             ->db_update_if_ok(self::table, $up)
             ->on_after_update(function () use ($a, $id) {
-                common()->admin_wall_add([t('admin account edited: %login', ['%login' => $_POST['login']]), $id]);
+                common()->admin_wall_add([t('admin account edited: %login', ['%login' => ($_POST['login'] ?? null)]), $id]);
             })
             ->login()
             ->email()
@@ -160,7 +160,7 @@ class yf_admin
             ])
             ->db_insert_if_ok(self::table, ['login', 'email', 'first_name', 'last_name', 'go_after_login', 'password', 'group', 'active'], ['add_date' => time()])
             ->on_after_update(function () {
-                common()->admin_wall_add(['admin account added: ' . $_POST['login'] . '', main()->ADMIN_ID]);
+                common()->admin_wall_add(['admin account added: ' . ($_POST['login'] ?? null) . '', main()->ADMIN_ID]);
             })
             ->login()
             ->email()
@@ -178,7 +178,7 @@ class yf_admin
      */
     public function ajax($force_id = false)
     {
-        $id = (int) ($force_id ?: $_GET['id']);
+        $id = (int) ($force_id ?: ($_GET['id'] ?? null));
         $admin = from(self::table)->whereid($id)->get();
         if ( ! $id || ! $admin) {
             return _404();
@@ -358,7 +358,7 @@ class yf_admin
 
     public function delete()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         $id && $a = from(self::table)->whereid($id)->get();
         $func = $this->display_func;
         $allowed = $func($a);
@@ -377,7 +377,7 @@ class yf_admin
 
     public function active()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         $id && $a = from(self::table)->whereid($id)->get();
         $func = $this->display_func;
         $allowed = $func($a);
@@ -396,7 +396,7 @@ class yf_admin
 
     public function login_as()
     {
-        $id = (int) $_GET['id'];
+        $id = (int) ($_GET['id'] ?? null);
         if ( ! $id) {
             return _e('Wrong id');
         }
@@ -415,7 +415,7 @@ class yf_admin
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [];

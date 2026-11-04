@@ -4,7 +4,7 @@
 return function () {
     $tip_info = [];
     // Try to get tip id
-    $TIP_ID = substr($_REQUEST['id'], strlen('help_'));
+    $TIP_ID = substr(($_REQUEST['id'] ?? null), strlen('help_'));
     if (empty($TIP_ID) && ! main()->USE_SYSTEM_CACHE) {
         return false;
     }

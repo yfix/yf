@@ -72,14 +72,14 @@ class yf_login_form
         $_url_after_login = $this->DEF_REDIRECT_URL;
         // Process special redirect format
         if ( ! empty($_GET['go_url'])) {
-            if (false !== ($pos1 = strpos($_GET['go_url'], ';'))) {
-                $_GET['go_url'] = substr($_GET['go_url'], 0, $pos1) . '&action=' . substr($_GET['go_url'], $pos1 + 1);
+            if (false !== ($pos1 = strpos(($_GET['go_url'] ?? null), ';'))) {
+                $_GET['go_url'] = substr(($_GET['go_url'] ?? null), 0, $pos1) . '&action=' . substr(($_GET['go_url'] ?? null), $pos1 + 1);
             }
             $_url_after_login = './?object=' . str_replace(';', '&', $_GET['go_url']);
         } elseif (conf('_force_login_go_url')) {
             $_url_after_login = conf('_force_login_go_url');
         }
-        if (strlen($_url_after_login) > 3 && ! $_SESSION['user_go_url']) {
+        if (strlen($_url_after_login) > 3 && ! ($_SESSION['user_go_url'] ?? null)) {
             if (substr($_url_after_login, 0, 3) == './?') {
                 $_url_after_login = substr($_url_after_login, 3);
             }
@@ -137,7 +137,7 @@ class yf_login_form
         if ( ! isset($params['only_icons'])) {
             $params['only_icons'] = 1;
         }
-        if ( ! $_GET['id'] && ! $this->OAUTH_LIST_PROVIDERS && empty($params)) {
+        if ( ! ($_GET['id'] ?? null) && ! $this->OAUTH_LIST_PROVIDERS && empty($params)) {
             if (main()->USER_ID) {
                 return js_redirect('./');
             }
@@ -146,10 +146,10 @@ class yf_login_form
         //		$allowed_objects = array('login','login_form','register','user_profile','profile')
         $allowed_objects = ['login_form', 'user_profile', 'profile'];
         $def_object = 'login_form';
-        $url_object = in_array($_GET['object'], $allowed_objects) ? $_GET['object'] : 'login_form';
+        $url_object = in_array(($_GET['object'] ?? null), $allowed_objects) ? ($_GET['object'] ?? null) : 'login_form';
         $url_action = __FUNCTION__;
-        if (in_array($_GET['object'], $allowed_objects) && $_GET['id'] && preg_match('/^[a-z0-9_-]+$/ims', $_GET['id'])) {
-            return _class('oauth')->login($_GET['id']);
+        if (in_array(($_GET['object'] ?? null), $allowed_objects) && ($_GET['id'] ?? null) && preg_match('/^[a-z0-9_-]+$/ims', $_GET['id'])) {
+            return _class('oauth')->login(($_GET['id'] ?? null));
         }
         $body = [];
         foreach ((array) $providers as $name => $settings) {

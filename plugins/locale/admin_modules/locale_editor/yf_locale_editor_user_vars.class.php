@@ -15,20 +15,20 @@ class yf_locale_editor_user_vars
     {
         $filter_sql = $i = null;
         if (isset($_GET['id']) && ! isset($_GET['page'])) {
-            $_GET['page'] = $_GET['id'];
+            $_GET['page'] = ($_GET['id'] ?? null);
             $_GET['id'] = null;
         }
         // Group actions here
         if (main()->is_post()) {
             if (isset($_POST['multi-push'])) {
-                foreach ((array) $_POST['items'] as $_id) {
+                foreach ((array) ($_POST['items'] ?? null) as $_id) {
                     $_id = (int) $_id;
                     if ( ! empty($_id)) {
                         $this->user_var_push($_id);
                     }
                 }
             }
-            return js_redirect('./?object=' . $_GET['object'] . '&action=user_vars' . _add_get());
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=user_vars' . _add_get());
         }
 
         $sql = 'SELECT * FROM ' . db('locale_user_tr') . '';
@@ -84,20 +84,20 @@ class yf_locale_editor_user_vars
                 'global_exists' => (int) $global_var_exists,
                 'var_bg_color' => $var_bg_color,
                 'active' => (int) ($A['active']),
-                'edit_url' => './?object=' . $_GET['object'] . '&action=user_var_edit&id=' . $A['id'],
-                'delete_url' => './?object=' . $_GET['object'] . '&action=user_var_delete&id=' . $A['id'],
-                'push_url' => './?object=' . $_GET['object'] . '&action=user_var_push&id=' . $A['id'],
+                'edit_url' => './?object=' . ($_GET['object'] ?? null) . '&action=user_var_edit&id=' . $A['id'],
+                'delete_url' => './?object=' . ($_GET['object'] ?? null) . '&action=user_var_delete&id=' . $A['id'],
+                'push_url' => './?object=' . ($_GET['object'] ?? null) . '&action=user_var_push&id=' . $A['id'],
             ];
         }
         $replace = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . ($_GET['id'] ? '&id=' . $_GET['id'] : ''),
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . (($_GET['id'] ?? null) ? '&id=' . ($_GET['id'] ?? null) : ''),
             'error' => _e(),
             'items' => $items,
             'pages' => $pages,
             'total' => $total,
-            'show_vars_link' => './?object=' . $_GET['object'] . '&action=show_vars',
+            'show_vars_link' => './?object=' . ($_GET['object'] ?? null) . '&action=show_vars',
         ];
-        return tpl()->parse($_GET['object'] . '/user_vars_main', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/user_vars_main', $replace);
         /*
         <form action="{form_action}" method="post" name="" class="form-horizontal">
         <caption>{t(total)}: {total}</caption>
@@ -142,24 +142,24 @@ class yf_locale_editor_user_vars
      */
     public function user_var_edit()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $A = db()->query_fetch('SELECT * FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $A = db()->query_fetch('SELECT * FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $A) {
             return _e('No id');
         }
         if (main()->is_post()) {
             db()->UPDATE('locale_user_tr', [
-                'name' => _es($_POST['name']),
-                'translation' => _es($_POST['translation']),
+                'name' => _es(($_POST['name'] ?? null)),
+                'translation' => _es(($_POST['translation'] ?? null)),
                 'last_update' => time(),
-            ], 'id=' . (int) ($_GET['id']));
-            return js_redirect('./?object=' . $_GET['object'] . '&action=user_vars');
+            ], 'id=' . (int) (($_GET['id'] ?? null)));
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=user_vars');
         }
         $DATA = my_array_merge($A, $_POST);
 
         $replace = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=' . $_GET['action'] . ($_GET['id'] ? '&id=' . $_GET['id'] : ''),
-            'back_url' => process_url('./?object=' . $_GET['object'] . '&action=user_vars'),
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . (($_GET['id'] ?? null) ? '&id=' . ($_GET['id'] ?? null) : ''),
+            'back_url' => process_url('./?object=' . ($_GET['object'] ?? null) . '&action=user_vars'),
             'error' => _e(),
             'for_edit' => 1,
             'id' => _prepare_html($DATA['id']),
@@ -169,7 +169,7 @@ class yf_locale_editor_user_vars
             'locale' => _prepare_html($DATA['locale']),
             'site_id' => _prepare_html($DATA['site_id']),
         ];
-        return tpl()->parse($_GET['object'] . '/user_vars_edit', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/user_vars_edit', $replace);
     }
 
     /**
@@ -177,16 +177,16 @@ class yf_locale_editor_user_vars
      */
     public function user_var_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        if ($_GET['id']) {
-            db()->query('DELETE FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        if (($_GET['id'] ?? null)) {
+            db()->query('DELETE FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         // Return user back
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
-            return js_redirect('./?object=' . $_GET['object'] . '&action=user_vars' . _add_get());
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=user_vars' . _add_get());
         }
     }
 
@@ -196,8 +196,8 @@ class yf_locale_editor_user_vars
      */
     public function user_var_push($FORCE_ID = false)
     {
-        $_GET['id'] = (int) ($FORCE_ID ? $FORCE_ID : $_GET['id']);
-        $A = db()->query_fetch('SELECT * FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) ($_GET['id']));
+        $_GET['id'] = (int) ($FORCE_ID ? $FORCE_ID : ($_GET['id'] ?? null));
+        $A = db()->query_fetch('SELECT * FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if ( ! $A) {
             return _e('No id');
         }
@@ -247,6 +247,6 @@ class yf_locale_editor_user_vars
         } else {
             db()->INSERT('locale_translate', $sql_data);
         }
-        return $FORCE_ID ? '' : js_redirect('./?object=' . $_GET['object'] . '&action=user_vars');
+        return $FORCE_ID ? '' : js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=user_vars');
     }
 }

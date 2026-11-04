@@ -92,7 +92,7 @@ class yf_user_ban
         }
         // Do update user's table (if needed)
         if ( ! empty($sql3)) {
-            $NEW_ADMIN_COMMENTS = "\r\n==============\r\nAuto-banned on " . _format_date(time()) . ' (action: ' . $_GET['object'] . '->' . $_GET['action'] . '; ' . implode(',', $ban_reasons) . ')';
+            $NEW_ADMIN_COMMENTS = "\r\n==============\r\nAuto-banned on " . _format_date(time()) . ' (action: ' . ($_GET['object'] ?? null) . '->' . ($_GET['action'] ?? null) . '; ' . implode(',', $ban_reasons) . ')';
             $sql4 = 'UPDATE ' . db('user') . ' SET 
 					' . implode(',', $sql3) . ", 
 					admin_comments = CONCAT(admin_comments, '" . _es($NEW_ADMIN_COMMENTS) . "')

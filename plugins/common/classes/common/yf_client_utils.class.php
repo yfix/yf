@@ -30,7 +30,7 @@ class yf_client_utils
         $ignore_ips = $this->_get_ignore_ips();
         foreach ((array) $ip_storage as $element) {
             if ( ! empty($_SERVER[$element])) {
-                $current_ip = $this->_check_ip($_SERVER[$element], $ignore_ips, $check_type);
+                $current_ip = $this->_check_ip(($_SERVER[$element] ?? null), $ignore_ips, $check_type);
                 if ($current_ip) {
                     return $this->CACHE[$cache_name] = $current_ip;
                 }
@@ -129,7 +129,7 @@ class yf_client_utils
     {
         $log_version2 = null;
         if ( ! empty($_SERVER['HTTP_USER_AGENT'])) {
-            $HTTP_USER_AGENT = $_SERVER['HTTP_USER_AGENT'];
+            $HTTP_USER_AGENT = ($_SERVER['HTTP_USER_AGENT'] ?? null);
         } elseif ( ! isset($HTTP_USER_AGENT)) {
             $HTTP_USER_AGENT = '';
         }

@@ -48,7 +48,7 @@ class yf_admin_home
         // Path to project.conf.php
         $proj_conf_path = INCLUDE_PATH . 'project_conf.php';
 
-        if ($this->SHOW_CUR_SETTINGS && $_SESSION['admin_group'] == 1) {
+        if ($this->SHOW_CUR_SETTINGS && ($_SESSION['admin_group'] ?? null) == 1) {
             // Current settings
             $replace2 = [
                 'rewrite_mode' => (int) conf('rewrite_mode'),
@@ -62,12 +62,12 @@ class yf_admin_home
                 'site_enabled' => (int) conf('site_enabled'),
                 'settings_link' => $this->_url_allowed('./?object=settings'),
             ];
-            $cur_settings = tpl()->parse($_GET['object'] . '/cur_settings', $replace2);
+            $cur_settings = tpl()->parse(($_GET['object'] ?? null) . '/cur_settings', $replace2);
         } else {
             $this->DISPLAY_STATS = false;
         }
 
-        if ($this->SHOW_GENERAL_INFO && $_SESSION['admin_group'] == 1) {
+        if ($this->SHOW_GENERAL_INFO && ($_SESSION['admin_group'] ?? null) == 1) {
             $replace3 = [
                 'php_ver' => phpversion(),
                 'mysql_serv_ver' => db()->get_server_version(),
@@ -76,7 +76,7 @@ class yf_admin_home
                 'db_size' => $admin_statistics_array['db_size'],
                 'project_dir_size' => $admin_statistics_array['project_dir_size'],
             ];
-            $general_info = tpl()->parse($_GET['object'] . '/general_info', $replace3);
+            $general_info = tpl()->parse(($_GET['object'] ?? null) . '/general_info', $replace3);
         }
 
         if ($this->DISPLAY_STATS) {
@@ -116,13 +116,13 @@ class yf_admin_home
         }
 
         if ($this->DISPLAY_STATS) {
-            $statistics = tpl()->parse($_GET['object'] . '/statistics', $admin_statistics_array);
+            $statistics = tpl()->parse(($_GET['object'] ?? null) . '/statistics', $admin_statistics_array);
         }
 
         $replace = [
             'proj_conf_link' => file_exists($proj_conf_path) ? './?object=file_manager&action=edit_item&f_=' . basename($proj_conf_path) . '&dir_name=' . urlencode(dirname($proj_conf_path)) : '',
             'current_date' => _format_date(time(), 'long'),
-            'my_id' => $_SESSION['admin_id'],
+            'my_id' => ($_SESSION['admin_id'] ?? null),
             'cur_settings' => $cur_settings,
             'general_info' => $general_info,
             'statistics' => $statistics,
@@ -133,7 +133,7 @@ class yf_admin_home
             // Common actions here
         ];
 
-        return tpl()->parse($_GET['object'] . '/main', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/main', $replace);
     }
 
 
@@ -209,7 +209,7 @@ class yf_admin_home
     public function clear_core_cache()
     {
         _class('cache')->_clear_cache_files();
-        return js_redirect('./?object=' . $_GET['object']);
+        return js_redirect('./?object=' . ($_GET['object'] ?? null));
     }
 
     /**

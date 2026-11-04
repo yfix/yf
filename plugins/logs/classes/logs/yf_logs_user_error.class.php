@@ -33,8 +33,8 @@ class yf_logs_user_error
         $cur_trace = $backtrace[1];
         $next_trace = $backtrace[2];
         // Prepare log text
-        $text = '## LOG STARTS AT ' . date('Y-m-d H:i:s') . '; QUERY_STRING: ' . $_SERVER['QUERY_STRING'] . '; REFERER: ' . $_SERVER['HTTP_REFERER'] . '; USER_ID: ' . main()->USER_ID . '; USER_GROUP: ' . main()->USER_GROUP . '; SITE_ID: ' . SITE_ID . '; USER_AGENT: ' . $_SERVER['HTTP_USER_AGENT'] . " ##\r\n";
-        $text .= 'URL: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . "\r\n";
+        $text = '## LOG STARTS AT ' . date('Y-m-d H:i:s') . '; QUERY_STRING: ' . ($_SERVER['QUERY_STRING'] ?? null) . '; REFERER: ' . ($_SERVER['HTTP_REFERER'] ?? null) . '; USER_ID: ' . main()->USER_ID . '; USER_GROUP: ' . main()->USER_GROUP . '; SITE_ID: ' . SITE_ID . '; USER_AGENT: ' . ($_SERVER['HTTP_USER_AGENT'] ?? null) . " ##\r\n";
+        $text .= 'URL: http://' . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null) . "\r\n";
         $text .= 'SOURCE FILE: "' . $cur_trace['file'] . '" at LINE ' . $cur_trace['line'] . '; ' . ( ! empty($next_trace['class']) ? 'METHOD: ' . $next_trace['class'] . '->' . $next_trace['function'] : 'FUNCTION: ' . $next_trace['function']) . ";\r\n";
         $text .= 'MESSAGE: ' . $error_message . "\r\n";
         $text .= "## LOG ENDS ##\r\n";
@@ -52,17 +52,17 @@ class yf_logs_user_error
                 'source_line' => (int) ($cur_trace['line']),
                 'date' => time(),
                 'site_id' => (int) conf('SITE_ID'),
-                'user_id' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
-                'user_group' => (int) ($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
+                'user_id' => (int) (($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id'] ?? null)),
+                'user_group' => (int) (($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group'] ?? null)),
                 'is_admin' => MAIN_TYPE_ADMIN ? 1 : 0,
                 'ip' => common()->get_ip(),
-                'query_string' => WEB_PATH . '?' . $_SERVER['QUERY_STRING'],
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-                'referer' => $_SERVER['HTTP_REFERER'],
-                'request_uri' => $_SERVER['REQUEST_URI'],
+                'query_string' => WEB_PATH . '?' . ($_SERVER['QUERY_STRING'] ?? null),
+                'user_agent' => ($_SERVER['HTTP_USER_AGENT'] ?? null),
+                'referer' => ($_SERVER['HTTP_REFERER'] ?? null),
+                'request_uri' => ($_SERVER['REQUEST_URI'] ?? null),
                 'env_data' => $this->DB_LOG_ENV ? $this->_prepare_env() : '',
-                'object' => $_GET['object'],
-                'action' => $_GET['action'],
+                'object' => ($_GET['object'] ?? null),
+                'action' => ($_GET['action'] ?? null),
             ]);
         }
     }

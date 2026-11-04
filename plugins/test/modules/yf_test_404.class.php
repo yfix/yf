@@ -6,7 +6,7 @@ class yf_test_404
     {
         no_graphics(true);
         header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
-        header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 404 Not Found');
+        header((($_SERVER['SERVER_PROTOCOL'] ?? null) ? ($_SERVER['SERVER_PROTOCOL'] ?? null) : 'HTTP/1.1') . ' 404 Not Found');
         echo 'Page not found';
         exit;
     }

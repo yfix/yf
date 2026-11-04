@@ -545,7 +545,7 @@ class yf_i18n
                 $in = _strtolower($in);
             }
             // Search for namespaced variable with current module name inside, even when prefix was not explicitely passed
-            $module = $_GET['object'];
+            $module = ($_GET['object'] ?? null);
             if ( ! strlen($prefix) && $module && isset($t['::' . $module . '::' . $in])) {
                 $prefix = '::' . $module . '::';
             }
@@ -730,7 +730,7 @@ class yf_i18n
         if ( ! DEBUG_MODE || ! isset($_SESSION['locale_vars_edit'])) {
             return false;
         }
-        $is_enabled = (int) ((bool) $_SESSION['locale_vars_edit']);
+        $is_enabled = (int) ((bool) ($_SESSION['locale_vars_edit'] ?? null));
         $this->TRACK_TRANSLATED = $is_enabled;
         main()->INLINE_EDIT_LOCALE = $is_enabled;
 

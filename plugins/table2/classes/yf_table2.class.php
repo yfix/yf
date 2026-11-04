@@ -187,8 +187,8 @@ class yf_table2
             $params['table_attr'] = trim($params['table_attr'] . ' data-postload-url="' . _prepare_html($params['data-postload-url']) . '"');
         }
         if (isset($params['filter']) && ! is_array($params['filter']) && is_numeric($params['filter']) || is_bool($params['filter']) && ! empty($params['filter'])) {
-            $filter_name = $params['filter_name'] ?: $_GET['object'] . '__' . $_GET['action'];
-            $params['filter'] = $_SESSION[$filter_name];
+            $filter_name = $params['filter_name'] ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
+            $params['filter'] = ($_SESSION[$filter_name] ?? null);
         }
 
         $a = $this->_render_get_data($params);
@@ -552,7 +552,7 @@ class yf_table2
             $pager['out'] = common()->divide_pages(null, null, null, $pager['records_on_page'], count((array) $data), $pager['stpl_path'], $pager['add_get_vars'], $pager['extra']);
             $pages = $pager['out'][1];
             if (count((array) $data) > $pager['records_on_page']) {
-                $slice_start = (empty($_GET['page']) ? 0 : (int) ($_GET['page']) - 1) * $pager['records_on_page'];
+                $slice_start = (empty($_GET['page']) ? 0 : (int) (($_GET['page'] ?? null)) - 1) * $pager['records_on_page'];
                 $slice_end = $pager['records_on_page'];
                 $data = array_slice($data, $slice_start, $slice_end, $preserve_keys = true);
             }

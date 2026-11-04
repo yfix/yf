@@ -78,12 +78,12 @@ class yf_api
         $is_request = &$this->is_request;
         $request_method = &$this->request_method;
         // setup
-        $object = $_GET['object'];
+        $object = ($_GET['object'] ?? null);
         if (empty($object) || $object != 'api') {
             return  null;
         }
-        $class = $_GET['action'];
-        $method = $_GET['id'];
+        $class = ($_GET['action'] ?? null);
+        $method = ($_GET['id'] ?? null);
         // language_id
         $language_id = &$_GET['language_id'];
         $this->language_id = $language_id;
@@ -105,21 +105,21 @@ class yf_api
             $is_jsonp = true;
         }
         // override
-        $class == 'show' && $class = $_REQUEST['object'];
-        ! $method && $method = $_REQUEST['action'];
+        $class == 'show' && $class = ($_REQUEST['object'] ?? null);
+        ! $method && $method = ($_REQUEST['action'] ?? null);
         $this->_call($class, null, $method);
     }
 
     public function _ip($options = null)
     {
         if ( ! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ips = explode(',', ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? null));
             $ip = reset($ips);
         } else {
             $ip =
-                   $_SERVER['HTTP_CLIENT_IP']
-                ?: $_SERVER['HTTP_X_REAL_IP']
-                ?: $_SERVER['REMOTE_ADDR'];
+                   ($_SERVER['HTTP_CLIENT_IP'] ?? null)
+                ?: ($_SERVER['HTTP_X_REAL_IP'] ?? null)
+                ?: ($_SERVER['REMOTE_ADDR'] ?? null);
         }
         $result = trim($ip);
         return  $result;
@@ -321,7 +321,7 @@ class yf_api
     public function _detect_protocol_scheme($options = null)
     {
         $result = 'http';
-        if ( ! empty($_SERVER['HTTPS']) || $_SERVER['SERVER_PORT'] == 443) {
+        if ( ! empty($_SERVER['HTTPS']) || ($_SERVER['SERVER_PORT'] ?? null) == 443) {
             $result .= 's';
         }
         return  $result;
@@ -334,7 +334,7 @@ class yf_api
             $type = php_sapi_name();
             substr($type, 0, 3) == 'cgi' && $result = 'Status:';
         } else {
-            isset($_SERVER['SERVER_PROTOCOL']) && $result = $_SERVER['SERVER_PROTOCOL'];
+            isset($_SERVER['SERVER_PROTOCOL']) && $result = ($_SERVER['SERVER_PROTOCOL'] ?? null);
         }
         return  $result;
     }
@@ -642,7 +642,7 @@ class yf_api
             // check jsonp
             $type = 'json';
             if (isset($_GET['callback'])) {
-                $jsonp_callback = $_GET['callback'];
+                $jsonp_callback = ($_GET['callback'] ?? null);
                 $response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
                 $type = 'javascript';
                 $this->is_jsonp = true;

@@ -996,7 +996,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
         $is_server = ! empty($_GET['server']);
         $result = null;
         // check operation
-        $operation_id = (int) $_GET['operation_id'];
+        $operation_id = (int) ($_GET['operation_id'] ?? null);
         // START DUMP
         $payment_api->dump(['name' => 'Interkassa', 'operation_id' => (int) $operation_id]);
         /* // test data

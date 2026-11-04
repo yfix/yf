@@ -34,11 +34,11 @@ class yf_manage_payment_yandexmoney
         $filter = &$this->filter;
         $url = &$this->url;
         // setup property
-        $object = $_GET['object'];
-        $action = $_GET['action'];
-        $id = $_GET['id'];
+        $object = ($_GET['object'] ?? null);
+        $action = ($_GET['action'] ?? null);
+        $id = ($_GET['id'] ?? null);
         $filter_name = $object . '__' . $action;
-        $filter = $_SESSION[$filter_name];
+        $filter = ($_SESSION[$filter_name] ?? null);
         // url
         $url = [
             'list' => url_admin([
@@ -211,7 +211,7 @@ class yf_manage_payment_yandexmoney
             $content = $_status_footer;
         } else {
             $content = '';
-            $operation_id = empty($_operation_id) ? (int) $_GET['operation_id'] : $_operation_id;
+            $operation_id = empty($_operation_id) ? (int) ($_GET['operation_id'] ?? null) : $_operation_id;
             if ($operation_id > 0) {
                 $url_view = $this->_url('view', ['%operation_id' => $operation_id]);
                 $content .= '<a href="' . $url_view . '" class="btn btn-xs btn-info">Назад к операции</a>';

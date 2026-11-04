@@ -323,7 +323,7 @@ class yf_locale_editor_collect
         );
         $stmts = $traverser->traverse($stmts);
 
-        foreach ((array) $GLOBALS['_locale_editor_collect_vars'] as $var => $lines) {
+        foreach ((array) ($GLOBALS['_locale_editor_collect_vars'] ?? null) as $var => $lines) {
             $var = _strtolower($var);
             $vars[$var] = implode(',', $lines);
         }

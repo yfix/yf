@@ -14,8 +14,8 @@ class yf_shop_orders
                 }
             }
             $items[] = [
-                'order_id' => $_POST['order_id'],
-                'email' => $_POST['email'],
+                'order_id' => ($_POST['order_id'] ?? null),
+                'email' => ($_POST['email'] ?? null),
                 'form_action' => './?object=shop&action=orders',
                 'back_link' => './?object=shop',
             ];

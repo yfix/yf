@@ -55,7 +55,7 @@ class yf_admin_groups
             ->db_insert_if_ok(self::table, ['name', 'go_after_login', 'active'], [])
             ->on_after_update(function () {
                 cache_del([self::table, 'admin_groups_details']);
-                common()->admin_wall_add(['admin group added: ' . $_POST['name'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['admin group added: ' . ($_POST['name'] ?? null) . '', db()->insert_id()]);
             })
             ->text('name', 'Group name')
             ->text('go_after_login', 'Url after login')
@@ -66,7 +66,7 @@ class yf_admin_groups
 
     public function edit()
     {
-        $id = (int) ($_GET['id']);
+        $id = (int) (($_GET['id'] ?? null));
         if ( ! $id) {
             return _e('No id');
         }
@@ -80,7 +80,7 @@ class yf_admin_groups
             ->db_update_if_ok(self::table, ['name', 'go_after_login'], 'id=' . $id)
             ->on_after_update(function () use ($id) {
                 cache_del([self::table, 'admin_groups_details']);
-                common()->admin_wall_add(['admin group edited: ' . $_POST['name'] . '', $id]);
+                common()->admin_wall_add(['admin group edited: ' . ($_POST['name'] ?? null) . '', $id]);
             })
             ->text('name', 'Group name')
             ->text('go_after_login', 'Url after login')
@@ -90,18 +90,18 @@ class yf_admin_groups
 
     public function delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        if ($_GET['id'] == 1) {
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        if (($_GET['id'] ?? null) == 1) {
             $_GET['id'] = 0;
         }
         if ( ! empty($_GET['id'])) {
-            db()->query('DELETE FROM ' . db(self::table) . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            common()->admin_wall_add(['admin group deleted', $_GET['id']]);
+            db()->query('DELETE FROM ' . db(self::table) . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            common()->admin_wall_add(['admin group deleted', ($_GET['id'] ?? null)]);
         }
         cache_del([self::table, 'admin_groups_details']);
         if (is_ajax()) {
             no_graphics(true);
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect(url('/@object'));
         }
@@ -110,16 +110,16 @@ class yf_admin_groups
 
     public function active()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $group_info = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) ($_GET['id']));
+            $group_info = db()->query_fetch('SELECT * FROM ' . db(self::table) . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
-        if ($_GET['id'] == 1) {
+        if (($_GET['id'] ?? null) == 1) {
             $group_info = [];
         }
         if ( ! empty($group_info)) {
-            db()->update_safe(self::table, ['active' => (int) ( ! $group_info['active'])], 'id=' . (int) ($_GET['id']));
-            common()->admin_wall_add(['admin group ' . $group_info['name'] . ' ' . ($group_info['active'] ? 'inactivated' : 'activated'), $_GET['id']]);
+            db()->update_safe(self::table, ['active' => (int) ( ! $group_info['active'])], 'id=' . (int) (($_GET['id'] ?? null)));
+            common()->admin_wall_add(['admin group ' . $group_info['name'] . ' ' . ($group_info['active'] ? 'inactivated' : 'activated'), ($_GET['id'] ?? null)]);
         }
         cache_del([self::table, 'admin_groups_details']);
         if (is_ajax()) {

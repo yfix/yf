@@ -563,8 +563,8 @@ class yf_remote_files
             }
             $result[$id] = $this->get_remote_page($url, -1, $url_options);
 
-            $GLOBALS['_curl_requests_info'][$id] = $GLOBALS['_curl_requests_info'][$url];
-            $info = $GLOBALS['_curl_requests_info'][$id];
+            $GLOBALS['_curl_requests_info'][$id] = ($GLOBALS['_curl_requests_info'][$url] ?? null);
+            $info = ($GLOBALS['_curl_requests_info'][$id] ?? null);
             // send the return values to the callback function.
             $callback = $url_options['callback'];
             if (is_callable($callback)) {
@@ -751,7 +751,7 @@ class yf_remote_files
             }
             // catch exec times ($GLOBALS['_curl_requests_info'][$url])
             // Because it is cleaned on each call
-            foreach ((array) $GLOBALS['_curl_requests_info'] as $k => $v) {
+            foreach ((array) ($GLOBALS['_curl_requests_info'] ?? null) as $k => $v) {
                 $overall_multi_info[$k] = $v;
             }
         }
@@ -783,7 +783,7 @@ class yf_remote_files
         $response = $this->_multi_request($page_urls, $options);
         $sizes = [];
         foreach ((array) $page_urls as $k => $v) {
-            $info = $GLOBALS['_curl_requests_info'][$k];
+            $info = ($GLOBALS['_curl_requests_info'][$k] ?? null);
             $sizes[$k] = (int) $info['download_content_length'];
             if ($sizes[$k] < 0) {
                 $sizes[$k] = 0;
@@ -978,7 +978,7 @@ class yf_remote_files
         if (empty($email)) {
             return false;
         }
-        $debug = $GLOBALS['_email_verify_debug'];
+        $debug = ($GLOBALS['_email_verify_debug'] ?? null);
         $result = false;
         // First simple check by regexp
         $p_user = '\w+([\.-]?\w+)*';

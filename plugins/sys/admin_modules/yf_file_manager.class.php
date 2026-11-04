@@ -47,9 +47,9 @@ class yf_file_manager
         // TODO: add ability to allow some paths for specific admiin groups (fine grained internal permissions or ACL)
         // TODO: add ajax calculate dirs size (one-by-one to not kill server performance)
         // TODO: add filesystem stats (disks usage, mounted filesystems, iostat if possible, etc)
-        $path_info = pathinfo($_SERVER['SCRIPT_FILENAME']);
+        $path_info = pathinfo(($_SERVER['SCRIPT_FILENAME'] ?? null));
         $_old_dir_name = str_replace('\\', '/', getcwd());
-        $_dir_name = $_GET['dir_name'] ?: $_GET['id'];
+        $_dir_name = ($_GET['dir_name'] ?? null) ?: ($_GET['id'] ?? null);
         if ($_dir_name) {
             $dir_name = urldecode($_dir_name);
             chdir($dir_name);
@@ -67,7 +67,7 @@ class yf_file_manager
                 $replace2 = [
                     'encoded_name' => urlencode($v),
                     'name' => $v,
-                    'go_into_link' => './?object=' . $_GET['object'] . '&dir_name=' . urlencode($dir_name . '/' . $v) . _add_get(['dir_name']),
+                    'go_into_link' => './?object=' . ($_GET['object'] ?? null) . '&dir_name=' . urlencode($dir_name . '/' . $v) . _add_get(['dir_name']),
                     'color' => $this->color_dir,
                     'm_date' => date('Y-m-d H:i:s', filemtime($cur_dir_name . '/' . $v)),
                     'perms' => $this->_get_perms($cur_dir_name . '/' . $v),
@@ -75,7 +75,7 @@ class yf_file_manager
                     'is_dir' => 1,
                     'is_file' => 0,
                 ];
-                $items .= tpl()->parse($_GET['object'] . '/item', $replace2);
+                $items .= tpl()->parse(($_GET['object'] ?? null) . '/item', $replace2);
             }
             foreach ((array) $dir_contents['files'] as $k => $v) {
                 if (substr($v, -3) == 'zip') {
@@ -96,7 +96,7 @@ class yf_file_manager
                     'is_dir' => 0,
                     'is_file' => 1,
                 ];
-                $items .= tpl()->parse($_GET['object'] . '/item', $replace2);
+                $items .= tpl()->parse(($_GET['object'] ?? null) . '/item', $replace2);
             }
         }
         clearstatcache();
@@ -105,19 +105,19 @@ class yf_file_manager
         $_tmp_array = [];
         foreach ((array) explode('/', $cur_dir_name) as $_folder) {
             $_tmp_path .= $_folder . '/';
-            $_tmp_array[] = '<a href="./?object=' . $_GET['object'] . '&dir_name=' . urlencode($_tmp_path) . _add_get(['dir_name']) . '" class="btn btn-mini btn-xs">' . _prepare_html($_folder) . '</a>';
+            $_tmp_array[] = '<a href="./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . urlencode($_tmp_path) . _add_get(['dir_name']) . '" class="btn btn-mini btn-xs">' . _prepare_html($_folder) . '</a>';
         }
         if ($_tmp_array) {
             $cur_dir_name = implode('/', $_tmp_array);
         }
         $replace = [
-            'form_action' => './?object=' . $_GET['object'] . _add_get(['dir_name']) . '&action=',
-            'upload_form_action' => './?object=' . $_GET['object'] . '&action=upload_file&dir_name=' . $encoded_cur_dir . _add_get(['dir_name']),
-            'mkdir_form_action' => './?object=' . $_GET['object'] . '&action=make_dir&dir_name=' . $encoded_cur_dir . _add_get(['dir_name']),
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . _add_get(['dir_name']) . '&action=',
+            'upload_form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=upload_file&dir_name=' . $encoded_cur_dir . _add_get(['dir_name']),
+            'mkdir_form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=make_dir&dir_name=' . $encoded_cur_dir . _add_get(['dir_name']),
             'cur_dir_name' => $cur_dir_name,
             'encoded_dir_name' => $encoded_cur_dir,
-            'go_up_level_link' => './?object=' . $_GET['object'] . '&dir_name=' . urlencode($path_info_up['dirname']) . _add_get(['dir_name']),
-            'go_home_link' => './?object=' . $_GET['object'] . _add_get(['dir_name']),
+            'go_up_level_link' => './?object=' . ($_GET['object'] ?? null) . '&dir_name=' . urlencode($path_info_up['dirname']) . _add_get(['dir_name']),
+            'go_home_link' => './?object=' . ($_GET['object'] ?? null) . _add_get(['dir_name']),
             'total_files_size' => (int) $total_files_size,
             'total_files' => (int) (count((array) $dir_contents['files'])),
             'total_dirs' => (int) (count((array) $dir_contents['dirs'])),
@@ -126,7 +126,7 @@ class yf_file_manager
             'default_chmod' => 755,
             'items' => $items,
         ];
-        return tpl()->parse($_GET['object'] . '/main', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/main', $replace);
     }
 
     /**
@@ -175,7 +175,7 @@ class yf_file_manager
     public function view_item()
     {
         if ( ! empty($_GET['id'])) {
-            $file_name = urldecode($_GET['id']);
+            $file_name = urldecode(($_GET['id'] ?? null));
             $file_path = $file_name;
             $dir_name = dirname($file_path);
         } else {
@@ -186,7 +186,7 @@ class yf_file_manager
                     break;
                 }
             }
-            $dir_name = urldecode($_REQUEST['dir_name']);
+            $dir_name = urldecode(($_REQUEST['dir_name'] ?? null));
             $file_name = str_replace('\\', '/', $dir_name . '/' . $name);
             $file_path = $file_name;
         }
@@ -203,7 +203,7 @@ class yf_file_manager
         }
         $file_text = _prepare_html(file_get_contents($file_path), 0);
         $replace = [
-            'back_link' => url('/@object/show/' . urlencode($_REQUEST['dir_name'])),
+            'back_link' => url('/@object/show/' . urlencode(($_REQUEST['dir_name'] ?? null))),
         ];
         $div_id = 'editor_html';
         $hidden_id = 'file_text_hidden';
@@ -228,7 +228,7 @@ class yf_file_manager
     {
         // TODO: save file revision to db on each save
         if ( ! empty($_GET['id'])) {
-            $file_name = urldecode($_GET['id']);
+            $file_name = urldecode(($_GET['id'] ?? null));
             $file_path = $file_name;
             $dir_name = dirname($file_path);
         } else {
@@ -239,14 +239,14 @@ class yf_file_manager
                     break;
                 }
             }
-            $dir_name = urldecode($_REQUEST['dir_name']);
+            $dir_name = urldecode(($_REQUEST['dir_name'] ?? null));
             $file_name = str_replace('\\', '/', $dir_name . '/' . $name);
             $file_path = $file_name;
         }
         if (main()->is_post()) {
-            $file_name = urldecode($_GET['file_name']);
-            file_put_contents($file_name, $_POST['file_text_hidden']);
-            return js_redirect('/@object/show/' . urlencode($_GET['dir_name']));
+            $file_name = urldecode(($_GET['file_name'] ?? null));
+            file_put_contents($file_name, ($_POST['file_text_hidden'] ?? null));
+            return js_redirect('/@object/show/' . urlencode(($_GET['dir_name'] ?? null)));
         }
         $_tmp_array = [];
         $tmp_path = '/';
@@ -262,7 +262,7 @@ class yf_file_manager
         $file_text = _prepare_html(file_get_contents($file_path), 0);
         $replace = [
             'form_action' => url('/@object/@action/' . urlencode($file_path)),
-            'back_link' => url('/@object/show/' . urlencode($_REQUEST['dir_name'])),
+            'back_link' => url('/@object/show/' . urlencode(($_REQUEST['dir_name'] ?? null))),
         ];
         $div_id = 'editor_html';
         $hidden_id = 'file_text_hidden';
@@ -310,7 +310,7 @@ class yf_file_manager
                 'encoded_name' => urlencode($dir_next),
                 'padding' => ($level - 1) * 30,
             ];
-            $body .= tpl()->parse($_GET['object'] . '/copy_dir_item', $replace);
+            $body .= tpl()->parse(($_GET['object'] ?? null) . '/copy_dir_item', $replace);
             if ($level < $this->_copy_dir_deepness) {
                 $body .= $this->_get_all_dirs($dir_next, $level + 1);
             }
@@ -322,7 +322,7 @@ class yf_file_manager
     public function copy_item()
     {
         $items = null;
-        $dir_name = urldecode($_POST['dir_name']);
+        $dir_name = urldecode(($_POST['dir_name'] ?? null));
         $items_to_copy = [];
         foreach ((array) $_POST as $k => $v) {
             $tmp = substr($k, 0, 2);
@@ -343,16 +343,16 @@ class yf_file_manager
                 'file_name' => $file_name,
                 'type' => $type,
             ];
-            $items .= tpl()->parse($_GET['object'] . '/copy_item', $replace2);
+            $items .= tpl()->parse(($_GET['object'] ?? null) . '/copy_item', $replace2);
         }
         $replace = [
-            'form_action' => './?object=' . $_GET['object'] . '&action=copy_item2&dir_name=' . $_POST['dir_name'] . _add_get(['dir_name']),
+            'form_action' => './?object=' . ($_GET['object'] ?? null) . '&action=copy_item2&dir_name=' . ($_POST['dir_name'] ?? null) . _add_get(['dir_name']),
             'items' => $items,
             'items_to_copy' => urlencode(serialize($items_to_copy)),
             'dest_dirs' => $this->_get_all_dirs(dirname($dir_name)),
-            'back' => back('./?object=' . $_GET['object'] . '&dir_name=' . $_POST['dir_name'] . _add_get(['dir_name'])),
+            'back' => back('./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . ($_POST['dir_name'] ?? null) . _add_get(['dir_name'])),
         ];
-        return tpl()->parse($_GET['object'] . '/copy', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/copy', $replace);
     }
 
     /**
@@ -361,8 +361,8 @@ class yf_file_manager
     public function copy_item2()
     {
         $body = null;
-        if ($_POST['items_to_copy']) {
-            $items = unserialize(urldecode($_POST['items_to_copy']));
+        if (($_POST['items_to_copy'] ?? null)) {
+            $items = unserialize(urldecode(($_POST['items_to_copy'] ?? null)));
             foreach ((array) $items as $k => $v) {
                 $tmp = substr($v, 0, 2);
                 if ($tmp == 'd_' || $tmp == 'f_') {
@@ -394,7 +394,7 @@ class yf_file_manager
                             }
                         }
                     }
-                    js_redirect('./?object=' . $_GET['object'] . '&dir_name=' . $_GET['dir_name'] . _add_get(['dir_name']));
+                    js_redirect('./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . ($_GET['dir_name'] ?? null) . _add_get(['dir_name']));
                 } else {
                     $body .= t('please_select_destinatin_folders');
                 }
@@ -405,7 +405,7 @@ class yf_file_manager
             $body .= t('please_select_items_to_copy');
         }
 
-        $body .= back('./?object=' . $_GET['object'] . '&dir_name=' . $_GET['dir_name']);
+        $body .= back('./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . ($_GET['dir_name'] ?? null));
 
         return $body;
     }
@@ -413,7 +413,7 @@ class yf_file_manager
 
     public function delete_item()
     {
-        $dir_name = urldecode($_POST['dir_name']);
+        $dir_name = urldecode(($_POST['dir_name'] ?? null));
         foreach ((array) $_POST as $k => $v) {
             $file_name = str_replace('\\', '/', $dir_name . '/' . $v);
 
@@ -432,14 +432,14 @@ class yf_file_manager
                 @unlink($file_name);
             }
         }
-        return js_redirect('./?object=' . $_GET['object'] . '&dir_name=' . $_POST['dir_name'] . _add_get(['dir_name']));
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . ($_POST['dir_name'] ?? null) . _add_get(['dir_name']));
     }
 
 
     public function chmod_item()
     {
-        $dir_name = urldecode($_POST['dir_name']);
-        if ( ! $_POST['new_chmod']) {
+        $dir_name = urldecode(($_POST['dir_name'] ?? null));
+        if ( ! ($_POST['new_chmod'] ?? null)) {
             $_POST['new_chmod'] = '755';
         }
         $_old_dir_name = str_replace('\\', '/', getcwd());
@@ -450,20 +450,20 @@ class yf_file_manager
                 continue;
             }
             $file_name = str_replace('\\', '/', $dir_name . '/' . $v);
-            chmod($file_name, '0' . $_POST['new_chmod']);
+            chmod($file_name, '0' . ($_POST['new_chmod'] ?? null));
         }
         chdir($_old_dir_name);
-        return js_redirect('./?object=' . $_GET['object'] . '&dir_name=' . $_POST['dir_name'] . _add_get(['dir_name']));
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . ($_POST['dir_name'] ?? null) . _add_get(['dir_name']));
     }
 
 
     public function make_zip_item()
     {
-        $dir_name = urldecode($_POST['dir_name']);
-        if ( ! $_POST['new_zip_name']) {
+        $dir_name = urldecode(($_POST['dir_name'] ?? null));
+        if ( ! ($_POST['new_zip_name'] ?? null)) {
             $_POST['new_zip_name'] = 'tmp_1234';
         }
-        $new_zip_name = $dir_name . '/' . $_POST['new_zip_name'] . '.zip';
+        $new_zip_name = $dir_name . '/' . ($_POST['new_zip_name'] ?? null) . '.zip';
 
         $_old_dir_name = str_replace('\\', '/', getcwd());
         chdir($dir_name);
@@ -483,13 +483,13 @@ class yf_file_manager
         chdir($_old_dir_name);
         // TODO: replace making ZIP with php built-in http://php.net/manual/en/zip.examples.php
         //		_class_safe('pclzip', 'classes/common/')->create($item_list);
-        return js_redirect('./?object=' . $_GET['object'] . '&dir_name=' . $_POST['dir_name'] . _add_get(['dir_name']));
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . ($_POST['dir_name'] ?? null) . _add_get(['dir_name']));
     }
 
 
     public function unzip_item()
     {
-        $dir_name = urldecode($_POST['dir_name']);
+        $dir_name = urldecode(($_POST['dir_name'] ?? null));
         $_old_dir_name = str_replace('\\', '/', getcwd());
         foreach ((array) $_POST as $k => $name) {
             $tmp = substr($k, 0, 2);
@@ -510,13 +510,13 @@ class yf_file_manager
 //			_class_safe('pclzip', 'classes/common/')->extract();
         }
         chdir($_old_dir_name);
-        return js_redirect('./?object=' . $_GET['object'] . '&dir_name=' . $_POST['dir_name'] . _add_get(['dir_name']));
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . ($_POST['dir_name'] ?? null) . _add_get(['dir_name']));
     }
 
 
     public function download_item()
     {
-        $dir_name = urldecode($_POST['dir_name']);
+        $dir_name = urldecode(($_POST['dir_name'] ?? null));
 
         $_old_dir_name = str_replace('\\', '/', getcwd());
         chdir($dir_name);
@@ -540,14 +540,14 @@ class yf_file_manager
                 exit();
             }
             chdir($_old_dir_name);
-            return js_redirect('./?object=' . $_GET['object'] . '&dir_name=' . $_POST['dir_name'] . _add_get(['dir_name']));
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . ($_POST['dir_name'] ?? null) . _add_get(['dir_name']));
         }
     }
 
 
     public function email_item()
     {
-        $dir_name = urldecode($_POST['dir_name']);
+        $dir_name = urldecode(($_POST['dir_name'] ?? null));
 
         $_old_dir_name = str_replace('\\', '/', getcwd());
         chdir($dir_name);
@@ -566,10 +566,10 @@ class yf_file_manager
         }
         if (count((array) $attach)) {
             $email_from = 'yfix.dev auto-sender';
-            if ( ! $_POST['target_email']) {
+            if ( ! ($_POST['target_email'] ?? null)) {
                 $email_to = 'admin@yfix.net';
             } else {
-                $email_to = $_POST['target_email'];
+                $email_to = ($_POST['target_email'] ?? null);
             }
             $to_name = 'auto-sender destination';
             $subject = 'yfix.dev auto-sender generated email';
@@ -578,21 +578,21 @@ class yf_file_manager
             $result = common()->send_mail('PHP-Mailer', $email_from, $email_to, $to_name, $subject, $TEXT, $HTML, $attach);
         }
         chdir($_old_dir_name);
-        return js_redirect('./?object=' . $_GET['object'] . '&dir_name=' . $_POST['dir_name'] . _add_get(['dir_name']));
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&dir_name=' . ($_POST['dir_name'] ?? null) . _add_get(['dir_name']));
     }
 
 
     public function upload_file()
     {
         $body = null;
-        if ($_POST['verify']) {
-            if ($_POST['name']) {
-                $Name = $_POST['name'];
+        if (($_POST['verify'] ?? null)) {
+            if (($_POST['name'] ?? null)) {
+                $Name = ($_POST['name'] ?? null);
             } else {
-                $Name = $_FILES['file']['name'];
+                $Name = ($_FILES['file']['name'] ?? null);
             }
-            $fileName = urldecode($_POST['dir_name']) . '/' . $Name;
-            if ( ! move_uploaded_file($_FILES['file']['tmp_name'], $fileName)) {
+            $fileName = urldecode(($_POST['dir_name'] ?? null)) . '/' . $Name;
+            if ( ! move_uploaded_file(($_FILES['file']['tmp_name'] ?? null), $fileName)) {
                 $body .= error_back();
             } else {
                 $body .= t('save_successful') . '<br />' . PHP_EOL;
@@ -606,8 +606,8 @@ class yf_file_manager
     public function make_dir()
     {
         $body = null;
-        if ($_POST['verify'] && $_POST['name']) {
-            $new_dir = urldecode($_POST['dir_name']) . '/' . $_POST['name'];
+        if (($_POST['verify'] ?? null) && ($_POST['name'] ?? null)) {
+            $new_dir = urldecode(($_POST['dir_name'] ?? null)) . '/' . ($_POST['name'] ?? null);
             if ( ! @file_exists($new_dir)) {
                 mkdir($new_dir, 0777);
             }

@@ -39,7 +39,7 @@ class yf_user_profile extends yf_module
             if ( ! empty($GLOBALS['_agency_info'])) {
                 $this->_agency_info = &$GLOBALS['_agency_info'];
             }
-            main()->USER_ID = $_SESSION['edit_escort_id'];
+            main()->USER_ID = ($_SESSION['edit_escort_id'] ?? null);
             main()->USER_GROUP = 3;
         } else {
             main()->USER_ID = main()->USER_ID;
@@ -47,7 +47,7 @@ class yf_user_profile extends yf_module
         }
         // Get user account type
         $this->_account_types = main()->get_data('account_types');
-        if ($_GET['action'] == 'show') {
+        if (($_GET['action'] ?? null) == 'show') {
             // Try to get user info
             $this->_get_user_info();
         }
@@ -75,16 +75,16 @@ class yf_user_profile extends yf_module
         if ( ! empty($this->_user_info)) {
             return '';
         }
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! isset($_GET['profile_url']) && ! isset($_GET['id']) && ! empty(main()->USER_ID)) {
             $user_id = main()->USER_ID;
         } elseif (isset($_GET['profile_url'])) {
-            $this->_user_info = db()->query_fetch('SELECT * FROM ' . db('user') . " WHERE profile_url='" . _es($_GET['profile_url']) . "' AND active='1'");
+            $this->_user_info = db()->query_fetch('SELECT * FROM ' . db('user') . " WHERE profile_url='" . _es(($_GET['profile_url'] ?? null)) . "' AND active='1'");
             $user_id = $_GET['id'] = (int) ($user_info['id']);
             unset($_GET['profile_url']);
         } elseif (isset($_GET['id'])) {
-            $_GET['id'] = (int) ($_GET['id']);
-            $user_id = ! empty($_GET['id']) ? $_GET['id'] : main()->USER_ID;
+            $_GET['id'] = (int) (($_GET['id'] ?? null));
+            $user_id = ! empty($_GET['id']) ? ($_GET['id'] ?? null) : main()->USER_ID;
         }
         // Try to get user info
         if ( ! empty($user_id) && empty($this->_user_info)) {
@@ -151,8 +151,8 @@ class yf_user_profile extends yf_module
             'articles_pages' => $article_posts[1],
             'num_forum_posts' => $this->_num_forum_posts > $this->MAX_SHOW_FORUM_POSTS ? (int) ($this->_num_forum_posts) : 0,
             'num_blog_posts' => $this->_num_blog_posts > $this->MAX_SHOW_BLOG_POSTS ? (int) ($this->_num_blog_posts) : 0,
-            'num_friend_of' => $GLOBALS['profile_total_friend_of'] > $this->MAX_SHOW_FRIEND_OF ? (int) ($GLOBALS['profile_total_friend_of']) : 0,
-            'num_friends' => $GLOBALS['profile_total_friends'] > $this->MAX_SHOW_FRIENDS ? (int) ($GLOBALS['profile_total_friends']) : 0,
+            'num_friend_of' => ($GLOBALS['profile_total_friend_of'] ?? null) > $this->MAX_SHOW_FRIEND_OF ? (int) (($GLOBALS['profile_total_friend_of'] ?? null)) : 0,
+            'num_friends' => ($GLOBALS['profile_total_friends'] ?? null) > $this->MAX_SHOW_FRIENDS ? (int) (($GLOBALS['profile_total_friends'] ?? null)) : 0,
             'forum_posts_link' => './?object=forum&action=search&user_name=' . urlencode(_display_name($this->_user_info)) . '&sort_by=last_post_date&sort_order=desc&prune_days=1000&prune_type=newer&search_in=posts&result_type=posts&keywords=&q=results',
             'blog_posts_link' => './?object=blog&action=show_posts&id=' . $this->_user_info['id'],
             'que_url' => './?object=que&action=view&id=' . $this->_user_info['id'],
@@ -164,8 +164,8 @@ class yf_user_profile extends yf_module
             'comments' => $this->_show_comments(),
             'custom_css' => ''/*$this->_show_custom_design_css ($this->_user_info)*/,
             'add_review_link' => $this->_user_info['group'] == 3/* && ($this->_user_info["id"] != main()->USER_ID)*/ ? './?object=reviews&action=add_for_user&id=' . $this->_user_info['id'] : './?object=login_form&go_url=reviews;add_for_user;id=' . $this->_user_info['id'],
-            'stats_visit_url' => './?object=' . $_GET['object'] . '&action=show_visits_stats',
-            'stats_friend_url' => './?object=' . $_GET['object'] . '&action=show_friend_stats',
+            'stats_visit_url' => './?object=' . ($_GET['object'] ?? null) . '&action=show_visits_stats',
+            'stats_friend_url' => './?object=' . ($_GET['object'] ?? null) . '&action=show_friend_stats',
         ];
         // Dynamic info
 
@@ -174,7 +174,7 @@ class yf_user_profile extends yf_module
         //			$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_view(intval($_GET["id"]));
         //		}
 
-        return tpl()->parse($_GET['object'] . '/main', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/main', $replace);
         // TODO: prepare array for dd_table
 // TODO: make this pluggable: use forum, articles, gallery and other specific items through hooks in those modules
 //		return _class('html')->dd_table($replace);
@@ -257,8 +257,8 @@ class yf_user_profile extends yf_module
             }
             $body .= $this->_show_item($desc, $value);
         }
-        $_login_link = tpl()->parse($_GET['object'] . '/login_link', ['link' => './?object=login_form&go_url=' . $_GET['object'] . ';show;id=' . $_GET['id']]);
-        $website = $this->_show_contact_item('Web Site', ($this->_user_info['approved_recip'] && $this->_ad_info['url']) ? (main()->USER_ID ? './?object=' . $_GET['object'] . '&action=go&id=' . $this->_ad_info['ad_id'] : './?object=login_form&go_url=' . $_GET['object'] . ';go;id=' . $this->_ad_info['ad_id']) : '');
+        $_login_link = tpl()->parse(($_GET['object'] ?? null) . '/login_link', ['link' => './?object=login_form&go_url=' . ($_GET['object'] ?? null) . ';show;id=' . ($_GET['id'] ?? null)]);
+        $website = $this->_show_contact_item('Web Site', ($this->_user_info['approved_recip'] && $this->_ad_info['url']) ? (main()->USER_ID ? './?object=' . ($_GET['object'] ?? null) . '&action=go&id=' . $this->_ad_info['ad_id'] : './?object=login_form&go_url=' . ($_GET['object'] ?? null) . ';go;id=' . $this->_ad_info['ad_id']) : '');
         $email = $this->_show_contact_item('Email', main()->USER_ID ? './?object=email&action=send_form&id=' . $this->_user_info['id'] : './?object=login_form&go_url=email;send_form;id=' . $this->_user_info['id']);
         $phone = $this->_show_item('Phone', $this->_user_info['phone'] ? (main()->USER_ID ? $this->_user_info['phone'] : $_login_link) : '');
         $fax = $this->_show_item('Fax', $this->_user_info['fax'] ? (main()->USER_ID ? $this->_user_info['fax'] : $_login_link) : '');
@@ -299,13 +299,13 @@ class yf_user_profile extends yf_module
     // Show item
     public function _show_item($name = '', $value = '')
     {
-        return ( ! empty($name) && ! empty($value)) ? tpl()->parse($_GET['object'] . '/item', ['name' => $name, 'value' => $value]) : '';
+        return ( ! empty($name) && ! empty($value)) ? tpl()->parse(($_GET['object'] ?? null) . '/item', ['name' => $name, 'value' => $value]) : '';
     }
 
     // Show contact item
     public function _show_contact_item($name = '', $value = '')
     {
-        return ( ! empty($name) && ! empty($value)) ? tpl()->parse($_GET['object'] . '/item_contact', ['name' => $name, 'link' => $value]) : '';
+        return ( ! empty($name) && ! empty($value)) ? tpl()->parse(($_GET['object'] ?? null) . '/item_contact', ['name' => $name, 'link' => $value]) : '';
     }
 
     // Show user forum posts
@@ -373,7 +373,7 @@ class yf_user_profile extends yf_module
             'reput_points' => (int) ($REPUT_INFO['points']),
             'alt_power' => (int) ($REPUT_INFO['alt_power']),
         ];
-        return tpl()->parse($_GET['object'] . '/reput_info', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/reput_info', $replace);
     }
 
     // Show user interests
@@ -389,7 +389,7 @@ class yf_user_profile extends yf_module
                 'search_link' => $cur_info['search_link'],
                 'keyword' => $cur_info['keyword'],
             ];
-            $body .= tpl()->parse($_GET['object'] . '/interests_item', $replace);
+            $body .= tpl()->parse(($_GET['object'] ?? null) . '/interests_item', $replace);
             $this->_interests_array[] = $cur_info['keyword'];
         }
         return $body;
@@ -459,7 +459,7 @@ class yf_user_profile extends yf_module
         main()->NO_GRAPHICS = true;
         conf('no_ajax_here', true);
         // Check user id
-        $USER_ID = $_REQUEST['id'];
+        $USER_ID = ($_REQUEST['id'] ?? null);
         if (empty($USER_ID)) {
             $error_message = 'No id';
         }
@@ -569,7 +569,7 @@ class yf_user_profile extends yf_module
                     'verify_link' => ! $this->_user_info['photo_verified'] ? './?object=manage_photo_verify&action=add&id=' . (int) ($this->_user_info['id']) : '',
                 ]);
             }
-            $body = tpl()->parse($_GET['object'] . '/compact_info', $replace);
+            $body = tpl()->parse(($_GET['object'] ?? null) . '/compact_info', $replace);
         }
         if ( ! empty($error_message)) {
             $body = $error_message;
@@ -592,7 +592,7 @@ class yf_user_profile extends yf_module
             return _error_need_login();
         }
 
-        $_GET['id'] ? $_id = (int) ($_GET['id']) : $_id = main()->USER_ID;
+        ($_GET['id'] ?? null) ? $_id = (int) (($_GET['id'] ?? null)) : $_id = main()->USER_ID;
         $sql = 'SELECT * FROM ' . db('log_user_action') . " WHERE action_name='visit' AND owner_id=" . (int) $_id . ' ORDER BY add_date DESC';
         list($add_sql, $pages, $total) = common()->divide_pages($sql);
         $stats_array = db()->query_fetch_all($sql . $add_sql);
@@ -609,15 +609,15 @@ class yf_user_profile extends yf_module
                 'user_nick' => $user_infos[$A['member_id']]['nick'],
                 'profile_url' => _profile_link($user_infos[$A['member_id']]),
             ];
-            $items .= tpl()->parse($_GET['object'] . '/visit_stats_item', $replace2);
+            $items .= tpl()->parse(($_GET['object'] ?? null) . '/visit_stats_item', $replace2);
         }
         $replace = [
             'total' => $total,
             'pages' => $pages,
             'items' => $items,
-            'back_url' => './?object=' . $_GET['object'],
+            'back_url' => './?object=' . ($_GET['object'] ?? null),
         ];
-        return tpl()->parse($_GET['object'] . '/visit_stats_main', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/visit_stats_main', $replace);
     }
 
     /**
@@ -648,15 +648,15 @@ class yf_user_profile extends yf_module
                 'event' => $A['action_name'],
                 'profile_url' => _profile_link($user_infos[$A['member_id']]),
             ];
-            $items .= tpl()->parse($_GET['object'] . '/friend_stats_item', $replace2);
+            $items .= tpl()->parse(($_GET['object'] ?? null) . '/friend_stats_item', $replace2);
         }
         $replace = [
             'total' => $total,
             'pages' => $pages,
             'items' => $items,
-            'back_url' => './?object=' . $_GET['object'],
+            'back_url' => './?object=' . ($_GET['object'] ?? null),
         ];
-        return tpl()->parse($_GET['object'] . '/friend_stats_main', $replace);
+        return tpl()->parse(($_GET['object'] ?? null) . '/friend_stats_main', $replace);
     }
 
     /**
@@ -667,15 +667,15 @@ class yf_user_profile extends yf_module
         $menu = [
             [
                 'name' => 'Manage',
-                'url' => './?object=' . $_GET['object'],
+                'url' => './?object=' . ($_GET['object'] ?? null),
             ],
             [
                 'name' => 'Show visits statistics',
-                'url' => './?object=' . $_GET['object'] . '&action=show_visits_stats',
+                'url' => './?object=' . ($_GET['object'] ?? null) . '&action=show_visits_stats',
             ],
             [
                 'name' => 'Show friendship statistics',
-                'url' => './?object=' . $_GET['object'] . '&action=show_friend_stats',
+                'url' => './?object=' . ($_GET['object'] ?? null) . '&action=show_friend_stats',
             ],
             [
                 'name' => 'View All Friends',
@@ -687,7 +687,7 @@ class yf_user_profile extends yf_module
             ],
             [
                 'name' => '',
-                'url' => './?object=' . $_GET['object'],
+                'url' => './?object=' . ($_GET['object'] ?? null),
             ],
         ];
         return $menu;

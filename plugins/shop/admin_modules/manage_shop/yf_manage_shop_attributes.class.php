@@ -13,7 +13,7 @@ class yf_manage_shop_attributes
         }
         // TODO: rewrite this into pure table() with custom func to support filter
         return table($items, [
-                'filter' => $_SESSION[$_GET['object'] . '__attributes'],
+                'filter' => ($_SESSION[$_GET['object'] . '__attributes'] ?? null),
             ])
             ->text('title')
             ->text('options')
@@ -34,14 +34,14 @@ class yf_manage_shop_attributes
             }
             if ( ! common()->_error_exists()) {
                 $value_list = [];
-                foreach ((array) explode("\n", $_POST['value_list']) as $val) {
+                foreach ((array) explode("\n", ($_POST['value_list'] ?? null)) as $val) {
                     $v = trim($val);
                     if ($v != '') {
                         $value_list[$v] = $v;
                     }
                 }
                 db()->INSERT('shop_productparams', db()->es([
-                    'title' => $_POST['title'],
+                    'title' => ($_POST['title'] ?? null),
                 ]));
 
                 $insert_id = db()->insert_id();
@@ -53,14 +53,14 @@ class yf_manage_shop_attributes
                     ]);
                 }
 
-                common()->admin_wall_add(['shop product attribute added: ' . $_POST['title'], $insert_id]);
+                common()->admin_wall_add(['shop product attribute added: ' . ($_POST['title'] ?? null), $insert_id]);
                 return js_redirect('./?object=' . main()->_get('object') . '&action=attributes');
             }
         }
         $form_fields = ['name', 'type', 'value_list', 'default_value', 'order', 'comment'];
         $replace = array_fill_keys($form_fields, '');
         $replace = my_array_merge($replace, [
-            'form_action' => './?object=' . main()->_get('object') . '&action=' . $_GET['action'] . '&id=' . $_GET['id'],
+            'form_action' => './?object=' . main()->_get('object') . '&action=' . ($_GET['action'] ?? null) . '&id=' . ($_GET['id'] ?? null),
             'error' => _e(),
             'back_url' => './?object=' . main()->_get('object') . '&action=attributes',
             'active' => 1,
@@ -77,9 +77,9 @@ class yf_manage_shop_attributes
         if (empty($_GET['id'])) {
             return _e('no id');
         }
-        $_GET['id'] = (int) ($_GET['id']);
-        $A = db()->query_fetch('SELECT * FROM `' . db('shop_productparams') . '` WHERE `id`=' . $_GET['id']);
-        $options = db()->get_2d('SELECT `id`,`title` FROM ' . db('shop_productparams_options') . ' WHERE `productparams_id`=' . $_GET['id'] . ' ORDER BY `title`');
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $A = db()->query_fetch('SELECT * FROM `' . db('shop_productparams') . '` WHERE `id`=' . ($_GET['id'] ?? null));
+        $options = db()->get_2d('SELECT `id`,`title` FROM ' . db('shop_productparams_options') . ' WHERE `productparams_id`=' . ($_GET['id'] ?? null) . ' ORDER BY `title`');
         $A['value_list'] = implode("\n", $options);
         if (main()->is_post()) {
             if (empty($_POST['title'])) {
@@ -90,7 +90,7 @@ class yf_manage_shop_attributes
             }
             if ( ! common()->_error_exists()) {
                 $value_list = [];
-                foreach ((array) explode("\n", $_POST['value_list']) as $val) {
+                foreach ((array) explode("\n", ($_POST['value_list'] ?? null)) as $val) {
                     $v = trim($val);
                     if ($v != '') {
                         $value_list[$v] = $v;
@@ -104,25 +104,25 @@ class yf_manage_shop_attributes
                     } else {
                         // insert new
                         db()->INSERT('shop_productparams_options', [
-                            'productparams_id' => $_GET['id'],
+                            'productparams_id' => ($_GET['id'] ?? null),
                             'title' => $val,
                         ]);
                     }
                 }
                 if (count((array) $options_list != 0)) {
                     // options not found - delete these
-                    db()->query('DELETE FROM `' . db('shop_productparams_options') . '` WHERE `id` IN (' . implode(',', $options_list) . ') AND `productparams_id`=' . $_GET['id']);
+                    db()->query('DELETE FROM `' . db('shop_productparams_options') . '` WHERE `id` IN (' . implode(',', $options_list) . ') AND `productparams_id`=' . ($_GET['id'] ?? null));
                 }
 
                 db()->UPDATE('shop_productparams', db()->es([
-                    'title' => $_POST['title'],
-                ]), 'id=' . $_GET['id']);
-                common()->admin_wall_add(['shop product attribute updated: ' . $_POST['title'], $_GET['id']]);
+                    'title' => ($_POST['title'] ?? null),
+                ]), 'id=' . ($_GET['id'] ?? null));
+                common()->admin_wall_add(['shop product attribute updated: ' . ($_POST['title'] ?? null), ($_GET['id'] ?? null)]);
                 return js_redirect('./?object=' . main()->_get('object') . '&action=attributes');
             }
         }
         $replace = [
-            'form_action' => './?object=' . main()->_get('object') . '&action=' . $_GET['action'] . '&id=' . $A['id'],
+            'form_action' => './?object=' . main()->_get('object') . '&action=' . ($_GET['action'] ?? null) . '&id=' . $A['id'],
             'error' => _e(),
             'title' => $A['title'],
             'value_list' => $A['value_list'],
@@ -138,21 +138,21 @@ class yf_manage_shop_attributes
 
     public function attribute_delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
-        $field_info = db()->query_fetch('SELECT * FROM ' . db('shop_productparams') . ' WHERE id = ' . (int) ($_GET['id']));
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $field_info = db()->query_fetch('SELECT * FROM ' . db('shop_productparams') . ' WHERE id = ' . (int) (($_GET['id'] ?? null)));
         if (empty($field_info)) {
             return _e('no field');
         }
-        if ($_GET['id']) {
-            db()->query('DELETE FROM ' . db('shop_productparams') . ' WHERE id=' . $_GET['id']);
-            db()->query('DELETE FROM ' . db('shop_productparams_options') . ' WHERE productparams_id = ' . $_GET['id']);
-            common()->admin_wall_add(['shop product attribute deleted: ' . $_GET['id'], $_GET['id']]);
+        if (($_GET['id'] ?? null)) {
+            db()->query('DELETE FROM ' . db('shop_productparams') . ' WHERE id=' . ($_GET['id'] ?? null));
+            db()->query('DELETE FROM ' . db('shop_productparams_options') . ' WHERE productparams_id = ' . ($_GET['id'] ?? null));
+            common()->admin_wall_add(['shop product attribute deleted: ' . ($_GET['id'] ?? null), ($_GET['id'] ?? null)]);
         }
-        if ($_POST['ajax_mode']) {
+        if (($_POST['ajax_mode'] ?? null)) {
             main()->NO_GRAPHICS = true;
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
-            return js_redirect($_SERVER['HTTP_REFERER'], 0);
+            return js_redirect(($_SERVER['HTTP_REFERER'] ?? null), 0);
         }
     }
 
@@ -310,7 +310,7 @@ class yf_manage_shop_attributes
             return;
         }
         // 2-nd case of dynamic attributes assignment
-        foreach ((array) $_POST['single_attr'] as $_attr_id => $_sel_id) {
+        foreach ((array) ($_POST['single_attr'] ?? null) as $_attr_id => $_sel_id) {
             $_item_id = $_attr_id . '_' . $_sel_id;
             $_POST['attributes_use'][$_item_id] = 1;
         }
@@ -333,10 +333,10 @@ class yf_manage_shop_attributes
 
             foreach ((array) $_info['value_list'] as $_val_id => $_value) {
                 $_item_id = $_attr_id . '_' . $_val_id;
-                if ($_POST['attributes_use'][$_item_id]) {
-                    $option_values[$_val_id] = $_POST['attributes_use'][$_item_id];
+                if (($_POST['attributes_use'][$_item_id] ?? null)) {
+                    $option_values[$_val_id] = ($_POST['attributes_use'][$_item_id] ?? null);
                 }
-                $value_prices[$_val_id] = $_POST['attributes_price'][$_item_id];
+                $value_prices[$_val_id] = ($_POST['attributes_price'][$_item_id] ?? null);
             }
             $option_values = serialize($option_values);
             $value_prices = serialize($value_prices);

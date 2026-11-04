@@ -39,7 +39,7 @@ class yf_manage_shop_product_sets
     public function product_sets()
     {
         return table('SELECT * FROM ' . db('shop_product_sets'), [
-                'filter' => $_SESSION[$_GET['object'] . '__product_sets'],
+                'filter' => ($_SESSION[$_GET['object'] . '__product_sets'] ?? null),
                 'custom_fields' => [
                     'products_items' => 'SELECT product_set_id, COUNT(*) AS num FROM ' . db('shop_product_sets_items') . ' GROUP BY product_set_id',
                     'products_price' => $this->_sql_sets_prices_total,
@@ -69,7 +69,7 @@ class yf_manage_shop_product_sets
     public function product_set_edit()
     {
         $replace = null;
-        $product_set_id = (int) $_GET['id'];
+        $product_set_id = (int) ($_GET['id'] ?? null);
         $a = db()->from('shop_product_sets')->whereid($product_set_id)->get();
 
         if (input()->is_post()) {
@@ -127,9 +127,9 @@ class yf_manage_shop_product_sets
             }
             $up = [];
             // Add products to current set
-            if ($_POST['products_ids']) {
+            if (($_POST['products_ids'] ?? null)) {
                 $ids = [];
-                foreach (explode(',', $_POST['products_ids']) as $id) {
+                foreach (explode(',', ($_POST['products_ids'] ?? null)) as $id) {
                     $id = (int) $id;
                     $id && $ids[$id] = $id;
                 }
@@ -157,11 +157,11 @@ class yf_manage_shop_product_sets
                 }
             }
             // Editable quantity for each product in list
-            if ( ! empty($_POST['quantity']) && is_array($_POST['quantity'])) {
+            if ( ! empty($_POST['quantity']) && is_array(($_POST['quantity'] ?? null))) {
                 $current_items = (array) db()->get_all(str_replace('%sid', $product_set_id, $this->_sql_set_list_products));
                 $current_ids = array_keys($current_items);
                 $current_ids && $current_ids = array_combine($current_ids, $current_ids);
-                foreach ((array) $_POST['quantity'] as $id => $quantity) {
+                foreach ((array) ($_POST['quantity'] ?? null) as $id => $quantity) {
                     if ( ! isset($current_ids[$id])) {
                         continue;
                     }
@@ -179,8 +179,8 @@ class yf_manage_shop_product_sets
             // Process common form fields
             foreach ((array) $this->_table['fields'] as $f) {
                 // TODO: form validation, name=required
-                if ($a[$f] != $_POST[$f] && isset($_POST[$f])) {
-                    $up[$f] = $_POST[$f];
+                if ($a[$f] != ($_POST[$f] ?? null) && isset($_POST[$f])) {
+                    $up[$f] = ($_POST[$f] ?? null);
                 }
             }
             // Count price from real product prices
@@ -241,10 +241,10 @@ class yf_manage_shop_product_sets
     public function product_set_delete()
     {
         if ( ! empty($_GET['product_id'])) {
-            $result = db()->query('DELETE FROM ' . db('shop_product_sets_items') . ' WHERE product_set_id = ' . (int) $_GET['id'] . ' AND product_id = ' . (int) $_GET['product_id']);
+            $result = db()->query('DELETE FROM ' . db('shop_product_sets_items') . ' WHERE product_set_id = ' . (int) ($_GET['id'] ?? null) . ' AND product_id = ' . (int) ($_GET['product_id'] ?? null));
             return $result;
         }
-        $result = db()->query('DELETE FROM ' . db('shop_product_sets_items') . ' WHERE product_set_id = ' . (int) $_GET['id']);
+        $result = db()->query('DELETE FROM ' . db('shop_product_sets_items') . ' WHERE product_set_id = ' . (int) ($_GET['id'] ?? null));
         return $result && _class('admin_methods')->delete($this->_table) || 0;
     }
 }

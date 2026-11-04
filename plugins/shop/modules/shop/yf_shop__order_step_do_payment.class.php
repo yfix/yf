@@ -17,7 +17,7 @@ class yf_shop__order_step_do_payment
         if (common()->_error_exists() || empty($_POST)) {
             return module('shop')->_order_step_select_payment();
         }
-        $ORDER_ID = (int) ($_POST['order_id'] ? $_POST['order_id'] : module('shop')->_CUR_ORDER_ID);
+        $ORDER_ID = (int) (($_POST['order_id'] ?? null) ? ($_POST['order_id'] ?? null) : module('shop')->_CUR_ORDER_ID);
         if (empty($ORDER_ID)) {
             _re('Missing order ID');
         }
@@ -27,12 +27,12 @@ class yf_shop__order_step_do_payment
             _re('Missing order record');
         }
         // Payment by courier, skip next step
-        if ( ! common()->_error_exists() && $_POST['pay_type'] == 1 or $_POST['pay_type'] == 3 or $_POST['pay_type'] == 4) {
+        if ( ! common()->_error_exists() && ($_POST['pay_type'] ?? null) == 1 or ($_POST['pay_type'] ?? null) == 3 or ($_POST['pay_type'] ?? null) == 4) {
             module('shop')->_basket_api()->clean();
-            return js_redirect('./?object=shop&action=' . $_GET['action'] . '&id=finish&page=' . (int) $ORDER_ID);
+            return js_redirect('./?object=shop&action=' . ($_GET['action'] ?? null) . '&id=finish&page=' . (int) $ORDER_ID);
         }
         // Authorize.net payment type
-        if ($_POST['pay_type'] == 2) {
+        if (($_POST['pay_type'] ?? null) == 2) {
             module('shop')->_basket_api()->clean();
             return module('shop')->_order_pay_authorize_net($order_info);
         }

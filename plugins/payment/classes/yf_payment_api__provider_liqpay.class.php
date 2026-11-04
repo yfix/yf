@@ -191,7 +191,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote
             return  null;
         }
         $result = null;
-        $operation_id = (int) $_GET['operation_id'];
+        $operation_id = (int) ($_GET['operation_id'] ?? null);
         // get response
         /*
                     $response = array (
@@ -261,7 +261,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote
             return  null;
         }
         $result = null;
-        $operation_id = (int) $_GET['operation_id'];
+        $operation_id = (int) ($_GET['operation_id'] ?? null);
         // get response
         /*
                 $_POST = array (
@@ -281,7 +281,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote
                 );
         // */
         // check response signature
-        $signature = $_POST['signature'];
+        $signature = ($_POST['signature'] ?? null);
         if (empty($signature)) {
             $result = [
                 'status' => false,

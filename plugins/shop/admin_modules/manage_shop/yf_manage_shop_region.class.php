@@ -70,9 +70,9 @@ class yf_manage_shop_region
 
     public function region()
     {
-        $session_key = $_GET['object'] . '__' . $_GET['action'];
+        $session_key = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $filter = [
-            'filter' => $_SESSION[$session_key],
+            'filter' => ($_SESSION[$session_key] ?? null),
             'filter_params' => [
                 'id' => 'in',
                 'value' => 'like',

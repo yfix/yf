@@ -71,7 +71,7 @@ class yf_blocks
         $func = function ($row) {
             return ! ($row['name'] == 'center_area' && $row['type'] == 'admin');
         };
-        $filter_name = $_GET['object'] . '__' . $_GET['action'];
+        $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $default_filter = [
             'order_by' => 'type',
             'order_direction' => 'desc',
@@ -81,7 +81,7 @@ class yf_blocks
                 'custom_fields' => ['num_rules' => 'SELECT block_id, COUNT(*) AS num FROM ' . db('block_rules') . ' GROUP BY block_id'],
 //				'condensed' => 1,
                 'pager_records_on_page' => 10000,
-                'filter' => (array) $_SESSION[$filter_name] + $default_filter,
+                'filter' => (array) ($_SESSION[$filter_name] ?? null) + $default_filter,
                 'filter_params' => [
                     'name' => 'like',
                 ],
@@ -99,7 +99,7 @@ class yf_blocks
             ->btn_clone(['btn_no_text' => 1])
             ->btn_delete(['btn_no_text' => 1, 'display_func' => $func])
             ->btn_active(['display_func' => $func])
-            ->footer_add('', './?object=' . $_GET['object'] . '&action=add');
+            ->footer_add('', './?object=' . ($_GET['object'] ?? null) . '&action=add');
     }
 
 
@@ -114,7 +114,7 @@ class yf_blocks
             ])
             ->db_insert_if_ok('blocks', ['type', 'name', 'desc', 'stpl_name', 'method_name', 'active'], [])
             ->on_after_update(function () {
-                common()->admin_wall_add(['block added: ' . $_POST['name'] . '', db()->insert_id()]);
+                common()->admin_wall_add(['block added: ' . ($_POST['name'] ?? null) . '', db()->insert_id()]);
                 module('blocks')->_cache_purge();
             })
             ->radio_box('type', ['admin' => 'admin', 'user' => 'user'])
@@ -129,17 +129,17 @@ class yf_blocks
 
     public function edit()
     {
-        $a = db()->get('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) ($_GET['id']) . ' OR name="' . _es($_GET['id']) . '"');
+        $a = db()->get('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' OR name="' . _es(($_GET['id'] ?? null)) . '"');
         $_GET['id'] = $a['id'];
         $a['redirect_link'] = url('/@object');
         return form($a)
             ->validate([
                 'name' => 'trim|required|alpha_dash',
             ])
-            ->db_update_if_ok('blocks', ['name', 'desc', 'stpl_name', 'method_name', 'active'], 'id=' . $_GET['id'])
+            ->db_update_if_ok('blocks', ['name', 'desc', 'stpl_name', 'method_name', 'active'], 'id=' . ($_GET['id'] ?? null))
             ->on_after_update(function () {
                 $id = null;
-                common()->admin_wall_add(['block updated: ' . $_POST['name'] . '', $id]);
+                common()->admin_wall_add(['block updated: ' . ($_POST['name'] ?? null) . '', $id]);
                 module('blocks')->_cache_purge();
             })
             ->text('name', 'Block name')
@@ -164,19 +164,19 @@ class yf_blocks
      */
     public function delete()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) ($_GET['id']));
+            $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($block_info['id'])) {
-            db()->query('DELETE FROM ' . db('blocks') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            db()->query('DELETE FROM ' . db('block_rules') . ' WHERE block_id=' . (int) ($_GET['id']));
-            common()->admin_wall_add(['block deleted: ' . $block_info['name'] . '', $_GET['id']]);
+            db()->query('DELETE FROM ' . db('blocks') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            db()->query('DELETE FROM ' . db('block_rules') . ' WHERE block_id=' . (int) (($_GET['id'] ?? null)));
+            common()->admin_wall_add(['block deleted: ' . $block_info['name'] . '', ($_GET['id'] ?? null)]);
         }
         module('blocks')->_cache_purge();
         if (is_ajax()) {
             no_graphics(true);
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
             return js_redirect(url('/@object'));
         }
@@ -185,11 +185,11 @@ class yf_blocks
 
     public function clone_item()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if (empty($_GET['id'])) {
             return _e('No id!');
         }
-        $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) ($_GET['id']));
+        $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         $sql = $block_info;
         unset($sql['id']);
         $sql['name'] = $sql['name'] . '_clone';
@@ -197,7 +197,7 @@ class yf_blocks
         db()->INSERT('blocks', $sql);
         $NEW_BLOCK_ID = db()->INSERT_ID();
 
-        $Q = db()->query('SELECT * FROM ' . db('block_rules') . ' WHERE block_id=' . (int) ($_GET['id']));
+        $Q = db()->query('SELECT * FROM ' . db('block_rules') . ' WHERE block_id=' . (int) (($_GET['id'] ?? null)));
         while ($_info = db()->fetch_assoc($Q)) {
             unset($_info['id']);
             $_info['block_id'] = $NEW_BLOCK_ID;
@@ -214,13 +214,13 @@ class yf_blocks
 
     public function active()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) ($_GET['id']));
+            $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($block_info['id'])) {
-            db()->UPDATE('blocks', ['active' => (int) ! $block_info['active']], 'id=' . (int) ($_GET['id']));
-            common()->admin_wall_add(['block ' . $block_info['name'] . ' ' . ($block_info['active'] ? 'inactivated' : 'activated'), $_GET['id']]);
+            db()->UPDATE('blocks', ['active' => (int) ! $block_info['active']], 'id=' . (int) (($_GET['id'] ?? null)));
+            common()->admin_wall_add(['block ' . $block_info['name'] . ' ' . ($block_info['active'] ? 'inactivated' : 'activated'), ($_GET['id'] ?? null)]);
         }
         module('blocks')->_cache_purge();
         if (is_ajax()) {
@@ -236,12 +236,12 @@ class yf_blocks
      */
     public function show_rules()
     {
-        $block_info = db()->get('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) ($_GET['id']));
+        $block_info = db()->get('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($block_info['id'])) {
             return _e('No such block!');
         }
         $_GET['id'] = $block_info['id'];
-        return table('SELECT * FROM ' . db('block_rules') . ' WHERE block_id=' . (int) ($_GET['id']) . ' ORDER BY `order` ASC')
+        return table('SELECT * FROM ' . db('block_rules') . ' WHERE block_id=' . (int) (($_GET['id'] ?? null)) . ' ORDER BY `order` ASC')
             ->text('order')
             ->allow_deny('rule_type')
             ->data('methods', $this->_methods[$block_info['type']])
@@ -251,17 +251,17 @@ class yf_blocks
             ->data('site_ids', $this->_sites, ['desc' => 'Sites'])
             ->data('server_ids', $this->_servers, ['desc' => 'Servers'])
             ->data('server_roles', $this->_server_roles, ['desc' => 'Server roles'])
-            ->btn_edit('', './?object=' . $_GET['object'] . '&action=edit_rule&id=%d', ['no_ajax' => 1])
-            ->btn_delete('', './?object=' . $_GET['object'] . '&action=delete_rule&id=%d')
-            ->btn_clone('', './?object=' . $_GET['object'] . '&action=clone_rule&id=%d')
-            ->btn_active('', './?object=' . $_GET['object'] . '&action=activate_rule&id=%d')
-            ->footer_add('', './?object=' . $_GET['object'] . '&action=add_rule&id=' . $block_info['id'], ['no_ajax' => 1]);
+            ->btn_edit('', './?object=' . ($_GET['object'] ?? null) . '&action=edit_rule&id=%d', ['no_ajax' => 1])
+            ->btn_delete('', './?object=' . ($_GET['object'] ?? null) . '&action=delete_rule&id=%d')
+            ->btn_clone('', './?object=' . ($_GET['object'] ?? null) . '&action=clone_rule&id=%d')
+            ->btn_active('', './?object=' . ($_GET['object'] ?? null) . '&action=activate_rule&id=%d')
+            ->footer_add('', './?object=' . ($_GET['object'] ?? null) . '&action=add_rule&id=' . $block_info['id'], ['no_ajax' => 1]);
     }
 
 
     public function add_rule()
     {
-        $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) ($_GET['id']));
+        $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($block_info['id'])) {
             return _e('No such block!');
         }
@@ -272,7 +272,7 @@ class yf_blocks
         $multi_selects = ['methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids'];
         if (main()->is_post()) {
             foreach ($multi_selects as $k) {
-                $_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
+                $_POST[$k] = $this->_multi_html_to_db(($_POST[$k] ?? null));
             }
         }
         $a['redirect_link'] = url('/@object');
@@ -285,7 +285,7 @@ class yf_blocks
                 'redirect_link' => './?object=blocks&action=show_rules&id=' . $block_info['id'],
             ])
             ->on_after_update(function () use($block_info) {
-                common()->admin_wall_add(['block rule added for ' . $block_info['name'], $_GET['id']]);
+                common()->admin_wall_add(['block rule added for ' . $block_info['name'], ($_GET['id'] ?? null)]);
                 module('blocks')->_cache_purge();
             })
             ->info('type')
@@ -305,7 +305,7 @@ class yf_blocks
 
     public function edit_rule()
     {
-        $rule_info = db()->get('SELECT * FROM ' . db('block_rules') . ' WHERE id=' . (int) ($_GET['id']));
+        $rule_info = db()->get('SELECT * FROM ' . db('block_rules') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         if (empty($rule_info['id'])) {
             return _e('No such rule!');
         }
@@ -320,7 +320,7 @@ class yf_blocks
         $multi_selects = ['methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids'];
         if (main()->is_post()) {
             foreach ($multi_selects as $k) {
-                $_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
+                $_POST[$k] = $this->_multi_html_to_db(($_POST[$k] ?? null));
             }
         } else {
             foreach ($multi_selects as $k) {
@@ -337,7 +337,7 @@ class yf_blocks
                 'redirect_link' => './?object=blocks&action=show_rules&id=' . $a['block_id'],
             ])
             ->on_after_update(function () use($block_info) {
-                common()->admin_wall_add(['block rule updated for: ' . $block_info['name'], $_GET['id']]);
+                common()->admin_wall_add(['block rule updated for: ' . $block_info['name'], ($_GET['id'] ?? null)]);
                 module('blocks')->_cache_purge();
             })
             ->info('type')
@@ -357,32 +357,32 @@ class yf_blocks
 
     public function delete_rule()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $rule_info = db()->query_fetch('SELECT * FROM ' . db('block_rules') . ' WHERE id=' . (int) ($_GET['id']));
+            $rule_info = db()->query_fetch('SELECT * FROM ' . db('block_rules') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($rule_info['id'])) {
             $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) ($rule_info['block_id']));
         }
         if ( ! empty($block_info['id'])) {
-            db()->query('DELETE FROM ' . db('block_rules') . ' WHERE id=' . (int) ($_GET['id']) . ' LIMIT 1');
-            common()->admin_wall_add(['block rule deleted for: ' . $block_info['name'], $_GET['id']]);
+            db()->query('DELETE FROM ' . db('block_rules') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            common()->admin_wall_add(['block rule deleted for: ' . $block_info['name'], ($_GET['id'] ?? null)]);
             module('blocks')->_cache_purge();
         }
         if (is_ajax()) {
             no_graphics(true);
-            echo $_GET['id'];
+            echo ($_GET['id'] ?? null);
         } else {
-            return js_redirect('./?object=' . $_GET['object'] . '&action=show_rules&id=' . $block_info['id']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=show_rules&id=' . $block_info['id']);
         }
     }
 
 
     public function clone_rule()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $rule_info = db()->query_fetch('SELECT * FROM ' . db('block_rules') . ' WHERE id=' . (int) ($_GET['id']));
+            $rule_info = db()->query_fetch('SELECT * FROM ' . db('block_rules') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($rule_info['id'])) {
             $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) ($rule_info['block_id']));
@@ -398,29 +398,29 @@ class yf_blocks
 
         common()->admin_wall_add(['block rule cloned for block ' . $block_info['name'], $NEW_RULE_ID]);
         module('blocks')->_cache_purge();
-        return js_redirect('./?object=' . $_GET['object'] . '&action=show_rules&id=' . $block_info['id']);
+        return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=show_rules&id=' . $block_info['id']);
     }
 
 
     public function activate_rule()
     {
-        $_GET['id'] = (int) ($_GET['id']);
+        $_GET['id'] = (int) (($_GET['id'] ?? null));
         if ( ! empty($_GET['id'])) {
-            $rule_info = db()->query_fetch('SELECT * FROM ' . db('block_rules') . ' WHERE id=' . (int) ($_GET['id']));
+            $rule_info = db()->query_fetch('SELECT * FROM ' . db('block_rules') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
         }
         if ( ! empty($rule_info['id'])) {
             $block_info = db()->query_fetch('SELECT * FROM ' . db('blocks') . ' WHERE id=' . (int) ($rule_info['block_id']));
         }
         if ( ! empty($block_info['id'])) {
-            db()->UPDATE('block_rules', ['active' => (int) ! $rule_info['active']], 'id=' . (int) ($_GET['id']));
-            common()->admin_wall_add(['block rule for ' . $block_info['name'] . ' ' . ($rule_info['active'] ? 'inactivated' : 'activated'), $_GET['id']]);
+            db()->UPDATE('block_rules', ['active' => (int) ! $rule_info['active']], 'id=' . (int) (($_GET['id'] ?? null)));
+            common()->admin_wall_add(['block rule for ' . $block_info['name'] . ' ' . ($rule_info['active'] ? 'inactivated' : 'activated'), ($_GET['id'] ?? null)]);
             module('blocks')->_cache_purge();
         }
         if (is_ajax()) {
             no_graphics(true);
             echo $rule_info['active'] ? 0 : 1;
         } else {
-            return js_redirect('./?object=' . $_GET['object'] . '&action=show_rules&id=' . $block_info['id']);
+            return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=show_rules&id=' . $block_info['id']);
         }
     }
 
@@ -461,7 +461,7 @@ class yf_blocks
 
     public function _show_filter()
     {
-        if ( ! in_array($_GET['action'], ['show'])) {
+        if ( ! in_array(($_GET['action'] ?? null), ['show'])) {
             return false;
         }
         $order_fields = [];

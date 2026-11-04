@@ -15,15 +15,15 @@ class yf_logs_db_queries
 
         $IP = is_object(common()) ? common()->get_ip() : false;
         if ( ! $IP) {
-            $IP = $_SERVER['REMOTE_ADDR'];
+            $IP = ($_SERVER['REMOTE_ADDR'] ?? null);
         }
         $log_header =
             '## ' . date('Y-m-d H:i:s') . '; '
             . 'SITE_ID: ' . conf('SITE_ID') . '; '
             . 'IP = ' . $IP . '; '
-            . 'QUERY_STRING = ' . WEB_PATH . '?' . $_SERVER['QUERY_STRING'] . '; '
-            . ( ! empty($_SERVER['REQUEST_URI']) ? 'URL: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . '; ' : '')
-            . ( ! empty($_SERVER['HTTP_REFERER']) ? 'REFERER = ' . $_SERVER['HTTP_REFERER'] . '; ' : '')
+            . 'QUERY_STRING = ' . WEB_PATH . '?' . ($_SERVER['QUERY_STRING'] ?? null) . '; '
+            . ( ! empty($_SERVER['REQUEST_URI']) ? 'URL: http://' . ($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null) . '; ' : '')
+            . ( ! empty($_SERVER['HTTP_REFERER']) ? 'REFERER = ' . ($_SERVER['HTTP_REFERER'] ?? null) . '; ' : '')
             . "##\r\n";
 
         if (db()->LOG_ALL_QUERIES && ! empty(db()->FILE_NAME_LOG_ALL)) {
