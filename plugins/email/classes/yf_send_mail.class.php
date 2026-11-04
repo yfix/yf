@@ -97,6 +97,7 @@ class yf_send_mail
      */
     public function send($params = [])
     {
+        $name_to = $email_to = null;
         $driver = strtolower($params['driver'] ?: $this->DRIVER);
         if (DEBUG_MODE || $this->LOG_EMAILS) {
             $time_start = microtime(true);

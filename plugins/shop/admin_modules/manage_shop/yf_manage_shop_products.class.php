@@ -328,6 +328,7 @@ class yf_manage_shop_products
      */
     public function products_show_by_category($cat = '')
     {
+        $product_info = null;
         main()->NO_GRAPHICS = true;
         $cat_id = $_GET['cat_id'];
         $sql1 = 'SELECT product_id FROM ' . db('shop_product_to_category') . ' WHERE category_id =' . $cat_id;

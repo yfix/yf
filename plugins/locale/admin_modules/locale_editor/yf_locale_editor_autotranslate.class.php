@@ -54,6 +54,7 @@ class yf_locale_editor_autotranslate
      */
     public function _on_validate_ok($params = [], $form = null)
     {
+        $stats = null;
         $p = $params ?: $_POST;
         $lang = $p['lang_to'];
         $lang_from = $p['lang_from'] ?: 'en';

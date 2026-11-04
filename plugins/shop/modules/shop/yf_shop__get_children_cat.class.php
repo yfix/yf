@@ -4,6 +4,7 @@ class yf_shop__get_children_cat
 {
     public function _get_children_cat($id)
     {
+        $cat_id = null;
         $sql1 = 'SELECT id FROM shop_sys_category_items WHERE parent_id = ' . $id;
         $cat = db()->query($sql1);
         while ($A = db()->fetch_assoc($cat)) {

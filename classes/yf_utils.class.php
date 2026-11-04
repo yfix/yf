@@ -169,6 +169,7 @@ class yf_utils
     // Function to prevent creation VERY long words (without spaces inside)
     public function _check_words_length($text, $length = 0, $do_encode_email = false)
     {
+        $_cur_number = null;
         if (empty($length)) {
             $length = 60;
             if (SITE_MAX_WORD_LENGTH != 'SITE_MAX_WORD_LENGTH' && SITE_MAX_WORD_LENGTH != '') {
@@ -567,6 +568,7 @@ class yf_utils
     // Error message for guests with propose to log into system (for user section)
     public function _error_need_login($go_after_login = '')
     {
+        $body = null;
         // Hosting frontend
         if (IS_FRONT == 1) {
             return '';

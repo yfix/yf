@@ -10,6 +10,7 @@ class yf_form2_tinymce
      */
     public function _tinymce_html($extra = [], $replace = [], $form = null)
     {
+        $body = null;
         if ( ! is_array($extra)) {
             return '';
         }

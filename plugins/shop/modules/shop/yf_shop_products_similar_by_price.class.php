@@ -4,6 +4,7 @@ class yf_shop_products_similar_by_price
 {
     public function products_similar_by_price($price, $id)
     {
+        $cats_id = $prods = null;
         $price_min = floor($price - ($price * 10 / 100));
         $price_max = ceil($price + ($price * 10 / 100));
         $sql1 = 'SELECT category_id FROM ' . db('shop_product_to_category') . ' WHERE product_id =  ' . $id . '';

@@ -73,6 +73,7 @@ class yf_manage_shop_clear_products
 
     public function clear_pattern_list()
     {
+        $row_info = null;
         if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
             return t('Empty clear pattern ID');
         }
@@ -236,6 +237,7 @@ class yf_manage_shop_clear_products
      */
     public function clear_pattern_status()
     {
+        $row_info = null;
         if (empty($_POST['ids'])) {
             exit;
         }
@@ -260,6 +262,7 @@ class yf_manage_shop_clear_products
      */
     public function clear_pattern_child_process()
     {
+        $row_info = null;
         if ( ! isset($_GET['id']) && (int) ($_GET['id'])) {
             return t('Empty clear pattern ID');
         }

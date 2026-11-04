@@ -92,6 +92,7 @@ class yf_manage_sphinx
      */
     public function _current_config()
     {
+        $sources = $indexes = null;
         $config_data = [];
 
         $source_main = [

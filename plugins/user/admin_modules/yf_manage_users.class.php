@@ -54,6 +54,7 @@ class yf_manage_users
 
     public function edit()
     {
+        $func = null;
         $id = (int) ($_GET['id']);
         if ( ! $id) {
             return _e('No id');

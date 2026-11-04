@@ -27,6 +27,7 @@ class yf_mail_driver_sendgrid extends yf_mail_driver
      */
     public function send(array $params = [], &$error_message = '')
     {
+        $result = null;
         require_php_lib('sendgrid');
 
         $error_message = null;

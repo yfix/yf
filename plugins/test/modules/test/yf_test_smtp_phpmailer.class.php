@@ -5,6 +5,7 @@ class yf_test_smtp_phpmailer
 {
     public function test()
     {
+        $error_message = $body = null;
         $time_start = microtime(true);
 
         require_php_lib('phpmailer');

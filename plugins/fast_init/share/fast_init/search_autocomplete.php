@@ -1,6 +1,7 @@
 <?php
 
 return function () {
+    $data = $counter = null;
     if (empty($WHAT)) {
         $WHAT = trim($_GET['id']);
     }

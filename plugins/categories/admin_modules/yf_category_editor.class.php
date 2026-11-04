@@ -112,6 +112,7 @@ class yf_category_editor
             ])
             ->db_update_if_ok('categories', ['name', 'desc', 'stpl_name', 'method_name', 'custom_fields', 'active'], 'id=' . $id)
             ->on_after_update(function () use($a) {
+                $id = null;
                 common()->admin_wall_add(['category updated: ' . $a['name'], $id]);
                 module('category_editor')->_purge_category_caches();
             })
@@ -601,6 +602,7 @@ class yf_category_editor
 
     public function edit_item()
     {
+        $field_zzname = null;
         $item_info = db()->query_fetch('SELECT * FROM ' . db('category_items') . ' WHERE id=' . (int) ($_GET['id']));
         if ( ! $item_info['id']) {
             return _e('No such item!');

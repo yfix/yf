@@ -430,6 +430,7 @@ class yf_manage_shop__product_revisions
 
     public function product_images_revisions_view()
     {
+        $images_stamp = null;
         $sql = 'SELECT r.*, p.name
 				FROM ' . db('shop_product_images_revisions') . ' as r
 				RIGHT JOIN ' . db('shop_products') . ' as p

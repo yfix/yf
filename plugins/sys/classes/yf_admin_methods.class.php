@@ -755,6 +755,7 @@ class yf_admin_methods
      */
     public function find_active_modules($section = 'all')
     {
+        $hooks = null;
         if ( ! in_array($section, ['all', 'user', 'admin'])) {
             $section = 'all';
         }

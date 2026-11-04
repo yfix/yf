@@ -127,6 +127,7 @@ class yf_client_utils
     // TODO: add unit tests for this
     public function _get_browser_info()
     {
+        $log_version2 = null;
         if ( ! empty($_SERVER['HTTP_USER_AGENT'])) {
             $HTTP_USER_AGENT = $_SERVER['HTTP_USER_AGENT'];
         } elseif ( ! isset($HTTP_USER_AGENT)) {

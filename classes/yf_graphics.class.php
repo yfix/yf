@@ -551,6 +551,7 @@ class yf_graphics
      */
     public function _show_header()
     {
+        $obj = null;
         if (conf('no_page_header')) {
             return false;
         }
@@ -589,6 +590,7 @@ class yf_graphics
      */
     public function quick_menu()
     {
+        $obj = $items = null;
         if ( ! $this->QUICK_MENU_ENABLED
             || (MAIN_TYPE_USER && ( ! isset($_SESSION['user_id']) || ! $_SESSION['user_id']))
             || (MAIN_TYPE_ADMIN && ( ! isset($_SESSION['admin_id']) || ! $_SESSION['admin_id']))

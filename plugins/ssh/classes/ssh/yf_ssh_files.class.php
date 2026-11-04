@@ -11,6 +11,7 @@ class yf_ssh_files
      */
     public function read_file($server_info = [], $remote_file = '', $local_file = '')
     {
+        $debug_info = null;
         $local_file = trim($local_file);
         $remote_file = _class('ssh')->_prepare_path($remote_file);
         if ( ! _class('ssh')->_INIT_OK || ! $server_info || ! strlen($remote_file)) {
@@ -69,6 +70,7 @@ class yf_ssh_files
      */
     public function write_file($server_info = [], $local_file = '', $remote_file = '')
     {
+        $debug_info = null;
         $local_file = trim($local_file);
         $remote_file = _class('ssh')->_prepare_path($remote_file);
         if ( ! _class('ssh')->_INIT_OK || ! $server_info || ! strlen($local_file) || ! strlen($remote_file)) {
@@ -126,6 +128,7 @@ class yf_ssh_files
      */
     public function write_string($server_info = [], $string = '', $remote_file = '')
     {
+        $debug_info = null;
         $remote_file = _class('ssh')->_prepare_path($remote_file);
         if ( ! _class('ssh')->_INIT_OK || ! $server_info || ! $string || ( ! strlen($remote_file) && ! is_array($string))) {
             return false;

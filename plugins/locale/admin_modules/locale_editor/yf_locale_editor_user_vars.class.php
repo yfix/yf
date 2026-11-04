@@ -13,6 +13,7 @@ class yf_locale_editor_user_vars
      */
     public function user_vars()
     {
+        $filter_sql = $i = null;
         if (isset($_GET['id']) && ! isset($_GET['page'])) {
             $_GET['page'] = $_GET['id'];
             $_GET['id'] = null;

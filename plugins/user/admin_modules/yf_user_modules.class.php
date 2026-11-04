@@ -361,6 +361,7 @@ class yf_user_modules
      */
     public function _recursive_get_methods_from_extends($file_text = '', $user_module_name = '', $ONLY_PRIVATE_METHODS = false)
     {
+        $extends_file_path2 = null;
         // TODO: need to add 'site__' and 'adm__' functionality
         $extends_file_path = '';
         $methods = [];

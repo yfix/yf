@@ -325,6 +325,7 @@ class yf_payment_test
 
     public function _currency_rate_load_NBU()
     {
+        $title = null;
         $options = [
             'title' => $title,
             'provider' => 'nbu',
@@ -341,6 +342,7 @@ class yf_payment_test
 
     public function _currency_rate_load_CBR()
     {
+        $title = null;
         $options = [
             'title' => $title,
             'provider' => 'cbr',
@@ -355,6 +357,7 @@ class yf_payment_test
 
     public function _currency_rate_load_Privat24()
     {
+        $title = null;
         $options = [
             'title' => $title,
             'provider' => 'p24',
@@ -369,6 +372,7 @@ class yf_payment_test
 
     public function _currency_rate_load_CashExchange()
     {
+        $title = null;
         $options = [
             'title' => $title,
             'provider' => 'cashex',
@@ -1329,6 +1333,7 @@ EOS;
 
     protected function _currency_rates_load_CBR()
     {
+        $title = null;
         $options = [
             'title' => $title,
             'provider' => 'cbr',
@@ -1342,6 +1347,7 @@ EOS;
 
     protected function _currency_rates_load_Privat24()
     {
+        $title = null;
         $options = [
             'title' => $title,
             'provider' => 'p24',
@@ -1355,6 +1361,7 @@ EOS;
 
     protected function _currency_rates_load_CashExchange()
     {
+        $title = null;
         $options = [
             'title' => $title,
             'provider' => 'cashex',

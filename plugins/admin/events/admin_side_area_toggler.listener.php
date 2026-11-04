@@ -1,6 +1,7 @@
 <?php
 
 MAIN_TYPE_ADMIN && events()->listen('block.prepend[center_area]', function () {
+    $body = null;
     if ( ! is_common_page() || main()->NO_SIDE_AREA_TOGGLER) {
         return;
     }

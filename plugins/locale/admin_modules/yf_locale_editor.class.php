@@ -125,6 +125,7 @@ Fallback when no numbers matched (any string)
         }
         $filter = _class('admin_methods')->_get_filter(['filter_name' => $_GET['object'] . '__show']);
         $is_current = function ($item) use ($filter) {
+            $name = null;
             return $filter[$name] ? ' disabled' : '';
         };
         $a = [];
@@ -661,6 +662,7 @@ Fallback when no numbers matched (any string)
             $form->textarea('translation_' . $lang, ['desc' => $this->_lang_icon($lang, true), 'placeholder' => $name]);
         }
         $form->on_post(function ($a, $r, $f) use ($langs, $var, $var_db, $var_tr_db) {
+            $data = null;
             $up = [];
             $var_id = $a['id'];
             foreach ((array) $langs as $lcode => $lname) {

@@ -28,6 +28,7 @@ class yf_site_nav_bar
     // Display navigation bar
     public function _show($return_array = false)
     {
+        $bookmark_page_code = null;
         if ($return_array) {
             $this->_nav_item_as_array = true;
         }

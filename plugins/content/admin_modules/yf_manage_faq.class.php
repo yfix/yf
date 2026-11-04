@@ -70,6 +70,7 @@ class yf_manage_faq
 
     public function save()
     {
+        $cur_items = null;
         $lang = $_GET['page'];
         if ( ! is_post() || ! $lang || ! isset($this->all_langs[$lang])) {
             return js_redirect(url('/@object'));

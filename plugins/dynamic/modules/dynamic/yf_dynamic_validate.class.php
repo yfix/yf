@@ -22,6 +22,7 @@ class yf_dynamic_validate
 
     public function ajax_validate()
     {
+        $error_msg = null;
         no_graphics(true);
         header('X-Robots-Tag: noindex, nofollow, noarchive, nosnippet');
 

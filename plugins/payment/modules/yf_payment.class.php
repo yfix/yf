@@ -182,6 +182,7 @@ class yf_payment
 
     public function _operation($request, $options)
     {
+        $count = null;
         $api = _class('api');
         $payment_api = _class('payment_api');
         // update account, operation
@@ -219,6 +220,7 @@ class yf_payment
 
     public function _cancel($request, $options)
     {
+        $balance = null;
         $api = _class('api');
         $payment_api = _class('payment_api');
         $object = $payment_api->cancel_user($request);

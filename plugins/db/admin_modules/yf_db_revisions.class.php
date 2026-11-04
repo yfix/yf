@@ -68,6 +68,7 @@ class yf_db_revisions
 
     public function _show_filter()
     {
+        $filter_name = $replace = null;
         $filters = [
             'show' => function ($filter_name, $replace) {
                 $fields = ['id', 'date', 'query_method', 'query_table', 'ip', 'user_id'];

@@ -818,6 +818,7 @@ class yf_auth_user
      */
     public function _check_multi_accounts()
     {
+        $last_id = null;
         if (empty($_SESSION[$this->VAR_USER_ID]) || empty($_SESSION[$this->VAR_USER_GROUP_ID])) {
             return false;
         }

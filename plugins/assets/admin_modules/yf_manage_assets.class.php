@@ -24,6 +24,7 @@ class yf_manage_assets
      */
     public function _module_action_handler($method)
     {
+        $append = null;
         $prepend = $this->_menu();
         if ( ! $method || substr($method, 0, 1) === '_' || ! method_exists($this, $method)) {
             $method = 'show';

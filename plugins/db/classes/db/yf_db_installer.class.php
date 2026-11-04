@@ -65,6 +65,7 @@ abstract class yf_db_installer
 
     public function load_data()
     {
+        $project_data = null;
         $t_names = [];
         // Preload db installer SQL CREATE TABLE DDL statements
         $ext = '.sql.php';

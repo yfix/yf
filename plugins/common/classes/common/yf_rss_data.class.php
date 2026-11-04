@@ -140,6 +140,7 @@ class yf_rss_data
      */
     public function fetch_data($params = [])
     {
+        $body = null;
         // Templates names
         $STPL_MAIN = ! empty($params['stpl_main']) ? $params['stpl_main'] : 'system/common/get_rss_page_main';
         $STPL_ITEM = ! empty($params['stpl_item']) ? $params['stpl_item'] : 'system/common/get_rss_page_item';
@@ -227,6 +228,7 @@ class yf_rss_data
      */
     public function get_data($url = '', $params = [])
     {
+        $i = null;
         if ( ! $url) {
             return false;
         }

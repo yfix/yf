@@ -93,6 +93,7 @@ class yf_register
      */
     public function _send_success_email($extra = false)
     {
+        $code = null;
         $identify = ! empty($extra['identify']) ? $extra['identify'] : $_POST['email'];
         $replace = [
             'code' => $code,
@@ -117,6 +118,7 @@ class yf_register
     // TODO: convert into form()
     public function confirm()
     {
+        $body = $replace3 = $replace4 = null;
         // Send registration confirmation email
         if ( ! $this->CONFIRM_REGISTER) {
             return tpl()->parse('@object/confirm_messages', ['msg' => 'confirm_not_needed']);

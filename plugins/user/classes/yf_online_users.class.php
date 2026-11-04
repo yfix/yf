@@ -47,6 +47,7 @@ class yf_online_users
 
     public function _is_online($user_ids, $user_type = null)
     {
+        $user_id = null;
         if (is_array($user_ids)) {
         } else {
             $user_ids = (int) $user_ids;

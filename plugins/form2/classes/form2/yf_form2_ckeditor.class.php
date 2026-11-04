@@ -17,6 +17,7 @@ class yf_form2_ckeditor
      */
     public function _ckeditor_html($extra = [], $replace = [], $form = null)
     {
+        $content_id = $body = null;
         if ( ! is_array($extra)) {
             return '';
         }

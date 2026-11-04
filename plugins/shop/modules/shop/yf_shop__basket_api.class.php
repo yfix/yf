@@ -19,6 +19,7 @@ class yf_shop__basket_api
     /***/
     public function get($k, $k2 = false)
     {
+        $storage_name = null;
         if ( ! empty($k2)) {
             return $_SESSION[$storage_name][$k][$k2];
         }
@@ -28,12 +29,14 @@ class yf_shop__basket_api
     /***/
     public function get_all()
     {
+        $storage_name = null;
         return $_SESSION[$storage_name];
     }
 
     /***/
     public function set($k, $v)
     {
+        $storage_name = null;
         $_SESSION[$storage_name][$k] = $v;
         return true;
     }
@@ -41,6 +44,7 @@ class yf_shop__basket_api
     /***/
     public function del($k)
     {
+        $storage_name = null;
         unset($_SESSION[$storage_name][$k]);
         return true;
     }
@@ -48,6 +52,7 @@ class yf_shop__basket_api
     /***/
     public function clean()
     {
+        $storage_name = null;
         $_SESSION[$storage_name] = [];
         return true;
     }

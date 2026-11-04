@@ -100,6 +100,7 @@ class yf_mail_driver_mandrill extends yf_mail_driver
      */
     public function send(array $params = [], &$error_message = '')
     {
+        $mail = null;
         require_php_lib('mandrill');
 
         try {

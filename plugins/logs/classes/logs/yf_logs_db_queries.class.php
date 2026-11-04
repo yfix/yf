@@ -89,6 +89,7 @@ class yf_logs_db_queries
      */
     public function _format_db_explain_result($explain_result = [])
     {
+        $max_row_lengths = $body = null;
         if (empty($explain_result)) {
             return false;
         }

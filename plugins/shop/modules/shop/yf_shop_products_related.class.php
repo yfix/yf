@@ -4,6 +4,7 @@ class yf_shop_products_related
 {
     public function products_related($id = '')
     {
+        $product_related_id = null;
         $product_related_data = [];
         $sql = 'SELECT * FROM ' . db('shop_product_related') . ' WHERE product_id = ' . $id;
         $product = db()->query($sql);

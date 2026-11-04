@@ -31,6 +31,7 @@ class yf_mail_driver_ses extends yf_mail_driver
      */
     public function send(array $params = [], &$error_message = '')
     {
+        $mail = null;
         require_php_lib('aws_sdk');
 
         $error_message = null;

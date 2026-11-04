@@ -27,6 +27,7 @@ class yf_html_datetime
      */
     public function date_box($selected = '', $years = '', $name_postfix = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1, $extra = [])
     {
+        $y = $m = $d = null;
         if (is_array($selected)) {
             $extra = (array) $extra;
             $selected = $extra['selected'];

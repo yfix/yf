@@ -4,6 +4,7 @@ class yf_shop__get_select_attributes
 {
     public function _get_select_attributes($atts = [])
     {
+        $selected = null;
         if (empty($atts)) {
             return [];
         }

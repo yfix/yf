@@ -131,6 +131,7 @@ class yf_manage_shop_express
      */
     public function _prepare_express_pdf($items = false)
     {
+        $total_sum = null;
         if (empty($items)) {
             return false;
         }

@@ -378,6 +378,7 @@ class yf_manage_shop_import_products2
 
     public function _data()
     {
+        $sub_action_count = null;
         $_sub_action = [
             '0' => '- не выбрано -',
             'load' => 'загрузить',

@@ -320,6 +320,7 @@ class yf_email
      */
     public function _send_copies($params = [])
     {
+        $email_to = null;
         if ( ! $params) {
             return false;
         }

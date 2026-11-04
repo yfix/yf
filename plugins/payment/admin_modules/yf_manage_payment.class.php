@@ -242,6 +242,7 @@ class yf_manage_payment
 
     public function show()
     {
+        $sum_chart = null;
         $object = &$this->object;
         $action = &$this->action;
         $filter_name = &$this->filter_name;
@@ -456,6 +457,7 @@ class yf_manage_payment
                 'provider_name' => 'trim|required',
             ])
             ->on_validate_ok(function ($data, $extra, $rules) use (&$user_id, &$account_id, &$account) {
+                $is_account = null;
                 $payment_api = _class('payment_api');
                 $provider_name = $_POST['provider_name'];
                 $provider_name = empty($provider_name) ? 'administration' : $provider_name;

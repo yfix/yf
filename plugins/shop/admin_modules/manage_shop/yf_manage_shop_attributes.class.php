@@ -262,6 +262,7 @@ class yf_manage_shop_attributes
      */
     public function _attributes_html($object_id = 0, $only_selected = false)
     {
+        $params = $i = null;
         $object_id = $params['object_id'];
         $only_selected = $params['only_selected'];
 

@@ -138,6 +138,7 @@ class yf_blocks
             ])
             ->db_update_if_ok('blocks', ['name', 'desc', 'stpl_name', 'method_name', 'active'], 'id=' . $_GET['id'])
             ->on_after_update(function () {
+                $id = null;
                 common()->admin_wall_add(['block updated: ' . $_POST['name'] . '', $id]);
                 module('blocks')->_cache_purge();
             })

@@ -357,6 +357,7 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function query_fetch_prepared($query, $data = [])
     {
+        $result = null;
         $stmt = mysqli_prepare($this->db_connect_id, $query);
         $this->bind_params($stmt, $data);
         mysqli_stmt_execute($stmt);

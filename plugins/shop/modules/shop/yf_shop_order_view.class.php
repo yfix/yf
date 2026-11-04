@@ -7,6 +7,7 @@ class yf_shop_order_view
      */
     public function _order_view()
     {
+        $price = $total_price = $quantity = null;
         if ($_POST['order_id']) {
             $_GET['id'] = (int) ($_POST['order_id']);
         } else {

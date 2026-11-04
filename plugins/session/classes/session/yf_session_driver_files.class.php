@@ -68,6 +68,7 @@ class yf_session_driver_files extends yf_session_driver
      */
     public function gc($life_time)
     {
+        $start_dir = null;
         $dh = opendir($start_dir);
         while (false !== ($f = readdir($dh))) {
             if ($f == '.' || $f == '..') {

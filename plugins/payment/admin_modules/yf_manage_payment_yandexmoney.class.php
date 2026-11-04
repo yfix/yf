@@ -122,6 +122,7 @@ class yf_manage_payment_yandexmoney
         ];
         $result = form($replace)
             ->on_post(function ($data, $extra, $rules) {
+                $url_authorize = null;
                 $is_confirm = ! empty($_POST['is_confirm']);
                 if ($is_confirm) {
                     $is_action = false;

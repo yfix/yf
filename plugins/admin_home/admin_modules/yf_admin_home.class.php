@@ -44,6 +44,7 @@ class yf_admin_home
 
     public function show_old()
     {
+        $admin_statistics_array = null;
         // Path to project.conf.php
         $proj_conf_path = INCLUDE_PATH . 'project_conf.php';
 
@@ -170,6 +171,7 @@ class yf_admin_home
      */
     public function _home_block_from_menu()
     {
+        $i = null;
         $STPL_MENU_MAIN = 'admin_home/menu';
         $STPL_MENU_ITEM = $STPL_MENU_MAIN . '_item';
 

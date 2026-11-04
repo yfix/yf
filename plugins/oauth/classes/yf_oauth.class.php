@@ -28,6 +28,7 @@ class yf_oauth
      */
     public function login($provider, $params = [])
     {
+        $body = null;
         if ( ! $provider) {
             return false;
         }

@@ -71,6 +71,7 @@ class yf_user_profile extends yf_module
     // Try to get user info
     public function _get_user_info()
     {
+        $user_info = null;
         if ( ! empty($this->_user_info)) {
             return '';
         }
@@ -182,6 +183,7 @@ class yf_user_profile extends yf_module
     // Show user info items
     public function _show_info_items()
     {
+        $body = null;
         // Array of text fields
         $text_fields = [
             'name' => 'Name',
@@ -396,6 +398,7 @@ class yf_user_profile extends yf_module
     // Show stars for the given value between 1 and 5
     public function _show_stars($value = 0)
     {
+        $body = null;
         if (empty($value) || $value > 5 || $value < 1) {
             return 'Not rated';
         }
@@ -452,6 +455,7 @@ class yf_user_profile extends yf_module
     // Show compact user info (usually for JavaScript calls)
     public function compact_info()
     {
+        $user_id = $REPUT_INFO = null;
         main()->NO_GRAPHICS = true;
         conf('no_ajax_here', true);
         // Check user id
@@ -583,6 +587,7 @@ class yf_user_profile extends yf_module
      */
     public function show_visits_stats()
     {
+        $items = null;
         if (empty(main()->USER_ID)) {
             return _error_need_login();
         }
@@ -620,6 +625,7 @@ class yf_user_profile extends yf_module
      */
     public function show_friend_stats()
     {
+        $items = null;
         if (empty(main()->USER_ID)) {
             return _error_need_login();
         }

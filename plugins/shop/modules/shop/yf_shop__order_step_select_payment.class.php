@@ -8,6 +8,7 @@ class yf_shop__order_step_select_payment
      */
     public function _order_step_select_payment($FORCE_DISPLAY_FORM = false)
     {
+        $SELF_METHOD_ID = null;
         // Show previous form if needed
         if (common()->_error_exists() || empty($_POST)) {
             return module('shop')->_order_step_delivery();

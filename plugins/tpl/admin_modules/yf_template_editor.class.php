@@ -91,6 +91,7 @@ class yf_template_editor
 
     public function _show_themes()
     {
+        $items = $i = null;
         $themes = $this->_get_themes();
 
         $num_stpls_array = cache_get($this->CACHE_NAME, 60);
@@ -164,6 +165,7 @@ class yf_template_editor
 
     public function show_stpls_in_theme()
     {
+        $PER_PAGE = null;
         $this->theme_name = $_GET['theme'];
         $this->_cur_theme_path = $this->_dir_array[$_GET['location']] . $this->theme_name;
         $files_array = _class('dir')->scan_dir($this->_cur_theme_path, false);

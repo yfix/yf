@@ -17,6 +17,7 @@ class yf_oauth_driver_amazon extends yf_oauth_driver2
      */
     public function _get_user_info_for_auth($raw = [])
     {
+        $user_info = null;
         /*
                 $user_info = array(
                     'user_id'		=> $raw['id'],

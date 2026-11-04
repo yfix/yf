@@ -393,6 +393,7 @@ class yf_remote_files
      */
     public function _multi_request($urls, $options = [], $max_threads = 0, &$requests_info = [])
     {
+        $i = null;
         if ( ! $max_threads) {
             $max_threads = $this->CURL_DEF_MAX_THREADS;
         }
@@ -618,6 +619,7 @@ class yf_remote_files
      */
     public function _set_curl_options($url_options = [], $is_ftp_url = false)
     {
+        $url = null;
         $curl_opts = [];
 
         $user_agent = isset($url_options['user_agent']) ? $url_options['user_agent'] : $this->DEF_USER_AGENT;
@@ -972,6 +974,7 @@ class yf_remote_files
      */
     public function _email_verify($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false)
     {
+        $_error_msg = $_debug_info = null;
         if (empty($email)) {
             return false;
         }
@@ -1163,6 +1166,7 @@ class yf_remote_files
      */
     public function alternate_remote_file_size($url, $retry = 3)
     {
+        $headers = $data = null;
         $method = 'GET';
 
         $time_start = microtime(true);

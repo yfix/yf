@@ -89,6 +89,7 @@ class yf_geo_content
     // Get selected array
     public function ajax_city()
     {
+        $body = null;
         main()->NO_GRAPHICS = true;
         // Check input
         if (isset($_REQUEST['country'])) {

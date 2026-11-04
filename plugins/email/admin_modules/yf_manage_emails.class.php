@@ -74,6 +74,7 @@ class yf_manage_emails
 
     public function raw()
     {
+        $replace = null;
         $a = $this->_get_info();
         if (empty($a)) {
             return _404();
@@ -90,6 +91,7 @@ class yf_manage_emails
 
     public function raw_text()
     {
+        $replace = null;
         $a = $this->_get_info();
         if (empty($a)) {
             return _404();
@@ -244,6 +246,7 @@ class yf_manage_emails
      */
     public function _get_info($id = null, $lang = null)
     {
+        $locale = null;
         $id = isset($id) ? $id : $_GET['id'];
         $lang = isset($lang) ? $lang : $_GET['page'];
         $a = db()->from(self::table)

@@ -169,6 +169,7 @@ class yf_manage_shop_hook_side_column
     /***/
     public function _revisions($type)
     {
+        $_class_revision = $order_id = null;
         $id = (int) ($_GET['id']);
         $db = $_class_revision->get_db($type);
         $info = db()->get('SELECT * FROM ' . $db . ' WHERE id=' . $id);

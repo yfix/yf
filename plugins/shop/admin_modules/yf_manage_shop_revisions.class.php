@@ -31,6 +31,7 @@ class yf_manage_shop_revisions
      */
     public function new_revision($function, $ids, $db_table)
     {
+        $revision_ids = null;
         if (empty($function) || empty($ids) || empty($db_table)) {
             return false;
         }
@@ -136,6 +137,7 @@ class yf_manage_shop_revisions
 
     public function _show_filter()
     {
+        $filter_name = $replace = null;
         $filters = [
             'show' => function ($filter_name, $replace) {
                 $fields = ['id', 'add_date', 'action', 'item_id', 'ip', 'user_id'];

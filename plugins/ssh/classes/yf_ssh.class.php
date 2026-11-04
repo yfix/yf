@@ -295,6 +295,7 @@ class yf_ssh
      */
     public function exec($server_info = [], $cmd = '')
     {
+        $debug_info = null;
         if ( ! $this->_INIT_OK || ! $cmd || ! $server_info) {
             return false;
         }
@@ -353,6 +354,7 @@ class yf_ssh
      */
     public function shell_exec($server_info = [], $cmd = '')
     {
+        $debug_info = null;
         if ( ! $this->_INIT_OK || ! $cmd || ! $server_info) {
             return false;
         }
@@ -621,6 +623,7 @@ class yf_ssh
      */
     public function _skip_by_pattern($path = '', $_type = 'f', $pattern_include = '', $pattern_exclude = '')
     {
+        $type = null;
         if ( ! $path) {
             return false;
         }
@@ -692,6 +695,7 @@ class yf_ssh
      */
     public function _local_extract_tar($archive_path = '', $extract_path = '')
     {
+        $files_list = null;
         $f = __FUNCTION__;
         return _class('ssh_tar', 'classes/ssh/')->$f($files_list, $archive_path);
     }
@@ -738,6 +742,7 @@ class yf_ssh
      */
     public function _prepare_text($text = '')
     {
+        $path = null;
         if (is_array($text)) {
             foreach ((array) $path as $k => $v) {
                 $text[$k] = $this->_prepare_text($v);
@@ -795,6 +800,7 @@ class yf_ssh
      */
     public function _perm_str2num($perm = '')
     {
+        $own = $grp = $oth = null;
         $perm_len = strlen(trim($perm));
         if ($perm_len > 10 && $perm_len < 9) {
             return false;

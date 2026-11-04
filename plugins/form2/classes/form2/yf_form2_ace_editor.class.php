@@ -9,6 +9,7 @@ class yf_form2_ace_editor
      */
     public function _ace_editor_html($extra = [], $replace = [], $form = null)
     {
+        $body = null;
         $extra['id'] = $extra['id'] ?: 'editor_html';
         asset('ace-editor');
         $opts = [

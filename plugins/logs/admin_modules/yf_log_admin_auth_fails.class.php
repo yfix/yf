@@ -51,6 +51,7 @@ class yf_log_admin_auth_fails
 
     public function _show_filter()
     {
+        $filter_name = null;
         if ( ! in_array($_GET['action'], ['show'])) {
             return false;
         }

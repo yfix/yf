@@ -370,6 +370,7 @@ class yf_manage_transfer
                 'amount' => 'trim|required|numeric|greater_than[0]',
             ])
             ->on_validate_ok(function ($data, $extra, $rules) use (&$_this) {
+                $_operation = null;
                 $is_error = false;
                 $is_continue = $_POST['operation'] === 'transfer_and_continue';
                 // handler

@@ -284,6 +284,7 @@ class yf_site_map
      */
     public function _store_item($data = [])
     {
+        $string = null;
         if (is_string($data) && strlen($data)) {
             $data = ['url' => $data];
         }
@@ -433,6 +434,7 @@ class yf_site_map
      */
     public function _process_sitemap_file($_path = '')
     {
+        $rewrited = null;
         $text = file_get_contents($_path);
         if ($this->ALLOW_REWRITE) {
             $RW = _class('rewrite');

@@ -101,6 +101,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo
      */
     public function limit($count, $offset)
     {
+        $sql = null;
         if ($count > 0) {
             $offset = ($offset > 0) ? $offset : 0;
             $sql .= 'LIMIT ' . ($offset ? $offset . ', ' : '') . $count;

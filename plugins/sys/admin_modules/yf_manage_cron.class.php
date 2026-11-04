@@ -83,6 +83,7 @@ class yf_manage_cron
                 'exec_time' => 'trim|decimal|required',
             ])
             ->on_post(function () {
+                $a = null;
                 db()->update_safe('cron_tasks', [
                     'comment' => $_POST['comment'],
                     'frequency' => $_POST['digits'] . ' ' . $_POST['units'],
@@ -127,6 +128,7 @@ class yf_manage_cron
 
     public function _select_f()
     {
+        $options_d = $options_u = null;
         $digits = range(1, 59);
         $units = [
             'minutes' => 'minutes',

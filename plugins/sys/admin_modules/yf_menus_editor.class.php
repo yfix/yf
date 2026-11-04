@@ -108,6 +108,7 @@ class yf_menus_editor
             ])
             ->db_update_if_ok('menus', ['name', 'desc', 'stpl_name', 'method_name', 'custom_fields', 'active'], 'id=' . $id)
             ->on_after_update(function () {
+                $menu_info = null;
                 common()->admin_wall_add(['menu updated: ' . $_POST['name'] . '', $menu_info['id']]);
                 module('menus_editor')->_purge_caches();
             })
@@ -274,6 +275,7 @@ class yf_menus_editor
 
     public function drag_items()
     {
+        $cur_items = null;
         if (empty($_GET['id'])) {
             return _e('No id!');
         }

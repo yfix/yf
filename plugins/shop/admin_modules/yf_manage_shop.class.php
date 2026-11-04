@@ -705,21 +705,25 @@ class yf_manage_shop
 
     public function product_search_autocomplete()
     {
+        $params = null;
         return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
     }
 
     public function category_search_autocomplete()
     {
+        $params = null;
         return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
     }
 
     public function order_product_add_ajax()
     {
+        $params = null;
         return _class('manage_shop_orders', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
     }
 
     public function productparams_container_ajax()
     {
+        $params = null;
         return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->_productparams_container($params, 'productparams_container_ajax');
     }
 
@@ -730,6 +734,7 @@ class yf_manage_shop
 
     public function send_sms()
     {
+        $params = null;
         return _class('manage_shop_send_sms', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
     }
 

@@ -4,6 +4,7 @@ class yf_shop_products_show
 {
     public function products_show($search = '', $str_search = '')
     {
+        $product_info = null;
         foreach ((array) module('shop')->_shop_cats as $_cat_id => $_cat_name) {
             if ($_GET['id'] == module('shop')->_shop_cats_all[$_cat_id]['url'] && $_GET['id'] != '') {
                 $_GET['id'] = $_cat_id;

@@ -10,6 +10,7 @@ class yf_test_ssh
      */
     public function test()
     {
+        $body = null;
         $_GET['id'] = preg_replace('/[^0-9\.]/i', '', substr($_GET['id'], 0, 15));
         $server_info = [
             'ssh_host' => $_GET['id'] ? $_GET['id'] : '192.168.1.2',

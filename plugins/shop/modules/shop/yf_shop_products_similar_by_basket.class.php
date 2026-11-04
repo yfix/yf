@@ -4,6 +4,7 @@ class yf_shop_products_similar_by_basket
 {
     public function products_similar_by_basket($id)
     {
+        $order_id = $product_id = null;
         $sql_order_id = 'SELECT order_id FROM ' . db('shop_order_items') . ' WHERE product_id =  ' . $id;
         $orders = db()->query($sql_order_id);
         while ($A = db()->fetch_assoc($orders)) {

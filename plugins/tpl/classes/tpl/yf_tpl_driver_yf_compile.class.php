@@ -95,6 +95,7 @@ class yf_tpl_driver_yf_compile
                 return $start . 'echo main()->_execute(\'' . $m[2] . '\',\'' . $m[3] . '\',\'' . $m[4] . '\',\'' . $name . '\',0,' . ($is_cached ? 'true' : 'false') . ');' . $end;
             },
             '/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function ($m) use ($start, $end) {
+                $name = null;
                 return $start . '/*exec_last_start*/echo main()->_execute(\'' . $m[2] . '\',\'' . $m[3] . '\',\'' . $m[4] . '\',\'' . $name . '\',0,false);/*exec_last_end*/' . $end;
             },
             '/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function ($m) use ($start, $end, $name) {

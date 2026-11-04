@@ -209,6 +209,7 @@ class yf_image_manip
      */
     public function _gd_rotate($original_path, $dest_file_path, $angle)
     {
+        $rotated_path = null;
         if ( ! extension_loaded('gd')) {
             return false;
         }
@@ -381,6 +382,7 @@ class yf_image_manip
      */
     public function _try_to_find_libs()
     {
+        $slash = null;
         if ( ! $this->AUTO_FIND_PATHS) {
             return false;
         }

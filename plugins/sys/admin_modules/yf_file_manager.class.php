@@ -29,6 +29,7 @@ class yf_file_manager
 
     public function show()
     {
+        $items = $total_files_size = null;
         // TODO: show preview if file is image
         // TODO: doubleclick should edit file
         // TODO: buttons near eacj table row (edit/show revisions)
@@ -292,6 +293,7 @@ class yf_file_manager
      */
     public function _get_all_dirs($dir_name = '', $level = 1)
     {
+        $body = null;
         if ( ! file_exists($dir_name)) {
             return;
         }
@@ -319,6 +321,7 @@ class yf_file_manager
 
     public function copy_item()
     {
+        $items = null;
         $dir_name = urldecode($_POST['dir_name']);
         $items_to_copy = [];
         foreach ((array) $_POST as $k => $v) {
@@ -357,6 +360,7 @@ class yf_file_manager
      */
     public function copy_item2()
     {
+        $body = null;
         if ($_POST['items_to_copy']) {
             $items = unserialize(urldecode($_POST['items_to_copy']));
             foreach ((array) $items as $k => $v) {
@@ -580,6 +584,7 @@ class yf_file_manager
 
     public function upload_file()
     {
+        $body = null;
         if ($_POST['verify']) {
             if ($_POST['name']) {
                 $Name = $_POST['name'];
@@ -600,6 +605,7 @@ class yf_file_manager
 
     public function make_dir()
     {
+        $body = null;
         if ($_POST['verify'] && $_POST['name']) {
             $new_dir = urldecode($_POST['dir_name']) . '/' . $_POST['name'];
             if ( ! @file_exists($new_dir)) {

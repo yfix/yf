@@ -4,6 +4,7 @@ class yf_shop_orders
 {
     public function orders()
     {
+        $filter_sql = null;
         if ( ! main()->USER_ID) {
             if (main()->is_post()) {
                 module('shop')->order_validate_data();

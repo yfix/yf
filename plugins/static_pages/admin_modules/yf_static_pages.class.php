@@ -62,6 +62,7 @@ class yf_static_pages
             ])
             ->db_insert_if_ok(self::table, ['name', 'locale', 'active'])
             ->on_after_update(function () use ($_this) {
+                $name = null;
                 $id = db()->insert_id();
                 module_safe('manage_revisions')->add($_this::table, $id, 'add');
                 common()->admin_wall_add(['static page added: ' . $name, $id]);
@@ -155,6 +156,7 @@ class yf_static_pages
 
     public function delete()
     {
+        $page_name = null;
         $a = $this->_get_info();
         if ($a) {
             module_safe('manage_revisions')->add([
@@ -238,6 +240,7 @@ class yf_static_pages
      */
     public function _get_info($id = null, $lang = null)
     {
+        $locale = null;
         $id = isset($id) ? $id : $_GET['id'];
         $lang = isset($lang) ? $lang : $_GET['page'];
         $a = db()->from(self::table)

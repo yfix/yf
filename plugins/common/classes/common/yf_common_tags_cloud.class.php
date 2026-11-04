@@ -18,6 +18,7 @@ class yf_common_tags_cloud
      */
     public function create($cloud_data = [], $params = [])
     {
+        $items = null;
         if (empty($cloud_data)) {
             return '';
         }

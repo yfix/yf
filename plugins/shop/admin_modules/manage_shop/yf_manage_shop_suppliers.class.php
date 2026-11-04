@@ -23,6 +23,7 @@ class yf_manage_shop_suppliers
 
     public function supplier_add()
     {
+        $url = $supplier_info = null;
         if (main()->is_post()) {
             if ( ! $_POST['name']) {
                 _re('Product name must be filled');
@@ -73,6 +74,7 @@ class yf_manage_shop_suppliers
 
     public function supplier_edit()
     {
+        $url = null;
         $_GET['id'] = (int) ($_GET['id']);
         if (empty($_GET['id'])) {
             return _e('Empty ID!');

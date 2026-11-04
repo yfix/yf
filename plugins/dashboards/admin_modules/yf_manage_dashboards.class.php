@@ -343,6 +343,7 @@ class yf_manage_dashboards
      */
     public function _hook_side_column()
     {
+        $auto_saved_config = null;
         if ($_GET['object'] != 'manage_dashboards' || ! in_array($_GET['action'], ['edit', 'add'])) {
             return false;
         }
@@ -481,6 +482,7 @@ class yf_manage_dashboards
      */
     public function _get_dashboard_data($id = '')
     {
+        $params = null;
         if ( ! $id) {
             $id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
         }

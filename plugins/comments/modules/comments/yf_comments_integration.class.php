@@ -11,6 +11,7 @@ class yf_comments_integration
      */
     public function _for_home_page($NUM_NEWEST_COMMENTS = 4)
     {
+        $item = null;
         list($comments, $titles, $user_names) = $this->_get_comments($NUM_NEWEST_COMMENTS);
         if ( ! empty($comments)) {
             foreach ((array) $comments as $comment) {
@@ -38,6 +39,7 @@ class yf_comments_integration
      */
     public function _for_user_profile($user_id, $MAX_SHOW_COMMENTS)
     {
+        $i = $item = null;
         list($comments, $titles, $user_names) = $this->_get_comments($MAX_SHOW_COMMENTS, $user_id);
         if ( ! empty($comments)) {
             foreach ((array) $comments as $comment) {
@@ -62,6 +64,7 @@ class yf_comments_integration
      */
     public function _get_comments($NUM_NEWEST_COMMENTS, $user_id = '')
     {
+        $where = null;
         foreach ((array) module('comments')->COMMENT_LINKS as $key => $value) {
             $where .= 'object_name="' . $key . '"';
             if ($value !== end(module('comments')->COMMENT_LINKS)) {
@@ -114,6 +117,7 @@ class yf_comments_integration
      */
     public function _rss_general()
     {
+        $where = null;
         foreach ((array) module('comments')->COMMENT_LINKS as $key => $value) {
             $where .= 'object_name="' . $key . '"';
             if ($value !== end(module('comments')->COMMENT_LINKS)) {

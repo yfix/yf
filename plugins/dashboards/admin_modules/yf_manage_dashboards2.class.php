@@ -362,6 +362,7 @@ class yf_manage_dashboards2
      */
     public function _get_dashboard_data($id = '')
     {
+        $params = null;
         if ( ! $id) {
             $id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
         }

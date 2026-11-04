@@ -303,6 +303,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2
      */
     public function _encode($value)
     {
+        $key = null;
         $func = __FUNCTION__;
         if (is_array($value)) {
             foreach ($value as $k => $v) {

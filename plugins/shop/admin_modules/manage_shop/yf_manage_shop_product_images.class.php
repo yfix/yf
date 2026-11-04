@@ -173,6 +173,7 @@ class yf_manage_shop_product_images
 
     public function product_image_search()
     {
+        $items = null;
         $_GET['id'] = (int) ($_GET['id']);
         if ($_GET['id']) {
             $product = module('manage_shop')->_product_get_info($_GET['id']);

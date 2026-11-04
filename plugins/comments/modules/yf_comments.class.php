@@ -78,6 +78,7 @@ class yf_comments
      */
     public function _show_for_object($params = [])
     {
+        $i = $REPUT_OBJ = $users_reput_info = $items = null;
         if ($this->USE_TREE_MODE) {
             return $this->_show_for_object_tree($params);
         }
@@ -193,6 +194,7 @@ class yf_comments
      */
     public function _show_for_object_tree($params = [])
     {
+        $REPUT_OBJ = $items = $pages = $total = null;
         $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
         $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) ($_GET['id']);
         $STPL_NAME_MAIN = ! empty($params['stpl_main']) ? $params['stpl_main'] : 'comments/main_tree';

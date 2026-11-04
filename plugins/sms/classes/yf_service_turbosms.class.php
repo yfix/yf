@@ -41,6 +41,7 @@ class yf_service_turbosms
      */
     public function send($phone, $text, $params = [])
     {
+        $phone_error = null;
         if ( ! $this->_is_enabled()) {
             return false;
         }

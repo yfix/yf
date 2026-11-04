@@ -114,6 +114,7 @@ class yf_static_pages
      */
     public function _get_page_from_db($id = null)
     {
+        $lang = null;
         $id = $id ?: $_GET['id'];
         if (empty($id)) {
             return [];

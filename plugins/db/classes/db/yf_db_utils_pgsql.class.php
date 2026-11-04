@@ -177,6 +177,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
      */
     public function list_indexes($table, $extra = [], &$error = false)
     {
+        $db_name = null;
         if ( ! $table) {
             $error = 'table_name is empty';
             return false;

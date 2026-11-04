@@ -68,6 +68,7 @@ class yf_manage_shop_product_sets
 
     public function product_set_edit()
     {
+        $replace = null;
         $product_set_id = (int) $_GET['id'];
         $a = db()->from('shop_product_sets')->whereid($product_set_id)->get();
 

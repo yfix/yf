@@ -138,6 +138,7 @@ class yf_dashboards2
      */
     public function _view_widget_items($widgets = [])
     {
+        $info = $saved_config = null;
         $_orig_object = $_GET['object'];
         $_orig_action = $_GET['action'];
         $is_cloneable_item = true;
@@ -217,6 +218,7 @@ class yf_dashboards2
      */
     public function _get_dashboard_data($id = '')
     {
+        $params = null;
         if ( ! $id) {
             $id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
         }

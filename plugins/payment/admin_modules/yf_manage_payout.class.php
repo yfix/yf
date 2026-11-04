@@ -549,6 +549,7 @@ class yf_manage_payout
      */
     public function csv_ecommpay($options = null)
     {
+        $_operation_id = null;
         $operation_id = &$_POST['operation_id'];
         if ( ! is_array($operation_id) || count($operation_id) < 1) {
             common()->message_info('Отсутствуют данные');
@@ -1720,6 +1721,7 @@ class yf_manage_payout
      */
     public function csv()
     {
+        $opt = null;
         // class
         $payment_api = &$this->payment_api;
         $provider_class = $payment_api->provider_class([

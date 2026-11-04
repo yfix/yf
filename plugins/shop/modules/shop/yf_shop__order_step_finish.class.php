@@ -8,6 +8,7 @@ class yf_shop__order_step_finish
      */
     public function _order_step_finish($FORCE_DISPLAY_FORM = false)
     {
+        $total_price = $quantity = null;
         module('shop')->_basket_api()->clean();
 
         if (isset($_GET['page'])) {

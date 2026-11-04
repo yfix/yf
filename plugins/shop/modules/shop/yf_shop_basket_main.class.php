@@ -7,6 +7,7 @@ class yf_shop_basket_main
      */
     public function basket_main()
     {
+        $quantity = null;
         $products_ids = [];
         $basket_contents = module('shop')->_basket_api()->get_all();
         foreach ((array) $basket_contents as $_item_id => $_info) {

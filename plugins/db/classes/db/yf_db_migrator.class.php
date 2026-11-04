@@ -385,6 +385,7 @@ abstract class yf_db_migrator
      */
     public function _load_tables_sql_php_from_files($params = [])
     {
+        $installer = $existing_sql_php_files = null;
         $existing_files_sql_php = [];
         $existing_sql_php = [];
         // Preload db installer PHP array of CREATE TABLE DDL statements

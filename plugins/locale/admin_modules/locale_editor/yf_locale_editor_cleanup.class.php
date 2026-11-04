@@ -37,6 +37,7 @@ class yf_locale_editor_cleanup
      */
     public function _on_validate_ok($params = [], $form = null)
     {
+        $lang = null;
         $p = $params ?: $_POST;
 
         // TODO: named cleanups and separate stats by them

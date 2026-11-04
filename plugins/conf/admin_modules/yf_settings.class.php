@@ -140,6 +140,7 @@ class yf_settings
      */
     public function _get_settings($hooks_data)
     {
+        $i = null;
         $settings = db()->from('settings')->order_by('`order`, item ASC')->get_all();
         if ( ! $settings && $hooks_data) {
             $settings = [];
@@ -161,6 +162,7 @@ class yf_settings
 
     public function display_what()
     {
+        $i = null;
         $hooks_data = _class('admin_methods')->call_hooks('settings', $r);
         $avail_hook_modules = [];
         foreach ((array) $hooks_data as $k => $v) {

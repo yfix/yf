@@ -13,6 +13,7 @@ class yf_site_nav_bar
     // Display navigation bar
     public function _show()
     {
+        $bookmark_page_code = null;
         $items = [];
 
         if (in_array($_GET['object'], [])) {

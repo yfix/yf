@@ -298,6 +298,7 @@ class yf_captcha
      */
     public function show_image($no_header = false, $no_exit = false)
     {
+        $random_string = null;
         if (function_exists('main')) {
             main()->NO_GRAPHICS = true;
         }

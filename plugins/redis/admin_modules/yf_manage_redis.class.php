@@ -247,6 +247,7 @@ class yf_manage_redis
 
     public function edit()
     {
+        $php_exported = null;
         if (is_post() && isset($_POST['mass_delete']) && $_POST['id']) {
             $_GET['action'] = 'delete';
             return $this->delete();

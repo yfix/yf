@@ -852,6 +852,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
 
     public function _form($data, $options = null)
     {
+        $_ = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

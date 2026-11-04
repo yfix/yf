@@ -515,6 +515,7 @@ class yf_manage_shop_orders
 
     public function merge_order()
     {
+        $total_price = $price_total = null;
         $_GET['id'] = (int) ($_GET['id']);
         if ($_GET['id']) {
             $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['id']));

@@ -36,6 +36,7 @@ class yf_divide_pages
      */
     public function go($sql = '', $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = [])
     {
+        $limited_pages = null;
         if (is_array($url_path)) {
             $extra = $url_path;
             $url_path = '';
@@ -183,6 +184,7 @@ class yf_divide_pages
      */
     public function render_type_blocks($params = [])
     {
+        $limited_pages = null;
         $total_records = $params['total_records'];
         $per_page = $params['per_page'];
         $requested_page = $params['requested_page'];
@@ -283,6 +285,7 @@ class yf_divide_pages
      */
     public function render_type_slide($params = [])
     {
+        $limited_pages = null;
         $total_records = $params['total_records'];
         $per_page = $params['per_page'];
         $requested_page = $params['requested_page'];

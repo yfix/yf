@@ -27,6 +27,7 @@ class yf_mail_driver_sendinblue extends yf_mail_driver
      */
     public function send(array $params = [], &$error_message = '')
     {
+        $mail = null;
         require_php_lib('sendinblue');
 
         $error_message = null;

@@ -184,6 +184,7 @@ class yf_services
      */
     public function markdown($content, $params = [])
     {
+        $input = null;
         $this->require_php_lib('parsedown');
         $parsedown = new Parsedown();
         return $parsedown->text($input);

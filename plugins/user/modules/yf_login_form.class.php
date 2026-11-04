@@ -133,6 +133,7 @@ class yf_login_form
      */
     public function oauth($params = [])
     {
+        $providers = null;
         if ( ! isset($params['only_icons'])) {
             $params['only_icons'] = 1;
         }

@@ -366,6 +366,7 @@ class yf_admin_modules
      */
     public function _recursive_get_methods_from_extends($file_text = '', $user_module_name = '', $_type = 'admin', $ONLY_PRIVATE_METHODS = false)
     {
+        $extends_file_path2 = null;
         $extends_file_path = '';
         $methods = [];
         // TODO: connect plugins

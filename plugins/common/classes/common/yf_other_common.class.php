@@ -167,6 +167,7 @@ class yf_other_common
      */
     public function _my_split($text = '', $split_token = '', $split_length = 0)
     {
+        $_split_token = null;
         if ( ! strlen($split_token) || ! $split_length) {
             return [$text];
         }
@@ -198,6 +199,7 @@ class yf_other_common
      */
     public function _create_cloud($cloud_data = [], $params = [])
     {
+        $items = null;
         if (empty($cloud_data)) {
             return '';
         }

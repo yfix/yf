@@ -23,6 +23,7 @@ class yf_upload_archive
      */
     public function go($new_file_path, $name_in_form = 'archive')
     {
+        $is_local = null;
         ignore_user_abort(true);
         if (empty($new_file_path)) {
             trigger_error(__CLASS__ . ': New file path id required', E_USER_WARNING);
