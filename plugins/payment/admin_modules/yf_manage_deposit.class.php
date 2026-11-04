@@ -704,7 +704,7 @@ class yf_manage_deposit
         // import options
         is_array($operation) && extract($operation, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if (empty($_is_valid)) {
-            return  $result;
+            return  $operation;
         }
         $status = ($_GET['status'] ?? null);
         // check status

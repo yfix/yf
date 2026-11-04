@@ -190,6 +190,7 @@ class yf_register
     // TODO: convert into form()
     public function resend_code()
     {
+        $replace = [];
         if ( ! empty($_POST['email'])) {
             $user_info = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE email="' . _es($_POST['email'] ?? null) . '"');
             if (empty($user_info)) {

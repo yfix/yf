@@ -99,6 +99,7 @@ class yf_services
             return false;
         }
         ob_start();
+        $return_config = false; // service files return their config only when this is true
         require_once $path;
         $this->php_libs[$name] = $path;
         return ob_get_clean();

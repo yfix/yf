@@ -1293,6 +1293,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
             return  $result;
         }
         $amount = $_amount;
+        $currency_id = $this->get_currency_payout($options);
         // amount min/max
         $result = $this->amount_limit([
             'amount' => $amount,

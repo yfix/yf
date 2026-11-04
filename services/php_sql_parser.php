@@ -19,6 +19,6 @@ $config = [
         var_export($parsed);
     },
 ];
-if (@$return_config) {
+if ( ! empty($return_config)) {
     return $config;
 } require_once __DIR__ . '/_yf_autoloader.php'; new yf_autoloader($config);

@@ -50,6 +50,7 @@ class yf_manage_sites
 
     public function add()
     {
+        $a = [];
         return form($a)
             ->validate([
                 'name' => 'trim|required',

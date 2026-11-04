@@ -591,6 +591,7 @@ class yf_graphics
     public function quick_menu()
     {
         $obj = $items = null;
+        $data = [];
         if ( ! $this->QUICK_MENU_ENABLED
             || (MAIN_TYPE_USER && ( ! isset($_SESSION['user_id']) || ! ($_SESSION['user_id'] ?? null)))
             || (MAIN_TYPE_ADMIN && ( ! isset($_SESSION['admin_id']) || ! ($_SESSION['admin_id'] ?? null)))
@@ -604,6 +605,7 @@ class yf_graphics
             ];
         }
         $method_name = '_quick_menu';
+        $data2 = [];
         // TODO: need to check permissions at first
         //		$obj = module($_GET['object']);
         if (is_object($obj) && method_exists($obj, $method_name)) {
