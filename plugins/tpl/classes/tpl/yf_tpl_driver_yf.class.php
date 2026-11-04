@@ -830,12 +830,12 @@ class yf_tpl_driver_yf
                     }
                 }
                 if (! count((array) $center_tmp)) {
-                    $center_cond = ($negate ? '!' : '') . $func . '($replace["___not_existing_key__"])';
+                    $center_cond = ($negate ? '!' : '') . $func . '(null)';
                 } else {
                     $center_cond = '(' . implode(') ' . $multiple_cond . ' (', $center_tmp) . ')';
                 }
             } else {
-                $center_cond = ($negate ? '!' : '') . $func . '(' . (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]') . ')';
+                $center_cond = ($negate ? '!' : '') . $func . '(' . (strlen($part_left) ? $part_left : 'null') . ')';
             }
             return '<' . '?p' . 'hp ' . ($cond === 'elseif' ? '} ' . $cond : $cond) . '(' . $center_cond . ') { ?>';
         }, $string);
@@ -941,7 +941,7 @@ class yf_tpl_driver_yf
     {
         $pos = strpos($cond, '.');
         if ($pos === false) {
-            return '$replace[\'' . addslashes($cond) . '\']';
+            return '($replace[\'' . addslashes($cond) . '\'] ?? null)';
         }
         $try_elm = substr($cond, 0, $pos);
         $try_elm2 = '[\'' . str_replace('.', '\'][\'', substr($cond, $pos + 1)) . '\']';
@@ -954,7 +954,8 @@ class yf_tpl_driver_yf
         } elseif (isset($replace[$try_elm]) && is_array($replace[$try_elm])) {
             $out = '$replace[\'' . $try_elm . '\']' . $try_elm2;
         }
-        return $out;
+        // ?? keeps missing keys from raising warnings in the generated code
+        return strlen($out) ? '(' . $out . ' ?? null)' : '';
     }
 
     /**

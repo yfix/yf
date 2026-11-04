@@ -42,7 +42,7 @@ class yf_tpl_driver_yf_compile
                 return $start . 'ob_start();' . $end . $m[2] . $start . '$replace[\'' . $m[1] . '\'] = trim(ob_get_clean());' . $end;
             },
             '/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims' => function ($m) use ($start, $end) {
-                $str = preg_replace('/\{([a-z0-9_-]+)\}/i', '\'.$replace[\'\1\'].\'', addslashes($m[2]));
+                $str = preg_replace('/\{([a-z0-9_-]+)\}/i', '\'.($replace[\'\1\'] ?? null).\'', addslashes($m[2]));
                 return $start . 'echo _class(\'tpl\')->_i18n_wrapper(stripslashes(\'' . $str . '\'), $replace);' . $end;
             },
             '/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i' => function ($m) use ($start, $end) {
@@ -73,21 +73,21 @@ class yf_tpl_driver_yf_compile
             },
             // Common replace vars
             '/\{([a-z0-9_-]+)\}/i' => function ($m) use ($start, $end) {
-                return $start . 'echo $replace[\'' . $m[1] . '\'];' . $end;
+                return $start . 'echo $replace[\'' . $m[1] . '\'] ?? null;' . $end;
             },
             // Second level vars
             '/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}/i' => function ($m) use ($start, $end) {
                 $global_arrays = tpl()->_avail_arrays;
                 $is_global = is_array($global_arrays) && array_key_exists($m[1], $global_arrays);
-                return $start . 'echo ' . ($is_global ? '$' . $global_arrays[$m[1]] . '[\'' . $m[2] . '\']' : '$replace[\'' . $m[1] . '\'][\'' . $m[2] . '\']') . ';' . $end;
+                return $start . 'echo ' . ($is_global ? '$' . $global_arrays[$m[1]] . '[\'' . $m[2] . '\']' : '$replace[\'' . $m[1] . '\'][\'' . $m[2] . '\']') . ' ?? null;' . $end;
             },
             // Variable filtering like in Smarty/Twig. Examples: {var1|trim} {var1|urlencode|trim} {var1|_prepare_html} {var1|my_func} {sub1.var1|trim}
             '/\{([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function ($m) use ($start, $end) {
-                return $start . 'echo _class(\'tpl\')->_process_var_filters($replace[\'' . $m[1] . '\'],\'' . $m[2] . '\');' . $end;
+                return $start . 'echo _class(\'tpl\')->_process_var_filters($replace[\'' . $m[1] . '\'] ?? null,\'' . $m[2] . '\');' . $end;
             },
             // Second level variables with filters
             '/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function ($m) use ($start, $end) {
-                return $start . 'echo _class(\'tpl\')->_process_var_filters($replace[\'' . $m[1] . '\'][\'' . $m[2] . '\'], \'' . $m[3] . '\');' . $end;
+                return $start . 'echo _class(\'tpl\')->_process_var_filters($replace[\'' . $m[1] . '\'][\'' . $m[2] . '\'] ?? null, \'' . $m[3] . '\');' . $end;
             },
             // Vars inside foreach with filters
             '/\{\#\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function ($m) use ($start, $end) {
@@ -312,7 +312,7 @@ class yf_tpl_driver_yf_compile
             if ($for_right) {
                 $cond = '(isset($replace[\'' . $cond . '\']) ? $replace[\'' . $cond . '\'] : \'' . $cond . '\')';
             } else {
-                $cond = '$replace[\'' . $cond . '\']';
+                $cond = '($replace[\'' . $cond . '\'] ?? null)';
             }
         }
         return strlen($cond) ? $cond : 'null';
@@ -325,7 +325,7 @@ class yf_tpl_driver_yf_compile
     {
         $pos = strpos($cond, '.');
         if ($pos === false) {
-            return '$replace[\'' . str_replace("'", "\\'", $cond) . '\']';
+            return '($replace[\'' . str_replace("'", "\\'", $cond) . '\'] ?? null)';
         }
         $try_elm = substr($cond, 0, $pos);
         $try_elm2 = '[\'' . str_replace('.', '\'][\'', substr($cond, $pos + 1)) . '\']';
@@ -337,7 +337,8 @@ class yf_tpl_driver_yf_compile
         } else {
             $cond = '$replace["' . $try_elm . '"]' . $try_elm2;
         }
-        return $cond;
+        // ?? keeps missing keys from raising warnings in the generated code
+        return '(' . $cond . ' ?? null)';
     }
 
 
@@ -405,12 +406,12 @@ class yf_tpl_driver_yf_compile
                 }
             }
             if ( ! count((array) $center_tmp)) {
-                $center_cond = ($negate ? '!' : '') . $func . '($replace["___not_existing_key__"])';
+                $center_cond = ($negate ? '!' : '') . $func . '(null)';
             } else {
                 $center_cond = '(' . implode(') ' . $multiple_cond . ' (', $center_tmp) . ')';
             }
         } else {
-            $center_cond = ($negate ? '!' : '') . $func . '(' . (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]') . ')';
+            $center_cond = ($negate ? '!' : '') . $func . '(' . (strlen($part_left) ? $part_left : 'null') . ')';
         }
         return ($cond === 'elseif' ? '} ' . $cond : $cond) . '(' . $center_cond . ') {';
     }
@@ -470,6 +471,7 @@ class yf_tpl_driver_yf_compile
         } else {
             $foreach_arr_tag = '$replace[\'' . $foreach_arr_name . '\']';
         }
+        $foreach_arr_tag = '(' . $foreach_arr_tag . ' ?? null)';
         if ( ! $foreach_data_tag) {
             $foreach_data_tag = 'is_array(' . $foreach_arr_tag . ') ? ' . $foreach_arr_tag . ' : $this->_range_foreach(' . (is_numeric($foreach_arr_name) ? (int) $foreach_arr_name : $foreach_arr_tag) . ')';
         }
