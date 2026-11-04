@@ -42,14 +42,8 @@ class yf_shop__order_pay_authorize_net
         // a timestamp is generated
         $time_stamp = time();
 
-        // The following lines generate the SIM fingerprint.  PHP versions 5.1.2 and
-        // newer have the necessary hmac function built in.  For older versions, it
-        // will try to use the mhash library.
-        if (phpversion() >= '5.1.2') {
-            $fingerprint = hash_hmac('md5', $login_id . '^' . $sequence . '^' . $time_stamp . '^' . $amount . '^', $transaction_key);
-        } else {
-            $fingerprint = bin2hex(mhash(MHASH_MD5, $login_id . '^' . $sequence . '^' . $time_stamp . '^' . $amount . '^', $transaction_key));
-        }
+        // The following line generates the SIM fingerprint.
+        $fingerprint = hash_hmac('md5', $login_id . '^' . $sequence . '^' . $time_stamp . '^' . $amount . '^', $transaction_key);
 
         // Required authorise.net fields
         $_fields_and_values = [
