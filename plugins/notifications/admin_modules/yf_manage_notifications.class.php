@@ -44,7 +44,7 @@ class yf_manage_notifications
     public function add()
     {
         $a = $_POST;
-        if ((int) (($_GET['receiver_id'] ?? null)) != 0) {
+        if ((int) ($_GET['receiver_id'] ?? null) != 0) {
             $a['receiver_id'] = ($_GET['receiver_id'] ?? null);
         }
         $receiver_type_options = [];
@@ -59,11 +59,11 @@ class yf_manage_notifications
             ])
             ->db_insert_if_ok('notifications', ['title', 'content', 'receiver_type', 'is_common_template', 'template_alias'], ['add_date' => time()])
             ->on_after_update(function () {
-                if ((int) (($_POST['receiver_id'] ?? null)) != 0) {
+                if ((int) ($_POST['receiver_id'] ?? null) != 0) {
                     db()->insert(db('notifications_receivers'), [
                         'notification_id' => db()->insert_id(),
-                        'receiver_id' => (int) (($_POST['receiver_id'] ?? null)),
-                        'receiver_type' => _es(($_POST['receiver_type'] ?? null)),
+                        'receiver_id' => (int) ($_POST['receiver_id'] ?? null),
+                        'receiver_type' => _es($_POST['receiver_type'] ?? null),
                         'is_read' => 0,
                     ]);
                 }
@@ -86,7 +86,7 @@ class yf_manage_notifications
 
     public function view()
     {
-        $A = $this->_get_notification(($_GET['id'] ?? null));
+        $A = $this->_get_notification($_GET['id'] ?? null);
         $info = form($A)
             ->info('title')
             ->info('content')
@@ -97,23 +97,23 @@ class yf_manage_notifications
 
 
         if ($A['receiver_type'] == 'admin_id') {
-            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) (($_GET['id'] ?? null)))
+            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) ($_GET['id'] ?? null))
                 ->text('receiver_id')
                 ->text('is_read')
-                ->footer_add('add_receivers', './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . (int) (($_GET['id'] ?? null)), ['no_ajax' => 1]);
+                ->footer_add('add_receivers', './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . (int) ($_GET['id'] ?? null), ['no_ajax' => 1]);
         } elseif ($A['receiver_type'] == 'user_id') {
-            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) (($_GET['id'] ?? null)))
+            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) ($_GET['id'] ?? null))
                 ->text('receiver_id')
                 ->text('is_read')
 
                 ->date('add_date', ['format' => 'full', 'nowrap' => 1])
-                ->footer_add('add_receivers', './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . (int) (($_GET['id'] ?? null)), ['no_ajax' => 1]);
+                ->footer_add('add_receivers', './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . (int) ($_GET['id'] ?? null), ['no_ajax' => 1]);
         } else {
-            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) (($_GET['id'] ?? null)))
+            $table = table('SELECT * FROM ' . db('notifications_receivers') . ' WHERE `notification_id`=' . (int) ($_GET['id'] ?? null))
                 ->text('receiver_id')
                 ->text('is_read')
                 ->date('add_date', ['format' => 'full', 'nowrap' => 1])
-                ->footer_add('add_receivers', './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . (int) (($_GET['id'] ?? null)), ['no_ajax' => 1]);
+                ->footer_add('add_receivers', './?object=' . ($_GET['object'] ?? null) . '&action=add_receivers&id=' . (int) ($_GET['id'] ?? null), ['no_ajax' => 1]);
         }
         $r = [
             'info' => $info,
@@ -124,7 +124,7 @@ class yf_manage_notifications
 
     public function delete()
     {
-        $A = $this->_get_notification(($_GET['id'] ?? null));
+        $A = $this->_get_notification($_GET['id'] ?? null);
         if ($A['id']) {
             db()->query('DELETE FROM ' . db('notifications') . ' WHERE id=' . ($_GET['id'] ?? null));
             db()->query('DELETE FROM ' . db('notifications_receivers') . ' WHERE notification_id=' . ($_GET['id'] ?? null));
@@ -134,14 +134,14 @@ class yf_manage_notifications
 
     public function add_receivers()
     {
-        $A = $this->_get_notification(($_GET['id'] ?? null));
+        $A = $this->_get_notification($_GET['id'] ?? null);
         $method_name = '_add_receivers_' . $A['receiver_type'];
         if ( ! method_exists($this, $method_name) || ! method_exists($this, $method_name . '_process')) {
             js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
         if (main()->is_post()) {
             $method_name_process = $method_name . '_process';
-            $sql = $this->$method_name_process(($_GET['id'] ?? null));
+            $sql = $this->$method_name_process($_GET['id'] ?? null);
             $receivers = db()->get_2d($sql);
             $sql_arr = [];
             foreach ((array) $receivers as $v) {
@@ -156,7 +156,7 @@ class yf_manage_notifications
         }
 
         $replace = [
-            'table' => $this->$method_name(($_GET['id'] ?? null)),
+            'table' => $this->$method_name($_GET['id'] ?? null),
             'show_add_selected' => $A['receiver_type'] != 'user_id_tmp' ? 1 : 0,
         ];
         return tpl()->parse(($_GET['object'] ?? null) . '/' . __FUNCTION__, $replace);
@@ -294,7 +294,7 @@ class yf_manage_notifications
         if ( ! in_array(($_GET['action'] ?? null), ['add_receivers'])) {
             return false;
         }
-        $A = $this->_get_notification(($_GET['id'] ?? null));
+        $A = $this->_get_notification($_GET['id'] ?? null);
         $receiver_type = $A['receiver_type'];
 
         $method_name = '_show_filter_' . $A['receiver_type'];
@@ -363,7 +363,7 @@ class yf_manage_notifications
 
     public function filter_save()
     {
-        $A = $this->_get_notification(($_POST['notification_id'] ?? null));
+        $A = $this->_get_notification($_POST['notification_id'] ?? null);
 
         $filter_name = ($_GET['id'] ?? null) == 'manage_notifications' ? 'manage_notifications' : (($_GET['object'] ?? null) . '__add_receivers__' . $A['receiver_type']);
         if (($_GET['page'] ?? null) == 'clear') {

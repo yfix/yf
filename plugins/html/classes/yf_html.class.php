@@ -1612,13 +1612,13 @@ class yf_html
         ];
         // ajax
         $js_functions = [];
-        if (($extra['ajax_func'] ?? null)) {
+        if ($extra['ajax_func'] ?? null) {
             foreach ((array) $extra['ajax_func'] as $key => $value) {
                 $js_options['ajax'][$key] = '%__' . $key . '__%';
                 $js_functions['"%__' . $key . '__%"'] = $value;
             }
         }
-        if (($extra['ajax'] ?? null)) {
+        if ($extra['ajax'] ?? null) {
             $js_options += [
                 'maximumSelectionSize' => 10,
                 'minimumInputLength' => 1,

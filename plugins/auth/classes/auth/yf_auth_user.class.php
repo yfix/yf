@@ -180,7 +180,7 @@ class yf_auth_user
             // User has changed IP, logout immediately
             $ip = common()->get_ip();
             if ( ! isset($_SESSION[$this->VAR_LOCK_IP]) || ($_SESSION[$this->VAR_LOCK_IP] ?? null) !== $ip) {
-                trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:' . ($_SESSION[$this->VAR_LOCK_IP] ?? null) . ', new_ip:' . $ip . ', user_id: ' . (int) (($_SESSION[$this->VAR_USER_ID] ?? null)), E_USER_WARNING);
+                trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:' . ($_SESSION[$this->VAR_LOCK_IP] ?? null) . ', new_ip:' . $ip . ', user_id: ' . (int) ($_SESSION[$this->VAR_USER_ID] ?? null), E_USER_WARNING);
                 $this->_log_fail(['reason' => 'auth_blocked_by_ip']);
                 $_GET['task'] = 'logout';
             }
@@ -190,7 +190,7 @@ class yf_auth_user
             // User has changed User Agent, logout immediately
             $ua = ($_SERVER['HTTP_USER_AGENT'] ?? null);
             if ( ! isset($_SESSION[$this->VAR_LOCK_UA]) || ($_SESSION[$this->VAR_LOCK_UA] ?? null) !== $ua) {
-                trigger_error('AUTH: Attempt to use session with changed User Agent blocked, auth_ua:"' . ($_SESSION[$this->VAR_LOCK_UA] ?? null) . '", new_ua:"' . $ua . '", user_id: ' . (int) (($_SESSION[$this->VAR_USER_ID] ?? null)), E_USER_WARNING);
+                trigger_error('AUTH: Attempt to use session with changed User Agent blocked, auth_ua:"' . ($_SESSION[$this->VAR_LOCK_UA] ?? null) . '", new_ua:"' . $ua . '", user_id: ' . (int) ($_SESSION[$this->VAR_USER_ID] ?? null), E_USER_WARNING);
                 $this->_log_fail(['reason' => 'auth_blocked_by_ua']);
                 $_GET['task'] = 'logout';
             }
@@ -200,7 +200,7 @@ class yf_auth_user
             // User has changed Host, logout immediately
             $host = ($_SERVER['HTTP_HOST'] ?? null);
             if ( ! isset($_SESSION[$this->VAR_LOCK_HOST]) || ($_SESSION[$this->VAR_LOCK_HOST] ?? null) !== $host) {
-                trigger_error('AUTH: Attempt to use session with changed Host blocked, auth_host:"' . ($_SESSION[$this->VAR_LOCK_HOST] ?? null) . '", new_host:"' . $ua . '", user_id: ' . (int) (($_SESSION[$this->VAR_USER_ID] ?? null)), E_USER_WARNING);
+                trigger_error('AUTH: Attempt to use session with changed Host blocked, auth_host:"' . ($_SESSION[$this->VAR_LOCK_HOST] ?? null) . '", new_host:"' . $ua . '", user_id: ' . (int) ($_SESSION[$this->VAR_USER_ID] ?? null), E_USER_WARNING);
                 $this->_log_fail(['reason' => 'auth_blocked_by_host']);
                 $_GET['task'] = 'logout';
             }
@@ -231,7 +231,7 @@ class yf_auth_user
             $this->_process_cookie();
         }
         if (isset($_GET['task']) && ($_GET['task'] ?? null) == 'login') {
-            if (($_GET['id'] ?? null) && strlen(($_GET['id'] ?? '')) > 16 && ! is_numeric(($_GET['id'] ?? null))) {
+            if (($_GET['id'] ?? null) && strlen(($_GET['id'] ?? '')) > 16 && ! is_numeric($_GET['id'] ?? null)) {
                 $this->_do_login_with_encrypted();
             }
             if (empty($_SESSION[$this->VAR_USER_ID])) {
@@ -303,7 +303,7 @@ class yf_auth_user
 
         if ($this->AUTH_ONLY_HTTPS && ! (($_SERVER['HTTPS'] ?? null) || ($_SERVER['SSL_PROTOCOL'] ?? null))) {
             $redirect_url = '';
-            if (($_SERVER['HTTP_REFERER'] ?? null)) {
+            if ($_SERVER['HTTP_REFERER'] ?? null) {
                 $redirect_url = str_replace('http://', 'https://', $_SERVER['HTTP_REFERER']);
             }
             if ( ! $redirect_url) {
@@ -472,7 +472,7 @@ class yf_auth_user
     public function _do_login_with_encrypted()
     {
         header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
-        if ( ! ($_GET['id'] ?? null) || strlen(($_GET['id'] ?? '')) < 16 || is_numeric(($_GET['id'] ?? null))) {
+        if ( ! ($_GET['id'] ?? null) || strlen(($_GET['id'] ?? '')) < 16 || is_numeric($_GET['id'] ?? null)) {
             $this->_encrypted_error = 'GET_id is not like an encrypted string';
             return false;
         }
@@ -689,7 +689,7 @@ class yf_auth_user
     public function _do_logout($no_redirect = false)
     {
         if ($this->STORE_ONLINE_USERS) {
-            db()->_add_shutdown_query('DELETE FROM ' . db('online') . ' WHERE user_id=' . (int) (($_SESSION[$this->VAR_USER_ID] ?? null)));
+            db()->_add_shutdown_query('DELETE FROM ' . db('online') . ' WHERE user_id=' . (int) ($_SESSION[$this->VAR_USER_ID] ?? null));
             $MAIN = &main();
             if (isset($MAIN->_online_users[session_id()])) {
                 unset($MAIN->_online_users[session_id()]);
@@ -758,7 +758,7 @@ class yf_auth_user
             return false;
         }
         // Decrypt cookie contents
-        list($user_id, $login, $password, $cookie_created) = @explode('-', _class('encryption')->_safe_decrypt_with_base64(($_COOKIE[$this->VAR_COOKIE_NAME] ?? null)));
+        list($user_id, $login, $password, $cookie_created) = @explode('-', _class('encryption')->_safe_decrypt_with_base64($_COOKIE[$this->VAR_COOKIE_NAME] ?? null));
         // Check if user with such login and password exists and cookie has not expired
         if (time() < ($cookie_created + $this->VAR_COOKIE_LIFE_TIME) && ! empty($login) && ! empty($password)) {
             // Empty redirect address (in every case)
@@ -824,7 +824,7 @@ class yf_auth_user
         }
         $_SPECIAL_NAME = 'accounts';
         if (empty($_COOKIE[$_SPECIAL_NAME])) {
-            return $this->_set_special_cookie(($_SESSION[$this->VAR_USER_ID] ?? null));
+            return $this->_set_special_cookie($_SESSION[$this->VAR_USER_ID] ?? null);
         }
         $cookie_users = [];
         foreach (explode('_', ($_COOKIE[$_SPECIAL_NAME] ?? '')) as $_user_id) {
@@ -835,14 +835,14 @@ class yf_auth_user
         ) {
             return false;
         }
-        $data = db()->query_fetch('SELECT * FROM ' . db('check_multi_accounts') . ' WHERE user_id=' . (int) (($_SESSION[$this->VAR_USER_ID] ?? null)));
+        $data = db()->query_fetch('SELECT * FROM ' . db('check_multi_accounts') . ' WHERE user_id=' . (int) ($_SESSION[$this->VAR_USER_ID] ?? null));
         if (isset($cookie_users[$_SESSION[$this->VAR_USER_ID]])) {
             unset($cookie_users[$_SESSION[$this->VAR_USER_ID]]);
         }
         $matching_users = implode(',', $cookie_users);
         if (empty($data)) {
             db()->insert_safe('check_multi_accounts', [
-                'user_id' => (int) (($_SESSION[$this->VAR_USER_ID] ?? null)),
+                'user_id' => (int) ($_SESSION[$this->VAR_USER_ID] ?? null),
                 'matching_users' => $matching_users,
                 'last_update' => time(),
                 'cookie_match' => 1,
@@ -852,7 +852,7 @@ class yf_auth_user
                 'matching_users' => $matching_users,
                 'last_update' => time(),
                 'cookie_match' => 1,
-            ], 'user_id=' . (int) (($_SESSION[$this->VAR_USER_ID] ?? null)));
+            ], 'user_id=' . (int) ($_SESSION[$this->VAR_USER_ID] ?? null));
         }
         $this->_set_special_cookie(($_COOKIE[$_SPECIAL_NAME] ?? null) . '_' . ($_SESSION[$this->VAR_USER_ID] ?? null));
         main()->_HAS_MULTI_ACCOUNTS = true;
@@ -883,13 +883,13 @@ class yf_auth_user
         }
         $data = [
             'id' => _es(session_id()),
-            'user_id' => (int) (($_SESSION[$this->VAR_USER_ID] ?? null)),
-            'user_group' => (int) (($_SESSION[$this->VAR_USER_GROUP_ID] ?? null)),
+            'user_id' => (int) ($_SESSION[$this->VAR_USER_ID] ?? null),
+            'user_group' => (int) ($_SESSION[$this->VAR_USER_GROUP_ID] ?? null),
             'time' => time(),
             'type' => _es(MAIN_TYPE),
             'ip' => _es(common()->get_ip()),
-            'user_agent' => _es(($_SERVER['HTTP_USER_AGENT'] ?? null)),
-            'query_string' => _es(($_SERVER['QUERY_STRING'] ?? null)),
+            'user_agent' => _es($_SERVER['HTTP_USER_AGENT'] ?? null),
+            'query_string' => _es($_SERVER['QUERY_STRING'] ?? null),
             'site_id' => (int) conf('SITE_ID'),
         ];
         $sql = db()->REPLACE('online', $data, 1);

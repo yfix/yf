@@ -188,7 +188,7 @@ class yf_register
     public function resend_code()
     {
         if ( ! empty($_POST['email'])) {
-            $user_info = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE email="' . _es(($_POST['email'] ?? null)) . '"');
+            $user_info = db()->query_fetch('SELECT * FROM ' . db('user') . ' WHERE email="' . _es($_POST['email'] ?? null) . '"');
             if (empty($user_info)) {
                 return _e('No such user');
             }

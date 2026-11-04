@@ -243,7 +243,7 @@ class yf_module
 
     public function edit_tag()
     {
-        return module_safe('tags')->_edit_tags(($_GET['id'] ?? null));
+        return module_safe('tags')->_edit_tags($_GET['id'] ?? null);
     }
 
     /**

@@ -142,17 +142,17 @@ class yf_locale_editor_user_vars
      */
     public function user_var_edit()
     {
-        $_GET['id'] = (int) (($_GET['id'] ?? null));
-        $A = db()->query_fetch('SELECT * FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+        $_GET['id'] = (int) ($_GET['id'] ?? null);
+        $A = db()->query_fetch('SELECT * FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) ($_GET['id'] ?? null));
         if ( ! $A) {
             return _e('No id');
         }
         if (main()->is_post()) {
             db()->UPDATE('locale_user_tr', [
-                'name' => _es(($_POST['name'] ?? null)),
-                'translation' => _es(($_POST['translation'] ?? null)),
+                'name' => _es($_POST['name'] ?? null),
+                'translation' => _es($_POST['translation'] ?? null),
                 'last_update' => time(),
-            ], 'id=' . (int) (($_GET['id'] ?? null)));
+            ], 'id=' . (int) ($_GET['id'] ?? null));
             return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=user_vars');
         }
         $DATA = my_array_merge($A, $_POST);
@@ -177,12 +177,12 @@ class yf_locale_editor_user_vars
      */
     public function user_var_delete()
     {
-        $_GET['id'] = (int) (($_GET['id'] ?? null));
-        if (($_GET['id'] ?? null)) {
-            db()->query('DELETE FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+        $_GET['id'] = (int) ($_GET['id'] ?? null);
+        if ($_GET['id'] ?? null) {
+            db()->query('DELETE FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) ($_GET['id'] ?? null));
         }
         // Return user back
-        if (($_POST['ajax_mode'] ?? null)) {
+        if ($_POST['ajax_mode'] ?? null) {
             main()->NO_GRAPHICS = true;
             echo ($_GET['id'] ?? null);
         } else {
@@ -197,7 +197,7 @@ class yf_locale_editor_user_vars
     public function user_var_push($FORCE_ID = false)
     {
         $_GET['id'] = (int) ($FORCE_ID ? $FORCE_ID : ($_GET['id'] ?? null));
-        $A = db()->query_fetch('SELECT * FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+        $A = db()->query_fetch('SELECT * FROM ' . db('locale_user_tr') . ' WHERE id=' . (int) ($_GET['id'] ?? null));
         if ( ! $A) {
             return _e('No id');
         }

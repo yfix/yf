@@ -52,8 +52,8 @@ class yf_manage_shop_price_update
         list($total, $preview) = $data;
         $replace = [
             '_all' => $total,
-            'percent' => $_class_price->_number_format(($_POST['percent'] ?? null)),
-            'add' => $_class_price->_number_format(($_POST['add'] ?? null)),
+            'percent' => $_class_price->_number_format($_POST['percent'] ?? null),
+            'add' => $_class_price->_number_format($_POST['add'] ?? null),
         ];
         $to_field = $this->_fields_update;
         // create form
@@ -101,11 +101,11 @@ class yf_manage_shop_price_update
         $count = db()->get_one($sql_count);
         // build temp data
         // prepare percent
-        $_percent = $_class_price->_number_float(($_POST['percent'] ?? null));
+        $_percent = $_class_price->_number_float($_POST['percent'] ?? null);
         $percent = 1 + $_percent / 100;
         $percent = $_class_price->_number_mysql($percent, 4);
         // prepare add
-        $_add = $_class_price->_number_float(($_POST['add'] ?? null));
+        $_add = $_class_price->_number_float($_POST['add'] ?? null);
         $add = $_class_price->_number_mysql($_add);
         // prepare to field
         $_fields = $this->_fields_update;

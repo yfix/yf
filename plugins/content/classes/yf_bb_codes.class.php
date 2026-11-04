@@ -160,7 +160,7 @@ class yf_bb_codes
                     return $_this->_parse_csv_bb_code($m[1]);
                 }, $body);
             }
-            if ($this->ENABLE_SMILIES && is_array(($GLOBALS['_smiles_array'] ?? null)) && empty($no_smilies)) {
+            if ($this->ENABLE_SMILIES && is_array($GLOBALS['_smiles_array'] ?? null) && empty($no_smilies)) {
                 if ( ! empty($GLOBALS['_SMILIES_CACHE'])) {
                     $this->_smilies_replace = &$GLOBALS['_SMILIES_CACHE'];
                 } else {

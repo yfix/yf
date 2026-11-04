@@ -76,7 +76,7 @@ class yf_news
 
     public function show()
     {
-        if (($_GET['id'] ?? null)) {
+        if ($_GET['id'] ?? null) {
             return $this->_view();
         }
         $num_comments = db()->select('object_id', 'COUNT(*)')->from('comments')->where('object_name', 'news')->group_by('object_id')->get_2d();

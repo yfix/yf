@@ -27,7 +27,7 @@ class yf_dynamic_lang
         if ( ! $this->_parent->ALLOW_LANG_CHANGE) {
             return _e('Changing language not allowed!');
         }
-        $new_lang = _prepare_html(($_REQUEST['lang_id'] ?? null));
+        $new_lang = _prepare_html($_REQUEST['lang_id'] ?? null);
         if ( ! empty($new_lang) && conf('languages::' . $new_lang . '::active')) {
             $_SESSION['user_lang'] = $new_lang;
             $old_location = './?object=account';
@@ -36,7 +36,7 @@ class yf_dynamic_lang
             }
             return js_redirect($old_location/*. '&lang='.(!isset($_GET['language']) ? $_SESSION['user_lang'] : $_GET['language'])*/);
         }
-        return js_redirect(($_SERVER['HTTP_REFERER'] ?? null));
+        return js_redirect($_SERVER['HTTP_REFERER'] ?? null);
     }
 
     /**

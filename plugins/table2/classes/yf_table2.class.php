@@ -552,7 +552,7 @@ class yf_table2
             $pager['out'] = common()->divide_pages(null, null, null, $pager['records_on_page'], count((array) $data), $pager['stpl_path'], $pager['add_get_vars'], $pager['extra']);
             $pages = $pager['out'][1];
             if (count((array) $data) > $pager['records_on_page']) {
-                $slice_start = (empty($_GET['page']) ? 0 : (int) (($_GET['page'] ?? null)) - 1) * $pager['records_on_page'];
+                $slice_start = (empty($_GET['page']) ? 0 : (int) ($_GET['page'] ?? null) - 1) * $pager['records_on_page'];
                 $slice_end = $pager['records_on_page'];
                 $data = array_slice($data, $slice_start, $slice_end, $preserve_keys = true);
             }

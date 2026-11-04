@@ -1327,7 +1327,7 @@ class yf_validate
         if (($_POST['login'] ?? null) == '') {
             _re('Login required');
         // TODO: convert into query buidler
-        } elseif ($this->db->query_num_rows('SELECT id FROM ' . $this->db->_real_name('user') . ' WHERE login="' . $this->db->es(($_POST['login'] ?? null)) . '"') >= 1) {
+        } elseif ($this->db->query_num_rows('SELECT id FROM ' . $this->db->_real_name('user') . ' WHERE login="' . $this->db->es($_POST['login'] ?? null) . '"') >= 1) {
             _re('This login ' . ($_POST['login'] ?? null) . ' has already been registered with us!');
         }
     }
@@ -1359,7 +1359,7 @@ class yf_validate
         }
         if ( ! empty($_POST['region'])) {
             // TODO: convert into query buidler
-            $region_info = $this->db->query_fetch('SELECT * FROM ' . $this->db->_real_name('geo_regions') . ' WHERE country = "' . $this->db->es(($_POST['country'] ?? null)) . '" AND code="' . $this->db->es(($_POST['region'] ?? null)) . '"');
+            $region_info = $this->db->query_fetch('SELECT * FROM ' . $this->db->_real_name('geo_regions') . ' WHERE country = "' . $this->db->es($_POST['country'] ?? null) . '" AND code="' . $this->db->es($_POST['region'] ?? null) . '"');
             if (empty($region_info)) {
                 $_POST['region'] = '';
                 $_POST['state'] = '';
@@ -1370,7 +1370,7 @@ class yf_validate
         }
         if ( ! empty($_POST['city'])) {
             // TODO: convert into query buidler
-            $city_info = $this->db->query_fetch('SELECT * FROM ' . $this->db->_real_name('geo_city_location') . ' WHERE region = "' . $this->db->es(($_POST['region'] ?? null)) . '" AND country = "' . $this->db->es(($_POST['country'] ?? null)) . '" AND city="' . $this->db->es(($_POST['city'] ?? null)) . '"');
+            $city_info = $this->db->query_fetch('SELECT * FROM ' . $this->db->_real_name('geo_city_location') . ' WHERE region = "' . $this->db->es($_POST['region'] ?? null) . '" AND country = "' . $this->db->es($_POST['country'] ?? null) . '" AND city="' . $this->db->es($_POST['city'] ?? null) . '"');
             if (empty($city_info)) {
                 $_POST['city'] = '';
             }
@@ -1386,9 +1386,9 @@ class yf_validate
         // TODO: rewrite me
         $_POST['birth_date'] = $CUR_VALUE;
 
-        $_POST['year_birth'] = (int) (($_POST['year_birth'] ?? null));
-        $_POST['month_birth'] = (int) (($_POST['month_birth'] ?? null));
-        $_POST['day_birth'] = (int) (($_POST['day_birth'] ?? null));
+        $_POST['year_birth'] = (int) ($_POST['year_birth'] ?? null);
+        $_POST['month_birth'] = (int) ($_POST['month_birth'] ?? null);
+        $_POST['day_birth'] = (int) ($_POST['day_birth'] ?? null);
         if (($_POST['year_birth'] ?? null) >= 1915 && ($_POST['year_birth'] ?? null) <= (date('Y') - 17)
             && ($_POST['month_birth'] ?? null) >= 1 && ($_POST['month_birth'] ?? null) <= 12
             && ($_POST['day_birth'] ?? null) >= 1 && ($_POST['day_birth'] ?? null) <= 31
@@ -1402,7 +1402,7 @@ class yf_validate
             $_POST['birth_date'] = ($_POST['year_birth'] ?? null) . '-' . ($_POST['month_birth'] ?? null) . '-' . ($_POST['day_birth'] ?? null);
         }
         if ( ! empty($_POST['birth_date'])) {
-            $_POST['age'] = _get_age_from_birth(($_POST['birth_date'] ?? null));
+            $_POST['age'] = _get_age_from_birth($_POST['birth_date'] ?? null);
         }
     }
 

@@ -1265,7 +1265,7 @@ class yf_payment_api
             $this->transaction_rollback();
             return  $result;
         }
-        if (($_user_mode ?? null)) {
+        if ($_user_mode ?? null) {
             $account_result = $this->get_account($options);
             if (empty($account_result)) {
                 return  $account_result;
@@ -1323,7 +1323,7 @@ class yf_payment_api
             $options['is_revert'] = true;
         }
         $result = $this->_cancel($options);
-        if (($result['status'] ?? null)) {
+        if ($result['status'] ?? null) {
             $result['status_message'] = 'Операция отменена';
             $this->transaction_commit();
         } else {
@@ -1347,7 +1347,7 @@ class yf_payment_api
         // start transaction
         $this->transaction_start($options);
         // revert funds
-        if (($_is_revert ?? null)) {
+        if ($_is_revert ?? null) {
             $result = $this->_amount_revert($options);
             if (empty($result['status'])) {
                 $this->transaction_rollback();
@@ -1427,7 +1427,7 @@ class yf_payment_api
         $balance = $account['balance'];
         // status
         $status_id = &$_status_id;
-        if (($_status_name ?? null)) {
+        if ($_status_name ?? null) {
             $object = $this->get_status(['name' => $_status_name]);
             list($status_id, $status) = $object;
             if (empty($status_id)) {
@@ -1469,7 +1469,7 @@ class yf_payment_api
         $data['user_id'] = $value;
         // check direction
         $direction = null;
-        switch (($_['direction'] ?? null)) {
+        switch ($_['direction'] ?? null) {
             case 'in':
                 $direction = 'in';
                 break;
@@ -1913,7 +1913,7 @@ class yf_payment_api
             'options' => $update_options,
         ];
         $result = $this->operation_update($update_data);
-        if (($result['status'] ?? null)) {
+        if ($result['status'] ?? null) {
             $result['status_message'] = 'Операция подтверждена';
             // mail
             $this->mail([
@@ -1938,7 +1938,7 @@ class yf_payment_api
         // var
         $result = null;
         $new_level = null;
-        if (($_level ?? null)) {
+        if ($_level ?? null) {
             $level = strtoupper($_level);
             switch ($_level) {
                 case 'READ UNCOMMITTED':
@@ -2000,7 +2000,7 @@ class yf_payment_api
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $tx = &$this->transaction;
         $result = null;
-        if (($_state ?? null)) {
+        if ($_state ?? null) {
             $state = strtoupper($_state);
             switch ($state) {
                 case 'COMMIT':
@@ -2257,7 +2257,7 @@ class yf_payment_api
         // var
         $mail_copy = &$this->MAIL_COPY_TO;
         // add: all, type, status
-        if (($mail_copy['all'] ?? null)) {
+        if ($mail_copy['all'] ?? null) {
             $mail_ref = &$mail_copy['all'];
             foreach (@['all', $_type, $_status] as $key) {
                 foreach ((array) ($mail_ref[$key] ?? null) as $value) {
@@ -2266,7 +2266,7 @@ class yf_payment_api
             }
         }
         // add by type: all, status
-        if (($mail_copy[$_type] ?? null)) {
+        if ($mail_copy[$_type] ?? null) {
             $mail_ref = &$mail_copy[$_type];
             foreach (@['all', $_status] as $key) {
                 foreach ((array) ($mail_ref[$key] ?? null) as $value) {
@@ -2376,7 +2376,7 @@ class yf_payment_api
         list($currency_id, $currency) = $this->get_currency__by_id(['currency_id' => ($_currency_id ?? null)]);
         $decimals = $currency['minor_units'];
         $sign = $currency['sign'];
-        switch (($_format ?? null)) {
+        switch ($_format ?? null) {
             case 'html':
                 $thousands_separator = '&nbsp;';
                 // no break
@@ -2392,7 +2392,7 @@ class yf_payment_api
         $value = $this->_number_format($value, $decimals, $decimal_point, $thousands_separator);
         // decoration
         $nbsp = '';
-        switch (($_format ?? null)) {
+        switch ($_format ?? null) {
             case 'html':
                 $sign = '<span class="currency">' . $sign . '</span>';
                 $value = '<span class="money">' . $value . '</span>';

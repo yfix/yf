@@ -328,9 +328,9 @@ class yf_sphinxsearch
         $out = implode('#|#', [
             date('YmdH'),
             conf('CUR_DOMAIN_SHORT'),
-            common()->_db_escape(($_SERVER['HTTP_REFERER'] ?? null)),
+            common()->_db_escape($_SERVER['HTTP_REFERER'] ?? null),
             common()->_db_escape(($_SERVER['HTTP_HOST'] ?? null) . ($_SERVER['REQUEST_URI'] ?? null)),
-            common()->_db_escape(($_SERVER['HTTP_USER_AGENT'] ?? null)),
+            common()->_db_escape($_SERVER['HTTP_USER_AGENT'] ?? null),
             common()->_db_escape($sql),
         ]) . PHP_EOL;
         return file_put_contents($this->EMPTY_RESULTS_LOG_PATH, $out, FILE_APPEND);

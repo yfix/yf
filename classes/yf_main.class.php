@@ -1810,7 +1810,7 @@ class yf_main
             }
             $host = '';
             $conf_domains = conf('DOMAINS');
-            if (($_SERVER['HTTP_HOST'] ?? null)) {
+            if ($_SERVER['HTTP_HOST'] ?? null) {
                 $host = ($_SERVER['HTTP_HOST'] ?? null);
             } elseif (is_array($conf_domains)) {
                 $host = (string) current($conf_domains);

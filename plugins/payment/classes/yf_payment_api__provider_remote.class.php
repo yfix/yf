@@ -256,7 +256,7 @@ class yf_payment_api__provider_remote
             ];
         }
         ! empty($_is_finish) && $data['datetime_finish'] = $sql_datetime;
-        if (($data_options ?? null)) {
+        if ($data_options ?? null) {
             $data['options'] = $payment_api->_merge($data_options, $_options);
         }
         $result = $payment_api->operation_update($data);

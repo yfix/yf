@@ -75,15 +75,15 @@ class yf_user_profile extends yf_module
         if ( ! empty($this->_user_info)) {
             return '';
         }
-        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $_GET['id'] = (int) ($_GET['id'] ?? null);
         if ( ! isset($_GET['profile_url']) && ! isset($_GET['id']) && ! empty(main()->USER_ID)) {
             $user_id = main()->USER_ID;
         } elseif (isset($_GET['profile_url'])) {
-            $this->_user_info = db()->query_fetch('SELECT * FROM ' . db('user') . " WHERE profile_url='" . _es(($_GET['profile_url'] ?? null)) . "' AND active='1'");
+            $this->_user_info = db()->query_fetch('SELECT * FROM ' . db('user') . " WHERE profile_url='" . _es($_GET['profile_url'] ?? null) . "' AND active='1'");
             $user_id = $_GET['id'] = (int) ($user_info['id']);
             unset($_GET['profile_url']);
         } elseif (isset($_GET['id'])) {
-            $_GET['id'] = (int) (($_GET['id'] ?? null));
+            $_GET['id'] = (int) ($_GET['id'] ?? null);
             $user_id = ! empty($_GET['id']) ? ($_GET['id'] ?? null) : main()->USER_ID;
         }
         // Try to get user info
@@ -151,8 +151,8 @@ class yf_user_profile extends yf_module
             'articles_pages' => $article_posts[1],
             'num_forum_posts' => $this->_num_forum_posts > $this->MAX_SHOW_FORUM_POSTS ? (int) ($this->_num_forum_posts) : 0,
             'num_blog_posts' => $this->_num_blog_posts > $this->MAX_SHOW_BLOG_POSTS ? (int) ($this->_num_blog_posts) : 0,
-            'num_friend_of' => ($GLOBALS['profile_total_friend_of'] ?? null) > $this->MAX_SHOW_FRIEND_OF ? (int) (($GLOBALS['profile_total_friend_of'] ?? null)) : 0,
-            'num_friends' => ($GLOBALS['profile_total_friends'] ?? null) > $this->MAX_SHOW_FRIENDS ? (int) (($GLOBALS['profile_total_friends'] ?? null)) : 0,
+            'num_friend_of' => ($GLOBALS['profile_total_friend_of'] ?? null) > $this->MAX_SHOW_FRIEND_OF ? (int) ($GLOBALS['profile_total_friend_of'] ?? null) : 0,
+            'num_friends' => ($GLOBALS['profile_total_friends'] ?? null) > $this->MAX_SHOW_FRIENDS ? (int) ($GLOBALS['profile_total_friends'] ?? null) : 0,
             'forum_posts_link' => './?object=forum&action=search&user_name=' . urlencode(_display_name($this->_user_info)) . '&sort_by=last_post_date&sort_order=desc&prune_days=1000&prune_type=newer&search_in=posts&result_type=posts&keywords=&q=results',
             'blog_posts_link' => './?object=blog&action=show_posts&id=' . $this->_user_info['id'],
             'que_url' => './?object=que&action=view&id=' . $this->_user_info['id'],
@@ -592,7 +592,7 @@ class yf_user_profile extends yf_module
             return _error_need_login();
         }
 
-        ($_GET['id'] ?? null) ? $_id = (int) (($_GET['id'] ?? null)) : $_id = main()->USER_ID;
+        ($_GET['id'] ?? null) ? $_id = (int) ($_GET['id'] ?? null) : $_id = main()->USER_ID;
         $sql = 'SELECT * FROM ' . db('log_user_action') . " WHERE action_name='visit' AND owner_id=" . (int) $_id . ' ORDER BY add_date DESC';
         list($add_sql, $pages, $total) = common()->divide_pages($sql);
         $stats_array = db()->query_fetch_all($sql . $add_sql);

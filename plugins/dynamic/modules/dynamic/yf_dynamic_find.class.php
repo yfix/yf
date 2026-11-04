@@ -32,7 +32,7 @@ class yf_dynamic_find
         $Q = db()->query(
             'SELECT id, nick 
 			FROM ' . db('user') . ' 
-			WHERE ' . _es(($_POST['search_field'] ?? null)) . " LIKE '" . _es(($_POST['param'] ?? null)) . "%' 
+			WHERE ' . _es($_POST['search_field'] ?? null) . " LIKE '" . _es($_POST['param'] ?? null) . "%' 
 			LIMIT " . (int) ($this->_parent->USER_RESULTS_LIMIT)
         );
         while ($A = db()->fetch_assoc($Q)) {
@@ -65,7 +65,7 @@ class yf_dynamic_find
 					AND u.id IN( 
 						SELECT id 
 						FROM ' . db('user') . ' 
-						WHERE ' . _es(($_POST['search_field'] ?? null)) . " LIKE '" . _es(($_POST['param'] ?? null)) . "%'
+						WHERE ' . _es($_POST['search_field'] ?? null) . " LIKE '" . _es($_POST['param'] ?? null) . "%'
 					) 
 				LIMIT " . (int) ($this->_parent->USER_RESULTS_LIMIT)
             );
@@ -81,7 +81,7 @@ class yf_dynamic_find
 						, u.id AS 'uid' 
 				FROM " . db('host_accounts') . ' AS a
 					, ' . db('user') . ' AS u 
-				WHERE a.' . _es(($_POST['search_field'] ?? null)) . " LIKE '" . _es(($_POST['param'] ?? null)) . "%' 
+				WHERE a.' . _es($_POST['search_field'] ?? null) . " LIKE '" . _es($_POST['param'] ?? null) . "%' 
 					AND a.user_id=u.id 
 				LIMIT " . (int) ($this->_parent->USER_RESULTS_LIMIT)
             );

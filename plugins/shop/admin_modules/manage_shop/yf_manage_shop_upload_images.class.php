@@ -40,10 +40,10 @@ class yf_manage_shop_upload_images
             }
             return $form;
         }
-        if (($_POST['supplier'] ?? null)) {
+        if ($_POST['supplier'] ?? null) {
             $SUPPLIER_ID = ($_POST['supplier'] ?? null);
         }
-        if (($_POST['server_path'] ?? null)) {
+        if ($_POST['server_path'] ?? null) {
             $server_path = strip_tags(ltrim(($_POST['server_path'] ?? ''), ' .-_+=|,!@#%~&*();:\'"'));
             if (file_exists($server_path) && is_readable($server_path)) {
                 $archive_name = $server_path;

@@ -124,7 +124,7 @@ class yf_dynamic_edit
                     'object_name' => _es('locale_stpl'),
                     'object_id' => _es($STPL_NAME),
                     'old_text' => _es($text),
-                    'new_text' => _es(($_POST['text'] ?? null)),
+                    'new_text' => _es($_POST['text'] ?? null),
                     'date' => time(),
                     'ip' => common()->get_ip(),
                     'comment' => _es('saved into file: ' . $locale_stpl_path),
@@ -153,15 +153,15 @@ class yf_dynamic_edit
             $A = db()->query_fetch('SELECT * FROM ' . db('tips') . " WHERE name='" . ($_POST['name'] ?? null) . "' AND locale='" . $CUR_LOCALE . "'");
             if ( ! $A) {
                 db()->INSERT('tips', [
-                    'name' => _es(($_POST['name'] ?? null)),
+                    'name' => _es($_POST['name'] ?? null),
                     'locale' => _es($CUR_LOCALE),
-                    'text' => _es(($_POST['text'] ?? null)),
+                    'text' => _es($_POST['text'] ?? null),
                     'type' => 1,
                     'active' => 1,
                 ]);
             } else {
                 db()->UPDATE('tips', [
-                    'text' => _es(($_POST['text'] ?? null)),
+                    'text' => _es($_POST['text'] ?? null),
                 ], "name='" . ($_POST['name'] ?? null) . "' AND locale='" . $CUR_LOCALE . "'");
             }
         }

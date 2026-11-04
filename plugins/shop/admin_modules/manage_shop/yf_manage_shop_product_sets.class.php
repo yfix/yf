@@ -127,7 +127,7 @@ class yf_manage_shop_product_sets
             }
             $up = [];
             // Add products to current set
-            if (($_POST['products_ids'] ?? null)) {
+            if ($_POST['products_ids'] ?? null) {
                 $ids = [];
                 foreach (explode(',', ($_POST['products_ids'] ?? '')) as $id) {
                     $id = (int) $id;
@@ -157,7 +157,7 @@ class yf_manage_shop_product_sets
                 }
             }
             // Editable quantity for each product in list
-            if ( ! empty($_POST['quantity']) && is_array(($_POST['quantity'] ?? null))) {
+            if ( ! empty($_POST['quantity']) && is_array($_POST['quantity'] ?? null)) {
                 $current_items = (array) db()->get_all(str_replace('%sid', $product_set_id, $this->_sql_set_list_products));
                 $current_ids = array_keys($current_items);
                 $current_ids && $current_ids = array_combine($current_ids, $current_ids);

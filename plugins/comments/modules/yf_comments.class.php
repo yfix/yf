@@ -83,7 +83,7 @@ class yf_comments
             return $this->_show_for_object_tree($params);
         }
         $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : ($_GET['object'] ?? null);
-        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) (($_GET['id'] ?? null));
+        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) ($_GET['id'] ?? null);
         $STPL_NAME_MAIN = ! empty($params['stpl_main']) ? $params['stpl_main'] : 'comments/main';
         $STPL_NAME_ITEM = ! empty($params['stpl_item']) ? $params['stpl_item'] : 'comments/item';
         $PAGER_PATH = ! empty($params['pager_path']) ? $params['pager_path'] : '';
@@ -114,7 +114,7 @@ class yf_comments
         }
         module('reputation')->_get_reput_info_for_user_ids($users_ids);
         // Try to find more complex checking methods
-        $obj = module(($_GET['object'] ?? null));
+        $obj = module($_GET['object'] ?? null);
         $edit_allowed_check_method = is_object($obj) && method_exists($obj, $this->_edit_allowed_method);
         $delete_allowed_check_method = is_object($obj) && method_exists($obj, $this->_delete_allowed_method);
         if ($this->CHECK_ALLOW_TO_VIEW_USER_EMAIL) {
@@ -122,13 +122,13 @@ class yf_comments
         }
         if ($view_email_allowed_check_method) {
             $m = $this->_view_email_allowed_method;
-            $view_email = (bool) module(($_GET['object'] ?? null))->$m(['object_id' => $OBJECT_ID]);
+            $view_email = (bool) module($_GET['object'] ?? null)->$m(['object_id' => $OBJECT_ID]);
         }
 
         foreach ((array) $comments_array as $comment_info) {
             if ($edit_allowed_check_method) {
                 $m = $this->_edit_allowed_method;
-                $edit_allowed = (bool) module(($_GET['object'] ?? null))->$m([
+                $edit_allowed = (bool) module($_GET['object'] ?? null)->$m([
                     'user_id' => $comment_info['user_id'],
                     'object_id' => $comment_info['object_id'],
                 ]);
@@ -137,7 +137,7 @@ class yf_comments
             }
             if ($delete_allowed_check_method) {
                 $m = $this->_delete_allowed_method;
-                $delete_allowed = (bool) module(($_GET['object'] ?? null))->$m([
+                $delete_allowed = (bool) module($_GET['object'] ?? null)->$m([
                     'user_id' => $comment_info['user_id'],
                     'object_id' => $comment_info['object_id'],
                 ]);
@@ -196,7 +196,7 @@ class yf_comments
     {
         $REPUT_OBJ = $items = $pages = $total = null;
         $OBJECT_NAME = ! empty($params['object_name']) ? $params['object_name'] : ($_GET['object'] ?? null);
-        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) (($_GET['id'] ?? null));
+        $OBJECT_ID = ! empty($params['object_id']) ? (int) ($params['object_id']) : (int) ($_GET['id'] ?? null);
         $STPL_NAME_MAIN = ! empty($params['stpl_main']) ? $params['stpl_main'] : 'comments/main_tree';
         $STPL_NAME_ITEM = ! empty($params['stpl_item']) ? $params['stpl_item'] : 'comments/item_tree';
         $PAGER_PATH = ! empty($params['pager_path']) ? $params['pager_path'] : '';
@@ -229,7 +229,7 @@ class yf_comments
         }
         $users_reput_info = module('reputation')->_get_reput_info_for_user_ids($users_ids);
         // Try to find more complex checking methods
-        $obj = module(($_GET['object'] ?? null));
+        $obj = module($_GET['object'] ?? null);
         $edit_allowed_check_method = is_object($obj) && method_exists($obj, $this->_edit_allowed_method);
         $delete_allowed_check_method = is_object($obj) && method_exists($obj, $this->_delete_allowed_method);
         if ($this->CHECK_ALLOW_TO_VIEW_USER_EMAIL) {
@@ -238,7 +238,7 @@ class yf_comments
 
         if ($view_email_allowed_check_method) {
             $m = $this->_view_email_allowed_method;
-            $view_email = (bool) module(($_GET['object'] ?? null))->$m([
+            $view_email = (bool) module($_GET['object'] ?? null)->$m([
                 'object_id' => $OBJECT_ID,
             ]);
         }
@@ -260,7 +260,7 @@ class yf_comments
 
             if ($edit_allowed_check_method) {
                 $m = $this->_edit_allowed_method;
-                $edit_allowed = (bool) module(($_GET['object'] ?? null))->$m([
+                $edit_allowed = (bool) module($_GET['object'] ?? null)->$m([
                     'user_id' => $comment_info['user_id'],
                     'object_id' => $comment_info['object_id'],
                 ]);
@@ -269,7 +269,7 @@ class yf_comments
             }
             if ($delete_allowed_check_method) {
                 $m = $this->_delete_allowed_method;
-                $delete_allowed = (bool) module(($_GET['object'] ?? null))->$m([
+                $delete_allowed = (bool) module($_GET['object'] ?? null)->$m([
                     'user_id' => $comment_info['user_id'],
                     'object_id' => $comment_info['object_id'],
                 ]);

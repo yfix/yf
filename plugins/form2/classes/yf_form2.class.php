@@ -411,7 +411,7 @@ class yf_form2
         }
         if (is_post()) {
             $is_current_form = isset($_POST[$this->CONF_FORM_ID_FIELD]) && (($_POST[$this->CONF_FORM_ID_FIELD] ?? null) == $form_id);
-            if ($csrf_protect && $is_current_form && ! $csrf_guard->validate(($_POST[$this->CONF_CSRF_NAME] ?? null))) {
+            if ($csrf_protect && $is_current_form && ! $csrf_guard->validate($_POST[$this->CONF_CSRF_NAME] ?? null)) {
                 // We need this as validation now is skipping empty values
                 if ( ! isset($_POST[$this->CONF_CSRF_NAME]) || (trim(($_POST[$this->CONF_CSRF_NAME] ?? '')) == '')) {
                     $_POST[$this->CONF_CSRF_NAME] = '__wrong_token_' . md5(microtime()) . '__';

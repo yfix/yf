@@ -76,7 +76,7 @@ class yf_manage_shop_express
     public function express_pdf($send_mail = false)
     {
         $date = date('Y-m-d');
-        $hours = (int) (($_GET['hours'] ?? null));
+        $hours = (int) ($_GET['hours'] ?? null);
         $orders = db()->get_2d('SELECT id FROM ' . db('shop_orders') . " WHERE delivery_time LIKE '" . $date . ' ' . $hours . "%' AND status = 1");
         if (empty($orders)) {
             common()->message_warning('No orders for this time');
@@ -164,7 +164,7 @@ class yf_manage_shop_express
 
     public function mail_pdf()
     {
-        $time = (int) (($_GET['hours'] ?? null));
+        $time = (int) ($_GET['hours'] ?? null);
         if (empty($time)) {
             return _e('No delivery time');
         }

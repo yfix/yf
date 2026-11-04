@@ -76,19 +76,19 @@ class yf_manage_shop_orders
 
     public function view_order()
     {
-        $_GET['id'] = (int) (($_GET['id'] ?? null));
-        if (($_GET['id'] ?? null)) {
+        $_GET['id'] = (int) ($_GET['id'] ?? null);
+        if ($_GET['id'] ?? null) {
             if ($this->SUPPLIER_ID) {
                 $sql = 'SELECT o.* FROM ' . db('shop_orders') . ' AS o
 						INNER JOIN ' . db('shop_order_items') . ' AS i ON i.order_id = o.id
 						INNER JOIN ' . db('shop_products') . ' AS p ON i.product_id = p.id
 						INNER JOIN ' . db('shop_admin_to_supplier') . ' AS m ON m.supplier_id = p.supplier_id
 						WHERE
-							o.id=' . (int) (($_GET['id'] ?? null)) . '
+							o.id=' . (int) ($_GET['id'] ?? null) . '
 							AND m.admin_id=' . (int) (main()->ADMIN_ID) . '
 						GROUP BY o.id';
             } else {
-                $sql = 'SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) (($_GET['id'] ?? null));
+                $sql = 'SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['id'] ?? null);
             }
             $order_info = db()->query_fetch($sql);
         }
@@ -100,7 +100,7 @@ class yf_manage_shop_orders
         $_class_units = _class('_shop_product_units', 'modules/shop/');
         $_class_basket = _class('shop_basket', 'modules/shop/');
         if (main()->is_post()) {
-            module('manage_shop')->_product_check_first_revision('order', (int) (($_GET['id'] ?? null)));
+            module('manage_shop')->_product_check_first_revision('order', (int) ($_GET['id'] ?? null));
             $order_id = (int) ($_GET['id'] ?? null);
             foreach ($_POST as $k => $v) {
                 if ($k == 'status_item') {
@@ -205,13 +205,13 @@ class yf_manage_shop_orders
                 }
             }
             if (count((array) $sql) > 0) {
-                db()->update_safe(db('shop_orders'), $sql, 'id=' . (int) (($_GET['id'] ?? null)));
+                db()->update_safe(db('shop_orders'), $sql, 'id=' . (int) ($_GET['id'] ?? null));
             }
             if ($recount_price) {
                 list($order_info['total_sum'], $order_info['delivery_price']) = $this->_order_recount_price($order_info['id'], $order_info);
             }
 
-            module('manage_shop')->_order_add_revision('edit', (int) (($_GET['id'] ?? null)));
+            module('manage_shop')->_order_add_revision('edit', (int) ($_GET['id'] ?? null));
 
             return js_redirect('./?object=' . main()->_get('object') . '&action=view_order&id=' . $order_info['id']);
         }
@@ -516,18 +516,18 @@ class yf_manage_shop_orders
     public function merge_order()
     {
         $total_price = $price_total = null;
-        $_GET['id'] = (int) (($_GET['id'] ?? null));
-        if (($_GET['id'] ?? null)) {
-            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+        $_GET['id'] = (int) ($_GET['id'] ?? null);
+        if ($_GET['id'] ?? null) {
+            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['id'] ?? null));
         }
         if (empty($order_info)) {
             return _e('No such order');
         }
         module('manage_shop')->_product_check_first_revision('order', ($_GET['id'] ?? null));
 
-        $_GET['merge_id'] = (int) (($_GET['merge_id'] ?? null));
-        if (($_GET['merge_id'] ?? null)) {
-            $order_info_merge = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) (($_GET['merge_id'] ?? null)) . " AND `id`!='" . $order_info['id'] . "' AND `phone`='" . $order_info['phone'] . "' AND `status`='" . $order_info['status'] . "'");
+        $_GET['merge_id'] = (int) ($_GET['merge_id'] ?? null);
+        if ($_GET['merge_id'] ?? null) {
+            $order_info_merge = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['merge_id'] ?? null) . " AND `id`!='" . $order_info['id'] . "' AND `phone`='" . $order_info['phone'] . "' AND `status`='" . $order_info['status'] . "'");
         }
         if (empty($order_info_merge)) {
             return _e('No order to merge');
@@ -562,7 +562,7 @@ class yf_manage_shop_orders
             }
         }
 
-        $Q = db()->query('SELECT * FROM ' . db('shop_order_items') . ' WHERE `order_id`=' . (int) (($_GET['id'] ?? null)));
+        $Q = db()->query('SELECT * FROM ' . db('shop_order_items') . ' WHERE `order_id`=' . (int) ($_GET['id'] ?? null));
         while ($_info = db()->fetch_assoc($Q)) {
             $total_price += $_info['quantity'] * $_info['price'];
         }
@@ -587,20 +587,20 @@ class yf_manage_shop_orders
 
     public function delete_order()
     {
-        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $_GET['id'] = (int) ($_GET['id'] ?? null);
         if ( ! empty($_GET['id'])) {
-            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+            $order_info = db()->query_fetch('SELECT * FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['id'] ?? null));
         }
         if ( ! empty($order_info['id'])) {
             module('manage_shop')->_product_check_first_revision('order', ($_GET['id'] ?? null));
-            db()->query('DELETE FROM ' . db('shop_orders') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
-            db()->query('DELETE FROM ' . db('shop_order_items') . ' WHERE `order_id`=' . (int) (($_GET['id'] ?? null)));
+            db()->query('DELETE FROM ' . db('shop_orders') . ' WHERE id=' . (int) ($_GET['id'] ?? null) . ' LIMIT 1');
+            db()->query('DELETE FROM ' . db('shop_order_items') . ' WHERE `order_id`=' . (int) ($_GET['id'] ?? null));
             common()->admin_wall_add(['shop order deleted: ' . ($_GET['id'] ?? null), ($_GET['id'] ?? null)]);
         }
 
         module('manage_shop')->_order_add_revision('delete', ($_GET['id'] ?? null));
 
-        if (($_POST['ajax_mode'] ?? null)) {
+        if ($_POST['ajax_mode'] ?? null) {
             main()->NO_GRAPHICS = true;
             ($_GET['id'] ?? null);
         } else {
@@ -614,10 +614,10 @@ class yf_manage_shop_orders
             return json_encode('ko');
         }
 
-        $order_id = (int) (($_POST['order_id'] ?? null));
-        $product_id = (int) (($_POST['product_id'] ?? null));
+        $order_id = (int) ($_POST['order_id'] ?? null);
+        $product_id = (int) ($_POST['product_id'] ?? null);
 
-        if ((int) (($_POST['quantity'] ?? null)) == 0) {
+        if ((int) ($_POST['quantity'] ?? null) == 0) {
             return json_encode('ko');
         }
 
@@ -663,13 +663,13 @@ class yf_manage_shop_orders
                 'order_id' => $order_id,
                 'product_id' => $product_id,
                 'param_id' => 0,
-                'quantity' => (int) (($_POST['quantity'] ?? null)),
+                'quantity' => (int) ($_POST['quantity'] ?? null),
                 'price' => $price,
                 'unit' => $unit,
             ]);
         } else {
             db()->update(db('shop_order_items'), [
-                'quantity' => $A['quantity'] + (int) (($_POST['quantity'] ?? null)),
+                'quantity' => $A['quantity'] + (int) ($_POST['quantity'] ?? null),
             ], ' `order_id`=' . $order_id . ' AND `product_id`=' . $product_id);
         }
         $this->_order_recount_price(($_POST['order_id'] ?? null), $order_info);
@@ -741,14 +741,14 @@ class yf_manage_shop_orders
 
     public function order_clone()
     {
-        $_GET['id'] = (int) (($_GET['id'] ?? null));
-        if (($_GET['id'] ?? null)) {
-            $a = db()->get('SELECT * FROM `' . db('shop_orders') . "` WHERE `id`='" . (int) (($_GET['id'] ?? null)) . "'");
+        $_GET['id'] = (int) ($_GET['id'] ?? null);
+        if ($_GET['id'] ?? null) {
+            $a = db()->get('SELECT * FROM `' . db('shop_orders') . "` WHERE `id`='" . (int) ($_GET['id'] ?? null) . "'");
         }
         if ( ! $a['id']) {
             return _e('No such order!');
         }
-        $items = db()->get_all('SELECT * FROM `' . db('shop_order_items') . "` WHERE `order_id`='" . (int) (($_GET['id'] ?? null)) . "'");
+        $items = db()->get_all('SELECT * FROM `' . db('shop_order_items') . "` WHERE `order_id`='" . (int) ($_GET['id'] ?? null) . "'");
         unset($a['id']);
         db()->insert(db('shop_orders'), $a);
         $new_id = db()->insert_id();

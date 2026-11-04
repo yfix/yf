@@ -43,7 +43,7 @@ class yf_email_page
         // Verify and send email
         if ( ! empty($_POST['go'])) {
             // Check if email is already registered for someone
-            if ( ! common()->email_verify(($_POST['email'] ?? null))) {
+            if ( ! common()->email_verify($_POST['email'] ?? null)) {
                 _re('Invalid e-mail, please check your spelling!');
             }
             if (empty($_POST['name'])) {
@@ -77,7 +77,7 @@ class yf_email_page
                 'name' => _prepare_html(isset($_POST['name']) ? ($_POST['name'] ?? null) : ( ! empty($this->_user_info['display_name']) ? $this->_user_info['display_name'] : $this->_user_info['name'])),
                 'email' => _prepare_html(isset($_POST['email']) ? ($_POST['email'] ?? null) : $this->_user_info['email']),
                 'message' => _prepare_html(isset($_POST['message']) ? ($_POST['message'] ?? null) : $text),
-                'comment' => _prepare_html(($_POST['comment'] ?? null)),
+                'comment' => _prepare_html($_POST['comment'] ?? null),
                 'page_preview' => isset($_POST['message']) ? ($_POST['message'] ?? null) : $text,
             ];
             return tpl()->parse('system/common/email_page_form', $replace);

@@ -68,7 +68,7 @@ class yf_manage_cron
 
     public function edit()
     {
-        $id = (int) (($_GET['id'] ?? null));
+        $id = (int) ($_GET['id'] ?? null);
         if ( ! $id) {
             return js_redirect(url('/@object'), false, 'Empty ID');
         }
@@ -92,7 +92,7 @@ class yf_manage_cron
                     'active' => ($_POST['active'] ?? null),
                     'exec_type' => ($_POST['exec_type'] ?? null),
                     'exec_time' => ($_POST['exec_time'] ?? null) ?: '600',
-                ], 'id=' . (int) (($_GET['id'] ?? null)));
+                ], 'id=' . (int) ($_GET['id'] ?? null));
                 common()->admin_wall_add(['cron tasks updated: ' . $a['name'], $a['id']]);
                 return js_redirect(url('/@object'));
             })

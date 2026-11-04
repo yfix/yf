@@ -30,9 +30,9 @@ class yf_dynamic_validate
 
         $rules = [];
         $errors = [];
-        if (isset($_POST['rules']) && is_array(($_POST['rules'] ?? null))) {
+        if (isset($_POST['rules']) && is_array($_POST['rules'] ?? null)) {
             $rules = ($_POST['rules'] ?? null);
-        } elseif (isset($_GET['rules']) && is_array(($_GET['rules'] ?? null))) {
+        } elseif (isset($_GET['rules']) && is_array($_GET['rules'] ?? null)) {
             $rules = ($_GET['rules'] ?? null);
         } else {
             $rules[] = [

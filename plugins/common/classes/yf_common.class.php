@@ -1594,7 +1594,7 @@ class yf_common
 
     public function show_left_filter()
     {
-        $obj = module_safe(($_GET['object'] ?? null));
+        $obj = module_safe($_GET['object'] ?? null);
         $method = '_show_filter';
         if (method_exists($obj, $method) && ! (isset($obj->USE_FILTER) && ! $obj->USE_FILTER)) {
             return $obj->$method();
@@ -1604,7 +1604,7 @@ class yf_common
 
     public function show_side_column_hooked()
     {
-        $obj = module_safe(($_GET['object'] ?? null));
+        $obj = module_safe($_GET['object'] ?? null);
         $method = '_hook_side_column';
         if (method_exists($obj, $method)) {
             return $obj->$method();

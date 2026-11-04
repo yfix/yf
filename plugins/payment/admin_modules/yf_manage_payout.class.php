@@ -658,7 +658,7 @@ class yf_manage_payout
             'is_return' => true,
             // 'debug'     => true,
         ]);
-        if (($result['status'] ?? null)) {
+        if ($result['status'] ?? null) {
             $payment_api->transaction_commit();
             exit;
         }
@@ -1267,7 +1267,7 @@ class yf_manage_payout
                 $is_recreate = ($_POST['operation'] ?? null) == 'recreate';
                 if ($is_recreate) {
                     $result = $this->_recreate($_POST);
-                    if (($result['status'] ?? null)) {
+                    if ($result['status'] ?? null) {
                         $level = 'success';
                         $message = 'Выполнено пересоздание: ';
                     } else {
@@ -1277,7 +1277,7 @@ class yf_manage_payout
                     $message .= $result['status_message'];
                     common()->add_message($message, $level);
                     // recreated items
-                    if (($result['status'] ?? null)) {
+                    if ($result['status'] ?? null) {
                         $operation_id = (int) $result['operation_id'];
                         $items = implode(',', $result['items']);
                         $url = $this->_url('recreate_items', ['%operation_id' => $operation_id, '%items' => $items]);
@@ -1350,7 +1350,7 @@ class yf_manage_payout
             return  $operation;
         }
         // is_processing
-        if (($_is_processing ?? null)) {
+        if ($_is_processing ?? null) {
             $result = [
                 'status_message' => 'Операция уже обрабатывается',
             ];
@@ -1405,7 +1405,7 @@ class yf_manage_payout
             return  $this->_user_message($operation);
         }
         // is_processing
-        if (($_is_processing ?? null)) {
+        if ($_is_processing ?? null) {
             $result = [
                 'status_message' => 'Операция уже обрабатывается',
             ];
@@ -1738,7 +1738,7 @@ class yf_manage_payout
             'provider_name' => 'ecommpay',
         ]);
         // var
-        $operation_id = (int) (($_GET['operation_id'] ?? null));
+        $operation_id = (int) ($_GET['operation_id'] ?? null);
         $info = db()->from('payment_operation')->where('operation_id', $operation_id)->get();
         if ( ! $info) {
             return _404();

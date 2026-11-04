@@ -49,10 +49,10 @@ class yf_manage_dashboards2
     public function save()
     {
         main()->NO_GRAPHICS = true;
-        print_r(json_encode(($_POST['structure'] ?? null)));
+        print_r(json_encode($_POST['structure'] ?? null));
         db()->update('dashboards2', db()->es([
-                    'data' => json_encode(($_POST['structure'] ?? null)),
-                ]), 'id=' . (int) (($_GET['id'] ?? null)));
+                    'data' => json_encode($_POST['structure'] ?? null),
+                ]), 'id=' . (int) ($_GET['id'] ?? null));
         exit;
     }
 
@@ -88,10 +88,10 @@ class yf_manage_dashboards2
         }
         $_GET['id'] = $ds_info['id'];
         if ( ! empty($ds_info['id'])) {
-            db()->query('DELETE FROM ' . db('dashboards2') . ' WHERE id=' . (int) (($_GET['id'] ?? null)) . ' LIMIT 1');
+            db()->query('DELETE FROM ' . db('dashboards2') . ' WHERE id=' . (int) ($_GET['id'] ?? null) . ' LIMIT 1');
             common()->admin_wall_add(['dashboard deleted: ' . $ds_info['name'] . '', ($_GET['id'] ?? null)]);
         }
-        if (($_POST['ajax_mode'] ?? null)) {
+        if ($_POST['ajax_mode'] ?? null) {
             main()->NO_GRAPHICS = true;
             echo ($_GET['id'] ?? null);
         } else {
@@ -119,15 +119,15 @@ class yf_manage_dashboards2
 
     public function active()
     {
-        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $_GET['id'] = (int) ($_GET['id'] ?? null);
         if ( ! empty($_GET['id'])) {
-            $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+            $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) ($_GET['id'] ?? null));
         }
         if ( ! empty($ds_info['id'])) {
-            db()->update('dashboards2', ['active' => (int) ! $ds_info['active']], 'id=' . (int) (($_GET['id'] ?? null)));
+            db()->update('dashboards2', ['active' => (int) ! $ds_info['active']], 'id=' . (int) ($_GET['id'] ?? null));
             common()->admin_wall_add(['dashboard ' . $ds_info['name'] . ' ' . ($ds_info['active'] ? 'inactivated' : 'activated'), ($_GET['id'] ?? null)]);
         }
-        if (($_POST['ajax_mode'] ?? null)) {
+        if ($_POST['ajax_mode'] ?? null) {
             main()->NO_GRAPHICS = true;
             echo $ds_info['active'] ? 0 : 1;
         } else {
@@ -138,15 +138,15 @@ class yf_manage_dashboards2
 
     public function lock()
     {
-        $_GET['id'] = (int) (($_GET['id'] ?? null));
+        $_GET['id'] = (int) ($_GET['id'] ?? null);
         if ( ! empty($_GET['id'])) {
-            $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+            $ds_info = db()->get('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) ($_GET['id'] ?? null));
         }
         if ( ! empty($ds_info['id'])) {
-            db()->update('dashboards2', ['lock' => (int) ! $ds_info['lock']], 'id=' . (int) (($_GET['id'] ?? null)));
+            db()->update('dashboards2', ['lock' => (int) ! $ds_info['lock']], 'id=' . (int) ($_GET['id'] ?? null));
             common()->admin_wall_add(['dashboard ' . $ds_info['name'] . ' ' . ($ds_info['lock'] ? 'unlocked' : 'locked'), ($_GET['id'] ?? null)]);
         }
-        if (($_POST['ajax_mode'] ?? null)) {
+        if ($_POST['ajax_mode'] ?? null) {
             main()->NO_GRAPHICS = true;
             echo $ds_info['lock'] ? 0 : 1;
         } else {
@@ -184,11 +184,11 @@ class yf_manage_dashboards2
 
     public function edit()
     {
-        $id = (int) (($_GET['id'] ?? null));
+        $id = (int) ($_GET['id'] ?? null);
         if ( ! $id) {
             return _e('No id');
         }
-        $a = db()->query_fetch('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) (($_GET['id'] ?? null)));
+        $a = db()->query_fetch('SELECT * FROM ' . db('dashboards2') . ' WHERE id=' . (int) ($_GET['id'] ?? null));
         $a['redirect_link'] = './?object=' . ($_GET['object'] ?? null);
         return form($a, ['autocomplete' => 'off'])
             ->validate([
@@ -208,7 +208,7 @@ class yf_manage_dashboards2
 
     public function view()
     {
-        $ds = $this->_get_dashboard_data(($_GET['id'] ?? null));
+        $ds = $this->_get_dashboard_data($_GET['id'] ?? null);
 
         if ( ! $ds['id']) {
             return _e('No such record');
@@ -216,7 +216,7 @@ class yf_manage_dashboards2
         if (main()->is_post()) {
             if ( ! _ee()) {
                 db()->update('dashboards2', db()->es([
-                    'data' => json_encode(($_POST['ds_data'] ?? null)),
+                    'data' => json_encode($_POST['ds_data'] ?? null),
                 ]), 'id=' . (int) ($ds['id']));
                 common()->admin_wall_add(['dashboard updated: ' . $ds['name'], ($_GET['id'] ?? null)]);
                 return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['object'] ?? null));
