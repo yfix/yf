@@ -706,7 +706,7 @@ class yf_payment_api__currency
 
     public function rates($options = null)
     {
-        $_currency_id = null;
+        $_currency_id = $_is_force = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -724,7 +724,7 @@ class yf_payment_api__currency
         $provider_id = $provider_item['id'];
         // cache
         $currency_rate = $this->cache[__FUNCTION__][$provider_id][$_type][$_currency_id];
-        if ( ! empty($_force) || ! $currency_rate) {
+        if ( ! empty($_is_force) || ! $currency_rate) {
             list($currency_id, $currency) = $payment_api->get_currency__by_id(['currency_id' => $_currency_id]);
             if (($_type ?? null) == 'buy') {
                 $target = 'to';
