@@ -110,7 +110,7 @@ class yf_graphics
         if (is_object($obj)) {
             $hook_names = ['_hook_title', '_site_title'];
             foreach ($hook_names as $method_name) {
-                if (method_exists($obj, $method_name)) {
+                if (is_object($obj) && method_exists($obj, $method_name)) {
                     $title = $obj->$method_name($title);
                     break;
                 }
@@ -146,7 +146,7 @@ class yf_graphics
         if (is_object($obj)) {
             $hook_names = ['_hook_meta_tags', '_hook_meta'];
             foreach ($hook_names as $method_name) {
-                if (method_exists($obj, $method_name)) {
+                if (is_object($obj) && method_exists($obj, $method_name)) {
                     $meta = $obj->$method_name($meta);
                     break;
                 }
@@ -559,8 +559,8 @@ class yf_graphics
         $page_subheader = '';
         // Display hook contents
         // TODO: need to check permissions at first
-        //		$obj = module($_GET['object']);
-        if (method_exists($obj, '_show_header')) {
+        $obj = module_safe(($_GET['object'] ?? null));
+        if (is_object($obj) && method_exists($obj, '_show_header')) {
             $result = $obj->_show_header();
             if (is_array($result)) {
                 $page_header = $result['header'];
@@ -606,7 +606,7 @@ class yf_graphics
         $method_name = '_quick_menu';
         // TODO: need to check permissions at first
         //		$obj = module($_GET['object']);
-        if (method_exists($obj, $method_name)) {
+        if (is_object($obj) && method_exists($obj, $method_name)) {
             $data2 = $obj->$method_name();
         }
         $data = (array) $data2 + (array) $data;

@@ -58,7 +58,7 @@ class yf_log_user_auth_fails
         foreach (explode('|', 'login|time|ip|user_agent|referer') as $f) {
             $order_fields[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->text('login')

@@ -176,7 +176,7 @@ class yf_other_common
 
         $text_length = strlen($text);
         $num_parts = ceil($text_length / $split_length);
-        $token_length = strlen($_split_token);
+        $token_length = strlen((string) $_split_token);
 
         for ($i = 0; $i < $num_parts; $i++) {
             $_start_offset = $i * $split_length + $token_length;

@@ -58,7 +58,7 @@ class yf_manage_geo_countries
             'active' => 'active',
         ];
         $per_page = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500];
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->text('name')

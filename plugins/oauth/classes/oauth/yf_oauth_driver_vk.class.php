@@ -50,7 +50,7 @@ class yf_oauth_driver_vk extends yf_oauth_driver2
                 'access_token' => $access_token,
                 'user_id' => $user_id,
             ]);
-            $result = common()->get_remote_page($url, $cache = false, $opts, $response);
+            $result = common()->get_remote_page($url, $cache = false, [], $response);
             $result = $this->_decode_result($result, $response);
             if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
                 $this->_storage_clean();

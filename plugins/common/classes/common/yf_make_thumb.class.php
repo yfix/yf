@@ -253,7 +253,7 @@ class yf_make_thumb
             $img->setImageCompressionQuality(85);
             $img->resizeImage($x, $y, Imagick::FILTER_LANCZOS, 1.1, $bestfit = true);
         } else {
-            $img->resizeImage($x, $y, null, null, $bestfit = true);
+            $img->resizeImage($x, $y, Imagick::FILTER_UNDEFINED, 1, $bestfit = true);
         }
         return $img->writeImage($dest);
     }

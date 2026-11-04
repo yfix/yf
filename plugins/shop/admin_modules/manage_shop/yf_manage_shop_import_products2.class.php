@@ -1105,7 +1105,7 @@ class yf_manage_shop_import_products2
         }
         $exists = null;
         $status = $valid;
-        $status_message = $status ? null : $status_message;
+        $status_message = $status ? null : ($status_message ?? null);
         $result = [
             'valid' => $valid,
             'exists' => $exists,
@@ -1126,7 +1126,7 @@ class yf_manage_shop_import_products2
         }
         $exists = null;
         $status = $valid;
-        $status_message = $status ? null : $status_message;
+        $status_message = $status ? null : ($status_message ?? null);
         $result = [
             'valid' => $valid,
             'exists' => $exists,
@@ -1179,7 +1179,7 @@ class yf_manage_shop_import_products2
         }
         $exists = null;
         $status = $valid;
-        $status_message = $status ? null : $status_message;
+        $status_message = $status ? null : ($status_message ?? null);
         $result = [
             'valid' => $valid,
             'exists' => $exists,
@@ -1201,7 +1201,7 @@ class yf_manage_shop_import_products2
             ! $exists && $status_message = 'категория не существует';
         }
         $status = $valid && $exists;
-        $status_message = $status ? null : $status_message;
+        $status_message = $status ? null : ($status_message ?? null);
         $result = [
             'valid' => $valid,
             'exists' => $exists,
@@ -1225,7 +1225,7 @@ class yf_manage_shop_import_products2
             $many > 1 && $status_message = 'множество категорий с этим именем: ' . $many;
         }
         $status = $valid && $exists && $many == 1;
-        $status_message = $status ? null : $status_message;
+        $status_message = $status ? null : ($status_message ?? null);
         $result = [
             'valid' => $valid,
             'exists' => $exists,
@@ -1248,7 +1248,7 @@ class yf_manage_shop_import_products2
             ! $exists && $status_message = 'код производителя не существует';
         }
         $status = $valid && $exists;
-        $status_message = $status ? null : $status_message;
+        $status_message = $status ? null : ($status_message ?? null);
         $result = [
             'valid' => $valid,
             'exists' => $exists,
@@ -1271,7 +1271,7 @@ class yf_manage_shop_import_products2
             $many > 1 && $status_message = 'множество производителей с этим именем: ' . $many;
         }
         $status = ($action == 'insert') || ($valid && $exists && $many == 1);
-        $status_message = $status ? null : $status_message;
+        $status_message = $status ? null : ($status_message ?? null);
         $result = [
             'valid' => $valid,
             'exists' => $exists,
@@ -1294,7 +1294,7 @@ class yf_manage_shop_import_products2
             ! $exists && $status_message = 'код поставщика не существует';
         }
         $status = $valid && $exists;
-        $status_message = $status ? null : $status_message;
+        $status_message = $status ? null : ($status_message ?? null);
         $result = [
             'valid' => $valid,
             'exists' => $exists,
@@ -1315,7 +1315,7 @@ class yf_manage_shop_import_products2
         ! $exists && $status_message = 'поставщик не существует';
         $many > 1 && $status_message = 'множество поставщиков с этим именем: ' . $many;
         $status = ($valid && $exists && $many == 1);
-        $status_message = $status ? null : $status_message;
+        $status_message = $status ? null : ($status_message ?? null);
         $result = [
             'valid' => $valid,
             'exists' => $exists,

@@ -22,7 +22,7 @@ class yf_shop_orders
         } else {
             $sql = 'SELECT * FROM ' . db('shop_orders') . ' WHERE user_id=' . (int) (main()->USER_ID);
             //$filter_sql = $this->PARENT_OBJ->USE_FILTER ? $this->PARENT_OBJ->_create_filter_sql() : "";
-            $sql .= strlen($filter_sql) ? ' WHERE 1=1 ' . $filter_sql : ' ORDER BY date DESC ';
+            $sql .= strlen((string) $filter_sql) ? ' WHERE 1=1 ' . $filter_sql : ' ORDER BY date DESC ';
             list($add_sql, $pages, $total) = common()->divide_pages($sql);
             $orders_info = db()->query_fetch_all($sql . $add_sql);
             if ( ! empty($orders_info)) {

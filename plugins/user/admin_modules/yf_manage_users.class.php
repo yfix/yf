@@ -208,7 +208,7 @@ class yf_manage_users
         foreach (explode('|', 'name|login|email|add_date|last_login|num_logins|active') as $f) {
             $order_fields[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->number('id')

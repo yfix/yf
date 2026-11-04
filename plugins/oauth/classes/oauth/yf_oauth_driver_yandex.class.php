@@ -50,7 +50,7 @@ class yf_oauth_driver_yandex extends yf_oauth_driver2
                 'oauth_token' => $access_token,
                 'format' => 'json',
             ]);
-            $result = common()->get_remote_page($url, $cache = false, $opts, $response);
+            $result = common()->get_remote_page($url, $cache = false, [], $response);
             $result = $this->_decode_result($result, $response, __FUNCTION__);
             if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
                 $this->_storage_clean();

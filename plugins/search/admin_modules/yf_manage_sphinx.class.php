@@ -244,7 +244,7 @@ class yf_manage_sphinx
                     ), $index_share);
                 }
         */
-        $config_data = array_merge($sources, $indexes, $config_data);
+        $config_data = array_merge((array) $sources, (array) $indexes, (array) $config_data);
 
         return $config_data;
     }

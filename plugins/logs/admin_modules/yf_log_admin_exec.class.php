@@ -60,7 +60,7 @@ class yf_log_admin_exec
         foreach (explode('|', 'admin_id|admin_group|date|ip|user_agent|referer') as $f) {
             $order_fields[$f] = $f;
         }
-		return form($r, ['filter' => true])
+		return form([], ['filter' => true])
             ->number('admin_id')
             ->text('ip')
             ->text('user_agent')

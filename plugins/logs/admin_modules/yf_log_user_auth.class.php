@@ -64,7 +64,7 @@ class yf_log_user_auth
         foreach (explode('|', 'user_id|login|group|date|ip|user_agent|referer') as $f) {
             $order_fields[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->number('user_id')

@@ -60,7 +60,7 @@ class yf_shop_order_view
         }
         $total_price = $order_info['total_sum'];
 
-        $replace = my_array_merge($replace, _prepare_html($order_info));
+        $replace = my_array_merge($replace ?? [], _prepare_html($order_info));
         $replace = my_array_merge($replace, [
             'form_action' => './?object=shop&action=' . ($_GET['action'] ?? null) . '&id=' . ($_GET['id'] ?? null),
             'order_id' => $order_info['id'],

@@ -2293,8 +2293,8 @@ class yf_manage_payout
         }
         // amount
         $amount = (float) $operation['amount'];
-        $amounts = @preg_replace('/[^\d\.\,]/', '|', $_amounts);
-        $amounts = @explode('|', $amounts);
+        $amounts = preg_replace('/[^\d\.\,]/', '|', (string) $_amounts);
+        $amounts = explode('|', (string) $amounts);
         if ($amount != array_sum($amounts)) {
             $payment_api->transaction_rollback();
             $status_message = 'Сумма не совпадает: ' . $amount . ' != ' . implode(' + ', $amounts);

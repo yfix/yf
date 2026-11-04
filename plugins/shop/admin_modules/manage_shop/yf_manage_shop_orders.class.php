@@ -295,7 +295,7 @@ class yf_manage_shop_orders
         $discount_add_price = $_class_price->apply_price($price_total, $_discount);
         $discount_add_price -= $price_total;
         $total_price = tofloat($order_info['total_sum']);
-        $replace = my_array_merge($replace, _prepare_html($order_info));
+        $replace = my_array_merge($replace ?? [], _prepare_html($order_info));
         $replace = my_array_merge($replace, [
             'form_action' => './?object=' . main()->_get('object') . '&action=' . ($_GET['action'] ?? null) . '&id=' . ($_GET['id'] ?? null),
             'order_id' => $order_info['id'],

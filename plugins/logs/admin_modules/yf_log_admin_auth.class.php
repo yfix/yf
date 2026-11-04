@@ -58,7 +58,7 @@ class yf_log_admin_auth
         foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
             $order_fields[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->number('admin_id')

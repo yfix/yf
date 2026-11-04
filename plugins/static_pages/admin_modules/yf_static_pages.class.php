@@ -41,7 +41,7 @@ class yf_static_pages
 
     public function add()
     {
-        $a = (array) $_POST + (array) $a;
+        $a = (array) $_POST + (array) ($a ?? []);
         $a['back_link'] = url('/@object');
         $a['locale'] = ($a['locale'] ?? null) ?: conf('language');
         $_this = $this;
@@ -103,7 +103,7 @@ class yf_static_pages
                 $a[$k] = str_replace(array_keys($exec_fix), array_values($exec_fix), $a[$k]);
             }
         }
-        $a = (array) $_POST + (array) $a;
+        $a = (array) $_POST + (array) ($a ?? []);
         if (is_post()) {
             foreach ((array) $keys_to_fix as $k) {
                 if (false !== strpos(($_POST[$k] ?? ''), '{') && false !== strpos(($_POST[$k] ?? ''), '}')) {
@@ -356,7 +356,7 @@ class yf_static_pages
             'name' => 'name',
             'active' => 'active',
         ];
-        return form($r, [
+        return form([], [
                 'class' => 'form-vertical',
                 'filter' => true,
             ])

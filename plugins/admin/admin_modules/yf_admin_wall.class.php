@@ -87,7 +87,7 @@ class yf_admin_wall
         foreach (explode('|', 'add_date|message|object|action|object_id|admin_id') as $v) {
             $order_fields[$v] = $v;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->number('user_id')

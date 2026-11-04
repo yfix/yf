@@ -965,7 +965,7 @@ class yf_main
             $this->modules[$class_name] = new $class_name_to_load($params);
             $this->set_module_conf($class_name, $this->modules[$class_name], $params);
         }
-        if (is_object($this->modules[$class_name])) {
+        if (is_object($this->modules[$class_name] ?? null)) {
             return $this->modules[$class_name];
         }
         return null;

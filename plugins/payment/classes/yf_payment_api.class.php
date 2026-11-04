@@ -823,7 +823,7 @@ class yf_payment_api
          */
         // test: exists by provider_id
         if ( ! empty($_exists)) {
-            $result = ! empty($provider[$exists]);
+            $result = ! empty($provider[$_exists]);
         }
         // all
         elseif ( ! empty($_all)) {
@@ -1996,6 +1996,7 @@ class yf_payment_api
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $tx = &$this->transaction;
         $result = null;
+        $state = null;
         if ($_state ?? null) {
             $state = strtoupper($_state);
             switch ($state) {

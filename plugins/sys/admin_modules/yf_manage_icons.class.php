@@ -89,7 +89,7 @@ class yf_manage_icons
             'active' => 'active',
         ];
         $per_page = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000];
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->text('name')

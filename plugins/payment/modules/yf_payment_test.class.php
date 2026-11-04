@@ -2057,6 +2057,9 @@ EOS;
             $action = implode(' ', (array) $_action);
         }
         // data
+        $data = null;
+        $lang = null;
+        $footer = '';
         if (($_php ?? null)) {
             $data = is_array($_php) ? implode("\n", $_php) : $_php;
             $lang = 'php';
@@ -2078,7 +2081,7 @@ EOS;
             ! ($_is_action ?? null) && $expanded_in = '';
             // form
             $form = '';
-            $name = strtolower($_title);
+            $name = strtolower((string) $_title);
             ($_form ?? null) && $form = <<<EOS
 			<div class="form">
 				$_form

@@ -93,7 +93,7 @@ class yf_payment_api__currency
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
-        @$provider = &$this->provider[strtolower($_provider)];
+        @$provider = &$this->provider[strtolower((string) $_provider)];
         if ( ! $provider) {
             $result = [
                 'status' => false,
