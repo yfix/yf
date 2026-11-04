@@ -30,7 +30,7 @@ SSH::run($commands, function($line) {
 if (!function_exists('ssh_exec_all')) {
     function ssh_exec_all($group_name = '', $cmd = '')
     {
-        static $server_groups, $server_groups_names, $server_groups, $server_groups_names, $servers, $servers_ids_by_group;
+        static $server_groups, $server_groups_names, $servers, $servers_ids_by_group;
         if (empty($servers)) {
             $server_groups = [];
             $server_groups_names = [];
