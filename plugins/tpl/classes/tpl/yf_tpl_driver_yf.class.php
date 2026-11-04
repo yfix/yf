@@ -54,7 +54,7 @@ class yf_tpl_driver_yf
      */
     public function _init()
     {
-        $this->tpl = &_class('tpl');
+        $this->tpl = _class('tpl');
         if (! function_exists('preg_match_all')) {
             trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_WARNING);
         }
@@ -254,6 +254,7 @@ class yf_tpl_driver_yf
         $compiled_string = null;
         // TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
         $compiled_storage = 'files';
+        $compiled_mtime = null;
         if ($compiled_storage === 'files') {
             $compiled_cache_name = $name . '@' . $params['force_storage'] . '@' . MAIN_TYPE;
             if (isset($this->_compiled_cache[$compiled_cache_name])) {
@@ -269,7 +270,7 @@ class yf_tpl_driver_yf
                 }
             }
         }
-        if ($compiled_mtime && strlen($compiled_string) && $this->tpl->COMPILE_CHECK_STPL_CHANGED) {
+        if ($compiled_mtime && strlen((string) $compiled_string) && $this->tpl->COMPILE_CHECK_STPL_CHANGED) {
             $mtime_cache_name = $name . '@' . $params['force_storage'];
             if (isset($this->_stpl_mtimes[$mtime_cache_name])) {
                 $source_mtime = $this->_stpl_mtimes[$mtime_cache_name];
@@ -323,7 +324,7 @@ class yf_tpl_driver_yf
     {
         $this->CACHE[$name]['driver'] = 'yf';
         $this->CACHE[$name]['is_compiled'] = (int) $is_compiled;
-        @$this->CACHE[$name]['calls']++;
+        $this->CACHE[$name]['calls'] = ($this->CACHE[$name]['calls'] ?? 0) + 1;
         if (! isset($this->CACHE[$name]['string'])) {
             $this->CACHE[$name]['string'] = $string;
         }

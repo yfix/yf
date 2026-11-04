@@ -523,6 +523,7 @@ class yf_table2
         }
         $sql = $this->_sql;
         $ids = [];
+        $sql_is_array = $sql_is_callable = $sql_is_query_builder = $sql_is_object = false;
         if (is_array($sql)) {
             $sql_is_array = true;
         } elseif (is_callable($sql)) {
@@ -1212,6 +1213,8 @@ class yf_table2
                 $name = $params['name'];
                 $extra = $params['extra'];
                 $orig_extra = $extra;
+                $body = '';
+                $link = null;
                 if (($extra['padding'] ?? null) && $row['level']) {
                     $body = '<span style="padding-left:' . ($row['level'] * 20) . 'px; padding-right:5px;">&#9492;</span>';
                 }
@@ -1778,7 +1781,7 @@ class yf_table2
             $link = ($extra['link'] ?? null) ?: url('/@object/edit/%d');
         }
         if ( ! ($extra['no_ajax'] ?? null)) {
-            $extra['class_add'] .= ' ' . $this->CLASS_AJAX_EDIT;
+            $extra['class_add'] = ($extra['class_add'] ?? '') . ' ' . $this->CLASS_AJAX_EDIT;
         }
         if ( ! isset($extra['icon'])) {
             $extra['icon'] = $this->CLASS_ICON_EDIT;
@@ -1810,7 +1813,7 @@ class yf_table2
             $link = ($extra['link'] ?? null) ?: url('/@object/delete/%d');
         }
         if ( ! ($extra['no_ajax'] ?? null)) {
-            $extra['class_add'] .= ' ' . $this->CLASS_AJAX_DELETE;
+            $extra['class_add'] = ($extra['class_add'] ?? '') . ' ' . $this->CLASS_AJAX_DELETE;
         }
         if ( ! isset($extra['icon'])) {
             $extra['icon'] = $this->CLASS_ICON_DELETE;
@@ -1842,7 +1845,7 @@ class yf_table2
             $link = ($extra['link'] ?? null) ?: url('/@object/clone_item/%d');
         }
         if ( ! $extra['no_ajax']) {
-            $extra['class_add'] .= ' ' . $this->CLASS_AJAX_CLONE;
+            $extra['class_add'] = ($extra['class_add'] ?? '') . ' ' . $this->CLASS_AJAX_CLONE;
         }
         if ( ! isset($extra['icon'])) {
             $extra['icon'] = $this->CLASS_ICON_CLONE;
@@ -1874,7 +1877,7 @@ class yf_table2
             $link = ($extra['link'] ?? null) ?: url('/@object/view/%d');
         }
         if ( ! $extra['no_ajax']) {
-            $extra['class_add'] .= ' ' . $this->CLASS_AJAX_VIEW;
+            $extra['class_add'] = ($extra['class_add'] ?? '') . ' ' . $this->CLASS_AJAX_VIEW;
         }
         if ( ! isset($extra['icon'])) {
             $extra['icon'] = $this->CLASS_ICON_VIEW;
@@ -2063,7 +2066,7 @@ class yf_table2
             $link = ($extra['link'] ?? null) ?: url('/@object/add');
         }
         if ( ! ($extra['no_ajax'] ?? null)) {
-            $extra['class_add'] .= ' ' . $this->CLASS_AJAX_ADD;
+            $extra['class_add'] = ($extra['class_add'] ?? '') . ' ' . $this->CLASS_AJAX_ADD;
         }
         if ( ! isset($extra['icon'])) {
             $extra['icon'] = $this->CLASS_ICON_ADD;

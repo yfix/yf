@@ -425,7 +425,7 @@ class yf_security
      */
     protected function _decode_entity($match)
     {
-        return $this->entity_decode($match[0], strtoupper(conf('charset')));
+        return $this->entity_decode($match[0], strtoupper((string) conf('charset')));
     }
 
     /**

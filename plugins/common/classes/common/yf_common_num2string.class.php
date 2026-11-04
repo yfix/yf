@@ -242,7 +242,7 @@ class yf_common_num2string
         $decimal_point = $number_format['decimal_point'];
         // $thousands_sep = $number_format[ 'thousands_sep' ];
         $thousands_sep = [' ', '.', ',', "'", '`'];
-        list($part1, $part2) = explode($decimal_point, $number);
+        list($part1, $part2) = array_pad(explode($decimal_point, $number), 2, '');
         $part2 = substr($part2 . '00', 0, 2);
         $number = str_replace($thousands_sep, '', $part1) . '0' . $part2;
         // add sign word

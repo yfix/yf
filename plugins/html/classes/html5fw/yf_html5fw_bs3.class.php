@@ -59,7 +59,7 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
                 if ($extra['stacked'] ?? null) {
                     $extra['class_add_stacked'] .= ' ' . $_css_class;
                 } else {
-                    $extra['class_add_form_group'] .= ' ' . $_css_class;
+                    $extra['class_add_form_group'] = ($extra['class_add_form_group'] ?? '') . ' ' . $_css_class;
                 }
                 break;
             }

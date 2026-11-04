@@ -197,7 +197,7 @@ class yf_form2_tbl_funcs
         }
         $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'active');
         $extra['link'] = ($extra['link'] ?? null) ?: $link;
-        $extra['desc'] = $form->_prepare_desc($extra, $desc);
+        $extra['desc'] = $form->_prepare_desc($extra, '');
         $func = function ($extra, $r, $form) {
             $link = $extra['link'];
             if ( ! $link) {

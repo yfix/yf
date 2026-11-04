@@ -1282,7 +1282,7 @@ class yf_assets
 			// This line needed to strip query string from file name like this:
 			// /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
             $parsed_url = parse_url($content);
-			if ( ! strlen($parsed_url['host'] ?? null) && strlen($parsed_url['path']) && pathinfo($parsed_url['path'], PATHINFO_EXTENSION) != $asset_type) {
+			if ( ! strlen($parsed_url['host'] ?? '') && strlen($parsed_url['path'] ?? '') && pathinfo($parsed_url['path'], PATHINFO_EXTENSION) != $asset_type) {
 				$content = '';
 			}
 		}

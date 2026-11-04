@@ -325,7 +325,7 @@ class yf_form2
             $form_id = $params[$this->CONF_FORM_ID_FIELD];
         }
         if ( ! $form_id) {
-            $form_id = $this->CONF_FORM_AUTOID_PREFIX . strtolower(($_GET['object'] ?? null) . '_' . ($_GET['action'] ?? null)) . '_' . ++main()->_unique_widget_ids['form'];
+            $form_id = $this->CONF_FORM_AUTOID_PREFIX . strtolower(($_GET['object'] ?? null) . '_' . ($_GET['action'] ?? null)) . '_' . (main()->_unique_widget_ids['form'] = (main()->_unique_widget_ids['form'] ?? 0) + 1);
         }
         $this->_form_id = $form_id;
         return $form_id;
@@ -493,7 +493,7 @@ class yf_form2
             if ( ! is_array($v)) {
                 continue;
             }
-            $_extra = ($v['extra'] ?? []) + ($extra_override[($v['extra']['name'] ?? null)] ?? []);
+            $_extra = ($v['extra'] ?? []) + ($extra_override[$v['extra']['name'] ?? ''] ?? []);
             $_replace = ($r ?? []) + ($v['replace'] ?? []);
             $func = $v['func'];
             if ($v['name'] == 'row_start') {
@@ -764,7 +764,7 @@ class yf_form2
         $extra['name'] = ($extra['name'] ?? null) ?: $name;
         $func = function ($extra, $r, $form) {
             $body = '';
-            if ($form->_fieldset_mode_on) {
+            if ($form->_fieldset_mode_on ?? false) {
                 $body = '</fieldset>' . PHP_EOL;
             } else {
                 $form->_fieldset_mode_on = true;
@@ -3371,7 +3371,7 @@ class yf_form2
             $validate_ok = $form->_validate_rules_process($form->_validate_rules, $data, $extra);
             if ($validate_ok) {
                 $form->_validate_ok = true;
-                $on_validate_ok = isset($extra['on_validate_ok']) ? $extra['on_validate_ok'] : $form->_on['on_validate_ok'];
+                $on_validate_ok = isset($extra['on_validate_ok']) ? $extra['on_validate_ok'] : ($form->_on['on_validate_ok'] ?? null);
                 if (is_callable($on_validate_ok)) {
                     $on_validate_ok($data, $extra, $form->_validate_rules, $this);
                 }

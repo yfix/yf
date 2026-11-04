@@ -389,7 +389,7 @@ class yf_validate
             }
             return false;
         }
-        return trim($in) !== '';
+        return trim((string) $in) !== '';
     }
 
     /**
@@ -401,7 +401,7 @@ class yf_validate
      */
     public function required_if($in, $params = [], $fields = [])
     {
-        $param = trim(is_array($params) ? ($params['param'] ?? null) : $params);
+        $param = trim((string) (is_array($params) ? ($params['param'] ?? '') : $params));
         if ( ! strlen($param)) {
             return false;
         }
@@ -420,9 +420,10 @@ class yf_validate
      */
     public function required_any($in, $params = [], $fields = [])
     {
-        $param = trim(is_array($params) ? ($params['param'] ?? null) : $params);
+        $param = trim((string) (is_array($params) ? ($params['param'] ?? '') : $params));
         $wildcard = false;
         // Example: duration_day,duration_week,duration_month
+        $field_names = $wildcard = null;
         if (false !== strpos($param, ',')) {
             $field_names = explode(',', $param);
         // Example: duration_*
@@ -559,7 +560,7 @@ class yf_validate
      */
     public function standard_text($in)
     {
-        return (bool) preg_match('~^[a-z0-9\s\t,\._-]+$~ims', $in);
+        return (bool) preg_match('~^[a-z0-9\s\t,\._-]+$~ims', (string) $in);
     }
 
     /**
@@ -595,7 +596,7 @@ class yf_validate
             return false;
         }
         $regex = '~^[' . preg_quote(implode($chars), '~') . ']+$~ims';
-        return (bool) preg_match($regex, $in);
+        return (bool) preg_match($regex, (string) $in);
     }
 
     /**
@@ -717,7 +718,7 @@ class yf_validate
     public function regex_match($in, $params = [])
     {
         $regex = is_array($params) ? $params['param'] : $params;
-        return (bool) preg_match($regex, $in);
+        return (bool) preg_match($regex, (string) $in);
     }
 
     /**
@@ -764,7 +765,7 @@ class yf_validate
                 return false;
             }
         }
-        return (bool) preg_match('/^([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9])(\.([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9]))*$/i', $in);
+        return (bool) preg_match('/^([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9])(\.([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9]))*$/i', (string) $in);
     }
 
     /**
@@ -814,7 +815,7 @@ class yf_validate
      */
     public function valid_email($in)
     {
-        return (bool) filter_var(strval($in), FILTER_VALIDATE_EMAIL);
+        return ! is_array($in) && (bool) filter_var(strval($in), FILTER_VALIDATE_EMAIL);
     }
 
     /**
@@ -844,6 +845,9 @@ class yf_validate
      */
     public function valid_base64($in)
     {
+        if (is_array($in)) {
+            return false;
+        }
         $in = strval($in);
         return strlen($in) && (base64_encode(base64_decode($in)) === $in);
     }
@@ -919,7 +923,7 @@ class yf_validate
     public function length($in, $params = [])
     {
         $val = is_array($params) ? ($params['param'] ?? null) : $params;
-        if (false === strpos($val, ',')) {
+        if (false === strpos((string) $val, ',')) {
             return $this->exact_length($in, $params);
         }
         list($min, $max) = explode(',', $val);
@@ -1029,7 +1033,7 @@ class yf_validate
      */
     public function alpha($in)
     {
-        return ctype_alpha($in);
+        return is_string($in) && ctype_alpha($in);
     }
 
     /**
@@ -1050,7 +1054,7 @@ class yf_validate
      */
     public function alpha_spaces($in)
     {
-        return (bool) preg_match('/^[A-Z ]+$/i', $in);
+        return (bool) preg_match('/^[A-Z ]+$/i', (string) $in);
     }
 
     /**
@@ -1059,7 +1063,7 @@ class yf_validate
      */
     public function alpha_numeric_spaces($in)
     {
-        return (bool) preg_match('/^[A-Z0-9 ]+$/i', $in);
+        return (bool) preg_match('/^[A-Z0-9 ]+$/i', (string) $in);
     }
 
     /**
@@ -1068,7 +1072,7 @@ class yf_validate
      */
     public function alpha_dash($in)
     {
-        return (bool) preg_match('/^[a-z0-9_-]+$/i', $in);
+        return (bool) preg_match('/^[a-z0-9_-]+$/i', (string) $in);
     }
 
     /**
@@ -1077,7 +1081,7 @@ class yf_validate
      */
     public function alpha_dash_dots($in)
     {
-        return (bool) preg_match('/^[a-z0-9_\.-]+$/i', $in);
+        return (bool) preg_match('/^[a-z0-9_\.-]+$/i', (string) $in);
     }
 
     /**
@@ -1086,7 +1090,7 @@ class yf_validate
      */
     public function unicode_alpha($in)
     {
-        return (bool) preg_match('/^[\pL\pM]+$/u', $in);
+        return (bool) preg_match('/^[\pL\pM]+$/u', (string) $in);
     }
 
     /**
@@ -1095,7 +1099,7 @@ class yf_validate
      */
     public function unicode_alpha_numeric($in)
     {
-        return (bool) preg_match('/^[\pL\pM\pN]+$/u', $in);
+        return (bool) preg_match('/^[\pL\pM\pN]+$/u', (string) $in);
     }
 
     /**
@@ -1104,7 +1108,7 @@ class yf_validate
      */
     public function unicode_alpha_spaces($in)
     {
-        return (bool) preg_match('/^[\pL\pM\s]+$/u', $in);
+        return (bool) preg_match('/^[\pL\pM\s]+$/u', (string) $in);
     }
 
     /**
@@ -1113,7 +1117,7 @@ class yf_validate
      */
     public function unicode_alpha_numeric_spaces($in)
     {
-        return (bool) preg_match('/^[\pL\pM\pN\s]+$/u', $in);
+        return (bool) preg_match('/^[\pL\pM\pN\s]+$/u', (string) $in);
     }
 
     /**
@@ -1122,7 +1126,7 @@ class yf_validate
      */
     public function unicode_alpha_dash($in)
     {
-        return (bool) preg_match('/^[\pL\pM\pN_-]+$/u', $in);
+        return (bool) preg_match('/^[\pL\pM\pN_-]+$/u', (string) $in);
     }
 
     /**
@@ -1131,7 +1135,7 @@ class yf_validate
      */
     public function numeric($in)
     {
-        return (bool) preg_match('/^[\-+]?[0-9]*\.?[0-9]+$/', $in);
+        return (bool) preg_match('/^[\-+]?[0-9]*\.?[0-9]+$/', (string) $in);
     }
 
     /**
@@ -1140,7 +1144,7 @@ class yf_validate
      */
     public function integer($in)
     {
-        return (bool) preg_match('/^[\-+]?[0-9]+$/', $in);
+        return (bool) preg_match('/^[\-+]?[0-9]+$/', (string) $in);
     }
 
     /**
@@ -1149,7 +1153,7 @@ class yf_validate
      */
     public function decimal($in)
     {
-        return (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $in);
+        return (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', (string) $in);
     }
 
     /**
@@ -1210,7 +1214,7 @@ class yf_validate
      */
     public function _valid_ip($ip, $ip_version = 'ipv4')
     {
-        $ip_version = strtolower($ip_version);
+        $ip_version = strtolower((string) $ip_version);
         if ( ! $ip_version) {
             $ip_version = 'ipv4';
         }

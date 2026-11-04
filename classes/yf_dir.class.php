@@ -427,6 +427,7 @@ class yf_dir
         $func = __FUNCTION__;
         $start_dir = rtrim($start_dir, '/');
         // Process folder contents
+        $sub_dirs_list = [];
         $dh = opendir($start_dir);
         while (false !== ($f = readdir($dh))) {
             if ($f == '.' || $f == '..') {

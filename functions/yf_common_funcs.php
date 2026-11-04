@@ -407,7 +407,7 @@ if ( ! function_exists('_htmlchars')) {
             '<' => '&lt;',
             '>' => '&gt;',
         ];
-        return str_replace(array_keys($replace), array_values($replace), $str);
+        return str_replace(array_keys($replace), array_values($replace), (string) $str);
     }
 }
 

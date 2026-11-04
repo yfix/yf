@@ -258,6 +258,7 @@ class yf_common
      */
     public function divide_pages($sql = '', $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = [])
     {
+        $sql_is_array = $sql_is_callable = $sql_is_query_builder = $sql_is_object = false;
         if (is_array($sql)) {
             $sql_is_array = true;
         } elseif (is_callable($sql)) {

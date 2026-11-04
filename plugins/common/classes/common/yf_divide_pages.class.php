@@ -226,7 +226,7 @@ class yf_divide_pages
             }
             // Process current block of pages
             for ($k = $start_page; $k < $end_page; $k++) {
-                $items['pages'] .= tpl()->parse($tpls_path . ($cur_page == $k ? 'page_current' : 'page_other'), [
+                $items['pages'] = ($items['pages'] ?? '') . tpl()->parse($tpls_path . ($cur_page == $k ? 'page_current' : 'page_other'), [
                     'link' => $url_path . '&page=' . $k,
                     'page_num' => $k,
                 ]);
@@ -328,7 +328,7 @@ class yf_divide_pages
             }
             // Process current block of pages
             for ($k = $start_page; $k < $end_page; $k++) {
-                $items['pages'] .= tpl()->parse($tpls_path . ($cur_page == $k ? 'page_current' : 'page_other'), [
+                $items['pages'] = ($items['pages'] ?? '') . tpl()->parse($tpls_path . ($cur_page == $k ? 'page_current' : 'page_other'), [
                     'link' => $url_path . '&page=' . $k,
                     'page_num' => $k,
                 ]);

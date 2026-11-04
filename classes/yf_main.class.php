@@ -296,6 +296,7 @@ class yf_main
         if ($enabled || $refresh) {
             $cache = cache();
         }
+        $result = null;
         $enabled && $result = $cache->get($name, $ttl, $params);
         $need_result = true;
         if ($result) {
