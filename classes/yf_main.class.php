@@ -1803,10 +1803,10 @@ class yf_main
         if (! defined('WEB_PATH')) {
             $request_uri = $_SERVER['REQUEST_URI'];
             $cur_web_path = '';
-            if ($request_uri[strlen($request_uri) - 1] == '/') {
+            if (substr((string) $request_uri, -1) === '/') {
                 $cur_web_path = substr($request_uri, 0, -1);
             } else {
-                $cur_web_path = dirname($request_uri);
+                $cur_web_path = dirname((string) $request_uri);
             }
             $host = '';
             $conf_domains = conf('DOMAINS');
