@@ -158,7 +158,7 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function num_rows($query_id)
     {
-        return $query_id ? mysqli_num_rows($query_id) : false;
+        return $query_id instanceof mysqli_result ? mysqli_num_rows($query_id) : false;
     }
 
     /**
@@ -182,7 +182,7 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function fetch_row($query_id)
     {
-        return $query_id ? mysqli_fetch_row($query_id) : false;
+        return $query_id instanceof mysqli_result ? mysqli_fetch_row($query_id) : false;
     }
 
     /**
@@ -190,7 +190,7 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function fetch_assoc($query_id)
     {
-        return $query_id ? mysqli_fetch_assoc($query_id) : false;
+        return $query_id instanceof mysqli_result ? mysqli_fetch_assoc($query_id) : false;
     }
 
     /**
@@ -198,7 +198,7 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function fetch_array($query_id)
     {
-        return $query_id ? mysqli_fetch_array($query_id) : false;
+        return $query_id instanceof mysqli_result ? mysqli_fetch_array($query_id) : false;
     }
 
     /**
@@ -206,7 +206,7 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function fetch_object($query_id)
     {
-        return $query_id ? mysqli_fetch_object($query_id) : false;
+        return $query_id instanceof mysqli_result ? mysqli_fetch_object($query_id) : false;
     }
 
     /**
@@ -234,7 +234,7 @@ class yf_db_driver_mysqli extends yf_db_driver
      */
     public function free_result($query_id)
     {
-        if ($query_id) {
+        if ($query_id instanceof mysqli_result) {
             mysqli_free_result($query_id);
             // We need this for compatibility, because mysqli_free_result() returns "void"
             return true;
