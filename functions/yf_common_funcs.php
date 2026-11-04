@@ -159,11 +159,7 @@ if ( ! function_exists('my_array_merge')) {
             if (isset($a1[$k]) && is_array($a1[$k])) {
                 if (is_array($a2[$k])) {
                     foreach ((array) $a2[$k] as $k2 => $v2) {
-                        if (isset($a1[$k][$k1]) && is_array($a1[$k][$k1])) {
-                            $a1[$k][$k2] += $v2;
-                        } else {
-                            $a1[$k][$k2] = $v2;
-                        }
+                        $a1[$k][$k2] = $v2; // override wins (nested arrays are replaced, not merged)
                     }
                 } else {
                     $a1[$k] += $v;
