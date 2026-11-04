@@ -5,6 +5,7 @@
  */
 class yf_settings
 {
+    public $_used_modules = null;
     // bs2, bs3, pure, foundation, etc
     public $css_frameworks = [
         'bs2' => 'Twitter Bootstrap v2',

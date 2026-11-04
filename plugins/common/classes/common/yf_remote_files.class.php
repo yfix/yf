@@ -9,6 +9,12 @@
 #[AllowDynamicProperties]
 class yf_remote_files
 {
+    public $_curl_threads = null;
+    public $_curl_ids = null;
+    public $_file_handles = null;
+    public $_mh = null;
+    public $_curlopt_consts = null;
+    public $_curlinfo_consts = null;
     /** @var string SMTP host to verify emails from. Be sure to set this correctly! */
     public $SMTP_PROBE_HOST = 'mx.test.com';
     /** @var string */

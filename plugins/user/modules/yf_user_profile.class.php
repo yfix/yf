@@ -3,6 +3,8 @@
 // User profile handling module
 class yf_user_profile extends yf_module
 {
+    public $_num_forum_posts = null;
+    public $_num_blog_posts = null;
     public $FRIENDS_OBJ;
     public $_account_types;
     public $_ad_info;
@@ -279,7 +281,7 @@ class yf_user_profile extends yf_module
         // Process fields with links
         foreach ((array) $link_fields as $name => $desc) {
             if ( ! empty($this->_user_info[$name])) {
-                $body .= $$name;
+                $body .= $$name ?? '';
             }
         }
         // Process other fields

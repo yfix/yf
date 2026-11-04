@@ -9,6 +9,13 @@
 #[AllowDynamicProperties]
 class yf_admin_methods
 {
+    public $USER_ID = null;
+    public $USER_GROUP = null;
+    public $ADMIN_ID = null;
+    public $ADMIN_GROUP = null;
+    public $CENTER_BLOCK_ID = null;
+    public $ADMIN_URL_HOST = null;
+    public $ADMIN_URL_PATH = null;
     public $params = [];
     public $_params = [];
     public $default_ckeditor_params = [

@@ -8,6 +8,8 @@
  */
 class yf_admin_home
 {
+    public $SHOW_CUR_SETTINGS = null;
+    public $SHOW_GENERAL_INFO = null;
     /** @var string @conf_skip */
     public $CACHE_NAME = 'admin_statistics';
     /** @var int */

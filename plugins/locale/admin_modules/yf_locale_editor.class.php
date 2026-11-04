@@ -9,6 +9,13 @@
 #[AllowDynamicProperties]
 class yf_locale_editor
 {
+    public $lang_def_country = null;
+    public $_modules = null;
+    public $_langs = null;
+    public $_cur_langs_array = null;
+    public $_cur_langs = null;
+    public $_import_export_file_formats = null;
+    public $_import_modes = null;
     /** @var array @conf_skip */
     private static $HELP = [
         'edit' => [
@@ -906,7 +913,7 @@ Fallback when no numbers matched (any string)
             $order_fields[$f] = $f;
         }
         $per_page = ['' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000];
-        return form($r, ['filter' => true])
+        return form([], ['filter' => true])
             ->text('value', 'Source var')
             ->text('translation')
             ->select_box('locale', $this->_cur_langs)

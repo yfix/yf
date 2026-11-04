@@ -3,6 +3,7 @@
 load('mail_driver', '', 'classes/mail/');
 class yf_mail_driver_internal extends yf_mail_driver
 {
+    public $ALLOW_ATTACHMENTS = null;
     public $PARENT;
     /**
      * Catch missing method call.

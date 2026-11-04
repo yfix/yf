@@ -3,6 +3,7 @@
 
 class yf_locale_editor_user_vars
 {
+    public $VARS_IGNORE_CASE = null;
     public $_parent;
     public function _init()
     {
@@ -34,7 +35,7 @@ class yf_locale_editor_user_vars
 
         $sql = 'SELECT * FROM ' . db('locale_user_tr') . '';
         // TODO: add filter here with sorting selection, user id, etc
-        $sql .= strlen($filter_sql) ? ' WHERE 1 ' . $filter_sql : ' ORDER BY user_id DESC, name ASC';
+        $sql .= strlen((string) $filter_sql) ? ' WHERE 1 ' . $filter_sql : ' ORDER BY user_id DESC, name ASC';
 
         list($add_sql, $pages, $total) = common()->divide_pages($sql, '', '', 100);
 

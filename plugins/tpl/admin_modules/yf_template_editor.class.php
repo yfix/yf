@@ -9,6 +9,9 @@
 #[AllowDynamicProperties]
 class yf_template_editor
 {
+    public $_dir_array = null;
+    public $theme_name = null;
+    public $_cur_theme_path = null;
     /***/
     public $CACHE_NAME = 'themes_num_stpls';
 

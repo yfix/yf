@@ -2,6 +2,7 @@
 
 class yf_log_admin_redirects
 {
+    public $FOR_USER = null;
     public function show()
     {
         $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
@@ -62,7 +63,7 @@ class yf_log_admin_redirects
         foreach (explode('|', 'user_id|user_group|date|ip|user_agent|referer|url_from|url_to') as $f) {
             $order_fields[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->number('user_id')

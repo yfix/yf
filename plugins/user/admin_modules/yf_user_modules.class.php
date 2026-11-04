@@ -9,6 +9,9 @@
 #[AllowDynamicProperties]
 class yf_user_modules
 {
+    public $_yf_plugins = null;
+    public $_yf_plugins_classes = null;
+    public $_user_modules_array = null;
     /** @var array @conf_skip */
     public $_MODULES_TO_SKIP = [
         'rewrite',
@@ -477,7 +480,7 @@ class yf_user_modules
         foreach (explode('|', 'framework|framework_p2|framework_plugin|app_plugin|project|project_p2|project_plugin|site') as $f) {
             $locations[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->text('name')

@@ -3,6 +3,7 @@
 #[AllowDynamicProperties]
 class yf_payment_api__provider
 {
+    public $description = null;
     public $ENABLE = null;
     public $TEST_MODE = null;
 

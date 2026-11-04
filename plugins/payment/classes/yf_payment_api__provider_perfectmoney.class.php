@@ -4,6 +4,7 @@ _class('payment_api__provider_remote');
 
 class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_remote
 {
+    public $KEY_PRIVATE_API = null;
     public $URL = 'https://perfectmoney.is/api/step1.asp';
     public $KEY_PUBLIC = null;     // id
     public $KEY_PRIVATE = null;     // secret key

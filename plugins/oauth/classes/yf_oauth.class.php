@@ -3,6 +3,7 @@
 #[AllowDynamicProperties]
 class yf_oauth
 {
+    public $_providers_loaded = null;
     private $auto_email_prefix = 'oauth.';
     private $_providers = [];
 

@@ -10,6 +10,8 @@
 #[AllowDynamicProperties]
 class yf_category_editor
 {
+    public $_groups = null;
+    public $_category_items_from_db = null;
     /** @var int */
     public $ITEMS_PER_PAGE = 100;
     /** @var bool */

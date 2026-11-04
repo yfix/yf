@@ -3,6 +3,7 @@
 // Navigation bar handler
 class yf_site_nav_bar
 {
+    public $_cities = null;
     /** @var string */
     public $HOOK_NAME = '_nav_bar_items';
     /** @var bool */

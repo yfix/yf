@@ -2,6 +2,7 @@
 
 class yf_service_turbosms
 {
+    public $_connection = null;
     public $allowed_countries = [
         'UA' => '38',
     ];

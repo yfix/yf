@@ -5,6 +5,8 @@
  */
 class yf_wrapper_mongodb
 {
+    public $_connection = null;
+    public $connection = null;
     public $host;
     public $port;
     /**

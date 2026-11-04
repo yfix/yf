@@ -10,6 +10,9 @@
 #[AllowDynamicProperties]
 class yf_logs_exec_user
 {
+    public $is = null;
+    public $checks = null;
+    public $log_denied_because = null;
     /** @var bool */
     public $LOGGING = true;
     /** @var enum('db','file') */

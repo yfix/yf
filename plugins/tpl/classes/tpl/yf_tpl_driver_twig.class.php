@@ -7,6 +7,7 @@
 #[AllowDynamicProperties]
 class yf_tpl_driver_twig
 {
+    public $env = null;
     /**
      * Catch missing method call.
      * @param mixed $name

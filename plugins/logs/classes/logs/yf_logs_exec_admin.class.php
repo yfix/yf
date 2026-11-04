@@ -9,6 +9,8 @@
 #[AllowDynamicProperties]
 class yf_logs_exec_admin
 {
+    public $checks = null;
+    public $log_denied_because = null;
     /** @var array Stop-list for logging (REGEXPs allowed here) */
     public $STOP_LIST = [
 //		'task=(login|logout)',

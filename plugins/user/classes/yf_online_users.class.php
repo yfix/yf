@@ -2,6 +2,8 @@
 
 class yf_online_users
 {
+    public $online_user_id = null;
+    public $online_user_type = null;
     public $_CACHE_UPDATE_TTL = 30;
     public $_CACHE_CLEANUP_TTL = 90;
     public $_ONLINE_TTL = 60;

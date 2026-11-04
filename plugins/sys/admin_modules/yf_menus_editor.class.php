@@ -9,6 +9,13 @@
 #[AllowDynamicProperties]
 class yf_menus_editor
 {
+    public $_menu_items = null;
+    public $_groups = null;
+    public $_sites = null;
+    public $_servers = null;
+    public $_menu_types = null;
+    public $_item_types = null;
+    public $_menus_infos = null;
     /** @var string Path to icons */
     public $ICONS_PATH = 'uploads/icons/';
 

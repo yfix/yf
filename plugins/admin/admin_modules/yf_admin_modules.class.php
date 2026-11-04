@@ -9,6 +9,8 @@
 #[AllowDynamicProperties]
 class yf_admin_modules
 {
+    public $_yf_plugins = null;
+    public $_yf_plugins_classes = null;
     /** @var array */
     public $_MODULES_TO_SKIP = [];
     /** @var string @conf_skip Pattern for files */
@@ -491,7 +493,7 @@ class yf_admin_modules
         foreach (explode('|', 'framework|framework_p2|framework_plugin|app_plugin|project|project_p2|site') as $f) {
             $locations[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->text('name')

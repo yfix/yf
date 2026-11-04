@@ -3,6 +3,9 @@
 #[AllowDynamicProperties]
 class yf_manage_faq
 {
+    public $lang_def_country = null;
+    public $all_langs = null;
+    public $_items = null;
     const table = 'faq';
 
 

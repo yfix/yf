@@ -10,6 +10,10 @@
 #[AllowDynamicProperties]
 class yf_manage_dashboards
 {
+    public $_auto_info = null;
+    public $_name = null;
+    public $_dashboard_data = null;
+    public $_avail_widgets = null;
     /**
      * Bootstrap CSS classes used to create configurable grid.
      */

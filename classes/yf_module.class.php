@@ -8,6 +8,7 @@
  */
 class yf_module
 {
+    public $USE_BB_CODES = null;
     public $_boxes;
     /** @var bool */
     public $USE_CAPTCHA = true;

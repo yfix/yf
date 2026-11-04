@@ -4,6 +4,7 @@ _class('payment_api__provider_remote');
 
 class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
 {
+    public $external_response_errors = null;
     public $PROVIDER_NAME = 'bitaps';
     public $URL_API = 'https://bitaps.com/api/';
 
@@ -466,7 +467,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
         $payment_api = &$this->payment_api;
         // operation_id
         $_operation_id = (int) $_operation_id;
-        //$operation_id = $_operation_id;
+        $operation_id = $_operation_id;
         if (empty($_operation_id)) {
             $result = [
                 'status' => false,

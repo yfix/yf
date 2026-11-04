@@ -4,6 +4,11 @@ _class('payment_api__provider_remote');
 
 class yf_payment_api__provider_bitpay extends yf_payment_api__provider_remote
 {
+    public $external_response_errors = null;
+    public $fee = null;
+    public $ACCOUNT = null;
+    public $API_ID = null;
+    public $API_PASS = null;
     public $PROVIDER_NAME = 'bitpay';
     public $XPUB = null;
     public $KEY = null;

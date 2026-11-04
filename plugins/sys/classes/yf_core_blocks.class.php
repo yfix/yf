@@ -9,6 +9,7 @@
 #[AllowDynamicProperties]
 class yf_core_blocks
 {
+    public $cache__get_denied_tasks_names = null;
     public $TASK_NOT_FOUND_404_HEADER = false;
     public $TASK_DENIED_403_HEADER = false;
     public $FORCE_ALLOWED_CLASSES = [

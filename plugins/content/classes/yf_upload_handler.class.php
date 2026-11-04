@@ -3,6 +3,7 @@
 require_php_lib('jquery-file-upload');
 class yf_upload_handler extends UploadHandler
 {
+    public $options = null;
     public $image_width = 1920;
     public $image_height = 1080;
     public $image_types = [

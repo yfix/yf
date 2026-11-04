@@ -3,6 +3,9 @@
 #[AllowDynamicProperties]
 class yf_payment_api__provider_remote
 {
+    public $ip_filter = null;
+    public $currency_default = null;
+    public $fee = null;
     public $ENABLE = false;
     public $TEST_MODE = null;
 
@@ -401,6 +404,7 @@ class yf_payment_api__provider_remote
 
     public function _api_transaction($options)
     {
+        $mail_tpl = $status_message = $sql_sign = null; // init: set by the branches below
         $_operation_id = $_response = $_status_name = $_provider_name = $_state = $_status_message = null;
         if ( ! $this->ENABLE) {
             return  null;
@@ -438,7 +442,7 @@ class yf_payment_api__provider_remote
             $payment_api->mail([
                 'subject' => 'Ошибка платежа (id: ' . $operation_id . ')',
                 'tpl' => $tpl,
-                'user_id' => $account['user_id'],
+                'user_id' => $account['user_id'] ?? null,
                 'is_admin' => true,
                 'data' => [
                     'operation_id' => $operation_id,

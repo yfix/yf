@@ -3,6 +3,7 @@
 load('pubsub_driver', '', 'classes/pubsub/');
 class yf_pubsub_driver_redis extends yf_pubsub_driver
 {
+    public $_connection = null;
     public $_is_connection = null;
     public $_connection_pub = null;
     public $_connection_sub = null;

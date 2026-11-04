@@ -5,6 +5,8 @@
  */
 class yf_register
 {
+    public $CONFIRM_REGISTER = null;
+    public $CONFIRM_TTL = null;
     public $_account_types;
     public function show()
     {

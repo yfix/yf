@@ -29,6 +29,7 @@
 
 class yf_api
 {
+    public $ip_filter = null;
     public $API_SSL_VERIFY = true;
     public $JSON_VULNERABILITY_PROTECTION = true;
     public $ROBOT_NONE = true;

@@ -9,6 +9,12 @@
 #[AllowDynamicProperties]
 class yf_site_map
 {
+    public $_path_size_bytes = null;
+    public $_sitemap_file_counter = null;
+    public $_fp = null;
+    public $_total_length = null;
+    public $_entries_counter = null;
+    public $_file_for_google = null;
     /** @var bool Enable\disable site map generation */
     public $SITE_MAP_ENABLED = false;
     /** @var array Array of site modules to include their parts of sitemap */

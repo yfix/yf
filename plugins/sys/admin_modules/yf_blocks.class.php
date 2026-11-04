@@ -9,6 +9,13 @@
 #[AllowDynamicProperties]
 class yf_blocks
 {
+    public $_methods = null;
+    public $_groups = null;
+    public $_themes = null;
+    public $_locales = null;
+    public $_sites = null;
+    public $_servers = null;
+    public $_server_roles = null;
     /***/
     private $_preload_complete = false;
 
@@ -468,7 +475,7 @@ class yf_blocks
         foreach (explode('|', 'name|active|stpl_name|method_name') as $f) {
             $order_fields[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->text('name')

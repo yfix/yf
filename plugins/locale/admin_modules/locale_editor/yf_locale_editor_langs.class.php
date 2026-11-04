@@ -3,6 +3,7 @@
 #[AllowDynamicProperties]
 class yf_locale_editor_langs
 {
+    public $_parent = null;
     public function _init()
     {
         $this->_parent = module('locale_editor');

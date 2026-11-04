@@ -3,6 +3,7 @@
 
 class yf_locale_editor_cleanup
 {
+    public $VARS_IGNORE_CASE = null;
     public $_parent;
     public function _init()
     {

@@ -9,6 +9,7 @@
 #[AllowDynamicProperties]
 class yf_admin
 {
+    public $display_func = null;
     const table = 'admin';
 
 
@@ -422,7 +423,7 @@ class yf_admin
         foreach (explode('|', 'login|email|group|first_name|last_name|add_date|last_login|num_logins|active') as $f) {
             $order_fields[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->login('login', ['class' => 'input-medium', 'no_label' => 1])
