@@ -311,6 +311,10 @@ class yf_db
             for ($i = 1; $i <= $tries; $i++) {
                 $this->db = new $driver_class_name($driver_params);
                 if ( ! is_object($this->db) || ! ($this->db instanceof yf_db_driver)) {
+                    // E_USER_ERROR in trigger_error() is deprecated (PHP 8.4), so a required connection throws instead
+                    if ($this->CONNECTION_REQUIRED) {
+                        throw new RuntimeException('DB: Wrong driver');
+                    }
                     trigger_error('DB: Wrong driver', E_USER_WARNING);
                     break;
                 }
@@ -339,6 +343,9 @@ class yf_db
         }
         $this->_tried_to_connect = true;
         if ( ! $this->db->db_connect_id) {
+            if ($this->CONNECTION_REQUIRED) {
+                throw new RuntimeException('DB: ERROR CONNECTING TO DATABASE');
+            }
             trigger_error('DB: ERROR CONNECTING TO DATABASE', E_USER_WARNING);
         } else {
             $this->db->SQL_NO_CACHE = $this->SQL_NO_CACHE;
