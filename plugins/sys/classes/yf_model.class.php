@@ -6,8 +6,10 @@ load('yf_model_relation', '', 'classes/model/');
 /**
  * ORM model.
  */
+#[\AllowDynamicProperties]
 class yf_model
 {
+    public $_with = null;
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -146,7 +148,7 @@ class yf_model
      */
     public function __construct($args = [], $params = [])
     {
-        $this->set_db_object($params['db']);
+        $this->set_db_object($params['db'] ?? null);
         $this->set_data($args);
     }
 
@@ -376,7 +378,7 @@ class yf_model
             $this->$k = $v;
         }
         $pk = $this->get_key_name();
-        if (isset($data[$pk])) {
+        if ($pk !== null && isset($data[$pk])) {
             $this->set_key($data[$pk]);
         }
     }
@@ -423,7 +425,7 @@ class yf_model
      */
     public function new_query($params = [])
     {
-        if ($params['where'] === null) {
+        if (($params['where'] ?? null) === null) {
             unset($params['where']);
         }
         $table = ($params['table'] ?? null) ?: $this->get_table();
@@ -437,18 +439,18 @@ class yf_model
         $builder->_remove_as_from_delete = true;
         $builder->from($table . ' AS t0');
         foreach (['select', 'where', 'where_or', 'whereid', 'order_by', 'having', 'group_by'] as $part) {
-            if ($params[$part]) {
+            if ($params[$part] ?? null) {
                 call_user_func_array([$builder, $part], is_array($params[$part]) ? $params[$part] : [$params[$part]]);
             }
         }
         // limit => [10,30] or limit => 5
-        if ($params['limit']) {
+        if ($params['limit'] ?? null) {
             $count = is_numeric($params['limit']) ? $params['limit'] : $params['limit'][0];
             $offset = is_numeric($params['limit']) ? null : $params['limit'][1];
             $builder->limit($count, $offset);
         }
         foreach (['join', 'left_join', 'inner_join', 'right_join'] as $func) {
-            if ($params[$func]) {
+            if ($params[$func] ?? null) {
                 $join = $params[$func];
                 $builder->$func($join['table'], $join['on']);
             }
@@ -463,7 +465,7 @@ class yf_model
     {
         $data = $this->get_data();
         $pk = $this->get_key_name();
-        if ( ! $data[$pk]) {
+        if ($pk === null || empty($data[$pk])) {
             $insert_id = $this->new_query()->insert($data);
             if ( ! $insert_id) {
                 return null;
