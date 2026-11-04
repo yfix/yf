@@ -205,7 +205,7 @@ class yf_locale_editor_import
             return false;
         }
         $a = array_map(function ($in) use ($delim, $enc) {
-            return str_getcsv($in, $delim, $enc) ?: [];
+            return str_getcsv($in, $delim, $enc, '\\') ?: [];
         }, explode(PHP_EOL, $raw));
         foreach ($a as $k => $v) {
             if ( ! $v || ! $v[0]) {

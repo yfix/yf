@@ -95,9 +95,9 @@ class yf_locale_editor_export
         }
         ob_start();
         $df = fopen('php://output', 'w');
-        fputcsv($df, array_keys(reset($data)), $delim, $enc);
+        fputcsv($df, array_keys(reset($data)), $delim, $enc, '\\');
         foreach ($data as $row) {
-            fputcsv($df, $row, $delim, $enc);
+            fputcsv($df, $row, $delim, $enc, '\\');
         }
         fclose($df);
         return ob_get_clean();

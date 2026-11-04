@@ -725,7 +725,7 @@ class yf_manage_payout
                     return  $result;
                 }
                 $_data = array_values($item);
-                $result = fputcsv($file, $_data, ';', '"');
+                $result = fputcsv($file, $_data, ';', '"', '\\');
                 if (false === $result) {
                     fclose($file);
                     $result = [
@@ -1718,9 +1718,9 @@ class yf_manage_payout
         }
         ob_start();
         $df = fopen('php://output', 'w');
-        fputcsv($df, array_keys(reset($array)));
+        fputcsv($df, array_keys(reset($array)), ',', '"', '\\');
         foreach ($array as $row) {
-            fputcsv($df, $row, $delim);
+            fputcsv($df, $row, $delim, '"', '\\');
         }
         fclose($df);
         return ob_get_clean();
