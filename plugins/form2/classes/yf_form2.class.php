@@ -3531,6 +3531,9 @@ class yf_form2
             }
             return $data;
         }
+        if ($data === null) {
+            $data = '';
+        }
         return @$func($data);
     }
 

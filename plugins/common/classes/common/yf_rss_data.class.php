@@ -369,7 +369,9 @@ class yf_rss_data
             $encoding = 'html_entity_decode';
         // non utf-8 page
         } else {
-            $encoding = 'utf8_decode';
+            $encoding = function ($text) {
+                return mb_convert_encoding((string) $text, 'ISO-8859-1', 'UTF-8');
+            };
         }
         return $encoding;
     }
