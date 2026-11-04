@@ -71,8 +71,8 @@ class yf_manage_shop_coupons
                     'status' => (int) (($_POST['status'] ?? null)),
                     'cat_id' => (int) (($_POST['cat_id'] ?? null)),
                     'order_id' => (int) (($_POST['order_id'] ?? null)),
-                    'time_start' => strtotime(($_POST['time_start'] ?? null)),
-                    'time_end' => strtotime(($_POST['time_end'] ?? null)),
+                    'time_start' => strtotime(($_POST['time_start'] ?? '')),
+                    'time_end' => strtotime(($_POST['time_end'] ?? '')),
                 ];
                 db()->insert(db('shop_coupons'), db()->es($sql_array));
                 common()->admin_wall_add(['shop coupon added: ' . $this->_cleanup_code(($_POST['code'] ?? null)), db()->insert_id()]);
@@ -122,8 +122,8 @@ class yf_manage_shop_coupons
                     'status' => (int) (($_POST['status'] ?? null)),
                     'cat_id' => (int) (($_POST['cat_id'] ?? null)),
                     'order_id' => (int) (($_POST['order_id'] ?? null)),
-                    'time_start' => strtotime(($_POST['time_start'] ?? null)),
-                    'time_end' => strtotime(($_POST['time_end'] ?? null)),
+                    'time_start' => strtotime(($_POST['time_start'] ?? '')),
+                    'time_end' => strtotime(($_POST['time_end'] ?? '')),
                 ];
                 db()->update('shop_coupons', db()->es($sql_array), 'id=' . ($_GET['id'] ?? null));
                 common()->admin_wall_add(['shop coupon updated: ' . $this->_cleanup_code(($_POST['code'] ?? null)), ($_GET['id'] ?? null)]);

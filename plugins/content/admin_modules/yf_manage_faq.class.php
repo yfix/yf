@@ -119,7 +119,7 @@ class yf_manage_faq
 
     public function add()
     {
-        $a['locale'] = substr(($_GET['page'] ?? null), 0, 2) ?: 'ru';
+        $a['locale'] = substr(($_GET['page'] ?? ''), 0, 2) ?: 'ru';
         $a['parent_id'] = (int) ($_GET['id'] ?? null);
         $parent = $a['parent_id'] ? (array) from(self::table)->whereid($a['parent_id'])->get() : [];
         if ( ! $a['locale'] && $parent['locale']) {
@@ -168,7 +168,7 @@ class yf_manage_faq
         $a = (array) $_POST + (array) $a;
         if (is_post()) {
             foreach ((array) $keys_to_fix as $k) {
-                if (false !== strpos(($_POST[$k] ?? null), '{') && false !== strpos(($_POST[$k] ?? null), '}')) {
+                if (false !== strpos(($_POST[$k] ?? ''), '{') && false !== strpos(($_POST[$k] ?? ''), '}')) {
                     $_POST[$k] = str_replace(array_values($exec_fix), array_keys($exec_fix), $_POST[$k]);
                 }
             }

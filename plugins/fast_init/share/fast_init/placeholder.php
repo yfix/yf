@@ -2,10 +2,10 @@
 
 return function () {
     if (isset($_GET['id'])) {
-        list($id, $ext) = explode('.', ($_GET['id'] ?? null));
+        list($id, $ext) = explode('.', ($_GET['id'] ?? ''));
         $color_bg = ($_GET['page'] ?? null);
     } else {
-        $parts = explode('/', substr(($_SERVER['REQUEST_URI'] ?? null), strlen('/dynamic/placeholder/')));
+        $parts = explode('/', substr(($_SERVER['REQUEST_URI'] ?? ''), strlen('/dynamic/placeholder/')));
         list($id, $ext) = explode('.', $parts[0]);
         $color_bg = $parts[1];
     }

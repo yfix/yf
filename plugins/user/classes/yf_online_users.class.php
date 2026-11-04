@@ -80,7 +80,7 @@ class yf_online_users
     public function _ip($options = null)
     {
         if ( ! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? null));
+            $ips = explode(',', ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''));
             $ip = reset($ips);
         } else {
             $ip =
@@ -104,7 +104,7 @@ class yf_online_users
             cache()->set($cache_name, 'OK', $this->_CACHE_UPDATE_TTL);
         }
         // details not cached for current url to be shown
-        if (main()->TRACK_ONLINE_DETAILS && ! (strtolower(($_SERVER['HTTP_X_REQUESTED_WITH'] ?? null)) == 'xmlhttprequest' || ! empty($_GET['ajax_mode'])) && (int) ($this->online_user_id) != 0) {
+        if (main()->TRACK_ONLINE_DETAILS && ! (strtolower(($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) == 'xmlhttprequest' || ! empty($_GET['ajax_mode'])) && (int) ($this->online_user_id) != 0) {
             $ip = $this->_ip();
             db()->replace_safe('users_online_details', [
                 'user_id' => $this->online_user_id,

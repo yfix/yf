@@ -14,7 +14,7 @@ return function () {
     $params = [];
     foreach ((array) ($_SERVER['argv'] ?? null) as $key => $argv) {
         if ($argv == '--params' && isset($_SERVER['argv'][$key + 1])) {
-            $params = unserialize(($_SERVER['argv'][$key + 1] ?? null));
+            $params = unserialize(($_SERVER['argv'][$key + 1] ?? ''));
             break;
         }
     }

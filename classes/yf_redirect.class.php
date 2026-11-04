@@ -79,7 +79,7 @@ class yf_redirect
             $exclude_source = [$exclude_source];
         }
         // Check current/source page for exclude patterns
-        $url_path_and_query = ($_SERVER['REQUEST_URI'] ?? null) . (strlen(($_SERVER['QUERY_STRING'] ?? null)) ? '?' . ($_SERVER['QUERY_STRING'] ?? null) : '');
+        $url_path_and_query = ($_SERVER['REQUEST_URI'] ?? null) . (strlen(($_SERVER['QUERY_STRING'] ?? '')) ? '?' . ($_SERVER['QUERY_STRING'] ?? null) : '');
         foreach ((array) $exclude_source as $pattern) {
             if (preg_match($pattern, $url_path_and_query)) {
                 return false;

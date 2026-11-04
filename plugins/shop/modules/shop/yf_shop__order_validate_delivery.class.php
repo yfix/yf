@@ -13,11 +13,11 @@ class yf_shop__order_validate_delivery
         if ($force_ship_type) {
             $_POST['ship_type'] = $force_ship_type;
         }
-        if ( ! strlen(($_POST['ship_type'] ?? null)) || ! isset(module('shop')->_ship_types[$_POST['ship_type']])) {
+        if ( ! strlen(($_POST['ship_type'] ?? '')) || ! isset(module('shop')->_ship_types[$_POST['ship_type']])) {
             _re('Shipping type required');
         }
         foreach ((array) module('shop')->_b_fields as $_field) {
-            if ( ! strlen(($_POST[$_field] ?? null)) && in_array($_field, module('shop')->_required_fields)) {
+            if ( ! strlen(($_POST[$_field] ?? '')) && in_array($_field, module('shop')->_required_fields)) {
                 _re(t(str_replace('b_', 'Billing ', $_field)) . ' ' . t('is required'));
             }
         }

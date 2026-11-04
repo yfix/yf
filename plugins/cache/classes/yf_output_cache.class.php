@@ -70,10 +70,10 @@ class yf_output_cache extends yf_cache
         // Ability to handle output cache through http query
         if ($this->OUTPUT_CACHING && $this->CACHE_CONTROL_FROM_URL) {
             // Display current page without as it is without cache
-            if (isset($_GET['no_cache']) || false !== strpos(($_SERVER['REQUEST_URI'] ?? null), '?no_cache')) {
+            if (isset($_GET['no_cache']) || false !== strpos(($_SERVER['REQUEST_URI'] ?? ''), '?no_cache')) {
                 conf('no_output_cache', true);
             }
-            if (isset($_GET['refresh_cache']) || false !== strpos(($_SERVER['REQUEST_URI'] ?? null), '?refresh_cache')) {
+            if (isset($_GET['refresh_cache']) || false !== strpos(($_SERVER['REQUEST_URI'] ?? ''), '?refresh_cache')) {
                 conf('refresh_output_cache', true);
             }
         }
@@ -196,7 +196,7 @@ class yf_output_cache extends yf_cache
         $etag = '' . md5($date) . '';
         // Check http headers:
         $modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? ($_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? null) == $date : null;
-        if ( ! empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) && ($timestamp = strtotime(($_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? null))) > 0) {
+        if ( ! empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) && ($timestamp = strtotime(($_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? ''))) > 0) {
             $modified_since = $cache_last_modified_time <= $timestamp;
         } else {
             $modified_since = null;
@@ -306,7 +306,7 @@ class yf_output_cache extends yf_cache
             return false;
         }
         // Special for the 'share on facebook' feature
-        if (false !== strpos(($_SERVER['HTTP_USER_AGENT'] ?? null), 'facebookexternalhit')) {
+        if (false !== strpos(($_SERVER['HTTP_USER_AGENT'] ?? ''), 'facebookexternalhit')) {
             $this->NO_NEED_TO_CACHE = true;
             return false;
         }

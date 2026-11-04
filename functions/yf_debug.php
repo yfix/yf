@@ -31,7 +31,7 @@ if ($console_mode && $need_debug_auth) {
     $hash = substr(md5($debug_salt . gmdate('Y-m-d')), 6, 16);
     $cookie_name = '_debug_authorized_' . $hash;
     if (_debug_auth_check($debug_users) || ! empty($_COOKIE[$cookie_name])) {
-        $h = array_reverse(explode('.', ($_SERVER['HTTP_HOST'] ?? null)));
+        $h = array_reverse(explode('.', ($_SERVER['HTTP_HOST'] ?? '')));
         setcookie($cookie_name, '1', 0, '/', $h[1] . '.' . $h[0]); // Live for session, set for TLD
         define('DEBUG_MODE', 1);
     } else {
@@ -71,8 +71,8 @@ function _debug_remove_from_url($uri = '', $qs = '')
 }
 function _debug_auth_check($users = [])
 {
-    $auth_user = trim(($_SERVER['PHP_AUTH_USER'] ?? null));
-    $auth_pswd = trim(($_SERVER['PHP_AUTH_PW'] ?? null));
+    $auth_user = trim(($_SERVER['PHP_AUTH_USER'] ?? ''));
+    $auth_pswd = trim(($_SERVER['PHP_AUTH_PW'] ?? ''));
     if ( ! strlen($auth_user) || ! strlen($auth_pswd)) {
         return false;
     }

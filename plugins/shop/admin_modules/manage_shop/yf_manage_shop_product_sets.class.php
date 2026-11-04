@@ -129,7 +129,7 @@ class yf_manage_shop_product_sets
             // Add products to current set
             if (($_POST['products_ids'] ?? null)) {
                 $ids = [];
-                foreach (explode(',', ($_POST['products_ids'] ?? null)) as $id) {
+                foreach (explode(',', ($_POST['products_ids'] ?? '')) as $id) {
                     $id = (int) $id;
                     $id && $ids[$id] = $id;
                 }

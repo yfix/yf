@@ -124,11 +124,11 @@ class yf_register
             return tpl()->parse('@object/confirm_messages', ['msg' => 'confirm_not_needed']);
         }
         // Check confirmation code
-        if ( ! strlen(($_GET['id'] ?? null))) {
+        if ( ! strlen(($_GET['id'] ?? ''))) {
             return _e('Confirmation ID is required!');
         }
         // Decode confirmation number
-        list($user_id, $member_date) = explode('wvcn', trim(base64_decode(($_GET['id'] ?? null))));
+        list($user_id, $member_date) = explode('wvcn', trim(base64_decode(($_GET['id'] ?? ''))));
         $user_id = (int) $user_id;
         $member_date = (int) $member_date;
         // Get target user info

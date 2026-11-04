@@ -283,7 +283,7 @@ class yf_tpl
             if ($this->CUSTOM_META_INFO && $init_type == 'user') {
                 $this->register_output_filter([$this, '_custom_replace_callback'], 'custom_replace');
             }
-            if ($init_type == 'user' && _class('graphics')->IFRAME_CENTER && (false === strpos(($_SERVER['QUERY_STRING'] ?? null), 'center_area=1'))) {
+            if ($init_type == 'user' && _class('graphics')->IFRAME_CENTER && (false === strpos(($_SERVER['QUERY_STRING'] ?? ''), 'center_area=1'))) {
                 $this->register_output_filter([$this, '_replace_for_iframe_callback'], 'replace_for_iframe');
             }
         }

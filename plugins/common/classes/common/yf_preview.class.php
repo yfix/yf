@@ -52,7 +52,7 @@ class yf_preview
             }
         }
         // Try to get template
-        if (false !== strpos(($_POST['preview_form_action'] ?? null), 'add_comment')) {
+        if (false !== strpos(($_POST['preview_form_action'] ?? ''), 'add_comment')) {
             $body = tpl()->parse('comments/preview', $replace);
         } else {
             $stpl_name = $PARENT_OBJECT . '/' . $PARENT_ACTION . '_preview';

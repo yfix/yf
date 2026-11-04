@@ -140,7 +140,7 @@ class yf_template_editor
 
     public function edit_theme()
     {
-        if (false !== strpos(($_GET['location'] ?? null), 'framework')) {
+        if (false !== strpos(($_GET['location'] ?? ''), 'framework')) {
             return $this->_framework_warning();
         }
         $new_theme_name = ($_POST['theme_name'] ?? null);
@@ -311,7 +311,7 @@ class yf_template_editor
             return _e('Template name and theme required!');
         }
         if (main()->is_post()) {
-            if (false !== strpos(($_GET['location'] ?? null), 'framework')) {
+            if (false !== strpos(($_GET['location'] ?? ''), 'framework')) {
                 // TODO: use readonly mode with message and ability to save changed file inside project
                 return $this->_framework_warning();
             }
@@ -327,7 +327,7 @@ class yf_template_editor
             file_put_contents($lib_stpl_path, $text);
             return js_redirect('./?object=' . ($_GET['object'] ?? null) . '&action=show_stpls_in_theme&theme=' . $theme_name . '&location=' . ($_GET['location'] ?? null));
         }
-        if (substr(($_GET['location'] ?? null), -strlen('_user')) == '_user' && $theme_name == 'admin') {
+        if (substr(($_GET['location'] ?? ''), -strlen('_user')) == '_user' && $theme_name == 'admin') {
             $theme_name = 'user';
         }
         $stpl_path = $this->_dir_array[$_GET['location']] . $theme_name . '/' . $stpl_name . tpl()->_STPL_EXT;
@@ -368,7 +368,7 @@ class yf_template_editor
      */
     public function show_file_src()
     {
-        $path = base64_decode(($_GET['path'] ?? null));
+        $path = base64_decode(($_GET['path'] ?? ''));
         $stpl_text = file_get_contents($path);
 
         $replace = [

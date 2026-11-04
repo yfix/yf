@@ -27,7 +27,7 @@ class yf_dynamic_assets
     {
         session_write_close();
         no_graphics(true);
-        $name = strtolower(preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['id'] ?? null))));
+        $name = strtolower(preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['id'] ?? ''))));
         $type = strtolower(preg_replace('~[^a-z0-9_-]+~ims', '', trim($type ?: ($_GET['page'] ?? null))));
         if ( ! strlen($name) || ! strlen($type) || ! in_array($type, ['css', 'js', 'jquery', 'ng'])) {
             _404();

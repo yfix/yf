@@ -72,8 +72,8 @@ class yf_login_form
         $_url_after_login = $this->DEF_REDIRECT_URL;
         // Process special redirect format
         if ( ! empty($_GET['go_url'])) {
-            if (false !== ($pos1 = strpos(($_GET['go_url'] ?? null), ';'))) {
-                $_GET['go_url'] = substr(($_GET['go_url'] ?? null), 0, $pos1) . '&action=' . substr(($_GET['go_url'] ?? null), $pos1 + 1);
+            if (false !== ($pos1 = strpos(($_GET['go_url'] ?? ''), ';'))) {
+                $_GET['go_url'] = substr(($_GET['go_url'] ?? ''), 0, $pos1) . '&action=' . substr(($_GET['go_url'] ?? ''), $pos1 + 1);
             }
             $_url_after_login = './?object=' . str_replace(';', '&', $_GET['go_url']);
         } elseif (conf('_force_login_go_url')) {

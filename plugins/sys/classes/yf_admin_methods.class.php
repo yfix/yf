@@ -192,7 +192,7 @@ class yf_admin_methods
         $params += (array) $this->params;
 
         $replace = [
-            'form_action' => ($params['form_action'] ?? null) ?: url('/@object/@action/' . urlencode(($_GET['id'] ?? null)) . '/' . $params['links_add']),
+            'form_action' => ($params['form_action'] ?? null) ?: url('/@object/@action/' . urlencode(($_GET['id'] ?? '')) . '/' . $params['links_add']),
             'back_link' => ($params['back_link'] ?? null) ?: url('/@object/' . $params['links_add']),
         ];
         $db = is_object($params['db']) ? $params['db'] : db();

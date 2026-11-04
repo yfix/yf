@@ -48,7 +48,7 @@ class yf_manage_security
         if (is_post()) {
             foreach ($fields_ip as $k) {
                 $tmp = [];
-                foreach (explode(PHP_EOL, str_replace([' ', ',', ';'], PHP_EOL, trim(($_POST[$k] ?? null)))) as $v) {
+                foreach (explode(PHP_EOL, str_replace([' ', ',', ';'], PHP_EOL, trim(($_POST[$k] ?? '')))) as $v) {
                     $v = trim($v);
                     if (preg_match('~^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$~', $v)) {
                         $tmp[$v] = $v;

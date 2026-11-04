@@ -7,7 +7,7 @@ class yf_advertising
 
         // Set cookie
         if (empty($_COOKIE['advertise']) && ($_GET['ads_places'] ?? null) == 1) {
-            $_COOKIE['advertise'] = setcookie('advertise', ($_SERVER['HTTP_HOST'] ?? null), time() + 3600, '/');
+            $_COOKIE['advertise'] = setcookie('advertise', ($_SERVER['HTTP_HOST'] ?? ''), time() + 3600, '/');
         // Unset cookie
         } elseif (($_GET['ads_places'] ?? null) == 2 && ! empty($_COOKIE['advertise'])) {
             setcookie('advertise', '', time() - 3600, '/');

@@ -45,7 +45,7 @@ class yf_comments_manage
                 unset($_POST['text2']);
             }
             if ( ! common()->_error_exists()) {
-                $_POST['text'] = substr(($_POST['text'] ?? null), 0, module('comments')->MAX_POST_TEXT_LENGTH);
+                $_POST['text'] = substr(($_POST['text'] ?? ''), 0, module('comments')->MAX_POST_TEXT_LENGTH);
                 if (empty($_POST['text'])) {
                     _re('Comment text required');
                 }
@@ -128,7 +128,7 @@ class yf_comments_manage
                 if (is_callable($try_trigger_callback)) {
                     call_user_func($try_trigger_callback, $params);
                 }
-                common()->_add_activity_points(main()->USER_ID, $OBJECT_NAME . '_comment', strlen(($_POST['text'] ?? null)), $RECORD_ID);
+                common()->_add_activity_points(main()->USER_ID, $OBJECT_NAME . '_comment', strlen(($_POST['text'] ?? '')), $RECORD_ID);
                 return js_redirect($RETURN_PATH, false);
             }
         }
@@ -213,7 +213,7 @@ class yf_comments_manage
         }
         $user_info = user($comment_info['user_id'], ['id', 'name', module('comments')->_user_nick_field, 'photo_verified'], ['WHERE' => ['active' => 1]]);
         if (count((array) $_POST) > 0 && ! isset($_POST['_not_for_comments'])) {
-            $_POST['text'] = substr(($_POST['text'] ?? null), 0, module('comments')->MAX_POST_TEXT_LENGTH);
+            $_POST['text'] = substr(($_POST['text'] ?? ''), 0, module('comments')->MAX_POST_TEXT_LENGTH);
             if (empty($_POST['text'])) {
                 _re('Comment text required');
             }

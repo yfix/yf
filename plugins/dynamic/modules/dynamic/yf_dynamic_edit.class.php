@@ -28,8 +28,8 @@ class yf_dynamic_edit
         if ( ! DEBUG_MODE && ! ($_SESSION['locale_vars_edit'] ?? null)) {
             return print 'Access denied';
         }
-        $SOURCE_VAR_NAME = str_replace('%20', ' ', trim(($_POST['source_var'] ?? null)));
-        $EDITED_VALUE = str_replace('%20', ' ', trim(($_POST['edited_value'] ?? null)));
+        $SOURCE_VAR_NAME = str_replace('%20', ' ', trim(($_POST['source_var'] ?? '')));
+        $EDITED_VALUE = str_replace('%20', ' ', trim(($_POST['edited_value'] ?? '')));
         $CUR_LOCALE = conf('language');
         // First we need to check if such var exists
         if ( ! strlen($SOURCE_VAR_NAME)) {
@@ -91,7 +91,7 @@ class yf_dynamic_edit
             return print 'Access denied';
         }
         // Prepare template name to get
-        $STPL_NAME = trim(($_GET['id'] ?? null));
+        $STPL_NAME = trim(($_GET['id'] ?? ''));
         // Some security checks
         $STPL_NAME = preg_replace('/[^a-z0-9_\-\/]/i', '', $STPL_NAME);
         $STPL_NAME = trim($STPL_NAME, '/');

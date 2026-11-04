@@ -165,8 +165,8 @@ class yf_auth_admin
      */
     public function _do_login()
     {
-        $AUTH_LOGIN = trim(($_POST[$this->LOGIN_FIELD] ?? null));
-        $AUTH_PSWD = trim(($_POST[$this->PSWD_FIELD] ?? null));
+        $AUTH_LOGIN = trim(($_POST[$this->LOGIN_FIELD] ?? ''));
+        $AUTH_PSWD = trim(($_POST[$this->PSWD_FIELD] ?? ''));
 
         if (empty($AUTH_LOGIN) || empty($AUTH_PSWD)) {
             return false;
@@ -226,7 +226,7 @@ class yf_auth_admin
 
             // Auto-redirect to the page before login form if needed
             if ( ! empty($_SESSION[$this->VAR_ADMIN_GO_URL])) {
-                $REDIRECT_URL = (substr(($_SESSION[$this->VAR_ADMIN_GO_URL] ?? null), 0, 2) != './' ? './?' : '') . ($_SESSION[$this->VAR_ADMIN_GO_URL] ?? null);
+                $REDIRECT_URL = (substr(($_SESSION[$this->VAR_ADMIN_GO_URL] ?? ''), 0, 2) != './' ? './?' : '') . ($_SESSION[$this->VAR_ADMIN_GO_URL] ?? null);
                 // Cleanup redirect url
                 $_SESSION[$this->VAR_ADMIN_GO_URL] = '';
             // Redirect user to the user default

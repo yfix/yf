@@ -1341,8 +1341,8 @@ class yf_validate
     public function _check_location($cur_country = '', $cur_region = '', $cur_city = '')
     {
         // TODO: rewrite me
-        if (FEATURED_COUNTRY_SELECT && ! empty($_POST['country']) && substr(($_POST['country'] ?? null), 0, 2) == 'f_') {
-            $_POST['country'] = substr(($_POST['country'] ?? null), 2);
+        if (FEATURED_COUNTRY_SELECT && ! empty($_POST['country']) && substr(($_POST['country'] ?? ''), 0, 2) == 'f_') {
+            $_POST['country'] = substr(($_POST['country'] ?? ''), 2);
         }
         if ( ! empty($_POST['country'])) {
             if ( ! isset($GLOBALS['countries'])) {

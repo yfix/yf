@@ -477,8 +477,8 @@ class yf_main
             $utm_source = $utm_source ?? $_POST['utm_source'] ?? null;
             $utm_source = $utm_source ?? $_COOKIE['utm_source'] ?? null;
             if (! $utm_source && ($_SERVER['HTTP_REFERER'] ?? false)) {
-                $cur_domain = trim(($_SERVER['HTTP_HOST'] ?? null));
-                $ref_domain = trim(parse_url(($_SERVER['HTTP_REFERER'] ?? null), PHP_URL_HOST));
+                $cur_domain = trim(($_SERVER['HTTP_HOST'] ?? ''));
+                $ref_domain = trim(parse_url(($_SERVER['HTTP_REFERER'] ?? ''), PHP_URL_HOST));
                 if ($ref_domain && $ref_domain != $cur_domain) {
                     $utm_source = $ref_domain;
                 }
@@ -1733,20 +1733,20 @@ class yf_main
             ini_set('display_errors', 'stdout');
         }
         if (@$_SERVER['SERVER_ADDR'] !== null) {
-            $_SERVER['SERVER_ADDR'] = preg_replace('#[^0-9\.]+#', '', trim(($_SERVER['SERVER_ADDR'] ?? null)));
+            $_SERVER['SERVER_ADDR'] = preg_replace('#[^0-9\.]+#', '', trim(($_SERVER['SERVER_ADDR'] ?? '')));
         }
         if (@$_SERVER['SERVER_PORT'] !== null) {
             $_SERVER['SERVER_PORT'] = (int) ($_SERVER['SERVER_PORT'] ?? null);
         }
         if (@$_SERVER['HTTP_HOST'] !== null) {
-            if (false !== ($pos = strpos(($_SERVER['HTTP_HOST'] ?? null), ':'))) {
-                $_SERVER['HTTP_HOST'] = substr(($_SERVER['HTTP_HOST'] ?? null), 0, $pos);
+            if (false !== ($pos = strpos(($_SERVER['HTTP_HOST'] ?? ''), ':'))) {
+                $_SERVER['HTTP_HOST'] = substr(($_SERVER['HTTP_HOST'] ?? ''), 0, $pos);
             }
-            $_SERVER['HTTP_HOST'] = strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim(($_SERVER['HTTP_HOST'] ?? null)))));
+            $_SERVER['HTTP_HOST'] = strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim(($_SERVER['HTTP_HOST'] ?? '')))));
         }
         if (@$_SERVER['REQUEST_URI'] !== null) {
             // Possible bug when apache sends full url into request_uri, like this: "http://test.dev/" instead of "/"
-            $p = parse_url(($_SERVER['REQUEST_URI'] ?? null));
+            $p = parse_url(($_SERVER['REQUEST_URI'] ?? ''));
             if (isset($p['scheme']) || isset($p['host'])) {
                 $_SERVER['REQUEST_URI'] = (($p['path'] ?? null) ?: '/') . ($p['query'] ? '?' . $p['query'] : '');
                 if (($_SERVER['QUERY_STRING'] ?? null) != $p['query']) {
@@ -2142,16 +2142,16 @@ class yf_main
 
     public function is_https()
     {
-        return (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] ?? null) && strtolower(($_SERVER['HTTPS'] ?? null)) != 'off')
+        return (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] ?? null) && strtolower(($_SERVER['HTTPS'] ?? '')) != 'off')
             || (isset($_SERVER['SSL_PROTOCOL']) && ($_SERVER['SSL_PROTOCOL'] ?? null))
             // Non-standard header used by Microsoft applications and load-balancers:
-            || (isset($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower(($_SERVER['HTTP_FRONT_END_HTTPS'] ?? null)) == 'on')
+            || (isset($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower(($_SERVER['HTTP_FRONT_END_HTTPS'] ?? '')) == 'on')
             // http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/x-forwarded-headers.html
-            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower(($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null)) == 'https')
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower(($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) == 'https')
             // http://stackoverflow.com/questions/16042647/whats-the-de-facto-standard-for-a-reverse-proxy-to-tell-the-backend-ssl-is-used
-            || (isset($_SERVER['HTTP_X_URL_SCHEME']) && strtolower(($_SERVER['HTTP_X_URL_SCHEME'] ?? null)) == 'https')
+            || (isset($_SERVER['HTTP_X_URL_SCHEME']) && strtolower(($_SERVER['HTTP_X_URL_SCHEME'] ?? '')) == 'https')
             // http://serverfault.com/questions/302282/how-can-i-use-haproxy-with-ssl-and-get-x-forwarded-for-headers-and-tell-php-that
-            || (isset($_SERVER['HTTP_SCHEME']) && strtolower(($_SERVER['HTTP_SCHEME'] ?? null)) == 'https');
+            || (isset($_SERVER['HTTP_SCHEME']) && strtolower(($_SERVER['HTTP_SCHEME'] ?? '')) == 'https');
     }
 
     public function is_dev()
@@ -2218,7 +2218,7 @@ class yf_main
         if (! $this->is_console()) {
             try {
                 require_php_lib('mobile_detect');
-                $detect = new Mobile_Detect([], strtolower(($_SERVER['HTTP_USER_AGENT'] ?? null)));
+                $detect = new Mobile_Detect([], strtolower(($_SERVER['HTTP_USER_AGENT'] ?? '')));
                 $this->_is_mobile = (bool) $detect->isMobile();
             } catch (Exception $e) {
             }

@@ -11,7 +11,7 @@ class yf_test_ssh
     public function test()
     {
         $body = null;
-        $_GET['id'] = preg_replace('/[^0-9\.]/i', '', substr(($_GET['id'] ?? null), 0, 15));
+        $_GET['id'] = preg_replace('/[^0-9\.]/i', '', substr(($_GET['id'] ?? ''), 0, 15));
         $server_info = [
             'ssh_host' => ($_GET['id'] ?? null) ? ($_GET['id'] ?? null) : '192.168.1.2',
             'ssh_user' => 'root',

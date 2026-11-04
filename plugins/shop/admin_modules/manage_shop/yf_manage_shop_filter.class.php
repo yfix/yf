@@ -8,7 +8,7 @@ class yf_manage_shop_filter
     public function filter_save()
     {
         $_GET['id'] = preg_replace('~[^0-9a-z_]+~ims', '', $_GET['id']);
-        if (($_GET['id'] ?? null) && false !== strpos(($_GET['id'] ?? null), ($_GET['object'] ?? null) . '__')) {
+        if (($_GET['id'] ?? null) && false !== strpos(($_GET['id'] ?? ''), ($_GET['object'] ?? null) . '__')) {
             $filter_name = ($_GET['id'] ?? null);
             list(, $action) = explode('__', $filter_name);
         }

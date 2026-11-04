@@ -37,7 +37,7 @@ class yf_manage_shop_product_edit
                 }
                 foreach (['price', 'price_promo', 'price_partner', 'price_raw', 'old_price'] as $k) {
                     if (isset($_POST[$k])) {
-                        $sql[$k] = number_format(($_POST[$k] ?? null), 2, '.', '');
+                        $sql[$k] = number_format(($_POST[$k] ?? 0.0), 2, '.', '');
                     }
                 }
                 db()->update_safe(db('shop_products'), $sql, 'id=' . $id);

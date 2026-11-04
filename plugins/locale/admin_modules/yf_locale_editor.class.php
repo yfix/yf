@@ -720,7 +720,7 @@ Fallback when no numbers matched (any string)
         $a['back_link'] = url('/@object/vars');
         $a['redirect_link'] = $a['back_link'];
         if (is_post()) {
-            $val = trim(($_POST['value'] ?? null));
+            $val = trim(($_POST['value'] ?? ''));
             strlen($val) && $a['redirect_link'] = url('/@object/var_edit/' . urlencode($val));
         }
         return form($a + (array) $_POST)

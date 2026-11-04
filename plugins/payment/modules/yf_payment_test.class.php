@@ -1980,7 +1980,7 @@ EOS;
 
     protected function _fast_init_route()
     {
-        $url = parse_url(($_SERVER['REQUEST_URI'] ?? null));
+        $url = parse_url(($_SERVER['REQUEST_URI'] ?? ''));
         $path = explode('/', $url['path']);
         $object = $path[1];
         $method = $path[2];

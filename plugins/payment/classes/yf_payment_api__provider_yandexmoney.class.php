@@ -451,7 +451,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
             ];
         } // */
         // check shop_id, operation
-        @list($shop_id, $operation_id) = explode(':', ($_POST['label'] ?? null));
+        @list($shop_id, $operation_id) = explode(':', ($_POST['label'] ?? ''));
         $operation_id = (int) $operation_id;
         // START DUMP
         $payment_api->dump(['name' => 'YandexMoney', 'operation_id' => $operation_id]);

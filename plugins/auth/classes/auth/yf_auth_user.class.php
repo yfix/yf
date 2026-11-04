@@ -171,7 +171,7 @@ class yf_auth_user
         }
         // Remember last query string to process it after succesful login
         if (empty($_SESSION[$this->VAR_USER_ID]) && isset($_GET['task']) && ($_GET['task'] ?? null) == 'login') {
-            if (false === strpos(($_SERVER['HTTP_REFERER'] ?? null), 'login')) {
+            if (false === strpos(($_SERVER['HTTP_REFERER'] ?? ''), 'login')) {
                 $_SESSION[$this->VAR_USER_GO_URL] = ($_SERVER['HTTP_REFERER'] ?? null);
             }
         }
@@ -231,7 +231,7 @@ class yf_auth_user
             $this->_process_cookie();
         }
         if (isset($_GET['task']) && ($_GET['task'] ?? null) == 'login') {
-            if (($_GET['id'] ?? null) && strlen(($_GET['id'] ?? null)) > 16 && ! is_numeric(($_GET['id'] ?? null))) {
+            if (($_GET['id'] ?? null) && strlen(($_GET['id'] ?? '')) > 16 && ! is_numeric(($_GET['id'] ?? null))) {
                 $this->_do_login_with_encrypted();
             }
             if (empty($_SESSION[$this->VAR_USER_ID])) {
@@ -389,7 +389,7 @@ class yf_auth_user
         $fail_reason = false;
 
         $cur_ip = common()->get_ip();
-        $cur_country = strtoupper(($_SERVER['GEOIP_COUNTRY_CODE'] ?? null));
+        $cur_country = strtoupper(($_SERVER['GEOIP_COUNTRY_CODE'] ?? ''));
 
         $user_settings = db()->from('user_settings')->whereid($user_id, 'user_id')->get_2d('key, value');
 
@@ -472,7 +472,7 @@ class yf_auth_user
     public function _do_login_with_encrypted()
     {
         header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
-        if ( ! ($_GET['id'] ?? null) || strlen(($_GET['id'] ?? null)) < 16 || is_numeric(($_GET['id'] ?? null))) {
+        if ( ! ($_GET['id'] ?? null) || strlen(($_GET['id'] ?? '')) < 16 || is_numeric(($_GET['id'] ?? null))) {
             $this->_encrypted_error = 'GET_id is not like an encrypted string';
             return false;
         }
@@ -667,7 +667,7 @@ class yf_auth_user
             return js_redirect('/');
         // Auto-redirect to the page before login form if needed
         } elseif ( ! empty($_SESSION[$this->VAR_USER_GO_URL]) && ! ($this->URL_SUCCESS_LOGIN && ($_POST['skip_auto_url'] ?? null))) {
-            $REDIRECT_URL = (substr(($_SESSION[$this->VAR_USER_GO_URL] ?? null), 0, 2) != './' ? './?' : '') . str_replace(WEB_PATH, '', str_replace(['http:', 'https:'], '', $_SESSION[$this->VAR_USER_GO_URL]));
+            $REDIRECT_URL = (substr(($_SESSION[$this->VAR_USER_GO_URL] ?? ''), 0, 2) != './' ? './?' : '') . str_replace(WEB_PATH, '', str_replace(['http:', 'https:'], '', $_SESSION[$this->VAR_USER_GO_URL]));
             $_SESSION[$this->VAR_USER_GO_URL] = '';
         } elseif ( ! empty($user_info['go_after_login'])) {
             $REDIRECT_URL = $user_info['go_after_login'];
@@ -827,7 +827,7 @@ class yf_auth_user
             return $this->_set_special_cookie(($_SESSION[$this->VAR_USER_ID] ?? null));
         }
         $cookie_users = [];
-        foreach (explode('_', ($_COOKIE[$_SPECIAL_NAME] ?? null)) as $_user_id) {
+        foreach (explode('_', ($_COOKIE[$_SPECIAL_NAME] ?? '')) as $_user_id) {
             $cookie_users[$_user_id] = $_user_id;
         }
         if (($_COOKIE[$_SPECIAL_NAME] ?? null) == ($_SESSION[$this->VAR_USER_ID] ?? null)
@@ -920,7 +920,7 @@ class yf_auth_user
         // Try to get data from cookie (current user selection)
         $SEL_COOKIE_NAME = 'geo_selected';
         if (empty($geo_data) && isset($_COOKIE[$SEL_COOKIE_NAME]) && ! empty($_COOKIE[$SEL_COOKIE_NAME])) {
-            $geo_data = unserialize(($_COOKIE[$SEL_COOKIE_NAME] ?? null));
+            $geo_data = unserialize(($_COOKIE[$SEL_COOKIE_NAME] ?? ''));
             $geo_data['_source'] = 'sel_cookie';
         }
         // Try to get data from nginx geoip module

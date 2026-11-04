@@ -35,10 +35,10 @@ class yf_dynamic_image
     public function image()
     {
         no_graphics(true);
-        if (empty($_SERVER['HTTP_REFERER']) || ! defined('WEB_PATH') || substr(($_SERVER['HTTP_REFERER'] ?? null), 0, strlen(WEB_PATH)) !== WEB_PATH) {
+        if (empty($_SERVER['HTTP_REFERER']) || ! defined('WEB_PATH') || substr(($_SERVER['HTTP_REFERER'] ?? ''), 0, strlen(WEB_PATH)) !== WEB_PATH) {
             return $this->_show_error_image();
         }
-        $img = trim(($_GET['id'] ?? null), '/');
+        $img = trim(($_GET['id'] ?? ''), '/');
         $path = PROJECT_PATH . $img;
         if ( ! strlen($img) || false !== strpos($img, '..')) {
             return $this->_show_error_image();
@@ -74,7 +74,7 @@ class yf_dynamic_image
     {
         no_graphics(true);
 
-        list($id, $ext) = explode('.', ($_GET['id'] ?? null));
+        list($id, $ext) = explode('.', ($_GET['id'] ?? ''));
         list($w, $h) = explode('x', $id);
         $w = (int) $w ?: 100;
         $h = (int) $h ?: 100;

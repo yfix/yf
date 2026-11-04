@@ -106,7 +106,7 @@ class yf_static_pages
         $a = (array) $_POST + (array) $a;
         if (is_post()) {
             foreach ((array) $keys_to_fix as $k) {
-                if (false !== strpos(($_POST[$k] ?? null), '{') && false !== strpos(($_POST[$k] ?? null), '}')) {
+                if (false !== strpos(($_POST[$k] ?? ''), '{') && false !== strpos(($_POST[$k] ?? ''), '}')) {
                     $_POST[$k] = str_replace(array_values($exec_fix), array_keys($exec_fix), $_POST[$k]);
                 }
             }

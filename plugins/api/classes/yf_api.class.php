@@ -113,7 +113,7 @@ class yf_api
     public function _ip($options = null)
     {
         if ( ! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? null));
+            $ips = explode(',', ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''));
             $ip = reset($ips);
         } else {
             $ip =

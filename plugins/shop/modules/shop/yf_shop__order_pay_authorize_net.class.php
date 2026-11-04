@@ -77,7 +77,7 @@ class yf_shop__order_pay_authorize_net
         }
         $_order_fields_values = [
             'x_cust_id' => substr($order_info['user_id'], 0, 20),
-            'x_customer_ip' => substr(($_SERVER['REMOTE_ADDR'] ?? null), 0, 20),
+            'x_customer_ip' => substr(($_SERVER['REMOTE_ADDR'] ?? ''), 0, 20),
             'x_card_num' => substr($order_info['card_num'], 0, 50),
             'x_exp_date' => substr($order_info['exp_date'], 0, 4),
             'x_first_name' => substr($order_info['b_first_name'], 0, 50),

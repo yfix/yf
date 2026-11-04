@@ -119,7 +119,7 @@ class yf_ck_file_browser
         }
         // TODO: tons of additional security checks
         $error = '';
-        $add_path = ($_GET['path'] ?? null) ? urldecode(($_GET['path'] ?? null)) . '/' : '';
+        $add_path = ($_GET['path'] ?? null) ? urldecode(($_GET['path'] ?? '')) . '/' : '';
         $upload_dir = $this->base . '/' . $add_path . ($_GET['id'] ?? null);
         if ( ! file_exists($upload_dir)) {
             mkdir($upload_dir, 0755, true);
@@ -174,9 +174,9 @@ class yf_ck_file_browser
         if ( ! $this->ENABLED_IMG_EDIT) {
             return false;
         }
-        $img_url = urldecode(($_REQUEST['image'] ?? null));
-        $title = ltrim(str_replace('|', '/', urldecode(($_REQUEST['title'] ?? null))), '/');
-        $type = strtolower(($_REQUEST['type'] ?? null));
+        $img_url = urldecode(($_REQUEST['image'] ?? ''));
+        $title = ltrim(str_replace('|', '/', urldecode(($_REQUEST['title'] ?? ''))), '/');
+        $type = strtolower(($_REQUEST['type'] ?? ''));
         if ( ! strlen($img_url)
             || parse_url($img_url, PHP_URL_HOST) !== 'apps.pixlr.com'
             || ! strlen($title)
@@ -230,7 +230,7 @@ class yf_ck_file_browser
     {
         $res = [];
         if ($this->ENABLED_IMG_DELETE && is_ajax() && is_post() && ! empty($_POST['path'])) {
-            $fs_path = parse_url(($_POST['path'] ?? null), PHP_URL_PATH);
+            $fs_path = parse_url(($_POST['path'] ?? ''), PHP_URL_PATH);
             if (substr($fs_path, 0, strlen($this->TOP_DIR)) === $this->TOP_DIR) {
                 $fs_path = substr($fs_path, strlen($this->TOP_DIR));
             }

@@ -55,7 +55,7 @@ class yf_docs
             $callback = 'callback';
         }
         $base_dir = YF_PATH . '.dev/demo/data/';
-        $filename = basename(($_GET['filename'] ?? null));
+        $filename = basename(($_GET['filename'] ?? ''));
         $json = '{}';
         if (preg_match('/^[a-zA-Z\-\.]+\.json$/', $filename)) {
             $json = file_get_contents($base_dir . $filename);

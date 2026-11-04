@@ -600,7 +600,7 @@ class yf_graphics
         if (MAIN_TYPE_ADMIN) {
             $data[-1] = [
                 'name' => 'module settings',
-                'url' => './?object=conf_editor&action=admin_modules&id=' . strtolower(($_GET['object'] ?? null)),
+                'url' => './?object=conf_editor&action=admin_modules&id=' . strtolower(($_GET['object'] ?? '')),
             ];
         }
         $method_name = '_quick_menu';

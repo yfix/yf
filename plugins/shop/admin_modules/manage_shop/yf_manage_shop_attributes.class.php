@@ -34,7 +34,7 @@ class yf_manage_shop_attributes
             }
             if ( ! common()->_error_exists()) {
                 $value_list = [];
-                foreach ((array) explode("\n", ($_POST['value_list'] ?? null)) as $val) {
+                foreach ((array) explode("\n", ($_POST['value_list'] ?? '')) as $val) {
                     $v = trim($val);
                     if ($v != '') {
                         $value_list[$v] = $v;
@@ -90,7 +90,7 @@ class yf_manage_shop_attributes
             }
             if ( ! common()->_error_exists()) {
                 $value_list = [];
-                foreach ((array) explode("\n", ($_POST['value_list'] ?? null)) as $val) {
+                foreach ((array) explode("\n", ($_POST['value_list'] ?? '')) as $val) {
                     $v = trim($val);
                     if ($v != '') {
                         $value_list[$v] = $v;

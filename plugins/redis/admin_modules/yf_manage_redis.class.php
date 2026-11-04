@@ -101,9 +101,9 @@ class yf_manage_redis
 
     public function show()
     {
-        $i = preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['i'] ?? null))); // instance
-        $g = preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['g'] ?? null))); // group
-        $t = preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['t'] ?? null))); // type
+        $i = preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['i'] ?? ''))); // instance
+        $g = preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['g'] ?? ''))); // group
+        $t = preg_replace('~[^a-z0-9_-]+~ims', '', trim(($_GET['t'] ?? ''))); // type
         $page = (int) ($_GET['page'] ?? null) ?: 1; // page
         $per_page = 2000;
         if ( ! $i || ! isset($this->instances[$i])) {
@@ -252,13 +252,13 @@ class yf_manage_redis
             $_GET['action'] = 'delete';
             return $this->delete();
         }
-        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim(($_GET['i'] ?? null)));
+        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim(($_GET['i'] ?? '')));
         if ( ! $i || ! isset($this->instances[$i])) {
             return js_redirect('/@object');
         }
         $r = &$this->instances[$i];
         $prefix = $r->prefix;
-        $id = trim(($_GET['id'] ?? null));
+        $id = trim(($_GET['id'] ?? ''));
         if (strpos($id, $prefix) === 0) {
             $id = substr($id, strlen($prefix) + 1);
         }
@@ -322,14 +322,14 @@ class yf_manage_redis
 
     public function delete()
     {
-        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim(($_GET['i'] ?? null)));
+        $i = preg_replace('~[^a-z0-9_]+~ims', '', trim(($_GET['i'] ?? '')));
         if ( ! $i || ! isset($this->instances[$i])) {
             return js_redirect('/@object');
         }
         $r = &$this->instances[$i];
         $prefix = $r->prefix;
         $plen = strlen($prefix);
-        $id = trim(($_GET['id'] ?? null));
+        $id = trim(($_GET['id'] ?? ''));
         if (strpos($id, $prefix) === 0) {
             $id = substr($id, $plen);
         }
@@ -348,7 +348,7 @@ class yf_manage_redis
                 }
                 // Click on delete link from edit
             } elseif (isset($_GET['num'])) {
-                $k = trim(($_GET['num'] ?? null));
+                $k = trim(($_GET['num'] ?? ''));
                 if (strpos($k, $prefix) === 0) {
                     $k = substr($k, $plen);
                 }
@@ -373,7 +373,7 @@ class yf_manage_redis
             $this->_do_delete($r, $id, $keys_to_del);
         // Click on delete link from keys listing
         } elseif (isset($_GET['num'])) {
-            $k = trim(($_GET['num'] ?? null));
+            $k = trim(($_GET['num'] ?? ''));
             if (strpos($k, $prefix) === 0) {
                 $k = substr($k, $plen);
             }

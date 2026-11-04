@@ -6,7 +6,7 @@ class yf_manage_shop_send_sms
     {
         if (main()->is_post()) {
             $phone = ($_POST['phone'] ?? null);
-            $text = mb_substr(($_POST['text'] ?? null), 0, 512);
+            $text = mb_substr(($_POST['text'] ?? ''), 0, 512);
 
             $turbosms = mysql_connect(SMS_HOST, SMS_USER, SMS_PASS);
             mysql_select_db(SMS_NAME, $turbosms);

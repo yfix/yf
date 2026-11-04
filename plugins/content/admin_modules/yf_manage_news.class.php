@@ -72,7 +72,7 @@ class yf_manage_news
         $a = (array) $_POST + (array) $a;
         if (is_post()) {
             foreach ((array) $keys_to_fix as $k) {
-                if (false !== strpos(($_POST[$k] ?? null), '{') && false !== strpos(($_POST[$k] ?? null), '}')) {
+                if (false !== strpos(($_POST[$k] ?? ''), '{') && false !== strpos(($_POST[$k] ?? ''), '}')) {
                     $_POST[$k] = str_replace(array_values($exec_fix), array_keys($exec_fix), $_POST[$k]);
                 }
             }
@@ -88,12 +88,12 @@ class yf_manage_news
                 'locale' => 'required',
             ])
             ->on_post(function () {
-                if (strlen(($_POST['url'] ?? null))) {
-                    $_POST['url'] = preg_replace('~[\s/]+~', '-', trim(($_POST['url'] ?? null)));
+                if (strlen(($_POST['url'] ?? ''))) {
+                    $_POST['url'] = preg_replace('~[\s/]+~', '-', trim(($_POST['url'] ?? '')));
                 }
-                if (strlen(($_POST['title'] ?? null)) && ! strlen(($_POST['url'] ?? null))) {
+                if (strlen(($_POST['title'] ?? '')) && ! strlen(($_POST['url'] ?? ''))) {
                     $_POST['url'] = common()->_propose_url_from_name(($_POST['title'] ?? null));
-                } elseif ( ! strlen(($_POST['head_text'] ?? null)) && strlen(($_POST['full_text'] ?? null))) {
+                } elseif ( ! strlen(($_POST['head_text'] ?? '')) && strlen(($_POST['full_text'] ?? ''))) {
                     $_POST['head_text'] = _truncate(($_POST['full_text'] ?? null), 200, false, false);
                 }
             })

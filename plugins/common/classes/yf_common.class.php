@@ -104,11 +104,11 @@ class yf_common
         $extra['is_banned'] = $main->is_banned() ? 'is-banned' : '';
         $extra['group_id'] = ($group = MAIN_TYPE_ADMIN ? $main->ADMIN_GROUP : $main->USER_GROUP) ? 'groupid-' . strtolower($group) : '';
         $extra['site_id'] = ($site_id = $main->SITE_ID) ? 'siteid-' . strtolower($site_id) : '';
-        $extra['get_object'] = 'get-object-' . strtolower(($_GET['object'] ?? null));
-        $extra['get_action'] = 'get-action-' . strtolower(($_GET['action'] ?? null));
-        $extra['get_id'] = ($_GET['id'] ?? null) ? 'get-id-' . strtolower(($_GET['id'] ?? null)) : '';
+        $extra['get_object'] = 'get-object-' . strtolower(($_GET['object'] ?? ''));
+        $extra['get_action'] = 'get-action-' . strtolower(($_GET['action'] ?? ''));
+        $extra['get_id'] = ($_GET['id'] ?? null) ? 'get-id-' . strtolower(($_GET['id'] ?? '')) : '';
         $extra['language'] = 'lang-' . strtolower(conf('language') ?: 'en');
-        $extra['country'] = ($_SERVER['GEOIP_COUNTRY_CODE'] ?? null) ? 'country-' . strtolower(($_SERVER['GEOIP_COUNTRY_CODE'] ?? null)) : '';
+        $extra['country'] = ($_SERVER['GEOIP_COUNTRY_CODE'] ?? null) ? 'country-' . strtolower(($_SERVER['GEOIP_COUNTRY_CODE'] ?? '')) : '';
         $extra['currency'] = ($currency = conf('currency')) ? 'currency-' . strtolower($currency) : '';
         return implode(' ', array_filter($extra));
     }
@@ -1557,7 +1557,7 @@ class yf_common
     {
         foreach ((array) ($_SERVER['argv'] ?? null) as $key => $argv) {
             if ($argv == '--params' && isset($_SERVER['argv'][$key + 1])) {
-                return unserialize(($_SERVER['argv'][$key + 1] ?? null));
+                return unserialize(($_SERVER['argv'][$key + 1] ?? ''));
             }
         }
         return false;

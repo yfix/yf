@@ -14,7 +14,7 @@ return function () {
         return false;
     }
     // Special for the 'share on facebook' feature
-    if (false !== strpos(($_SERVER['HTTP_USER_AGENT'] ?? null), 'facebookexternalhit')) {
+    if (false !== strpos(($_SERVER['HTTP_USER_AGENT'] ?? ''), 'facebookexternalhit')) {
         return false;
     }
     $w = $MODULE_CONF['WHITE_LIST_PATTERN'];
