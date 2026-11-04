@@ -18,17 +18,17 @@ class yf_form2_stars
         if ( ! is_array($extra)) {
             $extra = [];
         }
-        $extra['name'] = $extra['name'] ?: ($name ?: 'stars');
+        $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'stars');
         $extra['desc'] = $form->_prepare_desc($extra, $desc);
         $func = function ($extra, $r, $form) {
             $extra['id'] = $extra['name'];
-            $color_ok = $extra['color_ok'] ?: 'yellow';
-            $color_ko = $extra['color_ko'] ?: '';
-            $class = $extra['class'] ?: 'icon-star icon-large';
-            $class_ok = $extra['class_ok'] ?: 'star-ok';
-            $class_ko = $extra['class_ko'] ?: 'star-ko';
-            $max = $extra['max'] ?: 5;
-            $stars = $extra['stars'] ?: 5;
+            $color_ok = ($extra['color_ok'] ?? null) ?: 'yellow';
+            $color_ko = ($extra['color_ko'] ?? null) ?: '';
+            $class = ($extra['class'] ?? null) ?: 'icon-star icon-large';
+            $class_ok = ($extra['class_ok'] ?? null) ?: 'star-ok';
+            $class_ko = ($extra['class_ko'] ?? null) ?: 'star-ko';
+            $max = ($extra['max'] ?? null) ?: 5;
+            $stars = ($extra['stars'] ?? null) ?: 5;
             $input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
             foreach (range(1, $stars) as $num) {
                 $is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
@@ -67,13 +67,13 @@ class yf_form2_stars
         if ( ! is_array($extra)) {
             $extra = [];
         }
-        $extra['name'] = $extra['name'] ?: ($name ?: 'stars');
+        $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'stars');
         $extra['desc'] = $form->_prepare_desc($extra, $desc);
         $func = function ($extra, $r, $form) {
             $form->_prepare_inline_error($extra);
-            $max = $extra['max'] ?: 5;
-            $stars = $extra['stars'] ?: 5;
-            $class = $extra['class'] ?: 'star';
+            $max = ($extra['max'] ?? null) ?: 5;
+            $stars = ($extra['stars'] ?? null) ?: 5;
+            $class = ($extra['class'] ?? null) ?: 'star';
             $body[] = '<span class="rating">';
             foreach (range(1, $stars) as $num) {
                 $body[] = '<span class="' . $class . ' ' . $extra['name'] . '" data-name="' . $extra['name'] . '" data-value="' . ($stars - $num + 1) . '"></span>';

@@ -51,7 +51,7 @@ class yf_form2_auto
             $form->_params['links_add'] = $params['links_add'];
         }
         if ($table && $id) {
-            $db = ($form->_params['db'] ?: $params['db']) ?: db();
+            $db = (($form->_params['db'] ?? null) ?: $params['db']) ?: db();
             // TODO: use info from db()->utils()->list_columns()
             $columns = $db->meta_columns($table);
             $info = $db->get('SELECT * FROM ' . $db->es($table) . ' WHERE id=' . (int) $id);

@@ -629,12 +629,12 @@ class yf_remote_files
 
         $curl_opts[CURLOPT_RETURNTRANSFER] = 1;
         $curl_opts[CURLOPT_FOLLOWLOCATION] = 1; // follow redirects
-        $curl_opts[CURLOPT_MAXREDIRS] = $url_options['max_redirects'] ?: $this->CURL_DEF_MAX_REDIRECTS;
+        $curl_opts[CURLOPT_MAXREDIRS] = ($url_options['max_redirects'] ?? null) ?: $this->CURL_DEF_MAX_REDIRECTS;
         $curl_opts[CURLOPT_FILETIME] = 1;
         $curl_opts[CURLOPT_FRESH_CONNECT] = 0;
         $curl_opts[CURLOPT_DNS_CACHE_TIMEOUT] = 3600;
-        $curl_opts[CURLOPT_CONNECTTIMEOUT] = $url_options['connect_timeout'] ?: $this->CURL_DEF_CONNECT_TIMEOUT;
-        $curl_opts[CURLOPT_TIMEOUT] = $url_options['timeout'] ?: $this->CURL_DEF_TIMEOUT; // timeout on response
+        $curl_opts[CURLOPT_CONNECTTIMEOUT] = ($url_options['connect_timeout'] ?? null) ?: $this->CURL_DEF_CONNECT_TIMEOUT;
+        $curl_opts[CURLOPT_TIMEOUT] = ($url_options['timeout'] ?? null) ?: $this->CURL_DEF_TIMEOUT; // timeout on response
         if ($user_agent) {
             $curl_opts[CURLOPT_USERAGENT] = $user_agent;
         }

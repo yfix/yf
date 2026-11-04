@@ -575,7 +575,7 @@ abstract class yf_db_utils_driver
             $extra = (array) $extra + $table;
             $table = '';
         }
-        $table = $extra['name'] ?: $table;
+        $table = ($extra['name'] ?? null) ?: $table;
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -982,9 +982,9 @@ abstract class yf_db_utils_driver
             $extra = (array) $extra + $index_name;
             $index_name = '';
         }
-        $table = $extra['table'] ?: $table;
-        $index_name = $extra['name'] ?: $index_name;
-        $fields = $extra['columns'] ?: $fields;
+        $table = ($extra['table'] ?? null) ?: $table;
+        $index_name = ($extra['name'] ?? null) ?: $index_name;
+        $fields = ($extra['columns'] ?? null) ?: $fields;
         if ( ! strlen($table)) {
             $error = 'table name is empty';
             return false;
@@ -999,7 +999,7 @@ abstract class yf_db_utils_driver
             $error = 'index name is empty';
             return false;
         }
-        $index_type = strtolower($extra['type'] ?: 'index');
+        $index_type = strtolower(($extra['type'] ?? null) ?: 'index');
         $supported_types = [
             'index' => 'index',
             'primary' => 'primary key',
@@ -1033,7 +1033,7 @@ abstract class yf_db_utils_driver
             $error = 'table name is empty';
             return false;
         }
-        $index_name = $extra['name'] ?: $index_name;
+        $index_name = ($extra['name'] ?? null) ?: $index_name;
         if ( ! strlen($index_name)) {
             $error = 'index name is empty';
             return false;
@@ -1074,8 +1074,8 @@ abstract class yf_db_utils_driver
             $extra = (array) $extra + $index_name;
             $index_name = '';
         }
-        $table = $extra['table'] ?: $table;
-        $index_name = $extra['name'] ?: $index_name;
+        $table = ($extra['table'] ?? null) ?: $table;
+        $index_name = ($extra['name'] ?? null) ?: $index_name;
         if ($this->drop_index($table, $index_name, $extra, $error)) {
             return $this->add_index($table, $index_name, $fields, $extra, $error);
         }
@@ -1183,8 +1183,8 @@ abstract class yf_db_utils_driver
             $extra = (array) $extra + $table;
             $table = '';
         }
-        $table = $extra['table'] ?: $table;
-        $index_name = $extra['name'] ?: $index_name;
+        $table = ($extra['table'] ?? null) ?: $table;
+        $index_name = ($extra['name'] ?? null) ?: $index_name;
         if ( ! strlen($table)) {
             $error = 'table name is empty';
             return false;
@@ -1211,11 +1211,11 @@ abstract class yf_db_utils_driver
             $extra = (array) $extra + $index_name;
             $index_name = '';
         }
-        $table = $extra['table'] ?: $table;
-        $index_name = $extra['name'] ?: $index_name;
-        $fields = $extra['columns'] ?: $fields;
-        $ref_table = $extra['ref_table'] ?: $ref_table;
-        $ref_fields = $extra['ref_columns'] ?: $ref_fields;
+        $table = ($extra['table'] ?? null) ?: $table;
+        $index_name = ($extra['name'] ?? null) ?: $index_name;
+        $fields = ($extra['columns'] ?? null) ?: $fields;
+        $ref_table = ($extra['ref_table'] ?? null) ?: $ref_table;
+        $ref_fields = ($extra['ref_columns'] ?? null) ?: $ref_fields;
         if ( ! strlen($table)) {
             $error = 'table name is empty';
             return false;
@@ -1279,8 +1279,8 @@ abstract class yf_db_utils_driver
             $extra = (array) $extra + $index_name;
             $index_name = '';
         }
-        $table = $extra['table'] ?: $table;
-        $index_name = $extra['name'] ?: $index_name;
+        $table = ($extra['table'] ?? null) ?: $table;
+        $index_name = ($extra['name'] ?? null) ?: $index_name;
         if ($this->drop_foreign_key($table, $index_name, $extra, $error)) {
             return $this->add_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
         }

@@ -284,7 +284,7 @@ class yf_manage_payment
             })
             ->text('id', 'Номер')
             ->func('user_name', function ($value, $extra, $row) {
-                $name = $row['name'] ?: $row['login'] ?: $row['nick'] ?: $row['email'];
+                $name = ($row['name'] ?? null) ?: ($row['login'] ?? null) ?: ($row['nick'] ?? null) ?: $row['email'];
                 $result = a('/members/edit/' . $row['user_id'], $name . ' (id: ' . $row['user_id'] . ')');
                 return  $result;
             }, ['desc' => 'пользователь'])
@@ -417,7 +417,7 @@ class yf_manage_payment
             return  $form;
         }
         $user = user($user_id);
-        $uname = $user['name'] ?: $user['login'] ?: $user['email'];
+        $uname = ($user['name'] ?? null) ?: ($user['login'] ?? null) ?: $user['email'];
         // prepare url
         $url_form_action = url_admin([
             'object' => $object,

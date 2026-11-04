@@ -15,15 +15,15 @@ class yf_form2_ui_range
             $extra += $desc;
             $desc = '';
         }
-        $extra['name'] = $extra['name'] ?: $name;
-        $extra['min'] = $extra['min'] ?: 1;
-        $extra['max'] = $extra['max'] ?: 500;
-        $extra['max'] = $extra['max'] ?: 500;
-        $extra['step'] = $extra['step'] ?: 1;
-        $extra['value_min'] = $extra['value_min'] ?: $extra['min'];
-        $extra['value_max'] = $extra['value_max'] ?: $extra['max'];
-        $extra['value'] = $extra['value_min'] ?: '75';
-        $extra['orientation'] = $extra['orientation'] ?: 'horizontal'; //horizontal", "vertical".
+        $extra['name'] = ($extra['name'] ?? null) ?: $name;
+        $extra['min'] = ($extra['min'] ?? null) ?: 1;
+        $extra['max'] = ($extra['max'] ?? null) ?: 500;
+        $extra['max'] = ($extra['max'] ?? null) ?: 500;
+        $extra['step'] = ($extra['step'] ?? null) ?: 1;
+        $extra['value_min'] = ($extra['value_min'] ?? null) ?: $extra['min'];
+        $extra['value_max'] = ($extra['value_max'] ?? null) ?: $extra['max'];
+        $extra['value'] = ($extra['value_min'] ?? null) ?: '75';
+        $extra['orientation'] = ($extra['orientation'] ?? null) ?: 'horizontal'; //horizontal", "vertical".
         $extra['range'] = isset($extra['range']) ? $extra['range'] : 'true'; // true , false, min,  max
         $extra['animate'] = isset($extra['animate']) ? $extra['animate'] : 'false'; // boolean, string("slow", "normal", "fast), int
         $extra['disabled'] = isset($extra['disabled']) ? $extra['disabled'] : 'false'; // boolean

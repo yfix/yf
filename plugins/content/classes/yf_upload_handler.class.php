@@ -105,9 +105,9 @@ class yf_upload_handler extends UploadHandler
                 // create image versions
                 foreach ($image_versions[$param_name] as $version_name => $version_options) {
                     $file = $version_options['file'];
-                    $max_width = $version_options['max_width'] ?: $this->image_width;
-                    $max_height = $version_options['max_height'] ?: $this->image_height;
-                    $watermark = $version_options['watermark'] ?: false;
+                    $max_width = ($version_options['max_width'] ?? null) ?: $this->image_width;
+                    $max_height = ($version_options['max_height'] ?? null) ?: $this->image_height;
+                    $watermark = ($version_options['watermark'] ?? null) ?: false;
                     $result &= common()->make_thumb($file_upload, $file, $max_width, $max_height, $watermark);
                 }
                 // remove upload file

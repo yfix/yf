@@ -17,7 +17,7 @@ class yf_html_tree
      */
     public function tree($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if ($data) {
             $data = $this->_parent->_recursive_sort_items($data);
         }
@@ -93,7 +93,7 @@ class yf_html_tree
             } else {
                 $controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
             }
-            $badge = $item['badge'] ? ' <sup class="badge badge-' . ($item['class_badge'] ?: 'info') . '">' . $item['badge'] . '</sup>' : '';
+            $badge = $item['badge'] ? ' <sup class="badge badge-' . (($item['class_badge'] ?? null) ?: 'info') . '">' . $item['badge'] . '</sup>' : '';
             $controls_style = 'float:right;' . ($extra['class_add'] != 'no_hide_controls' ? 'display:none;' : '');
             $items[] = '
 				<li id="item_' . $id . '"' . ( ! $is_draggable ? ' class="not_draggable"' : '') . '>
@@ -129,7 +129,7 @@ class yf_html_tree
      */
     public function li_tree($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if ($data) {
             $data = $this->_parent->_recursive_sort_items($data);
         }
@@ -155,12 +155,12 @@ class yf_html_tree
                     $close_li = 0;
                 }
             }
-            $body = $item['name'] ?: $item['body'];
+            $body = ($item['name'] ?? null) ?: $item['body'];
             $content = ($item['icon_class'] ? '<i class="' . $item['icon_class'] . '"></i>' : '') . (strlen($body) ? '<span class="li-content">' . $body . '</span>' : '');
             if ($item['link']) {
                 $content = '<a href="' . $item['link'] . '">' . $content . '</a>';
             }
-            $items[] = '<li id="' . ($item['id'] ?: ($extra['id'] ?: 'item') . '_' . $id) . '" class="li-header li-level-' . $item['level'] . '">' . $content;
+            $items[] = '<li id="' . (($item['id'] ?? null) ?: (($extra['id'] ?? null) ?: 'item') . '_' . $id) . '" class="li-header li-level-' . $item['level'] . '">' . $content;
             if ($has_children) {
                 $ul_opened = true;
                 $items[] = PHP_EOL . '<ul class="' . ($item['level'] >= $opened_levels ? 'closed' : '') . '">' . PHP_EOL;

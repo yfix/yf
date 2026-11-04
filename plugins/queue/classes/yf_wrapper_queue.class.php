@@ -111,7 +111,7 @@ class yf_wrapper_queue
             if ($data) {
                 $callback($data, $params);
             }
-            usleep($params['usleep'] ?: 100000);
+            usleep(($params['usleep'] ?? null) ?: 100000);
         }
     }
 }

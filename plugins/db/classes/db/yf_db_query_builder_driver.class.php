@@ -659,7 +659,7 @@ abstract class yf_db_query_builder_driver
             return false;
         }
         $a = [];
-        $table = $params['table'] ?: $this->get_table();
+        $table = ($params['table'] ?? null) ?: $this->get_table();
         if ( ! $table) {
             return false;
         }
@@ -802,7 +802,7 @@ abstract class yf_db_query_builder_driver
      */
     public function update(array $data, $params = [])
     {
-        $table = $params['table'] ?: $this->get_table();
+        $table = ($params['table'] ?? null) ?: $this->get_table();
         if ( ! $table) {
             return false;
         }
@@ -811,7 +811,7 @@ abstract class yf_db_query_builder_driver
         }
         // 3-dimensional array detected
         if (is_array($data) && is_array(reset($data))) {
-            $index = $params['id'] ?: $this->get_key_name();
+            $index = ($params['id'] ?? null) ?: $this->get_key_name();
             return $this->update_batch($table, $data, $index, $params['sql'], $params);
         }
         $a = $this->_sql_to_array($return_raw = true);

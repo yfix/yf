@@ -272,7 +272,7 @@ class yf_auth_admin
         return db()->insert_safe('log_admin_auth_fails', [
             'time'         => str_replace(',', '.', microtime(true)),
             'ip'           => common()->get_ip(),
-            'user_id'      => $data['user_id'] ?: ($_SESSION[$this->VAR_ADMIN_ID] ?? null),
+            'user_id'      => ($data['user_id'] ?? null) ?: ($_SESSION[$this->VAR_ADMIN_ID] ?? null),
             'login'        => $data['login'],
             'pswd'         => $data['pswd'],
             'reason'       => $data['reason'],
@@ -313,7 +313,7 @@ class yf_auth_admin
         $_SESSION[$this->VAR_LOCK_UA] = ($_SERVER['HTTP_USER_AGENT'] ?? null);
         $_SESSION[$this->VAR_LOCK_HOST] = ($_SERVER['HTTP_HOST'] ?? null);
 
-        $after_login = $t_group['go_after_login'] ?: $t_group['go_after_login'];
+        $after_login = ($t_group['go_after_login'] ?? null) ?: $t_group['go_after_login'];
         return js_redirect($after_login ?: './');
     }
 
@@ -350,7 +350,7 @@ class yf_auth_admin
         $_SESSION[$this->VAR_LOCK_UA] = ($_SERVER['HTTP_USER_AGENT'] ?? null);
         $_SESSION[$this->VAR_LOCK_HOST] = ($_SERVER['HTTP_HOST'] ?? null);
 
-        $after_login = $t_group[$this->VAR_ADMIN_GO_URL] ?: $t_group[$this->VAR_ADMIN_GO_URL];
+        $after_login = ($t_group[$this->VAR_ADMIN_GO_URL] ?? null) ?: $t_group[$this->VAR_ADMIN_GO_URL];
         return js_redirect($after_login ?: './');
     }
     /**

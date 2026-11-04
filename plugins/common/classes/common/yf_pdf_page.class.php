@@ -45,10 +45,10 @@ class yf_pdf_page
     {
         if (is_array($html)) {
             $_ = $html;
-            $html = $_['html'] ?: '';
-            $css = $_['css'] ?: null;
-            $file = $_['file'] ?: $file;
-            $type = $_['type'] ?: $type;
+            $html = ($_['html'] ?? null) ?: '';
+            $css = ($_['css'] ?? null) ?: null;
+            $file = ($_['file'] ?? null) ?: $file;
+            $type = ($_['type'] ?? null) ?: $type;
         }
         if ($type == 'F') {
             _class('dir')->mkdir($this->PATH_TO_PDF);

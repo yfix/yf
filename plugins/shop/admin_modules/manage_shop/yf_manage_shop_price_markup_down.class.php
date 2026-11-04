@@ -115,8 +115,8 @@ class yf_manage_shop_price_markup_down
     public function _on_before_show(&$fields)
     {
         $_class_price = $this->_class_price;
-        $fields['type'] = $fields['type'] ?: 1;
-        $fields['conditions'] = $fields['conditions'] ?: '{ }';
+        $fields['type'] = ($fields['type'] ?? null) ?: 1;
+        $fields['conditions'] = ($fields['conditions'] ?? null) ?: '{ }';
         $fields['value'] = $_class_price->_number_from_mysql($fields['value']);
     }
 

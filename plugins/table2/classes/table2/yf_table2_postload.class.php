@@ -11,8 +11,8 @@ class yf_table2_postload
      */
     public function postload($params = [], $table = null)
     {
-        $attr_postload_url = $params['attr_postload_url'] ?: 'postload-url';
-        $tr_id_key = $params['tr_id_key'] ?: 'name';
+        $attr_postload_url = ($params['attr_postload_url'] ?? null) ?: 'postload-url';
+        $tr_id_key = ($params['tr_id_key'] ?? null) ?: 'name';
 
         $jquery = '
 			var attr_postload_url = "' . $attr_postload_url . '"

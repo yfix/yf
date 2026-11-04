@@ -169,7 +169,7 @@ class yf_html
             ];
         }
 
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $extra['no_header'] = isset($extra['no_header']) ? $extra['no_header'] : 1;
         $extra['pager_records_on_page'] = isset($extra['pager_records_on_page']) ? $extra['pager_records_on_page'] : 10000;
         $extra['no_total'] = isset($extra['no_total']) ? $extra['no_total'] : true;
@@ -188,7 +188,7 @@ class yf_html
      */
     public function dd_table($replace = [], $field_types = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if (DEBUG_MODE) {
             $ts = microtime(true);
         }
@@ -246,9 +246,9 @@ class yf_html
      */
     public function modal($extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $def_style = $extra['inline'] ? 'position: relative; top: auto; left: auto; right: auto; bottom: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%; display: block; overflow-y: auto;' : '';
-        $extra['style'] = $extra['style'] ?: $def_style;
+        $extra['style'] = ($extra['style'] ?? null) ?: $def_style;
         return '
 			<div class="modal" style="' . $extra['style'] . '" id="' . $extra['id'] . '">
 				<div class="modal-dialog">
@@ -270,14 +270,14 @@ class yf_html
      */
     public function tabs($tabs = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
 
         $extra_by_id = [];
         if (isset($extra['by_id'])) {
             $extra_by_id = (array) $extra['by_id'];
             unset($extra['by_id']);
         }
-        $links_prefix = $extra['links_prefix'] ?: 'tab_';
+        $links_prefix = ($extra['links_prefix'] ?? null) ?: 'tab_';
 
         $headers = [];
         $items = [];
@@ -297,9 +297,9 @@ class yf_html
             if ($_extra['hide_empty'] && ! strlen($content)) {
                 continue;
             }
-            $name = $v['name'] ?: $k;
-            $desc = $v['desc'] ?: (! $_extra['no_auto_desc'] ? ucfirst(str_replace('_', ' ', $name)) : $name);
-            $id = preg_replace('~[^a-z0-9_-]+~i', '', $v['id'] ?: $links_prefix . $k);
+            $name = ($v['name'] ?? null) ?: $k;
+            $desc = ($v['desc'] ?? null) ?: (! $_extra['no_auto_desc'] ? ucfirst(str_replace('_', ' ', $name)) : $name);
+            $id = preg_replace('~[^a-z0-9_-]+~i', '', ($v['id'] ?? null) ?: $links_prefix . $k);
             $i = 0;
             if (isset($_extra['selected'])) {
                 $is_active = ($_extra['selected'] == $k);
@@ -309,21 +309,21 @@ class yf_html
             if (isset($_extra['totals'][$name])) {
                 $v['badge'] = (int) (isset($_extra['totals'][$name]['total']) ? $_extra['totals'][$name]['total'] : $_extra['totals'][$name]);
             }
-            $badge = isset($v['badge']) ? ' <sup class="badge badge-' . ($v['class_badge'] ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
+            $badge = isset($v['badge']) ? ' <sup class="badge badge-' . (($v['class_badge'] ?? null) ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
             if (! $_extra['no_headers']) {
-                $class_head = $v['class_head'] ?: $_extra['class_head'];
+                $class_head = ($v['class_head'] ?? null) ?: $_extra['class_head'];
                 $class_head .= $_extra['class_add_head'] ? ' ' . $_extra['class_add_head'] : '';
                 if ($is_active) {
                     $class_head = trim('active ' . $class_head);
                 }
                 $_extra_head = (array) $_extra['tab_head'];
-                $_extra_head['class'] = $_extra_head['class'] ?: $class_head;
+                $_extra_head['class'] = ($_extra_head['class'] ?? null) ?: $class_head;
                 $headers[] =
                     '<li' . _attrs($_extra_head, ['id', 'class', 'style']) . '>
 						<a ' . (! $disabled ? 'href="#' . fix_html_attr_id($id) . '" ' : '') . 'data-toggle="tab">' . ($desc_raw ?: t($desc)) . $badge . '</a>
 					</li>';
             }
-            $class_body = ($_extra['class'] ?: $v['class_body']) ?: $_extra['class_body'];
+            $class_body = (($_extra['class'] ?? null) ?: $v['class_body']) ?: $_extra['class_body'];
             $class_body = $class_body ?: 'tab-pane';
             $class_body .= $_extra['class_add_body'] ? ' ' . $_extra['class_add_body'] : '';
             if ($is_active || $_extra['show_all']) {
@@ -332,8 +332,8 @@ class yf_html
                 $class_body = trim('fade ' . $class_body);
             }
             $_extra_body = (array) $_extra['tab_body'];
-            $_extra_body['id'] = $_extra_body['id'] ?: $id;
-            $_extra_body['class'] = $_extra_body['class'] ?: $class_body;
+            $_extra_body['id'] = ($_extra_body['id'] ?? null) ?: $id;
+            $_extra_body['class'] = ($_extra_body['class'] ?? null) ?: $class_body;
             $items[] = '<div' . _attrs($_extra_body, ['id', 'class', 'style']) . '>' . $content . '</div>';
         }
         $body = $headers ? '<ul id="' . $extra['id'] . '" class="nav nav-tabs">' . implode(PHP_EOL, (array) $headers) . '</ul>' . PHP_EOL : '';
@@ -347,7 +347,7 @@ class yf_html
      */
     public function accordion($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
         $i = 0;
         foreach ((array) $data as $k => $v) {
@@ -357,18 +357,18 @@ class yf_html
             } else {
                 $content = $v['body'];
             }
-            $name = $v['name'] ?: $k;
-            $desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
-            $id = $v['id'] ?: 'accordion_item_' . $k;
+            $name = ($v['name'] ?? null) ?: $k;
+            $desc = ($v['desc'] ?? null) ?: ucfirst(str_replace('_', ' ', $name));
+            $id = ($v['id'] ?? null) ?: 'accordion_item_' . $k;
             if (isset($extra['selected'])) {
                 $is_selected = ($extra['selected'] == $k);
             } else {
                 $is_selected = (++$i == 1);
             }
-            $class_group = $v['class_group'] ?: $extra['class_group'];
-            $class_head = $v['class_head'] ?: $extra['class_head'];
-            $class_body = $v['class_body'] ?: $extra['class_body'];
-            $badge = $v['badge'] ? ' <sup class="badge badge-' . ($v['class_badge'] ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
+            $class_group = ($v['class_group'] ?? null) ?: $extra['class_group'];
+            $class_head = ($v['class_head'] ?? null) ?: $extra['class_head'];
+            $class_body = ($v['class_body'] ?? null) ?: $extra['class_body'];
+            $badge = $v['badge'] ? ' <sup class="badge badge-' . (($v['class_badge'] ?? null) ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
 
             $items[] =
                 '<div class="accordion-group panel panel-default' . ($class_group ? ' ' . $class_group : '') . '">
@@ -391,7 +391,7 @@ class yf_html
      */
     public function carousel($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
         $headers = [];
         $i = 0;
@@ -403,15 +403,15 @@ class yf_html
                 $img_src = $v['img'];
             }
             $desc = $v['desc'];
-            $alt = $v['alt'] ?: strip_tags($desc);
-            $id = $v['id'] ?: 'carousel_item_' . $k;
+            $alt = ($v['alt'] ?? null) ?: strip_tags($desc);
+            $id = ($v['id'] ?? null) ?: 'carousel_item_' . $k;
             if (isset($extra['selected'])) {
                 $is_active = ($extra['selected'] == $k);
             } else {
                 $is_active = (++$i == 1);
             }
-            $class_head = $v['class_head'] ?: $extra['class_head'];
-            $class_body = $v['class_body'] ?: $extra['class_body'];
+            $class_head = ($v['class_head'] ?? null) ?: $extra['class_head'];
+            $class_body = ($v['class_body'] ?? null) ?: $extra['class_body'];
 
             $headers[] = '<li data-target="#' . $extra['id'] . '" data-slide-to="' . ($i - 1) . '" class="' . ($is_active ? 'active' : '') . ($class_head ? ' ' . $class_head : '') . '"></li>';
             $items[] =
@@ -437,11 +437,11 @@ class yf_html
      */
     public function alert($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $close_btn = (! $extra['no_close'] && ! $data['no_close']) ? '<button type="button" class="close" data-dismiss="alert">×</button>' : '';
         $head = is_array($data) ? $data['head'] : '';
         $body = is_array($data) ? $data['body'] : $data;
-        $alert_type = $extra['alert'] ?: (is_array($data) ? $data['alert'] : '');
+        $alert_type = ($extra['alert'] ?? null) ?: (is_array($data) ? $data['alert'] : '');
         if (! $alert_type) {
             $alert_type = 'error';
         }
@@ -459,7 +459,7 @@ class yf_html
      */
     public function navbar($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
         $brand = '';
         if (isset($data['brand'])) {
@@ -475,8 +475,8 @@ class yf_html
             } else {
                 $is_selected = (++$i == 1);
             }
-            $class_item = $v['class_item'] ?: $extra['class_item'];
-            $badge = $v['badge'] ? ' <sup class="badge badge-' . ($v['class_badge'] ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
+            $class_item = ($v['class_item'] ?? null) ?: $extra['class_item'];
+            $badge = $v['badge'] ? ' <sup class="badge badge-' . (($v['class_badge'] ?? null) ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
             $items[] = '<li class="' . ($is_selected ? ' active' : '') . ($class_item ? ' ' . $class_item : '') . '"><a href="' . $v['link'] . '" title="' . $v['name'] . '">' . $v['name'] . $badge . '</a></li>';
         }
         return
@@ -494,17 +494,17 @@ class yf_html
      */
     public function breadcrumbs($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
-        $divider = $extra['divider'] ?: ''; // '/'
+        $divider = ($extra['divider'] ?? null) ?: ''; // '/'
         $show_divider = ! $this->_is_bs3 && strlen($divider);
         $len = count((array) $data);
         $data = _prepare_html($data);
         $i = 0;
         foreach ((array) $data as $k => $v) {
             $is_last = (++$i == $len);
-            $class_item = $v['class_item'] ?: $extra['class_item'];
-            $badge = $v['badge'] ? ' <sup class="badge badge-' . ($v['class_badge'] ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
+            $class_item = ($v['class_item'] ?? null) ?: $extra['class_item'];
+            $badge = $v['badge'] ? ' <sup class="badge badge-' . (($v['class_badge'] ?? null) ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
             $items[] = '<li class="' . ($is_last ? ' active' : '') . ($class_item ? ' ' . $class_item : '') . '">
 				' . (
                 ($is_last || ! $v['link']) ? $v['name']
@@ -523,7 +523,7 @@ class yf_html
     public function thumbnails($data = [], $extra = [])
     {
         $items = [];
-        $columns = (int) $extra['columns'] ?: 3;
+        $columns = (int) ($extra['columns'] ?? null) ?: 3;
         $row_class = 'span' . round(12 / $columns) . ' col-md-' . round(12 / $columns);
         foreach ((array) $data as $k => $v) {
             if (! is_array($v)) {
@@ -532,12 +532,12 @@ class yf_html
             } else {
                 $img_src = $v['img'];
             }
-            $class_item = $v['class_item'] ?: $extra['class_item'];
+            $class_item = ($v['class_item'] ?? null) ?: $extra['class_item'];
             $tag = $this->_is_bs3 ? 'div' : 'li';
             $items[] =
                 '<' . $tag . ' class="' . $row_class . ($class_item ? ' ' . $class_item : '') . ($v['style'] ? ' style="' . $v['style'] . '"' : '') . '">
 					<div class="thumbnail">
-						<img alt="' . _prepare_html($v['alt'] ?: $v['head']) . '" src="' . _prepare_html($img_src) . '" />
+						<img alt="' . _prepare_html(($v['alt'] ?? null) ?: $v['head']) . '" src="' . _prepare_html($img_src) . '" />
 						' . (($v['head'] || $v['body']) ? '<div class="caption">' . ($v['head'] ? '<h3>' . _prepare_html($v['head']) . '</h3>' : '') . ' ' . $v['body'] . '</div>' : '') . '
 					</div>
 				</' . $tag . '>';
@@ -557,7 +557,7 @@ class yf_html
      */
     public function progress_bar($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
         foreach ((array) $data as $v) {
             if (! is_array($v)) {
@@ -566,8 +566,8 @@ class yf_html
             } else {
                 $val = $v['val'];
             }
-            $type = $v['type'] ?: $extra['type'];
-            $class_item = $v['class_item'] ?: $extra['class_item'];
+            $type = ($v['type'] ?? null) ?: $extra['type'];
+            $class_item = ($v['class_item'] ?? null) ?: $extra['class_item'];
             $items[] = '<div class="progress-bar bar bar-' . $type . ' progress-bar-' . $type . ($class_item ? ' ' . $class_item : '')
                 . '" style="width: ' . $val . '%;' . ($v['style'] ? ' ' . $v['style'] : '') . '" role="progressbar"></div>';
         }
@@ -580,7 +580,7 @@ class yf_html
      */
     public function pagination($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if (isset($data['prev'])) {
             $prev = $data['prev'];
             unset($data['prev']);
@@ -611,8 +611,8 @@ class yf_html
      */
     public function panel($extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
-        $extra['class'] = $extra['class'] ?: 'panel panel-default';
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['class'] = ($extra['class'] ?? null) ?: 'panel panel-default';
         return
             '<div class="' . implode(' ', array_filter([$extra['class'], $extra['class_add']])) . '" id="' . $extra['id'] . '">
 				<div class="panel-heading">
@@ -628,7 +628,7 @@ class yf_html
      */
     public function jumbotron($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         return '<div class="jumbotron' . ($extra['class'] ? ' ' . $extra['class'] : '') . '" id="' . $extra['id'] . '"><h1>' . $data['head'] . '</h1>' . $data['body'] . '</div>';
     }
 
@@ -638,7 +638,7 @@ class yf_html
      */
     public function well($body = '', $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if (! $extra['class']) {
             $extra['class'] = 'well-lg';
         }
@@ -651,7 +651,7 @@ class yf_html
      */
     public function list_group($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
         foreach ((array) $data as $v) {
             if (! is_array($v)) {
@@ -660,8 +660,8 @@ class yf_html
             } else {
                 $body = $v['body'];
             }
-            $type = $v['type'] ?: $extra['type'];
-            $class_item = $v['class_item'] ?: $extra['class_item'];
+            $type = ($v['type'] ?? null) ?: $extra['type'];
+            $class_item = ($v['class_item'] ?? null) ?: $extra['class_item'];
             $items[] = '<li class="list-group-item' . ($class_item ? ' ' . $class_item : '') . '"><span class="badge">' . $v['badge'] . '</span> ' . $body . '</li>';
         }
         return '<ul class="list-group' . ($extra['class'] ? ' ' . $extra['class'] : '') . '" id="' . $extra['id'] . '">' . implode(PHP_EOL, (array) $items) . '</ul>';
@@ -673,11 +673,11 @@ class yf_html
      */
     public function media_objects($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if ($data) {
             $data = $this->_recursive_sort_items($data);
         }
-        $img_class = ($extra['img_class'] ?: 'media-object') . ($extra['img_class_add'] ? ' ' . $extra['img_class_add'] : '');
+        $img_class = (($extra['img_class'] ?? null) ?: 'media-object') . ($extra['img_class_add'] ? ' ' . $extra['img_class_add'] : '');
         $keys = array_keys($data);
         $keys_counter = array_flip($keys);
         $items = [];
@@ -700,7 +700,7 @@ class yf_html
 					<div class="media-body">
 						<h4 class="media-heading">'
                 . ($item['link'] ? '<a href="' . $item['link'] . '">' : '') . $item['head'] . ($item['link'] ? '</a>' : '')
-                . ($item['date'] ? '&nbsp;<small class="pull-right">' . _format_date($item['date'], $extra['date_format'] ?: 'full') . '</small>' : '')
+                . ($item['date'] ? '&nbsp;<small class="pull-right">' . _format_date($item['date'], ($extra['date_format'] ?? null) ?: 'full') . '</small>' : '')
                 . '</h4>'
                 . $item['body'] . '
 			';
@@ -717,7 +717,7 @@ class yf_html
      */
     public function menu($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if ($data) {
             $data = $this->_recursive_sort_items($data);
         }
@@ -739,7 +739,7 @@ class yf_html
                     $close_li = 0;
                 }
             }
-            $badge = $item['badge'] ? ' <sup class="badge badge-' . ($item['class_badge'] ?: 'info') . '">' . $item['badge'] . '</sup>' : '';
+            $badge = $item['badge'] ? ' <sup class="badge badge-' . (($item['class_badge'] ?? null) ?: 'info') . '">' . $item['badge'] . '</sup>' : '';
             $items[] = '
 				<li class="dropdown">
 					<a href="' . $item['link'] . '" class="dropdown-toggle">' . $item['name'] . $badge . ($has_children ? ' <b class="caret"></b>' : '') . '</a>';
@@ -771,7 +771,7 @@ class yf_html
      */
     public function grid($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $rows = [];
         $ul_opened = false;
         foreach ((array) $data as $id => $row) {
@@ -781,8 +781,8 @@ class yf_html
                 $row_col = 1;
             }
             foreach ((array) $row as $rid => $item) {
-                $body = $item[0] ?: $item['body'];
-                $col = $item[1] ?: $item['col'];
+                $body = ($item[0] ?? null) ?: $item['body'];
+                $col = ($item[1] ?? null) ?: $item['col'];
                 $class = $item['class'];
                 if (! $col) {
                     $col = $row_col;
@@ -800,7 +800,7 @@ class yf_html
      */
     public function navlist($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
         foreach ((array) $data as $k => $v) {
             if (! is_array($v)) {
@@ -811,8 +811,8 @@ class yf_html
                 $name = $v['name'];
                 $link = $v['link'];
             }
-            $class_item = $v['class_item'] ?: $extra['class_item'];
-            $badge = $v['badge'] ? ' <sup class="badge badge-' . ($v['class_badge'] ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
+            $class_item = ($v['class_item'] ?? null) ?: $extra['class_item'];
+            $badge = $v['badge'] ? ' <sup class="badge badge-' . (($v['class_badge'] ?? null) ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
             $items[] = '<li class="' . ($class_item ? ' ' . $class_item : '') . '"><a href="' . $link . '"><i class="icon-chevron-right fa fa-chevron-right"></i> ' . t($name) . $badge . '</a></li>';
         }
         return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav' . ($extra['class'] ? ' ' . $extra['class'] : '') . '" id="' . $extra['id'] . '">' . implode(PHP_EOL, (array) $items) . '</ul></div>';
@@ -824,20 +824,20 @@ class yf_html
      */
     public function li($data = [], $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $items = [];
         foreach ((array) $data as $v) {
             if (! is_array($v)) {
                 $body = $v;
                 $v = [];
             } else {
-                $body = $v['body'] ?: $v['name'];
+                $body = ($v['body'] ?? null) ?: $v['name'];
             }
             if (! strlen($body)) {
                 continue;
             }
-            $class_item = $v['class'] ?: $extra['class_item'];
-            $badge = $v['badge'] ? ' <sup class="badge badge-' . ($v['class_badge'] ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
+            $class_item = ($v['class'] ?? null) ?: $extra['class_item'];
+            $badge = $v['badge'] ? ' <sup class="badge badge-' . (($v['class_badge'] ?? null) ?: 'info') . '">' . $v['badge'] . '</sup>' : '';
             $items[] = '<li class="' . ($class_item ? ' ' . $class_item : '') . '"' . ($v['id'] ? ' id="' . $v['id'] . '"' : '') . '>' . $badge . ($v['link'] ? '<a href="' . $v['link'] . '">' . $body . '</a>' : $body) . '</li>';
             if (is_array($v['sub'])) {
                 $items[] = $this->li($v['sub'], $extra);
@@ -1129,7 +1129,7 @@ class yf_html
             'selected' => $selected,
             'use_stpl' => false,
             'label_extra' => [
-                'class' => ($label_extra['class'] ?: $this->CLASS_LABEL_BTN_CHECKBOX),
+                'class' => (($label_extra['class'] ?? null) ?: $this->CLASS_LABEL_BTN_CHECKBOX),
             ],
         ] + $extra;
         $label_right = $extra['label_right'] ? '<label class="text">&nbsp;<small>' . $extra['desc'] . '</small></label>' : '';
@@ -1202,7 +1202,7 @@ class yf_html
             } else {
                 $label_extra = $extra['label_extra'];
                 if (isset($label_extra['class'])) {
-                    $label_extra['class'] = ($label_extra_class ?: $label_extra['class'] ?: $this->CLASS_LABEL_RADIO) . ($horizontal ? ' ' . $this->CLASS_LABEL_RADIO_INLINE : '');
+                    $label_extra['class'] = ($label_extra_class ?: ($label_extra['class'] ?? null) ?: $this->CLASS_LABEL_RADIO) . ($horizontal ? ' ' . $this->CLASS_LABEL_RADIO_INLINE : '');
                 }
                 if ($extra['class_add_label_radio']) {
                     $label_extra['class'] .= ' ' . $extra['class_add_label_radio'];
@@ -1244,7 +1244,7 @@ class yf_html
             $selected = $extra['checked'];
         }
         $extra['checked'] = $selected ? 'checked' : null;
-        $extra['id'] = ($extra['force_id'] ?: $extra['id']) ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__] : null);
+        $extra['id'] = (($extra['force_id'] ?? null) ?: $extra['id']) ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__] : null);
         $extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $extra['name']));
         if ($extra['no_desc']) {
             $extra['desc'] = '';
@@ -1392,11 +1392,11 @@ class yf_html
         if (! is_array($extra)) {
             $extra = [];
         }
-        $extra['name'] = $extra['name'] ?: ($name ?: 'text');
-        $extra['value'] = $extra['value'] ?: $value;
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
-        $extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
-        $extra['type'] = $extra['type'] ?: 'text';
+        $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'text');
+        $extra['value'] = ($extra['value'] ?? null) ?: $value;
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['desc'] = ($extra['desc'] ?? null) ?: ucfirst(str_replace('_', '', $extra['name']));
+        $extra['type'] = ($extra['type'] ?? null) ?: 'text';
         $extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
         $extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_INPUT;
         if ($extra['class_add']) {
@@ -1421,11 +1421,11 @@ class yf_html
         if (! is_array($extra)) {
             $extra = [];
         }
-        $extra['name'] = $extra['name'] ?: ($name ?: 'text');
-        $extra['value'] = $extra['value'] ?: $value;
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
-        $extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
-        $extra['type'] = $extra['type'] ?: 'text';
+        $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'text');
+        $extra['value'] = ($extra['value'] ?? null) ?: $value;
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['desc'] = ($extra['desc'] ?? null) ?: ucfirst(str_replace('_', '', $extra['name']));
+        $extra['type'] = ($extra['type'] ?? null) ?: 'text';
         $extra['placeholder'] = $extra['placeholder'] ? t($extra['placeholder']) : $extra['desc'];
         $extra['contenteditable'] = (! isset($extra['contenteditable']) || $extra['contenteditable']) ? 'true' : false;
 
@@ -1451,8 +1451,8 @@ class yf_html
         if ($extra['no_translate']) {
             $translate = 0;
         }
-        $selected = $extra['selected'] ?: $selected;
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $selected = ($extra['selected'] ?? null) ?: $selected;
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if (! $values) {
             return false;
         }
@@ -1500,7 +1500,7 @@ class yf_html
             $translate = 0;
         }
         $selected = isset($extra['selected']) ? $extra['selected'] : $selected;
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if (! $values) {
             return false;
         }
@@ -1517,7 +1517,7 @@ class yf_html
                 $selected_val = $val;
             }
         }
-        $class = $extra['class'] ?: 'btn dropdown-toggle';
+        $class = ($extra['class'] ?? null) ?: 'btn dropdown-toggle';
         $extra['class_add'] && $class .= ' ' . $extra['class_add'];
         $text = $selected_val ?: $desc;
 
@@ -1569,7 +1569,7 @@ class yf_html
             $translate = 0;
         }
         $selected = isset($extra['selected']) ? $extra['selected'] : $selected;
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if (! $values) {
             return false;
         }
@@ -1604,7 +1604,7 @@ class yf_html
         } else {
             $extra['name'] = $name;
         }
-        $extra['force_id'] = $extra['force_id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['force_id'] = ($extra['force_id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         // put default js options here
         $js_options = (array) $extra['js_options'] + [
             'width' => 'element',
@@ -1681,7 +1681,7 @@ class yf_html
         } else {
             $extra['name'] = $name;
         }
-        $extra['force_id'] = $extra['force_id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['force_id'] = ($extra['force_id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
 
         asset('chosen');
 
@@ -1715,7 +1715,7 @@ class yf_html
         if (! $extra['name']) {
             $name = $extra['name'] = 'phone';
         }
-        $extra['force_id'] = $extra['force_id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['force_id'] = ($extra['force_id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if (! $extra['id']) {
             $extra['id'] = $extra['force_id'] . '_input';
         }
@@ -1803,7 +1803,7 @@ class yf_html
         } else {
             $extra['name'] = $name;
         }
-        $extra['force_id'] = $extra['force_id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['force_id'] = ($extra['force_id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
 
         asset('jquery-image-picker');
         asset('jquery-imagesloaded');
@@ -1844,7 +1844,7 @@ class yf_html
         jquery('$(".datepicker").datepicker({ dateFormat: "yy-mm-dd" });');
         css('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery.ui.datepicker.min.css');
 
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         // TODO: use input() unified control
         return '<input type="text" name="' . $name . '" class="datepicker" value="' . $cur_date . '" style="width:80px" readonly="true" id="' . $extra['id'] . '" />';
     }
@@ -1929,14 +1929,14 @@ class yf_html
             $extra = [];
         }
         //		css('.popover { width:auto; min-width: 100px;}');
-        $extra['text'] = $extra['text'] ?: $text;
-        $extra['icon'] = $extra['icon'] ?: 'icon icon-info-sign fa fa-question-circle';
-        $extra['href'] = $extra['href'] ?: '#';
-        $extra['class'] = ($extra['class'] ?: 'yf_tip') . ($extra['class_add'] ? ' ' . $extra['class_add'] : '');
-        $extra['data-content'] = $extra['data-content'] ?: _prepare_html($extra['text']);
-        $extra['data-toggle'] = $extra['data-toggle'] ?: 'popover';
-        $extra['data-container'] = $extra['data-container'] ?: 'body';
-        $extra['data-html'] = $extra['data-html'] ?: 'true';
+        $extra['text'] = ($extra['text'] ?? null) ?: $text;
+        $extra['icon'] = ($extra['icon'] ?? null) ?: 'icon icon-info-sign fa fa-question-circle';
+        $extra['href'] = ($extra['href'] ?? null) ?: '#';
+        $extra['class'] = (($extra['class'] ?? null) ?: 'yf_tip') . ($extra['class_add'] ? ' ' . $extra['class_add'] : '');
+        $extra['data-content'] = ($extra['data-content'] ?? null) ?: _prepare_html($extra['text']);
+        $extra['data-toggle'] = ($extra['data-toggle'] ?? null) ?: 'popover';
+        $extra['data-container'] = ($extra['data-container'] ?? null) ?: 'body';
+        $extra['data-html'] = ($extra['data-html'] ?? null) ?: 'true';
         return (! $extra['no_nbsp'] ? '&nbsp;' : '') . '<span' . _attrs($extra, ['id', 'class', 'style']) . '><i class="' . $extra['icon'] . '"></i></span>';
     }
 
@@ -1968,7 +1968,7 @@ class yf_html
             }
         }
         if (! isset($a['text'])) {
-            $a['text'] = $a['title'] ?: $a['href'];
+            $a['text'] = ($a['title'] ?? null) ?: $a['href'];
         }
         if ($a['href'] && substr($a['href'], 0, strlen('http')) !== 'http' && substr($a['href'], 0, strlen('//')) !== '//') {
             $a['href'] = url($a['href']);
@@ -2010,7 +2010,7 @@ class yf_html
             'icon' => ['fa fa-ban', 'fa fa-check'],
             'title' => [t('Disabled'), t('Active')],
         ];
-        $class = ($extra['class'] ?: 'change_active') . ($extra['class_add'] ? ' ' . $extra['class_add'] : '');
+        $class = (($extra['class'] ?? null) ?: 'change_active') . ($extra['class_add'] ? ' ' . $extra['class_add'] : '');
         return $extra['disabled'] ? $pairs['class'][$active] : $this->a(
             $url,
             $pairs['title'][$active],
@@ -2149,7 +2149,7 @@ class yf_html
         $selected2 = '/@object/' . ($_GET['action'] ?? null);
         foreach ((array) $items as $i) {
             $is_selected = (strpos($i[0], $selected) === 0) || (strpos($i[0], $selected2) === 0);
-            $out[] = a($i[0], $i[1], $i[2], $i[3], $is_selected ? 'disabled btn-primary' : '', $i[5] ?: '', $i[6]);
+            $out[] = a($i[0], $i[1], $i[2], $i[3], $is_selected ? 'disabled btn-primary' : '', ($i[5] ?? null) ?: '', $i[6]);
         }
         return implode($out) . PHP_EOL;
     }

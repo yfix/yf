@@ -137,9 +137,9 @@ class yf_graphics
         if ( ! is_array($meta)) {
             $meta = [];
         }
-        $meta['charset'] = $meta['charset'] ?: (conf('charset') ?: 'utf-8');
-        $meta['keywords'] = $meta['keywords'] ?: (conf('meta_keywords') ?: $this->META_KEYWORDS);
-        $meta['description'] = $meta['description'] ?: (conf('meta_description') ?: $this->META_DESCRIPTION);
+        $meta['charset'] = ($meta['charset'] ?? null) ?: (conf('charset') ?: 'utf-8');
+        $meta['keywords'] = ($meta['keywords'] ?? null) ?: (conf('meta_keywords') ?: $this->META_KEYWORDS);
+        $meta['description'] = ($meta['description'] ?? null) ?: (conf('meta_description') ?: $this->META_DESCRIPTION);
         // Override by hook method
         // TODO: maybe need to check permissions at first
         $obj = module_safe(($_GET['object'] ?? null));
@@ -672,7 +672,7 @@ class yf_graphics
                 }
             }
         }
-        $extra['text'] = trim($extra['text'] ?: (is_string($in) ? $in : ''));
+        $extra['text'] = trim(($extra['text'] ?? null) ?: (is_string($in) ? $in : ''));
         if ( ! strlen($extra['text'])) {
             return false;
         }
@@ -712,8 +712,8 @@ class yf_graphics
         if ($return_text || $extra['return_text']) {
             return $extra['text'];
         }
-        $extra['icon'] = $extra['icon'] ?: $tip['icon'];
-        $extra['class_add'] = $extra['class_add'] ?: $tip['class_add'];
+        $extra['icon'] = ($extra['icon'] ?? null) ?: $tip['icon'];
+        $extra['class_add'] = ($extra['class_add'] ?? null) ?: $tip['class_add'];
         return html()->tooltip($extra['text'], $extra);
     }
 }

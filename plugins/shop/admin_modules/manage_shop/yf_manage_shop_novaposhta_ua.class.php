@@ -128,9 +128,9 @@ class yf_manage_shop_novaposhta_ua
         $sql_data = [];
         foreach ($data['response'] as $i => $item) {
             $count++;
-            $city_raw = $item['cityRu'] ?: '';
-            $tel_raw = $item['phone'] ?: '';
-            $address_raw = $item['addressRu'] ?: '';
+            $city_raw = ($item['cityRu'] ?? null) ?: '';
+            $tel_raw = ($item['phone'] ?? null) ?: '';
+            $address_raw = ($item['addressRu'] ?? null) ?: '';
             $city = $this->_cleanup_city($city_raw);
             $tel = $this->_cleanup_tel($tel_raw);
             list($address, $branch_no, $info) = $this->_cleanup_address($address_raw);

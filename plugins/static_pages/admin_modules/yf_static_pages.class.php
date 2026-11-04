@@ -43,7 +43,7 @@ class yf_static_pages
     {
         $a = (array) $_POST + (array) $a;
         $a['back_link'] = url('/@object');
-        $a['locale'] = $a['locale'] ?: conf('language');
+        $a['locale'] = ($a['locale'] ?? null) ?: conf('language');
         $_this = $this;
         return form($a)
             ->validate([

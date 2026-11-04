@@ -14,9 +14,9 @@ class yf_form2_google_maps
 
         asset('google-maps-api');
 
-        $extra['name'] = $extra['name'] ?: ($name ?: 'map');
-        $extra['markers_limit'] = $extra['markers_limit'] ?: 5;
-        $extra['start_zoom'] = $extra['start_zoom'] ?: 5;
+        $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'map');
+        $extra['markers_limit'] = ($extra['markers_limit'] ?? null) ?: 5;
+        $extra['start_zoom'] = ($extra['start_zoom'] ?? null) ?: 5;
         $extra['desc'] = $form->_prepare_desc($extra, $desc);
         $func = function ($extra, $r, $form) {
             $form->_prepare_inline_error($extra);

@@ -62,13 +62,13 @@ class yf_divide_pages
             $render_type = $this->DEFAULT_RENDER_TYPE;
         }
         $requested_page = isset($extra['requested_page']) ? $extra['requested_page'] : ($_GET['page'] ?? null);
-        $records_on_page = abs((int) ($extra['records_on_page'] ?: $records_on_page));
+        $records_on_page = abs((int) (($extra['records_on_page'] ?? null) ?: $records_on_page));
         $per_page = $records_on_page ?: (MAIN_TYPE_ADMIN ? conf('admin_per_page') : conf('user_per_page'));
         if ( ! $per_page) {
             $per_page = conf('per_page') ?: $this->DEFAULT_PER_PAGE;
         }
-        $num_records = abs((int) ($extra['num_records'] ?: $num_records));
-        $tpls_path = $extra['tpls_path'] ?: $tpls_path;
+        $num_records = abs((int) (($extra['num_records'] ?? null) ?: $num_records));
+        $tpls_path = ($extra['tpls_path'] ?? null) ?: $tpls_path;
         if ( ! strlen($tpls_path)) {
             $tpls_path = $this->DEFAULT_TPLS_PATH;
         }
@@ -99,7 +99,7 @@ class yf_divide_pages
             'total_pages' => $total_pages,
             'url_path' => $url_path . ($add_get_vars ? _add_get(['page']) : ''),
             'tpls_path' => $tpls_path,
-            'pages_per_block' => $extra['pages_per_block'] ?: $this->PAGES_PER_BLOCK,
+            'pages_per_block' => ($extra['pages_per_block'] ?? null) ?: $this->PAGES_PER_BLOCK,
         ]);
         $result = [
             'limit_sql' => ' LIMIT ' . (int) ($rendered['first']) . ', ' . (int) $per_page,
@@ -192,7 +192,7 @@ class yf_divide_pages
         $tpls_path = $params['tpls_path'];
         $total_pages = $params['total_pages'];
         $cur_page = $params['cur_page'];
-        $pages_per_block = $params['pages_per_block'] ?: $this->PAGES_PER_BLOCK;
+        $pages_per_block = ($params['pages_per_block'] ?? null) ?: $this->PAGES_PER_BLOCK;
 
         $items = [];
         if ($total_records < $per_page) {
@@ -293,7 +293,7 @@ class yf_divide_pages
         $tpls_path = $params['tpls_path'];
         $total_pages = $params['total_pages'];
         $cur_page = $params['cur_page'];
-        $pages_per_block = $params['pages_per_block'] ?: $this->PAGES_PER_BLOCK;
+        $pages_per_block = ($params['pages_per_block'] ?? null) ?: $this->PAGES_PER_BLOCK;
 
         $items = [];
         if ($total_records < $per_page) {

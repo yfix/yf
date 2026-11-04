@@ -16,8 +16,8 @@ class yf_form2_tbl_funcs
             $extra = (array) $extra + $name;
             $name = $extra['name'];
         }
-        $extra['name'] = $extra['name'] ?: $name;
-        $extra['link'] = $extra['link'] ?: $link;
+        $extra['name'] = ($extra['name'] ?? null) ?: $name;
+        $extra['link'] = ($extra['link'] ?? null) ?: $link;
         $func = function ($extra, $r, $form) {
             $link = $extra['link'];
             if ( ! $link && $extra['link_variants']) {
@@ -38,7 +38,7 @@ class yf_form2_tbl_funcs
             }
             $icon = $extra['icon'] ? $extra['icon'] : _class('table2')->CLASS_ICON_BTN;
             $extra['href'] = $link_url;
-            $extra['class'] = $extra['class'] ?: $form->CLASS_BTN_MINI . ($extra['class_add'] ? ' ' . $extra['class_add'] : '');
+            $extra['class'] = ($extra['class'] ?? null) ?: $form->CLASS_BTN_MINI . ($extra['class_add'] ? ' ' . $extra['class_add'] : '');
             $attrs_names = ['id', 'name', 'href', 'class', 'style', 'target', 'alt', 'title'];
             return ' <a' . _attrs($extra, $attrs_names) . '><i class="' . $icon . '"></i>' . ( ! $extra['hide_text'] ? ' ' . t($extra['name']) : '') . '</a> ';
         };
@@ -195,8 +195,8 @@ class yf_form2_tbl_funcs
             $extra = (array) $extra + $name;
             $name = $extra['name'];
         }
-        $extra['name'] = $extra['name'] ?: ($name ?: 'active');
-        $extra['link'] = $extra['link'] ?: $link;
+        $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'active');
+        $extra['link'] = ($extra['link'] ?? null) ?: $link;
         $extra['desc'] = $form->_prepare_desc($extra, $desc);
         $func = function ($extra, $r, $form) {
             $link = $extra['link'];

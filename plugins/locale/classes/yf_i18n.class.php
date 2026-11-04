@@ -168,7 +168,7 @@ class yf_i18n
             $lang = '';
             if ($uid && MAIN_TYPE_USER && main()->is_db()) {
                 $u = from('user')->whereid($uid)->limit(1)->get();
-                $u && $lang = $u['lang'] ?: $u['language'] ?: $u['locale'];
+                $u && $lang = ($u['lang'] ?? null) ?: ($u['language'] ?? null) ?: $u['locale'];
             }
             return $lang;
         };

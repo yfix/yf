@@ -56,7 +56,7 @@ class yf_html5fw
      */
     public function form_row($content, $extra = [], $replace = [], $obj = null)
     {
-        $css_framework = $extra['css_framework'] ?: conf('css_framework');
+        $css_framework = ($extra['css_framework'] ?? null) ?: conf('css_framework');
         if ( ! $css_framework) {
             $css_framework = $this->DEFAULT_CSS_FRAMEWORK;
         }
@@ -71,7 +71,7 @@ class yf_html5fw
      */
     public function form_dd_row($content, $extra = [], $replace = [], $obj = null)
     {
-        $css_framework = $extra['css_framework'] ?: conf('css_framework');
+        $css_framework = ($extra['css_framework'] ?? null) ?: conf('css_framework');
         if ( ! $css_framework) {
             $css_framework = $this->DEFAULT_CSS_FRAMEWORK;
         }
@@ -86,7 +86,7 @@ class yf_html5fw
      */
     public function form_render_out($content, $extra = [], $replace = [], $obj = null)
     {
-        $css_framework = $extra['css_framework'] ?: conf('css_framework');
+        $css_framework = ($extra['css_framework'] ?? null) ?: conf('css_framework');
         if ( ! $css_framework) {
             $css_framework = $this->DEFAULT_CSS_FRAMEWORK;
         }

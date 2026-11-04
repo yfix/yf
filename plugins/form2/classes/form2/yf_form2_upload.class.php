@@ -8,8 +8,8 @@ class yf_form2_upload
             $extra = (array) $extra + $desc;
             $desc = '';
         }
-        $extra['name'] = $extra['name'] ?: ($name ?: 'image');
-        $extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+        $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'image');
+        $extra['desc'] = ($extra['desc'] ?? null) ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
         $func = function ($_extra, $_replace, $form) {
             asset('blueimp-uploader');
             $r = [

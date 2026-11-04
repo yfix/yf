@@ -349,7 +349,7 @@ class yf_sphinxsearch
             'error' => $a['error'],
             'warnings' => $a['warnings'],
             'describe' => $a['describe'],
-            'trace' => $a['trace'] ?: main()->trace_string(),
+            'trace' => ($a['trace'] ?? null) ?: main()->trace_string(),
             'cached' => (int) $a['cached'],
             'time' => round(microtime(true) - $a['time'], 5),
             'time_wo_cache' => $a['time_wo_cache'] ? round($a['time_wo_cache'], 5) : '',

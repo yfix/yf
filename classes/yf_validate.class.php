@@ -641,7 +641,7 @@ class yf_validate
             return true;
         }
         $param = is_array($params) ? $params['param'] : $params;
-        $id_field = $params['id_field'] ?: 'id';
+        $id_field = ($params['id_field'] ?? null) ?: 'id';
         if ($param) {
             list($check_table, $check_field, $check_id) = explode('.', $param);
         }
@@ -1222,7 +1222,7 @@ class yf_validate
     public function phone_cleanup($in, $params = [], $fields = [], &$error = '')
     {
         $error = false;
-        $country_prefix = $params['param'] ?: '38';
+        $country_prefix = ($params['param'] ?? null) ?: '38';
         $p_len = strlen($country_prefix);
         $phone = preg_replace('/[^0-9]+/ims', '', strip_tags($in));
         if (strlen($phone) == 10) { // 063 123 45 67 (spaces here for example readability)

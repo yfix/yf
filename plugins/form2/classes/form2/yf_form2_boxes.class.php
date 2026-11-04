@@ -24,8 +24,8 @@ class yf_form2_boxes
             $name = 'country';
         }
         $data = [];
-        $row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
-        $countries = $extra['countries'] ?: main()->get_data('geo_countries');
+        $row_tpl = ($extra['row_tpl'] ?? null) ?: '%icon %name %code';
+        $countries = ($extra['countries'] ?? null) ?: main()->get_data('geo_countries');
         foreach ((array) $countries as $v) {
             $r = [
                 '%icon' => '<i class="bfh-flag-' . strtoupper($v['code']) . '"></i>',
@@ -37,7 +37,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = './?object=manage_countries';
         }
-        $renderer = $extra['renderer'] ?: 'list_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'list_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 
@@ -61,10 +61,10 @@ class yf_form2_boxes
         if ( ! $name) {
             $name = 'region';
         }
-        $extra['country'] = $extra['country'] ?: 'UA';
+        $extra['country'] = ($extra['country'] ?? null) ?: 'UA';
         $data = [];
-        $row_tpl = $extra['row_tpl'] ?: '%name';
-        $regions = $extra['regions'] ?: main()->get_data('geo_regions', 0, ['country' => $extra['country']]);
+        $row_tpl = ($extra['row_tpl'] ?? null) ?: '%name';
+        $regions = ($extra['regions'] ?? null) ?: main()->get_data('geo_regions', 0, ['country' => $extra['country']]);
         foreach ((array) $regions as $v) {
             $r = [
                 '%name' => $v['name'],
@@ -74,7 +74,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = './?object=manage_regions';
         }
-        $renderer = $extra['renderer'] ?: 'list_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'list_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 
@@ -98,9 +98,9 @@ class yf_form2_boxes
         if ( ! $name) {
             $name = 'city';
         }
-        $extra['country'] = $extra['country'] ?: 'UA';
+        $extra['country'] = ($extra['country'] ?? null) ?: 'UA';
         $data = [];
-        $row_tpl = $extra['row_tpl'] ?: '%name';
+        $row_tpl = ($extra['row_tpl'] ?? null) ?: '%name';
         foreach ((array) main()->get_data('geo_regions', 0, ['country' => $extra['country']]) as $v) {
             $data[$v['name']] = [];
             $region_names[$v['id']] = $v['name'];
@@ -118,7 +118,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = './?object=manage_cities';
         }
-        $renderer = $extra['renderer'] ?: 'select2_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'select2_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 
@@ -143,7 +143,7 @@ class yf_form2_boxes
             $name = 'currency';
         }
         $data = [];
-        $row_tpl = $extra['row_tpl'] ?: '%sign &nbsp; %name %code';
+        $row_tpl = ($extra['row_tpl'] ?? null) ?: '%sign &nbsp; %name %code';
         foreach ((array) main()->get_data('currencies') as $v) {
             $r = [
                 '%sign' => $v['sign'],
@@ -155,7 +155,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = './?object=manage_currencies';
         }
-        $renderer = $extra['renderer'] ?: 'list_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'list_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 
@@ -180,10 +180,10 @@ class yf_form2_boxes
             $name = 'locale';
         }
         $data = [];
-        $row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
+        $row_tpl = ($extra['row_tpl'] ?? null) ?: '%icon %name %code';
 
         asset('bfh-select');
-        $extra['style'] = $extra['style'] ?: 'max-width:200px;';
+        $extra['style'] = ($extra['style'] ?? null) ?: 'max-width:200px;';
 
         $lang_def_country = main()->get_data('lang_def_country');
         foreach ((array) db()->from('sys_locale_langs')->get_all() as $v) {
@@ -202,7 +202,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = url('/locale_editor');
         }
-        $renderer = $extra['renderer'] ?: 'list_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'list_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 
@@ -227,7 +227,7 @@ class yf_form2_boxes
             $name = 'language';
         }
         $data = [];
-        $row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
+        $row_tpl = ($extra['row_tpl'] ?? null) ?: '%icon %name %code';
         foreach ((array) main()->get_data('languages_new') as $v) {
             $r = [
                 '%icon' => ($v['country'] ? '<i class="bfh-flag-' . strtoupper($v['country']) . '"></i> ' : ''),
@@ -239,7 +239,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = './?object=manage_languages';
         }
-        $renderer = $extra['renderer'] ?: 'list_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'list_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 
@@ -264,7 +264,7 @@ class yf_form2_boxes
             $name = 'timezone';
         }
         $data = [];
-        $row_tpl = $extra['row_tpl'] ?: '<small>%offset %name</small>';
+        $row_tpl = ($extra['row_tpl'] ?? null) ?: '<small>%offset %name</small>';
         foreach ((array) main()->get_data('timezones') as $v) {
             $r = [
                 '%offset' => $v['offset'],
@@ -275,7 +275,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = './?object=manage_timezones';
         }
-        $renderer = $extra['renderer'] ?: 'list_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'list_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 
@@ -300,7 +300,7 @@ class yf_form2_boxes
             $name = 'icon';
         }
         $data = [];
-        $row_tpl = $extra['row_tpl'] ?: '%icon %name';
+        $row_tpl = ($extra['row_tpl'] ?? null) ?: '%icon %name';
         foreach ((array) main()->get_data('fontawesome_icons') as $icon) {
             $r = [
                 '%icon' => '<i class="icon fa ' . $icon . '"></i> ',
@@ -311,7 +311,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = './?object=manage_icons';
         }
-        $renderer = $extra['renderer'] ?: 'list_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'list_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 
@@ -344,7 +344,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=admin_modules' : './?object=user_modules';
         }
-        $renderer = $extra['renderer'] ?: 'list_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'list_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 
@@ -377,7 +377,7 @@ class yf_form2_boxes
         if (MAIN_TYPE_ADMIN && ! isset($extra['edit_link'])) {
             $extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=template_editor' : './?object=template_editor';
         }
-        $renderer = $extra['renderer'] ?: 'list_box';
+        $renderer = ($extra['renderer'] ?? null) ?: 'list_box';
         return $form->$renderer($name, $data, $extra, $replace);
     }
 

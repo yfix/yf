@@ -46,10 +46,10 @@ abstract class yf_oauth_driver2
         if ($this->redirect_uri_force_https) {
             $this->redirect_uri = str_replace('http://', 'https://', $this->redirect_uri);
         }
-        $this->client_id = $config[$this->provider]['client_id'] ?: '';
+        $this->client_id = ($config[$this->provider]['client_id'] ?? null) ?: '';
         $application_line = __LINE__;
-        $this->client_secret = $config[$this->provider]['client_secret'] ?: '';
-        $this->client_public = $config[$this->provider]['client_public'] ?: '';
+        $this->client_secret = ($config[$this->provider]['client_secret'] ?? null) ?: '';
+        $this->client_public = ($config[$this->provider]['client_public'] ?? null) ?: '';
         return $this->get_user_info();
     }
 

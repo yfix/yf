@@ -22,7 +22,7 @@ class yf_form2_datetime
         if ( ! is_array($extra)) {
             $extra = [];
         }
-        $extra['name'] = $extra['name'] ?: ($name ?: 'date');
+        $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'date');
         $extra['desc'] = $form->_prepare_desc($extra, $desc);
         $extra['limit_date_format'] = $extra['limit_date_format'] ? $extra['limit_date_format'] : 'm/d/Y H:i';
 
@@ -42,7 +42,7 @@ class yf_form2_datetime
         $_format_js = implode(' ', $format_js);
         $_format_php = implode(' ', $format_php);
         $_placeholder = implode(' ', $placeholder);
-        $extra['placeholder'] = $extra['placeholder'] ?: $_placeholder;
+        $extra['placeholder'] = ($extra['placeholder'] ?? null) ?: $_placeholder;
 
         // Compatibility with filter
         if ( ! strlen($extra['value'])) {

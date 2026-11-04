@@ -19,14 +19,14 @@ class yf_form2_daterange
         if ( ! is_array($extra)) {
             $extra = [];
         }
-        $extra['name'] = $extra['name'] ?: ($name ?: 'date');
+        $extra['name'] = ($extra['name'] ?? null) ?: ($name ?: 'date');
         $extra['desc'] = $form->_prepare_desc($extra, $desc);
         $extra['placeholder'] = $extra['placeholder'] ?? '';
 
         if ($extra['min_date'] && strlen($extra['min_date']) == 10) {
             $time = time();
             $extra += [
-                'min_date' => date('Y-m-d', intval($extra['min_date'] ?: ($time - 86400 * 30))),
+                'min_date' => date('Y-m-d', intval(($extra['min_date'] ?? null) ?: ($time - 86400 * 30))),
                 'max_date' => date('Y-m-d', $time + 86400),
                 'autocomplete' => 'off',
             ];
@@ -46,11 +46,11 @@ class yf_form2_daterange
 
         asset('bootstrap-daterangepicker');
         jquery('$("input#' . $extra['name'] . '").daterangepicker({
-			format: "' . ($extra['format'] ?: 'YYYY-MM-DD') . '",
+			format: "' . (($extra['format'] ?? null) ?: 'YYYY-MM-DD') . '",
 			minDate: "' . $extra['min_date'] . '",
 			maxDate: "' . $extra['max_date'] . '",
-			startDate: "' . ($extra['start_date'] ?: $extra['min_date']) . '",
-			endDate: "' . ($extra['end_date'] ?: $extra['max_date']) . '",
+			startDate: "' . (($extra['start_date'] ?? null) ?: $extra['min_date']) . '",
+			endDate: "' . (($extra['end_date'] ?? null) ?: $extra['max_date']) . '",
 			buttonClasses: "btn btn-xs",
 			ranges: {
 			   "' . t('Today') . '": [moment(), moment()],

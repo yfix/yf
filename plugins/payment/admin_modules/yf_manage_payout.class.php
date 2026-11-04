@@ -500,7 +500,7 @@ class yf_manage_payout
             ->text('amount', 'сумма')
             ->text('balance', 'баланс')
             ->func('user_name', function ($value, $extra, $row) {
-                $name = $row['user_name'] ?: $row['user_login'] ?: $row['user_nick'] ?: $row['user_email'];
+                $name = ($row['user_name'] ?? null) ?: ($row['user_login'] ?? null) ?: ($row['user_nick'] ?? null) ?: $row['user_email'];
                 $result = a('/members/edit/' . $row['user_id'], $name . ' (id: ' . $row['user_id'] . ')');
                 return  $result;
             }, ['desc' => 'пользователь'])

@@ -16,7 +16,7 @@ class yf_wrapper_redlock
 
     public function setup(array $params = [])
     {
-        $this->servers = $params['servers'] ?: [[
+        $this->servers = ($params['servers'] ?? null) ?: [[
             $this->_get_conf('REDIS_HOST', '127.0.0.1', $params),
             $this->_get_conf('REDIS_PORT', 6379, $params),
             $timeout = 0.01,
@@ -26,8 +26,8 @@ class yf_wrapper_redlock
             $this->instances = $params['instances'];
             $this->quorum = min(count((array) $this->instances), (count((array) $this->instances) / 2 + 1));
         }
-        $this->retry_delay = $params['retry_delay'] ?: 200;
-        $this->retry_count = $params['retry_count'] ?: 3;
+        $this->retry_delay = ($params['retry_delay'] ?? null) ?: 200;
+        $this->retry_count = ($params['retry_count'] ?? null) ?: 3;
     }
 
 

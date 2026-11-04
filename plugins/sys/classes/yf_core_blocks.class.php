@@ -121,7 +121,7 @@ class yf_core_blocks
         }
         $prepend = _class('core_events')->fire('block.prepend[' . $block_name . ']');
 
-        $body = tpl()->parse($cur_block_info['stpl_name'] ?: $block_name, [
+        $body = tpl()->parse(($cur_block_info['stpl_name'] ?? null) ?: $block_name, [
             'block_name' => $block_name,
             'block_id' => $block_id,
         ]);
@@ -467,7 +467,7 @@ class yf_core_blocks
                         $_GET[$k] = $u[$k];
                     }
                     if ( ! empty($u['object'])) {
-                        $action = $u['action'] ?: 'show';
+                        $action = ($u['action'] ?? null) ?: 'show';
                         $body = _class_safe($u['object'], $u['path'])->$action();
                     } elseif (isset($u['stpl'])) {
                         $main->no_graphics(true);

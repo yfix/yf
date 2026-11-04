@@ -25,9 +25,9 @@ class yf_mail_driver_internal extends yf_mail_driver
         $CRLF = "\r\n";
         $TAB = "\t";
 
-        $params['charset'] = $params['charset'] ?: conf('charset') ?: $this->PARENT->DEFAULT_CHARSET ?: 'utf-8';
-        $params['mailer_name'] = $params['mailer_name'] ?: $this->PARENT->DEFAULT_MAILER_NAME;
-        $params['text'] = $params['text'] ?: 'Sorry, but you need an html mailer to read this mail.';
+        $params['charset'] = ($params['charset'] ?? null) ?: conf('charset') ?: $this->PARENT->DEFAULT_CHARSET ?: 'utf-8';
+        $params['mailer_name'] = ($params['mailer_name'] ?? null) ?: $this->PARENT->DEFAULT_MAILER_NAME;
+        $params['text'] = ($params['text'] ?? null) ?: 'Sorry, but you need an html mailer to read this mail.';
 
         $OB = '----=_OuterBoundary_000';
         $IB = '----=_InnerBoundery_001';

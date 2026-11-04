@@ -47,7 +47,7 @@ class yf_html_datetime
                 $add_str .= ' style="' . $extra['style'] . '" ';
             }
         }
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if (strlen($selected)) {
             // Process timestamp (convert it to the 'Y-m-d' pattern)
             if (is_numeric($selected)) {
@@ -116,7 +116,7 @@ class yf_html_datetime
                 $add_str .= ' style="' . $extra['style'] . '" ';
             }
         }
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if (strlen($selected)) {
             // Process timestamp (convert it to the 'Y-m-d' pattern)
             if (is_numeric($selected)) {
@@ -178,7 +178,7 @@ class yf_html_datetime
                 $add_str .= ' style="' . $extra['style'] . '" ';
             }
         }
-        $extra['id'] = strval($extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__]);
+        $extra['id'] = strval(($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__]);
         $year = $month = $day = null;
         if (strlen($selected)) {
             // Process timestamp (convert it to the 'Y-m-d' pattern)
@@ -254,7 +254,7 @@ class yf_html_datetime
                 $add_str .= ' style="' . $extra['style'] . '" ';
             }
         }
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         $hour = $minute = $second = null;
         if (strlen($selected)) {
             // Process timestamp (convert it to the 'Y-m-d' pattern)

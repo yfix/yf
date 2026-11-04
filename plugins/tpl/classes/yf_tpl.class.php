@@ -401,11 +401,11 @@ class yf_tpl
         if ( ! is_array($params)) {
             $params = [];
         }
-        $string = $params['string'] ?: false;
-        $params['replace_images'] = $params['replace_images'] ?: true;
-        $params['no_cache'] = $params['no_cache'] ?: false;
-        $params['force_storage'] = $params['force_storage'] ?: '';
-        $params['no_include'] = $params['no_include'] ?: false;
+        $string = ($params['string'] ?? null) ?: false;
+        $params['replace_images'] = ($params['replace_images'] ?? null) ?: true;
+        $params['no_cache'] = ($params['no_cache'] ?? null) ?: false;
+        $params['force_storage'] = ($params['force_storage'] ?? null) ?: '';
+        $params['no_include'] = ($params['no_include'] ?? null) ?: false;
         if (DEBUG_MODE) {
             $stpl_time_start = microtime(true);
         }

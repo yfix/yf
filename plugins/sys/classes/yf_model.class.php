@@ -426,7 +426,7 @@ class yf_model
         if ($params['where'] === null) {
             unset($params['where']);
         }
-        $table = $params['table'] ?: $this->get_table();
+        $table = ($params['table'] ?? null) ?: $this->get_table();
         if ( ! $table) {
             throw new Exception('MODEL: ' . get_called_class() . ': requires table name to make queries');
         }
@@ -720,8 +720,8 @@ class yf_model
     public function table($params = [])
     {
         $sql = $this->new_query((array) $params['query_builder'])->sql();
-        $filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null));
-        $params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: ($_SESSION[$filter_name] ?? null));
+        $filter_name = ($params['filter_name'] ?? null) ?: (($this->_params['filter_name'] ?? null) ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null));
+        $params['filter'] = ($params['filter'] ?? null) ?: (($this->_params['filter'] ?? null) ?: ($_SESSION[$filter_name] ?? null));
         return table($sql, $params);
     }
 
@@ -744,12 +744,12 @@ class yf_model
      */
     public function filter_form($data = [], $params = [])
     {
-        $filter_name = $params['filter_name'] ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
+        $filter_name = ($params['filter_name'] ?? null) ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $a = [
             'form_action' => url_admin('/@object/filter_save/' . $filter_name),
             'clear_url' => url_admin('/@object/filter_save/' . $filter_name . '/clear'),
         ];
-        $params['selected'] = $params['selected'] ?: ($_SESSION[$filter_name] ?? null);
+        $params['selected'] = ($params['selected'] ?? null) ?: ($_SESSION[$filter_name] ?? null);
         return form($a + (array) $data, $params);
     }
 

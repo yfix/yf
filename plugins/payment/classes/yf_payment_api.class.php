@@ -685,7 +685,7 @@ class yf_payment_api
         $_ = &$options;
         $object = $this->type($options);
         if (empty($object)) {
-            $name = $_['exists'] ?: $_['type_id'] ?: $_['name'];
+            $name = ($_['exists'] ?? null) ?: ($_['type_id'] ?? null) ?: $_['name'];
             $result = [
                 'status' => false,
                 'status_message' => 'Тип платежей не существует: "' . $name . '"',
@@ -749,7 +749,7 @@ class yf_payment_api
         $_ = &$options;
         $payment_status = $this->status($options);
         if (empty($payment_status)) {
-            $name = $_['exists'] ?: $_['status_id'] ?: $_['name'];
+            $name = ($_['exists'] ?? null) ?: ($_['status_id'] ?? null) ?: $_['name'];
             $result = [
                 'status' => false,
                 'status_message' => 'Статус не существует: "' . $name . '"',
@@ -874,7 +874,7 @@ class yf_payment_api
         $object = $this->provider($options);
         $object_id_name = 'provider_id';
         if (empty($object)) {
-            $name = $_['exists'] ?: $_[$object_id_name] ?: $_['name'];
+            $name = ($_['exists'] ?? null) ?: ($_[$object_id_name] ?? null) ?: $_['name'];
             $result = [
                 'status' => false,
                 'status_message' => 'Провайдер не существует: "' . $name . '"',
@@ -996,7 +996,7 @@ class yf_payment_api
         $_ = &$options;
         $is_transaction = isset( $_['is_transaction'] ) ? $_['is_transaction'] : true;
         $_['type_name'] = __FUNCTION__;
-        $_['operation_title'] = $_['operation_title'] ?: 'Пополнение счета';
+        $_['operation_title'] = ($_['operation_title'] ?? null) ?: 'Пополнение счета';
         $result = $this->_operation_check($options);
         list($status, $data, $operation_data) = $result;
         if (empty($status)) {
@@ -1059,7 +1059,7 @@ class yf_payment_api
         $_ = &$options;
         $is_transaction = isset( $_['is_transaction'] ) ? $_['is_transaction'] : true;
         $_['type_name'] = __FUNCTION__;
-        $_['operation_title'] = $_['operation_title'] ?: 'Оплата';
+        $_['operation_title'] = ($_['operation_title'] ?? null) ?: 'Оплата';
         $result = $this->_operation_check($options);
         list($status, $data, $operation_data) = $result;
         if (empty($status)) {
@@ -1139,7 +1139,7 @@ class yf_payment_api
         }
         // prepare
         $_['type_name'] = __FUNCTION__;
-        $_['operation_title'] = $_['operation_title'] ?: 'Перевод';
+        $_['operation_title'] = ($_['operation_title'] ?? null) ?: 'Перевод';
         $data = $_;
         unset($data['from'], $data['to']);
         // prepare operation
@@ -1679,7 +1679,7 @@ class yf_payment_api
         }
         // limit
         if ( ! $is_no_limit) {
-            $limit = (int) $_['limit'] ?: $this->OPERATION_LIMIT;
+            $limit = (int) ($_['limit'] ?? null) ?: $this->OPERATION_LIMIT;
             $limit_from = $_['limit_from'];
             if (empty($limit_from)) {
                 $page = (int) $_['page'];
@@ -2070,7 +2070,7 @@ class yf_payment_api
         $status = true;
         $result['user'] = $user;
         $result['mail'] = $user['email'];
-        $result['name'] = $user['name'] ?: $user['login'];
+        $result['name'] = ($user['name'] ?? null) ?: $user['login'];
         return  $result;
     }
 

@@ -54,7 +54,7 @@ class yf_manage_comments
         if (empty($a) || ! $a['object_name'] || ! $a['object_id']) {
             return js_redirect('./?object=' . ($_GET['object'] ?? null));
         }
-        return js_redirect('./?object=' . $a['object_name'] . '&action=' . ($this->_comments_actions[$a['object_name']] ?: 'edit') . '&id=' . $a['object_id']);
+        return js_redirect('./?object=' . $a['object_name'] . '&action=' . (($this->_comments_actions[$a['object_name']] ?? null) ?: 'edit') . '&id=' . $a['object_id']);
     }
 
 

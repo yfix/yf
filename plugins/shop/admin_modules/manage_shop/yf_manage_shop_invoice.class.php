@@ -135,7 +135,7 @@ __INVOICE__
             $price_item = $price_one * $quantity;
             $out['products'][] = [
                 'product_name' => _prepare_html($info['name']),
-                'product_units' => $units[$unit]['title'] ?: $this->default_unit,
+                'product_units' => ($units[$unit]['title'] ?? null) ?: $this->default_unit,
                 'product_price_one' => $_class_shop->_format_price($price_one),
                 'product_quantity' => $quantity,
                 'product_item_price' => $_class_shop->_format_price($price_item),

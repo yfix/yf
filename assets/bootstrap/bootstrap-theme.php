@@ -1,7 +1,7 @@
 <?php
 
 return function ($assets) {
-    $main_type = $assets->_override['main_type'] ?: MAIN_TYPE;
+    $main_type = ($assets->_override['main_type'] ?? null) ?: MAIN_TYPE;
     if ( ! (is_console() || $assets->_override['main_type'] || $main_type == 'user')) {
         $bs_theme = common()->bs_current_theme($main_type, $force_default = false);
     } else {

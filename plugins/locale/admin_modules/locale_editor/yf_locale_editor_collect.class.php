@@ -117,8 +117,8 @@ class yf_locale_editor_collect
             $params['find_angular'] && $files['app']['ng'] = $this->_scan_files('app', 'ng', $params);
         }
         $remove_prefixes = [
-            'framework' => $params['YF_PATH'] ?: YF_PATH,
-            'app' => $params['APP_PATH'] ?: APP_PATH,
+            'framework' => ($params['YF_PATH'] ?? null) ?: YF_PATH,
+            'app' => ($params['APP_PATH'] ?? null) ?: APP_PATH,
         ];
         $vars = [];
         foreach ((array) $files as $top => $types) {
@@ -146,8 +146,8 @@ class yf_locale_editor_collect
     public function _scan_files($top, $type, $params = [])
     {
         $dirs_map = [
-            'framework' => $params['YF_PATH'] ?: YF_PATH,
-            'app' => $params['APP_PATH'] ?: APP_PATH,
+            'framework' => ($params['YF_PATH'] ?? null) ?: YF_PATH,
+            'app' => ($params['APP_PATH'] ?? null) ?: APP_PATH,
         ];
         $patterns = [
             'php' => [

@@ -289,7 +289,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
             unset($_['url_server']);
         }
         // default
-        $amount = number_format($_['PAYMENT_AMOUNT'], $this->PURSE_UNITS[$currency_id]['decimals'] ?: 2, '.', '');
+        $amount = number_format($_['PAYMENT_AMOUNT'], ($this->PURSE_UNITS[$currency_id]['decimals'] ?? null) ?: 2, '.', '');
         if ($amount != $_['PAYMENT_AMOUNT']) {
             return  null;
         }
@@ -695,7 +695,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
         @$_operation_title && $request['title'] = $_operation_title;
         // test amount
         $this->is_test() && $amount = '0.01';
-        $amount = number_format($amount, $this->PURSE_UNITS[$currency_id]['decimals'] ?: 2, '.', '');
+        $amount = number_format($amount, ($this->PURSE_UNITS[$currency_id]['decimals'] ?? null) ?: 2, '.', '');
         $request['amount'] = $amount;
         $request['operation_id'] = $operation_id;
         // transform

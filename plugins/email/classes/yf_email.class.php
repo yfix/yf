@@ -278,7 +278,7 @@ class yf_email
     public function _get_email_text($replace = [], $extra = [])
     {
         if ($extra['tpl_name']) {
-            $lang = $extra['locale'] ?: conf('language');
+            $lang = ($extra['locale'] ?? null) ?: conf('language');
             $a = db()->from(self::table_tpls)->where('name', $extra['tpl_name'])->where('locale', $lang)->get();
             if ( ! $a) {
                 $a = db()->from(self::table_tpls)->where('name', $extra['tpl_name'])->get();
@@ -287,7 +287,7 @@ class yf_email
         if ($extra['subject']) {
             $a['subject'] = $extra['subject'];
         }
-        $body = $a['text'] ?: $extra['body'];
+        $body = ($a['text'] ?? null) ?: $extra['body'];
         if ($a['parent_id']) {
             $parent = db()->from(self::table_tpls)->whereid($a['parent_id'])->where('locale', $a['locale'])->get();
             if ( ! $parent) {
@@ -381,7 +381,7 @@ class yf_email
 
         if ($need_raw) {
             preg_match('|<body.*>(.*)</body>|isU', $result, $matches);
-            $result = $matches[1] ?: $result;
+            $result = ($matches[1] ?? null) ?: $result;
         }
         return $result;
     }

@@ -564,15 +564,15 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote
                 'card' => $user['card'],
                 'sender_first_name' => $user['first_name'],
                 'sender_last_name' => $user['last_name'],
-                'sender_middle_name' => $user['middle_name'] ?: $user['patronymic'],
+                'sender_middle_name' => ($user['middle_name'] ?? null) ?: $user['patronymic'],
                 'sender_passport_number' => $user['passport_num'],
                 'sender_passport_issue_date' => $user['passport_issue_date'],
-                'sender_passport_issued_by' => $user['passport_issued_by'] ?: $user['passport_released'],
+                'sender_passport_issued_by' => ($user['passport_issued_by'] ?? null) ?: $user['passport_released'],
                 'sender_phone' => @str_replace([' ', '-', '+'], '', $user['phone']),
-                'sender_birthdate' => $user['birthdate'] ?: $user['birth_date'],
-                'sender_address' => $user['address'] ?: $user['address2'],
-                'sender_city' => $user['city'] ?: $user['city2'],
-                'sender_postindex' => $user['zip_code'] ?: $user['zip_code2'],
+                'sender_birthdate' => ($user['birthdate'] ?? null) ?: $user['birth_date'],
+                'sender_address' => ($user['address'] ?? null) ?: $user['address2'],
+                'sender_city' => ($user['city'] ?? null) ?: $user['city2'],
+                'sender_postindex' => ($user['zip_code'] ?? null) ?: $user['zip_code2'],
             ];
             $option_default = &$this->method_allow['payout']['qiwi']['option_default'];
             $option_default = [

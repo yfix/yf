@@ -64,16 +64,16 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
                 break;
             }
         }
-        $class_form_group = $extra['class_form_group'] ?: $this->CLASS_FORM_GROUP . ($extra['class_add_form_group'] ? ' ' . $extra['class_add_form_group'] : '');
+        $class_form_group = ($extra['class_form_group'] ?? null) ?: $this->CLASS_FORM_GROUP . ($extra['class_add_form_group'] ? ' ' . $extra['class_add_form_group'] : '');
         if ($extra['class_add_wrapper']) {
             $class_form_group .= ' ' . $extra['class_add_wrapper'];
         }
-        $class_label = $extra['class_label'] ?: $this->CLASS_LABEL
+        $class_label = ($extra['class_label'] ?? null) ?: $this->CLASS_LABEL
             . ($extra['class_add_label'] ? ' ' . $extra['class_add_label'] : '');
 
         $def_class_controls = $extra['buttons_controls'] ? $this->CLASS_CONTROLS_BUTTONS : $this->CLASS_CONTROLS;
         $def_class_no_label = $extra['buttons_controls'] ? $this->CLASS_NO_LABEL_BUTTONS : $this->CLASS_NO_LABEL;
-        $class_controls = $extra['class_controls'] ?: $def_class_controls
+        $class_controls = ($extra['class_controls'] ?? null) ?: $def_class_controls
             . ($extra['desc'] && ! $no_label ? ' ' . $this->CLASS_DESC : $def_class_no_label)
             . ($extra['class_add_controls'] ? ' ' . $extra['class_add_controls'] : '');
 
@@ -140,7 +140,7 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
             if ($extra['class_stacked'] && ! isset($extra_stacked['class'])) {
                 $extra_stacked['class'] = $extra['class_stacked'];
             }
-            $extra_stacked['class'] = ($extra_stacked['class'] ?: $this->CLASS_STACKED_ITEM) . ' ' . ($extra_stacked['class_add'] ?: $extra['class_add_stacked']);
+            $extra_stacked['class'] = (($extra_stacked['class'] ?? null) ?: $this->CLASS_STACKED_ITEM) . ' ' . (($extra_stacked['class_add'] ?? null) ?: $extra['class_add_stacked']);
             return
                 '<span' . _attrs($extra_stacked, ['id', 'class', 'style']) . '>'
                 . ($extra['show_label'] ? $label : '')
@@ -166,13 +166,13 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
      */
     public function form_dd_row($content, $extra = [], $replace = [], $form = [])
     {
-        $dd_class = $form->_params['dd_class'] ?: 'span6';
+        $dd_class = ($form->_params['dd_class'] ?? null) ?: 'span6';
 
-        $class_wrapper = $extra['class_wrapper'] ?: 'dl-horizontal';
+        $class_wrapper = ($extra['class_wrapper'] ?? null) ?: 'dl-horizontal';
         if ($extra['class_add_wrapper']) {
             $class_wrapper .= ' ' . $extra['class_add_wrapper'];
         }
-        $class_dd = $extra['class_dd'] ?: '';
+        $class_dd = ($extra['class_dd'] ?? null) ?: '';
         if ($extra['class_add_dd']) {
             $class_dd .= ' ' . $extra['class_add_dd'];
         }

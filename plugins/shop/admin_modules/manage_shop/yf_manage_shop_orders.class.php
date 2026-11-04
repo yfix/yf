@@ -240,7 +240,7 @@ class yf_manage_shop_orders
                 $link = './?object=' . main()->_get('object') . '&action=product_edit&id=' . $_info['product_id'];
                 $_units = $_class_units->get_by_product_ids($_info['product_id']);
             }
-            $image = $images[0]['thumb'] ?: _class('_shop_categories', 'modules/shop/')->get_icon_url($_product['cat_id'], 'item');
+            $image = ($images[0]['thumb'] ?? null) ?: _class('_shop_categories', 'modules/shop/')->get_icon_url($_product['cat_id'], 'item');
             $dynamic_atts = [];
             if (strlen($_info['attributes']) > 3) {
                 foreach ((array) unserialize($_info['attributes']) as $_attr_id) {

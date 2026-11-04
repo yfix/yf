@@ -34,13 +34,13 @@ class yf_manage_revisions
             $extra = (array) $extra + $object_name;
             $object_name = '';
         }
-        $object_name = $extra['object_name'] ?: ($object_name ?: ($_GET['object'] ?? null));
+        $object_name = ($extra['object_name'] ?? null) ?: ($object_name ?: ($_GET['object'] ?? null));
         if (($allowed_objects = $this->ALLOWED_OBJECTS)) {
             if ( ! in_array($object_name, $allowed_objects)) {
                 return false;
             }
         }
-        $ids = $extra['object_id'] ?: ($extra['ids'] ?: $ids);
+        $ids = ($extra['object_id'] ?? null) ?: (($extra['ids'] ?? null) ?: $ids);
         if ($ids && ! is_array($ids)) {
             $ids = [$ids];
         }
@@ -71,7 +71,7 @@ class yf_manage_revisions
                 return false;
             }
         }
-        $action = $extra['action'] ?: $action;
+        $action = ($extra['action'] ?? null) ?: $action;
         if ( ! $action) {
             $action = 'update';
         }
@@ -90,8 +90,8 @@ class yf_manage_revisions
             if ( ! $object_id) {
                 continue;
             }
-            $data_old = $data['old'] ?: ($extra['data_old'] ?: $extra['old']);
-            $data_new = $data['new'] ?: ($extra['data_new'] ?: $extra['new']);
+            $data_old = ($data['old'] ?? null) ?: (($extra['data_old'] ?? null) ?: $extra['old']);
+            $data_new = ($data['new'] ?? null) ?: (($extra['data_new'] ?? null) ?: $extra['new']);
             if ( ! $data_old && ! $data_new) {
                 continue;
             }
@@ -109,7 +109,7 @@ class yf_manage_revisions
                 'locale' => (is_array($data_old) ? $data_old['locale'] : '') ?: $extra['locale'],
                 'data_old' => is_array($data_old) ? 'json:' . json_encode($data_old) : (string) $data_old,
                 'data_new' => is_array($data_new) ? 'json:' . json_encode($data_new) : (string) $data_new,
-                'comment' => $data['comment'] ?: $extra['comment'],
+                'comment' => ($data['comment'] ?? null) ?: $extra['comment'],
             ], $only_sql = true);
             db()->_add_shutdown_query($sql);
         }

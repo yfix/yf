@@ -101,15 +101,15 @@ class yf_oauth
                         $set_user_info = $params['set_user_info'];
                         $sys_user_id = $set_user_info($normalized_info);
                     } else {
-                        $login = $normalized_info['login'] ?: $this->auto_email_prefix . $provider . '.' . $normalized_info['user_id'];
+                        $login = ($normalized_info['login'] ?? null) ?: $this->auto_email_prefix . $provider . '.' . $normalized_info['user_id'];
 
-                        $email = $normalized_info['email'] ?: $login . '@' . $self_host;
+                        $email = ($normalized_info['email'] ?? null) ?: $login . '@' . $self_host;
                         db()->insert_safe('user', [
                             'group' => 2,
                             'login' => $login,
                             'email' => $email,
-                            'name' => $normalized_info['name'] ?: $login,
-                            'nick' => $normalized_info['name'] ?: $login,
+                            'name' => ($normalized_info['name'] ?? null) ?: $login,
+                            'nick' => ($normalized_info['name'] ?? null) ?: $login,
                             'password' => md5(time() . 'some_salt' . uniqid()),
 // TODO: make verification by email
                             'active' => 1,

@@ -47,9 +47,9 @@ class yf_manage_shop_products
     {
         // get options
         $_ = &$options;
-        $fields = (array) $_['fields'] ?: [];
-        $where = (array) $_['where'] ?: [];
-        $order = (array) $_['order'] ?: [];
+        $fields = (array) ($_['fields'] ?? null) ?: [];
+        $where = (array) ($_['where'] ?? null) ?: [];
+        $order = (array) ($_['order'] ?? null) ?: [];
         // init
         $sql_fields = '*';
         $sql_where = '';

@@ -184,9 +184,9 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
     public function _external_response($options)
     {
         $operation_id = $options['operation_id'];
-        $payment_code = $options['code'] ?: '';
-        $address = $options['address'] ?: '';
-        $confirmations = $options['confirmations'] ?: '';
+        $payment_code = ($options['code'] ?? null) ?: '';
+        $address = ($options['address'] ?? null) ?: '';
+        $confirmations = ($options['confirmations'] ?? null) ?: '';
         $ip = common()->get_ip();
 
         $payment_api = $this->payment_api;
@@ -631,8 +631,8 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
     {
         $payment_api = &$this->payment_api;
         $operation = $payment_api->operation(['operation_id' => $operation_id]);
-        $address = $operation['options']['request'][0]['options']['address'] ?: false;
-        $tx_hash = $operation['options']['response'][count((array) $operation['options']['response']) - 1]['data']['tx_hash'] ?: false;
+        $address = ($operation['options']['request'][0]['options']['address'] ?? null) ?: false;
+        $tx_hash = ($operation['options']['response'][count((array) $operation['options']['response']) - 1]['data']['tx_hash'] ?? null) ?: false;
         if ($address && $tx_hash) {
             $url = $this->URL_API . 'address/transactions/' . $address . '/0/received/confirmed';
             $result = @common()->get_remote_page($url, false);
@@ -691,7 +691,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
         switch ($type) {
             case 'payout':
                 $provider = $payment_api->get_provider(['name' => $this->PROVIDER_NAME]);
-                $provider_id = $provider[1]['provider_id'] ?: false;
+                $provider_id = ($provider[1]['provider_id'] ?? null) ?: false;
                 $status = 'processing';
                 $object = $payment_api->get_status(['name' => $status]);
                 list($status_id, $status) = $object;

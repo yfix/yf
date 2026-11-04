@@ -124,7 +124,7 @@ class yf_wrapper_rabbitmq
                 $ch = $this->init_channel($params);
                 $ex = new AMQPExchange($ch);
                 $ex->setName($name);
-                $ex->setType($params['exchange_type'] ?: AMQP_EX_TYPE_FANOUT);
+                $ex->setType(($params['exchange_type'] ?? null) ?: AMQP_EX_TYPE_FANOUT);
                 $ex->declareExchange();
                 $this->_exchange[$name] = $ex;
             } elseif ($this->driver == 'amqplib') {
@@ -148,7 +148,7 @@ class yf_wrapper_rabbitmq
                 $ch = $this->init_channel($params);
                 $q = new AMQPQueue($ch);
                 $q->setName($name);
-                $q->setFlags($params['queue_flags'] ?: AMQP_DURABLE);
+                $q->setFlags(($params['queue_flags'] ?? null) ?: AMQP_DURABLE);
                 $q->declareQueue();
                 $this->_queue[$name] = $q;
             }

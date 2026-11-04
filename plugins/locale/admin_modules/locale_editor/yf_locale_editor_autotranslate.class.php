@@ -57,7 +57,7 @@ class yf_locale_editor_autotranslate
         $stats = null;
         $p = $params ?: $_POST;
         $lang = $p['lang_to'];
-        $lang_from = $p['lang_from'] ?: 'en';
+        $lang_from = ($p['lang_from'] ?? null) ?: 'en';
         $max_items = (int) $p['max_items'];
         $keep_existing = $p['keep_existing'];
 

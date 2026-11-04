@@ -42,12 +42,12 @@ class yf_db_driver_mysqli extends yf_db_driver
             trigger_error('YF MySQLi db driver require missing php extension mysqli', E_USER_ERROR);
             return false;
         }
-        $params['port'] = $params['port'] ?: 3306;
+        $params['port'] = ($params['port'] ?? null) ?: 3306;
         if ($params['socket'] && ! file_exists($params['socket'])) {
             $params['socket'] = '';
         }
         $charset = 'utf8';
-        $params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $charset);
+        $params['charset'] = ($params['charset'] ?? null) ?: (defined('DB_CHARSET') ? DB_CHARSET : $charset);
         $this->params = $params;
         $connected = $this->connect();
         if ($params['charset'] && $connected && $this->db_connect_id) {

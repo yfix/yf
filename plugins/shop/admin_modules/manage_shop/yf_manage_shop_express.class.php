@@ -139,7 +139,7 @@ class yf_manage_shop_express
             $price_item = $_info['price'] * $_info['quantity'];
             $out['products'][] = [
                 'product_name' => _prepare_html($_info['name']),
-                'product_units' => $_info['unit'] ?: $this->default_unit,
+                'product_units' => ($_info['unit'] ?? null) ?: $this->default_unit,
                 'product_price_one' => module('shop')->_format_price($_info['price']),
                 'product_quantity' => (int) ($_info['quantity']),
                 'product_item_price' => module('shop')->_format_price($price_item),

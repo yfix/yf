@@ -26,12 +26,12 @@ class yf_mail_driver_phpmailer extends yf_mail_driver
     {
         $mail = new PHPMailer\PHPMailer\PHPMailer(true); // defaults to using php 'mail()'
         try {
-            $mail->CharSet = $params['charset'] ?: conf('charset') ?: $this->PARENT->DEFAULT_CHARSET ?: 'utf-8';
+            $mail->CharSet = ($params['charset'] ?? null) ?: conf('charset') ?: $this->PARENT->DEFAULT_CHARSET ?: 'utf-8';
             $mail->From = $params['email_from'];
             $mail->FromName = $params['name_from'];
             if (DEBUG_MODE && $this->PARENT->MAIL_DEBUG) {
                 $mail->SMTPDebug = 1;
-                $mail->Debugoutput = $params['phpmailer_debug_output'] ?: 'error_log';
+                $mail->Debugoutput = ($params['phpmailer_debug_output'] ?? null) ?: 'error_log';
             }
             if (is_array($params['email_to'])) {
                 list($name, $email) = [ key($params['email_to']), current($params['email_to']) ];

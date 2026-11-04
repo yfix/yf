@@ -929,7 +929,7 @@ Fallback when no numbers matched (any string)
             return false;
         }
         $lang = $lang ?: conf('language');
-        return $this->_pre_text(trim($help[$lang] ?: $help['en'] ?: current($help)));
+        return $this->_pre_text(trim(($help[$lang] ?? null) ?: ($help['en'] ?? null) ?: current($help)));
     }
 
     /**

@@ -26,7 +26,7 @@ class yf_table2_image
             $extra = [];
         }
         if ( ! $link) {
-            $link = $extra['link'] ?: WEB_PATH . $path;
+            $link = ($extra['link'] ?? null) ?: WEB_PATH . $path;
         }
         if ( ! isset($extra['width'])) {
             $extra['width'] = '50px';
@@ -41,7 +41,7 @@ class yf_table2_image
             'func' => function ($field, $params, $row, $instance_params, $table) {
                 $extra = $params['extra'];
                 $id = $row['id'];
-                $fs_path = $extra['fs_path'] ?: PROJECT_PATH;
+                $fs_path = ($extra['fs_path'] ?? null) ?: PROJECT_PATH;
                 $web_path = isset($extra['web_path']) ? $extra['web_path'] : WEB_PATH;
                 // Make 3-level dir path
                 $d = sprintf('%09s', $id);

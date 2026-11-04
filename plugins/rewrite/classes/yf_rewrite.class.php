@@ -420,8 +420,8 @@ class yf_rewrite
             if ($for_section == 'admin') {
                 if ($params['admin_host']) {
                     $_host = $params['admin_host'];
-                    $_port = $params['admin_port'] ?: '80';
-                    $_path = $params['admin_path'] ?: '/admin/';
+                    $_port = ($params['admin_port'] ?? null) ?: '80';
+                    $_path = ($params['admin_path'] ?? null) ?: '/admin/';
                     $link = $this->_correct_protocol($http_protocol . '://' . $_host . ($_port && ! in_array($_port, ['80', '443']) ? ':' . $_port : '') . ($_path ?: '/') . $u);
                 } else {
                     $link = ADMIN_WEB_PATH . $u;
@@ -432,8 +432,8 @@ class yf_rewrite
                 }
             } else {
                 $_host = $params['host'];
-                $_port = $params['port'] ?: '80';
-                $_path = $params['path'] ?: '/';
+                $_port = ($params['port'] ?? null) ?: '80';
+                $_path = ($params['path'] ?? null) ?: '/';
                 $link = $this->_correct_protocol($http_protocol . '://' . $_host . ($_port && ! in_array($_port, ['80', '443']) ? ':' . $_port : '') . ($_path ?: '/') . $u);
             }
             if ($params['fragment']) {

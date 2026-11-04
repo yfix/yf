@@ -24,7 +24,7 @@ class yf_charts
      */
     public function jquery_sparklines($data, $extra = [])
     {
-        $extra['id'] = $extra['id'] ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
+        $extra['id'] = ($extra['id'] ?? null) ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
         if ( ! is_array($data) || ! $data) {
             return false;
         }
@@ -57,7 +57,7 @@ class yf_charts
                 return false;
             }
         }
-        $extra['type'] = $extra['type'] ?: 'bar';
+        $extra['type'] = ($extra['type'] ?? null) ?: 'bar';
 
         asset('jquery-sparklines');
         jquery('

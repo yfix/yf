@@ -223,7 +223,7 @@ class yf_captcha
             $extra += $stpl_name;
             $stpl_name = $extra['captcha_stpl_name'];
         }
-        $stpl_name = $extra['captcha_stpl_name'] ?: $stpl_name;
+        $stpl_name = ($extra['captcha_stpl_name'] ?? null) ?: $stpl_name;
         if (empty($location)) {
             $location = './?object=' . ($_GET['object'] ?? null) . '&action=show_image';
         }

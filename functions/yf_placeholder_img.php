@@ -10,16 +10,16 @@ function yf_placeholder_img($w = 100, $h = 100, $params = [])
 {
     $w = abs((int) $w ?: 100);
     $h = abs((int) $h ?: 100);
-    $text = $params['text'] ?: $w . ' x ' . $h;
+    $text = ($params['text'] ?? null) ?: $w . ' x ' . $h;
 
-    $font_try_paths = $params['font_paths'] ?: [
+    $font_try_paths = ($params['font_paths'] ?? null) ?: [
         '/usr/share/fonts/',
         '/usr/share/fonts/dejavu/',
         '/usr/share/fonts/truetype/',
         '/usr/share/fonts/truetype/dejavu/',
         '/usr/share/fonts/truetype/ttf-dejavu/', // Centos
     ];
-    $font_name = $params['font_name'] ?: 'DejaVuSans-Bold.ttf';
+    $font_name = ($params['font_name'] ?? null) ?: 'DejaVuSans-Bold.ttf';
     $font = '';
     foreach ($font_try_paths as $path) {
         if (file_exists($path . $font_name)) {
@@ -30,13 +30,13 @@ function yf_placeholder_img($w = 100, $h = 100, $params = [])
     $im = imagecreatetruecolor($w, $h);
     imagealphablending($im, false);
 
-    $ctext = $params['color_text'] ?: '777';
-    $cbg = $params['color_bg'] ?: 'bbb';
+    $ctext = ($params['color_text'] ?? null) ?: '777';
+    $cbg = ($params['color_bg'] ?? null) ?: 'bbb';
 
     // http://php.net/manual/en/function.imagecolorallocatealpha.php
     // alpha A value between 0 and 127. 0 indicates completely opaque while 127 indicates completely transparent.
-    $opacity_text = $params['opacity_text'] ?: 0;
-    $opacity_bg = $params['opacity_bg'] ?: 0;
+    $opacity_text = ($params['opacity_text'] ?? null) ?: 0;
+    $opacity_bg = ($params['opacity_bg'] ?? null) ?: 0;
     if ($params['transparent_bg']) {
         $opacity_bg = 127;
     }
@@ -46,8 +46,8 @@ function yf_placeholder_img($w = 100, $h = 100, $params = [])
     $color_text = imagecolorallocatealpha($im, hexdec(substr($ctext, 0, 2)), hexdec(substr($ctext, 2, 2)), hexdec(substr($ctext, 4, 2)), $opacity_text);
     $color_bg = imagecolorallocatealpha($im, hexdec(substr($cbg, 0, 2)), hexdec(substr($cbg, 2, 2)), hexdec(substr($cbg, 4, 2)), $opacity_bg);
 
-    $min_size = $params['min_size'] ?: 5;
-    $max_size = $params['max_size'] ?: 14;
+    $min_size = ($params['min_size'] ?? null) ?: 5;
+    $max_size = ($params['max_size'] ?? null) ?: 14;
     $def_size = ceil($w / 10) + 1;
     if ($def_size < $min_size) {
         $def_size = $min_size;
@@ -55,8 +55,8 @@ function yf_placeholder_img($w = 100, $h = 100, $params = [])
     if ($def_size > $max_size) {
         $def_size = $max_size;
     }
-    $font_size = $params['font_size'] ?: $def_size;
-    $font_angle = $params['font_angle'] ?: 0;
+    $font_size = ($params['font_size'] ?? null) ?: $def_size;
+    $font_angle = ($params['font_angle'] ?? null) ?: 0;
 
     // Set the background
     imagefilledrectangle($im, 0, 0, $w, $h, $color_bg);

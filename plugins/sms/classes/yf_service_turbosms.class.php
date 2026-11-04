@@ -57,9 +57,9 @@ class yf_service_turbosms
             return false;
         }
         if ($text == '') {
-            $text = $this->conf['text'] ?: $this->default_conf['text'];
+            $text = ($this->conf['text'] ?? null) ?: $this->default_conf['text'];
         }
-        $sign = $params['sign'] ?: $this->conf['sign'] ?: $this->default_conf['sign'];
+        $sign = ($params['sign'] ?? null) ?: ($this->conf['sign'] ?? null) ?: $this->default_conf['sign'];
         $data[$phone] = [
             'sign' => $sign,
             'number' => $phone,

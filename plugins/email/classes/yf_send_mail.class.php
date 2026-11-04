@@ -98,7 +98,7 @@ class yf_send_mail
     public function send($params = [])
     {
         $name_to = $email_to = null;
-        $driver = strtolower($params['driver'] ?: $this->DRIVER);
+        $driver = strtolower(($params['driver'] ?? null) ?: $this->DRIVER);
         if (DEBUG_MODE || $this->LOG_EMAILS) {
             $time_start = microtime(true);
         }
@@ -154,7 +154,7 @@ class yf_send_mail
             }
             if ($this->REPLACE_FIELD_FROM && $smtp['smtp_from_mail']) {
                 $params['email_from'] = $smtp['smtp_from_mail'];
-                $params['name_from'] = $smtp['smtp_from_name'] ?: $params['name_from'];
+                $params['name_from'] = ($smtp['smtp_from_name'] ?? null) ?: $params['name_from'];
             }
         }
         $params['smtp'] = $smtp;

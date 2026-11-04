@@ -31,7 +31,7 @@ class yf_db_driver_pgsql extends yf_db_driver
         if (strlen($this->params['pswd'])) {
             $dsn .= ' password=' . $this->params['pswd'] . ' ';
         }
-        $db_name = $this->params['name'] ?: 'template1';
+        $db_name = ($this->params['name'] ?? null) ?: 'template1';
         $dsn .= ' dbname=' . $db_name . ' ';
         $dsn .= ' connect_timeout=5 ';
         $this->db_connect_id = $this->params['persist'] ? pg_pconnect($dsn) : pg_connect($dsn);

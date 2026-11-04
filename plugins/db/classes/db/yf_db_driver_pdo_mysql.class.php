@@ -15,11 +15,11 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo
             trigger_error('YF PDO MySQL db driver missing php extension pdo_mysql', E_USER_ERROR);
             return false;
         }
-        $params['port'] = $params['port'] ?: 3306;
+        $params['port'] = ($params['port'] ?? null) ?: 3306;
         if ($params['socket'] && ! file_exists($params['socket'])) {
             $params['socket'] = '';
         }
-        $params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : 'utf8');
+        $params['charset'] = ($params['charset'] ?? null) ?: (defined('DB_CHARSET') ? DB_CHARSET : 'utf8');
         $this->params = $params;
         $this->connect();
         return $this->db_connect_id;

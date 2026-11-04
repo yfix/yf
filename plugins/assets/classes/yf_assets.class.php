@@ -659,10 +659,10 @@ class yf_assets
         }
         foreach ((array) $this->ASSETS_GET_PRIORITY as $method) {
             if (in_array($method, ['bower', 'github'])) {
-                $data = $asset_data[$method] ?: [];
+                $data = ($asset_data[$method] ?? null) ?: [];
                 $_files = $data[$asset_type];
                 if ($_files) {
-                    $_name = $data['name'] ?: $name;
+                    $_name = ($data['name'] ?? null) ?: $name;
                     strpos($_name, '#') !== false && list($_name, $_version) = explode('#', $_name);
                     $_version ??= $version;
                     $_version ??= $data['version'];
@@ -675,13 +675,13 @@ class yf_assets
                 return $this->get_asset_from_github($_name, $_version, $data, $asset_type);
             } elseif ($method == 'cdn' && $this->ALLOW_GET_FROM_CDN && isset($asset_data[$method]) && isset($asset_data[$method][$asset_type])) {
                 $data = $asset_data[$method];
-                $_version = $version ?: $data['version'] ?: 'master';
+                $_version = $version ?: ($data['version'] ?? null) ?: 'master';
                 return $this->get_asset_from_cdn($name, $_version, $data, $asset_type);
             } elseif ($method == 'versions') {
                 if ( ! is_array($asset_data[$method])) {
                     return null;
                 }
-                $data = $asset_data[$method] ?: [];
+                $data = ($asset_data[$method] ?? null) ?: [];
                 $version = $this->find_version_best_match($version, array_keys($data));
                 if ( ! $version || ! isset($data[$version])) {
                     return null;
@@ -875,8 +875,8 @@ class yf_assets
             '{name}' => $name,
             '{version}' => $version,
             '{branch}' => $version,
-            '{main_type}' => $this->_override['main_type'] ?: MAIN_TYPE,
-            '{host}' => $this->_override['host'] ?: ($_SERVER['HTTP_HOST'] ?? null),
+            '{main_type}' => ($this->_override['main_type'] ?? null) ?: MAIN_TYPE,
+            '{host}' => ($this->_override['host'] ?? null) ?: ($_SERVER['HTTP_HOST'] ?? null),
             '{lang}' => $this->_cache_language,
         ];
     }
@@ -1049,7 +1049,7 @@ class yf_assets
                 continue;
             }
             $types[$atype] = $atype;
-            $inherit_types = (array) $inherit_types_map[$atype] ?: [];
+            $inherit_types = (array) ($inherit_types_map[$atype] ?? null) ?: [];
             foreach ((array) $inherit_types as $inherit_type) {
                 $types[$inherit_type] = $inherit_type;
             }
@@ -1118,7 +1118,7 @@ class yf_assets
         $inherit_types_map = $this->inherit_asset_types_map;
         $types = [];
         $types[$asset_type] = $asset_type;
-        $inherit_types = (array) $inherit_types_map[$asset_type] ?: [];
+        $inherit_types = (array) ($inherit_types_map[$asset_type] ?? null) ?: [];
         foreach ((array) $inherit_types as $inherit_type) {
             $types[$inherit_type] = $inherit_type;
         }
@@ -2046,17 +2046,17 @@ class yf_assets
             $func = $this->CACHE_DIR_TPL;
             $cache_dir = $func($out_type, $asset_name, $version, $this);
         } else {
-            $main_type = $this->_override['main_type'] ?: MAIN_TYPE;
-            $host = $this->_override['host'] ?: ($_SERVER['HTTP_HOST'] ?? null);
+            $main_type = ($this->_override['main_type'] ?? null) ?: MAIN_TYPE;
+            $host = ($this->_override['host'] ?? null) ?: ($_SERVER['HTTP_HOST'] ?? null);
 
             ! isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
-            $lang = $this->_override['language'] ?: $this->_cache_language;
+            $lang = ($this->_override['language'] ?? null) ?: $this->_cache_language;
 
             ! isset($this->_cache_html5fw) && $this->_cache_html5fw = conf('css_framework') ?: 'bs3';
-            $html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
+            $html5fw = ($this->_override['html5fw'] ?? null) ?: $this->_cache_html5fw;
 
             ! isset($this->_cache_date) && $this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
-            $date = $this->_override['date'] ?: $this->_cache_date;
+            $date = ($this->_override['date'] ?? null) ?: $this->_cache_date;
 
             $replace = [
                 '{site_path}' => SITE_PATH,
@@ -2091,17 +2091,17 @@ class yf_assets
             $func = $this->COMBINED_VERSION_TPL;
             $version = $func($out_type, $this);
         } else {
-            $main_type = $this->_override['main_type'] ?: MAIN_TYPE;
-            $host = $this->_override['host'] ?: ($_SERVER['HTTP_HOST'] ?? null);
+            $main_type = ($this->_override['main_type'] ?? null) ?: MAIN_TYPE;
+            $host = ($this->_override['host'] ?? null) ?: ($_SERVER['HTTP_HOST'] ?? null);
 
             ! isset($this->_cache_language) && $this->_cache_language = conf('language') ?: 'en';
-            $lang = $this->_override['language'] ?: $this->_cache_language;
+            $lang = ($this->_override['language'] ?? null) ?: $this->_cache_language;
 
             ! isset($this->_cache_html5fw) && $this->_cache_html5fw = conf('css_framework') ?: 'bs3';
-            $html5fw = $this->_override['html5fw'] ?: $this->_cache_html5fw;
+            $html5fw = ($this->_override['html5fw'] ?? null) ?: $this->_cache_html5fw;
 
             ! isset($this->_cache_date) && $this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
-            $date = $this->_override['date'] ?: $this->_cache_date;
+            $date = ($this->_override['date'] ?? null) ?: $this->_cache_date;
 
             $replace = [
                 '{site_path}' => SITE_PATH,

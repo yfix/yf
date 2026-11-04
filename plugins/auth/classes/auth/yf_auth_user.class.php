@@ -453,7 +453,7 @@ class yf_auth_user
         return db()->insert_safe('log_auth_fails', [
             'time'         => str_replace(',', '.', microtime(true)),
             'ip'           => common()->get_ip(),
-            'user_id'      => $data['user_id'] ?: ($_SESSION[$this->VAR_USER_ID] ?? null),
+            'user_id'      => ($data['user_id'] ?? null) ?: ($_SESSION[$this->VAR_USER_ID] ?? null),
             'login'        => $data['login'],
             'pswd'         => $data['pswd'],
             'reason'       => $data['reason'],

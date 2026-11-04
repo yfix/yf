@@ -306,18 +306,18 @@ class yf_common
         if ( ! is_array($params)) {
             $params = [];
         }
-        $params['email_from'] = $params['from_mail'] ?: $params['email_from'] ?: $email_from;
-        $params['name_from'] = $params['from_name'] ?: $params['name_from'] ?: $name_from;
-        $params['email_to'] = $params['to_mail'] ?: $params['email_to'] ?: $email_to;
-        $params['name_to'] = $params['to_name'] ?: $params['name_to'] ?: $name_to;
-        $params['subject'] = $params['subj'] ?: $params['subject'] ?: $subject;
-        $params['text'] = $params['text'] ?: $text;
-        $params['html'] = $params['html'] ?: $html;
-        $params['attaches'] = $params['attach'] ?: $params['attaches'] ?: $attaches;
-        $params['charset'] = $params['charset'] ?: $charset;
-        $params['mta_params'] = $params['force_mta_opts'] ?: $params['mta_params'] ?: $force_mta_opts;
-        $params['priority'] = $params['priority'] ?: $priority ?: 3;
-        $params['smtp'] = $params['smtp'] ?: $smtp;
+        $params['email_from'] = ($params['from_mail'] ?? null) ?: ($params['email_from'] ?? null) ?: $email_from;
+        $params['name_from'] = ($params['from_name'] ?? null) ?: ($params['name_from'] ?? null) ?: $name_from;
+        $params['email_to'] = ($params['to_mail'] ?? null) ?: ($params['email_to'] ?? null) ?: $email_to;
+        $params['name_to'] = ($params['to_name'] ?? null) ?: ($params['name_to'] ?? null) ?: $name_to;
+        $params['subject'] = ($params['subj'] ?? null) ?: ($params['subject'] ?? null) ?: $subject;
+        $params['text'] = ($params['text'] ?? null) ?: $text;
+        $params['html'] = ($params['html'] ?? null) ?: $html;
+        $params['attaches'] = ($params['attach'] ?? null) ?: ($params['attaches'] ?? null) ?: $attaches;
+        $params['charset'] = ($params['charset'] ?? null) ?: $charset;
+        $params['mta_params'] = ($params['force_mta_opts'] ?? null) ?: ($params['mta_params'] ?? null) ?: $force_mta_opts;
+        $params['priority'] = ($params['priority'] ?? null) ?: $priority ?: 3;
+        $params['smtp'] = ($params['smtp'] ?? null) ?: $smtp;
         return _class('send_mail')->send($params);
     }
 

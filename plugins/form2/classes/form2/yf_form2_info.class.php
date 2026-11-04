@@ -15,7 +15,7 @@ class yf_form2_info
         $name = 'user_name';
         $user_id = $form->_replace['user_id'];
 
-        $db = ($form->_params['db'] ?: $extra['db']) ?: db();
+        $db = (($form->_params['db'] ?? null) ?: $extra['db']) ?: db();
 
         $user_info = $db->get('SELECT login,email,phone,nick,id AS user_name FROM ' . $db->_fix_table_name('user') . ' WHERE id=' . (int) $user_id);
         $user_name = [];
@@ -53,7 +53,7 @@ class yf_form2_info
         $name = 'admin_name';
         $user_id = $form->_replace['user_id'];
 
-        $db = ($form->_params['db'] ?: $extra['db']) ?: db();
+        $db = (($form->_params['db'] ?? null) ?: $extra['db']) ?: db();
 
         $user_info = $db->get('SELECT login,id AS user_name FROM ' . $db->_fix_table_name('admin') . ' WHERE id=' . (int) $user_id);
         // TODO: add tpl param

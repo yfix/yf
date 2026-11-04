@@ -82,7 +82,7 @@ class yf_db_ddl_parser_mysql
             'nullable' => ! $v['nullable'] ? 'NOT NULL' : '',
             'default' => $def ? 'DEFAULT ' . $def : '',
             'auto_inc' => $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
-            'on_update' => $v['on_update'] ?: '',
+            'on_update' => ($v['on_update'] ?? null) ?: '',
         ]);
     }
 
@@ -152,9 +152,9 @@ class yf_db_ddl_parser_mysql
     {
         $parsed = $this->parser->parse($sql);
 
-        $table_name = $parsed['TABLE']['no_quotes']['parts'][0] ?: '';
-        $tmp_create_def = $parsed['TABLE']['create-def']['sub_tree'] ?: [];
-        $tmp_options = $parsed['TABLE']['options'] ?: [];
+        $table_name = ($parsed['TABLE']['no_quotes']['parts'][0] ?? null) ?: '';
+        $tmp_create_def = ($parsed['TABLE']['create-def']['sub_tree'] ?? null) ?: [];
+        $tmp_options = ($parsed['TABLE']['options'] ?? null) ?: [];
 
         $struct = [
             'name' => $table_name,
@@ -429,7 +429,7 @@ class yf_db_ddl_parser_mysql
             'int' => 11,
             'bigint' => 20,
         ];
-        return $a[$type] ?: 11;
+        return ($a[$type] ?? null) ?: 11;
     }
 
     /**

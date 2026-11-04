@@ -21,7 +21,7 @@ class yf_oauth_driver_bitly extends yf_oauth_driver2
         $user_info = [
             'user_id' => $raw['data']['login'],
             'login' => $raw['data']['login'],
-            'name' => $raw['data']['display_name'] ?: $raw['data']['login'],
+            'name' => ($raw['data']['display_name'] ?? null) ?: $raw['data']['login'],
             'email' => '',
             'avatar_url' => $raw['data']['profile_image'],
             'profile_url' => $raw['data']['profile_url'],

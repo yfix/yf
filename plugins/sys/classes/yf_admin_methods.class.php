@@ -80,11 +80,11 @@ class yf_admin_methods
         }
         $params += (array) $this->params;
 
-        $filter_name = $params['filter_name'] ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
+        $filter_name = ($params['filter_name'] ?? null) ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         $db = is_object($params['db']) ? $params['db'] : db();
         $table = $db->_fix_table_name($params['table']);
         return table(from($table), [
-            'id' => $params['id'] ?: 'id',
+            'id' => ($params['id'] ?? null) ?: 'id',
             'filter' => ($_SESSION[$filter_name] ?? null),
             'filter_params' => $params['filter_params'],
         ])->auto();
@@ -104,8 +104,8 @@ class yf_admin_methods
         $params += (array) $this->params;
 
         $replace = [
-            'form_action' => $params['form_action'] ?: url('/@object/@action/' . $params['links_add']),
-            'back_link' => $params['back_link'] ?: url('/@object/' . $params['links_add']),
+            'form_action' => ($params['form_action'] ?? null) ?: url('/@object/@action/' . $params['links_add']),
+            'back_link' => ($params['back_link'] ?? null) ?: url('/@object/' . $params['links_add']),
         ];
         $db = is_object($params['db']) ? $params['db'] : db();
         $table = $db->_fix_table_name($params['table']);
@@ -148,7 +148,7 @@ class yf_admin_methods
                 if (is_callable($params['on_after_update'])) {
                     $params['on_after_update']($sql, $new_id);
                 }
-                $form_action = $params['form_action'] ?: url('/@object/@action/' . $params['links_add']);
+                $form_action = ($params['form_action'] ?? null) ?: url('/@object/@action/' . $params['links_add']);
                 if ($new_id) {
                     $form_action .= '&id=' . $new_id;
                 }
@@ -192,8 +192,8 @@ class yf_admin_methods
         $params += (array) $this->params;
 
         $replace = [
-            'form_action' => $params['form_action'] ?: url('/@object/@action/' . urlencode(($_GET['id'] ?? null)) . '/' . $params['links_add']),
-            'back_link' => $params['back_link'] ?: url('/@object/' . $params['links_add']),
+            'form_action' => ($params['form_action'] ?? null) ?: url('/@object/@action/' . urlencode(($_GET['id'] ?? null)) . '/' . $params['links_add']),
+            'back_link' => ($params['back_link'] ?? null) ?: url('/@object/' . $params['links_add']),
         ];
         $db = is_object($params['db']) ? $params['db'] : db();
         $table = $db->_fix_table_name($params['table']);
@@ -206,8 +206,8 @@ class yf_admin_methods
             return $replace;
         }
         $fields = $params['fields'];
-        $primary_field = $params['id'] ?: $params['primary'] ?: 'id';
-        $secondary_field = $params['secondary'] ?: 'name';
+        $primary_field = ($params['id'] ?? null) ?: ($params['primary'] ?? null) ?: 'id';
+        $secondary_field = ($params['secondary'] ?? null) ?: 'name';
         $id = isset($params['input_' . $primary_field]) ? $params['input_' . $primary_field] : ($_GET['id'] ?? null);
         if ( ! $fields) {
             $columns = $db->meta_columns($table);
@@ -456,11 +456,11 @@ class yf_admin_methods
         if ( ! is_array($params)) {
             $params = [];
         }
-        $filter_save_silent = $params['filter_save_silent'] ?: $this->_params['filter_save_silent'];
-        $redirect_url = $params['redirect_url'] ?: $this->_params['redirect_url'];
-        $filter_data = $params['filter_data'] ?: ($_GET['filter'] ?? null);
-        $filter_name = $params['filter_name'] ?: $this->_params['filter_name'] ?: ($_GET['object'] ?? null) . '__show';
-        $need_clear = $params['filter_clear'] ?: (($_GET['id'] ?? null) == 'clear' || ($_GET['page'] ?? null) == 'clear');
+        $filter_save_silent = ($params['filter_save_silent'] ?? null) ?: $this->_params['filter_save_silent'];
+        $redirect_url = ($params['redirect_url'] ?? null) ?: $this->_params['redirect_url'];
+        $filter_data = ($params['filter_data'] ?? null) ?: ($_GET['filter'] ?? null);
+        $filter_name = ($params['filter_name'] ?? null) ?: ($this->_params['filter_name'] ?? null) ?: ($_GET['object'] ?? null) . '__show';
+        $need_clear = ($params['filter_clear'] ?? null) ?: (($_GET['id'] ?? null) == 'clear' || ($_GET['page'] ?? null) == 'clear');
 
         $data = ($_SESSION[$filter_name] ?? null);
         if ($need_clear) {
@@ -527,7 +527,7 @@ class yf_admin_methods
      */
     public function _get_filter($params = [])
     {
-        $filter_name = $params['filter_name'] ?: $this->_params['filter_name'];
+        $filter_name = ($params['filter_name'] ?? null) ?: $this->_params['filter_name'];
         if ( ! $filter_name) {
             $filter_name = ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
         }

@@ -110,7 +110,7 @@ class yf_mail_driver_mandrill extends yf_mail_driver
                 'subject' => $params['subject'],
                 'from_email' => $params['email_from'],
                 'from_name' => $params['name_from'],
-                'headers' => ['Reply-To' => $params['reply_to'] ?: $params['from']],
+                'headers' => ['Reply-To' => ($params['reply_to'] ?? null) ?: $params['from']],
             ];
             if (is_array($params['email_to'])) {
                 foreach ($params['email_to'] as $name => $email) {

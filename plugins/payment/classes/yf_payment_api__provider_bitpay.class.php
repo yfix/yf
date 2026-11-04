@@ -263,7 +263,7 @@ class yf_payment_api__provider_bitpay extends yf_payment_api__provider_remote
                                 $payment_api->operation_update($update_data);
                             }
                             if (in_array($options['status'], $this->partial_statuses)) {
-                                $currency = $options['currency'] ?: 'USD';
+                                $currency = ($options['currency'] ?? null) ?: 'USD';
                                 $currency_rate = $this->payment_api->currency_rate(['from' => $currency, 'to' => 'UNT']);
 
                                 $amount = $options['btcPaid'] * $options['rate'] * $currency_rate;

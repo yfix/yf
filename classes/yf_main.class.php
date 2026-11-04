@@ -1748,7 +1748,7 @@ class yf_main
             // Possible bug when apache sends full url into request_uri, like this: "http://test.dev/" instead of "/"
             $p = parse_url(($_SERVER['REQUEST_URI'] ?? null));
             if (isset($p['scheme']) || isset($p['host'])) {
-                $_SERVER['REQUEST_URI'] = ($p['path'] ?: '/') . ($p['query'] ? '?' . $p['query'] : '');
+                $_SERVER['REQUEST_URI'] = (($p['path'] ?? null) ?: '/') . ($p['query'] ? '?' . $p['query'] : '');
                 if (($_SERVER['QUERY_STRING'] ?? null) != $p['query']) {
                     $_SERVER['QUERY_STRING'] = $p['query'];
                     parse_str($p['query'], $_get);

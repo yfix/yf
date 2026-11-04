@@ -105,7 +105,7 @@ class yf_db_utils_helper_create_table
         }
         return $this->add_column($column, (array) $params + [
             'type' => 'char',
-            'length' => $params['length'] ?: 255,
+            'length' => ($params['length'] ?? null) ?: 255,
         ]);
     }
 
@@ -130,7 +130,7 @@ class yf_db_utils_helper_create_table
         }
         return $this->add_column($column, (array) $params + [
             'type' => 'varchar',
-            'length' => $params['length'] ?: 255,
+            'length' => ($params['length'] ?? null) ?: 255,
         ]);
     }
 

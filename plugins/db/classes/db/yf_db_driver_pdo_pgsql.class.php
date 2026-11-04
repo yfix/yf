@@ -13,7 +13,7 @@ class yf_db_driver_pdo_pgsql extends yf_db_driver_pdo
             trigger_error('YF PDO PgSQL db driver require missing php extension pdo_pgsql', E_USER_ERROR);
             return false;
         }
-        $params['port'] = $params['port'] ?: 5432;
+        $params['port'] = ($params['port'] ?? null) ?: 5432;
         $this->params = $params;
         $this->connect();
         return $this->db_connect_id;
@@ -26,7 +26,7 @@ class yf_db_driver_pdo_pgsql extends yf_db_driver_pdo
         if ($this->params['port'] && $this->params['port'] != $this->DEF_PORT) {
             $dsn .= ';port=' . $this->params['port'];
         }
-        $dsn .= ';dbname=' . ($this->params['name'] ?: 'template1');
+        $dsn .= ';dbname=' . (($this->params['name'] ?? null) ?: 'template1');
         $attrs = [];
         $attrs[PDO::ATTR_TIMEOUT] = 2;
         if ($this->params['persist']) {

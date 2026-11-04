@@ -32,7 +32,7 @@ class yf_news
         // For links like this:
         // /news/uvazhaemie-polzovateli-i-posetiteli
         // /news/уникальая-новость
-        $id = trim($dirty_args['action'] ?: ($_GET['action'] ?? null));
+        $id = trim(($dirty_args['action'] ?? null) ?: ($_GET['action'] ?? null));
         if ( ! ($_GET['id'] ?? null) && strlen($id) && $id != 'show') {
             $_GET['id'] = $id;
         }
@@ -89,7 +89,7 @@ class yf_news
                 'head_text' => $a['head_text'],
                 'full_text' => $a['full_text'],
                 'add_date' => _format_date($a['add_date'], 'long'),
-                'full_link' => url('/@object/show/' . ($a['url'] ?: $a['id'])),
+                'full_link' => url('/@object/show/' . (($a['url'] ?? null) ?: $a['id'])),
                 'num_comments' => (int) $num_comments[$a['id']],
             ];
         }
@@ -124,7 +124,7 @@ class yf_news
         }
         $this->_current = $a;
 
-        $url = url('/@object/@action/' . ($a['url'] ?: $a['id']));
+        $url = url('/@object/@action/' . (($a['url'] ?? null) ?: $a['id']));
         $comments = module('comments')->_show_comments((array) $this->_comments_params + [
             'add_form_action' => url('/@object/add_comment/' . $a['id']),
             'return_path' => $url,
@@ -162,7 +162,7 @@ class yf_news
         if ( ! $a || ! $a['active']) {
             return _404('Not found');
         }
-        $url = url('/@object/' . ($a['url'] ?: $a['id']));
+        $url = url('/@object/' . (($a['url'] ?? null) ?: $a['id']));
         return module('comments')->add((array) $this->_comments_params + [
             'add_form_action' => url('/@object/add_comment/' . $a['id']),
             'return_path' => $url,
@@ -215,7 +215,7 @@ class yf_news
         $a = $this->_current;
         if ($a) {
             $desc = _truncate($a['meta_desc'], 250);
-            $url = url('/@object/show/' . ($a['url'] ?: $a['id']));
+            $url = url('/@object/show/' . (($a['url'] ?? null) ?: $a['id']));
             $meta = [
                 'keywords' => $a['meta_keywords'],
                 'news_keywords' => $a['meta_keywords'],
@@ -255,7 +255,7 @@ class yf_news
             return false;
         }
         foreach ((array) db()->select('id, url')->from(self::table)->where('active', '1')->where('locale', conf('language'))->order_by('add_date', 'desc')->get_all() as $a) {
-            $sitemap->_add('/news/show/' . ($a['url'] ?: $a['id']) . ($a['locale'] ? '?lang=' . $a['locale'] : ''));
+            $sitemap->_add('/news/show/' . (($a['url'] ?? null) ?: $a['id']) . ($a['locale'] ? '?lang=' . $a['locale'] : ''));
         }
         return true;
     }

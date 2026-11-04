@@ -187,7 +187,7 @@ class yf_table2
             $params['table_attr'] = trim($params['table_attr'] . ' data-postload-url="' . _prepare_html($params['data-postload-url']) . '"');
         }
         if (isset($params['filter']) && ! is_array($params['filter']) && is_numeric($params['filter']) || is_bool($params['filter']) && ! empty($params['filter'])) {
-            $filter_name = $params['filter_name'] ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
+            $filter_name = ($params['filter_name'] ?? null) ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
             $params['filter'] = ($_SESSION[$filter_name] ?? null);
         }
 
@@ -511,11 +511,11 @@ class yf_table2
         $pager = [
             'path' => $params['pager_path'],
             'type' => $params['pager_type'],
-            'records_on_page' => $params['pager_records_on_page'] ?: $default_per_page,
-            'num_records' => $params['pager_num_records'] ?: 0,
-            'stpl_path' => $params['pager_stpl_path'] ?: '',
-            'add_get_vars' => $params['pager_add_get_vars'] ?: 1,
-            'sql_callback' => $params['pager_sql_callback'] ?: null,
+            'records_on_page' => ($params['pager_records_on_page'] ?? null) ?: $default_per_page,
+            'num_records' => ($params['pager_num_records'] ?? null) ?: 0,
+            'stpl_path' => ($params['pager_stpl_path'] ?? null) ?: '',
+            'add_get_vars' => ($params['pager_add_get_vars'] ?? null) ?: 1,
+            'sql_callback' => ($params['pager_sql_callback'] ?? null) ?: null,
             'extra' => $params['extra'] ?? [],
         ];
         if ( ! $pager['extra']['sql_callback'] && $pager['sql_callback']) {
@@ -922,7 +922,7 @@ class yf_table2
         }
         $td_attrs = '';
         if (isset($params['td']) || isset($_extra['td'])) {
-            $td_attrs = $this->_get_attrs_string_from_params($params['td'] ?: $_extra['td'], $name, $row, $row_id);
+            $td_attrs = $this->_get_attrs_string_from_params(($params['td'] ?? null) ?: $_extra['td'], $name, $row, $row_id);
         }
         if ($row_id !== null && isset($this->_rowspan[$name])) {
             $rowspan = $this->_rowspan[$name][$row_id];
@@ -1199,7 +1199,7 @@ class yf_table2
             $extra = [];
         }
         if ( ! $desc) {
-            $desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
+            $desc = ucfirst(str_replace('_', ' ', ($extra['desc'] ?? null) ?: $name));
         }
         $this->_fields[] = [
             'type' => __FUNCTION__,
@@ -1263,7 +1263,7 @@ class yf_table2
                     if ( ! isset($extra['nowrap']) || $extra['nowrap']) {
                         $text = str_replace(' ', '&nbsp;', $text);
                     }
-                    $class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
+                    $class = (($extra['class'] ?? null) ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
                     if ($extra['class_add']) {
                         $class .= ' ' . $extra['class_add'];
                     }
@@ -1342,7 +1342,7 @@ class yf_table2
         if ( ! is_array($extra)) {
             $extra = [];
         }
-        $name = $extra['name'] ?: $name;
+        $name = ($extra['name'] ?? null) ?: $name;
         if ( ! $extra['link']) {
             $extra['link'] = url_admin('/members/edit/%d');
         }
@@ -1402,7 +1402,7 @@ class yf_table2
                     continue;
                 }
                 $u = $table->_data_for_func[$func_name][$id];
-                $uname = ($u['login'] ?: $u['name'] ?: $u['email'] ?: $u['phone']);
+                $uname = (($u['login'] ?? null) ?: ($u['name'] ?? null) ?: ($u['email'] ?? null) ?: $u['phone']);
                 $out[$id] = a(str_replace('%d', $id, $e['extra']['link']), _truncate($uname, 50) . '&nbsp;[' . $id . ']', 'fa fa-user');
             }
             return implode(PHP_EOL, $out);
@@ -1426,7 +1426,7 @@ class yf_table2
             $extra = [];
         }
         if ( ! $name) {
-            $name = $extra['name'] ?: 'user_id';
+            $name = ($extra['name'] ?? null) ?: 'user_id';
         }
         if ($link) {
             $extra['link'] = $link;
@@ -1458,7 +1458,7 @@ class yf_table2
             $extra = [];
         }
         if ( ! $desc) {
-            $desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
+            $desc = ucfirst(str_replace('_', ' ', ($extra['desc'] ?? null) ?: $name));
         }
         $this->_fields[] = [
             'type' => __FUNCTION__,
@@ -1489,7 +1489,7 @@ class yf_table2
             $extra = [];
         }
         if ( ! $desc) {
-            $desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
+            $desc = ucfirst(str_replace('_', ' ', ($extra['desc'] ?? null) ?: $name));
         }
         $this->_fields[] = [
             'type' => __FUNCTION__,
@@ -1499,13 +1499,13 @@ class yf_table2
             'func' => function ($field, $params, $row, $instance_params, $table) {
                 $extra = $params['extra'];
                 $extra['id'] = $extra['name'];
-                $color_ok = $extra['color_ok'] ?: 'yellow';
-                $color_ko = $extra['color_ko'] ?: '';
-                $class = $extra['class'] ?: $table->CLASS_ICON_STAR;
-                $class_ok = $extra['class_ok'] ?: $table->CLASS_STAR_OK;
-                $class_ko = $extra['class_ko'] ?: $table->CLASS_STAR_KO;
-                $max = $extra['max'] ?: 5;
-                $stars = $extra['stars'] ?: 5;
+                $color_ok = ($extra['color_ok'] ?? null) ?: 'yellow';
+                $color_ko = ($extra['color_ko'] ?? null) ?: '';
+                $class = ($extra['class'] ?? null) ?: $table->CLASS_ICON_STAR;
+                $class_ok = ($extra['class_ok'] ?? null) ?: $table->CLASS_STAR_OK;
+                $class_ko = ($extra['class_ko'] ?? null) ?: $table->CLASS_STAR_KO;
+                $max = ($extra['max'] ?? null) ?: 5;
+                $stars = ($extra['stars'] ?? null) ?: 5;
                 $input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
                 foreach (range(1, $stars) as $num) {
                     $is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
@@ -1545,7 +1545,7 @@ class yf_table2
                 $name = $extra['name'];
             } else {
                 $name = __FUNCTION__ . '_' . ++$this->_auto_names[__FUNCTION__];
-                $extra['desc'] = $extra['desc'] ?: ''; // Prevent auto-generated id desc
+                $extra['desc'] = ($extra['desc'] ?? null) ?: ''; // Prevent auto-generated id desc
             }
             $this->_params['custom_fields'][$name] = $func;
         }
@@ -1706,7 +1706,7 @@ class yf_table2
                     }
                 }
                 $extra['href'] = $link;
-                $class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
+                $class = (($extra['class'] ?? null) ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
                 if ($extra['class_add']) {
                     $class .= ' ' . $extra['class_add'];
                 }
@@ -1717,11 +1717,11 @@ class yf_table2
                 if ($extra['hidden_toggle']) {
                     $extra['data-hidden-toggle'] = $extra['hidden_toggle'];
                 }
-                $title = $params['name'] ?: $extra['title'] ?: $extra['desc'];
+                $title = ($params['name'] ?? null) ?: ($extra['title'] ?? null) ?: $extra['desc'];
                 if ($title) {
                     $extra['title'] = $title;
                 }
-                $renderer = $extra['renderer'] ?: 'a';
+                $renderer = ($extra['renderer'] ?? null) ?: 'a';
                 if ($renderer == 'a') {
                     $body = '<a' . _attrs($extra, ['href', 'class', 'target', 'title']) . '><i class="' . trim($icon) . '"></i>' . (empty($no_text) ? ' ' . t($params['name']) : '') . '</a> ';
                 } elseif ($renderer == 'button') {
@@ -1772,10 +1772,10 @@ class yf_table2
             $extra = [];
         }
         if ( ! $name) {
-            $name = $extra['name'] ?: 'Edit';
+            $name = ($extra['name'] ?? null) ?: 'Edit';
         }
         if ( ! $link) {
-            $link = $extra['link'] ?: url('/@object/edit/%d');
+            $link = ($extra['link'] ?? null) ?: url('/@object/edit/%d');
         }
         if ( ! $extra['no_ajax']) {
             $extra['class_add'] .= ' ' . $this->CLASS_AJAX_EDIT;
@@ -1804,10 +1804,10 @@ class yf_table2
             $extra = [];
         }
         if ( ! $name) {
-            $name = $extra['name'] ?: 'Delete';
+            $name = ($extra['name'] ?? null) ?: 'Delete';
         }
         if ( ! $link) {
-            $link = $extra['link'] ?: url('/@object/delete/%d');
+            $link = ($extra['link'] ?? null) ?: url('/@object/delete/%d');
         }
         if ( ! $extra['no_ajax']) {
             $extra['class_add'] .= ' ' . $this->CLASS_AJAX_DELETE;
@@ -1836,10 +1836,10 @@ class yf_table2
             $extra = [];
         }
         if ( ! $name) {
-            $name = $extra['name'] ?: 'Clone';
+            $name = ($extra['name'] ?? null) ?: 'Clone';
         }
         if ( ! $link) {
-            $link = $extra['link'] ?: url('/@object/clone_item/%d');
+            $link = ($extra['link'] ?? null) ?: url('/@object/clone_item/%d');
         }
         if ( ! $extra['no_ajax']) {
             $extra['class_add'] .= ' ' . $this->CLASS_AJAX_CLONE;
@@ -1868,10 +1868,10 @@ class yf_table2
             $extra = [];
         }
         if ( ! $name) {
-            $name = $extra['name'] ?: 'View';
+            $name = ($extra['name'] ?? null) ?: 'View';
         }
         if ( ! $link) {
-            $link = $extra['link'] ?: url('/@object/view/%d');
+            $link = ($extra['link'] ?? null) ?: url('/@object/view/%d');
         }
         if ( ! $extra['no_ajax']) {
             $extra['class_add'] .= ' ' . $this->CLASS_AJAX_VIEW;
@@ -1900,10 +1900,10 @@ class yf_table2
             $extra = [];
         }
         if ( ! $name) {
-            $name = $extra['name'] ?: 'Active';
+            $name = ($extra['name'] ?? null) ?: 'Active';
         }
         if ( ! $link) {
-            $link = $extra['link'] ?: url('/@object/active/%d');
+            $link = ($extra['link'] ?? null) ?: url('/@object/active/%d');
         }
         $this->_buttons[] = [
             'type' => __FUNCTION__,
@@ -2004,7 +2004,7 @@ class yf_table2
                 }
                 $extra['href'] = $link;
                 $icon = ($extra['icon'] ? ' ' . $extra['icon'] : $table->CLASS_ICON_BTN);
-                $class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
+                $class = (($extra['class'] ?? null) ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
                 if ($extra['class_add']) {
                     $class .= ' ' . $extra['class_add'];
                 }
@@ -2057,10 +2057,10 @@ class yf_table2
             $extra = [];
         }
         if ( ! $name) {
-            $name = $extra['name'] ?: 'add';
+            $name = ($extra['name'] ?? null) ?: 'add';
         }
         if ( ! $link) {
-            $link = $extra['link'] ?: url('/@object/add');
+            $link = ($extra['link'] ?? null) ?: url('/@object/add');
         }
         if ( ! $extra['no_ajax']) {
             $extra['class_add'] .= ' ' . $this->CLASS_AJAX_ADD;
@@ -2108,12 +2108,12 @@ class yf_table2
                     $extra = $value;
                     $value = '';
                 }
-                $value = $extra['value'] ?: $value;
-                $desc = $extra['desc'] ?: $value;
+                $value = ($extra['value'] ?? null) ?: $value;
+                $desc = ($extra['desc'] ?? null) ?: $value;
                 $extra['type'] = 'submit';
-                $extra['name'] = trim($extra['name'] ?: $value);
+                $extra['name'] = trim(($extra['name'] ?? null) ?: $value);
                 $icon = ($extra['icon'] ? ' ' . $extra['icon'] : $table->CLASS_ICON_SAVE);
-                $class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
+                $class = (($extra['class'] ?? null) ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
                 $extra['class'] = $class;
                 return '<button' . _attrs($extra, ['type', 'name', 'class', 'value']) . '><i class="' . trim($icon) . '"></i> ' . t($desc) . '</button>';
             },
@@ -2239,7 +2239,7 @@ class yf_table2
             if (false === strpos($extra['name'], '[')) {
                 $extra['name'] .= '[' . $field . ']';
             }
-            $extra['desc'] = $extra['desc'] ?: '';
+            $extra['desc'] = ($extra['desc'] ?? null) ?: '';
             $extra['id'] = 'checkbox_' . $field;
             return _class('html')->check_box($extra);
         }, $extra);
