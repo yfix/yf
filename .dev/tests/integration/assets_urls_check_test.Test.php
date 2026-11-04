@@ -91,7 +91,7 @@ class assets_urls_check_test extends yf\tests\wrapper
             ];
 
             curl_multi_remove_handle($multiHandle, $ch);
-            unset($ch);
+            unset($handles[$originalUrl]); // the handle is released when the last reference goes
         }
 
         curl_multi_close($multiHandle);
