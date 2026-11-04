@@ -320,7 +320,7 @@ class yf_manage_deposit
         list($payment_status_in_progress_id, $payment_success_in_progress) = $item;
         if (empty($payment_status_in_progress_id)) {
             $result = [
-                'status_message' => 'Статус платежей не найден: ' . $object_name,
+                'status_message' => 'Статус платежей не найден: ' . $name,
             ];
             return  $this->_user_message($result);
         }
