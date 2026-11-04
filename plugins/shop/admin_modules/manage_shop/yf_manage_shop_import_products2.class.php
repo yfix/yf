@@ -525,7 +525,7 @@ class yf_manage_shop_import_products2
                 $output[] = 'NULL';
                 continue;
             }
-            $output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field) ?
+            $output[] = preg_match("/(?:{$delimiter_esc}|{$enclosure_esc}|\s)/", $field) ?
                 ($enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure) : $field;
         }
         $result = fwrite($file, implode($delimiter, $output) . "\n");

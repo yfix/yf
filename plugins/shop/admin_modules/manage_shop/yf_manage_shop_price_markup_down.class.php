@@ -151,7 +151,7 @@ class yf_manage_shop_price_markup_down
             $id = (int) $i['id'];
             $result[] = [
                 'id' => $id,
-                'text' => "[$id] ${i[name]}",
+                'text' => "[$id] {$i['name']}",
             ];
         }
         return  json_encode($result);
@@ -178,7 +178,7 @@ class yf_manage_shop_price_markup_down
             $id = (int) $i['id'];
             $result[] = [
                 'id' => $id,
-                'text' => "[$id] ${i[name]}",
+                'text' => "[$id] {$i['name']}",
             ];
         }
         return  json_encode($result);
