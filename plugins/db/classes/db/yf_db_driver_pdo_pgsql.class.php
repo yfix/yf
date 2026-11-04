@@ -11,7 +11,7 @@ class yf_db_driver_pdo_pgsql extends yf_db_driver_pdo
     public function __construct(array $params)
     {
         if ( ! extension_loaded('pdo_pgsql')) {
-            trigger_error('YF PDO PgSQL db driver require missing php extension pdo_pgsql', E_USER_ERROR);
+            trigger_error('YF PDO PgSQL db driver require missing php extension pdo_pgsql', E_USER_WARNING);
             return false;
         }
         $params['port'] = ($params['port'] ?? null) ?: 5432;

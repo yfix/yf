@@ -11,7 +11,7 @@ class yf_db_driver_pgsql extends yf_db_driver
     public function __construct(array $params)
     {
         if ( ! function_exists('pg_connect')) {
-            trigger_error('YF PgSQL db driver require missing php extension pgsql', E_USER_ERROR);
+            trigger_error('YF PgSQL db driver require missing php extension pgsql', E_USER_WARNING);
             return false;
         }
         $this->params = $params;

@@ -56,7 +56,7 @@ class yf_tpl_driver_yf
     {
         $this->tpl = &_class('tpl');
         if (! function_exists('preg_match_all')) {
-            trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_ERROR);
+            trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_WARNING);
         }
         $this->CACHE = [
             'stpl' => [],

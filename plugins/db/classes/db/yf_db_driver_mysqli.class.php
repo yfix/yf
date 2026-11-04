@@ -39,7 +39,7 @@ class yf_db_driver_mysqli extends yf_db_driver
     public function __construct(array $params)
     {
         if ( ! function_exists('mysqli_init')) {
-            trigger_error('YF MySQLi db driver require missing php extension mysqli', E_USER_ERROR);
+            trigger_error('YF MySQLi db driver require missing php extension mysqli', E_USER_WARNING);
             return false;
         }
         $params['port'] = ($params['port'] ?? null) ?: 3306;

@@ -311,7 +311,7 @@ class yf_db
             for ($i = 1; $i <= $tries; $i++) {
                 $this->db = new $driver_class_name($driver_params);
                 if ( ! is_object($this->db) || ! ($this->db instanceof yf_db_driver)) {
-                    trigger_error('DB: Wrong driver', $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
+                    trigger_error('DB: Wrong driver', E_USER_WARNING);
                     break;
                 }
                 $implemented = [];
@@ -339,7 +339,7 @@ class yf_db
         }
         $this->_tried_to_connect = true;
         if ( ! $this->db->db_connect_id) {
-            trigger_error('DB: ERROR CONNECTING TO DATABASE', $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
+            trigger_error('DB: ERROR CONNECTING TO DATABASE', E_USER_WARNING);
         } else {
             $this->db->SQL_NO_CACHE = $this->SQL_NO_CACHE;
             $this->_connected = true;

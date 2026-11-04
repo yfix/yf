@@ -13,7 +13,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo
     public function __construct(array $params)
     {
         if ( ! extension_loaded('pdo_mysql')) {
-            trigger_error('YF PDO MySQL db driver missing php extension pdo_mysql', E_USER_ERROR);
+            trigger_error('YF PDO MySQL db driver missing php extension pdo_mysql', E_USER_WARNING);
             return false;
         }
         $params['port'] = ($params['port'] ?? null) ?: 3306;

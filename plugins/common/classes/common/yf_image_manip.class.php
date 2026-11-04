@@ -92,7 +92,7 @@ class yf_image_manip
                 if ( ! empty($ANGLE) && $ANGLE < 90 && $ANGLE > -90) {
                     $ANGLE = (int) $ANGLE;
                 } else {
-                    trigger_error('ROTATE_IMG: current angle is wrong! Use angle up -90 to 90', E_USER_ERROR);
+                    trigger_error('ROTATE_IMG: current angle is wrong! Use angle up -90 to 90', E_USER_WARNING);
                     break;
                 }
                 $ANGLE = (int) $ANGLE;

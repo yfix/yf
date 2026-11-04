@@ -1,9 +1,5 @@
 <?php
 
-if ( ! function_exists('array_replace_recursive')) {
-    trigger_error('Not exists function "array_replace_recursive ( PHP 5 >= 5.3.0 )"', E_USER_ERROR);
-}
-
 #[AllowDynamicProperties]
 class yf_payment_api__provider_remote
 {
