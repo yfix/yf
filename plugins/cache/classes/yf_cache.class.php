@@ -60,9 +60,11 @@ class yf_cache
 
     public function __clone()
     {
+        // Reset internal state to class defaults (unset() would turn them into dynamic properties)
+        $defaults = get_class_vars(get_class($this));
         foreach ((array) get_object_vars($this) as $k => $v) {
             if ($k[0] == '_') {
-                unset($this->$k);
+                $this->$k = $defaults[$k] ?? null;
             }
         }
     }
@@ -302,7 +304,7 @@ class yf_cache
             return null;
         }
         $do_real_work = true;
-        if (! $this->_driver_ok || $this->NO_CACHE || $this->_no_cache[$name]) {
+        if (! $this->_driver_ok || $this->NO_CACHE || ( ! is_array($name) && ! empty($this->_no_cache[$name]))) {
             $do_real_work = false;
         }
         if (is_array($name)) {
@@ -491,7 +493,7 @@ class yf_cache
         }
         $result = null;
         if ($do_real_work) {
-            if ($this->_driver->implemented['multi_get']) {
+            if ( ! empty($this->_driver->implemented['multi_get'])) {
                 // Fix names prefix
                 $p_len = strlen($this->CACHE_NS);
                 foreach ((array) $names as $k => $name) {
@@ -549,7 +551,7 @@ class yf_cache
         }
         $result = null;
         if ($do_real_work) {
-            if ($this->_driver->implemented['multi_set']) {
+            if ( ! empty($this->_driver->implemented['multi_set'])) {
                 // Fix names prefix
                 foreach ((array) $data as $name => $_data) {
                     $data[$this->CACHE_NS . $name] = $_data;
@@ -595,7 +597,7 @@ class yf_cache
         if ($do_real_work) {
             $old_names = $names;
             $failed = false;
-            $implemented = $this->_driver->implemented['multi_del'];
+            $implemented = $this->_driver->implemented['multi_del'] ?? false;
             if ($implemented) {
                 // Fix names prefix
                 foreach ((array) $names as $k => $name) {

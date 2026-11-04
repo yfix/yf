@@ -44,7 +44,7 @@ class yf_cache_driver_tmp extends yf_cache_driver
         } else {
             $this->_misses++;
         }
-        return $this->storage[$name];
+        return $this->storage[$name] ?? null;
     }
 
     /**

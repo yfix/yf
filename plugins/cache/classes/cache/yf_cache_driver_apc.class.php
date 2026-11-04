@@ -3,6 +3,7 @@
 load('cache_driver', '', 'classes/cache/');
 class yf_cache_driver_apc extends yf_cache_driver
 {
+    public $_connection = null;
     /**
      * Catch missing method call.
      * @param mixed $name

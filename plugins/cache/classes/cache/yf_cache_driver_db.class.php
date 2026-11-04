@@ -3,6 +3,7 @@
 load('cache_driver', '', 'classes/cache/');
 class yf_cache_driver_db extends yf_cache_driver
 {
+    public $_connection = null;
     public $table = 'cache';
 
     /**

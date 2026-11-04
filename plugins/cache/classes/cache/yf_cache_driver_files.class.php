@@ -17,7 +17,6 @@ class yf_cache_driver_files extends yf_cache_driver
     public $DIR_CHMOD = 0777;
 
     public $CACHE_DIR = null;
-    public $_parent = null;
 
 
     public function _init()
