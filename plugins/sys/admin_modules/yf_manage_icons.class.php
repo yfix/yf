@@ -35,7 +35,7 @@ class yf_manage_icons
         return form($a)
             ->validate(['name' => 'trim|required|alpha-dash'])
             ->db_update_if_ok(self::table, ['name', 'active'], 'id=' . $a['id'])
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($a) {
                 cache_del([self::table]);
                 common()->admin_wall_add(['icon updated: ' . $_POST['name'] . '', $a['id']]);
             })

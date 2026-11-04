@@ -67,7 +67,7 @@ class yf_manage_users
                 'email' => 'trim|required|valid_email|is_unique_without[user.email.' . $id . ']',
             ])
             ->db_update_if_ok(self::table, ['login', 'email', 'name', 'active', 'birthday'], 'id=' . $id)
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($id) {
                 common()->admin_wall_add(['user updated: ' . $_POST['login'] . '', $id]);
             })
             ->login()

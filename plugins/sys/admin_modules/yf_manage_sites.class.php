@@ -36,7 +36,7 @@ class yf_manage_sites
                 'name' => 'trim|required',
             ])
             ->db_update_if_ok(self::table, ['name', 'web_path', 'real_path'], 'id=' . $a['id'])
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($a) {
                 cache_del([self::table]);
                 common()->admin_wall_add(['site updated: ' . $_POST['name'] . '', $a['id']]);
             })

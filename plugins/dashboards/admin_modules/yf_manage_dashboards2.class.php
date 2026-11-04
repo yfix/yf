@@ -194,7 +194,7 @@ class yf_manage_dashboards2
             ->validate([
                 'name' => 'trim|required',
             ])
-            ->db_update_if_ok('dashboards2', ['name', 'type', 'active'], 'id=' . $id, ['on_after_update' => function () {
+            ->db_update_if_ok('dashboards2', ['name', 'type', 'active'], 'id=' . $id, ['on_after_update' => function () use ($a, $id) {
                 common()->admin_wall_add(['dashboards2 updated: ' . $a['name'], $id]);
             }])
             ->text('name')

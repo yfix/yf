@@ -107,7 +107,7 @@ class yf_manage_news
                     'action' => 'update',
                 ]);
             })
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($a) {
                 common()->admin_wall_add(['news updated: ' . $a['id'], $a['id']]);
             })
             ->text('title')

@@ -136,7 +136,7 @@ class yf_static_pages
                     'action' => 'update',
                 ]);
             })
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($a) {
                 common()->admin_wall_add(['static page updated: ' . $a['name'], $a['id']]);
                 cache_del('static_pages_names');
             })

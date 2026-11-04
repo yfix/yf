@@ -78,7 +78,7 @@ class yf_admin_groups
                 'name' => 'trim|required|alpha_dash|is_unique_without[admin_groups.name.' . $id . ']',
             ])
             ->db_update_if_ok(self::table, ['name', 'go_after_login'], 'id=' . $id)
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($id) {
                 cache_del([self::table, 'admin_groups_details']);
                 common()->admin_wall_add(['admin group edited: ' . $_POST['name'] . '', $id]);
             })

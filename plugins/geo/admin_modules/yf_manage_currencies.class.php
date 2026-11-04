@@ -36,7 +36,7 @@ class yf_manage_currencies
         return form($a)
             ->validate(['name' => 'trim|required|alpha-dash'])
             ->db_update_if_ok('currencies', ['name', 'sign', 'active'], 'id="' . _es($a['id']) . '"')
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($a) {
                 cache_del(['currencies']);
                 common()->admin_wall_add(['icon updated: ' . $_POST['name'] . '', $a['id']]);
             })

@@ -676,7 +676,7 @@ class yf_menus_editor
             ->db_update_if_ok('menu_items', [
                 'type_id', 'parent_id', 'name', 'location', 'icon', 'user_groups', 'site_ids', 'server_ids', 'active', 'other_info',
             ], 'id=' . $item_info['id'])
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($item_info) {
                 common()->admin_wall_add(['menu item updated: ' . $_POST['name'] . '', $item_info['id']]);
                 module('menus_editor')->_purge_caches();
             })

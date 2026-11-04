@@ -47,7 +47,7 @@ class yf_manage_languages
         return form($a)
             ->validate(['name' => 'trim|required|alpha-dash'])
             ->db_update_if_ok(self::table, ['name', 'native', 'active'], 'code="' . _es($a['code']) . '"')
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($a) {
                 cache_del([self::table]);
                 common()->admin_wall_add(['language updated: ' . $_POST['name'] . '', $a['code']]);
             })

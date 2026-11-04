@@ -43,7 +43,7 @@ class yf_manage_countries
         return form($a)
             ->validate(['name' => 'trim|required'])
             ->db_update_if_ok('countries', ['name', 'active'], 'code="' . _es($a['code']) . '"')
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($a) {
                 cache_del(['countries']);
                 common()->admin_wall_add(['country updated: ' . $_POST['name'] . '', $a['code']]);
             })

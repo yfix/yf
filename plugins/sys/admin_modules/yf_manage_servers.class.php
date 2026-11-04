@@ -36,7 +36,7 @@ class yf_manage_servers
         return form($a)
             ->validate(['ip' => 'trim|required|valid_ip'])
             ->db_update_if_ok(self::table, ['ip', 'role', 'name', 'hostname', 'comment'], 'id=' . $a['id'])
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($a) {
                 cache_del(['servers', 'server_roles']);
                 common()->admin_wall_add(['server updated: ' . $_POST['ip'] . '', $a['id']]);
             })

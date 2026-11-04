@@ -41,7 +41,7 @@ class yf_manage_regions
         return form($a)
             ->validate(['name' => 'trim|required'])
             ->db_update_if_ok('regions', ['name', 'active'], 'id=' . $a['id'])
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($a) {
                 cache_del(['regions']);
                 common()->admin_wall_add(['region updated: ' . $_POST['name'] . '', $a['id']]);
             })

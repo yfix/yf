@@ -71,7 +71,7 @@ class yf_user_groups
                 'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]',
             ])
             ->db_update_if_ok('user_groups', ['name', 'go_after_login'], 'id=' . $id)
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($id) {
                 cache_del(['user_groups', 'user_groups_details']);
                 common()->admin_wall_add(['user group edited: ' . $_POST['name'] . '', $id]);
             })

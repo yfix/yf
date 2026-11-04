@@ -259,7 +259,7 @@ Fallback when no numbers matched (any string)
                 'charset' => 'trim|required',
             ])
             ->db_update_if_ok('locale_langs', ['name', 'charset'], 'id=' . $id)
-            ->on_after_update(function () {
+            ->on_after_update(function () use ($id) {
                 cache_del('locale_langs');
                 common()->admin_wall_add(['locale lang updated: ' . $_POST['name'] . '', $id]);
             })
