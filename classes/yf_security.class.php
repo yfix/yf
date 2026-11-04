@@ -225,10 +225,10 @@ class yf_security
             $matches = $matches1 = 0;
             $str = html_entity_decode($str, ENT_COMPAT, $charset);
             $str = preg_replace_callback('~&#x(0*[0-9a-f]{2,5})~i', function ($m) {
-                return chr(hexdec($m[1]));
+                return $this->_entity_chr((int) hexdec($m[1]));
             }, $str, -1, $matches);
             $str = preg_replace_callback('~&#([0-9]{2,4})~', function ($m) {
-                return chr($m[1]);
+                return $this->_entity_chr((int) $m[1]);
             }, $str, -1, $matches1);
         } while ($matches or $matches1);
         return $str;
@@ -238,6 +238,21 @@ class yf_security
      * @param mixed $str
      * @param mixed $url_encoded
      */
+    /**
+     * Numeric entity to string: single byte up to 255 (as before), UTF-8 above
+     * (chr() outside 0..255 is deprecated since PHP 8.5 and returned a wrong byte anyway).
+     * @param int $code
+     * @return string
+     */
+    public function _entity_chr($code)
+    {
+        if ($code <= 255) {
+            return chr($code);
+        }
+        $chr = mb_chr($code, 'UTF-8');
+        return $chr === false ? '' : $chr;
+    }
+
     public function remove_invisible_characters($str, $url_encoded = true)
     {
         $non_displayables = [];

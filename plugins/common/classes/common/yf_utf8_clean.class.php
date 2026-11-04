@@ -242,7 +242,7 @@ class yf_utf8_clean
             foreach ((array) $trans as $literal => $entity) {
                 // Make sure we don't process any other characters
                 // such as fractions, quotes etc:
-                if (ord($literal) >= 192) {
+                if (ord(((string) $literal)[0]) >= 192) {
                     // Get the accented form of the letter
                     // Get e.g. 'E' from the string '&Eacute'
                     $search[mb_convert_encoding($literal, 'UTF-8', 'ISO-8859-1')] = $entity[1];

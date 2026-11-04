@@ -276,12 +276,14 @@ class yf_utf8
 
         return preg_replace_callback('/&(#x?)?([A-Za-z0-9]+);/',
             function ($matches) use ($newtable) {
-                if ($matches[1] === '#') {
-                    $code = (int) $matches[2];
-                    return mb_convert_encoding("&#{$code};", 'UTF-8', 'HTML-ENTITIES');
-                } elseif ($matches[1] === '#x') {
-                    $code = hexdec($matches[2]);
-                    return mb_convert_encoding("&#{$code};", 'UTF-8', 'HTML-ENTITIES');
+                if ($matches[1] === '#' || $matches[1] === '#x') {
+                    // mb_chr() instead of the 'HTML-ENTITIES' mbstring encoding (deprecated since PHP 8.2)
+                    $is_hex = $matches[1] === '#x';
+                    if ( ! ($is_hex ? ctype_xdigit($matches[2]) : ctype_digit($matches[2])) || strlen(ltrim($matches[2], '0')) > 6) {
+                        return $matches[0];
+                    }
+                    $chr = mb_chr($is_hex ? (int) hexdec($matches[2]) : (int) $matches[2], 'UTF-8');
+                    return $chr === false ? $matches[0] : $chr;
                 } else {
                     return $newtable[$matches[0]] ?? $matches[0];
                 }
@@ -313,6 +315,7 @@ class yf_utf8
         else {
             $codepoint = preg_replace('/^0+/', '', $codepoint);
         }
+        $codepoint = (int) $codepoint; // "" (from "&#0;") would be a TypeError in chr() on PHP 8
         // Encode codepoint as UTF-8 bytes
         if ($codepoint < 0x80) {
             $str = chr($codepoint);
