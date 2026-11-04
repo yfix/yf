@@ -62,7 +62,7 @@ class yf_form2_validate
         }
         if (isset($vr['required']) || isset($vr['captcha'])) {
             $extra['required'] = 1;
-            $extra['class_add_form_group'] = trim($extra['class_add_form_group'] . ' ' . $form->CLASS_REQUIRED);
+            $extra['class_add_form_group'] = trim(($extra['class_add_form_group'] ?? null) . ' ' . $form->CLASS_REQUIRED);
         }
         foreach (['ajax_is_unique', 'ajax_is_unique_without', 'ajax_exists'] as $rule) {
             $_rule = str_replace('ajax_', '', $rule);

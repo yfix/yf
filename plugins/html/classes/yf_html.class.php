@@ -885,7 +885,7 @@ class yf_html
         !is_array($extra) && $extra = [];
         $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
         $translate = isset($extra['translate']) ? $extra['translate'] : $translate;
-        if ($extra['no_translate']) {
+        if ($extra['no_translate'] ?? null) {
             $translate = 0;
         }
         $selected = isset($extra['selected']) ? $extra['selected'] : $selected;
@@ -895,22 +895,22 @@ class yf_html
         // (example: $add_str = 'size=6')
         $add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
         $extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_SELECT_BOX;
-        $extra['class_add'] && $extra['class'] = trim($extra['class'] . ' ' . $extra['class_add']);
-        if (! $values && @! $extra['ajax']) {
+        ($extra['class_add'] ?? null) && $extra['class'] = trim($extra['class'] . ' ' . ($extra['class_add'] ?? null));
+        if (! $values && @! ($extra['ajax'] ?? null)) {
             return false;
         }
-        if ($extra['disabled']) {
+        if ($extra['disabled'] ?? null) {
             $extra['disabled'] = 'disabled';
         }
         $id = null;
         $body = [];
         if ($level == 0) {
-            $extra['force_id'] && $id = $extra['force_id'];
+            ($extra['force_id'] ?? null) && $id = ($extra['force_id'] ?? null);
             $id = $id ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
             if ($this->AUTO_ASSIGN_IDS) {
                 $extra['id'] = $id;
             }
-            if ($extra['outer_label']) {
+            if ($extra['outer_label'] ?? null) {
                 $body[] = '<label class="outer-label">' . $extra['outer_label'] . '</label>';
             }
             $extra['name'] = $name;
@@ -925,7 +925,7 @@ class yf_html
             $body[] = '<option value="" class="' . $this->CLASS_SELECT_OPTION_DEFAULT . '">' . $def_opt_text . '</option>';
         }
         $self_func = __FUNCTION__;
-        $option_callback = $extra['option_callback'];
+        $option_callback = ($extra['option_callback'] ?? null);
         $use_option_callback = is_callable($option_callback);
         foreach ((array) $values as $key => $cur_value) {
             if (is_array($cur_value)) {
@@ -967,7 +967,7 @@ class yf_html
         }
         $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
         $translate = isset($extra['translate']) ? $extra['translate'] : $translate;
-        if ($extra['no_translate']) {
+        if ($extra['no_translate'] ?? null) {
             $translate = 0;
         }
         $selected = isset($extra['selected']) ? $extra['selected'] : $selected;
@@ -977,11 +977,11 @@ class yf_html
         // (example: $add_str = 'size=6') disabled
         $add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
         $extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_SELECT_BOX;
-        $extra['class_add'] && $extra['class'] = trim($extra['class'] . ' ' . $extra['class_add']);
+        ($extra['class_add'] ?? null) && $extra['class'] = trim($extra['class'] . ' ' . ($extra['class_add'] ?? null));
         if (! $values) {
             return false;
         }
-        if ($extra['disabled'] || $disabled) {
+        if (($extra['disabled'] ?? null) || $disabled) {
             $extra['disabled'] = 'disabled';
         }
         if (! is_array($selected)) {
@@ -990,12 +990,12 @@ class yf_html
         $body = [];
         $id = '';
         if ($level == 0) {
-            $extra['force_id'] && $id = $extra['force_id'];
+            ($extra['force_id'] ?? null) && $id = ($extra['force_id'] ?? null);
             $id = $id ?: __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
             if ($this->AUTO_ASSIGN_IDS) {
                 $extra['id'] = $id;
             }
-            if ($extra['outer_label']) {
+            if ($extra['outer_label'] ?? null) {
                 $body[] = '<label class="outer-label">' . $extra['outer_label'] . '</label>';
             }
             $extra['multiple'] = 'multiple';
@@ -1232,38 +1232,38 @@ class yf_html
     {
         if (is_array($name)) {
             $extra = (array) $extra + $name;
-            $name = $extra['name'];
+            $name = ($extra['name'] ?? null);
         }
         if (! is_array($extra)) {
             $extra = [];
         }
-        $extra['name'] = strlen($name) ? $name : (strlen($extra['name']) ? $extra['name'] : 'checkbox');
+        $extra['name'] = strlen($name) ? $name : (strlen($extra['name'] ?? null) ? ($extra['name'] ?? null) : 'checkbox');
         $extra['value'] = strlen($value ?? '') ? $value : (strlen($extra['value'] ?? '') ? $extra['value'] : '1');
         $selected = isset($extra['selected']) ? $extra['selected'] : $selected;
         if (isset($extra['checked'])) {
             $selected = $extra['checked'];
         }
         $extra['checked'] = $selected ? 'checked' : null;
-        $extra['id'] = (($extra['force_id'] ?? null) ?: $extra['id']) ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__] : null);
+        $extra['id'] = (($extra['force_id'] ?? null) ?: ($extra['id'] ?? null)) ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__] : null);
         $extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $extra['name']));
-        if ($extra['no_desc']) {
+        if ($extra['no_desc'] ?? null) {
             $extra['desc'] = '';
         }
-        $extra['class'] = trim($extra['class'] . ' ' . $extra['class_add']);
-        $add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
+        $extra['class'] = trim(($extra['class'] ?? null) . ' ' . ($extra['class_add'] ?? null));
+        $add_str = ($extra['add_str'] ?? null) ? ($extra['add_str'] ?? null) : $add_str;
         $translate = $extra['translate'] ?? false;
 
-        $label_extra = $extra['label_extra'];
+        $label_extra = ($extra['label_extra'] ?? null);
         $def_label_class = $this->CLASS_LABEL_CHECKBOX . ' ' . $this->CLASS_LABEL_CHECKBOX_INLINE;
         $label_extra['class'] = isset($label_extra['class']) ? $label_extra['class'] : (isset($extra['class_label_checkbox']) ? $extra['class_label_checkbox'] : $def_label_class);
-        if ($extra['class_add_label_checkbox']) {
+        if ($extra['class_add_label_checkbox'] ?? null) {
             $label_extra['class'] .= ' ' . $extra['class_add_label_checkbox'];
         }
         if ($selected) {
             $label_extra['class'] .= ' ' . $this->CLASS_LABEL_CHECKBOX_SELECTED;
         }
         $body = [];
-        if ($extra['outer_label']) {
+        if ($extra['outer_label'] ?? null) {
             $body[] = '<label class="outer-label">' . $extra['outer_label'] . '</label>';
         }
         $extra['type'] = 'checkbox';
@@ -1293,18 +1293,18 @@ class yf_html
         }
         $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
         $translate = isset($extra['translate']) ? $extra['translate'] : 0;
-        if ($extra['no_translate']) {
+        if ($extra['no_translate'] ?? null) {
             $translate = 0;
         }
-        $selected = $extra['selected'];
+        $selected = ($extra['selected'] ?? null);
         $type = isset($extra['type']) ? $extra['type'] : ($type !== null ? $type : 2);
         $horizontal = isset($extra['horizontal']) ? $extra['horizontal'] : $horizontal;
         $name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
         $add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-        if ($extra['class']) {
+        if ($extra['class'] ?? null) {
             $add_str .= ' class="' . trim($extra['class'] . ' ' . $extra['class_add']) . '" ';
         }
-        if ($extra['style']) {
+        if ($extra['style'] ?? null) {
             $add_str .= ' style="' . $extra['style'] . '" ';
         }
         if (! $values) {
@@ -1314,7 +1314,7 @@ class yf_html
             $selected = (string) $selected;
         }
         $body = [];
-        if ($extra['outer_label']) {
+        if ($extra['outer_label'] ?? null) {
             $body[] = '<label class="outer-label">' . $extra['outer_label'] . '</label>';
         }
         foreach ((array) $values as $key => $value) {
@@ -1338,19 +1338,19 @@ class yf_html
             } else {
                 $val_name = $name . '_' . $key;
             }
-            $label_extra = $extra['label_extra'];
+            $label_extra = ($extra['label_extra'] ?? null);
             $label_extra['class'] = isset($label_extra['class']) ? $label_extra['class'] : (isset($extra['class_label_checkbox']) ? $extra['class_label_checkbox'] : $this->CLASS_LABEL_CHECKBOX);
             if ($horizontal) {
                 $label_extra['class'] .= ' ' . $this->CLASS_LABEL_CHECKBOX_INLINE;
             }
-            if ($extra['class_add_label_checkbox']) {
+            if ($extra['class_add_label_checkbox'] ?? null) {
                 $label_extra['class'] .= ' ' . $extra['class_add_label_checkbox'];
             }
             if ($is_selected) {
                 $label_extra['class'] .= ' ' . $this->CLASS_LABEL_CHECKBOX_SELECTED;
             }
             $id = __FUNCTION__ . '_' . ++$this->_ids[__FUNCTION__];
-            if ($extra['no_desc']) {
+            if ($extra['no_desc'] ?? null) {
                 $desc = '';
             } else {
                 $desc = ($translate ? t($value) : $value);
@@ -1448,7 +1448,7 @@ class yf_html
         $desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
         $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
         $translate = isset($extra['translate']) ? $extra['translate'] : 0;
-        if ($extra['no_translate']) {
+        if ($extra['no_translate'] ?? null) {
             $translate = 0;
         }
         $selected = ($extra['selected'] ?? null) ?: $selected;
@@ -1565,7 +1565,7 @@ class yf_html
         $desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
         $values = isset($extra['values']) ? $extra['values'] : (array) $values; // Required
         $translate = isset($extra['translate']) ? $extra['translate'] : 0;
-        if ($extra['no_translate']) {
+        if ($extra['no_translate'] ?? null) {
             $translate = 0;
         }
         $selected = isset($extra['selected']) ? $extra['selected'] : $selected;
@@ -1575,7 +1575,7 @@ class yf_html
         }
         asset('bfh-select');
 
-        $extra['class'] = 'bfh-selectbox ' . $extra['class_add'];
+        $extra['class'] = 'bfh-selectbox ' . ($extra['class_add'] ?? null);
         $extra['data-name'] = $name;
         $extra['data-value'] = (string) $selected;
         $extra['data-filter'] = isset($extra['data-filter']) ? $extra['data-filter'] : (count((array) $values) > 10 ? 'true' : '');

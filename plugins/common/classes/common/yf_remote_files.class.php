@@ -279,13 +279,13 @@ class yf_remote_files
                 curl_setopt($ch, $k, $v);
             }
         }
-        if ($url_options['curl_verbose'] || $this->DEBUG) {
+        if (($url_options['curl_verbose'] ?? null) || $this->DEBUG) {
             $verbose_stream = fopen('php://temp', 'rw+');
             curl_setopt($ch, CURLOPT_STDERR, $verbose_stream);
         }
         // Download file efficiently. Do not move up!
         // Should be set after CURLOPT_RETURNTRANSFER !
-        if ($url_options['save_path']) {
+        if ($url_options['save_path'] ?? null) {
             $save_dir = dirname($url_options['save_path']);
             if ( ! file_exists($save_dir)) {
                 mkdir($save_dir, 0777, true);
@@ -296,7 +296,7 @@ class yf_remote_files
         $result = curl_exec($ch);
         // Get lot of details about connections done
         $info = curl_getinfo($ch);
-        if ($url_options['curl_verbose'] || $this->DEBUG) {
+        if (($url_options['curl_verbose'] ?? null) || $this->DEBUG) {
             $response_header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
             $response_header = substr($result, 0, $response_header_size);
             $result = substr($result, $response_header_size);
@@ -326,7 +326,7 @@ class yf_remote_files
 
         unset($ch);
         // Close file handles after curl_close to receive good file
-        if ($url_options['save_path'] && $file_handles[$url]) {
+        if (($url_options['save_path'] ?? null) && ($file_handles[$url] ?? null)) {
             @fclose($file_handles[$url]);
         }
 
@@ -650,14 +650,14 @@ class yf_remote_files
         $curl_opts[CURLOPT_SSL_VERIFYPEER] = 0;
         $curl_opts[CURLOPT_SSL_VERIFYHOST] = 0;
         // HEAD request
-        if ($url_options['method_head']) {
+        if ($url_options['method_head'] ?? null) {
             $curl_opts[CURLOPT_HEADER] = 1;
             $curl_opts[CURLOPT_NOBODY] = 1;
         // Common GET or POST request
         } else {
             $curl_opts[CURLOPT_HEADER] = 0;
             $curl_opts[CURLOPT_ENCODING] = 'gzip'; // The contents of the 'Accept-Encoding: ' header. This enables decoding
-            if ( ! $url_options['no_autoreferer']) {
+            if ( ! ($url_options['no_autoreferer'] ?? null)) {
                 $curl_opts[CURLOPT_AUTOREFERER] = 1; // set referer on redirect
             }
         }
@@ -667,17 +667,17 @@ class yf_remote_files
             $curl_opts[CURLOPT_POSTFIELDS] = is_array($url_options['post']) ? http_build_query($url_options['post']) : $url_options['post'];
         }
         // Cookie string
-        if ($url_options['cookie']) {
+        if ($url_options['cookie'] ?? null) {
             $curl_opts[CURLOPT_COOKIE] = $url_options['cookie'];
         }
-        if ($url_options['cookie_file']) {
+        if ($url_options['cookie_file'] ?? null) {
             $curl_opts[CURLOPT_COOKIEFILE] = $url_options['cookie_file'];
         }
-        if ($url_options['cookie_jar']) {
+        if ($url_options['cookie_jar'] ?? null) {
             $curl_opts[CURLOPT_COOKIEJAR] = $url_options['cookie_jar'];
         }
         // If we need to get target url where remote server redirects us
-        if ($url_options['get_redirected_url']) {
+        if ($url_options['get_redirected_url'] ?? null) {
             $curl_opts[CURLOPT_NOBODY] = 1;
         }
         // Custom network interface to use in request
@@ -695,7 +695,7 @@ class yf_remote_files
         }
         // Enable a proxy connection for request
         // $options['proxy'] = array('host' => '192.168.1.1', 'port' => '8080', 'user' => '', 'pswd' => '');
-        if ($url_options['proxy']) {
+        if ($url_options['proxy'] ?? null) {
             $proxy = $url_options['proxy'];
             $curl_opts[CURLOPT_HTTPPROXYTUNNEL] = true;
             $curl_opts[CURLOPT_PROXY] = $proxy['host'] . ($proxy['port'] ? ':' . $proxy['port'] : '');
@@ -704,7 +704,7 @@ class yf_remote_files
             }
         }
         // HTTP basic auth support
-        if ($url_options['auth']) {
+        if ($url_options['auth'] ?? null) {
             $auth = $url_options['auth'];
             $curl_opts[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
             if (isset($auth['user']) && isset($auth['pswd'])) {
@@ -712,7 +712,7 @@ class yf_remote_files
             }
         }
         // Enable verbose debug output (usually into STDERR)
-        if ($url_options['curl_verbose'] || $this->DEBUG) {
+        if (($url_options['curl_verbose'] ?? null) || $this->DEBUG) {
             $curl_opts[CURLOPT_VERBOSE] = true;
             if (main()->is_console() && $url_options['interactive']) {
                 $interactive_console = true;
@@ -723,7 +723,7 @@ class yf_remote_files
             }
         }
         // Ability to override any other curl option
-        if ($url_options['curl_opts']) {
+        if ($url_options['curl_opts'] ?? null) {
             foreach ((array) $url_options['curl_opts'] as $k => $v) {
                 $curl_opts[$k] = $v;
             }

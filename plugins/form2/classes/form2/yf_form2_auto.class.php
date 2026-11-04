@@ -47,7 +47,7 @@ class yf_form2_auto
      */
     public function auto($table = '', $id = '', $params = [], $form = null)
     {
-        if ($params['links_add']) {
+        if ($params['links_add'] ?? null) {
             $form->_params['links_add'] = $params['links_add'];
         }
         if ($table && $id) {

@@ -33,14 +33,14 @@ class yf_form2_tbl_funcs
                     return '';
                 }
             }
-            if ($extra['rewrite']) {
+            if ($extra['rewrite'] ?? null) {
                 $link_url = url($link_url);
             }
-            $icon = $extra['icon'] ? $extra['icon'] : _class('table2')->CLASS_ICON_BTN;
+            $icon = ($extra['icon'] ?? null) ? ($extra['icon'] ?? null) : _class('table2')->CLASS_ICON_BTN;
             $extra['href'] = $link_url;
-            $extra['class'] = ($extra['class'] ?? null) ?: $form->CLASS_BTN_MINI . ($extra['class_add'] ? ' ' . $extra['class_add'] : '');
+            $extra['class'] = ($extra['class'] ?? null) ?: $form->CLASS_BTN_MINI . (($extra['class_add'] ?? null) ? ' ' . ($extra['class_add'] ?? null) : '');
             $attrs_names = ['id', 'name', 'href', 'class', 'style', 'target', 'alt', 'title'];
-            return ' <a' . _attrs($extra, $attrs_names) . '><i class="' . $icon . '"></i>' . ( ! $extra['hide_text'] ? ' ' . t($extra['name']) : '') . '</a> ';
+            return ' <a' . _attrs($extra, $attrs_names) . '><i class="' . $icon . '"></i>' . ( ! ($extra['hide_text'] ?? null) ? ' ' . t($extra['name']) : '') . '</a> ';
         };
         if ($form->_chained_mode) {
             $form->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
@@ -94,7 +94,7 @@ class yf_form2_tbl_funcs
         if ( ! isset($extra['icon'])) {
             $extra['icon'] = _class('table2')->CLASS_ICON_EDIT;
         }
-        if ( ! isset($extra['class_add']) && ! $extra['no_ajax']) {
+        if ( ! isset($extra['class_add']) && ! ($extra['no_ajax'] ?? null)) {
             $extra['class_add'] = _class('table2')->CLASS_AJAX_EDIT;
         }
         return $form->tbl_link($name, $link, $extra, $replace);
@@ -121,7 +121,7 @@ class yf_form2_tbl_funcs
         if ( ! isset($extra['icon'])) {
             $extra['icon'] = _class('table2')->CLASS_ICON_DELETE;
         }
-        if ( ! isset($extra['class_add']) && ! $extra['no_ajax']) {
+        if ( ! isset($extra['class_add']) && ! ($extra['no_ajax'] ?? null)) {
             $extra['class_add'] = _class('table2')->CLASS_AJAX_DELETE;
         }
         return $form->tbl_link($name, $link, $extra, $replace);
@@ -148,7 +148,7 @@ class yf_form2_tbl_funcs
         if ( ! isset($extra['icon'])) {
             $extra['icon'] = _class('table2')->CLASS_ICON_CLONE;
         }
-        if ( ! isset($extra['class_add']) && ! $extra['no_ajax']) {
+        if ( ! isset($extra['class_add']) && ! ($extra['no_ajax'] ?? null)) {
             $extra['class_add'] = _class('table2')->CLASS_AJAX_CLONE;
         }
         return $form->tbl_link($name, $link, $extra, $replace);
@@ -175,7 +175,7 @@ class yf_form2_tbl_funcs
         if ( ! isset($extra['icon'])) {
             $extra['icon'] = _class('table2')->CLASS_ICON_VIEW;
         }
-        if ( ! isset($extra['class_add']) && ! $extra['no_ajax']) {
+        if ( ! isset($extra['class_add']) && ! ($extra['no_ajax'] ?? null)) {
             $extra['class_add'] = _class('table2')->CLASS_AJAX_VIEW;
         }
         return $form->tbl_link($name, $link, $extra, $replace);
@@ -212,11 +212,11 @@ class yf_form2_tbl_funcs
                     return '';
                 }
             }
-            if ($extra['rewrite']) {
+            if ($extra['rewrite'] ?? null) {
                 $link_url = url($link_url);
             }
-            $is_active = (bool) $r[$extra['name']];
-            if ( ! $extra['items']) {
+            $is_active = (bool) ($r[$extra['name']] ?? null);
+            if ( ! ($extra['items'] ?? null)) {
                 if ( ! isset($form->_pair_active_buttons)) {
                     $form->_pair_active_buttons = main()->get_data('pair_active_buttons');
                 }

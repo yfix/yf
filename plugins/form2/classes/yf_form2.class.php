@@ -136,7 +136,7 @@ class yf_form2
         if ( ! is_array($replace)) {
             $replace = [];
         }
-        if (isset($params['filter']) && ! is_array($params['filter']) && is_numeric($params['filter']) || is_bool($params['filter']) && ! empty($params['filter'])) {
+        if (isset($params['filter']) && ! is_array($params['filter'] ?? null) && is_numeric($params['filter'] ?? null) || is_bool($params['filter'] ?? null) && ! empty($params['filter'])) {
             $filter_name = ($params['filter_name'] ?? null) ?: ($_GET['object'] ?? null) . '__' . ($_GET['action'] ?? null);
             $params['selected'] = ($_SESSION[$filter_name] ?? null);
             $replace['form_action'] = ($replace['form_action'] ?? null) ?: url('/@object/filter_save/' . $filter_name);
@@ -145,7 +145,7 @@ class yf_form2
                 $params['class'] = 'form-vertical';
             }
         }
-        if ( ! $params['no_chained_mode']) {
+        if ( ! ($params['no_chained_mode'] ?? null)) {
             $this->_chained_mode = true;
         }
         $this->_replace = $replace;
@@ -174,7 +174,7 @@ class yf_form2
             if ( ! $func || ! method_exists($this, $func)) {
                 continue;
             }
-            $this->$func($v[1], $v[2], $v[3], $v[4], $v[5]);
+            $this->$func($v[1], ($v[2] ?? null), ($v[3] ?? null), ($v[4] ?? null), ($v[5] ?? null));
         }
         return $this;
     }
@@ -391,7 +391,7 @@ class yf_form2
         if ($form_id) {
             $extra_override = $this->_get_extra_override($form_id);
         }
-        $headless_form = ($extra['no_form'] || $this->_params['no_form']);
+        $headless_form = (($extra['no_form'] ?? null) || ($this->_params['no_form'] ?? null));
 
         $csrf_protect = isset($extra['csrf']) ? (bool) $extra['csrf'] : (isset($this->_params['csrf']) ? $this->_params['csrf'] : $this->CONF_CSRF_PROTECTION);
         if (isset($extra['method']) && strtolower($extra['method']) != 'post') {
@@ -493,7 +493,7 @@ class yf_form2
             if ( ! is_array($v)) {
                 continue;
             }
-            $_extra = ($v['extra'] ?? []) + ($extra_override[$v['extra']['name']] ?? []);
+            $_extra = ($v['extra'] ?? []) + ($extra_override[($v['extra']['name'] ?? null)] ?? []);
             $_replace = ($r ?? []) + ($v['replace'] ?? []);
             $func = $v['func'];
             if ($v['name'] == 'row_start') {
@@ -554,7 +554,7 @@ class yf_form2
         if ($tabs) {
             $this->_body[$tabs_container]['rendered'] = html()->tabs($tabs, (array) $this->_params['tabs'] + (array) $tabs_extra);
         }
-        if ($this->_params['show_alerts']) {
+        if ($this->_params['show_alerts'] ?? null) {
             $errors = common()->_get_error_messages();
             if ($errors) {
                 $e = [];
@@ -564,7 +564,7 @@ class yf_form2
                 $this->_body = array_slice($this->_body, 0, 1, true) + ['error_message' => implode(PHP_EOL, $e)] + array_slice($this->_body, 1, null, true);
             }
         }
-        if ($this->_params['stpl'] || $this->_params['return_array']) {
+        if (($this->_params['stpl'] ?? null) || ($this->_params['return_array'] ?? null)) {
             $data = [];
             foreach ($this->_body as $k => $v) {
                 $name = fix_html_attr_id(($v['extra']['name'] ?? null) ?: ($v['extra']['id'] ?? null) ?: $k);
@@ -686,16 +686,16 @@ class yf_form2
 
         $func = function ($extra, $r, $form) {
             $enctype = '';
-            if ($extra['enctype']) {
+            if ($extra['enctype'] ?? null) {
                 $enctype = $extra['enctype'];
-            } elseif ($extra['for_upload']) {
+            } elseif ($extra['for_upload'] ?? null) {
                 $enctype = 'multipart/form-data';
             }
             $extra['enctype'] = $enctype;
             if ( ! isset($extra['action'])) {
                 $get_id = isset($_GET['id']) && strlen(($_GET['id'] ?? '')) ? urlencode(($_GET['id'] ?? '')) : '';
                 $get_page = isset($_GET['page']) && strlen(($_GET['page'] ?? '')) ? urlencode(($_GET['page'] ?? '')) : '';
-                $extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : url('/@object/@action/' . $get_id . '/' . $get_page) . $form->_params['links_add'];
+                $extra['action'] = isset($r[$extra['name']]) ? ($r[$extra['name']] ?? null) : url('/@object/@action/' . $get_id . '/' . $get_page) . ($form->_params['links_add'] ?? null);
             }
             if (MAIN_TYPE_USER) {
                 if (strpos($extra['action'], 'http://') === false && strpos($extra['action'], 'https://') !== 0) {
@@ -703,7 +703,7 @@ class yf_form2
                 }
             }
             $extra['class'] = ($extra['class'] ?? null) ?: $form->CLASS_FORM_MAIN;// col-md-6';
-            if ($extra['class_add']) {
+            if ($extra['class_add'] ?? null) {
                 $extra['class'] .= ' ' . $extra['class_add'];
             }
             $extra['autocomplete'] = isset($extra['autocomplete']) ? $extra['autocomplete'] : true;
@@ -715,8 +715,8 @@ class yf_form2
 
             $body = '<form' . _attrs($extra, ['method', 'action', 'class', 'style', 'id', 'name', 'autocomplete', 'enctype', 'novalidate', 'target']) . '>' . PHP_EOL;
             $form->_fieldset_mode_on = true;
-            $body .= '<fieldset' . _attrs($extra['fieldset'], ['class', 'style', 'id', 'name']) . '>';
-            if ($extra['legend']) {
+            $body .= '<fieldset' . _attrs(($extra['fieldset'] ?? null), ['class', 'style', 'id', 'name']) . '>';
+            if ($extra['legend'] ?? null) {
                 $body .= PHP_EOL . '<legend>' . _htmlchars(t($extra['legend'])) . '</legend>' . PHP_EOL;
             }
             return $body;
@@ -770,13 +770,13 @@ class yf_form2
                 $form->_fieldset_mode_on = true;
             }
             $body .= '<fieldset' . _attrs($extra, ['class', 'style', 'id', 'name']) . '>';
-            if ($extra['legend']) {
+            if ($extra['legend'] ?? null) {
                 $body .= PHP_EOL . '<legend>' . _htmlchars(t($extra['legend'])) . '</legend>' . PHP_EOL;
             }
             return $body;
         };
         $replace = [];
-        if ($this->_chained_mode || $extra['chained_mode']) {
+        if ($this->_chained_mode || ($extra['chained_mode'] ?? null)) {
             $this->_body[] = ['func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__];
             return $this;
         }
@@ -909,13 +909,13 @@ class yf_form2
         if ( ! strlen($content) && ($extra['hide_empty'] || $this->_params['hide_empty'])) {
             return '';
         }
-        if ($this->_params['only_content']) {
+        if ($this->_params['only_content'] ?? null) {
             return $content;
         }
-        if ($this->_params['dd_mode']) {
+        if ($this->_params['dd_mode'] ?? null) {
             return $this->_dd_row_html($content, $extra, $replace);
         }
-        if ($extra['form_input_no_append'] || $this->_params['form_input_no_append'] || conf('form_input_no_append')) {
+        if (($extra['form_input_no_append'] ?? null) || ($this->_params['form_input_no_append'] ?? null) || conf('form_input_no_append')) {
             $extra['append'] = '';
             $extra['prepend'] = '';
         }
@@ -975,17 +975,17 @@ class yf_form2
     public function _prepare_css_class($default_class, $value, &$extra)
     {
         $css_class = $default_class;
-        if ($extra['badge']) {
+        if ($extra['badge'] ?? null) {
             $badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
             if ($badge) {
                 $css_class = str_replace('%name', $badge, $this->CLASS_TPL_BADGE);
             }
-        } elseif ($extra['label']) {
+        } elseif ($extra['label'] ?? null) {
             $label = is_array($extra['label']) && isset($extra['label'][$value]) ? $extra['label'][$value] : $extra['label'];
             if ($label) {
                 $css_class = str_replace('%name', $label, $this->CLASS_TPL_LABEL);
             }
-        } elseif ($extra['class']) {
+        } elseif ($extra['class'] ?? null) {
             $_css_class = is_array($extra['class']) && isset($extra['class'][$value]) ? $extra['class'][$value] : $extra['class'];
             if ($_css_class) {
                 $css_class = $_css_class;
@@ -998,7 +998,7 @@ class yf_form2
                 $css_class .= ' ' . $_css_class_add;
             }
         }
-        if ($this->_params['big_labels']) {
+        if ($this->_params['big_labels'] ?? null) {
             $css_class .= ' labels-big';
         }
         return $css_class ? ' ' . $css_class : '';
@@ -1009,7 +1009,7 @@ class yf_form2
      */
     public function _prepare_id(&$extra, $default = '')
     {
-        $out = $extra['id'];
+        $out = ($extra['id'] ?? null);
         if ( ! $out) {
             $out = $extra['name'] ?? '';
             $is_html_array = (false !== strpos($out, '['));
@@ -1026,7 +1026,7 @@ class yf_form2
      */
     public function _prepare_desc(&$extra, $input = '')
     {
-        $out = $extra['desc'];
+        $out = ($extra['desc'] ?? null);
         ! $out && $out = $input;
         if ( ! $out) {
             $out = ucfirst(str_replace('_', ' ', $extra['name'] ?? ''));
@@ -1083,7 +1083,7 @@ class yf_form2
             }
             $selected = $value;
         } else {
-            $selected = $r[$name];
+            $selected = ($r[$name] ?? null);
         }
         // $selected = $r[$name];
         if (isset($extra['selected'])) {
@@ -1141,13 +1141,13 @@ class yf_form2
         $extra['desc'] = $this->_prepare_desc($extra, $desc);
 
         $func = function ($extra, $r, $form) {
-            $extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+            $extra['edit_link'] = ($extra['edit_link'] ?? null) ? (isset($r[($extra['edit_link'] ?? null)]) ? ($r[$extra['edit_link']] ?? null) : ($extra['edit_link'] ?? null)) : '';
             $extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
             $extra['id'] = $form->_prepare_id($extra, 'content_editable');
-            $extra['desc'] = ! $form->_params['no_label'] ? $extra['desc'] : '';
+            $extra['desc'] = ! ($form->_params['no_label'] ?? null) ? $extra['desc'] : '';
 
             $attrs_names = ['id', 'contenteditable', 'style', 'class', 'title'];
-            if ($extra['ckeditor']) {
+            if ($extra['ckeditor'] ?? null) {
                 $extra['ckeditor_inline'] = true;
             }
             return $form->_row_html(isset($extra['ckeditor']) ? '<div' . _attrs($extra, $attrs_names) . '>' . $extra['text'] . '</div>' : $extra['text'], $extra, $r);
@@ -1183,16 +1183,16 @@ class yf_form2
             $extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
             $extra['value'] = $form->_prepare_value($extra, $r, $form->_params);
             $extra['type'] = ($extra['type'] ?? null) ?: 'text';
-            $extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-            $extra['class'] = $form->CLASS_FORM_CONTROL . $form->_prepare_css_class('', $r[$extra['name']], $extra);
-            if ($this->_params['filter'] && ! isset($extra['sizing'])) {
+            $extra['edit_link'] = ($extra['edit_link'] ?? null) ? (isset($r[($extra['edit_link'] ?? null)]) ? ($r[$extra['edit_link']] ?? null) : ($extra['edit_link'] ?? null)) : '';
+            $extra['class'] = $form->CLASS_FORM_CONTROL . $form->_prepare_css_class('', ($r[$extra['name']] ?? null), $extra);
+            if (($this->_params['filter'] ?? null) && ! isset($extra['sizing'])) {
                 $extra['sizing'] = 'sm';
             }
             // Supported: sm, lg
-            if ($extra['sizing']) {
+            if ($extra['sizing'] ?? null) {
                 $extra['class'] .= ' input-' . $extra['sizing'];
             }
-            if ($form->_params['no_label']) {
+            if ($form->_params['no_label'] ?? null) {
                 $extra['desc'] = '';
             }
             $extra = $form->_input_assign_params_from_validate($extra);
@@ -1228,11 +1228,11 @@ class yf_form2
             $extra['id'] = $form->_prepare_id($extra);
             $extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
             $extra['value'] = $form->_prepare_value($extra, $r, $form->_params);
-            $extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+            $extra['edit_link'] = ($extra['edit_link'] ?? null) ? (isset($r[($extra['edit_link'] ?? null)]) ? ($r[$extra['edit_link']] ?? null) : ($extra['edit_link'] ?? null)) : '';
             $extra['contenteditable'] = ( ! isset($extra['contenteditable']) || $extra['contenteditable']) ? 'true' : false;
             $use_ckeditor = isset($extra['ckeditor']) ? $extra['ckeditor'] : false;
-            $extra['class'] = ($use_ckeditor ? $form->CLASS_CKEDITOR . ' ' : '') . $form->CLASS_FORM_CONTROL . $form->_prepare_css_class('', $r[$extra['name']], $extra);
-            if ($form->_params['no_label']) {
+            $extra['class'] = ($use_ckeditor ? $form->CLASS_CKEDITOR . ' ' : '') . $form->CLASS_FORM_CONTROL . $form->_prepare_css_class('', ($r[$extra['name']] ?? null), $extra);
+            if ($form->_params['no_label'] ?? null) {
                 $extra['desc'] = '';
             }
             $extra = $form->_input_assign_params_from_validate($extra);
@@ -1410,7 +1410,7 @@ class yf_form2
             $extra['value'] = $desc;
         }
         $extra['value'] = t($extra['value']);
-        if ( ! $extra['class']) {
+        if ( ! ($extra['class'] ?? null)) {
             $extra['class'] = $this->CLASS_BTN_DEFAULT;
         }
         return $this->input($name, $desc, $extra, $replace);
@@ -2017,28 +2017,28 @@ class yf_form2
         $extra['id'] = ($extra['id'] ?? null) ?: (($extra['name'] ?? null) ?: strtolower($extra['value']));
         $func = function ($extra, $r, $form) {
             $form->_prepare_inline_error($extra);
-            $extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
+            $extra['link_url'] = ($extra['link_url'] ?? null) ? (isset($r[($extra['link_url'] ?? null)]) ? ($r[$extra['link_url']] ?? null) : ($extra['link_url'] ?? null)) : '';
             if (false === strpos($extra['link_url'], '/')) {
                 $extra['link_url'] = '';
             }
             $extra['link_name'] = ($extra['link_name'] ?? null) ?: '';
-            $extra['class'] = ($extra['class'] ?? null) ?: $form->CLASS_BTN_SUBMIT . $form->_prepare_css_class('', $r[$extra['name']], $extra);
+            $extra['class'] = ($extra['class'] ?? null) ?: $form->CLASS_BTN_SUBMIT . $form->_prepare_css_class('', ($r[$extra['name']] ?? null), $extra);
             $extra['value'] = $extra['value'];
             $extra['type'] = 'submit';
-            $button_text = $extra['desc'];
+            $button_text = ($extra['desc'] ?? null);
             $extra['desc'] = '';
             $extra['buttons_controls'] = true;
-            if ($this->_params['filter'] && ! isset($extra['sizing'])) {
+            if (($this->_params['filter'] ?? null) && ! isset($extra['sizing'])) {
                 $extra['sizing'] = 'sm';
             }
             // Supported: xs, sm, md, lg
-            if ($extra['sizing']) {
+            if ($extra['sizing'] ?? null) {
                 $extra['class'] .= ' btn-' . $extra['sizing'];
                 $extra['link_class'] .= ' btn-' . $extra['sizing'];
             }
             $attrs_names = ['type', 'name', 'id', 'class', 'style', 'value', 'disabled', 'target'];
-            if ( ! $extra['as_input']) {
-                $icon = ($extra['icon'] ? '<i class="' . $extra['icon'] . '"></i> ' : '');
+            if ( ! ($extra['as_input'] ?? null)) {
+                $icon = (($extra['icon'] ?? null) ? '<i class="' . ($extra['icon'] ?? null) . '"></i> ' : '');
                 $value = ( ! isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']);
                 $button_text = $icon . t($button_text ?: $value);
                 return $form->_row_html('<button' . _attrs($extra, $attrs_names) . '>' . $button_text . '</button>', $extra, $r);
@@ -2180,10 +2180,10 @@ class yf_form2
         $extra['desc'] = $this->_prepare_desc($extra, $desc);
         $func = function ($extra, $r, $form) {
             $form->_prepare_inline_error($extra);
-            $extra['desc'] = ! $extra['no_label'] && ! $form->_params['no_label'] ? $extra['desc'] : '';
+            $extra['desc'] = ! ($extra['no_label'] ?? null) && ! ($form->_params['no_label'] ?? null) ? $extra['desc'] : '';
 
-            $value = ($r[$extra['name']] ?? null) ?: $extra['value'];
-            if (is_array($extra['data'])) {
+            $value = ($r[$extra['name']] ?? null) ?: ($extra['value'] ?? null);
+            if (is_array($extra['data'] ?? null)) {
                 if (isset($extra['data'][$value])) {
                     $value = $extra['data'][$value];
                 } elseif (isset($extra['data'][$extra['name']])) {
@@ -2191,22 +2191,22 @@ class yf_form2
                 }
             }
             $value = ! isset($extra['no_escape']) ? _htmlchars($value) : $value;
-            if ( ! $extra['no_translate']) {
+            if ( ! ($extra['no_translate'] ?? null)) {
                 $extra['desc'] = t($extra['desc']);
                 $value = t($value);
             }
-            if ($extra['no_text']) {
+            if ($extra['no_text'] ?? null) {
                 $value = '';
             }
-            if ($extra['link']) {
+            if ($extra['link'] ?? null) {
                 if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && ! _class('admin_methods')->_admin_link_is_allowed($extra['link'])) {
                     $extra['link'] = '';
                 }
             }
-            $icon = $extra['icon'] ? '<i class="' . $extra['icon'] . '"></i> ' : '';
+            $icon = ($extra['icon'] ?? null) ? '<i class="' . ($extra['icon'] ?? null) . '"></i> ' : '';
             $content = '';
-            if ($extra['link']) {
-                if ($extra['rewrite']) {
+            if ($extra['link'] ?? null) {
+                if ($extra['rewrite'] ?? null) {
                     $extra['link'] = url($extra['link']);
                 }
                 $extra['class'] = ($extra['class'] ?? null) ?: $form->CLASS_BTN_MINI;
@@ -2217,7 +2217,7 @@ class yf_form2
                 $content = '<a' . _attrs($extra, $attrs_names) . '>' . $icon . $value . '</a>';
             } else {
                 $extra['class'] = ($extra['class'] ?? null) ?: $form->CLASS_LABEL_INFO;
-                $content = '<span class="' . $form->_prepare_css_class($extra['class'], $r[$extra['name']], $extra) . '">' . $icon . $value . '</span>';
+                $content = '<span class="' . $form->_prepare_css_class($extra['class'], ($r[$extra['name']] ?? null), $extra) . '">' . $icon . $value . '</span>';
             }
             return $form->_row_html($content, $extra, $r);
         };
@@ -2267,7 +2267,7 @@ class yf_form2
             $extra = [];
         }
         $extra['format'] = ($extra['format'] ?? null) ?: $format;
-        $replace[$name] = _format_date($r[$name], $extra['format']);
+        $replace[$name] = _format_date(($r[$name] ?? null), $extra['format']);
         $this->_replace[$name] = $replace[$name];
         return $this->info($name, $format, $extra, $replace);
     }
@@ -2285,7 +2285,7 @@ class yf_form2
         if ( ! is_array($extra)) {
             $extra = [];
         }
-        $extra['link'] = ($extra['link'] ?? null) ?: ($link ?: $r[$name]);
+        $extra['link'] = ($extra['link'] ?? null) ?: ($link ?: ($r[$name] ?? null));
         return $this->info($name, '', $extra, $replace);
     }
 
@@ -2373,19 +2373,19 @@ class yf_form2
         $extra['func_html_control'] = ($extra['func_html_control'] ?? null) ?: $func_html_control;
         $func = function ($extra, $r, $form) {
             $form->_prepare_inline_error($extra);
-            $extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+            $extra['edit_link'] = ($extra['edit_link'] ?? null) ? (isset($r[($extra['edit_link'] ?? null)]) ? ($r[$extra['edit_link']] ?? null) : ($extra['edit_link'] ?? null)) : '';
             $extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
             $extra['id'] = $extra['name'];
             $extra = $form->_input_assign_params_from_validate($extra);
-            if ($this->_params['filter']) {
+            if ($this->_params['filter'] ?? null) {
                 $extra['class_add'] .= ' input-sm';
             }
             $func = $extra['func_html_control'];
             $content = _class('html')->$func($extra);
-            if ($extra['no_label'] || $form->_params['no_label']) {
+            if (($extra['no_label'] ?? null) || ($form->_params['no_label'] ?? null)) {
                 $extra['desc'] = '';
             }
-            if ($extra['hide_empty'] && ! strlen($content)) {
+            if (($extra['hide_empty'] ?? null) && ! strlen($content)) {
                 return '';
             }
             return $form->_row_html($content, $extra, $r);

@@ -32,14 +32,14 @@ class yf_rewrite_pattern_yf
             }
         }
         if ( ! $u) {
-            if ($a['task'] == 'login' || $a['task'] == 'logout') {
+            if (($a['task'] ?? null) == 'login' || ($a['task'] ?? null) == 'logout') {
                 $u = $a['task'];
                 unset($a['task']);
-                if ($a['id']) {
+                if ($a['id'] ?? null) {
                     $u .= '/' . $a['id'];
                     unset($a['id']);
                 }
-            } elseif ($a['object'] === 'static_pages' && in_array($a['id'], $this->_get_static_pages_names())) {
+            } elseif (($a['object'] ?? null) === 'static_pages' && in_array($a['id'], $this->_get_static_pages_names())) {
                 $u = $a['id'];
             } else {
                 $u = [];
@@ -67,8 +67,8 @@ class yf_rewrite_pattern_yf
             }
         }
         $arr = $a;
-        $fragment = $arr['fragment'];
-        $lang = $arr['lang'];
+        $fragment = ($arr['fragment'] ?? null);
+        $lang = ($arr['lang'] ?? null);
         unset($arr['object'], $arr['action'], $arr['host'], $arr['port'], $arr['id'], $arr['page'], $arr['fragment'], $arr['lang']);
         //		foreach ((array)$class_rewrite->allowed_url_params as $name) {
         //			if (isset($_GET[$name]) && preg_match('~^[a-z0-9_-]+$~i', $_GET[$name])) {
@@ -87,7 +87,7 @@ class yf_rewrite_pattern_yf
         if ($class_rewrite->USE_WEB_PATH) {
             $url = WEB_PATH;
         } else {
-            $url = 'http://' . $a['host'] . ($a['port'] && ! in_array($a['port'], ['80', '443']) ? ':' . $a['port'] : '') . '/';
+            $url = 'http://' . $a['host'] . (($a['port'] ?? null) && ! in_array(($a['port'] ?? null), ['80', '443']) ? ':' . ($a['port'] ?? null) : '') . '/';
         }
         return $class_rewrite->_correct_protocol($url . $u);
     }

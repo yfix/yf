@@ -56,7 +56,7 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
         ];
         foreach ($_css_group_map as $_a => $_css_class) {
             if (isset($extra[$_a][$name]) || ($is_html_array && isset($extra[$_a][$name_dotted]))) {
-                if ($extra['stacked']) {
+                if ($extra['stacked'] ?? null) {
                     $extra['class_add_stacked'] .= ' ' . $_css_class;
                 } else {
                     $extra['class_add_form_group'] .= ' ' . $_css_class;
@@ -64,86 +64,86 @@ class yf_html5fw_bs3 extends yf_html5fw_empty
                 break;
             }
         }
-        $class_form_group = ($extra['class_form_group'] ?? null) ?: $this->CLASS_FORM_GROUP . ($extra['class_add_form_group'] ? ' ' . $extra['class_add_form_group'] : '');
-        if ($extra['class_add_wrapper']) {
+        $class_form_group = ($extra['class_form_group'] ?? null) ?: $this->CLASS_FORM_GROUP . (($extra['class_add_form_group'] ?? null) ? ' ' . ($extra['class_add_form_group'] ?? null) : '');
+        if ($extra['class_add_wrapper'] ?? null) {
             $class_form_group .= ' ' . $extra['class_add_wrapper'];
         }
         $class_label = ($extra['class_label'] ?? null) ?: $this->CLASS_LABEL
-            . ($extra['class_add_label'] ? ' ' . $extra['class_add_label'] : '');
+            . (($extra['class_add_label'] ?? null) ? ' ' . ($extra['class_add_label'] ?? null) : '');
 
-        $def_class_controls = $extra['buttons_controls'] ? $this->CLASS_CONTROLS_BUTTONS : $this->CLASS_CONTROLS;
-        $def_class_no_label = $extra['buttons_controls'] ? $this->CLASS_NO_LABEL_BUTTONS : $this->CLASS_NO_LABEL;
+        $def_class_controls = ($extra['buttons_controls'] ?? null) ? $this->CLASS_CONTROLS_BUTTONS : $this->CLASS_CONTROLS;
+        $def_class_no_label = ($extra['buttons_controls'] ?? null) ? $this->CLASS_NO_LABEL_BUTTONS : $this->CLASS_NO_LABEL;
         $class_controls = ($extra['class_controls'] ?? null) ?: $def_class_controls
             . ($extra['desc'] && ! $no_label ? ' ' . $this->CLASS_DESC : $def_class_no_label)
-            . ($extra['class_add_controls'] ? ' ' . $extra['class_add_controls'] : '');
+            . (($extra['class_add_controls'] ?? null) ? ' ' . ($extra['class_add_controls'] ?? null) : '');
 
-        $form_group_extra = $extra['form_group'];
+        $form_group_extra = ($extra['form_group'] ?? null);
         $form_group_extra['class'] = $class_form_group;
 
-        if ($form->_params['form_group_auto_id'] && ! $form_group_extra['id'] && $extra['id']) {
+        if (($form->_params['form_group_auto_id'] ?? null) && ! $form_group_extra['id'] && $extra['id']) {
             $form_group_extra['class'] .= ' form-group-id-' . $extra['id'];
         }
 
-        $controls_extra = $extra['controls'];
+        $controls_extra = ($extra['controls'] ?? null);
         $controls_extra['class'] = $class_controls;
 
-        $label_extra = $extra['control_label'];
+        $label_extra = ($extra['control_label'] ?? null);
         $label_extra['class'] = $class_label;
         $label_extra['for'] = $extra['id'];
 
-        $label_tip_html = $extra['label_tip'] ? trim(' ' . tip($extra['label_tip'], $replace)) : '';
+        $label_tip_html = ($extra['label_tip'] ?? null) ? trim(' ' . tip(($extra['label_tip'] ?? null), $replace)) : '';
 
         $label = ($extra['desc'] && ! $no_label ? '<label' . _attrs($label_extra, ['id', 'class', 'style', 'for']) . '>' . t($extra['desc']) . $label_tip_html . '</label>' . PHP_EOL : '');
 
         $row_start = '<div' . _attrs($form_group_extra, ['id', 'class', 'style']) . '>' . PHP_EOL
             . $label
-            . ( ! $extra['wide'] ? '<div' . _attrs($controls_extra, ['id', 'class', 'style']) . '>' . PHP_EOL : '');
+            . ( ! ($extra['wide'] ?? null) ? '<div' . _attrs($controls_extra, ['id', 'class', 'style']) . '>' . PHP_EOL : '');
 
         $row_end =
-                ( ! $extra['wide'] ? '</div>' . PHP_EOL : '')
+                ( ! ($extra['wide'] ?? null) ? '</div>' . PHP_EOL : '')
             . '</div>';
 
-        $input_group_extra = $extra['input_group'];
+        $input_group_extra = ($extra['input_group'] ?? null);
         if (!isset($input_group_extra['class'])) {
-            $input_group_extra['class'] =  $this->CLASS_INPUT_GROUP . ' ' . ($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : '') . ($extra['append'] ? ' ' . $this->CLASS_INPUT_APPEND : '');
+            $input_group_extra['class'] =  $this->CLASS_INPUT_GROUP . ' ' . (($extra['prepend'] ?? null) ? $this->CLASS_INPUT_PREPEND : '') . (($extra['append'] ?? null) ? ' ' . $this->CLASS_INPUT_APPEND : '');
         }
-        $input_group_extra['class'] .= ' ' . $input_group_extra['class_add'];
+        $input_group_extra['class'] .= ' ' . ($input_group_extra['class_add'] ?? null);
 
-        $show_input_group = ($extra['append'] || $extra['prepend']);
+        $show_input_group = (($extra['append'] ?? null) || ($extra['prepend'] ?? null));
 
         $before_content_html = $show_input_group ? '<div' . _attrs($input_group_extra, ['id', 'class', 'style']) . '>' . PHP_EOL : '';
-        $before_content_html .= $extra['prepend'] ? '<span class="' . $this->CLASS_ADDON . ($extra['class_prepend'] ? ' ' . $extra['class_prepend'] : '') . '">' . $extra['prepend'] . '</span>' . PHP_EOL : '';
+        $before_content_html .= ($extra['prepend'] ?? null) ? '<span class="' . $this->CLASS_ADDON . (($extra['class_prepend'] ?? null) ? ' ' . ($extra['class_prepend'] ?? null) : '') . '">' . ($extra['prepend'] ?? null) . '</span>' . PHP_EOL : '';
 
-        $after_content_html = $extra['append'] ? '<span class="' . $this->CLASS_ADDON . ($extra['class_append'] ? ' ' . $extra['class_append'] : '') . '">' . $extra['append'] . '</span>' . PHP_EOL : '';
+        $after_content_html = ($extra['append'] ?? null) ? '<span class="' . $this->CLASS_ADDON . ($extra['class_append'] ? ' ' . $extra['class_append'] : '') . '">' . ($extra['append'] ?? null) . '</span>' . PHP_EOL : '';
         $after_content_html .= $show_input_group ? '</div>' . PHP_EOL : '';
 
         //		$after_content_html .= $extra['feedback_icon'] ? '<span class="'.$extra['feedback_icon'].' '.$this->CLASS_FEEDBACK.'" aria-hidden="true"></span>'.PHP_EOL : '';
 
-        if ($extra['edit_link']) {
+        if ($extra['edit_link'] ?? null) {
             if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && ! _class('admin_methods')->_admin_link_is_allowed($extra['edit_link'])) {
                 $extra['edit_link'] = '';
             }
         }
-        $edit_link_html = $extra['edit_link'] ? ' <a href="' . $extra['edit_link'] . '" class="' . $this->CLASS_EDIT_LINK . '"><i class="' . $this->CLASS_EDIT_ICON . '"></i> ' . t('Edit') . '</a>' . PHP_EOL : '';
-        $link_name_html = ($extra['link_url'] && $extra['link_name']) ? ' <a href="' . $extra['link_url'] . '" class="' . $this->CLASS_LINK_URL . $extra['link_class'] . '">' . t($extra['link_name']) . '</a>' . PHP_EOL : '';
+        $edit_link_html = ($extra['edit_link'] ?? null) ? ' <a href="' . ($extra['edit_link'] ?? null) . '" class="' . $this->CLASS_EDIT_LINK . '"><i class="' . $this->CLASS_EDIT_ICON . '"></i> ' . t('Edit') . '</a>' . PHP_EOL : '';
+        $link_name_html = (($extra['link_url'] ?? null) && $extra['link_name']) ? ' <a href="' . ($extra['link_url'] ?? null) . '" class="' . $this->CLASS_LINK_URL . $extra['link_class'] . '">' . t($extra['link_name']) . '</a>' . PHP_EOL : '';
 
-        $inline_help_before = $extra['help_before'] ? '<span class="' . $this->CLASS_HELP . '">' . nl2br($extra['help_before']) . '</span>' . PHP_EOL : '';
-        $inline_help_after = $extra['inline_help'] ? '<span class="' . $this->CLASS_HELP . '">' . nl2br($extra['inline_help']) . '</span>' . PHP_EOL : '';
-        $inline_tip_html = $extra['tip'] ? ' ' . tip($extra['tip'], $replace) : '';
+        $inline_help_before = ($extra['help_before'] ?? null) ? '<span class="' . $this->CLASS_HELP . '">' . nl2br($extra['help_before'] ?? null) . '</span>' . PHP_EOL : '';
+        $inline_help_after = ($extra['inline_help'] ?? null) ? '<span class="' . $this->CLASS_HELP . '">' . nl2br($extra['inline_help'] ?? null) . '</span>' . PHP_EOL : '';
+        $inline_tip_html = ($extra['tip'] ?? null) ? ' ' . tip(($extra['tip'] ?? null), $replace) : '';
 
-        if ($extra['only_row_start']) {
+        if ($extra['only_row_start'] ?? null) {
             return $row_start;
-        } elseif ($extra['only_row_end']) {
+        } elseif ($extra['only_row_end'] ?? null) {
             return $row_end;
-        } elseif ($extra['stacked']) {
+        } elseif ($extra['stacked'] ?? null) {
             $extra_stacked = is_array($extra['stacked']) ? $extra['stacked'] : [];
-            if ($extra['class_stacked'] && ! isset($extra_stacked['class'])) {
+            if (($extra['class_stacked'] ?? null) && ! isset($extra_stacked['class'])) {
                 $extra_stacked['class'] = $extra['class_stacked'];
             }
-            $extra_stacked['class'] = (($extra_stacked['class'] ?? null) ?: $this->CLASS_STACKED_ITEM) . ' ' . (($extra_stacked['class_add'] ?? null) ?: $extra['class_add_stacked']);
+            $extra_stacked['class'] = (($extra_stacked['class'] ?? null) ?: $this->CLASS_STACKED_ITEM) . ' ' . (($extra_stacked['class_add'] ?? null) ?: ($extra['class_add_stacked'] ?? null));
             return
                 '<span' . _attrs($extra_stacked, ['id', 'class', 'style']) . '>'
-                . ($extra['show_label'] ? $label : '')
+                . (($extra['show_label'] ?? null) ? $label : '')
                 . $inline_help_before . $before_content_html . $content . PHP_EOL . $after_content_html
                 . $edit_link_html . $link_name_html . $inline_tip_html . $inline_help_after
                 . '</span>';

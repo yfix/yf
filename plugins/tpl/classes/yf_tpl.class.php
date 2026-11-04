@@ -410,7 +410,7 @@ class yf_tpl
             $stpl_time_start = microtime(true);
         }
         $replace = (array) $replace + (array) $this->_global_tags;
-        $replace['error'] = $this->_parse_get_user_errors($name, $replace['error']);
+        $replace['error'] = $this->_parse_get_user_errors($name, ($replace['error'] ?? null));
         if (isset($replace[''])) {
             unset($replace['']);
         }
@@ -418,7 +418,7 @@ class yf_tpl
             $this->_custom_filter($name, $replace);
         }
         // Allowing to override driver
-        if ($params['driver'] && $params['driver'] != $this->DRIVER_NAME) {
+        if (($params['driver'] ?? null) && ($params['driver'] ?? null) != $this->DRIVER_NAME) {
             $driver = _class('tpl_driver_' . $params['driver'], 'classes/tpl/');
         } else {
             $driver = $this->driver;
@@ -693,7 +693,7 @@ class yf_tpl
         } else {
             $def_theme = $this->_get_def_user_theme();
             $all_tpls_paths = $this->_get_cached_paths();
-            $paths = $all_tpls_paths[$stpl_name];
+            $paths = ($all_tpls_paths[$stpl_name] ?? null);
             // Storages are defined in specially crafted `order`, so do not change it unless you have strong reason
             $storages = [];
             $site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
@@ -1097,7 +1097,7 @@ class yf_tpl
     public function add_function_callback($name, $func, $params = [])
     {
         $pattern = '/\{(?P<name>' . preg_quote($name) . ')\(\s*["\']{0,1}(?P<args>[a-z0-9_:\/\.]+?)["\']{0,1}\s*\)\}/ims';
-        if ($params['only_pattern']) {
+        if ($params['only_pattern'] ?? null) {
             return $pattern;
         }
         $this->add_pattern_callback($pattern, $func, $name);
@@ -1111,7 +1111,7 @@ class yf_tpl
     public function add_section_callback($name, $func, $params = [])
     {
         $pattern = '/\{(?P<name>' . preg_quote($name) . ')\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<body>.+?)\s*{\/(\1)\}/ims';
-        if ($params['only_pattern']) {
+        if ($params['only_pattern'] ?? null) {
             return $pattern;
         }
         $this->add_pattern_callback($pattern, $func, $name);

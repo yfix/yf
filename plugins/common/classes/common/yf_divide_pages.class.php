@@ -42,9 +42,9 @@ class yf_divide_pages
             $url_path = '';
         }
         if (empty($url_path)) {
-            if ($extra['url_path']) {
+            if ($extra['url_path'] ?? null) {
                 $url_path = $extra['url_path'];
-            } elseif ($extra['path']) {
+            } elseif ($extra['path'] ?? null) {
                 $url_path = $extra['path'];
             }
         }
@@ -52,9 +52,9 @@ class yf_divide_pages
             $url_path = './?object=' . ($_GET['object'] ?? null) . '&action=' . ($_GET['action'] ?? null) . (isset($_GET['id']) ? '&id=' . ($_GET['id'] ?? null) : '');
         }
         if (!($render_type ?? false ) || !strlen($render_type)) {
-            if ($extra['render_type']) {
+            if ($extra['render_type'] ?? null) {
                 $render_type = $extra['render_type'];
-            } elseif ($extra['type']) {
+            } elseif ($extra['type'] ?? null) {
                 $render_type = $extra['type'];
             }
         }
@@ -144,7 +144,7 @@ class yf_divide_pages
      */
     public function get_total_records($sql = '', $num_records = 0, $extra = [])
     {
-        $sql_callback = $extra['sql_callback'];
+        $sql_callback = ($extra['sql_callback'] ?? null);
         if (is_array($sql)) {
             $total_records = count((array) $sql);
         } elseif (empty($num_records) && ! empty($sql)) {
@@ -357,13 +357,13 @@ class yf_divide_pages
             'total_records' => (int) $total_records,
             'record_first' => (int) ($first + 1),
             'record_last' => (int) ($cur_page * $per_page),
-            'page_first' => $items['page_first'],
+            'page_first' => ($items['page_first'] ?? null),
             'block_prev' => '',
-            'page_prev' => $items['page_prev'],
-            'pages' => $items['pages'],
-            'page_next' => $items['page_next'],
+            'page_prev' => ($items['page_prev'] ?? null),
+            'pages' => ($items['pages'] ?? null),
+            'page_next' => ($items['page_next'] ?? null),
             'block_next' => '',
-            'page_last' => $items['page_last'],
+            'page_last' => ($items['page_last'] ?? null),
             'current_page' => $cur_page,
         ]);
         return [

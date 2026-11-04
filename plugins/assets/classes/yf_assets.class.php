@@ -414,7 +414,7 @@ class yf_assets
                 break;
             }
         }
-        $this->_autoload_registered = $paths[$path_loaded];
+        $this->_autoload_registered = ($paths[$path_loaded] ?? null);
     }
 
     /**
@@ -630,11 +630,11 @@ class yf_assets
     public function get_asset_details($name)
     {
         // If overall asset is callable - call it and save result to prevent multiple calls
-        if ( ! is_string($this->assets[$name]) && is_callable($this->assets[$name])) {
+        if ( ! is_string($this->assets[$name] ?? null) && is_callable($this->assets[$name] ?? null)) {
             $func = $this->assets[$name];
             $this->assets[$name] = $func($this);
         }
-        return $this->assets[$name];
+        return ($this->assets[$name] ?? null);
     }
 
     /**
@@ -660,7 +660,7 @@ class yf_assets
         foreach ((array) $this->ASSETS_GET_PRIORITY as $method) {
             if (in_array($method, ['bower', 'github'])) {
                 $data = ($asset_data[$method] ?? null) ?: [];
-                $_files = $data[$asset_type];
+                $_files = ($data[$asset_type] ?? null);
                 if ($_files) {
                     $_name = ($data['name'] ?? null) ?: $name;
                     strpos($_name, '#') !== false && list($_name, $_version) = explode('#', $_name);
@@ -678,7 +678,7 @@ class yf_assets
                 $_version = $version ?: ($data['version'] ?? null) ?: 'master';
                 return $this->get_asset_from_cdn($name, $_version, $data, $asset_type);
             } elseif ($method == 'versions') {
-                if ( ! is_array($asset_data[$method])) {
+                if ( ! is_array($asset_data[$method] ?? null)) {
                     return null;
                 }
                 $data = ($asset_data[$method] ?? null) ?: [];
@@ -687,7 +687,7 @@ class yf_assets
                     return null;
                 }
                 $version_info = $data[$version];
-                $content = $version_info[$asset_type];
+                $content = ($version_info[$asset_type] ?? null);
                 return $content;
             }
         }
@@ -907,7 +907,7 @@ class yf_assets
         }
         if (is_array($content_type_hint)) {
             $params = (array) $params + $content_type_hint;
-            $content_type_hint = $params['type'];
+            $content_type_hint = ($params['type'] ?? null);
         }
         if ( ! $asset_type || $asset_type === 'asset') {
             $asset_type = 'bundle';
@@ -1030,7 +1030,7 @@ class yf_assets
             return false;
         }
         if (isset($bundle_details['config']) && is_array($bundle_details['config'])) {
-            $_params['config'] = (array) $_params['config'] + (array) $bundle_details['config'];
+            $_params['config'] = (array) ($_params['config'] ?? null) + (array) ($bundle_details['config'] ?? null);
         }
         $DIRECT_OUT = isset($_params['direct_out']) ? $_params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
         $_params += ($DIRECT_OUT ? ['direct_out' => false] : []);
@@ -1102,7 +1102,7 @@ class yf_assets
             return false;
         }
         if (isset($asset_data['config']) && is_array($asset_data['config'])) {
-            $_params['config'] = (array) $_params['config'] + (array) $asset_data['config'];
+            $_params['config'] = (array) ($_params['config'] ?? null) + (array) ($asset_data['config'] ?? null);
         }
         $DIRECT_OUT = isset($_params['direct_out']) ? $_params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
         $_params += ($DIRECT_OUT ? ['direct_out' => false] : []);
@@ -1282,7 +1282,7 @@ class yf_assets
 			// This line needed to strip query string from file name like this:
 			// /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
             $parsed_url = parse_url($content);
-			if ( ! strlen($parsed_url['host']) && strlen($parsed_url['path']) && pathinfo($parsed_url['path'], PATHINFO_EXTENSION) != $asset_type) {
+			if ( ! strlen($parsed_url['host'] ?? null) && strlen($parsed_url['path']) && pathinfo($parsed_url['path'], PATHINFO_EXTENSION) != $asset_type) {
 				$content = '';
 			}
 		}
@@ -1464,16 +1464,16 @@ class yf_assets
             }
         }
         foreach ((array) $all_content as $md5 => $v) {
-            if ($v['params']['out_before']) {
+            if ($v['params']['out_before'] ?? null) {
                 $out_before[$md5] = $names_to_md5[$v['params']['out_before']];
-            } elseif ($v['params']['out_after']) {
+            } elseif ($v['params']['out_after'] ?? null) {
                 $out_after[$md5] = $names_to_md5[$v['params']['out_after']];
             }
             $content_type = $v['content_type'];
             if ($is_ajax && $content_type !== 'inline') {
                 continue;
             }
-            if ($v['params']['is_last']) {
+            if ($v['params']['is_last'] ?? null) {
                 $last[$md5] = $v;
             } elseif (in_array($content_type, ['inline'])) {
                 $bottom[$md5] = $v;

@@ -128,11 +128,20 @@ class yf_validate
                 $param = $rule[1];
                 // PHP pure function, from core or user
                 if (is_string($func) && function_exists($func)) {
-                    $data[$name] = $this->_apply_existing_func($func, $data[$name], $error_msg);
+                    $data[$name] = $this->_apply_existing_func($func, ($data[$name] ?? null), $error_msg);
                 } elseif (is_callable($func)) {
                     $is_ok = $func($data[$name], null, $data, $error_msg);
                 } else {
-                    $is_ok = _class('validate')->$func($data[$name], ['param' => $param], $data, $error_msg);
+                    // some validators take the value by reference (password_update, md5_not_empty)
+                    if (array_key_exists($name, $data)) {
+                        $is_ok = _class('validate')->$func($data[$name], ['param' => $param], $data, $error_msg);
+                    } else {
+                        $in = null;
+                        $is_ok = _class('validate')->$func($in, ['param' => $param], $data, $error_msg);
+                        if ($in !== null) {
+                            $data[$name] = $in;
+                        }
+                    }
                     if ( ! $is_ok && empty($error_msg)) {
                         $error_msg = t('form_validate_' . $func, ['%field' => $name, '%param' => $param]);
                     }
@@ -392,7 +401,7 @@ class yf_validate
      */
     public function required_if($in, $params = [], $fields = [])
     {
-        $param = trim(is_array($params) ? $params['param'] : $params);
+        $param = trim(is_array($params) ? ($params['param'] ?? null) : $params);
         if ( ! strlen($param)) {
             return false;
         }
@@ -411,7 +420,7 @@ class yf_validate
      */
     public function required_any($in, $params = [], $fields = [])
     {
-        $param = trim(is_array($params) ? $params['param'] : $params);
+        $param = trim(is_array($params) ? ($params['param'] ?? null) : $params);
         $wildcard = false;
         // Example: duration_day,duration_week,duration_month
         if (false !== strpos($param, ',')) {
@@ -846,7 +855,7 @@ class yf_validate
      */
     public function valid_ip($in, $params = [])
     {
-        $which = is_array($params) ? $params['param'] : $params;
+        $which = is_array($params) ? ($params['param'] ?? null) : $params;
         return $this->_valid_ip($in, $which);
     }
 
@@ -858,7 +867,7 @@ class yf_validate
      */
     public function min_length($in, $params = [])
     {
-        $val = is_array($params) ? $params['param'] : $params;
+        $val = is_array($params) ? ($params['param'] ?? null) : $params;
         if ( ! is_numeric($val)) {
             return false;
         }
@@ -875,7 +884,7 @@ class yf_validate
      */
     public function max_length($in, $params = [])
     {
-        $val = is_array($params) ? $params['param'] : $params;
+        $val = is_array($params) ? ($params['param'] ?? null) : $params;
         if ( ! is_numeric($val)) {
             return false;
         }
@@ -892,7 +901,7 @@ class yf_validate
      */
     public function exact_length($in, $params = [])
     {
-        $val = is_array($params) ? $params['param'] : $params;
+        $val = is_array($params) ? ($params['param'] ?? null) : $params;
         if ( ! is_numeric($val)) {
             return false;
         }
@@ -909,7 +918,7 @@ class yf_validate
      */
     public function length($in, $params = [])
     {
-        $val = is_array($params) ? $params['param'] : $params;
+        $val = is_array($params) ? ($params['param'] ?? null) : $params;
         if (false === strpos($val, ',')) {
             return $this->exact_length($in, $params);
         }
@@ -934,7 +943,7 @@ class yf_validate
      */
     public function greater_than($in, $params = [])
     {
-        $min = is_array($params) ? $params['param'] : $params;
+        $min = is_array($params) ? ($params['param'] ?? null) : $params;
         return is_numeric($in) ? ($in > $min) : false;
     }
 
@@ -956,7 +965,7 @@ class yf_validate
      */
     public function less_than($in, $params = [])
     {
-        $max = is_array($params) ? $params['param'] : $params;
+        $max = is_array($params) ? ($params['param'] ?? null) : $params;
         return is_numeric($in) ? ($in < $max) : false;
     }
 
@@ -978,7 +987,7 @@ class yf_validate
      */
     public function greater_than_equal_to($in, $params = [])
     {
-        $min = is_array($params) ? $params['param'] : $params;
+        $min = is_array($params) ? ($params['param'] ?? null) : $params;
         return is_numeric($in) ? ($in >= $min) : false;
     }
 
@@ -1000,7 +1009,7 @@ class yf_validate
      */
     public function less_than_equal_to($in, $params = [])
     {
-        $max = is_array($params) ? $params['param'] : $params;
+        $max = is_array($params) ? ($params['param'] ?? null) : $params;
         return is_numeric($in) ? ($in <= $max) : false;
     }
 

@@ -136,7 +136,7 @@ class yf_tpl_driver_yf
         $string = $this->_process_raw_collect($string, $replace, $name);
         $string = $this->_process_ifs($string, $replace, $name);
         $string = $this->_process_raw_collect($string, $replace, $name);
-        if (! $params['no_include']) {
+        if (! ($params['no_include'] ?? null)) {
             $string = $this->_process_includes($string, $replace, $name);
             $string = $this->_process_raw_collect($string, $replace, $name);
             $string = $this->_process_executes($string, $replace, $name);
@@ -343,7 +343,7 @@ class yf_tpl_driver_yf
     public function _parse_get_cached($name, array &$replace, $params = [], $string = false)
     {
         $force_storage = $params['force_storage'];
-        if (isset($this->CACHE[$name]) && ! $params['no_cache'] && ! $force_storage) {
+        if (isset($this->CACHE[$name]) && ! ($params['no_cache'] ?? null) && ! $force_storage) {
             $string = $this->CACHE[$name]['string'];
             @$this->CACHE[$name]['calls']++;
             if (DEBUG_MODE) {
@@ -638,7 +638,7 @@ class yf_tpl_driver_yf
             // Form item/row. Examples: {form_row("text","password","New Password")}
             '/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,'
                 . '[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims' => function ($m) use ($replace, $name) {
-                return _class('form2')->tpl_row($m[1], $replace, $m[3], $m[5], $m[7]);
+                return _class('form2')->tpl_row($m[1], $replace, ($m[3] ?? null), ($m[5] ?? null), ($m[7] ?? null));
             },
             // Variable filtering like in Smarty/Twig. Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
             '/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function ($m) use ($replace, $name, $tpl) {
@@ -1022,7 +1022,7 @@ class yf_tpl_driver_yf
                 if (! $sub_key1 || ! $sub_key2) {
                     return '';
                 }
-                $data = $replace[$sub_key1][$sub_key2];
+                $data = ($replace[$sub_key1][$sub_key2] ?? null);
                 if (isset($data)) {
                     if (is_array($data)) {
                         $sub_array = $data;

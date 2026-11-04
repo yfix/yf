@@ -288,7 +288,7 @@ class yf_rewrite
             }
             if (is_array($host)) {
                 $params += (array) $host;
-                $host = $params['host'];
+                $host = ($params['host'] ?? null);
             }
         }
         if ( ! is_array($params) && empty($url_str)) {
@@ -373,16 +373,16 @@ class yf_rewrite
                 $params['action'] = 'show';
             }
         }
-        if ($params['object'] == '@object') {
+        if (($params['object'] ?? null) == '@object') {
             $params['object'] = ($_GET['object'] ?? null);
         }
-        if ($params['action'] == '@action') {
+        if (($params['action'] ?? null) == '@action') {
             $params['action'] = ($_GET['action'] ?? null);
         }
-        if ($params['id'] == '@id') {
+        if (($params['id'] ?? null) == '@id') {
             $params['id'] = ($_GET['id'] ?? null);
         }
-        if ($params['page'] == '@page') {
+        if (($params['page'] ?? null) == '@page') {
             $params['page'] = ($_GET['page'] ?? null);
         }
         foreach ((array) $params as $k => $v) {
@@ -418,14 +418,14 @@ class yf_rewrite
             }
             $http_protocol = main()->USE_ONLY_HTTPS ? 'https' : 'http';
             if ($for_section == 'admin') {
-                if ($params['admin_host']) {
+                if ($params['admin_host'] ?? null) {
                     $_host = $params['admin_host'];
                     $_port = ($params['admin_port'] ?? null) ?: '80';
                     $_path = ($params['admin_path'] ?? null) ?: '/admin/';
                     $link = $this->_correct_protocol($http_protocol . '://' . $_host . ($_port && ! in_array($_port, ['80', '443']) ? ':' . $_port : '') . ($_path ?: '/') . $u);
                 } else {
                     $link = ADMIN_WEB_PATH . $u;
-                    if ($params['is_full_url']) {
+                    if ($params['is_full_url'] ?? null) {
                         $protocol_scheme = _class('api')->_detect_protocol_scheme();
                         $link = $protocol_scheme . ':' . $link;
                     }
@@ -436,7 +436,7 @@ class yf_rewrite
                 $_path = ($params['path'] ?? null) ?: '/';
                 $link = $this->_correct_protocol($http_protocol . '://' . $_host . ($_port && ! in_array($_port, ['80', '443']) ? ':' . $_port : '') . ($_path ?: '/') . $u);
             }
-            if ($params['fragment']) {
+            if ($params['fragment'] ?? null) {
                 $link .= '#' . $params['fragment'];
             }
         }
