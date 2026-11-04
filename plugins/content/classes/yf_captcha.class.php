@@ -343,7 +343,7 @@ class yf_captcha
         }
         ob_start();
         imagepng($image);
-        imagedestroy($image);
+        unset($image);
         $data = ob_get_clean();
         // Throw image to the user
         if ( ! $no_header) {

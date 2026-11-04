@@ -84,7 +84,7 @@ class yf_remote_files
             curl_setopt($ch, CURLOPT_URL, $url_to_post);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             $result = curl_exec($ch);
-            curl_close($ch);
+            unset($ch);
         }
         // Do cleanup temporary file
         if (file_exists($new_tmp_file_path)) {
@@ -168,7 +168,7 @@ class yf_remote_files
             // not necessary unless the file redirects (like the PHP example we're using here)
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             $data = curl_exec($ch);
-            curl_close($ch);
+            unset($ch);
             if ($data === false) {
                 return 0;
             }
@@ -324,7 +324,7 @@ class yf_remote_files
             debug('curl_get_remote_page[]', ['info' => $info, 'trace' => main()->trace_string()]);
         }
 
-        curl_close($ch);
+        unset($ch);
         // Close file handles after curl_close to receive good file
         if ($url_options['save_path'] && $file_handles[$url]) {
             @fclose($file_handles[$url]);

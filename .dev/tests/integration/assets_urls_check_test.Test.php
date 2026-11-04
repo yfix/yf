@@ -82,7 +82,7 @@ class assets_urls_check_test extends yf\tests\wrapper
                 ]);
                 $retryContent = curl_exec($retryCh);
                 $size = $retryContent ? strlen($retryContent) : 0;
-                curl_close($retryCh);
+                unset($retryCh);
             }
 
             $results[] = [
@@ -91,7 +91,7 @@ class assets_urls_check_test extends yf\tests\wrapper
             ];
 
             curl_multi_remove_handle($multiHandle, $ch);
-            curl_close($ch);
+            unset($ch);
         }
 
         curl_multi_close($multiHandle);

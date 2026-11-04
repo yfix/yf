@@ -130,7 +130,7 @@ class yf_shop__order_pay_authorize_net
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             $response = curl_exec($ch);
             $error = curl_error($ch);
-            curl_close($ch);
+            unset($ch);
             if ($error) {
                 trigger_error('SHOP: authorize.net response error: ' . $error, E_USER_WARNING);
                 return _e("SHOP: Payment gateway error #1. Please <a href='" . process_url('./?object=support') . "'>contact</a> site admin");

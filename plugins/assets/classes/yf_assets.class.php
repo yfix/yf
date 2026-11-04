@@ -2561,7 +2561,7 @@ requirejs( [ "module1", "module2" ], function( angular ) {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->URL_TIMEOUT);
         $data = curl_exec($ch);
-        curl_close($ch);
+        unset($ch);
         return $data;
     }
 }

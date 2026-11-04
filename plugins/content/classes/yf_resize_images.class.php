@@ -165,7 +165,7 @@ class yf_resize_images
                 $thumb_quality = $thumb_quality / 10;
             }
             strlen($this->output_type) ? $func_name($this->tmp_resampled, $output_file, $thumb_quality) : null;
-            imagedestroy($this->tmp_resampled);
+            $this->tmp_resampled = null;
         } else {
             if ($this->source_file != $output_file) {
                 $out_dir = dirname($output_file);

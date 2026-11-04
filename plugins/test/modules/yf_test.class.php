@@ -300,7 +300,7 @@ div
         ob_start();
         imagepng($image);
         $img_data = ob_get_clean();
-        imagedestroy($image);
+        unset($image);
 
         return '<img src="data:image/png;base64,' . base64_encode($img_data) . '" width="' . $w . '" height="' . $h . '" />';
     }

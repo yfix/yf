@@ -227,8 +227,8 @@ class yf_image_manip
         if ( ! imagejpeg($rotate_resource, $dest_file_path, 100)) {
             return false;
         }
-        imagedestroy($src_resource);
-        imagedestroy($rotate_resource);
+        unset($src_resource);
+        unset($rotate_resource);
         return $rotated_path;
     }
 
@@ -268,8 +268,8 @@ class yf_image_manip
         if ( ! imagejpeg($dest_resource, $dest_file_path, 75)) {
             return false;
         }
-        imagedestroy($src_resource);
-        imagedestroy($dest_resource);
+        unset($src_resource);
+        unset($dest_resource);
         return $dest_file_path;
     }
 

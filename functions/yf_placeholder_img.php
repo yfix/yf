@@ -71,7 +71,7 @@ function yf_placeholder_img($w = 100, $h = 100, $params = [])
 
     ob_start();
     imagepng($im);
-    imagedestroy($im);
+    unset($im);
     $data = ob_get_clean();
 
     if ( ! $params['no_out']) {
