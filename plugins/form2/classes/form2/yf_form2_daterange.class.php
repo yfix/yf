@@ -21,7 +21,7 @@ class yf_form2_daterange
         }
         $extra['name'] = $extra['name'] ?: ($name ?: 'date');
         $extra['desc'] = $form->_prepare_desc($extra, $desc);
-        $extra['placeholder'] = $extra['placeholder'] ?: $_placeholder;
+        $extra['placeholder'] = $extra['placeholder'] ?? '';
 
         if ($extra['min_date'] && strlen($extra['min_date']) == 10) {
             $time = time();
@@ -42,7 +42,7 @@ class yf_form2_daterange
             }
             $extra['value'] = empty($value) || $value == '0000-00-00 00:00:00' ? null : strtotime($value);
         }
-        $extra['value'] = empty($extra['value']) ? '' : date($_format_php, $extra['value']);
+        $extra['value'] = empty($extra['value']) ? '' : date($extra['format_php'] ?? 'Y-m-d', $extra['value']);
 
         asset('bootstrap-daterangepicker');
         jquery('$("input#' . $extra['name'] . '").daterangepicker({
