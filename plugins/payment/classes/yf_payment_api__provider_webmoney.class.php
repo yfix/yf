@@ -733,6 +733,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
 
     public function _url($options, $is_server = false)
     {
+        $_url_server = $_url_result = $_operation_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -863,6 +864,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
 
     public function _get_operation($options)
     {
+        $_operation_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -1160,6 +1162,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
 
     public function api_request_send($options = null)
     {
+        $_option = $_method = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -1222,6 +1225,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
 
     public function api_payout($options = null)
     {
+        $_amount = $_purse = $_title = $_operation_title = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

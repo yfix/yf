@@ -930,6 +930,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 
     public function _url($options, $is_server = false)
     {
+        $_url_server = $_url_result = $_operation_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -1180,6 +1181,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 
     public function api_request($options = null)
     {
+        $_option = $_header = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -1261,6 +1263,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 
     public function api_payout($options = null)
     {
+        $_amount = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

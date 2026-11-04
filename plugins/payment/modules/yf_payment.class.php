@@ -367,6 +367,7 @@ class yf_payment
 
     protected function _operation_form()
     {
+        $_operation_id = $o_title = $o_amount = null;
         // import options
         is_array($_GET) && extract($_GET, EXTR_PREFIX_ALL | EXTR_REFS, '');
         is_array($_POST) && extract($_POST, EXTR_PREFIX_ALL | EXTR_REFS, '_');

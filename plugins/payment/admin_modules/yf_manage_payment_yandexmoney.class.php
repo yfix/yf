@@ -170,6 +170,7 @@ class yf_manage_payment_yandexmoney
 
     protected function _user_message($options = null)
     {
+        $_status_message = $_status_footer = $_operation_id = null;
         $url = &$this->url;
         // import operation
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');

@@ -371,6 +371,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 
     public function _url($options, $is_server = false)
     {
+        $_url_server = $_url_result = $_operation_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -604,6 +605,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 
     public function _get_api_redirect_uri($options = null)
     {
+        $_redirect_hash = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -614,6 +616,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 
     public function authorize_request($options = null)
     {
+        $_redirect_uri = $_option = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -792,6 +795,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 
     public function api_request($options = null)
     {
+        $_option = $_header = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -868,6 +872,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 
     public function api_payout($options = null)
     {
+        $_amount = $_to = $_title = $_operation_title = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -1095,6 +1100,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 
     public function _payout_process($options = null)
     {
+        $_request_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -1169,6 +1175,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
 
     public function _payout_status_handler($options = null)
     {
+        $_error_description = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

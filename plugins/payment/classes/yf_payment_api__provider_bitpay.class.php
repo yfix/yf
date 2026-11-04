@@ -128,6 +128,7 @@ class yf_payment_api__provider_bitpay extends yf_payment_api__provider_remote
 
     public function _api_response($options)
     {
+        $_data = $_provider = $_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         /*
@@ -548,6 +549,7 @@ class yf_payment_api__provider_bitpay extends yf_payment_api__provider_remote
 
     public function payment($options)
     {
+        $_data = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

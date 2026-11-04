@@ -124,6 +124,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
 
     public function _api_response($options)
     {
+        $_data = $_provider = $_options = null;
         $operation_id = isset($_GET['operation_id']) ? (int) ($_GET['operation_id']) : '';
         $this->payment_api->dump(['name' => ucfirst($this->PROVIDER_NAME), 'operation_id' => $operation_id]);
         // import options
@@ -444,6 +445,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
 
     public function api_payout($options = null)
     {
+        $_method_id = $_amount = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

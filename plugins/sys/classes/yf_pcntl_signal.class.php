@@ -40,6 +40,7 @@ class yf_pcntl_signal
 
     public static function _pcntl_init($options = null)
     {
+        $_pcntl_ttl = $_pcntl_is_limit_action = $_pcntl_limit_action = $_pcntl_ts_start = $_pcntl_count_action = $_pcntl_is_exit = $_pcntl_is_terminate = $_pcntl_is_terminate_by_signal = $_pcntl_is_silent = $_pcntl_vars = $_is_error = null;
         if (is_console()) {
             // import options
             is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
@@ -167,6 +168,7 @@ class yf_pcntl_signal
 
     public static function _pcntl_dispatch($options = null)
     {
+        $_pcntl_is_ttl = $_pcntl_ttl = $_pcntl_is_limit_action = $_pcntl_limit_action = $_pcntl_ts_start = $_pcntl_count_action = $_pcntl_is_exit = $_pcntl_is_terminate = $_pcntl_is_terminate_by_signal = $_pcntl_is_silent = $_is_exit = $_is_silent = null;
         $result = false;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
@@ -236,6 +238,7 @@ class yf_pcntl_signal
 
     public static function _pcntl_log($options = null, $type = null)
     {
+        $_type = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // message

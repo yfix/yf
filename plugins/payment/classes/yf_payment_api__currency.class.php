@@ -89,6 +89,7 @@ class yf_payment_api__currency
 
     public function load($options = null)
     {
+        $_provider = $_method = $_date = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -161,6 +162,7 @@ class yf_payment_api__currency
     // Национальный банк Украины: html
     public function load__nbu_html($options = null)
     {
+        $_date = $_request_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -237,6 +239,7 @@ class yf_payment_api__currency
     // Национальный банк Украины: json, xml
     public function load__nbu($options = null)
     {
+        $_date = $_request_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -302,6 +305,7 @@ class yf_payment_api__currency
     // Центральный банк Российской Федерации: xml
     public function load__cbr_xml($options = null)
     {
+        $_date = $_request_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -356,6 +360,7 @@ class yf_payment_api__currency
     // ПриватБанк: json
     public function load__p24_json($options = null)
     {
+        $_request_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -409,6 +414,7 @@ class yf_payment_api__currency
     // CashExchange.com.ua: xml
     public function load__cashex_xml($options = null)
     {
+        $_request_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -464,6 +470,7 @@ class yf_payment_api__currency
     // CashExchange.com.ua: xml
     public function load__cashex_json($options = null)
     {
+        $_request_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -516,6 +523,7 @@ class yf_payment_api__currency
 
     public function reverse($options = null)
     {
+        $_currency_rate = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if (empty($_currency_rate)) {
@@ -538,6 +546,7 @@ class yf_payment_api__currency
 
     public function correction($options = null)
     {
+        $_currency_rate = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if (empty($_currency_rate)) {
@@ -565,6 +574,7 @@ class yf_payment_api__currency
 
     public function prepare($options = null)
     {
+        $_provider = $_currency_rate = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if (empty($_currency_rate)) {
@@ -634,6 +644,7 @@ class yf_payment_api__currency
 
     public function update($options = null)
     {
+        $_provider = $_currency_rate = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if ( ! @$_provider || ! @$_currency_rate) {
@@ -695,6 +706,7 @@ class yf_payment_api__currency
 
     public function rates($options = null)
     {
+        $_currency_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -767,6 +779,7 @@ class yf_payment_api__currency
 
     public function rate($options = null)
     {
+        $_currency_id = $_provider = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -810,6 +823,7 @@ class yf_payment_api__currency
 
     public function load_rate($options = null)
     {
+        $_provider = $_currency_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -865,6 +879,7 @@ class yf_payment_api__currency
 
     public function conversion($options = null)
     {
+        $_amount = $_currency_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var

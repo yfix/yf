@@ -231,6 +231,7 @@ class yf_wrapper_redis
      */
     public function set_config($options = [])
     {
+        $_name = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if (@$_name) {
@@ -253,6 +254,7 @@ class yf_wrapper_redis
      */
     public function diff_config($options = [])
     {
+        $_name = null;
         if ( ! $options || ! is_array($options)) {
             return  null;
         }

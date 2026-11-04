@@ -436,6 +436,7 @@ class yf_manage_deposit
      */
     public function _operation($options = null)
     {
+        $_operation_id = $o_account_id = $o_provider_id = $o_options = $o_status_id = $o_amount = $o_datetime_start = $o_datetime_update = $o_datetime_finish = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // class
@@ -601,6 +602,7 @@ class yf_manage_deposit
      */
     public function view()
     {
+        $_method = $_request = $_response = $_user_id = $_user = $_account_id = $_account = $_operation_id = $_html_amount = $_provider = $_html_status_title = $_html_datetime_start = $_html_datetime_update = $_html_datetime_finish = $_provider_class = $_status = null;
         // check operation
         $operation = $this->_operation();
         // import options
@@ -696,6 +698,7 @@ class yf_manage_deposit
 
     public function status()
     {
+        $_provider_class = $_provider = $_operation_id = $_operation = null;
         // check operation
         $operation = $this->_operation();
         // import options
@@ -825,6 +828,7 @@ class yf_manage_deposit
      */
     protected function _user_message($options = null)
     {
+        $_status_message = $_status_footer = $_operation_id = null;
         $url = &$this->url;
         // import operation
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');

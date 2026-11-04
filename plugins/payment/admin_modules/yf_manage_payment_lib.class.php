@@ -18,6 +18,7 @@ class yf_manage_payment_lib
 
     public function css_by_status($options = null)
     {
+        $_status_name = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var

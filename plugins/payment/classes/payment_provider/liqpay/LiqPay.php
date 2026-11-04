@@ -59,6 +59,7 @@ class LiqPay
 
     public function signature($options, $is_request = true)
     {
+        $_amount = $_currency = $_public_key = $_order_id = $_type = $_description = $_result_url = $_server_url = $_status = $_transaction_id = $_sender_phone = null;
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $data = [];
         array_push(

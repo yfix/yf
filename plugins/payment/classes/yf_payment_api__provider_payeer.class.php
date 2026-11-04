@@ -669,6 +669,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
 
     public function _api_response($options)
     {
+        $_data = $_provider = $_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $this->payment_api->dump(['name' => 'Payeer', 'operation_id' => @(int) $_POST['m_orderid'], 'ip' => common()->get_ip()]);
@@ -820,6 +821,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
 
     public function _form_options($options)
     {
+        $_operation_id = $_amount = $_ps = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -1026,6 +1028,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
 
     public function api_payout($options = null)
     {
+        $_method_id = $_amount = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

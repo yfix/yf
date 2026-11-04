@@ -128,6 +128,7 @@ RESPONSE:
 
     public function _api_response($options)
     {
+        $_data = $_provider = $_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -259,6 +260,7 @@ RESPONSE:
     //create at blockchain.info address for transfer
     public function _get_wallet($options)
     {
+        $_operation_id = $_amount = null;
         //$_SESSION['wallet_options'] = $options;
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if (empty($_operation_id)) {
@@ -294,6 +296,7 @@ RESPONSE:
 
     public function _api_deposition($options)
     {
+        $_operation_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -349,6 +352,7 @@ RESPONSE:
 
     public function payment($options)
     {
+        $_data = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

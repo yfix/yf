@@ -323,6 +323,7 @@ class yf_manage_payment
      */
     public function _operation_table($options = null)
     {
+        $_sql = $_filter = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // class

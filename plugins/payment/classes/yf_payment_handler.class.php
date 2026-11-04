@@ -4,6 +4,7 @@ class yf_payment_handler
 {
     public function balance_refresh($options = null)
     {
+        $_user_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if (@$_user_id < 1) {

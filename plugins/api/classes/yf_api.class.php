@@ -127,6 +127,7 @@ class yf_api
 
     public function _check_ip($options = null)
     {
+        $_ip_filter = $_ip = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // filter
@@ -340,6 +341,7 @@ class yf_api
 
     public function _request($url, $post = null, $options = null)
     {
+        $_method = $_user = $_password = $_access_token = $_proxy = $_proxy_user_pwd = $_resolve = $_timeout = $_SSLCERT = $_SSLCERTPASSWD = $_SSLKEY = $_SSLKEYPASSWD = $_header = $_k = $_v = $_query = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // options
@@ -734,6 +736,7 @@ class yf_api
     }
 
     public function _cache( $options = null ) {
+        $_ttl = $_ttl_s = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $h = [];

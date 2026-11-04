@@ -425,6 +425,7 @@ class yf_manage_transfer
 
     public function _operation($options = null)
     {
+        $_operation_id = $o_account_id = $o_provider_id = $o_status_id = $o_options = $o_amount = $o_datetime_start = $o_datetime_update = $o_datetime_finish = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -594,6 +595,7 @@ class yf_manage_transfer
      */
     public function view()
     {
+        $_account_id = $_operation = $_provider_id = $_operation_id = $_user_id = $_user = $_provider = $_html_amount = $_html_status_title = $_html_datetime_start = $_html_datetime_update = $_html_datetime_finish = null;
         // check operation
         $operation = $this->_operation();
         // import options
@@ -723,6 +725,7 @@ class yf_manage_transfer
 
     protected function _user_message($options = null)
     {
+        $_status_message = $_status_footer = $_operation_id = null;
         $url = &$this->url;
         // import operation
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');

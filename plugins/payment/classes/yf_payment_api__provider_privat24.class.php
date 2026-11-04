@@ -194,6 +194,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote
 
     public function api_payout($method, $options)
     {
+        $_payment_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

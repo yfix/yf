@@ -711,6 +711,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote
 
     public function _url($options, $is_server = false)
     {
+        $_url_server = $_url_result = $_operation_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -959,6 +960,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote
 
     public function api_payout($options = null)
     {
+        $_method_id = $_amount = $_currency_id = $_external_id = $_sender_phone = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

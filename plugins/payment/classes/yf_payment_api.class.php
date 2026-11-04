@@ -768,6 +768,7 @@ class yf_payment_api
 
     public function provider_class($options = null)
     {
+        $_provider_name = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $result = null;
@@ -783,6 +784,7 @@ class yf_payment_api
 
     public function provider($options = null)
     {
+        $_provider_id = $_name = $_system = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // get providers
@@ -1239,6 +1241,7 @@ class yf_payment_api
 
     public function cancel($options = null)
     {
+        $_operation_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -1396,6 +1399,7 @@ class yf_payment_api
 
     public function _operation_balance_update($options = null)
     {
+        $_status_name = $_operation_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // operation
@@ -1700,6 +1704,7 @@ class yf_payment_api
 
     public function _operation_fetch($options = null)
     {
+        $_data = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if (is_array($_data)) {
@@ -1735,6 +1740,7 @@ class yf_payment_api
     // user confirmation
     public function confirmation(&$options = null, &$data = null, &$operation_data = null)
     {
+        $_user_mode = $_type_name = null;
         $status = true;
         $result = [
             'status' => &$status,
@@ -1802,6 +1808,7 @@ class yf_payment_api
 
     public function confirmation_code_check($options = null)
     {
+        $_operation_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // operation
@@ -1872,6 +1879,7 @@ class yf_payment_api
 
     public function confirmation_ok($options = null)
     {
+        $_operation_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // operation
@@ -1924,6 +1932,7 @@ class yf_payment_api
     // transaction
     public function transaction_isolation($options = null)
     {
+        $_level = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -1952,6 +1961,7 @@ class yf_payment_api
 
     public function transaction_start($options = null)
     {
+        $_operation_id = $_status_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $tx = &$this->transaction;
@@ -1985,6 +1995,7 @@ class yf_payment_api
 
     public function transaction_finish($options = null)
     {
+        $_state = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $tx = &$this->transaction;
@@ -2027,6 +2038,7 @@ class yf_payment_api
     // mail
     public function is_user_mail($options = null)
     {
+        $_user_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -2064,6 +2076,7 @@ class yf_payment_api
 
     public function mail($options = null)
     {
+        $_type = $_status = $_data = $__operation_id = $_user_id = null;
         // DEBUG
         // ini_set( 'html_errors', 0 );
         // var_dump( $options );
@@ -2235,6 +2248,7 @@ class yf_payment_api
 
     public function mail_copy_find(&$mails, $options = null)
     {
+        $_type = $_status = null;
         if (empty($this->MAIL_COPY_TO)) {
             return;
         }
@@ -2264,6 +2278,7 @@ class yf_payment_api
 
     public function mail_copy($options = null)
     {
+        $_subject = $_tpl = $_data = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if (empty($_tpl) || empty($_data)) {
@@ -2300,6 +2315,7 @@ class yf_payment_api
 
     public function mail_log($options = null)
     {
+        $_name = $_data = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if ( ! @$_name || ! @$_data) {
@@ -2353,6 +2369,7 @@ class yf_payment_api
 
     public function money_format($options = null)
     {
+        $_decimals = $_decimal_point = $_thousands_separator = $_value = $_nbsp = $_sign = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // currency
@@ -2506,6 +2523,7 @@ class yf_payment_api
 
     public function dump($options = null)
     {
+        $_name = $_operation_id = $_var = null;
         static $is_first = true;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
@@ -2548,6 +2566,7 @@ class yf_payment_api
 
     protected function _object_update($name, $data, $options = null)
     {
+        $_options = $__is_escape = null;
         if (empty($name)) {
             return  null;
         }

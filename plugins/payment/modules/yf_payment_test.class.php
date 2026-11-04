@@ -1267,6 +1267,7 @@ EOS;
 
     protected function _currency_rates_load($options = null)
     {
+        $_provider = $_method = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -1376,6 +1377,7 @@ EOS;
 
     protected function _currency_rate_load($options = null)
     {
+        $_provider = $_method = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -1994,6 +1996,7 @@ EOS;
 
     protected function _options($title, $options = null)
     {
+        $_amount = $_operation_id = $_url_result = $_url_server = null;
         $_ = &$this->options;
         is_array($_) && extract($_, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $result = (array) $options + [
@@ -2045,6 +2048,7 @@ EOS;
 
     protected function _add_panel($options)
     {
+        $_action = $_php = $_form = $_lang = $_submit = $_title = $_header = null;
         static $count = 1;
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // action

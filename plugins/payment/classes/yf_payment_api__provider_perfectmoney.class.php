@@ -303,6 +303,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 
     public function _url($options, $is_server = false)
     {
+        $_url_server = $_url_result = $_operation_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -525,6 +526,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 
     public function api_request($options = null)
     {
+        $_option = $_header = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -604,6 +606,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
 
     public function api_payout($options = null)
     {
+        $_amount = $_account = $_title = $_operation_title = null;
         if ( ! $this->ENABLE) {
             return  null;
         }

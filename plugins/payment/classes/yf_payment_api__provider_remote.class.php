@@ -111,6 +111,7 @@ class yf_payment_api__provider_remote
 
     public function _check_ip($options = null)
     {
+        $_ip_filter = $_ip = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -139,6 +140,7 @@ class yf_payment_api__provider_remote
 
     public function option_transform($options = null)
     {
+        $_transform = $_option = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         foreach ((array) $_transform as $from => $to) {
@@ -151,6 +153,7 @@ class yf_payment_api__provider_remote
 
     public function api_url($options = null, $request_options = null)
     {
+        $_url = $_uri = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if ( ! empty($_url)) {
@@ -185,6 +188,7 @@ class yf_payment_api__provider_remote
 
     public function _update_status($options = null)
     {
+        $_operation_id = $_name = $_options = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -261,6 +265,7 @@ class yf_payment_api__provider_remote
 
     public function validate($options)
     {
+        $_type_name = $_amount = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // check payment method, type
@@ -360,6 +365,7 @@ class yf_payment_api__provider_remote
 
     public function api_method($options = null)
     {
+        $_type = $_method_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $result = null;
@@ -399,6 +405,7 @@ class yf_payment_api__provider_remote
 
     public function _api_transaction($options)
     {
+        $_operation_id = $_response = $_status_name = $_provider_name = $_state = $_status_message = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -757,6 +764,7 @@ class yf_payment_api__provider_remote
 
     public function get_currency_payout($options)
     {
+        $_method_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -782,6 +790,7 @@ class yf_payment_api__provider_remote
 
     public function get_fee_payout($options)
     {
+        $_method_id = null;
         if ( ! $this->ENABLE) {
             return  null;
         }
@@ -804,6 +813,7 @@ class yf_payment_api__provider_remote
 
     public function currency_conversion_payout($options)
     {
+        $_options = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
@@ -853,6 +863,7 @@ class yf_payment_api__provider_remote
 
     public function amount_limit($options = null)
     {
+        $_amount = $_currency_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if ( ! empty($_method['amount'])) {
@@ -930,6 +941,7 @@ class yf_payment_api__provider_remote
 
     public function _payout_processing($options = null)
     {
+        $_operation_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // progress
@@ -948,6 +960,7 @@ class yf_payment_api__provider_remote
 
     public function _payout_success($options = null)
     {
+        $_operation_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // progress
@@ -972,6 +985,7 @@ class yf_payment_api__provider_remote
 
     public function _payout_refused($options = null)
     {
+        $_operation_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // progress
