@@ -331,7 +331,7 @@ class yf_utils
             $date_format = 'F d, Y';
         // Custom format. Example: %Y_%m_%d
         } elseif ( ! empty($type) && false !== strpos($type, '%')) {
-            $date_format = $type;
+            $date_format = $this->_strftime_to_date_format($type);
         // Unknown named format fallback
         } else {
             $date_format = 'Y-m-d H:i:s';
@@ -353,6 +353,36 @@ class yf_utils
             }
         }
         return $output;
+    }
+
+    /**
+     * Convert strftime()-style format (deprecated since PHP 8.1) into a date() format.
+     * Literal letters are escaped so date() does not treat them as tokens.
+     * @param string $format
+     * @return string
+     */
+    public function _strftime_to_date_format($format)
+    {
+        $map = [
+            'Y' => 'Y', 'y' => 'y', 'm' => 'm', 'd' => 'd', 'e' => 'j', 'j' => 'z',
+            'H' => 'H', 'I' => 'h', 'M' => 'i', 'S' => 's', 'p' => 'A', 'P' => 'a',
+            'B' => 'F', 'b' => 'M', 'h' => 'M', 'A' => 'l', 'a' => 'D', 'u' => 'N', 'w' => 'w',
+            'Z' => 'T', 'z' => 'O', 's' => 'U', 'F' => 'Y-m-d', 'T' => 'H:i:s', 'D' => 'm/d/y', 'R' => 'H:i',
+            'n' => "\n", 't' => "\t", '%' => '\\%',
+        ];
+        $out = '';
+        $len = strlen($format);
+        for ($i = 0; $i < $len; $i++) {
+            $c = $format[$i];
+            if ($c === '%' && $i + 1 < $len && isset($map[$format[$i + 1]])) {
+                $out .= $map[$format[++$i]];
+            } elseif (ctype_alpha($c) || $c === '\\') {
+                $out .= '\\' . $c;
+            } else {
+                $out .= $c;
+            }
+        }
+        return $out;
     }
 
     // This function adds the 'st', 'nd', 'rd' or 'th' to a given timestamp
