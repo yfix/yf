@@ -5,6 +5,8 @@ require_once dirname(__DIR__) . '/yf_unit_tests_setup.php';
 abstract class tpl_abstract extends yf\tests\wrapper
 {
     public static $_bak = [];
+    public $_callme_results = [];
+    public $_callme2_results = [];
     public static function setUpBeforeClass() : void
     {
         // Replace default style and script templates with empty strings

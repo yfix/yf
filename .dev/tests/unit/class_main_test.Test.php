@@ -27,7 +27,7 @@ class class_main_test extends \yf\tests\wrapper
             $_SERVER['SERVER_PORT'] = $server_port ?: $_this->test_defaults['port'];
             $_SERVER['HTTP_HOST'] = $server_host ?: $_this->test_defaults['host'];
             $res = main()->_find_site($sites_dir);
-            return $res[0];
+            return $res[0] ?? null;
         };
     }
     public function test__find_site_path_best_match__basic()

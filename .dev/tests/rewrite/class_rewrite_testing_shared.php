@@ -8,7 +8,7 @@ class class_rewrite_testing_shared extends yf\tests\wrapper
 
     public static function setUpBeforeClass() : void
     {
-        self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
+        self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] ?? null;
         $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
         $_GET = [
             'object' => 'dynamic',
@@ -352,7 +352,7 @@ class class_rewrite_testing_shared extends yf\tests\wrapper
 
         main()->USE_ONLY_HTTPS = $old;
 
-        $old = $_SERVER['HTTPS'];
+        $old = $_SERVER['HTTPS'] ?? null;
         $_SERVER['HTTPS'] = 'on';
         $this->assertTrue(main()->is_https());
         $this->assertEquals('https://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('//test.dev/?object=obj&action=act'));

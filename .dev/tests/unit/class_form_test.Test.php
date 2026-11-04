@@ -113,6 +113,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_input_text_simple()
     {
+        $r = [];
         $this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(form_item($r)->text('name')));
         $this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name')));
         $this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '')));
@@ -132,18 +133,21 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_input_text_attr_data()
     {
+        $r = [];
         $this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" data-something="5">', trim(self::form_no_chain($r)->text('name', ['data-something' => '5'])));
         $this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" data-a1="a11" data-b1="b11">', trim(self::form_no_chain($r)->text('name', ['data-a1' => 'a11', 'data-b1' => 'b11'])));
         $this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" data-test-escape="!@#$%^&*(&quot;&apos;&lt;&gt;?&gt;&lt;:;">', trim(self::form_no_chain($r)->text('name', ['data-test-escape' => '!@#$%^&*("\'<>?><:;'])));
     }
     public function test_input_text_attr_ng()
     {
+        $r = [];
         $this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" ng-something="5">', trim(self::form_no_chain($r)->text('name', ['ng-something' => '5'])));
         $this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" ng-a1="a11" ng-b1="b11">', trim(self::form_no_chain($r)->text('name', ['ng-a1' => 'a11', 'ng-b1' => 'b11'])));
         $this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" ng-test-escape="!@#$%^&*(&quot;&apos;&lt;&gt;?&gt;&lt;:;">', trim(self::form_no_chain($r)->text('name', ['ng-test-escape' => '!@#$%^&*("\'<>?><:;'])));
     }
     public function test_input_textarea()
     {
+        $r = [];
         $this->assertEquals('<textarea id="name" name="name" placeholder="Name" contenteditable="true" class="form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name')));
         $this->assertEquals('<textarea id="name" name="name" placeholder="Name" contenteditable="true" class="form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name', '')));
         $this->assertEquals('<textarea id="name" name="name" placeholder="Desc" contenteditable="true" class="form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name', '', ['desc' => 'Desc'])));
@@ -152,17 +156,20 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_input_hidden()
     {
+        $r = [];
         $this->assertEquals('<input type="hidden" id="hdn" name="hdn">', trim(self::form_no_chain($r)->hidden('hdn')));
         $this->assertEquals('<input type="hidden" id="hdn" name="hdn" value="val1">', trim(self::form_no_chain($r)->hidden('hdn', ['value' => 'val1'])));
     }
     public function test_container()
     {
+        $r = [];
         $this->assertEquals('<form method="post" action="' . self::$action . '" class="form-horizontal" name="form_action" autocomplete="1"><fieldset>' .
             '<div class="' . self::$css['CLASS_FORM_GROUP'] . '"><div class="' . _attr_class_clean(self::$css['CLASS_CONTROLS'] . self::$css['CLASS_NO_LABEL']) . '"><section id="test"></section></div></div></fieldset></form>', str_replace(PHP_EOL, '', trim(form()->container('<section id="test"></section>'))));
         $this->assertEquals('<section id="test"></section>', trim(self::form_no_chain($r)->container('<section id="test"></section>')));
     }
     public function test_select_box()
     {
+        $r = [];
         $data = ['k1' => 'v1',	'k2' => 'v2'];
         $this->assertEquals(str_replace(
             PHP_EOL,
@@ -182,6 +189,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_select_box_subarray()
     {
+        $r = [];
         $data = [
             'group1' => ['k1' => 'v1', 'k2' => 'v2'],
             'group2' => ['k3' => 'v3',	'k4' => 'v4'],
@@ -197,6 +205,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_multi_select_box()
     {
+        $r = [];
         $data = ['k1' => 'v1', 'k2' => 'v2', 'k3' => 'v2'];
         $selected = ['k2' => '1', 'k3' => '1'];
         $this->assertEquals('<select name="myselect[]" id="multi_select_1" class="form-control" multiple="multiple"><option value="k1">v1</option><option value="k2">v2</option><option value="k3">v2</option></select>', str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_select_box('myselect', $data))));
@@ -208,6 +217,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_check_box()
     {
+        $r = [];
         $html = html();
         $def_class = $html->CLASS_LABEL_CHECKBOX . ' ' . $html->CLASS_LABEL_CHECKBOX_INLINE;
 
@@ -262,6 +272,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_multi_check_box()
     {
+        $r = [];
         $html = html();
         $data = ['k1' => 'v1', 'k2' => 'v2'];
         $selected = ['k2' => '1'];
@@ -295,6 +306,7 @@ class class_form_test extends yf\tests\wrapper
     // }
     public function test_div_box()
     {
+        $r = [];
         $data = ['k1' => 'v1', 'k2' => 'v2'];
         $selected = 'k2';
         $this->assertEquals(
@@ -310,6 +322,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_list_box()
     {
+        $r = [];
         $data = ['k1' => 'v1', 'k2' => 'v2'];
         $selected = 'k2';
         $this->assertEquals(
@@ -323,10 +336,12 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_fieldset_start()
     {
+        $r = [];
         $this->assertEquals('<fieldset name="f1">', trim(self::form_no_chain($r)->fieldset_start('f1')));
     }
     public function test_input()
     {
+        $r = [];
         $this->assertEquals(
             '<input name="test" type="text" id="test" class="form-control" placeholder="Test">',
             trim(self::form_no_chain($r)->input('test'))
@@ -334,107 +349,130 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_password()
     {
+        $r = [];
         $this->assertEquals('<input name="test" type="password" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->password('test')));
     }
     public function test_file()
     {
+        $r = [];
         $this->assertEquals('<input name="test" type="file" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->file('test')));
     }
     public function test_button()
     {
+        $r = [];
         $this->assertEquals('<input name="test" type="button" id="test" class="form-control btn btn-default" placeholder="Test" value="Test">', trim(self::form_no_chain($r)->button('test')));
     }
     public function test_login()
     {
+        $r = [];
         $this->assertEquals('<input name="login" type="text" id="login" class="form-control" placeholder="Login">', trim(self::form_no_chain($r)->login()));
         $this->assertEquals('<input name="test" type="text" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->login('test')));
     }
     public function test_email()
     {
+        $r = [];
         $this->assertEquals('<input name="email" type="email" id="email" class="form-control" placeholder="Email">', trim(self::form_no_chain($r)->email()));
         $this->assertEquals('<input name="test" type="email" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->email('test')));
     }
     public function test_number()
     {
+        $r = [];
         $this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="10">', trim(self::form_no_chain($r)->number('test')));
     }
     public function test_integer()
     {
+        $r = [];
         $this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="10">', trim(self::form_no_chain($r)->integer('test')));
     }
     public function test_float()
     {
+        $r = [];
         $this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="10" step="0.01">', trim(self::form_no_chain($r)->float('test')));
     }
     public function test_decimal()
     {
+        $r = [];
         $this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="10" step="0.01">', trim(self::form_no_chain($r)->decimal('test')));
     }
     public function test_money()
     {
+        $r = [];
         $this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="8" step="0.01">', trim(self::form_no_chain($r)->money('test')));
     }
     public function test_price()
     {
+        $r = [];
         $this->assertEquals('<input name="test" type="number" id="test" class="form-control" placeholder="Test" maxlength="8" min="0" step="0.01">', trim(self::form_no_chain($r)->price('test')));
     }
     public function test_url()
     {
+        $r = [];
         $this->assertEquals('<input name="url" type="url" id="url" class="form-control" placeholder="Url">', trim(self::form_no_chain($r)->url()));
         $this->assertEquals('<input name="test" type="url" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->url('test')));
     }
     public function test_color()
     {
+        $r = [];
         $this->assertEquals('<input name="color" type="color" id="color" class="form-control" placeholder="Color">', trim(self::form_no_chain($r)->color()));
         $this->assertEquals('<input name="test" type="color" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->color('test')));
     }
     public function test_date()
     {
+        $r = [];
         $this->assertEquals('<input name="date" type="date" id="date" class="form-control" placeholder="Date">', trim(self::form_no_chain($r)->date()));
         $this->assertEquals('<input name="test" type="date" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->date('test')));
     }
     public function test_datetime()
     {
+        $r = [];
         $this->assertEquals('<input name="datetime" type="datetime" id="datetime" class="form-control" placeholder="Datetime">', trim(self::form_no_chain($r)->datetime()));
         $this->assertEquals('<input name="test" type="datetime" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->datetime('test')));
     }
     public function test_datetime_local()
     {
+        $r = [];
         $this->assertEquals('<input name="datetime_local" type="datetime-local" id="datetime_local" class="form-control" placeholder="Datetime local">', trim(self::form_no_chain($r)->datetime_local()));
         $this->assertEquals('<input name="test" type="datetime-local" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->datetime_local('test')));
     }
     public function test_month()
     {
+        $r = [];
         $this->assertEquals('<input name="month" type="month" id="month" class="form-control" placeholder="Month">', trim(self::form_no_chain($r)->month()));
         $this->assertEquals('<input name="test" type="month" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->month('test')));
     }
     public function test_range()
     {
+        $r = [];
         $this->assertEquals('<input name="range" type="range" id="range" class="form-control" placeholder="Range">', trim(self::form_no_chain($r)->range()));
         $this->assertEquals('<input name="test" type="range" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->range('test')));
     }
     public function test_search()
     {
+        $r = [];
         $this->assertEquals('<input name="search" type="search" id="search" class="form-control" placeholder="Search">', trim(self::form_no_chain($r)->search()));
         $this->assertEquals('<input name="test" type="search" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->search('test')));
     }
     public function test_tel()
     {
+        $r = [];
         $this->assertEquals('<input name="tel" type="tel" id="tel" class="form-control" placeholder="Tel">', trim(self::form_no_chain($r)->tel()));
         $this->assertEquals('<input name="test" type="tel" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->tel('test')));
     }
     public function test_phone()
     {
+        $r = [];
         $this->assertEquals('<input name="phone" type="tel" id="phone" class="form-control" placeholder="Phone">', trim(self::form_no_chain($r)->phone()));
         $this->assertEquals('<input name="test" type="tel" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->phone('test')));
     }
     public function test_time()
     {
+        $r = [];
         $this->assertEquals('<input name="time" type="time" id="time" class="form-control" placeholder="Time">', trim(self::form_no_chain($r)->time()));
         $this->assertEquals('<input name="test" type="time" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->time('test')));
     }
     public function test_week()
     {
+        $r = [];
         $this->assertEquals('<input name="week" type="week" id="week" class="form-control" placeholder="Week">', trim(self::form_no_chain($r)->week()));
         $this->assertEquals('<input name="test" type="week" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->week('test')));
     }
@@ -485,11 +523,13 @@ class class_form_test extends yf\tests\wrapper
     // }
     public function test_submit()
     {
+        $r = [];
         $this->assertEquals('<button type="submit" id="save" class="btn btn-default btn-primary" value="Save">Save</button>', trim(self::form_no_chain($r)->submit()));
         $this->assertEquals('<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save">Save</button>', trim(self::form_no_chain($r)->submit('test')));
     }
     public function test_save()
     {
+        $r = [];
         $this->assertEquals(
             '<button type="submit" id="save" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button>',
             trim(self::form_no_chain($r)->save())
@@ -501,23 +541,27 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_save_and_back()
     {
+        $r = [];
         //		$r['back_link'] = 'http://somewhere.com/';
         $this->assertEquals('<button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button>', trim(self::form_no_chain($r)->save_and_back()));
         $this->assertEquals('<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button>', trim(self::form_no_chain($r)->save_and_back('test')));
     }
     public function test_save_and_clear()
     {
+        $r = [];
         $this->assertEquals('<button type="submit" name="clear_link" id="clear_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button>', trim(self::form_no_chain($r)->save_and_clear()));
         $this->assertEquals('<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button>', trim(self::form_no_chain($r)->save_and_clear('test')));
     }
     public function test_info()
     {
+        $r = [];
         $this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info('test')));
         $r['test'] = 'some info';
         $this->assertEquals('<span class=" label label-info">some info</span>', trim(self::form_no_chain($r)->info('test')));
     }
     public function test_info_date()
     {
+        $r = [];
         $this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_date()));
         $this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_date('test')));
         $r['test'] = '2015-01-01';
@@ -525,6 +569,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_info_link()
     {
+        $r = [];
         $this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_link()));
         $this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_link('test')));
         $r['test'] = './?object=someobject&action=someaction';
@@ -532,10 +577,12 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_tbl_link()
     {
+        $r = [];
         $this->assertEquals('<a name="test" href="./?object=someobject&action=someaction" class="btn btn-default btn-mini btn-xs"><i class="icon-tasks fa fa-tasks"></i> test</a>', trim(self::form_no_chain($r)->tbl_link('test', './?object=someobject&action=someaction')));
     }
     public function test_tbl_link_edit()
     {
+        $r = [];
         $this->assertEquals('<a name="Edit" class="btn btn-default btn-mini btn-xs ajax_edit"><i class="icon-edit fa fa-edit"></i> Edit</a>', trim(self::form_no_chain($r)->tbl_link_edit()));
         $this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_edit"><i class="icon-edit fa fa-edit"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_edit('test')));
         $r['edit_link'] = './?object=someobject&action=someaction';
@@ -543,6 +590,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_tbl_link_delete()
     {
+        $r = [];
         $this->assertEquals('<a name="Delete" class="btn btn-default btn-mini btn-xs ajax_delete btn-danger"><i class="icon-trash fa fa-trash"></i> Delete</a>', trim(self::form_no_chain($r)->tbl_link_delete()));
         $this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_delete btn-danger"><i class="icon-trash fa fa-trash"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_delete('test')));
         $r['delete_link'] = './?object=someobject&action=someaction';
@@ -550,6 +598,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_tbl_link_clone()
     {
+        $r = [];
         $this->assertEquals('<a name="Clone" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-code-fork fa fa-code-fork"></i> Clone</a>', trim(self::form_no_chain($r)->tbl_link_clone()));
         $this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-code-fork fa fa-code-fork"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_clone('test')));
         $r['clone_link'] = './?object=someobject&action=someaction';
@@ -557,6 +606,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_tbl_link_view()
     {
+        $r = [];
         $this->assertEquals('<a name="View" class="btn btn-default btn-mini btn-xs ajax_view"><i class="icon-eye-open fa fa-eye"></i> View</a>', trim(self::form_no_chain($r)->tbl_link_view()));
         $this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_view"><i class="icon-eye-open fa fa-eye"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_view('test')));
         $r['view_link'] = './?object=someobject&action=someaction';
@@ -564,6 +614,7 @@ class class_form_test extends yf\tests\wrapper
     }
     public function test_tbl_link_active()
     {
+        $r = [];
         //		$this->assertEquals('<a href="active_link" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</button></a>'
         //			, trim(self::form_no_chain($r)->tbl_link_active()) );
         //		$this->assertEquals('<a href="active_link" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</button></a>'

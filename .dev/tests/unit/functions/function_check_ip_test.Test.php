@@ -33,7 +33,7 @@ class function_check_ip_test extends yf\tests\wrapper
         ];
         $ignore_ips = array_combine($ignore_ips, $ignore_ips);
         foreach ((array) $test_array as $test_ip => $expect_ip) {
-            $_SERVER['HTTP_X_FORWARDED_FOR'] = $key;
+            $_SERVER['HTTP_X_FORWARDED_FOR'] = $test_ip;
             $this->assertEquals($expect_ip, _class('client_utils', 'classes/common/')->_check_ip($test_ip, $ignore_ips/*, 'GEO'*/));
         }
     }

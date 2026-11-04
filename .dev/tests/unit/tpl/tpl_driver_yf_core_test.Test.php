@@ -193,8 +193,8 @@ class tpl_driver_yf_core_test extends tpl_abstract
     }
     public function test_if_const()
     {
-        define('MY_TEST_CONST_1', '42');
-        define('MY_TEST_CONST_2', '43');
+        defined('MY_TEST_CONST_1') || define('MY_TEST_CONST_1', '42');
+        defined('MY_TEST_CONST_2') || define('MY_TEST_CONST_2', '43');
         $this->assertFalse(defined('MY_NOT_EXISTING_CONST'));
         $this->assertEquals('GOOD', self::_tpl('{if("const.MY_TEST_CONST_1" ne "")}GOOD{else}BAD{/if}'));
         $this->assertEquals('GOOD', self::_tpl('{if("const.MY_NOT_EXISTING_CONST" eq "")}GOOD{else}BAD{/if}'));
@@ -213,7 +213,7 @@ class tpl_driver_yf_core_test extends tpl_abstract
     }
     public function test_if_const_and_sub()
     {
-        define('MY_TEST_CONST_1', '42');
+        defined('MY_TEST_CONST_1') || define('MY_TEST_CONST_1', '42');
         $this->assertEquals('GOOD', self::_tpl('{if("sub.key1" eq "val1" and "const.MY_TEST_CONST_1" eq "42")}GOOD{else}BAD{/if}', ['sub' => ['key1' => 'val1']]));
         $this->assertEquals('GOOD', self::_tpl('{if("sub.key1" eq "val1" and "const.MY_TEST_CONST_1" eq "43")}BAD{else}GOOD{/if}', ['sub' => ['key1' => 'val1']]));
         $this->assertEquals('GOOD', self::_tpl('{if("sub.key1" eq "val1" and "const.MY_NOT_EXISTING_CONST" eq "1")}BAD{else}GOOD{/if}', ['sub' => ['key1' => 'val1']]));

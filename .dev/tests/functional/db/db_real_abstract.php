@@ -24,8 +24,8 @@ abstract class db_real_abstract extends yf\tests\wrapper {
 	*/
 	public static function _connect($params = []) {
 		try {
-		self::$DB_NAME = $params['name'] ?: DB_NAME;
-		if ($params['driver']) {
+		self::$DB_NAME = ($params['name'] ?? null) ?: DB_NAME;
+		if ($params['driver'] ?? null) {
 			self::$DB_DRIVER = $params['driver'];
 		}
 		$db_class = load_db_class();
@@ -52,11 +52,11 @@ abstract class db_real_abstract extends yf\tests\wrapper {
 	*/
 	public static function _connect_mysql($params = []) {
 		$res = self::$db->connect([
-			'host'	=> $params['host'] ?: DB_HOST,
+			'host'	=> ($params['host'] ?? null) ?: DB_HOST,
 			'name'	=> self::$DB_NAME,
-			'user'	=> $params['user'] ?: DB_USER,
-			'pswd'	=> $params['pswd'] ?: DB_PSWD,
-			'prefix'=> $params['prefix'] ?: DB_PREFIX,
+			'user'	=> ($params['user'] ?? null) ?: DB_USER,
+			'pswd'	=> ($params['pswd'] ?? null) ?: DB_PSWD,
+			'prefix'=> ($params['prefix'] ?? null) ?: DB_PREFIX,
 			'force' => true,
 		]);
 		return !empty($res) ? true : false;
@@ -67,11 +67,11 @@ abstract class db_real_abstract extends yf\tests\wrapper {
 	public static function _connect_pgsql($params = []) {
 		self::$DB_NAME = $params['name'] ?: (is_string(getenv('YF_DB_PG_NAME')) ? getenv('YF_DB_PG_NAME') : DB_NAME);
 		$res = self::$db->connect([
-			'host'	=> $params['host'] ?: (is_string(getenv('YF_DB_PG_HOST')) ? getenv('YF_DB_PG_HOST') : '127.0.0.1'),
+			'host'	=> ($params['host'] ?? null) ?: (is_string(getenv('YF_DB_PG_HOST')) ? getenv('YF_DB_PG_HOST') : '127.0.0.1'),
 			'name'	=> self::$DB_NAME,
-			'user'	=> $params['user'] ?: (is_string(getenv('YF_DB_PG_USER')) ? getenv('YF_DB_PG_USER') : 'yf'),
+			'user'	=> ($params['user'] ?? null) ?: (is_string(getenv('YF_DB_PG_USER')) ? getenv('YF_DB_PG_USER') : 'yf'),
 			'pswd'	=> is_string($params['pswd']) ? $params['pswd'] : (is_string(getenv('YF_DB_PG_PSWD')) ? getenv('YF_DB_PG_PSWD') : DB_PSWD),
-			'prefix'=> $params['prefix'] ?: (is_string(getenv('YF_DB_PG_PREFIX')) ? getenv('YF_DB_PG_PREFIX') : DB_PREFIX),
+			'prefix'=> ($params['prefix'] ?? null) ?: (is_string(getenv('YF_DB_PG_PREFIX')) ? getenv('YF_DB_PG_PREFIX') : DB_PREFIX),
 			'force' => true,
 		]);
 		return !empty($res) ? true : false;

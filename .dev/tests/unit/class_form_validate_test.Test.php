@@ -17,7 +17,7 @@ class class_form_validate_test extends yf\tests\wrapper
     {
         $this->assertEquals('', common()->_get_error_messages());
 
-        $old = $_SERVER['REQUEST_METHOD'];
+        $old = $_SERVER['REQUEST_METHOD'] ?? null;
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
         $form_id = md5(microtime());
@@ -26,7 +26,7 @@ class class_form_validate_test extends yf\tests\wrapper
         $_POST['name'] = '';
         $params = ['do_not_remove_errors' => 1, '__form_id__' => $form_id];
 
-        form($a, $params)
+        form([], $params)
             ->text('name', ['validate' => 'required'])
             ->validate()
             ->render();
@@ -37,7 +37,7 @@ class class_form_validate_test extends yf\tests\wrapper
 
         $_POST['name'] = '';
 
-        form($a, $params)
+        form([], $params)
             ->text('name')
             ->validate($rules = ['name' => 'required'])
             ->render();
@@ -48,7 +48,7 @@ class class_form_validate_test extends yf\tests\wrapper
 
         $_POST['name'] = '';
 
-        form($a, $params)
+        form([], $params)
             ->text('name')
             ->validate($rules = ['name' => 'trim'])
             ->render();
@@ -56,7 +56,7 @@ class class_form_validate_test extends yf\tests\wrapper
 
         $_POST['name'] = 'something';
 
-        form($a, $params)
+        form([], $params)
             ->text('name')
             ->validate($rules = ['name' => 'required'], $post = ['name' => '', '__form_id__' => $form_id])
             ->render();
@@ -68,7 +68,7 @@ class class_form_validate_test extends yf\tests\wrapper
         $_POST['name1'] = 'val';
         $_POST['name2'] = 'val';
 
-        form($a, $params)
+        form([], $params)
             ->text('name1')
             ->text('name2')
             ->validate($rules = ['name1' => 'trim', 'name2' => 'matches:name1'])
@@ -78,7 +78,7 @@ class class_form_validate_test extends yf\tests\wrapper
         $_POST['name1'] = 'val';
         $_POST['name2'] = 'other';
 
-        form($a, $params)
+        form([], $params)
             ->text('name1')
             ->text('name2')
             ->validate($rules = ['name1' => 'trim', 'name2' => 'matches:name1'])
@@ -88,7 +88,7 @@ class class_form_validate_test extends yf\tests\wrapper
         $_POST['name1'] = 'val';
         $_POST['name2'] = 'other';
 
-        form($a, $params)
+        form([], $params)
             ->text('name1', 'Desc1')
             ->text('name2', 'Desc2')
             ->validate($rules = ['name1' => 'trim', 'name2' => 'matches:name1'])
