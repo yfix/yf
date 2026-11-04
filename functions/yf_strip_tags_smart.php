@@ -29,7 +29,7 @@
  */
 function strip_tags_smart(
     /*string*/ $s,
-    array $allowable_tags = null,
+    ?array $allowable_tags = null,
     /*boolean*/ $is_format_spaces = true,
     array $pair_tags = ['script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button'],
     array $para_tags = ['p', 'td', 'th', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'form', 'title', 'pre', 'textarea']
