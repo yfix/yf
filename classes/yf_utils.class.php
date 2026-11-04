@@ -360,10 +360,7 @@ class yf_utils
         if (empty($timestamp)) {
             $timestamp = time();
         }
-        $day_number = gmstrftime('%#d', $timestamp);
-        $sufixes = ['1' => 'st', '2' => 'nd', '3' => 'rd'];
-        $new_suffix = $sufixes[substr($day_number, -1)];
-        return ! empty($new_suffix) ? $new_suffix : 'th';
+        return gmdate('S', $timestamp);
     }
 
     // Simple encode string
