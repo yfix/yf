@@ -358,15 +358,18 @@ class yf_utils
     /**
      * Convert strftime()-style format (deprecated since PHP 8.1) into a date() format.
      * Literal letters are escaped so date() does not treat them as tokens.
+     * Known differences: %e is not space-padded; %j (day of year, 001-366) has no date() equivalent
+     * and, like any other unmapped token, is kept literally and reported with a notice.
      * @param string $format
      * @return string
      */
     public function _strftime_to_date_format($format)
     {
         $map = [
-            'Y' => 'Y', 'y' => 'y', 'm' => 'm', 'd' => 'd', 'e' => 'j', 'j' => 'z',
-            'H' => 'H', 'I' => 'h', 'M' => 'i', 'S' => 's', 'p' => 'A', 'P' => 'a',
+            'Y' => 'Y', 'y' => 'y', 'm' => 'm', 'd' => 'd', 'e' => 'j',
+            'H' => 'H', 'k' => 'G', 'I' => 'h', 'l' => 'g', 'M' => 'i', 'S' => 's', 'p' => 'A', 'P' => 'a',
             'B' => 'F', 'b' => 'M', 'h' => 'M', 'A' => 'l', 'a' => 'D', 'u' => 'N', 'w' => 'w',
+            'G' => 'o', 'V' => 'W',
             'Z' => 'T', 'z' => 'O', 's' => 'U', 'F' => 'Y-m-d', 'T' => 'H:i:s', 'D' => 'm/d/y', 'R' => 'H:i',
             'n' => "\n", 't' => "\t", '%' => '\\%',
         ];
@@ -376,6 +379,9 @@ class yf_utils
             $c = $format[$i];
             if ($c === '%' && $i + 1 < $len && isset($map[$format[$i + 1]])) {
                 $out .= $map[$format[++$i]];
+            } elseif ($c === '%' && $i + 1 < $len && ctype_alpha($format[$i + 1])) {
+                trigger_error('UTILS: unsupported strftime token %' . $format[$i + 1] . ' in format "' . $format . '"', E_USER_NOTICE);
+                $out .= '%\\' . $format[++$i];
             } elseif (ctype_alpha($c) || $c === '\\') {
                 $out .= '\\' . $c;
             } else {
