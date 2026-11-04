@@ -712,7 +712,7 @@ class yf_payment_api__currency
         $provider_id = $provider_item['id'];
         // cache
         $currency_rate = $this->cache[__FUNCTION__][$provider_id][$_type][$_currency_id];
-        if ($_['force'] || ! $currency_rate) {
+        if ( ! empty($_force) || ! $currency_rate) {
             list($currency_id, $currency) = $payment_api->get_currency__by_id(['currency_id' => $_currency_id]);
             if (@$_type == 'buy') {
                 $target = 'to';
