@@ -156,7 +156,7 @@ class yf_utf8_clean
     public function _unaccent($str = '')
     {
         if ( ! common()->is_utf8($str)) {
-            $str = utf8_encode($str);
+            $str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
         }
         if ($this->fss_exists && ! $GLOBALS['force_strtr']) {
             if ( ! isset($GLOBALS['fss']['unaccent'])) {
@@ -244,7 +244,7 @@ class yf_utf8_clean
                 if (ord($literal) >= 192) {
                     // Get the accented form of the letter
                     // Get e.g. 'E' from the string '&Eacute'
-                    $search[utf8_encode($literal)] = $entity[1];
+                    $search[mb_convert_encoding($literal, 'UTF-8', 'ISO-8859-1')] = $entity[1];
                 }
             }
         }
