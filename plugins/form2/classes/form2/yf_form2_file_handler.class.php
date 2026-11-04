@@ -3,6 +3,8 @@
 require_php_lib('jquery-file-upload');
 class yf_form2_file_handler extends UploadHandler
 {
+    public $options = null;
+    public $error_messages = null;
     public function process($options = null, $initialize = true, $error_messages = null)
     {
         $this->options = [

@@ -3469,21 +3469,22 @@ class yf_form2
                 $error_msg = '';
                 $func = $rule[0];
                 $param = $rule[1];
+                $value = $data[$name] ?? null;
                 // PHP pure function, from core or user
                 if (is_string($func) && function_exists($func)) {
-                    $data[$name] = $this->_apply_existing_func($func, $data[$name]);
+                    $data[$name] = $this->_apply_existing_func($func, $value);
                 } elseif (is_callable($func)) {
-                    $is_ok = $func($data[$name], null, $data, $error_msg);
+                    $is_ok = $func($value, null, $data, $error_msg);
                 } else {
-                    if (is_array($data[$name]) && ! empty($data[$name])) {
-                        foreach ($data[$name] as $k => $v) {
+                    if (is_array($value) && ! empty($value)) {
+                        foreach ($value as $k => $v) {
                             $is_ok = _class('validate')->$func($v, ['param' => $param], $data, $error_msg, ['field' => $name]);
                             if ( ! $is_ok) {
                                 break;
                             }
                         }
                     } else {
-                        $is_ok = _class('validate')->$func($data[$name], ['param' => $param], $data, $error_msg, ['field' => $name]);
+                        $is_ok = _class('validate')->$func($value, ['param' => $param], $data, $error_msg, ['field' => $name]);
                     }
                     if ( ! $is_ok && empty($error_msg)) {
                         $desc = $this->_find_field_desc($name) ?: $name;
