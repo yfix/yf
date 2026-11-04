@@ -98,8 +98,8 @@ class yf_payment_api__provider_remote
         if ( ! is_array($status_message)) {
             $status_message = &$this->_status_message;
         }
-        $name = @$status[$value] ?: null;
-        $message = @$status_message[$name] ?: @$status_message[$value] ?: null;
+        $name = ($status[$value] ?? null) ?: null;
+        $message = ($status_message[$name] ?? null) ?: ($status_message[$value] ?? null) ?: null;
         return  [$name, $message];
     }
 
@@ -118,7 +118,7 @@ class yf_payment_api__provider_remote
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // allow ip
-        $ip_filter = @$_ip_filter ? $_ip_filter : $this->ip_filter;
+        $ip_filter = ($_ip_filter ?? null) ? $_ip_filter : $this->ip_filter;
         $ip = isset($_ip) ? $_ip : $this->_ip();
         $result = _class('api')->_check_ip([
             'ip' => $ip,
@@ -169,7 +169,7 @@ class yf_payment_api__provider_remote
             foreach ($_uri as $id => $value) {
                 if (is_string($value) && strpos($value, '$') !== false) {
                     $v = str_replace('$', '', $value);
-                    $v = @$request_options[$v];
+                    $v = ($request_options[$v] ?? null);
                     if ($v === null) {
                         $result = [
                             'status' => false,
@@ -256,7 +256,7 @@ class yf_payment_api__provider_remote
             ];
         }
         ! empty($_is_finish) && $data['datetime_finish'] = $sql_datetime;
-        if (@$data_options) {
+        if (($data_options ?? null)) {
             $data['options'] = $payment_api->_merge($data_options, $_options);
         }
         $result = $payment_api->operation_update($data);
@@ -286,8 +286,8 @@ class yf_payment_api__provider_remote
         }
         // method
         $method = $this->api_method([
-            'type' => @$payway,
-            'method_id' => @$_method_id,
+            'type' => ($payway ?? null),
+            'method_id' => ($_method_id ?? null),
         ]);
         if (empty($method)) {
             return  $this->result_success();
@@ -308,7 +308,7 @@ class yf_payment_api__provider_remote
             'currency_id' => $currency_id,
             'method' => $method,
         ]);
-        if ( ! @$result['status']) {
+        if ( ! ($result['status'] ?? null)) {
             return  $result;
         }
         // validation options
@@ -316,7 +316,7 @@ class yf_payment_api__provider_remote
             return  $this->result_success();
         }
         $validation = $method['option_validation'];
-        $validation_message = @$method['option_validation_message'];
+        $validation_message = ($method['option_validation_message'] ?? null);
         $validation_error = [];
         $validate = _class('validate');
         // validation processor
@@ -330,7 +330,7 @@ class yf_payment_api__provider_remote
             $rules = $validation[$key];
             $result = $validate->_input_is_valid($value, $rules);
             if (empty($result)) {
-                $message = @$validation_message[$key] ?: 'Неверное поле';
+                $message = ($validation_message[$key] ?? null) ?: 'Неверное поле';
                 $validation_error[$key] = t($message);
             }
         }
@@ -353,7 +353,7 @@ class yf_payment_api__provider_remote
     public function api_authorization($method = null)
     {
         $result = null;
-        if ( ! @$method['is_authorization']) {
+        if ( ! ($method['is_authorization'] ?? null)) {
             return  $result;
         }
         $result = [
@@ -511,7 +511,7 @@ class yf_payment_api__provider_remote
         $provider = reset($object);
         $provider_name = $provider['name'];
         // check request/response provider
-        if ( ! @$_provider_force && $provider_name != $_provider_name) {
+        if ( ! ($_provider_force ?? null) && $provider_name != $_provider_name) {
             $result = [
                 'status' => false,
                 'status_message' => "Провайдер не совпадает ($_provider_name)",
@@ -675,7 +675,7 @@ class yf_payment_api__provider_remote
                         'provider_name' => $provider_name,
                         'state' => $_state,
                         'status' => $new_status_name,
-                        'status_message' => @$_status_message,
+                        'status_message' => ($_status_message ?? null),
                         'data' => $_response,
                     ]],
                 ];
@@ -720,7 +720,7 @@ class yf_payment_api__provider_remote
                     ]);
                 }
             }
-            @$_status_message && $status_message = $_status_message;
+            ($_status_message ?? null) && $status_message = $_status_message;
             // event
             // get updated account
             $object = $payment_api->get_account__by_id(['account_id' => $account_id]);
@@ -748,7 +748,7 @@ class yf_payment_api__provider_remote
                 ],
             ]);
         }
-        if ( ! @$status_message) {
+        if ( ! ($status_message ?? null)) {
             $status_message = $operation['title'] . ', сумма: ' . $amount;
             if ( ! empty($payment_api->currency['short'])) {
                 $status_message .= ' ' . $payment_api->currency['short'];
@@ -854,9 +854,9 @@ class yf_payment_api__provider_remote
         $result = [
             'status' => true,
             'amount' => $amount,
-            'amount_currency' => @$amount_currency,
-            'amount_currency_total' => @$amount_currency_total,
-            'currency_id' => @$currency_id,
+            'amount_currency' => ($amount_currency ?? null),
+            'amount_currency_total' => ($amount_currency_total ?? null),
+            'currency_id' => ($currency_id ?? null),
         ];
         return  $result;
     }
@@ -867,8 +867,8 @@ class yf_payment_api__provider_remote
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         if ( ! empty($_method['amount'])) {
-            $min = @$_method['amount']['min'];
-            $max = @$_method['amount']['max'];
+            $min = ($_method['amount']['min'] ?? null);
+            $max = ($_method['amount']['max'] ?? null);
             $status = false;
             switch (true) {
                 case isset($min) && $_amount < $min: $status_message = 'больше'; $limit = $min; break;
@@ -1108,14 +1108,14 @@ class yf_payment_api__provider_remote
         // add options
         $method = $this->api_method([
             'type' => 'payin',
-            'method_id' => @$options['method_id'],
+            'method_id' => ($options['method_id'] ?? null),
         ]);
         ! empty($method['option']) && $form_options += $method['option'];
         // form
         $form = $this->_form($form_options);
         // $form = $this->_form( $form_options, array( 'is_array' => true, ) );
         // save options
-        $data = array_merge($form_data, ['method_id' => @$options['method_id']]);
+        $data = array_merge($form_data, ['method_id' => ($options['method_id'] ?? null)]);
         $operation_options = [
             'request' => [[
                 'data' => $data,
@@ -1284,7 +1284,7 @@ class yf_payment_api__provider_remote
         // message
         $result = [
             'status' => true,
-            'status_message' => @$operation_data['status_message'] ?: t('Заявка на вывод средств принята'),
+            'status_message' => ($operation_data['status_message'] ?? null) ?: t('Заявка на вывод средств принята'),
         ];
         return  $result;
     }

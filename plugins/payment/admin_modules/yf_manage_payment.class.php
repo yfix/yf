@@ -54,7 +54,7 @@ class yf_manage_payment
      */
     public function _url($name, $replace = null, $url = null)
     {
-        $url = @$url ?: $this->url;
+        $url = ($url ?? null) ?: $this->url;
         $result = null;
         if (empty($url[$name])) {
             return  $result;

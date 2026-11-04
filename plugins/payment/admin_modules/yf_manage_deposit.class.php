@@ -632,18 +632,18 @@ class yf_manage_deposit
                 ->text('datetime', 'дата')
                 ->func('data', function ($value, $extra, $row) use ($_provider_name, $_providers_user__by_name) {
                     // message
-                    $message = @$row['status_message'] ?: @$row['data']['message'];
+                    $message = ($row['status_message'] ?? null) ?: ($row['data']['message'] ?? null);
                     $result = t(trim(trim($message), '.,:'));
                     // provider
-                    $provider_name = @$row['provider_name'];
+                    $provider_name = ($row['provider_name'] ?? null);
                     if ($_provider_name && $provider_name != $_provider_name) {
-                        $provider_title = @$_providers_user__by_name[$provider_name]['title'];
+                        $provider_title = ($_providers_user__by_name[$provider_name]['title'] ?? null);
                         $result .= ' (' . $provider_title . ')';
                     }
                     return  $result;
                 }, ['desc' => 'сообщение'])
                 ->func('data', function ($value, $extra, $row) {
-                    $result = @$row['state'] ?: @$row['data']['state'] ?: null;
+                    $result = ($row['state'] ?? null) ?: ($row['data']['state'] ?? null) ?: null;
                     return  $result;
                 }, ['desc' => 'статус']);
         }

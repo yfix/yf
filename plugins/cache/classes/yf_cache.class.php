@@ -233,10 +233,10 @@ class yf_cache
         if ($name === false || $name === null || ! is_string($name)) {
             return null;
         }
-        if (! @$params['force']) {
+        if (! ($params['force'] ?? null)) {
             $result = $this->get($name, $ttl, $params);
         }
-        if (@$result === null) {
+        if (($result ?? null) === null) {
             $result = $func($name, $ttl, $params, $this);
             if ($result !== null) {
                 $this->set($name, $result, $ttl);

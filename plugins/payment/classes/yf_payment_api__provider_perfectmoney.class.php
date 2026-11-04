@@ -412,12 +412,12 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
             return  $result;
         }
         // signature
-        $signature = @$response[$this->HASH_KEY];
+        $signature = ($response[$this->HASH_KEY] ?? null);
         $_signature = $this->signature($response, false);
         $is_signature_ok = $signature == $_signature;
         // check status
         $state = null;
-        $state = @$_GET['status']; // disable user request by comment this line
+        $state = ($_GET['status'] ?? null); // disable user request by comment this line
         // server status always is success
         if ($is_server) {
             if ( ! $is_signature_ok) {
@@ -466,8 +466,8 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
         $_response = $this->_response_parse($response);
         // check operation data
         $operation = $payment_api->operation(['operation_id' => $operation_id]);
-        $_operation_id = @$operation['operation_id'];
-        $amount = @$_response['amount'];
+        $_operation_id = ($operation['operation_id'] ?? null);
+        $amount = ($_response['amount'] ?? null);
         // $_amount       = @$operation[ 'amount'       ];
         $is_operation_ok =
             $operation_id == $_operation_id
@@ -519,8 +519,8 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
             return  null;
         }
         // AccountID, PassPhrase
-        ! @$_AccountID && $request['AccountID'] = $account_id;
-        ! @$_PassPhrase && $request['PassPhrase'] = $password;
+        ! ($_AccountID ?? null) && $request['AccountID'] = $account_id;
+        ! ($_PassPhrase ?? null) && $request['PassPhrase'] = $password;
         return  $request;
     }
 
@@ -538,7 +538,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
         // method
         $method = $this->api_method([
             'type' => 'api',
-            'method_id' => @$_method_id,
+            'method_id' => ($_method_id ?? null),
         ]);
         if (empty($method)) {
             $result = [
@@ -584,7 +584,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
         // xml
         $request['api_version'] = '1';
         $request_option['is_response_form'] = true;
-        @$_is_debug && $request_option['is_debug'] = true;
+        ($_is_debug ?? null) && $request_option['is_debug'] = true;
         // header
         is_array($_header) && $request_option = array_merge_recursive($request_option, ['header' => $_header]);
         // test
@@ -615,7 +615,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
         // method
         $method = $this->api_method([
             'type' => 'payout',
-            'method_id' => @$_method_id,
+            'method_id' => ($_method_id ?? null),
         ]);
         if (empty($method)) {
             $result = [
@@ -666,13 +666,13 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
         $amount_currency_total = $result['amount_currency_total'];
         $currency_id = $result['currency_id'];
         // default
-        $amount = @$method['is_fee'] ? $amount_currency_total : $amount_currency;
+        $amount = ($method['is_fee'] ?? null) ? $amount_currency_total : $amount_currency;
         // request
         $request = [];
-        @$method['request_option'] && $request = $method['request_option'];
+        ($method['request_option'] ?? null) && $request = $method['request_option'];
         // add common fields
-        ! @$request['Payer_Account'] && $request['Payer_Account'] = $this->PURSE_ID[$currency_id];
-        if ( ! @$request['Payer_Account']) {
+        ! ($request['Payer_Account'] ?? null) && $request['Payer_Account'] = $this->PURSE_ID[$currency_id];
+        if ( ! ($request['Payer_Account'] ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Требуется настройка счет плательщика',
@@ -680,10 +680,10 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
             return  $result;
         }
         // account
-        @$_account && $request['account'] = $_account;
+        ($_account ?? null) && $request['account'] = $_account;
         // test account self
         $this->is_test() && $request['account'] = $this->PURSE_ID[$currency_id];
-        if ( ! @$request['account']) {
+        if ( ! ($request['account'] ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Требуется указать счет получателя',
@@ -691,8 +691,8 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
             return  $result;
         }
         // title
-        @$_title && $request['title'] = $_title;
-        @$_operation_title && $request['title'] = $_operation_title;
+        ($_title ?? null) && $request['title'] = $_title;
+        ($_operation_title ?? null) && $request['title'] = $_operation_title;
         // test amount
         $this->is_test() && $amount = '0.01';
         $amount = number_format($amount, ($this->PURSE_UNITS[$currency_id]['decimals'] ?? null) ?: 2, '.', '');
@@ -742,7 +742,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
         $request_option = [
             'method_id' => 'spend',
             'option' => $request,
-            'is_debug' => @$_is_debug,
+            'is_debug' => ($_is_debug ?? null),
         ];
         // DEBUG
         // var_dump( $request_option ); exit;
@@ -760,14 +760,14 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
             return  $result;
         }
         @list($status, $response) = $result;
-        if ( ! @$status) {
+        if ( ! ($status ?? null)) {
             $result = [
                 'status' => false,
-                'status_message' => @$response ?: @$result['status_message'] ?: 'unknown error',
+                'status_message' => ($response ?? null) ?: ($result['status_message'] ?? null) ?: 'unknown error',
             ];
             return  $result;
         }
-        if ( ! @$response) {
+        if ( ! ($response ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Невозможно декодировать ответ: ' . var_export($response, true),
@@ -808,7 +808,7 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
                 $status_message = 'Ошибка: ' . $response['state'];
                 break;
         }
-        @$status_message && $response['message'] = $status_message;
+        ($status_message ?? null) && $response['message'] = $status_message;
         if ( ! $status_name) {
             return  $result;
         }
@@ -818,13 +818,13 @@ class yf_payment_api__provider_perfectmoney extends yf_payment_api__provider_rem
             $this->_payout_status,
             $this->_payout_status_message
         );
-        $status_message = @$status_message ?: @$error;
-        ! @$error && $error = $status_name;
+        $status_message = ($status_message ?? null) ?: ($error ?? null);
+        ! ($error ?? null) && $error = $status_name;
         // update account, operation data
         $payment_type = 'payment';
         $operation_data = [
             'operation_id' => $operation_id,
-            'provider_force' => @$_provider_force,
+            'provider_force' => ($_provider_force ?? null),
             'provider_name' => 'perfectmoney',
             'state' => $state,
             'status_name' => $status_name,

@@ -7,7 +7,7 @@ class yf_payment_handler
         $_user_id = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        if (@$_user_id < 1) {
+        if (($_user_id ?? null) < 1) {
             return  null;
         }
         $user_id = (int) $_user_id;

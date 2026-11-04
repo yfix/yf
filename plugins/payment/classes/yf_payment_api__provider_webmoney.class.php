@@ -390,9 +390,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
             $payment_api->dump(['var' => $result]);
             return  $result;
         }
-        $request = @$operation['options']['request'][0]['data'];
+        $request = ($operation['options']['request'][0]['data'] ?? null);
         // check operation_id
-        if (@$request['operation_id'] != @$response['operation_id']) {
+        if (($request['operation_id'] ?? null) != ($response['operation_id'] ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Неверный ответ: operation_id',
@@ -418,7 +418,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         }
         // check payee purse
         $purse = $this->_purse_by_currency($request);
-        if (@$response['key_public'] != @$purse['id']) {
+        if (($response['key_public'] ?? null) != ($purse['id'] ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Неверный ответ: payee purse',
@@ -556,7 +556,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
             return  $result;
         }
         $r = end($operation['options']['response']);
-        $_data = @$r['data'];
+        $_data = ($r['data'] ?? null);
         // check transaction data
         if (
             $_data['LMI_SYS_INVS_NO'] != $response['LMI_SYS_INVS_NO']
@@ -613,7 +613,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         if ($is_test) {
             $this->SHOP_ID = 21;
         }
-        if ($is_test && @$_GET['result_test']) {
+        if ($is_test && ($_GET['result_test'] ?? null)) {
             $result_test = ($_GET['result_test'] ?? null) == '1' || ($_GET['result_test'] ?? null) == 'true' ? 1 : 0;
             // test: 0 - success; 1 - fail.
             // $_[ 'LMI_SIM_MODE' ] = 0;
@@ -692,8 +692,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
             $first_letter = _substr(($_POST['LMI_PAYEE_PURSE'] ?? null), 0, 1);
             $response_currency = ($first_letter == 'Z') ? 'USD' : (($first_letter == 'R') ? 'RUB' : false);
         }
-        $currency_id = @$_currency_id ?: @$_currency ?: @$response_currency ?: @$this->currency_default;
-        if ( ! @$currency_id) {
+        $currency_id = ($_currency_id ?? null) ?: ($_currency ?? null) ?: ($response_currency ?? null) ?: @$this->currency_default;
+        if ( ! ($currency_id ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Неизвестный код валюты',
@@ -702,14 +702,14 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         }
         // purse
         $purse = &$this->purse_by_currency;
-        if ( ! @$purse[$currency_id]) {
+        if ( ! ($purse[$currency_id] ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Неизвестная валюта',
             ];
             return  $result;
         }
-        if ( ! @$purse[$currency_id]['active']) {
+        if ( ! ($purse[$currency_id]['active'] ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Валюта не активна',
@@ -719,11 +719,11 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         $result = $purse[$currency_id];
         $this->purse = $result;
         // hash method
-        if ( ! @$result['hash_method']) {
+        if ( ! ($result['hash_method'] ?? null)) {
             $result['hash_method'] = $this->HASH_METHOD;
         }
         // setup
-        if (@$_is_key === false) {
+        if (($_is_key ?? null) === false) {
             $this->key('public', $result['id']);
             $this->key('private', $result['key']);
             $this->hash_method($result['hash_method']);
@@ -812,7 +812,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         }
         // DEBUG
         $is_test = $this->is_test();
-        if ($is_test && @$_SESSION['payin']['result_test']) {
+        if ($is_test && ($_SESSION['payin']['result_test'] ?? null)) {
             $result_test = ($_SESSION['payin']['result_test'] ?? null);
             // test: 0 - success; 1 - fail.
             // $_[ 'LMI_SIM_MODE' ] = 0;
@@ -907,16 +907,16 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
             }
         }
         // response
-        $response = @$_POST;
+        $response = ($_POST ?? null);
         // prerequest is empty
-        if ( ! @$response) {
+        if ( ! ($response ?? null)) {
             // DUMP
             $payment_api->dump(['var' => ['PREREQUEST' => 'is empty']]);
             $result = ['is_raw' => true, 'OK'];
             return  $result;
         }
         // prerequest
-        if (@$response['LMI_PREREQUEST']) {
+        if (($response['LMI_PREREQUEST'] ?? null)) {
             // DUMP
             $payment_api->dump(['var' => ['PREREQUEST' => 'YES']]);
             $result = $this->__api_response__prerequest($operation_id, $response);
@@ -1010,7 +1010,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
 
     public function _xml_add(&$xml, $items)
     {
-        if ( ! (@$xml instanceof SimpleXMLElement) || ! @$items) {
+        if ( ! (($xml ?? null) instanceof SimpleXMLElement) || ! ($items ?? null)) {
             return  null;
         }
         foreach ($items as $key => $value) {
@@ -1064,7 +1064,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         }
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        if ( ! @$_method) {
+        if ( ! ($_method ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Метод запроса не задан',
@@ -1074,7 +1074,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         // data
         $options['option'] = [
             'getpurses' => [
-                'wmid' => @$_option['wmid'],
+                'wmid' => ($_option['wmid'] ?? null),
             ],
         ];
         // send
@@ -1089,7 +1089,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         }
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        if ( ! @$_method) {
+        if ( ! ($_method ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Метод запроса не задан',
@@ -1128,14 +1128,14 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         }
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // method
-        if ( ! @$_method) {
+        if ( ! ($_method ?? null)) {
             $_method = $this->api_method([
                 'type' => 'api',
-                'method_id' => @$_method_id,
+                'method_id' => ($_method_id ?? null),
             ]);
         }
         $method = $_method;
-        if ( ! @$method) {
+        if ( ! ($method ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Метод запроса не найден',
@@ -1144,7 +1144,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         }
         $options['method'] = $method;
         // method handler
-        if (@$method['is_handler']) {
+        if (($method['is_handler'] ?? null)) {
             $handler = 'api_request__' . $method['is_handler'];
             if ( ! method_exists($this, $handler)) {
                 $result = [
@@ -1168,7 +1168,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         }
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        if ( ! @$_method) {
+        if ( ! ($_method ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Метод запроса не задан',
@@ -1177,9 +1177,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         }
         // request
         $request = [];
-        if (is_string(@$_option)) {
+        if (is_string(($_option ?? null))) {
             $request = $_option;
-        } elseif (is_array(@$_option)) {
+        } elseif (is_array(($_option ?? null))) {
             $request = $this->_array2xml($_option);
         }
         // url
@@ -1190,7 +1190,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         $url = $object;
         // request options
         $request_option = [];
-        @$_is_debug && $request_option['is_debug'] = true;
+        ($_is_debug ?? null) && $request_option['is_debug'] = true;
         // CA
         $request_option['CA'] = $this->CA;
         // authorization: client crt/key (WebPro)
@@ -1207,7 +1207,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
 
     public function api_request__X_tranid($operation_id = null)
     {
-        if ( ! @$this->SHOP_ID || ! @$operation_id) {
+        if ( ! @$this->SHOP_ID || ! ($operation_id ?? null)) {
             return  $operation_id;
         }
         $result = sprintf('%02d%08d', $this->SHOP_ID, $operation_id);
@@ -1216,7 +1216,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
 
     public function api_request__X_tranid_reverse($operation_id = null)
     {
-        if ( ! @$this->SHOP_ID || ! @$operation_id) {
+        if ( ! @$this->SHOP_ID || ! ($operation_id ?? null)) {
             return  $operation_id;
         }
         $result = (int) substr($operation_id, 2);
@@ -1234,7 +1234,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         // method
         $method = $this->api_method([
             'type' => 'payout',
-            'method_id' => @$_method_id,
+            'method_id' => ($_method_id ?? null),
         ]);
         if (empty($method)) {
             $result = [
@@ -1275,7 +1275,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
             'currency_id' => $currency_id,
             'method' => $method,
         ]);
-        if ( ! @$result['status']) {
+        if ( ! ($result['status'] ?? null)) {
             return  $result;
         }
         // amount currency conversion
@@ -1291,11 +1291,11 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         $amount_currency_total = $result['amount_currency_total'];
         $currency_id = $result['currency_id'];
         // default
-        $amount = @$method['is_fee'] ? $amount_currency_total : $amount_currency;
+        $amount = ($method['is_fee'] ?? null) ? $amount_currency_total : $amount_currency;
         $amount = $payment_api->_number_api($amount, 2);
         // request
         $request = [];
-        @$method['request_option'] && $request = $method['request_option'];
+        ($method['request_option'] ?? null) && $request = $method['request_option'];
         // add common fields
         $request['tranid'] = $this->api_request__X_tranid($operation_id);
         // amount
@@ -1304,10 +1304,10 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         // pursesrc
         $request['pursesrc'] = $purse['id'];
         // pursedest
-        @$_purse && $request['pursedest'] = $_purse;
+        ($_purse ?? null) && $request['pursedest'] = $_purse;
         // title
-        @$_title && $request['title'] = $_title;
-        @$_operation_title && $request['title'] = $_operation_title;
+        ($_title ?? null) && $request['title'] = $_title;
+        ($_operation_title ?? null) && $request['title'] = $_operation_title;
         // transform
         $this->option_transform([
             'option' => &$request,
@@ -1350,7 +1350,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
             'method_id' => 'p2p',
             'option' => $request,
         ];
-        @$_is_debug && $request_option['is_debug'] = true;
+        ($_is_debug ?? null) && $request_option['is_debug'] = true;
         // DEBUG
         // var_dump( $request_option );
         $result = $this->api_request($request_option);
@@ -1362,7 +1362,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         if (isset($result['status']) && $result['status'] == false) {
             return  $result;
         }
-        if ( ! @$result) {
+        if ( ! ($result ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Невозможно отправить запрос',
@@ -1370,7 +1370,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
             return  $result;
         }
         @list($status, $response) = $result;
-        if ( ! @$response || ! (@$response instanceof SimpleXMLElement)) {
+        if ( ! ($response ?? null) || ! (($response ?? null) instanceof SimpleXMLElement)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Невозможно декодировать ответ: ' . var_export($response, true),
@@ -1405,7 +1405,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         $payment_type = 'payment';
         $operation_data = [
             'operation_id' => $operation_id,
-            'provider_force' => @$_provider_force,
+            'provider_force' => ($_provider_force ?? null),
             'provider_name' => 'webmoney',
             'state' => $state,
             'status_name' => $status_name,
@@ -1473,7 +1473,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote
         // var_dump( 'state:', $state, $status, $status_name, $status_message ); exit;
         // result
         $state = $status_name ?: $status;
-        $status_message = @$status_message ?: $state;
+        $status_message = ($status_message ?? null) ?: $state;
         return  [$request_status, $state, $result];
     }
 }

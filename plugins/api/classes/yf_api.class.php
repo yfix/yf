@@ -90,7 +90,7 @@ class yf_api
         $this->class_i18n = _class('i18n');
         $this->class_i18n->_set_current_lang($language_id);
         // http method
-        $request_method = @$_SERVER['REQUEST_METHOD'] ?: 'GET';
+        $request_method = ($_SERVER['REQUEST_METHOD'] ?? null) ?: 'GET';
         switch ($request_method) {
             case 'GET':    $is_get = true; break;
             case 'POST':   $is_post = true; break;
@@ -98,10 +98,10 @@ class yf_api
             case 'PATCH':  $is_patch = true; break;
             case 'DELETE': $is_delete = true; break;
         }
-        if (strpos(@$_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+        if (strpos(($_SERVER['CONTENT_TYPE'] ?? null), 'application/json') !== false) {
             $is_json = true;
         }
-        if ($is_get && is_string(@$_GET['callback'])) {
+        if ($is_get && is_string(($_GET['callback'] ?? null))) {
             $is_jsonp = true;
         }
         // override
@@ -131,7 +131,7 @@ class yf_api
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // filter
-        $ip_filter = @$_ip_filter ? $_ip_filter : $this->ip_filter;
+        $ip_filter = ($_ip_filter ?? null) ? $_ip_filter : $this->ip_filter;
         is_string($ip_filter) && $ip_filter = (array) $ip_filter;
         if ( ! is_array($ip_filter)) {
             return  null;
@@ -314,7 +314,7 @@ class yf_api
         list($protocol, $code, $status) = $this->_send_http_status($code);
         $this->_send_http_type($type);
         // message
-        $message = @$message ?: $status;
+        $message = ($message ?? null) ?: $status;
         $this->_send_http_content($message, $is_raw);
     }
 
@@ -355,14 +355,14 @@ class yf_api
         }
         $header = [];
         if ( ! empty($post)) {
-            if (@$_is_json) {
+            if (($_is_json ?? null)) {
                 $http_post = json_encode($post);
                 $options += [
                     CURLOPT_ENCODING => '',
                     CURLOPT_CUSTOMREQUEST => 'POST',
                 ];
             } else {
-                if (@$_is_request_raw || @$_is_post_raw) {
+                if (($_is_request_raw ?? null) || ($_is_post_raw ?? null)) {
                     $http_post = $post;
                 } else {
                     $http_post = http_build_query($post);
@@ -375,50 +375,50 @@ class yf_api
                 CURLOPT_POSTFIELDS => $http_post,
             ];
         }
-        if (@$_is_post) {
+        if (($_is_post ?? null)) {
             $options += [
                 CURLOPT_POST => true,
             ];
         }
-        if (@$_method) {
+        if (($_method ?? null)) {
             $options += [
                 CURLOPT_CUSTOMREQUEST => $_method,
             ];
         }
-        if (@$_user) {
+        if (($_user ?? null)) {
             $userpwd = $_user;
-            @$_password && $userpwd .= ':' . $_password;
+            ($_password ?? null) && $userpwd .= ':' . $_password;
             $options += [
                 CURLOPT_HTTPAUTH => CURLAUTH_ANY,
                 CURLOPT_USERPWD => $userpwd,
             ];
         }
-        if (@$_bearer || @$_access_token) {
-            ( ! @$_bearer && $_access_token) && $_bearer = $_access_token;
+        if (($_bearer ?? null) || ($_access_token ?? null)) {
+            ( ! ($_bearer ?? null) && $_access_token) && $_bearer = $_access_token;
             $header[] = 'Authorization: Bearer ' . $_bearer;
         }
-        if (@$_is_json) {
+        if (($_is_json ?? null)) {
             $header[] = 'Content-Type: application/json; charset=utf-8';
         }
         if ($this->API_SSL_VERIFY && strpos($url, 'https') !== false) {
             $options += [
                 CURLOPT_SSL_VERIFYPEER => true,
                 CURLOPT_SSL_VERIFYHOST => 2,
-                CURLOPT_CAINFO => @$_CA ?: __DIR__ . '/ca.pem',
+                CURLOPT_CAINFO => ($_CA ?? null) ?: __DIR__ . '/ca.pem',
             ];
         } else {
             $options += [
                 CURLOPT_SSL_VERIFYPEER => false,
             ];
         }
-        if ( @$_proxy ) {
+        if ( ($_proxy ?? null) ) {
             // proxy: 128.0.0.1:8080
             $options += [CURLOPT_PROXY => $_proxy];
             // auth: USERNAME:PASSWORD
-            @$_proxy_user_pwd && $options += [CURLOPT_PROXYUSERPWD => $_proxy_user_pwd];
+            ($_proxy_user_pwd ?? null) && $options += [CURLOPT_PROXYUSERPWD => $_proxy_user_pwd];
             // type: http, https, socks5 ...
             $i = CURLPROXY_HTTPS;
-            switch (@$_proxy_type) {
+            switch (($_proxy_type ?? null)) {
                 case 'http':    $i = CURLPROXY_HTTP;    break;
                 case 'https':   $i = CURLPROXY_HTTPS;   break;
                 case 'socks4':  $i = CURLPROXY_SOCKS4;  break;
@@ -431,15 +431,15 @@ class yf_api
         // resolve = [
         //     "example.com:80:192.0.2.1",
         // ];
-        @$_resolve && $options += [CURLOPT_RESOLVE => $_resolve];
+        ($_resolve ?? null) && $options += [CURLOPT_RESOLVE => $_resolve];
         // other
-        @$_timeout && $options += [CURLOPT_TIMEOUT => $_timeout];
-        @$_SSLCERT && $options += [CURLOPT_SSLCERT => $_SSLCERT];
-        @$_SSLCERTPASSWD && $options += [CURLOPT_SSLCERTPASSWD => $_SSLCERTPASSWD];
-        @$_SSLKEY && $options += [CURLOPT_SSLKEY => $_SSLKEY];
-        @$_SSLKEYPASSWD && $options += [CURLOPT_SSLKEYPASSWD => $_SSLKEYPASSWD];
+        ($_timeout ?? null) && $options += [CURLOPT_TIMEOUT => $_timeout];
+        ($_SSLCERT ?? null) && $options += [CURLOPT_SSLCERT => $_SSLCERT];
+        ($_SSLCERTPASSWD ?? null) && $options += [CURLOPT_SSLCERTPASSWD => $_SSLCERTPASSWD];
+        ($_SSLKEY ?? null) && $options += [CURLOPT_SSLKEY => $_SSLKEY];
+        ($_SSLKEYPASSWD ?? null) && $options += [CURLOPT_SSLKEYPASSWD => $_SSLKEYPASSWD];
         // redirect
-        $is_redirect = @$_is_redirect || @$_is_followlocation;
+        $is_redirect = ($_is_redirect ?? null) || ($_is_followlocation ?? null);
         if ($is_redirect) {
             $options += [
                 CURLOPT_FOLLOWLOCATION => true,
@@ -447,7 +447,7 @@ class yf_api
         }
         // add header
         if ( ! empty($_header)) {
-            @$_is_debug && var_dump($_header);
+            ($_is_debug ?? null) && var_dump($_header);
             if ( empty($header)) {
                 $header = $_header;
             } else {
@@ -467,7 +467,7 @@ class yf_api
                 }
             }
         }
-        @$_is_debug && var_dump($header);
+        ($_is_debug ?? null) && var_dump($header);
         ! empty($header) && $options += [CURLOPT_HTTPHEADER => $header];
         // debug request header
         $options += [
@@ -478,7 +478,7 @@ class yf_api
             CURLOPT_VERBOSE => true,
             CURLOPT_HEADER => true,
         ];
-        if (@$_query) {
+        if (($_query ?? null)) {
             if (is_array($_query)) {
                 $q = http_build_query($_query);
             } else {
@@ -496,7 +496,7 @@ class yf_api
         $error_number = curl_errno($ch);
         $error_message = curl_error($ch);
         // DEBUG
-        @$_is_debug && var_dump($url, $options, $http_code, $http_header);
+        ($_is_debug ?? null) && var_dump($url, $options, $http_code, $http_header);
         // exit;
         // response
         $status = null;
@@ -513,7 +513,7 @@ class yf_api
         $header = substr($response, 0, $http_header_size);
         $body = substr($response, $http_header_size);
         // DEBUG
-        @$_is_debug && var_dump($header, $body);
+        ($_is_debug ?? null) && var_dump($header, $body);
         // exit;
         // http code
         $is_error = false;
@@ -538,23 +538,23 @@ class yf_api
         }
         $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
         // DEBUG
-        @$_is_debug && var_dump($content_type);
+        ($_is_debug ?? null) && var_dump($content_type);
         // finish
         // curl_close: This function has been DEPRECATED as of PHP 8.5.0
         // curl_close($ch);
         unset( $ch );
         // detect content type of response
-        if (@$_is_response_raw) {
+        if (($_is_response_raw ?? null)) {
             $result = $body;
         } else {
             switch (true) {
-                case  @$_is_response_json || strpos($content_type, 'application/json') === 0:
+                case  ($_is_response_json ?? null) || strpos($content_type, 'application/json') === 0:
                     $result = @json_decode($body, true);
                     if ($result ?? false) { $status = true; }
                     // DEBUG
-                    @$_is_debug && var_dump('is_json', $result);
+                    ($_is_debug ?? null) && var_dump('is_json', $result);
                     break;
-                case @$_is_response_html || @$_is_response_xml || @$_is_response_form
+                case ($_is_response_html ?? null) || ($_is_response_xml ?? null) || ($_is_response_form ?? null)
                     || strpos($content_type, 'application/xml') === 0
                     || strpos($content_type, 'text/xml') === 0
                     || strpos($content_type, 'text/html') === 0:
@@ -562,7 +562,7 @@ class yf_api
                     $xml_response = @simplexml_load_string($body);
                     $error = libxml_get_errors();
                     // DEBUG
-                    @$_is_debug && var_dump('is_xml', $result, $error);
+                    ($_is_debug ?? null) && var_dump('is_xml', $result, $error);
                     if ($error) {
                         libxml_clear_errors();
                         $result = [
@@ -581,7 +581,7 @@ class yf_api
                         ];
                         return  $result;
                     }
-                    if (@$_is_response_form) {
+                    if (($_is_response_form ?? null)) {
                         $form = [];
                         foreach ($xml_response->xpath('//input') as $item) {
                             $_item = $item->attributes();
@@ -591,12 +591,12 @@ class yf_api
                         }
                         ! empty($form) && $xml_response = $form;
                         // DEBUG
-                        @$_is_debug && var_dump('is_form', $form);
+                        ($_is_debug ?? null) && var_dump('is_form', $form);
                     }
                     $result = $xml_response;
             }
         }
-        if (@$_is_http_raw) {
+        if (($_is_http_raw ?? null)) {
             $result = [
                 'status' => $status,
                 'http_code' => $http_code,
@@ -650,7 +650,7 @@ class yf_api
         }
         list($protocol, $code, $status) = $this->_send_http_status($code);
         // message
-        $message = @$response ?: $status;
+        $message = ($response ?? null) ?: $status;
         $this->_send_http_type($type);
         $this->_send_http_content($message, $is_raw);
     }
@@ -719,7 +719,7 @@ class yf_api
         }
         // $error = ob_get_contents();
         // ob_end_clean();
-        if ( ! @$is_raw && ! $this->is_jsonp && @$this->JSON_VULNERABILITY_PROTECTION) {
+        if ( ! ($is_raw ?? null) && ! $this->is_jsonp && @$this->JSON_VULNERABILITY_PROTECTION) {
             echo  ")]}',\n";
         }
         if (isset($response)) {
@@ -741,20 +741,20 @@ class yf_api
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $h = [];
         // none
-        if( @$_no_store ) {
+        if( ($_no_store ?? null) ) {
             header( 'Cache-Control: no-store' );
             return;
         }
         // public/private
-        if( @$_private ) {
+        if( ($_private ?? null) ) {
             $h[] = 'private';
         } else {
             $h[] = 'public';
         }
         switch( true ) {
-            case @$_no_cache : $h[] =   'no-cache'; break;
-            case @$_ttl      : $h[] =   'max-age='. $_ttl;
-            case @$_ttl_s    : $h[] = 's-max-age='. $_ttl_s; break;
+            case ($_no_cache ?? null) : $h[] =   'no-cache'; break;
+            case ($_ttl ?? null)      : $h[] =   'max-age='. $_ttl;
+            case ($_ttl_s ?? null)    : $h[] = 's-max-age='. $_ttl_s; break;
             default:
                 $h[] =  'max-age='. $this->CACHE_TTL;
                 $h[] = 's-maxage='. $this->CACHE_TTL_S;

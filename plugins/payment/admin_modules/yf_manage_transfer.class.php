@@ -376,8 +376,8 @@ class yf_manage_transfer
                 // handler
                 $result = $this->_transfer($_POST);
                 // message
-                $message = @$result['status_message'];
-                if (@$result['status']) {
+                $message = ($result['status_message'] ?? null);
+                if (($result['status'] ?? null)) {
                     $message_type = 'message_success';
                     $message = $message ?: 'Операция выполнена';
                 } else {
@@ -523,7 +523,7 @@ class yf_manage_transfer
         if (is_array($o_options['processing'])) {
             $processing_log = array_reverse($o_options['processing']);
             $processing = reset($processing_log);
-            if (@$processing['provider_name'] && $processing['provider_name'] != $provider_name) {
+            if (($processing['provider_name'] ?? null) && $processing['provider_name'] != $provider_name) {
                 @list($processing_provider_id, $processing_provider) = $payment_api->get_provider([
                     'name' => $processing['provider_name'],
                 ]);
@@ -733,19 +733,19 @@ class yf_manage_transfer
             return  null;
         }
         switch (true) {
-            case @$_status === 'in_progress':
+            case ($_status ?? null) === 'in_progress':
                 $_css_panel_status = 'warning';
                 empty($_status_header) && $_status_header = 'В процессе';
                 break;
-            case @$_status === 'processing':
+            case ($_status ?? null) === 'processing':
                 $_css_panel_status = 'warning';
                 empty($_status_header) && $_status_header = 'Обработка';
                 break;
-            case @$_status === 'success' || @$_status === true:
+            case ($_status ?? null) === 'success' || ($_status ?? null) === true:
                 $_css_panel_status = 'success';
                 empty($_status_header) && $_status_header = 'Выполнено';
                 break;
-            case @$_status === 'refused':
+            case ($_status ?? null) === 'refused':
             default:
                 $_css_panel_status = 'danger';
                 empty($_status_header) && $_status_header = 'Ошибка';

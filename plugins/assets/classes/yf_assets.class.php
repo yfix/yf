@@ -2216,13 +2216,13 @@ class yf_assets
                 }
                 $out = '<script' . _attrs($params, ['src', 'type', 'class', 'id']) . '></script>';
             } elseif ($content_type === 'file') {
-                if( @$params[ 'raw' ] ) {
+                if( ($params[ 'raw' ] ?? null) ) {
                     $out = $str;
                 } else {
                     $out = '<script' . _attrs($params, ['type', 'class', 'id']) . '>' . PHP_EOL . $str . PHP_EOL . '</script>';
                 }
             } elseif ($content_type === 'inline') {
-                if( @$params[ 'raw' ] ) {
+                if( ($params[ 'raw' ] ?? null) ) {
                     $out = $str;
                 } else {
                     $str = $this->_strip_js_input($str);

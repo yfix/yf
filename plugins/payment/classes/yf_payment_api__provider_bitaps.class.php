@@ -489,7 +489,7 @@ class yf_payment_api__provider_bitaps extends yf_payment_api__provider_remote
             'currency_id' => $currency_id,
             'method' => $method,
         ]);
-        if ( ! @$result['status']) {
+        if ( ! ($result['status'] ?? null)) {
             return  $result;
         }
         // currency conversion

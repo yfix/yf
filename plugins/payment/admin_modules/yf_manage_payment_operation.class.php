@@ -390,19 +390,19 @@ class yf_manage_payment_operation
                     return  $result;
                 }
                 // method
-                $provider_id = @$request['options']['provider_id'];
+                $provider_id = ($request['options']['provider_id'] ?? null);
                 if (empty($provider_id)) {
                     return  $result;
                 }
-                $method_id = @$request['options']['method_id'];
+                $method_id = ($request['options']['method_id'] ?? null);
                 if (empty($method_id)) {
                     return  $result;
                 }
-                $method = @$providers[$provider_id]['_method_allow']['payout'][$method_id];
+                $method = ($providers[$provider_id]['_method_allow']['payout'][$method_id] ?? null);
                 if (empty($method)) {
                     return  $result;
                 }
-                $method_title = @$method['title'];
+                $method_title = ($method['title'] ?? null);
                 $method_title && $result = $method_title;
                 return  $result;
             }, ['desc' => 'метод'])

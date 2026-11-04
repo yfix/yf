@@ -12,7 +12,7 @@ class yf_form_api
 
     public function user_select_box(&$name, &$values, &$extra, &$replace)
     {
-        if ( ! @$extra['ajax']['url']) {
+        if ( ! ($extra['ajax']['url'] ?? null)) {
             $extra['ajax']['url'] = url($this->URL . __FUNCTION__);
         }
     }
@@ -36,7 +36,7 @@ class yf_form_api
         $offset = ($page - 1) * $page_per;
         $db->limit($page_per, $offset);
         // q
-        $q = @$_GET['q'];
+        $q = ($_GET['q'] ?? null);
         $q_int = (int) $q;
         $q_is_int = $q_int > 0;
         // order

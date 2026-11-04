@@ -283,7 +283,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         $this->url_authorize = url_user('/api/payment/provider?name=yandexmoney&operation=authorize&server=true');
         // provider options
         list($provider_id, $provider) = $payment_api->get_provider(['name' => $provider_name]);
-        $access_token = @$provider['options']['authorize']['access_token'];
+        $access_token = ($provider['options']['authorize']['access_token'] ?? null);
         ! is_string($access_token) && $access_token = null;
     }
 
@@ -330,7 +330,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         unset($_['description'], $_['currency']);
         // payment title
         $title = '';
-        if (@$_['targets']) {
+        if (($_['targets'] ?? null)) {
             switch (true) {
                 case defined('SITE_ADVERT_NAME'):
                     $title = SITE_ADVERT_NAME;
@@ -338,7 +338,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
                 case defined('SITE_ADVERT_TITLE'):
                     $title = SITE_ADVERT_TITLE;
                     break;
-                case @$_SERVER['SERVER_NAME']:
+                case ($_SERVER['SERVER_NAME'] ?? null):
                     $title = ($_SERVER['SERVER_NAME'] ?? null);
                     break;
             }
@@ -477,7 +477,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
             return  $result;
         }
         // signature
-        $signature = @$response[$this->HASH_KEY];
+        $signature = ($response[$this->HASH_KEY] ?? null);
         //* // TEST
         if ($this->is_test()) {
             unset($response['label']);
@@ -496,8 +496,8 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         // check status
         $state = 'fail';
         // check payin
-        $is_codepro = @$response['codepro'] == 'true';
-        $is_unaccepted = @$response['unaccepted'] == 'true';
+        $is_codepro = ($response['codepro'] ?? null) == 'true';
+        $is_unaccepted = ($response['unaccepted'] ?? null) == 'true';
         $is_payin = ! ($is_codepro || $is_unaccepted);
         if ($is_server && $is_signature_ok && $is_payin) {
             $state = 'success';
@@ -508,8 +508,8 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         $_response = $this->_response_parse($response);
         // check operation data
         $operation = $payment_api->operation(['operation_id' => $operation_id]);
-        $_operation_id = @$operation['operation_id'];
-        $amount = @$_response['amount'];
+        $_operation_id = ($operation['operation_id'] ?? null);
+        $amount = ($_response['amount'] ?? null);
         // $_amount       = @$operation[ 'amount'       ];
         $is_operation_ok =
             $operation_id == (int) $_operation_id
@@ -592,7 +592,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
                 'provider_id' => $provider_id,
                 'options' => ['redirect_uri' => null, 'authorize' => null],
             ], ['is_replace' => true]);
-            if ( ! @$r['status']) {
+            if ( ! ($r['status'] ?? null)) {
                 return  $r;
             }
         }
@@ -629,7 +629,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         $request_options = [];
         // redirect uri
         $redirect_hash = null;
-        if (@$_redirect_uri) {
+        if (($_redirect_uri ?? null)) {
             $redirect_hash = substr(md5($_redirect_uri . time()), 0, 8);
             $r = $payment_api->provider_update([
                 'provider_id' => $provider_id,
@@ -640,7 +640,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
                     ],
                 ]],
             ], ['is_replace' => true]);
-            if ( ! @$r['status']) {
+            if ( ! ($r['status'] ?? null)) {
                 return  $r;
             }
         }
@@ -741,7 +741,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
                 'token response' => $response,
             ]]);
             // store access_token
-            if (@$status && @$response['access_token']) {
+            if (($status ?? null) && ($response['access_token'] ?? null)) {
                 $access_token = &$this->access_token;
                 $access_token = $response['access_token'];
                 $provider_id = &$this->provider_id;
@@ -755,7 +755,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
                         'redirect_uri' => [$redirect_hash => null],
                     ],
                 ], ['is_replace' => true]);
-                if ( ! @$r['status']) {
+                if ( ! ($r['status'] ?? null)) {
                     return  $r;
                 }
             }
@@ -807,7 +807,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         // method
         $method = $this->api_method([
             'type' => 'api',
-            'method_id' => @$_method_id,
+            'method_id' => ($_method_id ?? null),
         ]);
         if (empty($method)) {
             $result = [
@@ -831,7 +831,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         }
         // request
         $request = [];
-        is_array(@$_option) && $request = $_option;
+        is_array(($_option ?? null)) && $request = $_option;
         // DEBUG
         // var_dump( $url, $request, $request_option );
         // exit;
@@ -848,11 +848,11 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         $url = $object;
         // request options
         $request_option = [];
-        @$_is_debug && $request_option['is_debug'] = true;
-        if (@$method['is_authorization']) {
+        ($_is_debug ?? null) && $request_option['is_debug'] = true;
+        if (($method['is_authorization'] ?? null)) {
             $result = $this->api_authorization($request_option);
             $request_option['access_token'] = $this->access_token;
-            if ( ! @$result['status']) {
+            if ( ! ($result['status'] ?? null)) {
                 return  $result;
             }
         }
@@ -881,7 +881,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         // method
         $method = $this->api_method([
             'type' => 'payout',
-            'method_id' => @$_method_id,
+            'method_id' => ($_method_id ?? null),
         ]);
         if (empty($method)) {
             $result = [
@@ -916,7 +916,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
             'currency_id' => $currency_id,
             'method' => $method,
         ]);
-        if ( ! @$result['status']) {
+        if ( ! ($result['status'] ?? null)) {
             return  $result;
         }
         // amount currency conversion
@@ -932,30 +932,30 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         $amount_currency_total = $result['amount_currency_total'];
         $currency_id = $result['currency_id'];
         // default
-        $amount = @$method['is_fee'] ? $amount_currency_total : $amount_currency;
+        $amount = ($method['is_fee'] ?? null) ? $amount_currency_total : $amount_currency;
         $amount = $payment_api->_number_api($amount, 2);
         // request
         $request = [];
-        @$method['request_option'] && $request = $method['request_option'];
+        ($method['request_option'] ?? null) && $request = $method['request_option'];
         // add common fields
         $request['label'] = (@$this->SHOP_ID ?: 'shop id') . ':' . $operation_id;
         // amount
         $this->is_test() && $amount = '0.01';
         $request['amount'] = $amount;
         // account
-        @$_to && $request['to'] = $_to;
+        ($_to ?? null) && $request['to'] = $_to;
         // test
         if ($this->is_test()) {
             $request += [
                 'test_payment' => 'true',
-                'test_result' => @$_test_result1 ?: 'success',
+                'test_result' => ($_test_result1 ?? null) ?: 'success',
                 // 'test_result'  => 'account_blocked',
                 // 'test_result'  => 'illegal_params',
             ];
         }
         // title
-        @$_title && $request['title'] = $_title;
-        @$_operation_title && $request['title'] = $_operation_title;
+        ($_title ?? null) && $request['title'] = $_title;
+        ($_operation_title ?? null) && $request['title'] = $_operation_title;
         // transform
         $this->option_transform([
             'option' => &$request,
@@ -998,7 +998,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
             'method_id' => 'request-payment',
             'option' => $request,
         ];
-        @$_is_debug && $request_option['is_debug'] = true;
+        ($_is_debug ?? null) && $request_option['is_debug'] = true;
         // DEBUG
         // var_dump( $request_option );
         $result = $this->api_request($request_option);
@@ -1006,10 +1006,10 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         // var_dump( $result );
         // DUMP
         $payment_api->dump(['var' => ['response' => $result]]);
-        if (@$result['status'] === false) {
+        if (($result['status'] ?? null) === false) {
             return  $result;
         }
-        if ( ! @$result) {
+        if ( ! ($result ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Невозможно отправить запрос',
@@ -1035,7 +1035,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
             ),
             'recipient_identified'     => false,
         ); //*/
-        if ( ! @$response) {
+        if ( ! ($response ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Невозможно декодировать ответ: ' . var_export($response, true),
@@ -1054,7 +1054,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         // DEBUG
         // var_dump( $request_status, $state, $result ); exit;
         // request
-        $request_id = @$response['request_id'];
+        $request_id = ($response['request_id'] ?? null);
         if ($request_status && $state == 'success') {
             if ( ! $request_id) {
                 $result = [
@@ -1080,7 +1080,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         $payment_type = 'payment';
         $operation_data = [
             'operation_id' => $operation_id,
-            'provider_force' => @$_provider_force,
+            'provider_force' => ($_provider_force ?? null),
             'provider_name' => 'yandexmoney',
             'state' => $state,
             'status_name' => $status_name,
@@ -1106,7 +1106,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         }
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        if ( ! @$_request_id) {
+        if ( ! ($_request_id ?? null)) {
             $result = [
                 'status' => 'processing',
                 'status_message' => 'Ошибка: отсутствует request_id',
@@ -1121,7 +1121,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         if ($this->is_test()) {
             $request += [
                 'test_payment' => 'true',
-                'test_result' => @$_test_result2 ?: 'success',
+                'test_result' => ($_test_result2 ?? null) ?: 'success',
                 // 'test_result'  => 'payment_refused',
                 // 'test_result'  => 'not_enough_funds',
             ];
@@ -1131,7 +1131,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
             'method_id' => 'process-payment',
             'option' => $request,
         ];
-        @$_is_debug && $request_option['is_debug'] = true;
+        ($_is_debug ?? null) && $request_option['is_debug'] = true;
         // DEBUG
         // var_dump( 'process:', $request_option );
         // DUMP
@@ -1141,10 +1141,10 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
         // var_dump( 'process:', $result ); exit;
         // DUMP
         $payment_api->dump(['var' => ['process response' => $result]]);
-        if (@$result['status'] === false) {
+        if (($result['status'] ?? null) === false) {
             return  [null, $result];
         }
-        if ( ! @$result) {
+        if ( ! ($result ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Невозможно отправить запрос',
@@ -1152,7 +1152,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
             return  [null, $result];
         }
         @list($status, $response) = $result;
-        if ( ! @$response) {
+        if ( ! ($response ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Невозможно декодировать ответ: ' . var_export($response, true),
@@ -1216,7 +1216,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
                 $status_message = 'Ошибка: ' . $state;
                 break;
         }
-        @$status_message && $_message = $status_message;
+        ($status_message ?? null) && $_message = $status_message;
         // check status
         if ($status != 'unknown') {
             list($status_name, $status_message) = $this->_state(
@@ -1240,7 +1240,7 @@ class yf_payment_api__provider_yandexmoney extends yf_payment_api__provider_remo
             && $status_message .= ' (' . $_error_description . ')';
         // result
         $state = $status_name ?: $status;
-        $status_message = @$status_message ?: $state;
+        $status_message = ($status_message ?? null) ?: $state;
         return  [$request_status, $state, $result];
     }
 }

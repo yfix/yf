@@ -26,13 +26,13 @@ class yf_htmx {
     $this->_api = _class( 'api' );
     $this->_api->JSON_VULNERABILITY_PROTECTION = false;
     $this->_is_hx();
-    $this->target  = @$_SERVER[ 'HTTP_HX_TARGET'  ];
-    $this->boosted = @$_SERVER[ 'HTTP_HX_BOOSTED' ];
+    $this->target  = ($_SERVER[ 'HTTP_HX_TARGET'  ] ?? null);
+    $this->boosted = ($_SERVER[ 'HTTP_HX_BOOSTED' ] ?? null);
     $this->_get_req();
   }
 
   function _is_hx() {
-    $r = (bool) @$_SERVER[ 'HTTP_HX_REQUEST' ];
+    $r = (bool) ($_SERVER[ 'HTTP_HX_REQUEST' ] ?? null);
     $this->is_hx = $r;
     return( $r );
   }

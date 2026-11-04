@@ -1608,17 +1608,17 @@ class yf_html
         // put default js options here
         $js_options = (array) $extra['js_options'] + [
             'width' => 'element',
-            'placeholder' => @$extra['placeholder'] ?: @$extra['desc'],
+            'placeholder' => ($extra['placeholder'] ?? null) ?: ($extra['desc'] ?? null),
         ];
         // ajax
         $js_functions = [];
-        if (@$extra['ajax_func']) {
+        if (($extra['ajax_func'] ?? null)) {
             foreach ((array) $extra['ajax_func'] as $key => $value) {
                 $js_options['ajax'][$key] = '%__' . $key . '__%';
                 $js_functions['"%__' . $key . '__%"'] = $value;
             }
         }
-        if (@$extra['ajax']) {
+        if (($extra['ajax'] ?? null)) {
             $js_options += [
                 'maximumSelectionSize' => 10,
                 'minimumInputLength' => 1,
@@ -1656,7 +1656,7 @@ class yf_html
         if ($extra['ajax']) {
             $func = 'input';
             $extra['id'] = $extra['force_id'];
-            $extra['value'] = @$extra['selected'] ?: @$extra['value'] ?: '';
+            $extra['value'] = ($extra['selected'] ?? null) ?: ($extra['value'] ?? null) ?: '';
             $css[] = $this->CLASS_INPUT;
         }
         $css[] = 'no-chosen';

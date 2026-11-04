@@ -33,10 +33,10 @@ class yf_payment
         is_array($_GET) && extract($_GET, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // route
         switch (true) {
-            case @$_is_confirmation:
+            case ($_is_confirmation ?? null):
                 $result = $this->confirmation();
                 break;
-            case @$_is_cancel:
+            case ($_is_cancel ?? null):
                 $result = $this->cancel();
                 break;
             default:
@@ -50,8 +50,8 @@ class yf_payment
     {
         $result = $this->_operation_form();
         // form handler
-        if (@$_POST) {
-            switch (@$_POST['confirmation_action']) {
+        if (($_POST ?? null)) {
+            switch (($_POST['confirmation_action'] ?? null)) {
                 case 'ok':
                     $result += $this->_confirmation_action_ok();
                     break;
@@ -72,7 +72,7 @@ class yf_payment
         // var
         $payment_api = _class('payment_api');
         $result += $payment_api->cancel_user([
-            'operation_id' => @$_operation_id,
+            'operation_id' => ($_operation_id ?? null),
         ]);
         // result
         return  $this->_operation_tpl($result);
@@ -282,14 +282,14 @@ class yf_payment
                 break;
         }
         $result = $payment_api->_class($provider_class, '_api_' . $method, $request);
-        if (@$result['is_raw']) {
+        if (($result['is_raw'] ?? null)) {
             return  $result;
         }
         // var_dump( $result );
         // exit;
         @list($status, $status_message) = array_values($result);
         if ($is_server) {
-            if (@$status) {
+            if (($status ?? null)) {
                 return  ['status' => 'ok'];
             }
             $api->_error();
@@ -406,7 +406,7 @@ class yf_payment
             'amount' => $payment_api->money_html($o_amount),
         ];
         $form = [
-            'code' => @$__code ?: @$_code,
+            'code' => ($__code ?? null) ?: ($_code ?? null),
             'action' => url_user(($_SERVER['REQUEST_URI'] ?? null)),
         ];
         $result = [
@@ -434,8 +434,8 @@ class yf_payment
         // var
         $payment_api = _class('payment_api');
         $result = $payment_api->confirmation_code_check([
-            'operation_id' => @$_operation_id,
-            'code' => @$p_code,
+            'operation_id' => ($_operation_id ?? null),
+            'code' => ($p_code ?? null),
         ]);
         return  $result;
     }
@@ -447,7 +447,7 @@ class yf_payment
         // var
         $payment_api = _class('payment_api');
         $result = $payment_api->cancel_user([
-            'operation_id' => @$_operation_id,
+            'operation_id' => ($_operation_id ?? null),
         ]);
         return  $result;
     }

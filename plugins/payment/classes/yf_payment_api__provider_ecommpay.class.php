@@ -1004,7 +1004,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote
             'currency_id' => $currency_id,
             'method' => $method,
         ]);
-        if ( ! @$result['status']) {
+        if ( ! ($result['status'] ?? null)) {
             return  $result;
         }
         // currency conversion
@@ -1080,7 +1080,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote
         $url = $object;
         // request
         $request_options = [];
-        @$_is_debug && $request_options['is_debug'] = true;
+        ($_is_debug ?? null) && $request_options['is_debug'] = true;
         $result = $this->_api_request($url, $request, $request_options);
         // DUMP
         $payment_api->dump(['var' => ['response' => $result]]);
@@ -1180,7 +1180,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote
                 $status_message = 'Ошибка: ' . $response['message'] . ' (' . $state . ')';
                 break;
         }
-        @$status_message && $response['message'] = $status_message;
+        ($status_message ?? null) && $response['message'] = $status_message;
         // save response
         $sql_datetime = $payment_api->sql_datetime();
         $provider_name = 'ecommpay';

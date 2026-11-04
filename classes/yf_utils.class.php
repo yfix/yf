@@ -442,7 +442,7 @@ class yf_utils
             return $array_2;
         }
         foreach ((array) $array_2 as $key_2 => $value_2) {
-            $array_1[$key_2] = $this->array_replace_recursive(@$array_1[$key_2], $value_2);
+            $array_1[$key_2] = $this->array_replace_recursive(($array_1[$key_2] ?? null), $value_2);
         }
         return $array_1;
     }

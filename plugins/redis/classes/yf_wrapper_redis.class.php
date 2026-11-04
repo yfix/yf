@@ -234,7 +234,7 @@ class yf_wrapper_redis
         $_name = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        if (@$_name) {
+        if (($_name ?? null)) {
             $this->name = $_name;
         }
         // config
@@ -260,10 +260,10 @@ class yf_wrapper_redis
         }
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        if (@$_is_new || @$_is_force) {
+        if (($_is_new ?? null) || ($_is_force ?? null)) {
             return  true;
         }
-        if (@$_name && $_name != $this->name) {
+        if (($_name ?? null) && $_name != $this->name) {
             return  true;
         }
         $config = &$this->config;
@@ -279,7 +279,7 @@ class yf_wrapper_redis
             if ( ! $value) {
                 continue;
             }
-            $_value = @$config[$key] ?: $default;
+            $_value = ($config[$key] ?? null) ?: $default;
             if ( ! $_value) {
                 continue;
             }

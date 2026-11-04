@@ -203,7 +203,7 @@ class yf_main
         if (defined('DEBUG_MODE') && DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || ( $CONF['main']['ALLOW_DEBUG_PROFILING'] ?? false))) {
             $this->PROFILING = true;
         }
-        if (@$_SERVER['argc'] && ! isset($_SERVER['REQUEST_METHOD'])) {
+        if (($_SERVER['argc'] ?? null) && ! isset($_SERVER['REQUEST_METHOD'])) {
             $this->CONSOLE_MODE = true;
         }
         // error_reporting(0); // Remove all errors initially
@@ -345,7 +345,7 @@ class yf_main
     public function _before_init_hook()
     {
         $this->PROFILING && $this->_timing[] = [microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args()];
-        $this->NO_GRAPHICS = @$GLOBALS['no_graphics'];
+        $this->NO_GRAPHICS = ($GLOBALS['no_graphics'] ?? null);
         $GLOBALS['no_graphics'] = &$this->NO_GRAPHICS;
         if (defined('DEBUG_MODE') && DEBUG_MODE) {
             ini_set('display_errors', 'on');
@@ -1732,19 +1732,19 @@ class yf_main
         if (DEBUG_MODE) {
             ini_set('display_errors', 'stdout');
         }
-        if (@$_SERVER['SERVER_ADDR'] !== null) {
+        if (($_SERVER['SERVER_ADDR'] ?? null) !== null) {
             $_SERVER['SERVER_ADDR'] = preg_replace('#[^0-9\.]+#', '', trim(($_SERVER['SERVER_ADDR'] ?? '')));
         }
-        if (@$_SERVER['SERVER_PORT'] !== null) {
+        if (($_SERVER['SERVER_PORT'] ?? null) !== null) {
             $_SERVER['SERVER_PORT'] = (int) ($_SERVER['SERVER_PORT'] ?? null);
         }
-        if (@$_SERVER['HTTP_HOST'] !== null) {
+        if (($_SERVER['HTTP_HOST'] ?? null) !== null) {
             if (false !== ($pos = strpos(($_SERVER['HTTP_HOST'] ?? ''), ':'))) {
                 $_SERVER['HTTP_HOST'] = substr(($_SERVER['HTTP_HOST'] ?? ''), 0, $pos);
             }
             $_SERVER['HTTP_HOST'] = strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim(($_SERVER['HTTP_HOST'] ?? '')))));
         }
-        if (@$_SERVER['REQUEST_URI'] !== null) {
+        if (($_SERVER['REQUEST_URI'] ?? null) !== null) {
             // Possible bug when apache sends full url into request_uri, like this: "http://test.dev/" instead of "/"
             $p = parse_url(($_SERVER['REQUEST_URI'] ?? ''));
             if (isset($p['scheme']) || isset($p['host'])) {

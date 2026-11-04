@@ -23,7 +23,7 @@ class yf_manage_payment_lib
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
         $css = &$this->css_by_status;
-        $result = @$css[$_status_name] ?: '';
+        $result = ($css[$_status_name] ?? null) ?: '';
         return  $result;
     }
 }

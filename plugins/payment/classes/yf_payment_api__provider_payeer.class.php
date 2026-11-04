@@ -996,7 +996,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
         // add options
         $method = $this->api_method([
             'type' => 'payin',
-            'method_id' => @$options['method_id'],
+            'method_id' => ($options['method_id'] ?? null),
         ]);
         ! empty($method['option']) && $form_options += $method['option'];
         // form
@@ -1072,7 +1072,7 @@ class yf_payment_api__provider_payeer extends yf_payment_api__provider_remote
             'currency_id' => $currency_id,
             'method' => $method,
         ]);
-        if ( ! @$result['status']) {
+        if ( ! ($result['status'] ?? null)) {
             return  $result;
         }
         // currency conversion

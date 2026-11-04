@@ -325,7 +325,7 @@ EOS;
                 $is_confirm = ! empty($_POST['is_confirm']);
                 if ($is_confirm) {
                     $result = $this->_update();
-                    if ( ! @$result) {
+                    if ( ! ($result ?? null)) {
                         $level = 'error';
                         $message = 'Ошибка: обновление курса валют';
                     } else {
@@ -348,7 +348,7 @@ EOS;
     public function _update_cli()
     {
         $result = $this->_update();
-        if ( ! @$result) {
+        if ( ! ($result ?? null)) {
             $status = 1;
             $message = 'Currency rate update is fail';
         } else {

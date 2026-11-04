@@ -90,7 +90,7 @@ class yf_mail_driver_phpmailer extends yf_mail_driver
             $callback = $params['on_after_send'];
             $callback($mail, $params, $result, $error_message, $this->PARENT);
         }
-        if (@$error_message && DEBUG_MODE && $this->PARENT->MAIL_DEBUG_ERROR) {
+        if (($error_message ?? null) && DEBUG_MODE && $this->PARENT->MAIL_DEBUG_ERROR) {
             trigger_error($error_message, E_USER_WARNING);
         }
         $this->PARENT->_last_error_message = $error_message;

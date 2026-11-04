@@ -126,7 +126,7 @@ class yf_manage_payment_yandexmoney
                 $is_confirm = ! empty($_POST['is_confirm']);
                 if ($is_confirm) {
                     $is_action = false;
-                    $action = @$_POST['operation'];
+                    $action = ($_POST['operation'] ?? null);
                     switch ($action) {
                         case 'authorize':
                         case 'revoke_authorize':
@@ -178,19 +178,19 @@ class yf_manage_payment_yandexmoney
             return  null;
         }
         switch (true) {
-            case @$_status === 'in_progress':
+            case ($_status ?? null) === 'in_progress':
                 $_css_panel_status = 'warning';
                 empty($_status_header) && $_status_header = 'В процессе';
                 break;
-            case @$_status === 'processing':
+            case ($_status ?? null) === 'processing':
                 $_css_panel_status = 'warning';
                 empty($_status_header) && $_status_header = 'Обработка';
                 break;
-            case @$_status === 'success' || @$_status === true:
+            case ($_status ?? null) === 'success' || ($_status ?? null) === true:
                 $_css_panel_status = 'success';
                 empty($_status_header) && $_status_header = 'Выполнено';
                 break;
-            case @$_status === 'refused':
+            case ($_status ?? null) === 'refused':
             default:
                 $_css_panel_status = 'danger';
                 empty($_status_header) && $_status_header = 'Ошибка';

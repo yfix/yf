@@ -189,7 +189,7 @@ class yf_pcntl_signal
             // signal
             $__is_exit = isset($_is_exit) ? $_is_exit : $is_exit;
             $__is_silent = isset($_is_silent) ? $_is_silent : $is_silent;
-            if ( ! @$__is_silent) {
+            if ( ! ($__is_silent ?? null)) {
                 echo PHP_EOL;
             }
             $message_head = 'Going to terminate';
@@ -219,7 +219,7 @@ class yf_pcntl_signal
             // exit
             if ($is_terminate) {
                 $result = true;
-                if ( ! @$__is_silent) {
+                if ( ! ($__is_silent ?? null)) {
                     $message = $message_head;
                     if ($message_type) {
                         $message .= ' by ' . implode(', ', $message_type);
@@ -228,7 +228,7 @@ class yf_pcntl_signal
                         echo $message . PHP_EOL;
                     }
                 }
-                if (@$__is_exit) {
+                if (($__is_exit ?? null)) {
                     exit(0);
                 }
             }
@@ -245,11 +245,11 @@ class yf_pcntl_signal
         if (is_string($options)) {
             $_message = $options;
         }
-        if ( ! @$_message) {
+        if ( ! ($_message ?? null)) {
             return;
         }
         // file type
-        @$_type && $type = $_type;
+        ($_type ?? null) && $type = $_type;
         $type = in_array($type, ['log', 'error']) ? $type : 'log';
         // file
         if ($type == 'log') {
@@ -271,10 +271,10 @@ class yf_pcntl_signal
 
     public static function _pcntl_dump($message = null, $var = null)
     {
-        if ( ! @$message && ! @$var) {
+        if ( ! ($message ?? null) && ! ($var ?? null)) {
             return  false;
         }
-        ! @$message && $message = '';
+        ! ($message ?? null) && $message = '';
         $log = $var ? ' - ' . var_export($var, true) : '';
         self::_pcntl_log($message . $log);
         return  true;
@@ -282,7 +282,7 @@ class yf_pcntl_signal
 
     public static function _pcntl_error($message = null)
     {
-        if ( ! @$message) {
+        if ( ! ($message ?? null)) {
             return  false;
         }
         $title = 'Error: ';
@@ -292,7 +292,7 @@ class yf_pcntl_signal
 
     public static function _pcntl_fatal($message = null, $code = -1)
     {
-        if ( ! @$message) {
+        if ( ! ($message ?? null)) {
             return  false;
         }
         $title = 'Fatal: ';

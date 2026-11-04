@@ -154,7 +154,7 @@ class yf_mail_driver_mandrill extends yf_mail_driver
         } catch (Mandrill_Error $e) {
             $error_message = 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
         }
-        if (@$error_message && DEBUG_MODE && $this->PARENT->MAIL_DEBUG_ERROR) {
+        if (($error_message ?? null) && DEBUG_MODE && $this->PARENT->MAIL_DEBUG_ERROR) {
             trigger_error($error_message, E_USER_WARNING);
         }
         if (is_callable($params['on_after_send'])) {

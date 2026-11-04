@@ -68,7 +68,7 @@ class yf_payment_test
         $payment_api = _class('payment_api');
         // var
         $result = [];
-        $operation_id = @$_GET['operation_id'];
+        $operation_id = ($_GET['operation_id'] ?? null);
         $data = ['operation_id' => $operation_id];
         // start
         $result[1]['level'] = $payment_api->transaction_isolation();
@@ -154,14 +154,14 @@ class yf_payment_test
         ];
         // exec
         $form = '';
-        if (@$_GET['tpl'] || (@$_GET['type'] && @$_GET['status'])) {
+        if (($_GET['tpl'] ?? null) || (($_GET['type'] ?? null) && ($_GET['status'] ?? null))) {
             // vars
             $payment_api = _class('payment_api');
             // prepare
-            $tpl = @$_GET['tpl'];
-            $type = @$_GET['type'];
-            $status = @$_GET['status'];
-            $user_id = @$_GET['user_id'] ?: 1;
+            $tpl = ($_GET['tpl'] ?? null);
+            $type = ($_GET['type'] ?? null);
+            $status = ($_GET['status'] ?? null);
+            $user_id = ($_GET['user_id'] ?? null) ?: 1;
             $is_admin = ! empty($_GET['is_admin']);
             $result = $payment_api->mail([
                 'tpl' => $tpl,
@@ -193,14 +193,14 @@ class yf_payment_test
             $uri = [];
             $uri[] = 'tpl=' . $tpl;
             // user
-            if (@$item['is_user']) {
+            if (($item['is_user'] ?? null)) {
                 $_uri = '?' . implode('&', $uri);
                 $link = url_user('/@object/@action' . $_uri);
                 $a = sprintf('<a href="%s" class="btn btn-default">%s</a>', $link, $tpl);
                 $action[] = $a;
             }
             // admin
-            if (@$item['is_admin']) {
+            if (($item['is_admin'] ?? null)) {
                 $uri[] = 'is_admin=' . true;
                 $_uri = '?' . implode('&', $uri);
                 $link = url_user('/@object/@action' . $_uri);
@@ -212,14 +212,14 @@ class yf_payment_test
             $uri[] = 'type=' . $item['type'];
             $uri[] = 'status=' . $item['status'];
             // user
-            if (@$item['is_user']) {
+            if (($item['is_user'] ?? null)) {
                 $_uri = '?' . implode('&', $uri);
                 $link = url_user('/@object/@action' . $_uri);
                 $a = sprintf('<a href="%s" class="btn btn-default">by %s - %s</a>', $link, $item['type'], $item['status']);
                 $action[] = $a;
             }
             // admin
-            if (@$item['is_admin']) {
+            if (($item['is_admin'] ?? null)) {
                 $uri[] = 'is_admin=' . true;
                 $_uri = '?' . implode('&', $uri);
                 $link = url_user('/@object/@action' . $_uri);
@@ -549,8 +549,8 @@ class yf_payment_test
         $_ = [
             'url_result' => url('/@object/@action', ['test_mode' => 1]),
             'url_server' => url('/@object/@action', ['test_mode' => 1, 'server' => true]),
-            'operation_id' => @$_GET['operation_id'] ?: '_1',
-            'amount' => @$_GET['amount'] ?: '0.01',
+            'operation_id' => ($_GET['operation_id'] ?? null) ?: '_1',
+            'amount' => ($_GET['amount'] ?? null) ?: '0.01',
         ];
         return  $_;
     }
@@ -625,17 +625,17 @@ class yf_payment_test
         if ( ! @empty($methods[$_GET['method']])) {
             $is_action = true;
             $method_id = ($_GET['method'] ?? null);
-            $is_debug = @$_GET['is_debug'];
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'method_id' => $method_id,
                 'is_debug' => $is_debug,
             ];
-            $operation_id = @$_GET['operation_id'] ?: '1';
-            $amount = @$_GET['amount'] ?: 50;
-            $card = @$_GET['card'] ?: '5218572211211342';
+            $operation_id = ($_GET['operation_id'] ?? null) ?: '1';
+            $amount = ($_GET['amount'] ?? null) ?: 50;
+            $card = ($_GET['card'] ?? null) ?: '5218572211211342';
             switch (true) {
                 case $method_id == 'withdraw-id' || $method_id == 'co-invoice-id':
-                    if (@$_GET['id'] > 0) {
+                    if (($_GET['id'] ?? null) > 0) {
                         $options['id'] = ($_GET['id'] ?? null);
                     }
                     break;
@@ -705,14 +705,14 @@ EOS;
         if ( ! @empty($methods[$_GET['method']])) {
             $is_action = true;
             $method_id = ($_GET['method'] ?? null);
-            $is_debug = @$_GET['is_debug'];
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'method_id' => $method_id,
                 'is_debug' => $is_debug,
             ];
-            $operation_id = '_' . (@$_GET['operation_id'] ?: '1');
-            $amount = @$_GET['amount'] ?: 0.01;
-            $account = @$_GET['account'] ?: $api->PURSE_ID['USD'];
+            $operation_id = '_' . (($_GET['operation_id'] ?? null) ?: '1');
+            $amount = ($_GET['amount'] ?? null) ?: 0.01;
+            $account = ($_GET['account'] ?? null) ?: $api->PURSE_ID['USD'];
             switch (true) {
                 case $method_id == 'verify' || $method_id == 'spend':
                     $options['option'] = [
@@ -765,14 +765,14 @@ EOS;
         if ( ! @empty($methods[$_GET['method']])) {
             $is_action = true;
             $method_id = ($_GET['method'] ?? null);
-            $is_debug = @$_GET['is_debug'];
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'method_id' => $method_id,
                 'is_debug' => $is_debug,
             ];
-            $operation_id = '_' . (@$_GET['operation_id'] ?: '1');
-            $amount = @$_GET['amount'] ?: 0.01;
-            $account = @$_GET['account'] ?: $api->PURSE_ID['USD'];
+            $operation_id = '_' . (($_GET['operation_id'] ?? null) ?: '1');
+            $amount = ($_GET['amount'] ?? null) ?: 0.01;
+            $account = ($_GET['account'] ?? null) ?: $api->PURSE_ID['USD'];
             switch (true) {
                 case $method_id == 'operation-history':
                     $options['option'] = [
@@ -833,14 +833,14 @@ EOS;
         if ( ! @empty($methods[$_GET['method']])) {
             $is_action = true;
             $method_id = ($_GET['method'] ?? null);
-            $is_debug = @$_GET['is_debug'];
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'method_id' => $method_id,
                 'is_debug' => $is_debug,
             ];
-            $operation_id = (int) (@$_GET['operation_id'] ?: '1');
-            $amount = @$_GET['amount'] ?: 0.01;
-            $account = @$_GET['purse'] ?: $api->_purse_by_currency(['currency_id' => 'USD'])['id'];
+            $operation_id = (int) (($_GET['operation_id'] ?? null) ?: '1');
+            $amount = ($_GET['amount'] ?? null) ?: 0.01;
+            $account = ($_GET['purse'] ?? null) ?: $api->_purse_by_currency(['currency_id' => 'USD'])['id'];
             switch (true) {
                 case $method_id == 'balance':
                     $purse = $api->_purse_by_currency(['currency_id' => 'USD']);
@@ -943,14 +943,14 @@ EOS;
             'qiwi' => true,
         ];
         // process
-        if (@$methods[($_GET['method'] ?? null)]) {
+        if (($methods[($_GET['method'] ?? null)] ?? null)) {
             $method_id = ($_GET['method'] ?? null);
-            $is_debug = @$_GET['is_debug'];
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'method_id' => $method_id,
                 'is_debug' => $is_debug,
             ];
-            $operation_id = @$_GET['operation_id'] ?: '1';
+            $operation_id = ($_GET['operation_id'] ?? null) ?: '1';
             switch (true) {
                 case $method_id == 'pay_card':
                     $options += [
@@ -1027,17 +1027,17 @@ EOS;
         ];
         $is_action = null;
         // process
-        if (@$methods[($_GET['method'] ?? null)]) {
+        if (($methods[($_GET['method'] ?? null)] ?? null)) {
             $is_action = true;
             $method_id = ($_GET['method'] ?? null);
-            $is_debug = @$_GET['is_debug'];
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'method_id' => $method_id,
                 'is_debug' => $is_debug,
             ];
-            $operation_id = @$_GET['operation_id'] ?: '1';
-            $amount = @$_GET['amount'] ?: 50;
-            $card = @$_GET['card'] ?: '5218572211211342';
+            $operation_id = ($_GET['operation_id'] ?? null) ?: '1';
+            $amount = ($_GET['amount'] ?? null) ?: 50;
+            $card = ($_GET['card'] ?? null) ?: '5218572211211342';
             switch (true) {
                 case $method_id == 'mastercard_p2p_privat_uah':
                     $options += [
@@ -1089,17 +1089,17 @@ EOS;
         ];
         $is_action = null;
         // process
-        if (@$methods[($_GET['method'] ?? null)]) {
+        if (($methods[($_GET['method'] ?? null)] ?? null)) {
             $is_action = true;
             $method_id = ($_GET['method'] ?? null);
-            $is_debug = @$_GET['is_debug'];
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'method_id' => $method_id,
                 'is_debug' => $is_debug,
             ];
-            $operation_id = (int) (@$_GET['operation_id'] ?: 1);
-            $amount = @$_GET['amount'] ?: 0.01;
-            $purse = @$_GET['purse'] ?: 'Z272631242756';
+            $operation_id = (int) (($_GET['operation_id'] ?? null) ?: 1);
+            $amount = ($_GET['amount'] ?? null) ?: 0.01;
+            $purse = ($_GET['purse'] ?? null) ?: 'Z272631242756';
             switch (true) {
                 case $method_id == 'p2p_wmz':
                     $options += [
@@ -1151,17 +1151,17 @@ EOS;
         ];
         $is_action = null;
         // process
-        if (@$methods[($_GET['method'] ?? null)]) {
+        if (($methods[($_GET['method'] ?? null)] ?? null)) {
             $is_action = true;
             $method_id = ($_GET['method'] ?? null);
-            $is_debug = @$_GET['is_debug'];
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'method_id' => $method_id,
                 'is_debug' => $is_debug,
             ];
-            $operation_id = '_' . (@$_GET['operation_id'] ?: '1');
-            $amount = @$_GET['amount'] ?: 0.01;
-            $account = @$_GET['account'] ?: $provider_class->PURSE_ID['USD'];
+            $operation_id = '_' . (($_GET['operation_id'] ?? null) ?: '1');
+            $amount = ($_GET['amount'] ?? null) ?: 0.01;
+            $account = ($_GET['account'] ?? null) ?: $provider_class->PURSE_ID['USD'];
             switch (true) {
                 case $method_id == 'perfectmoney':
                     $options += [
@@ -1213,18 +1213,18 @@ EOS;
         ];
         $is_action = null;
         // process
-        if (@$methods[($_GET['method'] ?? null)]) {
+        if (($methods[($_GET['method'] ?? null)] ?? null)) {
             $is_action = true;
             $method_id = ($_GET['method'] ?? null);
-            $is_debug = @$_GET['is_debug'];
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'method_id' => $method_id,
                 'is_debug' => $is_debug,
             ];
-            $operation_id = @$_GET['operation_id'] ?: 1;
-            $amount = @$_GET['amount'] ?: 100;
-            $test_result1 = @$_GET['test_result1'];
-            $test_result2 = @$_GET['test_result2'];
+            $operation_id = ($_GET['operation_id'] ?? null) ?: 1;
+            $amount = ($_GET['amount'] ?? null) ?: 100;
+            $test_result1 = ($_GET['test_result1'] ?? null);
+            $test_result2 = ($_GET['test_result2'] ?? null);
             switch (true) {
                 case $method_id == 'yandexmoney_p2p':
                     $options += [
@@ -1274,11 +1274,11 @@ EOS;
         $php = 'Выберите метод';
         $method = null;
         $is_action = null;
-        if (@$_provider == @$_GET['provider'] && @$_method[($_GET['method'] ?? null)]) {
+        if (($_provider ?? null) == ($_GET['provider'] ?? null) && ($_method[($_GET['method'] ?? null)] ?? null)) {
             $is_action = true;
-            $provider = @$_GET['provider'];
-            $method = @$_GET['method'];
-            $is_debug = @$_GET['is_debug'];
+            $provider = ($_GET['provider'] ?? null);
+            $method = ($_GET['method'] ?? null);
+            $is_debug = ($_GET['is_debug'] ?? null);
             $options = [
                 'provider' => $provider,
                 'method' => $method,
@@ -1384,22 +1384,22 @@ EOS;
         $php = 'Выберите метод';
         $method = null;
         $is_action = null;
-        if (@$_provider == @$_GET['provider'] && @$_method[($_GET['method'] ?? null)]) {
+        if (($_provider ?? null) == ($_GET['provider'] ?? null) && ($_method[($_GET['method'] ?? null)] ?? null)) {
             $is_action = true;
-            $provider = @$_GET['provider'];
-            $method = @$_GET['method'];
-            $is_debug = @$_GET['is_debug'];
-            $from = @$_GET['from'];
-            $to = @$_GET['to'];
-            $date = @$_GET['date'];
-            $api = @$_GET['api'];
+            $provider = ($_GET['provider'] ?? null);
+            $method = ($_GET['method'] ?? null);
+            $is_debug = ($_GET['is_debug'] ?? null);
+            $from = ($_GET['from'] ?? null);
+            $to = ($_GET['to'] ?? null);
+            $date = ($_GET['date'] ?? null);
+            $api = ($_GET['api'] ?? null);
             $options = [
                 'provider' => $provider,
                 'method' => $method,
-                'date' => $date ?: @$_date,
-                'currency_id' => @$_currency_id,
-                'from' => $from ?: @$_from,
-                'to' => $to ?: @$_to,
+                'date' => $date ?: ($_date ?? null),
+                'currency_id' => ($_currency_id ?? null),
+                'from' => $from ?: ($_from ?? null),
+                'to' => $to ?: ($_to ?? null),
                 'is_force' => true,
                 // 'is_force_load' => true,
                 'request_options' => [
@@ -2057,10 +2057,10 @@ EOS;
             $action = implode(' ', (array) $_action);
         }
         // data
-        if (@$_php) {
+        if (($_php ?? null)) {
             $data = is_array($_php) ? implode("\n", $_php) : $_php;
             $lang = 'php';
-        } elseif (@$_form) {
+        } elseif (($_form ?? null)) {
             $data = $_form;
             $lang = 'html';
         }
@@ -2075,11 +2075,11 @@ EOS;
         $expanded_in = 'in';
         if (is_string($_submit) || is_string($action)) {
             $expanded = 'false';
-            ! @$_is_action && $expanded_in = '';
+            ! ($_is_action ?? null) && $expanded_in = '';
             // form
             $form = '';
             $name = strtolower($_title);
-            @$_form && $form = <<<EOS
+            ($_form ?? null) && $form = <<<EOS
 			<div class="form">
 				$_form
 			</div>

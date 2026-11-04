@@ -105,8 +105,8 @@ class yf_payment_api__currency
         // method
         $method_id = null;
         @$method = &$provider['method'];
-        if (@$_method) {
-            if ( ! @$method[$_method]) {
+        if (($_method ?? null)) {
+            if ( ! ($method[$_method] ?? null)) {
                 $result = [
                     'status' => false,
                     'status_message' => 'Загрузка курса валют: метод не найден',
@@ -126,7 +126,7 @@ class yf_payment_api__currency
         }
         // date
         $date = 0;
-        if (@$_date) {
+        if (($_date ?? null)) {
             if ( ! is_numeric($_date)) {
                 $date = @strtotime($_date);
                 if (is_int($date)) {
@@ -138,7 +138,7 @@ class yf_payment_api__currency
         // $options[ 'is_debug' ] = true;
         // cache
         @$result = $this->cache[__FUNCTION__][$provider_id][$method_id][$date];
-        if ( ! @$_is_force_load && $result) {
+        if ( ! ($_is_force_load ?? null) && $result) {
             return  $result;
         }
         // load
@@ -171,7 +171,7 @@ class yf_payment_api__currency
         // prepare request options
         $url = 'http://www.bank.gov.ua/control/uk/curmetal/detail/currency?period=daily';
         // date
-        if (@$_date) {
+        if (($_date ?? null)) {
             $tpl = 'd.m.Y';
             $url = 'http://www.bank.gov.ua/control/uk/curmetal/currency/search?formType=searchFormDate&time_step=daily&date=' . date($tpl, $_date);
         }
@@ -179,7 +179,7 @@ class yf_payment_api__currency
         $request_options = [
             'is_response_raw' => true,
         ];
-        @$_request_options && $request_options = array_replace_recursive(
+        ($_request_options ?? null) && $request_options = array_replace_recursive(
             $request_options,
             $_request_options
         );
@@ -249,13 +249,13 @@ class yf_payment_api__currency
         $url = 'http://bank.gov.ua/NBUStatService/v1/statdirectory/exchange';
         $uri = [];
         // method
-        switch (@$_method) {
+        switch (($_method ?? null)) {
             case 'xml':  $uri[] = 'xml';  break;
             default:
             case 'json': $uri[] = 'json'; break;
         }
         // date
-        if (@$_date) {
+        if (($_date ?? null)) {
             $tpl = 'Ymd';
             $uri[] = 'date=' . date($tpl, $_date);
         }
@@ -266,7 +266,7 @@ class yf_payment_api__currency
         $request_options = [
             'is_redirect' => true,
         ];
-        @$_request_options && $request_options = array_replace_recursive(
+        ($_request_options ?? null) && $request_options = array_replace_recursive(
             $request_options,
             $_request_options
         );
@@ -283,7 +283,7 @@ class yf_payment_api__currency
         $data = [];
         $currencies = $payment_api->currencies;
         foreach ($response as $i => $item) {
-            if (@$_method == 'xml') {
+            if (($_method ?? null) == 'xml') {
                 $item = (array) $item;
             }
             $currency_id = $item['cc'];
@@ -314,7 +314,7 @@ class yf_payment_api__currency
         // prepare request options
         $url = 'http://www.cbr.ru/scripts/XML_daily.asp';
         // date
-        if (@$_date) {
+        if (($_date ?? null)) {
             $tpl = 'd/m/Y';
             $url = $url . '?date_req=' . date($tpl, $_date);
         }
@@ -322,7 +322,7 @@ class yf_payment_api__currency
             'is_redirect' => true,
             'is_response_xml' => true,
         ];
-        @$_request_options && $request_options = array_replace_recursive(
+        ($_request_options ?? null) && $request_options = array_replace_recursive(
             $request_options,
             $_request_options
         );
@@ -371,7 +371,7 @@ class yf_payment_api__currency
         $request_options = [
             'is_response_json' => true,
         ];
-        @$_request_options && $request_options = array_replace_recursive(
+        ($_request_options ?? null) && $request_options = array_replace_recursive(
             $request_options,
             $_request_options
         );
@@ -426,7 +426,7 @@ class yf_payment_api__currency
             'is_redirect' => true,
             'is_response_raw' => true,
         ];
-        @$_request_options && $request_options = array_replace_recursive(
+        ($_request_options ?? null) && $request_options = array_replace_recursive(
             $request_options,
             $_request_options
         );
@@ -481,7 +481,7 @@ class yf_payment_api__currency
         $request_options = [
             'is_redirect' => true,
         ];
-        @$_request_options && $request_options = array_replace_recursive(
+        ($_request_options ?? null) && $request_options = array_replace_recursive(
             $request_options,
             $_request_options
         );
@@ -581,7 +581,7 @@ class yf_payment_api__currency
             return  null;
         }
         // base
-        if ( ! @$_base && @$_provider) {
+        if ( ! ($_base ?? null) && ($_provider ?? null)) {
             $_base = $this->provider[$_provider]['base'];
         }
         // currency
@@ -647,11 +647,11 @@ class yf_payment_api__currency
         $_provider = $_currency_rate = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        if ( ! @$_provider || ! @$_currency_rate) {
+        if ( ! ($_provider ?? null) || ! ($_currency_rate ?? null)) {
             return  null;
         }
         $provider_id = @$this->provider[$_provider]['id'];
-        if ( ! @$provider_id) {
+        if ( ! ($provider_id ?? null)) {
             return  null;
         }
         // var
@@ -660,14 +660,14 @@ class yf_payment_api__currency
         // add datetime, value
         $decimals = 6;
         foreach ($_currency_rate as $index => &$item) {
-            ! @$item['provider_id'] && $item['provider_id'] = $provider_id;
+            ! ($item['provider_id'] ?? null) && $item['provider_id'] = $provider_id;
             $item['datetime'] = &$sql_datetime;
             $value = &$item['from_value'];
             $value = $payment_api->_number_mysql($value, $decimals);
             $value = &$item['to_value'];
             $value = $payment_api->_number_mysql($value, $decimals);
         }
-        if ( ! @$_currency_rate) {
+        if ( ! ($_currency_rate ?? null)) {
             return  null;
         }
         // store
@@ -687,9 +687,9 @@ class yf_payment_api__currency
         $provider = &$this->provider;
         $index = &$this->index;
         // default
-        $_provider = strtolower(@$_provider ?: $this->provider_default);
+        $_provider = strtolower(($_provider ?? null) ?: $this->provider_default);
         // provider_id
-        if (@$_provider_id) {
+        if (($_provider_id ?? null)) {
             $_provider_id = (int) $_provider_id;
             if ( ! is_array($index['provider']['id'][$_provider_id])) {
                 return  $result;
@@ -697,7 +697,7 @@ class yf_payment_api__currency
             $result = $index['provider']['id'][$_provider_id];
         }
         // allow
-        if ( ! @$_is_force && ! @$this->provider_allow[$_provider]) {
+        if ( ! ($_is_force ?? null) && ! @$this->provider_allow[$_provider]) {
             return  $result;
         }
         ! $result && $result = $provider[$_provider];
@@ -710,8 +710,8 @@ class yf_payment_api__currency
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
-        $_type = @$_type == 'sell' ? 'sell' : 'buy';
-        if ( ! @$_type || ! @$_currency_id) {
+        $_type = ($_type ?? null) == 'sell' ? 'sell' : 'buy';
+        if ( ! ($_type ?? null) || ! ($_currency_id ?? null)) {
             return  null;
         }
         $payment_api = $this->payment_api;
@@ -726,7 +726,7 @@ class yf_payment_api__currency
         $currency_rate = $this->cache[__FUNCTION__][$provider_id][$_type][$_currency_id];
         if ( ! empty($_force) || ! $currency_rate) {
             list($currency_id, $currency) = $payment_api->get_currency__by_id(['currency_id' => $_currency_id]);
-            if (@$_type == 'buy') {
+            if (($_type ?? null) == 'buy') {
                 $target = 'to';
                 $source = 'from';
             } else {
@@ -784,8 +784,8 @@ class yf_payment_api__currency
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
         $result = null;
-        $_type = @$_type == 'sell' ? 'sell' : 'buy';
-        if ( ! @$_from && ! @$_currency_id) {
+        $_type = ($_type ?? null) == 'sell' ? 'sell' : 'buy';
+        if ( ! ($_from ?? null) && ! ($_currency_id ?? null)) {
             return  $result;
         }
         // provider
@@ -794,8 +794,8 @@ class yf_payment_api__currency
             return  $result;
         }
         // currency base
-        $from = @$_from ?: $_currency_id;
-        $to = @$_to ?: $provider['base'];
+        $from = ($_from ?? null) ?: $_currency_id;
+        $to = ($_to ?? null) ?: $provider['base'];
         $o = [
             'type' => $_type,
             'currency_id' => $from,
@@ -803,7 +803,7 @@ class yf_payment_api__currency
         ];
         $rates = $this->rates($o);
         $r = &$rates[$to];
-        if ( ! @$r) {
+        if ( ! ($r ?? null)) {
             return  $result;
         }
         $result = $r['rate'] / $r['value'];
@@ -828,7 +828,7 @@ class yf_payment_api__currency
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
         $result = null;
-        if ( ! @$_from && ! @$_currency_id) {
+        if ( ! ($_from ?? null) && ! ($_currency_id ?? null)) {
             return  $result;
         }
         // provider
@@ -838,16 +838,16 @@ class yf_payment_api__currency
         }
         ! $_provider && $_provider = $provider['code'];
         // currency base, main
-        ! @$_main && $_main = $this->main;
+        ! ($_main ?? null) && $_main = $this->main;
         $base = $provider['base'];
-        $from = @$_from ?: $_currency_id;
-        $to = @$_to ?: $base;
+        $from = ($_from ?? null) ?: $_currency_id;
+        $to = ($_to ?? null) ?: $base;
         // request
         $o = [
             'provider' => $_provider,
-            'method' => @$_method,
-            'date' => @$_date,
-            'is_force' => @$_is_force,
+            'method' => ($_method ?? null),
+            'date' => ($_date ?? null),
+            'is_force' => ($_is_force ?? null),
         ];
         // request
         $data = $this->load($o);
@@ -883,7 +883,7 @@ class yf_payment_api__currency
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
-        if ( ! @$_amount) {
+        if ( ! ($_amount ?? null)) {
             return  null;
         }
         $result = $this->rate($options);
@@ -893,7 +893,7 @@ class yf_payment_api__currency
         $result *= $_amount;
         // if( !@$_round ) {
         $payment_api = $this->payment_api;
-        $to = @$_to ?: $_currency_id;
+        $to = ($_to ?? null) ?: $_currency_id;
         list($currency_id, $currency) = $payment_api->get_currency__by_id([
                 'currency_id' => $to,
             ]);

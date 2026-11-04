@@ -454,11 +454,11 @@ class yf_payment_api
         $fix = 0;
         $min = 0;
         if (is_array($fee)) {
-            $rt = @$fee['rt'] ?: $rt;
-            $fix = @$fee['fix'] ?: $fix;
-            $min = @$fee['min'] ?: $min;
+            $rt = ($fee['rt'] ?? null) ?: $rt;
+            $fix = ($fee['fix'] ?? null) ?: $fix;
+            $min = ($fee['min'] ?? null) ?: $min;
         } else {
-            $rt = @$fee ?: $rt;
+            $rt = ($fee ?? null) ?: $rt;
         }
         $result = $amount + $amount * ($rt / 100) + $fix;
         ($min > 0 && $min > $result) && $result = $min;
@@ -792,7 +792,7 @@ class yf_payment_api
         $provider_index = $this->provider_index;
         if (empty($provider)) {
             $is_admin = main()->ADMIN_ID > 0;
-            $active = $is_admin || @$_is_service ? 1 : 2;
+            $active = $is_admin || ($_is_service ?? null) ? 1 : 2;
             $provider = db()->table('payment_provider')
                 ->where('active', '>=', $active)
                 ->order_by('order')
@@ -1085,7 +1085,7 @@ class yf_payment_api
         $data['operation_id'] = $operation_id;
         // user confirmation
         $result = $this->confirmation($options, $data, $operation_data);
-        if ( ! @$result['status']) {
+        if ( ! ($result['status'] ?? null)) {
             $is_transaction && db()->rollback();
             return  $result;
         }
@@ -1130,7 +1130,7 @@ class yf_payment_api
         $_ = &$options;
         $is_transaction = isset( $_['is_transaction'] ) ? $_['is_transaction'] : true;
         // check: from, to
-        if ( ! @$_['from'] || ! @$_['to']) {
+        if ( ! ($_['from'] ?? null) || ! ($_['to'] ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Недостаточно данных',
@@ -1184,7 +1184,7 @@ class yf_payment_api
         $is_transaction && db()->begin();
         $status_from = db()->table('payment_operation')->insert($data_from);
         $status_to = db()->table('payment_operation')->insert($data_to);
-        if ( ! @$status_from || ! @$status_to) {
+        if ( ! ($status_from ?? null) || ! ($status_to ?? null)) {
             $is_transaction && db()->rollback();
             $result = [
                 'status' => false,
@@ -1245,7 +1245,7 @@ class yf_payment_api
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
-        if (@$_operation_id < 1) {
+        if (($_operation_id ?? null) < 1) {
             $result = [
                 'status' => false,
                 'status_message' => 'Неверный код операции',
@@ -1265,7 +1265,7 @@ class yf_payment_api
             $this->transaction_rollback();
             return  $result;
         }
-        if (@$_user_mode) {
+        if (($_user_mode ?? null)) {
             $account_result = $this->get_account($options);
             if (empty($account_result)) {
                 return  $account_result;
@@ -1306,11 +1306,11 @@ class yf_payment_api
         }
         // check provider
         $provider_options = [];
-        if ( ! @$_user_mode) {
+        if ( ! ($_user_mode ?? null)) {
             $provider_options['all'] = true;
         }
         $providers = $this->provider($provider_options);
-        if ( ! @$providers[$operation['provider_id']]) {
+        if ( ! ($providers[$operation['provider_id']] ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Операцию данного провайдера невозможно отменить',
@@ -1323,7 +1323,7 @@ class yf_payment_api
             $options['is_revert'] = true;
         }
         $result = $this->_cancel($options);
-        if (@$result['status']) {
+        if (($result['status'] ?? null)) {
             $result['status_message'] = 'Операция отменена';
             $this->transaction_commit();
         } else {
@@ -1337,7 +1337,7 @@ class yf_payment_api
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // var
-        if (@$_operation_id < 1) {
+        if (($_operation_id ?? null) < 1) {
             $result = [
                 'status' => false,
                 'status_message' => 'Неверный код операции',
@@ -1347,7 +1347,7 @@ class yf_payment_api
         // start transaction
         $this->transaction_start($options);
         // revert funds
-        if (@$_is_revert) {
+        if (($_is_revert ?? null)) {
             $result = $this->_amount_revert($options);
             if (empty($result['status'])) {
                 $this->transaction_rollback();
@@ -1356,7 +1356,7 @@ class yf_payment_api
         }
         // update operation balance
         $options = [
-                'status_name' => @$_status_name ?: 'cancelled',
+                'status_name' => ($_status_name ?? null) ?: 'cancelled',
                 'is_finish' => true,
             ] + $options;
         $result = $this->_operation_balance_update($options);
@@ -1374,11 +1374,11 @@ class yf_payment_api
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // operation
-        $operation = $this->operation(['operation_id' => @$_operation_id]);
+        $operation = $this->operation(['operation_id' => ($_operation_id ?? null)]);
         if (empty($operation)) {
             $result = [
                 'status' => false,
-                'status_message' => 'Операция отсутствует: ' . @$_operation_id,
+                'status_message' => 'Операция отсутствует: ' . ($_operation_id ?? null),
             ];
             return  $result;
         }
@@ -1407,7 +1407,7 @@ class yf_payment_api
         if (empty($operation)) {
             $result = [
                 'status' => false,
-                'status_message' => 'Операция отсутствует: ' . @$_operation_id,
+                'status_message' => 'Операция отсутствует: ' . ($_operation_id ?? null),
             ];
             return  $result;
         }
@@ -1427,7 +1427,7 @@ class yf_payment_api
         $balance = $account['balance'];
         // status
         $status_id = &$_status_id;
-        if (@$_status_name) {
+        if (($_status_name ?? null)) {
             $object = $this->get_status(['name' => $_status_name]);
             list($status_id, $status) = $object;
             if (empty($status_id)) {
@@ -1441,8 +1441,8 @@ class yf_payment_api
             'balance' => $balance,
             'datetime_update' => $sql_datetime,
         ];
-        @$status_id && $data['status_id'] = $status_id;
-        @$_is_finish && $data['datetime_finish'] = $sql_datetime;
+        ($status_id ?? null) && $data['status_id'] = $status_id;
+        ($_is_finish ?? null) && $data['datetime_finish'] = $sql_datetime;
         $result = $this->operation_update($data);
         return  $result;
     }
@@ -1469,7 +1469,7 @@ class yf_payment_api
         $data['user_id'] = $value;
         // check direction
         $direction = null;
-        switch (@$_['direction']) {
+        switch (($_['direction'] ?? null)) {
             case 'in':
                 $direction = 'in';
                 break;
@@ -1541,7 +1541,7 @@ class yf_payment_api
             0,
         ]);
         $balance_limit_lower = $this->_number_float($balance_limit_lower);
-        if (@$_['user_mode'] && (
+        if (($_['user_mode'] ?? null) && (
             ($type['name'] == 'payment' && $_['is_balance_limit_lower'] && ($balance - $amount < $balance_limit_lower))
             || ($type['name'] == 'transfer' && $direction === 'out' && $_['is_balance_limit_lower'] && ($balance - $amount < $balance_limit_lower))
         )) {
@@ -1555,7 +1555,7 @@ class yf_payment_api
         // check payout limit min
         $payout_limit_min = @$this->PAYOUT_LIMIT_MIN;
         $payout_limit_min = $this->_number_float($payout_limit_min);
-        if (@$_['user_mode'] &&
+        if (($_['user_mode'] ?? null) &&
             ($type['name'] == 'payment' && ($balance < $payout_limit_min))
             ) {
             $result = [
@@ -1580,7 +1580,7 @@ class yf_payment_api
             return  $result;
         }
         $provider = reset($object);
-        if (@$_['user_mode'] && (bool) $provider['system']) {
+        if (($_['user_mode'] ?? null) && (bool) $provider['system']) {
             $result = [
                 'status' => false,
                 'status_message' => 'Неизвестный провайдер',
@@ -1756,7 +1756,7 @@ class yf_payment_api
         }
         // check user mail
         $user_mail = $this->is_user_mail($operation_data);
-        if ( ! @$user_mail['status']) {
+        if ( ! ($user_mail['status'] ?? null)) {
             return  $user_mail;
         }
         // code by operation_id, amount
@@ -1790,8 +1790,8 @@ class yf_payment_api
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // processing
-        $salt = @$_salt ?: $this->_hash(time() . @$this->SECURITY_CODE);
-        $raw = implode('-', (array) @$_data);
+        $salt = ($_salt ?? null) ?: $this->_hash(time() . @$this->SECURITY_CODE);
+        $raw = implode('-', (array) ($_data ?? null));
         $code = $this->_hash($raw . $salt);
         $result = [$code, $salt, $raw];
         return  $result;
@@ -1799,7 +1799,7 @@ class yf_payment_api
 
     public function _hash($str)
     {
-        $hash = hash('sha256', @$str, true);
+        $hash = hash('sha256', ($str ?? null), true);
         $base64 = base64_encode($hash);
         $clean = str_replace(['+', '=', '/'], '', $base64);
         $result = substr($clean, 0, 16);
@@ -1813,7 +1813,7 @@ class yf_payment_api
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // operation
         $operation = $this->operation([
-            'operation_id' => @$_operation_id,
+            'operation_id' => ($_operation_id ?? null),
         ]);
         if ( ! $operation) {
             $result = [
@@ -1838,7 +1838,7 @@ class yf_payment_api
         // check
         $confirmation = &$operation['options']['confirmation'];
         // check already confirmed
-        $is_confirmed = @$confirmation['status'][0] ?: @$confirmation['status'];
+        $is_confirmed = ($confirmation['status'][0] ?? null) ?: ($confirmation['status'] ?? null);
         if ($is_confirmed) {
             $result = [
                 'status' => true,
@@ -1862,7 +1862,7 @@ class yf_payment_api
         // check code
         $code = &$confirmation['code'];
         $salt = &$confirmation['salt'];
-        if ($code !== @$_code) {
+        if ($code !== ($_code ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Неверный код',
@@ -1913,7 +1913,7 @@ class yf_payment_api
             'options' => $update_options,
         ];
         $result = $this->operation_update($update_data);
-        if (@$result['status']) {
+        if (($result['status'] ?? null)) {
             $result['status_message'] = 'Операция подтверждена';
             // mail
             $this->mail([
@@ -1938,7 +1938,7 @@ class yf_payment_api
         // var
         $result = null;
         $new_level = null;
-        if (@$_level) {
+        if (($_level ?? null)) {
             $level = strtoupper($_level);
             switch ($_level) {
                 case 'READ UNCOMMITTED':
@@ -1955,7 +1955,7 @@ class yf_payment_api
         }
         // get currency level
         $r = db()->get_2d('SHOW VARIABLES LIKE "%'.$this->TX_VAR.'%"');
-        @$r[$this->TX_VAR] && $result = str_replace('-', ' ', $r[$this->TX_VAR]);
+        ($r[$this->TX_VAR] ?? null) && $result = str_replace('-', ' ', $r[$this->TX_VAR]);
         return  $result;
     }
 
@@ -2000,7 +2000,7 @@ class yf_payment_api
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         $tx = &$this->transaction;
         $result = null;
-        if (@$_state) {
+        if (($_state ?? null)) {
             $state = strtoupper($_state);
             switch ($state) {
                 case 'COMMIT':
@@ -2011,7 +2011,7 @@ class yf_payment_api
                     break;
             }
         }
-        if ($state && @$tx['level']) {
+        if ($state && ($tx['level'] ?? null)) {
             $result = db()->query($state);
             $result &= $this->transaction_isolation(['level' => $tx['level']]);
             $result && $tx['level'] = null;
@@ -2048,7 +2048,7 @@ class yf_payment_api
             'status_message' => &$status_message,
         ];
         // check user
-        if (@$_user_id < 1) {
+        if (($_user_id ?? null) < 1) {
             $status_message = 'Пользователь не найден для отправки почты';
             return  $result;
         }
@@ -2058,12 +2058,12 @@ class yf_payment_api
             return  $result;
         }
         // check mail
-        if ( ! @$user['email']) {
+        if ( ! ($user['email'] ?? null)) {
             $status_message = 'Укажите и подтвердите ваш email адрес в личном кабинете';
             return  $result;
         }
         // check mail verification
-        if (@$user['email'] != @$user['email_validated']) {
+        if (($user['email'] ?? null) != ($user['email_validated'] ?? null)) {
             $status_message = 'Подтвердите ваш email адрес в личном кабинете';
             return  $result;
         }
@@ -2092,11 +2092,11 @@ class yf_payment_api
         }
         if (empty($_type) || empty($_status)) {
             list($type, $status) = @explode('_', $_tpl);
-            if ( ! @$_type && @$type) {
+            if ( ! ($_type ?? null) && ($type ?? null)) {
                 $_type = $type;
                 $options['type'] = $_type;
             }
-            if ( ! @$_status && @$status) {
+            if ( ! ($_status ?? null) && ($status ?? null)) {
                 $_status = $status;
                 $options['status'] = $_status;
             }
@@ -2116,10 +2116,10 @@ class yf_payment_api
                 $send_mail_class->MAIL_DEBUG = false;
          */
         // check user
-        if (@$_user_id > 0) {
+        if (($_user_id ?? null) > 0) {
             $user_mail = $this->is_user_mail($options);
             // check email, validate email
-            if ( ! @$_force && ! @$user_mail['status']) {
+            if ( ! ($_force ?? null) && ! ($user_mail['status'] ?? null)) {
                 return  $user_mail;
             }
             $user = $user_mail['user'];
@@ -2148,13 +2148,13 @@ class yf_payment_api
             case 'confirmation':
                 $url['user_confirmation'] = url_user([
                     'object' => 'payment',
-                    'operation_id' => @$__operation_id,
-                    'code' => @$__code,
+                    'operation_id' => ($__operation_id ?? null),
+                    'code' => ($__code ?? null),
                     'is_confirmation' => 1,
                 ]);
                 $url['user_confirmation_cancel'] = url_user([
                     'object' => 'payment',
-                    'operation_id' => @$__operation_id,
+                    'operation_id' => ($__operation_id ?? null),
                     'is_cancel' => 1,
                 ]);
                 break;
@@ -2190,7 +2190,7 @@ class yf_payment_api
             ]);
             $result &= $r;
             // mail copy
-            ! $admin && $this->mail_copy(['tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data]);
+            ! $admin && $this->mail_copy(['tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => ($_subject ?? null), 'data' => $data]);
         }
         // admin
         if ($admin || $is_admin) {
@@ -2236,8 +2236,8 @@ class yf_payment_api
                 ],
             ]);
             // mail copy
-            $result_copy = $this->mail_copy(['tpl' => $tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data]);
-            ! $result_copy && $this->mail_copy(['tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => @$_subject, 'data' => $data]);
+            $result_copy = $this->mail_copy(['tpl' => $tpl, 'type' => $_type, 'status' => $_status, 'subject' => ($_subject ?? null), 'data' => $data]);
+            ! $result_copy && $this->mail_copy(['tpl' => $_tpl, 'type' => $_type, 'status' => $_status, 'subject' => ($_subject ?? null), 'data' => $data]);
         }
         /*
                 $mail_class->MAIL_DEBUG      = $mail_debug;
@@ -2257,19 +2257,19 @@ class yf_payment_api
         // var
         $mail_copy = &$this->MAIL_COPY_TO;
         // add: all, type, status
-        if (@$mail_copy['all']) {
+        if (($mail_copy['all'] ?? null)) {
             $mail_ref = &$mail_copy['all'];
             foreach (@['all', $_type, $_status] as $key) {
-                foreach ((array) @$mail_ref[$key] as $value) {
+                foreach ((array) ($mail_ref[$key] ?? null) as $value) {
                     $mails[$value] = $value;
                 }
             }
         }
         // add by type: all, status
-        if (@$mail_copy[$_type]) {
+        if (($mail_copy[$_type] ?? null)) {
             $mail_ref = &$mail_copy[$_type];
             foreach (@['all', $_status] as $key) {
-                foreach ((array) @$mail_ref[$key] as $value) {
+                foreach ((array) ($mail_ref[$key] ?? null) as $value) {
                     $mails[$value] = $value;
                 }
             }
@@ -2292,7 +2292,7 @@ class yf_payment_api
         if (is_array($mails)) {
             $mail_class = _class('email');
             $override = [];
-            @$_subject && $override['subject'] = $_subject;
+            ($_subject ?? null) && $override['subject'] = $_subject;
             $name = 'Payment admin';
             $instant_send = true;
             foreach ($mails as $mail) {
@@ -2318,7 +2318,7 @@ class yf_payment_api
         $_name = $_data = null;
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
-        if ( ! @$_name || ! @$_data) {
+        if ( ! ($_name ?? null) || ! ($_data ?? null)) {
             return  null;
         }
         // log
@@ -2373,10 +2373,10 @@ class yf_payment_api
         // import options
         is_array($options) && extract($options, EXTR_PREFIX_ALL | EXTR_REFS, '');
         // currency
-        list($currency_id, $currency) = $this->get_currency__by_id(['currency_id' => @$_currency_id]);
+        list($currency_id, $currency) = $this->get_currency__by_id(['currency_id' => ($_currency_id ?? null)]);
         $decimals = $currency['minor_units'];
         $sign = $currency['sign'];
-        switch (@$_format) {
+        switch (($_format ?? null)) {
             case 'html':
                 $thousands_separator = '&nbsp;';
                 // no break
@@ -2392,7 +2392,7 @@ class yf_payment_api
         $value = $this->_number_format($value, $decimals, $decimal_point, $thousands_separator);
         // decoration
         $nbsp = '';
-        switch (@$_format) {
+        switch (($_format ?? null)) {
             case 'html':
                 $sign = '<span class="currency">' . $sign . '</span>';
                 $value = '<span class="money">' . $value . '</span>';
@@ -2533,21 +2533,21 @@ class yf_payment_api
         $time = &$this->dump['time'];
         ! $time && $time = date('Y-m-d_H-i-s', $ts);
         // name
-        ! @$_is_transaction && $name = &$this->dump['name'];
-        @$_name && $name = $_name;
-        $name = @$name ?: 'payment_api_dump';
+        ! ($_is_transaction ?? null) && $name = &$this->dump['name'];
+        ($_name ?? null) && $name = $_name;
+        $name = ($name ?? null) ?: 'payment_api_dump';
         // number
-        ! @$_is_transaction && $number = &$this->dump['number'];
-        if ( ! @$number || @$_operation_id) {
+        ! ($_is_transaction ?? null) && $number = &$this->dump['number'];
+        if ( ! ($number ?? null) || ($_operation_id ?? null)) {
             $number = [];
-            @$_operation_id && $number[] = $_operation_id;
+            ($_operation_id ?? null) && $number[] = $_operation_id;
             $number[] = $time;
             $number = implode('_', $number);
         }
         // path
-        $path = @$_path ?: @$this->DUMP_PATH ?: '/tmp';
+        $path = ($_path ?? null) ?: @$this->DUMP_PATH ?: '/tmp';
         // file path
-        $file = @$_file_path ?: sprintf('%s/%s__%s.txt', $path, $name, $number);
+        $file = ($_file_path ?? null) ?: sprintf('%s/%s__%s.txt', $path, $name, $number);
         $html_errors = ini_get('html_errors');
         ini_set('html_errors', 0);
         $result = '';
@@ -2559,7 +2559,7 @@ class yf_payment_api
         isset($_var) && $result .= 'VAR:' . PHP_EOL . var_export($_var, true) . PHP_EOL . PHP_EOL;
         ! empty($result) && file_put_contents($file, $result, FILE_APPEND);
         $is_first = false;
-        @$_is_new && $is_first = true;
+        ($_is_new ?? null) && $is_first = true;
         ini_set('html_errors', $html_errors);
         return  $result;
     }
@@ -2594,7 +2594,7 @@ class yf_payment_api
                 ->where($id_name, $id)
                 ->get();
             $operation_options = (array) json_decode($operation['options'] ?? '{}', true);
-            $array_method = @$__is_replace ? 'replace' : 'merge';
+            $array_method = ($__is_replace ?? null) ? 'replace' : 'merge';
             $array_method = sprintf('array_%s_recursive', $array_method);
             $json_options = json_encode($array_method(
                 $operation_options,

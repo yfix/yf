@@ -1147,7 +1147,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
         // find business account_id
         $account_id = null;
         foreach ($account['data'] as $id => $item) {
-            if (@$item['tp'] == 'b') {
+            if (($item['tp'] ?? null) == 'b') {
                 $account_id = $item['_id'];
                 break;
             }
@@ -1193,7 +1193,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
         // method
         $method = $this->api_method([
             'type' => 'api',
-            'method_id' => @$_method_id,
+            'method_id' => ($_method_id ?? null),
         ]);
         if (empty($method)) {
             $result = [
@@ -1234,7 +1234,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
         $url = $object;
         // request options
         $request_option = [];
-        @$_is_debug && $request_option['is_debug'] = true;
+        ($_is_debug ?? null) && $request_option['is_debug'] = true;
         // api authorization
         $_request_option = $this->api_authorization($method);
         is_array($_request_option) && $request_option = array_merge_recursive($request_option, $_request_option);
@@ -1272,7 +1272,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
         // method
         $method = $this->api_method([
             'type' => 'payout',
-            'method_id' => @$_method_id,
+            'method_id' => ($_method_id ?? null),
         ]);
         if (empty($method)) {
             $result = [
@@ -1315,13 +1315,13 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
             return  $result;
         }
         // default
-        $amount = @$method['is_fee'] ? $amount_currency_total : $amount_currency;
+        $amount = ($method['is_fee'] ?? null) ? $amount_currency_total : $amount_currency;
         // request
         $request = [];
-        @$method['request_option'] && $request = $method['request_option'];
+        ($method['request_option'] ?? null) && $request = $method['request_option'];
         // add common fields
-        ! @$request['purseId'] && $request['purseId'] = $this->PURSE_ID[$currency_id];
-        if ( ! @$request['purseId']) {
+        ! ($request['purseId'] ?? null) && $request['purseId'] = $this->PURSE_ID[$currency_id];
+        if ( ! ($request['purseId'] ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Требуется настройка кошелька',
@@ -1377,7 +1377,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
         $request_option = [
             'method_id' => 'withdraw-process',
             'option' => $request,
-            'is_debug' => @$_is_debug,
+            'is_debug' => ($_is_debug ?? null),
         ];
         $result = $this->api_request($request_option);
         // DUMP
@@ -1439,7 +1439,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
             ),
             'message' => 'Success',
         ); //*/
-        if ( ! @$response) {
+        if ( ! ($response ?? null)) {
             $result = [
                 'status' => false,
                 'status_message' => 'Невозможно декодировать ответ: ' . var_export($response, true),
@@ -1475,7 +1475,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
                 $status_message = 'Ошибка: ' . $response['message'];
                 break;
         }
-        @$status_message && $response['message'] = $status_message;
+        ($status_message ?? null) && $response['message'] = $status_message;
         if ( ! $status_name) {
             return  $result;
         }
@@ -1499,12 +1499,12 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
             $this->_payout_status,
             $this->_payout_status_message
         );
-        $status_message = @$status_message ?: @$data['stateName'];
+        $status_message = ($status_message ?? null) ?: ($data['stateName'] ?? null);
         // update account, operation data
         $payment_type = 'payment';
         $operation_data = [
             'operation_id' => $operation_id,
-            'provider_force' => @$_provider_force,
+            'provider_force' => ($_provider_force ?? null),
             'provider_name' => 'interkassa',
             'state' => $state,
             'status_name' => $status_name,

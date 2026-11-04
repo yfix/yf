@@ -195,7 +195,7 @@ class yf_core_errors
                 'ip' => $IP,
                 'qs' => WEB_PATH . (strlen($_SERVER['QUERY_STRING'] ?? '') ? '?' . ($_SERVER['QUERY_STRING'] ?? null) : ''),
                 'url' => 'http://' . ( $_SERVER['HTTP_HOST'] ?? '' ) . ( $_SERVER['REQUEST_URI'] ?? '' ),
-                'ref' => @$_SERVER['HTTP_REFERER'],
+                'ref' => ($_SERVER['HTTP_REFERER'] ?? null),
                 'get' => $this->_log_display_array('GET'),
                 'post' => $this->_log_display_array('POST'),
                 'files' => $this->_log_display_array('FILES'),

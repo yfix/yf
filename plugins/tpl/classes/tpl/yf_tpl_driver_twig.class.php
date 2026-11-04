@@ -82,7 +82,7 @@ class yf_tpl_driver_twig
         $theme = trim($theme, '/');
         $type = main()->type == 'admin' ? 'admin' : tpl()->_get_def_user_theme();
         // object
-        $object = @$_GET['object'];
+        $object = ($_GET['object'] ?? null);
         if( $object ) {
             $p = [ 'plugins', $object, ];
             $paths[] = $p;
@@ -96,7 +96,7 @@ class yf_tpl_driver_twig
                 $p[] = $object;
                 $paths[] = $p;
             }
-            $action = @$_GET['action'];
+            $action = ($_GET['action'] ?? null);
             if( $action ) {
                 $p[] = $action;
                 $paths[] = $p;
@@ -117,7 +117,7 @@ class yf_tpl_driver_twig
         foreach ($all_tpls_paths as $name => $storage) {
             foreach ($storage as $s_type => $f_type) {
                 if(!in_array($s_type, ['app', 'site'])) { continue; }
-                if (@$f_type[$type]) {
+                if (($f_type[$type] ?? null)) {
                     $d = &$f_type[$type];
                     $c = substr_count($name, DIRECTORY_SEPARATOR);
                     for( $i = 0; $i < $c + 1; $i++ ) {
@@ -141,11 +141,11 @@ class yf_tpl_driver_twig
      */
     public function parse($name, $replace = [], $params = [])
     {
-        if (@$params['no_cache']) {
+        if (($params['no_cache'] ?? null)) {
             $this->env->enableAutoReload();
             $this->env->setCache(false);
         }
-        if (@$params['string']) {
+        if (($params['string'] ?? null)) {
             $s = $params['string'];
         } else {
             $s = tpl()->get($name);
