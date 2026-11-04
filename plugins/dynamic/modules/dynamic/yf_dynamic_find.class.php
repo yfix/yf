@@ -3,6 +3,7 @@
 
 class yf_dynamic_find
 {
+    public $_parent;
     public function __construct()
     {
         $this->_parent = module('dynamic');

@@ -2,6 +2,7 @@
 
 class yf_manage_shop_price_markup_down
 {
+    public $_uri;
     private $_table = [
         'table' => 'shop_price_markup_down',
         'fields' => [

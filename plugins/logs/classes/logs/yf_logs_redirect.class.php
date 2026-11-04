@@ -3,6 +3,8 @@
 
 class yf_logs_redirect
 {
+    public $checks;
+    public $log_denied_because;
     /** @var bool */
     public $LOG_REDIRECTS = true;
     /** @var array Stop-list for logging (REGEXPs allowed here) */

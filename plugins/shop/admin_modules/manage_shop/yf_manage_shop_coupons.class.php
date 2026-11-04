@@ -2,6 +2,7 @@
 
 class yf_manage_shop_coupons
 {
+    public $_statuses;
     public function _init()
     {
         $this->_statuses = [

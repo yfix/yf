@@ -5,6 +5,7 @@
  */
 class yf_sphinxsearch
 {
+    public $_connects_tried;
     /** In seconds */
     private $CONNECT_TIMEOUT = 2;
     /** Just counter, set to 0 to disable reconnect tries */

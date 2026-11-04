@@ -4,6 +4,8 @@
 
 class yf_manage_sphinx
 {
+    public $_countries;
+    public $stats;
     /** @var */
     public $CONF_PATH = '/usr/local/sphinx/etc/';
     /** @var */

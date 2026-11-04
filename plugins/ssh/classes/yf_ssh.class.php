@@ -8,6 +8,12 @@
  */
 class yf_ssh
 {
+    public $_sftp_connected;
+    public $_sftp_try_to_connect;
+    public $_ssh_cache_os;
+    public $_ssh_connected;
+    public $_ssh_try_to_connect;
+    public $shell;
     // TODO: chained mode like in form and table, mass actions on one server, array of servers, named group(s) of servers:
     // ssh('s23.dev')->exec('service memcached restart');
     // ssh('s23*.dev')->exec('service memcached restart');

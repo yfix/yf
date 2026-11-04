@@ -6,6 +6,7 @@
  */
 class yf_tpl_driver_fenom
 {
+    public $fenom;
     /**
      * Catch missing method call.
      * @param mixed $name

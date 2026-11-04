@@ -6,6 +6,7 @@
  */
 class yf_tpl_driver_smarty
 {
+    public $smarty;
     /**
      * Catch missing method call.
      * @param mixed $name

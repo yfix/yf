@@ -2,6 +2,7 @@
 
 class yf_manage_shop_region
 {
+    public $_uri;
     private $_table = [
         'table' => 'shop_regions',
         'fields' => [

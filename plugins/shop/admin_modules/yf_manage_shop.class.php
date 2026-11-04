@@ -5,6 +5,21 @@
  */
 class yf_manage_shop
 {
+    public $SUPPLIER_ID;
+    public $_boxes;
+    public $_category_names;
+    public $_cats_for_select;
+    public $_featured;
+    public $_man_for_select;
+    public $_order_items_status;
+    public $_products_info_cache;
+    public $_status_prod;
+    public $_suppliers;
+    public $_suppliers_for_select;
+    public $_units_for_select;
+    public $man;
+    public $products_img_dir;
+    public $products_img_webdir;
     /** @var bool Filter on/off */
     public $USE_FILTER = true;
     /** @var string Folder where product's images store */

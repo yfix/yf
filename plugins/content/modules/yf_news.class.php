@@ -2,6 +2,7 @@
 
 class yf_news
 {
+    public $_current;
     const table = 'news';
     /** @var array @conf_skip Params for the comments */
     public $_comments_params = [

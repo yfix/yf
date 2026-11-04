@@ -3,6 +3,7 @@
 load('mail_driver', '', 'classes/mail/');
 class yf_mail_driver_simple extends yf_mail_driver
 {
+    public $PARENT;
     /**
      * Catch missing method call.
      * @param mixed $name

@@ -8,6 +8,10 @@
  */
 class yf_rss_data
 {
+    public $_decode_func;
+    public $_latest_cached_items;
+    public $_rss_feeds;
+    public $self_link;
     /** @var array @conf_skip Known item field names */
     public $avail_item_fields = [
         'title',

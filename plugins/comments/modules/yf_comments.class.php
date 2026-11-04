@@ -8,6 +8,9 @@
  */
 class yf_comments
 {
+    public $_comment_array;
+    public $_comment_tree_array;
+    public $_user_info;
     /** @var int Number of comments to display on one page */
     public $NUM_PER_PAGE = 20;
     /** @var int Max post text length */

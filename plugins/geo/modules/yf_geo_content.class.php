@@ -3,6 +3,7 @@
 // Content display by geo location (ads, pages, etc)
 class yf_geo_content
 {
+    public $_user_info;
     // TODO: need to connect here in all methods where needed
     /** @var bool */
     public $AJAX_USE_CACHE = false;

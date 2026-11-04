@@ -3,6 +3,7 @@
 load('mail_driver', '', 'classes/mail/');
 class yf_mail_driver_mailgun extends yf_mail_driver
 {
+    public $PARENT;
     /** @var string The Mailgun API key */
     public $key;
     /** @var string The Mailgun domain. */

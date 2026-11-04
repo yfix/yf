@@ -3,6 +3,7 @@
 load('search_driver', '', 'classes/search/');
 class yf_search_driver_db_like extends yf_search_driver
 {
+    public $PARENT;
     /**
      * Catch missing method call.
      * @param mixed $name

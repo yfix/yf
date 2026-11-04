@@ -8,6 +8,9 @@
  */
 class yf_tpl_driver_yf_compile
 {
+    public $_cond_operators;
+    public $_math_operators;
+    public $_stpl_compile_dir_check;
     public function _init()
     {
         $tpl_driver_yf = _class('tpl_driver_yf', 'classes/tpl/');

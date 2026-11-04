@@ -8,6 +8,7 @@
  */
 class yf_email_page
 {
+    public $_user_info;
     /** @var string Variable name in session (for anti-flood) */
     public $SESSION_TTL_NAME = 'sent_to_friend_time';
     /** @var int Time between two equal page sendings */

@@ -11,6 +11,8 @@
 
 class yf_manage_shop_novaposhta_ua
 {
+    public $is_init;
+    public $is_post;
     private $_class_price = false;
 
     public function _init()

@@ -5,6 +5,8 @@
  */
 class yf_dashboards2
 {
+    public $_dashboard_data;
+    public $_name;
     /**
      * Bootstrap CSS classes used to create configurable grid.
      */

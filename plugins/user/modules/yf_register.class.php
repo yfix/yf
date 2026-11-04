@@ -5,6 +5,7 @@
  */
 class yf_register
 {
+    public $_account_types;
     public function show()
     {
         $validate_rules = [

@@ -8,6 +8,7 @@
  */
 class yf_pdf_page
 {
+    public $pdf_obj;
     public $PATH_TO_PDF = 'uploads/pdf/';
 
     // bug fix: mPDF reset locale setting

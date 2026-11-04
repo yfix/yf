@@ -2,6 +2,7 @@
 
 class yf_manage_redis
 {
+    public $instances;
     public $types = [
         Redis::REDIS_STRING => 'STRING',
         Redis::REDIS_SET => 'SET',

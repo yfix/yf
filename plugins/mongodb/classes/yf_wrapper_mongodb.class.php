@@ -5,6 +5,8 @@
  */
 class yf_wrapper_mongodb
 {
+    public $host;
+    public $port;
     /**
      * Catch missing method call.
      * @param mixed $name

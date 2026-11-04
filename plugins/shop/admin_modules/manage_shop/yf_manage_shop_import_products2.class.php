@@ -52,6 +52,8 @@
 
 class yf_manage_shop_import_products2
 {
+    public $is_init;
+    public $is_post;
     public $import_field = [
         0 => 'не использовать (0)',
         'id' => 'идентификатор (id)',

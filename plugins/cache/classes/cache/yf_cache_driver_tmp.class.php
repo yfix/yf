@@ -3,6 +3,8 @@
 load('cache_driver', '', 'classes/cache/');
 class yf_cache_driver_tmp extends yf_cache_driver
 {
+    public $_hits;
+    public $_misses;
     public $storage = [];
     protected $hits = 0;
     protected $misses = 0;

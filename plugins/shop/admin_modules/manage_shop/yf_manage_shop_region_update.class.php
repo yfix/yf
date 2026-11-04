@@ -2,6 +2,8 @@
 
 class yf_manage_shop_region_update
 {
+    public $is_init;
+    public $is_post;
     private $_filter = false;
     private $_filter_params = false;
 

@@ -8,6 +8,7 @@
  */
 class yf_auth_user
 {
+    public $_encrypted_error;
     /** @var bool Online users vars */
     public $STORE_ONLINE_USERS = false;// Use db table to store online users or not
     /** @var int Online TTL if inactive */

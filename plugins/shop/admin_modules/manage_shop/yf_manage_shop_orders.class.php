@@ -2,6 +2,7 @@
 
 class yf_manage_shop_orders
 {
+    public $SUPPLIER_ID;
     public function _init()
     {
         $this->SUPPLIER_ID = module('manage_shop')->SUPPLIER_ID;

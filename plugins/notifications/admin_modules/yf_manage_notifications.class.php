@@ -2,6 +2,7 @@
 
 class yf_manage_notifications
 {
+    public $notifications;
     public $RECEIVER_TYPES = [
         'user_id' => 'user',
         'admin_id' => 'admin',

@@ -2,6 +2,9 @@
 
 class yf_manage_shop_product_sets
 {
+    public $_sql_set_list_products;
+    public $_sql_sets_prices_total;
+    public $_table;
     // TODO: improve filter
 
     public function _init()

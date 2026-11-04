@@ -3,6 +3,7 @@
 // Class for handling retrieving lost password
 class yf_get_pswd
 {
+    public $_my_site_title;
     public function _init()
     {
         $this->_my_site_title = t('Password Reminder');

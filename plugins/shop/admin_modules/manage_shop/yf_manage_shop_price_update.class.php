@@ -2,6 +2,8 @@
 
 class yf_manage_shop_price_update
 {
+    public $is_init;
+    public $is_post;
     private $_fields_show = [
         'name',
         'price_raw',

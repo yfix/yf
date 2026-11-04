@@ -2,6 +2,9 @@
 
 class yf_manage_shop_upload_images
 {
+    public $ARCHIVE_FOLDER;
+    public $SAVE_PATH;
+    public $SUPPLIER_ID;
     public $ALLOWED_MIME_TYPES = [
             'application/zip' => 'zip',
             'application/x-rar' => 'rar',

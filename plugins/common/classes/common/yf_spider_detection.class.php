@@ -8,6 +8,7 @@
  */
 class yf_spider_detection
 {
+    public $_cache_se_hosts;
     /** @var */
     public $well_known_bots = [
         'googlebot' => 'Google',

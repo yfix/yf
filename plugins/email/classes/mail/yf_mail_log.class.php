@@ -2,6 +2,7 @@
 
 class yf_mail_log
 {
+    public $PARENT;
     /**
      * Catch missing method call.
      * @param mixed $name

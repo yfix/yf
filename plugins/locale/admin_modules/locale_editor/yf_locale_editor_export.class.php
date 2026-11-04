@@ -3,6 +3,7 @@
 
 class yf_locale_editor_export
 {
+    public $_parent;
     public function _init()
     {
         $this->_parent = module('locale_editor');

@@ -2,6 +2,7 @@
 
 class yf_manage_shop_express
 {
+    public $PATH_TO_PDF;
     public $alcohol_category = 4;
 
     public $default_unit = 'шт';

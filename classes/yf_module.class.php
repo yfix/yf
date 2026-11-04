@@ -8,6 +8,7 @@
  */
 class yf_module
 {
+    public $_boxes;
     /** @var bool */
     public $USE_CAPTCHA = true;
     /** @var bool Force stripslashes on '_format_text' method */

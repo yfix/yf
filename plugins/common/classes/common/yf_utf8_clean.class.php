@@ -8,6 +8,7 @@
  */
 class yf_utf8_clean
 {
+    public $fss_exists;
     /** @var @conf_skip */
     public $UTF8_LOWER_ACCENTS = [
       'à' => 'a', 'ô' => 'o', 'ď' => 'd', 'ḟ' => 'f', 'ë' => 'e', 'š' => 's', 'ơ' => 'o',

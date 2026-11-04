@@ -12,6 +12,7 @@ $config = [
         Resque::setBackend('localhost:6379');
         class My_Job
         {
+            public $args;
             public function perform()
             {
                 echo $this->args['name'];

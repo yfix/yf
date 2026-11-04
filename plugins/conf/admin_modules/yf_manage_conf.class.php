@@ -2,6 +2,7 @@
 
 class yf_manage_conf
 {
+    public $_table;
     const table = 'conf';
 
 

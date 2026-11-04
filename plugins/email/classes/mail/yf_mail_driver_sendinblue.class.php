@@ -3,6 +3,7 @@
 load('mail_driver', '', 'classes/mail/');
 class yf_mail_driver_sendinblue extends yf_mail_driver
 {
+    public $PARENT;
     /** @var string The sendinblue API key. */
     public $key;
 

@@ -3,6 +3,14 @@
 // User profile handling module
 class yf_user_profile extends yf_module
 {
+    public $FRIENDS_OBJ;
+    public $_account_types;
+    public $_ad_info;
+    public $_agency_info;
+    public $_dynamic_fields;
+    public $_interests_array;
+    public $_user_info;
+    public $_user_levels;
     /** @var int */
     public $MAX_SHOW_ADS = 10;
     /** @var int */

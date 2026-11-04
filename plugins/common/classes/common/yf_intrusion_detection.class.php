@@ -8,6 +8,7 @@
  */
 class yf_intrusion_detection
 {
+    public $config;
     /**
      * Contructor.
      */

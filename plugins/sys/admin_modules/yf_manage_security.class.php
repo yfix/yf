@@ -2,6 +2,8 @@
 
 class yf_manage_security
 {
+    public $_country_names;
+    public $_ip_to_country;
     public function show()
     {
         if ( ! main()->ADMIN_ID) {

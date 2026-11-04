@@ -3,6 +3,7 @@
 load('mail_driver', '', 'classes/mail/');
 class yf_mail_driver_ses extends yf_mail_driver
 {
+    public $PARENT;
     /** @var string AWS SES region. */
     public $region = 'eu-west-1';
     /** @var string AWS SES key. */

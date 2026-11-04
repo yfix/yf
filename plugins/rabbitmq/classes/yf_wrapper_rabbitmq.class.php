@@ -8,6 +8,7 @@
  */
 class yf_wrapper_rabbitmq
 {
+    public $_queue;
     public $driver = 'pecl'; // pecl | amqplib
     public $routing_key = 'mykey';
 

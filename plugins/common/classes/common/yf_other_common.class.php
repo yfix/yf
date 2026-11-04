@@ -8,6 +8,7 @@
  */
 class yf_other_common
 {
+    public $_geoip_obj;
     /**
      * Get file using HTTP request (grabbed from drupal 5.1).
      * @param mixed $url

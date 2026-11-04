@@ -5,6 +5,10 @@
  */
 class yf_dashboards
 {
+    public $_auto_info;
+    public $_avail_widgets;
+    public $_dashboard_data;
+    public $_name;
     /**
      * Bootstrap CSS classes used to create configurable grid.
      */

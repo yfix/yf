@@ -8,6 +8,9 @@
  */
 class yf_bb_codes
 {
+    public $_preg_bb_codes;
+    public $_preload_complete;
+    public $_smilies_replace;
     /** @var bool BB codes Enabled or not */
     public $ENABLE_BB_CODES = true;
     /** @var bool Smilies in bb codes enabled or not */

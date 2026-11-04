@@ -9,6 +9,7 @@
 load('cache', '', 'classes/');
 class yf_output_cache extends yf_cache
 {
+    public $_cur_cache_name;
     /** @var bool Output caching on/off */
     public $OUTPUT_CACHING = false;
     /** @var int Output cache TTL, in seconds (0 - for unlimited) */

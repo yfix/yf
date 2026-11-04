@@ -2,6 +2,9 @@
 
 class yf_manage_cron
 {
+    public $_interval;
+    public $_table;
+    public $exec_type;
     public function _init()
     {
         $this->_interval = [

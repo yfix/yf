@@ -2,6 +2,8 @@
 
 class yf_manage_tips
 {
+    public $lang_def_country;
+    public $pages_langs;
     const table = 'tips';
 
 
