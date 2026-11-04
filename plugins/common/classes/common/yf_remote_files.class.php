@@ -909,7 +909,7 @@ class yf_remote_files
         ];
         // RFC 2616 states that all unknown HTTP codes must be treated the same as the base code in their class.
         if ( ! isset($responses[$code])) {
-            $code = floor($code / 100) * 100;
+            $code = floor((int) $code / 100) * 100;
         }
         switch ($code) {
             case 200: // OK
@@ -1244,7 +1244,7 @@ class yf_remote_files
             500, 501, 502, 503, 504, 505,
         ];
         if ( ! in_array($code, $responses)) {
-            $code = floor($code / 100) * 100;
+            $code = floor((int) $code / 100) * 100;
         }
         switch ($code) {
             case 200: // OK

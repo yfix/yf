@@ -300,7 +300,7 @@ class yf_utils
             return false;
         }
         $tmp = explode('-', $birth_date);
-        return (int) (date('Y') - $tmp[0] - (strtotime(date('Y') . '-' . $tmp[1] . '-' . $tmp[2]) > time() ? 1 : 0));
+        return (int) (date('Y') - (int) $tmp[0] - (strtotime(date('Y') . '-' . $tmp[1] . '-' . $tmp[2]) > time() ? 1 : 0));
     }
 
     // Display user nick name (or name before all nicks will not be transfered)

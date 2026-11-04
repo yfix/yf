@@ -140,8 +140,9 @@ class yf_other_common
     {
         // get the base and the bits from the ban in the database
         list($base, $bits) = explode('/', $CIDR);
+        $bits = (int) $bits;
         // now split it up into it's classes
-        list($a, $b, $c, $d) = explode('.', $base);
+        list($a, $b, $c, $d) = array_map('intval', explode('.', $base));
         // now do some bit shfiting/switching to convert to ints
         $i = ($a << 24) + ($b << 16) + ($c << 8) + $d;
         $mask = $bits == 0 ? 0 : (~0 << (32 - $bits));
@@ -150,7 +151,7 @@ class yf_other_common
         // here's our highest int
         $high = $i | (~$mask & 0xFFFFFFFF);
         // now split the ip were checking against up into classes
-        list($a, $b, $c, $d) = explode('.', $iptocheck);
+        list($a, $b, $c, $d) = array_map('intval', explode('.', $iptocheck));
         // now convert the ip we're checking against to an int
         $check = ($a << 24) + ($b << 16) + ($c << 8) + $d;
         // if the ip is within the range, including highest/lowest values, then it's witin the CIDR range

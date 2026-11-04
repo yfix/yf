@@ -731,7 +731,7 @@ class yf_manage_payout
                     $result = [
                         'status' => false,
                         'status_header' => 'Экспорт в CSV',
-                        'status_message' => 'Ошибка при конвертацию данных: ' . $_data,
+                        'status_message' => 'Ошибка при конвертацию данных: ' . json_encode($_data, JSON_UNESCAPED_UNICODE),
                     ];
                     return  $result;
                 }

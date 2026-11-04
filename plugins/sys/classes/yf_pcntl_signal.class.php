@@ -265,7 +265,7 @@ class yf_pcntl_signal
         // prepare: datetime, message
         list($msec, $ts) = explode(' ', microtime());
         $datetime = date('Y-m-d H-i-s', $ts);
-        $message = sprintf('[%s %3d] %s%s', $datetime, (int) ($msec * 1000), $_message, PHP_EOL);
+        $message = sprintf('[%s %3d] %s%s', $datetime, (int) ((float) $msec * 1000), $_message, PHP_EOL);
         fwrite($file, $message);
     }
 

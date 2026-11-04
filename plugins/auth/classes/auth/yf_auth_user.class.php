@@ -761,7 +761,7 @@ class yf_auth_user
         // Decrypt cookie contents
         list($user_id, $login, $password, $cookie_created) = @explode('-', _class('encryption')->_safe_decrypt_with_base64($_COOKIE[$this->VAR_COOKIE_NAME] ?? null));
         // Check if user with such login and password exists and cookie has not expired
-        if (time() < ($cookie_created + $this->VAR_COOKIE_LIFE_TIME) && ! empty($login) && ! empty($password)) {
+        if (time() < ((int) $cookie_created + $this->VAR_COOKIE_LIFE_TIME) && ! empty($login) && ! empty($password)) {
             // Empty redirect address (in every case)
             $_SESSION[$this->VAR_USER_GO_URL] = null;
             $this->_do_login([
