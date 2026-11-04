@@ -47,11 +47,11 @@ class yf_db_utils_mysql extends yf_db_utils_driver
         if ( ! isset($extra['if_exists'])) {
             $extra['if_exists'] = true;
         }
-        if ( ! $extra['sql'] && ! $this->database_exists($db_name)) {
+        if ( ! ($extra['sql'] ?? null) && ! $this->database_exists($db_name)) {
             return true;
         }
         $fk_sql = 'SET foreign_key_checks = 0;';
-        if ( ! $extra['sql']) {
+        if ( ! ($extra['sql'] ?? null)) {
             $this->db->query($fk_sql);
         } else {
             $sql[] = $fk_sql;
@@ -75,12 +75,12 @@ class yf_db_utils_mysql extends yf_db_utils_driver
             $sql[] = $this->drop_event($db_name . '.' . $name, $extra);
         }
         $fk_sql = 'SET foreign_key_checks = 1;';
-        if ( ! $extra['sql']) {
+        if ( ! ($extra['sql'] ?? null)) {
             $this->db->query($fk_sql);
         } else {
             $sql[] = $fk_sql;
         }
-        return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
+        return ($extra['sql'] ?? null) ? implode(PHP_EOL, $sql) : true;
     }
 
     /**
@@ -155,7 +155,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
             return false;
         }
         $sql = 'DROP PROCEDURE IF EXISTS ' . $this->_escape_key($name);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -173,7 +173,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
         }
         $sql = 'CREATE PROCEDURE ' . $this->_escape_key($name) . ' (' . $sql_params . ')' . PHP_EOL
             . 'BEGIN' . PHP_EOL . $sql_body . PHP_EOL . 'END';
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -250,7 +250,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
             return false;
         }
         $sql = 'DROP FUNCTION IF EXISTS ' . $this->_escape_table_name($db_name . '.' . $name);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -280,7 +280,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
         $sql = ' CREATE FUNCTION ' . $this->_escape_table_name($db_name . '.' . $name) . ' (' . $sql_params . ')' . PHP_EOL
             . 'RETURNS ' . $sql_returns_type . ' DETERMINISTIC' . PHP_EOL
             . 'RETURN ' . $sql_body;
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
 
@@ -377,7 +377,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
             return false;
         }
         $sql = 'DROP EVENT IF EXISTS ' . $this->_escape_table_name($name);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -421,7 +421,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
         $sql = 'CREATE EVENT IF NOT EXISTS ' . $this->_escape_table_name($db_name . '.' . $name) . ' ' . PHP_EOL
             . 'ON SCHEDULE ' . $event_shedule . PHP_EOL
             . 'DO ' . $event_body;
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -469,7 +469,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
     {
         list($host, $user) = explode('@', $name);
         $sql = 'DELETE FROM mysql.user WHERE host=' . $this->_escape_val($host) . ' AND user=' . $this->_escape_val($user);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -486,7 +486,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
             return false;
         }
         $sql = '';
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -503,7 +503,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
             return false;
         }
         $sql = '';
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -517,7 +517,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
             return false;
         }
         $sql = 'CHECK TABLE ' . $this->_escape_table_name($table);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -531,7 +531,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
             return false;
         }
         $sql = 'OPTIMIZE TABLE ' . $this->_escape_table_name($table);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -545,7 +545,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver
             return false;
         }
         $sql = 'REPAIR TABLE ' . $this->_escape_table_name($table);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**

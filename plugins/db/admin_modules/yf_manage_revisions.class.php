@@ -293,7 +293,7 @@ class yf_manage_revisions
         foreach (explode('|', 'id|date|object_name|object_id|action|user_id|locale|site_id|server_id|ip') as $f) {
             $order_fields[$f] = $f;
         }
-        return form($r, [
+        return form([], [
                 'filter' => true,
             ])
             ->daterange('date', [

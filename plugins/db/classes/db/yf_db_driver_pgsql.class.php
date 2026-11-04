@@ -3,6 +3,7 @@
 load('db_driver', '', 'classes/db/');
 class yf_db_driver_pgsql extends yf_db_driver
 {
+    public $params = null;
     public $_connect_error;
     /** @var @conf_skip */
     public $db_connect_id = null;

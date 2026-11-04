@@ -194,7 +194,7 @@ class yf_db_installer_mysql extends yf_db_installer
             if ($this->RETRY_DELAY) {
                 sleep($this->RETRY_DELAY);
             }
-            $result = $this->repair($sql, $db_error, $db);
+            $result = $this->repair($sql, $db->error(), $db);
         }
         return $result;
     }

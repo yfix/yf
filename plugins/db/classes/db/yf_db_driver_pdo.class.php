@@ -3,6 +3,7 @@
 load('db_driver', '', 'classes/db/');
 abstract class yf_db_driver_pdo extends yf_db_driver
 {
+    public $_connect_error = null;
     public $_last_query_error;
     public $_last_query_id;
     public $_query_error;

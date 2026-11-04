@@ -40,7 +40,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     public function list_databases($extra = [])
     {
         $sql = 'SELECT datname,datname FROM pg_database WHERE datistemplate = false';
-        return $extra['sql'] ? $sql : $this->db->get_2d($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->get_2d($sql);
     }
 
     /**
@@ -91,7 +91,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
         if ($params) {
             $sql = 'ALTER DATABASE ' . $this->_escape_database_name($db_name) . ' ' . implode(' ', $params);
         }
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -154,6 +154,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     public function table_info($table, $extra = [], &$error = false)
     {
         $orig_table = $table;
+        $db_name = '';
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -218,6 +219,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
     public function list_foreign_keys($table, $extra = [], &$error = false)
     {
         $orig_table = $table;
+        $db_name = '';
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -292,6 +294,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver
      */
     public function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = [], &$error = false)
     {
+        $db_name = '';
         if (strpos($name, '.') !== false) {
             list($db_name, $name) = explode('.', trim($name));
         }

@@ -51,7 +51,7 @@ abstract class yf_db_utils_driver
     public function list_databases($extra = [])
     {
         $sql = 'SHOW DATABASES';
-        return $extra['sql'] ? $sql : $this->db->get_2d($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->get_2d($sql);
     }
 
     /**
@@ -110,7 +110,7 @@ abstract class yf_db_utils_driver
             $extra['if_not_exists'] = true;
         }
         $sql = 'CREATE DATABASE ' . ($extra['if_not_exists'] ? 'IF NOT EXISTS ' : '') . $this->_escape_database_name($db_name);
-        return $extra['sql'] ? $sql : (bool) $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : (bool) $this->db->query($sql);
     }
 
     /**
@@ -126,7 +126,7 @@ abstract class yf_db_utils_driver
         if ( ! isset($extra['if_exists'])) {
             $extra['if_exists'] = true;
         }
-        if ( ! $extra['sql'] && ! $this->database_exists($db_name)) {
+        if ( ! ($extra['sql'] ?? null) && ! $this->database_exists($db_name)) {
             return true;
         }
         foreach ((array) $this->list_tables($db_name) as $table) {
@@ -137,8 +137,8 @@ abstract class yf_db_utils_driver
             $sql[] = $this->drop_table($db_name . '.' . $table, $extra);
         }
         $_sql = 'DROP DATABASE ' . ($extra['if_exists'] ? 'IF EXISTS ' : '') . $this->_escape_database_name($db_name);
-        $sql[] = $extra['sql'] ? $_sql : $this->db->query($_sql);
-        return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
+        $sql[] = ($extra['sql'] ?? null) ? $_sql : $this->db->query($_sql);
+        return ($extra['sql'] ?? null) ? implode(PHP_EOL, $sql) : true;
     }
 
     /**
@@ -167,7 +167,7 @@ abstract class yf_db_utils_driver
         if ($params) {
             $sql = 'ALTER DATABASE ' . $this->_escape_database_name($db_name) . ' ' . implode(' ', $params);
         }
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -185,11 +185,11 @@ abstract class yf_db_utils_driver
             $error = 'new_name is empty';
             return false;
         }
-        if ( ! $extra['sql'] && ! $this->database_exists($db_name)) {
+        if ( ! ($extra['sql'] ?? null) && ! $this->database_exists($db_name)) {
             $error = 'db_name not exists';
             return false;
         }
-        if ( ! $extra['sql'] && $this->database_exists($new_name)) {
+        if ( ! ($extra['sql'] ?? null) && $this->database_exists($new_name)) {
             $error = 'new database already exists';
             return false;
         }
@@ -202,7 +202,7 @@ abstract class yf_db_utils_driver
             $sql[] = $this->rename_table($db_name . '.' . $t, $new_name . '.' . $t, $extra);
         }
         $sql[] = $this->drop_database($db_name, $extra);
-        return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
+        return ($extra['sql'] ?? null) ? implode(PHP_EOL, $sql) : true;
     }
 
     /**
@@ -218,7 +218,7 @@ abstract class yf_db_utils_driver
         if ( ! isset($extra['if_exists'])) {
             $extra['if_exists'] = true;
         }
-        if ( ! $extra['sql'] && ! $this->database_exists($db_name)) {
+        if ( ! ($extra['sql'] ?? null) && ! $this->database_exists($db_name)) {
             return true;
         }
         foreach ((array) $this->list_tables($db_name) as $table) {
@@ -230,7 +230,7 @@ abstract class yf_db_utils_driver
         foreach ((array) $this->list_triggers($db_name) as $name => $tmp) {
             $sql[] = $this->drop_trigger($db_name . '.' . $name, $extra);
         }
-        return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
+        return ($extra['sql'] ?? null) ? implode(PHP_EOL, $sql) : true;
     }
 
     /**
@@ -308,6 +308,7 @@ abstract class yf_db_utils_driver
             $extra = (array) $extra + $table;
             $table = '';
         }
+        $db_name = '';
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -431,6 +432,7 @@ abstract class yf_db_utils_driver
             $table = '';
         }
         $orig_table = $table;
+        $db_name = '';
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -470,6 +472,7 @@ abstract class yf_db_utils_driver
             $table = '';
         }
         $orig_table = $table;
+        $db_name = '';
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -547,6 +550,7 @@ abstract class yf_db_utils_driver
     {
         // Example callable: create_table($name, function($t) { $t->int('id', 10); });
         if (is_callable($extra)) {
+            $db_name = '';
             if (strpos($table, '.') !== false) {
                 list($db_name, $table) = explode('.', trim($table));
             }
@@ -576,6 +580,7 @@ abstract class yf_db_utils_driver
             $table = '';
         }
         $table = ($extra['name'] ?? null) ?: $table;
+        $db_name = '';
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -590,7 +595,7 @@ abstract class yf_db_utils_driver
             $error = 'db_name is empty';
             return false;
         }
-        if ( ! $extra['sql'] && $this->table_exists($table, $db_name)) {
+        if ( ! ($extra['sql'] ?? null) && $this->table_exists($table, $db_name)) {
             $error = 'table_name already exists';
             return false;
         }
@@ -631,7 +636,7 @@ abstract class yf_db_utils_driver
             'foreign_keys' => $extra['foreign_keys'],
             'options' => $table_options,
         ]);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -649,7 +654,7 @@ abstract class yf_db_utils_driver
             return false;
         }
         $sql = 'DROP TABLE IF EXISTS ' . $this->_escape_table_name($table);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -678,7 +683,7 @@ abstract class yf_db_utils_driver
             return false;
         }
         $sql = 'ALTER TABLE ' . $this->_escape_table_name($table) . PHP_EOL . implode(' ', $table_options);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -697,7 +702,7 @@ abstract class yf_db_utils_driver
             return false;
         }
         $sql = 'RENAME TABLE ' . $this->_escape_table_name($table) . ' TO ' . $this->_escape_table_name($new_name);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -715,7 +720,7 @@ abstract class yf_db_utils_driver
             return false;
         }
         $sql = 'TRUNCATE TABLE ' . $this->_escape_table_name($table);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -803,7 +808,7 @@ abstract class yf_db_utils_driver
             return false;
         }
         $sql = 'ALTER TABLE ' . $this->_escape_table_name($table) . ' DROP COLUMN ' . $this->db->escape_key($col_name);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -823,7 +828,7 @@ abstract class yf_db_utils_driver
         }
         $parser = _class('db_ddl_parser_mysql', 'classes/db/');
         $sql = 'ALTER TABLE ' . $this->_escape_table_name($table) . ' ADD COLUMN ' . $parser->create_column_line($data);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -846,7 +851,7 @@ abstract class yf_db_utils_driver
         $new_data['name'] = $new_name;
         $parser = _class('db_ddl_parser_mysql', 'classes/db/');
         $sql = 'ALTER TABLE ' . $this->_escape_table_name($table) . ' CHANGE COLUMN ' . $this->_escape_key($col_name) . ' ' . $parser->create_column_line($new_data);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -882,7 +887,7 @@ abstract class yf_db_utils_driver
         }
         $parser = _class('db_ddl_parser_mysql', 'classes/db/');
         $sql = 'ALTER TABLE ' . $this->_escape_table_name($table) . ' MODIFY COLUMN ' . $parser->create_column_line($col_info) . $position_change;
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -1015,7 +1020,7 @@ abstract class yf_db_utils_driver
         } else {
             $sql = 'ALTER TABLE ' . $this->_escape_table_name($table) . ' ADD ' . strtoupper($supported_types[$index_type]) . ' ' . $this->_escape_val($index_name) . ' (' . implode(',', $this->_escape_fields($fields)) . ')';
         }
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -1043,7 +1048,7 @@ abstract class yf_db_utils_driver
         } else {
             $sql = 'ALTER TABLE ' . $this->_escape_table_name($table) . ' DROP INDEX ' . $this->_escape_key($index_name);
         }
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -1093,6 +1098,7 @@ abstract class yf_db_utils_driver
             $table = '';
         }
         $orig_table = $table;
+        $db_name = '';
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -1140,7 +1146,7 @@ abstract class yf_db_utils_driver
      * @param mixed $table
      * @param mixed $index_name
      */
-    public function foreign_key_info($table, $index_name, &$error = false)
+    public function foreign_key_info($table, $index_name, &$error = false, $extra = [])
     {
         if (is_array($table)) {
             $extra = (array) $extra + $table;
@@ -1190,7 +1196,7 @@ abstract class yf_db_utils_driver
             return false;
         }
         $sql = 'ALTER TABLE ' . $this->_escape_table_name($table) . ' DROP FOREIGN KEY ' . $this->_escape_key($index_name);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -1244,7 +1250,7 @@ abstract class yf_db_utils_driver
             . ' REFERENCES ' . $this->_escape_key($this->db->_fix_table_name($ref_table)) . ' (' . implode(',', $this->_escape_fields($ref_fields)) . ')' . PHP_EOL
             . ($on_delete ? ' ON DELETE ' . strtoupper(str_replace('_', ' ', $on_delete)) : '') . PHP_EOL
             . ($on_update ? ' ON UPDATE ' . strtoupper(str_replace('_', ' ', $on_update)) : '');
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -1331,6 +1337,7 @@ abstract class yf_db_utils_driver
             $extra = (array) $extra + $table;
             $table = '';
         }
+        $db_name = '';
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -1359,6 +1366,7 @@ abstract class yf_db_utils_driver
             $extra = (array) $extra + $table;
             $table = '';
         }
+        $db_name = '';
         if (strpos($table, '.') !== false) {
             list($db_name, $table) = explode('.', trim($table));
         }
@@ -1392,7 +1400,7 @@ abstract class yf_db_utils_driver
             return false;
         }
         $sql = 'DROP VIEW IF EXISTS ' . $this->_escape_table_name($table);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -1412,7 +1420,7 @@ abstract class yf_db_utils_driver
             return false;
         }
         $sql = 'CREATE VIEW ' . $this->_escape_table_name($table) . ' AS ' . $sql_as;
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -1506,7 +1514,7 @@ abstract class yf_db_utils_driver
             return false;
         }
         $sql = 'DROP TRIGGER IF EXISTS ' . $this->_escape_table_name($name);
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**
@@ -1520,6 +1528,7 @@ abstract class yf_db_utils_driver
      */
     public function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = [], &$error = false)
     {
+        $db_name = '';
         if (strpos($name, '.') !== false) {
             list($db_name, $name) = explode('.', trim($name));
         }
@@ -1566,7 +1575,7 @@ abstract class yf_db_utils_driver
             . ' ' . strtoupper($trigger_time) . ' ' . strtoupper($trigger_event) . PHP_EOL
             . ' ON ' . $this->_escape_table_name($db_name . '.' . $table) . ' FOR EACH ROW '
             . $trigger_body;
-        return $extra['sql'] ? $sql : $this->db->query($sql);
+        return ($extra['sql'] ?? null) ? $sql : $this->db->query($sql);
     }
 
     /**

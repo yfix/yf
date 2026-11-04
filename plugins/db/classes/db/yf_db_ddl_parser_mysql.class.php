@@ -57,31 +57,32 @@ class yf_db_ddl_parser_mysql
             $name = $v['name'];
         }
         $name = strtolower($name);
-        $v['type'] = strtolower($v['type']);
-        if (strpos($v['type'], 'int') !== false && ! $v['length']) {
+        $v['type'] = strtolower($v['type'] ?? '');
+        if (strpos($v['type'], 'int') !== false && empty($v['length'])) {
             $v['length'] = $this->_get_int_def_length($v['type']);
         }
         $type_braces = (isset($v['length']) && is_numeric($v['length']) ? '(' . $v['length'] . (isset($v['decimals']) && is_numeric($v['decimals']) ? ',' . $v['decimals'] : '') . ')' : '');
-        if (in_array($v['type'], ['enum', 'set']) && is_array($v['values']) && count((array) $v['values'])) {
+        if (in_array($v['type'], ['enum', 'set']) && is_array($v['values'] ?? null) && count((array) $v['values'])) {
             $type_braces = '(\'' . implode('\',\'', $v['values']) . '\')';
         }
         $def = false;
-        if ($v['default'] === 'NULL') {
+        $default = $v['default'] ?? null;
+        if ($default === 'NULL') {
             $def = 'NULL';
         } elseif ($v['type'] == 'timestamp') {
-            $def = $v['default'];
-        } elseif ($v['default'] !== null) {
-            $def = '\'' . $v['default'] . '\'';
+            $def = $default;
+        } elseif ($default !== null) {
+            $def = '\'' . $default . '\'';
         }
         return $this->_implode_line([
             'name' => $this->escape_key($name),
             'type' => $v['type'] . $type_braces,
-            'unsigned' => $v['unsigned'] ? 'unsigned' : '',
-            'charset' => $v['charset'] && $v['collate'] ? 'CHARACTER SET ' . strtolower($v['charset']) : '',
-            'collate' => $v['collate'] ? 'COLLATE ' . strtolower($v['collate']) : '',
-            'nullable' => ! $v['nullable'] ? 'NOT NULL' : '',
+            'unsigned' => ! empty($v['unsigned']) ? 'unsigned' : '',
+            'charset' => ! empty($v['charset']) && ! empty($v['collate']) ? 'CHARACTER SET ' . strtolower($v['charset']) : '',
+            'collate' => ! empty($v['collate']) ? 'COLLATE ' . strtolower($v['collate']) : '',
+            'nullable' => empty($v['nullable']) ? 'NOT NULL' : '',
             'default' => $def ? 'DEFAULT ' . $def : '',
-            'auto_inc' => $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
+            'auto_inc' => ! empty($v['auto_inc']) ? 'AUTO_INCREMENT' : '',
             'on_update' => ($v['on_update'] ?? null) ?: '',
         ]);
     }

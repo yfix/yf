@@ -19,6 +19,8 @@ abstract class yf_db_query_builder_driver
 
     public $_sql = [];
     public $_model = [];
+    public $_with = [];
+    public $_remove_as_from_delete = false;
     public $db = null;
     public $_result_wrapper = null;
     public $_qb_set = null;
@@ -268,7 +270,7 @@ abstract class yf_db_query_builder_driver
         if ( ! isset($data) || empty($data)) {
             return false;
         }
-        $operator = $config['operator'];
+        $operator = $config['operator'] ?? '';
         $out = [];
         if (is_array($data)) {
             if ( ! isset($config['separator'])) {
@@ -1192,6 +1194,7 @@ abstract class yf_db_query_builder_driver
     {
         $id = func_get_args();
         $pk = '';
+        $cache_name = '';
         if (count((array) $id) > 1) {
             $last = array_pop($id);
             if ( ! empty($last) && ! is_numeric($last)) {
@@ -1238,6 +1241,7 @@ abstract class yf_db_query_builder_driver
     {
         $id = func_get_args();
         $pk = '';
+        $cache_name = '';
         if (count((array) $id) > 1) {
             $last = array_pop($id);
             if ( ! empty($last) && ! is_numeric($last)) {
@@ -1977,6 +1981,8 @@ abstract class yf_db_query_builder_driver
     public function get_key_name($table = '')
     {
         $pk = '';
+        $cache_name = '';
+        $cache_name = '';
         if (strlen($table)) {
             if (main()->USE_SYSTEM_CACHE) {
                 $cache_name = get_class($this) . '|' . __FUNCTION__ . '|' . $table . '|' . $this->db->DB_HOST . '|' . $this->db->DB_PORT . '|' . $this->db->DB_NAME . '|' . $this->db->DB_PREFIX;

@@ -461,7 +461,7 @@ class yf_db
      * Function return resource ID of the query.
      * @param mixed $sql
      */
-    public function &query($sql)
+    public function query($sql)
     {
         if ( ! $this->_connected && ! $this->connect()) {
             return false;
@@ -1600,7 +1600,7 @@ class yf_db
         $model_class = $name . '_model';
         $custom_storages = &$main->_custom_class_storages;
         $wildcard = '*_model';
-        if ( ! isset($$custom_storages[$wildcard]['yf'])) {
+        if ( ! isset($custom_storages[$wildcard]['yf'])) {
             $yf_models_basic_storages = [
                 'project_app_path' => [APP_PATH . 'models/'],
                 'project_plugins' => [PROJECT_PATH . 'plugins/*/share/models/'],
