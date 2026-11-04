@@ -53,10 +53,10 @@ class yf_html_datetime
             if (is_numeric($selected)) {
                 $selected = gmdate('Y-m-d', $selected);
             }
-            list($year, $month, $day) = explode('-', $selected);
+            list($year, $month, $day) = array_pad(explode('-', $selected), 3, null);
         }
         if (strlen($years)) {
-            list($start_year, $end_year) = explode('-', $years);
+            list($start_year, $end_year) = array_pad(explode('-', $years), 2, null);
         } else {
             $start_year = 1900;
             $end_year = gmdate('Y');
@@ -122,7 +122,7 @@ class yf_html_datetime
             if (is_numeric($selected)) {
                 $selected = gmdate('H:i:s', $selected);
             }
-            list($hour, $minute, $second) = explode(':', $selected);
+            list($hour, $minute, $second) = array_pad(explode(':', $selected), 3, null);
         }
         $body = '<select name="hour' . $name_postfix . '"' . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . $name_postfix . '_hour"' : '') . ' class="span1 col-md-1">' . PHP_EOL;
         $body .= $show_text ? '<option ' . ($hour == '' ? 'selected="selected"' : '') . ' value="">-' . ($translate ? t('hour') : 'hour') . '-</option>' . PHP_EOL : '';
@@ -185,10 +185,10 @@ class yf_html_datetime
             if (is_numeric($selected)) {
                 $selected = gmdate('Y-m-d', $selected);
             }
-            list($year, $month, $day) = explode('-', $selected);
+            list($year, $month, $day) = array_pad(explode('-', $selected), 3, null);
         }
         if (strlen($years)) {
-            list($start_year, $end_year) = explode('-', $years);
+            list($start_year, $end_year) = array_pad(explode('-', $years), 2, null);
         } else {
             $start_year = 1900;
             $end_year = gmdate('Y');
@@ -261,7 +261,7 @@ class yf_html_datetime
             if (is_numeric($selected)) {
                 $selected = gmdate('H:i:s', $selected);
             }
-            list($hour, $minute, $second) = explode(':', $selected);
+            list($hour, $minute, $second) = array_pad(explode(':', $selected), 3, null);
         }
         $body = PHP_EOL . '<select name="' . $name . '"[hour]'
             . (_class('html')->AUTO_ASSIGN_IDS ? ' id="' . $extra['id'] . '_hour"' : '')

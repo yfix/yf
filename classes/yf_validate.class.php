@@ -562,7 +562,7 @@ class yf_validate
     public function between($in, $params = [])
     {
         $param = is_array($params) ? $params['param'] : $params;
-        list($min, $max) = explode(',', $param);
+        list($min, $max) = array_pad(explode(',', $param), 2, null);
         return $in >= $min && $in <= $max;
     }
 
@@ -643,7 +643,7 @@ class yf_validate
         $param = is_array($params) ? $params['param'] : $params;
         $id_field = ($params['id_field'] ?? null) ?: 'id';
         if ($param) {
-            list($check_table, $check_field, $check_id) = explode('.', $param);
+            list($check_table, $check_field, $check_id) = array_pad(explode('.', $param), 3, null);
         }
         if ($check_table && $check_field && $check_id && $in) {
             $exists = $this->db

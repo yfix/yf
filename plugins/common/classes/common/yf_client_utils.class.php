@@ -92,7 +92,7 @@ class yf_client_utils
             }
             $flag = true;
             foreach ((array) $masks as $mask) {
-                list($net_addr, $net_mask) = explode('/', $mask);
+                list($net_addr, $net_mask) = array_pad(explode('/', $mask), 2, null);
                 if ($net_mask <= 0) {
                     continue;
                 }

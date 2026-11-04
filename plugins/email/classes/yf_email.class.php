@@ -125,7 +125,7 @@ class yf_email
      */
     public function _is_mailru($email)
     {
-        list(, $host) = explode('@', $email);
+        list(, $host) = array_pad(explode('@', $email), 2, null);
         if (in_array($host, ['mail.ru', 'bk.ru', 'inbox.ru', 'mail.ua', 'list.ru'])) {
             return true;
         }

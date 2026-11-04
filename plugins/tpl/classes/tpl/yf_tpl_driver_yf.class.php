@@ -386,7 +386,7 @@ class yf_tpl_driver_yf
             $stpl_name = str_replace('@action', $_GET['action'] ?? '', $stpl_name);
             // Force to include template from special storage, example: @framework:script_js
             if ($stpl_name[0] === '@') {
-                list($force_storage, $stpl_name) = explode(':', substr($stpl_name, 1));
+                list($force_storage, $stpl_name) = array_pad(explode(':', substr($stpl_name, 1)), 2, null);
             }
             if ($if_exists && ! tpl()->exists($stpl_name, $force_storage)) {
                 return false;
@@ -394,7 +394,7 @@ class yf_tpl_driver_yf
             $prevent_name = $name . '__' . $m[0];
             // Here we merge/override incoming $replace with parsed params, to be passed to included template
             foreach ((array) explode(';', str_replace(['\'', '"'], '', $_replace)) as $v) {
-                list($a_name, $a_val) = explode('=', trim($v));
+                list($a_name, $a_val) = array_pad(explode('=', trim($v)), 2, null);
                 $a_name = trim($a_name);
                 if (strlen($a_name)) {
                     $replace[$a_name] = trim($a_val);
@@ -1187,7 +1187,7 @@ class yf_tpl_driver_yf
         $force_storage = '';
         // Force to include template from special storage, example: @framework:script_js
         if ($stpl_name[0] === '@') {
-            list($force_storage, $stpl_name) = explode(':', substr($stpl_name, 1));
+            list($force_storage, $stpl_name) = array_pad(explode(':', substr($stpl_name, 1)), 2, null);
         }
         if ($if_exists && ! tpl()->exists($stpl_name, $force_storage)) {
             return false;

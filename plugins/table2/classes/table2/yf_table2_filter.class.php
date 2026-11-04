@@ -120,7 +120,7 @@ class yf_table2_filter
                     return false;
                 }
                 $only_date_regex = '~^[0-9]{2,4}[\.-][0-9]{2,4}[\.-][0-9]{2,4}$~';
-                list($from, $to) = explode(' - ', $value);
+                list($from, $to) = array_pad(explode(' - ', $value), 2, '');
                 $from = trim($from);
                 if (preg_match($only_date_regex, $from)) {
                     $from .= ' 00:00:00';
@@ -151,7 +151,7 @@ class yf_table2_filter
                     return false;
                 }
                 $only_date_regex = '~^[0-9]{2,4}[\.-][0-9]{2,4}[\.-][0-9]{2,4}$~';
-                list($from, $to) = explode(' - ', $value);
+                list($from, $to) = array_pad(explode(' - ', $value), 2, '');
                 $from = trim($from);
                 if (preg_match($only_date_regex, $from)) {
                     $from .= ' 00:00:00';

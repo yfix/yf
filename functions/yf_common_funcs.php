@@ -376,7 +376,7 @@ if ( ! function_exists('_attrs_string2array')) {
             if ($strip_quotes) {
                 $tmp_string = trim(trim($tmp_string, '"\''));
             }
-            list($try_key, $try_value) = explode('=', $tmp_string);
+            list($try_key, $try_value) = array_pad(explode('=', $tmp_string), 2, null);
             $try_key && $try_key = trim($try_key);
             $try_value && $try_value = trim($try_value);
             if ($strip_quotes) {

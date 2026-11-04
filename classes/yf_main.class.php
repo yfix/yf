@@ -1851,10 +1851,10 @@ class yf_main
                     continue;
                 }
                 $v = substr($v, 2);
-                list($_name, $_val) = explode('=', $v);
+                list($_name, $_val) = array_pad(explode('=', $v), 2, null);
                 $_name = trim($_name);
                 if (strlen($_name)) {
-                    $_GET[$_name] = trim($_val);
+                    $_GET[$_name] = trim((string) $_val);
                 }
             }
         }

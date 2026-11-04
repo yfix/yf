@@ -470,7 +470,7 @@ class yf_admin_methods
             // Example: &filter=admin_id:1,ip:127.0.0.1
             if ($filter_data) {
                 foreach (explode(',', $filter_data) as $item) {
-                    list($k, $v) = explode(':', $item);
+                    list($k, $v) = array_pad(explode(':', $item), 2, null);
                     if ($k && isset($v)) {
                         $data[$k] = $v;
                     }

@@ -74,8 +74,8 @@ class yf_dynamic_image
     {
         no_graphics(true);
 
-        list($id, $ext) = explode('.', ($_GET['id'] ?? ''));
-        list($w, $h) = explode('x', $id);
+        list($id, $ext) = array_pad(explode('.', ($_GET['id'] ?? '')), 2, null);
+        list($w, $h) = array_pad(explode('x', $id), 2, null);
         $w = (int) $w ?: 100;
         $h = (int) $h ?: 100;
         $params['color_bg'] = ($_GET['page'] ?? null) ? preg_replace('[^a-z0-9]', '', $_GET['page']) : '';

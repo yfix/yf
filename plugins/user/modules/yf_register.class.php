@@ -128,7 +128,7 @@ class yf_register
             return _e('Confirmation ID is required!');
         }
         // Decode confirmation number
-        list($user_id, $member_date) = explode('wvcn', trim(base64_decode(($_GET['id'] ?? ''))));
+        list($user_id, $member_date) = array_pad(explode('wvcn', trim(base64_decode(($_GET['id'] ?? '')))), 2, null);
         $user_id = (int) $user_id;
         $member_date = (int) $member_date;
         // Get target user info

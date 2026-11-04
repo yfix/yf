@@ -1037,7 +1037,7 @@ class yf_tpl
             } elseif (false !== strpos($params, '=')) {
                 $params = _attrs_string2array($params);
             } else {
-                list($object, $action, $id, $page) = explode(';', str_replace(',', ';', $params));
+                list($object, $action, $id, $page) = array_pad(explode(';', str_replace(',', ';', $params)), 4, null);
                 $params = [
                     'object' => $object,
                     'action' => $action,

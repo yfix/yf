@@ -273,14 +273,14 @@ class yf_rewrite
                 if (($url_str[0] ?? '') == '/') {
                     if (($url_str[1] ?? '') == '/') {
                         // Example: //test/test_action/&k1=v1&k2=v2 => object=test, action=test_action, k1=v1, k2=v2
-                        list(, , $params['object'], $params['action'], $params['_other']) = explode('/', $url_str);
+                        list(, , $params['object'], $params['action'], $params['_other']) = array_pad(explode('/', $url_str), 5, null);
                     } else {
                         // Example: /test/oauth/github => object=test, action=oauth, id=github
-                        list(, $params['object'], $params['action'], $params['id'], $params['page'], $params['_other']) = explode('/', $url_str);
+                        list(, $params['object'], $params['action'], $params['id'], $params['page'], $params['_other']) = array_pad(explode('/', $url_str), 6, null);
                     }
                 } else {
                     // Example: test2.dev/test/oauth/github => host=test2.dev, object=test, action=oauth, id=github
-                    list($params['host'], $params['object'], $params['action'], $params['id'], $params['page'], $params['_other']) = explode('/', $url_str);
+                    list($params['host'], $params['object'], $params['action'], $params['id'], $params['page'], $params['_other']) = array_pad(explode('/', $url_str), 6, null);
                 }
                 if ( ! $params['_other'] && $_other) {
                     $params['_other'] = $_other;
